@@ -2,13 +2,28 @@
 import { fileURLToPath, URL } from 'node:url'
 
 import vue from '@vitejs/plugin-vue'
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv, type ProxyOptions } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const moonraker = env.VITE_MOONRAKER_HTTP_URL || 'http://localhost:7125'
+  // Where the dev proxy forwards Moonraker traffic. Set MOONRAKER_PROXY_TARGET to
+  // a remote printer to develop against real hardware without touching its config.
+  const moonrakerTarget =
+    env.MOONRAKER_PROXY_TARGET || env.VITE_MOONRAKER_HTTP_URL || 'http://localhost:7125'
   const backend = env.VITE_BACKEND_URL || 'http://localhost:8000'
+
+  // Strip the browser Origin so Moonraker treats the proxied request as a trusted
+  // non-browser client (its cors_domains may not include the dev origin).
+  const moonraker = (ws = false): ProxyOptions => ({
+    target: moonrakerTarget,
+    changeOrigin: true,
+    ws,
+    configure: (proxy) => {
+      proxy.on('proxyReq', (proxyReq) => proxyReq.removeHeader('origin'))
+      proxy.on('proxyReqWs', (proxyReq) => proxyReq.removeHeader('origin'))
+    },
+  })
 
   return {
     plugins: [vue()],
@@ -19,14 +34,12 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 5173,
-      // Dev-only reverse proxy so the SPA can reach Moonraker + the backend
-      // without CORS during local development.
       proxy: {
-        '/server': { target: moonraker, changeOrigin: true },
-        '/printer': { target: moonraker, changeOrigin: true },
-        '/access': { target: moonraker, changeOrigin: true },
-        '/machine': { target: moonraker, changeOrigin: true },
-        '/websocket': { target: moonraker, ws: true, changeOrigin: true },
+        '/server': moonraker(),
+        '/printer': moonraker(),
+        '/access': moonraker(),
+        '/machine': moonraker(),
+        '/websocket': moonraker(true),
         '/api': { target: backend, changeOrigin: true },
       },
     },

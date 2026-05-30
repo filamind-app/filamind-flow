@@ -1,0 +1,19 @@
+# Persistent simulated Klipper printer for FilaMind Flow development & tests.
+# Runs Moonraker (REST + WebSocket) on :7125 backed by a simulated Klipper
+# (simulavr) — no physical hardware needed. See README.md.
+services:
+  printer:
+    container_name: filamind-virtual-printer
+    image: ghcr.io/mainsail-crew/virtual-klipper-printer:latest
+    restart: unless-stopped
+    ports:
+      - "7125:7125" # Moonraker API (REST + WebSocket JSON-RPC)
+      - "8110:8080" # dummy webcam (mjpg-streamer)
+    volumes:
+      - printer_data:/home/printer/printer_data
+    tmpfs:
+      - /tmp:noexec
+      - /home/printer/printer_data/comms:noexec
+
+volumes:
+  printer_data:
