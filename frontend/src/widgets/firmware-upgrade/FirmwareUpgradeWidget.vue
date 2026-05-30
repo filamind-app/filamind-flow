@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import { fetchFirmwareStatus } from './api'
 import type { FirmwareStatus, FirmwareTools } from './types'
@@ -7,6 +7,14 @@ import type { FirmwareStatus, FirmwareTools } from './types'
 const status = ref<FirmwareStatus | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(true)
+
+/** Explicit status for the optional Klipper 'Linux process' host MCU. */
+const hostMcu = computed(() => {
+  const h = status.value?.host_mcu
+  if (h?.configured) return { label: 'active', cls: 'bg-brand-lime' }
+  if (h?.service_active) return { label: 'available · not configured', cls: 'bg-brand-yellow' }
+  return { label: 'not installed', cls: 'bg-surface opacity-60' }
+})
 
 const TOOLS: { key: keyof FirmwareTools; label: string }[] = [
   { key: 'klipper', label: 'Klipper' },
@@ -54,6 +62,7 @@ onMounted(load)
           class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
         >
           <span class="min-w-0 flex-1 truncate font-bold">{{ mcu.name }}</span>
+          <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{ mcu.kind }}</span>
           <span class="font-mono text-[11px] opacity-80">{{ mcu.version ?? '—' }}</span>
           <span
             class="nb-badge shrink-0"
@@ -72,6 +81,11 @@ onMounted(load)
         <p v-if="!status.mcus.length" class="font-mono text-xs opacity-70">
           {{ status.reachable ? 'No MCUs reported.' : 'Printer not reachable.' }}
         </p>
+      </div>
+
+      <div class="flex items-center justify-between gap-2 border-t-2 border-ink pt-2 text-xs">
+        <span class="font-bold">Linux host MCU</span>
+        <span class="nb-badge shrink-0" :class="hostMcu.cls">{{ hostMcu.label }}</span>
       </div>
 
       <div class="flex flex-wrap gap-1.5 border-t-2 border-ink pt-2">

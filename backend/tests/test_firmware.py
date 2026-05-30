@@ -24,5 +24,9 @@ def test_firmware_status_unreachable() -> None:
     assert body["reachable"] is False
     assert body["host"]["version"] is None
     assert body["mcus"] == []
+    # With no reachable MCUs, no host MCU can be configured; the service probe
+    # returns a bool either way (False on non-systemd test hosts).
+    assert body["host_mcu"]["configured"] is False
+    assert isinstance(body["host_mcu"]["service_active"], bool)
     assert set(body["tools"]) == _TOOL_KEYS
     assert body["tools"]["klipper"] is False
