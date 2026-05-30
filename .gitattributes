@@ -1,0 +1,4 @@
+# Normalize line endings to LF for all text files (matters for shell scripts and
+# config files deployed to the Linux printer host).
+* text=auto eol=lf
+*.svg text eol=lf

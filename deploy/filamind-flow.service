@@ -1,0 +1,19 @@
+# FilaMind Flow backend — systemd unit.
+# Copy to /etc/systemd/system/filamind-flow.service, edit User/paths, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now filamind-flow
+[Unit]
+Description=FilaMind Flow backend (Klipper / Moonraker panel)
+After=network-online.target moonraker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/filamind-flow/backend
+EnvironmentFile=-/home/pi/filamind-flow/backend/.env
+ExecStart=/home/pi/filamind-flow/backend/.venv/bin/python -m app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

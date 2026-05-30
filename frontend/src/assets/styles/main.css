@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-display antialiased;
+  }
+}
+
+@layer components {
+  /* Neo-Brutalist building blocks. Compose these instead of repeating utilities. */
+  .nb-card {
+    @apply rounded-brutal border-3 border-ink bg-surface shadow-brutal;
+  }
+
+  .nb-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-brutal border-3 border-ink
+      px-4 py-2 font-bold shadow-brutal-sm transition-transform
+      hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal
+      active:translate-x-0.5 active:translate-y-0.5 active:shadow-none;
+  }
+
+  .nb-badge {
+    @apply inline-flex items-center gap-1.5 rounded-brutal border-2 border-ink px-2 py-0.5
+      text-xs font-bold uppercase tracking-wide;
+  }
+}
