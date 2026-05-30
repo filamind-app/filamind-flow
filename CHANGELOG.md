@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Dev test harness (`dev/virtual-printer/`): develop against any Moonraker through
+  the Vite dev proxy via `MOONRAKER_PROXY_TARGET` (strips the browser Origin, so no
+  printer CORS changes are needed) — verified end-to-end against a real BigTreeTech
+  CB1 — plus an optional Docker simulated printer.
+
+### Fixed
+
+- Backend `cors_origins` raised a `SettingsError` when set from the environment; it
+  is now a comma-separated string exposed as `cors_origin_list`.
+
 ## [0.1.0] - 2026-05-31
 
 ### Added

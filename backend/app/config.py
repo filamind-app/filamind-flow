@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,16 +17,13 @@ class Settings(BaseSettings):
     # Base URL of the Moonraker instance this panel sits in front of.
     moonraker_url: str = "http://localhost:7125"
 
-    # Browser origins allowed to call this API (i.e. where the frontend is served).
-    cors_origins: list[str] = ["http://localhost:5173"]
+    # Comma-separated browser origins allowed to call this API.
+    cors_origins: str = "http://localhost:5173"
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def _split_origins(cls, value: object) -> object:
-        """Accepts a comma-separated string in addition to a JSON/list value."""
-        if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
-        return value
+    @property
+    def cors_origin_list(self) -> list[str]:
+        """The configured CORS origins as a list."""
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
 
 @lru_cache
