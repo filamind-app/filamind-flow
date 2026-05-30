@@ -14,10 +14,11 @@ from the browser, no command line.
 
 | Phase | Scope | Risk |
 | ----- | ----- | ---- |
-| 🚧 **1 — Foundation** | Firmware status: per-MCU versions, host↔MCU sync check, tool readiness | low (read-only) |
-| 📋 **2 — Configure** | Web Kconfig editor (reactive form) + saved profiles | medium |
-| 📋 **3 — Build** | Compile firmware for a profile, with live streamed log | medium |
-| 📋 **4 — Flash** | Flash via Katapult / DFU / avrdude, auto-reboot to bootloader, safety guards | high (touches hardware) |
+| ✅ **1 — Foundation** | Firmware status: per-MCU versions, host↔MCU sync check, tool readiness, Linux host MCU | low (read-only) |
+| ✅ **2 — Discover** | Detect every board on any printer — Moonraker `[mcu]` + USB / CAN / DFU scans, with connection + mode | low (read-only) |
+| 🚧 **3 — Configure** | Web Kconfig editor (reactive form) + saved per-board profiles | medium |
+| 📋 **4 — Build** | Compile firmware for a profile, with live streamed log | medium |
+| 📋 **5 — Flash** | Flash via Katapult / DFU / avrdude, auto-reboot to bootloader, safety guards | high (touches hardware) |
 
 **Planned enhancements**
 
