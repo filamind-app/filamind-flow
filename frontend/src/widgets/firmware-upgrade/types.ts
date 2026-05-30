@@ -38,3 +38,30 @@ export interface FirmwareStatus {
   host_mcu: HostMcu
   tools: FirmwareTools
 }
+
+/** A discovered board, merged across Moonraker + USB/CAN/DFU scans. */
+export interface Board {
+  id: string
+  name: string
+  mcu_name: string | null
+  /** usb / can / dfu / linux / serial. */
+  connection: string
+  /** service (running) / ready (bootloader) / dfu / available / unknown. */
+  mode: string
+  configured: boolean
+  version: string | null
+  application: string | null
+  interface: string | null
+}
+
+export interface BoardScan {
+  configured: number
+  serial: number
+  can: number
+  dfu: number
+}
+
+export interface BoardDiscovery {
+  boards: Board[]
+  scanned: BoardScan
+}

@@ -68,3 +68,38 @@ class FirmwareStatus(BaseModel):
     mcus: list[McuFirmware]
     host_mcu: HostMcu
     tools: FirmwareTools
+
+
+class Board(BaseModel):
+    """A discovered MCU board, merged across Moonraker + USB/CAN/DFU scans."""
+
+    id: str
+    name: str
+    #: The Klipper ``[mcu]`` section name, when this board is configured.
+    mcu_name: str | None = None
+    #: How the board is reached: usb / can / dfu / linux / serial.
+    connection: str
+    #: service (running firmware) / ready (bootloader) / dfu / available / unknown.
+    mode: str
+    configured: bool = False
+    version: str | None = None
+    #: CAN application reported by Katapult (Klipper / Katapult / CanBoot).
+    application: str | None = None
+    #: CAN interface (e.g. can0) for CAN boards.
+    interface: str | None = None
+
+
+class BoardScan(BaseModel):
+    """How many boards each discovery source contributed."""
+
+    configured: int
+    serial: int
+    can: int
+    dfu: int
+
+
+class BoardDiscovery(BaseModel):
+    """Every board detected on the host, with a per-source scan summary."""
+
+    boards: list[Board]
+    scanned: BoardScan

@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import { fetchFirmwareStatus } from './api'
-import type { FirmwareStatus, FirmwareTools } from './types'
+import { fetchBoards, fetchFirmwareStatus } from './api'
+import type { BoardDiscovery, FirmwareStatus, FirmwareTools } from './types'
 
 const status = ref<FirmwareStatus | null>(null)
+const boards = ref<BoardDiscovery | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(true)
+
+function boardModeClass(mode: string): string {
+  if (mode === 'service') return 'bg-brand-lime'
+  if (mode === 'ready' || mode === 'dfu') return 'bg-brand-yellow'
+  return 'bg-surface opacity-70'
+}
 
 /** Explicit status for the optional Klipper 'Linux process' host MCU. */
 const hostMcu = computed(() => {
@@ -29,7 +36,9 @@ async function load(): Promise<void> {
   loading.value = true
   error.value = null
   try {
-    status.value = await fetchFirmwareStatus()
+    const [statusData, boardsData] = await Promise.all([fetchFirmwareStatus(), fetchBoards()])
+    status.value = statusData
+    boards.value = boardsData
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to load firmware status'
   } finally {
@@ -97,6 +106,26 @@ onMounted(load)
         >
           {{ status.tools[tool.key] ? '✓' : '✗' }} {{ tool.label }}
         </span>
+      </div>
+
+      <div v-if="boards" class="space-y-1.5 border-t-2 border-ink pt-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wide">Detected boards</span>
+          <span class="font-mono text-[10px] opacity-60">{{ boards.boards.length }} found</span>
+        </div>
+        <div
+          v-for="board in boards.boards"
+          :key="board.id"
+          class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
+        >
+          <span class="min-w-0 flex-1 truncate font-bold">{{ board.name }}</span>
+          <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{ board.connection }}</span>
+          <span v-if="board.configured" class="nb-badge shrink-0 bg-surface text-[9px]">cfg</span>
+          <span class="nb-badge shrink-0" :class="boardModeClass(board.mode)">{{ board.mode }}</span>
+        </div>
+        <p v-if="!boards.boards.length" class="font-mono text-xs opacity-70">
+          No flashable boards detected.
+        </p>
       </div>
 
       <p class="font-mono text-[10px] opacity-60">
