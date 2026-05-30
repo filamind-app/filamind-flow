@@ -7,8 +7,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-111111.svg)](LICENSE)
 
 FilaMind Flow is a standalone single-page app that talks **directly to Moonraker**
-(REST + WebSocket JSON-RPC) and is linked from the Mainsail/Fluidd sidebar — the
-same integration model as the rest of the ecosystem. The frontend is built once
+(REST + WebSocket JSON-RPC) and is linked from the Mainsail sidebar (and reached by
+URL from Fluidd, which has no custom-link API yet) — the same integration model as
+the rest of the ecosystem. The frontend is built once
 on your machine and deployed as **static files**, so it adds virtually nothing to
 the printer host at runtime; a small FastAPI backend handles anything that must
 run server-side.

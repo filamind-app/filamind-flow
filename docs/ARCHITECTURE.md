@@ -13,9 +13,10 @@ start see the root [README](../README.md).
 ## Integration model
 
 The panel is a standalone SPA that talks **directly to Moonraker** and is linked
-from the Mainsail/Fluidd sidebar. This is the same pattern other ecosystem tools
-use: there is no stable third-party plugin API inside Mainsail/Fluidd, so a
-sibling page sharing the same Moonraker instance is the clean, durable approach.
+from the Mainsail sidebar (Fluidd has no custom-link API yet, so it is reached by
+URL there). This is the same pattern other ecosystem tools use: there is no stable
+third-party plugin API inside Mainsail/Fluidd, so a sibling page sharing the same
+Moonraker instance is the clean, durable approach.
 
 ```
 Browser (phone / desktop)
