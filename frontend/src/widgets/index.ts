@@ -1,13 +1,18 @@
+import { defineAsyncComponent } from 'vue'
+
+import { registerWidget } from '@/core/registry'
+
 /**
- * Feature widget registration hub.
- *
- * The scaffold intentionally ships with NO widgets. To add a feature:
- *   1. create `src/widgets/<feature>/<Feature>Widget.vue`;
- *   2. build a `WidgetDefinition` (see core/registry/types.ts), using
- *      `defineAsyncComponent(() => import('./<feature>/<Feature>Widget.vue'))`
- *      so each widget is a separate, lazily-loaded chunk;
- *   3. register it below with `registerWidget(...)`.
+ * Feature widget registration hub. Each feature registers a `WidgetDefinition`
+ * here; keep components lazy (`defineAsyncComponent`) so each widget is its own
+ * chunk, loaded only when shown.
  */
 export function registerWidgets(): void {
-  // Intentionally empty — feature widgets are registered here.
+  registerWidget({
+    id: 'firmware-upgrade',
+    title: 'Firmware Upgrade',
+    description: 'MCU firmware versions, host sync status, and toolchain readiness.',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./firmware-upgrade/FirmwareUpgradeWidget.vue')),
+  })
 }
