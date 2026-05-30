@@ -1,9 +1,9 @@
 [
   {
     "title": "FilaMind Flow",
-    "icon": "mdi-tune-vertical",
     "href": "http://printer.local:8080",
     "target": "_blank",
-    "position": 100
+    "icon": "M5 3h14v4h-10v3h8v4h-8v7h-4z",
+    "position": 90
   }
 ]

@@ -7,7 +7,7 @@ setup. Adjust the user (`pi`), paths, and host (`printer.local`) to your machine
 
 ```bash
 cd ~
-git clone https://github.com/your-org/filamind-flow.git
+git clone https://github.com/filamind-app/filamind-flow.git
 cd filamind-flow
 chmod +x deploy/install.sh
 ./deploy/install.sh        # builds frontend/dist and the backend venv
@@ -51,17 +51,25 @@ panel appears in Mainsail/Fluidd's update manager and updates with one click.
 
 ### Mainsail
 
-Mainsail can show a custom sidebar entry. Place `deploy/mainsail-navi.json` as
-`~/printer_data/config/.theme/navi.json` (merge if the file already exists) and
-set `href` to your panel URL. Verify the field names against the current
-[Mainsail docs](https://docs.mainsail.xyz/) — the custom-navigation format can
-change between releases.
+Mainsail supports custom sidebar links via `navi.json`. Place
+`deploy/mainsail-navi.json` at `~/printer_data/config/.theme/navi.json` (merge into
+the existing array if the file is already there) and set `href` to your panel URL.
+The `icon` field is an SVG path string on a 24×24 viewBox (Material-Design-Icon
+style); the bundled entry uses a brutalist "F". Docs:
+[Mainsail → Navigation](https://docs.mainsail.xyz/settings/navigation/).
+
+> Host-preserving tip: serve FilaMind Flow at a subpath on Mainsail's own origin and
+> use a relative `href` (e.g. `/filamind/`) so the link works regardless of the
+> hostname/IP used to reach the printer.
 
 ### Fluidd
 
-Fluidd does not use the same `navi.json` mechanism. Until a native entry is added,
-bookmark the panel URL (`http://printer.local:8080`) or add it via any available
-custom-link feature in your Fluidd version.
+Fluidd does **not** support custom sidebar links yet — it is an open feature request
+([fluidd-core/fluidd#472](https://github.com/fluidd-core/fluidd/issues/472)). Its
+`.fluidd-theme` folder customizes only styling/logo, not navigation. Until native
+support lands, reach the panel by URL (`http://printer.local:8080`) — a bookmark or
+browser start page works well. (Editing Fluidd's built assets to inject a link is
+possible but not recommended: it breaks on every update.)
 
 ## Notes
 

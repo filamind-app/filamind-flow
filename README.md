@@ -3,7 +3,7 @@
 > An extensible, Neo-Brutalist control panel for **Klipper / Moonraker** — designed
 > to live alongside Mainsail and Fluidd and grow one widget at a time.
 
-[![CI](https://github.com/your-org/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/filamind-flow/actions/workflows/ci.yml)
+[![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-111111.svg)](LICENSE)
 
 FilaMind Flow is a standalone single-page app that talks **directly to Moonraker**
@@ -140,7 +140,14 @@ templates live in [`deploy/`](deploy/).
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 
+## Credits
+
+Built and maintained by the **DeltaFabs team**:
+
+- abdelmonem awad — <eg2@live.com>
+- Ahmed bebars — <Ahmedbebars1@gmail.com>
+
 ## License
 
-[MIT](LICENSE) © FilaMind Flow contributors. Not affiliated with the Klipper,
-Moonraker, Mainsail, or Fluidd projects.
+[MIT](LICENSE) © 2026 DeltaFabs team. Not affiliated with the Klipper, Moonraker,
+Mainsail, or Fluidd projects.

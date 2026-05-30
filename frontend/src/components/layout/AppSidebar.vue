@@ -21,7 +21,7 @@ const nav = [{ id: 'dashboard', label: 'Dashboard', icon: '▣' }] as const
     </nav>
 
     <p class="mt-auto font-mono text-[10px] leading-tight opacity-70">
-      Extensible · Neo-Brutalist<br />Moonraker · Klipper
+      Moonraker · Klipper<br />by DeltaFabs team
     </p>
   </aside>
 </template>

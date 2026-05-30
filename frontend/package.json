@@ -5,6 +5,18 @@
   "type": "module",
   "description": "Extensible Neo-Brutalist control panel for Klipper / Moonraker — frontend.",
   "license": "MIT",
+  "author": "DeltaFabs team",
+  "contributors": [
+    "abdelmonem awad <eg2@live.com>",
+    "Ahmed bebars <Ahmedbebars1@gmail.com>"
+  ],
+  "homepage": "https://github.com/filamind-app/filamind-flow#readme",
+  "bugs": "https://github.com/filamind-app/filamind-flow/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filamind-app/filamind-flow.git",
+    "directory": "frontend"
+  },
   "engines": {
     "node": ">=20.0.0"
   },
