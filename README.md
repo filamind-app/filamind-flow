@@ -4,7 +4,7 @@
 > to live alongside Mainsail and Fluidd and grow one widget at a time.
 
 [![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-111111.svg)](LICENSE)
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-111111.svg)](LICENSE)
 
 FilaMind Flow is a standalone single-page app that talks **directly to Moonraker**
 (REST + WebSocket JSON-RPC) and is linked from the Mainsail sidebar (and reached by
@@ -163,5 +163,5 @@ Built and maintained by the **DeltaFabs team**:
 
 ## License
 
-[MIT](LICENSE) © 2026 DeltaFabs team. Not affiliated with the Klipper, Moonraker,
-Mainsail, or Fluidd projects.
+[GPL-3.0-or-later](LICENSE) © 2026 DeltaFabs team. Not affiliated with the Klipper,
+Moonraker, Mainsail, or Fluidd projects.

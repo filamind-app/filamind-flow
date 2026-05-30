@@ -21,6 +21,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   proxy that forwards Moonraker/backend traffic) instead of `host:7125`, so no host
   or port is baked into the build and there is no CORS.
 - The deploy nginx template strips `Origin` on the Moonraker proxy.
+- Relicensed from MIT to **GPL-3.0-or-later** to match the Klipper / Moonraker ecosystem.
+- Header now has a **Back to Mainsail** button.
 
 ### Fixed
 
