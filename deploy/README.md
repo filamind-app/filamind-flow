@@ -3,15 +3,22 @@
 These templates install FilaMind Flow next to an existing Klipper + Moonraker
 setup. Adjust the user (`pi`), paths, and host (`printer.local`) to your machine.
 
+## Quick install (recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/filamind-app/filamind-flow/main/scripts/install.sh | bash
+```
+
+That single command performs everything below (service, nginx, sidebar, update
+manager). The steps that follow are for a manual install or to understand what it does.
+
 ## 1. Get the code on the host
 
 ```bash
-cd ~
-git clone https://github.com/filamind-app/filamind-flow.git
-cd filamind-flow
-chmod +x deploy/install.sh
-./deploy/install.sh        # builds frontend/dist and the backend venv
+cd ~ && git clone https://github.com/filamind-app/filamind-flow.git
 ```
+
+The UI ships pre-built in `frontend/dist`, so no Node.js is needed on the printer.
 
 ## 2. Backend service (systemd)
 
