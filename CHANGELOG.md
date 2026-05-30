@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-31
+
+### Added
+
+- **Board discovery** (`GET /api/firmware/boards`) — finds every flashable MCU on
+  any printer by merging four independent sources: configured `[mcu]` sections
+  from Moonraker, USB/serial (`/dev/serial/by-id` + ttyACM/ttyUSB), CAN (Katapult
+  `flashtool.py -q` on each CAN interface), and DFU (`dfu-util -l`). Each board
+  reports its connection (usb/can/dfu/linux), mode (service / ready / dfu),
+  whether it is configured, and its running firmware version. Surfaced as a
+  **Detected boards** section in the Firmware Upgrade widget.
+
 ## [0.2.2] - 2026-05-31
 
 ### Added
@@ -70,7 +82,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.3.0
 [0.2.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.2
 [0.2.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.1
 [0.2.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.0
