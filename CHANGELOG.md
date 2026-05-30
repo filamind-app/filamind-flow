@@ -10,8 +10,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Dev test harness (`dev/virtual-printer/`): develop against any Moonraker through
   the Vite dev proxy via `MOONRAKER_PROXY_TARGET` (strips the browser Origin, so no
-  printer CORS changes are needed) — verified end-to-end against a real BigTreeTech
-  CB1 — plus an optional Docker simulated printer.
+  printer CORS changes are needed) — plus an optional Docker simulated printer.
+- Verified the full on-device deployment on a real **BigTreeTech CB1**: backend
+  systemd service + nginx-served UI + a **FilaMind Flow entry in the Mainsail
+  sidebar** (alongside KlipperFleet), with klippy `ready` and a live Connected badge.
+
+### Changed
+
+- The frontend now defaults to **same-origin** endpoints (it is served behind a
+  proxy that forwards Moonraker/backend traffic) instead of `host:7125`, so no host
+  or port is baked into the build and there is no CORS.
+- The deploy nginx template strips `Origin` on the Moonraker proxy.
 
 ### Fixed
 
