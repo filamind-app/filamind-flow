@@ -18,6 +18,19 @@ run server-side.
 > widget registry, design system, and CI are wired and ready. No feature widgets
 > ship yet; they are added under `frontend/src/widgets/`.
 
+## Install on a printer (one line)
+
+On your Klipper / Moonraker host, run as your normal printer user (e.g. `pi` / `biqu`):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/filamind-app/filamind-flow/main/scripts/install.sh | bash
+```
+
+It installs the backend service, serves the (pre-built) UI via nginx on port `8090`,
+adds a **FilaMind Flow** entry to the Mainsail sidebar, and registers it with
+Moonraker's update manager for one-click updates. Re-runnable; ports are overridable
+(`FILAMIND_UI_PORT`, `FILAMIND_API_PORT`). See [`scripts/install.sh`](scripts/install.sh).
+
 ## Why it exists
 
 - **Extensible by construction** — every feature is a self-registering _widget_.
