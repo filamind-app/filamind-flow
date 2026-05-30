@@ -5,6 +5,15 @@ description = "Extensible Neo-Brutalist control panel for Klipper / Moonraker â€
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
+authors = [
+    { name = "abdelmonem awad", email = "eg2@live.com" },
+    { name = "Ahmed bebars", email = "Ahmedbebars1@gmail.com" },
+]
+
+[project.urls]
+Homepage = "https://github.com/filamind-app/filamind-flow"
+Repository = "https://github.com/filamind-app/filamind-flow"
+Issues = "https://github.com/filamind-app/filamind-flow/issues"
 
 [tool.ruff]
 line-length = 100

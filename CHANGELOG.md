@@ -23,5 +23,5 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/your-org/filamind-flow/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/your-org/filamind-flow/releases/tag/v0.1.0
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.1.0
