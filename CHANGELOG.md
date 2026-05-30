@@ -6,8 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-31
+
 ### Added
 
+- **Firmware Upgrade widget — Phase 1**: read-only firmware status showing each
+  MCU's version, host↔MCU sync detection, and toolchain readiness
+  (`GET /api/firmware/status`). The first FilaMind widget.
+- A living [`ROADMAP.md`](ROADMAP.md).
 - Dev test harness (`dev/virtual-printer/`): develop against any Moonraker through
   the Vite dev proxy via `MOONRAKER_PROXY_TARGET` (strips the browser Origin, so no
   printer CORS changes are needed) — plus an optional Docker simulated printer.
@@ -46,5 +52,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.0
 [0.1.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.1.0

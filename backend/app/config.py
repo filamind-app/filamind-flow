@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     # Base URL of the Moonraker instance this panel sits in front of.
     moonraker_url: str = "http://localhost:7125"
 
+    # Firmware toolchain locations (Firmware Upgrade widget).
+    klipper_dir: str = "~/klipper"
+    katapult_dir: str = "~/katapult"
+
     # Comma-separated browser origins allowed to call this API.
     cors_origins: str = "http://localhost:5173"
 
