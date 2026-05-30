@@ -20,6 +20,7 @@ htmlcov/
 .env
 .env.*
 !.env.example
+!.env.*.example
 
 # Editor / OS
 .vscode/*
