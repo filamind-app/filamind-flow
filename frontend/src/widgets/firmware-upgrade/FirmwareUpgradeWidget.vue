@@ -119,9 +119,13 @@ onMounted(load)
           class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
         >
           <span class="min-w-0 flex-1 truncate font-bold">{{ board.name }}</span>
-          <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{ board.connection }}</span>
+          <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{
+            board.connection
+          }}</span>
           <span v-if="board.configured" class="nb-badge shrink-0 bg-surface text-[9px]">cfg</span>
-          <span class="nb-badge shrink-0" :class="boardModeClass(board.mode)">{{ board.mode }}</span>
+          <span class="nb-badge shrink-0" :class="boardModeClass(board.mode)">{{
+            board.mode
+          }}</span>
         </div>
         <p v-if="!boards.boards.length" class="font-mono text-xs opacity-70">
           No flashable boards detected.
