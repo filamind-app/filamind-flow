@@ -33,6 +33,20 @@ class McuFirmware(BaseModel):
     name: str
     version: str | None = None
     in_sync: bool | None = None
+    #: Connection type derived from the Klipper config: host / canbus / usb / serial.
+    kind: str = "serial"
+
+
+class HostMcu(BaseModel):
+    """The optional Klipper 'Linux process' MCU running on the host (host GPIO/I2C/SPI).
+
+    ``configured`` means an ``[mcu host]``-style section is wired into the running
+    config (so it shows up as an active MCU); ``service_active`` means the host's
+    ``klipper-mcu`` service is running, which can be true even when nothing uses it.
+    """
+
+    configured: bool = False
+    service_active: bool = False
 
 
 class FirmwareTools(BaseModel):
@@ -52,4 +66,5 @@ class FirmwareStatus(BaseModel):
     reachable: bool
     host: HostFirmware
     mcus: list[McuFirmware]
+    host_mcu: HostMcu
     tools: FirmwareTools

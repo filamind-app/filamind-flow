@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-05-31
+
+### Added
+
+- Firmware Upgrade widget now surfaces the optional **Linux host MCU** (Klipper
+  "Linux process" MCU) explicitly — `active` / `available · not configured` /
+  `not installed` — based on the host's `klipper-mcu` service and whether a host
+  MCU is wired into the running config. Each MCU row also shows its connection
+  kind (host / canbus / usb / serial).
+
 ## [0.2.1] - 2026-05-31
 
 ### Changed
@@ -60,7 +70,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.2
 [0.2.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.1
 [0.2.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.0
 [0.1.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.1.0
