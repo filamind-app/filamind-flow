@@ -9,6 +9,8 @@ interface ImportMetaEnv {
   readonly VITE_BACKEND_URL?: string
   /** Optional UI title override. */
   readonly VITE_APP_TITLE?: string
+  /** URL of the Mainsail UI for the "back" button. Falls back to the host root. */
+  readonly VITE_MAINSAIL_URL?: string
 }
 
 interface ImportMeta {
