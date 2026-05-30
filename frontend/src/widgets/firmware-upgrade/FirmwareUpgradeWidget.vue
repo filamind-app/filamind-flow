@@ -38,12 +38,16 @@ onMounted(load)
     <div v-else-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
 
     <template v-else-if="status">
-      <div class="flex items-center justify-between gap-2">
-        <span class="font-bold">Host · {{ status.host.state ?? 'unknown' }}</span>
-        <span class="font-mono text-xs">{{ status.host.version ?? '—' }}</span>
-      </div>
+      <div class="space-y-1.5">
+        <!-- Host runs the Klipper host software — the reference every MCU syncs to. -->
+        <div
+          class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-cyan px-2 py-1"
+        >
+          <span class="min-w-0 flex-1 truncate font-bold">Host · Klipper</span>
+          <span class="font-mono text-[11px] opacity-80">{{ status.host.version ?? '—' }}</span>
+          <span class="nb-badge shrink-0 bg-surface">{{ status.host.state ?? 'host' }}</span>
+        </div>
 
-      <div v-if="status.mcus.length" class="space-y-1.5">
         <div
           v-for="mcu in status.mcus"
           :key="mcu.name"
@@ -64,10 +68,11 @@ onMounted(load)
             {{ mcu.in_sync === false ? 'mismatch' : mcu.in_sync ? 'in sync' : '—' }}
           </span>
         </div>
+
+        <p v-if="!status.mcus.length" class="font-mono text-xs opacity-70">
+          {{ status.reachable ? 'No MCUs reported.' : 'Printer not reachable.' }}
+        </p>
       </div>
-      <p v-else class="font-mono text-xs opacity-70">
-        {{ status.reachable ? 'No MCUs reported.' : 'Printer not reachable.' }}
-      </p>
 
       <div class="flex flex-wrap gap-1.5 border-t-2 border-ink pt-2">
         <span
