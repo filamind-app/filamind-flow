@@ -6,6 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-05-31
+
+### Changed
+
+- Firmware Upgrade widget: the **host** is now shown as a first-class row in the
+  device list — the reference version every MCU is compared against — styled
+  distinctly instead of a separate header line.
+
 ## [0.2.0] - 2026-05-31
 
 ### Added
@@ -52,6 +60,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.1
 [0.2.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.0
 [0.1.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.1.0
