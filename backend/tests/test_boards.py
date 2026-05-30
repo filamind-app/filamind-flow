@@ -17,7 +17,7 @@ def test_classify_serial_mode() -> None:
 
 def test_parse_dfu_line() -> None:
     line = (
-        'Found DFU: [0483:df11] ver=0200, devnum=12, cfg=1, intf=0, '
+        "Found DFU: [0483:df11] ver=0200, devnum=12, cfg=1, intf=0, "
         'path="1-1.2", alt=0, name="@Internal Flash", serial="357236543131"'
     )
     parsed = _parse_dfu_line(line)

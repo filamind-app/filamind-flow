@@ -287,9 +287,7 @@ async def discover_boards(
         )
 
     # The Linux-process host MCU: present if configured or its service runs.
-    if "linux_process" not in boards and await asyncio.to_thread(
-        _klipper_mcu_service_active
-    ):
+    if "linux_process" not in boards and await asyncio.to_thread(_klipper_mcu_service_active):
         boards["linux_process"] = _board(
             id="linux_process",
             name="Linux host MCU",
