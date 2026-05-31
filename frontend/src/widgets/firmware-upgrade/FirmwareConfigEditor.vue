@@ -321,7 +321,7 @@ onMounted(async () => {
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
     <div v-else-if="loading" class="font-mono text-xs">Loading configuration…</div>
 
-    <div v-else class="max-h-80 space-y-0.5 overflow-y-auto pr-1">
+    <div v-else class="space-y-0.5">
       <template v-for="item in flat" :key="item.node.name">
         <div
           v-if="item.node.type === 'menu'"

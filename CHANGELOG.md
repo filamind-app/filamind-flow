@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-05-31
+
+### Added
+
+- **Discovered boards show their bootloader mode** — the Devices manager's
+  *Discovered* list now badges each unregistered board with its live mode /
+  bootloader (KATAPULT, READY, DFU, …), and no longer offers the Linux host MCU
+  as an addable board (it is managed separately).
+
+### Changed
+
+- **Linked bootloader identities are clearer** — a board's attached Katapult /
+  DFU identity now renders as an indented, connected sub-card with an *unlink*
+  button, instead of a flat badge row; the discovered-board action is labelled
+  **🔗 link**.
+- **Firmware configurator shows the whole config** — the Kconfig editor no longer
+  scrolls inside a fixed-height box; every option is visible and the page scrolls
+  normally.
+
 ## [0.20.1] - 2026-05-31
 
 ### Fixed
@@ -395,7 +414,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.20.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.0
 [0.20.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.20.1
 [0.20.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.20.0
 [0.19.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.19.0
