@@ -303,9 +303,11 @@ class ServiceActionResponse(BaseModel):
 
 
 class RebootRequest(BaseModel):
-    """Asks a board to reboot into its bootloader."""
+    """Asks a board to reboot into a bootloader."""
 
     #: serial / can.
     method: str
     device: str
     interface: str = "can0"
+    #: katapult (flashtool -r) / dfu (1200-baud magic-baud touch).
+    mode: str = "katapult"

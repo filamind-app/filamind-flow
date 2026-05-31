@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-05-31
+
+### Added
+
+- **Advanced flash (Phase 10)** — sturdier flashing for more boards: DFU now
+  **retries** (up to 3×) and **exits via `:leave`** to return to firmware; a
+  **USB-to-CAN bridge** (a CAN board that enumerates as a serial path) is flashed
+  over serial automatically; a serial board that **re-enumerates** under a new
+  `/dev` id after flashing is matched and its registry entry updated; and a board
+  can be rebooted straight into **STM32 DFU** with a 1200-baud touch (a new
+  **dfu** button beside **boot**).
+
 ## [0.11.0] - 2026-05-31
 
 ### Added
@@ -221,7 +233,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.12.0
 [0.11.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.11.0
 [0.10.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.10.0
 [0.9.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.9.1

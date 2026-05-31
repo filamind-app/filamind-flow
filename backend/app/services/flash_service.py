@@ -15,6 +15,7 @@ Klipper's ``make flash`` (AVR) — and a Linux-process MCU is installed as the
 from __future__ import annotations
 
 import asyncio
+import glob
 import os
 from collections.abc import AsyncIterator
 from typing import Any
@@ -22,6 +23,7 @@ from typing import Any
 import httpx
 
 from app.config import Settings
+from app.services import devices_store
 from app.services.firmware_profiles import artifact_path_for, profile_path
 from app.services.moonraker_client import MoonrakerClient
 from app.services.version_store import read_build_info, record_flash
@@ -74,6 +76,33 @@ def dfu_command(firmware: str, offset: str, serial: str | None = None) -> list[s
     if serial and len(serial) > 5 and not serial.startswith("/dev/"):
         cmd += ["-S", serial]
     return cmd
+
+
+def dfu_leave_command(offset: str, serial: str | None = None) -> list[str]:
+    """dfu-util exit — returns a board from DFU back to firmware (``:leave``)."""
+    cmd = ["sudo", "-n", "dfu-util", "-a", "0", "-d", "0483:df11", "-s", f"{offset}:leave"]
+    if serial and len(serial) > 5 and not serial.startswith("/dev/"):
+        cmd += ["-S", serial]
+    return cmd
+
+
+def resolve_method(method: str, device: str) -> str:
+    """Corrects a USB-to-CAN bridge: it is configured as CAN but enumerates as a
+    serial ``/dev/`` path, so a ``/dev/`` device given for CAN is flashed over serial.
+    """
+    if method == "can" and device.startswith("/dev/"):
+        return "serial"
+    return method
+
+
+def reenumerated_id(old_id: str, before: set[str], after: set[str]) -> str | None:
+    """A board can re-appear under a new ``/dev`` id after a flash. If the old id
+    is gone and exactly one new id appeared, that new id is the same board.
+    """
+    if old_id in after:
+        return None
+    fresh = after - before
+    return next(iter(fresh)) if len(fresh) == 1 else None
 
 
 def make_flash_command(device: str) -> list[str]:
@@ -248,6 +277,65 @@ async def _flash_linux(firmware: str) -> AsyncIterator[str]:
     yield "!! this kernel blocks realtime — drop the -r flag from the klipper-mcu unit.\n"
 
 
+def _serial_by_id() -> set[str]:
+    """The current set of /dev/serial/by-id endpoints (used to spot re-enumeration)."""
+    return set(glob.glob("/dev/serial/by-id/*"))
+
+
+async def _magic_baud(device: str) -> None:
+    """1200-baud 'touch' — a native-USB STM32 resets into DFU on a 1200 open/close.
+
+    Done with stdlib termios (Unix only; this only ever runs on the Linux host) so
+    no extra dependency is needed.
+    """
+    import termios
+
+    fd = os.open(device, os.O_RDWR | os.O_NOCTTY)
+    try:
+        attrs = termios.tcgetattr(fd)
+        attrs[4] = termios.B1200  # input speed
+        attrs[5] = termios.B1200  # output speed
+        termios.tcsetattr(fd, termios.TCSANOW, attrs)
+    finally:
+        os.close(fd)
+    await asyncio.sleep(2)
+
+
+async def reboot_to_dfu(device: str) -> AsyncIterator[str]:
+    """Resets a running native-USB board into its STM32 DFU bootloader."""
+    yield f">>> 1200-baud touch on {device} to enter DFU…\n"
+    try:
+        await _magic_baud(device)
+    except (OSError, ImportError) as exc:
+        yield f"!! magic-baud touch failed: {exc}\n"
+        yield "!! Enter DFU manually (hold BOOT0, tap RESET) and retry.\n"
+        return
+    await asyncio.sleep(1)
+    yield ">>> Touch sent — the board should now enumerate as a DFU device.\n"
+
+
+async def _flash_dfu(
+    device: str, firmware: str, offset: str, attempts: int = 3
+) -> AsyncIterator[str]:
+    """DFU download with retries, then ``:leave`` to return the board to firmware."""
+    cmd = dfu_command(firmware, offset, device)
+    for attempt in range(1, attempts + 1):
+        yield f">>> DFU attempt {attempt}/{attempts}: {' '.join(cmd)}\n"
+        ok = False
+        async for line in _stream(cmd):
+            yield line
+            if "success" in line.lower() or "download done" in line.lower():
+                ok = True
+        if ok:
+            break
+        if attempt < attempts:
+            yield ">>> DFU failed — retrying…\n"
+            await asyncio.sleep(2)
+    yield ">>> Exiting DFU (:leave) to return to firmware…\n"
+    async for line in _stream(dfu_leave_command(offset, device)):
+        yield line
+
+
 async def run_flash(
     profile: str, method: str, device: str, interface: str, settings: Settings
 ) -> AsyncIterator[str]:
@@ -264,6 +352,7 @@ async def run_flash(
         yield "!! Run once on the host:  sudo bash deploy/setup-sudoers.sh\n"
         return
 
+    method = resolve_method(method, device)
     yield f">>> Flashing {os.path.basename(artifact)} → {device} via {method}\n"
 
     # A Linux-process host MCU is installed as a binary, not flashed over a bus.
@@ -281,35 +370,64 @@ async def run_flash(
     async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
         yield line
 
-    if method in ("serial", "can", "dfu"):
+    # A board can re-appear under a new /dev id after a serial flash — snapshot first.
+    before = _serial_by_id() if method == "serial" else set()
+
+    # A DFU device is already in its bootloader; only running boards need a reboot.
+    if method in ("serial", "can"):
         async for line in _reboot_to_bootloader(method, device, interface, settings):
             yield line
 
-    command = _build_command(method, settings, device, artifact, interface or "can0", offset)
-    yield f">>> {' '.join(command)}\n"
-    async for line in _stream(command, cwd=settings.klipper_dir if method == "make" else None):
-        yield line
+    if method == "dfu":
+        async for line in _flash_dfu(device, artifact, offset):
+            yield line
+    else:
+        command = _build_command(method, settings, device, artifact, interface or "can0", offset)
+        yield f">>> {' '.join(command)}\n"
+        async for line in _stream(command, cwd=settings.klipper_dir if method == "make" else None):
+            yield line
 
     yield ">>> Restarting Klipper…\n"
     async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
         yield line
+
+    # Pick up a serial board's new id (re-enumeration) and carry it into the registry.
+    flashed_id = device
+    if method == "serial":
+        await asyncio.sleep(3)
+        new_id = reenumerated_id(device, before, _serial_by_id())
+        if new_id:
+            yield f">>> Board re-appeared as {new_id} — updating the registry.\n"
+            existing = devices_store.get_device(settings.data_dir, device)
+            if existing:
+                devices_store.save_device(
+                    settings.data_dir, {**existing, "id": new_id}, old_id=device
+                )
+            flashed_id = new_id
+
     record_flash(
-        settings.data_dir, device, profile, read_build_info(settings.data_dir, profile) or {}
+        settings.data_dir, flashed_id, profile, read_build_info(settings.data_dir, profile) or {}
     )
     yield ">>> Flash sequence complete — verify the board reconnects in Mainsail.\n"
 
 
 async def run_reboot(
-    method: str, device: str, interface: str, settings: Settings
+    method: str, device: str, interface: str, settings: Settings, mode: str = "katapult"
 ) -> AsyncIterator[str]:
-    """Asks a running board to drop into its Katapult bootloader (no flashing).
+    """Reboots a running board into a bootloader (no flashing).
 
-    Useful to stage a board for a manual flash, or to recover one. Refused mid
-    print; the reboot itself is the same ``flashtool.py -r`` the flasher uses.
+    ``mode='katapult'`` uses ``flashtool.py -r`` (serial / CAN); ``mode='dfu'``
+    does the 1200-baud touch to drop a native-USB board into STM32 DFU. Refused
+    mid print. Useful to stage a board for a manual flash, or to recover one.
     """
     if await _is_printing(settings.moonraker_url):
         yield "!! Refused: a print is in progress.\n"
         return
+    if mode == "dfu":
+        async for line in reboot_to_dfu(device):
+            yield line
+        return
+    method = resolve_method(method, device)
     async for line in _reboot_to_bootloader(method, device, interface or "can0", settings):
         yield line
     yield ">>> Reboot requested — the board should re-appear in its bootloader.\n"
