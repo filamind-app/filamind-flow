@@ -27,3 +27,14 @@ config DEMO_SERIAL
 	string "Serial device"
 	default "/dev/ttyAMA0"
 	depends on !DEMO_USB
+
+# Gate symbol Klipper hides extra menus behind; the editor force-enables it so
+# the dependent option is always visible (see _FORCE_VISIBLE).
+config LOW_LEVEL_OPTIONS
+	bool "Enable extra low-level configuration options"
+	default n
+
+config DEMO_LOWLEVEL_TWEAK
+	bool "A low-level tweak"
+	default n
+	depends on LOW_LEVEL_OPTIONS

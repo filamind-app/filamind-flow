@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import { buildFirmware, deleteProfile, fetchConfigTree, fetchProfiles, saveProfile } from './api'
+import {
+  buildFirmware,
+  deleteProfile,
+  downloadArtifact,
+  fetchConfigTree,
+  fetchProfiles,
+  saveProfile,
+} from './api'
 import type { ConfigNode, FirmwareProfile } from './types'
 
 defineEmits<{ close: [] }>()
@@ -119,6 +126,16 @@ async function save(): Promise<void> {
   }
 }
 
+async function downloadBin(): Promise<void> {
+  if (!baseProfile.value) return
+  error.value = null
+  try {
+    await downloadArtifact(baseProfile.value)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Download failed'
+  }
+}
+
 async function removeProfile(name: string): Promise<void> {
   try {
     await deleteProfile(name)
@@ -176,6 +193,14 @@ onMounted(async () => {
         @click="build"
       >
         {{ building ? 'building…' : 'build' }}
+      </button>
+      <button
+        v-if="selectedBuilt"
+        class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+        title="Download the built firmware binary"
+        @click="downloadBin"
+      >
+        ↓ .bin
       </button>
       <button
         v-if="baseProfile"

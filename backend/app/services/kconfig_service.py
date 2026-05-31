@@ -27,6 +27,12 @@ _kconfiglib: Any = None
 # (which runs in a worker thread) must be serialised across all requests.
 _KCONFIG_LOCK = threading.Lock()
 
+#: Gate symbols Klipper hides the optimization / low-level menus behind. We force
+#: them on after loading so those menus are always visible in the editor — the
+#: revealed options keep their defaults, so a build is unchanged unless the user
+#: edits one. Without this, whole sub-menus silently never appear.
+_FORCE_VISIBLE = ("HAVE_LIMITED_CODE_SIZE", "LOW_LEVEL_OPTIONS")
+
 
 def _load_kconfiglib(klipper_dir: str) -> Any:
     """Imports kconfiglib, preferring Klipper's bundled copy over a system one."""
@@ -122,7 +128,15 @@ class KconfigService:
             expanded = os.path.expanduser(config_file)
             if os.path.isfile(expanded):
                 kconf.load_config(expanded)
+        self._force_visible_menus(kconf)
         return kconf
+
+    def _force_visible_menus(self, kconf: Any) -> None:
+        """Force the gate symbols on so their optimization menus are always shown."""
+        for name in _FORCE_VISIBLE:
+            sym = kconf.syms.get(name)
+            if sym is not None:
+                sym.set_value(2)  # 2 == 'y'
 
     def _apply_values(self, kconf: Any, values: list[tuple[str, str]]) -> None:
         """Applies edits in several passes so cascading ``select`` deps settle."""
