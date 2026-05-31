@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.16.2] - 2026-05-31
+
+### Fixed
+
+- **Per-device flash runs the built firmware directly** — clicking **flash** on a
+  device card now flashes its assigned profile (reusing the artifact you just
+  built) instead of opening a separate profile-picker. The streamed command log
+  appears **right under that device's build / flash buttons**, and the batch log
+  under the batch buttons.
+
 ## [0.16.1] - 2026-05-31
 
 ### Changed
@@ -284,7 +294,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.16.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.16.2...HEAD
+[0.16.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.2
 [0.16.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.1
 [0.16.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.0
 [0.15.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.15.0
