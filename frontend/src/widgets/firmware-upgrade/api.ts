@@ -116,6 +116,23 @@ export async function buildFirmware(
   }
 }
 
+/**
+ * Picks the download filename out of a Content-Disposition header. Handles both
+ * `filename="x.elf"` and the RFC 5987 `filename*=utf-8''x%20y.elf` form Starlette
+ * emits when the name has spaces or non-ASCII (e.g. a "Linux host" profile).
+ */
+export function filenameFromDisposition(disposition: string, fallback: string): string {
+  const encoded = /filename\*=(?:[^']*'')?([^;]+)/i.exec(disposition)?.[1]
+  if (encoded) {
+    try {
+      return decodeURIComponent(encoded.trim())
+    } catch {
+      return encoded.trim()
+    }
+  }
+  return /filename="?([^";]+?)"?(?:;|$)/i.exec(disposition)?.[1] ?? fallback
+}
+
 /** Downloads a profile's built firmware binary (triggers a browser download). */
 export async function downloadArtifact(profile: string): Promise<void> {
   const { backendUrl } = resolveEndpoints()
@@ -127,7 +144,7 @@ export async function downloadArtifact(profile: string): Promise<void> {
     throw new Error(detail?.detail ?? `Download failed (${response.status})`)
   }
   const disposition = response.headers.get('Content-Disposition') ?? ''
-  const filename = /filename="?([^"]+)"?/.exec(disposition)?.[1] ?? `${profile}.bin`
+  const filename = filenameFromDisposition(disposition, `${profile}.bin`)
   const url = URL.createObjectURL(await response.blob())
   const link = document.createElement('a')
   link.href = url
