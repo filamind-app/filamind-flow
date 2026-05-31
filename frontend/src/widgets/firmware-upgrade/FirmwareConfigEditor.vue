@@ -1,0 +1,223 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+
+import { deleteProfile, fetchConfigTree, fetchProfiles, saveProfile } from './api'
+import type { ConfigNode, FirmwareProfile } from './types'
+
+defineEmits<{ close: [] }>()
+
+const profiles = ref<FirmwareProfile[]>([])
+const baseProfile = ref<string | null>(null)
+const tree = ref<ConfigNode[]>([])
+const edits = ref<Record<string, string>>({})
+const showOptional = ref(false)
+
+const loading = ref(true)
+const saving = ref(false)
+const error = ref<string | null>(null)
+const message = ref<string | null>(null)
+const profileName = ref('')
+
+const inputClass =
+  'shrink-0 max-w-[55%] rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
+
+interface FlatNode {
+  node: ConfigNode
+  depth: number
+}
+
+function flatten(nodes: ConfigNode[], depth = 0, acc: FlatNode[] = []): FlatNode[] {
+  for (const node of nodes) {
+    if (node.type !== 'comment') acc.push({ node, depth })
+    if (node.children.length) flatten(node.children, depth + 1, acc)
+  }
+  return acc
+}
+
+const flat = computed(() => flatten(tree.value))
+const dirtyCount = computed(() => Object.keys(edits.value).length)
+
+function editList(): { name: string; value: string }[] {
+  return Object.entries(edits.value).map(([name, value]) => ({ name, value }))
+}
+
+async function reloadTree(): Promise<void> {
+  error.value = null
+  try {
+    tree.value = await fetchConfigTree({
+      profile: baseProfile.value,
+      values: editList(),
+      show_optional: showOptional.value,
+    })
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Failed to load configuration'
+  } finally {
+    loading.value = false
+  }
+}
+
+async function loadProfiles(): Promise<void> {
+  try {
+    profiles.value = (await fetchProfiles()).profiles
+  } catch {
+    /* profiles are optional context; ignore */
+  }
+}
+
+function selectProfile(): void {
+  edits.value = {}
+  loading.value = true
+  void reloadTree()
+}
+
+function boolOn(node: ConfigNode): boolean {
+  return node.value === 'y'
+}
+
+function toggleBool(node: ConfigNode): void {
+  edits.value[node.name] = boolOn(node) ? 'n' : 'y'
+  void reloadTree()
+}
+
+function onSelect(node: ConfigNode, event: Event): void {
+  const value = (event.target as HTMLSelectElement).value
+  for (const choice of node.choices) delete edits.value[choice.name]
+  edits.value[value] = 'y'
+  void reloadTree()
+}
+
+function onInput(node: ConfigNode, event: Event): void {
+  edits.value[node.name] = (event.target as HTMLInputElement).value
+  void reloadTree()
+}
+
+async function save(): Promise<void> {
+  saving.value = true
+  error.value = null
+  message.value = null
+  try {
+    await saveProfile({
+      name: profileName.value.trim(),
+      values: editList(),
+      base_profile: baseProfile.value,
+    })
+    message.value = `Saved profile “${profileName.value.trim()}”.`
+    baseProfile.value = profileName.value.trim()
+    edits.value = {}
+    profileName.value = ''
+    await loadProfiles()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Save failed'
+  } finally {
+    saving.value = false
+  }
+}
+
+async function removeProfile(name: string): Promise<void> {
+  try {
+    await deleteProfile(name)
+    if (baseProfile.value === name) baseProfile.value = null
+    await loadProfiles()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Delete failed'
+  }
+}
+
+onMounted(async () => {
+  await Promise.all([loadProfiles(), reloadTree()])
+})
+</script>
+
+<template>
+  <div class="space-y-2 text-sm">
+    <div class="flex items-center justify-between gap-2">
+      <span class="text-xs font-bold uppercase tracking-wide">Configure firmware</span>
+      <button class="nb-btn px-2 py-0.5 text-xs" @click="$emit('close')">← back</button>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink p-2">
+      <select v-model="baseProfile" :class="['flex-1', inputClass]" @change="selectProfile">
+        <option :value="null">— blank config —</option>
+        <option v-for="p in profiles" :key="p.name" :value="p.name">{{ p.name }}</option>
+      </select>
+      <label class="flex items-center gap-1 text-[11px]">
+        <input v-model="showOptional" type="checkbox" @change="reloadTree" /> optional
+      </label>
+      <span v-if="dirtyCount" class="nb-badge bg-brand-yellow text-[10px]"
+        >{{ dirtyCount }} edits</span
+      >
+      <button
+        v-if="baseProfile"
+        class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+        @click="removeProfile(baseProfile)"
+      >
+        delete
+      </button>
+    </div>
+
+    <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+    <div v-else-if="loading" class="font-mono text-xs">Loading configuration…</div>
+
+    <div v-else class="max-h-80 space-y-0.5 overflow-y-auto pr-1">
+      <template v-for="item in flat" :key="item.node.name">
+        <div
+          v-if="item.node.type === 'menu'"
+          class="mt-1.5 text-[11px] font-bold uppercase opacity-70"
+          :style="{ paddingLeft: item.depth * 12 + 'px' }"
+        >
+          {{ item.node.prompt }}
+        </div>
+        <div
+          v-else
+          class="flex items-center justify-between gap-2 py-0.5"
+          :style="{ paddingLeft: item.depth * 12 + 'px' }"
+        >
+          <span class="min-w-0 flex-1 truncate" :title="item.node.help ?? item.node.name">
+            {{ item.node.prompt }}
+          </span>
+          <button
+            v-if="item.node.type === 'bool' || item.node.type === 'tristate'"
+            class="nb-badge shrink-0"
+            :class="boolOn(item.node) ? 'bg-brand-lime' : 'bg-surface opacity-70'"
+            :disabled="item.node.readonly"
+            @click="toggleBool(item.node)"
+          >
+            {{ boolOn(item.node) ? 'on' : 'off' }}
+          </button>
+          <select
+            v-else-if="item.node.type === 'choice'"
+            :class="inputClass"
+            :value="item.node.value ?? ''"
+            @change="onSelect(item.node, $event)"
+          >
+            <option v-for="c in item.node.choices" :key="c.name" :value="c.name">
+              {{ c.prompt }}
+            </option>
+          </select>
+          <input
+            v-else
+            :class="[inputClass, 'font-mono']"
+            :value="item.node.value ?? ''"
+            @change="onInput(item.node, $event)"
+          />
+        </div>
+      </template>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 border-t-2 border-ink pt-2">
+      <input
+        v-model="profileName"
+        placeholder="profile name (e.g. EBB36)"
+        :class="['min-w-[8rem] flex-1', inputClass, 'max-w-none']"
+      />
+      <button
+        class="nb-btn bg-brand-lime px-3 py-0.5 text-xs"
+        :disabled="!profileName.trim() || saving"
+        @click="save"
+      >
+        {{ saving ? 'saving…' : 'save profile' }}
+      </button>
+    </div>
+    <p v-if="message" class="font-mono text-[10px] opacity-70">{{ message }}</p>
+  </div>
+</template>
