@@ -3,7 +3,6 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
-import FirmwareFlashPanel from './FirmwareFlashPanel.vue'
 import {
   buildFirmware,
   cancelTask,
@@ -12,9 +11,11 @@ import {
   fetchDevices,
   fetchFirmwareStatus,
   fetchHealth,
+  fetchProfiles,
   fetchServices,
   fetchTask,
   flashBeacon,
+  flashBoard,
   manageServices,
   rebootBoard,
   startBatch,
@@ -23,6 +24,7 @@ import type {
   BeaconResponse,
   Board,
   Device,
+  FirmwareProfile,
   FirmwareStatus,
   FirmwareTools,
   HealthReport,
@@ -30,10 +32,10 @@ import type {
 } from './types'
 
 const mode = ref<'status' | 'configure' | 'devices'>('status')
-const flashTarget = ref<Board | null>(null)
 const status = ref<FirmwareStatus | null>(null)
 const boards = ref<Board[]>([])
 const devices = ref<Device[]>([])
+const profiles = ref<FirmwareProfile[]>([])
 const services = ref<ServiceInfo[]>([])
 const servicesBusy = ref(false)
 const beacon = ref<BeaconResponse | null>(null)
@@ -77,14 +79,16 @@ async function load(silent = false): Promise<void> {
   if (!silent) loading.value = true
   error.value = null
   try {
-    const [statusData, boardsData, devicesData] = await Promise.all([
+    const [statusData, boardsData, devicesData, profilesData] = await Promise.all([
       fetchFirmwareStatus(),
       fetchBoards(),
       fetchDevices(),
+      fetchProfiles(),
     ])
     status.value = statusData
     boards.value = boardsData.boards
     devices.value = devicesData.devices
+    profiles.value = profilesData.profiles
   } catch (e) {
     if (!silent) error.value = e instanceof Error ? e.message : 'Failed to load firmware status'
   } finally {
@@ -116,6 +120,8 @@ const BATCH_ACTIONS = [
 ]
 const opLog = ref('')
 const opBusy = ref(false)
+/** Whose op-log is showing: a device id, or null for the batch log under the batch buttons. */
+const activeDeviceId = ref<string | null>(null)
 const batchTaskId = ref<string | null>(null)
 let pollTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -147,6 +153,7 @@ async function pollTask(): Promise<void> {
 async function runBatch(action: string): Promise<void> {
   if (opBusy.value) return
   error.value = null
+  activeDeviceId.value = null
   opLog.value = ''
   opBusy.value = true
   try {
@@ -165,6 +172,7 @@ async function cancelBatch(): Promise<void> {
 async function buildDevice(device: Device): Promise<void> {
   if (opBusy.value || !device.profile) return
   error.value = null
+  activeDeviceId.value = device.id
   opLog.value = ''
   opBusy.value = true
   try {
@@ -182,6 +190,7 @@ async function buildDevice(device: Device): Promise<void> {
 async function rebootDevice(device: Device, rebootMode = 'katapult'): Promise<void> {
   if (opBusy.value) return
   error.value = null
+  activeDeviceId.value = device.id
   opLog.value = ''
   opBusy.value = true
   try {
@@ -199,20 +208,35 @@ async function rebootDevice(device: Device, rebootMode = 'katapult'): Promise<vo
   }
 }
 
-/** Opens the flash panel for a registered device (reuses the board-based panel). */
-function openFlash(device: Device): void {
-  flashTarget.value = {
-    id: device.id,
-    name: device.name,
-    mcu_name: null,
-    connection: device.method,
-    mode: liveMode.value[device.id] ?? 'unknown',
-    configured: false,
-    version: device.flashed_version,
-    application: null,
-    interface: device.interface,
-    flashed_version: device.flashed_version,
-    managed: true,
+/** True when a profile builds AVR firmware (flashed via `make flash`, not Katapult). */
+function isAvr(profile: string | null): boolean {
+  return !!profile && (profiles.value.find((p) => p.name === profile)?.is_avr ?? false)
+}
+
+/** Flashes a device's assigned profile directly — uses its already-built artifact. */
+async function flashDevice(device: Device): Promise<void> {
+  if (opBusy.value || !device.profile) return
+  error.value = null
+  activeDeviceId.value = device.id
+  opLog.value = ''
+  opBusy.value = true
+  try {
+    await flashBoard(
+      {
+        profile: device.profile,
+        method: isAvr(device.profile) ? 'make' : device.method,
+        device: device.id,
+        interface: device.interface,
+      },
+      (chunk) => {
+        opLog.value += chunk
+      },
+    )
+    await load(true)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Flash failed'
+  } finally {
+    opBusy.value = false
   }
 }
 
@@ -262,8 +286,7 @@ onUnmounted(() => {
 
 <template>
   <div class="space-y-3 text-sm">
-    <FirmwareFlashPanel v-if="flashTarget" :board="flashTarget" @close="flashTarget = null" />
-    <FirmwareConfigEditor v-else-if="mode === 'configure'" @close="mode = 'status'" />
+    <FirmwareConfigEditor v-if="mode === 'configure'" @close="mode = 'status'" />
     <FirmwareDevicesPanel v-else-if="mode === 'devices'" @close="mode = 'status'" />
     <template v-else>
       <div v-if="loading" class="font-mono text-xs">Loading firmware status…</div>
@@ -402,7 +425,7 @@ onUnmounted(() => {
           </div>
 
           <div
-            v-if="opLog"
+            v-if="opLog && activeDeviceId === null"
             class="max-h-48 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight"
           >
             <div
@@ -448,10 +471,10 @@ onUnmounted(() => {
               </button>
               <button
                 class="nb-btn bg-brand-yellow px-2 py-0.5 text-[10px]"
-                :disabled="!device.profile"
-                @click="openFlash(device)"
+                :disabled="opBusy || !device.profile"
+                @click="flashDevice(device)"
               >
-                flash →
+                flash
               </button>
               <button
                 v-if="device.method === 'serial' || device.method === 'can'"
@@ -461,6 +484,19 @@ onUnmounted(() => {
               >
                 boot
               </button>
+            </div>
+
+            <div
+              v-if="opLog && activeDeviceId === device.id"
+              class="max-h-48 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight"
+            >
+              <div
+                v-for="(line, i) in opLines"
+                :key="i"
+                :class="['whitespace-pre-wrap break-all', opLineClass(line)]"
+              >
+                {{ line }}
+              </div>
             </div>
           </div>
           <p v-if="!operationalDevices.length" class="font-mono text-xs opacity-70">
