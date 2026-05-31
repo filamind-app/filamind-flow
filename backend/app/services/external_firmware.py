@@ -114,21 +114,49 @@ def _scan(blob: bytes, info: dict[str, Any]) -> None:
             break
 
 
+def _parse_data_dict(blob: bytes) -> dict[str, Any] | None:
+    """Parses the leading JSON object of a Klipper data dictionary (ignores trailing)."""
+    try:
+        obj, _ = json.JSONDecoder().raw_decode(blob.decode("utf-8", "replace"))
+    except (ValueError, UnicodeDecodeError):
+        return None
+    return obj if isinstance(obj, dict) else None
+
+
 def inspect_firmware(path: str) -> dict[str, Any]:
-    """Best-effort read of properties embedded in a firmware binary: the Klipper
-    git version + an MCU-family hint, from either plain strings (``.elf``) or the
-    zlib data dictionary (raw ``.bin``)."""
-    info: dict[str, Any] = {"detected_version": None, "detected_mcu": None}
+    """Best-effort read of the properties baked into a firmware binary.
+
+    Klipper stores a data dictionary (zlib-compressed JSON) that records the git
+    version, the app, and a ``config`` section of build-time constants (MCU, clock
+    frequency, comm pins, enabled features, …). We surface all of those read-only
+    — they're compiled in and cannot be edited without rebuilding from source.
+    """
+    info: dict[str, Any] = {
+        "detected_version": None,
+        "detected_mcu": None,
+        "detected_app": None,
+        "detected_config": None,
+    }
     try:
         with open(path, "rb") as handle:
             data = handle.read(8_000_000)
     except OSError:
         return info
-    _scan(data, info)
-    if not info["detected_version"] or not info["detected_mcu"]:
-        embedded = _decompress_dict(data)
-        if embedded is not None:
-            _scan(embedded, info)
+    _scan(data, info)  # plain strings (e.g. an .elf) as a fallback
+    embedded = _decompress_dict(data)
+    if embedded is not None:
+        _scan(embedded, info)
+        parsed = _parse_data_dict(embedded)
+        if parsed is not None:
+            if parsed.get("version"):
+                info["detected_version"] = str(parsed["version"])
+            if parsed.get("app"):
+                info["detected_app"] = str(parsed["app"])
+            config = parsed.get("config")
+            if isinstance(config, dict):
+                info["detected_config"] = {str(k): str(v) for k, v in config.items()}
+                if config.get("MCU"):
+                    info["detected_mcu"] = str(config["MCU"])
     return info
 
 

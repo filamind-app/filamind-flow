@@ -27,6 +27,14 @@ const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 te
  *  in load() — never created during render (which would loop the renderer). */
 const flashTo = reactive<Record<string, { device: string; katapult: boolean }>>({})
 
+/** Which firmware rows have their baked-in config expanded (toggled in a handler). */
+const expanded = reactive<Record<string, boolean>>({})
+
+/** A firmware's baked-in config as sorted [key, value] pairs. */
+function configEntries(fw: ExternalFirmware): [string, string][] {
+  return Object.entries(fw.detected_config ?? {}).sort((a, b) => a[0].localeCompare(b[0]))
+}
+
 async function load(): Promise<void> {
   error.value = null
   try {
@@ -155,10 +163,38 @@ onMounted(load)
         </button>
       </div>
 
-      <div v-if="fw.detected_version || fw.detected_mcu" class="font-mono text-[9px] opacity-60">
-        🔍 read from file:
-        <span v-if="fw.detected_version">Klipper {{ fw.detected_version }}</span>
-        <span v-if="fw.detected_mcu" class="ml-2">mcu “{{ fw.detected_mcu }}”</span>
+      <!-- Read-only properties baked into the firmware (from its data dictionary). -->
+      <div
+        v-if="fw.detected_version || fw.detected_mcu || fw.detected_config"
+        class="rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1"
+      >
+        <div class="flex flex-wrap items-center gap-x-2 font-mono text-[9px] opacity-70">
+          <span>🔍 read from file:</span>
+          <span v-if="fw.detected_app" class="font-bold">{{ fw.detected_app }}</span>
+          <span v-if="fw.detected_version">{{ fw.detected_version }}</span>
+          <span v-if="fw.detected_mcu">· mcu {{ fw.detected_mcu }}</span>
+          <button
+            v-if="configEntries(fw).length"
+            class="nb-btn ml-auto px-1.5 py-0 text-[9px]"
+            @click="expanded[fw.name] = !expanded[fw.name]"
+          >
+            {{ expanded[fw.name] ? 'hide' : 'config' }} ({{ configEntries(fw).length }})
+          </button>
+        </div>
+        <div v-if="expanded[fw.name]" class="mt-1 space-y-0.5">
+          <div
+            v-for="[k, v] in configEntries(fw)"
+            :key="k"
+            class="flex justify-between gap-2 font-mono text-[9px]"
+          >
+            <span class="opacity-70">{{ k }}</span>
+            <span class="min-w-0 truncate">{{ v }}</span>
+          </div>
+          <p class="pt-0.5 text-[8px] italic opacity-50">
+            Compiled into the firmware — read-only. To change these, build a profile in Configure
+            and flash that instead.
+          </p>
+        </div>
       </div>
 
       <div class="flex flex-wrap items-center gap-1.5">
