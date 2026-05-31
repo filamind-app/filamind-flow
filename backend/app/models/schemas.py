@@ -334,3 +334,10 @@ class BeaconFlashRequest(BaseModel):
     """Updates a Beacon probe's firmware."""
 
     device: str
+
+
+class BackupImportResponse(BaseModel):
+    """What a restore put back."""
+
+    restored_devices: bool
+    restored_profiles: list[str]
