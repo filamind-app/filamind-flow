@@ -341,3 +341,18 @@ class BackupImportResponse(BaseModel):
 
     restored_devices: bool
     restored_profiles: list[str]
+
+
+class HealthCheck(BaseModel):
+    """One install-integrity check and how to fix it."""
+
+    name: str
+    ok: bool
+    detail: str
+
+
+class HealthReport(BaseModel):
+    """Whether the host is set up for flashing, with per-check detail."""
+
+    healthy: bool
+    checks: list[HealthCheck]

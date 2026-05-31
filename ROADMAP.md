@@ -32,7 +32,7 @@ Phases 6+ grow it into a full multi-board manager.
 | ✅ **10 — Advanced flash** | 1200bps magic-baud reboot-to-DFU, DFU **retry + `:leave`** auto-exit, **USB-to-CAN bridge** redirect, AVR auto-detect, **post-flash re-enumeration** (new `/dev` id after flash → auto-update the registry). (Test-DFU-Cycle validation + Katapult native wire-protocol return-to-firmware remain follow-ups.) | reliability on more boards |
 | ✅ **11 — Beacon** | Beacon eddy-probe firmware (detect probes + flash via the plugin's `update_firmware.py` + show the available version) | Beacon users |
 | ✅ **12 — Backup & Restore** | Export / import a ZIP of the **device registry + all Kconfig profiles** (binaries excluded, rebuildable; restore guards against zip path-traversal) | migrate or recover a whole setup |
-| 📋 **13 — Health & install integrity** | `/api/health` checks (sudoers, **udev DFU rules**, system deps, venv, moonraker.conf) + a UI health indicator; ship a **`99-stm32-dfu.rules`** so DFU flashes without `sudo`; **self-heal** sudoers / system-deps on startup | DFU-without-sudo + zero-touch install |
+| ✅ **13 — Health & install integrity** | `/firmware/health` checks (sudoers, **udev DFU rule**, sudo-ready, dfu-util) + a UI **setup** badge with fix-it hints; `deploy/setup-sudoers.sh` now ships **`99-stm32-dfu.rules`** so DFU flashes without `sudo`. (Self-heal on startup needs root the backend doesn't have — the badge tells the user the one command to run instead.) | DFU-without-sudo + a clear setup light |
 
 **Ideas (not yet sequenced)**
 

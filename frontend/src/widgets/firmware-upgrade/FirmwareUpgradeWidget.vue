@@ -8,6 +8,7 @@ import {
   fetchBeacon,
   fetchBoards,
   fetchFirmwareStatus,
+  fetchHealth,
   fetchServices,
   flashBeacon,
   manageServices,
@@ -18,6 +19,7 @@ import type {
   BoardDiscovery,
   FirmwareStatus,
   FirmwareTools,
+  HealthReport,
   ServiceInfo,
 } from './types'
 
@@ -30,8 +32,14 @@ const servicesBusy = ref(false)
 const beacon = ref<BeaconResponse | null>(null)
 const beaconLog = ref('')
 const beaconFlashing = ref(false)
+const health = ref<HealthReport | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(true)
+
+const healthIssues = computed(() => health.value?.checks.filter((c) => !c.ok) ?? [])
+const healthTitle = computed(() =>
+  healthIssues.value.map((c) => `${c.name}: ${c.detail}`).join('\n'),
+)
 
 function boardModeClass(mode: string): string {
   if (mode === 'service') return 'bg-brand-lime'
@@ -77,6 +85,11 @@ async function load(silent = false): Promise<void> {
     beacon.value = await fetchBeacon()
   } catch {
     /* beacon probes are optional — ignore */
+  }
+  try {
+    health.value = await fetchHealth()
+  } catch {
+    /* health is optional context — ignore */
   }
 }
 
@@ -201,6 +214,18 @@ onUnmounted(() => {
             :class="status.tools[tool.key] ? 'bg-brand-lime' : 'bg-surface opacity-60'"
           >
             {{ status.tools[tool.key] ? '✓' : '✗' }} {{ tool.label }}
+          </span>
+          <span
+            v-if="health"
+            class="nb-badge text-[10px]"
+            :class="health.healthy ? 'bg-brand-lime' : 'bg-brand-yellow'"
+            :title="healthTitle || 'host is set up for flashing'"
+          >
+            {{
+              health.healthy
+                ? '✓ setup'
+                : `${healthIssues.length} setup issue${healthIssues.length === 1 ? '' : 's'}`
+            }}
           </span>
         </div>
 

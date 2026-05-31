@@ -11,6 +11,7 @@ import type {
   Device,
   DeviceSave,
   DevicesResponse,
+  HealthReport,
   ProfilesResponse,
   ServicesResponse,
   TaskStatus,
@@ -237,6 +238,16 @@ export async function cancelTask(taskId: string): Promise<void> {
   await fetch(`${backendUrl}/api/firmware/task/${encodeURIComponent(taskId)}/cancel`, {
     method: 'POST',
   })
+}
+
+/** Reports install-integrity health (sudoers, udev DFU rule, dfu-util). */
+export async function fetchHealth(): Promise<HealthReport> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/health`)
+  if (!response.ok) {
+    throw new Error(`Health request failed (${response.status})`)
+  }
+  return (await response.json()) as HealthReport
 }
 
 /** Lists connected Beacon probes plus the plugin path and available version. */
