@@ -24,6 +24,7 @@ from app.models.schemas import (
     FlashPlan,
     FlashRequest,
     HealthReport,
+    ProfileRenameRequest,
     ProfileSaveRequest,
     ProfilesResponse,
     RebootRequest,
@@ -153,6 +154,49 @@ async def firmware_delete_profile(
     if not removed:
         raise HTTPException(status_code=404, detail=f"Profile '{name}' not found")
     return {"message": f"Profile '{name}' deleted"}
+
+
+@router.post("/config/profiles/{name}/rename")
+async def firmware_rename_profile(
+    name: str, request: ProfileRenameRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Renames a profile (config + artifacts) and rewrites devices that used it."""
+    try:
+        firmware_profiles.validate_name(name)
+        firmware_profiles.validate_name(request.new_name)
+    except firmware_profiles.ProfileNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    try:
+        firmware_profiles.rename_profile(settings.data_dir, name, request.new_name)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=f"Profile '{name}' not found") from exc
+    except FileExistsError as exc:
+        raise HTTPException(
+            status_code=409, detail=f"Profile '{request.new_name}' already exists"
+        ) from exc
+    moved = devices_store.rename_profile_refs(settings.data_dir, name, request.new_name)
+    return {"message": f"Renamed '{name}' → '{request.new_name}' ({moved} device(s) updated)"}
+
+
+@router.post("/config/profiles/{name}/duplicate")
+async def firmware_duplicate_profile(
+    name: str, request: ProfileRenameRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Duplicates a profile's config (and any built artifacts) under a new name."""
+    try:
+        firmware_profiles.validate_name(name)
+        firmware_profiles.validate_name(request.new_name)
+    except firmware_profiles.ProfileNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    try:
+        firmware_profiles.duplicate_profile(settings.data_dir, name, request.new_name)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=f"Profile '{name}' not found") from exc
+    except FileExistsError as exc:
+        raise HTTPException(
+            status_code=409, detail=f"Profile '{request.new_name}' already exists"
+        ) from exc
+    return {"message": f"Duplicated '{name}' → '{request.new_name}'"}
 
 
 @router.get("/config/profiles/{name}/artifact")
