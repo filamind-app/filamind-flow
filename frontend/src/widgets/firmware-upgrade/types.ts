@@ -60,6 +60,8 @@ export interface Board {
   interface: string | null
   /** Firmware version FilaMind last flashed to this board, if recorded. */
   flashed_version: string | null
+  /** True when this board is already saved in the fleet. */
+  managed: boolean
 }
 
 export interface BoardScan {
@@ -133,4 +135,39 @@ export interface FlashPlan {
   sudo_ready: boolean
   ready: boolean
   warnings: string[]
+}
+
+/** A board saved in the fleet: which profile it runs and how to flash it. */
+export interface FleetDevice {
+  id: string
+  name: string
+  profile: string | null
+  /** serial / can / dfu / linux / beacon. */
+  method: string
+  interface: string
+  baudrate: number
+  notes: string
+  is_katapult: boolean
+  is_bridge: boolean
+  /** Bootloader identities the board takes on under Katapult / DFU, if distinct. */
+  serial_id: string | null
+  dfu_id: string | null
+  exclude_from_batch: boolean
+  custom_make_command: string | null
+  /** Read back from the flash records (not stored in fleet.json). */
+  flashed_version: string | null
+  flashed_commit: string | null
+  last_flashed: string | null
+}
+
+/** Upsert payload for a fleet device, with an optional previous id (rename). */
+export interface FleetDeviceSave extends Partial<FleetDevice> {
+  id: string
+  name: string
+  old_id?: string | null
+}
+
+/** The saved fleet, as returned by the backend. */
+export interface FleetResponse {
+  devices: FleetDevice[]
 }

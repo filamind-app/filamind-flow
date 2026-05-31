@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-31
+
+### Added
+
+- **Fleet (Phase 7)** — FilaMind now keeps a saved fleet (`fleet.json`): each
+  board remembers its build profile, how it is flashed (method, baudrate, CAN
+  interface), free-form notes, an exclude-from-batch flag, an optional custom
+  make command, and the separate Katapult / DFU **bootloader identity** it takes
+  on while flashing. A new **Fleet** view lists registered boards (editable
+  inline), **adds** a discovered board, and **attaches** a found bootloader
+  device to an existing entry. Board discovery now flags which boards are
+  already `managed`.
+
 ## [0.8.0] - 2026-05-31
 
 ### Added
@@ -16,7 +29,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`flashed.json`). The **Linux host MCU** and other boards now show their
   firmware version even when Moonraker can't report it (e.g. an unconfigured
   host MCU) — and each profile carries its `built_version`. Closes the
-  version-display gap found against KlipperFleet.
+  host-MCU version-display gap.
 
 ## [0.7.1] - 2026-05-31
 
@@ -144,7 +157,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   printer CORS changes are needed) — plus an optional Docker simulated printer.
 - Verified the full on-device deployment on a real **BigTreeTech CB1**: backend
   systemd service + nginx-served UI + a **FilaMind Flow entry in the Mainsail
-  sidebar** (alongside KlipperFleet), with klippy `ready` and a live Connected badge.
+  sidebar**, with klippy `ready` and a live Connected badge.
 
 ### Changed
 
@@ -177,7 +190,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.9.0
 [0.8.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.8.0
 [0.7.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.1
 [0.7.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.0

@@ -24,6 +24,7 @@ from typing import Any
 
 import httpx
 
+from app.services import fleet_store
 from app.services.firmware_service import _klipper_mcu_service_active
 from app.services.moonraker_client import MoonrakerClient
 from app.services.version_store import flashed_version
@@ -238,6 +239,7 @@ def _board(**kwargs: Any) -> dict[str, Any]:
         "application": None,
         "interface": None,
         "flashed_version": None,
+        "managed": False,
     }
     base.update(kwargs)
     return base
@@ -297,9 +299,11 @@ async def discover_boards(
             mode="available",
         )
 
-    # Annotate each board with the version FilaMind last flashed to it.
+    # Annotate each board with its last-flashed version + fleet membership.
+    managed = fleet_store.managed_identities(data_dir)
     for board in boards.values():
         board["flashed_version"] = flashed_version(data_dir, board["id"])
+        board["managed"] = board["id"] in managed
 
     ordered = sorted(
         boards.values(), key=lambda b: (not b["configured"], b["connection"], b["name"])

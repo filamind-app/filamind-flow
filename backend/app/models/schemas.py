@@ -97,6 +97,8 @@ class Board(BaseModel):
     interface: str | None = None
     #: Firmware version FilaMind last flashed to this board, if recorded.
     flashed_version: str | None = None
+    #: True when this board is already saved in the fleet.
+    managed: bool = False
 
 
 class BoardScan(BaseModel):
@@ -202,3 +204,56 @@ class FlashPlan(BaseModel):
     sudo_ready: bool
     ready: bool
     warnings: list[str] = []
+
+
+class FleetDeviceBase(BaseModel):
+    """The editable settings of a board saved in the fleet."""
+
+    id: str
+    name: str
+    #: Build profile assigned to this board (None until one is chosen).
+    profile: str | None = None
+    #: How the board is flashed: serial / can / dfu / linux / beacon.
+    method: str = "serial"
+    interface: str = "can0"
+    baudrate: int = 250000
+    notes: str = ""
+    is_katapult: bool = True
+    is_bridge: bool = False
+    #: Bootloader identities the board takes on under Katapult / DFU, if distinct.
+    serial_id: str | None = None
+    dfu_id: str | None = None
+    #: Skip this board during fleet-wide (batch) flashes.
+    exclude_from_batch: bool = False
+    #: Overrides ``make`` for this board's build, when set.
+    custom_make_command: str | None = None
+
+
+class FleetDevice(FleetDeviceBase):
+    """A fleet device as returned to the UI, enriched with its flash history."""
+
+    #: Read back from the flash records (not stored in fleet.json).
+    flashed_version: str | None = None
+    flashed_commit: str | None = None
+    last_flashed: str | None = None
+
+
+class FleetDeviceSave(FleetDeviceBase):
+    """Upsert payload for a fleet device, with an optional previous id (rename)."""
+
+    old_id: str | None = None
+
+
+class AttachRequest(BaseModel):
+    """Binds a discovered bootloader identity to an existing fleet device."""
+
+    fleet_id: str
+    hardware_id: str
+    #: Which identity to set: serial / dfu.
+    kind: str
+
+
+class FleetResponse(BaseModel):
+    """The saved fleet."""
+
+    devices: list[FleetDevice]

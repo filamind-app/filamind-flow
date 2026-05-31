@@ -7,7 +7,7 @@ whose running binary FilaMind installed but which never appears as a live MCU.
 
 Two small JSON stores live under the data dir:
   * ``artifacts/<profile>.build_info.json`` — the Klipper version/commit/date a
-    profile was last built with (mirrors KlipperFleet).
+    profile was last built with.
   * ``flashed.json`` — ``{board_id: {profile, version, commit, flashed_at}}``,
     written after a successful flash.
 """

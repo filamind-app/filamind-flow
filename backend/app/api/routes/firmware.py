@@ -7,6 +7,7 @@ from fastapi.responses import StreamingResponse
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
+    AttachRequest,
     BoardDiscovery,
     ConfigNode,
     ConfigTreeRequest,
@@ -14,13 +15,22 @@ from app.models.schemas import (
     FirmwareStatus,
     FlashPlan,
     FlashRequest,
+    FleetDevice,
+    FleetDeviceSave,
+    FleetResponse,
     ProfileSaveRequest,
     ProfilesResponse,
 )
-from app.services import board_service, firmware_profiles, firmware_service, flash_service
+from app.services import (
+    board_service,
+    firmware_profiles,
+    firmware_service,
+    flash_service,
+    fleet_store,
+)
 from app.services.build_service import BuildService
 from app.services.kconfig_service import KconfigError, get_kconfig_service
-from app.services.version_store import read_build_info
+from app.services.version_store import flash_records, read_build_info
 
 router = APIRouter(prefix="/firmware", tags=["firmware"])
 
@@ -153,3 +163,52 @@ async def firmware_flash(
         ),
         media_type="text/plain",
     )
+
+
+@router.get("/fleet", response_model=FleetResponse)
+async def firmware_fleet(settings: Settings = Depends(get_settings)) -> FleetResponse:
+    """Returns the saved fleet, each device enriched with its last-flashed version."""
+    records = flash_records(settings.data_dir)
+    devices: list[FleetDevice] = []
+    for device in fleet_store.read_fleet(settings.data_dir):
+        record = records.get(device["id"]) or {}
+        device["flashed_version"] = record.get("version")
+        device["flashed_commit"] = record.get("commit")
+        device["last_flashed"] = record.get("flashed_at")
+        devices.append(FleetDevice.model_validate(device))
+    return FleetResponse(devices=devices)
+
+
+@router.post("/fleet/device", response_model=FleetDevice)
+async def firmware_save_fleet_device(
+    request: FleetDeviceSave, settings: Settings = Depends(get_settings)
+) -> FleetDevice:
+    """Adds or updates a board in the fleet (matched by ``old_id`` on rename)."""
+    if not request.id:
+        raise HTTPException(status_code=400, detail="Device id is required")
+    payload = request.model_dump(exclude={"old_id"})
+    saved = fleet_store.save_device(settings.data_dir, payload, old_id=request.old_id)
+    return FleetDevice.model_validate(saved)
+
+
+@router.delete("/fleet/device")
+async def firmware_remove_fleet_device(
+    device_id: str, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Removes a board from the fleet."""
+    if not fleet_store.remove_device(settings.data_dir, device_id):
+        raise HTTPException(status_code=404, detail=f"Device '{device_id}' not in fleet")
+    return {"message": f"Device '{device_id}' removed"}
+
+
+@router.post("/fleet/attach", response_model=FleetDevice)
+async def firmware_attach_identity(
+    request: AttachRequest, settings: Settings = Depends(get_settings)
+) -> FleetDevice:
+    """Binds a discovered bootloader identity (serial / dfu) to a fleet device."""
+    device = fleet_store.attach_identity(
+        settings.data_dir, request.fleet_id, request.hardware_id, request.kind
+    )
+    if device is None:
+        raise HTTPException(status_code=404, detail=f"Device '{request.fleet_id}' not in fleet")
+    return FleetDevice.model_validate(device)
