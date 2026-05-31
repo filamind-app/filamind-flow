@@ -286,8 +286,10 @@ async def firmware_services_manage(action: str) -> ServiceActionResponse:
 async def firmware_reboot(
     request: RebootRequest, settings: Settings = Depends(get_settings)
 ) -> StreamingResponse:
-    """Reboots a board into its bootloader, streaming the log."""
+    """Reboots a board into a bootloader (Katapult or DFU), streaming the log."""
     return StreamingResponse(
-        flash_service.run_reboot(request.method, request.device, request.interface, settings),
+        flash_service.run_reboot(
+            request.method, request.device, request.interface, settings, request.mode
+        ),
         media_type="text/plain",
     )

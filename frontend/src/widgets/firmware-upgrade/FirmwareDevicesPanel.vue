@@ -174,14 +174,14 @@ function modeClass(mode: string): string {
   return 'bg-surface opacity-60'
 }
 
-async function rebootDevice(device: Device): Promise<void> {
+async function rebootDevice(device: Device, mode = 'katapult'): Promise<void> {
   if (batchRunning.value) return
   error.value = null
   batchLog.value = ''
   batchRunning.value = true
   try {
     await rebootBoard(
-      { method: device.method, device: device.id, interface: device.interface },
+      { method: device.method, device: device.id, interface: device.interface, mode },
       (chunk) => {
         batchLog.value += chunk
       },
@@ -289,9 +289,19 @@ onUnmounted(() => {
             v-if="device.method === 'serial' || device.method === 'can'"
             class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
             :disabled="batchRunning"
-            @click="rebootDevice(device)"
+            title="Reboot into the Katapult bootloader"
+            @click="rebootDevice(device, 'katapult')"
           >
             boot
+          </button>
+          <button
+            v-if="device.method === 'serial'"
+            class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
+            :disabled="batchRunning"
+            title="1200-baud touch into STM32 DFU"
+            @click="rebootDevice(device, 'dfu')"
+          >
+            dfu
           </button>
           <button
             class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[10px] text-surface"
