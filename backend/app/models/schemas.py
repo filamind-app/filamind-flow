@@ -103,3 +103,63 @@ class BoardDiscovery(BaseModel):
 
     boards: list[Board]
     scanned: BoardScan
+
+
+class ConfigChoice(BaseModel):
+    """One selectable option of a Kconfig ``choice`` symbol."""
+
+    name: str
+    prompt: str
+
+
+class ConfigNode(BaseModel):
+    """A node of Klipper's Kconfig menu tree (menu, symbol, or choice)."""
+
+    name: str
+    #: menu / comment / bool / tristate / string / int / hex / choice / unknown.
+    type: str
+    prompt: str
+    value: str | None = None
+    help: str | None = None
+    choices: list[ConfigChoice] = []
+    readonly: bool = False
+    children: list[ConfigNode] = []
+
+
+class ConfigValue(BaseModel):
+    """A single edited symbol value (name -> value)."""
+
+    name: str
+    value: str
+
+
+class ConfigTreeRequest(BaseModel):
+    """Request for the live Kconfig tree, with an optional base profile + edits."""
+
+    profile: str | None = None
+    values: list[ConfigValue] = []
+    show_optional: bool = False
+
+
+class ProfileSaveRequest(BaseModel):
+    """Saves a set of Kconfig edits (atop an optional base) as a named profile."""
+
+    name: str
+    values: list[ConfigValue] = []
+    base_profile: str | None = None
+
+
+class FirmwareProfile(BaseModel):
+    """A saved per-board firmware profile and the flags that shape its flashing."""
+
+    name: str
+    is_can_bridge: bool = False
+    is_linux: bool = False
+    is_avr: bool = False
+
+
+class ProfilesResponse(BaseModel):
+    """Saved profiles plus whether the Kconfig editor is usable on this host."""
+
+    kconfig_available: bool
+    profiles: list[FirmwareProfile]

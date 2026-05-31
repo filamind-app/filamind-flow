@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-31
+
+### Added
+
+- **Firmware config editor (Phase 3 — Configure)**: edit Klipper's
+  `make menuconfig` options from the browser. The backend loads Klipper's bundled
+  `kconfiglib`, serialises `src/Kconfig` into a live menu tree (dependencies
+  re-evaluate as values change), and writes a `.config`. Edits are saved as
+  **per-board profiles** (one `.config` each) under the FilaMind data dir, with
+  list / save / delete via `GET`/`POST`/`DELETE /api/firmware/config/...`. The
+  widget gains a **Configure firmware** view that renders the tree as a form with
+  a profile selector. Adds a `kconfiglib` dependency (Klipper's own copy is
+  preferred at runtime).
+
 ## [0.3.0] - 2026-05-31
 
 ### Added
@@ -82,7 +96,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.4.0
 [0.3.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.3.0
 [0.2.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.2
 [0.2.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.1

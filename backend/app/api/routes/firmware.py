@@ -1,10 +1,19 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
-from app.models.schemas import BoardDiscovery, FirmwareStatus
-from app.services import board_service, firmware_service
+from app.models.schemas import (
+    BoardDiscovery,
+    ConfigNode,
+    ConfigTreeRequest,
+    FirmwareProfile,
+    FirmwareStatus,
+    ProfileSaveRequest,
+    ProfilesResponse,
+)
+from app.services import board_service, firmware_profiles, firmware_service
+from app.services.kconfig_service import KconfigError, get_kconfig_service
 
 router = APIRouter(prefix="/firmware", tags=["firmware"])
 
@@ -25,3 +34,75 @@ async def firmware_boards(settings: Settings = Depends(get_settings)) -> BoardDi
         settings.moonraker_url, settings.klipper_dir, settings.katapult_dir
     )
     return BoardDiscovery.model_validate(data)
+
+
+@router.post("/config/tree", response_model=list[ConfigNode])
+async def firmware_config_tree(
+    request: ConfigTreeRequest, settings: Settings = Depends(get_settings)
+) -> list[ConfigNode]:
+    """Klipper's Kconfig menu tree, optionally loaded with a profile and live edits."""
+    config_file: str | None = None
+    if request.profile:
+        try:
+            config_file = firmware_profiles.profile_path(settings.data_dir, request.profile)
+        except firmware_profiles.ProfileNameError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+    service = get_kconfig_service(settings.klipper_dir)
+    try:
+        tree = await service.menu_tree(
+            config_file=config_file,
+            values=[(v.name, v.value) for v in request.values],
+            show_optional=request.show_optional,
+        )
+    except KconfigError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    return [ConfigNode.model_validate(node) for node in tree]
+
+
+@router.get("/config/profiles", response_model=ProfilesResponse)
+async def firmware_list_profiles(
+    settings: Settings = Depends(get_settings),
+) -> ProfilesResponse:
+    """Lists saved per-board firmware profiles and whether the editor is usable."""
+    service = get_kconfig_service(settings.klipper_dir)
+    profiles = [
+        FirmwareProfile.model_validate(p)
+        for p in firmware_profiles.list_profiles(settings.data_dir)
+    ]
+    return ProfilesResponse(kconfig_available=service.available, profiles=profiles)
+
+
+@router.post("/config/profiles")
+async def firmware_save_profile(
+    request: ProfileSaveRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Saves Kconfig edits (atop an optional base profile) as a named profile."""
+    try:
+        output = firmware_profiles.profile_path(settings.data_dir, request.name)
+        base = (
+            firmware_profiles.profile_path(settings.data_dir, request.base_profile)
+            if request.base_profile
+            else None
+        )
+    except firmware_profiles.ProfileNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    service = get_kconfig_service(settings.klipper_dir)
+    try:
+        await service.write_config(output, base, [(v.name, v.value) for v in request.values])
+    except KconfigError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    return {"message": f"Profile '{request.name}' saved"}
+
+
+@router.delete("/config/profiles/{name}")
+async def firmware_delete_profile(
+    name: str, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Deletes a saved firmware profile."""
+    try:
+        removed = firmware_profiles.delete_profile(settings.data_dir, name)
+    except firmware_profiles.ProfileNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not removed:
+        raise HTTPException(status_code=404, detail=f"Profile '{name}' not found")
+    return {"message": f"Profile '{name}' deleted"}

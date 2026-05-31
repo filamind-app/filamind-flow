@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
+import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
 import { fetchBoards, fetchFirmwareStatus } from './api'
 import type { BoardDiscovery, FirmwareStatus, FirmwareTools } from './types'
 
+const mode = ref<'status' | 'configure'>('status')
 const status = ref<FirmwareStatus | null>(null)
 const boards = ref<BoardDiscovery | null>(null)
 const error = ref<string | null>(null)
@@ -51,90 +53,93 @@ onMounted(load)
 
 <template>
   <div class="space-y-3 text-sm">
-    <div v-if="loading" class="font-mono text-xs">Loading firmware status…</div>
-    <div v-else-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+    <FirmwareConfigEditor v-if="mode === 'configure'" @close="mode = 'status'" />
+    <template v-else>
+      <div v-if="loading" class="font-mono text-xs">Loading firmware status…</div>
+      <div v-else-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
 
-    <template v-else-if="status">
-      <div class="space-y-1.5">
-        <!-- Host runs the Klipper host software — the reference every MCU syncs to. -->
-        <div
-          class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-cyan px-2 py-1"
-        >
-          <span class="min-w-0 flex-1 truncate font-bold">Host · Klipper</span>
-          <span class="font-mono text-[11px] opacity-80">{{ status.host.version ?? '—' }}</span>
-          <span class="nb-badge shrink-0 bg-surface">{{ status.host.state ?? 'host' }}</span>
+      <template v-else-if="status">
+        <div class="space-y-1.5">
+          <!-- Host runs the Klipper host software — the reference every MCU syncs to. -->
+          <div
+            class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-cyan px-2 py-1"
+          >
+            <span class="min-w-0 flex-1 truncate font-bold">Host · Klipper</span>
+            <span class="font-mono text-[11px] opacity-80">{{ status.host.version ?? '—' }}</span>
+            <span class="nb-badge shrink-0 bg-surface">{{ status.host.state ?? 'host' }}</span>
+          </div>
+
+          <div
+            v-for="mcu in status.mcus"
+            :key="mcu.name"
+            class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
+          >
+            <span class="min-w-0 flex-1 truncate font-bold">{{ mcu.name }}</span>
+            <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{ mcu.kind }}</span>
+            <span class="font-mono text-[11px] opacity-80">{{ mcu.version ?? '—' }}</span>
+            <span
+              class="nb-badge shrink-0"
+              :class="
+                mcu.in_sync === false
+                  ? 'bg-brand-red text-surface'
+                  : mcu.in_sync
+                    ? 'bg-brand-lime'
+                    : 'bg-surface'
+              "
+            >
+              {{ mcu.in_sync === false ? 'mismatch' : mcu.in_sync ? 'in sync' : '—' }}
+            </span>
+          </div>
+
+          <p v-if="!status.mcus.length" class="font-mono text-xs opacity-70">
+            {{ status.reachable ? 'No MCUs reported.' : 'Printer not reachable.' }}
+          </p>
         </div>
 
-        <div
-          v-for="mcu in status.mcus"
-          :key="mcu.name"
-          class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
-        >
-          <span class="min-w-0 flex-1 truncate font-bold">{{ mcu.name }}</span>
-          <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{ mcu.kind }}</span>
-          <span class="font-mono text-[11px] opacity-80">{{ mcu.version ?? '—' }}</span>
+        <div class="flex items-center justify-between gap-2 border-t-2 border-ink pt-2 text-xs">
+          <span class="font-bold">Linux host MCU</span>
+          <span class="nb-badge shrink-0" :class="hostMcu.cls">{{ hostMcu.label }}</span>
+        </div>
+
+        <div class="flex flex-wrap gap-1.5 border-t-2 border-ink pt-2">
           <span
-            class="nb-badge shrink-0"
-            :class="
-              mcu.in_sync === false
-                ? 'bg-brand-red text-surface'
-                : mcu.in_sync
-                  ? 'bg-brand-lime'
-                  : 'bg-surface'
-            "
+            v-for="tool in TOOLS"
+            :key="tool.key"
+            class="nb-badge"
+            :class="status.tools[tool.key] ? 'bg-brand-lime' : 'bg-surface opacity-60'"
           >
-            {{ mcu.in_sync === false ? 'mismatch' : mcu.in_sync ? 'in sync' : '—' }}
+            {{ status.tools[tool.key] ? '✓' : '✗' }} {{ tool.label }}
           </span>
         </div>
 
-        <p v-if="!status.mcus.length" class="font-mono text-xs opacity-70">
-          {{ status.reachable ? 'No MCUs reported.' : 'Printer not reachable.' }}
-        </p>
-      </div>
-
-      <div class="flex items-center justify-between gap-2 border-t-2 border-ink pt-2 text-xs">
-        <span class="font-bold">Linux host MCU</span>
-        <span class="nb-badge shrink-0" :class="hostMcu.cls">{{ hostMcu.label }}</span>
-      </div>
-
-      <div class="flex flex-wrap gap-1.5 border-t-2 border-ink pt-2">
-        <span
-          v-for="tool in TOOLS"
-          :key="tool.key"
-          class="nb-badge"
-          :class="status.tools[tool.key] ? 'bg-brand-lime' : 'bg-surface opacity-60'"
-        >
-          {{ status.tools[tool.key] ? '✓' : '✗' }} {{ tool.label }}
-        </span>
-      </div>
-
-      <div v-if="boards" class="space-y-1.5 border-t-2 border-ink pt-2">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wide">Detected boards</span>
-          <span class="font-mono text-[10px] opacity-60">{{ boards.boards.length }} found</span>
+        <div v-if="boards" class="space-y-1.5 border-t-2 border-ink pt-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wide">Detected boards</span>
+            <span class="font-mono text-[10px] opacity-60">{{ boards.boards.length }} found</span>
+          </div>
+          <div
+            v-for="board in boards.boards"
+            :key="board.id"
+            class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
+          >
+            <span class="min-w-0 flex-1 truncate font-bold">{{ board.name }}</span>
+            <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{
+              board.connection
+            }}</span>
+            <span v-if="board.configured" class="nb-badge shrink-0 bg-surface text-[9px]">cfg</span>
+            <span class="nb-badge shrink-0" :class="boardModeClass(board.mode)">{{
+              board.mode
+            }}</span>
+          </div>
+          <p v-if="!boards.boards.length" class="font-mono text-xs opacity-70">
+            No flashable boards detected.
+          </p>
         </div>
-        <div
-          v-for="board in boards.boards"
-          :key="board.id"
-          class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
-        >
-          <span class="min-w-0 flex-1 truncate font-bold">{{ board.name }}</span>
-          <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{
-            board.connection
-          }}</span>
-          <span v-if="board.configured" class="nb-badge shrink-0 bg-surface text-[9px]">cfg</span>
-          <span class="nb-badge shrink-0" :class="boardModeClass(board.mode)">{{
-            board.mode
-          }}</span>
-        </div>
-        <p v-if="!boards.boards.length" class="font-mono text-xs opacity-70">
-          No flashable boards detected.
-        </p>
-      </div>
 
-      <p class="font-mono text-[10px] opacity-60">
-        Read-only status · configure, build & flash coming next.
-      </p>
+        <button class="nb-btn w-full bg-brand-cyan py-1 text-xs" @click="mode = 'configure'">
+          Configure firmware →
+        </button>
+      </template>
     </template>
   </div>
 </template>
