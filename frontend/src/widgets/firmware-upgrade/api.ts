@@ -5,6 +5,8 @@ import type {
   ConfigEdit,
   ConfigNode,
   FirmwareStatus,
+  FlashPlan,
+  FlashRequest,
   ProfilesResponse,
 } from './types'
 
@@ -97,6 +99,43 @@ export async function buildFirmware(
   const response = await fetch(`${backendUrl}/api/firmware/build/${encodeURIComponent(profile)}`)
   if (!response.ok || !response.body) {
     throw new Error(`Build request failed (${response.status})`)
+  }
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    onChunk(decoder.decode(value, { stream: true }))
+  }
+}
+
+/** Read-only: what a flash would do + its safety gates (runs nothing). */
+export async function fetchFlashPlan(request: FlashRequest): Promise<FlashPlan> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/flash-plan`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  })
+  if (!response.ok) {
+    throw new Error(`Flash plan failed (${response.status})`)
+  }
+  return (await response.json()) as FlashPlan
+}
+
+/** Flashes a board, streaming the log via onChunk. Guarded server-side. */
+export async function flashBoard(
+  request: FlashRequest,
+  onChunk: (text: string) => void,
+): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/flash`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  })
+  if (!response.ok || !response.body) {
+    throw new Error(`Flash request failed (${response.status})`)
   }
   const reader = response.body.getReader()
   const decoder = new TextDecoder()

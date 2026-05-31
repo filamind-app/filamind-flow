@@ -2,10 +2,12 @@
 import { computed, onMounted, ref } from 'vue'
 
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
+import FirmwareFlashPanel from './FirmwareFlashPanel.vue'
 import { fetchBoards, fetchFirmwareStatus } from './api'
-import type { BoardDiscovery, FirmwareStatus, FirmwareTools } from './types'
+import type { Board, BoardDiscovery, FirmwareStatus, FirmwareTools } from './types'
 
 const mode = ref<'status' | 'configure'>('status')
+const flashTarget = ref<Board | null>(null)
 const status = ref<FirmwareStatus | null>(null)
 const boards = ref<BoardDiscovery | null>(null)
 const error = ref<string | null>(null)
@@ -53,7 +55,8 @@ onMounted(load)
 
 <template>
   <div class="space-y-3 text-sm">
-    <FirmwareConfigEditor v-if="mode === 'configure'" @close="mode = 'status'" />
+    <FirmwareFlashPanel v-if="flashTarget" :board="flashTarget" @close="flashTarget = null" />
+    <FirmwareConfigEditor v-else-if="mode === 'configure'" @close="mode = 'status'" />
     <template v-else>
       <div v-if="loading" class="font-mono text-xs">Loading firmware status…</div>
       <div v-else-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
@@ -130,6 +133,9 @@ onMounted(load)
             <span class="nb-badge shrink-0" :class="boardModeClass(board.mode)">{{
               board.mode
             }}</span>
+            <button class="nb-btn shrink-0 px-2 py-0.5 text-[10px]" @click="flashTarget = board">
+              flash
+            </button>
           </div>
           <p v-if="!boards.boards.length" class="font-mono text-xs opacity-70">
             No flashable boards detected.

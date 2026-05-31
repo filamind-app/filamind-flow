@@ -164,3 +164,29 @@ class ProfilesResponse(BaseModel):
 
     kconfig_available: bool
     profiles: list[FirmwareProfile]
+
+
+class FlashRequest(BaseModel):
+    """A request to flash (or preview flashing) a board with a profile's firmware."""
+
+    profile: str | None = None
+    #: serial / can / dfu / make / linux.
+    method: str
+    #: Serial path, CAN UUID, DFU serial, or board id depending on the method.
+    device: str
+    interface: str = "can0"
+
+
+class FlashPlan(BaseModel):
+    """Read-only preview of what a flash would do, plus its safety gates."""
+
+    method: str
+    device: str
+    artifact: str | None = None
+    command: str
+    offset: str
+    printing: bool
+    artifact_exists: bool
+    sudo_ready: bool
+    ready: bool
+    warnings: list[str] = []
