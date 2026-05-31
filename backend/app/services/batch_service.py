@@ -75,7 +75,12 @@ async def _flash_phase(
         method = "make" if avr.get(profile) else device["method"]
         task.append(f">>> Flashing {name} ({profile}) via {method}…\n")
         async for line in flash_service.run_flash(
-            profile, method, device["id"], device.get("interface") or "can0", settings
+            profile,
+            method,
+            device["id"],
+            device.get("interface") or "can0",
+            settings,
+            device.get("is_katapult", True),
         ):
             task.append(line)
             if task.cancelled:

@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-05-31
+
+### Added
+
+- **Per-device Katapult toggle.** Each serial / CAN device in the Devices manager
+  now has a **katapult** checkbox (the flag was stored but never surfaced). When
+  it's off, a flash **skips the Katapult reboot-to-bootloader** step — for boards
+  flashed directly or via `make flash` — matching how the reference tool models
+  Katapult per device.
+
 ## [0.21.2] - 2026-05-31
 
 ### Fixed
@@ -438,7 +448,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.21.2...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.22.0...HEAD
+[0.22.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.22.0
 [0.21.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.2
 [0.21.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.1
 [0.21.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.0

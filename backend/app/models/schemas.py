@@ -199,6 +199,8 @@ class FlashRequest(BaseModel):
     #: Serial path, CAN UUID, DFU serial, or board id depending on the method.
     device: str
     interface: str = "can0"
+    #: Whether the board carries a Katapult bootloader (drives the reboot step).
+    is_katapult: bool = True
 
 
 class FlashPlan(BaseModel):

@@ -102,3 +102,43 @@ def test_flash_refused_without_artifact(tmp_path: Path) -> None:
     )
     assert resp.status_code == 200
     assert "No firmware built" in resp.text
+
+
+async def test_flash_skips_reboot_when_not_katapult(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "p.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "p.config").write_text("CONFIG_X=y\n")
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+
+    async def run(is_katapult: bool) -> str:
+        out = ""
+        async for line in flash_service.run_flash(
+            "p", "serial", "/dev/ttyACM0", "can0", settings, is_katapult
+        ):
+            out += line
+        return out
+
+    off = await run(is_katapult=False)
+    assert "skipping reboot-to-bootloader" in off
+    assert "enter its bootloader" not in off
+
+    on = await run(is_katapult=True)
+    assert "enter its bootloader" in on

@@ -125,6 +125,8 @@ export interface FlashRequest {
   method: string
   device: string
   interface: string
+  /** Whether the board carries a Katapult bootloader (drives the reboot step). */
+  is_katapult?: boolean
 }
 
 /** Read-only preview of what a flash would do, plus its safety gates. */
