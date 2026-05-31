@@ -113,6 +113,21 @@ def test_download_artifact(tmp_path: Path) -> None:
     assert client.get("/api/firmware/config/profiles/..%2fevil/artifact").status_code in (400, 404)
 
 
+def test_menu_and_comment_nodes_serialize(tmp_path: Path) -> None:
+    # Regression: menu / comment MenuNodes have no `help` attribute in kconfiglib;
+    # serializing them must not raise (this used to 500 for STM32 etc.).
+    client = _client(tmp_path)
+    tree = client.post("/api/firmware/config/tree", json={"values": []})
+    assert tree.status_code == 200
+
+    by_type = [(n["name"], n["type"], n["help"]) for n in tree.json()]
+    menus = [t for t in by_type if t[1] == "menu"]
+    assert menus, f"expected a menu node, got {by_type}"
+    assert menus[0][2] is None  # help is None, not an error
+    # The option nested inside the menu is reachable.
+    assert "DEMO_MENU_OPT" in _all_names(tree.json())
+
+
 def test_nodes_expose_default_and_dependency(tmp_path: Path) -> None:
     client = _client(tmp_path)
     # Turn USB off so the serial option (which depends on !DEMO_USB) is shown.

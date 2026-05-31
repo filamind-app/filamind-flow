@@ -187,7 +187,8 @@ class KconfigService:
                 "name": f"__menu_{node.linenr}",
                 "prompt": prompt_text,
                 "value": None,
-                "help": node.help,
+                # menu / comment nodes have no `help` slot in kconfiglib.
+                "help": getattr(node, "help", None),
                 "choices": [],
                 "readonly": False,
             }
@@ -209,7 +210,7 @@ class KconfigService:
             "name": item.name or f"__node_{node.linenr}",
             "prompt": prompt_text,
             "value": item.str_value,
-            "help": node.help,
+            "help": getattr(node, "help", None),
             "choices": [],
             "readonly": False,
             "default": None,
