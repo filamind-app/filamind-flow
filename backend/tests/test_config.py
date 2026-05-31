@@ -128,6 +128,22 @@ def test_menu_and_comment_nodes_serialize(tmp_path: Path) -> None:
     assert "DEMO_MENU_OPT" in _all_names(tree.json())
 
 
+def test_optional_unsettable_options_render_locked(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    # WANT_DEMO_FEATURE depends on a hidden HAVE_ symbol that's off, so it's
+    # hidden by default and only surfaced by the 'optional' toggle.
+    plain = _flat_nodes(client.post("/api/firmware/config/tree", json={"values": []}).json())
+    assert "WANT_DEMO_FEATURE" not in plain
+
+    shown = _flat_nodes(
+        client.post("/api/firmware/config/tree", json={"values": [], "show_optional": True}).json()
+    )
+    assert "WANT_DEMO_FEATURE" in shown
+    # It can't actually be toggled (prerequisite off), so it must be readonly —
+    # shown for information, not as a dead toggle.
+    assert shown["WANT_DEMO_FEATURE"]["readonly"] is True
+
+
 def test_nodes_expose_default_and_dependency(tmp_path: Path) -> None:
     client = _client(tmp_path)
     # Turn USB off so the serial option (which depends on !DEMO_USB) is shown.

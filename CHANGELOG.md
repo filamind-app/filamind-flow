@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.21.2] - 2026-05-31
+
+### Fixed
+
+- **"Optional" options that can't be set now show as locked.** Turning on the
+  *optional* toggle surfaces Klipper's `WANT_*` feature flags; many depend on a
+  prerequisite that isn't enabled in the current configuration, so Klipper won't
+  let them change. They now render **🔒 locked** (with an explanatory tooltip)
+  instead of an ON toggle that did nothing when clicked.
+
 ## [0.21.1] - 2026-05-31
 
 ### Fixed
@@ -428,7 +438,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.21.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.21.2...HEAD
+[0.21.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.2
 [0.21.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.1
 [0.21.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.0
 [0.20.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.20.1
