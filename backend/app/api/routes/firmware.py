@@ -10,6 +10,8 @@ from app.config import Settings, get_settings
 from app.models.schemas import (
     AttachRequest,
     BatchRequest,
+    BeaconFlashRequest,
+    BeaconResponse,
     BoardDiscovery,
     ConfigNode,
     ConfigTreeRequest,
@@ -29,6 +31,7 @@ from app.models.schemas import (
 )
 from app.services import (
     batch_service,
+    beacon_service,
     board_service,
     devices_store,
     firmware_profiles,
@@ -292,4 +295,21 @@ async def firmware_reboot(
             request.method, request.device, request.interface, settings, request.mode
         ),
         media_type="text/plain",
+    )
+
+
+@router.get("/beacon", response_model=BeaconResponse)
+async def firmware_beacon(settings: Settings = Depends(get_settings)) -> BeaconResponse:
+    """Lists connected Beacon probes plus the plugin path and available version."""
+    data = await beacon_service.gather_beacons(settings.moonraker_url)
+    return BeaconResponse.model_validate(data)
+
+
+@router.post("/beacon/flash")
+async def firmware_beacon_flash(
+    request: BeaconFlashRequest, settings: Settings = Depends(get_settings)
+) -> StreamingResponse:
+    """Updates a Beacon probe's firmware through its plugin, streaming the log."""
+    return StreamingResponse(
+        beacon_service.flash_beacon(request.device, settings), media_type="text/plain"
     )

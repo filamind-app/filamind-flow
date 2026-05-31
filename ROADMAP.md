@@ -30,7 +30,7 @@ Phases 6+ grow it into a full multi-board manager.
 | ✅ **8 — Batch operations** | Build All / Flash All / Flash Ready across all devices, with service stop/start orchestration; **cancel a running build/flash** (task store) + colorized / expandable log panel | one-click upgrade of every board |
 | ✅ **9 — Live status & services** | Live per-device status (service / ready / offline / dfu) with **auto-refresh polling**; a **Services** bar to start/stop/restart Klipper / Moonraker; **reboot a board into its Katapult bootloader** (Restart-to-Firmware / Reboot-to-DFU land with the Phase 10 wire-protocol) | interactive dashboard |
 | ✅ **10 — Advanced flash** | 1200bps magic-baud reboot-to-DFU, DFU **retry + `:leave`** auto-exit, **USB-to-CAN bridge** redirect, AVR auto-detect, **post-flash re-enumeration** (new `/dev` id after flash → auto-update the registry). (Test-DFU-Cycle validation + Katapult native wire-protocol return-to-firmware remain follow-ups.) | reliability on more boards |
-| 📋 **11 — Beacon** | Beacon eddy-probe firmware (flash + remote-version compare) | Beacon users |
+| ✅ **11 — Beacon** | Beacon eddy-probe firmware (detect probes + flash via the plugin's `update_firmware.py` + show the available version) | Beacon users |
 | 📋 **12 — Backup & Restore** | Export / import a ZIP of the **device registry + all Kconfig profiles** (binaries excluded, rebuildable) | migrate or recover a whole setup |
 | 📋 **13 — Health & install integrity** | `/api/health` checks (sudoers, **udev DFU rules**, system deps, venv, moonraker.conf) + a UI health indicator; ship a **`99-stm32-dfu.rules`** so DFU flashes without `sudo`; **self-heal** sudoers / system-deps on startup | DFU-without-sudo + zero-touch install |
 

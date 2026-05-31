@@ -4,8 +4,22 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
 import FirmwareFlashPanel from './FirmwareFlashPanel.vue'
-import { fetchBoards, fetchFirmwareStatus, fetchServices, manageServices } from './api'
-import type { Board, BoardDiscovery, FirmwareStatus, FirmwareTools, ServiceInfo } from './types'
+import {
+  fetchBeacon,
+  fetchBoards,
+  fetchFirmwareStatus,
+  fetchServices,
+  flashBeacon,
+  manageServices,
+} from './api'
+import type {
+  BeaconResponse,
+  Board,
+  BoardDiscovery,
+  FirmwareStatus,
+  FirmwareTools,
+  ServiceInfo,
+} from './types'
 
 const mode = ref<'status' | 'configure' | 'devices'>('status')
 const flashTarget = ref<Board | null>(null)
@@ -13,6 +27,9 @@ const status = ref<FirmwareStatus | null>(null)
 const boards = ref<BoardDiscovery | null>(null)
 const services = ref<ServiceInfo[]>([])
 const servicesBusy = ref(false)
+const beacon = ref<BeaconResponse | null>(null)
+const beaconLog = ref('')
+const beaconFlashing = ref(false)
 const error = ref<string | null>(null)
 const loading = ref(true)
 
@@ -55,6 +72,28 @@ async function load(silent = false): Promise<void> {
     services.value = (await fetchServices()).services
   } catch {
     /* services are optional context — ignore */
+  }
+  try {
+    beacon.value = await fetchBeacon()
+  } catch {
+    /* beacon probes are optional — ignore */
+  }
+}
+
+async function flashProbe(device: string): Promise<void> {
+  if (beaconFlashing.value) return
+  beaconFlashing.value = true
+  beaconLog.value = ''
+  error.value = null
+  try {
+    await flashBeacon(device, (chunk) => {
+      beaconLog.value += chunk
+    })
+    await load(true)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Beacon flash failed'
+  } finally {
+    beaconFlashing.value = false
   }
 }
 
@@ -205,6 +244,35 @@ onUnmounted(() => {
               no services detected
             </span>
           </div>
+        </div>
+
+        <div v-if="beacon?.probes.length" class="space-y-1.5 border-t-2 border-ink pt-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wide">Beacon</span>
+            <span v-if="beacon.available_version" class="font-mono text-[10px] opacity-60">
+              available {{ beacon.available_version }}
+            </span>
+          </div>
+          <div
+            v-for="p in beacon.probes"
+            :key="p.serial"
+            class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
+          >
+            <span class="min-w-0 flex-1 truncate font-bold">{{ p.name }}</span>
+            <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">beacon</span>
+            <button
+              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5 text-[10px]"
+              :disabled="beaconFlashing"
+              @click="flashProbe(p.id)"
+            >
+              {{ beaconFlashing ? 'flashing…' : 'flash' }}
+            </button>
+          </div>
+          <pre
+            v-if="beaconLog"
+            class="max-h-40 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight text-surface"
+            >{{ beaconLog }}</pre
+          >
         </div>
 
         <div v-if="boards" class="space-y-1.5 border-t-2 border-ink pt-2">

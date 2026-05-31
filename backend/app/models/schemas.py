@@ -311,3 +311,26 @@ class RebootRequest(BaseModel):
     interface: str = "can0"
     #: katapult (flashtool -r) / dfu (1200-baud magic-baud touch).
     mode: str = "katapult"
+
+
+class BeaconProbe(BaseModel):
+    """A connected Beacon eddy-current probe."""
+
+    id: str
+    name: str
+    revision: str
+    serial: str
+
+
+class BeaconResponse(BaseModel):
+    """Discovered Beacon probes plus the plugin path and available version."""
+
+    probes: list[BeaconProbe]
+    repo: str | None = None
+    available_version: str | None = None
+
+
+class BeaconFlashRequest(BaseModel):
+    """Updates a Beacon probe's firmware."""
+
+    device: str

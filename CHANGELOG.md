@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-05-31
+
+### Added
+
+- **Beacon (Phase 11)** — FilaMind now detects connected **Beacon eddy-current
+  probes** and updates their firmware through the Beacon plugin's own
+  `update_firmware.py` (located via Moonraker's update_manager). The widget shows
+  each probe with its revision, the version available in the plugin checkout, and
+  a **flash** button — and only appears when a probe is present.
+
 ## [0.12.0] - 2026-05-31
 
 ### Added
@@ -233,7 +243,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.13.0
 [0.12.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.12.0
 [0.11.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.11.0
 [0.10.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.10.0
