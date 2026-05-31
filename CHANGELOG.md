@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-31
+
+### Added
+
+- **Firmware build (Phase 4 — Build)**: compile a saved profile into a flashable
+  artifact from the browser. `GET /api/firmware/build/{profile}` stages the
+  profile's `.config`, runs `make clean` + `make olddefconfig` + `make`, and
+  **streams the build log live** (with stall / total timeouts); the resulting
+  `out/klipper.{bin,uf2,elf}` is copied into the artifacts directory under the
+  profile name. The Configure view gains a **build** button per profile, a live
+  log console, and a **built ✓** indicator.
+
 ## [0.4.0] - 2026-05-31
 
 ### Added
@@ -96,7 +108,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.5.0
 [0.4.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.4.0
 [0.3.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.3.0
 [0.2.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.2.2

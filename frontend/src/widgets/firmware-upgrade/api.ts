@@ -87,3 +87,22 @@ export async function deleteProfile(name: string): Promise<void> {
     throw new Error(`Delete failed (${response.status})`)
   }
 }
+
+/** Streams a profile's firmware build log, invoking onChunk for each chunk. */
+export async function buildFirmware(
+  profile: string,
+  onChunk: (text: string) => void,
+): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/build/${encodeURIComponent(profile)}`)
+  if (!response.ok || !response.body) {
+    throw new Error(`Build request failed (${response.status})`)
+  }
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    onChunk(decoder.decode(value, { stream: true }))
+  }
+}
