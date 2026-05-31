@@ -229,6 +229,9 @@ class ExternalFirmware(BaseModel):
     notes: str = ""
     filename: str | None = None
     size: int = 0
+    #: Read-only properties detected inside the binary (best-effort).
+    detected_version: str | None = None
+    detected_mcu: str | None = None
 
 
 class ExternalFirmwareResponse(BaseModel):

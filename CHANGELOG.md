@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-05-31
+
+### Changed
+
+- **Optional config options show as normal toggles (no lock).** Klipper's
+  "Optional features (to reduce code size)" (`WANT_*`) are gated behind
+  `HAVE_LIMITED_CODE_SIZE`, which Klipper auto-selects only for MCUs with **<64 KB
+  flash** (`select … if FLASH_SIZE < 0x10000`). They now render as plain toggles,
+  matching the reference tool: on flash-limited boards they apply; on roomier
+  boards Klipper auto-includes them. (Reverts the 🔒 lock from v0.21.2.)
+
+### Added
+
+- **External firmware: read embedded properties.** On upload (and for existing
+  files), the binary is scanned for its embedded **Klipper version** and an **MCU
+  hint**, shown read-only ("🔍 read from file: Klipper v… · mcu …").
+
 ## [0.23.1] - 2026-05-31
 
 ### Fixed
@@ -468,7 +485,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.23.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.24.0...HEAD
+[0.24.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.24.0
 [0.23.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.23.1
 [0.23.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.23.0
 [0.22.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.22.0

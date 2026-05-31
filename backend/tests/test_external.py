@@ -51,6 +51,16 @@ def test_external_upload_list_update_download_delete(tmp_path: Path) -> None:
     assert client.post("/api/firmware/external/ghost/meta", json={"notes": "x"}).status_code == 404
 
 
+def test_external_reads_embedded_properties(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    blob = b"\x00\x01junk Klipper v0.12.0-345-gabcdef12 build on stm32f103xe\x00more"
+    up = client.post("/api/firmware/external?name=fw2&ext=bin", content=blob)
+    assert up.status_code == 200
+    body = up.json()
+    assert body["detected_version"] == "v0.12.0-345-gabcdef12"
+    assert "stm32" in (body["detected_mcu"] or "")
+
+
 def test_external_rejects_bad_name_and_ext(tmp_path: Path) -> None:
     client = _client(tmp_path)
     assert (

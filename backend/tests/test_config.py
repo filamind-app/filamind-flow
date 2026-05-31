@@ -128,7 +128,7 @@ def test_menu_and_comment_nodes_serialize(tmp_path: Path) -> None:
     assert "DEMO_MENU_OPT" in _all_names(tree.json())
 
 
-def test_optional_unsettable_options_render_locked(tmp_path: Path) -> None:
+def test_optional_options_shown_as_toggles(tmp_path: Path) -> None:
     client = _client(tmp_path)
     # WANT_DEMO_FEATURE depends on a hidden HAVE_ symbol that's off, so it's
     # hidden by default and only surfaced by the 'optional' toggle.
@@ -139,9 +139,9 @@ def test_optional_unsettable_options_render_locked(tmp_path: Path) -> None:
         client.post("/api/firmware/config/tree", json={"values": [], "show_optional": True}).json()
     )
     assert "WANT_DEMO_FEATURE" in shown
-    # It can't actually be toggled (prerequisite off), so it must be readonly —
-    # shown for information, not as a dead toggle.
-    assert shown["WANT_DEMO_FEATURE"]["readonly"] is True
+    # Shown as a normal toggle (matching the reference tool), not locked — Klipper
+    # gates these behind HAVE_LIMITED_CODE_SIZE (select-only for <64KB MCUs).
+    assert shown["WANT_DEMO_FEATURE"]["readonly"] is False
 
 
 def test_nodes_expose_default_and_dependency(tmp_path: Path) -> None:

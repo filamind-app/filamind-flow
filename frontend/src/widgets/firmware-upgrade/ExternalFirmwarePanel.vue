@@ -155,6 +155,12 @@ onMounted(load)
         </button>
       </div>
 
+      <div v-if="fw.detected_version || fw.detected_mcu" class="font-mono text-[9px] opacity-60">
+        🔍 read from file:
+        <span v-if="fw.detected_version">Klipper {{ fw.detected_version }}</span>
+        <span v-if="fw.detected_mcu" class="ml-2">mcu “{{ fw.detected_mcu }}”</span>
+      </div>
+
       <div class="flex flex-wrap items-center gap-1.5">
         <select v-model="fw.method" :class="inputClass" @change="persist(fw)">
           <option v-for="m in METHODS" :key="m" :value="m">{{ m }}</option>
