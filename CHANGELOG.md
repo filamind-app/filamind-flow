@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-05-31
+
+### Added
+
+- **Health & install integrity (Phase 13)** — a new `/firmware/health` check
+  reports whether the host is set up for flashing (the passwordless **sudo**
+  rule, the **STM32 DFU udev rule**, and **dfu-util**), shown as a **setup**
+  badge with a fix-it tooltip. `deploy/setup-sudoers.sh` now also installs a
+  `99-stm32-dfu.rules` udev rule so **DFU flashing works without sudo**. This
+  completes the Firmware Upgrade widget's planned phases (1–13).
+
 ## [0.14.0] - 2026-05-31
 
 ### Added
@@ -253,7 +264,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.15.0
 [0.14.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.14.0
 [0.13.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.13.0
 [0.12.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.12.0

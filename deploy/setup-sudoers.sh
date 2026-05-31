@@ -38,3 +38,14 @@ visudo -cf "$TMP"
 install -m 0440 -o root -g root "$TMP" "$SUDOERS_FILE"
 
 echo "Installed $SUDOERS_FILE — '$USER_NAME' can now flash firmware without a password."
+
+# DFU access: let the user talk to STM32 ROM bootloaders (0483:df11) directly, so
+# dfu-util can flash without sudo. Ships beside this script.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+UDEV_RULE="/etc/udev/rules.d/99-stm32-dfu.rules"
+if [ -f "$SCRIPT_DIR/99-stm32-dfu.rules" ]; then
+  install -m 0644 -o root -g root "$SCRIPT_DIR/99-stm32-dfu.rules" "$UDEV_RULE"
+  udevadm control --reload-rules 2>/dev/null || true
+  udevadm trigger 2>/dev/null || true
+  echo "Installed $UDEV_RULE — STM32 DFU boards are reachable without sudo."
+fi
