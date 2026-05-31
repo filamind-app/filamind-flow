@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
 import FirmwareFlashPanel from './FirmwareFlashPanel.vue'
-import { fetchBoards, fetchFirmwareStatus } from './api'
-import type { Board, BoardDiscovery, FirmwareStatus, FirmwareTools } from './types'
+import { fetchBoards, fetchFirmwareStatus, fetchServices, manageServices } from './api'
+import type { Board, BoardDiscovery, FirmwareStatus, FirmwareTools, ServiceInfo } from './types'
 
 const mode = ref<'status' | 'configure' | 'devices'>('status')
 const flashTarget = ref<Board | null>(null)
 const status = ref<FirmwareStatus | null>(null)
 const boards = ref<BoardDiscovery | null>(null)
+const services = ref<ServiceInfo[]>([])
+const servicesBusy = ref(false)
 const error = ref<string | null>(null)
 const loading = ref(true)
 
@@ -37,21 +39,49 @@ const TOOLS: { key: keyof FirmwareTools; label: string }[] = [
   { key: 'can_utils', label: 'can-utils' },
 ]
 
-async function load(): Promise<void> {
-  loading.value = true
+async function load(silent = false): Promise<void> {
+  if (!silent) loading.value = true
   error.value = null
   try {
     const [statusData, boardsData] = await Promise.all([fetchFirmwareStatus(), fetchBoards()])
     status.value = statusData
     boards.value = boardsData
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to load firmware status'
+    if (!silent) error.value = e instanceof Error ? e.message : 'Failed to load firmware status'
   } finally {
     loading.value = false
   }
+  try {
+    services.value = (await fetchServices()).services
+  } catch {
+    /* services are optional context — ignore */
+  }
 }
 
-onMounted(load)
+async function doService(action: string): Promise<void> {
+  servicesBusy.value = true
+  error.value = null
+  try {
+    await manageServices(action)
+    await load(true)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Service action failed'
+  } finally {
+    servicesBusy.value = false
+  }
+}
+
+let timer: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+  void load()
+  // Keep live status fresh while the widget is open (silent refreshes).
+  timer = setInterval(() => void load(true), 6000)
+})
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
 </script>
 
 <template>
@@ -133,6 +163,48 @@ onMounted(load)
           >
             {{ status.tools[tool.key] ? '✓' : '✗' }} {{ tool.label }}
           </span>
+        </div>
+
+        <div class="space-y-1.5 border-t-2 border-ink pt-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wide">Services</span>
+            <div class="flex gap-1">
+              <button
+                class="nb-btn px-2 py-0.5 text-[10px]"
+                :disabled="servicesBusy"
+                @click="doService('start')"
+              >
+                start
+              </button>
+              <button
+                class="nb-btn px-2 py-0.5 text-[10px]"
+                :disabled="servicesBusy"
+                @click="doService('stop')"
+              >
+                stop
+              </button>
+              <button
+                class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]"
+                :disabled="servicesBusy"
+                @click="doService('restart')"
+              >
+                restart
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span
+              v-for="s in services"
+              :key="s.name"
+              class="nb-badge text-[10px]"
+              :class="s.active ? 'bg-brand-lime' : 'bg-surface opacity-60'"
+            >
+              {{ s.active ? '●' : '○' }} {{ s.name }}
+            </span>
+            <span v-if="!services.length" class="font-mono text-[10px] opacity-60">
+              no services detected
+            </span>
+          </div>
         </div>
 
         <div v-if="boards" class="space-y-1.5 border-t-2 border-ink pt-2">

@@ -297,3 +297,19 @@ async def run_flash(
         settings.data_dir, device, profile, read_build_info(settings.data_dir, profile) or {}
     )
     yield ">>> Flash sequence complete — verify the board reconnects in Mainsail.\n"
+
+
+async def run_reboot(
+    method: str, device: str, interface: str, settings: Settings
+) -> AsyncIterator[str]:
+    """Asks a running board to drop into its Katapult bootloader (no flashing).
+
+    Useful to stage a board for a manual flash, or to recover one. Refused mid
+    print; the reboot itself is the same ``flashtool.py -r`` the flasher uses.
+    """
+    if await _is_printing(settings.moonraker_url):
+        yield "!! Refused: a print is in progress.\n"
+        return
+    async for line in _reboot_to_bootloader(method, device, interface or "can0", settings):
+        yield line
+    yield ">>> Reboot requested — the board should re-appear in its bootloader.\n"
