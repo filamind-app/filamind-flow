@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-05-31
+
+### Added
+
+- **External firmware section.** A new section in the Devices manager to register
+  pre-built firmware files (`.bin` / `.uf2` / `.elf` / `.hex`) and flash them
+  directly — no build step. Upload a file, edit its flash properties (label,
+  flash method, bootloader offset, CAN interface, notes), pick a target board,
+  and flash; files can also be downloaded or removed. Backed by new
+  `/api/firmware/external` endpoints.
+
 ## [0.22.0] - 2026-05-31
 
 ### Added
@@ -448,7 +459,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.23.0...HEAD
+[0.23.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.23.0
 [0.22.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.22.0
 [0.21.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.2
 [0.21.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.1

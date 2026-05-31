@@ -218,6 +218,42 @@ class FlashPlan(BaseModel):
     warnings: list[str] = []
 
 
+class ExternalFirmware(BaseModel):
+    """A registered external firmware file and its editable flash properties."""
+
+    name: str
+    label: str
+    method: str = "serial"
+    offset: str = ""
+    interface: str = "can0"
+    notes: str = ""
+    filename: str | None = None
+    size: int = 0
+
+
+class ExternalFirmwareResponse(BaseModel):
+    """All registered external firmware files."""
+
+    firmware: list[ExternalFirmware] = []
+
+
+class ExternalMetaUpdate(BaseModel):
+    """A patch of an external firmware's editable properties (only set fields apply)."""
+
+    label: str | None = None
+    method: str | None = None
+    offset: str | None = None
+    interface: str | None = None
+    notes: str | None = None
+
+
+class ExternalFlashRequest(BaseModel):
+    """Flashes a registered external firmware file onto a board."""
+
+    device: str
+    is_katapult: bool = True
+
+
 class DeviceBase(BaseModel):
     """The editable settings of a board saved in the registry."""
 

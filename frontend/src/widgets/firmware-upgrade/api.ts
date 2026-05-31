@@ -11,6 +11,8 @@ import type {
   Device,
   DeviceSave,
   DevicesResponse,
+  ExternalFirmware,
+  ExternalFirmwareResponse,
   HealthReport,
   ProfilesResponse,
   ServicesResponse,
@@ -185,6 +187,112 @@ export async function downloadArtifact(profile: string): Promise<void> {
   link.download = filename
   link.click()
   URL.revokeObjectURL(url)
+}
+
+/** Lists registered external firmware files (pre-built binaries to flash as-is). */
+export async function fetchExternal(): Promise<ExternalFirmwareResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/external`)
+  if (!response.ok) throw new Error(`External firmware request failed (${response.status})`)
+  return (await response.json()) as ExternalFirmwareResponse
+}
+
+/** Uploads an external firmware file (raw bytes). Returns the stored record. */
+export async function uploadExternal(
+  name: string,
+  ext: string,
+  file: File,
+): Promise<ExternalFirmware> {
+  const { backendUrl } = resolveEndpoints()
+  const url = `${backendUrl}/api/firmware/external?name=${encodeURIComponent(name)}&ext=${encodeURIComponent(ext)}`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: await file.arrayBuffer(),
+  })
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Upload failed (${response.status})`)
+  }
+  return (await response.json()) as ExternalFirmware
+}
+
+/** Updates an external firmware's editable properties (label / method / offset / …). */
+export async function updateExternalMeta(
+  name: string,
+  patch: Partial<ExternalFirmware>,
+): Promise<ExternalFirmware> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/external/${encodeURIComponent(name)}/meta`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    },
+  )
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Update failed (${response.status})`)
+  }
+  return (await response.json()) as ExternalFirmware
+}
+
+/** Deletes an external firmware file and its metadata. */
+export async function deleteExternal(name: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/external/${encodeURIComponent(name)}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) throw new Error(`Delete failed (${response.status})`)
+}
+
+/** Downloads a stored external firmware file (triggers a browser download). */
+export async function downloadExternal(name: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/external/${encodeURIComponent(name)}/download`,
+  )
+  if (!response.ok) throw new Error(`Download failed (${response.status})`)
+  const filename = filenameFromDisposition(
+    response.headers.get('Content-Disposition') ?? '',
+    `${name}.bin`,
+  )
+  const url = URL.createObjectURL(await response.blob())
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+/** Flashes a stored external firmware onto a board, streaming the log via onChunk. */
+export async function flashExternal(
+  name: string,
+  device: string,
+  isKatapult: boolean,
+  onChunk: (text: string) => void,
+): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/external/${encodeURIComponent(name)}/flash`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ device, is_katapult: isKatapult }),
+    },
+  )
+  if (!response.ok || !response.body) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Flash failed (${response.status})`)
+  }
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    onChunk(decoder.decode(value, { stream: true }))
+  }
 }
 
 /** Read-only: what a flash would do + its safety gates (runs nothing). */

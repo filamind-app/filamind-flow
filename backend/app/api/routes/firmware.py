@@ -19,6 +19,10 @@ from app.models.schemas import (
     Device,
     DeviceSave,
     DevicesResponse,
+    ExternalFirmware,
+    ExternalFirmwareResponse,
+    ExternalFlashRequest,
+    ExternalMetaUpdate,
     FirmwareProfile,
     FirmwareStatus,
     FlashPlan,
@@ -38,6 +42,7 @@ from app.services import (
     beacon_service,
     board_service,
     devices_store,
+    external_firmware,
     firmware_profiles,
     firmware_service,
     flash_service,
@@ -213,6 +218,105 @@ async def firmware_download_artifact(
         raise HTTPException(status_code=404, detail=f"No built firmware for profile '{name}'")
     return FileResponse(
         path, media_type="application/octet-stream", filename=os.path.basename(path)
+    )
+
+
+@router.get("/external", response_model=ExternalFirmwareResponse)
+async def firmware_external_list(
+    settings: Settings = Depends(get_settings),
+) -> ExternalFirmwareResponse:
+    """Lists registered external firmware files (pre-built binaries flashed as-is)."""
+    items = external_firmware.list_external(settings.data_dir)
+    return ExternalFirmwareResponse(firmware=[ExternalFirmware.model_validate(f) for f in items])
+
+
+@router.post("/external", response_model=ExternalFirmware)
+async def firmware_external_upload(
+    request: Request, name: str, ext: str, settings: Settings = Depends(get_settings)
+) -> ExternalFirmware:
+    """Uploads an external firmware file (raw body; ``name`` / ``ext`` are query params)."""
+    try:
+        saved = external_firmware.save_firmware(settings.data_dir, name, ext, await request.body())
+    except external_firmware.ExternalNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return ExternalFirmware.model_validate(saved)
+
+
+@router.post("/external/{name}/meta", response_model=ExternalFirmware)
+async def firmware_external_update(
+    name: str, patch: ExternalMetaUpdate, settings: Settings = Depends(get_settings)
+) -> ExternalFirmware:
+    """Updates an external firmware's editable properties (label / method / offset / …)."""
+    try:
+        external_firmware.validate_name(name)
+        updated = external_firmware.update_meta(
+            settings.data_dir, name, patch.model_dump(exclude_none=True)
+        )
+    except external_firmware.ExternalNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=404, detail=f"External firmware '{name}' not found"
+        ) from exc
+    return ExternalFirmware.model_validate(updated)
+
+
+@router.delete("/external/{name}")
+async def firmware_external_delete(
+    name: str, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Deletes an external firmware file and its metadata."""
+    try:
+        removed = external_firmware.delete_firmware(settings.data_dir, name)
+    except external_firmware.ExternalNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not removed:
+        raise HTTPException(status_code=404, detail=f"External firmware '{name}' not found")
+    return {"message": f"Deleted external firmware '{name}'"}
+
+
+@router.get("/external/{name}/download")
+async def firmware_external_download(
+    name: str, settings: Settings = Depends(get_settings)
+) -> FileResponse:
+    """Downloads a stored external firmware file."""
+    try:
+        external_firmware.validate_name(name)
+    except external_firmware.ExternalNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    path = external_firmware.firmware_path(settings.data_dir, name)
+    if path is None:
+        raise HTTPException(status_code=404, detail=f"External firmware '{name}' not found")
+    return FileResponse(
+        path, media_type="application/octet-stream", filename=os.path.basename(path)
+    )
+
+
+@router.post("/external/{name}/flash")
+async def firmware_external_flash(
+    name: str, request: ExternalFlashRequest, settings: Settings = Depends(get_settings)
+) -> StreamingResponse:
+    """Flashes a stored external firmware file onto a board, streaming the log."""
+    try:
+        external_firmware.validate_name(name)
+    except external_firmware.ExternalNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    path = external_firmware.firmware_path(settings.data_dir, name)
+    if path is None:
+        raise HTTPException(status_code=404, detail=f"External firmware '{name}' not found")
+    meta = external_firmware.read_meta(settings.data_dir, name)
+    return StreamingResponse(
+        flash_service.run_flash(
+            name,
+            meta["method"],
+            request.device,
+            meta.get("interface") or "can0",
+            settings,
+            request.is_katapult,
+            firmware=path,
+            offset_override=meta.get("offset") or None,
+        ),
+        media_type="text/plain",
     )
 
 
