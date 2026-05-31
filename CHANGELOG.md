@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-05-31
+
+### Added
+
+- `deploy/setup-sudoers.sh` — grants the backend the narrow passwordless-sudo
+  rights flashing needs (`systemctl`, `dfu-util`, `cp`, `chmod`). Run once with
+  sudo to enable the Flash phase; until then the UI reports flashing as blocked
+  and points to this script.
+
+### Fixed
+
+- Flash now stops/starts the correct service (`klipper-mcu` for a Linux-process
+  MCU, `klipper` for hardware MCUs) and marks an installed Linux MCU binary
+  executable.
+
 ## [0.6.0] - 2026-05-31
 
 ### Added
@@ -122,7 +137,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.1
 [0.6.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.0
 [0.5.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.5.0
 [0.4.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.4.0

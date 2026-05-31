@@ -146,7 +146,9 @@ async def flash_plan(
     if not artifact:
         warnings.append("No firmware has been built for this profile yet.")
     if needs_sudo and not sudo:
-        warnings.append("Passwordless sudo is not configured (needed to stop Klipper and flash).")
+        warnings.append(
+            "Passwordless sudo not configured — run deploy/setup-sudoers.sh on the host."
+        )
     ready = bool(artifact) and not printing and (sudo or not needs_sudo)
     return {
         "method": method,
@@ -209,16 +211,18 @@ async def run_flash(
         yield f"!! No firmware built for profile '{profile}'. Build it first.\n"
         return
     if method in _NEEDS_SUDO and not await _sudo_ready():
-        user = os.environ.get("USER", "pi")
         yield "!! Passwordless sudo is not configured — required to stop Klipper and flash.\n"
-        yield f"!! Add a sudoers rule for '{user}' (systemctl, dfu-util, cp) and retry.\n"
+        yield "!! Run once on the host:  sudo bash deploy/setup-sudoers.sh\n"
         return
 
     offset = flash_offset(profile_path(settings.data_dir, profile))
+    # A Linux-process MCU is held by the klipper-mcu service; a hardware MCU's
+    # serial is held by klippy itself — stop whichever owns the device.
+    service = "klipper-mcu" if method == "linux" else "klipper"
     yield f">>> Flashing {os.path.basename(artifact)} → {device} via {method}\n"
 
-    yield ">>> Stopping Klipper to free the bus…\n"
-    async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
+    yield f">>> Stopping {service} to free the device…\n"
+    async for line in _stream(["sudo", "-n", "systemctl", "stop", service]):
         yield line
 
     if method in ("serial", "can", "dfu"):
@@ -229,8 +233,11 @@ async def run_flash(
     yield f">>> {' '.join(command)}\n"
     async for line in _stream(command, cwd=settings.klipper_dir if method == "make" else None):
         yield line
+    if method == "linux":
+        async for line in _stream(["sudo", "-n", "chmod", "0755", "/usr/local/bin/klipper_mcu"]):
+            yield line
 
-    yield ">>> Restarting Klipper…\n"
-    async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
+    yield f">>> Restarting {service}…\n"
+    async for line in _stream(["sudo", "-n", "systemctl", "start", service]):
         yield line
     yield ">>> Flash sequence complete — verify the board reconnects in Mainsail.\n"
