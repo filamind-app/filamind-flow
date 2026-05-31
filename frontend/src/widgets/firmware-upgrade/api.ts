@@ -7,6 +7,9 @@ import type {
   FirmwareStatus,
   FlashPlan,
   FlashRequest,
+  FleetDevice,
+  FleetDeviceSave,
+  FleetResponse,
   ProfilesResponse,
 } from './types'
 
@@ -144,4 +147,59 @@ export async function flashBoard(
     if (done) break
     onChunk(decoder.decode(value, { stream: true }))
   }
+}
+
+/** Fetches the saved fleet (each device enriched with its last-flashed version). */
+export async function fetchFleet(): Promise<FleetResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/fleet`)
+  if (!response.ok) {
+    throw new Error(`Fleet request failed (${response.status})`)
+  }
+  return (await response.json()) as FleetResponse
+}
+
+/** Adds or updates a board in the fleet. Returns the saved device. */
+export async function saveFleetDevice(device: FleetDeviceSave): Promise<FleetDevice> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/fleet/device`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(device),
+  })
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Save failed (${response.status})`)
+  }
+  return (await response.json()) as FleetDevice
+}
+
+/** Removes a board from the fleet. */
+export async function removeFleetDevice(deviceId: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/fleet/device?device_id=${encodeURIComponent(deviceId)}`,
+    { method: 'DELETE' },
+  )
+  if (!response.ok) {
+    throw new Error(`Remove failed (${response.status})`)
+  }
+}
+
+/** Binds a discovered bootloader identity (serial / dfu) to a fleet device. */
+export async function attachIdentity(
+  fleetId: string,
+  hardwareId: string,
+  kind: string,
+): Promise<FleetDevice> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/fleet/attach`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fleet_id: fleetId, hardware_id: hardwareId, kind }),
+  })
+  if (!response.ok) {
+    throw new Error(`Attach failed (${response.status})`)
+  }
+  return (await response.json()) as FleetDevice
 }
