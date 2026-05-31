@@ -23,13 +23,9 @@ const busy = ref(false)
 const METHODS = ['serial', 'can', 'dfu', 'make']
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
 
-/** Per-firmware flash target + katapult choice (keyed by name). */
+/** Per-firmware flash target + katapult choice (keyed by name). Always populated
+ *  in load() — never created during render (which would loop the renderer). */
 const flashTo = reactive<Record<string, { device: string; katapult: boolean }>>({})
-
-function pick(name: string): { device: string; katapult: boolean } {
-  if (!flashTo[name]) flashTo[name] = { device: targets.value[0]?.id ?? '', katapult: true }
-  return flashTo[name]
-}
 
 async function load(): Promise<void> {
   error.value = null
@@ -42,6 +38,11 @@ async function load(): Promise<void> {
       .map((b: Board) => ({ id: b.id, label: `${b.name} (${b.connection})` }))
     const seen = new Set<string>()
     targets.value = [...devs, ...boards].filter((t) => !seen.has(t.id) && seen.add(t.id))
+    // Seed a flash choice for every firmware so the template never mutates state.
+    for (const fw of items.value) {
+      if (!flashTo[fw.name])
+        flashTo[fw.name] = { device: targets.value[0]?.id ?? '', katapult: true }
+    }
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to load external firmware'
   }
@@ -90,8 +91,8 @@ async function remove(fw: ExternalFirmware): Promise<void> {
 }
 
 async function doFlash(fw: ExternalFirmware): Promise<void> {
-  const target = pick(fw.name)
-  if (busy.value || !target.device) return
+  const target = flashTo[fw.name]
+  if (busy.value || !target?.device) return
   error.value = null
   activeName.value = fw.name
   log.value = `>>> flashing ${fw.filename} → ${target.device}\n`
@@ -178,17 +179,20 @@ onMounted(load)
         @change="persist(fw)"
       />
 
-      <div class="flex flex-wrap items-center gap-1.5 border-t-2 border-dashed border-ink pt-1.5">
+      <div
+        v-if="flashTo[fw.name]"
+        class="flex flex-wrap items-center gap-1.5 border-t-2 border-dashed border-ink pt-1.5"
+      >
         <span class="text-[10px] opacity-60">flash to:</span>
-        <select v-model="pick(fw.name).device" :class="inputClass">
+        <select v-model="flashTo[fw.name].device" :class="inputClass">
           <option v-for="t in targets" :key="t.id" :value="t.id">{{ t.label }}</option>
         </select>
         <label class="flex items-center gap-1 text-[10px]">
-          <input v-model="pick(fw.name).katapult" type="checkbox" /> katapult
+          <input v-model="flashTo[fw.name].katapult" type="checkbox" /> katapult
         </label>
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
-          :disabled="busy || !pick(fw.name).device"
+          :disabled="busy || !flashTo[fw.name].device"
           @click="doFlash(fw)"
         >
           {{ busy && activeName === fw.name ? 'flashing…' : 'flash' }}
