@@ -12,10 +12,12 @@ from app.models.schemas import (
     ConfigTreeRequest,
     FirmwareProfile,
     FirmwareStatus,
+    FlashPlan,
+    FlashRequest,
     ProfileSaveRequest,
     ProfilesResponse,
 )
-from app.services import board_service, firmware_profiles, firmware_service
+from app.services import board_service, firmware_profiles, firmware_service, flash_service
 from app.services.build_service import BuildService
 from app.services.kconfig_service import KconfigError, get_kconfig_service
 
@@ -125,3 +127,27 @@ async def firmware_build(
         raise HTTPException(status_code=404, detail=f"Profile '{profile}' not found")
     service = BuildService(settings.klipper_dir, settings.data_dir)
     return StreamingResponse(service.run_build(config_path, profile), media_type="text/plain")
+
+
+@router.post("/flash-plan", response_model=FlashPlan)
+async def firmware_flash_plan(
+    request: FlashRequest, settings: Settings = Depends(get_settings)
+) -> FlashPlan:
+    """Read-only: reports the exact command + safety gates for a flash, running nothing."""
+    data = await flash_service.flash_plan(
+        request.profile or "", request.method, request.device, request.interface, settings
+    )
+    return FlashPlan.model_validate(data)
+
+
+@router.post("/flash")
+async def firmware_flash(
+    request: FlashRequest, settings: Settings = Depends(get_settings)
+) -> StreamingResponse:
+    """Flashes a board, streaming the log. Refuses while printing or without sudo."""
+    return StreamingResponse(
+        flash_service.run_flash(
+            request.profile or "", request.method, request.device, request.interface, settings
+        ),
+        media_type="text/plain",
+    )

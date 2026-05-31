@@ -7,10 +7,11 @@ A living roadmap — updated as features land. Each feature ships on its own bra
 
 ## Widgets
 
-### 🚧 Firmware Upgrade
+### ✅ Firmware Upgrade
 
 Configure, build, flash and upgrade the firmware on every MCU of your printer —
-from the browser, no command line.
+from the browser, no command line. **The core pipeline (phases 1–5) is complete;**
+the enhancements below are next.
 
 | Phase | Scope | Risk |
 | ----- | ----- | ---- |
@@ -18,7 +19,7 @@ from the browser, no command line.
 | ✅ **2 — Discover** | Detect every board on any printer — Moonraker `[mcu]` + USB / CAN / DFU scans, with connection + mode | low (read-only) |
 | ✅ **3 — Configure** | Web Kconfig editor (reactive form) + saved per-board profiles | medium |
 | ✅ **4 — Build** | Compile firmware for a profile, with live streamed log | medium |
-| 🚧 **5 — Flash** | Flash via Katapult / DFU / avrdude, auto-reboot to bootloader, safety guards | high (touches hardware) |
+| ✅ **5 — Flash** | Flash via Katapult / DFU / `make flash`, reboot-to-bootloader, safety guards (print-lock, sudo, confirm) | high (touches hardware) |
 
 **Planned enhancements**
 
