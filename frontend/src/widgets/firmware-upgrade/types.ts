@@ -178,6 +178,22 @@ export interface DevicesResponse {
   devices: Device[]
 }
 
+/** A registered external firmware file (pre-built binary) + its flash properties. */
+export interface ExternalFirmware {
+  name: string
+  label: string
+  method: string
+  offset: string
+  interface: string
+  notes: string
+  filename: string | null
+  size: number
+}
+
+export interface ExternalFirmwareResponse {
+  firmware: ExternalFirmware[]
+}
+
 /** A background batch task's accumulating log and status. */
 export interface TaskStatus {
   id: string

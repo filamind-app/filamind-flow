@@ -101,7 +101,7 @@ def test_flash_refused_without_artifact(tmp_path: Path) -> None:
         json={"profile": "ghost", "method": "serial", "device": "/dev/ttyACM0"},
     )
     assert resp.status_code == 200
-    assert "No firmware built" in resp.text
+    assert "No firmware file to flash" in resp.text
 
 
 async def test_flash_skips_reboot_when_not_katapult(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]

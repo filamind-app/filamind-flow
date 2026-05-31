@@ -343,18 +343,22 @@ async def run_flash(
     interface: str,
     settings: Settings,
     is_katapult: bool = True,
+    firmware: str | None = None,
+    offset_override: str | None = None,
 ) -> AsyncIterator[str]:
     """Guarded flash sequence: stop services, reboot-to-bootloader, flash, restart.
 
     ``is_katapult=False`` skips the Katapult reboot-to-bootloader step for serial /
     CAN boards (boards without Katapult are flashed directly / via ``make flash``).
+    ``firmware`` flashes a direct file path (external firmware) instead of a built
+    profile artifact; ``offset_override`` sets the DFU/bootloader offset for it.
     """
     if await _is_printing(settings.moonraker_url):
         yield "!! Refused: a print is in progress. Flashing is blocked for safety.\n"
         return
-    artifact = artifact_path_for(settings.data_dir, profile) if profile else None
-    if not artifact:
-        yield f"!! No firmware built for profile '{profile}'. Build it first.\n"
+    artifact = firmware or (artifact_path_for(settings.data_dir, profile) if profile else None)
+    if not artifact or not os.path.isfile(artifact):
+        yield f"!! No firmware file to flash for '{profile or firmware}'.\n"
         return
     if method in _NEEDS_SUDO and not await _sudo_ready():
         yield "!! Passwordless sudo is not configured — required to stop Klipper and flash.\n"
@@ -374,7 +378,9 @@ async def run_flash(
         yield ">>> Flash sequence complete — host MCU reinstalled.\n"
         return
 
-    offset = flash_offset(profile_path(settings.data_dir, profile))
+    offset = offset_override or (
+        flash_offset(profile_path(settings.data_dir, profile)) if profile else _DEFAULT_OFFSET
+    )
     yield ">>> Stopping Klipper to free the device…\n"
     async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
         yield line
