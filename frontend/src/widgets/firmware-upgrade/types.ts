@@ -204,3 +204,15 @@ export interface BeaconResponse {
   repo: string | null
   available_version: string | null
 }
+
+/** One install-integrity check and how to fix it. */
+export interface HealthCheck {
+  name: string
+  ok: boolean
+  detail: string
+}
+
+export interface HealthReport {
+  healthy: boolean
+  checks: HealthCheck[]
+}

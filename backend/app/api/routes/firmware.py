@@ -23,6 +23,7 @@ from app.models.schemas import (
     FirmwareStatus,
     FlashPlan,
     FlashRequest,
+    HealthReport,
     ProfileSaveRequest,
     ProfilesResponse,
     RebootRequest,
@@ -39,6 +40,7 @@ from app.services import (
     firmware_profiles,
     firmware_service,
     flash_service,
+    health_service,
     services_service,
     task_store,
 )
@@ -315,6 +317,12 @@ async def firmware_beacon_flash(
     return StreamingResponse(
         beacon_service.flash_beacon(request.device, settings), media_type="text/plain"
     )
+
+
+@router.get("/health", response_model=HealthReport)
+async def firmware_health() -> HealthReport:
+    """Reports whether the host is set up for flashing (sudoers, udev DFU, dfu-util)."""
+    return HealthReport.model_validate(await health_service.gather_health())
 
 
 @router.get("/backup/export")
