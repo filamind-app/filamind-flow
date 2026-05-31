@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-05-31
+
+### Added
+
+- **Batch operations (Phase 8)** — build and/or flash every device in one go:
+  **Build all**, **Flash all**, **Flash ready** (only boards already sitting in
+  a bootloader), and **Build & flash**. It runs as a cancellable background task
+  with a live, colorized log; **cancel** stops it at the next checkpoint. Builds
+  are de-duplicated by profile, `exclude_from_batch` devices are skipped, and
+  each flash reuses the same guarded single-board sequence (print-lock, sudo,
+  bootloader reboot, version recording).
+
 ## [0.9.1] - 2026-05-31
 
 ### Changed
@@ -198,7 +210,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.10.0
 [0.9.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.9.1
 [0.9.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.9.0
 [0.8.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.8.0
