@@ -33,14 +33,13 @@ Phases 6+ grow it into a full multi-board manager.
 | ✅ **11 — Beacon** | Beacon eddy-probe firmware (detect probes + flash via the plugin's `update_firmware.py` + show the available version) | Beacon users |
 | ✅ **12 — Backup & Restore** | Export / import a ZIP of the **device registry + all Kconfig profiles** (binaries excluded, rebuildable; restore guards against zip path-traversal) | migrate or recover a whole setup |
 | ✅ **13 — Health & install integrity** | `/firmware/health` checks (sudoers, **udev DFU rule**, sudo-ready, dfu-util) + a UI **setup** badge with fix-it hints; `deploy/setup-sudoers.sh` now ships **`99-stm32-dfu.rules`** so DFU flashes without `sudo`. (Self-heal on startup needs root the backend doesn't have — the badge tells the user the one command to run instead.) | DFU-without-sudo + a clear setup light |
+| 📋 **14 — Configurator / profile parity** | Close the Kconfig-editor gaps found vs the reference tool (gap analysis 2026-05-31): **profile rename** (move artifacts + rewrite device refs) · **duplicate / save-as** · **download the built binary** (`/build/{p}/download`; the `artifact_path_for` helper already exists) · **force `HAVE_LIMITED_CODE_SIZE` + `LOW_LEVEL_OPTIONS`** (else the optimization / low-level menus stay hidden — a real regression) · **inline help text** (data already flows; only shown as a tooltip today) · a **Profile Info** card (name + modified count) · **show-raw-symbol-names** toggle · render Kconfig **comments** · `readonly` on the select/input branches · **build auto-saves** pending edits first · (optional node fields `default` / `dep_str` / `visible`) | a complete firmware configurator |
 
 **Ideas (not yet sequenced)**
 
-- 📋 One-click "Check & Upgrade" (installed vs upstream, per device) · Host↔MCU mismatch alerts · Pre-flight checks
-- 📋 Firmware backup + rollback · Board profile library (EBB36, Spider, …) · Scheduled flash · Flash audit log · Guided wizard
-- 📋 Configurator polish: modified-options count, raw-symbol-names toggle, profile **rename + duplicate**, Kalico firmware-name detection
-- 📋 Download a built binary to the browser · App self-update from the UI ("N commits behind" badge)
-- ✅ MCU telemetry (freq / load / retransmits) — shipped in v0.7.0
+- 📋 One-click "Check & Upgrade" (installed vs upstream, per device) · Pre-flight checks · Board profile library (EBB36, Spider, …) · Scheduled flash · Flash audit log · Guided wizard
+- 📋 Firmware backup + rollback · App self-update from the UI ("N commits behind" badge) · Kalico firmware-name detection · Test-DFU-Cycle + Katapult native wire-protocol (deferred from Phase 10)
+- ✅ MCU telemetry (freq / load / retransmits) — v0.7.0 · Host↔MCU **update/mismatch alert** (per-device ⚠ badge: live MCU firmware vs the host's running Klipper) — v0.17.x
 
 ### 📋 Other widgets
 

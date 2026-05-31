@@ -11,8 +11,8 @@ from __future__ import annotations
 import asyncio
 from typing import Any
 
-#: Never start/stop these — our own backend and any sibling firmware panel.
-_PROTECTED = ("filamind", "klipperfleet")
+#: Never start/stop our own backend service from the services manager.
+_PROTECTED = ("filamind",)
 #: Bring low-level MCUs up first; tear them down last (reverse on stop).
 _ORDER = ("klipper-mcu", "klipper", "moonraker")
 

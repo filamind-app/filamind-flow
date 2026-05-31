@@ -217,10 +217,16 @@ function normalizeVer(v: string | null | undefined): string {
   return (v ?? '').replace(/-dirty$/, '')
 }
 
-/** A device is out of date when its flashed firmware differs from the host's Klipper. */
+/** The board's actual running firmware, as the live MCU reports it to Moonraker
+ *  (NOT the repo build version) — falls back to the recorded flashed version. */
+function deviceFirmware(device: Device): string | null {
+  return boards.value.find((b) => b.id === device.id)?.version ?? device.flashed_version
+}
+
+/** Out of date = the board's running firmware differs from the host's running Klipper. */
 function isOutdated(device: Device): boolean {
   const host = normalizeVer(status.value?.host.version)
-  const dev = normalizeVer(device.flashed_version)
+  const dev = normalizeVer(boards.value.find((b) => b.id === device.id)?.version)
   return host !== '' && dev !== '' && dev !== host
 }
 
@@ -506,11 +512,11 @@ onUnmounted(() => {
                 <span
                   v-if="isOutdated(device)"
                   class="nb-badge bg-brand-red text-surface opacity-100"
-                  title="Flashed firmware differs from the host Klipper — build &amp; flash to update"
+                  title="Running firmware differs from the host's Klipper — build &amp; flash to update"
                 >
                   ⚠ update
                 </span>
-                <span v-if="device.flashed_version">{{ device.flashed_version }}</span>
+                <span v-if="deviceFirmware(device)">{{ deviceFirmware(device) }}</span>
               </span>
             </div>
             <div class="flex flex-wrap gap-1.5">
