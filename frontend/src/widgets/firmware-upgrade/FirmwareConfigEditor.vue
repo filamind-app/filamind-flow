@@ -359,7 +359,7 @@ onMounted(async () => {
               class="min-w-0 flex-1 truncate"
               :title="
                 item.node.readonly
-                  ? 'Locked — set automatically by another option'
+                  ? 'Locked — controlled by Klipper (a prerequisite or another option sets it); not directly editable here'
                   : (item.node.help ?? item.node.name)
               "
             >
