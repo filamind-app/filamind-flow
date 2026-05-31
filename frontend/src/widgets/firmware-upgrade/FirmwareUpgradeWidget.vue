@@ -148,7 +148,11 @@ onMounted(load)
             <span class="nb-badge shrink-0" :class="boardModeClass(board.mode)">{{
               board.mode
             }}</span>
-            <button class="nb-btn shrink-0 px-2 py-0.5 text-[10px]" @click="flashTarget = board">
+            <button
+              v-if="board.connection !== 'linux'"
+              class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
+              @click="flashTarget = board"
+            >
               flash
             </button>
           </div>

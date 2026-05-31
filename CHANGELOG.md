@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-05-31
+
+### Fixed
+
+- FilaMind no longer offers to flash a **Linux-process (host) MCU**. Rebuilding
+  and installing that binary from here can leave the `klipper-mcu` service unable
+  to start on some kernels — host MCU firmware is managed by Klipper/KIAUH. The
+  flash button is hidden for host MCUs and the API refuses the `linux` method.
+
 ## [0.7.0] - 2026-05-31
 
 ### Added
@@ -154,7 +163,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.1
 [0.7.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.0
 [0.6.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.2
 [0.6.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.1

@@ -102,3 +102,18 @@ def test_flash_refused_without_artifact(tmp_path: Path) -> None:
     )
     assert resp.status_code == 200
     assert "No firmware built" in resp.text
+
+
+def test_flash_linux_host_mcu_is_refused(tmp_path: Path) -> None:
+    # A Linux-process host MCU is never flashed by FilaMind (managed by Klipper).
+    resp = _client(tmp_path).post(
+        "/api/firmware/flash",
+        json={"profile": "x", "method": "linux", "device": "linux_process"},
+    )
+    assert "managed by Klipper" in resp.text
+
+    plan = _client(tmp_path).post(
+        "/api/firmware/flash-plan",
+        json={"profile": "x", "method": "linux", "device": "linux_process"},
+    )
+    assert plan.json()["ready"] is False
