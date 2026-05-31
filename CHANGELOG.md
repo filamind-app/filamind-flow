@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-31
+
+### Added
+
+- **Firmware flash (Phase 5 — Flash)**: push a built artifact onto a board from
+  the browser. `POST /api/firmware/flash` runs the right tool for the board —
+  Katapult `flashtool.py` (serial / CAN), `dfu-util` (DFU), or `make flash`
+  (AVR) — rebooting it to its bootloader first, and streams the log. A read-only
+  `POST /api/firmware/flash-plan` previews the exact command + safety gates.
+  Flashing is **refused while a print is running**, requires a built artifact,
+  and needs passwordless sudo; the UI shows the plan, warnings, and a hard
+  confirmation before anything touches the board. Completes the widget's
+  configure → build → flash pipeline.
+
 ## [0.5.0] - 2026-05-31
 
 ### Added
@@ -108,7 +122,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.0
 [0.5.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.5.0
 [0.4.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.4.0
 [0.3.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.3.0

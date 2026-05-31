@@ -45,10 +45,19 @@ def artifacts_dir(data_dir: str) -> str:
     return path
 
 
+def artifact_path_for(data_dir: str, name: str) -> str | None:
+    """Returns the path of the first built artifact for a profile, or None."""
+    artifacts = artifacts_dir(data_dir)
+    for ext in _ARTIFACT_EXTS:
+        path = os.path.join(artifacts, f"{name}.{ext}")
+        if os.path.isfile(path):
+            return path
+    return None
+
+
 def profile_is_built(data_dir: str, name: str) -> bool:
     """True if a built firmware artifact exists for the profile."""
-    artifacts = artifacts_dir(data_dir)
-    return any(os.path.isfile(os.path.join(artifacts, f"{name}.{ext}")) for ext in _ARTIFACT_EXTS)
+    return artifact_path_for(data_dir, name) is not None
 
 
 def profile_path(data_dir: str, name: str) -> str:

@@ -102,3 +102,25 @@ export interface ProfilesResponse {
   kconfig_available: boolean
   profiles: FirmwareProfile[]
 }
+
+/** A request to flash (or preview flashing) a board. */
+export interface FlashRequest {
+  profile: string | null
+  method: string
+  device: string
+  interface: string
+}
+
+/** Read-only preview of what a flash would do, plus its safety gates. */
+export interface FlashPlan {
+  method: string
+  device: string
+  artifact: string | null
+  command: string
+  offset: string
+  printing: boolean
+  artifact_exists: boolean
+  sudo_ready: boolean
+  ready: boolean
+  warnings: string[]
+}
