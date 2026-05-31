@@ -6,7 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.25.0] - 2026-05-31
+## [0.26.0] - 2026-05-31
+
+### Added
+
+- **Compare two external firmware files side by side.** A `compare A ⇄ B` picker
+  at the top of the External firmware section diffs the two files' detected
+  properties — app, version, MCU, size, and every baked-in `config` constant —
+  into a read-only table that highlights what **changed**, what's **only in A**,
+  what's **only in B**, and what's the **same** (with a per-config-key tally). The
+  diff runs entirely client-side from the already-inspected properties, so it
+  needs no extra request and never touches the files. Appears once two files are
+  registered.
 
 ### Added
 

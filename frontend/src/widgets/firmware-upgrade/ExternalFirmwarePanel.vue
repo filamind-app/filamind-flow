@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 
 import {
   deleteExternal,
@@ -11,6 +11,7 @@ import {
   updateExternalMeta,
   uploadExternal,
 } from './api'
+import { compareFirmware, type DiffRow, type DiffStatus } from './compare'
 import type { Board, Device, ExternalFirmware } from './types'
 
 const items = ref<ExternalFirmware[]>([])
@@ -35,11 +36,55 @@ function configEntries(fw: ExternalFirmware): [string, string][] {
   return Object.entries(fw.detected_config ?? {}).sort((a, b) => a[0].localeCompare(b[0]))
 }
 
+/** Two files chosen for the A ⇄ B comparison (by name; null = unset). */
+const compareA = ref<string | null>(null)
+const compareB = ref<string | null>(null)
+
+/** The diff of the two chosen files, or null until two *distinct* files are picked. */
+const comparison = computed(() => {
+  if (!compareA.value || !compareB.value || compareA.value === compareB.value) return null
+  const a = items.value.find((f) => f.name === compareA.value)
+  const b = items.value.find((f) => f.name === compareB.value)
+  return a && b ? compareFirmware(a, b) : null
+})
+
+function clearCompare(): void {
+  compareA.value = null
+  compareB.value = null
+}
+
+/** A chosen file's display label, for the comparison column headers. */
+function fwLabel(name: string | null): string {
+  const fw = items.value.find((f) => f.name === name)
+  return fw ? fw.label || fw.name : ''
+}
+
+/** A diff-row status → its Neo-Brutalist row tint. */
+function rowClass(status: DiffStatus): string {
+  return {
+    same: 'opacity-50',
+    changed: 'rounded bg-brand-yellow/40 px-1',
+    a_only: 'rounded bg-brand-red/20 px-1',
+    b_only: 'rounded bg-brand-lime/50 px-1',
+  }[status]
+}
+
+/** One side of a diff row, formatting the size field as KB. */
+function cell(row: DiffRow, side: 'a' | 'b'): string {
+  const value = side === 'a' ? row.a : row.b
+  if (value === null) return '—'
+  return row.key === 'size' ? kb(Number(value)) : value
+}
+
 async function load(): Promise<void> {
   error.value = null
   try {
     const [ext, dev, brd] = await Promise.all([fetchExternal(), fetchDevices(), fetchBoards()])
     items.value = ext.firmware
+    // Drop a comparison pick whose file was removed.
+    const names = new Set(items.value.map((f) => f.name))
+    if (compareA.value && !names.has(compareA.value)) compareA.value = null
+    if (compareB.value && !names.has(compareB.value)) compareB.value = null
     const devs = dev.devices.map((d: Device) => ({ id: d.id, label: `${d.name} (device)` }))
     const boards = brd.boards
       .filter((b: Board) => b.connection !== 'linux')
@@ -137,6 +182,93 @@ onMounted(load)
     </p>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+
+    <!-- Compare two files: an A ⇄ B diff of their detected properties (read-only). -->
+    <div
+      v-if="items.length >= 2"
+      class="space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2"
+    >
+      <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
+        <span class="font-bold uppercase tracking-wide">compare</span>
+        <select v-model="compareA" :class="inputClass">
+          <option :value="null">— A —</option>
+          <option v-for="fw in items" :key="fw.name" :value="fw.name">
+            {{ fw.label || fw.name }}
+          </option>
+        </select>
+        <span class="font-bold">⇄</span>
+        <select v-model="compareB" :class="inputClass">
+          <option :value="null">— B —</option>
+          <option v-for="fw in items" :key="fw.name" :value="fw.name">
+            {{ fw.label || fw.name }}
+          </option>
+        </select>
+        <button
+          v-if="compareA || compareB"
+          class="nb-btn px-1.5 py-0 text-[9px]"
+          @click="clearCompare"
+        >
+          clear
+        </button>
+      </div>
+
+      <div
+        v-if="compareA && compareB && compareA === compareB"
+        class="font-mono text-[9px] opacity-60"
+      >
+        Pick two different files.
+      </div>
+
+      <div v-else-if="comparison" class="space-y-1">
+        <div class="flex flex-wrap gap-1 font-mono text-[9px]">
+          <span class="nb-badge bg-brand-yellow">{{ comparison.counts.changed }} changed</span>
+          <span class="nb-badge bg-brand-red text-surface"
+            >{{ comparison.counts.a_only }} only in A</span
+          >
+          <span class="nb-badge bg-brand-lime">{{ comparison.counts.b_only }} only in B</span>
+          <span class="nb-badge">{{ comparison.counts.same }} same</span>
+        </div>
+
+        <div
+          class="grid grid-cols-[6rem_1fr_1fr] gap-2 border-b-2 border-ink pb-0.5 font-mono text-[9px] font-bold"
+        >
+          <span></span>
+          <span class="min-w-0 truncate">A · {{ fwLabel(compareA) }}</span>
+          <span class="min-w-0 truncate">B · {{ fwLabel(compareB) }}</span>
+        </div>
+
+        <div
+          v-for="row in comparison.meta"
+          :key="'m-' + row.key"
+          class="grid grid-cols-[6rem_1fr_1fr] items-center gap-2 font-mono text-[9px]"
+          :class="rowClass(row.status)"
+        >
+          <span class="opacity-70">{{ row.key }}</span>
+          <span class="min-w-0 break-all">{{ cell(row, 'a') }}</span>
+          <span class="min-w-0 break-all">{{ cell(row, 'b') }}</span>
+        </div>
+
+        <div
+          v-if="comparison.config.length"
+          class="mt-0.5 space-y-px border-t-2 border-dashed border-ink pt-0.5"
+        >
+          <div
+            v-for="row in comparison.config"
+            :key="'c-' + row.key"
+            class="grid grid-cols-[6rem_1fr_1fr] items-center gap-2 font-mono text-[9px]"
+            :class="rowClass(row.status)"
+          >
+            <span class="min-w-0 break-all opacity-70">{{ row.key }}</span>
+            <span class="min-w-0 break-all">{{ cell(row, 'a') }}</span>
+            <span class="min-w-0 break-all">{{ cell(row, 'b') }}</span>
+          </div>
+        </div>
+
+        <p class="pt-0.5 text-[8px] italic opacity-50">
+          Read-only comparison of the properties baked into each file.
+        </p>
+      </div>
+    </div>
 
     <div
       v-for="fw in items"
