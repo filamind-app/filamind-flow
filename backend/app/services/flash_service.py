@@ -113,12 +113,18 @@ async def _is_printing(moonraker_url: str) -> bool:
 
 
 async def _sudo_ready() -> bool:
-    """True if passwordless sudo works (``sudo -n true`` succeeds)."""
+    """True if the backend can sudo without a password.
+
+    The sudoers rule only grants NOPASSWD for specific binaries, so we probe one
+    of them (``systemctl --version``) rather than ``true`` — which would not match
+    the rule and would always look unauthorised.
+    """
     try:
         proc = await asyncio.create_subprocess_exec(
             "sudo",
             "-n",
-            "true",
+            "systemctl",
+            "--version",
             stdout=asyncio.subprocess.DEVNULL,
             stderr=asyncio.subprocess.DEVNULL,
         )
