@@ -2,11 +2,12 @@
 import { computed, onMounted, ref } from 'vue'
 
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
+import FirmwareFleetPanel from './FirmwareFleetPanel.vue'
 import FirmwareFlashPanel from './FirmwareFlashPanel.vue'
 import { fetchBoards, fetchFirmwareStatus } from './api'
 import type { Board, BoardDiscovery, FirmwareStatus, FirmwareTools } from './types'
 
-const mode = ref<'status' | 'configure'>('status')
+const mode = ref<'status' | 'configure' | 'fleet'>('status')
 const flashTarget = ref<Board | null>(null)
 const status = ref<FirmwareStatus | null>(null)
 const boards = ref<BoardDiscovery | null>(null)
@@ -57,6 +58,7 @@ onMounted(load)
   <div class="space-y-3 text-sm">
     <FirmwareFlashPanel v-if="flashTarget" :board="flashTarget" @close="flashTarget = null" />
     <FirmwareConfigEditor v-else-if="mode === 'configure'" @close="mode = 'status'" />
+    <FirmwareFleetPanel v-else-if="mode === 'fleet'" @close="mode = 'status'" />
     <template v-else>
       <div v-if="loading" class="font-mono text-xs">Loading firmware status…</div>
       <div v-else-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
@@ -166,9 +168,14 @@ onMounted(load)
           </p>
         </div>
 
-        <button class="nb-btn w-full bg-brand-cyan py-1 text-xs" @click="mode = 'configure'">
-          Configure firmware →
-        </button>
+        <div class="flex gap-2">
+          <button class="nb-btn flex-1 bg-brand-yellow py-1 text-xs" @click="mode = 'fleet'">
+            Fleet →
+          </button>
+          <button class="nb-btn flex-1 bg-brand-cyan py-1 text-xs" @click="mode = 'configure'">
+            Configure →
+          </button>
+        </div>
       </template>
     </template>
   </div>
