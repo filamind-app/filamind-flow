@@ -220,11 +220,11 @@ class KconfigService:
         if isinstance(item, kl.Symbol):
             if kl.expr_value(item.rev_dep) > 0:
                 entry["readonly"] = True  # selected by another symbol
-            if item.visibility == 0:
-                # Reached here only via the want_optional path: the symbol's
-                # prerequisite isn't enabled, so Kconfig won't let it be toggled.
-                # Show it (informationally) but locked, not as a dead toggle.
-                entry["readonly"] = True
+            # NOTE: the want_optional "WANT_*" features (visibility 0) are shown as
+            # normal toggles, matching the reference tool. On boards with enough
+            # flash Klipper auto-includes them (HAVE_LIMITED_CODE_SIZE is select-only
+            # for <64KB MCUs), so the toggle is effectively informational there; on
+            # flash-limited boards it genuinely applies.
             entry["default"] = self._default_str(item)
             entry["dep_str"] = self._dep_str(item)
         elif isinstance(item, kl.Choice):
