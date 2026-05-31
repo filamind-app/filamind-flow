@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-05-31
+
+### Added
+
+- **Configurator: low-level options are always visible.** The firmware config
+  editor now force-enables Klipper's `LOW_LEVEL_OPTIONS` (and
+  `HAVE_LIMITED_CODE_SIZE`) gates, so the optimization / low-level menus Klipper
+  hides by default always show. Revealed options keep their defaults — a build
+  is unchanged unless you edit one.
+- **Download the built firmware binary.** Built profiles get a **↓ .bin** button
+  (backed by `GET /api/firmware/config/profiles/{name}/artifact`) to download the
+  compiled `.bin` / `.uf2` / `.elf` for manual flashing.
+
+### Changed
+
+- README refreshed — it described an "empty scaffold"; it now documents the
+  shipped Firmware Upgrade widget.
+
 ## [0.17.1] - 2026-05-31
 
 ### Fixed
@@ -323,7 +341,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.17.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.18.0
 [0.17.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.17.1
 [0.17.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.17.0
 [0.16.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.2

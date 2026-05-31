@@ -116,6 +116,26 @@ export async function buildFirmware(
   }
 }
 
+/** Downloads a profile's built firmware binary (triggers a browser download). */
+export async function downloadArtifact(profile: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/config/profiles/${encodeURIComponent(profile)}/artifact`,
+  )
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Download failed (${response.status})`)
+  }
+  const disposition = response.headers.get('Content-Disposition') ?? ''
+  const filename = /filename="?([^"]+)"?/.exec(disposition)?.[1] ?? `${profile}.bin`
+  const url = URL.createObjectURL(await response.blob())
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 /** Read-only: what a flash would do + its safety gates (runs nothing). */
 export async function fetchFlashPlan(request: FlashRequest): Promise<FlashPlan> {
   const { backendUrl } = resolveEndpoints()
