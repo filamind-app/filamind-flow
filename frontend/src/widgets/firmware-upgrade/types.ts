@@ -65,3 +65,39 @@ export interface BoardDiscovery {
   boards: Board[]
   scanned: BoardScan
 }
+
+/** One option of a Kconfig `choice` symbol. */
+export interface ConfigChoice {
+  name: string
+  prompt: string
+}
+
+/** A node of Klipper's Kconfig menu tree (menu, symbol, or choice). */
+export interface ConfigNode {
+  name: string
+  type: string
+  prompt: string
+  value: string | null
+  help: string | null
+  choices: ConfigChoice[]
+  readonly: boolean
+  children: ConfigNode[]
+}
+
+/** A single edited symbol value sent back to the backend. */
+export interface ConfigEdit {
+  name: string
+  value: string
+}
+
+export interface FirmwareProfile {
+  name: string
+  is_can_bridge: boolean
+  is_linux: boolean
+  is_avr: boolean
+}
+
+export interface ProfilesResponse {
+  kconfig_available: boolean
+  profiles: FirmwareProfile[]
+}

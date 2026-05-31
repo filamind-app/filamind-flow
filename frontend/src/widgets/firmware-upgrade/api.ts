@@ -1,6 +1,12 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { BoardDiscovery, FirmwareStatus } from './types'
+import type {
+  BoardDiscovery,
+  ConfigEdit,
+  ConfigNode,
+  FirmwareStatus,
+  ProfilesResponse,
+} from './types'
 
 /** Fetches read-only firmware status from the FilaMind backend. */
 export async function fetchFirmwareStatus(): Promise<FirmwareStatus> {
@@ -20,4 +26,64 @@ export async function fetchBoards(): Promise<BoardDiscovery> {
     throw new Error(`Board discovery failed (${response.status})`)
   }
   return (await response.json()) as BoardDiscovery
+}
+
+interface ConfigTreeBody {
+  profile?: string | null
+  values: ConfigEdit[]
+  show_optional?: boolean
+}
+
+/** Loads Klipper's Kconfig menu tree, with an optional base profile + live edits. */
+export async function fetchConfigTree(body: ConfigTreeBody): Promise<ConfigNode[]> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/config/tree`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!response.ok) {
+    throw new Error(`Config tree request failed (${response.status})`)
+  }
+  return (await response.json()) as ConfigNode[]
+}
+
+/** Lists saved per-board firmware profiles. */
+export async function fetchProfiles(): Promise<ProfilesResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/config/profiles`)
+  if (!response.ok) {
+    throw new Error(`Profiles request failed (${response.status})`)
+  }
+  return (await response.json()) as ProfilesResponse
+}
+
+/** Saves Kconfig edits (atop an optional base) as a named profile. */
+export async function saveProfile(body: {
+  name: string
+  values: ConfigEdit[]
+  base_profile?: string | null
+}): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/config/profiles`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Save failed (${response.status})`)
+  }
+}
+
+/** Deletes a saved firmware profile. */
+export async function deleteProfile(name: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/config/profiles/${encodeURIComponent(name)}`,
+    { method: 'DELETE' },
+  )
+  if (!response.ok) {
+    throw new Error(`Delete failed (${response.status})`)
+  }
 }

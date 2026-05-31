@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     klipper_dir: str = "~/klipper"
     katapult_dir: str = "~/katapult"
 
+    # Where FilaMind keeps its own data (per-board firmware profiles, etc.).
+    data_dir: str = "~/printer_data/config/filamind"
+
     # Comma-separated browser origins allowed to call this API.
     cors_origins: str = "http://localhost:5173"
 

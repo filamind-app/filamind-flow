@@ -1,0 +1,29 @@
+# Minimal self-contained Kconfig used by the firmware-config editor tests.
+# Mirrors the shape of Klipper's real src/Kconfig (a choice + symbols + a
+# dependency) without needing a Klipper checkout.
+
+mainmenu "Fake Klipper Firmware Configuration"
+
+choice
+	prompt "Micro-controller Architecture"
+
+config MACH_DEMO_STM32
+	bool "STMicroelectronics STM32"
+
+config MACH_DEMO_AVR
+	bool "Atmel AVR"
+
+endchoice
+
+config DEMO_CLOCK_FREQ
+	int "Clock Frequency"
+	default 8000000
+
+config DEMO_USB
+	bool "Use USB for communication"
+	default y
+
+config DEMO_SERIAL
+	string "Serial device"
+	default "/dev/ttyAMA0"
+	depends on !DEMO_USB
