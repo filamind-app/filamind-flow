@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.23.1] - 2026-05-31
+
+### Fixed
+
+- **External firmware section no longer freezes the page.** The per-file
+  flash-target state was created lazily inside a `v-model` during render, which
+  looped the renderer once a firmware entry existed. It's now seeded when the
+  list loads.
+
 ## [0.23.0] - 2026-05-31
 
 ### Added
@@ -459,7 +468,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.23.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.23.1...HEAD
+[0.23.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.23.1
 [0.23.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.23.0
 [0.22.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.22.0
 [0.21.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.2
