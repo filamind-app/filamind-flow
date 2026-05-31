@@ -12,6 +12,10 @@ export interface McuFirmware {
   in_sync: boolean | null
   /** Connection type from the Klipper config: host / canbus / usb / serial. */
   kind: string
+  /** Live telemetry from the MCU's last_stats (null when unavailable). */
+  freq: number | null
+  awake: number | null
+  retransmits: number | null
 }
 
 /** The optional Klipper "Linux process" MCU running on the host machine. */

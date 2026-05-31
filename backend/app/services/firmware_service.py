@@ -19,6 +19,14 @@ def _normalize(version: str | None) -> str:
     return (version or "").removesuffix("-dirty")
 
 
+def _as_int(value: Any) -> int | None:
+    return int(value) if isinstance(value, (int, float)) else None
+
+
+def _as_float(value: Any) -> float | None:
+    return float(value) if isinstance(value, (int, float)) else None
+
+
 def _classify_mcu(settings: dict[str, Any], config_key: str) -> str:
     """Derives an MCU's connection kind from its parsed Klipper config section."""
     section = settings.get(config_key)
@@ -98,12 +106,17 @@ async def gather_status(moonraker_url: str, klipper_dir: str, katapult_dir: str)
             in_sync = (
                 _normalize(ver) == _normalize(host_version) if (ver and host_version) else None
             )
+            stats = obj.get("last_stats")
+            stats = stats if isinstance(stats, dict) else {}
             mcus.append(
                 {
                     "name": label,
                     "version": ver,
                     "in_sync": in_sync,
                     "kind": _classify_mcu(settings, name),
+                    "freq": _as_int(stats.get("freq")),
+                    "awake": _as_float(stats.get("mcu_awake")),
+                    "retransmits": _as_int(stats.get("bytes_retransmit")),
                 }
             )
     except httpx.HTTPError:

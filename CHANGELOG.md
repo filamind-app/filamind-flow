@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-31
+
+### Added
+
+- **Live MCU telemetry** in the firmware status — each MCU now shows its actual
+  clock frequency, awake load, and retransmitted-bytes count (the key host↔MCU
+  comms-health signal, highlighted when non-zero), pulled from the MCU's
+  `last_stats`. First of the Firmware Upgrade widget's planned enhancements.
+
 ## [0.6.2] - 2026-05-31
 
 ### Fixed
@@ -145,7 +154,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.0
 [0.6.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.2
 [0.6.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.1
 [0.6.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.0
