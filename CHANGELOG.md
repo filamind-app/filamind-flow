@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.17.1] - 2026-05-31
+
+### Fixed
+
+- **Update alert compares the right versions** — a device's **⚠ update** badge
+  now compares its **live MCU firmware** (what Moonraker reports the board
+  running) against the **host's running Klipper** (`software_version`), instead
+  of the repo build version. Both come from the live printer, matching how
+  Klipper itself decides host↔MCU sync.
+
+### Added
+
+- Roadmap **Phase 14 — Configurator / profile parity**, capturing the
+  profile-creation gaps found vs the reference (rename, duplicate / save-as,
+  download the built binary, forced low-level symbols, inline help text, …).
+
 ## [0.17.0] - 2026-05-31
 
 ### Added
@@ -307,7 +323,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.17.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.17.1...HEAD
+[0.17.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.17.1
 [0.17.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.17.0
 [0.16.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.2
 [0.16.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.1
