@@ -232,6 +232,9 @@ class ExternalFirmware(BaseModel):
     #: Read-only properties detected inside the binary (best-effort).
     detected_version: str | None = None
     detected_mcu: str | None = None
+    #: The firmware's app ("Klipper" / "Katapult") and its baked-in build config.
+    detected_app: str | None = None
+    detected_config: dict[str, str] | None = None
 
 
 class ExternalFirmwareResponse(BaseModel):

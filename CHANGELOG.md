@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-05-31
+
+### Added
+
+- **External firmware shows the full build config baked into the file (read-only).**
+  Beyond the Klipper version, the inspector now decompresses the firmware's data
+  dictionary and surfaces every constant compiled into the binary — `MCU`,
+  `CLOCK_FREQ`, the reserved USB / SPI / I2C bus pins, `STEPPER_BOTH_EDGE`,
+  `ADC_MAX` / `PWM_MAX`, … — in a collapsible, read-only list under each file
+  (e.g. an SV08 `.bin` reveals its 14 baked-in settings). These are compiled into
+  the machine code and **cannot be edited**: to change them, build a profile in
+  Configure and flash that instead — the panel says so explicitly rather than
+  implying the values are editable.
+
 ## [0.24.1] - 2026-05-31
 
 ### Fixed
