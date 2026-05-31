@@ -269,6 +269,38 @@ export async function flashBeacon(device: string, onChunk: (text: string) => voi
   }
 }
 
+/** Downloads a ZIP backup of the registry + profiles (triggers a browser download). */
+export async function exportBackup(): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/backup/export`)
+  if (!response.ok) {
+    throw new Error(`Backup export failed (${response.status})`)
+  }
+  const url = URL.createObjectURL(await response.blob())
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'filamind-backup.zip'
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+/** Restores a backup ZIP (raw bytes). Returns what was put back. */
+export async function importBackup(
+  file: File,
+): Promise<{ restored_devices: boolean; restored_profiles: string[] }> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/backup/import`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: await file.arrayBuffer(),
+  })
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Import failed (${response.status})`)
+  }
+  return (await response.json()) as { restored_devices: boolean; restored_profiles: string[] }
+}
+
 /** Lists the host's Klipper / Moonraker services and their active state. */
 export async function fetchServices(): Promise<ServicesResponse> {
   const { backendUrl } = resolveEndpoints()
