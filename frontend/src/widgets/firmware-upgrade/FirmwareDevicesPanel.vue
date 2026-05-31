@@ -3,19 +3,15 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import {
   attachIdentity,
-  cancelTask,
   exportBackup,
   fetchBoards,
   fetchDevices,
   fetchProfiles,
-  fetchTask,
   importBackup,
-  rebootBoard,
   removeDevice,
   saveDevice,
-  startBatch,
 } from './api'
-import type { Board, FirmwareProfile, Device } from './types'
+import type { Board, Device, FirmwareProfile } from './types'
 
 defineEmits<{ close: [] }>()
 
@@ -33,6 +29,19 @@ const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 te
 
 /** Boards on the bus that are not yet saved in the registry. */
 const unmanaged = computed(() => boards.value.filter((b) => !b.managed))
+
+/** Live bus mode (service / ready / dfu / …) keyed by board id. */
+const liveMode = computed(() => {
+  const map: Record<string, string> = {}
+  for (const b of boards.value) map[b.id] = b.mode
+  return map
+})
+
+function modeClass(mode: string): string {
+  if (mode === 'service') return 'bg-brand-lime'
+  if (mode === 'ready' || mode === 'dfu') return 'bg-brand-yellow'
+  return 'bg-surface opacity-60'
+}
 
 async function load(): Promise<void> {
   loading.value = true
@@ -108,94 +117,6 @@ async function remove(device: Device): Promise<void> {
   }
 }
 
-// --- Batch operations (build / flash every device, with a cancellable log) ---
-const BATCH_ACTIONS = [
-  { action: 'build-all', label: 'Build all', cls: 'bg-surface' },
-  { action: 'flash-all', label: 'Flash all', cls: 'bg-brand-yellow' },
-  { action: 'flash-ready', label: 'Flash ready', cls: 'bg-brand-yellow' },
-  { action: 'build-flash-all', label: 'Build & flash', cls: 'bg-brand-red text-surface' },
-]
-const batchLog = ref('')
-const batchRunning = ref(false)
-const batchTaskId = ref<string | null>(null)
-let pollTimer: ReturnType<typeof setTimeout> | null = null
-
-const batchLines = computed(() => batchLog.value.split('\n'))
-
-function batchLineClass(line: string): string {
-  if (line.startsWith('!!') || /fail/i.test(line)) return 'text-brand-red'
-  if (line.includes('=====') || /\bOK\b|complete|successful/i.test(line)) return 'text-brand-lime'
-  if (line.startsWith('>>>')) return 'text-brand-cyan'
-  return 'text-surface opacity-80'
-}
-
-async function poll(): Promise<void> {
-  if (!batchTaskId.value) return
-  try {
-    const task = await fetchTask(batchTaskId.value)
-    batchLog.value = task.log
-    if (task.status === 'running') {
-      pollTimer = setTimeout(poll, 1200)
-    } else {
-      batchRunning.value = false
-      await load()
-    }
-  } catch {
-    batchRunning.value = false
-  }
-}
-
-async function runBatch(action: string): Promise<void> {
-  if (batchRunning.value) return
-  error.value = null
-  batchLog.value = ''
-  batchRunning.value = true
-  try {
-    batchTaskId.value = await startBatch(action)
-    await poll()
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Batch failed'
-    batchRunning.value = false
-  }
-}
-
-async function cancelBatch(): Promise<void> {
-  if (batchTaskId.value) await cancelTask(batchTaskId.value)
-}
-
-// --- Live status + per-device reboot-to-bootloader ---
-const liveMode = computed(() => {
-  const map: Record<string, string> = {}
-  for (const b of boards.value) map[b.id] = b.mode
-  return map
-})
-
-function modeClass(mode: string): string {
-  if (mode === 'service') return 'bg-brand-lime'
-  if (mode === 'ready' || mode === 'dfu') return 'bg-brand-yellow'
-  return 'bg-surface opacity-60'
-}
-
-async function rebootDevice(device: Device, mode = 'katapult'): Promise<void> {
-  if (batchRunning.value) return
-  error.value = null
-  batchLog.value = ''
-  batchRunning.value = true
-  try {
-    await rebootBoard(
-      { method: device.method, device: device.id, interface: device.interface, mode },
-      (chunk) => {
-        batchLog.value += chunk
-      },
-    )
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Reboot failed'
-  } finally {
-    batchRunning.value = false
-    await load()
-  }
-}
-
 // Refresh only the live board modes on a timer — never the editable device rows.
 let boardsTimer: ReturnType<typeof setInterval> | null = null
 async function refreshBoards(): Promise<void> {
@@ -243,7 +164,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (pollTimer) clearTimeout(pollTimer)
   if (boardsTimer) clearInterval(boardsTimer)
 })
 </script>
@@ -251,53 +171,19 @@ onUnmounted(() => {
 <template>
   <div class="space-y-2 text-sm">
     <div class="flex items-center justify-between gap-2">
-      <span class="text-xs font-bold uppercase tracking-wide">Devices</span>
+      <span class="text-xs font-bold uppercase tracking-wide">Devices manager</span>
       <button class="nb-btn px-2 py-0.5 text-xs" @click="$emit('close')">← back</button>
     </div>
+    <p class="font-mono text-[10px] opacity-60">
+      Add boards, assign a profile, and configure how each is flashed. Build / flash lives on the
+      main screen.
+    </p>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
     <div v-if="loading" class="font-mono text-xs">Loading devices…</div>
 
     <template v-else>
-      <!-- Batch operations across every registered device -->
-      <div class="space-y-1.5 rounded-brutal border-2 border-ink p-2">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wide">Batch</span>
-          <button
-            v-if="batchRunning"
-            class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
-            @click="cancelBatch"
-          >
-            cancel
-          </button>
-        </div>
-        <div class="flex flex-wrap gap-1.5">
-          <button
-            v-for="b in BATCH_ACTIONS"
-            :key="b.action"
-            class="nb-btn px-2 py-0.5 text-[10px]"
-            :class="b.cls"
-            :disabled="batchRunning"
-            @click="runBatch(b.action)"
-          >
-            {{ b.label }}
-          </button>
-        </div>
-        <div
-          v-if="batchLog"
-          class="max-h-56 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight"
-        >
-          <div
-            v-for="(line, i) in batchLines"
-            :key="i"
-            :class="['whitespace-pre-wrap break-all', batchLineClass(line)]"
-          >
-            {{ line }}
-          </div>
-        </div>
-      </div>
-
-      <!-- Registered devices -->
+      <!-- Registered devices (configure each board) -->
       <div
         v-for="device in devices"
         :key="device.id"
@@ -315,27 +201,6 @@ onUnmounted(() => {
           >
             {{ liveMode[device.id] ?? 'offline' }}
           </span>
-          <span v-if="device.flashed_version" class="shrink-0 font-mono text-[9px] opacity-60">{{
-            device.flashed_version
-          }}</span>
-          <button
-            v-if="device.method === 'serial' || device.method === 'can'"
-            class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
-            :disabled="batchRunning"
-            title="Reboot into the Katapult bootloader"
-            @click="rebootDevice(device, 'katapult')"
-          >
-            boot
-          </button>
-          <button
-            v-if="device.method === 'serial'"
-            class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
-            :disabled="batchRunning"
-            title="1200-baud touch into STM32 DFU"
-            @click="rebootDevice(device, 'dfu')"
-          >
-            dfu
-          </button>
           <button
             class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[10px] text-surface"
             @click="remove(device)"
