@@ -1,12 +1,12 @@
-"""The fleet — a saved registry of the printer's boards and how to flash each.
+"""Devices — a saved registry of the printer's boards and how to flash each.
 
 Board *discovery* (``board_service``) reports what is on the bus right now; the
-fleet remembers your *intent*: which build profile belongs to each board, how to
+registry remembers your *intent*: which build profile belongs to each board, how to
 reach it (method, baudrate, CAN interface), and the separate bootloader identity
 a board takes on when it drops into Katapult or DFU to be flashed (a board often
 enumerates under a *different* id while in its bootloader, so we store both).
 
-Persisted as a JSON list under ``<data_dir>/fleet.json`` with atomic writes. The
+Persisted as a JSON list under ``<data_dir>/devices.json`` with atomic writes. The
 firmware *version* of each device is deliberately not stored here — it is read
 back from the flash records in ``version_store`` so there is one source of truth.
 """
@@ -17,8 +17,8 @@ import json
 import os
 from typing import Any
 
-#: Every field a fleet device carries, with its default. Unknown keys are
-#: dropped on normalise so a stray ``old_id`` never lands in fleet.json.
+#: Every field a device carries, with its default. Unknown keys are
+#: dropped on normalise so a stray ``old_id`` never lands in devices.json.
 _DEVICE_DEFAULTS: dict[str, Any] = {
     "id": "",
     "name": "",
@@ -38,9 +38,9 @@ _DEVICE_DEFAULTS: dict[str, Any] = {
 }
 
 
-def fleet_path(data_dir: str) -> str:
-    """The fleet registry file (``<data_dir>/fleet.json``)."""
-    return os.path.join(os.path.expanduser(data_dir), "fleet.json")
+def devices_path(data_dir: str) -> str:
+    """The device registry file (``<data_dir>/devices.json``)."""
+    return os.path.join(os.path.expanduser(data_dir), "devices.json")
 
 
 def _normalise(device: dict[str, Any]) -> dict[str, Any]:
@@ -49,10 +49,10 @@ def _normalise(device: dict[str, Any]) -> dict[str, Any]:
     return {key: merged[key] for key in _DEVICE_DEFAULTS}
 
 
-def read_fleet(data_dir: str) -> list[dict[str, Any]]:
-    """Returns the saved fleet (empty if none / unreadable). Skips id-less rows."""
+def read_devices(data_dir: str) -> list[dict[str, Any]]:
+    """Returns the saved devices (empty if none / unreadable). Skips id-less rows."""
     try:
-        with open(fleet_path(data_dir)) as handle:
+        with open(devices_path(data_dir)) as handle:
             data = json.load(handle)
     except (OSError, json.JSONDecodeError):
         return []
@@ -61,9 +61,9 @@ def read_fleet(data_dir: str) -> list[dict[str, Any]]:
     return [_normalise(d) for d in data if isinstance(d, dict) and d.get("id")]
 
 
-def write_fleet(data_dir: str, devices: list[dict[str, Any]]) -> None:
-    """Atomically writes the fleet registry."""
-    path = fleet_path(data_dir)
+def write_devices(data_dir: str, devices: list[dict[str, Any]]) -> None:
+    """Atomically writes the device registry."""
+    path = devices_path(data_dir)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     tmp = f"{path}.tmp"
     with open(tmp, "w") as handle:
@@ -72,8 +72,8 @@ def write_fleet(data_dir: str, devices: list[dict[str, Any]]) -> None:
 
 
 def get_device(data_dir: str, device_id: str) -> dict[str, Any] | None:
-    """Returns a single fleet device by id, or None."""
-    for device in read_fleet(data_dir):
+    """Returns a single device by id, or None."""
+    for device in read_devices(data_dir):
         if device["id"] == device_id:
             return device
     return None
@@ -83,51 +83,51 @@ def save_device(data_dir: str, device: dict[str, Any], old_id: str | None = None
     """Inserts or updates a device, matched by ``old_id`` (for renames) or its id."""
     record = _normalise(device)
     key = old_id or record["id"]
-    devices = read_fleet(data_dir)
+    devices = read_devices(data_dir)
     for index, existing in enumerate(devices):
         if existing["id"] == key:
             devices[index] = record
             break
     else:
         devices.append(record)
-    write_fleet(data_dir, devices)
+    write_devices(data_dir, devices)
     return record
 
 
 def remove_device(data_dir: str, device_id: str) -> bool:
-    """Removes a device from the fleet. Returns False if it was not present."""
-    devices = read_fleet(data_dir)
+    """Removes a device from the registry. Returns False if it was not present."""
+    devices = read_devices(data_dir)
     kept = [d for d in devices if d["id"] != device_id]
     if len(kept) == len(devices):
         return False
-    write_fleet(data_dir, kept)
+    write_devices(data_dir, kept)
     return True
 
 
 def attach_identity(
-    data_dir: str, fleet_id: str, hardware_id: str, kind: str
+    data_dir: str, device_id: str, hardware_id: str, kind: str
 ) -> dict[str, Any] | None:
     """Binds a discovered bootloader identity (``serial`` / ``dfu``) to a device.
 
-    Returns the updated device, or None if no fleet device has ``fleet_id``.
+    Returns the updated device, or None if no device has ``device_id``.
     """
     field = "dfu_id" if kind == "dfu" else "serial_id"
-    devices = read_fleet(data_dir)
+    devices = read_devices(data_dir)
     for device in devices:
-        if device["id"] == fleet_id:
+        if device["id"] == device_id:
             device[field] = hardware_id
-            write_fleet(data_dir, devices)
+            write_devices(data_dir, devices)
             return device
     return None
 
 
 def managed_identities(data_dir: str) -> set[str]:
-    """Every identity the fleet claims — runtime ids plus bootloader ids.
+    """Every identity the registry claims — runtime ids plus bootloader ids.
 
-    Lets board discovery flag which scanned boards are already in the fleet.
+    Lets board discovery flag which scanned boards are already in the registry.
     """
     identities: set[str] = set()
-    for device in read_fleet(data_dir):
+    for device in read_devices(data_dir):
         for key in ("id", "serial_id", "dfu_id"):
             value = device.get(key)
             if value:
