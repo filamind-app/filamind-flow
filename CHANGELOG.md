@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.24.1] - 2026-05-31
+
+### Fixed
+
+- **External firmware reads the version from raw `.bin` files too.** Klipper
+  stores its version / MCU in a **zlib-compressed data dictionary**, not plain
+  strings, so a raw `.bin` (e.g. an SV08 firmware) showed nothing. The inspector
+  now decompresses that dictionary (→ `v0.12.0-… · stm32f103xe`).
+
 ## [0.24.0] - 2026-05-31
 
 ### Changed
@@ -485,7 +494,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.24.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.24.1...HEAD
+[0.24.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.24.1
 [0.24.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.24.0
 [0.23.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.23.1
 [0.23.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.23.0
