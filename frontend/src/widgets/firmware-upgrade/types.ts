@@ -24,6 +24,8 @@ export interface HostMcu {
   configured: boolean
   /** The host's `klipper-mcu` service is running (can be idle if not configured). */
   service_active: boolean
+  /** Firmware version FilaMind last flashed to the host MCU (null if never). */
+  version: string | null
 }
 
 export interface FirmwareTools {
@@ -56,6 +58,8 @@ export interface Board {
   version: string | null
   application: string | null
   interface: string | null
+  /** Firmware version FilaMind last flashed to this board, if recorded. */
+  flashed_version: string | null
 }
 
 export interface BoardScan {
@@ -97,6 +101,8 @@ export interface ConfigEdit {
 export interface FirmwareProfile {
   name: string
   built: boolean
+  /** Klipper version this profile was last built with (null if never). */
+  built_version: string | null
   is_can_bridge: boolean
   is_linux: boolean
   is_avr: boolean

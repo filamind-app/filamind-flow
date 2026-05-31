@@ -20,6 +20,7 @@ from app.models.schemas import (
 from app.services import board_service, firmware_profiles, firmware_service, flash_service
 from app.services.build_service import BuildService
 from app.services.kconfig_service import KconfigError, get_kconfig_service
+from app.services.version_store import read_build_info
 
 router = APIRouter(prefix="/firmware", tags=["firmware"])
 
@@ -28,7 +29,7 @@ router = APIRouter(prefix="/firmware", tags=["firmware"])
 async def firmware_status(settings: Settings = Depends(get_settings)) -> FirmwareStatus:
     """Read-only firmware status: host + per-MCU versions, sync check, tool readiness."""
     data = await firmware_service.gather_status(
-        settings.moonraker_url, settings.klipper_dir, settings.katapult_dir
+        settings.moonraker_url, settings.klipper_dir, settings.katapult_dir, settings.data_dir
     )
     return FirmwareStatus.model_validate(data)
 
@@ -37,7 +38,7 @@ async def firmware_status(settings: Settings = Depends(get_settings)) -> Firmwar
 async def firmware_boards(settings: Settings = Depends(get_settings)) -> BoardDiscovery:
     """Discovers every flashable board on the host (Moonraker + USB/CAN/DFU scans)."""
     data = await board_service.discover_boards(
-        settings.moonraker_url, settings.klipper_dir, settings.katapult_dir
+        settings.moonraker_url, settings.klipper_dir, settings.katapult_dir, settings.data_dir
     )
     return BoardDiscovery.model_validate(data)
 
@@ -71,10 +72,11 @@ async def firmware_list_profiles(
 ) -> ProfilesResponse:
     """Lists saved per-board firmware profiles and whether the editor is usable."""
     service = get_kconfig_service(settings.klipper_dir)
-    profiles = [
-        FirmwareProfile.model_validate(p)
-        for p in firmware_profiles.list_profiles(settings.data_dir)
-    ]
+    profiles = []
+    for entry in firmware_profiles.list_profiles(settings.data_dir):
+        info = read_build_info(settings.data_dir, entry["name"])
+        entry["built_version"] = info.get("version") if info else None
+        profiles.append(FirmwareProfile.model_validate(entry))
     return ProfilesResponse(kconfig_available=service.available, profiles=profiles)
 
 

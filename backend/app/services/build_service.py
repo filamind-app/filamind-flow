@@ -18,6 +18,7 @@ import shutil
 from collections.abc import AsyncIterator
 
 from app.services.firmware_profiles import artifacts_dir
+from app.services.version_store import get_klipper_version, write_build_info
 
 _ARTIFACT_EXTS = ("bin", "uf2", "elf")
 _STALL_TIMEOUT_S = 120.0
@@ -31,6 +32,7 @@ class BuildService:
         self, klipper_dir: str, data_dir: str, build_command: list[str] | None = None
     ) -> None:
         self.klipper_dir = os.path.abspath(os.path.expanduser(klipper_dir))
+        self.data_dir = data_dir
         self.artifacts = artifacts_dir(data_dir)
         # Overridable so tests can drive a portable command instead of `make`.
         self.build_command = build_command
@@ -61,6 +63,9 @@ class BuildService:
 
         saved = self._collect(profile_name)
         if saved:
+            version = await get_klipper_version(self.klipper_dir)
+            write_build_info(self.data_dir, profile_name, version)
+            yield f">>> Built with Klipper {version['version']}\n"
             yield f">>> Saved artifact(s): {', '.join(saved)}\n>>> BUILD OK\n"
         else:
             yield ">>> BUILD FAILED — no firmware artifact was produced\n"
