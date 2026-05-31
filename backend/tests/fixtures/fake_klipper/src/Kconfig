@@ -50,3 +50,15 @@ config DEMO_MENU_OPT
 	default n
 
 endmenu
+
+# A WANT_ feature whose prerequisite (a hidden HAVE_ symbol) is off, so it is
+# only shown via the 'optional' toggle and isn't actually settable — it must
+# render locked (readonly), not as a dead toggle.
+config HAVE_DEMO_THING
+	bool
+	default n
+
+config WANT_DEMO_FEATURE
+	bool "Support the demo feature"
+	default y
+	depends on HAVE_DEMO_THING

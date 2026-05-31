@@ -220,6 +220,11 @@ class KconfigService:
         if isinstance(item, kl.Symbol):
             if kl.expr_value(item.rev_dep) > 0:
                 entry["readonly"] = True  # selected by another symbol
+            if item.visibility == 0:
+                # Reached here only via the want_optional path: the symbol's
+                # prerequisite isn't enabled, so Kconfig won't let it be toggled.
+                # Show it (informationally) but locked, not as a dead toggle.
+                entry["readonly"] = True
             entry["default"] = self._default_str(item)
             entry["dep_str"] = self._dep_str(item)
         elif isinstance(item, kl.Choice):
