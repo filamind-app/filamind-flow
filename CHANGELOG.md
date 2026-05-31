@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-05-31
+
+### Added
+
+- **Sidebar pages** — the FilaMind sidebar now lists each panel (e.g. **Firmware
+  Upgrade**) as its own entry; clicking it opens that panel on its own page. The
+  **Dashboard** home is intentionally empty for now, ready for future widgets.
+- **Per-device "build & flash"** — a third button on each device card builds the
+  assigned profile then flashes it in one go (it only flashes if the build
+  succeeded).
+- **Outdated-firmware alert** — a device card shows a **⚠ update** badge when its
+  flashed firmware differs from the host's Klipper version.
+
 ## [0.16.2] - 2026-05-31
 
 ### Fixed
@@ -294,7 +307,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.16.2...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.17.0
 [0.16.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.2
 [0.16.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.1
 [0.16.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.0

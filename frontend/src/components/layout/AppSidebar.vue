@@ -1,7 +1,17 @@
 <script setup lang="ts">
-// Navigation is intentionally minimal in the scaffold. Add links/routes as
-// features land.
-const nav = [{ id: 'dashboard', label: 'Dashboard', icon: '▣' }] as const
+import { computed } from 'vue'
+
+import { useNav } from '@/core/nav'
+import { widgetRegistry } from '@/core/registry'
+
+const { current, go } = useNav()
+
+// Dashboard (the empty home) plus one entry per registered widget — each widget
+// gets its own page, reached from here.
+const items = computed(() => [
+  { id: 'dashboard', label: 'Dashboard', icon: '▣' },
+  ...widgetRegistry.all().map((w) => ({ id: w.id, label: w.title, icon: '◳' })),
+])
 </script>
 
 <template>
@@ -14,10 +24,16 @@ const nav = [{ id: 'dashboard', label: 'Dashboard', icon: '▣' }] as const
     </div>
 
     <nav class="flex flex-col gap-2">
-      <a v-for="item in nav" :key="item.id" class="nb-btn justify-start bg-surface" href="#">
+      <button
+        v-for="item in items"
+        :key="item.id"
+        class="nb-btn justify-start text-left"
+        :class="current === item.id ? 'bg-brand-cyan' : 'bg-surface'"
+        @click="go(item.id)"
+      >
         <span aria-hidden="true">{{ item.icon }}</span>
         {{ item.label }}
-      </a>
+      </button>
     </nav>
 
     <p class="mt-auto font-mono text-[10px] leading-tight opacity-70">

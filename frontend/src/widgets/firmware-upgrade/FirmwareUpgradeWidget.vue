@@ -213,6 +213,17 @@ function isAvr(profile: string | null): boolean {
   return !!profile && (profiles.value.find((p) => p.name === profile)?.is_avr ?? false)
 }
 
+function normalizeVer(v: string | null | undefined): string {
+  return (v ?? '').replace(/-dirty$/, '')
+}
+
+/** A device is out of date when its flashed firmware differs from the host's Klipper. */
+function isOutdated(device: Device): boolean {
+  const host = normalizeVer(status.value?.host.version)
+  const dev = normalizeVer(device.flashed_version)
+  return host !== '' && dev !== '' && dev !== host
+}
+
 /** Flashes a device's assigned profile directly — uses its already-built artifact. */
 async function flashDevice(device: Device): Promise<void> {
   if (opBusy.value || !device.profile) return
@@ -235,6 +246,40 @@ async function flashDevice(device: Device): Promise<void> {
     await load(true)
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Flash failed'
+  } finally {
+    opBusy.value = false
+  }
+}
+
+/** Builds a device's profile, then flashes it — but only if the build succeeded. */
+async function buildAndFlash(device: Device): Promise<void> {
+  if (opBusy.value || !device.profile) return
+  error.value = null
+  activeDeviceId.value = device.id
+  opLog.value = ''
+  opBusy.value = true
+  try {
+    await buildFirmware(device.profile, (chunk) => {
+      opLog.value += chunk
+    })
+    if (!/BUILD OK/i.test(opLog.value)) {
+      opLog.value += '\n!! Build did not succeed — skipping flash.\n'
+      return
+    }
+    await flashBoard(
+      {
+        profile: device.profile,
+        method: isAvr(device.profile) ? 'make' : device.method,
+        device: device.id,
+        interface: device.interface,
+      },
+      (chunk) => {
+        opLog.value += chunk
+      },
+    )
+    await load(true)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Build & flash failed'
   } finally {
     opBusy.value = false
   }
@@ -457,9 +502,16 @@ onUnmounted(() => {
               <span class="truncate">{{
                 device.profile ? 'profile: ' + device.profile : 'no profile assigned'
               }}</span>
-              <span v-if="device.flashed_version" class="shrink-0">{{
-                device.flashed_version
-              }}</span>
+              <span class="flex shrink-0 items-center gap-1">
+                <span
+                  v-if="isOutdated(device)"
+                  class="nb-badge bg-brand-red text-surface opacity-100"
+                  title="Flashed firmware differs from the host Klipper — build &amp; flash to update"
+                >
+                  ⚠ update
+                </span>
+                <span v-if="device.flashed_version">{{ device.flashed_version }}</span>
+              </span>
             </div>
             <div class="flex flex-wrap gap-1.5">
               <button
@@ -475,6 +527,13 @@ onUnmounted(() => {
                 @click="flashDevice(device)"
               >
                 flash
+              </button>
+              <button
+                class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+                :disabled="opBusy || !device.profile"
+                @click="buildAndFlash(device)"
+              >
+                build &amp; flash
               </button>
               <button
                 v-if="device.method === 'serial' || device.method === 'can'"
