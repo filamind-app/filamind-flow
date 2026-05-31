@@ -31,7 +31,7 @@ the enhancements below are next.
 - 📋 Schedule a flash for after the current print finishes
 - 📋 Flash audit log (what / when / which version)
 - 📋 Guided first-time wizard (detect board → profile → build → flash)
-- 📋 MCU telemetry (load, frequency, comms errors) in the device list
+- ✅ MCU telemetry (load, frequency, comms errors) in the device list
 
 ### 📋 Other widgets
 

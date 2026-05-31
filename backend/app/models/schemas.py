@@ -35,6 +35,12 @@ class McuFirmware(BaseModel):
     in_sync: bool | None = None
     #: Connection type derived from the Klipper config: host / canbus / usb / serial.
     kind: str = "serial"
+    #: Live telemetry from the MCU's ``last_stats`` (None when unavailable).
+    freq: int | None = None
+    #: Fraction of time the MCU was awake (0 to 1) — a rough load indicator.
+    awake: float | None = None
+    #: Retransmitted bytes — the key host↔MCU comms-health signal.
+    retransmits: int | None = None
 
 
 class HostMcu(BaseModel):
