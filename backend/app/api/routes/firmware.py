@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -8,6 +9,7 @@ from fastapi.responses import StreamingResponse
 from app.config import Settings, get_settings
 from app.models.schemas import (
     AttachRequest,
+    BatchRequest,
     BoardDiscovery,
     ConfigNode,
     ConfigTreeRequest,
@@ -20,19 +22,35 @@ from app.models.schemas import (
     FlashRequest,
     ProfileSaveRequest,
     ProfilesResponse,
+    TaskStatus,
 )
 from app.services import (
+    batch_service,
     board_service,
     devices_store,
     firmware_profiles,
     firmware_service,
     flash_service,
+    task_store,
 )
 from app.services.build_service import BuildService
 from app.services.kconfig_service import KconfigError, get_kconfig_service
+from app.services.task_store import Task
 from app.services.version_store import flash_records, read_build_info
 
 router = APIRouter(prefix="/firmware", tags=["firmware"])
+
+#: Strong references to in-flight batch tasks so the event loop doesn't drop them.
+_background: set[asyncio.Task[None]] = set()
+
+
+async def _run_batch(action: str, settings: Settings, task: Task) -> None:
+    """Wraps the batch run so an unexpected error marks the task failed, not hung."""
+    try:
+        await batch_service.run_batch(action, settings, task)
+    except Exception as exc:
+        task.append(f"!! Batch failed: {exc}\n")
+        task.status = "failed"
 
 
 @router.get("/status", response_model=FirmwareStatus)
@@ -214,3 +232,32 @@ async def firmware_attach_identity(
             status_code=404, detail=f"Device '{request.device_id}' not in the registry"
         )
     return Device.model_validate(device)
+
+
+@router.post("/batch")
+async def firmware_batch(
+    request: BatchRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Starts a background build / flash run over every device. Returns its task id."""
+    task = task_store.create_task()
+    background = asyncio.create_task(_run_batch(request.action, settings, task))
+    _background.add(background)
+    background.add_done_callback(_background.discard)
+    return {"task_id": task.id}
+
+
+@router.get("/task/{task_id}", response_model=TaskStatus)
+async def firmware_task(task_id: str) -> TaskStatus:
+    """Returns a batch task's accumulating log and status (for polling)."""
+    task = task_store.get_task(task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail=f"Task '{task_id}' not found")
+    return TaskStatus.model_validate(task.as_dict())
+
+
+@router.post("/task/{task_id}/cancel")
+async def firmware_task_cancel(task_id: str) -> dict[str, str]:
+    """Requests cancellation of a running batch task (stops at the next checkpoint)."""
+    if not task_store.cancel_task(task_id):
+        raise HTTPException(status_code=404, detail=f"Task '{task_id}' not found")
+    return {"message": "Cancellation requested"}

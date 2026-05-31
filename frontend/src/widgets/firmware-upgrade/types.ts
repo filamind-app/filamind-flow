@@ -171,3 +171,12 @@ export interface DeviceSave extends Partial<Device> {
 export interface DevicesResponse {
   devices: Device[]
 }
+
+/** A background batch task's accumulating log and status. */
+export interface TaskStatus {
+  id: string
+  /** running / done / cancelled / failed. */
+  status: string
+  log: string
+  cancelled: boolean
+}

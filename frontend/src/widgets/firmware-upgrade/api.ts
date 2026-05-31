@@ -11,6 +11,7 @@ import type {
   DeviceSave,
   DevicesResponse,
   ProfilesResponse,
+  TaskStatus,
 } from './types'
 
 /** Fetches read-only firmware status from the FilaMind backend. */
@@ -202,4 +203,36 @@ export async function attachIdentity(
     throw new Error(`Attach failed (${response.status})`)
   }
   return (await response.json()) as Device
+}
+
+/** Starts a background batch run (build-all / flash-all / …). Returns its task id. */
+export async function startBatch(action: string): Promise<string> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/batch`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action }),
+  })
+  if (!response.ok) {
+    throw new Error(`Batch failed (${response.status})`)
+  }
+  return ((await response.json()) as { task_id: string }).task_id
+}
+
+/** Polls a batch task's log + status. */
+export async function fetchTask(taskId: string): Promise<TaskStatus> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/task/${encodeURIComponent(taskId)}`)
+  if (!response.ok) {
+    throw new Error(`Task status failed (${response.status})`)
+  }
+  return (await response.json()) as TaskStatus
+}
+
+/** Requests cancellation of a running batch task. */
+export async function cancelTask(taskId: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  await fetch(`${backendUrl}/api/firmware/task/${encodeURIComponent(taskId)}/cancel`, {
+    method: 'POST',
+  })
 }
