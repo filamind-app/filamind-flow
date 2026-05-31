@@ -9,6 +9,7 @@ from typing import Any
 import httpx
 
 from app.services.moonraker_client import MoonrakerClient
+from app.services.version_store import flashed_version
 
 #: A Klipper 'Linux process' MCU connects over this host Unix socket.
 _HOST_MCU_SOCKET = "klipper_host_mcu"
@@ -73,7 +74,9 @@ def _scan_tools(klipper_dir: str, katapult_dir: str) -> dict[str, bool]:
     }
 
 
-async def gather_status(moonraker_url: str, klipper_dir: str, katapult_dir: str) -> dict[str, Any]:
+async def gather_status(
+    moonraker_url: str, klipper_dir: str, katapult_dir: str, data_dir: str
+) -> dict[str, Any]:
     """Read-only firmware status: host + per-MCU versions, sync check, tool readiness."""
     client = MoonrakerClient(moonraker_url)
     host_version: str | None = None
@@ -131,6 +134,7 @@ async def gather_status(moonraker_url: str, klipper_dir: str, katapult_dir: str)
         "host_mcu": {
             "configured": any(m["kind"] == "host" for m in mcus),
             "service_active": service_active,
+            "version": flashed_version(data_dir, "linux_process"),
         },
         "tools": _scan_tools(klipper_dir, katapult_dir),
     }

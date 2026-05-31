@@ -24,6 +24,7 @@ import httpx
 from app.config import Settings
 from app.services.firmware_profiles import artifact_path_for, profile_path
 from app.services.moonraker_client import MoonrakerClient
+from app.services.version_store import read_build_info, record_flash
 
 # Methods that must stop services / use sudo to flash.
 _NEEDS_SUDO = ("serial", "can", "dfu", "make", "linux")
@@ -269,6 +270,9 @@ async def run_flash(
     if method == "linux":
         async for line in _flash_linux(artifact):
             yield line
+        record_flash(
+            settings.data_dir, device, profile, read_build_info(settings.data_dir, profile) or {}
+        )
         yield ">>> Flash sequence complete — host MCU reinstalled.\n"
         return
 
@@ -289,4 +293,7 @@ async def run_flash(
     yield ">>> Restarting Klipper…\n"
     async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
         yield line
+    record_flash(
+        settings.data_dir, device, profile, read_build_info(settings.data_dir, profile) or {}
+    )
     yield ">>> Flash sequence complete — verify the board reconnects in Mainsail.\n"

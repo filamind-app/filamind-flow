@@ -116,6 +116,9 @@ onMounted(load)
 
         <div class="flex items-center justify-between gap-2 border-t-2 border-ink pt-2 text-xs">
           <span class="font-bold">Linux host MCU</span>
+          <span v-if="status.host_mcu.version" class="font-mono text-[11px] opacity-80">{{
+            status.host_mcu.version
+          }}</span>
           <span class="nb-badge shrink-0" :class="hostMcu.cls">{{ hostMcu.label }}</span>
         </div>
 
@@ -144,6 +147,12 @@ onMounted(load)
             <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{
               board.connection
             }}</span>
+            <span
+              v-if="board.version || board.flashed_version"
+              class="shrink-0 truncate font-mono text-[9px] opacity-60"
+            >
+              {{ board.version ?? board.flashed_version }}
+            </span>
             <span v-if="board.configured" class="nb-badge shrink-0 bg-surface text-[9px]">cfg</span>
             <span class="nb-badge shrink-0" :class="boardModeClass(board.mode)">{{
               board.mode

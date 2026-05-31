@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-31
+
+### Added
+
+- **Firmware version tracking (Phase 6)** — FilaMind now captures the Klipper
+  version / commit / date a profile is built with (`<profile>.build_info.json`
+  via `get_klipper_version`) and records what it flashes to each board
+  (`flashed.json`). The **Linux host MCU** and other boards now show their
+  firmware version even when Moonraker can't report it (e.g. an unconfigured
+  host MCU) — and each profile carries its `built_version`. Closes the
+  version-display gap found against KlipperFleet.
+
 ## [0.7.1] - 2026-05-31
 
 ### Changed
@@ -165,7 +177,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.8.0
 [0.7.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.1
 [0.7.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.0
 [0.6.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.2
