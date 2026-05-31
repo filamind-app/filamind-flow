@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.20.1] - 2026-05-31
+
+### Fixed
+
+- **Configurator no longer 500s when switching processor architectures** (STM32,
+  ATSAM, LPC176x, RP2040, PRU, AR100). Those architectures expose Kconfig **menu /
+  comment** nodes, which — unlike symbols — have no `help` attribute in
+  kconfiglib; reading it raised `AttributeError`. The serializer now reads it
+  safely. (Surfaced by v0.18.0 forcing the low-level menus visible.)
+
 ## [0.20.0] - 2026-05-31
 
 ### Added
@@ -385,7 +395,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.20.1...HEAD
+[0.20.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.20.1
 [0.20.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.20.0
 [0.19.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.19.0
 [0.18.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.18.1

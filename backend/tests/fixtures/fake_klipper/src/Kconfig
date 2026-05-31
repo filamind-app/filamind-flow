@@ -38,3 +38,15 @@ config DEMO_LOWLEVEL_TWEAK
 	bool "A low-level tweak"
 	default n
 	depends on LOW_LEVEL_OPTIONS
+
+# A menu + a bare comment: kconfiglib MenuNodes for these have NO `help` slot,
+# so serializing them must not touch `node.help` directly (regression guard).
+menu "Demo low-level menu"
+
+comment "Read the docs before changing these"
+
+config DEMO_MENU_OPT
+	bool "An option inside a menu"
+	default n
+
+endmenu
