@@ -188,6 +188,9 @@ export interface ExternalFirmware {
   notes: string
   filename: string | null
   size: number
+  /** Read-only properties detected inside the binary (best-effort). */
+  detected_version: string | null
+  detected_mcu: string | null
 }
 
 export interface ExternalFirmwareResponse {

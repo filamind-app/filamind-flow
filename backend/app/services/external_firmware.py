@@ -55,6 +55,47 @@ def firmware_path(data_dir: str, name: str) -> str | None:
     return None
 
 
+#: Klipper stamps its git version into the firmware, e.g. ``v0.12.0-345-gabcd123``.
+_VERSION_RE = re.compile(rb"v\d+\.\d+\.\d+(?:-\d+-g[0-9a-f]{6,})?(?:-dirty)?")
+#: MCU family tokens that may appear in the binary's strings (best-effort).
+_MCU_TOKENS = (
+    b"stm32",
+    b"rp2040",
+    b"atmega",
+    b"sam3",
+    b"samd",
+    b"same5",
+    b"lpc176",
+    b"hc32",
+    b"ar100",
+)
+
+
+def inspect_firmware(path: str) -> dict[str, Any]:
+    """Best-effort read of properties embedded in a firmware binary by scanning its
+    printable strings — the Klipper git version and an MCU-family hint."""
+    info: dict[str, Any] = {"detected_version": None, "detected_mcu": None}
+    try:
+        with open(path, "rb") as handle:
+            data = handle.read(8_000_000)
+    except OSError:
+        return info
+    version = _VERSION_RE.search(data)
+    if version:
+        info["detected_version"] = version.group(0).decode("ascii", "replace")
+    low = data.lower()
+    for token in _MCU_TOKENS:
+        idx = low.find(token)
+        if idx == -1:
+            continue
+        end = idx
+        while end < len(low) and end < idx + 14 and chr(low[end]).isalnum():
+            end += 1
+        info["detected_mcu"] = data[idx:end].decode("ascii", "replace")
+        break
+    return info
+
+
 def _default_meta(name: str) -> dict[str, Any]:
     return {
         "name": name,
@@ -63,6 +104,9 @@ def _default_meta(name: str) -> dict[str, Any]:
         "offset": "",
         "interface": "can0",
         "notes": "",
+        "detected_version": None,
+        "detected_mcu": None,
+        "inspected": False,
     }
 
 
@@ -134,9 +178,16 @@ def delete_firmware(data_dir: str, name: str) -> bool:
 
 
 def list_one(data_dir: str, name: str) -> dict[str, Any]:
-    """One firmware's metadata enriched with its file name + size."""
+    """One firmware's metadata enriched with its file name + size + read properties.
+
+    Embedded properties are inspected once (best-effort) and cached in the sidecar.
+    """
     path = firmware_path(data_dir, name)
     meta = read_meta(data_dir, name)
+    if path and not meta.get("inspected"):
+        meta.update(inspect_firmware(path))
+        meta["inspected"] = True
+        _write_meta(data_dir, name, meta)
     meta["filename"] = os.path.basename(path) if path else None
     meta["size"] = os.path.getsize(path) if path else 0
     return meta
