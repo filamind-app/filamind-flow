@@ -28,11 +28,27 @@ def validate_name(name: str) -> str:
     return name
 
 
+_ARTIFACT_EXTS = ("bin", "uf2", "elf")
+
+
 def profiles_dir(data_dir: str) -> str:
     """Returns (creating if needed) the directory holding profile ``.config`` files."""
     path = os.path.join(os.path.expanduser(data_dir), "firmware-profiles")
     os.makedirs(path, exist_ok=True)
     return path
+
+
+def artifacts_dir(data_dir: str) -> str:
+    """Returns (creating if needed) the directory holding built firmware artifacts."""
+    path = os.path.join(os.path.expanduser(data_dir), "artifacts")
+    os.makedirs(path, exist_ok=True)
+    return path
+
+
+def profile_is_built(data_dir: str, name: str) -> bool:
+    """True if a built firmware artifact exists for the profile."""
+    artifacts = artifacts_dir(data_dir)
+    return any(os.path.isfile(os.path.join(artifacts, f"{name}.{ext}")) for ext in _ARTIFACT_EXTS)
 
 
 def profile_path(data_dir: str, name: str) -> str:
@@ -62,7 +78,13 @@ def list_profiles(data_dir: str) -> list[dict[str, Any]]:
         if not entry.endswith(".config"):
             continue
         name = entry[: -len(".config")]
-        profiles.append({"name": name, **_profile_flags(os.path.join(directory, entry))})
+        profiles.append(
+            {
+                "name": name,
+                "built": profile_is_built(data_dir, name),
+                **_profile_flags(os.path.join(directory, entry)),
+            }
+        )
     return profiles
 
 
