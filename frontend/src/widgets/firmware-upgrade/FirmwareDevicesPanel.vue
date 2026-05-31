@@ -27,8 +27,14 @@ const METHODS = ['serial', 'can', 'dfu', 'linux']
 const BAUDRATES = [115200, 230400, 250000, 500000, 1000000]
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
 
-/** Boards on the bus that are not yet saved in the registry. */
-const unmanaged = computed(() => boards.value.filter((b) => !b.managed))
+/** Boards on the bus that are not yet saved in the registry (the host MCU is
+ *  managed separately, so it never appears as an addable board). */
+const unmanaged = computed(() => boards.value.filter((b) => !b.managed && b.connection !== 'linux'))
+
+/** Short bootloader / run-mode label for a discovered board (e.g. KATAPULT, DFU). */
+function boardBadge(board: Board): string {
+  return (board.application || board.mode || '').toUpperCase()
+}
 
 /** Live bus mode (service / ready / dfu / …) keyed by board id. */
 const liveMode = computed(() => {
@@ -245,21 +251,31 @@ onUnmounted(() => {
           @change="persist(device)"
         />
 
-        <div v-if="device.serial_id" class="flex items-center gap-1 text-[10px]">
-          <span class="nb-badge shrink-0 bg-brand-cyan">serial id</span>
+        <!-- Linked bootloader identities — a board enumerates under a separate id
+             when it drops into Katapult / DFU; show each as a connected sub-card. -->
+        <div
+          v-if="device.serial_id"
+          class="ml-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
+        >
+          <span class="nb-badge shrink-0 bg-brand-cyan text-[9px]">↳ serial katapult identity</span>
           <span class="min-w-0 flex-1 truncate font-mono opacity-60">{{ device.serial_id }}</span>
           <button
             class="nb-btn shrink-0 px-1.5 py-0 text-[9px]"
             @click="detach(device, 'serial_id')"
           >
-            detach
+            unlink
           </button>
         </div>
-        <div v-if="device.dfu_id" class="flex items-center gap-1 text-[10px]">
-          <span class="nb-badge shrink-0 bg-brand-yellow">dfu id</span>
+        <div
+          v-if="device.dfu_id"
+          class="ml-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
+        >
+          <span class="nb-badge shrink-0 bg-brand-yellow text-[9px]"
+            >↳ dfu bootloader identity</span
+          >
           <span class="min-w-0 flex-1 truncate font-mono opacity-60">{{ device.dfu_id }}</span>
           <button class="nb-btn shrink-0 px-1.5 py-0 text-[9px]" @click="detach(device, 'dfu_id')">
-            detach
+            unlink
           </button>
         </div>
       </div>
@@ -277,6 +293,13 @@ onUnmounted(() => {
         >
           <div class="flex items-center gap-2">
             <span class="min-w-0 flex-1 truncate font-bold">{{ board.name }}</span>
+            <span
+              v-if="boardBadge(board)"
+              class="nb-badge shrink-0 text-[9px]"
+              :class="modeClass(board.mode)"
+            >
+              {{ boardBadge(board) }}
+            </span>
             <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{
               board.connection
             }}</span>
@@ -289,12 +312,14 @@ onUnmounted(() => {
             <button
               v-if="devices.length"
               class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
+              title="Link this bootloader identity to a registered device"
               @click="attachFor = attachFor === board.id ? null : board.id"
             >
-              attach
+              🔗 link
             </button>
           </div>
-          <div v-if="attachFor === board.id" class="mt-1 flex flex-wrap gap-1">
+          <div v-if="attachFor === board.id" class="mt-1 flex flex-wrap items-center gap-1">
+            <span class="text-[10px] opacity-60">link to:</span>
             <button
               v-for="device in devices"
               :key="device.id"
