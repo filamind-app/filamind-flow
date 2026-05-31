@@ -257,3 +257,20 @@ class DevicesResponse(BaseModel):
     """The saved devices."""
 
     devices: list[Device]
+
+
+class BatchRequest(BaseModel):
+    """Starts a batch run over the registry: build / flash / flash-ready."""
+
+    #: build-all / flash-all / flash-ready / build-flash-all.
+    action: str
+
+
+class TaskStatus(BaseModel):
+    """A background batch task's accumulating log and status."""
+
+    id: str
+    #: running / done / cancelled / failed.
+    status: str
+    log: str
+    cancelled: bool
