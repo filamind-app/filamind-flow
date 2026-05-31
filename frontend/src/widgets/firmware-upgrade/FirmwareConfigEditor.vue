@@ -20,6 +20,8 @@ const baseProfile = ref<string | null>(null)
 const tree = ref<ConfigNode[]>([])
 const edits = ref<Record<string, string>>({})
 const showOptional = ref(false)
+const showHelp = ref(false)
+const showRaw = ref(false)
 
 const loading = ref(true)
 const saving = ref(false)
@@ -30,9 +32,10 @@ const message = ref<string | null>(null)
 const profileName = ref('')
 const manageName = ref('')
 
-const selectedBuilt = computed(
-  () => profiles.value.find((p) => p.name === baseProfile.value)?.built ?? false,
+const selectedProfile = computed(
+  () => profiles.value.find((p) => p.name === baseProfile.value) ?? null,
 )
+const selectedBuilt = computed(() => selectedProfile.value?.built ?? false)
 
 const inputClass =
   'shrink-0 max-w-[55%] rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
@@ -44,7 +47,7 @@ interface FlatNode {
 
 function flatten(nodes: ConfigNode[], depth = 0, acc: FlatNode[] = []): FlatNode[] {
   for (const node of nodes) {
-    if (node.type !== 'comment') acc.push({ node, depth })
+    acc.push({ node, depth })
     if (node.children.length) flatten(node.children, depth + 1, acc)
   }
   return acc
@@ -230,6 +233,15 @@ onMounted(async () => {
       <label class="flex items-center gap-1 text-[11px]">
         <input v-model="showOptional" type="checkbox" @change="reloadTree" /> optional
       </label>
+      <label
+        class="flex items-center gap-1 text-[11px]"
+        title="Show each option's help text inline"
+      >
+        <input v-model="showHelp" type="checkbox" /> help
+      </label>
+      <label class="flex items-center gap-1 text-[11px]" title="Show raw Kconfig symbol names">
+        <input v-model="showRaw" type="checkbox" /> raw
+      </label>
       <span v-if="dirtyCount" class="nb-badge bg-brand-yellow text-[10px]"
         >{{ dirtyCount }} edits</span
       >
@@ -289,6 +301,23 @@ onMounted(async () => {
       </button>
     </div>
 
+    <div
+      v-if="selectedProfile"
+      class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[11px]"
+    >
+      <span class="font-bold uppercase tracking-wide">{{ selectedProfile.name }}</span>
+      <span :class="selectedProfile.built ? '' : 'opacity-50'">
+        {{
+          selectedProfile.built ? `built · ${selectedProfile.built_version ?? '—'}` : 'not built'
+        }}
+      </span>
+      <span v-if="selectedProfile.is_linux" class="nb-badge bg-brand-yellow text-[9px]">linux</span>
+      <span v-if="selectedProfile.is_avr" class="nb-badge bg-brand-yellow text-[9px]">avr</span>
+      <span v-if="selectedProfile.is_can_bridge" class="nb-badge bg-brand-yellow text-[9px]"
+        >CAN bridge</span
+      >
+    </div>
+
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
     <div v-else-if="loading" class="font-mono text-xs">Loading configuration…</div>
 
@@ -302,38 +331,62 @@ onMounted(async () => {
           {{ item.node.prompt }}
         </div>
         <div
-          v-else
-          class="flex items-center justify-between gap-2 py-0.5"
+          v-else-if="item.node.type === 'comment'"
+          class="py-0.5 text-[11px] italic opacity-60"
           :style="{ paddingLeft: item.depth * 12 + 'px' }"
         >
-          <span class="min-w-0 flex-1 truncate" :title="item.node.help ?? item.node.name">
-            {{ item.node.prompt }}
-          </span>
-          <button
-            v-if="item.node.type === 'bool' || item.node.type === 'tristate'"
-            class="nb-badge shrink-0"
-            :class="boolOn(item.node) ? 'bg-brand-lime' : 'bg-surface opacity-70'"
-            :disabled="item.node.readonly"
-            @click="toggleBool(item.node)"
+          ❝ {{ item.node.prompt }}
+        </div>
+        <div v-else :style="{ paddingLeft: item.depth * 12 + 'px' }">
+          <div class="flex items-center justify-between gap-2 py-0.5">
+            <span class="min-w-0 flex-1 truncate" :title="item.node.help ?? item.node.name">
+              {{ item.node.prompt }}
+              <code
+                v-if="showRaw && !item.node.name.startsWith('__')"
+                class="ml-1 text-[9px] opacity-50"
+                >{{ item.node.name }}</code
+              >
+            </span>
+            <button
+              v-if="item.node.type === 'bool' || item.node.type === 'tristate'"
+              class="nb-badge shrink-0"
+              :class="boolOn(item.node) ? 'bg-brand-lime' : 'bg-surface opacity-70'"
+              :disabled="item.node.readonly"
+              @click="toggleBool(item.node)"
+            >
+              {{ boolOn(item.node) ? 'on' : 'off' }}
+            </button>
+            <select
+              v-else-if="item.node.type === 'choice'"
+              :class="inputClass"
+              :value="item.node.value ?? ''"
+              :disabled="item.node.readonly"
+              @change="onSelect(item.node, $event)"
+            >
+              <option v-for="c in item.node.choices" :key="c.name" :value="c.name">
+                {{ c.prompt }}
+              </option>
+            </select>
+            <input
+              v-else
+              :class="[inputClass, 'font-mono']"
+              :value="item.node.value ?? ''"
+              :disabled="item.node.readonly"
+              @change="onInput(item.node, $event)"
+            />
+          </div>
+          <div
+            v-if="(showRaw && item.node.dep_str) || (showHelp && item.node.default)"
+            class="text-[9px] opacity-50"
           >
-            {{ boolOn(item.node) ? 'on' : 'off' }}
-          </button>
-          <select
-            v-else-if="item.node.type === 'choice'"
-            :class="inputClass"
-            :value="item.node.value ?? ''"
-            @change="onSelect(item.node, $event)"
-          >
-            <option v-for="c in item.node.choices" :key="c.name" :value="c.name">
-              {{ c.prompt }}
-            </option>
-          </select>
-          <input
-            v-else
-            :class="[inputClass, 'font-mono']"
-            :value="item.node.value ?? ''"
-            @change="onInput(item.node, $event)"
-          />
+            <span v-if="showRaw && item.node.dep_str">needs: {{ item.node.dep_str }}</span>
+            <span v-if="showHelp && item.node.default" class="ml-2"
+              >default: {{ item.node.default }}</span
+            >
+          </div>
+          <p v-if="showHelp && item.node.help" class="pb-1 text-[10px] leading-tight opacity-60">
+            {{ item.node.help }}
+          </p>
         </div>
       </template>
     </div>

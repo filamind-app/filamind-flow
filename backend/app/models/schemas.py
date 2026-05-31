@@ -135,6 +135,10 @@ class ConfigNode(BaseModel):
     help: str | None = None
     choices: list[ConfigChoice] = []
     readonly: bool = False
+    #: The symbol's compiled-in default, shown as a hint in the editor.
+    default: str | None = None
+    #: Human-readable dependency expression (why a symbol is gated), if any.
+    dep_str: str | None = None
     children: list[ConfigNode] = []
 
 

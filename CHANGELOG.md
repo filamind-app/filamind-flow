@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-05-31
+
+### Added
+
+- **Inline help** — a *help* toggle renders each option's help text under it
+  (previously only a hover tooltip).
+- **Profile Info card** — the selected profile's built status, version, and flags
+  (linux / avr / CAN bridge) at a glance.
+- **Raw symbol names** — a *raw* toggle shows the underlying Kconfig symbol name
+  and, for gated options, the dependency that controls them.
+- **Kconfig comments** are now rendered in the editor (informational notes that
+  were previously dropped).
+- Each symbol now carries its **default** value and **dependency** expression,
+  surfaced as inline hints under the *raw* / *help* toggles.
+
+### Fixed
+
+- **Read-only options can't be edited.** Symbols selected by another option now
+  also disable their dropdown / text field (only the on/off toggle was guarded).
+
 ## [0.19.0] - 2026-05-31
 
 ### Added
@@ -365,7 +385,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.20.0
 [0.19.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.19.0
 [0.18.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.18.1
 [0.18.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.18.0
