@@ -60,7 +60,7 @@ export interface Board {
   interface: string | null
   /** Firmware version FilaMind last flashed to this board, if recorded. */
   flashed_version: string | null
-  /** True when this board is already saved in the fleet. */
+  /** True when this board is already saved in the registry. */
   managed: boolean
 }
 
@@ -137,8 +137,8 @@ export interface FlashPlan {
   warnings: string[]
 }
 
-/** A board saved in the fleet: which profile it runs and how to flash it. */
-export interface FleetDevice {
+/** A board saved in your devices: which profile it runs and how to flash it. */
+export interface Device {
   id: string
   name: string
   profile: string | null
@@ -154,20 +154,20 @@ export interface FleetDevice {
   dfu_id: string | null
   exclude_from_batch: boolean
   custom_make_command: string | null
-  /** Read back from the flash records (not stored in fleet.json). */
+  /** Read back from the flash records (not stored in devices.json). */
   flashed_version: string | null
   flashed_commit: string | null
   last_flashed: string | null
 }
 
-/** Upsert payload for a fleet device, with an optional previous id (rename). */
-export interface FleetDeviceSave extends Partial<FleetDevice> {
+/** Upsert payload for a device, with an optional previous id (rename). */
+export interface DeviceSave extends Partial<Device> {
   id: string
   name: string
   old_id?: string | null
 }
 
-/** The saved fleet, as returned by the backend. */
-export interface FleetResponse {
-  devices: FleetDevice[]
+/** The saved devices, as returned by the backend. */
+export interface DevicesResponse {
+  devices: Device[]
 }
