@@ -205,6 +205,48 @@ async def _reboot_to_bootloader(
     await asyncio.sleep(5)
 
 
+async def _service_active(name: str) -> bool:
+    """True if a systemd service is currently active (no sudo needed)."""
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "systemctl",
+            "is-active",
+            "--quiet",
+            name,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL,
+        )
+    except (OSError, NotImplementedError):
+        return False
+    return await proc.wait() == 0
+
+
+async def _flash_linux(firmware: str) -> AsyncIterator[str]:
+    """Installs a Linux-process host MCU as /usr/local/bin/klipper_mcu."""
+    target = "/usr/local/bin/klipper_mcu"
+    yield ">>> Stopping klipper-mcu…\n"
+    async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper-mcu"]):
+        yield line
+    # Free the binary from any lingering process, then install it executable.
+    async for line in _stream(["sudo", "-n", "fuser", "-k", target]):
+        yield line
+    await asyncio.sleep(1)
+    async for line in _stream(["sudo", "-n", "cp", firmware, target]):
+        yield line
+    async for line in _stream(["sudo", "-n", "chmod", "0755", target]):
+        yield line
+    yield ">>> Starting klipper-mcu…\n"
+    async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper-mcu"]):
+        yield line
+    for _ in range(12):
+        await asyncio.sleep(0.5)
+        if await _service_active("klipper-mcu"):
+            yield ">>> klipper-mcu is running.\n"
+            return
+    yield "!! klipper-mcu did not come up. If its journal shows 'sched_setscheduler',\n"
+    yield "!! this kernel blocks realtime — drop the -r flag from the klipper-mcu unit.\n"
+
+
 async def run_flash(
     profile: str, method: str, device: str, interface: str, settings: Settings
 ) -> AsyncIterator[str]:
@@ -221,14 +263,18 @@ async def run_flash(
         yield "!! Run once on the host:  sudo bash deploy/setup-sudoers.sh\n"
         return
 
-    offset = flash_offset(profile_path(settings.data_dir, profile))
-    # A Linux-process MCU is held by the klipper-mcu service; a hardware MCU's
-    # serial is held by klippy itself — stop whichever owns the device.
-    service = "klipper-mcu" if method == "linux" else "klipper"
     yield f">>> Flashing {os.path.basename(artifact)} → {device} via {method}\n"
 
-    yield f">>> Stopping {service} to free the device…\n"
-    async for line in _stream(["sudo", "-n", "systemctl", "stop", service]):
+    # A Linux-process host MCU is installed as a binary, not flashed over a bus.
+    if method == "linux":
+        async for line in _flash_linux(artifact):
+            yield line
+        yield ">>> Flash sequence complete — host MCU reinstalled.\n"
+        return
+
+    offset = flash_offset(profile_path(settings.data_dir, profile))
+    yield ">>> Stopping Klipper to free the device…\n"
+    async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
         yield line
 
     if method in ("serial", "can", "dfu"):
@@ -239,11 +285,8 @@ async def run_flash(
     yield f">>> {' '.join(command)}\n"
     async for line in _stream(command, cwd=settings.klipper_dir if method == "make" else None):
         yield line
-    if method == "linux":
-        async for line in _stream(["sudo", "-n", "chmod", "0755", "/usr/local/bin/klipper_mcu"]):
-            yield line
 
-    yield f">>> Restarting {service}…\n"
-    async for line in _stream(["sudo", "-n", "systemctl", "start", service]):
+    yield ">>> Restarting Klipper…\n"
+    async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
         yield line
     yield ">>> Flash sequence complete — verify the board reconnects in Mainsail.\n"
