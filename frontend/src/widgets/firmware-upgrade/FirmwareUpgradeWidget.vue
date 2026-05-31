@@ -244,6 +244,7 @@ async function flashDevice(device: Device): Promise<void> {
         method: isAvr(device.profile) ? 'make' : device.method,
         device: device.id,
         interface: device.interface,
+        is_katapult: device.is_katapult,
       },
       (chunk) => {
         opLog.value += chunk
@@ -278,6 +279,7 @@ async function buildAndFlash(device: Device): Promise<void> {
         method: isAvr(device.profile) ? 'make' : device.method,
         device: device.id,
         interface: device.interface,
+        is_katapult: device.is_katapult,
       },
       (chunk) => {
         opLog.value += chunk

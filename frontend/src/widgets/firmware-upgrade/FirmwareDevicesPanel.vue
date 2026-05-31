@@ -238,6 +238,14 @@ onUnmounted(() => {
             :class="['w-20 font-mono', inputClass]"
             @change="persist(device)"
           />
+          <label
+            v-if="device.method === 'serial' || device.method === 'can'"
+            class="flex items-center gap-1 text-[10px]"
+            title="Board carries a Katapult bootloader — it's rebooted into Katapult before flashing. Uncheck for boards flashed directly."
+          >
+            <input v-model="device.is_katapult" type="checkbox" @change="persist(device)" />
+            katapult
+          </label>
           <label class="flex items-center gap-1 text-[10px]">
             <input v-model="device.exclude_from_batch" type="checkbox" @change="persist(device)" />
             exclude
