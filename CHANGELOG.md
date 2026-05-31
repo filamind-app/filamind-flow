@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.21.1] - 2026-05-31
+
+### Fixed
+
+- **Config options are easier to toggle.** A bool option's **whole row** is now a
+  click target (not just the small badge on the right), with a pointer cursor and
+  a hover highlight — so options like *Optimize stepper code…* are obviously and
+  reliably controllable. Options that Kconfig locks (forced by another symbol)
+  now show a 🔒 and a tooltip explaining why they can't be changed.
+- **Browsers always load the latest build.** nginx now serves `index.html` with
+  `Cache-Control: no-cache` (and the content-hashed assets as `immutable`), so a
+  new deploy is picked up immediately instead of a stale bundle lingering in the
+  browser cache.
+
 ## [0.21.0] - 2026-05-31
 
 ### Added
@@ -414,7 +428,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.21.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.21.1...HEAD
+[0.21.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.1
 [0.21.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.21.0
 [0.20.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.20.1
 [0.20.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.20.0

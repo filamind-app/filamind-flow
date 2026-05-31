@@ -61,6 +61,10 @@ server {
     root $APP/frontend/dist;
     index index.html;
 
+    # Hashed build assets are immutable; index.html must always revalidate so a
+    # new deploy is picked up immediately (never serve a stale bundle).
+    location /assets/ { add_header Cache-Control "public, max-age=31536000, immutable"; }
+    location = /index.html { add_header Cache-Control "no-cache"; }
     location / { try_files \$uri \$uri/ /index.html; }
     location /api/ { proxy_pass http://127.0.0.1:$API_PORT; proxy_set_header Host \$host; }
 

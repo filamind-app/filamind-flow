@@ -93,7 +93,13 @@ function boolOn(node: ConfigNode): boolean {
   return node.value === 'y'
 }
 
+/** A bool/tristate row whose whole width is a click target to toggle. */
+function isToggle(node: ConfigNode): boolean {
+  return node.type === 'bool' || node.type === 'tristate'
+}
+
 function toggleBool(node: ConfigNode): void {
+  if (node.readonly) return
   edits.value[node.name] = boolOn(node) ? 'n' : 'y'
   void reloadTree()
 }
@@ -338,8 +344,25 @@ onMounted(async () => {
           ❝ {{ item.node.prompt }}
         </div>
         <div v-else :style="{ paddingLeft: item.depth * 12 + 'px' }">
-          <div class="flex items-center justify-between gap-2 py-0.5">
-            <span class="min-w-0 flex-1 truncate" :title="item.node.help ?? item.node.name">
+          <div
+            class="flex items-center justify-between gap-2 rounded px-1 py-0.5"
+            :class="
+              isToggle(item.node)
+                ? item.node.readonly
+                  ? 'opacity-60'
+                  : 'cursor-pointer select-none hover:bg-paper'
+                : ''
+            "
+            @click="isToggle(item.node) && toggleBool(item.node)"
+          >
+            <span
+              class="min-w-0 flex-1 truncate"
+              :title="
+                item.node.readonly
+                  ? 'Locked — set automatically by another option'
+                  : (item.node.help ?? item.node.name)
+              "
+            >
               {{ item.node.prompt }}
               <code
                 v-if="showRaw && !item.node.name.startsWith('__')"
@@ -347,15 +370,14 @@ onMounted(async () => {
                 >{{ item.node.name }}</code
               >
             </span>
-            <button
-              v-if="item.node.type === 'bool' || item.node.type === 'tristate'"
+            <!-- bool/tristate: the whole row is the click target; this is the indicator -->
+            <span
+              v-if="isToggle(item.node)"
               class="nb-badge shrink-0"
               :class="boolOn(item.node) ? 'bg-brand-lime' : 'bg-surface opacity-70'"
-              :disabled="item.node.readonly"
-              @click="toggleBool(item.node)"
             >
-              {{ boolOn(item.node) ? 'on' : 'off' }}
-            </button>
+              {{ item.node.readonly ? '🔒 ' : '' }}{{ boolOn(item.node) ? 'ON' : 'OFF' }}
+            </span>
             <select
               v-else-if="item.node.type === 'choice'"
               :class="inputClass"
