@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-05-31
+
+### Added
+
+- **Rename a profile** — renames its `.config`, moves any built binary +
+  build-info, and rewrites every device that pointed at it, in one step.
+- **Duplicate / save-as a profile** — copies a profile's config (and any built
+  binary) under a new name to branch from an existing setup.
+
+### Changed
+
+- **Build auto-saves pending edits** — clicking *build* with unsaved Kconfig
+  edits now saves them into the profile first, so the compiled firmware always
+  reflects what's on screen.
+
 ## [0.18.1] - 2026-05-31
 
 ### Fixed
@@ -350,7 +365,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.18.1...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.19.0
 [0.18.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.18.1
 [0.18.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.18.0
 [0.17.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.17.1

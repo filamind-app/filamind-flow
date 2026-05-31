@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings
 from app.main import create_app
+from app.services import devices_store
 from app.services.firmware_profiles import ProfileNameError, validate_name
 
 FIXTURE_KLIPPER = str(Path(__file__).parent / "fixtures" / "fake_klipper")
@@ -105,6 +106,57 @@ def test_download_artifact(tmp_path: Path) -> None:
 
     # Path-traversal names are rejected before touching the filesystem.
     assert client.get("/api/firmware/config/profiles/..%2fevil/artifact").status_code in (400, 404)
+
+
+def test_rename_profile_moves_config_artifact_and_device_refs(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    client.post("/api/firmware/config/profiles", json={"name": "old", "values": []})
+
+    # Pretend it was built: drop an artifact + build-info sidecar.
+    artifacts = tmp_path / "artifacts"
+    artifacts.mkdir(parents=True, exist_ok=True)
+    (artifacts / "old.bin").write_bytes(b"FW")
+    (artifacts / "old.build_info.json").write_text('{"version": "v1"}')
+    # A device that points at the profile.
+    devices_store.save_device(str(tmp_path), {"id": "dev1", "name": "Board", "profile": "old"})
+
+    renamed = client.post("/api/firmware/config/profiles/old/rename", json={"new_name": "new"})
+    assert renamed.status_code == 200
+
+    profiles = tmp_path / "firmware-profiles"
+    assert not (profiles / "old.config").exists()
+    assert (profiles / "new.config").exists()
+    assert (artifacts / "new.bin").exists() and not (artifacts / "old.bin").exists()
+    assert (artifacts / "new.build_info.json").exists()
+    assert devices_store.get_device(str(tmp_path), "dev1")["profile"] == "new"
+
+    # Collision → 409, missing source → 404.
+    client.post("/api/firmware/config/profiles", json={"name": "other", "values": []})
+    assert (
+        client.post("/api/firmware/config/profiles/new/rename", json={"new_name": "other"})
+    ).status_code == 409
+    assert (
+        client.post("/api/firmware/config/profiles/ghost/rename", json={"new_name": "x"})
+    ).status_code == 404
+
+
+def test_duplicate_profile_copies_config(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    client.post(
+        "/api/firmware/config/profiles",
+        json={"name": "src", "values": [{"name": "DEMO_CLOCK_FREQ", "value": "16000000"}]},
+    )
+
+    dup = client.post("/api/firmware/config/profiles/src/duplicate", json={"new_name": "copy"})
+    assert dup.status_code == 200
+
+    profiles = tmp_path / "firmware-profiles"
+    assert (profiles / "src.config").read_text() == (profiles / "copy.config").read_text()
+    # Source is untouched; duplicating onto an existing name → 409.
+    assert (profiles / "src.config").exists()
+    assert (
+        client.post("/api/firmware/config/profiles/src/duplicate", json={"new_name": "copy"})
+    ).status_code == 409
 
 
 def test_config_unavailable_without_klipper(tmp_path: Path) -> None:

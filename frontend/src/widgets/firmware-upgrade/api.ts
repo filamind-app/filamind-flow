@@ -85,6 +85,40 @@ export async function saveProfile(body: {
   }
 }
 
+/** Renames a profile (config + artifacts) and rewrites devices that referenced it. */
+export async function renameProfile(name: string, newName: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/config/profiles/${encodeURIComponent(name)}/rename`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ new_name: newName }),
+    },
+  )
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Rename failed (${response.status})`)
+  }
+}
+
+/** Duplicates a profile's config (and any built artifacts) under a new name. */
+export async function duplicateProfile(name: string, newName: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/config/profiles/${encodeURIComponent(name)}/duplicate`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ new_name: newName }),
+    },
+  )
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { detail?: string } | null
+    throw new Error(detail?.detail ?? `Duplicate failed (${response.status})`)
+  }
+}
+
 /** Deletes a saved firmware profile. */
 export async function deleteProfile(name: string): Promise<void> {
   const { backendUrl } = resolveEndpoints()

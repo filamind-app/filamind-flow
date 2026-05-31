@@ -161,6 +161,12 @@ class ProfileSaveRequest(BaseModel):
     base_profile: str | None = None
 
 
+class ProfileRenameRequest(BaseModel):
+    """Renames or duplicates a profile to ``new_name``."""
+
+    new_name: str
+
+
 class FirmwareProfile(BaseModel):
     """A saved per-board firmware profile and the flags that shape its flashing."""
 
