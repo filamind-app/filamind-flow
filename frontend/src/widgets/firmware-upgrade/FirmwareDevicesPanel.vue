@@ -4,10 +4,12 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import {
   attachIdentity,
   cancelTask,
+  exportBackup,
   fetchBoards,
   fetchDevices,
   fetchProfiles,
   fetchTask,
+  importBackup,
   rebootBoard,
   removeDevice,
   saveDevice,
@@ -201,6 +203,37 @@ async function refreshBoards(): Promise<void> {
     boards.value = (await fetchBoards()).boards
   } catch {
     /* transient — keep the last good modes */
+  }
+}
+
+// --- Backup & restore the registry + profiles ---
+const backupMsg = ref<string | null>(null)
+
+async function doExport(): Promise<void> {
+  backupMsg.value = null
+  error.value = null
+  try {
+    await exportBackup()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Export failed'
+  }
+}
+
+async function onImportFile(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  backupMsg.value = null
+  error.value = null
+  try {
+    const summary = await importBackup(file)
+    const extra = summary.restored_devices ? ' + devices' : ''
+    backupMsg.value = `Restored ${summary.restored_profiles.length} profile(s)${extra}.`
+    await load()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Import failed'
+  } finally {
+    input.value = ''
   }
 }
 
@@ -407,6 +440,21 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
+      </div>
+
+      <!-- Backup & restore the registry + profiles -->
+      <div class="space-y-1.5 border-t-2 border-ink pt-2">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-bold uppercase tracking-wide">Backup</span>
+          <div class="flex gap-1">
+            <button class="nb-btn px-2 py-0.5 text-[10px]" @click="doExport">export</button>
+            <label class="nb-btn cursor-pointer px-2 py-0.5 text-[10px]">
+              import
+              <input type="file" accept=".zip" class="hidden" @change="onImportFile" />
+            </label>
+          </div>
+        </div>
+        <p v-if="backupMsg" class="font-mono text-[10px] opacity-70">{{ backupMsg }}</p>
       </div>
     </template>
   </div>

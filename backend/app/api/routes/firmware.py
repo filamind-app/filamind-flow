@@ -3,12 +3,13 @@ from __future__ import annotations
 import asyncio
 import os
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import StreamingResponse
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
     AttachRequest,
+    BackupImportResponse,
     BatchRequest,
     BeaconFlashRequest,
     BeaconResponse,
@@ -30,6 +31,7 @@ from app.models.schemas import (
     TaskStatus,
 )
 from app.services import (
+    backup_service,
     batch_service,
     beacon_service,
     board_service,
@@ -313,3 +315,26 @@ async def firmware_beacon_flash(
     return StreamingResponse(
         beacon_service.flash_beacon(request.device, settings), media_type="text/plain"
     )
+
+
+@router.get("/backup/export")
+async def firmware_backup_export(settings: Settings = Depends(get_settings)) -> Response:
+    """Downloads a ZIP backup of the device registry + all Kconfig profiles."""
+    blob = backup_service.export_backup(settings.data_dir)
+    return Response(
+        content=blob,
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=filamind-backup.zip"},
+    )
+
+
+@router.post("/backup/import", response_model=BackupImportResponse)
+async def firmware_backup_import(
+    request: Request, settings: Settings = Depends(get_settings)
+) -> BackupImportResponse:
+    """Restores a ZIP backup (raw body). Overwrites the registry + named profiles."""
+    try:
+        summary = backup_service.import_backup(settings.data_dir, await request.body())
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return BackupImportResponse.model_validate(summary)
