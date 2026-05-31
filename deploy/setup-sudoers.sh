@@ -24,12 +24,13 @@ SYSTEMCTL="$(command -v systemctl || echo /usr/bin/systemctl)"
 DFU_UTIL="$(command -v dfu-util || echo /usr/bin/dfu-util)"
 CP_BIN="$(command -v cp || echo /bin/cp)"
 CHMOD_BIN="$(command -v chmod || echo /bin/chmod)"
+FUSER_BIN="$(command -v fuser || echo /usr/bin/fuser)"
 
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 cat > "$TMP" <<EOF
 # Managed by FilaMind Flow (deploy/setup-sudoers.sh) — firmware flashing only.
-$USER_NAME ALL=(root) NOPASSWD: $SYSTEMCTL, $DFU_UTIL, $CP_BIN, $CHMOD_BIN
+$USER_NAME ALL=(root) NOPASSWD: $SYSTEMCTL, $DFU_UTIL, $CP_BIN, $CHMOD_BIN, $FUSER_BIN
 EOF
 
 # Validate syntax BEFORE installing so a mistake can never lock you out of sudo.
