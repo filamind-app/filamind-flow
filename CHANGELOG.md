@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-05-31
+
+### Changed
+
+- **Operational dashboard** — your registered devices now live on the **main
+  screen** as operational cards (live status, profile, version, per-device
+  **build / flash / boot**), and the **batch** buttons (Build all / Flash all /
+  Flash ready / Build & flash) moved there too. A device appears on the main
+  screen only once it's been **added and given a profile**, so raw discovery no
+  longer duplicates there. The **Devices manager** (the former Devices tab) is
+  now purely for discovering, adding, and configuring boards.
+
 ## [0.15.0] - 2026-05-31
 
 ### Added
@@ -264,7 +276,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.0
 [0.15.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.15.0
 [0.14.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.14.0
 [0.13.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.13.0
