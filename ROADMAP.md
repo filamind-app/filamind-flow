@@ -26,17 +26,20 @@ Phases 6+ close the gaps found against the installed KlipperFleet v1.3.1-alpha.
 | Phase | Scope | Closes / unlocks |
 | ----- | ----- | ---------------- |
 | ✅ **6 — Version tracking** | Capture Klipper version/commit/date at build time (`<profile>.build_info.json` + `get_klipper_version`); show the **built / flashed version** on every board — including the Linux host MCU, which Moonraker can't report | the reported "host MCU shows no version" gap |
-| 📋 **7 — Fleet (persistence)** | A saved fleet (`fleet.json`): board↔profile mapping, flashed_version, last_flashed, and per-device settings (baudrate, Katapult serial identity, custom make command, exclude-from-batch, notes) | a persistent dashboard + everything below |
-| 📋 **8 — Batch operations** | Build All / Flash All / Flash Ready across the fleet, with service stop/start orchestration | one-click fleet upgrade |
-| 📋 **9 — Live status & services** | Live per-device status (service / ready / offline) + start/stop/restart Klipper services from the UI + profile Backup & Restore | |
-| 📋 **10 — Advanced flash** | 1200bps magic-baud reboot, DFU retry + `:leave`, USB-to-CAN bridge handling, AVR auto-detect | reliability on more boards |
+| 📋 **7 — Fleet (persistence)** | A saved fleet (`fleet.json`): board↔profile mapping, flashed_version, last_flashed, per-device settings (baudrate, custom make command, exclude-from-batch, notes), and a **dual identity per device** (runtime + its separate Katapult-serial / DFU bootloader id); **Add / Attach / Remove** discovered hardware (Attach binds a found bootloader device to an existing fleet entry) | a persistent dashboard + everything below |
+| 📋 **8 — Batch operations** | Build All / Flash All / Flash Ready across the fleet, with service stop/start orchestration; **cancel a running build/flash** (task store) + colorized / expandable log panel | one-click fleet upgrade |
+| 📋 **9 — Live status, services & reboot** | Live per-device status (service / ready / offline / dfu) with **auto-refresh polling**; **reboot controls** per board (Restart-to-Firmware / Reboot-to-Katapult / Reboot-to-DFU); start/stop/restart Klipper services; **version coloring** (match / mismatch / update-available) | interactive dashboard |
+| 📋 **10 — Advanced flash** | 1200bps magic-baud reboot **+ "Test DFU Cycle" validation** (gates auto-DFU / auto-exit), DFU retry + `:leave` + auto-exit, USB-to-CAN bridge handling, AVR auto-detect, **post-flash re-enumeration tracking** (board id changes after flash → auto-update fleet), **Katapult native wire-protocol** return-to-firmware + CAN interface bring-up | reliability on more boards |
 | 📋 **11 — Beacon** | Beacon eddy-probe firmware (flash + remote-version compare) | Beacon users |
+| 📋 **12 — Backup & Restore** | Export / import a ZIP of the **fleet registry + all Kconfig profiles** (binaries excluded, rebuildable) | migrate or recover a whole setup |
+| 📋 **13 — Health & install integrity** | `/api/health` checks (sudoers, **udev DFU rules**, system deps, venv, moonraker.conf) + a UI health indicator; ship a **`99-stm32-dfu.rules`** so DFU flashes without `sudo`; **self-heal** sudoers / system-deps on startup | DFU-without-sudo + zero-touch install |
 
 **Ideas (not yet sequenced)**
 
-- 📋 One-click "Check & Upgrade" (installed vs upstream) · Host↔MCU mismatch alerts · Pre-flight checks
+- 📋 One-click "Check & Upgrade" (installed vs upstream, per device) · Host↔MCU mismatch alerts · Pre-flight checks
 - 📋 Firmware backup + rollback · Board profile library (EBB36, Spider, …) · Scheduled flash · Flash audit log · Guided wizard
-- 📋 Configurator polish: modified-options count, raw-symbol-names toggle, profile rename
+- 📋 Configurator polish: modified-options count, raw-symbol-names toggle, profile **rename + duplicate**, Kalico firmware-name detection
+- 📋 Download a built binary to the browser · App self-update from the UI ("N commits behind" badge)
 - ✅ MCU telemetry (freq / load / retransmits) — shipped in v0.7.0
 
 ### 📋 Other widgets
