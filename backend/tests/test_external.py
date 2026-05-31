@@ -61,6 +61,21 @@ def test_external_reads_embedded_properties(tmp_path: Path) -> None:
     assert "stm32" in (body["detected_mcu"] or "")
 
 
+def test_external_reads_version_from_zlib_data_dict(tmp_path: Path) -> None:
+    # Klipper raw .bin stores the version/MCU in a zlib-compressed data dictionary,
+    # not plain strings — the inspector must decompress it.
+    import zlib
+
+    client = _client(tmp_path)
+    data_dict = b'{"app":"Klipper","version":"v0.12.0-5-gabc1234","config":{"MCU":"stm32f103xe"}}'
+    blob = b"\x00\xffARMCODE\x00" + zlib.compress(data_dict) + b"\xfetail"
+    up = client.post("/api/firmware/external?name=fw3&ext=bin", content=blob)
+    assert up.status_code == 200
+    body = up.json()
+    assert body["detected_version"] == "v0.12.0-5-gabc1234"
+    assert "stm32" in (body["detected_mcu"] or "")
+
+
 def test_external_rejects_bad_name_and_ext(tmp_path: Path) -> None:
     client = _client(tmp_path)
     assert (

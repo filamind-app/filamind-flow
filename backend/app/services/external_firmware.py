@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import zlib
 from typing import Any
 
 _NAME_RE = re.compile(r"^[A-Za-z0-9 _.\-]+$")
@@ -71,28 +72,63 @@ _MCU_TOKENS = (
 )
 
 
+def _decompress_dict(data: bytes) -> bytes | None:
+    """Finds + decompresses Klipper's embedded zlib data dictionary, if present.
+
+    Klipper stamps its version / MCU into a zlib-compressed JSON dictionary rather
+    than plain strings, so we scan for a zlib stream (``0x78`` header) and return
+    the first decompressed blob that looks like that JSON dictionary.
+    """
+    attempts = 0
+    for idx in range(len(data) - 1):
+        if data[idx] != 0x78 or data[idx + 1] not in (0x01, 0x5E, 0x9C, 0xDA):
+            continue
+        attempts += 1
+        if attempts > 8000:
+            break
+        try:
+            blob = zlib.decompressobj().decompress(data[idx:], 2_000_000)
+        except zlib.error:
+            continue
+        if len(blob) > 40 and b'"' in blob and (b"version" in blob.lower() or b'"app"' in blob):
+            return blob
+    return None
+
+
+def _scan(blob: bytes, info: dict[str, Any]) -> None:
+    """Fills detected_version / detected_mcu from a blob of bytes, if not already set."""
+    if not info["detected_version"]:
+        version = _VERSION_RE.search(blob)
+        if version:
+            info["detected_version"] = version.group(0).decode("ascii", "replace")
+    if not info["detected_mcu"]:
+        low = blob.lower()
+        for token in _MCU_TOKENS:
+            idx = low.find(token)
+            if idx == -1:
+                continue
+            end = idx
+            while end < len(low) and end < idx + 14 and chr(low[end]).isalnum():
+                end += 1
+            info["detected_mcu"] = blob[idx:end].decode("ascii", "replace")
+            break
+
+
 def inspect_firmware(path: str) -> dict[str, Any]:
-    """Best-effort read of properties embedded in a firmware binary by scanning its
-    printable strings — the Klipper git version and an MCU-family hint."""
+    """Best-effort read of properties embedded in a firmware binary: the Klipper
+    git version + an MCU-family hint, from either plain strings (``.elf``) or the
+    zlib data dictionary (raw ``.bin``)."""
     info: dict[str, Any] = {"detected_version": None, "detected_mcu": None}
     try:
         with open(path, "rb") as handle:
             data = handle.read(8_000_000)
     except OSError:
         return info
-    version = _VERSION_RE.search(data)
-    if version:
-        info["detected_version"] = version.group(0).decode("ascii", "replace")
-    low = data.lower()
-    for token in _MCU_TOKENS:
-        idx = low.find(token)
-        if idx == -1:
-            continue
-        end = idx
-        while end < len(low) and end < idx + 14 and chr(low[end]).isalnum():
-            end += 1
-        info["detected_mcu"] = data[idx:end].decode("ascii", "replace")
-        break
+    _scan(data, info)
+    if not info["detected_version"] or not info["detected_mcu"]:
+        embedded = _decompress_dict(data)
+        if embedded is not None:
+            _scan(embedded, info)
     return info
 
 
@@ -104,9 +140,6 @@ def _default_meta(name: str) -> dict[str, Any]:
         "offset": "",
         "interface": "can0",
         "notes": "",
-        "detected_version": None,
-        "detected_mcu": None,
-        "inspected": False,
     }
 
 
@@ -184,10 +217,10 @@ def list_one(data_dir: str, name: str) -> dict[str, Any]:
     """
     path = firmware_path(data_dir, name)
     meta = read_meta(data_dir, name)
-    if path and not meta.get("inspected"):
-        meta.update(inspect_firmware(path))
-        meta["inspected"] = True
-        _write_meta(data_dir, name, meta)
+    # Read embedded properties fresh (cheap; avoids a stale cache across upgrades).
+    meta.update(
+        inspect_firmware(path) if path else {"detected_version": None, "detected_mcu": None}
+    )
     meta["filename"] = os.path.basename(path) if path else None
     meta["size"] = os.path.getsize(path) if path else 0
     return meta
