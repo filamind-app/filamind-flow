@@ -26,6 +26,7 @@ import httpx
 
 from app.services.firmware_service import _klipper_mcu_service_active
 from app.services.moonraker_client import MoonrakerClient
+from app.services.version_store import flashed_version
 
 _SERVICE_HINTS = ("klipper", "kalico")
 _BOOTLOADER_HINTS = ("katapult", "canboot")
@@ -236,13 +237,14 @@ def _board(**kwargs: Any) -> dict[str, Any]:
         "version": None,
         "application": None,
         "interface": None,
+        "flashed_version": None,
     }
     base.update(kwargs)
     return base
 
 
 async def discover_boards(
-    moonraker_url: str, klipper_dir: str, katapult_dir: str
+    moonraker_url: str, klipper_dir: str, katapult_dir: str, data_dir: str
 ) -> dict[str, Any]:
     """Discovers and merges every detectable board on the host."""
     configured = await _moonraker_mcus(moonraker_url)
@@ -294,6 +296,10 @@ async def discover_boards(
             connection="linux",
             mode="available",
         )
+
+    # Annotate each board with the version FilaMind last flashed to it.
+    for board in boards.values():
+        board["flashed_version"] = flashed_version(data_dir, board["id"])
 
     ordered = sorted(
         boards.values(), key=lambda b: (not b["configured"], b["connection"], b["name"])

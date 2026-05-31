@@ -53,6 +53,8 @@ class HostMcu(BaseModel):
 
     configured: bool = False
     service_active: bool = False
+    #: Firmware version last flashed to the host MCU (from FilaMind's flash record).
+    version: str | None = None
 
 
 class FirmwareTools(BaseModel):
@@ -93,6 +95,8 @@ class Board(BaseModel):
     application: str | None = None
     #: CAN interface (e.g. can0) for CAN boards.
     interface: str | None = None
+    #: Firmware version FilaMind last flashed to this board, if recorded.
+    flashed_version: str | None = None
 
 
 class BoardScan(BaseModel):
@@ -160,6 +164,8 @@ class FirmwareProfile(BaseModel):
 
     name: str
     built: bool = False
+    #: Klipper version this profile was last built with (from build_info.json).
+    built_version: str | None = None
     is_can_bridge: bool = False
     is_linux: bool = False
     is_avr: bool = False
