@@ -6,6 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.16.1] - 2026-05-31
+
+### Changed
+
+- Slimmed the main screen — removed the per-MCU status rows and the Linux host
+  MCU row; the operational **Devices** cards now carry each board's live status.
+  The host Klipper row, tool / setup badges, services, and Devices section stay.
+
 ## [0.16.0] - 2026-05-31
 
 ### Changed
@@ -276,7 +284,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.16.1...HEAD
+[0.16.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.1
 [0.16.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.16.0
 [0.15.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.15.0
 [0.14.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.14.0

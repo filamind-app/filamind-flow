@@ -64,14 +64,6 @@ function boardModeClass(mode: string): string {
   return 'bg-surface opacity-70'
 }
 
-/** Explicit status for the optional Klipper 'Linux process' host MCU. */
-const hostMcu = computed(() => {
-  const h = status.value?.host_mcu
-  if (h?.configured) return { label: 'active', cls: 'bg-brand-lime' }
-  if (h?.service_active) return { label: 'available · not configured', cls: 'bg-brand-yellow' }
-  return { label: 'not installed', cls: 'bg-surface opacity-60' }
-})
-
 const TOOLS: { key: keyof FirmwareTools; label: string }[] = [
   { key: 'klipper', label: 'Klipper' },
   { key: 'katapult', label: 'Katapult' },
@@ -287,55 +279,6 @@ onUnmounted(() => {
             <span class="font-mono text-[11px] opacity-80">{{ status.host.version ?? '—' }}</span>
             <span class="nb-badge shrink-0 bg-surface">{{ status.host.state ?? 'host' }}</span>
           </div>
-
-          <div
-            v-for="mcu in status.mcus"
-            :key="mcu.name"
-            class="rounded-brutal border-2 border-ink px-2 py-1"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <span class="min-w-0 flex-1 truncate font-bold">{{ mcu.name }}</span>
-              <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{ mcu.kind }}</span>
-              <span class="font-mono text-[11px] opacity-80">{{ mcu.version ?? '—' }}</span>
-              <span
-                class="nb-badge shrink-0"
-                :class="
-                  mcu.in_sync === false
-                    ? 'bg-brand-red text-surface'
-                    : mcu.in_sync
-                      ? 'bg-brand-lime'
-                      : 'bg-surface'
-                "
-              >
-                {{ mcu.in_sync === false ? 'mismatch' : mcu.in_sync ? 'in sync' : '—' }}
-              </span>
-            </div>
-            <div
-              v-if="mcu.freq"
-              class="mt-0.5 flex flex-wrap gap-x-2 font-mono text-[9px] opacity-60"
-            >
-              <span>{{ Math.round(mcu.freq / 1e6) }} MHz</span>
-              <span v-if="mcu.awake != null">· {{ (mcu.awake * 100).toFixed(1) }}% load</span>
-              <span
-                v-if="mcu.retransmits != null"
-                :class="mcu.retransmits > 0 ? 'text-brand-red opacity-100' : ''"
-              >
-                · {{ mcu.retransmits }} retransmit{{ mcu.retransmits === 1 ? '' : 's' }}
-              </span>
-            </div>
-          </div>
-
-          <p v-if="!status.mcus.length" class="font-mono text-xs opacity-70">
-            {{ status.reachable ? 'No MCUs reported.' : 'Printer not reachable.' }}
-          </p>
-        </div>
-
-        <div class="flex items-center justify-between gap-2 border-t-2 border-ink pt-2 text-xs">
-          <span class="font-bold">Linux host MCU</span>
-          <span v-if="status.host_mcu.version" class="font-mono text-[11px] opacity-80">{{
-            status.host_mcu.version
-          }}</span>
-          <span class="nb-badge shrink-0" :class="hostMcu.cls">{{ hostMcu.label }}</span>
         </div>
 
         <div class="flex flex-wrap gap-1.5 border-t-2 border-ink pt-2">
