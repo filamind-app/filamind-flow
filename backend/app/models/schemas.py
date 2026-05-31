@@ -97,7 +97,7 @@ class Board(BaseModel):
     interface: str | None = None
     #: Firmware version FilaMind last flashed to this board, if recorded.
     flashed_version: str | None = None
-    #: True when this board is already saved in the fleet.
+    #: True when this board is already saved in the registry.
     managed: bool = False
 
 
@@ -206,8 +206,8 @@ class FlashPlan(BaseModel):
     warnings: list[str] = []
 
 
-class FleetDeviceBase(BaseModel):
-    """The editable settings of a board saved in the fleet."""
+class DeviceBase(BaseModel):
+    """The editable settings of a board saved in the registry."""
 
     id: str
     name: str
@@ -223,37 +223,37 @@ class FleetDeviceBase(BaseModel):
     #: Bootloader identities the board takes on under Katapult / DFU, if distinct.
     serial_id: str | None = None
     dfu_id: str | None = None
-    #: Skip this board during fleet-wide (batch) flashes.
+    #: Skip this board during batch (Flash All) flashes.
     exclude_from_batch: bool = False
     #: Overrides ``make`` for this board's build, when set.
     custom_make_command: str | None = None
 
 
-class FleetDevice(FleetDeviceBase):
-    """A fleet device as returned to the UI, enriched with its flash history."""
+class Device(DeviceBase):
+    """A device as returned to the UI, enriched with its flash history."""
 
-    #: Read back from the flash records (not stored in fleet.json).
+    #: Read back from the flash records (not stored in devices.json).
     flashed_version: str | None = None
     flashed_commit: str | None = None
     last_flashed: str | None = None
 
 
-class FleetDeviceSave(FleetDeviceBase):
-    """Upsert payload for a fleet device, with an optional previous id (rename)."""
+class DeviceSave(DeviceBase):
+    """Upsert payload for a device, with an optional previous id (rename)."""
 
     old_id: str | None = None
 
 
 class AttachRequest(BaseModel):
-    """Binds a discovered bootloader identity to an existing fleet device."""
+    """Binds a discovered bootloader identity to an existing device."""
 
-    fleet_id: str
+    device_id: str
     hardware_id: str
     #: Which identity to set: serial / dfu.
     kind: str
 
 
-class FleetResponse(BaseModel):
-    """The saved fleet."""
+class DevicesResponse(BaseModel):
+    """The saved devices."""
 
-    devices: list[FleetDevice]
+    devices: list[Device]

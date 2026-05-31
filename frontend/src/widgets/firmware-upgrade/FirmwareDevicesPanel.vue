@@ -4,53 +4,53 @@ import { computed, onMounted, ref } from 'vue'
 import {
   attachIdentity,
   fetchBoards,
-  fetchFleet,
+  fetchDevices,
   fetchProfiles,
-  removeFleetDevice,
-  saveFleetDevice,
+  removeDevice,
+  saveDevice,
 } from './api'
-import type { Board, FirmwareProfile, FleetDevice } from './types'
+import type { Board, FirmwareProfile, Device } from './types'
 
 defineEmits<{ close: [] }>()
 
-const fleet = ref<FleetDevice[]>([])
+const devices = ref<Device[]>([])
 const boards = ref<Board[]>([])
 const profiles = ref<FirmwareProfile[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
-/** Id of the discovered board currently choosing a fleet device to attach to. */
+/** Id of the discovered board currently choosing a device to attach to. */
 const attachFor = ref<string | null>(null)
 
 const METHODS = ['serial', 'can', 'dfu', 'linux']
 const BAUDRATES = [115200, 230400, 250000, 500000, 1000000]
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
 
-/** Boards on the bus that are not yet saved in the fleet. */
+/** Boards on the bus that are not yet saved in the registry. */
 const unmanaged = computed(() => boards.value.filter((b) => !b.managed))
 
 async function load(): Promise<void> {
   loading.value = true
   error.value = null
   try {
-    const [fleetData, boardData, profileData] = await Promise.all([
-      fetchFleet(),
+    const [devicesData, boardData, profileData] = await Promise.all([
+      fetchDevices(),
       fetchBoards(),
       fetchProfiles(),
     ])
-    fleet.value = fleetData.devices
+    devices.value = devicesData.devices
     boards.value = boardData.boards
     profiles.value = profileData.profiles
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to load fleet'
+    error.value = e instanceof Error ? e.message : 'Failed to load devices'
   } finally {
     loading.value = false
   }
 }
 
-async function persist(device: FleetDevice): Promise<void> {
+async function persist(device: Device): Promise<void> {
   error.value = null
   try {
-    await saveFleetDevice({ ...device })
+    await saveDevice({ ...device })
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Save failed'
   }
@@ -63,7 +63,7 @@ function methodForBoard(board: Board): string {
 async function addBoard(board: Board): Promise<void> {
   error.value = null
   try {
-    await saveFleetDevice({
+    await saveDevice({
       id: board.id,
       name: board.name,
       method: methodForBoard(board),
@@ -76,10 +76,10 @@ async function addBoard(board: Board): Promise<void> {
   }
 }
 
-async function attachToDevice(board: Board, fleetId: string): Promise<void> {
+async function attachToDevice(board: Board, deviceId: string): Promise<void> {
   error.value = null
   try {
-    await attachIdentity(fleetId, board.id, board.connection === 'dfu' ? 'dfu' : 'serial')
+    await attachIdentity(deviceId, board.id, board.connection === 'dfu' ? 'dfu' : 'serial')
     attachFor.value = null
     await load()
   } catch (e) {
@@ -87,15 +87,15 @@ async function attachToDevice(board: Board, fleetId: string): Promise<void> {
   }
 }
 
-async function detach(device: FleetDevice, field: 'serial_id' | 'dfu_id'): Promise<void> {
+async function detach(device: Device, field: 'serial_id' | 'dfu_id'): Promise<void> {
   device[field] = null
   await persist(device)
 }
 
-async function remove(device: FleetDevice): Promise<void> {
+async function remove(device: Device): Promise<void> {
   error.value = null
   try {
-    await removeFleetDevice(device.id)
+    await removeDevice(device.id)
     await load()
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Remove failed'
@@ -108,17 +108,17 @@ onMounted(load)
 <template>
   <div class="space-y-2 text-sm">
     <div class="flex items-center justify-between gap-2">
-      <span class="text-xs font-bold uppercase tracking-wide">Fleet</span>
+      <span class="text-xs font-bold uppercase tracking-wide">Devices</span>
       <button class="nb-btn px-2 py-0.5 text-xs" @click="$emit('close')">← back</button>
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
-    <div v-if="loading" class="font-mono text-xs">Loading fleet…</div>
+    <div v-if="loading" class="font-mono text-xs">Loading devices…</div>
 
     <template v-else>
-      <!-- Registered fleet -->
+      <!-- Registered devices -->
       <div
-        v-for="device in fleet"
+        v-for="device in devices"
         :key="device.id"
         class="space-y-1.5 rounded-brutal border-2 border-ink p-2"
       >
@@ -193,11 +193,11 @@ onMounted(load)
           </button>
         </div>
       </div>
-      <p v-if="!fleet.length" class="font-mono text-xs opacity-70">
-        No boards in the fleet yet — add one below.
+      <p v-if="!devices.length" class="font-mono text-xs opacity-70">
+        No saved devices yet — add one below.
       </p>
 
-      <!-- Discovered, not yet in the fleet -->
+      <!-- Discovered, not yet saved -->
       <div v-if="unmanaged.length" class="space-y-1.5 border-t-2 border-ink pt-2">
         <span class="text-xs font-bold uppercase tracking-wide">Discovered</span>
         <div
@@ -217,7 +217,7 @@ onMounted(load)
               add
             </button>
             <button
-              v-if="fleet.length"
+              v-if="devices.length"
               class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
               @click="attachFor = attachFor === board.id ? null : board.id"
             >
@@ -226,7 +226,7 @@ onMounted(load)
           </div>
           <div v-if="attachFor === board.id" class="mt-1 flex flex-wrap gap-1">
             <button
-              v-for="device in fleet"
+              v-for="device in devices"
               :key="device.id"
               class="nb-btn px-2 py-0.5 text-[10px]"
               @click="attachToDevice(board, device.id)"
