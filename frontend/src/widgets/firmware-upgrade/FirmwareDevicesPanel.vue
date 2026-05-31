@@ -8,6 +8,7 @@ import {
   fetchDevices,
   fetchProfiles,
   fetchTask,
+  rebootBoard,
   removeDevice,
   saveDevice,
   startBatch,
@@ -160,11 +161,58 @@ async function cancelBatch(): Promise<void> {
   if (batchTaskId.value) await cancelTask(batchTaskId.value)
 }
 
-onUnmounted(() => {
-  if (pollTimer) clearTimeout(pollTimer)
+// --- Live status + per-device reboot-to-bootloader ---
+const liveMode = computed(() => {
+  const map: Record<string, string> = {}
+  for (const b of boards.value) map[b.id] = b.mode
+  return map
 })
 
-onMounted(load)
+function modeClass(mode: string): string {
+  if (mode === 'service') return 'bg-brand-lime'
+  if (mode === 'ready' || mode === 'dfu') return 'bg-brand-yellow'
+  return 'bg-surface opacity-60'
+}
+
+async function rebootDevice(device: Device): Promise<void> {
+  if (batchRunning.value) return
+  error.value = null
+  batchLog.value = ''
+  batchRunning.value = true
+  try {
+    await rebootBoard(
+      { method: device.method, device: device.id, interface: device.interface },
+      (chunk) => {
+        batchLog.value += chunk
+      },
+    )
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Reboot failed'
+  } finally {
+    batchRunning.value = false
+    await load()
+  }
+}
+
+// Refresh only the live board modes on a timer — never the editable device rows.
+let boardsTimer: ReturnType<typeof setInterval> | null = null
+async function refreshBoards(): Promise<void> {
+  try {
+    boards.value = (await fetchBoards()).boards
+  } catch {
+    /* transient — keep the last good modes */
+  }
+}
+
+onMounted(() => {
+  void load()
+  boardsTimer = setInterval(refreshBoards, 6000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearTimeout(pollTimer)
+  if (boardsTimer) clearInterval(boardsTimer)
+})
 </script>
 
 <template>
@@ -228,9 +276,23 @@ onMounted(load)
             :class="['min-w-0 flex-1 font-bold', inputClass]"
             @change="persist(device)"
           />
+          <span
+            class="nb-badge shrink-0 text-[9px]"
+            :class="modeClass(liveMode[device.id] ?? 'offline')"
+          >
+            {{ liveMode[device.id] ?? 'offline' }}
+          </span>
           <span v-if="device.flashed_version" class="shrink-0 font-mono text-[9px] opacity-60">{{
             device.flashed_version
           }}</span>
+          <button
+            v-if="device.method === 'serial' || device.method === 'can'"
+            class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
+            :disabled="batchRunning"
+            @click="rebootDevice(device)"
+          >
+            boot
+          </button>
           <button
             class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[10px] text-surface"
             @click="remove(device)"

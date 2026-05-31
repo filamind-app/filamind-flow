@@ -274,3 +274,38 @@ class TaskStatus(BaseModel):
     status: str
     log: str
     cancelled: bool
+
+
+class ServiceInfo(BaseModel):
+    """A Klipper / Moonraker systemd unit and whether it is currently active."""
+
+    name: str
+    active: bool
+
+
+class ServicesResponse(BaseModel):
+    """The host's firmware-related services."""
+
+    services: list[ServiceInfo]
+
+
+class ServiceResult(BaseModel):
+    """Outcome of a start/stop/restart on one service."""
+
+    name: str
+    ok: bool
+
+
+class ServiceActionResponse(BaseModel):
+    """Per-service results of a services action."""
+
+    results: list[ServiceResult]
+
+
+class RebootRequest(BaseModel):
+    """Asks a board to reboot into its bootloader."""
+
+    #: serial / can.
+    method: str
+    device: str
+    interface: str = "can0"

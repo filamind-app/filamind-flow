@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-05-31
+
+### Added
+
+- **Live status & services (Phase 9)** — the widget now **auto-refreshes**
+  every few seconds, so each board's live mode (service / ready / dfu / offline)
+  stays current. A new **Services** bar lists the host's Klipper / Moonraker
+  units and can **start / stop / restart** them all (ordered so host MCUs come
+  up first and go down last). Each saved board gains a live-mode badge and a
+  **boot** button that reboots it into its Katapult bootloader.
+
 ## [0.10.0] - 2026-05-31
 
 ### Added
@@ -210,7 +221,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.11.0
 [0.10.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.10.0
 [0.9.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.9.1
 [0.9.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.9.0
