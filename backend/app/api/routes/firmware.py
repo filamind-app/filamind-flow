@@ -22,6 +22,9 @@ from app.models.schemas import (
     FlashRequest,
     ProfileSaveRequest,
     ProfilesResponse,
+    RebootRequest,
+    ServiceActionResponse,
+    ServicesResponse,
     TaskStatus,
 )
 from app.services import (
@@ -31,6 +34,7 @@ from app.services import (
     firmware_profiles,
     firmware_service,
     flash_service,
+    services_service,
     task_store,
 )
 from app.services.build_service import BuildService
@@ -261,3 +265,29 @@ async def firmware_task_cancel(task_id: str) -> dict[str, str]:
     if not task_store.cancel_task(task_id):
         raise HTTPException(status_code=404, detail=f"Task '{task_id}' not found")
     return {"message": "Cancellation requested"}
+
+
+@router.get("/services", response_model=ServicesResponse)
+async def firmware_services() -> ServicesResponse:
+    """Lists the host's Klipper / Moonraker services and whether each is active."""
+    return ServicesResponse.model_validate({"services": await services_service.list_services()})
+
+
+@router.post("/services/{action}", response_model=ServiceActionResponse)
+async def firmware_services_manage(action: str) -> ServiceActionResponse:
+    """Starts / stops / restarts every Klipper / Moonraker service."""
+    if action not in services_service.VALID_ACTIONS:
+        raise HTTPException(status_code=400, detail="action must be start, stop, or restart")
+    results = await services_service.manage_services(action)
+    return ServiceActionResponse.model_validate({"results": results})
+
+
+@router.post("/reboot")
+async def firmware_reboot(
+    request: RebootRequest, settings: Settings = Depends(get_settings)
+) -> StreamingResponse:
+    """Reboots a board into its bootloader, streaming the log."""
+    return StreamingResponse(
+        flash_service.run_reboot(request.method, request.device, request.interface, settings),
+        media_type="text/plain",
+    )

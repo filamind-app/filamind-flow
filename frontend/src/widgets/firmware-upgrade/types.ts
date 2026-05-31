@@ -180,3 +180,13 @@ export interface TaskStatus {
   log: string
   cancelled: boolean
 }
+
+/** A Klipper / Moonraker systemd service and whether it is active. */
+export interface ServiceInfo {
+  name: string
+  active: boolean
+}
+
+export interface ServicesResponse {
+  services: ServiceInfo[]
+}

@@ -11,6 +11,7 @@ import type {
   DeviceSave,
   DevicesResponse,
   ProfilesResponse,
+  ServicesResponse,
   TaskStatus,
 } from './types'
 
@@ -235,4 +236,49 @@ export async function cancelTask(taskId: string): Promise<void> {
   await fetch(`${backendUrl}/api/firmware/task/${encodeURIComponent(taskId)}/cancel`, {
     method: 'POST',
   })
+}
+
+/** Lists the host's Klipper / Moonraker services and their active state. */
+export async function fetchServices(): Promise<ServicesResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/services`)
+  if (!response.ok) {
+    throw new Error(`Services request failed (${response.status})`)
+  }
+  return (await response.json()) as ServicesResponse
+}
+
+/** Starts / stops / restarts every Klipper / Moonraker service. */
+export async function manageServices(action: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/firmware/services/${encodeURIComponent(action)}`,
+    { method: 'POST' },
+  )
+  if (!response.ok) {
+    throw new Error(`Service ${action} failed (${response.status})`)
+  }
+}
+
+/** Reboots a board into its bootloader, streaming the log via onChunk. */
+export async function rebootBoard(
+  request: { method: string; device: string; interface: string },
+  onChunk: (text: string) => void,
+): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/reboot`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  })
+  if (!response.ok || !response.body) {
+    throw new Error(`Reboot failed (${response.status})`)
+  }
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    onChunk(decoder.decode(value, { stream: true }))
+  }
 }
