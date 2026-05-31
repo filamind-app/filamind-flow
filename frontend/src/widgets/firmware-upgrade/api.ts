@@ -260,9 +260,9 @@ export async function manageServices(action: string): Promise<void> {
   }
 }
 
-/** Reboots a board into its bootloader, streaming the log via onChunk. */
+/** Reboots a board into a bootloader (Katapult or DFU), streaming via onChunk. */
 export async function rebootBoard(
-  request: { method: string; device: string; interface: string },
+  request: { method: string; device: string; interface: string; mode?: string },
   onChunk: (text: string) => void,
 ): Promise<void> {
   const { backendUrl } = resolveEndpoints()
