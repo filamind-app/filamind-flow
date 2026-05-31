@@ -92,6 +92,7 @@ export interface ConfigEdit {
 
 export interface FirmwareProfile {
   name: string
+  built: boolean
   is_can_bridge: boolean
   is_linux: boolean
   is_avr: boolean

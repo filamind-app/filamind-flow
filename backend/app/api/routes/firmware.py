@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import os
+
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
@@ -13,6 +16,7 @@ from app.models.schemas import (
     ProfilesResponse,
 )
 from app.services import board_service, firmware_profiles, firmware_service
+from app.services.build_service import BuildService
 from app.services.kconfig_service import KconfigError, get_kconfig_service
 
 router = APIRouter(prefix="/firmware", tags=["firmware"])
@@ -106,3 +110,18 @@ async def firmware_delete_profile(
     if not removed:
         raise HTTPException(status_code=404, detail=f"Profile '{name}' not found")
     return {"message": f"Profile '{name}' deleted"}
+
+
+@router.get("/build/{profile}")
+async def firmware_build(
+    profile: str, settings: Settings = Depends(get_settings)
+) -> StreamingResponse:
+    """Compiles a profile's firmware, streaming the build log line by line."""
+    try:
+        config_path = firmware_profiles.profile_path(settings.data_dir, profile)
+    except firmware_profiles.ProfileNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not os.path.isfile(config_path):
+        raise HTTPException(status_code=404, detail=f"Profile '{profile}' not found")
+    service = BuildService(settings.klipper_dir, settings.data_dir)
+    return StreamingResponse(service.run_build(config_path, profile), media_type="text/plain")

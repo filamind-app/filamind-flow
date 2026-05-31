@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import { deleteProfile, fetchConfigTree, fetchProfiles, saveProfile } from './api'
+import { buildFirmware, deleteProfile, fetchConfigTree, fetchProfiles, saveProfile } from './api'
 import type { ConfigNode, FirmwareProfile } from './types'
 
 defineEmits<{ close: [] }>()
@@ -14,9 +14,15 @@ const showOptional = ref(false)
 
 const loading = ref(true)
 const saving = ref(false)
+const building = ref(false)
+const buildLog = ref('')
 const error = ref<string | null>(null)
 const message = ref<string | null>(null)
 const profileName = ref('')
+
+const selectedBuilt = computed(
+  () => profiles.value.find((p) => p.name === baseProfile.value)?.built ?? false,
+)
 
 const inputClass =
   'shrink-0 max-w-[55%] rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
@@ -123,6 +129,22 @@ async function removeProfile(name: string): Promise<void> {
   }
 }
 
+async function build(): Promise<void> {
+  if (!baseProfile.value || building.value) return
+  building.value = true
+  buildLog.value = `>>> compiling ${baseProfile.value}…\n`
+  try {
+    await buildFirmware(baseProfile.value, (chunk) => {
+      buildLog.value += chunk
+    })
+    await loadProfiles()
+  } catch (e) {
+    buildLog.value += `\n!! ${e instanceof Error ? e.message : 'build failed'}\n`
+  } finally {
+    building.value = false
+  }
+}
+
 onMounted(async () => {
   await Promise.all([loadProfiles(), reloadTree()])
 })
@@ -146,6 +168,15 @@ onMounted(async () => {
       <span v-if="dirtyCount" class="nb-badge bg-brand-yellow text-[10px]"
         >{{ dirtyCount }} edits</span
       >
+      <span v-if="selectedBuilt" class="nb-badge bg-brand-lime text-[10px]">built ✓</span>
+      <button
+        v-if="baseProfile"
+        class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]"
+        :disabled="building"
+        @click="build"
+      >
+        {{ building ? 'building…' : 'build' }}
+      </button>
       <button
         v-if="baseProfile"
         class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
@@ -219,5 +250,11 @@ onMounted(async () => {
       </button>
     </div>
     <p v-if="message" class="font-mono text-[10px] opacity-70">{{ message }}</p>
+
+    <pre
+      v-if="buildLog"
+      class="max-h-48 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight text-surface"
+      >{{ buildLog }}</pre
+    >
   </div>
 </template>

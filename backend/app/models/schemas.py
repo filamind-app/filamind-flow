@@ -153,6 +153,7 @@ class FirmwareProfile(BaseModel):
     """A saved per-board firmware profile and the flags that shape its flashing."""
 
     name: str
+    built: bool = False
     is_can_bridge: bool = False
     is_linux: bool = False
     is_avr: bool = False
