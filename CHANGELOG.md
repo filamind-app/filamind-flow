@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-05-31
+
+### Changed
+
+- The **Linux host MCU** flash now matches the standard install: stop
+  `klipper-mcu`, free the binary with `fuser -k`, install it executable, restart
+  the service, and wait for it to come up — warning (instead of leaving it
+  silently broken) if the kernel blocks realtime, in which case the `-r` flag
+  should be dropped from the klipper-mcu unit. `setup-sudoers.sh` now also grants
+  `fuser`.
+
 ## [0.7.0] - 2026-05-31
 
 ### Added
@@ -154,7 +165,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.1
 [0.7.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.7.0
 [0.6.2]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.2
 [0.6.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.6.1
