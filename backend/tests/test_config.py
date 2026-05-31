@@ -67,6 +67,46 @@ def test_profile_save_list_delete(tmp_path: Path) -> None:
     assert client.delete("/api/firmware/config/profiles/demo").status_code == 404
 
 
+def _all_names(nodes: list[dict]) -> set[str]:
+    """Collects every symbol name in the tree, descending into nested submenus."""
+    names: set[str] = set()
+    for node in nodes:
+        names.add(node["name"])
+        names |= _all_names(node.get("children", []))
+    return names
+
+
+def test_low_level_menus_forced_visible(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+
+    # DEMO_LOWLEVEL_TWEAK depends on LOW_LEVEL_OPTIONS, which defaults to 'n', so
+    # kconfiglib nests it as a child of that gate. The editor force-enables the
+    # gate, so the tweak must appear (nested) without the user touching anything.
+    tree = client.post("/api/firmware/config/tree", json={"values": []})
+    assert tree.status_code == 200
+    assert "DEMO_LOWLEVEL_TWEAK" in _all_names(tree.json())
+
+
+def test_download_artifact(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+
+    # No build yet → 404.
+    assert client.get("/api/firmware/config/profiles/demo/artifact").status_code == 404
+
+    # Drop a fake built binary where artifact_path_for looks for it.
+    artifacts = tmp_path / "artifacts"
+    artifacts.mkdir(parents=True, exist_ok=True)
+    (artifacts / "demo.bin").write_bytes(b"\x7fELF fake firmware")
+
+    got = client.get("/api/firmware/config/profiles/demo/artifact")
+    assert got.status_code == 200
+    assert got.content == b"\x7fELF fake firmware"
+    assert "demo.bin" in got.headers["content-disposition"]
+
+    # Path-traversal names are rejected before touching the filesystem.
+    assert client.get("/api/firmware/config/profiles/..%2fevil/artifact").status_code in (400, 404)
+
+
 def test_config_unavailable_without_klipper(tmp_path: Path) -> None:
     client = _client(tmp_path, klipper_dir=str(tmp_path / "no-klipper-here"))
 

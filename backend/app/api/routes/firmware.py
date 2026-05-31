@@ -4,7 +4,7 @@ import asyncio
 import os
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
@@ -153,6 +153,23 @@ async def firmware_delete_profile(
     if not removed:
         raise HTTPException(status_code=404, detail=f"Profile '{name}' not found")
     return {"message": f"Profile '{name}' deleted"}
+
+
+@router.get("/config/profiles/{name}/artifact")
+async def firmware_download_artifact(
+    name: str, settings: Settings = Depends(get_settings)
+) -> FileResponse:
+    """Downloads the built firmware binary (``.bin`` / ``.uf2`` / ``.elf``) for a profile."""
+    try:
+        firmware_profiles.validate_name(name)
+    except firmware_profiles.ProfileNameError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    path = firmware_profiles.artifact_path_for(settings.data_dir, name)
+    if path is None:
+        raise HTTPException(status_code=404, detail=f"No built firmware for profile '{name}'")
+    return FileResponse(
+        path, media_type="application/octet-stream", filename=os.path.basename(path)
+    )
 
 
 @router.get("/build/{profile}")

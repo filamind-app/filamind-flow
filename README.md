@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-111111.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.17.1-111111.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.18.0-111111.svg)](CHANGELOG.md)
 [![Last commit](https://img.shields.io/github/last-commit/filamind-app/filamind-flow?color=111111&label=updated)](https://github.com/filamind-app/filamind-flow/commits/main)
 
 [![Klipper](https://img.shields.io/badge/Klipper-compatible-111111)](https://www.klipper3d.org)
@@ -28,9 +28,12 @@ on your machine and deployed as **static files**, so it adds virtually nothing t
 the printer host at runtime; a small FastAPI backend handles anything that must
 run server-side.
 
-> **Status:** this is the **empty scaffold** — the architecture, Moonraker client,
-> widget registry, design system, and CI are wired and ready. No feature widgets
-> ship yet; they are added under `frontend/src/widgets/`.
+> **Status:** actively developed and **running on real hardware**. The first
+> widget — **Firmware Upgrade** — ships today: a full Klipper firmware
+> build & flash console (per-board profiles, a live Kconfig editor,
+> Katapult / DFU / SD-card flashing, Beacon probe updates, host service control,
+> and host↔MCU update alerts). Further widgets are added under
+> `frontend/src/widgets/`.
 
 ## Install on a printer (one line)
 
@@ -117,7 +120,7 @@ filamind-flow/
 │  └─ src/
 │     ├─ core/               # MoonrakerClient · widget registry · Pinia store
 │     ├─ components/         # App shell + dashboard (design-system driven)
-│     ├─ widgets/            # Feature widgets register here (empty scaffold)
+│     ├─ widgets/            # Feature widgets register here (Firmware Upgrade ships today)
 │     └─ assets/styles/      # Neo-Brutalist design tokens
 ├─ backend/                  # FastAPI service
 │  └─ app/                   # config · api/routes · services · models
@@ -163,10 +166,16 @@ templates live in [`deploy/`](deploy/).
 
 ## Roadmap
 
-- [ ] First widgets: temperatures, print status, controls, console
+- [x] **Firmware Upgrade** widget — build & flash Klipper firmware: per-board
+      profiles, a live Kconfig editor (with downloadable build artifacts),
+      Katapult / DFU / SD-card flashing, Beacon probe updates, host service
+      control, and host↔MCU update alerts
+- [ ] More widgets: temperatures, print status, controls, console
 - [ ] Dashboard layout persistence (via Moonraker's database namespace)
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
+
+See [ROADMAP.md](ROADMAP.md) for the full phase-by-phase plan.
 
 ## Credits
 
