@@ -104,6 +104,17 @@ def remove_device(data_dir: str, device_id: str) -> bool:
     return True
 
 
+def rename_profile_refs(data_dir: str, old: str, new: str) -> int:
+    """Rewrites every device whose ``profile`` is ``old`` to ``new``. Returns count."""
+    devices = read_devices(data_dir)
+    changed = [d for d in devices if d.get("profile") == old]
+    for device in changed:
+        device["profile"] = new
+    if changed:
+        write_devices(data_dir, devices)
+    return len(changed)
+
+
 def attach_identity(
     data_dir: str, device_id: str, hardware_id: str, kind: str
 ) -> dict[str, Any] | None:

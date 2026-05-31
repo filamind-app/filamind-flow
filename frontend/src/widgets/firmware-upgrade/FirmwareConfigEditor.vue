@@ -5,8 +5,10 @@ import {
   buildFirmware,
   deleteProfile,
   downloadArtifact,
+  duplicateProfile,
   fetchConfigTree,
   fetchProfiles,
+  renameProfile,
   saveProfile,
 } from './api'
 import type { ConfigNode, FirmwareProfile } from './types'
@@ -26,6 +28,7 @@ const buildLog = ref('')
 const error = ref<string | null>(null)
 const message = ref<string | null>(null)
 const profileName = ref('')
+const manageName = ref('')
 
 const selectedBuilt = computed(
   () => profiles.value.find((p) => p.name === baseProfile.value)?.built ?? false,
@@ -146,11 +149,56 @@ async function removeProfile(name: string): Promise<void> {
   }
 }
 
+async function renameSelected(): Promise<void> {
+  const target = manageName.value.trim()
+  if (!baseProfile.value || !target) return
+  error.value = null
+  message.value = null
+  try {
+    await renameProfile(baseProfile.value, target)
+    message.value = `Renamed to “${target}”.`
+    baseProfile.value = target
+    manageName.value = ''
+    await loadProfiles()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Rename failed'
+  }
+}
+
+async function duplicateSelected(): Promise<void> {
+  const target = manageName.value.trim()
+  if (!baseProfile.value || !target) return
+  error.value = null
+  message.value = null
+  try {
+    await duplicateProfile(baseProfile.value, target)
+    message.value = `Duplicated to “${target}”.`
+    baseProfile.value = target
+    edits.value = {}
+    manageName.value = ''
+    await loadProfiles()
+    await reloadTree()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Duplicate failed'
+  }
+}
+
 async function build(): Promise<void> {
   if (!baseProfile.value || building.value) return
   building.value = true
-  buildLog.value = `>>> compiling ${baseProfile.value}…\n`
+  buildLog.value = ''
   try {
+    // Auto-save pending edits into the profile so the build reflects them.
+    if (dirtyCount.value > 0) {
+      buildLog.value += `>>> saving ${dirtyCount.value} pending edit(s) to ${baseProfile.value}…\n`
+      await saveProfile({
+        name: baseProfile.value,
+        values: editList(),
+        base_profile: baseProfile.value,
+      })
+      edits.value = {}
+    }
+    buildLog.value += `>>> compiling ${baseProfile.value}…\n`
     await buildFirmware(baseProfile.value, (chunk) => {
       buildLog.value += chunk
     })
@@ -190,6 +238,7 @@ onMounted(async () => {
         v-if="baseProfile"
         class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]"
         :disabled="building"
+        :title="dirtyCount ? 'saves pending edits, then builds' : 'build firmware'"
         @click="build"
       >
         {{ building ? 'building…' : 'build' }}
@@ -208,6 +257,35 @@ onMounted(async () => {
         @click="removeProfile(baseProfile)"
       >
         delete
+      </button>
+    </div>
+
+    <div
+      v-if="baseProfile"
+      class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-dashed border-ink px-2 py-1"
+    >
+      <span class="text-[11px] font-bold uppercase opacity-70">manage</span>
+      <input
+        v-model="manageName"
+        placeholder="new name"
+        :class="[inputClass, 'max-w-none flex-1']"
+        @keyup.enter="renameSelected"
+      />
+      <button
+        class="nb-btn px-2 py-0.5 text-[10px]"
+        :disabled="!manageName.trim()"
+        title="Rename this profile (and any built binary + linked devices)"
+        @click="renameSelected"
+      >
+        rename →
+      </button>
+      <button
+        class="nb-btn px-2 py-0.5 text-[10px]"
+        :disabled="!manageName.trim()"
+        title="Save a copy of this profile under the new name"
+        @click="duplicateSelected"
+      >
+        duplicate
       </button>
     </div>
 

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 from typing import Any
 
 _PROFILE_NAME_RE = re.compile(r"^[A-Za-z0-9 _.\-]+$")
@@ -104,3 +105,47 @@ def delete_profile(data_dir: str, name: str) -> bool:
         return False
     os.remove(path)
     return True
+
+
+#: Per-profile sidecar files in the artifacts dir, keyed by ``<name>.<suffix>``.
+_ARTIFACT_SUFFIXES = (*_ARTIFACT_EXTS, "build_info.json")
+
+
+def _move_artifacts(data_dir: str, old: str, new: str, *, copy: bool) -> None:
+    """Moves (or copies) a profile's built artifacts + build-info sidecars."""
+    artifacts = artifacts_dir(data_dir)
+    op = shutil.copy2 if copy else os.replace
+    for suffix in _ARTIFACT_SUFFIXES:
+        src = os.path.join(artifacts, f"{old}.{suffix}")
+        if os.path.isfile(src):
+            op(src, os.path.join(artifacts, f"{new}.{suffix}"))
+
+
+def rename_profile(data_dir: str, old: str, new: str) -> None:
+    """Renames a profile's ``.config`` and its built artifacts / build-info.
+
+    Raises ``ProfileNameError`` on a bad name, ``FileNotFoundError`` if ``old`` is
+    missing, or ``FileExistsError`` if ``new`` already exists. Device references
+    are rewritten separately by the caller.
+    """
+    old_path, new_path = profile_path(data_dir, old), profile_path(data_dir, new)
+    if not os.path.isfile(old_path):
+        raise FileNotFoundError(old)
+    if old != new and os.path.isfile(new_path):
+        raise FileExistsError(new)
+    os.replace(old_path, new_path)
+    _move_artifacts(data_dir, old, new, copy=False)
+
+
+def duplicate_profile(data_dir: str, src_name: str, new_name: str) -> None:
+    """Copies a profile's ``.config`` (and any built artifacts) to ``new_name``.
+
+    Raises the same errors as :func:`rename_profile`.
+    """
+    src, dst = profile_path(data_dir, src_name), profile_path(data_dir, new_name)
+    if not os.path.isfile(src):
+        raise FileNotFoundError(src_name)
+    if os.path.isfile(dst):
+        raise FileExistsError(new_name)
+    shutil.copy2(src, dst)
+    _move_artifacts(data_dir, src_name, new_name, copy=True)
