@@ -337,9 +337,18 @@ async def _flash_dfu(
 
 
 async def run_flash(
-    profile: str, method: str, device: str, interface: str, settings: Settings
+    profile: str,
+    method: str,
+    device: str,
+    interface: str,
+    settings: Settings,
+    is_katapult: bool = True,
 ) -> AsyncIterator[str]:
-    """Guarded flash sequence: stop services, reboot-to-bootloader, flash, restart."""
+    """Guarded flash sequence: stop services, reboot-to-bootloader, flash, restart.
+
+    ``is_katapult=False`` skips the Katapult reboot-to-bootloader step for serial /
+    CAN boards (boards without Katapult are flashed directly / via ``make flash``).
+    """
     if await _is_printing(settings.moonraker_url):
         yield "!! Refused: a print is in progress. Flashing is blocked for safety.\n"
         return
@@ -373,10 +382,13 @@ async def run_flash(
     # A board can re-appear under a new /dev id after a serial flash — snapshot first.
     before = _serial_by_id() if method == "serial" else set()
 
-    # A DFU device is already in its bootloader; only running boards need a reboot.
-    if method in ("serial", "can"):
+    # A DFU device is already in its bootloader; only running Katapult boards need
+    # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
+    if method in ("serial", "can") and is_katapult:
         async for line in _reboot_to_bootloader(method, device, interface, settings):
             yield line
+    elif method in ("serial", "can"):
+        yield ">>> Device is not marked Katapult — skipping reboot-to-bootloader.\n"
 
     if method == "dfu":
         async for line in _flash_dfu(device, artifact, offset):

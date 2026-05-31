@@ -249,7 +249,12 @@ async def firmware_flash(
     """Flashes a board, streaming the log. Refuses while printing or without sudo."""
     return StreamingResponse(
         flash_service.run_flash(
-            request.profile or "", request.method, request.device, request.interface, settings
+            request.profile or "",
+            request.method,
+            request.device,
+            request.interface,
+            settings,
+            request.is_katapult,
         ),
         media_type="text/plain",
     )
