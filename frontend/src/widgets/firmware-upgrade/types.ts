@@ -190,3 +190,17 @@ export interface ServiceInfo {
 export interface ServicesResponse {
   services: ServiceInfo[]
 }
+
+/** A connected Beacon eddy-current probe. */
+export interface BeaconProbe {
+  id: string
+  name: string
+  revision: string
+  serial: string
+}
+
+export interface BeaconResponse {
+  probes: BeaconProbe[]
+  repo: string | null
+  available_version: string | null
+}

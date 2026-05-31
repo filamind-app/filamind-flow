@@ -7,6 +7,7 @@ import type {
   FirmwareStatus,
   FlashPlan,
   FlashRequest,
+  BeaconResponse,
   Device,
   DeviceSave,
   DevicesResponse,
@@ -236,6 +237,36 @@ export async function cancelTask(taskId: string): Promise<void> {
   await fetch(`${backendUrl}/api/firmware/task/${encodeURIComponent(taskId)}/cancel`, {
     method: 'POST',
   })
+}
+
+/** Lists connected Beacon probes plus the plugin path and available version. */
+export async function fetchBeacon(): Promise<BeaconResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/beacon`)
+  if (!response.ok) {
+    throw new Error(`Beacon request failed (${response.status})`)
+  }
+  return (await response.json()) as BeaconResponse
+}
+
+/** Updates a Beacon probe's firmware, streaming the log via onChunk. */
+export async function flashBeacon(device: string, onChunk: (text: string) => void): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/beacon/flash`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ device }),
+  })
+  if (!response.ok || !response.body) {
+    throw new Error(`Beacon flash failed (${response.status})`)
+  }
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    onChunk(decoder.decode(value, { stream: true }))
+  }
 }
 
 /** Lists the host's Klipper / Moonraker services and their active state. */
