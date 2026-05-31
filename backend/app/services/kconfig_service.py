@@ -212,11 +212,15 @@ class KconfigService:
             "help": node.help,
             "choices": [],
             "readonly": False,
+            "default": None,
+            "dep_str": None,
         }
 
         if isinstance(item, kl.Symbol):
             if kl.expr_value(item.rev_dep) > 0:
                 entry["readonly"] = True  # selected by another symbol
+            entry["default"] = self._default_str(item)
+            entry["dep_str"] = self._dep_str(item)
         elif isinstance(item, kl.Choice):
             entry["type"] = "choice"
             choices = [
@@ -230,6 +234,26 @@ class KconfigService:
             if len(choices) <= 1:
                 return None  # a settled single-option choice adds no value
         return entry
+
+    @staticmethod
+    def _default_str(item: Any) -> str | None:
+        """The symbol's first compiled-in default as a readable string (or None)."""
+        try:
+            if not item.defaults:
+                return None
+            text = _kconfiglib.expr_str(item.defaults[0][0])
+            return text or None
+        except Exception:
+            return None
+
+    @staticmethod
+    def _dep_str(item: Any) -> str | None:
+        """A human-readable direct-dependency expression, or None when unconditional."""
+        try:
+            text = _kconfiglib.expr_str(item.direct_dep)
+        except Exception:
+            return None
+        return text if text and text != "y" else None
 
     def _write_config(
         self, output_path: str, config_file: str | None, values: list[tuple[str, str]]

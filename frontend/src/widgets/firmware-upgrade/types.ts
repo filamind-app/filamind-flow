@@ -91,6 +91,10 @@ export interface ConfigNode {
   help: string | null
   choices: ConfigChoice[]
   readonly: boolean
+  /** The symbol's compiled-in default, shown as a hint. */
+  default: string | null
+  /** Human-readable dependency expression (why a symbol is gated), if any. */
+  dep_str: string | null
   children: ConfigNode[]
 }
 
