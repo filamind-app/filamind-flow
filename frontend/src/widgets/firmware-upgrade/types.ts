@@ -191,6 +191,9 @@ export interface ExternalFirmware {
   /** Read-only properties detected inside the binary (best-effort). */
   detected_version: string | null
   detected_mcu: string | null
+  /** The firmware's app ("Klipper"/"Katapult") and its baked-in build config. */
+  detected_app: string | null
+  detected_config: Record<string, string> | null
 }
 
 export interface ExternalFirmwareResponse {
