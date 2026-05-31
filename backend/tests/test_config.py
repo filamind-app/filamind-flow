@@ -70,11 +70,16 @@ def test_profile_save_list_delete(tmp_path: Path) -> None:
 
 def _all_names(nodes: list[dict]) -> set[str]:
     """Collects every symbol name in the tree, descending into nested submenus."""
-    names: set[str] = set()
+    return set(_flat_nodes(nodes))
+
+
+def _flat_nodes(nodes: list[dict]) -> dict[str, dict]:
+    """Flattens the tree to ``{name: node}``, descending into nested submenus."""
+    out: dict[str, dict] = {}
     for node in nodes:
-        names.add(node["name"])
-        names |= _all_names(node.get("children", []))
-    return names
+        out[node["name"]] = node
+        out.update(_flat_nodes(node.get("children", [])))
+    return out
 
 
 def test_low_level_menus_forced_visible(tmp_path: Path) -> None:
@@ -106,6 +111,18 @@ def test_download_artifact(tmp_path: Path) -> None:
 
     # Path-traversal names are rejected before touching the filesystem.
     assert client.get("/api/firmware/config/profiles/..%2fevil/artifact").status_code in (400, 404)
+
+
+def test_nodes_expose_default_and_dependency(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    # Turn USB off so the serial option (which depends on !DEMO_USB) is shown.
+    tree = client.post(
+        "/api/firmware/config/tree", json={"values": [{"name": "DEMO_USB", "value": "n"}]}
+    )
+    nodes = _flat_nodes(tree.json())
+
+    assert nodes["DEMO_CLOCK_FREQ"]["default"] == "8000000"
+    assert "DEMO_USB" in (nodes["DEMO_SERIAL"]["dep_str"] or "")
 
 
 def test_rename_profile_moves_config_artifact_and_device_refs(tmp_path: Path) -> None:
