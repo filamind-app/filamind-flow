@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.18.1] - 2026-05-31
+
+### Fixed
+
+- **Downloaded firmware keeps its real filename for profiles with spaces.** The
+  ↓ .bin download parsed only the plain `Content-Disposition` form, so a profile
+  like "Linux host" (sent by Starlette as the RFC 5987 `filename*=utf-8''…` form)
+  fell back to a wrong `.bin` name. It now decodes both forms (→ `Linux host.elf`).
+
 ## [0.18.0] - 2026-05-31
 
 ### Added
@@ -341,7 +350,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Actions CI; deployment templates (systemd, nginx, Moonraker update_manager,
   Mainsail navi).
 
-[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/filamind-app/filamind-flow/compare/v0.18.1...HEAD
+[0.18.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.18.1
 [0.18.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.18.0
 [0.17.1]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.17.1
 [0.17.0]: https://github.com/filamind-app/filamind-flow/releases/tag/v0.17.0
