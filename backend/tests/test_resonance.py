@@ -58,10 +58,14 @@ def test_analyze_file_rejects_paths_outside_allowed_dirs(tmp_path: Path) -> None
 class _FakeClient:
     """Stand-in for MoonrakerClient: run_gcode 'writes' the CSV Klipper would."""
 
-    def __init__(self, *, printing: bool, has_tester: bool, write_dir: Path) -> None:
+    def __init__(
+        self, *, printing: bool, has_tester: bool, write_dir: Path, homed: str = "xyz"
+    ) -> None:
         self.printing = printing
         self.has_tester = has_tester
         self.write_dir = write_dir
+        self.homed = homed
+        self.gcodes: list[str] = []
 
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
         out: dict[str, Any] = {}
@@ -69,10 +73,14 @@ class _FakeClient:
             out["print_stats"] = {"state": "printing" if self.printing else "ready"}
         if "configfile" in objects:
             out["configfile"] = {"config": {"resonance_tester": {}} if self.has_tester else {}}
+        if "toolhead" in objects:
+            out["toolhead"] = {"homed_axes": self.homed}
         return out
 
-    async def run_gcode(self, _script: str) -> None:
-        _write(self.write_dir, "resonances_x_filamind_x.csv")
+    async def run_gcode(self, script: str) -> None:
+        self.gcodes.append(script)
+        if script.startswith("TEST_RESONANCES"):
+            _write(self.write_dir, "resonances_x_filamind_x.csv")
 
 
 def _patch_client(monkeypatch: pytest.MonkeyPatch, fake: _FakeClient) -> None:
@@ -80,10 +88,22 @@ def _patch_client(monkeypatch: pytest.MonkeyPatch, fake: _FakeClient) -> None:
 
 
 async def test_live_test_runs_and_analyses(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    _patch_client(monkeypatch, _FakeClient(printing=False, has_tester=True, write_dir=tmp_path))
+    fake = _FakeClient(printing=False, has_tester=True, write_dir=tmp_path)  # already homed
+    _patch_client(monkeypatch, fake)
     result = await resonance_service.run_live_test("http://x", str(tmp_path), axis="x")
     assert result["recommended_shaper"] in _SHAPERS
     assert result["source_file"] == "resonances_x_filamind_x.csv"
+    assert "G28" not in fake.gcodes  # already homed → no re-home
+
+
+async def test_live_test_homes_first_when_not_homed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake = _FakeClient(printing=False, has_tester=True, write_dir=tmp_path, homed="")
+    _patch_client(monkeypatch, fake)
+    await resonance_service.run_live_test("http://x", str(tmp_path), axis="x")
+    assert "G28" in fake.gcodes
+    assert any(g.startswith("TEST_RESONANCES") for g in fake.gcodes)
 
 
 async def test_live_test_refuses_while_printing(

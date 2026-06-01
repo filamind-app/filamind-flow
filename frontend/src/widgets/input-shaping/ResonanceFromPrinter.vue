@@ -94,7 +94,7 @@ onMounted(loadFiles)
         </button>
       </div>
       <p class="font-mono text-[9px] opacity-60">
-        Runs TEST_RESONANCES on the printer (needs an accelerometer + a
+        Homes the printer if needed, then runs TEST_RESONANCES (needs an accelerometer + a
         <code>[resonance_tester]</code>). Refused while printing.
       </p>
     </div>
