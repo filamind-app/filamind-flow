@@ -1,6 +1,6 @@
 [project]
 name = "filamind-flow-backend"
-version = "0.26.0"
+version = "0.27.0"
 description = "Extensible Neo-Brutalist control panel for Klipper / Moonraker — backend service."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -19,6 +19,8 @@ Issues = "https://github.com/filamind-app/filamind-flow/issues"
 line-length = 100
 target-version = "py310"
 src = ["app", "tests"]
+# Vendored upstream code (Klipper) is kept verbatim — don't lint/format it.
+extend-exclude = ["app/vendor"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "C4", "SIM", "RUF"]
@@ -45,3 +47,9 @@ disallow_untyped_defs = true
 no_implicit_optional = true
 warn_redundant_casts = true
 ignore_missing_imports = true
+# Vendored upstream code (Klipper) is untyped — don't type-check it.
+exclude = ["app/vendor/"]
+
+[[tool.mypy.overrides]]
+module = "app.vendor.*"
+ignore_errors = true
