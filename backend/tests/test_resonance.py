@@ -63,11 +63,13 @@ class _FakeClient:
         self.has_tester = has_tester
         self.write_dir = write_dir
 
-    async def query_objects(self, _objects: list[str]) -> dict[str, Any]:
-        return {"print_stats": {"state": "printing" if self.printing else "ready"}}
-
-    async def list_objects(self) -> list[str]:
-        return ["toolhead"] + (["resonance_tester"] if self.has_tester else [])
+    async def query_objects(self, objects: list[str]) -> dict[str, Any]:
+        out: dict[str, Any] = {}
+        if "print_stats" in objects:
+            out["print_stats"] = {"state": "printing" if self.printing else "ready"}
+        if "configfile" in objects:
+            out["configfile"] = {"config": {"resonance_tester": {}} if self.has_tester else {}}
+        return out
 
     async def run_gcode(self, _script: str) -> None:
         _write(self.write_dir, "resonances_x_filamind_x.csv")
