@@ -34,4 +34,22 @@ export interface ShaperAnalysis {
   shaper_curves: ShaperCurve[]
   /** Human-readable calibration log lines (one per fitted shaper). */
   log: string[]
+  /** Filename this came from, when imported/captured on the printer host. */
+  source_file: string | null
+}
+
+/** A resonance CSV Klipper wrote on the printer host. */
+export interface ResonanceFile {
+  name: string
+  path: string
+  size: number
+  /** Last-modified time (epoch seconds). */
+  mtime: number
+  /** Axis guessed from the filename (x / y), if any. */
+  axis: string | null
+}
+
+export interface ResonanceFilesResponse {
+  files: ResonanceFile[]
+  dirs: string[]
 }

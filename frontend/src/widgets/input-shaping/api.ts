@@ -1,6 +1,17 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { ShaperAnalysis } from './types'
+import type { ResonanceFilesResponse, ShaperAnalysis } from './types'
+
+/** Extracts a backend error detail, falling back to the status line. */
+async function errorDetail(response: Response, fallback: string): Promise<string> {
+  try {
+    const body = (await response.json()) as { detail?: string }
+    if (body.detail) return body.detail
+  } catch {
+    /* non-JSON body */
+  }
+  return `${fallback} (${response.status})`
+}
 
 /** Tuning knobs for an analysis (all optional; the backend supplies defaults). */
 export interface AnalyzeOptions {
@@ -45,5 +56,35 @@ export async function analyzeResonance(
     }
     throw new Error(detail)
   }
+  return (await response.json()) as ShaperAnalysis
+}
+
+/** Lists the resonance CSVs Klipper has written on the printer host. */
+export async function listResonanceFiles(): Promise<ResonanceFilesResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/files`)
+  if (!response.ok) throw new Error(await errorDetail(response, 'Listing printer files failed'))
+  return (await response.json()) as ResonanceFilesResponse
+}
+
+/** Analyses a resonance CSV that already exists on the printer host (by path). */
+export async function analyzeResonanceFile(path: string, axis?: string): Promise<ShaperAnalysis> {
+  const { backendUrl } = resolveEndpoints()
+  const params = new URLSearchParams({ path })
+  if (axis) params.set('axis', axis)
+  const response = await fetch(`${backendUrl}/api/shaper/analyze-file?${params}`, {
+    method: 'POST',
+  })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Analysis failed'))
+  return (await response.json()) as ShaperAnalysis
+}
+
+/** Runs a live TEST_RESONANCES on the printer (moves the toolhead) and analyses it. */
+export async function runLiveTest(axis: string): Promise<ShaperAnalysis> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/live-test?axis=${axis}`, {
+    method: 'POST',
+  })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Live test failed'))
   return (await response.json()) as ShaperAnalysis
 }
