@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 
+import ResonanceCompare from './ResonanceCompare.vue'
 import { analyzeResonance } from './api'
 import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
@@ -13,6 +14,7 @@ const error = ref<string | null>(null)
 const busy = ref(false)
 const copied = ref(false)
 const showAdvanced = ref(false)
+const showCompare = ref(false)
 
 /** Advanced calibration knobs (kept as strings for the inputs; blank = default). */
 const params = reactive({ maxFreq: '200', scv: '5', maxSmoothing: '', dampingRatio: '' })
@@ -118,6 +120,9 @@ async function copyConfig(): Promise<void> {
       </button>
       <button class="nb-btn px-2 py-1 text-[10px]" @click="showAdvanced = !showAdvanced">
         ⚙ advanced
+      </button>
+      <button class="nb-btn px-2 py-1 text-[10px]" @click="showCompare = !showCompare">
+        ⇄ compare
       </button>
       <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
         file.name
@@ -271,5 +276,7 @@ async function copyConfig(): Promise<void> {
         Paste into your <code>printer.cfg</code>, then restart Klipper.
       </p>
     </div>
+
+    <ResonanceCompare v-if="showCompare" />
   </div>
 </template>
