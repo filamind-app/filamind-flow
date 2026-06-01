@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.30.0] - 2026-06-02
+
+### Added
+
+- **Input Shaping — per-axis X/Y config + advanced parameters.** Analyze the X and
+  Y resonance files in turn and the widget accumulates both into a single
+  `[input_shaper]` block (`shaper_type_x` / `_y` + frequencies), with chips showing
+  which axes are captured and a clear button. A new **advanced** panel exposes the
+  knobs the desktop tool hardcodes — `max_freq`, `scv`, `max_smoothing`,
+  `damping_ratio` (blank = Klipper's default).
+
 ## [0.29.0] - 2026-06-02
 
 ### Added
