@@ -170,8 +170,6 @@ templates live in [`deploy/`](deploy/).
       profiles, a live Kconfig editor (with downloadable build artifacts),
       Katapult / DFU / SD-card flashing, Beacon probe updates, host service
       control, and host↔MCU update alerts
-- [ ] More widgets: temperatures, print status, controls, console
-- [ ] Dashboard layout persistence (via Moonraker's database namespace)
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 

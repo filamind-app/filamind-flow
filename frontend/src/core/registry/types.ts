@@ -16,7 +16,7 @@ export interface WidgetSize {
  * downloaded when it is actually shown.
  */
 export interface WidgetDefinition {
-  /** Stable, unique id, e.g. "temperature". Used for layout persistence. */
+  /** Stable, unique id (e.g. "firmware-upgrade"); keys the widget's sidebar page. */
   id: string
   /** Human-readable title shown in the widget header. */
   title: string
