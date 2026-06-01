@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-06-02
+
+### Added
+
+- **Input Shaping — interpretation hints + calibration history.** Each analysis now
+  comes with plain-language guidance: the suggested `max_accel`, warnings for a low
+  shaper frequency or high smoothing, and a note when a multi-hump shaper is
+  chosen. A browser-local **history** records each calibration (date · axis ·
+  shaper @ frequency) so you can watch how an axis drifts over time. Completes the
+  Input Shaping widget (phases 1–6).
+
 ## [0.31.0] - 2026-06-02
 
 ### Added
