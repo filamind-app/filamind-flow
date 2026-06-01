@@ -41,14 +41,6 @@ Phases 6+ grow it into a full multi-board manager.
 - 📋 Firmware backup + rollback · App self-update from the UI ("N commits behind" badge) · Kalico firmware-name detection · Test-DFU-Cycle + Katapult native wire-protocol (deferred from Phase 10)
 - ✅ MCU telemetry (freq / load / retransmits) — v0.7.0 · Host↔MCU **update/mismatch alert** (per-device ⚠ badge: live MCU firmware vs the host's running Klipper) — v0.17.x
 
-### 📋 Other widgets
-
-- 📋 **Temperatures** — live extruder / bed / chamber with targets
-- 📋 **Print status & controls** — progress, pause / resume / cancel
-- 📋 **Motion** — home / move / disable steppers
-- 📋 **Console** — G-code send + streamed response log
-- 📋 **Layout persistence** — remember the dashboard layout via Moonraker's database
-
 ## Platform
 
 - 📋 Smart "Back to UI" (auto-detect Mainsail / Fluidd, host-preserving link)
