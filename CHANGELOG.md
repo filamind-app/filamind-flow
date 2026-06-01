@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.31.0] - 2026-06-02
+
+### Added
+
+- **Input Shaping — compare two captures (A ⇄ B).** A new compare panel: load two
+  resonance CSVs (e.g. before/after a belt-tension fix, or the same axis re-tested)
+  and see them side by side — an overlaid total-PSD chart plus a metric table
+  (recommended shaper, frequencies, peak frequency, remaining vibrations,
+  `max_accel`) that flags whether **B improved or regressed** versus A.
+
 ## [0.30.0] - 2026-06-02
 
 ### Added
