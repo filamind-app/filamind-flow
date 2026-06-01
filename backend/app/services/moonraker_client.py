@@ -59,3 +59,19 @@ class MoonrakerClient:
         result = await self._get(f"/printer/objects/query?{query}")
         status = result.get("status", {})
         return status if isinstance(status, dict) else {}
+
+    async def run_gcode(self, script: str) -> None:
+        """Runs a G-code script via ``/printer/gcode/script``.
+
+        The request blocks until Klipper finishes the command, so a long-running
+        macro (e.g. ``TEST_RESONANCES``) needs this client created with a
+        correspondingly long ``timeout``.
+
+        Raises:
+            httpx.HTTPError: if Moonraker is unreachable or the command errors.
+        """
+        async with httpx.AsyncClient(timeout=self._timeout) as client:
+            response = await client.post(
+                f"{self._base_url}/printer/gcode/script", params={"script": script}
+            )
+            response.raise_for_status()
