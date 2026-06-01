@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 import { analyzeResonance } from './api'
 import { buildResponseChart } from './chart'
@@ -12,11 +12,29 @@ const analysis = ref<ShaperAnalysis | null>(null)
 const error = ref<string | null>(null)
 const busy = ref(false)
 const copied = ref(false)
+const showAdvanced = ref(false)
+
+/** Advanced calibration knobs (kept as strings for the inputs; blank = default). */
+const params = reactive({ maxFreq: '200', scv: '5', maxSmoothing: '', dampingRatio: '' })
+
+/** Results accumulated per axis ('x' / 'y') or 'generic' (no axis), so an X and a
+ *  Y capture combine into a single config block. */
+const byAxis = reactive<Record<string, ShaperAnalysis>>({})
 
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
+const numClass = `${inputClass} w-16 font-mono`
 
-const configText = computed(() => (analysis.value ? inputShaperConfig([analysis.value]) : ''))
+const captured = computed(() => ['generic', 'x', 'y'].filter((k) => byAxis[k]))
+const configText = computed(() => {
+  const list = ['x', 'y', 'generic'].map((k) => byAxis[k]).filter(Boolean) as ShaperAnalysis[]
+  return list.length ? inputShaperConfig(list) : ''
+})
 const chart = computed(() => (analysis.value ? buildResponseChart(analysis.value) : null))
+
+function num(value: string, fallback: number): number {
+  const n = Number(value)
+  return value.trim() !== '' && Number.isFinite(n) ? n : fallback
+}
 
 function onPick(event: Event): void {
   const input = event.target as HTMLInputElement
@@ -30,14 +48,35 @@ async function analyze(): Promise<void> {
   error.value = null
   busy.value = true
   try {
-    analysis.value = await analyzeResonance(file.value, {
-      axis: axis.value === 'auto' ? undefined : axis.value,
+    const ax = axis.value === 'auto' ? undefined : axis.value
+    const result = await analyzeResonance(file.value, {
+      axis: ax,
+      maxFreq: num(params.maxFreq, 200),
+      scv: num(params.scv, 5),
+      maxSmoothing: params.maxSmoothing.trim() ? Number(params.maxSmoothing) : undefined,
+      dampingRatio: params.dampingRatio.trim() ? Number(params.dampingRatio) : undefined,
     })
+    analysis.value = result
+    // A generic capture replaces any per-axis ones and vice versa, so the config
+    // block never mixes `shaper_type` with `shaper_type_x`.
+    const key = ax ?? 'generic'
+    if (key === 'generic') {
+      delete byAxis.x
+      delete byAxis.y
+    } else {
+      delete byAxis.generic
+    }
+    byAxis[key] = result
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Analysis failed'
   } finally {
     busy.value = false
   }
+}
+
+function clearResults(): void {
+  analysis.value = null
+  for (const key of Object.keys(byAxis)) delete byAxis[key]
 }
 
 async function copyConfig(): Promise<void> {
@@ -56,7 +95,8 @@ async function copyConfig(): Promise<void> {
   <div class="space-y-3 text-sm">
     <p class="font-mono text-[11px] opacity-70">
       Find the best input shaper from a Klipper resonance CSV — no command line. Capture data with
-      <code>TEST_RESONANCES</code>, then upload the resulting <code>.csv</code>.
+      <code>TEST_RESONANCES</code>, then upload the resulting <code>.csv</code>. Analyze the X and Y
+      files in turn to build one config block.
     </p>
 
     <div class="flex flex-wrap items-center gap-2">
@@ -76,9 +116,31 @@ async function copyConfig(): Promise<void> {
       >
         {{ busy ? 'Analyzing…' : '🚀 Analyze' }}
       </button>
+      <button class="nb-btn px-2 py-1 text-[10px]" @click="showAdvanced = !showAdvanced">
+        ⚙ advanced
+      </button>
       <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
         file.name
       }}</span>
+    </div>
+
+    <div
+      v-if="showAdvanced"
+      class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1.5 font-mono text-[10px]"
+    >
+      <label class="flex items-center gap-1"
+        >max_freq <input v-model="params.maxFreq" :class="numClass"
+      /></label>
+      <label class="flex items-center gap-1"
+        >scv <input v-model="params.scv" :class="numClass"
+      /></label>
+      <label class="flex items-center gap-1"
+        >max_smoothing <input v-model="params.maxSmoothing" placeholder="—" :class="numClass"
+      /></label>
+      <label class="flex items-center gap-1"
+        >damping_ratio <input v-model="params.dampingRatio" placeholder="—" :class="numClass"
+      /></label>
+      <span class="opacity-50">blank = Klipper default</span>
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
@@ -184,22 +246,30 @@ async function copyConfig(): Promise<void> {
           <span class="text-right">≤{{ s.max_accel.toFixed(0) }}</span>
         </div>
       </div>
-
-      <div class="space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wide">printer.cfg</span>
-          <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyConfig">
-            {{ copied ? '✅ Copied' : '📋 Copy' }}
-          </button>
-        </div>
-        <pre
-          class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight text-surface"
-          >{{ configText }}</pre
-        >
-        <p class="text-[9px] italic opacity-50">
-          Paste into your <code>printer.cfg</code>, then restart Klipper.
-        </p>
-      </div>
     </template>
+
+    <!-- Combined config block (accumulates across the X and Y captures). -->
+    <div v-if="configText" class="space-y-1">
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-xs font-bold uppercase tracking-wide">printer.cfg</span>
+        <span class="flex items-center gap-1 font-mono text-[9px] opacity-70">
+          <span v-for="k in captured" :key="k" class="nb-badge bg-brand-cyan">{{
+            k === 'generic' ? 'X+Y' : k.toUpperCase()
+          }}</span>
+        </span>
+        <span class="flex-1"></span>
+        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyConfig">
+          {{ copied ? '✅ Copied' : '📋 Copy' }}
+        </button>
+        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="clearResults">clear</button>
+      </div>
+      <pre
+        class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight text-surface"
+        >{{ configText }}</pre
+      >
+      <p class="text-[9px] italic opacity-50">
+        Paste into your <code>printer.cfg</code>, then restart Klipper.
+      </p>
+    </div>
   </div>
 </template>
