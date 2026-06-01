@@ -15,4 +15,11 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./firmware-upgrade/FirmwareUpgradeWidget.vue')),
   })
+
+  registerWidget({
+    id: 'input-shaping',
+    title: 'Input Shaping',
+    description: 'Analyze a resonance CSV and find the best input shaper.',
+    component: defineAsyncComponent(() => import('./input-shaping/InputShapingWidget.vue')),
+  })
 }
