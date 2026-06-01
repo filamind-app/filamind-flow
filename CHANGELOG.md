@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.28.0] - 2026-06-02
+
+### Added
+
+- **Input Shaping widget (analysis UI).** A new **Input Shaping** sidebar page:
+  upload a resonance `.csv`, pick the axis, and Analyze → it shows the recommended
+  shaper (e.g. `MZV @ 52.3 Hz`), a table of every tested shaper (frequency,
+  remaining vibrations, smoothing, suggested `max_accel`), and a ready-to-paste
+  `[input_shaper]` config block with one-click copy. The frequency-response chart
+  lands next.
+
 ## [0.27.0] - 2026-06-02
 
 ### Added
