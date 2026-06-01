@@ -83,3 +83,14 @@ def test_analyze_route() -> None:
     assert len(body["shaper_curves"]) == len(_SHAPER_NAMES)
 
     assert client.post("/api/shaper/analyze", content=b"").status_code == 400
+
+
+def test_analyze_surfaces_a_failed_init_as_a_clean_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    # A missing dependency (e.g. numpy not installed) must not 500 — it should be
+    # caught and reported, since ShaperCalibrate imports numpy on construction.
+    def boom(*_a: object, **_k: object) -> object:
+        raise Exception("Failed to import `numpy` module")
+
+    monkeypatch.setattr(shaper_service._sc, "ShaperCalibrate", boom)
+    with pytest.raises(shaper_service.ShaperAnalysisError, match="Could not analyse"):
+        shaper_service.analyze(_psd_csv())

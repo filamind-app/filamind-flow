@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.33.1] - 2026-06-02
+
+### Fixed
+
+- **Input Shaping analysis 500'd when `numpy` was missing from the backend venv.**
+  A manual `git reset` deploy doesn't run `pip install`, so a host that never ran
+  `deploy/install-host.sh` (or the Moonraker update manager) lacked numpy and every
+  analysis failed with an unhandled HTTP 500. The shaper helper is now built inside
+  the guarded block, so a missing dependency surfaces as a clear 400 instead. (The
+  real fix is installing the dependency — run `install-host.sh` / the update
+  manager after pulling new backend requirements.)
+
 ## [0.33.0] - 2026-06-02
 
 ### Added
