@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 
 import ResonanceCompare from './ResonanceCompare.vue'
 import { analyzeResonance } from './api'
 import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
+import { addHistory, clearHistory, loadHistory, type HistoryEntry } from './history'
+import { interpret } from './interpret'
 import type { ShaperAnalysis } from './types'
 
 const file = ref<File | null>(null)
@@ -32,6 +34,23 @@ const configText = computed(() => {
   return list.length ? inputShaperConfig(list) : ''
 })
 const chart = computed(() => (analysis.value ? buildResponseChart(analysis.value) : null))
+const hints = computed(() => (analysis.value ? interpret(analysis.value) : []))
+
+const history = ref<HistoryEntry[]>([])
+const showHistory = ref(false)
+onMounted(() => (history.value = loadHistory()))
+
+function hintClass(level: 'good' | 'warn' | 'info'): string {
+  return level === 'warn' ? 'font-medium' : 'opacity-60'
+}
+function fmtDate(iso: string): string {
+  const d = new Date(iso)
+  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString()
+}
+function wipeHistory(): void {
+  clearHistory()
+  history.value = []
+}
 
 function num(value: string, fallback: number): number {
   const n = Number(value)
@@ -69,6 +88,14 @@ async function analyze(): Promise<void> {
       delete byAxis.generic
     }
     byAxis[key] = result
+    if (result.recommended_shaper && result.recommended_freq != null) {
+      history.value = addHistory({
+        at: new Date().toISOString(),
+        axis: result.axis,
+        shaper: result.recommended_shaper,
+        freq: result.recommended_freq,
+      })
+    }
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Analysis failed'
   } finally {
@@ -124,6 +151,9 @@ async function copyConfig(): Promise<void> {
       <button class="nb-btn px-2 py-1 text-[10px]" @click="showCompare = !showCompare">
         ⇄ compare
       </button>
+      <button class="nb-btn px-2 py-1 text-[10px]" @click="showHistory = !showHistory">
+        🕘 history
+      </button>
       <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
         file.name
       }}</span>
@@ -165,6 +195,18 @@ async function copyConfig(): Promise<void> {
         </span>
       </div>
       <div v-else class="nb-badge bg-brand-yellow">No shaper recommended for this data.</div>
+
+      <ul v-if="hints.length" class="space-y-0.5">
+        <li
+          v-for="(h, i) in hints"
+          :key="i"
+          class="flex items-start gap-1 text-[10px]"
+          :class="hintClass(h.level)"
+        >
+          <span>{{ h.level === 'warn' ? '⚠' : 'ℹ' }}</span>
+          <span>{{ h.text }}</span>
+        </li>
+      </ul>
 
       <!-- Frequency response: PSD curves (front) over shaper-reduction curves (behind). -->
       <div v-if="chart && chart.psd.length" class="space-y-1">
@@ -278,5 +320,24 @@ async function copyConfig(): Promise<void> {
     </div>
 
     <ResonanceCompare v-if="showCompare" />
+
+    <div v-if="showHistory" class="space-y-1 rounded-brutal border-2 border-ink bg-paper p-2">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase tracking-wide">History</span>
+        <button v-if="history.length" class="nb-btn px-2 py-0.5 text-[10px]" @click="wipeHistory">
+          clear
+        </button>
+      </div>
+      <p v-if="!history.length" class="font-mono text-[10px] opacity-60">No calibrations yet.</p>
+      <div
+        v-for="(h, i) in history"
+        :key="i"
+        class="grid grid-cols-[auto_auto_1fr] items-center gap-2 font-mono text-[10px]"
+      >
+        <span class="opacity-60">{{ fmtDate(h.at) }}</span>
+        <span class="nb-badge bg-brand-cyan">{{ (h.axis ?? 'xy').toUpperCase() }}</span>
+        <span>{{ h.shaper.toUpperCase() }} @ {{ h.freq.toFixed(1) }} Hz</span>
+      </div>
+    </div>
   </div>
 </template>
