@@ -17,6 +17,7 @@ function analysis(over: Partial<ShaperAnalysis>): ShaperAnalysis {
     psd_sum: [],
     shaper_curves: [],
     log: [],
+    source_file: null,
     ...over,
   }
 }

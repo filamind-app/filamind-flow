@@ -2,6 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 
 import ResonanceCompare from './ResonanceCompare.vue'
+import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
 import { analyzeResonance } from './api'
 import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
@@ -17,6 +18,7 @@ const busy = ref(false)
 const copied = ref(false)
 const showAdvanced = ref(false)
 const showCompare = ref(false)
+const showFromPrinter = ref(false)
 
 /** Advanced calibration knobs (kept as strings for the inputs; blank = default). */
 const params = reactive({ maxFreq: '200', scv: '5', maxSmoothing: '', dampingRatio: '' })
@@ -64,6 +66,29 @@ function onPick(event: Event): void {
   error.value = null
 }
 
+/** Files an analysis into the displayed state, the combined config, and history. */
+function applyResult(result: ShaperAnalysis): void {
+  analysis.value = result
+  // A generic capture replaces any per-axis ones and vice versa, so the config
+  // block never mixes `shaper_type` with `shaper_type_x`.
+  const key = result.axis === 'x' || result.axis === 'y' ? result.axis : 'generic'
+  if (key === 'generic') {
+    delete byAxis.x
+    delete byAxis.y
+  } else {
+    delete byAxis.generic
+  }
+  byAxis[key] = result
+  if (result.recommended_shaper && result.recommended_freq != null) {
+    history.value = addHistory({
+      at: new Date().toISOString(),
+      axis: result.axis,
+      shaper: result.recommended_shaper,
+      freq: result.recommended_freq,
+    })
+  }
+}
+
 async function analyze(): Promise<void> {
   if (!file.value || busy.value) return
   error.value = null
@@ -77,25 +102,7 @@ async function analyze(): Promise<void> {
       maxSmoothing: params.maxSmoothing.trim() ? Number(params.maxSmoothing) : undefined,
       dampingRatio: params.dampingRatio.trim() ? Number(params.dampingRatio) : undefined,
     })
-    analysis.value = result
-    // A generic capture replaces any per-axis ones and vice versa, so the config
-    // block never mixes `shaper_type` with `shaper_type_x`.
-    const key = ax ?? 'generic'
-    if (key === 'generic') {
-      delete byAxis.x
-      delete byAxis.y
-    } else {
-      delete byAxis.generic
-    }
-    byAxis[key] = result
-    if (result.recommended_shaper && result.recommended_freq != null) {
-      history.value = addHistory({
-        at: new Date().toISOString(),
-        axis: result.axis,
-        shaper: result.recommended_shaper,
-        freq: result.recommended_freq,
-      })
-    }
+    applyResult(result)
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Analysis failed'
   } finally {
@@ -154,6 +161,9 @@ async function copyConfig(): Promise<void> {
       <button class="nb-btn px-2 py-1 text-[10px]" @click="showHistory = !showHistory">
         🕘 history
       </button>
+      <button class="nb-btn px-2 py-1 text-[10px]" @click="showFromPrinter = !showFromPrinter">
+        📥 printer
+      </button>
       <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
         file.name
       }}</span>
@@ -179,6 +189,8 @@ async function copyConfig(): Promise<void> {
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+
+    <ResonanceFromPrinter v-if="showFromPrinter" @analyzed="applyResult" />
 
     <template v-if="analysis">
       <div

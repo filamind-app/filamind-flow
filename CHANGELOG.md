@@ -6,7 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.32.0] - 2026-06-02
+## [0.33.0] - 2026-06-02
+
+### Added
+
+- **Input Shaping — connected to the printer.** A new "from printer" panel:
+  - **Import** the resonance CSVs Klipper already wrote on the host (scans `/tmp`
+    by default) and analyse one with a click — no download/re-upload.
+  - **Run a live test** — trigger `TEST_RESONANCES` on a chosen axis via Moonraker
+    (gated behind a "moves the toolhead" confirm), then auto-analyse the captured
+    CSV. Print-guarded; refuses unless a `[resonance_tester]` is configured.
+
+  Backend: `GET /api/shaper/files`, `POST /api/shaper/analyze-file` (path-validated
+  to the configured `resonance_dirs`), `POST /api/shaper/live-test`, and
+  `MoonrakerClient.run_gcode`. The connected paths are verified locally with a
+  mocked Moonraker; running an actual live test needs a printer with an
+  accelerometer.
 
 ### Added
 

@@ -450,3 +450,24 @@ class ShaperAnalysis(BaseModel):
     shaper_curves: list[ShaperCurve] = []
     #: Human-readable calibration log lines (one per fitted shaper).
     log: list[str] = []
+    #: Filename this analysis came from (set when imported from the printer host).
+    source_file: str | None = None
+
+
+class ResonanceFile(BaseModel):
+    """A resonance CSV Klipper wrote on the printer host."""
+
+    name: str
+    path: str
+    size: int
+    #: Last-modified time (epoch seconds).
+    mtime: float
+    #: Axis guessed from the filename (x / y), if any.
+    axis: str | None = None
+
+
+class ResonanceFilesResponse(BaseModel):
+    """Resonance CSVs discovered on the host, plus the directories scanned."""
+
+    files: list[ResonanceFile] = []
+    dirs: list[str] = []
