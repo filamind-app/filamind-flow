@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.33.3] - 2026-06-02
+
+### Fixed
+
+- **Live resonance test failed with "Must home axis first".** `TEST_RESONANCES`
+  moves the toolhead to the probe point, which needs homed axes. The live test now
+  homes the printer (`G28`) first when it isn't already fully homed, then runs the
+  test — so the button works from cold.
+
 ## [0.33.2] - 2026-06-02
 
 ### Fixed

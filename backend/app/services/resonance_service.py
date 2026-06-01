@@ -101,6 +101,16 @@ async def _has_resonance_tester(client: MoonrakerClient) -> bool:
     return isinstance(config, dict) and "resonance_tester" in config
 
 
+async def _homed_axes(client: MoonrakerClient) -> str:
+    """Returns Klipper's homed-axes string (e.g. 'xyz'), or '' if unknown."""
+    try:
+        data = await client.query_objects(["toolhead"])
+    except Exception:
+        return ""
+    toolhead = data.get("toolhead", {})
+    return str(toolhead.get("homed_axes", "")) if isinstance(toolhead, dict) else ""
+
+
 async def run_live_test(
     moonraker_url: str, resonance_dirs: str, *, axis: str = "x", **kwargs: Any
 ) -> dict[str, Any]:
@@ -122,6 +132,15 @@ async def run_live_test(
         raise shaper_service.ShaperAnalysisError(
             "No [resonance_tester] / accelerometer is configured on this printer"
         )
+
+    # TEST_RESONANCES moves to the probe point, which requires homed axes —
+    # home first if the printer isn't already fully homed.
+    homed = await _homed_axes(client)
+    if not all(axis in homed for axis in "xyz"):
+        try:
+            await client.run_gcode("G28")
+        except Exception as exc:
+            raise shaper_service.ShaperAnalysisError(f"Homing failed: {exc}") from exc
 
     name = f"filamind_{ax}"
     before = {f["path"] for f in list_files(resonance_dirs)}
