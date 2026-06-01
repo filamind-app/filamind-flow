@@ -80,13 +80,15 @@ def analyze(
     """Analyses a resonance CSV → recommended shaper + per-shaper metrics + plot series."""
     if not raw_csv.strip():
         raise ShaperAnalysisError("Empty CSV")
-    helper = _sc.ShaperCalibrate(printer=None)
     try:
+        # ShaperCalibrate imports numpy lazily here, so a missing dependency
+        # surfaces as a clean 400 rather than an unhandled 500.
+        helper = _sc.ShaperCalibrate(printer=None)
         cal = _parse_csv(raw_csv, helper)
     except ShaperAnalysisError:
         raise
-    except Exception as exc:  # numpy / Klipper parsing failure
-        raise ShaperAnalysisError(f"Could not parse resonance data: {exc}") from exc
+    except Exception as exc:  # e.g. numpy not installed, or malformed data
+        raise ShaperAnalysisError(f"Could not analyse resonance data: {exc}") from exc
 
     log: list[str] = []
     best, all_shapers = helper.find_best_shaper(
