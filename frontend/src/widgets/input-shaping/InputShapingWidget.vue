@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { analyzeResonance } from './api'
+import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
 import type { ShaperAnalysis } from './types'
 
@@ -15,6 +16,7 @@ const copied = ref(false)
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
 
 const configText = computed(() => (analysis.value ? inputShaperConfig([analysis.value]) : ''))
+const chart = computed(() => (analysis.value ? buildResponseChart(analysis.value) : null))
 
 function onPick(event: Event): void {
   const input = event.target as HTMLInputElement
@@ -96,6 +98,68 @@ async function copyConfig(): Promise<void> {
         </span>
       </div>
       <div v-else class="nb-badge bg-brand-yellow">No shaper recommended for this data.</div>
+
+      <!-- Frequency response: PSD curves (front) over shaper-reduction curves (behind). -->
+      <div v-if="chart && chart.psd.length" class="space-y-1">
+        <svg
+          :viewBox="`0 0 ${chart.width} ${chart.height}`"
+          class="w-full rounded-brutal border-2 border-ink bg-paper"
+          role="img"
+          aria-label="Frequency response and shapers"
+        >
+          <line
+            v-for="t in chart.xTicks"
+            :key="'g' + t.label"
+            :x1="t.x"
+            :x2="t.x"
+            :y1="6"
+            :y2="chart.height - 12"
+            stroke="#111111"
+            stroke-opacity="0.12"
+            stroke-width="0.5"
+          />
+          <polyline
+            v-for="s in chart.shapers"
+            :key="'sh' + s.name"
+            :points="s.points"
+            fill="none"
+            :stroke="s.color"
+            stroke-width="0.8"
+            :stroke-dasharray="s.dashed ? '2 2' : ''"
+          />
+          <polyline
+            v-for="s in chart.psd"
+            :key="'psd' + s.name"
+            :points="s.points"
+            fill="none"
+            :stroke="s.color"
+            stroke-width="1"
+          />
+          <text
+            v-for="t in chart.xTicks"
+            :key="'t' + t.label"
+            :x="t.x"
+            :y="chart.height - 2"
+            font-size="6"
+            fill="#111111"
+            fill-opacity="0.6"
+            text-anchor="middle"
+          >
+            {{ t.label }}
+          </text>
+        </svg>
+        <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[9px]">
+          <span v-for="s in chart.psd" :key="'lg' + s.name" class="flex items-center gap-1">
+            <span class="inline-block h-2 w-3 rounded-sm" :style="{ background: s.color }" />
+            {{ s.name }}
+          </span>
+          <span class="flex items-center gap-1 opacity-70">
+            <span class="inline-block h-0 w-3 border-t-2" style="border-color: #ff5c8a" />
+            recommended
+          </span>
+          <span class="opacity-50">Hz · left PSD · right vibration reduction</span>
+        </div>
+      </div>
 
       <div class="space-y-1">
         <div

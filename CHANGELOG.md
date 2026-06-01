@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.29.0] - 2026-06-02
+
+### Added
+
+- **Input Shaping — frequency-response chart.** The widget now draws the resonance
+  **frequency-response graph** inline as a dependency-free SVG: the X / Y / Z and
+  combined PSD curves layered over each shaper's vibration-reduction curve, with
+  the recommended shaper accented and the rest dashed — the same picture as
+  Klipper's `calibrate_shaper` plot, rendered in the browser.
+
 ## [0.28.0] - 2026-06-02
 
 ### Added
