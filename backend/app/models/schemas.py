@@ -410,3 +410,43 @@ class HealthReport(BaseModel):
 
     healthy: bool
     checks: list[HealthCheck]
+
+
+class ShaperResult(BaseModel):
+    """One shaper family's fitted result on the resonance data."""
+
+    name: str
+    freq: float
+    #: Estimated remaining vibrations, as a percentage (lower is better).
+    vibrations_pct: float
+    smoothing: float
+    #: Suggested max_accel (mm/s^2) to avoid excessive smoothing.
+    max_accel: float
+    recommended: bool = False
+
+
+class ShaperCurve(BaseModel):
+    """A shaper's vibration-reduction curve, sampled over the frequency bins."""
+
+    name: str
+    vals: list[float]
+
+
+class ShaperAnalysis(BaseModel):
+    """Result of analysing a resonance CSV with Klipper's input-shaper calibration."""
+
+    recommended_shaper: str | None = None
+    recommended_freq: float | None = None
+    #: The axis this CSV belongs to (x / y), if the caller supplied it.
+    axis: str | None = None
+    max_freq: float
+    shapers: list[ShaperResult] = []
+    #: Frequency bins (Hz) shared by every PSD + shaper-curve series below.
+    freqs: list[float] = []
+    psd_x: list[float] = []
+    psd_y: list[float] = []
+    psd_z: list[float] = []
+    psd_sum: list[float] = []
+    shaper_curves: list[ShaperCurve] = []
+    #: Human-readable calibration log lines (one per fitted shaper).
+    log: list[str] = []

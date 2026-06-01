@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-06-02
+
+### Added
+
+- **Input Shaping — resonance analysis backend.** A new `POST /api/shaper/analyze`
+  endpoint runs Klipper's own input-shaper calibration on an uploaded resonance
+  CSV (a PSD `freq,psd_x,…` file or raw accelerometer `time,accel_x,…` samples)
+  and returns the recommended shaper, every tested shaper's metrics (frequency,
+  remaining vibrations, smoothing, suggested `max_accel`), and the full
+  frequency-response series for plotting. The math is Klipper's `shaper_calibrate`
+  vendored under `backend/app/vendor/klipper_shaper` (GPLv3); it runs serially
+  with only numpy, so no printer is required. First slice of the Input Shaping
+  widget.
+
 ## [0.26.0] - 2026-05-31
 
 ### Added

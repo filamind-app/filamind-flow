@@ -6,3 +6,6 @@ pydantic-settings>=2.6,<3.0
 # Parses Klipper's Kconfig for the firmware config editor (Klipper ships its own
 # copy under lib/kconfiglib, used in preference to this one at runtime).
 kconfiglib>=14.1,<15.0
+# Powers the input-shaper resonance math vendored from Klipper
+# (app/vendor/klipper_shaper) for the Input Shaping widget.
+numpy>=1.26,<3.0
