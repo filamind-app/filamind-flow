@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.33.2] - 2026-06-02
+
+### Fixed
+
+- **Live resonance test wrongly reported "No `[resonance_tester]`".** The guard
+  looked for `resonance_tester` in `/printer/objects/list`, but that's a Klipper
+  config *section*, not a queryable status object — it never appears there, so the
+  live test always refused, even on printers that have it configured (e.g. a Sovol
+  SV08 with its toolhead ADXL345). It now checks the parsed `configfile` config,
+  where the section actually lives.
+
 ## [0.33.1] - 2026-06-02
 
 ### Fixed

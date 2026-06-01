@@ -91,10 +91,14 @@ async def _is_printing(client: MoonrakerClient) -> bool:
 
 
 async def _has_resonance_tester(client: MoonrakerClient) -> bool:
+    # `resonance_tester` is a config *section*, not a queryable status object, so
+    # it never shows up in /printer/objects/list — check the parsed config map.
     try:
-        return "resonance_tester" in await client.list_objects()
+        data = await client.query_objects(["configfile"])
     except Exception:
         return False
+    config = data.get("configfile", {}).get("config", {})
+    return isinstance(config, dict) and "resonance_tester" in config
 
 
 async def run_live_test(
