@@ -506,3 +506,56 @@ class BeltComparison(BaseModel):
     belt_a: ShaperAnalysis
     #: Excited along the (1,-1) diagonal.
     belt_b: ShaperAnalysis
+
+
+class AxisMapping(BaseModel):
+    """One machine axis → accelerometer axis mapping from axes-map detection."""
+
+    machine_axis: str
+    accel_axis: str
+    #: "+" or "-".
+    sign: str
+    angle_error: float
+    confidence: float
+    #: True if this axis was reconstructed (2-axis / bed-slinger machine).
+    extrapolated: bool
+
+
+class VelocitySeries(BaseModel):
+    """Downsampled integrated-velocity series for one machine-axis stroke (for the plot)."""
+
+    axis: str
+    t: list[float] = []
+    vx: list[float] = []
+    vy: list[float] = []
+    vz: list[float] = []
+    detected_axis: str
+    confidence: float
+    extrapolated: bool
+
+
+class AxesMapResult(BaseModel):
+    """Result of axes-map calibration — the accelerometer's detected orientation."""
+
+    #: The detected Klipper ``axes_map`` string, e.g. "-z, y, x".
+    axes_map: str
+    #: The accelerometer config section the axes_map goes in (e.g. "adxl345").
+    chip: str = "adxl345"
+    #: ok | warning | error.
+    status: str
+    messages: list[str] = []
+    mappings: list[AxisMapping] = []
+    #: Intrinsic-XYZ Euler tilt angles (deg), keyed x/y/z.
+    euler: dict[str, float] = {}
+    #: Gravity magnitude (m/s²).
+    gravity: float
+    #: Dynamic noise (mm/s²).
+    noise: float
+    #: ok | warning | error.
+    noise_grade: str
+    current_axes_map: str | None = None
+    matches_current: bool | None = None
+    accel: float
+    extrapolated_axis: int | None = None
+    velocity_series: list[VelocitySeries] = []
+    source_files: list[str] = []

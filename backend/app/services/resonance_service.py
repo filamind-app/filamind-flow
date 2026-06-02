@@ -16,13 +16,14 @@ so it is print-guarded and refuses unless a ``[resonance_tester]`` is configured
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import glob
 import os
 import re
 import time
 from typing import Any
 
-from app.services import shaper_service
+from app.services import axes_map_service, shaper_service
 from app.services.moonraker_client import MoonrakerClient
 
 #: Klipper writes raw accelerometer data from a background process, so the
@@ -34,6 +35,12 @@ _FILE_WAIT_TIMEOUT = 120.0
 
 #: Filenames Klipper produces for resonance data (raw accel + PSD calibration).
 _PATTERNS = ("resonances_*.csv", "calibration_data_*.csv", "raw_data_*.csv")
+#: Intermediate raw-accel files ACCELEROMETER_MEASURE writes (axes-map etc.). These
+#: are transient — captured, read, then deleted by the orchestrators — so they are
+#: matched for the capture-await but kept OUT of the user-facing import list (which
+#: uses _PATTERNS only) to avoid clutter.
+_CAPTURE_PATTERNS = ("*-axesmap_*.csv", "*-filamind_static-*.csv", "*-vib_*.csv")
+_ALL_PATTERNS = _PATTERNS + _CAPTURE_PATTERNS
 #: Best-effort axis guess from the filename (…_x_… / …_y.csv).
 _AXIS_RE = re.compile(r"_(x|y)(?:[._]|$)", re.IGNORECASE)
 #: A live test can take a couple of minutes; give Moonraker room.
@@ -57,11 +64,11 @@ def resolve_dirs(resonance_dirs: str) -> list[str]:
     return [os.path.expanduser(d.strip()) for d in resonance_dirs.split(",") if d.strip()]
 
 
-def list_files(resonance_dirs: str) -> list[dict[str, Any]]:
+def list_files(resonance_dirs: str, patterns: tuple[str, ...] = _PATTERNS) -> list[dict[str, Any]]:
     """Lists resonance CSVs found in the configured directories, newest first."""
     found: dict[str, dict[str, Any]] = {}
     for directory in resolve_dirs(resonance_dirs):
-        for pattern in _PATTERNS:
+        for pattern in patterns:
             for path in glob.glob(os.path.join(directory, pattern)):
                 if not os.path.isfile(path):
                     continue
@@ -284,6 +291,159 @@ async def compare_belts(moonraker_url: str, resonance_dirs: str, **kwargs: Any) 
     return {"belt_a": belt_a, "belt_b": belt_b}
 
 
+async def _accel_chip(client: MoonrakerClient) -> str | None:
+    """The accelerometer chip name for ACCELEROMETER_MEASURE (None = printer default)."""
+    try:
+        data = await client.query_objects(["configfile"])
+    except Exception:
+        return None
+    config = data.get("configfile", {}).get("config", {})
+    if not isinstance(config, dict):
+        return None
+    rt = config.get("resonance_tester", {})
+    chip = rt.get("accel_chip") or rt.get("accel_chip_x") if isinstance(rt, dict) else None
+    if isinstance(chip, str) and chip.strip():
+        return chip.strip()
+    for section in config:
+        if section.split(" ", 1)[0] in (
+            "adxl345",
+            "lis2dw",
+            "lis3dh",
+            "mpu9250",
+            "mpu6050",
+            "icm20948",
+        ):
+            return section
+    return None
+
+
+def _axes_map_of(config: dict[str, Any], chip: str | None) -> str | None:
+    """The configured ``axes_map`` for the chip's section, if any."""
+    if not chip:
+        return None
+    section = config.get(chip, {})
+    value = section.get("axes_map") if isinstance(section, dict) else None
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
+async def _bed_center(client: MoonrakerClient) -> tuple[float, float] | None:
+    """(mid_x, mid_y) from the toolhead's axis limits, or None if unavailable."""
+    try:
+        data = await client.query_objects(["toolhead"])
+    except Exception:
+        return None
+    toolhead = data.get("toolhead", {})
+    lo, hi = toolhead.get("axis_minimum"), toolhead.get("axis_maximum")
+    if isinstance(lo, list) and isinstance(hi, list) and len(lo) >= 2 and len(hi) >= 2:
+        return (lo[0] + hi[0]) / 2.0, (lo[1] + hi[1]) / 2.0
+    return None
+
+
+async def _capture_axesmap_segment(
+    client: MoonrakerClient, resonance_dirs: str, chip: str | None, axis_label: str, move_gcode: str
+) -> str:
+    """Brackets one constant-velocity stroke with ACCELEROMETER_MEASURE start/stop and
+    returns the raw-accel CSV Klipper wrote for it."""
+    name = f"axesmap_{axis_label}"
+    measure = (
+        f"ACCELEROMETER_MEASURE CHIP={chip} NAME={name}"
+        if chip
+        else f"ACCELEROMETER_MEASURE NAME={name}"
+    )
+    before = {f["path"] for f in list_files(resonance_dirs, _ALL_PATTERNS)}
+    await client.run_gcode(measure)  # start
+    await client.run_gcode("G4 P500")
+    await client.run_gcode(move_gcode)
+    await client.run_gcode("M400")
+    await client.run_gcode("G4 P500")
+    await client.run_gcode(measure)  # stop -> flush CSV
+    return await _await_new_file(resonance_dirs, before, name)
+
+
+async def calibrate_axes_map(
+    moonraker_url: str,
+    resonance_dirs: str,
+    *,
+    z_height: float = 20.0,
+    speed: float = 80.0,
+    accel: float = 1500.0,
+    travel_speed: float = 120.0,
+) -> dict[str, Any]:
+    """Detects the accelerometer's ``axes_map`` by jogging the toolhead +X/+Y/+Z.
+
+    **Moves the toolhead** (three 30 mm strokes around bed center + a 30 mm Z rise).
+    Print-guarded; requires a configured resonance tester + accelerometer.
+    """
+    client = MoonrakerClient(moonraker_url, timeout=_LIVE_TEST_TIMEOUT)
+    await _ensure_test_ready(client)
+
+    chip = await _accel_chip(client)
+    try:
+        cfg = (await client.query_objects(["configfile"])).get("configfile", {}).get("config", {})
+    except Exception:
+        cfg = {}
+    current_map = _axes_map_of(cfg if isinstance(cfg, dict) else {}, chip)
+
+    center = await _bed_center(client)
+    if center is None:
+        raise shaper_service.ShaperAnalysisError(
+            "Could not determine the bed center from the printer config"
+        )
+    mid_x, mid_y = center
+
+    try:
+        toolhead = (await client.query_objects(["toolhead"])).get("toolhead", {})
+        old_accel = toolhead.get("max_accel")
+        old_scv = toolhead.get("square_corner_velocity")
+    except Exception:
+        old_accel = old_scv = None
+
+    f_travel = int(travel_speed * 60)
+    f_move = int(speed * 60)
+    moves = {
+        "x": f"G1 X{mid_x + 15:.1f} Y{mid_y - 15:.1f} Z{z_height:.1f} F{f_move}",
+        "y": f"G1 X{mid_x + 15:.1f} Y{mid_y + 15:.1f} Z{z_height:.1f} F{f_move}",
+        "z": f"G1 X{mid_x + 15:.1f} Y{mid_y + 15:.1f} Z{z_height + 30:.1f} F{f_move}",
+    }
+    paths: dict[str, str] = {}
+    try:
+        await client.run_gcode(f"SET_VELOCITY_LIMIT ACCEL={int(accel)} SQUARE_CORNER_VELOCITY=5.0")
+        await client.run_gcode("G90")
+        await client.run_gcode(
+            f"G1 X{mid_x - 15:.1f} Y{mid_y - 15:.1f} Z{z_height:.1f} F{f_travel}"
+        )
+        await client.run_gcode("M400")
+        for axis in ("x", "y", "z"):
+            paths[axis] = await _capture_axesmap_segment(
+                client, resonance_dirs, chip, axis, moves[axis]
+            )
+    except shaper_service.ShaperAnalysisError:
+        raise
+    except Exception as exc:
+        raise shaper_service.ShaperAnalysisError(f"Axes-map calibration failed: {exc}") from exc
+    finally:
+        if old_accel:
+            scv = f" SQUARE_CORNER_VELOCITY={old_scv}" if old_scv else ""
+            with contextlib.suppress(Exception):
+                await client.run_gcode(f"SET_VELOCITY_LIMIT ACCEL={int(old_accel)}{scv}")
+
+    raws = []
+    for axis in ("x", "y", "z"):
+        if not _is_allowed(paths[axis], resonance_dirs):
+            raise shaper_service.ShaperAnalysisError("Capture landed outside the allowed dirs")
+        with open(paths[axis], "rb") as handle:
+            raws.append(handle.read(64_000_000))
+    result = axes_map_service.analyze_axesmap(
+        raws[0], raws[1], raws[2], current_axes_map=current_map, accel=accel
+    )
+    result["chip"] = chip or "adxl345"
+    result["source_files"] = [os.path.basename(paths[a]) for a in ("x", "y", "z")]
+    for path in paths.values():  # best-effort cleanup of the transient captures
+        with contextlib.suppress(OSError):
+            os.remove(path)
+    return result
+
+
 async def _await_new_file(resonance_dirs: str, before: set[str], name: str) -> str:
     """Waits for the fresh resonance CSV to appear and finish being written.
 
@@ -294,7 +454,7 @@ async def _await_new_file(resonance_dirs: str, before: set[str], name: str) -> s
     last_size = -1
     stable_at: float | None = None
     while time.monotonic() < deadline:
-        after = list_files(resonance_dirs)
+        after = list_files(resonance_dirs, _ALL_PATTERNS)
         fresh = [f for f in after if f["path"] not in before]
         candidates = fresh or [f for f in after if name in f["name"]]
         if candidates:

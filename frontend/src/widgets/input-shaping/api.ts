@@ -1,6 +1,12 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { BeltComparison, NoiseResult, ResonanceFilesResponse, ShaperAnalysis } from './types'
+import type {
+  AxesMapResult,
+  BeltComparison,
+  NoiseResult,
+  ResonanceFilesResponse,
+  ShaperAnalysis,
+} from './types'
 
 /** Extracts a backend error detail, falling back to the status line. */
 async function errorDetail(response: Response, fallback: string): Promise<string> {
@@ -103,4 +109,12 @@ export async function compareBelts(): Promise<BeltComparison> {
   const response = await fetch(`${backendUrl}/api/shaper/compare-belts`, { method: 'POST' })
   if (!response.ok) throw new Error(await errorDetail(response, 'Belt comparison failed'))
   return (await response.json()) as BeltComparison
+}
+
+/** Detects the accelerometer's axes_map by jogging the toolhead +X/+Y/+Z. */
+export async function runAxesMap(): Promise<AxesMapResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/axes-map`, { method: 'POST' })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Axes-map detection failed'))
+  return (await response.json()) as AxesMapResult
 }
