@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.38.0] - 2026-06-02
+
+### Added
+
+- **Grade-tracked calibration history.** The Input Shaping history now records the
+  measurement quality grade (A–F + score) for each calibration and shows it inline,
+  with a trend arrow (▲ improved / ▼ declined) versus the previous test of the same
+  axis — so the effect of a mechanical fix on measurement quality is visible at a
+  glance. Frontend-only; entries saved before v0.38 (without a grade) still load.
+
 ## [0.37.0] - 2026-06-02
 
 ### Added

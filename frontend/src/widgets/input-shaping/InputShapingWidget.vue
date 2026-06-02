@@ -8,8 +8,8 @@ import { analyzeResonance } from './api'
 import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
 import { diagnose, diagnoseAxes, type DiagnosticLevel } from './diagnose'
-import { gradeAnalysis, type Letter, type Rating } from './grade'
-import { addHistory, clearHistory, loadHistory, type HistoryEntry } from './history'
+import { gradeAnalysis, type Rating } from './grade'
+import { addHistory, clearHistory, loadHistory, withTrends, type HistoryEntry } from './history'
 import type { ShaperAnalysis } from './types'
 
 const file = ref<File | null>(null)
@@ -53,10 +53,18 @@ const diagnostics = computed(() => {
 })
 
 const history = ref<HistoryEntry[]>([])
+const historyTrends = computed(() => withTrends(history.value))
 const showHistory = ref(false)
 onMounted(() => (history.value = loadHistory()))
 
-function gradeBg(letter: Letter): string {
+function trendArrow(trend: 'up' | 'down' | 'same' | 'none'): string {
+  return trend === 'up' ? '▲' : trend === 'down' ? '▼' : trend === 'same' ? '=' : ''
+}
+function trendClass(trend: 'up' | 'down' | 'same' | 'none'): string {
+  return trend === 'up' ? 'text-brand-lime' : trend === 'down' ? 'text-brand-red' : 'opacity-30'
+}
+
+function gradeBg(letter: string): string {
   if (letter === 'A' || letter === 'B') return 'bg-brand-lime'
   if (letter === 'C') return 'bg-brand-yellow'
   return 'bg-brand-red text-surface'
@@ -109,11 +117,14 @@ function applyResult(result: ShaperAnalysis): void {
   }
   byAxis[key] = result
   if (result.recommended_shaper && result.recommended_freq != null) {
+    const g = gradeAnalysis(result)
     history.value = addHistory({
       at: new Date().toISOString(),
       axis: result.axis,
       shaper: result.recommended_shaper,
       freq: result.recommended_freq,
+      grade: g.letter,
+      score: g.score,
     })
   }
 }
@@ -466,13 +477,22 @@ async function copyConfig(): Promise<void> {
       </div>
       <p v-if="!history.length" class="font-mono text-[10px] opacity-60">No calibrations yet.</p>
       <div
-        v-for="(h, i) in history"
+        v-for="(h, i) in historyTrends"
         :key="i"
-        class="grid grid-cols-[auto_auto_1fr] items-center gap-2 font-mono text-[10px]"
+        class="grid grid-cols-[auto_auto_1fr_auto] items-center gap-2 font-mono text-[10px]"
       >
         <span class="opacity-60">{{ fmtDate(h.at) }}</span>
         <span class="nb-badge bg-brand-cyan">{{ (h.axis ?? 'xy').toUpperCase() }}</span>
         <span>{{ h.shaper.toUpperCase() }} @ {{ h.freq.toFixed(1) }} Hz</span>
+        <span v-if="h.grade" class="flex items-center gap-1">
+          <span class="nb-badge" :class="gradeBg(h.grade)">{{ h.grade }}</span>
+          <span
+            v-if="h.trend !== 'none'"
+            :class="trendClass(h.trend)"
+            :title="`score ${h.score} vs the previous ${(h.axis ?? 'xy').toUpperCase()} test`"
+            >{{ trendArrow(h.trend) }}</span
+          >
+        </span>
       </div>
     </div>
   </div>
