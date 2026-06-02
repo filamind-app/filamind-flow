@@ -1,7 +1,7 @@
 [
   {
     "title": "FilaMind Flow",
-    "href": "http://printer.local:8080",
+    "href": "http://YOUR-PRINTER-IP:8090",
     "target": "_blank",
     "icon": "M5 3h14v4h-10v3h8v4h-8v7h-4z",
     "position": 90

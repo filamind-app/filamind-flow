@@ -82,7 +82,9 @@ def analyze_file(resonance_dirs: str, path: str, **kwargs: Any) -> dict[str, Any
         )
     try:
         with open(path, "rb") as handle:
-            raw = handle.read(20_000_000)
+            # A live capture can be tens of MB (a long sweep). Read generously so a
+            # large file isn't silently truncated mid-row, which corrupts the parse.
+            raw = handle.read(128_000_000)
     except OSError as exc:
         raise shaper_service.ShaperAnalysisError(f"Could not read {path}: {exc}") from exc
     result = shaper_service.analyze(raw, **kwargs)
