@@ -6,6 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Documentation
+
+- Brought the docs in step with the shipped features: documented the **Input
+  Shaping** widget in `README.md` + `ROADMAP.md`, refreshed the version badge,
+  filled in the `/api/shaper/*` endpoints and the firmware / resonance `FILAMIND_*`
+  settings in `backend/README.md`, refreshed `docs/ARCHITECTURE.md`, and added a
+  "keep docs in step with features" rule to `CONTRIBUTING.md`.
+
 ## [0.35.0] - 2026-06-02
 
 ### Added — Input Shaping advanced insights

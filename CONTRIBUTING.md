@@ -60,6 +60,17 @@ Widgets are the unit of extension. The core never needs to change.
 
 Keep components lazy (`defineAsyncComponent`) so each widget is its own chunk.
 
+## Keep the docs in step with features
+
+When a change adds or changes a user-facing feature, an `/api` endpoint, or a
+config setting, **update the docs in the same PR** — stale docs are a bug:
+
+- **`CHANGELOG.md`** — every release (Keep a Changelog format).
+- **`README.md`** — the status blurb, the feature / roadmap list, and the version badge.
+- **`ROADMAP.md`** — mark the shipped phase ✅.
+- **`backend/README.md`** — new or changed `/api` endpoints and `FILAMIND_*` settings.
+- **`docs/ARCHITECTURE.md`** — only when the structure or data flow changes.
+
 ## Code style
 
 - **Frontend** — TypeScript (no `any` where avoidable), Prettier formatting
