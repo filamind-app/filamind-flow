@@ -24,9 +24,11 @@ class Settings(BaseSettings):
     # Where FilaMind keeps its own data (per-board firmware profiles, etc.).
     data_dir: str = "~/printer_data/config/filamind"
 
-    # Comma-separated dirs to scan for the resonance CSVs Klipper writes
-    # (TEST_RESONANCES / SHAPER_CALIBRATE default to /tmp) — Input Shaping widget.
-    resonance_dirs: str = "/tmp"
+    # Comma-separated dirs to scan for the resonance CSVs Klipper writes.
+    # TEST_RESONANCES/SHAPER_CALIBRATE default to /tmp, but many setups also keep
+    # captures under printer_data/config. Override with FILAMIND_RESONANCE_DIRS
+    # (e.g. when FilaMind runs off the printer host). — Input Shaping widget.
+    resonance_dirs: str = "/tmp,~/printer_data/config,~/printer_data/config/input_shaper"
 
     # Comma-separated browser origins allowed to call this API.
     cors_origins: str = "http://localhost:5173"

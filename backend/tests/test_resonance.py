@@ -80,7 +80,7 @@ class _FakeClient:
     async def run_gcode(self, script: str) -> None:
         self.gcodes.append(script)
         if script.startswith("TEST_RESONANCES"):
-            _write(self.write_dir, "resonances_x_filamind_x.csv")
+            _write(self.write_dir, "raw_data_x_filamind_x.csv")
 
 
 def _patch_client(monkeypatch: pytest.MonkeyPatch, fake: _FakeClient) -> None:
@@ -95,7 +95,7 @@ async def test_live_test_runs_and_analyses(tmp_path: Path, monkeypatch: pytest.M
     _patch_client(monkeypatch, fake)
     result = await resonance_service.run_live_test("http://x", str(tmp_path), axis="x")
     assert result["recommended_shaper"] in _SHAPERS
-    assert result["source_file"] == "resonances_x_filamind_x.csv"
+    assert result["source_file"] == "raw_data_x_filamind_x.csv"
     assert "G28" not in fake.gcodes  # already homed → no re-home
 
 
