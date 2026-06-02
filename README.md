@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-111111.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.38.0-111111.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.38.1-111111.svg)](CHANGELOG.md)
 [![Last commit](https://img.shields.io/github/last-commit/filamind-app/filamind-flow?color=111111&label=updated)](https://github.com/filamind-app/filamind-flow/commits/main)
 
 [![Klipper](https://img.shields.io/badge/Klipper-compatible-111111)](https://www.klipper3d.org)
@@ -54,7 +54,9 @@ curl -fsSL https://raw.githubusercontent.com/filamind-app/filamind-flow/main/scr
 It installs the backend service, serves the (pre-built) UI via nginx on port `8090`,
 adds a **FilaMind Flow** entry to the Mainsail sidebar, and registers it with
 Moonraker's update manager for one-click updates. Re-runnable; ports are overridable
-(`FILAMIND_UI_PORT`, `FILAMIND_API_PORT`). See [`scripts/install.sh`](scripts/install.sh).
+(`FILAMIND_UI_PORT`, `FILAMIND_API_PORT`), and the sidebar-link host with
+`FILAMIND_PUBLIC_HOST` (defaults to the LAN IP — more portable than `<hostname>.local`,
+which needs mDNS the client may not have). See [`scripts/install.sh`](scripts/install.sh).
 
 ## Why it exists
 

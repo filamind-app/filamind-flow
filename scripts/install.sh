@@ -89,8 +89,15 @@ sudo nginx -t && sudo systemctl reload nginx
 
 info "Mainsail sidebar entry"
 mkdir -p "$PRINTER_DATA/config/.theme"
-FILAMIND_UI_PORT="$UI_PORT" python3 - "$PRINTER_DATA/config/.theme/navi.json" <<'PY'
-import json, os, socket, sys
+# The sidebar link is a static URL, so it must point at a host every client can
+# reach. Prefer an explicit FILAMIND_PUBLIC_HOST; otherwise the primary LAN IP,
+# which resolves everywhere on the network — unlike <hostname>.local, which needs
+# mDNS the client may not have (Windows w/o Bonjour, Android, other subnets, VPN).
+# Fall back to the mDNS name only if no IP could be found.
+NAVI_HOST="${FILAMIND_PUBLIC_HOST:-$(hostname -I 2>/dev/null | awk '{print $1}')}"
+[ -n "$NAVI_HOST" ] || NAVI_HOST="$(hostname).local"
+FILAMIND_NAVI_HOST="$NAVI_HOST" FILAMIND_UI_PORT="$UI_PORT" python3 - "$PRINTER_DATA/config/.theme/navi.json" <<'PY'
+import json, os, sys
 p = sys.argv[1]
 data = []
 if os.path.exists(p):
@@ -102,18 +109,19 @@ if os.path.exists(p):
 if not isinstance(data, list):
     data = []
 data = [e for e in data if not (isinstance(e, dict) and e.get('title') == 'FilaMind Flow')]
+host = os.environ.get('FILAMIND_NAVI_HOST', 'localhost')
 port = os.environ.get('FILAMIND_UI_PORT', '8090')
 data.append({
     "title": "FilaMind Flow",
-    "href": "http://%s.local:%s" % (socket.gethostname(), port),
-    "target": "_self",
+    "href": "http://%s:%s" % (host, port),
+    "target": "_blank",
     "icon": "M5 3h14v4h-10v3h8v4h-8v7h-4z",
     "position": 88,
 })
 with open(p, 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
-print("   navi.json updated (edit the href if .local doesn't resolve on your network)")
+print("   navi.json -> http://%s:%s  (override with FILAMIND_PUBLIC_HOST=<ip-or-host>)" % (host, port))
 PY
 
 info "Registering with Moonraker (update_manager + service allowlist)"
@@ -136,5 +144,5 @@ fi
 sudo systemctl restart moonraker || true
 
 info "Done."
-echo "  Open:    http://$(hostname).local:$UI_PORT   (also in the Mainsail sidebar)"
+echo "  Open:    http://$NAVI_HOST:$UI_PORT   (also in the Mainsail sidebar)"
 echo "  Service: sudo systemctl status $SERVICE"
