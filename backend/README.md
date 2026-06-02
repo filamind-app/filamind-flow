@@ -35,6 +35,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/shaper/analyze-file` | Analyze a resonance CSV already on the host (by path).          |
 | POST   | `/api/shaper/live-test`    | Run `TEST_RESONANCES` on the printer and analyze the capture.   |
 | POST   | `/api/shaper/noise`        | Run `MEASURE_AXES_NOISE` (motion-free) to check the sensor mount. |
+| POST   | `/api/shaper/compare-belts` | Resonance-test each CoreXY belt diagonal and return both (moves the toolhead). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

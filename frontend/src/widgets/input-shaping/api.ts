@@ -1,6 +1,6 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { NoiseResult, ResonanceFilesResponse, ShaperAnalysis } from './types'
+import type { BeltComparison, NoiseResult, ResonanceFilesResponse, ShaperAnalysis } from './types'
 
 /** Extracts a backend error detail, falling back to the status line. */
 async function errorDetail(response: Response, fallback: string): Promise<string> {
@@ -95,4 +95,12 @@ export async function measureNoise(): Promise<NoiseResult> {
   const response = await fetch(`${backendUrl}/api/shaper/noise`, { method: 'POST' })
   if (!response.ok) throw new Error(await errorDetail(response, 'Noise check failed'))
   return (await response.json()) as NoiseResult
+}
+
+/** Runs a resonance test on each CoreXY belt diagonal (moves the toolhead). */
+export async function compareBelts(): Promise<BeltComparison> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/compare-belts`, { method: 'POST' })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Belt comparison failed'))
+  return (await response.json()) as BeltComparison
 }

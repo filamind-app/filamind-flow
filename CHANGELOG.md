@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.37.0] - 2026-06-02
+
+### Added
+
+- **CoreXY belt comparison.** A `🟰 compare belts` action in the Input Shaping "from the
+  printer" panel runs a resonance test along each belt diagonal — `(1,1)` and `(1,-1)` —
+  and overlays the two responses with a verdict (belts matched vs a tension mismatch,
+  judged from the dominant-peak frequencies), so you can balance CoreXY belt tension.
+  New backend route `POST /api/shaper/compare-belts` (print-guarded; **moves the
+  toolhead**, two sweeps).
+
 ## [0.36.0] - 2026-06-02
 
 ### Added
