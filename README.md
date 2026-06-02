@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-111111.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.24.1-111111.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.35.0-111111.svg)](CHANGELOG.md)
 [![Last commit](https://img.shields.io/github/last-commit/filamind-app/filamind-flow?color=111111&label=updated)](https://github.com/filamind-app/filamind-flow/commits/main)
 
 [![Klipper](https://img.shields.io/badge/Klipper-compatible-111111)](https://www.klipper3d.org)
@@ -28,12 +28,20 @@ on your machine and deployed as **static files**, so it adds virtually nothing t
 the printer host at runtime; a small FastAPI backend handles anything that must
 run server-side.
 
-> **Status:** actively developed and **running on real hardware**. The first
-> widget — **Firmware Upgrade** — ships today: a full Klipper firmware
-> build & flash console (per-board profiles, a live Kconfig editor,
-> Katapult / DFU / SD-card flashing, Beacon probe updates, host service control,
-> and host↔MCU update alerts). Further widgets are added under
-> `frontend/src/widgets/`.
+> **Status:** actively developed and **running on real hardware** (a Sovol SV08).
+> Two widgets ship today:
+>
+> - **Firmware Upgrade** — a full Klipper firmware build & flash console: per-board
+>   profiles, a live Kconfig editor, Katapult / DFU / SD-card flashing, Beacon probe
+>   updates, host service control, host↔MCU update alerts, and an external-firmware
+>   inspector / diff.
+> - **Input Shaping** — turn a Klipper resonance capture into a ready
+>   `[input_shaper]` config without the command line: the recommended shaper, an SVG
+>   frequency-response chart, per-axis X/Y, an A⇄B comparison, a **measurement
+>   quality grade (A–F)**, and **visual diagnostics with illustrated fixes**. Import
+>   captures from the printer host or run a live test.
+>
+> Further widgets are added under `frontend/src/widgets/`.
 
 ## Install on a printer (one line)
 
@@ -79,8 +87,9 @@ Moonraker's update manager for one-click updates. Re-runnable; ports are overrid
 - **Widget registry** — the extensibility core; widgets declare the printer
   objects they need and the dashboard subscribes to their union, once.
 - **Pinia store** — a single reactive mirror of Moonraker state for all widgets.
-- **FastAPI backend** — health + diagnostics today; the home for privileged or
-  aggregated server-side operations later.
+- **FastAPI backend** — health + diagnostics, plus the firmware build/flash and
+  resonance-analysis services; the home for privileged or aggregated server-side
+  operations.
 
 ## Tech stack
 
@@ -120,7 +129,7 @@ filamind-flow/
 │  └─ src/
 │     ├─ core/               # MoonrakerClient · widget registry · Pinia store
 │     ├─ components/         # App shell + dashboard (design-system driven)
-│     ├─ widgets/            # Feature widgets register here (Firmware Upgrade ships today)
+│     ├─ widgets/            # Feature widgets register here (Firmware Upgrade + Input Shaping ship today)
 │     └─ assets/styles/      # Neo-Brutalist design tokens
 ├─ backend/                  # FastAPI service
 │  └─ app/                   # config · api/routes · services · models
@@ -170,6 +179,10 @@ templates live in [`deploy/`](deploy/).
       profiles, a live Kconfig editor (with downloadable build artifacts),
       Katapult / DFU / SD-card flashing, Beacon probe updates, host service
       control, and host↔MCU update alerts
+- [x] **Input Shaping** widget — resonance capture → `[input_shaper]` config:
+      recommended shaper, SVG frequency-response chart, per-axis X/Y, A⇄B compare,
+      a measurement **quality grade (A–F)**, **visual diagnostics with fixes**, and
+      printer-host import + a live test
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 
