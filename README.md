@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-111111.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.38.1-111111.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.39.0-111111.svg)](CHANGELOG.md)
 [![Last commit](https://img.shields.io/github/last-commit/filamind-app/filamind-flow?color=111111&label=updated)](https://github.com/filamind-app/filamind-flow/commits/main)
 
 [![Klipper](https://img.shields.io/badge/Klipper-compatible-111111)](https://www.klipper3d.org)
@@ -184,8 +184,8 @@ templates live in [`deploy/`](deploy/).
 - [x] **Input Shaping** widget — resonance capture → `[input_shaper]` config:
       recommended shaper, SVG frequency-response chart, per-axis X/Y, A⇄B compare,
       a measurement **quality grade (A–F)**, **visual diagnostics with fixes**,
-      printer-host import, a live test, an accelerometer noise pre-check, and a
-      CoreXY belt-tension comparison
+      printer-host import, a live test, an accelerometer noise pre-check, a
+      CoreXY belt-tension comparison, and accelerometer axes-map detection
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 

@@ -6,10 +6,19 @@ import {
   compareBelts,
   listResonanceFiles,
   measureNoise,
+  runAxesMap,
   runLiveTest,
 } from './api'
+import { buildAxesVelocityChart } from './axesChart'
+import { angleClass, axesMapConfig, mappingArrow, matchVerdict, statusBg } from './axesMap'
 import { beltVerdict, buildCompareChart } from './compare'
-import type { BeltComparison, NoiseResult, ResonanceFile, ShaperAnalysis } from './types'
+import type {
+  AxesMapResult,
+  BeltComparison,
+  NoiseResult,
+  ResonanceFile,
+  ShaperAnalysis,
+} from './types'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis] }>()
 
@@ -24,6 +33,9 @@ const noise = ref<NoiseResult | null>(null)
 const noiseBusy = ref(false)
 const belts = ref<BeltComparison | null>(null)
 const beltsBusy = ref(false)
+const axesMapResult = ref<AxesMapResult | null>(null)
+const axesBusy = ref(false)
+const axesCopied = ref(false)
 
 const beltChart = computed(() =>
   belts.value ? buildCompareChart(belts.value.belt_a, belts.value.belt_b) : null,
@@ -31,6 +43,11 @@ const beltChart = computed(() =>
 const beltJudge = computed(() =>
   belts.value ? beltVerdict(belts.value.belt_a, belts.value.belt_b) : null,
 )
+const axesChart = computed(() =>
+  axesMapResult.value ? buildAxesVelocityChart(axesMapResult.value.velocity_series) : null,
+)
+/** Any toolhead-moving action in flight (the gated buttons share this). */
+const motionBusy = computed(() => liveBusy.value || beltsBusy.value || axesBusy.value)
 
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
 
@@ -121,6 +138,31 @@ async function runBelts(): Promise<void> {
   }
 }
 
+async function runAxes(): Promise<void> {
+  if (axesBusy.value || !liveReady.value) return
+  error.value = null
+  axesBusy.value = true
+  try {
+    axesMapResult.value = await runAxesMap()
+    liveReady.value = false
+  } catch (e) {
+    error.value = msg(e, 'Axes-map detection failed')
+  } finally {
+    axesBusy.value = false
+  }
+}
+
+async function copyAxesMap(): Promise<void> {
+  if (!axesMapResult.value) return
+  try {
+    await navigator.clipboard.writeText(axesMapConfig(axesMapResult.value))
+    axesCopied.value = true
+    window.setTimeout(() => (axesCopied.value = false), 1500)
+  } catch {
+    error.value = 'Copy failed — select the text and copy it manually.'
+  }
+}
+
 onMounted(loadFiles)
 </script>
 
@@ -168,24 +210,33 @@ onMounted(loadFiles)
         </label>
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
-          :disabled="!liveReady || liveBusy || beltsBusy"
+          :disabled="!liveReady || motionBusy"
           @click="live"
         >
           {{ liveBusy ? 'running…' : 'run TEST_RESONANCES' }}
         </button>
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
-          :disabled="!liveReady || liveBusy || beltsBusy"
+          :disabled="!liveReady || motionBusy"
           title="CoreXY: excite each belt diagonal and overlay the responses"
           @click="runBelts"
         >
           {{ beltsBusy ? 'comparing…' : '🟰 compare belts' }}
         </button>
+        <button
+          class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
+          :disabled="!liveReady || motionBusy"
+          title="Jog +X/+Y/+Z to detect the accelerometer orientation (axes_map)"
+          @click="runAxes"
+        >
+          {{ axesBusy ? 'detecting…' : '🧭 axes map' }}
+        </button>
       </div>
       <p class="font-mono text-[9px] opacity-60">
         Homes the printer if needed, then runs TEST_RESONANCES (needs an accelerometer + a
         <code>[resonance_tester]</code>). Refused while printing.
-        <strong>Compare belts</strong> runs two sweeps along the CoreXY belt diagonals.
+        <strong>Compare belts</strong> runs two sweeps along the CoreXY belt diagonals;
+        <strong>axes map</strong> jogs ~30 mm in X, Y, Z to detect the sensor orientation.
       </p>
     </div>
 
@@ -264,6 +315,105 @@ onMounted(loadFiles)
           belt B (1,-1)</span
         >
       </div>
+    </div>
+
+    <!-- Axes-map detection: orientation + the paste-ready axes_map. -->
+    <div v-if="axesMapResult && axesChart" class="space-y-1 rounded-brutal border-2 border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-[10px] font-bold uppercase tracking-wide">Axes map</span>
+        <span class="nb-badge font-mono text-xs" :class="statusBg(axesMapResult.status)">{{
+          axesMapResult.axes_map
+        }}</span>
+        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyAxesMap">
+          {{ axesCopied ? '✅ Copied' : '📋 Copy' }}
+        </button>
+      </div>
+      <p class="text-[9px] opacity-70">{{ matchVerdict(axesMapResult) }}</p>
+      <div class="flex flex-wrap gap-1.5 font-mono text-[9px]">
+        <span
+          v-for="m in axesMapResult.mappings"
+          :key="m.machine_axis"
+          class="nb-badge"
+          :class="m.extrapolated ? 'bg-surface opacity-60' : angleClass(m.angle_error)"
+        >
+          {{ mappingArrow(m) }}{{ m.extrapolated ? ' (virtual)' : ` ${m.angle_error.toFixed(0)}°` }}
+        </span>
+      </div>
+      <svg
+        :viewBox="`0 0 ${axesChart.width} ${axesChart.height}`"
+        class="w-full rounded-brutal border-2 border-ink bg-paper"
+        role="img"
+        aria-label="Axis velocity sequence"
+      >
+        <line
+          :x1="4"
+          :x2="axesChart.width - 4"
+          :y1="axesChart.zeroY"
+          :y2="axesChart.zeroY"
+          stroke="#111111"
+          stroke-opacity="0.2"
+          stroke-width="0.5"
+        />
+        <line
+          v-for="(b, i) in axesChart.boundaries"
+          :key="'ab' + i"
+          :x1="b"
+          :x2="b"
+          :y1="6"
+          :y2="axesChart.height - 12"
+          stroke="#111111"
+          stroke-opacity="0.15"
+          stroke-width="0.5"
+          stroke-dasharray="2 2"
+        />
+        <template v-for="(z, i) in axesChart.zones" :key="'z' + i">
+          <polyline :points="z.vx" fill="none" :stroke="axesChart.colors.x" stroke-width="0.8" />
+          <polyline :points="z.vy" fill="none" :stroke="axesChart.colors.y" stroke-width="0.8" />
+          <polyline :points="z.vz" fill="none" :stroke="axesChart.colors.z" stroke-width="0.8" />
+          <text
+            :x="z.centerX"
+            :y="11"
+            font-size="6"
+            font-weight="bold"
+            fill="#111111"
+            text-anchor="middle"
+          >
+            {{ z.axis }} → {{ z.detected }}
+          </text>
+          <text
+            :x="z.centerX"
+            :y="axesChart.height - 2"
+            font-size="5.5"
+            fill="#111111"
+            fill-opacity="0.6"
+            text-anchor="middle"
+          >
+            {{ z.extrapolated ? 'virtual' : (z.confidence * 100).toFixed(0) + '%' }}
+          </text>
+        </template>
+      </svg>
+      <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[9px] opacity-70">
+        <span class="flex items-center gap-1"
+          ><span class="inline-block h-2 w-3 rounded-sm" style="background: #ff5247" />accel x</span
+        >
+        <span class="flex items-center gap-1"
+          ><span class="inline-block h-2 w-3 rounded-sm" style="background: #5b8cff" />y</span
+        >
+        <span class="flex items-center gap-1"
+          ><span class="inline-block h-2 w-3 rounded-sm" style="background: #00e0c6" />z</span
+        >
+        <span
+          >tilt {{ axesMapResult.euler.x?.toFixed(1) }}° / {{ axesMapResult.euler.y?.toFixed(1) }}°
+          / {{ axesMapResult.euler.z?.toFixed(1) }}°</span
+        >
+        <span>gravity {{ axesMapResult.gravity.toFixed(2) }} m/s²</span>
+        <span :class="axesMapResult.noise_grade === 'ok' ? '' : 'text-brand-red'"
+          >noise {{ axesMapResult.noise.toFixed(0) }}</span
+        >
+      </div>
+      <p v-if="axesMapResult.messages.length" class="text-[9px] opacity-60">
+        {{ axesMapResult.messages.join(' · ') }}
+      </p>
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>

@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.39.0] - 2026-06-02
+
+### Added — Input Shaping: axes-map calibration (Shake&Tune parity, 1 of 5)
+
+- **Accelerometer orientation detection.** A new `🧭 axes map` action jogs the toolhead
+  ~30 mm in +X/+Y/+Z, integrates the accelerometer signal to velocity, and detects the
+  Klipper `axes_map` to use (e.g. `-z, y, x`) plus per-axis tilt + confidence — so every
+  Input Shaping graph reads with X/Y/Z aligned. Reconstructs the no-signal axis on 2-axis
+  / bed-slinger machines. Shows a paste-ready `[<chip>] axes_map: …` (Copy) + a
+  "matches your config?" verdict + a velocity-sequence chart.
+- New backend `POST /api/shaper/axes-map` (**moves the toolhead**; print-guarded; auto-homes).
+  The pure-numpy detection (`axes_map_service`) is ported from Shake&Tune's
+  `axes_map_computation` (GPL-3.0); the capture is orchestrated over Moonraker REST with
+  `ACCELEROMETER_MEASURE` bracketing the moves — the reusable capture spine for the coming
+  sustain-frequency and vibrations features.
+
 ## [0.38.1] - 2026-06-02
 
 ### Fixed

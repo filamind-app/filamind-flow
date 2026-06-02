@@ -58,6 +58,14 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 | ✅ **7 — Noise pre-check** | Motion-free `MEASURE_AXES_NOISE` reads the accelerometer's idle noise floor and grades it (quiet / elevated / too noisy, per Klipper's ~1–100 normal range), validating the sensor mount before a test. |
 | ✅ **8 — Belt comparison** | CoreXY belt-tension comparison: a resonance test along each belt diagonal (`(1,1)` / `(1,-1)`), the two responses overlaid with a matched-vs-mismatch verdict from the dominant-peak frequencies. |
 | ✅ **9 — Grade-tracked history** | The calibration history records the quality grade (A–F + score) per run and shows a trend (▲/▼) vs. the previous test of the same axis. |
+| ✅ **10 — Axes-map calibration** | Jog +X/+Y/+Z, integrate the accelerometer to velocity, and detect the Klipper `axes_map` (orientation) + tilt/confidence; reconstructs the no-signal axis on bed-slingers. First of the Shake&Tune-parity set; builds the `ACCELEROMETER_MEASURE` capture spine. |
+
+**Shake&Tune parity (in progress — 1 of 5 shipped)**
+
+- ✅ **Axes-map calibration** (phase 10, v0.39.0)
+- 📋 **Sustain frequency** (`EXCITATE_AXIS_AT_FREQ`) — hold a frequency to find what rattles + a spectrogram
+- 📋 **Guided wizard** — belts → shaper → vibrations with pass/fail gates + step-by-step recommendations
+- 📋 **Vibrations profile** (`CREATE_VIBRATIONS_PROFILE`) — speed×angle VFA map → slicer speed guidance
 
 **Ideas (not yet sequenced)**
 

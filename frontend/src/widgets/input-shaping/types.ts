@@ -79,3 +79,49 @@ export interface BeltComparison {
   /** Excited along the (1,-1) diagonal. */
   belt_b: ShaperAnalysis
 }
+
+/** One machine axis → accelerometer axis mapping from axes-map detection. */
+export interface AxisMapping {
+  machine_axis: string
+  accel_axis: string
+  /** "+" or "-". */
+  sign: string
+  angle_error: number
+  confidence: number
+  /** True if reconstructed (2-axis / bed-slinger machine). */
+  extrapolated: boolean
+}
+
+/** Downsampled integrated-velocity series for one machine-axis stroke. */
+export interface VelocitySeries {
+  axis: string
+  t: number[]
+  vx: number[]
+  vy: number[]
+  vz: number[]
+  detected_axis: string
+  confidence: number
+  extrapolated: boolean
+}
+
+/** Result of axes-map calibration — the accelerometer's detected orientation. */
+export interface AxesMapResult {
+  axes_map: string
+  /** Accelerometer config section the axes_map goes in (e.g. "adxl345"). */
+  chip: string
+  status: 'ok' | 'warning' | 'error'
+  messages: string[]
+  mappings: AxisMapping[]
+  euler: Record<string, number>
+  /** Gravity magnitude (m/s²). */
+  gravity: number
+  /** Dynamic noise (mm/s²). */
+  noise: number
+  noise_grade: 'ok' | 'warning' | 'error'
+  current_axes_map: string | null
+  matches_current: boolean | null
+  accel: number
+  extrapolated_axis: number | null
+  velocity_series: VelocitySeries[]
+  source_files: string[]
+}

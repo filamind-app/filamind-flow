@@ -76,20 +76,54 @@ class _FakeClient:
         self.gcodes: list[str] = []
         self._store: list[dict[str, Any]] = []
         self._t = 0.0
+        self._active_measures: set[str] = set()
 
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
         out: dict[str, Any] = {}
         if "print_stats" in objects:
             out["print_stats"] = {"state": "printing" if self.printing else "ready"}
         if "configfile" in objects:
-            out["configfile"] = {"config": {"resonance_tester": {}} if self.has_tester else {}}
+            config: dict[str, Any] = {}
+            if self.has_tester:
+                config["resonance_tester"] = {"accel_chip": "adxl345"}
+                config["adxl345"] = {"axes_map": "x,y,z"}
+            out["configfile"] = {"config": config}
         if "toolhead" in objects:
-            out["toolhead"] = {"homed_axes": self.homed}
+            out["toolhead"] = {
+                "homed_axes": self.homed,
+                "axis_minimum": [0.0, 0.0, 0.0, 0.0],
+                "axis_maximum": [350.0, 350.0, 340.0, 0.0],
+                "max_accel": 5000.0,
+                "square_corner_velocity": 5.0,
+            }
         return out
+
+    def _write_axesmap(self, name: str) -> None:
+        """Writes a synthetic clean stroke for ACCELEROMETER_MEASURE NAME=axesmap_<axis>."""
+        col = {"x": 1, "y": 2, "z": 3}[name.split("_")[-1]]
+        n = 2000
+        data = np.zeros((n, 4))
+        data[:, 0] = np.arange(n) / 3200.0
+        data[:, 3] = 9810.0
+        half = n // 2
+        data[:half, col] += 3000.0
+        data[half:, col] -= 3000.0
+        lines = ["#time,accel_x,accel_y,accel_z"]
+        lines += [f"{r[0]:.6f},{r[1]:.2f},{r[2]:.2f},{r[3]:.2f}" for r in data]
+        (self.write_dir / f"adxl345-{name}.csv").write_text("\n".join(lines) + "\n")
 
     async def run_gcode(self, script: str) -> None:
         self.gcodes.append(script)
-        if script.startswith("TEST_RESONANCES"):
+        if script.startswith("ACCELEROMETER_MEASURE"):
+            match = re.search(r"NAME=(\S+)", script)
+            name = match.group(1) if match else "meas"
+            if name in self._active_measures:  # paired stop → flush the CSV
+                self._active_measures.discard(name)
+                if name.startswith("axesmap_"):
+                    self._write_axesmap(name)
+            else:
+                self._active_measures.add(name)
+        elif script.startswith("TEST_RESONANCES"):
             # Mirror Klipper's raw_data_<axislabel>_<name>.csv naming.
             name = re.search(r"NAME=(\S+)", script)
             axis = re.search(r"AXIS=(\S+)", script)
@@ -210,3 +244,26 @@ async def test_compare_belts_refuses_while_printing(
     _patch_client(monkeypatch, _FakeClient(printing=True, has_tester=True, write_dir=tmp_path))
     with pytest.raises(shaper_service.ShaperAnalysisError, match="printing"):
         await resonance_service.compare_belts("http://x", str(tmp_path))
+
+
+async def test_calibrate_axes_map_detects_identity_and_cleans_up(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake = _FakeClient(printing=False, has_tester=True, write_dir=tmp_path)
+    _patch_client(monkeypatch, fake)
+    result = await resonance_service.calibrate_axes_map("http://x", str(tmp_path))
+    assert result["axes_map"] == "x, y, z"
+    assert len(result["source_files"]) == 3
+    assert len(result["velocity_series"]) == 3
+    # The toolhead was bracketed with ACCELEROMETER_MEASURE on each axis.
+    assert sum(g.startswith("ACCELEROMETER_MEASURE") for g in fake.gcodes) == 6
+    # Intermediate captures are cleaned up afterwards.
+    assert not list(tmp_path.glob("*-axesmap_*.csv"))
+
+
+async def test_calibrate_axes_map_refuses_without_resonance_tester(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _patch_client(monkeypatch, _FakeClient(printing=False, has_tester=False, write_dir=tmp_path))
+    with pytest.raises(shaper_service.ShaperAnalysisError, match="resonance_tester"):
+        await resonance_service.calibrate_axes_map("http://x", str(tmp_path))

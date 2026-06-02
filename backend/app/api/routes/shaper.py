@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
+    AxesMapResult,
     BeltComparison,
     NoiseResult,
     ResonanceFile,
@@ -130,3 +131,31 @@ async def compare_belts(
         belt_a=ShaperAnalysis(**result["belt_a"]),
         belt_b=ShaperAnalysis(**result["belt_b"]),
     )
+
+
+@router.post("/axes-map", response_model=AxesMapResult)
+async def calibrate_axes_map(
+    z_height: float = Query(20.0, description="Z height for the strokes (mm)"),
+    speed: float = Query(80.0, description="Stroke speed (mm/s)"),
+    accel: float = Query(1500.0, description="Acceleration for the strokes (mm/s²)"),
+    travel_speed: float = Query(120.0, description="Travel speed to the start point (mm/s)"),
+    settings: Settings = Depends(get_settings),
+) -> AxesMapResult:
+    """Detects the accelerometer's ``axes_map`` by jogging the toolhead +X/+Y/+Z.
+
+    **Moves the toolhead** (three 30 mm strokes + a 30 mm Z rise). Print-guarded and
+    requires a configured resonance tester; returns HTTP 400 with a clear message if a
+    check fails.
+    """
+    try:
+        result = await resonance_service.calibrate_axes_map(
+            settings.moonraker_url,
+            settings.resonance_dirs,
+            z_height=z_height,
+            speed=speed,
+            accel=accel,
+            travel_speed=travel_speed,
+        )
+    except shaper_service.ShaperAnalysisError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return AxesMapResult(**result)
