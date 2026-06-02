@@ -15,13 +15,22 @@ so it is print-guarded and refuses unless a ``[resonance_tester]`` is configured
 
 from __future__ import annotations
 
+import asyncio
 import glob
 import os
 import re
+import time
 from typing import Any
 
 from app.services import shaper_service
 from app.services.moonraker_client import MoonrakerClient
+
+#: Klipper writes raw accelerometer data from a background process, so the
+#: TEST_RESONANCES gcode returns before the (large) CSV is flushed. Poll until a
+#: matching file's size has been stable for this long before reading it.
+_POLL_INTERVAL = 0.5
+_FILE_SETTLE = 2.0
+_FILE_WAIT_TIMEOUT = 120.0
 
 #: Filenames Klipper produces for resonance data (raw accel + PSD calibration).
 _PATTERNS = ("resonances_*.csv", "calibration_data_*.csv", "raw_data_*.csv")
@@ -149,11 +158,38 @@ async def run_live_test(
     except Exception as exc:
         raise shaper_service.ShaperAnalysisError(f"Resonance test failed: {exc}") from exc
 
-    after = list_files(resonance_dirs)
-    fresh = [f for f in after if f["path"] not in before]
-    candidates = fresh or [f for f in after if name in f["name"]]
-    if not candidates:
-        raise shaper_service.ShaperAnalysisError(
-            "The resonance test finished but no output CSV was found"
-        )
-    return analyze_file(resonance_dirs, candidates[0]["path"], axis=ax, **kwargs)
+    target = await _await_new_file(resonance_dirs, before, name)
+    return analyze_file(resonance_dirs, target, axis=ax, **kwargs)
+
+
+async def _await_new_file(resonance_dirs: str, before: set[str], name: str) -> str:
+    """Waits for the fresh resonance CSV to appear and finish being written.
+
+    Returns the path once a matching file's size has been stable for ``_FILE_SETTLE``
+    seconds, so the (background-written) capture isn't read while still flushing.
+    """
+    deadline = time.monotonic() + _FILE_WAIT_TIMEOUT
+    last_size = -1
+    stable_at: float | None = None
+    while time.monotonic() < deadline:
+        after = list_files(resonance_dirs)
+        fresh = [f for f in after if f["path"] not in before]
+        candidates = fresh or [f for f in after if name in f["name"]]
+        if candidates:
+            path = candidates[0]["path"]
+            try:
+                size = os.path.getsize(path)
+            except OSError:
+                size = -1
+            if size > 0 and size == last_size:
+                if stable_at is None:
+                    stable_at = time.monotonic()
+                elif time.monotonic() - stable_at >= _FILE_SETTLE:
+                    return path
+            else:
+                stable_at = None
+                last_size = size
+        await asyncio.sleep(_POLL_INTERVAL)
+    raise shaper_service.ShaperAnalysisError(
+        "Timed out waiting for the resonance CSV to finish writing"
+    )

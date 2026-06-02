@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.33.4] - 2026-06-02
+
+### Fixed
+
+- **Live resonance test failed to parse the captured CSV** ("the number of columns
+  changed from 4 to 2"). Klipper writes the raw accelerometer data from a
+  background process, so `TEST_RESONANCES` returns before the (often hundreds of
+  thousands of rows) file is fully flushed — the analysis read it mid-write and
+  hit a truncated final row. The live test now waits for the file size to
+  stabilise before reading it, and the raw-CSV parser tolerates a ragged row.
+
 ## [0.33.3] - 2026-06-02
 
 ### Fixed

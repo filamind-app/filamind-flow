@@ -58,8 +58,19 @@ def _parse_csv(raw: bytes, helper: Any) -> Any:
         if "mzv" not in header:
             cd.normalize_to_frequencies()
         return cd
-    # Raw accelerometer samples: time, accel_x, accel_y, accel_z.
-    data = np.loadtxt(buf, comments="#", delimiter=",")
+    # Raw accelerometer samples: time, accel_x, accel_y, accel_z. Tolerant of a
+    # ragged row (e.g. a truncated final line) — fall back to skipping bad rows.
+    try:
+        data = np.loadtxt(buf, comments="#", delimiter=",")
+    except ValueError:
+        data = np.genfromtxt(
+            io.StringIO(text),
+            comments="#",
+            delimiter=",",
+            usecols=(0, 1, 2, 3),
+            invalid_raise=False,
+        )
+        data = data[~np.isnan(data).any(axis=1)]
     if data.ndim != 2 or data.shape[1] < 4:
         raise ShaperAnalysisError("Malformed accelerometer CSV (need time,accel_x,accel_y,accel_z)")
     cd = helper.process_accelerometer_data(data)
