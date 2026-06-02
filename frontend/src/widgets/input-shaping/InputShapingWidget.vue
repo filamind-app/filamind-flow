@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 
+import DiagnosticIllo from './DiagnosticIllo.vue'
 import ResonanceCompare from './ResonanceCompare.vue'
 import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
 import { analyzeResonance } from './api'
 import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
+import { diagnose, diagnoseAxes, type DiagnosticLevel } from './diagnose'
+import { gradeAnalysis, type Letter, type Rating } from './grade'
 import { addHistory, clearHistory, loadHistory, type HistoryEntry } from './history'
-import { interpret } from './interpret'
 import type { ShaperAnalysis } from './types'
 
 const file = ref<File | null>(null)
@@ -19,6 +21,7 @@ const copied = ref(false)
 const showAdvanced = ref(false)
 const showCompare = ref(false)
 const showFromPrinter = ref(false)
+const showFactors = ref(false)
 
 /** Advanced calibration knobs (kept as strings for the inputs; blank = default). */
 const params = reactive({ maxFreq: '200', scv: '5', maxSmoothing: '', dampingRatio: '' })
@@ -36,14 +39,40 @@ const configText = computed(() => {
   return list.length ? inputShaperConfig(list) : ''
 })
 const chart = computed(() => (analysis.value ? buildResponseChart(analysis.value) : null))
-const hints = computed(() => (analysis.value ? interpret(analysis.value) : []))
+const rec = computed(() => analysis.value?.shapers.find((s) => s.recommended) ?? null)
+const grade = computed(() => (analysis.value ? gradeAnalysis(analysis.value) : null))
+const diagnostics = computed(() => {
+  if (!analysis.value) return []
+  const list = diagnose(analysis.value)
+  // Once both axes are captured, flag a big X-vs-Y stiffness mismatch.
+  if (byAxis.x && byAxis.y) {
+    const cross = diagnoseAxes(byAxis.x, byAxis.y)
+    if (cross) list.push(cross)
+  }
+  return list
+})
 
 const history = ref<HistoryEntry[]>([])
 const showHistory = ref(false)
 onMounted(() => (history.value = loadHistory()))
 
-function hintClass(level: 'good' | 'warn' | 'info'): string {
-  return level === 'warn' ? 'font-medium' : 'opacity-60'
+function gradeBg(letter: Letter): string {
+  if (letter === 'A' || letter === 'B') return 'bg-brand-lime'
+  if (letter === 'C') return 'bg-brand-yellow'
+  return 'bg-brand-red text-surface'
+}
+function dotClass(rating: Rating): string {
+  return rating === 'good' ? 'bg-brand-lime' : rating === 'ok' ? 'bg-brand-yellow' : 'bg-brand-red'
+}
+function diagClass(level: DiagnosticLevel): string {
+  if (level === 'good') return 'bg-brand-lime'
+  if (level === 'warn') return 'bg-brand-yellow'
+  return 'bg-brand-red text-surface'
+}
+/** Keeps the peak label inside the plot — flips to the left of the marker near
+ *  the right edge. */
+function peakLabelX(x: number, width: number): number {
+  return x > width * 0.78 ? x - 3 : x + 3
 }
 function fmtDate(iso: string): string {
   const d = new Date(iso)
@@ -205,20 +234,72 @@ async function copyConfig(): Promise<void> {
         <span v-if="analysis.axis" class="nb-badge bg-surface">
           axis {{ analysis.axis.toUpperCase() }}
         </span>
+        <span v-if="rec" class="nb-badge bg-surface font-mono">
+          ≤{{ rec.max_accel.toFixed(0) }} mm/s²
+        </span>
       </div>
       <div v-else class="nb-badge bg-brand-yellow">No shaper recommended for this data.</div>
 
-      <ul v-if="hints.length" class="space-y-0.5">
-        <li
-          v-for="(h, i) in hints"
-          :key="i"
-          class="flex items-start gap-1 text-[10px]"
-          :class="hintClass(h.level)"
+      <!-- Measurement quality grade (A–F) with a factor breakdown. -->
+      <div
+        v-if="grade"
+        class="flex items-center gap-3 rounded-brutal border-2 border-ink bg-paper px-3 py-2"
+      >
+        <span
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-brutal border-2 border-ink font-mono text-2xl font-black"
+          :class="gradeBg(grade.letter)"
+          >{{ grade.letter }}</span
         >
-          <span>{{ h.level === 'warn' ? '⚠' : 'ℹ' }}</span>
-          <span>{{ h.text }}</span>
-        </li>
-      </ul>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-baseline gap-2">
+            <span class="text-xs font-bold uppercase tracking-wide">Measurement quality</span>
+            <span class="font-mono text-[11px] opacity-70">{{ grade.score }}/100</span>
+          </div>
+          <p class="text-[11px] leading-tight">{{ grade.verdict }}</p>
+        </div>
+        <button
+          v-if="grade.factors.length > 1"
+          class="nb-btn px-2 py-0.5 text-[10px]"
+          @click="showFactors = !showFactors"
+        >
+          {{ showFactors ? 'hide' : 'details' }}
+        </button>
+      </div>
+
+      <div
+        v-if="grade && showFactors"
+        class="space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1.5"
+      >
+        <div
+          v-for="f in grade.factors"
+          :key="f.label"
+          class="flex flex-wrap items-center gap-x-2 text-[10px]"
+        >
+          <span class="inline-block h-2 w-2 rounded-full" :class="dotClass(f.rating)" />
+          <span class="font-medium">{{ f.label }}</span>
+          <span class="font-mono opacity-70">{{ f.value }}</span>
+          <span class="text-[9px] opacity-50">— {{ f.note }}</span>
+        </div>
+      </div>
+
+      <!-- Diagnostics + fixes, each with an illustration. -->
+      <div v-if="diagnostics.length" class="space-y-1.5">
+        <div
+          v-for="(d, i) in diagnostics"
+          :key="i"
+          class="flex items-start gap-2 rounded-brutal border-2 border-ink px-2 py-1.5"
+          :class="diagClass(d.level)"
+        >
+          <DiagnosticIllo :illo="d.illo" class="mt-0.5 h-7 w-7 shrink-0" />
+          <div class="min-w-0 flex-1 space-y-0.5">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="text-[11px] font-bold">{{ d.title }}</span>
+              <span class="nb-badge bg-surface font-mono text-[9px] text-ink">{{ d.detail }}</span>
+            </div>
+            <p class="text-[10px] leading-snug">{{ d.advice }}</p>
+          </div>
+        </div>
+      </div>
 
       <!-- Frequency response: PSD curves (front) over shaper-reduction curves (behind). -->
       <div v-if="chart && chart.psd.length" class="space-y-1">
@@ -239,6 +320,18 @@ async function copyConfig(): Promise<void> {
             stroke-opacity="0.12"
             stroke-width="0.5"
           />
+          <!-- Noise floor (median PSD) — anything near it is just noise. -->
+          <line
+            v-if="chart.noiseY != null"
+            :x1="4"
+            :x2="chart.width - 4"
+            :y1="chart.noiseY"
+            :y2="chart.noiseY"
+            stroke="#111111"
+            stroke-opacity="0.3"
+            stroke-width="0.5"
+            stroke-dasharray="3 2"
+          />
           <polyline
             v-for="s in chart.shapers"
             :key="'sh' + s.name"
@@ -256,6 +349,36 @@ async function copyConfig(): Promise<void> {
             :stroke="s.color"
             stroke-width="1"
           />
+          <!-- Dominant resonance peak. -->
+          <g v-if="chart.peak">
+            <line
+              :x1="chart.peak.x"
+              :x2="chart.peak.x"
+              :y1="6"
+              :y2="chart.height - 12"
+              stroke="#ff5247"
+              stroke-width="0.6"
+              stroke-dasharray="2 1.5"
+            />
+            <circle
+              :cx="chart.peak.x"
+              :cy="chart.peak.y"
+              r="2.2"
+              fill="#ff5247"
+              stroke="#111111"
+              stroke-width="0.5"
+            />
+            <text
+              :x="peakLabelX(chart.peak.x, chart.width)"
+              :y="11"
+              font-size="6.5"
+              font-weight="bold"
+              fill="#ff5247"
+              :text-anchor="chart.peak.x > chart.width * 0.78 ? 'end' : 'start'"
+            >
+              ▲ {{ chart.peak.label }}
+            </text>
+          </g>
           <text
             v-for="t in chart.xTicks"
             :key="'t' + t.label"
@@ -278,6 +401,7 @@ async function copyConfig(): Promise<void> {
             <span class="inline-block h-0 w-3 border-t-2" style="border-color: #ff5c8a" />
             recommended
           </span>
+          <span class="flex items-center gap-1" style="color: #ff5247">▲ peak</span>
           <span class="opacity-50">Hz · left PSD · right vibration reduction</span>
         </div>
       </div>
