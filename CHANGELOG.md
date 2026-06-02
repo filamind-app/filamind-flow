@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.41.0] - 2026-06-03
+
+### Added — Input Shaping: guided tuning wizard (Shake&Tune parity, 3 of 5)
+
+- **🧭 Guided tune.** A step-by-step wizard that walks Noise → Belts → Shaper X → Shaper Y
+  with automated **pass/fail gates** (reusing the existing scorers — the A–F grade, the belt
+  verdict and the noise grade) and concrete **next-step suggestions** per result. A progress
+  rail, per-step verdicts + ranked recommendation cards (do-now / consider / ok), and
+  Next / Re-run / Skip controls; the X and Y captures flow into the same combined
+  `[input_shaper]` block and the grade-tracked history. Pure, unit-tested `guided` (state +
+  gates) and `recommend` modules; reuses the existing `/api/shaper/*` endpoints (no new
+  backend).
+
 ## [0.40.0] - 2026-06-03
 
 ### Added — Input Shaping: sustain frequency (Shake&Tune parity, 2 of 5)

@@ -2,6 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 
 import DiagnosticIllo from './DiagnosticIllo.vue'
+import GuidedTune from './GuidedTune.vue'
 import ResonanceCompare from './ResonanceCompare.vue'
 import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
 import { analyzeResonance } from './api'
@@ -22,6 +23,7 @@ const showAdvanced = ref(false)
 const showCompare = ref(false)
 const showFromPrinter = ref(false)
 const showFactors = ref(false)
+const showGuided = ref(false)
 
 /** Advanced calibration knobs (kept as strings for the inputs; blank = default). */
 const params = reactive({ maxFreq: '200', scv: '5', maxSmoothing: '', dampingRatio: '' })
@@ -204,10 +206,15 @@ async function copyConfig(): Promise<void> {
       <button class="nb-btn px-2 py-1 text-[10px]" @click="showFromPrinter = !showFromPrinter">
         📥 printer
       </button>
+      <button class="nb-btn bg-brand-cyan px-2 py-1 text-[10px]" @click="showGuided = !showGuided">
+        🧭 guided
+      </button>
       <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
         file.name
       }}</span>
     </div>
+
+    <GuidedTune v-if="showGuided" @analyzed="applyResult" @exit="showGuided = false" />
 
     <div
       v-if="showAdvanced"
