@@ -60,12 +60,13 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 | ✅ **9 — Grade-tracked history** | The calibration history records the quality grade (A–F + score) per run and shows a trend (▲/▼) vs. the previous test of the same axis. |
 | ✅ **10 — Axes-map calibration** | Jog +X/+Y/+Z, integrate the accelerometer to velocity, and detect the Klipper `axes_map` (orientation) + tilt/confidence; reconstructs the no-signal axis on bed-slingers. First of the Shake&Tune-parity set; builds the `ACCELEROMETER_MEASURE` capture spine. |
 | ✅ **11 — Sustain frequency** | Hold the toolhead vibrating near a frequency (a slow, narrow `TEST_RESONANCES` sweep — no macro/config change) to find the resonance source by hand; returns a frequency×time spectrogram + an energy "touch timeline". |
+| ✅ **12 — Guided tuning wizard** | A step-by-step walk-through (Noise → Belts → Shaper X → Shaper Y) with automated pass/fail gates (reusing the grade / belt verdict / noise grade) + ranked next-step suggestions; the captures feed the shared config + history. |
 
-**Shake&Tune parity (in progress — 2 of 5 shipped)**
+**Shake&Tune parity (in progress — 3 of 5 shipped)**
 
 - ✅ **Axes-map calibration** (phase 10, v0.39.0)
 - ✅ **Sustain frequency** (phase 11, v0.40.0)
-- 📋 **Guided wizard** — belts → shaper → vibrations with pass/fail gates + step-by-step recommendations
+- ✅ **Guided wizard** (phase 12, v0.41.0) — Noise → Belts → Shaper; Vibrations + Pressure-Advance steps land with the next two phases
 - 📋 **Vibrations profile** (`CREATE_VIBRATIONS_PROFILE`) — speed×angle VFA map → slicer speed guidance
 
 **Ideas (not yet sequenced)**
