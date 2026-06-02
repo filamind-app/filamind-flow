@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import type { BeltVerdict } from '../compare'
-import { recommendBelts, recommendNoise, recommendShaper } from '../recommend'
+import {
+  recommendBelts,
+  recommendNoise,
+  recommendPressure,
+  recommendShaper,
+  recommendVibrations,
+} from '../recommend'
 import type { NoiseResult, ShaperAnalysis, ShaperResult } from '../types'
 
 function noise(over: Partial<NoiseResult>): NoiseResult {
@@ -57,6 +63,15 @@ describe('recommend', () => {
     const suggestions = recommendBelts(verdict)
     expect(suggestions[0].level).toBe('do-now')
     expect(suggestions[0].title).toContain('A (1,1)') // 40 Hz < 60 Hz → looser
+  })
+
+  it('vibrations → ok when none, consider when VFAs are seen', () => {
+    expect(recommendVibrations(false)[0].level).toBe('ok')
+    expect(recommendVibrations(true)[0].level).toBe('consider')
+  })
+
+  it('pressure → a do-now PA-tower step', () => {
+    expect(recommendPressure()[0].level).toBe('do-now')
   })
 
   it('shaper → maps diagnostics, worst (do-now) first', () => {

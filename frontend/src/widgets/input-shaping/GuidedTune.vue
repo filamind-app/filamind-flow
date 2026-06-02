@@ -16,9 +16,17 @@ import {
   gateNoise,
   gateShaper,
   nextStep,
+  PA_TOWER_GCODE,
   STEPS,
 } from './guided'
-import { recommendBelts, recommendNoise, recommendShaper, type Suggestion } from './recommend'
+import {
+  recommendBelts,
+  recommendNoise,
+  recommendPressure,
+  recommendShaper,
+  recommendVibrations,
+  type Suggestion,
+} from './recommend'
 import type { BeltComparison, NoiseResult, ShaperAnalysis } from './types'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis]; exit: [] }>()
@@ -36,6 +44,8 @@ const statuses = reactive<Record<StepId, StepState>>({
   belts: 'pending',
   shaperX: 'pending',
   shaperY: 'pending',
+  vibrations: 'pending',
+  pressure: 'pending',
   done: 'pending',
 })
 const results = reactive<{
@@ -47,6 +57,9 @@ const results = reactive<{
 
 const step = computed(() => STEPS[idx.value])
 const canProceed = computed(() => gate.value?.status === 'passed' || gate.value?.status === 'warn')
+const paGcode = PA_TOWER_GCODE
+const paSuggestions = recommendPressure()
+const paCopied = ref(false)
 
 function stepBg(s: StepState): string {
   if (s === 'passed') return 'bg-brand-lime'
@@ -114,6 +127,24 @@ function advance(): void {
   suggestions.value = []
   error.value = null
 }
+function answerVibrations(visible: boolean): void {
+  gate.value = { status: visible ? 'warn' : 'passed', headline: visible ? 'VFAs noted' : 'No VFAs' }
+  suggestions.value = recommendVibrations(visible)
+  statuses.vibrations = gate.value.status
+}
+async function copyPa(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(paGcode)
+    paCopied.value = true
+    window.setTimeout(() => (paCopied.value = false), 1500)
+  } catch {
+    error.value = 'Copy failed — select the text and copy it manually.'
+  }
+}
+function finishPressure(): void {
+  statuses.pressure = 'passed'
+  advance()
+}
 function skip(): void {
   statuses[step.value.id] = 'skipped'
   advance()
@@ -151,7 +182,44 @@ function review(i: number): void {
       <div class="text-[11px] font-bold">{{ step.title }}</div>
       <p class="text-[10px] opacity-70">{{ step.why }}</p>
 
-      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+      <!-- Manual: vibrations / VFA self-report. -->
+      <div v-if="step.id === 'vibrations'" class="flex flex-wrap items-center gap-2 text-[10px]">
+        <span class="opacity-70">After a test print:</span>
+        <button class="nb-btn bg-brand-lime px-2 py-0.5" @click="answerVibrations(false)">
+          ✓ no VFAs
+        </button>
+        <button class="nb-btn bg-brand-yellow px-2 py-0.5" @click="answerVibrations(true)">
+          ⚠ I see VFAs
+        </button>
+      </div>
+
+      <!-- Manual: pressure-advance tower. -->
+      <div v-else-if="step.id === 'pressure'" class="space-y-1">
+        <pre
+          class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[10px] text-surface"
+          >{{ paGcode }}</pre
+        >
+        <div class="flex items-center gap-2">
+          <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyPa">
+            {{ paCopied ? '✅ Copied' : '📋 Copy PA tower' }}
+          </button>
+          <button class="nb-btn bg-brand-lime px-3 py-0.5 text-[10px]" @click="finishPressure">
+            Finish →
+          </button>
+        </div>
+        <div
+          v-for="(sug, i) in paSuggestions"
+          :key="i"
+          class="rounded-brutal border-2 border-ink px-2 py-1"
+          :class="sugBg(sug.level)"
+        >
+          <div class="text-[10px] font-bold">{{ sug.title }}</div>
+          <p class="text-[9px] leading-snug">{{ sug.why }}</p>
+        </div>
+      </div>
+
+      <!-- Endpoint step (noise / belts / shaper). -->
+      <div v-else class="flex flex-wrap items-center gap-2 text-[10px]">
         <label v-if="step.motion" class="flex items-center gap-1">
           <input v-model="ready" type="checkbox" /> ⚠ moves the toolhead — I'm ready
         </label>
@@ -170,7 +238,7 @@ function review(i: number): void {
 
       <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
 
-      <template v-if="gate">
+      <template v-if="gate && step.id !== 'pressure'">
         <div class="flex flex-wrap items-center gap-2">
           <span class="nb-badge text-[10px]" :class="gateBg(gate.status)">{{ gate.headline }}</span>
         </div>
