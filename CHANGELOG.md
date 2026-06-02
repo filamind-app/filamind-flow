@@ -6,6 +6,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.35.0] - 2026-06-02
+
+### Added — Input Shaping advanced insights
+
+- **Measurement quality grade (A–F).** Each capture gets a letter grade + a 0–100
+  score from five factors — peak clarity (signal-to-noise), residual vibration,
+  smoothing, frequency band, and single-vs-multi resonance — with a per-factor
+  breakdown and a plain verdict, so a trustworthy, well-tuned result is obvious at a
+  glance from one that needs a re-test.
+- **Visual diagnostics + fixes.** Rule-based cards map the measurement to the likely
+  mechanical cause and the fix, each with a hand-drawn, dependency-free SVG
+  illustration: low frequency → tighten belts / stiffen frame; high smoothing →
+  retune; multi-hump → re-seat the toolhead; weak peak → secure the accelerometer;
+  plus a cross-axis card that flags a large X-vs-Y stiffness mismatch once both axes
+  are captured.
+- **Annotated frequency-response chart.** The dominant resonance peak is marked
+  (vertical line + dot + a "57 Hz" label) and the PSD noise floor is drawn as a faint
+  reference line, so the meaningful peak stands out from the noise.
+- The **Recommended** banner now shows the suggested `max_accel`.
+
+### Changed
+
+- The plain-text hint list is replaced by the richer grade + diagnostics. The
+  `interpret` helper is superseded by pure, unit-tested `grade` + `diagnose` modules.
+
 ## [0.34.0] - 2026-06-02
 
 ### Changed / Fixed — portability (works for any user on any printer, not just the dev's)

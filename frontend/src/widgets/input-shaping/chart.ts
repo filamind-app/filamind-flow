@@ -5,6 +5,7 @@
  *  ratio. Everything shares the frequency x-axis.
  */
 
+import { median, peakIndex } from './signal'
 import type { ShaperAnalysis } from './types'
 
 export interface PlotSeries {
@@ -16,6 +17,15 @@ export interface PlotSeries {
   points: string
 }
 
+/** The dominant PSD peak, marked on the plot. */
+export interface PeakMarker {
+  x: number
+  y: number
+  freq: number
+  /** Pre-formatted label, e.g. "57 Hz". */
+  label: string
+}
+
 export interface ResponseChart {
   width: number
   height: number
@@ -25,6 +35,10 @@ export interface ResponseChart {
   shapers: PlotSeries[]
   /** Frequency gridline labels along the x-axis. */
   xTicks: { x: number; label: string }[]
+  /** Dominant resonance peak, for annotation (null with no data). */
+  peak: PeakMarker | null
+  /** y of the PSD noise floor (median power), for a faint reference line. */
+  noiseY: number | null
 }
 
 const PSD_COLORS: Record<string, string> = {
@@ -45,7 +59,7 @@ export function buildResponseChart(
   const innerH = height - pad.t - pad.b
   const freqs = analysis.freqs
   const n = freqs.length
-  if (!n) return { width, height, psd: [], shapers: [], xTicks: [] }
+  if (!n) return { width, height, psd: [], shapers: [], xTicks: [], peak: null, noiseY: null }
 
   const fMax = freqs[n - 1] || 1
   const psdMax = Math.max(1e-12, ...analysis.psd_sum)
@@ -73,5 +87,18 @@ export function buildResponseChart(
   const xTicks: { x: number; label: string }[] = []
   for (let f = 0; f <= fMax; f += 50) xTicks.push({ x: xAt(f), label: String(f) })
 
-  return { width, height, psd, shapers, xTicks }
+  // Annotate the dominant resonance and the noise floor.
+  const pi = peakIndex(analysis.psd_sum)
+  const peak: PeakMarker | null =
+    pi >= 0
+      ? {
+          x: xAt(freqs[pi]),
+          y: yPsd(analysis.psd_sum[pi]),
+          freq: freqs[pi],
+          label: `${freqs[pi].toFixed(0)} Hz`,
+        }
+      : null
+  const noiseY = analysis.psd_sum.length ? yPsd(median(analysis.psd_sum)) : null
+
+  return { width, height, psd, shapers, xTicks, peak, noiseY }
 }
