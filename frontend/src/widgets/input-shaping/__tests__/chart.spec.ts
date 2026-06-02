@@ -23,11 +23,30 @@ function analysis(over: Partial<ShaperAnalysis>): ShaperAnalysis {
 }
 
 describe('buildResponseChart', () => {
-  it('returns empty series when there is no data', () => {
+  it('returns empty series + no annotations when there is no data', () => {
     const chart = buildResponseChart(analysis({}))
     expect(chart.psd).toEqual([])
     expect(chart.shapers).toEqual([])
     expect(chart.xTicks).toEqual([])
+    expect(chart.peak).toBeNull()
+    expect(chart.noiseY).toBeNull()
+  })
+
+  it('annotates the dominant peak and the noise floor', () => {
+    const chart = buildResponseChart(
+      analysis({
+        freqs: [0, 50, 100],
+        psd_x: [0, 10, 0],
+        psd_y: [0, 5, 0],
+        psd_z: [0, 1, 0],
+        psd_sum: [0, 16, 0],
+      }),
+      320,
+      150,
+    )
+    expect(chart.peak?.freq).toBe(50)
+    expect(chart.peak?.label).toBe('50 Hz')
+    expect(chart.noiseY).not.toBeNull()
   })
 
   it('maps PSD + shaper series onto polyline points', () => {
