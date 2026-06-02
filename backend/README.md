@@ -37,6 +37,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/shaper/noise`        | Run `MEASURE_AXES_NOISE` (motion-free) to check the sensor mount. |
 | POST   | `/api/shaper/compare-belts` | Resonance-test each CoreXY belt diagonal and return both (moves the toolhead). |
 | POST   | `/api/shaper/axes-map`     | Jog +X/+Y/+Z to detect the accelerometer `axes_map` orientation (moves the toolhead). |
+| POST   | `/api/shaper/excitate`     | Hold a frequency (sustain) to find what rattles → spectrogram + energy timeline (moves the toolhead in place). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

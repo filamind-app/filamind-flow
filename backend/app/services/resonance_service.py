@@ -23,7 +23,7 @@ import re
 import time
 from typing import Any
 
-from app.services import axes_map_service, shaper_service
+from app.services import axes_map_service, shaper_service, spectrogram_service
 from app.services.moonraker_client import MoonrakerClient
 
 #: Klipper writes raw accelerometer data from a background process, so the
@@ -57,6 +57,9 @@ _NOISE_RE = re.compile(
 #: Per Klipper's docs, ~1-100 is normal; ~1000+ means a problem.
 _NOISE_OK = 100.0
 _NOISE_HIGH = 1000.0
+#: A sustain-frequency hold is a slow TEST_RESONANCES sweep this wide (Hz) around the
+#: target — close enough to a constant hold, using only stock Klipper g-code.
+_STATIC_BAND = 3.0
 
 
 def resolve_dirs(resonance_dirs: str) -> list[str]:
@@ -230,6 +233,21 @@ async def _ensure_test_ready(client: MoonrakerClient) -> None:
             raise shaper_service.ShaperAnalysisError(f"Homing failed: {exc}") from exc
 
 
+async def _run_resonances(
+    client: MoonrakerClient, resonance_dirs: str, *, axis_arg: str, name: str, extra: str = ""
+) -> str:
+    """Runs one ``TEST_RESONANCES`` (an axis or a ``dx,dy`` vector, plus any ``extra``
+    params like ``FREQ_START=…``) and returns the raw-accel CSV path it wrote."""
+    before = {f["path"] for f in list_files(resonance_dirs, _ALL_PATTERNS)}
+    try:
+        await client.run_gcode(
+            f"TEST_RESONANCES AXIS={axis_arg} OUTPUT=raw_data NAME={name}{extra}"
+        )
+    except Exception as exc:
+        raise shaper_service.ShaperAnalysisError(f"Resonance test failed: {exc}") from exc
+    return await _await_new_file(resonance_dirs, before, name)
+
+
 async def _capture(
     client: MoonrakerClient,
     resonance_dirs: str,
@@ -239,13 +257,8 @@ async def _capture(
     analyze_axis: str | None,
     **kwargs: Any,
 ) -> dict[str, Any]:
-    """Runs one ``TEST_RESONANCES`` (an axis or a ``dx,dy`` vector) and analyses it."""
-    before = {f["path"] for f in list_files(resonance_dirs)}
-    try:
-        await client.run_gcode(f"TEST_RESONANCES AXIS={axis_arg} OUTPUT=raw_data NAME={name}")
-    except Exception as exc:
-        raise shaper_service.ShaperAnalysisError(f"Resonance test failed: {exc}") from exc
-    target = await _await_new_file(resonance_dirs, before, name)
+    """Runs one ``TEST_RESONANCES`` and analyses the CSV it writes."""
+    target = await _run_resonances(client, resonance_dirs, axis_arg=axis_arg, name=name)
     return analyze_file(resonance_dirs, target, axis=analyze_axis, **kwargs)
 
 
@@ -289,6 +302,53 @@ async def compare_belts(moonraker_url: str, resonance_dirs: str, **kwargs: Any) 
         client, resonance_dirs, axis_arg="1,-1", name="belt_b", analyze_axis=None, **kwargs
     )
     return {"belt_a": belt_a, "belt_b": belt_b}
+
+
+async def run_static_excitation(
+    moonraker_url: str,
+    resonance_dirs: str,
+    *,
+    axis: str = "x",
+    freq: float = 50.0,
+    duration: float = 15.0,
+    max_freq: float = 200.0,
+) -> dict[str, Any]:
+    """Holds an axis vibrating near ``freq`` for ``duration`` s (a slow, narrow
+    ``TEST_RESONANCES`` sweep around the target — no custom macro needed) so the user
+    can touch parts to find the resonance source, then returns a time-frequency
+    spectrogram + an energy-vs-time timeline.
+
+    **Moves the toolhead** (buzzes in place at the probe point). Print-guarded.
+    """
+    ax = axis.lower()
+    if ax not in ("x", "y"):
+        raise shaper_service.ShaperAnalysisError("axis must be 'x' or 'y'")
+    freq = max(5.0, min(float(freq), max_freq - _STATIC_BAND))
+    duration = max(3.0, min(float(duration), 120.0))
+
+    client = MoonrakerClient(moonraker_url, timeout=_LIVE_TEST_TIMEOUT)
+    await _ensure_test_ready(client)
+
+    half = _STATIC_BAND / 2.0
+    freq_start = max(1.0, freq - half)
+    freq_end = freq + half
+    hz_per_sec = (freq_end - freq_start) / duration
+    extra = f" FREQ_START={freq_start:.2f} FREQ_END={freq_end:.2f} HZ_PER_SEC={hz_per_sec:.4f}"
+    target = await _run_resonances(
+        client, resonance_dirs, axis_arg=ax.upper(), name="filamind_static", extra=extra
+    )
+
+    if not _is_allowed(target, resonance_dirs):
+        raise shaper_service.ShaperAnalysisError("Capture landed outside the allowed dirs")
+    with open(target, "rb") as handle:
+        raw = handle.read(128_000_000)
+    result = spectrogram_service.compute_spectrogram(
+        raw, freq=freq, duration=duration, axis=ax, max_freq=max_freq
+    )
+    result["source_file"] = os.path.basename(target)
+    with contextlib.suppress(OSError):  # transient capture
+        os.remove(target)
+    return result
 
 
 async def _accel_chip(client: MoonrakerClient) -> str | None:

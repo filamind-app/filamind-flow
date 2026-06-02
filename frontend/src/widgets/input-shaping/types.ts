@@ -125,3 +125,25 @@ export interface AxesMapResult {
   velocity_series: VelocitySeries[]
   source_files: string[]
 }
+
+/** Result of a sustain-frequency hold — a time-frequency spectrogram + timeline. */
+export interface StaticExcitationResult {
+  axis: string
+  freq: number
+  duration: number
+  max_freq: number
+  /** Frequency-bin centres (Hz) — heatmap rows. */
+  freqs: number[]
+  /** Segment centre times (s) — heatmap columns + energy timeline. */
+  times: number[]
+  /** Log-normalised power grid [freq][time], 0..1. */
+  spectrogram: number[][]
+  /** Normalised vibration energy per time, 0..1. */
+  energy: number[]
+  excited_band_pct: number
+  energy_drop_pct: number
+  dominant_freq: number
+  dominant_ok: boolean
+  verdict: string
+  source_file: string | null
+}
