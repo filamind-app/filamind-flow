@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.40.0] - 2026-06-03
+
+### Added — Input Shaping: sustain frequency (Shake&Tune parity, 2 of 5)
+
+- **Hold-a-frequency hands-on diagnostic.** A new `🎯 sustain frequency` action buzzes the
+  toolhead in place near a chosen frequency for a few seconds — a slow, narrow
+  `TEST_RESONANCES` sweep, so **no custom macro or printer-config change is needed** — and
+  you touch belts / toolhead / frame to feel which part is the resonance source. Returns a
+  frequency×time **spectrogram** + an **energy-vs-time "touch timeline"** (the cyan dip marks
+  when a touch reduced the vibration) + a verdict on whether the requested frequency
+  dominated. New backend `POST /api/shaper/excitate` (moves the toolhead in place;
+  print-guarded). Pure-numpy STFT in `spectrogram_service`.
+
 ## [0.39.0] - 2026-06-02
 
 ### Added — Input Shaping: axes-map calibration (Shake&Tune parity, 1 of 5)

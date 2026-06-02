@@ -98,6 +98,18 @@ class _FakeClient:
             }
         return out
 
+    def _write_sine(self, fname: str) -> None:
+        """Writes a synthetic 50 Hz raw-accel capture for the sustain-frequency test."""
+        n = 4000
+        t = np.arange(n) / 3200.0
+        data = np.zeros((n, 4))
+        data[:, 0] = t
+        data[:, 1] = 1000.0 * np.sin(2 * np.pi * 50.0 * t)
+        data[:, 3] = 9810.0
+        lines = ["#time,accel_x,accel_y,accel_z"]
+        lines += [f"{r[0]:.6f},{r[1]:.2f},{r[2]:.2f},{r[3]:.2f}" for r in data]
+        (self.write_dir / fname).write_text("\n".join(lines) + "\n")
+
     def _write_axesmap(self, name: str) -> None:
         """Writes a synthetic clean stroke for ACCELEROMETER_MEASURE NAME=axesmap_<axis>."""
         col = {"x": 1, "y": 2, "z": 3}[name.split("_")[-1]]
@@ -129,7 +141,10 @@ class _FakeClient:
             axis = re.search(r"AXIS=(\S+)", script)
             nm = name.group(1) if name else "test"
             ax = (axis.group(1) if axis else "x").lower().replace(",", "").replace("-", "")
-            _write(self.write_dir, f"raw_data_{ax}_{nm}.csv")
+            if "filamind_static" in nm:  # sustain-frequency capture → raw-accel sine
+                self._write_sine(f"raw_data_{ax}_{nm}.csv")
+            else:
+                _write(self.write_dir, f"raw_data_{ax}_{nm}.csv")
         elif script == "MEASURE_AXES_NOISE":
             x, y, z = self.noise
             self._t += 1.0
@@ -267,3 +282,27 @@ async def test_calibrate_axes_map_refuses_without_resonance_tester(
     _patch_client(monkeypatch, _FakeClient(printing=False, has_tester=False, write_dir=tmp_path))
     with pytest.raises(shaper_service.ShaperAnalysisError, match="resonance_tester"):
         await resonance_service.calibrate_axes_map("http://x", str(tmp_path))
+
+
+async def test_static_excitation_holds_and_analyses(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake = _FakeClient(printing=False, has_tester=True, write_dir=tmp_path)
+    _patch_client(monkeypatch, fake)
+    result = await resonance_service.run_static_excitation(
+        "http://x", str(tmp_path), axis="x", freq=50.0, duration=4.0
+    )
+    assert result["dominant_ok"] is True
+    assert result["source_file"]
+    # A narrow slow sweep around the target was used (stock g-code, no macro).
+    assert any("FREQ_START" in g and "HZ_PER_SEC" in g for g in fake.gcodes)
+    # The transient capture is cleaned up.
+    assert not list(tmp_path.glob("*filamind_static*"))
+
+
+async def test_static_excitation_refuses_while_printing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _patch_client(monkeypatch, _FakeClient(printing=True, has_tester=True, write_dir=tmp_path))
+    with pytest.raises(shaper_service.ShaperAnalysisError, match="printing"):
+        await resonance_service.run_static_excitation("http://x", str(tmp_path), freq=50.0)

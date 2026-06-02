@@ -8,16 +8,19 @@ import {
   measureNoise,
   runAxesMap,
   runLiveTest,
+  runStaticExcitation,
 } from './api'
 import { buildAxesVelocityChart } from './axesChart'
 import { angleClass, axesMapConfig, mappingArrow, matchVerdict, statusBg } from './axesMap'
 import { beltVerdict, buildCompareChart } from './compare'
+import { buildEnergyTimeline, buildSpectrogram } from './spectrogram-chart'
 import type {
   AxesMapResult,
   BeltComparison,
   NoiseResult,
   ResonanceFile,
   ShaperAnalysis,
+  StaticExcitationResult,
 } from './types'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis] }>()
@@ -36,6 +39,12 @@ const beltsBusy = ref(false)
 const axesMapResult = ref<AxesMapResult | null>(null)
 const axesBusy = ref(false)
 const axesCopied = ref(false)
+const staticResult = ref<StaticExcitationResult | null>(null)
+const staticBusy = ref(false)
+const staticReady = ref(false)
+const staticAxis = ref<'x' | 'y'>('x')
+const staticFreq = ref('50')
+const staticDuration = ref('15')
 
 const beltChart = computed(() =>
   belts.value ? buildCompareChart(belts.value.belt_a, belts.value.belt_b) : null,
@@ -46,10 +55,17 @@ const beltJudge = computed(() =>
 const axesChart = computed(() =>
   axesMapResult.value ? buildAxesVelocityChart(axesMapResult.value.velocity_series) : null,
 )
+const specChart = computed(() => (staticResult.value ? buildSpectrogram(staticResult.value) : null))
+const energyChart = computed(() =>
+  staticResult.value ? buildEnergyTimeline(staticResult.value) : null,
+)
 /** Any toolhead-moving action in flight (the gated buttons share this). */
-const motionBusy = computed(() => liveBusy.value || beltsBusy.value || axesBusy.value)
+const motionBusy = computed(
+  () => liveBusy.value || beltsBusy.value || axesBusy.value || staticBusy.value,
+)
 
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
+const numClass = `${inputClass} w-14 font-mono`
 
 function noiseClass(grade: NoiseResult['grade']): string {
   if (grade === 'good') return 'bg-brand-lime'
@@ -160,6 +176,24 @@ async function copyAxesMap(): Promise<void> {
     window.setTimeout(() => (axesCopied.value = false), 1500)
   } catch {
     error.value = 'Copy failed — select the text and copy it manually.'
+  }
+}
+
+async function runStatic(): Promise<void> {
+  if (staticBusy.value || !staticReady.value) return
+  error.value = null
+  staticBusy.value = true
+  try {
+    staticResult.value = await runStaticExcitation(
+      staticAxis.value,
+      Number(staticFreq.value) || 50,
+      Number(staticDuration.value) || 15,
+    )
+    staticReady.value = false
+  } catch (e) {
+    error.value = msg(e, 'Sustain-frequency test failed')
+  } finally {
+    staticBusy.value = false
   }
 }
 
@@ -414,6 +448,110 @@ onMounted(loadFiles)
       <p v-if="axesMapResult.messages.length" class="text-[9px] opacity-60">
         {{ axesMapResult.messages.join(' · ') }}
       </p>
+    </div>
+
+    <!-- Sustain frequency: hold a frequency in place to find what rattles by hand. -->
+    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+        <span class="font-bold">🎯 Sustain frequency</span>
+        <select v-model="staticAxis" :class="inputClass">
+          <option value="x">X</option>
+          <option value="y">Y</option>
+        </select>
+        <label class="flex items-center gap-1"
+          >Hz <input v-model="staticFreq" :class="numClass"
+        /></label>
+        <label class="flex items-center gap-1"
+          >sec <input v-model="staticDuration" :class="numClass"
+        /></label>
+        <label class="flex items-center gap-1">
+          <input v-model="staticReady" type="checkbox" /> ⚠ moves the toolhead — I'm ready
+        </label>
+        <button
+          class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
+          :disabled="!staticReady || motionBusy"
+          @click="runStatic"
+        >
+          {{ staticBusy ? 'holding…' : 'run' }}
+        </button>
+      </div>
+      <p class="font-mono text-[9px] opacity-60">
+        Buzzes the toolhead in place near the frequency — touch belts, the toolhead and frame to
+        find what rattles. Refused while printing.
+      </p>
+      <div v-if="staticResult && specChart && energyChart" class="space-y-1">
+        <div class="flex flex-wrap items-center gap-2">
+          <span
+            class="nb-badge"
+            :class="staticResult.dominant_ok ? 'bg-brand-lime' : 'bg-brand-yellow'"
+            >{{ staticResult.dominant_ok ? '✅ holding' : '⚠ off-target' }}</span
+          >
+          <span class="font-mono text-[9px] opacity-60"
+            >peak {{ staticResult.dominant_freq.toFixed(0) }} Hz ·
+            {{ staticResult.excited_band_pct.toFixed(0) }}% in band</span
+          >
+        </div>
+        <p class="text-[9px] opacity-80">{{ staticResult.verdict }}</p>
+        <svg
+          :viewBox="`0 0 ${specChart.width} ${specChart.height}`"
+          class="w-full rounded-brutal border-2 border-ink bg-paper"
+          role="img"
+          aria-label="Frequency-time spectrogram"
+        >
+          <rect
+            v-for="(c, i) in specChart.cells"
+            :key="'c' + i"
+            :x="c.x"
+            :y="c.y"
+            :width="c.w"
+            :height="c.h"
+            :fill="c.fill"
+          />
+          <line
+            v-if="specChart.guideX != null"
+            :x1="specChart.guideX"
+            :x2="specChart.guideX"
+            :y1="6"
+            :y2="specChart.height - 12"
+            stroke="#111111"
+            stroke-width="0.7"
+            stroke-dasharray="2 1.5"
+          />
+          <text
+            v-for="t in specChart.freqTicks"
+            :key="'ft' + t.label"
+            :x="t.x"
+            :y="specChart.height - 2"
+            font-size="6"
+            fill="#111111"
+            fill-opacity="0.6"
+            text-anchor="middle"
+          >
+            {{ t.label }}
+          </text>
+        </svg>
+        <svg
+          :viewBox="`0 0 ${energyChart.width} ${energyChart.height}`"
+          class="w-full rounded-brutal border-2 border-ink bg-paper"
+          role="img"
+          aria-label="Vibration energy over time"
+        >
+          <polyline :points="energyChart.points" fill="none" stroke="#ff5247" stroke-width="1" />
+          <circle
+            v-if="energyChart.minMark"
+            :cx="energyChart.minMark.x"
+            :cy="energyChart.minMark.y"
+            r="2"
+            fill="#00e0c6"
+            stroke="#111111"
+            stroke-width="0.5"
+          />
+        </svg>
+        <div class="flex flex-wrap gap-x-3 font-mono text-[9px] opacity-60">
+          <span>freq → · time ↓</span>
+          <span>energy vs time — the cyan dip is where a touch helped</span>
+        </div>
+      </div>
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
