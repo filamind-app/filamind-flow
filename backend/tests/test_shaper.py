@@ -65,6 +65,14 @@ def test_analyze_raw_accelerometer_csv() -> None:
     assert len(result["freqs"]) > 10
 
 
+def test_analyze_tolerates_a_truncated_final_row() -> None:
+    # A capture read mid-write can end in a truncated (2-column) line — the parser
+    # must skip it rather than erroring on "the number of columns changed".
+    raw = _raw_accel_csv().rstrip(b"\n") + b"\n8183.379,1924.5\n"
+    result = shaper_service.analyze(raw, shapers=["mzv"])
+    assert result["recommended_shaper"] == "mzv"
+
+
 def test_analyze_rejects_empty_and_garbage() -> None:
     with pytest.raises(shaper_service.ShaperAnalysisError):
         shaper_service.analyze(b"")

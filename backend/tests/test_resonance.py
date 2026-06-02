@@ -85,6 +85,9 @@ class _FakeClient:
 
 def _patch_client(monkeypatch: pytest.MonkeyPatch, fake: _FakeClient) -> None:
     monkeypatch.setattr(resonance_service, "MoonrakerClient", lambda *a, **k: fake)
+    # Don't actually wait for the (synchronously written) fake CSV to "settle".
+    monkeypatch.setattr(resonance_service, "_FILE_SETTLE", 0.0)
+    monkeypatch.setattr(resonance_service, "_POLL_INTERVAL", 0.0)
 
 
 async def test_live_test_runs_and_analyses(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
