@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -89,7 +90,12 @@ class _FakeClient:
     async def run_gcode(self, script: str) -> None:
         self.gcodes.append(script)
         if script.startswith("TEST_RESONANCES"):
-            _write(self.write_dir, "raw_data_x_filamind_x.csv")
+            # Mirror Klipper's raw_data_<axislabel>_<name>.csv naming.
+            name = re.search(r"NAME=(\S+)", script)
+            axis = re.search(r"AXIS=(\S+)", script)
+            nm = name.group(1) if name else "test"
+            ax = (axis.group(1) if axis else "x").lower().replace(",", "").replace("-", "")
+            _write(self.write_dir, f"raw_data_{ax}_{nm}.csv")
         elif script == "MEASURE_AXES_NOISE":
             x, y, z = self.noise
             self._t += 1.0
@@ -181,3 +187,26 @@ async def test_measure_noise_refuses_without_resonance_tester(
     _patch_client(monkeypatch, _FakeClient(printing=False, has_tester=False, write_dir=tmp_path))
     with pytest.raises(shaper_service.ShaperAnalysisError, match="resonance_tester"):
         await resonance_service.measure_noise("http://x")
+
+
+async def test_compare_belts_runs_both_diagonals(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake = _FakeClient(printing=False, has_tester=True, write_dir=tmp_path)
+    _patch_client(monkeypatch, fake)
+    result = await resonance_service.compare_belts("http://x", str(tmp_path))
+    assert result["belt_a"]["recommended_shaper"] in _SHAPERS
+    assert result["belt_b"]["recommended_shaper"] in _SHAPERS
+    # Both belt diagonals were excited, and each produced its own capture.
+    tr = [g for g in fake.gcodes if g.startswith("TEST_RESONANCES")]
+    assert any("AXIS=1,1 " in g for g in tr)
+    assert any("AXIS=1,-1 " in g for g in tr)
+    assert result["belt_a"]["source_file"] != result["belt_b"]["source_file"]
+
+
+async def test_compare_belts_refuses_while_printing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _patch_client(monkeypatch, _FakeClient(printing=True, has_tester=True, write_dir=tmp_path))
+    with pytest.raises(shaper_service.ShaperAnalysisError, match="printing"):
+        await resonance_service.compare_belts("http://x", str(tmp_path))

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
+    BeltComparison,
     NoiseResult,
     ResonanceFile,
     ResonanceFilesResponse,
@@ -106,3 +107,26 @@ async def measure_axes_noise(settings: Settings = Depends(get_settings)) -> Nois
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return NoiseResult(**result)
+
+
+@router.post("/compare-belts", response_model=BeltComparison)
+async def compare_belts(
+    scv: float = Query(5.0),
+    max_freq: float = Query(200.0),
+    settings: Settings = Depends(get_settings),
+) -> BeltComparison:
+    """Runs a resonance test on each CoreXY belt diagonal and returns both captures.
+
+    **Moves the toolhead** (two sweeps along the (1,1) and (1,-1) directions).
+    Print-guarded and requires a configured resonance tester.
+    """
+    try:
+        result = await resonance_service.compare_belts(
+            settings.moonraker_url, settings.resonance_dirs, scv=scv, max_freq=max_freq
+        )
+    except shaper_service.ShaperAnalysisError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return BeltComparison(
+        belt_a=ShaperAnalysis(**result["belt_a"]),
+        belt_b=ShaperAnalysis(**result["belt_b"]),
+    )

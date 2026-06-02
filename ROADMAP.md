@@ -56,10 +56,11 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 | ✅ **5 — From the printer** | Import the resonance CSVs Klipper wrote on the host (scans `/tmp` + `printer_data/config`), or **run a live `TEST_RESONANCES`** (auto-homes, waits for the background CSV write to settle) and analyze the result. |
 | ✅ **6 — Advanced insights** | Measurement **quality grade (A–F)** + 0–100 score with a factor breakdown; **visual diagnostics** with hand-drawn SVG illustrations + fixes (incl. a cross-axis X/Y imbalance card); **annotated chart** (dominant-peak marker + noise floor). |
 | ✅ **7 — Noise pre-check** | Motion-free `MEASURE_AXES_NOISE` reads the accelerometer's idle noise floor and grades it (quiet / elevated / too noisy, per Klipper's ~1–100 normal range), validating the sensor mount before a test. |
+| ✅ **8 — Belt comparison** | CoreXY belt-tension comparison: a resonance test along each belt diagonal (`(1,1)` / `(1,-1)`), the two responses overlaid with a matched-vs-mismatch verdict from the dominant-peak frequencies. |
 
 **Ideas (not yet sequenced)**
 
-- 📋 CoreXY belt-tension comparison (left/right) · grade-tracked history trend · re-test recommendations from the grade.
+- 📋 Grade-tracked history trend · re-test recommendations from the grade · write the chosen `[input_shaper]` straight to `printer.cfg`.
 
 ## Platform
 

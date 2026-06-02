@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
-import { analyzeResonanceFile, listResonanceFiles, measureNoise, runLiveTest } from './api'
-import type { NoiseResult, ResonanceFile, ShaperAnalysis } from './types'
+import {
+  analyzeResonanceFile,
+  compareBelts,
+  listResonanceFiles,
+  measureNoise,
+  runLiveTest,
+} from './api'
+import { beltVerdict, buildCompareChart } from './compare'
+import type { BeltComparison, NoiseResult, ResonanceFile, ShaperAnalysis } from './types'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis] }>()
 
@@ -15,6 +22,15 @@ const liveReady = ref(false)
 const liveBusy = ref(false)
 const noise = ref<NoiseResult | null>(null)
 const noiseBusy = ref(false)
+const belts = ref<BeltComparison | null>(null)
+const beltsBusy = ref(false)
+
+const beltChart = computed(() =>
+  belts.value ? buildCompareChart(belts.value.belt_a, belts.value.belt_b) : null,
+)
+const beltJudge = computed(() =>
+  belts.value ? beltVerdict(belts.value.belt_a, belts.value.belt_b) : null,
+)
 
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
 
@@ -90,6 +106,21 @@ async function live(): Promise<void> {
   }
 }
 
+async function runBelts(): Promise<void> {
+  if (beltsBusy.value || !liveReady.value) return
+  error.value = null
+  beltsBusy.value = true
+  try {
+    belts.value = await compareBelts()
+    liveReady.value = false
+    await loadFiles()
+  } catch (e) {
+    error.value = msg(e, 'Belt comparison failed')
+  } finally {
+    beltsBusy.value = false
+  }
+}
+
 onMounted(loadFiles)
 </script>
 
@@ -137,16 +168,102 @@ onMounted(loadFiles)
         </label>
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
-          :disabled="!liveReady || liveBusy"
+          :disabled="!liveReady || liveBusy || beltsBusy"
           @click="live"
         >
           {{ liveBusy ? 'running…' : 'run TEST_RESONANCES' }}
+        </button>
+        <button
+          class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
+          :disabled="!liveReady || liveBusy || beltsBusy"
+          title="CoreXY: excite each belt diagonal and overlay the responses"
+          @click="runBelts"
+        >
+          {{ beltsBusy ? 'comparing…' : '🟰 compare belts' }}
         </button>
       </div>
       <p class="font-mono text-[9px] opacity-60">
         Homes the printer if needed, then runs TEST_RESONANCES (needs an accelerometer + a
         <code>[resonance_tester]</code>). Refused while printing.
+        <strong>Compare belts</strong> runs two sweeps along the CoreXY belt diagonals.
       </p>
+    </div>
+
+    <!-- Belt comparison (CoreXY): the two belt-direction responses overlaid. -->
+    <div
+      v-if="belts && beltChart && beltJudge"
+      class="space-y-1 rounded-brutal border-2 border-ink p-2"
+    >
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-[10px] font-bold uppercase tracking-wide">Belt comparison</span>
+        <span
+          class="nb-badge"
+          :class="beltJudge.level === 'good' ? 'bg-brand-lime' : 'bg-brand-yellow'"
+          >{{ beltJudge.matched ? '✅' : '⚠' }} {{ beltJudge.title }}</span
+        >
+        <span class="font-mono text-[9px] opacity-60"
+          >A {{ beltJudge.peakA.toFixed(1) }} Hz vs B {{ beltJudge.peakB.toFixed(1) }} Hz · Δ{{
+            beltJudge.diffPct.toFixed(0)
+          }}%</span
+        >
+      </div>
+      <svg
+        :viewBox="`0 0 ${beltChart.width} ${beltChart.height}`"
+        class="w-full rounded-brutal border-2 border-ink bg-paper"
+        role="img"
+        aria-label="Belt A vs B frequency response"
+      >
+        <line
+          v-for="t in beltChart.xTicks"
+          :key="'bg' + t.label"
+          :x1="t.x"
+          :x2="t.x"
+          :y1="6"
+          :y2="beltChart.height - 12"
+          stroke="#111111"
+          stroke-opacity="0.12"
+          stroke-width="0.5"
+        />
+        <polyline
+          :points="beltChart.a.points"
+          fill="none"
+          :stroke="beltChart.a.color"
+          stroke-width="1"
+        />
+        <polyline
+          :points="beltChart.b.points"
+          fill="none"
+          :stroke="beltChart.b.color"
+          stroke-width="1"
+          stroke-dasharray="2 2"
+        />
+        <text
+          v-for="t in beltChart.xTicks"
+          :key="'bt' + t.label"
+          :x="t.x"
+          :y="beltChart.height - 2"
+          font-size="6"
+          fill="#111111"
+          fill-opacity="0.6"
+          text-anchor="middle"
+        >
+          {{ t.label }}
+        </text>
+      </svg>
+      <p class="text-[9px] opacity-70">{{ beltJudge.advice }}</p>
+      <div class="flex gap-3 font-mono text-[9px]">
+        <span class="flex items-center gap-1"
+          ><span class="inline-block h-0 w-3 border-t-2" style="border-color: #5b8cff" /> belt A
+          (1,1)</span
+        >
+        <span class="flex items-center gap-1"
+          ><span
+            class="inline-block h-0 w-3 border-t-2 border-dashed"
+            style="border-color: #ff5247"
+          />
+          belt B (1,-1)</span
+        >
+      </div>
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
