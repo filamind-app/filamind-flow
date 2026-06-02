@@ -7,7 +7,7 @@ import { beltVerdict } from './compare'
 import { gradeAnalysis } from './grade'
 import type { NoiseResult, ShaperAnalysis } from './types'
 
-export type StepId = 'noise' | 'belts' | 'shaperX' | 'shaperY' | 'done'
+export type StepId = 'noise' | 'belts' | 'shaperX' | 'shaperY' | 'vibrations' | 'pressure' | 'done'
 export type GateStatus = 'passed' | 'warn' | 'failed'
 
 export interface Gate {
@@ -22,6 +22,8 @@ export interface StepDef {
   why: string
   /** Whether running this step moves the toolhead (needs the confirm gate). */
   motion: boolean
+  /** Manual-for-now: a self-report / instructions step, not an endpoint call. */
+  manual?: boolean
 }
 
 export const STEPS: StepDef[] = [
@@ -53,8 +55,28 @@ export const STEPS: StepDef[] = [
     why: 'Find the Y resonance and the best shaper.',
     motion: true,
   },
+  {
+    id: 'vibrations',
+    label: 'Vibrations',
+    title: 'Vibrations / VFAs',
+    why: 'After a test print, check for vertical fine artifacts (speed-dependent motor vibration).',
+    motion: false,
+    manual: true,
+  },
+  {
+    id: 'pressure',
+    label: 'Pressure',
+    title: 'Pressure advance',
+    why: 'Tune pressure advance last to sharpen corners and seams.',
+    motion: false,
+    manual: true,
+  },
   { id: 'done', label: 'Done', title: 'Tuning summary', why: '', motion: false },
 ]
+
+/** The standard Klipper pressure-advance tuning-tower g-code. */
+export const PA_TOWER_GCODE =
+  'TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.005'
 
 /** The next step after ``id`` (stays at 'done' at the end). */
 export function nextStep(id: StepId): StepId {

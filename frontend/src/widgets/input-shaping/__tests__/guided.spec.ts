@@ -40,8 +40,15 @@ describe('guided', () => {
   it('advances through the steps and stops at done', () => {
     expect(STEPS[0].id).toBe('noise')
     expect(nextStep('noise')).toBe('belts')
-    expect(nextStep('shaperY')).toBe('done')
+    expect(nextStep('shaperY')).toBe('vibrations')
+    expect(nextStep('vibrations')).toBe('pressure')
+    expect(nextStep('pressure')).toBe('done')
     expect(nextStep('done')).toBe('done')
+  })
+
+  it('marks the vibrations + pressure steps as manual', () => {
+    const manual = STEPS.filter((s) => s.manual).map((s) => s.id)
+    expect(manual).toEqual(['vibrations', 'pressure'])
   })
 
   it('gates noise by grade', () => {
