@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.34.0] - 2026-06-02
+
+### Changed / Fixed — portability (works for any user on any printer, not just the dev's)
+
+- **Import finds resonance CSVs beyond `/tmp`.** Default scan dirs are now
+  `/tmp,~/printer_data/config,~/printer_data/config/input_shaper` (override with
+  `FILAMIND_RESONANCE_DIRS`), so captures saved by the usual input-shaper flows show
+  up — not just the volatile `/tmp` (which is wiped on reboot and empty off-host).
+- **Large live captures are no longer silently truncated.** The host-file read cap
+  was 20 MB; a long sweep exceeds that (a real SV08 capture was 30 MB), feeding the
+  parser a truncated file. Raised to 128 MB.
+- **Deploy templates are consistent + host-portable.** The nginx site, the Mainsail
+  `navi.json` and the deploy docs used port 8080 while `install.sh` uses 8090 —
+  aligned to 8090. Removed the misleading advice to bake `VITE_*` host URLs into the
+  build: the pre-built UI resolves Moonraker/backend/Mainsail from `window.location`
+  (same origin), so it already works at whatever IP/hostname you reach it by — no
+  host is baked in. (A fully host-preserving Mainsail sidebar link via a subpath
+  reverse-proxy is the documented next step.)
+
 ## [0.33.4] - 2026-06-02
 
 ### Fixed

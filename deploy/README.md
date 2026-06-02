@@ -37,13 +37,15 @@ sudo cp deploy/nginx-filamind-flow.conf /etc/nginx/sites-available/filamind-flow
 # edit `root` to .../filamind-flow/frontend/dist
 sudo ln -s /etc/nginx/sites-available/filamind-flow /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
-# open http://printer.local:8080
+# open http://<your-printer-ip>:8090
 ```
 
 The nginx template runs in **reverse-proxy mode**: it serves the SPA and proxies
 Moonraker (`/server`, `/printer`, `/access`, `/machine`, `/websocket`) and the
-backend (`/api`) on the same origin, so no CORS is involved. Build the frontend
-with the env pointing at this origin (see the header of `nginx-filamind-flow.conf`).
+backend (`/api`) on the same origin, so no CORS is involved. Serve the pre-built
+`frontend/dist` **as-is** — it resolves Moonraker, the websocket and the backend
+from `window.location`, so it works at whatever host/IP you reach it by. Do **not**
+set any `VITE_*` override (that would hardcode a host and break other clients).
 
 > **Direct mode (alternative):** skip the Moonraker proxy blocks and let the
 > browser hit Moonraker on `:7125` directly. Then add the panel's origin to
@@ -74,7 +76,7 @@ style); the bundled entry uses a brutalist "F". Docs:
 Fluidd does **not** support custom sidebar links yet — it is an open feature request
 ([fluidd-core/fluidd#472](https://github.com/fluidd-core/fluidd/issues/472)). Its
 `.fluidd-theme` folder customizes only styling/logo, not navigation. Until native
-support lands, reach the panel by URL (`http://printer.local:8080`) — a bookmark or
+support lands, reach the panel by URL (`http://<your-printer-ip>:8090`) — a bookmark or
 browser start page works well. (Editing Fluidd's built assets to inject a link is
 possible but not recommended: it breaks on every update.)
 
