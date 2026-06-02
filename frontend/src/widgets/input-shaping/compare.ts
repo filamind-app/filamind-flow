@@ -119,3 +119,45 @@ export function buildCompareChart(
     xTicks,
   }
 }
+
+export interface BeltVerdict {
+  matched: boolean
+  /** Dominant peak frequency of each belt (Hz). */
+  peakA: number
+  peakB: number
+  /** Difference of the peak frequencies, as a percentage of the larger. */
+  diffPct: number
+  level: 'good' | 'warn'
+  title: string
+  advice: string
+}
+
+/** Belts whose dominant resonances are within this % are considered matched. */
+const BELT_MATCH_PCT = 10
+
+/** Judges two CoreXY belt-direction captures: matched tension vs a mismatch. */
+export function beltVerdict(a: ShaperAnalysis, b: ShaperAnalysis): BeltVerdict {
+  const peakA = peakFreq(a)
+  const peakB = peakFreq(b)
+  const diffPct = (Math.abs(peakA - peakB) / Math.max(peakA, peakB, 1)) * 100
+  if (diffPct < BELT_MATCH_PCT) {
+    return {
+      matched: true,
+      peakA,
+      peakB,
+      diffPct,
+      level: 'good',
+      title: 'Belts matched',
+      advice: 'The two belt responses line up — tension looks balanced.',
+    }
+  }
+  return {
+    matched: false,
+    peakA,
+    peakB,
+    diffPct,
+    level: 'warn',
+    title: 'Belts differ',
+    advice: 'The belt resonances differ — re-tension the looser belt until both peaks line up.',
+  }
+}

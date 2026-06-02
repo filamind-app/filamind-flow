@@ -71,3 +71,11 @@ export interface NoiseResult {
   ok: boolean
   threshold: number
 }
+
+/** Two belt-direction captures for a CoreXY belt-tension comparison. */
+export interface BeltComparison {
+  /** Excited along the (1,1) diagonal. */
+  belt_a: ShaperAnalysis
+  /** Excited along the (1,-1) diagonal. */
+  belt_b: ShaperAnalysis
+}

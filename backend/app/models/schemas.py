@@ -497,3 +497,12 @@ class NoiseResult(BaseModel):
     grade: str
     ok: bool
     threshold: float
+
+
+class BeltComparison(BaseModel):
+    """Two belt-direction resonance captures for a CoreXY belt-tension comparison."""
+
+    #: Excited along the (1,1) diagonal.
+    belt_a: ShaperAnalysis
+    #: Excited along the (1,-1) diagonal.
+    belt_b: ShaperAnalysis

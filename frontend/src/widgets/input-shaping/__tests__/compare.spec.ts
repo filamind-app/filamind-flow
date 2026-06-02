@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildCompareChart, compareAnalyses } from '../compare'
+import { beltVerdict, buildCompareChart, compareAnalyses } from '../compare'
 import type { ShaperAnalysis, ShaperResult } from '../types'
 
 function shaper(over: Partial<ShaperResult>): ShaperResult {
@@ -63,6 +63,26 @@ describe('compareAnalyses', () => {
     const b = analysis({ shapers: [shaper({ max_accel: 4000 })] })
     const rows = Object.fromEntries(compareAnalyses(a, b).map((r) => [r.label, r]))
     expect(rows['max_accel'].trend).toBe('worse')
+  })
+})
+
+describe('beltVerdict', () => {
+  it('matches belts whose dominant peaks are close', () => {
+    const a = analysis({ freqs: [40, 50, 60], psd_sum: [1, 9, 2] }) // peak 50
+    const b = analysis({ freqs: [40, 50, 60], psd_sum: [1, 8, 3] }) // peak 50
+    const v = beltVerdict(a, b)
+    expect(v.matched).toBe(true)
+    expect(v.level).toBe('good')
+    expect(v.peakA).toBe(50)
+  })
+
+  it('flags a tension mismatch when the peaks diverge', () => {
+    const a = analysis({ freqs: [40, 50, 60, 70], psd_sum: [1, 9, 2, 1] }) // peak 50
+    const b = analysis({ freqs: [40, 50, 60, 70], psd_sum: [1, 2, 3, 9] }) // peak 70
+    const v = beltVerdict(a, b)
+    expect(v.matched).toBe(false)
+    expect(v.level).toBe('warn')
+    expect(v.diffPct).toBeGreaterThan(10)
   })
 })
 

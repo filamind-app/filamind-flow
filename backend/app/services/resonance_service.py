@@ -203,6 +203,45 @@ async def measure_noise(moonraker_url: str) -> dict[str, Any]:
     }
 
 
+async def _ensure_test_ready(client: MoonrakerClient) -> None:
+    """Shared guards + homing for any live capture (raises ShaperAnalysisError)."""
+    if await _is_printing(client):
+        raise shaper_service.ShaperAnalysisError(
+            "Printer is printing or paused — refusing to run a resonance test"
+        )
+    if not await _has_resonance_tester(client):
+        raise shaper_service.ShaperAnalysisError(
+            "No [resonance_tester] / accelerometer is configured on this printer"
+        )
+    # TEST_RESONANCES moves to the probe point, which requires homed axes —
+    # home first if the printer isn't already fully homed.
+    homed = await _homed_axes(client)
+    if not all(axis in homed for axis in "xyz"):
+        try:
+            await client.run_gcode("G28")
+        except Exception as exc:
+            raise shaper_service.ShaperAnalysisError(f"Homing failed: {exc}") from exc
+
+
+async def _capture(
+    client: MoonrakerClient,
+    resonance_dirs: str,
+    *,
+    axis_arg: str,
+    name: str,
+    analyze_axis: str | None,
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Runs one ``TEST_RESONANCES`` (an axis or a ``dx,dy`` vector) and analyses it."""
+    before = {f["path"] for f in list_files(resonance_dirs)}
+    try:
+        await client.run_gcode(f"TEST_RESONANCES AXIS={axis_arg} OUTPUT=raw_data NAME={name}")
+    except Exception as exc:
+        raise shaper_service.ShaperAnalysisError(f"Resonance test failed: {exc}") from exc
+    target = await _await_new_file(resonance_dirs, before, name)
+    return analyze_file(resonance_dirs, target, axis=analyze_axis, **kwargs)
+
+
 async def run_live_test(
     moonraker_url: str, resonance_dirs: str, *, axis: str = "x", **kwargs: Any
 ) -> dict[str, Any]:
@@ -216,33 +255,33 @@ async def run_live_test(
         raise shaper_service.ShaperAnalysisError("axis must be 'x' or 'y'")
 
     client = MoonrakerClient(moonraker_url, timeout=_LIVE_TEST_TIMEOUT)
-    if await _is_printing(client):
-        raise shaper_service.ShaperAnalysisError(
-            "Printer is printing or paused — refusing to run a resonance test"
-        )
-    if not await _has_resonance_tester(client):
-        raise shaper_service.ShaperAnalysisError(
-            "No [resonance_tester] / accelerometer is configured on this printer"
-        )
+    await _ensure_test_ready(client)
+    return await _capture(
+        client,
+        resonance_dirs,
+        axis_arg=ax.upper(),
+        name=f"filamind_{ax}",
+        analyze_axis=ax,
+        **kwargs,
+    )
 
-    # TEST_RESONANCES moves to the probe point, which requires homed axes —
-    # home first if the printer isn't already fully homed.
-    homed = await _homed_axes(client)
-    if not all(axis in homed for axis in "xyz"):
-        try:
-            await client.run_gcode("G28")
-        except Exception as exc:
-            raise shaper_service.ShaperAnalysisError(f"Homing failed: {exc}") from exc
 
-    name = f"filamind_{ax}"
-    before = {f["path"] for f in list_files(resonance_dirs)}
-    try:
-        await client.run_gcode(f"TEST_RESONANCES AXIS={ax.upper()} OUTPUT=raw_data NAME={name}")
-    except Exception as exc:
-        raise shaper_service.ShaperAnalysisError(f"Resonance test failed: {exc}") from exc
+async def compare_belts(moonraker_url: str, resonance_dirs: str, **kwargs: Any) -> dict[str, Any]:
+    """Runs a belt-direction resonance test on each CoreXY belt and returns both.
 
-    target = await _await_new_file(resonance_dirs, before, name)
-    return analyze_file(resonance_dirs, target, axis=ax, **kwargs)
+    Excites the ``(1,1)`` and ``(1,-1)`` diagonals — the two belts — so their
+    responses can be overlaid to spot a tension mismatch. **Moves the toolhead**
+    (two sweeps). Print-guarded; requires a configured resonance tester.
+    """
+    client = MoonrakerClient(moonraker_url, timeout=_LIVE_TEST_TIMEOUT)
+    await _ensure_test_ready(client)
+    belt_a = await _capture(
+        client, resonance_dirs, axis_arg="1,1", name="belt_a", analyze_axis=None, **kwargs
+    )
+    belt_b = await _capture(
+        client, resonance_dirs, axis_arg="1,-1", name="belt_b", analyze_axis=None, **kwargs
+    )
+    return {"belt_a": belt_a, "belt_b": belt_b}
 
 
 async def _await_new_file(resonance_dirs: str, before: set[str], name: str) -> str:
