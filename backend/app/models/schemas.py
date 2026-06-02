@@ -471,3 +471,29 @@ class ResonanceFilesResponse(BaseModel):
 
     files: list[ResonanceFile] = []
     dirs: list[str] = []
+
+
+class NoiseChip(BaseModel):
+    """One accelerometer chip's idle noise — the mean PSD per axis."""
+
+    #: The chip's mounting-axis label as Klipper reports it (e.g. "xy").
+    label: str
+    x: float
+    y: float
+    z: float
+
+
+class NoiseResult(BaseModel):
+    """Result of ``MEASURE_AXES_NOISE`` — the accelerometer's idle noise floor.
+
+    Validates the sensor mount before a resonance test. Per Klipper's guidance,
+    ~1-100 is normal; values of ~1000+ indicate a problem.
+    """
+
+    chips: list[NoiseChip] = []
+    #: Largest noise value across all chips / axes.
+    max_noise: float
+    #: "good" (<100), "elevated" (100-1000), "high" (>=1000).
+    grade: str
+    ok: bool
+    threshold: float

@@ -60,6 +60,17 @@ class MoonrakerClient:
         status = result.get("status", {})
         return status if isinstance(status, dict) else {}
 
+    async def gcode_store(self, count: int = 20) -> list[dict[str, Any]]:
+        """Recent G-code console responses via ``/server/gcode_store`` (oldest first).
+
+        Each entry is ``{"message": str, "time": float, "type": str}``. Used to read
+        the output of a command (e.g. ``MEASURE_AXES_NOISE``) that prints its result
+        to the console rather than returning it.
+        """
+        result = await self._get(f"/server/gcode_store?count={count}")
+        store = result.get("gcode_store", [])
+        return [e for e in store if isinstance(e, dict)] if isinstance(store, list) else []
+
     async def run_gcode(self, script: str) -> None:
         """Runs a G-code script via ``/printer/gcode/script``.
 
