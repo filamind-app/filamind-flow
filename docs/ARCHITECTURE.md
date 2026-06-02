@@ -45,7 +45,7 @@ src/
 │  ├─ registry/    # extensibility: the widget registry
 │  └─ store/       # state: Pinia mirror of Moonraker status
 ├─ components/     # presentation: app shell + dashboard (design-system driven)
-├─ widgets/        # features: self-registering widgets (empty in the scaffold)
+├─ widgets/        # features: self-registering widgets (Firmware Upgrade · Input Shaping)
 └─ assets/styles/  # Neo-Brutalist design tokens + component classes
 ```
 
@@ -79,11 +79,13 @@ feature never requires touching the transport or other widgets.
 ## Backend
 
 A FastAPI application factory (`create_app`) wires settings, logging, CORS, and a
-versioned `/api` router. Today it exposes liveness (`/api/health`) and a
-server-side Moonraker reachability probe (`/api/moonraker/status`). It is the
-right home for operations that should not run in the browser — privileged file or
-system actions, multi-call aggregations, or scheduled jobs — added as new route
-modules under `app/api/routes/`.
+versioned `/api` router. It exposes liveness (`/api/health`), a server-side
+Moonraker reachability probe (`/api/moonraker/status`), the **firmware**
+build / flash / device routes (`/api/firmware/*`), and the **input-shaping**
+resonance-analysis routes (`/api/shaper/*` — which vendor Klipper's
+`shaper_calibrate`). It is the right home for operations that should not run in the
+browser — privileged file or system actions, multi-call aggregations, or scheduled
+jobs — added as new route modules under `app/api/routes/`.
 
 ## Design system
 
