@@ -3,7 +3,12 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
 from app.config import Settings, get_settings
-from app.models.schemas import ResonanceFile, ResonanceFilesResponse, ShaperAnalysis
+from app.models.schemas import (
+    NoiseResult,
+    ResonanceFile,
+    ResonanceFilesResponse,
+    ShaperAnalysis,
+)
 from app.services import resonance_service, shaper_service
 
 router = APIRouter(prefix="/shaper", tags=["shaper"])
@@ -86,3 +91,18 @@ async def live_resonance_test(
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return ShaperAnalysis(**result)
+
+
+@router.post("/noise", response_model=NoiseResult)
+async def measure_axes_noise(settings: Settings = Depends(get_settings)) -> NoiseResult:
+    """Runs ``MEASURE_AXES_NOISE`` to validate the accelerometer mount before testing.
+
+    **Does not move the toolhead** (it dwells while reading the sensor). Print-guarded
+    and requires a configured resonance tester; returns HTTP 400 with a clear message
+    if either check fails.
+    """
+    try:
+        result = await resonance_service.measure_noise(settings.moonraker_url)
+    except shaper_service.ShaperAnalysisError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return NoiseResult(**result)

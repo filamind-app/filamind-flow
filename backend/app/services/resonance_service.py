@@ -38,6 +38,18 @@ _PATTERNS = ("resonances_*.csv", "calibration_data_*.csv", "raw_data_*.csv")
 _AXIS_RE = re.compile(r"_(x|y)(?:[._]|$)", re.IGNORECASE)
 #: A live test can take a couple of minutes; give Moonraker room.
 _LIVE_TEST_TIMEOUT = 600.0
+#: MEASURE_AXES_NOISE just dwells ~2 s reading the accelerometer.
+_NOISE_TIMEOUT = 30.0
+
+#: Klipper's MEASURE_AXES_NOISE output, one line per accelerometer chip:
+#: "Axes noise for <label>-axis accelerometer: <x> (x), <y> (y), <z> (z)".
+_NOISE_RE = re.compile(
+    r"Axes noise for (?P<label>\S+?)-axis accelerometer:\s*"
+    r"(?P<x>[-+\d.eE]+) \(x\),\s*(?P<y>[-+\d.eE]+) \(y\),\s*(?P<z>[-+\d.eE]+) \(z\)"
+)
+#: Per Klipper's docs, ~1-100 is normal; ~1000+ means a problem.
+_NOISE_OK = 100.0
+_NOISE_HIGH = 1000.0
 
 
 def resolve_dirs(resonance_dirs: str) -> list[str]:
@@ -120,6 +132,75 @@ async def _homed_axes(client: MoonrakerClient) -> str:
         return ""
     toolhead = data.get("toolhead", {})
     return str(toolhead.get("homed_axes", "")) if isinstance(toolhead, dict) else ""
+
+
+def _parse_noise(messages: list[str]) -> list[dict[str, Any]]:
+    """Extracts per-chip noise dicts from MEASURE_AXES_NOISE console lines."""
+    chips: list[dict[str, Any]] = []
+    for message in messages:
+        match = _NOISE_RE.search(message)
+        if match:
+            chips.append(
+                {
+                    "label": match.group("label"),
+                    "x": float(match.group("x")),
+                    "y": float(match.group("y")),
+                    "z": float(match.group("z")),
+                }
+            )
+    return chips
+
+
+async def measure_noise(moonraker_url: str) -> dict[str, Any]:
+    """Runs ``MEASURE_AXES_NOISE`` and returns the accelerometer's idle noise floor.
+
+    A pre-flight check for the sensor mount — **does not move the toolhead** (it just
+    dwells while reading the accelerometer). Print-guarded and requires a configured
+    resonance tester. The result is parsed from the G-code console output.
+    """
+    client = MoonrakerClient(moonraker_url, timeout=_NOISE_TIMEOUT)
+    if await _is_printing(client):
+        raise shaper_service.ShaperAnalysisError(
+            "Printer is printing or paused — refusing to measure noise"
+        )
+    if not await _has_resonance_tester(client):
+        raise shaper_service.ShaperAnalysisError(
+            "No [resonance_tester] / accelerometer is configured on this printer"
+        )
+
+    # Snapshot existing console lines so we read only the ones this run produces.
+    try:
+        seen = {(e.get("time"), e.get("message")) for e in await client.gcode_store(50)}
+    except Exception:
+        seen = set()
+
+    try:
+        await client.run_gcode("MEASURE_AXES_NOISE")
+    except Exception as exc:
+        raise shaper_service.ShaperAnalysisError(f"Noise measurement failed: {exc}") from exc
+
+    try:
+        store = await client.gcode_store(50)
+    except Exception as exc:
+        raise shaper_service.ShaperAnalysisError(f"Could not read the result: {exc}") from exc
+
+    fresh = [
+        str(e.get("message", "")) for e in store if (e.get("time"), e.get("message")) not in seen
+    ]
+    chips = _parse_noise(fresh) or _parse_noise([str(e.get("message", "")) for e in store])
+    if not chips:
+        raise shaper_service.ShaperAnalysisError("MEASURE_AXES_NOISE produced no readable output")
+
+    values = [v for chip in chips for v in (chip["x"], chip["y"], chip["z"])]
+    max_noise = max(values)
+    grade = "good" if max_noise < _NOISE_OK else "high" if max_noise >= _NOISE_HIGH else "elevated"
+    return {
+        "chips": chips,
+        "max_noise": max_noise,
+        "grade": grade,
+        "ok": max_noise < _NOISE_OK,
+        "threshold": _NOISE_OK,
+    }
 
 
 async def run_live_test(

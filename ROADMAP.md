@@ -55,10 +55,11 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 | ✅ **4 — Advanced + compare** | Calibration knobs (`max_freq`, `scv`, `max_smoothing`, `damping_ratio`); **A⇄B** comparison of two captures; localStorage history. |
 | ✅ **5 — From the printer** | Import the resonance CSVs Klipper wrote on the host (scans `/tmp` + `printer_data/config`), or **run a live `TEST_RESONANCES`** (auto-homes, waits for the background CSV write to settle) and analyze the result. |
 | ✅ **6 — Advanced insights** | Measurement **quality grade (A–F)** + 0–100 score with a factor breakdown; **visual diagnostics** with hand-drawn SVG illustrations + fixes (incl. a cross-axis X/Y imbalance card); **annotated chart** (dominant-peak marker + noise floor). |
+| ✅ **7 — Noise pre-check** | Motion-free `MEASURE_AXES_NOISE` reads the accelerometer's idle noise floor and grades it (quiet / elevated / too noisy, per Klipper's ~1–100 normal range), validating the sensor mount before a test. |
 
 **Ideas (not yet sequenced)**
 
-- 📋 Noise pre-check (`MEASURE_AXES_NOISE`) to validate the accelerometer mount before a test · CoreXY belt-tension comparison (left/right) · grade-tracked history trend.
+- 📋 CoreXY belt-tension comparison (left/right) · grade-tracked history trend · re-test recommendations from the grade.
 
 ## Platform
 

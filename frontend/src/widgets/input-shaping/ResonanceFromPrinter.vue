@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-import { analyzeResonanceFile, listResonanceFiles, runLiveTest } from './api'
-import type { ResonanceFile, ShaperAnalysis } from './types'
+import { analyzeResonanceFile, listResonanceFiles, measureNoise, runLiveTest } from './api'
+import type { NoiseResult, ResonanceFile, ShaperAnalysis } from './types'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis] }>()
 
@@ -13,8 +13,21 @@ const busy = ref(false)
 const liveAxis = ref<'x' | 'y'>('x')
 const liveReady = ref(false)
 const liveBusy = ref(false)
+const noise = ref<NoiseResult | null>(null)
+const noiseBusy = ref(false)
 
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
+
+function noiseClass(grade: NoiseResult['grade']): string {
+  if (grade === 'good') return 'bg-brand-lime'
+  if (grade === 'elevated') return 'bg-brand-yellow'
+  return 'bg-brand-red text-surface'
+}
+function noiseVerdict(grade: NoiseResult['grade']): string {
+  if (grade === 'good') return '✅ quiet'
+  if (grade === 'elevated') return '⚠ elevated'
+  return '⛔ too noisy'
+}
 
 function msg(e: unknown, fallback: string): string {
   return e instanceof Error ? e.message : fallback
@@ -48,6 +61,19 @@ async function importFile(f: ResonanceFile): Promise<void> {
   }
 }
 
+async function checkNoise(): Promise<void> {
+  if (noiseBusy.value) return
+  error.value = null
+  noiseBusy.value = true
+  try {
+    noise.value = await measureNoise()
+  } catch (e) {
+    error.value = msg(e, 'Noise check failed')
+  } finally {
+    noiseBusy.value = false
+  }
+}
+
 async function live(): Promise<void> {
   if (liveBusy.value || !liveReady.value) return
   error.value = null
@@ -72,6 +98,30 @@ onMounted(loadFiles)
     <div class="flex items-center justify-between">
       <span class="text-xs font-bold uppercase tracking-wide">From the printer</span>
       <button class="nb-btn px-2 py-0.5 text-[10px]" @click="loadFiles">↻ refresh</button>
+    </div>
+
+    <!-- Accelerometer noise pre-check — motion-free, validates the sensor mount. -->
+    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+        <span class="font-bold">🔊 Noise check</span>
+        <button class="nb-btn px-2 py-0.5" :disabled="noiseBusy" @click="checkNoise">
+          {{ noiseBusy ? 'measuring…' : 'MEASURE_AXES_NOISE' }}
+        </button>
+        <span class="opacity-60">motion-free · run before testing</span>
+      </div>
+      <div v-if="noise" class="space-y-0.5">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="nb-badge" :class="noiseClass(noise.grade)">{{
+            noiseVerdict(noise.grade)
+          }}</span>
+          <span class="font-mono text-[9px] opacity-60"
+            >max {{ noise.max_noise.toFixed(1) }} · normal &lt; {{ noise.threshold }}</span
+          >
+        </div>
+        <div v-for="c in noise.chips" :key="c.label" class="font-mono text-[9px] opacity-70">
+          {{ c.label }}: x {{ c.x.toFixed(1) }} · y {{ c.y.toFixed(1) }} · z {{ c.z.toFixed(1) }}
+        </div>
+      </div>
     </div>
 
     <!-- Live test: moves the toolhead, so it is gated behind a confirm checkbox. -->
