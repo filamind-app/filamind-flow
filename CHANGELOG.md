@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.42.0] - 2026-06-03
+
+### Added — Input Shaping: guided wizard completes the workflow (Shake&Tune parity, 4 of 5)
+
+- The 🧭 guided wizard now covers the full Shake&Tune flow with two guided-manual steps
+  after the shaper calibration: **Vibrations / VFAs** (a quick "do you see vertical fine
+  artifacts?" self-report → keep slicer speeds out of the resonant band, or dig into TMC
+  tuning) and **Pressure advance** (a copy-able PA tuning-tower g-code + how to apply the
+  result). Frontend-only; the Vibrations step is the seam the measured vibrations profile
+  (next) plugs into.
+
 ## [0.41.0] - 2026-06-03
 
 ### Added — Input Shaping: guided tuning wizard (Shake&Tune parity, 3 of 5)

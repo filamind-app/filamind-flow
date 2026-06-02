@@ -62,12 +62,12 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 | ✅ **11 — Sustain frequency** | Hold the toolhead vibrating near a frequency (a slow, narrow `TEST_RESONANCES` sweep — no macro/config change) to find the resonance source by hand; returns a frequency×time spectrogram + an energy "touch timeline". |
 | ✅ **12 — Guided tuning wizard** | A step-by-step walk-through (Noise → Belts → Shaper X → Shaper Y) with automated pass/fail gates (reusing the grade / belt verdict / noise grade) + ranked next-step suggestions; the captures feed the shared config + history. |
 
-**Shake&Tune parity (in progress — 3 of 5 shipped)**
+**Shake&Tune parity (in progress — 4 of 5 shipped)**
 
 - ✅ **Axes-map calibration** (phase 10, v0.39.0)
 - ✅ **Sustain frequency** (phase 11, v0.40.0)
-- ✅ **Guided wizard** (phase 12, v0.41.0) — Noise → Belts → Shaper; Vibrations + Pressure-Advance steps land with the next two phases
-- 📋 **Vibrations profile** (`CREATE_VIBRATIONS_PROFILE`) — speed×angle VFA map → slicer speed guidance
+- ✅ **Guided wizard** (phase 12, v0.41.0) + the **Vibrations + Pressure-Advance** steps (v0.42.0) — full Noise → Belts → Shaper → Vibrations → PA flow
+- 📋 **Vibrations profile** (`CREATE_VIBRATIONS_PROFILE`) — speed×angle VFA map → slicer speed guidance (upgrades the wizard's manual Vibrations step to a measured one)
 
 **Ideas (not yet sequenced)**
 

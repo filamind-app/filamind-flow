@@ -53,6 +53,35 @@ export function recommendBelts(verdict: BeltVerdict): Suggestion[] {
   ]
 }
 
+export function recommendVibrations(vfaVisible: boolean): Suggestion[] {
+  if (!vfaVisible) {
+    return [
+      {
+        level: 'ok',
+        title: 'No visible VFAs',
+        why: 'Speed-dependent vibration looks fine — continue to pressure advance.',
+      },
+    ]
+  }
+  return [
+    {
+      level: 'consider',
+      title: 'Reduce speed-dependent vibration',
+      why: 'Keep slicer print / travel speeds out of the resonant band, or dig into TMC driver tuning. A full vibrations-profile sweep is coming.',
+    },
+  ]
+}
+
+export function recommendPressure(): Suggestion[] {
+  return [
+    {
+      level: 'do-now',
+      title: 'Run a pressure-advance tower',
+      why: 'Print the PA tower, read the height where corners look sharpest, then `SET_PRESSURE_ADVANCE ADVANCE=<value>` and `SAVE_CONFIG`.',
+    },
+  ]
+}
+
 /** Reuses the shaper diagnostics, ranked do-now (bad) → consider (warn) → ok. */
 export function recommendShaper(analysis: ShaperAnalysis): Suggestion[] {
   const order: Record<string, number> = { bad: 0, warn: 1, good: 2 }
