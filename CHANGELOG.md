@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.38.1] - 2026-06-02
+
+### Fixed
+
+- **Portable Mainsail sidebar link.** The installer hard-coded the sidebar link to
+  `http://<hostname>.local:8090`, which is dead for any client that can't resolve mDNS
+  (Windows without Bonjour, Android, a different subnet, VPN) — a real user saw it land
+  on an unreachable `…​.local:8090`. It now defaults to the primary **LAN IP** (resolves
+  everywhere on the network), opens in a new tab, and accepts a `FILAMIND_PUBLIC_HOST`
+  override (`FILAMIND_PUBLIC_HOST=printer.example` or a fixed IP). The app itself was
+  always fine — same-origin — so the broken case was purely the link host. (A fully
+  host-preserving subpath link, working at *any* address, is the next step.)
+
 ## [0.38.0] - 2026-06-02
 
 ### Added

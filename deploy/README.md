@@ -63,6 +63,9 @@ panel appears in Mainsail/Fluidd's update manager and updates with one click.
 Mainsail supports custom sidebar links via `navi.json`. Place
 `deploy/mainsail-navi.json` at `~/printer_data/config/.theme/navi.json` (merge into
 the existing array if the file is already there) and set `href` to your panel URL.
+Prefer the **LAN IP** (ideally a DHCP-reserved one) over `<hostname>.local` — mDNS
+fails on many clients (Windows without Bonjour, Android, other subnets, VPN). The
+one-line installer uses the LAN IP by default; override with `FILAMIND_PUBLIC_HOST`.
 The `icon` field is an SVG path string on a 24×24 viewBox (Material-Design-Icon
 style); the bundled entry uses a brutalist "F". Docs:
 [Mainsail → Navigation](https://docs.mainsail.xyz/settings/navigation/).
