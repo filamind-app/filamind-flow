@@ -53,3 +53,21 @@ export interface ResonanceFilesResponse {
   files: ResonanceFile[]
   dirs: string[]
 }
+
+/** One accelerometer chip's idle noise (mean PSD per axis). */
+export interface NoiseChip {
+  label: string
+  x: number
+  y: number
+  z: number
+}
+
+/** Result of MEASURE_AXES_NOISE — the accelerometer's idle noise floor. */
+export interface NoiseResult {
+  chips: NoiseChip[]
+  max_noise: number
+  /** good (<100) · elevated (100–1000) · high (≥1000), per Klipper's guidance. */
+  grade: 'good' | 'elevated' | 'high'
+  ok: boolean
+  threshold: number
+}

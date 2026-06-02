@@ -6,13 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.36.0] - 2026-06-02
+
+### Added
+
+- **Accelerometer noise pre-check.** A motion-free `MEASURE_AXES_NOISE` button in the
+  Input Shaping "from the printer" panel reads the accelerometer's idle noise floor and
+  grades it (quiet / elevated / too noisy — Klipper's normal range is ~1-100), so you
+  can validate the sensor mount before running a resonance test. New backend route
+  `POST /api/shaper/noise` (print-guarded; does **not** move the toolhead).
+
 ### Documentation
 
-- Brought the docs in step with the shipped features: documented the **Input
-  Shaping** widget in `README.md` + `ROADMAP.md`, refreshed the version badge,
-  filled in the `/api/shaper/*` endpoints and the firmware / resonance `FILAMIND_*`
-  settings in `backend/README.md`, refreshed `docs/ARCHITECTURE.md`, and added a
-  "keep docs in step with features" rule to `CONTRIBUTING.md`.
+- Brought the docs in step with the shipped features: documented the **Input Shaping**
+  widget in `README.md` + `ROADMAP.md`, refreshed the version badge, filled in the
+  `/api/shaper/*` endpoints and the firmware / resonance `FILAMIND_*` settings in
+  `backend/README.md`, refreshed `docs/ARCHITECTURE.md`, and added a "keep docs in step
+  with features" rule to `CONTRIBUTING.md`.
 
 ## [0.35.0] - 2026-06-02
 

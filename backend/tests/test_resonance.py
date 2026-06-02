@@ -59,13 +59,22 @@ class _FakeClient:
     """Stand-in for MoonrakerClient: run_gcode 'writes' the CSV Klipper would."""
 
     def __init__(
-        self, *, printing: bool, has_tester: bool, write_dir: Path, homed: str = "xyz"
+        self,
+        *,
+        printing: bool,
+        has_tester: bool,
+        write_dir: Path,
+        homed: str = "xyz",
+        noise: tuple[float, float, float] = (12.0, 15.0, 9.0),
     ) -> None:
         self.printing = printing
         self.has_tester = has_tester
         self.write_dir = write_dir
         self.homed = homed
+        self.noise = noise
         self.gcodes: list[str] = []
+        self._store: list[dict[str, Any]] = []
+        self._t = 0.0
 
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
         out: dict[str, Any] = {}
@@ -81,6 +90,22 @@ class _FakeClient:
         self.gcodes.append(script)
         if script.startswith("TEST_RESONANCES"):
             _write(self.write_dir, "raw_data_x_filamind_x.csv")
+        elif script == "MEASURE_AXES_NOISE":
+            x, y, z = self.noise
+            self._t += 1.0
+            self._store.append(
+                {
+                    "time": self._t,
+                    "type": "response",
+                    "message": (
+                        f"Axes noise for xy-axis accelerometer: "
+                        f"{x:.6f} (x), {y:.6f} (y), {z:.6f} (z)"
+                    ),
+                }
+            )
+
+    async def gcode_store(self, count: int = 20) -> list[dict[str, Any]]:
+        return self._store[-count:]
 
 
 def _patch_client(monkeypatch: pytest.MonkeyPatch, fake: _FakeClient) -> None:
@@ -123,3 +148,36 @@ async def test_live_test_refuses_without_resonance_tester(
     _patch_client(monkeypatch, _FakeClient(printing=False, has_tester=False, write_dir=tmp_path))
     with pytest.raises(shaper_service.ShaperAnalysisError, match="resonance_tester"):
         await resonance_service.run_live_test("http://x", str(tmp_path), axis="x")
+
+
+async def test_measure_noise_parses_and_grades_good(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake = _FakeClient(printing=False, has_tester=True, write_dir=tmp_path, noise=(12.0, 15.0, 9.0))
+    _patch_client(monkeypatch, fake)
+    result = await resonance_service.measure_noise("http://x")
+    assert "MEASURE_AXES_NOISE" in fake.gcodes
+    assert result["grade"] == "good"
+    assert result["ok"] is True
+    assert result["max_noise"] == pytest.approx(15.0)
+    assert result["chips"][0] == {"label": "xy", "x": 12.0, "y": 15.0, "z": 9.0}
+
+
+async def test_measure_noise_flags_high_noise(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake = _FakeClient(
+        printing=False, has_tester=True, write_dir=tmp_path, noise=(1500.0, 1200.0, 50.0)
+    )
+    _patch_client(monkeypatch, fake)
+    result = await resonance_service.measure_noise("http://x")
+    assert result["grade"] == "high"
+    assert result["ok"] is False
+
+
+async def test_measure_noise_refuses_without_resonance_tester(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _patch_client(monkeypatch, _FakeClient(printing=False, has_tester=False, write_dir=tmp_path))
+    with pytest.raises(shaper_service.ShaperAnalysisError, match="resonance_tester"):
+        await resonance_service.measure_noise("http://x")

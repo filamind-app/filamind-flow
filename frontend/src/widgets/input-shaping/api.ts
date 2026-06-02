@@ -1,6 +1,6 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { ResonanceFilesResponse, ShaperAnalysis } from './types'
+import type { NoiseResult, ResonanceFilesResponse, ShaperAnalysis } from './types'
 
 /** Extracts a backend error detail, falling back to the status line. */
 async function errorDetail(response: Response, fallback: string): Promise<string> {
@@ -87,4 +87,12 @@ export async function runLiveTest(axis: string): Promise<ShaperAnalysis> {
   })
   if (!response.ok) throw new Error(await errorDetail(response, 'Live test failed'))
   return (await response.json()) as ShaperAnalysis
+}
+
+/** Runs MEASURE_AXES_NOISE (motion-free) to check the accelerometer mount. */
+export async function measureNoise(): Promise<NoiseResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/noise`, { method: 'POST' })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Noise check failed'))
+  return (await response.json()) as NoiseResult
 }
