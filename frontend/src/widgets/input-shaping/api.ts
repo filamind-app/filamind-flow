@@ -6,6 +6,7 @@ import type {
   NoiseResult,
   ResonanceFilesResponse,
   ShaperAnalysis,
+  StaticExcitationResult,
 } from './types'
 
 /** Extracts a backend error detail, falling back to the status line. */
@@ -117,4 +118,21 @@ export async function runAxesMap(): Promise<AxesMapResult> {
   const response = await fetch(`${backendUrl}/api/shaper/axes-map`, { method: 'POST' })
   if (!response.ok) throw new Error(await errorDetail(response, 'Axes-map detection failed'))
   return (await response.json()) as AxesMapResult
+}
+
+/** Holds an axis vibrating near `freq` for `duration` s (moves the toolhead). */
+export async function runStaticExcitation(
+  axis: string,
+  freq: number,
+  duration: number,
+): Promise<StaticExcitationResult> {
+  const { backendUrl } = resolveEndpoints()
+  const params = new URLSearchParams({
+    axis,
+    freq: String(freq),
+    duration: String(duration),
+  })
+  const response = await fetch(`${backendUrl}/api/shaper/excitate?${params}`, { method: 'POST' })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Sustain-frequency test failed'))
+  return (await response.json()) as StaticExcitationResult
 }

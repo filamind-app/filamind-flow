@@ -559,3 +559,28 @@ class AxesMapResult(BaseModel):
     extrapolated_axis: int | None = None
     velocity_series: list[VelocitySeries] = []
     source_files: list[str] = []
+
+
+class StaticExcitationResult(BaseModel):
+    """Result of a sustain-frequency hold — a time-frequency spectrogram + timeline."""
+
+    axis: str
+    freq: float
+    duration: float
+    max_freq: float
+    #: Frequency-bin centres (Hz) — the heatmap rows.
+    freqs: list[float] = []
+    #: Segment centre times (s) — the heatmap columns + the energy timeline.
+    times: list[float] = []
+    #: Log-normalised power grid ``[freq][time]``, 0..1.
+    spectrogram: list[list[float]] = []
+    #: Normalised vibration energy per time, 0..1 (the "touch timeline").
+    energy: list[float] = []
+    #: Percent of total power within ±2 Hz of the requested frequency.
+    excited_band_pct: float
+    #: How far the energy dropped from its peak during the hold (a touch helping).
+    energy_drop_pct: float
+    dominant_freq: float
+    dominant_ok: bool
+    verdict: str
+    source_file: str | None = None

@@ -10,6 +10,7 @@ from app.models.schemas import (
     ResonanceFile,
     ResonanceFilesResponse,
     ShaperAnalysis,
+    StaticExcitationResult,
 )
 from app.services import resonance_service, shaper_service
 
@@ -159,3 +160,31 @@ async def calibrate_axes_map(
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return AxesMapResult(**result)
+
+
+@router.post("/excitate", response_model=StaticExcitationResult)
+async def excitate_axis(
+    axis: str = Query("x", description="Axis to excite: x or y"),
+    freq: float = Query(50.0, description="Frequency to hold (Hz)"),
+    duration: float = Query(15.0, description="Hold duration (s)"),
+    max_freq: float = Query(200.0, description="Max frequency for the spectrogram (Hz)"),
+    settings: Settings = Depends(get_settings),
+) -> StaticExcitationResult:
+    """Holds an axis vibrating near ``freq`` for ``duration`` s so you can touch parts
+    to find what rattles, then returns a spectrogram + energy timeline.
+
+    **Moves the toolhead** (buzzes in place at the probe point). Print-guarded and
+    requires a configured resonance tester.
+    """
+    try:
+        result = await resonance_service.run_static_excitation(
+            settings.moonraker_url,
+            settings.resonance_dirs,
+            axis=axis,
+            freq=freq,
+            duration=duration,
+            max_freq=max_freq,
+        )
+    except shaper_service.ShaperAnalysisError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return StaticExcitationResult(**result)
