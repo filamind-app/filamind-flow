@@ -17,6 +17,7 @@ export type HelpTopic =
   | 'catalog'
   | 'motor'
   | 'recommend'
+  | 'sensorless'
 
 export interface HelpEntry {
   title: string
@@ -119,6 +120,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Assigning a motor',
     body: 'Pick the stepper motor wired to each axis from a built-in catalog of 200+ motors. Klipper doesn’t know which motor you fitted — telling FilaMind unlocks its datasheet specs (holding torque, rated current, resistance, inductance), which a later step uses to recommend a safe run current and driver tuning. It’s saved on the printer and changes nothing on the driver by itself.',
     illo: 'current',
+  },
+  sensorless: {
+    title: 'Sensorless homing',
+    body: 'Some axes home without an endstop switch: the driver detects the gentle “stall” when the toolhead reaches the end of travel. The StallGuard threshold sets how sensitive that is — too low and it triggers early (stops short), too high and it never triggers (the axis grinds into the frame). This helper lets you set the threshold and test-home one axis, both behind a confirm. Adjust by feel: lower if it stops early, raise if it doesn’t stop — and keep a hand near the power the first few times. If your axis uses a physical endstop, you don’t need this.',
+    illo: 'stallguard',
   },
   recommend: {
     title: 'Recommended tuning',

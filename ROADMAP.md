@@ -103,7 +103,7 @@ so recommendations work even without the `klipper_tmc_autotune` host extra insta
 | ✅ **2b — Motor picker** | A searchable catalog of 200+ motors; assign the motor on each stepper (its datasheet specs surface on the card), persisted to `<data_dir>/motor-mapping.json`. (`GET /api/drivers/motors`, `GET`/`POST /api/drivers/mapping`) | low |
 | ✅ **3 — Recommender** | Pure `motor_constants` port → recommended run current + StealthChop/SpreadCycle registers (pwm_grad/pwm_ofs/hstrt/hend) from datasheet specs + supply voltage; preview diffed vs live. Compute-only. (`POST /api/drivers/recommend`) | low (compute) |
 | ✅ **4 — Apply** | Copy-to-config, gated live `SET_TMC_CURRENT` / `SET_TMC_FIELD` writes (explicit confirm + refused while printing + value validation), `INIT_TMC` revert, and drive `AUTOTUNE_TMC` when the extra is installed. (`POST /api/drivers/config-block · /apply · /init · /autotune`) | high (writes registers) |
-| 📋 **5 — Sensorless homing** | StallGuard threshold helper (`sgthrs` / `sgt` / `sg4_thrs`) with a guided sweep. | high (motion) |
+| ✅ **5 — Sensorless homing** | StallGuard threshold helper (`sgthrs` / `sgt` / `sg4_thrs`) — gated set + gated test-home (`G28 <axis>`) with a crash warning; guidance to dial it in. (`POST /api/drivers/stallguard · /home`) | high (motion) |
 | 📋 **6 — Live monitor** | Live `drv_status` telemetry: temperature, `SG_RESULT`, `CS_ACTUAL`, fault flags, over time. | low (read-only) |
 | 📋 **7 — Tuning wizard** | A guided driver-tuning walk-through tying the above together. | medium |
 | 📋 **8 — Motors-sync** | Integrate `motors_sync` for dual-motor phase alignment (dual-Z / dual-X). | high (motion) |
