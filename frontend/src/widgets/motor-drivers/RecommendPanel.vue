@@ -1,16 +1,24 @@
 <script setup lang="ts">
-/** Per-driver tuning recommendation (compute-only). Given the assigned motor + a supply
- *  voltage, asks the backend for a suggested run current + StealthChop/SpreadCycle
- *  registers, and shows them diffed against the live config. Applying is a later, gated
- *  step — this panel never writes to the driver.
+/** Per-driver tuning recommendation + apply. Given the assigned motor + a supply voltage,
+ *  asks the backend for a suggested run current + StealthChop/SpreadCycle registers, shown
+ *  diffed against the live config. The values can then be copied to printer.cfg, or written
+ *  live (SET_TMC_*) behind an explicit confirm — and reverted (INIT_TMC). Writes are gated
+ *  server-side too (refused while printing).
  */
 import { computed, ref } from 'vue'
 
-import { fetchRecommendation } from './api'
+import {
+  applyTuning,
+  fetchConfigBlock,
+  fetchRecommendation,
+  revertDriver,
+  runAutotune,
+} from './api'
 import { recommendationRows } from './format'
 import type { DriverRecommendation, TmcDriver } from './types'
 
 const props = defineProps<{ driver: TmcDriver }>()
+const emit = defineEmits<{ applied: [] }>()
 
 const open = ref(false)
 const voltage = ref(24)
@@ -18,7 +26,19 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const rec = ref<DriverRecommendation | null>(null)
 
+const confirmed = ref(false)
+const busy = ref(false)
+const resultMsg = ref<string | null>(null)
+const resultOk = ref(false)
+const configText = ref<string | null>(null)
+
 const rows = computed(() => (rec.value ? recommendationRows(props.driver, rec.value) : []))
+
+/** The recommended register values as a SET_TMC_FIELD map. */
+function recFields(): Record<string, number> {
+  const r = rec.value
+  return r ? { pwm_grad: r.pwm_grad, pwm_ofs: r.pwm_ofs, hstrt: r.hstrt, hend: r.hend } : {}
+}
 
 async function compute(): Promise<void> {
   if (!props.driver.motor) return
@@ -34,6 +54,56 @@ async function compute(): Promise<void> {
     error.value = e instanceof Error ? e.message : String(e)
   } finally {
     loading.value = false
+  }
+}
+
+/** Wraps a write/revert action: show its message, and refresh the dashboard on success. */
+async function run(action: () => Promise<{ ok: boolean; message: string }>): Promise<void> {
+  busy.value = true
+  resultMsg.value = null
+  try {
+    const res = await action()
+    resultOk.value = res.ok
+    resultMsg.value = res.message
+    if (res.ok) emit('applied')
+  } catch (e) {
+    resultOk.value = false
+    resultMsg.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    busy.value = false
+  }
+}
+
+function apply(): Promise<void> {
+  const r = rec.value
+  if (!r) return Promise.resolve()
+  return run(() =>
+    applyTuning({ stepper: props.driver.stepper, run_current: r.run_current, fields: recFields() }),
+  )
+}
+
+function revert(): Promise<void> {
+  return run(() => revertDriver(props.driver.stepper))
+}
+
+function autotune(): Promise<void> {
+  return run(() => runAutotune(props.driver.stepper))
+}
+
+async function copyConfig(): Promise<void> {
+  const r = rec.value
+  if (!r || !props.driver.motor) return
+  try {
+    const { text } = await fetchConfigBlock({
+      stepper: props.driver.stepper,
+      model: props.driver.model,
+      run_current: r.run_current,
+      fields: recFields(),
+    })
+    configText.value = text
+    await navigator.clipboard?.writeText(text).catch(() => {})
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : String(e)
   }
 }
 </script>
@@ -105,9 +175,59 @@ async function compute(): Promise<void> {
           }}
           rev/s at {{ rec.voltage }} V.
         </p>
-        <p class="rounded-brutal border-2 border-ink bg-brand-yellow px-1.5 py-0.5">
-          Preview only — nothing is written to the driver. Applying lands in a later step.
-        </p>
+        <!-- Apply: copy-to-config (safe) or a gated live write -->
+        <div class="space-y-1 border-t-2 border-dashed border-ink pt-1.5">
+          <label class="flex items-start gap-1.5">
+            <input v-model="confirmed" type="checkbox" class="mt-0.5 shrink-0" />
+            <span>
+              Write these to the <b>{{ driver.stepper }}</b> driver now. Reversible (Revert / a
+              restart restores your config); refused while printing.
+            </span>
+          </label>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button
+              class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+              :disabled="!confirmed || busy"
+              @click="apply"
+            >
+              {{ busy ? '…' : 'apply to driver' }}
+            </button>
+            <button
+              class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+              :disabled="busy"
+              @click="revert"
+            >
+              ↺ revert
+            </button>
+            <button
+              class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+              :disabled="busy"
+              @click="copyConfig"
+            >
+              copy config
+            </button>
+            <button
+              class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+              :disabled="busy"
+              title="Runs AUTOTUNE_TMC if the klipper_tmc_autotune add-on is installed"
+              @click="autotune"
+            >
+              autotune
+            </button>
+          </div>
+          <p
+            v-if="resultMsg"
+            class="rounded-brutal border-2 border-ink px-1.5 py-0.5"
+            :class="resultOk ? 'bg-brand-lime' : 'bg-brand-red text-surface'"
+          >
+            {{ resultMsg }}
+          </p>
+          <pre
+            v-if="configText"
+            class="overflow-x-auto rounded-brutal border-2 border-ink bg-surface p-1.5 text-[9px] leading-tight"
+            >{{ configText }}</pre
+          >
+        </div>
       </template>
     </div>
   </div>

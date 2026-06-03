@@ -219,7 +219,7 @@ onUnmounted(() => {
             @assign="onAssign"
           />
 
-          <RecommendPanel v-if="d.motor" :driver="d" />
+          <RecommendPanel v-if="d.motor" :driver="d" @applied="load(true)" />
 
           <div v-if="registerEntries(d).length" class="font-mono text-[10px]">
             <button

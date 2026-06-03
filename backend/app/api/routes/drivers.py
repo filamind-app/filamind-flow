@@ -4,6 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
+    ApplyRequest,
+    ApplyResponse,
+    ConfigBlockRequest,
+    ConfigBlockResponse,
     DriverCatalog,
     DriverRecommendation,
     DriversStatus,
@@ -11,8 +15,16 @@ from app.models.schemas import (
     MotorCatalog,
     MotorMapping,
     RecommendRequest,
+    StepperRequest,
 )
-from app.services import driver_catalog, drivers_service, motor_catalog, motor_mapping, recommender
+from app.services import (
+    driver_catalog,
+    drivers_apply,
+    drivers_service,
+    motor_catalog,
+    motor_mapping,
+    recommender,
+)
 
 router = APIRouter(prefix="/drivers", tags=["drivers"])
 
@@ -86,3 +98,46 @@ async def recommend_tuning(request: RecommendRequest) -> DriverRecommendation:
         is_2240=request.is_2240,
     )
     return DriverRecommendation.model_validate(data)
+
+
+@router.post("/config-block", response_model=ConfigBlockResponse)
+async def config_block(request: ConfigBlockRequest) -> ConfigBlockResponse:
+    """Render a printer.cfg override block to copy — no write, always safe."""
+    text = drivers_apply.config_block(
+        request.stepper, request.model, request.run_current, request.fields
+    )
+    return ConfigBlockResponse(text=text)
+
+
+@router.post("/apply", response_model=ApplyResponse)
+async def apply_tuning(
+    request: ApplyRequest, settings: Settings = Depends(get_settings)
+) -> ApplyResponse:
+    """Write tuning to a driver now via SET_TMC_CURRENT / SET_TMC_FIELD. Refuses while
+    printing; reversible with /init. The UI also requires an explicit confirm."""
+    data = await drivers_apply.apply_live(
+        settings.moonraker_url,
+        request.stepper,
+        request.run_current,
+        request.hold_current,
+        request.fields,
+    )
+    return ApplyResponse.model_validate(data)
+
+
+@router.post("/init", response_model=ApplyResponse)
+async def init_driver(
+    request: StepperRequest, settings: Settings = Depends(get_settings)
+) -> ApplyResponse:
+    """INIT_TMC — re-apply the stepper's configured registers (undo a live apply)."""
+    data = await drivers_apply.revert(settings.moonraker_url, request.stepper)
+    return ApplyResponse.model_validate(data)
+
+
+@router.post("/autotune", response_model=ApplyResponse)
+async def autotune(
+    request: StepperRequest, settings: Settings = Depends(get_settings)
+) -> ApplyResponse:
+    """Drive AUTOTUNE_TMC if the klipper_tmc_autotune extra is installed for this stepper."""
+    data = await drivers_apply.run_autotune(settings.moonraker_url, request.stepper)
+    return ApplyResponse.model_validate(data)

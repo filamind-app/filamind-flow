@@ -91,7 +91,9 @@ per-driver `get_status`, annotated from a curated capability catalog
 `/api/drivers/catalog` — that capability map; `/api/drivers/motors` — a 200+ motor
 database baked to `app/data/motor_catalog.json`; `/api/drivers/mapping` — the persisted
 stepper→motor map; `/api/drivers/recommend` — a run-current + register recommendation from
-a faithful pure port of `klipper_tmc_autotune`'s `motor_constants` physics). It is the right
+a faithful pure port of `klipper_tmc_autotune`'s `motor_constants` physics;
+`/api/drivers/{config-block,apply,init,autotune}` — copy-to-config and the gated live
+`SET_TMC_*` / `INIT_TMC` / `AUTOTUNE_TMC` writes, refused while printing). It is the right
 home for
 operations that should not run in the browser — privileged file or system actions,
 the live `ACCELEROMETER_MEASURE` / `TEST_RESONANCES` capture orchestration,
