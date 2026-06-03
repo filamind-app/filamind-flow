@@ -85,8 +85,10 @@ build / flash / device routes (`/api/firmware/*`), the **input-shaping**
 resonance-analysis routes (`/api/shaper/*` — which vendor Klipper's
 `shaper_calibrate` and add pure-numpy ports of the Shake&Tune analyses: axes-map,
 spectrogram, and the machine vibrations profile), and the **motor-drivers**
-inventory route (`/api/drivers/status` — TMC driver state aggregated from the live
-config + per-driver `get_status`). It is the right home for
+routes (`/api/drivers/status` — TMC driver state aggregated from the live config +
+per-driver `get_status`, annotated from a curated capability catalog shipped as
+`app/data/driver_catalog.json`; `/api/drivers/catalog` — that capability map). It is the
+right home for
 operations that should not run in the browser — privileged file or system actions,
 the live `ACCELEROMETER_MEASURE` / `TEST_RESONANCES` capture orchestration,
 multi-call aggregations, or scheduled jobs — added as new route modules under

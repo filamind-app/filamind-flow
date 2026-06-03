@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.52.0] - 2026-06-03
+
+### Added
+
+- **Motor Drivers P2a — driver capability map.** Each driver card is now annotated with
+  authoritative reference data for its TMC model, from a curated capability catalog
+  (verified against the Klipper / Kalico driver code): **communication interface**
+  (UART / SPI / both), the **current cap**, and accurate **capabilities** (StealthChop /
+  SpreadCycle / CoolStep / StallGuard / temperature) — so the chips reflect what the model
+  truly supports rather than only what the config exposes. A ⚠ hint flags a run current
+  near the model's rated cap, and a new "where the model facts come from" help note explains
+  the source.
+  - New endpoint **`GET /api/drivers/catalog`** returns the full capability map (keyed by
+    model, with aliases like 2225→2208 / 2226→2209 / 5161→5160), backing this and the
+    upcoming motor picker.
+  - Data baked to `backend/app/data/driver_catalog.json`; covers TMC2208 / 2209 / 2130 /
+    2240 / 2660 / 5160 (and aliases). Unknown models still render fully from live config.
+
 ## [0.51.0] - 2026-06-03
 
 ### Added

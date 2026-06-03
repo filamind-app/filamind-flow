@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings
 from app.main import create_app
-from app.services import drivers_service
+from app.services import driver_catalog, drivers_service
 
 # A deliberately mixed, multi-model printer to prove generic (not SV08-specific) parsing:
 # a 2209 on X (SpreadCycle, sgthrs), a 2240 on Z (StealthChop, sg4_thrs, temperature),
@@ -143,6 +143,32 @@ def test_drivers_status_parses_mixed_models(monkeypatch: pytest.MonkeyPatch) -> 
     e = by_stepper["extruder"]
     assert e["axis"] == "E"
     assert e["chopper_mode"] == "StealthChop"  # threshold 5.0
+
+    # Each driver is annotated with authoritative catalog reference data.
+    assert x["info"]["interface"] == "UART"
+    assert x["info"]["sensorless"] is True
+    assert z["info"]["model"] == "tmc2240"
+    assert z["info"]["interface"] == "UART/SPI"
+    assert z["info"]["temperature"] is True  # the 2240 has a sensor
+
+
+def test_driver_catalog_lookup() -> None:
+    assert driver_catalog.lookup("tmc2209")["sensorless"] is True
+    assert driver_catalog.lookup("tmc2208")["sensorless"] is False
+    # Aliases resolve to their base model (2226 is configured as [tmc2209]).
+    assert driver_catalog.lookup("tmc2226")["model"] == "tmc2209"
+    assert driver_catalog.lookup("TMC2240")["temperature"] is True  # case-insensitive
+    assert driver_catalog.lookup("nope") is None
+
+
+def test_drivers_catalog_route() -> None:
+    client = TestClient(create_app())
+    response = client.get("/api/drivers/catalog")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["source"]
+    models = {d["model"] for d in body["drivers"]}
+    assert {"tmc2209", "tmc2240", "tmc5160"} <= models
 
 
 def test_chopper_mode() -> None:

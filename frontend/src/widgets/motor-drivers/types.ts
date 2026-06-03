@@ -1,4 +1,24 @@
-/** Mirrors the backend `DriversStatus` / `TmcDriver` schema (GET /api/drivers/status). */
+/** Mirrors the backend `DriversStatus` / `TmcDriver` / `DriverCatalog` schemas
+ *  (GET /api/drivers/status, GET /api/drivers/catalog). */
+
+/** Reference capabilities for a TMC model, from the curated driver catalog. */
+export interface DriverInfo {
+  model: string
+  name: string
+  interface: string | null
+  max_current_a: number | null
+  current_note: string | null
+  microsteps: number | null
+  stealthchop: boolean | null
+  spreadcycle: boolean | null
+  coolstep: boolean | null
+  stallguard: boolean | null
+  stallguard_field: string | null
+  sensorless: boolean | null
+  temperature: boolean | null
+  aliases: string[]
+  notes: string | null
+}
 
 export interface TmcDriver {
   stepper: string
@@ -19,9 +39,15 @@ export interface TmcDriver {
   drv_status: Record<string, unknown> | null
   capabilities: Record<string, boolean>
   registers: Record<string, unknown>
+  info: DriverInfo | null
 }
 
 export interface DriversStatus {
   reachable: boolean
   drivers: TmcDriver[]
+}
+
+export interface DriverCatalog {
+  source: string
+  drivers: DriverInfo[]
 }

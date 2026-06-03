@@ -64,10 +64,42 @@ export function temperatureLabel(d: TmcDriver): string {
   return d.model === 'tmc2240' ? '—' : 'no sensor'
 }
 
+/** Authoritative capabilities from the driver catalog when known, else the
+ *  config-inferred set. The catalog is verified per-model, so prefer it. */
+export function effectiveCapabilities(d: TmcDriver): Record<string, boolean> {
+  const i = d.info
+  if (!i) return d.capabilities
+  return {
+    stealthchop: !!i.stealthchop,
+    spreadcycle: !!i.spreadcycle,
+    coolstep: !!i.coolstep,
+    stallguard: !!i.stallguard,
+    temperature: !!i.temperature,
+  }
+}
+
 /** Capabilities present, as short uppercase chips, in a stable order. */
 export function capabilityChips(caps: Record<string, boolean>): string[] {
   const order = ['stealthchop', 'spreadcycle', 'coolstep', 'stallguard', 'temperature']
   return order.filter((k) => caps[k]).map((k) => k.toUpperCase())
+}
+
+/** Communication interface from the catalog (UART / SPI / UART·SPI), or '' if unknown. */
+export function interfaceLabel(d: TmcDriver): string {
+  return d.info?.interface?.replace('/', '·') ?? ''
+}
+
+/** Max current cap from the catalog, e.g. "≤ 2.0 A", or '' if unknown. */
+export function maxCurrentLabel(d: TmcDriver): string {
+  const a = d.info?.max_current_a
+  return a != null ? `≤ ${a.toFixed(1)} A` : ''
+}
+
+/** Whether the run current is close to (or over) the model's rated cap — a gentle warning. */
+export function nearCurrentCap(d: TmcDriver): boolean {
+  const cap = d.info?.max_current_a
+  const run = d.run_current ?? d.run_current_config
+  return cap != null && run != null && run >= cap * 0.9
 }
 
 /** "stepper_x" -> "X axis" / "extruder" -> "Extruder" — a friendly card heading. */
