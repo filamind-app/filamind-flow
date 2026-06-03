@@ -45,7 +45,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | DELETE | `/api/shaper/archive/{id}` | Delete an archived run (folder + index entry).                  |
 | POST   | `/api/shaper/archive/save-config` | Save a generated `[input_shaper]` config to the archive. |
 | POST   | `/api/shaper/archive/save-file` | Copy an existing host resonance CSV into the archive.      |
-| GET    | `/api/drivers/status`      | Live TMC stepper-driver inventory: current / mode / microsteps / StallGuard / temperature / health (Motor Drivers widget). |
+| GET    | `/api/drivers/status`      | Live TMC stepper-driver inventory: current / mode / microsteps / StallGuard / temperature / health, each annotated with its model's catalog facts (Motor Drivers widget). |
+| GET    | `/api/drivers/catalog`     | The curated TMC driver capability map (interface, current cap, chopper modes, StallGuard field, sensorless / temperature) keyed by model. |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

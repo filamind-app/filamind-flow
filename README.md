@@ -62,7 +62,7 @@ run server-side.
 | ------ | ------------ | ------ |
 | **Firmware Upgrade** | Build & flash Klipper firmware on every MCU — per-board Kconfig profiles, a live web editor, Katapult / DFU / SD-card flashing, Beacon probe updates, host service control, host↔MCU update alerts, and an external-firmware inspector / diff. | ✅ Shipped |
 | **Input Shaping** | Turn a resonance capture into a ready `[input_shaper]` config — recommended shaper, SVG frequency-response chart, per-axis X/Y, A⇄B compare, a quality grade (A–F) with illustrated diagnostics, live tests, belt & axes-map & vibration tooling, and a guided wizard. **Full Shake&Tune parity.** | ✅ Shipped |
-| **Motor Drivers** | A live inventory of every TMC stepper driver, read straight from the Klipper config — run/hold current, chopper mode, microsteps, StallGuard, temperature, and health, with a glossary and illustrated help. Generic across all printers and TMC models. | 🚧 P1 (read-only dashboard) |
+| **Motor Drivers** | A live inventory of every TMC stepper driver, read straight from the Klipper config — run/hold current, chopper mode, microsteps, StallGuard, temperature, and health, each annotated with authoritative per-model facts (interface, current cap, capabilities) from a built-in capability map. Glossary + illustrated help. Generic across all printers and TMC models. | 🚧 P1–P2a (dashboard + capability map) |
 
 See [ROADMAP.md](ROADMAP.md) for the phase-by-phase plan of each widget.
 

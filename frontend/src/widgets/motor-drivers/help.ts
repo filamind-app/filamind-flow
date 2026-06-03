@@ -14,6 +14,7 @@ export type HelpTopic =
   | 'stallguard'
   | 'health'
   | 'temperature'
+  | 'catalog'
 
 export interface HelpEntry {
   title: string
@@ -60,6 +61,10 @@ export const GLOSSARY: GlossaryTerm[] = [
     term: 'Sense resistor',
     def: 'A tiny resistor that sets the driver’s current scale. It must match your board; the dashboard shows the configured value.',
   },
+  {
+    term: 'Interface (UART / SPI)',
+    def: 'How the MCU talks to the driver. UART is a single wire (TMC220x family); SPI is a faster multi-wire bus used by the performance parts (2130 / 5160). The TMC2240 can do either.',
+  },
 ]
 
 export const HELP: Record<HelpTopic, HelpEntry> = {
@@ -102,6 +107,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Temperature',
     body: 'Only some drivers (e.g. the TMC2240) have a built-in temperature sensor. On models without one — like the common TMC2209 — temperature reads “no sensor”, which is normal, not an error.',
     illo: 'current',
+  },
+  catalog: {
+    title: 'Where the model facts come from',
+    body: 'The interface (UART / SPI), the current cap, and the supported features shown on each card come from a built-in capability map of the TMC family — verified against the Klipper / Kalico driver code. It tells you, for example, that a TMC2208 can’t do sensorless homing while a TMC2209 can, or that only the TMC2240 reports its own temperature. Electrical figures are datasheet-typical; your board, sense resistor, and cooling set the real limits.',
+    illo: 'driver',
   },
 }
 

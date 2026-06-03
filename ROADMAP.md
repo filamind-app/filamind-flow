@@ -99,7 +99,8 @@ so recommendations work even without the `klipper_tmc_autotune` host extra insta
 | Phase | Scope | Risk |
 | ----- | ----- | ---- |
 | ✅ **1 — Dashboard** | Read-only inventory: every `tmcXXXX <stepper>` with run/hold current (live vs configured), chopper mode, microsteps, sense resistor, StallGuard threshold, temperature, a live health badge (`drv_status`), capability chips, and an advanced-register view. Glossary + illustrated help + "how to read this" steps. (`drivers_service` + `GET /api/drivers/status`) | low (read-only) |
-| 📋 **2 — Motor picker** | The 207-motor database + the 26-driver capability map; pick/auto-detect the motor on each stepper; persist a motor↔stepper mapping. | low |
+| ✅ **2a — Capability map** | Annotate each driver with authoritative per-model reference data (interface UART/SPI, current cap, chopper modes, StallGuard field, sensorless / temperature) from a curated catalog verified against the Klipper/Kalico code; a ⚠ near-cap hint. (`GET /api/drivers/catalog`) | low (read-only) |
+| 📋 **2b — Motor picker** | The 207-motor database; pick / auto-detect the motor on each stepper; persist a motor↔stepper mapping. | low |
 | 📋 **3 — Recommender** | Pure `motor_constants` port → recommended run current + driver registers from datasheet specs + supply voltage; preview vs live diff. (`POST /api/drivers/recommend`) | low (compute) |
 | 📋 **4 — Apply** | Copy-to-config, gated live `SET_TMC_CURRENT` / `SET_TMC_FIELD` writes, and drive `AUTOTUNE_TMC` when the extra is installed. | high (writes registers) |
 | 📋 **5 — Sensorless homing** | StallGuard threshold helper (`sgthrs` / `sgt` / `sg4_thrs`) with a guided sweep. | high (motion) |
