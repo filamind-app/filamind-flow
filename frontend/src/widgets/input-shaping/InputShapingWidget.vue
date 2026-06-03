@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 
+import CsvSourceChooser from './CsvSourceChooser.vue'
 import DiagnosticIllo from './DiagnosticIllo.vue'
 import GuidedTune from './GuidedTune.vue'
 import HelpNote from './HelpNote.vue'
 import ResonanceCompare from './ResonanceCompare.vue'
 import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
-import { analyzeResonance } from './api'
+import { analyzeResonance, analyzeResonanceFile, saveConfigToArchive } from './api'
 import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
 import { diagnose, diagnoseAxes, type DiagnosticLevel } from './diagnose'
@@ -28,15 +29,15 @@ function tabClass(m: Mode): string {
   return mode.value === m ? 'bg-brand-cyan ring-2 ring-ink' : ''
 }
 
-const file = ref<File | null>(null)
-const axis = ref<'auto' | 'x' | 'y'>('auto')
 const analysis = ref<ShaperAnalysis | null>(null)
 const error = ref<string | null>(null)
 const busy = ref(false)
 const copied = ref(false)
+const savedToArchive = ref(false)
 const showAdvanced = ref(false)
 const showCompare = ref(false)
 const showFactors = ref(false)
+const chooserRef = ref<InstanceType<typeof CsvSourceChooser> | null>(null)
 
 /** Advanced calibration knobs (kept as strings for the inputs; blank = default). */
 const params = reactive({ maxFreq: '200', scv: '5', maxSmoothing: '', dampingRatio: '' })
@@ -110,13 +111,6 @@ function num(value: string, fallback: number): number {
   return value.trim() !== '' && Number.isFinite(n) ? n : fallback
 }
 
-function onPick(event: Event): void {
-  const input = event.target as HTMLInputElement
-  file.value = input.files?.[0] ?? null
-  analysis.value = null
-  error.value = null
-}
-
 /** Files an analysis into the displayed state, the combined config, and history. */
 function applyResult(result: ShaperAnalysis): void {
   analysis.value = result
@@ -143,19 +137,29 @@ function applyResult(result: ShaperAnalysis): void {
   }
 }
 
-async function analyze(): Promise<void> {
-  if (!file.value || busy.value) return
+/** Analyses whichever source the chooser picked — an upload or a host/archive file —
+ *  applying the shared advanced params either way, then files the result. */
+async function onSourceAnalyze(req: {
+  kind: 'upload' | 'host'
+  file?: File
+  path?: string
+  axis: string | null
+}): Promise<void> {
+  if (busy.value) return
   error.value = null
   busy.value = true
   try {
-    const ax = axis.value === 'auto' ? undefined : axis.value
-    const result = await analyzeResonance(file.value, {
-      axis: ax,
+    const opts = {
+      axis: req.axis ?? undefined,
       maxFreq: num(params.maxFreq, 200),
       scv: num(params.scv, 5),
       maxSmoothing: params.maxSmoothing.trim() ? Number(params.maxSmoothing) : undefined,
       dampingRatio: params.dampingRatio.trim() ? Number(params.dampingRatio) : undefined,
-    })
+    }
+    const result =
+      req.kind === 'upload' && req.file
+        ? await analyzeResonance(req.file, opts)
+        : await analyzeResonanceFile(req.path ?? '', opts)
     applyResult(result)
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Analysis failed'
@@ -177,6 +181,22 @@ async function copyConfig(): Promise<void> {
     window.setTimeout(() => (copied.value = false), 1500)
   } catch {
     error.value = 'Copy failed — select the text and copy it manually.'
+  }
+}
+
+/** Saves the generated config to the on-host archive (a deletable historical record). */
+async function saveConfig(): Promise<void> {
+  if (!configText.value) return
+  try {
+    await saveConfigToArchive(configText.value, analysis.value?.axis ?? null, {
+      shaper: analysis.value?.recommended_shaper ?? null,
+      freq: analysis.value?.recommended_freq ?? null,
+    })
+    savedToArchive.value = true
+    window.setTimeout(() => (savedToArchive.value = false), 1500)
+    chooserRef.value?.refresh()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Save to archive failed'
   }
 }
 </script>
@@ -209,38 +229,19 @@ async function copyConfig(): Promise<void> {
       <GuidedTune @analyzed="applyResult" @exit="mode = 'analyze'" />
     </div>
 
-    <!-- ANALYZE — manual: pick a CSV, tune the knobs, compare two captures. -->
+    <!-- ANALYZE — pick a CSV (upload or from the host / archive), tune the knobs, compare. -->
     <div v-show="mode === 'analyze'" class="space-y-3">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <HelpNote topic="analyze" />
         <HelpNote topic="glossary" />
       </div>
+      <CsvSourceChooser ref="chooserRef" :busy="busy" @analyze="onSourceAnalyze" />
       <div class="flex flex-wrap items-center gap-2">
-        <label class="nb-btn cursor-pointer px-2 py-1 text-xs">
-          📈 Select CSV
-          <input type="file" accept=".csv" class="hidden" @change="onPick" />
-        </label>
-        <select v-model="axis" :class="inputClass" title="Axis this data belongs to">
-          <option value="auto">axis: auto</option>
-          <option value="x">axis: X</option>
-          <option value="y">axis: Y</option>
-        </select>
-        <button
-          class="nb-btn bg-brand-lime px-3 py-1 text-xs"
-          :disabled="!file || busy"
-          @click="analyze"
-        >
-          {{ busy ? 'Analyzing…' : '🚀 Analyze' }}
-        </button>
         <button class="nb-btn px-2 py-1 text-[10px]" @click="showAdvanced = !showAdvanced">
           ⚙ advanced
         </button>
         <button class="nb-btn px-2 py-1 text-[10px]" @click="showCompare = !showCompare">
           ⇄ compare
         </button>
-        <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
-          file.name
-        }}</span>
       </div>
 
       <div
@@ -534,6 +535,9 @@ async function copyConfig(): Promise<void> {
         <span class="flex-1"></span>
         <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyConfig">
           {{ copied ? '✅ Copied' : '📋 Copy' }}
+        </button>
+        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="saveConfig">
+          {{ savedToArchive ? '✅ Saved' : '💾 Archive' }}
         </button>
         <button class="nb-btn px-2 py-0.5 text-[10px]" @click="clearResults">clear</button>
       </div>

@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.48.0] - 2026-06-03
+
+### Added — Input Shaping: unified CSV source + archive browser (UX overhaul, 5 of N)
+
+- **One place to pick the CSV to analyse.** The Analyze view now has a `CsvSourceChooser` with a
+  segmented **📤 Upload** ⟷ **🖥 From printer** control. "From printer" lists both the resonance
+  CSVs on the host *and* the persistent archive, so the previously-separate upload and host-import
+  paths are unified — all flowing into the one analysis path (and carrying the advanced params
+  either way).
+- **Archive browser.** Saved runs are listed with per-file **download** and **delete**, a 💾 **save**
+  on each host capture, and a 💾 **Archive** button beside the config block's Copy — so a generated
+  `[input_shaper]` or a scan CSV can be kept as a deletable historical record. (Backend from v0.47.0.)
+- The host-file list moved out of **Live tools** (now motion-only) into the chooser, removing the
+  duplication. `/analyze-file` now also accepts `max_smoothing` / `damping_ratio` so a local-file
+  analysis honours the same knobs as an upload.
+
 ## [0.47.0] - 2026-06-03
 
 ### Added — Input Shaping: persistent on-host archive (backend, UX overhaul 4 of N)
