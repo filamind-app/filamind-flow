@@ -1,7 +1,7 @@
 /** Pure display helpers for the Motor Drivers dashboard — kept out of the component
  *  so they're unit-testable and the template stays declarative.
  */
-import type { MotorSpec, TmcDriver } from './types'
+import type { DriverRecommendation, MotorSpec, TmcDriver } from './types'
 
 /** "tmc2209" -> "TMC2209". */
 export function driverModelLabel(model: string): string {
@@ -127,4 +127,32 @@ export function filterMotors(catalog: MotorSpec[], query: string): MotorSpec[] {
   return catalog.filter(
     (m) => m.model.toLowerCase().includes(q) || m.manufacturer.toLowerCase().includes(q),
   )
+}
+
+/** One row of the recommendation preview: the live value vs the recommended one. */
+export interface RecRow {
+  label: string
+  current: number | null
+  recommended: number
+  changed: boolean
+}
+
+/** Builds the recommended-vs-current diff rows for a driver. `changed` is true when the
+ *  live value is unknown or differs from the recommendation. */
+export function recommendationRows(d: TmcDriver, rec: DriverRecommendation): RecRow[] {
+  const reg = d.registers
+  const num = (v: unknown): number | null => (typeof v === 'number' ? v : null)
+  const row = (label: string, current: number | null, recommended: number): RecRow => ({
+    label,
+    current,
+    recommended,
+    changed: current === null || current !== recommended,
+  })
+  return [
+    row('run current (A)', d.run_current, rec.run_current),
+    row('pwm_grad', num(reg.pwm_grad), rec.pwm_grad),
+    row('pwm_ofs', num(reg.pwm_ofs), rec.pwm_ofs),
+    row('hstrt', num(reg.hstrt), rec.hstrt),
+    row('hend', num(reg.hend), rec.hend),
+  ]
 }

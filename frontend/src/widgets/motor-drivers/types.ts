@@ -71,3 +71,27 @@ export interface MotorCatalog {
   manufacturers: string[]
   motors: MotorSpec[]
 }
+
+/** Mirrors the backend `DriverRecommendation` (POST /api/drivers/recommend). */
+export interface DriverRecommendation {
+  motor_model: string
+  motor_name: string
+  run_current: number
+  run_current_basis: string
+  pwm_grad: number
+  pwm_ofs: number
+  hstrt: number
+  hend: number
+  max_pwm_rps: number
+  cbemf: number
+  voltage: number
+  toff: number
+  tbl: number
+}
+
+export interface RecommendRequest {
+  motor_model: string
+  voltage?: number
+  run_current?: number | null
+  is_2240?: boolean
+}

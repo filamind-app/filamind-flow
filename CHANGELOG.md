@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.54.0] - 2026-06-03
+
+### Added
+
+- **Motor Drivers P3 — tuning recommender.** Once a motor is assigned to a stepper, each
+  card can compute a suggested **run current** plus the StealthChop / SpreadCycle register
+  values (**pwm_grad, pwm_ofs, hstrt, hend**) from the motor's datasheet specs and your
+  supply voltage — a faithful port of `klipper_tmc_autotune`'s `motor_constants` physics, so
+  it works **even without that add-on installed**. The run current defaults to a conservative
+  70% of the motor's rating (overridable). Results are shown as a **preview diffed against the
+  live config** (changed values highlighted), with the max StealthChop speed; **nothing is
+  written to the driver** — applying is a later, safety-gated step (P4).
+  - Backend: pure `motor_constants` + `recommender` services; **`POST /api/drivers/recommend`**
+    (404 unknown motor, 422 if the motor lacks the needed datasheet specs).
+
 ## [0.53.1] - 2026-06-03
 
 ### Fixed

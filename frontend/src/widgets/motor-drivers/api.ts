@@ -1,6 +1,6 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { DriversStatus, MotorCatalog } from './types'
+import type { DriverRecommendation, DriversStatus, MotorCatalog, RecommendRequest } from './types'
 
 /** Fetches the read-only TMC driver inventory from the FilaMind backend. */
 export async function fetchDriverStatus(): Promise<DriversStatus> {
@@ -36,4 +36,22 @@ export async function saveMotorAssignment(
   if (!response.ok) {
     throw new Error(`Motor assignment failed (${response.status})`)
   }
+}
+
+/** Computes a driver-tuning recommendation for a motor (compute-only). */
+export async function fetchRecommendation(req: RecommendRequest): Promise<DriverRecommendation> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/drivers/recommend`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req),
+  })
+  if (!response.ok) {
+    const detail = await response
+      .json()
+      .then((b) => b?.detail)
+      .catch(() => null)
+    throw new Error(detail || `Recommendation failed (${response.status})`)
+  }
+  return (await response.json()) as DriverRecommendation
 }
