@@ -126,6 +126,24 @@ export interface AxesMapResult {
   source_files: string[]
 }
 
+/** One saved run in the on-host input-shaping archive (a capture and/or a config). */
+export interface ArchiveRun {
+  id: string
+  at: string
+  kind: string
+  axis: string | null
+  summary: Record<string, unknown>
+  files: string[]
+  size: number
+  config_text: string | null
+}
+
+export interface ArchiveListResponse {
+  runs: ArchiveRun[]
+  dir: string
+  keep_n: number
+}
+
 /** A smooth (low-vibration) speed band, sorted best-first. */
 export interface SpeedRange {
   start: number

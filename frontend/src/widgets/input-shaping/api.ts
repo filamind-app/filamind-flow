@@ -1,6 +1,8 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
+  ArchiveListResponse,
+  ArchiveRun,
   AxesMapResult,
   BeltComparison,
   NoiseResult,
@@ -76,10 +78,17 @@ export async function listResonanceFiles(): Promise<ResonanceFilesResponse> {
 }
 
 /** Analyses a resonance CSV that already exists on the printer host (by path). */
-export async function analyzeResonanceFile(path: string, axis?: string): Promise<ShaperAnalysis> {
+export async function analyzeResonanceFile(
+  path: string,
+  opts: AnalyzeOptions = {},
+): Promise<ShaperAnalysis> {
   const { backendUrl } = resolveEndpoints()
   const params = new URLSearchParams({ path })
-  if (axis) params.set('axis', axis)
+  if (opts.axis) params.set('axis', opts.axis)
+  if (opts.scv != null) params.set('scv', String(opts.scv))
+  if (opts.maxFreq != null) params.set('max_freq', String(opts.maxFreq))
+  if (opts.maxSmoothing != null) params.set('max_smoothing', String(opts.maxSmoothing))
+  if (opts.dampingRatio != null) params.set('damping_ratio', String(opts.dampingRatio))
   const response = await fetch(`${backendUrl}/api/shaper/analyze-file?${params}`, {
     method: 'POST',
   })
@@ -170,4 +179,68 @@ export async function runVibrationsProfile(
   )
   if (!response.ok) throw new Error(await errorDetail(response, 'Vibrations profile failed'))
   return (await response.json()) as VibrationsProfile
+}
+
+/** Lists the saved runs (captures + generated configs) in the on-host archive. */
+export async function listArchive(): Promise<ArchiveListResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/archive`)
+  if (!response.ok) throw new Error(await errorDetail(response, 'Listing the archive failed'))
+  return (await response.json()) as ArchiveListResponse
+}
+
+/** Deletes an archived run (folder + index entry). */
+export async function deleteArchiveRun(id: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/archive/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Delete failed'))
+}
+
+/** Downloads a file (CSV / config) stored in an archived run (browser download). */
+export async function downloadArchiveFile(id: string, filename: string): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/shaper/archive/${encodeURIComponent(id)}/file/${encodeURIComponent(filename)}`,
+  )
+  if (!response.ok) throw new Error(await errorDetail(response, 'Download failed'))
+  const url = URL.createObjectURL(await response.blob())
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+/** Saves a generated `[input_shaper]` config to the archive (new run, or attached). */
+export async function saveConfigToArchive(
+  configText: string,
+  axis?: string | null,
+  summary: Record<string, unknown> = {},
+): Promise<ArchiveRun> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/archive/save-config`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ config_text: configText, axis: axis ?? null, summary }),
+  })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Save to archive failed'))
+  return (await response.json()) as ArchiveRun
+}
+
+/** Copies an existing host resonance CSV into the archive as a saved run. */
+export async function saveFileToArchive(
+  path: string,
+  kind = 'shaper',
+  axis?: string | null,
+): Promise<ArchiveRun> {
+  const { backendUrl } = resolveEndpoints()
+  const params = new URLSearchParams({ path, kind })
+  if (axis) params.set('axis', axis)
+  const response = await fetch(`${backendUrl}/api/shaper/archive/save-file?${params}`, {
+    method: 'POST',
+  })
+  if (!response.ok) throw new Error(await errorDetail(response, 'Save to archive failed'))
+  return (await response.json()) as ArchiveRun
 }

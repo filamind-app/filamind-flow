@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import {
-  analyzeResonanceFile,
   compareBelts,
-  listResonanceFiles,
   measureNoise,
   runAxesMap,
   runLiveTest,
@@ -19,7 +17,6 @@ import type {
   AxesMapResult,
   BeltComparison,
   NoiseResult,
-  ResonanceFile,
   ShaperAnalysis,
   StaticExcitationResult,
   VibrationsProfile as VibrationsProfileResult,
@@ -29,10 +26,7 @@ import VibrationsProfile from './VibrationsProfile.vue'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis] }>()
 
-const files = ref<ResonanceFile[]>([])
-const dirs = ref<string[]>([])
 const error = ref<string | null>(null)
-const busy = ref(false)
 const liveAxis = ref<'x' | 'y'>('x')
 const liveReady = ref(false)
 const liveBusy = ref(false)
@@ -95,34 +89,6 @@ function msg(e: unknown, fallback: string): string {
   return e instanceof Error ? e.message : fallback
 }
 
-function kb(size: number): string {
-  return size >= 1024 ? `${(size / 1024).toFixed(0)} KB` : `${size} B`
-}
-
-async function loadFiles(): Promise<void> {
-  error.value = null
-  try {
-    const r = await listResonanceFiles()
-    files.value = r.files
-    dirs.value = r.dirs
-  } catch (e) {
-    error.value = msg(e, 'Could not list printer files')
-  }
-}
-
-async function importFile(f: ResonanceFile): Promise<void> {
-  if (busy.value) return
-  error.value = null
-  busy.value = true
-  try {
-    emit('analyzed', await analyzeResonanceFile(f.path, f.axis ?? undefined))
-  } catch (e) {
-    error.value = msg(e, 'Analysis failed')
-  } finally {
-    busy.value = false
-  }
-}
-
 async function checkNoise(): Promise<void> {
   if (noiseBusy.value) return
   error.value = null
@@ -144,7 +110,6 @@ async function live(): Promise<void> {
     const result = await runLiveTest(liveAxis.value)
     liveReady.value = false
     emit('analyzed', result)
-    await loadFiles()
   } catch (e) {
     error.value = msg(e, 'Live test failed')
   } finally {
@@ -159,7 +124,6 @@ async function runBelts(): Promise<void> {
   try {
     belts.value = await compareBelts()
     beltsReady.value = false
-    await loadFiles()
   } catch (e) {
     error.value = msg(e, 'Belt comparison failed')
   } finally {
@@ -210,6 +174,8 @@ async function runStatic(): Promise<void> {
   }
 }
 
+// (host-file import + the file list now live in the Analyze tab's CSV source chooser)
+
 async function runVib(): Promise<void> {
   if (vibBusy.value || !vibReady.value) return
   error.value = null
@@ -226,19 +192,14 @@ async function runVib(): Promise<void> {
     vibBusy.value = false
   }
 }
-
-onMounted(loadFiles)
 </script>
 
 <template>
   <div class="space-y-2 rounded-brutal border-2 border-ink bg-paper p-2">
-    <div class="flex items-center justify-between">
-      <span class="text-xs font-bold uppercase tracking-wide">From the printer</span>
-      <button class="nb-btn px-2 py-0.5 text-[10px]" @click="loadFiles">↻ refresh</button>
-    </div>
+    <span class="text-xs font-bold uppercase tracking-wide">Live tools</span>
     <p class="font-mono text-[9px] opacity-60">
-      ⏳ Live tests move the toolhead and can take <strong>1–5 minutes</strong> (a belt comparison
-      runs two full sweeps) — keep this page open until the result appears.
+      ⏳ These move the toolhead and can take <strong>1–5 minutes</strong> (a belt comparison runs
+      two full sweeps) — keep this page open until the result appears.
     </p>
 
     <!-- Accelerometer noise pre-check — motion-free, validates the sensor mount. -->
@@ -650,18 +611,5 @@ onMounted(loadFiles)
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
-
-    <!-- Resonance CSVs already on the host. -->
-    <p v-if="!files.length" class="font-mono text-[10px] opacity-60">
-      No resonance CSVs found{{ dirs.length ? ` in ${dirs.join(', ')}` : '' }}.
-    </p>
-    <div v-for="f in files" :key="f.path" class="flex items-center gap-2 font-mono text-[10px]">
-      <span v-if="f.axis" class="nb-badge shrink-0 bg-brand-cyan">{{ f.axis.toUpperCase() }}</span>
-      <span class="min-w-0 flex-1 truncate">{{ f.name }}</span>
-      <span class="shrink-0 opacity-50">{{ kb(f.size) }}</span>
-      <button class="nb-btn shrink-0 px-2 py-0.5" :disabled="busy" @click="importFile(f)">
-        analyze
-      </button>
-    </div>
   </div>
 </template>

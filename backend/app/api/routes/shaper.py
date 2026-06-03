@@ -70,12 +70,20 @@ async def analyze_resonance_file(
     axis: str | None = Query(None),
     scv: float = Query(5.0),
     max_freq: float = Query(200.0),
+    max_smoothing: float | None = Query(None),
+    damping_ratio: float | None = Query(None),
     settings: Settings = Depends(get_settings),
 ) -> ShaperAnalysis:
     """Analyses a resonance CSV that already exists on the printer host (no upload)."""
     try:
         result = resonance_service.analyze_file(
-            settings.resonance_dirs, path, axis=axis, scv=scv, max_freq=max_freq
+            settings.resonance_dirs,
+            path,
+            axis=axis,
+            scv=scv,
+            max_freq=max_freq,
+            max_smoothing=max_smoothing,
+            damping_ratio=damping_ratio,
         )
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
