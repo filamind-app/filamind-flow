@@ -24,6 +24,7 @@ import type {
   StaticExcitationResult,
   VibrationsProfile as VibrationsProfileResult,
 } from './types'
+import HelpNote from './HelpNote.vue'
 import VibrationsProfile from './VibrationsProfile.vue'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis] }>()
@@ -245,6 +246,7 @@ onMounted(loadFiles)
         </button>
         <span class="opacity-60">motion-free · run before testing</span>
       </div>
+      <HelpNote topic="noise" />
       <div v-if="noise" class="space-y-0.5">
         <div class="flex flex-wrap items-center gap-2">
           <span class="nb-badge" :class="noiseClass(noise.grade)">{{
@@ -301,6 +303,10 @@ onMounted(loadFiles)
         <strong>Compare belts</strong> runs two sweeps along the CoreXY belt diagonals;
         <strong>axes map</strong> jogs ~30 mm in X, Y, Z to detect the sensor orientation.
       </p>
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <HelpNote topic="belts" />
+        <HelpNote topic="axesMap" />
+      </div>
     </div>
 
     <!-- Belt comparison (CoreXY): the two belt-direction responses overlaid. -->
@@ -508,6 +514,7 @@ onMounted(loadFiles)
         Buzzes the toolhead in place near the frequency — touch belts, the toolhead and frame to
         find what rattles. Refused while printing.
       </p>
+      <HelpNote topic="sustain" />
       <div v-if="staticResult && specChart && energyChart" class="space-y-1">
         <div class="flex flex-wrap items-center gap-2">
           <span
@@ -609,6 +616,7 @@ onMounted(loadFiles)
         <strong>step</strong> is finer but slower. Reports the smoothest speeds, the speeds to
         avoid, motor symmetry and the motor resonance. Refused while printing.
       </p>
+      <HelpNote topic="vibrations" />
       <VibrationsProfile v-if="vibResult" :result="vibResult" />
     </div>
 

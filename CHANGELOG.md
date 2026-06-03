@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.46.0] - 2026-06-03
+
+### Added — Input Shaping: built-in explanations + illustrations (UX overhaul, 2 of N)
+
+- **The widget now teaches as it works.** A collapsed-by-default **"ℹ what's this?"** note sits
+  beside each section — glossary (6 core terms), how to read the A–F grade, the frequency chart,
+  the shaper table, the config block, and every live tool (noise / belts / axes-map / sustain /
+  vibrations) plus a "guided vs. manual" primer. Each expands a short plain-language explanation
+  and, where it helps, a **hand-drawn SVG illustration** (resonance peak, shaper impulses, belt
+  pair, sensor axes, speed sweep, capture→analyze→apply flow). All copy lives in one `help.ts`,
+  with the numbers anchored to the actual grading thresholds.
+- The cryptic frequency-chart caption (`Hz · left PSD · right vibration reduction`) is replaced
+  with plain wording (`frequency (Hz) → · solid = measured · faint = shaper leftover`).
+- Collapsed by default, so the default view stays uncluttered.
+
 ## [0.45.0] - 2026-06-03
 
 ### Changed — Input Shaping: widget reorganized (UX overhaul, 1 of N)

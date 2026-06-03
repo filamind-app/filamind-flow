@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 
 import DiagnosticIllo from './DiagnosticIllo.vue'
 import GuidedTune from './GuidedTune.vue'
+import HelpNote from './HelpNote.vue'
 import ResonanceCompare from './ResonanceCompare.vue'
 import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
 import { analyzeResonance } from './api'
@@ -203,10 +204,17 @@ async function copyConfig(): Promise<void> {
     </div>
 
     <!-- GUIDED — kept mounted (v-show) so an in-progress wizard survives a tab switch. -->
-    <GuidedTune v-show="mode === 'guided'" @analyzed="applyResult" @exit="mode = 'analyze'" />
+    <div v-show="mode === 'guided'" class="space-y-2">
+      <HelpNote topic="guided" />
+      <GuidedTune @analyzed="applyResult" @exit="mode = 'analyze'" />
+    </div>
 
     <!-- ANALYZE — manual: pick a CSV, tune the knobs, compare two captures. -->
     <div v-show="mode === 'analyze'" class="space-y-3">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <HelpNote topic="analyze" />
+        <HelpNote topic="glossary" />
+      </div>
       <div class="flex flex-wrap items-center gap-2">
         <label class="nb-btn cursor-pointer px-2 py-1 text-xs">
           📈 Select CSV
@@ -271,6 +279,7 @@ async function copyConfig(): Promise<void> {
           clear
         </button>
       </div>
+      <HelpNote topic="history" />
       <p v-if="!history.length" class="font-mono text-[10px] opacity-60">No calibrations yet.</p>
       <div
         v-for="(h, i) in historyTrends"
@@ -339,6 +348,8 @@ async function copyConfig(): Promise<void> {
           {{ showFactors ? 'hide' : 'details' }}
         </button>
       </div>
+
+      <HelpNote topic="grade" />
 
       <div
         v-if="grade && showFactors"
@@ -476,8 +487,11 @@ async function copyConfig(): Promise<void> {
             recommended
           </span>
           <span class="flex items-center gap-1" style="color: #ff5247">▲ peak</span>
-          <span class="opacity-50">Hz · left PSD · right vibration reduction</span>
+          <span class="opacity-50"
+            >frequency (Hz) → · solid = measured · faint = shaper leftover</span
+          >
         </div>
+        <HelpNote topic="chart" />
       </div>
 
       <div class="space-y-1">
@@ -503,6 +517,8 @@ async function copyConfig(): Promise<void> {
           <span class="text-right">≤{{ s.max_accel.toFixed(0) }}</span>
         </div>
       </div>
+
+      <HelpNote topic="shapers" />
     </template>
 
     <!-- Combined config block (accumulates across the X and Y captures) — shown in
@@ -528,6 +544,7 @@ async function copyConfig(): Promise<void> {
       <p class="text-[9px] italic opacity-50">
         Paste into your <code>printer.cfg</code>, then restart Klipper.
       </p>
+      <HelpNote topic="config" />
     </div>
   </div>
 </template>
