@@ -95,3 +95,24 @@ export interface RecommendRequest {
   run_current?: number | null
   is_2240?: boolean
 }
+
+export interface ApplyRequest {
+  stepper: string
+  run_current?: number | null
+  hold_current?: number | null
+  fields?: Record<string, number>
+}
+
+export interface ConfigBlockRequest {
+  stepper: string
+  model: string
+  run_current?: number | null
+  fields?: Record<string, number>
+}
+
+/** Result of a write / revert / autotune: whether it ran + the exact g-code sent. */
+export interface ApplyResponse {
+  ok: boolean
+  applied: string[]
+  message: string
+}
