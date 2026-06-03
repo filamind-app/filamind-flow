@@ -83,9 +83,12 @@ versioned `/api` router. It exposes liveness (`/api/health`), a server-side
 Moonraker reachability probe (`/api/moonraker/status`), the **firmware**
 build / flash / device routes (`/api/firmware/*`), and the **input-shaping**
 resonance-analysis routes (`/api/shaper/*` — which vendor Klipper's
-`shaper_calibrate`). It is the right home for operations that should not run in the
-browser — privileged file or system actions, multi-call aggregations, or scheduled
-jobs — added as new route modules under `app/api/routes/`.
+`shaper_calibrate` and add pure-numpy ports of the Shake&Tune analyses: axes-map,
+spectrogram, and the machine vibrations profile). It is the right home for
+operations that should not run in the browser — privileged file or system actions,
+the live `ACCELEROMETER_MEASURE` / `TEST_RESONANCES` capture orchestration,
+multi-call aggregations, or scheduled jobs — added as new route modules under
+`app/api/routes/`.
 
 ## Design system
 
