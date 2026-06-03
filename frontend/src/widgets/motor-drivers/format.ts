@@ -1,7 +1,7 @@
 /** Pure display helpers for the Motor Drivers dashboard — kept out of the component
  *  so they're unit-testable and the template stays declarative.
  */
-import type { TmcDriver } from './types'
+import type { MotorSpec, TmcDriver } from './types'
 
 /** "tmc2209" -> "TMC2209". */
 export function driverModelLabel(model: string): string {
@@ -108,4 +108,23 @@ export function axisHeading(d: TmcDriver): string {
     return d.axis === 'E' ? 'Extruder' : `Extruder ${d.axis.slice(1)}`
   if (d.axis) return `${d.axis} axis`
   return d.stepper
+}
+
+/** A motor's key datasheet specs as a compact line, e.g. "0.40 Nm · 1.7 A · 1.5 Ω · 2.8 mH". */
+export function motorSpecLabel(m: MotorSpec): string {
+  const parts: string[] = []
+  if (m.holding_torque_Nm != null) parts.push(`${m.holding_torque_Nm.toFixed(2)} Nm`)
+  if (m.max_current_A != null) parts.push(`${m.max_current_A.toFixed(1)} A`)
+  if (m.resistance_ohm != null) parts.push(`${m.resistance_ohm} Ω`)
+  if (m.inductance_H != null) parts.push(`${(m.inductance_H * 1000).toFixed(1)} mH`)
+  return parts.join(' · ') || '—'
+}
+
+/** Filters the motor catalog by a free-text query over model + manufacturer. */
+export function filterMotors(catalog: MotorSpec[], query: string): MotorSpec[] {
+  const q = query.trim().toLowerCase()
+  if (!q) return catalog
+  return catalog.filter(
+    (m) => m.model.toLowerCase().includes(q) || m.manufacturer.toLowerCase().includes(q),
+  )
 }

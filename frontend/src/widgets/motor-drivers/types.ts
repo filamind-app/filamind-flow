@@ -20,6 +20,18 @@ export interface DriverInfo {
   notes: string | null
 }
 
+/** A stepper motor's datasheet parameters, from the motor catalog. */
+export interface MotorSpec {
+  manufacturer: string
+  model: string
+  resistance_ohm: number | null
+  inductance_H: number | null
+  holding_torque_Nm: number | null
+  max_current_A: number | null
+  steps_per_rev: number
+  source: string
+}
+
 export interface TmcDriver {
   stepper: string
   model: string
@@ -40,6 +52,7 @@ export interface TmcDriver {
   capabilities: Record<string, boolean>
   registers: Record<string, unknown>
   info: DriverInfo | null
+  motor: MotorSpec | null
 }
 
 export interface DriversStatus {
@@ -50,4 +63,11 @@ export interface DriversStatus {
 export interface DriverCatalog {
   source: string
   drivers: DriverInfo[]
+}
+
+export interface MotorCatalog {
+  source: string
+  count: number
+  manufacturers: string[]
+  motors: MotorSpec[]
 }

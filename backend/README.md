@@ -47,6 +47,9 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/shaper/archive/save-file` | Copy an existing host resonance CSV into the archive.      |
 | GET    | `/api/drivers/status`      | Live TMC stepper-driver inventory: current / mode / microsteps / StallGuard / temperature / health, each annotated with its model's catalog facts (Motor Drivers widget). |
 | GET    | `/api/drivers/catalog`     | The curated TMC driver capability map (interface, current cap, chopper modes, StallGuard field, sensorless / temperature) keyed by model. |
+| GET    | `/api/drivers/motors`      | The stepper-motor catalog (200+ motors, datasheet parameters) for the motor picker. |
+| GET    | `/api/drivers/mapping`     | The saved stepper → motor assignments. |
+| POST   | `/api/drivers/mapping`     | Assign a catalogued motor to a stepper (empty `motor_model` clears it). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

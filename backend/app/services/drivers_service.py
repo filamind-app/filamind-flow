@@ -16,7 +16,7 @@ from typing import Any
 
 import httpx
 
-from app.services import driver_catalog
+from app.services import driver_catalog, motor_catalog, motor_mapping
 from app.services.moonraker_client import MoonrakerClient
 
 #: A TMC driver config section name, e.g. "tmc2209 stepper_x" / "tmc5160 stepper_y".
@@ -144,9 +144,11 @@ def _sections(configfile: Any) -> dict[str, Any]:
     return {}
 
 
-async def gather_drivers(moonraker_url: str) -> dict[str, Any]:
+async def gather_drivers(moonraker_url: str, data_dir: str = "") -> dict[str, Any]:
     """Read-only TMC driver inventory: every ``tmcXXXX <stepper>`` the printer has.
 
+    Each driver is annotated with its model's catalog reference (``info``) and the motor
+    the user assigned to that stepper (``motor``, from ``<data_dir>/motor-mapping.json``).
     Returns ``{reachable, drivers}``; on an unreachable Moonraker returns
     ``reachable=False`` with an empty list instead of raising.
     """
@@ -159,6 +161,7 @@ async def gather_drivers(moonraker_url: str) -> dict[str, Any]:
     except httpx.HTTPError:
         return {"reachable": False, "drivers": []}
 
+    mapping = motor_mapping.read_mapping(data_dir) if data_dir else {}
     drivers: list[dict[str, Any]] = []
     for name in names:
         get_status = live.get(name)
@@ -166,5 +169,7 @@ async def gather_drivers(moonraker_url: str) -> dict[str, Any]:
         record = _parse_driver(name, get_status, sections)
         # Annotate with authoritative reference data for the model (None if unknown).
         record["info"] = driver_catalog.lookup(record["model"])
+        # Attach the motor the user assigned to this stepper (None if unassigned).
+        record["motor"] = motor_catalog.lookup(mapping.get(record["stepper"], ""))
         drivers.append(record)
     return {"reachable": True, "drivers": drivers}

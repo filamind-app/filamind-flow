@@ -8,12 +8,28 @@ import {
   driverHealth,
   driverModelLabel,
   effectiveCapabilities,
+  filterMotors,
   interfaceLabel,
   maxCurrentLabel,
+  motorSpecLabel,
   nearCurrentCap,
   temperatureLabel,
 } from '../format'
-import type { DriverInfo, TmcDriver } from '../types'
+import type { DriverInfo, MotorSpec, TmcDriver } from '../types'
+
+function motor(overrides: Partial<MotorSpec> = {}): MotorSpec {
+  return {
+    manufacturer: 'LDO Motors',
+    model: 'ldo-42sth48-2004ah',
+    resistance_ohm: 1.5,
+    inductance_H: 0.0028,
+    holding_torque_Nm: 0.45,
+    max_current_A: 2.0,
+    steps_per_rev: 200,
+    source: 'motor_database.cfg',
+    ...overrides,
+  }
+}
 
 function info(overrides: Partial<DriverInfo> = {}): DriverInfo {
   return {
@@ -57,6 +73,7 @@ function driver(overrides: Partial<TmcDriver> = {}): TmcDriver {
     capabilities: { stealthchop: true, spreadcycle: true, stallguard: true },
     registers: {},
     info: null,
+    motor: null,
     ...overrides,
   }
 }
@@ -174,5 +191,43 @@ describe('catalog-aware helpers', () => {
       false,
     )
     expect(nearCurrentCap(driver({ info: null }))).toBe(false)
+  })
+})
+
+describe('motorSpecLabel', () => {
+  it('formats the key datasheet specs', () => {
+    expect(motorSpecLabel(motor())).toBe('0.45 Nm · 2.0 A · 1.5 Ω · 2.8 mH')
+  })
+  it('omits missing fields and falls back to an em dash', () => {
+    expect(
+      motorSpecLabel(motor({ resistance_ohm: null, inductance_H: null, max_current_A: null })),
+    ).toBe('0.45 Nm')
+    expect(
+      motorSpecLabel(
+        motor({
+          holding_torque_Nm: null,
+          resistance_ohm: null,
+          inductance_H: null,
+          max_current_A: null,
+        }),
+      ),
+    ).toBe('—')
+  })
+})
+
+describe('filterMotors', () => {
+  const catalog = [
+    motor({ manufacturer: 'LDO Motors', model: 'ldo-42sth48-2004ah' }),
+    motor({ manufacturer: 'Moons', model: 'ms17hd2p4100' }),
+    motor({ manufacturer: 'OMC / StepperOnline', model: '17hs19-2004s1' }),
+  ]
+  it('returns all motors for an empty query', () => {
+    expect(filterMotors(catalog, '  ')).toHaveLength(3)
+  })
+  it('matches on model substring', () => {
+    expect(filterMotors(catalog, '42sth').map((m) => m.model)).toEqual(['ldo-42sth48-2004ah'])
+  })
+  it('matches on manufacturer, case-insensitively', () => {
+    expect(filterMotors(catalog, 'moons').map((m) => m.model)).toEqual(['ms17hd2p4100'])
   })
 })
