@@ -187,6 +187,12 @@ async function onSourceAnalyze(req: {
   }
 }
 
+/** A live tool (noise / belts / axes-map / sustain / vibrations) reported a result —
+ *  file it into the audit so every test type is aggregated in one place. */
+function onRecorded(record: Omit<AuditRecord, 'id' | 'source'>): void {
+  localAudit.value = recordAudit(record)
+}
+
 function clearResults(): void {
   analysis.value = null
   for (const key of Object.keys(byAxis)) delete byAxis[key]
@@ -286,7 +292,7 @@ async function saveConfig(): Promise<void> {
     </div>
 
     <!-- LIVE TOOLS — on-printer captures. Kept mounted (v-show) so results persist. -->
-    <ResonanceFromPrinter v-show="mode === 'live'" @analyzed="applyResult" />
+    <ResonanceFromPrinter v-show="mode === 'live'" @analyzed="applyResult" @recorded="onRecorded" />
 
     <!-- AUDIT — every past result (local + the on-host archive), per-property. -->
     <div

@@ -2,7 +2,10 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import {
   archiveToRecord,
+  buildNoiseRecord,
   buildShaperRecord,
+  buildSustainRecord,
+  buildVibrationsRecord,
   loadLocalAudit,
   mergeAudit,
   migrateLegacyHistory,
@@ -11,7 +14,13 @@ import {
   type AuditRecord,
 } from '../audit'
 import type { QualityGrade } from '../grade'
-import type { ArchiveRun, ShaperAnalysis } from '../types'
+import type {
+  ArchiveRun,
+  NoiseResult,
+  ShaperAnalysis,
+  StaticExcitationResult,
+  VibrationsProfile,
+} from '../types'
 
 afterEach(() => localStorage.clear())
 
@@ -153,5 +162,39 @@ describe('audit', () => {
     expect(r.kind).toBe('shaper')
     expect(r.grade).toEqual({ letter: 'A', score: 95 })
     expect(r.fields[0]).toEqual({ label: 'Recommended', value: 'MZV @ 57.0 Hz' })
+  })
+
+  it('builds per-property records for the live tools', () => {
+    const noise = buildNoiseRecord({
+      chips: [{ label: 'xy', x: 1, y: 2, z: 3 }],
+      max_noise: 44.8,
+      grade: 'good',
+      ok: true,
+      threshold: 100,
+    } as NoiseResult)
+    expect(noise.kind).toBe('noise')
+    expect(noise.fields.find((f) => f.label === 'Status')?.value).toBe('good')
+
+    const sustain = buildSustainRecord({
+      axis: 'x',
+      freq: 57,
+      dominant_freq: 57.3,
+      excited_band_pct: 92,
+      dominant_ok: true,
+      verdict: 'holding',
+    } as StaticExcitationResult)
+    expect(sustain.kind).toBe('static')
+    expect(sustain.axis).toBe('x')
+
+    const vib = buildVibrationsRecord({
+      recommended_speed: 46,
+      symmetry_pct: 100,
+      motor_freq: 146,
+      peak_speeds: [120],
+      verdict: 'ok',
+    } as VibrationsProfile)
+    expect(vib.kind).toBe('vibrations')
+    expect(vib.fields.find((f) => f.label === 'Symmetry')?.value).toBe('100%')
+    expect(vib.fields.find((f) => f.label === 'Avoid')?.value).toContain('120')
   })
 })
