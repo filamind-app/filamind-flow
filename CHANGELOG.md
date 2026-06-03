@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.60.0] - 2026-06-03
+
+### Added
+
+- **Firmware Upgrade widget — built-in help layer (#82).** Per the project's widget-UX rule
+  (already used by Input Shaping and Motor Drivers), the Firmware Upgrade widget now has a
+  collapsed help row: a **glossary**, **"what's this?" explanations** for each section
+  (host/MCU sync, toolchain badges, services, devices, flashing) with **inline SVG
+  illustrations**, and a **"build → flash" quick guide**. Collapsed by default — zero clutter.
+
 ## [0.59.1] - 2026-06-03
 
 ### Fixed
