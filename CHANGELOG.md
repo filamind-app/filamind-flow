@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.43.0] - 2026-06-03
+
+### Added — Input Shaping: vibrations profile backend (Shake&Tune parity, 5 of 5 — part 1/3)
+
+- **Machine vibrations profile (backend).** New `POST /api/shaper/vibrations-profile` and a
+  pure `vibrations_service` (a numpy port of Shake&Tune's `vibrations_computation.py`, reusing
+  the vendored Klipper `ShaperCalibrate` for the per-segment PSD — no matplotlib, no Klipper
+  host). It sweeps a range of speeds along each kinematic motor angle (0/90 for
+  Cartesian/CoreXZ, 45/135 for CoreXY) while `ACCELEROMETER_MEASURE` brackets each constant-
+  speed burst, then reports the **smoothest speed ranges**, the **resonance speeds to avoid**,
+  the smoothest **travel directions** (polar energy), a motor **symmetry** score, and the
+  **motors' resonant frequency + damping**. The whole sweep is one blocking call kept inside
+  nginx's 1200s budget by a coarse default speed increment (finer increments take longer).
+  Print-guarded; requires a configured resonance tester + accelerometer. The browser UI and
+  the guided-wizard integration land in the next two releases.
+
 ## [0.42.1] - 2026-06-03
 
 ### Fixed

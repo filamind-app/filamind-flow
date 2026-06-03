@@ -584,3 +584,67 @@ class StaticExcitationResult(BaseModel):
     dominant_ok: bool
     verdict: str
     source_file: str | None = None
+
+
+class SpeedRange(BaseModel):
+    """A smooth (low-vibration) speed band, sorted best-first."""
+
+    #: Range start (mm/s).
+    start: float
+    #: Range end (mm/s).
+    end: float
+    #: Mean vibration energy in the band, as a percent of the signal max (lower better).
+    energy_pct: float
+
+
+class AngleRange(BaseModel):
+    """A smooth travel-direction band (degrees), sorted best-first."""
+
+    #: Range start (degrees).
+    start: float
+    #: Range end (degrees).
+    end: float
+    #: Mean vibration energy in the band, as a percent of the signal max (lower better).
+    energy_pct: float
+
+
+class VibrationsProfile(BaseModel):
+    """Result of a machine vibrations profile — smoothest speeds/angles + motor health."""
+
+    kinematics: str
+    accel: float
+    max_freq: float
+    #: The two motor angles measured (0/90 Cartesian/CoreXZ, 45/135 CoreXY).
+    main_angles: list[float] = []
+    #: Number of captures actually used in the analysis.
+    segments_used: int
+    #: Number of captures recorded during the sweep.
+    segments_captured: int = 0
+    #: Speed axis (mm/s) shared by the energy profile + spectrogram columns.
+    speeds: list[float] = []
+    #: Normalised vibration metric per speed (0..1) — the speed-energy profile.
+    energy_profile: list[float] = []
+    #: Normalised max-energy curve per speed (0..1).
+    max_profile: list[float] = []
+    #: Speeds with resonance peaks to avoid (mm/s).
+    peak_speeds: list[float] = []
+    #: Smoothest speed bands, best-first.
+    good_speed_ranges: list[SpeedRange] = []
+    #: Angle axis (deg, 0..360) shared by the polar energy + spectrogram rows.
+    angles: list[float] = []
+    #: Normalised vibration energy per travel direction (0..1) — the polar curve.
+    angle_energy: list[float] = []
+    #: Smoothest travel-direction bands, best-first.
+    good_angle_ranges: list[AngleRange] = []
+    #: How alike the two motors behave (0-100%); low suggests a belt-tension mismatch.
+    symmetry_pct: float
+    #: Motors' main resonant frequency (Hz) and damping ratio, if derivable.
+    motor_freq: float | None = None
+    motor_damping: float | None = None
+    #: True if too much low-frequency motion was recorded (lower ACCEL and re-run).
+    low_freq_warning: bool = False
+    #: Log-normalised directional energy grid ``[angle][speed]``, 0..1 (the heatmap).
+    spectrogram: list[list[float]] = []
+    #: A suggested smooth speed (mm/s) to favour in the slicer.
+    recommended_speed: float | None = None
+    verdict: str
