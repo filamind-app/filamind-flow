@@ -75,9 +75,17 @@ const TOOLS: { key: keyof FirmwareTools; label: string }[] = [
   { key: 'can_utils', label: 'can-utils' },
 ]
 
+/** Maps a raw fetch failure to a clear, actionable message. */
+function describeError(e: unknown): string {
+  const m = e instanceof Error ? e.message : String(e)
+  if (/failed to fetch|networkerror|load failed|fetch/i.test(m)) {
+    return 'Cannot reach the FilaMind backend — check that the filamind-flow service is running and reachable.'
+  }
+  return m
+}
+
 async function load(silent = false): Promise<void> {
   if (!silent) loading.value = true
-  error.value = null
   try {
     const [statusData, boardsData, devicesData, profilesData] = await Promise.all([
       fetchFirmwareStatus(),
@@ -89,8 +97,11 @@ async function load(silent = false): Promise<void> {
     boards.value = boardsData.boards
     devices.value = devicesData.devices
     profiles.value = profilesData.profiles
+    error.value = null
   } catch (e) {
-    if (!silent) error.value = e instanceof Error ? e.message : 'Failed to load firmware status'
+    // Surface the failure on silent refreshes too. Otherwise a poll that fails after
+    // the first successful load clears nothing and leaves the widget blank.
+    error.value = describeError(e)
   } finally {
     loading.value = false
   }
@@ -342,8 +353,20 @@ onUnmounted(() => {
     <FirmwareConfigEditor v-if="mode === 'configure'" @close="mode = 'status'" />
     <FirmwareDevicesPanel v-else-if="mode === 'devices'" @close="mode = 'status'" />
     <template v-else>
-      <div v-if="loading" class="font-mono text-xs">Loading firmware status…</div>
-      <div v-else-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+      <div v-if="loading && !status" class="font-mono text-xs">Loading firmware status…</div>
+      <div
+        v-else-if="error"
+        class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red px-2 py-1 text-surface"
+      >
+        <span class="min-w-0 flex-1 text-[11px]">{{ error }}</span>
+        <button
+          class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[10px] text-ink"
+          :disabled="loading"
+          @click="load()"
+        >
+          {{ loading ? 'retrying…' : '↻ retry' }}
+        </button>
+      </div>
 
       <template v-else-if="status">
         <div class="space-y-1.5">
@@ -580,6 +603,10 @@ onUnmounted(() => {
           </button>
         </div>
       </template>
+
+      <p v-else class="font-mono text-xs opacity-70">
+        No firmware status yet — couldn't reach the backend.
+      </p>
     </template>
   </div>
 </template>

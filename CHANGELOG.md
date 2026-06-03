@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.50.1] - 2026-06-03
+
+### Fixed
+
+- **Firmware Upgrade widget no longer goes blank / shows a bare "Failed to fetch".** When the
+  backend was briefly unreachable, the silent 6 s refresh cleared the error and left no fresh
+  data, so the widget rendered an **empty panel** (and the initial failure showed only the raw
+  `Failed to fetch`). It now keeps the last good data on a transient refresh failure, shows a
+  clear **"Cannot reach the FilaMind backend — check that the filamind-flow service is running"**
+  message with a **Retry** button, and a fallback line instead of a blank panel.
+
 ## [0.50.0] - 2026-06-03
 
 ### Added — Input Shaping: every test type feeds the Audit (UX overhaul, 7 of 7 — complete)
