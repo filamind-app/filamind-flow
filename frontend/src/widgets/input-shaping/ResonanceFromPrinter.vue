@@ -9,6 +9,14 @@ import {
   runStaticExcitation,
   runVibrationsProfile,
 } from './api'
+import {
+  type AuditRecord,
+  buildAxesMapRecord,
+  buildBeltsRecord,
+  buildNoiseRecord,
+  buildSustainRecord,
+  buildVibrationsRecord,
+} from './audit'
 import { buildAxesVelocityChart } from './axesChart'
 import { angleClass, axesMapConfig, mappingArrow, matchVerdict, statusBg } from './axesMap'
 import { beltVerdict, buildCompareChart } from './compare'
@@ -24,7 +32,10 @@ import type {
 import HelpNote from './HelpNote.vue'
 import VibrationsProfile from './VibrationsProfile.vue'
 
-const emit = defineEmits<{ analyzed: [ShaperAnalysis] }>()
+const emit = defineEmits<{
+  analyzed: [ShaperAnalysis]
+  recorded: [Omit<AuditRecord, 'id' | 'source'>]
+}>()
 
 const error = ref<string | null>(null)
 const liveAxis = ref<'x' | 'y'>('x')
@@ -94,7 +105,9 @@ async function checkNoise(): Promise<void> {
   error.value = null
   noiseBusy.value = true
   try {
-    noise.value = await measureNoise()
+    const r = await measureNoise()
+    noise.value = r
+    emit('recorded', buildNoiseRecord(r))
   } catch (e) {
     error.value = msg(e, 'Noise check failed')
   } finally {
@@ -122,8 +135,10 @@ async function runBelts(): Promise<void> {
   error.value = null
   beltsBusy.value = true
   try {
-    belts.value = await compareBelts()
+    const r = await compareBelts()
+    belts.value = r
     beltsReady.value = false
+    emit('recorded', buildBeltsRecord(r))
   } catch (e) {
     error.value = msg(e, 'Belt comparison failed')
   } finally {
@@ -136,8 +151,10 @@ async function runAxes(): Promise<void> {
   error.value = null
   axesBusy.value = true
   try {
-    axesMapResult.value = await runAxesMap()
+    const r = await runAxesMap()
+    axesMapResult.value = r
     axesReady.value = false
+    emit('recorded', buildAxesMapRecord(r))
   } catch (e) {
     error.value = msg(e, 'Axes-map detection failed')
   } finally {
@@ -161,12 +178,14 @@ async function runStatic(): Promise<void> {
   error.value = null
   staticBusy.value = true
   try {
-    staticResult.value = await runStaticExcitation(
+    const r = await runStaticExcitation(
       staticAxis.value,
       Number(staticFreq.value) || 50,
       Number(staticDuration.value) || 15,
     )
+    staticResult.value = r
     staticReady.value = false
+    emit('recorded', buildSustainRecord(r))
   } catch (e) {
     error.value = msg(e, 'Sustain-frequency test failed')
   } finally {
@@ -181,11 +200,13 @@ async function runVib(): Promise<void> {
   error.value = null
   vibBusy.value = true
   try {
-    vibResult.value = await runVibrationsProfile({
+    const r = await runVibrationsProfile({
       maxSpeed: Number(vibMaxSpeed.value) || 200,
       speedIncrement: Number(vibIncrement.value) || 10,
     })
+    vibResult.value = r
     vibReady.value = false
+    emit('recorded', buildVibrationsRecord(r))
   } catch (e) {
     error.value = msg(e, 'Vibrations profile failed')
   } finally {

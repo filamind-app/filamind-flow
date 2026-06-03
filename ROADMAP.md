@@ -70,16 +70,18 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 - ✅ **Guided wizard** (phase 12, v0.41.0) + the **Vibrations + Pressure-Advance** steps (v0.42.0) — full Noise → Belts → Shaper → Vibrations → PA flow
 - ✅ **Vibrations profile** (phase 13, backend v0.43.0 + UI/wizard v0.44.0) — speed×angle vibration map → slicer speed guidance; the wizard's Vibrations step is now measured
 
-**Phase 14 — Widget reorganization & UX overhaul (in progress)**
+**Phase 14 — Widget reorganization & UX overhaul ✅ COMPLETE (v0.45.0 → v0.50.0)**
 
-A focused, multi-PR pass to simplify the widget after the feature build-out: clearer navigation, on-host persistence, a unified file source, an aggregated audit, and inline teaching.
+A focused, multi-PR pass that simplified the widget after the feature build-out: clearer navigation, on-host persistence, a unified file source, an aggregated audit, and inline teaching.
 
-- ✅ **Information architecture** (v0.45.0) — the six stacked toggle panels become a four-view tab strip: **Guided** (default) / **Analyze** / **Live tools** / **History**; the guided wizard stays mounted so an in-progress run survives a tab switch.
+- ✅ **Information architecture** (v0.45.0) — the six stacked toggle panels become a four-view tab strip: **Guided** (default) / **Analyze** / **Live tools** / **Audit**; the guided wizard stays mounted so an in-progress run survives a tab switch.
 - ✅ **Explanations + illustrations** (v0.46.0) — per-tool "what's this / how to read it" help + new hand-drawn SVGs, collapsed by default.
 - ✅ **Per-tool motion confirm** (v0.46.1) — each on-printer tool gets its own "moves the toolhead" gate (live / belts / axes-map split into separate panels).
 - ✅ **Persistent host archive** — a dedicated folder keeps recent scans + generated configs (review / download / delete), retention-bounded. Backend v0.47.0 + browser UI v0.48.0.
 - ✅ **Unified CSV source** (v0.48.0) — one chooser for an external upload *or* a local/host file (host dirs + archive).
-- ⏳ **Aggregated Audit** — every result organized by property; folds in the grade history. Shaper + archive merged into the Audit view v0.49.0; the live tools (noise / belts / axes-map / sustain / vibrations) join next.
+- ✅ **Aggregated Audit** (v0.49.0 + v0.50.0) — every result (shaper / noise / belts / axes-map / sustain / vibrations) organized by property in one view, merged with the archive; folds in the grade history.
+
+Plus a CI guard that fails on a stale committed `frontend/dist`.
 
 **Ideas (not yet sequenced)**
 

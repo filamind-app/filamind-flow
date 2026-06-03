@@ -1,12 +1,23 @@
 /** The Input Shaping "audit" — one aggregated, per-property record of every result
- *  (shaper analysis, and in a later step the live tools too), merged with the on-host
- *  archive. Browser-local (localStorage), additive: it never clears the legacy history,
- *  it folds it in once. Pure + testable; the component supplies the archive runs.
+ *  (shaper analysis + the live tools: noise / belts / axes-map / sustain / vibrations),
+ *  merged with the on-host archive. Browser-local (localStorage), additive: it never
+ *  clears the legacy history, it folds it in once. Pure + testable; the component
+ *  supplies the archive runs.
  */
 
+import { matchVerdict } from './axesMap'
+import { beltVerdict } from './compare'
 import type { QualityGrade } from './grade'
 import { loadHistory } from './history'
-import type { ArchiveRun, ShaperAnalysis } from './types'
+import type {
+  ArchiveRun,
+  AxesMapResult,
+  BeltComparison,
+  NoiseResult,
+  ShaperAnalysis,
+  StaticExcitationResult,
+  VibrationsProfile,
+} from './types'
 
 export type AuditKind =
   | 'shaper'
@@ -109,6 +120,97 @@ export function buildShaperRecord(
     verdict: grade.verdict,
     fields,
   }
+}
+
+function now(): string {
+  return new Date().toISOString()
+}
+
+/** Audit record for an accelerometer noise check. */
+export function buildNoiseRecord(n: NoiseResult): Omit<AuditRecord, 'id' | 'source'> {
+  return {
+    at: now(),
+    kind: 'noise',
+    axis: null,
+    verdict: `Max idle noise ${n.max_noise.toFixed(0)} (normal < ${n.threshold}).`,
+    fields: [
+      { label: 'Status', value: n.grade },
+      { label: 'Max noise', value: n.max_noise.toFixed(1) },
+      { label: 'Threshold', value: String(n.threshold) },
+      ...n.chips.map((c) => ({
+        label: c.label,
+        value: `x ${c.x.toFixed(0)} · y ${c.y.toFixed(0)} · z ${c.z.toFixed(0)}`,
+      })),
+    ],
+  }
+}
+
+/** Audit record for a CoreXY belt comparison. */
+export function buildBeltsRecord(b: BeltComparison): Omit<AuditRecord, 'id' | 'source'> {
+  const v = beltVerdict(b.belt_a, b.belt_b)
+  return {
+    at: now(),
+    kind: 'belts',
+    axis: null,
+    verdict: v.advice,
+    fields: [
+      { label: 'Match', value: v.matched ? 'matched' : 'mismatch' },
+      { label: 'Belt A peak', value: `${v.peakA.toFixed(1)} Hz` },
+      { label: 'Belt B peak', value: `${v.peakB.toFixed(1)} Hz` },
+      { label: 'Difference', value: `${v.diffPct.toFixed(0)}%` },
+    ],
+  }
+}
+
+/** Audit record for an axes-map detection. */
+export function buildAxesMapRecord(a: AxesMapResult): Omit<AuditRecord, 'id' | 'source'> {
+  return {
+    at: now(),
+    kind: 'axes_map',
+    axis: null,
+    verdict: matchVerdict(a),
+    fields: [
+      { label: 'axes_map', value: a.axes_map },
+      { label: 'Status', value: a.status },
+      { label: 'Gravity', value: `${a.gravity.toFixed(2)} m/s²` },
+      { label: 'Noise', value: a.noise.toFixed(0) },
+    ],
+  }
+}
+
+/** Audit record for a sustain-frequency hold. */
+export function buildSustainRecord(s: StaticExcitationResult): Omit<AuditRecord, 'id' | 'source'> {
+  return {
+    at: now(),
+    kind: 'static',
+    axis: s.axis,
+    verdict: s.verdict,
+    fields: [
+      { label: 'Target', value: `${s.freq.toFixed(0)} Hz` },
+      { label: 'Dominant', value: `${s.dominant_freq.toFixed(0)} Hz` },
+      { label: 'In band', value: `${s.excited_band_pct.toFixed(0)}%` },
+      { label: 'On target', value: s.dominant_ok ? 'yes' : 'no' },
+    ],
+  }
+}
+
+/** Audit record for a vibrations profile. */
+export function buildVibrationsRecord(v: VibrationsProfile): Omit<AuditRecord, 'id' | 'source'> {
+  const fields: AuditField[] = []
+  if (v.recommended_speed != null)
+    fields.push({ label: 'Smoothest', value: `${v.recommended_speed.toFixed(0)} mm/s` })
+  fields.push({ label: 'Symmetry', value: `${v.symmetry_pct.toFixed(0)}%` })
+  if (v.motor_freq != null)
+    fields.push({ label: 'Motor resonance', value: `${v.motor_freq.toFixed(0)} Hz` })
+  if (v.peak_speeds.length)
+    fields.push({
+      label: 'Avoid',
+      value: `${v.peak_speeds
+        .slice(0, 4)
+        .map((p) => p.toFixed(0))
+        .join(', ')} mm/s`,
+    })
+  return { at: now(), kind: 'vibrations', axis: null, verdict: v.verdict, fields }
 }
 
 /** One-time fold of the legacy grade-history into shaper records (only if audit is empty). */
