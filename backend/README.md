@@ -51,6 +51,10 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/drivers/mapping`     | The saved stepper → motor assignments. |
 | POST   | `/api/drivers/mapping`     | Assign a catalogued motor to a stepper (empty `motor_model` clears it). |
 | POST   | `/api/drivers/recommend`   | Recommend a run current + StealthChop/SpreadCycle registers for a motor (compute-only; faithful `motor_constants` port). |
+| POST   | `/api/drivers/config-block`| Render a printer.cfg override block to copy (no write). |
+| POST   | `/api/drivers/apply`       | Write tuning live via `SET_TMC_CURRENT` / `SET_TMC_FIELD` (refused while printing; validated). |
+| POST   | `/api/drivers/init`        | `INIT_TMC` — re-apply the stepper's configured registers (revert a live apply). |
+| POST   | `/api/drivers/autotune`    | Drive `AUTOTUNE_TMC` if the `klipper_tmc_autotune` add-on is installed for the stepper. |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

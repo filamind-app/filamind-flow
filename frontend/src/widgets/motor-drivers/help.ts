@@ -122,7 +122,7 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
   },
   recommend: {
     title: 'Recommended tuning',
-    body: 'Once a motor is assigned, FilaMind can compute a suggested run current and the StealthChop / SpreadCycle register values (pwm_grad, pwm_ofs, hstrt, hend) from the motor’s datasheet specs and your supply voltage — the same physics the klipper_tmc_autotune project uses, so it works even without that add-on installed. The run current defaults to a conservative 70% of the motor’s rating. It’s shown as a preview diffed against your live config; nothing is written to the driver (applying it is a later, safety-gated step).',
+    body: 'Once a motor is assigned, FilaMind can compute a suggested run current and the StealthChop / SpreadCycle register values (pwm_grad, pwm_ofs, hstrt, hend) from the motor’s datasheet specs and your supply voltage — the same physics the klipper_tmc_autotune project uses, so it works even without that add-on installed. The run current defaults to a conservative 70% of the motor’s rating. The result is diffed against your live config; you can then copy it to printer.cfg, or write it live behind a confirm (reversible with Revert, and refused while printing). If the autotune add-on is installed, you can run it instead.',
     illo: 'driver',
   },
 }

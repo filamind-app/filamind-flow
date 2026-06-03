@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.55.0] - 2026-06-03
+
+### Added
+
+- **Motor Drivers P4 — apply tuning.** The recommendation can now be acted on, three ways:
+  **copy a printer.cfg block** (always safe, no write); **apply it live** to the driver via
+  `SET_TMC_CURRENT` / `SET_TMC_FIELD` behind an **explicit confirm**; or **run AUTOTUNE_TMC**
+  when the `klipper_tmc_autotune` add-on is installed. A **Revert** button (`INIT_TMC`)
+  restores the configured values, and the dashboard refreshes to show the new live numbers.
+  - **Safety:** every live write is **refused server-side while the printer is printing**,
+    requires the UI confirm, validates all values (no g-code injection), and is reversible.
+  - Backend: `drivers_apply` service + **`POST /api/drivers/config-block` · `/apply` · `/init`
+    · `/autotune`**.
+
+### Changed
+
+- The "Recommended tuning" panel is no longer preview-only — it now offers copy / apply /
+  revert / autotune.
+
 ## [0.54.0] - 2026-06-03
 
 ### Added

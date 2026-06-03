@@ -842,3 +842,39 @@ class DriverRecommendation(BaseModel):
     voltage: float
     toff: int
     tbl: int
+
+
+class ApplyRequest(BaseModel):
+    """Push tuning to a driver now (gated). ``fields`` are TMC field names → values."""
+
+    stepper: str
+    run_current: float | None = None
+    hold_current: float | None = None
+    fields: dict[str, float] = {}
+
+
+class ConfigBlockRequest(BaseModel):
+    """Render a printer.cfg override block (copy-to-config; no write)."""
+
+    stepper: str
+    model: str
+    run_current: float | None = None
+    fields: dict[str, float] = {}
+
+
+class ConfigBlockResponse(BaseModel):
+    text: str
+
+
+class StepperRequest(BaseModel):
+    """A bare stepper target (for revert / autotune)."""
+
+    stepper: str
+
+
+class ApplyResponse(BaseModel):
+    """Result of a write/revert/autotune: whether it ran + the exact g-code sent."""
+
+    ok: bool
+    applied: list[str] = []
+    message: str
