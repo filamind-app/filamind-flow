@@ -70,6 +70,17 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 - ✅ **Guided wizard** (phase 12, v0.41.0) + the **Vibrations + Pressure-Advance** steps (v0.42.0) — full Noise → Belts → Shaper → Vibrations → PA flow
 - ✅ **Vibrations profile** (phase 13, backend v0.43.0 + UI/wizard v0.44.0) — speed×angle vibration map → slicer speed guidance; the wizard's Vibrations step is now measured
 
+**Phase 14 — Widget reorganization & UX overhaul (in progress)**
+
+A focused, multi-PR pass to simplify the widget after the feature build-out: clearer navigation, on-host persistence, a unified file source, an aggregated audit, and inline teaching.
+
+- ✅ **Information architecture** (v0.45.0) — the six stacked toggle panels become a four-view tab strip: **Guided** (default) / **Analyze** / **Live tools** / **History**; the guided wizard stays mounted so an in-progress run survives a tab switch.
+- 📋 **Explanations + illustrations** — per-tool "what's this / how to read it" help + new hand-drawn SVGs, collapsed by default.
+- 📋 **Per-tool motion confirm** — each on-printer tool gets its own "moves the toolhead" gate.
+- 📋 **Persistent host archive** — a dedicated folder keeps recent scans + generated configs (review / download / delete), retention-bounded.
+- 📋 **Unified CSV source** — one chooser for an external upload *or* a local/host file.
+- 📋 **Aggregated Audit** — every result (shaper / noise / belts / axes-map / sustain / vibrations) organized by property; folds in the grade history.
+
 **Ideas (not yet sequenced)**
 
 - 📋 Re-test recommendations from the grade · write the chosen `[input_shaper]` straight to `printer.cfg`.

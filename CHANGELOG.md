@@ -6,12 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Changed
+## [0.45.0] - 2026-06-03
 
-- **CI now fails on a stale `frontend/dist`.** The printer host serves the pre-built UI
-  bundle straight from git, so a forgotten rebuild would silently ship an old UI. CI now
-  runs `npm run build` and fails if anything under `frontend/dist` differs from what was
-  committed. Added a matching PR-template reminder.
+### Changed — Input Shaping: widget reorganized (UX overhaul, 1 of N)
+
+- **Four clear views instead of six stacked toggles.** The Input Shaping widget now opens on a
+  tab strip — **🧭 Guided** (the default landing view), **📈 Analyze**, **🔴 Live tools**,
+  **🕘 History** — so only one task is on screen at a time instead of a long scroll of
+  independently-toggled panels. The guided wizard is kept mounted, so an in-progress run
+  (including its minutes-long on-printer captures) survives a tab switch. Behavior-preserving:
+  every existing tool, the result view, and the combined `printer.cfg` block are unchanged —
+  just better organized. First step of a multi-PR Input Shaping UX overhaul.
+- **CI now fails on a stale `frontend/dist`.** The printer host serves the pre-built UI bundle
+  straight from git, so a forgotten rebuild would silently ship an old UI. CI now runs
+  `npm run build` and fails if anything under `frontend/dist` differs from what was committed.
+  Added a matching PR-template reminder.
 
 ## [0.44.1] - 2026-06-03
 
