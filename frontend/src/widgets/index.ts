@@ -22,4 +22,12 @@ export function registerWidgets(): void {
     description: 'Analyze a resonance CSV and find the best input shaper.',
     component: defineAsyncComponent(() => import('./input-shaping/InputShapingWidget.vue')),
   })
+
+  registerWidget({
+    id: 'motor-drivers',
+    title: 'Motor Drivers',
+    description: 'Live TMC stepper-driver inventory: current, mode, microsteps, and status.',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./motor-drivers/MotorDriversWidget.vue')),
+  })
 }

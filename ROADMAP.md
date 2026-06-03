@@ -87,6 +87,26 @@ Plus a CI guard that fails on a stale committed `frontend/dist`.
 
 - 📋 Re-test recommendations from the grade · write the chosen `[input_shaper]` straight to `printer.cfg`.
 
+### 🚧 Motor Drivers
+
+Understand and tune the TMC stepper drivers on any Klipper printer — from a read-only
+dashboard up to a guided tuning wizard. **Generic by design:** drivers are detected from
+the live config (any axis layout), and all TMC models are handled (2209 / 2208 / 2130 /
+2240 / 5160 / 2660…) by reading what the running config exposes — never hardcoded to one
+board. Reimplements the `motor_constants` physics (like the vendored `shaper_calibrate`)
+so recommendations work even without the `klipper_tmc_autotune` host extra installed.
+
+| Phase | Scope | Risk |
+| ----- | ----- | ---- |
+| ✅ **1 — Dashboard** | Read-only inventory: every `tmcXXXX <stepper>` with run/hold current (live vs configured), chopper mode, microsteps, sense resistor, StallGuard threshold, temperature, a live health badge (`drv_status`), capability chips, and an advanced-register view. Glossary + illustrated help + "how to read this" steps. (`drivers_service` + `GET /api/drivers/status`) | low (read-only) |
+| 📋 **2 — Motor picker** | The 207-motor database + the 26-driver capability map; pick/auto-detect the motor on each stepper; persist a motor↔stepper mapping. | low |
+| 📋 **3 — Recommender** | Pure `motor_constants` port → recommended run current + driver registers from datasheet specs + supply voltage; preview vs live diff. (`POST /api/drivers/recommend`) | low (compute) |
+| 📋 **4 — Apply** | Copy-to-config, gated live `SET_TMC_CURRENT` / `SET_TMC_FIELD` writes, and drive `AUTOTUNE_TMC` when the extra is installed. | high (writes registers) |
+| 📋 **5 — Sensorless homing** | StallGuard threshold helper (`sgthrs` / `sgt` / `sg4_thrs`) with a guided sweep. | high (motion) |
+| 📋 **6 — Live monitor** | Live `drv_status` telemetry: temperature, `SG_RESULT`, `CS_ACTUAL`, fault flags, over time. | low (read-only) |
+| 📋 **7 — Tuning wizard** | A guided driver-tuning walk-through tying the above together. | medium |
+| 📋 **8 — Motors-sync** | Integrate `motors_sync` for dual-motor phase alignment (dual-Z / dual-X). | high (motion) |
+
 ## Platform
 
 - 📋 Smart "Back to UI" (auto-detect Mainsail / Fluidd, host-preserving link)
