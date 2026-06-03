@@ -18,6 +18,7 @@ export type HelpTopic =
   | 'motor'
   | 'recommend'
   | 'sensorless'
+  | 'monitor'
 
 export interface HelpEntry {
   title: string
@@ -120,6 +121,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Assigning a motor',
     body: 'Pick the stepper motor wired to each axis from a built-in catalog of 200+ motors. Klipper doesn’t know which motor you fitted — telling FilaMind unlocks its datasheet specs (holding torque, rated current, resistance, inductance), which a later step uses to recommend a safe run current and driver tuning. It’s saved on the printer and changes nothing on the driver by itself.',
     illo: 'current',
+  },
+  monitor: {
+    title: 'Live monitor',
+    body: 'Watch a driver in real time while it runs: temperature, StallGuard load (SG_RESULT — it falls toward zero as mechanical load rises), current scale (CS_ACTUAL), and any fault flags (overtemperature, short, open-load). The driver only reports these while the motor is enabled, so move or home the axis to see live data. Read-only — it just observes.',
+    illo: 'driver',
   },
   sensorless: {
     title: 'Sensorless homing',

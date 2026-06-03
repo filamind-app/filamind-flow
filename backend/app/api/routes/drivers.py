@@ -9,6 +9,7 @@ from app.models.schemas import (
     ConfigBlockRequest,
     ConfigBlockResponse,
     DriverCatalog,
+    DriverLive,
     DriverRecommendation,
     DriversStatus,
     HomeRequest,
@@ -38,6 +39,14 @@ async def drivers_status(settings: Settings = Depends(get_settings)) -> DriversS
     Generic across all Klipper printers."""
     data = await drivers_service.gather_drivers(settings.moonraker_url, settings.data_dir)
     return DriversStatus.model_validate(data)
+
+
+@router.get("/live/{stepper}", response_model=DriverLive)
+async def driver_live(stepper: str, settings: Settings = Depends(get_settings)) -> DriverLive:
+    """Fast live telemetry for one driver (temperature / SG_RESULT / CS_ACTUAL / faults) —
+    for the live monitor's quick polling. ``drv_status`` is null while the motor is disabled."""
+    data = await drivers_service.gather_live(settings.moonraker_url, stepper)
+    return DriverLive.model_validate(data)
 
 
 @router.get("/catalog", response_model=DriverCatalog)

@@ -6,7 +6,9 @@ import {
   chopperLabel,
   currentLabel,
   driverHealth,
+  activeFlags,
   driverModelLabel,
+  drvNum,
   effectiveCapabilities,
   filterMotors,
   interfaceLabel,
@@ -14,6 +16,7 @@ import {
   motorSpecLabel,
   nearCurrentCap,
   recommendationRows,
+  sparklinePath,
   temperatureLabel,
 } from '../format'
 import type { DriverInfo, DriverRecommendation, MotorSpec, TmcDriver } from '../types'
@@ -230,6 +233,25 @@ describe('filterMotors', () => {
   })
   it('matches on manufacturer, case-insensitively', () => {
     expect(filterMotors(catalog, 'moons').map((m) => m.model)).toEqual(['ms17hd2p4100'])
+  })
+})
+
+describe('live monitor helpers', () => {
+  it('reads numeric drv_status fields, else null', () => {
+    expect(drvNum({ sg_result: 120, cs_actual: 16 }, 'sg_result')).toBe(120)
+    expect(drvNum({ sg_result: 120 }, 'cs_actual')).toBeNull()
+    expect(drvNum(null, 'sg_result')).toBeNull()
+  })
+  it('lists only the set fault flags, deduped to human labels', () => {
+    expect(activeFlags({ otpw: 1, ot: 0, s2ga: 1, stst: 0 })).toEqual(['temp-warn', 'short A'])
+    expect(activeFlags({ ot: 1, otpw: 1 })).toEqual(['overtemp', 'temp-warn'])
+    expect(activeFlags(null)).toEqual([])
+  })
+  it('builds an auto-scaled sparkline path (empty for <2 points)', () => {
+    expect(sparklinePath([5], 100, 20)).toBe('')
+    const path = sparklinePath([0, 10], 100, 20)
+    expect(path.startsWith('M0.0,20.0')).toBe(true) // min at the bottom
+    expect(path).toContain('L100.0,0.0') // max at the top
   })
 })
 

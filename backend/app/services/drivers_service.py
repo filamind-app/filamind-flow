@@ -173,3 +173,35 @@ async def gather_drivers(moonraker_url: str, data_dir: str = "") -> dict[str, An
         record["motor"] = motor_catalog.lookup(mapping.get(record["stepper"], ""))
         drivers.append(record)
     return {"reachable": True, "drivers": drivers}
+
+
+async def gather_live(moonraker_url: str, stepper: str) -> dict[str, Any]:
+    """Fast, focused live telemetry for ONE driver — for the live monitor's quick polling.
+
+    Returns just that driver's ``get_status`` (temperature / run_current / drv_status) without
+    re-reading the whole config. ``drv_status`` is ``None`` while the motor is disabled.
+    """
+    client = MoonrakerClient(moonraker_url)
+    try:
+        names = await client.list_objects()
+        name = next(
+            (n for n in names if _DRIVER_SECTION.match(n) and n.split(" ", 1)[-1] == stepper),
+            None,
+        )
+        if name is None:
+            return {"reachable": True, "stepper": stepper, "model": None, "drv_status": None}
+        status = await client.query_objects([name])
+    except httpx.HTTPError:
+        return {"reachable": False, "stepper": stepper, "model": None, "drv_status": None}
+
+    obj = status.get(name)
+    obj = obj if isinstance(obj, dict) else {}
+    drv_status = obj.get("drv_status")
+    return {
+        "reachable": True,
+        "stepper": stepper,
+        "model": name.split(" ", 1)[0],
+        "temperature": _as_float(obj.get("temperature")),
+        "run_current": _as_float(obj.get("run_current")),
+        "drv_status": drv_status if isinstance(drv_status, dict) else None,
+    }

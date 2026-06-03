@@ -79,6 +79,9 @@ class _FakeClient:
     def __init__(self) -> None:
         self.queried: list[list[str]] = []
 
+    async def list_objects(self) -> list[str]:
+        return ["configfile", "print_stats", *_LIVE.keys()]
+
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
         self.queried.append(objects)
         if "configfile" in objects:
@@ -169,6 +172,26 @@ def test_drivers_catalog_route() -> None:
     assert body["source"]
     models = {d["model"] for d in body["drivers"]}
     assert {"tmc2209", "tmc2240", "tmc5160"} <= models
+
+
+def test_driver_live_route(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(drivers_service, "MoonrakerClient", lambda *a, **k: _FakeClient())
+    client = TestClient(create_app())
+    res = client.get("/api/drivers/live/stepper_z")
+    assert res.status_code == 200
+    body = res.json()
+    assert body["reachable"] is True
+    assert body["model"] == "tmc2240"
+    assert body["temperature"] == 42.5
+    assert body["drv_status"]["sg_result"] == 120
+
+
+def test_driver_live_idle(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(drivers_service, "MoonrakerClient", lambda *a, **k: _FakeClient())
+    client = TestClient(create_app())
+    body = client.get("/api/drivers/live/stepper_x").json()
+    assert body["model"] == "tmc2209"
+    assert body["drv_status"] is None  # idle — motor disabled
 
 
 def test_motor_catalog_route() -> None:
