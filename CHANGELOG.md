@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.44.1] - 2026-06-03
+
+### Docs — Shake&Tune feature parity complete (5 of 5)
+
+- Documentation sweep closing out the Shake&Tune-parity effort (part 3/3): the ROADMAP
+  gains phase 13 (vibrations profile) and the parity section is marked **✅ COMPLETE (5 of
+  5)**; the Input Shaping range now reads v0.27.0 → v0.44.0. ARCHITECTURE updated to describe
+  the full capture/analysis set (axes-map · sustain frequency · guided wizard · vibrations
+  profile); the README feature list already covers it (v0.44.0). No code change.
+
 ## [0.44.0] - 2026-06-03
 
 ### Added — Input Shaping: vibrations profile UI + wizard (Shake&Tune parity, 5 of 5 — part 2/3)
