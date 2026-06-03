@@ -690,6 +690,26 @@ class ArchiveSaveConfigRequest(BaseModel):
     summary: dict[str, Any] = {}
 
 
+class DriverInfo(BaseModel):
+    """Reference capabilities for a TMC model, from the curated driver catalog."""
+
+    model: str
+    name: str
+    interface: str | None = None
+    max_current_a: float | None = None
+    current_note: str | None = None
+    microsteps: int | None = None
+    stealthchop: bool | None = None
+    spreadcycle: bool | None = None
+    coolstep: bool | None = None
+    stallguard: bool | None = None
+    stallguard_field: str | None = None
+    sensorless: bool | None = None
+    temperature: bool | None = None
+    aliases: list[str] = []
+    notes: str | None = None
+
+
 class TmcDriver(BaseModel):
     """One TMC stepper driver: who it is, its configured tuning, and live telemetry.
 
@@ -736,6 +756,9 @@ class TmcDriver(BaseModel):
     capabilities: dict[str, bool] = {}
     #: Raw ``driver_*`` tuning registers for an advanced view (toff / hstrt / pwm_* / …).
     registers: dict[str, Any] = {}
+    #: Authoritative reference data for this model from the driver catalog (None if the
+    #: model isn't in the catalog — the card still renders from the live config).
+    info: DriverInfo | None = None
 
 
 class DriversStatus(BaseModel):
@@ -743,3 +766,10 @@ class DriversStatus(BaseModel):
 
     reachable: bool
     drivers: list[TmcDriver] = []
+
+
+class DriverCatalog(BaseModel):
+    """The curated TMC driver capability map (GET /api/drivers/catalog)."""
+
+    source: str = ""
+    drivers: list[DriverInfo] = []

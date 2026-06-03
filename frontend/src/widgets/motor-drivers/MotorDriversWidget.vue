@@ -11,7 +11,11 @@ import {
   currentLabel,
   driverHealth,
   driverModelLabel,
+  effectiveCapabilities,
   healthClass,
+  interfaceLabel,
+  maxCurrentLabel,
+  nearCurrentCap,
   temperatureLabel,
 } from './format'
 import { STEPS } from './help'
@@ -155,9 +159,15 @@ onUnmounted(() => {
           </div>
 
           <div class="flex items-center justify-between font-mono text-[11px]">
-            <span
-              >Run <b>{{ currentLabel(d.run_current, d.run_current_config) }}</b></span
-            >
+            <span>
+              Run <b>{{ currentLabel(d.run_current, d.run_current_config) }}</b>
+              <span
+                v-if="nearCurrentCap(d)"
+                class="text-brand-red"
+                :title="`Near this model's rated cap (${maxCurrentLabel(d)})`"
+                >⚠</span
+              >
+            </span>
             <span class="opacity-80"
               >Hold {{ currentLabel(d.hold_current, d.hold_current_config) }}</span
             >
@@ -172,11 +182,13 @@ onUnmounted(() => {
             <span v-if="d.stallguard_field"
               >SG {{ d.stallguard_field }} {{ d.stallguard_threshold }}</span
             >
+            <span v-if="interfaceLabel(d)" class="opacity-70">{{ interfaceLabel(d) }}</span>
+            <span v-if="maxCurrentLabel(d)" class="opacity-70">{{ maxCurrentLabel(d) }}</span>
           </div>
 
-          <div v-if="capabilityChips(d.capabilities).length" class="flex flex-wrap gap-1">
+          <div v-if="capabilityChips(effectiveCapabilities(d)).length" class="flex flex-wrap gap-1">
             <span
-              v-for="c in capabilityChips(d.capabilities)"
+              v-for="c in capabilityChips(effectiveCapabilities(d))"
               :key="c"
               class="nb-badge bg-paper px-1.5 py-0 text-[9px]"
               >{{ c }}</span
@@ -211,6 +223,7 @@ onUnmounted(() => {
         <HelpNote topic="microsteps" />
         <HelpNote topic="stallguard" />
         <HelpNote topic="health" />
+        <HelpNote topic="catalog" />
       </div>
     </template>
   </div>

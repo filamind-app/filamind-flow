@@ -7,9 +7,34 @@ import {
   currentLabel,
   driverHealth,
   driverModelLabel,
+  effectiveCapabilities,
+  interfaceLabel,
+  maxCurrentLabel,
+  nearCurrentCap,
   temperatureLabel,
 } from '../format'
-import type { TmcDriver } from '../types'
+import type { DriverInfo, TmcDriver } from '../types'
+
+function info(overrides: Partial<DriverInfo> = {}): DriverInfo {
+  return {
+    model: 'tmc2209',
+    name: 'TMC2209',
+    interface: 'UART',
+    max_current_a: 2.0,
+    current_note: null,
+    microsteps: 256,
+    stealthchop: true,
+    spreadcycle: true,
+    coolstep: true,
+    stallguard: true,
+    stallguard_field: 'sgthrs',
+    sensorless: true,
+    temperature: false,
+    aliases: [],
+    notes: null,
+    ...overrides,
+  }
+}
 
 function driver(overrides: Partial<TmcDriver> = {}): TmcDriver {
   return {
@@ -31,6 +56,7 @@ function driver(overrides: Partial<TmcDriver> = {}): TmcDriver {
     drv_status: null,
     capabilities: { stealthchop: true, spreadcycle: true, stallguard: true },
     registers: {},
+    info: null,
     ...overrides,
   }
 }
@@ -113,5 +139,40 @@ describe('axisHeading', () => {
   })
   it('labels a second extruder', () => {
     expect(axisHeading(driver({ stepper: 'extruder1', axis: 'E1' }))).toBe('Extruder 1')
+  })
+})
+
+describe('catalog-aware helpers', () => {
+  it('prefers authoritative catalog capabilities when info is present', () => {
+    const d = driver({
+      capabilities: { stallguard: true }, // config-inferred (incomplete)
+      info: info({ stealthchop: true, spreadcycle: true, coolstep: true, stallguard: false }),
+    })
+    const caps = effectiveCapabilities(d)
+    expect(caps.coolstep).toBe(true) // from the catalog, not the inferred set
+    expect(caps.stallguard).toBe(false) // catalog overrides the inferred true
+  })
+  it('falls back to inferred capabilities when info is absent', () => {
+    const d = driver({ info: null, capabilities: { stealthchop: true } })
+    expect(effectiveCapabilities(d)).toEqual({ stealthchop: true })
+  })
+  it('formats interface and current cap from the catalog', () => {
+    const d = driver({ info: info({ interface: 'UART/SPI', max_current_a: 3 }) })
+    expect(interfaceLabel(d)).toBe('UART·SPI')
+    expect(maxCurrentLabel(d)).toBe('≤ 3.0 A')
+  })
+  it('returns empty strings when there is no catalog info', () => {
+    const d = driver({ info: null })
+    expect(interfaceLabel(d)).toBe('')
+    expect(maxCurrentLabel(d)).toBe('')
+  })
+  it('flags a run current near the rated cap', () => {
+    expect(nearCurrentCap(driver({ run_current: 1.9, info: info({ max_current_a: 2 }) }))).toBe(
+      true,
+    )
+    expect(nearCurrentCap(driver({ run_current: 1.0, info: info({ max_current_a: 2 }) }))).toBe(
+      false,
+    )
+    expect(nearCurrentCap(driver({ info: null }))).toBe(false)
   })
 })

@@ -16,6 +16,7 @@ from typing import Any
 
 import httpx
 
+from app.services import driver_catalog
 from app.services.moonraker_client import MoonrakerClient
 
 #: A TMC driver config section name, e.g. "tmc2209 stepper_x" / "tmc5160 stepper_y".
@@ -162,5 +163,8 @@ async def gather_drivers(moonraker_url: str) -> dict[str, Any]:
     for name in names:
         get_status = live.get(name)
         get_status = get_status if isinstance(get_status, dict) else {}
-        drivers.append(_parse_driver(name, get_status, sections))
+        record = _parse_driver(name, get_status, sections)
+        # Annotate with authoritative reference data for the model (None if unknown).
+        record["info"] = driver_catalog.lookup(record["model"])
+        drivers.append(record)
     return {"reachable": True, "drivers": drivers}
