@@ -6,6 +6,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **CI now fails on a stale `frontend/dist`.** The printer host serves the pre-built UI
+  bundle straight from git, so a forgotten rebuild would silently ship an old UI. CI now
+  runs `npm run build` and fails if anything under `frontend/dist` differs from what was
+  committed. Added a matching PR-template reminder.
+
 ## [0.44.1] - 2026-06-03
 
 ### Docs — Shake&Tune feature parity complete (5 of 5)

@@ -25,6 +25,16 @@ jobs:
       - run: npm run type-check
       - run: npm test
       - run: npm run build
+      # The printer host serves the pre-built bundle straight from git (no Node on the
+      # Pi), so a stale committed dist silently ships an old UI. Fail if a fresh build
+      # changes anything under frontend/dist that wasn't committed.
+      - name: Verify committed frontend/dist is fresh
+        run: |
+          if [ -n "$(git status --porcelain -- dist)" ]; then
+            echo "::error::frontend/dist is stale — run 'npm run build' and commit the result."
+            git status --porcelain -- dist
+            exit 1
+          fi
 
   backend:
     name: Backend
