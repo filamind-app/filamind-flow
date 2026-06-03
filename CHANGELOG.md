@@ -6,6 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.59.1] - 2026-06-03
+
+### Fixed
+
+- **Motor Drivers: a driver with no `stealthchop_threshold` set now shows "SpreadCycle"
+  instead of "—".** An unset threshold means Klipper's default of 0, i.e. SpreadCycle — so
+  the card reports the real mode rather than an unknown one (e.g. the SV08 extruder). (#85)
+
 ## [0.59.0] - 2026-06-03
 
 ### Added

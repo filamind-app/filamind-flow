@@ -57,11 +57,13 @@ def _axis_label(stepper: str) -> str | None:
     return stepper  # unknown kinematics — show the raw section name
 
 
-def _chopper_mode(stealthchop_threshold: float | None) -> str | None:
-    """0 (or unset) => SpreadCycle always; > 0 => StealthChop below that velocity."""
-    if stealthchop_threshold is None:
-        return None
-    return "SpreadCycle" if stealthchop_threshold == 0 else "StealthChop"
+def _chopper_mode(stealthchop_threshold: float | None) -> str:
+    """0 (or unset — Klipper's default) => SpreadCycle; > 0 => StealthChop below that velocity.
+
+    An absent ``stealthchop_threshold`` means the default 0, i.e. SpreadCycle — so report that
+    rather than an unknown mode (#85).
+    """
+    return "SpreadCycle" if not stealthchop_threshold else "StealthChop"
 
 
 def _stallguard(config: dict[str, Any]) -> tuple[str | None, int | None]:
