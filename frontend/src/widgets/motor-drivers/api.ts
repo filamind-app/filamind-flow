@@ -8,6 +8,7 @@ import type {
   DriverRecommendation,
   DriversStatus,
   MotorCatalog,
+  MotorsSyncStatus,
   RecommendRequest,
 } from './types'
 
@@ -120,4 +121,19 @@ export async function setStallguard(
 /** Home one axis (G28) as a sensorless test — moves the toolhead. Gated server-side. */
 export async function homeAxis(axis: string): Promise<ApplyResponse> {
   return postJson('/api/drivers/home', { axis })
+}
+
+/** Whether the motors_sync add-on is installed. */
+export async function fetchMotorsSyncStatus(): Promise<MotorsSyncStatus> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/drivers/motors-sync`)
+  if (!response.ok) {
+    throw new Error(`Motor-sync status request failed (${response.status})`)
+  }
+  return (await response.json()) as MotorsSyncStatus
+}
+
+/** Run motor synchronization (dual/quad-Z, dual-X) — moves the toolhead. Gated server-side. */
+export async function runMotorsSync(calibrate: boolean): Promise<ApplyResponse> {
+  return postJson('/api/drivers/motors-sync', { calibrate })
 }

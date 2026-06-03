@@ -19,6 +19,7 @@ export type HelpTopic =
   | 'recommend'
   | 'sensorless'
   | 'monitor'
+  | 'motorsync'
 
 export interface HelpEntry {
   title: string
@@ -121,6 +122,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Assigning a motor',
     body: 'Pick the stepper motor wired to each axis from a built-in catalog of 200+ motors. Klipper doesn’t know which motor you fitted — telling FilaMind unlocks its datasheet specs (holding torque, rated current, resistance, inductance), which a later step uses to recommend a safe run current and driver tuning. It’s saved on the printer and changes nothing on the driver by itself.',
     illo: 'current',
+  },
+  motorsync: {
+    title: 'Motor synchronization',
+    body: 'When one axis is driven by two or more motors (dual or quad-Z, dual-X), their microstep phases can drift apart and fight each other — adding noise and losing torque. The motors_sync add-on measures each motor with an accelerometer and nudges them back into phase. It’s a separate add-on; if it’s installed FilaMind can run or calibrate it here (it moves the toolhead, so it’s gated). If not installed, this just explains what it does.',
+    illo: 'driver',
   },
   monitor: {
     title: 'Live monitor',

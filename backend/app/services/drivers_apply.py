@@ -269,3 +269,47 @@ async def home_axis(moonraker_url: str, axis: str, *, timeout: float = 120.0) ->
     except httpx.HTTPError as exc:
         return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
     return {"ok": True, "applied": [cmd], "message": f"Homed {ax}."}
+
+
+async def motors_sync_available(moonraker_url: str) -> bool:
+    """True if the motors_sync add-on is configured (a ``[motors_sync]`` section)."""
+    client = MoonrakerClient(moonraker_url)
+    try:
+        cf = await client.query_objects(["configfile"])
+    except httpx.HTTPError:
+        return False
+    configfile = cf.get("configfile")
+    settings = configfile.get("settings") if isinstance(configfile, dict) else None
+    settings = settings if isinstance(settings, dict) else {}
+    return any(key == "motors_sync" or key.startswith("motors_sync ") for key in settings)
+
+
+async def run_motors_sync(
+    moonraker_url: str, *, calibrate: bool = False, timeout: float = 600.0
+) -> dict[str, Any]:
+    """Drive the motors_sync add-on to align multi-motor axes (dual/quad-Z, dual-X).
+
+    ``SYNC_MOTORS`` aligns now; ``SYNC_MOTORS_CALIBRATE`` runs the longer calibration. Gated:
+    requires the add-on installed and refused while printing. Accelerometer-based — it moves
+    the toolhead for a while, so the UI warns and requires a confirm.
+    """
+    if not await motors_sync_available(moonraker_url):
+        return {
+            "ok": False,
+            "applied": [],
+            "message": "The motors_sync add-on isn't installed — it aligns the microstep phase "
+            "of multiple motors on one axis (dual/quad-Z, dual-X) using an accelerometer.",
+        }
+    client = MoonrakerClient(moonraker_url, timeout=timeout)
+    cmd = "SYNC_MOTORS_CALIBRATE" if calibrate else "SYNC_MOTORS"
+    try:
+        if await _is_printing(client):
+            return {
+                "ok": False,
+                "applied": [],
+                "message": "Refusing to sync motors while printing.",
+            }
+        await client.run_gcode(cmd)
+    except httpx.HTTPError as exc:
+        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
+    return {"ok": True, "applied": [cmd], "message": f"Ran {cmd}."}

@@ -87,10 +87,10 @@ Plus a CI guard that fails on a stale committed `frontend/dist`.
 
 - 📋 Re-test recommendations from the grade · write the chosen `[input_shaper]` straight to `printer.cfg`.
 
-### 🚧 Motor Drivers
+### ✅ Motor Drivers
 
 Understand and tune the TMC stepper drivers on any Klipper printer — from a read-only
-dashboard up to a guided tuning wizard. **Generic by design:** drivers are detected from
+dashboard up to a guided tuning wizard. **Shipped v0.51.0 → v0.59.0 — all 8 phases.** **Generic by design:** drivers are detected from
 the live config (any axis layout), and all TMC models are handled (2209 / 2208 / 2130 /
 2240 / 5160 / 2660…) by reading what the running config exposes — never hardcoded to one
 board. Reimplements the `motor_constants` physics (like the vendored `shaper_calibrate`)
@@ -106,7 +106,7 @@ so recommendations work even without the `klipper_tmc_autotune` host extra insta
 | ✅ **5 — Sensorless homing** | StallGuard threshold helper (`sgthrs` / `sgt` / `sg4_thrs`) — gated set + gated test-home (`G28 <axis>`) with a crash warning; guidance to dial it in. (`POST /api/drivers/stallguard · /home`) | high (motion) |
 | ✅ **6 — Live monitor** | Per-driver live `drv_status` telemetry (~1.5 s poll): temperature, `SG_RESULT` (+ sparkline), `CS_ACTUAL`, fault flags. (`GET /api/drivers/live/{stepper}`) | low (read-only) |
 | ✅ **7 — Tuning wizard** | A 🧭 Guided view walking one driver through choose → motor → recommend & apply → sensorless → done, reusing the dashboard panels with a step breadcrumb + Back/Next. | medium |
-| 📋 **8 — Motors-sync** | Integrate `motors_sync` for dual-motor phase alignment (dual-Z / dual-X). | high (motion) |
+| ✅ **8 — Motors-sync** | Drive the optional `motors_sync` add-on for multi-motor phase alignment (dual / quad-Z, dual-X) — detect + gated `SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE`. (`GET`/`POST /api/drivers/motors-sync`) | high (motion) |
 
 ## Platform
 

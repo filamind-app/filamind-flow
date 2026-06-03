@@ -16,6 +16,8 @@ from app.models.schemas import (
     MotorAssignRequest,
     MotorCatalog,
     MotorMapping,
+    MotorsSyncRequest,
+    MotorsSyncStatus,
     RecommendRequest,
     StallguardRequest,
     StepperRequest,
@@ -170,4 +172,21 @@ async def home(request: HomeRequest, settings: Settings = Depends(get_settings))
     """Home one axis (G28) as a sensorless test — moves the toolhead. Gated; the UI warns
     about crash risk and requires a confirm."""
     data = await drivers_apply.home_axis(settings.moonraker_url, request.axis)
+    return ApplyResponse.model_validate(data)
+
+
+@router.get("/motors-sync", response_model=MotorsSyncStatus)
+async def motors_sync_status(settings: Settings = Depends(get_settings)) -> MotorsSyncStatus:
+    """Whether the motors_sync add-on is installed (for the motor-sync panel)."""
+    available = await drivers_apply.motors_sync_available(settings.moonraker_url)
+    return MotorsSyncStatus(available=available)
+
+
+@router.post("/motors-sync", response_model=ApplyResponse)
+async def motors_sync(
+    request: MotorsSyncRequest, settings: Settings = Depends(get_settings)
+) -> ApplyResponse:
+    """Run motor synchronization (dual/quad-Z, dual-X) via the motors_sync add-on — moves the
+    toolhead. Gated; refused while printing and when the add-on isn't installed."""
+    data = await drivers_apply.run_motors_sync(settings.moonraker_url, calibrate=request.calibrate)
     return ApplyResponse.model_validate(data)
