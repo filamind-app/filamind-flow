@@ -9,6 +9,7 @@ import {
   runAxesMap,
   runLiveTest,
   runStaticExcitation,
+  runVibrationsProfile,
 } from './api'
 import { buildAxesVelocityChart } from './axesChart'
 import { angleClass, axesMapConfig, mappingArrow, matchVerdict, statusBg } from './axesMap'
@@ -21,7 +22,9 @@ import type {
   ResonanceFile,
   ShaperAnalysis,
   StaticExcitationResult,
+  VibrationsProfile as VibrationsProfileResult,
 } from './types'
+import VibrationsProfile from './VibrationsProfile.vue'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis] }>()
 
@@ -45,6 +48,11 @@ const staticReady = ref(false)
 const staticAxis = ref<'x' | 'y'>('x')
 const staticFreq = ref('50')
 const staticDuration = ref('15')
+const vibResult = ref<VibrationsProfileResult | null>(null)
+const vibBusy = ref(false)
+const vibReady = ref(false)
+const vibMaxSpeed = ref('200')
+const vibIncrement = ref('10')
 
 const beltChart = computed(() =>
   belts.value ? buildCompareChart(belts.value.belt_a, belts.value.belt_b) : null,
@@ -61,7 +69,7 @@ const energyChart = computed(() =>
 )
 /** Any toolhead-moving action in flight (the gated buttons share this). */
 const motionBusy = computed(
-  () => liveBusy.value || beltsBusy.value || axesBusy.value || staticBusy.value,
+  () => liveBusy.value || beltsBusy.value || axesBusy.value || staticBusy.value || vibBusy.value,
 )
 
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
@@ -194,6 +202,23 @@ async function runStatic(): Promise<void> {
     error.value = msg(e, 'Sustain-frequency test failed')
   } finally {
     staticBusy.value = false
+  }
+}
+
+async function runVib(): Promise<void> {
+  if (vibBusy.value || !vibReady.value) return
+  error.value = null
+  vibBusy.value = true
+  try {
+    vibResult.value = await runVibrationsProfile({
+      maxSpeed: Number(vibMaxSpeed.value) || 200,
+      speedIncrement: Number(vibIncrement.value) || 10,
+    })
+    vibReady.value = false
+  } catch (e) {
+    error.value = msg(e, 'Vibrations profile failed')
+  } finally {
+    vibBusy.value = false
   }
 }
 
@@ -556,6 +581,35 @@ onMounted(loadFiles)
           <span>energy vs time — the cyan dip is where a touch helped</span>
         </div>
       </div>
+    </div>
+
+    <!-- Vibrations profile: a long speed × motor-angle sweep → smoothest/worst speeds. -->
+    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+        <span class="font-bold">📊 Vibrations profile</span>
+        <label class="flex items-center gap-1"
+          >max <input v-model="vibMaxSpeed" :class="numClass" /> mm/s</label
+        >
+        <label class="flex items-center gap-1"
+          >step <input v-model="vibIncrement" :class="numClass" /> mm/s</label
+        >
+        <label class="flex items-center gap-1">
+          <input v-model="vibReady" type="checkbox" /> ⚠ moves the toolhead — I'm ready
+        </label>
+        <button
+          class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
+          :disabled="!vibReady || motionBusy"
+          @click="runVib"
+        >
+          {{ vibBusy ? 'sweeping…' : 'run sweep' }}
+        </button>
+      </div>
+      <p class="font-mono text-[9px] opacity-60">
+        Sweeps speed × motor angle around bed center — a long run (minutes). A smaller
+        <strong>step</strong> is finer but slower. Reports the smoothest speeds, the speeds to
+        avoid, motor symmetry and the motor resonance. Refused while printing.
+      </p>
+      <VibrationsProfile v-if="vibResult" :result="vibResult" />
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>

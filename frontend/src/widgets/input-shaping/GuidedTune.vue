@@ -6,7 +6,7 @@
  */
 import { computed, reactive, ref } from 'vue'
 
-import { compareBelts, measureNoise, runLiveTest } from './api'
+import { compareBelts, measureNoise, runLiveTest, runVibrationsProfile } from './api'
 import { beltVerdict } from './compare'
 import {
   type Gate,
@@ -15,6 +15,7 @@ import {
   gateBelts,
   gateNoise,
   gateShaper,
+  gateVibrations,
   nextStep,
   PA_TOWER_GCODE,
   STEPS,
@@ -27,7 +28,8 @@ import {
   recommendVibrations,
   type Suggestion,
 } from './recommend'
-import type { BeltComparison, NoiseResult, ShaperAnalysis } from './types'
+import type { BeltComparison, NoiseResult, ShaperAnalysis, VibrationsProfile } from './types'
+import VibrationsProfileView from './VibrationsProfile.vue'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis]; exit: [] }>()
 
@@ -53,6 +55,7 @@ const results = reactive<{
   belts?: BeltComparison
   shaperX?: ShaperAnalysis
   shaperY?: ShaperAnalysis
+  vibrations?: VibrationsProfile
 }>({})
 
 const step = computed(() => STEPS[idx.value])
@@ -111,6 +114,11 @@ async function run(): Promise<void> {
       gate.value = gateShaper(r)
       suggestions.value = recommendShaper(r)
       emit('analyzed', r) // flows into the parent's byAxis / config / history
+    } else if (s.id === 'vibrations') {
+      const r = await runVibrationsProfile()
+      results.vibrations = r
+      gate.value = gateVibrations(r)
+      suggestions.value = recommendVibrations(r)
     }
     if (gate.value) statuses[s.id] = gate.value.status
     ready.value = false
@@ -126,11 +134,6 @@ function advance(): void {
   gate.value = null
   suggestions.value = []
   error.value = null
-}
-function answerVibrations(visible: boolean): void {
-  gate.value = { status: visible ? 'warn' : 'passed', headline: visible ? 'VFAs noted' : 'No VFAs' }
-  suggestions.value = recommendVibrations(visible)
-  statuses.vibrations = gate.value.status
 }
 async function copyPa(): Promise<void> {
   try {
@@ -182,19 +185,8 @@ function review(i: number): void {
       <div class="text-[11px] font-bold">{{ step.title }}</div>
       <p class="text-[10px] opacity-70">{{ step.why }}</p>
 
-      <!-- Manual: vibrations / VFA self-report. -->
-      <div v-if="step.id === 'vibrations'" class="flex flex-wrap items-center gap-2 text-[10px]">
-        <span class="opacity-70">After a test print:</span>
-        <button class="nb-btn bg-brand-lime px-2 py-0.5" @click="answerVibrations(false)">
-          ✓ no VFAs
-        </button>
-        <button class="nb-btn bg-brand-yellow px-2 py-0.5" @click="answerVibrations(true)">
-          ⚠ I see VFAs
-        </button>
-      </div>
-
       <!-- Manual: pressure-advance tower. -->
-      <div v-else-if="step.id === 'pressure'" class="space-y-1">
+      <div v-if="step.id === 'pressure'" class="space-y-1">
         <pre
           class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[10px] text-surface"
           >{{ paGcode }}</pre
@@ -237,6 +229,11 @@ function review(i: number): void {
       </div>
 
       <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+
+      <VibrationsProfileView
+        v-if="step.id === 'vibrations' && results.vibrations"
+        :result="results.vibrations"
+      />
 
       <template v-if="gate && step.id !== 'pressure'">
         <div class="flex flex-wrap items-center gap-2">
