@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### CI
+
+- **Releases now publish automatically.** Pushing a `vX.Y.Z` tag triggers
+  `.github/workflows/release.yml`, which creates the GitHub Release from the matching
+  `CHANGELOG.md` section. Fixes release publishing that had silently stalled at v0.42.1
+  (11 tags with no Release; now backfilled). (#80)
+
+### Docs
+
+- **CONTRIBUTING**: documented three project norms — the widget-UX rule (every widget
+  ships explanations + practical steps + inline SVG illustrations), the
+  discovered-problem → typed GitHub issue → patch-PR rule, and the release process.
+
 ## [0.50.1] - 2026-06-03
 
 ### Fixed
