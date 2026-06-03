@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     # Where FilaMind keeps its own data (per-board firmware profiles, etc.).
     data_dir: str = "~/printer_data/config/filamind"
 
+    # Input Shaping archive: how many runs to keep PER KIND under
+    # <data_dir>/input-shaper-archive/ (older runs are pruned). Keeps the SD card light.
+    shaper_archive_keep_n: int = 20
+
     # Comma-separated dirs to scan for the resonance CSVs Klipper writes.
     # TEST_RESONANCES/SHAPER_CALIBRATE default to /tmp, but many setups also keep
     # captures under printer_data/config. Override with FILAMIND_RESONANCE_DIRS
