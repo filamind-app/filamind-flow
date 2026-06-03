@@ -878,3 +878,17 @@ class ApplyResponse(BaseModel):
     ok: bool
     applied: list[str] = []
     message: str
+
+
+class StallguardRequest(BaseModel):
+    """Set a StallGuard threshold (sensorless-homing sensitivity)."""
+
+    stepper: str
+    field: str  # sgthrs | sgt | sg4_thrs
+    value: float
+
+
+class HomeRequest(BaseModel):
+    """Home a single axis as a sensorless test (X / Y / Z)."""
+
+    axis: str

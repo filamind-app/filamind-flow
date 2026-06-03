@@ -221,3 +221,51 @@ async def run_autotune(
     except httpx.HTTPError as exc:
         return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
     return {"ok": True, "applied": [cmd], "message": f"Ran AUTOTUNE_TMC on {stepper}."}
+
+
+#: StallGuard threshold field names, by model family (2209 / 2130-5160 / 2240).
+_SG_FIELDS = ("sgthrs", "sgt", "sg4_thrs")
+#: Axes that can be homed individually for a sensorless test.
+_AXES = ("X", "Y", "Z")
+
+
+async def set_stallguard(
+    moonraker_url: str, stepper: str, field: str, value: float, *, timeout: float = 20.0
+) -> dict[str, Any]:
+    """Set a StallGuard threshold (sensorless-homing sensitivity) via SET_TMC_FIELD. Gated."""
+    try:
+        stepper = _safe_name(stepper)
+    except ValueError as exc:
+        return {"ok": False, "applied": [], "message": str(exc)}
+    if field not in _SG_FIELDS:
+        return {"ok": False, "applied": [], "message": f"unknown StallGuard field: {field!r}"}
+    try:
+        num = _safe_num(value)
+    except ValueError as exc:
+        return {"ok": False, "applied": [], "message": str(exc)}
+    client = MoonrakerClient(moonraker_url, timeout=timeout)
+    cmd = f"SET_TMC_FIELD STEPPER={stepper} FIELD={field} VALUE={num}"
+    try:
+        if await _is_printing(client):
+            return {"ok": False, "applied": [], "message": "Refusing to write while printing."}
+        await client.run_gcode(cmd)
+    except httpx.HTTPError as exc:
+        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
+    return {"ok": True, "applied": [cmd], "message": f"Set {field} = {num} on {stepper}."}
+
+
+async def home_axis(moonraker_url: str, axis: str, *, timeout: float = 120.0) -> dict[str, Any]:
+    """Home a single axis (``G28 <axis>``) — a sensorless-homing test. Gated; refused
+    while printing. The caller (UI) warns about crash risk and requires a confirm."""
+    ax = str(axis).strip().upper()
+    if ax not in _AXES:
+        return {"ok": False, "applied": [], "message": f"unknown axis: {axis!r}"}
+    client = MoonrakerClient(moonraker_url, timeout=timeout)
+    cmd = f"G28 {ax}"
+    try:
+        if await _is_printing(client):
+            return {"ok": False, "applied": [], "message": "Refusing to home while printing."}
+        await client.run_gcode(cmd)
+    except httpx.HTTPError as exc:
+        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
+    return {"ok": True, "applied": [cmd], "message": f"Homed {ax}."}

@@ -126,6 +126,49 @@ async def test_autotune_runs_when_installed(monkeypatch: pytest.MonkeyPatch) -> 
     assert fake.scripts == ["AUTOTUNE_TMC STEPPER=stepper_x"]
 
 
+async def test_set_stallguard_sends_field(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.set_stallguard("http://x", "stepper_x", "sgthrs", 75)
+    assert res["ok"] is True
+    assert fake.scripts == ["SET_TMC_FIELD STEPPER=stepper_x FIELD=sgthrs VALUE=75"]
+
+
+async def test_set_stallguard_rejects_bad_field(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.set_stallguard("http://x", "stepper_x", "run_current", 1.0)
+    assert res["ok"] is False
+    assert fake.scripts == []
+
+
+async def test_set_stallguard_refuses_while_printing(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient(printing=True)
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.set_stallguard("http://x", "stepper_x", "sg4_thrs", 40)
+    assert res["ok"] is False
+    assert fake.scripts == []
+
+
+async def test_home_axis_sends_g28(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.home_axis("http://x", "x")
+    assert res["ok"] is True
+    assert fake.scripts == ["G28 X"]
+
+
+async def test_home_axis_rejects_bad_axis_and_printing(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    assert (await drivers_apply.home_axis("http://x", "W"))["ok"] is False
+    assert fake.scripts == []
+    printing = _FakeClient(printing=True)
+    _patch(monkeypatch, printing)
+    assert (await drivers_apply.home_axis("http://x", "x"))["ok"] is False
+    assert printing.scripts == []
+
+
 def test_config_block_route() -> None:
     client = TestClient(create_app())
     res = client.post(

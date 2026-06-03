@@ -11,10 +11,12 @@ from app.models.schemas import (
     DriverCatalog,
     DriverRecommendation,
     DriversStatus,
+    HomeRequest,
     MotorAssignRequest,
     MotorCatalog,
     MotorMapping,
     RecommendRequest,
+    StallguardRequest,
     StepperRequest,
 )
 from app.services import (
@@ -140,4 +142,23 @@ async def autotune(
 ) -> ApplyResponse:
     """Drive AUTOTUNE_TMC if the klipper_tmc_autotune extra is installed for this stepper."""
     data = await drivers_apply.run_autotune(settings.moonraker_url, request.stepper)
+    return ApplyResponse.model_validate(data)
+
+
+@router.post("/stallguard", response_model=ApplyResponse)
+async def set_stallguard(
+    request: StallguardRequest, settings: Settings = Depends(get_settings)
+) -> ApplyResponse:
+    """Set a StallGuard threshold (sensorless-homing sensitivity). Gated; refused while printing."""
+    data = await drivers_apply.set_stallguard(
+        settings.moonraker_url, request.stepper, request.field, request.value
+    )
+    return ApplyResponse.model_validate(data)
+
+
+@router.post("/home", response_model=ApplyResponse)
+async def home(request: HomeRequest, settings: Settings = Depends(get_settings)) -> ApplyResponse:
+    """Home one axis (G28) as a sensorless test — moves the toolhead. Gated; the UI warns
+    about crash risk and requires a confirm."""
+    data = await drivers_apply.home_axis(settings.moonraker_url, request.axis)
     return ApplyResponse.model_validate(data)
