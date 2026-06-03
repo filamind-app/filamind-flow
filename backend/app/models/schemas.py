@@ -688,3 +688,58 @@ class ArchiveSaveConfigRequest(BaseModel):
     #: Attach to this existing run if given; otherwise a new config-only run is created.
     run_id: str | None = None
     summary: dict[str, Any] = {}
+
+
+class TmcDriver(BaseModel):
+    """One TMC stepper driver: who it is, its configured tuning, and live telemetry.
+
+    Generic across models — fields a given driver doesn't expose are ``None`` (e.g.
+    ``temperature`` only on the TMC2240; ``drv_status`` only while the motor is enabled).
+    """
+
+    #: Config section after the model, e.g. "stepper_x" / "stepper_z1" / "extruder".
+    stepper: str
+    #: Driver model as Klipper names it, lower-case: "tmc2209" / "tmc5160" / …
+    model: str
+    #: Best-effort axis label derived from the stepper name: "X" / "Z1" / "E" / ….
+    axis: str | None = None
+
+    #: Live applied current (A) from get_status — may differ slightly from the configured
+    #: value because the TMC quantises it to an achievable step.
+    run_current: float | None = None
+    hold_current: float | None = None
+    #: Configured current (A) from the config section.
+    run_current_config: float | None = None
+    hold_current_config: float | None = None
+
+    sense_resistor: float | None = None
+    #: From the matching ``[stepper_*]`` section (not the tmc section).
+    microsteps: int | None = None
+    interpolate: bool | None = None
+    #: 0 ⇒ SpreadCycle always; > 0 ⇒ StealthChop below this velocity (mm/s).
+    stealthchop_threshold: float | None = None
+    #: Coarse derived mode: "SpreadCycle" | "StealthChop".
+    chopper_mode: str | None = None
+
+    #: StallGuard (sensorless homing). The register name varies by model family.
+    stallguard_field: str | None = None  # "sgthrs" | "sg4_thrs" | "sgt"
+    stallguard_threshold: int | None = None
+
+    #: °C — only the TMC2240 has a sensor; ``None`` on other models.
+    temperature: float | None = None
+    #: Live driver flags (overtemp / short / open-load / sg_result / cs_actual). Present
+    #: only while the motor is enabled — ``None`` when idle.
+    drv_status: dict[str, Any] | None = None
+
+    #: Capabilities inferred from the running config (stealthchop / spreadcycle /
+    #: coolstep / stallguard / temperature).
+    capabilities: dict[str, bool] = {}
+    #: Raw ``driver_*`` tuning registers for an advanced view (toff / hstrt / pwm_* / …).
+    registers: dict[str, Any] = {}
+
+
+class DriversStatus(BaseModel):
+    """Read-only TMC driver dashboard (GET /api/drivers/status)."""
+
+    reachable: bool
+    drivers: list[TmcDriver] = []

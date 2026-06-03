@@ -29,7 +29,7 @@ the printer host at runtime; a small FastAPI backend handles anything that must
 run server-side.
 
 > **Status:** actively developed and **running on real hardware** (a Sovol SV08).
-> Two widgets ship today:
+> Three widgets ship today:
 >
 > - **Firmware Upgrade** — a full Klipper firmware build & flash console: per-board
 >   profiles, a live Kconfig editor, Katapult / DFU / SD-card flashing, Beacon probe
@@ -42,6 +42,11 @@ run server-side.
 >   captures from the printer host or run a live test, compare CoreXY belts, detect the
 >   accelerometer axes-map, hold a sustain frequency, sweep a **machine vibrations
 >   profile** (smoothest speeds + resonances to avoid), and walk it all in a guided wizard.
+> - **Motor Drivers** — a live inventory of every TMC stepper driver, read straight from
+>   the Klipper config: per-motor run/hold current, chopper mode (SpreadCycle / StealthChop),
+>   microsteps, StallGuard threshold, temperature, and a live health badge — with a built-in
+>   glossary, illustrated help, and advanced register view. Works on any Klipper printer and
+>   any TMC model.
 >
 > Further widgets are added under `frontend/src/widgets/`.
 
@@ -133,7 +138,7 @@ filamind-flow/
 │  └─ src/
 │     ├─ core/               # MoonrakerClient · widget registry · Pinia store
 │     ├─ components/         # App shell + dashboard (design-system driven)
-│     ├─ widgets/            # Feature widgets register here (Firmware Upgrade + Input Shaping ship today)
+│     ├─ widgets/            # Feature widgets register here (Firmware Upgrade + Input Shaping + Motor Drivers ship today)
 │     └─ assets/styles/      # Neo-Brutalist design tokens
 ├─ backend/                  # FastAPI service
 │  └─ app/                   # config · api/routes · services · models
@@ -191,6 +196,9 @@ templates live in [`deploy/`](deploy/).
       sustain-frequency hands-on diagnostic, a machine **vibrations profile**
       (smoothest/worst speeds, motor symmetry, motor resonance), and a guided
       tuning wizard
+- [x] **Motor Drivers** widget (P1) — live TMC driver dashboard: per-motor run/hold
+      current, chopper mode, microsteps, StallGuard, temperature + health, with a
+      glossary and illustrated help; generic across all Klipper printers and TMC models
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 
