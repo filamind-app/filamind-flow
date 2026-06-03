@@ -12,9 +12,16 @@ from app.services import drivers_apply
 class _FakeClient:
     """Records g-code and reports printing state + which steppers have the autotune extra."""
 
-    def __init__(self, *, printing: bool = False, autotune: tuple[str, ...] = ()) -> None:
+    def __init__(
+        self,
+        *,
+        printing: bool = False,
+        autotune: tuple[str, ...] = (),
+        config: dict[str, Any] | None = None,
+    ) -> None:
         self.printing = printing
         self.autotune = set(autotune)
+        self.config = config or {}  # extra configfile sections (e.g. tmc run_current)
         self.scripts: list[str] = []
 
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
@@ -22,7 +29,9 @@ class _FakeClient:
         if "print_stats" in objects:
             out["print_stats"] = {"state": "printing" if self.printing else "ready"}
         if "configfile" in objects:
-            out["configfile"] = {"settings": {f"autotune_tmc {s}": {} for s in self.autotune}}
+            settings: dict[str, Any] = {f"autotune_tmc {s}": {} for s in self.autotune}
+            settings.update(self.config)
+            out["configfile"] = {"settings": settings}
         return out
 
     async def run_gcode(self, script: str) -> None:
@@ -79,8 +88,21 @@ async def test_apply_rejects_unsafe_input(monkeypatch: pytest.MonkeyPatch) -> No
     assert fake.scripts == []
 
 
-async def test_revert_sends_init_tmc(monkeypatch: pytest.MonkeyPatch) -> None:
-    fake = _FakeClient()
+async def test_revert_restores_config_current(monkeypatch: pytest.MonkeyPatch) -> None:
+    # INIT_TMC alone doesn't restore run_current (#93), so revert must SET_TMC_CURRENT
+    # back to the configured value.
+    fake = _FakeClient(config={"tmc2209 stepper_x": {"run_current": 1.1, "hold_current": 0.8}})
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.revert("http://x", "stepper_x")
+    assert res["ok"] is True
+    assert fake.scripts == [
+        "INIT_TMC STEPPER=stepper_x",
+        "SET_TMC_CURRENT STEPPER=stepper_x CURRENT=1.1 HOLDCURRENT=0.8",
+    ]
+
+
+async def test_revert_without_config_current_just_inits(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()  # no tmc config section → can't know the current, so INIT_TMC only
     _patch(monkeypatch, fake)
     res = await drivers_apply.revert("http://x", "stepper_x")
     assert res["ok"] is True

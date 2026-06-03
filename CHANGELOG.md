@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.55.1] - 2026-06-03
+
+### Fixed
+
+- **Motor Drivers: Revert now fully restores the run current.** `INIT_TMC` re-applies the
+  configured register *fields* but does **not** undo a `SET_TMC_CURRENT`, so after applying
+  a recommendation the motor stayed at the applied current on Revert. Revert now also issues
+  `SET_TMC_CURRENT` with the stepper's **configured** run/hold current (read from the live
+  config), so it returns to exactly the pre-apply state. (#93)
+
 ## [0.55.0] - 2026-06-03
 
 ### Added
