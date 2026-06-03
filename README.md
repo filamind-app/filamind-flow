@@ -1,11 +1,13 @@
+<div align="center">
+
 # FilaMind Flow
 
-> An extensible, Neo-Brutalist control panel for **Klipper / Moonraker** — designed
-> to live alongside Mainsail and Fluidd and grow one widget at a time.
+**An extensible, Neo-Brutalist control panel for Klipper / Moonraker** — built to live
+alongside Mainsail and Fluidd and grow one widget at a time.
 
 [![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/filamind-app/filamind-flow?color=111111&label=release&sort=semver)](https://github.com/filamind-app/filamind-flow/releases/latest)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-111111.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.42.1-111111.svg)](CHANGELOG.md)
 [![Last commit](https://img.shields.io/github/last-commit/filamind-app/filamind-flow?color=111111&label=updated)](https://github.com/filamind-app/filamind-flow/commits/main)
 
 [![Klipper](https://img.shields.io/badge/Klipper-compatible-111111)](https://www.klipper3d.org)
@@ -19,6 +21,10 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org)
+
+[Install](#install-on-a-printer-one-line) · [Widgets](#widgets) · [Architecture](#architecture) · [Quickstart](#quickstart) · [Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md)
+
+</div>
 
 FilaMind Flow is a standalone single-page app that talks **directly to Moonraker**
 (REST + WebSocket JSON-RPC) and is linked from the Mainsail sidebar (and reached by
@@ -49,6 +55,16 @@ run server-side.
 >   any TMC model.
 >
 > Further widgets are added under `frontend/src/widgets/`.
+
+## Widgets
+
+| Widget | What it does | Status |
+| ------ | ------------ | ------ |
+| **Firmware Upgrade** | Build & flash Klipper firmware on every MCU — per-board Kconfig profiles, a live web editor, Katapult / DFU / SD-card flashing, Beacon probe updates, host service control, host↔MCU update alerts, and an external-firmware inspector / diff. | ✅ Shipped |
+| **Input Shaping** | Turn a resonance capture into a ready `[input_shaper]` config — recommended shaper, SVG frequency-response chart, per-axis X/Y, A⇄B compare, a quality grade (A–F) with illustrated diagnostics, live tests, belt & axes-map & vibration tooling, and a guided wizard. **Full Shake&Tune parity.** | ✅ Shipped |
+| **Motor Drivers** | A live inventory of every TMC stepper driver, read straight from the Klipper config — run/hold current, chopper mode, microsteps, StallGuard, temperature, and health, with a glossary and illustrated help. Generic across all printers and TMC models. | 🚧 P1 (read-only dashboard) |
+
+See [ROADMAP.md](ROADMAP.md) for the phase-by-phase plan of each widget.
 
 ## Install on a printer (one line)
 
@@ -175,6 +191,16 @@ const printer = usePrinterStore()
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 for the design rationale.
+
+## Documentation
+
+| Document | What's inside |
+| -------- | ------------- |
+| [ROADMAP.md](ROADMAP.md) | Phase-by-phase plan and status for every widget |
+| [CHANGELOG.md](CHANGELOG.md) | Release history (Keep a Changelog) |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Dev workflow, conventions, widget-UX rule, release process |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Design + data-flow deep dive |
+| [backend/README.md](backend/README.md) | Backend service, `/api` endpoints, `FILAMIND_*` settings |
 
 ## Deployment
 
