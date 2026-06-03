@@ -1,0 +1,52 @@
+name: Release
+
+# Publish a GitHub Release automatically whenever a version tag is pushed.
+# Releases had silently stalled at v0.42.1 because they were created by hand and
+# the manual step was forgotten (issue #80). This makes publishing automatic so
+# every `git push origin vX.Y.Z` produces a Release with notes from CHANGELOG.md.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history + tags so we can read the annotated tag's subject.
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+
+          # Title: the annotated tag's subject (e.g. "v0.51.0 — Motor Drivers …"),
+          # falling back to the bare tag name.
+          TITLE="$(git tag -l --format='%(contents:subject)' "$TAG")"
+          [ -n "$TITLE" ] || TITLE="$TAG"
+
+          # Notes: the matching "## [VERSION]" section of CHANGELOG.md.
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { cap=1; next }
+            cap && /^## \[/ { exit }
+            cap { print }
+          ' CHANGELOG.md > NOTES.md
+          [ -s NOTES.md ] || echo "See CHANGELOG.md for details." > NOTES.md
+
+          # Idempotent: create the Release, or update it if it already exists.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$TITLE" --notes-file NOTES.md
+          else
+            gh release create "$TAG" --verify-tag --title "$TITLE" --notes-file NOTES.md
+          fi
