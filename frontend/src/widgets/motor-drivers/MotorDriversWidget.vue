@@ -4,6 +4,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { fetchDriverStatus, fetchMotorCatalog, saveMotorAssignment } from './api'
 import HelpIllo from './HelpIllo.vue'
 import HelpNote from './HelpNote.vue'
+import LiveMonitor from './LiveMonitor.vue'
 import MotorPicker from './MotorPicker.vue'
 import RecommendPanel from './RecommendPanel.vue'
 import SensorlessPanel from './SensorlessPanel.vue'
@@ -213,6 +214,8 @@ onUnmounted(() => {
             >
           </div>
 
+          <LiveMonitor :driver="d" />
+
           <MotorPicker
             :stepper="d.stepper"
             :assigned="d.motor"
@@ -260,6 +263,7 @@ onUnmounted(() => {
         <HelpNote topic="motor" />
         <HelpNote topic="recommend" />
         <HelpNote topic="sensorless" />
+        <HelpNote topic="monitor" />
       </div>
     </template>
   </div>

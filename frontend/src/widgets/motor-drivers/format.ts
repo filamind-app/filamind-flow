@@ -129,6 +129,49 @@ export function filterMotors(catalog: MotorSpec[], query: string): MotorSpec[] {
   )
 }
 
+/** A numeric field from a live drv_status map (e.g. sg_result, cs_actual), or null. */
+export function drvNum(drv: Record<string, unknown> | null, key: string): number | null {
+  const v = drv?.[key]
+  return typeof v === 'number' ? v : null
+}
+
+/** Live driver fault/status flags that are set, as short human labels (deduped). */
+export function activeFlags(drv: Record<string, unknown> | null): string[] {
+  if (!drv) return []
+  const map: [string, string][] = [
+    ['ot', 'overtemp'],
+    ['otpw', 'temp-warn'],
+    ['s2ga', 'short A'],
+    ['s2gb', 'short B'],
+    ['s2vsa', 'short A'],
+    ['s2vsb', 'short B'],
+    ['ola', 'open-load A'],
+    ['olb', 'open-load B'],
+    ['stst', 'standstill'],
+  ]
+  const out: string[] = []
+  for (const [key, label] of map) {
+    if (drv[key] && !out.includes(label)) out.push(label)
+  }
+  return out
+}
+
+/** An auto-scaled SVG path ("M…L…") for a sparkline of recent values. '' if too few points. */
+export function sparklinePath(values: number[], width: number, height: number): string {
+  if (values.length < 2) return ''
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const span = max - min || 1
+  const step = width / (values.length - 1)
+  return values
+    .map((v, i) => {
+      const x = (i * step).toFixed(1)
+      const y = (height - ((v - min) / span) * height).toFixed(1)
+      return `${i === 0 ? 'M' : 'L'}${x},${y}`
+    })
+    .join(' ')
+}
+
 /** One row of the recommendation preview: the live value vs the recommended one. */
 export interface RecRow {
   label: string

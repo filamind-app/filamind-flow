@@ -783,6 +783,19 @@ class DriversStatus(BaseModel):
     drivers: list[TmcDriver] = []
 
 
+class DriverLive(BaseModel):
+    """Focused live telemetry for one driver (GET /api/drivers/live/{stepper})."""
+
+    reachable: bool
+    stepper: str
+    model: str | None = None
+    temperature: float | None = None
+    run_current: float | None = None
+    #: Live driver flags (sg_result / cs_actual / overtemp / short / open-load / …). None
+    #: while the motor is disabled.
+    drv_status: dict[str, Any] | None = None
+
+
 class DriverCatalog(BaseModel):
     """The curated TMC driver capability map (GET /api/drivers/catalog)."""
 
