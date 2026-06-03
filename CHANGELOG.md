@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.50.0] - 2026-06-03
+
+### Added — Input Shaping: every test type feeds the Audit (UX overhaul, 7 of 7 — complete)
+
+- **The Audit now aggregates every result, not just shaper runs.** Each live tool — accelerometer
+  noise, belt comparison, axes-map, sustain frequency, and the vibrations profile — records an
+  entry when it completes, rendered as a per-property card alongside the shaper calibrations and
+  the archived configs/captures. One organized, engineered place to review every test by property.
+- New pure record builders in `audit.ts` (one per tool, reusing the existing belt / axes-map /
+  result verdicts) with unit coverage; `ResonanceFromPrinter` emits a `recorded` event per tool.
+- **This completes the Input Shaping widget reorganization** (v0.45.0 → v0.50.0): four-view IA,
+  inline help + illustrations, per-tool motion confirms, a persistent host archive, a unified
+  upload/host file source, and the aggregated per-property Audit.
+
 ## [0.49.0] - 2026-06-03
 
 ### Changed — Input Shaping: History becomes the aggregated Audit (UX overhaul, 6 of N)
