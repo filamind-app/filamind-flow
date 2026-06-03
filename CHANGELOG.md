@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.49.0] - 2026-06-03
+
+### Changed — Input Shaping: History becomes the aggregated Audit (UX overhaul, 6 of N)
+
+- **The History tab is now "Audit"** — one place that aggregates past results, merging this
+  browser's records with the on-host **archive** (saved configs + captures). Each result renders
+  as a card with its properties in **separate labelled fields** (the shaper factor breakdown,
+  grade, and trend ▲/▼ vs the previous same-axis run), newest-first.
+- New pure `audit.ts` (unified `AuditRecord` model + per-kind retention + a one-time, idempotent
+  fold-in of the legacy grade-history — additive, the old localStorage is never cleared) with a
+  unit-test suite. Shaper analyses now also record an audit entry.
+- The other live-tool results (noise / belts / axes-map / sustain / vibrations) join the Audit in
+  the next release.
+
 ## [0.48.0] - 2026-06-03
 
 ### Added — Input Shaping: unified CSV source + archive browser (UX overhaul, 5 of N)
