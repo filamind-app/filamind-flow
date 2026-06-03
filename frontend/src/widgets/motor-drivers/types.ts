@@ -126,3 +126,8 @@ export interface ApplyResponse {
   applied: string[]
   message: string
 }
+
+/** Whether the motors_sync add-on is installed (GET /api/drivers/motors-sync). */
+export interface MotorsSyncStatus {
+  available: boolean
+}
