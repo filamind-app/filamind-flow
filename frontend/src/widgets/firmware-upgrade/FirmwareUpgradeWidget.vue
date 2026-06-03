@@ -3,6 +3,8 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
+import HelpNote from './HelpNote.vue'
+import { STEPS } from './help'
 import {
   buildFirmware,
   cancelTask,
@@ -44,6 +46,7 @@ const beaconFlashing = ref(false)
 const health = ref<HealthReport | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(true)
+const showSteps = ref(false)
 
 const healthIssues = computed(() => health.value?.checks.filter((c) => !c.ok) ?? [])
 const healthTitle = computed(() =>
@@ -369,6 +372,30 @@ onUnmounted(() => {
       </div>
 
       <template v-else-if="status">
+        <!-- Help layer (collapsed by default — the project widget-UX rule) -->
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <HelpNote topic="overview" />
+          <HelpNote topic="glossary" />
+          <HelpNote topic="status" />
+          <HelpNote topic="toolchain" />
+          <HelpNote topic="services" />
+          <HelpNote topic="devices" />
+          <HelpNote topic="flash" />
+          <button
+            class="font-mono text-[10px] opacity-60 transition-opacity hover:opacity-100"
+            :aria-expanded="showSteps"
+            @click="showSteps = !showSteps"
+          >
+            {{ showSteps ? '▾ build → flash guide' : '▸ build → flash guide' }}
+          </button>
+        </div>
+        <ol
+          v-if="showSteps"
+          class="list-decimal space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper py-2 pl-6 pr-2 text-[11px] leading-snug opacity-80"
+        >
+          <li v-for="(s, i) in STEPS" :key="i">{{ s }}</li>
+        </ol>
+
         <div class="space-y-1.5">
           <!-- Host runs the Klipper host software — the reference every MCU syncs to. -->
           <div
