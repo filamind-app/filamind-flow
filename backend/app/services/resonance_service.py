@@ -18,12 +18,18 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import glob
+import math
 import os
 import re
 import time
 from typing import Any
 
-from app.services import axes_map_service, shaper_service, spectrogram_service
+from app.services import (
+    axes_map_service,
+    shaper_service,
+    spectrogram_service,
+    vibrations_service,
+)
 from app.services.moonraker_client import MoonrakerClient
 
 #: Klipper writes raw accelerometer data from a background process, so the
@@ -60,6 +66,12 @@ _NOISE_HIGH = 1000.0
 #: A sustain-frequency hold is a slow TEST_RESONANCES sweep this wide (Hz) around the
 #: target — close enough to a constant hold, using only stock Klipper g-code.
 _STATIC_BAND = 3.0
+#: A vibrations profile is a long speed x angle sweep. Each Moonraker call is short,
+#: but the whole blocking sweep must finish inside nginx's /api proxy_read_timeout
+#: (1200s). The defaults below keep a full run well under that; finer increments take
+#: proportionally longer (and are surfaced as a warning in the docs/UI).
+_VIB_TIMEOUT = 1200.0
+_VIB_MIN_SPEED = 5.0
 
 
 def resolve_dirs(resonance_dirs: str) -> list[str]:
@@ -348,6 +360,165 @@ async def run_static_excitation(
     result["source_file"] = os.path.basename(target)
     with contextlib.suppress(OSError):  # transient capture
         os.remove(target)
+    return result
+
+
+async def _kinematics(client: MoonrakerClient) -> str:
+    """The configured kinematics (e.g. 'corexy') from ``[printer] kinematics``."""
+    try:
+        config = (
+            (await client.query_objects(["configfile"])).get("configfile", {}).get("config", {})
+        )
+    except Exception:
+        config = {}
+    printer = config.get("printer", {}) if isinstance(config, dict) else {}
+    kin = printer.get("kinematics") if isinstance(printer, dict) else None
+    if isinstance(kin, str) and kin.strip():
+        return kin.strip().lower()
+    raise shaper_service.ShaperAnalysisError("Could not read [printer] kinematics from the config")
+
+
+async def _capture_vib_segment(
+    client: MoonrakerClient,
+    resonance_dirs: str,
+    chip: str | None,
+    name: str,
+    move_gcodes: list[str],
+) -> str:
+    """Brackets one constant-speed back-and-forth burst with ACCELEROMETER_MEASURE and
+    returns the raw-accel CSV Klipper wrote for it (M400 before the stop so the queued
+    moves are flushed)."""
+    measure = (
+        f"ACCELEROMETER_MEASURE CHIP={chip} NAME={name}"
+        if chip
+        else f"ACCELEROMETER_MEASURE NAME={name}"
+    )
+    before = {f["path"] for f in list_files(resonance_dirs, _ALL_PATTERNS)}
+    await client.run_gcode(measure)  # start
+    for gcode in move_gcodes:
+        await client.run_gcode(gcode)
+    await client.run_gcode("M400")
+    await client.run_gcode(measure)  # stop -> flush CSV
+    return await _await_new_file(resonance_dirs, before, name)
+
+
+async def run_vibrations_profile(
+    moonraker_url: str,
+    resonance_dirs: str,
+    *,
+    size: float = 100.0,
+    z_height: float = 20.0,
+    max_speed: float = 200.0,
+    min_speed: float = _VIB_MIN_SPEED,
+    speed_increment: float = 10.0,
+    accel: float = 3000.0,
+    travel_speed: float = 120.0,
+    max_freq: float = 200.0,
+) -> dict[str, Any]:
+    """Sweeps many speeds along each motor angle and profiles the machine's vibrations.
+
+    For every speed sample (``min_speed`` .. ``max_speed`` step ``speed_increment``) at
+    each kinematic motor angle (0/90 for Cartesian/CoreXZ, 45/135 for CoreXY), moves the
+    toolhead back and forth at a constant speed while ACCELEROMETER_MEASURE records, then
+    analyses all the captures into a directional speed-vs-vibration profile.
+
+    **Moves the toolhead a lot** (a minutes-long sweep around bed center). Print-guarded;
+    requires a configured resonance tester + accelerometer. The whole sweep runs as one
+    blocking call — kept under nginx's 1200s budget by the coarse default increment.
+    """
+    size = max(50.0, float(size))
+    max_speed = max(10.0, float(max_speed))
+    speed_increment = max(1.0, float(speed_increment))
+    min_speed = max(1.0, float(min_speed))
+    if size / (max_speed / 60.0) < 0.25:
+        raise shaper_service.ShaperAnalysisError(
+            "Movement is too small for the speed — increase SIZE or lower MAX_SPEED"
+        )
+
+    client = MoonrakerClient(moonraker_url, timeout=_VIB_TIMEOUT)
+    await _ensure_test_ready(client)
+    kinematics = await _kinematics(client)
+    main_angles = vibrations_service.kinematics_main_angles(kinematics)  # validates kinematics
+    chip = await _accel_chip(client)
+
+    center = await _bed_center(client)
+    if center is None:
+        raise shaper_service.ShaperAnalysisError(
+            "Could not determine the bed center from the printer config"
+        )
+    mid_x, mid_y = center
+
+    try:
+        toolhead = (await client.query_objects(["toolhead"])).get("toolhead", {})
+        old_accel = toolhead.get("max_accel")
+        old_scv = toolhead.get("square_corner_velocity")
+    except Exception:
+        old_accel = old_scv = None
+
+    f_travel = int(travel_speed * 60)
+    nb_samples = int((max_speed - min_speed) / speed_increment + 1)
+    segments: list[dict[str, Any]] = []
+    paths: list[str] = []
+    try:
+        await client.run_gcode(f"SET_VELOCITY_LIMIT ACCEL={int(accel)} SQUARE_CORNER_VELOCITY=5.0")
+        await client.run_gcode("G90")
+        await client.run_gcode(
+            f"G1 X{mid_x - 15:.1f} Y{mid_y - 15:.1f} Z{z_height:.1f} F{f_travel}"
+        )
+        await client.run_gcode("M400")
+        for angle in main_angles:
+            radian = math.radians(angle)
+            for i in range(nb_samples):
+                speed = min_speed + i * speed_increment
+                # Shorter segments at low speed (1/5 of SIZE, ramping to full at 100mm/s)
+                # gather enough data without wasting travel — verbatim from Shake&Tune.
+                mult = (1 / 5 + 4 / 5 * speed / 100) if speed < 100 else 1.0
+                d_x = (size / 2) * math.cos(radian) * mult
+                d_y = (size / 2) * math.sin(radian) * mult
+                f_move = int(speed * 60)
+                await client.run_gcode(
+                    f"G1 X{mid_x - d_x:.2f} Y{mid_y - d_y:.2f} Z{z_height:.1f} F{f_travel}"
+                )
+                await client.run_gcode("M400")
+                # Fewer passes at low speed (also from Shake&Tune): 1 < 150, 2 < 250, else 3.
+                movements = 3 if speed >= 250 else 2 if speed >= 150 else 1
+                moves: list[str] = []
+                for _ in range(movements):
+                    moves.append(
+                        f"G1 X{mid_x + d_x:.2f} Y{mid_y + d_y:.2f} Z{z_height:.1f} F{f_move}"
+                    )
+                    moves.append(
+                        f"G1 X{mid_x - d_x:.2f} Y{mid_y - d_y:.2f} Z{z_height:.1f} F{f_move}"
+                    )
+                name = f"vib_an{angle:.2f}sp{speed:.2f}".replace(".", "_")
+                path = await _capture_vib_segment(client, resonance_dirs, chip, name, moves)
+                paths.append(path)
+                if not _is_allowed(path, resonance_dirs):
+                    raise shaper_service.ShaperAnalysisError(
+                        "Capture landed outside the allowed dirs"
+                    )
+                with open(path, "rb") as handle:
+                    raw = handle.read(64_000_000)
+                segments.append({"angle": float(angle), "speed": float(speed), "raw": raw})
+                with contextlib.suppress(OSError):  # keep /tmp clean as we go
+                    os.remove(path)
+    except shaper_service.ShaperAnalysisError:
+        raise
+    except Exception as exc:
+        raise shaper_service.ShaperAnalysisError(f"Vibrations profile failed: {exc}") from exc
+    finally:
+        for path in paths:  # best-effort cleanup of any straggler captures
+            with contextlib.suppress(OSError):
+                os.remove(path)
+        if old_accel:
+            scv = f" SQUARE_CORNER_VELOCITY={old_scv}" if old_scv else ""
+            with contextlib.suppress(Exception):
+                await client.run_gcode(f"SET_VELOCITY_LIMIT ACCEL={int(old_accel)}{scv}")
+
+    result = vibrations_service.analyze_vibrations(
+        segments, kinematics=kinematics, accel=accel, max_freq=max_freq
+    )
+    result["segments_captured"] = len(segments)
     return result
 
 

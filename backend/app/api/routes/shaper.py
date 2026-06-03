@@ -11,6 +11,7 @@ from app.models.schemas import (
     ResonanceFilesResponse,
     ShaperAnalysis,
     StaticExcitationResult,
+    VibrationsProfile,
 )
 from app.services import resonance_service, shaper_service
 
@@ -188,3 +189,40 @@ async def excitate_axis(
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return StaticExcitationResult(**result)
+
+
+@router.post("/vibrations-profile", response_model=VibrationsProfile)
+async def vibrations_profile(
+    size: float = Query(100.0, description="Movement size for the strokes (mm)"),
+    z_height: float = Query(20.0, description="Z height for the sweep (mm)"),
+    max_speed: float = Query(200.0, description="Top speed to test (mm/s)"),
+    min_speed: float = Query(5.0, description="Lowest speed to test (mm/s)"),
+    speed_increment: float = Query(10.0, description="Speed step (mm/s); finer = longer run"),
+    accel: float = Query(3000.0, description="Acceleration during the sweep (mm/s²)"),
+    travel_speed: float = Query(120.0, description="Travel speed between strokes (mm/s)"),
+    max_freq: float = Query(200.0, description="Max frequency for the analysis (Hz)"),
+    settings: Settings = Depends(get_settings),
+) -> VibrationsProfile:
+    """Sweeps speed x motor-angle and profiles the machine's vibrations.
+
+    Reports the smoothest speeds/directions, the resonance speeds to avoid, motor
+    symmetry and the motors' resonant frequency. **Moves the toolhead for minutes**
+    (one long blocking sweep). Print-guarded and requires a configured resonance tester;
+    returns HTTP 400 with a clear message if a check fails.
+    """
+    try:
+        result = await resonance_service.run_vibrations_profile(
+            settings.moonraker_url,
+            settings.resonance_dirs,
+            size=size,
+            z_height=z_height,
+            max_speed=max_speed,
+            min_speed=min_speed,
+            speed_increment=speed_increment,
+            accel=accel,
+            travel_speed=travel_speed,
+            max_freq=max_freq,
+        )
+    except shaper_service.ShaperAnalysisError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return VibrationsProfile(**result)
