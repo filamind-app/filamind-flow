@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import { fetchDriverStatus, fetchMotorCatalog, saveMotorAssignment } from './api'
 import HelpIllo from './HelpIllo.vue'
+import GuidedWizard from './GuidedWizard.vue'
 import HelpNote from './HelpNote.vue'
 import LiveMonitor from './LiveMonitor.vue'
 import MotorPicker from './MotorPicker.vue'
@@ -31,6 +32,7 @@ const loading = ref(true)
 const showSteps = ref(false)
 const openRegisters = ref<Record<string, boolean>>({})
 const motorCatalog = ref<MotorSpec[]>([])
+const mode = ref<'dashboard' | 'guided'>('dashboard')
 
 const drivers = computed(() => status.value?.drivers ?? [])
 const reachable = computed(() => status.value?.reachable ?? false)
@@ -102,8 +104,8 @@ onUnmounted(() => {
     <!-- Intro + help layer (collapsed by default — zero clutter) -->
     <div class="flex items-start justify-between gap-2">
       <p class="min-w-0 flex-1 text-xs opacity-70">
-        Every TMC stepper driver on your printer, read live from its Klipper config. Read-only —
-        tuning comes later.
+        Every TMC stepper driver on your printer, read live from its Klipper config — inspect, get
+        tuning recommendations, and apply them (gated). New here? Try 🧭 Guided.
       </p>
       <HelpIllo illo="driver" class="h-8 w-8 shrink-0 opacity-70" />
     </div>
@@ -124,6 +126,19 @@ onUnmounted(() => {
     >
       <li v-for="(s, i) in STEPS" :key="i">{{ s }}</li>
     </ol>
+
+    <!-- Dashboard / Guided mode strip (only once drivers have loaded) -->
+    <div v-if="reachable && drivers.length" class="flex gap-1">
+      <button
+        v-for="m in ['dashboard', 'guided'] as const"
+        :key="m"
+        class="nb-btn px-2 py-0.5 text-[11px]"
+        :class="mode === m ? 'bg-brand-cyan' : 'bg-surface'"
+        @click="mode = m"
+      >
+        {{ m === 'dashboard' ? 'Dashboard' : '🧭 Guided' }}
+      </button>
+    </div>
 
     <!-- States -->
     <div v-if="loading && !status" class="font-mono text-xs">Loading motor drivers…</div>
@@ -153,8 +168,8 @@ onUnmounted(() => {
       No TMC drivers found in the Klipper config. (Only TMC stepper drivers appear here.)
     </p>
 
-    <!-- Driver cards -->
-    <template v-else>
+    <!-- Driver cards (dashboard mode) -->
+    <template v-else-if="mode === 'dashboard'">
       <div class="grid gap-2 sm:grid-cols-2">
         <section
           v-for="d in drivers"
@@ -266,5 +281,14 @@ onUnmounted(() => {
         <HelpNote topic="monitor" />
       </div>
     </template>
+
+    <!-- Guided wizard mode -->
+    <GuidedWizard
+      v-else
+      :drivers="drivers"
+      :catalog="motorCatalog"
+      @changed="load(true)"
+      @exit="mode = 'dashboard'"
+    />
   </div>
 </template>

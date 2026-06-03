@@ -17,10 +17,10 @@ import {
 import { recommendationRows } from './format'
 import type { DriverRecommendation, TmcDriver } from './types'
 
-const props = defineProps<{ driver: TmcDriver }>()
+const props = defineProps<{ driver: TmcDriver; defaultOpen?: boolean }>()
 const emit = defineEmits<{ applied: [] }>()
 
-const open = ref(false)
+const open = ref(props.defaultOpen === true)
 const voltage = ref(24)
 const loading = ref(false)
 const error = ref<string | null>(null)
