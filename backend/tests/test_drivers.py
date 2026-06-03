@@ -252,7 +252,8 @@ def test_status_attaches_assigned_motor(tmp_path: Any, monkeypatch: pytest.Monke
 def test_chopper_mode() -> None:
     assert drivers_service._chopper_mode(0.0) == "SpreadCycle"
     assert drivers_service._chopper_mode(5.0) == "StealthChop"
-    assert drivers_service._chopper_mode(None) is None
+    # Unset threshold => Klipper's default 0 => SpreadCycle, not an unknown mode (#85).
+    assert drivers_service._chopper_mode(None) == "SpreadCycle"
 
 
 def test_axis_label() -> None:
