@@ -13,9 +13,10 @@ import {
   maxCurrentLabel,
   motorSpecLabel,
   nearCurrentCap,
+  recommendationRows,
   temperatureLabel,
 } from '../format'
-import type { DriverInfo, MotorSpec, TmcDriver } from '../types'
+import type { DriverInfo, DriverRecommendation, MotorSpec, TmcDriver } from '../types'
 
 function motor(overrides: Partial<MotorSpec> = {}): MotorSpec {
   return {
@@ -229,5 +230,43 @@ describe('filterMotors', () => {
   })
   it('matches on manufacturer, case-insensitively', () => {
     expect(filterMotors(catalog, 'moons').map((m) => m.model)).toEqual(['ms17hd2p4100'])
+  })
+})
+
+describe('recommendationRows', () => {
+  const rec: DriverRecommendation = {
+    motor_model: 'm',
+    motor_name: 'LDO m',
+    run_current: 1.4,
+    run_current_basis: '70% of the rated 2.0 A',
+    pwm_grad: 14,
+    pwm_ofs: 28,
+    hstrt: 5,
+    hend: 2,
+    max_pwm_rps: 5.1,
+    cbemf: 0.1475,
+    voltage: 24,
+    toff: 3,
+    tbl: 2,
+  }
+  it('diffs the recommendation against the live registers and run current', () => {
+    const d = driver({
+      run_current: 1.1,
+      registers: { pwm_grad: 14, pwm_ofs: 36, hstrt: 5, hend: 0 },
+    })
+    const rows = recommendationRows(d, rec)
+    expect(rows.map((r) => [r.label, r.current, r.recommended, r.changed])).toEqual([
+      ['run current (A)', 1.1, 1.4, true],
+      ['pwm_grad', 14, 14, false], // unchanged
+      ['pwm_ofs', 36, 28, true],
+      ['hstrt', 5, 5, false],
+      ['hend', 0, 2, true],
+    ])
+  })
+  it('marks a register changed when the live value is unknown', () => {
+    const d = driver({ registers: {} })
+    const row = recommendationRows(d, rec).find((r) => r.label === 'pwm_grad')!
+    expect(row.current).toBeNull()
+    expect(row.changed).toBe(true)
   })
 })

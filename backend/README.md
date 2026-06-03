@@ -50,6 +50,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/drivers/motors`      | The stepper-motor catalog (200+ motors, datasheet parameters) for the motor picker. |
 | GET    | `/api/drivers/mapping`     | The saved stepper → motor assignments. |
 | POST   | `/api/drivers/mapping`     | Assign a catalogued motor to a stepper (empty `motor_model` clears it). |
+| POST   | `/api/drivers/recommend`   | Recommend a run current + StealthChop/SpreadCycle registers for a motor (compute-only; faithful `motor_constants` port). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).
