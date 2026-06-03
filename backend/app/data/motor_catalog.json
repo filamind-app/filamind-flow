@@ -1,6 +1,6 @@
 {
   "source": "Baked from app/data/sources/stepper_motors.csv (hardware-database/01-stepper-motors) by scripts/bake_motor_catalog.py.",
-  "count": 207,
+  "count": 202,
   "manufacturers": [
     "ACT Motor",
     "BIGTREETECH/BIQU",
@@ -627,16 +627,6 @@
     },
     {
       "manufacturer": "LDO Motors",
-      "model": "ldo-36sth20-1004ahg",
-      "resistance_ohm": 2.1,
-      "inductance_H": 0.0016,
-      "holding_torque_Nm": 0.1,
-      "max_current_A": 1.0,
-      "steps_per_rev": 400,
-      "source": "motor_data.cfg"
-    },
-    {
-      "manufacturer": "LDO Motors",
       "model": "ldo-36sth20-1004ahg-9T",
       "resistance_ohm": 2.4,
       "inductance_H": 0.0014,
@@ -867,16 +857,6 @@
     },
     {
       "manufacturer": "LDO Motors",
-      "model": "ldo-42sth48-2004ac",
-      "resistance_ohm": 1.6,
-      "inductance_H": 0.003,
-      "holding_torque_Nm": 0.59,
-      "max_current_A": 2.0,
-      "steps_per_rev": 200,
-      "source": "motor_data.cfg"
-    },
-    {
-      "manufacturer": "LDO Motors",
       "model": "ldo-42sth48-2004mac(s46)",
       "resistance_ohm": 1.4,
       "inductance_H": 0.0028,
@@ -897,16 +877,6 @@
     },
     {
       "manufacturer": "LDO Motors",
-      "model": "ldo-42sth48-2004mah",
-      "resistance_ohm": 1.4,
-      "inductance_H": 0.003,
-      "holding_torque_Nm": 0.44,
-      "max_current_A": 2.0,
-      "steps_per_rev": 400,
-      "source": "motor_data.cfg"
-    },
-    {
-      "manufacturer": "LDO Motors",
       "model": "ldo-42sth48-2504ac",
       "resistance_ohm": 1.2,
       "inductance_H": 0.0015,
@@ -914,16 +884,6 @@
       "max_current_A": 2.5,
       "steps_per_rev": 200,
       "source": "motor_database.cfg"
-    },
-    {
-      "manufacturer": "LDO Motors",
-      "model": "ldo-42sth48-2504ac",
-      "resistance_ohm": 1.2,
-      "inductance_H": 0.0015,
-      "holding_torque_Nm": 0.55,
-      "max_current_A": 2.5,
-      "steps_per_rev": 200,
-      "source": "motor_data.cfg"
     },
     {
       "manufacturer": "LDO Motors",
@@ -944,16 +904,6 @@
       "max_current_A": 2.8,
       "steps_per_rev": 200,
       "source": "motor_database.cfg"
-    },
-    {
-      "manufacturer": "LDO Motors",
-      "model": "ldo-42sth48-2804ah",
-      "resistance_ohm": 0.7,
-      "inductance_H": 0.0006,
-      "holding_torque_Nm": 0.42,
-      "max_current_A": 2.8,
-      "steps_per_rev": 200,
-      "source": "motor_data.cfg"
     },
     {
       "manufacturer": "LDO Motors",

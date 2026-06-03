@@ -58,7 +58,7 @@ function pick(model: string | null): void {
         ✕ clear assignment
       </button>
       <ul class="max-h-44 space-y-0.5 overflow-y-auto">
-        <li v-for="m in shown" :key="m.model">
+        <li v-for="m in shown" :key="`${m.manufacturer}::${m.model}`">
           <button
             class="w-full rounded px-1 py-0.5 text-left hover:bg-surface"
             @click="pick(m.model)"
