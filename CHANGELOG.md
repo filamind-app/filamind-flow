@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.46.1] - 2026-06-03
+
+### Changed — Input Shaping: per-tool motion confirm (UX overhaul, 3 of N)
+
+- **Each on-printer tool now has its own "moves the toolhead — I'm ready" confirm.** Previously a
+  single checkbox armed the live test, the belt comparison *and* axes-map together — so ticking it
+  for a quick live test also armed the much larger belt sweep. The live test, belt comparison and
+  axes-map are now three self-contained panels, each with its own confirm + run button (consistent
+  with the Sustain and Vibrations panels). Safer and clearer; the shared concurrency lock and the
+  backend print-guard are unchanged.
+
+### Added
+
+- Backend guard tests covering every on-printer entrypoint (live / belts / axes-map / sustain /
+  vibrations / noise) refusing to run while the printer is printing.
+
 ## [0.46.0] - 2026-06-03
 
 ### Added — Input Shaping: built-in explanations + illustrations (UX overhaul, 2 of N)

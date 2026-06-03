@@ -36,6 +36,10 @@ const busy = ref(false)
 const liveAxis = ref<'x' | 'y'>('x')
 const liveReady = ref(false)
 const liveBusy = ref(false)
+// Each motion tool has its OWN confirm checkbox, so ticking "ready" for one can't
+// accidentally arm a different (and possibly much larger) motion.
+const beltsReady = ref(false)
+const axesReady = ref(false)
 const noise = ref<NoiseResult | null>(null)
 const noiseBusy = ref(false)
 const belts = ref<BeltComparison | null>(null)
@@ -149,12 +153,12 @@ async function live(): Promise<void> {
 }
 
 async function runBelts(): Promise<void> {
-  if (beltsBusy.value || !liveReady.value) return
+  if (beltsBusy.value || !beltsReady.value) return
   error.value = null
   beltsBusy.value = true
   try {
     belts.value = await compareBelts()
-    liveReady.value = false
+    beltsReady.value = false
     await loadFiles()
   } catch (e) {
     error.value = msg(e, 'Belt comparison failed')
@@ -164,12 +168,12 @@ async function runBelts(): Promise<void> {
 }
 
 async function runAxes(): Promise<void> {
-  if (axesBusy.value || !liveReady.value) return
+  if (axesBusy.value || !axesReady.value) return
   error.value = null
   axesBusy.value = true
   try {
     axesMapResult.value = await runAxesMap()
-    liveReady.value = false
+    axesReady.value = false
   } catch (e) {
     error.value = msg(e, 'Axes-map detection failed')
   } finally {
@@ -262,7 +266,8 @@ onMounted(loadFiles)
       </div>
     </div>
 
-    <!-- Live test: moves the toolhead, so it is gated behind a confirm checkbox. -->
+    <!-- Each on-printer motion tool is its own panel with its OWN confirm, so arming one
+         motion can't trigger another (consistent with the Sustain / Vibrations panels). -->
     <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
       <div class="flex flex-wrap items-center gap-2 text-[10px]">
         <span class="font-bold">🔴 Live test</span>
@@ -280,33 +285,57 @@ onMounted(loadFiles)
         >
           {{ liveBusy ? 'running…' : 'run TEST_RESONANCES' }}
         </button>
+      </div>
+      <p class="font-mono text-[9px] opacity-60">
+        Homes the printer if needed, then runs TEST_RESONANCES on the chosen axis (needs an
+        accelerometer + a <code>[resonance_tester]</code>). Refused while printing.
+      </p>
+    </div>
+
+    <!-- Compare belts (CoreXY) — its own confirm. -->
+    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+        <span class="font-bold">🟰 Compare belts</span>
+        <label class="flex items-center gap-1">
+          <input v-model="beltsReady" type="checkbox" /> ⚠ moves the toolhead — I'm ready
+        </label>
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
-          :disabled="!liveReady || motionBusy"
+          :disabled="!beltsReady || motionBusy"
           title="CoreXY: excite each belt diagonal and overlay the responses"
           @click="runBelts"
         >
-          {{ beltsBusy ? 'comparing…' : '🟰 compare belts' }}
-        </button>
-        <button
-          class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
-          :disabled="!liveReady || motionBusy"
-          title="Jog +X/+Y/+Z to detect the accelerometer orientation (axes_map)"
-          @click="runAxes"
-        >
-          {{ axesBusy ? 'detecting…' : '🧭 axes map' }}
+          {{ beltsBusy ? 'comparing…' : 'compare belts' }}
         </button>
       </div>
       <p class="font-mono text-[9px] opacity-60">
-        Homes the printer if needed, then runs TEST_RESONANCES (needs an accelerometer + a
-        <code>[resonance_tester]</code>). Refused while printing.
-        <strong>Compare belts</strong> runs two sweeps along the CoreXY belt diagonals;
-        <strong>axes map</strong> jogs ~30 mm in X, Y, Z to detect the sensor orientation.
+        CoreXY only: runs two sweeps along the belt diagonals and overlays them. Refused while
+        printing.
       </p>
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <HelpNote topic="belts" />
-        <HelpNote topic="axesMap" />
+      <HelpNote topic="belts" />
+    </div>
+
+    <!-- Axes map — its own confirm. -->
+    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+        <span class="font-bold">🧭 Axes map</span>
+        <label class="flex items-center gap-1">
+          <input v-model="axesReady" type="checkbox" /> ⚠ moves the toolhead — I'm ready
+        </label>
+        <button
+          class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
+          :disabled="!axesReady || motionBusy"
+          title="Jog +X/+Y/+Z to detect the accelerometer orientation (axes_map)"
+          @click="runAxes"
+        >
+          {{ axesBusy ? 'detecting…' : 'detect axes_map' }}
+        </button>
       </div>
+      <p class="font-mono text-[9px] opacity-60">
+        Jogs ~30 mm in X, then Y, then Z to detect the accelerometer orientation. Refused while
+        printing.
+      </p>
+      <HelpNote topic="axesMap" />
     </div>
 
     <!-- Belt comparison (CoreXY): the two belt-direction responses overlaid. -->
