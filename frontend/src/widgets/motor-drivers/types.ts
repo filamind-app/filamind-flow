@@ -60,6 +60,16 @@ export interface DriversStatus {
   drivers: TmcDriver[]
 }
 
+/** Mirrors the backend `DriverLive` (GET /api/drivers/live/{stepper}). */
+export interface DriverLive {
+  reachable: boolean
+  stepper: string
+  model: string | null
+  temperature: number | null
+  run_current: number | null
+  drv_status: Record<string, unknown> | null
+}
+
 export interface DriverCatalog {
   source: string
   drivers: DriverInfo[]

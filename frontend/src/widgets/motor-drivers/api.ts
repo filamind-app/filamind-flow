@@ -4,6 +4,7 @@ import type {
   ApplyRequest,
   ApplyResponse,
   ConfigBlockRequest,
+  DriverLive,
   DriverRecommendation,
   DriversStatus,
   MotorCatalog,
@@ -18,6 +19,16 @@ export async function fetchDriverStatus(): Promise<DriversStatus> {
     throw new Error(`Driver status request failed (${response.status})`)
   }
   return (await response.json()) as DriversStatus
+}
+
+/** Fast live telemetry for one driver (for the live monitor's quick polling). */
+export async function fetchDriverLive(stepper: string): Promise<DriverLive> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/drivers/live/${encodeURIComponent(stepper)}`)
+  if (!response.ok) {
+    throw new Error(`Live telemetry request failed (${response.status})`)
+  }
+  return (await response.json()) as DriverLive
 }
 
 /** Fetches the stepper-motor catalog (datasheet parameters) for the motor picker. */

@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.57.0] - 2026-06-03
+
+### Added
+
+- **Motor Drivers P6 — live monitor.** A per-driver, read-only "live monitor" panel polls
+  the driver's telemetry (~1.5 s) and shows **temperature**, **StallGuard load (SG_RESULT)**
+  with an inline sparkline, **current scale (CS_ACTUAL)**, and any **fault flags**
+  (overtemperature / short / open-load / standstill). The driver only reports this while the
+  motor is enabled, so an idle motor shows a hint to move/home the axis. No writes, no motion.
+  - Backend: fast, focused **`GET /api/drivers/live/{stepper}`** (one driver's `get_status`,
+    no config re-read).
+
 ## [0.56.0] - 2026-06-03
 
 ### Added
