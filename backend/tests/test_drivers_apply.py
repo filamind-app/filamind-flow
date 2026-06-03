@@ -169,6 +169,38 @@ async def test_home_axis_rejects_bad_axis_and_printing(monkeypatch: pytest.Monke
     assert printing.scripts == []
 
 
+async def test_motors_sync_unavailable_does_not_run(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()  # no [motors_sync] section
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.run_motors_sync("http://x")
+    assert res["ok"] is False
+    assert "isn't installed" in res["message"]
+    assert fake.scripts == []
+
+
+async def test_motors_sync_runs_when_installed(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient(config={"motors_sync": {}})
+    _patch(monkeypatch, fake)
+    assert (await drivers_apply.run_motors_sync("http://x"))["ok"] is True
+    assert fake.scripts == ["SYNC_MOTORS"]
+
+
+async def test_motors_sync_calibrate(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient(config={"motors_sync": {}})
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.run_motors_sync("http://x", calibrate=True)
+    assert res["ok"] is True
+    assert fake.scripts == ["SYNC_MOTORS_CALIBRATE"]
+
+
+async def test_motors_sync_refuses_while_printing(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient(printing=True, config={"motors_sync": {}})
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.run_motors_sync("http://x")
+    assert res["ok"] is False
+    assert fake.scripts == []
+
+
 def test_config_block_route() -> None:
     client = TestClient(create_app())
     res = client.post(

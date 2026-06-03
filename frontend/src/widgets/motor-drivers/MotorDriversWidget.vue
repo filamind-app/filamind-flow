@@ -7,6 +7,7 @@ import GuidedWizard from './GuidedWizard.vue'
 import HelpNote from './HelpNote.vue'
 import LiveMonitor from './LiveMonitor.vue'
 import MotorPicker from './MotorPicker.vue'
+import MotorSyncPanel from './MotorSyncPanel.vue'
 import RecommendPanel from './RecommendPanel.vue'
 import SensorlessPanel from './SensorlessPanel.vue'
 import {
@@ -267,6 +268,9 @@ onUnmounted(() => {
         </section>
       </div>
 
+      <!-- Printer-level: motor synchronization (dual/quad-motor axes) -->
+      <MotorSyncPanel />
+
       <!-- Contextual help (all collapsed) -->
       <div class="flex flex-wrap gap-x-3 gap-y-1 pt-1">
         <HelpNote topic="current" />
@@ -279,6 +283,7 @@ onUnmounted(() => {
         <HelpNote topic="recommend" />
         <HelpNote topic="sensorless" />
         <HelpNote topic="monitor" />
+        <HelpNote topic="motorsync" />
       </div>
     </template>
 

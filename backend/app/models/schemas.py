@@ -905,3 +905,15 @@ class HomeRequest(BaseModel):
     """Home a single axis as a sensorless test (X / Y / Z)."""
 
     axis: str
+
+
+class MotorsSyncStatus(BaseModel):
+    """Whether the motors_sync add-on is installed (GET /api/drivers/motors-sync)."""
+
+    available: bool
+
+
+class MotorsSyncRequest(BaseModel):
+    """Run motor synchronization; ``calibrate`` runs the longer calibration pass."""
+
+    calibrate: bool = False

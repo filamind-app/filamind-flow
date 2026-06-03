@@ -58,6 +58,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/drivers/autotune`    | Drive `AUTOTUNE_TMC` if the `klipper_tmc_autotune` add-on is installed for the stepper. |
 | POST   | `/api/drivers/stallguard`  | Set a StallGuard threshold (`sgthrs` / `sgt` / `sg4_thrs`) — sensorless-homing sensitivity (gated). |
 | POST   | `/api/drivers/home`        | Home one axis (`G28 <axis>`) as a sensorless test — moves the toolhead (gated). |
+| GET    | `/api/drivers/motors-sync` | Whether the `motors_sync` add-on is installed. |
+| POST   | `/api/drivers/motors-sync` | Run `SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE` (multi-motor phase alignment) — moves the toolhead (gated). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

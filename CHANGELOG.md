@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.59.0] - 2026-06-03
+
+### Added
+
+- **Motor Drivers P8 — motor synchronization (roadmap complete).** A printer-level panel
+  drives the optional **motors_sync** add-on to align the microstep phase of multiple motors
+  on one axis (dual / quad-Z, dual-X). It detects whether the add-on is installed; if so it
+  offers **Sync motors** / **Calibrate** behind a confirm + crash warning (accelerometer-based,
+  moves the toolhead, refused while printing); if not, it explains what it does. This completes
+  the Motor Drivers widget roadmap (**P1–P8**).
+  - Backend: **`GET /api/drivers/motors-sync`** (availability) + **`POST /api/drivers/motors-sync`**
+    (`SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE`, gated).
+
 ## [0.58.0] - 2026-06-03
 
 ### Added
