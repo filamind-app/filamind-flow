@@ -1,0 +1,175 @@
+/** The Input Shaping "audit" — one aggregated, per-property record of every result
+ *  (shaper analysis, and in a later step the live tools too), merged with the on-host
+ *  archive. Browser-local (localStorage), additive: it never clears the legacy history,
+ *  it folds it in once. Pure + testable; the component supplies the archive runs.
+ */
+
+import type { QualityGrade } from './grade'
+import { loadHistory } from './history'
+import type { ArchiveRun, ShaperAnalysis } from './types'
+
+export type AuditKind =
+  | 'shaper'
+  | 'noise'
+  | 'belts'
+  | 'axes_map'
+  | 'static'
+  | 'vibrations'
+  | 'config'
+export type GradeTrend = 'up' | 'down' | 'same' | 'none'
+
+export interface AuditField {
+  label: string
+  value: string
+}
+
+export interface AuditRecord {
+  id: string
+  /** ISO timestamp. */
+  at: string
+  kind: AuditKind
+  axis: string | null
+  /** Where the record came from: this browser, or the on-host archive. */
+  source: 'local' | 'archive'
+  grade?: { letter: string; score: number }
+  verdict?: string
+  /** The result's properties, each in its own labelled field (the "engineered" layout). */
+  fields: AuditField[]
+  /** For archive-backed records: the run id + its files (for download / management). */
+  runId?: string
+  files?: string[]
+}
+
+export interface AuditRecordWithTrend extends AuditRecord {
+  trend: GradeTrend
+}
+
+const KEY = 'filamind.input-shaping.audit'
+const CAP_PER_KIND = 20
+
+function uid(at: string, kind: string): string {
+  return `${at}-${kind}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+/** Reads the local audit records (newest-first), tolerating missing/corrupt storage. */
+export function loadLocalAudit(): AuditRecord[] {
+  try {
+    const raw = localStorage.getItem(KEY)
+    const data = raw ? JSON.parse(raw) : []
+    return Array.isArray(data) ? (data as AuditRecord[]) : []
+  } catch {
+    return []
+  }
+}
+
+function save(records: AuditRecord[]): void {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(records))
+  } catch {
+    /* storage unavailable (private mode / quota) — keep the in-memory list */
+  }
+}
+
+/** Keeps the newest CAP_PER_KIND records of each kind (records are newest-first). */
+function capPerKind(records: AuditRecord[]): AuditRecord[] {
+  const seen: Record<string, number> = {}
+  return records.filter((r) => {
+    const n = (seen[r.kind] = (seen[r.kind] ?? 0) + 1)
+    return n <= CAP_PER_KIND
+  })
+}
+
+/** Prepends a record, caps per kind, persists, returns the new local list. */
+export function recordAudit(record: Omit<AuditRecord, 'id' | 'source'>): AuditRecord[] {
+  const full: AuditRecord = { ...record, id: uid(record.at, record.kind), source: 'local' }
+  const next = capPerKind([full, ...loadLocalAudit()])
+  save(next)
+  return next
+}
+
+/** Builds a shaper audit record from an analysis + its grade (fields = the factor breakdown). */
+export function buildShaperRecord(
+  analysis: ShaperAnalysis,
+  grade: QualityGrade,
+): Omit<AuditRecord, 'id' | 'source'> {
+  const rec = analysis.shapers.find((s) => s.recommended)
+  const fields: AuditField[] = grade.factors.map((f) => ({ label: f.label, value: f.value }))
+  if (analysis.recommended_shaper && analysis.recommended_freq != null) {
+    fields.unshift({
+      label: 'Recommended',
+      value: `${analysis.recommended_shaper.toUpperCase()} @ ${analysis.recommended_freq.toFixed(1)} Hz`,
+    })
+  }
+  if (rec) fields.push({ label: 'Max accel', value: `≤${rec.max_accel.toFixed(0)} mm/s²` })
+  return {
+    at: new Date().toISOString(),
+    kind: 'shaper',
+    axis: analysis.axis,
+    grade: { letter: grade.letter, score: grade.score },
+    verdict: grade.verdict,
+    fields,
+  }
+}
+
+/** One-time fold of the legacy grade-history into shaper records (only if audit is empty). */
+export function migrateLegacyHistory(): void {
+  if (loadLocalAudit().length) return
+  const legacy = loadHistory()
+  if (!legacy.length) return
+  const records: AuditRecord[] = legacy.map((h) => ({
+    id: `${h.at}-shaper`,
+    at: h.at,
+    kind: 'shaper',
+    axis: h.axis,
+    source: 'local',
+    grade: h.grade && h.score != null ? { letter: h.grade, score: h.score } : undefined,
+    fields: [
+      { label: 'Recommended', value: `${h.shaper.toUpperCase()} @ ${h.freq.toFixed(1)} Hz` },
+    ],
+  }))
+  save(capPerKind(records))
+}
+
+/** Maps an on-host archive run to an audit record (its summary becomes the fields). */
+export function archiveToRecord(run: ArchiveRun): AuditRecord {
+  const summary = run.summary ?? {}
+  const fields: AuditField[] = Object.entries(summary)
+    .filter(([k]) => k !== 'verdict' && k !== 'grade' && k !== 'score')
+    .map(([k, v]) => ({ label: k, value: String(v) }))
+  const grade =
+    typeof summary.grade === 'string' && typeof summary.score === 'number'
+      ? { letter: summary.grade, score: summary.score }
+      : undefined
+  return {
+    id: `archive-${run.id}`,
+    at: run.at,
+    kind: (run.kind as AuditKind) ?? 'config',
+    axis: run.axis,
+    source: 'archive',
+    grade,
+    verdict: typeof summary.verdict === 'string' ? summary.verdict : undefined,
+    fields,
+    runId: run.id,
+    files: run.files,
+  }
+}
+
+/** Merges the local records with the archive runs into one newest-first list. */
+export function mergeAudit(local: AuditRecord[], archiveRuns: ArchiveRun[]): AuditRecord[] {
+  const all = [...local, ...archiveRuns.map(archiveToRecord)]
+  return all.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0))
+}
+
+/** Annotates shaper records with how their score compares to the previous same-axis run. */
+export function withAuditTrends(records: AuditRecord[]): AuditRecordWithTrend[] {
+  return records.map((record, i) => {
+    if (record.kind !== 'shaper' || record.grade == null) return { ...record, trend: 'none' }
+    const prev = records
+      .slice(i + 1)
+      .find((p) => p.kind === 'shaper' && p.axis === record.axis && p.grade != null)
+    if (!prev?.grade) return { ...record, trend: 'none' }
+    if (record.grade.score > prev.grade.score) return { ...record, trend: 'up' }
+    if (record.grade.score < prev.grade.score) return { ...record, trend: 'down' }
+    return { ...record, trend: 'same' }
+  })
+}
