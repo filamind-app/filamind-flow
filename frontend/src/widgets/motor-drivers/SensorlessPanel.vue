@@ -9,10 +9,10 @@ import { ref } from 'vue'
 import { homeAxis, setStallguard } from './api'
 import type { ApplyResponse, TmcDriver } from './types'
 
-const props = defineProps<{ driver: TmcDriver }>()
+const props = defineProps<{ driver: TmcDriver; defaultOpen?: boolean }>()
 const emit = defineEmits<{ changed: [] }>()
 
-const open = ref(false)
+const open = ref(props.defaultOpen === true)
 const threshold = ref<number>(props.driver.stallguard_threshold ?? 0)
 const confirmSet = ref(false)
 const confirmHome = ref(false)

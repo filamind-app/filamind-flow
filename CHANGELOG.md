@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.58.0] - 2026-06-03
+
+### Added
+
+- **Motor Drivers P7 — guided tuning wizard.** A new **🧭 Guided** view walks one driver
+  through the whole flow in order — **choose axis → assign motor → recommend & apply →
+  (sensorless) → done** — with a step breadcrumb, per-step guidance, and Back/Next (the
+  sensorless step is skipped automatically when the model doesn't support it). It **reuses the
+  same panels** as the dashboard, so there's one source of truth and the same safety gating.
+  A Dashboard / Guided mode strip switches between the full dashboard and the wizard.
+
+### Changed
+
+- Motor Drivers intro updated (it's no longer read-only — it inspects, recommends, and applies).
+
 ## [0.57.0] - 2026-06-03
 
 ### Added
