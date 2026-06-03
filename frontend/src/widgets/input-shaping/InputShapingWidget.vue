@@ -7,23 +7,32 @@ import GuidedTune from './GuidedTune.vue'
 import HelpNote from './HelpNote.vue'
 import ResonanceCompare from './ResonanceCompare.vue'
 import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
-import { analyzeResonance, analyzeResonanceFile, saveConfigToArchive } from './api'
+import { analyzeResonance, analyzeResonanceFile, listArchive, saveConfigToArchive } from './api'
+import {
+  buildShaperRecord,
+  loadLocalAudit,
+  mergeAudit,
+  migrateLegacyHistory,
+  recordAudit,
+  withAuditTrends,
+  type AuditRecord,
+} from './audit'
 import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
 import { diagnose, diagnoseAxes, type DiagnosticLevel } from './diagnose'
 import { gradeAnalysis, type Rating } from './grade'
-import { addHistory, clearHistory, loadHistory, withTrends, type HistoryEntry } from './history'
-import type { ShaperAnalysis } from './types'
+import { addHistory } from './history'
+import type { ArchiveRun, ShaperAnalysis } from './types'
 
 /** The widget's top-level views. Guided is the default landing view; Analyze and Live
- *  are the manual / on-printer paths; History reviews past calibrations. */
-type Mode = 'guided' | 'analyze' | 'live' | 'history'
+ *  are the manual / on-printer paths; Audit aggregates every past result. */
+type Mode = 'guided' | 'analyze' | 'live' | 'audit'
 const mode = ref<Mode>('guided')
 const TABS: { id: Mode; label: string }[] = [
   { id: 'guided', label: '🧭 Guided' },
   { id: 'analyze', label: '📈 Analyze' },
   { id: 'live', label: '🔴 Live tools' },
-  { id: 'history', label: '🕘 History' },
+  { id: 'audit', label: '🕘 Audit' },
 ]
 function tabClass(m: Mode): string {
   return mode.value === m ? 'bg-brand-cyan ring-2 ring-ink' : ''
@@ -38,6 +47,8 @@ const showAdvanced = ref(false)
 const showCompare = ref(false)
 const showFactors = ref(false)
 const chooserRef = ref<InstanceType<typeof CsvSourceChooser> | null>(null)
+const localAudit = ref<AuditRecord[]>([])
+const archiveRuns = ref<ArchiveRun[]>([])
 
 /** Advanced calibration knobs (kept as strings for the inputs; blank = default). */
 const params = reactive({ maxFreq: '200', scv: '5', maxSmoothing: '', dampingRatio: '' })
@@ -68,9 +79,20 @@ const diagnostics = computed(() => {
   return list
 })
 
-const history = ref<HistoryEntry[]>([])
-const historyTrends = computed(() => withTrends(history.value))
-onMounted(() => (history.value = loadHistory()))
+/** The aggregated audit: local records (shaper + the live tools) merged with the
+ *  on-host archive, newest-first, shaper runs annotated with their grade trend. */
+const auditView = computed(() => withAuditTrends(mergeAudit(localAudit.value, archiveRuns.value)))
+
+async function loadAudit(): Promise<void> {
+  migrateLegacyHistory()
+  localAudit.value = loadLocalAudit()
+  try {
+    archiveRuns.value = (await listArchive()).runs
+  } catch {
+    /* the archive lives on the printer host — fine to be unavailable off-host */
+  }
+}
+onMounted(loadAudit)
 
 function trendArrow(trend: 'up' | 'down' | 'same' | 'none'): string {
   return trend === 'up' ? '▲' : trend === 'down' ? '▼' : trend === 'same' ? '=' : ''
@@ -101,11 +123,6 @@ function fmtDate(iso: string): string {
   const d = new Date(iso)
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleString()
 }
-function wipeHistory(): void {
-  clearHistory()
-  history.value = []
-}
-
 function num(value: string, fallback: number): number {
   const n = Number(value)
   return value.trim() !== '' && Number.isFinite(n) ? n : fallback
@@ -126,7 +143,8 @@ function applyResult(result: ShaperAnalysis): void {
   byAxis[key] = result
   if (result.recommended_shaper && result.recommended_freq != null) {
     const g = gradeAnalysis(result)
-    history.value = addHistory({
+    // Keep the legacy grade-history (additive) and record an audit entry.
+    addHistory({
       at: new Date().toISOString(),
       axis: result.axis,
       shaper: result.recommended_shaper,
@@ -134,6 +152,7 @@ function applyResult(result: ShaperAnalysis): void {
       grade: g.letter,
       score: g.score,
     })
+    localAudit.value = recordAudit(buildShaperRecord(result, g))
   }
 }
 
@@ -269,36 +288,53 @@ async function saveConfig(): Promise<void> {
     <!-- LIVE TOOLS — on-printer captures. Kept mounted (v-show) so results persist. -->
     <ResonanceFromPrinter v-show="mode === 'live'" @analyzed="applyResult" />
 
-    <!-- HISTORY — past calibrations with grade + trend. -->
+    <!-- AUDIT — every past result (local + the on-host archive), per-property. -->
     <div
-      v-show="mode === 'history'"
-      class="space-y-1 rounded-brutal border-2 border-ink bg-paper p-2"
+      v-show="mode === 'audit'"
+      class="space-y-2 rounded-brutal border-2 border-ink bg-paper p-2"
     >
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wide">History</span>
-        <button v-if="history.length" class="nb-btn px-2 py-0.5 text-[10px]" @click="wipeHistory">
-          clear
-        </button>
+        <span class="text-xs font-bold uppercase tracking-wide">Audit</span>
+        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="loadAudit">↻ refresh</button>
       </div>
       <HelpNote topic="history" />
-      <p v-if="!history.length" class="font-mono text-[10px] opacity-60">No calibrations yet.</p>
+      <p v-if="!auditView.length" class="font-mono text-[10px] opacity-60">
+        No results yet — run a tune, or save one to the archive.
+      </p>
       <div
-        v-for="(h, i) in historyTrends"
-        :key="i"
-        class="grid grid-cols-[auto_auto_1fr_auto] items-center gap-2 font-mono text-[10px]"
+        v-for="r in auditView"
+        :key="r.id"
+        class="space-y-1 rounded-brutal border-2 border-ink p-2"
       >
-        <span class="opacity-60">{{ fmtDate(h.at) }}</span>
-        <span class="nb-badge bg-brand-cyan">{{ (h.axis ?? 'xy').toUpperCase() }}</span>
-        <span>{{ h.shaper.toUpperCase() }} @ {{ h.freq.toFixed(1) }} Hz</span>
-        <span v-if="h.grade" class="flex items-center gap-1">
-          <span class="nb-badge" :class="gradeBg(h.grade)">{{ h.grade }}</span>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="nb-badge bg-brand-yellow text-[9px]">{{ r.kind }}</span>
+          <span v-if="r.axis" class="nb-badge bg-brand-cyan text-[9px]">{{
+            r.axis.toUpperCase()
+          }}</span>
+          <span v-if="r.grade" class="nb-badge text-[9px]" :class="gradeBg(r.grade.letter)">{{
+            r.grade.letter
+          }}</span>
           <span
-            v-if="h.trend !== 'none'"
-            :class="trendClass(h.trend)"
-            :title="`score ${h.score} vs the previous ${(h.axis ?? 'xy').toUpperCase()} test`"
-            >{{ trendArrow(h.trend) }}</span
+            v-if="r.trend !== 'none'"
+            :class="trendClass(r.trend)"
+            :title="`score ${r.grade?.score} vs the previous ${(r.axis ?? 'xy').toUpperCase()} test`"
+            >{{ trendArrow(r.trend) }}</span
           >
-        </span>
+          <span class="font-mono text-[9px] opacity-50">{{ fmtDate(r.at) }}</span>
+          <span class="flex-1"></span>
+          <span
+            class="nb-badge text-[9px]"
+            :class="r.source === 'archive' ? 'bg-brand-lime' : 'bg-surface'"
+            >{{ r.source === 'archive' ? '💾 saved' : 'local' }}</span
+          >
+        </div>
+        <p v-if="r.verdict" class="text-[10px] leading-snug opacity-80">{{ r.verdict }}</p>
+        <div v-if="r.fields.length" class="grid grid-cols-2 gap-x-3 gap-y-0.5 font-mono text-[9px]">
+          <div v-for="(f, i) in r.fields" :key="i" class="flex justify-between gap-2">
+            <span class="shrink-0 opacity-60">{{ f.label }}</span>
+            <span class="min-w-0 truncate text-right font-bold">{{ f.value }}</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -524,7 +560,7 @@ async function saveConfig(): Promise<void> {
 
     <!-- Combined config block (accumulates across the X and Y captures) — shown in
          any working view (Guided / Analyze / Live), hidden while reviewing History. -->
-    <div v-if="configText && mode !== 'history'" class="space-y-1">
+    <div v-if="configText && mode !== 'audit'" class="space-y-1">
       <div class="flex items-center justify-between gap-2">
         <span class="text-xs font-bold uppercase tracking-wide">printer.cfg</span>
         <span class="flex items-center gap-1 font-mono text-[9px] opacity-70">

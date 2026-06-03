@@ -79,7 +79,7 @@ A focused, multi-PR pass to simplify the widget after the feature build-out: cle
 - ✅ **Per-tool motion confirm** (v0.46.1) — each on-printer tool gets its own "moves the toolhead" gate (live / belts / axes-map split into separate panels).
 - ✅ **Persistent host archive** — a dedicated folder keeps recent scans + generated configs (review / download / delete), retention-bounded. Backend v0.47.0 + browser UI v0.48.0.
 - ✅ **Unified CSV source** (v0.48.0) — one chooser for an external upload *or* a local/host file (host dirs + archive).
-- 📋 **Aggregated Audit** — every result (shaper / noise / belts / axes-map / sustain / vibrations) organized by property; folds in the grade history.
+- ⏳ **Aggregated Audit** — every result organized by property; folds in the grade history. Shaper + archive merged into the Audit view v0.49.0; the live tools (noise / belts / axes-map / sustain / vibrations) join next.
 
 **Ideas (not yet sequenced)**
 
