@@ -13,6 +13,20 @@ import { gradeAnalysis, type Rating } from './grade'
 import { addHistory, clearHistory, loadHistory, withTrends, type HistoryEntry } from './history'
 import type { ShaperAnalysis } from './types'
 
+/** The widget's top-level views. Guided is the default landing view; Analyze and Live
+ *  are the manual / on-printer paths; History reviews past calibrations. */
+type Mode = 'guided' | 'analyze' | 'live' | 'history'
+const mode = ref<Mode>('guided')
+const TABS: { id: Mode; label: string }[] = [
+  { id: 'guided', label: '🧭 Guided' },
+  { id: 'analyze', label: '📈 Analyze' },
+  { id: 'live', label: '🔴 Live tools' },
+  { id: 'history', label: '🕘 History' },
+]
+function tabClass(m: Mode): string {
+  return mode.value === m ? 'bg-brand-cyan ring-2 ring-ink' : ''
+}
+
 const file = ref<File | null>(null)
 const axis = ref<'auto' | 'x' | 'y'>('auto')
 const analysis = ref<ShaperAnalysis | null>(null)
@@ -21,9 +35,7 @@ const busy = ref(false)
 const copied = ref(false)
 const showAdvanced = ref(false)
 const showCompare = ref(false)
-const showFromPrinter = ref(false)
 const showFactors = ref(false)
-const showGuided = ref(false)
 
 /** Advanced calibration knobs (kept as strings for the inputs; blank = default). */
 const params = reactive({ maxFreq: '200', scv: '5', maxSmoothing: '', dampingRatio: '' })
@@ -56,7 +68,6 @@ const diagnostics = computed(() => {
 
 const history = ref<HistoryEntry[]>([])
 const historyTrends = computed(() => withTrends(history.value))
-const showHistory = ref(false)
 onMounted(() => (history.value = loadHistory()))
 
 function trendArrow(trend: 'up' | 'down' | 'same' | 'none'): string {
@@ -172,74 +183,119 @@ async function copyConfig(): Promise<void> {
 <template>
   <div class="space-y-3 text-sm">
     <p class="font-mono text-[11px] opacity-70">
-      Find the best input shaper from a Klipper resonance CSV — no command line. Capture data with
-      <code>TEST_RESONANCES</code>, then upload the resulting <code>.csv</code>. Analyze the X and Y
-      files in turn to build one config block.
+      Tune input shaping from a Klipper resonance capture — no command line. New here? Start with
+      <strong>🧭 Guided</strong>. Or pick <strong>📈 Analyze</strong> to work a
+      <code>.csv</code> yourself, <strong>🔴 Live tools</strong> to capture on the printer, or
+      <strong>🕘 History</strong> to review past runs.
     </p>
 
-    <div class="flex flex-wrap items-center gap-2">
-      <label class="nb-btn cursor-pointer px-2 py-1 text-xs">
-        📈 Select CSV
-        <input type="file" accept=".csv" class="hidden" @change="onPick" />
-      </label>
-      <select v-model="axis" :class="inputClass" title="Axis this data belongs to">
-        <option value="auto">axis: auto</option>
-        <option value="x">axis: X</option>
-        <option value="y">axis: Y</option>
-      </select>
+    <!-- Mode strip: one view at a time (Guided is the default landing view). -->
+    <div class="flex flex-wrap gap-1">
       <button
-        class="nb-btn bg-brand-lime px-3 py-1 text-xs"
-        :disabled="!file || busy"
-        @click="analyze"
+        v-for="t in TABS"
+        :key="t.id"
+        class="nb-btn px-3 py-1 text-xs"
+        :class="tabClass(t.id)"
+        @click="mode = t.id"
       >
-        {{ busy ? 'Analyzing…' : '🚀 Analyze' }}
+        {{ t.label }}
       </button>
-      <button class="nb-btn px-2 py-1 text-[10px]" @click="showAdvanced = !showAdvanced">
-        ⚙ advanced
-      </button>
-      <button class="nb-btn px-2 py-1 text-[10px]" @click="showCompare = !showCompare">
-        ⇄ compare
-      </button>
-      <button class="nb-btn px-2 py-1 text-[10px]" @click="showHistory = !showHistory">
-        🕘 history
-      </button>
-      <button class="nb-btn px-2 py-1 text-[10px]" @click="showFromPrinter = !showFromPrinter">
-        📥 printer
-      </button>
-      <button class="nb-btn bg-brand-cyan px-2 py-1 text-[10px]" @click="showGuided = !showGuided">
-        🧭 guided
-      </button>
-      <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
-        file.name
-      }}</span>
     </div>
 
-    <GuidedTune v-if="showGuided" @analyzed="applyResult" @exit="showGuided = false" />
+    <!-- GUIDED — kept mounted (v-show) so an in-progress wizard survives a tab switch. -->
+    <GuidedTune v-show="mode === 'guided'" @analyzed="applyResult" @exit="mode = 'analyze'" />
 
+    <!-- ANALYZE — manual: pick a CSV, tune the knobs, compare two captures. -->
+    <div v-show="mode === 'analyze'" class="space-y-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <label class="nb-btn cursor-pointer px-2 py-1 text-xs">
+          📈 Select CSV
+          <input type="file" accept=".csv" class="hidden" @change="onPick" />
+        </label>
+        <select v-model="axis" :class="inputClass" title="Axis this data belongs to">
+          <option value="auto">axis: auto</option>
+          <option value="x">axis: X</option>
+          <option value="y">axis: Y</option>
+        </select>
+        <button
+          class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+          :disabled="!file || busy"
+          @click="analyze"
+        >
+          {{ busy ? 'Analyzing…' : '🚀 Analyze' }}
+        </button>
+        <button class="nb-btn px-2 py-1 text-[10px]" @click="showAdvanced = !showAdvanced">
+          ⚙ advanced
+        </button>
+        <button class="nb-btn px-2 py-1 text-[10px]" @click="showCompare = !showCompare">
+          ⇄ compare
+        </button>
+        <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
+          file.name
+        }}</span>
+      </div>
+
+      <div
+        v-if="showAdvanced"
+        class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1.5 font-mono text-[10px]"
+      >
+        <label class="flex items-center gap-1"
+          >max_freq <input v-model="params.maxFreq" :class="numClass"
+        /></label>
+        <label class="flex items-center gap-1"
+          >scv <input v-model="params.scv" :class="numClass"
+        /></label>
+        <label class="flex items-center gap-1"
+          >max_smoothing <input v-model="params.maxSmoothing" placeholder="—" :class="numClass"
+        /></label>
+        <label class="flex items-center gap-1"
+          >damping_ratio <input v-model="params.dampingRatio" placeholder="—" :class="numClass"
+        /></label>
+        <span class="opacity-50">blank = Klipper default</span>
+      </div>
+
+      <ResonanceCompare v-if="showCompare" />
+    </div>
+
+    <!-- LIVE TOOLS — on-printer captures. Kept mounted (v-show) so results persist. -->
+    <ResonanceFromPrinter v-show="mode === 'live'" @analyzed="applyResult" />
+
+    <!-- HISTORY — past calibrations with grade + trend. -->
     <div
-      v-if="showAdvanced"
-      class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1.5 font-mono text-[10px]"
+      v-show="mode === 'history'"
+      class="space-y-1 rounded-brutal border-2 border-ink bg-paper p-2"
     >
-      <label class="flex items-center gap-1"
-        >max_freq <input v-model="params.maxFreq" :class="numClass"
-      /></label>
-      <label class="flex items-center gap-1"
-        >scv <input v-model="params.scv" :class="numClass"
-      /></label>
-      <label class="flex items-center gap-1"
-        >max_smoothing <input v-model="params.maxSmoothing" placeholder="—" :class="numClass"
-      /></label>
-      <label class="flex items-center gap-1"
-        >damping_ratio <input v-model="params.dampingRatio" placeholder="—" :class="numClass"
-      /></label>
-      <span class="opacity-50">blank = Klipper default</span>
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase tracking-wide">History</span>
+        <button v-if="history.length" class="nb-btn px-2 py-0.5 text-[10px]" @click="wipeHistory">
+          clear
+        </button>
+      </div>
+      <p v-if="!history.length" class="font-mono text-[10px] opacity-60">No calibrations yet.</p>
+      <div
+        v-for="(h, i) in historyTrends"
+        :key="i"
+        class="grid grid-cols-[auto_auto_1fr_auto] items-center gap-2 font-mono text-[10px]"
+      >
+        <span class="opacity-60">{{ fmtDate(h.at) }}</span>
+        <span class="nb-badge bg-brand-cyan">{{ (h.axis ?? 'xy').toUpperCase() }}</span>
+        <span>{{ h.shaper.toUpperCase() }} @ {{ h.freq.toFixed(1) }} Hz</span>
+        <span v-if="h.grade" class="flex items-center gap-1">
+          <span class="nb-badge" :class="gradeBg(h.grade)">{{ h.grade }}</span>
+          <span
+            v-if="h.trend !== 'none'"
+            :class="trendClass(h.trend)"
+            :title="`score ${h.score} vs the previous ${(h.axis ?? 'xy').toUpperCase()} test`"
+            >{{ trendArrow(h.trend) }}</span
+          >
+        </span>
+      </div>
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
 
-    <ResonanceFromPrinter v-if="showFromPrinter" @analyzed="applyResult" />
-
-    <template v-if="analysis">
+    <!-- Shared result view — shown for Analyze + Live (Guided shows its own per-step results). -->
+    <template v-if="analysis && (mode === 'analyze' || mode === 'live')">
       <div
         v-if="analysis.recommended_shaper"
         class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink bg-brand-lime px-3 py-2"
@@ -449,8 +505,9 @@ async function copyConfig(): Promise<void> {
       </div>
     </template>
 
-    <!-- Combined config block (accumulates across the X and Y captures). -->
-    <div v-if="configText" class="space-y-1">
+    <!-- Combined config block (accumulates across the X and Y captures) — shown in
+         any working view (Guided / Analyze / Live), hidden while reviewing History. -->
+    <div v-if="configText && mode !== 'history'" class="space-y-1">
       <div class="flex items-center justify-between gap-2">
         <span class="text-xs font-bold uppercase tracking-wide">printer.cfg</span>
         <span class="flex items-center gap-1 font-mono text-[9px] opacity-70">
@@ -471,36 +528,6 @@ async function copyConfig(): Promise<void> {
       <p class="text-[9px] italic opacity-50">
         Paste into your <code>printer.cfg</code>, then restart Klipper.
       </p>
-    </div>
-
-    <ResonanceCompare v-if="showCompare" />
-
-    <div v-if="showHistory" class="space-y-1 rounded-brutal border-2 border-ink bg-paper p-2">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wide">History</span>
-        <button v-if="history.length" class="nb-btn px-2 py-0.5 text-[10px]" @click="wipeHistory">
-          clear
-        </button>
-      </div>
-      <p v-if="!history.length" class="font-mono text-[10px] opacity-60">No calibrations yet.</p>
-      <div
-        v-for="(h, i) in historyTrends"
-        :key="i"
-        class="grid grid-cols-[auto_auto_1fr_auto] items-center gap-2 font-mono text-[10px]"
-      >
-        <span class="opacity-60">{{ fmtDate(h.at) }}</span>
-        <span class="nb-badge bg-brand-cyan">{{ (h.axis ?? 'xy').toUpperCase() }}</span>
-        <span>{{ h.shaper.toUpperCase() }} @ {{ h.freq.toFixed(1) }} Hz</span>
-        <span v-if="h.grade" class="flex items-center gap-1">
-          <span class="nb-badge" :class="gradeBg(h.grade)">{{ h.grade }}</span>
-          <span
-            v-if="h.trend !== 'none'"
-            :class="trendClass(h.trend)"
-            :title="`score ${h.score} vs the previous ${(h.axis ?? 'xy').toUpperCase()} test`"
-            >{{ trendArrow(h.trend) }}</span
-          >
-        </span>
-      </div>
     </div>
   </div>
 </template>
