@@ -5,7 +5,7 @@
 
 import { beltVerdict } from './compare'
 import { gradeAnalysis } from './grade'
-import type { NoiseResult, ShaperAnalysis } from './types'
+import type { NoiseResult, ShaperAnalysis, VibrationsProfile } from './types'
 
 export type StepId = 'noise' | 'belts' | 'shaperX' | 'shaperY' | 'vibrations' | 'pressure' | 'done'
 export type GateStatus = 'passed' | 'warn' | 'failed'
@@ -58,10 +58,9 @@ export const STEPS: StepDef[] = [
   {
     id: 'vibrations',
     label: 'Vibrations',
-    title: 'Vibrations / VFAs',
-    why: 'After a test print, check for vertical fine artifacts (speed-dependent motor vibration).',
-    motion: false,
-    manual: true,
+    title: 'Vibrations profile',
+    why: 'Sweep speed × motor angle to find the smoothest speeds and the resonances to avoid.',
+    motion: true,
   },
   {
     id: 'pressure',
@@ -106,4 +105,18 @@ export function gateShaper(analysis: ShaperAnalysis): Gate {
   }
   if (grade.letter === 'C') return { status: 'warn', headline: 'Grade C — usable' }
   return { status: 'failed', headline: `Grade ${grade.letter} — tune + re-test` }
+}
+
+export function gateVibrations(profile: VibrationsProfile): Gate {
+  if (profile.low_freq_warning) {
+    return { status: 'failed', headline: 'Too much low-freq motion — lower accel & re-run' }
+  }
+  if (profile.symmetry_pct < 60) {
+    return { status: 'warn', headline: `Motors mismatched (${profile.symmetry_pct.toFixed(0)}%)` }
+  }
+  const rec = profile.recommended_speed
+  return {
+    status: 'passed',
+    headline: rec != null ? `Smoothest ~${rec.toFixed(0)} mm/s` : 'Profile complete',
+  }
 }

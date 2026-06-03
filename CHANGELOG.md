@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.44.0] - 2026-06-03
+
+### Added — Input Shaping: vibrations profile UI + wizard (Shake&Tune parity, 5 of 5 — part 2/3)
+
+- **Machine vibrations profile (browser).** A new 📊 panel in the "From the printer" view
+  runs the sweep (with adjustable top speed + step) and renders it as a **speed-vs-energy
+  curve** (smoothest bands highlighted, resonance speeds to avoid flagged, the recommended
+  speed marked), a **polar plot** of vibration energy by travel direction, and an **angle ×
+  speed heatmap** — plus the motor **symmetry**, the motor **resonant frequency / damping**,
+  and a plain-language verdict. All dependency-free SVG.
+- **Guided wizard: the Vibrations step is now measured.** What was a manual "did you see
+  VFAs?" self-report now runs the real vibrations profile, gates on motor symmetry +
+  low-frequency-noise health, and shows the same profile view inline with ranked
+  recommendations (favour ~X mm/s, avoid the peak speeds, re-tension belts if symmetry is low).
+  This closes the guided flow end to end: Noise → Belts → Shaper X → Shaper Y → Vibrations →
+  Pressure.
+
 ## [0.43.0] - 2026-06-03
 
 ### Added — Input Shaping: vibrations profile backend (Shake&Tune parity, 5 of 5 — part 1/3)

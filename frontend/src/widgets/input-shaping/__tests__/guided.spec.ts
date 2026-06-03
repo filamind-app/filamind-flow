@@ -1,7 +1,34 @@
 import { describe, expect, it } from 'vitest'
 
-import { gateBelts, gateNoise, gateShaper, nextStep, STEPS } from '../guided'
-import type { NoiseResult, ShaperAnalysis, ShaperResult } from '../types'
+import { gateBelts, gateNoise, gateShaper, gateVibrations, nextStep, STEPS } from '../guided'
+import type { NoiseResult, ShaperAnalysis, ShaperResult, VibrationsProfile } from '../types'
+
+function vib(over: Partial<VibrationsProfile>): VibrationsProfile {
+  return {
+    kinematics: 'corexy',
+    accel: 3000,
+    max_freq: 200,
+    main_angles: [45, 135],
+    segments_used: 40,
+    segments_captured: 40,
+    speeds: [20, 60, 100],
+    energy_profile: [0.2, 1, 0.3],
+    max_profile: [0.3, 1, 0.4],
+    peak_speeds: [60],
+    good_speed_ranges: [{ start: 80, end: 100, energy_pct: 20 }],
+    angles: [0, 90, 180, 270],
+    angle_energy: [0.5, 1, 0.5, 1],
+    good_angle_ranges: [],
+    symmetry_pct: 90,
+    motor_freq: 55,
+    motor_damping: 0.1,
+    low_freq_warning: false,
+    spectrogram: [[0.5]],
+    recommended_speed: 90,
+    verdict: 'ok',
+    ...over,
+  }
+}
 
 function noise(over: Partial<NoiseResult>): NoiseResult {
   return { chips: [], max_noise: 50, grade: 'good', ok: true, threshold: 100, ...over }
@@ -46,9 +73,15 @@ describe('guided', () => {
     expect(nextStep('done')).toBe('done')
   })
 
-  it('marks the vibrations + pressure steps as manual', () => {
-    const manual = STEPS.filter((s) => s.manual).map((s) => s.id)
-    expect(manual).toEqual(['vibrations', 'pressure'])
+  it('vibrations is now a measured (motion) step; only pressure stays manual', () => {
+    expect(STEPS.filter((s) => s.manual).map((s) => s.id)).toEqual(['pressure'])
+    expect(STEPS.find((s) => s.id === 'vibrations')?.motion).toBe(true)
+  })
+
+  it('gates the vibrations profile: smooth passes, low symmetry warns, low-freq fails', () => {
+    expect(gateVibrations(vib({})).status).toBe('passed')
+    expect(gateVibrations(vib({ symmetry_pct: 40 })).status).toBe('warn')
+    expect(gateVibrations(vib({ low_freq_warning: true })).status).toBe('failed')
   })
 
   it('gates noise by grade', () => {
