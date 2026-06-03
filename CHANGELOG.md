@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.56.0] - 2026-06-03
+
+### Added
+
+- **Motor Drivers P5 — sensorless-homing helper.** For drivers that support sensorless
+  homing, a new panel lets you tune the **StallGuard threshold** (`sgthrs` / `sgt` /
+  `sg4_thrs`) and **test-home one axis** — both behind an explicit confirm and refused
+  server-side while printing. The test-home carries a loud crash warning (a wrong threshold
+  can drive the axis into the frame). Guidance: lower if it stops early, raise if it doesn't
+  stop. Shown only where the model actually supports sensorless homing.
+  - Backend: **`POST /api/drivers/stallguard`** (validated field + value) and
+    **`POST /api/drivers/home`** (`G28 <axis>`, gated).
+
 ## [0.55.1] - 2026-06-03
 
 ### Fixed

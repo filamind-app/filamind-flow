@@ -6,6 +6,7 @@ import HelpIllo from './HelpIllo.vue'
 import HelpNote from './HelpNote.vue'
 import MotorPicker from './MotorPicker.vue'
 import RecommendPanel from './RecommendPanel.vue'
+import SensorlessPanel from './SensorlessPanel.vue'
 import {
   axisHeading,
   capabilityChips,
@@ -221,6 +222,12 @@ onUnmounted(() => {
 
           <RecommendPanel v-if="d.motor" :driver="d" @applied="load(true)" />
 
+          <SensorlessPanel
+            v-if="d.stallguard_field && d.info?.sensorless"
+            :driver="d"
+            @changed="load(true)"
+          />
+
           <div v-if="registerEntries(d).length" class="font-mono text-[10px]">
             <button
               class="opacity-60 transition-opacity hover:opacity-100"
@@ -252,6 +259,7 @@ onUnmounted(() => {
         <HelpNote topic="catalog" />
         <HelpNote topic="motor" />
         <HelpNote topic="recommend" />
+        <HelpNote topic="sensorless" />
       </div>
     </template>
   </div>

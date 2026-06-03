@@ -96,3 +96,17 @@ export async function revertDriver(stepper: string): Promise<ApplyResponse> {
 export async function runAutotune(stepper: string): Promise<ApplyResponse> {
   return postJson('/api/drivers/autotune', { stepper })
 }
+
+/** Set a StallGuard threshold (sensorless-homing sensitivity). Gated server-side. */
+export async function setStallguard(
+  stepper: string,
+  field: string,
+  value: number,
+): Promise<ApplyResponse> {
+  return postJson('/api/drivers/stallguard', { stepper, field, value })
+}
+
+/** Home one axis (G28) as a sensorless test — moves the toolhead. Gated server-side. */
+export async function homeAxis(axis: string): Promise<ApplyResponse> {
+  return postJson('/api/drivers/home', { axis })
+}
