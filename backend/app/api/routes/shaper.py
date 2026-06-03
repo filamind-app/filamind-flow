@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+import os
+
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi.responses import FileResponse
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
+    ArchiveListResponse,
+    ArchiveRun,
+    ArchiveSaveConfigRequest,
     AxesMapResult,
     BeltComparison,
     NoiseResult,
@@ -13,7 +19,7 @@ from app.models.schemas import (
     StaticExcitationResult,
     VibrationsProfile,
 )
-from app.services import resonance_service, shaper_service
+from app.services import resonance_service, shaper_archive, shaper_service
 
 router = APIRouter(prefix="/shaper", tags=["shaper"])
 
@@ -226,3 +232,101 @@ async def vibrations_profile(
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return VibrationsProfile(**result)
+
+
+@router.get("/archive", response_model=ArchiveListResponse)
+async def list_archive(settings: Settings = Depends(get_settings)) -> ArchiveListResponse:
+    """Lists the saved input-shaping runs (captures + generated configs), newest first."""
+    runs = shaper_archive.read_index(settings.data_dir)
+    return ArchiveListResponse(
+        runs=[ArchiveRun(**r) for r in runs],
+        dir=shaper_archive.archive_dir(settings.data_dir),
+        keep_n=settings.shaper_archive_keep_n,
+    )
+
+
+@router.get("/archive/{run_id}", response_model=ArchiveRun)
+async def get_archive_run(run_id: str, settings: Settings = Depends(get_settings)) -> ArchiveRun:
+    """Returns one archived run plus its inline config text (if any)."""
+    try:
+        run = shaper_archive.get_run(settings.data_dir, run_id)
+    except shaper_archive.ArchiveError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if run is None:
+        raise HTTPException(status_code=404, detail="No such archive run")
+    return ArchiveRun(**run)
+
+
+@router.get("/archive/{run_id}/file/{filename}")
+async def download_archive_file(
+    run_id: str, filename: str, settings: Settings = Depends(get_settings)
+) -> FileResponse:
+    """Downloads a file (CSV / config) stored in an archived run."""
+    try:
+        path = shaper_archive.run_file_path(settings.data_dir, run_id, filename)
+    except shaper_archive.ArchiveError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if path is None:
+        raise HTTPException(status_code=404, detail="No such file in this run")
+    return FileResponse(path, filename=os.path.basename(path))
+
+
+@router.delete("/archive/{run_id}")
+async def delete_archive_run(
+    run_id: str, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Deletes an archived run (folder + index entry)."""
+    try:
+        removed = shaper_archive.delete_run(settings.data_dir, run_id)
+    except shaper_archive.ArchiveError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not removed:
+        raise HTTPException(status_code=404, detail="No such archive run")
+    return {"deleted": run_id}
+
+
+@router.post("/archive/save-config", response_model=ArchiveRun)
+async def save_archive_config(
+    request: ArchiveSaveConfigRequest, settings: Settings = Depends(get_settings)
+) -> ArchiveRun:
+    """Saves a generated ``[input_shaper]`` config to the archive (new run, or attached)."""
+    if not request.config_text.strip():
+        raise HTTPException(status_code=400, detail="config_text is empty")
+    try:
+        run = shaper_archive.save_config_run(
+            settings.data_dir,
+            config_text=request.config_text,
+            axis=request.axis,
+            summary=request.summary,
+            run_id=request.run_id,
+            keep_n=settings.shaper_archive_keep_n,
+        )
+    except shaper_archive.ArchiveError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return ArchiveRun(**run)
+
+
+@router.post("/archive/save-file", response_model=ArchiveRun)
+async def save_archive_file(
+    path: str = Query(..., description="Host path of a resonance CSV (within the allowed dirs)"),
+    kind: str = Query("shaper", description="Run kind to record it under"),
+    axis: str | None = Query(None),
+    settings: Settings = Depends(get_settings),
+) -> ArchiveRun:
+    """Copies an existing host resonance CSV into the archive as a saved run."""
+    if not resonance_service.is_allowed_path(path, settings.resonance_dirs):
+        raise HTTPException(status_code=400, detail="File is outside the allowed dirs")
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="No such file")
+    try:
+        run = shaper_archive.save_run(
+            settings.data_dir,
+            kind=kind,
+            axis=axis,
+            summary={"source_file": os.path.basename(path)},
+            csv_sources=[path],
+            keep_n=settings.shaper_archive_keep_n,
+        )
+    except shaper_archive.ArchiveError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return ArchiveRun(**run)

@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.47.0] - 2026-06-03
+
+### Added — Input Shaping: persistent on-host archive (backend, UX overhaul 4 of N)
+
+- **A persistent archive of captures + generated configs.** New `shaper_archive` service +
+  `/api/shaper/archive` routes keep recent resonance CSVs and generated `[input_shaper]`
+  configs under `<data_dir>/input-shaper-archive/<run_id>/`, so results survive a reboot and
+  the browser — reviewable, **downloadable**, and **deletable** as a historical record. A
+  single `index.json` stores only a compact per-run summary (never the multi-thousand-element
+  PSD / spectrogram arrays), and retention is bounded **per kind** (`FILAMIND_SHAPER_ARCHIVE_KEEP_N`,
+  default 20) to stay light on the SD card.
+- Routes: `GET /archive` (list), `GET /archive/{id}` (+ inline config), `GET /archive/{id}/file/{name}`
+  (download), `DELETE /archive/{id}`, `POST /archive/save-config`, `POST /archive/save-file` (copy a
+  host CSV in). All path-guarded (name regex + realpath containment), atomic writes.
+- The browser UI for the archive (review / save / delete + the unified file source) lands next.
+
 ## [0.46.1] - 2026-06-03
 
 ### Changed — Input Shaping: per-tool motion confirm (UX overhaul, 3 of N)

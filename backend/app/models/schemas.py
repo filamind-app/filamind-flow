@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -648,3 +650,41 @@ class VibrationsProfile(BaseModel):
     #: A suggested smooth speed (mm/s) to favour in the slicer.
     recommended_speed: float | None = None
     verdict: str
+
+
+class ArchiveRun(BaseModel):
+    """One saved run in the input-shaping archive (a capture and/or a generated config)."""
+
+    #: Sortable run id: ``<YYYY-MM-DD_HH-MM-SS>_<kind>[_<axis>]``.
+    id: str
+    #: ISO timestamp the run was archived.
+    at: str
+    #: shaper | noise | belts | axes_map | static | vibrations | config.
+    kind: str
+    axis: str | None = None
+    #: Compact per-kind summary (never the full PSD / spectrogram arrays).
+    summary: dict[str, Any] = {}
+    #: File basenames stored in the run folder (CSV(s) and/or input_shaper.cfg).
+    files: list[str] = []
+    #: Total size of the run folder, bytes.
+    size: int = 0
+    #: The generated config text, included when a single run is fetched.
+    config_text: str | None = None
+
+
+class ArchiveListResponse(BaseModel):
+    """The archived runs plus the archive directory and the per-kind retention cap."""
+
+    runs: list[ArchiveRun] = []
+    dir: str
+    keep_n: int
+
+
+class ArchiveSaveConfigRequest(BaseModel):
+    """Saves a generated ``[input_shaper]`` config — to a new run, or attached to ``run_id``."""
+
+    config_text: str
+    axis: str | None = None
+    #: Attach to this existing run if given; otherwise a new config-only run is created.
+    run_id: str | None = None
+    summary: dict[str, Any] = {}

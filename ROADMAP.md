@@ -77,7 +77,7 @@ A focused, multi-PR pass to simplify the widget after the feature build-out: cle
 - ✅ **Information architecture** (v0.45.0) — the six stacked toggle panels become a four-view tab strip: **Guided** (default) / **Analyze** / **Live tools** / **History**; the guided wizard stays mounted so an in-progress run survives a tab switch.
 - ✅ **Explanations + illustrations** (v0.46.0) — per-tool "what's this / how to read it" help + new hand-drawn SVGs, collapsed by default.
 - ✅ **Per-tool motion confirm** (v0.46.1) — each on-printer tool gets its own "moves the toolhead" gate (live / belts / axes-map split into separate panels).
-- 📋 **Persistent host archive** — a dedicated folder keeps recent scans + generated configs (review / download / delete), retention-bounded.
+- ⏳ **Persistent host archive** — a dedicated folder keeps recent scans + generated configs (review / download / delete), retention-bounded. Backend shipped v0.47.0; browser UI next.
 - 📋 **Unified CSV source** — one chooser for an external upload *or* a local/host file.
 - 📋 **Aggregated Audit** — every result (shaper / noise / belts / axes-map / sustain / vibrations) organized by property; folds in the grade history.
 
