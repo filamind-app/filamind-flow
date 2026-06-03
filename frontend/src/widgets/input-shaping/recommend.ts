@@ -5,7 +5,7 @@
 
 import type { BeltVerdict } from './compare'
 import { diagnose } from './diagnose'
-import type { NoiseResult, ShaperAnalysis } from './types'
+import type { NoiseResult, ShaperAnalysis, VibrationsProfile } from './types'
 
 export type SuggestionLevel = 'do-now' | 'consider' | 'ok'
 
@@ -53,23 +53,47 @@ export function recommendBelts(verdict: BeltVerdict): Suggestion[] {
   ]
 }
 
-export function recommendVibrations(vfaVisible: boolean): Suggestion[] {
-  if (!vfaVisible) {
+export function recommendVibrations(profile: VibrationsProfile): Suggestion[] {
+  if (profile.low_freq_warning) {
     return [
       {
-        level: 'ok',
-        title: 'No visible VFAs',
-        why: 'Speed-dependent vibration looks fine — continue to pressure advance.',
+        level: 'do-now',
+        title: 'Re-run at a lower acceleration',
+        why: 'Too much low-frequency motion was recorded — lower ACCEL (or raise SIZE) so only constant speeds are measured, then re-run.',
       },
     ]
   }
-  return [
-    {
+  const out: Suggestion[] = []
+  if (profile.recommended_speed != null && profile.good_speed_ranges.length) {
+    const b = profile.good_speed_ranges[0]
+    out.push({
+      level: 'ok',
+      title: `Favour ~${profile.recommended_speed.toFixed(0)} mm/s`,
+      why: `Smoothest band ${b.start.toFixed(0)}–${b.end.toFixed(0)} mm/s — set slicer print / travel speeds here when you can.`,
+    })
+  }
+  if (profile.peak_speeds.length) {
+    const shown = profile.peak_speeds
+      .slice(0, 4)
+      .map((p) => p.toFixed(0))
+      .join(', ')
+    out.push({
       level: 'consider',
-      title: 'Reduce speed-dependent vibration',
-      why: 'Keep slicer print / travel speeds out of the resonant band, or dig into TMC driver tuning. A full vibrations-profile sweep is coming.',
-    },
-  ]
+      title: `Avoid ${shown} mm/s`,
+      why: 'These speeds hit a resonance — keep print + travel moves away from them in the slicer.',
+    })
+  }
+  if (profile.symmetry_pct < 60) {
+    out.push({
+      level: 'do-now',
+      title: 'Check belt tension / motor match',
+      why: `Motor symmetry ${profile.symmetry_pct.toFixed(0)}% is low — re-tension the belts (compare belts) and verify both motor currents match.`,
+    })
+  }
+  if (!out.length) {
+    out.push({ level: 'ok', title: 'Vibrations look fine', why: 'No problem speeds stood out.' })
+  }
+  return out
 }
 
 export function recommendPressure(): Suggestion[] {

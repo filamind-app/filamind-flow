@@ -126,6 +126,55 @@ export interface AxesMapResult {
   source_files: string[]
 }
 
+/** A smooth (low-vibration) speed band, sorted best-first. */
+export interface SpeedRange {
+  start: number
+  end: number
+  /** Mean vibration energy in the band, as a percent of the signal max (lower better). */
+  energy_pct: number
+}
+
+/** A smooth travel-direction band (degrees), sorted best-first. */
+export interface AngleRange {
+  start: number
+  end: number
+  energy_pct: number
+}
+
+/** Result of a machine vibrations profile — smoothest speeds/angles + motor health. */
+export interface VibrationsProfile {
+  kinematics: string
+  accel: number
+  max_freq: number
+  /** The two motor angles measured (0/90 Cartesian/CoreXZ, 45/135 CoreXY). */
+  main_angles: number[]
+  segments_used: number
+  segments_captured: number
+  /** Speed axis (mm/s) shared by the energy profile + spectrogram columns. */
+  speeds: number[]
+  /** Normalised vibration metric per speed (0..1) — the speed-energy profile. */
+  energy_profile: number[]
+  /** Normalised max-energy curve per speed (0..1). */
+  max_profile: number[]
+  /** Speeds with resonance peaks to avoid (mm/s). */
+  peak_speeds: number[]
+  good_speed_ranges: SpeedRange[]
+  /** Angle axis (deg, 0..360) shared by the polar energy + spectrogram rows. */
+  angles: number[]
+  /** Normalised vibration energy per travel direction (0..1) — the polar curve. */
+  angle_energy: number[]
+  good_angle_ranges: AngleRange[]
+  /** How alike the two motors behave (0-100%); low suggests a belt-tension mismatch. */
+  symmetry_pct: number
+  motor_freq: number | null
+  motor_damping: number | null
+  low_freq_warning: boolean
+  /** Log-normalised directional energy grid [angle][speed], 0..1 (the heatmap). */
+  spectrogram: number[][]
+  recommended_speed: number | null
+  verdict: string
+}
+
 /** Result of a sustain-frequency hold — a time-frequency spectrogram + timeline. */
 export interface StaticExcitationResult {
   axis: string

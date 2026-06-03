@@ -7,6 +7,7 @@ import type {
   ResonanceFilesResponse,
   ShaperAnalysis,
   StaticExcitationResult,
+  VibrationsProfile,
 } from './types'
 
 /** Extracts a backend error detail, falling back to the status line. */
@@ -135,4 +136,38 @@ export async function runStaticExcitation(
   const response = await fetch(`${backendUrl}/api/shaper/excitate?${params}`, { method: 'POST' })
   if (!response.ok) throw new Error(await errorDetail(response, 'Sustain-frequency test failed'))
   return (await response.json()) as StaticExcitationResult
+}
+
+/** Tuning knobs for a vibrations profile (all optional; backend supplies defaults). */
+export interface VibrationsOptions {
+  /** Top speed to test, mm/s. */
+  maxSpeed?: number
+  /** Lowest speed to test, mm/s. */
+  minSpeed?: number
+  /** Speed step, mm/s (finer = longer run). */
+  speedIncrement?: number
+  /** Movement size, mm. */
+  size?: number
+  /** Acceleration during the sweep, mm/s². */
+  accel?: number
+}
+
+/** Sweeps speed × motor-angle and profiles machine vibrations (moves the toolhead for minutes). */
+export async function runVibrationsProfile(
+  opts: VibrationsOptions = {},
+): Promise<VibrationsProfile> {
+  const { backendUrl } = resolveEndpoints()
+  const params = new URLSearchParams()
+  if (opts.maxSpeed != null) params.set('max_speed', String(opts.maxSpeed))
+  if (opts.minSpeed != null) params.set('min_speed', String(opts.minSpeed))
+  if (opts.speedIncrement != null) params.set('speed_increment', String(opts.speedIncrement))
+  if (opts.size != null) params.set('size', String(opts.size))
+  if (opts.accel != null) params.set('accel', String(opts.accel))
+  const query = params.toString()
+  const response = await fetch(
+    `${backendUrl}/api/shaper/vibrations-profile${query ? `?${query}` : ''}`,
+    { method: 'POST' },
+  )
+  if (!response.ok) throw new Error(await errorDetail(response, 'Vibrations profile failed'))
+  return (await response.json()) as VibrationsProfile
 }

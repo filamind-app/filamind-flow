@@ -39,7 +39,9 @@ run server-side.
 >   `[input_shaper]` config without the command line: the recommended shaper, an SVG
 >   frequency-response chart, per-axis X/Y, an A⇄B comparison, a **measurement
 >   quality grade (A–F)**, and **visual diagnostics with illustrated fixes**. Import
->   captures from the printer host or run a live test.
+>   captures from the printer host or run a live test, compare CoreXY belts, detect the
+>   accelerometer axes-map, hold a sustain frequency, sweep a **machine vibrations
+>   profile** (smoothest speeds + resonances to avoid), and walk it all in a guided wizard.
 >
 > Further widgets are added under `frontend/src/widgets/`.
 
@@ -186,7 +188,9 @@ templates live in [`deploy/`](deploy/).
       a measurement **quality grade (A–F)**, **visual diagnostics with fixes**,
       printer-host import, a live test, an accelerometer noise pre-check, a
       CoreXY belt-tension comparison, accelerometer axes-map detection, a
-      sustain-frequency hands-on diagnostic, and a guided tuning wizard
+      sustain-frequency hands-on diagnostic, a machine **vibrations profile**
+      (smoothest/worst speeds, motor symmetry, motor resonance), and a guided
+      tuning wizard
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 
