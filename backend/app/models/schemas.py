@@ -810,3 +810,35 @@ class MotorAssignRequest(BaseModel):
 
     stepper: str
     motor_model: str | None = None
+
+
+class RecommendRequest(BaseModel):
+    """Inputs for a driver-tuning recommendation (compute-only)."""
+
+    motor_model: str
+    voltage: float = 24.0
+    #: Override the suggested run current; omit to let the recommender pick (~70% of rated).
+    run_current: float | None = None
+    toff: int = 3
+    tbl: int = 2
+    extra_hysteresis: int = 0
+    #: TMC2240 uses a different tblank table; set when the target driver is a 2240.
+    is_2240: bool = False
+
+
+class DriverRecommendation(BaseModel):
+    """Recommended run current + StealthChop/SpreadCycle registers from a motor's specs."""
+
+    motor_model: str
+    motor_name: str
+    run_current: float
+    run_current_basis: str
+    pwm_grad: int
+    pwm_ofs: int
+    hstrt: int
+    hend: int
+    max_pwm_rps: float
+    cbemf: float
+    voltage: float
+    toff: int
+    tbl: int

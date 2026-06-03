@@ -5,6 +5,7 @@ import { fetchDriverStatus, fetchMotorCatalog, saveMotorAssignment } from './api
 import HelpIllo from './HelpIllo.vue'
 import HelpNote from './HelpNote.vue'
 import MotorPicker from './MotorPicker.vue'
+import RecommendPanel from './RecommendPanel.vue'
 import {
   axisHeading,
   capabilityChips,
@@ -218,6 +219,8 @@ onUnmounted(() => {
             @assign="onAssign"
           />
 
+          <RecommendPanel v-if="d.motor" :driver="d" />
+
           <div v-if="registerEntries(d).length" class="font-mono text-[10px]">
             <button
               class="opacity-60 transition-opacity hover:opacity-100"
@@ -248,6 +251,7 @@ onUnmounted(() => {
         <HelpNote topic="health" />
         <HelpNote topic="catalog" />
         <HelpNote topic="motor" />
+        <HelpNote topic="recommend" />
       </div>
     </template>
   </div>

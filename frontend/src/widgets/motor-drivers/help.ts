@@ -16,6 +16,7 @@ export type HelpTopic =
   | 'temperature'
   | 'catalog'
   | 'motor'
+  | 'recommend'
 
 export interface HelpEntry {
   title: string
@@ -118,6 +119,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Assigning a motor',
     body: 'Pick the stepper motor wired to each axis from a built-in catalog of 200+ motors. Klipper doesn’t know which motor you fitted — telling FilaMind unlocks its datasheet specs (holding torque, rated current, resistance, inductance), which a later step uses to recommend a safe run current and driver tuning. It’s saved on the printer and changes nothing on the driver by itself.',
     illo: 'current',
+  },
+  recommend: {
+    title: 'Recommended tuning',
+    body: 'Once a motor is assigned, FilaMind can compute a suggested run current and the StealthChop / SpreadCycle register values (pwm_grad, pwm_ofs, hstrt, hend) from the motor’s datasheet specs and your supply voltage — the same physics the klipper_tmc_autotune project uses, so it works even without that add-on installed. The run current defaults to a conservative 70% of the motor’s rating. It’s shown as a preview diffed against your live config; nothing is written to the driver (applying it is a later, safety-gated step).',
+    illo: 'driver',
   },
 }
 
