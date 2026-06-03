@@ -126,21 +126,62 @@ async def apply_live(
     }
 
 
+async def _restore_current_cmd(client: MoonrakerClient, stepper: str) -> str | None:
+    """A ``SET_TMC_CURRENT`` restoring the stepper's *configured* run/hold current, or None.
+
+    ``INIT_TMC`` re-applies register fields but NOT the run current set via
+    ``SET_TMC_CURRENT`` (#93), so a full revert must restore the current explicitly.
+    """
+    cf = await client.query_objects(["configfile"])
+    configfile = cf.get("configfile")
+    settings = configfile.get("settings") if isinstance(configfile, dict) else None
+    settings = settings if isinstance(settings, dict) else {}
+    section = next(
+        (
+            value
+            for key, value in settings.items()
+            if key.startswith("tmc")
+            and key.split(" ", 1)[-1] == stepper
+            and isinstance(value, dict)
+        ),
+        None,
+    )
+    if section is None:
+        return None
+    run_current = section.get("run_current")
+    if not isinstance(run_current, (int, float)) or isinstance(run_current, bool):
+        return None
+    cmd = f"SET_TMC_CURRENT STEPPER={stepper} CURRENT={_fmt(run_current)}"
+    hold = section.get("hold_current")
+    if isinstance(hold, (int, float)) and not isinstance(hold, bool):
+        cmd += f" HOLDCURRENT={_fmt(hold)}"
+    return cmd
+
+
 async def revert(moonraker_url: str, stepper: str, *, timeout: float = 20.0) -> dict[str, Any]:
-    """``INIT_TMC`` re-applies the stepper's configured registers — undoes a live apply."""
+    """Undo a live apply: ``INIT_TMC`` re-applies the configured register fields, and we
+    restore the configured run/hold current too (INIT_TMC alone doesn't — #93)."""
     try:
         stepper = _safe_name(stepper)
     except ValueError as exc:
         return {"ok": False, "applied": [], "message": str(exc)}
     client = MoonrakerClient(moonraker_url, timeout=timeout)
-    cmd = f"INIT_TMC STEPPER={stepper}"
     try:
         if await _is_printing(client):
             return {"ok": False, "applied": [], "message": "Refusing to re-init while printing."}
-        await client.run_gcode(cmd)
+        commands = [f"INIT_TMC STEPPER={stepper}"]
+        current_cmd = await _restore_current_cmd(client, stepper)
+        if current_cmd:
+            commands.append(current_cmd)
+        for cmd in commands:
+            await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
         return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
-    return {"ok": True, "applied": [cmd], "message": f"Re-initialized {stepper} from its config."}
+    return {
+        "ok": True,
+        "applied": commands,
+        "message": f"Re-initialized {stepper} and restored its configured current.",
+    }
 
 
 async def autotune_available(moonraker_url: str, stepper: str) -> bool:
