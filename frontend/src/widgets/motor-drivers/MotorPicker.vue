@@ -8,10 +8,15 @@ import { computed, ref } from 'vue'
 import { filterMotors, motorSpecLabel } from './format'
 import type { MotorSpec } from './types'
 
-const props = defineProps<{ stepper: string; assigned: MotorSpec | null; catalog: MotorSpec[] }>()
+const props = defineProps<{
+  stepper: string
+  assigned: MotorSpec | null
+  catalog: MotorSpec[]
+  defaultOpen?: boolean
+}>()
 const emit = defineEmits<{ assign: [stepper: string, model: string | null] }>()
 
-const open = ref(false)
+const open = ref(props.defaultOpen === true)
 const query = ref('')
 
 //: Cap the rendered list — 200+ rows at once is needless DOM; refine via search.
