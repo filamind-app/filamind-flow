@@ -206,6 +206,10 @@ onMounted(loadFiles)
       <span class="text-xs font-bold uppercase tracking-wide">From the printer</span>
       <button class="nb-btn px-2 py-0.5 text-[10px]" @click="loadFiles">↻ refresh</button>
     </div>
+    <p class="font-mono text-[9px] opacity-60">
+      ⏳ Live tests move the toolhead and can take <strong>1–5 minutes</strong> (a belt comparison
+      runs two full sweeps) — keep this page open until the result appears.
+    </p>
 
     <!-- Accelerometer noise pre-check — motion-free, validates the sensor mount. -->
     <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
