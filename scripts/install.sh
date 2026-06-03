@@ -66,7 +66,14 @@ server {
     location /assets/ { add_header Cache-Control "public, max-age=31536000, immutable"; }
     location = /index.html { add_header Cache-Control "no-cache"; }
     location / { try_files \$uri \$uri/ /index.html; }
-    location /api/ { proxy_pass http://127.0.0.1:$API_PORT; proxy_set_header Host \$host; }
+    # Resonance captures move the toolhead for minutes (belt comparison = two sweeps;
+    # vibrations profile longer), so raise nginx's 60s default read timeout or they 504.
+    location /api/ {
+        proxy_pass http://127.0.0.1:$API_PORT;
+        proxy_set_header Host \$host;
+        proxy_read_timeout 1200s;
+        proxy_send_timeout 1200s;
+    }
 
     location ~ ^/(server|printer|access|machine) {
         proxy_pass http://127.0.0.1:7125;

@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.42.1] - 2026-06-03
+
+### Fixed
+
+- **Long resonance tests no longer 504.** The nginx `/api/` proxy used the default 60s
+  `proxy_read_timeout`, so any operation that moves the toolhead for more than a minute —
+  a belt comparison (two full sweeps), a live test, axes-map, or sustain-frequency —
+  returned **504 Gateway Timeout** even though the backend was still running and would have
+  finished. Raised the `/api/` `proxy_read_timeout` / `proxy_send_timeout` to 1200s in both
+  the installer (`scripts/install.sh`) and the deploy template. Added a UI note that live
+  tests can take 1–5 minutes. (Existing installs: re-run the installer, or reload the
+  updated nginx site, to apply.)
+
 ## [0.42.0] - 2026-06-03
 
 ### Added — Input Shaping: guided wizard completes the workflow (Shake&Tune parity, 4 of 5)
