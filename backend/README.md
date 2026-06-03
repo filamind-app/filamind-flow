@@ -39,6 +39,12 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/shaper/axes-map`     | Jog +X/+Y/+Z to detect the accelerometer `axes_map` orientation (moves the toolhead). |
 | POST   | `/api/shaper/excitate`     | Hold a frequency (sustain) to find what rattles → spectrogram + energy timeline (moves the toolhead in place). |
 | POST   | `/api/shaper/vibrations-profile` | Sweep speed × motor-angle → smoothest/worst speeds, motor symmetry, motor resonance (moves the toolhead for minutes). |
+| GET    | `/api/shaper/archive`      | List the saved runs (captures + generated configs) in the on-host archive. |
+| GET    | `/api/shaper/archive/{id}` | One archived run + its inline config text.                      |
+| GET    | `/api/shaper/archive/{id}/file/{name}` | Download a CSV / config stored in a run.            |
+| DELETE | `/api/shaper/archive/{id}` | Delete an archived run (folder + index entry).                  |
+| POST   | `/api/shaper/archive/save-config` | Save a generated `[input_shaper]` config to the archive. |
+| POST   | `/api/shaper/archive/save-file` | Copy an existing host resonance CSV into the archive.      |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

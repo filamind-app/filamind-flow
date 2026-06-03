@@ -108,6 +108,11 @@ def _is_allowed(path: str, resonance_dirs: str) -> bool:
     )
 
 
+def is_allowed_path(path: str, resonance_dirs: str) -> bool:
+    """Public: True if ``path`` resolves inside one of the configured resonance dirs."""
+    return _is_allowed(path, resonance_dirs)
+
+
 def analyze_file(resonance_dirs: str, path: str, **kwargs: Any) -> dict[str, Any]:
     """Reads a resonance CSV from the host (within the allowed dirs) and analyses it."""
     if not _is_allowed(path, resonance_dirs):
