@@ -45,7 +45,7 @@ Phases 6+ grow it into a full multi-board manager.
 
 Turn a Klipper resonance capture into a ready-to-paste `[input_shaper]` config —
 no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
-`SHAPER_CALIBRATE`. **Shipped v0.27.0 → v0.35.0.**
+`SHAPER_CALIBRATE`. **Shipped v0.27.0 → v0.44.0 — full Shake&Tune feature parity.**
 
 | Phase | Scope |
 | ----- | ----- |
@@ -61,13 +61,14 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 | ✅ **10 — Axes-map calibration** | Jog +X/+Y/+Z, integrate the accelerometer to velocity, and detect the Klipper `axes_map` (orientation) + tilt/confidence; reconstructs the no-signal axis on bed-slingers. First of the Shake&Tune-parity set; builds the `ACCELEROMETER_MEASURE` capture spine. |
 | ✅ **11 — Sustain frequency** | Hold the toolhead vibrating near a frequency (a slow, narrow `TEST_RESONANCES` sweep — no macro/config change) to find the resonance source by hand; returns a frequency×time spectrogram + an energy "touch timeline". |
 | ✅ **12 — Guided tuning wizard** | A step-by-step walk-through (Noise → Belts → Shaper X → Shaper Y) with automated pass/fail gates (reusing the grade / belt verdict / noise grade) + ranked next-step suggestions; the captures feed the shared config + history. |
+| ✅ **13 — Vibrations profile** | Sweep many speeds along each motor angle (0/90 Cartesian/CoreXZ, 45/135 CoreXY) → the smoothest speed ranges + the resonance speeds to avoid, a polar energy plot by travel direction, an angle×speed heatmap, motor symmetry and the motors' resonant frequency. Upgrades the wizard's Vibrations step from a self-report to a measured one. (numpy port of Shake&Tune's `vibrations_computation.py`, reusing the vendored `ShaperCalibrate`.) |
 
-**Shake&Tune parity (in progress — 4 of 5 shipped)**
+**Shake&Tune parity — ✅ COMPLETE (5 of 5 shipped)**
 
 - ✅ **Axes-map calibration** (phase 10, v0.39.0)
 - ✅ **Sustain frequency** (phase 11, v0.40.0)
 - ✅ **Guided wizard** (phase 12, v0.41.0) + the **Vibrations + Pressure-Advance** steps (v0.42.0) — full Noise → Belts → Shaper → Vibrations → PA flow
-- 📋 **Vibrations profile** (`CREATE_VIBRATIONS_PROFILE`) — speed×angle VFA map → slicer speed guidance (upgrades the wizard's manual Vibrations step to a measured one)
+- ✅ **Vibrations profile** (phase 13, backend v0.43.0 + UI/wizard v0.44.0) — speed×angle vibration map → slicer speed guidance; the wizard's Vibrations step is now measured
 
 **Ideas (not yet sequenced)**
 
