@@ -80,10 +80,15 @@ When a change adds or changes a user-facing feature, an `/api` endpoint, or a
 config setting, **update the docs in the same PR** — stale docs are a bug:
 
 - **`CHANGELOG.md`** — every release (Keep a Changelog format).
-- **`README.md`** — the status blurb, the feature / roadmap list, and the version badge.
+- **`README.md`** — the status blurb, the **Widgets** table, and the roadmap list.
+  (The release badge is dynamic — it tracks the latest GitHub Release, so no manual bump.)
 - **`ROADMAP.md`** — mark the shipped phase ✅.
 - **`backend/README.md`** — new or changed `/api` endpoints and `FILAMIND_*` settings.
 - **`docs/ARCHITECTURE.md`** — only when the structure or data flow changes.
+
+Keep the **repository's GitHub metadata** current too: the **About description** and
+**topics** should reflect what ships today — update them with `gh repo edit` whenever a
+new widget or major capability lands.
 
 ## Code style
 
