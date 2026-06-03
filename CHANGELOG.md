@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.51.0] - 2026-06-03
+
+### Added
+
+- **New widget — Motor Drivers (P1: read-only dashboard).** A live inventory of every
+  TMC stepper driver on the printer, discovered straight from the Klipper config — one
+  card per motor (X / Y / each Z / extruder…). Each card shows the driver model, run &
+  hold current (live vs configured), chopper mode (SpreadCycle / StealthChop + threshold),
+  microsteps, sense resistor, StallGuard threshold, live temperature (or “no sensor” on
+  models without one), a live health badge (idle / ok / warning / fault from `drv_status`),
+  capability chips, and a collapsible advanced-register view.
+  - **Generic across every Klipper printer** — drivers are detected from config, not
+    assumed; all TMC models are handled (2209 / 2208 / 2130 / 2240 / 5160 / 2660…), with
+    model-specific fields (temperature sensor, StallGuard register name) resolved from
+    what the running config actually exposes.
+  - Built-in **help layer** (the project UX rule): a glossary, per-section “what’s this?”
+    notes with inline SVG illustrations, and a “how to read this” step list.
+  - Backend: `drivers_service` + **`GET /api/drivers/status`**.
+
 ### CI
 
 - **Releases now publish automatically.** Pushing a `vX.Y.Z` tag triggers

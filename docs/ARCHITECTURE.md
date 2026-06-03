@@ -45,7 +45,7 @@ src/
 │  ├─ registry/    # extensibility: the widget registry
 │  └─ store/       # state: Pinia mirror of Moonraker status
 ├─ components/     # presentation: app shell + dashboard (design-system driven)
-├─ widgets/        # features: self-registering widgets (Firmware Upgrade · Input Shaping)
+├─ widgets/        # features: self-registering widgets (Firmware Upgrade · Input Shaping · Motor Drivers)
 └─ assets/styles/  # Neo-Brutalist design tokens + component classes
 ```
 
@@ -81,10 +81,12 @@ feature never requires touching the transport or other widgets.
 A FastAPI application factory (`create_app`) wires settings, logging, CORS, and a
 versioned `/api` router. It exposes liveness (`/api/health`), a server-side
 Moonraker reachability probe (`/api/moonraker/status`), the **firmware**
-build / flash / device routes (`/api/firmware/*`), and the **input-shaping**
+build / flash / device routes (`/api/firmware/*`), the **input-shaping**
 resonance-analysis routes (`/api/shaper/*` — which vendor Klipper's
 `shaper_calibrate` and add pure-numpy ports of the Shake&Tune analyses: axes-map,
-spectrogram, and the machine vibrations profile). It is the right home for
+spectrogram, and the machine vibrations profile), and the **motor-drivers**
+inventory route (`/api/drivers/status` — TMC driver state aggregated from the live
+config + per-driver `get_status`). It is the right home for
 operations that should not run in the browser — privileged file or system actions,
 the live `ACCELEROMETER_MEASURE` / `TEST_RESONANCES` capture orchestration,
 multi-call aggregations, or scheduled jobs — added as new route modules under
