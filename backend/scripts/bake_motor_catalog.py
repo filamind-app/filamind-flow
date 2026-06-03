@@ -56,6 +56,18 @@ def bake() -> dict[str, object]:
                     "source": (row.get("source") or "").strip(),
                 }
             )
+    # Dedupe by model: the source merges several .cfg files, so a few motors appear
+    # more than once (with identical specs). Duplicates would also produce non-unique
+    # v-for keys in the picker and break its filtered rendering.
+    seen: set[str] = set()
+    unique: list[dict[str, object]] = []
+    for motor in motors:
+        key = str(motor["model"]).lower()
+        if key not in seen:
+            seen.add(key)
+            unique.append(motor)
+    motors = unique
+
     motors.sort(key=lambda m: (str(m["manufacturer"]).lower(), str(m["model"]).lower()))
     manufacturers = sorted({str(m["manufacturer"]) for m in motors if m["manufacturer"]})
     return {

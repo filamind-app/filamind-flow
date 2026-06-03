@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.53.1] - 2026-06-03
+
+### Fixed
+
+- **Motor picker showed stale results while searching.** The baked motor catalog had 5
+  duplicate entries (the same LDO models appear in two source `.cfg` files with identical
+  specs), so the picker's `v-for` keys weren't unique and Vue mis-tracked the list as you
+  typed. The catalog is now **deduplicated by model** (202 unique motors), the picker uses
+  a robust key, and a regression test guards against duplicate models. (#89)
+
 ## [0.53.0] - 2026-06-03
 
 ### Added

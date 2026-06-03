@@ -180,6 +180,9 @@ def test_motor_catalog_route() -> None:
     assert body["manufacturers"]
     first = body["motors"][0]
     assert {"manufacturer", "model", "resistance_ohm", "holding_torque_Nm"} <= first.keys()
+    # Models must be unique — duplicate keys break the picker's filtered v-for (#89).
+    models = [m["model"] for m in body["motors"]]
+    assert len(models) == len(set(models)), "duplicate motor models in the catalog"
 
 
 def test_motor_mapping_roundtrip(tmp_path: Any) -> None:
