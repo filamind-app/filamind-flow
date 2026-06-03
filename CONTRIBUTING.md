@@ -60,6 +60,20 @@ Widgets are the unit of extension. The core never needs to change.
 
 Keep components lazy (`defineAsyncComponent`) so each widget is its own chunk.
 
+## Widget UX: explain, guide, illustrate
+
+Every widget must be approachable to a newcomer — bare data panels aren't enough.
+Build these in from the start (don't bolt them on later):
+
+- **Explanations** — inline, collapsible help for each section (see `HelpNote.vue`).
+- **Practical steps** — for any procedural tool, a numbered / guided flow with clear
+  pass–fail outcomes (see the Input Shaping 🧭 Guided view).
+- **Illustrations** — hand-drawn inline **SVG** diagrams (see `HelpIllo.vue`); no binary
+  image assets — inline SVGs are theme-aware and diff cleanly in git.
+
+The **Input Shaping** widget (`HelpNote` / `HelpIllo` / `help.ts` + Guided) is the
+reference. Apply this to new widgets up front, and retrofit older ones over time.
+
 ## Keep the docs in step with features
 
 When a change adds or changes a user-facing feature, an `/api` endpoint, or a
@@ -87,3 +101,30 @@ config setting, **update the docs in the same PR** — stale docs are a bug:
   `fix:`, `docs:`, `refactor:`, `test:`, `chore:`.
 - Keep PRs focused; include a short description of _why_, not just _what_.
 - Ensure CI is green before requesting review.
+- Merge with **rebase** (`gh pr merge --rebase`) to preserve commit authorship.
+
+## Tracking discovered problems
+
+Found a bug or defect while working? Don't fix it silently:
+
+1. Open a **GitHub issue**, labeled by type (`bug`, `ci`, `chore`, `enhancement`, `ux`).
+2. Fix it in a PR whose description references **`Closes #<n>`**, so merging the patch
+   auto-closes the issue.
+
+This keeps every defect traceable by type, with a patch tied to it.
+
+## Releases
+
+Releases publish **automatically**: pushing a `vX.Y.Z` tag triggers
+[`.github/workflows/release.yml`](.github/workflows/release.yml), which creates the
+GitHub Release using the annotated tag's subject as the title and the matching
+`CHANGELOG.md` section as the notes. To cut a release:
+
+```bash
+# 1. Bump the version in all three places:
+#    frontend/package.json · backend/pyproject.toml · backend/app/__init__.py
+# 2. Add the CHANGELOG.md entry, rebuild frontend/dist, open the PR, merge.
+# 3. Tag the merge commit and push the tag — the workflow does the rest:
+git tag -a vX.Y.Z -m "vX.Y.Z — <summary>"
+git push origin vX.Y.Z
+```
