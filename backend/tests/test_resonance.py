@@ -238,6 +238,14 @@ async def test_measure_noise_refuses_without_resonance_tester(
         await resonance_service.measure_noise("http://x")
 
 
+async def test_measure_noise_refuses_while_printing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _patch_client(monkeypatch, _FakeClient(printing=True, has_tester=True, write_dir=tmp_path))
+    with pytest.raises(shaper_service.ShaperAnalysisError, match="printing"):
+        await resonance_service.measure_noise("http://x")
+
+
 async def test_compare_belts_runs_both_diagonals(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -281,6 +289,14 @@ async def test_calibrate_axes_map_refuses_without_resonance_tester(
 ) -> None:
     _patch_client(monkeypatch, _FakeClient(printing=False, has_tester=False, write_dir=tmp_path))
     with pytest.raises(shaper_service.ShaperAnalysisError, match="resonance_tester"):
+        await resonance_service.calibrate_axes_map("http://x", str(tmp_path))
+
+
+async def test_calibrate_axes_map_refuses_while_printing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _patch_client(monkeypatch, _FakeClient(printing=True, has_tester=True, write_dir=tmp_path))
+    with pytest.raises(shaper_service.ShaperAnalysisError, match="printing"):
         await resonance_service.calibrate_axes_map("http://x", str(tmp_path))
 
 
