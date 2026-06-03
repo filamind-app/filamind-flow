@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.53.0] - 2026-06-03
+
+### Added
+
+- **Motor Drivers P2b — motor picker.** Each driver card now lets you assign the stepper
+  **motor** wired to that axis from a built-in catalog of **200+ motors** (searchable by
+  model or manufacturer). The assigned motor's datasheet specs — holding torque, rated
+  current, resistance, inductance — show on the card, and the choice is **persisted on the
+  printer** (`<data_dir>/motor-mapping.json`). This sets up the upcoming current/register
+  recommender; it changes nothing on the driver by itself.
+  - Backend: motor database baked to `backend/app/data/motor_catalog.json` (via
+    `scripts/bake_motor_catalog.py` from the vendored CSV); new endpoints
+    **`GET /api/drivers/motors`** (the catalog) and **`GET`/`POST /api/drivers/mapping`**
+    (read / assign). `GET /api/drivers/status` now attaches the assigned `motor` per driver.
+  - A "what's this?" help note explains why assigning a motor matters.
+
 ## [0.52.0] - 2026-06-03
 
 ### Added

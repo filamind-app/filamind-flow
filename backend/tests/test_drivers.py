@@ -171,6 +171,58 @@ def test_drivers_catalog_route() -> None:
     assert {"tmc2209", "tmc2240", "tmc5160"} <= models
 
 
+def test_motor_catalog_route() -> None:
+    client = TestClient(create_app())
+    response = client.get("/api/drivers/motors")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["count"] == len(body["motors"]) > 100  # the full baked catalog
+    assert body["manufacturers"]
+    first = body["motors"][0]
+    assert {"manufacturer", "model", "resistance_ohm", "holding_torque_Nm"} <= first.keys()
+
+
+def test_motor_mapping_roundtrip(tmp_path: Any) -> None:
+    from app.services import motor_catalog
+
+    model = str(motor_catalog.all_motors()[0]["model"])
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        moonraker_url="http://127.0.0.1:1", data_dir=str(tmp_path)
+    )
+    client = TestClient(app)
+
+    assert client.get("/api/drivers/mapping").json()["mapping"] == {}
+    saved = client.post("/api/drivers/mapping", json={"stepper": "stepper_x", "motor_model": model})
+    assert saved.json()["mapping"] == {"stepper_x": model}
+    assert client.get("/api/drivers/mapping").json()["mapping"]["stepper_x"] == model
+    # An empty motor_model clears the assignment.
+    cleared = client.post("/api/drivers/mapping", json={"stepper": "stepper_x"})
+    assert cleared.json()["mapping"] == {}
+
+
+def test_status_attaches_assigned_motor(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.services import motor_catalog, motor_mapping
+
+    model = str(motor_catalog.all_motors()[0]["model"])
+    motor_mapping.assign(str(tmp_path), "stepper_x", model)
+    monkeypatch.setattr(drivers_service, "MoonrakerClient", lambda *a, **k: _FakeClient())
+
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        moonraker_url="http://x", data_dir=str(tmp_path)
+    )
+    client = TestClient(app)
+
+    drivers = client.get("/api/drivers/status").json()["drivers"]
+    x = next(d for d in drivers if d["stepper"] == "stepper_x")
+    assert x["motor"] is not None
+    assert x["motor"]["model"] == model
+    # An unassigned stepper has no motor.
+    z = next(d for d in drivers if d["stepper"] == "stepper_z")
+    assert z["motor"] is None
+
+
 def test_chopper_mode() -> None:
     assert drivers_service._chopper_mode(0.0) == "SpreadCycle"
     assert drivers_service._chopper_mode(5.0) == "StealthChop"
