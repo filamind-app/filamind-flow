@@ -710,6 +710,19 @@ class DriverInfo(BaseModel):
     notes: str | None = None
 
 
+class MotorSpec(BaseModel):
+    """A stepper motor's datasheet parameters, from the motor catalog."""
+
+    manufacturer: str = ""
+    model: str
+    resistance_ohm: float | None = None
+    inductance_H: float | None = None
+    holding_torque_Nm: float | None = None
+    max_current_A: float | None = None
+    steps_per_rev: int = 200
+    source: str = ""
+
+
 class TmcDriver(BaseModel):
     """One TMC stepper driver: who it is, its configured tuning, and live telemetry.
 
@@ -759,6 +772,8 @@ class TmcDriver(BaseModel):
     #: Authoritative reference data for this model from the driver catalog (None if the
     #: model isn't in the catalog — the card still renders from the live config).
     info: DriverInfo | None = None
+    #: The motor the user assigned to this stepper (from the motor catalog), or None.
+    motor: MotorSpec | None = None
 
 
 class DriversStatus(BaseModel):
@@ -773,3 +788,25 @@ class DriverCatalog(BaseModel):
 
     source: str = ""
     drivers: list[DriverInfo] = []
+
+
+class MotorCatalog(BaseModel):
+    """The stepper-motor catalog (GET /api/drivers/motors)."""
+
+    source: str = ""
+    count: int = 0
+    manufacturers: list[str] = []
+    motors: list[MotorSpec] = []
+
+
+class MotorMapping(BaseModel):
+    """The saved stepper -> motor-model assignments (GET/POST /api/drivers/mapping)."""
+
+    mapping: dict[str, str] = {}
+
+
+class MotorAssignRequest(BaseModel):
+    """Assign (or, with an empty ``motor_model``, clear) the motor on a stepper."""
+
+    stepper: str
+    motor_model: str | None = None

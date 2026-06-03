@@ -15,6 +15,7 @@ export type HelpTopic =
   | 'health'
   | 'temperature'
   | 'catalog'
+  | 'motor'
 
 export interface HelpEntry {
   title: string
@@ -112,6 +113,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Where the model facts come from',
     body: 'The interface (UART / SPI), the current cap, and the supported features shown on each card come from a built-in capability map of the TMC family — verified against the Klipper / Kalico driver code. It tells you, for example, that a TMC2208 can’t do sensorless homing while a TMC2209 can, or that only the TMC2240 reports its own temperature. Electrical figures are datasheet-typical; your board, sense resistor, and cooling set the real limits.',
     illo: 'driver',
+  },
+  motor: {
+    title: 'Assigning a motor',
+    body: 'Pick the stepper motor wired to each axis from a built-in catalog of 200+ motors. Klipper doesn’t know which motor you fitted — telling FilaMind unlocks its datasheet specs (holding torque, rated current, resistance, inductance), which a later step uses to recommend a safe run current and driver tuning. It’s saved on the printer and changes nothing on the driver by itself.',
+    illo: 'current',
   },
 }
 

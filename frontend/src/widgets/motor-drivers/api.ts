@@ -1,6 +1,6 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { DriversStatus } from './types'
+import type { DriversStatus, MotorCatalog } from './types'
 
 /** Fetches the read-only TMC driver inventory from the FilaMind backend. */
 export async function fetchDriverStatus(): Promise<DriversStatus> {
@@ -10,4 +10,30 @@ export async function fetchDriverStatus(): Promise<DriversStatus> {
     throw new Error(`Driver status request failed (${response.status})`)
   }
   return (await response.json()) as DriversStatus
+}
+
+/** Fetches the stepper-motor catalog (datasheet parameters) for the motor picker. */
+export async function fetchMotorCatalog(): Promise<MotorCatalog> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/drivers/motors`)
+  if (!response.ok) {
+    throw new Error(`Motor catalog request failed (${response.status})`)
+  }
+  return (await response.json()) as MotorCatalog
+}
+
+/** Assigns a catalogued motor to a stepper (pass null to clear the assignment). */
+export async function saveMotorAssignment(
+  stepper: string,
+  motorModel: string | null,
+): Promise<void> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/drivers/mapping`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stepper, motor_model: motorModel }),
+  })
+  if (!response.ok) {
+    throw new Error(`Motor assignment failed (${response.status})`)
+  }
 }

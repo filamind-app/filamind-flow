@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
-import { fetchDriverStatus } from './api'
+import { fetchDriverStatus, fetchMotorCatalog, saveMotorAssignment } from './api'
 import HelpIllo from './HelpIllo.vue'
 import HelpNote from './HelpNote.vue'
+import MotorPicker from './MotorPicker.vue'
 import {
   axisHeading,
   capabilityChips,
@@ -19,13 +20,14 @@ import {
   temperatureLabel,
 } from './format'
 import { STEPS } from './help'
-import type { DriversStatus, TmcDriver } from './types'
+import type { DriversStatus, MotorSpec, TmcDriver } from './types'
 
 const status = ref<DriversStatus | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(true)
 const showSteps = ref(false)
 const openRegisters = ref<Record<string, boolean>>({})
+const motorCatalog = ref<MotorSpec[]>([])
 
 const drivers = computed(() => status.value?.drivers ?? [])
 const reachable = computed(() => status.value?.reachable ?? false)
@@ -68,9 +70,23 @@ async function load(silent = false): Promise<void> {
   }
 }
 
+/** Persist a motor assignment, then refresh so the card shows the motor's specs. */
+async function onAssign(stepper: string, model: string | null): Promise<void> {
+  try {
+    await saveMotorAssignment(stepper, model)
+    await load(true)
+  } catch (e) {
+    error.value = describeError(e)
+  }
+}
+
 let timer: ReturnType<typeof setInterval> | null = null
 onMounted(() => {
   void load()
+  // The motor catalog is static reference data — fetch once (best-effort).
+  fetchMotorCatalog()
+    .then((c) => (motorCatalog.value = c.motors))
+    .catch(() => {})
   timer = setInterval(() => void load(true), 6000)
 })
 onUnmounted(() => {
@@ -195,6 +211,13 @@ onUnmounted(() => {
             >
           </div>
 
+          <MotorPicker
+            :stepper="d.stepper"
+            :assigned="d.motor"
+            :catalog="motorCatalog"
+            @assign="onAssign"
+          />
+
           <div v-if="registerEntries(d).length" class="font-mono text-[10px]">
             <button
               class="opacity-60 transition-opacity hover:opacity-100"
@@ -224,6 +247,7 @@ onUnmounted(() => {
         <HelpNote topic="stallguard" />
         <HelpNote topic="health" />
         <HelpNote topic="catalog" />
+        <HelpNote topic="motor" />
       </div>
     </template>
   </div>
