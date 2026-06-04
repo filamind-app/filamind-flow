@@ -60,6 +60,16 @@ class MoonrakerClient:
         status = result.get("status", {})
         return status if isinstance(status, dict) else {}
 
+    async def query_endstops(self) -> dict[str, Any]:
+        """Live endstop trigger state via ``/printer/query_endstops/status``.
+
+        This actively triggers a query (the ``query_endstops`` object is otherwise stale
+        until ``QUERY_ENDSTOPS`` runs). It's a motion-free MCU read but uses the g-code
+        mutex, so call it on demand, not in a fast poll. Returns ``{axis: "open"|"TRIGGERED"}``.
+        """
+        result = await self._get("/printer/query_endstops/status")
+        return result if isinstance(result, dict) else {}
+
     async def gcode_store(self, count: int = 20) -> list[dict[str, Any]]:
         """Recent G-code console responses via ``/server/gcode_store`` (oldest first).
 

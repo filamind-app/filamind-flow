@@ -94,6 +94,38 @@ def _capabilities(config: dict[str, Any], temperature: float | None) -> dict[str
     }
 
 
+def _classify_homing(stepper_cfg: dict[str, Any], model: str) -> tuple[str, str | None, str | None]:
+    """Per-axis homing method from ``[stepper_*].endstop_pin`` — using Klipper's own rule
+    (``':virtual_endstop' in endstop_pin`` ⇒ sensorless). Returns (method, endstop_pin, note).
+
+    Methods: ``physical`` (a real switch) / ``sensorless`` (TMC StallGuard) / ``probe``
+    (Z homed by the probe) / ``other_virtual`` / ``inherited`` (extra stepper, shares the
+    rail's endstop). Sensorless StallGuard tuning is valid ONLY for ``sensorless``.
+    """
+    pin = stepper_cfg.get("endstop_pin")
+    if pin is None:
+        return "inherited", None, None
+    pin = str(pin).strip()
+    low = pin.lower()
+    if low.startswith("probe:") or "z_virtual_endstop" in low:
+        return "probe", pin, "homes via the probe"
+    override = stepper_cfg.get("use_sensorless_homing")
+    is_virtual = ":virtual_endstop" in low  # Klipper's exact substring test
+    sensorless = override is True or (is_virtual and override is not False)
+    if sensorless:
+        chip = pin.split(":", 1)[0].lstrip("^~!").strip()
+        if not chip.startswith("tmc"):
+            return "other_virtual", pin, None
+        if model == "tmc2208":
+            return "sensorless", pin, "misconfigured — TMC2208 has no StallGuard"
+        return "sensorless", pin, None
+    if is_virtual:
+        return "other_virtual", pin, None
+    chip = pin.split(":", 1)[0].lstrip("^~!").strip() if ":" in pin else "mcu"
+    note = f"endstop on {chip}" if chip not in ("mcu", "") else None
+    return "physical", pin, note
+
+
 def _parse_driver(
     name: str, get_status: dict[str, Any], sections: dict[str, Any]
 ) -> dict[str, Any]:
@@ -106,6 +138,7 @@ def _parse_driver(
     config = config if isinstance(config, dict) else {}
     stepper_cfg = sections.get(stepper)
     stepper_cfg = stepper_cfg if isinstance(stepper_cfg, dict) else {}
+    homing_method, endstop_pin, homing_note = _classify_homing(stepper_cfg, model)
 
     temperature = _as_float(get_status.get("temperature"))
     drv_status = get_status.get("drv_status")
@@ -132,6 +165,9 @@ def _parse_driver(
         "drv_status": drv_status,
         "capabilities": _capabilities(config, temperature),
         "registers": _registers(config),
+        "homing_method": homing_method,
+        "endstop_pin": endstop_pin,
+        "homing_note": homing_note,
     }
 
 
@@ -175,6 +211,22 @@ async def gather_drivers(moonraker_url: str, data_dir: str = "") -> dict[str, An
         record["motor"] = motor_catalog.lookup(mapping.get(record["stepper"], ""))
         drivers.append(record)
     return {"reachable": True, "drivers": drivers}
+
+
+async def gather_endstops(moonraker_url: str) -> dict[str, Any]:
+    """Live endstop trigger state (open / TRIGGERED), actively queried on demand.
+
+    The ``query_endstops`` object is stale until a query runs, so this triggers one. Useful
+    for ``physical`` endstops at rest; a ``sensorless`` axis only reads meaningfully during a
+    homing move (the UI labels it accordingly). Returns ``{reachable, states}``.
+    """
+    client = MoonrakerClient(moonraker_url)
+    try:
+        states = await client.query_endstops()
+    except httpx.HTTPError:
+        return {"reachable": False, "states": {}}
+    clean = {str(k): str(v) for k, v in states.items()} if isinstance(states, dict) else {}
+    return {"reachable": True, "states": clean}
 
 
 async def gather_live(moonraker_url: str, stepper: str) -> dict[str, Any]:

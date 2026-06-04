@@ -5,11 +5,11 @@ import { fetchDriverStatus, fetchMotorCatalog, saveMotorAssignment } from './api
 import HelpIllo from './HelpIllo.vue'
 import GuidedWizard from './GuidedWizard.vue'
 import HelpNote from './HelpNote.vue'
+import HomingPanel from './HomingPanel.vue'
 import LiveMonitor from './LiveMonitor.vue'
 import MotorPicker from './MotorPicker.vue'
 import MotorSyncPanel from './MotorSyncPanel.vue'
 import RecommendPanel from './RecommendPanel.vue'
-import SensorlessPanel from './SensorlessPanel.vue'
 import {
   axisHeading,
   capabilityChips,
@@ -19,6 +19,7 @@ import {
   driverModelLabel,
   effectiveCapabilities,
   healthClass,
+  homingApplies,
   interfaceLabel,
   maxCurrentLabel,
   nearCurrentCap,
@@ -241,11 +242,7 @@ onUnmounted(() => {
 
           <RecommendPanel v-if="d.motor" :driver="d" @applied="load(true)" />
 
-          <SensorlessPanel
-            v-if="d.stallguard_field && d.info?.sensorless"
-            :driver="d"
-            @changed="load(true)"
-          />
+          <HomingPanel v-if="homingApplies(d.homing_method)" :driver="d" @changed="load(true)" />
 
           <div v-if="registerEntries(d).length" class="font-mono text-[10px]">
             <button
@@ -281,6 +278,7 @@ onUnmounted(() => {
         <HelpNote topic="catalog" />
         <HelpNote topic="motor" />
         <HelpNote topic="recommend" />
+        <HelpNote topic="homing" />
         <HelpNote topic="sensorless" />
         <HelpNote topic="monitor" />
         <HelpNote topic="motorsync" />

@@ -13,7 +13,11 @@ from app.services import driver_catalog, drivers_service
 # a 2209 on X (SpreadCycle, sgthrs), a 2240 on Z (StealthChop, sg4_thrs, temperature),
 # and a 2209 on the extruder. No assumptions about axis count or kinematics.
 _SETTINGS: dict[str, Any] = {
-    "stepper_x": {"microsteps": 16, "rotation_distance": 40},
+    "stepper_x": {
+        "microsteps": 16,
+        "rotation_distance": 40,
+        "endstop_pin": "tmc2209_stepper_x:virtual_endstop",
+    },
     "tmc2209 stepper_x": {
         "run_current": 1.1,
         "hold_current": 0.8,
@@ -27,7 +31,7 @@ _SETTINGS: dict[str, Any] = {
         "driver_pwm_autoscale": True,
         "driver_semin": 0,
     },
-    "stepper_z": {"microsteps": 32},
+    "stepper_z": {"microsteps": 32, "endstop_pin": "probe:z_virtual_endstop"},
     "tmc2240 stepper_z": {
         "run_current": 0.8,
         "hold_current": 0.5,
@@ -81,6 +85,9 @@ class _FakeClient:
 
     async def list_objects(self) -> list[str]:
         return ["configfile", "print_stats", *_LIVE.keys()]
+
+    async def query_endstops(self) -> dict[str, Any]:
+        return {"x": "open", "y": "TRIGGERED", "z": "open"}
 
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
         self.queried.append(objects)
@@ -146,6 +153,11 @@ def test_drivers_status_parses_mixed_models(monkeypatch: pytest.MonkeyPatch) -> 
     e = by_stepper["extruder"]
     assert e["axis"] == "E"
     assert e["chopper_mode"] == "StealthChop"  # threshold 5.0
+
+    # Homing method is classified from endstop_pin, not from "has a StallGuard field" (#101).
+    assert x["homing_method"] == "sensorless"  # tmc2209_stepper_x:virtual_endstop
+    assert z["homing_method"] == "probe"  # probe:z_virtual_endstop — NOT sensorless
+    assert e["homing_method"] == "inherited"  # extruder has no endstop_pin
 
     # Each driver is annotated with authoritative catalog reference data.
     assert x["info"]["interface"] == "UART"
@@ -247,6 +259,38 @@ def test_status_attaches_assigned_motor(tmp_path: Any, monkeypatch: pytest.Monke
     # An unassigned stepper has no motor.
     z = next(d for d in drivers if d["stepper"] == "stepper_z")
     assert z["motor"] is None
+
+
+def test_classify_homing() -> None:
+    c = drivers_service._classify_homing
+    # sensorless: a TMC virtual endstop
+    assert c({"endstop_pin": "tmc2209_stepper_x:virtual_endstop"}, "tmc2209")[0] == "sensorless"
+    assert c({"endstop_pin": "^tmc5160_stepper_y:virtual_endstop"}, "tmc5160")[0] == "sensorless"
+    # probe-homed Z
+    assert c({"endstop_pin": "probe:z_virtual_endstop"}, "tmc2209")[0] == "probe"
+    # physical switch (real pin, with inversion prefix / off-board chip)
+    assert c({"endstop_pin": "^PG6"}, "tmc2209")[0] == "physical"
+    assert c({"endstop_pin": "!EBBCan:PB6"}, "tmc2240")[0] == "physical"
+    # extra stepper with no endstop_pin → inherited
+    assert c({"microsteps": 16}, "tmc2209")[0] == "inherited"
+    # TMC2208 can't do sensorless — flagged misconfigured
+    method, _pin, note = c({"endstop_pin": "tmc2208_stepper_x:virtual_endstop"}, "tmc2208")
+    assert method == "sensorless" and note is not None and "2208" in note
+    # explicit override off downgrades a virtual pin away from sensorless
+    assert (
+        c({"endstop_pin": "tmc2209_x:virtual_endstop", "use_sensorless_homing": False}, "tmc2209")[
+            0
+        ]
+        == "other_virtual"
+    )
+
+
+def test_endstops_route(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(drivers_service, "MoonrakerClient", lambda *a, **k: _FakeClient())
+    client = TestClient(create_app())
+    body = client.get("/api/drivers/endstops").json()
+    assert body["reachable"] is True
+    assert body["states"] == {"x": "open", "y": "TRIGGERED", "z": "open"}
 
 
 def test_chopper_mode() -> None:

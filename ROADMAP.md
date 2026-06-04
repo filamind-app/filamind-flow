@@ -90,7 +90,8 @@ Plus a CI guard that fails on a stale committed `frontend/dist`.
 ### ✅ Motor Drivers
 
 Understand and tune the TMC stepper drivers on any Klipper printer — from a read-only
-dashboard up to a guided tuning wizard. **Shipped v0.51.0 → v0.59.0 — all 8 phases.** **Generic by design:** drivers are detected from
+dashboard up to a guided tuning wizard. **Core shipped v0.51.0 → v0.59.0 (P1–P8); homing
+coverage (P9) v0.61.0.** **Generic by design:** drivers are detected from
 the live config (any axis layout), and all TMC models are handled (2209 / 2208 / 2130 /
 2240 / 5160 / 2660…) by reading what the running config exposes — never hardcoded to one
 board. Reimplements the `motor_constants` physics (like the vendored `shaper_calibrate`)
@@ -107,6 +108,8 @@ so recommendations work even without the `klipper_tmc_autotune` host extra insta
 | ✅ **6 — Live monitor** | Per-driver live `drv_status` telemetry (~1.5 s poll): temperature, `SG_RESULT` (+ sparkline), `CS_ACTUAL`, fault flags. (`GET /api/drivers/live/{stepper}`) | low (read-only) |
 | ✅ **7 — Tuning wizard** | A 🧭 Guided view walking one driver through choose → motor → recommend & apply → sensorless → done, reusing the dashboard panels with a step breadcrumb + Back/Next. | medium |
 | ✅ **8 — Motors-sync** | Drive the optional `motors_sync` add-on for multi-motor phase alignment (dual / quad-Z, dual-X) — detect + gated `SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE`. (`GET`/`POST /api/drivers/motors-sync`) | high (motion) |
+| ✅ **9 — Homing coverage** | Classify each axis's homing method from `[stepper_*].endstop_pin` (physical switch / sensorless / Z-probe / virtual / shared) via Klipper's own rule, and render a method-aware **🏠 homing** panel — live switch state + plain test-home for physical, per-model StallGuard polarity (signed `sgt` vs unsigned `sgthrs` / `sg4_thrs`) for sensorless, a probe pointer for Z. The sensorless tuner now appears only where it applies. (`GET /api/drivers/endstops`) | medium (motion) |
+| 📋 **10 — Advanced register editing** | Open safe, model-aware editing of more TMC registers behind a server-side per-field allowlist + clamp (StallGuard polarity, CoolStep, chopper timing, thresholds), with raw current-scaling and protection-defeat fields blocked. (#102) | high (writes registers) |
 
 ## Platform
 

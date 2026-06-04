@@ -110,6 +110,54 @@ export function axisHeading(d: TmcDriver): string {
   return d.stepper
 }
 
+/** Human label for a homing-method classification (the backend `homing_method`). */
+export function homingMethodLabel(method: string | null): string {
+  switch (method) {
+    case 'sensorless':
+      return 'Sensorless (StallGuard)'
+    case 'physical':
+      return 'Physical endstop'
+    case 'probe':
+      return 'Z probe'
+    case 'other_virtual':
+      return 'Virtual endstop'
+    case 'inherited':
+      return 'Shared rail'
+    default:
+      return '—'
+  }
+}
+
+/** Whether a homing panel applies to this axis. Extra motors on a shared rail (a second Z,
+ *  the extruder) don't home on their own, so they get no homing UI. */
+export function homingApplies(method: string | null): boolean {
+  return (
+    method === 'sensorless' ||
+    method === 'physical' ||
+    method === 'probe' ||
+    method === 'other_virtual'
+  )
+}
+
+/** Input range + polarity hint for a StallGuard threshold register — which differs by model,
+ *  and getting it wrong makes the control feel backwards. `sgthrs` (2209) and `sg4_thrs` (2240)
+ *  are unsigned 0–255 where HIGHER is more sensitive; `sgt` (2130 / 5160 / 2660) is a signed
+ *  −64…63 where LOWER is more sensitive. */
+export function stallguardRange(field: string | null): { min: number; max: number; hint: string } {
+  if (field === 'sgt') {
+    return {
+      min: -64,
+      max: 63,
+      hint: 'Signed −64…63 — LOWER is more sensitive (stops sooner). Raise it if the axis stops short; lower it if it never stops.',
+    }
+  }
+  return {
+    min: 0,
+    max: 255,
+    hint: 'Range 0–255 — HIGHER is more sensitive (stops sooner). Lower it if the axis stops short; raise it if it never stops.',
+  }
+}
+
 /** A motor's key datasheet specs as a compact line, e.g. "0.40 Nm · 1.7 A · 1.5 Ω · 2.8 mH". */
 export function motorSpecLabel(m: MotorSpec): string {
   const parts: string[] = []

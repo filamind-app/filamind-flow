@@ -3,7 +3,7 @@
  *  "ℹ what's this?" toggle, with the matching `HelpIllo` illustration.
  */
 
-export type HelpIlloKey = 'driver' | 'current' | 'chopper' | 'microsteps' | 'stallguard'
+export type HelpIlloKey = 'driver' | 'current' | 'chopper' | 'microsteps' | 'stallguard' | 'homing'
 
 export type HelpTopic =
   | 'glossary'
@@ -17,6 +17,7 @@ export type HelpTopic =
   | 'catalog'
   | 'motor'
   | 'recommend'
+  | 'homing'
   | 'sensorless'
   | 'monitor'
   | 'motorsync'
@@ -132,6 +133,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Live monitor',
     body: 'Watch a driver in real time while it runs: temperature, StallGuard load (SG_RESULT — it falls toward zero as mechanical load rises), current scale (CS_ACTUAL), and any fault flags (overtemperature, short, open-load). The driver only reports these while the motor is enabled, so move or home the axis to see live data. Read-only — it just observes.',
     illo: 'driver',
+  },
+  homing: {
+    title: 'How this axis homes',
+    body: 'Klipper finds each axis’s zero one of a few ways, and FilaMind reads which from your config rather than guessing: a physical endstop switch (the classic microswitch — most printers), sensorless homing (the TMC driver senses the motor stalling at the end of travel — no switch), or the Z probe (the same sensor used for bed mesh finds Z=0). This panel adapts to whichever your axis uses — live switch state and a plain test-home for a physical endstop, a StallGuard tuner for sensorless, or a pointer to the probe tools for a probed Z. Extra motors sharing a rail (a second Z, the extruder) don’t home on their own, so they show nothing here.',
+    illo: 'homing',
   },
   sensorless: {
     title: 'Sensorless homing',

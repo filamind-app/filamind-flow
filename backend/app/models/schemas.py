@@ -774,6 +774,13 @@ class TmcDriver(BaseModel):
     info: DriverInfo | None = None
     #: The motor the user assigned to this stepper (from the motor catalog), or None.
     motor: MotorSpec | None = None
+    #: How this axis homes, from its ``endstop_pin``: physical / sensorless / probe /
+    #: other_virtual / inherited. StallGuard tuning is offered ONLY for ``sensorless``.
+    homing_method: str | None = None
+    #: The configured ``endstop_pin`` (reference; carries the MCU/board name when off-board).
+    endstop_pin: str | None = None
+    #: A short human note for the homing method (e.g. "homes via the probe", a misconfig reason).
+    homing_note: str | None = None
 
 
 class DriversStatus(BaseModel):
@@ -794,6 +801,13 @@ class DriverLive(BaseModel):
     #: Live driver flags (sg_result / cs_actual / overtemp / short / open-load / …). None
     #: while the motor is disabled.
     drv_status: dict[str, Any] | None = None
+
+
+class EndstopStates(BaseModel):
+    """Live endstop trigger state (GET /api/drivers/endstops), actively queried."""
+
+    reachable: bool
+    states: dict[str, str] = {}
 
 
 class DriverCatalog(BaseModel):
