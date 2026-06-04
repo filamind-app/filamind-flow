@@ -45,7 +45,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | DELETE | `/api/shaper/archive/{id}` | Delete an archived run (folder + index entry).                  |
 | POST   | `/api/shaper/archive/save-config` | Save a generated `[input_shaper]` config to the archive. |
 | POST   | `/api/shaper/archive/save-file` | Copy an existing host resonance CSV into the archive.      |
-| GET    | `/api/drivers/status`      | Live TMC stepper-driver inventory: current / mode / microsteps / StallGuard / temperature / health + each axis's homing method (physical / sensorless / probe / …, from `endstop_pin`), each annotated with its model's catalog facts (Motor Drivers widget). |
+| GET    | `/api/drivers/status`      | Live TMC stepper-driver inventory: current / mode / microsteps / StallGuard / temperature / health + each axis's homing method (physical / sensorless / probe / …, from `endstop_pin`) + the effective run-current cap (`current_cap` = min(model code cap, motor rating)), each annotated with its model's catalog facts (Motor Drivers widget). |
 | GET    | `/api/drivers/endstops`    | Live endstop trigger state (open / TRIGGERED), actively queried on demand — for the physical-homing panel. |
 | GET    | `/api/drivers/live/{stepper}` | Fast live telemetry for one driver (temperature / SG_RESULT / CS_ACTUAL / faults) for the live monitor. |
 | GET    | `/api/drivers/catalog`     | The curated TMC driver capability map (interface, current cap, chopper modes, StallGuard field, sensorless / temperature) keyed by model. |

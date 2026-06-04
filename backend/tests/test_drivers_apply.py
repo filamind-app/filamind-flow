@@ -16,10 +16,12 @@ class _FakeClient:
         self,
         *,
         printing: bool = False,
+        state: str | None = None,
         autotune: tuple[str, ...] = (),
         config: dict[str, Any] | None = None,
     ) -> None:
-        self.printing = printing
+        # `state` overrides `printing` for the paused/error gate tests.
+        self.state = state if state is not None else ("printing" if printing else "ready")
         self.autotune = set(autotune)
         self.config = config or {}  # extra configfile sections (e.g. tmc run_current)
         self.scripts: list[str] = []
@@ -27,7 +29,7 @@ class _FakeClient:
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
         out: dict[str, Any] = {}
         if "print_stats" in objects:
-            out["print_stats"] = {"state": "printing" if self.printing else "ready"}
+            out["print_stats"] = {"state": self.state}
         if "configfile" in objects:
             settings: dict[str, Any] = {f"autotune_tmc {s}": {} for s in self.autotune}
             settings.update(self.config)
@@ -148,6 +150,40 @@ async def test_set_stallguard_refuses_while_printing(monkeypatch: pytest.MonkeyP
     res = await drivers_apply.set_stallguard("http://x", "stepper_x", "sg4_thrs", 40)
     assert res["ok"] is False
     assert fake.scripts == []
+
+
+async def test_set_stallguard_rejects_out_of_range(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The server now enforces the field range (the client's max= isn't trusted): a 2209 sgthrs
+    # is 0-255, so 300 must be rejected before any g-code is sent (Klipper would mask-truncate).
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.set_stallguard("http://x", "stepper_x", "sgthrs", 300)
+    assert res["ok"] is False
+    assert fake.scripts == []
+
+
+async def test_set_stallguard_signed_sgt_round_trip(monkeypatch: pytest.MonkeyPatch) -> None:
+    # sgt is signed -64..63: -64 is valid and sent verbatim; 64 is out of range and rejected.
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    ok = await drivers_apply.set_stallguard("http://x", "stepper_z", "sgt", -64)
+    assert ok["ok"] is True
+    assert fake.scripts == ["SET_TMC_FIELD STEPPER=stepper_z FIELD=sgt VALUE=-64"]
+    bad = await drivers_apply.set_stallguard("http://x", "stepper_z", "sgt", 64)
+    assert bad["ok"] is False
+    assert fake.scripts == ["SET_TMC_FIELD STEPPER=stepper_z FIELD=sgt VALUE=-64"]  # unchanged
+
+
+async def test_writes_refused_while_paused(monkeypatch: pytest.MonkeyPatch) -> None:
+    # _is_busy covers paused (and error), not just printing — a paused print still blocks writes.
+    paused = _FakeClient(state="paused")
+    _patch(monkeypatch, paused)
+    assert (await drivers_apply.set_stallguard("http://x", "stepper_x", "sgthrs", 70))[
+        "ok"
+    ] is False
+    assert (await drivers_apply.apply_live("http://x", "stepper_x", 1.0, None, {}))["ok"] is False
+    assert (await drivers_apply.home_axis("http://x", "x"))["ok"] is False
+    assert paused.scripts == []
 
 
 async def test_home_axis_sends_g28(monkeypatch: pytest.MonkeyPatch) -> None:

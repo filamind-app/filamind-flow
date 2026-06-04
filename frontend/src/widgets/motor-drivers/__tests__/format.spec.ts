@@ -82,6 +82,8 @@ function driver(overrides: Partial<TmcDriver> = {}): TmcDriver {
     registers: {},
     info: null,
     motor: null,
+    rref: null,
+    current_cap: null,
     homing_method: 'sensorless',
     endstop_pin: 'tmc2209_stepper_x:virtual_endstop',
     homing_note: null,
@@ -202,6 +204,23 @@ describe('catalog-aware helpers', () => {
       false,
     )
     expect(nearCurrentCap(driver({ info: null }))).toBe(false)
+  })
+  it('prefers the effective current_cap over the catalog sanity ceiling (#102)', () => {
+    // A TMC5160's catalog cap (10.6 A) is just a sanity ceiling; current_cap reflects the real
+    // motor-bound 4 A limit, so 3.8 A should flag as near-cap (it would not against 10.6).
+    const d = driver({
+      model: 'tmc5160',
+      run_current: 3.8,
+      current_cap: 4.0,
+      info: info({ model: 'tmc5160', max_current_a: 10.6 }),
+    })
+    expect(nearCurrentCap(d)).toBe(true)
+    expect(maxCurrentLabel(d)).toBe('≤ 4.0 A')
+  })
+  it('falls back to the catalog cap when current_cap is unknown', () => {
+    const d = driver({ run_current: 1.9, current_cap: null, info: info({ max_current_a: 2 }) })
+    expect(nearCurrentCap(d)).toBe(true)
+    expect(maxCurrentLabel(d)).toBe('≤ 2.0 A')
   })
 })
 

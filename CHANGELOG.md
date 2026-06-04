@@ -6,6 +6,42 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.62.0] - 2026-06-04
+
+### Added
+
+- **Motor Drivers — register-edit safety foundation (P10a, #102).** A new server-side
+  `field_policy` module is the single source of truth for which TMC registers may be edited
+  live and within what bounds — the load-bearing safety layer for advanced-register editing,
+  because `SET_TMC_FIELD VALUE=` *silently mask-truncates* out-of-range values rather than
+  erroring. It provides:
+  - an **allowlist** (only catalogued fields are editable; everything else is display-only);
+  - a **per-field clamp** whose range is derived from the register **bit-mask** (so it provably
+    matches the silicon), with **per-model signedness** — `sgt` is a signed −64…63, while
+    `sgthrs` / `sg4_thrs` are unsigned 0–255;
+  - a **blocklist** of raw current-scaling (`irun`, `globalscaler`, `vsense`, …) and
+    protection-defeat (`diss2g`, `test_mode`, `overvoltage_vth`, …) fields, plus `mres` /
+    `microsteps` (which would desync Klipper's step distance), that are never written live;
+  - a **per-model current cap** `I_cap = min(code_cap[model], motor rating)` — the TMC2240 cap
+    is computed from its `rref` — surfaced per driver as `current_cap` on `/api/drivers/status`.
+
+### Changed
+
+- The sensorless StallGuard write (`POST /api/drivers/stallguard`) now **enforces the field
+  range server-side** (the client's `max=` was not trusted): a 2209 `sgthrs` of 300, or a signed
+  `sgt` of 64, is rejected before any g-code is sent.
+- Driver writes and test-homes are now refused while the printer is **printing, paused, or in an
+  error state** (previously only while actively printing).
+- `/api/drivers/status` records gained `rref` and `current_cap` per driver.
+
+### Fixed
+
+- **The current-cap warning used the driver's sanity-ceiling, not the real limit (#102).** A
+  TMC5160's catalog cap (10.6 A) is only a board sanity ceiling, so the dashboard would show
+  "≤ 10.6 A" and not warn until ~9.5 A — dangerously permissive. The "near cap" warning and the
+  cap label now use the effective `current_cap` (min of the model code cap and the assigned
+  motor's rating), so once a motor is assigned the real motor-bound limit drives the warning.
+
 ## [0.61.2] - 2026-06-04
 
 ### Fixed
