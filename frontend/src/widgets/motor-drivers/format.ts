@@ -139,6 +139,20 @@ export function homingApplies(method: string | null): boolean {
   )
 }
 
+/** The live trigger state for an axis from the `/api/drivers/endstops` map. Moonraker keys
+ *  endstops by the rail/stepper name, which is `stepper_x` on some printers (the SV08) and the
+ *  bare axis letter `x` on others — so try the stepper section name first, then the axis letter. */
+export function endstopStateFor(
+  states: Record<string, string>,
+  stepper: string,
+  axis: string | null,
+): string | null {
+  if (states[stepper] != null) return states[stepper]
+  const key = axis?.toLowerCase()
+  if (key && states[key] != null) return states[key]
+  return null
+}
+
 /** Input range + polarity hint for a StallGuard threshold register — which differs by model,
  *  and getting it wrong makes the control feel backwards. `sgthrs` (2209) and `sg4_thrs` (2240)
  *  are unsigned 0–255 where HIGHER is more sensitive; `sgt` (2130 / 5160 / 2660) is a signed
