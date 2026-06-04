@@ -43,6 +43,12 @@ defineProps<{ illo: HelpIlloKey }>()
       <path d="M3 20 h3 v-3 h3 v-3 h3 v-3 h3 v-3 h3" />
     </g>
 
+    <!-- CoolStep: a current level that dips when load is low, rises under load -->
+    <g v-else-if="illo === 'coolstep'">
+      <line x1="3" y1="20" x2="21" y2="20" stroke-opacity="0.4" />
+      <path d="M3 8 v4 q0 4 4 4 h2 q4 0 4 -4 v-2 q0 -4 4 -4 h4" />
+    </g>
+
     <!-- Homing: a microswitch endstop with its lever + roller -->
     <g v-else-if="illo === 'homing'">
       <rect x="3" y="10" width="9" height="6" rx="1" />

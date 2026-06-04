@@ -60,6 +60,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/drivers/stallguard`  | Set a StallGuard threshold (`sgthrs` / `sgt` / `sg4_thrs`) — sensorless-homing sensitivity (gated + server-clamped). |
 | GET    | `/api/drivers/field-policy/{model}` | The editable-register policy for a model — which fields the editor may expose, with control type + clamp range. |
 | POST   | `/api/drivers/field`       | Write one editable TMC register field live via `SET_TMC_FIELD` (gated; server-side allowlist + per-field clamp; velocity thresholds sent as mm/s). |
+| POST   | `/api/drivers/coolstep`    | Enable CoolStep with a vetted register set (semin/semax/seup/sedn/seimin) or disable it — a single gated toggle. |
 | POST   | `/api/drivers/home`        | Home one axis (`G28 <axis>`) as a sensorless test — moves the toolhead (gated). |
 | GET    | `/api/drivers/motors-sync` | Whether the `motors_sync` add-on is installed. |
 | POST   | `/api/drivers/motors-sync` | Run `SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE` (multi-motor phase alignment) — moves the toolhead (gated). |
