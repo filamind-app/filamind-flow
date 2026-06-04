@@ -7,6 +7,7 @@ import type {
   DriverLive,
   DriverRecommendation,
   DriversStatus,
+  EndstopStates,
   MotorCatalog,
   MotorsSyncStatus,
   RecommendRequest,
@@ -20,6 +21,17 @@ export async function fetchDriverStatus(): Promise<DriversStatus> {
     throw new Error(`Driver status request failed (${response.status})`)
   }
   return (await response.json()) as DriversStatus
+}
+
+/** Live endstop trigger state (open / TRIGGERED), actively queried on demand. Useful for a
+ *  physical-switch axis; a sensorless axis only reads meaningfully during a homing move. */
+export async function fetchEndstops(): Promise<EndstopStates> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/drivers/endstops`)
+  if (!response.ok) {
+    throw new Error(`Endstop status request failed (${response.status})`)
+  }
+  return (await response.json()) as EndstopStates
 }
 
 /** Fast live telemetry for one driver (for the live monitor's quick polling). */

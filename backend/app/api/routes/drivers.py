@@ -12,6 +12,7 @@ from app.models.schemas import (
     DriverLive,
     DriverRecommendation,
     DriversStatus,
+    EndstopStates,
     HomeRequest,
     MotorAssignRequest,
     MotorCatalog,
@@ -41,6 +42,14 @@ async def drivers_status(settings: Settings = Depends(get_settings)) -> DriversS
     Generic across all Klipper printers."""
     data = await drivers_service.gather_drivers(settings.moonraker_url, settings.data_dir)
     return DriversStatus.model_validate(data)
+
+
+@router.get("/endstops", response_model=EndstopStates)
+async def endstops(settings: Settings = Depends(get_settings)) -> EndstopStates:
+    """Live endstop trigger state (open / TRIGGERED), actively queried on demand. Useful for
+    physical-switch axes; a sensorless axis only reads meaningfully during a homing move."""
+    data = await drivers_service.gather_endstops(settings.moonraker_url)
+    return EndstopStates.model_validate(data)
 
 
 @router.get("/live/{stepper}", response_model=DriverLive)

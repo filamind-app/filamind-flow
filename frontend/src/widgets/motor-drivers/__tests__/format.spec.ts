@@ -11,12 +11,15 @@ import {
   drvNum,
   effectiveCapabilities,
   filterMotors,
+  homingApplies,
+  homingMethodLabel,
   interfaceLabel,
   maxCurrentLabel,
   motorSpecLabel,
   nearCurrentCap,
   recommendationRows,
   sparklinePath,
+  stallguardRange,
   temperatureLabel,
 } from '../format'
 import type { DriverInfo, DriverRecommendation, MotorSpec, TmcDriver } from '../types'
@@ -78,6 +81,9 @@ function driver(overrides: Partial<TmcDriver> = {}): TmcDriver {
     registers: {},
     info: null,
     motor: null,
+    homing_method: 'sensorless',
+    endstop_pin: 'tmc2209_stepper_x:virtual_endstop',
+    homing_note: null,
     ...overrides,
   }
 }
@@ -195,6 +201,41 @@ describe('catalog-aware helpers', () => {
       false,
     )
     expect(nearCurrentCap(driver({ info: null }))).toBe(false)
+  })
+})
+
+describe('homing helpers', () => {
+  it('labels each homing method', () => {
+    expect(homingMethodLabel('sensorless')).toBe('Sensorless (StallGuard)')
+    expect(homingMethodLabel('physical')).toBe('Physical endstop')
+    expect(homingMethodLabel('probe')).toBe('Z probe')
+    expect(homingMethodLabel('other_virtual')).toBe('Virtual endstop')
+    expect(homingMethodLabel('inherited')).toBe('Shared rail')
+    expect(homingMethodLabel(null)).toBe('—')
+  })
+  it('applies a homing panel to homing axes but not shared/inherited rails', () => {
+    expect(homingApplies('sensorless')).toBe(true)
+    expect(homingApplies('physical')).toBe(true)
+    expect(homingApplies('probe')).toBe(true)
+    expect(homingApplies('other_virtual')).toBe(true)
+    expect(homingApplies('inherited')).toBe(false)
+    expect(homingApplies(null)).toBe(false)
+  })
+})
+
+describe('stallguardRange', () => {
+  it('uses unsigned 0–255 for sgthrs (2209) and sg4_thrs (2240)', () => {
+    expect(stallguardRange('sgthrs')).toMatchObject({ min: 0, max: 255 })
+    expect(stallguardRange('sg4_thrs')).toMatchObject({ min: 0, max: 255 })
+    expect(stallguardRange('sgthrs').hint).toContain('HIGHER')
+  })
+  it('uses the signed −64…63 range for sgt (2130 / 5160 / 2660)', () => {
+    const r = stallguardRange('sgt')
+    expect(r).toMatchObject({ min: -64, max: 63 })
+    expect(r.hint).toContain('LOWER')
+  })
+  it('defaults to the unsigned range when the field is unknown', () => {
+    expect(stallguardRange(null)).toMatchObject({ min: 0, max: 255 })
   })
 })
 
