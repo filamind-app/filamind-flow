@@ -57,7 +57,9 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/drivers/apply`       | Write tuning live via `SET_TMC_CURRENT` / `SET_TMC_FIELD` (refused while printing; validated). |
 | POST   | `/api/drivers/init`        | `INIT_TMC` — re-apply the stepper's configured registers (revert a live apply). |
 | POST   | `/api/drivers/autotune`    | Drive `AUTOTUNE_TMC` if the `klipper_tmc_autotune` add-on is installed for the stepper. |
-| POST   | `/api/drivers/stallguard`  | Set a StallGuard threshold (`sgthrs` / `sgt` / `sg4_thrs`) — sensorless-homing sensitivity (gated). |
+| POST   | `/api/drivers/stallguard`  | Set a StallGuard threshold (`sgthrs` / `sgt` / `sg4_thrs`) — sensorless-homing sensitivity (gated + server-clamped). |
+| GET    | `/api/drivers/field-policy/{model}` | The editable-register policy for a model — which fields the editor may expose, with control type + clamp range. |
+| POST   | `/api/drivers/field`       | Write one editable TMC register field live via `SET_TMC_FIELD` (gated; server-side allowlist + per-field clamp; velocity thresholds sent as mm/s). |
 | POST   | `/api/drivers/home`        | Home one axis (`G28 <axis>`) as a sensorless test — moves the toolhead (gated). |
 | GET    | `/api/drivers/motors-sync` | Whether the `motors_sync` add-on is installed. |
 | POST   | `/api/drivers/motors-sync` | Run `SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE` (multi-motor phase alignment) — moves the toolhead (gated). |

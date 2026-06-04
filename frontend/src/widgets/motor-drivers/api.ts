@@ -8,6 +8,7 @@ import type {
   DriverRecommendation,
   DriversStatus,
   EndstopStates,
+  FieldPolicyResponse,
   MotorCatalog,
   MotorsSyncStatus,
   RecommendRequest,
@@ -133,6 +134,28 @@ export async function setStallguard(
 /** Home one axis (G28) as a sensorless test — moves the toolhead. Gated server-side. */
 export async function homeAxis(axis: string): Promise<ApplyResponse> {
   return postJson('/api/drivers/home', { axis })
+}
+
+/** The editable-register policy for a model (which fields + their control type + clamp range). */
+export async function fetchFieldPolicy(model: string): Promise<FieldPolicyResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/drivers/field-policy/${encodeURIComponent(model)}`,
+  )
+  if (!response.ok) {
+    throw new Error(`Field policy request failed (${response.status})`)
+  }
+  return (await response.json()) as FieldPolicyResponse
+}
+
+/** Write one editable TMC register field live (gated + clamped server-side). */
+export async function setField(
+  stepper: string,
+  field: string,
+  value: number,
+  model: string | null,
+): Promise<ApplyResponse> {
+  return postJson('/api/drivers/field', { stepper, field, value, model })
 }
 
 /** Whether the motors_sync add-on is installed. */

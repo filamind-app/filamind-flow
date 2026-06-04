@@ -63,7 +63,7 @@ run server-side.
 | ------ | ------------ | ------ |
 | **Firmware Upgrade** | Build & flash Klipper firmware on every MCU — per-board Kconfig profiles, a live web editor, Katapult / DFU / SD-card flashing, Beacon probe updates, host service control, host↔MCU update alerts, and an external-firmware inspector / diff. Glossary + illustrated help + a build→flash guide. | ✅ Shipped |
 | **Input Shaping** | Turn a resonance capture into a ready `[input_shaper]` config — recommended shaper, SVG frequency-response chart, per-axis X/Y, A⇄B compare, a quality grade (A–F) with illustrated diagnostics, live tests, belt & axes-map & vibration tooling, and a guided wizard. **Full Shake&Tune parity.** | ✅ Shipped |
-| **Motor Drivers** | A live inventory of every TMC stepper driver, read straight from the Klipper config — run/hold current, chopper mode, microsteps, StallGuard, temperature, and health, each annotated with authoritative per-model facts from a built-in capability map. Assign each axis its motor from a 200+ motor catalog, get recommended run current + driver registers from the motor's datasheet (a faithful `motor_constants` port), and copy-to-config or apply them live behind a confirm (reversible; refused while printing). A method-aware **🏠 homing** panel adapts to how each axis homes (physical switch / sensorless / Z-probe) — live switch state + test-home for switches, a per-model-correct StallGuard tuner for sensorless. Watch a live monitor (temperature / StallGuard load / faults), sync multi-motor axes, or run it all from a **🧭 Guided wizard**. Glossary + illustrated help. Generic across all printers and TMC models. | ✅ Shipped (P1–P9) |
+| **Motor Drivers** | A live inventory of every TMC stepper driver, read straight from the Klipper config — run/hold current, chopper mode, microsteps, StallGuard, temperature, and health, each annotated with authoritative per-model facts from a built-in capability map. Assign each axis its motor from a 200+ motor catalog, get recommended run current + driver registers from the motor's datasheet (a faithful `motor_constants` port), and copy-to-config or apply them live behind a confirm (reversible; refused while printing). A method-aware **🏠 homing** panel adapts to how each axis homes (physical switch / sensorless / Z-probe) — live switch state + test-home for switches, a per-model-correct StallGuard tuner for sensorless. An **⚙ advanced register editor** edits the safe subset of TMC registers live behind a server-side allowlist + clamp (raw current and protection registers blocked). Watch a live monitor (temperature / StallGuard load / faults), sync multi-motor axes, or run it all from a **🧭 Guided wizard**. Glossary + illustrated help. Generic across all printers and TMC models. | ✅ Shipped (P1–P10) |
 
 See [ROADMAP.md](ROADMAP.md) for the phase-by-phase plan of each widget.
 
@@ -223,11 +223,12 @@ templates live in [`deploy/`](deploy/).
       sustain-frequency hands-on diagnostic, a machine **vibrations profile**
       (smoothest/worst speeds, motor symmetry, motor resonance), and a guided
       tuning wizard
-- [x] **Motor Drivers** widget (P1–P9) — live TMC driver dashboard + capability map,
+- [x] **Motor Drivers** widget (P1–P10) — live TMC driver dashboard + capability map,
       a 200+ motor picker, datasheet-based tuning recommendations (a faithful
       `motor_constants` port), gated apply / copy-to-config / autotune, a method-aware
-      homing panel (physical switch / sensorless with per-model StallGuard polarity / Z-probe)
-      and a live monitor, a guided wizard, and multi-motor synchronization; generic across
+      homing panel (physical switch / sensorless with per-model StallGuard polarity / Z-probe),
+      an advanced register editor (server-side allowlist + clamp; raw current/protection blocked),
+      a live monitor, a guided wizard, and multi-motor synchronization; generic across
       all Klipper printers and TMC models
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups

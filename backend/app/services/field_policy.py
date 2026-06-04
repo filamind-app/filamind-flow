@@ -47,11 +47,14 @@ class FieldPolicy:
     models: frozenset[str] | None = None
     blocked: bool = False  # dangerous → never written live, even if requested
     current_aware: bool = False  # current goes only through SET_TMC_CURRENT, never here
-    velocity: bool = False  # user value is mm/s (≥0); converted to a TSTEP register later
+    velocity: bool = False  # user value is mm/s (≥0); Klipper converts it to a TSTEP register
     requires_confirm: bool = False
     enum: tuple[int, ...] | None = None  # explicit allowed values (overrides the mask range)
     lo: float | None = None  # explicit lower bound (overrides the mask-derived min)
     hi: float | None = None  # explicit upper bound (overrides the mask-derived max)
+    #: The TMC register field name to send in ``SET_TMC_FIELD FIELD=`` when it differs from the
+    #: policy key (e.g. the friendly ``stealthchop_threshold`` writes the ``tpwmthrs`` register).
+    reg: str | None = None
     note: str | None = None
 
 
@@ -115,12 +118,17 @@ _POLICY: dict[str, FieldPolicy] = {
     "sgthrs": FieldPolicy("safe", mask=0xFF, models=frozenset({"tmc2209"})),
     "sg4_thrs": FieldPolicy("safe", mask=0xFF, models=frozenset({"tmc2240"})),
     "sgt": FieldPolicy("safe", mask=0x7F, signed=True, models=_SGT_MODELS),
-    # Group 6 — velocity thresholds (mm/s on the user side; TSTEP-encoded on the wire)
+    # Group 6 — velocity thresholds (mm/s on the user side; Klipper TSTEP-encodes via VELOCITY=).
+    # Keyed by friendly name; `reg` is the register field SET_TMC_FIELD actually writes.
     "stealthchop_threshold": FieldPolicy(
-        "safe", control="velocity", velocity=True, models=_STEALTH
+        "safe", control="velocity", velocity=True, reg="tpwmthrs", models=_STEALTH
     ),
-    "coolstep_threshold": FieldPolicy("safe", control="velocity", velocity=True, models=_COOLSTEP),
-    "high_velocity_threshold": FieldPolicy("safe", control="velocity", velocity=True, models=_HV),
+    "coolstep_threshold": FieldPolicy(
+        "safe", control="velocity", velocity=True, reg="tcoolthrs", models=_COOLSTEP
+    ),
+    "high_velocity_threshold": FieldPolicy(
+        "safe", control="velocity", velocity=True, reg="thigh", models=_HV
+    ),
     "tpowerdown": FieldPolicy("safe", mask=0xFF),
     "iholddelay": FieldPolicy("safe", mask=0xF),
     "irundelay": FieldPolicy("safe", mask=0xF, models=frozenset({"tmc2240"})),
@@ -166,6 +174,19 @@ BLOCKED: frozenset[str] = frozenset(
 
 def is_blocked(field: str) -> bool:
     return field in BLOCKED
+
+
+def is_velocity(field: str) -> bool:
+    """Whether a field takes a velocity (mm/s) value, written via ``SET_TMC_FIELD VELOCITY=``."""
+    fp = _POLICY.get(field)
+    return bool(fp and fp.velocity)
+
+
+def register_name(field: str) -> str:
+    """The TMC register field name to put in ``SET_TMC_FIELD FIELD=`` — the policy's ``reg``
+    override when set (e.g. ``stealthchop_threshold`` → ``tpwmthrs``), else the field itself."""
+    fp = _POLICY.get(field)
+    return fp.reg if fp and fp.reg else field
 
 
 def _applicable(fp: FieldPolicy, model: str | None) -> bool:
