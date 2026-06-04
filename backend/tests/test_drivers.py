@@ -16,7 +16,8 @@ _SETTINGS: dict[str, Any] = {
     "stepper_x": {
         "microsteps": 16,
         "rotation_distance": 40,
-        "endstop_pin": "tmc2209_stepper_x:virtual_endstop",
+        # Mirror the real SV08 printer.cfg: a stray space after the colon (#104) — still sensorless.
+        "endstop_pin": "tmc2209_stepper_x: virtual_endstop",
     },
     "tmc2209 stepper_x": {
         "run_current": 1.1,
@@ -266,8 +267,12 @@ def test_classify_homing() -> None:
     # sensorless: a TMC virtual endstop
     assert c({"endstop_pin": "tmc2209_stepper_x:virtual_endstop"}, "tmc2209")[0] == "sensorless"
     assert c({"endstop_pin": "^tmc5160_stepper_y:virtual_endstop"}, "tmc5160")[0] == "sensorless"
-    # probe-homed Z
+    # whitespace after the colon is still a sensorless virtual endstop — Klipper strips it,
+    # and the real SV08 printer.cfg has exactly this on stepper_x (#104).
+    assert c({"endstop_pin": "tmc2209_stepper_x: virtual_endstop"}, "tmc2209")[0] == "sensorless"
+    # probe-homed Z (with or without a stray space)
     assert c({"endstop_pin": "probe:z_virtual_endstop"}, "tmc2209")[0] == "probe"
+    assert c({"endstop_pin": "probe: z_virtual_endstop"}, "tmc2209")[0] == "probe"
     # physical switch (real pin, with inversion prefix / off-board chip)
     assert c({"endstop_pin": "^PG6"}, "tmc2209")[0] == "physical"
     assert c({"endstop_pin": "!EBBCan:PB6"}, "tmc2240")[0] == "physical"
