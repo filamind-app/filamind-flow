@@ -146,3 +146,24 @@ export interface ApplyResponse {
 export interface MotorsSyncStatus {
   available: boolean
 }
+
+/** One editable register's policy (from the server — the client doesn't decide these). */
+export interface FieldPolicyEntry {
+  risk: 'safe' | 'risky' | 'dangerous'
+  control: 'number' | 'toggle' | 'select' | 'velocity'
+  signed: boolean
+  requires_confirm: boolean
+  min?: number
+  max?: number
+  enum?: number[]
+  velocity?: boolean
+  note?: string
+}
+
+export type FieldPolicyMap = Record<string, FieldPolicyEntry>
+
+/** The editable-register policy for one model (GET /api/drivers/field-policy/{model}). */
+export interface FieldPolicyResponse {
+  model: string
+  fields: FieldPolicyMap
+}

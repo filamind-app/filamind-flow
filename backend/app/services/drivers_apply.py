@@ -272,6 +272,50 @@ async def set_stallguard(
     return {"ok": True, "applied": [cmd], "message": f"Set {field} = {num} on {stepper}."}
 
 
+async def set_field(
+    moonraker_url: str,
+    stepper: str,
+    field: str,
+    value: float,
+    *,
+    model: str | None = None,
+    timeout: float = 20.0,
+) -> dict[str, Any]:
+    """Write one TMC register field live via ``SET_TMC_FIELD``, behind the ``field_policy``
+    allowlist + per-field clamp (rejecting blocked / unknown / out-of-range / not-applicable).
+
+    Velocity-threshold fields are sent as ``VELOCITY=`` in mm/s so Klipper does the TSTEP
+    conversion itself (and refuses it on a driver with no clock, e.g. the TMC2660). Gated:
+    refused while the printer is busy (printing / paused / error). Reversible via ``revert``
+    (``INIT_TMC``); a power-cycle or ``FIRMWARE_RESTART`` also restores the configured value.
+    """
+    try:
+        stepper = _safe_name(stepper)
+        validated = field_policy.validate(field, value, model)
+    except (field_policy.PolicyError, ValueError) as exc:
+        return {"ok": False, "applied": [], "message": str(exc)}
+    reg = field_policy.register_name(field)
+    param = "VELOCITY" if field_policy.is_velocity(field) else "VALUE"
+    cmd = f"SET_TMC_FIELD STEPPER={stepper} FIELD={reg} {param}={_safe_num(validated)}"
+    client = MoonrakerClient(moonraker_url, timeout=timeout)
+    try:
+        if await _is_busy(client):
+            return {
+                "ok": False,
+                "applied": [],
+                "message": "Refusing to write while the printer is busy (printing or paused).",
+            }
+        await client.run_gcode(cmd)
+    except httpx.HTTPError as exc:
+        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
+    return {
+        "ok": True,
+        "applied": [cmd],
+        "message": f"Set {field} = {_safe_num(validated)} on {stepper} "
+        "(live only — INIT_TMC or a restart restores the configured value).",
+    }
+
+
 async def home_axis(moonraker_url: str, axis: str, *, timeout: float = 120.0) -> dict[str, Any]:
     """Home a single axis (``G28 <axis>``) — a sensorless-homing test. Gated; refused
     while printing. The caller (UI) warns about crash risk and requires a confirm."""

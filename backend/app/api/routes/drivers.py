@@ -13,6 +13,7 @@ from app.models.schemas import (
     DriverRecommendation,
     DriversStatus,
     EndstopStates,
+    FieldPolicyResponse,
     HomeRequest,
     MotorAssignRequest,
     MotorCatalog,
@@ -20,6 +21,7 @@ from app.models.schemas import (
     MotorsSyncRequest,
     MotorsSyncStatus,
     RecommendRequest,
+    SetFieldRequest,
     StallguardRequest,
     StepperRequest,
 )
@@ -27,6 +29,7 @@ from app.services import (
     driver_catalog,
     drivers_apply,
     drivers_service,
+    field_policy,
     motor_catalog,
     motor_mapping,
     recommender,
@@ -172,6 +175,26 @@ async def set_stallguard(
     """Set a StallGuard threshold (sensorless-homing sensitivity). Gated; refused while printing."""
     data = await drivers_apply.set_stallguard(
         settings.moonraker_url, request.stepper, request.field, request.value
+    )
+    return ApplyResponse.model_validate(data)
+
+
+@router.get("/field-policy/{model}", response_model=FieldPolicyResponse)
+async def field_policy_for_model(model: str) -> FieldPolicyResponse:
+    """The editable-register policy for one TMC model — which fields the editor may expose, with
+    each one's control type + clamp range. Blocked and non-applicable fields are omitted."""
+    return FieldPolicyResponse(model=model, fields=field_policy.policy_for(model))
+
+
+@router.post("/field", response_model=ApplyResponse)
+async def set_field(
+    request: SetFieldRequest, settings: Settings = Depends(get_settings)
+) -> ApplyResponse:
+    """Write one editable TMC register field live via SET_TMC_FIELD. Gated (refused while
+    printing / paused / error) and clamped server-side by the field_policy allowlist; raw
+    current-scaling and protection-defeat fields are blocked. Reversible with /init."""
+    data = await drivers_apply.set_field(
+        settings.moonraker_url, request.stepper, request.field, request.value, model=request.model
     )
     return ApplyResponse.model_validate(data)
 
