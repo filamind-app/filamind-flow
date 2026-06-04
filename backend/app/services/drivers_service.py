@@ -95,34 +95,45 @@ def _capabilities(config: dict[str, Any], temperature: float | None) -> dict[str
 
 
 def _classify_homing(stepper_cfg: dict[str, Any], model: str) -> tuple[str, str | None, str | None]:
-    """Per-axis homing method from ``[stepper_*].endstop_pin`` — using Klipper's own rule
-    (``':virtual_endstop' in endstop_pin`` ⇒ sensorless). Returns (method, endstop_pin, note).
+    """Per-axis homing method from ``[stepper_*].endstop_pin``, mirroring Klipper's own pin
+    parsing. Returns (method, endstop_pin, note).
+
+    Klipper resolves an endstop pin as ``chip:pin`` split on the *first* colon with whitespace
+    stripped from each side, so a stray space — ``tmc2209_stepper_x: virtual_endstop``, which
+    appears verbatim in real SV08 configs (#104) — is still a sensorless virtual endstop. We
+    normalise the same way (and compare case-insensitively) rather than an exact substring test.
 
     Methods: ``physical`` (a real switch) / ``sensorless`` (TMC StallGuard) / ``probe``
     (Z homed by the probe) / ``other_virtual`` / ``inherited`` (extra stepper, shares the
     rail's endstop). Sensorless StallGuard tuning is valid ONLY for ``sensorless``.
     """
-    pin = stepper_cfg.get("endstop_pin")
-    if pin is None:
+    raw = stepper_cfg.get("endstop_pin")
+    if raw is None:
         return "inherited", None, None
-    pin = str(pin).strip()
-    low = pin.lower()
-    if low.startswith("probe:") or "z_virtual_endstop" in low:
+    pin = str(raw).strip()
+    # Klipper splits chip:pin on the first colon and strips whitespace around each side.
+    if ":" in pin:
+        chip_part, pin_part = (s.strip() for s in pin.split(":", 1))
+    else:
+        chip_part, pin_part = "mcu", pin
+    chip = chip_part.lstrip("^~!").strip()  # drop pin-modifier prefixes (^ pull-up, ! invert)
+    chip_low, pin_low = chip.lower(), pin_part.lower()
+
+    if chip_low == "probe" or pin_low == "z_virtual_endstop":
         return "probe", pin, "homes via the probe"
+
     override = stepper_cfg.get("use_sensorless_homing")
-    is_virtual = ":virtual_endstop" in low  # Klipper's exact substring test
+    is_virtual = pin_low == "virtual_endstop"
     sensorless = override is True or (is_virtual and override is not False)
     if sensorless:
-        chip = pin.split(":", 1)[0].lstrip("^~!").strip()
-        if not chip.startswith("tmc"):
+        if not chip_low.startswith("tmc"):
             return "other_virtual", pin, None
         if model == "tmc2208":
             return "sensorless", pin, "misconfigured — TMC2208 has no StallGuard"
         return "sensorless", pin, None
     if is_virtual:
         return "other_virtual", pin, None
-    chip = pin.split(":", 1)[0].lstrip("^~!").strip() if ":" in pin else "mcu"
-    note = f"endstop on {chip}" if chip not in ("mcu", "") else None
+    note = f"endstop on {chip}" if chip_low not in ("mcu", "") else None
     return "physical", pin, note
 
 
