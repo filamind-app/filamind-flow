@@ -7,9 +7,13 @@
  */
 import { computed, ref } from 'vue'
 
-import { fetchFieldPolicy, revertDriver, setField } from './api'
+import { fetchFieldPolicy, revertDriver, setCoolstep, setField } from './api'
+import { stallguardRange } from './format'
 import HelpNote from './HelpNote.vue'
 import type { FieldPolicyEntry, FieldPolicyMap, TmcDriver } from './types'
+
+/** CoolStep's five coupled registers are presented as one toggle, not five raw boxes. */
+const COOLSTEP_FIELDS = ['semin', 'semax', 'seup', 'sedn', 'seimin']
 
 const props = defineProps<{ driver: TmcDriver }>()
 const emit = defineEmits<{ changed: [] }>()
@@ -23,6 +27,7 @@ const values = ref<Record<string, number>>({})
 const confirms = ref<Record<string, boolean>>({})
 const busyField = ref<string | null>(null)
 const reverting = ref(false)
+const coolstepBusy = ref(false)
 const result = ref<{ field: string; ok: boolean; message: string } | null>(null)
 
 /** The current value of a register, for the control's initial value + the "now" hint. */
@@ -32,13 +37,34 @@ function currentValue(field: string): number | null {
   return typeof v === 'number' ? v : null
 }
 
-/** Editable fields, safe ones first so the riskier knobs sit lower. */
+/** Editable fields (CoolStep's coupled set is handled by its own toggle), safe ones first. */
 const fields = computed<[string, FieldPolicyEntry][]>(() => {
   const p = policy.value
   if (!p) return []
   const rank = { safe: 0, risky: 1, dangerous: 2 }
-  return Object.entries(p).sort((a, b) => rank[a[1].risk] - rank[b[1].risk])
+  return Object.entries(p)
+    .filter(([f]) => !COOLSTEP_FIELDS.includes(f))
+    .sort((a, b) => rank[a[1].risk] - rank[b[1].risk])
 })
+
+/** CoolStep is offered (as a single toggle) when this model exposes it. */
+const coolstepAvailable = computed(() => !!policy.value && 'semin' in policy.value)
+/** CoolStep is on when the configured lower threshold (semin) is above zero. */
+const coolstepOn = computed(() => {
+  const v = props.driver.registers.semin
+  return typeof v === 'number' && v > 0
+})
+
+/** A polarity/pairing hint for the trickier fields, else the policy's own note. */
+function hintFor(field: string, entry: FieldPolicyEntry): string | null {
+  if (field === 'sgthrs' || field === 'sg4_thrs' || field === 'sgt') {
+    return stallguardRange(field).hint
+  }
+  if (field === 'toff') {
+    return 'If you set toff to 1, also keep tbl ≥ 1 (the 16-cycle blank time needs it).'
+  }
+  return entry.note ?? null
+}
 
 /** Raw driver_* registers that aren't editable — shown read-only for full visibility. */
 const readOnlyRegisters = computed<[string, string][]>(() => {
@@ -104,6 +130,24 @@ async function resetToConfig(): Promise<void> {
   }
 }
 
+async function applyCoolstep(enable: boolean): Promise<void> {
+  coolstepBusy.value = true
+  result.value = null
+  try {
+    const res = await setCoolstep(props.driver.stepper, enable, props.driver.model)
+    result.value = { field: 'coolstep', ok: res.ok, message: res.message }
+    if (res.ok) emit('changed')
+  } catch (e) {
+    result.value = {
+      field: 'coolstep',
+      ok: false,
+      message: e instanceof Error ? e.message : String(e),
+    }
+  } finally {
+    coolstepBusy.value = false
+  }
+}
+
 /** Options for a small-range select control (0…max, or the explicit enum). */
 function selectOptions(entry: FieldPolicyEntry): number[] {
   if (entry.enum) return entry.enum
@@ -151,6 +195,33 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
 
       <p v-if="loading" class="opacity-60">Loading editable registers…</p>
       <p v-else-if="loadErr" class="text-brand-red">{{ loadErr }}</p>
+
+      <!-- CoolStep: one toggle for the five coupled registers -->
+      <div
+        v-if="coolstepAvailable"
+        class="flex flex-wrap items-center gap-2 border-b-2 border-dashed border-ink pb-1.5"
+      >
+        <span class="w-28 shrink-0">CoolStep</span>
+        <span class="nb-badge" :class="coolstepOn ? 'bg-brand-lime' : 'bg-surface opacity-60'">{{
+          coolstepOn ? 'on' : 'off'
+        }}</span>
+        <button
+          class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+          :disabled="coolstepBusy"
+          title="Apply the autotune-vetted CoolStep set (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)"
+          @click="applyCoolstep(true)"
+        >
+          {{ coolstepBusy ? '…' : 'enable' }}
+        </button>
+        <button
+          class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+          :disabled="coolstepBusy"
+          @click="applyCoolstep(false)"
+        >
+          off
+        </button>
+        <HelpNote topic="coolstep" />
+      </div>
 
       <!-- Editable fields -->
       <div
@@ -209,7 +280,9 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
         >
           {{ busyField === field ? '…' : 'set' }}
         </button>
-        <span v-if="entry.note" class="w-full pl-28 text-[9px] opacity-50">{{ entry.note }}</span>
+        <span v-if="hintFor(field, entry)" class="w-full pl-28 text-[9px] opacity-50">{{
+          hintFor(field, entry)
+        }}</span>
       </div>
 
       <p

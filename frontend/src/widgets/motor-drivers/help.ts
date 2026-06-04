@@ -3,7 +3,14 @@
  *  "ℹ what's this?" toggle, with the matching `HelpIllo` illustration.
  */
 
-export type HelpIlloKey = 'driver' | 'current' | 'chopper' | 'microsteps' | 'stallguard' | 'homing'
+export type HelpIlloKey =
+  | 'driver'
+  | 'current'
+  | 'chopper'
+  | 'microsteps'
+  | 'stallguard'
+  | 'homing'
+  | 'coolstep'
 
 export type HelpTopic =
   | 'glossary'
@@ -22,6 +29,7 @@ export type HelpTopic =
   | 'monitor'
   | 'motorsync'
   | 'registers'
+  | 'coolstep'
 
 export interface HelpEntry {
   title: string
@@ -144,6 +152,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Sensorless homing',
     body: 'Some axes home without an endstop switch: the driver detects the gentle “stall” when the toolhead reaches the end of travel. The StallGuard threshold sets how sensitive that is — too low and it triggers early (stops short), too high and it never triggers (the axis grinds into the frame). This helper lets you set the threshold and test-home one axis, both behind a confirm. Adjust by feel: lower if it stops early, raise if it doesn’t stop — and keep a hand near the power the first few times. If your axis uses a physical endstop, you don’t need this.',
     illo: 'stallguard',
+  },
+  coolstep: {
+    title: 'CoolStep (load-adaptive current)',
+    body: 'CoolStep lets the driver lower the coil current when the motor isn’t working hard, then raise it back under load — saving heat and noise. It’s a coupled feedback loop with five interacting registers (semin/semax/seup/sedn/seimin), so instead of five raw knobs this is a single on/off that applies the same vetted set the klipper_tmc_autotune project uses (semin 2, semax 4, seup 3, sedn 2, seimin 1). It only acts above a velocity threshold, and being too aggressive under high acceleration can drop steps — leave it off unless you know you want it. Live only: a restart or “reset to config” restores your saved values.',
+    illo: 'coolstep',
   },
   registers: {
     title: 'Editing registers (advanced)',

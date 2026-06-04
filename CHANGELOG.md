@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.64.0] - 2026-06-05
+
+### Added
+
+- **Motor Drivers — register-editor polish (P10c, #102).** Completes the advanced editor:
+  - **CoolStep as a single toggle.** CoolStep is a coupled five-register feedback loop, so
+    instead of five raw boxes the editor offers one **enable / off** control that applies the
+    `klipper_tmc_autotune`-vetted set (`semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1`) or
+    disables it (`semin 0`) — via a new gated `POST /api/drivers/coolstep`, with its own
+    illustrated help note.
+  - **StallGuard polarity hints.** The `sgthrs` / `sg4_thrs` / `sgt` rows now show the per-model
+    polarity inline ("higher = more sensitive" vs the signed `sgt`'s "lower = more sensitive"),
+    so the sensitivity direction isn't backwards on SPI drivers.
+  - A **`toff` pairing note** (if you set `toff` to 1, keep `tbl` ≥ 1).
+
 ## [0.63.0] - 2026-06-05
 
 ### Added

@@ -235,6 +235,36 @@ async def test_set_field_refused_while_busy(monkeypatch: pytest.MonkeyPatch) -> 
     assert paused.scripts == []
 
 
+async def test_coolstep_enable_writes_vetted_set(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.set_coolstep("http://x", "stepper_x", True, model="tmc2209")
+    assert res["ok"] is True
+    assert fake.scripts == [
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=semin VALUE=2",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=semax VALUE=4",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=seup VALUE=3",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=sedn VALUE=2",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=seimin VALUE=1",
+    ]
+
+
+async def test_coolstep_disable_sets_semin_zero(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.set_coolstep("http://x", "stepper_x", False, model="tmc2209")
+    assert res["ok"] is True
+    assert fake.scripts == ["SET_TMC_FIELD STEPPER=stepper_x FIELD=semin VALUE=0"]
+
+
+async def test_coolstep_refused_while_busy(monkeypatch: pytest.MonkeyPatch) -> None:
+    paused = _FakeClient(state="paused")
+    _patch(monkeypatch, paused)
+    res = await drivers_apply.set_coolstep("http://x", "stepper_x", True, model="tmc2209")
+    assert res["ok"] is False
+    assert paused.scripts == []
+
+
 async def test_home_axis_sends_g28(monkeypatch: pytest.MonkeyPatch) -> None:
     fake = _FakeClient()
     _patch(monkeypatch, fake)
