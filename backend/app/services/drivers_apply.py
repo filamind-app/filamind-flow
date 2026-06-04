@@ -316,6 +316,52 @@ async def set_field(
     }
 
 
+#: CoolStep is a coupled loop — rather than five scattered 0-15 boxes, expose one toggle that
+#: applies the klipper_tmc_autotune-vetted set (or semin=0 to disable, which turns CoolStep off).
+_COOLSTEP_ON = {"semin": 2, "semax": 4, "seup": 3, "sedn": 2, "seimin": 1}
+_COOLSTEP_OFF = {"semin": 0}
+
+
+async def set_coolstep(
+    moonraker_url: str,
+    stepper: str,
+    enable: bool,
+    *,
+    model: str | None = None,
+    timeout: float = 20.0,
+) -> dict[str, Any]:
+    """Enable CoolStep with a single vetted register set (semin/semax/seup/sedn/seimin), or
+    disable it (semin=0). Each field still passes the field_policy clamp; gated like any write."""
+    try:
+        stepper = _safe_name(stepper)
+        targets = _COOLSTEP_ON if enable else _COOLSTEP_OFF
+        cmds = []
+        for fld, val in targets.items():
+            num = _safe_num(field_policy.validate(fld, val, model))
+            cmds.append(f"SET_TMC_FIELD STEPPER={stepper} FIELD={fld} VALUE={num}")
+    except (field_policy.PolicyError, ValueError) as exc:
+        return {"ok": False, "applied": [], "message": str(exc)}
+    client = MoonrakerClient(moonraker_url, timeout=timeout)
+    try:
+        if await _is_busy(client):
+            return {
+                "ok": False,
+                "applied": [],
+                "message": "Refusing to write while the printer is busy (printing or paused).",
+            }
+        for cmd in cmds:
+            await client.run_gcode(cmd)
+    except httpx.HTTPError as exc:
+        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
+    state = "enabled" if enable else "disabled"
+    return {
+        "ok": True,
+        "applied": cmds,
+        "message": f"CoolStep {state} on {stepper} "
+        "(live only — INIT_TMC or a restart restores the configured values).",
+    }
+
+
 async def home_axis(moonraker_url: str, axis: str, *, timeout: float = 120.0) -> dict[str, Any]:
     """Home a single axis (``G28 <axis>``) — a sensorless-homing test. Gated; refused
     while printing. The caller (UI) warns about crash risk and requires a confirm."""

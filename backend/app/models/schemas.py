@@ -945,6 +945,14 @@ class FieldPolicyResponse(BaseModel):
     fields: dict[str, dict[str, Any]] = {}
 
 
+class CoolstepRequest(BaseModel):
+    """Enable CoolStep with a vetted register set, or disable it (POST /api/drivers/coolstep)."""
+
+    stepper: str
+    enable: bool
+    model: str | None = None
+
+
 class MotorsSyncStatus(BaseModel):
     """Whether the motors_sync add-on is installed (GET /api/drivers/motors-sync)."""
 

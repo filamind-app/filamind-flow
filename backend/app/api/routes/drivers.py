@@ -8,6 +8,7 @@ from app.models.schemas import (
     ApplyResponse,
     ConfigBlockRequest,
     ConfigBlockResponse,
+    CoolstepRequest,
     DriverCatalog,
     DriverLive,
     DriverRecommendation,
@@ -195,6 +196,18 @@ async def set_field(
     current-scaling and protection-defeat fields are blocked. Reversible with /init."""
     data = await drivers_apply.set_field(
         settings.moonraker_url, request.stepper, request.field, request.value, model=request.model
+    )
+    return ApplyResponse.model_validate(data)
+
+
+@router.post("/coolstep", response_model=ApplyResponse)
+async def coolstep(
+    request: CoolstepRequest, settings: Settings = Depends(get_settings)
+) -> ApplyResponse:
+    """Enable CoolStep with a single vetted register set (semin/semax/seup/sedn/seimin), or
+    disable it. Gated + clamped like any register write; reversible with /init."""
+    data = await drivers_apply.set_coolstep(
+        settings.moonraker_url, request.stepper, request.enable, model=request.model
     )
     return ApplyResponse.model_validate(data)
 

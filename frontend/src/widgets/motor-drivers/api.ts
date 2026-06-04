@@ -158,6 +158,15 @@ export async function setField(
   return postJson('/api/drivers/field', { stepper, field, value, model })
 }
 
+/** Enable CoolStep with a vetted register set (semin/semax/seup/sedn/seimin), or disable it. */
+export async function setCoolstep(
+  stepper: string,
+  enable: boolean,
+  model: string | null,
+): Promise<ApplyResponse> {
+  return postJson('/api/drivers/coolstep', { stepper, enable, model })
+}
+
 /** Whether the motors_sync add-on is installed. */
 export async function fetchMotorsSyncStatus(): Promise<MotorsSyncStatus> {
   const { backendUrl } = resolveEndpoints()
