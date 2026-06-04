@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.61.2] - 2026-06-04
+
+### Fixed
+
+- **Physical-endstop switch state could show `—` on printers that key endstops by stepper name
+  (#106).** `GET /api/drivers/endstops` returns Moonraker's raw keys, which are `stepper_x` on
+  some printers (the SV08) and the bare axis letter `x` on others. The P9 physical-homing panel
+  looked up only the axis letter, so the live switch state wouldn't render on the former. A new
+  unit-tested `endstopStateFor()` tries the stepper section name first, then the axis letter.
+
 ## [0.61.1] - 2026-06-04
 
 ### Fixed

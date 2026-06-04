@@ -10,6 +10,7 @@ import {
   driverModelLabel,
   drvNum,
   effectiveCapabilities,
+  endstopStateFor,
   filterMotors,
   homingApplies,
   homingMethodLabel,
@@ -220,6 +221,22 @@ describe('homing helpers', () => {
     expect(homingApplies('other_virtual')).toBe(true)
     expect(homingApplies('inherited')).toBe(false)
     expect(homingApplies(null)).toBe(false)
+  })
+})
+
+describe('endstopStateFor', () => {
+  it('matches the stepper section name first (Moonraker keys the SV08 this way)', () => {
+    expect(endstopStateFor({ stepper_x: 'open' }, 'stepper_x', 'X')).toBe('open')
+  })
+  it('falls back to the bare axis letter (standard cartesian naming)', () => {
+    expect(endstopStateFor({ x: 'TRIGGERED' }, 'stepper_x', 'X')).toBe('TRIGGERED')
+  })
+  it('prefers the stepper key when both are present', () => {
+    expect(endstopStateFor({ stepper_x: 'open', x: 'TRIGGERED' }, 'stepper_x', 'X')).toBe('open')
+  })
+  it('returns null when neither key is present', () => {
+    expect(endstopStateFor({ y: 'open' }, 'stepper_x', 'X')).toBeNull()
+    expect(endstopStateFor({}, 'stepper_x', null)).toBeNull()
   })
 })
 

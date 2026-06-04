@@ -10,7 +10,7 @@
 import { ref } from 'vue'
 
 import { fetchEndstops, homeAxis } from './api'
-import { homingMethodLabel } from './format'
+import { endstopStateFor, homingMethodLabel } from './format'
 import SensorlessPanel from './SensorlessPanel.vue'
 import type { ApplyResponse, TmcDriver } from './types'
 
@@ -32,7 +32,7 @@ async function checkEndstop(): Promise<void> {
   endstopErr.value = null
   try {
     const res = await fetchEndstops()
-    endstopState.value = axis ? (res.states[axis.toLowerCase()] ?? null) : null
+    endstopState.value = endstopStateFor(res.states, props.driver.stepper, axis)
     if (!res.reachable) endstopErr.value = 'printer unreachable'
   } catch (e) {
     endstopErr.value = e instanceof Error ? e.message : String(e)
