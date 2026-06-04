@@ -22,9 +22,9 @@ const selectedStepper = ref<string | null>(null)
 const selected = computed(
   () => props.drivers.find((d) => d.stepper === selectedStepper.value) ?? null,
 )
-const supportsSensorless = computed(
-  () => !!(selected.value?.stallguard_field && selected.value?.info?.sensorless),
-)
+// Offer the sensorless step only when the axis actually homes sensorless (read from the
+// config), not merely because the driver has a StallGuard register (#101).
+const supportsSensorless = computed(() => selected.value?.homing_method === 'sensorless')
 
 //: Labelled steps, with the sensorless step dropped when the driver can't do it.
 const stepLabels = computed(() => {
@@ -134,7 +134,7 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
         <p class="text-xs opacity-70">
           Optional: dial in sensorless homing. Skip if this axis uses an endstop switch.
         </p>
-        <SensorlessPanel :driver="selected" :default-open="true" @changed="emit('changed')" />
+        <SensorlessPanel :driver="selected" @changed="emit('changed')" />
       </div>
 
       <div v-else-if="step === 5" class="space-y-1.5">

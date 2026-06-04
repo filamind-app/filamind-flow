@@ -53,6 +53,17 @@ export interface TmcDriver {
   registers: Record<string, unknown>
   info: DriverInfo | null
   motor: MotorSpec | null
+  /** How this axis homes, classified from `[stepper_*].endstop_pin` (P9):
+   *  'sensorless' | 'physical' | 'probe' | 'other_virtual' | 'inherited'. */
+  homing_method: string | null
+  endstop_pin: string | null
+  homing_note: string | null
+}
+
+/** Live endstop trigger state (GET /api/drivers/endstops). */
+export interface EndstopStates {
+  reachable: boolean
+  states: Record<string, string>
 }
 
 export interface DriversStatus {

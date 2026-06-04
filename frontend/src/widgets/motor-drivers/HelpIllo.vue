@@ -43,6 +43,15 @@ defineProps<{ illo: HelpIlloKey }>()
       <path d="M3 20 h3 v-3 h3 v-3 h3 v-3 h3 v-3 h3" />
     </g>
 
+    <!-- Homing: a microswitch endstop with its lever + roller -->
+    <g v-else-if="illo === 'homing'">
+      <rect x="3" y="10" width="9" height="6" rx="1" />
+      <line x1="12" y1="11" x2="20" y2="6" />
+      <circle cx="20.5" cy="5.5" r="1.5" />
+      <line x1="6" y1="16" x2="6" y2="20" />
+      <line x1="9" y1="16" x2="9" y2="20" />
+    </g>
+
     <!-- StallGuard: motor pushing against a wall (sensorless stop) -->
     <g v-else>
       <circle cx="8" cy="12" r="5" />

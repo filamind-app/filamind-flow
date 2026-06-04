@@ -6,6 +6,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.61.0] - 2026-06-04
+
+### Added
+
+- **Motor Drivers — homing coverage (P9, #101).** Each axis's homing method is now classified
+  from its `[stepper_*].endstop_pin` using Klipper's own rule, and surfaced on the card as a
+  method-aware **🏠 homing** panel instead of assuming "has a StallGuard register ⇒ sensorless":
+  - **Physical endstop** → live switch state (open / TRIGGERED), an on-demand **↻ check**, and a
+    plain gated **test-home** (the switch stops the move, so a softer warning than sensorless).
+  - **Sensorless (StallGuard)** → the StallGuard tuner, now with **per-model polarity**: the
+    signed `sgt` register (TMC2130 / 5160 / 2660) uses its true −64…63 range where _lower_ is
+    more sensitive, while `sgthrs` / `sg4_thrs` (2209 / 2240) stay unsigned 0–255 where _higher_
+    is more sensitive — so the control no longer feels backwards on SPI drivers.
+  - **Z probe** → a pointer to the bed-leveling tools (no StallGuard to tune here).
+  - **Virtual / shared** → a clear note; extra motors on a shared rail (a second Z, the extruder)
+    show no homing UI.
+
+  The sensorless tuner (and the Guided wizard's sensorless step) now appear **only** for axes that
+  actually home sensorless — fixing the case where a probe-homed Z or a switch-homed axis on a
+  StallGuard-capable driver wrongly offered sensorless tuning. New `GET /api/drivers/endstops`.
+
 ## [0.60.0] - 2026-06-03
 
 ### Added
