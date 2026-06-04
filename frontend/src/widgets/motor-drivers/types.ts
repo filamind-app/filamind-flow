@@ -41,6 +41,8 @@ export interface TmcDriver {
   run_current_config: number | null
   hold_current_config: number | null
   sense_resistor: number | null
+  /** TMC2240 external reference resistor (Ω); its current cap is derived from this. */
+  rref: number | null
   microsteps: number | null
   interpolate: boolean | null
   stealthchop_threshold: number | null
@@ -53,6 +55,8 @@ export interface TmcDriver {
   registers: Record<string, unknown>
   info: DriverInfo | null
   motor: MotorSpec | null
+  /** Effective run-current ceiling (A): min(model code cap, assigned motor's rating), or null. */
+  current_cap: number | null
   /** How this axis homes, classified from `[stepper_*].endstop_pin` (P9):
    *  'sensorless' | 'physical' | 'probe' | 'other_virtual' | 'inherited'. */
   homing_method: string | null

@@ -20,6 +20,7 @@ from typing import Any
 
 import httpx
 
+from app.services import field_policy
 from app.services.moonraker_client import MoonrakerClient
 
 #: Recommendation keys that map directly to ``SET_TMC_FIELD FIELD=`` names.
@@ -64,11 +65,13 @@ def config_block(
     return "\n".join(lines) + "\n"
 
 
-async def _is_printing(client: MoonrakerClient) -> bool:
+async def _is_busy(client: MoonrakerClient) -> bool:
+    """True while the printer is printing, paused, or in an error state — block all register
+    writes and motion then (not just while actively printing). Reads ``print_stats.state``."""
     status = await client.query_objects(["print_stats"])
     stats = status.get("print_stats")
     stats = stats if isinstance(stats, dict) else {}
-    return str(stats.get("state", "")).lower() == "printing"
+    return str(stats.get("state", "")).lower() in ("printing", "paused", "error")
 
 
 def _commands(
@@ -109,11 +112,12 @@ async def apply_live(
 
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     try:
-        if await _is_printing(client):
+        if await _is_busy(client):
             return {
                 "ok": False,
                 "applied": [],
-                "message": "Refusing to write to a driver while the printer is printing.",
+                "message": "Refusing to write to a driver while the printer is busy "
+                "(printing or paused).",
             }
         for cmd in commands:
             await client.run_gcode(cmd)
@@ -167,8 +171,12 @@ async def revert(moonraker_url: str, stepper: str, *, timeout: float = 20.0) -> 
         return {"ok": False, "applied": [], "message": str(exc)}
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     try:
-        if await _is_printing(client):
-            return {"ok": False, "applied": [], "message": "Refusing to re-init while printing."}
+        if await _is_busy(client):
+            return {
+                "ok": False,
+                "applied": [],
+                "message": "Refusing to re-init while the printer is busy (printing or paused).",
+            }
         commands = [f"INIT_TMC STEPPER={stepper}"]
         current_cmd = await _restore_current_cmd(client, stepper)
         if current_cmd:
@@ -215,8 +223,12 @@ async def run_autotune(
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     cmd = f"AUTOTUNE_TMC STEPPER={stepper}"
     try:
-        if await _is_printing(client):
-            return {"ok": False, "applied": [], "message": "Refusing to autotune while printing."}
+        if await _is_busy(client):
+            return {
+                "ok": False,
+                "applied": [],
+                "message": "Refusing to autotune while the printer is busy (printing or paused).",
+            }
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
         return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
@@ -239,15 +251,21 @@ async def set_stallguard(
         return {"ok": False, "applied": [], "message": str(exc)}
     if field not in _SG_FIELDS:
         return {"ok": False, "applied": [], "message": f"unknown StallGuard field: {field!r}"}
+    # Server-enforced range (the client's max= is not trusted): sgthrs/sg4_thrs are unsigned
+    # 0-255, sgt is a signed -64..63 - a UI sending 300 would otherwise mask-truncate in Klipper.
     try:
-        num = _safe_num(value)
-    except ValueError as exc:
+        num = _safe_num(field_policy.validate(field, value))
+    except (field_policy.PolicyError, ValueError) as exc:
         return {"ok": False, "applied": [], "message": str(exc)}
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     cmd = f"SET_TMC_FIELD STEPPER={stepper} FIELD={field} VALUE={num}"
     try:
-        if await _is_printing(client):
-            return {"ok": False, "applied": [], "message": "Refusing to write while printing."}
+        if await _is_busy(client):
+            return {
+                "ok": False,
+                "applied": [],
+                "message": "Refusing to write while the printer is busy (printing or paused).",
+            }
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
         return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
@@ -263,8 +281,12 @@ async def home_axis(moonraker_url: str, axis: str, *, timeout: float = 120.0) ->
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     cmd = f"G28 {ax}"
     try:
-        if await _is_printing(client):
-            return {"ok": False, "applied": [], "message": "Refusing to home while printing."}
+        if await _is_busy(client):
+            return {
+                "ok": False,
+                "applied": [],
+                "message": "Refusing to home while the printer is busy (printing or paused).",
+            }
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
         return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
@@ -303,11 +325,12 @@ async def run_motors_sync(
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     cmd = "SYNC_MOTORS_CALIBRATE" if calibrate else "SYNC_MOTORS"
     try:
-        if await _is_printing(client):
+        if await _is_busy(client):
             return {
                 "ok": False,
                 "applied": [],
-                "message": "Refusing to sync motors while printing.",
+                "message": "Refusing to sync motors while the printer is busy "
+                "(printing or paused).",
             }
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:

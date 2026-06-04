@@ -746,6 +746,8 @@ class TmcDriver(BaseModel):
     hold_current_config: float | None = None
 
     sense_resistor: float | None = None
+    #: The TMC2240's external reference resistor (Ω); its current cap is derived from this.
+    rref: float | None = None
     #: From the matching ``[stepper_*]`` section (not the tmc section).
     microsteps: int | None = None
     interpolate: bool | None = None
@@ -774,6 +776,9 @@ class TmcDriver(BaseModel):
     info: DriverInfo | None = None
     #: The motor the user assigned to this stepper (from the motor catalog), or None.
     motor: MotorSpec | None = None
+    #: Effective run-current ceiling (A): min(model code cap, assigned motor's rating). The
+    #: real safe limit for live current edits — None if neither is known.
+    current_cap: float | None = None
     #: How this axis homes, from its ``endstop_pin``: physical / sensorless / probe /
     #: other_virtual / inherited. StallGuard tuning is offered ONLY for ``sensorless``.
     homing_method: str | None = None
