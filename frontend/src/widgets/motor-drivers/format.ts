@@ -89,15 +89,23 @@ export function interfaceLabel(d: TmcDriver): string {
   return d.info?.interface?.replace('/', '·') ?? ''
 }
 
-/** Max current cap from the catalog, e.g. "≤ 2.0 A", or '' if unknown. */
+/** The effective run-current ceiling: the server's `current_cap` (= min(model code cap, the
+ *  assigned motor's rating)) when known, else the catalog's model cap. Preferring `current_cap`
+ *  fixes the misleading "≤ 10.6 A" a TMC5160's *sanity ceiling* would otherwise show (#102) —
+ *  once a motor is assigned, the real (motor-bound) limit is used. */
+export function effectiveCap(d: TmcDriver): number | null {
+  return d.current_cap ?? d.info?.max_current_a ?? null
+}
+
+/** Max current cap, e.g. "≤ 2.0 A", or '' if unknown. */
 export function maxCurrentLabel(d: TmcDriver): string {
-  const a = d.info?.max_current_a
+  const a = effectiveCap(d)
   return a != null ? `≤ ${a.toFixed(1)} A` : ''
 }
 
-/** Whether the run current is close to (or over) the model's rated cap — a gentle warning. */
+/** Whether the run current is close to (or over) the effective cap — a gentle warning. */
 export function nearCurrentCap(d: TmcDriver): boolean {
-  const cap = d.info?.max_current_a
+  const cap = effectiveCap(d)
   const run = d.run_current ?? d.run_current_config
   return cap != null && run != null && run >= cap * 0.9
 }

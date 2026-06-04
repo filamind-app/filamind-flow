@@ -16,7 +16,7 @@ from typing import Any
 
 import httpx
 
-from app.services import driver_catalog, motor_catalog, motor_mapping
+from app.services import driver_catalog, field_policy, motor_catalog, motor_mapping
 from app.services.moonraker_client import MoonrakerClient
 
 #: A TMC driver config section name, e.g. "tmc2209 stepper_x" / "tmc5160 stepper_y".
@@ -166,6 +166,9 @@ def _parse_driver(
         "run_current_config": _as_float(config.get("run_current")),
         "hold_current_config": _as_float(config.get("hold_current")),
         "sense_resistor": _as_float(config.get("sense_resistor")),
+        # The 2240's external reference resistor — its full-scale current (and so the cap) is
+        # derived from this, since the 2240 has no fixed MAX_CURRENT constant like other models.
+        "rref": _as_float(config.get("rref")),
         "microsteps": _as_int(stepper_cfg.get("microsteps")),
         "interpolate": _as_bool(config.get("interpolate")),
         "stealthchop_threshold": stealth,
@@ -219,7 +222,14 @@ async def gather_drivers(moonraker_url: str, data_dir: str = "") -> dict[str, An
         # Annotate with authoritative reference data for the model (None if unknown).
         record["info"] = driver_catalog.lookup(record["model"])
         # Attach the motor the user assigned to this stepper (None if unassigned).
-        record["motor"] = motor_catalog.lookup(mapping.get(record["stepper"], ""))
+        motor = motor_catalog.lookup(mapping.get(record["stepper"], ""))
+        record["motor"] = motor
+        # The effective run-current ceiling: min(model code cap, assigned motor's rating). The
+        # motor rating usually binds; the 2240's cap comes from its rref. None if unknown.
+        motor_rated = motor.get("max_current_A") if isinstance(motor, dict) else None
+        record["current_cap"] = field_policy.current_cap(
+            record["model"], motor_rated, record.get("rref")
+        )
         drivers.append(record)
     return {"reachable": True, "drivers": drivers}
 

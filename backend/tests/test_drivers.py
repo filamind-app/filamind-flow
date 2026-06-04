@@ -160,6 +160,12 @@ def test_drivers_status_parses_mixed_models(monkeypatch: pytest.MonkeyPatch) -> 
     assert z["homing_method"] == "probe"  # probe:z_virtual_endstop — NOT sensorless
     assert e["homing_method"] == "inherited"  # extruder has no endstop_pin
 
+    # Effective run-current cap (P10): a 2209 with no assigned motor falls back to its 2.0 A
+    # code cap; the 2240 has no fixed cap and no rref/motor here, so it's unknown (None).
+    assert x["current_cap"] == 2.0
+    assert z["current_cap"] is None
+    assert z["rref"] is None
+
     # Each driver is annotated with authoritative catalog reference data.
     assert x["info"]["interface"] == "UART"
     assert x["info"]["sensorless"] is True
