@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.61.1] - 2026-06-04
+
+### Fixed
+
+- **Homing classifier missed sensorless when the endstop pin had whitespace after the colon
+  (#104).** Klipper parses `endstop_pin` as `chip:pin` split on the first colon with whitespace
+  stripped from each side, so `tmc2209_stepper_x: virtual_endstop` (a stray space — present
+  verbatim in the SV08's own `printer.cfg`) is a valid sensorless virtual endstop. The P9
+  classifier used an exact `:virtual_endstop` substring test and wrongly classified that axis
+  as a **physical endstop**. It now normalises the pin the way Klipper does (split + strip,
+  case-insensitive), so spaced and unspaced forms classify identically. Caught by live-verify
+  on the SV08, where `stepper_x` (spaced) was mislabelled while `stepper_y` (unspaced) was not.
+
 ## [0.61.0] - 2026-06-04
 
 ### Added
