@@ -10,6 +10,7 @@ import LiveMonitor from './LiveMonitor.vue'
 import MotorPicker from './MotorPicker.vue'
 import MotorSyncPanel from './MotorSyncPanel.vue'
 import RecommendPanel from './RecommendPanel.vue'
+import RegisterEditor from './RegisterEditor.vue'
 import {
   axisHeading,
   capabilityChips,
@@ -32,7 +33,6 @@ const status = ref<DriversStatus | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(true)
 const showSteps = ref(false)
-const openRegisters = ref<Record<string, boolean>>({})
 const motorCatalog = ref<MotorSpec[]>([])
 const mode = ref<'dashboard' | 'guided'>('dashboard')
 
@@ -47,15 +47,6 @@ function describeError(e: unknown): string {
     return 'Cannot reach the FilaMind backend — check that the filamind-flow service is running and reachable.'
   }
   return m
-}
-
-/** Raw driver_* registers as printable [name, value] pairs for the advanced view. */
-function registerEntries(d: TmcDriver): [string, string][] {
-  return Object.entries(d.registers).map(([k, v]) => [k, String(v)])
-}
-
-function toggleRegisters(stepper: string): void {
-  openRegisters.value[stepper] = !openRegisters.value[stepper]
 }
 
 function healthTitle(d: TmcDriver): string {
@@ -244,24 +235,7 @@ onUnmounted(() => {
 
           <HomingPanel v-if="homingApplies(d.homing_method)" :driver="d" @changed="load(true)" />
 
-          <div v-if="registerEntries(d).length" class="font-mono text-[10px]">
-            <button
-              class="opacity-60 transition-opacity hover:opacity-100"
-              :aria-expanded="!!openRegisters[d.stepper]"
-              @click="toggleRegisters(d.stepper)"
-            >
-              {{ openRegisters[d.stepper] ? '▾' : '▸' }} advanced registers
-            </button>
-            <dl
-              v-if="openRegisters[d.stepper]"
-              class="mt-1 grid grid-cols-2 gap-x-2 gap-y-0.5 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
-            >
-              <div v-for="[k, v] in registerEntries(d)" :key="k" class="flex justify-between gap-1">
-                <dt class="opacity-60">{{ k }}</dt>
-                <dd class="font-bold">{{ v }}</dd>
-              </div>
-            </dl>
-          </div>
+          <RegisterEditor :driver="d" @changed="load(true)" />
         </section>
       </div>
 
@@ -282,6 +256,7 @@ onUnmounted(() => {
         <HelpNote topic="sensorless" />
         <HelpNote topic="monitor" />
         <HelpNote topic="motorsync" />
+        <HelpNote topic="registers" />
       </div>
     </template>
 

@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.63.0] - 2026-06-05
+
+### Added
+
+- **Motor Drivers — advanced register editor (P10b, #102).** Each driver card gains a
+  **⚙ tune registers (advanced)** panel that edits the safe subset of its TMC registers live,
+  driven entirely by the server's `field_policy` (the browser never decides what's editable or
+  the bounds):
+  - chopper timing (`toff` / `tbl` / `hstrt` / `hend`), StealthChop PWM (`pwm_grad` / `pwm_ofs`
+    / `pwm_freq` / …), CoolStep (`semin` / `semax` / …), StallGuard sensitivity, and the
+    StealthChop↔SpreadCycle crossover threshold **in mm/s** (Klipper does the TSTEP conversion
+    via `VELOCITY=`, and refuses it on a clock-less driver like the 2660);
+  - the right control per field — number (with the server's clamp range), toggle, select, or a
+    mm/s field — with **per-field confirm** on riskier knobs, and non-editable `driver_*`
+    registers shown read-only beneath;
+  - a **"↺ reset to config"** (`INIT_TMC`) undo and a persistent "live only — a restart restores
+    it" note; raw current-scaling and protection registers are not editable here.
+  - New `POST /api/drivers/field` (gated + server-clamped) and `GET /api/drivers/field-policy/{model}`.
+
 ## [0.62.0] - 2026-06-04
 
 ### Added

@@ -926,6 +926,25 @@ class HomeRequest(BaseModel):
     axis: str
 
 
+class SetFieldRequest(BaseModel):
+    """Write one editable TMC register field live (POST /api/drivers/field). Gated + clamped
+    server-side by the field_policy allowlist. ``model`` lets the server enforce per-model
+    applicability; ``value`` is the register value, or mm/s for a velocity-threshold field."""
+
+    stepper: str
+    field: str
+    value: float
+    model: str | None = None
+
+
+class FieldPolicyResponse(BaseModel):
+    """The editable-register policy for one model (GET /api/drivers/field-policy/{model}) —
+    which fields may be edited, with their control type + clamp range, for the editor UI."""
+
+    model: str
+    fields: dict[str, dict[str, Any]] = {}
+
+
 class MotorsSyncStatus(BaseModel):
     """Whether the motors_sync add-on is installed (GET /api/drivers/motors-sync)."""
 

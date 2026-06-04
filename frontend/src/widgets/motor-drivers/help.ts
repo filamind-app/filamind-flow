@@ -21,6 +21,7 @@ export type HelpTopic =
   | 'sensorless'
   | 'monitor'
   | 'motorsync'
+  | 'registers'
 
 export interface HelpEntry {
   title: string
@@ -143,6 +144,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
     title: 'Sensorless homing',
     body: 'Some axes home without an endstop switch: the driver detects the gentle “stall” when the toolhead reaches the end of travel. The StallGuard threshold sets how sensitive that is — too low and it triggers early (stops short), too high and it never triggers (the axis grinds into the frame). This helper lets you set the threshold and test-home one axis, both behind a confirm. Adjust by feel: lower if it stops early, raise if it doesn’t stop — and keep a hand near the power the first few times. If your axis uses a physical endstop, you don’t need this.',
     illo: 'stallguard',
+  },
+  registers: {
+    title: 'Editing registers (advanced)',
+    body: 'The advanced editor writes individual TMC tuning registers to the driver live — chopper timing (toff/tbl/hstrt/hend), StealthChop PWM (pwm_grad/pwm_ofs/…), CoolStep, StallGuard sensitivity, and the StealthChop↔SpreadCycle speed threshold (in mm/s). Which fields appear, and their valid range, come from the printer-side safety policy — not the browser — because the driver silently truncates an out-of-range value instead of erroring, so the server clamps and rejects. Raw current-scaling and short/overtemp-protection registers are deliberately not editable here (current goes through the recommender/run-current path; microsteps need a config change + restart). Every edit is live only: INIT_TMC (the “reset to config” button), a firmware restart, or a power-cycle restores your saved values. Riskier knobs need a per-field confirm, and all writes are refused while the printer is printing or paused.',
+    illo: 'chopper',
   },
   recommend: {
     title: 'Recommended tuning',

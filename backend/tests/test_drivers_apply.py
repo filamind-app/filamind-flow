@@ -186,6 +186,55 @@ async def test_writes_refused_while_paused(monkeypatch: pytest.MonkeyPatch) -> N
     assert paused.scripts == []
 
 
+async def test_set_field_sends_value(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.set_field("http://x", "stepper_x", "hstrt", 6, model="tmc2209")
+    assert res["ok"] is True
+    assert fake.scripts == ["SET_TMC_FIELD STEPPER=stepper_x FIELD=hstrt VALUE=6"]
+
+
+async def test_set_field_velocity_uses_velocity_param(monkeypatch: pytest.MonkeyPatch) -> None:
+    # A velocity-threshold field writes its register (tpwmthrs) via VELOCITY= (mm/s) so Klipper
+    # does the TSTEP conversion; the friendly name maps to the register name.
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.set_field(
+        "http://x", "stepper_x", "stealthchop_threshold", 100, model="tmc2209"
+    )
+    assert res["ok"] is True
+    assert fake.scripts == ["SET_TMC_FIELD STEPPER=stepper_x FIELD=tpwmthrs VELOCITY=100"]
+
+
+async def test_set_field_rejects_blocked_and_out_of_range(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    # Blocked raw current-scaling field.
+    assert (await drivers_apply.set_field("http://x", "stepper_x", "irun", 16))["ok"] is False
+    # toff=0 disables the motor → rejected (floor is 1).
+    assert (await drivers_apply.set_field("http://x", "stepper_x", "toff", 0))["ok"] is False
+    # hstrt is a 3-bit field (0-7) → 8 is out of range.
+    assert (await drivers_apply.set_field("http://x", "stepper_x", "hstrt", 8))["ok"] is False
+    assert fake.scripts == []
+
+
+async def test_set_field_rejects_not_applicable_to_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    # sgt is not a 2209 field (the 2209 uses sgthrs) → rejected, nothing sent.
+    res = await drivers_apply.set_field("http://x", "stepper_x", "sgt", 3, model="tmc2209")
+    assert res["ok"] is False
+    assert fake.scripts == []
+
+
+async def test_set_field_refused_while_busy(monkeypatch: pytest.MonkeyPatch) -> None:
+    paused = _FakeClient(state="paused")
+    _patch(monkeypatch, paused)
+    res = await drivers_apply.set_field("http://x", "stepper_x", "hstrt", 6, model="tmc2209")
+    assert res["ok"] is False
+    assert paused.scripts == []
+
+
 async def test_home_axis_sends_g28(monkeypatch: pytest.MonkeyPatch) -> None:
     fake = _FakeClient()
     _patch(monkeypatch, fake)
@@ -261,3 +310,31 @@ def test_apply_route_unreachable_is_graceful() -> None:
     res = client.post("/api/drivers/apply", json={"stepper": "stepper_x", "run_current": 1.0})
     assert res.status_code == 200
     assert res.json()["ok"] is False  # Moonraker unreachable → reported, not a 500
+
+
+def test_field_policy_route() -> None:
+    client = TestClient(create_app())
+    res = client.get("/api/drivers/field-policy/tmc2209")
+    assert res.status_code == 200
+    body = res.json()
+    assert body["model"] == "tmc2209"
+    # The 2209 exposes sgthrs (not the signed sgt / the 2240's sg4_thrs); blocked fields are absent.
+    assert "sgthrs" in body["fields"] and "sgt" not in body["fields"]
+    assert "irun" not in body["fields"]
+    assert body["fields"]["toff"]["min"] == 1
+
+
+def test_field_route_rejects_out_of_range_before_send() -> None:
+    # Even unreachable, an out-of-range value is rejected by policy (never reaches Moonraker).
+    from app.config import Settings, get_settings
+
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(moonraker_url="http://127.0.0.1:1")
+    client = TestClient(app)
+    res = client.post(
+        "/api/drivers/field",
+        json={"stepper": "stepper_x", "field": "sgthrs", "value": 300, "model": "tmc2209"},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["ok"] is False and "255" in body["message"]
