@@ -20,6 +20,8 @@ export interface WidgetDefinition {
   id: string
   /** Human-readable title shown in the widget header. */
   title: string
+  /** A short glyph/emoji for the sidebar, for wayfinding (falls back to a generic icon). */
+  icon?: string
   /** Short description for a future widget catalog. */
   description?: string
   /** Optional grouping category. */
