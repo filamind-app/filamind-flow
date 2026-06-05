@@ -129,6 +129,20 @@ export interface FlashRequest {
   is_katapult?: boolean
 }
 
+/** A pending firmware flash awaiting explicit user confirmation (the safety gate). Every
+ *  flash entry point sets one of these instead of writing immediately; the confirm dialog
+ *  previews the plan (when a `request` is given) and requires an "I understand" acknowledgement. */
+export interface FlashIntent {
+  kind: 'device' | 'buildflash' | 'batch' | 'beacon'
+  title: string
+  warning: string
+  /** Device / probe name(s), for display in the dialog. */
+  device?: string
+  devices?: string[]
+  /** When present, the dialog previews the flash plan (command + warnings) for this request. */
+  request?: FlashRequest
+}
+
 /** Read-only preview of what a flash would do, plus its safety gates. */
 export interface FlashPlan {
   method: string
