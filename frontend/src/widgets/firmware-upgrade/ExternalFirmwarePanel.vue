@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   deleteExternal,
@@ -13,6 +14,8 @@ import {
 } from './api'
 import { compareFirmware, type DiffRow, type DiffStatus } from './compare'
 import type { Board, Device, ExternalFirmware } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const items = ref<ExternalFirmware[]>([])
 const targets = ref<{ id: string; label: string }[]>([])
@@ -97,7 +100,7 @@ async function load(): Promise<void> {
         flashTo[fw.name] = { device: targets.value[0]?.id ?? '', katapult: true }
     }
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to load external firmware'
+    error.value = e instanceof Error ? e.message : t('firmware.external.loadFailed')
   }
 }
 
@@ -113,7 +116,7 @@ async function onUpload(event: Event): Promise<void> {
     await uploadExternal(name, ext, file)
     await load()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Upload failed'
+    error.value = e instanceof Error ? e.message : t('firmware.external.uploadFailed')
   } finally {
     input.value = ''
   }
@@ -130,7 +133,7 @@ async function persist(fw: ExternalFirmware): Promise<void> {
       notes: fw.notes,
     })
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Save failed'
+    error.value = e instanceof Error ? e.message : t('firmware.external.saveFailed')
   }
 }
 
@@ -139,7 +142,7 @@ async function remove(fw: ExternalFirmware): Promise<void> {
     await deleteExternal(fw.name)
     await load()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Delete failed'
+    error.value = e instanceof Error ? e.message : t('firmware.external.deleteFailed')
   }
 }
 
@@ -148,14 +151,14 @@ async function doFlash(fw: ExternalFirmware): Promise<void> {
   if (busy.value || !target?.device) return
   error.value = null
   activeName.value = fw.name
-  log.value = `>>> flashing ${fw.filename} → ${target.device}\n`
+  log.value = `>>> ${t('firmware.external.flashingLog', { filename: fw.filename, device: target.device })}\n`
   busy.value = true
   try {
     await flashExternal(fw.name, target.device, target.katapult, (chunk) => {
       log.value += chunk
     })
   } catch (e) {
-    log.value += `\n!! ${e instanceof Error ? e.message : 'flash failed'}\n`
+    log.value += `\n!! ${e instanceof Error ? e.message : t('firmware.external.flashFailed')}\n`
   } finally {
     busy.value = false
   }
@@ -171,14 +174,16 @@ onMounted(load)
 <template>
   <div class="space-y-1.5 border-t-2 border-ink pt-2">
     <div class="flex items-center justify-between gap-2">
-      <span class="text-xs font-bold uppercase tracking-wide">External firmware</span>
+      <span class="text-xs font-bold uppercase tracking-wide">{{
+        t('firmware.external.title')
+      }}</span>
       <label class="nb-btn cursor-pointer px-2 py-0.5 text-[10px]">
-        + upload .bin
+        {{ t('firmware.external.upload') }}
         <input type="file" accept=".bin,.uf2,.elf,.hex" class="hidden" @change="onUpload" />
       </label>
     </div>
     <p class="font-mono text-[10px] opacity-60">
-      Flash a pre-built firmware file as-is (no build). Set how each is flashed, then pick a board.
+      {{ t('firmware.external.intro') }}
     </p>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
@@ -189,16 +194,16 @@ onMounted(load)
       class="space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2"
     >
       <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
-        <span class="font-bold uppercase tracking-wide">compare</span>
+        <span class="font-bold uppercase tracking-wide">{{ t('firmware.external.compare') }}</span>
         <select v-model="compareA" :class="inputClass">
-          <option :value="null">— A —</option>
+          <option :value="null">{{ t('firmware.external.optionA') }}</option>
           <option v-for="fw in items" :key="fw.name" :value="fw.name">
             {{ fw.label || fw.name }}
           </option>
         </select>
         <span class="font-bold">⇄</span>
         <select v-model="compareB" :class="inputClass">
-          <option :value="null">— B —</option>
+          <option :value="null">{{ t('firmware.external.optionB') }}</option>
           <option v-for="fw in items" :key="fw.name" :value="fw.name">
             {{ fw.label || fw.name }}
           </option>
@@ -208,7 +213,7 @@ onMounted(load)
           class="nb-btn px-1.5 py-0 text-[9px]"
           @click="clearCompare"
         >
-          clear
+          {{ t('firmware.external.clear') }}
         </button>
       </div>
 
@@ -216,25 +221,35 @@ onMounted(load)
         v-if="compareA && compareB && compareA === compareB"
         class="font-mono text-[9px] opacity-60"
       >
-        Pick two different files.
+        {{ t('firmware.external.pickTwoDifferent') }}
       </div>
 
       <div v-else-if="comparison" class="space-y-1">
         <div class="flex flex-wrap gap-1 font-mono text-[9px]">
-          <span class="nb-badge bg-brand-yellow">{{ comparison.counts.changed }} changed</span>
-          <span class="nb-badge bg-brand-red text-surface"
-            >{{ comparison.counts.a_only }} only in A</span
-          >
-          <span class="nb-badge bg-brand-lime">{{ comparison.counts.b_only }} only in B</span>
-          <span class="nb-badge">{{ comparison.counts.same }} same</span>
+          <span class="nb-badge bg-brand-yellow">{{
+            t('firmware.external.countChanged', { n: comparison.counts.changed })
+          }}</span>
+          <span class="nb-badge bg-brand-red text-surface">{{
+            t('firmware.external.countOnlyA', { n: comparison.counts.a_only })
+          }}</span>
+          <span class="nb-badge bg-brand-lime">{{
+            t('firmware.external.countOnlyB', { n: comparison.counts.b_only })
+          }}</span>
+          <span class="nb-badge">{{
+            t('firmware.external.countSame', { n: comparison.counts.same })
+          }}</span>
         </div>
 
         <div
           class="grid grid-cols-[6rem_1fr_1fr] gap-2 border-b-2 border-ink pb-0.5 font-mono text-[9px] font-bold"
         >
           <span></span>
-          <span class="min-w-0 truncate">A · {{ fwLabel(compareA) }}</span>
-          <span class="min-w-0 truncate">B · {{ fwLabel(compareB) }}</span>
+          <span class="min-w-0 truncate">{{
+            t('firmware.external.headerA', { label: fwLabel(compareA) })
+          }}</span>
+          <span class="min-w-0 truncate">{{
+            t('firmware.external.headerB', { label: fwLabel(compareB) })
+          }}</span>
         </div>
 
         <div
@@ -265,7 +280,7 @@ onMounted(load)
         </div>
 
         <p class="pt-0.5 text-[8px] italic opacity-50">
-          Read-only comparison of the properties baked into each file.
+          {{ t('firmware.external.compareNote') }}
         </p>
       </div>
     </div>
@@ -291,7 +306,7 @@ onMounted(load)
           class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[10px] text-surface"
           @click="remove(fw)"
         >
-          remove
+          {{ t('firmware.external.remove') }}
         </button>
       </div>
 
@@ -301,16 +316,19 @@ onMounted(load)
         class="rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1"
       >
         <div class="flex flex-wrap items-center gap-x-2 font-mono text-[9px] opacity-70">
-          <span>🔍 read from file:</span>
+          <span>{{ t('firmware.external.readFromFile') }}</span>
           <span v-if="fw.detected_app" class="font-bold">{{ fw.detected_app }}</span>
           <span v-if="fw.detected_version">{{ fw.detected_version }}</span>
-          <span v-if="fw.detected_mcu">· mcu {{ fw.detected_mcu }}</span>
+          <span v-if="fw.detected_mcu">{{
+            t('firmware.external.mcuLabel', { mcu: fw.detected_mcu })
+          }}</span>
           <button
             v-if="configEntries(fw).length"
             class="nb-btn ml-auto px-1.5 py-0 text-[9px]"
             @click="expanded[fw.name] = !expanded[fw.name]"
           >
-            {{ expanded[fw.name] ? 'hide' : 'config' }} ({{ configEntries(fw).length }})
+            {{ expanded[fw.name] ? t('firmware.external.hide') : t('firmware.external.config') }}
+            ({{ configEntries(fw).length }})
           </button>
         </div>
         <div v-if="expanded[fw.name]" class="mt-1 space-y-0.5">
@@ -323,8 +341,7 @@ onMounted(load)
             <span class="min-w-0 truncate">{{ v }}</span>
           </div>
           <p class="pt-0.5 text-[8px] italic opacity-50">
-            Compiled into the firmware — read-only. To change these, build a profile in Configure
-            and flash that instead.
+            {{ t('firmware.external.compiledNote') }}
           </p>
         </div>
       </div>
@@ -335,7 +352,7 @@ onMounted(load)
         </select>
         <input
           v-model="fw.offset"
-          placeholder="offset (DFU, e.g. 0x08002000)"
+          :placeholder="t('firmware.external.offsetPlaceholder')"
           :class="['w-44 font-mono', inputClass]"
           @change="persist(fw)"
         />
@@ -348,7 +365,7 @@ onMounted(load)
       </div>
       <input
         v-model="fw.notes"
-        placeholder="notes (source, board, version…)"
+        :placeholder="t('firmware.external.notesPlaceholder')"
         :class="['w-full', inputClass]"
         @change="persist(fw)"
       />
@@ -357,19 +374,24 @@ onMounted(load)
         v-if="flashTo[fw.name]"
         class="flex flex-wrap items-center gap-1.5 border-t-2 border-dashed border-ink pt-1.5"
       >
-        <span class="text-[10px] opacity-60">flash to:</span>
+        <span class="text-[10px] opacity-60">{{ t('firmware.external.flashTo') }}</span>
         <select v-model="flashTo[fw.name].device" :class="inputClass">
-          <option v-for="t in targets" :key="t.id" :value="t.id">{{ t.label }}</option>
+          <option v-for="tgt in targets" :key="tgt.id" :value="tgt.id">{{ tgt.label }}</option>
         </select>
         <label class="flex items-center gap-1 text-[10px]">
-          <input v-model="flashTo[fw.name].katapult" type="checkbox" /> katapult
+          <input v-model="flashTo[fw.name].katapult" type="checkbox" />
+          {{ t('firmware.external.katapult') }}
         </label>
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
           :disabled="busy || !flashTo[fw.name].device"
           @click="doFlash(fw)"
         >
-          {{ busy && activeName === fw.name ? 'flashing…' : 'flash' }}
+          {{
+            busy && activeName === fw.name
+              ? t('firmware.external.flashing')
+              : t('firmware.external.flash')
+          }}
         </button>
       </div>
 
@@ -381,7 +403,7 @@ onMounted(load)
     </div>
 
     <p v-if="!items.length" class="font-mono text-xs opacity-70">
-      No external firmware yet — upload a .bin to flash it directly.
+      {{ t('firmware.external.empty') }}
     </p>
   </div>
 </template>

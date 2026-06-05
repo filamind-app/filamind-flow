@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.83.0] - 2026-06-06
+
+### Changed
+
+- **i18n Phase 2 complete (Firmware Manager — templates).** Externalized all of the Firmware Manager
+  widget's template strings — `FirmwareUpgradeWidget.vue` (tabs, the build→flash steps, status /
+  services / devices / batch actions, confirm copy, errors) and the panels `FirmwareGuided`,
+  `FirmwareFlashConfirm`, `FirmwareConfigEditor`, `FirmwareDevicesPanel`, `ExternalFirmwarePanel` —
+  into the `vue-i18n` catalog (`firmware.{widget,guided,flashConfirm,configEditor,devices,external}.*`;
+  **845 `en` keys**). Real counts use **vue-i18n pipe plurals** (e.g. `{n} setup issue | {n} setup
+  issues`, edits badge, "Restored N profile(s)"); the `STEPS` guide moved to the catalog (`tm()`);
+  tab / batch arrays became `computed`; inline markup uses `<i18n-t>`; units / tokens stay literal.
+  Build-log lines (`>>> compiling…`) are kept English as technical console output. **No visible
+  change.** New mount + pipe-plural test suite. **This completes i18n Phase 2** — all three widgets
+  (Input Shaping, Motor Drivers, Firmware Manager) and the app shell are now fully localizable.
+
 ## [0.82.0] - 2026-06-06
 
 ### Changed

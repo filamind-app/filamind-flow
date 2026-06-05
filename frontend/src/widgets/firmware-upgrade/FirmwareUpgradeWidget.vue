@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import LogPane from '@/components/ui/LogPane.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
@@ -11,7 +12,6 @@ import FirmwareGuided from './FirmwareGuided.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
 import FirmwareFlashConfirm from './FirmwareFlashConfirm.vue'
 import HelpNote from './HelpNote.vue'
-import { STEPS } from './help'
 import {
   buildFirmware,
   cancelTask,
@@ -42,15 +42,17 @@ import type {
   ServiceInfo,
 } from './types'
 
+const { t, tm } = useI18n({ useScope: 'global' })
+
 type FwMode = 'guided' | 'status' | 'configure' | 'devices' | 'external'
 const mode = ref<FwMode>('status')
-const FW_TABS: { id: FwMode; label: string }[] = [
-  { id: 'guided', label: '🧭 Guided' },
-  { id: 'status', label: '🩺 Status' },
-  { id: 'configure', label: '🔧 Configure' },
-  { id: 'devices', label: '🖥 Devices' },
-  { id: 'external', label: '📦 External' },
-]
+const FW_TABS = computed<{ id: FwMode; label: string }[]>(() => [
+  { id: 'guided', label: t('firmware.widget.tabGuided') },
+  { id: 'status', label: t('firmware.widget.tabStatus') },
+  { id: 'configure', label: t('firmware.widget.tabConfigure') },
+  { id: 'devices', label: t('firmware.widget.tabDevices') },
+  { id: 'external', label: t('firmware.widget.tabExternal') },
+])
 const status = ref<FirmwareStatus | null>(null)
 const boards = ref<Board[]>([])
 const devices = ref<Device[]>([])
@@ -137,12 +139,16 @@ async function load(silent = false): Promise<void> {
 }
 
 // --- Operations on the registered devices: batch + per-device build / flash / reboot ---
-const BATCH_ACTIONS = [
-  { action: 'build-all', label: 'Build all', cls: 'bg-surface' },
-  { action: 'flash-all', label: 'Flash all', cls: 'bg-brand-yellow' },
-  { action: 'flash-ready', label: 'Flash ready', cls: 'bg-brand-yellow' },
-  { action: 'build-flash-all', label: 'Build & flash', cls: 'bg-brand-red text-surface' },
-]
+const BATCH_ACTIONS = computed(() => [
+  { action: 'build-all', label: t('firmware.widget.batchBuildAll'), cls: 'bg-surface' },
+  { action: 'flash-all', label: t('firmware.widget.batchFlashAll'), cls: 'bg-brand-yellow' },
+  { action: 'flash-ready', label: t('firmware.widget.batchFlashReady'), cls: 'bg-brand-yellow' },
+  {
+    action: 'build-flash-all',
+    label: t('firmware.widget.batchBuildFlash'),
+    cls: 'bg-brand-red text-surface',
+  },
+])
 const opLog = ref('')
 const opBusy = ref(false)
 /** Whose op-log is showing: a device id, or null for the batch log under the batch buttons. */
@@ -179,7 +185,7 @@ async function runBatch(action: string): Promise<void> {
     batchTaskId.value = await startBatch(action)
     await pollTask()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Batch failed'
+    error.value = e instanceof Error ? e.message : t('firmware.widget.errBatch')
     opBusy.value = false
   }
 }
@@ -200,7 +206,7 @@ async function buildDevice(device: Device): Promise<void> {
     })
     await load(true)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Build failed'
+    error.value = e instanceof Error ? e.message : t('firmware.widget.errBuild')
   } finally {
     opBusy.value = false
   }
@@ -221,7 +227,7 @@ async function rebootDevice(device: Device, rebootMode = 'katapult'): Promise<vo
     )
     await load(true)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Reboot failed'
+    error.value = e instanceof Error ? e.message : t('firmware.widget.errReboot')
   } finally {
     opBusy.value = false
   }
@@ -274,7 +280,7 @@ async function flashDevice(device: Device): Promise<void> {
     })
     await load(true)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Flash failed'
+    error.value = e instanceof Error ? e.message : t('firmware.widget.errFlash')
   } finally {
     opBusy.value = false
   }
@@ -292,7 +298,7 @@ async function buildAndFlash(device: Device): Promise<void> {
       opLog.value += chunk
     })
     if (!/BUILD OK/i.test(opLog.value)) {
-      opLog.value += '\n!! Build did not succeed — skipping flash.\n'
+      opLog.value += '\n' + t('firmware.widget.buildFailedSkipFlash') + '\n'
       return
     }
     await flashBoard(flashRequest(device), (chunk) => {
@@ -300,7 +306,7 @@ async function buildAndFlash(device: Device): Promise<void> {
     })
     await load(true)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Build & flash failed'
+    error.value = e instanceof Error ? e.message : t('firmware.widget.errBuildFlash')
   } finally {
     opBusy.value = false
   }
@@ -312,8 +318,11 @@ function requestFlash(device: Device): void {
   if (opBusy.value || !device.profile) return
   pendingFlash.value = {
     kind: 'device',
-    title: `Flash ${device.name} with “${device.profile}”.`,
-    warning: 'Keep power stable and don’t unplug — interrupting a flash can brick the board.',
+    title: t('firmware.widget.confirmFlashTitle', {
+      device: device.name,
+      profile: device.profile,
+    }),
+    warning: t('firmware.widget.confirmFlashWarning'),
     device: device.name,
     request: flashRequest(device),
   }
@@ -324,9 +333,11 @@ function requestBuildFlash(device: Device): void {
   if (opBusy.value || !device.profile) return
   pendingFlash.value = {
     kind: 'buildflash',
-    title: `Build “${device.profile}”, then flash ${device.name}.`,
-    warning:
-      'This rebuilds the firmware and writes it to the board — keep power stable until done.',
+    title: t('firmware.widget.confirmBuildFlashTitle', {
+      profile: device.profile,
+      device: device.name,
+    }),
+    warning: t('firmware.widget.confirmBuildFlashWarning'),
     device: device.name,
   }
   pendingExec = () => void buildAndFlash(device)
@@ -334,14 +345,14 @@ function requestBuildFlash(device: Device): void {
 
 function requestBatch(action: string): void {
   if (opBusy.value) return
-  const label = BATCH_ACTIONS.find((b) => b.action === action)?.label ?? action
+  const label = BATCH_ACTIONS.value.find((b) => b.action === action)?.label ?? action
   const affected = operationalDevices.value
     .filter((d) => action !== 'flash-ready' || liveMode.value[d.id] === 'ready')
     .map((d) => d.name)
   pendingFlash.value = {
     kind: 'batch',
-    title: `${label} — this flashes multiple devices in turn.`,
-    warning: 'Keep power stable until every device finishes — interrupting any flash can brick it.',
+    title: t('firmware.widget.confirmBatchTitle', { label }),
+    warning: t('firmware.widget.confirmBatchWarning'),
     devices: affected,
   }
   pendingExec = () => void runBatch(action)
@@ -351,8 +362,8 @@ function requestBeacon(probe: { id: string; name: string }): void {
   if (beaconFlashing.value) return
   pendingFlash.value = {
     kind: 'beacon',
-    title: `Flash the Beacon probe ${probe.name}.`,
-    warning: 'Keep the probe connected and powered — interrupting the flash can brick it.',
+    title: t('firmware.widget.confirmBeaconTitle', { name: probe.name }),
+    warning: t('firmware.widget.confirmBeaconWarning'),
     device: probe.name,
   }
   pendingExec = () => void flashProbe(probe.id)
@@ -387,7 +398,7 @@ async function flashProbe(device: string): Promise<void> {
     })
     await load(true)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Beacon flash failed'
+    error.value = e instanceof Error ? e.message : t('firmware.widget.errBeaconFlash')
   } finally {
     beaconFlashing.value = false
   }
@@ -400,7 +411,7 @@ async function doService(action: string): Promise<void> {
     await manageServices(action)
     await load(true)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Service action failed'
+    error.value = e instanceof Error ? e.message : t('firmware.widget.errService')
   } finally {
     servicesBusy.value = false
   }
@@ -448,7 +459,9 @@ onUnmounted(() => {
       <ExternalFirmwarePanel />
     </div>
     <template v-else>
-      <div v-if="loading && !status" class="font-mono text-xs">Loading firmware status…</div>
+      <div v-if="loading && !status" class="font-mono text-xs">
+        {{ t('firmware.widget.loading') }}
+      </div>
       <div
         v-else-if="error"
         class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red px-2 py-1 text-surface"
@@ -459,7 +472,7 @@ onUnmounted(() => {
           :disabled="loading"
           @click="load()"
         >
-          {{ loading ? 'retrying…' : '↻ retry' }}
+          {{ loading ? t('firmware.widget.retrying') : t('firmware.widget.retry') }}
         </button>
       </div>
 
@@ -478,14 +491,14 @@ onUnmounted(() => {
             :aria-expanded="showSteps"
             @click="showSteps = !showSteps"
           >
-            {{ showSteps ? '▾ build → flash guide' : '▸ build → flash guide' }}
+            {{ showSteps ? t('firmware.widget.stepsHide') : t('firmware.widget.stepsShow') }}
           </button>
         </div>
         <ol
           v-if="showSteps"
           class="list-decimal space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper py-2 pl-6 pr-2 text-[11px] leading-snug opacity-80"
         >
-          <li v-for="(s, i) in STEPS" :key="i">{{ s }}</li>
+          <li v-for="(s, i) in tm('firmware.widget.steps')" :key="i">{{ s }}</li>
         </ol>
 
         <div class="space-y-1.5">
@@ -493,9 +506,13 @@ onUnmounted(() => {
           <div
             class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-cyan px-2 py-1"
           >
-            <span class="min-w-0 flex-1 truncate font-bold">Host · Klipper</span>
+            <span class="min-w-0 flex-1 truncate font-bold">{{
+              t('firmware.widget.hostKlipper')
+            }}</span>
             <span class="font-mono text-[11px] opacity-80">{{ status.host.version ?? '—' }}</span>
-            <span class="nb-badge shrink-0 bg-surface">{{ status.host.state ?? 'host' }}</span>
+            <span class="nb-badge shrink-0 bg-surface">{{
+              status.host.state ?? t('firmware.widget.hostFallback')
+            }}</span>
           </div>
         </div>
 
@@ -512,40 +529,42 @@ onUnmounted(() => {
             v-if="health"
             class="nb-badge text-[10px]"
             :class="health.healthy ? 'bg-brand-lime' : 'bg-brand-yellow'"
-            :title="healthTitle || 'host is set up for flashing'"
+            :title="healthTitle || t('firmware.widget.healthOkTitle')"
           >
             {{
               health.healthy
-                ? '✓ setup'
-                : `${healthIssues.length} setup issue${healthIssues.length === 1 ? '' : 's'}`
+                ? t('firmware.widget.healthOk')
+                : t('firmware.widget.healthIssues', { n: healthIssues.length }, healthIssues.length)
             }}
           </span>
         </div>
 
         <div class="space-y-1.5 border-t-2 border-ink pt-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wide">Services</span>
+            <span class="text-xs font-bold uppercase tracking-wide">{{
+              t('firmware.widget.servicesHeading')
+            }}</span>
             <div class="flex gap-1">
               <button
                 class="nb-btn px-2 py-0.5 text-[10px]"
                 :disabled="servicesBusy"
                 @click="doService('start')"
               >
-                start
+                {{ t('firmware.widget.svcStart') }}
               </button>
               <button
                 class="nb-btn px-2 py-0.5 text-[10px]"
                 :disabled="servicesBusy"
                 @click="doService('stop')"
               >
-                stop
+                {{ t('firmware.widget.svcStop') }}
               </button>
               <button
                 class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]"
                 :disabled="servicesBusy"
                 @click="doService('restart')"
               >
-                restart
+                {{ t('firmware.widget.svcRestart') }}
               </button>
             </div>
           </div>
@@ -559,16 +578,18 @@ onUnmounted(() => {
               {{ s.active ? '●' : '○' }} {{ s.name }}
             </span>
             <span v-if="!services.length" class="font-mono text-[10px] opacity-60">
-              no services detected
+              {{ t('firmware.widget.noServices') }}
             </span>
           </div>
         </div>
 
         <div v-if="beacon?.probes.length" class="space-y-1.5 border-t-2 border-ink pt-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wide">Beacon</span>
+            <span class="text-xs font-bold uppercase tracking-wide">{{
+              t('firmware.widget.beaconHeading')
+            }}</span>
             <span v-if="beacon.available_version" class="font-mono text-[10px] opacity-60">
-              available {{ beacon.available_version }}
+              {{ t('firmware.widget.beaconAvailable', { version: beacon.available_version }) }}
             </span>
           </div>
           <div
@@ -583,7 +604,7 @@ onUnmounted(() => {
               :disabled="beaconFlashing"
               @click="requestBeacon(p)"
             >
-              {{ beaconFlashing ? 'flashing…' : 'flash' }}
+              {{ beaconFlashing ? t('firmware.widget.flashing') : t('firmware.widget.flash') }}
             </button>
           </div>
           <LogPane v-if="beaconLog" :log="beaconLog" max-class="max-h-40" />
@@ -592,13 +613,15 @@ onUnmounted(() => {
         <!-- Your registered devices: the operational view (configure them in the manager). -->
         <div class="space-y-1.5 border-t-2 border-ink pt-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wide">Devices</span>
+            <span class="text-xs font-bold uppercase tracking-wide">{{
+              t('firmware.widget.devicesHeading')
+            }}</span>
             <button
               v-if="opBusy"
               class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
               @click="cancelBatch"
             >
-              cancel
+              {{ t('firmware.widget.cancel') }}
             </button>
           </div>
 
@@ -635,15 +658,17 @@ onUnmounted(() => {
             </div>
             <div class="flex items-center justify-between gap-2 font-mono text-[9px] opacity-60">
               <span class="truncate">{{
-                device.profile ? 'profile: ' + device.profile : 'no profile assigned'
+                device.profile
+                  ? t('firmware.widget.profileLabel', { profile: device.profile })
+                  : t('firmware.widget.noProfileAssigned')
               }}</span>
               <span class="flex shrink-0 items-center gap-1">
                 <span
                   v-if="isOutdated(device)"
                   class="nb-badge bg-brand-red text-surface opacity-100"
-                  title="Running firmware differs from the host's Klipper — build &amp; flash to update"
+                  :title="t('firmware.widget.outdatedTitle')"
                 >
-                  ⚠ update
+                  {{ t('firmware.widget.updateBadge') }}
                 </span>
                 <span v-if="deviceFirmware(device)">{{ deviceFirmware(device) }}</span>
               </span>
@@ -654,21 +679,21 @@ onUnmounted(() => {
                 :disabled="opBusy || !device.profile"
                 @click="buildDevice(device)"
               >
-                build
+                {{ t('firmware.widget.build') }}
               </button>
               <button
                 class="nb-btn bg-brand-yellow px-2 py-0.5 text-[10px]"
                 :disabled="opBusy || !device.profile"
                 @click="requestFlash(device)"
               >
-                flash
+                {{ t('firmware.widget.flash') }}
               </button>
               <button
                 class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
                 :disabled="opBusy || !device.profile"
                 @click="requestBuildFlash(device)"
               >
-                build &amp; flash
+                {{ t('firmware.widget.buildFlash') }}
               </button>
               <button
                 v-if="device.method === 'serial' || device.method === 'can'"
@@ -676,7 +701,7 @@ onUnmounted(() => {
                 :disabled="opBusy"
                 @click="rebootDevice(device, 'katapult')"
               >
-                boot
+                {{ t('firmware.widget.boot') }}
               </button>
             </div>
 
@@ -684,17 +709,17 @@ onUnmounted(() => {
           </div>
           <div v-if="!operationalDevices.length" class="space-y-1.5">
             <p class="font-mono text-xs opacity-70">
-              No devices yet — add a board and assign it a profile to build &amp; flash it here.
+              {{ t('firmware.widget.noDevices') }}
             </p>
             <button class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]" @click="mode = 'devices'">
-              + Add your first board →
+              {{ t('firmware.widget.addFirstBoard') }}
             </button>
           </div>
         </div>
       </template>
 
       <p v-else class="font-mono text-xs opacity-70">
-        No firmware status yet — couldn't reach the backend.
+        {{ t('firmware.widget.noStatus') }}
       </p>
     </template>
 

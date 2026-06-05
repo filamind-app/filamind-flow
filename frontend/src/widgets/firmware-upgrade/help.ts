@@ -57,12 +57,3 @@ export const GLOSSARY_KEYS = [
 ] as const
 
 export type GlossaryKey = (typeof GLOSSARY_KEYS)[number]
-
-/** The practical build→flash quick guide, shown once at the top. */
-export const STEPS: string[] = [
-  'Check each MCU’s version against the host — a ⚠ badge flags firmware that’s out of sync.',
-  'Configure a board’s firmware (Configure →) and save it as a profile, so it rebuilds identically.',
-  'Build the firmware for that profile and watch the live log for errors.',
-  'Put the board in its bootloader (Katapult / DFU) if needed, then Flash — Klipper is stopped and restarted around it.',
-  'After flashing, the board re-enumerates and its version updates here — confirm it now matches the host.',
-]

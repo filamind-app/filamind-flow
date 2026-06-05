@@ -5,6 +5,9 @@
  *  state satisfies it, and its button opens the tab where you do that step.
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n({ useScope: 'global' })
 
 type Tab = 'status' | 'configure' | 'devices' | 'external'
 
@@ -27,31 +30,31 @@ interface Step {
 const steps = computed<Step[]>(() => [
   {
     id: 'detect',
-    label: 'Detect your board',
-    why: 'Connect the board (USB / CAN / DFU) and scan so FilaMind can see it.',
+    label: t('firmware.guided.stepDetectLabel'),
+    why: t('firmware.guided.stepDetectWhy'),
     done: props.boardsScanned > 0,
-    action: { label: 'Scan in Devices →', tab: 'devices' },
+    action: { label: t('firmware.guided.stepDetectAction'), tab: 'devices' },
   },
   {
     id: 'configure',
-    label: 'Configure & build a profile',
-    why: "Pick the board's Klipper options (Kconfig) and build the firmware once as a reusable profile.",
+    label: t('firmware.guided.stepConfigureLabel'),
+    why: t('firmware.guided.stepConfigureWhy'),
     done: props.builtProfiles > 0,
-    action: { label: 'Configure →', tab: 'configure' },
+    action: { label: t('firmware.guided.stepConfigureAction'), tab: 'configure' },
   },
   {
     id: 'assign',
-    label: 'Add & assign the device',
-    why: "Register the board and give it the profile + how it's flashed.",
+    label: t('firmware.guided.stepAssignLabel'),
+    why: t('firmware.guided.stepAssignWhy'),
     done: props.operational > 0,
-    action: { label: 'Devices →', tab: 'devices' },
+    action: { label: t('firmware.guided.stepAssignAction'), tab: 'devices' },
   },
   {
     id: 'flash',
-    label: 'Build & flash, then verify',
-    why: "Flash the firmware (behind a confirm), then check the board's reported version matches the host.",
+    label: t('firmware.guided.stepFlashLabel'),
+    why: t('firmware.guided.stepFlashWhy'),
     done: props.operational > 0 && props.outdated === 0,
-    action: { label: 'Status →', tab: 'status' },
+    action: { label: t('firmware.guided.stepFlashAction'), tab: 'status' },
   },
 ])
 
@@ -62,16 +65,15 @@ const currentId = computed(() => steps.value.find((s) => !s.done)?.id ?? null)
 
 <template>
   <div class="space-y-2 rounded-brutal border-2 border-ink bg-paper p-2 text-sm">
-    <div class="text-xs font-bold uppercase tracking-wide">🧭 Guided — flash a new board</div>
+    <div class="text-xs font-bold uppercase tracking-wide">{{ t('firmware.guided.title') }}</div>
     <p
       v-if="allDone"
       class="rounded-brutal border-2 border-ink bg-brand-lime px-2 py-1 text-[11px]"
     >
-      ✓ All set — every registered board is built and in sync with the host.
+      {{ t('firmware.guided.allDone') }}
     </p>
     <p v-else class="text-[11px] opacity-70">
-      Four steps to get a new control board running matching firmware. Each opens the right tab and
-      turns green once it's done.
+      {{ t('firmware.guided.intro') }}
     </p>
 
     <ol class="space-y-1.5">
