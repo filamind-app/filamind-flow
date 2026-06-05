@@ -6,7 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.64.0] - 2026-06-05
+## [0.65.0] - 2026-06-05
+
+### Fixed
+
+- **Firmware flashing now requires explicit confirmation (#111, P0).** Every flash entry point —
+  per-device **flash** / **build & flash**, the **batch** flash actions, and the **Beacon** probe
+  flash — previously wrote firmware **immediately on click**, with no preview or confirm, while the
+  help text promised FilaMind "confirms before irreversible steps". Flashing is destructive (a
+  mid-flash interruption can brick a board), so this was a safety gap. A new `FirmwareFlashConfirm`
+  dialog now stands in front of every flash: it previews the flash plan (`command` + warnings +
+  ready/blocked, via the existing `fetchFlashPlan`) for a single device, lists the affected devices
+  for a batch, and requires an "I understand…" acknowledgement before anything writes. A plan that
+  reports `ready: false` (e.g. a print is running) blocks the action. This brings Firmware in line
+  with Motor Drivers and Input Shaping, which already gate every write.
+
+### Removed
+
+- The orphaned `FirmwareFlashPanel.vue` (imported nowhere) — its plan→confirm→flash pattern is now
+  served by the gated flash path above, removing a second, dead flash UI.
 
 ### Added
 
