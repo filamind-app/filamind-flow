@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.70.0] - 2026-06-05
+## [0.70.1] - 2026-06-05
+
+### Changed
+
+- **Sidebar entries stay on one line, and the Firmware widget is renamed to “Firmware Manager” (#135).**
+  After per-widget icons were added (#121), the Firmware entry's long label wrapped next to the
+  icon, making the button look oversized. Sidebar nav items now use a fixed-width icon slot + a
+  truncating single-line label, so every entry is the same compact height. The widget's display
+  title is now **Firmware Manager** (it builds, flashes, and manages firmware across MCUs — not
+  only "upgrades"); its id/route (`firmware-upgrade`) is unchanged.
 
 ### Added
 

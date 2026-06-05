@@ -37,7 +37,7 @@ run server-side.
 > **Status:** actively developed and **running on real hardware** (a Sovol SV08).
 > Three widgets ship today:
 >
-> - **Firmware Upgrade** — a full Klipper firmware build & flash console: per-board
+> - **Firmware Manager** — a full Klipper firmware build & flash console: per-board
 >   profiles, a live Kconfig editor, Katapult / DFU / SD-card flashing, Beacon probe
 >   updates, host service control, host↔MCU update alerts, and an external-firmware
 >   inspector / diff.
@@ -61,7 +61,7 @@ run server-side.
 
 | Widget | What it does | Status |
 | ------ | ------------ | ------ |
-| **Firmware Upgrade** | Build & flash Klipper firmware on every MCU, organized into tabs (Status / Configure / Devices / External) — per-board Kconfig profiles, a live web editor, Katapult / DFU / SD-card flashing (each behind a flash-plan preview + confirm gate), Beacon probe updates, host service control, host↔MCU update alerts, and an external-firmware inspector / diff. Glossary + illustrated help + a build→flash guide. | ✅ Shipped |
+| **Firmware Manager** | Build & flash Klipper firmware on every MCU, organized into tabs (Status / Configure / Devices / External) — per-board Kconfig profiles, a live web editor, Katapult / DFU / SD-card flashing (each behind a flash-plan preview + confirm gate), Beacon probe updates, host service control, host↔MCU update alerts, and an external-firmware inspector / diff. Glossary + illustrated help + a build→flash guide. | ✅ Shipped |
 | **Input Shaping** | Turn a resonance capture into a ready `[input_shaper]` config — recommended shaper, SVG frequency-response chart, per-axis X/Y, A⇄B compare, a quality grade (A–F) with illustrated diagnostics, live tests, belt & axes-map & vibration tooling, and a guided wizard. **Full Shake&Tune parity.** | ✅ Shipped |
 | **Motor Drivers** | A live inventory of every TMC stepper driver, read straight from the Klipper config — run/hold current, chopper mode, microsteps, StallGuard, temperature, and health, each annotated with authoritative per-model facts from a built-in capability map. Assign each axis its motor from a 200+ motor catalog, get recommended run current + driver registers from the motor's datasheet (a faithful `motor_constants` port), and copy-to-config or apply them live behind a confirm (reversible; refused while printing). A method-aware **🏠 homing** panel adapts to how each axis homes (physical switch / sensorless / Z-probe) — live switch state + test-home for switches, a per-model-correct StallGuard tuner for sensorless. An **⚙ advanced register editor** edits the safe subset of TMC registers live behind a server-side allowlist + clamp (raw current and protection registers blocked). Watch a live monitor (temperature / StallGuard load / faults), sync multi-motor axes, or run it all from a **🧭 Guided wizard**. Glossary + illustrated help. Generic across all printers and TMC models. | ✅ Shipped (P1–P10) |
 
@@ -155,7 +155,7 @@ filamind-flow/
 │  └─ src/
 │     ├─ core/               # MoonrakerClient · widget registry · Pinia store
 │     ├─ components/         # App shell + dashboard (design-system driven)
-│     ├─ widgets/            # Feature widgets register here (Firmware Upgrade + Input Shaping + Motor Drivers ship today)
+│     ├─ widgets/            # Feature widgets register here (Firmware Manager + Input Shaping + Motor Drivers ship today)
 │     └─ assets/styles/      # Neo-Brutalist design tokens
 ├─ backend/                  # FastAPI service
 │  └─ app/                   # config · api/routes · services · models
@@ -211,7 +211,7 @@ templates live in [`deploy/`](deploy/).
 
 ## Roadmap
 
-- [x] **Firmware Upgrade** widget — build & flash Klipper firmware: per-board
+- [x] **Firmware Manager** widget — build & flash Klipper firmware: per-board
       profiles, a live Kconfig editor (with downloadable build artifacts),
       Katapult / DFU / SD-card flashing, Beacon probe updates, host service
       control, and host↔MCU update alerts
