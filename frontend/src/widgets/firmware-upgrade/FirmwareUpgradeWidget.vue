@@ -5,6 +5,7 @@ import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 
 import ExternalFirmwarePanel from './ExternalFirmwarePanel.vue'
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
+import FirmwareGuided from './FirmwareGuided.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
 import FirmwareFlashConfirm from './FirmwareFlashConfirm.vue'
 import HelpNote from './HelpNote.vue'
@@ -39,9 +40,10 @@ import type {
   ServiceInfo,
 } from './types'
 
-type FwMode = 'status' | 'configure' | 'devices' | 'external'
+type FwMode = 'guided' | 'status' | 'configure' | 'devices' | 'external'
 const mode = ref<FwMode>('status')
 const FW_TABS: { id: FwMode; label: string }[] = [
+  { id: 'guided', label: '🧭 Guided' },
   { id: 'status', label: '🩺 Status' },
   { id: 'configure', label: '🔧 Configure' },
   { id: 'devices', label: '🖥 Devices' },
@@ -75,6 +77,9 @@ const liveMode = computed(() => {
 
 /** Devices ready to operate here: only those added AND given a profile. */
 const operationalDevices = computed(() => devices.value.filter((d) => d.profile))
+/** Live counts that drive the Guided checklist (#118). */
+const builtProfileCount = computed(() => profiles.value.filter((p) => p.built).length)
+const outdatedCount = computed(() => operationalDevices.value.filter(isOutdated).length)
 
 function boardModeClass(mode: string): string {
   if (mode === 'service') return 'bg-brand-lime'
@@ -420,7 +425,10 @@ async function doService(action: string): Promise<void> {
 let timer: ReturnType<typeof setInterval> | null = null
 
 onMounted(() => {
-  void load()
+  // First-run: if no board is set up yet, land on the Guided walkthrough (#118).
+  void load().then(() => {
+    if (operationalDevices.value.length === 0) mode.value = 'guided'
+  })
   // Keep live status fresh while the widget is open (silent refreshes).
   timer = setInterval(() => void load(true), 6000)
 })
@@ -436,7 +444,17 @@ onUnmounted(() => {
     <!-- House navigation: one persistent tab strip (#117) — replaces the footer-button nav. -->
     <WidgetTabs v-model="mode" :tabs="FW_TABS" />
 
-    <div v-if="mode === 'configure'" class="space-y-2">
+    <div v-if="mode === 'guided'" class="space-y-2">
+      <HelpNote topic="guided" />
+      <FirmwareGuided
+        :boards-scanned="boards.length"
+        :built-profiles="builtProfileCount"
+        :operational="operationalDevices.length"
+        :outdated="outdatedCount"
+        @go="mode = $event"
+      />
+    </div>
+    <div v-else-if="mode === 'configure'" class="space-y-2">
       <HelpNote topic="configure" />
       <FirmwareConfigEditor @close="mode = 'status'" />
     </div>
