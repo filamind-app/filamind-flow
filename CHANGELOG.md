@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.85.0] - 2026-06-06
+
+### Changed
+
+- **Arabic RTL layout polish.** With Arabic selected (`<html dir=rtl>`), the Neo-Brutalist UI now lays
+  out correctly right-to-left:
+  - **Logical-property sweep** — migrated the directional Tailwind utilities to their logical
+    equivalents across the components (`ml-/mr-`→`ms-/me-`, `pl-/pr-`→`ps-/pe-`,
+    `text-left/right`→`text-start/end`, the sidebar's `border-r`→`border-e` and the mobile drawer's
+    `left-0`→`start-0`), so margins, padding, text alignment, and the sidebar/drawer flip with `dir`.
+  - **Arabic font stack** — IBM Plex Sans Arabic / Noto Sans Arabic, applied via `:lang(ar)` to the
+    prose + display faces (data stays in JetBrains Mono); loaded with a system fallback like the Latin
+    faces. (Self-hosting for fully-offline hosts remains the existing roadmap item.)
+  - **Brutalist tweaks that don't translate** — under `:lang(ar)`, `uppercase` and `letter-spacing`
+    are dropped (Arabic has no case and tracking breaks its cursive joining); the bold weight keeps the
+    "shout". The hard offset shadow stays put (a fixed light source, not a reading-direction cue) while
+    the button press-translate is mirrored.
+
+  Bidi-isolation of inline measurements and self-hosted Arabic webfonts are minor follow-ups.
+
 ## [0.84.0] - 2026-06-06
 
 ### Added

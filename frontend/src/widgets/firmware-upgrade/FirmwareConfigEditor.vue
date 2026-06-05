@@ -394,7 +394,7 @@ onMounted(async () => {
               {{ item.node.prompt }}
               <code
                 v-if="showRaw && !item.node.name.startsWith('__')"
-                class="ml-1 text-[9px] opacity-50"
+                class="ms-1 text-[9px] opacity-50"
                 >{{ item.node.name }}</code
               >
             </span>
@@ -435,7 +435,7 @@ onMounted(async () => {
             <span v-if="showRaw && item.node.dep_str">{{
               t('firmware.configEditor.needs', { dep: item.node.dep_str })
             }}</span>
-            <span v-if="showHelp && item.node.default" class="ml-2">{{
+            <span v-if="showHelp && item.node.default" class="ms-2">{{
               t('firmware.configEditor.default', { value: item.node.default })
             }}</span>
           </div>

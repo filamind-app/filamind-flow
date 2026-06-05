@@ -98,7 +98,7 @@ const currentId = computed(() => steps.value.find((s) => !s.done)?.id ?? null)
             {{ s.action.label }}
           </button>
         </div>
-        <p class="pl-7 text-[10px] leading-snug opacity-70">{{ s.why }}</p>
+        <p class="ps-7 text-[10px] leading-snug opacity-70">{{ s.why }}</p>
       </li>
     </ol>
   </div>

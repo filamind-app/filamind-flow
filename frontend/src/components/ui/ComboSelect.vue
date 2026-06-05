@@ -95,7 +95,7 @@ watch(query, () => (activeIndex.value = 0))
   <div ref="root" class="relative font-mono text-[10px]" @focusout="onFocusOut">
     <button
       type="button"
-      class="flex w-full items-center justify-between gap-1 rounded-brutal border-2 border-ink bg-surface px-1.5 py-1 text-left"
+      class="flex w-full items-center justify-between gap-1 rounded-brutal border-2 border-ink bg-surface px-1.5 py-1 text-start"
       :disabled="disabled"
       role="combobox"
       aria-haspopup="listbox"
@@ -125,7 +125,7 @@ watch(query, () => (activeIndex.value = 0))
       <button
         v-if="clearable && modelValue"
         type="button"
-        class="block w-full px-1 py-0.5 text-left text-brand-red hover:underline"
+        class="block w-full px-1 py-0.5 text-start text-brand-red hover:underline"
         @click="select(null)"
       >
         ✕ clear
@@ -137,7 +137,7 @@ watch(query, () => (activeIndex.value = 0))
             type="button"
             role="option"
             :aria-selected="o.value === modelValue"
-            class="w-full rounded px-1 py-0.5 text-left hover:bg-surface"
+            class="w-full rounded px-1 py-0.5 text-start hover:bg-surface"
             :class="{ 'bg-surface': i === activeIndex }"
             @click="select(o.value)"
             @mousemove="activeIndex = i"
