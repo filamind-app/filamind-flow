@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.82.0] - 2026-06-06
+
+### Changed
+
+- **i18n Phase 2 (Firmware Manager — help layer).** Externalized the Firmware Manager widget's help
+  copy (10 `HelpNote` topics + a 6-term glossary) into the `vue-i18n` catalog (`firmware.help.*`;
+  **652 `en` keys**), mirroring the shipped Input Shaping / Motor Drivers pattern: `help.ts` is now
+  structural (`HELP_TOPICS` / `HELP_ILLO` / `GLOSSARY_KEYS`; the `STEPS` build→flash guide stays for
+  the templates slice), and `HelpNote.vue` renders through `t()`. `compare.ts` needed no change (it
+  holds only status codes / data, no user-facing prose). **No visible change.** New `help.spec.ts`
+  mount test guards the rendering. The Firmware templates (the orchestrator + panels) follow next.
+
 ## [0.81.0] - 2026-06-05
 
 ### Changed
