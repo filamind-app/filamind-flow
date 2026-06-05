@@ -6,7 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.69.1] - 2026-06-05
+## [0.70.0] - 2026-06-05
+
+### Added
+
+- **App shell — deep-linking, mobile navigation, and wayfinding (#121).**
+  - The current view is now synced to `location.hash` (e.g. `#motor-drivers`), so a widget page
+    can be **bookmarked and survives a reload** — back/forward work too. (The empty Dashboard
+    clears the hash cleanly.)
+  - On narrow screens the sidebar is now an **off-canvas drawer** with a ☰ toggle in the header
+    and a tap-to-dismiss backdrop — previously there was *no* navigation at all below the `md`
+    breakpoint (a portrait tablet had no way to switch widgets).
+  - Each widget carries its own **sidebar icon** (`WidgetDefinition.icon`: 🔧 / 📈 / ⚙) instead of
+    the same generic glyph for all.
+
+### Removed
+
+- Dead `spanClass` grid logic in `WidgetFrame` (the shell always renders a single column, so it
+  never applied).
 
 ### Added
 
