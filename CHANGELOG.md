@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.80.0] - 2026-06-05
+
+### Changed
+
+- **i18n Phase 2 begins (Motor Drivers — help layer + format helpers).** Externalized the Motor
+  Drivers widget's help copy (17 `HelpNote` topics + a 9-term glossary) and the `format.ts` display
+  helpers (current / chopper / health / temperature / homing-method / StallGuard-range hints / motor
+  spec line / fault flags / recommendation labels) into the `vue-i18n` catalog
+  (`motorDrivers.{help,format}.*`; **510 `en` keys**), mirroring the shipped Input Shaping pattern:
+  `help.ts` is now structural (`HELP_TOPICS` / `HELP_ILLO` / `GLOSSARY_KEYS`; the `STEPS` const stays
+  for now), `HelpNote.vue` renders through `t()`, and `format.ts` uses the global translator (option
+  A — no signature changes, so `format.spec.ts`'s 44 assertions pass unchanged). **No visible
+  change.** New `help.spec.ts` mount test guards the rendering. The Motor Drivers templates follow
+  next.
+
 ## [0.79.0] - 2026-06-05
 
 ### Changed
