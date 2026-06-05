@@ -243,7 +243,7 @@ onMounted(async () => {
         class="flex items-center gap-1 text-[11px]"
         title="Show each option's help text inline"
       >
-        <input v-model="showHelp" type="checkbox" /> help
+        <input v-model="showHelp" type="checkbox" /> option docs
       </label>
       <label class="flex items-center gap-1 text-[11px]" title="Show raw Kconfig symbol names">
         <input v-model="showRaw" type="checkbox" /> raw
@@ -259,7 +259,7 @@ onMounted(async () => {
         :title="dirtyCount ? 'saves pending edits, then builds' : 'build firmware'"
         @click="build"
       >
-        {{ building ? 'building…' : 'build' }}
+        {{ building ? 'building…' : 'build profile' }}
       </button>
       <button
         v-if="selectedBuilt"

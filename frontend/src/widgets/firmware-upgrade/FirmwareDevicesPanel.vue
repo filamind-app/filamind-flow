@@ -182,8 +182,8 @@ onUnmounted(() => {
       <button class="nb-btn px-2 py-0.5 text-xs" @click="$emit('close')">← back</button>
     </div>
     <p class="font-mono text-[10px] opacity-60">
-      Add boards, assign a profile, and configure how each is flashed. Build / flash lives on the
-      main screen.
+      Add boards, assign a profile, and configure how each is flashed. You build &amp; flash each
+      device from the Status screen (Configure builds the shared profile).
     </p>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>

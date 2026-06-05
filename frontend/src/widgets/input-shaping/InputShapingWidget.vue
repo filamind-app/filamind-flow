@@ -34,7 +34,7 @@ const TABS: { id: Mode; label: string }[] = [
   { id: 'guided', label: '🧭 Guided' },
   { id: 'analyze', label: '📈 Analyze' },
   { id: 'live', label: '🔴 Live tools' },
-  { id: 'audit', label: '🕘 Audit' },
+  { id: 'audit', label: '🕘 History' },
 ]
 const analysis = ref<ShaperAnalysis | null>(null)
 const error = ref<string | null>(null)
@@ -253,7 +253,7 @@ async function saveConfig(): Promise<void> {
           ⚙ advanced
         </button>
         <button class="nb-btn px-2 py-1 text-[10px]" @click="showCompare = !showCompare">
-          ⇄ compare
+          ⇄ compare CSVs
         </button>
       </div>
 
