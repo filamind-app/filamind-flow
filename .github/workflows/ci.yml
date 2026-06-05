@@ -24,6 +24,9 @@ jobs:
       - run: npm run format:check
       - run: npm run type-check
       - run: npm test
+      # Every non-en locale must carry exactly the en key set (no missing / no extra). Trivial
+      # while only en exists; becomes a real gate as translations land.
+      - run: npm run i18n:keydiff
       - run: npm run build
       # The printer host serves the pre-built bundle straight from git (no Node on the
       # Pi), so a stale committed dist silently ships an old UI. Fail if a fresh build

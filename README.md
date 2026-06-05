@@ -121,7 +121,7 @@ which needs mDNS the client may not have). See [`scripts/install.sh`](scripts/in
 
 | Layer    | Stack                                              |
 | -------- | -------------------------------------------------- |
-| Frontend | Vue 3, Vite, TypeScript, Tailwind CSS v3, Pinia    |
+| Frontend | Vue 3, Vite, TypeScript, Tailwind CSS v3, Pinia, vue-i18n |
 | Backend  | FastAPI, Uvicorn, httpx, Pydantic v2               |
 | Tooling  | ESLint (flat) + Prettier, Vitest · Ruff + Mypy + Pytest |
 
@@ -153,9 +153,10 @@ python -m app        # http://localhost:8000  (docs at /docs)
 filamind-flow/
 ├─ frontend/                 # Vue 3 + Vite + TS + Tailwind SPA
 │  └─ src/
-│     ├─ core/               # MoonrakerClient · widget registry · Pinia store
+│     ├─ core/               # MoonrakerClient · widget registry · Pinia store · i18n
 │     ├─ components/         # App shell + dashboard (design-system driven)
 │     ├─ widgets/            # Feature widgets register here (Firmware Manager + Input Shaping + Motor Drivers ship today)
+│     ├─ locales/            # Per-language message catalogs (en bundled; others lazy)
 │     └─ assets/styles/      # Neo-Brutalist design tokens
 ├─ backend/                  # FastAPI service
 │  └─ app/                   # config · api/routes · services · models
@@ -192,6 +193,20 @@ const printer = usePrinterStore()
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 for the design rationale.
+
+## Internationalization
+
+The UI is being made multilingual on an **offline-first, extensible** foundation (`vue-i18n` v11).
+English is bundled eagerly; every other locale is a lazy chunk under `src/locales/<code>/` — so
+**adding a language is dropping in a folder**, no component edits. `en` is the source of truth for
+keys (type-checked, so a typo fails the build), and CI enforces that every locale carries exactly
+the same key set (`npm run i18n:keydiff`); `npm run i18n:pseudo` previews text-expansion / RTL
+overflow. Arabic is wired for RTL with Western (`latn`) digits — engineers cross-reference G-code
+and datasheets in `1.7 A` form.
+
+> **Status:** Phase 0 (scaffolding) is in place — no visible change yet; the existing English copy is
+> externalized phase-by-phase (see [ROADMAP.md](ROADMAP.md)). Target locales:
+> **en · ar · de · zh-Hans · fr · es · ru**.
 
 ## Documentation
 
@@ -230,6 +245,9 @@ templates live in [`deploy/`](deploy/).
       an advanced register editor (server-side allowlist + clamp; raw current/protection blocked),
       a live monitor, a guided wizard, and multi-motor synchronization; generic across
       all Klipper printers and TMC models
+- [ ] **Internationalization (i18n)** — multilingual UI on an offline-first, extensible
+      `vue-i18n` foundation (en · ar · de · zh-Hans · fr · es · ru), RTL + Arabic.
+      _Phase 0 (scaffolding) ✅ — externalizing copy phase-by-phase_
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 

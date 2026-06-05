@@ -25,6 +25,7 @@ npm run lint
 npm run format:check
 npm run type-check
 npm test
+npm run i18n:keydiff
 npm run build
 
 # Backend
@@ -73,6 +74,24 @@ Build these in from the start (don't bolt them on later):
 
 The **Input Shaping** widget (`HelpNote` / `HelpIllo` / `help.ts` + Guided) is the
 reference. Apply this to new widgets up front, and retrofit older ones over time.
+
+## Internationalization (strings & locales)
+
+User-facing copy is being moved into `vue-i18n` catalogs under `src/locales/` (offline-first,
+extensible; see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). While the migration is in progress
+(phase-by-phase, see [ROADMAP.md](ROADMAP.md)), follow these rules so nothing regresses:
+
+- **New user-facing text goes through `t()`**, not a hardcoded literal. Add the key to the matching
+  `en` namespace JSON (`common` / `shell` / `<widget>`) — `en` is the source of truth.
+- **Keys are type-checked** — `t('…')` autocompletes from the `en` catalog and a wrong key fails
+  `type-check`. Use hierarchical, stable keys (e.g. `motorDrivers.format.current`).
+- **Keep units and tokens Latin** — SI unit symbols (Hz, A, °C, …) and brand / protocol / register /
+  G-code names (Klipper, StallGuard, `run_current`, `G28`, …) are **not** translated; only the
+  surrounding prose is. Prefer `Intl`-formatted numbers (vue-i18n `numberFormats`) over `.toFixed()`.
+- **Adding a language = dropping a folder** — create `src/locales/<code>/*.json` mirroring `en`,
+  add the locale to `LOCALE_META` in `core/i18n.ts` (label, `dir`, optional `numberingSystem`), and
+  `npm run i18n:keydiff` must pass (it enforces an exact key-set match with `en`).
+- **Eyeball expansion / RTL** with `npm run i18n:pseudo` before shipping layout-sensitive copy.
 
 ## Keep the docs in step with features
 

@@ -43,9 +43,11 @@ src/
 ├─ core/
 │  ├─ moonraker/   # transport: reconnecting JSON-RPC WS client + types + config
 │  ├─ registry/    # extensibility: the widget registry
-│  └─ store/       # state: Pinia mirror of Moonraker status
+│  ├─ store/       # state: Pinia mirror of Moonraker status
+│  └─ i18n.ts      # i18n: catalog loading, locale detection, switching
 ├─ components/     # presentation: app shell + dashboard (design-system driven)
 ├─ widgets/        # features: self-registering widgets (Firmware Upgrade · Input Shaping · Motor Drivers)
+├─ locales/        # i18n message catalogs, one folder per language (en bundled; others lazy)
 └─ assets/styles/  # Neo-Brutalist design tokens + component classes
 ```
 
@@ -119,6 +121,39 @@ few component classes (`frontend/src/assets/styles/main.css`):
 Fonts currently load from Google Fonts with system fallbacks, so an offline host
 still renders (in fallback faces). For a fully offline install, self-host the two
 fonts and replace the `<link>` in `index.html` with local `@font-face` rules.
+
+## Internationalization (i18n)
+
+`vue-i18n` v11 (Composition API), set up in `src/core/i18n.ts` and registered in `main.ts`. The
+design mirrors the rest of the app: offline-first, extensible, and type-safe.
+
+- **Offline-first.** `en` is bundled eagerly so first paint never waits on a network fetch (a
+  printer host is usually offline). Every other locale is a dynamic `import()` chunk loaded on
+  switch — combined with each widget's `defineAsyncComponent` chunk, switching to Arabic and
+  opening one widget downloads only that locale's catalog for that widget.
+- **Namespaced catalogs** under `src/locales/<code>/` mirror the code-split: `common`, `shell`, and
+  one per widget (`firmware`, `input-shaping`, `motor-drivers`). Each JSON file carries a single
+  top-level namespace key (e.g. `shell`) that is merged into the locale's messages.
+- **Drop-in extensibility.** `availableLocales` is derived from which catalog folders exist, so a
+  new language is *dropping in `src/locales/<code>/`* — no component or registry edits. The switcher
+  (`LanguageSelect`, reusing `ComboSelect`) appears once more than one locale ships.
+- **Type-safe keys.** `en` is the single source of truth; `src/types/i18n.d.ts` augments vue-i18n's
+  `DefineLocaleMessage` from the `en` catalog, so `t('…')` is autocompleted and a wrong key fails
+  `type-check`. Other locales are checked **structurally** against `en` by `scripts/i18n-keydiff.mjs`
+  (a CI gate) — keys are often built dynamically (e.g. `t('inputShaping.grade.verdict.' + letter)`),
+  which defeats eslint's `no-unused-keys`.
+- **Numbers, dates, direction.** Per-locale `numberFormats` / `datetimeFormats` route values through
+  `Intl` (locale separators / digit system) instead of `.toFixed()` string-gluing. Arabic pins
+  Western digits (`numberingSystem: 'latn'`) — engineers cross-reference G-code and datasheets in
+  `1.7 A` form. `<html lang>` / `dir` are set reactively from the active locale's metadata, so RTL
+  flips with the language.
+- **Tooling.** `npm run i18n:keydiff` (key-set parity, in CI) and `npm run i18n:pseudo`
+  (pseudo-localization — accents + ~40% padding + brackets — to surface text-expansion / RTL overflow
+  and any un-externalized strings before a translator is involved).
+
+SI **unit symbols** (Hz, A, °C, Ω, Nm, mH, mm/s²) and brand / protocol / register / G-code tokens
+stay Latin in every locale; only the surrounding plain-language copy is translated. Externalizing
+the existing English copy proceeds phase-by-phase (see [ROADMAP.md](../ROADMAP.md)).
 
 ## Conventions
 

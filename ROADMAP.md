@@ -111,6 +111,23 @@ so recommendations work even without the `klipper_tmc_autotune` host extra insta
 | ✅ **9 — Homing coverage** | Classify each axis's homing method from `[stepper_*].endstop_pin` (physical switch / sensorless / Z-probe / virtual / shared) via Klipper's own rule, and render a method-aware **🏠 homing** panel — live switch state + plain test-home for physical, per-model StallGuard polarity (signed `sgt` vs unsigned `sgthrs` / `sg4_thrs`) for sensorless, a probe pointer for Z. The sensorless tuner now appears only where it applies. (`GET /api/drivers/endstops`) | medium (motion) |
 | ✅ **10 — Advanced register editing** | Safe, model-aware editing of more TMC registers behind a server-side per-field allowlist + clamp (StallGuard polarity, CoolStep, chopper timing, thresholds), with raw current-scaling and protection-defeat fields blocked. (#102) **P10a (v0.62.0):** the `field_policy` safety foundation — mask-derived clamp + per-model signedness + blocklist + per-model `current_cap` (2240 from `rref`); sensorless write server-clamped; writes refused while printing/paused/error. **P10b (v0.63.0):** the **⚙ tune registers** editor — `POST /api/drivers/field` (gated, server-clamped, velocity→TSTEP) + `GET /api/drivers/field-policy/{model}`, an editable grid driven by the server policy (per-field control + range + confirm), `INIT_TMC` reset, read-only registers beneath. **P10c (v0.64.0):** CoolStep single-toggle (vetted set, `POST /api/drivers/coolstep`), per-model StallGuard polarity hints, `toff`/`tbl` pairing note, illustrated help. | high (writes registers) |
 
+## Internationalization (i18n)
+
+Make the UI multilingual on an **offline-first, extensible** `vue-i18n` foundation — adding a
+language is dropping a catalog folder, no component edits. Target locales: **en · ar · de ·
+zh-Hans · fr · es · ru** (Arabic is RTL with Western `latn` digits). Externalizing the existing
+English copy proceeds phase-by-phase; see
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#internationalization-i18n).
+
+| Phase | Scope | Status |
+| ----- | ----- | ------ |
+| **0 — Scaffolding** | `vue-i18n` v11 + Vite plugin; `core/i18n.ts` (eager `en`, lazy locales, detection, `localStorage` persistence, reactive `<html lang/dir>`); namespaced `en` catalogs; type-safe keys; `LanguageSelect` (hidden until a 2nd locale ships); CI key-diff + pseudo-localization tooling. No user-visible change. | ✅ v0.74.0 |
+| **1 — Shell + Input Shaping** | Externalize the shell + the Input Shaping widget end-to-end as the reference pattern: help text, the prose-returning `.ts` helpers refactored to take `t` (tests assert keys), templates, ICU plurals, `numberFormats`. | 📋 |
+| **2 — Remaining widgets** | Apply the pattern to Firmware Manager + Motor Drivers; tab / action label arrays become computed so they re-translate on switch. | 📋 |
+| **3 — RTL + Arabic** | `dir` / `lang` per locale, logical-property sweep, `[dir=rtl]` brutalist tweaks, bidi-isolated measurements, self-hosted Arabic webfonts, Arabic plural rules; first real `ar` catalog (human-translated). | 📋 |
+| **4 — Backend messages** | A `{ code, params, message }` contract for backend user-facing strings; the frontend owns the translated copy (English `message` kept as a fallback). | 📋 |
+| **5 — More locales** | Add de / zh-Hans / fr / es / ru by dropping in catalog folders (+ CJK / Cyrillic font subsets). Proves a new locale touches no component. | 📋 |
+
 ## Platform
 
 - 📋 Smart "Back to UI" (auto-detect Mainsail / Fluidd, host-preserving link)
