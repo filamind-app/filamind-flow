@@ -10,6 +10,8 @@ import LiveMonitor from './LiveMonitor.vue'
 import MotorPicker from './MotorPicker.vue'
 import MotorSyncPanel from './MotorSyncPanel.vue'
 import RecommendPanel from './RecommendPanel.vue'
+import WidgetTabs from '@/components/ui/WidgetTabs.vue'
+
 import RegisterEditor from './RegisterEditor.vue'
 import {
   axisHeading,
@@ -35,6 +37,10 @@ const loading = ref(true)
 const showSteps = ref(false)
 const motorCatalog = ref<MotorSpec[]>([])
 const mode = ref<'dashboard' | 'guided'>('dashboard')
+const MODE_TABS: { id: 'dashboard' | 'guided'; label: string }[] = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'guided', label: '🧭 Guided' },
+]
 
 const drivers = computed(() => status.value?.drivers ?? [])
 const reachable = computed(() => status.value?.reachable ?? false)
@@ -121,17 +127,7 @@ onUnmounted(() => {
     </ol>
 
     <!-- Dashboard / Guided mode strip (only once drivers have loaded) -->
-    <div v-if="reachable && drivers.length" class="flex gap-1">
-      <button
-        v-for="m in ['dashboard', 'guided'] as const"
-        :key="m"
-        class="nb-btn px-2 py-0.5 text-[11px]"
-        :class="mode === m ? 'bg-brand-cyan' : 'bg-surface'"
-        @click="mode = m"
-      >
-        {{ m === 'dashboard' ? 'Dashboard' : '🧭 Guided' }}
-      </button>
-    </div>
+    <WidgetTabs v-if="reachable && drivers.length" v-model="mode" :tabs="MODE_TABS" />
 
     <!-- States -->
     <div v-if="loading && !status" class="font-mono text-xs">Loading motor drivers…</div>

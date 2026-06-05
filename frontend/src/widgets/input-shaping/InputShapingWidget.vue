@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 
+import WidgetTabs from '@/components/ui/WidgetTabs.vue'
+
 import CsvSourceChooser from './CsvSourceChooser.vue'
 import DiagnosticIllo from './DiagnosticIllo.vue'
 import GuidedTune from './GuidedTune.vue'
@@ -34,10 +36,6 @@ const TABS: { id: Mode; label: string }[] = [
   { id: 'live', label: '🔴 Live tools' },
   { id: 'audit', label: '🕘 Audit' },
 ]
-function tabClass(m: Mode): string {
-  return mode.value === m ? 'bg-brand-cyan ring-2 ring-ink' : ''
-}
-
 const analysis = ref<ShaperAnalysis | null>(null)
 const error = ref<string | null>(null)
 const busy = ref(false)
@@ -236,17 +234,7 @@ async function saveConfig(): Promise<void> {
     </p>
 
     <!-- Mode strip: one view at a time (Guided is the default landing view). -->
-    <div class="flex flex-wrap gap-1">
-      <button
-        v-for="t in TABS"
-        :key="t.id"
-        class="nb-btn px-3 py-1 text-xs"
-        :class="tabClass(t.id)"
-        @click="mode = t.id"
-      >
-        {{ t.label }}
-      </button>
-    </div>
+    <WidgetTabs v-model="mode" :tabs="TABS" />
 
     <!-- GUIDED — kept mounted (v-show) so an in-progress wizard survives a tab switch. -->
     <div v-show="mode === 'guided'" class="space-y-2">

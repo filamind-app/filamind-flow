@@ -6,7 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.66.0] - 2026-06-05
+## [0.67.0] - 2026-06-05
+
+### Changed
+
+- **Navigation converged on one shared tab strip (#112).** A new generic `components/ui/
+  WidgetTabs.vue` (the persistent top tab strip, active = `bg-brand-cyan ring-2 ring-ink`,
+  type-safe over the tab-id union, ARIA `tablist`/`tab`) replaces the bespoke per-widget strips.
+  Input Shaping and Motor Drivers now use it, so navigation looks and behaves identically across
+  widgets. (Firmware Upgrade adopts it as part of its IA reorg, #117.)
 
 ### Added
 
