@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
+import LogPane from '@/components/ui/LogPane.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
+import { describeError } from '@/core/describeError'
 
 import ExternalFirmwarePanel from './ExternalFirmwarePanel.vue'
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
@@ -96,15 +98,6 @@ const TOOLS: { key: keyof FirmwareTools; label: string }[] = [
   { key: 'can_utils', label: 'can-utils' },
 ]
 
-/** Maps a raw fetch failure to a clear, actionable message. */
-function describeError(e: unknown): string {
-  const m = e instanceof Error ? e.message : String(e)
-  if (/failed to fetch|networkerror|load failed|fetch/i.test(m)) {
-    return 'Cannot reach the FilaMind backend — check that the filamind-flow service is running and reachable.'
-  }
-  return m
-}
-
 async function load(silent = false): Promise<void> {
   if (!silent) loading.value = true
   try {
@@ -159,15 +152,6 @@ const batchTaskId = ref<string | null>(null)
 const pendingFlash = ref<FlashIntent | null>(null)
 let pendingExec: (() => void) | null = null
 let pollTimer: ReturnType<typeof setTimeout> | null = null
-
-const opLines = computed(() => opLog.value.split('\n'))
-
-function opLineClass(line: string): string {
-  if (line.startsWith('!!') || /fail/i.test(line)) return 'text-brand-red'
-  if (line.includes('=====') || /\bOK\b|complete|successful/i.test(line)) return 'text-brand-lime'
-  if (line.startsWith('>>>')) return 'text-brand-cyan'
-  return 'text-surface opacity-80'
-}
 
 async function pollTask(): Promise<void> {
   if (!batchTaskId.value) return
@@ -602,11 +586,7 @@ onUnmounted(() => {
               {{ beaconFlashing ? 'flashing…' : 'flash' }}
             </button>
           </div>
-          <pre
-            v-if="beaconLog"
-            class="max-h-40 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight text-surface"
-            >{{ beaconLog }}</pre
-          >
+          <LogPane v-if="beaconLog" :log="beaconLog" max-class="max-h-40" />
         </div>
 
         <!-- Your registered devices: the operational view (configure them in the manager). -->
@@ -635,18 +615,7 @@ onUnmounted(() => {
             </button>
           </div>
 
-          <div
-            v-if="opLog && activeDeviceId === null"
-            class="max-h-48 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight"
-          >
-            <div
-              v-for="(line, i) in opLines"
-              :key="i"
-              :class="['whitespace-pre-wrap break-all', opLineClass(line)]"
-            >
-              {{ line }}
-            </div>
-          </div>
+          <LogPane v-if="opLog && activeDeviceId === null" :log="opLog" />
 
           <div
             v-for="device in operationalDevices"
@@ -711,18 +680,7 @@ onUnmounted(() => {
               </button>
             </div>
 
-            <div
-              v-if="opLog && activeDeviceId === device.id"
-              class="max-h-48 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight"
-            >
-              <div
-                v-for="(line, i) in opLines"
-                :key="i"
-                :class="['whitespace-pre-wrap break-all', opLineClass(line)]"
-              >
-                {{ line }}
-              </div>
-            </div>
+            <LogPane v-if="opLog && activeDeviceId === device.id" :log="opLog" />
           </div>
           <div v-if="!operationalDevices.length" class="space-y-1.5">
             <p class="font-mono text-xs opacity-70">

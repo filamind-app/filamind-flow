@@ -11,6 +11,7 @@ import MotorPicker from './MotorPicker.vue'
 import MotorSyncPanel from './MotorSyncPanel.vue'
 import RecommendPanel from './RecommendPanel.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
+import { describeError } from '@/core/describeError'
 
 import RegisterEditor from './RegisterEditor.vue'
 import {
@@ -46,16 +47,6 @@ const openDetails = ref<Record<string, boolean>>({})
 
 const drivers = computed(() => status.value?.drivers ?? [])
 const reachable = computed(() => status.value?.reachable ?? false)
-
-/** Maps a raw fetch failure to a clear, actionable message (same resilience as the
- *  other widgets — never blank, never a bare "Failed to fetch"). */
-function describeError(e: unknown): string {
-  const m = e instanceof Error ? e.message : String(e)
-  if (/failed to fetch|networkerror|load failed|fetch/i.test(m)) {
-    return 'Cannot reach the FilaMind backend — check that the filamind-flow service is running and reachable.'
-  }
-  return m
-}
 
 function healthTitle(d: TmcDriver): string {
   return driverHealth(d).tone === 'idle'
