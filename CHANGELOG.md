@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.68.0] - 2026-06-05
+
+### Changed
+
+- **Motor Drivers — lower card density + earlier wizard access (#119).** Each driver card now
+  keeps only the live-tuning essentials inline (chopper mode, microsteps, temperature, StallGuard);
+  the secondary specs (sense resistor, interpolation, interface, current cap, capability chips)
+  collapse behind a per-card **▸ details** toggle. The Dashboard / 🧭 Guided tab strip now shows
+  as soon as the printer is reachable (not only after drivers load), so the wizard is discoverable
+  from the start. The advanced register editor's toggle uses a distinct **🛠** glyph so it no longer
+  collides with the recommend panel's ⚙.
+
 ## [0.67.0] - 2026-06-05
 
 ### Changed
