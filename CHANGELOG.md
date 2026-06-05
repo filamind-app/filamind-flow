@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.68.1] - 2026-06-05
+
+### Changed
+
+- **Quick-win copy/naming fixes (#122).** Resolved several small inconsistencies from the UX
+  review: Input Shaping's fourth view is now consistently **🕘 History** (tab label aligned with
+  the intro + help topic); the Analyze tab's compare button is **⇄ compare CSVs** to distinguish
+  it from the Live "compare belts" tool; the Firmware Configure screen's `help` checkbox is now
+  **option docs** (distinct from the standard ℹ help layer) and its build button is **build
+  profile** (vs the per-device build on Status — and the Devices caption no longer contradicts
+  it); the Firmware empty state is now an actionable **"+ Add your first board →"** button.
+
 ## [0.68.0] - 2026-06-05
 
 ### Changed

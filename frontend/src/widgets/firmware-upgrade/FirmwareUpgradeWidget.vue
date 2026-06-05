@@ -686,9 +686,14 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <p v-if="!operationalDevices.length" class="font-mono text-xs opacity-70">
-            No devices yet — add a board and assign it a profile in the Devices manager.
-          </p>
+          <div v-if="!operationalDevices.length" class="space-y-1.5">
+            <p class="font-mono text-xs opacity-70">
+              No devices yet — add a board and assign it a profile to build &amp; flash it here.
+            </p>
+            <button class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]" @click="mode = 'devices'">
+              + Add your first board →
+            </button>
+          </div>
         </div>
 
         <div class="flex gap-2">
