@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.75.0] - 2026-06-05
+
+### Changed
+
+- **i18n Phase 1 (shell).** Externalized the app chrome into the `vue-i18n` catalogs — the first
+  slice of the string migration. The sidebar (nav, brand tagline, footer), header (Mainsail link +
+  nav toggle), the connection-status badge, the empty-home copy, the per-widget **nav titles /
+  descriptions**, and the shared `describeError` backend-unreachable message now render through
+  `t()`. A small `widgetTitle` / `widgetDescription` helper prefers a `shell.widgets.<id>` key and
+  falls back to the widget's registered English, so a widget without a catalog entry still shows a
+  sane label. **No visible change** — English renders identically and the language switcher stays
+  hidden until a second locale ships in a later phase.
+
 ## [0.74.0] - 2026-06-05
 
 ### Added
