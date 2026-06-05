@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { analyzeResonance } from './api'
 import { buildCompareChart, compareAnalyses, type CompareRow } from './compare'
 import type { ShaperAnalysis } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const fileA = ref<File | null>(null)
 const fileB = ref<File | null>(null)
@@ -34,7 +37,7 @@ async function run(): Promise<void> {
     resA.value = a
     resB.value = b
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Comparison failed'
+    error.value = e instanceof Error ? e.message : t('inputShaping.compareView.comparisonFailed')
   } finally {
     busy.value = false
   }
@@ -50,20 +53,22 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
 
 <template>
   <div class="space-y-2 rounded-brutal border-2 border-ink bg-paper p-2">
-    <span class="text-xs font-bold uppercase tracking-wide">Compare two captures (A ⇄ B)</span>
+    <span class="text-xs font-bold uppercase tracking-wide">{{
+      t('inputShaping.compareView.title')
+    }}</span>
     <p class="font-mono text-[10px] opacity-60">
-      Before/after a mechanical fix, or the same axis re-tested. (Compare same-axis files.)
+      {{ t('inputShaping.compareView.intro') }}
     </p>
 
     <div class="flex flex-wrap items-center gap-2 text-[10px]">
       <label class="nb-btn cursor-pointer px-2 py-0.5">
-        A: select
+        {{ t('inputShaping.compareView.selectA') }}
         <input type="file" accept=".csv" class="hidden" @change="(e) => pick('a', e)" />
       </label>
       <span v-if="fileA" class="max-w-[7rem] truncate font-mono opacity-60">{{ fileA.name }}</span>
       <span class="font-bold">⇄</span>
       <label class="nb-btn cursor-pointer px-2 py-0.5">
-        B: select
+        {{ t('inputShaping.compareView.selectB') }}
         <input type="file" accept=".csv" class="hidden" @change="(e) => pick('b', e)" />
       </label>
       <span v-if="fileB" class="max-w-[7rem] truncate font-mono opacity-60">{{ fileB.name }}</span>
@@ -72,7 +77,7 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
         :disabled="!fileA || !fileB || busy"
         @click="run"
       >
-        {{ busy ? '…' : 'compare' }}
+        {{ busy ? t('inputShaping.compareView.busy') : t('inputShaping.compareView.compare') }}
       </button>
     </div>
 
@@ -83,13 +88,13 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
         :viewBox="`0 0 ${plot.width} ${plot.height}`"
         class="w-full rounded-brutal border-2 border-ink bg-surface"
         role="img"
-        aria-label="A vs B power spectral density"
+        :aria-label="t('inputShaping.compareView.chartAriaLabel')"
       >
         <line
-          v-for="t in plot.xTicks"
-          :key="'g' + t.label"
-          :x1="t.x"
-          :x2="t.x"
+          v-for="tick in plot.xTicks"
+          :key="'g' + tick.label"
+          :x1="tick.x"
+          :x2="tick.x"
           :y1="6"
           :y2="plot.height - 12"
           stroke="#111111"
@@ -105,16 +110,16 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
           stroke-dasharray="2 2"
         />
         <text
-          v-for="t in plot.xTicks"
-          :key="'t' + t.label"
-          :x="t.x"
+          v-for="tick in plot.xTicks"
+          :key="'t' + tick.label"
+          :x="tick.x"
           :y="plot.height - 2"
           font-size="6"
           fill="#111111"
           fill-opacity="0.6"
           text-anchor="middle"
         >
-          {{ t.label }}
+          {{ tick.label }}
         </text>
       </svg>
 
@@ -123,8 +128,8 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
           class="grid grid-cols-[1fr_auto_auto] gap-3 border-b-2 border-ink pb-0.5 font-mono text-[10px] font-bold uppercase"
         >
           <span></span>
-          <span class="text-right text-brand-blue">A</span>
-          <span class="text-right text-brand-red">B</span>
+          <span class="text-right text-brand-blue">{{ t('inputShaping.compareView.colA') }}</span>
+          <span class="text-right text-brand-red">{{ t('inputShaping.compareView.colB') }}</span>
         </div>
         <div
           v-for="row in rows"

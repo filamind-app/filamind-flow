@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.79.0] - 2026-06-05
+
+### Changed
+
+- **i18n Phase 1 complete (Input Shaping — templates).** Externalized the Input Shaping widget's own
+  template strings — `InputShapingWidget.vue` (tabs, intro, result / chart labels, the cfg block,
+  the audit view) and the sub-panels `ResonanceFromPrinter.vue`, `VibrationsProfile.vue`,
+  `ResonanceCompare.vue`, `CsvSourceChooser.vue` — into the `vue-i18n` catalog
+  (`inputShaping.{widget,fromPrinter,vibrationsView,compareView,csvSource}.*`; **423 `en` keys**).
+  Sentences with inline markup use `<i18n-t>` (keeping their `<code>` / `<strong>` tags); the
+  tab-label arrays became `computed`; units / tokens stay literal. **No visible change.** New mount
+  tests render every Input Shaping panel and guard that no raw key path leaks. **This completes i18n
+  Phase 1** — the app shell and the entire Input Shaping widget are now fully localizable.
+
 ## [0.78.0] - 2026-06-05
 
 ### Changed
