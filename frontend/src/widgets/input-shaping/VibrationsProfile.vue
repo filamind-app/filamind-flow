@@ -4,11 +4,14 @@
  *  heatmap, and the motor health stats. Pure presentation over a VibrationsProfile.
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { VibrationsProfile } from './types'
 import { buildPolarAngles, buildSpeedProfile, buildVibHeatmap } from './vibrations'
 
 const props = defineProps<{ result: VibrationsProfile }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const speedChart = computed(() => buildSpeedProfile(props.result))
 const polar = computed(() => buildPolarAngles(props.result))
@@ -24,29 +27,35 @@ function symmetryClass(pct: number): string {
 <template>
   <div class="space-y-1.5 rounded-brutal border-2 border-ink p-2">
     <div class="flex flex-wrap items-center gap-2">
-      <span class="text-[10px] font-bold uppercase tracking-wide">Vibrations profile</span>
-      <span v-if="result.low_freq_warning" class="nb-badge bg-brand-red text-surface"
-        >⚠ low-freq noise</span
-      >
-      <span v-else-if="result.recommended_speed != null" class="nb-badge bg-brand-cyan"
-        >▼ smoothest ~{{ result.recommended_speed.toFixed(0) }} mm/s</span
-      >
-      <span class="nb-badge" :class="symmetryClass(result.symmetry_pct)"
-        >symmetry {{ result.symmetry_pct.toFixed(0) }}%</span
-      >
-      <span class="font-mono text-[9px] opacity-60"
-        >{{ result.kinematics }} · {{ result.accel }} mm/s²</span
-      >
+      <span class="text-[10px] font-bold uppercase tracking-wide">{{
+        t('inputShaping.vibrationsView.title')
+      }}</span>
+      <span v-if="result.low_freq_warning" class="nb-badge bg-brand-red text-surface">{{
+        t('inputShaping.vibrationsView.lowFreqNoise')
+      }}</span>
+      <span v-else-if="result.recommended_speed != null" class="nb-badge bg-brand-cyan">{{
+        t('inputShaping.vibrationsView.smoothest', { v: result.recommended_speed.toFixed(0) })
+      }}</span>
+      <span class="nb-badge" :class="symmetryClass(result.symmetry_pct)">{{
+        t('inputShaping.vibrationsView.symmetry', { v: result.symmetry_pct.toFixed(0) })
+      }}</span>
+      <span class="font-mono text-[9px] opacity-60">{{
+        t('inputShaping.vibrationsView.kinematicsAccel', {
+          kin: result.kinematics,
+          accel: result.accel,
+        })
+      }}</span>
     </div>
 
     <p class="text-[9px] opacity-80">{{ result.verdict }}</p>
+    <!-- result.verdict is built by the vibrations helper (already translated). -->
 
     <!-- Speed-energy profile: the main curve + smoothest bands + peaks to avoid. -->
     <svg
       :viewBox="`0 0 ${speedChart.width} ${speedChart.height}`"
       class="w-full rounded-brutal border-2 border-ink bg-paper"
       role="img"
-      aria-label="Vibration energy versus speed"
+      :aria-label="t('inputShaping.vibrationsView.svgSpeedLabel')"
     >
       <rect
         v-for="(b, i) in speedChart.bands"
@@ -89,29 +98,31 @@ function symmetryClass(pct: number): string {
       />
       <polyline :points="speedChart.energyPoints" fill="none" stroke="#ff5247" stroke-width="1.2" />
       <text
-        v-for="t in speedChart.speedTicks"
-        :key="'st' + t.label"
-        :x="t.x"
+        v-for="tick in speedChart.speedTicks"
+        :key="'st' + tick.label"
+        :x="tick.x"
         :y="speedChart.height - 3"
         font-size="6"
         fill="#111111"
         fill-opacity="0.6"
         text-anchor="middle"
       >
-        {{ t.label }}
+        {{ tick.label }}
       </text>
     </svg>
     <div class="flex flex-wrap gap-x-3 font-mono text-[9px] opacity-60">
-      <span>speed (mm/s) → · vibration energy ↑</span>
+      <span>{{ t('inputShaping.vibrationsView.axisLegend') }}</span>
       <span class="flex items-center gap-1"
-        ><span class="inline-block h-2 w-3 rounded-sm" style="background: #9be15d" />smooth</span
+        ><span class="inline-block h-2 w-3 rounded-sm" style="background: #9be15d" />{{
+          t('inputShaping.vibrationsView.smooth')
+        }}</span
       >
       <span class="flex items-center gap-1"
         ><span
           class="inline-block h-0 w-3 border-t-2 border-dashed"
           style="border-color: #ff5247"
         />
-        avoid</span
+        {{ t('inputShaping.vibrationsView.avoid') }}</span
       >
     </div>
 
@@ -122,7 +133,7 @@ function symmetryClass(pct: number): string {
         class="rounded-brutal border-2 border-ink bg-paper"
         style="width: 150px; height: 150px"
         role="img"
-        aria-label="Vibration energy by travel direction"
+        :aria-label="t('inputShaping.vibrationsView.svgPolarLabel')"
       >
         <circle
           :cx="polar.cx"
@@ -180,7 +191,7 @@ function symmetryClass(pct: number): string {
         :viewBox="`0 0 ${heatmap.width} ${heatmap.height}`"
         class="min-w-0 flex-1 rounded-brutal border-2 border-ink bg-paper"
         role="img"
-        aria-label="Vibration energy heatmap by angle and speed"
+        :aria-label="t('inputShaping.vibrationsView.svgHeatmapLabel')"
       >
         <rect
           v-for="(c, i) in heatmap.cells"
@@ -192,27 +203,27 @@ function symmetryClass(pct: number): string {
           :fill="c.fill"
         />
         <text
-          v-for="t in heatmap.speedTicks"
-          :key="'hst' + t.label"
-          :x="t.x"
+          v-for="tick in heatmap.speedTicks"
+          :key="'hst' + tick.label"
+          :x="tick.x"
           :y="heatmap.height - 3"
           font-size="6"
           fill="#111111"
           fill-opacity="0.6"
           text-anchor="middle"
         >
-          {{ t.label }}
+          {{ tick.label }}
         </text>
         <text
-          v-for="t in heatmap.angleTicks"
-          :key="'hat' + t.label"
+          v-for="tick in heatmap.angleTicks"
+          :key="'hat' + tick.label"
           :x="3"
-          :y="t.y + 2"
+          :y="tick.y + 2"
           font-size="5.5"
           fill="#111111"
           fill-opacity="0.55"
         >
-          {{ t.label }}
+          {{ tick.label }}
         </text>
       </svg>
     </div>
@@ -223,29 +234,36 @@ function symmetryClass(pct: number): string {
         v-for="(r, i) in result.good_speed_ranges.slice(0, 3)"
         :key="'gs' + i"
         class="nb-badge bg-brand-lime"
-        >✓ {{ r.start.toFixed(0) }}–{{ r.end.toFixed(0) }} mm/s</span
+        >{{
+          t('inputShaping.vibrationsView.goodSpeedRange', {
+            start: r.start.toFixed(0),
+            end: r.end.toFixed(0),
+          })
+        }}</span
       >
       <span
         v-for="(p, i) in result.peak_speeds.slice(0, 5)"
         :key="'ps' + i"
         class="nb-badge bg-brand-red text-surface"
-        >✕ {{ p.toFixed(0) }}</span
+        >{{ t('inputShaping.vibrationsView.peakSpeed', { v: p.toFixed(0) }) }}</span
       >
     </div>
     <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[9px] opacity-70">
       <span v-if="result.motor_freq != null"
-        >motor resonance {{ result.motor_freq.toFixed(0) }} Hz<span
-          v-if="result.motor_damping != null"
-        >
-          · ζ {{ result.motor_damping.toFixed(3) }}</span
+        >{{ t('inputShaping.vibrationsView.motorResonance', { v: result.motor_freq.toFixed(0) })
+        }}<span v-if="result.motor_damping != null">
+          {{
+            t('inputShaping.vibrationsView.motorDamping', { v: result.motor_damping.toFixed(3) })
+          }}</span
         ></span
       >
-      <span v-if="result.good_angle_ranges.length"
-        >smoothest direction ~{{ result.good_angle_ranges[0].start.toFixed(0) }}–{{
-          result.good_angle_ranges[0].end.toFixed(0)
-        }}°</span
-      >
-      <span>{{ result.segments_used }} captures</span>
+      <span v-if="result.good_angle_ranges.length">{{
+        t('inputShaping.vibrationsView.smoothestDirection', {
+          start: result.good_angle_ranges[0].start.toFixed(0),
+          end: result.good_angle_ranges[0].end.toFixed(0),
+        })
+      }}</span>
+      <span>{{ t('inputShaping.vibrationsView.captures', { n: result.segments_used }) }}</span>
     </div>
   </div>
 </template>

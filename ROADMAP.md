@@ -122,7 +122,7 @@ English copy proceeds phase-by-phase; see
 | Phase | Scope | Status |
 | ----- | ----- | ------ |
 | **0 — Scaffolding** | `vue-i18n` v11 + Vite plugin; `core/i18n.ts` (eager `en`, lazy locales, detection, `localStorage` persistence, reactive `<html lang/dir>`); namespaced `en` catalogs; type-safe keys; `LanguageSelect` (hidden until a 2nd locale ships); CI key-diff + pseudo-localization tooling. No user-visible change. | ✅ v0.74.0 |
-| **1 — Shell + Input Shaping** | Externalize the shell + the Input Shaping widget end-to-end as the reference pattern: help text, the prose-returning `.ts` helpers refactored to take `t` (tests assert keys), templates, ICU plurals, `numberFormats`. | 📋 |
+| **1 — Shell + Input Shaping** | The app shell + the **entire** Input Shaping widget externalized end-to-end as the reference pattern: shell chrome, the help layer, the prose display helpers (grade / diagnose / compare / recommend / axesMap / guided / audit — calling the global translator so they stay test-stable), the guided wizard, and all widget templates (inline markup via `<i18n-t>`; units / tokens kept literal). | ✅ v0.75.0–v0.79.0 |
 | **2 — Remaining widgets** | Apply the pattern to Firmware Manager + Motor Drivers; tab / action label arrays become computed so they re-translate on switch. | 📋 |
 | **3 — RTL + Arabic** | `dir` / `lang` per locale, logical-property sweep, `[dir=rtl]` brutalist tweaks, bidi-isolated measurements, self-hosted Arabic webfonts, Arabic plural rules; first real `ar` catalog (human-translated). | 📋 |
 | **4 — Backend messages** | A `{ code, params, message }` contract for backend user-facing strings; the frontend owns the translated copy (English `message` kept as a fallback). | 📋 |
