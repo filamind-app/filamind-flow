@@ -4,6 +4,7 @@
  *  panels the dashboard uses, so there's one source of truth and the same safety gating.
  */
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { saveMotorAssignment } from './api'
 import { axisHeading, driverModelLabel } from './format'
@@ -15,6 +16,8 @@ import type { MotorSpec, TmcDriver } from './types'
 
 const props = defineProps<{ drivers: TmcDriver[]; catalog: MotorSpec[] }>()
 const emit = defineEmits<{ changed: []; exit: [] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const step = ref(1)
 const selectedStepper = ref<string | null>(null)
@@ -28,9 +31,13 @@ const supportsSensorless = computed(() => selected.value?.homing_method === 'sen
 
 //: Labelled steps, with the sensorless step dropped when the driver can't do it.
 const stepLabels = computed(() => {
-  const labels = ['Choose', 'Motor', 'Tune']
-  if (supportsSensorless.value) labels.push('Sensorless')
-  labels.push('Done')
+  const labels = [
+    t('motorDrivers.guidedWizard.stepChoose'),
+    t('motorDrivers.guidedWizard.stepMotor'),
+    t('motorDrivers.guidedWizard.stepTune'),
+  ]
+  if (supportsSensorless.value) labels.push(t('motorDrivers.guidedWizard.stepSensorless'))
+  labels.push(t('motorDrivers.guidedWizard.stepDone'))
   return labels
 })
 
@@ -63,9 +70,9 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
 <template>
   <div class="space-y-2 text-sm">
     <div class="flex items-center justify-between gap-2">
-      <div class="font-bold">🧭 Guided tuning</div>
+      <div class="font-bold">{{ t('motorDrivers.guidedWizard.title') }}</div>
       <button class="font-mono text-[10px] opacity-60 hover:opacity-100" @click="emit('exit')">
-        ← dashboard
+        {{ t('motorDrivers.guidedWizard.backToDashboard') }}
       </button>
     </div>
 
@@ -86,7 +93,7 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
 
     <!-- Step 1 — choose a driver -->
     <div v-if="step === 1" class="space-y-1.5">
-      <p class="text-xs opacity-70">Pick the axis to tune.</p>
+      <p class="text-xs opacity-70">{{ t('motorDrivers.guidedWizard.step1Intro') }}</p>
       <div class="grid gap-1.5 sm:grid-cols-2">
         <button
           v-for="d in drivers"
@@ -102,13 +109,21 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
 
     <!-- Steps 2–5 operate on the selected driver -->
     <template v-else-if="selected">
-      <div class="font-mono text-[11px] opacity-70">
-        Tuning <b>{{ axisHeading(selected) }}</b> · {{ driverModelLabel(selected.model) }}
-      </div>
+      <i18n-t
+        keypath="motorDrivers.guidedWizard.tuningHeader"
+        tag="div"
+        scope="global"
+        class="font-mono text-[11px] opacity-70"
+      >
+        <template #axis
+          ><b>{{ axisHeading(selected) }}</b></template
+        >
+        <template #model>{{ driverModelLabel(selected.model) }}</template>
+      </i18n-t>
 
       <div v-if="step === 2" class="space-y-1.5">
         <p class="text-xs opacity-70">
-          Which motor is wired to this axis? Pick it so FilaMind knows its datasheet specs.
+          {{ t('motorDrivers.guidedWizard.step2Intro') }}
         </p>
         <MotorPicker
           :stepper="selected.stepper"
@@ -117,49 +132,56 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
           @assign="onAssign"
         />
         <p v-if="!selected.motor" class="font-mono text-[10px] opacity-60">
-          Assign a motor to continue.
+          {{ t('motorDrivers.guidedWizard.assignToContinue') }}
         </p>
       </div>
 
       <div v-else-if="step === 3" class="space-y-1.5">
         <p class="text-xs opacity-70">
-          Get a recommendation from the motor's specs, then copy it to your config or apply it live
-          (gated).
+          {{ t('motorDrivers.guidedWizard.step3Intro') }}
         </p>
         <RecommendPanel :driver="selected" :default-open="true" @applied="emit('changed')" />
       </div>
 
       <div v-else-if="step === 4 && supportsSensorless" class="space-y-1.5">
         <p class="text-xs opacity-70">
-          Optional: dial in sensorless homing. Skip if this axis uses an endstop switch.
+          {{ t('motorDrivers.guidedWizard.step4Intro') }}
         </p>
         <SensorlessPanel :driver="selected" @changed="emit('changed')" />
       </div>
 
       <div v-else-if="step === 5" class="space-y-1.5">
-        <p class="text-xs opacity-70">
-          Done with <b>{{ axisHeading(selected) }}</b
-          >. Watch it live while you move the axis, or tune another.
-        </p>
+        <i18n-t
+          keypath="motorDrivers.guidedWizard.step5Intro"
+          tag="p"
+          scope="global"
+          class="text-xs opacity-70"
+        >
+          <template #axis
+            ><b>{{ axisHeading(selected) }}</b></template
+          >
+        </i18n-t>
         <LiveMonitor :driver="selected" />
         <button class="nb-btn bg-surface px-2 py-0.5 text-[10px]" @click="restart">
-          tune another axis
+          {{ t('motorDrivers.guidedWizard.tuneAnother') }}
         </button>
       </div>
 
       <!-- Step navigation -->
       <div class="flex items-center justify-between pt-1">
-        <button class="nb-btn bg-surface px-2 py-0.5 text-[10px]" @click="back">← back</button>
+        <button class="nb-btn bg-surface px-2 py-0.5 text-[10px]" @click="back">
+          {{ t('motorDrivers.guidedWizard.back') }}
+        </button>
         <button
           v-if="step < 5"
           class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
           :disabled="step === 2 && !selected.motor"
           @click="next"
         >
-          next →
+          {{ t('motorDrivers.guidedWizard.next') }}
         </button>
         <button v-else class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]" @click="emit('exit')">
-          finish
+          {{ t('motorDrivers.guidedWizard.finish') }}
         </button>
       </div>
     </template>

@@ -1,0 +1,1 @@
+import{j as o}from"./index-f1cdR_4w.js";function n(r){const e=r instanceof Error?r.message:String(r);return/failed to fetch|networkerror|load failed|fetch/i.test(e)?o.global.t("common.errors.backendUnreachable"):e}export{n as d};

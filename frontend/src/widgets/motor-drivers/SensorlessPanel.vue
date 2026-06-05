@@ -6,10 +6,13 @@
  *  threshold range + polarity hint adapt to the model's register (sgthrs/sg4_thrs vs signed sgt).
  */
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { homeAxis, setStallguard } from './api'
 import { stallguardRange } from './format'
 import type { ApplyResponse, TmcDriver } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{ driver: TmcDriver }>()
 const emit = defineEmits<{ changed: [] }>()
@@ -58,16 +61,21 @@ function testHome(): Promise<void> {
     class="space-y-1.5 rounded-brutal border-2 border-dashed border-ink bg-paper p-2 font-mono text-[10px]"
   >
     <p v-if="!driver.stallguard_field" class="text-brand-red">
-      ⚠ This driver exposes no StallGuard threshold register, so sensorless homing can’t be tuned
-      here — check the printer’s homing configuration.
+      {{ t('motorDrivers.sensorless.noRegister') }}
     </p>
     <p class="opacity-70">
-      StallGuard <b>{{ driver.stallguard_field ?? '—' }}</b> sets sensorless-homing sensitivity.
+      <i18n-t keypath="motorDrivers.sensorless.intro" tag="span" scope="global">
+        <template #field
+          ><b>{{ driver.stallguard_field ?? '—' }}</b></template
+        >
+      </i18n-t>
       {{ range.hint }}
     </p>
 
     <div class="flex items-center gap-1.5">
-      <label class="opacity-70" :for="`sg-${driver.stepper}`">threshold</label>
+      <label class="opacity-70" :for="`sg-${driver.stepper}`">{{
+        t('motorDrivers.sensorless.threshold')
+      }}</label>
       <input
         :id="`sg-${driver.stepper}`"
         v-model.number="threshold"
@@ -77,37 +85,44 @@ function testHome(): Promise<void> {
         :disabled="!driver.stallguard_field"
         class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
       />
-      <span class="opacity-60"
-        >now: {{ driver.stallguard_threshold ?? '—' }} · range {{ range.min }}…{{ range.max }}</span
-      >
+      <span class="opacity-60">{{
+        t('motorDrivers.sensorless.nowRange', {
+          now: driver.stallguard_threshold ?? '—',
+          min: range.min,
+          max: range.max,
+        })
+      }}</span>
     </div>
     <label class="flex items-start gap-1.5">
       <input v-model="confirmSet" type="checkbox" class="mt-0.5 shrink-0" />
-      <span>Write this threshold to the driver now (reversible; refused while printing).</span>
+      <span>{{ t('motorDrivers.sensorless.confirmSet') }}</span>
     </label>
     <button
       class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
       :disabled="!confirmSet || busy || !driver.stallguard_field"
       @click="setThreshold"
     >
-      {{ busy ? '…' : 'set threshold' }}
+      {{ busy ? '…' : t('motorDrivers.sensorless.setThreshold') }}
     </button>
 
     <template v-if="axis">
       <div class="rounded-brutal border-2 border-ink bg-brand-red px-1.5 py-1 text-surface">
-        ⚠ Test-home moves the <b>{{ axis }}</b> axis now. With a wrong threshold it may not stop —
-        keep a hand on the power. Sensorless axes only.
+        <i18n-t keypath="motorDrivers.sensorless.testHomeWarning" tag="span" scope="global">
+          <template #axis
+            ><b>{{ axis }}</b></template
+          >
+        </i18n-t>
       </div>
       <label class="flex items-start gap-1.5">
         <input v-model="confirmHome" type="checkbox" class="mt-0.5 shrink-0" />
-        <span>I’m watching the printer and ready to cut power — home {{ axis }}.</span>
+        <span>{{ t('motorDrivers.sensorless.confirmHome', { axis }) }}</span>
       </label>
       <button
         class="nb-btn bg-brand-yellow px-2 py-0.5 text-[10px]"
         :disabled="!confirmHome || busy"
         @click="testHome"
       >
-        {{ busy ? '…' : `test-home ${axis}` }}
+        {{ busy ? '…' : t('motorDrivers.sensorless.testHome', { axis }) }}
       </button>
     </template>
 

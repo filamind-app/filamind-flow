@@ -6,11 +6,14 @@
  *  fields require a per-field confirm. Non-editable registers are shown read-only beneath.
  */
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { fetchFieldPolicy, revertDriver, setCoolstep, setField } from './api'
 import { stallguardRange } from './format'
 import HelpNote from './HelpNote.vue'
 import type { FieldPolicyEntry, FieldPolicyMap, TmcDriver } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 /** CoolStep's five coupled registers are presented as one toggle, not five raw boxes. */
 const COOLSTEP_FIELDS = ['semin', 'semax', 'seup', 'sedn', 'seimin']
@@ -61,7 +64,7 @@ function hintFor(field: string, entry: FieldPolicyEntry): string | null {
     return stallguardRange(field).hint
   }
   if (field === 'toff') {
-    return 'If you set toff to 1, also keep tbl ≥ 1 (the 16-cycle blank time needs it).'
+    return t('motorDrivers.registerEditor.toffHint')
   }
   return entry.note ?? null
 }
@@ -168,7 +171,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
       :aria-expanded="open"
       @click="toggle"
     >
-      {{ open ? '▾' : '🛠' }} tune registers (advanced)
+      {{ open ? '▾' : '🛠' }} {{ t('motorDrivers.registerEditor.toggle') }}
     </button>
 
     <div
@@ -180,20 +183,25 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
         <button
           class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
           :disabled="reverting || !!busyField"
-          title="INIT_TMC — re-apply this driver's configured registers + current"
+          :title="t('motorDrivers.registerEditor.resetTitle')"
           @click="resetToConfig"
         >
-          {{ reverting ? '…' : '↺ reset to config' }}
+          {{ reverting ? '…' : t('motorDrivers.registerEditor.resetLabel') }}
         </button>
       </div>
 
       <p class="opacity-70">
-        Edits are <b>live only</b> — not saved. <code>INIT_TMC</code> (reset), a firmware restart,
-        or a power-cycle restores the configured values. Out-of-range values are rejected by the
-        printer-side safety policy; raw current and protection registers aren't editable here.
+        <i18n-t keypath="motorDrivers.registerEditor.liveOnly" tag="span" scope="global">
+          <template #live>
+            <b>{{ t('motorDrivers.registerEditor.liveOnlyEmphasis') }}</b>
+          </template>
+          <template #initTmc>
+            <code>INIT_TMC</code>
+          </template>
+        </i18n-t>
       </p>
 
-      <p v-if="loading" class="opacity-60">Loading editable registers…</p>
+      <p v-if="loading" class="opacity-60">{{ t('motorDrivers.registerEditor.loading') }}</p>
       <p v-else-if="loadErr" class="text-brand-red">{{ loadErr }}</p>
 
       <!-- CoolStep: one toggle for the five coupled registers -->
@@ -201,24 +209,24 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
         v-if="coolstepAvailable"
         class="flex flex-wrap items-center gap-2 border-b-2 border-dashed border-ink pb-1.5"
       >
-        <span class="w-28 shrink-0">CoolStep</span>
+        <span class="w-28 shrink-0">{{ t('motorDrivers.registerEditor.coolstep') }}</span>
         <span class="nb-badge" :class="coolstepOn ? 'bg-brand-lime' : 'bg-surface opacity-60'">{{
-          coolstepOn ? 'on' : 'off'
+          coolstepOn ? t('motorDrivers.registerEditor.on') : t('motorDrivers.registerEditor.off')
         }}</span>
         <button
           class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
           :disabled="coolstepBusy"
-          title="Apply the autotune-vetted CoolStep set (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)"
+          :title="t('motorDrivers.registerEditor.coolstepEnableTitle')"
           @click="applyCoolstep(true)"
         >
-          {{ coolstepBusy ? '…' : 'enable' }}
+          {{ coolstepBusy ? '…' : t('motorDrivers.registerEditor.enable') }}
         </button>
         <button
           class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
           :disabled="coolstepBusy"
           @click="applyCoolstep(false)"
         >
-          off
+          {{ t('motorDrivers.registerEditor.off') }}
         </button>
         <HelpNote topic="coolstep" />
       </div>
@@ -233,7 +241,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
         <span
           v-if="entry.risk === 'risky'"
           class="nb-badge bg-brand-yellow px-1 py-0 text-[9px]"
-          title="Riskier knob — confirm before writing"
+          :title="t('motorDrivers.registerEditor.riskyTitle')"
           >!</span
         >
 
@@ -266,11 +274,13 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
           >{{ entry.min }}…{{ entry.max }}</span
         >
 
-        <span class="opacity-50">now: {{ currentValue(field) ?? '—' }}</span>
+        <span class="opacity-50"
+          >{{ t('motorDrivers.registerEditor.now') }} {{ currentValue(field) ?? '—' }}</span
+        >
 
         <label v-if="entry.requires_confirm" class="flex items-center gap-1">
           <input v-model="confirms[field]" type="checkbox" class="shrink-0" />
-          <span class="opacity-60">confirm</span>
+          <span class="opacity-60">{{ t('motorDrivers.registerEditor.confirm') }}</span>
         </label>
 
         <button
@@ -278,7 +288,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
           :disabled="!canWrite(field, entry)"
           @click="write(field)"
         >
-          {{ busyField === field ? '…' : 'set' }}
+          {{ busyField === field ? '…' : t('motorDrivers.registerEditor.set') }}
         </button>
         <span v-if="hintFor(field, entry)" class="w-full pl-28 text-[9px] opacity-50">{{
           hintFor(field, entry)
@@ -296,7 +306,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
 
       <!-- Read-only registers (not editable) -->
       <div v-if="readOnlyRegisters.length" class="border-t-2 border-dashed border-ink pt-1.5">
-        <div class="mb-1 opacity-50">read-only registers</div>
+        <div class="mb-1 opacity-50">{{ t('motorDrivers.registerEditor.readOnly') }}</div>
         <dl class="grid grid-cols-2 gap-x-2 gap-y-0.5">
           <div v-for="[k, v] in readOnlyRegisters" :key="k" class="flex justify-between gap-1">
             <dt class="opacity-60">{{ k }}</dt>

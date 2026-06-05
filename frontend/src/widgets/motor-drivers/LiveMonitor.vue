@@ -5,10 +5,13 @@
  *  motor is enabled, so an idle motor shows a hint instead. No writes, no motion.
  */
 import { computed, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { fetchDriverLive } from './api'
 import { activeFlags, drvNum, sparklinePath } from './format'
 import type { DriverLive, TmcDriver } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{ driver: TmcDriver }>()
 
@@ -58,7 +61,7 @@ const spark = computed(() => sparklinePath(sgHistory.value, 100, 22))
       :aria-expanded="open"
       @click="toggle"
     >
-      {{ open ? '▾' : '📈' }} live monitor
+      {{ open ? '▾' : '📈' }} {{ t('motorDrivers.liveMonitor.toggle') }}
     </button>
 
     <div
@@ -67,10 +70,12 @@ const spark = computed(() => sparklinePath(sgHistory.value, 100, 22))
     >
       <template v-if="drv">
         <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5">
-          <span v-if="live?.temperature != null">temp {{ live.temperature.toFixed(1) }} °C</span>
-          <span v-if="sg != null">SG {{ sg }}</span>
-          <span v-if="cs != null">CS {{ cs }}</span>
-          <span class="opacity-50">· updates ~1.5s</span>
+          <span v-if="live?.temperature != null">{{
+            t('motorDrivers.liveMonitor.temp', { temp: live.temperature.toFixed(1) })
+          }}</span>
+          <span v-if="sg != null">{{ t('motorDrivers.liveMonitor.sg', { sg }) }}</span>
+          <span v-if="cs != null">{{ t('motorDrivers.liveMonitor.cs', { cs }) }}</span>
+          <span class="opacity-50">{{ t('motorDrivers.liveMonitor.updates') }}</span>
         </div>
         <svg
           v-if="spark"
@@ -89,10 +94,10 @@ const spark = computed(() => sparklinePath(sgHistory.value, 100, 22))
             >{{ f }}</span
           >
         </div>
-        <div v-else class="opacity-60">no faults</div>
+        <div v-else class="opacity-60">{{ t('motorDrivers.liveMonitor.noFaults') }}</div>
       </template>
       <p v-else class="opacity-70">
-        Idle — enable the motor (home or jog the axis) to read live SG / current / temperature.
+        {{ t('motorDrivers.liveMonitor.idle') }}
       </p>
     </div>
   </div>

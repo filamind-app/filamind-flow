@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.81.0] - 2026-06-05
+
+### Changed
+
+- **i18n Phase 2 (Motor Drivers — templates; widget complete).** Externalized all of the Motor
+  Drivers widget's template strings — `MotorDriversWidget.vue` (intro, tabs, the "how to read this"
+  steps, card labels, states) and every panel (`LiveMonitor`, `RecommendPanel`, `MotorSyncPanel`,
+  `SensorlessPanel`, `HomingPanel`, `GuidedWizard`, `MotorPicker`, `RegisterEditor`) into the
+  `vue-i18n` catalog (`motorDrivers.{widget,liveMonitor,recommendPanel,motorSync,sensorless,homing,
+  guidedWizard,motorPicker,registerEditor}.*`; **619 `en` keys**). The `STEPS` const moved from
+  `help.ts` into the catalog (rendered via `tm()`); sentences with inline markup use `<i18n-t>`; tab
+  arrays became `computed`; units / tokens stay literal. **No visible change.** A new mount-test
+  suite renders every panel and the orchestrator, guarding against leaked keys. **With this, the
+  entire Motor Drivers widget is localizable** — only the Firmware Manager widget remains for Phase 2.
+
 ## [0.80.0] - 2026-06-05
 
 ### Changed
