@@ -6,6 +6,7 @@
  *  server-side too (refused while printing).
  */
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   applyTuning,
@@ -16,6 +17,8 @@ import {
 } from './api'
 import { recommendationRows } from './format'
 import type { DriverRecommendation, TmcDriver } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{ driver: TmcDriver; defaultOpen?: boolean }>()
 const emit = defineEmits<{ applied: [] }>()
@@ -115,7 +118,7 @@ async function copyConfig(): Promise<void> {
       :aria-expanded="open"
       @click="open = !open"
     >
-      {{ open ? '▾' : '⚙' }} recommend tuning
+      {{ open ? '▾' : '⚙' }} {{ t('motorDrivers.recommendPanel.toggle') }}
     </button>
 
     <div
@@ -123,7 +126,9 @@ async function copyConfig(): Promise<void> {
       class="mt-1 space-y-1.5 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
     >
       <div class="flex items-center gap-1.5">
-        <label class="opacity-70" :for="`v-${driver.stepper}`">supply</label>
+        <label class="opacity-70" :for="`v-${driver.stepper}`">{{
+          t('motorDrivers.recommendPanel.supply')
+        }}</label>
         <input
           :id="`v-${driver.stepper}`"
           v-model.number="voltage"
@@ -139,7 +144,13 @@ async function copyConfig(): Promise<void> {
           :disabled="loading"
           @click="compute"
         >
-          {{ loading ? '…' : rec ? 'recompute' : 'recommend' }}
+          {{
+            loading
+              ? '…'
+              : rec
+                ? t('motorDrivers.recommendPanel.recompute')
+                : t('motorDrivers.recommendPanel.recommend')
+          }}
         </button>
       </div>
 
@@ -155,8 +166,12 @@ async function copyConfig(): Promise<void> {
           <thead class="opacity-60">
             <tr>
               <th class="text-left font-normal"></th>
-              <th class="text-right font-normal">current</th>
-              <th class="text-right font-normal">recommended</th>
+              <th class="text-right font-normal">
+                {{ t('motorDrivers.recommendPanel.colCurrent') }}
+              </th>
+              <th class="text-right font-normal">
+                {{ t('motorDrivers.recommendPanel.colRecommended') }}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -170,18 +185,24 @@ async function copyConfig(): Promise<void> {
           </tbody>
         </table>
         <p class="opacity-60">
-          run current = {{ rec.run_current_basis }}; StealthChop holds to ~{{
-            rec.max_pwm_rps
+          {{
+            t('motorDrivers.recommendPanel.basis', {
+              basis: rec.run_current_basis,
+              rps: rec.max_pwm_rps,
+              voltage: rec.voltage,
+            })
           }}
-          rev/s at {{ rec.voltage }} V.
         </p>
         <!-- Apply: copy-to-config (safe) or a gated live write -->
         <div class="space-y-1 border-t-2 border-dashed border-ink pt-1.5">
           <label class="flex items-start gap-1.5">
             <input v-model="confirmed" type="checkbox" class="mt-0.5 shrink-0" />
             <span>
-              Write these to the <b>{{ driver.stepper }}</b> driver now. Reversible (Revert / a
-              restart restores your config); refused while printing.
+              <i18n-t keypath="motorDrivers.recommendPanel.confirm" tag="span" scope="global">
+                <template #stepper
+                  ><b>{{ driver.stepper }}</b></template
+                >
+              </i18n-t>
             </span>
           </label>
           <div class="flex flex-wrap items-center gap-1.5">
@@ -190,29 +211,29 @@ async function copyConfig(): Promise<void> {
               :disabled="!confirmed || busy"
               @click="apply"
             >
-              {{ busy ? '…' : 'apply to driver' }}
+              {{ busy ? '…' : t('motorDrivers.recommendPanel.applyToDriver') }}
             </button>
             <button
               class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
               :disabled="busy"
               @click="revert"
             >
-              ↺ revert
+              {{ t('motorDrivers.recommendPanel.revert') }}
             </button>
             <button
               class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
               :disabled="busy"
               @click="copyConfig"
             >
-              copy config
+              {{ t('motorDrivers.recommendPanel.copyConfig') }}
             </button>
             <button
               class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
               :disabled="busy"
-              title="Runs AUTOTUNE_TMC if the klipper_tmc_autotune add-on is installed"
+              :title="t('motorDrivers.recommendPanel.autotuneTitle')"
               @click="autotune"
             >
-              autotune
+              {{ t('motorDrivers.recommendPanel.autotune') }}
             </button>
           </div>
           <p

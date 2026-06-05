@@ -5,8 +5,11 @@
  *  calibrate (accelerometer-based, moves the toolhead). Printer-level, shown once.
  */
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { fetchMotorsSyncStatus, runMotorsSync } from './api'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const open = ref(false)
 const available = ref<boolean | null>(null) // null = not checked yet
@@ -46,34 +49,33 @@ async function run(calibrate: boolean): Promise<void> {
       :aria-expanded="open"
       @click="open = !open"
     >
-      {{ open ? '▾' : '🔗' }} motor synchronization
-      <span v-if="available === false" class="opacity-50">(add-on not installed)</span>
+      {{ open ? '▾' : '🔗' }} {{ t('motorDrivers.motorSync.toggle') }}
+      <span v-if="available === false" class="opacity-50">{{
+        t('motorDrivers.motorSync.notInstalledTag')
+      }}</span>
     </button>
 
     <div
       v-if="open"
       class="mt-1 space-y-1.5 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
     >
-      <p class="opacity-70">
-        Aligns the microstep phase of multiple motors on one axis (dual / quad-Z, dual-X) using an
-        accelerometer, so they don't fight each other. Provided by the separate
-        <b>motors_sync</b> add-on.
-      </p>
+      <i18n-t keypath="motorDrivers.motorSync.about" tag="p" scope="global" class="opacity-70">
+        <template #addon><b>motors_sync</b></template>
+      </i18n-t>
 
-      <p v-if="available === null" class="opacity-60">checking…</p>
+      <p v-if="available === null" class="opacity-60">{{ t('motorDrivers.motorSync.checking') }}</p>
 
       <p v-else-if="!available" class="opacity-70">
-        Not installed on this printer. Install the motors_sync add-on to enable it here.
+        {{ t('motorDrivers.motorSync.notInstalled') }}
       </p>
 
       <template v-else>
         <div class="rounded-brutal border-2 border-ink bg-brand-red px-1.5 py-1 text-surface">
-          ⚠ This moves the toolhead for a while (it probes each motor). Keep clear and ready to cut
-          power.
+          {{ t('motorDrivers.motorSync.warning') }}
         </div>
         <label class="flex items-start gap-1.5">
           <input v-model="confirmed" type="checkbox" class="mt-0.5 shrink-0" />
-          <span>I'm watching the printer — run motor synchronization now.</span>
+          <span>{{ t('motorDrivers.motorSync.confirm') }}</span>
         </label>
         <div class="flex flex-wrap gap-1.5">
           <button
@@ -81,14 +83,14 @@ async function run(calibrate: boolean): Promise<void> {
             :disabled="!confirmed || busy"
             @click="run(false)"
           >
-            {{ busy ? '…' : 'sync motors' }}
+            {{ busy ? '…' : t('motorDrivers.motorSync.syncMotors') }}
           </button>
           <button
             class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
             :disabled="!confirmed || busy"
             @click="run(true)"
           >
-            calibrate
+            {{ t('motorDrivers.motorSync.calibrate') }}
           </button>
         </div>
       </template>

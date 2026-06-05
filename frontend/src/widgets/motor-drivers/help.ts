@@ -88,12 +88,3 @@ export const GLOSSARY_KEYS = [
 ] as const
 
 export type GlossaryKey = (typeof GLOSSARY_KEYS)[number]
-
-/** The practical “how to read this” steps, shown once at the top of the dashboard. */
-export const STEPS: string[] = [
-  'Each card is one stepper driver — its heading is the axis (X / Y / Z / Extruder) and the badge is the chip model.',
-  'Run current shows how hard the motor is driven; the live value may differ slightly from the configured “set” value — that’s normal.',
-  'Mode tells you SpreadCycle (precise, louder) or StealthChop (quiet); microsteps shows how smooth the motion is.',
-  'Home an axis or jog the motor to wake it — live temperature and fault flags only appear while a motor is enabled (idle drivers show “idle”).',
-  'Open “advanced registers” on a card to inspect the raw tuning values the driver is using.',
-]
