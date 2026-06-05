@@ -5,11 +5,14 @@
  *  it and refreshes.
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import ComboSelect from '@/components/ui/ComboSelect.vue'
 
 import { motorSpecLabel } from './format'
 import type { MotorSpec } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{
   stepper: string
@@ -32,15 +35,15 @@ const selectedModel = computed(() => props.assigned?.model ?? null)
 <template>
   <div class="font-mono text-[10px]">
     <div class="mb-1 min-w-0 truncate">
-      <span class="opacity-60">motor:</span>
+      <span class="opacity-60">{{ t('motorDrivers.motorPicker.motorLabel') }}</span>
       <b v-if="assigned"> {{ assigned.manufacturer }} {{ assigned.model }}</b>
-      <span v-else class="opacity-60"> not set</span>
+      <span v-else class="opacity-60"> {{ t('motorDrivers.motorPicker.notSet') }}</span>
     </div>
     <div v-if="assigned" class="mb-1 truncate opacity-70">{{ motorSpecLabel(assigned) }}</div>
     <ComboSelect
       :model-value="selectedModel"
       :options="options"
-      placeholder="search 200+ motors (model or maker)…"
+      :placeholder="t('motorDrivers.motorPicker.searchPlaceholder')"
       clearable
       @update:model-value="(m) => emit('assign', stepper, m)"
     />

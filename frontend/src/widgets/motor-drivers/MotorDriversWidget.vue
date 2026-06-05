@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { fetchDriverStatus, fetchMotorCatalog, saveMotorAssignment } from './api'
 import HelpIllo from './HelpIllo.vue'
@@ -29,8 +30,9 @@ import {
   nearCurrentCap,
   temperatureLabel,
 } from './format'
-import { STEPS } from './help'
 import type { DriversStatus, MotorSpec, TmcDriver } from './types'
+
+const { t, tm } = useI18n({ useScope: 'global' })
 
 const status = ref<DriversStatus | null>(null)
 const error = ref<string | null>(null)
@@ -38,10 +40,10 @@ const loading = ref(true)
 const showSteps = ref(false)
 const motorCatalog = ref<MotorSpec[]>([])
 const mode = ref<'dashboard' | 'guided'>('dashboard')
-const MODE_TABS: { id: 'dashboard' | 'guided'; label: string }[] = [
-  { id: 'dashboard', label: 'Dashboard' },
-  { id: 'guided', label: '🧭 Guided' },
-]
+const MODE_TABS = computed<{ id: 'dashboard' | 'guided'; label: string }[]>(() => [
+  { id: 'dashboard', label: t('motorDrivers.widget.tabDashboard') },
+  { id: 'guided', label: t('motorDrivers.widget.tabGuided') },
+])
 /** Per-card "details" disclosure — keeps the secondary specs off the baseline card (#119). */
 const openDetails = ref<Record<string, boolean>>({})
 
@@ -50,8 +52,8 @@ const reachable = computed(() => status.value?.reachable ?? false)
 
 function healthTitle(d: TmcDriver): string {
   return driverHealth(d).tone === 'idle'
-    ? 'Enable the motor (home or jog an axis) to read live temperature and fault flags'
-    : 'Live driver status from drv_status'
+    ? t('motorDrivers.widget.healthTitleIdle')
+    : t('motorDrivers.widget.healthTitleLive')
 }
 
 async function load(silent = false): Promise<void> {
@@ -96,8 +98,7 @@ onUnmounted(() => {
     <!-- Intro + help layer (collapsed by default — zero clutter) -->
     <div class="flex items-start justify-between gap-2">
       <p class="min-w-0 flex-1 text-xs opacity-70">
-        Every TMC stepper driver on your printer, read live from its Klipper config — inspect, get
-        tuning recommendations, and apply them (gated). New here? Try 🧭 Guided.
+        {{ t('motorDrivers.widget.intro') }}
       </p>
       <HelpIllo illo="driver" class="h-8 w-8 shrink-0 opacity-70" />
     </div>
@@ -109,14 +110,18 @@ onUnmounted(() => {
         :aria-expanded="showSteps"
         @click="showSteps = !showSteps"
       >
-        {{ showSteps ? '▾ how to read this' : '▸ how to read this' }}
+        {{
+          showSteps
+            ? t('motorDrivers.widget.howToReadHide')
+            : t('motorDrivers.widget.howToReadShow')
+        }}
       </button>
     </div>
     <ol
       v-if="showSteps"
       class="list-decimal space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper py-2 pl-6 pr-2 text-[11px] leading-snug opacity-80"
     >
-      <li v-for="(s, i) in STEPS" :key="i">{{ s }}</li>
+      <li v-for="(s, i) in tm('motorDrivers.widget.steps')" :key="i">{{ s }}</li>
     </ol>
 
     <!-- Dashboard / Guided mode strip — shown once the printer is reachable, so the Guided
@@ -124,7 +129,9 @@ onUnmounted(() => {
     <WidgetTabs v-if="reachable" v-model="mode" :tabs="MODE_TABS" />
 
     <!-- States -->
-    <div v-if="loading && !status" class="font-mono text-xs">Loading motor drivers…</div>
+    <div v-if="loading && !status" class="font-mono text-xs">
+      {{ t('motorDrivers.widget.loading') }}
+    </div>
 
     <div
       v-else-if="error"
@@ -136,7 +143,7 @@ onUnmounted(() => {
         :disabled="loading"
         @click="load()"
       >
-        {{ loading ? 'retrying…' : '↻ retry' }}
+        {{ loading ? t('motorDrivers.widget.retrying') : t('motorDrivers.widget.retry') }}
       </button>
     </div>
 
@@ -144,11 +151,11 @@ onUnmounted(() => {
       v-else-if="!reachable"
       class="rounded-brutal border-2 border-ink bg-brand-yellow px-2 py-1 text-[11px]"
     >
-      Can’t reach the printer’s Moonraker — driver data is unavailable right now.
+      {{ t('motorDrivers.widget.unreachable') }}
     </p>
 
     <p v-else-if="!drivers.length" class="font-mono text-xs opacity-70">
-      No TMC drivers found in the Klipper config. (Only TMC stepper drivers appear here.)
+      {{ t('motorDrivers.widget.noDrivers') }}
     </p>
 
     <!-- Driver cards (dashboard mode) -->
@@ -177,17 +184,23 @@ onUnmounted(() => {
 
           <div class="flex items-center justify-between font-mono text-[11px]">
             <span>
-              Run <b>{{ currentLabel(d.run_current, d.run_current_config) }}</b>
+              <i18n-t keypath="motorDrivers.widget.runCurrent" tag="span" scope="global">
+                <template #value
+                  ><b>{{ currentLabel(d.run_current, d.run_current_config) }}</b></template
+                >
+              </i18n-t>
               <span
                 v-if="nearCurrentCap(d)"
                 class="text-brand-red"
-                :title="`Near this model's rated cap (${maxCurrentLabel(d)})`"
+                :title="t('motorDrivers.widget.nearCapTitle', { max: maxCurrentLabel(d) })"
                 >⚠</span
               >
             </span>
-            <span class="opacity-80"
-              >Hold {{ currentLabel(d.hold_current, d.hold_current_config) }}</span
-            >
+            <span class="opacity-80">{{
+              t('motorDrivers.widget.holdCurrent', {
+                value: currentLabel(d.hold_current, d.hold_current_config),
+              })
+            }}</span>
           </div>
 
           <!-- Essentials stay inline; the rest collapses behind a per-card "details" toggle. -->
@@ -195,17 +208,26 @@ onUnmounted(() => {
             class="flex flex-wrap items-center gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-80"
           >
             <span>{{ chopperLabel(d) }}</span>
-            <span v-if="d.microsteps != null">{{ d.microsteps }} µsteps</span>
+            <span v-if="d.microsteps != null">{{
+              t('motorDrivers.widget.microsteps', { n: d.microsteps })
+            }}</span>
             <span>{{ temperatureLabel(d) }}</span>
-            <span v-if="d.stallguard_field"
-              >SG {{ d.stallguard_field }} {{ d.stallguard_threshold }}</span
-            >
+            <span v-if="d.stallguard_field">{{
+              t('motorDrivers.widget.sg', {
+                field: d.stallguard_field,
+                threshold: d.stallguard_threshold,
+              })
+            }}</span>
             <button
               class="opacity-60 transition-opacity hover:opacity-100"
               :aria-expanded="!!openDetails[d.stepper]"
               @click="openDetails[d.stepper] = !openDetails[d.stepper]"
             >
-              {{ openDetails[d.stepper] ? '▾ less' : '▸ details' }}
+              {{
+                openDetails[d.stepper]
+                  ? t('motorDrivers.widget.detailsHide')
+                  : t('motorDrivers.widget.detailsShow')
+              }}
             </button>
           </div>
 
@@ -213,8 +235,10 @@ onUnmounted(() => {
             v-if="openDetails[d.stepper]"
             class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] opacity-70"
           >
-            <span v-if="d.interpolate">interp</span>
-            <span v-if="d.sense_resistor != null">sense {{ d.sense_resistor }} Ω</span>
+            <span v-if="d.interpolate">{{ t('motorDrivers.widget.interp') }}</span>
+            <span v-if="d.sense_resistor != null">{{
+              t('motorDrivers.widget.sense', { value: d.sense_resistor })
+            }}</span>
             <span v-if="interfaceLabel(d)">{{ interfaceLabel(d) }}</span>
             <span v-if="maxCurrentLabel(d)">{{ maxCurrentLabel(d) }}</span>
             <span
