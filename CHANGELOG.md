@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.71.0] - 2026-06-05
+## [0.72.0] - 2026-06-05
+
+### Added
+
+- **Firmware Manager — Guided new-board wizard (#118).** A new **🧭 Guided** tab walks a new
+  control board through four steps — detect the board, configure & build a profile, add & assign
+  the device, then build & flash and verify it's in sync with the host. Each step reflects the
+  **live** firmware state (it turns green when satisfied) and deep-links into the tab where you do
+  it; it doesn't duplicate the build/flash logic or bypass any confirm. The widget now lands on
+  Guided on first run when no board is set up yet, mirroring the other widgets' first-run flow.
 
 ### Changed
 
