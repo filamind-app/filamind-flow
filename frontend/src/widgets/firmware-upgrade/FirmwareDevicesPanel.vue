@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   attachIdentity,
@@ -14,6 +15,8 @@ import {
 import type { Board, Device, FirmwareProfile } from './types'
 
 defineEmits<{ close: [] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const devices = ref<Device[]>([])
 const boards = ref<Board[]>([])
@@ -62,7 +65,7 @@ async function load(): Promise<void> {
     boards.value = boardData.boards
     profiles.value = profileData.profiles
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to load devices'
+    error.value = e instanceof Error ? e.message : t('firmware.devices.loadFailed')
   } finally {
     loading.value = false
   }
@@ -73,7 +76,7 @@ async function persist(device: Device): Promise<void> {
   try {
     await saveDevice({ ...device })
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Save failed'
+    error.value = e instanceof Error ? e.message : t('firmware.devices.saveFailed')
   }
 }
 
@@ -93,7 +96,7 @@ async function addBoard(board: Board): Promise<void> {
     })
     await load()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Add failed'
+    error.value = e instanceof Error ? e.message : t('firmware.devices.addFailed')
   }
 }
 
@@ -104,7 +107,7 @@ async function attachToDevice(board: Board, deviceId: string): Promise<void> {
     attachFor.value = null
     await load()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Attach failed'
+    error.value = e instanceof Error ? e.message : t('firmware.devices.attachFailed')
   }
 }
 
@@ -119,7 +122,7 @@ async function remove(device: Device): Promise<void> {
     await removeDevice(device.id)
     await load()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Remove failed'
+    error.value = e instanceof Error ? e.message : t('firmware.devices.removeFailed')
   }
 }
 
@@ -142,7 +145,7 @@ async function doExport(): Promise<void> {
   try {
     await exportBackup()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Export failed'
+    error.value = e instanceof Error ? e.message : t('firmware.devices.exportFailed')
   }
 }
 
@@ -154,11 +157,12 @@ async function onImportFile(event: Event): Promise<void> {
   error.value = null
   try {
     const summary = await importBackup(file)
-    const extra = summary.restored_devices ? ' + devices' : ''
-    backupMsg.value = `Restored ${summary.restored_profiles.length} profile(s)${extra}.`
+    const extra = summary.restored_devices ? t('firmware.devices.restoredDevicesSuffix') : ''
+    const n = summary.restored_profiles.length
+    backupMsg.value = t('firmware.devices.restored', { n, extra }, n)
     await load()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Import failed'
+    error.value = e instanceof Error ? e.message : t('firmware.devices.importFailed')
   } finally {
     input.value = ''
   }
@@ -177,16 +181,19 @@ onUnmounted(() => {
 <template>
   <div class="space-y-2 text-sm">
     <div class="flex items-center justify-between gap-2">
-      <span class="text-xs font-bold uppercase tracking-wide">Devices manager</span>
-      <button class="nb-btn px-2 py-0.5 text-xs" @click="$emit('close')">← back</button>
+      <span class="text-xs font-bold uppercase tracking-wide">{{
+        t('firmware.devices.title')
+      }}</span>
+      <button class="nb-btn px-2 py-0.5 text-xs" @click="$emit('close')">
+        {{ t('firmware.devices.back') }}
+      </button>
     </div>
     <p class="font-mono text-[10px] opacity-60">
-      Add boards, assign a profile, and configure how each is flashed. You build &amp; flash each
-      device from the Status screen (Configure builds the shared profile).
+      {{ t('firmware.devices.intro') }}
     </p>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
-    <div v-if="loading" class="font-mono text-xs">Loading devices…</div>
+    <div v-if="loading" class="font-mono text-xs">{{ t('firmware.devices.loading') }}</div>
 
     <template v-else>
       <!-- Registered devices (configure each board) -->
@@ -211,14 +218,14 @@ onUnmounted(() => {
             class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[10px] text-surface"
             @click="remove(device)"
           >
-            remove
+            {{ t('firmware.devices.remove') }}
           </button>
         </div>
         <div class="font-mono text-[9px] opacity-50">{{ device.id }}</div>
 
         <div class="flex flex-wrap items-center gap-1.5">
           <select v-model="device.profile" :class="inputClass" @change="persist(device)">
-            <option :value="null">— profile —</option>
+            <option :value="null">{{ t('firmware.devices.profilePlaceholder') }}</option>
             <option v-for="p in profiles" :key="p.name" :value="p.name">{{ p.name }}</option>
           </select>
           <select v-model="device.method" :class="inputClass" @change="persist(device)">
@@ -241,20 +248,20 @@ onUnmounted(() => {
           <label
             v-if="device.method === 'serial' || device.method === 'can'"
             class="flex items-center gap-1 text-[10px]"
-            title="Board carries a Katapult bootloader — it's rebooted into Katapult before flashing. Uncheck for boards flashed directly."
+            :title="t('firmware.devices.katapultHint')"
           >
             <input v-model="device.is_katapult" type="checkbox" @change="persist(device)" />
-            katapult
+            {{ t('firmware.devices.katapult') }}
           </label>
           <label class="flex items-center gap-1 text-[10px]">
             <input v-model="device.exclude_from_batch" type="checkbox" @change="persist(device)" />
-            exclude
+            {{ t('firmware.devices.exclude') }}
           </label>
         </div>
 
         <input
           v-model="device.notes"
-          placeholder="notes (URLs, pinout…)"
+          :placeholder="t('firmware.devices.notesPlaceholder')"
           :class="['w-full', inputClass]"
           @change="persist(device)"
         />
@@ -265,35 +272,39 @@ onUnmounted(() => {
           v-if="device.serial_id"
           class="ml-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
         >
-          <span class="nb-badge shrink-0 bg-brand-cyan text-[9px]">↳ serial katapult identity</span>
+          <span class="nb-badge shrink-0 bg-brand-cyan text-[9px]">{{
+            t('firmware.devices.serialIdentity')
+          }}</span>
           <span class="min-w-0 flex-1 truncate font-mono opacity-60">{{ device.serial_id }}</span>
           <button
             class="nb-btn shrink-0 px-1.5 py-0 text-[9px]"
             @click="detach(device, 'serial_id')"
           >
-            unlink
+            {{ t('firmware.devices.unlink') }}
           </button>
         </div>
         <div
           v-if="device.dfu_id"
           class="ml-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
         >
-          <span class="nb-badge shrink-0 bg-brand-yellow text-[9px]"
-            >↳ dfu bootloader identity</span
-          >
+          <span class="nb-badge shrink-0 bg-brand-yellow text-[9px]">{{
+            t('firmware.devices.dfuIdentity')
+          }}</span>
           <span class="min-w-0 flex-1 truncate font-mono opacity-60">{{ device.dfu_id }}</span>
           <button class="nb-btn shrink-0 px-1.5 py-0 text-[9px]" @click="detach(device, 'dfu_id')">
-            unlink
+            {{ t('firmware.devices.unlink') }}
           </button>
         </div>
       </div>
       <p v-if="!devices.length" class="font-mono text-xs opacity-70">
-        No saved devices yet — add one below.
+        {{ t('firmware.devices.empty') }}
       </p>
 
       <!-- Discovered, not yet saved -->
       <div v-if="unmanaged.length" class="space-y-1.5 border-t-2 border-ink pt-2">
-        <span class="text-xs font-bold uppercase tracking-wide">Discovered</span>
+        <span class="text-xs font-bold uppercase tracking-wide">{{
+          t('firmware.devices.discovered')
+        }}</span>
         <div
           v-for="board in unmanaged"
           :key="board.id"
@@ -315,26 +326,26 @@ onUnmounted(() => {
               class="nb-btn shrink-0 bg-brand-lime px-2 py-0.5 text-[10px]"
               @click="addBoard(board)"
             >
-              add
+              {{ t('firmware.devices.add') }}
             </button>
             <button
               v-if="devices.length"
               class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
-              title="Link this bootloader identity to a registered device"
+              :title="t('firmware.devices.linkHint')"
               @click="attachFor = attachFor === board.id ? null : board.id"
             >
-              🔗 link
+              {{ t('firmware.devices.link') }}
             </button>
           </div>
           <div v-if="attachFor === board.id" class="mt-1 flex flex-wrap items-center gap-1">
-            <span class="text-[10px] opacity-60">link to:</span>
+            <span class="text-[10px] opacity-60">{{ t('firmware.devices.linkTo') }}</span>
             <button
               v-for="device in devices"
               :key="device.id"
               class="nb-btn px-2 py-0.5 text-[10px]"
               @click="attachToDevice(board, device.id)"
             >
-              → {{ device.name }}
+              {{ t('firmware.devices.linkTarget', { name: device.name }) }}
             </button>
           </div>
         </div>
@@ -343,11 +354,15 @@ onUnmounted(() => {
       <!-- Backup & restore the registry + profiles -->
       <div class="space-y-1.5 border-t-2 border-ink pt-2">
         <div class="flex items-center justify-between gap-2">
-          <span class="text-xs font-bold uppercase tracking-wide">Backup</span>
+          <span class="text-xs font-bold uppercase tracking-wide">{{
+            t('firmware.devices.backup')
+          }}</span>
           <div class="flex gap-1">
-            <button class="nb-btn px-2 py-0.5 text-[10px]" @click="doExport">export</button>
+            <button class="nb-btn px-2 py-0.5 text-[10px]" @click="doExport">
+              {{ t('firmware.devices.export') }}
+            </button>
             <label class="nb-btn cursor-pointer px-2 py-0.5 text-[10px]">
-              import
+              {{ t('firmware.devices.import') }}
               <input type="file" accept=".zip" class="hidden" @change="onImportFile" />
             </label>
           </div>

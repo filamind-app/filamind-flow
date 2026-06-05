@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   buildFirmware,
@@ -12,6 +13,8 @@ import {
   saveProfile,
 } from './api'
 import type { ConfigNode, FirmwareProfile } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 defineEmits<{ close: [] }>()
 
@@ -69,7 +72,7 @@ async function reloadTree(): Promise<void> {
       show_optional: showOptional.value,
     })
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to load configuration'
+    error.value = e instanceof Error ? e.message : t('firmware.configEditor.errLoad')
   } finally {
     loading.value = false
   }
@@ -126,13 +129,13 @@ async function save(): Promise<void> {
       values: editList(),
       base_profile: baseProfile.value,
     })
-    message.value = `Saved profile “${profileName.value.trim()}”.`
+    message.value = t('firmware.configEditor.savedProfile', { name: profileName.value.trim() })
     baseProfile.value = profileName.value.trim()
     edits.value = {}
     profileName.value = ''
     await loadProfiles()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Save failed'
+    error.value = e instanceof Error ? e.message : t('firmware.configEditor.errSave')
   } finally {
     saving.value = false
   }
@@ -144,7 +147,7 @@ async function downloadBin(): Promise<void> {
   try {
     await downloadArtifact(baseProfile.value)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Download failed'
+    error.value = e instanceof Error ? e.message : t('firmware.configEditor.errDownload')
   }
 }
 
@@ -154,7 +157,7 @@ async function removeProfile(name: string): Promise<void> {
     if (baseProfile.value === name) baseProfile.value = null
     await loadProfiles()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Delete failed'
+    error.value = e instanceof Error ? e.message : t('firmware.configEditor.errDelete')
   }
 }
 
@@ -165,12 +168,12 @@ async function renameSelected(): Promise<void> {
   message.value = null
   try {
     await renameProfile(baseProfile.value, target)
-    message.value = `Renamed to “${target}”.`
+    message.value = t('firmware.configEditor.renamedTo', { name: target })
     baseProfile.value = target
     manageName.value = ''
     await loadProfiles()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Rename failed'
+    error.value = e instanceof Error ? e.message : t('firmware.configEditor.errRename')
   }
 }
 
@@ -181,14 +184,14 @@ async function duplicateSelected(): Promise<void> {
   message.value = null
   try {
     await duplicateProfile(baseProfile.value, target)
-    message.value = `Duplicated to “${target}”.`
+    message.value = t('firmware.configEditor.duplicatedTo', { name: target })
     baseProfile.value = target
     edits.value = {}
     manageName.value = ''
     await loadProfiles()
     await reloadTree()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Duplicate failed'
+    error.value = e instanceof Error ? e.message : t('firmware.configEditor.errDuplicate')
   }
 }
 
@@ -199,6 +202,7 @@ async function build(): Promise<void> {
   try {
     // Auto-save pending edits into the profile so the build reflects them.
     if (dirtyCount.value > 0) {
+      // Build-log lines are technical console output — kept English (not externalized).
       buildLog.value += `>>> saving ${dirtyCount.value} pending edit(s) to ${baseProfile.value}…\n`
       await saveProfile({
         name: baseProfile.value,
@@ -227,54 +231,70 @@ onMounted(async () => {
 <template>
   <div class="space-y-2 text-sm">
     <div class="flex items-center justify-between gap-2">
-      <span class="text-xs font-bold uppercase tracking-wide">Configure firmware</span>
-      <button class="nb-btn px-2 py-0.5 text-xs" @click="$emit('close')">← back</button>
+      <span class="text-xs font-bold uppercase tracking-wide">{{
+        t('firmware.configEditor.title')
+      }}</span>
+      <button class="nb-btn px-2 py-0.5 text-xs" @click="$emit('close')">
+        {{ t('firmware.configEditor.back') }}
+      </button>
     </div>
 
     <div class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink p-2">
       <select v-model="baseProfile" :class="['flex-1', inputClass]" @change="selectProfile">
-        <option :value="null">— blank config —</option>
+        <option :value="null">{{ t('firmware.configEditor.blankConfig') }}</option>
         <option v-for="p in profiles" :key="p.name" :value="p.name">{{ p.name }}</option>
       </select>
       <label class="flex items-center gap-1 text-[11px]">
-        <input v-model="showOptional" type="checkbox" @change="reloadTree" /> optional
+        <input v-model="showOptional" type="checkbox" @change="reloadTree" />
+        {{ t('firmware.configEditor.optional') }}
       </label>
       <label
         class="flex items-center gap-1 text-[11px]"
-        title="Show each option's help text inline"
+        :title="t('firmware.configEditor.optionDocsTitle')"
       >
-        <input v-model="showHelp" type="checkbox" /> option docs
+        <input v-model="showHelp" type="checkbox" /> {{ t('firmware.configEditor.optionDocs') }}
       </label>
-      <label class="flex items-center gap-1 text-[11px]" title="Show raw Kconfig symbol names">
-        <input v-model="showRaw" type="checkbox" /> raw
-      </label>
-      <span v-if="dirtyCount" class="nb-badge bg-brand-yellow text-[10px]"
-        >{{ dirtyCount }} edits</span
+      <label
+        class="flex items-center gap-1 text-[11px]"
+        :title="t('firmware.configEditor.rawTitle')"
       >
-      <span v-if="selectedBuilt" class="nb-badge bg-brand-lime text-[10px]">built ✓</span>
+        <input v-model="showRaw" type="checkbox" /> {{ t('firmware.configEditor.raw') }}
+      </label>
+      <span v-if="dirtyCount" class="nb-badge bg-brand-yellow text-[10px]">{{
+        t('firmware.configEditor.editsBadge', { n: dirtyCount }, dirtyCount)
+      }}</span>
+      <span v-if="selectedBuilt" class="nb-badge bg-brand-lime text-[10px]">{{
+        t('firmware.configEditor.builtBadge')
+      }}</span>
       <button
         v-if="baseProfile"
         class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]"
         :disabled="building"
-        :title="dirtyCount ? 'saves pending edits, then builds' : 'build firmware'"
+        :title="
+          dirtyCount
+            ? t('firmware.configEditor.buildTitleDirty')
+            : t('firmware.configEditor.buildTitle')
+        "
         @click="build"
       >
-        {{ building ? 'building…' : 'build profile' }}
+        {{
+          building ? t('firmware.configEditor.building') : t('firmware.configEditor.buildProfile')
+        }}
       </button>
       <button
         v-if="selectedBuilt"
         class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
-        title="Download the built firmware binary"
+        :title="t('firmware.configEditor.downloadBinTitle')"
         @click="downloadBin"
       >
-        ↓ .bin
+        {{ t('firmware.configEditor.downloadBin') }}
       </button>
       <button
         v-if="baseProfile"
         class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
         @click="removeProfile(baseProfile)"
       >
-        delete
+        {{ t('firmware.configEditor.delete') }}
       </button>
     </div>
 
@@ -282,28 +302,30 @@ onMounted(async () => {
       v-if="baseProfile"
       class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-dashed border-ink px-2 py-1"
     >
-      <span class="text-[11px] font-bold uppercase opacity-70">manage</span>
+      <span class="text-[11px] font-bold uppercase opacity-70">{{
+        t('firmware.configEditor.manage')
+      }}</span>
       <input
         v-model="manageName"
-        placeholder="new name"
+        :placeholder="t('firmware.configEditor.newNamePlaceholder')"
         :class="[inputClass, 'max-w-none flex-1']"
         @keyup.enter="renameSelected"
       />
       <button
         class="nb-btn px-2 py-0.5 text-[10px]"
         :disabled="!manageName.trim()"
-        title="Rename this profile (and any built binary + linked devices)"
+        :title="t('firmware.configEditor.renameTitle')"
         @click="renameSelected"
       >
-        rename →
+        {{ t('firmware.configEditor.rename') }}
       </button>
       <button
         class="nb-btn px-2 py-0.5 text-[10px]"
         :disabled="!manageName.trim()"
-        title="Save a copy of this profile under the new name"
+        :title="t('firmware.configEditor.duplicateTitle')"
         @click="duplicateSelected"
       >
-        duplicate
+        {{ t('firmware.configEditor.duplicate') }}
       </button>
     </div>
 
@@ -314,18 +336,24 @@ onMounted(async () => {
       <span class="font-bold uppercase tracking-wide">{{ selectedProfile.name }}</span>
       <span :class="selectedProfile.built ? '' : 'opacity-50'">
         {{
-          selectedProfile.built ? `built · ${selectedProfile.built_version ?? '—'}` : 'not built'
+          selectedProfile.built
+            ? t('firmware.configEditor.builtVersion', {
+                version: selectedProfile.built_version ?? '—',
+              })
+            : t('firmware.configEditor.notBuilt')
         }}
       </span>
       <span v-if="selectedProfile.is_linux" class="nb-badge bg-brand-yellow text-[9px]">linux</span>
       <span v-if="selectedProfile.is_avr" class="nb-badge bg-brand-yellow text-[9px]">avr</span>
-      <span v-if="selectedProfile.is_can_bridge" class="nb-badge bg-brand-yellow text-[9px]"
-        >CAN bridge</span
-      >
+      <span v-if="selectedProfile.is_can_bridge" class="nb-badge bg-brand-yellow text-[9px]">{{
+        t('firmware.configEditor.canBridge')
+      }}</span>
     </div>
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
-    <div v-else-if="loading" class="font-mono text-xs">Loading configuration…</div>
+    <div v-else-if="loading" class="font-mono text-xs">
+      {{ t('firmware.configEditor.loading') }}
+    </div>
 
     <div v-else class="space-y-0.5">
       <template v-for="item in flat" :key="item.node.name">
@@ -359,7 +387,7 @@ onMounted(async () => {
               class="min-w-0 flex-1 truncate"
               :title="
                 item.node.readonly
-                  ? 'Locked — controlled by Klipper (a prerequisite or another option sets it); not directly editable here'
+                  ? t('firmware.configEditor.lockedTitle')
                   : (item.node.help ?? item.node.name)
               "
             >
@@ -376,7 +404,10 @@ onMounted(async () => {
               class="nb-badge shrink-0"
               :class="boolOn(item.node) ? 'bg-brand-lime' : 'bg-surface opacity-70'"
             >
-              {{ item.node.readonly ? '🔒 ' : '' }}{{ boolOn(item.node) ? 'ON' : 'OFF' }}
+              {{ item.node.readonly ? '🔒 ' : ''
+              }}{{
+                boolOn(item.node) ? t('firmware.configEditor.on') : t('firmware.configEditor.off')
+              }}
             </span>
             <select
               v-else-if="item.node.type === 'choice'"
@@ -401,10 +432,12 @@ onMounted(async () => {
             v-if="(showRaw && item.node.dep_str) || (showHelp && item.node.default)"
             class="text-[9px] opacity-50"
           >
-            <span v-if="showRaw && item.node.dep_str">needs: {{ item.node.dep_str }}</span>
-            <span v-if="showHelp && item.node.default" class="ml-2"
-              >default: {{ item.node.default }}</span
-            >
+            <span v-if="showRaw && item.node.dep_str">{{
+              t('firmware.configEditor.needs', { dep: item.node.dep_str })
+            }}</span>
+            <span v-if="showHelp && item.node.default" class="ml-2">{{
+              t('firmware.configEditor.default', { value: item.node.default })
+            }}</span>
           </div>
           <p v-if="showHelp && item.node.help" class="pb-1 text-[10px] leading-tight opacity-60">
             {{ item.node.help }}
@@ -416,7 +449,7 @@ onMounted(async () => {
     <div class="flex flex-wrap items-center gap-2 border-t-2 border-ink pt-2">
       <input
         v-model="profileName"
-        placeholder="profile name (e.g. EBB36)"
+        :placeholder="t('firmware.configEditor.profileNamePlaceholder')"
         :class="['min-w-[8rem] flex-1', inputClass, 'max-w-none']"
       />
       <button
@@ -424,7 +457,7 @@ onMounted(async () => {
         :disabled="!profileName.trim() || saving"
         @click="save"
       >
-        {{ saving ? 'saving…' : 'save profile' }}
+        {{ saving ? t('firmware.configEditor.saving') : t('firmware.configEditor.saveProfile') }}
       </button>
     </div>
     <p v-if="message" class="font-mono text-[10px] opacity-70">{{ message }}</p>
