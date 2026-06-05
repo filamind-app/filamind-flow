@@ -9,7 +9,7 @@ defineEmits<{ 'update:modelValue': [id: T] }>()
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-1" role="tablist">
+  <div class="flex flex-wrap gap-1" role="tablist" aria-label="Views">
     <button
       v-for="t in tabs"
       :key="t.id"
