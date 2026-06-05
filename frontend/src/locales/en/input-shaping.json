@@ -85,6 +85,194 @@
           "def": "The acceleration the shaper can sustain without too much smoothing — a suggested SET_VELOCITY_LIMIT / printer.cfg value."
         }
       }
+    },
+    "grade": {
+      "clarity": {
+        "label": "Peak clarity",
+        "value": "{ratio}×",
+        "note": {
+          "none": "No spectrum to assess.",
+          "good": "Sharp peak, well above the noise.",
+          "ok": "Peak visible above the noise.",
+          "poor": "Weak peak — noisy or very stiff."
+        }
+      },
+      "vibration": {
+        "label": "Residual vibration",
+        "value": "{pct}%",
+        "note": {
+          "good": "Almost all resonance removed.",
+          "ok": "Most resonance removed.",
+          "poor": "Significant vibration remains."
+        }
+      },
+      "smoothing": {
+        "label": "Smoothing",
+        "note": {
+          "good": "Minimal corner rounding.",
+          "ok": "Some rounding at high accel.",
+          "poor": "Heavy smoothing — rounds corners."
+        }
+      },
+      "freq": {
+        "label": "Frequency",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "No frequency found.",
+          "good": "Healthy, stiff axis.",
+          "ok": "A little soft or very stiff.",
+          "soft": "Soft / heavy axis.",
+          "high": "Unusually high."
+        }
+      },
+      "shaper": {
+        "label": "Resonance shape",
+        "note": {
+          "clean": "Clean single resonance.",
+          "robust": "Single resonance, robust shaper.",
+          "twin": "Broad or twin resonance.",
+          "multiple": "Multiple resonances.",
+          "atypical": "Atypical shaper."
+        }
+      },
+      "verdict": {
+        "a": "Excellent — clean capture, well-tuned axis.",
+        "b": "Good — solid result, minor room to improve.",
+        "c": "Fair — usable; see the suggestions below.",
+        "d": "Poor — mechanical tuning + a re-test advised.",
+        "f": "Unreliable — re-run the test (check the sensor mount).",
+        "none": "No usable result — re-run TEST_RESONANCES."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "No usable resonance",
+        "advice": "Re-run TEST_RESONANCES. Check the accelerometer is wired and mounted firmly to the toolhead.",
+        "detail": "no clear peak detected"
+      },
+      "noisy": {
+        "title": "Noisy capture",
+        "advice": "Secure the accelerometer mount and re-run. Avoid fans or other motion during the test.",
+        "detail": "signal-to-noise {snr}×"
+      },
+      "lowFreq": {
+        "title": "Low resonance frequency",
+        "advice": "Soft or heavy axis — tighten the belts and check frame rigidity. A stiffer axis resonates higher and prints faster.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Somewhat soft axis",
+        "advice": "Frequency is on the low side. Firming up belts or the frame raises it and lets you print faster.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "High smoothing",
+        "advice": "Will round corners. Pick a stiffer shaper or lower max_accel.",
+        "detail": "smoothing {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Multiple resonances",
+        "advice": "Often a loose toolhead, belt, or part. Re-seat the toolhead and re-check belt tension."
+      },
+      "vibrationRemains": {
+        "title": "Vibration remains",
+        "advice": "Mechanical tuning (belts, frame, toolhead mass) could push this lower.",
+        "detail": "{vibrations}% left after shaping"
+      },
+      "healthy": {
+        "title": "Healthy axis",
+        "advice": "Clean capture and a stiff axis — good to go. Apply the config and restart Klipper.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X and Y differ a lot",
+        "advice": "Asymmetric stiffness. Check belt tension on the softer axis; on CoreXY make sure both belts are matched and tight.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "recommended",
+        "shaperFreq": "shaper freq",
+        "peakFreq": "peak freq",
+        "remainingVibr": "remaining vibr",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Belts matched",
+          "advice": "The two belt responses line up — tension looks balanced."
+        },
+        "differ": {
+          "title": "Belts differ",
+          "advice": "The belt resonances differ — re-tension the looser belt until both peaks line up."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Sensor is quiet",
+          "why": "Good to continue."
+        },
+        "elevated": {
+          "title": "Reduce sensor noise",
+          "why": "Max {max} ≥ {threshold}. Turn off the toolhead fan and re-check the mount, then re-run."
+        },
+        "bad": {
+          "title": "Fix the accelerometer before testing",
+          "why": "Noise {max} is too high — re-seat the sensor and check its wiring."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Belts balanced",
+          "why": "Tension is even — calibrate the shaper next."
+        },
+        "mismatch": {
+          "title": "Re-tension belt {looser}",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). Tighten the lower-frequency belt until both peaks line up, then re-run."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Re-run at a lower acceleration",
+          "why": "Too much low-frequency motion was recorded — lower ACCEL (or raise SIZE) so only constant speeds are measured, then re-run."
+        },
+        "favour": {
+          "title": "Favour ~{speed} mm/s",
+          "why": "Smoothest band {start}–{end} mm/s — set slicer print / travel speeds here when you can."
+        },
+        "avoid": {
+          "title": "Avoid {shown} mm/s",
+          "why": "These speeds hit a resonance — keep print + travel moves away from them in the slicer."
+        },
+        "symmetry": {
+          "title": "Check belt tension / motor match",
+          "why": "Motor symmetry {pct}% is low — re-tension the belts (compare belts) and verify both motor currents match."
+        },
+        "fine": {
+          "title": "Vibrations look fine",
+          "why": "No problem speeds stood out."
+        }
+      },
+      "pressure": {
+        "title": "Run a pressure-advance tower",
+        "why": "Print the PA tower, read the height where corners look sharpest, then `SET_PRESSURE_ADVANCE ADVANCE=<value>` and `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "Your configured axes_map is already correct.",
+        "update": "Update your config to: {axes_map}",
+        "add": "Add this so every Input Shaping graph reads X/Y/Z aligned."
+      }
     }
   }
 }

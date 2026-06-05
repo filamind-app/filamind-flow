@@ -3,6 +3,8 @@
  *  new physics. Pure + testable.
  */
 
+import { i18n } from '@/core/i18n'
+
 import type { BeltVerdict } from './compare'
 import { diagnose } from './diagnose'
 import type { NoiseResult, ShaperAnalysis, VibrationsProfile } from './types'
@@ -17,22 +19,33 @@ export interface Suggestion {
 
 export function recommendNoise(noise: NoiseResult): Suggestion[] {
   if (noise.grade === 'good') {
-    return [{ level: 'ok', title: 'Sensor is quiet', why: 'Good to continue.' }]
+    return [
+      {
+        level: 'ok',
+        title: i18n.global.t('inputShaping.recommend.noise.quiet.title'),
+        why: i18n.global.t('inputShaping.recommend.noise.quiet.why'),
+      },
+    ]
   }
   if (noise.grade === 'elevated') {
     return [
       {
         level: 'consider',
-        title: 'Reduce sensor noise',
-        why: `Max ${noise.max_noise.toFixed(0)} ≥ ${noise.threshold}. Turn off the toolhead fan and re-check the mount, then re-run.`,
+        title: i18n.global.t('inputShaping.recommend.noise.elevated.title'),
+        why: i18n.global.t('inputShaping.recommend.noise.elevated.why', {
+          max: noise.max_noise.toFixed(0),
+          threshold: noise.threshold,
+        }),
       },
     ]
   }
   return [
     {
       level: 'do-now',
-      title: 'Fix the accelerometer before testing',
-      why: `Noise ${noise.max_noise.toFixed(0)} is too high — re-seat the sensor and check its wiring.`,
+      title: i18n.global.t('inputShaping.recommend.noise.bad.title'),
+      why: i18n.global.t('inputShaping.recommend.noise.bad.why', {
+        max: noise.max_noise.toFixed(0),
+      }),
     },
   ]
 }
@@ -40,15 +53,23 @@ export function recommendNoise(noise: NoiseResult): Suggestion[] {
 export function recommendBelts(verdict: BeltVerdict): Suggestion[] {
   if (verdict.matched) {
     return [
-      { level: 'ok', title: 'Belts balanced', why: 'Tension is even — calibrate the shaper next.' },
+      {
+        level: 'ok',
+        title: i18n.global.t('inputShaping.recommend.belts.matched.title'),
+        why: i18n.global.t('inputShaping.recommend.belts.matched.why'),
+      },
     ]
   }
   const looser = verdict.peakA < verdict.peakB ? 'A (1,1)' : 'B (1,-1)'
   return [
     {
       level: 'do-now',
-      title: `Re-tension belt ${looser}`,
-      why: `A ${verdict.peakA.toFixed(0)} Hz vs B ${verdict.peakB.toFixed(0)} Hz (Δ${verdict.diffPct.toFixed(0)}%). Tighten the lower-frequency belt until both peaks line up, then re-run.`,
+      title: i18n.global.t('inputShaping.recommend.belts.mismatch.title', { looser }),
+      why: i18n.global.t('inputShaping.recommend.belts.mismatch.why', {
+        peakA: verdict.peakA.toFixed(0),
+        peakB: verdict.peakB.toFixed(0),
+        diffPct: verdict.diffPct.toFixed(0),
+      }),
     },
   ]
 }
@@ -58,8 +79,8 @@ export function recommendVibrations(profile: VibrationsProfile): Suggestion[] {
     return [
       {
         level: 'do-now',
-        title: 'Re-run at a lower acceleration',
-        why: 'Too much low-frequency motion was recorded — lower ACCEL (or raise SIZE) so only constant speeds are measured, then re-run.',
+        title: i18n.global.t('inputShaping.recommend.vibrations.lowFreq.title'),
+        why: i18n.global.t('inputShaping.recommend.vibrations.lowFreq.why'),
       },
     ]
   }
@@ -68,8 +89,13 @@ export function recommendVibrations(profile: VibrationsProfile): Suggestion[] {
     const b = profile.good_speed_ranges[0]
     out.push({
       level: 'ok',
-      title: `Favour ~${profile.recommended_speed.toFixed(0)} mm/s`,
-      why: `Smoothest band ${b.start.toFixed(0)}–${b.end.toFixed(0)} mm/s — set slicer print / travel speeds here when you can.`,
+      title: i18n.global.t('inputShaping.recommend.vibrations.favour.title', {
+        speed: profile.recommended_speed.toFixed(0),
+      }),
+      why: i18n.global.t('inputShaping.recommend.vibrations.favour.why', {
+        start: b.start.toFixed(0),
+        end: b.end.toFixed(0),
+      }),
     })
   }
   if (profile.peak_speeds.length) {
@@ -79,19 +105,25 @@ export function recommendVibrations(profile: VibrationsProfile): Suggestion[] {
       .join(', ')
     out.push({
       level: 'consider',
-      title: `Avoid ${shown} mm/s`,
-      why: 'These speeds hit a resonance — keep print + travel moves away from them in the slicer.',
+      title: i18n.global.t('inputShaping.recommend.vibrations.avoid.title', { shown }),
+      why: i18n.global.t('inputShaping.recommend.vibrations.avoid.why'),
     })
   }
   if (profile.symmetry_pct < 60) {
     out.push({
       level: 'do-now',
-      title: 'Check belt tension / motor match',
-      why: `Motor symmetry ${profile.symmetry_pct.toFixed(0)}% is low — re-tension the belts (compare belts) and verify both motor currents match.`,
+      title: i18n.global.t('inputShaping.recommend.vibrations.symmetry.title'),
+      why: i18n.global.t('inputShaping.recommend.vibrations.symmetry.why', {
+        pct: profile.symmetry_pct.toFixed(0),
+      }),
     })
   }
   if (!out.length) {
-    out.push({ level: 'ok', title: 'Vibrations look fine', why: 'No problem speeds stood out.' })
+    out.push({
+      level: 'ok',
+      title: i18n.global.t('inputShaping.recommend.vibrations.fine.title'),
+      why: i18n.global.t('inputShaping.recommend.vibrations.fine.why'),
+    })
   }
   return out
 }
@@ -100,8 +132,8 @@ export function recommendPressure(): Suggestion[] {
   return [
     {
       level: 'do-now',
-      title: 'Run a pressure-advance tower',
-      why: 'Print the PA tower, read the height where corners look sharpest, then `SET_PRESSURE_ADVANCE ADVANCE=<value>` and `SAVE_CONFIG`.',
+      title: i18n.global.t('inputShaping.recommend.pressure.title'),
+      why: i18n.global.t('inputShaping.recommend.pressure.why'),
     },
   ]
 }

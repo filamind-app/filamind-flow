@@ -3,6 +3,7 @@
  */
 
 import type { AxesMapResult, AxisMapping } from './types'
+import { i18n } from '@/core/i18n'
 
 /** The paste-ready printer.cfg snippet for the detected axes_map. */
 export function axesMapConfig(result: AxesMapResult): string {
@@ -30,7 +31,9 @@ export function angleClass(deg: number): string {
 
 /** One-line guidance vs. the currently configured axes_map. */
 export function matchVerdict(result: AxesMapResult): string {
-  if (result.matches_current === true) return 'Your configured axes_map is already correct.'
-  if (result.matches_current === false) return `Update your config to: ${result.axes_map}`
-  return 'Add this so every Input Shaping graph reads X/Y/Z aligned.'
+  if (result.matches_current === true)
+    return i18n.global.t('inputShaping.axesMap.verdict.alreadyCorrect')
+  if (result.matches_current === false)
+    return i18n.global.t('inputShaping.axesMap.verdict.update', { axes_map: result.axes_map })
+  return i18n.global.t('inputShaping.axesMap.verdict.add')
 }
