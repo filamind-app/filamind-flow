@@ -6,6 +6,14 @@
   body {
     @apply bg-paper text-ink font-display antialiased;
   }
+
+  /* Keyboard focus is visible everywhere (the brand only had an :active press affordance).
+     Uses outline, not box-shadow, so it never fights the brutal shadow. Mouse clicks don't
+     trigger :focus-visible, so the dense UI stays clean for pointer users. (a11y) */
+  :where(a, button, [role='button'], summary, input, select, textarea):focus-visible {
+    outline: 3px solid theme('colors.brand.cyan');
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
@@ -24,5 +32,15 @@
   .nb-badge {
     @apply inline-flex items-center gap-1.5 rounded-brutal border-2 border-ink px-2 py-0.5
       text-xs font-bold uppercase tracking-wide;
+  }
+}
+
+/* Touch-target floor: on touch devices the many compact buttons (e.g. the firmware
+   flash/build actions shrunk to text-[10px]) are well under the ~44px tap minimum. Give
+   every branded button a 44px min-height on coarse pointers only, leaving the dense
+   desktop layout untouched. */
+@media (pointer: coarse) {
+  .nb-btn {
+    min-height: 2.75rem;
   }
 }
