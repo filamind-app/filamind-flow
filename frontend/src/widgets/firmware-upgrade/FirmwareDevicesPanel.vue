@@ -270,7 +270,7 @@ onUnmounted(() => {
              when it drops into Katapult / DFU; show each as a connected sub-card. -->
         <div
           v-if="device.serial_id"
-          class="ml-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
+          class="ms-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
         >
           <span class="nb-badge shrink-0 bg-brand-cyan text-[9px]">{{
             t('firmware.devices.serialIdentity')
@@ -285,7 +285,7 @@ onUnmounted(() => {
         </div>
         <div
           v-if="device.dfu_id"
-          class="ml-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
+          class="ms-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
         >
           <span class="nb-badge shrink-0 bg-brand-yellow text-[9px]">{{
             t('firmware.devices.dfuIdentity')

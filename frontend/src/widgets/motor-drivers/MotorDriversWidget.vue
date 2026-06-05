@@ -119,7 +119,7 @@ onUnmounted(() => {
     </div>
     <ol
       v-if="showSteps"
-      class="list-decimal space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper py-2 pl-6 pr-2 text-[11px] leading-snug opacity-80"
+      class="list-decimal space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper py-2 ps-6 pe-2 text-[11px] leading-snug opacity-80"
     >
       <li v-for="(s, i) in tm('motorDrivers.widget.steps')" :key="i">{{ s }}</li>
     </ol>

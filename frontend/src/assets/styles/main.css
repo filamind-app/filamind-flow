@@ -44,3 +44,31 @@
     min-height: 2.75rem;
   }
 }
+
+/* Arabic / RTL. The document direction flips via <html dir> (set per-locale in core/i18n.ts), and
+   Tailwind logical utilities (ms-/me-/ps-/pe-/text-start/end) handle directional spacing. These
+   rules cover what utilities can't:
+   1) the Arabic font stack (Space Grotesk / JetBrains Mono have no Arabic glyphs) — applied to the
+      prose/display faces, but NOT .font-mono (data is Latin digits + tokens, which read best in mono);
+   2) brutalist type tweaks that don't translate — Arabic has no letter-case, and letter-spacing
+      breaks its cursive joining, so drop uppercase + tracking (the bold weight keeps the "shout");
+   3) mirror the button press translate (the hard offset shadow itself stays put — it reads as a
+      fixed light source, not a reading-direction cue). */
+:lang(ar),
+:lang(ar) .font-display {
+  font-family: theme('fontFamily.arabic');
+}
+:lang(ar) .nb-badge,
+:lang(ar) .uppercase,
+:lang(ar) .tracking-wide,
+:lang(ar) .tracking-tight,
+:lang(ar) .tracking-widest {
+  text-transform: none;
+  letter-spacing: normal;
+}
+[dir='rtl'] .nb-btn:hover {
+  transform: translate(0.125rem, -0.125rem);
+}
+[dir='rtl'] .nb-btn:active {
+  transform: translate(-0.125rem, 0.125rem);
+}

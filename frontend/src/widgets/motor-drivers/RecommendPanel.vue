@@ -140,7 +140,7 @@ async function copyConfig(): Promise<void> {
         />
         <span class="opacity-70">V</span>
         <button
-          class="nb-btn ml-auto bg-brand-cyan px-2 py-0.5 text-[10px]"
+          class="nb-btn ms-auto bg-brand-cyan px-2 py-0.5 text-[10px]"
           :disabled="loading"
           @click="compute"
         >
@@ -165,20 +165,20 @@ async function copyConfig(): Promise<void> {
         <table class="w-full">
           <thead class="opacity-60">
             <tr>
-              <th class="text-left font-normal"></th>
-              <th class="text-right font-normal">
+              <th class="text-start font-normal"></th>
+              <th class="text-end font-normal">
                 {{ t('motorDrivers.recommendPanel.colCurrent') }}
               </th>
-              <th class="text-right font-normal">
+              <th class="text-end font-normal">
                 {{ t('motorDrivers.recommendPanel.colRecommended') }}
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="r in rows" :key="r.label" :class="r.changed ? 'text-ink' : 'opacity-60'">
-              <td class="text-left">{{ r.label }}</td>
-              <td class="text-right">{{ r.current ?? '—' }}</td>
-              <td class="text-right font-bold" :class="{ 'text-brand-blue': r.changed }">
+              <td class="text-start">{{ r.label }}</td>
+              <td class="text-end">{{ r.current ?? '—' }}</td>
+              <td class="text-end font-bold" :class="{ 'text-brand-blue': r.changed }">
                 {{ r.recommended }}
               </td>
             </tr>

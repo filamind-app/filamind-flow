@@ -367,7 +367,7 @@ async function saveConfig(): Promise<void> {
         <div v-if="r.fields.length" class="grid grid-cols-2 gap-x-3 gap-y-0.5 font-mono text-[9px]">
           <div v-for="(f, i) in r.fields" :key="i" class="flex justify-between gap-2">
             <span class="shrink-0 opacity-60">{{ f.label }}</span>
-            <span class="min-w-0 truncate text-right font-bold">{{ f.value }}</span>
+            <span class="min-w-0 truncate text-end font-bold">{{ f.value }}</span>
           </div>
         </div>
       </div>
@@ -581,10 +581,10 @@ async function saveConfig(): Promise<void> {
           class="grid grid-cols-[1fr_auto_auto_auto_auto] gap-3 border-b-2 border-ink pb-0.5 font-mono text-[10px] font-bold uppercase"
         >
           <span>{{ t('inputShaping.widget.colShaper') }}</span>
-          <span class="text-right">{{ t('inputShaping.widget.colFreq') }}</span>
-          <span class="text-right">{{ t('inputShaping.widget.colVibr') }}</span>
-          <span class="text-right">{{ t('inputShaping.widget.colSmooth') }}</span>
-          <span class="text-right">{{ t('inputShaping.widget.colAccel') }}</span>
+          <span class="text-end">{{ t('inputShaping.widget.colFreq') }}</span>
+          <span class="text-end">{{ t('inputShaping.widget.colVibr') }}</span>
+          <span class="text-end">{{ t('inputShaping.widget.colSmooth') }}</span>
+          <span class="text-end">{{ t('inputShaping.widget.colAccel') }}</span>
         </div>
         <div
           v-for="s in analysis.shapers"
@@ -593,14 +593,14 @@ async function saveConfig(): Promise<void> {
           :class="s.recommended ? 'bg-brand-lime/50 font-bold' : ''"
         >
           <span>{{ s.name.toUpperCase() }}</span>
-          <span class="text-right">{{
+          <span class="text-end">{{
             t('inputShaping.widget.rowFreq', { v: s.freq.toFixed(1) })
           }}</span>
-          <span class="text-right">{{
+          <span class="text-end">{{
             t('inputShaping.widget.rowVibr', { v: s.vibrations_pct.toFixed(1) })
           }}</span>
-          <span class="text-right">{{ s.smoothing.toFixed(3) }}</span>
-          <span class="text-right">{{
+          <span class="text-end">{{ s.smoothing.toFixed(3) }}</span>
+          <span class="text-end">{{
             t('inputShaping.widget.rowAccel', { v: s.max_accel.toFixed(0) })
           }}</span>
         </div>
