@@ -6,6 +6,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.74.0] - 2026-06-05
+
+### Added
+
+- **Internationalization (i18n) — Phase 0 scaffolding.** Stood up an extensible, offline-first
+  multi-language foundation. **No user-visible change yet** — existing English copy is externalized
+  in the following phases; this phase only wires the plumbing.
+  - **`vue-i18n` v11** (Composition API) + **`@intlify/unplugin-vue-i18n`** wired into Vite. A new
+    **`src/core/i18n.ts`** bundles `en` eagerly (first paint never waits on a fetch — a printer host
+    is usually offline) and **lazy-loads** every other locale on demand.
+  - **Namespaced catalogs** under `src/locales/<code>/` (`common` / `shell` / `firmware` /
+    `input-shaping` / `motor-drivers`), mirroring the widget code-split. **Drop-in extensibility:** a
+    language becomes selectable the moment its folder exists — no component edits.
+  - **Type-safe keys** — `en` is the schema source (`src/types/i18n.d.ts`), so `t('…')` is
+    autocompleted and a wrong key fails `npm run type-check`.
+  - **Detection** (stored → browser → `en`) + `localStorage` persistence, a reactive
+    `<html lang/dir>` update on locale switch, and a **`LanguageSelect`** in the header (reusing
+    `ComboSelect`) that stays hidden until a second locale ships.
+  - **`latn` (Western) digits pinned for Arabic** and RTL declared in the locale metadata, ahead of
+    the Arabic phase; per-locale `numberFormats` / `datetimeFormats` established.
+  - **CI/dev tooling:** `npm run i18n:keydiff` (a structural key-diff gate — every locale must carry
+    exactly the `en` key set; now a CI step) and `npm run i18n:pseudo` (pseudo-localization to
+    surface text-expansion / RTL overflow and any un-externalized strings).
+
 ## [0.73.0] - 2026-06-05
 
 ### Changed
