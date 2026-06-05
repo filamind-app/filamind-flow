@@ -7,6 +7,7 @@ export type HelpIlloKey = 'mcu' | 'flash' | 'sync' | 'tool'
 export type HelpTopic =
   | 'glossary'
   | 'overview'
+  | 'guided'
   | 'status'
   | 'toolchain'
   | 'services'
@@ -62,6 +63,11 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
   overview: {
     title: 'What this widget does',
     body: 'Build and flash the Klipper firmware on every control board (MCU) of your printer — from one place, no command line. It shows each MCU’s version and whether it matches the host, lets you configure and build firmware per board, and flashes over Katapult / DFU / SD card.',
+    illo: 'flash',
+  },
+  guided: {
+    title: 'Guided new-board flow',
+    body: 'A four-step checklist to get a new control board running matching firmware: detect the board, configure & build a profile, add & assign the device, then build & flash and verify it’s in sync with the host. Each step opens the right tab and turns green once the live state satisfies it, so you always know what’s next. Nothing here flashes on its own — it guides you to the existing tools, which keep their own confirms.',
     illo: 'flash',
   },
   status: {
