@@ -1,0 +1,47 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · panneau klipper"
+    },
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "toggle": "Afficher/masquer la navigation"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Retour à Mainsail"
+    },
+    "footer": {
+      "stack": "Moonraker · Klipper",
+      "by": "par l'équipe DeltaFabs"
+    },
+    "home": {
+      "body": "Vos panneaux se trouvent dans la barre latérale — choisissez-en un pour commencer. Cet accueil est intentionnellement vide pour le moment."
+    },
+    "connection": {
+      "connected": "Connecté",
+      "connecting": "Connexion",
+      "error": "Erreur",
+      "offline": "Hors ligne",
+      "idle": "Inactif"
+    },
+    "language": {
+      "label": "Langue",
+      "select": "Sélectionner la langue"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Gestionnaire de firmware",
+        "description": "Versions du firmware MCU, état de synchronisation de l'hôte et disponibilité de la chaîne d'outils."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Analysez un CSV de résonance et trouvez le meilleur input shaper."
+      },
+      "motor-drivers": {
+        "title": "Drivers moteur",
+        "description": "Inventaire en direct des drivers de moteur pas-à-pas TMC : courant, mode, microsteps et état."
+      }
+    }
+  }
+}

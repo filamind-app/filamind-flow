@@ -1,0 +1,286 @@
+{
+  "firmware": {
+    "help": {
+      "whatsThis": "qu'est-ce que c'est ?",
+      "topics": {
+        "glossary": {
+          "title": "Termes du firmware",
+          "body": "Un petit glossaire pour ce widget :"
+        },
+        "overview": {
+          "title": "Ce que fait ce widget",
+          "body": "Compilez et flashez le firmware Klipper sur chaque carte de contrôle (MCU) de votre imprimante — depuis un seul endroit, sans ligne de commande. Il affiche la version de chaque MCU et indique si elle correspond à l'hôte, permet de configurer et compiler le firmware par carte, et flashe via Katapult / DFU / carte SD."
+        },
+        "guided": {
+          "title": "Procédure guidée nouvelle carte",
+          "body": "Une liste de contrôle en quatre étapes pour faire fonctionner une nouvelle carte de contrôle avec un firmware correspondant : détecter la carte, configurer et compiler un profil, ajouter et assigner le périphérique, puis compiler et flasher et vérifier qu'il est synchronisé avec l'hôte. Chaque étape ouvre le bon onglet et passe au vert dès que l'état en direct la satisfait, vous savez donc toujours quoi faire ensuite. Rien ici ne flashe de lui-même — cela vous guide vers les outils existants, qui conservent leurs propres confirmations."
+        },
+        "status": {
+          "title": "Versions hôte et MCU",
+          "body": "L'hôte exécute Klipper ; chaque MCU doit exécuter un firmware compilé à partir de la même version. Un ⚠ sur un périphérique signifie que son firmware n'est pas synchronisé avec l'hôte — recompilez-le et reflashez-le. Le « process MCU » propre à l'hôte Linux est également affiché (Moonraker ne peut pas signaler sa version, donc FilaMind le suit)."
+        },
+        "toolchain": {
+          "title": "Badges de la chaîne d'outils",
+          "body": "Ils indiquent quels outils de compilation/flash sont présents sur l'hôte : Klipper (les sources + le système de compilation), Katapult, flashtool, dfu-util, avrdude, can-utils. Un ✗ signifie que cet outil n'est pas installé — vous n'avez besoin que de ceux qu'utilisent vos cartes. Le badge « setup » signale les problèmes de l'hôte (sudoers, règles udev) avec des conseils de correction."
+        },
+        "services": {
+          "title": "Services",
+          "body": "Démarrez / arrêtez / redémarrez les services de l'hôte (Klipper, Moonraker, …). Le flash arrête généralement Klipper pour qu'il libère le port série, puis le redémarre ensuite — ces commandes vous permettent de le faire à la main si nécessaire."
+        },
+        "devices": {
+          "title": "Périphériques",
+          "body": "Chaque carte enregistrée, avec ses actions de compilation/flash. « Compiler » compile le firmware pour le profil de la carte ; « Flasher » l'écrit ; « compiler & flasher » fait les deux. Les boutons par lots (Tout compiler / Tout flasher / Flasher les prêts) agissent sur tous les périphériques à la fois. Ajoutez ou attachez des cartes dans le gestionnaire de périphériques."
+        },
+        "configure": {
+          "title": "Configurer et compiler le firmware",
+          "body": "Choisissez un profil de carte et modifiez ses options de compilation Klipper (le menu Kconfig) — activez « docs des options » pour lire ce que fait chaque réglage, directement ici. Puis « compiler le profil » compile le firmware et enregistre le profil afin que la même compilation puisse être reproduite plus tard. Cela compile le profil partagé ; vous le flashez sur une carte spécifique depuis l'onglet Statut."
+        },
+        "external": {
+          "title": "Firmware externe",
+          "body": "Flashez un binaire de firmware pré-compilé que vous n'avez pas compilé ici — un `.bin` d'un fabricant (p. ex. un Beacon, une carte ERCF, une toolhead CAN). Enregistrez le fichier, définissez sa méthode de flash et son offset, puis flashez-le comme n'importe quelle carte (derrière la même barrière de confirmation). FilaMind inspecte le binaire au mieux (version détectée / MCU / configuration de compilation) et peut comparer deux fichiers pour voir ce qui a changé."
+        },
+        "flash": {
+          "title": "Compiler → flasher en toute sécurité",
+          "body": "Le flash touche au matériel, donc FilaMind le protège : il ne flashe pas en cours d'impression, il arrête/redémarre Klipper autour de l'opération, et il confirme avant les étapes irréversibles. Après un flash, la carte se réénumère et sa version signalée se met à jour pour confirmer la réussite."
+        }
+      },
+      "glossary": {
+        "klipperFirmware": {
+          "term": "Firmware Klipper",
+          "def": "Le petit programme exécuté sur chaque carte de contrôle qui transforme les commandes step/dir de l'hôte en mouvement. Il doit être compilé à partir de la même version de Klipper que l'hôte."
+        },
+        "mcu": {
+          "term": "MCU",
+          "def": "Un microcontrôleur — la puce d'une carte de contrôle. Une imprimante en possède souvent plusieurs : la carte mère, une carte toolhead, le « process MCU » de l'hôte Linux, etc. Chacun exécute son propre firmware Klipper."
+        },
+        "hostMcuSync": {
+          "term": "Synchro hôte ↔ MCU",
+          "def": "Le firmware d'un MCU doit correspondre à la version de Klipper de l'hôte. S'il dérive (p. ex. après une mise à jour de l'hôte), vous obtenez une « incompatibilité de version » — reflashez ce MCU pour corriger."
+        },
+        "katapultDfu": {
+          "term": "Katapult / DFU",
+          "def": "Des bootloaders qui permettent de flasher un MCU via USB ou CAN sans retirer de carte SD. Katapult est le bootloader Klipper moderne ; DFU est celui intégré aux STM32."
+        },
+        "flashing": {
+          "term": "Flash",
+          "def": "Écriture d'un nouveau firmware sur un MCU. La carte doit généralement être d'abord dans son bootloader (Katapult / DFU / un reset)."
+        },
+        "profile": {
+          "term": "Profil",
+          "def": "Une configuration de firmware enregistrée (Kconfig / menuconfig) pour une carte, afin de pouvoir recompiler exactement le même firmware plus tard."
+        }
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Guidé",
+      "tabStatus": "🩺 Statut",
+      "tabConfigure": "🔧 Configurer",
+      "tabDevices": "🖥 Périphériques",
+      "tabExternal": "📦 Externe",
+      "loading": "Chargement du statut du firmware…",
+      "retrying": "nouvelle tentative…",
+      "retry": "↻ réessayer",
+      "stepsShow": "▸ guide compiler → flasher",
+      "stepsHide": "▾ guide compiler → flasher",
+      "steps": [
+        "Vérifiez la version de chaque MCU par rapport à l'hôte — un badge ⚠ signale un firmware désynchronisé.",
+        "Configurez le firmware d'une carte (Configurer →) et enregistrez-le comme profil, pour qu'il se recompile à l'identique.",
+        "Compilez le firmware de ce profil et surveillez le journal en direct pour repérer les erreurs.",
+        "Mettez la carte dans son bootloader (Katapult / DFU) si nécessaire, puis Flasher — Klipper est arrêté et redémarré autour de l'opération.",
+        "Après le flash, la carte se réénumère et sa version se met à jour ici — confirmez qu'elle correspond maintenant à l'hôte."
+      ],
+      "hostKlipper": "Hôte · Klipper",
+      "hostFallback": "hôte",
+      "healthOk": "✓ setup",
+      "healthOkTitle": "l'hôte est configuré pour le flash",
+      "healthIssues": "{n} problème de setup | {n} problèmes de setup",
+      "servicesHeading": "Services",
+      "svcStart": "démarrer",
+      "svcStop": "arrêter",
+      "svcRestart": "redémarrer",
+      "noServices": "aucun service détecté",
+      "beaconHeading": "Beacon",
+      "beaconAvailable": "disponible {version}",
+      "flashing": "flash en cours…",
+      "flash": "flasher",
+      "devicesHeading": "Périphériques",
+      "cancel": "annuler",
+      "batchBuildAll": "Tout compiler",
+      "batchFlashAll": "Tout flasher",
+      "batchFlashReady": "Flasher les prêts",
+      "batchBuildFlash": "Compiler & flasher",
+      "profileLabel": "profil : {profile}",
+      "noProfileAssigned": "aucun profil assigné",
+      "updateBadge": "⚠ mettre à jour",
+      "outdatedTitle": "Le firmware en cours diffère du Klipper de l'hôte — compilez et flashez pour mettre à jour",
+      "build": "compiler",
+      "buildFlash": "compiler & flasher",
+      "boot": "boot",
+      "noDevices": "Aucun périphérique pour l'instant — ajoutez une carte et assignez-lui un profil pour la compiler et la flasher ici.",
+      "addFirstBoard": "+ Ajoutez votre première carte →",
+      "noStatus": "Aucun statut de firmware pour l'instant — impossible de joindre le backend.",
+      "confirmFlashTitle": "Flasher {device} avec « {profile} ».",
+      "confirmFlashWarning": "Maintenez l'alimentation stable et ne débranchez pas — interrompre un flash peut briquer la carte.",
+      "confirmBuildFlashTitle": "Compiler « {profile} », puis flasher {device}.",
+      "confirmBuildFlashWarning": "Cela recompile le firmware et l'écrit sur la carte — maintenez l'alimentation stable jusqu'à la fin.",
+      "confirmBatchTitle": "{label} — cela flashe plusieurs périphériques à tour de rôle.",
+      "confirmBatchWarning": "Maintenez l'alimentation stable jusqu'à ce que chaque périphérique termine — interrompre un flash peut le briquer.",
+      "confirmBeaconTitle": "Flasher la sonde Beacon {name}.",
+      "confirmBeaconWarning": "Maintenez la sonde connectée et alimentée — interrompre le flash peut la briquer.",
+      "buildFailedSkipFlash": "!! La compilation a échoué — flash ignoré.",
+      "errBatch": "Échec du lot",
+      "errBuild": "Échec de la compilation",
+      "errReboot": "Échec du redémarrage",
+      "errFlash": "Échec du flash",
+      "errBuildFlash": "Échec de la compilation et du flash",
+      "errBeaconFlash": "Échec du flash Beacon",
+      "errService": "Échec de l'action de service"
+    },
+    "guided": {
+      "title": "🧭 Guidé — flasher une nouvelle carte",
+      "allDone": "✓ Tout est prêt — chaque carte enregistrée est compilée et synchronisée avec l'hôte.",
+      "intro": "Quatre étapes pour faire fonctionner une nouvelle carte de contrôle avec un firmware correspondant. Chacune ouvre le bon onglet et passe au vert une fois terminée.",
+      "stepDetectLabel": "Détecter votre carte",
+      "stepDetectWhy": "Connectez la carte (USB / CAN / DFU) et scannez pour que FilaMind puisse la voir.",
+      "stepDetectAction": "Scanner dans Périphériques →",
+      "stepConfigureLabel": "Configurer et compiler un profil",
+      "stepConfigureWhy": "Choisissez les options Klipper de la carte (Kconfig) et compilez le firmware une fois comme profil réutilisable.",
+      "stepConfigureAction": "Configurer →",
+      "stepAssignLabel": "Ajouter et assigner le périphérique",
+      "stepAssignWhy": "Enregistrez la carte et donnez-lui le profil + sa méthode de flash.",
+      "stepAssignAction": "Périphériques →",
+      "stepFlashLabel": "Compiler et flasher, puis vérifier",
+      "stepFlashWhy": "Flashez le firmware (derrière une confirmation), puis vérifiez que la version signalée de la carte correspond à l'hôte.",
+      "stepFlashAction": "Statut →"
+    },
+    "flashConfirm": {
+      "title": "⚠ Confirmer le flash",
+      "cancel": "annuler",
+      "previewing": "aperçu…",
+      "ready": "prêt",
+      "blocked": "bloqué",
+      "planErrorSuffix": "{error} — procédez avec prudence.",
+      "previewFailed": "Impossible de prévisualiser le flash",
+      "acknowledge": "Je comprends que cela écrit le firmware sur le matériel et peut briquer une carte si interrompu.",
+      "blockedSeeWarnings": "bloqué — voir les avertissements",
+      "flashNow": "⚠ Flasher maintenant"
+    },
+    "configEditor": {
+      "title": "Configurer le firmware",
+      "back": "← retour",
+      "blankConfig": "— config vierge —",
+      "optional": "optionnel",
+      "optionDocs": "docs des options",
+      "optionDocsTitle": "Afficher le texte d'aide de chaque option en ligne",
+      "raw": "brut",
+      "rawTitle": "Afficher les noms de symboles Kconfig bruts",
+      "editsBadge": "{n} modification | {n} modifications",
+      "builtBadge": "compilé ✓",
+      "building": "compilation…",
+      "buildProfile": "compiler le profil",
+      "buildTitle": "compiler le firmware",
+      "buildTitleDirty": "enregistre les modifications en attente, puis compile",
+      "downloadBin": "↓ .bin",
+      "downloadBinTitle": "Télécharger le binaire de firmware compilé",
+      "delete": "supprimer",
+      "manage": "gérer",
+      "newNamePlaceholder": "nouveau nom",
+      "rename": "renommer →",
+      "renameTitle": "Renommer ce profil (et tout binaire compilé + périphériques liés)",
+      "duplicate": "dupliquer",
+      "duplicateTitle": "Enregistrer une copie de ce profil sous le nouveau nom",
+      "builtVersion": "compilé · {version}",
+      "notBuilt": "non compilé",
+      "canBridge": "pont CAN",
+      "loading": "Chargement de la configuration…",
+      "lockedTitle": "Verrouillé — contrôlé par Klipper (un prérequis ou une autre option le définit) ; non modifiable directement ici",
+      "on": "ON",
+      "off": "OFF",
+      "needs": "nécessite : {dep}",
+      "default": "par défaut : {value}",
+      "profileNamePlaceholder": "nom du profil (p. ex. EBB36)",
+      "saving": "enregistrement…",
+      "saveProfile": "enregistrer le profil",
+      "savedProfile": "Profil « {name} » enregistré.",
+      "renamedTo": "Renommé en « {name} ».",
+      "duplicatedTo": "Dupliqué en « {name} ».",
+      "errLoad": "Échec du chargement de la configuration",
+      "errSave": "Échec de l'enregistrement",
+      "errDownload": "Échec du téléchargement",
+      "errDelete": "Échec de la suppression",
+      "errRename": "Échec du renommage",
+      "errDuplicate": "Échec de la duplication",
+      "errBuild": "échec de la compilation"
+    },
+    "devices": {
+      "title": "Gestionnaire de périphériques",
+      "back": "← retour",
+      "intro": "Ajoutez des cartes, assignez un profil et configurez la méthode de flash de chacune. Vous compilez et flashez chaque périphérique depuis l'écran Statut (Configurer compile le profil partagé).",
+      "loading": "Chargement des périphériques…",
+      "remove": "retirer",
+      "profilePlaceholder": "— profil —",
+      "katapult": "katapult",
+      "katapultHint": "La carte porte un bootloader Katapult — elle est redémarrée dans Katapult avant le flash. Décochez pour les cartes flashées directement.",
+      "exclude": "exclure",
+      "notesPlaceholder": "notes (URL, pinout…)",
+      "serialIdentity": "↳ identité katapult série",
+      "dfuIdentity": "↳ identité bootloader dfu",
+      "unlink": "délier",
+      "empty": "Aucun périphérique enregistré pour l'instant — ajoutez-en un ci-dessous.",
+      "discovered": "Découverts",
+      "add": "ajouter",
+      "link": "🔗 lier",
+      "linkHint": "Lier cette identité de bootloader à un périphérique enregistré",
+      "linkTo": "lier à :",
+      "linkTarget": "→ {name}",
+      "backup": "Sauvegarde",
+      "export": "exporter",
+      "import": "importer",
+      "restored": "{n} profil{extra} restauré. | {n} profils{extra} restaurés.",
+      "restoredDevicesSuffix": " + périphériques",
+      "loadFailed": "Échec du chargement des périphériques",
+      "saveFailed": "Échec de l'enregistrement",
+      "addFailed": "Échec de l'ajout",
+      "attachFailed": "Échec de l'attachement",
+      "removeFailed": "Échec du retrait",
+      "exportFailed": "Échec de l'export",
+      "importFailed": "Échec de l'import"
+    },
+    "external": {
+      "title": "Firmware externe",
+      "upload": "+ envoyer .bin",
+      "intro": "Flashez un fichier de firmware pré-compilé tel quel (sans compilation). Définissez la méthode de flash de chacun, puis choisissez une carte.",
+      "compare": "comparer",
+      "optionA": "— A —",
+      "optionB": "— B —",
+      "clear": "effacer",
+      "pickTwoDifferent": "Choisissez deux fichiers différents.",
+      "countChanged": "{n} modifiés",
+      "countOnlyA": "{n} uniquement dans A",
+      "countOnlyB": "{n} uniquement dans B",
+      "countSame": "{n} identiques",
+      "headerA": "A · {label}",
+      "headerB": "B · {label}",
+      "compareNote": "Comparaison en lecture seule des propriétés intégrées à chaque fichier.",
+      "remove": "retirer",
+      "readFromFile": "🔍 lire depuis le fichier :",
+      "mcuLabel": "· mcu {mcu}",
+      "hide": "masquer",
+      "config": "config",
+      "compiledNote": "Compilé dans le firmware — lecture seule. Pour les modifier, compilez un profil dans Configurer et flashez celui-ci à la place.",
+      "offsetPlaceholder": "offset (DFU, p. ex. 0x08002000)",
+      "notesPlaceholder": "notes (source, carte, version…)",
+      "flashTo": "flasher vers :",
+      "katapult": "katapult",
+      "flashing": "flash en cours…",
+      "flash": "flasher",
+      "empty": "Aucun firmware externe pour l'instant — envoyez un .bin pour le flasher directement.",
+      "flashingLog": "flash de {filename} → {device}",
+      "loadFailed": "Échec du chargement du firmware externe",
+      "uploadFailed": "Échec de l'envoi",
+      "saveFailed": "Échec de l'enregistrement",
+      "deleteFailed": "Échec de la suppression",
+      "flashFailed": "échec du flash"
+    }
+  }
+}

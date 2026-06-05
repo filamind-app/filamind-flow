@@ -204,9 +204,9 @@ the same key set (`npm run i18n:keydiff`); `npm run i18n:pseudo` previews text-e
 overflow. Arabic is wired for RTL with Western (`latn`) digits — engineers cross-reference G-code
 and datasheets in `1.7 A` form.
 
-> **Status:** Phase 0 (scaffolding) is in place — no visible change yet; the existing English copy is
-> externalized phase-by-phase (see [ROADMAP.md](ROADMAP.md)). Target locales:
-> **en · ar · de · zh-Hans · fr · es · ru**.
+> **Status:** Shipped — the UI is available in **7 languages** (**en · ar · de · zh-Hans · fr · es ·
+> ru**) via a header switcher; switching is instant and lazy-loaded. Arabic flips the document to RTL
+> (the Neo-Brutalist RTL layout polish is in progress — see [ROADMAP.md](ROADMAP.md)).
 
 ## Documentation
 
