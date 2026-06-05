@@ -5,9 +5,12 @@
  *  destructive and can brick a board if interrupted, so NOTHING writes until the user confirms.
  */
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { fetchFlashPlan } from './api'
 import type { FlashIntent, FlashPlan } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{ intent: FlashIntent }>()
 const emit = defineEmits<{ confirm: []; cancel: [] }>()
@@ -23,7 +26,7 @@ onMounted(async () => {
   try {
     plan.value = await fetchFlashPlan(props.intent.request)
   } catch (e) {
-    planError.value = e instanceof Error ? e.message : 'Could not preview the flash'
+    planError.value = e instanceof Error ? e.message : t('firmware.flashConfirm.previewFailed')
   } finally {
     loadingPlan.value = false
   }
@@ -44,9 +47,11 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
       class="w-full max-w-md space-y-2 rounded-brutal border-3 border-ink bg-paper p-3 text-sm shadow-brutal"
     >
       <div class="flex items-center justify-between gap-2">
-        <span class="text-xs font-bold uppercase tracking-wide">⚠ Confirm flash</span>
+        <span class="text-xs font-bold uppercase tracking-wide">{{
+          t('firmware.flashConfirm.title')
+        }}</span>
         <button class="nb-btn bg-surface px-2 py-0.5 text-[10px]" @click="emit('cancel')">
-          cancel
+          {{ t('firmware.flashConfirm.cancel') }}
         </button>
       </div>
 
@@ -59,7 +64,9 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
         <li v-for="d in intent.devices" :key="d">• {{ d }}</li>
       </ul>
 
-      <p v-if="loadingPlan" class="font-mono text-[10px] opacity-60">previewing…</p>
+      <p v-if="loadingPlan" class="font-mono text-[10px] opacity-60">
+        {{ t('firmware.flashConfirm.previewing') }}
+      </p>
       <div v-else-if="plan" class="space-y-1 rounded-brutal border-2 border-ink p-2">
         <div class="flex items-center justify-between gap-2">
           <span class="min-w-0 truncate font-mono text-[10px]"
@@ -68,7 +75,9 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
           <span
             class="nb-badge shrink-0 text-[10px]"
             :class="plan.ready ? 'bg-brand-lime' : 'bg-brand-yellow'"
-            >{{ plan.ready ? 'ready' : 'blocked' }}</span
+            >{{
+              plan.ready ? t('firmware.flashConfirm.ready') : t('firmware.flashConfirm.blocked')
+            }}</span
           >
         </div>
         <pre
@@ -80,22 +89,23 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
         </p>
       </div>
       <p v-else-if="planError" class="font-mono text-[10px] text-brand-red">
-        {{ planError }} — proceed with care.
+        {{ t('firmware.flashConfirm.planErrorSuffix', { error: planError }) }}
       </p>
 
       <label class="flex items-start gap-1.5 text-[11px]">
         <input v-model="confirmed" type="checkbox" class="mt-0.5 shrink-0" />
-        <span
-          >I understand this writes firmware to the hardware and can brick a board if
-          interrupted.</span
-        >
+        <span>{{ t('firmware.flashConfirm.acknowledge') }}</span>
       </label>
       <button
         class="nb-btn w-full bg-brand-red py-1 text-xs text-surface"
         :disabled="!confirmed || blocked"
         @click="emit('confirm')"
       >
-        {{ blocked ? 'blocked — see warnings' : '⚠ Flash now' }}
+        {{
+          blocked
+            ? t('firmware.flashConfirm.blockedSeeWarnings')
+            : t('firmware.flashConfirm.flashNow')
+        }}
       </button>
     </div>
   </div>
