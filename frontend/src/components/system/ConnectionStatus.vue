@@ -1,24 +1,26 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { usePrinterStore } from '@/core/store/printer'
 
+const { t } = useI18n({ useScope: 'global' })
 const { connectionState } = storeToRefs(usePrinterStore())
 
 const meta = computed(() => {
   switch (connectionState.value) {
     case 'connected':
-      return { label: 'Connected', class: 'bg-brand-lime' }
+      return { label: t('shell.connection.connected'), class: 'bg-brand-lime' }
     case 'connecting':
     case 'reconnecting':
-      return { label: 'Connecting', class: 'bg-brand-yellow' }
+      return { label: t('shell.connection.connecting'), class: 'bg-brand-yellow' }
     case 'error':
-      return { label: 'Error', class: 'bg-brand-red text-surface' }
+      return { label: t('shell.connection.error'), class: 'bg-brand-red text-surface' }
     case 'closed':
-      return { label: 'Offline', class: 'bg-ink text-surface' }
+      return { label: t('shell.connection.offline'), class: 'bg-ink text-surface' }
     default:
-      return { label: 'Idle', class: 'bg-surface' }
+      return { label: t('shell.connection.idle'), class: 'bg-surface' }
   }
 })
 </script>

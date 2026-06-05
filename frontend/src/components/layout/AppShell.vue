@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import WidgetFrame from '@/components/dashboard/WidgetFrame.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
@@ -8,6 +9,7 @@ import { useNav } from '@/core/nav'
 import { widgetRegistry } from '@/core/registry'
 import { usePrinterStore } from '@/core/store/printer'
 
+const { t } = useI18n({ useScope: 'global' })
 const printer = usePrinterStore()
 const { current } = useNav()
 
@@ -31,11 +33,8 @@ onMounted(() => {
         </section>
         <div v-else class="nb-card mx-auto max-w-xl bg-surface p-8 text-center">
           <p class="font-mono text-5xl" aria-hidden="true">▦</p>
-          <h2 class="mt-4 font-display text-2xl font-bold">Dashboard</h2>
-          <p class="mt-2 text-sm">
-            Your panels live in the sidebar — pick one to get started. This home is intentionally
-            empty for now.
-          </p>
+          <h2 class="mt-4 font-display text-2xl font-bold">{{ t('shell.nav.dashboard') }}</h2>
+          <p class="mt-2 text-sm">{{ t('shell.home.body') }}</p>
         </div>
       </main>
     </div>

@@ -1,8 +1,47 @@
 {
   "shell": {
+    "brand": {
+      "tagline": "FLOW · klipper panel"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "toggle": "Toggle navigation"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Back to Mainsail"
+    },
+    "footer": {
+      "stack": "Moonraker · Klipper",
+      "by": "by DeltaFabs team"
+    },
+    "home": {
+      "body": "Your panels live in the sidebar — pick one to get started. This home is intentionally empty for now."
+    },
+    "connection": {
+      "connected": "Connected",
+      "connecting": "Connecting",
+      "error": "Error",
+      "offline": "Offline",
+      "idle": "Idle"
+    },
     "language": {
       "label": "Language",
       "select": "Select language"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Firmware Manager",
+        "description": "MCU firmware versions, host sync status, and toolchain readiness."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Analyze a resonance CSV and find the best input shaper."
+      },
+      "motor-drivers": {
+        "title": "Motor Drivers",
+        "description": "Live TMC stepper-driver inventory: current, mode, microsteps, and status."
+      }
     }
   }
 }

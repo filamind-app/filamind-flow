@@ -207,3 +207,23 @@ export async function setLocale(code: string): Promise<void> {
 export async function initLocale(): Promise<void> {
   await setLocale(detectLocale())
 }
+
+// --- widget display labels ------------------------------------------------
+// Widget titles/descriptions are registered (in English) in widgets/index.ts and rendered in the
+// shell (sidebar + frame). These resolve a per-widget shell key when one exists, falling back to
+// the registry English — so a widget without a catalog entry still shows a sane label. Reading
+// ``locale`` via ``t`` makes them re-translate on switch when called inside a computed/template.
+
+// The schema-typed ``t`` only accepts literal keys; the widget key is built at runtime, so use a
+// string-accepting view of the global translator (the runtime resolves dynamic keys fine).
+const tDynamic = i18n.global.t as unknown as (key: string) => string
+
+export function widgetTitle(widget: { id: string; title: string }): string {
+  const key = `shell.widgets.${widget.id}.title`
+  return i18n.global.te(key) ? tDynamic(key) : widget.title
+}
+
+export function widgetDescription(widget: { id: string; description?: string }): string {
+  const key = `shell.widgets.${widget.id}.description`
+  return i18n.global.te(key) ? tDynamic(key) : (widget.description ?? '')
+}

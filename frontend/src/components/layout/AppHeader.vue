@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 import ConnectionStatus from '@/components/system/ConnectionStatus.vue'
 import LanguageSelect from '@/components/layout/LanguageSelect.vue'
 import { useNav } from '@/core/nav'
 
+const { t } = useI18n({ useScope: 'global' })
 const { sidebarOpen } = useNav()
 
 const title = import.meta.env.VITE_APP_TITLE || 'FilaMind Flow'
@@ -19,7 +22,7 @@ const mainsailUrl =
     <div class="flex min-w-0 items-center gap-3">
       <button
         class="nb-btn shrink-0 px-2 py-1.5 md:hidden"
-        aria-label="Toggle navigation"
+        :aria-label="t('shell.nav.toggle')"
         :aria-expanded="sidebarOpen"
         @click="sidebarOpen = !sidebarOpen"
       >
@@ -28,10 +31,10 @@ const mainsailUrl =
       <a
         class="nb-btn shrink-0 bg-brand-cyan px-3 py-1.5"
         :href="mainsailUrl"
-        title="Back to Mainsail"
+        :title="t('shell.mainsail.title')"
       >
         <span aria-hidden="true">←</span>
-        <span class="hidden sm:inline">Mainsail</span>
+        <span class="hidden sm:inline">{{ t('shell.mainsail.label') }}</span>
       </a>
       <h1 class="truncate font-display text-xl font-bold sm:text-2xl">{{ title }}</h1>
     </div>

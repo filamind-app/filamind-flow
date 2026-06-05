@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+import { widgetTitle } from '@/core/i18n'
 import { useNav } from '@/core/nav'
 import { widgetRegistry } from '@/core/registry'
 
+const { t } = useI18n({ useScope: 'global' })
 const { current, go, sidebarOpen } = useNav()
 
 // Dashboard (the empty home) plus one entry per registered widget — each widget
 // gets its own page, reached from here. Icons come from each widget's definition.
 const items = computed(() => [
-  { id: 'dashboard', label: 'Dashboard', icon: '▣' },
-  ...widgetRegistry.all().map((w) => ({ id: w.id, label: w.title, icon: w.icon ?? '◳' })),
+  { id: 'dashboard', label: t('shell.nav.dashboard'), icon: '▣' },
+  ...widgetRegistry.all().map((w) => ({ id: w.id, label: widgetTitle(w), icon: w.icon ?? '◳' })),
 ])
 </script>
 
@@ -28,7 +31,7 @@ const items = computed(() => [
   >
     <div class="nb-card bg-surface px-3 py-4">
       <p class="font-display text-2xl font-bold leading-none">FilaMind</p>
-      <p class="font-mono text-xs tracking-tight">FLOW · klipper panel</p>
+      <p class="font-mono text-xs tracking-tight">{{ t('shell.brand.tagline') }}</p>
     </div>
 
     <nav class="flex flex-col gap-2">
@@ -45,7 +48,7 @@ const items = computed(() => [
     </nav>
 
     <p class="mt-auto font-mono text-[10px] leading-tight opacity-70">
-      Moonraker · Klipper<br />by DeltaFabs team
+      {{ t('shell.footer.stack') }}<br />{{ t('shell.footer.by') }}
     </p>
   </aside>
 </template>

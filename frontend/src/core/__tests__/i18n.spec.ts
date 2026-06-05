@@ -1,7 +1,17 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { diffKeys, flattenKeys, pseudoize, pseudoizeTree } from '../../../scripts/i18n-lib.mjs'
-import { availableLocales, detectLocale, i18n, LOCALE_META, matchLocale, setLocale } from '../i18n'
+import { describeError } from '../describeError'
+import {
+  availableLocales,
+  detectLocale,
+  i18n,
+  LOCALE_META,
+  matchLocale,
+  setLocale,
+  widgetDescription,
+  widgetTitle,
+} from '../i18n'
 
 describe('i18n key tooling', () => {
   it('flattens a nested message tree to dotted paths', () => {
@@ -75,5 +85,31 @@ describe('locale detection & switching', () => {
   it('pins Western digits and RTL for Arabic in the metadata', () => {
     expect(LOCALE_META.ar.numberingSystem).toBe('latn')
     expect(LOCALE_META.ar.dir).toBe('rtl')
+  })
+})
+
+describe('shell catalog', () => {
+  it('resolves shell chrome strings', () => {
+    expect(i18n.global.t('shell.nav.dashboard')).toBe('Dashboard')
+    expect(i18n.global.t('shell.connection.connected')).toBe('Connected')
+    expect(i18n.global.t('shell.mainsail.label')).toBe('Mainsail')
+  })
+})
+
+describe('describeError', () => {
+  it('translates a network failure and passes other errors through', () => {
+    expect(describeError(new Error('Failed to fetch'))).toBe(
+      i18n.global.t('common.errors.backendUnreachable'),
+    )
+    expect(describeError(new Error('boom'))).toBe('boom')
+  })
+})
+
+describe('widget label helpers', () => {
+  it('use the shell catalog when a key exists, else fall back to the registry text', () => {
+    expect(widgetTitle({ id: 'input-shaping', title: 'fallback' })).toBe('Input Shaping')
+    expect(widgetTitle({ id: 'does-not-exist', title: 'My Widget' })).toBe('My Widget')
+    expect(widgetDescription({ id: 'motor-drivers', description: 'fallback' })).toMatch(/TMC/)
+    expect(widgetDescription({ id: 'does-not-exist', description: 'desc' })).toBe('desc')
   })
 })
