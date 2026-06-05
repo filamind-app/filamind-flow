@@ -114,7 +114,6 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
           :stepper="selected.stepper"
           :assigned="selected.motor"
           :catalog="catalog"
-          :default-open="true"
           @assign="onAssign"
         />
         <p v-if="!selected.motor" class="font-mono text-[10px] opacity-60">

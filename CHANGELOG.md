@@ -6,7 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.65.1] - 2026-06-05
+## [0.66.0] - 2026-06-05
+
+### Added
+
+- **Shared `ComboSelect` dropdown/combobox primitive (#120).** A reusable typeahead select
+  (`components/ui/ComboSelect.vue`): one control that opens a filtered dropdown with keyboard
+  navigation (↑/↓/Enter/Esc), ARIA `combobox`/`listbox`/`option` roles, optional clear, and a
+  capped result list — the convention for every long option list going forward.
+
+### Changed
+
+- **The Motor Drivers motor picker is now a dropdown** instead of an always-open inline list of
+  200+ rows. It uses the new `ComboSelect` (search by model or maker; specs shown per option),
+  so a card stays compact until you actually pick. Future long pickers (filaments, boards,
+  profiles) should reuse the same primitive.
 
 ### Added
 
