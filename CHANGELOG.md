@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.78.0] - 2026-06-05
+
+### Changed
+
+- **i18n Phase 1 (Input Shaping — guided wizard + audit).** Externalized the last two prose helpers
+  and the Guided wizard UI. **`guided.ts`** keeps only the step *structure* (id / motion / manual);
+  the step labels / titles / why-text move to `inputShaping.guided.steps.<id>`, and the gate
+  headlines resolve through `t()`. **`audit.ts`** routes its per-property record labels, verdicts,
+  and value formats through `inputShaping.audit.*`. **`GuidedTune.vue`** is now fully localized — it
+  reads the step text via `t()` and its own chrome (buttons, the motion-confirm, the summary) comes
+  from the catalog (the summary's inline `printer.cfg` uses `<i18n-t>` to keep the `<code>` tag). A
+  new **mount test** guards that the wizard renders from the catalog with no raw keys leaking.
+  **No visible change** (English identical; 244 `en` keys; 135 tests). With this, all of Input
+  Shaping's display helpers are externalized — the widget's own template strings follow next.
+
 ## [0.77.0] - 2026-06-05
 
 ### Changed
