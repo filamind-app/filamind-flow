@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.69.1] - 2026-06-05
+
+### Added
+
+- **Accessibility pass — completed (#114).** Accessible names on the shared primitives: the
+  `WidgetTabs` tablist (`aria-label="Views"`) and the `ComboSelect` search input + options
+  listbox. This closes out the a11y review item: the resonance/vibration **charts already carry
+  `role="img"` + `aria-label`**, the motor sparkline is `aria-hidden` (its value is shown as
+  text), **keyboard focus rings** shipped in v0.65.1 (#115), and the dense Configure/External
+  firmware screens gained touch-accessible help in v0.69.0 (#117). Status badges convey state
+  with text + symbols, not color alone.
+
 ## [0.69.0] - 2026-06-05
 
 ### Changed

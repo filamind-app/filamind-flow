@@ -117,6 +117,7 @@ watch(query, () => (activeIndex.value = 0))
         v-model="query"
         type="text"
         :placeholder="placeholder"
+        :aria-label="placeholder"
         class="w-full rounded-brutal border-2 border-ink bg-surface px-1.5 py-1"
         :aria-activedescendant="shown[activeIndex] ? `${uid}-opt-${activeIndex}` : undefined"
         @keydown="onKeydown"
@@ -129,7 +130,7 @@ watch(query, () => (activeIndex.value = 0))
       >
         ✕ clear
       </button>
-      <ul ref="list" role="listbox" class="max-h-72 overflow-y-auto">
+      <ul ref="list" role="listbox" aria-label="Options" class="max-h-72 overflow-y-auto">
         <li v-for="(o, i) in shown" :key="o.value">
           <button
             :id="`${uid}-opt-${i}`"
