@@ -236,6 +236,25 @@ async function saveConfig(): Promise<void> {
     <!-- Mode strip: one view at a time (Guided is the default landing view). -->
     <WidgetTabs v-model="mode" :tabs="TABS" />
 
+    <!-- Pinned "config ready" bar (#116): the widget's payoff is otherwise the last element, so
+         after a capture it's surfaced at the top of every working view with one-tap Copy/Archive. -->
+    <div
+      v-if="configText && mode !== 'audit'"
+      class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink bg-brand-lime px-2 py-1 text-[11px]"
+    >
+      <span class="font-bold uppercase tracking-wide">printer.cfg ready</span>
+      <span v-for="k in captured" :key="k" class="nb-badge bg-surface text-[9px]">{{
+        k === 'generic' ? 'X+Y' : k.toUpperCase()
+      }}</span>
+      <span class="flex-1"></span>
+      <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyConfig">
+        {{ copied ? '✅ Copied' : '📋 Copy' }}
+      </button>
+      <button class="nb-btn px-2 py-0.5 text-[10px]" @click="saveConfig">
+        {{ savedToArchive ? '✅ Saved' : '💾 Archive' }}
+      </button>
+    </div>
+
     <!-- GUIDED — kept mounted (v-show) so an in-progress wizard survives a tab switch. -->
     <div v-show="mode === 'guided'" class="space-y-2">
       <HelpNote topic="guided" />
@@ -334,8 +353,10 @@ async function saveConfig(): Promise<void> {
 
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
 
-    <!-- Shared result view — shown for Analyze + Live (Guided shows its own per-step results). -->
-    <template v-if="analysis && (mode === 'analyze' || mode === 'live')">
+    <!-- Shared result view — the recommended shaper, A–F grade, frequency chart and shaper table.
+         Shown in EVERY working view (Analyze, Live, and Guided — which otherwise shows only
+         per-step gate badges, so the full result was previously invisible there). #116 -->
+    <template v-if="analysis && mode !== 'audit'">
       <div
         v-if="analysis.recommended_shaper"
         class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink bg-brand-lime px-3 py-2"
