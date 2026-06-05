@@ -41,6 +41,8 @@ const MODE_TABS: { id: 'dashboard' | 'guided'; label: string }[] = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'guided', label: '🧭 Guided' },
 ]
+/** Per-card "details" disclosure — keeps the secondary specs off the baseline card (#119). */
+const openDetails = ref<Record<string, boolean>>({})
 
 const drivers = computed(() => status.value?.drivers ?? [])
 const reachable = computed(() => status.value?.reachable ?? false)
@@ -126,8 +128,9 @@ onUnmounted(() => {
       <li v-for="(s, i) in STEPS" :key="i">{{ s }}</li>
     </ol>
 
-    <!-- Dashboard / Guided mode strip (only once drivers have loaded) -->
-    <WidgetTabs v-if="reachable && drivers.length" v-model="mode" :tabs="MODE_TABS" />
+    <!-- Dashboard / Guided mode strip — shown once the printer is reachable, so the Guided
+         wizard is discoverable even before any driver is assigned a motor (#119). -->
+    <WidgetTabs v-if="reachable" v-model="mode" :tabs="MODE_TABS" />
 
     <!-- States -->
     <div v-if="loading && !status" class="font-mono text-xs">Loading motor drivers…</div>
@@ -196,20 +199,33 @@ onUnmounted(() => {
             >
           </div>
 
-          <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-80">
+          <!-- Essentials stay inline; the rest collapses behind a per-card "details" toggle. -->
+          <div
+            class="flex flex-wrap items-center gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-80"
+          >
             <span>{{ chopperLabel(d) }}</span>
             <span v-if="d.microsteps != null">{{ d.microsteps }} µsteps</span>
-            <span v-if="d.interpolate">interp</span>
-            <span v-if="d.sense_resistor != null">sense {{ d.sense_resistor }} Ω</span>
             <span>{{ temperatureLabel(d) }}</span>
             <span v-if="d.stallguard_field"
               >SG {{ d.stallguard_field }} {{ d.stallguard_threshold }}</span
             >
-            <span v-if="interfaceLabel(d)" class="opacity-70">{{ interfaceLabel(d) }}</span>
-            <span v-if="maxCurrentLabel(d)" class="opacity-70">{{ maxCurrentLabel(d) }}</span>
+            <button
+              class="opacity-60 transition-opacity hover:opacity-100"
+              :aria-expanded="!!openDetails[d.stepper]"
+              @click="openDetails[d.stepper] = !openDetails[d.stepper]"
+            >
+              {{ openDetails[d.stepper] ? '▾ less' : '▸ details' }}
+            </button>
           </div>
 
-          <div v-if="capabilityChips(effectiveCapabilities(d)).length" class="flex flex-wrap gap-1">
+          <div
+            v-if="openDetails[d.stepper]"
+            class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] opacity-70"
+          >
+            <span v-if="d.interpolate">interp</span>
+            <span v-if="d.sense_resistor != null">sense {{ d.sense_resistor }} Ω</span>
+            <span v-if="interfaceLabel(d)">{{ interfaceLabel(d) }}</span>
+            <span v-if="maxCurrentLabel(d)">{{ maxCurrentLabel(d) }}</span>
             <span
               v-for="c in capabilityChips(effectiveCapabilities(d))"
               :key="c"
