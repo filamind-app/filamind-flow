@@ -35,12 +35,12 @@ const items = computed(() => [
       <button
         v-for="item in items"
         :key="item.id"
-        class="nb-btn justify-start text-left"
+        class="nb-btn w-full justify-start text-left"
         :class="current === item.id ? 'bg-brand-cyan' : 'bg-surface'"
         @click="go(item.id)"
       >
-        <span aria-hidden="true">{{ item.icon }}</span>
-        {{ item.label }}
+        <span class="w-5 shrink-0 text-center" aria-hidden="true">{{ item.icon }}</span>
+        <span class="truncate">{{ item.label }}</span>
       </button>
     </nav>
 

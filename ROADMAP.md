@@ -7,7 +7,7 @@ A living roadmap — updated as features land. Each feature ships on its own bra
 
 ## Widgets
 
-### ✅ Firmware Upgrade
+### ✅ Firmware Manager
 
 Configure, build, flash and upgrade the firmware on every MCU of your printer —
 from the browser, no command line. **The core pipeline (phases 1–5) is complete.**

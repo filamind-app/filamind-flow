@@ -10,7 +10,7 @@ import { registerWidget } from '@/core/registry'
 export function registerWidgets(): void {
   registerWidget({
     id: 'firmware-upgrade',
-    title: 'Firmware Upgrade',
+    title: 'Firmware Manager',
     icon: '🔧',
     description: 'MCU firmware versions, host sync status, and toolchain readiness.',
     defaultSize: { w: 2, h: 1 },
