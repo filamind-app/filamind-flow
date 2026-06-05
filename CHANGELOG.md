@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.77.0] - 2026-06-05
+
+### Changed
+
+- **i18n Phase 1 (Input Shaping — prose helpers).** Externalized the user-facing copy returned by
+  five pure display helpers — `grade.ts` (A–F verdicts + factor labels/notes), `diagnose.ts`
+  (mechanical-diagnostic cards), `compare.ts` (A⇄B metric rows + belt verdict), `recommend.ts`
+  (next-step suggestions), and `axesMap.ts` (the axes-map verdict) — into the `vue-i18n` catalog
+  under `inputShaping.*` (159 `en` keys now). Each helper resolves its strings through the global
+  translator, so function signatures, call sites, and unit tests are unchanged. **No visible
+  change** — English renders identically, numeric values keep their exact formatting, and units /
+  tokens (Hz, %, ×, `max_accel`, `TEST_RESONANCES`, …) stay literal. `guided.ts` (its `STEPS`
+  template coupling) and `audit.ts` (persisted records) follow in later slices.
+
 ## [0.76.0] - 2026-06-05
 
 ### Changed

@@ -4,6 +4,7 @@
  *  testable.
  */
 
+import { i18n } from '@/core/i18n'
 import { peakSnr } from './signal'
 import type { ShaperAnalysis } from './types'
 
@@ -36,10 +37,9 @@ export function diagnose(analysis: ShaperAnalysis): Diagnostic[] {
       {
         level: 'bad',
         illo: 'accel',
-        title: 'No usable resonance',
-        advice:
-          'Re-run TEST_RESONANCES. Check the accelerometer is wired and mounted firmly to the toolhead.',
-        detail: 'no clear peak detected',
+        title: i18n.global.t('inputShaping.diagnose.noUsable.title'),
+        advice: i18n.global.t('inputShaping.diagnose.noUsable.advice'),
+        detail: i18n.global.t('inputShaping.diagnose.noUsable.detail'),
       },
     ]
   }
@@ -52,47 +52,45 @@ export function diagnose(analysis: ShaperAnalysis): Diagnostic[] {
     out.push({
       level: 'bad',
       illo: 'accel',
-      title: 'Noisy capture',
-      advice:
-        'Secure the accelerometer mount and re-run. Avoid fans or other motion during the test.',
-      detail: `signal-to-noise ${snr.toFixed(1)}×`,
+      title: i18n.global.t('inputShaping.diagnose.noisy.title'),
+      advice: i18n.global.t('inputShaping.diagnose.noisy.advice'),
+      detail: i18n.global.t('inputShaping.diagnose.noisy.detail', { snr: snr.toFixed(1) }),
     })
   }
   if (freq != null && freq < LOW_FREQ) {
     out.push({
       level: 'bad',
       illo: 'belt',
-      title: 'Low resonance frequency',
-      advice:
-        'Soft or heavy axis — tighten the belts and check frame rigidity. A stiffer axis resonates higher and prints faster.',
-      detail: `${freq.toFixed(1)} Hz`,
+      title: i18n.global.t('inputShaping.diagnose.lowFreq.title'),
+      advice: i18n.global.t('inputShaping.diagnose.lowFreq.advice'),
+      detail: i18n.global.t('inputShaping.diagnose.lowFreq.detail', { freq: freq.toFixed(1) }),
     })
   } else if (freq != null && freq < SOFT_FREQ) {
     out.push({
       level: 'warn',
       illo: 'frame',
-      title: 'Somewhat soft axis',
-      advice:
-        'Frequency is on the low side. Firming up belts or the frame raises it and lets you print faster.',
-      detail: `${freq.toFixed(1)} Hz`,
+      title: i18n.global.t('inputShaping.diagnose.softAxis.title'),
+      advice: i18n.global.t('inputShaping.diagnose.softAxis.advice'),
+      detail: i18n.global.t('inputShaping.diagnose.softAxis.detail', { freq: freq.toFixed(1) }),
     })
   }
   if (rec.smoothing > HIGH_SMOOTHING) {
     out.push({
       level: 'warn',
       illo: 'tune',
-      title: 'High smoothing',
-      advice: 'Will round corners. Pick a stiffer shaper or lower max_accel.',
-      detail: `smoothing ${rec.smoothing.toFixed(3)}`,
+      title: i18n.global.t('inputShaping.diagnose.highSmoothing.title'),
+      advice: i18n.global.t('inputShaping.diagnose.highSmoothing.advice'),
+      detail: i18n.global.t('inputShaping.diagnose.highSmoothing.detail', {
+        smoothing: rec.smoothing.toFixed(3),
+      }),
     })
   }
   if (MULTI_HUMP.includes(analysis.recommended_shaper)) {
     out.push({
       level: 'warn',
       illo: 'toolhead',
-      title: 'Multiple resonances',
-      advice:
-        'Often a loose toolhead, belt, or part. Re-seat the toolhead and re-check belt tension.',
+      title: i18n.global.t('inputShaping.diagnose.multiResonance.title'),
+      advice: i18n.global.t('inputShaping.diagnose.multiResonance.advice'),
       detail: analysis.recommended_shaper.toUpperCase(),
     })
   }
@@ -100,9 +98,11 @@ export function diagnose(analysis: ShaperAnalysis): Diagnostic[] {
     out.push({
       level: 'warn',
       illo: 'tune',
-      title: 'Vibration remains',
-      advice: 'Mechanical tuning (belts, frame, toolhead mass) could push this lower.',
-      detail: `${rec.vibrations_pct.toFixed(1)}% left after shaping`,
+      title: i18n.global.t('inputShaping.diagnose.vibrationRemains.title'),
+      advice: i18n.global.t('inputShaping.diagnose.vibrationRemains.advice'),
+      detail: i18n.global.t('inputShaping.diagnose.vibrationRemains.detail', {
+        vibrations: rec.vibrations_pct.toFixed(1),
+      }),
     })
   }
 
@@ -110,9 +110,12 @@ export function diagnose(analysis: ShaperAnalysis): Diagnostic[] {
     out.push({
       level: 'good',
       illo: 'ok',
-      title: 'Healthy axis',
-      advice: 'Clean capture and a stiff axis — good to go. Apply the config and restart Klipper.',
-      detail: `${analysis.recommended_shaper.toUpperCase()} @ ${freq?.toFixed(1)} Hz`,
+      title: i18n.global.t('inputShaping.diagnose.healthy.title'),
+      advice: i18n.global.t('inputShaping.diagnose.healthy.advice'),
+      detail: i18n.global.t('inputShaping.diagnose.healthy.detail', {
+        shaper: analysis.recommended_shaper.toUpperCase(),
+        freq: freq?.toFixed(1),
+      }),
     })
   }
   return out
@@ -129,9 +132,11 @@ export function diagnoseAxes(x: ShaperAnalysis, y: ShaperAnalysis): Diagnostic |
   return {
     level: 'warn',
     illo: 'balance',
-    title: 'X and Y differ a lot',
-    advice:
-      'Asymmetric stiffness. Check belt tension on the softer axis; on CoreXY make sure both belts are matched and tight.',
-    detail: `X ${fx.toFixed(0)} Hz vs Y ${fy.toFixed(0)} Hz`,
+    title: i18n.global.t('inputShaping.diagnose.axesDiffer.title'),
+    advice: i18n.global.t('inputShaping.diagnose.axesDiffer.advice'),
+    detail: i18n.global.t('inputShaping.diagnose.axesDiffer.detail', {
+      fx: fx.toFixed(0),
+      fy: fy.toFixed(0),
+    }),
   }
 }
