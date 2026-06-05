@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
+import FirmwareFlashConfirm from './FirmwareFlashConfirm.vue'
 import HelpNote from './HelpNote.vue'
 import { STEPS } from './help'
 import {
@@ -29,6 +30,8 @@ import type {
   FirmwareProfile,
   FirmwareStatus,
   FirmwareTools,
+  FlashIntent,
+  FlashRequest,
   HealthReport,
   ServiceInfo,
 } from './types'
@@ -137,6 +140,9 @@ const opBusy = ref(false)
 /** Whose op-log is showing: a device id, or null for the batch log under the batch buttons. */
 const activeDeviceId = ref<string | null>(null)
 const batchTaskId = ref<string | null>(null)
+/** A flash awaiting explicit confirmation (the safety gate) + the action to run on confirm. */
+const pendingFlash = ref<FlashIntent | null>(null)
+let pendingExec: (() => void) | null = null
 let pollTimer: ReturnType<typeof setTimeout> | null = null
 
 const opLines = computed(() => opLog.value.split('\n'))
@@ -244,7 +250,19 @@ function isOutdated(device: Device): boolean {
   return host !== '' && dev !== '' && dev !== host
 }
 
-/** Flashes a device's assigned profile directly — uses its already-built artifact. */
+/** The flash request for a registered device (profile + connection method + bootloader). */
+function flashRequest(device: Device): FlashRequest {
+  return {
+    profile: device.profile,
+    method: isAvr(device.profile) ? 'make' : device.method,
+    device: device.id,
+    interface: device.interface,
+    is_katapult: device.is_katapult,
+  }
+}
+
+/** Flashes a device's assigned profile directly — uses its already-built artifact.
+ *  Not called on click: the flash buttons go through requestFlash() -> the confirm gate. */
 async function flashDevice(device: Device): Promise<void> {
   if (opBusy.value || !device.profile) return
   error.value = null
@@ -252,18 +270,9 @@ async function flashDevice(device: Device): Promise<void> {
   opLog.value = ''
   opBusy.value = true
   try {
-    await flashBoard(
-      {
-        profile: device.profile,
-        method: isAvr(device.profile) ? 'make' : device.method,
-        device: device.id,
-        interface: device.interface,
-        is_katapult: device.is_katapult,
-      },
-      (chunk) => {
-        opLog.value += chunk
-      },
-    )
+    await flashBoard(flashRequest(device), (chunk) => {
+      opLog.value += chunk
+    })
     await load(true)
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Flash failed'
@@ -287,24 +296,85 @@ async function buildAndFlash(device: Device): Promise<void> {
       opLog.value += '\n!! Build did not succeed — skipping flash.\n'
       return
     }
-    await flashBoard(
-      {
-        profile: device.profile,
-        method: isAvr(device.profile) ? 'make' : device.method,
-        device: device.id,
-        interface: device.interface,
-        is_katapult: device.is_katapult,
-      },
-      (chunk) => {
-        opLog.value += chunk
-      },
-    )
+    await flashBoard(flashRequest(device), (chunk) => {
+      opLog.value += chunk
+    })
     await load(true)
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Build & flash failed'
   } finally {
     opBusy.value = false
   }
+}
+
+// --- Flash safety gate (#111): every firmware write goes through an explicit plan-preview +
+// "I understand" confirm. The buttons set a pending intent; nothing flashes until confirmFlash(). ---
+function requestFlash(device: Device): void {
+  if (opBusy.value || !device.profile) return
+  pendingFlash.value = {
+    kind: 'device',
+    title: `Flash ${device.name} with “${device.profile}”.`,
+    warning: 'Keep power stable and don’t unplug — interrupting a flash can brick the board.',
+    device: device.name,
+    request: flashRequest(device),
+  }
+  pendingExec = () => void flashDevice(device)
+}
+
+function requestBuildFlash(device: Device): void {
+  if (opBusy.value || !device.profile) return
+  pendingFlash.value = {
+    kind: 'buildflash',
+    title: `Build “${device.profile}”, then flash ${device.name}.`,
+    warning:
+      'This rebuilds the firmware and writes it to the board — keep power stable until done.',
+    device: device.name,
+  }
+  pendingExec = () => void buildAndFlash(device)
+}
+
+function requestBatch(action: string): void {
+  if (opBusy.value) return
+  const label = BATCH_ACTIONS.find((b) => b.action === action)?.label ?? action
+  const affected = operationalDevices.value
+    .filter((d) => action !== 'flash-ready' || liveMode.value[d.id] === 'ready')
+    .map((d) => d.name)
+  pendingFlash.value = {
+    kind: 'batch',
+    title: `${label} — this flashes multiple devices in turn.`,
+    warning: 'Keep power stable until every device finishes — interrupting any flash can brick it.',
+    devices: affected,
+  }
+  pendingExec = () => void runBatch(action)
+}
+
+function requestBeacon(probe: { id: string; name: string }): void {
+  if (beaconFlashing.value) return
+  pendingFlash.value = {
+    kind: 'beacon',
+    title: `Flash the Beacon probe ${probe.name}.`,
+    warning: 'Keep the probe connected and powered — interrupting the flash can brick it.',
+    device: probe.name,
+  }
+  pendingExec = () => void flashProbe(probe.id)
+}
+
+/** Build-all doesn't write firmware, so it bypasses the gate; flashing actions go through it. */
+function runBatchGated(action: string): void {
+  if (action === 'build-all') void runBatch(action)
+  else requestBatch(action)
+}
+
+function confirmFlash(): void {
+  const exec = pendingExec
+  pendingFlash.value = null
+  pendingExec = null
+  exec?.()
+}
+
+function cancelFlash(): void {
+  pendingFlash.value = null
+  pendingExec = null
 }
 
 async function flashProbe(device: string): Promise<void> {
@@ -489,7 +559,7 @@ onUnmounted(() => {
             <button
               class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5 text-[10px]"
               :disabled="beaconFlashing"
-              @click="flashProbe(p.id)"
+              @click="requestBeacon(p)"
             >
               {{ beaconFlashing ? 'flashing…' : 'flash' }}
             </button>
@@ -521,7 +591,7 @@ onUnmounted(() => {
               class="nb-btn px-2 py-0.5 text-[10px]"
               :class="b.cls"
               :disabled="opBusy"
-              @click="runBatch(b.action)"
+              @click="runBatchGated(b.action)"
             >
               {{ b.label }}
             </button>
@@ -582,14 +652,14 @@ onUnmounted(() => {
               <button
                 class="nb-btn bg-brand-yellow px-2 py-0.5 text-[10px]"
                 :disabled="opBusy || !device.profile"
-                @click="flashDevice(device)"
+                @click="requestFlash(device)"
               >
                 flash
               </button>
               <button
                 class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
                 :disabled="opBusy || !device.profile"
-                @click="buildAndFlash(device)"
+                @click="requestBuildFlash(device)"
               >
                 build &amp; flash
               </button>
@@ -635,5 +705,13 @@ onUnmounted(() => {
         No firmware status yet — couldn't reach the backend.
       </p>
     </template>
+
+    <!-- Flash safety gate: nothing writes firmware until the user confirms here (#111). -->
+    <FirmwareFlashConfirm
+      v-if="pendingFlash"
+      :intent="pendingFlash"
+      @confirm="confirmFlash"
+      @cancel="cancelFlash"
+    />
   </div>
 </template>
