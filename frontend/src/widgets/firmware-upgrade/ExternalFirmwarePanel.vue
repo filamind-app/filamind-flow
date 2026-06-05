@@ -324,7 +324,7 @@ onMounted(load)
           }}</span>
           <button
             v-if="configEntries(fw).length"
-            class="nb-btn ml-auto px-1.5 py-0 text-[9px]"
+            class="nb-btn ms-auto px-1.5 py-0 text-[9px]"
             @click="expanded[fw.name] = !expanded[fw.name]"
           >
             {{ expanded[fw.name] ? t('firmware.external.hide') : t('firmware.external.config') }}

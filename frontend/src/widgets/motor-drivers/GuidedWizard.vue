@@ -98,7 +98,7 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
         <button
           v-for="d in drivers"
           :key="d.stepper"
-          class="nb-btn justify-between bg-surface px-2 py-1 text-left text-xs"
+          class="nb-btn justify-between bg-surface px-2 py-1 text-start text-xs"
           @click="choose(d.stepper)"
         >
           <span class="font-bold">{{ axisHeading(d) }}</span>

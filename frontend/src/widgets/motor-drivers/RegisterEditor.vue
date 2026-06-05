@@ -290,7 +290,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
         >
           {{ busyField === field ? '…' : t('motorDrivers.registerEditor.set') }}
         </button>
-        <span v-if="hintFor(field, entry)" class="w-full pl-28 text-[9px] opacity-50">{{
+        <span v-if="hintFor(field, entry)" class="w-full ps-28 text-[9px] opacity-50">{{
           hintFor(field, entry)
         }}</span>
       </div>

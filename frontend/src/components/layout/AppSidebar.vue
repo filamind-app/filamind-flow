@@ -26,8 +26,8 @@ const items = computed(() => [
   />
 
   <aside
-    class="w-60 shrink-0 flex-col gap-6 border-r-3 border-ink bg-brand-yellow p-4 md:static md:z-auto md:flex"
-    :class="sidebarOpen ? 'fixed inset-y-0 left-0 z-40 flex' : 'hidden'"
+    class="w-60 shrink-0 flex-col gap-6 border-e-3 border-ink bg-brand-yellow p-4 md:static md:z-auto md:flex"
+    :class="sidebarOpen ? 'fixed inset-y-0 start-0 z-40 flex' : 'hidden'"
   >
     <div class="nb-card bg-surface px-3 py-4">
       <p class="font-display text-2xl font-bold leading-none">FilaMind</p>
@@ -38,7 +38,7 @@ const items = computed(() => [
       <button
         v-for="item in items"
         :key="item.id"
-        class="nb-btn w-full justify-start text-left"
+        class="nb-btn w-full justify-start text-start"
         :class="current === item.id ? 'bg-brand-cyan' : 'bg-surface'"
         @click="go(item.id)"
       >

@@ -27,6 +27,8 @@ export default {
       fontFamily: {
         display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        // Arabic face (Space Grotesk has no Arabic glyphs). Applied via :lang(ar) in main.css.
+        arabic: ['"IBM Plex Sans Arabic"', '"Noto Sans Arabic"', 'system-ui', 'sans-serif'],
       },
       borderWidth: {
         3: '3px',

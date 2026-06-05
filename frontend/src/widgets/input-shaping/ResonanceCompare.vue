@@ -128,8 +128,8 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
           class="grid grid-cols-[1fr_auto_auto] gap-3 border-b-2 border-ink pb-0.5 font-mono text-[10px] font-bold uppercase"
         >
           <span></span>
-          <span class="text-right text-brand-blue">{{ t('inputShaping.compareView.colA') }}</span>
-          <span class="text-right text-brand-red">{{ t('inputShaping.compareView.colB') }}</span>
+          <span class="text-end text-brand-blue">{{ t('inputShaping.compareView.colA') }}</span>
+          <span class="text-end text-brand-red">{{ t('inputShaping.compareView.colB') }}</span>
         </div>
         <div
           v-for="row in rows"
@@ -137,8 +137,8 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
           class="grid grid-cols-[1fr_auto_auto] items-center gap-3 font-mono text-[10px]"
         >
           <span class="opacity-70">{{ row.label }}</span>
-          <span class="text-right">{{ row.a }}</span>
-          <span class="rounded px-1 text-right" :class="TREND_CLASS[row.trend]">{{ row.b }}</span>
+          <span class="text-end">{{ row.a }}</span>
+          <span class="rounded px-1 text-end" :class="TREND_CLASS[row.trend]">{{ row.b }}</span>
         </div>
       </div>
     </template>
