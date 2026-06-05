@@ -125,6 +125,34 @@ const datetimeFormats = Object.fromEntries(
   Object.values(LOCALE_META).map((m) => [m.code, dateFmt(m.numberingSystem)]),
 )
 
+// --- plural rules ---------------------------------------------------------
+// vue-i18n's default pluralization is English-like (n===1 ? 0 : 1), which is correct for
+// en / de / es / fr (2-branch pipe messages). Arabic (6 categories), Russian (3) and Chinese (1)
+// need their CLDR cardinal rules so `t(key, { n }, n)` picks the right "a | b | …" branch.
+type PluralRule = (choice: number, choicesLength: number) => number
+const PLURAL_RULES: Record<string, PluralRule> = {
+  // zero | one | two | few | many | other
+  ar: (n) => {
+    if (n === 0) return 0
+    if (n === 1) return 1
+    if (n === 2) return 2
+    const m = n % 100
+    if (m >= 3 && m <= 10) return 3
+    if (m >= 11 && m <= 99) return 4
+    return 5
+  },
+  // one | few | many
+  ru: (n) => {
+    const m10 = n % 10
+    const m100 = n % 100
+    if (m10 === 1 && m100 !== 11) return 0
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 1
+    return 2
+  },
+  // Chinese has no plural inflection — a single form.
+  'zh-Hans': () => 0,
+}
+
 // --- instance -------------------------------------------------------------
 
 export const i18n = createI18n({
@@ -137,6 +165,7 @@ export const i18n = createI18n({
   messages: { en },
   numberFormats,
   datetimeFormats,
+  pluralRules: PLURAL_RULES,
 })
 
 // --- detection / switching ------------------------------------------------

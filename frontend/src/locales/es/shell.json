@@ -1,0 +1,47 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · panel de klipper"
+    },
+    "nav": {
+      "dashboard": "Panel",
+      "toggle": "Alternar navegación"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Volver a Mainsail"
+    },
+    "footer": {
+      "stack": "Moonraker · Klipper",
+      "by": "por el equipo DeltaFabs"
+    },
+    "home": {
+      "body": "Tus paneles están en la barra lateral — elige uno para empezar. Esta página de inicio está intencionadamente vacía por ahora."
+    },
+    "connection": {
+      "connected": "Conectado",
+      "connecting": "Conectando",
+      "error": "Error",
+      "offline": "Sin conexión",
+      "idle": "Inactivo"
+    },
+    "language": {
+      "label": "Idioma",
+      "select": "Seleccionar idioma"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Gestor de firmware",
+        "description": "Versiones de firmware de MCU, estado de sincronización del host y disponibilidad de la cadena de herramientas."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Analiza un CSV de resonancia y encuentra el mejor input shaper."
+      },
+      "motor-drivers": {
+        "title": "Controladores de motor",
+        "description": "Inventario en vivo de controladores de paso TMC: corriente, modo, micropasos y estado."
+      }
+    }
+  }
+}

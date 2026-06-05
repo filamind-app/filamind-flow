@@ -1,0 +1,47 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · панель klipper"
+    },
+    "nav": {
+      "dashboard": "Панель",
+      "toggle": "Переключить навигацию"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Назад в Mainsail"
+    },
+    "footer": {
+      "stack": "Moonraker · Klipper",
+      "by": "от команды DeltaFabs"
+    },
+    "home": {
+      "body": "Ваши панели находятся в боковом меню — выберите одну, чтобы начать. Эта главная страница пока намеренно пуста."
+    },
+    "connection": {
+      "connected": "Подключено",
+      "connecting": "Подключение",
+      "error": "Ошибка",
+      "offline": "Не в сети",
+      "idle": "Простой"
+    },
+    "language": {
+      "label": "Язык",
+      "select": "Выбрать язык"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Менеджер прошивок",
+        "description": "Версии прошивок MCU, статус синхронизации с хостом и готовность инструментария."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Анализ CSV резонанса и подбор оптимального input shaper."
+      },
+      "motor-drivers": {
+        "title": "Драйверы моторов",
+        "description": "Живой обзор драйверов TMC: ток, режим, микрошаги и статус."
+      }
+    }
+  }
+}

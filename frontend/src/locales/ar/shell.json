@@ -1,0 +1,47 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · لوحة klipper"
+    },
+    "nav": {
+      "dashboard": "لوحة المعلومات",
+      "toggle": "تبديل التنقّل"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "العودة إلى Mainsail"
+    },
+    "footer": {
+      "stack": "Moonraker · Klipper",
+      "by": "بواسطة فريق DeltaFabs"
+    },
+    "home": {
+      "body": "لوحاتك موجودة في الشريط الجانبي — اختر واحدة لتبدأ. هذه الصفحة الرئيسية فارغة عن قصد في الوقت الحالي."
+    },
+    "connection": {
+      "connected": "متّصل",
+      "connecting": "جارٍ الاتصال",
+      "error": "خطأ",
+      "offline": "غير متّصل",
+      "idle": "خامل"
+    },
+    "language": {
+      "label": "اللغة",
+      "select": "اختر اللغة"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "مدير البرنامج الثابت",
+        "description": "إصدارات البرنامج الثابت لوحدات MCU، وحالة المزامنة مع المضيف، وجاهزية سلسلة الأدوات."
+      },
+      "input-shaping": {
+        "title": "تشكيل الإدخال",
+        "description": "حلّل ملف رنين CSV واعثر على أفضل مشكّل إدخال."
+      },
+      "motor-drivers": {
+        "title": "مشغّلات المحرّكات",
+        "description": "جرد مباشر لمشغّلات الخطوة TMC: التيار، والوضع، والخطوات الدقيقة، والحالة."
+      }
+    }
+  }
+}

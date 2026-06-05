@@ -1,0 +1,286 @@
+{
+  "firmware": {
+    "help": {
+      "whatsThis": "was ist das?",
+      "topics": {
+        "glossary": {
+          "title": "Firmware-Begriffe",
+          "body": "Ein kurzes Glossar für dieses Widget:"
+        },
+        "overview": {
+          "title": "Was dieses Widget macht",
+          "body": "Baue und flashe die Klipper-Firmware auf jeder Steuerplatine (MCU) deines Druckers — von einer Stelle aus, ohne Kommandozeile. Es zeigt die Version jeder MCU und ob sie zum Host passt, lässt dich die Firmware pro Platine konfigurieren und bauen und flasht über Katapult / DFU / SD-Karte."
+        },
+        "guided": {
+          "title": "Geführter Ablauf für neue Platine",
+          "body": "Eine vierstufige Checkliste, um eine neue Steuerplatine mit passender Firmware zum Laufen zu bringen: Platine erkennen, Profil konfigurieren & bauen, Gerät hinzufügen & zuweisen, dann bauen & flashen und prüfen, dass sie mit dem Host synchron ist. Jeder Schritt öffnet den passenden Tab und wird grün, sobald der Live-Zustand ihn erfüllt — so weißt du immer, was als Nächstes kommt. Hier flasht nichts von allein — es führt dich zu den vorhandenen Werkzeugen, die ihre eigenen Bestätigungen behalten."
+        },
+        "status": {
+          "title": "Host- & MCU-Versionen",
+          "body": "Der Host führt Klipper aus; jede MCU muss Firmware ausführen, die aus derselben Version gebaut wurde. Ein ⚠ an einem Gerät bedeutet, dass seine Firmware nicht mit dem Host synchron ist — neu bauen und neu flashen. Die eigene „Prozess-MCU“ des Linux-Hosts wird ebenfalls angezeigt (Moonraker kann ihre Version nicht melden, daher verfolgt FilaMind sie)."
+        },
+        "toolchain": {
+          "title": "Toolchain-Badges",
+          "body": "Diese zeigen, welche Bau-/Flash-Werkzeuge auf dem Host vorhanden sind: Klipper (die Quelle + das Build-System), Katapult, flashtool, dfu-util, avrdude, can-utils. Ein ✗ bedeutet, dass dieses Werkzeug nicht installiert ist — du brauchst nur die, die deine Platinen verwenden. Das „setup“-Badge meldet Host-Probleme (sudoers, udev-Regeln) mit Hinweisen zur Behebung."
+        },
+        "services": {
+          "title": "Dienste",
+          "body": "Starte / stoppe / starte neu die Host-Dienste (Klipper, Moonraker, …). Beim Flashen wird Klipper meist gestoppt, damit es die serielle Schnittstelle freigibt, und danach neu gestartet — mit diesen Schaltflächen kannst du das bei Bedarf von Hand erledigen."
+        },
+        "devices": {
+          "title": "Geräte",
+          "body": "Jede registrierte Platine mit ihren Bau-/Flash-Aktionen. „Bauen“ kompiliert die Firmware für das Profil der Platine; „Flashen“ schreibt sie; „bauen & flashen“ macht beides. Die Batch-Schaltflächen (Alle bauen / Alle flashen / Bereite flashen) wirken auf alle Geräte zugleich. Platinen werden im Geräte-Manager hinzugefügt oder angebunden."
+        },
+        "configure": {
+          "title": "Firmware konfigurieren & bauen",
+          "body": "Wähle ein Platinenprofil und bearbeite seine Klipper-Build-Optionen (das Kconfig-Menü) — schalte „Options-Doku“ ein, um direkt dort zu lesen, was jede Einstellung bewirkt. Dann kompiliert „Profil bauen“ die Firmware und speichert das Profil, damit genau derselbe Build später reproduziert werden kann. Dies baut das gemeinsame Profil; flashen tust du es vom Status-Tab aus auf eine bestimmte Platine."
+        },
+        "external": {
+          "title": "Externe Firmware",
+          "body": "Flashe eine vorgefertigte Firmware-Binärdatei, die du nicht hier kompiliert hast — die `.bin` eines Herstellers (z. B. ein Beacon, eine ERCF-Platine, ein CAN-Toolhead). Registriere die Datei, lege ihre Flash-Methode und ihren Offset fest und flashe sie dann wie jede Platine (hinter derselben Bestätigung). FilaMind untersucht die Binärdatei nach bestem Vermögen (erkannte Version / MCU / Build-Konfiguration) und kann zwei Dateien vergleichen, damit du siehst, was sich geändert hat."
+        },
+        "flash": {
+          "title": "Bauen → sicher flashen",
+          "body": "Flashen greift auf Hardware zu, daher schützt FilaMind es: Es flasht nicht mitten im Druck, es stoppt/startet Klipper um den Vorgang herum und es bestätigt vor unwiderruflichen Schritten. Nach einem Flash meldet sich die Platine neu an und ihre gemeldete Version wird aktualisiert, sodass du den Erfolg bestätigen kannst."
+        }
+      },
+      "glossary": {
+        "klipperFirmware": {
+          "term": "Klipper-Firmware",
+          "def": "Das kleine Programm, das auf jeder Steuerplatine läuft und die Step-/Dir-Befehle des Hosts in Bewegung umsetzt. Sie muss aus derselben Klipper-Version wie der Host gebaut sein."
+        },
+        "mcu": {
+          "term": "MCU",
+          "def": "Ein Mikrocontroller — der Chip auf einer Steuerplatine. Ein Drucker hat oft mehrere: das Mainboard, eine Toolhead-Platine, die „Prozess-MCU“ des Linux-Hosts usw. Jede führt ihre eigene Klipper-Firmware aus."
+        },
+        "hostMcuSync": {
+          "term": "Host ↔ MCU-Sync",
+          "def": "Die Firmware auf einer MCU muss zur Klipper-Version des Hosts passen. Driftet sie (z. B. nach einem Host-Update), erhältst du eine „Versionsabweichung“ — flashe diese MCU neu, um es zu beheben."
+        },
+        "katapultDfu": {
+          "term": "Katapult / DFU",
+          "def": "Bootloader, mit denen du eine MCU über USB oder CAN flashen kannst, ohne eine SD-Karte zu ziehen. Katapult ist der moderne Klipper-Bootloader; DFU ist der eingebaute von STM32."
+        },
+        "flashing": {
+          "term": "Flashen",
+          "def": "Das Schreiben neuer Firmware auf eine MCU. Die Platine muss sich meist zuerst in ihrem Bootloader befinden (Katapult / DFU / ein Reset)."
+        },
+        "profile": {
+          "term": "Profil",
+          "def": "Eine gespeicherte Firmware-Konfiguration (Kconfig / menuconfig) für eine Platine, damit du später genau dieselbe Firmware neu bauen kannst."
+        }
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Geführt",
+      "tabStatus": "🩺 Status",
+      "tabConfigure": "🔧 Konfigurieren",
+      "tabDevices": "🖥 Geräte",
+      "tabExternal": "📦 Extern",
+      "loading": "Firmware-Status wird geladen…",
+      "retrying": "erneuter Versuch…",
+      "retry": "↻ erneut",
+      "stepsShow": "▸ Bauen-→-Flashen-Anleitung",
+      "stepsHide": "▾ Bauen-→-Flashen-Anleitung",
+      "steps": [
+        "Prüfe die Version jeder MCU gegen den Host — ein ⚠-Badge markiert Firmware, die nicht synchron ist.",
+        "Konfiguriere die Firmware einer Platine (Konfigurieren →) und speichere sie als Profil, damit sie identisch neu gebaut wird.",
+        "Baue die Firmware für dieses Profil und beobachte das Live-Log auf Fehler.",
+        "Versetze die Platine bei Bedarf in ihren Bootloader (Katapult / DFU), dann Flashen — Klipper wird dabei gestoppt und neu gestartet.",
+        "Nach dem Flashen meldet sich die Platine neu an und ihre Version wird hier aktualisiert — bestätige, dass sie nun zum Host passt."
+      ],
+      "hostKlipper": "Host · Klipper",
+      "hostFallback": "Host",
+      "healthOk": "✓ Setup",
+      "healthOkTitle": "Host ist zum Flashen eingerichtet",
+      "healthIssues": "{n} Setup-Problem | {n} Setup-Probleme",
+      "servicesHeading": "Dienste",
+      "svcStart": "starten",
+      "svcStop": "stoppen",
+      "svcRestart": "neu starten",
+      "noServices": "keine Dienste erkannt",
+      "beaconHeading": "Beacon",
+      "beaconAvailable": "verfügbar {version}",
+      "flashing": "flashe…",
+      "flash": "flashen",
+      "devicesHeading": "Geräte",
+      "cancel": "abbrechen",
+      "batchBuildAll": "Alle bauen",
+      "batchFlashAll": "Alle flashen",
+      "batchFlashReady": "Bereite flashen",
+      "batchBuildFlash": "Bauen & flashen",
+      "profileLabel": "Profil: {profile}",
+      "noProfileAssigned": "kein Profil zugewiesen",
+      "updateBadge": "⚠ Update",
+      "outdatedTitle": "Laufende Firmware weicht vom Klipper des Hosts ab — bauen & flashen zum Aktualisieren",
+      "build": "bauen",
+      "buildFlash": "bauen & flashen",
+      "boot": "boot",
+      "noDevices": "Noch keine Geräte — füge eine Platine hinzu und weise ihr ein Profil zu, um sie hier zu bauen & zu flashen.",
+      "addFirstBoard": "+ Erste Platine hinzufügen →",
+      "noStatus": "Noch kein Firmware-Status — Backend nicht erreichbar.",
+      "confirmFlashTitle": "{device} mit „{profile}“ flashen.",
+      "confirmFlashWarning": "Halte die Stromversorgung stabil und ziehe nicht den Stecker — ein unterbrochener Flash kann die Platine unbrauchbar machen.",
+      "confirmBuildFlashTitle": "„{profile}“ bauen, dann {device} flashen.",
+      "confirmBuildFlashWarning": "Dies baut die Firmware neu und schreibt sie auf die Platine — halte die Stromversorgung bis zum Ende stabil.",
+      "confirmBatchTitle": "{label} — dies flasht mehrere Geräte nacheinander.",
+      "confirmBatchWarning": "Halte die Stromversorgung stabil, bis jedes Gerät fertig ist — das Unterbrechen eines Flashes kann es unbrauchbar machen.",
+      "confirmBeaconTitle": "Die Beacon-Sonde {name} flashen.",
+      "confirmBeaconWarning": "Halte die Sonde verbunden und mit Strom versorgt — das Unterbrechen des Flashes kann sie unbrauchbar machen.",
+      "buildFailedSkipFlash": "!! Build nicht erfolgreich — Flashen wird übersprungen.",
+      "errBatch": "Batch fehlgeschlagen",
+      "errBuild": "Build fehlgeschlagen",
+      "errReboot": "Neustart fehlgeschlagen",
+      "errFlash": "Flash fehlgeschlagen",
+      "errBuildFlash": "Bauen & flashen fehlgeschlagen",
+      "errBeaconFlash": "Beacon-Flash fehlgeschlagen",
+      "errService": "Dienst-Aktion fehlgeschlagen"
+    },
+    "guided": {
+      "title": "🧭 Geführt — eine neue Platine flashen",
+      "allDone": "✓ Alles bereit — jede registrierte Platine ist gebaut und mit dem Host synchron.",
+      "intro": "Vier Schritte, um eine neue Steuerplatine mit passender Firmware zum Laufen zu bringen. Jeder öffnet den passenden Tab und wird grün, sobald er erledigt ist.",
+      "stepDetectLabel": "Platine erkennen",
+      "stepDetectWhy": "Verbinde die Platine (USB / CAN / DFU) und scanne, damit FilaMind sie sehen kann.",
+      "stepDetectAction": "In Geräte scannen →",
+      "stepConfigureLabel": "Profil konfigurieren & bauen",
+      "stepConfigureWhy": "Wähle die Klipper-Optionen der Platine (Kconfig) und baue die Firmware einmal als wiederverwendbares Profil.",
+      "stepConfigureAction": "Konfigurieren →",
+      "stepAssignLabel": "Gerät hinzufügen & zuweisen",
+      "stepAssignWhy": "Registriere die Platine und gib ihr das Profil + wie sie geflasht wird.",
+      "stepAssignAction": "Geräte →",
+      "stepFlashLabel": "Bauen & flashen, dann prüfen",
+      "stepFlashWhy": "Flashe die Firmware (hinter einer Bestätigung), prüfe dann, dass die gemeldete Version der Platine zum Host passt.",
+      "stepFlashAction": "Status →"
+    },
+    "flashConfirm": {
+      "title": "⚠ Flash bestätigen",
+      "cancel": "abbrechen",
+      "previewing": "Vorschau…",
+      "ready": "bereit",
+      "blocked": "blockiert",
+      "planErrorSuffix": "{error} — mit Vorsicht fortfahren.",
+      "previewFailed": "Vorschau des Flashes nicht möglich",
+      "acknowledge": "Mir ist klar, dass dies Firmware auf die Hardware schreibt und eine Platine bei Unterbrechung unbrauchbar machen kann.",
+      "blockedSeeWarnings": "blockiert — siehe Warnungen",
+      "flashNow": "⚠ Jetzt flashen"
+    },
+    "configEditor": {
+      "title": "Firmware konfigurieren",
+      "back": "← zurück",
+      "blankConfig": "— leere Konfiguration —",
+      "optional": "optional",
+      "optionDocs": "Options-Doku",
+      "optionDocsTitle": "Hilfetext jeder Option direkt anzeigen",
+      "raw": "roh",
+      "rawTitle": "Rohe Kconfig-Symbolnamen anzeigen",
+      "editsBadge": "{n} Änderung | {n} Änderungen",
+      "builtBadge": "gebaut ✓",
+      "building": "baue…",
+      "buildProfile": "Profil bauen",
+      "buildTitle": "Firmware bauen",
+      "buildTitleDirty": "speichert ausstehende Änderungen, baut dann",
+      "downloadBin": "↓ .bin",
+      "downloadBinTitle": "Die gebaute Firmware-Binärdatei herunterladen",
+      "delete": "löschen",
+      "manage": "verwalten",
+      "newNamePlaceholder": "neuer Name",
+      "rename": "umbenennen →",
+      "renameTitle": "Dieses Profil umbenennen (und jede gebaute Binärdatei + verknüpfte Geräte)",
+      "duplicate": "duplizieren",
+      "duplicateTitle": "Eine Kopie dieses Profils unter dem neuen Namen speichern",
+      "builtVersion": "gebaut · {version}",
+      "notBuilt": "nicht gebaut",
+      "canBridge": "CAN-Bridge",
+      "loading": "Konfiguration wird geladen…",
+      "lockedTitle": "Gesperrt — von Klipper gesteuert (eine Voraussetzung oder eine andere Option setzt es); hier nicht direkt bearbeitbar",
+      "on": "AN",
+      "off": "AUS",
+      "needs": "benötigt: {dep}",
+      "default": "Standard: {value}",
+      "profileNamePlaceholder": "Profilname (z. B. EBB36)",
+      "saving": "speichere…",
+      "saveProfile": "Profil speichern",
+      "savedProfile": "Profil „{name}“ gespeichert.",
+      "renamedTo": "Umbenannt in „{name}“.",
+      "duplicatedTo": "Dupliziert nach „{name}“.",
+      "errLoad": "Konfiguration konnte nicht geladen werden",
+      "errSave": "Speichern fehlgeschlagen",
+      "errDownload": "Download fehlgeschlagen",
+      "errDelete": "Löschen fehlgeschlagen",
+      "errRename": "Umbenennen fehlgeschlagen",
+      "errDuplicate": "Duplizieren fehlgeschlagen",
+      "errBuild": "Build fehlgeschlagen"
+    },
+    "devices": {
+      "title": "Geräte-Manager",
+      "back": "← zurück",
+      "intro": "Füge Platinen hinzu, weise ein Profil zu und konfiguriere, wie jede geflasht wird. Du baust & flashst jedes Gerät vom Status-Bildschirm aus (Konfigurieren baut das gemeinsame Profil).",
+      "loading": "Geräte werden geladen…",
+      "remove": "entfernen",
+      "profilePlaceholder": "— Profil —",
+      "katapult": "katapult",
+      "katapultHint": "Platine trägt einen Katapult-Bootloader — sie wird vor dem Flashen in Katapult neu gestartet. Deaktiviere dies für Platinen, die direkt geflasht werden.",
+      "exclude": "ausschließen",
+      "notesPlaceholder": "Notizen (URLs, Pinbelegung…)",
+      "serialIdentity": "↳ serielle Katapult-Identität",
+      "dfuIdentity": "↳ DFU-Bootloader-Identität",
+      "unlink": "trennen",
+      "empty": "Noch keine gespeicherten Geräte — füge unten eines hinzu.",
+      "discovered": "Erkannt",
+      "add": "hinzufügen",
+      "link": "🔗 verknüpfen",
+      "linkHint": "Diese Bootloader-Identität mit einem registrierten Gerät verknüpfen",
+      "linkTo": "verknüpfen mit:",
+      "linkTarget": "→ {name}",
+      "backup": "Backup",
+      "export": "exportieren",
+      "import": "importieren",
+      "restored": "{n} Profil{extra} wiederhergestellt. | {n} Profile{extra} wiederhergestellt.",
+      "restoredDevicesSuffix": " + Geräte",
+      "loadFailed": "Geräte konnten nicht geladen werden",
+      "saveFailed": "Speichern fehlgeschlagen",
+      "addFailed": "Hinzufügen fehlgeschlagen",
+      "attachFailed": "Anbinden fehlgeschlagen",
+      "removeFailed": "Entfernen fehlgeschlagen",
+      "exportFailed": "Export fehlgeschlagen",
+      "importFailed": "Import fehlgeschlagen"
+    },
+    "external": {
+      "title": "Externe Firmware",
+      "upload": "+ .bin hochladen",
+      "intro": "Flashe eine vorgefertigte Firmware-Datei unverändert (kein Build). Lege fest, wie jede geflasht wird, und wähle dann eine Platine.",
+      "compare": "vergleichen",
+      "optionA": "— A —",
+      "optionB": "— B —",
+      "clear": "leeren",
+      "pickTwoDifferent": "Wähle zwei verschiedene Dateien.",
+      "countChanged": "{n} geändert",
+      "countOnlyA": "{n} nur in A",
+      "countOnlyB": "{n} nur in B",
+      "countSame": "{n} gleich",
+      "headerA": "A · {label}",
+      "headerB": "B · {label}",
+      "compareNote": "Schreibgeschützter Vergleich der in jede Datei eingebackenen Eigenschaften.",
+      "remove": "entfernen",
+      "readFromFile": "🔍 aus Datei lesen:",
+      "mcuLabel": "· MCU {mcu}",
+      "hide": "ausblenden",
+      "config": "Konfiguration",
+      "compiledNote": "In die Firmware einkompiliert — schreibgeschützt. Um diese zu ändern, baue ein Profil unter Konfigurieren und flashe dieses stattdessen.",
+      "offsetPlaceholder": "Offset (DFU, z. B. 0x08002000)",
+      "notesPlaceholder": "Notizen (Quelle, Platine, Version…)",
+      "flashTo": "flashen auf:",
+      "katapult": "katapult",
+      "flashing": "flashe…",
+      "flash": "flashen",
+      "empty": "Noch keine externe Firmware — lade eine .bin hoch, um sie direkt zu flashen.",
+      "flashingLog": "flashe {filename} → {device}",
+      "loadFailed": "Externe Firmware konnte nicht geladen werden",
+      "uploadFailed": "Upload fehlgeschlagen",
+      "saveFailed": "Speichern fehlgeschlagen",
+      "deleteFailed": "Löschen fehlgeschlagen",
+      "flashFailed": "Flash fehlgeschlagen"
+    }
+  }
+}

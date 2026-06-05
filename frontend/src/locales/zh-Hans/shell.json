@@ -1,0 +1,47 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · klipper 面板"
+    },
+    "nav": {
+      "dashboard": "仪表盘",
+      "toggle": "切换导航"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "返回 Mainsail"
+    },
+    "footer": {
+      "stack": "Moonraker · Klipper",
+      "by": "由 DeltaFabs 团队打造"
+    },
+    "home": {
+      "body": "你的面板都在侧边栏 — 选择一个开始使用。此主页目前刻意保持为空。"
+    },
+    "connection": {
+      "connected": "已连接",
+      "connecting": "连接中",
+      "error": "错误",
+      "offline": "离线",
+      "idle": "空闲"
+    },
+    "language": {
+      "label": "语言",
+      "select": "选择语言"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "固件管理器",
+        "description": "MCU 固件版本、主机同步状态以及工具链就绪情况。"
+      },
+      "input-shaping": {
+        "title": "输入整形",
+        "description": "分析共振 CSV 并找出最佳的输入整形器。"
+      },
+      "motor-drivers": {
+        "title": "电机驱动器",
+        "description": "实时 TMC 步进驱动器清单：电流、模式、微步与状态。"
+      }
+    }
+  }
+}

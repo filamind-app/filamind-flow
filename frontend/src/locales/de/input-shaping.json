@@ -1,0 +1,594 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "was ist das?",
+      "topics": {
+        "glossary": {
+          "title": "Input-Shaping-Begriffe"
+        },
+        "analyze": {
+          "title": "Eine Resonanz-CSV analysieren",
+          "body": "Erfasse die Daten am Drucker mit TEST_RESONANCES (oder nutze 🔴 Live-Werkzeuge), lade dann die .csv hier. FilaMind führt Klippers eigene Shaper-Mathematik aus und empfiehlt einen input_shaper + eine Frequenz. Mache die X-Datei und die Y-Datei nacheinander — sie ergeben zusammen einen Konfigurationsblock."
+        },
+        "grade": {
+          "title": "Was die Note A–F bedeutet",
+          "body": "Eine Messqualitätsbewertung aus fünf gleichen Teilen: Peak-Klarheit, Restschwingung, Glättung, Frequenz (40–90 Hz ist gesund) und wie sauber die Resonanz ist. A/B → anwenden; C → brauchbar, überfliege die Tipps; D/F → die Mechanik beheben und erneut testen."
+        },
+        "diagnostics": {
+          "title": "Die Diagnostik lesen",
+          "body": "Jede Karte ordnet die Messung einer wahrscheinlichen mechanischen Ursache und einer Lösung zu. Limette = gesund, gelb = verbesserungswürdig, rot = beheben, bevor du dem Ergebnis vertraust. Wende eine Lösung an, führe erneut aus und beobachte, wie die Karte grün wird."
+        },
+        "chart": {
+          "title": "Das Frequenzdiagramm lesen",
+          "body": "Durchgezogene Kurven sind die gemessene Schwingungsenergie (X+Y+Z gesamt plus jede Achse). Das ▲ markiert die dominante Resonanz. Die schwachen Kurven sind die Restschwingung jedes Shapers über die Frequenz — der empfohlene (rosa) fällt bei deinem Peak am tiefsten ab."
+        },
+        "shapers": {
+          "title": "Einen Shaper wählen",
+          "body": "Jede Zeile wägt Restschwingung gegen Glättung ab. ZV / MZV sind am leichtesten (saubere Einzelresonanz); EI ist robuster; 2-/3-Hump bewältigen breite oder mehrfache Resonanzen, glätten aber stärker. FilaMind hebt die beste Balance hervor."
+        },
+        "config": {
+          "title": "Die Konfiguration anwenden",
+          "body": "Dieser [input_shaper]-Block trägt dein X- und/oder Y-Ergebnis. Kopiere ihn in printer.cfg und starte Klipper neu. Die Badges zeigen, welche Achsen erfasst sind — erfasse X und Y für einen vollständigen Block."
+        },
+        "noise": {
+          "title": "Rauschprüfung",
+          "body": "Liest die Leerlauf-Schwingung des Beschleunigungssensors ohne Bewegung — eine schnelle Montageprüfung vor dem Test. Klippers Faustregel: ~1–100 ist normal, ~1000+ bedeutet einen losen Sensor oder lose Verkabelung. Behebe eine verrauschte Montage zuerst, sonst ist jeder Test unzuverlässig."
+        },
+        "belts": {
+          "title": "Riemenvergleich (CoreXY)",
+          "body": "Regt jede Riemendiagonale an und überlagert die beiden Antworten. Übereinstimmende Peak-Frequenzen = gleichmäßige Spannung. Eine Lücke bedeutet, dass der Riemen mit der niedrigeren Frequenz lockerer ist — spanne ihn nach und führe erneut aus, bis sich die Peaks decken."
+        },
+        "axesMap": {
+          "title": "axes_map-Erkennung",
+          "body": "Bewegt den Toolhead ein wenig in X, dann Y, dann Z, um zu lernen, wie der Beschleunigungssensor montiert ist, und gibt dir die axes_map-Zeile für printer.cfg. Führe es einmal nach dem Anbringen oder Versetzen des Sensors aus, damit jeder spätere Test die richtigen Achsen liest."
+        },
+        "sustain": {
+          "title": "Halte-Frequenz",
+          "body": "Hält den Toolhead bei einer Frequenz summend, damit du Riemen, den Schlitten und den Rahmen von Hand antasten kannst, um zu finden, was klappert. Das Spektrogramm + die Zeitleiste zeigen, ob deine Zielfrequenz dominiert und wann eine Berührung sie beruhigt hat."
+        },
+        "vibrations": {
+          "title": "Vibrationsprofil",
+          "body": "Durchläuft viele Geschwindigkeiten entlang jedes Motorwinkels, um zu kartieren, wo die Maschine am ruhigsten läuft und welche Geschwindigkeiten eine Resonanz treffen. Bevorzuge die ruhigsten Geschwindigkeiten für Druck-/Reisebewegungen und meide die markierten. Symmetrie % zeigt, wie gut die beiden Motoren übereinstimmen."
+        },
+        "guided": {
+          "title": "Geführt vs. manuell",
+          "body": "Geführt durchläuft den gesamten Ablauf — Rauschen → Riemen → Shaper X → Shaper Y → Vibrationen → Druck — mit einem Bestehen/Durchfallen-Tor bei jedem Schritt. Nutze es für eine vollständige Abstimmung. Wechsle zu 📈 Analysieren oder 🔴 Live-Werkzeugen, wenn du nur ein bestimmtes Werkzeug willst."
+        },
+        "history": {
+          "title": "Verlauf & Trends",
+          "body": "Jede Kalibrierung wird (in diesem Browser) mit ihrer Note und Bewertung gespeichert. Der Pfeil ▲/▼ vergleicht einen Lauf mit dem vorherigen Test derselben Achse — nach oben bedeutet eine sauberere Erfassung oder eine steifere Achse, nach unten mehr Rauschen oder eine weichere Achse."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input Shaper",
+          "def": "Ein Filter, den Klipper auf die Bewegung anwendet und der die Hauptschwingung des Druckers aufhebt, sodass du schneller drucken kannst ohne Ringing / Ghosting."
+        },
+        "resonance": {
+          "term": "Resonanz",
+          "def": "Die Frequenz (Hz), bei der eine Achse natürlich schwingt, wenn sie angestoßen wird. Niedriger = weichere / schwerere Achse; ~40–90 Hz ist ein gesunder Drucker."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Leistungsdichtespektrum (power spectral density) — wie viel Schwingungsenergie bei jeder Frequenz liegt. Der hohe Peak ist die Resonanz, auf die der Shaper abzielt."
+        },
+        "smoothing": {
+          "term": "Glättung",
+          "def": "Ein Nebeneffekt des Shapings, der scharfe Ecken leicht abrundet. Niedriger ist besser; ≤0,1 ist minimal, >0,2 beginnt Details zu glätten."
+        },
+        "vibrationPct": {
+          "term": "Schwingung %",
+          "def": "Wie viel Resonanz nach dem Shaper übrig bleibt. Niedriger ist besser; ≤2 % ist exzellent, ≤5 % ist in Ordnung."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "Die Beschleunigung, die der Shaper ohne zu viel Glättung aufrechterhalten kann — ein vorgeschlagener SET_VELOCITY_LIMIT- / printer.cfg-Wert."
+        }
+      }
+    },
+    "grade": {
+      "clarity": {
+        "label": "Peak-Klarheit",
+        "value": "{ratio}×",
+        "note": {
+          "none": "Kein Spektrum zum Bewerten.",
+          "good": "Scharfer Peak, deutlich über dem Rauschen.",
+          "ok": "Peak über dem Rauschen sichtbar.",
+          "poor": "Schwacher Peak — verrauscht oder sehr steif."
+        }
+      },
+      "vibration": {
+        "label": "Restschwingung",
+        "value": "{pct}%",
+        "note": {
+          "good": "Fast die gesamte Resonanz entfernt.",
+          "ok": "Die meiste Resonanz entfernt.",
+          "poor": "Erhebliche Schwingung bleibt übrig."
+        }
+      },
+      "smoothing": {
+        "label": "Glättung",
+        "note": {
+          "good": "Minimale Eckenabrundung.",
+          "ok": "Etwas Abrundung bei hoher Beschleunigung.",
+          "poor": "Starke Glättung — rundet Ecken ab."
+        }
+      },
+      "freq": {
+        "label": "Frequenz",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "Keine Frequenz gefunden.",
+          "good": "Gesunde, steife Achse.",
+          "ok": "Etwas weich oder sehr steif.",
+          "soft": "Weiche / schwere Achse.",
+          "high": "Ungewöhnlich hoch."
+        }
+      },
+      "shaper": {
+        "label": "Resonanzform",
+        "note": {
+          "clean": "Saubere Einzelresonanz.",
+          "robust": "Einzelresonanz, robuster Shaper.",
+          "twin": "Breite oder Doppelresonanz.",
+          "multiple": "Mehrere Resonanzen.",
+          "atypical": "Untypischer Shaper."
+        }
+      },
+      "verdict": {
+        "a": "Exzellent — saubere Erfassung, gut abgestimmte Achse.",
+        "b": "Gut — solides Ergebnis, kleiner Verbesserungsspielraum.",
+        "c": "Befriedigend — brauchbar; siehe die Vorschläge unten.",
+        "d": "Mangelhaft — mechanische Abstimmung + erneuter Test empfohlen.",
+        "f": "Unzuverlässig — Test erneut ausführen (Sensormontage prüfen).",
+        "none": "Kein brauchbares Ergebnis — TEST_RESONANCES erneut ausführen."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "Keine brauchbare Resonanz",
+        "advice": "TEST_RESONANCES erneut ausführen. Prüfe, ob der Beschleunigungssensor verkabelt und fest am Toolhead montiert ist.",
+        "detail": "kein klarer Peak erkannt"
+      },
+      "noisy": {
+        "title": "Verrauschte Erfassung",
+        "advice": "Sichere die Montage des Beschleunigungssensors und führe erneut aus. Vermeide Lüfter oder andere Bewegung während des Tests.",
+        "detail": "Signal-Rausch-Verhältnis {snr}×"
+      },
+      "lowFreq": {
+        "title": "Niedrige Resonanzfrequenz",
+        "advice": "Weiche oder schwere Achse — spanne die Riemen nach und prüfe die Rahmensteifigkeit. Eine steifere Achse resoniert höher und druckt schneller.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Etwas weiche Achse",
+        "advice": "Die Frequenz ist eher niedrig. Das Festziehen der Riemen oder des Rahmens hebt sie an und lässt dich schneller drucken.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "Hohe Glättung",
+        "advice": "Wird Ecken abrunden. Wähle einen steiferen Shaper oder senke max_accel.",
+        "detail": "Glättung {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Mehrere Resonanzen",
+        "advice": "Oft ein loser Toolhead, Riemen oder ein loses Teil. Setze den Toolhead neu und prüfe die Riemenspannung erneut."
+      },
+      "vibrationRemains": {
+        "title": "Schwingung bleibt übrig",
+        "advice": "Mechanische Abstimmung (Riemen, Rahmen, Toolhead-Masse) könnte dies weiter senken.",
+        "detail": "{vibrations}% nach dem Shaping übrig"
+      },
+      "healthy": {
+        "title": "Gesunde Achse",
+        "advice": "Saubere Erfassung und eine steife Achse — startklar. Wende die Konfiguration an und starte Klipper neu.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X und Y unterscheiden sich stark",
+        "advice": "Asymmetrische Steifigkeit. Prüfe die Riemenspannung an der weicheren Achse; bei CoreXY stelle sicher, dass beide Riemen übereinstimmen und straff sind.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "empfohlen",
+        "shaperFreq": "Shaper-Freq",
+        "peakFreq": "Peak-Freq",
+        "remainingVibr": "Rest-Schwing.",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Riemen passen zusammen",
+          "advice": "Die beiden Riemenantworten decken sich — die Spannung wirkt ausgeglichen."
+        },
+        "differ": {
+          "title": "Riemen unterscheiden sich",
+          "advice": "Die Riemenresonanzen unterscheiden sich — spanne den lockereren Riemen nach, bis sich beide Peaks decken."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Sensor ist ruhig",
+          "why": "Gut zum Fortfahren."
+        },
+        "elevated": {
+          "title": "Sensorrauschen reduzieren",
+          "why": "Max {max} ≥ {threshold}. Schalte den Toolhead-Lüfter aus, prüfe die Montage erneut und führe dann erneut aus."
+        },
+        "bad": {
+          "title": "Beschleunigungssensor vor dem Test beheben",
+          "why": "Rauschen {max} ist zu hoch — setze den Sensor neu und prüfe seine Verkabelung."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Riemen ausgeglichen",
+          "why": "Die Spannung ist gleichmäßig — kalibriere als Nächstes den Shaper."
+        },
+        "mismatch": {
+          "title": "Riemen {looser} nachspannen",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). Spanne den Riemen mit der niedrigeren Frequenz nach, bis sich beide Peaks decken, dann erneut ausführen."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Mit niedrigerer Beschleunigung erneut ausführen",
+          "why": "Es wurde zu viel niederfrequente Bewegung aufgezeichnet — senke ACCEL (oder erhöhe SIZE), sodass nur konstante Geschwindigkeiten gemessen werden, dann erneut ausführen."
+        },
+        "favour": {
+          "title": "~{speed} mm/s bevorzugen",
+          "why": "Ruhigstes Band {start}–{end} mm/s — stelle die Druck-/Reisegeschwindigkeiten des Slicers hier ein, wenn möglich."
+        },
+        "avoid": {
+          "title": "{shown} mm/s meiden",
+          "why": "Diese Geschwindigkeiten treffen eine Resonanz — halte Druck- + Reisebewegungen im Slicer davon fern."
+        },
+        "symmetry": {
+          "title": "Riemenspannung / Motorabgleich prüfen",
+          "why": "Motorsymmetrie {pct}% ist niedrig — spanne die Riemen nach (Riemen vergleichen) und prüfe, dass beide Motorströme übereinstimmen."
+        },
+        "fine": {
+          "title": "Vibrationen sehen gut aus",
+          "why": "Keine problematischen Geschwindigkeiten stachen hervor."
+        }
+      },
+      "pressure": {
+        "title": "Einen Pressure-Advance-Turm drucken",
+        "why": "Drucke den PA-Turm, lies die Höhe ab, in der die Ecken am schärfsten aussehen, dann `SET_PRESSURE_ADVANCE ADVANCE=<value>` und `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "Deine konfigurierte axes_map ist bereits korrekt.",
+        "update": "Aktualisiere deine Konfiguration auf: {axes_map}",
+        "add": "Füge dies hinzu, damit jedes Input-Shaping-Diagramm X/Y/Z ausgerichtet liest."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Rauschen",
+          "title": "Beschleunigungssensor-Rauschen",
+          "why": "Bestätige vor jedem Test, dass der Sensor fest montiert ist (bewegungsfrei)."
+        },
+        "belts": {
+          "label": "Riemen",
+          "title": "CoreXY-Riemenabgleich",
+          "why": "Gleiche die beiden Riemenspannungen ab. Nur CoreXY — überspringe bei einem kartesischen / Bed-Slinger."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input Shaper — X",
+          "why": "Finde die X-Resonanz und den besten Shaper."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input Shaper — Y",
+          "why": "Finde die Y-Resonanz und den besten Shaper."
+        },
+        "vibrations": {
+          "label": "Vibrationen",
+          "title": "Vibrationsprofil",
+          "why": "Durchlaufe Geschwindigkeit × Motorwinkel, um die ruhigsten Geschwindigkeiten und die zu meidenden Resonanzen zu finden."
+        },
+        "pressure": {
+          "label": "Druck",
+          "title": "Pressure Advance",
+          "why": "Stimme Pressure Advance zuletzt ab, um Ecken und Nähte zu schärfen."
+        },
+        "done": {
+          "label": "Fertig"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Sensor ist ruhig",
+          "warn": "Rauschen ist etwas hoch",
+          "failed": "Zu verrauscht — Montage beheben"
+        },
+        "belts": {
+          "passed": "Riemen passen zusammen",
+          "differ": "Riemen unterscheiden sich (Δ{diffPct}%)",
+          "mismatched": "Riemen nicht abgeglichen (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "Note {letter} — gesunde Achse",
+          "usable": "Note C — brauchbar",
+          "tune": "Note {letter} — abstimmen + erneut testen"
+        },
+        "vibrations": {
+          "lowFreq": "Zu viel niederfrequente Bewegung — Beschleunigung senken & erneut ausführen",
+          "mismatched": "Motoren nicht abgeglichen ({pct}%)",
+          "smoothest": "Ruhigste ~{rec} mm/s",
+          "complete": "Profil vollständig"
+        }
+      },
+      "ui": {
+        "title": "🧭 Geführte Abstimmung",
+        "exit": "✕ beenden",
+        "motionReady": "⚠ bewegt den Toolhead — ich bin bereit",
+        "running": "läuft…",
+        "run": "ausführen",
+        "rerun": "↻ erneut ausführen",
+        "skipBelts": "überspringen (kein CoreXY)",
+        "copyPa": "📋 PA-Turm kopieren",
+        "copied": "✅ Kopiert",
+        "finish": "Abschließen →",
+        "nextStep": "Nächster Schritt →",
+        "skipAnyway": "trotzdem überspringen",
+        "complete": "Abstimmung abgeschlossen",
+        "stepFailed": "Schritt fehlgeschlagen",
+        "copyFailed": "Kopieren fehlgeschlagen — markiere den Text und kopiere ihn manuell.",
+        "summaryNote": "Deine X- und Y-Erfassungen befinden sich im kombinierten {code}-Block unten — kopiere ihn, dann starte Klipper neu. Öffne die geführte Abstimmung jederzeit erneut, um nachzuprüfen."
+      }
+    },
+    "audit": {
+      "recommended": "Empfohlen",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Max. Beschleunigung",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Max. Leerlaufrauschen {max} (normal < {threshold}).",
+        "status": "Status",
+        "maxNoise": "Max. Rauschen",
+        "threshold": "Schwellenwert",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Abgleich",
+        "beltA": "Riemen-A-Peak",
+        "beltB": "Riemen-B-Peak",
+        "difference": "Differenz",
+        "matched": "passend",
+        "mismatch": "abweichend",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Status",
+        "gravity": "Schwerkraft",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Rauschen"
+      },
+      "sustain": {
+        "target": "Ziel",
+        "dominant": "Dominant",
+        "inBand": "Im Band",
+        "onTarget": "Auf Ziel",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "ja",
+        "no": "nein"
+      },
+      "vibrations": {
+        "smoothest": "Ruhigste",
+        "symmetry": "Symmetrie",
+        "motorResonance": "Motorresonanz",
+        "avoid": "Meiden",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Geführt",
+      "tabAnalyze": "📈 Analysieren",
+      "tabLive": "🔴 Live-Werkzeuge",
+      "tabHistory": "🕘 Verlauf",
+      "intro": "Stimme Input Shaping aus einer Klipper-Resonanzerfassung ab — ohne Kommandozeile. Neu hier? Beginne mit {guided}. Oder wähle {analyze}, um selbst eine {csv} zu bearbeiten, {live}, um am Drucker zu erfassen, oder {history}, um vergangene Läufe durchzusehen.",
+      "cfgReady": "printer.cfg bereit",
+      "copy": "📋 Kopieren",
+      "copied": "✅ Kopiert",
+      "archive": "💾 Archivieren",
+      "saved": "✅ Gespeichert",
+      "advanced": "⚙ erweitert",
+      "compareCsvs": "⇄ CSVs vergleichen",
+      "blankDefault": "leer = Klipper-Standard",
+      "auditTitle": "Audit",
+      "refresh": "↻ aktualisieren",
+      "auditEmpty": "Noch keine Ergebnisse — führe eine Abstimmung aus oder speichere eine im Archiv.",
+      "trendTitle": "Bewertung {score} gegenüber dem vorherigen {axis}-Test",
+      "sourceSaved": "💾 gespeichert",
+      "sourceLocal": "lokal",
+      "recommended": "Empfohlen",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "Achse {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "Kein Shaper für diese Daten empfohlen.",
+      "measurementQuality": "Messqualität",
+      "scoreOutOf": "{v}/100",
+      "hide": "ausblenden",
+      "details": "Details",
+      "chartAria": "Frequenzgang und Shaper",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "empfohlen",
+      "legendPeak": "▲ Peak",
+      "legendAxisHint": "Frequenz (Hz) → · durchgezogen = gemessen · schwach = Shaper-Rest",
+      "colShaper": "Shaper",
+      "colFreq": "Freq",
+      "colVibr": "Schwing.",
+      "colSmooth": "Glättung",
+      "colAccel": "Beschl.",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "leeren",
+      "pasteHint": "Füge dies in deine {cfg} ein, dann starte Klipper neu.",
+      "errAnalysisFailed": "Analyse fehlgeschlagen",
+      "errCopyFailed": "Kopieren fehlgeschlagen — markiere den Text und kopiere ihn manuell.",
+      "errSaveFailed": "Speichern im Archiv fehlgeschlagen"
+    },
+    "fromPrinter": {
+      "liveTools": "Live-Werkzeuge",
+      "intro": "⏳ Diese bewegen den Toolhead und können {duration} dauern (ein Riemenvergleich führt zwei volle Durchläufe aus) — halte diese Seite offen, bis das Ergebnis erscheint.",
+      "introDuration": "1–5 Minuten",
+      "confirmMoves": "⚠ bewegt den Toolhead — ich bin bereit",
+      "axisX": "Achse X",
+      "axisY": "Achse Y",
+      "noiseTitle": "🔊 Rauschprüfung",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "messe…",
+      "noiseHint": "bewegungsfrei · vor dem Test ausführen",
+      "noiseVerdictQuiet": "✅ ruhig",
+      "noiseVerdictElevated": "⚠ erhöht",
+      "noiseVerdictTooNoisy": "⛔ zu verrauscht",
+      "noiseMaxNormal": "max {max} · normal < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Live-Test",
+      "liveBtn": "TEST_RESONANCES ausführen",
+      "liveBtnBusy": "läuft…",
+      "liveDesc": "Homt den Drucker bei Bedarf, führt dann TEST_RESONANCES auf der gewählten Achse aus (benötigt einen Beschleunigungssensor + einen {section}). Während des Drucks abgelehnt.",
+      "beltsTitle": "🟰 Riemen vergleichen",
+      "beltsBtn": "Riemen vergleichen",
+      "beltsBtnBusy": "vergleiche…",
+      "beltsBtnTitle": "CoreXY: jede Riemendiagonale anregen und die Antworten überlagern",
+      "beltsDesc": "Nur CoreXY: führt zwei Durchläufe entlang der Riemendiagonalen aus und überlagert sie. Während des Drucks abgelehnt.",
+      "axesTitle": "🧭 Achsenkarte",
+      "axesBtn": "axes_map erkennen",
+      "axesBtnBusy": "erkenne…",
+      "axesBtnTitle": "+X/+Y/+Z bewegen, um die Ausrichtung des Beschleunigungssensors zu erkennen (axes_map)",
+      "axesDesc": "Bewegt ~30 mm in X, dann Y, dann Z, um die Ausrichtung des Beschleunigungssensors zu erkennen. Während des Drucks abgelehnt.",
+      "beltResultTitle": "Riemenvergleich",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "Frequenzgang Riemen A vs B",
+      "beltLegendA": "Riemen A (1,1)",
+      "beltLegendB": "Riemen B (1,-1)",
+      "axesResultTitle": "Achsenkarte",
+      "copy": "📋 Kopieren",
+      "copied": "✅ Kopiert",
+      "mappingVirtual": " (virtuell)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "Achsen-Geschwindigkeitssequenz",
+      "zoneVirtual": "virtuell",
+      "zonePct": "{pct}%",
+      "legendAccelX": "Beschl. x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "Neigung {x}° / {y}° / {z}°",
+      "gravity": "Schwerkraft {v} m/s²",
+      "noiseValue": "Rauschen {v}",
+      "sustainTitle": "🎯 Halte-Frequenz",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "Sek.",
+      "sustainBtn": "ausführen",
+      "sustainBtnBusy": "halte…",
+      "sustainDesc": "Lässt den Toolhead an Ort und Stelle nahe der Frequenz summen — taste Riemen, den Toolhead und den Rahmen an, um zu finden, was klappert. Während des Drucks abgelehnt.",
+      "sustainHolding": "✅ haltend",
+      "sustainOffTarget": "⚠ neben dem Ziel",
+      "sustainPeak": "Peak {freq} Hz · {pct}% im Band",
+      "specChartLabel": "Frequenz-Zeit-Spektrogramm",
+      "energyChartLabel": "Schwingungsenergie über die Zeit",
+      "specAxes": "Freq → · Zeit ↓",
+      "energyLegend": "Energie vs Zeit — der cyanfarbene Einbruch zeigt, wo eine Berührung half",
+      "vibTitle": "📊 Vibrationsprofil",
+      "vibMax": "max",
+      "vibStep": "Schritt",
+      "vibUnit": "mm/s",
+      "vibBtn": "Durchlauf ausführen",
+      "vibBtnBusy": "durchlaufe…",
+      "vibDesc": "Durchläuft Geschwindigkeit × Motorwinkel um die Bettmitte — ein langer Lauf (Minuten). Ein kleinerer {step} ist feiner, aber langsamer. Meldet die ruhigsten Geschwindigkeiten, die zu meidenden Geschwindigkeiten, die Motorsymmetrie und die Motorresonanz. Während des Drucks abgelehnt.",
+      "vibDescStep": "Schritt",
+      "errNoiseCheck": "Rauschprüfung fehlgeschlagen",
+      "errLiveTest": "Live-Test fehlgeschlagen",
+      "errBeltComparison": "Riemenvergleich fehlgeschlagen",
+      "errAxesMapDetection": "axes_map-Erkennung fehlgeschlagen",
+      "errCopyFailed": "Kopieren fehlgeschlagen — markiere den Text und kopiere ihn manuell.",
+      "errSustainTest": "Halte-Frequenz-Test fehlgeschlagen",
+      "errVibrationsProfile": "Vibrationsprofil fehlgeschlagen"
+    },
+    "vibrationsView": {
+      "title": "Vibrationsprofil",
+      "lowFreqNoise": "⚠ niederfrequentes Rauschen",
+      "smoothest": "▼ ruhigste ~{v} mm/s",
+      "symmetry": "Symmetrie {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "Schwingungsenergie über Geschwindigkeit",
+      "axisLegend": "Geschwindigkeit (mm/s) → · Schwingungsenergie ↑",
+      "smooth": "ruhig",
+      "avoid": "meiden",
+      "svgPolarLabel": "Schwingungsenergie nach Bewegungsrichtung",
+      "svgHeatmapLabel": "Schwingungsenergie-Heatmap nach Winkel und Geschwindigkeit",
+      "goodSpeedRange": "✓ {start}–{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "Motorresonanz {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "ruhigste Richtung ~{start}–{end}°",
+      "captures": "{n} Erfassungen"
+    },
+    "compareView": {
+      "title": "Zwei Erfassungen vergleichen (A ⇄ B)",
+      "intro": "Vorher/nachher bei einer mechanischen Korrektur oder dieselbe Achse erneut getestet. (Vergleiche Dateien derselben Achse.)",
+      "selectA": "A: auswählen",
+      "selectB": "B: auswählen",
+      "busy": "…",
+      "compare": "vergleichen",
+      "comparisonFailed": "Vergleich fehlgeschlagen",
+      "chartAriaLabel": "Leistungsdichtespektrum A vs B",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "CSV-Quelle",
+      "tabUpload": "📤 Hochladen",
+      "tabHost": "🖥 Vom Drucker",
+      "selectCsv": "📈 CSV auswählen",
+      "axisTitle": "Achse, zu der diese Daten gehören",
+      "axisAuto": "Achse: auto",
+      "axisX": "Achse: X",
+      "axisY": "Achse: Y",
+      "analyzing": "Analysiere…",
+      "analyze": "🚀 Analysieren",
+      "onHost": "auf dem Drucker-Host",
+      "refresh": "↻ aktualisieren",
+      "noFiles": "Keine Resonanz-CSVs gefunden.",
+      "noFilesInDirs": "Keine Resonanz-CSVs in {dirs} gefunden.",
+      "analyzeFile": "analysieren",
+      "saveTitle": "Diese Erfassung ins Archiv kopieren",
+      "save": "💾 speichern",
+      "archive": "Archiv",
+      "archiveEmpty": "Noch nichts gespeichert — nutze 💾 speichern oben oder „im Archiv speichern“ unter einer Konfiguration.",
+      "downloadTitle": "{fn} herunterladen",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "Drucker-Dateien konnten nicht aufgelistet werden",
+      "errListArchive": "Das Archiv konnte nicht aufgelistet werden",
+      "errSave": "Speichern im Archiv fehlgeschlagen",
+      "errDelete": "Löschen fehlgeschlagen",
+      "errDownload": "Download fehlgeschlagen"
+    }
+  }
+}

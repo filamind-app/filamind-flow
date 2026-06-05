@@ -1,0 +1,47 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · klipper-Panel"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "toggle": "Navigation umschalten"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Zurück zu Mainsail"
+    },
+    "footer": {
+      "stack": "Moonraker · Klipper",
+      "by": "vom DeltaFabs-Team"
+    },
+    "home": {
+      "body": "Deine Panels findest du in der Seitenleiste — wähle eines aus, um loszulegen. Diese Startseite ist vorerst bewusst leer."
+    },
+    "connection": {
+      "connected": "Verbunden",
+      "connecting": "Verbinde",
+      "error": "Fehler",
+      "offline": "Offline",
+      "idle": "Leerlauf"
+    },
+    "language": {
+      "label": "Sprache",
+      "select": "Sprache auswählen"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Firmware-Manager",
+        "description": "MCU-Firmware-Versionen, Host-Sync-Status und Bereitschaft der Toolchain."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Analysiere eine Resonanz-CSV und finde den besten input_shaper."
+      },
+      "motor-drivers": {
+        "title": "Motortreiber",
+        "description": "Live-Inventar der TMC-Schrittmotortreiber: Strom, Modus, Microsteps und Status."
+      }
+    }
+  }
+}

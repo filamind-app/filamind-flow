@@ -1,0 +1,8 @@
+{
+  "common": {
+    "appName": "FilaMind Flow",
+    "errors": {
+      "backendUnreachable": "无法连接 FilaMind 后端 — 请检查 filamind-flow 服务是否正在运行且可访问。"
+    }
+  }
+}
