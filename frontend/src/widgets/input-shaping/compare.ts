@@ -3,6 +3,8 @@
  *  Read-only; never mutates the inputs.
  */
 
+import { i18n } from '@/core/i18n'
+
 import type { PlotSeries } from './chart'
 import type { ShaperAnalysis, ShaperResult } from './types'
 
@@ -24,7 +26,9 @@ export interface ComparePlot {
 }
 
 function fmtHz(value: number | null): string {
-  return value == null ? '—' : `${value.toFixed(1)} Hz`
+  return value == null
+    ? '—'
+    : i18n.global.t('inputShaping.compare.hz.value', { value: value.toFixed(1) })
 }
 
 function recommended(an: ShaperAnalysis): ShaperResult | null {
@@ -55,29 +59,34 @@ export function compareAnalyses(a: ShaperAnalysis, b: ShaperAnalysis): CompareRo
   const rb = recommended(b)
   const rows: CompareRow[] = [
     {
-      label: 'recommended',
+      label: i18n.global.t('inputShaping.compare.row.recommended'),
       a: (a.recommended_shaper ?? '—').toUpperCase(),
       b: (b.recommended_shaper ?? '—').toUpperCase(),
       trend: a.recommended_shaper === b.recommended_shaper ? 'same' : 'neutral',
     },
     {
-      label: 'shaper freq',
+      label: i18n.global.t('inputShaping.compare.row.shaperFreq'),
       a: fmtHz(a.recommended_freq),
       b: fmtHz(b.recommended_freq),
       trend: 'neutral',
     },
-    { label: 'peak freq', a: fmtHz(peakFreq(a)), b: fmtHz(peakFreq(b)), trend: 'neutral' },
+    {
+      label: i18n.global.t('inputShaping.compare.row.peakFreq'),
+      a: fmtHz(peakFreq(a)),
+      b: fmtHz(peakFreq(b)),
+      trend: 'neutral',
+    },
   ]
   if (ra && rb) {
     rows.push(
       {
-        label: 'remaining vibr',
-        a: `${ra.vibrations_pct.toFixed(1)}%`,
-        b: `${rb.vibrations_pct.toFixed(1)}%`,
+        label: i18n.global.t('inputShaping.compare.row.remainingVibr'),
+        a: i18n.global.t('inputShaping.compare.pct.value', { value: ra.vibrations_pct.toFixed(1) }),
+        b: i18n.global.t('inputShaping.compare.pct.value', { value: rb.vibrations_pct.toFixed(1) }),
         trend: numTrend(ra.vibrations_pct, rb.vibrations_pct, true),
       },
       {
-        label: 'max_accel',
+        label: i18n.global.t('inputShaping.compare.row.maxAccel'),
         a: ra.max_accel.toFixed(0),
         b: rb.max_accel.toFixed(0),
         trend: numTrend(ra.max_accel, rb.max_accel, false),
@@ -147,8 +156,8 @@ export function beltVerdict(a: ShaperAnalysis, b: ShaperAnalysis): BeltVerdict {
       peakB,
       diffPct,
       level: 'good',
-      title: 'Belts matched',
-      advice: 'The two belt responses line up — tension looks balanced.',
+      title: i18n.global.t('inputShaping.compare.belt.matched.title'),
+      advice: i18n.global.t('inputShaping.compare.belt.matched.advice'),
     }
   }
   return {
@@ -157,7 +166,7 @@ export function beltVerdict(a: ShaperAnalysis, b: ShaperAnalysis): BeltVerdict {
     peakB,
     diffPct,
     level: 'warn',
-    title: 'Belts differ',
-    advice: 'The belt resonances differ — re-tension the looser belt until both peaks line up.',
+    title: i18n.global.t('inputShaping.compare.belt.differ.title'),
+    advice: i18n.global.t('inputShaping.compare.belt.differ.advice'),
   }
 }
