@@ -6,7 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.70.1] - 2026-06-05
+## [0.71.0] - 2026-06-05
+
+### Changed
+
+- **Input Shaping — the result is reunited with the action (#116).** The recommended shaper,
+  A–F measurement grade, frequency-response chart and shaper table now render in **every working
+  view** — including **Guided**, which previously showed only per-step pass/fail badges and hid
+  the rich result the wizard had just computed. A pinned **“printer.cfg ready”** bar (captured
+  axes + 📋 Copy + 💾 Archive) now sits at the top of every working view, so after a capture the
+  widget's payoff is one tap away instead of buried below the on-printer panels. *(The optional
+  Live-panel section grouping is a minor follow-up.)*
 
 ### Changed
 
