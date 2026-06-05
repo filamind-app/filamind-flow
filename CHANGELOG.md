@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.68.1] - 2026-06-05
+## [0.68.2] - 2026-06-05
+
+### Fixed
+
+- **The motor dropdown showed only the first 50 motors (#130).** `ComboSelect` capped the rendered
+  list at 50, so with no search text you couldn't reach the rest — bad when you don't remember a
+  model name and want to browse. It now renders the full filtered list (the dropdown scrolls), is
+  taller for easier browsing, scrolls the highlighted option into view during ↑/↓ keyboard
+  navigation, and gives each combobox instance unique option ids (fixes a latent duplicate-id
+  across the per-stepper pickers).
 
 ### Changed
 
