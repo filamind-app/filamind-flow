@@ -1,6 +1,7 @@
 /** Pure display helpers for the Motor Drivers dashboard — kept out of the component
  *  so they're unit-testable and the template stays declarative.
  */
+import { i18n } from '@/core/i18n'
 import type { DriverRecommendation, MotorSpec, TmcDriver } from './types'
 
 /** "tmc2209" -> "TMC2209". */
@@ -12,12 +13,12 @@ export function driverModelLabel(model: string): string {
  *  the requested current to an achievable step, so live ≠ set is normal and worth showing). */
 export function currentLabel(live: number | null, config: number | null): string {
   if (live != null) {
-    const base = `${live.toFixed(2)} A`
+    const base = i18n.global.t('motorDrivers.format.amps', { a: live.toFixed(2) })
     if (config != null && Math.abs(config - live) >= 0.01)
-      return `${base} (set ${config.toFixed(2)})`
+      return i18n.global.t('motorDrivers.format.ampsSet', { base, set: config.toFixed(2) })
     return base
   }
-  if (config != null) return `${config.toFixed(2)} A`
+  if (config != null) return i18n.global.t('motorDrivers.format.amps', { a: config.toFixed(2) })
   return '—'
 }
 
@@ -25,9 +26,11 @@ export function currentLabel(live: number | null, config: number | null): string
 export function chopperLabel(d: TmcDriver): string {
   if (d.chopper_mode === 'StealthChop') {
     const t = d.stealthchop_threshold
-    return t != null && t > 0 && t < 99999 ? `StealthChop < ${t} mm/s` : 'StealthChop'
+    return t != null && t > 0 && t < 99999
+      ? i18n.global.t('motorDrivers.format.stealthchopThreshold', { t })
+      : i18n.global.t('motorDrivers.format.stealthchop')
   }
-  if (d.chopper_mode === 'SpreadCycle') return 'SpreadCycle'
+  if (d.chopper_mode === 'SpreadCycle') return i18n.global.t('motorDrivers.format.spreadcycle')
   return d.chopper_mode ?? '—'
 }
 
@@ -41,13 +44,14 @@ export interface DriverHealth {
  *  reports no drv_status, so we show "idle" rather than a false "ok". */
 export function driverHealth(d: TmcDriver): DriverHealth {
   const s = d.drv_status
-  if (!s) return { tone: 'idle', label: 'idle' }
+  if (!s) return { tone: 'idle', label: i18n.global.t('motorDrivers.format.health.idle') }
   const flag = (k: string): boolean => Boolean(s[k])
   if (flag('ot') || flag('s2ga') || flag('s2gb') || flag('s2vsa') || flag('s2vsb')) {
-    return { tone: 'error', label: 'fault' }
+    return { tone: 'error', label: i18n.global.t('motorDrivers.format.health.fault') }
   }
-  if (flag('otpw') || flag('ola') || flag('olb')) return { tone: 'warn', label: 'warning' }
-  return { tone: 'ok', label: 'ok' }
+  if (flag('otpw') || flag('ola') || flag('olb'))
+    return { tone: 'warn', label: i18n.global.t('motorDrivers.format.health.warning') }
+  return { tone: 'ok', label: i18n.global.t('motorDrivers.format.health.ok') }
 }
 
 /** Tailwind classes for a health badge by tone. */
@@ -60,8 +64,9 @@ export function healthClass(tone: DriverHealthTone): string {
 
 /** Temperature string, or a clear note for models without a sensor (only the 2240 has one). */
 export function temperatureLabel(d: TmcDriver): string {
-  if (d.temperature != null) return `${d.temperature.toFixed(1)} °C`
-  return d.model === 'tmc2240' ? '—' : 'no sensor'
+  if (d.temperature != null)
+    return i18n.global.t('motorDrivers.format.celsius', { v: d.temperature.toFixed(1) })
+  return d.model === 'tmc2240' ? '—' : i18n.global.t('motorDrivers.format.noSensor')
 }
 
 /** Authoritative capabilities from the driver catalog when known, else the
@@ -100,7 +105,7 @@ export function effectiveCap(d: TmcDriver): number | null {
 /** Max current cap, e.g. "≤ 2.0 A", or '' if unknown. */
 export function maxCurrentLabel(d: TmcDriver): string {
   const a = effectiveCap(d)
-  return a != null ? `≤ ${a.toFixed(1)} A` : ''
+  return a != null ? i18n.global.t('motorDrivers.format.maxCurrent', { a: a.toFixed(1) }) : ''
 }
 
 /** Whether the run current is close to (or over) the effective cap — a gentle warning. */
@@ -113,8 +118,10 @@ export function nearCurrentCap(d: TmcDriver): boolean {
 /** "stepper_x" -> "X axis" / "extruder" -> "Extruder" — a friendly card heading. */
 export function axisHeading(d: TmcDriver): string {
   if (d.axis && /^E\d*$/.test(d.axis))
-    return d.axis === 'E' ? 'Extruder' : `Extruder ${d.axis.slice(1)}`
-  if (d.axis) return `${d.axis} axis`
+    return d.axis === 'E'
+      ? i18n.global.t('motorDrivers.format.extruder')
+      : i18n.global.t('motorDrivers.format.extruderN', { n: d.axis.slice(1) })
+  if (d.axis) return i18n.global.t('motorDrivers.format.axis', { axis: d.axis })
   return d.stepper
 }
 
@@ -122,15 +129,15 @@ export function axisHeading(d: TmcDriver): string {
 export function homingMethodLabel(method: string | null): string {
   switch (method) {
     case 'sensorless':
-      return 'Sensorless (StallGuard)'
+      return i18n.global.t('motorDrivers.format.homing.sensorless')
     case 'physical':
-      return 'Physical endstop'
+      return i18n.global.t('motorDrivers.format.homing.physical')
     case 'probe':
-      return 'Z probe'
+      return i18n.global.t('motorDrivers.format.homing.probe')
     case 'other_virtual':
-      return 'Virtual endstop'
+      return i18n.global.t('motorDrivers.format.homing.otherVirtual')
     case 'inherited':
-      return 'Shared rail'
+      return i18n.global.t('motorDrivers.format.homing.inherited')
     default:
       return '—'
   }
@@ -170,23 +177,29 @@ export function stallguardRange(field: string | null): { min: number; max: numbe
     return {
       min: -64,
       max: 63,
-      hint: 'Signed −64…63 — LOWER is more sensitive (stops sooner). Raise it if the axis stops short; lower it if it never stops.',
+      hint: i18n.global.t('motorDrivers.format.stallguard.signed'),
     }
   }
   return {
     min: 0,
     max: 255,
-    hint: 'Range 0–255 — HIGHER is more sensitive (stops sooner). Lower it if the axis stops short; raise it if it never stops.',
+    hint: i18n.global.t('motorDrivers.format.stallguard.unsigned'),
   }
 }
 
 /** A motor's key datasheet specs as a compact line, e.g. "0.40 Nm · 1.7 A · 1.5 Ω · 2.8 mH". */
 export function motorSpecLabel(m: MotorSpec): string {
   const parts: string[] = []
-  if (m.holding_torque_Nm != null) parts.push(`${m.holding_torque_Nm.toFixed(2)} Nm`)
-  if (m.max_current_A != null) parts.push(`${m.max_current_A.toFixed(1)} A`)
-  if (m.resistance_ohm != null) parts.push(`${m.resistance_ohm} Ω`)
-  if (m.inductance_H != null) parts.push(`${(m.inductance_H * 1000).toFixed(1)} mH`)
+  if (m.holding_torque_Nm != null)
+    parts.push(i18n.global.t('motorDrivers.format.spec.nm', { v: m.holding_torque_Nm.toFixed(2) }))
+  if (m.max_current_A != null)
+    parts.push(i18n.global.t('motorDrivers.format.spec.amps', { v: m.max_current_A.toFixed(1) }))
+  if (m.resistance_ohm != null)
+    parts.push(i18n.global.t('motorDrivers.format.spec.ohm', { v: m.resistance_ohm }))
+  if (m.inductance_H != null)
+    parts.push(
+      i18n.global.t('motorDrivers.format.spec.mh', { v: (m.inductance_H * 1000).toFixed(1) }),
+    )
   return parts.join(' · ') || '—'
 }
 
@@ -209,15 +222,15 @@ export function drvNum(drv: Record<string, unknown> | null, key: string): number
 export function activeFlags(drv: Record<string, unknown> | null): string[] {
   if (!drv) return []
   const map: [string, string][] = [
-    ['ot', 'overtemp'],
-    ['otpw', 'temp-warn'],
-    ['s2ga', 'short A'],
-    ['s2gb', 'short B'],
-    ['s2vsa', 'short A'],
-    ['s2vsb', 'short B'],
-    ['ola', 'open-load A'],
-    ['olb', 'open-load B'],
-    ['stst', 'standstill'],
+    ['ot', i18n.global.t('motorDrivers.format.flag.overtemp')],
+    ['otpw', i18n.global.t('motorDrivers.format.flag.tempWarn')],
+    ['s2ga', i18n.global.t('motorDrivers.format.flag.shortA')],
+    ['s2gb', i18n.global.t('motorDrivers.format.flag.shortB')],
+    ['s2vsa', i18n.global.t('motorDrivers.format.flag.shortA')],
+    ['s2vsb', i18n.global.t('motorDrivers.format.flag.shortB')],
+    ['ola', i18n.global.t('motorDrivers.format.flag.openLoadA')],
+    ['olb', i18n.global.t('motorDrivers.format.flag.openLoadB')],
+    ['stst', i18n.global.t('motorDrivers.format.flag.standstill')],
   ]
   const out: string[] = []
   for (const [key, label] of map) {
@@ -262,7 +275,7 @@ export function recommendationRows(d: TmcDriver, rec: DriverRecommendation): Rec
     changed: current === null || current !== recommended,
   })
   return [
-    row('run current (A)', d.run_current, rec.run_current),
+    row(i18n.global.t('motorDrivers.format.runCurrent'), d.run_current, rec.run_current),
     row('pwm_grad', num(reg.pwm_grad), rec.pwm_grad),
     row('pwm_ofs', num(reg.pwm_ofs), rec.pwm_ofs),
     row('hstrt', num(reg.hstrt), rec.hstrt),
