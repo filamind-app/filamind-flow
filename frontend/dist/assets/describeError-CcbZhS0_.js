@@ -1,0 +1,1 @@
+function n(e){const r=e instanceof Error?e.message:String(e);return/failed to fetch|networkerror|load failed|fetch/i.test(r)?"Cannot reach the FilaMind backend — check that the filamind-flow service is running and reachable.":r}export{n as d};

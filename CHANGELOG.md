@@ -6,7 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.72.0] - 2026-06-05
+## [0.73.0] - 2026-06-05
+
+### Changed
+
+- **Shared UX kit (#113).** Continued de-duplicating cross-widget code into `components/ui/` +
+  `core/`: extracted **`describeError`** (the byte-identical backend-unreachable message helper,
+  now shared by the Firmware + Motor Drivers widget roots) and **`LogPane`** (the terminal-style
+  `bg-ink` log box with per-line coloring, replacing three hand-rolled copies in the Firmware
+  widget). These join the already-shared **`WidgetTabs`** (#112) and **`ComboSelect`** (#120).
+
+  *Intentionally not consolidated:* the per-widget `HelpNote`/`HelpIllo` (generic-izing them would
+  churn dozens of call sites across three widgets for no user benefit, and each binds to its own
+  `help.ts`), a shared `ConfirmAction` (it would refactor the safety-critical gated-write confirm
+  flows for no functional gain), and a `chartTokens` map (the chart hex are already byte-identical
+  to the brand tokens, so it's a no-op visually).
 
 ### Added
 
