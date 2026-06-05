@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ConnectionStatus from '@/components/system/ConnectionStatus.vue'
+import LanguageSelect from '@/components/layout/LanguageSelect.vue'
 import { useNav } from '@/core/nav'
 
 const { sidebarOpen } = useNav()
@@ -34,6 +35,10 @@ const mainsailUrl =
       </a>
       <h1 class="truncate font-display text-xl font-bold sm:text-2xl">{{ title }}</h1>
     </div>
-    <ConnectionStatus />
+    <div class="flex shrink-0 items-center gap-2">
+      <!-- Renders only once a second locale's catalog exists (hidden in the en-only build). -->
+      <LanguageSelect />
+      <ConnectionStatus />
+    </div>
   </header>
 </template>

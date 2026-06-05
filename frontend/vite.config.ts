@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import { fileURLToPath, URL } from 'node:url'
 
+import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig, loadEnv, type ProxyOptions } from 'vite'
 
@@ -26,7 +27,20 @@ export default defineConfig(({ mode }) => {
   })
 
   return {
-    plugins: [vue()],
+    plugins: [
+      vue(),
+      // Precompiles the locale JSON in src/locales/** and wires vue-i18n's feature flags.
+      // runtimeOnly stays off for now so the message compiler is available for the catalogs
+      // loaded dynamically via import.meta.glob; a later phase can enable it once precompilation
+      // of every catalog is verified, to drop the compiler from the bundle.
+      vueI18n({
+        include: [fileURLToPath(new URL('./src/locales/**', import.meta.url))],
+        runtimeOnly: false,
+        compositionOnly: true,
+        strictMessage: false,
+        escapeHtml: false,
+      }),
+    ],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
