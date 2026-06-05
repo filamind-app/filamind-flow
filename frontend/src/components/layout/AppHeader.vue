@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import ConnectionStatus from '@/components/system/ConnectionStatus.vue'
+import { useNav } from '@/core/nav'
+
+const { sidebarOpen } = useNav()
 
 const title = import.meta.env.VITE_APP_TITLE || 'FilaMind Flow'
 
@@ -13,6 +16,14 @@ const mainsailUrl =
     class="flex items-center justify-between gap-4 border-b-3 border-ink bg-surface px-4 py-3 sm:px-6"
   >
     <div class="flex min-w-0 items-center gap-3">
+      <button
+        class="nb-btn shrink-0 px-2 py-1.5 md:hidden"
+        aria-label="Toggle navigation"
+        :aria-expanded="sidebarOpen"
+        @click="sidebarOpen = !sidebarOpen"
+      >
+        <span aria-hidden="true">☰</span>
+      </button>
       <a
         class="nb-btn shrink-0 bg-brand-cyan px-3 py-1.5"
         :href="mainsailUrl"
