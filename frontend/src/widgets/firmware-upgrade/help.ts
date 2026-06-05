@@ -11,6 +11,8 @@ export type HelpTopic =
   | 'toolchain'
   | 'services'
   | 'devices'
+  | 'configure'
+  | 'external'
   | 'flash'
 
 export interface HelpEntry {
@@ -80,6 +82,16 @@ export const HELP: Record<HelpTopic, HelpEntry> = {
   devices: {
     title: 'Devices',
     body: 'Each registered board, with its build/flash actions. “Build” compiles firmware for the board’s profile; “Flash” writes it; “build & flash” does both. The batch buttons (Build all / Flash all / Flash ready) operate on every device at once. Add or attach boards in the Devices manager.',
+    illo: 'flash',
+  },
+  configure: {
+    title: 'Configure & build firmware',
+    body: 'Pick a board profile and edit its Klipper build options (the Kconfig menu) — toggle “option docs” to read what each setting does, right there. Then “build profile” compiles the firmware and saves the profile so the exact same build can be reproduced later. This builds the shared profile; you flash it to a specific board from the Status tab.',
+    illo: 'tool',
+  },
+  external: {
+    title: 'External firmware',
+    body: 'Flash a pre-built firmware binary you didn’t compile here — a vendor’s `.bin` (e.g. a Beacon, an ERCF board, a CAN toolhead). Register the file, set its flash method and offset, then flash it like any board (behind the same confirm gate). FilaMind inspects the binary best-effort (detected version / MCU / build config) and can diff two files so you can see what changed.',
     illo: 'flash',
   },
   flash: {
