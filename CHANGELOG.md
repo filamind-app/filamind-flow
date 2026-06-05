@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.76.0] - 2026-06-05
+
+### Changed
+
+- **i18n Phase 1 (Input Shaping — help layer).** Externalized the Input Shaping widget's help copy
+  (the 14 `HelpNote` topics + the 6-term glossary) into the `vue-i18n` catalog. `help.ts` is now
+  pure structure (topic order, per-topic illustration, glossary key order); the translatable text
+  lives under `inputShaping.help.*` and `HelpNote.vue` renders it through `t()`. **No visible
+  change.** The help test now asserts the catalog keys, and a new **component-mount test** verifies
+  `HelpNote` renders its title/body/glossary through i18n (the first mounted-component i18n test).
+
 ## [0.75.0] - 2026-06-05
 
 ### Changed
