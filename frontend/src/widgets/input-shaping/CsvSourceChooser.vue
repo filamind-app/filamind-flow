@@ -5,6 +5,7 @@
  *  the analysis (so the advanced params + the shared result/history stay in one place).
  */
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   deleteArchiveRun,
@@ -15,6 +16,8 @@ import {
 } from './api'
 import HelpNote from './HelpNote.vue'
 import type { ArchiveRun, ResonanceFile } from './types'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{ busy: boolean }>()
 const emit = defineEmits<{
@@ -57,14 +60,14 @@ async function loadHost(): Promise<void> {
     files.value = r.files
     dirs.value = r.dirs
   } catch (e) {
-    error.value = msg(e, 'Could not list printer files')
+    error.value = msg(e, t('inputShaping.csvSource.errListFiles'))
   }
 }
 async function loadArchive(): Promise<void> {
   try {
     runs.value = (await listArchive()).runs
   } catch (e) {
-    error.value = msg(e, 'Could not list the archive')
+    error.value = msg(e, t('inputShaping.csvSource.errListArchive'))
   }
 }
 async function refresh(): Promise<void> {
@@ -93,7 +96,7 @@ async function saveHostToArchive(f: ResonanceFile): Promise<void> {
     await saveFileToArchive(f.path, 'shaper', f.axis)
     await loadArchive()
   } catch (e) {
-    error.value = msg(e, 'Save to archive failed')
+    error.value = msg(e, t('inputShaping.csvSource.errSave'))
   } finally {
     working.value = false
   }
@@ -106,7 +109,7 @@ async function removeRun(run: ArchiveRun): Promise<void> {
     await deleteArchiveRun(run.id)
     runs.value = runs.value.filter((r) => r.id !== run.id)
   } catch (e) {
-    error.value = msg(e, 'Delete failed')
+    error.value = msg(e, t('inputShaping.csvSource.errDelete'))
   } finally {
     working.value = false
   }
@@ -116,7 +119,7 @@ async function download(run: ArchiveRun, filename: string): Promise<void> {
   try {
     await downloadArchiveFile(run.id, filename)
   } catch (e) {
-    error.value = msg(e, 'Download failed')
+    error.value = msg(e, t('inputShaping.csvSource.errDownload'))
   }
 }
 
@@ -127,20 +130,22 @@ defineExpose({ refresh })
 <template>
   <div class="space-y-2 rounded-brutal border-2 border-ink bg-paper p-2">
     <div class="flex flex-wrap items-center gap-2">
-      <span class="text-[10px] font-bold uppercase tracking-wide">CSV source</span>
+      <span class="text-[10px] font-bold uppercase tracking-wide">{{
+        t('inputShaping.csvSource.title')
+      }}</span>
       <button
         class="nb-btn px-2 py-0.5 text-[10px]"
         :class="tabClass('upload')"
         @click="source = 'upload'"
       >
-        📤 Upload
+        {{ t('inputShaping.csvSource.tabUpload') }}
       </button>
       <button
         class="nb-btn px-2 py-0.5 text-[10px]"
         :class="tabClass('host')"
         @click="source = 'host'"
       >
-        🖥 From printer
+        {{ t('inputShaping.csvSource.tabHost') }}
       </button>
       <HelpNote topic="analyze" />
     </div>
@@ -148,20 +153,20 @@ defineExpose({ refresh })
     <!-- External upload -->
     <div v-if="source === 'upload'" class="flex flex-wrap items-center gap-2">
       <label class="nb-btn cursor-pointer px-2 py-1 text-xs">
-        📈 Select CSV
+        {{ t('inputShaping.csvSource.selectCsv') }}
         <input type="file" accept=".csv" class="hidden" @change="onPick" />
       </label>
-      <select v-model="axis" :class="inputClass" title="Axis this data belongs to">
-        <option value="auto">axis: auto</option>
-        <option value="x">axis: X</option>
-        <option value="y">axis: Y</option>
+      <select v-model="axis" :class="inputClass" :title="t('inputShaping.csvSource.axisTitle')">
+        <option value="auto">{{ t('inputShaping.csvSource.axisAuto') }}</option>
+        <option value="x">{{ t('inputShaping.csvSource.axisX') }}</option>
+        <option value="y">{{ t('inputShaping.csvSource.axisY') }}</option>
       </select>
       <button
         class="nb-btn bg-brand-lime px-3 py-1 text-xs"
         :disabled="!file || busy"
         @click="analyzeUpload"
       >
-        {{ busy ? 'Analyzing…' : '🚀 Analyze' }}
+        {{ busy ? t('inputShaping.csvSource.analyzing') : t('inputShaping.csvSource.analyze') }}
       </button>
       <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
         file.name
@@ -171,12 +176,20 @@ defineExpose({ refresh })
     <!-- Local: host scan dirs + the persistent archive -->
     <div v-else class="space-y-2">
       <div class="flex items-center justify-between">
-        <span class="font-mono text-[9px] opacity-60">on the printer host</span>
-        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="refresh">↻ refresh</button>
+        <span class="font-mono text-[9px] opacity-60">{{
+          t('inputShaping.csvSource.onHost')
+        }}</span>
+        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="refresh">
+          {{ t('inputShaping.csvSource.refresh') }}
+        </button>
       </div>
 
       <p v-if="!files.length" class="font-mono text-[10px] opacity-60">
-        No resonance CSVs found{{ dirs.length ? ` in ${dirs.join(', ')}` : '' }}.
+        {{
+          dirs.length
+            ? t('inputShaping.csvSource.noFilesInDirs', { dirs: dirs.join(', ') })
+            : t('inputShaping.csvSource.noFiles')
+        }}
       </p>
       <div v-for="f in files" :key="f.path" class="flex items-center gap-2 font-mono text-[10px]">
         <span v-if="f.axis" class="nb-badge shrink-0 bg-brand-cyan">{{
@@ -185,23 +198,25 @@ defineExpose({ refresh })
         <span class="min-w-0 flex-1 truncate">{{ f.name }}</span>
         <span class="shrink-0 opacity-50">{{ kb(f.size) }}</span>
         <button class="nb-btn shrink-0 px-2 py-0.5" :disabled="busy" @click="analyzeHost(f)">
-          analyze
+          {{ t('inputShaping.csvSource.analyzeFile') }}
         </button>
         <button
           class="nb-btn shrink-0 px-2 py-0.5"
           :disabled="working"
-          title="Copy this capture into the archive"
+          :title="t('inputShaping.csvSource.saveTitle')"
           @click="saveHostToArchive(f)"
         >
-          💾 save
+          {{ t('inputShaping.csvSource.save') }}
         </button>
       </div>
 
       <!-- Persistent archive: saved captures + generated configs. -->
       <div class="space-y-1 border-t-2 border-ink pt-2">
-        <span class="text-[10px] font-bold uppercase tracking-wide">Archive</span>
+        <span class="text-[10px] font-bold uppercase tracking-wide">{{
+          t('inputShaping.csvSource.archive')
+        }}</span>
         <p v-if="!runs.length" class="font-mono text-[10px] opacity-60">
-          Nothing saved yet — use 💾 save above, or "save to archive" under a config.
+          {{ t('inputShaping.csvSource.archiveEmpty') }}
         </p>
         <div
           v-for="run in runs"
@@ -219,10 +234,15 @@ defineExpose({ refresh })
             v-for="fn in run.files"
             :key="fn"
             class="nb-btn shrink-0 px-1.5 py-0.5"
-            :title="`download ${fn}`"
+            :title="t('inputShaping.csvSource.downloadTitle', { fn })"
             @click="download(run, fn)"
           >
-            ⬇ {{ fn.endsWith('.cfg') ? 'cfg' : 'csv' }}
+            ⬇
+            {{
+              fn.endsWith('.cfg')
+                ? t('inputShaping.csvSource.cfg')
+                : t('inputShaping.csvSource.csv')
+            }}
           </button>
           <button
             class="nb-btn shrink-0 bg-brand-red px-1.5 py-0.5 text-surface"
