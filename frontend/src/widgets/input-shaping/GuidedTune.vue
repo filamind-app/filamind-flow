@@ -5,6 +5,7 @@
  *  each shaper result up via `analyzed`, so the combined config + grade-history just work.
  */
 import { computed, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { compareBelts, measureNoise, runLiveTest, runVibrationsProfile } from './api'
 import { beltVerdict } from './compare'
@@ -32,6 +33,10 @@ import type { BeltComparison, NoiseResult, ShaperAnalysis, VibrationsProfile } f
 import VibrationsProfileView from './VibrationsProfile.vue'
 
 const emit = defineEmits<{ analyzed: [ShaperAnalysis]; exit: [] }>()
+
+const { t } = useI18n({ useScope: 'global' })
+// Step keys are built from the (typed) step id at runtime — use a string-accepting view of t.
+const tt = t as unknown as (key: string) => string
 
 type StepState = GateStatus | 'pending' | 'skipped'
 
@@ -123,7 +128,7 @@ async function run(): Promise<void> {
     if (gate.value) statuses[s.id] = gate.value.status
     ready.value = false
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Step failed'
+    error.value = e instanceof Error ? e.message : t('inputShaping.guided.ui.stepFailed')
   } finally {
     busy.value = false
   }
@@ -141,7 +146,7 @@ async function copyPa(): Promise<void> {
     paCopied.value = true
     window.setTimeout(() => (paCopied.value = false), 1500)
   } catch {
-    error.value = 'Copy failed — select the text and copy it manually.'
+    error.value = t('inputShaping.guided.ui.copyFailed')
   }
 }
 function finishPressure(): void {
@@ -160,8 +165,12 @@ function review(i: number): void {
 <template>
   <div class="space-y-2 rounded-brutal border-2 border-ink bg-paper p-2">
     <div class="flex items-center justify-between">
-      <span class="text-xs font-bold uppercase tracking-wide">🧭 Guided tune</span>
-      <button class="nb-btn px-2 py-0.5 text-[10px]" @click="emit('exit')">✕ exit</button>
+      <span class="text-xs font-bold uppercase tracking-wide">{{
+        t('inputShaping.guided.ui.title')
+      }}</span>
+      <button class="nb-btn px-2 py-0.5 text-[10px]" @click="emit('exit')">
+        {{ t('inputShaping.guided.ui.exit') }}
+      </button>
     </div>
 
     <!-- Step rail -->
@@ -173,7 +182,7 @@ function review(i: number): void {
         :class="[stepBg(statuses[s.id]), i === idx ? 'ring-2 ring-ink' : '']"
         @click="review(i)"
       >
-        {{ glyph(statuses[s.id]) }} {{ s.label }}
+        {{ glyph(statuses[s.id]) }} {{ tt('inputShaping.guided.steps.' + s.id + '.label') }}
       </button>
     </div>
 
@@ -182,8 +191,12 @@ function review(i: number): void {
       v-if="step.id !== 'done'"
       class="space-y-1.5 rounded-brutal border-2 border-dashed border-ink p-2"
     >
-      <div class="text-[11px] font-bold">{{ step.title }}</div>
-      <p class="text-[10px] opacity-70">{{ step.why }}</p>
+      <div class="text-[11px] font-bold">
+        {{ tt('inputShaping.guided.steps.' + step.id + '.title') }}
+      </div>
+      <p class="text-[10px] opacity-70">
+        {{ tt('inputShaping.guided.steps.' + step.id + '.why') }}
+      </p>
 
       <!-- Manual: pressure-advance tower. -->
       <div v-if="step.id === 'pressure'" class="space-y-1">
@@ -193,10 +206,10 @@ function review(i: number): void {
         >
         <div class="flex items-center gap-2">
           <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyPa">
-            {{ paCopied ? '✅ Copied' : '📋 Copy PA tower' }}
+            {{ paCopied ? t('inputShaping.guided.ui.copied') : t('inputShaping.guided.ui.copyPa') }}
           </button>
           <button class="nb-btn bg-brand-lime px-3 py-0.5 text-[10px]" @click="finishPressure">
-            Finish →
+            {{ t('inputShaping.guided.ui.finish') }}
           </button>
         </div>
         <div
@@ -213,7 +226,7 @@ function review(i: number): void {
       <!-- Endpoint step (noise / belts / shaper). -->
       <div v-else class="flex flex-wrap items-center gap-2 text-[10px]">
         <label v-if="step.motion" class="flex items-center gap-1">
-          <input v-model="ready" type="checkbox" /> ⚠ moves the toolhead — I'm ready
+          <input v-model="ready" type="checkbox" /> {{ t('inputShaping.guided.ui.motionReady') }}
         </label>
         <button
           class="nb-btn px-2 py-0.5"
@@ -221,10 +234,16 @@ function review(i: number): void {
           :disabled="busy || (step.motion && !ready)"
           @click="run"
         >
-          {{ busy ? 'running…' : statuses[step.id] === 'pending' ? 'run' : '↻ re-run' }}
+          {{
+            busy
+              ? t('inputShaping.guided.ui.running')
+              : statuses[step.id] === 'pending'
+                ? t('inputShaping.guided.ui.run')
+                : t('inputShaping.guided.ui.rerun')
+          }}
         </button>
         <button v-if="step.id === 'belts'" class="nb-btn px-2 py-0.5 text-[10px]" @click="skip">
-          skip (not CoreXY)
+          {{ t('inputShaping.guided.ui.skipBelts') }}
         </button>
       </div>
 
@@ -254,10 +273,10 @@ function review(i: number): void {
             :disabled="!canProceed"
             @click="advance"
           >
-            Next step →
+            {{ t('inputShaping.guided.ui.nextStep') }}
           </button>
           <button v-if="!canProceed" class="nb-btn px-2 py-0.5 text-[10px]" @click="skip">
-            skip anyway
+            {{ t('inputShaping.guided.ui.skipAnyway') }}
           </button>
         </div>
       </template>
@@ -265,7 +284,7 @@ function review(i: number): void {
 
     <!-- Summary -->
     <div v-else class="space-y-1 rounded-brutal border-2 border-ink p-2">
-      <div class="text-[11px] font-bold">Tuning complete</div>
+      <div class="text-[11px] font-bold">{{ t('inputShaping.guided.ui.complete') }}</div>
       <div class="flex flex-wrap gap-1">
         <span
           v-for="s in STEPS.filter((s) => s.id !== 'done')"
@@ -273,13 +292,17 @@ function review(i: number): void {
           class="nb-badge text-[9px]"
           :class="stepBg(statuses[s.id])"
         >
-          {{ s.label }} {{ glyph(statuses[s.id]) }}
+          {{ tt('inputShaping.guided.steps.' + s.id + '.label') }} {{ glyph(statuses[s.id]) }}
         </span>
       </div>
-      <p class="text-[9px] opacity-70">
-        Your X and Y captures are in the combined <code>printer.cfg</code> block below — copy it,
-        then restart Klipper. Re-open guided tune any time to re-check.
-      </p>
+      <i18n-t
+        keypath="inputShaping.guided.ui.summaryNote"
+        tag="p"
+        class="text-[9px] opacity-70"
+        scope="global"
+      >
+        <template #code><code>printer.cfg</code></template>
+      </i18n-t>
     </div>
   </div>
 </template>
