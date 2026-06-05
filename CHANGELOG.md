@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.65.1] - 2026-06-05
+
+### Added
+
+- **Keyboard focus is now visible across the app (part of #115, accessibility).** Every
+  interactive element (links, buttons, summaries, inputs, selects) gets a clear `brand-cyan`
+  focus-visible outline. It uses `outline` (not `box-shadow`, so it never fights the brutal
+  shadow) and only shows for keyboard navigation, leaving the dense pointer UI unchanged.
+
+### Fixed
+
+- **Touch targets on tablets (part of #115).** Many compact buttons (notably the firmware
+  flash/build actions shrunk to `text-[10px]`) were well under the ~44px tap minimum. Branded
+  buttons (`.nb-btn`) now get a 44px min-height on coarse-pointer (touch) devices only, so the
+  printer-side tablet is usable while the desktop layout stays compact. (The cosmetic button-size
+  normalization follows in the per-widget reorg PRs.)
+
 ## [0.65.0] - 2026-06-05
 
 ### Fixed
