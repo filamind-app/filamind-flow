@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.69.0] - 2026-06-05
+
+### Changed
+
+- **Firmware Upgrade — information-architecture reorg (#117).** The widget now uses the house
+  **`WidgetTabs`** strip — **🩺 Status / 🔧 Configure / 🖥 Devices / 📦 External** — instead of a
+  full-screen mode swap + footer buttons, so every area is one tap away (and navigation matches
+  the other widgets). **External firmware** is promoted from a buried last-child of the Devices
+  manager to its own top-level tab. The Configure and External screens gained touch-accessible
+  **`HelpNote`** explanations (previously only hover `title=` tooltips existed there).
+
 ## [0.68.2] - 2026-06-05
 
 ### Fixed

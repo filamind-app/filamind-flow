@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
+import WidgetTabs from '@/components/ui/WidgetTabs.vue'
+
+import ExternalFirmwarePanel from './ExternalFirmwarePanel.vue'
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
 import FirmwareFlashConfirm from './FirmwareFlashConfirm.vue'
@@ -36,7 +39,14 @@ import type {
   ServiceInfo,
 } from './types'
 
-const mode = ref<'status' | 'configure' | 'devices'>('status')
+type FwMode = 'status' | 'configure' | 'devices' | 'external'
+const mode = ref<FwMode>('status')
+const FW_TABS: { id: FwMode; label: string }[] = [
+  { id: 'status', label: '🩺 Status' },
+  { id: 'configure', label: '🔧 Configure' },
+  { id: 'devices', label: '🖥 Devices' },
+  { id: 'external', label: '📦 External' },
+]
 const status = ref<FirmwareStatus | null>(null)
 const boards = ref<Board[]>([])
 const devices = ref<Device[]>([])
@@ -423,8 +433,18 @@ onUnmounted(() => {
 
 <template>
   <div class="space-y-3 text-sm">
-    <FirmwareConfigEditor v-if="mode === 'configure'" @close="mode = 'status'" />
+    <!-- House navigation: one persistent tab strip (#117) — replaces the footer-button nav. -->
+    <WidgetTabs v-model="mode" :tabs="FW_TABS" />
+
+    <div v-if="mode === 'configure'" class="space-y-2">
+      <HelpNote topic="configure" />
+      <FirmwareConfigEditor @close="mode = 'status'" />
+    </div>
     <FirmwareDevicesPanel v-else-if="mode === 'devices'" @close="mode = 'status'" />
+    <div v-else-if="mode === 'external'" class="space-y-2">
+      <HelpNote topic="external" />
+      <ExternalFirmwarePanel />
+    </div>
     <template v-else>
       <div v-if="loading && !status" class="font-mono text-xs">Loading firmware status…</div>
       <div
@@ -694,15 +714,6 @@ onUnmounted(() => {
               + Add your first board →
             </button>
           </div>
-        </div>
-
-        <div class="flex gap-2">
-          <button class="nb-btn flex-1 bg-brand-yellow py-1 text-xs" @click="mode = 'devices'">
-            Devices manager →
-          </button>
-          <button class="nb-btn flex-1 bg-brand-cyan py-1 text-xs" @click="mode = 'configure'">
-            Configure →
-          </button>
         </div>
       </template>
 
