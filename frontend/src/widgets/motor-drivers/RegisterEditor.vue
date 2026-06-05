@@ -168,7 +168,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
       :aria-expanded="open"
       @click="toggle"
     >
-      {{ open ? '▾' : '⚙' }} tune registers (advanced)
+      {{ open ? '▾' : '🛠' }} tune registers (advanced)
     </button>
 
     <div
