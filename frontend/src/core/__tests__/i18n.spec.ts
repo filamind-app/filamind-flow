@@ -58,28 +58,39 @@ describe('locale detection & switching', () => {
     }
   })
 
-  it('offers only locales that have a catalog (en in Phase 0)', () => {
-    expect(availableLocales.map((m) => m.code)).toEqual(['en'])
+  it('offers every locale that has a catalog (en + the 6 translations)', () => {
+    expect(availableLocales.map((m) => m.code).sort()).toEqual(
+      ['ar', 'de', 'en', 'es', 'fr', 'ru', 'zh-Hans'].sort(),
+    )
   })
 
-  it('matchLocale resolves base languages and rejects not-yet-available ones', () => {
+  it('matchLocale resolves base/region tags to a shipped locale', () => {
     expect(matchLocale('en-US')).toBe('en')
-    expect(matchLocale('ar-EG')).toBeNull() // ar declared but no catalog yet
-    expect(matchLocale('fr')).toBeNull()
+    expect(matchLocale('ar-EG')).toBe('ar')
+    expect(matchLocale('fr')).toBe('fr')
+    expect(matchLocale('zh')).toBe('zh-Hans') // base zh → Simplified
+    expect(matchLocale('xx-YY')).toBeNull() // unknown stays null
   })
 
   it('detectLocale falls back to en', () => {
     expect(detectLocale()).toBe('en')
   })
 
-  it('setLocale reflects lang/dir on <html> and falls back for unavailable locales', async () => {
+  it('setLocale reflects lang/dir on <html>, incl. RTL for Arabic, and falls back for unknown', async () => {
     await setLocale('en')
     expect(document.documentElement.lang).toBe('en')
     expect(document.documentElement.dir).toBe('ltr')
 
-    // ar has no catalog yet → falls back to en rather than throwing.
+    // ar now ships → it activates with dir=rtl.
     await setLocale('ar')
+    expect(document.documentElement.lang).toBe('ar')
+    expect(document.documentElement.dir).toBe('rtl')
+
+    // an unknown locale falls back to the default rather than throwing.
+    await setLocale('xx')
     expect(document.documentElement.lang).toBe('en')
+
+    await setLocale('en') // restore for other tests
   })
 
   it('pins Western digits and RTL for Arabic in the metadata', () => {

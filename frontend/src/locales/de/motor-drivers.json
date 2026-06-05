@@ -1,0 +1,294 @@
+{
+  "motorDrivers": {
+    "help": {
+      "whatsThis": "was ist das?",
+      "topics": {
+        "glossary": {
+          "title": "Treiber-Begriffe",
+          "body": "Ein kurzes Glossar für dieses Dashboard:"
+        },
+        "overview": {
+          "title": "Was dies zeigt",
+          "body": "Jeden TMC-Schrittmotortreiber, den dein Drucker hat, direkt aus seiner Live-Klipper-Konfiguration gelesen — eine Karte pro Motor (X, Y, jedes Z, der Extruder…). Diese Ansicht ist schreibgeschützt: Sie meldet, was konfiguriert ist und was der Treiber gerade tut. Die Abstimmung kommt in einem späteren Schritt."
+        },
+        "current": {
+          "title": "Lauf-/Halte-Strom",
+          "body": "Der Laufstrom ist, wie stark der Motor während der Bewegung angetrieben wird; der Haltestrom ist der niedrigere Leerlaufpegel. Der Live-Wert ist, was der Chip tatsächlich anlegt — er kann ein Haar neben dem konfigurierten Wert liegen, weil Ströme in diskreten Stufen kommen. Ein heiß laufender Treiber bedeutet meist, dass der Laufstrom für den Motor zu hoch eingestellt ist."
+        },
+        "chopper": {
+          "title": "StealthChop vs SpreadCycle",
+          "body": "Der Chopper-Modus ist, wie der Treiber den Spulenstrom formt. SpreadCycle ist präzise und drehmomentstark (gut für schnelles X/Y), aber hörbar; StealthChop ist nahezu lautlos (gut für Z und Leerlauf), aber bei Geschwindigkeit etwas weicher. „StealthChop < N mm/s“ bedeutet, dass es unter dieser Geschwindigkeit leise bleibt und darüber zu SpreadCycle wechselt."
+        },
+        "microsteps": {
+          "title": "Microstepping",
+          "body": "Jeder volle Motorschritt wird elektronisch in Microsteps unterteilt (16, 32, … 256). Mehr Microsteps = glattere, leisere Bewegung. Mit aktivierter Interpolation glättet der Treiber intern auf bis zu 256, unabhängig vom konfigurierten Wert."
+        },
+        "stallguard": {
+          "title": "StallGuard (sensorloses Homing)",
+          "body": "StallGuard misst die Motorlast, sodass die Achse durch Erkennen eines sanften Stalls homen kann, statt einen physischen Endstop zu nutzen. Das Schwellenwert-Register unterscheidet sich je Modell (sgthrs bei 2209, sgt bei 2130/5160, sg4_thrs bei 2240). Das Abstimmen ist ein späterer Schritt; hier zeigen wir nur den konfigurierten Wert."
+        },
+        "health": {
+          "title": "Live-Status",
+          "body": "Wenn ein Motor aktiviert ist (nach dem Homing oder einem Jog), meldet der Treiber Live-Flags: Überhitzung, Kurzschluss und offene Last. Ein grünes „ok“ bedeutet keine Fehler; „Warnung“ ist eine Übertemperatur-Vorwarnung oder offene Last; „Fehler“ ist ein Kurzschluss oder eine harte Übertemperatur. Solange der Motor deaktiviert ist, meldet der Treiber nichts, daher zeigt die Karte „Leerlauf“."
+        },
+        "temperature": {
+          "title": "Temperatur",
+          "body": "Nur manche Treiber (z. B. der TMC2240) haben einen eingebauten Temperatursensor. Bei Modellen ohne — wie dem verbreiteten TMC2209 — liest die Temperatur „kein Sensor“, was normal ist, kein Fehler."
+        },
+        "catalog": {
+          "title": "Woher die Modellfakten kommen",
+          "body": "Die Schnittstelle (UART / SPI), die Strom-Obergrenze und die auf jeder Karte gezeigten unterstützten Funktionen stammen aus einer eingebauten Fähigkeitskarte der TMC-Familie — gegen den Klipper-/Kalico-Treibercode verifiziert. Sie sagt dir zum Beispiel, dass ein TMC2208 kein sensorloses Homing kann, ein TMC2209 hingegen schon, oder dass nur der TMC2240 seine eigene Temperatur meldet. Elektrische Werte sind datenblatttypisch; deine Platine, dein Messwiderstand und deine Kühlung legen die tatsächlichen Grenzen fest."
+        },
+        "motor": {
+          "title": "Einen Motor zuweisen",
+          "body": "Wähle den an jede Achse verdrahteten Schrittmotor aus einem eingebauten Katalog von 200+ Motoren. Klipper weiß nicht, welchen Motor du verbaut hast — wenn du es FilaMind mitteilst, werden seine Datenblattwerte (Haltemoment, Nennstrom, Widerstand, Induktivität) freigeschaltet, die ein späterer Schritt nutzt, um einen sicheren Laufstrom und eine Treiberabstimmung zu empfehlen. Es wird auf dem Drucker gespeichert und ändert für sich allein nichts am Treiber."
+        },
+        "motorsync": {
+          "title": "Motorsynchronisierung",
+          "body": "Wenn eine Achse von zwei oder mehr Motoren angetrieben wird (Dual- oder Quad-Z, Dual-X), können ihre Microstep-Phasen auseinanderdriften und gegeneinander arbeiten — was Geräusche erzeugt und Drehmoment kostet. Das motors_sync-Add-on misst jeden Motor mit einem Beschleunigungssensor und schiebt sie wieder in Phase. Es ist ein separates Add-on; falls es installiert ist, kann FilaMind es hier ausführen oder kalibrieren (es bewegt den Toolhead, daher ist es gesperrt). Falls nicht installiert, erklärt dies einfach, was es macht."
+        },
+        "monitor": {
+          "title": "Live-Monitor",
+          "body": "Beobachte einen Treiber in Echtzeit, während er läuft: Temperatur, StallGuard-Last (SG_RESULT — fällt gegen null, wenn die mechanische Last steigt), Stromskala (CS_ACTUAL) und etwaige Fehler-Flags (Überhitzung, Kurzschluss, offene Last). Der Treiber meldet diese nur, während der Motor aktiviert ist, also bewege oder home die Achse, um Live-Daten zu sehen. Schreibgeschützt — es beobachtet nur."
+        },
+        "homing": {
+          "title": "Wie diese Achse homt",
+          "body": "Klipper findet den Nullpunkt jeder Achse auf eine von wenigen Arten, und FilaMind liest aus deiner Konfiguration, welche, statt zu raten: ein physischer Endstop-Schalter (der klassische Mikroschalter — die meisten Drucker), sensorloses Homing (der TMC-Treiber erfasst das Anschlagen des Motors am Ende des Verfahrwegs — kein Schalter) oder die Z-Sonde (derselbe Sensor für das Bett-Mesh findet Z=0). Dieses Panel passt sich an, welche deine Achse verwendet — Live-Schalterzustand und ein einfaches Test-Home für einen physischen Endstop, ein StallGuard-Abstimmer für sensorlos oder ein Verweis auf die Sonden-Werkzeuge für ein per Sonde gehomtes Z. Zusätzliche Motoren, die sich eine Schiene teilen (ein zweites Z, der Extruder), homen nicht eigenständig, daher zeigen sie hier nichts."
+        },
+        "sensorless": {
+          "title": "Sensorloses Homing",
+          "body": "Manche Achsen homen ohne Endstop-Schalter: Der Treiber erkennt den sanften „Stall“, wenn der Toolhead das Ende des Verfahrwegs erreicht. Der StallGuard-Schwellenwert legt fest, wie empfindlich das ist — zu niedrig und es löst zu früh aus (stoppt zu kurz), zu hoch und es löst nie aus (die Achse mahlt in den Rahmen). Dieser Helfer lässt dich den Schwellenwert setzen und eine Achse test-homen, beides hinter einer Bestätigung. Stelle nach Gefühl ein: niedriger, wenn es zu früh stoppt, höher, wenn es nicht stoppt — und halte die ersten paar Male eine Hand nahe der Stromversorgung. Wenn deine Achse einen physischen Endstop verwendet, brauchst du dies nicht."
+        },
+        "coolstep": {
+          "title": "CoolStep (lastadaptiver Strom)",
+          "body": "CoolStep lässt den Treiber den Spulenstrom senken, wenn der Motor nicht hart arbeitet, und ihn unter Last wieder anheben — was Hitze und Geräusche spart. Es ist eine gekoppelte Rückkopplungsschleife mit fünf zusammenwirkenden Registern (semin/semax/seup/sedn/seimin), daher ist dies statt fünf roher Regler ein einzelnes An/Aus, das denselben geprüften Satz anwendet, den das Projekt klipper_tmc_autotune verwendet (semin 2, semax 4, seup 3, sedn 2, seimin 1). Es wirkt nur oberhalb eines Geschwindigkeits-Schwellenwerts, und zu aggressiv unter hoher Beschleunigung kann Schritte verlieren — lass es aus, es sei denn, du weißt, dass du es willst. Nur live: ein Neustart oder „auf Konfiguration zurücksetzen“ stellt deine gespeicherten Werte wieder her."
+        },
+        "registers": {
+          "title": "Register bearbeiten (erweitert)",
+          "body": "Der erweiterte Editor schreibt einzelne TMC-Abstimmungsregister live an den Treiber — Chopper-Timing (toff/tbl/hstrt/hend), StealthChop-PWM (pwm_grad/pwm_ofs/…), CoolStep, StallGuard-Empfindlichkeit und den StealthChop↔SpreadCycle-Geschwindigkeits-Schwellenwert (in mm/s). Welche Felder erscheinen und ihr gültiger Bereich stammen aus der druckerseitigen Sicherheitsrichtlinie — nicht aus dem Browser — denn der Treiber kürzt einen Wert außerhalb des Bereichs stillschweigend, statt zu fehlern, also klemmt und verwirft der Server. Rohe Stromskalierungs- und Kurzschluss-/Übertemperatur-Schutzregister sind hier bewusst nicht bearbeitbar (Strom geht über den Empfehlungs-/Laufstrom-Pfad; Microsteps brauchen eine Konfigurationsänderung + Neustart). Jede Änderung ist nur live: INIT_TMC (die Schaltfläche „auf Konfiguration zurücksetzen“), ein Firmware-Neustart oder ein Stromaus-/-einschalten stellt deine gespeicherten Werte wieder her. Riskantere Regler brauchen eine Bestätigung pro Feld, und alle Schreibvorgänge werden abgelehnt, während der Drucker druckt oder pausiert ist."
+        },
+        "recommend": {
+          "title": "Empfohlene Abstimmung",
+          "body": "Sobald ein Motor zugewiesen ist, kann FilaMind aus den Datenblattwerten des Motors und deiner Versorgungsspannung einen vorgeschlagenen Laufstrom und die StealthChop-/SpreadCycle-Registerwerte (pwm_grad, pwm_ofs, hstrt, hend) berechnen — dieselbe Physik, die das Projekt klipper_tmc_autotune verwendet, sodass es auch ohne installiertes Add-on funktioniert. Der Laufstrom hat standardmäßig konservative 70 % der Motorbemessung. Das Ergebnis wird gegen deine Live-Konfiguration verglichen; du kannst es dann in printer.cfg kopieren oder hinter einer Bestätigung live schreiben (mit Zurücksetzen rückgängig zu machen und während des Drucks abgelehnt). Falls das Autotune-Add-on installiert ist, kannst du es stattdessen ausführen."
+        }
+      },
+      "glossary": {
+        "tmcDriver": {
+          "term": "TMC-Treiber",
+          "def": "Der Chip, der Klippers Step-/Dir-Signale in die Spulenströme umsetzt, die einen Schrittmotor drehen — z. B. TMC2209, TMC2240, TMC5160. Jeder Motor hat einen."
+        },
+        "runCurrent": {
+          "term": "Laufstrom",
+          "def": "Wie stark der Motor während der Bewegung angetrieben wird (Ampere). Zu niedrig → übersprungene Schritte; zu hoch → Überhitzung. Der Live-Wert kann leicht vom konfigurierten abweichen, weil der Chip ihn quantisiert."
+        },
+        "holdCurrent": {
+          "term": "Haltestrom",
+          "def": "Der reduzierte Strom, der angelegt wird, während der Motor im Leerlauf ist, um Hitze und Geräusche zu sparen."
+        },
+        "microsteps": {
+          "term": "Microsteps",
+          "def": "Wie fein jeder volle Motorschritt unterteilt wird (16/32/…/256). Höher = glattere und leisere Bewegung, ohne echten Drehmomentverlust dank Interpolation."
+        },
+        "stealthChop": {
+          "term": "StealthChop",
+          "def": "Ein nahezu lautloser Antriebsmodus, ideal für Z und Leerlauf. Glatt, aber bei hoher Geschwindigkeit etwas weniger präzise."
+        },
+        "spreadCycle": {
+          "term": "SpreadCycle",
+          "def": "Ein präziser, drehmomentstarker Antriebsmodus, besser für schnelle X/Y-Bewegungen. Hörbar, aber genau."
+        },
+        "stallGuard": {
+          "term": "StallGuard",
+          "def": "Der Lastsensor des Treibers. Er ermöglicht sensorloses Homing (Erkennen eines Stalls statt eines Endstop-Schalters). Sein Schwellenwert-Register variiert je Modell (sgthrs / sgt / sg4_thrs)."
+        },
+        "senseResistor": {
+          "term": "Messwiderstand",
+          "def": "Ein winziger Widerstand, der die Stromskala des Treibers festlegt. Er muss zu deiner Platine passen; das Dashboard zeigt den konfigurierten Wert."
+        },
+        "interface": {
+          "term": "Schnittstelle (UART / SPI)",
+          "def": "Wie die MCU mit dem Treiber spricht. UART ist eine einzelne Leitung (TMC220x-Familie); SPI ist ein schnellerer Mehrleiter-Bus, der von den Performance-Teilen (2130 / 5160) verwendet wird. Der TMC2240 kann beides."
+        }
+      }
+    },
+    "format": {
+      "amps": "{a} A",
+      "ampsSet": "{base} (gesetzt {set})",
+      "stealthchop": "StealthChop",
+      "stealthchopThreshold": "StealthChop < {t} mm/s",
+      "spreadcycle": "SpreadCycle",
+      "health": {
+        "idle": "Leerlauf",
+        "ok": "ok",
+        "warning": "Warnung",
+        "fault": "Fehler"
+      },
+      "celsius": "{v} °C",
+      "noSensor": "kein Sensor",
+      "maxCurrent": "≤ {a} A",
+      "extruder": "Extruder",
+      "extruderN": "Extruder {n}",
+      "axis": "Achse {axis}",
+      "homing": {
+        "sensorless": "Sensorlos (StallGuard)",
+        "physical": "Physischer Endstop",
+        "probe": "Z-Sonde",
+        "otherVirtual": "Virtueller Endstop",
+        "inherited": "Geteilte Schiene"
+      },
+      "stallguard": {
+        "signed": "Vorzeichenbehaftet −64…63 — NIEDRIGER ist empfindlicher (stoppt früher). Erhöhe es, wenn die Achse zu kurz stoppt; senke es, wenn sie nie stoppt.",
+        "unsigned": "Bereich 0–255 — HÖHER ist empfindlicher (stoppt früher). Senke es, wenn die Achse zu kurz stoppt; erhöhe es, wenn sie nie stoppt."
+      },
+      "spec": {
+        "nm": "{v} Nm",
+        "amps": "{v} A",
+        "ohm": "{v} Ω",
+        "mh": "{v} mH"
+      },
+      "flag": {
+        "overtemp": "Überhitzung",
+        "tempWarn": "Temp-Warnung",
+        "shortA": "Kurzschluss A",
+        "shortB": "Kurzschluss B",
+        "openLoadA": "offene Last A",
+        "openLoadB": "offene Last B",
+        "standstill": "Stillstand"
+      },
+      "runCurrent": "Laufstrom (A)"
+    },
+    "widget": {
+      "intro": "Jeder TMC-Schrittmotortreiber auf deinem Drucker, live aus seiner Klipper-Konfiguration gelesen — inspizieren, Abstimmungsempfehlungen erhalten und sie anwenden (gesperrt). Neu hier? Probiere 🧭 Geführt.",
+      "tabDashboard": "Dashboard",
+      "tabGuided": "🧭 Geführt",
+      "howToReadShow": "▸ wie man dies liest",
+      "howToReadHide": "▾ wie man dies liest",
+      "steps": [
+        "Jede Karte ist ein Schrittmotortreiber — ihre Überschrift ist die Achse (X / Y / Z / Extruder) und das Badge ist das Chip-Modell.",
+        "Der Laufstrom zeigt, wie stark der Motor angetrieben wird; der Live-Wert kann leicht vom konfigurierten „gesetzten“ Wert abweichen — das ist normal.",
+        "Der Modus sagt dir SpreadCycle (präzise, lauter) oder StealthChop (leise); Microsteps zeigt, wie glatt die Bewegung ist.",
+        "Home eine Achse oder jogge den Motor, um ihn zu wecken — Live-Temperatur und Fehler-Flags erscheinen nur, während ein Motor aktiviert ist (Leerlauf-Treiber zeigen „Leerlauf“).",
+        "Öffne „erweiterte Register“ auf einer Karte, um die rohen Abstimmungswerte zu inspizieren, die der Treiber verwendet."
+      ],
+      "loading": "Motortreiber werden geladen…",
+      "retry": "↻ erneut",
+      "retrying": "erneuter Versuch…",
+      "unreachable": "Moonraker des Druckers nicht erreichbar — Treiberdaten sind gerade nicht verfügbar.",
+      "noDrivers": "Keine TMC-Treiber in der Klipper-Konfiguration gefunden. (Nur TMC-Schrittmotortreiber erscheinen hier.)",
+      "runCurrent": "Lauf {value}",
+      "nearCapTitle": "Nahe der Bemessungsobergrenze dieses Modells ({max})",
+      "holdCurrent": "Halten {value}",
+      "microsteps": "{n} µsteps",
+      "sg": "SG {field} {threshold}",
+      "detailsShow": "▸ Details",
+      "detailsHide": "▾ weniger",
+      "interp": "interp",
+      "sense": "Mess {value} Ω",
+      "healthTitleIdle": "Aktiviere den Motor (home oder jogge eine Achse), um Live-Temperatur und Fehler-Flags zu lesen",
+      "healthTitleLive": "Live-Treiberstatus aus drv_status"
+    },
+    "liveMonitor": {
+      "toggle": "Live-Monitor",
+      "temp": "Temp {temp} °C",
+      "sg": "SG {sg}",
+      "cs": "CS {cs}",
+      "updates": "· Aktualisierung ~1,5 s",
+      "noFaults": "keine Fehler",
+      "idle": "Leerlauf — aktiviere den Motor (home oder jogge die Achse), um Live-SG / -Strom / -Temperatur zu lesen."
+    },
+    "recommendPanel": {
+      "toggle": "Abstimmung empfehlen",
+      "supply": "Versorgung",
+      "recompute": "neu berechnen",
+      "recommend": "empfehlen",
+      "colCurrent": "aktuell",
+      "colRecommended": "empfohlen",
+      "basis": "Laufstrom = {basis}; StealthChop hält bis ~{rps} U/s bei {voltage} V.",
+      "confirm": "Diese jetzt an den {stepper}-Treiber schreiben. Rückgängig machbar (Zurücksetzen / ein Neustart stellt deine Konfiguration wieder her); während des Drucks abgelehnt.",
+      "applyToDriver": "auf Treiber anwenden",
+      "revert": "↺ zurücksetzen",
+      "copyConfig": "Konfiguration kopieren",
+      "autotune": "autotune",
+      "autotuneTitle": "Führt AUTOTUNE_TMC aus, falls das Add-on klipper_tmc_autotune installiert ist"
+    },
+    "motorSync": {
+      "toggle": "Motorsynchronisierung",
+      "notInstalledTag": "(Add-on nicht installiert)",
+      "about": "Richtet die Microstep-Phase mehrerer Motoren auf einer Achse aus (Dual- / Quad-Z, Dual-X) mit einem Beschleunigungssensor, damit sie nicht gegeneinander arbeiten. Bereitgestellt vom separaten {addon}-Add-on.",
+      "checking": "prüfe…",
+      "notInstalled": "Auf diesem Drucker nicht installiert. Installiere das motors_sync-Add-on, um es hier zu aktivieren.",
+      "warning": "⚠ Dies bewegt den Toolhead eine Weile (es tastet jeden Motor ab). Halte Abstand und sei bereit, den Strom zu kappen.",
+      "confirm": "Ich beobachte den Drucker — Motorsynchronisierung jetzt ausführen.",
+      "syncMotors": "Motoren synchronisieren",
+      "calibrate": "kalibrieren"
+    },
+    "sensorless": {
+      "noRegister": "⚠ Dieser Treiber stellt kein StallGuard-Schwellenwert-Register bereit, daher kann sensorloses Homing hier nicht abgestimmt werden — prüfe die Homing-Konfiguration des Druckers.",
+      "intro": "StallGuard {field} legt die Empfindlichkeit des sensorlosen Homings fest.",
+      "threshold": "Schwellenwert",
+      "nowRange": "jetzt: {now} · Bereich {min}…{max}",
+      "confirmSet": "Diesen Schwellenwert jetzt an den Treiber schreiben (rückgängig machbar; während des Drucks abgelehnt).",
+      "setThreshold": "Schwellenwert setzen",
+      "testHomeWarning": "⚠ Test-Home bewegt jetzt die Achse {axis}. Mit einem falschen Schwellenwert stoppt sie womöglich nicht — halte eine Hand an der Stromversorgung. Nur sensorlose Achsen.",
+      "confirmHome": "Ich beobachte den Drucker und bin bereit, den Strom zu kappen — {axis} homen.",
+      "testHome": "{axis} test-homen"
+    },
+    "homing": {
+      "homing": "Homing",
+      "unreachable": "Drucker nicht erreichbar",
+      "physicalIntroLead": "Diese Achse homt gegen einen physischen Endstop-Schalter",
+      "physicalIntroTail": ". Drücke den Schalter von Hand und prüfe erneut, um die Verkabelung vor dem Homing zu bestätigen.",
+      "switchLabel": "Schalter:",
+      "check": "↻ prüfen",
+      "testHomeWarn": "⚠ Test-Home bewegt jetzt die Achse {axis} zu ihrem Endstop — stelle sicher, dass der Weg frei ist.",
+      "pathClear": "Weg ist frei — {axis} homen.",
+      "testHome": "{axis} test-homen",
+      "probeNote": "Diese Achse homt mit der Z-Sonde (derselbe Sensor für das Bett-Mesh), daher gibt es hier keinen StallGuard-Schwellenwert abzustimmen. Setze den Sonden-Offset und das Mesh in den Bett-Nivellierungswerkzeugen.",
+      "virtualNote": "Diese Achse homt gegen einen virtuellen Endstop, der kein TMC-StallGuard-Pin ist — er wird von seinem eigenen Host-Modul verwaltet, daher gibt es hier nichts abzustimmen."
+    },
+    "guidedWizard": {
+      "title": "🧭 Geführte Abstimmung",
+      "backToDashboard": "← Dashboard",
+      "stepChoose": "Wählen",
+      "stepMotor": "Motor",
+      "stepTune": "Abstimmen",
+      "stepSensorless": "Sensorlos",
+      "stepDone": "Fertig",
+      "step1Intro": "Wähle die abzustimmende Achse.",
+      "tuningHeader": "Stimme {axis} ab · {model}",
+      "step2Intro": "Welcher Motor ist an diese Achse verdrahtet? Wähle ihn, damit FilaMind seine Datenblattwerte kennt.",
+      "assignToContinue": "Weise einen Motor zu, um fortzufahren.",
+      "step3Intro": "Hol dir eine Empfehlung aus den Werten des Motors, kopiere sie dann in deine Konfiguration oder wende sie live an (gesperrt).",
+      "step4Intro": "Optional: stelle das sensorlose Homing ein. Überspringe, wenn diese Achse einen Endstop-Schalter verwendet.",
+      "step5Intro": "Fertig mit {axis}. Beobachte es live, während du die Achse bewegst, oder stimme eine andere ab.",
+      "tuneAnother": "eine andere Achse abstimmen",
+      "back": "← zurück",
+      "next": "weiter →",
+      "finish": "abschließen"
+    },
+    "motorPicker": {
+      "motorLabel": "Motor:",
+      "notSet": "nicht gesetzt",
+      "searchPlaceholder": "200+ Motoren durchsuchen (Modell oder Hersteller)…"
+    },
+    "registerEditor": {
+      "toggle": "Register abstimmen (erweitert)",
+      "resetTitle": "INIT_TMC — die konfigurierten Register + den Strom dieses Treibers erneut anwenden",
+      "resetLabel": "↺ auf Konfiguration zurücksetzen",
+      "liveOnly": "Änderungen sind {live} — nicht gespeichert. {initTmc} (Zurücksetzen), ein Firmware-Neustart oder ein Stromaus-/-einschalten stellt die konfigurierten Werte wieder her. Werte außerhalb des Bereichs werden von der druckerseitigen Sicherheitsrichtlinie abgelehnt; rohe Strom- und Schutzregister sind hier nicht bearbeitbar.",
+      "liveOnlyEmphasis": "nur live",
+      "loading": "Bearbeitbare Register werden geladen…",
+      "coolstep": "CoolStep",
+      "on": "an",
+      "off": "aus",
+      "coolstepEnableTitle": "Den autotune-geprüften CoolStep-Satz anwenden (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
+      "enable": "aktivieren",
+      "riskyTitle": "Riskanterer Regler — vor dem Schreiben bestätigen",
+      "now": "jetzt:",
+      "confirm": "bestätigen",
+      "set": "setzen",
+      "readOnly": "schreibgeschützte Register",
+      "toffHint": "Wenn du toff auf 1 setzt, halte auch tbl ≥ 1 (die 16-Zyklen-Austastzeit benötigt es)."
+    }
+  }
+}

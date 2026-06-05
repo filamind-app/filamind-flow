@@ -1,0 +1,8 @@
+{
+  "common": {
+    "appName": "FilaMind Flow",
+    "errors": {
+      "backendUnreachable": "No se puede acceder al backend de FilaMind — comprueba que el servicio filamind-flow esté en ejecución y sea accesible."
+    }
+  }
+}

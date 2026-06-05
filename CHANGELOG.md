@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.84.0] - 2026-06-06
+
+### Added
+
+- **Six languages — the UI is now multilingual.** Added full translations for **Arabic, German,
+  Simplified Chinese, French, Spanish, and Russian** — every one of the 845 catalog keys, across all
+  five namespaces (`common` / `shell` / `firmware` / `input-shaping` / `motor-drivers`). A
+  **language switcher** now appears in the header (it was hidden while only English shipped); picking
+  a language lazy-loads its catalog and updates `<html lang>` / `dir` (Arabic switches the document to
+  RTL). Each translation keeps brand / protocol / register / G-code tokens and SI unit symbols in
+  Latin, preserves every `{placeholder}` and emoji, and uses the correct **per-locale plural rules**
+  (registered for Arabic = 6 forms, Russian = 3, Chinese = 1; en/de/es/fr = 2). Adding a language was
+  exactly "drop in a `src/locales/<code>/` folder" — no component changed. CI `i18n:keydiff` now
+  enforces that every locale carries the exact `en` key set.
+
+  *Arabic note:* the document flips to RTL automatically; the Neo-Brutalist **RTL layout polish**
+  (logical-property sweep, Arabic webfonts, bidi-isolated measurements) lands in a follow-up.
+
 ## [0.83.0] - 2026-06-06
 
 ### Changed
