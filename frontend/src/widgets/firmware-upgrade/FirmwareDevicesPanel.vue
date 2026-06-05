@@ -12,7 +12,6 @@ import {
   saveDevice,
 } from './api'
 import type { Board, Device, FirmwareProfile } from './types'
-import ExternalFirmwarePanel from './ExternalFirmwarePanel.vue'
 
 defineEmits<{ close: [] }>()
 
@@ -355,9 +354,6 @@ onUnmounted(() => {
         </div>
         <p v-if="backupMsg" class="font-mono text-[10px] opacity-70">{{ backupMsg }}</p>
       </div>
-
-      <!-- External firmware: register + flash pre-built binaries -->
-      <ExternalFirmwarePanel />
     </template>
   </div>
 </template>
