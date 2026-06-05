@@ -273,6 +273,133 @@
         "update": "Update your config to: {axes_map}",
         "add": "Add this so every Input Shaping graph reads X/Y/Z aligned."
       }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Noise",
+          "title": "Accelerometer noise",
+          "why": "Confirm the sensor is mounted solidly before any test (motion-free)."
+        },
+        "belts": {
+          "label": "Belts",
+          "title": "CoreXY belt balance",
+          "why": "Match the two belt tensions. CoreXY only — skip on a cartesian / bed-slinger."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper — X",
+          "why": "Find the X resonance and the best shaper."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper — Y",
+          "why": "Find the Y resonance and the best shaper."
+        },
+        "vibrations": {
+          "label": "Vibrations",
+          "title": "Vibrations profile",
+          "why": "Sweep speed × motor angle to find the smoothest speeds and the resonances to avoid."
+        },
+        "pressure": {
+          "label": "Pressure",
+          "title": "Pressure advance",
+          "why": "Tune pressure advance last to sharpen corners and seams."
+        },
+        "done": {
+          "label": "Done"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Sensor is quiet",
+          "warn": "Noise is a bit high",
+          "failed": "Too noisy — fix the mount"
+        },
+        "belts": {
+          "passed": "Belts matched",
+          "differ": "Belts differ (Δ{diffPct}%)",
+          "mismatched": "Belts mismatched (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "Grade {letter} — healthy axis",
+          "usable": "Grade C — usable",
+          "tune": "Grade {letter} — tune + re-test"
+        },
+        "vibrations": {
+          "lowFreq": "Too much low-freq motion — lower accel & re-run",
+          "mismatched": "Motors mismatched ({pct}%)",
+          "smoothest": "Smoothest ~{rec} mm/s",
+          "complete": "Profile complete"
+        }
+      },
+      "ui": {
+        "title": "🧭 Guided tune",
+        "exit": "✕ exit",
+        "motionReady": "⚠ moves the toolhead — I'm ready",
+        "running": "running…",
+        "run": "run",
+        "rerun": "↻ re-run",
+        "skipBelts": "skip (not CoreXY)",
+        "copyPa": "📋 Copy PA tower",
+        "copied": "✅ Copied",
+        "finish": "Finish →",
+        "nextStep": "Next step →",
+        "skipAnyway": "skip anyway",
+        "complete": "Tuning complete",
+        "stepFailed": "Step failed",
+        "copyFailed": "Copy failed — select the text and copy it manually.",
+        "summaryNote": "Your X and Y captures are in the combined {code} block below — copy it, then restart Klipper. Re-open guided tune any time to re-check."
+      }
+    },
+    "audit": {
+      "recommended": "Recommended",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Max accel",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Max idle noise {max} (normal < {threshold}).",
+        "status": "Status",
+        "maxNoise": "Max noise",
+        "threshold": "Threshold",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Match",
+        "beltA": "Belt A peak",
+        "beltB": "Belt B peak",
+        "difference": "Difference",
+        "matched": "matched",
+        "mismatch": "mismatch",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Status",
+        "gravity": "Gravity",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Noise"
+      },
+      "sustain": {
+        "target": "Target",
+        "dominant": "Dominant",
+        "inBand": "In band",
+        "onTarget": "On target",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "yes",
+        "no": "no"
+      },
+      "vibrations": {
+        "smoothest": "Smoothest",
+        "symmetry": "Symmetry",
+        "motorResonance": "Motor resonance",
+        "avoid": "Avoid",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
     }
   }
 }

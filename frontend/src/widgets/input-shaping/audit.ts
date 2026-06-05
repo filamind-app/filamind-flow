@@ -5,6 +5,7 @@
  *  supplies the archive runs.
  */
 
+import { i18n } from '@/core/i18n'
 import { matchVerdict } from './axesMap'
 import { beltVerdict } from './compare'
 import type { QualityGrade } from './grade'
@@ -107,11 +108,18 @@ export function buildShaperRecord(
   const fields: AuditField[] = grade.factors.map((f) => ({ label: f.label, value: f.value }))
   if (analysis.recommended_shaper && analysis.recommended_freq != null) {
     fields.unshift({
-      label: 'Recommended',
-      value: `${analysis.recommended_shaper.toUpperCase()} @ ${analysis.recommended_freq.toFixed(1)} Hz`,
+      label: i18n.global.t('inputShaping.audit.recommended'),
+      value: i18n.global.t('inputShaping.audit.recommendedValue', {
+        shaper: analysis.recommended_shaper.toUpperCase(),
+        freq: analysis.recommended_freq.toFixed(1),
+      }),
     })
   }
-  if (rec) fields.push({ label: 'Max accel', value: `≤${rec.max_accel.toFixed(0)} mm/s²` })
+  if (rec)
+    fields.push({
+      label: i18n.global.t('inputShaping.audit.maxAccel'),
+      value: i18n.global.t('inputShaping.audit.maxAccelValue', { accel: rec.max_accel.toFixed(0) }),
+    })
   return {
     at: new Date().toISOString(),
     kind: 'shaper',
@@ -132,14 +140,21 @@ export function buildNoiseRecord(n: NoiseResult): Omit<AuditRecord, 'id' | 'sour
     at: now(),
     kind: 'noise',
     axis: null,
-    verdict: `Max idle noise ${n.max_noise.toFixed(0)} (normal < ${n.threshold}).`,
+    verdict: i18n.global.t('inputShaping.audit.noise.verdict', {
+      max: n.max_noise.toFixed(0),
+      threshold: n.threshold,
+    }),
     fields: [
-      { label: 'Status', value: n.grade },
-      { label: 'Max noise', value: n.max_noise.toFixed(1) },
-      { label: 'Threshold', value: String(n.threshold) },
+      { label: i18n.global.t('inputShaping.audit.noise.status'), value: n.grade },
+      { label: i18n.global.t('inputShaping.audit.noise.maxNoise'), value: n.max_noise.toFixed(1) },
+      { label: i18n.global.t('inputShaping.audit.noise.threshold'), value: String(n.threshold) },
       ...n.chips.map((c) => ({
         label: c.label,
-        value: `x ${c.x.toFixed(0)} · y ${c.y.toFixed(0)} · z ${c.z.toFixed(0)}`,
+        value: i18n.global.t('inputShaping.audit.noise.chipValue', {
+          x: c.x.toFixed(0),
+          y: c.y.toFixed(0),
+          z: c.z.toFixed(0),
+        }),
       })),
     ],
   }
@@ -154,10 +169,24 @@ export function buildBeltsRecord(b: BeltComparison): Omit<AuditRecord, 'id' | 's
     axis: null,
     verdict: v.advice,
     fields: [
-      { label: 'Match', value: v.matched ? 'matched' : 'mismatch' },
-      { label: 'Belt A peak', value: `${v.peakA.toFixed(1)} Hz` },
-      { label: 'Belt B peak', value: `${v.peakB.toFixed(1)} Hz` },
-      { label: 'Difference', value: `${v.diffPct.toFixed(0)}%` },
+      {
+        label: i18n.global.t('inputShaping.audit.belts.match'),
+        value: v.matched
+          ? i18n.global.t('inputShaping.audit.belts.matched')
+          : i18n.global.t('inputShaping.audit.belts.mismatch'),
+      },
+      {
+        label: i18n.global.t('inputShaping.audit.belts.beltA'),
+        value: i18n.global.t('inputShaping.audit.belts.hz', { value: v.peakA.toFixed(1) }),
+      },
+      {
+        label: i18n.global.t('inputShaping.audit.belts.beltB'),
+        value: i18n.global.t('inputShaping.audit.belts.hz', { value: v.peakB.toFixed(1) }),
+      },
+      {
+        label: i18n.global.t('inputShaping.audit.belts.difference'),
+        value: i18n.global.t('inputShaping.audit.belts.pct', { value: v.diffPct.toFixed(0) }),
+      },
     ],
   }
 }
@@ -170,10 +199,15 @@ export function buildAxesMapRecord(a: AxesMapResult): Omit<AuditRecord, 'id' | '
     axis: null,
     verdict: matchVerdict(a),
     fields: [
-      { label: 'axes_map', value: a.axes_map },
-      { label: 'Status', value: a.status },
-      { label: 'Gravity', value: `${a.gravity.toFixed(2)} m/s²` },
-      { label: 'Noise', value: a.noise.toFixed(0) },
+      { label: i18n.global.t('inputShaping.audit.axesMap.axesMap'), value: a.axes_map },
+      { label: i18n.global.t('inputShaping.audit.axesMap.status'), value: a.status },
+      {
+        label: i18n.global.t('inputShaping.audit.axesMap.gravity'),
+        value: i18n.global.t('inputShaping.audit.axesMap.gravityValue', {
+          gravity: a.gravity.toFixed(2),
+        }),
+      },
+      { label: i18n.global.t('inputShaping.audit.axesMap.noise'), value: a.noise.toFixed(0) },
     ],
   }
 }
@@ -186,10 +220,28 @@ export function buildSustainRecord(s: StaticExcitationResult): Omit<AuditRecord,
     axis: s.axis,
     verdict: s.verdict,
     fields: [
-      { label: 'Target', value: `${s.freq.toFixed(0)} Hz` },
-      { label: 'Dominant', value: `${s.dominant_freq.toFixed(0)} Hz` },
-      { label: 'In band', value: `${s.excited_band_pct.toFixed(0)}%` },
-      { label: 'On target', value: s.dominant_ok ? 'yes' : 'no' },
+      {
+        label: i18n.global.t('inputShaping.audit.sustain.target'),
+        value: i18n.global.t('inputShaping.audit.sustain.hz', { value: s.freq.toFixed(0) }),
+      },
+      {
+        label: i18n.global.t('inputShaping.audit.sustain.dominant'),
+        value: i18n.global.t('inputShaping.audit.sustain.hz', {
+          value: s.dominant_freq.toFixed(0),
+        }),
+      },
+      {
+        label: i18n.global.t('inputShaping.audit.sustain.inBand'),
+        value: i18n.global.t('inputShaping.audit.sustain.pct', {
+          value: s.excited_band_pct.toFixed(0),
+        }),
+      },
+      {
+        label: i18n.global.t('inputShaping.audit.sustain.onTarget'),
+        value: s.dominant_ok
+          ? i18n.global.t('inputShaping.audit.sustain.yes')
+          : i18n.global.t('inputShaping.audit.sustain.no'),
+      },
     ],
   }
 }
@@ -198,17 +250,30 @@ export function buildSustainRecord(s: StaticExcitationResult): Omit<AuditRecord,
 export function buildVibrationsRecord(v: VibrationsProfile): Omit<AuditRecord, 'id' | 'source'> {
   const fields: AuditField[] = []
   if (v.recommended_speed != null)
-    fields.push({ label: 'Smoothest', value: `${v.recommended_speed.toFixed(0)} mm/s` })
-  fields.push({ label: 'Symmetry', value: `${v.symmetry_pct.toFixed(0)}%` })
+    fields.push({
+      label: i18n.global.t('inputShaping.audit.vibrations.smoothest'),
+      value: i18n.global.t('inputShaping.audit.vibrations.mmps', {
+        speed: v.recommended_speed.toFixed(0),
+      }),
+    })
+  fields.push({
+    label: i18n.global.t('inputShaping.audit.vibrations.symmetry'),
+    value: i18n.global.t('inputShaping.audit.vibrations.pct', { pct: v.symmetry_pct.toFixed(0) }),
+  })
   if (v.motor_freq != null)
-    fields.push({ label: 'Motor resonance', value: `${v.motor_freq.toFixed(0)} Hz` })
+    fields.push({
+      label: i18n.global.t('inputShaping.audit.vibrations.motorResonance'),
+      value: i18n.global.t('inputShaping.audit.vibrations.hz', { freq: v.motor_freq.toFixed(0) }),
+    })
   if (v.peak_speeds.length)
     fields.push({
-      label: 'Avoid',
-      value: `${v.peak_speeds
-        .slice(0, 4)
-        .map((p) => p.toFixed(0))
-        .join(', ')} mm/s`,
+      label: i18n.global.t('inputShaping.audit.vibrations.avoid'),
+      value: i18n.global.t('inputShaping.audit.vibrations.mmps', {
+        speed: v.peak_speeds
+          .slice(0, 4)
+          .map((p) => p.toFixed(0))
+          .join(', '),
+      }),
     })
   return { at: now(), kind: 'vibrations', axis: null, verdict: v.verdict, fields }
 }
@@ -226,7 +291,13 @@ export function migrateLegacyHistory(): void {
     source: 'local',
     grade: h.grade && h.score != null ? { letter: h.grade, score: h.score } : undefined,
     fields: [
-      { label: 'Recommended', value: `${h.shaper.toUpperCase()} @ ${h.freq.toFixed(1)} Hz` },
+      {
+        label: i18n.global.t('inputShaping.audit.recommended'),
+        value: i18n.global.t('inputShaping.audit.recommendedValue', {
+          shaper: h.shaper.toUpperCase(),
+          freq: h.freq.toFixed(1),
+        }),
+      },
     ],
   }))
   save(capPerKind(records))
