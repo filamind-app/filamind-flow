@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.91.1] - 2026-06-06
+
+### Fixed
+
+- **Sidebar now themes (was stuck bright yellow in dark themes).** The app sidebar hardcoded
+  `bg-brand-yellow`, so it stayed loud yellow in Neon/Dark/High-Contrast and clashed with the dark
+  content. Added a dedicated `--c-sidebar` token (yellow in Light — the signature look — and a dark
+  rail in the other themes) and pointed the sidebar at it. (Caught by live browser verification.)
+
 ## [0.91.0] - 2026-06-06
 
 ### Added
