@@ -1,0 +1,82 @@
+{
+  "macroDesigner": {
+    "intro": "Simula G-code sin conexión — pega o escribe un programa y observa la trayectoria del cabezal, el recuadro delimitador, los totales de desplazamiento y extrusión, y una estimación de tiempo, sin tocar la impresora. Explora la biblioteca de macros integrada como referencia.",
+    "help": {
+      "guide": "Ayuda",
+      "guideTitle": "Acerca del Diseñador de Macros",
+      "close": "Cerrar",
+      "howToRead": "Cómo usar",
+      "steps": [
+        "Escribe o pega G-code en el editor (se carga un cuadrado de ejemplo para empezar).",
+        "Pulsa Simular — la trayectoria 2D y las estadísticas se actualizan.",
+        "Las líneas sólidas son movimientos de extrusión; las líneas discontinuas tenues son desplazamientos.",
+        "Explora la biblioteca de macros e Inserta una para partir de sus comandos."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "El simulador",
+          "body": "Ejecuta el programa en un cabezal virtual: movimientos G0/G1, G90/G91 (absoluto/relativo), M82/M83 (modo del extrusor), G92 (fijar posición) y G28 (referencia → origen). Informa de la trayectoria, el recuadro delimitador, el desplazamiento y la extrusión totales, una estimación aproximada de tiempo a partir de las velocidades de avance, y una línea de tiempo por comando. No se envía nada a la impresora."
+        },
+        "motion": {
+          "title": "Trayectoria y tiempo",
+          "body": "La vista 2D es la trayectoria XY (Z está en los límites). La estimación de tiempo divide la longitud de cada movimiento entre su velocidad de avance — ignora la aceleración, así que es un límite inferior aproximado, no el tiempo de impresión exacto. Los comandos que el simulador no modela (p. ej. M-codes, macros de alto nivel) se enumeran como advertencias y se omiten."
+        },
+        "macros": {
+          "title": "Biblioteca de macros",
+          "body": "Un conjunto de referencia de macros comunes de Klipper con su nombre, qué hacen y las secciones de configuración que necesitan. «Insertar» coloca los comandos de alto nivel de una macro en el editor como punto de partida — ten en cuenta que se expanden aún más en la impresora (la expansión completa de Jinja/macros está por llegar)."
+        },
+        "glossary": { "title": "Glosario", "body": "" }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "El lenguaje de movimiento línea por línea que ejecuta la impresora (movimientos, temperaturas, ventilador, …)."
+        },
+        "feedrate": {
+          "term": "Velocidad de avance (F)",
+          "def": "Velocidad de movimiento en mm/min — F1200 son 20 mm/s. Define la rapidez con la que se ejecuta cada movimiento."
+        },
+        "macro": {
+          "term": "Macro",
+          "def": "Un comando con nombre y reutilizable (p. ej. QUAD_GANTRY_LEVEL) que se expande a una secuencia de G-code."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Simular",
+      "simulating": "Simulando…",
+      "sample": "Cargar ejemplo",
+      "clear": "Borrar"
+    },
+    "library": {
+      "label": "Macros integradas",
+      "placeholder": "Explorar macros…",
+      "insert": "Insertar en el editor",
+      "requires": "Necesita: {sections}",
+      "none": "—"
+    },
+    "result": {
+      "title": "Simulación",
+      "moves": "{count} movimientos",
+      "distance": "{mm} mm de desplazamiento",
+      "extrude": "{mm} mm extruidos",
+      "time": "~{s} s",
+      "bounds": "Límites",
+      "empty": "No hay movimientos que simular."
+    },
+    "path": {
+      "title": "Trayectoria del cabezal (XY)",
+      "noPath": "Ejecuta una simulación para ver la trayectoria."
+    },
+    "timeline": {
+      "title": "Línea de tiempo",
+      "line": "Línea",
+      "cmd": "Comando",
+      "action": "Acción"
+    },
+    "warnings": {
+      "title": "Advertencias"
+    }
+  }
+}

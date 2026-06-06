@@ -1,0 +1,82 @@
+{
+  "macroDesigner": {
+    "intro": "Simulate G-code offline — paste or write a program and see the toolhead path, bounding box, travel and extrusion totals, and a time estimate, without touching the printer. Browse the built-in macro library for reference.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "About the Macro Designer",
+      "close": "Close",
+      "howToRead": "How to use",
+      "steps": [
+        "Type or paste G-code in the editor (a sample square is loaded to start).",
+        "Press Simulate — the 2D path and the stats update.",
+        "Solid lines are extrusion moves; faint dashed lines are travel.",
+        "Browse the macro library and Insert one to start from its commands."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "The simulator",
+          "body": "It runs the program on a virtual toolhead: G0/G1 moves, G90/G91 (absolute/relative), M82/M83 (extruder mode), G92 (set position) and G28 (home → origin). It reports the path, the bounding box, total travel and extrusion, a rough time estimate from the feedrates, and a per-command timeline. Nothing is sent to the printer."
+        },
+        "motion": {
+          "title": "Path & time",
+          "body": "The 2D view is the XY path (Z is in the bounds). The time estimate divides each move's length by its feedrate — it ignores acceleration, so it's a rough lower bound, not the exact print time. Commands the simulator doesn't model (e.g. M-codes, high-level macros) are listed as warnings and skipped."
+        },
+        "macros": {
+          "title": "Macro library",
+          "body": "A reference set of common Klipper macros with their name, what they do, and the config sections they need. \"Insert\" drops a macro's high-level commands into the editor as a starting point — note those expand further on the printer (full Jinja/macro expansion is coming)."
+        },
+        "glossary": { "title": "Glossary", "body": "" }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "The line-by-line motion language the printer runs (moves, temperatures, fan, …)."
+        },
+        "feedrate": {
+          "term": "Feedrate (F)",
+          "def": "Move speed in mm/min — F1200 is 20 mm/s. Sets how fast each move runs."
+        },
+        "macro": {
+          "term": "Macro",
+          "def": "A named, reusable command (e.g. QUAD_GANTRY_LEVEL) that expands to a sequence of G-code."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Simulate",
+      "simulating": "Simulating…",
+      "sample": "Load sample",
+      "clear": "Clear"
+    },
+    "library": {
+      "label": "Built-in macros",
+      "placeholder": "Browse macros…",
+      "insert": "Insert into editor",
+      "requires": "Needs: {sections}",
+      "none": "—"
+    },
+    "result": {
+      "title": "Simulation",
+      "moves": "{count} moves",
+      "distance": "{mm} mm travel",
+      "extrude": "{mm} mm extruded",
+      "time": "~{s} s",
+      "bounds": "Bounds",
+      "empty": "No moves to simulate."
+    },
+    "path": {
+      "title": "Toolhead path (XY)",
+      "noPath": "Run a simulation to see the path."
+    },
+    "timeline": {
+      "title": "Timeline",
+      "line": "Line",
+      "cmd": "Command",
+      "action": "Action"
+    },
+    "warnings": {
+      "title": "Warnings"
+    }
+  }
+}

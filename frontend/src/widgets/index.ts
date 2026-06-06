@@ -60,4 +60,13 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./board-topology/BoardTopologyWidget.vue')),
   })
+
+  registerWidget({
+    id: 'macro-designer',
+    title: 'Macro Designer',
+    icon: '🧩',
+    description: 'Simulate G-code offline — toolhead path, bounds, totals, and a macro library.',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./macro-designer/MacroDesignerWidget.vue')),
+  })
 }

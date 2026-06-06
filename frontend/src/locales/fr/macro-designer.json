@@ -1,0 +1,82 @@
+{
+  "macroDesigner": {
+    "intro": "Simulez du G-code hors ligne — collez ou écrivez un programme et visualisez la trajectoire de la tête d'impression, la boîte englobante, les totaux de déplacement et d'extrusion, ainsi qu'une estimation de durée, sans toucher à l'imprimante. Parcourez la bibliothèque de macros intégrée à titre de référence.",
+    "help": {
+      "guide": "Aide",
+      "guideTitle": "À propos du Concepteur de macros",
+      "close": "Fermer",
+      "howToRead": "Comment l'utiliser",
+      "steps": [
+        "Saisissez ou collez du G-code dans l'éditeur (un carré d'exemple est chargé au démarrage).",
+        "Appuyez sur Simuler — la trajectoire 2D et les statistiques se mettent à jour.",
+        "Les lignes pleines sont des déplacements d'extrusion ; les lignes pointillées et estompées sont des déplacements à vide.",
+        "Parcourez la bibliothèque de macros et insérez-en une pour partir de ses commandes."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "Le simulateur",
+          "body": "Il exécute le programme sur une tête d'impression virtuelle : déplacements G0/G1, G90/G91 (absolu/relatif), M82/M83 (mode extrudeur), G92 (définir la position) et G28 (origine → home). Il indique la trajectoire, la boîte englobante, le déplacement et l'extrusion totaux, une estimation approximative de durée à partir des vitesses d'avance, et une chronologie par commande. Rien n'est envoyé à l'imprimante."
+        },
+        "motion": {
+          "title": "Trajectoire et durée",
+          "body": "La vue 2D correspond à la trajectoire XY (le Z figure dans les limites). L'estimation de durée divise la longueur de chaque déplacement par sa vitesse d'avance — elle ignore l'accélération, c'est donc une borne inférieure approximative, pas la durée d'impression exacte. Les commandes que le simulateur ne modélise pas (par ex. les M-codes, les macros de haut niveau) sont listées en avertissements et ignorées."
+        },
+        "macros": {
+          "title": "Bibliothèque de macros",
+          "body": "Un ensemble de référence des macros Klipper courantes, avec leur nom, leur rôle et les sections de configuration dont elles ont besoin. « Insérer » dépose les commandes de haut niveau d'une macro dans l'éditeur comme point de départ — notez que celles-ci se développent davantage sur l'imprimante (l'expansion complète Jinja/macro est à venir)."
+        },
+        "glossary": { "title": "Glossaire", "body": "" }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "Le langage de mouvement ligne par ligne que l'imprimante exécute (déplacements, températures, ventilateur, …)."
+        },
+        "feedrate": {
+          "term": "Vitesse d'avance (F)",
+          "def": "Vitesse de déplacement en mm/min — F1200 équivaut à 20 mm/s. Détermine la rapidité de chaque déplacement."
+        },
+        "macro": {
+          "term": "Macro",
+          "def": "Une commande nommée et réutilisable (par ex. QUAD_GANTRY_LEVEL) qui se développe en une séquence de G-code."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Simuler",
+      "simulating": "Simulation…",
+      "sample": "Charger l'exemple",
+      "clear": "Effacer"
+    },
+    "library": {
+      "label": "Macros intégrées",
+      "placeholder": "Parcourir les macros…",
+      "insert": "Insérer dans l'éditeur",
+      "requires": "Nécessite : {sections}",
+      "none": "—"
+    },
+    "result": {
+      "title": "Simulation",
+      "moves": "{count} déplacements",
+      "distance": "{mm} mm de déplacement",
+      "extrude": "{mm} mm extrudés",
+      "time": "~{s} s",
+      "bounds": "Limites",
+      "empty": "Aucun déplacement à simuler."
+    },
+    "path": {
+      "title": "Trajectoire de la tête (XY)",
+      "noPath": "Lancez une simulation pour voir la trajectoire."
+    },
+    "timeline": {
+      "title": "Chronologie",
+      "line": "Ligne",
+      "cmd": "Commande",
+      "action": "Action"
+    },
+    "warnings": {
+      "title": "Avertissements"
+    }
+  }
+}
