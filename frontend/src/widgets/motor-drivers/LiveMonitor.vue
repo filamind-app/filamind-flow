@@ -55,7 +55,7 @@ const spark = computed(() => sparklinePath(sgHistory.value, 100, 22))
 </script>
 
 <template>
-  <div class="font-mono text-[10px]">
+  <div class="font-mono text-[11px]">
     <button
       class="flex w-full items-center gap-1.5 text-start opacity-70 transition-opacity hover:opacity-100"
       :aria-expanded="open"
@@ -66,10 +66,7 @@ const spark = computed(() => sparklinePath(sgHistory.value, 100, 22))
       <span class="font-bold">{{ t('motorDrivers.liveMonitor.toggle') }}</span>
     </button>
 
-    <div
-      v-if="open"
-      class="mt-1 space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
-    >
+    <div v-if="open" class="mt-1 space-y-1 rounded-brutal border-2 border-ink bg-paper p-2">
       <template v-if="drv">
         <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5">
           <span v-if="live?.temperature != null">{{
@@ -92,7 +89,7 @@ const spark = computed(() => sparklinePath(sgHistory.value, 100, 22))
           <span
             v-for="f in flags"
             :key="f"
-            class="nb-badge bg-brand-red px-1.5 py-0 text-[9px] text-surface"
+            class="nb-badge bg-brand-red px-1.5 py-0 text-[10px] text-surface"
             >{{ f }}</span
           >
         </div>

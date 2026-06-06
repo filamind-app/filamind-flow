@@ -56,11 +56,11 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
     <span class="text-xs font-bold uppercase tracking-wide">{{
       t('inputShaping.compareView.title')
     }}</span>
-    <p class="font-mono text-[10px] opacity-60">
+    <p class="font-mono text-[11px] opacity-60">
       {{ t('inputShaping.compareView.intro') }}
     </p>
 
-    <div class="flex flex-wrap items-center gap-2 text-[10px]">
+    <div class="flex flex-wrap items-center gap-2 text-[11px]">
       <label class="nb-btn cursor-pointer px-2 py-0.5">
         {{ t('inputShaping.compareView.selectA') }}
         <input type="file" accept=".csv" class="hidden" @change="(e) => pick('a', e)" />
@@ -125,7 +125,7 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
 
       <div class="space-y-0.5">
         <div
-          class="grid grid-cols-[1fr_auto_auto] gap-3 border-b-2 border-ink pb-0.5 font-mono text-[10px] font-bold uppercase"
+          class="grid grid-cols-[1fr_auto_auto] gap-3 border-b-2 border-ink pb-0.5 font-mono text-[11px] font-bold uppercase"
         >
           <span></span>
           <span class="text-end text-brand-blue">{{ t('inputShaping.compareView.colA') }}</span>
@@ -134,7 +134,7 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
         <div
           v-for="row in rows"
           :key="row.label"
-          class="grid grid-cols-[1fr_auto_auto] items-center gap-3 font-mono text-[10px]"
+          class="grid grid-cols-[1fr_auto_auto] items-center gap-3 font-mono text-[11px]"
         >
           <span class="opacity-70">{{ row.label }}</span>
           <span class="text-end">{{ row.a }}</span>

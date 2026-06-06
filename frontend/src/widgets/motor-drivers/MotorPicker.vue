@@ -33,7 +33,7 @@ const selectedModel = computed(() => props.assigned?.model ?? null)
 </script>
 
 <template>
-  <div class="font-mono text-[10px]">
+  <div class="font-mono text-[11px]">
     <div class="mb-1 min-w-0 truncate">
       <span class="opacity-60">{{ t('motorDrivers.motorPicker.motorLabel') }}</span>
       <b v-if="assigned"> {{ assigned.manufacturer }} {{ assigned.model }}</b>

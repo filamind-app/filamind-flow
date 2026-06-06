@@ -168,7 +168,7 @@ function review(i: number): void {
       <span class="text-xs font-bold uppercase tracking-wide">{{
         t('inputShaping.guided.ui.title')
       }}</span>
-      <button class="nb-btn px-2 py-0.5 text-[10px]" @click="emit('exit')">
+      <button class="nb-btn px-2 py-0.5 text-[11px]" @click="emit('exit')">
         {{ t('inputShaping.guided.ui.exit') }}
       </button>
     </div>
@@ -178,7 +178,7 @@ function review(i: number): void {
       <button
         v-for="(s, i) in STEPS"
         :key="s.id"
-        class="nb-badge text-[9px]"
+        class="nb-badge text-[10px]"
         :class="[stepBg(statuses[s.id]), i === idx ? 'ring-2 ring-ink' : '']"
         @click="review(i)"
       >
@@ -187,28 +187,25 @@ function review(i: number): void {
     </div>
 
     <!-- Active step -->
-    <div
-      v-if="step.id !== 'done'"
-      class="space-y-1.5 rounded-brutal border-2 border-dashed border-ink p-2"
-    >
+    <div v-if="step.id !== 'done'" class="space-y-1.5 rounded-brutal border-2 border-ink p-2">
       <div class="text-[11px] font-bold">
         {{ tt('inputShaping.guided.steps.' + step.id + '.title') }}
       </div>
-      <p class="text-[10px] opacity-70">
+      <p class="text-[11px] opacity-70">
         {{ tt('inputShaping.guided.steps.' + step.id + '.why') }}
       </p>
 
       <!-- Manual: pressure-advance tower. -->
       <div v-if="step.id === 'pressure'" class="space-y-1">
         <pre
-          class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[10px] text-surface"
+          class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
           >{{ paGcode }}</pre
         >
         <div class="flex items-center gap-2">
-          <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyPa">
+          <button class="nb-btn px-2 py-0.5 text-[11px]" @click="copyPa">
             {{ paCopied ? t('inputShaping.guided.ui.copied') : t('inputShaping.guided.ui.copyPa') }}
           </button>
-          <button class="nb-btn bg-brand-lime px-3 py-0.5 text-[10px]" @click="finishPressure">
+          <button class="nb-btn bg-brand-lime px-3 py-0.5 text-[11px]" @click="finishPressure">
             {{ t('inputShaping.guided.ui.finish') }}
           </button>
         </div>
@@ -218,13 +215,13 @@ function review(i: number): void {
           class="rounded-brutal border-2 border-ink px-2 py-1"
           :class="sugBg(sug.level)"
         >
-          <div class="text-[10px] font-bold">{{ sug.title }}</div>
-          <p class="text-[9px] leading-snug">{{ sug.why }}</p>
+          <div class="text-[11px] font-bold">{{ sug.title }}</div>
+          <p class="text-[10px] leading-snug">{{ sug.why }}</p>
         </div>
       </div>
 
       <!-- Endpoint step (noise / belts / shaper). -->
-      <div v-else class="flex flex-wrap items-center gap-2 text-[10px]">
+      <div v-else class="flex flex-wrap items-center gap-2 text-[11px]">
         <label v-if="step.motion" class="flex items-center gap-1">
           <input v-model="ready" type="checkbox" /> {{ t('inputShaping.guided.ui.motionReady') }}
         </label>
@@ -242,7 +239,7 @@ function review(i: number): void {
                 : t('inputShaping.guided.ui.rerun')
           }}
         </button>
-        <button v-if="step.id === 'belts'" class="nb-btn px-2 py-0.5 text-[10px]" @click="skip">
+        <button v-if="step.id === 'belts'" class="nb-btn px-2 py-0.5 text-[11px]" @click="skip">
           {{ t('inputShaping.guided.ui.skipBelts') }}
         </button>
       </div>
@@ -256,7 +253,7 @@ function review(i: number): void {
 
       <template v-if="gate && step.id !== 'pressure'">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="nb-badge text-[10px]" :class="gateBg(gate.status)">{{ gate.headline }}</span>
+          <span class="nb-badge text-[11px]" :class="gateBg(gate.status)">{{ gate.headline }}</span>
         </div>
         <div
           v-for="(sug, i) in suggestions"
@@ -264,18 +261,18 @@ function review(i: number): void {
           class="rounded-brutal border-2 border-ink px-2 py-1"
           :class="sugBg(sug.level)"
         >
-          <div class="text-[10px] font-bold">{{ sug.title }}</div>
-          <p class="text-[9px] leading-snug">{{ sug.why }}</p>
+          <div class="text-[11px] font-bold">{{ sug.title }}</div>
+          <p class="text-[10px] leading-snug">{{ sug.why }}</p>
         </div>
         <div class="flex items-center gap-2">
           <button
-            class="nb-btn bg-brand-lime px-3 py-0.5 text-[10px]"
+            class="nb-btn bg-brand-lime px-3 py-0.5 text-[11px]"
             :disabled="!canProceed"
             @click="advance"
           >
             {{ t('inputShaping.guided.ui.nextStep') }}
           </button>
-          <button v-if="!canProceed" class="nb-btn px-2 py-0.5 text-[10px]" @click="skip">
+          <button v-if="!canProceed" class="nb-btn px-2 py-0.5 text-[11px]" @click="skip">
             {{ t('inputShaping.guided.ui.skipAnyway') }}
           </button>
         </div>
@@ -289,7 +286,7 @@ function review(i: number): void {
         <span
           v-for="s in STEPS.filter((s) => s.id !== 'done')"
           :key="s.id"
-          class="nb-badge text-[9px]"
+          class="nb-badge text-[10px]"
           :class="stepBg(statuses[s.id])"
         >
           {{ tt('inputShaping.guided.steps.' + s.id + '.label') }} {{ glyph(statuses[s.id]) }}
@@ -298,7 +295,7 @@ function review(i: number): void {
       <i18n-t
         keypath="inputShaping.guided.ui.summaryNote"
         tag="p"
-        class="text-[9px] opacity-70"
+        class="text-[10px] opacity-70"
         scope="global"
       >
         <template #code><code>printer.cfg</code></template>

@@ -85,20 +85,20 @@ const currentId = computed(() => steps.value.find((s) => !s.done)?.id ?? null)
       >
         <div class="flex items-center gap-2">
           <span
-            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-brutal border-2 border-ink text-[10px] font-bold"
+            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-brutal border-2 border-ink text-[11px] font-bold"
             :class="s.done ? 'bg-brand-lime' : 'bg-surface'"
             >{{ s.done ? '✓' : i + 1 }}</span
           >
           <span class="min-w-0 flex-1 font-bold">{{ s.label }}</span>
           <button
             v-if="!s.done"
-            class="nb-btn shrink-0 bg-brand-cyan px-2 py-0.5 text-[10px]"
+            class="nb-btn shrink-0 bg-brand-cyan px-2 py-0.5 text-[11px]"
             @click="emit('go', s.action.tab)"
           >
             {{ s.action.label }}
           </button>
         </div>
-        <p class="ps-7 text-[10px] leading-snug opacity-70">{{ s.why }}</p>
+        <p class="ps-7 text-[11px] leading-snug opacity-70">{{ s.why }}</p>
       </li>
     </ol>
   </div>

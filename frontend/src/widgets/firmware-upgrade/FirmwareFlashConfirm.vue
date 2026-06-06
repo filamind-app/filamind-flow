@@ -50,7 +50,7 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
         <span class="text-xs font-bold uppercase tracking-wide">{{
           t('firmware.flashConfirm.title')
         }}</span>
-        <button class="nb-btn bg-surface px-2 py-0.5 text-[10px]" @click="emit('cancel')">
+        <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="emit('cancel')">
           {{ t('firmware.flashConfirm.cancel') }}
         </button>
       </div>
@@ -60,20 +60,20 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
         ⚠ {{ intent.warning }}
       </p>
 
-      <ul v-if="intent.devices?.length" class="font-mono text-[10px] opacity-80">
+      <ul v-if="intent.devices?.length" class="font-mono text-[11px] opacity-80">
         <li v-for="d in intent.devices" :key="d">• {{ d }}</li>
       </ul>
 
-      <p v-if="loadingPlan" class="font-mono text-[10px] opacity-60">
+      <p v-if="loadingPlan" class="font-mono text-[11px] opacity-60">
         {{ t('firmware.flashConfirm.previewing') }}
       </p>
       <div v-else-if="plan" class="space-y-1 rounded-brutal border-2 border-ink p-2">
         <div class="flex items-center justify-between gap-2">
-          <span class="min-w-0 truncate font-mono text-[10px]"
+          <span class="min-w-0 truncate font-mono text-[11px]"
             >{{ plan.method }} → {{ plan.artifact ?? '—' }}</span
           >
           <span
-            class="nb-badge shrink-0 text-[10px]"
+            class="nb-badge shrink-0 text-[11px]"
             :class="plan.ready ? 'bg-brand-lime' : 'bg-brand-yellow'"
             >{{
               plan.ready ? t('firmware.flashConfirm.ready') : t('firmware.flashConfirm.blocked')
@@ -81,14 +81,14 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
           >
         </div>
         <pre
-          class="overflow-x-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[10px] text-surface"
+          class="overflow-x-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
           >{{ plan.command }}</pre
         >
-        <p v-for="w in plan.warnings" :key="w" class="font-mono text-[10px] text-brand-red">
+        <p v-for="w in plan.warnings" :key="w" class="font-mono text-[11px] text-brand-red">
           ⚠ {{ w }}
         </p>
       </div>
-      <p v-else-if="planError" class="font-mono text-[10px] text-brand-red">
+      <p v-else-if="planError" class="font-mono text-[11px] text-brand-red">
         {{ t('firmware.flashConfirm.planErrorSuffix', { error: planError }) }}
       </p>
 

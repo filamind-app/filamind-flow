@@ -57,9 +57,7 @@ function testHome(): Promise<void> {
 </script>
 
 <template>
-  <div
-    class="space-y-1.5 rounded-brutal border-2 border-dashed border-ink bg-paper p-2 font-mono text-[10px]"
-  >
+  <div class="space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2 font-mono text-[11px]">
     <p v-if="!driver.stallguard_field" class="text-brand-red">
       {{ t('motorDrivers.sensorless.noRegister') }}
     </p>
@@ -83,7 +81,7 @@ function testHome(): Promise<void> {
         :min="range.min"
         :max="range.max"
         :disabled="!driver.stallguard_field"
-        class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
+        class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[11px]"
       />
       <span class="opacity-60">{{
         t('motorDrivers.sensorless.nowRange', {
@@ -98,7 +96,7 @@ function testHome(): Promise<void> {
       <span>{{ t('motorDrivers.sensorless.confirmSet') }}</span>
     </label>
     <button
-      class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+      class="nb-btn bg-brand-lime px-2 py-0.5 text-[11px]"
       :disabled="!confirmSet || busy || !driver.stallguard_field"
       @click="setThreshold"
     >
@@ -118,7 +116,7 @@ function testHome(): Promise<void> {
         <span>{{ t('motorDrivers.sensorless.confirmHome', { axis }) }}</span>
       </label>
       <button
-        class="nb-btn bg-brand-yellow px-2 py-0.5 text-[10px]"
+        class="nb-btn bg-brand-yellow px-2 py-0.5 text-[11px]"
         :disabled="!confirmHome || busy"
         @click="testHome"
       >
