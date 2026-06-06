@@ -5,6 +5,7 @@
 // unreliable here because keys are built dynamically, e.g. `t('…verdict.' + letter)`).
 
 import type common from '@/locales/en/common.json'
+import type configEditor from '@/locales/en/config-editor.json'
 import type firmware from '@/locales/en/firmware.json'
 import type inputShaping from '@/locales/en/input-shaping.json'
 import type motorDrivers from '@/locales/en/motor-drivers.json'
@@ -14,7 +15,8 @@ type MessageSchema = typeof common &
   typeof shell &
   typeof firmware &
   typeof inputShaping &
-  typeof motorDrivers
+  typeof motorDrivers &
+  typeof configEditor
 
 declare module 'vue-i18n' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type

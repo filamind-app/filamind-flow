@@ -1,6 +1,7 @@
 import { createI18n } from 'vue-i18n'
 
 import enCommon from '../locales/en/common.json'
+import enConfigEditor from '../locales/en/config-editor.json'
 import enFirmware from '../locales/en/firmware.json'
 import enInputShaping from '../locales/en/input-shaping.json'
 import enMotorDrivers from '../locales/en/motor-drivers.json'
@@ -62,7 +63,14 @@ type JsonModule = { default: Record<string, unknown> }
 // en is bundled eagerly (no fetch on first paint). Static imports keep it fully typed — it is the
 // schema source for type-safe keys (see types/i18n.d.ts). Every other locale is a dynamic chunk,
 // discovered and loaded on demand via the glob below.
-const en = { ...enCommon, ...enShell, ...enFirmware, ...enInputShaping, ...enMotorDrivers }
+const en = {
+  ...enCommon,
+  ...enShell,
+  ...enFirmware,
+  ...enInputShaping,
+  ...enMotorDrivers,
+  ...enConfigEditor,
+}
 
 // en is excluded — it's bundled eagerly above, so the dynamic glob must not also claim it
 // (that would split it into a never-used chunk and warn at build).

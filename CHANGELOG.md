@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.95.0] - 2026-06-06
+
+### Added
+
+- **Config Editor — viewer UI (Track A).** A new widget that reads the live config through the
+  `/api/config/*` routes and presents it:
+  - A file picker (`ComboSelect`) over every `.cfg` / `.conf` file on the printer, defaulting to
+    `printer.cfg`.
+  - Collapsible `[section]` cards → a parameter table (key / value + inline comment, multi-line
+    values intact), the `SAVE_CONFIG` block flagged, with expand/collapse-all.
+  - A validation banner that surfaces structural issues (e.g. a duplicate section) — colour- **and**
+    label-coded (Error / Warning), not colour alone.
+  - Structured and raw views (`WidgetTabs`), section/parameter counts, and an illustrated
+    `HelpDrawer` (topics + glossary + how-to steps).
+  - Fully internationalized across all 7 locales; new `configEditor` namespace + sidebar label.
+  - Read-only; the guided, confirm-gated save path follows.
+
 ## [0.94.0] - 2026-06-06
 
 ### Added

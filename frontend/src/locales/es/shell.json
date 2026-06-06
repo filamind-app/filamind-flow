@@ -41,6 +41,10 @@
       "motor-drivers": {
         "title": "Controladores de motor",
         "description": "Inventario en vivo de controladores de paso TMC: corriente, modo, micropasos y estado."
+      },
+      "config-editor": {
+        "title": "Editor de configuración",
+        "description": "Explora los archivos de configuración de tu impresora, analizados en secciones con validación."
       }
     }
   }

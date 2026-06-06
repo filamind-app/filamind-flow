@@ -41,6 +41,10 @@
       "motor-drivers": {
         "title": "Motor Drivers",
         "description": "Live TMC stepper-driver inventory: current, mode, microsteps, and status."
+      },
+      "config-editor": {
+        "title": "Config Editor",
+        "description": "Browse your printer's config files, parsed into sections with validation."
       }
     }
   }
