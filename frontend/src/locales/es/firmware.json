@@ -69,7 +69,11 @@
           "term": "Perfil",
           "def": "Una configuración de firmware guardada (Kconfig / menuconfig) para una placa, para poder recompilar exactamente el mismo firmware más tarde."
         }
-      }
+      },
+      "guide": "Guía",
+      "guideTitle": "Guía del gestor de firmware",
+      "close": "Cerrar",
+      "howToRead": "Cómo leer este panel"
     },
     "widget": {
       "tabGuided": "🧭 Guiado",

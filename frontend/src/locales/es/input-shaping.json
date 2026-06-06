@@ -84,7 +84,10 @@
           "term": "max_accel",
           "def": "La aceleración que el shaper puede mantener sin demasiado suavizado — un valor sugerido para SET_VELOCITY_LIMIT / printer.cfg."
         }
-      }
+      },
+      "guide": "Guía",
+      "guideTitle": "Guía de Input Shaping",
+      "close": "Cerrar"
     },
     "grade": {
       "clarity": {

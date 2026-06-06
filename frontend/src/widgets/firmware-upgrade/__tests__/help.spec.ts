@@ -38,11 +38,12 @@ describe('firmware help structure + catalog', () => {
 })
 
 describe('firmware HelpNote.vue (renders through i18n)', () => {
-  it('shows the toggle, then title + body when expanded', async () => {
+  it('shows the named title as the trigger, then the body when expanded', async () => {
     const w = mount(HelpNote, { props: { topic: 'overview' }, global: { plugins: [i18n] } })
-    expect(w.text()).toContain(t('firmware.help.whatsThis'))
-    await w.find('button').trigger('click')
+    // The trigger is named (the topic title), not a generic "what's this?".
     expect(w.text()).toContain(t('firmware.help.topics.overview.title'))
+    expect(w.text()).not.toContain(t('firmware.help.whatsThis'))
+    await w.find('button').trigger('click')
     expect(w.text()).toContain(t('firmware.help.topics.overview.body'))
   })
 

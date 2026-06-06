@@ -47,11 +47,12 @@ describe('help structure + catalog', () => {
 })
 
 describe('HelpNote.vue (renders through i18n)', () => {
-  it('shows the toggle, then the title + body when expanded', async () => {
+  it('shows the named title as the trigger, then the body when expanded', async () => {
     const wrapper = mount(HelpNote, { props: { topic: 'analyze' }, global: { plugins: [i18n] } })
-    expect(wrapper.text()).toContain(t('inputShaping.help.whatsThis'))
-    await wrapper.find('button').trigger('click')
+    // The trigger is named (the topic title), not a generic "what's this?".
     expect(wrapper.text()).toContain(t('inputShaping.help.topics.analyze.title'))
+    expect(wrapper.text()).not.toContain(t('inputShaping.help.whatsThis'))
+    await wrapper.find('button').trigger('click')
     expect(wrapper.text()).toContain(t('inputShaping.help.topics.analyze.body'))
   })
 

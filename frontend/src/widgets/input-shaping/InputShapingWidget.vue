@@ -3,11 +3,14 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
+import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 
 import CsvSourceChooser from './CsvSourceChooser.vue'
 import DiagnosticIllo from './DiagnosticIllo.vue'
 import GuidedTune from './GuidedTune.vue'
 import HelpNote from './HelpNote.vue'
+import HelpIllo from './HelpIllo.vue'
+import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import ResonanceCompare from './ResonanceCompare.vue'
 import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
 import { analyzeResonance, analyzeResonanceFile, listArchive, saveConfigToArchive } from './api'
@@ -229,18 +232,30 @@ async function saveConfig(): Promise<void> {
 
 <template>
   <div class="space-y-3 text-sm">
-    <i18n-t
-      keypath="inputShaping.widget.intro"
-      tag="p"
-      scope="global"
-      class="font-mono text-[11px] opacity-70"
-    >
-      <template #guided><strong>🧭 Guided</strong></template>
-      <template #analyze><strong>📈 Analyze</strong></template>
-      <template #csv><code>.csv</code></template>
-      <template #live><strong>🔴 Live tools</strong></template>
-      <template #history><strong>🕘 History</strong></template>
-    </i18n-t>
+    <div class="flex items-start justify-between gap-2">
+      <i18n-t
+        keypath="inputShaping.widget.intro"
+        tag="p"
+        scope="global"
+        class="min-w-0 flex-1 font-mono text-[11px] opacity-70"
+      >
+        <template #guided><strong>🧭 Guided</strong></template>
+        <template #analyze><strong>📈 Analyze</strong></template>
+        <template #csv><code>.csv</code></template>
+        <template #live><strong>🔴 Live tools</strong></template>
+        <template #history><strong>🕘 History</strong></template>
+      </i18n-t>
+      <HelpDrawer
+        namespace="inputShaping"
+        :topics="HELP_TOPICS"
+        :illo-map="HELP_ILLO"
+        :illo="HelpIllo"
+        :glossary-keys="GLOSSARY_KEYS"
+        :button-label="t('inputShaping.help.guide')"
+        :title="t('inputShaping.help.guideTitle')"
+        :close-label="t('inputShaping.help.close')"
+      />
+    </div>
 
     <!-- Mode strip: one view at a time (Guided is the default landing view). -->
     <WidgetTabs v-model="mode" :tabs="TABS" />
@@ -272,9 +287,6 @@ async function saveConfig(): Promise<void> {
 
     <!-- ANALYZE — pick a CSV (upload or from the host / archive), tune the knobs, compare. -->
     <div v-show="mode === 'analyze'" class="space-y-3">
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <HelpNote topic="glossary" />
-      </div>
       <CsvSourceChooser ref="chooserRef" :busy="busy" @analyze="onSourceAnalyze" />
       <div class="flex flex-wrap items-center gap-2">
         <button class="nb-btn px-2 py-1 text-[10px]" @click="showAdvanced = !showAdvanced">
