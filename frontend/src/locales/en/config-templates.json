@@ -1,0 +1,62 @@
+{
+  "configTemplates": {
+    "intro": "Ready-to-paste Klipper config blocks and macros — start sequences, filament handling, input shaping, bed mesh and more. Copy one and drop it into your printer.cfg (the Config Editor is a good place to paste it).",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "About Config Templates",
+      "close": "Close",
+      "howToRead": "How to use",
+      "steps": [
+        "Filter by category to find a macro or config block.",
+        "Read the description and what sections it needs.",
+        "Copy the template, paste it into your config, and adjust the values."
+      ],
+      "topics": {
+        "what": {
+          "title": "What these are",
+          "body": "A curated set of common Klipper building blocks: gcode_macros (PRINT_START, PAUSE/RESUME, filament load/unload, M600) and config sections ([input_shaper], [bed_mesh], [firmware_retraction], …). They're starting points — read each one and tune it for your machine."
+        },
+        "insert": {
+          "title": "Inserting a template",
+          "body": "Copy a template, then paste it into your printer.cfg — the Config Editor's Raw view is a convenient spot. After saving, a firmware restart applies it. Always review the values first; defaults here are sensible but not tuned to your printer."
+        },
+        "sections": {
+          "title": "Required sections",
+          "body": "Each template lists the config sections it defines or depends on. If a section already exists in your config, merge the keys rather than pasting a duplicate (a duplicate section is rejected at startup)."
+        },
+        "glossary": { "title": "Glossary", "body": "" }
+      },
+      "glossary": {
+        "template": {
+          "term": "Template",
+          "def": "A ready-to-paste snippet of Klipper config or macro G-code you copy into printer.cfg."
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "A named command you define in config (e.g. PRINT_START) that runs a sequence of G-code."
+        },
+        "section": {
+          "term": "Section",
+          "def": "A [bracketed] config block, e.g. [bed_mesh] — the unit Klipper configuration is grouped into."
+        }
+      }
+    },
+    "category": {
+      "label": "Category",
+      "all": "All categories"
+    },
+    "template": {
+      "copy": "Copy",
+      "copied": "Copied!",
+      "requires": "Sections: {sections}",
+      "requiresNone": "—"
+    },
+    "count": "{n} templates",
+    "states": {
+      "loading": "Loading templates…",
+      "error": "Couldn't load the templates.",
+      "empty": "No templates in this category.",
+      "retry": "Retry"
+    }
+  }
+}

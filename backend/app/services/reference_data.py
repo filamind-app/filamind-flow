@@ -35,6 +35,7 @@ _HOTENDS = _load("hotend_table.json")
 _BOARDS = _load("board_patterns.json")
 _MACROS = _load("macros.json")
 _HARDWARE = _load("hardware.json")
+_TEMPLATES = _load("templates.json")
 
 
 # ── StallGuard ───────────────────────────────────────────────────────────────
@@ -97,4 +98,11 @@ def hardware_categories() -> list[str]:
 def hardware_manufacturers() -> list[dict[str, Any]]:
     """The manufacturer directory (name / country / website / specialty / categories)."""
     rows = _HARDWARE.get("manufacturers", [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+# ── Config / macro templates ──────────────────────────────────────────────────
+def templates() -> list[dict[str, Any]]:
+    """Insertable Klipper config / macro templates (id / name / category / description / body)."""
+    rows = _TEMPLATES.get("templates", [])
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []

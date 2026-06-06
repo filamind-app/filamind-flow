@@ -44,3 +44,9 @@ async def boards() -> dict[str, Any]:
 async def macros() -> list[dict[str, Any]]:
     """Built-in Klipper calibration macro definitions."""
     return reference_data.macros()
+
+
+@router.get("/templates")
+async def templates() -> list[dict[str, Any]]:
+    """Insertable Klipper config / macro templates (Config Templates library)."""
+    return reference_data.templates()

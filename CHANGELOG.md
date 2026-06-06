@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.105.0] - 2026-06-06
+
+### Added
+
+- **Config Templates library (Track A — completes A4).** A curated set of ready-to-paste Klipper
+  config blocks and macros baked into the backend (`templates.json`): start/end sequences,
+  pause/resume/cancel, filament load/unload, M600, `[input_shaper]`, `[bed_mesh]`,
+  `[firmware_retraction]`, `[exclude_object]`, and more.
+  - `GET /api/reference/templates` + `reference_data.templates()`.
+  - A new **Config Templates** widget: category filter + cards (name, category, description,
+    required sections, the template body) with a one-click copy (works on a plain-http LAN host).
+  - New `configTemplates` namespace + sidebar label across all 7 locales; +3 backend tests.
+
 ## [0.104.0] - 2026-06-06
 
 ### Added
