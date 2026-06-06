@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.106.0] - 2026-06-06
+
+### Added
+
+- **Macro Designer — macro variable substitution (Track A, completes A2).** The G-code simulator
+  now renders Klipper-macro `{ ... }` value expressions before simulating: `{ params.X }`,
+  `{ params.X | default(N) }`, bare `{ NAME }`, and simple `int` / `float` / `upper` / `lower`
+  filters. `POST /api/macro/simulate` accepts an optional `params` map; unresolved expressions are
+  left intact and warned, and `{% … %}` control flow is reported (not evaluated — full Jinja is
+  future work). Dependency-free `macro_render.py`; +10 backend tests.
+
 ## [0.105.0] - 2026-06-06
 
 ### Added
