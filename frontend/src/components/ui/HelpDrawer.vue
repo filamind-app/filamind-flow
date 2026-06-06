@@ -31,10 +31,13 @@ const props = defineProps<{
   stepsTitle?: string
 }>()
 
-const { t, te, tm } = useI18n({ useScope: 'global' })
+const { t, te, tm, rt } = useI18n({ useScope: 'global' })
 // Topic/glossary keys are built at runtime; the schema-typed t/te only accept literal keys.
 const tt = t as unknown as (key: string) => string
 const tte = te as unknown as (key: string) => boolean
+// `tm()` over a dynamic key returns raw message nodes; `rt()` resolves each to a string.
+const rtt = rt as unknown as (msg: unknown) => string
+const steps = (): unknown[] => (props.stepsKey ? (tm(props.stepsKey) as unknown[]) : [])
 
 const open = ref(false)
 const GLOSSARY = 'glossary'
@@ -90,7 +93,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
           <section v-if="stepsKey">
             <h3 class="mb-1 font-display text-base font-bold">{{ stepsTitle }}</h3>
             <ol class="list-decimal space-y-1 ps-5 opacity-90">
-              <li v-for="(s, i) in tm(stepsKey) as unknown[]" :key="i">{{ s }}</li>
+              <li v-for="(s, i) in steps()" :key="i">{{ rtt(s) }}</li>
             </ol>
           </section>
 
