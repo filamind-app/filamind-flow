@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.107.0] - 2026-06-06
+
+### Changed
+
+- **Max-Flow safety hardening (from the post-sprint audit).** Before any live run can read garbage:
+  - **Chopper-mode / StallGuard preflight** — `run_max_flow` now refuses a driver with no StallGuard,
+    a missing `[<driver> extruder]` section, or the wrong chopper mode (SG4 needs StealthChop, SG2
+    needs SpreadCycle); returns 422 with an actionable message instead of measuring noise.
+  - **SG4 bias-region floor** — StallGuard samples below `SG_MIN_INFORMATIVE` (50 for tmc2209/tmc2240)
+    are dropped, so the 2209's low bias-region readings aren't analyzed as real load.
+  - **Safe-extrusion floor raised to 180 °C** (was 150) to avoid reading cold-extrusion grind as slip.
+  - Locked the tmc2240 StallGuard field (`sg4_thrs`) consistent across driver_catalog / stallguard_profiles
+    with a test. +8 backend tests.
+
 ## [0.106.0] - 2026-06-06
 
 ### Added

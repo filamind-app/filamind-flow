@@ -64,5 +64,7 @@ async def maxflow_run(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except max_flow_service.MaxFlowBusyError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except max_flow_service.MaxFlowPreflightError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
