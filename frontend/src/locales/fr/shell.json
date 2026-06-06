@@ -57,6 +57,10 @@
       "macro-designer": {
         "title": "Concepteur de macros",
         "description": "Simulez du G-code hors ligne — trajectoire de la tête, limites, totaux et une bibliothèque de macros."
+      },
+      "hardware-browser": {
+        "title": "Explorateur de matériel",
+        "description": "Recherchez une référence sélectionnée de matériel d'impression 3D par nom, fabricant ou spécification."
       }
     }
   }

@@ -7,6 +7,7 @@
 import type boardTopology from '@/locales/en/board-topology.json'
 import type common from '@/locales/en/common.json'
 import type configEditor from '@/locales/en/config-editor.json'
+import type hardwareBrowser from '@/locales/en/hardware-browser.json'
 import type firmware from '@/locales/en/firmware.json'
 import type inputShaping from '@/locales/en/input-shaping.json'
 import type macroDesigner from '@/locales/en/macro-designer.json'
@@ -22,7 +23,8 @@ type MessageSchema = typeof common &
   typeof configEditor &
   typeof maxFlow &
   typeof boardTopology &
-  typeof macroDesigner
+  typeof macroDesigner &
+  typeof hardwareBrowser
 
 declare module 'vue-i18n' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type

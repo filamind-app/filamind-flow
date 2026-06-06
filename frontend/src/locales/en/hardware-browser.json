@@ -1,0 +1,65 @@
+{
+  "hardwareBrowser": {
+    "intro": "Search a curated reference of 3D-printing hardware — steppers, drivers, boards, sensors, hotends, fans, hosts, nozzles, extruders, filaments and more — by name, manufacturer, category, or any spec.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "About the Hardware Browser",
+      "close": "Close",
+      "howToRead": "How to use",
+      "steps": [
+        "Type in the search box to match a name, manufacturer, or any spec value.",
+        "Narrow by category or manufacturer with the filters.",
+        "Each result card shows the component's specs; page through with Prev / Next."
+      ],
+      "topics": {
+        "search": {
+          "title": "Searching",
+          "body": "The search matches anywhere — manufacturer, model name, category, sub-section, or any spec value. Combine it with the category and manufacturer filters to narrow down. Results are paginated; the total count reflects everything that matches, not just the current page."
+        },
+        "categories": {
+          "title": "Categories",
+          "body": "Components are grouped into categories (stepper motors, drivers, boards, sensors, hotends, fans/power, hosts, motion, nozzles, extruders, filaments, electronics, cameras/displays). Pick one to browse just that type."
+        },
+        "manufacturers": {
+          "title": "Manufacturers & specs",
+          "body": "This is a curated reference for comparison, not a store — values come from manufacturer datasheets and community data and may lag the latest products. Always confirm against the manufacturer before buying or configuring."
+        },
+        "glossary": { "title": "Glossary", "body": "" }
+      },
+      "glossary": {
+        "category": {
+          "term": "Category",
+          "def": "The hardware type a component belongs to (e.g. Hotends, Stepper Motors, Sensors)."
+        },
+        "manufacturer": {
+          "term": "Manufacturer",
+          "def": "The company that makes the part (e.g. E3D, BIGTREETECH, LDO Motors)."
+        },
+        "spec": {
+          "term": "Spec",
+          "def": "A datasheet attribute of a component — current, voltage, max temp, dimensions, and so on."
+        }
+      }
+    },
+    "search": {
+      "placeholder": "Search hardware…",
+      "button": "Search",
+      "category": "Category",
+      "allCategories": "All categories",
+      "manufacturer": "Manufacturer",
+      "manufacturerPlaceholder": "Any manufacturer"
+    },
+    "results": {
+      "total": "{count} matches",
+      "none": "No components match your search.",
+      "showing": "Showing {from}–{to} of {total}",
+      "prev": "Prev",
+      "next": "Next"
+    },
+    "states": {
+      "loading": "Searching…",
+      "error": "Couldn't load the hardware database.",
+      "retry": "Retry"
+    }
+  }
+}

@@ -3,6 +3,7 @@ import { createI18n } from 'vue-i18n'
 import enBoardTopology from '../locales/en/board-topology.json'
 import enCommon from '../locales/en/common.json'
 import enConfigEditor from '../locales/en/config-editor.json'
+import enHardwareBrowser from '../locales/en/hardware-browser.json'
 import enFirmware from '../locales/en/firmware.json'
 import enInputShaping from '../locales/en/input-shaping.json'
 import enMacroDesigner from '../locales/en/macro-designer.json'
@@ -76,6 +77,7 @@ const en = {
   ...enMaxFlow,
   ...enBoardTopology,
   ...enMacroDesigner,
+  ...enHardwareBrowser,
 }
 
 // en is excluded — it's bundled eagerly above, so the dynamic glob must not also claim it
