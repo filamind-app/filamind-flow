@@ -1,0 +1,114 @@
+{
+  "maxFlow": {
+    "intro": "Find the highest volumetric flow (mm³/s) your hotend can sustain — by ramping the flow while watching the extruder's StallGuard load for the moment the gear slips. Preview the plan first; the live test heats and extrudes, so prepare the printer before running.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "About Max-Flow",
+      "close": "Close",
+      "howToRead": "How to use",
+      "steps": [
+        "Set the test temperature and your filament diameter (pick a hotend to prefill).",
+        "Preview the plan — it shows every flow step and how much filament it pushes.",
+        "Tick the safety checklist, then run the live test (heats + extrudes).",
+        "Read the max sustained flow and copy the suggested slicer value."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "How the test works",
+          "body": "The extruder pushes filament at a steadily increasing volumetric flow. While the hobbed gear grips cleanly the StallGuard load reading stays tight; once it starts to slip the readings jump around. The highest flow reached before that jump is your sustainable max flow. The ramp stops as soon as slip is detected, so no filament is ground past the first slip."
+        },
+        "stallguard": {
+          "title": "StallGuard slip detection",
+          "body": "StallGuard is a TMC driver feature that reports motor load. This test samples it many times per flow step and looks for a sudden rise in spread (IQR) or variation (CV) — the signature of the gear losing grip. Thresholds come from a per-driver profile. Note: on a TMC2209 extruder this uses the experimental SG4 path, so treat the first run as a calibration."
+        },
+        "safety": {
+          "title": "Safety",
+          "body": "This is a hot, moving test that deliberately makes the extruder slip. Load filament, make sure the nozzle is clear (over the bed or a waste area), and stay nearby. The run is refused while the printer is printing, and the heater is always turned off when it finishes."
+        },
+        "slicer": {
+          "title": "Using the result",
+          "body": "Put the suggested value into your slicer's \"max volumetric speed\" (per filament). The conservative figure (80% of the measured max) is a safe everyday limit; the balanced figure (90%) pushes a little harder. Higher hotend temperatures usually raise the achievable flow."
+        },
+        "glossary": { "title": "Glossary", "body": "" }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Volumetric flow",
+          "def": "How much plastic the hotend melts per second (mm³/s) — the real speed limit for fast printing."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "A TMC driver signal that reports motor mechanical load, used here to sense extruder slip."
+        },
+        "slip": {
+          "term": "Slip",
+          "def": "When the extruder gear can no longer grip the filament fast enough and skips — the flow ceiling."
+        },
+        "meltzone": {
+          "term": "Melt zone",
+          "def": "The heated length of the hotend; a longer melt zone (e.g. Volcano) sustains higher flow."
+        }
+      }
+    },
+    "params": {
+      "title": "Test parameters",
+      "temperature": "Temperature (°C)",
+      "filamentDiameter": "Filament Ø (mm)",
+      "hotend": "Hotend (optional)",
+      "hotendNone": "— none —",
+      "hotendHint": "Expected ~{flow} mm³/s",
+      "startFlow": "Start flow (mm³/s)",
+      "endFlow": "End flow (mm³/s)",
+      "stepFlow": "Step (mm³/s)",
+      "samples": "Samples / step",
+      "extrudePerStep": "Extrude / step (mm)"
+    },
+    "plan": {
+      "button": "Preview plan",
+      "title": "Planned ramp",
+      "stepCount": "{count} steps",
+      "totalExtrude": "{mm} mm filament",
+      "sgField": "StallGuard field: {field}",
+      "sgFieldUnknown": "No StallGuard field known for this driver",
+      "flowHead": "Flow (mm³/s)",
+      "feedrateHead": "Feedrate (mm/min)",
+      "warning": "The live test heats the hotend and extrudes filament, deliberately to the point of slip. Preview only — nothing runs yet."
+    },
+    "safety": {
+      "title": "Before you run — safety checklist",
+      "items": [
+        "Filament is loaded and feeds freely.",
+        "The nozzle is clear — over the bed or a waste bin, not mid-air onto parts.",
+        "I accept this will deliberately grind/slip some filament.",
+        "I will stay with the printer for the whole test."
+      ],
+      "ack": "I have done all of the above and the printer is ready",
+      "note": "The run is refused while printing; the heater is turned off automatically at the end."
+    },
+    "run": {
+      "button": "Run live test",
+      "running": "Running… (heating + extruding)",
+      "confirmTitle": "Start the live max-flow test?",
+      "confirmBody": "This heats the hotend to {temp} °C and extrudes up to {mm} mm of filament, ramping until the extruder slips.",
+      "confirm": "Run now",
+      "cancel": "Cancel",
+      "busy": "Refused: the printer is busy (printing or paused). Try again when it's idle.",
+      "error": "The test failed.",
+      "noSg": "No StallGuard samples were read — the slip result may be unreliable. The driver's live SG field likely needs adjusting for this model."
+    },
+    "result": {
+      "title": "Result",
+      "maxFlow": "Max sustained flow",
+      "slipAt": "Slip detected at {flow} mm³/s",
+      "noSlip": "No slip up to the highest tested flow",
+      "reason": "Detail",
+      "recommendTitle": "Suggested slicer values (max volumetric speed)",
+      "conservative": "Conservative (80%)",
+      "balanced": "Balanced (90%)",
+      "units": "mm³/s"
+    },
+    "states": {
+      "loadingHotends": "Loading hotends…"
+    }
+  }
+}
