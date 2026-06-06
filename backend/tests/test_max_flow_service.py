@@ -70,6 +70,19 @@ def test_hotend_hint() -> None:
     assert mfs.hotend_hint("nonexistent-hotend-xyz") is None
 
 
+def test_hotend_table_expanded_and_contract() -> None:
+    """Phase 7: the table was expanded (8 → ~96) and every row carries the key the
+    frontend reads (``expected_max_flow_mm3s``) — the bug was the data using a
+    different key so the flow-hint / max auto-fill never fired."""
+    rows = reference_data.hotends()
+    assert len(rows) > 50, "hotend table should be expanded from the big DB"
+    assert all(str(r.get("name", "")).strip() for r in rows), "every hotend has a name"
+    assert all("expected_max_flow_mm3s" in r for r in rows), "frontend flow-hint key present"
+    # the curated rows keep a usable suggested test temperature for the auto-fill
+    curated = [r for r in rows if r.get("source") == "curated"]
+    assert curated and all(isinstance(r.get("suggested_temp_c"), int) for r in curated)
+
+
 def test_plan_shape() -> None:
     out = mfs.plan(
         RampParams(temperature=240, start_flow=5, end_flow=9, step_flow=1, driver="TMC2209")
