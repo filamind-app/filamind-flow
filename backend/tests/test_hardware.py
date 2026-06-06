@@ -63,10 +63,10 @@ def test_search_limit_capped() -> None:
     assert out["limit"] <= 200
 
 
-# ── shipped dataset sanity ────────────────────────────────────────────────────
+# ── shipped dataset sanity + data-quality gates ───────────────────────────────
 def test_dataset_loaded_and_clean() -> None:
     items = reference_data.hardware_items()
-    assert len(items) > 1000  # the curated DB is sizable
+    assert len(items) > 3000  # the curated component DB
     cats = reference_data.hardware_categories()
     assert len(cats) >= 10
     mans = reference_data.hardware_manufacturers()
@@ -74,12 +74,30 @@ def test_dataset_loaded_and_clean() -> None:
     # No external-project provenance leaked into the published dataset.
     import json
 
-    blob = json.dumps({"i": items[:5000], "m": mans, "c": cats}, ensure_ascii=False).lower()
-    for banned in ("ratos", "klipper_tmc_autotune", "shake&tune", "shaketune"):
+    blob = json.dumps({"i": items, "m": mans, "c": cats}, ensure_ascii=False).lower()
+    for banned in ("ratos", "klipper_tmc_autotune", "shake&tune", "shaketune", "fragmon"):
         assert banned not in blob, f"leaked: {banned}"
-    # Every item has the core shape.
-    for it in items[:50]:
-        assert "category" in it and "manufacturer" in it and "specs" in it
+    # Every item has the core shape (now including a non-empty name).
+    for it in items:
+        assert "category" in it and "manufacturer" in it and "specs" in it and "name" in it
+
+
+def test_data_quality_gates() -> None:
+    """Lock the identity-hygiene fixes so the defects can't regress (audit §4c.5)."""
+    import json
+
+    items = reference_data.hardware_items()
+    empty_name = [i for i in items if not str(i.get("name", "")).strip()]
+    assert empty_name == [], f"{len(empty_name)} items have an empty name"
+    # No exact-duplicate full records.
+    seen = [
+        (i["category"], i["manufacturer"], i["name"], json.dumps(i["specs"], sort_keys=True))
+        for i in items
+    ]
+    assert len(seen) == len(set(seen)), "exact-duplicate item records present"
+    # Manufacturer-directory rows must not pollute the product list.
+    leaked_dir = [i for i in items if {"Country", "Website", "Specialty"} <= set(i["specs"])]
+    assert leaked_dir == [], f"{len(leaked_dir)} manufacturer-directory rows leaked into items"
 
 
 # ── routes ────────────────────────────────────────────────────────────────────
