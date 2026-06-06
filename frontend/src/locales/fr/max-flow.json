@@ -1,0 +1,114 @@
+{
+  "maxFlow": {
+    "intro": "Déterminez le débit volumétrique le plus élevé (mm³/s) que votre hotend peut soutenir — en augmentant progressivement le débit tout en surveillant la charge StallGuard de l'extrudeur pour détecter le moment où l'engrenage patine. Prévisualisez d'abord le plan ; le test en direct chauffe et extrude, alors préparez l'imprimante avant de lancer.",
+    "help": {
+      "guide": "Aide",
+      "guideTitle": "À propos de Max-Flow",
+      "close": "Fermer",
+      "howToRead": "Comment l'utiliser",
+      "steps": [
+        "Réglez la température de test et le diamètre de votre filament (choisissez un hotend pour préremplir).",
+        "Prévisualisez le plan — il affiche chaque palier de débit et la quantité de filament poussée.",
+        "Cochez la liste de contrôle de sécurité, puis lancez le test en direct (chauffe + extrusion).",
+        "Lisez le débit maximal soutenu et copiez la valeur de slicer suggérée."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Fonctionnement du test",
+          "body": "L'extrudeur pousse le filament à un débit volumétrique qui augmente régulièrement. Tant que l'engrenage moleté agrippe correctement, la lecture de charge StallGuard reste stable ; dès qu'il commence à patiner, les lectures s'emballent. Le débit le plus élevé atteint avant cet emballement correspond à votre débit maximal soutenable. La montée s'arrête dès qu'un patinage est détecté, afin qu'aucun filament ne soit broyé au-delà du premier patinage."
+        },
+        "stallguard": {
+          "title": "Détection de patinage StallGuard",
+          "body": "StallGuard est une fonction des drivers TMC qui rend compte de la charge moteur. Ce test l'échantillonne de nombreuses fois par palier de débit et recherche une hausse soudaine de la dispersion (IQR) ou de la variation (CV) — la signature de l'engrenage qui perd son adhérence. Les seuils proviennent d'un profil propre à chaque driver. Remarque : sur un extrudeur TMC2209, cela utilise le chemin expérimental SG4, alors considérez la première exécution comme un calibrage."
+        },
+        "safety": {
+          "title": "Sécurité",
+          "body": "Il s'agit d'un test chaud et en mouvement qui provoque délibérément le patinage de l'extrudeur. Chargez du filament, assurez-vous que la buse est dégagée (au-dessus du plateau ou d'une zone de purge) et restez à proximité. L'exécution est refusée pendant une impression, et le chauffage est toujours coupé une fois le test terminé."
+        },
+        "slicer": {
+          "title": "Utiliser le résultat",
+          "body": "Reportez la valeur suggérée dans le « max volumetric speed » de votre slicer (par filament). La valeur prudente (80 % du maximum mesuré) constitue une limite quotidienne sûre ; la valeur équilibrée (90 %) pousse un peu plus loin. Des températures de hotend plus élevées augmentent généralement le débit atteignable."
+        },
+        "glossary": { "title": "Glossaire", "body": "" }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Débit volumétrique",
+          "def": "La quantité de plastique que le hotend fait fondre par seconde (mm³/s) — la véritable limite de vitesse pour l'impression rapide."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Un signal des drivers TMC qui rend compte de la charge mécanique du moteur, utilisé ici pour détecter le patinage de l'extrudeur."
+        },
+        "slip": {
+          "term": "Patinage",
+          "def": "Lorsque l'engrenage de l'extrudeur ne peut plus agripper le filament assez vite et saute — le plafond de débit."
+        },
+        "meltzone": {
+          "term": "Zone de fusion",
+          "def": "La longueur chauffée du hotend ; une zone de fusion plus longue (par ex. Volcano) soutient un débit plus élevé."
+        }
+      }
+    },
+    "params": {
+      "title": "Paramètres du test",
+      "temperature": "Température (°C)",
+      "filamentDiameter": "Ø du filament (mm)",
+      "hotend": "Hotend (optionnel)",
+      "hotendNone": "— aucun —",
+      "hotendHint": "Attendu ~{flow} mm³/s",
+      "startFlow": "Débit de départ (mm³/s)",
+      "endFlow": "Débit de fin (mm³/s)",
+      "stepFlow": "Pas (mm³/s)",
+      "samples": "Échantillons / palier",
+      "extrudePerStep": "Extrusion / palier (mm)"
+    },
+    "plan": {
+      "button": "Prévisualiser le plan",
+      "title": "Montée planifiée",
+      "stepCount": "{count} paliers",
+      "totalExtrude": "{mm} mm de filament",
+      "sgField": "Champ StallGuard : {field}",
+      "sgFieldUnknown": "Aucun champ StallGuard connu pour ce driver",
+      "flowHead": "Débit (mm³/s)",
+      "feedrateHead": "Vitesse d'avance (mm/min)",
+      "warning": "Le test en direct chauffe le hotend et extrude du filament, délibérément jusqu'au point de patinage. Prévisualisation uniquement — rien ne s'exécute encore."
+    },
+    "safety": {
+      "title": "Avant de lancer — liste de contrôle de sécurité",
+      "items": [
+        "Le filament est chargé et avance librement.",
+        "La buse est dégagée — au-dessus du plateau ou d'un bac de purge, pas dans le vide au-dessus des pièces.",
+        "J'accepte que cela broie/fasse patiner délibérément un peu de filament.",
+        "Je resterai auprès de l'imprimante pendant toute la durée du test."
+      ],
+      "ack": "J'ai effectué tout ce qui précède et l'imprimante est prête",
+      "note": "L'exécution est refusée pendant une impression ; le chauffage est coupé automatiquement à la fin."
+    },
+    "run": {
+      "button": "Lancer le test en direct",
+      "running": "En cours… (chauffe + extrusion)",
+      "confirmTitle": "Démarrer le test de débit maximal en direct ?",
+      "confirmBody": "Cela chauffe le hotend à {temp} °C et extrude jusqu'à {mm} mm de filament, en augmentant le débit jusqu'à ce que l'extrudeur patine.",
+      "confirm": "Lancer maintenant",
+      "cancel": "Annuler",
+      "busy": "Refusé : l'imprimante est occupée (impression ou pause). Réessayez lorsqu'elle est inactive.",
+      "error": "Le test a échoué.",
+      "noSg": "Aucun échantillon StallGuard n'a été lu — le résultat de patinage peut être peu fiable. Le champ SG en direct du driver doit probablement être ajusté pour ce modèle."
+    },
+    "result": {
+      "title": "Résultat",
+      "maxFlow": "Débit maximal soutenu",
+      "slipAt": "Patinage détecté à {flow} mm³/s",
+      "noSlip": "Aucun patinage jusqu'au débit le plus élevé testé",
+      "reason": "Détail",
+      "recommendTitle": "Valeurs de slicer suggérées (max volumetric speed)",
+      "conservative": "Prudent (80 %)",
+      "balanced": "Équilibré (90 %)",
+      "units": "mm³/s"
+    },
+    "states": {
+      "loadingHotends": "Chargement des hotends…"
+    }
+  }
+}

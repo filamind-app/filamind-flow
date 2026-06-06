@@ -8,6 +8,7 @@ import type common from '@/locales/en/common.json'
 import type configEditor from '@/locales/en/config-editor.json'
 import type firmware from '@/locales/en/firmware.json'
 import type inputShaping from '@/locales/en/input-shaping.json'
+import type maxFlow from '@/locales/en/max-flow.json'
 import type motorDrivers from '@/locales/en/motor-drivers.json'
 import type shell from '@/locales/en/shell.json'
 
@@ -16,7 +17,8 @@ type MessageSchema = typeof common &
   typeof firmware &
   typeof inputShaping &
   typeof motorDrivers &
-  typeof configEditor
+  typeof configEditor &
+  typeof maxFlow
 
 declare module 'vue-i18n' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type

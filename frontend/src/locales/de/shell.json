@@ -45,6 +45,10 @@
       "config-editor": {
         "title": "Config Editor",
         "description": "Durchsuche die Konfigurationsdateien deines Druckers, aufgeteilt in Sektionen mit Validierung."
+      },
+      "max-flow": {
+        "title": "Max-Flow",
+        "description": "Miss den höchsten volumetrischen Fluss, den dein Hotend dauerhaft halten kann (StallGuard)."
       }
     }
   }

@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
+import httpx
 import pytest
 
 from app.services import max_flow_service as mfs
@@ -104,3 +105,76 @@ def test_route_plan_bad_temp_400() -> None:
 
     resp = TestClient(create_app()).post("/api/maxflow/plan", json={"temperature": 50})
     assert resp.status_code == 400
+
+
+# ── live measurement loop (mocked client; no real motion) ─────────────────────
+class _RunClient:
+    """Stub MoonrakerClient for the run loop: scripted StallGuard samples + recorded g-code."""
+
+    def __init__(
+        self, sg_values: list[float], state: str = "standby", fail_on: str | None = None
+    ) -> None:
+        self._sg = iter(sg_values)
+        self._state = state
+        self._fail_on = fail_on
+        self.gcodes: list[str] = []
+
+    async def query_objects(self, objects: list[str]) -> dict[str, Any]:
+        if "print_stats" in objects:
+            return {"print_stats": {"state": self._state}}
+        section = objects[0]
+        try:
+            value = next(self._sg)
+        except StopIteration:
+            value = 0.0
+        return {section: {"sg_result": value}}
+
+    async def run_gcode(self, script: str) -> None:
+        self.gcodes.append(script)
+        if self._fail_on and self._fail_on in script:
+            raise httpx.HTTPError("simulated command failure")
+
+
+_RUN_PARAMS: dict[str, Any] = {
+    "temperature": 240,
+    "start_flow": 5,
+    "end_flow": 7,
+    "step_flow": 1,
+    "samples_per_step": 4,
+    "extrude_per_step": 4,
+}
+
+
+async def test_run_clean_no_slip() -> None:
+    client = _RunClient([100.0] * 12)  # 3 steps x 4 samples, perfectly steady
+    out = await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
+    assert out["slip_flow"] is None
+    assert out["max_flow_mm3s"] == 7  # reached the highest tested flow
+    assert out["sg_samples_seen"] is True
+    assert "M109 S240" in client.gcodes  # waited for temperature
+    assert "M83" in client.gcodes  # relative extrusion
+    assert "M104 S0" in client.gcodes  # heater off at the end
+
+
+async def test_run_detects_slip_and_stops() -> None:
+    # Steps at flow 5 and 6 are steady; flow 7 is wildly erratic → slip there.
+    sg = [100.0] * 8 + [10.0, 1000.0, 10.0, 1000.0]
+    client = _RunClient(sg)
+    out = await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
+    assert out["slip_flow"] == 7
+    assert out["max_flow_mm3s"] == 6  # last clean step before slip
+    assert "M104 S0" in client.gcodes
+
+
+async def test_run_refused_when_busy() -> None:
+    client = _RunClient([100.0] * 12, state="printing")
+    with pytest.raises(mfs.MaxFlowBusyError):
+        await mfs.run_max_flow(client, RampParams(temperature=240))  # type: ignore[arg-type]
+    assert client.gcodes == []  # nothing was sent to the printer
+
+
+async def test_run_turns_heater_off_on_error() -> None:
+    client = _RunClient([100.0] * 12, fail_on="G1 E")  # first extrude move fails
+    with pytest.raises(httpx.HTTPError):
+        await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
+    assert "M104 S0" in client.gcodes  # heater cut despite the failure
