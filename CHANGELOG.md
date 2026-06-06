@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.99.0] - 2026-06-06
+
+### Added
+
+- **Board Topology — detection backend (Track A).** `board_topology.py` + `GET /api/topology`:
+  reads the live `configfile` sections and builds a host → MCU topology — each MCU's connection
+  type (CAN bus / USB / UART), its identifier, and a best-effort chip / board guess from the
+  reference pattern tables. Read-only; returns `reachable=false` when Moonraker is down.
+  +9 backend tests. The topology-graph UI and a pin-conflict validator follow.
+
 ## [0.98.0] - 2026-06-06
 
 ### Added
