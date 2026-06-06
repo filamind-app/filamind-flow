@@ -84,7 +84,10 @@
           "term": "max_accel",
           "def": "整形器在不产生过多平滑的情况下能维持的加速度 — 一个建议的 SET_VELOCITY_LIMIT / printer.cfg 值。"
         }
-      }
+      },
+      "guide": "指南",
+      "guideTitle": "输入整形指南",
+      "close": "关闭"
     },
     "grade": {
       "clarity": {

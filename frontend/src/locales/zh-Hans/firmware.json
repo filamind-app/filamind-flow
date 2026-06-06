@@ -69,7 +69,11 @@
           "term": "配置文件",
           "def": "为一块板卡保存的固件配置 (Kconfig / menuconfig)，让你日后能重新构建完全相同的固件。"
         }
-      }
+      },
+      "guide": "指南",
+      "guideTitle": "固件管理器指南",
+      "close": "关闭",
+      "howToRead": "如何阅读此面板"
     },
     "widget": {
       "tabGuided": "🧭 引导",

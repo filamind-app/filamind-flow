@@ -84,7 +84,10 @@
           "term": "max_accel",
           "def": "التسارع الذي يمكن للمشكّل إدامته دون تنعيم مفرط — قيمة SET_VELOCITY_LIMIT / printer.cfg مقترحة."
         }
-      }
+      },
+      "guide": "دليل",
+      "guideTitle": "دليل تشكيل الإدخال",
+      "close": "إغلاق"
     },
     "grade": {
       "clarity": {

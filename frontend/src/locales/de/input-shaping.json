@@ -84,7 +84,10 @@
           "term": "max_accel",
           "def": "Die Beschleunigung, die der Shaper ohne zu viel Glättung aufrechterhalten kann — ein vorgeschlagener SET_VELOCITY_LIMIT- / printer.cfg-Wert."
         }
-      }
+      },
+      "guide": "Anleitung",
+      "guideTitle": "Input-Shaping-Anleitung",
+      "close": "Schließen"
     },
     "grade": {
       "clarity": {
