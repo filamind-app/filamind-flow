@@ -61,6 +61,10 @@
       "hardware-browser": {
         "title": "Hardware Browser",
         "description": "Durchsuche eine kuratierte 3D-Druck-Hardware-Referenz nach Name, Hersteller oder Spezifikation."
+      },
+      "config-templates": {
+        "title": "Config Templates",
+        "description": "Sofort einfügbare Klipper-Konfigurationsblöcke und Makros, nach Kategorie."
       }
     }
   }

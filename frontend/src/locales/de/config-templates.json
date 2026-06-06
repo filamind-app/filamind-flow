@@ -1,0 +1,62 @@
+{
+  "configTemplates": {
+    "intro": "Sofort einfügbare Klipper-Konfigurationsblöcke und Makros — Startsequenzen, Filamenthandhabung, Input Shaping, Bed Mesh und mehr. Kopiere einen und füge ihn in deine printer.cfg ein (der Config Editor ist ein guter Ort dafür).",
+    "help": {
+      "guide": "Hilfe",
+      "guideTitle": "Über Config Templates",
+      "close": "Schließen",
+      "howToRead": "Verwendung",
+      "steps": [
+        "Filtere nach Kategorie, um ein Makro oder einen Konfigurationsblock zu finden.",
+        "Lies die Beschreibung und welche Sektionen benötigt werden.",
+        "Kopiere die Vorlage, füge sie in deine Konfiguration ein und passe die Werte an."
+      ],
+      "topics": {
+        "what": {
+          "title": "Was das ist",
+          "body": "Eine kuratierte Sammlung gängiger Klipper-Bausteine: gcode_macros (PRINT_START, PAUSE/RESUME, Filament laden/entladen, M600) und Konfigurationssektionen ([input_shaper], [bed_mesh], [firmware_retraction], …). Sie sind Ausgangspunkte — lies jeden durch und stimme ihn auf deine Maschine ab."
+        },
+        "insert": {
+          "title": "Eine Vorlage einfügen",
+          "body": "Kopiere eine Vorlage und füge sie in deine printer.cfg ein — die Raw-Ansicht des Config Editors ist ein praktischer Ort dafür. Nach dem Speichern wird sie durch einen Firmware-Neustart wirksam. Überprüfe immer zuerst die Werte; die Standardwerte hier sind sinnvoll, aber nicht auf deinen Drucker abgestimmt."
+        },
+        "sections": {
+          "title": "Benötigte Sektionen",
+          "body": "Jede Vorlage listet die Konfigurationssektionen auf, die sie definiert oder von denen sie abhängt. Wenn eine Sektion bereits in deiner Konfiguration existiert, füge die Schlüssel zusammen, anstatt ein Duplikat einzufügen (eine doppelte Sektion wird beim Start abgelehnt)."
+        },
+        "glossary": { "title": "Glossar", "body": "" }
+      },
+      "glossary": {
+        "template": {
+          "term": "Vorlage",
+          "def": "Ein sofort einfügbares Snippet aus Klipper-Konfiguration oder Makro-G-code, das du in deine printer.cfg kopierst."
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "Ein benannter Befehl, den du in der Konfiguration definierst (z. B. PRINT_START) und der eine Sequenz von G-code ausführt."
+        },
+        "section": {
+          "term": "Sektion",
+          "def": "Ein [in eckigen Klammern] stehender Konfigurationsblock, z. B. [bed_mesh] — die Einheit, in der die Klipper-Konfiguration gruppiert wird."
+        }
+      }
+    },
+    "category": {
+      "label": "Kategorie",
+      "all": "Alle Kategorien"
+    },
+    "template": {
+      "copy": "Kopieren",
+      "copied": "Kopiert!",
+      "requires": "Sektionen: {sections}",
+      "requiresNone": "—"
+    },
+    "count": "{n} Vorlagen",
+    "states": {
+      "loading": "Vorlagen werden geladen…",
+      "error": "Die Vorlagen konnten nicht geladen werden.",
+      "empty": "Keine Vorlagen in dieser Kategorie.",
+      "retry": "Erneut versuchen"
+    }
+  }
+}

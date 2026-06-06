@@ -1,0 +1,62 @@
+{
+  "configTemplates": {
+    "intro": "可直接粘贴的 Klipper 配置块和宏 —— 包括启动序列、耗材处理、输入整形、热床网格等。复制一个并放入你的 printer.cfg（配置编辑器是粘贴它的好地方）。",
+    "help": {
+      "guide": "帮助",
+      "guideTitle": "关于配置模板",
+      "close": "关闭",
+      "howToRead": "如何使用",
+      "steps": [
+        "按类别筛选，找到所需的宏或配置块。",
+        "阅读描述以及它需要哪些节。",
+        "复制模板，将其粘贴到你的配置中，然后调整数值。"
+      ],
+      "topics": {
+        "what": {
+          "title": "这些是什么",
+          "body": "一组精选的常用 Klipper 构建模块：gcode_macro（PRINT_START、PAUSE/RESUME、耗材进料/退料、M600）以及配置节（[input_shaper]、[bed_mesh]、[firmware_retraction] 等）。它们只是起点 —— 请逐一阅读并针对你的机器进行调校。"
+        },
+        "insert": {
+          "title": "插入模板",
+          "body": "复制一个模板，然后将其粘贴到你的 printer.cfg 中 —— 配置编辑器的原始视图是个方便的位置。保存后，固件重启即可应用它。请务必先检查数值；此处的默认值是合理的，但并未针对你的打印机进行调校。"
+        },
+        "sections": {
+          "title": "所需的节",
+          "body": "每个模板都会列出它所定义或依赖的配置节。如果某个节在你的配置中已经存在，请合并其键值，而不要粘贴一份重复的（重复的节会在启动时被拒绝）。"
+        },
+        "glossary": { "title": "术语表", "body": "" }
+      },
+      "glossary": {
+        "template": {
+          "term": "模板",
+          "def": "一段可直接粘贴的 Klipper 配置或宏 G-code 片段，复制后放入 printer.cfg。"
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "你在配置中定义的一个命名命令（例如 PRINT_START），它会运行一系列 G-code。"
+        },
+        "section": {
+          "term": "节",
+          "def": "一个用[方括号]括起来的配置块，例如 [bed_mesh] —— Klipper 配置据此分组的单元。"
+        }
+      }
+    },
+    "category": {
+      "label": "类别",
+      "all": "所有类别"
+    },
+    "template": {
+      "copy": "复制",
+      "copied": "已复制！",
+      "requires": "所需的节：{sections}",
+      "requiresNone": "—"
+    },
+    "count": "{n} 个模板",
+    "states": {
+      "loading": "正在加载模板…",
+      "error": "无法加载模板。",
+      "empty": "此类别下没有模板。",
+      "retry": "重试"
+    }
+  }
+}

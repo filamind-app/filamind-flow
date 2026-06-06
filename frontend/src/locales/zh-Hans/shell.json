@@ -61,6 +61,10 @@
       "hardware-browser": {
         "title": "硬件浏览器",
         "description": "按名称、制造商或规格搜索精选的 3D 打印硬件参考库。"
+      },
+      "config-templates": {
+        "title": "配置模板",
+        "description": "按类别提供可直接粘贴的 Klipper 配置块和宏。"
       }
     }
   }

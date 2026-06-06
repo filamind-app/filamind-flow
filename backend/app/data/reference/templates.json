@@ -1,0 +1,104 @@
+{
+  "_meta": {
+    "dataset": "FilaMind reference data",
+    "description": "Curated, insertable Klipper config / macro templates for the Config Templates library."
+  },
+  "templates": [
+    {
+      "id": "print_start",
+      "name": "PRINT_START",
+      "category": "Macros",
+      "description": "A start sequence the slicer calls at print start: home, optional bed mesh, heat soak, and a purge line. Pass bed/extruder temps from your slicer's start G-code as PRINT_START EXTRUDER=... BED=...",
+      "required_sections": ["gcode_macro PRINT_START"],
+      "body": "[gcode_macro PRINT_START]\ngcode:\n    {% set bed = params.BED|default(60)|float %}\n    {% set extruder = params.EXTRUDER|default(200)|float %}\n    M140 S{bed}\n    M104 S150            ; warm nozzle without oozing\n    G28                  ; home all axes\n    M190 S{bed}          ; wait for bed\n    BED_MESH_CALIBRATE   ; comment out if you have no probe\n    M109 S{extruder}     ; wait for nozzle\n    G90\n    G1 Z5 F3000\n    ; purge line\n    G1 X5 Y5 Z0.3 F6000\n    G92 E0\n    G1 X120 Y5 E15 F1200\n    G92 E0"
+    },
+    {
+      "id": "print_end",
+      "name": "PRINT_END",
+      "category": "Macros",
+      "description": "An end sequence: retract, lift, present the print, and turn off heaters and motors.",
+      "required_sections": ["gcode_macro PRINT_END"],
+      "body": "[gcode_macro PRINT_END]\ngcode:\n    M400                 ; finish moves\n    G91\n    G1 E-2 F2700         ; retract\n    G1 Z10 F3000         ; lift\n    G90\n    G1 X5 Y200 F6000     ; present\n    M104 S0\n    M140 S0\n    M106 S0\n    M84                  ; motors off"
+    },
+    {
+      "id": "pause_resume",
+      "name": "PAUSE / RESUME / CANCEL",
+      "category": "Macros",
+      "description": "Pause/resume that parks the toolhead and restores position, plus a cancel that runs PRINT_END. Requires [pause_resume] and [respond] enabled.",
+      "required_sections": ["pause_resume", "gcode_macro PAUSE", "gcode_macro RESUME", "gcode_macro CANCEL_PRINT"],
+      "body": "[gcode_macro PAUSE]\nrename_existing: BASE_PAUSE\ngcode:\n    {% set z = params.Z|default(10)|float %}\n    SAVE_GCODE_STATE NAME=pause_state\n    BASE_PAUSE\n    G91\n    G1 E-2 F2700\n    G1 Z{z} F900\n    G90\n    G1 X5 Y5 F6000\n\n[gcode_macro RESUME]\nrename_existing: BASE_RESUME\ngcode:\n    G91\n    G1 E2 F2700\n    G90\n    RESTORE_GCODE_STATE NAME=pause_state MOVE=1\n    BASE_RESUME\n\n[gcode_macro CANCEL_PRINT]\nrename_existing: BASE_CANCEL_PRINT\ngcode:\n    PRINT_END\n    BASE_CANCEL_PRINT"
+    },
+    {
+      "id": "load_unload",
+      "name": "LOAD / UNLOAD_FILAMENT",
+      "category": "Macros",
+      "description": "Heat-gated load and unload helpers. Adjust the lengths for your extruder-to-nozzle path.",
+      "required_sections": ["gcode_macro LOAD_FILAMENT", "gcode_macro UNLOAD_FILAMENT"],
+      "body": "[gcode_macro LOAD_FILAMENT]\ngcode:\n    {% set temp = params.TEMP|default(220)|float %}\n    M109 S{temp}\n    M83\n    G1 E50 F300          ; feed to nozzle\n    G1 E25 F150          ; slow purge\n    M82\n\n[gcode_macro UNLOAD_FILAMENT]\ngcode:\n    {% set temp = params.TEMP|default(220)|float %}\n    M109 S{temp}\n    M83\n    G1 E5 F300           ; tip forming\n    G1 E-50 F1800        ; retract out\n    M82"
+    },
+    {
+      "id": "m600",
+      "name": "M600 (filament change)",
+      "category": "Macros",
+      "description": "Mid-print filament change: pause, then use UNLOAD/LOAD and RESUME from the console.",
+      "required_sections": ["gcode_macro M600"],
+      "body": "[gcode_macro M600]\ngcode:\n    {% set x = params.X|default(50)|float %}\n    {% set y = params.Y|default(5)|float %}\n    PAUSE\n    G91\n    G1 E-2 F2700\n    G90\n    G1 X{x} Y{y} F6000\n    UNLOAD_FILAMENT"
+    },
+    {
+      "id": "input_shaper",
+      "name": "[input_shaper]",
+      "category": "Config blocks",
+      "description": "Input shaping section. Fill in shaper_type/shaper_freq from a resonance test (see the Input Shaping widget), or leave commented until measured.",
+      "required_sections": ["input_shaper"],
+      "body": "[input_shaper]\n#shaper_type_x: mzv\n#shaper_freq_x: 50\n#shaper_type_y: mzv\n#shaper_freq_y: 40\ndamping_ratio_x: 0.1\ndamping_ratio_y: 0.1"
+    },
+    {
+      "id": "firmware_retraction",
+      "name": "[firmware_retraction]",
+      "category": "Config blocks",
+      "description": "Firmware retraction so G10/G11 (and slicer firmware retraction) work. Tune the length for direct vs bowden.",
+      "required_sections": ["firmware_retraction"],
+      "body": "[firmware_retraction]\nretract_length: 0.8\nretract_speed: 35\nunretract_extra_length: 0\nunretract_speed: 35"
+    },
+    {
+      "id": "exclude_object",
+      "name": "[exclude_object]",
+      "category": "Config blocks",
+      "description": "Enables object exclusion so a failed object can be skipped mid-print (slicer must emit object labels).",
+      "required_sections": ["exclude_object"],
+      "body": "[exclude_object]"
+    },
+    {
+      "id": "gcode_arcs",
+      "name": "[gcode_arcs]",
+      "category": "Config blocks",
+      "description": "Enables G2/G3 arc moves. Lower resolution = smoother arcs (more segments).",
+      "required_sections": ["gcode_arcs"],
+      "body": "[gcode_arcs]\nresolution: 0.1"
+    },
+    {
+      "id": "bed_mesh",
+      "name": "[bed_mesh] (basic)",
+      "category": "Config blocks",
+      "description": "A starting bed mesh. Set mesh_min/mesh_max to your probeable area (account for probe offsets) and probe_count to taste.",
+      "required_sections": ["bed_mesh"],
+      "body": "[bed_mesh]\nspeed: 120\nhorizontal_move_z: 5\nmesh_min: 20, 20\nmesh_max: 200, 200\nprobe_count: 5, 5\nalgorithm: bicubic\nfade_start: 1\nfade_end: 10"
+    },
+    {
+      "id": "save_variables",
+      "name": "[save_variables]",
+      "category": "Config blocks",
+      "description": "Persists variables across restarts (used by many macros). Points at a file Klipper can write.",
+      "required_sections": ["save_variables"],
+      "body": "[save_variables]\nfilename: ~/printer_data/config/saved_variables.cfg"
+    },
+    {
+      "id": "idle_timeout",
+      "name": "[idle_timeout]",
+      "category": "Config blocks",
+      "description": "Turns off heaters/motors after an idle period. Raise the timeout if long heat-soaks trip it.",
+      "required_sections": ["idle_timeout"],
+      "body": "[idle_timeout]\ntimeout: 600"
+    }
+  ]
+}

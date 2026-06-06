@@ -61,6 +61,10 @@
       "hardware-browser": {
         "title": "Explorador de hardware",
         "description": "Busca una referencia curada de hardware de impresión 3D por nombre, fabricante o especificación."
+      },
+      "config-templates": {
+        "title": "Plantillas de configuración",
+        "description": "Bloques de configuración y macros de Klipper listos para pegar, por categoría."
       }
     }
   }
