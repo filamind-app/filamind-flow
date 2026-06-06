@@ -79,6 +79,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/hardware`            | Search the curated hardware DB (`?q=`/`category`/`manufacturer`, paginated) — 3,600+ components. |
 | GET    | `/api/hardware/categories` | The hardware categories + total component count. |
 | GET    | `/api/hardware/manufacturers` | The manufacturer directory (name / country / website / specialty). |
+| GET    | `/api/hardware/boards`     | Canonical control-board entities (summaries; `?q`/`manufacturer`/`board_class`, paginated) — each board's connectors aggregated into one `ports[]`. |
+| GET    | `/api/hardware/boards/{board_id}` | One board's full record (identity + specs + aggregated `ports[]` + detection `matchPatterns`). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

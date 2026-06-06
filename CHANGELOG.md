@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.110.0] - 2026-06-06
+
+### Added
+
+- **Canonical board entities — connectors aggregated into `ports[]` (Phase 2-4 of the DB overhaul).**
+  Fixes the structural "duplication" where each control board was repeated once per pin/connector
+  (963 flat rows for ~116 boards). The board data is now a proper `boards[]` entity — **263 boards**
+  (116 with aggregated ports, 147 spec-only), all **963 connector rows aggregated losslessly** into
+  per-board `ports[]` (a `count`-sum proof guarantees no row is dropped). Each port carries a
+  controlled `category` (motor / heater-bed / heater-hotend / thermistor / fan / power / endstop /
+  probe / can / usb / …), connector style, pins, pitch and MPN (real MPNs kept, "not published"
+  placeholders → `null`). Each board has a stable `board_id` slug, inferred manufacturer, a join to
+  its spec row (`MCU`/`Arch`/`Drivers`/…; 87 joined), and detection `matchPatterns` folded in.
+  - Purely **additive** — the flat `items[]` are untouched (the Hardware Browser keeps working);
+    the new entity is exposed at **`GET /api/hardware/boards`** (summaries) and
+    **`GET /api/hardware/boards/{board_id}`** (full record with `ports[]`).
+  - This is the foundation the next phases build on (enrichment, media, Board-Topology link, the
+    sectioned Browser).
+
 ## [0.109.0] - 2026-06-06
 
 ### Fixed
