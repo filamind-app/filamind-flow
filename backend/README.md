@@ -68,6 +68,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/reference/hotends`   | Hotend melt-zone / expected max-flow / test presets. |
 | GET    | `/api/reference/boards`    | Board + MCU identification patterns. |
 | GET    | `/api/reference/macros`    | Built-in Klipper calibration macro definitions. |
+| GET    | `/api/config/files`        | List the editable config files (`.cfg` / `.conf`) under Moonraker's `config` root (Config Editor). |
+| GET    | `/api/config/file`         | Parse one config file (`?filename=`) into a structured view: sections → params + validation issues (read-only). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).
