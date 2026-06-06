@@ -18,6 +18,7 @@ export default {
         ink: 'rgb(var(--c-ink) / <alpha-value>)',
         paper: 'rgb(var(--c-paper) / <alpha-value>)',
         surface: 'rgb(var(--c-surface) / <alpha-value>)',
+        sidebar: 'rgb(var(--c-sidebar) / <alpha-value>)',
         brand: {
           yellow: 'rgb(var(--c-brand-yellow) / <alpha-value>)',
           pink: 'rgb(var(--c-brand-pink) / <alpha-value>)',
