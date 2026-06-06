@@ -8,6 +8,7 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { fetchMotorsSyncStatus, runMotorsSync } from './api'
+import { applyResultText } from './format'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -32,7 +33,7 @@ async function run(calibrate: boolean): Promise<void> {
   try {
     const res = await runMotorsSync(calibrate)
     ok.value = res.ok
-    msg.value = res.message
+    msg.value = applyResultText(res)
   } catch (e) {
     ok.value = false
     msg.value = e instanceof Error ? e.message : String(e)

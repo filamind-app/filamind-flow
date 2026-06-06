@@ -289,6 +289,26 @@
       "set": "fijar",
       "readOnly": "registros de solo lectura",
       "toffHint": "Si fijas toff en 1, mantén también tbl ≥ 1 (el tiempo de blanqueo de 16 ciclos lo necesita)."
+    },
+    "apply": {
+      "nothingToApply": "Nada que aplicar.",
+      "busyApply": "Se rechaza la escritura en un driver mientras la impresora está ocupada (imprimiendo o en pausa).",
+      "applied": "Se aplicaron {n} cambio(s) a {stepper}.",
+      "busyReinit": "Se rechaza la reinicialización mientras la impresora está ocupada (imprimiendo o en pausa).",
+      "reinitialized": "Se reinicializó {stepper} y se restauró su corriente configurada.",
+      "autotuneNotInstalled": "klipper_tmc_autotune no está instalado para este stepper — usa la recomendación o copia a la configuración en su lugar.",
+      "busyAutotune": "Se rechaza el autoajuste mientras la impresora está ocupada (imprimiendo o en pausa).",
+      "autotuneRan": "Se ejecutó AUTOTUNE_TMC en {stepper}.",
+      "busyWrite": "Se rechaza la escritura mientras la impresora está ocupada (imprimiendo o en pausa).",
+      "stallguardSet": "Se estableció {field} = {num} en {stepper}.",
+      "fieldSet": "Se estableció {field} = {num} en {stepper} (solo en vivo — INIT_TMC o un reinicio restaura el valor configurado).",
+      "coolstepEnabled": "CoolStep activado en {stepper} (solo en vivo — INIT_TMC o un reinicio restaura los valores configurados).",
+      "coolstepDisabled": "CoolStep desactivado en {stepper} (solo en vivo — INIT_TMC o un reinicio restaura los valores configurados).",
+      "busyHome": "Se rechaza el homing mientras la impresora está ocupada (imprimiendo o en pausa).",
+      "homed": "Homing de {ax} completado.",
+      "motorsyncNotInstalled": "El complemento motors_sync no está instalado — alinea la fase de micropasos de varios motores en un mismo eje (Z doble/cuádruple, X doble) mediante un acelerómetro.",
+      "busySync": "Se rechaza la sincronización de motores mientras la impresora está ocupada (imprimiendo o en pausa).",
+      "syncRan": "Se ejecutó {cmd}."
     }
   }
 }

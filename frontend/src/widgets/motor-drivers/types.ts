@@ -140,6 +140,10 @@ export interface ApplyResponse {
   ok: boolean
   applied: string[]
   message: string
+  /** i18n code for `message` (rendered via `applyResultText`); null for passthrough errors. */
+  code?: string | null
+  /** Interpolation args for the coded message (stepper, n, field, num, ax, cmd…). */
+  params?: Record<string, string | number>
 }
 
 /** Whether the motors_sync add-on is installed (GET /api/drivers/motors-sync). */

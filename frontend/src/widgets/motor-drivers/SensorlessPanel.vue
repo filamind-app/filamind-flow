@@ -9,7 +9,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { homeAxis, setStallguard } from './api'
-import { stallguardRange } from './format'
+import { applyResultText, stallguardRange } from './format'
 import type { ApplyResponse, TmcDriver } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -34,7 +34,7 @@ async function run(action: () => Promise<ApplyResponse>): Promise<void> {
   try {
     const res = await action()
     ok.value = res.ok
-    msg.value = res.message
+    msg.value = applyResultText(res)
     if (res.ok) emit('changed')
   } catch (e) {
     ok.value = false

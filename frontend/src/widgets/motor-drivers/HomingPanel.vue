@@ -11,7 +11,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { fetchEndstops, homeAxis } from './api'
-import { endstopStateFor, homingMethodLabel } from './format'
+import { applyResultText, endstopStateFor, homingMethodLabel } from './format'
 import SensorlessPanel from './SensorlessPanel.vue'
 import type { ApplyResponse, TmcDriver } from './types'
 
@@ -58,7 +58,7 @@ async function testHome(): Promise<void> {
   try {
     const res: ApplyResponse = await homeAxis(axis)
     homeOk.value = res.ok
-    homeMsg.value = res.message
+    homeMsg.value = applyResultText(res)
     if (res.ok) emit('changed')
   } catch (e) {
     homeOk.value = false

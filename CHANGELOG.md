@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.86.0] - 2026-06-06
+
+### Changed
+
+- **i18n Phase 4 complete (backend message codes) — the i18n epic is done.** The Motor Drivers write
+  path (`drivers_apply.py`) now tags every user-facing result with an i18n `code` + `params` alongside
+  its English `message`: the `ApplyResponse` schema gained `code: str | None` and `params: dict`, and
+  each structured result (nothing-to-apply, busy-refusals, applied / re-initialized / autotuned /
+  field-set / CoolStep / homed / motors-synced) carries a stable `motorDrivers.apply.*` code with its
+  interpolation args. The frontend renders these through a new `applyResultText(res)` helper
+  (`t('motorDrivers.apply.' + res.code, res.params)`, falling back to `res.message`), wired into the
+  five panels that surface a write result (Recommend, RegisterEditor, Sensorless, Homing, MotorSync) —
+  so apply/revert/home/sync toasts now follow the selected language. **Passthrough errors stay English
+  by design** (Moonraker failures, `field_policy` / value-validation text carry no `code` — they are
+  technical upstream strings). Added the 18 `motorDrivers.apply.*` keys (English source + the six
+  translations) so `i18n:keydiff` parity holds (863 keys/locale). The English values are byte-identical
+  to the backend `message`, so the fallback is exact. **No g-code or behavior changed.**
+
 ## [0.85.0] - 2026-06-06
 
 ### Changed

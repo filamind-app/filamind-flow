@@ -289,6 +289,26 @@
       "set": "set",
       "readOnly": "read-only registers",
       "toffHint": "If you set toff to 1, also keep tbl ≥ 1 (the 16-cycle blank time needs it)."
+    },
+    "apply": {
+      "nothingToApply": "Nothing to apply.",
+      "busyApply": "Refusing to write to a driver while the printer is busy (printing or paused).",
+      "applied": "Applied {n} change(s) to {stepper}.",
+      "busyReinit": "Refusing to re-init while the printer is busy (printing or paused).",
+      "reinitialized": "Re-initialized {stepper} and restored its configured current.",
+      "autotuneNotInstalled": "klipper_tmc_autotune is not installed for this stepper — use the recommendation or copy-to-config instead.",
+      "busyAutotune": "Refusing to autotune while the printer is busy (printing or paused).",
+      "autotuneRan": "Ran AUTOTUNE_TMC on {stepper}.",
+      "busyWrite": "Refusing to write while the printer is busy (printing or paused).",
+      "stallguardSet": "Set {field} = {num} on {stepper}.",
+      "fieldSet": "Set {field} = {num} on {stepper} (live only — INIT_TMC or a restart restores the configured value).",
+      "coolstepEnabled": "CoolStep enabled on {stepper} (live only — INIT_TMC or a restart restores the configured values).",
+      "coolstepDisabled": "CoolStep disabled on {stepper} (live only — INIT_TMC or a restart restores the configured values).",
+      "busyHome": "Refusing to home while the printer is busy (printing or paused).",
+      "homed": "Homed {ax}.",
+      "motorsyncNotInstalled": "The motors_sync add-on isn't installed — it aligns the microstep phase of multiple motors on one axis (dual/quad-Z, dual-X) using an accelerometer.",
+      "busySync": "Refusing to sync motors while the printer is busy (printing or paused).",
+      "syncRan": "Ran {cmd}."
     }
   }
 }
