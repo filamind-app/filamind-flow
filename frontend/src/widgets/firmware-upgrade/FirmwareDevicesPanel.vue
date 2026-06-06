@@ -188,7 +188,7 @@ onUnmounted(() => {
         {{ t('firmware.devices.back') }}
       </button>
     </div>
-    <p class="font-mono text-[10px] opacity-60">
+    <p class="font-mono text-[11px] opacity-60">
       {{ t('firmware.devices.intro') }}
     </p>
 
@@ -209,19 +209,19 @@ onUnmounted(() => {
             @change="persist(device)"
           />
           <span
-            class="nb-badge shrink-0 text-[9px]"
+            class="nb-badge shrink-0 text-[10px]"
             :class="modeClass(liveMode[device.id] ?? 'offline')"
           >
             {{ liveMode[device.id] ?? 'offline' }}
           </span>
           <button
-            class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+            class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[11px] text-surface"
             @click="remove(device)"
           >
             {{ t('firmware.devices.remove') }}
           </button>
         </div>
-        <div class="font-mono text-[9px] opacity-50">{{ device.id }}</div>
+        <div class="font-mono text-[10px] opacity-50">{{ device.id }}</div>
 
         <div class="flex flex-wrap items-center gap-1.5">
           <select v-model="device.profile" :class="inputClass" @change="persist(device)">
@@ -247,13 +247,13 @@ onUnmounted(() => {
           />
           <label
             v-if="device.method === 'serial' || device.method === 'can'"
-            class="flex items-center gap-1 text-[10px]"
+            class="flex items-center gap-1 text-[11px]"
             :title="t('firmware.devices.katapultHint')"
           >
             <input v-model="device.is_katapult" type="checkbox" @change="persist(device)" />
             {{ t('firmware.devices.katapult') }}
           </label>
-          <label class="flex items-center gap-1 text-[10px]">
+          <label class="flex items-center gap-1 text-[11px]">
             <input v-model="device.exclude_from_batch" type="checkbox" @change="persist(device)" />
             {{ t('firmware.devices.exclude') }}
           </label>
@@ -270,14 +270,14 @@ onUnmounted(() => {
              when it drops into Katapult / DFU; show each as a connected sub-card. -->
         <div
           v-if="device.serial_id"
-          class="ms-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
+          class="ms-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[11px]"
         >
-          <span class="nb-badge shrink-0 bg-brand-cyan text-[9px]">{{
+          <span class="nb-badge shrink-0 bg-brand-cyan text-[10px]">{{
             t('firmware.devices.serialIdentity')
           }}</span>
           <span class="min-w-0 flex-1 truncate font-mono opacity-60">{{ device.serial_id }}</span>
           <button
-            class="nb-btn shrink-0 px-1.5 py-0 text-[9px]"
+            class="nb-btn shrink-0 px-1.5 py-0 text-[10px]"
             @click="detach(device, 'serial_id')"
           >
             {{ t('firmware.devices.unlink') }}
@@ -285,13 +285,13 @@ onUnmounted(() => {
         </div>
         <div
           v-if="device.dfu_id"
-          class="ms-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[10px]"
+          class="ms-3 flex items-center gap-2 rounded-brutal border-2 border-ink bg-surface px-2 py-1 text-[11px]"
         >
-          <span class="nb-badge shrink-0 bg-brand-yellow text-[9px]">{{
+          <span class="nb-badge shrink-0 bg-brand-yellow text-[10px]">{{
             t('firmware.devices.dfuIdentity')
           }}</span>
           <span class="min-w-0 flex-1 truncate font-mono opacity-60">{{ device.dfu_id }}</span>
-          <button class="nb-btn shrink-0 px-1.5 py-0 text-[9px]" @click="detach(device, 'dfu_id')">
+          <button class="nb-btn shrink-0 px-1.5 py-0 text-[10px]" @click="detach(device, 'dfu_id')">
             {{ t('firmware.devices.unlink') }}
           </button>
         </div>
@@ -314,23 +314,23 @@ onUnmounted(() => {
             <span class="min-w-0 flex-1 truncate font-bold">{{ board.name }}</span>
             <span
               v-if="boardBadge(board)"
-              class="nb-badge shrink-0 text-[9px]"
+              class="nb-badge shrink-0 text-[10px]"
               :class="modeClass(board.mode)"
             >
               {{ boardBadge(board) }}
             </span>
-            <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{
+            <span class="shrink-0 font-mono text-[10px] uppercase opacity-50">{{
               board.connection
             }}</span>
             <button
-              class="nb-btn shrink-0 bg-brand-lime px-2 py-0.5 text-[10px]"
+              class="nb-btn shrink-0 bg-brand-lime px-2 py-0.5 text-[11px]"
               @click="addBoard(board)"
             >
               {{ t('firmware.devices.add') }}
             </button>
             <button
               v-if="devices.length"
-              class="nb-btn shrink-0 px-2 py-0.5 text-[10px]"
+              class="nb-btn shrink-0 px-2 py-0.5 text-[11px]"
               :title="t('firmware.devices.linkHint')"
               @click="attachFor = attachFor === board.id ? null : board.id"
             >
@@ -338,11 +338,11 @@ onUnmounted(() => {
             </button>
           </div>
           <div v-if="attachFor === board.id" class="mt-1 flex flex-wrap items-center gap-1">
-            <span class="text-[10px] opacity-60">{{ t('firmware.devices.linkTo') }}</span>
+            <span class="text-[11px] opacity-60">{{ t('firmware.devices.linkTo') }}</span>
             <button
               v-for="device in devices"
               :key="device.id"
-              class="nb-btn px-2 py-0.5 text-[10px]"
+              class="nb-btn px-2 py-0.5 text-[11px]"
               @click="attachToDevice(board, device.id)"
             >
               {{ t('firmware.devices.linkTarget', { name: device.name }) }}
@@ -358,16 +358,16 @@ onUnmounted(() => {
             t('firmware.devices.backup')
           }}</span>
           <div class="flex gap-1">
-            <button class="nb-btn px-2 py-0.5 text-[10px]" @click="doExport">
+            <button class="nb-btn px-2 py-0.5 text-[11px]" @click="doExport">
               {{ t('firmware.devices.export') }}
             </button>
-            <label class="nb-btn cursor-pointer px-2 py-0.5 text-[10px]">
+            <label class="nb-btn cursor-pointer px-2 py-0.5 text-[11px]">
               {{ t('firmware.devices.import') }}
               <input type="file" accept=".zip" class="hidden" @change="onImportFile" />
             </label>
           </div>
         </div>
-        <p v-if="backupMsg" class="font-mono text-[10px] opacity-70">{{ backupMsg }}</p>
+        <p v-if="backupMsg" class="font-mono text-[11px] opacity-70">{{ backupMsg }}</p>
       </div>
     </template>
   </div>

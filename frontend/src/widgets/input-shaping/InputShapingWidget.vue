@@ -267,14 +267,14 @@ async function saveConfig(): Promise<void> {
       class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink bg-brand-lime px-2 py-1 text-[11px]"
     >
       <span class="font-bold uppercase tracking-wide">{{ t('inputShaping.widget.cfgReady') }}</span>
-      <span v-for="k in captured" :key="k" class="nb-badge bg-surface text-[9px]">{{
+      <span v-for="k in captured" :key="k" class="nb-badge bg-surface text-[10px]">{{
         k === 'generic' ? 'X+Y' : k.toUpperCase()
       }}</span>
       <span class="flex-1"></span>
-      <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyConfig">
+      <button class="nb-btn px-2 py-0.5 text-[11px]" @click="copyConfig">
         {{ copied ? t('inputShaping.widget.copied') : t('inputShaping.widget.copy') }}
       </button>
-      <button class="nb-btn px-2 py-0.5 text-[10px]" @click="saveConfig">
+      <button class="nb-btn px-2 py-0.5 text-[11px]" @click="saveConfig">
         {{ savedToArchive ? t('inputShaping.widget.saved') : t('inputShaping.widget.archive') }}
       </button>
     </div>
@@ -289,17 +289,17 @@ async function saveConfig(): Promise<void> {
     <div v-show="mode === 'analyze'" class="space-y-3">
       <CsvSourceChooser ref="chooserRef" :busy="busy" @analyze="onSourceAnalyze" />
       <div class="flex flex-wrap items-center gap-2">
-        <button class="nb-btn px-2 py-1 text-[10px]" @click="showAdvanced = !showAdvanced">
+        <button class="nb-btn px-2 py-1 text-[11px]" @click="showAdvanced = !showAdvanced">
           {{ t('inputShaping.widget.advanced') }}
         </button>
-        <button class="nb-btn px-2 py-1 text-[10px]" @click="showCompare = !showCompare">
+        <button class="nb-btn px-2 py-1 text-[11px]" @click="showCompare = !showCompare">
           {{ t('inputShaping.widget.compareCsvs') }}
         </button>
       </div>
 
       <div
         v-if="showAdvanced"
-        class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1.5 font-mono text-[10px]"
+        class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-brutal border-2 border-ink bg-paper px-2 py-1.5 font-mono text-[11px]"
       >
         <label class="flex items-center gap-1"
           >max_freq <input v-model="params.maxFreq" :class="numClass"
@@ -331,12 +331,12 @@ async function saveConfig(): Promise<void> {
         <span class="text-xs font-bold uppercase tracking-wide">{{
           t('inputShaping.widget.auditTitle')
         }}</span>
-        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="loadAudit">
+        <button class="nb-btn px-2 py-0.5 text-[11px]" @click="loadAudit">
           {{ t('inputShaping.widget.refresh') }}
         </button>
       </div>
       <HelpNote topic="history" />
-      <p v-if="!auditView.length" class="font-mono text-[10px] opacity-60">
+      <p v-if="!auditView.length" class="font-mono text-[11px] opacity-60">
         {{ t('inputShaping.widget.auditEmpty') }}
       </p>
       <div
@@ -345,11 +345,11 @@ async function saveConfig(): Promise<void> {
         class="space-y-1 rounded-brutal border-2 border-ink p-2"
       >
         <div class="flex flex-wrap items-center gap-1.5">
-          <span class="nb-badge bg-brand-yellow text-[9px]">{{ r.kind }}</span>
-          <span v-if="r.axis" class="nb-badge bg-brand-cyan text-[9px]">{{
+          <span class="nb-badge bg-brand-yellow text-[10px]">{{ r.kind }}</span>
+          <span v-if="r.axis" class="nb-badge bg-brand-cyan text-[10px]">{{
             r.axis.toUpperCase()
           }}</span>
-          <span v-if="r.grade" class="nb-badge text-[9px]" :class="gradeBg(r.grade.letter)">{{
+          <span v-if="r.grade" class="nb-badge text-[10px]" :class="gradeBg(r.grade.letter)">{{
             r.grade.letter
           }}</span>
           <span
@@ -363,10 +363,10 @@ async function saveConfig(): Promise<void> {
             "
             >{{ trendArrow(r.trend) }}</span
           >
-          <span class="font-mono text-[9px] opacity-50">{{ fmtDate(r.at) }}</span>
+          <span class="font-mono text-[10px] opacity-50">{{ fmtDate(r.at) }}</span>
           <span class="flex-1"></span>
           <span
-            class="nb-badge text-[9px]"
+            class="nb-badge text-[10px]"
             :class="r.source === 'archive' ? 'bg-brand-lime' : 'bg-surface'"
             >{{
               r.source === 'archive'
@@ -375,8 +375,11 @@ async function saveConfig(): Promise<void> {
             }}</span
           >
         </div>
-        <p v-if="r.verdict" class="text-[10px] leading-snug opacity-80">{{ r.verdict }}</p>
-        <div v-if="r.fields.length" class="grid grid-cols-2 gap-x-3 gap-y-0.5 font-mono text-[9px]">
+        <p v-if="r.verdict" class="text-[11px] leading-snug opacity-80">{{ r.verdict }}</p>
+        <div
+          v-if="r.fields.length"
+          class="grid grid-cols-2 gap-x-3 gap-y-0.5 font-mono text-[10px]"
+        >
           <div v-for="(f, i) in r.fields" :key="i" class="flex justify-between gap-2">
             <span class="shrink-0 opacity-60">{{ f.label }}</span>
             <span class="min-w-0 truncate text-end font-bold">{{ f.value }}</span>
@@ -436,7 +439,7 @@ async function saveConfig(): Promise<void> {
         </div>
         <button
           v-if="grade.factors.length > 1"
-          class="nb-btn px-2 py-0.5 text-[10px]"
+          class="nb-btn px-2 py-0.5 text-[11px]"
           @click="showFactors = !showFactors"
         >
           {{ showFactors ? t('inputShaping.widget.hide') : t('inputShaping.widget.details') }}
@@ -447,17 +450,17 @@ async function saveConfig(): Promise<void> {
 
       <div
         v-if="grade && showFactors"
-        class="space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1.5"
+        class="space-y-1 rounded-brutal border-2 border-ink bg-paper px-2 py-1.5"
       >
         <div
           v-for="f in grade.factors"
           :key="f.label"
-          class="flex flex-wrap items-center gap-x-2 text-[10px]"
+          class="flex flex-wrap items-center gap-x-2 text-[11px]"
         >
           <span class="inline-block h-2 w-2 rounded-full" :class="dotClass(f.rating)" />
           <span class="font-medium">{{ f.label }}</span>
           <span class="font-mono opacity-70">{{ f.value }}</span>
-          <span class="text-[9px] opacity-50">— {{ f.note }}</span>
+          <span class="text-[10px] opacity-50">— {{ f.note }}</span>
         </div>
       </div>
 
@@ -473,9 +476,9 @@ async function saveConfig(): Promise<void> {
           <div class="min-w-0 flex-1 space-y-0.5">
             <div class="flex flex-wrap items-center gap-1.5">
               <span class="text-[11px] font-bold">{{ d.title }}</span>
-              <span class="nb-badge bg-surface font-mono text-[9px] text-ink">{{ d.detail }}</span>
+              <span class="nb-badge bg-surface font-mono text-[10px] text-ink">{{ d.detail }}</span>
             </div>
-            <p class="text-[10px] leading-snug">{{ d.advice }}</p>
+            <p class="text-[11px] leading-snug">{{ d.advice }}</p>
           </div>
         </div>
       </div>
@@ -571,7 +574,7 @@ async function saveConfig(): Promise<void> {
             {{ tick.label }}
           </text>
         </svg>
-        <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[9px]">
+        <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[10px]">
           <span v-for="s in chart.psd" :key="'lg' + s.name" class="flex items-center gap-1">
             <span class="inline-block h-2 w-3 rounded-sm" :style="{ background: s.color }" />
             {{ s.name }}
@@ -590,7 +593,7 @@ async function saveConfig(): Promise<void> {
 
       <div class="space-y-1">
         <div
-          class="grid grid-cols-[1fr_auto_auto_auto_auto] gap-3 border-b-2 border-ink pb-0.5 font-mono text-[10px] font-bold uppercase"
+          class="grid grid-cols-[1fr_auto_auto_auto_auto] gap-3 border-b-2 border-ink pb-0.5 font-mono text-[11px] font-bold uppercase"
         >
           <span>{{ t('inputShaping.widget.colShaper') }}</span>
           <span class="text-end">{{ t('inputShaping.widget.colFreq') }}</span>
@@ -601,7 +604,7 @@ async function saveConfig(): Promise<void> {
         <div
           v-for="s in analysis.shapers"
           :key="s.name"
-          class="grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-3 rounded px-1 font-mono text-[10px]"
+          class="grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-3 rounded px-1 font-mono text-[11px]"
           :class="s.recommended ? 'bg-brand-lime/50 font-bold' : ''"
         >
           <span>{{ s.name.toUpperCase() }}</span>
@@ -628,19 +631,19 @@ async function saveConfig(): Promise<void> {
         <span class="text-xs font-bold uppercase tracking-wide">{{
           t('inputShaping.widget.printerCfg')
         }}</span>
-        <span class="flex items-center gap-1 font-mono text-[9px] opacity-70">
+        <span class="flex items-center gap-1 font-mono text-[10px] opacity-70">
           <span v-for="k in captured" :key="k" class="nb-badge bg-brand-cyan">{{
             k === 'generic' ? 'X+Y' : k.toUpperCase()
           }}</span>
         </span>
         <span class="flex-1"></span>
-        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyConfig">
+        <button class="nb-btn px-2 py-0.5 text-[11px]" @click="copyConfig">
           {{ copied ? t('inputShaping.widget.copied') : t('inputShaping.widget.copy') }}
         </button>
-        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="saveConfig">
+        <button class="nb-btn px-2 py-0.5 text-[11px]" @click="saveConfig">
           {{ savedToArchive ? t('inputShaping.widget.saved') : t('inputShaping.widget.archive') }}
         </button>
-        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="clearResults">
+        <button class="nb-btn px-2 py-0.5 text-[11px]" @click="clearResults">
           {{ t('inputShaping.widget.clear') }}
         </button>
       </div>
@@ -652,7 +655,7 @@ async function saveConfig(): Promise<void> {
         keypath="inputShaping.widget.pasteHint"
         tag="p"
         scope="global"
-        class="text-[9px] italic opacity-50"
+        class="text-[10px] italic opacity-50"
       >
         <template #cfg><code>printer.cfg</code></template>
       </i18n-t>

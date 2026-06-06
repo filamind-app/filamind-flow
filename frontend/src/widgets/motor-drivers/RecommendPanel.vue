@@ -112,7 +112,7 @@ async function copyConfig(): Promise<void> {
 </script>
 
 <template>
-  <div class="font-mono text-[10px]">
+  <div class="font-mono text-[11px]">
     <button
       class="flex w-full items-center gap-1.5 text-start opacity-70 transition-opacity hover:opacity-100"
       :aria-expanded="open"
@@ -123,10 +123,7 @@ async function copyConfig(): Promise<void> {
       <span class="font-bold">{{ t('motorDrivers.recommendPanel.toggle') }}</span>
     </button>
 
-    <div
-      v-if="open"
-      class="mt-1 space-y-1.5 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
-    >
+    <div v-if="open" class="mt-1 space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2">
       <div class="flex items-center gap-1.5">
         <label class="opacity-70" :for="`v-${driver.stepper}`">{{
           t('motorDrivers.recommendPanel.supply')
@@ -138,11 +135,11 @@ async function copyConfig(): Promise<void> {
           min="0"
           max="60"
           step="0.1"
-          class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
+          class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[11px]"
         />
         <span class="opacity-70">V</span>
         <button
-          class="nb-btn ms-auto bg-brand-cyan px-2 py-0.5 text-[10px]"
+          class="nb-btn ms-auto bg-brand-cyan px-2 py-0.5 text-[11px]"
           :disabled="loading"
           @click="compute"
         >
@@ -196,7 +193,7 @@ async function copyConfig(): Promise<void> {
           }}
         </p>
         <!-- Apply: copy-to-config (safe) or a gated live write -->
-        <div class="space-y-1 border-t-2 border-dashed border-ink pt-1.5">
+        <div class="space-y-1 border-t-2 border-ink pt-1.5">
           <label class="flex items-start gap-1.5">
             <input v-model="confirmed" type="checkbox" class="mt-0.5 shrink-0" />
             <span>
@@ -209,28 +206,28 @@ async function copyConfig(): Promise<void> {
           </label>
           <div class="flex flex-wrap items-center gap-1.5">
             <button
-              class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+              class="nb-btn bg-brand-lime px-2 py-0.5 text-[11px]"
               :disabled="!confirmed || busy"
               @click="apply"
             >
               {{ busy ? '…' : t('motorDrivers.recommendPanel.applyToDriver') }}
             </button>
             <button
-              class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+              class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
               :disabled="busy"
               @click="revert"
             >
               {{ t('motorDrivers.recommendPanel.revert') }}
             </button>
             <button
-              class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+              class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
               :disabled="busy"
               @click="copyConfig"
             >
               {{ t('motorDrivers.recommendPanel.copyConfig') }}
             </button>
             <button
-              class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+              class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
               :disabled="busy"
               :title="t('motorDrivers.recommendPanel.autotuneTitle')"
               @click="autotune"
@@ -247,7 +244,7 @@ async function copyConfig(): Promise<void> {
           </p>
           <pre
             v-if="configText"
-            class="overflow-x-auto rounded-brutal border-2 border-ink bg-surface p-1.5 text-[9px] leading-tight"
+            class="overflow-x-auto rounded-brutal border-2 border-ink bg-surface p-1.5 text-[10px] leading-tight"
             >{{ configText }}</pre
           >
         </div>

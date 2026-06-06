@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.90.0] - 2026-06-06
+
+### Changed
+
+- **Density & legibility pass (all widgets) — bigger text, clean card borders.** The dense data UI
+  used `text-[10px]`/`text-[9px]` throughout and **dashed** borders on every collapsible sub-panel,
+  which read as cramped and unfinished. Bumped the type one step across the three widgets + shared UI
+  (`text-[9px]`→`10px`, `text-[10px]`→`11px`; existing 11px kept), so the new hierarchy is 14 / 12 /
+  11 / 10 px. Replaced every **dashed** sub-panel/divider border with a **solid** one, so panels read
+  as clean cards. No layout, copy, or behaviour change — purely visual legibility. Completes the UX
+  series (help reorg + this).
+
 ## [0.89.0] - 2026-06-06
 
 ### Changed

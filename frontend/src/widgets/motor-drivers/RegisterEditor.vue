@@ -217,7 +217,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
 </script>
 
 <template>
-  <div class="font-mono text-[10px]">
+  <div class="font-mono text-[11px]">
     <button
       class="flex w-full items-center gap-1.5 text-start opacity-70 transition-opacity hover:opacity-100"
       :aria-expanded="open"
@@ -228,14 +228,11 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
       <span class="font-bold">{{ t('motorDrivers.registerEditor.toggle') }}</span>
     </button>
 
-    <div
-      v-if="open"
-      class="mt-1 space-y-2 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
-    >
+    <div v-if="open" class="mt-1 space-y-2 rounded-brutal border-2 border-ink bg-paper p-2">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <HelpNote topic="registers" />
         <button
-          class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+          class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
           :disabled="reverting || !!busyField"
           :title="t('motorDrivers.registerEditor.resetTitle')"
           @click="resetToConfig"
@@ -271,7 +268,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
             coolstepOn ? t('motorDrivers.registerEditor.on') : t('motorDrivers.registerEditor.off')
           }}</span>
           <button
-            class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+            class="nb-btn bg-brand-lime px-2 py-0.5 text-[11px]"
             :disabled="coolstepBusy"
             :title="t('motorDrivers.registerEditor.coolstepEnableTitle')"
             @click="applyCoolstep(true)"
@@ -279,7 +276,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
             {{ coolstepBusy ? '…' : t('motorDrivers.registerEditor.enable') }}
           </button>
           <button
-            class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+            class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
             :disabled="coolstepBusy"
             @click="applyCoolstep(false)"
           >
@@ -305,7 +302,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
               <span class="truncate">{{ field }}</span>
               <span
                 v-if="entry.risk === 'risky'"
-                class="nb-badge bg-brand-yellow px-1 py-0 text-[9px]"
+                class="nb-badge bg-brand-yellow px-1 py-0 text-[10px]"
                 :title="t('motorDrivers.registerEditor.riskyTitle')"
                 >!</span
               >
@@ -324,7 +321,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
               <select
                 v-else-if="entry.control === 'select'"
                 v-model.number="values[field]"
-                class="rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
+                class="rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[11px]"
               >
                 <option v-for="o in selectOptions(entry)" :key="o" :value="o">{{ o }}</option>
               </select>
@@ -334,7 +331,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
                 type="number"
                 :min="entry.velocity ? 0 : entry.min"
                 :max="entry.velocity ? undefined : entry.max"
-                class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
+                class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[11px]"
               />
             </span>
 
@@ -356,7 +353,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
                 <span class="opacity-60">{{ t('motorDrivers.registerEditor.confirm') }}</span>
               </label>
               <button
-                class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+                class="nb-btn bg-brand-lime px-2 py-0.5 text-[11px]"
                 :disabled="!canWrite(field, entry)"
                 @click="write(field)"
               >
@@ -365,7 +362,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
             </span>
 
             <!-- optional full-width hint under the row -->
-            <span v-if="hintFor(field, entry)" class="col-span-4 text-[9px] opacity-50">{{
+            <span v-if="hintFor(field, entry)" class="col-span-4 text-[10px] opacity-50">{{
               hintFor(field, entry)
             }}</span>
           </template>
@@ -382,7 +379,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
       </p>
 
       <!-- Read-only registers (not editable) -->
-      <div v-if="readOnlyRegisters.length" class="border-t-2 border-dashed border-ink pt-1.5">
+      <div v-if="readOnlyRegisters.length" class="border-t-2 border-ink pt-1.5">
         <div class="mb-1 opacity-50">{{ t('motorDrivers.registerEditor.readOnly') }}</div>
         <dl class="grid grid-cols-2 gap-x-2 gap-y-0.5">
           <div v-for="[k, v] in readOnlyRegisters" :key="k" class="flex justify-between gap-1">
