@@ -49,6 +49,10 @@
       "max-flow": {
         "title": "Max-Flow",
         "description": "Mesurez le débit volumétrique le plus élevé que votre hotend peut soutenir (StallGuard)."
+      },
+      "board-topology": {
+        "title": "Topologie des cartes",
+        "description": "Découvrez comment l'hôte et les MCU se connectent (USB / CAN / UART) + une estimation de la carte."
       }
     }
   }

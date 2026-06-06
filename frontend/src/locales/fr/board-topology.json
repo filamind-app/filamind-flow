@@ -1,0 +1,71 @@
+{
+  "boardTopology": {
+    "intro": "Découvrez comment les cartes de contrôle de votre imprimante se connectent : l'hôte (SBC) et chaque MCU avec lequel il communique, avec chaque type de connexion et une estimation au mieux de la carte / puce — lue en direct depuis la configuration.",
+    "help": {
+      "guide": "Aide",
+      "guideTitle": "À propos de la topologie des cartes",
+      "close": "Fermer",
+      "howToRead": "Comment lire",
+      "steps": [
+        "L'hôte (votre SBC, par ex. un Raspberry Pi ou un CB1) se trouve en haut.",
+        "Chaque carte MCU indique comment elle se connecte (USB / CAN bus / UART) et sa puce.",
+        "Une estimation de la carte apparaît lorsque l'identifiant de connexion correspond à une carte connue."
+      ],
+      "topics": {
+        "mcus": {
+          "title": "MCU",
+          "body": "Un MCU est une carte à microcontrôleur qui pilote les moteurs, les chauffages et les capteurs. Une imprimante en possède au moins un (la carte mère) ; beaucoup ajoutent une carte de tête d'impression et parfois une carte de palpeur ou de LED. Ce panneau liste chaque section `[mcu]` connue de Klipper."
+        },
+        "connections": {
+          "title": "Types de connexion",
+          "body": "USB — une liaison série sur USB (la connexion habituelle de la carte mère). CAN bus — un bus partagé à deux fils, courant pour les cartes de tête d'impression. UART — une liaison série directe via GPIO. Le type est déduit du paramètre `serial` / `canbus_uuid` de chaque MCU."
+        },
+        "detection": {
+          "title": "Comment fonctionne la détection",
+          "body": "La puce et la carte sont estimées en comparant l'identifiant de connexion (le chemin série ou l'UUID CAN) à une table de motifs. Une estimation de carte affiche un indice de confiance ; lorsque rien ne correspond, la puce/carte indique « inconnu » — la connexion elle-même reste affichée."
+        },
+        "glossary": { "title": "Glossaire", "body": "" }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Microcontroller unit — une carte de contrôle exécutant le firmware de Klipper (carte mère, tête d'impression, etc.)."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Un bus partagé à deux fils reliant les cartes par un UUID unique — populaire pour le câblage des têtes d'impression."
+        },
+        "host": {
+          "term": "Hôte / SBC",
+          "def": "L'ordinateur monocarte (Pi, CB1, …) qui exécute Klipper et communique avec les MCU."
+        }
+      }
+    },
+    "host": {
+      "label": "Hôte",
+      "role": "Ordinateur monocarte — exécute Klipper"
+    },
+    "mcu": {
+      "chip": "Puce",
+      "board": "Carte",
+      "unknown": "inconnu",
+      "identifier": "Identifiant",
+      "confidence": "{pct} % de correspondance"
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "inconnu",
+      "via": "via {type}"
+    },
+    "count": "{n} MCU",
+    "states": {
+      "loading": "Lecture de la topologie…",
+      "unreachable": "Impossible de joindre l'imprimante.",
+      "empty": "Aucun MCU trouvé dans la configuration.",
+      "retry": "Réessayer",
+      "refresh": "Actualiser"
+    }
+  }
+}

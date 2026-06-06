@@ -1,0 +1,71 @@
+{
+  "boardTopology": {
+    "intro": "See how your printer's control boards connect: the host (SBC) and every MCU it talks to, with each connection type and a best-effort board / chip guess — read live from the config.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "About Board Topology",
+      "close": "Close",
+      "howToRead": "How to read",
+      "steps": [
+        "The host (your SBC, e.g. a Raspberry Pi or CB1) sits at the top.",
+        "Each MCU card shows how it connects (USB / CAN bus / UART) and its chip.",
+        "A board guess appears when the connection identifier matches a known board."
+      ],
+      "topics": {
+        "mcus": {
+          "title": "MCUs",
+          "body": "An MCU is a microcontroller board that drives motors, heaters and sensors. A printer has at least one (the mainboard); many add a toolhead board and sometimes a probe or LED board. This panel lists every `[mcu]` section Klipper has."
+        },
+        "connections": {
+          "title": "Connection types",
+          "body": "USB — a serial-over-USB link (the usual mainboard connection). CAN bus — a shared two-wire bus, common for toolhead boards. UART — a direct serial link over GPIO. The type is inferred from each MCU's `serial` / `canbus_uuid` setting."
+        },
+        "detection": {
+          "title": "How detection works",
+          "body": "The chip and board are guessed by matching the connection identifier (the serial path or CAN UUID) against a pattern table. A board guess shows a match confidence; when nothing matches, the chip/board reads \"unknown\" — the connection itself is still shown."
+        },
+        "glossary": { "title": "Glossary", "body": "" }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Microcontroller unit — a control board running Klipper's firmware (mainboard, toolhead, etc.)."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "A two-wire shared bus linking boards by a unique UUID — popular for toolhead wiring."
+        },
+        "host": {
+          "term": "Host / SBC",
+          "def": "The single-board computer (Pi, CB1, …) that runs Klipper and talks to the MCUs."
+        }
+      }
+    },
+    "host": {
+      "label": "Host",
+      "role": "Single-board computer — runs Klipper"
+    },
+    "mcu": {
+      "chip": "Chip",
+      "board": "Board",
+      "unknown": "unknown",
+      "identifier": "Identifier",
+      "confidence": "{pct}% match"
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "unknown",
+      "via": "via {type}"
+    },
+    "count": "{n} MCUs",
+    "states": {
+      "loading": "Reading the topology…",
+      "unreachable": "Couldn't reach the printer.",
+      "empty": "No MCUs found in the config.",
+      "retry": "Retry",
+      "refresh": "Refresh"
+    }
+  }
+}
