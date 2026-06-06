@@ -85,7 +85,7 @@ versioned `/api` router. It exposes liveness (`/api/health`), a server-side
 Moonraker reachability probe (`/api/moonraker/status`), the **firmware**
 build / flash / device routes (`/api/firmware/*`), the **input-shaping**
 resonance-analysis routes (`/api/shaper/*` — which vendor Klipper's
-`shaper_calibrate` and add pure-numpy ports of the Shake&Tune analyses: axes-map,
+`shaper_calibrate` and add pure-numpy resonance analyses: axes-map,
 spectrogram, and the machine vibrations profile), and the **motor-drivers**
 routes (`/api/drivers/status` — TMC driver state aggregated from the live config +
 per-driver `get_status`, annotated from a curated capability catalog
@@ -94,7 +94,7 @@ per-driver `get_status`, annotated from a curated capability catalog
 `/api/drivers/catalog` — that capability map; `/api/drivers/motors` — a 200+ motor
 database baked to `app/data/motor_catalog.json`; `/api/drivers/mapping` — the persisted
 stepper→motor map; `/api/drivers/recommend` — a run-current + register recommendation from
-a faithful pure port of `klipper_tmc_autotune`'s `motor_constants` physics;
+a built-in `motor_constants` physics model;
 `/api/drivers/{config-block,apply,init,autotune,stallguard,home}` — copy-to-config and the
 gated live `SET_TMC_*` / `INIT_TMC` / `AUTOTUNE_TMC` writes + sensorless-homing threshold and
 test-home, all refused while printing). It is the right home for

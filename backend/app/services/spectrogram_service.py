@@ -2,8 +2,8 @@
 frequency" hands-on diagnostic (hold a frequency, touch parts to find what rattles).
 
 Pure numpy STFT. The vendored ``shaper_calibrate`` collapses time (Welch mean), so it
-cannot produce a time-resolved spectrogram; this is a small, self-contained port of the
-idea from Shake&Tune's ``spectrogram.py``. No Klipper host, no matplotlib.
+cannot produce a time-resolved spectrogram; this is a small, self-contained STFT.
+No Klipper host, no matplotlib.
 """
 
 from __future__ import annotations

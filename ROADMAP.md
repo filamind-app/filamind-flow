@@ -45,7 +45,7 @@ Phases 6+ grow it into a full multi-board manager.
 
 Turn a Klipper resonance capture into a ready-to-paste `[input_shaper]` config —
 no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
-`SHAPER_CALIBRATE`. **Shipped v0.27.0 → v0.44.0 — full Shake&Tune feature parity.**
+`SHAPER_CALIBRATE`. **Shipped v0.27.0 → v0.44.0 — a complete resonance-tuning suite.**
 
 | Phase | Scope |
 | ----- | ----- |
@@ -58,12 +58,12 @@ no command line. Vendors Klipper's own `shaper_calibrate` so the math matches
 | ✅ **7 — Noise pre-check** | Motion-free `MEASURE_AXES_NOISE` reads the accelerometer's idle noise floor and grades it (quiet / elevated / too noisy, per Klipper's ~1–100 normal range), validating the sensor mount before a test. |
 | ✅ **8 — Belt comparison** | CoreXY belt-tension comparison: a resonance test along each belt diagonal (`(1,1)` / `(1,-1)`), the two responses overlaid with a matched-vs-mismatch verdict from the dominant-peak frequencies. |
 | ✅ **9 — Grade-tracked history** | The calibration history records the quality grade (A–F + score) per run and shows a trend (▲/▼) vs. the previous test of the same axis. |
-| ✅ **10 — Axes-map calibration** | Jog +X/+Y/+Z, integrate the accelerometer to velocity, and detect the Klipper `axes_map` (orientation) + tilt/confidence; reconstructs the no-signal axis on bed-slingers. First of the Shake&Tune-parity set; builds the `ACCELEROMETER_MEASURE` capture spine. |
+| ✅ **10 — Axes-map calibration** | Jog +X/+Y/+Z, integrate the accelerometer to velocity, and detect the Klipper `axes_map` (orientation) + tilt/confidence; reconstructs the no-signal axis on bed-slingers. First of the advanced resonance set; builds the `ACCELEROMETER_MEASURE` capture spine. |
 | ✅ **11 — Sustain frequency** | Hold the toolhead vibrating near a frequency (a slow, narrow `TEST_RESONANCES` sweep — no macro/config change) to find the resonance source by hand; returns a frequency×time spectrogram + an energy "touch timeline". |
 | ✅ **12 — Guided tuning wizard** | A step-by-step walk-through (Noise → Belts → Shaper X → Shaper Y) with automated pass/fail gates (reusing the grade / belt verdict / noise grade) + ranked next-step suggestions; the captures feed the shared config + history. |
-| ✅ **13 — Vibrations profile** | Sweep many speeds along each motor angle (0/90 Cartesian/CoreXZ, 45/135 CoreXY) → the smoothest speed ranges + the resonance speeds to avoid, a polar energy plot by travel direction, an angle×speed heatmap, motor symmetry and the motors' resonant frequency. Upgrades the wizard's Vibrations step from a self-report to a measured one. (numpy port of Shake&Tune's `vibrations_computation.py`, reusing the vendored `ShaperCalibrate`.) |
+| ✅ **13 — Vibrations profile** | Sweep many speeds along each motor angle (0/90 Cartesian/CoreXZ, 45/135 CoreXY) → the smoothest speed ranges + the resonance speeds to avoid, a polar energy plot by travel direction, an angle×speed heatmap, motor symmetry and the motors' resonant frequency. Upgrades the wizard's Vibrations step from a self-report to a measured one. (Pure numpy vibrations analysis, reusing the vendored `ShaperCalibrate`.) |
 
-**Shake&Tune parity — ✅ COMPLETE (5 of 5 shipped)**
+**Advanced resonance suite — ✅ COMPLETE (5 of 5 shipped)**
 
 - ✅ **Axes-map calibration** (phase 10, v0.39.0)
 - ✅ **Sustain frequency** (phase 11, v0.40.0)
@@ -143,7 +143,7 @@ Moonraker).
 | 📋 **A1 — Config Editor** | Full schema-driven `printer.cfg` editor: 92 sections / 847 params, live validation, byte-faithful save, auto-backup + diff | A | medium (writes cfg) |
 | 📋 **A2 — Macro Designer** | Offline G-code/macro simulator: Jinja eval, trapezoidal motion, 2D path + collision, step timeline, 12 built-in macros | A | low (no motion) |
 | 📋 **A3 — Board Topology** | Auto board/MCU detection + a visual SBC↔mainboard↔toolhead topology graph; feeds Firmware (board-detect) + a pin-conflict validator | A | low (read-only) |
-| 📋 **A4 — Hardware Browser + Templates** | Searchable unified hardware DB (3,671 rows) + an insertable config/macro template library (RatOS + reference cfgs) | A | low (read-only) |
+| 📋 **A4 — Hardware Browser + Templates** | Searchable unified hardware DB (3,671 rows) + an insertable config/macro template library (community config templates) | A | low (read-only) |
 | 📋 **B1 — Max-Flow** | Measure the real max volumetric flow (mm³/s) via TMC StallGuard slip detection (coarse→bisection→verify), thermal profile + 80/90 % slicer values | B | high (heat + motion) |
 | 📋 **B2 — Motor Drivers “Phase 11”** | Auto-SGT calibration + multi-pattern slip-detection insights + thermal-stress diagnostic on the existing tuner; a Sensorless-Homing wizard (adds the missing TMC2209 **SG4** logic) | B | medium |
 

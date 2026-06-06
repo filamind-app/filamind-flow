@@ -1,7 +1,6 @@
 """Machine vibrations profile — find the speeds and directions that vibrate least.
 
-Pure numpy analysis (no Klipper host, no matplotlib), ported from Shake&Tune's
-``vibrations_computation.py`` (GPL-3.0, (C) 2024 Felix Boisselier). Given many short
+Pure numpy analysis (no Klipper host, no matplotlib). Given many short
 constant-speed back-and-forth captures taken at the kinematic motor angles (0/90 for
 Cartesian/CoreXZ, 45/135 for CoreXY) across a range of speeds, it builds a directional
 speed-vs-vibration map and reports:
@@ -15,16 +14,13 @@ The per-segment power spectral density reuses the vendored Klipper ``ShaperCalib
 (the same engine ``shaper_service`` uses). This is the pure math; the printer-side sweep
 that produces the captures lives in ``resonance_service.run_vibrations_profile``.
 
-Differences from upstream Shake&Tune (documented so the omission is honest):
+Scope notes (documented so the omission is honest):
 
 * No motor TMC-config comparison (driver registers are not reachable over Moonraker
-  REST, and that section is advisory). The mechanical motor resonance / damping that
-  Shake&Tune derives from the global motor profile is kept.
-* The directional projection loop is vectorized with ``np.interp`` over speed; upstream
-  hand-rolls the same linear interpolation point by point.
-* Upstream ``_compute_symmetry_analysis`` calls ``np.clip(0, 100, value)`` with its
-  arguments transposed (a latent bug that clamps oddly); here the symmetry score is
-  clamped to ``[0, 100]`` as intended.
+  REST, and that section is advisory). The mechanical motor resonance / damping derived
+  from the global motor profile is kept.
+* The directional projection loop is vectorized with ``np.interp`` over speed.
+* The symmetry score is clamped to ``[0, 100]``.
 """
 
 from __future__ import annotations
@@ -38,7 +34,7 @@ import numpy as np
 from app.services.shaper_service import ShaperAnalysisError
 from app.vendor.klipper_shaper import shaper_calibrate as _sc
 
-# Peak / valley detection tuning (verbatim from Shake&Tune).
+# Peak / valley detection tuning.
 PEAKS_DETECTION_THRESHOLD = 0.05
 PEAKS_RELATIVE_HEIGHT_THRESHOLD = 0.04
 SPEEDS_VALLEY_DETECTION_THRESHOLD = 0.7  # lower is more sensitive
@@ -83,7 +79,7 @@ def _parse_raw_accel(raw: bytes) -> np.ndarray:
 
 
 # ---------------------------------------------------------------------------
-# Pure helpers ported from Shake&Tune's common_func.py
+# Pure helpers.
 # ---------------------------------------------------------------------------
 
 
@@ -242,7 +238,7 @@ def _filter_and_split_ranges(
 
 
 # ---------------------------------------------------------------------------
-# Stage computations (ported from VibrationsComputation)
+# Stage computations.
 # ---------------------------------------------------------------------------
 
 
