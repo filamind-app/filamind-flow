@@ -53,6 +53,10 @@
       "board-topology": {
         "title": "板卡拓扑",
         "description": "查看主机与各 MCU 如何连接（USB / CAN / UART）+ 板卡推测。"
+      },
+      "macro-designer": {
+        "title": "宏设计器",
+        "description": "离线模拟 G-code —— 工具头路径、包围盒、总量以及宏库。"
       }
     }
   }

@@ -5,6 +5,7 @@ import enCommon from '../locales/en/common.json'
 import enConfigEditor from '../locales/en/config-editor.json'
 import enFirmware from '../locales/en/firmware.json'
 import enInputShaping from '../locales/en/input-shaping.json'
+import enMacroDesigner from '../locales/en/macro-designer.json'
 import enMaxFlow from '../locales/en/max-flow.json'
 import enMotorDrivers from '../locales/en/motor-drivers.json'
 import enShell from '../locales/en/shell.json'
@@ -74,6 +75,7 @@ const en = {
   ...enConfigEditor,
   ...enMaxFlow,
   ...enBoardTopology,
+  ...enMacroDesigner,
 }
 
 // en is excluded — it's bundled eagerly above, so the dynamic glob must not also claim it

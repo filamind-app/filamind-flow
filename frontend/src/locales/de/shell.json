@@ -53,6 +53,10 @@
       "board-topology": {
         "title": "Board-Topologie",
         "description": "Sieh, wie Host und MCUs verbunden sind (USB / CAN / UART) + eine Platinen-Schätzung."
+      },
+      "macro-designer": {
+        "title": "Macro Designer",
+        "description": "Simuliere G-code offline — Werkzeugkopf-Pfad, Grenzen, Summen und eine Makro-Bibliothek."
       }
     }
   }

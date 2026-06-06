@@ -1,0 +1,82 @@
+{
+  "macroDesigner": {
+    "intro": "Simuliere G-code offline — füge ein Programm ein oder schreibe es und sieh den Werkzeugkopf-Pfad, die Begrenzungsbox, Verfahr- und Extrusionssummen sowie eine Zeitschätzung, ohne den Drucker anzufassen. Durchstöbere die integrierte Makro-Bibliothek als Referenz.",
+    "help": {
+      "guide": "Hilfe",
+      "guideTitle": "Über den Macro Designer",
+      "close": "Schließen",
+      "howToRead": "Verwendung",
+      "steps": [
+        "Tippe oder füge G-code in den Editor ein (ein Beispielquadrat ist zu Beginn geladen).",
+        "Drücke Simulieren — der 2D-Pfad und die Statistiken werden aktualisiert.",
+        "Durchgezogene Linien sind Extrusionsbewegungen; schwache gestrichelte Linien sind Verfahrwege.",
+        "Durchstöbere die Makro-Bibliothek und füge eines ein, um von dessen Befehlen aus zu starten."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "Der Simulator",
+          "body": "Er führt das Programm auf einem virtuellen Werkzeugkopf aus: G0/G1-Bewegungen, G90/G91 (absolut/relativ), M82/M83 (Extrudermodus), G92 (Position setzen) und G28 (Homing → Ursprung). Er meldet den Pfad, die Begrenzungsbox, den gesamten Verfahrweg und die Extrusion, eine grobe Zeitschätzung aus den Vorschüben sowie einen Zeitablauf pro Befehl. Nichts wird an den Drucker gesendet."
+        },
+        "motion": {
+          "title": "Pfad & Zeit",
+          "body": "Die 2D-Ansicht ist der XY-Pfad (Z ist in den Grenzen enthalten). Die Zeitschätzung teilt die Länge jeder Bewegung durch ihren Vorschub — sie ignoriert die Beschleunigung, also ist sie eine grobe Untergrenze, nicht die exakte Druckzeit. Befehle, die der Simulator nicht modelliert (z. B. M-codes, übergeordnete Makros), werden als Warnungen aufgeführt und übersprungen."
+        },
+        "macros": {
+          "title": "Makro-Bibliothek",
+          "body": "Eine Referenzsammlung gängiger Klipper-Makros mit ihrem Namen, ihrer Funktion und den benötigten Konfigurationssektionen. \"Einfügen\" setzt die übergeordneten Befehle eines Makros als Ausgangspunkt in den Editor — beachte, dass diese sich auf dem Drucker weiter aufschlüsseln (vollständige Jinja-/Makro-Expansion folgt)."
+        },
+        "glossary": { "title": "Glossar", "body": "" }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "Die zeilenweise Bewegungssprache, die der Drucker ausführt (Bewegungen, Temperaturen, Lüfter, …)."
+        },
+        "feedrate": {
+          "term": "Vorschub (F)",
+          "def": "Bewegungsgeschwindigkeit in mm/min — F1200 sind 20 mm/s. Legt fest, wie schnell jede Bewegung läuft."
+        },
+        "macro": {
+          "term": "Makro",
+          "def": "Ein benannter, wiederverwendbarer Befehl (z. B. QUAD_GANTRY_LEVEL), der sich zu einer Folge von G-code aufschlüsselt."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Simulieren",
+      "simulating": "Simuliere…",
+      "sample": "Beispiel laden",
+      "clear": "Leeren"
+    },
+    "library": {
+      "label": "Integrierte Makros",
+      "placeholder": "Makros durchstöbern…",
+      "insert": "In Editor einfügen",
+      "requires": "Benötigt: {sections}",
+      "none": "—"
+    },
+    "result": {
+      "title": "Simulation",
+      "moves": "{count} Bewegungen",
+      "distance": "{mm} mm Verfahrweg",
+      "extrude": "{mm} mm extrudiert",
+      "time": "~{s} s",
+      "bounds": "Grenzen",
+      "empty": "Keine Bewegungen zum Simulieren."
+    },
+    "path": {
+      "title": "Werkzeugkopf-Pfad (XY)",
+      "noPath": "Führe eine Simulation aus, um den Pfad zu sehen."
+    },
+    "timeline": {
+      "title": "Zeitablauf",
+      "line": "Zeile",
+      "cmd": "Befehl",
+      "action": "Aktion"
+    },
+    "warnings": {
+      "title": "Warnungen"
+    }
+  }
+}

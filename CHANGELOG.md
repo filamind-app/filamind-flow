@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.102.0] - 2026-06-06
+
+### Added
+
+- **Macro Designer — editor UI (Track A).** A new widget on `POST /api/macro/simulate`: a G-code
+  editor (with a sample + clear), a **Simulate** button, and the results — a **2D toolhead path**
+  drawn as SVG (solid = extrusion, dashed = travel, theme-aware, flipped-Y), stat badges
+  (moves / travel / extrusion / time estimate), the bounding box, a collapsible per-command
+  timeline, and any warnings. Plus a **built-in macro reference library** (from `/api/reference/macros`)
+  with each macro's description + required sections and an "Insert into editor" action. New
+  `macroDesigner` namespace + sidebar label across all 7 locales. +4 frontend tests.
+
 ## [0.101.0] - 2026-06-06
 
 ### Added
