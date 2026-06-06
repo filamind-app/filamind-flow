@@ -114,11 +114,13 @@ async function copyConfig(): Promise<void> {
 <template>
   <div class="font-mono text-[10px]">
     <button
-      class="opacity-60 transition-opacity hover:opacity-100"
+      class="flex w-full items-center gap-1.5 text-start opacity-70 transition-opacity hover:opacity-100"
       :aria-expanded="open"
       @click="open = !open"
     >
-      {{ open ? '▾' : '⚙' }} {{ t('motorDrivers.recommendPanel.toggle') }}
+      <span aria-hidden="true">{{ open ? '▾' : '▸' }}</span>
+      <span aria-hidden="true">⚙</span>
+      <span class="font-bold">{{ t('motorDrivers.recommendPanel.toggle') }}</span>
     </button>
 
     <div

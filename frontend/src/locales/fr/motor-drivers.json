@@ -288,7 +288,14 @@
       "confirm": "confirmer",
       "set": "régler",
       "readOnly": "registres en lecture seule",
-      "toffHint": "Si vous réglez toff à 1, gardez aussi tbl ≥ 1 (le temps de blanc de 16 cycles en a besoin)."
+      "toffHint": "Si vous réglez toff à 1, gardez aussi tbl ≥ 1 (le temps de blanc de 16 cycles en a besoin).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Seuils et délais",
+        "other": "Autres"
+      }
     },
     "apply": {
       "nothingToApply": "Rien à appliquer.",
