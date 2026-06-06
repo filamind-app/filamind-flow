@@ -24,7 +24,10 @@
           "title": "Wie die Erkennung funktioniert",
           "body": "Chip und Platine werden geschätzt, indem die Verbindungskennung (der serielle Pfad oder die CAN-UUID) mit einer Mustertabelle abgeglichen wird. Eine Platinen-Schätzung zeigt eine Übereinstimmungs-Konfidenz; passt nichts, steht bei Chip/Platine \"unbekannt\" — die Verbindung selbst wird trotzdem angezeigt."
         },
-        "glossary": { "title": "Glossar", "body": "" }
+        "glossary": {
+          "title": "Glossar",
+          "body": ""
+        }
       },
       "glossary": {
         "mcu": {
@@ -50,7 +53,9 @@
       "board": "Platine",
       "unknown": "unbekannt",
       "identifier": "Kennung",
-      "confidence": "{pct}% Übereinstimmung"
+      "confidence": "{pct}% Übereinstimmung",
+      "viewBoard": "Board-Details anzeigen",
+      "hideBoard": "Details ausblenden"
     },
     "conn": {
       "canbus": "CAN bus",
@@ -66,6 +71,14 @@
       "empty": "Keine MCUs in der Konfiguration gefunden.",
       "retry": "Erneut versuchen",
       "refresh": "Aktualisieren"
+    },
+    "board": {
+      "suggested": "Vorschlag",
+      "ports": "{n} Anschlüsse",
+      "specsTitle": "Daten",
+      "portsTitle": "Anschlüsse",
+      "none": "Noch keine Katalogdetails für dieses Board.",
+      "loading": "Board wird geladen…"
     }
   }
 }

@@ -49,6 +49,36 @@ def test_analyze_board_guess() -> None:
     assert out["mcus"][0]["confidence"] == 0.6
 
 
+def test_analyze_resolves_board_id_from_matchpatterns() -> None:
+    """Phase 8: the connection signature is matched against the catalog boards'
+    folded matchPatterns to emit a board_id link (a *suggested* match)."""
+    catalog = [
+        {
+            "board_id": "btt-octopus",
+            "model": "Octopus",
+            "display_name": "BigTreeTech Octopus",
+            "aliases": [],
+            "matchPatterns": [{"pattern": "octopus", "confidence": 0.6}],
+        }
+    ]
+    sections = {"mcu": {"serial": "/dev/serial/by-id/usb-btt_octopus_v1-if00"}}
+    m = board_topology.analyze(sections, PATTERNS, boards=catalog)["mcus"][0]
+    assert m["board_id"] == "btt-octopus"
+    assert m["board_match"] == "suggested"
+    assert m["board_match_confidence"] == 0.6
+
+
+def test_analyze_board_id_null_when_chip_only() -> None:
+    """A chip-only signature (no board hint) yields no board_id — never a false match."""
+    catalog = [
+        {"board_id": "btt-octopus", "model": "Octopus", "matchPatterns": [{"pattern": "octopus"}]}
+    ]
+    sections = {"mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103_X-if00"}}
+    m = board_topology.analyze(sections, PATTERNS, boards=catalog)["mcus"][0]
+    assert m["board_id"] is None
+    assert m["board_match"] is None
+
+
 def test_analyze_uart_and_unknown() -> None:
     sections = {
         "mcu a": {"serial": "/dev/ttyAMA0"},  # not usb -> uart

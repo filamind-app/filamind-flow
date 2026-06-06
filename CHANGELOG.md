@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.112.0] - 2026-06-06
+
+### Added
+
+- **Board Topology → catalog link (Phase 8 of the DB overhaul).** Each detected MCU now resolves a
+  catalog **`board_id`** by matching its connection signature against the boards' folded
+  `matchPatterns` (with a normalized-name fallback). When a board is identified, the topology card
+  shows a **"View board details"** button that lazy-loads `GET /api/hardware/boards/{board_id}` and
+  shows the aggregated `ports[]` summary + spec sheet inline.
+  - Surfaced as a **suggested** match the user can ignore — a serial/canbus id usually reveals only
+    the chip, so `board_id` is `null` rather than a false guess (locked by tests).
+  - New board-detail i18n keys across all 7 locales.
+
 ## [0.111.0] - 2026-06-06
 
 ### Fixed

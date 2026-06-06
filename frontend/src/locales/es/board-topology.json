@@ -24,7 +24,10 @@
           "title": "Cómo funciona la detección",
           "body": "El chip y la placa se estiman comparando el identificador de conexión (la ruta serial o el UUID de CAN) con una tabla de patrones. Una estimación de placa muestra una confianza de coincidencia; cuando nada coincide, el chip/placa aparece como \"desconocido\", aunque la conexión en sí se sigue mostrando."
         },
-        "glossary": { "title": "Glosario", "body": "" }
+        "glossary": {
+          "title": "Glosario",
+          "body": ""
+        }
       },
       "glossary": {
         "mcu": {
@@ -50,7 +53,9 @@
       "board": "Placa",
       "unknown": "desconocido",
       "identifier": "Identificador",
-      "confidence": "{pct}% de coincidencia"
+      "confidence": "{pct}% de coincidencia",
+      "viewBoard": "Ver detalles de la placa",
+      "hideBoard": "Ocultar detalles"
     },
     "conn": {
       "canbus": "CAN bus",
@@ -66,6 +71,14 @@
       "empty": "No se encontraron MCUs en la configuración.",
       "retry": "Reintentar",
       "refresh": "Actualizar"
+    },
+    "board": {
+      "suggested": "sugerido",
+      "ports": "{n} puertos",
+      "specsTitle": "Especificaciones",
+      "portsTitle": "Puertos",
+      "none": "Aún no hay detalles de catálogo para esta placa.",
+      "loading": "Cargando placa…"
     }
   }
 }

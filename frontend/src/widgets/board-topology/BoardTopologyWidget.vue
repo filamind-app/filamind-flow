@@ -5,16 +5,39 @@ import { useI18n } from 'vue-i18n'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
-import { fetchTopology } from './api'
+import { fetchBoardDetail, fetchTopology } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { Topology } from './types'
+import type { BoardDetail, Topology } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
 const topology = ref<Topology | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+
+// Lazy-loaded board catalog details, keyed by board_id, for the suggested matches.
+const openBoard = ref<string | null>(null)
+const boardCache = ref<Record<string, BoardDetail>>({})
+const boardLoading = ref<string | null>(null)
+
+async function toggleBoard(boardId: string): Promise<void> {
+  if (openBoard.value === boardId) {
+    openBoard.value = null
+    return
+  }
+  openBoard.value = boardId
+  if (!boardCache.value[boardId]) {
+    boardLoading.value = boardId
+    try {
+      boardCache.value[boardId] = await fetchBoardDetail(boardId)
+    } catch {
+      openBoard.value = null
+    } finally {
+      boardLoading.value = null
+    }
+  }
+}
 
 function connLabel(conn: string): string {
   switch (conn) {
@@ -147,6 +170,61 @@ onMounted(() => void load())
           >
             {{ m.identifier }}
           </div>
+
+          <!-- Catalog board link (suggested match) -->
+          <template v-if="m.board_id">
+            <button
+              class="nb-btn w-full bg-brand-cyan px-2 py-0.5 text-[10px]"
+              @click="toggleBoard(m.board_id)"
+            >
+              {{
+                openBoard === m.board_id
+                  ? t('boardTopology.mcu.hideBoard')
+                  : t('boardTopology.mcu.viewBoard')
+              }}
+              <span class="opacity-70">· {{ t('boardTopology.board.suggested') }}</span>
+            </button>
+
+            <div v-if="openBoard === m.board_id" class="nb-card space-y-1 bg-paper p-2 text-[10px]">
+              <p v-if="boardLoading === m.board_id" class="font-mono opacity-70">
+                {{ t('boardTopology.board.loading') }}
+              </p>
+              <template v-else-if="boardCache[m.board_id]">
+                <div class="font-display text-[11px] font-bold">
+                  {{ boardCache[m.board_id].display_name || boardCache[m.board_id].model }}
+                </div>
+                <div v-if="boardCache[m.board_id].ports?.length" class="font-mono opacity-70">
+                  {{ t('boardTopology.board.portsTitle') }}:
+                  {{ t('boardTopology.board.ports', { n: boardCache[m.board_id].ports!.length }) }}
+                  <span
+                    v-for="(n, cat) in boardCache[m.board_id].portsSummary"
+                    :key="cat"
+                    class="ml-1 inline-block rounded bg-surface px-1"
+                  >
+                    {{ cat }}×{{ n }}
+                  </span>
+                </div>
+                <dl
+                  v-if="Object.keys(boardCache[m.board_id].specs || {}).length"
+                  class="grid grid-cols-[auto_1fr] gap-x-2 font-mono"
+                >
+                  <template v-for="(val, key) in boardCache[m.board_id].specs" :key="key">
+                    <dt class="opacity-60">{{ key }}</dt>
+                    <dd class="min-w-0 truncate">{{ val }}</dd>
+                  </template>
+                </dl>
+                <p
+                  v-if="
+                    !boardCache[m.board_id].ports?.length &&
+                    !Object.keys(boardCache[m.board_id].specs || {}).length
+                  "
+                  class="opacity-60"
+                >
+                  {{ t('boardTopology.board.none') }}
+                </p>
+              </template>
+            </div>
+          </template>
         </li>
       </ul>
     </template>

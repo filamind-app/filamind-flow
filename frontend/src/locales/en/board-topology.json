@@ -24,7 +24,10 @@
           "title": "How detection works",
           "body": "The chip and board are guessed by matching the connection identifier (the serial path or CAN UUID) against a pattern table. A board guess shows a match confidence; when nothing matches, the chip/board reads \"unknown\" — the connection itself is still shown."
         },
-        "glossary": { "title": "Glossary", "body": "" }
+        "glossary": {
+          "title": "Glossary",
+          "body": ""
+        }
       },
       "glossary": {
         "mcu": {
@@ -50,7 +53,9 @@
       "board": "Board",
       "unknown": "unknown",
       "identifier": "Identifier",
-      "confidence": "{pct}% match"
+      "confidence": "{pct}% match",
+      "viewBoard": "View board details",
+      "hideBoard": "Hide details"
     },
     "conn": {
       "canbus": "CAN bus",
@@ -66,6 +71,14 @@
       "empty": "No MCUs found in the config.",
       "retry": "Retry",
       "refresh": "Refresh"
+    },
+    "board": {
+      "suggested": "suggested",
+      "ports": "{n} ports",
+      "specsTitle": "Specs",
+      "portsTitle": "Ports",
+      "none": "No catalog details for this board yet.",
+      "loading": "Loading board…"
     }
   }
 }
