@@ -4,5 +4,12 @@
     "errors": {
       "backendUnreachable": "تعذّر الوصول إلى خادم FilaMind — تأكّد من أن خدمة filamind-flow قيد التشغيل ويمكن الوصول إليها."
     }
+  },
+  "theme": {
+    "label": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "neon": "نيون",
+    "contrast": "تباين عالٍ"
   }
 }

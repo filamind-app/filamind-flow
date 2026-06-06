@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n'
 
 import ConnectionStatus from '@/components/system/ConnectionStatus.vue'
 import LanguageSelect from '@/components/layout/LanguageSelect.vue'
+import ThemeSelect from '@/components/ui/ThemeSelect.vue'
 import { useNav } from '@/core/nav'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -39,6 +40,7 @@ const mainsailUrl =
       <h1 class="truncate font-display text-xl font-bold sm:text-2xl">{{ title }}</h1>
     </div>
     <div class="flex shrink-0 items-center gap-2">
+      <ThemeSelect />
       <!-- Renders only once a second locale's catalog exists (hidden in the en-only build). -->
       <LanguageSelect />
       <ConnectionStatus />

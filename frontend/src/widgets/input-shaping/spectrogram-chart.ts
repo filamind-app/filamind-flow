@@ -30,27 +30,45 @@ export interface EnergyChart {
   minMark: { x: number; y: number } | null
 }
 
-// paper → cyan → yellow → red (low to high power).
-const STOPS: [number, [number, number, number]][] = [
-  [0.0, [247, 243, 233]],
-  [0.4, [0, 224, 198]],
-  [0.7, [245, 217, 10]],
-  [1.0, [255, 82, 71]],
+type RGB = [number, number, number]
+
+// paper → cyan → yellow → red (low to high power). Each stop is sourced from a theme
+// token so the heatmap recolors per theme; the literals are only fallbacks (= the
+// light-theme brand values) used when a CSS var can't be read (e.g. SSR / tests).
+const STOPS: [number, string, RGB][] = [
+  [0.0, '--c-paper', [245, 241, 232]],
+  [0.4, '--c-brand-cyan', [0, 224, 198]],
+  [0.7, '--c-brand-yellow', [255, 212, 0]],
+  [1.0, '--c-brand-red', [255, 82, 71]],
 ]
 
-/** Maps a 0..1 power to a brand-palette rgb() string. */
+/** Reads a space-separated RGB triplet CSS var (e.g. "0 224 198"), falling back to
+ *  the supplied default when unavailable or unparseable. */
+function readToken(name: string, fallback: RGB): RGB {
+  if (typeof window === 'undefined' || typeof getComputedStyle !== 'function') return fallback
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  const parts = raw.split(/[\s,]+/).map(Number)
+  return parts.length === 3 && parts.every((n) => Number.isFinite(n)) ? (parts as RGB) : fallback
+}
+
+/** Maps a 0..1 power to a theme-palette rgb() string. */
 export function ramp(value: number): string {
+  const stops: [number, RGB][] = STOPS.map(([pos, token, fallback]) => [
+    pos,
+    readToken(token, fallback),
+  ])
   const x = Math.max(0, Math.min(1, value))
-  for (let i = 1; i < STOPS.length; i++) {
-    if (x <= STOPS[i][0]) {
-      const [x0, c0] = STOPS[i - 1]
-      const [x1, c1] = STOPS[i]
+  for (let i = 1; i < stops.length; i++) {
+    if (x <= stops[i][0]) {
+      const [x0, c0] = stops[i - 1]
+      const [x1, c1] = stops[i]
       const t = (x - x0) / (x1 - x0 || 1)
       const c = c0.map((v, k) => Math.round(v + (c1[k] - v) * t))
       return `rgb(${c[0]},${c[1]},${c[2]})`
     }
   }
-  return 'rgb(255,82,71)'
+  const last = stops[stops.length - 1][1]
+  return `rgb(${last[0]},${last[1]},${last[2]})`
 }
 
 /** Frequency (x) × time (y) heatmap of the spectrogram power. */

@@ -12,16 +12,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#111111',
-        paper: '#f5f1e8',
-        surface: '#fffdf5',
+        // Theme-driven via CSS custom properties (space-separated RGB triplets so
+        // Tailwind's <alpha-value> slot still works, e.g. bg-ink/50). The triplets
+        // are defined in src/assets/styles/main.css per [data-theme].
+        ink: 'rgb(var(--c-ink) / <alpha-value>)',
+        paper: 'rgb(var(--c-paper) / <alpha-value>)',
+        surface: 'rgb(var(--c-surface) / <alpha-value>)',
         brand: {
-          yellow: '#ffd400',
-          pink: '#ff5c8a',
-          cyan: '#00e0c6',
-          lime: '#9ae600',
-          blue: '#5b8cff',
-          red: '#ff5247',
+          yellow: 'rgb(var(--c-brand-yellow) / <alpha-value>)',
+          pink: 'rgb(var(--c-brand-pink) / <alpha-value>)',
+          cyan: 'rgb(var(--c-brand-cyan) / <alpha-value>)',
+          lime: 'rgb(var(--c-brand-lime) / <alpha-value>)',
+          blue: 'rgb(var(--c-brand-blue) / <alpha-value>)',
+          red: 'rgb(var(--c-brand-red) / <alpha-value>)',
         },
       },
       fontFamily: {
@@ -34,12 +37,12 @@ export default {
         3: '3px',
       },
       borderRadius: {
-        brutal: '4px',
+        brutal: 'var(--nb-radius)',
       },
       boxShadow: {
-        'brutal-sm': '2px 2px 0 0 #111111',
-        brutal: '4px 4px 0 0 #111111',
-        'brutal-lg': '7px 7px 0 0 #111111',
+        'brutal-sm': 'var(--nb-shadow-sm)',
+        brutal: 'var(--nb-shadow)',
+        'brutal-lg': 'var(--nb-shadow-lg)',
       },
     },
   },

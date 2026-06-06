@@ -4,5 +4,12 @@
     "errors": {
       "backendUnreachable": "FilaMind-Backend nicht erreichbar — prüfe, ob der filamind-flow-Dienst läuft und erreichbar ist."
     }
+  },
+  "theme": {
+    "label": "Design",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "neon": "Neon",
+    "contrast": "Hoher Kontrast"
   }
 }

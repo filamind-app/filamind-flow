@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.91.0] - 2026-06-06
+
+### Added
+
+- **Theme system — 4 themes with a header switcher (Neon default).** The whole look is now driven by
+  CSS custom properties, so a single switch restyles the entire app. Ships **Neon** (deep indigo/violet
+  with a soft glow + rounded corners — the new default), **Dark** (neutral charcoal), **Light** (the
+  original warm Neo-Brutalist look), and **High Contrast** (near-black/white for accessibility).
+  - **How it works:** every design token (the 9 colors + the shadow/radius style tokens) is a CSS
+    variable; the Tailwind tokens reference them (`rgb(var(--c-*) / <alpha-value>)`, `var(--nb-*)`), so
+    **every existing utility** (`bg-paper`, `border-ink`, `bg-brand-cyan`, `shadow-brutal`, `rounded-brutal`)
+    recolors per theme with no component changes. Adding a theme = one `[data-theme]` block + a registry entry.
+  - **No-flash:** an inline `<head>` script applies the saved theme before first paint. Choice persists
+    (`localStorage`), and is exposed via a header **theme selector** (translated in all 7 locales).
+  - **Charts follow the theme:** the Input Shaping SVG charts/heatmaps no longer hardcode hex — they use
+    the token variables, so they recolor correctly in dark/neon/contrast.
+  - Built by a specialized multi-agent workflow (spec → tokens+CSS / runtime+switcher / chart-decouple →
+    adversarial review), then verified live in the browser across all four themes.
+
 ## [0.90.0] - 2026-06-06
 
 ### Changed

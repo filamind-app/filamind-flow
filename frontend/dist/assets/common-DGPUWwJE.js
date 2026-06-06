@@ -1,1 +1,0 @@
-const e={common:{appName:{t:0,b:{t:2,i:[{t:3}],s:"FilaMind Flow"}},errors:{backendUnreachable:{t:0,b:{t:2,i:[{t:3}],s:"Impossible de joindre le backend FilaMind — vérifiez que le service filamind-flow est en cours d'exécution et accessible."}}}}};export{e as default};
