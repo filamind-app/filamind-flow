@@ -251,6 +251,12 @@ templates live in [`deploy/`](deploy/).
 - [x] **Internationalization (i18n)** — multilingual UI on an offline-first, extensible
       `vue-i18n` foundation (en · ar · de · zh-Hans · fr · es · ru), RTL + Arabic, and a
       `{ code, params, message }` backend-message contract. _All six phases complete._
+- [x] **Theme system** — 4 switchable themes (Neon · Dark · Light · High-Contrast) driven by
+      CSS variables; per-theme recolor of every token with no component edits; no-flash + persisted.
+- [ ] **Planned expansion** (analyzed reuse from the Klipper ecosystem, GPL-3.0) — a shared
+      data + config-engine **foundation**, then: **Config Editor**, **Macro Designer**,
+      **Board Topology**, **Hardware Browser + Templates**, **Max-Flow**, and Motor-Drivers
+      **auto-SGT / slip-detection** + a Sensorless-Homing wizard. _See [ROADMAP.md](ROADMAP.md)._
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 
