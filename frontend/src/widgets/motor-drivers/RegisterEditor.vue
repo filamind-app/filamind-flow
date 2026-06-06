@@ -9,7 +9,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { fetchFieldPolicy, revertDriver, setCoolstep, setField } from './api'
-import { stallguardRange } from './format'
+import { applyResultText, stallguardRange } from './format'
 import HelpNote from './HelpNote.vue'
 import type { FieldPolicyEntry, FieldPolicyMap, TmcDriver } from './types'
 
@@ -106,7 +106,7 @@ async function write(field: string): Promise<void> {
   result.value = null
   try {
     const res = await setField(props.driver.stepper, field, values.value[field], props.driver.model)
-    result.value = { field, ok: res.ok, message: res.message }
+    result.value = { field, ok: res.ok, message: applyResultText(res) }
     if (res.ok) emit('changed')
   } catch (e) {
     result.value = { field, ok: false, message: e instanceof Error ? e.message : String(e) }
@@ -120,7 +120,7 @@ async function resetToConfig(): Promise<void> {
   result.value = null
   try {
     const res = await revertDriver(props.driver.stepper)
-    result.value = { field: '(all)', ok: res.ok, message: res.message }
+    result.value = { field: '(all)', ok: res.ok, message: applyResultText(res) }
     if (res.ok) emit('changed')
   } catch (e) {
     result.value = {
@@ -138,7 +138,7 @@ async function applyCoolstep(enable: boolean): Promise<void> {
   result.value = null
   try {
     const res = await setCoolstep(props.driver.stepper, enable, props.driver.model)
-    result.value = { field: 'coolstep', ok: res.ok, message: res.message }
+    result.value = { field: 'coolstep', ok: res.ok, message: applyResultText(res) }
     if (res.ok) emit('changed')
   } catch (e) {
     result.value = {

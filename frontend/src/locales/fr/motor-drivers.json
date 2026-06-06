@@ -289,6 +289,26 @@
       "set": "régler",
       "readOnly": "registres en lecture seule",
       "toffHint": "Si vous réglez toff à 1, gardez aussi tbl ≥ 1 (le temps de blanc de 16 cycles en a besoin)."
+    },
+    "apply": {
+      "nothingToApply": "Rien à appliquer.",
+      "busyApply": "Écriture sur un driver refusée pendant que l'imprimante est occupée (impression ou en pause).",
+      "applied": "{n} modification(s) appliquée(s) à {stepper}.",
+      "busyReinit": "Réinitialisation refusée pendant que l'imprimante est occupée (impression ou en pause).",
+      "reinitialized": "{stepper} réinitialisé et son courant configuré restauré.",
+      "autotuneNotInstalled": "klipper_tmc_autotune n’est pas installé pour ce stepper — utilisez plutôt la recommandation ou la copie vers la configuration.",
+      "busyAutotune": "Autotune refusé pendant que l'imprimante est occupée (impression ou en pause).",
+      "autotuneRan": "AUTOTUNE_TMC exécuté sur {stepper}.",
+      "busyWrite": "Écriture refusée pendant que l'imprimante est occupée (impression ou en pause).",
+      "stallguardSet": "{field} = {num} défini sur {stepper}.",
+      "fieldSet": "{field} = {num} défini sur {stepper} (en direct uniquement — INIT_TMC ou un redémarrage restaure la valeur configurée).",
+      "coolstepEnabled": "CoolStep activé sur {stepper} (en direct uniquement — INIT_TMC ou un redémarrage restaure les valeurs configurées).",
+      "coolstepDisabled": "CoolStep désactivé sur {stepper} (en direct uniquement — INIT_TMC ou un redémarrage restaure les valeurs configurées).",
+      "busyHome": "Prise d'origine refusée pendant que l'imprimante est occupée (impression ou en pause).",
+      "homed": "Prise d'origine de {ax} effectuée.",
+      "motorsyncNotInstalled": "L'extension motors_sync n'est pas installée — elle aligne la phase de micro-pas de plusieurs moteurs sur un même axe (Z double/quadruple, X double) à l'aide d'un accéléromètre.",
+      "busySync": "Synchronisation des moteurs refusée pendant que l'imprimante est occupée (impression ou en pause).",
+      "syncRan": "{cmd} exécuté."
     }
   }
 }

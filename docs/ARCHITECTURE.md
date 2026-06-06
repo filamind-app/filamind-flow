@@ -150,10 +150,17 @@ design mirrors the rest of the app: offline-first, extensible, and type-safe.
 - **Tooling.** `npm run i18n:keydiff` (key-set parity, in CI) and `npm run i18n:pseudo`
   (pseudo-localization — accents + ~40% padding + brackets — to surface text-expansion / RTL overflow
   and any un-externalized strings before a translator is involved).
+- **Backend messages.** Write endpoints return a `{ code, params, message }` contract: the backend
+  picks a stable `code` (e.g. `motorDrivers.apply.applied`) plus interpolation `params`, and keeps an
+  English `message` as a fallback. The UI renders `t(code, params)` (`applyResultText`) so localized
+  copy lives in the frontend catalog, not the server. Raw upstream / validation errors (Moonraker
+  failures, `field_policy` text) carry **no** `code` and surface their English text verbatim — they
+  are technical strings, not product copy.
 
 SI **unit symbols** (Hz, A, °C, Ω, Nm, mH, mm/s²) and brand / protocol / register / G-code tokens
-stay Latin in every locale; only the surrounding plain-language copy is translated. Externalizing
-the existing English copy proceeds phase-by-phase (see [ROADMAP.md](../ROADMAP.md)).
+stay Latin in every locale; only the surrounding plain-language copy is translated. All six i18n
+phases (scaffolding → widgets → RTL/Arabic → backend message codes) are complete (see
+[ROADMAP.md](../ROADMAP.md)).
 
 ## Conventions
 

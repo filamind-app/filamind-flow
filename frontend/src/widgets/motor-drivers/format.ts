@@ -2,11 +2,20 @@
  *  so they're unit-testable and the template stays declarative.
  */
 import { i18n } from '@/core/i18n'
-import type { DriverRecommendation, MotorSpec, TmcDriver } from './types'
+import type { ApplyResponse, DriverRecommendation, MotorSpec, TmcDriver } from './types'
 
 /** "tmc2209" -> "TMC2209". */
 export function driverModelLabel(model: string): string {
   return model.toUpperCase()
+}
+
+/** Renders a write/revert/autotune result. The backend tags translatable messages with a
+ *  `code` + `params`; we render `motorDrivers.apply.<code>` so the text follows the locale.
+ *  Passthrough errors (Moonraker / policy / value errors) carry no code and stay as `message`. */
+export function applyResultText(res: ApplyResponse): string {
+  if (!res.code) return res.message
+  const tt = i18n.global.t as unknown as (key: string, named: Record<string, unknown>) => string
+  return tt(`motorDrivers.apply.${res.code}`, res.params ?? {})
 }
 
 /** Live current with the configured value appended when they differ (TMCs quantise

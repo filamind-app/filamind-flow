@@ -289,6 +289,26 @@
       "set": "设置",
       "readOnly": "只读寄存器",
       "toffHint": "如果你将 toff 设为 1，也要保持 tbl ≥ 1（16 周期的消隐时间需要它）。"
+    },
+    "apply": {
+      "nothingToApply": "没有可应用的更改。",
+      "busyApply": "打印机忙碌时（正在打印或已暂停）拒绝写入驱动器。",
+      "applied": "已对 {stepper} 应用 {n} 项更改。",
+      "busyReinit": "打印机忙碌时（正在打印或已暂停）拒绝重新初始化。",
+      "reinitialized": "已重新初始化 {stepper} 并恢复其配置的电流。",
+      "autotuneNotInstalled": "此步进电机未安装 klipper_tmc_autotune — 请改用推荐值或复制到配置。",
+      "busyAutotune": "打印机忙碌时（正在打印或已暂停）拒绝自动调谐。",
+      "autotuneRan": "已对 {stepper} 运行 AUTOTUNE_TMC。",
+      "busyWrite": "打印机忙碌时（正在打印或已暂停）拒绝写入。",
+      "stallguardSet": "已在 {stepper} 上设置 {field} = {num}。",
+      "fieldSet": "已在 {stepper} 上设置 {field} = {num}（仅实时生效 — INIT_TMC 或重启将恢复配置的值）。",
+      "coolstepEnabled": "已在 {stepper} 上启用 CoolStep（仅实时生效 — INIT_TMC 或重启将恢复配置的值）。",
+      "coolstepDisabled": "已在 {stepper} 上禁用 CoolStep（仅实时生效 — INIT_TMC 或重启将恢复配置的值）。",
+      "busyHome": "打印机忙碌时（正在打印或已暂停）拒绝回零。",
+      "homed": "已回零 {ax}。",
+      "motorsyncNotInstalled": "未安装 motors_sync 插件 — 它使用加速度计对齐同一轴上多个电机（双/四 Z、双 X）的微步相位。",
+      "busySync": "打印机忙碌时（正在打印或已暂停）拒绝同步电机。",
+      "syncRan": "已运行 {cmd}。"
     }
   }
 }

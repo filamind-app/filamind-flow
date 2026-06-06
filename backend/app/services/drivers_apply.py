@@ -11,6 +11,11 @@ Three mechanisms, in increasing risk:
 Live writes are reversible (INIT_TMC re-reads the config, a restart fully restores), but
 they touch the driver, so the UI also requires an explicit confirm. The actual numbers
 come from the recommender (read-only physics); this module only sends g-code.
+
+Each result carries an i18n ``code`` (+ ``params``) for the UI to translate, alongside the
+English ``message`` (kept as a fallback). Passthrough errors — Moonraker failures, field_policy /
+ValueError validation text — surface their raw English text with no ``code`` (they are technical /
+upstream strings, not localizable copy).
 """
 
 from __future__ import annotations
@@ -30,6 +35,14 @@ _FIELDS = ("pwm_grad", "pwm_ofs", "hstrt", "hend")
 _NUM = re.compile(r"^-?\d+(\.\d+)?$")
 #: A stepper section name is a safe identifier (e.g. "stepper_x", "extruder1").
 _NAME = re.compile(r"^[A-Za-z][\w-]*$")
+
+
+def _res(
+    ok: bool, applied: list[str], message: str, code: str | None = None, **params: Any
+) -> dict[str, Any]:
+    """Build an apply-result dict. ``code`` + ``params`` drive UI translation (``t(code, params)``);
+    ``message`` is the English fallback (kept byte-identical). Passthrough errors omit ``code``."""
+    return {"ok": ok, "applied": applied, "message": message, "code": code, "params": params}
 
 
 def _safe_name(stepper: str) -> str:
@@ -106,28 +119,31 @@ async def apply_live(
     try:
         commands = _commands(stepper, run_current, hold_current, fields)
     except ValueError as exc:
-        return {"ok": False, "applied": [], "message": str(exc)}
+        return _res(False, [], str(exc))
     if not commands:
-        return {"ok": False, "applied": [], "message": "Nothing to apply."}
+        return _res(False, [], "Nothing to apply.", "nothingToApply")
 
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     try:
         if await _is_busy(client):
-            return {
-                "ok": False,
-                "applied": [],
-                "message": "Refusing to write to a driver while the printer is busy "
-                "(printing or paused).",
-            }
+            return _res(
+                False,
+                [],
+                "Refusing to write to a driver while the printer is busy (printing or paused).",
+                "busyApply",
+            )
         for cmd in commands:
             await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
-        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
-    return {
-        "ok": True,
-        "applied": commands,
-        "message": f"Applied {len(commands)} change(s) to {stepper}.",
-    }
+        return _res(False, [], f"Moonraker error: {exc}")
+    return _res(
+        True,
+        commands,
+        f"Applied {len(commands)} change(s) to {stepper}.",
+        "applied",
+        n=len(commands),
+        stepper=stepper,
+    )
 
 
 async def _restore_current_cmd(client: MoonrakerClient, stepper: str) -> str | None:
@@ -168,15 +184,16 @@ async def revert(moonraker_url: str, stepper: str, *, timeout: float = 20.0) -> 
     try:
         stepper = _safe_name(stepper)
     except ValueError as exc:
-        return {"ok": False, "applied": [], "message": str(exc)}
+        return _res(False, [], str(exc))
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     try:
         if await _is_busy(client):
-            return {
-                "ok": False,
-                "applied": [],
-                "message": "Refusing to re-init while the printer is busy (printing or paused).",
-            }
+            return _res(
+                False,
+                [],
+                "Refusing to re-init while the printer is busy (printing or paused).",
+                "busyReinit",
+            )
         commands = [f"INIT_TMC STEPPER={stepper}"]
         current_cmd = await _restore_current_cmd(client, stepper)
         if current_cmd:
@@ -184,12 +201,14 @@ async def revert(moonraker_url: str, stepper: str, *, timeout: float = 20.0) -> 
         for cmd in commands:
             await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
-        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
-    return {
-        "ok": True,
-        "applied": commands,
-        "message": f"Re-initialized {stepper} and restored its configured current.",
-    }
+        return _res(False, [], f"Moonraker error: {exc}")
+    return _res(
+        True,
+        commands,
+        f"Re-initialized {stepper} and restored its configured current.",
+        "reinitialized",
+        stepper=stepper,
+    )
 
 
 async def autotune_available(moonraker_url: str, stepper: str) -> bool:
@@ -212,27 +231,29 @@ async def run_autotune(
     try:
         stepper = _safe_name(stepper)
     except ValueError as exc:
-        return {"ok": False, "applied": [], "message": str(exc)}
+        return _res(False, [], str(exc))
     if not await autotune_available(moonraker_url, stepper):
-        return {
-            "ok": False,
-            "applied": [],
-            "message": "klipper_tmc_autotune is not installed for this stepper "
+        return _res(
+            False,
+            [],
+            "klipper_tmc_autotune is not installed for this stepper "
             "— use the recommendation or copy-to-config instead.",
-        }
+            "autotuneNotInstalled",
+        )
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     cmd = f"AUTOTUNE_TMC STEPPER={stepper}"
     try:
         if await _is_busy(client):
-            return {
-                "ok": False,
-                "applied": [],
-                "message": "Refusing to autotune while the printer is busy (printing or paused).",
-            }
+            return _res(
+                False,
+                [],
+                "Refusing to autotune while the printer is busy (printing or paused).",
+                "busyAutotune",
+            )
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
-        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
-    return {"ok": True, "applied": [cmd], "message": f"Ran AUTOTUNE_TMC on {stepper}."}
+        return _res(False, [], f"Moonraker error: {exc}")
+    return _res(True, [cmd], f"Ran AUTOTUNE_TMC on {stepper}.", "autotuneRan", stepper=stepper)
 
 
 #: StallGuard threshold field names, by model family (2209 / 2130-5160 / 2240).
@@ -248,28 +269,37 @@ async def set_stallguard(
     try:
         stepper = _safe_name(stepper)
     except ValueError as exc:
-        return {"ok": False, "applied": [], "message": str(exc)}
+        return _res(False, [], str(exc))
     if field not in _SG_FIELDS:
-        return {"ok": False, "applied": [], "message": f"unknown StallGuard field: {field!r}"}
+        return _res(False, [], f"unknown StallGuard field: {field!r}")
     # Server-enforced range (the client's max= is not trusted): sgthrs/sg4_thrs are unsigned
     # 0-255, sgt is a signed -64..63 - a UI sending 300 would otherwise mask-truncate in Klipper.
     try:
         num = _safe_num(field_policy.validate(field, value))
     except (field_policy.PolicyError, ValueError) as exc:
-        return {"ok": False, "applied": [], "message": str(exc)}
+        return _res(False, [], str(exc))
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     cmd = f"SET_TMC_FIELD STEPPER={stepper} FIELD={field} VALUE={num}"
     try:
         if await _is_busy(client):
-            return {
-                "ok": False,
-                "applied": [],
-                "message": "Refusing to write while the printer is busy (printing or paused).",
-            }
+            return _res(
+                False,
+                [],
+                "Refusing to write while the printer is busy (printing or paused).",
+                "busyWrite",
+            )
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
-        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
-    return {"ok": True, "applied": [cmd], "message": f"Set {field} = {num} on {stepper}."}
+        return _res(False, [], f"Moonraker error: {exc}")
+    return _res(
+        True,
+        [cmd],
+        f"Set {field} = {num} on {stepper}.",
+        "stallguardSet",
+        field=field,
+        num=num,
+        stepper=stepper,
+    )
 
 
 async def set_field(
@@ -293,27 +323,32 @@ async def set_field(
         stepper = _safe_name(stepper)
         validated = field_policy.validate(field, value, model)
     except (field_policy.PolicyError, ValueError) as exc:
-        return {"ok": False, "applied": [], "message": str(exc)}
+        return _res(False, [], str(exc))
     reg = field_policy.register_name(field)
     param = "VELOCITY" if field_policy.is_velocity(field) else "VALUE"
     cmd = f"SET_TMC_FIELD STEPPER={stepper} FIELD={reg} {param}={_safe_num(validated)}"
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     try:
         if await _is_busy(client):
-            return {
-                "ok": False,
-                "applied": [],
-                "message": "Refusing to write while the printer is busy (printing or paused).",
-            }
+            return _res(
+                False,
+                [],
+                "Refusing to write while the printer is busy (printing or paused).",
+                "busyWrite",
+            )
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
-        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
-    return {
-        "ok": True,
-        "applied": [cmd],
-        "message": f"Set {field} = {_safe_num(validated)} on {stepper} "
+        return _res(False, [], f"Moonraker error: {exc}")
+    return _res(
+        True,
+        [cmd],
+        f"Set {field} = {_safe_num(validated)} on {stepper} "
         "(live only — INIT_TMC or a restart restores the configured value).",
-    }
+        "fieldSet",
+        field=field,
+        num=_safe_num(validated),
+        stepper=stepper,
+    )
 
 
 #: CoolStep is a coupled loop — rather than five scattered 0-15 boxes, expose one toggle that
@@ -340,26 +375,29 @@ async def set_coolstep(
             num = _safe_num(field_policy.validate(fld, val, model))
             cmds.append(f"SET_TMC_FIELD STEPPER={stepper} FIELD={fld} VALUE={num}")
     except (field_policy.PolicyError, ValueError) as exc:
-        return {"ok": False, "applied": [], "message": str(exc)}
+        return _res(False, [], str(exc))
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     try:
         if await _is_busy(client):
-            return {
-                "ok": False,
-                "applied": [],
-                "message": "Refusing to write while the printer is busy (printing or paused).",
-            }
+            return _res(
+                False,
+                [],
+                "Refusing to write while the printer is busy (printing or paused).",
+                "busyWrite",
+            )
         for cmd in cmds:
             await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
-        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
+        return _res(False, [], f"Moonraker error: {exc}")
     state = "enabled" if enable else "disabled"
-    return {
-        "ok": True,
-        "applied": cmds,
-        "message": f"CoolStep {state} on {stepper} "
+    return _res(
+        True,
+        cmds,
+        f"CoolStep {state} on {stepper} "
         "(live only — INIT_TMC or a restart restores the configured values).",
-    }
+        "coolstepEnabled" if enable else "coolstepDisabled",
+        stepper=stepper,
+    )
 
 
 async def home_axis(moonraker_url: str, axis: str, *, timeout: float = 120.0) -> dict[str, Any]:
@@ -367,20 +405,21 @@ async def home_axis(moonraker_url: str, axis: str, *, timeout: float = 120.0) ->
     while printing. The caller (UI) warns about crash risk and requires a confirm."""
     ax = str(axis).strip().upper()
     if ax not in _AXES:
-        return {"ok": False, "applied": [], "message": f"unknown axis: {axis!r}"}
+        return _res(False, [], f"unknown axis: {axis!r}")
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     cmd = f"G28 {ax}"
     try:
         if await _is_busy(client):
-            return {
-                "ok": False,
-                "applied": [],
-                "message": "Refusing to home while the printer is busy (printing or paused).",
-            }
+            return _res(
+                False,
+                [],
+                "Refusing to home while the printer is busy (printing or paused).",
+                "busyHome",
+            )
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
-        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
-    return {"ok": True, "applied": [cmd], "message": f"Homed {ax}."}
+        return _res(False, [], f"Moonraker error: {exc}")
+    return _res(True, [cmd], f"Homed {ax}.", "homed", ax=ax)
 
 
 async def motors_sync_available(moonraker_url: str) -> bool:
@@ -406,23 +445,24 @@ async def run_motors_sync(
     the toolhead for a while, so the UI warns and requires a confirm.
     """
     if not await motors_sync_available(moonraker_url):
-        return {
-            "ok": False,
-            "applied": [],
-            "message": "The motors_sync add-on isn't installed — it aligns the microstep phase "
+        return _res(
+            False,
+            [],
+            "The motors_sync add-on isn't installed — it aligns the microstep phase "
             "of multiple motors on one axis (dual/quad-Z, dual-X) using an accelerometer.",
-        }
+            "motorsyncNotInstalled",
+        )
     client = MoonrakerClient(moonraker_url, timeout=timeout)
     cmd = "SYNC_MOTORS_CALIBRATE" if calibrate else "SYNC_MOTORS"
     try:
         if await _is_busy(client):
-            return {
-                "ok": False,
-                "applied": [],
-                "message": "Refusing to sync motors while the printer is busy "
-                "(printing or paused).",
-            }
+            return _res(
+                False,
+                [],
+                "Refusing to sync motors while the printer is busy (printing or paused).",
+                "busySync",
+            )
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
-        return {"ok": False, "applied": [], "message": f"Moonraker error: {exc}"}
-    return {"ok": True, "applied": [cmd], "message": f"Ran {cmd}."}
+        return _res(False, [], f"Moonraker error: {exc}")
+    return _res(True, [cmd], f"Ran {cmd}.", "syncRan", cmd=cmd)

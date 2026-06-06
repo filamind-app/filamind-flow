@@ -68,6 +68,11 @@ Interactive API docs: <http://localhost:8000/docs>
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).
 
+The driver write endpoints return an `ApplyResponse` with an i18n **`{ code, params, message }`**
+contract: `code` (+ `params`) is a stable key the UI translates (`motorDrivers.apply.*`), and
+`message` is the English fallback. Passthrough errors (Moonraker failures, `field_policy` /
+value-validation text) carry `code: null` — their raw English text is shown verbatim.
+
 ## Development
 
 ```bash
