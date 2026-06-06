@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.88.1] - 2026-06-06
+
+### Fixed
+
+- **Guide drawer — "how to read" steps rendered as raw message objects.** `HelpDrawer` resolved its
+  ordered steps with `tm(stepsKey)` over a **dynamic** key and rendered each item directly, which
+  shows vue-i18n's raw compiled message nodes (`{t,b,s,i…}`) instead of text. Resolve each item with
+  `rt()` so the steps render as readable text. (Caught by live browser verification on the printer.)
+
 ## [0.88.0] - 2026-06-06
 
 ### Changed
