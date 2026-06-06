@@ -57,6 +57,10 @@
       "macro-designer": {
         "title": "宏设计器",
         "description": "离线模拟 G-code —— 工具头路径、包围盒、总量以及宏库。"
+      },
+      "hardware-browser": {
+        "title": "硬件浏览器",
+        "description": "按名称、制造商或规格搜索精选的 3D 打印硬件参考库。"
       }
     }
   }

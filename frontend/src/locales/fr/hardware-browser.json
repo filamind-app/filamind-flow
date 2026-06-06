@@ -1,0 +1,65 @@
+{
+  "hardwareBrowser": {
+    "intro": "Recherchez une référence sélectionnée de matériel d'impression 3D — moteurs pas-à-pas, drivers, cartes, capteurs, hotends, ventilateurs, hôtes, buses, extrudeurs, filaments et bien plus — par nom, fabricant, catégorie ou n'importe quelle spécification.",
+    "help": {
+      "guide": "Aide",
+      "guideTitle": "À propos de l'explorateur de matériel",
+      "close": "Fermer",
+      "howToRead": "Comment l'utiliser",
+      "steps": [
+        "Saisissez du texte dans le champ de recherche pour correspondre à un nom, un fabricant ou n'importe quelle valeur de spécification.",
+        "Affinez par catégorie ou par fabricant à l'aide des filtres.",
+        "Chaque fiche de résultat affiche les spécifications du composant ; naviguez avec Précédent / Suivant."
+      ],
+      "topics": {
+        "search": {
+          "title": "Recherche",
+          "body": "La recherche correspond partout — fabricant, nom du modèle, catégorie, sous-section ou n'importe quelle valeur de spécification. Combinez-la avec les filtres de catégorie et de fabricant pour affiner. Les résultats sont paginés ; le nombre total reflète tout ce qui correspond, pas seulement la page actuelle."
+        },
+        "categories": {
+          "title": "Catégories",
+          "body": "Les composants sont regroupés en catégories (moteurs pas-à-pas, drivers, cartes, capteurs, hotends, ventilateurs/alimentation, hôtes, mouvement, buses, extrudeurs, filaments, électronique, caméras/écrans). Choisissez-en une pour parcourir uniquement ce type."
+        },
+        "manufacturers": {
+          "title": "Fabricants et spécifications",
+          "body": "Ceci est une référence sélectionnée à des fins de comparaison, pas une boutique — les valeurs proviennent des fiches techniques des fabricants et des données de la communauté, et peuvent être en retard par rapport aux produits les plus récents. Vérifiez toujours auprès du fabricant avant d'acheter ou de configurer."
+        },
+        "glossary": { "title": "Glossaire", "body": "" }
+      },
+      "glossary": {
+        "category": {
+          "term": "Catégorie",
+          "def": "Le type de matériel auquel un composant appartient (par ex. Hotends, Moteurs pas-à-pas, Capteurs)."
+        },
+        "manufacturer": {
+          "term": "Fabricant",
+          "def": "L'entreprise qui fabrique la pièce (par ex. E3D, BIGTREETECH, LDO Motors)."
+        },
+        "spec": {
+          "term": "Spécification",
+          "def": "Un attribut de la fiche technique d'un composant — courant, tension, température maximale, dimensions, etc."
+        }
+      }
+    },
+    "search": {
+      "placeholder": "Rechercher du matériel…",
+      "button": "Rechercher",
+      "category": "Catégorie",
+      "allCategories": "Toutes les catégories",
+      "manufacturer": "Fabricant",
+      "manufacturerPlaceholder": "Tous les fabricants"
+    },
+    "results": {
+      "total": "{count} correspondances",
+      "none": "Aucun composant ne correspond à votre recherche.",
+      "showing": "Affichage de {from} à {to} sur {total}",
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "states": {
+      "loading": "Recherche…",
+      "error": "Impossible de charger la base de données de matériel.",
+      "retry": "Réessayer"
+    }
+  }
+}

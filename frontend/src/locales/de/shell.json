@@ -57,6 +57,10 @@
       "macro-designer": {
         "title": "Macro Designer",
         "description": "Simuliere G-code offline — Werkzeugkopf-Pfad, Grenzen, Summen und eine Makro-Bibliothek."
+      },
+      "hardware-browser": {
+        "title": "Hardware Browser",
+        "description": "Durchsuche eine kuratierte 3D-Druck-Hardware-Referenz nach Name, Hersteller oder Spezifikation."
       }
     }
   }
