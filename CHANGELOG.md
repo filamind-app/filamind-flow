@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.113.0] - 2026-06-06
+
+### Added
+
+- **Hardware Browser — sectioned catalog + "Search all" (Phase 9 of the DB overhaul, item 9).**
+  The browser now opens on a **Catalog** view: a tile per category with a hand-drawn illustration,
+  the category name, and a **live item count**, plus a prominent **"Search all"** tile. Clicking a
+  tile drops into the **Search** view pre-filtered to that category. The two views are a persistent
+  `WidgetTabs` strip (state preserved across switches).
+  - New `CategoryIllo.vue` (13 Neo-Brutalist category glyphs) + `GET /api/hardware/categories` now
+    returns **per-category counts**.
+  - New catalog/tab i18n keys across all 7 locales.
+
 ## [0.112.0] - 2026-06-06
 
 ### Added

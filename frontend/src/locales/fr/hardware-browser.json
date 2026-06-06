@@ -24,7 +24,10 @@
           "title": "Fabricants et spécifications",
           "body": "Ceci est une référence sélectionnée à des fins de comparaison, pas une boutique — les valeurs proviennent des fiches techniques des fabricants et des données de la communauté, et peuvent être en retard par rapport aux produits les plus récents. Vérifiez toujours auprès du fabricant avant d'acheter ou de configurer."
         },
-        "glossary": { "title": "Glossaire", "body": "" }
+        "glossary": {
+          "title": "Glossaire",
+          "body": ""
+        }
       },
       "glossary": {
         "category": {
@@ -60,6 +63,14 @@
       "loading": "Recherche…",
       "error": "Impossible de charger la base de données de matériel.",
       "retry": "Réessayer"
+    },
+    "tabs": {
+      "catalog": "Catalogue",
+      "search": "Tout chercher"
+    },
+    "catalog": {
+      "searchAll": "Tout chercher",
+      "items": "{n} éléments"
     }
   }
 }

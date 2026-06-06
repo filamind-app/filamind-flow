@@ -24,7 +24,10 @@
           "title": "Fabricantes y especificaciones",
           "body": "Esta es una referencia curada para comparar, no una tienda — los valores provienen de las hojas de datos de los fabricantes y de datos de la comunidad, y pueden estar desactualizados respecto a los productos más recientes. Confirma siempre con el fabricante antes de comprar o configurar."
         },
-        "glossary": { "title": "Glosario", "body": "" }
+        "glossary": {
+          "title": "Glosario",
+          "body": ""
+        }
       },
       "glossary": {
         "category": {
@@ -60,6 +63,14 @@
       "loading": "Buscando…",
       "error": "No se pudo cargar la base de datos de hardware.",
       "retry": "Reintentar"
+    },
+    "tabs": {
+      "catalog": "Catálogo",
+      "search": "Buscar todo"
+    },
+    "catalog": {
+      "searchAll": "Buscar todo",
+      "items": "{n} elementos"
     }
   }
 }

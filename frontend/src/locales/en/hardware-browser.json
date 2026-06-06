@@ -24,7 +24,10 @@
           "title": "Manufacturers & specs",
           "body": "This is a curated reference for comparison, not a store — values come from manufacturer datasheets and community data and may lag the latest products. Always confirm against the manufacturer before buying or configuring."
         },
-        "glossary": { "title": "Glossary", "body": "" }
+        "glossary": {
+          "title": "Glossary",
+          "body": ""
+        }
       },
       "glossary": {
         "category": {
@@ -60,6 +63,14 @@
       "loading": "Searching…",
       "error": "Couldn't load the hardware database.",
       "retry": "Retry"
+    },
+    "tabs": {
+      "catalog": "Catalog",
+      "search": "Search all"
+    },
+    "catalog": {
+      "searchAll": "Search all",
+      "items": "{n} items"
     }
   }
 }

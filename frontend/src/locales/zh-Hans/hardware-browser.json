@@ -24,7 +24,10 @@
           "title": "制造商与规格",
           "body": "这是一个用于对比的精选参考库，并非商店 —— 数据来自制造商数据表和社区资料，可能落后于最新产品。在购买或配置之前，请务必与制造商核实。"
         },
-        "glossary": { "title": "术语表", "body": "" }
+        "glossary": {
+          "title": "术语表",
+          "body": ""
+        }
       },
       "glossary": {
         "category": {
@@ -60,6 +63,14 @@
       "loading": "搜索中…",
       "error": "无法加载硬件数据库。",
       "retry": "重试"
+    },
+    "tabs": {
+      "catalog": "目录",
+      "search": "全部搜索"
+    },
+    "catalog": {
+      "searchAll": "全部搜索",
+      "items": "{n} 项"
     }
   }
 }
