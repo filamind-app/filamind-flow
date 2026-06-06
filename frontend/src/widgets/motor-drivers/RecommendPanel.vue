@@ -15,8 +15,8 @@ import {
   revertDriver,
   runAutotune,
 } from './api'
-import { recommendationRows } from './format'
-import type { DriverRecommendation, TmcDriver } from './types'
+import { applyResultText, recommendationRows } from './format'
+import type { ApplyResponse, DriverRecommendation, TmcDriver } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -61,13 +61,13 @@ async function compute(): Promise<void> {
 }
 
 /** Wraps a write/revert action: show its message, and refresh the dashboard on success. */
-async function run(action: () => Promise<{ ok: boolean; message: string }>): Promise<void> {
+async function run(action: () => Promise<ApplyResponse>): Promise<void> {
   busy.value = true
   resultMsg.value = null
   try {
     const res = await action()
     resultOk.value = res.ok
-    resultMsg.value = res.message
+    resultMsg.value = applyResultText(res)
     if (res.ok) emit('applied')
   } catch (e) {
     resultOk.value = false

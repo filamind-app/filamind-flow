@@ -202,11 +202,14 @@ English is bundled eagerly; every other locale is a lazy chunk under `src/locale
 keys (type-checked, so a typo fails the build), and CI enforces that every locale carries exactly
 the same key set (`npm run i18n:keydiff`); `npm run i18n:pseudo` previews text-expansion / RTL
 overflow. Arabic is wired for RTL with Western (`latn`) digits — engineers cross-reference G-code
-and datasheets in `1.7 A` form.
+and datasheets in `1.7 A` form. Backend write-results follow a `{ code, params, message }` contract:
+the API returns a stable code the UI translates (`applyResultText`), keeping the English `message` as
+a fallback; raw upstream / validation errors (Moonraker, `field_policy`) intentionally stay English.
 
 > **Status:** Shipped — the UI is available in **7 languages** (**en · ar · de · zh-Hans · fr · es ·
 > ru**) via a header switcher; switching is instant and lazy-loaded. Arabic flips the document to RTL
-> (the Neo-Brutalist RTL layout polish is in progress — see [ROADMAP.md](ROADMAP.md)).
+> (with a Neo-Brutalist RTL layout pass). All six i18n phases — scaffolding → widgets → RTL → backend
+> message codes — are complete.
 
 ## Documentation
 
@@ -245,9 +248,9 @@ templates live in [`deploy/`](deploy/).
       an advanced register editor (server-side allowlist + clamp; raw current/protection blocked),
       a live monitor, a guided wizard, and multi-motor synchronization; generic across
       all Klipper printers and TMC models
-- [ ] **Internationalization (i18n)** — multilingual UI on an offline-first, extensible
-      `vue-i18n` foundation (en · ar · de · zh-Hans · fr · es · ru), RTL + Arabic.
-      _Phase 0 (scaffolding) ✅ — externalizing copy phase-by-phase_
+- [x] **Internationalization (i18n)** — multilingual UI on an offline-first, extensible
+      `vue-i18n` foundation (en · ar · de · zh-Hans · fr · es · ru), RTL + Arabic, and a
+      `{ code, params, message }` backend-message contract. _All six phases complete._
 - [ ] Self-hosted fonts for fully offline hosts
 - [ ] Optional auth/oneshot-token flow for secured Moonraker setups
 

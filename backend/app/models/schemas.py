@@ -910,6 +910,10 @@ class ApplyResponse(BaseModel):
     ok: bool
     applied: list[str] = []
     message: str
+    #: i18n code for ``message``; the UI renders ``t(code, params)`` and falls back to ``message``
+    #: (English). ``None`` for passthrough upstream text (Moonraker / policy / value errors).
+    code: str | None = None
+    params: dict[str, Any] = {}
 
 
 class StallguardRequest(BaseModel):

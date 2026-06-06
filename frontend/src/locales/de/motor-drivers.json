@@ -289,6 +289,26 @@
       "set": "setzen",
       "readOnly": "schreibgeschützte Register",
       "toffHint": "Wenn du toff auf 1 setzt, halte auch tbl ≥ 1 (die 16-Zyklen-Austastzeit benötigt es)."
+    },
+    "apply": {
+      "nothingToApply": "Nichts anzuwenden.",
+      "busyApply": "Schreiben auf einen Treiber wird verweigert, während der Drucker beschäftigt ist (Druck läuft oder pausiert).",
+      "applied": "{n} Änderung(en) auf {stepper} angewendet.",
+      "busyReinit": "Neuinitialisierung wird verweigert, während der Drucker beschäftigt ist (Druck läuft oder pausiert).",
+      "reinitialized": "{stepper} neu initialisiert und den konfigurierten Strom wiederhergestellt.",
+      "autotuneNotInstalled": "klipper_tmc_autotune ist für diesen Stepper nicht installiert — verwende stattdessen die Empfehlung oder „In Konfiguration kopieren“.",
+      "busyAutotune": "Autotune wird verweigert, während der Drucker beschäftigt ist (Druck läuft oder pausiert).",
+      "autotuneRan": "AUTOTUNE_TMC auf {stepper} ausgeführt.",
+      "busyWrite": "Schreiben wird verweigert, während der Drucker beschäftigt ist (Druck läuft oder pausiert).",
+      "stallguardSet": "{field} = {num} auf {stepper} gesetzt.",
+      "fieldSet": "{field} = {num} auf {stepper} gesetzt (nur live — INIT_TMC oder ein Neustart stellt den konfigurierten Wert wieder her).",
+      "coolstepEnabled": "CoolStep auf {stepper} aktiviert (nur live — INIT_TMC oder ein Neustart stellt die konfigurierten Werte wieder her).",
+      "coolstepDisabled": "CoolStep auf {stepper} deaktiviert (nur live — INIT_TMC oder ein Neustart stellt die konfigurierten Werte wieder her).",
+      "busyHome": "Referenzfahrt wird verweigert, während der Drucker beschäftigt ist (Druck läuft oder pausiert).",
+      "homed": "{ax} referenziert.",
+      "motorsyncNotInstalled": "Das Add-on motors_sync ist nicht installiert — es richtet die Mikroschritt-Phase mehrerer Motoren an einer Achse (Doppel-/Quad-Z, Doppel-X) mithilfe eines Beschleunigungssensors aus.",
+      "busySync": "Motor-Synchronisierung wird verweigert, während der Drucker beschäftigt ist (Druck läuft oder pausiert).",
+      "syncRan": "{cmd} ausgeführt."
     }
   }
 }
