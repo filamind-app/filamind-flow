@@ -85,6 +85,35 @@
       "paramHead": "Parámetro",
       "valueHead": "Valor"
     },
+    "edit": {
+      "hint": "Edita el texto sin formato de abajo y luego pulsa Guardar. Se crea una copia de seguridad con marca de tiempo antes de cualquier escritura."
+    },
+    "save": {
+      "button": "Guardar",
+      "saving": "Guardando…",
+      "unsaved": "Cambios sin guardar",
+      "revert": "Revertir",
+      "confirmTitle": "¿Guardar en la impresora?",
+      "confirmBody": "Esto sobrescribe {file} en la impresora. Primero se guarda una copia de seguridad con marca de tiempo, y se necesita un reinicio del firmware para aplicar el cambio.",
+      "ack": "Entiendo que esto escribe en la impresora",
+      "confirm": "Guardar",
+      "cancel": "Cancelar",
+      "done": "Guardado. Copia de seguridad: {backup}",
+      "busy": "Rechazado: la impresora está ocupada (imprimiendo o en pausa). Inténtalo de nuevo cuando esté inactiva.",
+      "error": "Error al guardar."
+    },
+    "restart": {
+      "prompt": "¿Reiniciar el firmware para aplicar tu cambio?",
+      "button": "Reiniciar firmware",
+      "restarting": "Reiniciando…",
+      "confirmTitle": "¿Reiniciar el firmware?",
+      "confirmBody": "FIRMWARE_RESTART recarga la configuración e interrumpe brevemente la impresora. Hazlo solo cuando esté inactiva.",
+      "confirm": "Reiniciar ahora",
+      "cancel": "Cancelar",
+      "done": "Reinicio del firmware solicitado.",
+      "busy": "Rechazado: la impresora está ocupada. Reinicia cuando esté inactiva.",
+      "error": "Error al reiniciar."
+    },
     "states": {
       "loading": "Leyendo la configuración…",
       "error": "No se pudo leer la configuración de la impresora.",

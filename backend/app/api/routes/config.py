@@ -14,12 +14,20 @@ from typing import Any
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
 from app.services import config_service
 from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/config", tags=["config"])
+
+
+class ConfigSaveRequest(BaseModel):
+    """Body for ``POST /config/save`` — overwrite one config file with new text."""
+
+    filename: str = Field(..., description="Config path within the config root")
+    content: str = Field(..., description="The full new file content")
 
 
 def _client(settings: Settings) -> MoonrakerClient:
@@ -53,3 +61,32 @@ async def config_file(
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail=f"Moonraker unreachable: {exc}") from exc
+
+
+@router.post("/save")
+async def config_save(
+    body: ConfigSaveRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Back up then overwrite one config file. Refused while the printer is busy (409).
+
+    Does not restart — call ``/config/restart`` to apply.
+    """
+    try:
+        return await config_service.save_config_file(_client(settings), body.filename, body.content)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except config_service.ConfigBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+
+
+@router.post("/restart")
+async def config_restart(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Trigger ``FIRMWARE_RESTART`` to apply a saved config. Refused while busy (409)."""
+    try:
+        return await config_service.restart_firmware(_client(settings))
+    except config_service.ConfigBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc

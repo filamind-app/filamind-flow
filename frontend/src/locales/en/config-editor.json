@@ -85,6 +85,35 @@
       "paramHead": "Parameter",
       "valueHead": "Value"
     },
+    "edit": {
+      "hint": "Edit the raw text below, then Save. A timestamped backup is made before any write."
+    },
+    "save": {
+      "button": "Save",
+      "saving": "Saving…",
+      "unsaved": "Unsaved changes",
+      "revert": "Revert",
+      "confirmTitle": "Save to the printer?",
+      "confirmBody": "This overwrites {file} on the printer. A timestamped backup is saved first, and a firmware restart is needed to apply the change.",
+      "ack": "I understand this writes to the printer",
+      "confirm": "Save",
+      "cancel": "Cancel",
+      "done": "Saved. Backup: {backup}",
+      "busy": "Refused: the printer is busy (printing or paused). Try again when it's idle.",
+      "error": "Save failed."
+    },
+    "restart": {
+      "prompt": "Restart the firmware to apply your change?",
+      "button": "Restart firmware",
+      "restarting": "Restarting…",
+      "confirmTitle": "Restart firmware?",
+      "confirmBody": "FIRMWARE_RESTART reloads the config and briefly interrupts the printer. Only do this when it's idle.",
+      "confirm": "Restart now",
+      "cancel": "Cancel",
+      "done": "Firmware restart requested.",
+      "busy": "Refused: the printer is busy. Restart when it's idle.",
+      "error": "Restart failed."
+    },
     "states": {
       "loading": "Reading the config…",
       "error": "Couldn't read the config from the printer.",

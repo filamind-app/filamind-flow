@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import httpx
 import pytest
 
 from app.services import config_service
@@ -91,19 +92,44 @@ def test_accepts_safe_nested_path() -> None:
 
 
 class _FakeClient:
-    """Stub MoonrakerClient with just the two methods config_service uses."""
+    """Stub MoonrakerClient covering the methods config_service uses (read + save + restart)."""
 
-    def __init__(self, files: list[dict[str, Any]], text: str) -> None:
-        self._files = files
+    def __init__(
+        self,
+        files: list[dict[str, Any]] | None = None,
+        text: str = "",
+        *,
+        state: str = "standby",
+        missing: bool = False,
+    ) -> None:
+        self._files = files or []
         self._text = text
+        self._state = state
+        self._missing = missing
         self.requested: str | None = None
+        self.uploads: list[tuple[str, str]] = []
+        self.restarted = False
 
     async def list_files(self, root: str = "config") -> list[dict[str, Any]]:
         return self._files
 
     async def get_file_text(self, path: str, root: str = "config") -> str:
         self.requested = path
+        if self._missing:
+            raise httpx.HTTPStatusError(
+                "404", request=httpx.Request("GET", "http://x"), response=httpx.Response(404)
+            )
         return self._text
+
+    async def query_objects(self, objects: list[str]) -> dict[str, Any]:
+        return {"print_stats": {"state": self._state}}
+
+    async def upload_file(self, path: str, content: str, root: str = "config") -> dict[str, Any]:
+        self.uploads.append((path, content))
+        return {"item": {"path": path}}
+
+    async def firmware_restart(self) -> None:
+        self.restarted = True
 
 
 async def test_list_config_files_filters_and_sorts() -> None:
@@ -131,6 +157,59 @@ async def test_read_config_file_rejects_unsafe() -> None:
     client = _FakeClient(files=[], text=SAMPLE)
     with pytest.raises(ValueError):
         await config_service.read_config_file(client, "../moonraker.conf")  # type: ignore[arg-type]
+
+
+# ── save / restart path ──────────────────────────────────────────────────────
+async def test_save_backs_up_then_overwrites() -> None:
+    client = _FakeClient(text="[old]\nk: 1\n")
+    new = "[new]\nk: 2\n"
+    result = await config_service.save_config_file(client, "printer.cfg", new)  # type: ignore[arg-type]
+    # Two uploads: the backup (original content) first, then the new content.
+    assert len(client.uploads) == 2
+    backup_path, backup_content = client.uploads[0]
+    file_path, file_content = client.uploads[1]
+    assert backup_path.startswith("filamind-backups/")
+    assert backup_content == "[old]\nk: 1\n"
+    assert file_path == "printer.cfg"
+    assert file_content == new
+    assert result["ok"] is True
+    assert result["backup"] == backup_path
+
+
+async def test_save_new_file_skips_backup() -> None:
+    client = _FakeClient(missing=True)  # get_file_text -> 404
+    result = await config_service.save_config_file(client, "new.cfg", "[a]\n")  # type: ignore[arg-type]
+    assert result["backup"] is None
+    assert len(client.uploads) == 1  # only the write, no backup
+    assert client.uploads[0][0] == "new.cfg"
+
+
+async def test_save_refused_when_busy() -> None:
+    client = _FakeClient(text="[x]\n", state="printing")
+    with pytest.raises(config_service.ConfigBusyError):
+        await config_service.save_config_file(client, "printer.cfg", "[x]\ny: 1\n")  # type: ignore[arg-type]
+    assert client.uploads == []  # nothing written
+
+
+async def test_save_rejects_unsafe_path() -> None:
+    client = _FakeClient(text="[x]\n")
+    with pytest.raises(ValueError):
+        await config_service.save_config_file(client, "../evil.cfg", "[x]\n")  # type: ignore[arg-type]
+    assert client.uploads == []
+
+
+async def test_restart_calls_firmware_restart() -> None:
+    client = _FakeClient()
+    result = await config_service.restart_firmware(client)  # type: ignore[arg-type]
+    assert client.restarted is True
+    assert result["ok"] is True
+
+
+async def test_restart_refused_when_busy() -> None:
+    client = _FakeClient(state="paused")
+    with pytest.raises(config_service.ConfigBusyError):
+        await config_service.restart_firmware(client)  # type: ignore[arg-type]
+    assert client.restarted is False
 
 
 # ── route-level tests ────────────────────────────────────────────────────────
@@ -173,3 +252,52 @@ def test_route_file_unsafe_path_400() -> None:
     # No monkeypatch: read_config_file's guard rejects before any network call.
     resp = TestClient(_app()).get("/api/config/file", params={"filename": "../secrets"})
     assert resp.status_code == 400
+
+
+def test_route_save_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    from fastapi.testclient import TestClient
+
+    async def fake_save(_client: Any, filename: str, content: str) -> dict[str, Any]:
+        return {"ok": True, "filename": filename, "backup": "filamind-backups/x.bak", "issues": []}
+
+    monkeypatch.setattr(config_service, "save_config_file", fake_save)
+    resp = TestClient(_app()).post(
+        "/api/config/save", json={"filename": "printer.cfg", "content": "[x]\n"}
+    )
+    assert resp.status_code == 200
+    assert resp.json()["backup"] == "filamind-backups/x.bak"
+
+
+def test_route_save_busy_409(monkeypatch: pytest.MonkeyPatch) -> None:
+    from fastapi.testclient import TestClient
+
+    async def fake_save(_client: Any, filename: str, content: str) -> dict[str, Any]:
+        raise config_service.ConfigBusyError("busy")
+
+    monkeypatch.setattr(config_service, "save_config_file", fake_save)
+    resp = TestClient(_app()).post(
+        "/api/config/save", json={"filename": "printer.cfg", "content": "[x]\n"}
+    )
+    assert resp.status_code == 409
+
+
+def test_route_save_unsafe_400() -> None:
+    from fastapi.testclient import TestClient
+
+    # No monkeypatch: the guard rejects before any network call.
+    resp = TestClient(_app()).post(
+        "/api/config/save", json={"filename": "../evil.cfg", "content": "[x]\n"}
+    )
+    assert resp.status_code == 400
+
+
+def test_route_restart_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    from fastapi.testclient import TestClient
+
+    async def fake_restart(_client: Any) -> dict[str, Any]:
+        return {"ok": True}
+
+    monkeypatch.setattr(config_service, "restart_firmware", fake_restart)
+    resp = TestClient(_app()).post("/api/config/restart")
+    assert resp.status_code == 200
+    assert resp.json()["ok"] is True
