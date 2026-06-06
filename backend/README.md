@@ -76,6 +76,9 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/maxflow/run`         | Run the live max-flow test (heat + extrude + sample StallGuard); refused while printing; heater always cut. |
 | GET    | `/api/topology`            | Host → MCU topology from the live config: each MCU's connection (CAN/USB/UART) + chip/board guess (read-only). |
 | POST   | `/api/macro/simulate`      | Offline G-code motion simulator: path / bounds / totals / time estimate / timeline; pure compute, no printer. |
+| GET    | `/api/hardware`            | Search the curated hardware DB (`?q=`/`category`/`manufacturer`, paginated) — 3,600+ components. |
+| GET    | `/api/hardware/categories` | The hardware categories + total component count. |
+| GET    | `/api/hardware/manufacturers` | The manufacturer directory (name / country / website / specialty). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).
