@@ -61,6 +61,10 @@
       "hardware-browser": {
         "title": "Hardware Browser",
         "description": "Search a curated 3D-printing hardware reference by name, manufacturer, or spec."
+      },
+      "config-templates": {
+        "title": "Config Templates",
+        "description": "Ready-to-paste Klipper config blocks and macros, by category."
       }
     }
   }

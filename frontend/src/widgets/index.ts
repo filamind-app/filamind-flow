@@ -78,4 +78,13 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./hardware-browser/HardwareBrowserWidget.vue')),
   })
+
+  registerWidget({
+    id: 'config-templates',
+    title: 'Config Templates',
+    icon: '📋',
+    description: 'Ready-to-paste Klipper config blocks and macros, by category.',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./config-templates/ConfigTemplatesWidget.vue')),
+  })
 }
