@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Docs
+
+- **Roadmap expanded with a planned ecosystem-reuse program.** A deep multi-project analysis
+  (TMC StallGuard max-flow tooling, a full-stack Klipper config editor, a unified hardware DB —
+  all GPL-3.0) produced a phased plan: a shared **Phase 0 foundation** (reference-data layer +
+  ported config engine), then two parallel tracks — **Config Editor · Macro Designer · Board
+  Topology · Hardware Browser + Templates** and **Max-Flow · Motor-Drivers auto-SGT/slip-detection
+  + Sensorless wizard**. Documented in [ROADMAP.md](ROADMAP.md) + README. (Planning only; build
+  starts at Phase 0 — every actuating feature keeps the confirm-gate + gcode-driven conventions.)
+
 ## [0.91.1] - 2026-06-06
 
 ### Fixed
