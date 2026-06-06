@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.100.0] - 2026-06-06
+
+### Added
+
+- **Board Topology — widget UI (Track A).** A new read-only widget on `GET /api/topology`: the
+  host (SBC) node above a grid of MCU cards, each showing its connection type (USB / CAN bus /
+  UART, colour + label coded), chip, a best-effort board guess with match confidence, and its
+  identifier. Refresh, loading / unreachable / empty states, and an illustrated help drawer.
+  New `boardTopology` namespace + sidebar label across all 7 locales. This completes A3.
+
 ## [0.99.0] - 2026-06-06
 
 ### Added

@@ -51,4 +51,13 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./max-flow/MaxFlowWidget.vue')),
   })
+
+  registerWidget({
+    id: 'board-topology',
+    title: 'Board Topology',
+    icon: '🔌',
+    description: 'See how the host and MCUs connect (USB / CAN / UART) + a board guess.',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./board-topology/BoardTopologyWidget.vue')),
+  })
 }

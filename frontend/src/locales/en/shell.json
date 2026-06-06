@@ -49,6 +49,10 @@
       "max-flow": {
         "title": "Max-Flow",
         "description": "Measure the highest volumetric flow your hotend can sustain (StallGuard)."
+      },
+      "board-topology": {
+        "title": "Board Topology",
+        "description": "See how the host and MCUs connect (USB / CAN / UART) + a board guess."
       }
     }
   }

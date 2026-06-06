@@ -1,0 +1,71 @@
+{
+  "boardTopology": {
+    "intro": "查看打印机的控制板如何连接：主机（SBC）以及与之通信的每个 MCU，包含每种连接类型，并尽力推测板卡 / 芯片型号 —— 实时读取自配置。",
+    "help": {
+      "guide": "帮助",
+      "guideTitle": "关于板卡拓扑",
+      "close": "关闭",
+      "howToRead": "如何阅读",
+      "steps": [
+        "主机（你的 SBC，例如 Raspberry Pi 或 CB1）位于顶部。",
+        "每张 MCU 卡片显示其连接方式（USB / CAN bus / UART）及其芯片。",
+        "当连接标识符与已知板卡匹配时，会显示板卡推测结果。"
+      ],
+      "topics": {
+        "mcus": {
+          "title": "MCU",
+          "body": "MCU 是一块微控制器板卡，用于驱动电机、加热器和传感器。一台打印机至少有一个（主板）；许多还会加装工具头板卡，有时还有调平探头板或 LED 板。本面板列出 Klipper 拥有的每个 `[mcu]` 节。"
+        },
+        "connections": {
+          "title": "连接类型",
+          "body": "USB —— 通过 USB 的串口连接（常见的主板连接方式）。CAN bus —— 一条共享的双线总线，常用于工具头板卡。UART —— 通过 GPIO 的直接串口连接。连接类型根据每个 MCU 的 `serial` / `canbus_uuid` 设置推断得出。"
+        },
+        "detection": {
+          "title": "检测原理",
+          "body": "芯片和板卡通过将连接标识符（serial 路径或 CAN UUID）与模式表进行匹配来推测。板卡推测会显示匹配置信度；当没有任何匹配时，芯片/板卡显示为“未知”—— 但连接本身仍会显示。"
+        },
+        "glossary": { "title": "术语表", "body": "" }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "微控制器单元 —— 运行 Klipper 固件的控制板卡（主板、工具头等）。"
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "一条通过唯一 UUID 连接各板卡的双线共享总线 —— 在工具头布线中广受欢迎。"
+        },
+        "host": {
+          "term": "主机 / SBC",
+          "def": "运行 Klipper 并与各 MCU 通信的单板计算机（Pi、CB1……）。"
+        }
+      }
+    },
+    "host": {
+      "label": "主机",
+      "role": "单板计算机 —— 运行 Klipper"
+    },
+    "mcu": {
+      "chip": "芯片",
+      "board": "板卡",
+      "unknown": "未知",
+      "identifier": "标识符",
+      "confidence": "{pct}% 匹配"
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "未知",
+      "via": "通过 {type}"
+    },
+    "count": "{n} 个 MCU",
+    "states": {
+      "loading": "正在读取拓扑……",
+      "unreachable": "无法连接到打印机。",
+      "empty": "在配置中未找到 MCU。",
+      "retry": "重试",
+      "refresh": "刷新"
+    }
+  }
+}

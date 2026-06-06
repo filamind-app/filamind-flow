@@ -1,0 +1,71 @@
+{
+  "boardTopology": {
+    "intro": "Sieh, wie die Steuerungsplatinen deines Druckers verbunden sind: der Host (SBC) und jeder MCU, mit dem er kommuniziert, samt Verbindungstyp und einer bestmöglichen Schätzung von Platine / Chip — live aus der Konfiguration ausgelesen.",
+    "help": {
+      "guide": "Hilfe",
+      "guideTitle": "Über Board-Topologie",
+      "close": "Schließen",
+      "howToRead": "So liest du es",
+      "steps": [
+        "Der Host (dein SBC, z. B. ein Raspberry Pi oder CB1) steht ganz oben.",
+        "Jede MCU-Karte zeigt, wie sie verbunden ist (USB / CAN bus / UART) und ihren Chip.",
+        "Eine Platinen-Schätzung erscheint, wenn die Verbindungskennung mit einer bekannten Platine übereinstimmt."
+      ],
+      "topics": {
+        "mcus": {
+          "title": "MCUs",
+          "body": "Ein MCU ist eine Mikrocontroller-Platine, die Motoren, Heizungen und Sensoren ansteuert. Ein Drucker hat mindestens einen (das Mainboard); viele ergänzen eine Toolhead-Platine und manchmal eine Probe- oder LED-Platine. Dieses Panel listet jede `[mcu]`-Sektion auf, die Klipper kennt."
+        },
+        "connections": {
+          "title": "Verbindungstypen",
+          "body": "USB — eine Serial-over-USB-Verbindung (die übliche Mainboard-Anbindung). CAN bus — ein gemeinsam genutzter Zweidraht-Bus, üblich für Toolhead-Platinen. UART — eine direkte serielle Verbindung über GPIO. Der Typ wird aus der `serial`- / `canbus_uuid`-Einstellung jedes MCUs abgeleitet."
+        },
+        "detection": {
+          "title": "Wie die Erkennung funktioniert",
+          "body": "Chip und Platine werden geschätzt, indem die Verbindungskennung (der serielle Pfad oder die CAN-UUID) mit einer Mustertabelle abgeglichen wird. Eine Platinen-Schätzung zeigt eine Übereinstimmungs-Konfidenz; passt nichts, steht bei Chip/Platine \"unbekannt\" — die Verbindung selbst wird trotzdem angezeigt."
+        },
+        "glossary": { "title": "Glossar", "body": "" }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Microcontroller Unit — eine Steuerplatine, auf der Klippers Firmware läuft (Mainboard, Toolhead usw.)."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Ein gemeinsam genutzter Zweidraht-Bus, der Platinen über eine eindeutige UUID verbindet — beliebt für die Toolhead-Verkabelung."
+        },
+        "host": {
+          "term": "Host / SBC",
+          "def": "Der Einplatinencomputer (Pi, CB1, …), auf dem Klipper läuft und der mit den MCUs kommuniziert."
+        }
+      }
+    },
+    "host": {
+      "label": "Host",
+      "role": "Einplatinencomputer — führt Klipper aus"
+    },
+    "mcu": {
+      "chip": "Chip",
+      "board": "Platine",
+      "unknown": "unbekannt",
+      "identifier": "Kennung",
+      "confidence": "{pct}% Übereinstimmung"
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "unbekannt",
+      "via": "über {type}"
+    },
+    "count": "{n} MCUs",
+    "states": {
+      "loading": "Topologie wird gelesen…",
+      "unreachable": "Der Drucker war nicht erreichbar.",
+      "empty": "Keine MCUs in der Konfiguration gefunden.",
+      "retry": "Erneut versuchen",
+      "refresh": "Aktualisieren"
+    }
+  }
+}

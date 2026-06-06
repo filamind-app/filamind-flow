@@ -49,6 +49,10 @@
       "max-flow": {
         "title": "Max-Flow",
         "description": "قِس أعلى تدفّق حجمي يستطيع رأس التسخين لديك الحفاظ عليه (StallGuard)."
+      },
+      "board-topology": {
+        "title": "طوبولوجيا اللوحة",
+        "description": "اطّلع على كيفية اتصال المضيف ووحدات MCU (USB / CAN / UART) + تخمين للوحة."
       }
     }
   }
