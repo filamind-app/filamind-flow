@@ -288,7 +288,14 @@
       "confirm": "确认",
       "set": "设置",
       "readOnly": "只读寄存器",
-      "toffHint": "如果你将 toff 设为 1，也要保持 tbl ≥ 1（16 周期的消隐时间需要它）。"
+      "toffHint": "如果你将 toff 设为 1，也要保持 tbl ≥ 1（16 周期的消隐时间需要它）。",
+      "groups": {
+        "chopper": "斩波 (Chopper)",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "阈值与时序",
+        "other": "其他"
+      }
     },
     "apply": {
       "nothingToApply": "没有可应用的更改。",

@@ -288,7 +288,14 @@
       "confirm": "confirm",
       "set": "set",
       "readOnly": "read-only registers",
-      "toffHint": "If you set toff to 1, also keep tbl ≥ 1 (the 16-cycle blank time needs it)."
+      "toffHint": "If you set toff to 1, also keep tbl ≥ 1 (the 16-cycle blank time needs it).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Thresholds & timing",
+        "other": "Other"
+      }
     },
     "apply": {
       "nothingToApply": "Nothing to apply.",

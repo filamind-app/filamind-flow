@@ -288,7 +288,14 @@
       "confirm": "confirmar",
       "set": "fijar",
       "readOnly": "registros de solo lectura",
-      "toffHint": "Si fijas toff en 1, mantén también tbl ≥ 1 (el tiempo de blanqueo de 16 ciclos lo necesita)."
+      "toffHint": "Si fijas toff en 1, mantén también tbl ≥ 1 (el tiempo de blanqueo de 16 ciclos lo necesita).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Umbrales y temporización",
+        "other": "Otros"
+      }
     },
     "apply": {
       "nothingToApply": "Nada que aplicar.",

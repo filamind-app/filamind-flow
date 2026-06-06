@@ -288,7 +288,14 @@
       "confirm": "bestätigen",
       "set": "setzen",
       "readOnly": "schreibgeschützte Register",
-      "toffHint": "Wenn du toff auf 1 setzt, halte auch tbl ≥ 1 (die 16-Zyklen-Austastzeit benötigt es)."
+      "toffHint": "Wenn du toff auf 1 setzt, halte auch tbl ≥ 1 (die 16-Zyklen-Austastzeit benötigt es).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Schwellen & Timing",
+        "other": "Sonstiges"
+      }
     },
     "apply": {
       "nothingToApply": "Nichts anzuwenden.",

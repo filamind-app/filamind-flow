@@ -50,6 +50,58 @@ const fields = computed<[string, FieldPolicyEntry][]>(() => {
     .sort((a, b) => rank[a[1].risk] - rank[b[1].risk])
 })
 
+/** Topical grouping for the editable registers, mirroring the backend `field_policy` catalog
+ *  groups (the raw policy list is risk-sorted, not organised by function, so it reads as a
+ *  scattered wall). Field names must match the policy keys exactly. The CoolStep coupled set
+ *  (semin/semax/seup/sedn/seimin) is excluded above and handled by its own toggle; `sfilt` is
+ *  the StallGuard filter, grouped there. Any field not listed (intpol, multistep_filt) falls
+ *  into "other". */
+const FIELD_GROUPS: { key: string; fields: string[] }[] = [
+  {
+    key: 'chopper',
+    fields: ['toff', 'tbl', 'hstrt', 'hend', 'tpfd', 'chm', 'vhighfs', 'vhighchm'],
+  },
+  {
+    key: 'stealthchop',
+    fields: [
+      'pwm_autoscale',
+      'pwm_autograd',
+      'pwm_ofs',
+      'pwm_grad',
+      'pwm_reg',
+      'pwm_lim',
+      'pwm_freq',
+    ],
+  },
+  { key: 'stallguard', fields: ['sgthrs', 'sg4_thrs', 'sgt', 'sfilt'] },
+  {
+    key: 'thresholds',
+    fields: [
+      'stealthchop_threshold',
+      'coolstep_threshold',
+      'high_velocity_threshold',
+      'tpowerdown',
+      'iholddelay',
+      'irundelay',
+      'slope_control',
+    ],
+  },
+]
+
+/** The editable fields bucketed into ordered, labelled sections (empty groups dropped). */
+const groupedFields = computed<{ key: string; items: [string, FieldPolicyEntry][] }[]>(() => {
+  const all = fields.value
+  const used = new Set<string>()
+  const groups = FIELD_GROUPS.map((g) => {
+    const items = all.filter(([f]) => g.fields.includes(f))
+    items.forEach(([f]) => used.add(f))
+    return { key: g.key, items }
+  }).filter((g) => g.items.length > 0)
+  const other = all.filter(([f]) => !used.has(f))
+  if (other.length) groups.push({ key: 'other', items: other })
+  return groups
+})
+
 /** CoolStep is offered (as a single toggle) when this model exposes it. */
 const coolstepAvailable = computed(() => !!policy.value && 'semin' in policy.value)
 /** CoolStep is on when the configured lower threshold (semin) is above zero. */
@@ -167,11 +219,13 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
 <template>
   <div class="font-mono text-[10px]">
     <button
-      class="opacity-60 transition-opacity hover:opacity-100"
+      class="flex w-full items-center gap-1.5 text-start opacity-70 transition-opacity hover:opacity-100"
       :aria-expanded="open"
       @click="toggle"
     >
-      {{ open ? '▾' : '🛠' }} {{ t('motorDrivers.registerEditor.toggle') }}
+      <span aria-hidden="true">{{ open ? '▾' : '▸' }}</span>
+      <span aria-hidden="true">🛠</span>
+      <span class="font-bold">{{ t('motorDrivers.registerEditor.toggle') }}</span>
     </button>
 
     <div
@@ -204,96 +258,119 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
       <p v-if="loading" class="opacity-60">{{ t('motorDrivers.registerEditor.loading') }}</p>
       <p v-else-if="loadErr" class="text-brand-red">{{ loadErr }}</p>
 
-      <!-- CoolStep: one toggle for the five coupled registers -->
-      <div
-        v-if="coolstepAvailable"
-        class="flex flex-wrap items-center gap-2 border-b-2 border-dashed border-ink pb-1.5"
+      <!-- CoolStep: one toggle for the five coupled registers, in its own labelled section -->
+      <section v-if="coolstepAvailable" class="rounded-brutal border-2 border-ink bg-surface p-1.5">
+        <div class="mb-1 flex items-center gap-1.5">
+          <h5 class="text-[11px] font-bold uppercase tracking-wide">
+            {{ t('motorDrivers.registerEditor.coolstep') }}
+          </h5>
+          <HelpNote topic="coolstep" />
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="nb-badge" :class="coolstepOn ? 'bg-brand-lime' : 'bg-surface opacity-60'">{{
+            coolstepOn ? t('motorDrivers.registerEditor.on') : t('motorDrivers.registerEditor.off')
+          }}</span>
+          <button
+            class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+            :disabled="coolstepBusy"
+            :title="t('motorDrivers.registerEditor.coolstepEnableTitle')"
+            @click="applyCoolstep(true)"
+          >
+            {{ coolstepBusy ? '…' : t('motorDrivers.registerEditor.enable') }}
+          </button>
+          <button
+            class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+            :disabled="coolstepBusy"
+            @click="applyCoolstep(false)"
+          >
+            {{ t('motorDrivers.registerEditor.off') }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Editable fields — grouped into labelled sections, each an aligned column grid so the
+           names, controls, ranges, live values and Set buttons line up instead of wrapping. -->
+      <section
+        v-for="group in groupedFields"
+        :key="group.key"
+        class="rounded-brutal border-2 border-ink bg-surface p-1.5"
       >
-        <span class="w-28 shrink-0">{{ t('motorDrivers.registerEditor.coolstep') }}</span>
-        <span class="nb-badge" :class="coolstepOn ? 'bg-brand-lime' : 'bg-surface opacity-60'">{{
-          coolstepOn ? t('motorDrivers.registerEditor.on') : t('motorDrivers.registerEditor.off')
-        }}</span>
-        <button
-          class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
-          :disabled="coolstepBusy"
-          :title="t('motorDrivers.registerEditor.coolstepEnableTitle')"
-          @click="applyCoolstep(true)"
-        >
-          {{ coolstepBusy ? '…' : t('motorDrivers.registerEditor.enable') }}
-        </button>
-        <button
-          class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
-          :disabled="coolstepBusy"
-          @click="applyCoolstep(false)"
-        >
-          {{ t('motorDrivers.registerEditor.off') }}
-        </button>
-        <HelpNote topic="coolstep" />
-      </div>
+        <h5 class="mb-1 text-[11px] font-bold uppercase tracking-wide">
+          {{ t(`motorDrivers.registerEditor.groups.${group.key}`) }}
+        </h5>
+        <div class="grid grid-cols-[6.5rem_auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1.5">
+          <template v-for="[field, entry] in group.items" :key="field">
+            <!-- name (+ risky marker) -->
+            <span class="flex items-center gap-1 truncate" :title="field">
+              <span class="truncate">{{ field }}</span>
+              <span
+                v-if="entry.risk === 'risky'"
+                class="nb-badge bg-brand-yellow px-1 py-0 text-[9px]"
+                :title="t('motorDrivers.registerEditor.riskyTitle')"
+                >!</span
+              >
+            </span>
 
-      <!-- Editable fields -->
-      <div
-        v-for="[field, entry] in fields"
-        :key="field"
-        class="flex flex-wrap items-center gap-1.5"
-      >
-        <span class="w-28 shrink-0 truncate" :title="field">{{ field }}</span>
-        <span
-          v-if="entry.risk === 'risky'"
-          class="nb-badge bg-brand-yellow px-1 py-0 text-[9px]"
-          :title="t('motorDrivers.registerEditor.riskyTitle')"
-          >!</span
-        >
+            <!-- control -->
+            <span class="flex items-center">
+              <input
+                v-if="entry.control === 'toggle'"
+                v-model.number="values[field]"
+                type="checkbox"
+                :true-value="1"
+                :false-value="0"
+                class="shrink-0"
+              />
+              <select
+                v-else-if="entry.control === 'select'"
+                v-model.number="values[field]"
+                class="rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
+              >
+                <option v-for="o in selectOptions(entry)" :key="o" :value="o">{{ o }}</option>
+              </select>
+              <input
+                v-else
+                v-model.number="values[field]"
+                type="number"
+                :min="entry.velocity ? 0 : entry.min"
+                :max="entry.velocity ? undefined : entry.max"
+                class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
+              />
+            </span>
 
-        <!-- control -->
-        <input
-          v-if="entry.control === 'toggle'"
-          v-model.number="values[field]"
-          type="checkbox"
-          :true-value="1"
-          :false-value="0"
-          class="shrink-0"
-        />
-        <select
-          v-else-if="entry.control === 'select'"
-          v-model.number="values[field]"
-          class="rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
-        >
-          <option v-for="o in selectOptions(entry)" :key="o" :value="o">{{ o }}</option>
-        </select>
-        <input
-          v-else
-          v-model.number="values[field]"
-          type="number"
-          :min="entry.velocity ? 0 : entry.min"
-          :max="entry.velocity ? undefined : entry.max"
-          class="w-16 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 text-[10px]"
-        />
-        <span v-if="entry.velocity" class="opacity-50">mm/s</span>
-        <span v-else-if="entry.min != null" class="opacity-40"
-          >{{ entry.min }}…{{ entry.max }}</span
-        >
+            <!-- meta: range / unit + live value -->
+            <span class="flex min-w-0 items-center gap-2">
+              <span v-if="entry.velocity" class="opacity-40">mm/s</span>
+              <span v-else-if="entry.min != null" class="opacity-40"
+                >{{ entry.min }}…{{ entry.max }}</span
+              >
+              <span class="opacity-60"
+                >{{ t('motorDrivers.registerEditor.now') }} {{ currentValue(field) ?? '—' }}</span
+              >
+            </span>
 
-        <span class="opacity-50"
-          >{{ t('motorDrivers.registerEditor.now') }} {{ currentValue(field) ?? '—' }}</span
-        >
+            <!-- action: optional confirm + Set, right-aligned so the buttons form one column -->
+            <span class="flex items-center justify-end gap-1.5">
+              <label v-if="entry.requires_confirm" class="flex items-center gap-1">
+                <input v-model="confirms[field]" type="checkbox" class="shrink-0" />
+                <span class="opacity-60">{{ t('motorDrivers.registerEditor.confirm') }}</span>
+              </label>
+              <button
+                class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+                :disabled="!canWrite(field, entry)"
+                @click="write(field)"
+              >
+                {{ busyField === field ? '…' : t('motorDrivers.registerEditor.set') }}
+              </button>
+            </span>
 
-        <label v-if="entry.requires_confirm" class="flex items-center gap-1">
-          <input v-model="confirms[field]" type="checkbox" class="shrink-0" />
-          <span class="opacity-60">{{ t('motorDrivers.registerEditor.confirm') }}</span>
-        </label>
-
-        <button
-          class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
-          :disabled="!canWrite(field, entry)"
-          @click="write(field)"
-        >
-          {{ busyField === field ? '…' : t('motorDrivers.registerEditor.set') }}
-        </button>
-        <span v-if="hintFor(field, entry)" class="w-full ps-28 text-[9px] opacity-50">{{
-          hintFor(field, entry)
-        }}</span>
-      </div>
+            <!-- optional full-width hint under the row -->
+            <span v-if="hintFor(field, entry)" class="col-span-4 text-[9px] opacity-50">{{
+              hintFor(field, entry)
+            }}</span>
+          </template>
+        </div>
+      </section>
 
       <p
         v-if="result"
