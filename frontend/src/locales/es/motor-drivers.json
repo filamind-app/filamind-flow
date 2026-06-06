@@ -61,7 +61,7 @@
         },
         "coolstep": {
           "title": "CoolStep (corriente adaptativa a la carga)",
-          "body": "CoolStep permite al controlador bajar la corriente de bobina cuando el motor no trabaja duro, y luego subirla de nuevo bajo carga — ahorrando calor y ruido. Es un bucle de realimentación acoplado con cinco registros que interactúan (semin/semax/seup/sedn/seimin), así que en lugar de cinco perillas en crudo esto es un único encendido/apagado que aplica el mismo conjunto verificado que usa el proyecto klipper_tmc_autotune (semin 2, semax 4, seup 3, sedn 2, seimin 1). Solo actúa por encima de un umbral de velocidad, y ser demasiado agresivo bajo aceleración alta puede perder pasos — déjalo apagado a menos que sepas que lo quieres. Solo en vivo: un reinicio o “restablecer a config” restaura tus valores guardados."
+          "body": "CoolStep permite al controlador bajar la corriente de bobina cuando el motor no trabaja duro, y luego subirla de nuevo bajo carga — ahorrando calor y ruido. Es un bucle de realimentación acoplado con cinco registros que interactúan (semin/semax/seup/sedn/seimin), así que en lugar de cinco perillas en crudo esto es un único encendido/apagado que aplica un conjunto verificado y probado (semin 2, semax 4, seup 3, sedn 2, seimin 1). Solo actúa por encima de un umbral de velocidad, y ser demasiado agresivo bajo aceleración alta puede perder pasos — déjalo apagado a menos que sepas que lo quieres. Solo en vivo: un reinicio o “restablecer a config” restaura tus valores guardados."
         },
         "registers": {
           "title": "Editar registros (avanzado)",
@@ -69,7 +69,7 @@
         },
         "recommend": {
           "title": "Ajuste recomendado",
-          "body": "Una vez asignado un motor, FilaMind puede calcular una corriente de marcha sugerida y los valores de registro de StealthChop / SpreadCycle (pwm_grad, pwm_ofs, hstrt, hend) a partir de las especificaciones de hoja de datos del motor y tu voltaje de alimentación — la misma física que usa el proyecto klipper_tmc_autotune, así que funciona incluso sin ese complemento instalado. La corriente de marcha por defecto es un conservador 70% de la clasificación del motor. El resultado se compara con tu config en vivo; luego puedes copiarlo a printer.cfg, o escribirlo en vivo tras una confirmación (reversible con Revertir, y rechazado durante la impresión). Si el complemento autotune está instalado, puedes ejecutarlo en su lugar."
+          "body": "Una vez asignado un motor, FilaMind puede calcular una corriente de marcha sugerida y los valores de registro de StealthChop / SpreadCycle (pwm_grad, pwm_ofs, hstrt, hend) a partir de las especificaciones de hoja de datos del motor y tu voltaje de alimentación — así que funciona incluso sin el complemento autotune instalado. La corriente de marcha por defecto es un conservador 70% de la clasificación del motor. El resultado se compara con tu config en vivo; luego puedes copiarlo a printer.cfg, o escribirlo en vivo tras una confirmación (reversible con Revertir, y rechazado durante la impresión). Si el complemento autotune está instalado, puedes ejecutarlo en su lugar."
         }
       },
       "glossary": {

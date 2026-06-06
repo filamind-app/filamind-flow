@@ -61,7 +61,7 @@
         },
         "coolstep": {
           "title": "CoolStep (lastadaptiver Strom)",
-          "body": "CoolStep lässt den Treiber den Spulenstrom senken, wenn der Motor nicht hart arbeitet, und ihn unter Last wieder anheben — was Hitze und Geräusche spart. Es ist eine gekoppelte Rückkopplungsschleife mit fünf zusammenwirkenden Registern (semin/semax/seup/sedn/seimin), daher ist dies statt fünf roher Regler ein einzelnes An/Aus, das denselben geprüften Satz anwendet, den das Projekt klipper_tmc_autotune verwendet (semin 2, semax 4, seup 3, sedn 2, seimin 1). Es wirkt nur oberhalb eines Geschwindigkeits-Schwellenwerts, und zu aggressiv unter hoher Beschleunigung kann Schritte verlieren — lass es aus, es sei denn, du weißt, dass du es willst. Nur live: ein Neustart oder „auf Konfiguration zurücksetzen“ stellt deine gespeicherten Werte wieder her."
+          "body": "CoolStep lässt den Treiber den Spulenstrom senken, wenn der Motor nicht hart arbeitet, und ihn unter Last wieder anheben — was Hitze und Geräusche spart. Es ist eine gekoppelte Rückkopplungsschleife mit fünf zusammenwirkenden Registern (semin/semax/seup/sedn/seimin), daher ist dies statt fünf roher Regler ein einzelnes An/Aus, das einen geprüften, bewährten Satz anwendet (semin 2, semax 4, seup 3, sedn 2, seimin 1). Es wirkt nur oberhalb eines Geschwindigkeits-Schwellenwerts, und zu aggressiv unter hoher Beschleunigung kann Schritte verlieren — lass es aus, es sei denn, du weißt, dass du es willst. Nur live: ein Neustart oder „auf Konfiguration zurücksetzen“ stellt deine gespeicherten Werte wieder her."
         },
         "registers": {
           "title": "Register bearbeiten (erweitert)",
@@ -69,7 +69,7 @@
         },
         "recommend": {
           "title": "Empfohlene Abstimmung",
-          "body": "Sobald ein Motor zugewiesen ist, kann FilaMind aus den Datenblattwerten des Motors und deiner Versorgungsspannung einen vorgeschlagenen Laufstrom und die StealthChop-/SpreadCycle-Registerwerte (pwm_grad, pwm_ofs, hstrt, hend) berechnen — dieselbe Physik, die das Projekt klipper_tmc_autotune verwendet, sodass es auch ohne installiertes Add-on funktioniert. Der Laufstrom hat standardmäßig konservative 70 % der Motorbemessung. Das Ergebnis wird gegen deine Live-Konfiguration verglichen; du kannst es dann in printer.cfg kopieren oder hinter einer Bestätigung live schreiben (mit Zurücksetzen rückgängig zu machen und während des Drucks abgelehnt). Falls das Autotune-Add-on installiert ist, kannst du es stattdessen ausführen."
+          "body": "Sobald ein Motor zugewiesen ist, kann FilaMind aus den Datenblattwerten des Motors und deiner Versorgungsspannung einen vorgeschlagenen Laufstrom und die StealthChop-/SpreadCycle-Registerwerte (pwm_grad, pwm_ofs, hstrt, hend) berechnen — sodass es auch ohne installiertes Autotune-Add-on funktioniert. Der Laufstrom hat standardmäßig konservative 70 % der Motorbemessung. Das Ergebnis wird gegen deine Live-Konfiguration verglichen; du kannst es dann in printer.cfg kopieren oder hinter einer Bestätigung live schreiben (mit Zurücksetzen rückgängig zu machen und während des Drucks abgelehnt). Falls das Autotune-Add-on installiert ist, kannst du es stattdessen ausführen."
         }
       },
       "glossary": {

@@ -61,7 +61,7 @@
         },
         "coolstep": {
           "title": "CoolStep（负载自适应电流）",
-          "body": "CoolStep 让驱动器在电机不费力时降低线圈电流，在负载下再升回去 — 节省发热和噪声。它是一个带五个相互作用寄存器 (semin/semax/seup/sedn/seimin) 的耦合反馈回路，因此这里不是五个原始旋钮，而是一个开关，应用 klipper_tmc_autotune 项目所用的同一套经过验证的配置 (semin 2、semax 4、seup 3、sedn 2、seimin 1)。它只在某个速度阈值以上起作用，且在高加速下过于激进会丢步 — 除非你确知需要，否则保持关闭。仅实时：重启或“重置为配置”会恢复你保存的值。"
+          "body": "CoolStep 让驱动器在电机不费力时降低线圈电流，在负载下再升回去 — 节省发热和噪声。它是一个带五个相互作用寄存器 (semin/semax/seup/sedn/seimin) 的耦合反馈回路，因此这里不是五个原始旋钮，而是一个开关，应用一套经过验证的可靠配置 (semin 2、semax 4、seup 3、sedn 2、seimin 1)。它只在某个速度阈值以上起作用，且在高加速下过于激进会丢步 — 除非你确知需要，否则保持关闭。仅实时：重启或“重置为配置”会恢复你保存的值。"
         },
         "registers": {
           "title": "编辑寄存器（高级）",
@@ -69,7 +69,7 @@
         },
         "recommend": {
           "title": "推荐调校",
-          "body": "一旦指派了电机，FilaMind 即可根据电机的数据手册规格和你的供电电压计算出建议的运行电流以及 StealthChop / SpreadCycle 寄存器值 (pwm_grad、pwm_ofs、hstrt、hend) — 与 klipper_tmc_autotune 项目所用相同的物理原理，因此即便未安装该插件也能工作。运行电流默认取电机额定值的保守 70%。结果会与你的实时配置作对比；然后你可以将它复制到 printer.cfg，或在确认后实时写入（可用 Revert 还原，打印中拒绝）。如果已安装 autotune 插件，你也可以改为运行它。"
+          "body": "一旦指派了电机，FilaMind 即可根据电机的数据手册规格和你的供电电压计算出建议的运行电流以及 StealthChop / SpreadCycle 寄存器值 (pwm_grad、pwm_ofs、hstrt、hend) — 因此即便未安装 autotune 插件也能工作。运行电流默认取电机额定值的保守 70%。结果会与你的实时配置作对比；然后你可以将它复制到 printer.cfg，或在确认后实时写入（可用 Revert 还原，打印中拒绝）。如果已安装 autotune 插件，你也可以改为运行它。"
         }
       },
       "glossary": {

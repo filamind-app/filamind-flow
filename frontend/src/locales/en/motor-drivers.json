@@ -61,7 +61,7 @@
         },
         "coolstep": {
           "title": "CoolStep (load-adaptive current)",
-          "body": "CoolStep lets the driver lower the coil current when the motor isn’t working hard, then raise it back under load — saving heat and noise. It’s a coupled feedback loop with five interacting registers (semin/semax/seup/sedn/seimin), so instead of five raw knobs this is a single on/off that applies the same vetted set the klipper_tmc_autotune project uses (semin 2, semax 4, seup 3, sedn 2, seimin 1). It only acts above a velocity threshold, and being too aggressive under high acceleration can drop steps — leave it off unless you know you want it. Live only: a restart or “reset to config” restores your saved values."
+          "body": "CoolStep lets the driver lower the coil current when the motor isn’t working hard, then raise it back under load — saving heat and noise. It’s a coupled feedback loop with five interacting registers (semin/semax/seup/sedn/seimin), so instead of five raw knobs this is a single on/off that applies a vetted, known-good set (semin 2, semax 4, seup 3, sedn 2, seimin 1). It only acts above a velocity threshold, and being too aggressive under high acceleration can drop steps — leave it off unless you know you want it. Live only: a restart or “reset to config” restores your saved values."
         },
         "registers": {
           "title": "Editing registers (advanced)",
@@ -69,7 +69,7 @@
         },
         "recommend": {
           "title": "Recommended tuning",
-          "body": "Once a motor is assigned, FilaMind can compute a suggested run current and the StealthChop / SpreadCycle register values (pwm_grad, pwm_ofs, hstrt, hend) from the motor’s datasheet specs and your supply voltage — the same physics the klipper_tmc_autotune project uses, so it works even without that add-on installed. The run current defaults to a conservative 70% of the motor’s rating. The result is diffed against your live config; you can then copy it to printer.cfg, or write it live behind a confirm (reversible with Revert, and refused while printing). If the autotune add-on is installed, you can run it instead."
+          "body": "Once a motor is assigned, FilaMind can compute a suggested run current and the StealthChop / SpreadCycle register values (pwm_grad, pwm_ofs, hstrt, hend) from the motor’s datasheet specs and your supply voltage — so it works even without the autotune add-on installed. The run current defaults to a conservative 70% of the motor’s rating. The result is diffed against your live config; you can then copy it to printer.cfg, or write it live behind a confirm (reversible with Revert, and refused while printing). If the autotune add-on is installed, you can run it instead."
         }
       },
       "glossary": {

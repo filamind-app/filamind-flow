@@ -476,7 +476,7 @@ async def run_vibrations_profile(
             for i in range(nb_samples):
                 speed = min_speed + i * speed_increment
                 # Shorter segments at low speed (1/5 of SIZE, ramping to full at 100mm/s)
-                # gather enough data without wasting travel — verbatim from Shake&Tune.
+                # gather enough data without wasting travel.
                 mult = (1 / 5 + 4 / 5 * speed / 100) if speed < 100 else 1.0
                 d_x = (size / 2) * math.cos(radian) * mult
                 d_y = (size / 2) * math.sin(radian) * mult
@@ -485,7 +485,7 @@ async def run_vibrations_profile(
                     f"G1 X{mid_x - d_x:.2f} Y{mid_y - d_y:.2f} Z{z_height:.1f} F{f_travel}"
                 )
                 await client.run_gcode("M400")
-                # Fewer passes at low speed (also from Shake&Tune): 1 < 150, 2 < 250, else 3.
+                # Fewer passes at low speed: 1 < 150, 2 < 250, else 3.
                 movements = 3 if speed >= 250 else 2 if speed >= 150 else 1
                 moves: list[str] = []
                 for _ in range(movements):
