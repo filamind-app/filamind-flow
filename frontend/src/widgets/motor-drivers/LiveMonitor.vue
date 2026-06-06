@@ -57,11 +57,13 @@ const spark = computed(() => sparklinePath(sgHistory.value, 100, 22))
 <template>
   <div class="font-mono text-[10px]">
     <button
-      class="opacity-60 transition-opacity hover:opacity-100"
+      class="flex w-full items-center gap-1.5 text-start opacity-70 transition-opacity hover:opacity-100"
       :aria-expanded="open"
       @click="toggle"
     >
-      {{ open ? '▾' : '📈' }} {{ t('motorDrivers.liveMonitor.toggle') }}
+      <span aria-hidden="true">{{ open ? '▾' : '▸' }}</span>
+      <span aria-hidden="true">📈</span>
+      <span class="font-bold">{{ t('motorDrivers.liveMonitor.toggle') }}</span>
     </button>
 
     <div

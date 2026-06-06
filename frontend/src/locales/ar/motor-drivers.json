@@ -288,7 +288,14 @@
       "confirm": "تأكيد",
       "set": "ضبط",
       "readOnly": "سجلّات للقراءة فقط",
-      "toffHint": "إذا ضبطت toff على 1، فأبقِ أيضًا tbl ≥ 1 (وقت التفريغ ذو 16 دورة يحتاجه)."
+      "toffHint": "إذا ضبطت toff على 1، فأبقِ أيضًا tbl ≥ 1 (وقت التفريغ ذو 16 دورة يحتاجه).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "العتبات والتوقيت",
+        "other": "أخرى"
+      }
     },
     "apply": {
       "nothingToApply": "لا شيء للتطبيق.",

@@ -288,7 +288,14 @@
       "confirm": "подтвердить",
       "set": "задать",
       "readOnly": "регистры только для чтения",
-      "toffHint": "Если вы задаёте toff на 1, также держите tbl ≥ 1 (16-тактовое время гашения требует этого)."
+      "toffHint": "Если вы задаёте toff на 1, также держите tbl ≥ 1 (16-тактовое время гашения требует этого).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Пороги и тайминги",
+        "other": "Прочее"
+      }
     },
     "apply": {
       "nothingToApply": "Нечего применять.",

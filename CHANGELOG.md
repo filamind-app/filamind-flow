@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.87.0] - 2026-06-06
+
+### Changed
+
+- **Motor Drivers — register editor reorganised (layout only).** The advanced register editor was a
+  single flat, `flex-wrap` list of ~20 registers with no alignment — controls, ranges, live values and
+  the per-field **Set** buttons packed left and wrapped independently, so nothing lined up (it read as
+  a scattered wall). It is now split into **labelled sections** (Chopper · StealthChop (PWM) ·
+  StallGuard · Thresholds & timing · CoolStep · Other) that mirror the backend `field_policy` catalog
+  groups, each laid out as an **aligned CSS-grid** (name · control · range/live-value · Set) so every
+  column lines up and the Set buttons form a single right-hand column. **Every control and button is
+  unchanged** — same fields, same gated write paths, same per-field confirms; this is purely
+  layout/organisation. Section headers are fully translated across the 7 locales. Also unified the
+  collapsible sub-panel toggles across the widget (Register editor / Recommend / Live monitor /
+  Homing) into consistent full-width section headers (chevron + icon + bold label). No behaviour
+  change.
+
 ## [0.86.0] - 2026-06-06
 
 ### Changed
