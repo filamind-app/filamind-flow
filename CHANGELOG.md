@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.97.0] - 2026-06-06
+
+### Added
+
+- **Max-Flow — planner foundation (Track B).** `max_flow_service.py` (pure, hardware-free):
+  - `flow_to_feedrate` (mm³/s → extruder mm/min for a given filament) + `plan_ramp` (the
+    ascending flow steps a run would execute) + `recommend` (conservative 80 % / 90 % slicer
+    values from a measured max) + `hotend_hint` (match the reference melt-zone table) +
+    safety-bounded `validate`.
+  - `POST /api/maxflow/plan` — a dry-run preview: every flow step's feedrate + filament pushed,
+    the driver's StallGuard field, and totals. **Pure compute, no actuation.**
+  - +16 backend tests. The gated measurement loop (heat → extrude → sample StallGuard) and the
+    live run land in a later slice.
+
 ## [0.96.0] - 2026-06-06
 
 ### Added
