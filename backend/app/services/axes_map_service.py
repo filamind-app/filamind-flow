@@ -1,7 +1,6 @@
 """Axes-map calibration — detect the accelerometer's mounting orientation.
 
-Pure numpy analysis (no Klipper host), ported from Shake&Tune's
-``axes_map_computation.py`` (GPL-3.0, (C) 2024 Félix Boisselier). Given three raw
+Pure numpy analysis (no Klipper host). Given three raw
 accelerometer captures — one per machine axis X/Y/Z, each a short constant-velocity
 stroke — it recovers the accelerometer's orientation by low-pass filtering, velocity
 integration and peak detection, and returns the Klipper ``axes_map`` string to use.

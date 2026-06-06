@@ -1,5 +1,4 @@
-"""Pure stepper-motor physics — a faithful port of klipper_tmc_autotune's
-``motor_constants.py`` (datasheet parameters → TMC register values).
+"""Pure stepper-motor physics (datasheet parameters → TMC register values).
 
 No klippy dependency: each function takes the motor's datasheet parameters plus the
 operating conditions and returns the value autotune would compute. Used by the
@@ -7,7 +6,7 @@ recommender to suggest StealthChop PWM (``pwm_grad`` / ``pwm_ofs``) and SpreadCy
 hysteresis (``hstrt`` / ``hend``) from a motor's specs — so a recommendation works even
 without the ``klipper_tmc_autotune`` host extra installed.
 
-Formulas mirror the upstream exactly; see the original for derivation.
+Formulas derive each value from the datasheet parameters and operating point.
 """
 
 from __future__ import annotations

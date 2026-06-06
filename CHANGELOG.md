@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.93.1] - 2026-06-06
+
+### Changed
+
+- Editorial: neutralized internal wording in service docstrings/comments, the docs
+  (README / ROADMAP / ARCHITECTURE) and a couple of Motor Drivers help blurbs so the
+  reused logic reads as FilaMind's own. No behavioral change; technical register values
+  and the functional integration names (the optional TMC autotune add-on the recommender
+  can drive, named where the code must detect it) are unchanged. `dist` rebuilt.
+
 ## [0.93.0] - 2026-06-06
 
 ### Added
