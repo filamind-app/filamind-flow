@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.94.0] - 2026-06-06
+
+### Added
+
+- **Config Editor — read path (Track A keystone).** Backend endpoints that read the live
+  Klipper config through the round-trip `klipper_config` engine:
+  - `GET /api/config/files` — list the editable config files (`.cfg` / `.conf`) under
+    Moonraker's `config` root.
+  - `GET /api/config/file?filename=` — parse one file into a structured view: sections →
+    params (key / value / separator / inline comment, multi-line values preserved), the
+    `SAVE_CONFIG` block flagged, plus light validation issues. Read-only; a path-traversal
+    guard restricts reads to the config root.
+  - New `config_service.py` and two `MoonrakerClient` file helpers (`list_files`,
+    `get_file_text`); +14 backend tests. The viewer UI and the gated save path follow.
+
 ## [0.93.1] - 2026-06-06
 
 ### Changed

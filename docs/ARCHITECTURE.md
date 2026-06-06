@@ -97,7 +97,10 @@ stepper→motor map; `/api/drivers/recommend` — a run-current + register recom
 a built-in `motor_constants` physics model;
 `/api/drivers/{config-block,apply,init,autotune,stallguard,home}` — copy-to-config and the
 gated live `SET_TMC_*` / `INIT_TMC` / `AUTOTUNE_TMC` writes + sensorless-homing threshold and
-test-home, all refused while printing). It is the right home for
+test-home, all refused while printing), and the **config** routes (`/api/config/files`,
+`/api/config/file` — list and parse the live `printer.cfg` and its includes through the
+round-trip `klipper_config` engine into sections → params + validation issues; read-only,
+the keystone of the planned Config Editor). It is the right home for
 operations that should not run in the browser — privileged file or system actions,
 the live `ACCELEROMETER_MEASURE` / `TEST_RESONANCES` capture orchestration,
 multi-call aggregations, or scheduled jobs — added as new route modules under
