@@ -4,12 +4,16 @@ Reads ``printer.cfg`` (and its includes) from Moonraker's ``config`` file root, 
 each file with the round-trip :mod:`klipper_config` engine, and returns a structured,
 JSON-friendly view (sections → params) plus light validation issues.
 
-Read-only: this module never writes. The gated save path lands in a later phase.
+Also the gated write path: ``save_config_file`` backs up then overwrites a file, and
+``restart_firmware`` applies it — both refused while the printer is busy.
 """
 
 from __future__ import annotations
 
+import datetime
 from typing import Any
+
+import httpx
 
 from app.services import klipper_config
 from app.services.klipper_config import ConfigFile, ConfigParam, ConfigSection
@@ -17,6 +21,13 @@ from app.services.moonraker_client import MoonrakerClient
 
 #: File extensions treated as editable Klipper config files.
 _CONFIG_SUFFIXES = (".cfg", ".conf")
+
+#: Subdirectory (under the config root) where pre-save backups are kept.
+_BACKUP_DIR = "filamind-backups"
+
+
+class ConfigBusyError(RuntimeError):
+    """Raised when a write/restart is refused because the printer is busy."""
 
 
 def _param_view(param: ConfigParam) -> dict[str, Any]:
@@ -90,3 +101,73 @@ async def read_config_file(client: MoonrakerClient, filename: str) -> dict[str, 
     _reject_unsafe(filename)
     raw = await client.get_file_text(filename, root="config")
     return build_file_view(filename, raw)
+
+
+async def _is_busy(client: MoonrakerClient) -> bool:
+    """True while the printer is printing, paused, or in error — block writes and restarts
+    then. Reads ``print_stats.state`` (mirrors the Motor Drivers write guard)."""
+    status = await client.query_objects(["print_stats"])
+    stats = status.get("print_stats")
+    if not isinstance(stats, dict):
+        return False
+    return str(stats.get("state", "")).lower() in ("printing", "paused", "error")
+
+
+def _backup_path(filename: str, now: datetime.datetime) -> str:
+    """A timestamped backup path under the backup subdir (kept out of the .cfg/.conf list)."""
+    flat = filename.replace("/", "_")
+    stamp = now.strftime("%Y%m%d-%H%M%S")
+    return f"{_BACKUP_DIR}/{flat}.{stamp}.bak"
+
+
+async def save_config_file(client: MoonrakerClient, filename: str, content: str) -> dict[str, Any]:
+    """Back up the current file, then overwrite it with ``content``. Read-after-parse only —
+    never auto-restarts (that's a separate, explicit action).
+
+    Refuses while the printer is busy (printing / paused / error). The existing file (if any)
+    is copied to ``filamind-backups/`` first, so a bad edit is always recoverable.
+
+    Raises:
+        ValueError: if ``filename`` is not a safe in-root path.
+        ConfigBusyError: if the printer is busy.
+        httpx.HTTPError: if Moonraker is unreachable or rejects the write.
+    """
+    _reject_unsafe(filename)
+    if await _is_busy(client):
+        raise ConfigBusyError("Refusing to write the config while the printer is busy.")
+
+    # Back up the current content first (best-effort: a brand-new file has nothing to back up).
+    backup: str | None = None
+    try:
+        current = await client.get_file_text(filename, root="config")
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code != 404:
+            raise
+        current = None
+    if current is not None:
+        backup = _backup_path(filename, datetime.datetime.now())
+        await client.upload_file(backup, current, root="config")
+
+    await client.upload_file(filename, content, root="config")
+
+    view = build_file_view(filename, content)
+    return {
+        "ok": True,
+        "filename": filename,
+        "backup": backup,
+        "issues": view["issues"],
+        "section_count": view["section_count"],
+    }
+
+
+async def restart_firmware(client: MoonrakerClient) -> dict[str, Any]:
+    """Trigger ``FIRMWARE_RESTART`` so a saved config takes effect. Refused while busy.
+
+    Raises:
+        ConfigBusyError: if the printer is busy.
+        httpx.HTTPError: if Moonraker is unreachable or the restart fails.
+    """
+    if await _is_busy(client):
+        raise ConfigBusyError("Refusing to restart while the printer is busy.")
+    await client.firmware_restart()
+    return {"ok": True}

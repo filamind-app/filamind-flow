@@ -38,3 +38,12 @@ export interface ConfigFileInfo {
 export interface ConfigFileList {
   files: ConfigFileInfo[]
 }
+
+export interface ConfigSaveResult {
+  ok: boolean
+  filename: string
+  /** Path of the pre-save backup under `filamind-backups/`, or null for a brand-new file. */
+  backup: string | null
+  issues: ConfigIssue[]
+  section_count: number
+}
