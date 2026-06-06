@@ -4,6 +4,7 @@
 // *structurally* against `en` by `npm run i18n:keydiff` (the eslint no-unused-keys rule is
 // unreliable here because keys are built dynamically, e.g. `t('…verdict.' + letter)`).
 
+import type boardTopology from '@/locales/en/board-topology.json'
 import type common from '@/locales/en/common.json'
 import type configEditor from '@/locales/en/config-editor.json'
 import type firmware from '@/locales/en/firmware.json'
@@ -18,7 +19,8 @@ type MessageSchema = typeof common &
   typeof inputShaping &
   typeof motorDrivers &
   typeof configEditor &
-  typeof maxFlow
+  typeof maxFlow &
+  typeof boardTopology
 
 declare module 'vue-i18n' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type

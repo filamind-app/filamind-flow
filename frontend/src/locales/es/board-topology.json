@@ -1,0 +1,71 @@
+{
+  "boardTopology": {
+    "intro": "Observa cómo se conectan las placas de control de tu impresora: el host (SBC) y cada MCU con el que se comunica, con el tipo de cada conexión y una estimación de la placa o chip lo más precisa posible, leída en vivo desde la configuración.",
+    "help": {
+      "guide": "Ayuda",
+      "guideTitle": "Acerca de la topología de placas",
+      "close": "Cerrar",
+      "howToRead": "Cómo interpretarlo",
+      "steps": [
+        "El host (tu SBC, por ejemplo una Raspberry Pi o CB1) se sitúa arriba.",
+        "Cada tarjeta de MCU muestra cómo se conecta (USB / CAN bus / UART) y su chip.",
+        "Aparece una estimación de la placa cuando el identificador de conexión coincide con una placa conocida."
+      ],
+      "topics": {
+        "mcus": {
+          "title": "MCUs",
+          "body": "Un MCU es una placa microcontroladora que controla motores, calentadores y sensores. Una impresora tiene al menos uno (la placa base); muchas añaden una placa de cabezal y a veces una placa de sonda o de LED. Este panel lista cada sección `[mcu]` que tiene Klipper."
+        },
+        "connections": {
+          "title": "Tipos de conexión",
+          "body": "USB — un enlace serie sobre USB (la conexión habitual de la placa base). CAN bus — un bus compartido de dos hilos, común para placas de cabezal. UART — un enlace serie directo por GPIO. El tipo se infiere de los ajustes `serial` / `canbus_uuid` de cada MCU."
+        },
+        "detection": {
+          "title": "Cómo funciona la detección",
+          "body": "El chip y la placa se estiman comparando el identificador de conexión (la ruta serial o el UUID de CAN) con una tabla de patrones. Una estimación de placa muestra una confianza de coincidencia; cuando nada coincide, el chip/placa aparece como \"desconocido\", aunque la conexión en sí se sigue mostrando."
+        },
+        "glossary": { "title": "Glosario", "body": "" }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Unidad microcontroladora — una placa de control que ejecuta el firmware de Klipper (placa base, cabezal, etc.)."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Un bus compartido de dos hilos que enlaza placas mediante un UUID único — popular para el cableado del cabezal."
+        },
+        "host": {
+          "term": "Host / SBC",
+          "def": "El ordenador de placa única (Pi, CB1, …) que ejecuta Klipper y se comunica con los MCUs."
+        }
+      }
+    },
+    "host": {
+      "label": "Host",
+      "role": "Ordenador de placa única — ejecuta Klipper"
+    },
+    "mcu": {
+      "chip": "Chip",
+      "board": "Placa",
+      "unknown": "desconocido",
+      "identifier": "Identificador",
+      "confidence": "{pct}% de coincidencia"
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "desconocido",
+      "via": "vía {type}"
+    },
+    "count": "{n} MCUs",
+    "states": {
+      "loading": "Leyendo la topología…",
+      "unreachable": "No se pudo conectar con la impresora.",
+      "empty": "No se encontraron MCUs en la configuración.",
+      "retry": "Reintentar",
+      "refresh": "Actualizar"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { createI18n } from 'vue-i18n'
 
+import enBoardTopology from '../locales/en/board-topology.json'
 import enCommon from '../locales/en/common.json'
 import enConfigEditor from '../locales/en/config-editor.json'
 import enFirmware from '../locales/en/firmware.json'
@@ -72,6 +73,7 @@ const en = {
   ...enMotorDrivers,
   ...enConfigEditor,
   ...enMaxFlow,
+  ...enBoardTopology,
 }
 
 // en is excluded — it's bundled eagerly above, so the dynamic glob must not also claim it

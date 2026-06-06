@@ -49,6 +49,10 @@
       "max-flow": {
         "title": "Max-Flow",
         "description": "测量热端能够持续达到的最高体积流量（StallGuard）。"
+      },
+      "board-topology": {
+        "title": "板卡拓扑",
+        "description": "查看主机与各 MCU 如何连接（USB / CAN / UART）+ 板卡推测。"
       }
     }
   }
