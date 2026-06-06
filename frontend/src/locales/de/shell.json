@@ -41,6 +41,10 @@
       "motor-drivers": {
         "title": "Motortreiber",
         "description": "Live-Inventar der TMC-Schrittmotortreiber: Strom, Modus, Microsteps und Status."
+      },
+      "config-editor": {
+        "title": "Config Editor",
+        "description": "Durchsuche die Konfigurationsdateien deines Druckers, aufgeteilt in Sektionen mit Validierung."
       }
     }
   }

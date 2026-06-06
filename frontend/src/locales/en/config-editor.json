@@ -1,0 +1,94 @@
+{
+  "configEditor": {
+    "intro": "Read your printer's live configuration straight from Moonraker — every file, parsed into sections and parameters, with structural problems flagged. Read-only for now; guided editing arrives next.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "About the Config Editor",
+      "close": "Close",
+      "howToRead": "How to use",
+      "steps": [
+        "Pick a config file from the dropdown — printer.cfg is selected by default.",
+        "Browse its sections; click one to expand its parameters.",
+        "Check the Validation banner for structural issues like a duplicate section.",
+        "Switch to Raw to read the exact file text."
+      ],
+      "topics": {
+        "sections": {
+          "title": "Sections & parameters",
+          "body": "A Klipper config is a list of [section] blocks, each holding key: value parameters. This widget parses every section — including ones with a name like [tmc2209 stepper_x] — and lists its parameters with their value and any inline comment. Multi-line values (like a macro's gcode:) are kept intact."
+        },
+        "includes": {
+          "title": "Included files",
+          "body": "printer.cfg often pulls in other files with [include other.cfg] (or a glob like [include configs/*.cfg]). Each include is shown as its own entry; pick the included file from the dropdown to inspect what it defines."
+        },
+        "validation": {
+          "title": "Validation",
+          "body": "After parsing, the config is checked for structural problems that are wrong regardless of the section type — a duplicate section header, an empty section name, or a parameter sitting outside any section. These appear in the Validation banner; they don't change your file."
+        },
+        "saveConfig": {
+          "title": "The SAVE_CONFIG block",
+          "body": "Klipper appends an auto-generated block at the end of printer.cfg (after the #*# marker) when you run SAVE_CONFIG — calibration results like PID and Z offsets. It's shown but flagged as auto-saved, and is excluded from the editable section count because you shouldn't hand-edit it."
+        },
+        "readonly": {
+          "title": "Read-only (for now)",
+          "body": "This first version only reads and displays the config — nothing is written to the printer. Guided, confirm-gated editing (with an automatic backup before any save and a restart afterwards) arrives in a later update."
+        },
+        "glossary": { "title": "Glossary", "body": "" }
+      },
+      "glossary": {
+        "section": {
+          "term": "Section",
+          "def": "A [header] block grouping related settings, e.g. [stepper_x] or [extruder]."
+        },
+        "parameter": {
+          "term": "Parameter",
+          "def": "A key: value (or key = value) line inside a section, optionally with a trailing # comment."
+        },
+        "include": {
+          "term": "[include]",
+          "def": "A directive that pulls another config file into printer.cfg, so settings can be split across files."
+        },
+        "saveConfig": {
+          "term": "SAVE_CONFIG",
+          "def": "The auto-generated block (after #*#) where Klipper stores calibration results — don't hand-edit it."
+        }
+      }
+    },
+    "file": {
+      "label": "Config file",
+      "placeholder": "Select a file…",
+      "refresh": "Refresh",
+      "loadingList": "Loading files…",
+      "emptyList": "No config files found on the printer."
+    },
+    "summary": {
+      "sections": "{count} sections",
+      "params": "{count} parameters",
+      "size": "{kb} KB"
+    },
+    "validation": {
+      "title": "Validation",
+      "clean": "No structural issues found.",
+      "error": "Error",
+      "warning": "Warning"
+    },
+    "view": {
+      "structured": "Structured",
+      "raw": "Raw",
+      "expandAll": "Expand all",
+      "collapseAll": "Collapse all"
+    },
+    "section": {
+      "saveBadge": "auto-saved",
+      "noParams": "(no parameters)",
+      "paramsCount": "{count} params",
+      "paramHead": "Parameter",
+      "valueHead": "Value"
+    },
+    "states": {
+      "loading": "Reading the config…",
+      "error": "Couldn't read the config from the printer.",
+      "retry": "Retry"
+    }
+  }
+}

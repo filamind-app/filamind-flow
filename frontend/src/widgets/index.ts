@@ -33,4 +33,13 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./motor-drivers/MotorDriversWidget.vue')),
   })
+
+  registerWidget({
+    id: 'config-editor',
+    title: 'Config Editor',
+    icon: '📝',
+    description: "Browse your printer's config files, parsed into sections with validation.",
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./config-editor/ConfigEditorWidget.vue')),
+  })
 }

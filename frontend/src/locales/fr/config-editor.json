@@ -1,0 +1,94 @@
+{
+  "configEditor": {
+    "intro": "Lisez la configuration active de votre imprimante directement depuis Moonraker — chaque fichier, analysé en sections et en paramètres, avec les problèmes de structure signalés. En lecture seule pour l'instant ; l'édition guidée arrive prochainement.",
+    "help": {
+      "guide": "Aide",
+      "guideTitle": "À propos de l'éditeur de configuration",
+      "close": "Fermer",
+      "howToRead": "Comment utiliser",
+      "steps": [
+        "Choisissez un fichier de configuration dans la liste déroulante — printer.cfg est sélectionné par défaut.",
+        "Parcourez ses sections ; cliquez sur l'une d'elles pour développer ses paramètres.",
+        "Consultez la bannière de validation pour les problèmes de structure, comme une section en double.",
+        "Passez en mode Brut pour lire le texte exact du fichier."
+      ],
+      "topics": {
+        "sections": {
+          "title": "Sections et paramètres",
+          "body": "Une configuration Klipper est une liste de blocs [section], chacun contenant des paramètres au format key: value. Ce panneau analyse chaque section — y compris celles dont le nom ressemble à [tmc2209 stepper_x] — et liste ses paramètres avec leur valeur et tout commentaire en ligne. Les valeurs multilignes (comme le gcode: d'une macro) sont conservées intactes."
+        },
+        "includes": {
+          "title": "Fichiers inclus",
+          "body": "printer.cfg fait souvent appel à d'autres fichiers avec [include other.cfg] (ou un motif comme [include configs/*.cfg]). Chaque inclusion apparaît comme sa propre entrée ; choisissez le fichier inclus dans la liste déroulante pour examiner ce qu'il définit."
+        },
+        "validation": {
+          "title": "Validation",
+          "body": "Après l'analyse, la configuration est vérifiée pour détecter les problèmes de structure qui sont incorrects quel que soit le type de section — un en-tête de section en double, un nom de section vide, ou un paramètre situé en dehors de toute section. Ces éléments apparaissent dans la bannière de validation ; ils ne modifient pas votre fichier."
+        },
+        "saveConfig": {
+          "title": "Le bloc SAVE_CONFIG",
+          "body": "Klipper ajoute un bloc généré automatiquement à la fin de printer.cfg (après le marqueur #*#) lorsque vous exécutez SAVE_CONFIG — des résultats de calibration comme les valeurs PID et les offsets Z. Il est affiché mais signalé comme enregistré automatiquement, et il est exclu du nombre de sections modifiables car vous ne devez pas le modifier à la main."
+        },
+        "readonly": {
+          "title": "Lecture seule (pour l'instant)",
+          "body": "Cette première version se contente de lire et d'afficher la configuration — rien n'est écrit sur l'imprimante. L'édition guidée avec confirmation (incluant une sauvegarde automatique avant tout enregistrement et un redémarrage ensuite) arrivera dans une prochaine mise à jour."
+        },
+        "glossary": { "title": "Glossaire", "body": "" }
+      },
+      "glossary": {
+        "section": {
+          "term": "Section",
+          "def": "Un bloc [header] regroupant des réglages liés, par ex. [stepper_x] ou [extruder]."
+        },
+        "parameter": {
+          "term": "Paramètre",
+          "def": "Une ligne key: value (ou key = value) à l'intérieur d'une section, éventuellement suivie d'un commentaire # en fin de ligne."
+        },
+        "include": {
+          "term": "[include]",
+          "def": "Une directive qui intègre un autre fichier de configuration dans printer.cfg, afin de répartir les réglages sur plusieurs fichiers."
+        },
+        "saveConfig": {
+          "term": "SAVE_CONFIG",
+          "def": "Le bloc généré automatiquement (après #*#) où Klipper stocke les résultats de calibration — ne le modifiez pas à la main."
+        }
+      }
+    },
+    "file": {
+      "label": "Fichier de configuration",
+      "placeholder": "Sélectionnez un fichier…",
+      "refresh": "Actualiser",
+      "loadingList": "Chargement des fichiers…",
+      "emptyList": "Aucun fichier de configuration trouvé sur l'imprimante."
+    },
+    "summary": {
+      "sections": "{count} sections",
+      "params": "{count} paramètres",
+      "size": "{kb} KB"
+    },
+    "validation": {
+      "title": "Validation",
+      "clean": "Aucun problème de structure détecté.",
+      "error": "Erreur",
+      "warning": "Avertissement"
+    },
+    "view": {
+      "structured": "Structuré",
+      "raw": "Brut",
+      "expandAll": "Tout développer",
+      "collapseAll": "Tout réduire"
+    },
+    "section": {
+      "saveBadge": "enregistré auto.",
+      "noParams": "(aucun paramètre)",
+      "paramsCount": "{count} paramètres",
+      "paramHead": "Paramètre",
+      "valueHead": "Valeur"
+    },
+    "states": {
+      "loading": "Lecture de la configuration…",
+      "error": "Impossible de lire la configuration depuis l'imprimante.",
+      "retry": "Réessayer"
+    }
+  }
+}
