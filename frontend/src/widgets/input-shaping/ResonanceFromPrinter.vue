@@ -397,7 +397,7 @@ async function runVib(): Promise<void> {
           :x2="tick.x"
           :y1="6"
           :y2="beltChart.height - 12"
-          stroke="#111111"
+          class="stroke-ink"
           stroke-opacity="0.12"
           stroke-width="0.5"
         />
@@ -420,7 +420,7 @@ async function runVib(): Promise<void> {
           :x="tick.x"
           :y="beltChart.height - 2"
           font-size="6"
-          fill="#111111"
+          class="fill-ink"
           fill-opacity="0.6"
           text-anchor="middle"
         >
@@ -430,11 +430,11 @@ async function runVib(): Promise<void> {
       <p class="text-[10px] opacity-70">{{ beltJudge.advice }}</p>
       <div class="flex gap-3 font-mono text-[10px]">
         <span class="flex items-center gap-1"
-          ><span class="inline-block h-0 w-3 border-t-2" style="border-color: #5b8cff" />
+          ><span class="inline-block h-0 w-3 border-t-2 border-brand-blue" />
           {{ t('inputShaping.fromPrinter.beltLegendA') }}</span
         >
         <span class="flex items-center gap-1"
-          ><span class="inline-block h-0 w-3 border-t-2" style="border-color: #ff5247" />
+          ><span class="inline-block h-0 w-3 border-t-2 border-brand-red" />
           {{ t('inputShaping.fromPrinter.beltLegendB') }}</span
         >
       </div>
@@ -482,7 +482,7 @@ async function runVib(): Promise<void> {
           :x2="axesChart.width - 4"
           :y1="axesChart.zeroY"
           :y2="axesChart.zeroY"
-          stroke="#111111"
+          class="stroke-ink"
           stroke-opacity="0.2"
           stroke-width="0.5"
         />
@@ -493,7 +493,7 @@ async function runVib(): Promise<void> {
           :x2="b"
           :y1="6"
           :y2="axesChart.height - 12"
-          stroke="#111111"
+          class="stroke-ink"
           stroke-opacity="0.15"
           stroke-width="0.5"
           stroke-dasharray="2 2"
@@ -507,7 +507,7 @@ async function runVib(): Promise<void> {
             :y="11"
             font-size="6"
             font-weight="bold"
-            fill="#111111"
+            class="fill-ink"
             text-anchor="middle"
           >
             {{ z.axis }} → {{ z.detected }}
@@ -516,7 +516,7 @@ async function runVib(): Promise<void> {
             :x="z.centerX"
             :y="axesChart.height - 2"
             font-size="5.5"
-            fill="#111111"
+            class="fill-ink"
             fill-opacity="0.6"
             text-anchor="middle"
           >
@@ -530,17 +530,17 @@ async function runVib(): Promise<void> {
       </svg>
       <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-70">
         <span class="flex items-center gap-1"
-          ><span class="inline-block h-2 w-3 rounded-sm" style="background: #ff5247" />{{
+          ><span class="inline-block h-2 w-3 rounded-sm bg-brand-red" />{{
             t('inputShaping.fromPrinter.legendAccelX')
           }}</span
         >
         <span class="flex items-center gap-1"
-          ><span class="inline-block h-2 w-3 rounded-sm" style="background: #5b8cff" />{{
+          ><span class="inline-block h-2 w-3 rounded-sm bg-brand-blue" />{{
             t('inputShaping.fromPrinter.legendY')
           }}</span
         >
         <span class="flex items-center gap-1"
-          ><span class="inline-block h-2 w-3 rounded-sm" style="background: #00e0c6" />{{
+          ><span class="inline-block h-2 w-3 rounded-sm bg-brand-cyan" />{{
             t('inputShaping.fromPrinter.legendZ')
           }}</span
         >
@@ -639,7 +639,7 @@ async function runVib(): Promise<void> {
             :x2="specChart.guideX"
             :y1="6"
             :y2="specChart.height - 12"
-            stroke="#111111"
+            class="stroke-ink"
             stroke-width="0.7"
             stroke-dasharray="2 1.5"
           />
@@ -649,7 +649,7 @@ async function runVib(): Promise<void> {
             :x="tick.x"
             :y="specChart.height - 2"
             font-size="6"
-            fill="#111111"
+            class="fill-ink"
             fill-opacity="0.6"
             text-anchor="middle"
           >
@@ -662,14 +662,18 @@ async function runVib(): Promise<void> {
           role="img"
           :aria-label="t('inputShaping.fromPrinter.energyChartLabel')"
         >
-          <polyline :points="energyChart.points" fill="none" stroke="#ff5247" stroke-width="1" />
+          <polyline
+            :points="energyChart.points"
+            fill="none"
+            class="stroke-brand-red"
+            stroke-width="1"
+          />
           <circle
             v-if="energyChart.minMark"
             :cx="energyChart.minMark.x"
             :cy="energyChart.minMark.y"
             r="2"
-            fill="#00e0c6"
-            stroke="#111111"
+            class="fill-brand-cyan stroke-ink"
             stroke-width="0.5"
           />
         </svg>

@@ -4,5 +4,12 @@
     "errors": {
       "backendUnreachable": "无法连接 FilaMind 后端 — 请检查 filamind-flow 服务是否正在运行且可访问。"
     }
+  },
+  "theme": {
+    "label": "主题",
+    "light": "明亮",
+    "dark": "暗黑",
+    "neon": "霓虹",
+    "contrast": "高对比度"
   }
 }

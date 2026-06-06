@@ -498,7 +498,7 @@ async function saveConfig(): Promise<void> {
             :x2="tick.x"
             :y1="6"
             :y2="chart.height - 12"
-            stroke="#111111"
+            class="stroke-ink"
             stroke-opacity="0.12"
             stroke-width="0.5"
           />
@@ -509,7 +509,7 @@ async function saveConfig(): Promise<void> {
             :x2="chart.width - 4"
             :y1="chart.noiseY"
             :y2="chart.noiseY"
-            stroke="#111111"
+            class="stroke-ink"
             stroke-opacity="0.3"
             stroke-width="0.5"
             stroke-dasharray="3 2"
@@ -538,7 +538,7 @@ async function saveConfig(): Promise<void> {
               :x2="chart.peak.x"
               :y1="6"
               :y2="chart.height - 12"
-              stroke="#ff5247"
+              class="stroke-brand-red"
               stroke-width="0.6"
               stroke-dasharray="2 1.5"
             />
@@ -546,8 +546,7 @@ async function saveConfig(): Promise<void> {
               :cx="chart.peak.x"
               :cy="chart.peak.y"
               r="2.2"
-              fill="#ff5247"
-              stroke="#111111"
+              class="fill-brand-red stroke-ink"
               stroke-width="0.5"
             />
             <text
@@ -555,7 +554,7 @@ async function saveConfig(): Promise<void> {
               :y="11"
               font-size="6.5"
               font-weight="bold"
-              fill="#ff5247"
+              class="fill-brand-red"
               :text-anchor="chart.peak.x > chart.width * 0.78 ? 'end' : 'start'"
             >
               {{ t('inputShaping.widget.peakLabel', { v: chart.peak.label }) }}
@@ -567,7 +566,7 @@ async function saveConfig(): Promise<void> {
             :x="tick.x"
             :y="chart.height - 2"
             font-size="6"
-            fill="#111111"
+            class="fill-ink"
             fill-opacity="0.6"
             text-anchor="middle"
           >
@@ -580,10 +579,10 @@ async function saveConfig(): Promise<void> {
             {{ s.name }}
           </span>
           <span class="flex items-center gap-1 opacity-70">
-            <span class="inline-block h-0 w-3 border-t-2" style="border-color: #ff5c8a" />
+            <span class="inline-block h-0 w-3 border-t-2 border-brand-pink" />
             {{ t('inputShaping.widget.legendRecommended') }}
           </span>
-          <span class="flex items-center gap-1" style="color: #ff5247">{{
+          <span class="flex items-center gap-1 text-brand-red">{{
             t('inputShaping.widget.legendPeak')
           }}</span>
           <span class="opacity-50">{{ t('inputShaping.widget.legendAxisHint') }}</span>

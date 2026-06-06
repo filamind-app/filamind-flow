@@ -32,7 +32,12 @@ export interface AxesVelocityChart {
   colors: { x: string; y: string; z: string }
 }
 
-const COLORS = { x: '#ff5247', y: '#5b8cff', z: '#00e0c6' }
+// Theme-aware: resolve to the live brand tokens so the chart recolors per theme.
+const COLORS = {
+  x: 'rgb(var(--c-brand-red))',
+  y: 'rgb(var(--c-brand-blue))',
+  z: 'rgb(var(--c-brand-cyan))',
+}
 
 /** Builds the SVG model (empty zones if there's no data). */
 export function buildAxesVelocityChart(

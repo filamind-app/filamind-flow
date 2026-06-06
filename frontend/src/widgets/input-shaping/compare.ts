@@ -123,8 +123,8 @@ export function buildCompareChart(
   return {
     width,
     height,
-    a: { name: 'A', color: '#5b8cff', dashed: false, points: poly(a) },
-    b: { name: 'B', color: '#ff5247', dashed: true, points: poly(b) },
+    a: { name: 'A', color: 'rgb(var(--c-brand-blue))', dashed: false, points: poly(a) },
+    b: { name: 'B', color: 'rgb(var(--c-brand-red))', dashed: true, points: poly(b) },
     xTicks,
   }
 }

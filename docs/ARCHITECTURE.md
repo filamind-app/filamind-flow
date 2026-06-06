@@ -116,6 +116,22 @@ few component classes (`frontend/src/assets/styles/main.css`):
 - **Type** — a chunky display face (Space Grotesk) with monospace (JetBrains
   Mono) for data.
 
+### Theming
+
+Every visual token is a **CSS custom property**, so the whole app restyles from a single switch.
+The Tailwind tokens reference the variables (`ink: 'rgb(var(--c-ink) / <alpha-value>)'`, `boxShadow`
+→ `var(--nb-shadow*)`, `borderRadius.brutal` → `var(--nb-radius)`), so **every existing utility**
+(`bg-paper`, `border-ink`, `bg-brand-cyan`, `shadow-brutal`, `rounded-brutal`) recolors per theme with
+no component edits. `main.css` holds `:root` (Light defaults) plus a `[data-theme="…"]` block per theme.
+
+- **Themes:** `neon` (default — deep violet + soft glow + rounded), `dark` (neutral charcoal), `light`
+  (the original brutalist look), `contrast` (near-black/white, a11y). Mirrors the i18n design:
+  `core/theme.ts` (registry + detect + `localStorage` persistence + reactive `data-theme`), a
+  `ThemeSelect` header control, and a no-flash inline `<head>` script that applies the saved theme
+  before first paint. **Adding a theme = one `[data-theme]` block + a `THEME_META` entry + locale names.**
+- Theme is **orthogonal to locale/RTL** — the `:lang(ar)`/`[dir=rtl]` rules are independent.
+- SVG charts read the same token variables (not hardcoded hex), so they recolor with the theme.
+
 ### Offline note
 
 Fonts currently load from Google Fonts with system fallbacks, so an offline host
