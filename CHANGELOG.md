@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.104.0] - 2026-06-06
+
+### Added
+
+- **Hardware Browser — widget UI (Track A).** A new widget on `/api/hardware`: a search box +
+  manufacturer field + category filter (`ComboSelect`), paginated result cards each showing the
+  component's manufacturer, name, category badge, and full spec sheet. Match count + "showing
+  X–Y of N" + Prev/Next paging. New `hardwareBrowser` namespace + sidebar label across all 7
+  locales. +4 frontend tests. The insertable config/macro template library follows.
+
 ## [0.103.0] - 2026-06-06
 
 ### Added

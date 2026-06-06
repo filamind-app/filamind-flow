@@ -57,6 +57,10 @@
       "macro-designer": {
         "title": "Diseñador de Macros",
         "description": "Simula G-code sin conexión — trayectoria del cabezal, límites, totales y una biblioteca de macros."
+      },
+      "hardware-browser": {
+        "title": "Explorador de hardware",
+        "description": "Busca una referencia curada de hardware de impresión 3D por nombre, fabricante o especificación."
       }
     }
   }

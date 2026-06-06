@@ -69,4 +69,13 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./macro-designer/MacroDesignerWidget.vue')),
   })
+
+  registerWidget({
+    id: 'hardware-browser',
+    title: 'Hardware Browser',
+    icon: '🔎',
+    description: 'Search a curated 3D-printing hardware reference by name, manufacturer, or spec.',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./hardware-browser/HardwareBrowserWidget.vue')),
+  })
 }

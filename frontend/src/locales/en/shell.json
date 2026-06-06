@@ -57,6 +57,10 @@
       "macro-designer": {
         "title": "Macro Designer",
         "description": "Simulate G-code offline — toolhead path, bounds, totals, and a macro library."
+      },
+      "hardware-browser": {
+        "title": "Hardware Browser",
+        "description": "Search a curated 3D-printing hardware reference by name, manufacturer, or spec."
       }
     }
   }
