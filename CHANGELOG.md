@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.111.0] - 2026-06-06
+
+### Fixed
+
+- **Max-Flow hotend table — fixed the key mismatch + expanded 8 → 96 (Phase 7 of the DB overhaul).**
+  The widget read `expected_max_flow_mm3s` / `suggested_temp_c` but the data shipped
+  `expected_flow_mm3s` and no temp — so the flow hint and the temp/max auto-fill **never fired**.
+  - Standardised every row on `expected_max_flow_mm3s` (kept `expected_flow_mm3s` as an alias);
+    added `suggested_temp_c` to the curated rows so the auto-fill works.
+  - **Generated 88 more hotends** from the big-DB `Hotends` sub-category (96 total), with a careful
+    flow normaliser that excludes print-speed (`mm/s`), converts `mm³/min`, takes the range max, and
+    drops nozzle-size leaks → 68/96 with a parsed flow, the rest `null` (unpublished, never guessed).
+    Each generated row carries `max_temp_c` and a derived test `preset` where the flow is known.
+  - Regression test locks the contract (every row has `expected_max_flow_mm3s`; curated rows keep a
+    `suggested_temp_c`).
+
 ## [0.110.0] - 2026-06-06
 
 ### Added
