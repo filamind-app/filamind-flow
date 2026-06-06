@@ -34,6 +34,7 @@ _STALLGUARD = _load("stallguard_profiles.json")
 _HOTENDS = _load("hotend_table.json")
 _BOARDS = _load("board_patterns.json")
 _MACROS = _load("macros.json")
+_HARDWARE = _load("hardware.json")
 
 
 # ── StallGuard ───────────────────────────────────────────────────────────────
@@ -77,4 +78,23 @@ def board_patterns() -> dict[str, Any]:
 def macros() -> list[dict[str, Any]]:
     """Built-in Klipper calibration macro definitions."""
     rows = _MACROS.get("builtin_macros", [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+# ── Hardware reference DB ─────────────────────────────────────────────────────
+def hardware_items() -> list[dict[str, Any]]:
+    """Every hardware component row (category / manufacturer / name / specs)."""
+    rows = _HARDWARE.get("items", [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+def hardware_categories() -> list[str]:
+    """The hardware component categories, in dataset order."""
+    rows = _HARDWARE.get("categories", [])
+    return [str(c) for c in rows] if isinstance(rows, list) else []
+
+
+def hardware_manufacturers() -> list[dict[str, Any]]:
+    """The manufacturer directory (name / country / website / specialty / categories)."""
+    rows = _HARDWARE.get("manufacturers", [])
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []

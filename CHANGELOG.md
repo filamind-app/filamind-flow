@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.103.0] - 2026-06-06
+
+### Added
+
+- **Hardware Browser — data + search backend (Track A).** A curated 3D-printing hardware
+  reference baked into the backend (`hardware.json`: **3,671 components** across 13 categories +
+  a **274-manufacturer** directory), with a pure search service and read-only endpoints:
+  - `GET /api/hardware` — free-text (`?q=`) + `category` + `manufacturer` filters, paginated
+    (server-capped page size).
+  - `GET /api/hardware/categories` and `GET /api/hardware/manufacturers`.
+  - +8 backend tests (incl. a dataset-integrity check). The browser UI + a template library follow.
+
 ## [0.102.0] - 2026-06-06
 
 ### Added
