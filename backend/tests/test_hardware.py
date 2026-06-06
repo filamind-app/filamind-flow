@@ -75,7 +75,15 @@ def test_dataset_loaded_and_clean() -> None:
     import json
 
     blob = json.dumps({"i": items, "m": mans, "c": cats}, ensure_ascii=False).lower()
-    for banned in ("ratos", "klipper_tmc_autotune", "shake&tune", "shaketune", "fragmon"):
+    for banned in (
+        "ratos",
+        "klipper_tmc_autotune",
+        "shake&tune",
+        "shaketune",
+        "fragmon",
+        "klippain",
+        "gpl-3",
+    ):
         assert banned not in blob, f"leaked: {banned}"
     # Every item has the core shape (now including a non-empty name).
     for it in items:
@@ -98,6 +106,26 @@ def test_data_quality_gates() -> None:
     # Manufacturer-directory rows must not pollute the product list.
     leaked_dir = [i for i in items if {"Country", "Website", "Specialty"} <= set(i["specs"])]
     assert leaked_dir == [], f"{len(leaked_dir)} manufacturer-directory rows leaked into items"
+
+
+def test_no_category_was_gutted() -> None:
+    """Regression: the v0.108.0 over-clean dropped 605 stepper products; they were
+    restored in v0.109.0. Lock per-category floors so a regen can never silently
+    gut a whole category again (audit follow-up — restore-not-delete)."""
+    from collections import Counter
+
+    items = reference_data.hardware_items()
+    by_cat = Counter(i["category"] for i in items)
+    floors = {
+        "Stepper Motors": 600,  # 641 after restore (was wrongly 64)
+        "Electronics & Wiring": 190,  # 195 after restore
+        "MCU & Boards": 1000,
+        "Sensors & Probes": 200,
+    }
+    for cat, floor in floors.items():
+        assert by_cat[cat] >= floor, (
+            f"{cat} has {by_cat[cat]} rows, below floor {floor} — data loss?"
+        )
 
 
 # ── routes ────────────────────────────────────────────────────────────────────
