@@ -81,6 +81,37 @@ class MoonrakerClient:
         store = result.get("gcode_store", [])
         return [e for e in store if isinstance(e, dict)] if isinstance(store, list) else []
 
+    async def list_files(self, root: str = "config") -> list[dict[str, Any]]:
+        """List files under a Moonraker file root via ``/server/files/list?root=<root>``.
+
+        The ``config`` root holds ``printer.cfg`` and its includes. Each entry is
+        ``{"path": str, "modified": float, "size": int, "permissions": str}``. Returns
+        an empty list if the root is empty or the result is not a list.
+        """
+        async with httpx.AsyncClient(timeout=self._timeout) as client:
+            response = await client.get(
+                f"{self._base_url}/server/files/list", params={"root": root}
+            )
+            response.raise_for_status()
+            payload: object = response.json()
+        result = payload.get("result", []) if isinstance(payload, dict) else []
+        return [e for e in result if isinstance(e, dict)] if isinstance(result, list) else []
+
+    async def get_file_text(self, path: str, root: str = "config") -> str:
+        """Fetch a file's raw text via ``/server/files/<root>/<path>``.
+
+        Used to read ``printer.cfg`` (and its includes) for round-trip config editing.
+        ``path`` is relative to the root (e.g. ``printer.cfg``, ``macros/print.cfg``).
+
+        Raises:
+            httpx.HTTPError: if Moonraker is unreachable or the file is missing (404).
+        """
+        safe = "/".join(quote(part) for part in path.split("/"))
+        async with httpx.AsyncClient(timeout=self._timeout) as client:
+            response = await client.get(f"{self._base_url}/server/files/{root}/{safe}")
+            response.raise_for_status()
+            return response.text
+
     async def run_gcode(self, script: str) -> None:
         """Runs a G-code script via ``/printer/gcode/script``.
 
