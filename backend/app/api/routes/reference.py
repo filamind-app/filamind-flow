@@ -18,7 +18,7 @@ router = APIRouter(prefix="/reference", tags=["reference"])
 
 @router.get("/stallguard")
 async def stallguard() -> dict[str, Any]:
-    """Per-driver StallGuard slip-detection tuning constants (base + overrides + field map)."""
+    """StallGuard slip-detection tuning constants (base + per-driver overrides + field map)."""
     return reference_data.stallguard_profiles()
 
 

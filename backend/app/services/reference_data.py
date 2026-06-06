@@ -1,7 +1,6 @@
 """Phase 0 reference-data layer — curated Klipper datasets reused across upcoming widgets.
 
-Static JSON datasets baked under ``app/data/reference/`` (extracted from GPL-3.0 upstream
-projects; see ``data/reference/SOURCES.md`` for attribution):
+Static JSON datasets baked under ``app/data/reference/``:
 
 * ``stallguard_profiles.json`` — per-driver StallGuard slip-detection tuning constants
   (base + per-driver overrides + the StallGuard field name per model). Backs the planned

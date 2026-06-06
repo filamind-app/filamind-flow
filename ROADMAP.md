@@ -130,12 +130,12 @@ English copy proceeds phase-by-phase; see
 
 ## Planned expansion — reuse from the Klipper ecosystem
 
-A deep multi-project analysis (StallGuard max-flow tooling + a full-stack Klipper config
-editor + a unified hardware database, all GPL-3.0) surfaced reusable logic + data that
-unlocks a set of new widgets and enhancements. Delivery is phased; **Phase 0 (a shared
-data + config-engine foundation) lands first** and unblocks the rest, which then run on two
-parallel tracks. Every item keeps the project conventions (i18n ×7, theme-aware, confirm-gates
-for any motion/write, `gcode`-driven via Moonraker, GPL-3.0 attribution for ported code).
+A roadmap of new widgets and enhancements extending FilaMind across the full Klipper tuning +
+configuration surface (max volumetric flow, a config editor, a macro simulator, board topology,
+a hardware browser). Delivery is phased; **Phase 0 (a shared data + config-engine foundation)
+lands first** and unblocks the rest, which then run on two parallel tracks. Every item keeps the
+project conventions (i18n ×7, theme-aware, confirm-gates for any motion/write, `gcode`-driven via
+Moonraker).
 
 | Phase | Scope | Track | Risk |
 | ----- | ----- | ----- | ---- |
