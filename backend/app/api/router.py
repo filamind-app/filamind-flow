@@ -7,6 +7,7 @@ from app.api.routes import (
     drivers,
     firmware,
     health,
+    macro,
     maxflow,
     moonraker,
     reference,
@@ -24,3 +25,4 @@ api_router.include_router(reference.router)
 api_router.include_router(config.router)
 api_router.include_router(maxflow.router)
 api_router.include_router(topology.router)
+api_router.include_router(macro.router)

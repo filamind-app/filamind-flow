@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.101.0] - 2026-06-06
+
+### Added
+
+- **Macro Designer — G-code simulator core (Track A).** `gcode_sim.py` + `POST /api/macro/simulate`:
+  parses a literal G-code program (`G0`/`G1` moves, `G90`/`G91`, `M82`/`M83`, `G92`, `G28`) and
+  returns the toolhead path (2D), bounding box, total travel + extrusion, a rough time estimate,
+  and a per-command timeline. Inline comments stripped; unsupported commands recorded as warnings.
+  Pure compute, no printer. +10 backend tests. The editor UI and Jinja / macro expansion follow.
+
 ## [0.100.0] - 2026-06-06
 
 ### Added
