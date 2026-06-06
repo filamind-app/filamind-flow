@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "source": "https://github.com/Fragmon/klipper_max_flow_test",
+    "license": "GPL-3.0",
+    "extracted": "Per-hotend melt-zone length (mm), expected max volumetric flow (mm^3/s), and the TMC_FLOW_FIND_MAX START/MAX/COARSE_STEP presets, cross-referenced from README.md (melt-zone list + 'Picking the right START / MAX' table) and tmc_flow_test_macros.cfg (CRYD_FLOW_TEST_* quick-preset macros + [tmc_flow_test] melt-zone comments)."
+  },
+  "hotends": [
+    {
+      "name": "V6 / Revo Six",
+      "melt_zone_mm": 13,
+      "expected_flow_mm3s": 15,
+      "preset": { "START": 5, "MAX": 25, "COARSE_STEP": 5 }
+    },
+    {
+      "name": "Volcano",
+      "melt_zone_mm": 21,
+      "expected_flow_mm3s": 25,
+      "preset": { "START": 10, "MAX": 40, "COARSE_STEP": 5 }
+    },
+    {
+      "name": "Mosquito",
+      "melt_zone_mm": 18,
+      "expected_flow_mm3s": 50,
+      "preset": { "START": 15, "MAX": 80, "COARSE_STEP": 5 }
+    },
+    {
+      "name": "Rapido HF 0.4",
+      "melt_zone_mm": null,
+      "expected_flow_mm3s": 30,
+      "preset": { "START": 10, "MAX": 60, "COARSE_STEP": 5 }
+    },
+    {
+      "name": "Rapido HF 0.6",
+      "melt_zone_mm": null,
+      "expected_flow_mm3s": 50,
+      "preset": { "START": 15, "MAX": 80, "COARSE_STEP": 5 }
+    },
+    {
+      "name": "Goliath / CHC-XL",
+      "melt_zone_mm": 50,
+      "expected_flow_mm3s": 80,
+      "preset": { "START": 25, "MAX": 120, "COARSE_STEP": 5 }
+    },
+    {
+      "name": "Sherpa / Chube",
+      "melt_zone_mm": 42,
+      "expected_flow_mm3s": null,
+      "preset": { "START": 10, "MAX": 80, "COARSE_STEP": 5 }
+    },
+    {
+      "name": "Unknown",
+      "melt_zone_mm": null,
+      "expected_flow_mm3s": null,
+      "preset": { "START": 10, "MAX": 150, "COARSE_STEP": 5 }
+    }
+  ]
+}

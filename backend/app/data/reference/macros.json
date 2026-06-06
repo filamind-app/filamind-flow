@@ -1,0 +1,97 @@
+{
+  "_meta": {
+    "source": "KWC (kwc_repo) frontend/src/utils/macroDesigner.ts (BUILT_IN_MACROS) and frontend/src/types/macroDesigner.ts (BuiltInMacroDefinition)",
+    "license": "GPL-3.0",
+    "extracted": "The 12 built-in calibration macro definitions from KWC's Macro Designer. Each built-in macro maps a friendly title to a single Klipper g-code command (the gcode it expands to), with the printer.cfg config sections it requires to be available. A built-in is only offered when its requiredSections are present (the 'probe' requirement is satisfied by any of probe/bltouch/smart_effector/probe_eddy_current)."
+  },
+  "builtin_macros": [
+    {
+      "id": "quad_gantry_level",
+      "name": "QUAD_GANTRY_LEVEL",
+      "title": "QGL",
+      "description": "Run quad gantry leveling using the configured probe points.",
+      "required_sections": ["quad_gantry_level"],
+      "expands_to": ["QUAD_GANTRY_LEVEL"]
+    },
+    {
+      "id": "bed_mesh",
+      "name": "BED_MESH_CALIBRATE",
+      "title": "Bed Mesh",
+      "description": "Probe the bed mesh using the saved bed_mesh section.",
+      "required_sections": ["bed_mesh"],
+      "expands_to": ["BED_MESH_CALIBRATE"]
+    },
+    {
+      "id": "z_tilt",
+      "name": "Z_TILT_ADJUST",
+      "title": "Z Tilt",
+      "description": "Adjust multiple Z motors using the configured Z tilt probe points.",
+      "required_sections": ["z_tilt"],
+      "expands_to": ["Z_TILT_ADJUST"]
+    },
+    {
+      "id": "screws_tilt_adjust",
+      "name": "SCREWS_TILT_CALCULATE",
+      "title": "Screws Tilt Adjust",
+      "description": "Calculate bed screw adjustments using the configured probe locations.",
+      "required_sections": ["screws_tilt_adjust"],
+      "expands_to": ["SCREWS_TILT_CALCULATE"]
+    },
+    {
+      "id": "bed_screws",
+      "name": "BED_SCREWS_ADJUST",
+      "title": "Bed Screws",
+      "description": "Walk through configured bed screw locations.",
+      "required_sections": ["bed_screws"],
+      "expands_to": ["BED_SCREWS_ADJUST"]
+    },
+    {
+      "id": "bed_tilt",
+      "name": "BED_TILT_CALIBRATE",
+      "title": "Bed Tilt",
+      "description": "Run bed tilt calibration using configured probe points.",
+      "required_sections": ["bed_tilt"],
+      "expands_to": ["BED_TILT_CALIBRATE"]
+    },
+    {
+      "id": "axis_twist_compensation",
+      "name": "AXIS_TWIST_COMPENSATION_CALIBRATE",
+      "title": "Axis Twist",
+      "description": "Calibrate axis twist compensation for a configured axis.",
+      "required_sections": ["axis_twist_compensation"],
+      "expands_to": ["AXIS_TWIST_COMPENSATION_CALIBRATE"]
+    },
+    {
+      "id": "probe",
+      "name": "PROBE",
+      "title": "Probe",
+      "description": "Run a single probe cycle using the configured probe offsets.",
+      "required_sections": ["probe"],
+      "expands_to": ["PROBE"]
+    },
+    {
+      "id": "probe_accuracy",
+      "name": "PROBE_ACCURACY",
+      "title": "Probe Accuracy",
+      "description": "Measure probe repeatability using the current probe setup.",
+      "required_sections": ["probe"],
+      "expands_to": ["PROBE_ACCURACY"]
+    },
+    {
+      "id": "probe_calibrate",
+      "name": "PROBE_CALIBRATE",
+      "title": "Probe Calibrate",
+      "description": "Calibrate probe Z offset using the current probe setup.",
+      "required_sections": ["probe"],
+      "expands_to": ["PROBE_CALIBRATE"]
+    },
+    {
+      "id": "delta_calibrate",
+      "name": "DELTA_CALIBRATE",
+      "title": "Delta Calibrate",
+      "description": "Calibrate delta parameters by probing seven points on the bed.",
+      "required_sections": ["delta_calibrate"],
+      "expands_to": ["DELTA_CALIBRATE"]
+    }
+  ]
+}
