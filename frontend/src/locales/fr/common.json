@@ -4,5 +4,12 @@
     "errors": {
       "backendUnreachable": "Impossible de joindre le backend FilaMind — vérifiez que le service filamind-flow est en cours d'exécution et accessible."
     }
+  },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "neon": "Néon",
+    "contrast": "Contraste élevé"
   }
 }

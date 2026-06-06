@@ -97,7 +97,7 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
           :x2="tick.x"
           :y1="6"
           :y2="plot.height - 12"
-          stroke="#111111"
+          class="stroke-ink"
           stroke-opacity="0.12"
           stroke-width="0.5"
         />
@@ -115,7 +115,7 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
           :x="tick.x"
           :y="plot.height - 2"
           font-size="6"
-          fill="#111111"
+          class="fill-ink"
           fill-opacity="0.6"
           text-anchor="middle"
         >

@@ -41,11 +41,12 @@ export interface ResponseChart {
   noiseY: number | null
 }
 
+// Theme-aware: resolve to the live brand tokens so the curves recolor per theme.
 const PSD_COLORS: Record<string, string> = {
-  sum: '#111111', // ink — the X+Y+Z total
-  x: '#ff5247', // brand-red
-  y: '#5b8cff', // brand-blue
-  z: '#00e0c6', // brand-cyan
+  sum: 'rgb(var(--c-ink))', // ink — the X+Y+Z total
+  x: 'rgb(var(--c-brand-red))', // brand-red
+  y: 'rgb(var(--c-brand-blue))', // brand-blue
+  z: 'rgb(var(--c-brand-cyan))', // brand-cyan
 }
 
 /** Builds the SVG model for a resonance analysis (empty series if no data). */
@@ -79,7 +80,10 @@ export function buildResponseChart(
 
   const shapers: PlotSeries[] = analysis.shaper_curves.map((c) => ({
     name: c.name,
-    color: c.name === analysis.recommended_shaper ? '#ff5c8a' : '#6c7086',
+    color:
+      c.name === analysis.recommended_shaper
+        ? 'rgb(var(--c-brand-pink))'
+        : 'rgb(var(--c-ink) / 0.4)',
     dashed: c.name !== analysis.recommended_shaper,
     points: poly(c.vals, yRatio),
   }))

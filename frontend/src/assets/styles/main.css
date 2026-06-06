@@ -16,6 +16,89 @@
   }
 }
 
+/* ───────────────────────────────────────────────────────────────────────────
+   Theme tokens.
+
+   Every visual token (colors + shadows + radius) is a CSS custom property, so
+   switching [data-theme] on <html> recolors/restyles the entire UI without a
+   single component edit — Tailwind's color/boxShadow/borderRadius tokens all
+   resolve to these vars (see tailwind.config.ts).
+
+   Color vars are space-separated RGB triplets so Tailwind's alpha slot works
+   (bg-ink/50). Shadow vars hold full box-shadow values; --nb-radius a length.
+
+   :root holds the LIGHT defaults; [data-theme] blocks override. The default
+   theme applied by the app shell is "neon".
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+  --c-ink: 17 17 17;
+  --c-paper: 245 241 232;
+  --c-surface: 255 253 245;
+  --c-brand-yellow: 255 212 0;
+  --c-brand-pink: 255 92 138;
+  --c-brand-cyan: 0 224 198;
+  --c-brand-lime: 154 230 0;
+  --c-brand-blue: 91 140 255;
+  --c-brand-red: 255 82 71;
+  --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
+  --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
+  --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
+  --nb-radius: 4px;
+}
+
+/* Dark — neutral charcoal, no neon glow, softer ~8px corners. */
+[data-theme='dark'] {
+  --c-ink: 240 240 240;
+  --c-paper: 30 30 35;
+  --c-surface: 45 45 50;
+  --c-brand-yellow: 255 212 0;
+  --c-brand-pink: 255 140 165;
+  --c-brand-cyan: 100 240 225;
+  --c-brand-lime: 180 240 60;
+  --c-brand-blue: 140 180 255;
+  --c-brand-red: 255 120 110;
+  --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
+  --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
+  --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
+  --nb-radius: 8px;
+}
+
+/* Neon (default) — deep indigo/violet bg, near-white text, soft cyan glow in
+   place of the hard offset shadow, rounded ~12px corners. */
+[data-theme='neon'] {
+  --c-ink: 245 242 255;
+  --c-paper: 25 15 50;
+  --c-surface: 40 25 70;
+  --c-brand-yellow: 255 235 50;
+  --c-brand-pink: 255 100 200;
+  --c-brand-cyan: 0 240 220;
+  --c-brand-lime: 180 255 50;
+  --c-brand-blue: 140 170 255;
+  --c-brand-red: 255 100 120;
+  --nb-shadow-sm: 0 4px 15px 0 rgba(0, 200, 255, 0.3);
+  --nb-shadow: 0 8px 25px 0 rgba(0, 200, 255, 0.4);
+  --nb-shadow-lg: 0 12px 35px 0 rgba(0, 200, 255, 0.5);
+  --nb-radius: 12px;
+}
+
+/* High Contrast — near-black bg, pure-white text, bright accents, strong
+   borders + hard shadow for maximum readability (a11y). */
+[data-theme='contrast'] {
+  --c-ink: 255 255 255;
+  --c-paper: 5 5 5;
+  --c-surface: 20 20 20;
+  --c-brand-yellow: 255 255 0;
+  --c-brand-pink: 255 50 180;
+  --c-brand-cyan: 0 255 240;
+  --c-brand-lime: 200 255 0;
+  --c-brand-blue: 100 200 255;
+  --c-brand-red: 255 100 100;
+  --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
+  --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
+  --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
+  --nb-radius: 4px;
+}
+
 @layer components {
   /* Neo-Brutalist building blocks. Compose these instead of repeating utilities. */
   .nb-card {

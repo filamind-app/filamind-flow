@@ -4,8 +4,20 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>FilaMind Flow</title>
+    <!--
+      No-flash theme: apply the stored (or default 'neon') theme to <html> BEFORE any CSS/JS loads,
+      so the page never flashes the light default before the runtime (src/core/theme.ts) hydrates.
+      Keep the key/default in sync with theme.ts (STORAGE_KEY 'filamind-theme', DEFAULT 'neon').
+    -->
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('filamind-theme') || 'neon'
+      } catch (e) {
+        document.documentElement.dataset.theme = 'neon'
+      }
+    </script>
     <!--
       Fonts load from Google with system fallbacks so the panel still renders on
       an offline printer host. For fully offline installs, self-host these (see
@@ -26,8 +38,8 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-bTzEsKPy.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-B84oWFRp.css">
+    <script type="module" crossorigin src="/assets/index-CGHKMjtc.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Cf4H1nZg.css">
   </head>
   <body>
     <div id="app"></div>

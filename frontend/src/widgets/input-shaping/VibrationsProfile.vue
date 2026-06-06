@@ -64,7 +64,7 @@ function symmetryClass(pct: number): string {
         :y="8"
         :width="b.w"
         :height="speedChart.height - 22"
-        fill="#9be15d"
+        class="fill-brand-lime"
         fill-opacity="0.3"
       />
       <line
@@ -74,7 +74,7 @@ function symmetryClass(pct: number): string {
         :x2="p.x"
         :y1="8"
         :y2="speedChart.height - 14"
-        stroke="#ff5247"
+        class="stroke-brand-red"
         stroke-width="0.8"
         stroke-dasharray="2 1.5"
       />
@@ -84,26 +84,31 @@ function symmetryClass(pct: number): string {
         :x2="speedChart.recommendedX"
         :y1="8"
         :y2="speedChart.height - 14"
-        stroke="#00b3a0"
+        class="stroke-brand-cyan"
         stroke-width="1"
       />
       <polyline
         v-if="speedChart.maxPoints"
         :points="speedChart.maxPoints"
         fill="none"
-        stroke="#111111"
+        class="stroke-ink"
         stroke-opacity="0.25"
         stroke-width="0.8"
         stroke-dasharray="2 2"
       />
-      <polyline :points="speedChart.energyPoints" fill="none" stroke="#ff5247" stroke-width="1.2" />
+      <polyline
+        :points="speedChart.energyPoints"
+        fill="none"
+        class="stroke-brand-red"
+        stroke-width="1.2"
+      />
       <text
         v-for="tick in speedChart.speedTicks"
         :key="'st' + tick.label"
         :x="tick.x"
         :y="speedChart.height - 3"
         font-size="6"
-        fill="#111111"
+        class="fill-ink"
         fill-opacity="0.6"
         text-anchor="middle"
       >
@@ -113,12 +118,12 @@ function symmetryClass(pct: number): string {
     <div class="flex flex-wrap gap-x-3 font-mono text-[10px] opacity-60">
       <span>{{ t('inputShaping.vibrationsView.axisLegend') }}</span>
       <span class="flex items-center gap-1"
-        ><span class="inline-block h-2 w-3 rounded-sm" style="background: #9be15d" />{{
+        ><span class="inline-block h-2 w-3 rounded-sm bg-brand-lime" />{{
           t('inputShaping.vibrationsView.smooth')
         }}</span
       >
       <span class="flex items-center gap-1"
-        ><span class="inline-block h-0 w-3 border-t-2" style="border-color: #ff5247" />
+        ><span class="inline-block h-0 w-3 border-t-2 border-brand-red" />
         {{ t('inputShaping.vibrationsView.avoid') }}</span
       >
     </div>
@@ -137,7 +142,7 @@ function symmetryClass(pct: number): string {
           :cy="polar.cy"
           :r="polar.gridR"
           fill="none"
-          stroke="#111111"
+          class="stroke-ink"
           stroke-opacity="0.2"
           stroke-width="0.5"
         />
@@ -146,15 +151,14 @@ function symmetryClass(pct: number): string {
           :cy="polar.cy"
           :r="polar.gridR / 2"
           fill="none"
-          stroke="#111111"
+          class="stroke-ink"
           stroke-opacity="0.12"
           stroke-width="0.5"
         />
         <polygon
           :points="polar.polygon"
-          fill="#00e0c6"
+          class="fill-brand-cyan stroke-brand-cyan"
           fill-opacity="0.35"
-          stroke="#00b3a0"
           stroke-width="1"
         />
         <line
@@ -164,7 +168,7 @@ function symmetryClass(pct: number): string {
           :y1="polar.cy"
           :x2="s.x"
           :y2="s.y"
-          stroke="#111111"
+          class="stroke-ink"
           stroke-opacity="0.4"
           stroke-width="0.6"
           stroke-dasharray="2 2"
@@ -176,7 +180,7 @@ function symmetryClass(pct: number): string {
           :y="s.y"
           font-size="6"
           font-weight="bold"
-          fill="#111111"
+          class="fill-ink"
           text-anchor="middle"
         >
           {{ s.label }}
@@ -205,7 +209,7 @@ function symmetryClass(pct: number): string {
           :x="tick.x"
           :y="heatmap.height - 3"
           font-size="6"
-          fill="#111111"
+          class="fill-ink"
           fill-opacity="0.6"
           text-anchor="middle"
         >
@@ -217,7 +221,7 @@ function symmetryClass(pct: number): string {
           :x="3"
           :y="tick.y + 2"
           font-size="5.5"
-          fill="#111111"
+          class="fill-ink"
           fill-opacity="0.55"
         >
           {{ tick.label }}

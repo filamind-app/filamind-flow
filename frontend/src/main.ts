@@ -4,11 +4,16 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './assets/styles/main.css'
 import { i18n, initLocale } from './core/i18n'
+import { initTheme } from './core/theme'
 import { registerWidgets } from './widgets'
 
 const app = createApp(App)
 app.use(createPinia())
 app.use(i18n)
+
+// Resolve the user's theme (stored → neon) and reflect it on <html data-theme>. The no-flash inline
+// script in index.html already applied it before first paint; this syncs the reactive ref.
+initTheme()
 
 // Feature widgets self-register here. The scaffold ships with none.
 registerWidgets()

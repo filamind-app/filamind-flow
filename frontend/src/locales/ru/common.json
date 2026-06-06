@@ -4,5 +4,12 @@
     "errors": {
       "backendUnreachable": "Не удаётся подключиться к бэкенду FilaMind — проверьте, что сервис filamind-flow запущен и доступен."
     }
+  },
+  "theme": {
+    "label": "Тема",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "neon": "Неон",
+    "contrast": "Высокий контраст"
   }
 }
