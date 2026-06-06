@@ -24,7 +24,8 @@ from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
 # Safety bounds for a run request — rejected outside these.
-_TEMP_MIN, _TEMP_MAX = 150.0, 350.0
+# Safe-extrusion floor: a max-flow test below this risks reading cold-extrusion grind as slip.
+_TEMP_MIN, _TEMP_MAX = 180.0, 350.0
 _DIAM_MIN, _DIAM_MAX = 1.0, 3.5
 _EXTRUDE_MIN, _EXTRUDE_MAX = 1.0, 50.0
 _SAMPLES_MIN, _SAMPLES_MAX = 3, 200
@@ -40,6 +41,15 @@ _EXTRUDER = "extruder"
 
 class MaxFlowBusyError(RuntimeError):
     """Raised when a run is refused because the printer is busy."""
+
+
+class MaxFlowPreflightError(RuntimeError):
+    """Raised when the extruder driver is not configured to read StallGuard for this test."""
+
+
+#: StallGuard families. SG4 (2209 / 2240) reads only in StealthChop; SG2 reads in SpreadCycle.
+_SG4_DRIVERS = frozenset({"tmc2209", "tmc2240"})
+_SG2_DRIVERS = frozenset({"tmc2130", "tmc5160", "tmc2660"})
 
 
 @dataclass(frozen=True)
@@ -201,6 +211,74 @@ def _extract_sg(obj: dict[str, Any]) -> float | None:
     return None
 
 
+def _as_float(value: Any) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _sg_floor(driver: str) -> float:
+    """Below this StallGuard reading is bias-region noise (SG4 sticks low under the min velocity),
+    not real load — drop such samples. 0 for SG2 (no floor)."""
+    consts = reference_data.resolved_profile(driver).get("constants", {})
+    value = consts.get("SG_MIN_INFORMATIVE") if isinstance(consts, dict) else None
+    return _as_float(value) or 0.0
+
+
+async def _extruder_section(client: MoonrakerClient, driver: str) -> dict[str, Any] | None:
+    """The live ``[<driver> extruder]`` config section, or None if absent."""
+    configfile = await client.query_objects(["configfile"])
+    obj = configfile.get("configfile")
+    if not isinstance(obj, dict):
+        return None
+    for key in ("settings", "config"):
+        sections = obj.get(key)
+        if isinstance(sections, dict):
+            section = sections.get(f"{driver} extruder")
+            if isinstance(section, dict):
+                return section
+    return None
+
+
+async def _preflight(client: MoonrakerClient, driver: str) -> None:
+    """Verify the extruder driver can actually read StallGuard for this test (C1).
+
+    Refuses a driver with no StallGuard, a missing ``[<driver> extruder]`` section, or a chopper
+    mode that makes StallGuard meaningless (SG4 needs StealthChop; SG2 needs SpreadCycle) — so the
+    run can't silently measure garbage.
+
+    Raises:
+        MaxFlowPreflightError: if the driver/config can't yield a valid StallGuard signal.
+    """
+    d = driver.lower()
+    field = reference_data.stallguard_field(d)
+    if not field:
+        raise MaxFlowPreflightError(
+            f"Driver '{driver}' has no StallGuard — max-flow needs a StallGuard-capable "
+            "extruder driver."
+        )
+    section = await _extruder_section(client, d)
+    if section is None:
+        raise MaxFlowPreflightError(
+            f"No [{d} extruder] section found — the extruder's TMC driver must be configured first."
+        )
+    stealth = _as_float(section.get("stealthchop_threshold"))
+    stealth_on = stealth is not None and stealth > 0
+    if d in _SG4_DRIVERS and not stealth_on:
+        raise MaxFlowPreflightError(
+            f"StallGuard4 ({field}) only reads in StealthChop — set a non-zero "
+            f"stealthchop_threshold on [{d} extruder] before running max-flow."
+        )
+    if d in _SG2_DRIVERS and stealth_on:
+        raise MaxFlowPreflightError(
+            f"StallGuard2 ({field}) only reads in SpreadCycle — remove/zero the "
+            f"stealthchop_threshold on [{d} extruder] before running max-flow."
+        )
+
+
 async def run_max_flow(client: MoonrakerClient, params: RampParams) -> dict[str, Any]:
     """Run the live max-flow test: heat, then ramp the flow while sampling StallGuard.
 
@@ -212,15 +290,18 @@ async def run_max_flow(client: MoonrakerClient, params: RampParams) -> dict[str,
     Raises:
         ValueError: on invalid params.
         MaxFlowBusyError: if the printer is busy.
+        MaxFlowPreflightError: if the extruder driver can't read StallGuard for this test.
         httpx.HTTPError: if Moonraker is unreachable or a command fails.
     """
     validate(params)
     if await _is_busy(client):
         raise MaxFlowBusyError("Refusing to run a max-flow test while the printer is busy.")
+    await _preflight(client, params.driver)  # C1: refuse a config that can't read StallGuard
 
     plan_steps = plan_ramp(params)
     driver_section = f"{params.driver.lower()} {_EXTRUDER}"
     sub_mm = params.extrude_per_step / params.samples_per_step
+    sg_floor = _sg_floor(params.driver)  # C2: drop SG4 bias-region noise (below the min velocity)
     measurements: list[StepMeasurement] = []
     try:
         await client.run_gcode(f"M104 S{params.temperature:.0f}")  # start heating
@@ -234,7 +315,7 @@ async def run_max_flow(client: MoonrakerClient, params: RampParams) -> dict[str,
                 status = await client.query_objects([driver_section])
                 obj = status.get(driver_section)
                 sg = _extract_sg(obj if isinstance(obj, dict) else {})
-                if sg is not None:
+                if sg is not None and sg >= sg_floor:
                     samples.append(sg)
             measurements.append(StepMeasurement(flow_mm3s=step.flow_mm3s, sg_samples=samples))
             # Stop the moment slip is detected — don't grind filament past the first slip.

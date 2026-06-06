@@ -73,7 +73,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/config/save`         | Back up then overwrite one config file (refused while printing; auto-backup to `filamind-backups/`). |
 | POST   | `/api/config/restart`      | `FIRMWARE_RESTART` to apply a saved config (refused while printing). |
 | POST   | `/api/maxflow/plan`        | Preview the max-flow test ramp (flow → feedrate per step + StallGuard field); pure compute, no actuation. |
-| POST   | `/api/maxflow/run`         | Run the live max-flow test (heat + extrude + sample StallGuard); refused while printing; heater always cut. |
+| POST   | `/api/maxflow/run`         | Run the live max-flow test (heat + extrude + sample StallGuard); preflight (chopper-mode/StallGuard) + SG4 bias-floor + ≥180 °C; refused while printing; heater always cut. |
 | GET    | `/api/topology`            | Host → MCU topology from the live config: each MCU's connection (CAN/USB/UART) + chip/board guess (read-only). |
 | POST   | `/api/macro/simulate`      | Offline G-code simulator: macro `{ params.X }` substitution → path / bounds / totals / time / timeline; pure, no printer. |
 | GET    | `/api/hardware`            | Search the curated hardware DB (`?q=`/`category`/`manufacturer`, paginated) — 3,600+ components. |

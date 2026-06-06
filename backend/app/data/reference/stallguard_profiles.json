@@ -64,7 +64,8 @@
     "tmc5160": {},
     "tmc2240": {
       "WARMUP_DRIFT_THRESHOLD": 0.04,
-      "PLATEAU_RATIO": 0.2
+      "PLATEAU_RATIO": 0.2,
+      "SG_MIN_INFORMATIVE": 50
     },
     "tmc2209": {
       "SG_JUMP_THRESHOLD": 99999,
@@ -95,7 +96,8 @@
       "BORDER_IQR_HIGH": 50,
       "OUTLIER_MAD_RATIO": 4.0,
       "OUTLIER_MIN_REL": 0.15,
-      "WARMUP_DRIFT_THRESHOLD": 0.15
+      "WARMUP_DRIFT_THRESHOLD": 0.15,
+      "SG_MIN_INFORMATIVE": 50
     }
   },
   "field_by_driver": {
