@@ -64,9 +64,17 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/drivers/home`        | Home one axis (`G28 <axis>`) as a sensorless test — moves the toolhead (gated). |
 | GET    | `/api/drivers/motors-sync` | Whether the `motors_sync` add-on is installed. |
 | POST   | `/api/drivers/motors-sync` | Run `SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE` (multi-motor phase alignment) — moves the toolhead (gated). |
+| GET    | `/api/reference/stallguard` (+ `/{driver}`) | Per-driver StallGuard slip-detection tuning constants (base + overrides; `{driver}` = merged effective set + SG field). Static reference data. |
+| GET    | `/api/reference/hotends`   | Hotend melt-zone / expected max-flow / test presets. |
+| GET    | `/api/reference/boards`    | Board + MCU identification patterns. |
+| GET    | `/api/reference/macros`    | Built-in Klipper calibration macro definitions. |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).
+
+Curated reference datasets (StallGuard tuning, hotends, board/MCU patterns, macros) live under
+`app/data/reference/` — extracted from GPL-3.0 upstream projects (see `SOURCES.md`) and served
+read-only by `app/services/reference_data.py`.
 
 The driver write endpoints return an `ApplyResponse` with an i18n **`{ code, params, message }`**
 contract: `code` (+ `params`) is a stable key the UI translates (`motorDrivers.apply.*`), and

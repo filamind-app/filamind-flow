@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.92.0] - 2026-06-06
+
+### Added
+
+- **Phase 0 (foundation) — reference-data layer.** First build step of the planned expansion: a
+  backend module that serves curated, GPL-3.0-sourced Klipper datasets the upcoming widgets reuse.
+  Baked under `backend/app/data/reference/` (see `SOURCES.md` for attribution) and exposed read-only:
+  - `GET /api/reference/stallguard` + `/stallguard/{driver}` — per-driver StallGuard slip-detection
+    tuning constants (base + overrides; `{driver}` returns the merged effective set + the SG field),
+    from `klipper_max_flow_test`.
+  - `GET /api/reference/hotends` — hotend melt-zone / expected max-flow / test presets (8 classes).
+  - `GET /api/reference/boards` — board (34) + MCU (15) identification patterns, from KWC.
+  - `GET /api/reference/macros` — 11 built-in calibration macro definitions, from KWC.
+  - Pure static reads (no Moonraker / writes / gating); payloads returned verbatim. +4 backend tests.
+
 ### Docs
 
 - **Roadmap expanded with a planned ecosystem-reuse program.** A deep multi-project analysis
