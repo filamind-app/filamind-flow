@@ -128,6 +128,25 @@ English copy proceeds phase-by-phase; see
 | **4 — Backend messages** | A `{ code, params, message }` contract for backend user-facing strings; the frontend owns the translated copy (English `message` kept as a fallback). Done for the Motor Drivers write path (`drivers_apply.py` → `motorDrivers.apply.*`, rendered via `applyResultText`); passthrough/upstream errors (Moonraker / `field_policy` / validation) intentionally stay English (no `code`). | ✅ v0.86.0 |
 | **5 — More locales** | de / zh-Hans / fr / es / ru shipped — all 845 keys each, lazy-loaded, with correct per-locale plural rules. Each was a drop-in `src/locales/<code>/` folder; no component changed. (CJK / Cyrillic font subsets ride the default system stack for now.) | ✅ v0.84.0 |
 
+## Planned expansion — reuse from the Klipper ecosystem
+
+A deep multi-project analysis (StallGuard max-flow tooling + a full-stack Klipper config
+editor + a unified hardware database, all GPL-3.0) surfaced reusable logic + data that
+unlocks a set of new widgets and enhancements. Delivery is phased; **Phase 0 (a shared
+data + config-engine foundation) lands first** and unblocks the rest, which then run on two
+parallel tracks. Every item keeps the project conventions (i18n ×7, theme-aware, confirm-gates
+for any motion/write, `gcode`-driven via Moonraker, GPL-3.0 attribution for ported code).
+
+| Phase | Scope | Track | Risk |
+| ----- | ----- | ----- | ---- |
+| 📋 **0 — Foundation** | A reference-data layer (per-driver StallGuard knowledge base, hotend melt-zone/flow tables, board/MCU patterns, built-in macro defs, the unified hardware DB as JSON) + a ported, round-trip-tested Klipper **config engine** (parser / validator / writer / schema) | shared | low |
+| 📋 **A1 — Config Editor** | Full schema-driven `printer.cfg` editor: 92 sections / 847 params, live validation, byte-faithful save, auto-backup + diff | A | medium (writes cfg) |
+| 📋 **A2 — Macro Designer** | Offline G-code/macro simulator: Jinja eval, trapezoidal motion, 2D path + collision, step timeline, 12 built-in macros | A | low (no motion) |
+| 📋 **A3 — Board Topology** | Auto board/MCU detection + a visual SBC↔mainboard↔toolhead topology graph; feeds Firmware (board-detect) + a pin-conflict validator | A | low (read-only) |
+| 📋 **A4 — Hardware Browser + Templates** | Searchable unified hardware DB (3,671 rows) + an insertable config/macro template library (RatOS + reference cfgs) | A | low (read-only) |
+| 📋 **B1 — Max-Flow** | Measure the real max volumetric flow (mm³/s) via TMC StallGuard slip detection (coarse→bisection→verify), thermal profile + 80/90 % slicer values | B | high (heat + motion) |
+| 📋 **B2 — Motor Drivers “Phase 11”** | Auto-SGT calibration + multi-pattern slip-detection insights + thermal-stress diagnostic on the existing tuner; a Sensorless-Homing wizard (adds the missing TMC2209 **SG4** logic) | B | medium |
+
 ## Platform
 
 - 📋 Smart "Back to UI" (auto-detect Mainsail / Fluidd, host-preserving link)
