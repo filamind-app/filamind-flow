@@ -139,7 +139,7 @@ Moonraker).
 
 | Phase | Scope | Track | Risk |
 | ----- | ----- | ----- | ---- |
-| 🚧 **0 — Foundation** | **Reference-data layer ✅ v0.92.0** (per-driver StallGuard knowledge base, hotend melt-zone/flow tables, board/MCU patterns, built-in macro defs — read-only `/api/reference/*`; the unified hardware DB lands with the Hardware Browser). 📋 Remaining: a ported, round-trip-tested Klipper **config engine** (parser / validator / writer / schema) | shared | low |
+| 🚧 **0 — Foundation** | **Reference-data layer ✅ v0.92.0** (per-driver StallGuard knowledge base, hotend melt-zone/flow tables, board/MCU patterns, built-in macro defs — read-only `/api/reference/*`). **Config engine ✅ v0.93.0** (`klipper_config` round-trip parse/dump/validate) + **flow-analysis core ✅ v0.93.0** (`max_flow` StallGuard slip-detection). 📋 Remaining: the hardware DB (lands with the Hardware Browser); a fuller config schema/validator grows with the Config Editor | shared | low |
 | 📋 **A1 — Config Editor** | Full schema-driven `printer.cfg` editor: 92 sections / 847 params, live validation, byte-faithful save, auto-backup + diff | A | medium (writes cfg) |
 | 📋 **A2 — Macro Designer** | Offline G-code/macro simulator: Jinja eval, trapezoidal motion, 2D path + collision, step timeline, 12 built-in macros | A | low (no motion) |
 | 📋 **A3 — Board Topology** | Auto board/MCU detection + a visual SBC↔mainboard↔toolhead topology graph; feeds Firmware (board-detect) + a pin-conflict validator | A | low (read-only) |
