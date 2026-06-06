@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.109.0] - 2026-06-06
+
+### Fixed
+
+- **Restored hardware data the v0.108.0 clean had wrongly dropped (Phase 1 of the DB overhaul).**
+  The previous "data-quality clean" over-reached and removed real products. This restores them and
+  hardens the gates so it cannot recur:
+  - **Restored 577 stepper-motor products** (the whole "Stepper motors" section, e.g. ACT Motor,
+    Creality, FUYU, LDO …) that had collapsed from 669 → 64. Stepper Motors is back to **641**.
+  - **Restored 20 wiring/endstop reference rows** (wire-ampacity guidance + endstop/switch types)
+    dropped from Electronics & Wiring (176 → **195**), with names derived from their own specs.
+  - The manufacturer **directory stays in `manufacturers[]`** (274) instead of polluting the product
+    list — no directory data lost.
+  - **Scrubbed all remaining external-project references** from the dataset (incl. `klippain` and
+    third-party `GPL-3` license mentions) while keeping the technical values; added both to the CI
+    ban list.
+  - New CI regression: **per-category floors** (`test_no_category_was_gutted`) so a future regen can
+    never silently gut a whole category again.
+  - Curated DB total: **3,643 components** / 274 manufacturers / 13 categories.
+
 ## [0.108.0] - 2026-06-06
 
 ### Fixed
