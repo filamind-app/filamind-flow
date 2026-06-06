@@ -24,7 +24,10 @@
           "title": "Comment fonctionne la détection",
           "body": "La puce et la carte sont estimées en comparant l'identifiant de connexion (le chemin série ou l'UUID CAN) à une table de motifs. Une estimation de carte affiche un indice de confiance ; lorsque rien ne correspond, la puce/carte indique « inconnu » — la connexion elle-même reste affichée."
         },
-        "glossary": { "title": "Glossaire", "body": "" }
+        "glossary": {
+          "title": "Glossaire",
+          "body": ""
+        }
       },
       "glossary": {
         "mcu": {
@@ -50,7 +53,9 @@
       "board": "Carte",
       "unknown": "inconnu",
       "identifier": "Identifiant",
-      "confidence": "{pct} % de correspondance"
+      "confidence": "{pct} % de correspondance",
+      "viewBoard": "Voir les détails de la carte",
+      "hideBoard": "Masquer les détails"
     },
     "conn": {
       "canbus": "CAN bus",
@@ -66,6 +71,14 @@
       "empty": "Aucun MCU trouvé dans la configuration.",
       "retry": "Réessayer",
       "refresh": "Actualiser"
+    },
+    "board": {
+      "suggested": "suggéré",
+      "ports": "{n} ports",
+      "specsTitle": "Caractéristiques",
+      "portsTitle": "Ports",
+      "none": "Pas encore de détails de catalogue pour cette carte.",
+      "loading": "Chargement de la carte…"
     }
   }
 }

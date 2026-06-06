@@ -24,7 +24,10 @@
           "title": "检测原理",
           "body": "芯片和板卡通过将连接标识符（serial 路径或 CAN UUID）与模式表进行匹配来推测。板卡推测会显示匹配置信度；当没有任何匹配时，芯片/板卡显示为“未知”—— 但连接本身仍会显示。"
         },
-        "glossary": { "title": "术语表", "body": "" }
+        "glossary": {
+          "title": "术语表",
+          "body": ""
+        }
       },
       "glossary": {
         "mcu": {
@@ -50,7 +53,9 @@
       "board": "板卡",
       "unknown": "未知",
       "identifier": "标识符",
-      "confidence": "{pct}% 匹配"
+      "confidence": "{pct}% 匹配",
+      "viewBoard": "查看主板详情",
+      "hideBoard": "隐藏详情"
     },
     "conn": {
       "canbus": "CAN bus",
@@ -66,6 +71,14 @@
       "empty": "在配置中未找到 MCU。",
       "retry": "重试",
       "refresh": "刷新"
+    },
+    "board": {
+      "suggested": "推测匹配",
+      "ports": "{n} 个接口",
+      "specsTitle": "规格",
+      "portsTitle": "接口",
+      "none": "暂无该主板的目录详情。",
+      "loading": "正在加载主板…"
     }
   }
 }
