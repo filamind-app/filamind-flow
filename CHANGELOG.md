@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.108.0] - 2026-06-06
+
+### Fixed
+
+- **Hardware DB data quality (from the post-sprint audit).** Fixed the column-misrouting that
+  left **318 items unnamed**: identity-header name selection + a spec-derived fallback → **0 empty
+  names**; **dropped 605 manufacturer-directory rows** that were polluting the product list (they
+  belong to the 274-row manufacturer directory, not the components); de-duplicated exact records.
+  The curated DB is now **3,047 clean components / 274 manufacturers / 13 categories**.
+  - New **CI data-quality gates** (`test_hardware.py`): empty-name = 0, no exact-duplicate records,
+    no manufacturer-directory leakage; plus a **cross-source consistency test** locking each TMC
+    StallGuard field across `driver_catalog` / `stallguard_profiles` / `field_policy`.
+  - Known follow-up: ~35 % of item manufacturer strings still sit outside the directory (deeper
+    per-category column reconciliation) + optional cross-ref keys to the motor/driver catalogs.
+
 ## [0.107.0] - 2026-06-06
 
 ### Changed
