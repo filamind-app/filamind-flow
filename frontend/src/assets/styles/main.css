@@ -40,6 +40,8 @@
   --c-brand-lime: 154 230 0;
   --c-brand-blue: 91 140 255;
   --c-brand-red: 255 82 71;
+  /* Sidebar rail — the signature yellow in Light; a dark rail in the other themes. */
+  --c-sidebar: 255 212 0;
   --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
   --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
   --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
@@ -57,6 +59,7 @@
   --c-brand-lime: 180 240 60;
   --c-brand-blue: 140 180 255;
   --c-brand-red: 255 120 110;
+  --c-sidebar: 24 24 28;
   --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
   --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
   --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
@@ -75,6 +78,7 @@
   --c-brand-lime: 180 255 50;
   --c-brand-blue: 140 170 255;
   --c-brand-red: 255 100 120;
+  --c-sidebar: 18 10 38;
   --nb-shadow-sm: 0 4px 15px 0 rgba(0, 200, 255, 0.3);
   --nb-shadow: 0 8px 25px 0 rgba(0, 200, 255, 0.4);
   --nb-shadow-lg: 0 12px 35px 0 rgba(0, 200, 255, 0.5);
@@ -93,6 +97,7 @@
   --c-brand-lime: 200 255 0;
   --c-brand-blue: 100 200 255;
   --c-brand-red: 255 100 100;
+  --c-sidebar: 0 0 0;
   --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
   --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
   --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
