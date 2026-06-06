@@ -127,3 +127,39 @@ class MoonrakerClient:
                 f"{self._base_url}/printer/gcode/script", params={"script": script}
             )
             response.raise_for_status()
+
+    async def upload_file(self, path: str, content: str, root: str = "config") -> dict[str, Any]:
+        """Create or overwrite a file via ``POST /server/files/upload`` (multipart).
+
+        ``path`` is relative to ``root`` (e.g. ``printer.cfg`` or ``filamind-backups/x.bak``);
+        a leading subdirectory is passed as the ``path`` form field so Moonraker places the
+        file there (creating the directory if needed). Used by the Config Editor's save path.
+
+        Raises:
+            httpx.HTTPError: if Moonraker is unreachable or rejects the write.
+        """
+        directory, _, name = path.rpartition("/")
+        files = {"file": (name or path, content.encode("utf-8"), "application/octet-stream")}
+        data = {"root": root}
+        if directory:
+            data["path"] = directory
+        async with httpx.AsyncClient(timeout=self._timeout) as client:
+            response = await client.post(
+                f"{self._base_url}/server/files/upload", files=files, data=data
+            )
+            response.raise_for_status()
+            payload: object = response.json()
+        return payload if isinstance(payload, dict) else {}
+
+    async def firmware_restart(self) -> None:
+        """Request a Klipper ``FIRMWARE_RESTART`` via ``POST /printer/firmware_restart``.
+
+        Moonraker returns once the restart is initiated. Needed after a config write for the
+        new ``printer.cfg`` to take effect.
+
+        Raises:
+            httpx.HTTPError: if Moonraker is unreachable or the restart request fails.
+        """
+        async with httpx.AsyncClient(timeout=max(self._timeout, 30.0)) as client:
+            response = await client.post(f"{self._base_url}/printer/firmware_restart")
+            response.raise_for_status()

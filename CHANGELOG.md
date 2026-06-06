@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.96.0] - 2026-06-06
+
+### Added
+
+- **Config Editor — gated save path (Track A).** The Raw view is now editable, with a
+  confirm-gated write back to the printer:
+  - `POST /api/config/save` — backs the current file up to `filamind-backups/<name>.<ts>.bak`
+    first, then overwrites it. **Refused while the printer is busy** (printing / paused / error → 409).
+  - `POST /api/config/restart` — triggers `FIRMWARE_RESTART` to apply a saved change (also
+    refused while busy).
+  - UI: edit the raw text → **Save** opens a confirm panel ("I understand this writes to the
+    printer") → on success it shows the backup path and offers a one-click **Restart firmware**
+    (its own confirm). A "● Unsaved changes" indicator + Revert. Path-traversal guarded.
+  - `MoonrakerClient.upload_file` / `firmware_restart` helpers; new `configEditor.edit/save/restart`
+    i18n keys across all 7 locales; +10 backend tests.
+
 ## [0.95.0] - 2026-06-06
 
 ### Added

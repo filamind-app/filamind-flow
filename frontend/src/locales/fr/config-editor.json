@@ -85,6 +85,35 @@
       "paramHead": "Paramètre",
       "valueHead": "Valeur"
     },
+    "edit": {
+      "hint": "Modifiez le texte brut ci-dessous, puis enregistrez. Une sauvegarde horodatée est créée avant toute écriture."
+    },
+    "save": {
+      "button": "Enregistrer",
+      "saving": "Enregistrement…",
+      "unsaved": "Modifications non enregistrées",
+      "revert": "Annuler les modifications",
+      "confirmTitle": "Enregistrer sur l'imprimante ?",
+      "confirmBody": "Cette opération écrase {file} sur l'imprimante. Une sauvegarde horodatée est enregistrée au préalable, et un redémarrage du firmware est nécessaire pour appliquer la modification.",
+      "ack": "Je comprends que cela écrit sur l'imprimante",
+      "confirm": "Enregistrer",
+      "cancel": "Annuler",
+      "done": "Enregistré. Sauvegarde : {backup}",
+      "busy": "Refusé : l'imprimante est occupée (impression ou en pause). Réessayez lorsqu'elle est inactive.",
+      "error": "Échec de l'enregistrement."
+    },
+    "restart": {
+      "prompt": "Redémarrer le firmware pour appliquer votre modification ?",
+      "button": "Redémarrer le firmware",
+      "restarting": "Redémarrage…",
+      "confirmTitle": "Redémarrer le firmware ?",
+      "confirmBody": "FIRMWARE_RESTART recharge la configuration et interrompt brièvement l'imprimante. Ne le faites que lorsqu'elle est inactive.",
+      "confirm": "Redémarrer maintenant",
+      "cancel": "Annuler",
+      "done": "Redémarrage du firmware demandé.",
+      "busy": "Refusé : l'imprimante est occupée. Redémarrez lorsqu'elle est inactive.",
+      "error": "Échec du redémarrage."
+    },
     "states": {
       "loading": "Lecture de la configuration…",
       "error": "Impossible de lire la configuration depuis l'imprimante.",

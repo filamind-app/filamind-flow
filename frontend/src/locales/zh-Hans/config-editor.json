@@ -85,6 +85,35 @@
       "paramHead": "参数",
       "valueHead": "值"
     },
+    "edit": {
+      "hint": "在下方编辑原始文本，然后保存。每次写入前都会创建一个带时间戳的备份。"
+    },
+    "save": {
+      "button": "保存",
+      "saving": "正在保存…",
+      "unsaved": "有未保存的更改",
+      "revert": "还原",
+      "confirmTitle": "保存到打印机？",
+      "confirmBody": "这将覆盖打印机上的 {file}。会先保存一个带时间戳的备份，并需要重启固件才能使更改生效。",
+      "ack": "我了解这将写入打印机",
+      "confirm": "保存",
+      "cancel": "取消",
+      "done": "已保存。备份：{backup}",
+      "busy": "已拒绝：打印机正忙（正在打印或已暂停）。请在空闲时再试。",
+      "error": "保存失败。"
+    },
+    "restart": {
+      "prompt": "重启固件以使更改生效？",
+      "button": "重启固件",
+      "restarting": "正在重启…",
+      "confirmTitle": "重启固件？",
+      "confirmBody": "FIRMWARE_RESTART 会重新加载配置并短暂中断打印机。请仅在其空闲时执行此操作。",
+      "confirm": "立即重启",
+      "cancel": "取消",
+      "done": "已请求重启固件。",
+      "busy": "已拒绝：打印机正忙。请在空闲时重启。",
+      "error": "重启失败。"
+    },
     "states": {
       "loading": "正在读取配置…",
       "error": "无法从打印机读取配置。",

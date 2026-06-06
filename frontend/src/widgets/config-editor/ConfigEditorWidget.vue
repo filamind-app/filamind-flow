@@ -7,7 +7,7 @@ import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import { describeError } from '@/core/describeError'
 
-import { fetchConfigFile, fetchConfigFiles } from './api'
+import { ApiError, fetchConfigFile, fetchConfigFiles, restartFirmware, saveConfigFile } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { ConfigFileInfo, ConfigFileView } from './types'
@@ -24,6 +24,20 @@ const errView = ref<string | null>(null)
 const viewMode = ref<'structured' | 'raw'>('structured')
 /** Per-section disclosure (keyed by index, since headers can repeat — e.g. duplicate sections). */
 const open = ref<Record<number, boolean>>({})
+
+// Edit / save / restart state (the gated write path lives in the Raw view).
+const draft = ref('')
+const saving = ref(false)
+const restarting = ref(false)
+const confirmMode = ref<null | 'save' | 'restart'>(null)
+const ack = ref(false)
+const saveMsg = ref<string | null>(null)
+const saveErr = ref<string | null>(null)
+const restartMsg = ref<string | null>(null)
+const restartErr = ref<string | null>(null)
+const showRestartPrompt = ref(false)
+
+const dirty = computed(() => view.value != null && draft.value !== view.value.raw)
 
 const VIEW_TABS = computed<{ id: 'structured' | 'raw'; label: string }[]>(() => [
   { id: 'structured', label: t('configEditor.view.structured') },
@@ -68,12 +82,15 @@ async function loadFiles(): Promise<void> {
 async function loadView(filename: string): Promise<void> {
   loadingView.value = true
   try {
-    view.value = await fetchConfigFile(filename)
+    const v = await fetchConfigFile(filename)
+    view.value = v
+    draft.value = v.raw
     errView.value = null
     open.value = {}
   } catch (e) {
     errView.value = describeError(e)
     view.value = null
+    draft.value = ''
   } finally {
     loadingView.value = false
   }
@@ -88,7 +105,73 @@ function collapseAll(): void {
   open.value = {}
 }
 
+function resetWriteState(): void {
+  confirmMode.value = null
+  ack.value = false
+  saveMsg.value = null
+  saveErr.value = null
+  restartMsg.value = null
+  restartErr.value = null
+  showRestartPrompt.value = false
+}
+
+function revert(): void {
+  if (view.value) draft.value = view.value.raw
+}
+
+function openSaveConfirm(): void {
+  ack.value = false
+  saveErr.value = null
+  confirmMode.value = 'save'
+}
+function openRestartConfirm(): void {
+  restartErr.value = null
+  confirmMode.value = 'restart'
+}
+function cancelConfirm(): void {
+  confirmMode.value = null
+}
+
+async function doSave(): Promise<void> {
+  if (!selected.value) return
+  saving.value = true
+  saveErr.value = null
+  saveMsg.value = null
+  try {
+    const res = await saveConfigFile(selected.value, draft.value)
+    confirmMode.value = null
+    await loadView(selected.value) // reload → draft resets to the saved content (dirty = false)
+    saveMsg.value = t('configEditor.save.done', { backup: res.backup ?? '—' })
+    showRestartPrompt.value = true
+  } catch (e) {
+    confirmMode.value = null
+    saveErr.value =
+      e instanceof ApiError && e.status === 409 ? t('configEditor.save.busy') : describeError(e)
+  } finally {
+    saving.value = false
+  }
+}
+
+async function doRestart(): Promise<void> {
+  restarting.value = true
+  restartErr.value = null
+  restartMsg.value = null
+  try {
+    await restartFirmware()
+    confirmMode.value = null
+    showRestartPrompt.value = false
+    restartMsg.value = t('configEditor.restart.done')
+  } catch (e) {
+    confirmMode.value = null
+    restartErr.value =
+      e instanceof ApiError && e.status === 409 ? t('configEditor.restart.busy') : describeError(e)
+  } finally {
+    restarting.value = false
+  }
+}
+
 watch(selected, (f) => {
+  resetWriteState()
   if (f) void loadView(f)
 })
 onMounted(() => void loadFiles())
@@ -278,11 +361,116 @@ onMounted(() => void loadFiles())
         </ul>
       </template>
 
-      <!-- Raw -->
-      <pre
-        v-else
-        class="nb-card max-h-[28rem] overflow-auto bg-surface p-2 font-mono text-[11px] leading-snug"
-      ><code>{{ view.raw }}</code></pre>
+      <!-- Raw (editable) -->
+      <template v-else>
+        <p class="text-[11px] opacity-70">{{ t('configEditor.edit.hint') }}</p>
+        <textarea
+          v-model="draft"
+          spellcheck="false"
+          class="nb-card h-[28rem] w-full resize-y overflow-auto bg-surface p-2 font-mono text-[11px] leading-snug"
+          :aria-label="t('configEditor.view.raw')"
+        ></textarea>
+
+        <!-- Save toolbar -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            class="nb-btn bg-brand-cyan px-3 py-1 text-xs"
+            :disabled="!dirty || saving"
+            @click="openSaveConfirm"
+          >
+            {{ saving ? t('configEditor.save.saving') : t('configEditor.save.button') }}
+          </button>
+          <button
+            v-if="dirty"
+            class="nb-btn bg-surface px-2 py-1 text-xs"
+            :disabled="saving"
+            @click="revert"
+          >
+            {{ t('configEditor.save.revert') }}
+          </button>
+          <span v-if="dirty" class="font-mono text-[11px] text-brand-red">
+            <span aria-hidden="true">●</span> {{ t('configEditor.save.unsaved') }}
+          </span>
+        </div>
+
+        <!-- Save confirm gate -->
+        <div
+          v-if="confirmMode === 'save'"
+          class="nb-card space-y-2 border-brand-red bg-brand-red/10 p-2"
+        >
+          <p class="text-xs font-bold">{{ t('configEditor.save.confirmTitle') }}</p>
+          <p class="text-[11px] opacity-80">
+            {{ t('configEditor.save.confirmBody', { file: selected ?? '' }) }}
+          </p>
+          <label class="flex items-center gap-2 text-[11px]">
+            <input v-model="ack" type="checkbox" />
+            {{ t('configEditor.save.ack') }}
+          </label>
+          <div class="flex gap-2">
+            <button
+              class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper"
+              :disabled="!ack || saving"
+              @click="doSave"
+            >
+              {{ t('configEditor.save.confirm') }}
+            </button>
+            <button class="nb-btn bg-surface px-2 py-1 text-xs" @click="cancelConfirm">
+              {{ t('configEditor.save.cancel') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Save error -->
+        <p v-if="saveErr" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">
+          {{ saveErr }}
+        </p>
+
+        <!-- Saved + restart prompt -->
+        <div v-if="saveMsg" class="nb-card space-y-2 bg-brand-lime/20 p-2">
+          <p class="font-mono text-[11px]"><span aria-hidden="true">✓</span> {{ saveMsg }}</p>
+          <template v-if="showRestartPrompt">
+            <p class="text-[11px]">{{ t('configEditor.restart.prompt') }}</p>
+            <button
+              class="nb-btn bg-brand-yellow px-3 py-1 text-xs text-ink"
+              :disabled="restarting"
+              @click="openRestartConfirm"
+            >
+              {{
+                restarting ? t('configEditor.restart.restarting') : t('configEditor.restart.button')
+              }}
+            </button>
+          </template>
+        </div>
+
+        <!-- Restart confirm gate -->
+        <div
+          v-if="confirmMode === 'restart'"
+          class="nb-card space-y-2 border-brand-red bg-brand-yellow/20 p-2"
+        >
+          <p class="text-xs font-bold">{{ t('configEditor.restart.confirmTitle') }}</p>
+          <p class="text-[11px] opacity-80">{{ t('configEditor.restart.confirmBody') }}</p>
+          <div class="flex gap-2">
+            <button
+              class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper"
+              :disabled="restarting"
+              @click="doRestart"
+            >
+              {{ t('configEditor.restart.confirm') }}
+            </button>
+            <button class="nb-btn bg-surface px-2 py-1 text-xs" @click="cancelConfirm">
+              {{ t('configEditor.restart.cancel') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Restart result -->
+        <p v-if="restartMsg" class="nb-card bg-brand-lime/20 p-2 font-mono text-[11px]">
+          <span aria-hidden="true">✓</span> {{ restartMsg }}
+        </p>
+        <p v-if="restartErr" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">
+          {{ restartErr }}
+        </p>
+      </template>
     </template>
   </div>
 </template>

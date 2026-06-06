@@ -85,6 +85,35 @@
       "paramHead": "Parameter",
       "valueHead": "Wert"
     },
+    "edit": {
+      "hint": "Bearbeite den Rohtext unten und klicke dann auf Speichern. Vor jedem Schreibvorgang wird ein mit Zeitstempel versehenes Backup erstellt."
+    },
+    "save": {
+      "button": "Speichern",
+      "saving": "Wird gespeichert…",
+      "unsaved": "Ungespeicherte Änderungen",
+      "revert": "Verwerfen",
+      "confirmTitle": "Auf den Drucker speichern?",
+      "confirmBody": "Dies überschreibt {file} auf dem Drucker. Zuvor wird ein mit Zeitstempel versehenes Backup gespeichert, und zum Übernehmen der Änderung ist ein Firmware-Neustart erforderlich.",
+      "ack": "Mir ist bewusst, dass dies auf den Drucker schreibt",
+      "confirm": "Speichern",
+      "cancel": "Abbrechen",
+      "done": "Gespeichert. Backup: {backup}",
+      "busy": "Abgelehnt: Der Drucker ist beschäftigt (druckt oder pausiert). Versuche es erneut, wenn er im Leerlauf ist.",
+      "error": "Speichern fehlgeschlagen."
+    },
+    "restart": {
+      "prompt": "Firmware neu starten, um deine Änderung zu übernehmen?",
+      "button": "Firmware neu starten",
+      "restarting": "Wird neu gestartet…",
+      "confirmTitle": "Firmware neu starten?",
+      "confirmBody": "FIRMWARE_RESTART lädt die Konfiguration neu und unterbricht den Drucker kurz. Tu dies nur, wenn er im Leerlauf ist.",
+      "confirm": "Jetzt neu starten",
+      "cancel": "Abbrechen",
+      "done": "Firmware-Neustart angefordert.",
+      "busy": "Abgelehnt: Der Drucker ist beschäftigt. Starte neu, wenn er im Leerlauf ist.",
+      "error": "Neustart fehlgeschlagen."
+    },
     "states": {
       "loading": "Konfiguration wird gelesen…",
       "error": "Die Konfiguration konnte nicht vom Drucker gelesen werden.",
