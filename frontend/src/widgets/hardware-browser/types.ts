@@ -18,5 +18,6 @@ export interface HardwareSearchResult {
 
 export interface HardwareCategories {
   categories: string[]
+  counts?: Record<string, number>
   total: number
 }
