@@ -101,6 +101,22 @@ def hardware_manufacturers() -> list[dict[str, Any]]:
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
 
 
+def boards() -> list[dict[str, Any]]:
+    """The canonical control-board entities — each board's connectors aggregated into
+    a single ``ports[]`` list (instead of one flat row per pin), joined to its spec
+    row, with detection ``matchPatterns``. Built from the ``MCU & Boards`` category."""
+    rows = _HARDWARE.get("boards", [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+def board_by_id(board_id: str) -> dict[str, Any] | None:
+    """A single canonical board record by its stable ``board_id`` slug."""
+    for b in boards():
+        if b.get("board_id") == board_id:
+            return b
+    return None
+
+
 # ── Config / macro templates ──────────────────────────────────────────────────
 def templates() -> list[dict[str, Any]]:
     """Insertable Klipper config / macro templates (id / name / category / description / body)."""
