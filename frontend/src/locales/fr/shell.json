@@ -53,6 +53,10 @@
       "board-topology": {
         "title": "Topologie des cartes",
         "description": "Découvrez comment l'hôte et les MCU se connectent (USB / CAN / UART) + une estimation de la carte."
+      },
+      "macro-designer": {
+        "title": "Concepteur de macros",
+        "description": "Simulez du G-code hors ligne — trajectoire de la tête, limites, totaux et une bibliothèque de macros."
       }
     }
   }

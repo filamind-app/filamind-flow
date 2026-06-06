@@ -53,6 +53,10 @@
       "board-topology": {
         "title": "Board Topology",
         "description": "See how the host and MCUs connect (USB / CAN / UART) + a board guess."
+      },
+      "macro-designer": {
+        "title": "Macro Designer",
+        "description": "Simulate G-code offline — toolhead path, bounds, totals, and a macro library."
       }
     }
   }
