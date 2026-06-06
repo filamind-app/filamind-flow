@@ -41,6 +41,10 @@
       "motor-drivers": {
         "title": "Drivers moteur",
         "description": "Inventaire en direct des drivers de moteur pas-à-pas TMC : courant, mode, microsteps et état."
+      },
+      "config-editor": {
+        "title": "Éditeur de configuration",
+        "description": "Parcourez les fichiers de configuration de votre imprimante, analysés en sections avec validation."
       }
     }
   }

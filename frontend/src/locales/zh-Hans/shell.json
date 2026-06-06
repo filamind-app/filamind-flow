@@ -41,6 +41,10 @@
       "motor-drivers": {
         "title": "电机驱动器",
         "description": "实时 TMC 步进驱动器清单：电流、模式、微步与状态。"
+      },
+      "config-editor": {
+        "title": "配置编辑器",
+        "description": "浏览打印机的配置文件，解析为各个节并进行校验。"
       }
     }
   }
