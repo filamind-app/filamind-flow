@@ -1,8 +1,7 @@
 {
   "_meta": {
-    "source": "https://github.com/Fragmon/klipper_max_flow_test/blob/main/tmc_flow_test.py",
-    "license": "GPL-3.0",
-    "extracted": "TriggerProfile slip-detection threshold constants (base TMC5160 defaults) plus per-driver-family overrides (TMC5160/TMC2130/TMC2660, TMC2240, TMC2209), from tmc_flow_test.py lines 60-360, plus the StallGuard threshold field name per TMC driver model."
+    "dataset": "FilaMind reference data",
+    "description": "Per-driver StallGuard slip-detection tuning constants (base + per-driver overrides + the StallGuard field per model)."
   },
   "base": {
     "CV_HIGH_VARIANCE": 10.0,
@@ -52,7 +51,7 @@
     "SG_JUMP_THRESHOLD": 5,
     "PLATEAU_RATIO": 0.5,
     "PLATEAU_SATURATION_SKIP": 700,
-    "WARMUP_DRIFT_THRESHOLD": 0.10,
+    "WARMUP_DRIFT_THRESHOLD": 0.1,
     "SGT_LOW_TARGET_MIN": 600,
     "SGT_LOW_TARGET_MAX": 1022,
     "SGT_RANGE_MIN": -64,

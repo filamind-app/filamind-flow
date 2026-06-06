@@ -72,9 +72,8 @@ Interactive API docs: <http://localhost:8000/docs>
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).
 
-Curated reference datasets (StallGuard tuning, hotends, board/MCU patterns, macros) live under
-`app/data/reference/` — extracted from GPL-3.0 upstream projects (see `SOURCES.md`) and served
-read-only by `app/services/reference_data.py`.
+Curated Klipper reference datasets (StallGuard tuning, hotends, board/MCU patterns, macros) live
+under `app/data/reference/` and are served read-only by `app/services/reference_data.py`.
 
 The driver write endpoints return an `ApplyResponse` with an i18n **`{ code, params, message }`**
 contract: `code` (+ `params`) is a stable key the UI translates (`motorDrivers.apply.*`), and

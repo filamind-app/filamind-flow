@@ -6,30 +6,33 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.92.1] - 2026-06-06
+
+### Changed
+
+- Reference-dataset `_meta` and the surrounding docs simplified to concise internal descriptions.
+
 ## [0.92.0] - 2026-06-06
 
 ### Added
 
 - **Phase 0 (foundation) — reference-data layer.** First build step of the planned expansion: a
-  backend module that serves curated, GPL-3.0-sourced Klipper datasets the upcoming widgets reuse.
-  Baked under `backend/app/data/reference/` (see `SOURCES.md` for attribution) and exposed read-only:
+  backend module that serves curated Klipper reference datasets the upcoming widgets reuse.
+  Baked under `backend/app/data/reference/` and exposed read-only:
   - `GET /api/reference/stallguard` + `/stallguard/{driver}` — per-driver StallGuard slip-detection
-    tuning constants (base + overrides; `{driver}` returns the merged effective set + the SG field),
-    from `klipper_max_flow_test`.
+    tuning constants (base + overrides; `{driver}` returns the merged effective set + the SG field).
   - `GET /api/reference/hotends` — hotend melt-zone / expected max-flow / test presets (8 classes).
-  - `GET /api/reference/boards` — board (34) + MCU (15) identification patterns, from KWC.
-  - `GET /api/reference/macros` — 11 built-in calibration macro definitions, from KWC.
+  - `GET /api/reference/boards` — board (34) + MCU (15) identification patterns.
+  - `GET /api/reference/macros` — 11 built-in calibration macro definitions.
   - Pure static reads (no Moonraker / writes / gating); payloads returned verbatim. +4 backend tests.
 
 ### Docs
 
-- **Roadmap expanded with a planned ecosystem-reuse program.** A deep multi-project analysis
-  (TMC StallGuard max-flow tooling, a full-stack Klipper config editor, a unified hardware DB —
-  all GPL-3.0) produced a phased plan: a shared **Phase 0 foundation** (reference-data layer +
-  ported config engine), then two parallel tracks — **Config Editor · Macro Designer · Board
-  Topology · Hardware Browser + Templates** and **Max-Flow · Motor-Drivers auto-SGT/slip-detection
-  + Sensorless wizard**. Documented in [ROADMAP.md](ROADMAP.md) + README. (Planning only; build
-  starts at Phase 0 — every actuating feature keeps the confirm-gate + gcode-driven conventions.)
+- **Roadmap expanded with a planned widget/data program.** Documented a phased plan extending
+  FilaMind across the full Klipper tuning + configuration surface: a shared **Phase 0 foundation**
+  (reference-data layer + a config engine), then two parallel tracks — **Config Editor · Macro
+  Designer · Board Topology · Hardware Browser + Templates** and **Max-Flow · Motor-Drivers
+  auto-SGT/slip-detection + Sensorless wizard**. See [ROADMAP.md](ROADMAP.md) + README.
 
 ## [0.91.1] - 2026-06-06
 
