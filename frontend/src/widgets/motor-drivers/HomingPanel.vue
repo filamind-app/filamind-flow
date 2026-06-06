@@ -75,7 +75,7 @@ function toggle(): void {
 </script>
 
 <template>
-  <div class="font-mono text-[10px]">
+  <div class="font-mono text-[11px]">
     <button
       class="flex w-full items-center gap-1.5 text-start opacity-70 transition-opacity hover:opacity-100"
       :aria-expanded="open"
@@ -102,7 +102,7 @@ function toggle(): void {
       <!-- Physical endstop: live switch state + a plain test-home -->
       <div
         v-else-if="method === 'physical'"
-        class="space-y-1.5 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
+        class="space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2"
       >
         <p class="opacity-70">
           {{ t('motorDrivers.homing.physicalIntroLead')
@@ -117,7 +117,7 @@ function toggle(): void {
             >{{ endstopState ?? '—' }}</span
           >
           <button
-            class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+            class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
             :disabled="checking"
             @click="checkEndstop"
           >
@@ -142,7 +142,7 @@ function toggle(): void {
             <span>{{ t('motorDrivers.homing.pathClear', { axis }) }}</span>
           </label>
           <button
-            class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+            class="nb-btn bg-brand-lime px-2 py-0.5 text-[11px]"
             :disabled="!confirmHome || homing"
             @click="testHome"
           >
@@ -161,7 +161,7 @@ function toggle(): void {
       <!-- Probe-homed Z -->
       <div
         v-else-if="method === 'probe'"
-        class="rounded-brutal border-2 border-dashed border-ink bg-paper p-2 opacity-80"
+        class="rounded-brutal border-2 border-ink bg-paper p-2 opacity-80"
       >
         {{ t('motorDrivers.homing.probeNote') }}
       </div>
@@ -169,7 +169,7 @@ function toggle(): void {
       <!-- A virtual endstop that isn't a TMC StallGuard pin -->
       <div
         v-else-if="method === 'other_virtual'"
-        class="rounded-brutal border-2 border-dashed border-ink bg-paper p-2 opacity-80"
+        class="rounded-brutal border-2 border-ink bg-paper p-2 opacity-80"
       >
         {{ t('motorDrivers.homing.virtualNote') }}
       </div>

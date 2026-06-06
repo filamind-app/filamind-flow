@@ -177,12 +177,12 @@ onMounted(load)
       <span class="text-xs font-bold uppercase tracking-wide">{{
         t('firmware.external.title')
       }}</span>
-      <label class="nb-btn cursor-pointer px-2 py-0.5 text-[10px]">
+      <label class="nb-btn cursor-pointer px-2 py-0.5 text-[11px]">
         {{ t('firmware.external.upload') }}
         <input type="file" accept=".bin,.uf2,.elf,.hex" class="hidden" @change="onUpload" />
       </label>
     </div>
-    <p class="font-mono text-[10px] opacity-60">
+    <p class="font-mono text-[11px] opacity-60">
       {{ t('firmware.external.intro') }}
     </p>
 
@@ -193,7 +193,7 @@ onMounted(load)
       v-if="items.length >= 2"
       class="space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2"
     >
-      <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
+      <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
         <span class="font-bold uppercase tracking-wide">{{ t('firmware.external.compare') }}</span>
         <select v-model="compareA" :class="inputClass">
           <option :value="null">{{ t('firmware.external.optionA') }}</option>
@@ -210,7 +210,7 @@ onMounted(load)
         </select>
         <button
           v-if="compareA || compareB"
-          class="nb-btn px-1.5 py-0 text-[9px]"
+          class="nb-btn px-1.5 py-0 text-[10px]"
           @click="clearCompare"
         >
           {{ t('firmware.external.clear') }}
@@ -219,13 +219,13 @@ onMounted(load)
 
       <div
         v-if="compareA && compareB && compareA === compareB"
-        class="font-mono text-[9px] opacity-60"
+        class="font-mono text-[10px] opacity-60"
       >
         {{ t('firmware.external.pickTwoDifferent') }}
       </div>
 
       <div v-else-if="comparison" class="space-y-1">
-        <div class="flex flex-wrap gap-1 font-mono text-[9px]">
+        <div class="flex flex-wrap gap-1 font-mono text-[10px]">
           <span class="nb-badge bg-brand-yellow">{{
             t('firmware.external.countChanged', { n: comparison.counts.changed })
           }}</span>
@@ -241,7 +241,7 @@ onMounted(load)
         </div>
 
         <div
-          class="grid grid-cols-[6rem_1fr_1fr] gap-2 border-b-2 border-ink pb-0.5 font-mono text-[9px] font-bold"
+          class="grid grid-cols-[6rem_1fr_1fr] gap-2 border-b-2 border-ink pb-0.5 font-mono text-[10px] font-bold"
         >
           <span></span>
           <span class="min-w-0 truncate">{{
@@ -255,7 +255,7 @@ onMounted(load)
         <div
           v-for="row in comparison.meta"
           :key="'m-' + row.key"
-          class="grid grid-cols-[6rem_1fr_1fr] items-center gap-2 font-mono text-[9px]"
+          class="grid grid-cols-[6rem_1fr_1fr] items-center gap-2 font-mono text-[10px]"
           :class="rowClass(row.status)"
         >
           <span class="opacity-70">{{ row.key }}</span>
@@ -263,14 +263,11 @@ onMounted(load)
           <span class="min-w-0 break-all">{{ cell(row, 'b') }}</span>
         </div>
 
-        <div
-          v-if="comparison.config.length"
-          class="mt-0.5 space-y-px border-t-2 border-dashed border-ink pt-0.5"
-        >
+        <div v-if="comparison.config.length" class="mt-0.5 space-y-px border-t-2 border-ink pt-0.5">
           <div
             v-for="row in comparison.config"
             :key="'c-' + row.key"
-            class="grid grid-cols-[6rem_1fr_1fr] items-center gap-2 font-mono text-[9px]"
+            class="grid grid-cols-[6rem_1fr_1fr] items-center gap-2 font-mono text-[10px]"
             :class="rowClass(row.status)"
           >
             <span class="min-w-0 break-all opacity-70">{{ row.key }}</span>
@@ -296,14 +293,14 @@ onMounted(load)
           :class="['min-w-0 flex-1 font-bold', inputClass]"
           @change="persist(fw)"
         />
-        <span class="shrink-0 font-mono text-[9px] opacity-50"
+        <span class="shrink-0 font-mono text-[10px] opacity-50"
           >{{ fw.filename }} · {{ kb(fw.size) }}</span
         >
-        <button class="nb-btn shrink-0 px-2 py-0.5 text-[10px]" @click="downloadExternal(fw.name)">
+        <button class="nb-btn shrink-0 px-2 py-0.5 text-[11px]" @click="downloadExternal(fw.name)">
           ↓
         </button>
         <button
-          class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+          class="nb-btn shrink-0 bg-brand-red px-2 py-0.5 text-[11px] text-surface"
           @click="remove(fw)"
         >
           {{ t('firmware.external.remove') }}
@@ -313,9 +310,9 @@ onMounted(load)
       <!-- Read-only properties baked into the firmware (from its data dictionary). -->
       <div
         v-if="fw.detected_version || fw.detected_mcu || fw.detected_config"
-        class="rounded-brutal border-2 border-dashed border-ink bg-paper px-2 py-1"
+        class="rounded-brutal border-2 border-ink bg-paper px-2 py-1"
       >
-        <div class="flex flex-wrap items-center gap-x-2 font-mono text-[9px] opacity-70">
+        <div class="flex flex-wrap items-center gap-x-2 font-mono text-[10px] opacity-70">
           <span>{{ t('firmware.external.readFromFile') }}</span>
           <span v-if="fw.detected_app" class="font-bold">{{ fw.detected_app }}</span>
           <span v-if="fw.detected_version">{{ fw.detected_version }}</span>
@@ -324,7 +321,7 @@ onMounted(load)
           }}</span>
           <button
             v-if="configEntries(fw).length"
-            class="nb-btn ms-auto px-1.5 py-0 text-[9px]"
+            class="nb-btn ms-auto px-1.5 py-0 text-[10px]"
             @click="expanded[fw.name] = !expanded[fw.name]"
           >
             {{ expanded[fw.name] ? t('firmware.external.hide') : t('firmware.external.config') }}
@@ -335,7 +332,7 @@ onMounted(load)
           <div
             v-for="[k, v] in configEntries(fw)"
             :key="k"
-            class="flex justify-between gap-2 font-mono text-[9px]"
+            class="flex justify-between gap-2 font-mono text-[10px]"
           >
             <span class="opacity-70">{{ k }}</span>
             <span class="min-w-0 truncate">{{ v }}</span>
@@ -372,18 +369,18 @@ onMounted(load)
 
       <div
         v-if="flashTo[fw.name]"
-        class="flex flex-wrap items-center gap-1.5 border-t-2 border-dashed border-ink pt-1.5"
+        class="flex flex-wrap items-center gap-1.5 border-t-2 border-ink pt-1.5"
       >
-        <span class="text-[10px] opacity-60">{{ t('firmware.external.flashTo') }}</span>
+        <span class="text-[11px] opacity-60">{{ t('firmware.external.flashTo') }}</span>
         <select v-model="flashTo[fw.name].device" :class="inputClass">
           <option v-for="tgt in targets" :key="tgt.id" :value="tgt.id">{{ tgt.label }}</option>
         </select>
-        <label class="flex items-center gap-1 text-[10px]">
+        <label class="flex items-center gap-1 text-[11px]">
           <input v-model="flashTo[fw.name].katapult" type="checkbox" />
           {{ t('firmware.external.katapult') }}
         </label>
         <button
-          class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+          class="nb-btn bg-brand-red px-2 py-0.5 text-[11px] text-surface"
           :disabled="busy || !flashTo[fw.name].device"
           @click="doFlash(fw)"
         >
@@ -397,7 +394,7 @@ onMounted(load)
 
       <pre
         v-if="log && activeName === fw.name"
-        class="max-h-40 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight text-surface"
+        class="max-h-40 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight text-surface"
         >{{ log }}</pre
       >
     </div>

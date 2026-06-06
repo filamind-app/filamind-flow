@@ -1,1 +1,0 @@
-import{j as o}from"./index-B7IB92OP.js";function n(r){const e=r instanceof Error?r.message:String(r);return/failed to fetch|networkerror|load failed|fetch/i.test(e)?o.global.t("common.errors.backendUnreachable"):e}export{n as d};

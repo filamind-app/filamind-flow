@@ -260,15 +260,15 @@ onMounted(async () => {
       >
         <input v-model="showRaw" type="checkbox" /> {{ t('firmware.configEditor.raw') }}
       </label>
-      <span v-if="dirtyCount" class="nb-badge bg-brand-yellow text-[10px]">{{
+      <span v-if="dirtyCount" class="nb-badge bg-brand-yellow text-[11px]">{{
         t('firmware.configEditor.editsBadge', { n: dirtyCount }, dirtyCount)
       }}</span>
-      <span v-if="selectedBuilt" class="nb-badge bg-brand-lime text-[10px]">{{
+      <span v-if="selectedBuilt" class="nb-badge bg-brand-lime text-[11px]">{{
         t('firmware.configEditor.builtBadge')
       }}</span>
       <button
         v-if="baseProfile"
-        class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]"
+        class="nb-btn bg-brand-cyan px-2 py-0.5 text-[11px]"
         :disabled="building"
         :title="
           dirtyCount
@@ -283,7 +283,7 @@ onMounted(async () => {
       </button>
       <button
         v-if="selectedBuilt"
-        class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+        class="nb-btn bg-brand-lime px-2 py-0.5 text-[11px]"
         :title="t('firmware.configEditor.downloadBinTitle')"
         @click="downloadBin"
       >
@@ -291,7 +291,7 @@ onMounted(async () => {
       </button>
       <button
         v-if="baseProfile"
-        class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+        class="nb-btn bg-brand-red px-2 py-0.5 text-[11px] text-surface"
         @click="removeProfile(baseProfile)"
       >
         {{ t('firmware.configEditor.delete') }}
@@ -300,7 +300,7 @@ onMounted(async () => {
 
     <div
       v-if="baseProfile"
-      class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-dashed border-ink px-2 py-1"
+      class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink px-2 py-1"
     >
       <span class="text-[11px] font-bold uppercase opacity-70">{{
         t('firmware.configEditor.manage')
@@ -312,7 +312,7 @@ onMounted(async () => {
         @keyup.enter="renameSelected"
       />
       <button
-        class="nb-btn px-2 py-0.5 text-[10px]"
+        class="nb-btn px-2 py-0.5 text-[11px]"
         :disabled="!manageName.trim()"
         :title="t('firmware.configEditor.renameTitle')"
         @click="renameSelected"
@@ -320,7 +320,7 @@ onMounted(async () => {
         {{ t('firmware.configEditor.rename') }}
       </button>
       <button
-        class="nb-btn px-2 py-0.5 text-[10px]"
+        class="nb-btn px-2 py-0.5 text-[11px]"
         :disabled="!manageName.trim()"
         :title="t('firmware.configEditor.duplicateTitle')"
         @click="duplicateSelected"
@@ -343,9 +343,11 @@ onMounted(async () => {
             : t('firmware.configEditor.notBuilt')
         }}
       </span>
-      <span v-if="selectedProfile.is_linux" class="nb-badge bg-brand-yellow text-[9px]">linux</span>
-      <span v-if="selectedProfile.is_avr" class="nb-badge bg-brand-yellow text-[9px]">avr</span>
-      <span v-if="selectedProfile.is_can_bridge" class="nb-badge bg-brand-yellow text-[9px]">{{
+      <span v-if="selectedProfile.is_linux" class="nb-badge bg-brand-yellow text-[10px]"
+        >linux</span
+      >
+      <span v-if="selectedProfile.is_avr" class="nb-badge bg-brand-yellow text-[10px]">avr</span>
+      <span v-if="selectedProfile.is_can_bridge" class="nb-badge bg-brand-yellow text-[10px]">{{
         t('firmware.configEditor.canBridge')
       }}</span>
     </div>
@@ -394,7 +396,7 @@ onMounted(async () => {
               {{ item.node.prompt }}
               <code
                 v-if="showRaw && !item.node.name.startsWith('__')"
-                class="ms-1 text-[9px] opacity-50"
+                class="ms-1 text-[10px] opacity-50"
                 >{{ item.node.name }}</code
               >
             </span>
@@ -430,7 +432,7 @@ onMounted(async () => {
           </div>
           <div
             v-if="(showRaw && item.node.dep_str) || (showHelp && item.node.default)"
-            class="text-[9px] opacity-50"
+            class="text-[10px] opacity-50"
           >
             <span v-if="showRaw && item.node.dep_str">{{
               t('firmware.configEditor.needs', { dep: item.node.dep_str })
@@ -439,7 +441,7 @@ onMounted(async () => {
               t('firmware.configEditor.default', { value: item.node.default })
             }}</span>
           </div>
-          <p v-if="showHelp && item.node.help" class="pb-1 text-[10px] leading-tight opacity-60">
+          <p v-if="showHelp && item.node.help" class="pb-1 text-[11px] leading-tight opacity-60">
             {{ item.node.help }}
           </p>
         </div>
@@ -460,11 +462,11 @@ onMounted(async () => {
         {{ saving ? t('firmware.configEditor.saving') : t('firmware.configEditor.saveProfile') }}
       </button>
     </div>
-    <p v-if="message" class="font-mono text-[10px] opacity-70">{{ message }}</p>
+    <p v-if="message" class="font-mono text-[11px] opacity-70">{{ message }}</p>
 
     <pre
       v-if="buildLog"
-      class="max-h-48 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight text-surface"
+      class="max-h-48 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight text-surface"
       >{{ buildLog }}</pre
     >
   </div>

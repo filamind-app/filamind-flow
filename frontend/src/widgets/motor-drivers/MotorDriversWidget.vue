@@ -132,7 +132,7 @@ onUnmounted(() => {
     >
       <span class="min-w-0 flex-1 text-[11px]">{{ error }}</span>
       <button
-        class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[10px] text-ink"
+        class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[11px] text-ink"
         :disabled="loading"
         @click="load()"
       >
@@ -162,7 +162,7 @@ onUnmounted(() => {
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0">
               <div class="truncate font-bold">{{ axisHeading(d) }}</div>
-              <div class="font-mono text-[10px] opacity-60">{{ d.stepper }}</div>
+              <div class="font-mono text-[11px] opacity-60">{{ d.stepper }}</div>
             </div>
             <div class="flex shrink-0 items-center gap-1">
               <span class="nb-badge bg-brand-cyan">{{ driverModelLabel(d.model) }}</span>
@@ -198,7 +198,7 @@ onUnmounted(() => {
 
           <!-- Essentials stay inline; the rest collapses behind a per-card "details" toggle. -->
           <div
-            class="flex flex-wrap items-center gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-80"
+            class="flex flex-wrap items-center gap-x-3 gap-y-0.5 font-mono text-[11px] opacity-80"
           >
             <span>{{ chopperLabel(d) }}</span>
             <span v-if="d.microsteps != null">{{
@@ -226,7 +226,7 @@ onUnmounted(() => {
 
           <div
             v-if="openDetails[d.stepper]"
-            class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] opacity-70"
+            class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] opacity-70"
           >
             <span v-if="d.interpolate">{{ t('motorDrivers.widget.interp') }}</span>
             <span v-if="d.sense_resistor != null">{{
@@ -237,7 +237,7 @@ onUnmounted(() => {
             <span
               v-for="c in capabilityChips(effectiveCapabilities(d))"
               :key="c"
-              class="nb-badge bg-paper px-1.5 py-0 text-[9px]"
+              class="nb-badge bg-paper px-1.5 py-0 text-[10px]"
               >{{ c }}</span
             >
           </div>

@@ -24,7 +24,7 @@ const hasBody = computed(() => tte(bodyKey.value))
 </script>
 
 <template>
-  <div class="font-mono text-[10px]">
+  <div class="font-mono text-[11px]">
     <button
       class="opacity-60 transition-opacity hover:opacity-100"
       :aria-expanded="open"
@@ -34,7 +34,7 @@ const hasBody = computed(() => tte(bodyKey.value))
     </button>
     <div
       v-if="open"
-      class="mt-1 flex items-start gap-2 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
+      class="mt-1 flex items-start gap-2 rounded-brutal border-2 border-ink bg-paper p-2"
     >
       <HelpIllo v-if="illo" :illo="illo" class="mt-0.5 h-10 w-10 shrink-0 opacity-80" />
       <div class="min-w-0 flex-1 space-y-1 leading-snug opacity-80">

@@ -14,7 +14,7 @@ function lineClass(line: string): string {
 
 <template>
   <div
-    class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight"
+    class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight"
     :class="maxClass"
   >
     <div

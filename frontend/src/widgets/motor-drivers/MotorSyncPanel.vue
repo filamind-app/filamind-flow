@@ -44,7 +44,7 @@ async function run(calibrate: boolean): Promise<void> {
 </script>
 
 <template>
-  <div class="font-mono text-[10px]">
+  <div class="font-mono text-[11px]">
     <button
       class="opacity-60 transition-opacity hover:opacity-100"
       :aria-expanded="open"
@@ -56,10 +56,7 @@ async function run(calibrate: boolean): Promise<void> {
       }}</span>
     </button>
 
-    <div
-      v-if="open"
-      class="mt-1 space-y-1.5 rounded-brutal border-2 border-dashed border-ink bg-paper p-2"
-    >
+    <div v-if="open" class="mt-1 space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2">
       <i18n-t keypath="motorDrivers.motorSync.about" tag="p" scope="global" class="opacity-70">
         <template #addon><b>motors_sync</b></template>
       </i18n-t>
@@ -80,14 +77,14 @@ async function run(calibrate: boolean): Promise<void> {
         </label>
         <div class="flex flex-wrap gap-1.5">
           <button
-            class="nb-btn bg-brand-yellow px-2 py-0.5 text-[10px]"
+            class="nb-btn bg-brand-yellow px-2 py-0.5 text-[11px]"
             :disabled="!confirmed || busy"
             @click="run(false)"
           >
             {{ busy ? '…' : t('motorDrivers.motorSync.syncMotors') }}
           </button>
           <button
-            class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+            class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
             :disabled="!confirmed || busy"
             @click="run(true)"
           >

@@ -71,13 +71,13 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
   <div class="space-y-2 text-sm">
     <div class="flex items-center justify-between gap-2">
       <div class="font-bold">{{ t('motorDrivers.guidedWizard.title') }}</div>
-      <button class="font-mono text-[10px] opacity-60 hover:opacity-100" @click="emit('exit')">
+      <button class="font-mono text-[11px] opacity-60 hover:opacity-100" @click="emit('exit')">
         {{ t('motorDrivers.guidedWizard.backToDashboard') }}
       </button>
     </div>
 
     <!-- Step breadcrumb -->
-    <div class="flex flex-wrap gap-1 font-mono text-[10px]">
+    <div class="flex flex-wrap gap-1 font-mono text-[11px]">
       <span
         v-for="(label, i) in stepLabels"
         :key="label"
@@ -102,7 +102,7 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
           @click="choose(d.stepper)"
         >
           <span class="font-bold">{{ axisHeading(d) }}</span>
-          <span class="font-mono text-[10px] opacity-60">{{ driverModelLabel(d.model) }}</span>
+          <span class="font-mono text-[11px] opacity-60">{{ driverModelLabel(d.model) }}</span>
         </button>
       </div>
     </div>
@@ -131,7 +131,7 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
           :catalog="catalog"
           @assign="onAssign"
         />
-        <p v-if="!selected.motor" class="font-mono text-[10px] opacity-60">
+        <p v-if="!selected.motor" class="font-mono text-[11px] opacity-60">
           {{ t('motorDrivers.guidedWizard.assignToContinue') }}
         </p>
       </div>
@@ -162,25 +162,25 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
           >
         </i18n-t>
         <LiveMonitor :driver="selected" />
-        <button class="nb-btn bg-surface px-2 py-0.5 text-[10px]" @click="restart">
+        <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="restart">
           {{ t('motorDrivers.guidedWizard.tuneAnother') }}
         </button>
       </div>
 
       <!-- Step navigation -->
       <div class="flex items-center justify-between pt-1">
-        <button class="nb-btn bg-surface px-2 py-0.5 text-[10px]" @click="back">
+        <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="back">
           {{ t('motorDrivers.guidedWizard.back') }}
         </button>
         <button
           v-if="step < 5"
-          class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]"
+          class="nb-btn bg-brand-lime px-2 py-0.5 text-[11px]"
           :disabled="step === 2 && !selected.motor"
           @click="next"
         >
           {{ t('motorDrivers.guidedWizard.next') }}
         </button>
-        <button v-else class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]" @click="emit('exit')">
+        <button v-else class="nb-btn bg-brand-cyan px-2 py-0.5 text-[11px]" @click="emit('exit')">
           {{ t('motorDrivers.guidedWizard.finish') }}
         </button>
       </div>

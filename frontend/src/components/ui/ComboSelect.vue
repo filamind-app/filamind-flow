@@ -92,7 +92,7 @@ watch(query, () => (activeIndex.value = 0))
 </script>
 
 <template>
-  <div ref="root" class="relative font-mono text-[10px]" @focusout="onFocusOut">
+  <div ref="root" class="relative font-mono text-[11px]" @focusout="onFocusOut">
     <button
       type="button"
       class="flex w-full items-center justify-between gap-1 rounded-brutal border-2 border-ink bg-surface px-1.5 py-1 text-start"

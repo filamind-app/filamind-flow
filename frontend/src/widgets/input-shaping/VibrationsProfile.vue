@@ -27,7 +27,7 @@ function symmetryClass(pct: number): string {
 <template>
   <div class="space-y-1.5 rounded-brutal border-2 border-ink p-2">
     <div class="flex flex-wrap items-center gap-2">
-      <span class="text-[10px] font-bold uppercase tracking-wide">{{
+      <span class="text-[11px] font-bold uppercase tracking-wide">{{
         t('inputShaping.vibrationsView.title')
       }}</span>
       <span v-if="result.low_freq_warning" class="nb-badge bg-brand-red text-surface">{{
@@ -39,7 +39,7 @@ function symmetryClass(pct: number): string {
       <span class="nb-badge" :class="symmetryClass(result.symmetry_pct)">{{
         t('inputShaping.vibrationsView.symmetry', { v: result.symmetry_pct.toFixed(0) })
       }}</span>
-      <span class="font-mono text-[9px] opacity-60">{{
+      <span class="font-mono text-[10px] opacity-60">{{
         t('inputShaping.vibrationsView.kinematicsAccel', {
           kin: result.kinematics,
           accel: result.accel,
@@ -47,7 +47,7 @@ function symmetryClass(pct: number): string {
       }}</span>
     </div>
 
-    <p class="text-[9px] opacity-80">{{ result.verdict }}</p>
+    <p class="text-[10px] opacity-80">{{ result.verdict }}</p>
     <!-- result.verdict is built by the vibrations helper (already translated). -->
 
     <!-- Speed-energy profile: the main curve + smoothest bands + peaks to avoid. -->
@@ -110,7 +110,7 @@ function symmetryClass(pct: number): string {
         {{ tick.label }}
       </text>
     </svg>
-    <div class="flex flex-wrap gap-x-3 font-mono text-[9px] opacity-60">
+    <div class="flex flex-wrap gap-x-3 font-mono text-[10px] opacity-60">
       <span>{{ t('inputShaping.vibrationsView.axisLegend') }}</span>
       <span class="flex items-center gap-1"
         ><span class="inline-block h-2 w-3 rounded-sm" style="background: #9be15d" />{{
@@ -118,10 +118,7 @@ function symmetryClass(pct: number): string {
         }}</span
       >
       <span class="flex items-center gap-1"
-        ><span
-          class="inline-block h-0 w-3 border-t-2 border-dashed"
-          style="border-color: #ff5247"
-        />
+        ><span class="inline-block h-0 w-3 border-t-2" style="border-color: #ff5247" />
         {{ t('inputShaping.vibrationsView.avoid') }}</span
       >
     </div>
@@ -229,7 +226,7 @@ function symmetryClass(pct: number): string {
     </div>
 
     <!-- Smoothest / worst speeds + good directions + motor resonance. -->
-    <div class="flex flex-wrap gap-1 font-mono text-[9px]">
+    <div class="flex flex-wrap gap-1 font-mono text-[10px]">
       <span
         v-for="(r, i) in result.good_speed_ranges.slice(0, 3)"
         :key="'gs' + i"
@@ -248,7 +245,7 @@ function symmetryClass(pct: number): string {
         >{{ t('inputShaping.vibrationsView.peakSpeed', { v: p.toFixed(0) }) }}</span
       >
     </div>
-    <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[9px] opacity-70">
+    <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-70">
       <span v-if="result.motor_freq != null"
         >{{ t('inputShaping.vibrationsView.motorResonance', { v: result.motor_freq.toFixed(0) })
         }}<span v-if="result.motor_damping != null">

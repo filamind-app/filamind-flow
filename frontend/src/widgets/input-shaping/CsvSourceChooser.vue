@@ -130,18 +130,18 @@ defineExpose({ refresh })
 <template>
   <div class="space-y-2 rounded-brutal border-2 border-ink bg-paper p-2">
     <div class="flex flex-wrap items-center gap-2">
-      <span class="text-[10px] font-bold uppercase tracking-wide">{{
+      <span class="text-[11px] font-bold uppercase tracking-wide">{{
         t('inputShaping.csvSource.title')
       }}</span>
       <button
-        class="nb-btn px-2 py-0.5 text-[10px]"
+        class="nb-btn px-2 py-0.5 text-[11px]"
         :class="tabClass('upload')"
         @click="source = 'upload'"
       >
         {{ t('inputShaping.csvSource.tabUpload') }}
       </button>
       <button
-        class="nb-btn px-2 py-0.5 text-[10px]"
+        class="nb-btn px-2 py-0.5 text-[11px]"
         :class="tabClass('host')"
         @click="source = 'host'"
       >
@@ -168,7 +168,7 @@ defineExpose({ refresh })
       >
         {{ busy ? t('inputShaping.csvSource.analyzing') : t('inputShaping.csvSource.analyze') }}
       </button>
-      <span v-if="file" class="min-w-0 truncate font-mono text-[10px] opacity-60">{{
+      <span v-if="file" class="min-w-0 truncate font-mono text-[11px] opacity-60">{{
         file.name
       }}</span>
     </div>
@@ -176,22 +176,22 @@ defineExpose({ refresh })
     <!-- Local: host scan dirs + the persistent archive -->
     <div v-else class="space-y-2">
       <div class="flex items-center justify-between">
-        <span class="font-mono text-[9px] opacity-60">{{
+        <span class="font-mono text-[10px] opacity-60">{{
           t('inputShaping.csvSource.onHost')
         }}</span>
-        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="refresh">
+        <button class="nb-btn px-2 py-0.5 text-[11px]" @click="refresh">
           {{ t('inputShaping.csvSource.refresh') }}
         </button>
       </div>
 
-      <p v-if="!files.length" class="font-mono text-[10px] opacity-60">
+      <p v-if="!files.length" class="font-mono text-[11px] opacity-60">
         {{
           dirs.length
             ? t('inputShaping.csvSource.noFilesInDirs', { dirs: dirs.join(', ') })
             : t('inputShaping.csvSource.noFiles')
         }}
       </p>
-      <div v-for="f in files" :key="f.path" class="flex items-center gap-2 font-mono text-[10px]">
+      <div v-for="f in files" :key="f.path" class="flex items-center gap-2 font-mono text-[11px]">
         <span v-if="f.axis" class="nb-badge shrink-0 bg-brand-cyan">{{
           f.axis.toUpperCase()
         }}</span>
@@ -212,16 +212,16 @@ defineExpose({ refresh })
 
       <!-- Persistent archive: saved captures + generated configs. -->
       <div class="space-y-1 border-t-2 border-ink pt-2">
-        <span class="text-[10px] font-bold uppercase tracking-wide">{{
+        <span class="text-[11px] font-bold uppercase tracking-wide">{{
           t('inputShaping.csvSource.archive')
         }}</span>
-        <p v-if="!runs.length" class="font-mono text-[10px] opacity-60">
+        <p v-if="!runs.length" class="font-mono text-[11px] opacity-60">
           {{ t('inputShaping.csvSource.archiveEmpty') }}
         </p>
         <div
           v-for="run in runs"
           :key="run.id"
-          class="flex flex-wrap items-center gap-2 font-mono text-[9px]"
+          class="flex flex-wrap items-center gap-2 font-mono text-[10px]"
         >
           <span class="nb-badge shrink-0 bg-brand-yellow">{{ run.kind }}</span>
           <span v-if="run.axis" class="nb-badge shrink-0 bg-brand-cyan">{{

@@ -486,7 +486,7 @@ onUnmounted(() => {
       >
         <span class="min-w-0 flex-1 text-[11px]">{{ error }}</span>
         <button
-          class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[10px] text-ink"
+          class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[11px] text-ink"
           :disabled="loading"
           @click="load()"
         >
@@ -521,7 +521,7 @@ onUnmounted(() => {
           </span>
           <span
             v-if="health"
-            class="nb-badge text-[10px]"
+            class="nb-badge text-[11px]"
             :class="health.healthy ? 'bg-brand-lime' : 'bg-brand-yellow'"
             :title="healthTitle || t('firmware.widget.healthOkTitle')"
           >
@@ -540,21 +540,21 @@ onUnmounted(() => {
             }}</span>
             <div class="flex gap-1">
               <button
-                class="nb-btn px-2 py-0.5 text-[10px]"
+                class="nb-btn px-2 py-0.5 text-[11px]"
                 :disabled="servicesBusy"
                 @click="doService('start')"
               >
                 {{ t('firmware.widget.svcStart') }}
               </button>
               <button
-                class="nb-btn px-2 py-0.5 text-[10px]"
+                class="nb-btn px-2 py-0.5 text-[11px]"
                 :disabled="servicesBusy"
                 @click="doService('stop')"
               >
                 {{ t('firmware.widget.svcStop') }}
               </button>
               <button
-                class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]"
+                class="nb-btn bg-brand-cyan px-2 py-0.5 text-[11px]"
                 :disabled="servicesBusy"
                 @click="doService('restart')"
               >
@@ -566,12 +566,12 @@ onUnmounted(() => {
             <span
               v-for="s in services"
               :key="s.name"
-              class="nb-badge text-[10px]"
+              class="nb-badge text-[11px]"
               :class="s.active ? 'bg-brand-lime' : 'bg-surface opacity-60'"
             >
               {{ s.active ? '●' : '○' }} {{ s.name }}
             </span>
-            <span v-if="!services.length" class="font-mono text-[10px] opacity-60">
+            <span v-if="!services.length" class="font-mono text-[11px] opacity-60">
               {{ t('firmware.widget.noServices') }}
             </span>
           </div>
@@ -582,7 +582,7 @@ onUnmounted(() => {
             <span class="text-xs font-bold uppercase tracking-wide">{{
               t('firmware.widget.beaconHeading')
             }}</span>
-            <span v-if="beacon.available_version" class="font-mono text-[10px] opacity-60">
+            <span v-if="beacon.available_version" class="font-mono text-[11px] opacity-60">
               {{ t('firmware.widget.beaconAvailable', { version: beacon.available_version }) }}
             </span>
           </div>
@@ -592,9 +592,9 @@ onUnmounted(() => {
             class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
           >
             <span class="min-w-0 flex-1 truncate font-bold">{{ p.name }}</span>
-            <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">beacon</span>
+            <span class="shrink-0 font-mono text-[10px] uppercase opacity-50">beacon</span>
             <button
-              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5 text-[10px]"
+              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5 text-[11px]"
               :disabled="beaconFlashing"
               @click="requestBeacon(p)"
             >
@@ -612,7 +612,7 @@ onUnmounted(() => {
             }}</span>
             <button
               v-if="opBusy"
-              class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+              class="nb-btn bg-brand-red px-2 py-0.5 text-[11px] text-surface"
               @click="cancelBatch"
             >
               {{ t('firmware.widget.cancel') }}
@@ -623,7 +623,7 @@ onUnmounted(() => {
             <button
               v-for="b in BATCH_ACTIONS"
               :key="b.action"
-              class="nb-btn px-2 py-0.5 text-[10px]"
+              class="nb-btn px-2 py-0.5 text-[11px]"
               :class="b.cls"
               :disabled="opBusy"
               @click="runBatchGated(b.action)"
@@ -642,15 +642,15 @@ onUnmounted(() => {
             <div class="flex items-center gap-2">
               <span class="min-w-0 flex-1 truncate font-bold">{{ device.name }}</span>
               <span
-                class="nb-badge shrink-0 text-[9px]"
+                class="nb-badge shrink-0 text-[10px]"
                 :class="boardModeClass(liveMode[device.id] ?? 'offline')"
                 >{{ liveMode[device.id] ?? 'offline' }}</span
               >
-              <span class="shrink-0 font-mono text-[9px] uppercase opacity-50">{{
+              <span class="shrink-0 font-mono text-[10px] uppercase opacity-50">{{
                 device.method
               }}</span>
             </div>
-            <div class="flex items-center justify-between gap-2 font-mono text-[9px] opacity-60">
+            <div class="flex items-center justify-between gap-2 font-mono text-[10px] opacity-60">
               <span class="truncate">{{
                 device.profile
                   ? t('firmware.widget.profileLabel', { profile: device.profile })
@@ -669,21 +669,21 @@ onUnmounted(() => {
             </div>
             <div class="flex flex-wrap gap-1.5">
               <button
-                class="nb-btn px-2 py-0.5 text-[10px]"
+                class="nb-btn px-2 py-0.5 text-[11px]"
                 :disabled="opBusy || !device.profile"
                 @click="buildDevice(device)"
               >
                 {{ t('firmware.widget.build') }}
               </button>
               <button
-                class="nb-btn bg-brand-yellow px-2 py-0.5 text-[10px]"
+                class="nb-btn bg-brand-yellow px-2 py-0.5 text-[11px]"
                 :disabled="opBusy || !device.profile"
                 @click="requestFlash(device)"
               >
                 {{ t('firmware.widget.flash') }}
               </button>
               <button
-                class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+                class="nb-btn bg-brand-red px-2 py-0.5 text-[11px] text-surface"
                 :disabled="opBusy || !device.profile"
                 @click="requestBuildFlash(device)"
               >
@@ -691,7 +691,7 @@ onUnmounted(() => {
               </button>
               <button
                 v-if="device.method === 'serial' || device.method === 'can'"
-                class="nb-btn px-2 py-0.5 text-[10px]"
+                class="nb-btn px-2 py-0.5 text-[11px]"
                 :disabled="opBusy"
                 @click="rebootDevice(device, 'katapult')"
               >
@@ -705,7 +705,7 @@ onUnmounted(() => {
             <p class="font-mono text-xs opacity-70">
               {{ t('firmware.widget.noDevices') }}
             </p>
-            <button class="nb-btn bg-brand-lime px-2 py-0.5 text-[10px]" @click="mode = 'devices'">
+            <button class="nb-btn bg-brand-lime px-2 py-0.5 text-[11px]" @click="mode = 'devices'">
               {{ t('firmware.widget.addFirstBoard') }}
             </button>
           </div>

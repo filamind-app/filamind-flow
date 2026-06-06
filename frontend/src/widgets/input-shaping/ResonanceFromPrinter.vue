@@ -227,7 +227,7 @@ async function runVib(): Promise<void> {
       keypath="inputShaping.fromPrinter.intro"
       tag="p"
       scope="global"
-      class="font-mono text-[9px] opacity-60"
+      class="font-mono text-[10px] opacity-60"
     >
       <template #duration
         ><strong>{{ t('inputShaping.fromPrinter.introDuration') }}</strong></template
@@ -235,8 +235,8 @@ async function runVib(): Promise<void> {
     </i18n-t>
 
     <!-- Accelerometer noise pre-check — motion-free, validates the sensor mount. -->
-    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
-      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+    <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.noiseTitle') }}</span>
         <button class="nb-btn px-2 py-0.5" :disabled="noiseBusy" @click="checkNoise">
           {{
@@ -253,14 +253,14 @@ async function runVib(): Promise<void> {
           <span class="nb-badge" :class="noiseClass(noise.grade)">{{
             noiseVerdict(noise.grade)
           }}</span>
-          <span class="font-mono text-[9px] opacity-60">{{
+          <span class="font-mono text-[10px] opacity-60">{{
             t('inputShaping.fromPrinter.noiseMaxNormal', {
               max: noise.max_noise.toFixed(1),
               threshold: noise.threshold,
             })
           }}</span>
         </div>
-        <div v-for="c in noise.chips" :key="c.label" class="font-mono text-[9px] opacity-70">
+        <div v-for="c in noise.chips" :key="c.label" class="font-mono text-[10px] opacity-70">
           {{
             t('inputShaping.fromPrinter.noiseChip', {
               label: c.label,
@@ -275,8 +275,8 @@ async function runVib(): Promise<void> {
 
     <!-- Each on-printer motion tool is its own panel with its OWN confirm, so arming one
          motion can't trigger another (consistent with the Sustain / Vibrations panels). -->
-    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
-      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+    <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.liveTitle') }}</span>
         <select v-model="liveAxis" :class="inputClass">
           <option value="x">{{ t('inputShaping.fromPrinter.axisX') }}</option>
@@ -302,15 +302,15 @@ async function runVib(): Promise<void> {
         keypath="inputShaping.fromPrinter.liveDesc"
         tag="p"
         scope="global"
-        class="font-mono text-[9px] opacity-60"
+        class="font-mono text-[10px] opacity-60"
       >
         <template #section><code>[resonance_tester]</code></template>
       </i18n-t>
     </div>
 
     <!-- Compare belts (CoreXY) — its own confirm. -->
-    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
-      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+    <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.beltsTitle') }}</span>
         <label class="flex items-center gap-1">
           <input v-model="beltsReady" type="checkbox" />
@@ -329,15 +329,15 @@ async function runVib(): Promise<void> {
           }}
         </button>
       </div>
-      <p class="font-mono text-[9px] opacity-60">
+      <p class="font-mono text-[10px] opacity-60">
         {{ t('inputShaping.fromPrinter.beltsDesc') }}
       </p>
       <HelpNote topic="belts" />
     </div>
 
     <!-- Axes map — its own confirm. -->
-    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
-      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+    <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.axesTitle') }}</span>
         <label class="flex items-center gap-1">
           <input v-model="axesReady" type="checkbox" />
@@ -356,7 +356,7 @@ async function runVib(): Promise<void> {
           }}
         </button>
       </div>
-      <p class="font-mono text-[9px] opacity-60">
+      <p class="font-mono text-[10px] opacity-60">
         {{ t('inputShaping.fromPrinter.axesDesc') }}
       </p>
       <HelpNote topic="axesMap" />
@@ -368,7 +368,7 @@ async function runVib(): Promise<void> {
       class="space-y-1 rounded-brutal border-2 border-ink p-2"
     >
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-[10px] font-bold uppercase tracking-wide">{{
+        <span class="text-[11px] font-bold uppercase tracking-wide">{{
           t('inputShaping.fromPrinter.beltResultTitle')
         }}</span>
         <span
@@ -376,7 +376,7 @@ async function runVib(): Promise<void> {
           :class="beltJudge.level === 'good' ? 'bg-brand-lime' : 'bg-brand-yellow'"
           >{{ beltJudge.matched ? '✅' : '⚠' }} {{ beltJudge.title }}</span
         >
-        <span class="font-mono text-[9px] opacity-60">{{
+        <span class="font-mono text-[10px] opacity-60">{{
           t('inputShaping.fromPrinter.beltPeaks', {
             a: beltJudge.peakA.toFixed(1),
             b: beltJudge.peakB.toFixed(1),
@@ -427,17 +427,14 @@ async function runVib(): Promise<void> {
           {{ tick.label }}
         </text>
       </svg>
-      <p class="text-[9px] opacity-70">{{ beltJudge.advice }}</p>
-      <div class="flex gap-3 font-mono text-[9px]">
+      <p class="text-[10px] opacity-70">{{ beltJudge.advice }}</p>
+      <div class="flex gap-3 font-mono text-[10px]">
         <span class="flex items-center gap-1"
           ><span class="inline-block h-0 w-3 border-t-2" style="border-color: #5b8cff" />
           {{ t('inputShaping.fromPrinter.beltLegendA') }}</span
         >
         <span class="flex items-center gap-1"
-          ><span
-            class="inline-block h-0 w-3 border-t-2 border-dashed"
-            style="border-color: #ff5247"
-          />
+          ><span class="inline-block h-0 w-3 border-t-2" style="border-color: #ff5247" />
           {{ t('inputShaping.fromPrinter.beltLegendB') }}</span
         >
       </div>
@@ -446,20 +443,20 @@ async function runVib(): Promise<void> {
     <!-- Axes-map detection: orientation + the paste-ready axes_map. -->
     <div v-if="axesMapResult && axesChart" class="space-y-1 rounded-brutal border-2 border-ink p-2">
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-[10px] font-bold uppercase tracking-wide">{{
+        <span class="text-[11px] font-bold uppercase tracking-wide">{{
           t('inputShaping.fromPrinter.axesResultTitle')
         }}</span>
         <span class="nb-badge font-mono text-xs" :class="statusBg(axesMapResult.status)">{{
           axesMapResult.axes_map
         }}</span>
-        <button class="nb-btn px-2 py-0.5 text-[10px]" @click="copyAxesMap">
+        <button class="nb-btn px-2 py-0.5 text-[11px]" @click="copyAxesMap">
           {{
             axesCopied ? t('inputShaping.fromPrinter.copied') : t('inputShaping.fromPrinter.copy')
           }}
         </button>
       </div>
-      <p class="text-[9px] opacity-70">{{ matchVerdict(axesMapResult) }}</p>
-      <div class="flex flex-wrap gap-1.5 font-mono text-[9px]">
+      <p class="text-[10px] opacity-70">{{ matchVerdict(axesMapResult) }}</p>
+      <div class="flex flex-wrap gap-1.5 font-mono text-[10px]">
         <span
           v-for="m in axesMapResult.mappings"
           :key="m.machine_axis"
@@ -531,7 +528,7 @@ async function runVib(): Promise<void> {
           </text>
         </template>
       </svg>
-      <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[9px] opacity-70">
+      <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-70">
         <span class="flex items-center gap-1"
           ><span class="inline-block h-2 w-3 rounded-sm" style="background: #ff5247" />{{
             t('inputShaping.fromPrinter.legendAccelX')
@@ -561,14 +558,14 @@ async function runVib(): Promise<void> {
           t('inputShaping.fromPrinter.noiseValue', { v: axesMapResult.noise.toFixed(0) })
         }}</span>
       </div>
-      <p v-if="axesMapResult.messages.length" class="text-[9px] opacity-60">
+      <p v-if="axesMapResult.messages.length" class="text-[10px] opacity-60">
         {{ axesMapResult.messages.join(' · ') }}
       </p>
     </div>
 
     <!-- Sustain frequency: hold a frequency in place to find what rattles by hand. -->
-    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
-      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+    <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.sustainTitle') }}</span>
         <select v-model="staticAxis" :class="inputClass">
           <option value="x">{{ t('inputShaping.fromPrinter.sustainAxisX') }}</option>
@@ -598,7 +595,7 @@ async function runVib(): Promise<void> {
           }}
         </button>
       </div>
-      <p class="font-mono text-[9px] opacity-60">
+      <p class="font-mono text-[10px] opacity-60">
         {{ t('inputShaping.fromPrinter.sustainDesc') }}
       </p>
       <HelpNote topic="sustain" />
@@ -613,14 +610,14 @@ async function runVib(): Promise<void> {
                 : t('inputShaping.fromPrinter.sustainOffTarget')
             }}</span
           >
-          <span class="font-mono text-[9px] opacity-60">{{
+          <span class="font-mono text-[10px] opacity-60">{{
             t('inputShaping.fromPrinter.sustainPeak', {
               freq: staticResult.dominant_freq.toFixed(0),
               pct: staticResult.excited_band_pct.toFixed(0),
             })
           }}</span>
         </div>
-        <p class="text-[9px] opacity-80">{{ staticResult.verdict }}</p>
+        <p class="text-[10px] opacity-80">{{ staticResult.verdict }}</p>
         <svg
           :viewBox="`0 0 ${specChart.width} ${specChart.height}`"
           class="w-full rounded-brutal border-2 border-ink bg-paper"
@@ -676,7 +673,7 @@ async function runVib(): Promise<void> {
             stroke-width="0.5"
           />
         </svg>
-        <div class="flex flex-wrap gap-x-3 font-mono text-[9px] opacity-60">
+        <div class="flex flex-wrap gap-x-3 font-mono text-[10px] opacity-60">
           <span>{{ t('inputShaping.fromPrinter.specAxes') }}</span>
           <span>{{ t('inputShaping.fromPrinter.energyLegend') }}</span>
         </div>
@@ -684,8 +681,8 @@ async function runVib(): Promise<void> {
     </div>
 
     <!-- Vibrations profile: a long speed × motor-angle sweep → smoothest/worst speeds. -->
-    <div class="space-y-1 rounded-brutal border-2 border-dashed border-ink p-2">
-      <div class="flex flex-wrap items-center gap-2 text-[10px]">
+    <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
+      <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.vibTitle') }}</span>
         <label class="flex items-center gap-1"
           >{{ t('inputShaping.fromPrinter.vibMax') }}
@@ -717,7 +714,7 @@ async function runVib(): Promise<void> {
         keypath="inputShaping.fromPrinter.vibDesc"
         tag="p"
         scope="global"
-        class="font-mono text-[9px] opacity-60"
+        class="font-mono text-[10px] opacity-60"
       >
         <template #step
           ><strong>{{ t('inputShaping.fromPrinter.vibDescStep') }}</strong></template
