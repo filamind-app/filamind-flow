@@ -109,7 +109,11 @@
           "term": "Interfaz (UART / SPI)",
           "def": "Cómo se comunica el MCU con el controlador. UART es un solo cable (familia TMC220x); SPI es un bus multicable más rápido usado por las piezas de rendimiento (2130 / 5160). El TMC2240 puede usar cualquiera."
         }
-      }
+      },
+      "guide": "Guía",
+      "guideTitle": "Guía de drivers de motor",
+      "close": "Cerrar",
+      "howToRead": "Cómo leer este panel"
     },
     "format": {
       "amps": "{a} A",

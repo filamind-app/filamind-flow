@@ -30,7 +30,7 @@ const hasBody = computed(() => tte(bodyKey.value))
       :aria-expanded="open"
       @click="open = !open"
     >
-      {{ open ? '▾' : 'ℹ' }} {{ open ? title : t('motorDrivers.help.whatsThis') }}
+      <span aria-hidden="true">{{ open ? '▾' : 'ℹ' }}</span> {{ title }}
     </button>
     <div
       v-if="open"

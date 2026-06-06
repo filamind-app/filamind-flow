@@ -109,7 +109,11 @@
           "term": "接口 (UART / SPI)",
           "def": "MCU 与驱动器通信的方式。UART 是单线（TMC220x 系列）；SPI 是更快的多线总线，用于高性能型号 (2130 / 5160)。TMC2240 两者皆可。"
         }
-      }
+      },
+      "guide": "指南",
+      "guideTitle": "电机驱动器指南",
+      "close": "关闭",
+      "howToRead": "如何阅读此面板"
     },
     "format": {
       "amps": "{a} A",
