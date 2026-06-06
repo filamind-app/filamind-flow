@@ -6,6 +6,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.88.0] - 2026-06-06
+
+### Changed
+
+- **Help reorganised — named hints + one Guide drawer (Motor Drivers).** The help layer was
+  scattered and undiscoverable: every hint was an identical generic "what's this?" link, and the
+  Motor Drivers widget ended in a row of **13 indistinguishable** such links (plus two more at the
+  top). You couldn't tell what any of them revealed without clicking each. Now:
+  - **Named contextual hints** — each inline `HelpNote` shows its **topic title** as the trigger
+    (e.g. "Run / hold current") instead of a generic "what's this?", so hints are distinguishable at
+    a glance.
+  - **One Guide drawer** — a new shared `components/ui/HelpDrawer.vue` (off-canvas, RTL-aware,
+    closes on backdrop/✕/Esc) gathers the whole help layer in one organised place: the "how to read"
+    steps, every topic (title + illustration + body), and the glossary. A single **"❓ Guide"** button
+    in the widget header opens it.
+  - **Removed the scattered link rows** — the 13-link bottom dump and the duplicate top links are
+    gone (their content now lives in the drawer + the co-located named hints).
+  - Adds `motorDrivers.help.{guide,guideTitle,close,howToRead}` across all 7 locales (872 keys/locale).
+
+  This is the first of a short series; the same pattern will be applied to Input Shaping and the
+  Firmware Manager, followed by a density/legibility pass.
+
 ## [0.87.0] - 2026-06-06
 
 ### Changed

@@ -5,16 +5,17 @@ import { useI18n } from 'vue-i18n'
 import { fetchDriverStatus, fetchMotorCatalog, saveMotorAssignment } from './api'
 import HelpIllo from './HelpIllo.vue'
 import GuidedWizard from './GuidedWizard.vue'
-import HelpNote from './HelpNote.vue'
 import HomingPanel from './HomingPanel.vue'
 import LiveMonitor from './LiveMonitor.vue'
 import MotorPicker from './MotorPicker.vue'
 import MotorSyncPanel from './MotorSyncPanel.vue'
 import RecommendPanel from './RecommendPanel.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
+import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
 import RegisterEditor from './RegisterEditor.vue'
+import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import {
   axisHeading,
   capabilityChips,
@@ -32,12 +33,11 @@ import {
 } from './format'
 import type { DriversStatus, MotorSpec, TmcDriver } from './types'
 
-const { t, tm } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'global' })
 
 const status = ref<DriversStatus | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(true)
-const showSteps = ref(false)
 const motorCatalog = ref<MotorSpec[]>([])
 const mode = ref<'dashboard' | 'guided'>('dashboard')
 const MODE_TABS = computed<{ id: 'dashboard' | 'guided'; label: string }[]>(() => [
@@ -100,29 +100,22 @@ onUnmounted(() => {
       <p class="min-w-0 flex-1 text-xs opacity-70">
         {{ t('motorDrivers.widget.intro') }}
       </p>
-      <HelpIllo illo="driver" class="h-8 w-8 shrink-0 opacity-70" />
+      <div class="flex shrink-0 items-center gap-2">
+        <HelpDrawer
+          namespace="motorDrivers"
+          :topics="HELP_TOPICS"
+          :illo-map="HELP_ILLO"
+          :illo="HelpIllo"
+          :glossary-keys="GLOSSARY_KEYS"
+          steps-key="motorDrivers.widget.steps"
+          :button-label="t('motorDrivers.help.guide')"
+          :title="t('motorDrivers.help.guideTitle')"
+          :close-label="t('motorDrivers.help.close')"
+          :steps-title="t('motorDrivers.help.howToRead')"
+        />
+        <HelpIllo illo="driver" class="h-8 w-8 opacity-70" />
+      </div>
     </div>
-    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-      <HelpNote topic="overview" />
-      <HelpNote topic="glossary" />
-      <button
-        class="font-mono text-[10px] opacity-60 transition-opacity hover:opacity-100"
-        :aria-expanded="showSteps"
-        @click="showSteps = !showSteps"
-      >
-        {{
-          showSteps
-            ? t('motorDrivers.widget.howToReadHide')
-            : t('motorDrivers.widget.howToReadShow')
-        }}
-      </button>
-    </div>
-    <ol
-      v-if="showSteps"
-      class="list-decimal space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper py-2 ps-6 pe-2 text-[11px] leading-snug opacity-80"
-    >
-      <li v-for="(s, i) in tm('motorDrivers.widget.steps')" :key="i">{{ s }}</li>
-    </ol>
 
     <!-- Dashboard / Guided mode strip — shown once the printer is reachable, so the Guided
          wizard is discoverable even before any driver is assigned a motor (#119). -->
@@ -268,23 +261,6 @@ onUnmounted(() => {
 
       <!-- Printer-level: motor synchronization (dual/quad-motor axes) -->
       <MotorSyncPanel />
-
-      <!-- Contextual help (all collapsed) -->
-      <div class="flex flex-wrap gap-x-3 gap-y-1 pt-1">
-        <HelpNote topic="current" />
-        <HelpNote topic="chopper" />
-        <HelpNote topic="microsteps" />
-        <HelpNote topic="stallguard" />
-        <HelpNote topic="health" />
-        <HelpNote topic="catalog" />
-        <HelpNote topic="motor" />
-        <HelpNote topic="recommend" />
-        <HelpNote topic="homing" />
-        <HelpNote topic="sensorless" />
-        <HelpNote topic="monitor" />
-        <HelpNote topic="motorsync" />
-        <HelpNote topic="registers" />
-      </div>
     </template>
 
     <!-- Guided wizard mode -->

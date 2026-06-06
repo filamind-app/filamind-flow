@@ -109,7 +109,11 @@
           "term": "Schnittstelle (UART / SPI)",
           "def": "Wie die MCU mit dem Treiber spricht. UART ist eine einzelne Leitung (TMC220x-Familie); SPI ist ein schnellerer Mehrleiter-Bus, der von den Performance-Teilen (2130 / 5160) verwendet wird. Der TMC2240 kann beides."
         }
-      }
+      },
+      "guide": "Anleitung",
+      "guideTitle": "Motortreiber-Anleitung",
+      "close": "Schließen",
+      "howToRead": "So liest du dieses Panel"
     },
     "format": {
       "amps": "{a} A",

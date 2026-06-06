@@ -109,7 +109,11 @@
           "term": "Interface (UART / SPI)",
           "def": "How the MCU talks to the driver. UART is a single wire (TMC220x family); SPI is a faster multi-wire bus used by the performance parts (2130 / 5160). The TMC2240 can do either."
         }
-      }
+      },
+      "guide": "Guide",
+      "guideTitle": "Motor Drivers guide",
+      "close": "Close",
+      "howToRead": "How to read this panel"
     },
     "format": {
       "amps": "{a} A",
