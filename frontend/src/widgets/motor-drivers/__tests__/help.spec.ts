@@ -46,11 +46,13 @@ describe('motor-drivers help structure + catalog', () => {
 })
 
 describe('motor-drivers HelpNote.vue (renders through i18n)', () => {
-  it('shows the toggle, then title + body when expanded', async () => {
+  it('shows the named title as the trigger, then the body when expanded', async () => {
     const w = mount(HelpNote, { props: { topic: 'overview' }, global: { plugins: [i18n] } })
-    expect(w.text()).toContain(t('motorDrivers.help.whatsThis'))
-    await w.find('button').trigger('click')
+    // The trigger is named (the topic title), not a generic "what's this?", so notes are
+    // distinguishable at a glance.
     expect(w.text()).toContain(t('motorDrivers.help.topics.overview.title'))
+    expect(w.text()).not.toContain(t('motorDrivers.help.whatsThis'))
+    await w.find('button').trigger('click')
     expect(w.text()).toContain(t('motorDrivers.help.topics.overview.body'))
   })
 
