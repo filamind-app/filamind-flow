@@ -1,0 +1,114 @@
+{
+  "maxFlow": {
+    "intro": "Encuentra el mayor flujo volumétrico (mm³/s) que tu hotend puede mantener — aumentando el flujo progresivamente mientras vigilas la carga StallGuard del extrusor hasta el momento en que el engranaje patina. Previsualiza primero el plan; la prueba en vivo calienta y extruye, así que prepara la impresora antes de ejecutarla.",
+    "help": {
+      "guide": "Ayuda",
+      "guideTitle": "Acerca de Max-Flow",
+      "close": "Cerrar",
+      "howToRead": "Cómo usar",
+      "steps": [
+        "Establece la temperatura de prueba y el diámetro de tu filamento (elige un hotend para precargar valores).",
+        "Previsualiza el plan — muestra cada paso de flujo y cuánto filamento empuja.",
+        "Marca la lista de seguridad y luego ejecuta la prueba en vivo (calienta + extruye).",
+        "Lee el flujo máximo sostenido y copia el valor sugerido para el laminador."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Cómo funciona la prueba",
+          "body": "El extrusor empuja filamento a un flujo volumétrico que aumenta de forma constante. Mientras el engranaje dentado agarra limpiamente, la lectura de carga StallGuard se mantiene estable; en cuanto empieza a patinar, las lecturas se disparan de forma errática. El flujo más alto alcanzado antes de ese salto es tu flujo máximo sostenible. La rampa se detiene en cuanto se detecta el patinaje, de modo que no se desgasta filamento más allá del primer patinaje."
+        },
+        "stallguard": {
+          "title": "Detección de patinaje con StallGuard",
+          "body": "StallGuard es una función del controlador TMC que informa de la carga del motor. Esta prueba la muestrea muchas veces por paso de flujo y busca un aumento súbito en la dispersión (IQR) o la variación (CV) — la señal de que el engranaje pierde agarre. Los umbrales provienen de un perfil por controlador. Nota: en un extrusor TMC2209 esto usa la ruta experimental SG4, así que trata la primera ejecución como una calibración."
+        },
+        "safety": {
+          "title": "Seguridad",
+          "body": "Esta es una prueba caliente y en movimiento que hace patinar el extrusor deliberadamente. Carga filamento, asegúrate de que la boquilla esté despejada (sobre la cama o una zona de desecho) y permanece cerca. La ejecución se rechaza mientras la impresora está imprimiendo, y el calentador siempre se apaga al terminar."
+        },
+        "slicer": {
+          "title": "Uso del resultado",
+          "body": "Pon el valor sugerido en el campo \"max volumetric speed\" de tu laminador (por filamento). La cifra conservadora (80 % del máximo medido) es un límite seguro para el día a día; la cifra equilibrada (90 %) fuerza un poco más. Temperaturas de hotend más altas suelen aumentar el flujo alcanzable."
+        },
+        "glossary": { "title": "Glosario", "body": "" }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Flujo volumétrico",
+          "def": "Cuánto plástico funde el hotend por segundo (mm³/s) — el verdadero límite de velocidad para imprimir rápido."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Una señal del controlador TMC que informa de la carga mecánica del motor, usada aquí para detectar el patinaje del extrusor."
+        },
+        "slip": {
+          "term": "Patinaje",
+          "def": "Cuando el engranaje del extrusor ya no puede agarrar el filamento con suficiente rapidez y patina — el techo del flujo."
+        },
+        "meltzone": {
+          "term": "Zona de fusión",
+          "def": "La longitud calentada del hotend; una zona de fusión más larga (p. ej. Volcano) sostiene un flujo mayor."
+        }
+      }
+    },
+    "params": {
+      "title": "Parámetros de la prueba",
+      "temperature": "Temperatura (°C)",
+      "filamentDiameter": "Ø de filamento (mm)",
+      "hotend": "Hotend (opcional)",
+      "hotendNone": "— ninguno —",
+      "hotendHint": "Esperado ~{flow} mm³/s",
+      "startFlow": "Flujo inicial (mm³/s)",
+      "endFlow": "Flujo final (mm³/s)",
+      "stepFlow": "Paso (mm³/s)",
+      "samples": "Muestras / paso",
+      "extrudePerStep": "Extrusión / paso (mm)"
+    },
+    "plan": {
+      "button": "Previsualizar plan",
+      "title": "Rampa planificada",
+      "stepCount": "{count} pasos",
+      "totalExtrude": "{mm} mm de filamento",
+      "sgField": "Campo StallGuard: {field}",
+      "sgFieldUnknown": "No se conoce ningún campo StallGuard para este controlador",
+      "flowHead": "Flujo (mm³/s)",
+      "feedrateHead": "Avance (mm/min)",
+      "warning": "La prueba en vivo calienta el hotend y extruye filamento, deliberadamente hasta el punto de patinaje. Solo previsualización — todavía no se ejecuta nada."
+    },
+    "safety": {
+      "title": "Antes de ejecutar — lista de comprobación de seguridad",
+      "items": [
+        "El filamento está cargado y avanza libremente.",
+        "La boquilla está despejada — sobre la cama o un recipiente de desecho, no en el aire sobre las piezas.",
+        "Acepto que esto desgastará/hará patinar algo de filamento deliberadamente.",
+        "Permaneceré junto a la impresora durante toda la prueba."
+      ],
+      "ack": "He hecho todo lo anterior y la impresora está lista",
+      "note": "La ejecución se rechaza mientras se imprime; el calentador se apaga automáticamente al final."
+    },
+    "run": {
+      "button": "Ejecutar prueba en vivo",
+      "running": "Ejecutando… (calentando + extruyendo)",
+      "confirmTitle": "¿Iniciar la prueba de flujo máximo en vivo?",
+      "confirmBody": "Esto calienta el hotend a {temp} °C y extruye hasta {mm} mm de filamento, aumentando la rampa hasta que el extrusor patina.",
+      "confirm": "Ejecutar ahora",
+      "cancel": "Cancelar",
+      "busy": "Rechazado: la impresora está ocupada (imprimiendo o en pausa). Inténtalo de nuevo cuando esté inactiva.",
+      "error": "La prueba falló.",
+      "noSg": "No se leyeron muestras de StallGuard — el resultado de patinaje puede no ser fiable. Probablemente haya que ajustar el campo SG en vivo del controlador para este modelo."
+    },
+    "result": {
+      "title": "Resultado",
+      "maxFlow": "Flujo máximo sostenido",
+      "slipAt": "Patinaje detectado a {flow} mm³/s",
+      "noSlip": "Sin patinaje hasta el flujo más alto probado",
+      "reason": "Detalle",
+      "recommendTitle": "Valores sugeridos para el laminador (max volumetric speed)",
+      "conservative": "Conservador (80 %)",
+      "balanced": "Equilibrado (90 %)",
+      "units": "mm³/s"
+    },
+    "states": {
+      "loadingHotends": "Cargando hotends…"
+    }
+  }
+}

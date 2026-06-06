@@ -45,6 +45,10 @@
       "config-editor": {
         "title": "配置编辑器",
         "description": "浏览打印机的配置文件，解析为各个节并进行校验。"
+      },
+      "max-flow": {
+        "title": "Max-Flow",
+        "description": "测量热端能够持续达到的最高体积流量（StallGuard）。"
       }
     }
   }

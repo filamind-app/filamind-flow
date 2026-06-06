@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.98.0] - 2026-06-06
+
+### Added
+
+- **Max-Flow — measurement loop + widget (Track B).**
+  - `POST /api/maxflow/run` (actuating): heats the hotend, ramps the extrusion flow while
+    sampling the extruder's TMC StallGuard load, and feeds each step to the `max_flow` analysis
+    core. **Safe by construction** — refused while the printer is busy (409); the heater is
+    **always turned off in a `finally`**; and the ramp **stops at the first detected slip** so no
+    filament is ground past it. `MoonrakerClient.upload_file` was added earlier; this adds the
+    extruder StallGuard sampling. +4 backend tests (clean run, slip + early-stop, busy-refused,
+    heater-off-on-error).
+  - New **Max-Flow widget**: pick a hotend (prefills temp + flow range), preview the exact ramp
+    (flow → feedrate per step + total filament), then run behind a **safety checklist + confirm
+    gate**. Shows the max sustained flow, slip point, and suggested slicer values (80 % / 90 %),
+    with an illustrated help drawer. Fully internationalized across all 7 locales.
+  - Note: the live StallGuard field for a TMC2209 extruder during extrusion is best-effort and
+    validated on first live run (`sg_samples_seen` flags when none was read).
+
 ## [0.97.0] - 2026-06-06
 
 ### Added

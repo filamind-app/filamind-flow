@@ -42,4 +42,13 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./config-editor/ConfigEditorWidget.vue')),
   })
+
+  registerWidget({
+    id: 'max-flow',
+    title: 'Max-Flow',
+    icon: '🌡',
+    description: 'Measure the highest volumetric flow your hotend can sustain (StallGuard).',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./max-flow/MaxFlowWidget.vue')),
+  })
 }

@@ -1,0 +1,114 @@
+{
+  "maxFlow": {
+    "intro": "Finde den höchsten volumetrischen Fluss (mm³/s), den dein Hotend dauerhaft halten kann — indem der Fluss schrittweise erhöht wird, während die StallGuard-Last des Extruders auf den Moment des Durchrutschens beobachtet wird. Sieh dir zuerst den Plan an; der Live-Test heizt und extrudiert, also bereite den Drucker vor dem Start vor.",
+    "help": {
+      "guide": "Hilfe",
+      "guideTitle": "Über Max-Flow",
+      "close": "Schließen",
+      "howToRead": "Verwendung",
+      "steps": [
+        "Stelle die Testtemperatur und deinen Filamentdurchmesser ein (wähle ein Hotend zum Vorbelegen).",
+        "Zeige den Plan an — er listet jeden Flussschritt und wie viel Filament dabei gefördert wird.",
+        "Hake die Sicherheits-Checkliste ab und starte dann den Live-Test (heizt + extrudiert).",
+        "Lies den maximal gehaltenen Fluss ab und übernimm den vorgeschlagenen Slicer-Wert."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "So funktioniert der Test",
+          "body": "Der Extruder fördert Filament mit stetig steigendem volumetrischen Fluss. Solange das gehärtete Förderrad sauber greift, bleibt der StallGuard-Lastwert eng beieinander; sobald es zu rutschen beginnt, springen die Werte stark. Der höchste Fluss vor diesem Sprung ist dein dauerhaft haltbarer Maximalfluss. Die Rampe stoppt, sobald Durchrutschen erkannt wird, sodass kein Filament über das erste Durchrutschen hinaus abgeschliffen wird."
+        },
+        "stallguard": {
+          "title": "StallGuard-Schlupferkennung",
+          "body": "StallGuard ist eine Funktion des TMC-Treibers, die die Motorlast meldet. Dieser Test misst sie viele Male pro Flussschritt und sucht nach einem plötzlichen Anstieg der Streuung (IQR) oder Variation (CV) — dem typischen Zeichen, dass das Rad den Halt verliert. Die Schwellenwerte stammen aus einem treiberspezifischen Profil. Hinweis: Bei einem TMC2209-Extruder wird der experimentelle SG4-Pfad genutzt, betrachte den ersten Durchlauf daher als Kalibrierung."
+        },
+        "safety": {
+          "title": "Sicherheit",
+          "body": "Dies ist ein heißer, bewegter Test, der den Extruder absichtlich zum Durchrutschen bringt. Lade Filament, stelle sicher, dass die Düse frei ist (über dem Bett oder einem Abfallbereich) und bleibe in der Nähe. Der Durchlauf wird verweigert, während der Drucker druckt, und das Heizelement wird am Ende immer ausgeschaltet."
+        },
+        "slicer": {
+          "title": "Das Ergebnis nutzen",
+          "body": "Trage den vorgeschlagenen Wert in den \"max volumetric speed\" deines Slicers ein (pro Filament). Der konservative Wert (80 % des gemessenen Maximums) ist eine sichere Alltagsgrenze; der ausgewogene Wert (90 %) reizt es etwas weiter aus. Höhere Hotend-Temperaturen erhöhen in der Regel den erreichbaren Fluss."
+        },
+        "glossary": { "title": "Glossar", "body": "" }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Volumetrischer Fluss",
+          "def": "Wie viel Kunststoff das Hotend pro Sekunde schmilzt (mm³/s) — das eigentliche Tempolimit für schnelles Drucken."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Ein Signal des TMC-Treibers, das die mechanische Motorlast meldet und hier zum Erkennen des Extruder-Schlupfs verwendet wird."
+        },
+        "slip": {
+          "term": "Durchrutschen",
+          "def": "Wenn das Extruderrad das Filament nicht mehr schnell genug greifen kann und überspringt — die Flussobergrenze."
+        },
+        "meltzone": {
+          "term": "Schmelzzone",
+          "def": "Die beheizte Länge des Hotends; eine längere Schmelzzone (z. B. Volcano) hält einen höheren Fluss."
+        }
+      }
+    },
+    "params": {
+      "title": "Testparameter",
+      "temperature": "Temperatur (°C)",
+      "filamentDiameter": "Filament-Ø (mm)",
+      "hotend": "Hotend (optional)",
+      "hotendNone": "— keines —",
+      "hotendHint": "Erwartet ~{flow} mm³/s",
+      "startFlow": "Startfluss (mm³/s)",
+      "endFlow": "Endfluss (mm³/s)",
+      "stepFlow": "Schritt (mm³/s)",
+      "samples": "Messungen / Schritt",
+      "extrudePerStep": "Extrusion / Schritt (mm)"
+    },
+    "plan": {
+      "button": "Plan anzeigen",
+      "title": "Geplante Rampe",
+      "stepCount": "{count} Schritte",
+      "totalExtrude": "{mm} mm Filament",
+      "sgField": "StallGuard-Feld: {field}",
+      "sgFieldUnknown": "Kein StallGuard-Feld für diesen Treiber bekannt",
+      "flowHead": "Fluss (mm³/s)",
+      "feedrateHead": "Vorschub (mm/min)",
+      "warning": "Der Live-Test heizt das Hotend und extrudiert Filament, absichtlich bis zum Durchrutschen. Nur Vorschau — es läuft noch nichts."
+    },
+    "safety": {
+      "title": "Vor dem Start — Sicherheits-Checkliste",
+      "items": [
+        "Filament ist geladen und läuft frei nach.",
+        "Die Düse ist frei — über dem Bett oder einem Abfallbehälter, nicht in der Luft über Bauteilen.",
+        "Mir ist bewusst, dass dabei absichtlich etwas Filament abgeschliffen wird/durchrutscht.",
+        "Ich bleibe während des gesamten Tests beim Drucker."
+      ],
+      "ack": "Ich habe alles oben Genannte erledigt und der Drucker ist bereit",
+      "note": "Der Durchlauf wird während des Druckens verweigert; das Heizelement wird am Ende automatisch ausgeschaltet."
+    },
+    "run": {
+      "button": "Live-Test starten",
+      "running": "Läuft… (heizt + extrudiert)",
+      "confirmTitle": "Den Live-Max-Flow-Test starten?",
+      "confirmBody": "Dies heizt das Hotend auf {temp} °C und extrudiert bis zu {mm} mm Filament, mit steigender Rampe bis der Extruder durchrutscht.",
+      "confirm": "Jetzt starten",
+      "cancel": "Abbrechen",
+      "busy": "Verweigert: Der Drucker ist beschäftigt (druckt oder pausiert). Versuche es erneut, wenn er im Leerlauf ist.",
+      "error": "Der Test ist fehlgeschlagen.",
+      "noSg": "Es wurden keine StallGuard-Messungen erfasst — das Schlupf-Ergebnis ist möglicherweise unzuverlässig. Wahrscheinlich muss das Live-SG-Feld des Treibers für dieses Modell angepasst werden."
+    },
+    "result": {
+      "title": "Ergebnis",
+      "maxFlow": "Maximal gehaltener Fluss",
+      "slipAt": "Durchrutschen erkannt bei {flow} mm³/s",
+      "noSlip": "Kein Durchrutschen bis zum höchsten getesteten Fluss",
+      "reason": "Detail",
+      "recommendTitle": "Vorgeschlagene Slicer-Werte (max volumetric speed)",
+      "conservative": "Konservativ (80 %)",
+      "balanced": "Ausgewogen (90 %)",
+      "units": "mm³/s"
+    },
+    "states": {
+      "loadingHotends": "Hotends werden geladen…"
+    }
+  }
+}

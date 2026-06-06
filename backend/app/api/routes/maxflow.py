@@ -9,13 +9,19 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+import httpx
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
+from app.config import Settings, get_settings
 from app.services import max_flow_service
 from app.services.max_flow_service import RampParams
+from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/maxflow", tags=["maxflow"])
+
+#: Heating + the extrusion ramp block for minutes — the run client needs a long timeout.
+_RUN_TIMEOUT_S = 1200.0
 
 
 class MaxFlowPlanRequest(BaseModel):
@@ -39,3 +45,24 @@ async def maxflow_plan(body: MaxFlowPlanRequest) -> dict[str, Any]:
         return max_flow_service.plan(params)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/run")
+async def maxflow_run(
+    body: MaxFlowPlanRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Run the live max-flow test (ACTUATING: heat + extrude + sample StallGuard).
+
+    Refused while the printer is busy (409). The heater is always turned off when it finishes,
+    and the ramp stops as soon as slip is detected.
+    """
+    client = MoonrakerClient(settings.moonraker_url, timeout=_RUN_TIMEOUT_S)
+    params = RampParams(**body.model_dump())
+    try:
+        return await max_flow_service.run_max_flow(client, params)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except max_flow_service.MaxFlowBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc

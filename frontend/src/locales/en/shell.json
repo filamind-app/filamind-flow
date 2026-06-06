@@ -45,6 +45,10 @@
       "config-editor": {
         "title": "Config Editor",
         "description": "Browse your printer's config files, parsed into sections with validation."
+      },
+      "max-flow": {
+        "title": "Max-Flow",
+        "description": "Measure the highest volumetric flow your hotend can sustain (StallGuard)."
       }
     }
   }
