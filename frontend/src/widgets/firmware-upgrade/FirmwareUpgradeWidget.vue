@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import LogPane from '@/components/ui/LogPane.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
+import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
 import ExternalFirmwarePanel from './ExternalFirmwarePanel.vue'
@@ -12,6 +13,8 @@ import FirmwareGuided from './FirmwareGuided.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
 import FirmwareFlashConfirm from './FirmwareFlashConfirm.vue'
 import HelpNote from './HelpNote.vue'
+import HelpIllo from './HelpIllo.vue'
+import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import {
   buildFirmware,
   cancelTask,
@@ -42,7 +45,7 @@ import type {
   ServiceInfo,
 } from './types'
 
-const { t, tm } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'global' })
 
 type FwMode = 'guided' | 'status' | 'configure' | 'devices' | 'external'
 const mode = ref<FwMode>('status')
@@ -65,7 +68,6 @@ const beaconFlashing = ref(false)
 const health = ref<HealthReport | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(true)
-const showSteps = ref(false)
 
 const healthIssues = computed(() => health.value?.checks.filter((c) => !c.ok) ?? [])
 const healthTitle = computed(() =>
@@ -436,6 +438,22 @@ onUnmounted(() => {
 
 <template>
   <div class="space-y-3 text-sm">
+    <!-- One "guide" button (the organised home for all help), reachable from every tab. -->
+    <div class="flex justify-end">
+      <HelpDrawer
+        namespace="firmware"
+        :topics="HELP_TOPICS"
+        :illo-map="HELP_ILLO"
+        :illo="HelpIllo"
+        :glossary-keys="GLOSSARY_KEYS"
+        steps-key="firmware.widget.steps"
+        :button-label="t('firmware.help.guide')"
+        :title="t('firmware.help.guideTitle')"
+        :close-label="t('firmware.help.close')"
+        :steps-title="t('firmware.help.howToRead')"
+      />
+    </div>
+
     <!-- House navigation: one persistent tab strip (#117) — replaces the footer-button nav. -->
     <WidgetTabs v-model="mode" :tabs="FW_TABS" />
 
@@ -477,30 +495,6 @@ onUnmounted(() => {
       </div>
 
       <template v-else-if="status">
-        <!-- Help layer (collapsed by default — the project widget-UX rule) -->
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <HelpNote topic="overview" />
-          <HelpNote topic="glossary" />
-          <HelpNote topic="status" />
-          <HelpNote topic="toolchain" />
-          <HelpNote topic="services" />
-          <HelpNote topic="devices" />
-          <HelpNote topic="flash" />
-          <button
-            class="font-mono text-[10px] opacity-60 transition-opacity hover:opacity-100"
-            :aria-expanded="showSteps"
-            @click="showSteps = !showSteps"
-          >
-            {{ showSteps ? t('firmware.widget.stepsHide') : t('firmware.widget.stepsShow') }}
-          </button>
-        </div>
-        <ol
-          v-if="showSteps"
-          class="list-decimal space-y-1 rounded-brutal border-2 border-dashed border-ink bg-paper py-2 ps-6 pe-2 text-[11px] leading-snug opacity-80"
-        >
-          <li v-for="(s, i) in tm('firmware.widget.steps')" :key="i">{{ s }}</li>
-        </ol>
-
         <div class="space-y-1.5">
           <!-- Host runs the Klipper host software — the reference every MCU syncs to. -->
           <div

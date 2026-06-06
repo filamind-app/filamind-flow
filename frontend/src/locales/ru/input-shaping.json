@@ -84,7 +84,10 @@
           "term": "max_accel",
           "def": "Ускорение, которое шейпер может выдержать без чрезмерного сглаживания — предлагаемое значение SET_VELOCITY_LIMIT / printer.cfg."
         }
-      }
+      },
+      "guide": "Справка",
+      "guideTitle": "Руководство по Input Shaping",
+      "close": "Закрыть"
     },
     "grade": {
       "clarity": {

@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.89.0] - 2026-06-06
+
+### Changed
+
+- **Help reorganised across Input Shaping + Firmware Manager (same kit as Motor Drivers).** Applied
+  the v0.88.0 help pattern to the other two widgets so the whole app is consistent:
+  - **Named contextual hints** — every inline `HelpNote` in Input Shaping and the Firmware Manager
+    now shows its **topic title** as the trigger instead of a generic "what's this?".
+  - **One Guide drawer per widget** — a single **"❓ Guide"** button (in each widget's header,
+    reachable from every tab) opens the shared `HelpDrawer`: Input Shaping's gathers every topic +
+    glossary; the Firmware Manager's also includes the build→flash "how to read" steps.
+  - **Removed the scattered link rows** — the Firmware Status tab's 7-link help dump + its steps
+    toggle are gone (now in the drawer), and Input Shaping's stray standalone glossary link is gone
+    (the co-located, now-named hints per view remain).
+  - Adds `{inputShaping,firmware}.help.{guide,guideTitle,close[,howToRead]}` across all 7 locales
+    (879 keys/locale). This completes the help-reorg phase of the UX series; a density/legibility
+    pass (font size + replacing dashed borders with clean cards) is next.
+
 ## [0.88.1] - 2026-06-06
 
 ### Fixed

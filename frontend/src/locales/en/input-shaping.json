@@ -84,7 +84,10 @@
           "term": "max_accel",
           "def": "The acceleration the shaper can sustain without too much smoothing — a suggested SET_VELOCITY_LIMIT / printer.cfg value."
         }
-      }
+      },
+      "guide": "Guide",
+      "guideTitle": "Input Shaping guide",
+      "close": "Close"
     },
     "grade": {
       "clarity": {

@@ -69,7 +69,11 @@
           "term": "Profil",
           "def": "Une configuration de firmware enregistrée (Kconfig / menuconfig) pour une carte, afin de pouvoir recompiler exactement le même firmware plus tard."
         }
-      }
+      },
+      "guide": "Guide",
+      "guideTitle": "Guide du gestionnaire de firmware",
+      "close": "Fermer",
+      "howToRead": "Comment lire ce panneau"
     },
     "widget": {
       "tabGuided": "🧭 Guidé",

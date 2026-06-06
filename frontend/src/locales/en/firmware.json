@@ -69,7 +69,11 @@
           "term": "Profile",
           "def": "A saved firmware configuration (Kconfig / menuconfig) for a board, so you can rebuild the exact same firmware later."
         }
-      }
+      },
+      "guide": "Guide",
+      "guideTitle": "Firmware Manager guide",
+      "close": "Close",
+      "howToRead": "How to read this panel"
     },
     "widget": {
       "tabGuided": "🧭 Guided",

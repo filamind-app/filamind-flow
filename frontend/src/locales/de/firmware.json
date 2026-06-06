@@ -69,7 +69,11 @@
           "term": "Profil",
           "def": "Eine gespeicherte Firmware-Konfiguration (Kconfig / menuconfig) für eine Platine, damit du später genau dieselbe Firmware neu bauen kannst."
         }
-      }
+      },
+      "guide": "Anleitung",
+      "guideTitle": "Firmware-Manager-Anleitung",
+      "close": "Schließen",
+      "howToRead": "So liest du dieses Panel"
     },
     "widget": {
       "tabGuided": "🧭 Geführt",
