@@ -35,10 +35,17 @@ async def hardware(
 
 @router.get("/categories")
 async def hardware_categories() -> dict[str, Any]:
-    """The hardware categories + total component count (for the browser's filters)."""
+    """The hardware categories + per-category and total counts (for the browser's
+    sectioned catalog + filters)."""
+    from collections import Counter
+
+    items = reference_data.hardware_items()
+    counts = Counter(str(i.get("category", "")) for i in items)
+    cats = reference_data.hardware_categories()
     return {
-        "categories": reference_data.hardware_categories(),
-        "total": len(reference_data.hardware_items()),
+        "categories": cats,
+        "counts": {c: counts.get(c, 0) for c in cats},
+        "total": len(items),
     }
 
 
