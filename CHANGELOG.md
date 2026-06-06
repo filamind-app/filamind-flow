@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.93.0] - 2026-06-06
+
+### Added
+
+- **Phase 0.2 (foundation) — config engine + flow-analysis core.** Two internal backend modules
+  the upcoming widgets build on (pure logic; no Moonraker, no motion):
+  - `klipper_config.py` — a round-trip Klipper INI engine (`parse` / `dump` / `validate`): preserves
+    comments, `:`/`=` separators, section order, multi-line values and the auto-saved `SAVE_CONFIG`
+    block, so `dump(parse(x)) == x`. Light validation (duplicate sections, empty names, stray params).
+    Backs the planned Config Editor.
+  - `max_flow.py` — a pure StallGuard slip-detection analysis core: per-step median / IQR / CV stats +
+    CV-spike / IQR-spread / run-outlier detectors driven by the per-driver reference constants; turns a
+    flow sweep's samples into a max-flow result. Backs the planned Max-Flow widget.
+  - +23 backend tests (12 config round-trip/validate + 11 flow-analysis).
+
 ## [0.92.1] - 2026-06-06
 
 ### Changed
