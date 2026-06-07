@@ -6,6 +6,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.127.0] - 2026-06-07
+
+### Added
+
+- **Printer-model preset enrichment — all 108 presets. The entire hardware database is now
+  enriched: 406 web-enriched + 2 hardware-verified = every one of the 408 board entities.** The
+  printer presets already carried Klipper pin-maps; this adds printer-level data: stock control
+  board (`boardHint`, set on 106/108), kinematics, build volume, bed, hotend, stock extruder,
+  temps, year, and stock driver type, plus config-affecting electronics notes and Klipper-relevant
+  config notes. Same bounded Agent-tool method (4 waves). **+1046 specs, +107 media links, +266
+  electronics facts, +266 config notes.** Covers Anet, Anycubic, Artillery, BIQU, Creality (full
+  Ender/CR line), Elegoo, Eryone, FLSUN, Geeetech, Kingroon, Longer, LulzBot, MakerGear, Monoprice,
+  Prusa MINI+, RatRig, SeeMeCNC, Sovol, Sunlu, TEVO, Tronxy, Two Trees, Velleman, Voxelab, Wanhao,
+  FlashForge and more.
+- Agents corrected/clarified many stock-board facts from authoritative sources: Ender-2 Pro HC32
+  variant ships an HDSC HC32F460 (needs a community Klipper port, not STM32 firmware); Ender-3 Max
+  mixes TMC2208 (X/Y) with A4988 (Z/E); LulzBot Mini 2 = Einsy RAMBo (TMC2130 SPI), TAZ 6 = full
+  RAMBo (A4982); Monoprice Mini Delta = Malyan STM32F070 (has an official Klipper config); Wanhao
+  Duplicator 6 reads a PT100 via an onboard amplifier (not a 100k thermistor); Wanhao i3 v2.1 =
+  Melzi ATmega1284P; Anycubic Vyper / Sovol SV06 = GD32F103 (verify chip before flashing).
+
 ## [0.126.0] - 2026-06-07
 
 ### Added
