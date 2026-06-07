@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.120.0] - 2026-06-07
+
+### Added
+
+- **Web-researched enrichment for 32 boards (wave 1).** Using 4 bounded research agents (each given
+  a fixed batch — no runaway), enriched 32 popular boards that had no Klipper config, from
+  authoritative manufacturer / OSH-repo / wiki sources:
+  - **+107 confirmed specs**, **+57 media links** (product/repo/wiki/pinout/schematic/datasheet),
+    **+100 config-affecting electronics facts**, **+96 Klipper config notes**.
+  - The electronics are the high-value part — e.g. *LDO Nitehawk-SB uses a 2.2 kΩ thermistor pull-up
+    → set `pullup_resistor: 2200`*; *Octopus Pro per-driver 60 V MOTOR_POWER vs 28 V jumper*;
+    *Manta M8P V2 PT1000 pull-up jumper*; *Spider v3 permanent 120 Ω CAN termination*; *Duet 2 =
+    SPI TMC2660, current set in firmware*. All shown in the board detail (electronics + config notes
+    + links), traceable to source.
+  - Covers BigTreeTech, FYSETC, LDO, Duet3D, Mellow, MKS, Creality boards (incl. CB1/CB2/MKS-Pi SBCs,
+    U2C bridge, EBB/Nitehawk/SB2040 toolheads).
+
 ## [0.119.0] - 2026-06-07
 
 ### Added
