@@ -167,6 +167,18 @@ def test_toolhead_boards_are_classified() -> None:
     assert counts["printer-preset"] > 50  # presets stay their own class, not swept in
 
 
+def test_expansion_and_host_board_classes() -> None:
+    """Data audit Wave 2: Duet CAN-FD expansion/external-driver boards are class 'expansion';
+    host SBCs/SoCs mis-filed in boards[] are class 'host' (not masquerading as 'mainboard')."""
+    by_id = {b["board_id"]: b for b in reference_data.boards()}
+    for bid in ("duet-3-3hc", "duet-3-1xd", "1hcl-v2-0", "duet-3-expansion-1hcl"):
+        assert by_id[bid]["boardClass"] == "expansion", bid
+    for bid in ("cb1", "cb2", "mks-pi-v1-0-v1-1", "sonic-pad-cr-t800c", "nebula-pad"):
+        assert by_id[bid]["boardClass"] == "host", bid
+    counts = Counter(b.get("boardClass") for b in reference_data.boards())
+    assert counts["expansion"] == 7 and counts["host"] == 10
+
+
 def test_boards_enriched_media_links_are_safe() -> None:
     """Phase 5+6: some boards carry enriched specs + link-only media. Any media URL
     must be a real http(s) link (never a fabricated/relative path)."""

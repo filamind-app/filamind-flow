@@ -174,7 +174,9 @@
       "boardClass": {
         "mainboard": "Carte principale",
         "toolhead": "Tête d'outil",
-        "printer-preset": "Préréglage imprimante"
+        "printer-preset": "Préréglage imprimante",
+        "expansion": "Extension",
+        "host": "Hôte (SBC)"
       }
     }
   }
