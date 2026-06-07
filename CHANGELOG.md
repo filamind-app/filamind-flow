@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.122.0] - 2026-06-07
+
+### Added
+
+- **Web-researched enrichment for 32 more boards (wave 3).** Same bounded 4-agent method (clean, no
+  runaway). Now **95 boards web-enriched** total.
+  - **+153 specs, +48 media links, +99 electronics facts, +96 config notes.**
+  - Covers RAMPS 1.6, Sanguinololu, the **Anycubic Trigorilla family** (8/16/32-bit, HC32F460 /
+    GD32F303 / STM32F103 / GD32F103 across i3-Mega, Kobra, Vyper), **ZNP K1 = Elegoo Neptune 4**
+    (STM32F402 + RK3328), ZNP Robin Nano DW, MKS THR36/42 + SGEN_L V2, BTT Octopus V1.0 / SKR V1.4
+    Turbo / U2C v1.x & v2.x / EBB36 v1.0–v1.2 & GEN2, FYSETC Spider v2.2/v3.0-F446 / S6 v2, Hurakan.
+  - Config-critical facts: *EBB36 hotend pin PA2 (v1.0/v1.1) → PB13 (v1.2)*, *EBB GEN2 uses LIS2DW
+    not ADXL345*, *Anycubic boards use soldered GC6609/TMC clones — manual run_current, no sensorless*,
+    *ZNP K1 stock MCU firmware is non-standard — a plain Klipper .bin won't work*.
+
 ## [0.121.0] - 2026-06-07
 
 ### Added
