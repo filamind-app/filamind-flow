@@ -19,6 +19,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from app.services import hardware_links as _hwlinks  # pure (no reference_data import) — no cycle
 from app.services import hardware_search as _hwsearch  # pure (no reference_data import) — no cycle
 
 _DIR = Path(__file__).resolve().parent.parent / "data" / "reference"
@@ -122,6 +123,17 @@ _CATALOG_IDX: dict[str, dict[str, Any]] = {
 # into API responses.
 _ITEM_HAY: list[str] = [_hwsearch._haystack(it) for it in _HW_ITEMS]
 
+# DB-2 linking backbone: the cross-entity graph (canonical manufacturers + MCU entities +
+# composite-key adjacency), built once at load for O(1) `related()` lookups.
+_LINKS: _hwlinks.LinkGraph = _hwlinks.build_links(
+    boards=_HW_BOARDS,
+    drivers=_HW_DRIVERS,
+    motors=_HW_MOTORS,
+    hosts=_HW_HOSTS,
+    catalog=_HW_CATALOG,
+    manufacturers=_HW_MANUFACTURERS,
+)
+
 
 def _dataset_etag() -> str:
     meta = _HARDWARE.get("_meta") or {}
@@ -135,6 +147,8 @@ def _dataset_etag() -> str:
             len(_HW_MOTORS),
             len(_HW_HOSTS),
             sum(len(v) for v in _HW_CATALOG.values()),
+            len(_LINKS.manufacturers),
+            len(_LINKS.mcus),
         )
     )
     return 'W/"hw-' + hashlib.md5(basis.encode()).hexdigest()[:16] + '"'
@@ -164,8 +178,46 @@ def hardware_categories() -> list[str]:
 
 
 def hardware_manufacturers() -> list[dict[str, Any]]:
-    """The manufacturer directory (name / country / website / specialty / categories)."""
+    """The raw manufacturer directory (name / country / website / specialty / categories)."""
     return _HW_MANUFACTURERS
+
+
+# ── DB-2 linking backbone (canonical manufacturers / MCUs + cross-entity graph) ───────
+def manufacturers_canonical() -> list[dict[str, Any]]:
+    """The canonical manufacturer entities — directory entries (deduped, each with a stable
+    ``manufacturer_id``, auto-derived ``aliases`` and a ``memberCount``) plus a few recurring
+    real brands derived from entity usage. Sorted most-connected first."""
+    return _LINKS.manufacturers
+
+
+def manufacturer_by_id(manufacturer_id: str) -> dict[str, Any] | None:
+    """A single canonical manufacturer entity by its ``manufacturer_id`` slug (O(1))."""
+    return _LINKS.manufacturer_by_id.get(manufacturer_id)
+
+
+def mcus() -> list[dict[str, Any]]:
+    """The canonical MCU entities parsed from board ``specs.MCU`` (normalised to a canonical
+    part, e.g. ``stm32f407``), each with a ``family``, an ``arch`` and a ``boardCount``.
+    Sorted by board usage."""
+    return _LINKS.mcus
+
+
+def mcu_by_id(mcu_id: str) -> dict[str, Any] | None:
+    """A single canonical MCU entity by its ``mcu_id`` slug (O(1))."""
+    return _LINKS.mcu_by_id.get(mcu_id)
+
+
+def related(plural_type: str, entity_id: str) -> dict[str, Any] | None:
+    """Grouped related entities for one node (O(1) adjacency walk), or ``None`` if unknown.
+
+    ``plural_type`` is the route path segment (``boards`` / ``drivers`` / ``motors`` / ``hosts``
+    / ``catalog`` / ``manufacturers`` / ``mcus``)."""
+    return _hwlinks.related(_LINKS, plural_type, entity_id)
+
+
+def link_graph() -> _hwlinks.LinkGraph:
+    """The full in-memory link graph (used by the CI edge-validator test)."""
+    return _LINKS
 
 
 def canonical_category_counts() -> dict[str, int]:

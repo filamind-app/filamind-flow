@@ -119,10 +119,21 @@ summaries) and two routes: a paginated list and a `/{id}` full record. A `manufa
 and `categories` round it out. CI guards keep it honest (per-category floors so a regen can't gut a
 category; a scrub check for external-project names; lossless port-aggregation locks).
 
-This dataset is being grown into the **shared data layer other widgets link to**: a planned
-relationship/`links` edge layer + a `GET /api/hardware/{type}/{id}/related` endpoint will let any
-widget pull an entity *and everything related to it* at O(1) (precomputed adjacency, kept in
-memory). See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
+**Performance (DB-1):** lists, `id→entity` index dicts and a precomputed per-item search haystack
+are built once at load, so every `*_by_id` is O(1) and the flat free-text search never rebuilds its
+haystacks per request; the read-only `/api/hardware/*` responses carry a weak `ETag` + `Cache-Control`
+(304 on a match, busting on redeploy).
+
+**Linking backbone (DB-2):** `hardware_links.py` (a pure module) turns the formerly-islanded
+relationships into a precomputed in-memory graph, built once at load. It canonicalises
+**manufacturers** (a stable `manufacturer_id` + auto-derived aliases — variant spellings collapse to
+one id — with junk/placeholders excluded), promotes the **MCU** to a first-class entity (board
+`specs.MCU` parsed via a chip-family whitelist → canonical part), and builds an adjacency map keyed by
+composite `<type>:<id>` ids (ids are *not* unique across types — `sovol-sv08` is both a board and a
+host). That powers `GET /api/hardware/manufacturers[/{id}]`, `/mcus[/{id}]`, a generic
+`GET /api/hardware/{type}/{id}/related`, and `?expand=related` on the detail routes — all O(1) — so a
+widget can pull an entity *and everything related to it* in one call. A CI edge-validator proves the
+graph has no dangling edges. See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
 
 ## Design system
 
