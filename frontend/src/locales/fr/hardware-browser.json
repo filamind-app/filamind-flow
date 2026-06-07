@@ -66,11 +66,22 @@
     },
     "tabs": {
       "catalog": "Catalogue",
-      "search": "Tout chercher"
+      "search": "Tout chercher",
+      "boards": "Cartes"
     },
     "catalog": {
       "searchAll": "Tout chercher",
       "items": "{n} éléments"
+    },
+    "boards": {
+      "search": "Rechercher des cartes",
+      "total": "{n} cartes",
+      "none": "Aucune carte trouvée.",
+      "view": "Détails",
+      "hide": "Masquer",
+      "connector": "Connecteur",
+      "function": "Fonction",
+      "pins": "Broches"
     }
   }
 }

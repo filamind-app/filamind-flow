@@ -8,6 +8,7 @@ import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import { describeError } from '@/core/describeError'
 
 import { fetchCategories, searchHardware } from './api'
+import BoardsPanel from './BoardsPanel.vue'
 import CategoryIllo from './CategoryIllo.vue'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
@@ -16,10 +17,11 @@ import type { HardwareSearchResult } from './types'
 const LIMIT = 25
 const { t } = useI18n({ useScope: 'global' })
 
-type Mode = 'catalog' | 'search'
+type Mode = 'catalog' | 'boards' | 'search'
 const mode = ref<Mode>('catalog')
 const TABS = computed(() => [
   { id: 'catalog' as Mode, label: t('hardwareBrowser.tabs.catalog') },
+  { id: 'boards' as Mode, label: t('hardwareBrowser.tabs.boards') },
   { id: 'search' as Mode, label: t('hardwareBrowser.tabs.search') },
 ])
 
@@ -36,8 +38,14 @@ const error = ref<string | null>(null)
 
 const categoryOptions = computed(() => categories.value.map((c) => ({ value: c, label: c })))
 
-/** Enter the Search view pre-filtered to a category (or "all" when null). */
+/** Enter the right view for a category tile. The boards category opens the rich
+ *  board catalog; everything else opens the flat Search pre-filtered. */
 function openCategory(cat: string | null): void {
+  const c = (cat ?? '').toLowerCase()
+  if (c.includes('mcu') && c.includes('board')) {
+    mode.value = 'boards'
+    return
+  }
   category.value = cat
   q.value = ''
   manufacturer.value = ''
@@ -142,6 +150,9 @@ onMounted(() => {
         }}</span>
       </button>
     </div>
+
+    <!-- Boards: the canonical board catalog (specs + ports + media) -->
+    <BoardsPanel v-show="mode === 'boards'" />
 
     <!-- Search controls -->
     <div v-show="mode === 'search'" class="flex flex-wrap items-end gap-2">

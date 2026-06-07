@@ -66,11 +66,22 @@
     },
     "tabs": {
       "catalog": "Katalog",
-      "search": "Alles suchen"
+      "search": "Alles suchen",
+      "boards": "Boards"
     },
     "catalog": {
       "searchAll": "Alles suchen",
       "items": "{n} Einträge"
+    },
+    "boards": {
+      "search": "Boards suchen",
+      "total": "{n} Boards",
+      "none": "Keine Boards gefunden.",
+      "view": "Details",
+      "hide": "Ausblenden",
+      "connector": "Stecker",
+      "function": "Funktion",
+      "pins": "Pins"
     }
   }
 }
