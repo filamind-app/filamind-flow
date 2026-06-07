@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.119.0] - 2026-06-07
+
+### Added
+
+- **Printer-preset pin maps from Klipper's 108 official `printer-*.cfg` configs.** Finishes the
+  local authoritative data pass: each sample printer config is parsed into a **`printer-preset`**
+  board record (printer model + board hint from the header + MCU + the real pin map as structured
+  ports + a copy-ready config snippet + `configSource` URL). Great for owners of a specific machine
+  (Creality, Anet, Anycubic, Sovol, Voron kits, …) — search your printer, get the exact pins.
+  - **+108 printer-preset boards → 408 total** (290 mainboards · 108 printer-presets · 10 toolheads).
+  - Coverage: **188 boards with a full copy-ready pin map**, **384 with a known MCU**.
+  - All deterministic + traceable (no guessing). Next: bounded web-agent waves to enrich the boards
+    that have no Klipper config (specs/electronics/media).
+
 ## [0.118.0] - 2026-06-07
 
 ### Added
