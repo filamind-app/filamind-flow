@@ -1,13 +1,15 @@
 <script setup lang="ts">
 /** The board catalog view: browse the canonical boards[] entity (specs + aggregated
  *  ports[] + reference media links). This is where the enriched board data is seen. */
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
 
 import { fetchBoardDetail, fetchBoards } from './api'
+import RelatedChips from './RelatedChips.vue'
 import type { BoardDetail, BoardMedia, BoardSummary } from './types'
+import { useEntityFocus } from './useEntityFocus'
 
 const { t } = useI18n({ useScope: 'global' })
 const LIMIT = 24
@@ -89,6 +91,21 @@ function copyConfig(id: string, text: string): void {
     if (copied.value === id) copied.value = null
   }, 1500)
 }
+
+const { focus } = useEntityFocus()
+/** Deep-link: surface a specific board (search by name, then expand it once loaded). */
+async function focusById(id: string, name?: string): Promise<void> {
+  q.value = name ?? ''
+  await load(true)
+  if (openId.value !== id && boards.value.some((b) => b.board_id === id)) void toggle(id)
+}
+watch(
+  focus,
+  (f) => {
+    if (f && f.tab === 'boards') void focusById(f.id, f.name)
+  },
+  { immediate: true },
+)
 
 onMounted(() => void load(true))
 </script>
@@ -279,6 +296,9 @@ onMounted(() => void load(true))
                   >{{ detailCache[b.board_id].configSnippet }}</pre
                 >
               </div>
+
+              <!-- cross-entity links (manufacturer / MCUs / drivers) -->
+              <RelatedChips :id="b.board_id" type="boards" />
             </template>
           </div>
         </li>

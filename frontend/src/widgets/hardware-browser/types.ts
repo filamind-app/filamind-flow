@@ -200,3 +200,53 @@ export interface CatalogEntityDetail extends CatalogSummary {
   configSnippet?: string
   configSource?: string
 }
+
+// ── Canonical manufacturer entity (GET /api/hardware/manufacturers[/{id}]) ─────
+export interface ManufacturerEntity {
+  manufacturer_id: string
+  name: string
+  country?: string
+  website?: string
+  specialty?: string
+  categories?: string
+  aliases?: string[]
+  origin?: string
+  memberCount: number
+}
+
+// ── Canonical MCU entity (GET /api/hardware/mcus[/{id}]) ───────────────────────
+export interface McuEntity {
+  mcu_id: string
+  name: string
+  family: string
+  arch?: string | null
+  boardCount: number
+}
+
+export interface McusResult {
+  total: number
+  count: number
+  items: McuEntity[]
+}
+
+// ── Cross-entity relations (GET /api/hardware/{type}/{id}/related) ─────────────
+/** A lightweight entity reference returned inside a related group. */
+export interface RelatedRef {
+  type: string
+  id: string
+  name?: string | null
+  manufacturer?: string | null
+  boardClass?: string
+  interface?: string
+  nema?: string
+  kind?: string
+  category?: string
+  family?: string
+}
+
+export interface RelatedResult {
+  type: string
+  id: string
+  groups: Record<string, RelatedRef[]>
+  counts: Record<string, number>
+}

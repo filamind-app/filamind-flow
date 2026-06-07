@@ -8,7 +8,9 @@ import { useI18n } from 'vue-i18n'
 import { describeError } from '@/core/describeError'
 
 import { fetchCatalog, fetchCatalogEntity } from './api'
+import RelatedChips from './RelatedChips.vue'
 import type { CatalogEntityDetail, CatalogSummary } from './types'
+import { useEntityFocus } from './useEntityFocus'
 
 const props = defineProps<{ category: string }>()
 const emit = defineEmits<{ (e: 'back'): void }>()
@@ -82,16 +84,27 @@ function copyConfig(id: string, text: string): void {
   }, 1500)
 }
 
+// deep-link: when a cross-link chip targets a catalog entity in THIS category, surface + open it
+const { focus } = useEntityFocus()
+async function applyFocus(): Promise<void> {
+  const f = focus.value
+  if (!f || f.tab !== 'category' || f.category !== props.category) return
+  q.value = f.name ?? ''
+  await load(true)
+  if (openId.value !== f.id && entities.value.some((e) => e.catalog_id === f.id)) void toggle(f.id)
+}
+
 // reload when the chosen category changes
 watch(
   () => props.category,
   () => {
     q.value = ''
     openId.value = null
-    void load(true)
+    void load(true).then(applyFocus)
   },
 )
-onMounted(() => void load(true))
+watch(focus, () => void applyFocus())
+onMounted(() => void load(true).then(applyFocus))
 </script>
 
 <template>
@@ -202,6 +215,9 @@ onMounted(() => void load(true))
                   >{{ detailCache[e.catalog_id].configSnippet }}</pre
                 >
               </div>
+
+              <!-- cross-entity links (its manufacturer) -->
+              <RelatedChips :id="e.catalog_id" type="catalog" />
             </template>
           </div>
         </li>
