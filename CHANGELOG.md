@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.121.0] - 2026-06-07
+
+### Added
+
+- **Web-researched enrichment for 31 more boards (wave 2).** Same bounded method (4 research agents,
+  fixed batches — clean, no runaway). Now **63 boards web-enriched** total.
+  - **+122 specs, +50 media links, +101 electronics facts, +93 config notes** from manufacturer /
+    OSH-repo / wiki / Klipper-config sources.
+  - Covers Creality 4.2.2 / 4.2.7 / 4.2.10 / Ender-3 V3 SE, Prusa Buddy & xBuddy, the full Duet 3
+    family (6HC / 6XD / 3HC / 1HCL / 1XD + SBC mode), BigTreeTech EBB36/42 CAN v1.0–v1.2 & GEN2
+    toolheads, Mellow Fly-SB2240, MKS Monster8 / Robin / SGEN_L, Azteeg X5, Archim.
+  - Config-critical facts captured, e.g. *Creality 4.2.2 driver-letter codes (A=2208/B=2209/H=2225)*,
+    *EBB V1.2 hotend pin moved PA2→PB13*, *EBB toolheads use a 2.2 kΩ thermistor pull-up*,
+    *Fly-SB2240 = onboard TMC2240 + LIS2DW*, *Ender-3 V3 SE = GD32F303 + MS35774 (no UART tuning)*.
+
 ## [0.120.0] - 2026-06-07
 
 ### Added
