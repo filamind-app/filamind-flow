@@ -66,11 +66,22 @@
     },
     "tabs": {
       "catalog": "Catalog",
-      "search": "Search all"
+      "search": "Search all",
+      "boards": "Boards"
     },
     "catalog": {
       "searchAll": "Search all",
       "items": "{n} items"
+    },
+    "boards": {
+      "search": "Search boards",
+      "total": "{n} boards",
+      "none": "No boards found.",
+      "view": "Details",
+      "hide": "Hide",
+      "connector": "Connector",
+      "function": "Function",
+      "pins": "Pins"
     }
   }
 }

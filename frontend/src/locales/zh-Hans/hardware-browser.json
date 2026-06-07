@@ -66,11 +66,22 @@
     },
     "tabs": {
       "catalog": "目录",
-      "search": "全部搜索"
+      "search": "全部搜索",
+      "boards": "主板"
     },
     "catalog": {
       "searchAll": "全部搜索",
       "items": "{n} 项"
+    },
+    "boards": {
+      "search": "搜索主板",
+      "total": "{n} 块主板",
+      "none": "未找到主板。",
+      "view": "详情",
+      "hide": "隐藏",
+      "connector": "接口",
+      "function": "功能",
+      "pins": "针脚"
     }
   }
 }
