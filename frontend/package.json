@@ -1,6 +1,6 @@
 {
   "name": "filamind-flow-frontend",
-  "version": "0.120.0",
+  "version": "0.121.0",
   "private": true,
   "type": "module",
   "description": "Extensible Neo-Brutalist control panel for Klipper / Moonraker — frontend.",
