@@ -66,11 +66,22 @@
     },
     "tabs": {
       "catalog": "Catálogo",
-      "search": "Buscar todo"
+      "search": "Buscar todo",
+      "boards": "Placas"
     },
     "catalog": {
       "searchAll": "Buscar todo",
       "items": "{n} elementos"
+    },
+    "boards": {
+      "search": "Buscar placas",
+      "total": "{n} placas",
+      "none": "No se encontraron placas.",
+      "view": "Detalles",
+      "hide": "Ocultar",
+      "connector": "Conector",
+      "function": "Función",
+      "pins": "Pines"
     }
   }
 }

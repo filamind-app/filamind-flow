@@ -1,6 +1,6 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { HardwareCategories, HardwareSearchResult } from './types'
+import type { BoardDetail, BoardsResult, HardwareCategories, HardwareSearchResult } from './types'
 
 export interface SearchParams {
   q?: string
@@ -30,4 +30,30 @@ export async function fetchCategories(): Promise<HardwareCategories> {
   const response = await fetch(`${backendUrl}/api/hardware/categories`)
   if (!response.ok) throw new Error(`Categories request failed (${response.status})`)
   return (await response.json()) as HardwareCategories
+}
+
+/** Search the canonical board catalog (summaries, paginated). */
+export async function fetchBoards(params: {
+  q?: string
+  manufacturer?: string
+  limit?: number
+  offset?: number
+}): Promise<BoardsResult> {
+  const { backendUrl } = resolveEndpoints()
+  const qs = new URLSearchParams()
+  if (params.q) qs.set('q', params.q)
+  if (params.manufacturer) qs.set('manufacturer', params.manufacturer)
+  qs.set('limit', String(params.limit ?? 24))
+  qs.set('offset', String(params.offset ?? 0))
+  const response = await fetch(`${backendUrl}/api/hardware/boards?${qs.toString()}`)
+  if (!response.ok) throw new Error(`Boards request failed (${response.status})`)
+  return (await response.json()) as BoardsResult
+}
+
+/** The full board record (specs + aggregated ports[] + media). */
+export async function fetchBoardDetail(boardId: string): Promise<BoardDetail> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/hardware/boards/${encodeURIComponent(boardId)}`)
+  if (!response.ok) throw new Error(`Board request failed (${response.status})`)
+  return (await response.json()) as BoardDetail
 }

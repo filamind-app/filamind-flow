@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.115.0] - 2026-06-07
+
+### Added
+
+- **Hardware Browser → "Boards" tab — the enriched board catalog is now visible.** The aggregated
+  `boards[]` entity (263 boards with their aggregated `ports[]`, specs, and reference media) was
+  reachable only via the API and the Board-Topology card (which stays empty when detection is
+  chip-only, e.g. the SV08). A new **Boards** tab lists every board with a search box; each card
+  shows the manufacturer, class, port count and a ports-by-category summary, and **expands** to the
+  full spec sheet, the **reference links** (pinout / schematic / repo / product / datasheet), and a
+  **ports table** (connector / function / pins). The catalog's "MCU & Boards" tile now opens this
+  view instead of the raw flat rows.
+  - New `BoardsPanel.vue` + `fetchBoards`/`fetchBoardDetail`; new Boards-tab i18n keys ×7 locales.
+
 ## [0.114.0] - 2026-06-07
 
 ### Added
