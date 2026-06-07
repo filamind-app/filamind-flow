@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.125.0] - 2026-06-07
+
+### Added
+
+- **Web enrichment waves 6 + 7 — 64 more boards (now 223 web-enriched).** Bounded 4-agent method,
+  agents write results to files directly. +274 specs, +102 media links, +197 electronics facts, +181
+  config notes. Covers the full Duet 2/3 line + 1LC/1HCL/1XD/3HC toolheads & expansions, classic AVR
+  boards (RAMPS 1.4, Melzi, Megatronics, MKS Gen, Azteeg X3), Smoothieboard, Replicape, Prusa
+  Einsy/Buddy/Archim, Mellow Fly (Super8/Gemini/E3/SHT-36/SHT-42/Ruby/Caramba/MMB/Eagle/UTC/Roto),
+  MKS (Gen/SGEN/Robin/Monster8/SKIPR/SERVO42B/SERVO57C/THR), Creality (4.2.x/K1/Sonic Pad/Nebula
+  Pad/SV06 lineage), Artillery Ruby. Agents corrected many facts from source (1LC = Duet3D not BTT;
+  Roto = STM32F042 USB; Ruby v1.2 = Artillery STM32F401; UTC = STM32G0B0; SHT-36 V2 = GD32F103).
+
 ## [0.124.0] - 2026-06-07
 
 ### Added
