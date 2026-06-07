@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.146.0] - 2026-06-07
+
+### Fixed
+
+- **Hardware DB data audit, Wave 3 — manufacturer-field junk.** Cleaned 71 entries whose
+  `manufacturer` held a spec or junk value instead of a maker: bare AWG wire rows (`elec-10-55`)
+  rebuilt to `10 AWG` + a `Max current (A)` spec; AC fan/bed rows folded their `300×300` dimension
+  into the name; heater-cartridge / silicone-heater / build-plate / buck-module rows moved the real
+  product out of `manufacturer` into `name`; StallGuard endstop descriptions, bare gauge numbers
+  and em-dashes blanked; the Raspberry Pi Compute Modules' truncated `Compute` manufacturer fixed to
+  `Raspberry Pi`; and the open-hardware community boards (RAMPS 1.4 / Melzi / CRAMPS) had their prose
+  "manufacturer" blanked (no single maker). Conservative + scoped to genuine errors — valid short
+  names (MK8, V6, a 608 bearing) and real manufacturers were left untouched. Regression test added.
+
 ## [0.145.0] - 2026-06-07
 
 ### Fixed

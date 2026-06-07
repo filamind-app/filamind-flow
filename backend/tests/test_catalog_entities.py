@@ -72,6 +72,35 @@ def test_catalog_names_are_products_not_swapped_specs() -> None:
     assert by_id["elec-xt30-xt30u-connectors"]["name"] == "XT30 / XT30U"
 
 
+def test_manufacturer_field_has_no_junk() -> None:
+    """Data-audit lock (Wave 3): a catalog `manufacturer` must never be a spec/junk value
+    (a bare number, a dimension, a StallGuard description, an em-dash)."""
+    import re
+
+    bad = []
+    for cat in reference_data.catalog_categories():
+        for e in reference_data.catalog_entities(cat):
+            m = str(e.get("manufacturer", "")).strip()
+            if not m:
+                continue
+            if (
+                re.fullmatch(r"[\d.,/×x\s-]+", m)  # noqa: RUF001 (data uses mult-sign)
+                or m == "—"
+                or re.search(r"stallguard|tstep", m, re.I)
+            ):
+                bad.append((e.get("catalog_id"), m))
+    assert not bad, f"{len(bad)} catalog manufacturers are junk, e.g. {bad[:5]}"
+    by_id = {
+        e["catalog_id"]: e
+        for cat in reference_data.catalog_categories()
+        for e in reference_data.catalog_entities(cat)
+    }
+    assert by_id["elec-10-55"]["name"] == "10 AWG"  # bare-AWG reconstructed
+    assert not any(
+        h.get("manufacturer") == "Compute" for h in reference_data.hosts()
+    )  # truncation fixed
+
+
 def test_extruder_snippet_has_gear_ratio_or_rotation() -> None:
     ext = reference_data.catalog_entities("Extruders")
     assert ext
