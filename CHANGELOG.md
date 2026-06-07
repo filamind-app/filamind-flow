@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.135.0] - 2026-06-07
+
+### Added
+
+- **Deep OEM motor-series coverage — +82 part numbers (589 → 671 canonical motors).** Expanded the
+  Nidec Servo / Japan Servo **KH** family (KH42HM2/JM2/KM2 -801/-851/-901/-951 windings, the
+  KH42xx-B900 series KH4234/4238/4242/4248/4254-B901xx/B951xx, KH56 NEMA-23 B900, KH39 NEMA-16) and
+  the Sanyo Denki **103** series (103H52 NEMA-17, 103H67 NEMA-20, 103H712 NEMA-23, 103H782 NEMA-24,
+  103H822 NEMA-34, plus classic 103-xxx STEP-SYN), all from authoritative datasheets. Includes the
+  three exact OEM motors a user photographed: `KH4248-B90008`, `KH42KM2R001C`, and Sanyo
+  `103-594-0611`. Sanyo Denki now 51 models, Japan Servo / Nidec 58. Each gets the recommended
+  `run_current` + copyable config snippet; specs omitted (not guessed) where a datasheet didn't confirm them.
+
 ## [0.134.0] - 2026-06-07
 
 ### Added
