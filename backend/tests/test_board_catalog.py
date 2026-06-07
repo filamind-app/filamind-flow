@@ -167,6 +167,20 @@ def test_toolhead_boards_are_classified() -> None:
     assert counts["printer-preset"] > 50  # presets stay their own class, not swept in
 
 
+def test_no_doubled_words_in_board_labels() -> None:
+    """Data-audit lock (Wave 6): no board name/model/alias has a doubled consecutive word
+    (the 'Creality Creality 4.2.x' artefact)."""
+    import re
+
+    dup = re.compile(r"\b(\w+)\s+\1\b", re.I)
+    bad = []
+    for b in reference_data.boards():
+        for v in [b.get("display_name"), b.get("model"), *(b.get("aliases") or [])]:
+            if v and dup.search(str(v)):
+                bad.append((b["board_id"], v))
+    assert not bad, f"doubled words in board labels: {bad[:5]}"
+
+
 def test_expansion_and_host_board_classes() -> None:
     """Data audit Wave 2: Duet CAN-FD expansion/external-driver boards are class 'expansion';
     host SBCs/SoCs mis-filed in boards[] are class 'host' (not masquerading as 'mainboard')."""

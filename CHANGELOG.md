@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.149.0] - 2026-06-08
+
+### Fixed
+
+- **Hardware DB data audit, Wave 6 — text hygiene.** Fixed the doubled-word artefact in two board
+  aliases (`Creality Creality 4.2.2/4.2.7` → `Creality 4.2.x`). The broad audit confirmed the rest
+  of the dataset is clean here: **zero** mojibake (U+FFFD) and no doubled words in any spec value or
+  config body (the only other matches were inside config comments). Regression test added. Duplicate
+  board/catalog entries were intentionally **not** merged — they're kept by request (variant siblings
+  resolve via aliases), so dedup remains a separate, deliberate decision rather than an audit fix.
+
+### Notes
+
+- This completes the six-wave hardware-DB data-quality audit (v0.143.0 toolhead → v0.149.0).
+
 ## [0.148.0] - 2026-06-08
 
 ### Fixed
