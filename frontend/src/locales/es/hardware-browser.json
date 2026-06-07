@@ -67,7 +67,8 @@
     "tabs": {
       "catalog": "Catálogo",
       "search": "Buscar todo",
-      "boards": "Placas"
+      "boards": "Placas",
+      "drivers": "Drivers"
     },
     "catalog": {
       "searchAll": "Buscar todo",
@@ -88,6 +89,16 @@
       "config": "Fragmento de config",
       "copy": "Copiar",
       "copied": "¡Copiado!"
+    },
+    "drivers": {
+      "search": "Buscar drivers",
+      "klipperOnly": "Solo Klipper (TMC)",
+      "total": "{n} drivers",
+      "none": "No se encontraron drivers.",
+      "standalone": "autónomo",
+      "sensorless": "sin sensor",
+      "config": "Config de Klipper",
+      "reference": "Referencia de Klipper →"
     }
   }
 }

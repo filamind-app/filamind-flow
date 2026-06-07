@@ -81,6 +81,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/hardware/manufacturers` | The manufacturer directory (name / country / website / specialty). |
 | GET    | `/api/hardware/boards`     | Canonical control-board entities (summaries; `?q`/`manufacturer`/`board_class`, paginated) — each board's connectors aggregated into one `ports[]`. |
 | GET    | `/api/hardware/boards/{board_id}` | One board's full record (identity + specs + aggregated `ports[]` + detection `matchPatterns`). |
+| GET    | `/api/hardware/drivers`    | Canonical stepper-driver entities (summaries; `?q`/`manufacturer`/`klipper_only`, paginated) — one per chip, deduped. |
+| GET    | `/api/hardware/drivers/{driver_id}` | One driver's full record (specs + Klipper support + copyable `[tmcXXXX]` config snippet). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

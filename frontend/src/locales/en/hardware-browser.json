@@ -67,7 +67,8 @@
     "tabs": {
       "catalog": "Catalog",
       "search": "Search all",
-      "boards": "Boards"
+      "boards": "Boards",
+      "drivers": "Drivers"
     },
     "catalog": {
       "searchAll": "Search all",
@@ -88,6 +89,16 @@
       "config": "Config snippet",
       "copy": "Copy",
       "copied": "Copied!"
+    },
+    "drivers": {
+      "search": "Search drivers",
+      "klipperOnly": "Klipper (TMC) only",
+      "total": "{n} drivers",
+      "none": "No drivers found.",
+      "standalone": "standalone",
+      "sensorless": "sensorless",
+      "config": "Klipper config",
+      "reference": "Klipper reference →"
     }
   }
 }

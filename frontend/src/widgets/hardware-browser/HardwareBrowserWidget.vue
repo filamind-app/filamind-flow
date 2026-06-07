@@ -10,6 +10,7 @@ import { describeError } from '@/core/describeError'
 import { fetchCategories, searchHardware } from './api'
 import BoardsPanel from './BoardsPanel.vue'
 import CategoryIllo from './CategoryIllo.vue'
+import DriversPanel from './DriversPanel.vue'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { HardwareSearchResult } from './types'
@@ -17,11 +18,12 @@ import type { HardwareSearchResult } from './types'
 const LIMIT = 25
 const { t } = useI18n({ useScope: 'global' })
 
-type Mode = 'catalog' | 'boards' | 'search'
+type Mode = 'catalog' | 'boards' | 'drivers' | 'search'
 const mode = ref<Mode>('catalog')
 const TABS = computed(() => [
   { id: 'catalog' as Mode, label: t('hardwareBrowser.tabs.catalog') },
   { id: 'boards' as Mode, label: t('hardwareBrowser.tabs.boards') },
+  { id: 'drivers' as Mode, label: t('hardwareBrowser.tabs.drivers') },
   { id: 'search' as Mode, label: t('hardwareBrowser.tabs.search') },
 ])
 
@@ -44,6 +46,10 @@ function openCategory(cat: string | null): void {
   const c = (cat ?? '').toLowerCase()
   if (c.includes('mcu') && c.includes('board')) {
     mode.value = 'boards'
+    return
+  }
+  if (c.includes('driver')) {
+    mode.value = 'drivers'
     return
   }
   category.value = cat
@@ -153,6 +159,9 @@ onMounted(() => {
 
     <!-- Boards: the canonical board catalog (specs + ports + media) -->
     <BoardsPanel v-show="mode === 'boards'" />
+
+    <!-- Drivers: the canonical driver catalog (specs + copyable [tmcXXXX] config) -->
+    <DriversPanel v-show="mode === 'drivers'" />
 
     <!-- Search controls -->
     <div v-show="mode === 'search'" class="flex flex-wrap items-end gap-2">
