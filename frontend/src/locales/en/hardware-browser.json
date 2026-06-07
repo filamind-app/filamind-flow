@@ -164,6 +164,18 @@
         "hosts": "Hosts",
         "catalog": "Parts"
       }
+    },
+    "facets": {
+      "manufacturer": "Manufacturer",
+      "anyClass": "Any class",
+      "anyNema": "Any size",
+      "anyKind": "Any type",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Mainboard",
+        "toolhead": "Toolhead",
+        "printer-preset": "Printer preset"
+      }
     }
   }
 }

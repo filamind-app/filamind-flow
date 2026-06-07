@@ -78,6 +78,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/macro/simulate`      | Offline G-code simulator: macro `{ params.X }` substitution → path / bounds / totals / time / timeline; pure, no printer. |
 | GET    | `/api/hardware`            | Flat free-text search over the raw component rows (`?q=`/`category`/`manufacturer`, paginated). The canonical, deduped, config-carrying entities have their own typed endpoints below. |
 | GET    | `/api/hardware/categories` | The hardware categories + per-category **canonical** `counts` (raw kept as `rawCounts`) + total component count. |
+| GET    | `/api/hardware/facets`     | Distinct values for the catalog filter dropdowns — `boardClass` (boards), `nema` size (motors), `kind` (hosts). |
 | GET    | `/api/hardware/manufacturers` | Canonical manufacturer entities (`?q`) — each with a stable `manufacturer_id`, auto-derived `aliases` and a `memberCount`, sorted most-connected first. |
 | GET    | `/api/hardware/manufacturers/{manufacturer_id}` | One manufacturer's record (`?expand=related` adds its linked hardware, grouped by type). |
 | GET    | `/api/hardware/mcus`       | Canonical MCU entities (`?q`/`family`) parsed from board `specs.MCU` (normalised to a canonical part) — each with `family`, `arch`, `boardCount`. |

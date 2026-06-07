@@ -13,11 +13,13 @@ import type { FocusTarget } from './useEntityFocus'
 const { t } = useI18n({ useScope: 'global' })
 
 const klipperOnly = ref(false)
+const manufacturer = ref('')
 const reloadToken = ref(0)
 
 async function fetchPage(p: { q: string; offset: number; limit: number }) {
   const r = await fetchDrivers({
     q: p.q,
+    manufacturer: manufacturer.value,
     klipperOnly: klipperOnly.value,
     limit: p.limit,
     offset: p.offset,
@@ -59,6 +61,13 @@ function resetFacets(): void {
         />
         {{ t('hardwareBrowser.drivers.klipperOnly') }}
       </label>
+      <input
+        v-model="manufacturer"
+        type="text"
+        :placeholder="t('hardwareBrowser.facets.manufacturer')"
+        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        @keyup.enter="onFacetChange"
+      />
     </template>
 
     <template

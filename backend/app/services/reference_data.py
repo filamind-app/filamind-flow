@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -218,6 +219,28 @@ def related(plural_type: str, entity_id: str) -> dict[str, Any] | None:
 def link_graph() -> _hwlinks.LinkGraph:
     """The full in-memory link graph (used by the CI edge-validator test)."""
     return _LINKS
+
+
+def _facets() -> dict[str, list[str]]:
+    board_class = sorted({str(b["boardClass"]) for b in _HW_BOARDS if b.get("boardClass")})
+    # the raw nema field is inconsistent ("17", "17 (42mm)", "23 (57)") — facet on the size number
+    nema_sizes: set[str] = set()
+    for m in _HW_MOTORS:
+        hit = re.match(r"\d+", str(m.get("nema", "")))
+        if hit:
+            nema_sizes.add(hit.group(0))
+    nema = sorted(nema_sizes, key=int)
+    kind = sorted({str(h["kind"]) for h in _HW_HOSTS if h.get("kind")})
+    return {"boardClass": board_class, "nema": nema, "kind": kind}
+
+
+_HW_FACETS = _facets()
+
+
+def hardware_facets() -> dict[str, list[str]]:
+    """Distinct filter values for the catalog facet dropdowns: ``boardClass`` (boards),
+    ``nema`` size (motors, normalised to the leading number), and ``kind`` (hosts)."""
+    return _HW_FACETS
 
 
 def canonical_category_counts() -> dict[str, int]:

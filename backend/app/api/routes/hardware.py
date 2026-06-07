@@ -79,6 +79,13 @@ async def hardware_categories() -> dict[str, Any]:
     }
 
 
+@router.get("/facets")
+async def hardware_facets() -> dict[str, list[str]]:
+    """Distinct values for the catalog filter dropdowns — ``boardClass`` (boards),
+    ``nema`` size (motors), ``kind`` (hosts)."""
+    return reference_data.hardware_facets()
+
+
 @router.get("/manufacturers")
 async def hardware_manufacturers(
     q: str = Query("", description="Free-text search (name / alias)"),

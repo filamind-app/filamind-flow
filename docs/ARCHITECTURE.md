@@ -137,8 +137,9 @@ graph has no dangling edges. The Hardware Browser **surfaces** this graph (DB-3a
 detail shows clickable **cross-link chips** (manufacturer / MCU / drivers) that deep-link to the
 related entity, and **Brands** / **MCUs** tabs let you browse from a maker or a chip outward. The five
 detail panels share one `EntityCatalog.vue` shell (search / list / pagination / expand / copy /
-deep-link), each a thin wrapper supplying a `fetchPage` closure + bespoke summary/detail slots (DB-3b).
-See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
+deep-link), each a thin wrapper supplying a `fetchPage` closure + bespoke summary/detail slots (DB-3b),
+and the shell's `#facets` slot carries each panel's filters — class / NEMA / kind / manufacturer —
+backed by `GET /api/hardware/facets` (DB-3c). See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
 
 ## Design system
 

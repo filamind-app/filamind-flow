@@ -164,6 +164,18 @@
         "hosts": "Хосты",
         "catalog": "Детали"
       }
+    },
+    "facets": {
+      "manufacturer": "Производитель",
+      "anyClass": "Все классы",
+      "anyNema": "Все размеры",
+      "anyKind": "Все типы",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Материнская плата",
+        "toolhead": "Печатающая голова",
+        "printer-preset": "Пресет принтера"
+      }
     }
   }
 }
