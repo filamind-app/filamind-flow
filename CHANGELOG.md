@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.148.0] - 2026-06-08
+
+### Fixed
+
+- **Hardware DB data audit, Wave 5 — config / snippet integrity.** Cleared **39** `configSource`
+  fields that held a description instead of a URL (so nothing renders a broken link); fixed **3**
+  board snippets whose Klipper section header had a parenthetical annotation inside the brackets
+  (`[lis2dw (accelerometer)]` → `[lis2dw]  # accelerometer`); corrected **8** sensor snippets that
+  shipped a generic ADC-thermistor template for SPI / internal sensors — the MAX6675 / MAX31855 /
+  MAX31856 / MAX31865 thermocouple+RTD amplifiers now carry the right `sensor_type` + SPI pins (and
+  RTD params), and the MCU/host internal sensors use `temperature_mcu` / `temperature_host`. Fixed 3
+  stale `mediaStatus: none` flags on boards that do have media links. (The I2C sensor snippets —
+  BME280/HTU21D/LM75, where exact `sensor_type` support and i2c addressing need care — were left for
+  a focused pass rather than risk a wrong config.) Regression test added.
+
 ## [0.147.0] - 2026-06-08
 
 ### Fixed
