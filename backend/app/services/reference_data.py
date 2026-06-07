@@ -165,6 +165,35 @@ def host_by_id(host_id: str) -> dict[str, Any] | None:
     return None
 
 
+def catalog() -> dict[str, Any]:
+    """Generic canonical catalog for the remaining categories (sensors, hotends, extruders,
+    fans/power/bed, displays/cameras, motion, nozzles, filament, electronics) — each a deduped
+    entity with a copyable Klipper config snippet. Keyed by category name."""
+    data = _HARDWARE.get("catalog", {})
+    return data if isinstance(data, dict) else {}
+
+
+def catalog_categories() -> list[str]:
+    """The category names that have a canonical catalog (in dataset order)."""
+    return list(catalog().keys())
+
+
+def catalog_entities(category: str) -> list[dict[str, Any]]:
+    """The canonical entities for one catalog category."""
+    rows = catalog().get(category, [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+def catalog_entity_by_id(catalog_id: str) -> dict[str, Any] | None:
+    """A single catalog entity by its stable ``catalog_id`` slug (searched across categories)."""
+    for rows in catalog().values():
+        if isinstance(rows, list):
+            for e in rows:
+                if isinstance(e, dict) and e.get("catalog_id") == catalog_id:
+                    return e
+    return None
+
+
 # ── Config / macro templates ──────────────────────────────────────────────────
 def templates() -> list[dict[str, Any]]:
     """Insertable Klipper config / macro templates (id / name / category / description / body)."""

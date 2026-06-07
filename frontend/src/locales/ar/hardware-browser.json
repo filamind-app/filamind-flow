@@ -74,7 +74,8 @@
     },
     "catalog": {
       "searchAll": "بحث في الكل",
-      "items": "{n} عنصر"
+      "items": "{n} عنصر",
+      "back": "الكتالوج"
     },
     "boards": {
       "search": "ابحث في اللوحات",

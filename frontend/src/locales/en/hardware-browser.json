@@ -74,7 +74,8 @@
     },
     "catalog": {
       "searchAll": "Search all",
-      "items": "{n} items"
+      "items": "{n} items",
+      "back": "Catalog"
     },
     "boards": {
       "search": "Search boards",
