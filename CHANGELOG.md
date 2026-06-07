@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.123.0] - 2026-06-07
+
+### Added
+
+- **Web-researched enrichment for 32 more boards (wave 4).** Same bounded 4-agent method (clean, no
+  runaway). Now **127 boards web-enriched** total (129 with config-affecting electronics).
+  - **+190 specs, +62 media links, +103 electronics facts, +96 config notes.**
+  - Covers the BigTreeTech EBB42 CAN family (v1.0–v1.2 + GEN2), SB2209/SB2240 toolheads (RP2040 &
+    STM32 & TMC2240), Manta M8P, the full SKR line (v1.3 / v1.4 / v1.4 Turbo / SKR 3 / SKR 3 EZ in
+    H743 & H723 / SKRat / Mini E3 v2.0), U2C v2.1, Creality CR-FDM-V2.4.S4 / Ender-3 V3 SE / K1 host
+    pad / K2 Plus, and the Raspberry Pi host.
+  - Config-critical facts: *EBB42 V1.0 CAN on PB8/PB9 @250k vs G0B1 PB0/PB1 @1M (firmware not
+    interchangeable)*, *SKR 3 / 3 EZ ship in H743 and H723 builds (different Klipper target)*,
+    *Creality GD32F303 boards build as STM32F103 28KiB*, *K1 host = Genic X200 SoC + a separate
+    GD32F303 motion MCU*.
+
 ## [0.122.0] - 2026-06-07
 
 ### Added
