@@ -63,13 +63,14 @@ def test_boards_dataset_aggregated_and_lossless() -> None:
         if i.get("category") == "MCU & Boards"
         and str(i.get("subsection", "")).startswith("Board connectors")
     )
-    # Lossless applies to ports AGGREGATED from the flat rows — hardware-verified
-    # boards (e.g. SV08, mapped from the printer's own config) add their own ports.
+    # Lossless: the aggregation preserved every flat port row. Tracked by each board's
+    # xlsx_source_rows.portRowCount provenance (survives even when ports[] is later
+    # upgraded to a Klipper pin map — the original connectors move to `connectors`).
+    # Hardware-verified boards (SV08, from the printer's own config) are excluded.
     agg = sum(
-        p.get("count", 1)
+        b.get("xlsx_source_rows", {}).get("portRowCount", 0)
         for b in boards
         if not b.get("verified_on_hardware")
-        for p in b.get("ports", [])
     )
     assert agg == flat_port_rows, f"port aggregation not lossless: {agg} != {flat_port_rows}"
     with_ports = [b for b in boards if b.get("ports")]

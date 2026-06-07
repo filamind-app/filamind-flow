@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.118.0] - 2026-06-07
+
+### Added
+
+- **Real pin maps for the remaining boards, from Klipper's official board configs.** Parsed all
+  **84 `generic-*` board configs** from `Klipper3d/klipper/config/` (authoritative, deterministic
+  parse — no guessing) and folded them into the catalog:
+  - **49 existing boards enriched** with their real Klipper pin map (every section's pins as a
+    structured port: signal/role + `invert`/`pull-up` flags + the Klipper config key + a usage hint),
+    the **MCU** from the config header, and a **copy-ready config snippet**; the prior connector
+    aggregation is preserved under `connectors`.
+  - **35 new boards added** that weren't in the catalog before → **300 boards total**.
+  - Each carries `configSource` (the exact Klipper file URL) — every datum is traceable.
+  - Coverage now: **80 boards with a full copy-ready pin map**, **277 with a known MCU**.
+
 ## [0.117.0] - 2026-06-07
 
 ### Added
