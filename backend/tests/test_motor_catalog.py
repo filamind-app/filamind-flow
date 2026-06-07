@@ -22,6 +22,23 @@ def test_every_motor_has_copyable_snippet() -> None:
         assert (m.get("configSnippet") or "").strip(), f"{m['motor_id']} has no configSnippet"
 
 
+def test_motor_nema_and_step_angle_normalised() -> None:
+    """Data-audit lock (Wave 4): stepAngle uses one encoding (degree sign, not '1.8 deg'/'1.8'),
+    and NEMA was backfilled from part numbers so few motors are left sizeless."""
+    import re
+
+    motors = reference_data.motors()
+    for m in motors:
+        sa = str(m.get("stepAngle", "")).strip()
+        assert not re.fullmatch(r"\d+(\.\d+)?(\s*deg)?", sa), (
+            f"{m['motor_id']} stepAngle not normalised: {sa!r}"
+        )
+    by_id = {m["motor_id"]: m for m in motors}
+    assert by_id["bigtre-17h4401s"]["nema"] == "17"  # backfilled from the part number
+    sizeless = sum(1 for m in motors if not str(m.get("nema", "")).strip())
+    assert sizeless <= 30, f"{sizeless} motors still have no NEMA size (backfill regressed)"
+
+
 def test_run_current_recommendation_is_sane() -> None:
     """When a rated current is known, the recommended run_current is present, in the snippet,
     and conservative (below the rated phase current)."""
