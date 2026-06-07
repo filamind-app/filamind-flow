@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.136.0] - 2026-06-07
+
+### Added
+
+- **Missing-manufacturer sweep across the catalog categories — +79 branded entities, 22 new makers
+  (catalog 1,224 → 1,303).** Hotends: **Phaetus** (Dragon/Dragonfly/Rapido/Rapido 2), **Slice
+  Engineering** (Mosquito/Copperhead), **Trianglelab**. Extruders: **Orbiter** (v1.5/v2), **Bondtech
+  LGX/LGX-Lite**, **LDO Galileo/Galileo 2**, **Voron Clockwork CW1/CW2** (gear ratios from the
+  official config), **Vz-HextrudORT**, **BIQU H2**, **Sprite Pro**. Fans: **Noctua / Sunon / Delta /
+  GDStime / Winsinn / Sanyo San Ace** + PSUs **Mean Well** (LRS/RSP/UHP/HRP). Probes/sensors:
+  **Voron TAP, BTT Eddy, Mellow FLY Eddy, Duet Smart Effector, E3D PZ, Annex Quickdraw, BIQU
+  MicroProbe, PINDA 2, Omron/inductive, HX711 load-cell**. Motion: **Gates** belts, **HIWIN /
+  Misumi / THK** rails (with dynamic/static load ratings), **igus** DryLin, **Ooznest / OpenBuilds /
+  RobotDigg** pulleys & screws. Each gets the same copyable config snippet. Datasheet-verbatim;
+  non-real products (Vipfix, Decapod, Panda Hands) were correctly rejected.
+
+### Fixed
+
+- Motor `nema` display normalised (strip a leading "NEMA") so cards show "NEMA 17" not "NEMA NEMA17".
+
 ## [0.135.0] - 2026-06-07
 
 ### Added
