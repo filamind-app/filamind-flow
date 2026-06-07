@@ -117,6 +117,22 @@ def board_by_id(board_id: str) -> dict[str, Any] | None:
     return None
 
 
+def drivers() -> list[dict[str, Any]]:
+    """The canonical stepper-driver entities — one per chip (deduped from the flat
+    ``Stepper Drivers`` rows), with a copyable Klipper ``[tmcXXXX]`` config snippet
+    (or an honest note for standalone step/dir and closed-loop parts)."""
+    rows = _HARDWARE.get("drivers", [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+def driver_by_id(driver_id: str) -> dict[str, Any] | None:
+    """A single canonical driver record by its stable ``driver_id`` slug."""
+    for d in drivers():
+        if d.get("driver_id") == driver_id:
+            return d
+    return None
+
+
 # ── Config / macro templates ──────────────────────────────────────────────────
 def templates() -> list[dict[str, Any]]:
     """Insertable Klipper config / macro templates (id / name / category / description / body)."""

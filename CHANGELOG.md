@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.130.0] - 2026-06-07
+
+### Added
+
+- **Stepper-driver catalog with copyable Klipper config — a dedicated Drivers tab in the Hardware
+  Browser.** The 84 flat `Stepper Drivers` rows are deduped into **55 canonical driver entities**
+  (one per chip), each with unified specs, manufacturer, interface, Klipper-support flag, and a
+  **copyable config snippet**: the 14 Klipper-managed TMC chips emit a ready `[tmcXXXX stepper_*]`
+  block (run_current / sense_resistor / stealthchop_threshold / interpolate, UART or SPI per chip);
+  the 41 standalone step/dir and closed-loop parts (A4988, DRV8825, TB6600, LV8729, L6470, MKS
+  Servo…) get an honest note (current set by Vref pot / runs its own firmware — no `[tmc]` section).
+- Backend: `GET /api/hardware/drivers` (summaries, `?q`/`manufacturer`/`klipper_only`, paginated) +
+  `GET /api/hardware/drivers/{driver_id}` (full record incl. snippet). Frontend: `DriversPanel.vue`
+  (mirrors BoardsPanel) on a new **Drivers** tab; the "Stepper Drivers" catalog tile opens it.
+  i18n in all 7 locales. New `test_driver_catalog.py` locks dedup, snippet coverage, and the
+  TMC-section-vs-standalone-note distinction.
+
 ## [0.129.0] - 2026-06-07
 
 ### Changed

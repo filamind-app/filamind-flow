@@ -67,7 +67,8 @@
     "tabs": {
       "catalog": "Catalogue",
       "search": "Tout chercher",
-      "boards": "Cartes"
+      "boards": "Cartes",
+      "drivers": "Pilotes"
     },
     "catalog": {
       "searchAll": "Tout chercher",
@@ -88,6 +89,16 @@
       "config": "Extrait de config",
       "copy": "Copier",
       "copied": "Copié !"
+    },
+    "drivers": {
+      "search": "Rechercher des pilotes",
+      "klipperOnly": "Klipper (TMC) uniquement",
+      "total": "{n} pilotes",
+      "none": "Aucun pilote trouvé.",
+      "standalone": "autonome",
+      "sensorless": "sans capteur",
+      "config": "Config Klipper",
+      "reference": "Référence Klipper →"
     }
   }
 }

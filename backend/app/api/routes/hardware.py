@@ -9,7 +9,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 
-from app.services import board_search, hardware_search, reference_data
+from app.services import board_search, driver_search, hardware_search, reference_data
 
 router = APIRouter(prefix="/hardware", tags=["hardware"])
 
@@ -86,3 +86,35 @@ async def board_detail(board_id: str) -> dict[str, Any]:
     if board is None:
         raise HTTPException(status_code=404, detail=f"No board with id {board_id!r}")
     return board
+
+
+@router.get("/drivers")
+async def drivers(
+    q: str = Query("", description="Free-text search (manufacturer / name / chip / specs)"),
+    manufacturer: str = Query("", description="Manufacturer substring filter"),
+    klipper_only: bool = Query(False, description="Only Klipper-managed (TMC) drivers"),
+    limit: int = Query(50, ge=1, le=200, description="Page size"),
+    offset: int = Query(0, ge=0, description="Page offset"),
+) -> dict[str, Any]:
+    """Search the canonical stepper-driver entities (lightweight summaries, paginated).
+
+    The full record — including the copyable Klipper ``[tmcXXXX]`` config snippet — is
+    served by ``GET /api/hardware/drivers/{driver_id}``.
+    """
+    return driver_search.search(
+        reference_data.drivers(),
+        q=q,
+        manufacturer=manufacturer,
+        klipper_only=klipper_only,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@router.get("/drivers/{driver_id}")
+async def driver_detail(driver_id: str) -> dict[str, Any]:
+    """The full canonical driver record (specs + Klipper support + copyable config snippet)."""
+    driver = reference_data.driver_by_id(driver_id)
+    if driver is None:
+        raise HTTPException(status_code=404, detail=f"No driver with id {driver_id!r}")
+    return driver

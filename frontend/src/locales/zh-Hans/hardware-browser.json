@@ -67,7 +67,8 @@
     "tabs": {
       "catalog": "目录",
       "search": "全部搜索",
-      "boards": "主板"
+      "boards": "主板",
+      "drivers": "驱动器"
     },
     "catalog": {
       "searchAll": "全部搜索",
@@ -88,6 +89,16 @@
       "config": "配置片段",
       "copy": "复制",
       "copied": "已复制！"
+    },
+    "drivers": {
+      "search": "搜索驱动器",
+      "klipperOnly": "仅 Klipper (TMC)",
+      "total": "{n} 个驱动器",
+      "none": "未找到驱动器。",
+      "standalone": "独立式",
+      "sensorless": "无传感器",
+      "config": "Klipper 配置",
+      "reference": "Klipper 参考 →"
     }
   }
 }
