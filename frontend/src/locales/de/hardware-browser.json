@@ -81,7 +81,13 @@
       "hide": "Ausblenden",
       "connector": "Stecker",
       "function": "Funktion",
-      "pins": "Pins"
+      "pins": "Pins",
+      "use": "Verwendung",
+      "electronics": "Elektronik (beeinflusst Config)",
+      "notes": "Config-Hinweise",
+      "config": "Config-Snippet",
+      "copy": "Kopieren",
+      "copied": "Kopiert!"
     }
   }
 }

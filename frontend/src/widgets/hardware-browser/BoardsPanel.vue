@@ -81,6 +81,15 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
   }))
 }
 
+const copied = ref<string | null>(null)
+function copyConfig(id: string, text: string): void {
+  void navigator.clipboard?.writeText(text)
+  copied.value = id
+  window.setTimeout(() => {
+    if (copied.value === id) copied.value = null
+  }, 1500)
+}
+
 onMounted(() => void load(true))
 </script>
 
@@ -196,7 +205,7 @@ onMounted(() => void load(true))
                 </a>
               </div>
 
-              <!-- ports table -->
+              <!-- ports table (with Klipper pins + usage hint = usable, not just viewable) -->
               <div v-if="detailCache[b.board_id].ports?.length" class="overflow-x-auto">
                 <table class="w-full border-collapse font-mono text-[9px]">
                   <thead>
@@ -204,20 +213,71 @@ onMounted(() => void load(true))
                       <th class="pr-2">{{ t('hardwareBrowser.boards.connector') }}</th>
                       <th class="pr-2">{{ t('hardwareBrowser.boards.function') }}</th>
                       <th class="pr-2">{{ t('hardwareBrowser.boards.pins') }}</th>
+                      <th class="pr-2">{{ t('hardwareBrowser.boards.use') }}</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr
                       v-for="(p, i) in detailCache[b.board_id].ports"
                       :key="i"
-                      class="border-b border-ink/20"
+                      class="border-b border-ink/20 align-top"
                     >
                       <td class="pr-2">{{ p.connectorStyle || p.label }}</td>
                       <td class="pr-2">{{ p.portFunction }}</td>
-                      <td class="pr-2">{{ p.pins }}</td>
+                      <td class="whitespace-nowrap pr-2">{{ p.pins }}</td>
+                      <td class="min-w-[12rem] pr-2 opacity-80">
+                        {{ p.hint }}
+                        <span v-if="p.configKey" class="opacity-60">[{{ p.configKey }}]</span>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+
+              <!-- electronics that affect config / wiring decisions -->
+              <div v-if="Object.keys(detailCache[b.board_id].electronics || {}).length">
+                <div class="text-[10px] font-bold opacity-70">
+                  {{ t('hardwareBrowser.boards.electronics') }}
+                </div>
+                <dl class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 text-[10px]">
+                  <template v-for="(val, key) in detailCache[b.board_id].electronics" :key="key">
+                    <dt class="font-mono opacity-60">{{ key }}</dt>
+                    <dd class="min-w-0">{{ val }}</dd>
+                  </template>
+                </dl>
+              </div>
+
+              <!-- config notes -->
+              <div v-if="detailCache[b.board_id].configNotes?.length">
+                <div class="text-[10px] font-bold opacity-70">
+                  {{ t('hardwareBrowser.boards.notes') }}
+                </div>
+                <ul class="list-disc pl-4 text-[10px]">
+                  <li v-for="(n, i) in detailCache[b.board_id].configNotes" :key="i">{{ n }}</li>
+                </ul>
+              </div>
+
+              <!-- copy-ready config snippet -->
+              <div v-if="detailCache[b.board_id].configSnippet">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold opacity-70">{{
+                    t('hardwareBrowser.boards.config')
+                  }}</span>
+                  <button
+                    class="nb-btn bg-brand-lime px-2 py-0 text-[9px]"
+                    @click="copyConfig(b.board_id, detailCache[b.board_id].configSnippet || '')"
+                  >
+                    {{
+                      copied === b.board_id
+                        ? t('hardwareBrowser.boards.copied')
+                        : t('hardwareBrowser.boards.copy')
+                    }}
+                  </button>
+                </div>
+                <pre
+                  class="overflow-x-auto rounded-brutal border-2 border-ink bg-paper p-2 text-[9px] leading-tight"
+                  >{{ detailCache[b.board_id].configSnippet }}</pre
+                >
               </div>
             </template>
           </div>
