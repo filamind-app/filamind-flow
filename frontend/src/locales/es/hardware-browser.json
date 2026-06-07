@@ -68,7 +68,8 @@
       "catalog": "Catálogo",
       "search": "Buscar todo",
       "boards": "Placas",
-      "drivers": "Drivers"
+      "drivers": "Drivers",
+      "motors": "Motores"
     },
     "catalog": {
       "searchAll": "Buscar todo",
@@ -99,6 +100,14 @@
       "sensorless": "sin sensor",
       "config": "Config de Klipper",
       "reference": "Referencia de Klipper →"
+    },
+    "motors": {
+      "search": "Buscar motores",
+      "total": "{n} motores",
+      "none": "No se encontraron motores.",
+      "rated": "nominal",
+      "run": "run",
+      "config": "Config de Klipper"
     }
   }
 }

@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.131.0] - 2026-06-07
+
+### Added
+
+- **Stepper-motor catalog with a recommended `run_current` + copyable config — a dedicated Motors
+  tab in the Hardware Browser.** The 577 `Stepper Motors` rows become **534 canonical motor
+  entities** (43 community slug-rows merged into their marketing twin). Each motor carries unified
+  specs (NEMA / step angle / rated current / holding torque / R / L), a **recommended Klipper
+  `run_current`** (~0.7 × rated phase current, RMS — present on 526) and a **copyable config
+  snippet** (`[tmc2209 stepper_x] run_current: …` + a `full_steps_per_rotation`/`microsteps`/
+  `rotation_distance` skeleton). Where community per-axis current presets exist they're attached
+  and shown in the snippet.
+- Backend: `GET /api/hardware/motors` (summaries, `?q`/`manufacturer`/`nema`, paginated) +
+  `GET /api/hardware/motors/{motor_id}` (full record incl. snippet + presets). Frontend:
+  `MotorsPanel.vue` on a new **Motors** tab (the "Stepper Motors" catalog tile opens it). i18n ×7.
+  New `test_motor_catalog.py` locks entities, snippet coverage, and the run_current recommendation.
+
 ## [0.130.0] - 2026-06-07
 
 ### Added

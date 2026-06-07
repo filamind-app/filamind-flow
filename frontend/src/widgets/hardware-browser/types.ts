@@ -112,3 +112,39 @@ export interface DriverDetail extends DriverSummary {
   configSnippet?: string
   configSource?: string
 }
+
+// ── Motor catalog entity (GET /api/hardware/motors[/{id}]) ─────────────────────
+export interface MotorSummary {
+  motor_id: string
+  name?: string
+  manufacturer?: string
+  nema?: string
+  stepAngle?: string
+  ratedCurrent?: string
+  holdingTorque?: string
+  recommendedRunCurrent?: number | null
+  presetCount?: number
+}
+
+export interface MotorsResult {
+  total: number
+  count: number
+  offset: number
+  limit: number
+  motors: MotorSummary[]
+}
+
+export interface MotorCurrentPreset {
+  driver?: string
+  axis?: string
+  run_current?: string
+  voltage?: string
+}
+
+export interface MotorDetail extends MotorSummary {
+  aliases?: string[]
+  specs?: Record<string, string>
+  currentPresets?: MotorCurrentPreset[]
+  configSnippet?: string
+  configSource?: string
+}
