@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.133.0] - 2026-06-07
+
+### Added
+
+- **Missing global stepper-motor manufacturers — 12 new makers, 55 new motors (534 → 589 canonical).**
+  Added Japan Servo / Nidec Servo (incl. the exact `KH42KM2R015A` NEMA-17 OEM motor + the KH42/56/
+  39/60/86 + KV28 families), Minebea / MinebeaMitsumi / Astrosyn, Applied Motion Products, Sonceboz,
+  Tamagawa Seiki, Rtelligent, Fulling Motor, McLennan, Nippon Pulse, and Phidgets — all from
+  authoritative datasheets (rated current / R / L / holding torque / frame), each getting the same
+  recommended `run_current` + copyable config snippet as the rest of the motor catalog. The 11 new
+  vendors are added to the manufacturer directory (274 → 285). Per-axis community current presets
+  were preserved intact.
+
 ## [0.132.0] - 2026-06-07
 
 ### Added
