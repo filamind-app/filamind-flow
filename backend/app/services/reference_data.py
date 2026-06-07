@@ -14,9 +14,12 @@ Read once at import — small, static reference data (mirrors ``motor_catalog`` 
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
+
+from app.services import hardware_search as _hwsearch  # pure (no reference_data import) — no cycle
 
 _DIR = Path(__file__).resolve().parent.parent / "data" / "reference"
 
@@ -82,116 +85,182 @@ def macros() -> list[dict[str, Any]]:
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
 
 
-# ── Hardware reference DB ─────────────────────────────────────────────────────
+# ── Hardware reference DB (loaded once at import; cached + indexed for O(1) reads) ─────
+def _rows(key: str) -> list[dict[str, Any]]:
+    rows = _HARDWARE.get(key, [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+_HW_ITEMS = _rows("items")
+_HW_BOARDS = _rows("boards")
+_HW_DRIVERS = _rows("drivers")
+_HW_MOTORS = _rows("motors")
+_HW_HOSTS = _rows("hosts")
+_HW_MANUFACTURERS = _rows("manufacturers")
+_HW_CATEGORIES = [str(c) for c in _HARDWARE.get("categories", []) if isinstance(c, (str, int))]
+_HW_CATALOG: dict[str, list[dict[str, Any]]] = {
+    str(k): [e for e in v if isinstance(e, dict)]
+    for k, v in (_HARDWARE.get("catalog") or {}).items()
+    if isinstance(v, list)
+}
+
+
+def _index(rows: list[dict[str, Any]], key: str) -> dict[str, dict[str, Any]]:
+    return {str(r[key]): r for r in rows if r.get(key)}
+
+
+_BOARD_IDX = _index(_HW_BOARDS, "board_id")
+_DRIVER_IDX = _index(_HW_DRIVERS, "driver_id")
+_MOTOR_IDX = _index(_HW_MOTORS, "motor_id")
+_HOST_IDX = _index(_HW_HOSTS, "host_id")
+_CATALOG_IDX: dict[str, dict[str, Any]] = {
+    str(e["catalog_id"]): e for rows in _HW_CATALOG.values() for e in rows if e.get("catalog_id")
+}
+
+# Precomputed lowercased search haystacks for the flat-item search (the hot path), built once.
+# Kept as a parallel list aligned to _HW_ITEMS (NOT stored on the entities) so nothing leaks
+# into API responses.
+_ITEM_HAY: list[str] = [_hwsearch._haystack(it) for it in _HW_ITEMS]
+
+
+def _dataset_etag() -> str:
+    meta = _HARDWARE.get("_meta") or {}
+    basis = "|".join(
+        str(x)
+        for x in (
+            meta.get("version", ""),
+            len(_HW_ITEMS),
+            len(_HW_BOARDS),
+            len(_HW_DRIVERS),
+            len(_HW_MOTORS),
+            len(_HW_HOSTS),
+            sum(len(v) for v in _HW_CATALOG.values()),
+        )
+    )
+    return 'W/"hw-' + hashlib.md5(basis.encode()).hexdigest()[:16] + '"'
+
+
+_HW_ETAG = _dataset_etag()
+
+
+def dataset_etag() -> str:
+    """A stable weak ETag for the (immutable-after-load) hardware dataset; changes on redeploy."""
+    return _HW_ETAG
+
+
 def hardware_items() -> list[dict[str, Any]]:
     """Every hardware component row (category / manufacturer / name / specs)."""
-    rows = _HARDWARE.get("items", [])
-    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+    return _HW_ITEMS
+
+
+def item_haystacks() -> list[str]:
+    """Precomputed lowercased search strings aligned to :func:`hardware_items` by index."""
+    return _ITEM_HAY
 
 
 def hardware_categories() -> list[str]:
     """The hardware component categories, in dataset order."""
-    rows = _HARDWARE.get("categories", [])
-    return [str(c) for c in rows] if isinstance(rows, list) else []
+    return _HW_CATEGORIES
 
 
 def hardware_manufacturers() -> list[dict[str, Any]]:
     """The manufacturer directory (name / country / website / specialty / categories)."""
-    rows = _HARDWARE.get("manufacturers", [])
-    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+    return _HW_MANUFACTURERS
+
+
+def canonical_category_counts() -> dict[str, int]:
+    """Per-category counts using the CANONICAL deduped entity sets where one exists
+    (boards / drivers / motors / hosts / the 9 catalog categories), else the raw item count —
+    so the browser's category tiles match what each panel actually lists."""
+    from collections import Counter
+
+    raw = Counter(str(i.get("category", "")) for i in _HW_ITEMS)
+    out: dict[str, int] = {}
+    for c in _HW_CATEGORIES:
+        cl = c.lower()
+        if "mcu" in cl and "board" in cl:
+            out[c] = len(_HW_BOARDS)
+        elif "driver" in cl:
+            out[c] = len(_HW_DRIVERS)
+        elif "stepper" in cl and "motor" in cl:
+            out[c] = len(_HW_MOTORS)
+        elif "host" in cl:
+            out[c] = len(_HW_HOSTS)
+        elif c in _HW_CATALOG:
+            out[c] = len(_HW_CATALOG[c])
+        else:
+            out[c] = raw.get(c, 0)
+    return out
 
 
 def boards() -> list[dict[str, Any]]:
     """The canonical control-board entities — each board's connectors aggregated into
     a single ``ports[]`` list (instead of one flat row per pin), joined to its spec
     row, with detection ``matchPatterns``. Built from the ``MCU & Boards`` category."""
-    rows = _HARDWARE.get("boards", [])
-    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+    return _HW_BOARDS
 
 
 def board_by_id(board_id: str) -> dict[str, Any] | None:
-    """A single canonical board record by its stable ``board_id`` slug."""
-    for b in boards():
-        if b.get("board_id") == board_id:
-            return b
-    return None
+    """A single canonical board record by its stable ``board_id`` slug (O(1))."""
+    return _BOARD_IDX.get(board_id)
 
 
 def drivers() -> list[dict[str, Any]]:
     """The canonical stepper-driver entities — one per chip (deduped from the flat
     ``Stepper Drivers`` rows), with a copyable Klipper ``[tmcXXXX]`` config snippet
     (or an honest note for standalone step/dir and closed-loop parts)."""
-    rows = _HARDWARE.get("drivers", [])
-    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+    return _HW_DRIVERS
 
 
 def driver_by_id(driver_id: str) -> dict[str, Any] | None:
-    """A single canonical driver record by its stable ``driver_id`` slug."""
-    for d in drivers():
-        if d.get("driver_id") == driver_id:
-            return d
-    return None
+    """A single canonical driver record by its stable ``driver_id`` slug (O(1))."""
+    return _DRIVER_IDX.get(driver_id)
 
 
 def motors() -> list[dict[str, Any]]:
     """The canonical stepper-motor entities — one per model (lightly deduped), with a
     recommended Klipper ``run_current`` (~0.7 x rated), any community per-axis current
     presets, and a copyable config snippet."""
-    rows = _HARDWARE.get("motors", [])
-    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+    return _HW_MOTORS
 
 
 def motor_by_id(motor_id: str) -> dict[str, Any] | None:
-    """A single canonical motor record by its stable ``motor_id`` slug."""
-    for m in motors():
-        if m.get("motor_id") == motor_id:
-            return m
-    return None
+    """A single canonical motor record by its stable ``motor_id`` slug (O(1))."""
+    return _MOTOR_IDX.get(motor_id)
 
 
 def hosts() -> list[dict[str, Any]]:
     """The canonical host-computer entities — SBCs / x86 hosts / Klipper OS images (deduped),
     each with a copyable Klipper HOST config (the ``[mcu host]`` Linux-process-MCU block + setup
     note for open Linux hosts; an honest note for locked-proprietary hosts and OS images)."""
-    rows = _HARDWARE.get("hosts", [])
-    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+    return _HW_HOSTS
 
 
 def host_by_id(host_id: str) -> dict[str, Any] | None:
-    """A single canonical host record by its stable ``host_id`` slug."""
-    for h in hosts():
-        if h.get("host_id") == host_id:
-            return h
-    return None
+    """A single canonical host record by its stable ``host_id`` slug (O(1))."""
+    return _HOST_IDX.get(host_id)
 
 
 def catalog() -> dict[str, Any]:
     """Generic canonical catalog for the remaining categories (sensors, hotends, extruders,
     fans/power/bed, displays/cameras, motion, nozzles, filament, electronics) — each a deduped
     entity with a copyable Klipper config snippet. Keyed by category name."""
-    data = _HARDWARE.get("catalog", {})
-    return data if isinstance(data, dict) else {}
+    return _HW_CATALOG
 
 
 def catalog_categories() -> list[str]:
     """The category names that have a canonical catalog (in dataset order)."""
-    return list(catalog().keys())
+    return list(_HW_CATALOG.keys())
 
 
 def catalog_entities(category: str) -> list[dict[str, Any]]:
     """The canonical entities for one catalog category."""
-    rows = catalog().get(category, [])
-    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+    return _HW_CATALOG.get(category, [])
 
 
 def catalog_entity_by_id(catalog_id: str) -> dict[str, Any] | None:
-    """A single catalog entity by its stable ``catalog_id`` slug (searched across categories)."""
-    for rows in catalog().values():
-        if isinstance(rows, list):
-            for e in rows:
-                if isinstance(e, dict) and e.get("catalog_id") == catalog_id:
-                    return e
-    return None
+    """A single catalog entity by its stable ``catalog_id`` slug (O(1) across categories)."""
+    return _CATALOG_IDX.get(catalog_id)
 
 
 # ── Config / macro templates ──────────────────────────────────────────────────
