@@ -46,7 +46,7 @@ src/
 │  ├─ store/       # state: Pinia mirror of Moonraker status
 │  └─ i18n.ts      # i18n: catalog loading, locale detection, switching
 ├─ components/     # presentation: app shell + dashboard (design-system driven)
-├─ widgets/        # features: self-registering widgets (Firmware Upgrade · Input Shaping · Motor Drivers)
+├─ widgets/        # features: self-registering widgets (Firmware Manager · Input Shaping · Motor Drivers · Config Editor · Macro Designer · Board Topology · Max-Flow · Config Templates · Hardware Browser)
 ├─ locales/        # i18n message catalogs, one folder per language (en bundled; others lazy)
 └─ assets/styles/  # Neo-Brutalist design tokens + component classes
 ```
@@ -106,6 +106,24 @@ the live `ACCELEROMETER_MEASURE` / `TEST_RESONANCES` capture orchestration,
 multi-call aggregations, or scheduled jobs — added as new route modules under
 `app/api/routes/`.
 
+### Hardware database (`/api/hardware/*`)
+
+A curated, **read-only** reference dataset — `app/data/reference/hardware.json` (~7.5 MB)
+loaded **once at import** into a module-global dict (`reference_data.py`) and immutable
+thereafter (handlers only read; no locks). The raw rows (`items[]`) are deduped/enriched at
+build time into **canonical entity arrays** — `boards`, `drivers`, `motors`, `hosts`, and a generic
+`catalog` (9 more categories) — each entity carrying its specs **plus a copyable Klipper config
+snippet** (a board pin-map, a `[tmcXXXX]` driver block, a recommended motor `run_current`, an
+`[mcu host]` block, etc.). Per type there is a small `*_search.py` (filter + paginate to lightweight
+summaries) and two routes: a paginated list and a `/{id}` full record. A `manufacturers` directory
+and `categories` round it out. CI guards keep it honest (per-category floors so a regen can't gut a
+category; a scrub check for external-project names; lossless port-aggregation locks).
+
+This dataset is being grown into the **shared data layer other widgets link to**: a planned
+relationship/`links` edge layer + a `GET /api/hardware/{type}/{id}/related` endpoint will let any
+widget pull an entity *and everything related to it* at O(1) (precomputed adjacency, kept in
+memory). See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
+
 ## Design system
 
 Neo-Brutalism, expressed as Tailwind tokens (`frontend/tailwind.config.ts`) and a
@@ -151,7 +169,8 @@ design mirrors the rest of the app: offline-first, extensible, and type-safe.
   switch — combined with each widget's `defineAsyncComponent` chunk, switching to Arabic and
   opening one widget downloads only that locale's catalog for that widget.
 - **Namespaced catalogs** under `src/locales/<code>/` mirror the code-split: `common`, `shell`, and
-  one per widget (`firmware`, `input-shaping`, `motor-drivers`). Each JSON file carries a single
+  one per widget (`firmware`, `input-shaping`, `motor-drivers`, `config-editor`, `macro-designer`,
+  `board-topology`, `max-flow`, `config-templates`, `hardware-browser`). Each JSON file carries a single
   top-level namespace key (e.g. `shell`) that is merged into the locale's messages.
 - **Drop-in extensibility.** `availableLocales` is derived from which catalog folders exist, so a
   new language is *dropping in `src/locales/<code>/`* — no component or registry edits. The switcher
