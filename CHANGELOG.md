@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.114.0] - 2026-06-07
+
+### Added
+
+- **Board enrichment + reference media links (Phases 5+6 of the DB overhaul).** Researched the most
+  common boards and folded the results into the catalog: **58 boards gained +458 confirmed spec
+  fields** (MCU / arch / voltage rails / driver slots / USB / CAN / bootloader offset / dimensions …)
+  + **23 inferred manufacturers**, each from an authoritative manufacturer / open-source-hardware
+  source.
+- **Per-board media is exposed as a `media` block** (product page, OSH repo, wiki, image, pinout,
+  schematic, datasheet) — **link-only** (verified `http(s)` URLs to the manufacturer's own source),
+  not re-hosted binaries, to respect asset licensing and keep the repo lean. The Board Topology
+  board card now renders these as a row of **reference links** (i18n labels ×7 locales).
+- CI: media URLs are validated as real `http(s)` links (never fabricated/relative paths).
+
 ## [0.113.0] - 2026-06-06
 
 ### Added

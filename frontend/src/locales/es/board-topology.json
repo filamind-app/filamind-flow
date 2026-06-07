@@ -78,7 +78,17 @@
       "specsTitle": "Especificaciones",
       "portsTitle": "Puertos",
       "none": "Aún no hay detalles de catálogo para esta placa.",
-      "loading": "Cargando placa…"
+      "loading": "Cargando placa…",
+      "links": {
+        "title": "Enlaces",
+        "product": "Producto",
+        "repo": "Repo",
+        "wiki": "Wiki",
+        "pinout": "Pinout",
+        "schematic": "Esquema",
+        "datasheet": "Hoja de datos",
+        "image": "Foto"
+      }
     }
   }
 }

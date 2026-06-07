@@ -78,7 +78,17 @@
       "specsTitle": "Caractéristiques",
       "portsTitle": "Ports",
       "none": "Pas encore de détails de catalogue pour cette carte.",
-      "loading": "Chargement de la carte…"
+      "loading": "Chargement de la carte…",
+      "links": {
+        "title": "Liens",
+        "product": "Produit",
+        "repo": "Dépôt",
+        "wiki": "Wiki",
+        "pinout": "Brochage",
+        "schematic": "Schéma",
+        "datasheet": "Fiche technique",
+        "image": "Photo"
+      }
     }
   }
 }
