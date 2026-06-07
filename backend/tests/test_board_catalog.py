@@ -63,12 +63,39 @@ def test_boards_dataset_aggregated_and_lossless() -> None:
         if i.get("category") == "MCU & Boards"
         and str(i.get("subsection", "")).startswith("Board connectors")
     )
-    agg = sum(p.get("count", 1) for b in boards for p in b.get("ports", []))
+    # Lossless applies to ports AGGREGATED from the flat rows — hardware-verified
+    # boards (e.g. SV08, mapped from the printer's own config) add their own ports.
+    agg = sum(
+        p.get("count", 1)
+        for b in boards
+        if not b.get("verified_on_hardware")
+        for p in b.get("ports", [])
+    )
     assert agg == flat_port_rows, f"port aggregation not lossless: {agg} != {flat_port_rows}"
     with_ports = [b for b in boards if b.get("ports")]
     assert with_ports, "some boards must own ports[]"
     cats = {p["category"] for b in with_ports for p in b["ports"]}
     assert {"motor", "fan", "thermistor"} <= cats
+
+
+def test_sv08_fully_ingested() -> None:
+    """Gold proof: the printer under test (Sovol SV08) is fully in the catalog —
+    mainboard + toolhead, verified against the unit's own printer.cfg."""
+    boards = reference_data.boards()
+    main = reference_data.board_by_id("sovol-sv08")
+    tool = reference_data.board_by_id("sovol-sv08-toolhead")
+    assert main and tool, "SV08 mainboard + toolhead must both exist"
+    assert main["manufacturer"] == "Sovol"
+    assert main.get("verified_on_hardware") and tool.get("verified_on_hardware")
+    # mainboard drives X, Y and 4 Z steppers (quad-gantry CoreXY)
+    main_motors = [p for p in main["ports"] if p["category"] == "motor"]
+    assert len(main_motors) == 6, "SV08 mainboard has X, Y + 4 Z motors"
+    # every mainboard motor records its real Klipper step pin
+    assert all("step" in str(p.get("pins", "")).lower() for p in main_motors)
+    # toolhead carries the extruder + hotend + probe + accelerometer
+    tool_cats = {p["category"] for p in tool["ports"]}
+    assert {"motor", "heater-hotend", "probe", "accelerometer"} <= tool_cats
+    _ = boards
 
 
 def test_boards_enriched_media_links_are_safe() -> None:
