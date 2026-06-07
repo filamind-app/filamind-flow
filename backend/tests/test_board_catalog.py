@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import Any
 
 from app.services import board_search, reference_data
@@ -132,6 +133,38 @@ def test_every_board_port_has_usage_hint() -> None:
         if not p.get("hint") or not p.get("configKey")
     ]
     assert not missing, f"{len(missing)} ports lack a usage hint/configKey, e.g. {missing[:5]}"
+
+
+def test_toolhead_boards_are_classified() -> None:
+    """Data audit lock: known toolhead boards (EBB / SB2209 / SB2240 / Nitehawk / SHT / Orbitool /
+    Caramba / THR / FYSETC SB) must be classed 'toolhead', not 'mainboard'. Guards against the
+    classification silently collapsing back (it was wrongly showing only 10 toolheads)."""
+    by_id = {b["board_id"]: b for b in reference_data.boards()}
+    known_toolheads = [
+        "sb2209-can",
+        "sb2240-can",
+        "sb2209-usb",
+        "sb2209-can-rp2040-g0b1",
+        "ebb36-can-v1-0",
+        "ebb42-gen2",
+        "ebb-sb2209-rp2040",
+        "nitehawk-sb-v1",
+        "nitehawk-36",
+        "orbitool-o2",
+        "caramba",
+        "fly-sht36-sht42",
+        "fysetc-sb-can-toolhead-v1-x",
+        "thr36-thr42",
+        "mks-thr36-v1-0",
+    ]
+    for bid in known_toolheads:
+        assert bid in by_id, f"missing board {bid}"
+        assert by_id[bid]["boardClass"] == "toolhead", (
+            f"{bid} should be 'toolhead', got {by_id[bid]['boardClass']!r}"
+        )
+    counts = Counter(b.get("boardClass") for b in reference_data.boards())
+    assert counts["toolhead"] >= 50, f"only {counts['toolhead']} toolhead boards — likely regressed"
+    assert counts["printer-preset"] > 50  # presets stay their own class, not swept in
 
 
 def test_boards_enriched_media_links_are_safe() -> None:
