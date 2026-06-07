@@ -34,26 +34,34 @@ def search(
     manufacturer: str = "",
     limit: int = 50,
     offset: int = 0,
+    haystacks: list[str] | None = None,
 ) -> dict[str, Any]:
     """Filter ``items`` by query / category / manufacturer and return one page.
 
     ``q`` matches anywhere (manufacturer, name, category, sub-section, or any spec value).
     ``category`` is an exact (case-insensitive) match; ``manufacturer`` is a substring match.
+    ``haystacks`` (optional, aligned to ``items`` by index) supplies precomputed lowercased
+    search strings so the free-text scan does not rebuild them on every request.
     """
     ql = q.strip().lower()
     cat = category.strip().lower()
     man = manufacturer.strip().lower()
     limit = max(1, min(int(limit), _MAX_LIMIT))
     offset = max(0, int(offset))
+    hay_list: list[str] = haystacks or []
+    use_hay = len(hay_list) == len(items) and len(hay_list) > 0
 
-    def matches(item: dict[str, Any]) -> bool:
+    def matches(item: dict[str, Any], idx: int) -> bool:
         if cat and str(item.get("category", "")).lower() != cat:
             return False
         if man and man not in str(item.get("manufacturer", "")).lower():
             return False
-        return not (ql and ql not in _haystack(item))
+        if not ql:
+            return True
+        hay = hay_list[idx] if use_hay else _haystack(item)
+        return ql in hay
 
-    filtered = [it for it in items if matches(it)]
+    filtered = [it for i, it in enumerate(items) if matches(it, i)]
     page = filtered[offset : offset + limit]
     return {
         "total": len(filtered),
