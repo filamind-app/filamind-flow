@@ -24,6 +24,10 @@
           "title": "Manufacturers & specs",
           "body": "This is a curated reference for comparison, not a store — values come from manufacturer datasheets and community data and may lag the latest products. Always confirm against the manufacturer before buying or configuring."
         },
+        "relationships": {
+          "title": "Linked hardware",
+          "body": "Every board, driver, motor and host is linked by its manufacturer, and each board also links to its MCU and the drivers it supports. Open any item and use the cross-link chips at the bottom to jump straight to a related part. The Manufacturers and MCUs tabs let you start from a brand or a chip and see everything that uses it."
+        },
         "glossary": {
           "title": "Glossary",
           "body": ""
@@ -41,6 +45,10 @@
         "spec": {
           "term": "Spec",
           "def": "A datasheet attribute of a component — current, voltage, max temp, dimensions, and so on."
+        },
+        "links": {
+          "term": "Linked hardware",
+          "def": "Cross-links between parts — a board's manufacturer, its MCU, and the drivers it supports — shown as clickable chips that jump to the related entity."
         }
       }
     },
@@ -70,7 +78,9 @@
       "boards": "Boards",
       "drivers": "Drivers",
       "motors": "Motors",
-      "hosts": "Hosts"
+      "hosts": "Hosts",
+      "manufacturers": "Brands",
+      "mcus": "MCUs"
     },
     "catalog": {
       "searchAll": "Search all",
@@ -121,6 +131,38 @@
         "x86": "x86",
         "os": "OS image",
         "locked": "locked"
+      }
+    },
+    "manufacturers": {
+      "search": "Search brands",
+      "total": "{n} brands",
+      "none": "No brands found.",
+      "members": "{n} parts",
+      "specialty": "Specialty",
+      "aliases": "Also known as",
+      "website": "Website →",
+      "derived": "community"
+    },
+    "mcus": {
+      "search": "Search MCUs",
+      "total": "{n} MCUs",
+      "none": "No MCUs found.",
+      "boards": "{n} boards"
+    },
+    "related": {
+      "title": "Linked hardware",
+      "loading": "Loading links…",
+      "more": "+{n} more",
+      "jump": "Open {name}",
+      "rel": {
+        "manufacturer": "Manufacturer",
+        "mcus": "MCU",
+        "onboardDrivers": "On-board drivers",
+        "supportedDrivers": "Supported drivers",
+        "boards": "Boards",
+        "motors": "Motors",
+        "hosts": "Hosts",
+        "catalog": "Parts"
       }
     }
   }

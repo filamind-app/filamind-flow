@@ -11,8 +11,12 @@ import type {
   HardwareSearchResult,
   HostDetail,
   HostsResult,
+  ManufacturerEntity,
+  McuEntity,
+  McusResult,
   MotorDetail,
   MotorsResult,
+  RelatedResult,
 } from './types'
 
 export interface SearchParams {
@@ -181,4 +185,53 @@ export async function fetchCatalogEntity(catalogId: string): Promise<CatalogEnti
   )
   if (!response.ok) throw new Error(`Catalog entity request failed (${response.status})`)
   return (await response.json()) as CatalogEntityDetail
+}
+
+/** The canonical manufacturer entities (deduped, with id / aliases / memberCount). */
+export async function fetchManufacturers(q?: string): Promise<ManufacturerEntity[]> {
+  const { backendUrl } = resolveEndpoints()
+  const qs = q ? `?q=${encodeURIComponent(q)}` : ''
+  const response = await fetch(`${backendUrl}/api/hardware/manufacturers${qs}`)
+  if (!response.ok) throw new Error(`Manufacturers request failed (${response.status})`)
+  return (await response.json()) as ManufacturerEntity[]
+}
+
+/** A single manufacturer entity. */
+export async function fetchManufacturerDetail(id: string): Promise<ManufacturerEntity> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/hardware/manufacturers/${encodeURIComponent(id)}`)
+  if (!response.ok) throw new Error(`Manufacturer request failed (${response.status})`)
+  return (await response.json()) as ManufacturerEntity
+}
+
+/** The canonical MCU entities parsed from board specs (family / arch / boardCount). */
+export async function fetchMcus(params?: { q?: string; family?: string }): Promise<McusResult> {
+  const { backendUrl } = resolveEndpoints()
+  const qs = new URLSearchParams()
+  if (params?.q) qs.set('q', params.q)
+  if (params?.family) qs.set('family', params.family)
+  const suffix = qs.toString() ? `?${qs.toString()}` : ''
+  const response = await fetch(`${backendUrl}/api/hardware/mcus${suffix}`)
+  if (!response.ok) throw new Error(`MCUs request failed (${response.status})`)
+  return (await response.json()) as McusResult
+}
+
+/** A single MCU entity. */
+export async function fetchMcuDetail(id: string): Promise<McuEntity> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/hardware/mcus/${encodeURIComponent(id)}`)
+  if (!response.ok) throw new Error(`MCU request failed (${response.status})`)
+  return (await response.json()) as McuEntity
+}
+
+/** Cross-entity relationships for any node, grouped by relation (O(1) graph walk).
+ *  `pluralType` is the route path segment: boards / drivers / motors / hosts / catalog /
+ *  manufacturers / mcus. */
+export async function fetchRelated(pluralType: string, id: string): Promise<RelatedResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/hardware/${encodeURIComponent(pluralType)}/${encodeURIComponent(id)}/related`,
+  )
+  if (!response.ok) throw new Error(`Related request failed (${response.status})`)
+  return (await response.json()) as RelatedResult
 }

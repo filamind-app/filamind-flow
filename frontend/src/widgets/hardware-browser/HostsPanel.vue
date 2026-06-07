@@ -1,13 +1,15 @@
 <script setup lang="ts">
 /** The host catalog view: browse the canonical hosts[] entity — SBC / x86 / OS-image, with a
  *  copyable Klipper HOST config (the [mcu host] block + setup note). Mirrors BoardsPanel. */
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
 
 import { fetchHostDetail, fetchHosts } from './api'
+import RelatedChips from './RelatedChips.vue'
 import type { HostDetail, HostSummary } from './types'
+import { useEntityFocus } from './useEntityFocus'
 
 const { t } = useI18n({ useScope: 'global' })
 const LIMIT = 24
@@ -72,6 +74,20 @@ function copyConfig(id: string, text: string): void {
     if (copied.value === id) copied.value = null
   }, 1500)
 }
+
+const { focus } = useEntityFocus()
+async function focusById(id: string, name?: string): Promise<void> {
+  q.value = name ?? ''
+  await load(true)
+  if (openId.value !== id && hosts.value.some((h) => h.host_id === id)) void toggle(id)
+}
+watch(
+  focus,
+  (f) => {
+    if (f && f.tab === 'hosts') void focusById(f.id, f.name)
+  },
+  { immediate: true },
+)
 
 onMounted(() => void load(true))
 </script>
@@ -192,6 +208,9 @@ onMounted(() => void load(true))
                   >{{ detailCache[h.host_id].configSnippet }}</pre
                 >
               </div>
+
+              <!-- cross-entity links (its manufacturer) -->
+              <RelatedChips :id="h.host_id" type="hosts" />
             </template>
           </div>
         </li>

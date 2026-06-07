@@ -13,15 +13,27 @@ import CatalogPanel from './CatalogPanel.vue'
 import CategoryIllo from './CategoryIllo.vue'
 import DriversPanel from './DriversPanel.vue'
 import HostsPanel from './HostsPanel.vue'
+import ManufacturersPanel from './ManufacturersPanel.vue'
+import McusPanel from './McusPanel.vue'
 import MotorsPanel from './MotorsPanel.vue'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { HardwareSearchResult } from './types'
+import { useEntityFocus } from './useEntityFocus'
 
 const LIMIT = 25
 const { t } = useI18n({ useScope: 'global' })
 
-type Mode = 'catalog' | 'boards' | 'drivers' | 'motors' | 'hosts' | 'category' | 'search'
+type Mode =
+  | 'catalog'
+  | 'boards'
+  | 'drivers'
+  | 'motors'
+  | 'hosts'
+  | 'manufacturers'
+  | 'mcus'
+  | 'category'
+  | 'search'
 const mode = ref<Mode>('catalog')
 const selectedCategory = ref<string>('')
 const TABS = computed(() => [
@@ -30,8 +42,23 @@ const TABS = computed(() => [
   { id: 'drivers' as Mode, label: t('hardwareBrowser.tabs.drivers') },
   { id: 'motors' as Mode, label: t('hardwareBrowser.tabs.motors') },
   { id: 'hosts' as Mode, label: t('hardwareBrowser.tabs.hosts') },
+  { id: 'manufacturers' as Mode, label: t('hardwareBrowser.tabs.manufacturers') },
+  { id: 'mcus' as Mode, label: t('hardwareBrowser.tabs.mcus') },
   { id: 'search' as Mode, label: t('hardwareBrowser.tabs.search') },
 ])
+
+// cross-link navigation: a RelatedChips click sets the shared focus → switch to its tab
+// (the destination panel watches the same focus to open the targeted entity).
+const { focus } = useEntityFocus()
+watch(focus, (f) => {
+  if (!f) return
+  if (f.tab === 'category') {
+    if (f.category) selectedCategory.value = f.category
+    mode.value = 'category'
+  } else {
+    mode.value = f.tab
+  }
+})
 
 const q = ref('')
 const category = ref<string | null>(null)
@@ -189,6 +216,12 @@ onMounted(() => {
 
     <!-- Hosts: the canonical host-computer catalog (specs + copyable [mcu host] config) -->
     <HostsPanel v-show="mode === 'hosts'" />
+
+    <!-- Manufacturers: canonical brands with their linked hardware (cross-links) -->
+    <ManufacturersPanel v-show="mode === 'manufacturers'" />
+
+    <!-- MCUs: canonical chips parsed from board specs + the boards that use each -->
+    <McusPanel v-show="mode === 'mcus'" />
 
     <!-- Category: the generic canonical catalog for the remaining categories -->
     <CatalogPanel

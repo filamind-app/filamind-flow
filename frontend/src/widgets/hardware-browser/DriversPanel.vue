@@ -1,13 +1,15 @@
 <script setup lang="ts">
 /** The driver catalog view: browse the canonical drivers[] entity — specs + Klipper
  *  support + a copyable [tmcXXXX] config snippet. Mirrors BoardsPanel. */
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
 
 import { fetchDriverDetail, fetchDrivers } from './api'
+import RelatedChips from './RelatedChips.vue'
 import type { DriverDetail, DriverSummary } from './types'
+import { useEntityFocus } from './useEntityFocus'
 
 const { t } = useI18n({ useScope: 'global' })
 const LIMIT = 24
@@ -78,6 +80,21 @@ function copyConfig(id: string, text: string): void {
     if (copied.value === id) copied.value = null
   }, 1500)
 }
+
+const { focus } = useEntityFocus()
+async function focusById(id: string, name?: string): Promise<void> {
+  q.value = name ?? ''
+  klipperOnly.value = false
+  await load(true)
+  if (openId.value !== id && drivers.value.some((d) => d.driver_id === id)) void toggle(id)
+}
+watch(
+  focus,
+  (f) => {
+    if (f && f.tab === 'drivers') void focusById(f.id, f.name)
+  },
+  { immediate: true },
+)
 
 onMounted(() => void load(true))
 </script>
@@ -219,6 +236,9 @@ onMounted(() => void load(true))
                   {{ t('hardwareBrowser.drivers.reference') }}
                 </a>
               </div>
+
+              <!-- cross-entity links (the boards that carry / support this driver) -->
+              <RelatedChips :id="d.driver_id" type="drivers" />
             </template>
           </div>
         </li>

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 /** The motor catalog view: browse the canonical motors[] entity — specs + a recommended
  *  Klipper run_current + community presets + a copyable config snippet. Mirrors BoardsPanel. */
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
 
 import { fetchMotorDetail, fetchMotors } from './api'
+import RelatedChips from './RelatedChips.vue'
 import type { MotorDetail, MotorSummary } from './types'
+import { useEntityFocus } from './useEntityFocus'
 
 const { t } = useI18n({ useScope: 'global' })
 const LIMIT = 24
@@ -72,6 +74,20 @@ function copyConfig(id: string, text: string): void {
     if (copied.value === id) copied.value = null
   }, 1500)
 }
+
+const { focus } = useEntityFocus()
+async function focusById(id: string, name?: string): Promise<void> {
+  q.value = name ?? ''
+  await load(true)
+  if (openId.value !== id && motors.value.some((m) => m.motor_id === id)) void toggle(id)
+}
+watch(
+  focus,
+  (f) => {
+    if (f && f.tab === 'motors') void focusById(f.id, f.name)
+  },
+  { immediate: true },
+)
 
 onMounted(() => void load(true))
 </script>
@@ -195,6 +211,9 @@ onMounted(() => void load(true))
                   >{{ detailCache[m.motor_id].configSnippet }}</pre
                 >
               </div>
+
+              <!-- cross-entity links (its manufacturer) -->
+              <RelatedChips :id="m.motor_id" type="motors" />
             </template>
           </div>
         </li>

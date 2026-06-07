@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.140.0] - 2026-06-07
+
+### Added
+
+- **Hardware Browser cross-links + brand / MCU browsing (DB-3a) — the linking graph is now
+  visible and navigable.** Building on the DB-2 backbone, the browser surfaces the relationships
+  in the UI:
+  - **Cross-link chips** on every expanded entity (board / driver / motor / host / catalog) — its
+    manufacturer, MCU(s) and on-board / supported drivers shown as clickable chips. Click one to
+    **jump straight to that entity** (the right tab opens and the target is expanded).
+  - **Two new browse tabs** — **Brands** (the canonical manufacturers, each with its part count and
+    its linked hardware) and **MCUs** (the chips parsed from board specs, each with the boards that
+    use it). Start from a brand or a chip and see everything that uses it.
+  - An illustrated **"Linked hardware"** help topic + glossary entry explain the feature.
+  - Localised across all seven languages.
+
 ## [0.139.0] - 2026-06-07
 
 ### Added
