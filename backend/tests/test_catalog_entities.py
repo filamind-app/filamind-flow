@@ -101,6 +101,37 @@ def test_manufacturer_field_has_no_junk() -> None:
     )  # truncation fixed
 
 
+def test_config_snippet_integrity() -> None:
+    """Data-audit lock (Wave 5): SPI thermocouple sensors carry the correct Klipper config (not a
+    generic ADC-thermistor placeholder); no entity has a non-URL configSource; no snippet header
+    has a parenthetical annotation inside the brackets."""
+    import re
+
+    by_id = {
+        e["catalog_id"]: e
+        for cat in reference_data.catalog_categories()
+        for e in reference_data.catalog_entities(cat)
+    }
+    mx = by_id["sens-max6675-spi"]["configSnippet"]
+    assert (
+        "sensor_type: MAX6675" in mx and "spi_software" in mx and "<Klipper sensor name" not in mx
+    )
+    # no non-URL configSource anywhere
+    for cat in reference_data.catalog_categories():
+        for e in reference_data.catalog_entities(cat):
+            cs = str(e.get("configSource", "")).strip()
+            assert not cs or cs.lower().startswith(("http", "//")), (
+                f"{e['catalog_id']} configSource not a URL"
+            )
+    for b in reference_data.boards():
+        cs = str(b.get("configSource", "")).strip()
+        assert not cs or cs.lower().startswith(("http", "//")), (
+            f"{b['board_id']} configSource not a URL"
+        )
+        for hdr in re.findall(r"^\s*\[([^\]]+)\]", str(b.get("configSnippet", "")), re.M):
+            assert "(" not in hdr, f"{b['board_id']} has an invalid section header [{hdr}]"
+
+
 def test_extruder_snippet_has_gear_ratio_or_rotation() -> None:
     ext = reference_data.catalog_entities("Extruders")
     assert ext
