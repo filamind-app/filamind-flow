@@ -85,6 +85,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/hardware/drivers/{driver_id}` | One driver's full record (specs + Klipper support + copyable `[tmcXXXX]` config snippet). |
 | GET    | `/api/hardware/motors`     | Canonical stepper-motor entities (summaries; `?q`/`manufacturer`/`nema`, paginated) — one per model, deduped. |
 | GET    | `/api/hardware/motors/{motor_id}` | One motor's full record (specs + recommended `run_current` + current presets + copyable config snippet). |
+| GET    | `/api/hardware/hosts`      | Canonical host-computer entities (summaries; `?q`/`manufacturer`/`kind`, paginated) — SBC / x86 / OS-image, deduped. |
+| GET    | `/api/hardware/hosts/{host_id}` | One host's full record (specs + Klipper-open flag + copyable `[mcu host]` config snippet). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

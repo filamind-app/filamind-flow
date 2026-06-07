@@ -69,7 +69,8 @@
       "search": "Tout chercher",
       "boards": "Cartes",
       "drivers": "Pilotes",
-      "motors": "Moteurs"
+      "motors": "Moteurs",
+      "hosts": "Hôtes"
     },
     "catalog": {
       "searchAll": "Tout chercher",
@@ -108,6 +109,18 @@
       "rated": "nominal",
       "run": "courant",
       "config": "Config Klipper"
+    },
+    "hosts": {
+      "search": "Rechercher des hôtes",
+      "total": "{n} hôtes",
+      "none": "Aucun hôte trouvé.",
+      "config": "Config hôte",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "Image OS",
+        "locked": "verrouillé"
+      }
     }
   }
 }

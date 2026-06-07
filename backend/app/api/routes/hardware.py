@@ -13,6 +13,7 @@ from app.services import (
     board_search,
     driver_search,
     hardware_search,
+    host_search,
     motor_search,
     reference_data,
 )
@@ -156,3 +157,35 @@ async def motor_detail(motor_id: str) -> dict[str, Any]:
     if motor is None:
         raise HTTPException(status_code=404, detail=f"No motor with id {motor_id!r}")
     return motor
+
+
+@router.get("/hosts")
+async def hosts(
+    q: str = Query("", description="Free-text search (manufacturer / name / SoC / specs)"),
+    manufacturer: str = Query("", description="Manufacturer substring filter"),
+    kind: str = Query("", description="Exact kind filter (sbc / x86 / os / locked)"),
+    limit: int = Query(50, ge=1, le=200, description="Page size"),
+    offset: int = Query(0, ge=0, description="Page offset"),
+) -> dict[str, Any]:
+    """Search the canonical host-computer entities (lightweight summaries, paginated).
+
+    The full record — including the copyable Klipper HOST config snippet — is served by
+    ``GET /api/hardware/hosts/{host_id}``.
+    """
+    return host_search.search(
+        reference_data.hosts(),
+        q=q,
+        manufacturer=manufacturer,
+        kind=kind,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@router.get("/hosts/{host_id}")
+async def host_detail(host_id: str) -> dict[str, Any]:
+    """The full canonical host record (specs + Klipper-open flag + copyable host config snippet)."""
+    host = reference_data.host_by_id(host_id)
+    if host is None:
+        raise HTTPException(status_code=404, detail=f"No host with id {host_id!r}")
+    return host
