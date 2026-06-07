@@ -39,6 +39,39 @@ def test_every_catalog_entity_has_id_and_snippet() -> None:
             seen.add(cid)
 
 
+def test_catalog_names_are_products_not_swapped_specs() -> None:
+    """Data-audit lock (Wave 1): no catalog entity may carry a bare interface word / pure voltage /
+    pure thread as its `name` while a real product sits in `manufacturer` (the column-swap bug).
+    Each row's `name` must carry real product identity."""
+    import re
+
+    generic = {"connectors", "connector", "i2c", "spi", "wire", "cable"}
+    offenders = []
+    for cat in reference_data.catalog_categories():
+        for e in reference_data.catalog_entities(cat):
+            name = str(e.get("name", "")).strip()
+            mfr = str(e.get("manufacturer", "")).strip()
+            nl = name.lower()
+            looks_spec = (
+                nl in generic
+                or re.match(r"^[\d.]+\s*v(\s*(or|/)\s*[\d.]+\s*v)?$", nl)
+                or re.match(r"^m\d+\s*[×x]\s*[\d.]+$", nl)  # noqa: RUF001 (data uses mult-sign)
+            )
+            if looks_spec and mfr and not mfr.lower().startswith("generic") and mfr != "—":
+                offenders.append((e.get("catalog_id"), name, mfr))
+    assert not offenders, (
+        f"{len(offenders)} catalog rows still have a swapped spec-as-name, e.g. {offenders[:5]}"
+    )
+    # recovered identities
+    by_id = {
+        e["catalog_id"]: e
+        for cat in reference_data.catalog_categories()
+        for e in reference_data.catalog_entities(cat)
+    }
+    assert by_id["sens-max6675-spi"]["name"] == "MAX6675"
+    assert by_id["elec-xt30-xt30u-connectors"]["name"] == "XT30 / XT30U"
+
+
 def test_extruder_snippet_has_gear_ratio_or_rotation() -> None:
     ext = reference_data.catalog_entities("Extruders")
     assert ext
