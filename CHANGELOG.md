@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.117.0] - 2026-06-07
+
+### Added
+
+- **Board data made *usable*, not just viewable.** Every board port now carries a **usage hint +
+  the Klipper config key** it feeds (added to **all 265 boards / ~960 ports**), so you know exactly
+  where each connector goes in `printer.cfg`.
+- **SV08 built to full reference depth** (mainboard + toolhead):
+  - A **structured pin map** per port — each pin with its signal/role, the Klipper key, and
+    `invert` (`!`) / `pull-up` (`^`) flags + a per-pin hint.
+  - An **Electronics** block of config-affecting facts (e.g. *bed is mains-AC via SSR — PA0 is a
+    3.3V trigger, never wire mains*; *PT1000 on the default 4700Ω pull-up*; *sensorless homing via
+    diag pins*; 3.3V logic).
+  - **Config notes** + a **copy-ready config snippet** of the verified pin map.
+- The Hardware Browser's board detail renders all of this: a "Use it" column on the ports table,
+  the electronics list, config notes, and a one-click **Copy** config snippet. New i18n keys ×7.
+
 ## [0.116.0] - 2026-06-07
 
 ### Added

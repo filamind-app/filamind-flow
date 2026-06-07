@@ -42,6 +42,15 @@ export interface BoardsResult {
   boards: BoardSummary[]
 }
 
+export interface BoardPinDetail {
+  pin: string
+  signal?: string
+  configKey?: string
+  invert?: boolean
+  pullup?: boolean
+  hint?: string
+}
+
 export interface BoardPort {
   label?: string
   category?: string
@@ -50,6 +59,10 @@ export interface BoardPort {
   pins?: string | number
   pitchMm?: string | number
   notes?: string
+  hint?: string
+  configKey?: string
+  configSection?: string
+  pinMap?: BoardPinDetail[]
 }
 
 export interface BoardMedia {
@@ -67,4 +80,7 @@ export interface BoardDetail extends BoardSummary {
   specs?: Record<string, string>
   ports?: BoardPort[]
   media?: BoardMedia
+  electronics?: Record<string, string>
+  configNotes?: string[]
+  configSnippet?: string
 }

@@ -98,6 +98,41 @@ def test_sv08_fully_ingested() -> None:
     _ = boards
 
 
+def test_sv08_data_is_usable_not_just_viewable() -> None:
+    """The board data must be machine/human-usable: every port has a usage hint + the
+    Klipper config key, motors carry a structured pin map (role/invert/pull-up), and the
+    board ships config-affecting electronics + a copy-ready config snippet."""
+    main = reference_data.board_by_id("sovol-sv08")
+    assert main is not None
+    # every port: usage hint + the Klipper key it feeds
+    for p in main["ports"]:
+        assert p.get("hint"), f"{p['label']} has no usage hint"
+        assert "configKey" in p
+    # motors expose a structured pin map with roles + invert/pull-up flags
+    mx = next(p for p in main["ports"] if p["label"] == "Motor X")
+    keys = {pm["configKey"] for pm in mx["pinMap"]}
+    assert {"step_pin", "dir_pin", "enable_pin", "uart_pin"} <= keys
+    assert any(pm["invert"] for pm in mx["pinMap"])  # dir/enable inverted
+    # electronics that affect config decisions (SSR bed, PT1000 pull-up, etc.)
+    assert main.get("electronics") and "Bed heating" in main["electronics"]
+    assert main.get("configNotes") and main.get("configSnippet")
+    assert "PT1000" in reference_data.board_by_id("sovol-sv08-toolhead")["electronics"].get(
+        "Hotend sensor", ""
+    )
+
+
+def test_every_board_port_has_usage_hint() -> None:
+    """Usability floor: every port on every board tells you how to use it in printer.cfg."""
+    boards = reference_data.boards()
+    missing = [
+        (b["board_id"], p.get("label"))
+        for b in boards
+        for p in b.get("ports", [])
+        if not p.get("hint") or not p.get("configKey")
+    ]
+    assert not missing, f"{len(missing)} ports lack a usage hint/configKey, e.g. {missing[:5]}"
+
+
 def test_boards_enriched_media_links_are_safe() -> None:
     """Phase 5+6: some boards carry enriched specs + link-only media. Any media URL
     must be a real http(s) link (never a fabricated/relative path)."""
