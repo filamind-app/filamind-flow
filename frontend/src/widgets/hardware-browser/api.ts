@@ -7,6 +7,8 @@ import type {
   DriversResult,
   HardwareCategories,
   HardwareSearchResult,
+  MotorDetail,
+  MotorsResult,
 } from './types'
 
 export interface SearchParams {
@@ -91,4 +93,32 @@ export async function fetchDriverDetail(driverId: string): Promise<DriverDetail>
   const response = await fetch(`${backendUrl}/api/hardware/drivers/${encodeURIComponent(driverId)}`)
   if (!response.ok) throw new Error(`Driver request failed (${response.status})`)
   return (await response.json()) as DriverDetail
+}
+
+/** Search the canonical motor catalog (summaries, paginated). */
+export async function fetchMotors(params: {
+  q?: string
+  manufacturer?: string
+  nema?: string
+  limit?: number
+  offset?: number
+}): Promise<MotorsResult> {
+  const { backendUrl } = resolveEndpoints()
+  const qs = new URLSearchParams()
+  if (params.q) qs.set('q', params.q)
+  if (params.manufacturer) qs.set('manufacturer', params.manufacturer)
+  if (params.nema) qs.set('nema', params.nema)
+  qs.set('limit', String(params.limit ?? 24))
+  qs.set('offset', String(params.offset ?? 0))
+  const response = await fetch(`${backendUrl}/api/hardware/motors?${qs.toString()}`)
+  if (!response.ok) throw new Error(`Motors request failed (${response.status})`)
+  return (await response.json()) as MotorsResult
+}
+
+/** The full motor record (specs + recommended run_current + presets + config snippet). */
+export async function fetchMotorDetail(motorId: string): Promise<MotorDetail> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/hardware/motors/${encodeURIComponent(motorId)}`)
+  if (!response.ok) throw new Error(`Motor request failed (${response.status})`)
+  return (await response.json()) as MotorDetail
 }

@@ -68,7 +68,8 @@
       "catalog": "目录",
       "search": "全部搜索",
       "boards": "主板",
-      "drivers": "驱动器"
+      "drivers": "驱动器",
+      "motors": "电机"
     },
     "catalog": {
       "searchAll": "全部搜索",
@@ -99,6 +100,14 @@
       "sensorless": "无传感器",
       "config": "Klipper 配置",
       "reference": "Klipper 参考 →"
+    },
+    "motors": {
+      "search": "搜索电机",
+      "total": "{n} 个电机",
+      "none": "未找到电机。",
+      "rated": "额定",
+      "run": "运行",
+      "config": "Klipper 配置"
     }
   }
 }

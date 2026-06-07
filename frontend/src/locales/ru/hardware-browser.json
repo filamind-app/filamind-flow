@@ -68,7 +68,8 @@
       "catalog": "Каталог",
       "search": "Искать во всём",
       "boards": "Платы",
-      "drivers": "Драйверы"
+      "drivers": "Драйверы",
+      "motors": "Моторы"
     },
     "catalog": {
       "searchAll": "Искать во всём",
@@ -99,6 +100,14 @@
       "sensorless": "бессенсорный",
       "config": "Конфиг Klipper",
       "reference": "Справочник Klipper →"
+    },
+    "motors": {
+      "search": "Поиск моторов",
+      "total": "{n} моторов",
+      "none": "Моторы не найдены.",
+      "rated": "номин.",
+      "run": "ток",
+      "config": "Конфиг Klipper"
     }
   }
 }

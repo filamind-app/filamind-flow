@@ -133,6 +133,22 @@ def driver_by_id(driver_id: str) -> dict[str, Any] | None:
     return None
 
 
+def motors() -> list[dict[str, Any]]:
+    """The canonical stepper-motor entities — one per model (lightly deduped), with a
+    recommended Klipper ``run_current`` (~0.7 x rated), any community per-axis current
+    presets, and a copyable config snippet."""
+    rows = _HARDWARE.get("motors", [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+def motor_by_id(motor_id: str) -> dict[str, Any] | None:
+    """A single canonical motor record by its stable ``motor_id`` slug."""
+    for m in motors():
+        if m.get("motor_id") == motor_id:
+            return m
+    return None
+
+
 # ── Config / macro templates ──────────────────────────────────────────────────
 def templates() -> list[dict[str, Any]]:
     """Insertable Klipper config / macro templates (id / name / category / description / body)."""

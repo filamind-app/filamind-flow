@@ -11,6 +11,7 @@ import { fetchCategories, searchHardware } from './api'
 import BoardsPanel from './BoardsPanel.vue'
 import CategoryIllo from './CategoryIllo.vue'
 import DriversPanel from './DriversPanel.vue'
+import MotorsPanel from './MotorsPanel.vue'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { HardwareSearchResult } from './types'
@@ -18,12 +19,13 @@ import type { HardwareSearchResult } from './types'
 const LIMIT = 25
 const { t } = useI18n({ useScope: 'global' })
 
-type Mode = 'catalog' | 'boards' | 'drivers' | 'search'
+type Mode = 'catalog' | 'boards' | 'drivers' | 'motors' | 'search'
 const mode = ref<Mode>('catalog')
 const TABS = computed(() => [
   { id: 'catalog' as Mode, label: t('hardwareBrowser.tabs.catalog') },
   { id: 'boards' as Mode, label: t('hardwareBrowser.tabs.boards') },
   { id: 'drivers' as Mode, label: t('hardwareBrowser.tabs.drivers') },
+  { id: 'motors' as Mode, label: t('hardwareBrowser.tabs.motors') },
   { id: 'search' as Mode, label: t('hardwareBrowser.tabs.search') },
 ])
 
@@ -50,6 +52,10 @@ function openCategory(cat: string | null): void {
   }
   if (c.includes('driver')) {
     mode.value = 'drivers'
+    return
+  }
+  if (c.includes('stepper') && c.includes('motor')) {
+    mode.value = 'motors'
     return
   }
   category.value = cat
@@ -162,6 +168,9 @@ onMounted(() => {
 
     <!-- Drivers: the canonical driver catalog (specs + copyable [tmcXXXX] config) -->
     <DriversPanel v-show="mode === 'drivers'" />
+
+    <!-- Motors: the canonical motor catalog (specs + recommended run_current + config) -->
+    <MotorsPanel v-show="mode === 'motors'" />
 
     <!-- Search controls -->
     <div v-show="mode === 'search'" class="flex flex-wrap items-end gap-2">
