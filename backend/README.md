@@ -77,18 +77,22 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/topology`            | Host → MCU topology from the live config: each MCU's connection (CAN/USB/UART) + chip/board guess (read-only). |
 | POST   | `/api/macro/simulate`      | Offline G-code simulator: macro `{ params.X }` substitution → path / bounds / totals / time / timeline; pure, no printer. |
 | GET    | `/api/hardware`            | Flat free-text search over the raw component rows (`?q=`/`category`/`manufacturer`, paginated). The canonical, deduped, config-carrying entities have their own typed endpoints below. |
-| GET    | `/api/hardware/categories` | The hardware categories + total component count. |
-| GET    | `/api/hardware/manufacturers` | The manufacturer directory (name / country / website / specialty). |
+| GET    | `/api/hardware/categories` | The hardware categories + per-category **canonical** `counts` (raw kept as `rawCounts`) + total component count. |
+| GET    | `/api/hardware/manufacturers` | Canonical manufacturer entities (`?q`) — each with a stable `manufacturer_id`, auto-derived `aliases` and a `memberCount`, sorted most-connected first. |
+| GET    | `/api/hardware/manufacturers/{manufacturer_id}` | One manufacturer's record (`?expand=related` adds its linked hardware, grouped by type). |
+| GET    | `/api/hardware/mcus`       | Canonical MCU entities (`?q`/`family`) parsed from board `specs.MCU` (normalised to a canonical part) — each with `family`, `arch`, `boardCount`. |
+| GET    | `/api/hardware/mcus/{mcu_id}` | One MCU's record (`?expand=related` adds the boards that use it). |
 | GET    | `/api/hardware/boards`     | Canonical control-board entities (summaries; `?q`/`manufacturer`/`board_class`, paginated) — each board's connectors aggregated into one `ports[]`. |
-| GET    | `/api/hardware/boards/{board_id}` | One board's full record (identity + specs + aggregated `ports[]` + detection `matchPatterns`). |
+| GET    | `/api/hardware/boards/{board_id}` | One board's full record (identity + specs + aggregated `ports[]` + detection `matchPatterns`; `?expand=related` adds links). |
 | GET    | `/api/hardware/drivers`    | Canonical stepper-driver entities (summaries; `?q`/`manufacturer`/`klipper_only`, paginated) — one per chip, deduped. |
-| GET    | `/api/hardware/drivers/{driver_id}` | One driver's full record (specs + Klipper support + copyable `[tmcXXXX]` config snippet). |
+| GET    | `/api/hardware/drivers/{driver_id}` | One driver's full record (specs + Klipper support + copyable `[tmcXXXX]` config snippet; `?expand=related`). |
 | GET    | `/api/hardware/motors`     | Canonical stepper-motor entities (summaries; `?q`/`manufacturer`/`nema`, paginated) — one per model, deduped. |
-| GET    | `/api/hardware/motors/{motor_id}` | One motor's full record (specs + recommended `run_current` + current presets + copyable config snippet). |
+| GET    | `/api/hardware/motors/{motor_id}` | One motor's full record (specs + recommended `run_current` + current presets + copyable config snippet; `?expand=related`). |
 | GET    | `/api/hardware/hosts`      | Canonical host-computer entities (summaries; `?q`/`manufacturer`/`kind`, paginated) — SBC / x86 / OS-image, deduped. |
-| GET    | `/api/hardware/hosts/{host_id}` | One host's full record (specs + Klipper-open flag + copyable `[mcu host]` config snippet). |
+| GET    | `/api/hardware/hosts/{host_id}` | One host's full record (specs + Klipper-open flag + copyable `[mcu host]` config snippet; `?expand=related`). |
 | GET    | `/api/hardware/catalog`    | Canonical entities for one remaining category (`?category=…`, summaries; `?q`/`manufacturer`, paginated) — sensors / hotends / extruders / fans / displays / motion / nozzles / filament / electronics, deduped. |
-| GET    | `/api/hardware/catalog/{catalog_id}` | One catalog entity's full record (specs + copyable Klipper config snippet). |
+| GET    | `/api/hardware/catalog/{catalog_id}` | One catalog entity's full record (specs + copyable Klipper config snippet; `?expand=related`). |
+| GET    | `/api/hardware/{type}/{id}/related` | Cross-entity relationships for any node (`boards`/`drivers`/`motors`/`hosts`/`catalog`/`manufacturers`/`mcus`), grouped by relation (O(1) graph walk). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

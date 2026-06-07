@@ -273,9 +273,11 @@ templates live in [`deploy/`](deploy/).
       **Macro Designer**, **Board Topology**, **Hardware Browser + Config Templates**, and
       **Max-Flow** (planner + gated run) all shipped. _See [ROADMAP.md](ROADMAP.md)._
 - [x] **Hardware database** — the catalog deduped into canonical, config-carrying entities
-      (boards / drivers / motors / hosts / catalog) served under `/api/hardware/*`.
-- [ ] **Hardware DB as a cross-widget data backbone** — a relationship/`links` layer +
-      `/related` API, a reusable part-picker, and search-index/cache perf work. _See [ROADMAP.md](ROADMAP.md)._
+      (boards / drivers / motors / hosts / catalog) served under `/api/hardware/*`, with O(1)
+      id lookups + cached reads (**DB-1**), and a canonical-manufacturer / first-class-MCU
+      **linking graph** (`/related` + `?expand=related`, **DB-2**).
+- [ ] **Hardware DB backbone — remaining** — a reusable part-picker + shared catalog UI with
+      cross-link chips (DB-3), images / silo convergence (DB-4). _See [ROADMAP.md](ROADMAP.md)._
 - [ ] Max-Flow: a live validation run on the printer · Motor-Drivers auto-SGT / SG4 sensorless wizard
 - [ ] Self-hosted fonts for fully offline hosts · optional auth / oneshot-token flow for secured setups
 

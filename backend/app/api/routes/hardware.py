@@ -22,6 +22,21 @@ from app.services import (
 router = APIRouter(prefix="/hardware", tags=["hardware"])
 
 
+def _with_related(
+    record: dict[str, Any], plural_type: str, entity_id: str, expand: str
+) -> dict[str, Any]:
+    """Optionally inline the cross-entity ``related`` block when ``expand`` requests it
+    (``?expand=related``), so a caller can fetch an entity and its neighbours in one round-trip."""
+    if "related" not in {part.strip() for part in expand.split(",")}:
+        return record
+    rel = reference_data.related(plural_type, entity_id)
+    return {
+        **record,
+        "related": rel["groups"] if rel else {},
+        "relatedCounts": rel["counts"] if rel else {},
+    }
+
+
 @router.get("")
 async def hardware(
     q: str = Query("", description="Free-text search (manufacturer / name / category / specs)"),
@@ -65,9 +80,66 @@ async def hardware_categories() -> dict[str, Any]:
 
 
 @router.get("/manufacturers")
-async def hardware_manufacturers() -> list[dict[str, Any]]:
-    """The manufacturer directory (name / country / website / specialty / categories)."""
-    return reference_data.hardware_manufacturers()
+async def hardware_manufacturers(
+    q: str = Query("", description="Free-text search (name / alias)"),
+) -> list[dict[str, Any]]:
+    """The canonical manufacturer entities — each with a stable ``manufacturer_id``, auto-derived
+    ``aliases`` and a ``memberCount`` (how many hardware entities link to it), sorted
+    most-connected first. Use ``GET /manufacturers/{id}?expand=related`` to list its hardware."""
+    rows = reference_data.manufacturers_canonical()
+    ql = q.strip().lower()
+    if not ql:
+        return rows
+    return [
+        m
+        for m in rows
+        if ql in str(m.get("name", "")).lower()
+        or any(ql in str(a).lower() for a in m.get("aliases", []))
+    ]
+
+
+@router.get("/manufacturers/{manufacturer_id}")
+async def manufacturer_detail(
+    manufacturer_id: str,
+    expand: str = Query("", description="Comma list; ``related`` inlines linked entities"),
+) -> dict[str, Any]:
+    """A single canonical manufacturer entity (``?expand=related`` adds its linked hardware)."""
+    man = reference_data.manufacturer_by_id(manufacturer_id)
+    if man is None:
+        raise HTTPException(status_code=404, detail=f"No manufacturer with id {manufacturer_id!r}")
+    return _with_related(man, "manufacturers", manufacturer_id, expand)
+
+
+@router.get("/mcus")
+async def mcus(
+    q: str = Query("", description="Free-text search (name / family)"),
+    family: str = Query("", description="Family substring filter (e.g. STM32F4 / AVR / RP2xxx)"),
+) -> dict[str, Any]:
+    """The canonical MCU entities (parsed + normalised from board ``specs.MCU``), each with a
+    ``family``, ``arch`` and ``boardCount``. Small set — returned unpaginated."""
+    rows = reference_data.mcus()
+    ql, fam = q.strip().lower(), family.strip().lower()
+    if ql:
+        rows = [
+            m
+            for m in rows
+            if ql in str(m.get("name", "")).lower() or ql in str(m.get("family", "")).lower()
+        ]
+    if fam:
+        rows = [m for m in rows if fam in str(m.get("family", "")).lower()]
+    return {"total": len(rows), "count": len(rows), "items": rows}
+
+
+@router.get("/mcus/{mcu_id}")
+async def mcu_detail(
+    mcu_id: str,
+    expand: str = Query("", description="Comma list; ``related`` inlines the boards using it"),
+) -> dict[str, Any]:
+    """A single canonical MCU entity (``?expand=related`` adds the boards that use it)."""
+    mcu = reference_data.mcu_by_id(mcu_id)
+    if mcu is None:
+        raise HTTPException(status_code=404, detail=f"No MCU with id {mcu_id!r}")
+    return _with_related(mcu, "mcus", mcu_id, expand)
 
 
 @router.get("/boards")
@@ -94,13 +166,16 @@ async def boards(
 
 
 @router.get("/boards/{board_id}")
-async def board_detail(board_id: str) -> dict[str, Any]:
+async def board_detail(
+    board_id: str,
+    expand: str = Query("", description="Comma list; ``related`` inlines linked entities"),
+) -> dict[str, Any]:
     """The full canonical board record (identity + specs + aggregated ``ports[]`` +
-    detection ``matchPatterns``) for a single ``board_id``."""
+    detection ``matchPatterns``) for a single ``board_id`` (``?expand=related`` adds links)."""
     board = reference_data.board_by_id(board_id)
     if board is None:
         raise HTTPException(status_code=404, detail=f"No board with id {board_id!r}")
-    return board
+    return _with_related(board, "boards", board_id, expand)
 
 
 @router.get("/drivers")
@@ -127,12 +202,16 @@ async def drivers(
 
 
 @router.get("/drivers/{driver_id}")
-async def driver_detail(driver_id: str) -> dict[str, Any]:
-    """The full canonical driver record (specs + Klipper support + copyable config snippet)."""
+async def driver_detail(
+    driver_id: str,
+    expand: str = Query("", description="Comma list; ``related`` inlines linked entities"),
+) -> dict[str, Any]:
+    """The full canonical driver record (specs + Klipper support + copyable config snippet);
+    ``?expand=related`` adds the boards that carry/support it."""
     driver = reference_data.driver_by_id(driver_id)
     if driver is None:
         raise HTTPException(status_code=404, detail=f"No driver with id {driver_id!r}")
-    return driver
+    return _with_related(driver, "drivers", driver_id, expand)
 
 
 @router.get("/motors")
@@ -159,12 +238,16 @@ async def motors(
 
 
 @router.get("/motors/{motor_id}")
-async def motor_detail(motor_id: str) -> dict[str, Any]:
-    """The full canonical motor record (specs + recommended run_current + presets + snippet)."""
+async def motor_detail(
+    motor_id: str,
+    expand: str = Query("", description="Comma list; ``related`` inlines linked entities"),
+) -> dict[str, Any]:
+    """The full canonical motor record (specs + recommended run_current + presets + snippet);
+    ``?expand=related`` adds its manufacturer link."""
     motor = reference_data.motor_by_id(motor_id)
     if motor is None:
         raise HTTPException(status_code=404, detail=f"No motor with id {motor_id!r}")
-    return motor
+    return _with_related(motor, "motors", motor_id, expand)
 
 
 @router.get("/hosts")
@@ -191,12 +274,16 @@ async def hosts(
 
 
 @router.get("/hosts/{host_id}")
-async def host_detail(host_id: str) -> dict[str, Any]:
-    """The full canonical host record (specs + Klipper-open flag + copyable host config snippet)."""
+async def host_detail(
+    host_id: str,
+    expand: str = Query("", description="Comma list; ``related`` inlines linked entities"),
+) -> dict[str, Any]:
+    """The full canonical host record (specs + Klipper-open flag + copyable host config snippet);
+    ``?expand=related`` adds its manufacturer link."""
     host = reference_data.host_by_id(host_id)
     if host is None:
         raise HTTPException(status_code=404, detail=f"No host with id {host_id!r}")
-    return host
+    return _with_related(host, "hosts", host_id, expand)
 
 
 @router.get("/catalog")
@@ -221,9 +308,30 @@ async def catalog(
 
 
 @router.get("/catalog/{catalog_id}")
-async def catalog_detail(catalog_id: str) -> dict[str, Any]:
-    """The full catalog entity (specs + copyable config snippet) for a single ``catalog_id``."""
+async def catalog_detail(
+    catalog_id: str,
+    expand: str = Query("", description="Comma list; ``related`` inlines linked entities"),
+) -> dict[str, Any]:
+    """The full catalog entity (specs + copyable config snippet) for a single ``catalog_id``;
+    ``?expand=related`` adds its manufacturer link."""
     entity = reference_data.catalog_entity_by_id(catalog_id)
     if entity is None:
         raise HTTPException(status_code=404, detail=f"No catalog entity with id {catalog_id!r}")
-    return entity
+    return _with_related(entity, "catalog", catalog_id, expand)
+
+
+@router.get("/{entity_type}/{entity_id}/related")
+async def entity_related(entity_type: str, entity_id: str) -> dict[str, Any]:
+    """Cross-entity relationships for any node, grouped by relation (O(1) adjacency walk).
+
+    ``entity_type`` is the plural path segment (``boards`` / ``drivers`` / ``motors`` / ``hosts``
+    / ``catalog`` / ``manufacturers`` / ``mcus``). Returns ``{type, id, groups, counts}`` where
+    ``groups`` maps a relation (``manufacturer`` / ``mcus`` / ``onboardDrivers`` /
+    ``supportedDrivers`` / ``boards`` / ``motors`` / ``hosts`` / ``catalog``) to entity summaries.
+    """
+    result = reference_data.related(entity_type, entity_id)
+    if result is None:
+        raise HTTPException(
+            status_code=404, detail=f"No {entity_type!r} node with id {entity_id!r}"
+        )
+    return result
