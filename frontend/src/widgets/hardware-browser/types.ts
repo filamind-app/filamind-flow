@@ -84,3 +84,31 @@ export interface BoardDetail extends BoardSummary {
   configNotes?: string[]
   configSnippet?: string
 }
+
+// ── Driver catalog entity (GET /api/hardware/drivers[/{id}]) ───────────────────
+export interface DriverSummary {
+  driver_id: string
+  name?: string
+  manufacturer?: string
+  chip?: string
+  interface?: string
+  klipperSupported?: boolean
+  klipperSection?: string | null
+  sensorless?: boolean
+  specCount?: number
+}
+
+export interface DriversResult {
+  total: number
+  count: number
+  offset: number
+  limit: number
+  drivers: DriverSummary[]
+}
+
+export interface DriverDetail extends DriverSummary {
+  aliases?: string[]
+  specs?: Record<string, string>
+  configSnippet?: string
+  configSource?: string
+}

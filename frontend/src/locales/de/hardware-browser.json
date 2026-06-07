@@ -67,7 +67,8 @@
     "tabs": {
       "catalog": "Katalog",
       "search": "Alles suchen",
-      "boards": "Boards"
+      "boards": "Boards",
+      "drivers": "Treiber"
     },
     "catalog": {
       "searchAll": "Alles suchen",
@@ -88,6 +89,16 @@
       "config": "Config-Snippet",
       "copy": "Kopieren",
       "copied": "Kopiert!"
+    },
+    "drivers": {
+      "search": "Treiber suchen",
+      "klipperOnly": "Nur Klipper (TMC)",
+      "total": "{n} Treiber",
+      "none": "Keine Treiber gefunden.",
+      "standalone": "eigenständig",
+      "sensorless": "sensorlos",
+      "config": "Klipper-Konfig",
+      "reference": "Klipper-Referenz →"
     }
   }
 }

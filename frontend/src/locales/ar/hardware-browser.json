@@ -67,7 +67,8 @@
     "tabs": {
       "catalog": "الكاتلوج",
       "search": "بحث في الكل",
-      "boards": "اللوحات"
+      "boards": "اللوحات",
+      "drivers": "المشغّلات"
     },
     "catalog": {
       "searchAll": "بحث في الكل",
@@ -88,6 +89,16 @@
       "config": "مقتطف الكونفج",
       "copy": "نسخ",
       "copied": "تم النسخ!"
+    },
+    "drivers": {
+      "search": "ابحث في المشغّلات",
+      "klipperOnly": "Klipper (TMC) فقط",
+      "total": "{n} مشغّل",
+      "none": "لا توجد مشغّلات.",
+      "standalone": "مستقل",
+      "sensorless": "بلا مجسّ",
+      "config": "إعداد Klipper",
+      "reference": "مرجع Klipper ←"
     }
   }
 }

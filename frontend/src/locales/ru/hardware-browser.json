@@ -67,7 +67,8 @@
     "tabs": {
       "catalog": "Каталог",
       "search": "Искать во всём",
-      "boards": "Платы"
+      "boards": "Платы",
+      "drivers": "Драйверы"
     },
     "catalog": {
       "searchAll": "Искать во всём",
@@ -88,6 +89,16 @@
       "config": "Фрагмент конфига",
       "copy": "Копировать",
       "copied": "Скопировано!"
+    },
+    "drivers": {
+      "search": "Поиск драйверов",
+      "klipperOnly": "Только Klipper (TMC)",
+      "total": "{n} драйверов",
+      "none": "Драйверы не найдены.",
+      "standalone": "автономный",
+      "sensorless": "бессенсорный",
+      "config": "Конфиг Klipper",
+      "reference": "Справочник Klipper →"
     }
   }
 }
