@@ -27,6 +27,10 @@
         "glossary": {
           "title": "Glosario",
           "body": ""
+        },
+        "relationships": {
+          "title": "Hardware vinculado",
+          "body": "Cada placa, driver, motor y host está vinculado por su fabricante, y cada placa también se vincula con su MCU y los drivers que admite. Abre cualquier elemento y usa las fichas de enlaces de la parte inferior para saltar directamente a una pieza relacionada. Las pestañas «Marcas» y «MCU» te permiten partir de una marca o un chip y ver todo lo que lo usa."
         }
       },
       "glossary": {
@@ -41,6 +45,10 @@
         "spec": {
           "term": "Especificación",
           "def": "Un atributo de la hoja de datos de un componente — corriente, voltaje, temperatura máxima, dimensiones, etc."
+        },
+        "links": {
+          "term": "Hardware vinculado",
+          "def": "Enlaces entre piezas — el fabricante de una placa, su MCU y los drivers que admite — mostrados como fichas en las que se puede hacer clic para ir al elemento relacionado."
         }
       }
     },
@@ -70,7 +78,9 @@
       "boards": "Placas",
       "drivers": "Drivers",
       "motors": "Motores",
-      "hosts": "Hosts"
+      "hosts": "Hosts",
+      "manufacturers": "Marcas",
+      "mcus": "MCU"
     },
     "catalog": {
       "searchAll": "Buscar todo",
@@ -121,6 +131,38 @@
         "x86": "x86",
         "os": "Imagen OS",
         "locked": "bloqueado"
+      }
+    },
+    "manufacturers": {
+      "search": "Buscar marcas",
+      "total": "{n} marcas",
+      "none": "No se encontraron marcas.",
+      "members": "{n} piezas",
+      "specialty": "Especialidad",
+      "aliases": "También conocido como",
+      "website": "Sitio web →",
+      "derived": "comunidad"
+    },
+    "mcus": {
+      "search": "Buscar MCU",
+      "total": "{n} MCU",
+      "none": "No se encontraron MCU.",
+      "boards": "{n} placas"
+    },
+    "related": {
+      "title": "Hardware vinculado",
+      "loading": "Cargando enlaces…",
+      "more": "+{n} más",
+      "jump": "Abrir {name}",
+      "rel": {
+        "manufacturer": "Fabricante",
+        "mcus": "MCU",
+        "onboardDrivers": "Drivers integrados",
+        "supportedDrivers": "Drivers compatibles",
+        "boards": "Placas",
+        "motors": "Motores",
+        "hosts": "Hosts",
+        "catalog": "Piezas"
       }
     }
   }

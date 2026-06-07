@@ -27,6 +27,10 @@
         "glossary": {
           "title": "Glossar",
           "body": ""
+        },
+        "relationships": {
+          "title": "Verknüpfte Hardware",
+          "body": "Jede Platine, jeder Treiber, Motor und Host ist über seinen Hersteller verknüpft, und jede Platine ist zusätzlich mit ihrem MCU und den unterstützten Treibern verbunden. Öffne ein Element und nutze die Verknüpfungs-Chips unten, um direkt zu einem verwandten Teil zu springen. Über die Tabs „Marken“ und „MCUs“ kannst du von einer Marke oder einem Chip ausgehen und alles sehen, was sie verwendet."
         }
       },
       "glossary": {
@@ -41,6 +45,10 @@
         "spec": {
           "term": "Spezifikation",
           "def": "Ein Datenblatt-Attribut einer Komponente — Strom, Spannung, Maximaltemperatur, Abmessungen und so weiter."
+        },
+        "links": {
+          "term": "Verknüpfte Hardware",
+          "def": "Querverweise zwischen Teilen — der Hersteller einer Platine, ihr MCU und die unterstützten Treiber — als anklickbare Chips, die zum verwandten Element springen."
         }
       }
     },
@@ -70,7 +78,9 @@
       "boards": "Boards",
       "drivers": "Treiber",
       "motors": "Motoren",
-      "hosts": "Hosts"
+      "hosts": "Hosts",
+      "manufacturers": "Marken",
+      "mcus": "MCUs"
     },
     "catalog": {
       "searchAll": "Alles suchen",
@@ -121,6 +131,38 @@
         "x86": "x86",
         "os": "OS-Image",
         "locked": "gesperrt"
+      }
+    },
+    "manufacturers": {
+      "search": "Marken suchen",
+      "total": "{n} Marken",
+      "none": "Keine Marken gefunden.",
+      "members": "{n} Teile",
+      "specialty": "Spezialgebiet",
+      "aliases": "Auch bekannt als",
+      "website": "Website →",
+      "derived": "Community"
+    },
+    "mcus": {
+      "search": "MCUs suchen",
+      "total": "{n} MCUs",
+      "none": "Keine MCUs gefunden.",
+      "boards": "{n} Platinen"
+    },
+    "related": {
+      "title": "Verknüpfte Hardware",
+      "loading": "Verknüpfungen werden geladen…",
+      "more": "+{n} weitere",
+      "jump": "{name} öffnen",
+      "rel": {
+        "manufacturer": "Hersteller",
+        "mcus": "MCU",
+        "onboardDrivers": "Integrierte Treiber",
+        "supportedDrivers": "Unterstützte Treiber",
+        "boards": "Platinen",
+        "motors": "Motoren",
+        "hosts": "Hosts",
+        "catalog": "Teile"
       }
     }
   }

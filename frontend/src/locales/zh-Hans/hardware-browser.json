@@ -27,6 +27,10 @@
         "glossary": {
           "title": "术语表",
           "body": ""
+        },
+        "relationships": {
+          "title": "关联硬件",
+          "body": "每块主板、驱动、电机和主机都通过其制造商相互关联，每块主板还关联到它的 MCU 及其支持的驱动。打开任意条目，使用底部的关联标签即可直接跳转到相关部件。「品牌」和「MCU」选项卡可让你从某个品牌或芯片出发，查看使用它的所有部件。"
         }
       },
       "glossary": {
@@ -41,6 +45,10 @@
         "spec": {
           "term": "规格",
           "def": "组件的数据表属性 —— 电流、电压、最高温度、尺寸等等。"
+        },
+        "links": {
+          "term": "关联硬件",
+          "def": "部件之间的交叉链接——主板的制造商、它的 MCU 以及它支持的驱动——以可点击的标签显示，点击即可跳转到相关条目。"
         }
       }
     },
@@ -70,7 +78,9 @@
       "boards": "主板",
       "drivers": "驱动器",
       "motors": "电机",
-      "hosts": "主机"
+      "hosts": "主机",
+      "manufacturers": "品牌",
+      "mcus": "MCU"
     },
     "catalog": {
       "searchAll": "全部搜索",
@@ -121,6 +131,38 @@
         "x86": "x86",
         "os": "系统镜像",
         "locked": "锁定"
+      }
+    },
+    "manufacturers": {
+      "search": "搜索品牌",
+      "total": "{n} 个品牌",
+      "none": "未找到品牌。",
+      "members": "{n} 个部件",
+      "specialty": "专长",
+      "aliases": "又称",
+      "website": "网站 →",
+      "derived": "社区"
+    },
+    "mcus": {
+      "search": "搜索 MCU",
+      "total": "{n} 个 MCU",
+      "none": "未找到 MCU。",
+      "boards": "{n} 块主板"
+    },
+    "related": {
+      "title": "关联硬件",
+      "loading": "正在加载关联…",
+      "more": "+{n} 更多",
+      "jump": "打开 {name}",
+      "rel": {
+        "manufacturer": "制造商",
+        "mcus": "MCU",
+        "onboardDrivers": "板载驱动",
+        "supportedDrivers": "支持的驱动",
+        "boards": "主板",
+        "motors": "电机",
+        "hosts": "主机",
+        "catalog": "部件"
       }
     }
   }

@@ -133,7 +133,10 @@ composite `<type>:<id>` ids (ids are *not* unique across types — `sovol-sv08` 
 host). That powers `GET /api/hardware/manufacturers[/{id}]`, `/mcus[/{id}]`, a generic
 `GET /api/hardware/{type}/{id}/related`, and `?expand=related` on the detail routes — all O(1) — so a
 widget can pull an entity *and everything related to it* in one call. A CI edge-validator proves the
-graph has no dangling edges. See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
+graph has no dangling edges. The Hardware Browser **surfaces** this graph (DB-3a): every entity's
+detail shows clickable **cross-link chips** (manufacturer / MCU / drivers) that deep-link to the
+related entity, and **Brands** / **MCUs** tabs let you browse from a maker or a chip outward. See the
+Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
 
 ## Design system
 
