@@ -34,8 +34,10 @@ on your machine and deployed as **static files**, so it adds virtually nothing t
 the printer host at runtime; a small FastAPI backend handles anything that must
 run server-side.
 
-> **Status:** actively developed and **running on real hardware** (a Sovol SV08).
-> Three widgets ship today:
+> **Status:** actively developed and **running on real hardware** (a Sovol SV08), localized in
+> **7 languages** with **4 switchable themes**. **Nine widgets ship today** — Firmware Manager,
+> Input Shaping, Motor Drivers, Config Editor, Macro Designer, Board Topology, Max-Flow,
+> Config Templates, and the Hardware Browser. A few highlights:
 >
 > - **Firmware Manager** — a full Klipper firmware build & flash console: per-board
 >   profiles, a live Kconfig editor, Katapult / DFU / SD-card flashing, Beacon probe
@@ -54,8 +56,14 @@ run server-side.
 >   tuning recommendations, and a homing panel that adapts to each axis (physical switch /
 >   sensorless / Z-probe) — with a built-in glossary, illustrated help, and advanced register
 >   view. Works on any Klipper printer and any TMC model.
+> - **Hardware Browser** — a curated database of thousands of 3D-printing components
+>   (boards · drivers · motors · hosts · sensors · hotends · extruders · nozzles · fans ·
+>   filament · …), deduped into **2,600+ canonical entities each with a copyable Klipper
+>   config**: board pin-maps, `[tmcXXXX]` driver blocks, recommended motor `run_current`,
+>   `[mcu host]` host blocks, and more — designed to become the shared data layer every other
+>   widget links to.
 >
-> Further widgets are added under `frontend/src/widgets/`.
+> The full set is in the table below; new widgets are added under `frontend/src/widgets/`.
 
 ## Widgets
 
@@ -67,7 +75,7 @@ run server-side.
 | **Max-Flow** | Measure the highest volumetric flow (mm³/s) your hotend can sustain — ramp the extrusion flow while watching the extruder's TMC StallGuard load for the moment the gear slips. Pick a hotend to prefill, preview the exact ramp (flow → feedrate per step), then run behind a safety checklist + confirm gate; the heater is always cut at the end, the ramp stops at the first slip, and the run is refused while printing. Reports the max sustained flow + suggested slicer "max volumetric speed" (80 % / 90 %). Illustrated help. | ✅ Shipped (planner + gated run) |
 | **Board Topology** | A read-only map of how your control boards connect — the host (SBC) and every MCU it talks to, each with its connection type (USB / CAN bus / UART), chip, and a best-effort board guess, read live from the config. Illustrated help. Generic across all Klipper printers. | ✅ Shipped |
 | **Macro Designer** | An offline G-code simulator: write or paste a program and see the toolhead path drawn in 2D, the bounding box, total travel and extrusion, a time estimate, and a per-command timeline — nothing is sent to the printer. Plus a built-in macro reference library you can insert from. Illustrated help. | ✅ Shipped (simulator + UI) |
-| **Hardware Browser** | Search a curated reference of **3,600+** 3D-printing components — steppers, drivers, boards, sensors, hotends, fans, hosts, nozzles, extruders, filaments and more — by name, manufacturer, category, or any spec, with each result's full spec sheet. Illustrated help. | ✅ Shipped (search + UI) |
+| **Hardware Browser** | A curated reference of 3D-printing hardware deduped into **2,600+ canonical entities**, each with its full spec sheet **and a copyable Klipper config**: **Boards** (380 — aggregated pin-map / ports + a copy-ready pin config), **Drivers** (55 — `[tmcXXXX]` blocks for the TMC family, honest notes for standalone parts), **Motors** (670+ — recommended `run_current` + config, incl. real OEM part ranges), **Hosts** (220 SBC / x86 — `[mcu host]`), and a generic **catalog** of 9 more categories (sensors & probes, hotends, extruders, fans / power / bed, cameras & displays, motion, nozzles, filament, electronics). Search by name / manufacturer / spec; built to be the shared data layer other widgets link to. Illustrated help. | ✅ Shipped |
 | **Config Templates** | A library of ready-to-paste Klipper config blocks and macros — start/end sequences, pause/resume, filament load/unload, M600, `[input_shaper]`, `[bed_mesh]`, `[firmware_retraction]` and more — filterable by category, each with a one-click copy. Illustrated help. | ✅ Shipped |
 | **Motor Drivers** | A live inventory of every TMC stepper driver, read straight from the Klipper config — run/hold current, chopper mode, microsteps, StallGuard, temperature, and health, each annotated with authoritative per-model facts from a built-in capability map. Assign each axis its motor from a 200+ motor catalog, get recommended run current + driver registers from the motor's datasheet (a built-in `motor_constants` physics model), and copy-to-config or apply them live behind a confirm (reversible; refused while printing). A method-aware **🏠 homing** panel adapts to how each axis homes (physical switch / sensorless / Z-probe) — live switch state + test-home for switches, a per-model-correct StallGuard tuner for sensorless. An **⚙ advanced register editor** edits the safe subset of TMC registers live behind a server-side allowlist + clamp (raw current and protection registers blocked). Watch a live monitor (temperature / StallGuard load / faults), sync multi-motor axes, or run it all from a **🧭 Guided wizard**. Glossary + illustrated help. Generic across all printers and TMC models. | ✅ Shipped (P1–P10) |
 
@@ -119,9 +127,11 @@ which needs mDNS the client may not have). See [`scripts/install.sh`](scripts/in
 - **Widget registry** — the extensibility core; widgets declare the printer
   objects they need and the dashboard subscribes to their union, once.
 - **Pinia store** — a single reactive mirror of Moonraker state for all widgets.
-- **FastAPI backend** — health + diagnostics, plus the firmware build/flash and
-  resonance-analysis services; the home for privileged or aggregated server-side
-  operations.
+- **FastAPI backend** — health + diagnostics, the firmware build/flash and
+  resonance-analysis services, the config / topology / max-flow services, and the
+  read-only **hardware database** (`/api/hardware/*` — canonical boards / drivers /
+  motors / hosts / catalog, each with a copyable Klipper config); the home for
+  privileged or aggregated server-side operations.
 
 ## Tech stack
 
@@ -259,12 +269,15 @@ templates live in [`deploy/`](deploy/).
       `{ code, params, message }` backend-message contract. _All six phases complete._
 - [x] **Theme system** — 4 switchable themes (Neon · Dark · Light · High-Contrast) driven by
       CSS variables; per-theme recolor of every token with no component edits; no-flash + persisted.
-- [ ] **Planned expansion** (analyzed reuse from the Klipper ecosystem, GPL-3.0) — a shared
-      data + config-engine **foundation**, then: **Config Editor**, **Macro Designer**,
-      **Board Topology**, **Hardware Browser + Templates**, **Max-Flow**, and Motor-Drivers
-      **auto-SGT / slip-detection** + a Sensorless-Homing wizard. _See [ROADMAP.md](ROADMAP.md)._
-- [ ] Self-hosted fonts for fully offline hosts
-- [ ] Optional auth/oneshot-token flow for secured Moonraker setups
+- [x] **Platform expansion** — the shared data + config-engine foundation plus **Config Editor**,
+      **Macro Designer**, **Board Topology**, **Hardware Browser + Config Templates**, and
+      **Max-Flow** (planner + gated run) all shipped. _See [ROADMAP.md](ROADMAP.md)._
+- [x] **Hardware database** — the catalog deduped into canonical, config-carrying entities
+      (boards / drivers / motors / hosts / catalog) served under `/api/hardware/*`.
+- [ ] **Hardware DB as a cross-widget data backbone** — a relationship/`links` layer +
+      `/related` API, a reusable part-picker, and search-index/cache perf work. _See [ROADMAP.md](ROADMAP.md)._
+- [ ] Max-Flow: a live validation run on the printer · Motor-Drivers auto-SGT / SG4 sensorless wizard
+- [ ] Self-hosted fonts for fully offline hosts · optional auth / oneshot-token flow for secured setups
 
 See [ROADMAP.md](ROADMAP.md) for the full phase-by-phase plan.
 

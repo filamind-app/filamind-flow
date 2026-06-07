@@ -76,7 +76,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/maxflow/run`         | Run the live max-flow test (heat + extrude + sample StallGuard); preflight (chopper-mode/StallGuard) + SG4 bias-floor + ≥180 °C; refused while printing; heater always cut. |
 | GET    | `/api/topology`            | Host → MCU topology from the live config: each MCU's connection (CAN/USB/UART) + chip/board guess (read-only). |
 | POST   | `/api/macro/simulate`      | Offline G-code simulator: macro `{ params.X }` substitution → path / bounds / totals / time / timeline; pure, no printer. |
-| GET    | `/api/hardware`            | Search the curated hardware DB (`?q=`/`category`/`manufacturer`, paginated) — 3,600+ components. |
+| GET    | `/api/hardware`            | Flat free-text search over the raw component rows (`?q=`/`category`/`manufacturer`, paginated). The canonical, deduped, config-carrying entities have their own typed endpoints below. |
 | GET    | `/api/hardware/categories` | The hardware categories + total component count. |
 | GET    | `/api/hardware/manufacturers` | The manufacturer directory (name / country / website / specialty). |
 | GET    | `/api/hardware/boards`     | Canonical control-board entities (summaries; `?q`/`manufacturer`/`board_class`, paginated) — each board's connectors aggregated into one `ports[]`. |

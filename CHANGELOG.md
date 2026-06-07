@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.137.0] - 2026-06-07
+
+### Docs
+
+- **Professional documentation refresh + the Hardware-DB backbone plan.** Updated the main
+  **README** (the status callout now reflects all **nine** shipped widgets, not three; the Hardware
+  Browser is described as the canonical, config-carrying database it has become; the stale bottom
+  "Roadmap" — which listed already-shipped widgets as *planned* and carried an external-reuse /
+  "GPL-3.0" phrase — was rewritten and the external-project framing removed). **ARCHITECTURE.md**
+  gained a "Hardware database (`/api/hardware/*`)" section and its widget / i18n-catalog lists were
+  brought current. **backend/README** flat-search row clarified. **ROADMAP** gained a new
+  **"Hardware DB — cross-widget data backbone"** phased plan (DB-1 performance foundation →
+  DB-2 linking/`links` layer + `/related` API → DB-3 shared `EntityCatalog` + `HardwarePicker` +
+  facets/cross-links → DB-4 media + silo convergence; SQLite+FTS5 documented as the only-if-triggered
+  storage end-state), and the "Planned expansion" heading was de-externalized. No code changes.
+
 ## [0.136.0] - 2026-06-07
 
 ### Added
@@ -462,9 +478,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     dropped from Electronics & Wiring (176 → **195**), with names derived from their own specs.
   - The manufacturer **directory stays in `manufacturers[]`** (274) instead of polluting the product
     list — no directory data lost.
-  - **Scrubbed all remaining external-project references** from the dataset (incl. `klippain` and
-    third-party `GPL-3` license mentions) while keeping the technical values; added both to the CI
-    ban list.
+  - **Scrubbed all remaining external-project references** from the dataset (third-party project
+    names and license mentions) while keeping the technical values; added them to the CI ban list.
   - New CI regression: **per-category floors** (`test_no_category_was_gutted`) so a future regen can
     never silently gut a whole category again.
   - Curated DB total: **3,643 components** / 274 manufacturers / 13 categories.
@@ -1628,9 +1643,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.44.1] - 2026-06-03
 
-### Docs — Shake&Tune feature parity complete (5 of 5)
+### Docs — resonance-tuning suite complete (5 of 5)
 
-- Documentation sweep closing out the Shake&Tune-parity effort (part 3/3): the ROADMAP
+- Documentation sweep closing out the resonance-tuning suite effort (part 3/3): the ROADMAP
   gains phase 13 (vibrations profile) and the parity section is marked **✅ COMPLETE (5 of
   5)**; the Input Shaping range now reads v0.27.0 → v0.44.0. ARCHITECTURE updated to describe
   the full capture/analysis set (axes-map · sustain frequency · guided wizard · vibrations
@@ -1638,7 +1653,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.44.0] - 2026-06-03
 
-### Added — Input Shaping: vibrations profile UI + wizard (Shake&Tune parity, 5 of 5 — part 2/3)
+### Added — Input Shaping: vibrations profile UI + wizard (resonance-tuning suite, 5 of 5 — part 2/3)
 
 - **Machine vibrations profile (browser).** A new 📊 panel in the "From the printer" view
   runs the sweep (with adjustable top speed + step) and renders it as a **speed-vs-energy
@@ -1655,10 +1670,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.43.0] - 2026-06-03
 
-### Added — Input Shaping: vibrations profile backend (Shake&Tune parity, 5 of 5 — part 1/3)
+### Added — Input Shaping: vibrations profile backend (resonance-tuning suite, 5 of 5 — part 1/3)
 
 - **Machine vibrations profile (backend).** New `POST /api/shaper/vibrations-profile` and a
-  pure `vibrations_service` (a numpy port of Shake&Tune's `vibrations_computation.py`, reusing
+  pure `vibrations_service` (a numpy vibrations computation, reusing
   the vendored Klipper `ShaperCalibrate` for the per-segment PSD — no matplotlib, no Klipper
   host). It sweeps a range of speeds along each kinematic motor angle (0/90 for
   Cartesian/CoreXZ, 45/135 for CoreXY) while `ACCELEROMETER_MEASURE` brackets each constant-
@@ -1684,9 +1699,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.42.0] - 2026-06-03
 
-### Added — Input Shaping: guided wizard completes the workflow (Shake&Tune parity, 4 of 5)
+### Added — Input Shaping: guided wizard completes the workflow (resonance-tuning suite, 4 of 5)
 
-- The 🧭 guided wizard now covers the full Shake&Tune flow with two guided-manual steps
+- The 🧭 guided wizard now covers the full resonance tuning flow with two guided-manual steps
   after the shaper calibration: **Vibrations / VFAs** (a quick "do you see vertical fine
   artifacts?" self-report → keep slicer speeds out of the resonant band, or dig into TMC
   tuning) and **Pressure advance** (a copy-able PA tuning-tower g-code + how to apply the
@@ -1695,7 +1710,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.41.0] - 2026-06-03
 
-### Added — Input Shaping: guided tuning wizard (Shake&Tune parity, 3 of 5)
+### Added — Input Shaping: guided tuning wizard (resonance-tuning suite, 3 of 5)
 
 - **🧭 Guided tune.** A step-by-step wizard that walks Noise → Belts → Shaper X → Shaper Y
   with automated **pass/fail gates** (reusing the existing scorers — the A–F grade, the belt
@@ -1708,7 +1723,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.40.0] - 2026-06-03
 
-### Added — Input Shaping: sustain frequency (Shake&Tune parity, 2 of 5)
+### Added — Input Shaping: sustain frequency (resonance-tuning suite, 2 of 5)
 
 - **Hold-a-frequency hands-on diagnostic.** A new `🎯 sustain frequency` action buzzes the
   toolhead in place near a chosen frequency for a few seconds — a slow, narrow
@@ -1721,7 +1736,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.39.0] - 2026-06-02
 
-### Added — Input Shaping: axes-map calibration (Shake&Tune parity, 1 of 5)
+### Added — Input Shaping: axes-map calibration (resonance-tuning suite, 1 of 5)
 
 - **Accelerometer orientation detection.** A new `🧭 axes map` action jogs the toolhead
   ~30 mm in +X/+Y/+Z, integrates the accelerometer signal to velocity, and detects the
@@ -1730,8 +1745,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   / bed-slinger machines. Shows a paste-ready `[<chip>] axes_map: …` (Copy) + a
   "matches your config?" verdict + a velocity-sequence chart.
 - New backend `POST /api/shaper/axes-map` (**moves the toolhead**; print-guarded; auto-homes).
-  The pure-numpy detection (`axes_map_service`) is ported from Shake&Tune's
-  `axes_map_computation` (GPL-3.0); the capture is orchestrated over Moonraker REST with
+  The pure-numpy detection (`axes_map_service`) computes the accelerometer axes-map; the
+  capture is orchestrated over Moonraker REST with
   `ACCELEROMETER_MEASURE` bracketing the moves — the reusable capture spine for the coming
   sustain-frequency and vibrations features.
 
