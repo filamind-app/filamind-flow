@@ -9,7 +9,13 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 
-from app.services import board_search, driver_search, hardware_search, reference_data
+from app.services import (
+    board_search,
+    driver_search,
+    hardware_search,
+    motor_search,
+    reference_data,
+)
 
 router = APIRouter(prefix="/hardware", tags=["hardware"])
 
@@ -118,3 +124,35 @@ async def driver_detail(driver_id: str) -> dict[str, Any]:
     if driver is None:
         raise HTTPException(status_code=404, detail=f"No driver with id {driver_id!r}")
     return driver
+
+
+@router.get("/motors")
+async def motors(
+    q: str = Query("", description="Free-text search (manufacturer / name / NEMA / specs)"),
+    manufacturer: str = Query("", description="Manufacturer substring filter"),
+    nema: str = Query("", description="NEMA size substring filter (e.g. 17 / 23)"),
+    limit: int = Query(50, ge=1, le=200, description="Page size"),
+    offset: int = Query(0, ge=0, description="Page offset"),
+) -> dict[str, Any]:
+    """Search the canonical stepper-motor entities (lightweight summaries, paginated).
+
+    The full record — including the recommended ``run_current`` and the copyable Klipper
+    config snippet — is served by ``GET /api/hardware/motors/{motor_id}``.
+    """
+    return motor_search.search(
+        reference_data.motors(),
+        q=q,
+        manufacturer=manufacturer,
+        nema=nema,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@router.get("/motors/{motor_id}")
+async def motor_detail(motor_id: str) -> dict[str, Any]:
+    """The full canonical motor record (specs + recommended run_current + presets + snippet)."""
+    motor = reference_data.motor_by_id(motor_id)
+    if motor is None:
+        raise HTTPException(status_code=404, detail=f"No motor with id {motor_id!r}")
+    return motor

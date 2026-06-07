@@ -68,7 +68,8 @@
       "catalog": "Katalog",
       "search": "Alles suchen",
       "boards": "Boards",
-      "drivers": "Treiber"
+      "drivers": "Treiber",
+      "motors": "Motoren"
     },
     "catalog": {
       "searchAll": "Alles suchen",
@@ -99,6 +100,14 @@
       "sensorless": "sensorlos",
       "config": "Klipper-Konfig",
       "reference": "Klipper-Referenz →"
+    },
+    "motors": {
+      "search": "Motoren suchen",
+      "total": "{n} Motoren",
+      "none": "Keine Motoren gefunden.",
+      "rated": "Nenn",
+      "run": "Lauf",
+      "config": "Klipper-Konfig"
     }
   }
 }
