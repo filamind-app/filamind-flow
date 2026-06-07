@@ -6,6 +6,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.139.0] - 2026-06-07
+
+### Added
+
+- **Hardware-DB linking backbone (DB-2) — the reference DB is now a connected graph.** The data's
+  relationships used to be islands (free-text `manufacturer`, the MCU buried in a board's specs,
+  driver compatibility hidden in a spec string). DB-2 turns them into a precomputed, in-memory
+  cross-entity graph (built once at load) with O(1) lookups:
+  - **Canonical manufacturers** — every directory entry gets a stable `manufacturer_id`, auto-derived
+    aliases (parenthetical acronyms, `/`-separated co-brands) and a `memberCount`; variant spellings
+    collapse (`BTT` / `BigTreeTech` / `BIGTREETECH (BTT)` → one id), recurring real brands missing
+    from the directory are derived, and "no single maker" placeholders (generic / clone / RepRap) are
+    excluded so they never become misleading link hubs.
+  - **MCU as a first-class entity** — board `specs.MCU` strings are parsed with a whitelist of
+    chip-family rules and normalised to a canonical part (`STM32F407VET6` → `stm32f407`), so package
+    fragments, host SoCs and noise never become phantom MCUs.
+  - **Edges** use composite keys (`<type>:<id>`, since ids are not unique across types) linking each
+    entity to its manufacturer, each board to its MCU(s), and each board to its on-board / supported
+    drivers.
+  - New read-only endpoints: `GET /api/hardware/manufacturers` (now canonical) + `/manufacturers/{id}`,
+    `GET /api/hardware/mcus` + `/mcus/{id}`, a generic `GET /api/hardware/{type}/{id}/related`, and
+    `?expand=related` on the entity detail routes (fetch an entity and its neighbours in one call).
+  - A CI edge-validator test guarantees the graph has no dangling edges and every referenced
+    manufacturer / MCU resolves.
+
 ## [0.138.0] - 2026-06-07
 
 ### Changed
