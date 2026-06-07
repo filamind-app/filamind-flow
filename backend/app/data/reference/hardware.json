@@ -68246,7 +68246,7 @@
     },
     {
       "board_id": "ramps-1-6",
-      "manufacturer": "",
+      "manufacturer": "RepRap (open hardware, many vendors)",
       "model": "RAMPS 1.6",
       "display_name": "RAMPS 1.6",
       "aliases": [],
@@ -68258,7 +68258,12 @@
         "USB": "via Mega (16U2)",
         "Connectivity": "Same header map as 1.4; bigger bed MOSFET/heatsink, SMD fuses",
         "Voltage": "12 V / 24 V",
-        "Role/era": "~2017"
+        "Role/era": "~2017",
+        "Clock": "16 MHz",
+        "Driver slots": "5 (X, Y, Z, E0, E1)",
+        "Onboard drivers": "None - removable Pololu modules (A4988 / DRV8825)",
+        "CAN": "None",
+        "Flash method": "Arduino bootloader over USB"
       },
       "ports": [
         {
@@ -68304,7 +68309,22 @@
       "xlsx_source_rows": {
         "portRowCount": 2
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://reprap.org/wiki/RAMPS_1.4",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "5V logic": "5V logic level - thermistors/endstops/driver signals are 5V",
+        "Thermistor pull-up": "4.7k pull-ups on T0/T1/T2 (use pullup_resistor: 4700)",
+        "Bed = onboard MOSFET": "Bed driven by onboard MOSFET (D8); high-current/AC bed needs an external MOSFET/SSR triggered from D8"
+      },
+      "configNotes": [
+        "Standalone drivers: Vref set by potentiometer - no run_current in Klipper; set microsteps to match jumpers",
+        "Build for AVR atmega2560 @ 16 MHz over USB; thermistors pullup_resistor: 4700",
+        "RAMPS 1.6 upgrades MOSFETs vs 1.4 but pinout is identical - reuse RAMPS pin mapping"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "rumba",
@@ -69546,7 +69566,7 @@
     },
     {
       "board_id": "sanguinololu",
-      "manufacturer": "",
+      "manufacturer": "RepRap (open hardware, various vendors)",
       "model": "Sanguinololu (v1.0–1.3a)",
       "display_name": "Sanguinololu",
       "aliases": [
@@ -69566,7 +69586,9 @@
         "Onboard drivers": "socketed",
         "Supported drivers": "A4988, DRV8825 (Pololu-compatible StepStick)",
         "Class": "mainboard",
-        "Form factor": "low-cost all-in-one RepRap/CNC controller"
+        "Form factor": "low-cost all-in-one RepRap/CNC controller",
+        "CAN": "None",
+        "Flash method": "Arduino/Sanguino bootloader over FTDI serial"
       },
       "ports": [
         {
@@ -69729,7 +69751,18 @@
       "media": {
         "wikiUrl": "https://reprap.org/wiki/Sanguinololu",
         "mediaStatus": "none"
-      }
+      },
+      "electronics": {
+        "5V logic": "5V logic, single-extruder all-in-one (4 axes only)",
+        "Bed via FET / external": "Hotend and bed via onboard MOSFETs; high-power/AC bed via external MOSFET or SSR",
+        "Standalone drivers": "Pololu drivers standalone - current by trimpot, no UART/SPI"
+      },
+      "configNotes": [
+        "Set driver Vref before connecting motors (hardware-only, not from Klipper)",
+        "Build for AVR sanguino/atmega1284p (or atmega644p) @ 16 MHz; flash via FTDI",
+        "Only 4 driver slots - no second extruder; pin maps differ between 644P and 1284P"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "megatronics-v3",
@@ -78003,12 +78036,22 @@
     },
     {
       "board_id": "trigorilla-v1",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla V1",
       "display_name": "Trigorilla V1",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "ATmega2560",
+        "Arch": "8-bit AVR",
+        "Clock": "16 MHz",
+        "Voltage": "10-30V (typ 12V)",
+        "Driver slots": "5 (X, Y, Z, E0, E1)",
+        "Onboard drivers": "None - Pololu slots (A4988 / DRV8825 / TMC2100)",
+        "USB": "USB-B (CH340/16U2)",
+        "CAN": "None",
+        "Flash method": "Arduino bootloader over USB (RAMPS 1.4-compatible)"
+      },
       "ports": [
         {
           "label": "Screw terminal",
@@ -78123,16 +78166,40 @@
       "xlsx_source_rows": {
         "portRowCount": 7
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "RAMPS-compatible": "Integrated Mega2560+RAMPS1.4 - standard RAMPS pin map, 5V logic",
+        "Thermistor pull-up": "4.7k thermistor pull-ups - pullup_resistor: 4700",
+        "Bed = onboard MOSFET": "1 bed + 2 heater outputs via onboard MOSFETs"
+      },
+      "configNotes": [
+        "Treat as RAMPS 1.4: AVR atmega2560 @ 16 MHz, RAMPS pin aliases, pullup_resistor: 4700",
+        "Removable standalone drivers - Vref + microstep jumpers, no UART tuning",
+        "'Trigorilla' = V1, 'Trigorilla 1.1' = V1.1 (same MCU/pinout)"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-32-bit",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla 32-bit",
       "display_name": "Trigorilla 32-bit",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32F103ZET6",
+        "Arch": "32-bit ARM Cortex-M3",
+        "Clock": "72 MHz",
+        "Voltage": "12V class (i3 Mega 32-bit upgrade)",
+        "Driver slots": "5 positions, factory-soldered",
+        "Onboard drivers": "Soldered A4988 (standalone); reworkable to TMC2208",
+        "USB": "USB via PL2303 serial (~230400 baud)",
+        "CAN": "None",
+        "Flash method": "stm32flash serial bootloader (remove JP1, SW1 to USB); 8K bootloader offset"
+      },
       "ports": [
         {
           "label": "Screw terminal",
@@ -78277,11 +78344,26 @@
       "xlsx_source_rows": {
         "portRowCount": 9
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/napyk/trigorilla-pro",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Soldered A4988": "Standalone soldered A4988 - no UART, fixed Vref unless reworked",
+        "3.3V logic": "32-bit STM32 board - 3.3V logic (vs 8-bit Trigorilla 5V)",
+        "Serial via PL2303": "Host comms via PL2303; cap baud ~230400"
+      },
+      "configNotes": [
+        "Build for STM32F103 with 8KiB bootloader offset; flash with stm32flash",
+        "Onboard A4988 standalone: no [tmc]; thermistors 100k, pullup_resistor: 4700",
+        "Original i3 Mega 32-bit board - distinct from the newer Kobra-era HC32F460 Pro boards"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-spe",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla Spe A / B v1.0.x",
       "display_name": "Trigorilla Spe",
       "aliases": [
@@ -78295,7 +78377,12 @@
         "USB": "3× USB-A (U-EXT1/2, U-FIRMWARE); WiFi",
         "UART": "onboard",
         "Printer/board": "Kobra 2 Pro/Plus/Max",
-        "Notes": "Spe A pairs with a separate Cortex-A7 host for Klipper"
+        "Notes": "Spe A pairs with a separate Cortex-A7 host for Klipper",
+        "Voltage": "24V",
+        "Driver slots": "4, factory-soldered",
+        "Onboard drivers": "4x soldered TMC2209 (UART); some later boards use GC6609",
+        "CAN": "None",
+        "Flash method": "Runs Anycubic KobraOS (Klipper-based); Spe B moddable via community firmware"
       },
       "ports": [
         {
@@ -78321,7 +78408,22 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://1coderookie.github.io/AnycubicTrigorillaInsights/type_spe/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Onboard TMC2209 UART": "Soldered TMC2209 UART - run_current in firmware, sensorless via diag",
+        "Bed = onboard MOSFET": "24V; bed via onboard MOSFET (external-MOSFET mod common)",
+        "PWM via GND switching": "Low-side GND-switched PWM; 24V fans/heaters; 3.3V logic"
+      },
+      "configNotes": [
+        "Ships with KobraOS (Anycubic Klipper fork); Spe A is a Linux SoC (not a standard Klipper MCU)",
+        "Onboard TMC2209 UART: set run_current; sensorless homing via diag pins",
+        "Confirm Spe A vs Spe B and TMC2209 vs GC6609 before tuning"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "sv06",
@@ -78458,12 +78560,21 @@
     },
     {
       "board_id": "znp-k1-n4",
-      "manufacturer": "",
+      "manufacturer": "MKS (Makerbase) for Elegoo",
       "model": "ZNP K1 (N4)",
       "display_name": "ZNP K1 (N4)",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32F402RCT6 (Klipper MCU)",
+        "Arch": "ARM Cortex-M4 MCU + Rockchip RK3328 SBC host",
+        "Voltage": "12/24V DC (AC PSU input)",
+        "Driver slots": "None (integrated)",
+        "Onboard drivers": "4x TMC2209 (X/Y/Z/E), integrated",
+        "USB": "USB-C serial (/dev/ttyS2)",
+        "CAN": "Yes (500 kHz)",
+        "Flash method": "microSD card (MCU firmware)"
+      },
       "ports": [
         {
           "label": "Screw terminal (approx)",
@@ -78607,7 +78718,23 @@
       "xlsx_source_rows": {
         "portRowCount": 9
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.elegoo.com/products/elegoo-neptune-4",
+        "schematicUrl": "https://github.com/TheFeralEngineer/Elegoo-Neptune-board-schematics",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Do not reflash blindly": "Stock MCU firmware uses non-standard settings - a stock Klipper .bin will NOT work; use a verified Neptune 4 build",
+        "Sensorless jumpers": "Per-axis diag jumpers (X/Y/Z/E0/E1) - TMC2209 sensorless homing possible",
+        "ADXL345 header": "Onboard ADXL345 accelerometer header for input shaping"
+      },
+      "configNotes": [
+        "Combo board: RK3328 SBC runs the OS/UI, STM32F402RCT6 runs Klipper - flash only the MCU, never the host",
+        "Integrated TMC2209 with UART tuning + sensorless (diag jumpers)",
+        "CAN at 500 kHz; revisions 1.0/1.1/2.0 differ (DTB) - confirm before flashing"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "znp-robin-nano-n3",
@@ -79476,7 +79603,7 @@
     },
     {
       "board_id": "biqu-hurakan-electronics",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech / BIQU",
       "model": "BIQU Hurakan (electronics)",
       "display_name": "BIQU Hurakan (electronics)",
       "aliases": [],
@@ -79490,7 +79617,10 @@
         "UART": "Yes",
         "Voltage": "DC24V",
         "All-metal/accel": "none (board)",
-        "I2Cspi": "SPI accel header"
+        "I2Cspi": "SPI accel header",
+        "Clock": "64 MHz",
+        "Driver slots": "4 socketed",
+        "Flash method": "DFU / SD via CB1 host; 8KiB bootloader offset"
       },
       "ports": [],
       "portsSummary": {},
@@ -79499,7 +79629,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/biqu-hurakan-diy-3d-printer",
+        "repoUrl": "https://github.com/bigtreetech/Manta-M4P",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "CNC fan voltage": "Controllable-fan rail selectable 5V/12V/24V via jumper",
+        "eFuse": "Onboard eFuse protection auto-disconnects on overload/short and self-resets",
+        "Driver compatibility": "Accepts TMC5160/2209/2226/2208/2130, ST820, LV8729, DRV8825, A4988"
+      },
+      "configNotes": [
+        "Build for STM32G0B1 with an 8KiB bootloader; comms over USB to the CB1/CM4 host",
+        "100K NTC thermistors - sensor_type Generic 3950, pullup_resistor: 4700",
+        "Verify the controllable-fan voltage jumper (5/12/24V) matches the fan"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "buddy-board",
@@ -81308,7 +81454,10 @@
         "UART": "Yes",
         "SPI": "SPI/UART; 4 KB EEPROM",
         "Eth/WiFi": "MKS WIFI hdr",
-        "Voltage": "DC12–24 V"
+        "Voltage": "DC12–24 V",
+        "Clock": "120 MHz",
+        "Onboard drivers": "None (removable StepStick sockets)",
+        "Flash method": "SD card (firmware.bin)"
       },
       "ports": [],
       "portsSummary": {},
@@ -81326,7 +81475,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/makerbase-mks/MKS-SGEN_L-V2",
+        "wikiUrl": "https://github.com/makerbase-mks/MKS-SGEN_L-V2/wiki/Hardware_description",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Driver modes": "Supports TMC drivers in both UART and SPI mode",
+        "EEPROM": "Onboard 4KB EEPROM",
+        "Fan rails": "2 PWM fan outputs plus 2 DC 12/24V outputs (fan voltage follows main input)"
+      },
+      "configNotes": [
+        "Pick TMC2208/2209 (UART) or TMC2130 (SPI) to match the StepStick jumpers",
+        "Flash by copying firmware.bin to SD (LPC1769 / 'lpc1769' target)",
+        "Dual-Z and 5th-axis sockets exist; wire the second Z as [stepper_z1]"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "mks-thr36-v1-0",
@@ -81345,7 +81510,11 @@
         "UART": "n/a (CAN/USB to host)",
         "SPI": "SPI (ADXL345 accel)",
         "Eth/WiFi": "No (toolhead)",
-        "Voltage": "DC12–24 V"
+        "Voltage": "DC12–24 V",
+        "Clock": "133 MHz",
+        "Onboard drivers": "TMC2209 (UART, NEMA14 extruder)",
+        "Dimensions (mm)": "Circular R=25 (NEMA14); mounting 43.85",
+        "Flash method": "RP2040 BOOT/RESET -> drag-and-drop UF2"
       },
       "ports": [],
       "portsSummary": {},
@@ -81359,7 +81528,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://makerbase3d.com/product/mks-thr36-thr42-board/",
+        "repoUrl": "https://github.com/makerbase-mks/MKS-THR36-THR42-UTC",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Accelerometer": "Onboard ADXL345 for input shaping",
+        "Thermistor": "NTC 100K hotend input (PT1000 variant also offered)",
+        "CAN termination": "120 ohm is permanently soldered (no jumper) - keep this board at a bus end"
+      },
+      "configNotes": [
+        "RP2040 target: flash the .uf2 via the BOOT button (hold BOOT, tap RESET)",
+        "Onboard TMC2209 UART drives the NEMA14 extruder - set uart_pin + run_current",
+        "Add [adxl345] on the onboard chip; the fixed 120 ohm means keep it at a bus end"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "mks-thr42-v1-0",
@@ -81378,7 +81563,11 @@
         "UART": "CAN/USB to host",
         "SPI": "SPI (ADXL345BCCZ accel)",
         "Eth/WiFi": "No (toolhead)",
-        "Voltage": "DC12–24 V"
+        "Voltage": "DC12–24 V",
+        "Clock": "133 MHz",
+        "Onboard drivers": "TMC2209 (UART, NEMA17 extruder)",
+        "Dimensions (mm)": "42 x 42 (NEMA17); mounting 31 x 31",
+        "Flash method": "RP2040 BOOT/RESET -> drag-and-drop UF2"
       },
       "ports": [],
       "portsSummary": {},
@@ -81392,7 +81581,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://makerbase3d.com/product/mks-thr36-thr42-board/",
+        "repoUrl": "https://github.com/makerbase-mks/MKS-THR36-THR42-UTC",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Accelerometer": "Onboard ADXL345 for input shaping",
+        "Thermistor": "NTC 100K hotend input (PT1000 variant also offered)",
+        "CAN termination": "120 ohm permanently soldered - keep this board at a bus end"
+      },
+      "configNotes": [
+        "Same firmware/flash path as THR36 (RP2040 UF2 via BOOT); only the form factor differs (42mm)",
+        "Onboard TMC2209 UART - set run_current for the NEMA17 motor",
+        "Configure onboard [adxl345]; fixed 120 ohm means keep it at one bus end"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "octopus-v1-0",
@@ -81412,7 +81617,10 @@
         "SPI": "Yes (+MAX31865 PT100/1000)",
         "I2C": "Yes",
         "Eth/WiFi": "WiFi via ESP8266; EEPROM 24C32",
-        "Voltage": "Board 24V (12V on motor/bed); motor ≤60V"
+        "Voltage": "Board 24V (12V on motor/bed); motor ≤60V",
+        "Clock": "180 MHz",
+        "Dimensions (mm)": "160 x 100 (mounting 150 x 90)",
+        "Flash method": "SD card (firmware.bin); DFU alternative"
       },
       "ports": [],
       "portsSummary": {},
@@ -81421,11 +81629,26 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/BIGTREETECH-OCTOPUS-V1.0",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Fan voltage jumper": "Each controllable fan rail jumper-selectable Vin/12V/5V",
+        "Bed driving": "Onboard MOSFET drives beds up to ~300W (SSR/relay for higher power)",
+        "12V caveat": "At 12V logic needs >14.1V - 24V strongly preferred"
+      },
+      "configNotes": [
+        "Compile for STM32F446 with a 32KiB bootloader; flash firmware.bin via SD",
+        "Set each driver UART/SPI/standalone via jumpers; DIAG jumpers per sensorless need",
+        "CAN on RJ11 - terminate correctly if wiring a toolhead"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "s6-v2-0",
-      "manufacturer": "",
+      "manufacturer": "FYSETC",
       "model": "S6 v2.0",
       "display_name": "S6 v2.0",
       "aliases": [],
@@ -81439,7 +81662,10 @@
         "UART": "UART1 socket",
         "SPI": "SPI+I2C via EXP1/EXP2",
         "Eth/WiFi": "Via module",
-        "Voltage": "12–24 V (28 V abs max)"
+        "Voltage": "12–24 V (28 V abs max)",
+        "Clock": "180 MHz",
+        "Dimensions (mm)": "117 x 87",
+        "Flash method": "SD card (default) / DFU / dfu-util"
       },
       "ports": [],
       "portsSummary": {},
@@ -81448,7 +81674,24 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/FYSETC/FYSETC-S6",
+        "wikiUrl": "https://wiki.fysetc.com/FYSETC_S6/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "5V-tolerant IO": "All IO withstand 5V - endstops can be 24V/5V/3.3V",
+        "Fan voltage": "Fan rails selectable 12V or 24V - match the fan",
+        "Heater limits": "BED OUT 20A max, hotend 5A max; v2.0 cannot supply >2A on the 12V ports - SSR for high-power beds",
+        "BOOT0 jumper": "v2.0 replaces the BOOT0 button with a jumper for DFU"
+      },
+      "configNotes": [
+        "Build for STM32F446 (32KiB bootloader); DFU via BOOT0 jumper or SD firmware.bin",
+        "Set each TMC for UART or SPI; configure DIAG jumpers for sensorless",
+        "No CAN - wire the toolhead directly; respect heater limits (SSR for big beds)"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "skr-3",
@@ -82577,7 +82820,10 @@
         "SPI": "Yes (TMC SPI)",
         "I2C": "Yes",
         "Eth/WiFi": "WiFi via ESP-01S",
-        "Voltage": "DC12–24V (5–15A)"
+        "Voltage": "DC12–24V (5–15A)",
+        "Clock": "120 MHz (Turbo); 100 MHz (non-Turbo)",
+        "Dimensions (mm)": "~110 x 85",
+        "Flash method": "SD card - copy firmware.bin and reset"
       },
       "ports": [],
       "portsSummary": {},
@@ -82586,7 +82832,24 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-skr-v1-4-skr-v1-4-turbo-control-board",
+        "repoUrl": "https://github.com/bigtreetech/BIGTREETECH-SKR-V1.3",
+        "wikiUrl": "https://global.bttwiki.com/SKR%20V1.4.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Driver modes": "Per-driver jumpers select STEP/DIR, UART, or SPI",
+        "Sensorless DIAG": "DIAG jumper present - remove/cut for TMC2209 when not using sensorless",
+        "Bed MOSFET": "Onboard bed MOSFET ~144W (bed >1 ohm); SSR for larger beds"
+      },
+      "configNotes": [
+        "Flash by copying firmware.bin to microSD and resetting (board renames it)",
+        "Build for LPC1769 (Turbo) vs LPC1768 (standard) at menuconfig",
+        "Set per-driver UART/SPI/STEP-DIR jumpers; no CAN on this board"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "spider-v2-2",
@@ -82604,7 +82867,10 @@
         "UART": "UART1 → RPi (5 V)",
         "SPI": "SPI+I2C via EXP1/EXP2",
         "Eth/WiFi": "No",
-        "Voltage": "12–24 V (28 V abs max)"
+        "Voltage": "12–24 V (28 V abs max)",
+        "Clock": "180 MHz",
+        "Dimensions (mm)": "155.3 x 76.5",
+        "Flash method": "SD card / DFU / dfu-util / STM32CubeProgrammer"
       },
       "ports": [],
       "portsSummary": {},
@@ -82613,7 +82879,24 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.fysetc.com/products/fysetc-spider-v22",
+        "repoUrl": "https://github.com/FYSETC/FYSETC-SPIDER",
+        "wikiUrl": "https://wiki.fysetc.com/Spider/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "5V-tolerant IO": "All IO withstand 5V - endstops can be 24V/5V/3.3V",
+        "Driver protection": "Per-driver TVS, current-limit resistor, and VMOT fuse on v2.2",
+        "Thermistor": "PT1000 supported directly; PT100 needs an amplifier daughterboard"
+      },
+      "configNotes": [
+        "Build for STM32F446 with a 32KiB bootloader; flash via DFU or SD",
+        "Configure each TMC for UART or SPI per jumpers; set DIAG for sensorless",
+        "CAN needs an external transceiver on v2.2 (PD0/PD1)"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "spider-v3-0-f446",
@@ -82631,7 +82914,10 @@
         "UART": "UART → RPi",
         "SPI": "SPI+I2C via EXP1/EXP2",
         "Eth/WiFi": "No",
-        "Voltage": "12–24 V (48 V opt. per-driver)"
+        "Voltage": "12–24 V (48 V opt. per-driver)",
+        "Clock": "180 MHz",
+        "Dimensions (mm)": "155.3 x 76.5",
+        "Flash method": "SD card / DFU / dfu-util / STM32CubeProgrammer"
       },
       "ports": [],
       "portsSummary": {},
@@ -82640,11 +82926,27 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/FYSETC/FYSETC-SPIDER",
+        "wikiUrl": "https://wiki.fysetc.com/Spider/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Onboard CAN": "Built-in CAN transceiver - ready for a CAN toolhead without an external module",
+        "5V-tolerant IO": "All IO withstand 5V with 74HCT365A input buffering",
+        "RPi control": "Can drive BOOT/RST of an attached Raspberry Pi"
+      },
+      "configNotes": [
+        "F446 variant: build for STM32F446 (32KiB bootloader), flash via DFU or SD",
+        "CAN transceiver onboard - enable CAN and terminate the bus for a toolhead",
+        "Set each TMC to UART or SPI per jumpers; configure DIAG for sensorless"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-8-bit-v1-v1-1",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla (8-bit) V1 / V1.1",
       "display_name": "Trigorilla (8-bit) V1 / V1.1",
       "aliases": [],
@@ -82656,7 +82958,13 @@
         "USB": "USB-B; microSD; ESP-01S WiFi slot",
         "UART": "onboard",
         "Printer/board": "i3 Mega / Mega-S, Predator, Chiron",
-        "Notes": "Integrated Mega2560+RAMPS1.4; classic RAMPS connector set"
+        "Notes": "Integrated Mega2560+RAMPS1.4; classic RAMPS connector set",
+        "Clock": "16 MHz",
+        "Voltage": "10-30V (typ 12V)",
+        "Driver slots": "5 (X, Y, Z, E0, E1), socketed",
+        "Onboard drivers": "None - Pololu slots (A4988 / DRV8825 / TMC2100)",
+        "CAN": "None",
+        "Flash method": "Arduino bootloader over USB (RAMPS 1.4-compatible)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82665,11 +82973,25 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "RAMPS-compatible 5V": "Mega2560+RAMPS1.4 - standard RAMPS pin map, 5V logic",
+        "Thermistor pull-up": "4.7k pull-ups - pullup_resistor: 4700",
+        "Bed = onboard MOSFET": "1 bed + 2 heater outputs via onboard MOSFETs with recoverable fuse"
+      },
+      "configNotes": [
+        "Configure like RAMPS 1.4: AVR atmega2560 @ 16 MHz, pullup_resistor: 4700",
+        "Removable standalone drivers - Vref/microsteps in hardware",
+        "V1 vs V1.1: identical MCU and pinout (logo text differs)"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-pro-32-bit-v1-x",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla Pro (32-bit) v1.x",
       "display_name": "Trigorilla Pro (32-bit) v1.x",
       "aliases": [],
@@ -82681,7 +83003,13 @@
         "USB": "USB-B / USB-C; microSD",
         "UART": "CH340; RX/TX on USB chip",
         "Printer/board": "i3 Mega Pro era; early Vyper/Kobra",
-        "Notes": "W25Q16 SPI flash + 24C16 EEPROM"
+        "Notes": "W25Q16 SPI flash + 24C16 EEPROM",
+        "Clock": "200 MHz",
+        "Voltage": "24V",
+        "Driver slots": "Factory-soldered",
+        "Onboard drivers": "Soldered TMC2208 (some units GC6609 clones)",
+        "CAN": "None",
+        "Flash method": "Klipper needs the R65->R66 mod or a community HC32F460 firmware fork; else runs KobraOS"
       },
       "ports": [],
       "portsSummary": {},
@@ -82690,11 +83018,26 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://1coderookie.github.io/AnycubicTrigorillaInsights/type_pro/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Onboard TMC2208 (UART)": "Soldered TMC2208/GC6609 - run_current in firmware",
+        "24V rails": "24V fans/heaters; 3.3V logic",
+        "Bed = onboard MOSFET": "Bed via onboard MOSFET (external-MOSFET upgrade common)"
+      },
+      "configNotes": [
+        "Native Klipper on HC32F460 needs a special firmware fork or the R65->R66 hardware fix",
+        "If GC6609, treat as TMC2208-like but expect different tuning (cap acceleration)",
+        "Do not confuse with the older i3-Mega Trigorilla Pro (STM32F103 + A4988)"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-pro-b-v1-0-2-gen-v3-0-x",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla Pro B v1.0.2 / Gen v3.0.x",
       "display_name": "Trigorilla Pro B v1.0.2 / Gen v3.0.x",
       "aliases": [],
@@ -82706,7 +83049,12 @@
         "USB": "USB-C; microSD",
         "UART": "CH340",
         "Printer/board": "Kobra Go/Neo, Kobra 2, Vyper",
-        "Notes": "10-pin control connector; RTL8723DU WiFi on some"
+        "Notes": "10-pin control connector; RTL8723DU WiFi on some",
+        "Voltage": "24V",
+        "Driver slots": "4, factory-soldered",
+        "Onboard drivers": "Pro B v1.0.2: 4x soldered GC6609 (TMC2209-pin-compatible); Gen v3.0.x: TMC2208/GC6609",
+        "CAN": "None",
+        "Flash method": "Anycubic KobraOS stock; community Klipper builds"
       },
       "ports": [],
       "portsSummary": {},
@@ -82715,7 +83063,22 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://1coderookie.github.io/AnycubicTrigorillaInsights/type_gen/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "GC6609 drivers (UART)": "Pro B v1.0.2 uses GC6609 (not genuine TMC2209) - pin-compatible, set run_current manually",
+        "24V rails": "24V fans/heaters/bed; 3.3V logic",
+        "Bed = onboard MOSFET": "Bed via onboard MOSFET; sensorless possible via diag"
+      },
+      "configNotes": [
+        "Pro B v1.0.2 GC6609: configure as [tmc2209]-style UART but set run_current manually and cap max_accel ~3000",
+        "Confirm MCU before building Klipper: HC32F460 vs GD32F303 (Gen v4.0.1)",
+        "Drivers soldered; a failed GC6609 can be replaced with a genuine TMC2209 then re-tuned"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "u2c-v1-0-v1-1",
@@ -82732,7 +83095,9 @@
         "CAN": "bxCAN, 1×CAN_IN + 2×CAN_OUT",
         "UART": "—",
         "Voltage": "DC12–24V (passthrough)",
-        "I2Cspi": "—"
+        "I2Cspi": "—",
+        "Dimensions (mm)": "39.7 x 15.34 x 12.75",
+        "Flash method": "DFU via STM32CubeProgrammer (CandleLight firmware)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82741,7 +83106,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/U2C",
+        "wikiUrl": "https://github.com/bigtreetech/docs/blob/master/docs/U2C.md",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "120R termination": "120R jumper enables onboard termination - install when the U2C is at a bus end (v1.x)",
+        "CAN speed": "Default 500000 - must match canbus_speed on every node",
+        "Transceiver outputs": "CAN_IN to host, CAN_OUT to boards with a transceiver, CAN_OUT* without"
+      },
+      "configNotes": [
+        "Flash CandleLight in DFU mode; appears as a gs_usb CAN interface",
+        "Bring up can0 at the matching bitrate; query UUIDs with the Klipper canbus script",
+        "Install the 120R jumper only when the U2C is at a bus end"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "u2c-v2-0-v2-1",
@@ -82758,7 +83139,8 @@
         "CAN": "FDCAN, 1×CAN_IN + 3×CAN_OUT",
         "UART": "—",
         "Voltage": "DC12–24V (passthrough)",
-        "I2Cspi": "—"
+        "I2Cspi": "—",
+        "Flash method": "DFU via STM32CubeProgrammer (CandleLight STM32G0 fork)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82767,11 +83149,27 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/U2C",
+        "wikiUrl": "https://github.com/bigtreetech/docs/blob/master/docs/U2C.md",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "120R termination": "120R jumper toggles termination; v2.1 docs note removing it in many setups - install only at a true bus end",
+        "CAN speed": "Default 500 kbps; match canbus_speed on all nodes",
+        "Transceiver outputs": "CAN_IN to host, CAN_OUT to transceiver-equipped boards, CAN_OUT* without"
+      },
+      "configNotes": [
+        "Flash the STM32G0 CandleLight build in DFU mode; enumerates as gs_usb",
+        "Bring up the CAN interface at the matching bitrate; query UUIDs before configuring",
+        "Check the 120R jumper per the v2.0/v2.1 manual"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "znp-k1-v1-0-board",
-      "manufacturer": "",
+      "manufacturer": "MKS (Makerbase) for Elegoo",
       "model": "ZNP K1 v1.0 board",
       "display_name": "ZNP K1 v1.0 board",
       "aliases": [],
@@ -82783,7 +83181,12 @@
         "USB": "2× USB2.0 (1 unpopulated), USB3.0, internal USB-C serial; microSD (MCU)",
         "UART": "internal USB-C = serial adapter",
         "Printer/board": "Neptune 4 / 4 Pro/Plus/Max",
-        "Notes": "Klipper host SoC on-board; dual bed-heater + dual bed-thermistor headers"
+        "Notes": "Klipper host SoC on-board; dual bed-heater + dual bed-thermistor headers",
+        "Voltage": "12/24V DC",
+        "Driver slots": "None (integrated)",
+        "Onboard drivers": "4x TMC2209, integrated",
+        "CAN": "Yes (500 kHz)",
+        "Flash method": "microSD card (MCU firmware)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82792,7 +83195,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.elegoo.com/products/elegoo-neptune-4",
+        "schematicUrl": "https://github.com/TheFeralEngineer/Elegoo-Neptune-board-schematics",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "v1.0 revision": "First ZNP-K1 hardware revision (v1.1/v2.0 differ in DTB/kernel) - match firmware to revision",
+        "Do not reflash blindly": "A stock-config Klipper MCU .bin will not work; use a Neptune 4 verified build",
+        "Sensorless jumpers": "Per-axis diag jumpers for TMC2209 sensorless homing"
+      },
+      "configNotes": [
+        "v1.0 is a specific revision of the ZNP-K1 family (Elegoo Neptune 4); confirm v1.0 vs v1.1/v2.0",
+        "STM32F402RCT6 flashed by microSD; RK3328 SBC hosts Klipper/Moonraker",
+        "Integrated TMC2209 with UART + sensorless; CAN bus and ADXL345 header available"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "znp-robin-nano-dw-v2-2",
@@ -82808,7 +83227,12 @@
         "USB": "Micro-USB; microSD; WiFi module",
         "UART": "onboard",
         "Printer/board": "Neptune 3 / 3 Pro/Plus/Max",
-        "Notes": "Schematic public (TheFeralEngineer mirror)"
+        "Notes": "Schematic public (TheFeralEngineer mirror)",
+        "Clock": "84 MHz",
+        "Voltage": "12/24V DC",
+        "Driver slots": "None (integrated)",
+        "Onboard drivers": "Integrated soldered drivers",
+        "Flash method": "microSD - rename klipper.bin to ZNP_ROBIN_NANO.bin (32KiB bootloader)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82817,11 +83241,26 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "schematicUrl": "https://github.com/TheFeralEngineer/Elegoo-Neptune-board-schematics/blob/main/ZNP%20Robin%20Nano_DW%20V2.2%20SCH.pdf",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "SD flash naming": "make flash unsupported - copy out/klipper.bin to out/ZNP_ROBIN_NANO.bin and flash from microSD",
+        "Serial over USB": "CH340 on USART1 (PA10/PA9); appears as usb-1a86_USB_Serial",
+        "Integrated drivers": "Soldered drivers (X=PC12/PB3/PD2, Y=PC11/PA15/PC10, Z=PC7/PC9/PC8); bed PA5, hotend PA6"
+      },
+      "configNotes": [
+        "Compile for STM32F401 with 32KiB bootloader; serial USART1 (PA10/PA9) 250000 baud over CH340",
+        "Flash by renaming to ZNP_ROBIN_NANO.bin on microSD - make flash unsupported",
+        "Elegoo Neptune 3 series; thermistors PC1 (hotend)/PC0 (bed), 4.7k pull-up"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-gen-v3-0-6-3-0-7",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla Gen V3.0.6/3.0.7",
       "display_name": "Trigorilla Gen V3.0.6/3.0.7",
       "aliases": [],
@@ -82832,7 +83271,12 @@
         "Drivers": "Onboard TMC2208 / GC6609 (soldered)",
         "Connectivity": "USB-C; SD",
         "Voltage": "24V",
-        "Role/era": "Kobra Go, Kobra Neo; ~2022"
+        "Role/era": "Kobra Go, Kobra Neo; ~2022",
+        "Clock": "200 MHz",
+        "Driver slots": "None (soldered)",
+        "Onboard drivers": "4x TMC2208 (early) or GC6609 clones (later), soldered",
+        "USB": "USB-C",
+        "Flash method": "microSD card (firmware .bin)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82841,11 +83285,26 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://1coderookie.github.io/AnycubicTrigorillaInsights/type_gen/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Drivers soldered": "TMC2208/GC6609 fixed - sensorless homing not available, use physical endstops",
+        "24V rail": "24V fans/heaters",
+        "Driver clone risk": "Later units ship GC6609 clones - confirm before assuming TMC behavior"
+      },
+      "configNotes": [
+        "MCU is Huada HC32F460 (not STM32) - requires the HC32F460 build target",
+        "Drivers standalone (step/dir/enable) - no UART tuning",
+        "V3.0.7 near-identical to V3.0.6 - reuse the same config"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-gen-v4-0-1",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla Gen V4.0.1",
       "display_name": "Trigorilla Gen V4.0.1",
       "aliases": [],
@@ -82856,7 +83315,12 @@
         "Drivers": "Onboard TMC2208 / GC6609 (soldered)",
         "Connectivity": "USB-C; SD",
         "Voltage": "24V",
-        "Role/era": "Kobra 2 Neo; ~2023"
+        "Role/era": "Kobra 2 Neo; ~2023",
+        "Clock": "120 MHz",
+        "Driver slots": "None (soldered)",
+        "Onboard drivers": "4x TMC2208 or GC6609 clones, soldered",
+        "USB": "USB-C",
+        "Flash method": "microSD card (firmware .bin)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82865,11 +83329,26 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://1coderookie.github.io/AnycubicTrigorillaInsights/type_gen/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Drivers soldered": "Step/dir-only soldered drivers; no sensorless homing",
+        "24V rail": "24V fans/heaters",
+        "Driver clone risk": "May ship GC6609 clones rather than genuine TMC2208"
+      },
+      "configNotes": [
+        "MCU is GigaDevice GD32F303 (GD32F303 target, not STM32)",
+        "Used in the Kobra 2 Neo; drivers non-UART - current set in hardware",
+        "Flash via microSD by copying the .bin"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-pro-a-v1-0-4",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla Pro A v1.0.4",
       "display_name": "Trigorilla Pro A v1.0.4",
       "aliases": [],
@@ -82880,7 +83359,12 @@
         "Drivers": "Onboard TMC2208 / GC6609 (soldered)",
         "Connectivity": "USB; SD",
         "Voltage": "24V",
-        "Role/era": "Kobra, Kobra Plus/Max, Vyper; ~2021–22"
+        "Role/era": "Kobra, Kobra Plus/Max, Vyper; ~2021–22",
+        "Clock": "200 MHz",
+        "Driver slots": "None (soldered)",
+        "Onboard drivers": "TMC2208 / GC6609 clones, soldered",
+        "USB": "USB",
+        "Flash method": "microSD card (firmware .bin)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82889,11 +83373,26 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://1coderookie.github.io/AnycubicTrigorillaInsights/type_pro/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "USB-serial mod": "Native Klipper-over-USB usually needs the R65->R66 resistor move",
+        "Drivers soldered": "Standalone soldered drivers - no UART tuning/sensorless",
+        "24V rail": "24V; bed via onboard MOSFET"
+      },
+      "configNotes": [
+        "MCU is Huada HC32F460 - use the HC32F460 build target",
+        "For native USB control do the R65/R66 mod or use a community HC32F460 bootloader",
+        "Used in Kobra/Kobra Plus/Max/Vyper; run-current hardware-set"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-pro-b-v1-0-2",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla Pro B v1.0.2",
       "display_name": "Trigorilla Pro B v1.0.2",
       "aliases": [],
@@ -82904,7 +83403,12 @@
         "Drivers": "Onboard TMC2208 / GC6609 (soldered)",
         "Connectivity": "USB-C; SD; 10-pin ctrl",
         "Voltage": "24V",
-        "Role/era": "Later Kobra/Vyper + Kobra 2; ~2022–23"
+        "Role/era": "Later Kobra/Vyper + Kobra 2; ~2022–23",
+        "Clock": "200 MHz",
+        "Driver slots": "None (soldered)",
+        "Onboard drivers": "TMC2208 / GC6609 clones, soldered",
+        "USB": "USB-C",
+        "Flash method": "microSD card (firmware .bin)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82913,11 +83417,26 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://1coderookie.github.io/AnycubicTrigorillaInsights/type_pro/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "No mod needed": "Pro B generally works for Klipper without the R65/R66 mod required on Pro A",
+        "Drivers soldered": "Soldered drivers, step/dir/enable only - no sensorless homing",
+        "24V rail": "24V; bed via onboard MOSFET"
+      },
+      "configNotes": [
+        "MCU is Huada HC32F460 - use the HC32F460 build target",
+        "Pro B (1.0.2) typically needs no USB-serial resistor mod",
+        "Flash via microSD .bin"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-pro-v1",
-      "manufacturer": "",
+      "manufacturer": "Anycubic",
       "model": "Trigorilla Pro (V1)",
       "display_name": "Trigorilla Pro (V1)",
       "aliases": [],
@@ -82928,7 +83447,12 @@
         "Drivers": "5× soldered A4988 (1/16)",
         "Connectivity": "USB; SD; WiFi (ESP-01S slot)",
         "Voltage": "12V",
-        "Role/era": "i3 Mega/Mega-S, Predator, Chiron; ~2018"
+        "Role/era": "i3 Mega/Mega-S, Predator, Chiron; ~2018",
+        "Clock": "72 MHz",
+        "Driver slots": "None (integrated)",
+        "Onboard drivers": "TMC2209, soldered",
+        "USB": "USB",
+        "Flash method": "microSD card (firmware .bin)"
       },
       "ports": [],
       "portsSummary": {},
@@ -82937,7 +83461,22 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/ANYCUBIC-3D/Vyper",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "TMC2209 integrated": "Soldered TMC2209; sensorless diag not broken out by default - Vyper uses physical endstops",
+        "24V rail": "24V; bed via onboard MOSFET",
+        "Cortex-M3": "GD32F103 is Cortex-M3 - confirm GD32F103 target, not STM32F4"
+      },
+      "configNotes": [
+        "TriGorilla V0.0.6 (Vyper/Mega Zero 2.0) - MCU GigaDevice GD32F103 (F103-compatible target)",
+        "TMC2209 soldered standalone - treat as non-UART unless wiring confirmed",
+        "Flash via microSD .bin"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "ruby-v1-2",
@@ -82999,7 +83538,13 @@
         "Drivers": "Onboard TMC2209 (UART, soldered)",
         "Connectivity": "USB; FDCAN (jumper select)",
         "Voltage": "24V (approx)",
-        "Role/era": "toolhead"
+        "Role/era": "toolhead",
+        "Clock": "64 MHz",
+        "Onboard drivers": "TMC2209 (UART, addr 00, Rsense 0.11R)",
+        "USB": "USB Type-C",
+        "CAN": "FDCAN, 120 ohm selectable via jumper",
+        "Dimensions (mm)": "51.5 x 37",
+        "Flash method": "DFU over USB (BOOT/RESET)"
       },
       "ports": [],
       "portsSummary": {},
@@ -83008,7 +83553,24 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "wikiUrl": "https://global.bttwiki.com/EBB%2036%20CAN.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Hotend pin = PB13": "On V1.2 the hotend/heater IO moved to PB13 (was PA2 on V1.0/V1.1) - set heater_pin: PB13",
+        "Accelerometer = ADXL345": "Onboard ADXL345 on spi2_PB2_PB11_PB10, cs PB12",
+        "Thermistor 2.2K + PT1000": "TH0 = 100K NTC or PT1000 (2.2K pull-up jumper); optional MAX31865",
+        "VUSB jumper": "Fit VUSB only when powering/communicating over USB"
+      },
+      "configNotes": [
+        "Set heater_pin: PB13 on V1.2 (PA2 on older revisions)",
+        "Onboard TMC2209 uart_pin PA15 (~0.65A); ADXL345 cs PB12 on spi2_PB2_PB11_PB10",
+        "Enable 120 ohm only at a CAN bus end; DFU with 24V removed (BOOT shares heater pin)"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "ebb36-gen2-2",
@@ -83024,7 +83586,12 @@
         "Drivers": "Onboard TMC2209 (UART, soldered)",
         "Connectivity": "USB-C; CAN (jumper select)",
         "Voltage": "24–28V",
-        "Role/era": "toolhead"
+        "Role/era": "toolhead",
+        "Clock": "64 MHz",
+        "Onboard drivers": "TMC2209 (UART, TVS coil protection)",
+        "USB": "USB Type-C via adapter board (needs 24V)",
+        "CAN": "Yes; 120 ohm jumper; jumper-switchable CAN/USB",
+        "Flash method": "DFU via relocated BOOT/RESET"
       },
       "ports": [],
       "portsSummary": {},
@@ -83033,7 +83600,24 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "wikiUrl": "https://global.bttwiki.com/EBB36_GEN2.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Accelerometer = LIS2DW (not ADXL345)": "GEN2 uses an onboard LIS2DW (cs EBB:PB1 on spi2_PB2_PB11_PB10) - use [lis2dw]",
+        "Per-fan 5V/24V jumpers": "FAN0/FAN1 2-pin PWM + FAN2 3-pin tach; each has a 5V/24V select jumper",
+        "Thermistor 2.2K pull-up": "TH0 PT1000 or NTC with 2k2 pull-up; short protection + resettable fuse",
+        "Hotend/heater pin PB4": "GEN2 heater on PB4, thermistor PA3, TMC2209 uart PB3"
+      },
+      "configNotes": [
+        "Use [lis2dw] (cs EBB:PB1) for input shaping - GEN2 dropped the ADXL345",
+        "Pins differ from V1.x: heater_pin PB4, sensor_pin PA3 (2200 pullup), uart_pin PB3",
+        "Set each fan 5V/24V jumper; switch CAN/USB jumper and fit 120 ohm only at a bus end"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "ebb36-v1-0",
@@ -83046,7 +83630,14 @@
         "MCU": "stm32f072xb",
         "Arch": "STM32F0",
         "Driver slots": "1",
-        "Role/era": "toolhead-CAN"
+        "Role/era": "toolhead-CAN",
+        "Clock": "48 MHz",
+        "Voltage": "DC 12V - 24V, 6A",
+        "Onboard drivers": "TMC2209 (UART, addr 00, Rsense 0.11R)",
+        "USB": "USB Type-C",
+        "CAN": "Classic CAN (bxCAN), 120 ohm jumper",
+        "Dimensions (mm)": "51.5 x 37",
+        "Flash method": "DFU over USB (BOOT/RESET)"
       },
       "ports": [],
       "portsSummary": {},
@@ -83055,7 +83646,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "wikiUrl": "https://global.bttwiki.com/EBB%2036%20CAN.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Hotend pin = PA2": "On the F072 V1.0 the hotend/heater IO is PA2 (later PB13 on V1.2) - set heater_pin: PA2",
+        "Accelerometer = ADXL345": "Onboard ADXL345 on spi2_PB2_PB11_PB10, cs PB12",
+        "Thermistor 2.2K + PT1000/MAX31865": "TH0 = 100K NTC or PT1000 (2.2K pull-up jumper); optional onboard MAX31865"
+      },
+      "configNotes": [
+        "Build for STM32F072 (48MHz) - the only EBB36 on F072, rest are STM32G0B1",
+        "Set heater_pin: PA2; onboard TMC2209 uart_pin PA15; ADXL345 cs PB12",
+        "Enable 120 ohm only at the CAN bus end; remove 24V before DFU"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "ebb36-v1-1",
@@ -83068,7 +83675,14 @@
         "MCU": "stm32g0b1xx",
         "Arch": "STM32G0",
         "Driver slots": "1",
-        "Role/era": "toolhead-CAN"
+        "Role/era": "toolhead-CAN",
+        "Clock": "64 MHz",
+        "Voltage": "DC 12V - 24V, 6A",
+        "Onboard drivers": "TMC2209 (UART, addr 00, Rsense 0.11R)",
+        "USB": "USB Type-C",
+        "CAN": "FDCAN, 120 ohm jumper",
+        "Dimensions (mm)": "51.5 x 37",
+        "Flash method": "DFU over USB (BOOT/RESET)"
       },
       "ports": [],
       "portsSummary": {},
@@ -83077,7 +83691,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "wikiUrl": "https://global.bttwiki.com/EBB%2036%20CAN.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Hotend pin = PA2": "V1.1 keeps the hotend IO on PA2 (changed to PB13 only on V1.2) - set heater_pin: PA2",
+        "Accelerometer = ADXL345": "Onboard ADXL345 on spi2_PB2_PB11_PB10, cs PB12",
+        "Thermistor 2.2K + PT1000": "TH0 = 100K NTC or PT1000 (2.2K pull-up jumper); optional MAX31865"
+      },
+      "configNotes": [
+        "Same STM32G0B1 firmware as V1.2; difference is the hotend pin - use heater_pin: PA2 on V1.1",
+        "Onboard TMC2209 uart_pin PA15; ADXL345 cs PB12",
+        "Enable 120 ohm only at a CAN bus end; DFU with 24V removed"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "ebb36-v1-2",
@@ -83096,7 +83726,13 @@
         "Role/era": "toolhead",
         "Bootloader": "Katapult",
         "Flash offset": "8KiB",
-        "Notes": "36 mm round; 4-wire toolhead"
+        "Notes": "36 mm round; 4-wire toolhead",
+        "Clock": "64 MHz",
+        "Onboard drivers": "TMC2209 (UART, addr 00, Rsense 0.11R)",
+        "USB": "USB Type-C",
+        "CAN": "FDCAN, 120 ohm jumper",
+        "Dimensions (mm)": "51.5 x 37",
+        "Flash method": "DFU over USB (BOOT/RESET)"
       },
       "ports": [],
       "portsSummary": {},
@@ -83105,7 +83741,23 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "wikiUrl": "https://global.bttwiki.com/EBB%2036%20CAN.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Hotend pin = PB13": "V1.2's only change vs V1.1 is the hotend IO moving from PA2 to PB13 - set heater_pin: PB13",
+        "Accelerometer = ADXL345": "Onboard ADXL345 on spi2_PB2_PB11_PB10, cs PB12",
+        "Thermistor 2.2K + PT1000": "TH0 = 100K NTC or PT1000 (2.2K pull-up jumper); optional MAX31865"
+      },
+      "configNotes": [
+        "Set heater_pin: PB13 - the defining difference from V1.0/V1.1 (PA2)",
+        "Onboard TMC2209 uart_pin PA15; ADXL345 cs PB12; fans PA0/PA1",
+        "Enable 120 ohm only at a CAN bus end; remove 24V before DFU"
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "ebb42-can-v1-2-2",
