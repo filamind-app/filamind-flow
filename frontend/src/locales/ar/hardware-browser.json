@@ -174,7 +174,9 @@
       "boardClass": {
         "mainboard": "لوحة رئيسية",
         "toolhead": "رأس الأداة",
-        "printer-preset": "إعداد طابعة"
+        "printer-preset": "إعداد طابعة",
+        "expansion": "لوحة توسعة",
+        "host": "حاسب مضيف"
       }
     }
   }
