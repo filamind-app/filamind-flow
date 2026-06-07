@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.143.0] - 2026-06-07
+
+### Fixed
+
+- **Hardware DB data audit — toolhead boards were mis-classified.** Most toolhead boards
+  (BigTreeTech EBB36/EBB42 and EBB-SB, SB2209 / SB2240 / SB2040, Mellow Fly-SHT / Fly-SB2040,
+  LDO Nitehawk / Orbitool O2, MKS/LDO THR36/THR42, FYSETC SB CAN, Caramba, the K1 nozzle
+  sub-board, …) were tagged `mainboard` instead of `toolhead` — the catalog showed only 10
+  toolheads when there are 55. Reclassified the 45 affected boards from a curated set of
+  toolhead families plus each board's own `Class` / `Form factor` / `Role` spec signal (the
+  Duet 1HCL closed-loop high-current CAN *expansion* boards are intentionally kept out of the
+  toolhead class). A regression test now locks the classification. The dataset gained a
+  `_meta.version`, which also refreshes the read cache so the fix is visible immediately.
+
 ## [0.142.0] - 2026-06-07
 
 ### Added
