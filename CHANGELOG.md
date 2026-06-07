@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.147.0] - 2026-06-08
+
+### Fixed
+
+- **Hardware DB data audit, Wave 4 — motor NEMA + step-angle normalisation.** **124** motors that
+  had no NEMA size now show one, back-filled from the high-confidence frame code in their part number
+  (`42STH…`/`17H…` → NEMA 17, `35BYGF…`/`36STH…` → NEMA 14, etc.); only 28 truly-unparseable rows
+  remain sizeless. The `stepAngle` field, previously written three ways (`1.8°`, `1.8 deg`, bare
+  `1.8`), is normalised to a single degree-sign encoding (137 rows). Conservative: ambiguous size
+  inferences, free-text rated-current strings, and near-duplicate merging were left for later (a
+  wrong size is worse than a blank one). Regression test added.
+
 ## [0.146.0] - 2026-06-07
 
 ### Fixed
