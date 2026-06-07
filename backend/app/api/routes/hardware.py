@@ -38,21 +38,28 @@ async def hardware(
         manufacturer=manufacturer,
         limit=limit,
         offset=offset,
+        haystacks=reference_data.item_haystacks(),
     )
 
 
 @router.get("/categories")
 async def hardware_categories() -> dict[str, Any]:
     """The hardware categories + per-category and total counts (for the browser's
-    sectioned catalog + filters)."""
+    sectioned catalog + filters).
+
+    ``counts`` are the **canonical** entity counts per category (deduped boards / drivers /
+    motors / hosts / catalog), so a tile matches what its panel lists; ``rawCounts`` keeps the
+    underlying flat-row counts; ``total`` is the flat-row total (the cross-category search scope).
+    """
     from collections import Counter
 
     items = reference_data.hardware_items()
-    counts = Counter(str(i.get("category", "")) for i in items)
+    raw = Counter(str(i.get("category", "")) for i in items)
     cats = reference_data.hardware_categories()
     return {
         "categories": cats,
-        "counts": {c: counts.get(c, 0) for c in cats},
+        "counts": reference_data.canonical_category_counts(),
+        "rawCounts": {c: raw.get(c, 0) for c in cats},
         "total": len(items),
     }
 

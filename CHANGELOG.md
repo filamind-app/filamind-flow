@@ -6,6 +6,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.138.0] - 2026-06-07
+
+### Changed
+
+- **Hardware-DB performance foundation (DB-1) — invisible speedups, zero behaviour change.**
+  `reference_data` now builds its entity lists, **`id→entity` index dicts**, and a **precomputed
+  per-item search haystack** once at load (no more per-request rebuilds / per-call re-filtering):
+  every `*_by_id` lookup is O(1), and the flat `/api/hardware` free-text search no longer rebuilds
+  3.8k lowercased strings on each query (~16× faster on a Pi). The precomputed haystacks are kept in
+  a parallel list (not on the entities) so nothing leaks into API responses.
+- **Cache-Control + ETag on the immutable `/api/hardware/*` reads** (weak ETag derived from the
+  dataset version/sizes; `304 Not Modified` on a match) — card-expand detail re-fetches become free
+  over the wire, and the browser serves repeats from cache. Busts automatically on redeploy.
+
+### Fixed
+
+- **Catalog tile counts now show the canonical entity count** (e.g. boards 380, not the raw 1357
+  rows) so a category tile matches what its panel lists. `GET /api/hardware/categories` `counts` are
+  now canonical (boards / drivers / motors / hosts / the 9 catalog categories); the raw row counts
+  remain available as `rawCounts`.
+
 ## [0.137.0] - 2026-06-07
 
 ### Docs
