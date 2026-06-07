@@ -1,18 +1,42 @@
 <script setup lang="ts">
 /** The host catalog view: SBC / x86 / OS-image, with a copyable Klipper HOST config
  *  ([mcu host] block). Thin wrapper over the shared EntityCatalog. */
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+import ComboSelect from '@/components/ui/ComboSelect.vue'
 
 import { fetchHostDetail, fetchHosts } from './api'
 import EntityCatalog from './EntityCatalog.vue'
 import RelatedChips from './RelatedChips.vue'
 import type { HostDetail, HostSummary } from './types'
 import type { FocusTarget } from './useEntityFocus'
+import { useFacets } from './useFacets'
 
 const { t } = useI18n({ useScope: 'global' })
 
+const kind = ref<string | null>(null)
+const manufacturer = ref('')
+const reloadToken = ref(0)
+const { facets } = useFacets()
+const kindOptions = computed(() =>
+  (facets.value?.kind ?? []).map((v) => ({
+    value: v,
+    label: t(`hardwareBrowser.hosts.kind.${v}`),
+  })),
+)
+function onFacetChange(): void {
+  reloadToken.value += 1
+}
+
 async function fetchPage(p: { q: string; offset: number; limit: number }) {
-  const r = await fetchHosts({ q: p.q, limit: p.limit, offset: p.offset })
+  const r = await fetchHosts({
+    q: p.q,
+    manufacturer: manufacturer.value,
+    kind: kind.value ?? '',
+    limit: p.limit,
+    offset: p.offset,
+  })
   return { items: r.hosts, total: r.total }
 }
 const idOf = (h: HostSummary): string => h.host_id
@@ -25,10 +49,30 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'hosts'
     :fetch-detail="fetchHostDetail"
     :id-of="idOf"
     :focus-match="focusMatch"
+    :reload-token="reloadToken"
     search-key="hardwareBrowser.hosts.search"
     total-key="hardwareBrowser.hosts.total"
     none-key="hardwareBrowser.hosts.none"
   >
+    <template #facets>
+      <div class="min-w-[8rem]">
+        <ComboSelect
+          v-model="kind"
+          :options="kindOptions"
+          :placeholder="t('hardwareBrowser.facets.anyKind')"
+          clearable
+          @update:model-value="onFacetChange"
+        />
+      </div>
+      <input
+        v-model="manufacturer"
+        type="text"
+        :placeholder="t('hardwareBrowser.facets.manufacturer')"
+        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        @keyup.enter="onFacetChange"
+      />
+    </template>
+
     <template
       #summary="{ item, open, toggle }: { item: HostSummary; open: boolean; toggle: () => void }"
     >

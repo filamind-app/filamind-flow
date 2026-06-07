@@ -1,18 +1,42 @@
 <script setup lang="ts">
 /** The board catalog view: browse the canonical boards[] entity (specs + aggregated
  *  ports[] + reference media links). Thin wrapper over the shared EntityCatalog. */
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+import ComboSelect from '@/components/ui/ComboSelect.vue'
 
 import { fetchBoardDetail, fetchBoards } from './api'
 import EntityCatalog from './EntityCatalog.vue'
 import RelatedChips from './RelatedChips.vue'
 import type { BoardDetail, BoardMedia, BoardSummary } from './types'
 import type { FocusTarget } from './useEntityFocus'
+import { useFacets } from './useFacets'
 
 const { t } = useI18n({ useScope: 'global' })
 
+const boardClass = ref<string | null>(null)
+const manufacturer = ref('')
+const reloadToken = ref(0)
+const { facets } = useFacets()
+const classOptions = computed(() =>
+  (facets.value?.boardClass ?? []).map((v) => ({
+    value: v,
+    label: t(`hardwareBrowser.facets.boardClass.${v}`),
+  })),
+)
+function onFacetChange(): void {
+  reloadToken.value += 1
+}
+
 async function fetchPage(p: { q: string; offset: number; limit: number }) {
-  const r = await fetchBoards({ q: p.q, limit: p.limit, offset: p.offset })
+  const r = await fetchBoards({
+    q: p.q,
+    manufacturer: manufacturer.value,
+    boardClass: boardClass.value ?? '',
+    limit: p.limit,
+    offset: p.offset,
+  })
   return { items: r.boards, total: r.total }
 }
 const idOf = (b: BoardSummary): string => b.board_id
@@ -42,10 +66,30 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
     :fetch-detail="fetchBoardDetail"
     :id-of="idOf"
     :focus-match="focusMatch"
+    :reload-token="reloadToken"
     search-key="hardwareBrowser.boards.search"
     total-key="hardwareBrowser.boards.total"
     none-key="hardwareBrowser.boards.none"
   >
+    <template #facets>
+      <div class="min-w-[8rem]">
+        <ComboSelect
+          v-model="boardClass"
+          :options="classOptions"
+          :placeholder="t('hardwareBrowser.facets.anyClass')"
+          clearable
+          @update:model-value="onFacetChange"
+        />
+      </div>
+      <input
+        v-model="manufacturer"
+        type="text"
+        :placeholder="t('hardwareBrowser.facets.manufacturer')"
+        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        @keyup.enter="onFacetChange"
+      />
+    </template>
+
     <template
       #summary="{ item, open, toggle }: { item: BoardSummary; open: boolean; toggle: () => void }"
     >

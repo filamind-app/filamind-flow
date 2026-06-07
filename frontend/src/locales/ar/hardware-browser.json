@@ -164,6 +164,18 @@
         "hosts": "الأجهزة المضيفة",
         "catalog": "القطع"
       }
+    },
+    "facets": {
+      "manufacturer": "الشركة المصنّعة",
+      "anyClass": "كل الفئات",
+      "anyNema": "كل المقاسات",
+      "anyKind": "كل الأنواع",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "لوحة رئيسية",
+        "toolhead": "رأس الأداة",
+        "printer-preset": "إعداد طابعة"
+      }
     }
   }
 }

@@ -2,6 +2,7 @@
 /** Generic category catalog view — the remaining categories (sensors, hotends, extruders,
  *  fans/power/bed, displays/cameras, motion, nozzles, filament, electronics). Thin wrapper over
  *  the shared EntityCatalog; re-mounts per category via :key so each switch starts fresh. */
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { fetchCatalog, fetchCatalogEntity } from './api'
@@ -15,10 +16,17 @@ const emit = defineEmits<{ (e: 'back'): void }>()
 
 const { t } = useI18n({ useScope: 'global' })
 
+const manufacturer = ref('')
+const reloadToken = ref(0)
+function onFacetChange(): void {
+  reloadToken.value += 1
+}
+
 async function fetchPage(p: { q: string; offset: number; limit: number }) {
   const r = await fetchCatalog({
     category: props.category,
     q: p.q,
+    manufacturer: manufacturer.value,
     limit: p.limit,
     offset: p.offset,
   })
@@ -36,10 +44,21 @@ const focusMatch = (f: FocusTarget): boolean =>
     :fetch-detail="fetchCatalogEntity"
     :id-of="idOf"
     :focus-match="focusMatch"
+    :reload-token="reloadToken"
     search-key="hardwareBrowser.search.placeholder"
     total-key="hardwareBrowser.results.total"
     none-key="hardwareBrowser.results.none"
   >
+    <template #facets>
+      <input
+        v-model="manufacturer"
+        type="text"
+        :placeholder="t('hardwareBrowser.facets.manufacturer')"
+        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        @keyup.enter="onFacetChange"
+      />
+    </template>
+
     <template #header>
       <div class="flex flex-wrap items-center gap-2">
         <button class="nb-btn bg-surface px-2 py-1 text-[11px]" @click="emit('back')">

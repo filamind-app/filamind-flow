@@ -164,6 +164,18 @@
         "hosts": "Hosts",
         "catalog": "Teile"
       }
+    },
+    "facets": {
+      "manufacturer": "Hersteller",
+      "anyClass": "Alle Klassen",
+      "anyNema": "Alle Größen",
+      "anyKind": "Alle Typen",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Mainboard",
+        "toolhead": "Toolhead",
+        "printer-preset": "Drucker-Preset"
+      }
     }
   }
 }

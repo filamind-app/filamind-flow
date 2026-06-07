@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.142.0] - 2026-06-07
+
+### Added
+
+- **Hardware Browser faceted filters (DB-3c).** Each catalog panel now exposes the filters the
+  backend already supported, via the shared `EntityCatalog` facet slot: **Boards** filter by class
+  (mainboard / toolhead / printer-preset), **Motors** by NEMA size, **Hosts** by type
+  (SBC / x86 / OS / locked), and every panel (boards / drivers / motors / hosts / catalog) by
+  **manufacturer**. A new `GET /api/hardware/facets` returns the distinct filter values (board class,
+  normalised NEMA size, host kind); the dropdown options are fetched once and shared across panels.
+  Localised across all seven languages.
+
 ## [0.141.0] - 2026-06-07
 
 ### Changed
