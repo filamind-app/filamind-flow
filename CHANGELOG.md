@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.128.0] - 2026-06-07
+
+### Added
+
+- **Copyable pin-map (`configSnippet`) on every board — all 408 now have the copy section.** Was
+  188/408; the 220 standalone control boards that lacked one now have it. **366 carry a real,
+  verbatim Klipper pin map** copied from authoritative sources (Klipper repo `generic-*.cfg` +
+  official vendor GitHub Klipper sample configs — BigTreeTech, Mellow, MKS, FYSETC, Duet3D,
+  Creality, Anycubic, LDO, Qidi, etc.), with a `configSource` link. For those boards the `ports[]`
+  table was also upgraded from connector-level to real Klipper pins (the connector data is preserved
+  under `connectors`).
+- **42 boards carry an honest note instead of fabricated pins** where no published Klipper pin map
+  exists: 11 host SBCs (CB1/CB2, Raspberry Pi, Sonic/Nebula/Speeder pads, MKS Pi…), and 31 boards
+  that are USB-CAN bridges (U2C, UTC), ESP32/HC32 parts needing a community Klipper port (FYSETC E4,
+  some Anycubic Trigorilla / Creality HC32 revisions), closed-loop servo modules (MKS SERVO42/57),
+  or Duet 3 CAN expansion boards (1HCL/1XD/3HC) that have no standalone pin map.
+- Bounded Agent-tool method (6 waves, strict verbatim-only / anti-fabrication). Agents flagged real
+  source facts, e.g. FYSETC Catalyst = STM32H723 (not F401), SB CAN Toolhead = STM32F072, and that
+  "Mellow Eagle" / GD32F303 Trigorilla Gen V4 have no published Klipper pin map.
+
 ## [0.127.1] - 2026-06-07
 
 ### Fixed
