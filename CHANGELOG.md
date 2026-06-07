@@ -6,6 +6,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.126.0] - 2026-06-07
+
+### Added
+
+- **Web enrichment waves 8 + 9 + 10 — the final 75 boards. Board enrichment is now complete:
+  every one of the 300 standalone control boards in the database is web-enriched** (the remaining
+  108 entries are printer-model pin-map presets, a separate category). Same bounded Agent-tool
+  method (4 agents/wave writing results to files; no runaway). **+462 specs, +164 media links,
+  +224 electronics facts, +225 config notes.** Covers the long tail: Qidi Q1 Pro / X-Plus 3 /
+  X-Max 3, Sovol SV07, Raspberry Pi host, the legacy Klipper-generic boards (Alligator R2/R3,
+  Azteeg X5 Mini, Cramps, RADDS, Re-ARM, RuRAMPS, Archim, Megatronics, Minitronics, Mini-RAMBo,
+  Printrboard G2, RemRam, Mightyboard, GT2560, Ultimaker UltiMainboard), the BigTreeTech SKR
+  legacy/E3 line (CR6, E3 DIP, E3 Turbo, Mini E3 v1.0, Mini MZ, v1.1, E3 RRF), Creality 4.2.7 /
+  4.2.10, FYSETC Cheetah v1.1 / F6 / S6 v2, Mellow Fly CDY/Gemini/Super Infinity HV/Flyboard,
+  TH3D EZBoard Lite / V2.0, Duet DueX expansion, and ERCF EASY BRD.
+- Agents corrected several MCU/vendor facts from authoritative sources: SKR E3 Turbo = LPC1769
+  (not STM32F407); TH3D EZBoard Lite V1.2 = LPC1769 (not STM32F103); Terminator 3 = Sunlu
+  GD32F303 (not FLSUN); ERCF EASY BRD = Seeeduino XIAO SAMD21; Mellow Super Infinity HV = STM32F407;
+  Flyboard = Mellow FLYF407ZG; Printrboard G2 = Atmel SAM3X8C; RemRam = STM32F765 (no "v4" exists);
+  Alligator = RepRap/Alligator project (not UltiMachine); `simulavr` flagged as the Klipper AVR
+  simulator target, not physical hardware.
+
 ## [0.125.0] - 2026-06-07
 
 ### Added
