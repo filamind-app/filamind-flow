@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.141.0] - 2026-06-07
+
+### Changed
+
+- **Hardware Browser internal refactor (DB-3b) — shared `EntityCatalog` component, no behaviour
+  change.** The five near-clone detail panels (Boards / Drivers / Motors / Hosts / Catalog) each
+  repeated the same shell — search box, result list, pagination, per-row expand with a detail cache,
+  copy-config helper, loading / error states and cross-link deep-link focus. That shell is now one
+  shared `EntityCatalog.vue`; each panel is a thin wrapper that supplies a `fetchPage` / `fetchDetail`
+  closure and renders only its own bespoke summary + detail markup via slots. Behaviour and layout
+  are unchanged (verified by an old-vs-new parity review); the panels shed ~55 % of their code and
+  new entity catalogs / faceted filters (DB-3c) now plug into one place.
+
 ## [0.140.0] - 2026-06-07
 
 ### Added
