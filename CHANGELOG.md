@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.144.0] - 2026-06-07
+
+### Fixed
+
+- **Hardware DB data audit, Wave 1 — catalog product identity restored.** A broad read-only audit
+  found catalog rows where the real product had been swapped into the `manufacturer` column while
+  `name` held only a generic word or a bare spec. Recovered **80** rows: thermocouple/sensor chips
+  shown as `SPI`/`I2C` → `MAX6675` / `MAX31865` / `HTU21D` …; power connectors shown as `Connectors`
+  → `XT30` / `XT60` / `XT90` …; heater cartridges shown as `12 V`/`24 V` → `Ceramic cartridge 12 V
+  30 W (6×20)` …; nozzles shown as a thread `M6 × 1.0` → `E3D V6` / `MK8` … (the thread moved to a
+  spec); and 7 linear-rail rows all mislabelled `EGH25CA / EGW25CA` renamed to their real family
+  (`MGW7/9/12/15`). A regression test locks it. (The audit's larger raw counts were over-stated —
+  generic material/mechanical types like `PLA` or a `T8` leadscrew correctly have no manufacturer
+  and were left untouched.)
+
 ## [0.143.0] - 2026-06-07
 
 ### Fixed
