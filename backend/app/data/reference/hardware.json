@@ -52060,7 +52060,9 @@
         "CAN": "no",
         "Dimensions (mm)": "103.75 x 70.25 (V3.0)",
         "Form factor": "Ender 3 drop-in replacement mainboard",
-        "Class": "mainboard"
+        "Class": "mainboard",
+        "Clock": "64 MHz (V3.0)",
+        "Flash method": "Copy firmware.bin to microSD card; board flashes on boot"
       },
       "ports": [
         {
@@ -52241,7 +52243,19 @@
         "productUrl": "https://biqu.equipment/products/bigtreetech-skr-mini-e3-v2-0-32-bit-control-board-for-ender-3",
         "repoUrl": "https://github.com/bigtreetech/BIGTREETECH-SKR-mini-E3",
         "mediaStatus": "partial"
-      }
+      },
+      "electronics": {
+        "Logic level": "3.3V logic on all IO",
+        "Drivers": "TMC2209 in UART - sensorless homing available by fitting jumper on the DIAG pins",
+        "Fans": "V3.0 adds a 3rd controllable fan (3 total); fan rail is at input voltage (12/24V)",
+        "Thermistor": "100K NTC pull-up onboard"
+      },
+      "configNotes": [
+        "Use TMC2209 UART config with the board's onboard UART pins; serial/CAN not used for steppers.",
+        "For sensorless homing, enable diag_pin and set driver_SGTHRS after fitting the DIAG jumper.",
+        "Flash by placing firmware.bin on a FAT32 microSD; the file is renamed after a successful flash."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "mini-e3-v3-0",
@@ -54060,7 +54074,11 @@
         "Connectivity": "USB-C; CAN (header)",
         "Voltage": "24V main / up to 60V motor (per-socket)",
         "Role/era": "main",
-        "Notes": "High-voltage option; H723 variant exists"
+        "Notes": "High-voltage option; H723 variant exists",
+        "Clock": "Up to 168 MHz (F4) / up to 550 MHz (H723)",
+        "USB": "USB Type-C",
+        "CAN": "CAN bus header (XH2.54 2-pin on V1.1; was RJ11 on V1.0)",
+        "Flash method": "SD card or DFU over USB"
       },
       "ports": [
         {
@@ -54101,7 +54119,24 @@
       "xlsx_source_rows": {
         "portRowCount": 2
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro",
+        "pinoutUrl": "https://github.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro/blob/master/Hardware/BIGTREETECH%20Octopus%20Pro%20-%20PIN.pdf",
+        "datasheetUrl": "https://raw.githubusercontent.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro/master/BTT_Octopus_pro_EN.pdf",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Driver voltage jumper": "Each of the 8 drivers selects MOTOR_POWER (left, up to 60V) or Main Power (right, max 28V) via jumper - set this before powering high-voltage drivers like TMC5160",
+        "High-temp sensor": "Onboard MAX31865 for PT100/PT1000",
+        "Probe port": "Dedicated PC5 probe pin; supports NPN and PNP"
+      },
+      "configNotes": [
+        "Pick the generic Klipper printer.cfg matching your exact MCU variant (F446 / F429 / H723) - pin maps differ.",
+        "For PT100/PT1000, use the onboard MAX31865 (spi sensor) rather than an analog thermistor pin.",
+        "Set each driver's power-rail jumper to match its driver IC's voltage rating before first power-on."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "octopus-v1-1",
@@ -56071,7 +56106,8 @@
         "Ethernet/WiFi": "via CB1/CM4 core board only",
         "Flash method": "USB-DFU / SD-card / make flash",
         "Form factor": "Manta series (accepts BTT CB1 / Raspberry Pi CM4 core board)",
-        "Class": "mainboard"
+        "Class": "mainboard",
+        "Dimensions (mm)": "170 x 102.7"
       },
       "ports": [
         {
@@ -56237,7 +56273,18 @@
         "repoUrl": "https://github.com/bigtreetech/Manta-M8P",
         "wikiUrl": "https://global.bttwiki.com/M8P.html",
         "mediaStatus": "partial"
-      }
+      },
+      "electronics": {
+        "Core board": "BTB connector accepts Raspberry Pi CM4 or BTT CB1/CB1 eMMC (TPS5450 supplies up to 5A/6A to power the SBC)",
+        "Sensorless homing": "Onboard DIAG pins enabled by fitting a jumper - no need to cut driver DIAG pins",
+        "Thermistor": "5x 100K NTC inputs; PT1000 supported via jumper"
+      },
+      "configNotes": [
+        "This is a Klipper-oriented board paired with a CB1/CM4 SBC - the SBC runs the host, the G0B1 is the MCU.",
+        "Choose SPI or UART driver config to match the TMC modules you fit into the 8 slots.",
+        "Enable DIAG jumpers per axis for sensorless homing."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "m8p-v1-1",
@@ -56878,7 +56925,18 @@
         "wikiUrl": "https://global.bttwiki.com/M8P-V2_0.html",
         "datasheetUrl": "https://3d.nice-cdn.com/upload/file/BIGTREETECH_MANTA_M8P_V2.0_User_Manual.pdf",
         "mediaStatus": "partial"
-      }
+      },
+      "electronics": {
+        "Driver voltage jumper": "Per-board selection: 24V or HV (24-60V) - set to match driver ICs (e.g. TMC5160 on HV)",
+        "High-temp/PT1000": "Thermistor pull-up selectable - 4.7K for NTC, 2.2K for PT1000; PT1000 mode by shorting the marked pads",
+        "Sensorless homing": "DIAG jumper per driver; remove jumper when unused (no pin cutting needed)"
+      },
+      "configNotes": [
+        "Use the H723 generic Klipper config; the H7 needs the matching bootloader offset when flashing via Katapult/DFU.",
+        "Set the thermistor pull-up jumper to 2.2K and pullup_resistor: 2200 in printer.cfg when using PT1000.",
+        "CAN header is optional - the toolhead can also be wired via USB; configure canbus_uuid only if using CAN."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "manta-e3ez",
@@ -58666,12 +58724,21 @@
     },
     {
       "board_id": "sb2209-can-rp2040-g0b1",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech (BIQU)",
       "model": "SB2209 CAN (RP2040 & G0B1)",
       "display_name": "SB2209 CAN (RP2040 & G0B1)",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "Two variants: RP2040 (dual-core ARM Cortex-M0+) or STM32G0B1CBT6 (ARM Cortex-M0+, 64 MHz)",
+        "Arch": "32-bit ARM Cortex-M0+",
+        "Voltage": "DC 12V-24V input (9A max), 3.3V logic",
+        "Onboard drivers": "1x integrated TMC2209 (UART mode) for the extruder",
+        "USB": "USB Type-C",
+        "CAN": "CAN bus (PH2.0), jumper-selectable 120R termination",
+        "Dimensions (mm)": "68.5 x 42.5",
+        "Flash method": "CAN (Katapult) or DFU over USB"
+      },
       "ports": [
         {
           "label": "Molex 5569 (Mini-Fit Jr.)",
@@ -58696,7 +58763,24 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "wikiUrl": "https://global.bttwiki.com/EBB%202240%202209%20CAN.html",
+        "pinoutUrl": "https://github.com/bigtreetech/EBB/blob/master/EBB%20SB2209%20CAN%20(RP2040)/Hardware/EBB%20SB2209%20CAN%20V1.0%EF%BC%88RP2040%EF%BC%89-Pin.pdf",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Accelerometer": "Onboard ADXL345 - use directly for input-shaper resonance testing, no external sensor needed",
+        "Temp sensor": "Onboard MAX31865 (PT100/PT1000); alt TH0 port = 100K NTC with 4.7K or 2.2K jumper pull-up",
+        "Fan rails": "Two NC fans + one 4-wire fan, each jumper-selectable VIN/12V/5V; CAN 120R termination jumper"
+      },
+      "configNotes": [
+        "Designed as a CAN toolhead - set canbus_uuid (or USB serial for the RP2040 USB option) and the 8KiB Katapult bootloader offset.",
+        "Reference the onboard ADXL345 with an [adxl345] section bound to this MCU for input shaping.",
+        "For PT1000 use the MAX31865 SPI sensor; for NTC set the TH0 pull-up jumper to match pull_up_resistor."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "sb2209-can",
@@ -59367,7 +59451,14 @@
       "display_name": "BigTreeTech U2C (all)",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32G0B1CBT6 (V2.x; ARM Cortex-M0+) - early V1.0 used STM32F072",
+        "Arch": "32-bit ARM Cortex-M0+",
+        "Voltage": "USB-powered 5V; 3.3V logic on CAN side",
+        "USB": "USB Type-C to host",
+        "CAN": "USB-to-CAN bridge with jumper-selectable 120R termination resistor",
+        "Flash method": "DFU over USB"
+      },
       "ports": [
         {
           "label": "USB-C receptacle",
@@ -59451,11 +59542,27 @@
       "xlsx_source_rows": {
         "portRowCount": 5
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/bigtreetech/U2C",
+        "wikiUrl": "https://bigtreetech.github.io/docs/U2C.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "120R termination": "Fit the 120R jumper when the U2C is at one physical end of the CAN bus; remove it if it is mid-chain",
+        "Role": "Pure USB-to-CAN bridge - no steppers/heaters; presents a can0 interface to the host",
+        "Logic level": "CAN transceiver 3.3V referenced"
+      },
+      "configNotes": [
+        "Set up a can0 network interface on the host (e.g. 1M bitrate) - the U2C itself needs no printer.cfg [mcu] section.",
+        "Ensure exactly two 120R terminators on the whole CAN bus.",
+        "Find toolhead/MCU UUIDs over this bridge to populate canbus_uuid entries."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "cb1",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech (BIQU)",
       "model": "CB1 (compute module)",
       "display_name": "CB1",
       "aliases": [
@@ -59470,7 +59577,9 @@
         "CAN": "n/a (host)",
         "UART": "via 40-pin GPIO",
         "Voltage": "5V (via carrier)",
-        "I2Cspi": "via 40-pin GPIO"
+        "I2Cspi": "via 40-pin GPIO",
+        "Dimensions (mm)": "40 x 55 (mounting 33 x 48)",
+        "Flash method": "OS image written to microSD card (no onboard eMMC)"
       },
       "ports": [
         {
@@ -59525,11 +59634,26 @@
       "xlsx_source_rows": {
         "portRowCount": 3
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://github.com/bigtreetech/docs/blob/master/docs/CB1.md",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Form factor": "Raspberry Pi CM4-compatible BTB connectors - drops into most CM4 carrier boards (e.g. Manta M-series)",
+        "Storage": "Boots from microSD only (no eMMC) - keep a spare card for reflashing",
+        "Networking": "100M Ethernet + 2.4 GHz WiFi; HDMI 2.0a up to 4K"
+      },
+      "configNotes": [
+        "This is the Linux host SBC, not the printer MCU - it runs Klipper host + Moonraker, paired with a separate control board's MCU.",
+        "Flash the BTT CB1 OS image to microSD; it is not interchangeable with Raspberry Pi OS.",
+        "On a Manta carrier, the CB1 talks to the onboard MCU over an internal UART - no USB cable needed."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "cb2",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech (BIQU)",
       "model": "CB2",
       "display_name": "CB2",
       "aliases": [],
@@ -59540,7 +59664,9 @@
         "Driver slots": "—",
         "Connectivity": "Ethernet; WiFi; HDMI; USB",
         "Voltage": "5V (from carrier)",
-        "Role/era": "host SBC"
+        "Role/era": "host SBC",
+        "USB": "USB host via carrier; Gigabit Ethernet",
+        "Flash method": "Pre-loaded on 32GB onboard eMMC (image flashable over USB)"
       },
       "ports": [
         {
@@ -59610,7 +59736,22 @@
       "xlsx_source_rows": {
         "portRowCount": 4
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://global.bttwiki.com/CB2.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Form factor": "CM4-compatible (two 100-pin BTB connectors) - direct upgrade from CB1 on the same carriers",
+        "Storage": "2GB LPDDR4 + 32GB onboard eMMC (no microSD needed)",
+        "Networking": "Gigabit Ethernet, 2.4G/5G WiFi, Bluetooth 5.2, DSI + CSI"
+      },
+      "configNotes": [
+        "Host SBC running Klipper/Moonraker - drops onto CB1-compatible CM4 carriers like the Manta boards.",
+        "Boots from onboard eMMC; flash the BTT CB2 image rather than a Raspberry Pi or CB1 image.",
+        "Gigabit Ethernet makes it preferable to CB1 for fast camera/streaming."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "hurakan-manta-m4p",
@@ -59632,7 +59773,10 @@
         "SPI": "Yes",
         "I2C": "—",
         "Eth/WiFi": "Ethernet via CB1 (100M) / CM4 (1000M); WiFi via SBC",
-        "Voltage": "DC12–24V (TPS5450 5A)"
+        "Voltage": "DC12–24V (TPS5450 5A)",
+        "Clock": "64 MHz",
+        "Onboard drivers": "None (sockets accept TMC2209/2208/2226/5160/2130/A4988/DRV8825, UART/SPI/STEP-DIR)",
+        "Flash method": "Compile for STM32G0B1 with 8KiB bootloader + USB; flash via SD card or DFU/USB"
       },
       "ports": [
         {
@@ -59688,7 +59832,24 @@
       "xlsx_source_rows": {
         "portRowCount": 3
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/manta-m4p-m8p",
+        "repoUrl": "https://github.com/bigtreetech/Manta-M4P",
+        "datasheetUrl": "https://github.com/bigtreetech/Manta-M4P/blob/master/BIGTREETECH_MANTA_M4P_User_Manual.pdf",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Driver mode jumpers": "Per-slot jumpers select UART / SPI / STEP-DIR; set to match the installed driver and the Klipper config",
+        "Hotend thermistor": "Reference config uses EPCOS 100K B57560G104F; bed uses Generic 3950",
+        "SBC carrier": "Hosts a CB1 or CM4 compute module on-board"
+      },
+      "configNotes": [
+        "Build firmware for STM32G0B1 with an 8KiB bootloader and USB communication, then flash via SD card or DFU.",
+        "Set each driver slot's UART/SPI/STEP-DIR jumpers to match the driver model and the [tmc...] section.",
+        "The Z slot drives two Z motors in parallel; wire both Z steppers to the single Z driver."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "spider-v1-x-v2-2-v3-0",
@@ -60284,7 +60445,18 @@
       "display_name": "FYSETC Spider v3.0 only",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32F446 (ARM Cortex-M4)",
+        "Arch": "ARM Cortex-M4",
+        "Clock": "180 MHz",
+        "Voltage": "Up to 28V DC input",
+        "Driver slots": "8 removable stepper driver slots (UART & SPI support)",
+        "Onboard drivers": "None (sockets; commonly populated with TMC2209)",
+        "USB": "USB Type-C and Type-B connectors",
+        "CAN": "Onboard CAN transceiver with permanent 120-ohm termination resistor",
+        "Dimensions (mm)": "155.3 x 76.5",
+        "Flash method": "SD card (default), or DFU via dfu-util / STM32CubeProgrammer"
+      },
       "ports": [
         {
           "label": "JST-XH",
@@ -60309,7 +60481,25 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.fysetc.com/products/fysetc-spider-v3-0-h7-32-bit-motherboard",
+        "repoUrl": "https://github.com/FYSETC/FYSETC-SPIDER",
+        "wikiUrl": "https://wiki.fysetc.com/Spider/",
+        "schematicUrl": "https://github.com/FYSETC/FYSETC-SPIDER/blob/main/hardware/V3.0/spider_V3.0_sch.pdf",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "5V stepper logic": "v3.0 adds 74HCT365 buffers so stepper drive signals are level-shifted from 3.3V to 5V; all IOs 5V-tolerant",
+        "CAN termination": "Onboard 120-ohm terminating resistor is permanent - account for it when wiring a CAN bus",
+        "Fan rail": "Onboard 12V DC-DC plus 3.3V LDOs; confirm fan port voltage before wiring 12V vs 24V fans"
+      },
+      "configNotes": [
+        "Flash by copying firmware.bin to the SD card or via DFU over USB.",
+        "Configure the 8 driver sockets in UART or SPI mode to match each installed TMC2209.",
+        "An onboard CAN transceiver is present, so a CAN toolboard can be wired directly."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "spider-v3-0-h7",
@@ -61853,7 +62043,11 @@
         "UART": "UART 2×5 (PA9/PA10)",
         "SPI": "SPI+I2C via EXP1/EXP2",
         "Eth/WiFi": "No",
-        "Voltage": "12–24 V (15 A fuse)"
+        "Voltage": "12–24 V (15 A fuse)",
+        "Clock": "180 MHz",
+        "Onboard drivers": "4x TMC2209 (integrated, UART, sensorless-homing capable)",
+        "Dimensions (mm)": "101.5 x 72 (Creality Ender 3/5 mounting footprint)",
+        "Flash method": "DFU via USB (BT0 jumper to 3V3 to flash, BT0 to GND for normal run)"
       },
       "ports": [
         {
@@ -62058,7 +62252,24 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.fysetc.com/products/fysetc-cheetah-v3-0-stm32f446-mcu-motherboard",
+        "repoUrl": "https://github.com/FYSETC/Cheetah_V3.0",
+        "wikiUrl": "https://wiki.fysetc.com/Cheatah_Board_V30/",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Fan voltage selectable": "3 PWM fan outputs are jumper-selectable 5V / 12V / 24V - set the jumper to match each fan",
+        "Onboard TMC2209 sense": "Integrated TMC2209 drivers support StallGuard sensorless homing on X/Y",
+        "Pinout changed vs V2": "All IOs were redistributed; V2 configs are NOT compatible"
+      },
+      "configNotes": [
+        "Flash over USB DFU: move the BT0 jumper to 3V3 to enter bootloader, flash, then return BT0 to GND.",
+        "Use UART [tmc2209] sections for the four onboard drivers; enable diag_pin/sensorless on X and Y as wired.",
+        "Set each PWM fan's 5V/12V/24V jumper before configuring fan sections."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "catalyst",
@@ -63072,7 +63283,7 @@
     },
     {
       "board_id": "nitehawk-sb-v1",
-      "manufacturer": "",
+      "manufacturer": "LDO Motors (Motor Dynamics Lab)",
       "model": "Nitehawk-SB (v1)",
       "display_name": "Nitehawk-SB v1",
       "aliases": [
@@ -63086,7 +63297,10 @@
         "Drivers": "Onboard TMC2209 (soldered)",
         "Connectivity": "USB",
         "Voltage": "24V",
-        "Role/era": "toolhead"
+        "Role/era": "toolhead",
+        "Onboard drivers": "1x TMC2209 (extruder, 0.100-ohm sense resistor)",
+        "USB": "USB communication to host (not CAN)",
+        "Flash method": "Ships with Katapult + Klipper preinstalled; reflash over USB"
       },
       "ports": [
         {
@@ -63258,11 +63472,28 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://ldomotion.com/products/nitehawksb-toolboard",
+        "repoUrl": "https://github.com/MotorDynamicsLab/Nitehawk-SB",
+        "wikiUrl": "https://docs.ldomotors.com/en/Toolboard/nitehawk-sb",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Thermistor pullup = 2200 ohm": "The TH0 input uses a 2200-ohm pullup (not the usual 4.7k) - set pullup_resistor: 2200 in [extruder]",
+        "Onboard ADXL345": "Built-in accelerometer on the board's SPI bus (cs gpio21) for input shaping",
+        "Tachometer fan ports": "PCF and HEF fan ports support 3-pin tachometer fans for RPM feedback"
+      },
+      "configNotes": [
+        "USB toolboard: set the [mcu nhk] serial to the board's Klipper_rp2040 USB ID and power it from 24V.",
+        "Use pullup_resistor: 2200 on the extruder thermistor because TH0 uses a 2.2k pullup.",
+        "Configure the onboard ADXL345 (cs_pin: nhk:gpio21) for resonance/input-shaper measurements."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "nitehawk-sb-v2",
-      "manufacturer": "",
+      "manufacturer": "LDO Motors (Motor Dynamics Lab)",
       "model": "Nitehawk-SB V2",
       "display_name": "Nitehawk-SB v2",
       "aliases": [
@@ -63276,7 +63507,10 @@
         "Drivers": "Onboard TMC2209 (soldered)",
         "Connectivity": "USB (onboard hub + 2nd port)",
         "Voltage": "24V",
-        "Role/era": "toolhead"
+        "Role/era": "toolhead",
+        "Onboard drivers": "1x TMC2209 (extruder)",
+        "USB": "USB communication to host, with onboard USB hub + secondary USB port",
+        "Flash method": "Ships with Katapult + Klipper; reflash over USB"
       },
       "ports": [
         {
@@ -63463,7 +63697,24 @@
       "xlsx_source_rows": {
         "portRowCount": 12
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.onetwo3d.co.uk/product/ldo-nitehawk-sb-usb-toolhead-board/",
+        "repoUrl": "https://github.com/MotorDynamicsLab/Nitehawk-SB",
+        "wikiUrl": "https://docs.ldomotors.com/en/Toolboard/nitehawk-sb-v2",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "MCU changed to STM32G0B1": "v2 replaces the v1 RP2040 with an STM32G0B1 - the [mcu] type/serial and firmware build differ from v1",
+        "ESD + connectors revised": "Improved ESD protection; Probe/TH0/XY-endstop moved from JST-XH2.5 to JST-PH2.0",
+        "Added I2C + USB hub": "New general-purpose I2C port and an onboard USB hub with a secondary USB port"
+      },
+      "configNotes": [
+        "Build/flash Klipper for the STM32G0B1 MCU (not RP2040 as on v1); update the [mcu] serial to the v2 USB ID.",
+        "Still a 24V USB toolboard with onboard TMC2209 extruder and onboard accelerometer.",
+        "Use JST-PH2.0 connectors for Probe/TH0/XY-endstop when rewiring from a v1 board."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "nitehawk-36",
@@ -64216,7 +64467,11 @@
         "UART": "Serial port",
         "SPI": "SPI (TempDB hdr)",
         "Eth/WiFi": "Ethernet: W5500 10/100 RJ45; SBC from RRF 3.2 (HW mod)",
-        "Voltage": "11–25 V"
+        "Voltage": "11–25 V",
+        "Clock": "120 MHz",
+        "Driver slots": "5 onboard drivers",
+        "Onboard drivers": "5x Trinamic TMC2660 (SPI, up to 256 microstepping, ~2.4A each)",
+        "Flash method": "Firmware over USB / web interface (RepRapFirmware)"
       },
       "ports": [
         {
@@ -64251,7 +64506,23 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.filastruder.com/products/duet-ethernet",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_2_family/Duet_2_WiFi_Ethernet_Hardware_Overview",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Network = wired Ethernet (W5500)": "Ethernet variant uses an onboard W5500 TCP/IP controller for the RJ45 port (no WiFi)",
+        "Heater/fan channels": "3 heater + thermistor channels (bed + 2 hotends), 3 PWM fans + 2 always-on fans",
+        "SPI TMC2660 drivers": "Drivers are SPI-controlled TMC2660 - current is set in firmware/config, not by Vref pots"
+      },
+      "configNotes": [
+        "Designed for RepRapFirmware; for Klipper note the SAM4E target and SPI TMC2660 drivers.",
+        "Keep input voltage at/below ~25V because the TMC2660 drivers are rated 30V max.",
+        "Set motor currents in firmware (TMC2660 is SPI-controlled); no Vref pots."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "duet-2-wifi",
@@ -64269,7 +64540,11 @@
         "UART": "Serial port",
         "SPI": "SPI (TempDB hdr); I²C via SX1509B add-on",
         "Eth/WiFi": "WiFi: ESP8266 2.4 GHz; SBC from RRF 3.2 (HW mod)",
-        "Voltage": "11–25 V"
+        "Voltage": "11–25 V",
+        "Clock": "120 MHz",
+        "Driver slots": "5 onboard drivers",
+        "Onboard drivers": "5x Trinamic TMC2660 (SPI, up to 256 microstepping, ~2.4A each)",
+        "Flash method": "Firmware over USB / web interface (RepRapFirmware)"
       },
       "ports": [
         {
@@ -64304,7 +64579,23 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.filastruder.com/products/duet-wifi",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_2_family/Duet_2_WiFi_Ethernet_Hardware_Overview",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Network = onboard WiFi": "WiFi variant uses an onboard ESP8266-based WiFi module instead of the Ethernet W5500 controller",
+        "Heater/fan channels": "3 heater + thermistor channels (bed + 2 hotends), 3 PWM fans + 2 always-on fans",
+        "SPI TMC2660 drivers": "Drivers are SPI-controlled TMC2660 - current is set in firmware/config"
+      },
+      "configNotes": [
+        "Identical board to the Duet 2 Ethernet except networking is WiFi instead of wired Ethernet.",
+        "Keep input voltage at/below ~25V (TMC2660 rated 30V max).",
+        "Set motor currents in firmware (no Vref pots)."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "duet-2-maestro",
@@ -65319,7 +65610,11 @@
         "Connectivity": "USB; WiFi or Ethernet (variant); CAN-FD",
         "Voltage": "12V–25V (approx)",
         "Role/era": "main",
-        "Notes": "SBC- or standalone-capable; StallGuard2"
+        "Notes": "SBC- or standalone-capable; StallGuard2",
+        "Clock": "120 MHz",
+        "Onboard drivers": "5x Trinamic TMC2209 (UART, sensorless-homing capable)",
+        "CAN": "CAN-FD bus for expansion boards (up to 15 axes total)",
+        "Flash method": "Firmware over USB / web interface (RepRapFirmware)"
       },
       "ports": [
         {
@@ -65354,7 +65649,25 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.filastruder.com/products/duet-3-mini-5",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Mini5plus",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Mini_5+_Hardware_Overview",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "OUT3/OUT4 fan voltage jumper": "A 3-pin 'OUT 3&4 Select V' jumper picks fused VIN (up to 2A each) or the onboard 12V regulator",
+        "Thermistor / PT1000 inputs": "3 thermistor/PT1000 inputs onboard, plus optional PT100/thermocouple daughterboards",
+        "Split 5V rail": "5V_INT/5V_EXT split - only ~700mA available on 5V_EXT",
+        "Ethernet variant": "Ethernet model has a wired RJ45 port instead of the WiFi module"
+      },
+      "configNotes": [
+        "Ethernet variant uses a wired network port (no WiFi module).",
+        "Onboard drivers are UART TMC2209 - enable sensorless homing on the X/Y diag pins as wired.",
+        "Set the OUT3/OUT4 'Select V' jumper to VIN or 12V to match your fans."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "duet-3-mini-5-wifi",
@@ -65374,7 +65687,11 @@
         "UART": "2× serial (IO_0/IO_1 AUX)",
         "SPI": "SPI (SPI-DB hdr); I²C via IO2/IO3 (jumper)",
         "Eth/WiFi": "WiFi 2.4 GHz (U.FL) or Eth RJ45 (variant); SBC via 2×13 hdr",
-        "Voltage": "11–25 V"
+        "Voltage": "11–25 V",
+        "Clock": "120 MHz",
+        "Driver slots": "5 onboard + 2-driver expansion header",
+        "Onboard drivers": "5x Trinamic TMC2209 (up to 1.4A RMS / 2A peak, 256 microstepping, StallGuard2, StealthChop2)",
+        "Flash method": "Over USB / Duet Web Control"
       },
       "ports": [
         {
@@ -65409,7 +65726,23 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3mini5plus",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Mini_5+_Hardware_Overview",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Thermistor inputs": "3x thermistor/PT1000 inputs (plus optional PT100/thermocouple daughterboards)",
+        "Bed/heater outputs": "7 PWM outputs incl. high-current bed; large bed loads via external SSR, low-current via onboard MOSFET",
+        "Fan rail": "VIN-powered fan outputs; fan connectors rated ~2A"
+      },
+      "configNotes": [
+        "Klipper use requires building Klipper for the SAME54.",
+        "Onboard TMC2209 support sensorless homing via StallGuard2.",
+        "Use an external SSR for high-power beds; configure the trigger output as the heater pin."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "duet-3-6hc",
@@ -66645,7 +66978,9 @@
         "Max stepper current": "6.3A peak per phase (4.45A RMS)",
         "CAN": "yes (CAN-FD, connects to Duet 3 mainboard)",
         "Class": "expansion",
-        "Notes": "High-power CAN-FD expansion board adding 3 stepper channels plus heaters/fans/GPIO; compatible with 6HC/6XD/Mini 5+"
+        "Notes": "High-power CAN-FD expansion board adding 3 stepper channels plus heaters/fans/GPIO; compatible with 6HC/6XD/Mini 5+",
+        "USB": "None (CAN-only expansion board)",
+        "Flash method": "Firmware uploaded over the CAN-FD bus from the main board"
       },
       "ports": [
         {
@@ -66830,7 +67165,18 @@
         "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Expansion_3HC",
         "schematicUrl": "https://raw.githubusercontent.com/Duet3D/Duet3-Expansion-3HC/master/Expansion_3HC_v1.02/Duet3_Exp_3HC_Schematic_v1.02.pdf",
         "mediaStatus": "partial"
-      }
+      },
+      "electronics": {
+        "Heater outputs": "3 high-current (~5A) + 3 medium-current (~3A) PWM-capable outputs",
+        "Fan outputs": "3x 4-wire fan outputs (PWM + tacho)",
+        "I/O": "9 low-voltage I/O connectors"
+      },
+      "configNotes": [
+        "CAN-FD expansion board: assign it a CAN address and reference its drivers/heaters with the board-number prefix.",
+        "TMC5160 drivers are SPI/high-power; suitable for large motors up to 48V VIN.",
+        "No USB; managed entirely through the connected main board over CAN-FD."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "1hcl-v2-0",
@@ -66847,7 +67193,8 @@
         "Driver slots": "1",
         "Onboard drivers": "TMC2160A (soldered, SPI; open or closed loop; 6.3A peak / 4.45A RMS per phase)",
         "CAN": "yes (CAN-FD, RJ11)",
-        "Class": "toolhead"
+        "Class": "toolhead",
+        "Flash method": "Firmware uploaded over the CAN-FD bus from the main board"
       },
       "ports": [
         {
@@ -67054,7 +67401,18 @@
         "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Expansion_1HCL",
         "imageUrl": "https://docs.duet3d.com/duet_boards/duet_3_can_expansion/duet_3_1hcl/1hcl_angle_4_wb_sm.png",
         "mediaStatus": "partial"
-      }
+      },
+      "electronics": {
+        "Encoder inputs": "v2.0 has an 8-pin differential connector + 5-pin single-ended connector for position feedback",
+        "V_AUX": "v2.0-only V_AUX input supplies 12V+ for the encoder/feedback circuitry",
+        "Power": "Per-board local VIN up to 48V when daisy-chained"
+      },
+      "configNotes": [
+        "Closed-loop driver board: configure encoder type/resolution and run closed-loop tuning before relying on it.",
+        "Connects over CAN-FD via RJ11; give it a unique CAN address.",
+        "On v2.0 supply V_AUX (12V+) for the encoder inputs."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "1hcl-v1-0-1-0a",
@@ -67107,7 +67465,9 @@
         "CAN": "yes (CAN-FD, RJ11; daisy-chainable)",
         "Form factor": "expansion board",
         "Class": "expansion board (CAN)",
-        "Notes": "CAN-FD-connected expansion providing step/direction/enable outputs to interface one external stepper/servo driver plus associated peripherals"
+        "Notes": "CAN-FD-connected expansion providing step/direction/enable outputs to interface one external stepper/servo driver plus associated peripherals",
+        "MCU": "ARM Cortex-M0+",
+        "Flash method": "Firmware uploaded over the CAN-FD bus from the main board"
       },
       "ports": [
         {
@@ -67248,7 +67608,18 @@
         "pinoutUrl": "https://raw.githubusercontent.com/Duet3D/Duet3-Expansion-1XD/master/Expansion_1XD_v1.0/Duet3_EB_1XD_v1.0_Wiring_Diagram.svg",
         "schematicUrl": "https://github.com/Duet3D/Duet3-Expansion-1XD/blob/master/Expansion_1XD_v1.1/Duet3_EXB_1XD_Schematic_v1.1.pdf",
         "mediaStatus": "partial"
-      }
+      },
+      "electronics": {
+        "Step/dir level": "5V step/dir/enable to external drivers; single-ended or differential wiring",
+        "Inputs": "3 digital inputs with permanent 27K pull-ups; 1 thermistor input (reduced accuracy, PT1000 not recommended)",
+        "Step timing": "Default step pulse ~2.6us to suit external step/servo drivers"
+      },
+      "configNotes": [
+        "Drives an EXTERNAL stepper/servo driver: set step/dir/enable to the 1XD outputs and widen step pulse (~2.6us+).",
+        "Connects over CAN-FD via RJ11; assign a unique CAN address.",
+        "Thermistor input has reduced accuracy; avoid PT1000 on this board."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "roto-toolboard",
@@ -67956,7 +68327,8 @@
         "Supported drivers": "A4988, DRV8825 (Pololu-compatible StepStick)",
         "Dimensions (mm)": "135 x 75",
         "Class": "mainboard",
-        "Form factor": "all-in-one RepRap controller"
+        "Form factor": "all-in-one RepRap controller",
+        "Flash method": "Arduino IDE over USB (board: Arduino Mega 2560)"
       },
       "ports": [
         {
@@ -68135,7 +68507,18 @@
       "media": {
         "wikiUrl": "https://reprap.org/wiki/RUMBA",
         "mediaStatus": "none"
-      }
+      },
+      "electronics": {
+        "Heater MOSFETs": "5x PWM MOSFET outputs for extruders + 1x high-current MOSFET for heated bed",
+        "Logic level": "5V logic (ATmega2560)",
+        "Fan/aux rail": "Onboard 12V regulator for fans/lights"
+      },
+      "configNotes": [
+        "Klipper requires building/flashing the atmega2560 target over USB.",
+        "Drivers are standalone Pololu modules set by physical microstep jumpers - no UART/sensorless homing.",
+        "Bed MOSFET handles moderate beds directly; use an external SSR for large/AC beds."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "rumba32",
@@ -71668,7 +72051,10 @@
         "UART": "TMC UART per slot",
         "SPI": "TMC SPI per slot; ADXL via SPI header",
         "Voltage": "Board/bed ≤30 V; drivers ≤62 V (v1.3)",
-        "All-metal/accel": "No"
+        "All-metal/accel": "No",
+        "Clock": "550 MHz",
+        "Onboard drivers": "None - sockets accept A4988 / LV8729 / DRV8825 / TMC2208 / TMC2209 / TMC5160 / TMC5160HV",
+        "Flash method": "USB DFU / SD-card firmware update"
       },
       "ports": [
         {
@@ -71694,7 +72080,23 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://mellow.klipper.cn/en/docs/ProductDoc/MainBoard/fly-super/fly-super8-pro/",
+        "wikiUrl": "https://mellow-3d.github.io/fly_super8_pro_h723_general.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Fan rail": "Per-output jumper-selectable 5V / 12V / Vin",
+        "Fan MOSFETs": "10 PWM fan outputs with replaceable VS3622e MOSFET modules",
+        "Driver voltage": "Driver sockets support high-voltage TMC5160HV up to ~62V"
+      },
+      "configNotes": [
+        "Can run as Klipper USB-to-CAN bridge (CAN on PB8/PB9) to feed a toolhead board.",
+        "Set each fan rail jumper (5/12/Vin) to match the fan before configuring fan pins.",
+        "Match the socketed driver type in config; UART/SPI drivers enable sensorless homing."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "fly-gemini-v2-0",
@@ -72622,7 +73024,10 @@
         "UART": "TMC UART (onboard)",
         "SPI": "—",
         "Voltage": "≤32 V; dual 24 V inputs; drivers ≤24 V",
-        "All-metal/accel": "No"
+        "All-metal/accel": "No",
+        "Clock": "168 MHz",
+        "Onboard drivers": "5x integrated TMC2209 (drivers support up to 24V)",
+        "Flash method": "USB firmware flash"
       },
       "ports": [
         {
@@ -72708,7 +73113,23 @@
       "xlsx_source_rows": {
         "portRowCount": 5
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/Mellow-3D/Fly-E3-Pro-v3",
+        "wikiUrl": "https://mellow-3d.github.io/fly_e3_pro_v3.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Thermistor pull-up": "2k2 pull-up on temp inputs (not the usual 4k7) - enables PT1000 sensors",
+        "Fan rail": "24V fans (powered from the motor/heater input)",
+        "Power split": "Separate 24V rails for logic vs motors/bed"
+      },
+      "configNotes": [
+        "Integrated TMC2209 drivers: configure [tmc2209] UART per stepper; sensorless homing available.",
+        "Temp inputs use a 2.2k pull-up - set pullup_resistor: 2200 and you may use PT1000.",
+        "Powered by two 24V inputs; ensure both are supplied."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "fly-d5",
@@ -72728,7 +73149,10 @@
         "UART": "TMC UART",
         "SPI": "TMC SPI",
         "Voltage": "Manufacturer-spec (≈24 V class)",
-        "All-metal/accel": "No"
+        "All-metal/accel": "No",
+        "Clock": "48 MHz",
+        "Onboard drivers": "None - sockets accept A4988 / LV8729 / DRV8825 / TMC2208 / TMC2209 / TMC5160 (SPI / UART / STEP-DIR)",
+        "Flash method": "USB firmware flash"
       },
       "ports": [
         {
@@ -72799,7 +73223,22 @@
       "xlsx_source_rows": {
         "portRowCount": 4
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://mellow-3d.github.io/fly_d5.html",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Thermistor inputs": "2x NTC 100K thermistor inputs",
+        "Fan outputs": "2 PWM fans + 2 parallel + 2 always-on outputs",
+        "Driver modes": "Sockets support SPI (TMC5160), UART (TMC2208/09/25/26), or standalone step/dir"
+      },
+      "configNotes": [
+        "Flash the STM32F072 target over USB.",
+        "Match each socketed driver's mode in config - UART drivers enable sensorless homing, SPI for TMC5160.",
+        "Default 100K NTC temp inputs."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "fly-sht-36-v1",
@@ -73179,7 +73618,10 @@
         "UART": "TMC UART",
         "SPI": "(NTC/PT1000 ADC)",
         "Voltage": "DC 12–24 V",
-        "All-metal/accel": "ADXL345 (INT1/INT2)"
+        "All-metal/accel": "ADXL345 (INT1/INT2)",
+        "Clock": "133 MHz",
+        "Onboard drivers": "1x TMC2209 (extruder)",
+        "Flash method": "Katapult (USB or CANbus) / USB DFU"
       },
       "ports": [
         {
@@ -73310,7 +73752,26 @@
       "xlsx_source_rows": {
         "portRowCount": 8
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/Mellow-3D/Fly-SB2040",
+        "wikiUrl": "https://mellow-3d.github.io/fly_sb2040_v1_general.html",
+        "pinoutUrl": "https://mellow-3d.github.io/fly_sb2040_v2_pins.html",
+        "schematicUrl": "https://github.com/Mellow-3D/Fly-SB2040/blob/main/V1/Hardware/SB2040_Schematic.pdf",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Accelerometer": "Onboard ADXL345 (SPI) for input shaper",
+        "Temp sensing": "Thermistor + PT1000; optional MAX31865 add-on for PT100",
+        "Extruder driver": "Onboard TMC2209 in UART mode (EXT_UART pin)",
+        "Fans": "3 controllable fan outputs"
+      },
+      "configNotes": [
+        "[mcu] connects over CAN bridge - requires canbus_uuid in [mcu].",
+        "Use prefix SB2040 for pins; extruder uses onboard TMC2209 UART (EXT_UART), dir inverted (!EXT_DIR).",
+        "Add [adxl345] with the onboard ADXL CS pin and [resonance_tester]."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "fly-sb2040-pro-v3-sb2240",
@@ -73329,7 +73790,12 @@
         "Connectivity": "USB; CAN (bridge)",
         "Voltage": "24V (approx)",
         "Role/era": "toolhead",
-        "Notes": "RP2040 StealthBurner-class toolboard"
+        "Notes": "RP2040 StealthBurner-class toolboard",
+        "Clock": "133 MHz",
+        "Onboard drivers": "1x TMC2240 (extruder)",
+        "USB": "USB-C",
+        "CAN": "Onboard CAN transceiver; also RS232 mode",
+        "Flash method": "BOOT button via Type-C / Katapult"
       },
       "ports": [
         {
@@ -73415,7 +73881,24 @@
       "xlsx_source_rows": {
         "portRowCount": 5
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://mellow.klipper.cn/en/docs/ProductDoc/ToolBoard/fly-sb2040/sb2040-pro-v3/",
+        "repoUrl": "https://github.com/Mellow-3D/Fly-SB2040",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Accelerometer": "Onboard LIS2DW for resonance measurement",
+        "Extruder driver": "Onboard TMC2240 (higher-current, SPI-class TMC) for extruder",
+        "Comms modes": "Supports CAN, RS232 and RRF-CAN - pick one in config",
+        "Fans": "3 controllable fan outputs"
+      },
+      "configNotes": [
+        "Enter BOOT mode via Type-C to flash; connects to host over CAN (needs canbus_uuid).",
+        "Configure the extruder driver as [tmc2240] (not tmc2209) - different register/SPI setup.",
+        "Use the onboard LIS2DW with [lis2dw] + [resonance_tester]."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "gen-l-v2-1",
@@ -73629,7 +74112,10 @@
         "Connectivity": "USB",
         "Voltage": "12V/24V",
         "Role/era": "main",
-        "Notes": "Integrated Mega2560+RAMPS-1.4 on one PCB"
+        "Notes": "Integrated Mega2560+RAMPS-1.4 on one PCB",
+        "Clock": "16 MHz",
+        "Onboard drivers": "None (removable stepstick modules)",
+        "Flash method": "USB (Arduino/avrdude bootloader)"
       },
       "ports": [
         {
@@ -73655,7 +74141,23 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/makerbase-mks/MKS-GEN_L",
+        "wikiUrl": "https://github.com/makerbase-mks/MKS-GEN_L/wiki/MKS_GEN_L_V1",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Logic level": "5V logic (AVR) - note for endstop/probe and accelerometer wiring",
+        "MOSFET outputs": "Onboard MOSFETs for bed, 2x hotend and fans (no external SSR needed at 12/24V)",
+        "Driver compatibility": "A4988 / DRV8825 / TMC2100 / TMC2208 / TMC2209 / LV8729 sockets"
+      },
+      "configNotes": [
+        "8-bit AVR board - limited Klipper performance; offload to a host SBC.",
+        "Heaters/fans use onboard MOSFETs; set heater_pin/fan_pin to the RAMPS-style outputs.",
+        "Removable drivers: choose [tmc2208]/[tmc2209] only if those modules are fitted."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "gen-l-v1-0-v2-1",
@@ -73674,7 +74176,10 @@
         "Connectivity": "USB",
         "Voltage": "12V/24V",
         "Role/era": "main",
-        "Notes": "Integrated Mega2560+RAMPS-1.4 on one PCB"
+        "Notes": "Integrated Mega2560+RAMPS-1.4 on one PCB",
+        "Clock": "16 MHz",
+        "Onboard drivers": "None (removable; SPI/UART headers for MKS TMC2130/TMC2208 V2.0/TMC2209)",
+        "Flash method": "USB (Arduino/avrdude bootloader)"
       },
       "ports": [
         {
@@ -73715,7 +74220,23 @@
       "xlsx_source_rows": {
         "portRowCount": 2
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/makerbase-mks/MKS-GEN_L",
+        "wikiUrl": "https://github.com/makerbase-mks/MKS-GEN_L/wiki/MKS_GEN_L_V2",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Logic level": "5V logic (ATmega2560) - anti-interference 4-layer PCB",
+        "Driver interfaces": "Integrated SPI/UART traces so MKS TMC2130 (SPI) / TMC2208 V2.0 / TMC2209 (UART) plug in with no flying leads",
+        "MOSFET outputs": "Onboard MOSFETs for bed, hotend(s) and fans"
+      },
+      "configNotes": [
+        "For UART drivers use [tmc2209] with the board's onboard UART pin; SPI for TMC2130 - no soldering on V2.1.",
+        "8-bit AVR - run Klipper MCU role only, host on a separate SBC.",
+        "Configure bed/hotend/fan to onboard MOSFET pins (RAMPS-compatible mapping)."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "sgen-l-v1-v2",
@@ -75409,7 +75930,10 @@
         "UART": "Yes",
         "SPI": "SPI/UART; 2× MAX31855",
         "Eth/WiFi": "MKS WIFI hdr",
-        "Voltage": "DC12–24 V"
+        "Voltage": "DC12–24 V",
+        "Clock": "72 MHz",
+        "Onboard drivers": "None (removable; SPI/UART headers for MKS TMC2130/TMC2208 V2.0/TMC2209)",
+        "Flash method": "SD card firmware update"
       },
       "ports": [
         {
@@ -75525,7 +76049,23 @@
       "xlsx_source_rows": {
         "portRowCount": 7
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/makerbase-mks/MKS-Robin-Pro",
+        "schematicUrl": "https://github.com/makerbase-mks/MKS-Robin-Pro/blob/master/hardware/MKS%20Robin%20Pro%20V1.0_001/MKS%20Robin%20Pro%20V1.0_001%20SCH.pdf",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Temp sensing": "4x NTC100K inputs plus 2x MAX31855 thermocouple channels (K-type/high-temp)",
+        "Driver interfaces": "SPI (TMC2130) and UART (TMC2208/TMC2209) plug-in support, no soldering",
+        "Probe": "Dedicated BLTouch interface header"
+      },
+      "configNotes": [
+        "Flash Klipper via SD card - board reads firmware from SD on boot.",
+        "6 driver slots: assign the 6th to dual-Z or second extruder in [stepper_*].",
+        "MAX31855 thermocouple channels need SPI sensor config, not NTC pullup."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "monster8-v1-v2",
@@ -76873,7 +77413,9 @@
         "UART": "Yes (40-pin GPIO serial)",
         "SPI": "I2C/SPI on 40-pin GPIO; TF + EMMC",
         "Eth/WiFi": "GbE RJ45 + USB-WiFi; HDMI + PI-TS35",
-        "Voltage": "DC12–24 V"
+        "Voltage": "DC12–24 V",
+        "Dimensions (mm)": "Raspberry Pi 3B compatible footprint/mounting",
+        "Flash method": "Armbian/Klipper image written to microSD"
       },
       "ports": [
         {
@@ -77006,7 +77548,23 @@
       "xlsx_source_rows": {
         "portRowCount": 8
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://github.com/makerbase-mks/MKS-PI",
+        "repoUrl": "https://github.com/makerbase-mks/MKS-PI",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Role": "SBC Klipper host replacement for Raspberry Pi - needs a separate MCU control board over USB/UART",
+        "Memory": "1GB DDR3",
+        "Network": "100M Ethernet + onboard WiFi"
+      },
+      "configNotes": [
+        "This runs the Klipper host (Armbian) - pair it with an MCU mainboard; define [mcu] over /dev/serial USB.",
+        "Ships an Armbian image with Klipper/Moonraker/KlipperScreen preinstalled.",
+        "RPi 3B-compatible header but verify GPIO before reusing Pi HATs."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "4-2-2-4-2-7",
@@ -77300,7 +77858,10 @@
         "Connectors": "Ceramic heater, hotend thermistor, model/part-cooling fan, extruder motor, lidar data cable, sub-board data cable",
         "Voltage": "24V (heater/fan)",
         "Revision note": "2025 revision changed heater/thermistor housings (to XHB / HY2.0)",
-        "Printers": "K1 / K1 Max / K1C / K1 SE"
+        "Printers": "K1 / K1 Max / K1C / K1 SE",
+        "MCU": "GigaDevice GD32F303CBT6",
+        "CAN": "Connects to the K1 main board over CAN (toolhead/nozzle sub-board)",
+        "Flash method": "Firmware delivered with Creality K1 system image (Klipper)"
       },
       "ports": [
         {
@@ -77376,8 +77937,20 @@
         "repoUrl": "https://github.com/CrealityOfficial/K1_Series_Klipper",
         "wikiUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-max/nozzle-sub-board-replacement",
         "pinoutUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-se/sub-board-replacement",
-        "mediaStatus": "partial"
-      }
+        "mediaStatus": "partial",
+        "productUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-max"
+      },
+      "electronics": {
+        "Board ID": "K1_T9 toolhead board (silkscreen K1_T9_GD32F303CBT6), shared across K1 / K1C / K1 SE / K1 Max",
+        "Accelerometer": "Onboard accelerometer on the toolhead used for input shaping / belt tension graphs",
+        "Toolhead loads": "Carries hotend heater, hotend thermistor and part/hotend fans on the print head"
+      },
+      "configNotes": [
+        "Appears as a separate CAN [mcu] (toolhead) in the K1 Klipper config - keep its UUID when reflashing.",
+        "Use the onboard accelerometer with [adxl345]/[resonance_tester] for input shaping.",
+        "After a sub-board swap, re-pair/flash so the toolhead MCU UUID matches printer.cfg."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "trigorilla-v1",
@@ -77994,7 +78567,14 @@
       "display_name": "MKS ZNP Robin Nano (N3)",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32F407VGT6",
+        "Arch": "32-bit ARM Cortex-M4",
+        "Clock": "168 MHz",
+        "Voltage": "12V-24V input",
+        "Onboard drivers": "Onboard TMC2209 (UART) on the ZNP integrated-driver variant",
+        "Flash method": "SD card firmware update"
+      },
       "ports": [
         {
           "label": "JST XH (approx)",
@@ -78019,7 +78599,23 @@
       "xlsx_source_rows": {
         "portRowCount": 1
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/makerbase-mks/Klipper-for-MKS-Boards",
+        "wikiUrl": "https://github.com/makerbase-mks/MKS-Robin-Nano-V3.X/wiki",
+        "mediaStatus": "partial"
+      },
+      "electronics": {
+        "Temp sensing": "NTC100K thermistor inputs (standard ~4.7k pullup for hotend/bed)",
+        "Drivers": "TMC2209 in UART mode - enables sensorless homing via DIAG if jumpered",
+        "Logic level": "3.3V STM32 logic - match endstop/probe wiring accordingly"
+      },
+      "configNotes": [
+        "Flash Klipper via SD card - board flashes on boot.",
+        "Configure onboard drivers as [tmc2209] UART; set diag_pin only if doing sensorless homing.",
+        "Use the makerbase Klipper-for-MKS-Boards generic config as the pin reference."
+      ],
+      "webEnriched": true
     },
     {
       "board_id": "buddy-mini",
