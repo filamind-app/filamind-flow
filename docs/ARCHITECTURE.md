@@ -135,8 +135,10 @@ host). That powers `GET /api/hardware/manufacturers[/{id}]`, `/mcus[/{id}]`, a g
 widget can pull an entity *and everything related to it* in one call. A CI edge-validator proves the
 graph has no dangling edges. The Hardware Browser **surfaces** this graph (DB-3a): every entity's
 detail shows clickable **cross-link chips** (manufacturer / MCU / drivers) that deep-link to the
-related entity, and **Brands** / **MCUs** tabs let you browse from a maker or a chip outward. See the
-Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
+related entity, and **Brands** / **MCUs** tabs let you browse from a maker or a chip outward. The five
+detail panels share one `EntityCatalog.vue` shell (search / list / pagination / expand / copy /
+deep-link), each a thin wrapper supplying a `fetchPage` closure + bespoke summary/detail slots (DB-3b).
+See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
 
 ## Design system
 
