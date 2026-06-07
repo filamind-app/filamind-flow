@@ -174,7 +174,9 @@
       "boardClass": {
         "mainboard": "Mainboard",
         "toolhead": "Toolhead",
-        "printer-preset": "Drucker-Preset"
+        "printer-preset": "Drucker-Preset",
+        "expansion": "Erweiterung",
+        "host": "Host-SBC"
       }
     }
   }

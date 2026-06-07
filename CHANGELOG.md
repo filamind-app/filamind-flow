@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.145.0] - 2026-06-07
+
+### Fixed
+
+- **Hardware DB data audit, Wave 2 — board class taxonomy.** The `boardClass` enum was just
+  `mainboard` / `toolhead` / `printer-preset`, so two kinds of non-controller board had no correct
+  home and were lumped in as `mainboard`. Added two classes: **`expansion`** for the 7 Duet 3 CAN-FD
+  expansion / external-driver boards (3HC, 1XD, 1HCL family — they daisy-chain off a mainboard, they
+  aren't standalone controllers), and **`host`** for the 10 host SBCs / SoCs / carriers that were
+  mis-filed in `boards[]` (CB1, CB2, MKS Pi, Nebula/Sonic/Speeder pads, the K1 host pad, the Pi
+  carriers) so they no longer masquerade as selectable main controllers. Both new classes get a
+  localised filter label and appear in the Boards "class" facet. (Retagged rather than removed — three
+  carry real GPIO port data and the lossless-aggregation invariant must hold.) Regression test added.
+
 ## [0.144.0] - 2026-06-07
 
 ### Fixed

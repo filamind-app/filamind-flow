@@ -174,7 +174,9 @@
       "boardClass": {
         "mainboard": "主板",
         "toolhead": "工具头",
-        "printer-preset": "打印机预设"
+        "printer-preset": "打印机预设",
+        "expansion": "扩展板",
+        "host": "主机 SBC"
       }
     }
   }
