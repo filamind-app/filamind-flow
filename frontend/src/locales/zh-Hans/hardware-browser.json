@@ -69,7 +69,8 @@
       "search": "全部搜索",
       "boards": "主板",
       "drivers": "驱动器",
-      "motors": "电机"
+      "motors": "电机",
+      "hosts": "主机"
     },
     "catalog": {
       "searchAll": "全部搜索",
@@ -108,6 +109,18 @@
       "rated": "额定",
       "run": "运行",
       "config": "Klipper 配置"
+    },
+    "hosts": {
+      "search": "搜索主机",
+      "total": "{n} 个主机",
+      "none": "未找到主机。",
+      "config": "主机配置",
+      "kind": {
+        "sbc": "单板机",
+        "x86": "x86",
+        "os": "系统镜像",
+        "locked": "锁定"
+      }
     }
   }
 }

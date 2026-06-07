@@ -149,6 +149,22 @@ def motor_by_id(motor_id: str) -> dict[str, Any] | None:
     return None
 
 
+def hosts() -> list[dict[str, Any]]:
+    """The canonical host-computer entities — SBCs / x86 hosts / Klipper OS images (deduped),
+    each with a copyable Klipper HOST config (the ``[mcu host]`` Linux-process-MCU block + setup
+    note for open Linux hosts; an honest note for locked-proprietary hosts and OS images)."""
+    rows = _HARDWARE.get("hosts", [])
+    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+
+def host_by_id(host_id: str) -> dict[str, Any] | None:
+    """A single canonical host record by its stable ``host_id`` slug."""
+    for h in hosts():
+        if h.get("host_id") == host_id:
+            return h
+    return None
+
+
 # ── Config / macro templates ──────────────────────────────────────────────────
 def templates() -> list[dict[str, Any]]:
     """Insertable Klipper config / macro templates (id / name / category / description / body)."""

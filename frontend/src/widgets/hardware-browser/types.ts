@@ -148,3 +148,31 @@ export interface MotorDetail extends MotorSummary {
   configSnippet?: string
   configSource?: string
 }
+
+// ── Host catalog entity (GET /api/hardware/hosts[/{id}]) ───────────────────────
+export interface HostSummary {
+  host_id: string
+  name?: string
+  manufacturer?: string
+  kind?: string
+  soc?: string
+  ram?: string
+  klipperOs?: string
+  klipperOpen?: boolean
+  specCount?: number
+}
+
+export interface HostsResult {
+  total: number
+  count: number
+  offset: number
+  limit: number
+  hosts: HostSummary[]
+}
+
+export interface HostDetail extends HostSummary {
+  cpu?: string
+  specs?: Record<string, string>
+  configSnippet?: string
+  configSource?: string
+}

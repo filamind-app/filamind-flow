@@ -69,7 +69,8 @@
       "search": "Buscar todo",
       "boards": "Placas",
       "drivers": "Drivers",
-      "motors": "Motores"
+      "motors": "Motores",
+      "hosts": "Hosts"
     },
     "catalog": {
       "searchAll": "Buscar todo",
@@ -108,6 +109,18 @@
       "rated": "nominal",
       "run": "run",
       "config": "Config de Klipper"
+    },
+    "hosts": {
+      "search": "Buscar hosts",
+      "total": "{n} hosts",
+      "none": "No se encontraron hosts.",
+      "config": "Config del host",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "Imagen OS",
+        "locked": "bloqueado"
+      }
     }
   }
 }

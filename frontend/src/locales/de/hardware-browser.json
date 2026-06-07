@@ -69,7 +69,8 @@
       "search": "Alles suchen",
       "boards": "Boards",
       "drivers": "Treiber",
-      "motors": "Motoren"
+      "motors": "Motoren",
+      "hosts": "Hosts"
     },
     "catalog": {
       "searchAll": "Alles suchen",
@@ -108,6 +109,18 @@
       "rated": "Nenn",
       "run": "Lauf",
       "config": "Klipper-Konfig"
+    },
+    "hosts": {
+      "search": "Hosts suchen",
+      "total": "{n} Hosts",
+      "none": "Keine Hosts gefunden.",
+      "config": "Host-Konfig",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "OS-Image",
+        "locked": "gesperrt"
+      }
     }
   }
 }
