@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.116.0] - 2026-06-07
+
+### Added
+
+- **Sovol SV08 fully ingested — the printer under test, mapped from its own config (gold proof).**
+  The SV08 was missing from the board catalog entirely (it existed only as a "Host Computers" row).
+  It is now two complete, hardware-verified board records:
+  - **`sovol-sv08` (mainboard)** — STM32F103xE, CoreXY quad-gantry, **6 integrated TMC2209** (X, Y,
+    Z1–Z4), with **14 ports** carrying their real Klipper pins (every stepper's step/dir/enable/uart/
+    diag, heated bed, exhaust/controller/MCU fans, filament sensor, RGB, LED, EXP display).
+  - **`sovol-sv08-toolhead`** — STM32F103xE, 1× TMC2209 extruder, hotend + PT1000, probe, part &
+    hotend fans, onboard ADXL345 — **6 ports** with real pins.
+  - Every pin verified against the unit's own `printer.cfg`; media links to the Sovol3d/SV08 repo +
+    mainboard pin-definition PDFs + product page. New `test_sv08_fully_ingested` locks it in.
+
 ## [0.115.0] - 2026-06-07
 
 ### Added

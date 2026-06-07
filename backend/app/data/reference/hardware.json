@@ -71221,6 +71221,299 @@
         "portRowCount": 0
       },
       "source_category": "MCU & Boards"
+    },
+    {
+      "board_id": "sovol-sv08",
+      "entity_type": "board",
+      "manufacturer": "Sovol",
+      "model": "SV08 Mainboard",
+      "display_name": "Sovol SV08 Mainboard",
+      "aliases": [
+        "SV08",
+        "Sovol SV08 motherboard",
+        "JC_6Z"
+      ],
+      "family": "SV08",
+      "boardClass": "mainboard",
+      "status": "active",
+      "specs": {
+        "MCU": "STM32F103xE (512KB)",
+        "Arch": "ARM Cortex-M3",
+        "Clock": "72 MHz",
+        "Onboard drivers": "6x TMC2209 (integrated, UART) — X, Y, Z1, Z2, Z3, Z4",
+        "Kinematics": "CoreXY, quad-gantry (4 independent Z)",
+        "USB": "USB serial (usb-Klipper_stm32f103xe…)",
+        "Flash method": "ST-Link V2 / Katapult (USB)",
+        "Host": "Ships with a CB1-class SBC (Allwinner H616) running Klipper",
+        "Bed heater": "PA0 (mains-AC SSR or onboard MOSFET)",
+        "Class": "integrated mainboard"
+      },
+      "ports": [
+        {
+          "label": "Motor X",
+          "category": "motor",
+          "portFunction": "Stepper X (CoreXY A) · TMC2209 1.1A",
+          "pins": "step PE2 / dir !PE0 / en !PE3 / uart PE1 / diag PE15",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)",
+          "driver": "TMC2209"
+        },
+        {
+          "label": "Motor Y",
+          "category": "motor",
+          "portFunction": "Stepper Y (CoreXY B) · TMC2209 1.1A",
+          "pins": "step PB8 / dir !PB6 / en !PB9 / uart PB7 / diag PE13",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)",
+          "driver": "TMC2209"
+        },
+        {
+          "label": "Motor Z (Z3)",
+          "category": "motor",
+          "portFunction": "Stepper Z3 · TMC2209 0.55A",
+          "pins": "step PC0 / dir PE5 / en !PC1 / uart PE6",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)",
+          "driver": "TMC2209"
+        },
+        {
+          "label": "Motor Z1",
+          "category": "motor",
+          "portFunction": "Stepper Z1 · TMC2209 0.55A",
+          "pins": "step PD3 / dir !PD1 / en !PD4 / uart PD2",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)",
+          "driver": "TMC2209"
+        },
+        {
+          "label": "Motor Z2",
+          "category": "motor",
+          "portFunction": "Stepper Z2 · TMC2209 0.55A",
+          "pins": "step PD7 / dir PD5 / en !PB5 / uart PD6",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)",
+          "driver": "TMC2209"
+        },
+        {
+          "label": "Motor Z4",
+          "category": "motor",
+          "portFunction": "Stepper Z4 · TMC2209 0.55A",
+          "pins": "step PD11 / dir !PD9 / en !PD12 / uart PD10",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)",
+          "driver": "TMC2209"
+        },
+        {
+          "label": "Heated bed",
+          "category": "heater-bed",
+          "portFunction": "Heated-bed heater + thermistor",
+          "pins": "heater PA0 / sensor PC5",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "Exhaust fan",
+          "category": "fan",
+          "portFunction": "Exhaust / chamber fan (fan_generic)",
+          "pins": "PA2",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "Controller fan",
+          "category": "fan",
+          "portFunction": "MCU/controller cooling fan",
+          "pins": "PA1",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "MCU temp fan",
+          "category": "fan",
+          "portFunction": "Temperature-controlled MCU fan (host temp)",
+          "pins": "PA6",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "Filament sensor",
+          "category": "filament-sensor",
+          "portFunction": "Filament runout switch",
+          "pins": "^PE9",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "RGB (screen)",
+          "category": "rgb",
+          "portFunction": "Neopixel screen colour",
+          "pins": "EXP1_6",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "LED",
+          "category": "rgb",
+          "portFunction": "Main white LED",
+          "pins": "PA3",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "Display (EXP)",
+          "category": "display",
+          "portFunction": "Stock LCD header",
+          "pins": "EXP1 / EXP2",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        }
+      ],
+      "matchPatterns": [
+        {
+          "pattern": "sv08|sovol",
+          "confidence": 0.5
+        }
+      ],
+      "linkStatus": "verified",
+      "verified_on_hardware": true,
+      "media": {
+        "productUrl": "https://www.sovol3d.com/products/sv08-64-bit-silent-mainboard-with-tmc2209-driver",
+        "repoUrl": "https://github.com/Sovol3d/SV08",
+        "pinoutUrl": "https://github.com/Sovol3d/SV08/blob/main/Motherboard/MCU_PIN_definition.pdf",
+        "datasheetUrl": "https://github.com/Sovol3d/SV08/blob/main/Motherboard/Extra_PIN_definition.pdf",
+        "wikiUrl": "https://www.sovol3d.com/products/sovol-new-sv08-klipper-fdm-3d-printer",
+        "mediaStatus": "partial"
+      },
+      "portsSummary": {
+        "motor": 6,
+        "heater-bed": 1,
+        "fan": 3,
+        "filament-sensor": 1,
+        "rgb": 2,
+        "display": 1
+      },
+      "xlsx_source_rows": {
+        "portRowCount": 14
+      },
+      "source_category": "MCU & Boards"
+    },
+    {
+      "board_id": "sovol-sv08-toolhead",
+      "entity_type": "board",
+      "manufacturer": "Sovol",
+      "model": "SV08 Toolhead Board",
+      "display_name": "Sovol SV08 Toolhead Board",
+      "aliases": [
+        "SV08 toolhead",
+        "SV08 extra_mcu"
+      ],
+      "family": "SV08",
+      "boardClass": "toolhead",
+      "status": "active",
+      "specs": {
+        "MCU": "STM32F103xE",
+        "Arch": "ARM Cortex-M3",
+        "Onboard drivers": "1x TMC2209 (extruder, UART)",
+        "Connection": "USB serial to host (second usb-Klipper_stm32f103xe device)",
+        "Accelerometer": "Onboard ADXL345 (SPI) — input shaping",
+        "Class": "toolhead board"
+      },
+      "ports": [
+        {
+          "label": "Extruder motor",
+          "category": "motor",
+          "portFunction": "Extruder stepper · TMC2209 0.8A · planetary",
+          "pins": "step PA8 / dir PB8 / en !PB11 / uart PB10",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)",
+          "driver": "TMC2209"
+        },
+        {
+          "label": "Hotend heater",
+          "category": "heater-hotend",
+          "portFunction": "Hotend cartridge + PT1000",
+          "pins": "heater PB9 / sensor PA5 (PT1000)",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "Probe",
+          "category": "probe",
+          "portFunction": "Z probe (z_virtual_endstop)",
+          "pins": "PB6",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "Part fan",
+          "category": "fan",
+          "portFunction": "Part-cooling fan (dual, multi_pin)",
+          "pins": "PA7 + PB1",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "Hotend fan",
+          "category": "fan",
+          "portFunction": "Hotend heatsink fan (tach)",
+          "pins": "PA6 / tach PA1",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        },
+        {
+          "label": "Accelerometer",
+          "category": "accelerometer",
+          "portFunction": "ADXL345 (SPI) — resonance/input shaping",
+          "pins": "cs PB12",
+          "notes": "",
+          "count": 1,
+          "source": "SV08 printer.cfg (verified on the unit)"
+        }
+      ],
+      "matchPatterns": [
+        {
+          "pattern": "sv08",
+          "confidence": 0.4
+        }
+      ],
+      "linkStatus": "verified",
+      "verified_on_hardware": true,
+      "media": {
+        "productUrl": "https://www.sovol3d.com/products/sovol-new-sv08-klipper-fdm-3d-printer",
+        "repoUrl": "https://github.com/Sovol3d/SV08",
+        "pinoutUrl": "https://github.com/Sovol3d/SV08/blob/main/Motherboard/Extra_PIN_definition.pdf",
+        "mediaStatus": "partial"
+      },
+      "portsSummary": {
+        "motor": 1,
+        "heater-hotend": 1,
+        "probe": 1,
+        "fan": 2,
+        "accelerometer": 1
+      },
+      "xlsx_source_rows": {
+        "portRowCount": 6
+      },
+      "source_category": "MCU & Boards"
     }
   ]
 }
