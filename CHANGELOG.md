@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.127.1] - 2026-06-07
+
+### Fixed
+
+- **Printer-preset `boardHint` quality.** 23 presets had a terse `boardHint` extracted from the
+  Klipper config header (e.g. `"Anet"`, `"ZNP Robin"`, `"Tronxy"`, and one malformed sentence
+  fragment `"HC32F460. The"`); the never-overwrite enrichment merge had kept these stubs instead of
+  the richer web-researched values. Upgraded 17 of them to the fuller value (e.g. Anet A8 →
+  `"Anet V1.0 (Melzi clone, ATmega1284P)"`; Neptune 3 Pro → `"ZNP Robin Nano DW V2.2 (STM32F401)"`;
+  Ender-2 Pro HC32 → `"Creality Ender-2 Pro 32-bit V2.4 (HDSC HC32F460 MCU, MS35775_HC32F460KETA)"`).
+  Kept the 6 where the config-derived value is more specific or version-distinct (e.g. CR-6 SE 2020
+  `"early 4.5.2"`, Ender-3 Pro `"32-bit Creality 4.2.2"`, RatRig V-Minion's config-authoritative
+  `"Octopus Pro v1.1"`).
+
 ## [0.127.0] - 2026-06-07
 
 ### Added
