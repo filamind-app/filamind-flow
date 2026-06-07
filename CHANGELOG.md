@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.129.0] - 2026-06-07
+
+### Changed
+
+- **Deduplicated same-product board entities — 408 → 380 boards** (272 standalone + 108 printer
+  presets). 28 redundant entries (created when the same physical board appeared in multiple source
+  files, e.g. `creality-v4.2.7`/`creality-4-2-7`/`4-2-7`, `skr-v1-4`/`skr-1-4`/`skr-v1-4-2`, the
+  `duet-3-mainboard-6hc`/`-6hc-2` pairs) were merged into one canonical each. **Lossless merge, not
+  a delete:** all data is unioned into the canonical, every removed `board_id`/model name is folded
+  into the canonical's `aliases` (so search and detection still resolve them), `matchPatterns` are
+  unioned, and `xlsx_source_rows.portRowCount` is summed (the lossless CI lock still holds).
+  Genuine form-factor/driver variants are kept separate (EBB36 ≠ EBB42, SB2209 ≠ SB2240). Also
+  tidied a few canonical display names (collapsed a doubled "Creality Creality" source artifact).
+
 ## [0.128.0] - 2026-06-07
 
 ### Added
