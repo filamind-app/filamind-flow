@@ -11,6 +11,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from app.services import (
     board_search,
+    catalog_search,
     driver_search,
     hardware_search,
     host_search,
@@ -189,3 +190,33 @@ async def host_detail(host_id: str) -> dict[str, Any]:
     if host is None:
         raise HTTPException(status_code=404, detail=f"No host with id {host_id!r}")
     return host
+
+
+@router.get("/catalog")
+async def catalog(
+    category: str = Query(..., description="Category name (e.g. 'Sensors & Probes', 'Extruders')"),
+    q: str = Query("", description="Free-text search (manufacturer / name / specs)"),
+    manufacturer: str = Query("", description="Manufacturer substring filter"),
+    limit: int = Query(50, ge=1, le=200, description="Page size"),
+    offset: int = Query(0, ge=0, description="Page offset"),
+) -> dict[str, Any]:
+    """Search one category's canonical catalog entities (lightweight summaries, paginated).
+
+    The full record — including the copyable Klipper config snippet — is served by
+    ``GET /api/hardware/catalog/{catalog_id}``.
+    """
+    entities = reference_data.catalog_entities(category)
+    if not entities and category not in reference_data.catalog_categories():
+        raise HTTPException(status_code=404, detail=f"No catalog category {category!r}")
+    return catalog_search.search(
+        entities, q=q, manufacturer=manufacturer, limit=limit, offset=offset
+    )
+
+
+@router.get("/catalog/{catalog_id}")
+async def catalog_detail(catalog_id: str) -> dict[str, Any]:
+    """The full catalog entity (specs + copyable config snippet) for a single ``catalog_id``."""
+    entity = reference_data.catalog_entity_by_id(catalog_id)
+    if entity is None:
+        raise HTTPException(status_code=404, detail=f"No catalog entity with id {catalog_id!r}")
+    return entity

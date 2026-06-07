@@ -74,7 +74,8 @@
     },
     "catalog": {
       "searchAll": "全部搜索",
-      "items": "{n} 项"
+      "items": "{n} 项",
+      "back": "目录"
     },
     "boards": {
       "search": "搜索主板",

@@ -9,6 +9,7 @@ import { describeError } from '@/core/describeError'
 
 import { fetchCategories, searchHardware } from './api'
 import BoardsPanel from './BoardsPanel.vue'
+import CatalogPanel from './CatalogPanel.vue'
 import CategoryIllo from './CategoryIllo.vue'
 import DriversPanel from './DriversPanel.vue'
 import HostsPanel from './HostsPanel.vue'
@@ -20,8 +21,9 @@ import type { HardwareSearchResult } from './types'
 const LIMIT = 25
 const { t } = useI18n({ useScope: 'global' })
 
-type Mode = 'catalog' | 'boards' | 'drivers' | 'motors' | 'hosts' | 'search'
+type Mode = 'catalog' | 'boards' | 'drivers' | 'motors' | 'hosts' | 'category' | 'search'
 const mode = ref<Mode>('catalog')
+const selectedCategory = ref<string>('')
 const TABS = computed(() => [
   { id: 'catalog' as Mode, label: t('hardwareBrowser.tabs.catalog') },
   { id: 'boards' as Mode, label: t('hardwareBrowser.tabs.boards') },
@@ -47,7 +49,16 @@ const categoryOptions = computed(() => categories.value.map((c) => ({ value: c, 
 /** Enter the right view for a category tile. The boards category opens the rich
  *  board catalog; everything else opens the flat Search pre-filtered. */
 function openCategory(cat: string | null): void {
-  const c = (cat ?? '').toLowerCase()
+  // The "search all" tile (null) opens the flat cross-category search.
+  if (cat === null) {
+    category.value = null
+    q.value = ''
+    manufacturer.value = ''
+    mode.value = 'search'
+    void doSearch(true)
+    return
+  }
+  const c = cat.toLowerCase()
   if (c.includes('mcu') && c.includes('board')) {
     mode.value = 'boards'
     return
@@ -64,11 +75,9 @@ function openCategory(cat: string | null): void {
     mode.value = 'hosts'
     return
   }
-  category.value = cat
-  q.value = ''
-  manufacturer.value = ''
-  mode.value = 'search'
-  void doSearch(true)
+  // every other category opens its rich canonical catalog panel
+  selectedCategory.value = cat
+  mode.value = 'category'
 }
 const hasPrev = computed(() => offset.value > 0)
 const hasNext = computed(() => {
@@ -180,6 +189,13 @@ onMounted(() => {
 
     <!-- Hosts: the canonical host-computer catalog (specs + copyable [mcu host] config) -->
     <HostsPanel v-show="mode === 'hosts'" />
+
+    <!-- Category: the generic canonical catalog for the remaining categories -->
+    <CatalogPanel
+      v-if="mode === 'category'"
+      :category="selectedCategory"
+      @back="mode = 'catalog'"
+    />
 
     <!-- Search controls -->
     <div v-show="mode === 'search'" class="flex flex-wrap items-end gap-2">

@@ -87,6 +87,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/hardware/motors/{motor_id}` | One motor's full record (specs + recommended `run_current` + current presets + copyable config snippet). |
 | GET    | `/api/hardware/hosts`      | Canonical host-computer entities (summaries; `?q`/`manufacturer`/`kind`, paginated) — SBC / x86 / OS-image, deduped. |
 | GET    | `/api/hardware/hosts/{host_id}` | One host's full record (specs + Klipper-open flag + copyable `[mcu host]` config snippet). |
+| GET    | `/api/hardware/catalog`    | Canonical entities for one remaining category (`?category=…`, summaries; `?q`/`manufacturer`, paginated) — sensors / hotends / extruders / fans / displays / motion / nozzles / filament / electronics, deduped. |
+| GET    | `/api/hardware/catalog/{catalog_id}` | One catalog entity's full record (specs + copyable Klipper config snippet). |
 
 The interactive `/docs` page is the always-current, authoritative list (the
 firmware API has many routes beyond the summary above).

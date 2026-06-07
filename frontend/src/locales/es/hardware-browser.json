@@ -74,7 +74,8 @@
     },
     "catalog": {
       "searchAll": "Buscar todo",
-      "items": "{n} elementos"
+      "items": "{n} elementos",
+      "back": "Catálogo"
     },
     "boards": {
       "search": "Buscar placas",
