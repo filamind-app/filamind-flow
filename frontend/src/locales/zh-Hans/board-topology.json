@@ -78,7 +78,17 @@
       "specsTitle": "规格",
       "portsTitle": "接口",
       "none": "暂无该主板的目录详情。",
-      "loading": "正在加载主板…"
+      "loading": "正在加载主板…",
+      "links": {
+        "title": "链接",
+        "product": "产品",
+        "repo": "仓库",
+        "wiki": "Wiki",
+        "pinout": "引脚图",
+        "schematic": "原理图",
+        "datasheet": "数据手册",
+        "image": "图片"
+      }
     }
   }
 }

@@ -71,6 +71,28 @@ def test_boards_dataset_aggregated_and_lossless() -> None:
     assert {"motor", "fan", "thermistor"} <= cats
 
 
+def test_boards_enriched_media_links_are_safe() -> None:
+    """Phase 5+6: some boards carry enriched specs + link-only media. Any media URL
+    must be a real http(s) link (never a fabricated/relative path)."""
+    boards = reference_data.boards()
+    with_media = [b for b in boards if b.get("media")]
+    assert with_media, "some boards should have enriched media links"
+    url_keys = (
+        "productUrl",
+        "repoUrl",
+        "wikiUrl",
+        "imageUrl",
+        "pinoutUrl",
+        "schematicUrl",
+        "datasheetUrl",
+    )
+    for b in with_media:
+        for k in url_keys:
+            v = b["media"].get(k)
+            if v:
+                assert v.startswith(("http://", "https://")), f"{b['board_id']}.{k} not a URL"
+
+
 def test_route_boards_list_and_detail() -> None:
     from fastapi.testclient import TestClient
 

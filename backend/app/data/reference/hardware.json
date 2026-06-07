@@ -50804,7 +50804,22 @@
       "display_name": "BigTreeTech SKR 1.3/1.4/Turbo",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "LPC1768 (SKR 1.3 / 1.4); LPC1769 (1.4 Turbo)",
+        "Arch": "ARM Cortex-M3",
+        "Clock": "100 MHz (1.3 / 1.4); 120 MHz (1.4 Turbo)",
+        "Voltage": "12-24V",
+        "Driver slots": "5",
+        "Onboard drivers": "socketed (pluggable driver modules)",
+        "Supported drivers": "A4988, DRV8825, LV8729, ST820, TMC2100, TMC2130 (SPI), TMC2208/TMC2225 (UART), TMC2209 (UART), TMC5160/TMC5161 (SPI)",
+        "USB": "USB-B (Type-B)",
+        "CAN": "no",
+        "Ethernet/WiFi": "WiFi via optional ESP-01S module header",
+        "Flash method": "SD-card (firmware.bin)",
+        "Dimensions (mm)": "110 x 85 (mounting 102 x 76)",
+        "Form factor": "RAMPS-class 32-bit mainboard",
+        "Class": "mainboard"
+      },
       "ports": [
         {
           "label": "JST-XH",
@@ -51008,7 +51023,16 @@
       "xlsx_source_rows": {
         "portRowCount": 15
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-skr-v1-4-skr-v1-4-turbo-control-board-tmc2209-tmc2208-eeprom-v1-0-exp-mot-v1-0-3d-printer-parts-for-ender-3",
+        "repoUrl": "https://github.com/bigtreetech/BIGTREETECH-SKR-V1.3",
+        "wikiUrl": "https://github.com/bigtreetech/docs/blob/master/docs/SKR%20V1.4.md",
+        "imageUrl": "https://biqu.equipment/cdn/shop/products/2Pro.jpg?v=1718270444",
+        "pinoutUrl": "https://github.com/bigtreetech/BIGTREETECH-SKR-V1.3/blob/master/BTT%20SKR%20V1.4/Hardware/BTT%20SKR%20V1.4PIN.pdf",
+        "schematicUrl": "https://github.com/bigtreetech/BIGTREETECH-SKR-V1.3/blob/master/BTT%20SKR%20V1.4/Hardware/BTT%20SKR%20V1.4-SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "skr-2",
@@ -51025,7 +51049,12 @@
         "Connectivity": "USB; CAN (header)",
         "Voltage": "12V/24V",
         "Role/era": "main",
-        "Notes": "Cortex-M4 @168 MHz; DIAG jumper for sensorless"
+        "Notes": "Cortex-M4 @168 MHz; DIAG jumper for sensorless",
+        "Clock": "168 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC5160, TMC2209, TMC2226, TMC2225, TMC2208, TMC2130, ST820, LV8729, DRV8825, A4988",
+        "USB": "USB-C",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -51205,7 +51234,15 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://us.amazon.com/BIGTREETECH-Direct-Control-Upgrade-Motherboard/dp/B091N13WDK",
+        "repoUrl": "https://github.com/bigtreetech/SKR-2",
+        "imageUrl": "https://raw.githubusercontent.com/bigtreetech/SKR-2/master/Images/f429.jpg",
+        "pinoutUrl": "https://github.com/bigtreetech/SKR-2/blob/master/Hardware/BIGTREETECH%20SKR%202-Pin.pdf",
+        "schematicUrl": "https://github.com/bigtreetech/SKR-2/blob/master/Hardware/BIGTREETECH%20SKR%202-SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "skr-3-3-ez",
@@ -51227,7 +51264,15 @@
         "SPI": "Yes",
         "I2C": "Yes",
         "Eth/WiFi": "WiFi via ESP",
-        "Voltage": "DC12–24V"
+        "Voltage": "DC12–24V",
+        "Clock": "480 MHz (H743) / 550 MHz (H723)",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC5160, TMC2209, TMC2226, TMC2225, TMC2208, TMC2130 + EZ-series (EZ5160 Pro, EZ2209, etc.); SPI/UART/STEP-DIR",
+        "Ethernet/WiFi": "no",
+        "Flash method": "microSD (FAT32, firmware.bin)",
+        "Dimensions (mm)": "110 x 85 (mounting 102 x 76)",
+        "Form factor": "compact mainboard",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -51420,16 +51465,36 @@
       "xlsx_source_rows": {
         "portRowCount": 14
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-btt-skr-3-ez-control-board-mainboard-for-3d-printer",
+        "repoUrl": "https://github.com/bigtreetech/SKR-3",
+        "wikiUrl": "https://global.bttwiki.com/SKR%203.html",
+        "imageUrl": "https://global.bttwiki.com/img/SKR3/SKR3_Title.webp",
+        "pinoutUrl": "https://global.bttwiki.com/img/SKR3/SKR3_Pinout.webp",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "mini-e3-all",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech",
       "model": "Mini E3 (all)",
       "display_name": "Mini E3 (all)",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32G0B1RET6 (V3.0; earlier revisions STM32F103 / STM32G0B1)",
+        "Arch": "ARM Cortex-M0+",
+        "Voltage": "12-24V",
+        "Driver slots": "4 (X/Y/Z/E)",
+        "Onboard drivers": "onboard TMC2209 x4 (UART)",
+        "Supported drivers": "TMC2209 (soldered, UART)",
+        "USB": "USB-C (V3.0)",
+        "CAN": "no",
+        "Dimensions (mm)": "103.75 x 70.25 (V3.0)",
+        "Form factor": "Ender 3 drop-in replacement mainboard",
+        "Class": "mainboard"
+      },
       "ports": [
         {
           "label": "JST-XH",
@@ -51582,7 +51647,12 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-skr-mini-e3-v2-0-32-bit-control-board-for-ender-3",
+        "repoUrl": "https://github.com/bigtreetech/BIGTREETECH-SKR-mini-E3",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "mini-e3-v3-0",
@@ -51741,7 +51811,15 @@
         "SPI": "—",
         "I2C": "—",
         "Eth/WiFi": "No",
-        "Voltage": "DC12–24V"
+        "Voltage": "DC12–24V",
+        "Clock": "133 MHz",
+        "Onboard drivers": "TMC2209 x4 (UART mode)",
+        "Supported drivers": "TMC2209 (onboard, fixed)",
+        "Ethernet/WiFi": "no",
+        "Flash method": "USB mass-storage (RP2040 BOOTSEL / RPI-RP2 drive)",
+        "Dimensions (mm)": "85 x 56",
+        "Form factor": "compact 4-axis mainboard (Voron V0 class)",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -51908,7 +51986,14 @@
       "xlsx_source_rows": {
         "portRowCount": 12
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/btt-skr-pico-v1-0",
+        "repoUrl": "https://github.com/bigtreetech/SKR-Pico",
+        "wikiUrl": "https://global.bttwiki.com/SKR%20Pico.html",
+        "imageUrl": "https://global.bttwiki.com/img/SKR_Pico/SKR_Pico_In.webp",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "octopus-pro",
@@ -51927,7 +52012,17 @@
         "Connectivity": "USB-C; CAN (header)",
         "Voltage": "24V main / up to 60V motor (per-socket)",
         "Role/era": "main",
-        "Notes": "High-voltage option; H723 variant exists"
+        "Notes": "High-voltage option; H723 variant exists",
+        "Clock": "180 MHz (F446) / 168 MHz (F429)",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC2209, TMC2226, TMC2208, TMC2130, TMC5160 (use HV drivers if motor rail >24V)",
+        "USB": "USB-C",
+        "CAN": "yes (1, 6P6C RJ11 on V1.0, XH2.54 2-pin on V1.1)",
+        "Ethernet/WiFi": "none onboard",
+        "Flash method": "SD-card bootloader / USB-DFU",
+        "Dimensions (mm)": "160 x 100 (mounting 150 x 90)",
+        "Form factor": "mainboard",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -52256,7 +52351,17 @@
       "xlsx_source_rows": {
         "portRowCount": 25
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-octopus-pro-v1-0-chip-f446",
+        "repoUrl": "https://github.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro",
+        "wikiUrl": "https://global.bttwiki.com/Octopus%20Pro.html",
+        "imageUrl": "https://raw.githubusercontent.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro/master/Images/board.jpg",
+        "pinoutUrl": "https://raw.githubusercontent.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro/master/Hardware/BIGTREETECH%20Octopus%20Pro%20V1.1-Pin.jpg",
+        "schematicUrl": "https://raw.githubusercontent.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro/master/Hardware/BIGTREETECH%20Octopus%20Pro_SCH.pdf",
+        "datasheetUrl": "https://raw.githubusercontent.com/bigtreetech/BIGTREETECH-OCTOPUS-Pro/master/BTT_Octopus_pro_EN.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "octopus-pro-2",
@@ -52376,7 +52481,17 @@
         "SPI": "Yes (accel header)",
         "I2C": "Yes",
         "Eth/WiFi": "WiFi (ESP header)",
-        "Voltage": "Board DC12/24V; driver 24V or HV ≤56V"
+        "Voltage": "Board DC12/24V; driver 24V or HV ≤56V",
+        "Clock": "550 MHz",
+        "Onboard drivers": "socketed (pinless EZ driver sockets)",
+        "Supported drivers": "EZ5160, EZ2209, EZ2225, EZ2226, EZ2208, EZ2130 (SPI/UART)",
+        "Ethernet/WiFi": "WiFi (via ESP-series module header)",
+        "Flash method": "SD-card (firmware.bin) / USB-DFU",
+        "Dimensions (mm)": "160 x 100",
+        "Form factor": "mainboard",
+        "Class": "mainboard",
+        "Logic voltage": "3.3V",
+        "Thermistors": "5x 100K NTC (4 selectable NTC/PT1000)"
       },
       "ports": [
         {
@@ -52591,11 +52706,19 @@
       "xlsx_source_rows": {
         "portRowCount": 16
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-btt-octopusmax-ez-for-3d-printer",
+        "repoUrl": "https://github.com/bigtreetech/Octopus-Max-EZ",
+        "wikiUrl": "https://global.bttwiki.com/Octopus%20MAX%20EZ.html",
+        "pinoutUrl": "https://github.com/bigtreetech/Octopus-Max-EZ/blob/master/Hardware/BIGTREETECH%20Octopus%20MAX%20EZ%20V1.0%20PinOut.png",
+        "schematicUrl": "https://github.com/bigtreetech/Octopus-Max-EZ/blob/master/Hardware/BIGTREETECH%20Octopus%20MAX%20EZ%20V1.0-SCH.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "m4p",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech",
       "model": "Manta M4P",
       "display_name": "M4P",
       "aliases": [
@@ -52613,7 +52736,14 @@
         "SPI": "Yes",
         "I2C": "—",
         "Eth/WiFi": "Ethernet via CB1 (100M) / CM4 (1000M); WiFi via SBC",
-        "Voltage": "DC12–24V (TPS5450 5A)"
+        "Voltage": "DC12–24V (TPS5450 5A)",
+        "Clock": "64 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC2209, TMC2208, TMC2225, TMC2226, A4988, DRV8825, LV8729 (SPI/UART/STEP-DIR)",
+        "Ethernet/WiFi": "via CB1/CM4 core board only",
+        "Flash method": "USB-DFU (BOOT button) / SD-card / make flash",
+        "Form factor": "Manta series (accepts BTT CB1 / Raspberry Pi CM4 core board)",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -52793,7 +52923,14 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/manta-m4p-m8p",
+        "repoUrl": "https://github.com/bigtreetech/Manta-M4P",
+        "wikiUrl": "https://global.bttwiki.com/M4P.html",
+        "datasheetUrl": "https://github.com/bigtreetech/Manta-M4P/blob/master/BIGTREETECH_MANTA_M4P_User_Manual.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "m5p",
@@ -52921,12 +53058,26 @@
     },
     {
       "board_id": "m8p-v1-0-v1-1",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech",
       "model": "M8P V1.0/V1.1",
       "display_name": "M8P V1.0/V1.1",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32G0B1VET6",
+        "Arch": "ARM Cortex-M0+",
+        "Clock": "64 MHz",
+        "Voltage": "12-24V board; driver rail VIN 12/24V or HV up to 56V",
+        "Driver slots": "8",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC5160, TMC2209, TMC2226, TMC2225, TMC2208, TMC2130, ST820, LV8729, DRV8825, A4988 (SPI/UART/STEP-DIR)",
+        "USB": "USB-C",
+        "CAN": "V1.1 adds onboard CAN bus bridge; V1.0 no",
+        "Ethernet/WiFi": "via CB1/CM4 core board only",
+        "Flash method": "USB-DFU / SD-card / make flash",
+        "Form factor": "Manta series (accepts BTT CB1 / Raspberry Pi CM4 core board)",
+        "Class": "mainboard"
+      },
       "ports": [
         {
           "label": "JST-XH",
@@ -53065,7 +53216,13 @@
       "xlsx_source_rows": {
         "portRowCount": 10
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/manta-m4p-m8p",
+        "repoUrl": "https://github.com/bigtreetech/Manta-M8P",
+        "wikiUrl": "https://global.bttwiki.com/M8P.html",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "m8p-v1-1",
@@ -53128,7 +53285,7 @@
     },
     {
       "board_id": "m8p-v2-0",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech",
       "model": "Manta M8P V2.0",
       "display_name": "M8P V2.0",
       "aliases": [
@@ -53146,7 +53303,15 @@
         "SPI": "Yes (accel header)",
         "I2C": "Yes",
         "Eth/WiFi": "Ethernet via CB1/CM4; WiFi via SBC",
-        "Voltage": "VIN DC12/24V; HV 24–60V; bed 12/24V"
+        "Voltage": "VIN DC12/24V; HV 24–60V; bed 12/24V",
+        "Clock": "550 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC5160, TMC2209, TMC2226, TMC2225, TMC2208, TMC2130, ST820, LV8729, DRV8825, A4988 (SPI/UART/STEP-DIR)",
+        "Ethernet/WiFi": "Ethernet (LAN) onboard; WiFi via CB1/CM4 core board",
+        "Flash method": "USB-DFU (BOOT button) / SD-card / make flash",
+        "Dimensions (mm)": "170 x 102.7",
+        "Form factor": "Manta series (accepts BTT CB1 / Raspberry Pi CM4 core board)",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -53286,7 +53451,14 @@
       "xlsx_source_rows": {
         "portRowCount": 10
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/manta-m4p-m8p",
+        "repoUrl": "https://github.com/bigtreetech/Manta-M8P",
+        "wikiUrl": "https://global.bttwiki.com/M8P-V2_0.html",
+        "datasheetUrl": "https://3d.nice-cdn.com/upload/file/BIGTREETECH_MANTA_M8P_V2.0_User_Manual.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "manta-e3ez",
@@ -53397,7 +53569,20 @@
         "Driver slots": "8",
         "Role/era": "main",
         "Bootloader": "Katapult",
-        "Flash offset": "128KiB"
+        "Flash offset": "128KiB",
+        "Clock": "550 MHz",
+        "Voltage": "12-24V (board DCIN); driver rail HV 24-60V",
+        "Onboard drivers": "TMC2160 (soldered, SPI mode)",
+        "Driver current": "V1.0: S1-S4 up to 8A, S5-S8 up to 3A; V1.1: S1-S4 up to 4.7A, S5-S8 up to 3A",
+        "USB": "USB-C",
+        "CAN": "yes (2x CAN)",
+        "Bootloader offset": "128KiB (0x20000)",
+        "Heated bed output": "10A continuous (11A peak)",
+        "Heater output": "6A peak each (4x hotend)",
+        "Dimensions (mm)": "200 x 113",
+        "Form factor": "8-axis high-current mainboard",
+        "Class": "mainboard",
+        "Temp sensing": "2x MAX31865 (PT100/PT1000)"
       },
       "ports": [
         {
@@ -53638,7 +53823,16 @@
       "xlsx_source_rows": {
         "portRowCount": 18
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/kraken-for-voron-phoenix",
+        "repoUrl": "https://github.com/bigtreetech/BIGTREETECH-Kraken",
+        "wikiUrl": "https://global.bttwiki.com/Kraken.html",
+        "imageUrl": "https://raw.githubusercontent.com/bigtreetech/docs/master/docs/img/Kraken/kraken_title.webp",
+        "pinoutUrl": "https://raw.githubusercontent.com/bigtreetech/docs/master/docs/img/Kraken/kraken_pin.webp",
+        "datasheetUrl": "https://3d.nice-cdn.com/upload/file/BIGTREETECH_Kraken_V1.0_User_Manual.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "gtr-v1-0",
@@ -53958,7 +54152,18 @@
       "display_name": "BigTreeTech EBB36/42 v1.0–v1.2",
       "aliases": [],
       "boardClass": "toolhead",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32G0B1CBT6 (V1.1/V1.2); STM32F072 (V1.0)",
+        "Arch": "ARM Cortex-M0+",
+        "Clock": "64 MHz",
+        "USB": "USB Type-C (PA11/PA12)",
+        "CAN": "yes (1, FDCAN @ 1000K, on PB0/PB1)",
+        "Ethernet/WiFi": "none",
+        "Flash method": "USB / CAN (Katapult) - firmware_USB.bin or firmware_canbus.bin",
+        "Class": "toolhead",
+        "Form factor": "Toolhead / printhead CAN board (36mm EBB36, 42mm EBB42 NEMA-mount variants)",
+        "Supported drivers": "1 driver slot (toolhead extruder)"
+      },
       "ports": [
         {
           "label": "Molex 5569 (Mini-Fit Jr.)",
@@ -54135,7 +54340,16 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://bigtree-tech.com/collections/control-board",
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "wikiUrl": "https://global.bttwiki.com",
+        "pinoutUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB%20CAN%20V1.1%20and%20V1.2%20(STM32G0B1)/EBB36%20CAN%20V1.1%20and%20V1.2/Hardware/EBB36%20CAN%20V1.1%26V1.2-PIN.png",
+        "schematicUrl": "https://github.com/bigtreetech/EBB/blob/master/EBB%20CAN%20V1.1%20and%20V1.2%20(STM32G0B1)/EBB36%20CAN%20V1.1%20and%20V1.2/Hardware/BIGTREETECH%20EBB36%20CAN%20V1.2-SCH.pdf",
+        "datasheetUrl": "https://github.com/bigtreetech/EBB/blob/master/EBB%20CAN%20V1.1%20and%20V1.2%20(STM32G0B1)/EBB36%20CAN%20V1.1%20and%20V1.2/BIGTREETECH%20EBB36%20CAN%20V1.1%20User%20Manual.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "ebb36-42-gen2",
@@ -54144,7 +54358,24 @@
       "display_name": "BigTreeTech EBB36/42 GEN2",
       "aliases": [],
       "boardClass": "toolhead",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32G0B1CBT6",
+        "Arch": "ARM Cortex-M0+",
+        "Clock": "64 MHz",
+        "Voltage": "24-28V",
+        "Driver slots": "1 (onboard, soldered)",
+        "Onboard drivers": "TMC2209",
+        "Supported drivers": "TMC2209 (onboard, fixed)",
+        "USB": "USB-C (via adapter board)",
+        "CAN": "yes (jumper-selectable CAN/USB, optional 120ohm termination)",
+        "Ethernet/WiFi": "no",
+        "Flash method": "Katapult bootloader (8KiB / 0x2000 offset) or no-bootloader",
+        "Bootloader offset": "0x2000",
+        "Dimensions (mm)": "EBB36 36 x 30",
+        "Heater port": "120 W (24V / 5A)",
+        "Form factor": "CAN/USB toolhead board (EBB36 NEMA14 / EBB42 NEMA17)",
+        "Class": "toolhead"
+      },
       "ports": [
         {
           "label": "XT30 (AMASS)",
@@ -54334,7 +54565,15 @@
       "xlsx_source_rows": {
         "portRowCount": 14
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-ebb-36-42-can-bus-for-bigtreetech-ebb-36-42-can-bus-u2c-v2-1-for-connecting-klipper-expansion-device-support-pt1000connecting-klipper-expansion-device",
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "wikiUrl": "https://global.bttwiki.com/EBB36_GEN2.html",
+        "imageUrl": "https://global.bttwiki.com/img/EBB36_GEN2/EBB36_GEN2.jpg",
+        "pinoutUrl": "https://global.bttwiki.com/img/EBB36_GEN2/en/interface.jpg",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "sb2209-can-rp2040-g0b1",
@@ -54370,7 +54609,7 @@
     },
     {
       "board_id": "sb2209-can",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech",
       "model": "EBB SB2209 CAN (RP2040)",
       "display_name": "SB2209 CAN",
       "aliases": [
@@ -54386,7 +54625,11 @@
         "UART": "Yes (TMC)",
         "Voltage": "DC12–24V",
         "All-metal/accel": "ADXL345 (SPI)",
-        "I2Cspi": "SPI→ADXL345; I2C hdr"
+        "I2Cspi": "SPI→ADXL345; I2C hdr",
+        "Class": "toolhead",
+        "Onboard drivers": "TMC2209 (1, E/extruder, UART mode)",
+        "Accelerometer": "ADXL345 onboard",
+        "Form factor": "Voron StealthBurner toolhead (EBB SB family, RP2040 variant)"
       },
       "ports": [
         {
@@ -54538,11 +54781,19 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-ebb-sb2209-can-v1-0",
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "imageUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB%20SB2209%20CAN%20(RP2040)/Hardware/EBB%20SB2209%20CAN%20V1.0%EF%BC%88RP2040%EF%BC%89-Pin.png",
+        "pinoutUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB%20SB2209%20CAN%20(RP2040)/Hardware/EBB%20SB2209%20CAN%20V1.0%EF%BC%88RP2040%EF%BC%89-Pin.png",
+        "schematicUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB%20SB2209%20CAN%20(RP2040)/Hardware/BIGTREETECH%20EBB%20SB2209%20CAN(RP2040)%20V1.0-SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "sb2240-can",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech",
       "model": "EBB SB2240 CAN",
       "display_name": "SB2240 CAN",
       "aliases": [
@@ -54558,7 +54809,11 @@
         "UART": "— (SPI driver)",
         "Voltage": "DC12–24V, 9A",
         "All-metal/accel": "ADXL345",
-        "I2Cspi": "SPI→driver/accel; I2C hdr"
+        "I2Cspi": "SPI→driver/accel; I2C hdr",
+        "Class": "toolhead",
+        "Onboard drivers": "TMC2240 (1, E/extruder, SPI mode)",
+        "Accelerometer": "ADXL345 onboard",
+        "Form factor": "Voron StealthBurner toolhead (EBB SB family)"
       },
       "ports": [
         {
@@ -54735,11 +54990,19 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-ebb-sb2209-can-v1-0",
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "imageUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB%20SB2240_2209%20CAN/SB2240/Hardware/SB2240.png",
+        "pinoutUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB%20SB2240_2209%20CAN/SB2240/Hardware/BIGTREETECH%20EBB%20SB2240%20CAN%20%20V1.0_IO.pdf",
+        "schematicUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB%20SB2240_2209%20CAN/SB2240/Hardware/BIGTREETECH%20EBB%20SB2240%20CAN%20%20V1.0_SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "sb2209-usb",
-      "manufacturer": "",
+      "manufacturer": "BigTreeTech",
       "model": "EBB SB2209 USB",
       "display_name": "SB2209 USB",
       "aliases": [
@@ -54755,7 +55018,11 @@
         "UART": "Yes (TMC)",
         "Voltage": "DC12–24V, 9A",
         "All-metal/accel": "LIS2DW (SPI)",
-        "I2Cspi": "SPI→accel; I2C hdr"
+        "I2Cspi": "SPI→accel; I2C hdr",
+        "Class": "toolhead",
+        "Onboard drivers": "TMC2209 (1, E/extruder, UART mode)",
+        "Accelerometer": "ADXL345 onboard",
+        "Form factor": "Voron StealthBurner toolhead (EBB SB family)"
       },
       "ports": [
         {
@@ -54920,7 +55187,15 @@
       "xlsx_source_rows": {
         "portRowCount": 12
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://github.com/bigtreetech/EBB",
+        "repoUrl": "https://github.com/bigtreetech/EBB",
+        "pinoutUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB_SB2209_USB/Hardware/BIGTREETECH%20EBB%20SB2209%20USB-Pin.pdf",
+        "schematicUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB_SB2209_USB/Hardware/BIGTREETECH%20EBB%20SB2209%20USB%20V1.0-SCH.pdf",
+        "datasheetUrl": "https://raw.githubusercontent.com/bigtreetech/EBB/master/EBB_SB2209_USB/Manual/BIGTREETECH%20EBB%20SB2209%20USB%20V1.2%20User%20Manual.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "u2c-all",
@@ -55240,7 +55515,14 @@
         "UART": "UART1 → RPi header (5 V)",
         "SPI": "SPI+I2C via EXP1/EXP2",
         "Eth/WiFi": "No",
-        "Voltage": "~12–24 V (28 V abs max)"
+        "Voltage": "~12–24 V (28 V abs max)",
+        "Clock": "180 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC drivers (UART & SPI), e.g. TMC2209/TMC5160",
+        "Ethernet/WiFi": "Raspberry Pi via UART",
+        "Dimensions (mm)": "155.3 x 76.5",
+        "Form factor": "Voron-compatible mainboard",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -55444,7 +55726,15 @@
       "xlsx_source_rows": {
         "portRowCount": 15
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.fysetc.com/products/fysetc-spider-v3-0-h7-32-bit-motherboard",
+        "repoUrl": "https://github.com/FYSETC/FYSETC-SPIDER",
+        "imageUrl": "https://raw.githubusercontent.com/FYSETC/FYSETC-SPIDER/main/hardware/V3.0/spiderV3.0.285.jpg",
+        "pinoutUrl": "https://github.com/FYSETC/FYSETC-SPIDER/blob/main/images/Spider_V2.2_Pinout.jpg",
+        "schematicUrl": "https://github.com/FYSETC/FYSETC-SPIDER/blob/main/hardware/V3.0/spider_V3.0_sch.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "spider-v3-0-only",
@@ -55494,7 +55784,12 @@
         "UART": "UART → RPi",
         "SPI": "SPI+I2C via EXP1/EXP2",
         "Eth/WiFi": "No",
-        "Voltage": "12–24 V (48 V opt.; 60 V motor peak)"
+        "Voltage": "12–24 V (48 V opt.; 60 V motor peak)",
+        "Clock": "550 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC drivers (UART & SPI)",
+        "Form factor": "Voron-compatible mainboard (H7 variant of Spider v3.0)",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -55622,7 +55917,14 @@
       "xlsx_source_rows": {
         "portRowCount": 9
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.fysetc.com/products/fysetc-spider-v3-0-h7-32-bit-motherboard",
+        "repoUrl": "https://github.com/FYSETC/FYSETC-SPIDER",
+        "pinoutUrl": "https://github.com/FYSETC/FYSETC-SPIDER/blob/main/hardware/V3.0/Spider_V3.0_Pinout-01.pdf",
+        "schematicUrl": "https://github.com/FYSETC/FYSETC-SPIDER/blob/main/hardware/V3.0_H7/SPIDER_H7_SCH.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "spider-king",
@@ -55639,7 +55941,15 @@
         "Connectivity": "USB; CAN (approx)",
         "Voltage": "≤28V (approx)",
         "Role/era": "main",
-        "Notes": "Replaceable core module selects MCU"
+        "Notes": "Replaceable core module selects MCU",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "SPI / UART / standalone TMC drivers (auto driver-type identification)",
+        "CAN": "yes (onboard 5000V isolated CAN)",
+        "Ethernet/WiFi": "WiFi via ESP module; Raspberry Pi via UART/SPI/USB",
+        "Dimensions (mm)": "177 x 108",
+        "Form factor": "10-axis industrial-grade mainboard with replaceable control core",
+        "Class": "mainboard",
+        "Driver current": "6x 3A max + 4x 6A max"
       },
       "ports": [
         {
@@ -55856,11 +56166,20 @@
       "xlsx_source_rows": {
         "portRowCount": 16
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.fysetc.com/products/pre-sale-fysetc-spider-king-motherboard-core-replaceable-10-axis-industrial-grade-motherboard-support-uart-spi-for-voron",
+        "repoUrl": "https://github.com/FYSETC/FYSETC-SPIDER-KING",
+        "wikiUrl": "https://wiki.fysetc.com/docs/FYSETCSPIDERKING",
+        "imageUrl": "https://raw.githubusercontent.com/FYSETC/FYSETC-SPIDER-KING/main/images/SpiderKing.jpg",
+        "pinoutUrl": "https://github.com/FYSETC/FYSETC-SPIDER-KING/blob/main/Spider_King_V1.0_Pinout.pdf",
+        "schematicUrl": "https://github.com/FYSETC/FYSETC-SPIDER-KING/blob/main/hardware/Spider_King_V1.1_SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "s6-v1-2-v2-0",
-      "manufacturer": "",
+      "manufacturer": "FYSETC",
       "model": "S6 v1.2",
       "display_name": "S6 v1.2/v2.0",
       "aliases": [
@@ -55876,7 +56195,14 @@
         "UART": "UART1 socket (WiFi/flash)",
         "SPI": "SPI+I2C via EXP1/EXP2",
         "Eth/WiFi": "Via add-on module",
-        "Voltage": "12–24 V (28 V abs max)"
+        "Voltage": "12–24 V (28 V abs max)",
+        "Clock": "180 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC SPI / UART / standalone (full TMC range)",
+        "Dimensions (mm)": "117 x 87",
+        "Form factor": "Voron-compatible",
+        "Class": "mainboard",
+        "Notes": "10x PWM MOSFET outputs (1 bed, 3 hotend, 3 fan, 3 RGB); reverse-polarity protection"
       },
       "ports": [
         {
@@ -56081,7 +56407,16 @@
       "xlsx_source_rows": {
         "portRowCount": 15
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.fysetc.com/products/s6-v1-2-32-bit-board-xh-connector-control-board-support-6x-tmc-drivers-uart-spi-flying-wire-vs-f6-v1-3-skr-v1-3",
+        "repoUrl": "https://github.com/FYSETC/FYSETC-S6",
+        "wikiUrl": "https://wiki.fysetc.com/docs/FYSETCS6",
+        "imageUrl": "https://raw.githubusercontent.com/FYSETC/FYSETC-S6/main/images/S6_IMG_0389.jpg",
+        "pinoutUrl": "https://github.com/FYSETC/FYSETC-S6/blob/main/S6_V2.1_Pinout.pdf",
+        "datasheetUrl": "https://github.com/FYSETC/FYSETC-S6/blob/main/hardware/datasheet/stm32f446ve.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "cheetah-v1-2",
@@ -56610,7 +56945,7 @@
     },
     {
       "board_id": "catalyst",
-      "manufacturer": "",
+      "manufacturer": "FYSETC",
       "model": "Catalyst",
       "display_name": "Catalyst",
       "aliases": [],
@@ -56623,7 +56958,14 @@
         "Connectivity": "USB; (SBC networking)",
         "Voltage": "24V bed MOS; 5/12/24V fan switch",
         "Role/era": "main",
-        "Notes": "M4 + A55 all-in-one (Voron V0 class)"
+        "Notes": "M4 + A55 all-in-one (Voron V0 class)",
+        "Class": "toolhead",
+        "Onboard drivers": "TMC2209 (1, E/extruder)",
+        "USB": "USB (USB/CAN/RS-232 switchable on toolhead)",
+        "CAN": "yes (1)",
+        "Accelerometer": "ADXL345 onboard",
+        "Dimensions (mm)": "47 x 44 (ToolHead)",
+        "Form factor": "Voron StealthBurner toolhead"
       },
       "ports": [
         {
@@ -56802,11 +57144,19 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://wiki.fysetc.com/docs/CATALYST-K",
+        "repoUrl": "https://github.com/FYSETC/Catalyst.K_Kit",
+        "wikiUrl": "https://wiki.fysetc.com/docs/Catalyst-K-ToolHead",
+        "imageUrl": "https://raw.githubusercontent.com/FYSETC/Catalyst.K_Kit/main/image/image.png",
+        "pinoutUrl": "https://raw.githubusercontent.com/FYSETC/Catalyst.K_Kit/main/image/switch_nozzle_can.png",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "e4",
-      "manufacturer": "",
+      "manufacturer": "FYSETC",
       "model": "E4",
       "display_name": "E4",
       "aliases": [],
@@ -56819,7 +57169,18 @@
         "Connectivity": "USB (CH340); WiFi + Bluetooth",
         "Voltage": "12–24V",
         "Role/era": "main",
-        "Notes": "ESP32 @240 MHz, 16 MB flash; ESP3D/Marlin WebUI"
+        "Notes": "ESP32 @240 MHz, 16 MB flash; ESP3D/Marlin WebUI",
+        "Clock": "240 MHz",
+        "Flash": "16 MB",
+        "Onboard drivers": "4x TMC2209 (X/Y/Z/E, UART, sensorless homing)",
+        "Supported drivers": "TMC2209 (onboard, fixed)",
+        "USB": "USB (CH340 serial)",
+        "Ethernet/WiFi": "WiFi 802.11 b/g/n + Bluetooth (onboard or external-antenna variant)",
+        "Class": "mainboard",
+        "Form factor": "Compact all-in-one mainboard",
+        "Dimensions (mm)": "90 x 67",
+        "Connectors": "XH2.54",
+        "Storage": "onboard microSD/TF socket"
       },
       "ports": [
         {
@@ -56972,7 +57333,16 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.fysetc.com/products/fysetc-e4-board-with-built-in-wi-fi-and-bluetooth-4-pcs-tmc2209-240mhz-16m-flash-3d-printer-control-board-based-for-3d-printer",
+        "repoUrl": "https://github.com/FYSETC/FYSETC-E4",
+        "wikiUrl": "https://wiki.fysetc.com/E4/",
+        "imageUrl": "https://raw.githubusercontent.com/FYSETC/FYSETC-E4/main/images/E4%E6%AD%A3%E9%9D%A22.png",
+        "pinoutUrl": "https://raw.githubusercontent.com/FYSETC/FYSETC-E4/main/images/E4%E4%B8%BB%E6%9D%BFPIN%E8%84%9A%E5%9B%BE2.jpg",
+        "schematicUrl": "https://github.com/FYSETC/FYSETC-E4/blob/main/hardware/FYSETC%20E4_V1.0%20SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "leviathan-v1-2",
@@ -56989,7 +57359,17 @@
         "Connectivity": "USB; CAN (header to toolhead)",
         "Voltage": "24V main; 24–48V TMC5160 rail",
         "Role/era": "main",
-        "Notes": "Voron-oriented mainboard (see CSV)"
+        "Notes": "Voron-oriented mainboard (see CSV)",
+        "Clock": "180 MHz",
+        "Onboard drivers": "5x TMC2209 (24V) + 2x TMC5160 (HV 24-48V), soldered",
+        "Supported drivers": "TMC2209, TMC5160 (onboard, soldered)",
+        "USB": "USB (PA11/PA12)",
+        "CAN": "yes (USB-to-CAN bridge; CAN on PB5/PB6)",
+        "Ethernet/WiFi": "none onboard; dedicated Raspberry Pi mount (3/4/5/Zero 2W)",
+        "Bootloader offset": "0x8000",
+        "Flash method": "USB-DFU / Katapult (USB or UART)",
+        "Form factor": "Voron 2/Trident mainboard (RPi-mount)",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -57228,7 +57608,17 @@
       "xlsx_source_rows": {
         "portRowCount": 18
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://ldomotion.com/guides/voron-leviathan-v12",
+        "repoUrl": "https://github.com/MotorDynamicsLab/Leviathan",
+        "wikiUrl": "https://ldomotion.com/guides/voron-leviathan-v12",
+        "imageUrl": "https://raw.githubusercontent.com/MotorDynamicsLab/Leviathan/master/Media/front.jpg",
+        "pinoutUrl": "https://raw.githubusercontent.com/MotorDynamicsLab/Leviathan/master/Media/pin_assignment.jpg",
+        "schematicUrl": "https://github.com/MotorDynamicsLab/Leviathan/raw/master/Schematic/Leviathan_V1.2.pdf",
+        "datasheetUrl": "https://github.com/MotorDynamicsLab/Leviathan/raw/master/Manual/Leviathan_V1.2_Manual.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "nitehawk-sb-v1",
@@ -57581,7 +57971,7 @@
     },
     {
       "board_id": "nitehawk-36",
-      "manufacturer": "",
+      "manufacturer": "LDO Motors",
       "model": "LDO Nitehawk-36",
       "display_name": "Nitehawk-36",
       "aliases": [
@@ -57597,7 +57987,10 @@
         "UART": "—",
         "SPI": "SW-SPI ADXL345",
         "Eth/WiFi": "Host: USB to RPi",
-        "Voltage": "20–28 V (24 V typ), 120 W max, ≤65 °C"
+        "Voltage": "20–28 V (24 V typ), 120 W max, ≤65 °C",
+        "Onboard drivers": "1x TMC2209 (soldered)",
+        "Flash method": "USB (Katapult bootloader)",
+        "Class": "toolhead"
       },
       "ports": [
         {
@@ -57773,7 +58166,16 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://ldomotion.com/products/nitehawk36-toolboard",
+        "repoUrl": "https://github.com/MotorDynamicsLab/Nitehawk-36",
+        "wikiUrl": "https://docs.ldomotors.com/en/Toolboard/nitehawk-36",
+        "imageUrl": "https://github.com/MotorDynamicsLab/Nitehawk-36/blob/master/Images/Nitehawk-36-1.jpg",
+        "pinoutUrl": "https://github.com/MotorDynamicsLab/Nitehawk-36/blob/master/Images/nh36_pcb_pinout.jpg",
+        "schematicUrl": "https://github.com/MotorDynamicsLab/Nitehawk-36/blob/master/Hardware/Nitehawk-36%20V1.4/Nitehawk-36_V1.4_Schematics.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "duet-2-wifi-eth",
@@ -57793,7 +58195,17 @@
         "UART": "Serial port",
         "SPI": "SPI (TempDB hdr); I²C via SX1509B add-on",
         "Eth/WiFi": "WiFi: ESP8266 2.4 GHz; SBC from RRF 3.2 (HW mod)",
-        "Voltage": "11–25 V"
+        "Voltage": "11–25 V",
+        "Clock": "120 MHz",
+        "Driver slots": "5",
+        "Onboard drivers": "TMC2660 (soldered, SPI-controlled, up to 2.4A)",
+        "Supported drivers": "TMC2660 (onboard)",
+        "Ethernet/WiFi": "WiFi or Ethernet (variant-dependent)",
+        "Flash method": "USB / SD-card",
+        "Dimensions (mm)": "~123 x 100 (3.92 x 4.92 in)",
+        "Form factor": "mainboard",
+        "Class": "mainboard",
+        "Notes": "256-microstep SPI drivers; expandable via DueX2/DueX5; RepRapFirmware"
       },
       "ports": [
         {
@@ -58004,7 +58416,15 @@
       "xlsx_source_rows": {
         "portRowCount": 15
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/DuetWifi",
+        "repoUrl": "https://github.com/Duet3D/Duet-2-Hardware",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_2_family/Duet_2_WiFi_Ethernet_Hardware_Overview",
+        "pinoutUrl": "https://raw.githubusercontent.com/Duet3D/Duet-2-Hardware/master/Wiring%20Diagrams/Duet2ndGen_connections_V1.0n.svg",
+        "schematicUrl": "https://github.com/Duet3D/Duet-2-Hardware/blob/master/Duet2/Duet2v1.04/DuetWifi_Schematic_v1.04.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "duet-2-ethernet",
@@ -58124,7 +58544,13 @@
         "UART": "Serial; 2× ext-driver UART (E2/E3)",
         "SPI": "SPI (TempDB); 2 pins I²C/GPIO",
         "Eth/WiFi": "Ethernet 10/100 (onboard module); no SBC",
-        "Voltage": "11–25 V"
+        "Voltage": "11–25 V",
+        "Clock": "120 MHz",
+        "Driver slots": "5 (expandable to 7 via dual-driver module)",
+        "Onboard drivers": "TMC2224 (soldered, up to 1.6A peak)",
+        "Supported drivers": "TMC2224",
+        "Form factor": "mainboard",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -58302,7 +58728,14 @@
       "xlsx_source_rows": {
         "portRowCount": 12
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/Duet2Maestro",
+        "repoUrl": "https://github.com/Duet3D/Duet-2-Hardware",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_2_family/Duet_2_Maestro",
+        "schematicUrl": "https://github.com/Duet3D/Duet-2-Hardware/blob/master/Duet2/Duet2Maestro_v1.0/Duet2Maestro_Schematic_v1.0.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "duet-3-mini-5",
@@ -58319,7 +58752,16 @@
         "Connectivity": "USB; WiFi or Ethernet (variant); CAN-FD",
         "Voltage": "12V–25V (approx)",
         "Role/era": "main",
-        "Notes": "SBC- or standalone-capable; StallGuard2"
+        "Notes": "SBC- or standalone-capable; StallGuard2",
+        "Clock": "120 MHz",
+        "Onboard drivers": "TMC2209 (soldered)",
+        "Supported drivers": "TMC2209 (onboard, up to 1.4A RMS / 2A peak)",
+        "USB": "USB-C",
+        "CAN": "yes (CAN-FD)",
+        "Ethernet/WiFi": "WiFi or Ethernet (variant-dependent)",
+        "Flash method": "USB / SD-card",
+        "Form factor": "mainboard",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -58566,7 +59008,15 @@
       "xlsx_source_rows": {
         "portRowCount": 18
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3mini5plus",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Mini5plus",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Mini_5+_Hardware_Overview",
+        "imageUrl": "https://raw.githubusercontent.com/Duet3D/Duet3-Mini5plus/main/mini5plus.PNG",
+        "schematicUrl": "https://github.com/Duet3D/Duet3-Mini5plus/blob/main/v1.03_Ethernet/Duet3_5%2B_Ethernet_Schematic_v1.03_20240222a.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "duet-3-mini-5-eth",
@@ -58680,7 +59130,22 @@
       "display_name": "Duet3D Duet 3 6HC",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "ATSAME70Q21",
+        "Arch": "ARM Cortex-M7",
+        "Clock": "300 MHz",
+        "Voltage": "12-24V (11-30V abs max)",
+        "Driver slots": "6",
+        "Onboard drivers": "TMC5160 / TMC2160 (soldered)",
+        "Supported drivers": "TMC5160 / TMC2160 (onboard)",
+        "USB": "USB-C",
+        "CAN": "yes (2x CAN-FD)",
+        "Ethernet/WiFi": "Ethernet onboard; SBC via SPI/Raspberry Pi header",
+        "Flash method": "USB / SD-card",
+        "Form factor": "mainboard",
+        "Class": "mainboard",
+        "Notes": "10 PWM outputs, 9 IO ports, 4 thermistor/PT1000 inputs; optional PT100/thermocouple daughterboards; RepRapFirmware"
+      },
       "ports": [
         {
           "label": "6-way barrier strip",
@@ -58939,7 +59404,15 @@
       "xlsx_source_rows": {
         "portRowCount": 19
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3mainboard6hc",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Mainboard-6HC",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Mainboard_6HC_Hardware_Overview",
+        "pinoutUrl": "https://raw.githubusercontent.com/Duet3D/Duet3-Mainboard-6HC/master/Duet3_Mainboard_6HC_v1.0/Duet3_MB_6HC_v1.0_Wiring_Diagram.svg",
+        "schematicUrl": "https://github.com/Duet3D/Duet3-Mainboard-6HC/blob/master/Duet3_Mainboard_6HC_v1.02/Duet3_MB_6HC_Schematic_v1.02.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "duet-3-6xd",
@@ -58948,7 +59421,22 @@
       "display_name": "Duet3D Duet 3 6XD",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "ATSAME70Q21",
+        "Arch": "ARM Cortex-M7",
+        "Clock": "300 MHz",
+        "Voltage": "12-24V (11-30V abs max; 14V min recommended for onboard 12V regulator)",
+        "Driver slots": "0 (external drivers only)",
+        "Onboard drivers": "none",
+        "Supported drivers": "External step/dir/enable drivers (5V nominal signals, opto-isolated capable), 6 channels",
+        "USB": "USB-C",
+        "CAN": "yes (2x CAN-FD)",
+        "Ethernet/WiFi": "Ethernet onboard; SBC via SPI/Raspberry Pi header",
+        "Flash method": "USB / SD-card",
+        "Form factor": "mainboard",
+        "Class": "mainboard",
+        "Notes": "6 external stepper/servo driver outputs (step/dir/enable); opto-isolated GPIO for PLC interfacing; generates 12V from VIN; RepRapFirmware"
+      },
       "ports": [
         {
           "label": "2-way barrier strip",
@@ -59164,7 +59652,15 @@
       "xlsx_source_rows": {
         "portRowCount": 16
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3mainboard6xd",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Mainboard-6XD",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Mainboard_6XD_Hardware_Overview",
+        "pinoutUrl": "https://raw.githubusercontent.com/Duet3D/Duet3-Mainboard-6XD/master/v1.0/Duet3_MB_6XD_v1.0_Wiring_Diagram.svg",
+        "schematicUrl": "https://github.com/Duet3D/Duet3-Mainboard-6XD/blob/master/v1.02/Duet3_MB_6XD_Schematic_v1.02.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "1lc-v1-1-1-3",
@@ -59371,7 +59867,19 @@
       "display_name": "Duet3D Duet 3 3HC",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "Atmel ARM Cortex-M4F microcontroller",
+        "Arch": "ARM Cortex-M4F",
+        "Clock": "120 MHz",
+        "Voltage": "12-48V (12-32V on v1.01 and earlier)",
+        "Driver slots": "3",
+        "Onboard drivers": "3x TMC2160 / TMC5160 (soldered)",
+        "Supported drivers": "TMC2160 / TMC5160",
+        "Max stepper current": "6.3A peak per phase (4.45A RMS)",
+        "CAN": "yes (CAN-FD, connects to Duet 3 mainboard)",
+        "Class": "expansion",
+        "Notes": "High-power CAN-FD expansion board adding 3 stepper channels plus heaters/fans/GPIO; compatible with 6HC/6XD/Mini 5+"
+      },
       "ports": [
         {
           "label": "2-way barrier strip",
@@ -59526,16 +60034,32 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3expansion3hc",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Expansion-3HC",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Expansion_3HC",
+        "schematicUrl": "https://raw.githubusercontent.com/Duet3D/Duet3-Expansion-3HC/master/Expansion_3HC_v1.02/Duet3_Exp_3HC_Schematic_v1.02.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "1hcl-v2-0",
-      "manufacturer": "",
+      "manufacturer": "Duet3D",
       "model": "1HCL v2.0",
       "display_name": "1HCL v2.0",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "ATSAMC21 (Cortex-M4F)",
+        "Arch": "ARM Cortex-M4F",
+        "Clock": "120 MHz",
+        "Voltage": "12-48V (powered locally)",
+        "Driver slots": "1",
+        "Onboard drivers": "TMC2160A (soldered, SPI; open or closed loop; 6.3A peak / 4.45A RMS per phase)",
+        "CAN": "yes (CAN-FD, RJ11)",
+        "Class": "toolhead"
+      },
       "ports": [
         {
           "label": "2-way barrier strip",
@@ -59708,7 +60232,14 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet-3-expansion-1hcl",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Expansion-1HCL",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Expansion_1HCL",
+        "imageUrl": "https://docs.duet3d.com/duet_boards/duet_3_can_expansion/duet_3_1hcl/1hcl_angle_4_wb_sm.png",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "1hcl-v1-0-1-0a",
@@ -59749,7 +60280,18 @@
       "display_name": "Duet3D Duet 3 1XD",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "Arch": "ARM Cortex-M0+",
+        "Clock": "48 MHz",
+        "Voltage": "up to 48V (local board power)",
+        "Driver slots": "0 (external driver only)",
+        "Onboard drivers": "none",
+        "Supported drivers": "External step/dir/enable driver (1 channel)",
+        "CAN": "yes (CAN-FD, RJ11; daisy-chainable)",
+        "Form factor": "expansion board",
+        "Class": "expansion board (CAN)",
+        "Notes": "CAN-FD-connected expansion providing step/direction/enable outputs to interface one external stepper/servo driver plus associated peripherals"
+      },
       "ports": [
         {
           "label": "JST VH",
@@ -59865,7 +60407,15 @@
       "xlsx_source_rows": {
         "portRowCount": 8
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3expansion1xd",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Expansion-1XD",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Expansion_1XD",
+        "pinoutUrl": "https://raw.githubusercontent.com/Duet3D/Duet3-Expansion-1XD/master/Expansion_1XD_v1.0/Duet3_EB_1XD_v1.0_Wiring_Diagram.svg",
+        "schematicUrl": "https://github.com/Duet3D/Duet3-Expansion-1XD/blob/master/Expansion_1XD_v1.1/Duet3_EXB_1XD_Schematic_v1.1.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "roto-toolboard",
@@ -59989,7 +60539,12 @@
         "Connectivity": "USB (via Mega's 16U2)",
         "Voltage": "12V (≤24V w/ care)",
         "Role/era": "main",
-        "Notes": "Shield on Arduino Mega; classic 8-bit platform"
+        "Notes": "Shield on Arduino Mega; classic 8-bit platform",
+        "Clock": "16 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "Pololu-style: A4988, DRV8825, TMC2130",
+        "Form factor": "Arduino Mega 2560 shield",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -60170,7 +60725,14 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://reprap.org/wiki/RAMPS_1.4",
+        "imageUrl": "https://reprap.org/mediawiki/images/c/c1/Ramps_v1.4_shield_bothsides.png",
+        "pinoutUrl": "https://reprap.org/mediawiki/images/6/6d/Rampswire14.svg",
+        "schematicUrl": "https://reprap.org/mediawiki/images/f/f6/RAMPS1.4schematic.png",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "ramps-1-6",
@@ -60232,7 +60794,7 @@
     },
     {
       "board_id": "rumba",
-      "manufacturer": "",
+      "manufacturer": "RepRapDiscount",
       "model": "RUMBA",
       "display_name": "RUMBA",
       "aliases": [],
@@ -60244,7 +60806,14 @@
         "USB": "mini-B (onboard, FTDI/CH340-class)",
         "Connectivity": "SD/LCD (RRD smart-ctrl), EXP3 (I2C+ADC+PWM), ISP×2, JTAG, 6 endstops, 5 thermistors",
         "Voltage": "12–35 V",
-        "Role/era": "~2013"
+        "Role/era": "~2013",
+        "Clock": "16 MHz",
+        "Driver slots": "6",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, DRV8825 (Pololu-compatible StepStick)",
+        "Dimensions (mm)": "135 x 75",
+        "Class": "mainboard",
+        "Form factor": "all-in-one RepRap controller"
       },
       "ports": [
         {
@@ -60397,11 +60966,15 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://reprap.org/wiki/RUMBA",
+        "mediaStatus": "none"
+      }
     },
     {
       "board_id": "rumba32",
-      "manufacturer": "",
+      "manufacturer": "Aus3D",
       "model": "Rumba32",
       "display_name": "RUMBA32",
       "aliases": [
@@ -60416,7 +60989,16 @@
         "Connectivity": "USB",
         "Voltage": "12V/24V (approx)",
         "Role/era": "main",
-        "Notes": "M4 @180 MHz; modified Aus3D Rumba32"
+        "Notes": "M4 @180 MHz; modified Aus3D Rumba32",
+        "Clock": "180 MHz",
+        "Flash": "512 kB (128 kB SRAM)",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, DRV8825, and SPI/UART Trinamic drivers (jumper-configured)",
+        "EEPROM": "8 kB I2C",
+        "Class": "mainboard",
+        "MOSFET outputs": "6",
+        "Thermistor inputs": "5",
+        "Endstops": "6"
       },
       "ports": [
         {
@@ -60677,7 +61259,17 @@
       "xlsx_source_rows": {
         "portRowCount": 20
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://aus3d.com.au/products/rumba32-control-board",
+        "repoUrl": "https://github.com/Aus3D/RUMBA32",
+        "wikiUrl": "https://reprap.org/wiki/Rumba32",
+        "imageUrl": "https://aus3d.com.au/cdn/shop/products/RUMBA32_v1_1A-22.jpg?v=1637497060",
+        "pinoutUrl": "https://raw.githubusercontent.com/Aus3D/RUMBA32/master/Resources/Images/RUMBA32_v1_1B_PinoutDrawing.png",
+        "schematicUrl": "https://raw.githubusercontent.com/Aus3D/RUMBA32/master/Resources/Images/RUMBA32_v1_1B_Schematic.png",
+        "datasheetUrl": "https://youprintin3d.de/media/pdf/10/a5/c0/RUMBA32-V1-1-User-Manual-REV-A.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "melzi",
@@ -60695,7 +61287,14 @@
         "USB": "onboard mini/micro-B (FTDI FT232RL) + microSD",
         "Connectivity": "EXP (LCD/encoder), 3 endstops, 2 thermistors",
         "Voltage": "7–35 V (typ. 12 V; 5 V logic)",
-        "Role/era": "~2011–16"
+        "Role/era": "~2011–16",
+        "Clock": "16 MHz",
+        "Driver slots": "4",
+        "Onboard drivers": "A4988 (soldered, Ardentissimo/2.0 variants)",
+        "Flash method": "microSD card slot",
+        "Dimensions (mm)": "210 x 50 x 17",
+        "Class": "mainboard",
+        "Form factor": "integrated Sanguinololu-derivative controller"
       },
       "ports": [
         {
@@ -60822,7 +61421,11 @@
       "xlsx_source_rows": {
         "portRowCount": 9
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://reprap.org/wiki/Melzi",
+        "mediaStatus": "none"
+      }
     },
     {
       "board_id": "sanguinololu",
@@ -60840,7 +61443,13 @@
         "USB": "mini-B via external FTDI (FT232RL adapter / on later rev)",
         "Connectivity": "I2C+expansion header, 3 endstops, 2 thermistors, ISP",
         "Voltage": "7–35 V (12 V / 5 V ATX)",
-        "Role/era": "~2009–14"
+        "Role/era": "~2009–14",
+        "Clock": "16 MHz",
+        "Driver slots": "4",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, DRV8825 (Pololu-compatible StepStick)",
+        "Class": "mainboard",
+        "Form factor": "low-cost all-in-one RepRap/CNC controller"
       },
       "ports": [
         {
@@ -60979,11 +61588,15 @@
       "xlsx_source_rows": {
         "portRowCount": 10
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://reprap.org/wiki/Sanguinololu",
+        "mediaStatus": "none"
+      }
     },
     {
       "board_id": "megatronics-v3",
-      "manufacturer": "",
+      "manufacturer": "ReprapWorld",
       "model": "Megatronics v3.0 / v3.1 / v3.3",
       "display_name": "Megatronics v3",
       "aliases": [
@@ -60997,7 +61610,13 @@
         "USB": "onboard mini/micro-B + microSD",
         "Connectivity": "AUX1/AUX2/AUX3 (I2C/SPI/UART/ADC), 6 endstops, T0–T3 thermistors + S1/S2 thermocouples (MAX6675), LCD, ISP",
         "Voltage": "12–24 V (bed up to 15 A)",
-        "Role/era": "~2014"
+        "Role/era": "~2014",
+        "Clock": "16 MHz",
+        "Driver slots": "6 (RAMPS-compatible)",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, DRV8825",
+        "Form factor": "integrated Mega2560 + RAMPS remix (single board)",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -61175,7 +61794,14 @@
       "xlsx_source_rows": {
         "portRowCount": 13
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://reprapworld.com/electronics/megatronics/megatronics-v3-3-basic-kit/",
+        "wikiUrl": "https://reprap.org/wiki/Megatronics_3.0",
+        "imageUrl": "https://reprap.org/mediawiki/images/5/59/Megatronicsv3.jpg",
+        "pinoutUrl": "https://reprap.org/mediawiki/images/5/58/Megatronicsv3_connectors.png",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "mks-gen-v1-4",
@@ -61191,7 +61817,13 @@
         "USB": "onboard mini/micro-B + microSD (on LCD)",
         "Connectivity": "EXP1/EXP2 LCD, AUX, 6 endstops, 3 thermistors, servo",
         "Voltage": "12–24 V",
-        "Role/era": "~2016"
+        "Role/era": "~2016",
+        "Clock": "16 MHz",
+        "Driver slots": "5 (X, Y, Z, E0, E1)",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, DRV8825, TMC2100, TMC2208",
+        "Form factor": "integrated Mega2560 + RAMPS1.4 (4-layer PCB)",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -61322,11 +61954,19 @@
       "xlsx_source_rows": {
         "portRowCount": 9
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/makerbase-mks/MKS-GEN",
+        "wikiUrl": "https://reprap.org/wiki/MKS_GEN",
+        "imageUrl": "https://raw.githubusercontent.com/makerbase-mks/MKS-GEN/master/Picture/MKS_GEN.png",
+        "pinoutUrl": "https://raw.githubusercontent.com/makerbase-mks/MKS-GEN/master/hardware/MKS%20GEN%20V1.4_004/MKS%20GEN%20V1.4_004%20PIN.pdf",
+        "schematicUrl": "https://raw.githubusercontent.com/makerbase-mks/MKS-GEN/master/hardware/MKS%20GEN%20V1.4_004/MKS%20GEN%20V1.4_004%20SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "azteeg-x3",
-      "manufacturer": "",
+      "manufacturer": "Panucatt",
       "model": "Azteeg X3",
       "display_name": "Azteeg X3",
       "aliases": [],
@@ -61337,7 +61977,14 @@
         "Drivers": "Socketed (Pololu-style)",
         "Connectivity": "USB; SD",
         "Voltage": "12–24V",
-        "Role/era": "Beefed-up RAMPS-compatible all-in-one; ~2013"
+        "Role/era": "Beefed-up RAMPS-compatible all-in-one; ~2013",
+        "Clock": "16 MHz",
+        "Driver slots": "5 (Pololu-style)",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988 / Pololu-style StepStick (incl. SD8825 with digipot)",
+        "USB": "FT231x FTDI USB-to-UART",
+        "Form factor": "integrated Mega2560 + RAMPS (removable top shield)",
+        "Class": "mainboard"
       },
       "ports": [
         {
@@ -61451,7 +62098,13 @@
       "xlsx_source_rows": {
         "portRowCount": 8
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "wikiUrl": "https://reprap.org/wiki/Azteeg_X3",
+        "imageUrl": "https://reprap.org/mediawiki/images/2/22/Azteeg_x3.jpg",
+        "pinoutUrl": "https://reprap.org/mediawiki/images/a/a5/X3_wiring_diagram.jpg",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "azteeg-x5-mini-gt",
@@ -61908,7 +62561,15 @@
         "USB": "onboard mini/micro-B (32U2 CDC) + microSD",
         "Connectivity": "LCD P1/P2 ribbon, SPI, 3 endstops + ZProbe (PINDA/IR), 3 thermistors",
         "Voltage": "24 V (3× ATO fuses 5/5/15 A)",
-        "Role/era": "~2017"
+        "Role/era": "~2017",
+        "Driver slots": "4 (soldered)",
+        "Onboard drivers": "4x TMC2130 (SPI stepper current control, 1/256 microstep; Z has 2 connectors for dual-Z)",
+        "Supported drivers": "TMC2130 (onboard, fixed)",
+        "Ethernet/WiFi": "none",
+        "Class": "mainboard",
+        "Form factor": "All-in-one mainboard (RAMBo-class, Prusa i3 MK3/MK3S/MK3S+)",
+        "Thermistors": "3 thermistor jacks + 4th circuit on Z-probe",
+        "Fans": "3-pin 5V fan connectors with tachometer feedback"
       },
       "ports": [
         {
@@ -62130,7 +62791,14 @@
       "xlsx_source_rows": {
         "portRowCount": 16
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.prusa3d.com/product/einsy-rambo-mk3s/",
+        "repoUrl": "https://github.com/ultimachine/Einsy-Rambo",
+        "wikiUrl": "https://reprap.org/wiki/EinsyRambo",
+        "schematicUrl": "https://github.com/ultimachine/Einsy-Rambo/blob/1.1a/board/Project%20Outputs/Schematic%20Prints_Einsy%20Rambo_1.1a.PDF",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "fly-super8-v1-x",
@@ -62148,7 +62816,12 @@
         "UART": "TMC UART per slot",
         "SPI": "TMC SPI per slot; ADXL via SPI header",
         "Voltage": "Board/bed ≤30 V; drivers ≤62 V (v1.1–1.3; v1.0 drv3-7 ≤24 V)",
-        "All-metal/accel": "No"
+        "All-metal/accel": "No",
+        "Clock": "168 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, LV8729, DRV8825, TMC2208, TMC2209, TMC5160, TMC5160HV (UART/SPI)",
+        "Class": "mainboard",
+        "Notes": "Up to 5 extruders; 10 PWM fan outputs via 5 replaceable fan MOSFET modules"
       },
       "ports": [
         {
@@ -62276,7 +62949,15 @@
       "xlsx_source_rows": {
         "portRowCount": 9
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://mellow.klipper.cn/en/docs/ProductDoc/MainBoard/fly-super/fly-super8/",
+        "wikiUrl": "https://mellow-3d.github.io/fly_super8.html",
+        "imageUrl": "https://mellow-3d.github.io/images/fly-super8/fly-super8_pins.webp",
+        "pinoutUrl": "https://mellow-3d.github.io/images/fly-super8/fly-super8_pins.svg",
+        "datasheetUrl": "https://mellow-3d.github.io/fly_super8_files.html",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "fly-super8-pro-h723",
@@ -62430,7 +63111,11 @@
         "UART": "TMC UART (PB11/PC10/PB7/PB6)",
         "SPI": "TMC SPI",
         "Voltage": "Board ≤30 V; drivers ≤62 V (≤48 V per general pg)",
-        "All-metal/accel": "No"
+        "All-metal/accel": "No",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC2209 and other socketed drivers (drivers rated to 48V)",
+        "Class": "mainboard",
+        "Notes": "Integrated SBC: STM32 control board plus onboard Linux board (Armbian) with 1GB DDR RAM; no separate Raspberry Pi required; supports sensorless homing via diag pin"
       },
       "ports": [
         {
@@ -62583,7 +63268,15 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://mellow.klipper.cn/en/docs/category/fly-gemini-v3/",
+        "repoUrl": "https://github.com/Mellow-3D/Fly-Gemini-V3",
+        "wikiUrl": "https://mellow-3d.github.io/fly-gemini_v3_general.html",
+        "pinoutUrl": "https://github.com/Mellow-3D/Fly-Gemini-V3/blob/main/Hardware/Gemini_v3_pinout.svg",
+        "schematicUrl": "https://github.com/Mellow-3D/Fly-Gemini-V3/blob/main/Hardware/Gemini_v3_schematic.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "fly-e3-v2",
@@ -63446,7 +64139,13 @@
         "UART": "Yes (AUX)",
         "SPI": "SPI + I2C on AUX",
         "Eth/WiFi": "MKS WIFI hdr",
-        "Voltage": "DC12–24 V"
+        "Voltage": "DC12–24 V",
+        "Clock": "16 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, DRV8825, TMC2208, TMC2209, TMC2130 (selectable STEP/DIR, UART or SPI via 2-pin jumpers)",
+        "Class": "mainboard",
+        "Form factor": "RAMPS-compatible (all-in-one)",
+        "Notes": "5 steppers, 2 hotends + bed; USB chip FT232RL; V2.1 adds jumper-selectable driver communication mode"
       },
       "ports": [
         {
@@ -63585,7 +64284,16 @@
       "xlsx_source_rows": {
         "portRowCount": 10
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://github.com/makerbase-mks/MKS-GEN_L",
+        "repoUrl": "https://github.com/makerbase-mks/MKS-GEN_L",
+        "wikiUrl": "https://github.com/makerbase-mks/MKS-GEN_L/wiki/MKS_GEN_L_V2",
+        "imageUrl": "https://github.com/makerbase-mks/MKS-GEN_L/raw/master/hardware/Image/MKS_GEN_L_V2_WIRING.png",
+        "pinoutUrl": "https://github.com/makerbase-mks/MKS-GEN_L/blob/master/hardware/MKS%20Gen_L%20V2.1_001/MKS%20Gen_L%20V2.1_001%20PIN.pdf",
+        "schematicUrl": "https://github.com/makerbase-mks/MKS-GEN_L/blob/master/hardware/MKS%20Gen_L%20V2.1_001/MKS%20Gen_L%20V2.1_001%20SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "gen-l-v1-0",
@@ -63986,7 +64694,14 @@
         "Drivers": "Socketed (TMC UART/SPI)",
         "Connectivity": "USB; WiFi (SPI module)",
         "Voltage": "12V/24V",
-        "Role/era": "main"
+        "Role/era": "main",
+        "Clock": "168 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, DRV8825, TMC2208, TMC2209 (UART/SPI)",
+        "USB": "USB disk supported (added in V3); microSD via SPI3",
+        "Ethernet/WiFi": "WiFi via module (USART1 + SPI2)",
+        "Class": "mainboard",
+        "Notes": "6 stepper outputs (X, Y, dual Z, dual E); 2 hotends + heated bed; WiFi/TFT module support"
       },
       "ports": [
         {
@@ -64152,7 +64867,17 @@
       "xlsx_source_rows": {
         "portRowCount": 12
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://github.com/makerbase-mks/MKS-Robin-Nano-V3.X",
+        "repoUrl": "https://github.com/makerbase-mks/MKS-Robin-Nano-V3.X",
+        "wikiUrl": "https://github.com/makerbase-mks/MKS-Robin-Nano-V3.X/wiki/Wiring_Pinout_and_Size",
+        "imageUrl": "https://github.com/makerbase-mks/MKS-Robin-Nano-V3.X/raw/main/hardware/Image-V3/MKS_Robin_Nano_V3.jpg",
+        "pinoutUrl": "https://github.com/makerbase-mks/MKS-Robin-Nano-V3.X/raw/main/hardware/Image-V3/MKS_Robin_Nano_V3_PIN.png",
+        "schematicUrl": "https://github.com/makerbase-mks/MKS-Robin-Nano-V3.X/blob/main/hardware/MKS%20Robin%20Nano%20V3.1_001/MKS%20Robin%20Nano%20V3.1_001%20PIN.pdf",
+        "datasheetUrl": "https://github.com/makerbase-mks/Datasheet/blob/master/English%20datasheet/MKS%20ROBIN%20Nano%20motherboard%20Manual.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "robin-e3-v1-0",
@@ -64420,7 +65145,18 @@
       "display_name": "MKS Monster8 V1/V2",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "STM32F407VET6",
+        "Arch": "ARM Cortex-M4",
+        "Clock": "168 MHz",
+        "Voltage": "12-24V",
+        "Driver slots": "8 (socketed; 9 motor interfaces with dual-Z split)",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "A4988, DRV8825, LV8729, TMC2208, TMC2209, TMC2225, TMC2226 (UART/SPI)",
+        "CAN": "yes (built-in CAN transceiver)",
+        "Class": "mainboard",
+        "Notes": "8-axis board for Voron-class printers; 4 heater + 4 thermistor inputs; sensorless homing (Diag0-5); USB disk printing"
+      },
       "ports": [
         {
           "label": "Screw terminal HG129-5.0",
@@ -64573,7 +65309,16 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://github.com/makerbase-mks/MKS-Monster8",
+        "repoUrl": "https://github.com/makerbase-mks/MKS-Monster8",
+        "wikiUrl": "https://github.com/makerbase-mks/MKS-Monster8",
+        "imageUrl": "https://github.com/makerbase-mks/MKS-Monster8/raw/main/hardware/Image/MKS%20Monster8%20V1.0_002.jpg",
+        "pinoutUrl": "https://github.com/makerbase-mks/MKS-Monster8/blob/main/hardware/MKS%20Monster8%20V2.0_003/MKS%20Monster8%20V2.0_003%20PIN.pdf",
+        "schematicUrl": "https://github.com/makerbase-mks/MKS-Monster8/blob/main/hardware/MKS%20Monster8%20V2.0_003/MKS%20Monster8%20V2.0_003%20SCH.pdf",
+        "mediaStatus": "complete"
+      }
     },
     {
       "board_id": "skipr-v1-0",
@@ -64897,7 +65642,7 @@
     },
     {
       "board_id": "thr36-thr42",
-      "manufacturer": "",
+      "manufacturer": "MKS",
       "model": "THR36",
       "display_name": "THR36 / THR42",
       "aliases": [
@@ -64912,7 +65657,13 @@
         "Connectivity": "USB; CAN (120Ω term)",
         "Voltage": "12–24V",
         "Role/era": "toolhead",
-        "Notes": "NEMA14 toolhead; ADXL345 onboard"
+        "Notes": "NEMA14 toolhead; ADXL345 onboard",
+        "Class": "toolhead",
+        "Onboard drivers": "TMC2209 (1, E/extruder, UART mode)",
+        "USB": "USB",
+        "CAN": "yes (1, integrated transceiver + 120R term)",
+        "Accelerometer": "ADXL345 onboard",
+        "Form factor": "THR36 = NEMA14 round; THR42 = NEMA17 42x42 square"
       },
       "ports": [
         {
@@ -65064,7 +65815,15 @@
       "xlsx_source_rows": {
         "portRowCount": 11
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://github.com/makerbase-mks/MKS-THR36-THR42-UTC",
+        "repoUrl": "https://github.com/makerbase-mks/MKS-THR36-THR42-UTC",
+        "pinoutUrl": "https://raw.githubusercontent.com/makerbase-mks/MKS-THR36-THR42-UTC/main/hardware/MKS%20THR36%20V1.0_001/MKS%20THR36%20V1.0_001%20PIN.pdf",
+        "schematicUrl": "https://raw.githubusercontent.com/makerbase-mks/MKS-THR36-THR42-UTC/main/hardware/MKS%20THR36%20V1.0_001/MKS%20THR36%20V1.0_001%20SCH.pdf",
+        "datasheetUrl": "https://raw.githubusercontent.com/makerbase-mks/MKS-THR36-THR42-UTC/main/MKS%20THR36%2642%26UTC%20V1.0%20datesheet.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "utc-v1-0",
@@ -65580,12 +66339,23 @@
     },
     {
       "board_id": "k1-mainboard",
-      "manufacturer": "",
+      "manufacturer": "Creality",
       "model": "K1 mainboard",
       "display_name": "K1 mainboard",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "MCU": "GD32F303RET6",
+        "Arch": "ARM Cortex-M4 (GD32F3)",
+        "Onboard drivers": "3x TMC2209 (X/Y/Z) + 1x TMC2209 (extruder), soldered",
+        "Supported drivers": "TMC2209",
+        "Voltage": "24V",
+        "Class": "mainboard",
+        "Form factor": "Proprietary (Creality K1)",
+        "Onboard mainboard part number": "CR4CU220812S12 (X2000E silent board)",
+        "Architecture note": "Multi-MCU printer: nozzle sub-board (GD32F303CBT6) and leveling MCU (GD32E230) on a separate ribbon; host is the Genic X200 SoC running Klipper",
+        "Printers": "K1 / K1C / K1 SE"
+      },
       "ports": [
         {
           "label": "Screw terminal (approx)",
@@ -65647,16 +66417,31 @@
       "xlsx_source_rows": {
         "portRowCount": 4
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://store.creality.com/products/k1-mainboard-kit",
+        "repoUrl": "https://github.com/CrealityOfficial/K1_Series_Klipper",
+        "wikiUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-series-general-documents/mainboard-replacement",
+        "pinoutUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-max/mainboard-replacement",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "k1-nozzle-sub-board",
-      "manufacturer": "",
+      "manufacturer": "Creality",
       "model": "K1 nozzle sub-board",
       "display_name": "K1 nozzle sub-board",
       "aliases": [],
       "boardClass": "mainboard",
-      "specs": {},
+      "specs": {
+        "Nozzle MCU": "GD32F303CBT6",
+        "Arch": "ARM Cortex-M4 (GD32F3)",
+        "Class": "toolhead sub-board",
+        "Connectors": "Ceramic heater, hotend thermistor, model/part-cooling fan, extruder motor, lidar data cable, sub-board data cable",
+        "Voltage": "24V (heater/fan)",
+        "Revision note": "2025 revision changed heater/thermistor housings (to XHB / HY2.0)",
+        "Printers": "K1 / K1 Max / K1C / K1 SE"
+      },
       "ports": [
         {
           "label": "JST PH 2.0",
@@ -65718,7 +66503,13 @@
       "xlsx_source_rows": {
         "portRowCount": 4
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/CrealityOfficial/K1_Series_Klipper",
+        "wikiUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-max/nozzle-sub-board-replacement",
+        "pinoutUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-se/sub-board-replacement",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "trigorilla-v1",
@@ -66746,7 +67537,12 @@
         "UART": "Serial",
         "SPI": "SPI (2× TempDB)",
         "Eth/WiFi": "CAN only",
-        "Voltage": "12–48 V (12–32 V ≤v1.01)"
+        "Voltage": "12–48 V (12–32 V ≤v1.01)",
+        "Driver slots": "3",
+        "Onboard drivers": "TMC5160 (soldered, SPI), 4.45A RMS / 6.3A peak",
+        "Supported drivers": "TMC5160 (onboard)",
+        "Class": "mainboard",
+        "Form factor": "Duet 3 expansion board"
       },
       "ports": [],
       "portsSummary": {},
@@ -66760,7 +67556,13 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3expansion3hc",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Expansion-3HC",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Expansion_3HC",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "duet-3-mainboard-6hc",
@@ -66778,7 +67580,13 @@
         "UART": "Serial; RS485 (v1.02c+)",
         "SPI": "SPI (2× TempDB); I²C via IO2 (jumper)",
         "Eth/WiFi": "Eth RJ45; WiFi via ESP module (v1.02+); SBC via 2×13 hdr",
-        "Voltage": "11–48 V (11–32 V pre-v1.02); OUT0 0–48 V"
+        "Voltage": "11–48 V (11–32 V pre-v1.02); OUT0 0–48 V",
+        "Clock": "300 MHz",
+        "Driver slots": "6",
+        "Onboard drivers": "TMC5160/TMC2160 (soldered), 4.45A RMS / 6.3A peak",
+        "Ethernet/WiFi": "Ethernet (onboard); SBC interface for Raspberry Pi",
+        "Class": "mainboard",
+        "Form factor": "Duet 3 mainboard"
       },
       "ports": [],
       "portsSummary": {},
@@ -66792,7 +67600,14 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3mainboard6hc",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Mainboard-6HC",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Mainboard_6HC_Hardware_Overview",
+        "schematicUrl": "https://github.com/Duet3D/Duet3-Mainboard-6HC/blob/master/Duet3_Mainboard_6HC_v1.02/Duet3_MB_6HC_Schematic_v1.02.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "duet-3-mainboard-6xd",
@@ -66810,7 +67625,13 @@
         "UART": "Serial; RS485 (v1.02+)",
         "SPI": "SPI (SPI-DB hdr); I²C via IO2 (jumper)",
         "Eth/WiFi": "Eth RJ45; SBC via 2×13 hdr",
-        "Voltage": "11–30 V (14 V+ for 12 V reg)"
+        "Voltage": "11–30 V (14 V+ for 12 V reg)",
+        "Clock": "300 MHz",
+        "Driver slots": "6 (external step/dir only, no onboard drivers)",
+        "Onboard drivers": "none (external stepper/servo drivers via step+dir)",
+        "Ethernet/WiFi": "Ethernet (onboard); SBC interface for Raspberry Pi",
+        "Class": "mainboard",
+        "Form factor": "Duet 3 mainboard"
       },
       "ports": [],
       "portsSummary": {},
@@ -66824,7 +67645,13 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://www.duet3d.com/duet3mainboard6xd",
+        "repoUrl": "https://github.com/Duet3D/Duet3-Mainboard-6XD",
+        "wikiUrl": "https://docs.duet3d.com/Duet3D_hardware/Duet_3_family/Duet_3_Mainboard_6XD_Hardware_Overview",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "duet-3-sbc-interface-raspberry-pi",
@@ -67128,7 +67955,7 @@
     },
     {
       "board_id": "k1-print-board-cr4cu220812s12",
-      "manufacturer": "",
+      "manufacturer": "Creality",
       "model": "K1 print board CR4CU220812S12",
       "display_name": "K1 print board CR4CU220812S12",
       "aliases": [],
@@ -67140,7 +67967,14 @@
         "USB": "USB to host SoC",
         "UART": "UART to Genic X200 host",
         "Printer/board": "K1 / K1 Max / K1C / K1 SE",
-        "Notes": "Multi-MCU; nozzle \"sub-board\" carries heater/thermistor/fan; 2025 sub-board switched to XHB + HY2.0"
+        "Notes": "Multi-MCU; nozzle \"sub-board\" carries heater/thermistor/fan; 2025 sub-board switched to XHB + HY2.0",
+        "Onboard drivers": "4x TMC2209 (X/Y/Z + extruder), soldered",
+        "Supported drivers": "TMC2209",
+        "Voltage": "24V",
+        "Class": "mainboard",
+        "Board part number": "CR4CU220812S12 (X2000E silent board)",
+        "Multi-MCU": "Nozzle MCU GD32F303CBT6 + leveling MCU GD32E230; host = Genic X200 SoC running Klipper",
+        "Printers": "K1 / K1 Max / K1C / K1 SE"
       },
       "ports": [],
       "portsSummary": {},
@@ -67149,7 +67983,14 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://store.creality.com/products/k1-mainboard-kit",
+        "repoUrl": "https://github.com/CrealityOfficial/K1_Series_Klipper",
+        "wikiUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-series-general-documents/mainboard-replacement",
+        "pinoutUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-max/mainboard-replacement",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "manta-m8p-v1-0",
@@ -67579,7 +68420,13 @@
         "SPI": "Yes (TMC SPI)",
         "I2C": "Yes (EEPROM 24C32)",
         "Eth/WiFi": "WiFi via ESP-12S/07/32",
-        "Voltage": "DC12–24V"
+        "Voltage": "DC12–24V",
+        "Clock": "480 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "TMC5160, TMC2209, TMC2226, TMC2225, TMC2208, TMC2130, ST820, LV8729, DRV8825, A4988",
+        "Flash method": "USB-DFU (BOOT button) / SD-card",
+        "Form factor": "mainboard",
+        "Class": "mainboard"
       },
       "ports": [],
       "portsSummary": {},
@@ -67588,7 +68435,15 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-btt-skr-3-control-board-for-3d-printer",
+        "repoUrl": "https://github.com/bigtreetech/SKR-3",
+        "wikiUrl": "https://global.bttwiki.com/SKR%203%20EZ.html",
+        "pinoutUrl": "https://github.com/bigtreetech/SKR-3/blob/master/Hardware%20(SKR%203)/BIGTREETECH%20SKR%203-PIN.pdf",
+        "schematicUrl": "https://github.com/bigtreetech/SKR-3/blob/master/Hardware%20(SKR%203)/BIGTREETECH%20SKR%203-SCH.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "skr-3-ez",
@@ -67608,7 +68463,14 @@
         "SPI": "Yes",
         "I2C": "Yes",
         "Eth/WiFi": "WiFi via ESP module",
-        "Voltage": "DC12–24V"
+        "Voltage": "DC12–24V",
+        "Clock": "480 MHz",
+        "Onboard drivers": "socketed",
+        "Supported drivers": "EZ5160, EZ2209, EZ2208, EZ2226, EZ2130, TMC5160, TMC2209, TMC2226, TMC2208, TMC2130",
+        "Flash method": "USB-DFU (BOOT button) / SD-card",
+        "Dimensions (mm)": "109.7 x 98",
+        "Form factor": "mainboard",
+        "Class": "mainboard"
       },
       "ports": [],
       "portsSummary": {},
@@ -67617,7 +68479,15 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://biqu.equipment/products/bigtreetech-btt-skr-3-ez-control-board-mainboard-for-3d-printer",
+        "repoUrl": "https://github.com/bigtreetech/SKR-3",
+        "wikiUrl": "https://global.bttwiki.com/SKR%203%20EZ.html",
+        "pinoutUrl": "https://github.com/bigtreetech/SKR-3/blob/master/Hardware%20(SKR%203%20EZ)/BIGTREETECH%20SKR%203%20EZ%20V1.0-PIN.pdf",
+        "schematicUrl": "https://github.com/bigtreetech/SKR-3/blob/master/Hardware%20(SKR%203%20EZ)/BIGTREETECH%20SKR%203%20EZ%20V1.0-SCH.pdf",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "skr-mini-e3-v2-0",
@@ -69074,7 +69944,7 @@
     },
     {
       "board_id": "k1-k1-max-board-cr4cu220812s12",
-      "manufacturer": "",
+      "manufacturer": "Creality",
       "model": "K1 / K1 Max board (CR4CU220812S12)",
       "display_name": "K1 / K1 Max board (CR4CU220812S12)",
       "aliases": [],
@@ -69085,7 +69955,14 @@
         "Drivers": "Onboard 3× TMC2209 + 1× extruder TMC2209",
         "Connectivity": "UART to host SoC",
         "Voltage": "24V",
-        "Role/era": "K1/K1 Max/K1C, 2023+; CoreXY, multi-MCU"
+        "Role/era": "K1/K1 Max/K1C, 2023+; CoreXY, multi-MCU",
+        "Onboard drivers": "3x TMC2209 (X/Y/Z) + 1x TMC2209 (extruder), soldered",
+        "Supported drivers": "TMC2209",
+        "Class": "mainboard",
+        "Board part number": "CR4CU220812S12 (X2000E silent board)",
+        "Kinematics": "CoreXY",
+        "Multi-MCU": "Nozzle MCU GD32F303CBT6 + leveling MCU GD32E230; host = Genic X200 SoC running Klipper",
+        "Printers": "K1 / K1 Max / K1C"
       },
       "ports": [],
       "portsSummary": {},
@@ -69094,11 +69971,18 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://store.creality.com/products/k1-max-mainboard-kit",
+        "repoUrl": "https://github.com/CrealityOfficial/K1_Series_Klipper",
+        "wikiUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-max/mainboard-replacement",
+        "pinoutUrl": "https://wiki.creality.com/en/k1-flagship-series/k1-max/mainboard-replacement",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "k1-k2-host-pad-genic-x200",
-      "manufacturer": "",
+      "manufacturer": "Creality",
       "model": "K1/K2 host pad (Genic X200)",
       "display_name": "K1/K2 host pad (Genic X200)",
       "aliases": [],
@@ -69109,7 +69993,14 @@
         "Drivers": "n/a (runs Klipper)",
         "Connectivity": "WiFi; Ethernet; 8GB eMMC",
         "Voltage": "—",
-        "Role/era": "Klipper host SoC inside K1 series, 2023+"
+        "Role/era": "Klipper host SoC inside K1 series, 2023+",
+        "SoC": "Genic X200",
+        "RAM": "256 MB",
+        "Storage": "8 GB eMMC",
+        "Ethernet/WiFi": "2.4 GHz WiFi + Ethernet",
+        "Class": "host SoC (runs Klipper/Moonraker)",
+        "Role": "Klipper host inside K1 series; communicates with the GD32F303 print board over UART",
+        "Printers": "K1 / K1 Max / K1C / K1 SE (K1-series host)"
       },
       "ports": [],
       "portsSummary": {},
@@ -69118,11 +70009,16 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "repoUrl": "https://github.com/CrealityOfficial/K1_Series_Klipper",
+        "wikiUrl": "https://wiki.creality.com/en/k1-flagship-series/k1c",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "k2-plus-mainboard-cr4fn",
-      "manufacturer": "",
+      "manufacturer": "Creality",
       "model": "K2 Plus mainboard (CR4FN…)",
       "display_name": "K2 Plus mainboard (CR4FN…)",
       "aliases": [],
@@ -69135,7 +70031,13 @@
         "Connectivity": "USB",
         "Voltage": "24V (approx)",
         "Role/era": "main",
-        "Notes": "Modern \"v5-class\" GD32F303 silent board (K2 Plus)"
+        "Notes": "Modern \"v5-class\" GD32F303 silent board (K2 Plus)",
+        "Onboard drivers": "TMC2226 (silent), soldered",
+        "Supported drivers": "TMC2226",
+        "Class": "mainboard (\"lower computer\" board)",
+        "Board part number": "CR4FN200338C15_32",
+        "Ethernet/WiFi": "Dual-band WiFi + Ethernet (printer-level)",
+        "Printers": "K2 Plus / K2 Plus Combo"
       },
       "ports": [],
       "portsSummary": {},
@@ -69144,7 +70046,13 @@
       "xlsx_source_rows": {
         "portRowCount": 0
       },
-      "source_category": "MCU & Boards"
+      "source_category": "MCU & Boards",
+      "media": {
+        "productUrl": "https://store.creality.com/products/k2-plus-motherboard-kit",
+        "repoUrl": "https://github.com/CrealityOfficial/K2_Series_Klipper",
+        "wikiUrl": "https://www.creality.com/download/creality-k2-plus-cfs-combo",
+        "mediaStatus": "partial"
+      }
     },
     {
       "board_id": "nebula-pad",

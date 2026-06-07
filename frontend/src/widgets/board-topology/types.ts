@@ -22,6 +22,18 @@ export interface BoardPort {
   pins?: string | number
 }
 
+/** Per-board media / reference links (all optional, link-only). */
+export interface BoardMedia {
+  productUrl?: string
+  repoUrl?: string
+  wikiUrl?: string
+  imageUrl?: string
+  pinoutUrl?: string
+  schematicUrl?: string
+  datasheetUrl?: string
+  mediaStatus?: string
+}
+
 /** Full board record from `GET /api/hardware/boards/{board_id}`. */
 export interface BoardDetail {
   board_id: string
@@ -32,6 +44,7 @@ export interface BoardDetail {
   specs?: Record<string, string>
   ports?: BoardPort[]
   portsSummary?: Record<string, number>
+  media?: BoardMedia
 }
 
 export interface TopologyHost {

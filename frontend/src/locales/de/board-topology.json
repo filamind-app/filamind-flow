@@ -78,7 +78,17 @@
       "specsTitle": "Daten",
       "portsTitle": "Anschlüsse",
       "none": "Noch keine Katalogdetails für dieses Board.",
-      "loading": "Board wird geladen…"
+      "loading": "Board wird geladen…",
+      "links": {
+        "title": "Links",
+        "product": "Produkt",
+        "repo": "Repo",
+        "wiki": "Wiki",
+        "pinout": "Pinbelegung",
+        "schematic": "Schaltplan",
+        "datasheet": "Datenblatt",
+        "image": "Foto"
+      }
     }
   }
 }
