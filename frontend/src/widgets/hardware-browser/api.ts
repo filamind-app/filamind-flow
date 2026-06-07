@@ -7,6 +7,8 @@ import type {
   DriversResult,
   HardwareCategories,
   HardwareSearchResult,
+  HostDetail,
+  HostsResult,
   MotorDetail,
   MotorsResult,
 } from './types'
@@ -121,4 +123,32 @@ export async function fetchMotorDetail(motorId: string): Promise<MotorDetail> {
   const response = await fetch(`${backendUrl}/api/hardware/motors/${encodeURIComponent(motorId)}`)
   if (!response.ok) throw new Error(`Motor request failed (${response.status})`)
   return (await response.json()) as MotorDetail
+}
+
+/** Search the canonical host-computer catalog (summaries, paginated). */
+export async function fetchHosts(params: {
+  q?: string
+  manufacturer?: string
+  kind?: string
+  limit?: number
+  offset?: number
+}): Promise<HostsResult> {
+  const { backendUrl } = resolveEndpoints()
+  const qs = new URLSearchParams()
+  if (params.q) qs.set('q', params.q)
+  if (params.manufacturer) qs.set('manufacturer', params.manufacturer)
+  if (params.kind) qs.set('kind', params.kind)
+  qs.set('limit', String(params.limit ?? 24))
+  qs.set('offset', String(params.offset ?? 0))
+  const response = await fetch(`${backendUrl}/api/hardware/hosts?${qs.toString()}`)
+  if (!response.ok) throw new Error(`Hosts request failed (${response.status})`)
+  return (await response.json()) as HostsResult
+}
+
+/** The full host record (specs + Klipper-open flag + copyable host config snippet). */
+export async function fetchHostDetail(hostId: string): Promise<HostDetail> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/hardware/hosts/${encodeURIComponent(hostId)}`)
+  if (!response.ok) throw new Error(`Host request failed (${response.status})`)
+  return (await response.json()) as HostDetail
 }

@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.132.0] - 2026-06-07
+
+### Added
+
+- **Host-computer catalog with copyable Klipper host config — a dedicated Hosts tab in the Hardware
+  Browser.** The 222 `Host Computers` rows become **220 canonical host entities** (185 SBCs, 22 x86
+  hosts, 12 Klipper OS images, 1 locked/proprietary), each with unified specs (SoC / CPU / RAM /
+  storage / suggested Klipper OS) and a **copyable config snippet**: the 208 open Linux hosts emit
+  the `[mcu host]` Linux-process-MCU block (`serial: /tmp/klipper_host_mcu`) + a setup note (runs
+  the Klipper host stack; flash the printer MCU separately; suggested OS image); OS-image rows and
+  locked/proprietary hosts (Bambu) get an honest note instead — no `[mcu host]` block.
+- Backend: `GET /api/hardware/hosts` (summaries, `?q`/`manufacturer`/`kind`, paginated) +
+  `GET /api/hardware/hosts/{host_id}` (full record incl. snippet). Frontend: `HostsPanel.vue` on a
+  new **Hosts** tab (the "Host Computers" catalog tile opens it). i18n ×7. New `test_host_catalog.py`
+  locks entities, snippet coverage, and the open-host-block-vs-note distinction.
+
 ## [0.131.0] - 2026-06-07
 
 ### Added
