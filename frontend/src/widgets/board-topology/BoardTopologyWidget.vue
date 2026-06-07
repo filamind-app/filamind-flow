@@ -8,7 +8,7 @@ import { describeError } from '@/core/describeError'
 import { fetchBoardDetail, fetchTopology } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { BoardDetail, Topology } from './types'
+import type { BoardDetail, BoardMedia, Topology } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -37,6 +37,25 @@ async function toggleBoard(boardId: string): Promise<void> {
       boardLoading.value = null
     }
   }
+}
+
+const LINK_FIELDS: { key: keyof BoardMedia; tk: string }[] = [
+  { key: 'pinoutUrl', tk: 'pinout' },
+  { key: 'schematicUrl', tk: 'schematic' },
+  { key: 'imageUrl', tk: 'image' },
+  { key: 'productUrl', tk: 'product' },
+  { key: 'repoUrl', tk: 'repo' },
+  { key: 'wikiUrl', tk: 'wiki' },
+  { key: 'datasheetUrl', tk: 'datasheet' },
+]
+
+/** Build the list of available reference links for a board (link-only). */
+function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
+  if (!media) return []
+  return LINK_FIELDS.filter((f) => media[f.key]).map((f) => ({
+    url: media[f.key] as string,
+    label: t(`boardTopology.board.links.${f.tk}`),
+  }))
 }
 
 function connLabel(conn: string): string {
@@ -213,10 +232,27 @@ onMounted(() => void load())
                     <dd class="min-w-0 truncate">{{ val }}</dd>
                   </template>
                 </dl>
+                <div
+                  v-if="mediaLinks(boardCache[m.board_id].media).length"
+                  class="flex flex-wrap items-center gap-1 pt-0.5"
+                >
+                  <span class="opacity-60">{{ t('boardTopology.board.links.title') }}:</span>
+                  <a
+                    v-for="lnk in mediaLinks(boardCache[m.board_id].media)"
+                    :key="lnk.url"
+                    :href="lnk.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="nb-btn bg-surface px-1 py-0 text-[9px]"
+                  >
+                    {{ lnk.label }}
+                  </a>
+                </div>
                 <p
                   v-if="
                     !boardCache[m.board_id].ports?.length &&
-                    !Object.keys(boardCache[m.board_id].specs || {}).length
+                    !Object.keys(boardCache[m.board_id].specs || {}).length &&
+                    !mediaLinks(boardCache[m.board_id].media).length
                   "
                   class="opacity-60"
                 >

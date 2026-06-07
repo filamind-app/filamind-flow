@@ -78,7 +78,17 @@
       "specsTitle": "Specs",
       "portsTitle": "Ports",
       "none": "No catalog details for this board yet.",
-      "loading": "Loading board…"
+      "loading": "Loading board…",
+      "links": {
+        "title": "Links",
+        "product": "Product",
+        "repo": "Repo",
+        "wiki": "Wiki",
+        "pinout": "Pinout",
+        "schematic": "Schematic",
+        "datasheet": "Datasheet",
+        "image": "Photo"
+      }
     }
   }
 }
