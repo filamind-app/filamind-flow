@@ -81,7 +81,13 @@
       "hide": "Masquer",
       "connector": "Connecteur",
       "function": "Fonction",
-      "pins": "Broches"
+      "pins": "Broches",
+      "use": "Utilisation",
+      "electronics": "Électronique (impacte la config)",
+      "notes": "Notes de config",
+      "config": "Extrait de config",
+      "copy": "Copier",
+      "copied": "Copié !"
     }
   }
 }

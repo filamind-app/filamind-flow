@@ -81,7 +81,13 @@
       "hide": "Ocultar",
       "connector": "Conector",
       "function": "Función",
-      "pins": "Pines"
+      "pins": "Pines",
+      "use": "Cómo usarlo",
+      "electronics": "Electrónica (afecta la config)",
+      "notes": "Notas de config",
+      "config": "Fragmento de config",
+      "copy": "Copiar",
+      "copied": "¡Copiado!"
     }
   }
 }
