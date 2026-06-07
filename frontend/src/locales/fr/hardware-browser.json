@@ -164,6 +164,18 @@
         "hosts": "Hôtes",
         "catalog": "Pièces"
       }
+    },
+    "facets": {
+      "manufacturer": "Fabricant",
+      "anyClass": "Toutes les classes",
+      "anyNema": "Toutes les tailles",
+      "anyKind": "Tous les types",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Carte principale",
+        "toolhead": "Tête d'outil",
+        "printer-preset": "Préréglage imprimante"
+      }
     }
   }
 }

@@ -164,6 +164,18 @@
         "hosts": "主机",
         "catalog": "部件"
       }
+    },
+    "facets": {
+      "manufacturer": "制造商",
+      "anyClass": "全部类别",
+      "anyNema": "全部尺寸",
+      "anyKind": "全部类型",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "主板",
+        "toolhead": "工具头",
+        "printer-preset": "打印机预设"
+      }
     }
   }
 }

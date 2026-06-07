@@ -1,18 +1,42 @@
 <script setup lang="ts">
 /** The motor catalog view: specs + a recommended Klipper run_current + a copyable config
  *  snippet. Thin wrapper over the shared EntityCatalog. */
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+import ComboSelect from '@/components/ui/ComboSelect.vue'
 
 import { fetchMotorDetail, fetchMotors } from './api'
 import EntityCatalog from './EntityCatalog.vue'
 import RelatedChips from './RelatedChips.vue'
 import type { MotorDetail, MotorSummary } from './types'
 import type { FocusTarget } from './useEntityFocus'
+import { useFacets } from './useFacets'
 
 const { t } = useI18n({ useScope: 'global' })
 
+const nema = ref<string | null>(null)
+const manufacturer = ref('')
+const reloadToken = ref(0)
+const { facets } = useFacets()
+const nemaOptions = computed(() =>
+  (facets.value?.nema ?? []).map((v) => ({
+    value: v,
+    label: t('hardwareBrowser.facets.nemaOption', { n: v }),
+  })),
+)
+function onFacetChange(): void {
+  reloadToken.value += 1
+}
+
 async function fetchPage(p: { q: string; offset: number; limit: number }) {
-  const r = await fetchMotors({ q: p.q, limit: p.limit, offset: p.offset })
+  const r = await fetchMotors({
+    q: p.q,
+    manufacturer: manufacturer.value,
+    nema: nema.value ?? '',
+    limit: p.limit,
+    offset: p.offset,
+  })
   return { items: r.motors, total: r.total }
 }
 const idOf = (m: MotorSummary): string => m.motor_id
@@ -25,10 +49,30 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'motors'
     :fetch-detail="fetchMotorDetail"
     :id-of="idOf"
     :focus-match="focusMatch"
+    :reload-token="reloadToken"
     search-key="hardwareBrowser.motors.search"
     total-key="hardwareBrowser.motors.total"
     none-key="hardwareBrowser.motors.none"
   >
+    <template #facets>
+      <div class="min-w-[8rem]">
+        <ComboSelect
+          v-model="nema"
+          :options="nemaOptions"
+          :placeholder="t('hardwareBrowser.facets.anyNema')"
+          clearable
+          @update:model-value="onFacetChange"
+        />
+      </div>
+      <input
+        v-model="manufacturer"
+        type="text"
+        :placeholder="t('hardwareBrowser.facets.manufacturer')"
+        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        @keyup.enter="onFacetChange"
+      />
+    </template>
+
     <template
       #summary="{ item, open, toggle }: { item: MotorSummary; open: boolean; toggle: () => void }"
     >

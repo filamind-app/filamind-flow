@@ -8,6 +8,7 @@ import type {
   DriverDetail,
   DriversResult,
   HardwareCategories,
+  HardwareFacets,
   HardwareSearchResult,
   HostDetail,
   HostsResult,
@@ -49,10 +50,19 @@ export async function fetchCategories(): Promise<HardwareCategories> {
   return (await response.json()) as HardwareCategories
 }
 
+/** Distinct filter values for the catalog facet dropdowns (boardClass / nema / kind). */
+export async function fetchFacets(): Promise<HardwareFacets> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/hardware/facets`)
+  if (!response.ok) throw new Error(`Facets request failed (${response.status})`)
+  return (await response.json()) as HardwareFacets
+}
+
 /** Search the canonical board catalog (summaries, paginated). */
 export async function fetchBoards(params: {
   q?: string
   manufacturer?: string
+  boardClass?: string
   limit?: number
   offset?: number
 }): Promise<BoardsResult> {
@@ -60,6 +70,7 @@ export async function fetchBoards(params: {
   const qs = new URLSearchParams()
   if (params.q) qs.set('q', params.q)
   if (params.manufacturer) qs.set('manufacturer', params.manufacturer)
+  if (params.boardClass) qs.set('board_class', params.boardClass)
   qs.set('limit', String(params.limit ?? 24))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware/boards?${qs.toString()}`)
@@ -163,6 +174,7 @@ export async function fetchHostDetail(hostId: string): Promise<HostDetail> {
 export async function fetchCatalog(params: {
   category: string
   q?: string
+  manufacturer?: string
   limit?: number
   offset?: number
 }): Promise<CatalogResult> {
@@ -170,6 +182,7 @@ export async function fetchCatalog(params: {
   const qs = new URLSearchParams()
   qs.set('category', params.category)
   if (params.q) qs.set('q', params.q)
+  if (params.manufacturer) qs.set('manufacturer', params.manufacturer)
   qs.set('limit', String(params.limit ?? 24))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware/catalog?${qs.toString()}`)

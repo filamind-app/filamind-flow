@@ -164,6 +164,18 @@
         "hosts": "Hosts",
         "catalog": "Piezas"
       }
+    },
+    "facets": {
+      "manufacturer": "Fabricante",
+      "anyClass": "Todas las clases",
+      "anyNema": "Todos los tamaños",
+      "anyKind": "Todos los tipos",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Placa principal",
+        "toolhead": "Cabezal",
+        "printer-preset": "Preajuste de impresora"
+      }
     }
   }
 }

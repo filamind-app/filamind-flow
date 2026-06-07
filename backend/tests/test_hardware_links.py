@@ -154,6 +154,13 @@ def test_mcu_entities_present_and_clean() -> None:
 
 
 # ── endpoints ─────────────────────────────────────────────────────────────────
+def test_facets_endpoint() -> None:
+    body = client.get("/api/hardware/facets").json()
+    assert "mainboard" in body["boardClass"]
+    assert "17" in body["nema"] and all(s.isdigit() for s in body["nema"])  # normalised to size
+    assert {"sbc", "x86"} <= set(body["kind"])
+
+
 def test_manufacturers_endpoint_is_canonical() -> None:
     rows = client.get("/api/hardware/manufacturers").json()
     assert rows and all("manufacturer_id" in m and "memberCount" in m for m in rows)
