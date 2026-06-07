@@ -176,3 +176,27 @@ export interface HostDetail extends HostSummary {
   configSnippet?: string
   configSource?: string
 }
+
+// ── Generic catalog entity (GET /api/hardware/catalog?category=…[ /{id}]) ──────
+export interface CatalogSummary {
+  catalog_id: string
+  name?: string
+  manufacturer?: string
+  category?: string
+  subsection?: string
+  specCount?: number
+}
+
+export interface CatalogResult {
+  total: number
+  count: number
+  offset: number
+  limit: number
+  entities: CatalogSummary[]
+}
+
+export interface CatalogEntityDetail extends CatalogSummary {
+  specs?: Record<string, string>
+  configSnippet?: string
+  configSource?: string
+}

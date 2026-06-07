@@ -3,6 +3,8 @@ import { resolveEndpoints } from '@/core/moonraker'
 import type {
   BoardDetail,
   BoardsResult,
+  CatalogEntityDetail,
+  CatalogResult,
   DriverDetail,
   DriversResult,
   HardwareCategories,
@@ -151,4 +153,32 @@ export async function fetchHostDetail(hostId: string): Promise<HostDetail> {
   const response = await fetch(`${backendUrl}/api/hardware/hosts/${encodeURIComponent(hostId)}`)
   if (!response.ok) throw new Error(`Host request failed (${response.status})`)
   return (await response.json()) as HostDetail
+}
+
+/** Search one category's canonical catalog entities (summaries, paginated). */
+export async function fetchCatalog(params: {
+  category: string
+  q?: string
+  limit?: number
+  offset?: number
+}): Promise<CatalogResult> {
+  const { backendUrl } = resolveEndpoints()
+  const qs = new URLSearchParams()
+  qs.set('category', params.category)
+  if (params.q) qs.set('q', params.q)
+  qs.set('limit', String(params.limit ?? 24))
+  qs.set('offset', String(params.offset ?? 0))
+  const response = await fetch(`${backendUrl}/api/hardware/catalog?${qs.toString()}`)
+  if (!response.ok) throw new Error(`Catalog request failed (${response.status})`)
+  return (await response.json()) as CatalogResult
+}
+
+/** The full catalog entity (specs + copyable config snippet). */
+export async function fetchCatalogEntity(catalogId: string): Promise<CatalogEntityDetail> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/hardware/catalog/${encodeURIComponent(catalogId)}`,
+  )
+  if (!response.ok) throw new Error(`Catalog entity request failed (${response.status})`)
+  return (await response.json()) as CatalogEntityDetail
 }

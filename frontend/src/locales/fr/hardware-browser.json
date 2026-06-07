@@ -74,7 +74,8 @@
     },
     "catalog": {
       "searchAll": "Tout chercher",
-      "items": "{n} éléments"
+      "items": "{n} éléments",
+      "back": "Catalogue"
     },
     "boards": {
       "search": "Rechercher des cartes",

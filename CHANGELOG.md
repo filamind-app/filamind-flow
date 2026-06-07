@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.134.0] - 2026-06-07
+
+### Added
+
+- **Every remaining catalog category now gets the canonical-entity + copyable-config treatment.**
+  The 9 still-flat categories — Sensors & Probes, Hotends & Heaters, Extruders, Fans/Power/Bed,
+  Cameras & Displays, Motion & Mechanical, Nozzles, Filament Materials, Electronics & Wiring —
+  are deduped into **1,224 canonical entities**, each with a **copyable Klipper config snippet**
+  (real config where it applies — `[adxl345]`/`[probe]` for sensors, `[extruder] gear_ratio` for
+  extruders, `lcd_type:` for displays, `rotation_distance` for leadscrews/belts, `sensor_type`/
+  `max_temp` for hotends, filament temp presets — or an honest note otherwise). Reads each row's
+  existing `Klipper` spec hint where present; fixed a source-data column swap in Filament / Cameras
+  & Displays / Motion (product was in the manufacturer field).
+- Backend: generic `GET /api/hardware/catalog?category=…` (summaries, paginated) +
+  `GET /api/hardware/catalog/{catalog_id}` (full record incl. snippet). Frontend: a generic
+  `CatalogPanel.vue` — clicking any category tile opens a rich deduped view with the copy section
+  (no extra top-level tabs; the tab bar stays at 6). New `test_catalog_entities.py`.
+
 ## [0.133.0] - 2026-06-07
 
 ### Added
