@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.124.0] - 2026-06-07
+
+### Added
+
+- **Web enrichment wave 5 — 32 more boards (now 159 web-enriched).** Same bounded 4-agent method;
+  agents now write their results to files directly (no manual transcription). +68 specs, +32 media,
+  +96 electronics facts, +96 config notes. Covers the BigTreeTech SKR (1.3/1.4/2/3/Pico/Mini-E3) +
+  Octopus + Manta (M4P/M5P/M8P/E3EZ) + Kraken + GTR + EBB/SB toolheads, FYSETC Spider/S6/Cheetah/
+  Catalyst.K/E4, Mellow Leviathan, LDO Nitehawk-36, Duet 2. Agents corrected several MCU facts from
+  source (Cheetah v1.2 = STM32F103, v2.0 = STM32F401, FYSETC E4 = ESP32).
+
 ## [0.123.0] - 2026-06-07
 
 ### Added
