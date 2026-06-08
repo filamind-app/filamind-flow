@@ -50,15 +50,21 @@ const TABS = computed(() => [
 // cross-link navigation: a RelatedChips click sets the shared focus → switch to its tab
 // (the destination panel watches the same focus to open the targeted entity).
 const { focus } = useEntityFocus()
-watch(focus, (f) => {
-  if (!f) return
-  if (f.tab === 'category') {
-    if (f.category) selectedCategory.value = f.category
-    mode.value = 'category'
-  } else {
-    mode.value = f.tab
-  }
-})
+// `immediate` so a focus set by ANOTHER widget (e.g. Board Topology) *before* this widget mounts
+// is still applied on mount — not only on a later change. Harmless when focus is null.
+watch(
+  focus,
+  (f) => {
+    if (!f) return
+    if (f.tab === 'category') {
+      if (f.category) selectedCategory.value = f.category
+      mode.value = 'category'
+    } else {
+      mode.value = f.tab
+    }
+  },
+  { immediate: true },
+)
 
 const q = ref('')
 const category = ref<string | null>(null)
