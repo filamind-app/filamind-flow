@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.156.0] - 2026-06-08
+
+### Changed
+
+- **Max-Flow reads its hotend calibration data from the unified hardware database.** The hotend
+  melt-zone / expected-max-flow / test-preset table behind the Max-Flow widget now lives inside
+  `hardware.json` (a `hotendFlow` section) and is served from there via `/api/reference/hotends`,
+  instead of a separate file — one database, one place to curate. It is kept as a dedicated
+  calibration section rather than merged onto the browse-catalog hotend entries, because the
+  calibration set has many fine-grained flow variants per product (e.g. ~10 "V6" profiles) that are
+  not distinct browsable products.
+
+### Removed
+
+- The standalone hotend-table data file (folded into the hardware database above); also dropped one
+  unusable garbage-named row.
+
 ## [0.155.0] - 2026-06-08
 
 ### Changed
