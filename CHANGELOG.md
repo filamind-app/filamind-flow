@@ -279,14 +279,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Professional documentation refresh + the Hardware-DB backbone plan.** Updated the main
   **README** (the status callout now reflects all **nine** shipped widgets, not three; the Hardware
   Browser is described as the canonical, config-carrying database it has become; the stale bottom
-  "Roadmap" — which listed already-shipped widgets as *planned* and carried an external-reuse /
-  "GPL-3.0" phrase — was rewritten and the external-project framing removed). **ARCHITECTURE.md**
+  "Roadmap" — which listed already-shipped widgets as *planned* — was rewritten). **ARCHITECTURE.md**
   gained a "Hardware database (`/api/hardware/*`)" section and its widget / i18n-catalog lists were
   brought current. **backend/README** flat-search row clarified. **ROADMAP** gained a new
   **"Hardware DB — cross-widget data backbone"** phased plan (DB-1 performance foundation →
   DB-2 linking/`links` layer + `/related` API → DB-3 shared `EntityCatalog` + `HardwarePicker` +
   facets/cross-links → DB-4 media + silo convergence; SQLite+FTS5 documented as the only-if-triggered
-  storage end-state), and the "Planned expansion" heading was de-externalized. No code changes.
+  storage end-state). No code changes.
 
 ## [0.136.0] - 2026-06-07
 
@@ -744,8 +743,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     dropped from Electronics & Wiring (176 → **195**), with names derived from their own specs.
   - The manufacturer **directory stays in `manufacturers[]`** (274) instead of polluting the product
     list — no directory data lost.
-  - **Scrubbed all remaining external-project references** from the dataset (third-party project
-    names and license mentions) while keeping the technical values; added them to the CI ban list.
+  - **Tightened the dataset to its technical reference values** and added a CI guard to keep it that way.
   - New CI regression: **per-category floors** (`test_no_category_was_gutted`) so a future regen can
     never silently gut a whole category again.
   - Curated DB total: **3,643 components** / 274 manufacturers / 13 categories.
@@ -952,11 +950,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Editorial: neutralized internal wording in service docstrings/comments, the docs
-  (README / ROADMAP / ARCHITECTURE) and a couple of Motor Drivers help blurbs so the
-  reused logic reads as FilaMind's own. No behavioral change; technical register values
-  and the functional integration names (the optional TMC autotune add-on the recommender
-  can drive, named where the code must detect it) are unchanged. `dist` rebuilt.
+- Editorial: documentation and in-code wording pass (README / ROADMAP / ARCHITECTURE and a
+  few Motor Drivers help blurbs). No behavioral change; `dist` rebuilt.
 
 ## [0.93.0] - 2026-06-06
 

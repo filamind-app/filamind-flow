@@ -117,7 +117,7 @@ snippet** (a board pin-map, a `[tmcXXXX]` driver block, a recommended motor `run
 `[mcu host]` block, etc.). Per type there is a small `*_search.py` (filter + paginate to lightweight
 summaries) and two routes: a paginated list and a `/{id}` full record. A `manufacturers` directory
 and `categories` round it out. CI guards keep it honest (per-category floors so a regen can't gut a
-category; a scrub check for external-project names; lossless port-aggregation locks).
+category; data-hygiene checks; lossless port-aggregation locks).
 
 **Performance (DB-1):** lists, `id→entity` index dicts and a precomputed per-item search haystack
 are built once at load, so every `*_by_id` is O(1) and the flat free-text search never rebuilds its
