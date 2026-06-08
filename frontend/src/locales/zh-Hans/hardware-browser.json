@@ -179,6 +179,9 @@
         "host": "主机 SBC"
       },
       "anyType": "全部类型"
+    },
+    "picker": {
+      "placeholder": "选择部件…"
     }
   }
 }

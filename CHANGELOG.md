@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.152.0] - 2026-06-08
+
+### Added
+
+- **`HardwarePicker` — a reusable, DB-backed "pick a part" control (DB-3d).** Generalises the
+  Motor Drivers `MotorPicker` into a type-driven component: give it `type` (`boards` / `drivers` /
+  `motors` / `hosts`) and it pages the full canonical catalog from `/api/hardware/*` into a
+  typeahead `ComboSelect`, emitting both the chosen id (`v-model`) and the full entity summary
+  (`@select`) so a host widget can auto-fill from it (e.g. pre-filling a motor's `run_current`).
+  Any widget can now embed catalog-backed part selection. Localised; unit-tested.
+
 ## [0.151.0] - 2026-06-08
 
 ### Fixed
