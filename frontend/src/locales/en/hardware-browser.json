@@ -170,6 +170,7 @@
       "anyClass": "Any class",
       "anyNema": "Any size",
       "anyKind": "Any type",
+      "anyType": "All types",
       "nemaOption": "NEMA {n}",
       "boardClass": {
         "mainboard": "Mainboard",

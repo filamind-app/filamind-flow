@@ -175,6 +175,7 @@ export async function fetchCatalog(params: {
   category: string
   q?: string
   manufacturer?: string
+  subsection?: string
   limit?: number
   offset?: number
 }): Promise<CatalogResult> {
@@ -183,6 +184,7 @@ export async function fetchCatalog(params: {
   qs.set('category', params.category)
   if (params.q) qs.set('q', params.q)
   if (params.manufacturer) qs.set('manufacturer', params.manufacturer)
+  if (params.subsection) qs.set('subsection', params.subsection)
   qs.set('limit', String(params.limit ?? 24))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware/catalog?${qs.toString()}`)

@@ -177,7 +177,8 @@
         "printer-preset": "Préréglage imprimante",
         "expansion": "Extension",
         "host": "Hôte (SBC)"
-      }
+      },
+      "anyType": "Tous les types"
     }
   }
 }

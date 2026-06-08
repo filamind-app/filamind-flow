@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.150.0] - 2026-06-08
+
+### Added
+
+- **Catalog sub-type facet — the mixed categories are now filterable like boards.** Several catalog
+  categories lump different component types together (Fans, Power & Bed = fans / power supplies /
+  heated beds / build surfaces; Electronics & Wiring = connectors / power electronics / endstops /
+  wire / filament sensors; Cameras & Displays; Motion & Mechanical; Sensors & Probes; Hotends &
+  Heaters; Nozzles). That classification already lived in each entity's `subsection`; it's now
+  surfaced as a **sub-type dropdown** in the catalog panel (the catalog equivalent of a board's
+  class), backed by `catalogSubsections` on `GET /api/hardware/facets` and a `subsection` filter on
+  `GET /api/hardware/catalog`. Single-type categories (Extruders, Filament Materials) get no facet.
+  Localised across all seven languages. Regression test added.
+
 ## [0.149.0] - 2026-06-08
 
 ### Fixed
