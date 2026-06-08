@@ -165,6 +165,9 @@
         "catalog": "Parts"
       }
     },
+    "picker": {
+      "placeholder": "Pick a part…"
+    },
     "facets": {
       "manufacturer": "Manufacturer",
       "anyClass": "Any class",
