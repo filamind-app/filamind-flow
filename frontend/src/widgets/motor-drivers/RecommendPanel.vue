@@ -37,6 +37,19 @@ const configText = ref<string | null>(null)
 
 const rows = computed(() => (rec.value ? recommendationRows(props.driver, rec.value) : []))
 
+/** True only when the assigned motor carries the datasheet specs the recommender needs. Motors
+ *  in the catalog without an autotune block can be assigned but can't be auto-tuned. */
+const hasSpecs = computed(() => {
+  const m = props.driver.motor
+  return (
+    !!m &&
+    m.resistance_ohm != null &&
+    m.inductance_H != null &&
+    m.holding_torque_Nm != null &&
+    m.max_current_A != null
+  )
+})
+
 /** The recommended register values as a SET_TMC_FIELD map. */
 function recFields(): Record<string, number> {
   const r = rec.value
@@ -140,7 +153,7 @@ async function copyConfig(): Promise<void> {
         <span class="opacity-70">V</span>
         <button
           class="nb-btn ms-auto bg-brand-cyan px-2 py-0.5 text-[11px]"
-          :disabled="loading"
+          :disabled="loading || !hasSpecs"
           @click="compute"
         >
           {{
@@ -152,6 +165,10 @@ async function copyConfig(): Promise<void> {
           }}
         </button>
       </div>
+
+      <p v-if="driver.motor && !hasSpecs" class="opacity-60">
+        {{ t('motorDrivers.recommendPanel.noSpecs') }}
+      </p>
 
       <p
         v-if="error"

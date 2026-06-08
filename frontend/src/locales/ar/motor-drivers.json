@@ -213,7 +213,8 @@
       "revert": "↺ تراجع",
       "copyConfig": "انسخ التهيئة",
       "autotune": "autotune",
-      "autotuneTitle": "يُشغّل AUTOTUNE_TMC إذا كانت إضافة klipper_tmc_autotune مثبَّتة"
+      "autotuneTitle": "يُشغّل AUTOTUNE_TMC إذا كانت إضافة klipper_tmc_autotune مثبَّتة",
+      "noSpecs": "لا تتوفر بيانات داتاشيت لهذا الموتور — توصية الضبط غير متاحة."
     },
     "motorSync": {
       "toggle": "مزامنة المحرّكات",

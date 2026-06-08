@@ -31,9 +31,9 @@ from app.services import (
     drivers_apply,
     drivers_service,
     field_policy,
-    motor_catalog,
     motor_mapping,
     recommender,
+    reference_data,
 )
 
 router = APIRouter(prefix="/drivers", tags=["drivers"])
@@ -75,13 +75,15 @@ async def drivers_catalog() -> DriverCatalog:
 
 @router.get("/motors", response_model=MotorCatalog)
 async def drivers_motors() -> MotorCatalog:
-    """The stepper-motor catalog (datasheet parameters) backing the motor picker."""
+    """The stepper-motor catalog (datasheet parameters) backing the motor picker — served from
+    the unified hardware catalog (the single source of truth)."""
+    motors = reference_data.motor_specs()
     return MotorCatalog.model_validate(
         {
-            "source": motor_catalog.source(),
-            "count": len(motor_catalog.all_motors()),
-            "manufacturers": motor_catalog.manufacturers(),
-            "motors": motor_catalog.all_motors(),
+            "source": "Hardware reference catalog",
+            "count": len(motors),
+            "manufacturers": reference_data.motor_spec_manufacturers(),
+            "motors": motors,
         }
     )
 
@@ -105,7 +107,7 @@ async def assign_motor(
 async def recommend_tuning(request: RecommendRequest) -> DriverRecommendation:
     """Recommend a run current + StealthChop/SpreadCycle registers for a motor (compute-only;
     applying the values is a separate, gated step)."""
-    motor = motor_catalog.lookup(request.motor_model)
+    motor = reference_data.motor_spec_lookup(request.motor_model)
     if motor is None:
         raise HTTPException(status_code=404, detail=f"Unknown motor '{request.motor_model}'")
     missing = recommender.missing_specs(motor)
@@ -164,7 +166,7 @@ async def init_driver(
 async def autotune(
     request: StepperRequest, settings: Settings = Depends(get_settings)
 ) -> ApplyResponse:
-    """Drive AUTOTUNE_TMC if the klipper_tmc_autotune extra is installed for this stepper."""
+    """Drive AUTOTUNE_TMC if a TMC autotune host extra is installed for this stepper."""
     data = await drivers_apply.run_autotune(settings.moonraker_url, request.stepper)
     return ApplyResponse.model_validate(data)
 

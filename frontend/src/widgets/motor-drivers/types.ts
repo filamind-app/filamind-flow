@@ -23,7 +23,10 @@ export interface DriverInfo {
 /** A stepper motor's datasheet parameters, from the motor catalog. */
 export interface MotorSpec {
   manufacturer: string
+  /** Stable unique key (catalog motor_id) — the picker value + mapping/recommend key. */
   model: string
+  /** Human-readable model name for display (not unique across manufacturers). */
+  name: string
   resistance_ohm: number | null
   inductance_H: number | null
   holding_torque_Nm: number | null

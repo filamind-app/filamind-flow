@@ -711,10 +711,13 @@ class DriverInfo(BaseModel):
 
 
 class MotorSpec(BaseModel):
-    """A stepper motor's datasheet parameters, from the motor catalog."""
+    """A stepper motor's datasheet parameters, from the hardware catalog."""
 
     manufacturer: str = ""
+    #: Stable unique key (the catalog ``motor_id``) — the picker value + mapping/recommend key.
     model: str
+    #: Human-readable model name for display (e.g. "17HS4401"); not unique across manufacturers.
+    name: str = ""
     resistance_ohm: float | None = None
     inductance_H: float | None = None
     holding_torque_Nm: float | None = None

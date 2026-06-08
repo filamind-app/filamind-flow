@@ -62,9 +62,10 @@ def test_missing_specs() -> None:
 
 
 def test_recommend_route() -> None:
-    from app.services import motor_catalog
+    from app.services import reference_data
 
-    model = str(motor_catalog.all_motors()[0]["model"])
+    # a motor that carries datasheet specs (so the recommendation computes, not 422)
+    model = next(m["model"] for m in reference_data.motor_specs() if m["resistance_ohm"])
     client = TestClient(create_app())
 
     ok = client.post("/api/drivers/recommend", json={"motor_model": model, "voltage": 24})

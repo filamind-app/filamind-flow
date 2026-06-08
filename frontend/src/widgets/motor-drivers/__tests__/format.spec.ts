@@ -29,12 +29,13 @@ function motor(overrides: Partial<MotorSpec> = {}): MotorSpec {
   return {
     manufacturer: 'LDO Motors',
     model: 'ldo-42sth48-2004ah',
+    name: '42STH48-2004AH',
     resistance_ohm: 1.5,
     inductance_H: 0.0028,
     holding_torque_Nm: 0.45,
     max_current_A: 2.0,
     steps_per_rev: 200,
-    source: 'motor_database.cfg',
+    source: 'catalog',
     ...overrides,
   }
 }
@@ -298,9 +299,9 @@ describe('motorSpecLabel', () => {
 
 describe('filterMotors', () => {
   const catalog = [
-    motor({ manufacturer: 'LDO Motors', model: 'ldo-42sth48-2004ah' }),
-    motor({ manufacturer: 'Moons', model: 'ms17hd2p4100' }),
-    motor({ manufacturer: 'OMC / StepperOnline', model: '17hs19-2004s1' }),
+    motor({ manufacturer: 'LDO Motors', model: 'ldo-42sth48-2004ah', name: '42STH48-2004AH' }),
+    motor({ manufacturer: 'Moons', model: 'ms17hd2p4100', name: 'MS17HD2P4100' }),
+    motor({ manufacturer: 'OMC / StepperOnline', model: '17hs19-2004s1', name: '17HS19-2004S1' }),
   ]
   it('returns all motors for an empty query', () => {
     expect(filterMotors(catalog, '  ')).toHaveLength(3)

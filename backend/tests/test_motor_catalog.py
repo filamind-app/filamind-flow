@@ -48,15 +48,37 @@ def test_motors_carry_autotune_params() -> None:
     assert common >= len(with_at) - 20, "unexpected spread of non-standard step counts"
 
 
+def test_motor_drivers_catalog_backed() -> None:
+    """Convergence lock: the Motor Drivers motor catalog is served from the unified hardware
+    catalog (reference_data), not a separate silo. Each entry is the flat MotorSpec shape the
+    recommender needs, `model` is the unique motor_id, and a saved mapping key still resolves."""
+    specs = reference_data.motor_specs()
+    assert len(specs) == len(reference_data.motors()) >= 600
+    models = [s["model"] for s in specs]
+    assert len(models) == len(set(models)), "motor model (motor_id) must be unique for the picker"
+    with_specs = [s for s in specs if s["resistance_ohm"]]
+    assert len(with_specs) >= 550, "most motors carry flattened autotune params"
+    for s in with_specs[:50]:
+        # the exact flat top-level keys recommender.recommend() reads
+        for k in ("resistance_ohm", "inductance_H", "holding_torque_Nm", "max_current_A"):
+            assert s.get(k), s["model"]
+        assert s["name"] and s["manufacturer"]
+    # a motor resolves by motor_id, by display name, and by alias (zero-migration of saved maps)
+    sample = next(m for m in reference_data.motors() if m.get("aliases"))
+    assert reference_data.motor_spec_lookup(sample["motor_id"]) is not None
+    assert reference_data.motor_spec_lookup(sample["name"]) is not None
+    assert reference_data.motor_spec_lookup(sample["aliases"][0]) is not None
+    assert reference_data.motor_spec_lookup("does-not-exist") is None
+
+
 def test_motor_driver_catalog_no_external_refs() -> None:
-    """The Motor Drivers data silos (exposed verbatim by /api/drivers/motors) must not name any
-    other project as their provenance — present the reused reference data as FilaMind's own."""
-    from app.services import driver_catalog, motor_catalog
+    """The Motor Drivers data (exposed by /api/drivers/motors) must not name any other project as
+    its provenance — present the reused reference data as FilaMind's own."""
+    from app.services import driver_catalog
 
     blob = json.dumps(
         {
-            "ms": motor_catalog.source(),
-            "mm": motor_catalog.all_motors(),
+            "ms": reference_data.motor_specs(),
             "ds": driver_catalog.source(),
             "dd": driver_catalog.all_drivers(),
         },

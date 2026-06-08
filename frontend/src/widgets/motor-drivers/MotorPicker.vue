@@ -21,11 +21,11 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ assign: [stepper: string, model: string | null] }>()
 
-/** Catalog -> combobox options (label = model, sublabel = maker + key specs). */
+/** Catalog -> combobox options (value = motor_id, label = name, sublabel = maker + key specs). */
 const options = computed(() =>
   props.catalog.map((m) => ({
     value: m.model,
-    label: m.model,
+    label: m.name || m.model,
     sublabel: `${m.manufacturer} · ${motorSpecLabel(m)}`,
   })),
 )
@@ -36,7 +36,7 @@ const selectedModel = computed(() => props.assigned?.model ?? null)
   <div class="font-mono text-[11px]">
     <div class="mb-1 min-w-0 truncate">
       <span class="opacity-60">{{ t('motorDrivers.motorPicker.motorLabel') }}</span>
-      <b v-if="assigned"> {{ assigned.manufacturer }} {{ assigned.model }}</b>
+      <b v-if="assigned"> {{ assigned.manufacturer }} {{ assigned.name || assigned.model }}</b>
       <span v-else class="opacity-60"> {{ t('motorDrivers.motorPicker.notSet') }}</span>
     </div>
     <div v-if="assigned" class="mb-1 truncate opacity-70">{{ motorSpecLabel(assigned) }}</div>
