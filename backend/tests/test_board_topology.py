@@ -187,3 +187,20 @@ def test_analyze_joins_chip_to_db_mcu_entity() -> None:
     # SECTIONS' primary mcu is an stm32f103 (from its serial) — a real DB MCU entity.
     assert by_name["mcu"]["mcu_id"] == "stm32f103"
     assert by_name["mcu"]["mcu_family"] == "STM32F1"
+
+
+def test_host_node_links_to_catalog_host() -> None:
+    """Phase P5: the host's CPU/SoC string links to a catalog host entity (best-effort)."""
+    hosts = [
+        {"host_id": "btt-cb1", "name": "BIGTREETECH CB1", "soc": "Allwinner H616", "cpu": "A53"},
+        {"host_id": "rpi4", "name": "Raspberry Pi 4", "soc": "BCM2711", "cpu": "A72"},
+    ]
+    node = board_topology.host_node(
+        {"cpu_info": {"model": "Allwinner H616 (4x Cortex-A53)"}}, hosts
+    )
+    assert node["host_id"] == "btt-cb1"
+    assert node["host_match"] == "suggested"
+    assert node["role"] == "sbc"
+    # no system info -> graceful stub, no link
+    stub = board_topology.host_node({}, hosts)
+    assert stub["host_id"] is None and stub["name"] == "host"

@@ -6,7 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.161.0] - 2026-06-08
+## [0.162.0] - 2026-06-08
+
+### Changed
+
+- **Board Topology — the host node is now identified and linked to the hardware database (DB-link
+  uplift, phase 6 of 9).** The topology reads the host's CPU / SoC from Moonraker
+  (`/machine/system_info`) and best-effort matches it to a catalog host (e.g. *BIGTREETECH CB1*),
+  so the host node shows the real machine and links through to it in the Hardware Browser instead of
+  a generic "host" stub. The Moonraker call is optional — an older Moonraker without it degrades
+  gracefully (the topology still returns). (`GET /api/topology` host gained `host_id` /
+  `host_match` / `host_match_confidence`.)
 
 ### Changed
 

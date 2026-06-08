@@ -11,6 +11,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+import httpx
+
 from app.services import hardware_links, reference_data
 from app.services.moonraker_client import MoonrakerClient
 
@@ -169,6 +171,44 @@ def _attach_components(sections: dict[str, Any], mcus: list[dict[str, Any]]) -> 
         target["components"].append({"section": str(name), "kind": kind})
 
 
+def _resolve_host_id(model: str, hosts: list[dict[str, Any]]) -> tuple[str | None, float]:
+    """Best-effort link of the host's CPU/SoC string to a catalog ``host_id`` (a normalized
+    substring match against each host's name / soc / cpu). Low-confidence *suggested* link —
+    SBC SoC strings are generic, so ``(None, 0)`` is common."""
+    nm = _norm(model)
+    if len(nm) < 4:
+        return None, 0.0
+    best: tuple[str | None, float] = (None, 0.0)
+    for h in hosts:
+        for field, weight in (("soc", 0.6), ("name", 0.5), ("cpu", 0.5)):
+            nc = _norm(h.get(field))
+            if nc and len(nc) > 3 and (nc in nm or nm in nc) and weight > best[1]:
+                best = (h.get("host_id"), weight)
+    return best
+
+
+def host_node(
+    system_info: dict[str, Any], hosts: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
+    """Build the host node from ``/machine/system_info`` with a best-effort link to a DB host."""
+    catalog = hosts if hosts is not None else reference_data.hosts()
+    info = system_info if isinstance(system_info, dict) else {}
+    raw_cpu = info.get("cpu_info")
+    cpu: dict[str, Any] = raw_cpu if isinstance(raw_cpu, dict) else {}
+    raw_distro = info.get("distribution")
+    distro: dict[str, Any] = raw_distro if isinstance(raw_distro, dict) else {}
+    model = str(cpu.get("model") or cpu.get("cpu_desc") or "").strip()
+    name = model or str(distro.get("name") or "").strip() or "host"
+    host_id, conf = _resolve_host_id(model, catalog)
+    return {
+        "name": name,
+        "role": "sbc",
+        "host_id": host_id,
+        "host_match": "suggested" if host_id else None,
+        "host_match_confidence": conf,
+    }
+
+
 def analyze(
     sections: dict[str, Any],
     board_patterns: dict[str, Any] | None = None,
@@ -236,5 +276,12 @@ async def gather_topology(client: MoonrakerClient) -> dict[str, Any]:
     configfile = await client.query_objects(["configfile"])
     sections = _sections(configfile.get("configfile"))
     result = analyze(sections)
+    # Identify the host SBC (optional — older Moonraker may lack /machine/system_info; degrade
+    # gracefully so the topology still returns).
+    try:
+        system_info = await client.machine_system_info()
+        result["host"] = host_node(system_info)
+    except httpx.HTTPError:
+        pass
     result["reachable"] = True
     return result
