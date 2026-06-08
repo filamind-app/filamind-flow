@@ -201,7 +201,12 @@ onMounted(() => void load())
                   ? t('boardTopology.mcu.hideBoard')
                   : t('boardTopology.mcu.viewBoard')
               }}
-              <span class="opacity-70">· {{ t('boardTopology.board.suggested') }}</span>
+              <span class="opacity-70"
+                >· {{ t('boardTopology.board.suggested')
+                }}<template v-if="m.board_match_confidence">
+                  {{ Math.round(m.board_match_confidence * 100) }}%</template
+                ></span
+              >
             </button>
 
             <div v-if="openBoard === m.board_id" class="nb-card space-y-1 bg-paper p-2 text-[10px]">
@@ -211,6 +216,17 @@ onMounted(() => void load())
               <template v-else-if="boardCache[m.board_id]">
                 <div class="font-display text-[11px] font-bold">
                   {{ boardCache[m.board_id].display_name || boardCache[m.board_id].model }}
+                </div>
+                <div
+                  v-if="boardCache[m.board_id].manufacturer || boardCache[m.board_id].boardClass"
+                  class="flex flex-wrap items-center gap-1 font-mono opacity-70"
+                >
+                  <span v-if="boardCache[m.board_id].manufacturer">{{
+                    boardCache[m.board_id].manufacturer
+                  }}</span>
+                  <span v-if="boardCache[m.board_id].boardClass" class="rounded bg-surface px-1">{{
+                    boardCache[m.board_id].boardClass
+                  }}</span>
                 </div>
                 <div v-if="boardCache[m.board_id].ports?.length" class="font-mono opacity-70">
                   {{ t('boardTopology.board.portsTitle') }}:
