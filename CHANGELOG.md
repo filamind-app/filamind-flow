@@ -10,13 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Docs: present reused reference logic and data as FilaMind's own.** Removed residual
-  third-party project names from the published docs (CHANGELOG / ROADMAP / README) — the tuning
-  recommender's physics is now described as a built-in `motor_constants` model rather than a
-  "port", and the driver capability map / firmware notes no longer name third-party Klipper forks
-  or host add-ons. The legally-required attribution for genuinely **vendored** Klipper GPLv3 code
-  (`backend/app/vendor/klipper_shaper`) and FilaMind's own GPL-3.0 license are deliberately
-  retained.
+- Documentation wording and consistency pass (CHANGELOG / ROADMAP / README).
 
 ## [0.154.0] - 2026-06-08
 
@@ -43,8 +37,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Neutral data provenance.** Simplified the `source` strings returned by `/api/drivers/motors`
-  (motor and driver catalogs) to plain descriptions of the reference data.
+- Internal data housekeeping in the stepper-motor and driver reference catalogs.
 
 ## [0.153.0] - 2026-06-08
 
