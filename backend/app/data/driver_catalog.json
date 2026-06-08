@@ -1,5 +1,5 @@
 {
-  "source": "Curated from hardware-database/02-tmc-drivers/tmc_drivers_reference.md — interface and register/field capabilities verified against the Kalico driver modules (klippy/extras). Electrical figures are datasheet-typical and vary with board/sense-resistor/cooling. Keyed by the Klipper config section name (the model Klipper reports).",
+  "source": "Curated TMC driver reference: interface and register/field capabilities; electrical figures are datasheet-typical and vary with board, sense resistor and cooling. Keyed by the Klipper config section name (the model Klipper reports).",
   "drivers": [
     {
       "model": "tmc2208",

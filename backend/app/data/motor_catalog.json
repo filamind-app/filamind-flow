@@ -1,5 +1,5 @@
 {
-  "source": "Baked from app/data/sources/stepper_motors.csv (hardware-database/01-stepper-motors) by scripts/bake_motor_catalog.py.",
+  "source": "Stepper-motor electrical reference: datasheet-typical phase resistance, inductance, holding torque, rated current and steps/rev. Keyed by model name.",
   "count": 202,
   "manufacturers": [
     "ACT Motor",
@@ -53,7 +53,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "BIGTREETECH/BIQU",
@@ -63,7 +63,7 @@
       "holding_torque_Nm": 0.11,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "BIGTREETECH/BIQU",
@@ -73,7 +73,7 @@
       "holding_torque_Nm": 0.11,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "BIGTREETECH/BIQU",
@@ -83,7 +83,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Bondtech",
@@ -93,7 +93,7 @@
       "holding_torque_Nm": 0.16,
       "max_current_A": 0.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Bondtech",
@@ -103,7 +103,7 @@
       "holding_torque_Nm": 0.294,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Bondtech",
@@ -113,7 +113,7 @@
       "holding_torque_Nm": 0.09,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Bondtech",
@@ -123,7 +123,7 @@
       "holding_torque_Nm": 0.09,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Cloudray",
@@ -133,7 +133,7 @@
       "holding_torque_Nm": 0.71,
       "max_current_A": 1.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Creality",
@@ -143,7 +143,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Creality",
@@ -153,7 +153,7 @@
       "holding_torque_Nm": 0.48,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Creality",
@@ -163,7 +163,7 @@
       "holding_torque_Nm": 0.57,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Creality",
@@ -173,7 +173,7 @@
       "holding_torque_Nm": 0.76,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "DamenCNC",
@@ -183,7 +183,7 @@
       "holding_torque_Nm": 1.8,
       "max_current_A": 3.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "DFH",
@@ -193,7 +193,7 @@
       "holding_torque_Nm": 0.12,
       "max_current_A": 0.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "DFH",
@@ -203,7 +203,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "FLSUN",
@@ -213,7 +213,7 @@
       "holding_torque_Nm": 0.12,
       "max_current_A": 0.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "FLSUN",
@@ -223,7 +223,7 @@
       "holding_torque_Nm": 0.284,
       "max_current_A": 0.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -233,7 +233,7 @@
       "holding_torque_Nm": 0.49,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -243,7 +243,7 @@
       "holding_torque_Nm": 0.67,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -253,7 +253,7 @@
       "holding_torque_Nm": 0.59,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -263,7 +263,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -273,7 +273,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -283,7 +283,7 @@
       "holding_torque_Nm": 0.32,
       "max_current_A": 0.4,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -293,7 +293,7 @@
       "holding_torque_Nm": 0.35,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -303,7 +303,7 @@
       "holding_torque_Nm": 0.11,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -313,7 +313,7 @@
       "holding_torque_Nm": 0.12,
       "max_current_A": 0.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Fysetc",
@@ -323,7 +323,7 @@
       "holding_torque_Nm": 0.5,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Geeetech",
@@ -333,7 +333,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Guangzhou Bozu",
@@ -343,7 +343,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 0.9,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Hanpose",
@@ -353,7 +353,7 @@
       "holding_torque_Nm": 0.28,
       "max_current_A": 1.3,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Hanpose",
@@ -363,7 +363,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Hanpose",
@@ -373,7 +373,7 @@
       "holding_torque_Nm": 0.7,
       "max_current_A": 1.7,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "HoneyBadger (Fabreeko)",
@@ -383,7 +383,7 @@
       "holding_torque_Nm": 0.49,
       "max_current_A": 2.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Jinkong",
@@ -393,7 +393,7 @@
       "holding_torque_Nm": 0.2549729,
       "max_current_A": 1.33,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Jinkong",
@@ -403,7 +403,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Jinkong",
@@ -413,7 +413,7 @@
       "holding_torque_Nm": 0.44,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Jinkong",
@@ -423,7 +423,7 @@
       "holding_torque_Nm": 0.18,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -433,7 +433,7 @@
       "holding_torque_Nm": 0.15,
       "max_current_A": 0.84,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -443,7 +443,7 @@
       "holding_torque_Nm": 0.37,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -453,7 +453,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -463,7 +463,7 @@
       "holding_torque_Nm": 0.44,
       "max_current_A": 1.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -473,7 +473,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -483,7 +483,7 @@
       "holding_torque_Nm": 0.28,
       "max_current_A": 0.84,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -493,7 +493,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.2,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -503,7 +503,7 @@
       "holding_torque_Nm": 0.65,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kelimotor",
@@ -513,7 +513,7 @@
       "holding_torque_Nm": 0.1,
       "max_current_A": 1.2,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kingroon",
@@ -523,7 +523,7 @@
       "holding_torque_Nm": 0.13,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kingroon",
@@ -533,7 +533,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Kingroon",
@@ -543,7 +543,7 @@
       "holding_torque_Nm": 0.36,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -553,7 +553,7 @@
       "holding_torque_Nm": 0.165,
       "max_current_A": 0.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -563,7 +563,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -573,7 +573,7 @@
       "holding_torque_Nm": 0.37,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -583,7 +583,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -593,7 +593,7 @@
       "holding_torque_Nm": 0.06,
       "max_current_A": 0.35,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -603,7 +603,7 @@
       "holding_torque_Nm": 0.1,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -613,7 +613,7 @@
       "holding_torque_Nm": 0.08,
       "max_current_A": 0.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -623,7 +623,7 @@
       "holding_torque_Nm": 0.1,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -633,7 +633,7 @@
       "holding_torque_Nm": 0.1,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -643,7 +643,7 @@
       "holding_torque_Nm": 0.095,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -653,7 +653,7 @@
       "holding_torque_Nm": 0.18,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -663,7 +663,7 @@
       "holding_torque_Nm": 0.16,
       "max_current_A": 1.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -673,7 +673,7 @@
       "holding_torque_Nm": 0.2,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -683,7 +683,7 @@
       "holding_torque_Nm": 0.24,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -693,7 +693,7 @@
       "holding_torque_Nm": 0.23,
       "max_current_A": 1.4,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -703,7 +703,7 @@
       "holding_torque_Nm": 0.2,
       "max_current_A": 1.4,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -713,17 +713,17 @@
       "holding_torque_Nm": 0.18,
       "max_current_A": 1.4,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
       "model": "ldo-42sth34-1004l321e",
       "resistance_ohm": 8.0,
       "inductance_H": 0.0095,
-      "holding_torque_Nm": 107.7,
+      "holding_torque_Nm": 0.59,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -733,7 +733,7 @@
       "holding_torque_Nm": 0.59,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -743,7 +743,7 @@
       "holding_torque_Nm": 0.22,
       "max_current_A": 1.33,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -753,7 +753,7 @@
       "holding_torque_Nm": 0.2,
       "max_current_A": 1.5,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -763,7 +763,7 @@
       "holding_torque_Nm": 0.49,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -773,7 +773,7 @@
       "holding_torque_Nm": 0.39,
       "max_current_A": 1.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -783,7 +783,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -793,7 +793,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -803,7 +803,7 @@
       "holding_torque_Nm": 0.33,
       "max_current_A": 1.68,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -813,7 +813,7 @@
       "holding_torque_Nm": 0.35,
       "max_current_A": 2.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -823,7 +823,7 @@
       "holding_torque_Nm": 0.5,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -833,7 +833,7 @@
       "holding_torque_Nm": 0.5,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -843,7 +843,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.68,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -853,7 +853,7 @@
       "holding_torque_Nm": 0.59,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -863,7 +863,7 @@
       "holding_torque_Nm": 0.49,
       "max_current_A": 2.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -873,7 +873,7 @@
       "holding_torque_Nm": 0.44,
       "max_current_A": 2.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -883,7 +883,7 @@
       "holding_torque_Nm": 0.55,
       "max_current_A": 2.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -893,7 +893,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 2.5,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -903,7 +903,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 2.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -913,7 +913,7 @@
       "holding_torque_Nm": 0.85,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -923,7 +923,7 @@
       "holding_torque_Nm": 0.6,
       "max_current_A": 2.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -933,7 +933,7 @@
       "holding_torque_Nm": 0.6,
       "max_current_A": 2.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -943,7 +943,7 @@
       "holding_torque_Nm": 0.9,
       "max_current_A": 3.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -953,7 +953,7 @@
       "holding_torque_Nm": 0.8,
       "max_current_A": 3.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -963,7 +963,7 @@
       "holding_torque_Nm": 0.8,
       "max_current_A": 3.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LDO Motors",
@@ -973,7 +973,7 @@
       "holding_torque_Nm": 0.72,
       "max_current_A": 3.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Leadshine (Leisai)",
@@ -983,7 +983,7 @@
       "holding_torque_Nm": 0.8,
       "max_current_A": 2.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Leadshine (Leisai)",
@@ -993,7 +993,7 @@
       "holding_torque_Nm": 0.6,
       "max_current_A": 2.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LKD",
@@ -1003,7 +1003,7 @@
       "holding_torque_Nm": 0.59,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "LKD",
@@ -1013,7 +1013,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 2.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Longs Motor",
@@ -1023,7 +1023,7 @@
       "holding_torque_Nm": 0.6,
       "max_current_A": 2.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Mercury",
@@ -1033,7 +1033,7 @@
       "holding_torque_Nm": 0.23,
       "max_current_A": 0.33,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Monoprice",
@@ -1043,7 +1043,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Monoprice",
@@ -1053,7 +1053,7 @@
       "holding_torque_Nm": 0.22,
       "max_current_A": 1.33,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1063,7 +1063,7 @@
       "holding_torque_Nm": 0.39,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1073,7 +1073,7 @@
       "holding_torque_Nm": 0.1,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1083,7 +1083,7 @@
       "holding_torque_Nm": 0.19,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1093,7 +1093,7 @@
       "holding_torque_Nm": 0.48,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1103,7 +1103,7 @@
       "holding_torque_Nm": 0.29,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1113,7 +1113,7 @@
       "holding_torque_Nm": 0.054,
       "max_current_A": 0.65,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1123,7 +1123,7 @@
       "holding_torque_Nm": 0.82,
       "max_current_A": 3.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1133,7 +1133,7 @@
       "holding_torque_Nm": 1.5,
       "max_current_A": 5.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1143,7 +1143,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1153,7 +1153,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1163,7 +1163,7 @@
       "holding_torque_Nm": 0.5,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1173,7 +1173,7 @@
       "holding_torque_Nm": 0.62,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1183,7 +1183,7 @@
       "holding_torque_Nm": 0.63,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1193,7 +1193,7 @@
       "holding_torque_Nm": 0.67,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MOONS",
@@ -1203,7 +1203,7 @@
       "holding_torque_Nm": 0.83,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1213,7 +1213,7 @@
       "holding_torque_Nm": 0.127,
       "max_current_A": 1.4,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1223,7 +1223,7 @@
       "holding_torque_Nm": 0.314,
       "max_current_A": 1.33,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1233,7 +1233,7 @@
       "holding_torque_Nm": 0.31,
       "max_current_A": 1.33,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1243,7 +1243,7 @@
       "holding_torque_Nm": 0.431,
       "max_current_A": 1.2,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1253,7 +1253,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1263,7 +1263,7 @@
       "holding_torque_Nm": 0.343,
       "max_current_A": 1.68,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1273,7 +1273,7 @@
       "holding_torque_Nm": 0.55,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1283,7 +1283,7 @@
       "holding_torque_Nm": 0.431,
       "max_current_A": 1.68,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1293,7 +1293,7 @@
       "holding_torque_Nm": 0.804,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1303,7 +1303,7 @@
       "holding_torque_Nm": 1.24,
       "max_current_A": 2.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Motech",
@@ -1313,7 +1313,7 @@
       "holding_torque_Nm": 1.87,
       "max_current_A": 2.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "MotionKing",
@@ -1323,7 +1323,7 @@
       "holding_torque_Nm": 0.52,
       "max_current_A": 1.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1333,7 +1333,7 @@
       "holding_torque_Nm": 0.46,
       "max_current_A": 2.0,
       "steps_per_rev": 400,
-      "source": "motor_data.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1343,7 +1343,7 @@
       "holding_torque_Nm": 1.89,
       "max_current_A": 2.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1353,7 +1353,7 @@
       "holding_torque_Nm": 0.09,
       "max_current_A": 1.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1363,7 +1363,7 @@
       "holding_torque_Nm": 0.14,
       "max_current_A": 0.4,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1373,7 +1373,7 @@
       "holding_torque_Nm": 0.125,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1383,7 +1383,7 @@
       "holding_torque_Nm": 0.23,
       "max_current_A": 0.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1393,7 +1393,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1403,7 +1403,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1413,7 +1413,7 @@
       "holding_torque_Nm": 0.1,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1423,7 +1423,7 @@
       "holding_torque_Nm": 0.17,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1433,7 +1433,7 @@
       "holding_torque_Nm": 0.26,
       "max_current_A": 1.2,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1443,7 +1443,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1453,7 +1453,7 @@
       "holding_torque_Nm": 0.55,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1463,7 +1463,7 @@
       "holding_torque_Nm": 0.6,
       "max_current_A": 2.1,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1473,7 +1473,7 @@
       "holding_torque_Nm": 0.11,
       "max_current_A": 1.2,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1483,7 +1483,7 @@
       "holding_torque_Nm": 0.44,
       "max_current_A": 1.68,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1493,7 +1493,7 @@
       "holding_torque_Nm": 0.46,
       "max_current_A": 2.0,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1503,7 +1503,7 @@
       "holding_torque_Nm": 0.16,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1513,7 +1513,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1523,7 +1523,7 @@
       "holding_torque_Nm": 0.36,
       "max_current_A": 1.58,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1533,7 +1533,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1543,7 +1543,7 @@
       "holding_torque_Nm": 0.59,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1553,7 +1553,7 @@
       "holding_torque_Nm": 0.59,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1563,7 +1563,7 @@
       "holding_torque_Nm": 0.55,
       "max_current_A": 2.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1573,7 +1573,7 @@
       "holding_torque_Nm": 0.65,
       "max_current_A": 2.1,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "OMC (StepperOnline)",
@@ -1583,7 +1583,7 @@
       "holding_torque_Nm": 0.3,
       "max_current_A": 1.5,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oriental Motor",
@@ -1593,7 +1593,7 @@
       "holding_torque_Nm": 0.37,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oriental Motor",
@@ -1603,7 +1603,7 @@
       "holding_torque_Nm": 0.37,
       "max_current_A": 2.3,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oriental Motor",
@@ -1613,7 +1613,7 @@
       "holding_torque_Nm": 0.58,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oriental Motor",
@@ -1623,7 +1623,7 @@
       "holding_torque_Nm": 0.58,
       "max_current_A": 2.3,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oukeda",
@@ -1633,7 +1633,7 @@
       "holding_torque_Nm": 0.28,
       "max_current_A": 0.4,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oukeda",
@@ -1643,7 +1643,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oukeda",
@@ -1653,7 +1653,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oukeda",
@@ -1663,7 +1663,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oukeda",
@@ -1673,7 +1673,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oukeda",
@@ -1683,7 +1683,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Oukeda",
@@ -1693,7 +1693,7 @@
       "holding_torque_Nm": 0.59,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "QIDI",
@@ -1703,7 +1703,7 @@
       "holding_torque_Nm": 0.6,
       "max_current_A": 1.2,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "QIDI",
@@ -1713,7 +1713,7 @@
       "holding_torque_Nm": 0.41,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "QIDI",
@@ -1723,7 +1723,7 @@
       "holding_torque_Nm": 0.09,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "RATTM Motor",
@@ -1733,7 +1733,7 @@
       "holding_torque_Nm": 0.52,
       "max_current_A": 1.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "RB Motor",
@@ -1743,7 +1743,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Shengyang",
@@ -1753,7 +1753,7 @@
       "holding_torque_Nm": 0.135,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Shengyang",
@@ -1763,7 +1763,7 @@
       "holding_torque_Nm": 0.28,
       "max_current_A": 0.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Shengyang",
@@ -1773,7 +1773,7 @@
       "holding_torque_Nm": 0.26,
       "max_current_A": 1.2,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Shengyang",
@@ -1783,7 +1783,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Shengyang",
@@ -1793,7 +1793,7 @@
       "holding_torque_Nm": 0.56,
       "max_current_A": 4.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Shengyang",
@@ -1803,7 +1803,7 @@
       "holding_torque_Nm": 0.56,
       "max_current_A": 4.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Siboor",
@@ -1813,7 +1813,7 @@
       "holding_torque_Nm": 0.12,
       "max_current_A": 1.88,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Siboor",
@@ -1823,7 +1823,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Siboor",
@@ -1833,7 +1833,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.2,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Siboor",
@@ -1843,7 +1843,7 @@
       "holding_torque_Nm": 0.26,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Siboor",
@@ -1853,7 +1853,7 @@
       "holding_torque_Nm": 0.36,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Siboor",
@@ -1863,7 +1863,7 @@
       "holding_torque_Nm": 0.45,
       "max_current_A": 2.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Siboor",
@@ -1873,7 +1873,7 @@
       "holding_torque_Nm": 0.6,
       "max_current_A": 2.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "TH3D Studio",
@@ -1883,7 +1883,7 @@
       "holding_torque_Nm": 0.13,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "TOA",
@@ -1893,7 +1893,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Trianglelab",
@@ -1903,7 +1903,7 @@
       "holding_torque_Nm": 0.21,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Trinamic",
@@ -1913,7 +1913,7 @@
       "holding_torque_Nm": 0.27,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Trinamic",
@@ -1923,7 +1923,7 @@
       "holding_torque_Nm": 0.35,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Trinamic",
@@ -1933,7 +1933,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 2.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Trinamic",
@@ -1943,7 +1943,7 @@
       "holding_torque_Nm": 0.49,
       "max_current_A": 1.0,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Tronxy",
@@ -1953,7 +1953,7 @@
       "holding_torque_Nm": 0.4,
       "max_current_A": 1.68,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Tronxy",
@@ -1963,7 +1963,7 @@
       "holding_torque_Nm": 0.38,
       "max_current_A": 1.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Usongshine",
@@ -1973,7 +1973,7 @@
       "holding_torque_Nm": 0.14,
       "max_current_A": 0.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Usongshine",
@@ -1983,7 +1983,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Usongshine",
@@ -1993,7 +1993,7 @@
       "holding_torque_Nm": 0.42,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Usongshine",
@@ -2003,7 +2003,7 @@
       "holding_torque_Nm": 0.2,
       "max_current_A": 1.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Usongshine",
@@ -2013,7 +2013,7 @@
       "holding_torque_Nm": 0.52,
       "max_current_A": 1.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Wantai",
@@ -2023,7 +2023,7 @@
       "holding_torque_Nm": 0.13,
       "max_current_A": 1.8,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Wantai",
@@ -2033,7 +2033,7 @@
       "holding_torque_Nm": 0.21,
       "max_current_A": 1.2,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Wantai",
@@ -2043,7 +2043,7 @@
       "holding_torque_Nm": 0.48,
       "max_current_A": 2.4,
       "steps_per_rev": 400,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Wantai",
@@ -2053,7 +2053,7 @@
       "holding_torque_Nm": 0.48,
       "max_current_A": 2.5,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     },
     {
       "manufacturer": "Zyltech",
@@ -2063,7 +2063,7 @@
       "holding_torque_Nm": 0.59,
       "max_current_A": 1.7,
       "steps_per_rev": 200,
-      "source": "motor_database.cfg"
+      "source": "community"
     }
   ]
 }
