@@ -211,3 +211,44 @@ def test_host_node_links_to_catalog_host() -> None:
     # no system info -> graceful stub, no link
     stub = board_topology.host_node({}, hosts)
     assert stub["host_id"] is None and stub["name"] == "host"
+
+
+def test_analyze_fingerprints_board_from_pins() -> None:
+    """Phase P8: when the serial reveals only the chip, the printer's used pin set is matched
+    against each board's verbatim pin-map (containment) to resolve a board_id."""
+    board = {
+        "board_id": "acme-x",
+        "model": "X",
+        "ports": [
+            {
+                "pinMap": [
+                    {"pin": p}
+                    for p in (
+                        "PE2",
+                        "PE3",
+                        "PE4",
+                        "PB0",
+                        "PB1",
+                        "PB2",
+                        "PA0",
+                        "PA1",
+                        "PA2",
+                        "PD5",
+                        "PD6",
+                        "PD7",
+                    )
+                ]
+            }
+        ],
+    }
+    sections = {
+        "mcu": {"serial": "/dev/ttyUSB0"},  # signature reveals no board
+        "stepper_x": {"step_pin": "PE2", "dir_pin": "PE3", "enable_pin": "PE4"},
+        "stepper_y": {"step_pin": "PB0", "dir_pin": "PB1", "enable_pin": "PB2"},
+        "heater_bed": {"heater_pin": "PA0"},
+        "extruder": {"step_pin": "PA1", "heater_pin": "PA2"},
+    }
+    m = board_topology.analyze(sections, PATTERNS, boards=[board])["mcus"][0]
+    assert m["board_id"] == "acme-x"
+    assert m["board_match"] == "suggested"
+    assert m["board_match_confidence"] >= 0.6

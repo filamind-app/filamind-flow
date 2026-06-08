@@ -6,7 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.164.0] - 2026-06-09
+## [0.165.0] - 2026-06-09
+
+### Added
+
+- **Board Topology — pin-fingerprint board matching (DB-link uplift, phase 9 of 9 — final).** When a
+  serial / CAN id reveals only the chip, the topology now matches the printer's **used pin set** on
+  each MCU against every catalog board's verbatim pin-map (a containment score) to resolve the
+  actual board — a board-specific signal a serial id can't give. The fingerprint strengthens the
+  suggested board link (used when it beats, or fills in for, the serial-signature guess), with its
+  confidence shown on the node.
+
+This completes the Board Topology ↔ hardware-database integration (phases 1–9): every detected board
+and MCU links to its catalog record, manufacturer, components, and cross-links, with deep-links into
+the Hardware Browser and a firmware-sync overlay. (Retiring the legacy board-pattern table and a
+user-confirm board override remain as follow-ups.)
 
 ### Added
 
