@@ -218,7 +218,17 @@ onMounted(() => void load())
           </div>
           <div class="font-mono text-[11px]">
             <span class="opacity-60">{{ t('boardTopology.mcu.chip') }}:</span>
-            {{ m.mcu || t('boardTopology.mcu.unknown') }}
+            <button
+              v-if="m.mcu_id"
+              type="button"
+              class="nb-btn rounded bg-surface px-1 hover:bg-brand-cyan"
+              :title="t('hardwareBrowser.related.jump', { name: m.mcu || m.mcu_id })"
+              @click="openInBrowser({ type: 'mcu', id: m.mcu_id ?? '', name: m.mcu || m.mcu_id })"
+            >
+              {{ m.mcu || m.mcu_id }}
+            </button>
+            <template v-else>{{ m.mcu || t('boardTopology.mcu.unknown') }}</template>
+            <span v-if="m.mcu_family" class="opacity-50">· {{ m.mcu_family }}</span>
           </div>
           <div v-if="m.board" class="font-mono text-[11px]">
             <span class="opacity-60">{{ t('boardTopology.mcu.board') }}:</span> {{ m.board }}

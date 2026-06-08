@@ -179,3 +179,11 @@ def test_analyze_never_invents_phantom_mcu() -> None:
     out = board_topology.analyze(sections, PATTERNS)
     assert out["mcu_count"] == 1
     assert all(c["section"] != "stepper_x" for c in out["mcus"][0]["components"])
+
+
+def test_analyze_joins_chip_to_db_mcu_entity() -> None:
+    """Phase P4: the detected chip resolves to a canonical DB MCU entity (mcu_id + family)."""
+    by_name = {m["name"]: m for m in board_topology.analyze(SECTIONS, PATTERNS)["mcus"]}
+    # SECTIONS' primary mcu is an stm32f103 (from its serial) — a real DB MCU entity.
+    assert by_name["mcu"]["mcu_id"] == "stm32f103"
+    assert by_name["mcu"]["mcu_family"] == "STM32F1"
