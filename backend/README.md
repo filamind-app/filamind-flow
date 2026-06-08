@@ -49,7 +49,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/drivers/endstops`    | Live endstop trigger state (open / TRIGGERED), actively queried on demand — for the physical-homing panel. |
 | GET    | `/api/drivers/live/{stepper}` | Fast live telemetry for one driver (temperature / SG_RESULT / CS_ACTUAL / faults) for the live monitor. |
 | GET    | `/api/drivers/catalog`     | The curated TMC driver capability map (interface, current cap, chopper modes, StallGuard field, sensorless / temperature) keyed by model. |
-| GET    | `/api/drivers/motors`      | The stepper-motor catalog (200+ motors, datasheet parameters) for the motor picker. |
+| GET    | `/api/drivers/motors`      | The stepper-motor catalog (datasheet parameters) for the motor picker — served from the unified hardware database. |
 | GET    | `/api/drivers/mapping`     | The saved stepper → motor assignments. |
 | POST   | `/api/drivers/mapping`     | Assign a catalogued motor to a stepper (empty `motor_model` clears it). |
 | POST   | `/api/drivers/recommend`   | Recommend a run current + StealthChop/SpreadCycle registers for a motor (compute-only; faithful `motor_constants` port). |

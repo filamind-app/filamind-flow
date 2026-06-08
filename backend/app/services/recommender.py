@@ -67,7 +67,8 @@ def recommend(
 
     return {
         "motor_model": str(motor.get("model", "")),
-        "motor_name": f"{motor.get('manufacturer', '')} {motor.get('model', '')}".strip(),
+        "motor_name": f"{motor.get('manufacturer', '')} "
+        f"{motor.get('name') or motor.get('model', '')}".strip(),
         "run_current": current,
         "run_current_basis": (
             "your value"

@@ -9,7 +9,8 @@ Static JSON datasets baked under ``app/data/reference/``:
 * ``board_patterns.json`` — board / MCU identification patterns.
 * ``macros.json`` — built-in Klipper calibration macro definitions.
 
-Read once at import — small, static reference data (mirrors ``motor_catalog`` / ``driver_catalog``).
+Read once at import — small, static reference data. Also the single source for the Motor Drivers
+stepper-motor catalog (``motor_specs`` / ``motor_spec_lookup``), served via ``/api/drivers/motors``.
 """
 
 from __future__ import annotations
@@ -315,6 +316,63 @@ def motors() -> list[dict[str, Any]]:
 def motor_by_id(motor_id: str) -> dict[str, Any] | None:
     """A single canonical motor record by its stable ``motor_id`` slug (O(1))."""
     return _MOTOR_IDX.get(motor_id)
+
+
+# ── Motor-spec adapter (the Motor Drivers widget reads motors from the catalog, not a silo) ──
+# Presents each catalog motor in the flat ``MotorSpec`` shape the recommender / picker expect:
+# the ``autotune`` block is flattened to top level, ``model`` is the unique ``motor_id`` and
+# ``name`` the display label. A motor resolves by motor_id / name / alias, so a previously saved
+# ``motor-mapping.json`` assignment (which keyed on the old catalog model = a name or id) still
+# resolves with zero migration.
+def _motor_spec(m: dict[str, Any]) -> dict[str, Any]:
+    raw = m.get("autotune")
+    at: dict[str, Any] = raw if isinstance(raw, dict) else {}
+    return {
+        "model": str(m.get("motor_id", "")),
+        "name": str(m.get("name") or m.get("motor_id", "")),
+        "manufacturer": str(m.get("manufacturer", "")),
+        "resistance_ohm": at.get("resistance_ohm"),
+        "inductance_H": at.get("inductance_H"),
+        "holding_torque_Nm": at.get("holding_torque_Nm"),
+        "max_current_A": at.get("max_current_A"),
+        "steps_per_rev": int(at.get("steps_per_rev") or 200),
+        "source": "catalog",
+    }
+
+
+_MOTOR_SPECS: list[dict[str, Any]] = [_motor_spec(m) for m in _HW_MOTORS]
+
+
+def _build_motor_spec_index() -> dict[str, dict[str, Any]]:
+    idx: dict[str, dict[str, Any]] = {}
+    for m, spec in zip(_HW_MOTORS, _MOTOR_SPECS, strict=True):
+        for key in (m.get("motor_id"), m.get("name"), *(m.get("aliases") or [])):
+            if key:
+                idx.setdefault(re.sub(r"[^a-z0-9]", "", str(key).lower()), spec)
+    return idx
+
+
+_MOTOR_SPEC_IDX = _build_motor_spec_index()
+
+
+def motor_specs() -> list[dict[str, Any]]:
+    """Every catalog motor in the flat ``MotorSpec`` shape (``model`` = motor_id, plus ``name``
+    and the flattened autotune params) — the stepper-motor catalog the Motor Drivers widget reads.
+    Motors with no datasheet ``autotune`` block carry ``None`` for the electrical fields."""
+    return _MOTOR_SPECS
+
+
+def motor_spec_lookup(key: str) -> dict[str, Any] | None:
+    """Resolve a motor to its flat ``MotorSpec`` by ``motor_id`` / display name / alias (a saved
+    ``motor-mapping.json`` value resolves here too). ``None`` if the key is unknown/empty."""
+    if not key:
+        return None
+    return _MOTOR_SPEC_IDX.get(re.sub(r"[^a-z0-9]", "", str(key).lower()))
+
+
+def motor_spec_manufacturers() -> list[str]:
+    """Distinct motor manufacturers (sorted) for the picker's manufacturer column."""
+    return sorted({s["manufacturer"] for s in _MOTOR_SPECS if s["manufacturer"]})
 
 
 def hosts() -> list[dict[str, Any]]:

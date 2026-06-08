@@ -228,9 +228,9 @@ def test_motor_catalog_route() -> None:
 
 
 def test_motor_mapping_roundtrip(tmp_path: Any) -> None:
-    from app.services import motor_catalog
+    from app.services import reference_data
 
-    model = str(motor_catalog.all_motors()[0]["model"])
+    model = str(reference_data.motor_specs()[0]["model"])
     app = create_app()
     app.dependency_overrides[get_settings] = lambda: Settings(
         moonraker_url="http://127.0.0.1:1", data_dir=str(tmp_path)
@@ -247,9 +247,9 @@ def test_motor_mapping_roundtrip(tmp_path: Any) -> None:
 
 
 def test_status_attaches_assigned_motor(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> None:
-    from app.services import motor_catalog, motor_mapping
+    from app.services import motor_mapping, reference_data
 
-    model = str(motor_catalog.all_motors()[0]["model"])
+    model = str(reference_data.motor_specs()[0]["model"])
     motor_mapping.assign(str(tmp_path), "stepper_x", model)
     monkeypatch.setattr(drivers_service, "MoonrakerClient", lambda *a, **k: _FakeClient())
 

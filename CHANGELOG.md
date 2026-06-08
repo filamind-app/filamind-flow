@@ -6,7 +6,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.154.1] - 2026-06-08
+## [0.155.0] - 2026-06-08
+
+### Changed
+
+- **Motor Drivers now reads its motor catalog from the unified hardware database (single source
+  of truth).** The widget's motor picker, the tuning recommender, and the per-stepper motor
+  annotation are all served from the canonical `motors[]` in `hardware.json` via a thin adapter in
+  `reference_data` (`/api/drivers/motors`, `/api/drivers/recommend`, `/api/drivers/status`), instead
+  of a separate parallel motor file. Benefits: one place to curate motor data, no drift between
+  copies, and the full catalog (671 motors, 589 with datasheet autotune params) is now available to
+  the picker instead of a smaller subset.
+  - **Zero migration:** every previously-saved `motor-mapping.json` assignment on a printer still
+    resolves — a motor is found by its id, display name, or alias.
+  - The picker now shows the model **name** (with the manufacturer) and keys on a stable unique id,
+    so motors that share a model number across manufacturers are no longer ambiguous.
+  - Motors without datasheet specs are listed but their **Recommend** action is disabled (with a
+    short note) rather than erroring.
+
+### Removed
+
+- The standalone motor-catalog data file and its loader (folded into the hardware database above).
 
 ### Changed
 

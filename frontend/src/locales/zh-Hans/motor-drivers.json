@@ -213,7 +213,8 @@
       "revert": "↺ 还原",
       "copyConfig": "复制配置",
       "autotune": "autotune",
-      "autotuneTitle": "如果已安装 klipper_tmc_autotune 插件则运行 AUTOTUNE_TMC"
+      "autotuneTitle": "如果已安装 klipper_tmc_autotune 插件则运行 AUTOTUNE_TMC",
+      "noSpecs": "该电机无数据手册参数，无法提供调校建议。"
     },
     "motorSync": {
       "toggle": "电机同步",
