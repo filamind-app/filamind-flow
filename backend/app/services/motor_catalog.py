@@ -1,7 +1,6 @@
 """The stepper-motor catalog (datasheet parameters for 200+ motors).
 
-Loads ``app/data/motor_catalog.json`` (baked from the vendored CSV by
-``scripts/bake_motor_catalog.py``) and indexes it by model, backing the Motor Drivers
+Loads ``app/data/motor_catalog.json`` and indexes it by model, backing the Motor Drivers
 motor picker. Read once at import — small, static reference data.
 """
 

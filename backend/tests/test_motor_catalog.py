@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 from fastapi.testclient import TestClient
 
 from app.main import create_app
@@ -24,14 +26,54 @@ def test_every_motor_has_copyable_snippet() -> None:
 
 def test_motors_carry_autotune_params() -> None:
     """Motors in the autotune database carry the full datasheet params (resistance / inductance /
-    holding torque / current / steps) the Motor Drivers autotune + recommender need."""
+    holding torque / current / steps) the Motor Drivers autotune + recommender need, and every
+    value is physically plausible (guards against unit/extraction errors)."""
     with_at = [m for m in reference_data.motors() if m.get("autotune")]
-    assert len(with_at) >= 150, f"only {len(with_at)} motors have autotune params"
+    assert len(with_at) >= 550, f"only {len(with_at)} motors have autotune params"
     for m in with_at:
         at = m["autotune"]
-        assert at["resistance_ohm"] > 0 and at["inductance_H"] > 0, m["motor_id"]
-        assert at["holding_torque_Nm"] > 0 and at["max_current_A"] > 0
-        assert at["steps_per_rev"] >= 200
+        mid = m["motor_id"]
+        # all five fields present and positive
+        assert at["resistance_ohm"] > 0 and at["inductance_H"] > 0, mid
+        assert at["holding_torque_Nm"] > 0 and at["max_current_A"] > 0, mid
+        # plausible physical ranges (NEMA34 reaches ~13 Nm / ~8 A; micro can-stack steppers
+        # go down to 24 full steps/rev and ~150 ohm). A wrong value is worse than a blank.
+        assert 0.05 <= at["resistance_ohm"] <= 150, f"{mid} R={at['resistance_ohm']}"
+        assert 0.0001 <= at["inductance_H"] <= 0.1, f"{mid} L={at['inductance_H']}"
+        assert 0.003 <= at["holding_torque_Nm"] <= 20, f"{mid} T={at['holding_torque_Nm']}"
+        assert 0.05 <= at["max_current_A"] <= 9, f"{mid} I={at['max_current_A']}"
+        assert at["steps_per_rev"] >= 4, f"{mid} steps={at['steps_per_rev']}"
+    # the vast majority are the usual 1.8deg / 0.9deg hybrids (200 / 400 full steps)
+    common = sum(1 for m in with_at if m["autotune"]["steps_per_rev"] in (200, 400))
+    assert common >= len(with_at) - 20, "unexpected spread of non-standard step counts"
+
+
+def test_motor_driver_catalog_no_external_refs() -> None:
+    """The Motor Drivers data silos (exposed verbatim by /api/drivers/motors) must not name any
+    other project as their provenance — present the reused reference data as FilaMind's own."""
+    from app.services import driver_catalog, motor_catalog
+
+    blob = json.dumps(
+        {
+            "ms": motor_catalog.source(),
+            "mm": motor_catalog.all_motors(),
+            "ds": driver_catalog.source(),
+            "dd": driver_catalog.all_drivers(),
+        },
+        ensure_ascii=False,
+    ).lower()
+    for banned in (
+        "ratos",
+        "klipper_tmc_autotune",
+        "kalico",
+        "motor_database",
+        "shaketune",
+        "shake&tune",
+        "fragmon",
+        "vendored",
+        "hardware-database",
+    ):
+        assert banned not in blob, f"leaked external reference: {banned}"
 
 
 def test_motor_nema_and_step_angle_normalised() -> None:
