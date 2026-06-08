@@ -138,6 +138,25 @@ def test_extruder_snippet_has_gear_ratio_or_rotation() -> None:
     assert all("[extruder]" in e["configSnippet"] for e in ext)
 
 
+def test_catalog_subsection_facet() -> None:
+    """Mixed catalog categories expose a sub-type facet (the catalog equivalent of a board class):
+    /facets lists each category's sub-types, and /catalog?subsection=… filters by them."""
+    facets = client.get("/api/hardware/facets").json()
+    subs = facets["catalogSubsections"]
+    assert set(subs["Fans, Power & Bed"]) >= {"Fans", "Power supplies", "Heated beds"}
+    # single-subsection categories don't get a facet
+    assert "Extruders" not in subs and "Filament Materials" not in subs
+    # filtering by a sub-type narrows the category
+    whole = client.get("/api/hardware/catalog", params={"category": "Fans, Power & Bed"}).json()[
+        "total"
+    ]
+    fans = client.get(
+        "/api/hardware/catalog", params={"category": "Fans, Power & Bed", "subsection": "Fans"}
+    ).json()
+    assert 0 < fans["total"] < whole
+    assert all(e["subsection"] == "Fans" for e in fans["entities"])
+
+
 def test_route_catalog_list_and_detail() -> None:
     r = client.get("/api/hardware/catalog", params={"category": "Extruders", "limit": 5})
     assert r.status_code == 200

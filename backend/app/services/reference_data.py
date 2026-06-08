@@ -234,13 +234,26 @@ def _facets() -> dict[str, list[str]]:
     return {"boardClass": board_class, "nema": nema, "kind": kind}
 
 
+def _catalog_subsections() -> dict[str, list[str]]:
+    """Per-category distinct sub-types (e.g. Fans / Power supplies / Heated beds) for the catalog
+    sub-type facet — the catalog equivalent of a board's class."""
+    out: dict[str, list[str]] = {}
+    for cat, rows in _HW_CATALOG.items():
+        subs = sorted({str(e["subsection"]) for e in rows if e.get("subsection")})
+        if len(subs) > 1:  # only categories that actually mix sub-types get a facet
+            out[cat] = subs
+    return out
+
+
 _HW_FACETS = _facets()
+_HW_CATALOG_SUBSECTIONS = _catalog_subsections()
 
 
-def hardware_facets() -> dict[str, list[str]]:
+def hardware_facets() -> dict[str, Any]:
     """Distinct filter values for the catalog facet dropdowns: ``boardClass`` (boards),
-    ``nema`` size (motors, normalised to the leading number), and ``kind`` (hosts)."""
-    return _HW_FACETS
+    ``nema`` size (motors, normalised to the leading number), ``kind`` (hosts), and
+    ``catalogSubsections`` (per mixed catalog category, its sub-types)."""
+    return {**_HW_FACETS, "catalogSubsections": _HW_CATALOG_SUBSECTIONS}
 
 
 def canonical_category_counts() -> dict[str, int]:

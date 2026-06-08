@@ -177,7 +177,8 @@
         "printer-preset": "打印机预设",
         "expansion": "扩展板",
         "host": "主机 SBC"
-      }
+      },
+      "anyType": "全部类型"
     }
   }
 }

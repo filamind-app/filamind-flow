@@ -78,7 +78,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/macro/simulate`      | Offline G-code simulator: macro `{ params.X }` substitution → path / bounds / totals / time / timeline; pure, no printer. |
 | GET    | `/api/hardware`            | Flat free-text search over the raw component rows (`?q=`/`category`/`manufacturer`, paginated). The canonical, deduped, config-carrying entities have their own typed endpoints below. |
 | GET    | `/api/hardware/categories` | The hardware categories + per-category **canonical** `counts` (raw kept as `rawCounts`) + total component count. |
-| GET    | `/api/hardware/facets`     | Distinct values for the catalog filter dropdowns — `boardClass` (boards), `nema` size (motors), `kind` (hosts). |
+| GET    | `/api/hardware/facets`     | Distinct values for the filter dropdowns — `boardClass` (boards), `nema` size (motors), `kind` (hosts), and `catalogSubsections` (per mixed catalog category → its sub-types). |
 | GET    | `/api/hardware/manufacturers` | Canonical manufacturer entities (`?q`) — each with a stable `manufacturer_id`, auto-derived `aliases` and a `memberCount`, sorted most-connected first. |
 | GET    | `/api/hardware/manufacturers/{manufacturer_id}` | One manufacturer's record (`?expand=related` adds its linked hardware, grouped by type). |
 | GET    | `/api/hardware/mcus`       | Canonical MCU entities (`?q`/`family`) parsed from board `specs.MCU` (normalised to a canonical part) — each with `family`, `arch`, `boardCount`. |
@@ -91,7 +91,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/hardware/motors/{motor_id}` | One motor's full record (specs + recommended `run_current` + current presets + copyable config snippet; `?expand=related`). |
 | GET    | `/api/hardware/hosts`      | Canonical host-computer entities (summaries; `?q`/`manufacturer`/`kind`, paginated) — SBC / x86 / OS-image, deduped. |
 | GET    | `/api/hardware/hosts/{host_id}` | One host's full record (specs + Klipper-open flag + copyable `[mcu host]` config snippet; `?expand=related`). |
-| GET    | `/api/hardware/catalog`    | Canonical entities for one remaining category (`?category=…`, summaries; `?q`/`manufacturer`, paginated) — sensors / hotends / extruders / fans / displays / motion / nozzles / filament / electronics, deduped. |
+| GET    | `/api/hardware/catalog`    | Canonical entities for one remaining category (`?category=…`, summaries; `?q`/`manufacturer`/`subsection`, paginated) — sensors / hotends / extruders / fans / displays / motion / nozzles / filament / electronics, deduped. `subsection` filters a mixed category by sub-type. |
 | GET    | `/api/hardware/catalog/{catalog_id}` | One catalog entity's full record (specs + copyable Klipper config snippet; `?expand=related`). |
 | GET    | `/api/hardware/{type}/{id}/related` | Cross-entity relationships for any node (`boards`/`drivers`/`motors`/`hosts`/`catalog`/`manufacturers`/`mcus`), grouped by relation (O(1) graph walk). |
 

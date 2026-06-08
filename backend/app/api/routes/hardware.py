@@ -80,9 +80,10 @@ async def hardware_categories() -> dict[str, Any]:
 
 
 @router.get("/facets")
-async def hardware_facets() -> dict[str, list[str]]:
+async def hardware_facets() -> dict[str, Any]:
     """Distinct values for the catalog filter dropdowns — ``boardClass`` (boards),
-    ``nema`` size (motors), ``kind`` (hosts)."""
+    ``nema`` size (motors), ``kind`` (hosts), and ``catalogSubsections`` (per mixed catalog
+    category, its sub-types)."""
     return reference_data.hardware_facets()
 
 
@@ -298,19 +299,21 @@ async def catalog(
     category: str = Query(..., description="Category name (e.g. 'Sensors & Probes', 'Extruders')"),
     q: str = Query("", description="Free-text search (manufacturer / name / specs)"),
     manufacturer: str = Query("", description="Manufacturer substring filter"),
+    subsection: str = Query("", description="Exact sub-type filter (e.g. 'Fans', 'Heated beds')"),
     limit: int = Query(50, ge=1, le=200, description="Page size"),
     offset: int = Query(0, ge=0, description="Page offset"),
 ) -> dict[str, Any]:
     """Search one category's canonical catalog entities (lightweight summaries, paginated).
 
-    The full record — including the copyable Klipper config snippet — is served by
-    ``GET /api/hardware/catalog/{catalog_id}``.
+    ``subsection`` filters within a mixed category by sub-type (the catalog equivalent of a board's
+    class — values come from ``GET /api/hardware/facets`` ``catalogSubsections``). The full record —
+    including the copyable Klipper config snippet — is served by ``GET /api/hardware/catalog/{id}``.
     """
     entities = reference_data.catalog_entities(category)
     if not entities and category not in reference_data.catalog_categories():
         raise HTTPException(status_code=404, detail=f"No catalog category {category!r}")
     return catalog_search.search(
-        entities, q=q, manufacturer=manufacturer, limit=limit, offset=offset
+        entities, q=q, manufacturer=manufacturer, subsection=subsection, limit=limit, offset=offset
     )
 
 

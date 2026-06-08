@@ -22,11 +22,13 @@ export interface HardwareCategories {
   total: number
 }
 
-/** Distinct filter values for the catalog facet dropdowns (GET /api/hardware/facets). */
+/** Distinct filter values for the facet dropdowns (GET /api/hardware/facets). */
 export interface HardwareFacets {
   boardClass: string[]
   nema: string[]
   kind: string[]
+  /** Per mixed catalog category → its sub-types (e.g. "Fans, Power & Bed" → Fans / Power supplies…). */
+  catalogSubsections?: Record<string, string[]>
 }
 
 // ── Board catalog entity (GET /api/hardware/boards[/{id}]) ─────────────────────
