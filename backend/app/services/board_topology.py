@@ -197,9 +197,15 @@ def host_node(
     cpu: dict[str, Any] = raw_cpu if isinstance(raw_cpu, dict) else {}
     raw_distro = info.get("distribution")
     distro: dict[str, Any] = raw_distro if isinstance(raw_distro, dict) else {}
-    model = str(cpu.get("model") or cpu.get("cpu_desc") or "").strip()
-    name = model or str(distro.get("name") or "").strip() or "host"
-    host_id, conf = _resolve_host_id(model, catalog)
+    # Many SBCs leave cpu_info.model empty and put the board/OS string in distribution.name
+    # (e.g. a BTT CB1 reports "BIGTREETECH-CB1 …" there), so fall through to it for both the
+    # display name and the catalog match.
+    ident = (
+        str(cpu.get("model") or cpu.get("cpu_desc") or cpu.get("hardware_desc") or "").strip()
+        or str(distro.get("name") or "").strip()
+    )
+    name = ident or "host"
+    host_id, conf = _resolve_host_id(ident, catalog)
     return {
         "name": name,
         "role": "sbc",
