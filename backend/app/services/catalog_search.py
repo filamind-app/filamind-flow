@@ -39,17 +39,21 @@ def search(
     *,
     q: str = "",
     manufacturer: str = "",
+    subsection: str = "",
     limit: int = 50,
     offset: int = 0,
 ) -> dict[str, Any]:
-    """Filter entities by query / manufacturer and return one page of summaries."""
+    """Filter entities by query / manufacturer / sub-type and return one page of summaries."""
     ql = q.strip().lower()
     man = manufacturer.strip().lower()
+    sub = subsection.strip().lower()
     limit = max(1, min(int(limit), _MAX_LIMIT))
     offset = max(0, int(offset))
 
     def matches(e: dict[str, Any]) -> bool:
         if man and man not in str(e.get("manufacturer", "")).lower():
+            return False
+        if sub and str(e.get("subsection", "")).lower() != sub:
             return False
         return not (ql and ql not in _haystack(e))
 

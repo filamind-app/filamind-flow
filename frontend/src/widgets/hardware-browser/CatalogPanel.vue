@@ -2,14 +2,17 @@
 /** Generic category catalog view — the remaining categories (sensors, hotends, extruders,
  *  fans/power/bed, displays/cameras, motion, nozzles, filament, electronics). Thin wrapper over
  *  the shared EntityCatalog; re-mounts per category via :key so each switch starts fresh. */
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+import ComboSelect from '@/components/ui/ComboSelect.vue'
 
 import { fetchCatalog, fetchCatalogEntity } from './api'
 import EntityCatalog from './EntityCatalog.vue'
 import RelatedChips from './RelatedChips.vue'
 import type { CatalogEntityDetail, CatalogSummary } from './types'
 import type { FocusTarget } from './useEntityFocus'
+import { useFacets } from './useFacets'
 
 const props = defineProps<{ category: string }>()
 const emit = defineEmits<{ (e: 'back'): void }>()
@@ -17,7 +20,13 @@ const emit = defineEmits<{ (e: 'back'): void }>()
 const { t } = useI18n({ useScope: 'global' })
 
 const manufacturer = ref('')
+const subsection = ref<string | null>(null)
 const reloadToken = ref(0)
+const { facets } = useFacets()
+/** Sub-type options for THIS category (the catalog equivalent of a board's class). */
+const subsectionOptions = computed(() =>
+  (facets.value?.catalogSubsections?.[props.category] ?? []).map((s) => ({ value: s, label: s })),
+)
 function onFacetChange(): void {
   reloadToken.value += 1
 }
@@ -27,6 +36,7 @@ async function fetchPage(p: { q: string; offset: number; limit: number }) {
     category: props.category,
     q: p.q,
     manufacturer: manufacturer.value,
+    subsection: subsection.value ?? '',
     limit: p.limit,
     offset: p.offset,
   })
@@ -50,6 +60,15 @@ const focusMatch = (f: FocusTarget): boolean =>
     none-key="hardwareBrowser.results.none"
   >
     <template #facets>
+      <div v-if="subsectionOptions.length" class="min-w-[9rem]">
+        <ComboSelect
+          v-model="subsection"
+          :options="subsectionOptions"
+          :placeholder="t('hardwareBrowser.facets.anyType')"
+          clearable
+          @update:model-value="onFacetChange"
+        />
+      </div>
       <input
         v-model="manufacturer"
         type="text"
