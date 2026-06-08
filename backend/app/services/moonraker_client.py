@@ -45,6 +45,13 @@ class MoonrakerClient:
         """Klippy ``/printer/info`` (software_version, hostname, state)."""
         return await self._get("/printer/info")
 
+    async def machine_system_info(self) -> dict[str, Any]:
+        """Moonraker ``/machine/system_info`` → the ``system_info`` object (cpu_info / distribution
+        / …). Used to identify the host SBC. May be absent on older Moonraker — callers guard."""
+        result = await self._get("/machine/system_info")
+        info = result.get("system_info")
+        return info if isinstance(info, dict) else {}
+
     async def list_objects(self) -> list[str]:
         """Names of all available printer objects."""
         result = await self._get("/printer/objects/list")

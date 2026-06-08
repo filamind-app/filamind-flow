@@ -1002,6 +1002,9 @@ class TopologyHost(BaseModel):
 
     name: str
     role: str
+    host_id: str | None = None
+    host_match: str | None = None
+    host_match_confidence: float = 0.0
 
 
 class Topology(BaseModel):
