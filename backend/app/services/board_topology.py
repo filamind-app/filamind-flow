@@ -171,6 +171,63 @@ def _attach_components(sections: dict[str, Any], mcus: list[dict[str, Any]]) -> 
         target["components"].append({"section": str(name), "kind": kind})
 
 
+def _split_pin(value: Any) -> tuple[str, str]:
+    """``(chip, pin)`` for a Klipper pin value: split ``chip:pin`` on the first colon, strip pin
+    modifiers ``^ ~ !``; a bare pin lives on the primary ``mcu``."""
+    pin = str(value).strip()
+    if ":" in pin:
+        chip, pin = (s.strip() for s in pin.split(":", 1))
+        chip = chip.lstrip("^~!").strip() or "mcu"
+    else:
+        chip = "mcu"
+    return chip, pin.lstrip("^~!").strip().upper()
+
+
+def _used_pins(sections: dict[str, Any], mcu_name: str) -> set[str]:
+    """The set of pin names the live config uses on a given MCU (chip-prefix == ``mcu_name``)."""
+    used: set[str] = set()
+    for cfg in sections.values():
+        if not isinstance(cfg, dict):
+            continue
+        for key, value in cfg.items():
+            if not isinstance(value, str) or not (key.endswith("_pin") or key == "pin"):
+                continue
+            chip, pin = _split_pin(value)
+            if chip == mcu_name and pin:
+                used.add(pin)
+    return used
+
+
+def _board_pin_set(board: dict[str, Any]) -> set[str]:
+    """Every pin name in a catalog board's verbatim Klipper pin-maps."""
+    pins: set[str] = set()
+    for port in board.get("ports") or []:
+        if not isinstance(port, dict):
+            continue
+        for pm in port.get("pinMap") or []:
+            p = str(pm.get("pin") or "").strip().upper() if isinstance(pm, dict) else ""
+            if p:
+                pins.add(p)
+    return pins
+
+
+def _fingerprint_board(used: set[str], boards: list[dict[str, Any]]) -> tuple[str | None, float]:
+    """Match the printer's used pin set to a catalog board by containment (how many of the used
+    pins exist in the board's pin-map). A strong, board-specific signal — unlike a serial id, which
+    reveals only the chip. Returns ``(board_id, confidence)`` or ``(None, 0)`` below threshold."""
+    if len(used) < 5:
+        return None, 0.0  # too few pins to discriminate
+    best: tuple[str | None, float] = (None, 0.0)
+    for b in boards:
+        bp = _board_pin_set(b)
+        if len(bp) < 10:
+            continue  # board has too sparse a pin-map to fingerprint against
+        score = len(used & bp) / len(used)
+        if score > best[1]:
+            best = (b.get("board_id"), round(score, 2))
+    return best if best[1] >= 0.6 else (None, 0.0)
+
+
 def _resolve_host_id(model: str, hosts: list[dict[str, Any]]) -> tuple[str | None, float]:
     """Best-effort link of the host's CPU/SoC string to a catalog ``host_id`` (a normalized
     substring match against each host's name / soc / cpu). Low-confidence *suggested* link —
@@ -238,6 +295,12 @@ def analyze(
             chip, _ = _match(mpats, signature, "mcu")
             board, confidence = _match(bpats, signature, "board")
             board_id, board_id_conf = _resolve_board_id(board, signature, catalog)
+            # Pin-fingerprint: match the printer's used pin set on this MCU against each board's
+            # verbatim pin-map — a board-specific signal a serial id can't give. Use it when it
+            # beats (or fills in for) the signature-based guess.
+            fp_id, fp_conf = _fingerprint_board(_used_pins(sections, mcu_name), catalog)
+            if fp_id and (board_id is None or fp_conf > board_id_conf):
+                board_id, board_id_conf = fp_id, fp_conf
             # Join the detected chip to a canonical DB MCU entity (one of the first-class MCUs) —
             # a reliable DB anchor even when no board_id resolves. null for unrecognised chips.
             norm = hardware_links.normalize_mcu(chip or signature or "")
