@@ -179,6 +179,9 @@
         "host": "Host-SBC"
       },
       "anyType": "Alle Typen"
+    },
+    "picker": {
+      "placeholder": "Teil auswählen…"
     }
   }
 }

@@ -179,6 +179,9 @@
         "host": "Host (SBC)"
       },
       "anyType": "Todos los tipos"
+    },
+    "picker": {
+      "placeholder": "Elegir una pieza…"
     }
   }
 }
