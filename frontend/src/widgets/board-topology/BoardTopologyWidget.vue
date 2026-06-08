@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n'
 
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
+import { useNav } from '@/core/nav'
+import { targetFor, useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 
 import { fetchBoardDetail, fetchTopology } from './api'
 import HelpIllo from './HelpIllo.vue'
@@ -11,6 +13,18 @@ import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { BoardDetail, BoardMedia, RelatedRef, Topology } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
+const { go } = useNav()
+const { focusEntity } = useEntityFocus()
+
+/** Deep-link a related entity into the Hardware Browser: set the shared focus then switch view.
+ *  Topology unmounts and the Hardware Browser mounts + opens the target (its focus watch is
+ *  `immediate`, so a focus set before it mounts still applies). */
+function openInBrowser(ref: RelatedRef): void {
+  const target = targetFor(ref)
+  if (!target) return
+  focusEntity(target)
+  go('hardware-browser')
+}
 
 const topology = ref<Topology | null>(null)
 const loading = ref(true)
@@ -296,13 +310,16 @@ onMounted(() => void load())
                     class="flex flex-wrap items-center gap-1"
                   >
                     <span class="opacity-50">{{ t('hardwareBrowser.related.rel.' + g.key) }}:</span>
-                    <span
+                    <button
                       v-for="r in g.refs"
                       :key="r.type + r.id"
-                      class="rounded bg-surface px-1 font-mono"
+                      type="button"
+                      class="nb-btn rounded bg-surface px-1 font-mono hover:bg-brand-cyan"
+                      :title="t('hardwareBrowser.related.jump', { name: r.name || r.id })"
+                      @click="openInBrowser(r)"
                     >
                       {{ r.name || r.id }}
-                    </span>
+                    </button>
                   </div>
                 </div>
                 <p

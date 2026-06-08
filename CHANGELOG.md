@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.158.0] - 2026-06-08
+## [0.159.0] - 2026-06-08
+
+### Changed
+
+- **Board Topology — its DB cross-links now deep-link into the Hardware Browser (DB-link uplift,
+  phase 3 of 9).** Clicking a board's linked-hardware chip (manufacturer / MCU / driver) on a
+  topology node jumps straight to that entity in the Hardware Browser. Reuses the existing
+  cross-entity focus channel; the Hardware Browser now applies a focus set before it mounts (its
+  focus watch became `immediate`), so the jump works even when navigating in from another widget.
+  Frontend-only; no new strings.
 
 ### Changed
 
