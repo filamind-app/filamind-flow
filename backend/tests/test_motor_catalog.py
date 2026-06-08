@@ -22,6 +22,18 @@ def test_every_motor_has_copyable_snippet() -> None:
         assert (m.get("configSnippet") or "").strip(), f"{m['motor_id']} has no configSnippet"
 
 
+def test_motors_carry_autotune_params() -> None:
+    """Motors in the autotune database carry the full datasheet params (resistance / inductance /
+    holding torque / current / steps) the Motor Drivers autotune + recommender need."""
+    with_at = [m for m in reference_data.motors() if m.get("autotune")]
+    assert len(with_at) >= 150, f"only {len(with_at)} motors have autotune params"
+    for m in with_at:
+        at = m["autotune"]
+        assert at["resistance_ohm"] > 0 and at["inductance_H"] > 0, m["motor_id"]
+        assert at["holding_torque_Nm"] > 0 and at["max_current_A"] > 0
+        assert at["steps_per_rev"] >= 200
+
+
 def test_motor_nema_and_step_angle_normalised() -> None:
     """Data-audit lock (Wave 4): stepAngle uses one encoding (degree sign, not '1.8 deg'/'1.8'),
     and NEMA was backfilled from part numbers so few motors are left sizeless."""
