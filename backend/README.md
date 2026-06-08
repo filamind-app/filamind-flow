@@ -74,7 +74,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/config/restart`      | `FIRMWARE_RESTART` to apply a saved config (refused while printing). |
 | POST   | `/api/maxflow/plan`        | Preview the max-flow test ramp (flow → feedrate per step + StallGuard field); pure compute, no actuation. |
 | POST   | `/api/maxflow/run`         | Run the live max-flow test (heat + extrude + sample StallGuard); preflight (chopper-mode/StallGuard) + SG4 bias-floor + ≥180 °C; refused while printing; heater always cut. |
-| GET    | `/api/topology`            | Host → MCU topology from the live config: each MCU's connection (CAN/USB/UART) + chip/board guess (read-only). |
+| GET    | `/api/topology`            | Host → MCU topology from the live config: each MCU's connection (CAN/USB/UART) + chip/board guess + the components (steppers/drivers/heaters/fans/sensors) on it, attached by each pin's chip prefix (read-only). |
 | POST   | `/api/macro/simulate`      | Offline G-code simulator: macro `{ params.X }` substitution → path / bounds / totals / time / timeline; pure, no printer. |
 | GET    | `/api/hardware`            | Flat free-text search over the raw component rows (`?q=`/`category`/`manufacturer`, paginated). The canonical, deduped, config-carrying entities have their own typed endpoints below. |
 | GET    | `/api/hardware/categories` | The hardware categories + per-category **canonical** `counts` (raw kept as `rawCounts`) + total component count. |
