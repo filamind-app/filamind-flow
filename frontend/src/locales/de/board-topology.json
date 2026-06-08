@@ -89,6 +89,14 @@
         "datasheet": "Datenblatt",
         "image": "Foto"
       }
+    },
+    "components": {
+      "title": "Komponenten",
+      "motor": "Motoren",
+      "driver": "Treiber",
+      "heater": "Heizer",
+      "fan": "Lüfter",
+      "sensor": "Sensoren"
     }
   }
 }

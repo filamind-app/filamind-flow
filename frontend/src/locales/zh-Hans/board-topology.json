@@ -89,6 +89,14 @@
         "datasheet": "数据手册",
         "image": "图片"
       }
+    },
+    "components": {
+      "title": "组件",
+      "motor": "电机",
+      "driver": "驱动",
+      "heater": "加热器",
+      "fan": "风扇",
+      "sensor": "传感器"
     }
   }
 }

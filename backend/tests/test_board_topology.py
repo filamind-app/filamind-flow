@@ -132,8 +132,8 @@ def test_route_topology_ok(monkeypatch: Any) -> None:
     async def fake_gather(_client: Any) -> dict[str, Any]:
         return {
             "reachable": True,
-            "host": {"name": "host"},
-            "mcus": [{"name": "mcu"}],
+            "host": {"name": "host", "role": "sbc"},
+            "mcus": [{"name": "mcu", "connection": "usb"}],
             "mcu_count": 1,
         }
 
@@ -141,3 +141,41 @@ def test_route_topology_ok(monkeypatch: Any) -> None:
     resp = TestClient(create_app()).get("/api/topology")
     assert resp.status_code == 200
     assert resp.json()["mcu_count"] == 1
+
+
+def test_analyze_attaches_components_to_primary_mcu() -> None:
+    """Phase P3: a component is attached to the MCU named by its primary pin's chip prefix."""
+    by_name = {m["name"]: m for m in board_topology.analyze(SECTIONS, PATTERNS)["mcus"]}
+    # stepper_x has a bare step_pin (PE2) -> lives on the primary mcu, classified as a motor.
+    assert {"section": "stepper_x", "kind": "motor"} in by_name["mcu"]["components"]
+
+
+def test_analyze_component_edges_across_mcus() -> None:
+    """A CAN toolhead's components (chip-prefixed pins) attach to the CAN MCU, not the primary."""
+    sections = {
+        "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f446_X-if00"},
+        "mcu EBBCan": {"canbus_uuid": "aabbccddeeff"},
+        "stepper_x": {"step_pin": "PE2", "dir_pin": "PE3"},
+        "tmc2209 stepper_x": {"uart_pin": "PE1"},
+        "extruder": {"step_pin": "EBBCan: PD0", "heater_pin": "EBBCan: PB13"},
+        "heater_bed": {"heater_pin": "PA1"},
+        "fan": {"pin": "PA2"},
+        "adxl345": {"cs_pin": "EBBCan: PB12"},
+    }
+    by_name = {m["name"]: m for m in board_topology.analyze(sections, PATTERNS)["mcus"]}
+    main = {c["section"] for c in by_name["mcu"]["components"]}
+    ebb = {c["section"] for c in by_name["EBBCan"]["components"]}
+    assert {"stepper_x", "tmc2209 stepper_x", "heater_bed", "fan"} <= main
+    assert {"extruder", "adxl345"} <= ebb  # CAN-toolhead components attach to EBBCan
+    kinds = {c["section"]: c["kind"] for m in by_name.values() for c in m["components"]}
+    assert kinds["tmc2209 stepper_x"] == "driver"
+    assert kinds["adxl345"] == "sensor"
+    assert kinds["fan"] == "fan"
+
+
+def test_analyze_never_invents_phantom_mcu() -> None:
+    """A component pin referencing an undeclared chip is dropped — never turned into an MCU node."""
+    sections = {"mcu": {"serial": "x"}, "stepper_x": {"step_pin": "ghost: PA1"}}
+    out = board_topology.analyze(sections, PATTERNS)
+    assert out["mcu_count"] == 1
+    assert all(c["section"] != "stepper_x" for c in out["mcus"][0]["components"])

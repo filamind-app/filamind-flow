@@ -10,7 +10,7 @@ import { targetFor, useEntityFocus } from '@/widgets/hardware-browser/useEntityF
 import { fetchBoardDetail, fetchTopology } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { BoardDetail, BoardMedia, RelatedRef, Topology } from './types'
+import type { BoardDetail, BoardMedia, RelatedRef, Topology, TopologyMcu } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 const { go } = useNav()
@@ -90,6 +90,16 @@ function relatedGroups(detail?: BoardDetail): { key: string; refs: RelatedRef[] 
   if (!rel) return []
   const keys = [...REL_ORDER, ...Object.keys(rel).filter((k) => !REL_ORDER.includes(k))]
   return keys.filter((k) => (rel[k]?.length ?? 0) > 0).map((k) => ({ key: k, refs: rel[k] }))
+}
+
+const KIND_ORDER = ['motor', 'driver', 'heater', 'fan', 'sensor']
+
+/** Per-kind counts of the components on an MCU (motors / drivers / heaters / fans / sensors). */
+function componentCounts(m: TopologyMcu): { kind: string; n: number }[] {
+  const comps = m.components ?? []
+  return KIND_ORDER.map((k) => ({ kind: k, n: comps.filter((c) => c.kind === k).length })).filter(
+    (x) => x.n > 0,
+  )
 }
 
 function connLabel(conn: string): string {
@@ -222,6 +232,17 @@ onMounted(() => void load())
             :title="m.identifier"
           >
             {{ m.identifier }}
+          </div>
+
+          <!-- Components living on this MCU (steppers / drivers / heaters / fans / sensors) -->
+          <div
+            v-if="componentCounts(m).length"
+            class="flex flex-wrap items-center gap-1 font-mono text-[10px]"
+          >
+            <span class="opacity-60">{{ t('boardTopology.components.title') }}:</span>
+            <span v-for="c in componentCounts(m)" :key="c.kind" class="rounded bg-paper px-1">
+              {{ t('boardTopology.components.' + c.kind) }} ×{{ c.n }}
+            </span>
           </div>
 
           <!-- Catalog board link (suggested match) -->

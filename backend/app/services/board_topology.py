@@ -91,6 +91,84 @@ def _connection(cfg: dict[str, Any]) -> dict[str, Any]:
     return {"type": "unknown", "id": None}
 
 
+# ── Component → MCU edges (which steppers / drivers / heaters / fans / sensors live on each MCU) ──
+# A component is attached to the MCU named by the chip prefix of its primary pin (a bare pin lives
+# on the primary ``mcu``). MCU NODES come only from ``[mcu]`` sections — components merely attach to
+# them — so a stray pin can never invent a phantom MCU.
+_COMPONENT_KINDS: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"^stepper_\S+$"), "motor"),
+    (re.compile(r"^manual_stepper\s+\S"), "motor"),
+    (re.compile(r"^extruder\d*$"), "motor"),
+    (re.compile(r"^tmc\d\w*\s+\S"), "driver"),
+    (re.compile(r"^heater_bed$"), "heater"),
+    (re.compile(r"^heater_generic\s+\S"), "heater"),
+    (
+        re.compile(
+            r"^(?:fan|fan_generic\s+\S+|heater_fan\s+\S+|controller_fan\s+\S+|temperature_fan\s+\S+)$"
+        ),
+        "fan",
+    ),
+    (re.compile(r"^(?:adxl345|lis2dw|mpu9250|icm20948)(?:\s+\S+)?$"), "sensor"),
+    (re.compile(r"^(?:probe|bltouch|smart_effector)$"), "sensor"),
+    (re.compile(r"^probe_eddy_current\s+\S"), "sensor"),
+]
+
+#: Primary-pin candidate keys per kind — the pin whose chip prefix names the owning MCU.
+_PRIMARY_PIN: dict[str, tuple[str, ...]] = {
+    "motor": ("step_pin", "dir_pin", "enable_pin"),
+    "driver": ("uart_pin", "cs_pin", "step_pin"),
+    "heater": ("heater_pin", "pin"),
+    "fan": ("pin",),
+    "sensor": ("cs_pin", "sensor_pin", "data_pin", "pin"),
+}
+
+
+def _chip_of(value: Any) -> str | None:
+    """The MCU chip prefix of a Klipper pin value: ``chip:pin`` split on the first colon, pin
+    modifiers ``^ ~ !`` stripped; a bare pin lives on the primary ``mcu``. ``None`` if not a pin."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+    pin = value.strip()
+    chip = pin.split(":", 1)[0].strip().lstrip("^~!").strip() if ":" in pin else "mcu"
+    return chip or "mcu"
+
+
+def _component_kind(name: str) -> str | None:
+    low = name.strip().lower()
+    for pattern, kind in _COMPONENT_KINDS:
+        if pattern.match(low):
+            return kind
+    return None
+
+
+def _owning_mcu(kind: str, cfg: dict[str, Any]) -> str | None:
+    """The chip prefix of the component's primary pin = the MCU it lives on."""
+    for key in _PRIMARY_PIN.get(kind, ()):
+        chip = _chip_of(cfg.get(key))
+        if chip:
+            return chip
+    return None
+
+
+def _attach_components(sections: dict[str, Any], mcus: list[dict[str, Any]]) -> None:
+    """Attach each component section (stepper / driver / heater / fan / sensor) to the MCU node it
+    lives on, by the chip prefix of its primary pin. Mutates each MCU's ``components`` list."""
+    by_name = {m["name"]: m for m in mcus}
+    for name, cfg in sections.items():
+        if not isinstance(cfg, dict):
+            continue
+        kind = _component_kind(str(name))
+        if not kind:
+            continue
+        owner = _owning_mcu(kind, cfg)
+        if owner is None:
+            continue
+        target = by_name.get(owner) or (by_name.get("mcu") if owner == "mcu" else None)
+        if target is None:
+            continue  # pin references an MCU with no [mcu] section — skip (never invent a node)
+        target["components"].append({"section": str(name), "kind": kind})
+
+
 def analyze(
     sections: dict[str, Any],
     board_patterns: dict[str, Any] | None = None,
@@ -128,8 +206,12 @@ def analyze(
                     "board_id": board_id,
                     "board_match": "suggested" if board_id else None,
                     "board_match_confidence": board_id_conf,
+                    # Components (steppers / drivers / heaters / fans / sensors) on this MCU,
+                    # attached below by the chip prefix of each component's primary pin.
+                    "components": [],
                 }
             )
+    _attach_components(sections if isinstance(sections, dict) else {}, mcus)
     # Primary [mcu] first, then the rest alphabetically.
     mcus.sort(key=lambda m: (m["name"] != "mcu", str(m["name"])))
     return {"host": {"name": "host", "role": "sbc"}, "mcus": mcus, "mcu_count": len(mcus)}
