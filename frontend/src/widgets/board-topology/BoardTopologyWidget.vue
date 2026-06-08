@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 import { useNav } from '@/core/nav'
+import { fetchFirmwareStatus } from '@/widgets/firmware-upgrade/api'
 import { targetFor, useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 
 import { fetchBoardDetail, fetchTopology } from './api'
@@ -29,6 +30,8 @@ function openInBrowser(ref: RelatedRef): void {
 const topology = ref<Topology | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+// Per-MCU firmware sync (host vs MCU version), overlaid from the firmware status, keyed by MCU name.
+const fwSync = ref<Record<string, boolean | null>>({})
 
 // Lazy-loaded board catalog details, keyed by board_id, for the suggested matches.
 const openBoard = ref<string | null>(null)
@@ -134,6 +137,14 @@ async function load(): Promise<void> {
     const data = await fetchTopology()
     topology.value = data
     error.value = data.reachable === false ? t('boardTopology.states.unreachable') : null
+    // Overlay firmware sync (best-effort; never blocks the topology).
+    fetchFirmwareStatus()
+      .then((fw) => {
+        fwSync.value = Object.fromEntries((fw.mcus ?? []).map((m) => [m.name, m.in_sync]))
+      })
+      .catch(() => {
+        fwSync.value = {}
+      })
   } catch (e) {
     error.value = describeError(e)
     topology.value = null
@@ -234,6 +245,19 @@ onMounted(() => void load())
               :class="connClass(m.connection)"
             >
               {{ connLabel(m.connection) }}
+            </span>
+          </div>
+          <!-- Firmware sync overlay (host vs MCU version), shown only when known -->
+          <div v-if="fwSync[m.name] === true || fwSync[m.name] === false" class="text-[10px]">
+            <span
+              class="rounded px-1 font-bold"
+              :class="fwSync[m.name] ? 'bg-brand-lime text-ink' : 'bg-brand-red text-surface'"
+            >
+              {{
+                fwSync[m.name]
+                  ? '✓ ' + t('boardTopology.sync.synced')
+                  : '⚠ ' + t('boardTopology.sync.outOfSync')
+              }}
             </span>
           </div>
           <div class="font-mono text-[11px]">

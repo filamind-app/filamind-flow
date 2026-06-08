@@ -97,6 +97,10 @@
       "heater": "Heizer",
       "fan": "Lüfter",
       "sensor": "Sensoren"
+    },
+    "sync": {
+      "synced": "Firmware synchron",
+      "outOfSync": "Firmware NICHT synchron"
     }
   }
 }

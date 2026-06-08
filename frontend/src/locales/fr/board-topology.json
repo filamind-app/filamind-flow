@@ -97,6 +97,10 @@
       "heater": "Chauffages",
       "fan": "Ventilateurs",
       "sensor": "Capteurs"
+    },
+    "sync": {
+      "synced": "Firmware synchronisé",
+      "outOfSync": "Firmware DÉSYNCHRONISÉ"
     }
   }
 }
