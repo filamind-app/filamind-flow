@@ -987,6 +987,8 @@ class TopologyMcu(BaseModel):
     connection: str
     identifier: str | None = None
     mcu: str | None = None
+    mcu_id: str | None = None
+    mcu_family: str | None = None
     board: str | None = None
     confidence: float = 0.0
     board_id: str | None = None

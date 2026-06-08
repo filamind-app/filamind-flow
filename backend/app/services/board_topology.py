@@ -11,7 +11,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from app.services import reference_data
+from app.services import hardware_links, reference_data
 from app.services.moonraker_client import MoonrakerClient
 
 #: A ``[mcu]`` or ``[mcu <name>]`` section header.
@@ -192,6 +192,13 @@ def analyze(
             chip, _ = _match(mpats, signature, "mcu")
             board, confidence = _match(bpats, signature, "board")
             board_id, board_id_conf = _resolve_board_id(board, signature, catalog)
+            # Join the detected chip to a canonical DB MCU entity (one of the first-class MCUs) —
+            # a reliable DB anchor even when no board_id resolves. null for unrecognised chips.
+            norm = hardware_links.normalize_mcu(chip or signature or "")
+            mcu_id: str | None = None
+            mcu_family: str | None = None
+            if norm and reference_data.mcu_by_id(norm[0]):
+                mcu_id, _, mcu_family = norm
             mcus.append(
                 {
                     "name": mcu_name,
@@ -200,6 +207,9 @@ def analyze(
                     "mcu": chip,
                     "board": board,
                     "confidence": confidence,
+                    # Canonical DB MCU entity (GET /api/hardware/mcus/{id}); null if unrecognised.
+                    "mcu_id": mcu_id,
+                    "mcu_family": mcu_family,
                     # Link into the board catalog (GET /api/hardware/boards/{id}); may be
                     # null — a serial/canbus id usually reveals only the chip. Surfaced as
                     # a *suggested* match the user can override.

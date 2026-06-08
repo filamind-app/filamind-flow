@@ -15,6 +15,9 @@ export interface TopologyMcu {
   connection: 'canbus' | 'usb' | 'uart' | 'unknown'
   identifier: string | null
   mcu: string | null
+  /** Canonical DB MCU entity id (one of the first-class MCUs); null if unrecognised. */
+  mcu_id?: string | null
+  mcu_family?: string | null
   board: string | null
   confidence: number
   /** Link into the board catalog; null when only the chip could be identified. */

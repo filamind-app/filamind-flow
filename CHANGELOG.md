@@ -6,7 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.160.0] - 2026-06-08
+## [0.161.0] - 2026-06-08
+
+### Changed
+
+- **Board Topology — each MCU's chip now links to its canonical entry in the hardware database
+  (DB-link uplift, phase 5 of 9).** The detected chip is joined to one of the first-class DB MCU
+  entities (e.g. `stm32f446`, `rp2040`), so each MCU node shows its chip family and the chip name is
+  a clickable link that jumps to that MCU in the Hardware Browser — a reliable database anchor even
+  when no specific board could be matched. (`GET /api/topology` MCUs gained `mcu_id` + `mcu_family`.)
 
 ### Added
 
