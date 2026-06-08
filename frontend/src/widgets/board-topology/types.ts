@@ -1,5 +1,9 @@
 /** Shapes returned by `GET /api/topology`. */
 
+import type { RelatedRef } from '@/widgets/hardware-browser/types'
+
+export type { RelatedRef }
+
 export interface TopologyMcu {
   name: string
   connection: 'canbus' | 'usb' | 'uart' | 'unknown'
@@ -45,6 +49,10 @@ export interface BoardDetail {
   ports?: BoardPort[]
   portsSummary?: Record<string, number>
   media?: BoardMedia
+  /** Cross-entity links (manufacturer / mcus / onboardDrivers / supportedDrivers / …), inlined
+   *  by `?expand=related`. Keyed by relation → the neighbour refs. */
+  related?: Record<string, RelatedRef[]>
+  relatedCounts?: Record<string, number>
 }
 
 export interface TopologyHost {
