@@ -6,6 +6,34 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.154.0] - 2026-06-08
+
+### Added
+
+- **Complete motor autotune dataset (hardware DB).** Expanded the numeric `autotune` block
+  (`resistance_ohm`, `inductance_H`, `holding_torque_Nm`, `max_current_A`, `steps_per_rev`) from
+  188 to **589 of the 671** canonical motors via a manufacturer-by-manufacturer datasheet pass
+  across ~30 brands (Nanotec, Japan Servo / Nidec, Sanyo Denki, Phytron, Oriental Motor, Trinamic,
+  Lin Engineering, MOONS', Leadshine, StepperOnline, Wantai, MotionKing, FAULHABER, LDO,
+  MinebeaMitsumi, Applied Motion, Soyo, Creality and more). Only datasheet-verified values were
+  recorded — **no fabrication**; the remaining ~82 entries are series/placeholder rows, multi-phase
+  motors, or parts with no published phase resistance/inductance and are intentionally left blank.
+  Step angle is now stored faithfully (1.8° → 200, 0.9° → 400, and large-step can-stack motors such
+  as the FAULHABER AM2224 at 24 steps/rev). This is the data foundation for driving Motor Drivers
+  autotune from the full hardware catalog.
+
+### Fixed
+
+- **Implausible holding-torque value corrected.** One motor carried a `107.7 N·m` holding torque
+  (a clear unit/extraction error) from the curated motor database; restored to its true `0.59 N·m`
+  in both the source catalog and the hardware DB. The autotune regression test now enforces
+  physically-plausible ranges for every field to catch such errors.
+
+### Changed
+
+- **Neutral data provenance.** Simplified the `source` strings returned by `/api/drivers/motors`
+  (motor and driver catalogs) to plain descriptions of the reference data.
+
 ## [0.153.0] - 2026-06-08
 
 ### Added
