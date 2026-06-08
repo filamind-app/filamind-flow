@@ -6,7 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.155.0] - 2026-06-08
+## [0.156.0] - 2026-06-08
+
+### Changed
+
+- **Max-Flow reads its hotend data from the unified hardware catalog (single source of truth).**
+  Every hotend product in the catalog's "Hotends & Heaters" section now carries a `maxFlow` block
+  (max volumetric flow, melt-zone, suggested / max temperature, test preset). The Max-Flow widget's
+  hotend list and flow hints are derived from these catalog entries via `/api/reference/hotends`,
+  instead of a separate table file.
+  - **Completed every hotend's data** (109 products): 75 from the existing calibration set, and **34
+    filled in from manufacturer / community sources** (Phaetus Dragon & Rapido, Bambu, Micro Swiss
+    FlowTech, Mellow Goliath/HeatCore, E3D ObXidian, Slice, generic V6/MK classes, …) — so the
+    catalog is the complete source. Representative values for generic clones are flagged in research.
+
+### Removed
+
+- The standalone hotend-table data file (its data now lives on the catalog hotend entries).
 
 ### Changed
 
