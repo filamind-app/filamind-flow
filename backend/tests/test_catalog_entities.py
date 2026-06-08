@@ -116,6 +116,12 @@ def test_config_snippet_integrity() -> None:
     assert (
         "sensor_type: MAX6675" in mx and "spi_software" in mx and "<Klipper sensor name" not in mx
     )
+    # I2C chip sensors carry a real sensor_type + i2c_address (not the generic ADC placeholder)
+    for e in reference_data.catalog_entities("Sensors & Probes"):
+        blob = (e["catalog_id"] + " " + str(e.get("name", ""))).lower()
+        if re.search(r"bme280|bmp280|bme680|htu21|si70|sht21|\blm75", blob):
+            snip = str(e.get("configSnippet", ""))
+            assert "<Klipper sensor name" not in snip and "i2c_address" in snip, e["catalog_id"]
     # no non-URL configSource anywhere
     for cat in reference_data.catalog_categories():
         for e in reference_data.catalog_entities(cat):
