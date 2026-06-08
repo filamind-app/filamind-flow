@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.151.0] - 2026-06-08
+
+### Fixed
+
+- **I2C temperature-sensor snippets (deferred Wave-5 follow-up).** The 6 I2C chip sensors that still
+  shipped a generic ADC-thermistor placeholder now carry correct Klipper config — `sensor_type:
+  BME280` / `HTU21D` / `LM75` with an `i2c_address` (and commented `i2c_mcu` / `i2c_bus`). Three
+  also had a broken `name` (`sensor_type: BME280`, `I2C (SPI on some)`) restored to the real chip
+  family. Regression test extended.
+
 ## [0.150.0] - 2026-06-08
 
 ### Added
