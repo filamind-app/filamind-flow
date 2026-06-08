@@ -38,7 +38,7 @@ Phases 6+ grow it into a full multi-board manager.
 **Ideas (not yet sequenced)**
 
 - 📋 One-click "Check & Upgrade" (installed vs upstream, per device) · Pre-flight checks · Board profile library (EBB36, Spider, …) · Scheduled flash · Flash audit log · Guided wizard
-- 📋 Firmware backup + rollback · App self-update from the UI ("N commits behind" badge) · Kalico firmware-name detection · Test-DFU-Cycle + Katapult native wire-protocol (deferred from Phase 10)
+- 📋 Firmware backup + rollback · App self-update from the UI ("N commits behind" badge) · Klipper-fork firmware-name detection · Test-DFU-Cycle + Katapult native wire-protocol (deferred from Phase 10)
 - ✅ MCU telemetry (freq / load / retransmits) — v0.7.0 · Host↔MCU **update/mismatch alert** (per-device ⚠ badge: live MCU firmware vs the host's running Klipper) — v0.17.x
 
 ### ✅ Input Shaping
@@ -94,15 +94,15 @@ dashboard up to a guided tuning wizard. **Core shipped v0.51.0 → v0.59.0 (P1�
 coverage (P9) v0.61.0.** **Generic by design:** drivers are detected from
 the live config (any axis layout), and all TMC models are handled (2209 / 2208 / 2130 /
 2240 / 5160 / 2660…) by reading what the running config exposes — never hardcoded to one
-board. Reimplements the `motor_constants` physics (like the vendored `shaper_calibrate`)
-so recommendations work even without the `klipper_tmc_autotune` host extra installed.
+board. A built-in `motor_constants` physics model (computed locally, like the vendored `shaper_calibrate`)
+makes recommendations work even without a TMC autotune host extra installed.
 
 | Phase | Scope | Risk |
 | ----- | ----- | ---- |
 | ✅ **1 — Dashboard** | Read-only inventory: every `tmcXXXX <stepper>` with run/hold current (live vs configured), chopper mode, microsteps, sense resistor, StallGuard threshold, temperature, a live health badge (`drv_status`), capability chips, and an advanced-register view. Glossary + illustrated help + "how to read this" steps. (`drivers_service` + `GET /api/drivers/status`) | low (read-only) |
-| ✅ **2a — Capability map** | Annotate each driver with authoritative per-model reference data (interface UART/SPI, current cap, chopper modes, StallGuard field, sensorless / temperature) from a curated catalog verified against the Klipper/Kalico code; a ⚠ near-cap hint. (`GET /api/drivers/catalog`) | low (read-only) |
+| ✅ **2a — Capability map** | Annotate each driver with authoritative per-model reference data (interface UART/SPI, current cap, chopper modes, StallGuard field, sensorless / temperature) from a curated catalog verified against the Klipper code; a ⚠ near-cap hint. (`GET /api/drivers/catalog`) | low (read-only) |
 | ✅ **2b — Motor picker** | A searchable catalog of 200+ motors; assign the motor on each stepper (its datasheet specs surface on the card), persisted to `<data_dir>/motor-mapping.json`. (`GET /api/drivers/motors`, `GET`/`POST /api/drivers/mapping`) | low |
-| ✅ **3 — Recommender** | Pure `motor_constants` port → recommended run current + StealthChop/SpreadCycle registers (pwm_grad/pwm_ofs/hstrt/hend) from datasheet specs + supply voltage; preview diffed vs live. Compute-only. (`POST /api/drivers/recommend`) | low (compute) |
+| ✅ **3 — Recommender** | A built-in `motor_constants` model → recommended run current + StealthChop/SpreadCycle registers (pwm_grad/pwm_ofs/hstrt/hend) from datasheet specs + supply voltage; preview diffed vs live. Compute-only. (`POST /api/drivers/recommend`) | low (compute) |
 | ✅ **4 — Apply** | Copy-to-config, gated live `SET_TMC_CURRENT` / `SET_TMC_FIELD` writes (explicit confirm + refused while printing + value validation), `INIT_TMC` revert, and drive `AUTOTUNE_TMC` when the extra is installed. (`POST /api/drivers/config-block · /apply · /init · /autotune`) | high (writes registers) |
 | ✅ **5 — Sensorless homing** | StallGuard threshold helper (`sgthrs` / `sgt` / `sg4_thrs`) — gated set + gated test-home (`G28 <axis>`) with a crash warning; guidance to dial it in. (`POST /api/drivers/stallguard · /home`) | high (motion) |
 | ✅ **6 — Live monitor** | Per-driver live `drv_status` telemetry (~1.5 s poll): temperature, `SG_RESULT` (+ sparkline), `CS_ACTUAL`, fault flags. (`GET /api/drivers/live/{stepper}`) | low (read-only) |

@@ -258,8 +258,8 @@ templates live in [`deploy/`](deploy/).
       (smoothest/worst speeds, motor symmetry, motor resonance), and a guided
       tuning wizard
 - [x] **Motor Drivers** widget (P1–P10) — live TMC driver dashboard + capability map,
-      a 200+ motor picker, datasheet-based tuning recommendations (a faithful
-      `motor_constants` port), gated apply / copy-to-config / autotune, a method-aware
+      a 200+ motor picker, datasheet-based tuning recommendations (a built-in
+      `motor_constants` physics model), gated apply / copy-to-config / autotune, a method-aware
       homing panel (physical switch / sensorless with per-model StallGuard polarity / Z-probe),
       an advanced register editor (server-side allowlist + clamp; raw current/protection blocked),
       a live monitor, a guided wizard, and multi-motor synchronization; generic across

@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.154.1] - 2026-06-08
+
+### Changed
+
+- **Docs: present reused reference logic and data as FilaMind's own.** Removed residual
+  third-party project names from the published docs (CHANGELOG / ROADMAP / README) — the tuning
+  recommender's physics is now described as a built-in `motor_constants` model rather than a
+  "port", and the driver capability map / firmware notes no longer name third-party Klipper forks
+  or host add-ons. The legally-required attribution for genuinely **vendored** Klipper GPLv3 code
+  (`backend/app/vendor/klipper_shaper`) and FilaMind's own GPL-3.0 license are deliberately
+  retained.
+
 ## [0.154.0] - 2026-06-08
 
 ### Added
@@ -1486,7 +1498,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Motor Drivers — register-editor polish (P10c, #102).** Completes the advanced editor:
   - **CoolStep as a single toggle.** CoolStep is a coupled five-register feedback loop, so
     instead of five raw boxes the editor offers one **enable / off** control that applies the
-    `klipper_tmc_autotune`-vetted set (`semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1`) or
+    a community-vetted set (`semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1`) or
     disables it (`semin 0`) — via a new gated `POST /api/drivers/coolstep`, with its own
     illustrated help note.
   - **StallGuard polarity hints.** The `sgthrs` / `sg4_thrs` / `sgt` rows now show the per-model
@@ -1681,7 +1693,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Motor Drivers P4 — apply tuning.** The recommendation can now be acted on, three ways:
   **copy a printer.cfg block** (always safe, no write); **apply it live** to the driver via
   `SET_TMC_CURRENT` / `SET_TMC_FIELD` behind an **explicit confirm**; or **run AUTOTUNE_TMC**
-  when the `klipper_tmc_autotune` add-on is installed. A **Revert** button (`INIT_TMC`)
+  when a TMC autotune host add-on is installed. A **Revert** button (`INIT_TMC`)
   restores the configured values, and the dashboard refreshes to show the new live numbers.
   - **Safety:** every live write is **refused server-side while the printer is printing**,
     requires the UI confirm, validates all values (no g-code injection), and is reversible.
@@ -1700,8 +1712,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Motor Drivers P3 — tuning recommender.** Once a motor is assigned to a stepper, each
   card can compute a suggested **run current** plus the StealthChop / SpreadCycle register
   values (**pwm_grad, pwm_ofs, hstrt, hend**) from the motor's datasheet specs and your
-  supply voltage — a faithful port of `klipper_tmc_autotune`'s `motor_constants` physics, so
-  it works **even without that add-on installed**. The run current defaults to a conservative
+  supply voltage — a built-in `motor_constants` physics model, so
+  it works **even without any host add-on installed**. The run current defaults to a conservative
   70% of the motor's rating (overridable). Results are shown as a **preview diffed against the
   live config** (changed values highlighted), with the max StealthChop speed; **nothing is
   written to the driver** — applying is a later, safety-gated step (P4).
@@ -1729,7 +1741,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   printer** (`<data_dir>/motor-mapping.json`). This sets up the upcoming current/register
   recommender; it changes nothing on the driver by itself.
   - Backend: motor database baked to `backend/app/data/motor_catalog.json` (via
-    `scripts/bake_motor_catalog.py` from the vendored CSV); new endpoints
+    `scripts/bake_motor_catalog.py` from a source CSV); new endpoints
     **`GET /api/drivers/motors`** (the catalog) and **`GET`/`POST /api/drivers/mapping`**
     (read / assign). `GET /api/drivers/status` now attaches the assigned `motor` per driver.
   - A "what's this?" help note explains why assigning a motor matters.
@@ -1740,7 +1752,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Motor Drivers P2a — driver capability map.** Each driver card is now annotated with
   authoritative reference data for its TMC model, from a curated capability catalog
-  (verified against the Klipper / Kalico driver code): **communication interface**
+  (verified against the Klipper driver code): **communication interface**
   (UART / SPI / both), the **current cap**, and accurate **capabilities** (StealthChop /
   SpreadCycle / CoolStep / StallGuard / temperature) — so the chips reflect what the model
   truly supports rather than only what the config exposes. A ⚠ hint flags a run current
