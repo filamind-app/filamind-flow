@@ -212,12 +212,15 @@ export function motorSpecLabel(m: MotorSpec): string {
   return parts.join(' · ') || '—'
 }
 
-/** Filters the motor catalog by a free-text query over model + manufacturer. */
+/** Filters the motor catalog by a free-text query over name + model + manufacturer. */
 export function filterMotors(catalog: MotorSpec[], query: string): MotorSpec[] {
   const q = query.trim().toLowerCase()
   if (!q) return catalog
   return catalog.filter(
-    (m) => m.model.toLowerCase().includes(q) || m.manufacturer.toLowerCase().includes(q),
+    (m) =>
+      (m.name || '').toLowerCase().includes(q) ||
+      m.model.toLowerCase().includes(q) ||
+      m.manufacturer.toLowerCase().includes(q),
   )
 }
 

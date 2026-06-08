@@ -213,7 +213,8 @@
       "revert": "↺ revert",
       "copyConfig": "copy config",
       "autotune": "autotune",
-      "autotuneTitle": "Runs AUTOTUNE_TMC if the klipper_tmc_autotune add-on is installed"
+      "autotuneTitle": "Runs AUTOTUNE_TMC if the klipper_tmc_autotune add-on is installed",
+      "noSpecs": "No datasheet specs for this motor — tuning recommendation unavailable."
     },
     "motorSync": {
       "toggle": "motor synchronization",
