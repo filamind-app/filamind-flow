@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.156.0] - 2026-06-08
+## [0.157.0] - 2026-06-08
+
+### Changed
+
+- **Board Topology — surface more of the catalog record on each detected board (DB-link uplift,
+  phase 1 of 9).** A suggested board match now shows its **match confidence** next to the
+  "suggested" badge, and the expanded board card shows the board's **manufacturer** and **board
+  class** (mainboard / toolhead / …) from the hardware database — fields the catalog already
+  returns but the widget was dropping. Frontend-only; no new strings. First step of linking the
+  Board Topology widget fully to the hardware DB (see ROADMAP).
 
 ### Changed
 
