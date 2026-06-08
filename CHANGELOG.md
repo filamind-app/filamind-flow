@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.157.0] - 2026-06-08
+## [0.158.0] - 2026-06-08
+
+### Changed
+
+- **Board Topology — show each board's linked hardware from the database graph (DB-link uplift,
+  phase 2 of 9).** The expanded board card now lists the board's cross-entity links from the
+  hardware DB — its **manufacturer, MCU(s), and on-board / supported drivers** — fetched in one
+  round-trip via `?expand=related` on the board detail endpoint. Display-only for now; clicking
+  through to the Hardware Browser is wired in the next phase. Frontend-only (reuses the existing
+  `related` strings); no backend change.
 
 ### Changed
 

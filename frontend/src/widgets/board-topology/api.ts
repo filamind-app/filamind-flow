@@ -12,10 +12,13 @@ export async function fetchTopology(): Promise<Topology> {
   return (await response.json()) as Topology
 }
 
-/** The full catalog record for a detected board (aggregated ports + specs). */
+/** The full catalog record for a detected board (aggregated ports + specs) plus its cross-entity
+ *  links (manufacturer / MCU(s) / drivers / …) inlined via the DB linking graph in one round-trip. */
 export async function fetchBoardDetail(boardId: string): Promise<BoardDetail> {
   const { backendUrl } = resolveEndpoints()
-  const response = await fetch(`${backendUrl}/api/hardware/boards/${encodeURIComponent(boardId)}`)
+  const response = await fetch(
+    `${backendUrl}/api/hardware/boards/${encodeURIComponent(boardId)}?expand=related`,
+  )
   if (!response.ok) {
     throw new Error(`Board request failed (${response.status})`)
   }
