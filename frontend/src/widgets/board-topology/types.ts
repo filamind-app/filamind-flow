@@ -69,6 +69,10 @@ export interface BoardDetail {
 export interface TopologyHost {
   name: string
   role: string
+  /** Best-effort link to a catalog host entity (one of the DB hosts); null if unmatched. */
+  host_id?: string | null
+  host_match?: 'suggested' | null
+  host_match_confidence?: number
 }
 
 export interface Topology {

@@ -194,7 +194,27 @@ onMounted(() => void load())
       <div class="flex flex-col items-center gap-1">
         <div class="nb-card bg-brand-yellow px-3 py-2 text-center">
           <div class="font-display font-bold">
-            <span aria-hidden="true">🖥</span> {{ t('boardTopology.host.label') }}
+            <span aria-hidden="true">🖥</span>
+            <button
+              v-if="topology.host?.host_id"
+              type="button"
+              class="nb-btn rounded bg-surface px-1 hover:bg-brand-cyan"
+              :title="t('hardwareBrowser.related.jump', { name: topology.host.name })"
+              @click="
+                openInBrowser({
+                  type: 'host',
+                  id: topology.host.host_id ?? '',
+                  name: topology.host.name,
+                })
+              "
+            >
+              {{ topology.host.name }}
+            </button>
+            <template v-else>{{
+              topology.host && topology.host.name && topology.host.name !== 'host'
+                ? topology.host.name
+                : t('boardTopology.host.label')
+            }}</template>
           </div>
           <div class="text-[10px] opacity-70">{{ t('boardTopology.host.role') }}</div>
         </div>
