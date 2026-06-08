@@ -6,7 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.159.0] - 2026-06-08
+## [0.160.0] - 2026-06-08
+
+### Added
+
+- **Board Topology — a real wiring graph: each MCU now lists the components that live on it
+  (DB-link uplift, phase 4 of 9).** The backend parses every config section's pins and attaches
+  each **stepper / driver / heater / fan / sensor** to the MCU named by the chip prefix of its
+  primary pin (a bare pin → the primary `mcu`; a `chip:`-prefixed pin → that CAN/USB MCU). Each MCU
+  node now shows per-kind component counts (e.g. *Motors ×4 · Drivers ×4 · Heaters ×2 · Fans ×3*),
+  so a CAN toolhead's motor/heater/accelerometer correctly appear under the toolhead MCU. MCU nodes
+  still come only from `[mcu]` sections — a stray pin can never invent a phantom MCU.
+- `GET /api/topology` now has a typed response contract (Pydantic `Topology` / `TopologyMcu` /
+  `TopologyComponent`).
 
 ### Changed
 

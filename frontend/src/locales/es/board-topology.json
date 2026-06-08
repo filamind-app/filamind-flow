@@ -89,6 +89,14 @@
         "datasheet": "Hoja de datos",
         "image": "Foto"
       }
+    },
+    "components": {
+      "title": "Componentes",
+      "motor": "Motores",
+      "driver": "Drivers",
+      "heater": "Calentadores",
+      "fan": "Ventiladores",
+      "sensor": "Sensores"
     }
   }
 }

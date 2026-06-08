@@ -4,6 +4,12 @@ import type { RelatedRef } from '@/widgets/hardware-browser/types'
 
 export type { RelatedRef }
 
+/** A component (stepper / driver / heater / fan / sensor) attached to an MCU. */
+export interface TopologyComponent {
+  section: string
+  kind: 'motor' | 'driver' | 'heater' | 'fan' | 'sensor'
+}
+
 export interface TopologyMcu {
   name: string
   connection: 'canbus' | 'usb' | 'uart' | 'unknown'
@@ -15,6 +21,8 @@ export interface TopologyMcu {
   board_id?: string | null
   board_match?: 'suggested' | null
   board_match_confidence?: number
+  /** The components (steppers / drivers / heaters / fans / sensors) that live on this MCU. */
+  components?: TopologyComponent[]
 }
 
 /** A port on a catalog board (subset used by the topology board card). */

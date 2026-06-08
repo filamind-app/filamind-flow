@@ -970,3 +970,43 @@ class MotorsSyncRequest(BaseModel):
     """Run motor synchronization; ``calibrate`` runs the longer calibration pass."""
 
     calibrate: bool = False
+
+
+class TopologyComponent(BaseModel):
+    """A component (stepper / driver / heater / fan / sensor) attached to an MCU in the topology."""
+
+    section: str
+    kind: str  # motor / driver / heater / fan / sensor
+
+
+class TopologyMcu(BaseModel):
+    """One MCU node in the board topology: how it connects, a best-effort chip / board guess, a
+    suggested catalog board link, and the components that live on it."""
+
+    name: str
+    connection: str
+    identifier: str | None = None
+    mcu: str | None = None
+    board: str | None = None
+    confidence: float = 0.0
+    board_id: str | None = None
+    board_match: str | None = None
+    board_match_confidence: float = 0.0
+    components: list[TopologyComponent] = []
+
+
+class TopologyHost(BaseModel):
+    """The host node of the topology (the SBC / PC running Klipper)."""
+
+    name: str
+    role: str
+
+
+class Topology(BaseModel):
+    """Host → MCU topology built from the live config (GET /api/topology)."""
+
+    reachable: bool = True
+    host: TopologyHost | None = None
+    mcus: list[TopologyMcu] = []
+    mcu_count: int = 0
+    detail: str | None = None

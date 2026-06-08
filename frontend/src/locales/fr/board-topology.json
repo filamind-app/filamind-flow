@@ -89,6 +89,14 @@
         "datasheet": "Fiche technique",
         "image": "Photo"
       }
+    },
+    "components": {
+      "title": "Composants",
+      "motor": "Moteurs",
+      "driver": "Drivers",
+      "heater": "Chauffages",
+      "fan": "Ventilateurs",
+      "sensor": "Capteurs"
     }
   }
 }
