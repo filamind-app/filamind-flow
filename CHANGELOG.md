@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.153.0] - 2026-06-08
+
+### Added
+
+- **Motor autotune parameters on the hardware DB (toward Motor-Drivers convergence).** 188 of the
+  671 canonical motors now carry a numeric `autotune` block — `resistance_ohm`, `inductance_H`,
+  `holding_torque_Nm`, `max_current_A`, `steps_per_rev` — the datasheet parameters the Motor Drivers
+  autotune / `motor_constants` recommender needs. Merged from the existing curated motor database
+  (no fabrication). This is the data foundation that lets the Motor Drivers tab eventually drive
+  autotune from the full hardware catalog; the remaining motors await a datasheet-enrichment pass.
+  Exposed on the motor detail record; regression test added.
+
 ## [0.152.0] - 2026-06-08
 
 ### Added
