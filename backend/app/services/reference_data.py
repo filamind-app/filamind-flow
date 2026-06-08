@@ -5,7 +5,6 @@ Static JSON datasets baked under ``app/data/reference/``:
 * ``stallguard_profiles.json`` — per-driver StallGuard slip-detection tuning constants
   (base + per-driver overrides + the StallGuard field name per model). Backs the planned
   Max-Flow widget and the Motor Drivers auto-SGT / slip-detection enhancement.
-* ``hotend_table.json`` — hotend melt-zone + expected max-flow + suggested test presets.
 * ``board_patterns.json`` — board / MCU identification patterns.
 * ``macros.json`` — built-in Klipper calibration macro definitions.
 
@@ -37,7 +36,6 @@ def _load(name: str) -> dict[str, Any]:
 
 
 _STALLGUARD = _load("stallguard_profiles.json")
-_HOTENDS = _load("hotend_table.json")
 _BOARDS = _load("board_patterns.json")
 _MACROS = _load("macros.json")
 _HARDWARE = _load("hardware.json")
@@ -72,9 +70,15 @@ def resolved_profile(driver: str) -> dict[str, Any]:
 
 # ── Hotends / boards / macros ────────────────────────────────────────────────
 def hotends() -> list[dict[str, Any]]:
-    """Hotend melt-zone / expected-flow / test-preset table."""
-    rows = _HOTENDS.get("hotends", [])
-    return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+    """The Max-Flow hotend rows (max-flow / melt-zone / suggested temp / test preset), derived from
+    the unified hardware catalog: every "Hotends & Heaters" product carrying a ``maxFlow`` block,
+    surfaced as a flat row (``name`` + the flow fields). The catalog is the single source."""
+    out: list[dict[str, Any]] = []
+    for e in _HW_CATALOG.get("Hotends & Heaters", []):
+        mf = e.get("maxFlow")
+        if isinstance(mf, dict) and e.get("subsection") == "Hotends":
+            out.append({"name": e.get("name", ""), **mf})
+    return out
 
 
 def board_patterns() -> dict[str, Any]:
