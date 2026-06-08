@@ -97,6 +97,10 @@
       "heater": "Heaters",
       "fan": "Fans",
       "sensor": "Sensors"
+    },
+    "sync": {
+      "synced": "Firmware in sync",
+      "outOfSync": "Firmware OUT OF SYNC"
     }
   }
 }

@@ -97,6 +97,10 @@
       "heater": "Calentadores",
       "fan": "Ventiladores",
       "sensor": "Sensores"
+    },
+    "sync": {
+      "synced": "Firmware sincronizado",
+      "outOfSync": "Firmware DESINCRONIZADO"
     }
   }
 }
