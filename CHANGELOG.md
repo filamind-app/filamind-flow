@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.162.1] - 2026-06-09
+
+### Fixed
+
+- **Board Topology — host identification now works on SBCs that leave `cpu_info` empty.** Many
+  hosts (e.g. a BTT CB1) report an empty `cpu_info.model` and put the board/OS string in
+  `distribution.name`; the host matcher now falls through to that, so the host node links to the
+  correct catalog host instead of showing an unmatched stub.
+
 ## [0.162.0] - 2026-06-08
 
 ### Changed

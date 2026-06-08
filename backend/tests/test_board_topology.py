@@ -201,6 +201,13 @@ def test_host_node_links_to_catalog_host() -> None:
     assert node["host_id"] == "btt-cb1"
     assert node["host_match"] == "suggested"
     assert node["role"] == "sbc"
+    # many SBCs leave cpu_info empty and put the board string in distribution.name (real CB1 shape)
+    via_distro = board_topology.host_node(
+        {"cpu_info": {"model": ""}, "distribution": {"name": "BIGTREETECH-CB1 3.1.0-trunk trixie"}},
+        hosts,
+    )
+    assert via_distro["host_id"] == "btt-cb1"
+    assert via_distro["name"].startswith("BIGTREETECH-CB1")
     # no system info -> graceful stub, no link
     stub = board_topology.host_node({}, hosts)
     assert stub["host_id"] is None and stub["name"] == "host"
