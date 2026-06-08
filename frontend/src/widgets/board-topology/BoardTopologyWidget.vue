@@ -8,7 +8,7 @@ import { describeError } from '@/core/describeError'
 import { fetchBoardDetail, fetchTopology } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { BoardDetail, BoardMedia, Topology } from './types'
+import type { BoardDetail, BoardMedia, RelatedRef, Topology } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -56,6 +56,26 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
     url: media[f.key] as string,
     label: t(`boardTopology.board.links.${f.tk}`),
   }))
+}
+
+const REL_ORDER = [
+  'manufacturer',
+  'mcus',
+  'onboardDrivers',
+  'supportedDrivers',
+  'motors',
+  'hosts',
+  'boards',
+  'catalog',
+]
+
+/** A board's non-empty cross-entity link groups (from `?expand=related`), in a stable order, for
+ *  display. Navigation (clicking through to the Hardware Browser) is wired in a later phase. */
+function relatedGroups(detail?: BoardDetail): { key: string; refs: RelatedRef[] }[] {
+  const rel = detail?.related
+  if (!rel) return []
+  const keys = [...REL_ORDER, ...Object.keys(rel).filter((k) => !REL_ORDER.includes(k))]
+  return keys.filter((k) => (rel[k]?.length ?? 0) > 0).map((k) => ({ key: k, refs: rel[k] }))
 }
 
 function connLabel(conn: string): string {
@@ -264,11 +284,33 @@ onMounted(() => void load())
                     {{ lnk.label }}
                   </a>
                 </div>
+                <!-- Linked hardware from the DB graph (manufacturer / MCU / drivers …) -->
+                <div
+                  v-if="relatedGroups(boardCache[m.board_id]).length"
+                  class="space-y-0.5 border-t border-ink/20 pt-1"
+                >
+                  <span class="opacity-60">{{ t('hardwareBrowser.related.title') }}:</span>
+                  <div
+                    v-for="g in relatedGroups(boardCache[m.board_id])"
+                    :key="g.key"
+                    class="flex flex-wrap items-center gap-1"
+                  >
+                    <span class="opacity-50">{{ t('hardwareBrowser.related.rel.' + g.key) }}:</span>
+                    <span
+                      v-for="r in g.refs"
+                      :key="r.type + r.id"
+                      class="rounded bg-surface px-1 font-mono"
+                    >
+                      {{ r.name || r.id }}
+                    </span>
+                  </div>
+                </div>
                 <p
                   v-if="
                     !boardCache[m.board_id].ports?.length &&
                     !Object.keys(boardCache[m.board_id].specs || {}).length &&
-                    !mediaLinks(boardCache[m.board_id].media).length
+                    !mediaLinks(boardCache[m.board_id].media).length &&
+                    !relatedGroups(boardCache[m.board_id]).length
                   "
                   class="opacity-60"
                 >
