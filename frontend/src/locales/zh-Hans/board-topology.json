@@ -97,6 +97,10 @@
       "heater": "加热器",
       "fan": "风扇",
       "sensor": "传感器"
+    },
+    "sync": {
+      "synced": "固件已同步",
+      "outOfSync": "固件不同步"
     }
   }
 }

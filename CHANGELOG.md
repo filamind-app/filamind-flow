@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.162.1] - 2026-06-09
+## [0.163.0] - 2026-06-09
+
+### Added
+
+- **Board Topology — firmware-sync overlay on each MCU (DB-link uplift, phase 7 of 9).** Each MCU
+  node now shows whether its firmware is in sync with the host (✓ in sync / ⚠ out of sync), joined
+  from the firmware status by MCU name — a real health signal right where you look at the MCUs.
+  Shown only when known; the status fetch is best-effort and never blocks the topology. Frontend-only
+  (pure consumption of the existing firmware status); the badge uses an icon + colour + text (not
+  colour alone).
 
 ### Fixed
 
