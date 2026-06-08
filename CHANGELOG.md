@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.163.0] - 2026-06-09
+## [0.164.0] - 2026-06-09
+
+### Added
+
+- **Board Topology — the board card now shows the full catalog record (DB-link uplift, phase 8 of
+  9).** Opening a suggested board now also shows its **config-affecting electronics caveats**, its
+  **setup / config notes**, and a **copyable verbatim Klipper config / pin-map snippet** from the
+  hardware database — the same rich record the Hardware Browser shows, right inside the topology.
+  Frontend-only (the full record was already returned by the board detail endpoint); reuses the
+  existing board strings (no new i18n keys).
 
 ### Added
 

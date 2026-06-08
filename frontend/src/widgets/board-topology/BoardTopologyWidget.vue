@@ -95,6 +95,22 @@ function relatedGroups(detail?: BoardDetail): { key: string; refs: RelatedRef[] 
   return keys.filter((k) => (rel[k]?.length ?? 0) > 0).map((k) => ({ key: k, refs: rel[k] }))
 }
 
+const copiedBoard = ref<string | null>(null)
+
+/** Copy a board's config snippet to the clipboard (brief "copied" feedback). */
+async function copySnippet(text: string, boardId: string): Promise<void> {
+  if (!text) return
+  try {
+    await navigator.clipboard?.writeText(text)
+    copiedBoard.value = boardId
+    setTimeout(() => {
+      if (copiedBoard.value === boardId) copiedBoard.value = null
+    }, 1500)
+  } catch {
+    /* clipboard unavailable — no-op */
+  }
+}
+
 const KIND_ORDER = ['motor', 'driver', 'heater', 'fan', 'sensor']
 
 /** Per-kind counts of the components on an MCU (motors / drivers / heaters / fans / sensors). */
@@ -397,12 +413,55 @@ onMounted(() => void load())
                     </button>
                   </div>
                 </div>
+                <!-- Config-affecting electronics caveats -->
+                <div
+                  v-if="Object.keys(boardCache[m.board_id].electronics || {}).length"
+                  class="space-y-0.5 border-t border-ink/20 pt-1"
+                >
+                  <span class="opacity-60">{{ t('hardwareBrowser.boards.electronics') }}:</span>
+                  <dl class="grid grid-cols-[auto_1fr] gap-x-2">
+                    <template v-for="(v, k) in boardCache[m.board_id].electronics" :key="k">
+                      <dt class="opacity-60">{{ k }}</dt>
+                      <dd class="min-w-0">{{ v }}</dd>
+                    </template>
+                  </dl>
+                </div>
+                <!-- Setup / config notes -->
+                <div v-if="boardCache[m.board_id].configNotes?.length" class="space-y-0.5">
+                  <span class="opacity-60">{{ t('hardwareBrowser.boards.notes') }}:</span>
+                  <ul class="list-disc ps-4">
+                    <li v-for="(n, ni) in boardCache[m.board_id].configNotes" :key="ni">{{ n }}</li>
+                  </ul>
+                </div>
+                <!-- Copyable Klipper config / pin-map snippet -->
+                <div v-if="boardCache[m.board_id].configSnippet" class="space-y-0.5">
+                  <div class="flex items-center gap-1">
+                    <span class="opacity-60">{{ t('hardwareBrowser.boards.config') }}:</span>
+                    <button
+                      type="button"
+                      class="nb-btn bg-surface px-1 py-0 text-[9px]"
+                      @click="copySnippet(boardCache[m.board_id].configSnippet || '', m.board_id)"
+                    >
+                      {{
+                        copiedBoard === m.board_id
+                          ? t('hardwareBrowser.boards.copied')
+                          : t('hardwareBrowser.boards.copy')
+                      }}
+                    </button>
+                  </div>
+                  <pre
+                    class="overflow-x-auto rounded-brutal border border-ink/30 bg-surface p-1 text-[9px] leading-tight"
+                    >{{ boardCache[m.board_id].configSnippet }}</pre
+                  >
+                </div>
                 <p
                   v-if="
                     !boardCache[m.board_id].ports?.length &&
                     !Object.keys(boardCache[m.board_id].specs || {}).length &&
                     !mediaLinks(boardCache[m.board_id].media).length &&
-                    !relatedGroups(boardCache[m.board_id]).length
+                    !relatedGroups(boardCache[m.board_id]).length &&
+                    !boardCache[m.board_id].configSnippet &&
+                    !boardCache[m.board_id].configNotes?.length
                   "
                   class="opacity-60"
                 >

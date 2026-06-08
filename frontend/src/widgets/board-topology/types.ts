@@ -57,6 +57,13 @@ export interface BoardDetail {
   display_name?: string
   boardClass?: string
   specs?: Record<string, string>
+  /** Config-affecting electronics caveats (key → note). */
+  electronics?: Record<string, string>
+  /** Setup / config notes for this board. */
+  configNotes?: string[]
+  /** Copyable verbatim Klipper config / pin-map block. */
+  configSnippet?: string
+  configSource?: string
   ports?: BoardPort[]
   portsSummary?: Record<string, number>
   media?: BoardMedia
