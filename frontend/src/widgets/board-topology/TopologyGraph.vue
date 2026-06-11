@@ -13,13 +13,20 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
+
 import type { Topology, TopologyMcu } from './types'
 
-const props = defineProps<{
-  topology: Topology
-  view: 'logical' | 'physical'
-  selected: string | null
-}>()
+const props = withDefaults(
+  defineProps<{
+    topology: Topology
+    view: 'logical' | 'physical'
+    selected: string | null
+    /** Live per-MCU firmware/link telemetry, keyed by MCU name (empty when Moonraker is down). */
+    health?: Record<string, McuFirmware | undefined>
+  }>(),
+  { health: () => ({}) },
+)
 const emit = defineEmits<{ select: [id: string] }>()
 
 const { t } = useI18n({ useScope: 'global' })
@@ -51,6 +58,8 @@ interface EdgeLine {
   d: string
   bus: string
   backbone?: boolean
+  /** The MCU this edge leads to — so an out-of-sync MCU can flash its link. */
+  target?: string
 }
 interface Layout {
   nodes: NodeBox[]
@@ -131,6 +140,7 @@ function logical(): Layout {
       id: 'e' + i,
       d: vEdge(hostX + NW / 2, topY + NH, x + NW / 2, rowY),
       bus: m.connection,
+      target: m.name,
     })
   })
   return { nodes, edges, w, h: rowY + NH + PAD }
@@ -171,6 +181,7 @@ function physical(): Layout {
       id: 'eh',
       d: vEdge(PAD + NW / 2, PAD + NH, PAD + NW / 2, py),
       bus: primary.connection,
+      target: primary.name,
     })
     aRight = PAD + NW
     aRightY = py + NH / 2
@@ -189,7 +200,12 @@ function physical(): Layout {
   p2p.forEach((m, i) => {
     const y = PAD + i * (NH + 20)
     nodes.push(mcuBox(m, rightX, y))
-    edges.push({ id: 'p' + i, d: hEdge(aRight, aRightY, rightX, y + NH / 2), bus: m.connection })
+    edges.push({
+      id: 'p' + i,
+      d: hEdge(aRight, aRightY, rightX, y + NH / 2),
+      bus: m.connection,
+      target: m.name,
+    })
   })
 
   // CAN boards: a shared backbone rail below the anchor, toolheads hanging off it.
@@ -204,7 +220,12 @@ function physical(): Layout {
       const x = PAD + 18 + i * (NW + 22)
       const y = bbY + 34
       nodes.push(mcuBox(m, x, y))
-      edges.push({ id: 'c' + i, d: vEdge(x + NW / 2, bbY, x + NW / 2, y), bus: 'canbus' })
+      edges.push({
+        id: 'c' + i,
+        d: vEdge(x + NW / 2, bbY, x + NW / 2, y),
+        bus: 'canbus',
+        target: m.name,
+      })
     })
     canBottom = bbY + 34 + NH
   }
@@ -242,6 +263,40 @@ function ariaFor(n: NodeBox): string {
   if (n.kind === 'host') return t('boardTopology.host.label') + ': ' + n.title
   return n.title + (n.sub ? ', ' + n.sub : '') + (n.conn ? ', ' + connLabel(n.conn) : '')
 }
+
+// ── live link health (from /api/firmware/status, joined by MCU name) ────────────────────────────
+type Health = 'ok' | 'warn' | 'out' | 'unknown'
+function mcuNameOf(id: string): string {
+  return id.startsWith('mcu:') ? id.slice(4) : ''
+}
+function healthOf(id: string): Health {
+  const f = props.health[mcuNameOf(id)]
+  if (!f || f.in_sync == null) return 'unknown'
+  if (f.in_sync === false) return 'out' // firmware out of sync with the host — needs a restart/flash
+  if ((f.retransmits ?? 0) > 1000 || (f.awake ?? 0) > 0.6) return 'warn' // flaky link / high load
+  return 'ok'
+}
+const HEALTH_GLYPH: Record<Health, string> = { ok: '✓', warn: '⚠', out: '✕', unknown: '' }
+function targetHealth(target?: string): Health {
+  return target ? healthOf('mcu:' + target) : 'unknown'
+}
+function vitals(id: string): string {
+  const f = props.health[mcuNameOf(id)]
+  if (!f) return ''
+  const parts: string[] = []
+  if (f.freq != null)
+    parts.push(t('boardTopology.graph.vitals.freq', { mhz: (f.freq / 1e6).toFixed(2) }))
+  if (f.retransmits != null) parts.push(t('boardTopology.graph.vitals.retx', { n: f.retransmits }))
+  if (f.awake != null)
+    parts.push(t('boardTopology.graph.vitals.load', { pct: Math.round(f.awake * 100) }))
+  const sync =
+    f.in_sync === false
+      ? t('boardTopology.sync.outOfSync')
+      : f.in_sync
+        ? t('boardTopology.sync.synced')
+        : ''
+  return [sync, ...parts].filter(Boolean).join(' · ')
+}
 </script>
 
 <template>
@@ -261,7 +316,10 @@ function ariaFor(n: NodeBox): string {
             :key="e.id"
             :d="e.d"
             class="edge"
-            :class="[busClass(e.bus), { backbone: e.backbone }]"
+            :class="[
+              busClass(e.bus),
+              { backbone: e.backbone, 'edge-alert': targetHealth(e.target) === 'out' },
+            ]"
             fill="none"
           />
           <!-- Nodes -->
@@ -270,7 +328,11 @@ function ariaFor(n: NodeBox): string {
             :key="n.id"
             :transform="`translate(${n.x},${n.y})`"
             class="node"
-            :class="{ 'is-selected': selected === n.id, nested: n.nested }"
+            :class="{
+              'is-selected': selected === n.id,
+              nested: n.nested,
+              'is-alert': healthOf(n.id) === 'out',
+            }"
             role="button"
             tabindex="0"
             :aria-label="ariaFor(n)"
@@ -278,6 +340,9 @@ function ariaFor(n: NodeBox): string {
             @keydown.enter.prevent="emit('select', n.id)"
             @keydown.space.prevent="emit('select', n.id)"
           >
+            <title v-if="n.kind === 'mcu' && healthOf(n.id) !== 'unknown'">
+              {{ vitals(n.id) }}
+            </title>
             <rect
               :width="n.w"
               :height="n.h"
@@ -293,6 +358,25 @@ function ariaFor(n: NodeBox): string {
                     : 'fill-mcu'
               "
             />
+            <!-- live link-health: left-edge bar + status glyph (colour + glyph, never colour-only) -->
+            <template v-if="n.kind === 'mcu' && healthOf(n.id) !== 'unknown'">
+              <rect
+                x="2.5"
+                y="3"
+                width="3.5"
+                :height="n.h - 6"
+                rx="1.5"
+                :class="'health-bar h-' + healthOf(n.id)"
+              />
+              <text
+                :x="n.w - 8"
+                :y="n.chassis ? n.h - 8 : 15"
+                text-anchor="end"
+                :class="'t-health h-' + healthOf(n.id)"
+              >
+                {{ HEALTH_GLYPH[healthOf(n.id)] }}
+              </text>
+            </template>
             <!-- chassis label (mainboard) -->
             <text v-if="n.chassis" x="10" y="18" class="t-title text-ink">{{ n.title }}</text>
             <text
@@ -341,8 +425,8 @@ function ariaFor(n: NodeBox): string {
               </text>
             </g>
             <g
-              v-if="n.kind === 'mcu' && n.board"
-              :transform="`translate(${n.w - (n.chassis ? 26 : 22)},${n.chassis ? 10 : n.h - 18})`"
+              v-if="n.kind === 'mcu' && n.board && !n.chassis"
+              :transform="`translate(${n.w - 22},${n.h - 18})`"
             >
               <text
                 class="t-badge"
@@ -367,6 +451,16 @@ function ariaFor(n: NodeBox): string {
 .edge.backbone {
   stroke-width: 5;
   opacity: 0.9;
+}
+.edge.edge-alert {
+  stroke: rgb(var(--c-brand-red));
+  stroke-width: 3.5;
+  animation: edgepulse 1.1s ease-in-out infinite;
+}
+@keyframes edgepulse {
+  50% {
+    opacity: 0.35;
+  }
 }
 .bus-canbus {
   stroke: rgb(var(--c-brand-cyan));
@@ -401,6 +495,40 @@ function ariaFor(n: NodeBox): string {
   stroke: rgb(var(--c-brand-pink));
   stroke-width: 3.5;
   filter: drop-shadow(3px 3px 0 rgb(var(--c-ink)));
+}
+/* Live link-health — left-edge bar + status glyph (green ✓ / amber ⚠ / red ✕). */
+.health-bar {
+  stroke: rgb(var(--c-ink) / 0.5);
+  stroke-width: 0.5;
+}
+.t-health {
+  font:
+    700 12px/1 ui-monospace,
+    monospace;
+}
+.h-ok {
+  fill: rgb(var(--c-brand-lime));
+}
+.h-warn {
+  fill: rgb(var(--c-brand-yellow));
+}
+.h-out {
+  fill: rgb(var(--c-brand-red));
+}
+/* An out-of-sync MCU gently pulses to draw the eye to the problem. */
+.node.is-alert .node-rect {
+  animation: nodepulse 1.4s ease-in-out infinite;
+}
+@keyframes nodepulse {
+  50% {
+    filter: drop-shadow(0 0 5px rgb(var(--c-brand-red)));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .edge.edge-alert,
+  .node.is-alert .node-rect {
+    animation: none;
+  }
 }
 .fill-host {
   fill: rgb(var(--c-brand-yellow));

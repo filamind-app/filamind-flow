@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.171.0] - 2026-06-11
+
+### Added
+
+- **Board Topology — live link-health on the Machine Map.** Each MCU node now carries a status from
+  the live firmware telemetry the widget already fetches: a coloured left-edge bar + a glyph
+  (✓ healthy / ⚠ degraded / ✕ firmware out-of-sync — colour *and* glyph, never colour-only), and an
+  **out-of-sync MCU gently pulses while its link to the host flashes red**, so a firmware mismatch
+  reads as a machine-wide warning at a glance. Hovering a node (and the inspector) shows the live
+  **vitals**: MCU frequency, retransmit count (link quality) and load. Honest degradation — with no
+  telemetry the nodes are simply neutral. Respects `prefers-reduced-motion`. No backend change (the
+  data was already in `/api/firmware/status`); localised in all 7 languages.
+
 ## [0.170.0] - 2026-06-11
 
 ### Added

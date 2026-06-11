@@ -129,7 +129,18 @@
       "integrated": "SBC on-board",
       "integratedNote": "Der Host-SBC ist im Mainboard {board} verbaut.",
       "selectPrompt": "Wähle ein Board oder einen MCU in der Karte, um es zu inspizieren.",
-      "aria": "Maschinenkarte: der Host und {n} MCUs"
+      "aria": "Maschinenkarte: der Host und {n} MCUs",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} Neuübertragungen",
+        "load": "{pct}% Last"
+      },
+      "health": {
+        "title": "Verbindungsstatus",
+        "ok": "gesund",
+        "warn": "beeinträchtigt",
+        "out": "Firmware nicht synchron"
+      }
     }
   }
 }
