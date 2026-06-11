@@ -103,3 +103,21 @@ export interface FieldPolicyResponse {
   model: string
   fields: Record<string, FieldPolicyEntry>
 }
+
+/** One named pin of an MCU's resolved board (for pin-aware `*_pin` editing). */
+export interface PinMapPin {
+  pin: string
+  owners: string[]
+  caveat: string | null
+}
+
+export interface PinMapMcu {
+  name: string
+  board_name: string | null
+  pins: PinMapPin[]
+}
+
+export interface PinMapResult {
+  reachable: boolean
+  mcus: PinMapMcu[]
+}

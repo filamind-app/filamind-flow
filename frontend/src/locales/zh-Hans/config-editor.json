@@ -146,6 +146,13 @@
     },
     "tmc": {
       "review": "在「原始」中检查并保存"
+    },
+    "pinEdit": {
+      "offBoard": "不在板上",
+      "offBoardHint": "该引脚不在主板已知的引脚映射中 — 请检查拼写错误或 EXP/虚拟引脚。",
+      "double": "重复使用",
+      "doubleHint": "该引脚在多个配置段中被分配。",
+      "caveat": "注意"
     }
   }
 }

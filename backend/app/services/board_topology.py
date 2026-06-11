@@ -560,6 +560,36 @@ async def gather_pin_atlas(
     return build_pin_atlas(sections, mcu_name, board)
 
 
+async def gather_pin_map(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
+    """Per-MCU pin data for the Config Editor's pin-aware editing: each resolved board's named pins
+    (with what config section uses them + any electronics caveat), so a ``*_pin`` field can offer
+    valid-pin suggestions and flag a non-existent / double-assigned / caveated pin inline.
+
+    Raises:
+        httpx.HTTPError: if Moonraker is unreachable.
+    """
+    configfile = await client.query_objects(["configfile"])
+    sections = _sections(configfile.get("configfile"))
+    result = analyze(sections)
+    apply_overrides(result, topology_overrides.read_overrides(data_dir))
+    mcus: list[dict[str, Any]] = []
+    for mcu in result.get("mcus", []):
+        board_id = mcu.get("board_id")
+        board = reference_data.board_by_id(str(board_id)) if board_id else None
+        atlas = build_pin_atlas(sections, str(mcu.get("name", "")), board)
+        mcus.append(
+            {
+                "name": atlas["mcu_name"],
+                "board_name": atlas["board_name"],
+                "pins": [
+                    {"pin": p["pin"], "owners": p["owners"], "caveat": p["caveat"]}
+                    for p in atlas["pins"]
+                ],
+            }
+        )
+    return {"reachable": True, "mcus": mcus}
+
+
 async def gather_pin_doctor(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
     """Run the pin-conflict scanner over the WHOLE live config (every MCU), so the Config Editor can
     catch double-assigned pins + mains-on-logic-pin caveats — the #1 restart-bricking errors —

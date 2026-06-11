@@ -146,6 +146,13 @@
     },
     "tmc": {
       "review": "review in Raw & save"
+    },
+    "pinEdit": {
+      "offBoard": "not on board",
+      "offBoardHint": "This pin isn't in the board's known pin map — check for a typo or an EXP/virtual pin.",
+      "double": "reused",
+      "doubleHint": "This pin is assigned in more than one section.",
+      "caveat": "caveat"
     }
   }
 }
