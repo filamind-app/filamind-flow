@@ -237,6 +237,15 @@ function ruleLabel(rule: string): string {
   const label = t(key)
   return label === key ? rule : label
 }
+/** Number of actionable findings (errors + warnings) — informational overrides don't count. */
+const lintActionable = computed(
+  () => graph.value?.lint.filter((l) => l.level !== 'info').length ?? 0,
+)
+function lintClass(level: string): string {
+  if (level === 'error') return 'bg-brand-red/10'
+  if (level === 'warning') return 'bg-brand-yellow/20'
+  return 'bg-ink/5'
+}
 
 const searchQuery = ref('')
 const searchResult = ref<ConfigSearchResult | null>(null)
@@ -527,8 +536,8 @@ onMounted(() => {
     <details v-if="graph && graph.reachable" class="nb-card bg-surface p-2 text-[11px]">
       <summary class="cursor-pointer font-bold">
         {{ t('configEditor.project.title') }}
-        <span v-if="graph.lint.length" class="ms-1 rounded bg-brand-yellow px-1 text-ink">
-          {{ t('configEditor.project.lintBadge', { n: graph.lint.length }) }}
+        <span v-if="lintActionable" class="ms-1 rounded bg-brand-yellow px-1 text-ink">
+          {{ t('configEditor.project.lintBadge', { n: lintActionable }) }}
         </span>
       </summary>
 
@@ -595,7 +604,7 @@ onMounted(() => {
               v-for="(lt, li) in graph.lint"
               :key="li"
               class="rounded p-1"
-              :class="lt.level === 'error' ? 'bg-brand-red/10' : 'bg-brand-yellow/20'"
+              :class="lintClass(lt.level)"
             >
               <button class="w-full text-start hover:underline" @click="openFile(lt.file)">
                 <b>{{ ruleLabel(lt.rule) }}</b>

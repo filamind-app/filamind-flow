@@ -101,12 +101,14 @@ def test_project_graph_includes_and_cross_file_lint() -> None:
     rules = {(lt["rule"], lt["message"]) for lt in out["lint"]}
     assert ("broken_include", "missing.cfg") in rules
     assert ("orphan_driver", "stepper_q") in rules
-    assert ("duplicate_section", "extruder") in rules  # printer.cfg + steppers.cfg (both active)
+    # [extruder] is defined in two *included* files → a (non-error) override, not a duplicate.
+    assert ("section_override", "extruder") in rules
+    override = next(lt for lt in out["lint"] if lt["rule"] == "section_override")
+    assert override["level"] == "info"
     # The paired [tmc2209 stepper_x] is NOT an orphan (its [stepper_x] exists).
     assert ("orphan_driver", "stepper_x") not in rules
-    # The backup's [extruder] is excluded, so the duplicate is only flagged across active files.
-    dup = next(lt for lt in out["lint"] if lt["rule"] == "duplicate_section")
-    assert "printer-20260101.cfg" not in dup["files"]
+    # The backup's [extruder] is excluded, so the override only spans active files.
+    assert "printer-20260101.cfg" not in override["files"]
 
 
 def test_project_graph_same_basename_is_not_double_pulled() -> None:
@@ -121,7 +123,7 @@ def test_project_graph_same_basename_is_not_double_pulled() -> None:
     out = config_service.project_graph_from_files(files)
     assert "user/settings.cfg" in out["active"]
     assert "vendor/source/settings.cfg" not in out["active"]
-    assert not any(lt["rule"] == "duplicate_section" for lt in out["lint"])
+    assert not any(lt["rule"] == "section_override" for lt in out["lint"])
 
 
 def test_project_graph_glob_include_does_not_cross_directories() -> None:
@@ -137,7 +139,7 @@ def test_project_graph_glob_include_does_not_cross_directories() -> None:
     out = config_service.project_graph_from_files(files)
     assert "pack/a.cfg" in out["active"] and "pack/b.cfg" in out["active"]
     assert "pack/source/a.cfg" not in out["active"]
-    assert not any(lt["rule"] == "duplicate_section" for lt in out["lint"])
+    assert not any(lt["rule"] == "section_override" for lt in out["lint"])
 
 
 def test_is_config_file() -> None:
