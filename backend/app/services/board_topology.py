@@ -13,7 +13,7 @@ from typing import Any
 
 import httpx
 
-from app.services import hardware_links, reference_data
+from app.services import hardware_links, reference_data, topology_overrides
 from app.services.moonraker_client import MoonrakerClient
 
 #: A ``[mcu]`` or ``[mcu <name>]`` section header.
@@ -365,8 +365,25 @@ def analyze(
     return {"host": {"name": "host", "role": "sbc"}, "mcus": mcus, "mcu_count": len(mcus)}
 
 
-async def gather_topology(client: MoonrakerClient) -> dict[str, Any]:
-    """Fetch the live ``configfile`` sections and build the topology.
+def apply_overrides(result: dict[str, Any], overrides: dict[str, dict[str, Any]]) -> None:
+    """Apply the user's saved per-MCU board choices onto a built topology, keyed by MCU name.
+
+    A confirmed override replaces the auto suggestion: the chosen ``board_id`` wins, ``board_match``
+    becomes ``"confirmed"`` and the confidence is 1.0 (it's the user's call, not a guess). Mutates
+    ``result`` in place; a no-op when there are no overrides."""
+    if not overrides:
+        return
+    for mcu in result.get("mcus", []):
+        override = overrides.get(str(mcu.get("name", "")))
+        if override and override.get("board_id"):
+            mcu["board_id"] = override["board_id"]
+            mcu["board_match"] = "confirmed"
+            mcu["board_match_confidence"] = 1.0
+
+
+async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
+    """Fetch the live ``configfile`` sections and build the topology, applying any saved per-MCU
+    board overrides from ``data_dir``.
 
     Raises:
         httpx.HTTPError: if Moonraker is unreachable.
@@ -374,6 +391,7 @@ async def gather_topology(client: MoonrakerClient) -> dict[str, Any]:
     configfile = await client.query_objects(["configfile"])
     sections = _sections(configfile.get("configfile"))
     result = analyze(sections)
+    apply_overrides(result, topology_overrides.read_overrides(data_dir))
     # Identify the host SBC (optional — older Moonraker may lack /machine/system_info; degrade
     # gracefully so the topology still returns).
     try:

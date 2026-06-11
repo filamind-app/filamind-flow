@@ -22,11 +22,15 @@
         },
         "detection": {
           "title": "Wie die Erkennung funktioniert",
-          "body": "Chip und Platine werden geschätzt, indem die Verbindungskennung (der serielle Pfad oder die CAN-UUID) mit einer Mustertabelle abgeglichen wird. Eine Platinen-Schätzung zeigt eine Übereinstimmungs-Konfidenz; passt nichts, steht bei Chip/Platine \"unbekannt\" — die Verbindung selbst wird trotzdem angezeigt."
+          "body": "Chip und Board werden ermittelt, indem die Verbindungskennung (der serielle Pfad oder die CAN-UUID) mit einer Mustertabelle abgeglichen wird, plus einem Pin-Map-Fingerabdruck der von deiner Konfiguration genutzten Pins. Eine Board-Vermutung zeigt eine Treffersicherheit; passt nichts, steht bei Chip/Board „unbekannt“ — die Verbindung selbst wird weiterhin angezeigt."
         },
         "glossary": {
           "title": "Glossar",
           "body": ""
+        },
+        "override": {
+          "title": "Board bestätigen oder ändern",
+          "body": "Eine Serien-ID verrät meist nur den Chip, daher kann die Board-Vermutung fehlen oder falsch sein. Nutze „Dieses Board bestätigen“, um eine richtige Vermutung festzulegen, oder „Board ändern…“ / „Board festlegen…“, um das passende aus dem Katalog zu wählen. Deine Auswahl wird auf dem Host gespeichert und bei jedem Auslesen wiederverwendet; „Zurücksetzen“ stellt die automatische Vermutung wieder her."
         }
       },
       "glossary": {
@@ -101,6 +105,15 @@
     "sync": {
       "synced": "Firmware synchron",
       "outOfSync": "Firmware NICHT synchron"
+    },
+    "override": {
+      "confirmed": "Von dir bestätigt",
+      "confirm": "Dieses Board bestätigen",
+      "change": "Board ändern…",
+      "set": "Board festlegen…",
+      "clear": "Zurücksetzen",
+      "pickPlaceholder": "Board-Katalog durchsuchen…",
+      "hint": "Deine Auswahl wird auf dem Host gespeichert und ab jetzt für diesen MCU verwendet."
     }
   }
 }

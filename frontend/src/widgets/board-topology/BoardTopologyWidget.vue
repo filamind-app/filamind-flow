@@ -6,9 +6,10 @@ import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 import { useNav } from '@/core/nav'
 import { fetchFirmwareStatus } from '@/widgets/firmware-upgrade/api'
+import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 import { targetFor, useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 
-import { fetchBoardDetail, fetchTopology } from './api'
+import { clearBoardOverride, fetchBoardDetail, fetchTopology, setBoardOverride } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { BoardDetail, BoardMedia, RelatedRef, Topology, TopologyMcu } from './types'
@@ -119,6 +120,36 @@ function componentCounts(m: TopologyMcu): { kind: string; n: number }[] {
   return KIND_ORDER.map((k) => ({ kind: k, n: comps.filter((c) => c.kind === k).length })).filter(
     (x) => x.n > 0,
   )
+}
+
+// ── Per-MCU board confirm / override (the only write path) ──────────────────────────────────────
+// Overrides are keyed by the MCU's config section name (unique + stable). The picker is opened for
+// at most one MCU at a time; a set/clear re-fetches the whole topology (the backend re-applies it).
+const pickerOpen = ref<string | null>(null)
+const overrideBusy = ref<string | null>(null)
+
+async function confirmBoard(m: TopologyMcu, boardId: string): Promise<void> {
+  if (!boardId) return
+  overrideBusy.value = m.name
+  try {
+    topology.value = await setBoardOverride(m.name, boardId)
+    pickerOpen.value = null
+  } catch (e) {
+    error.value = describeError(e)
+  } finally {
+    overrideBusy.value = null
+  }
+}
+
+async function clearBoard(m: TopologyMcu): Promise<void> {
+  overrideBusy.value = m.name
+  try {
+    topology.value = await clearBoardOverride(m.name)
+  } catch (e) {
+    error.value = describeError(e)
+  } finally {
+    overrideBusy.value = null
+  }
 }
 
 function connLabel(conn: string): string {
@@ -470,6 +501,54 @@ onMounted(() => void load())
               </template>
             </div>
           </template>
+
+          <!-- Confirm / override the board for this MCU (persisted across reboots) -->
+          <div class="flex flex-wrap items-center gap-1 border-t border-ink/15 pt-1 text-[10px]">
+            <span
+              v-if="m.board_match === 'confirmed'"
+              class="rounded bg-brand-lime px-1 font-bold text-ink"
+            >
+              ✓ {{ t('boardTopology.override.confirmed') }}
+            </span>
+            <button
+              v-if="m.board_id && m.board_match !== 'confirmed'"
+              type="button"
+              class="nb-btn bg-surface px-1 py-0 disabled:opacity-50"
+              :disabled="overrideBusy === m.name"
+              @click="confirmBoard(m, m.board_id || '')"
+            >
+              {{ t('boardTopology.override.confirm') }}
+            </button>
+            <button
+              type="button"
+              class="nb-btn bg-surface px-1 py-0 disabled:opacity-50"
+              :disabled="overrideBusy === m.name"
+              @click="pickerOpen = pickerOpen === m.name ? null : m.name"
+            >
+              {{
+                m.board_id ? t('boardTopology.override.change') : t('boardTopology.override.set')
+              }}
+            </button>
+            <button
+              v-if="m.board_match === 'confirmed'"
+              type="button"
+              class="nb-btn bg-surface px-1 py-0 disabled:opacity-50"
+              :disabled="overrideBusy === m.name"
+              @click="clearBoard(m)"
+            >
+              {{ t('boardTopology.override.clear') }}
+            </button>
+          </div>
+          <div v-if="pickerOpen === m.name" class="pt-1">
+            <HardwarePicker
+              type="boards"
+              :model-value="m.board_id ?? null"
+              :placeholder="t('boardTopology.override.pickPlaceholder')"
+              :disabled="overrideBusy === m.name"
+              @update:model-value="(id: string | null) => confirmBoard(m, id || '')"
+            />
+            <p class="pt-0.5 opacity-60">{{ t('boardTopology.override.hint') }}</p>
+          </div>
         </li>
       </ul>
     </template>

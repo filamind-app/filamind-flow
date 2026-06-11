@@ -98,7 +98,7 @@ def test_analyze_ignores_non_mcu_and_bad_input() -> None:
 
 
 def test_analyze_with_real_reference_data() -> None:
-    # Uses the shipped board_patterns.json — just assert it runs and returns the right shape.
+    # Uses the catalog-derived patterns — just assert it runs and returns the right shape.
     out = board_topology.analyze(SECTIONS, reference_data.board_patterns())
     assert out["mcu_count"] == 3
     assert all("connection" in m for m in out["mcus"])
@@ -129,7 +129,7 @@ def test_route_topology_ok(monkeypatch: Any) -> None:
 
     from app.main import create_app
 
-    async def fake_gather(_client: Any) -> dict[str, Any]:
+    async def fake_gather(_client: Any, _data_dir: str = "") -> dict[str, Any]:
         return {
             "reachable": True,
             "host": {"name": "host", "role": "sbc"},
@@ -273,3 +273,105 @@ def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
     fit = _board("fit-x", sorted(used | {"PC0", "PC1"}))
     board_id, conf = board_topology._fingerprint_board(used, [fit, board_a])
     assert board_id == "fit-x" and conf >= 0.6
+
+
+# ── per-MCU board overrides (the only write path) ────────────────────────────
+def test_apply_overrides_confirms_chosen_board() -> None:
+    """A saved override replaces the auto suggestion: chosen board wins, match=confirmed."""
+    result = {
+        "mcus": [
+            {"name": "mcu", "board_id": "auto-guess", "board_match": "suggested"},
+            {"name": "toolhead_mcu", "board_id": None, "board_match": None},
+            {"name": "other", "board_id": "x", "board_match": "suggested"},
+        ]
+    }
+    overrides = {
+        "mcu": {"board_id": "sovol-sv08"},
+        "toolhead_mcu": {"board_id": "ebb36"},
+    }
+    board_topology.apply_overrides(result, overrides)
+    by_name = {m["name"]: m for m in result["mcus"]}
+    assert by_name["mcu"]["board_id"] == "sovol-sv08"
+    assert by_name["mcu"]["board_match"] == "confirmed"
+    assert by_name["mcu"]["board_match_confidence"] == 1.0
+    # An override can set a board where there was no suggestion at all.
+    assert by_name["toolhead_mcu"]["board_id"] == "ebb36"
+    assert by_name["toolhead_mcu"]["board_match"] == "confirmed"
+    # An MCU without an override is untouched.
+    assert by_name["other"]["board_match"] == "suggested"
+
+
+def test_overrides_store_roundtrip(tmp_path: Any) -> None:
+    from app.services import topology_overrides
+
+    data_dir = str(tmp_path)
+    assert topology_overrides.read_overrides(data_dir) == {}
+    topology_overrides.set_override(data_dir, "toolhead_mcu", "ebb36")
+    saved = topology_overrides.read_overrides(data_dir)
+    assert saved["toolhead_mcu"]["board_id"] == "ebb36" and saved["toolhead_mcu"]["at"]
+    # Clearing removes just that entry.
+    topology_overrides.set_override(data_dir, "mcu", "sovol-sv08")
+    topology_overrides.clear_override(data_dir, "toolhead_mcu")
+    after = topology_overrides.read_overrides(data_dir)
+    assert "toolhead_mcu" not in after and after["mcu"]["board_id"] == "sovol-sv08"
+
+
+def test_overrides_store_rejects_bad_input(tmp_path: Any) -> None:
+    import pytest
+
+    from app.services import topology_overrides
+
+    with pytest.raises(ValueError):
+        topology_overrides.set_override(str(tmp_path), "", "sovol-sv08")
+    with pytest.raises(ValueError):
+        topology_overrides.set_override(str(tmp_path), "mcu", "")
+
+
+def test_route_override_sets_and_clears(monkeypatch: Any, tmp_path: Any) -> None:
+    from fastapi.testclient import TestClient
+
+    from app.config import Settings, get_settings
+    from app.main import create_app
+    from app.services import reference_data
+
+    sections = {"mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103xe_X-if00"}}
+
+    async def fake_query(_self: Any, _objects: Any) -> dict[str, Any]:
+        return {"configfile": {"settings": sections}}
+
+    async def fake_sysinfo(_self: Any) -> dict[str, Any]:
+        return {}
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", fake_query)
+    monkeypatch.setattr(
+        "app.services.moonraker_client.MoonrakerClient.machine_system_info", fake_sysinfo
+    )
+    real_board_id = reference_data.boards()[0]["board_id"]
+
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(data_dir=str(tmp_path))
+    client = TestClient(app)
+
+    # Unknown board id is rejected.
+    assert (
+        client.post(
+            "/api/topology/override", json={"mcu_name": "mcu", "board_id": "nope"}
+        ).status_code
+        == 404
+    )
+
+    # Setting an override confirms the board on that MCU.
+    resp = client.post(
+        "/api/topology/override", json={"mcu_name": "mcu", "board_id": real_board_id}
+    )
+    assert resp.status_code == 200
+    mcu = next(m for m in resp.json()["mcus"] if m["name"] == "mcu")
+    assert mcu["board_id"] == real_board_id
+    assert mcu["board_match"] == "confirmed"
+    assert mcu["board_match_confidence"] == 1.0
+
+    # Clearing reverts to the auto suggestion (no longer confirmed).
+    resp = client.post("/api/topology/override/clear", json={"mcu_name": "mcu"})
+    assert resp.status_code == 200
+    mcu = next(m for m in resp.json()["mcus"] if m["name"] == "mcu")
+    assert mcu["board_match"] != "confirmed"

@@ -22,11 +22,15 @@
         },
         "detection": {
           "title": "Cómo funciona la detección",
-          "body": "El chip y la placa se estiman comparando el identificador de conexión (la ruta serial o el UUID de CAN) con una tabla de patrones. Una estimación de placa muestra una confianza de coincidencia; cuando nada coincide, el chip/placa aparece como \"desconocido\", aunque la conexión en sí se sigue mostrando."
+          "body": "El chip y la placa se deducen comparando el identificador de conexión (la ruta serie o el UUID de CAN) con una tabla de patrones, más una huella del mapa de pines que usa tu configuración. Una propuesta de placa muestra una confianza de coincidencia; si nada coincide, el chip/placa aparece como «desconocido», pero la conexión se sigue mostrando."
         },
         "glossary": {
           "title": "Glosario",
           "body": ""
+        },
+        "override": {
+          "title": "Confirmar o cambiar una placa",
+          "body": "Un id serie suele revelar solo el chip, así que la placa propuesta puede faltar o ser incorrecta. Usa «Confirmar esta placa» para fijar una propuesta correcta, o «Cambiar placa…» / «Elegir placa…» para escoger la correcta del catálogo. Tu elección se guarda en el host y se reutiliza en cada lectura; «Borrar» vuelve a la propuesta automática."
         }
       },
       "glossary": {
@@ -101,6 +105,15 @@
     "sync": {
       "synced": "Firmware sincronizado",
       "outOfSync": "Firmware DESINCRONIZADO"
+    },
+    "override": {
+      "confirmed": "Confirmado por ti",
+      "confirm": "Confirmar esta placa",
+      "change": "Cambiar placa…",
+      "set": "Elegir placa…",
+      "clear": "Borrar",
+      "pickPlaceholder": "Buscar en el catálogo de placas…",
+      "hint": "Tu elección se guarda en el host y se usa para este MCU a partir de ahora."
     }
   }
 }

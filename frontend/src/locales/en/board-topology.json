@@ -22,7 +22,11 @@
         },
         "detection": {
           "title": "How detection works",
-          "body": "The chip and board are guessed by matching the connection identifier (the serial path or CAN UUID) against a pattern table. A board guess shows a match confidence; when nothing matches, the chip/board reads \"unknown\" — the connection itself is still shown."
+          "body": "The chip and board are guessed by matching the connection identifier (the serial path or CAN UUID) against a pattern table, plus a pin-map fingerprint of the pins your config uses. A board guess shows a match confidence; when nothing matches, the chip/board reads \"unknown\" — the connection itself is still shown."
+        },
+        "override": {
+          "title": "Confirm or change a board",
+          "body": "A serial id usually reveals only the chip, so the board guess can be missing or wrong. Use \"Confirm this board\" to lock in a correct guess, or \"Change board…\" / \"Set board…\" to pick the right one from the catalog. Your choice is saved on the host and reused on every read; \"Clear\" reverts to the automatic guess."
         },
         "glossary": {
           "title": "Glossary",
@@ -97,6 +101,15 @@
       "heater": "Heaters",
       "fan": "Fans",
       "sensor": "Sensors"
+    },
+    "override": {
+      "confirmed": "Confirmed by you",
+      "confirm": "Confirm this board",
+      "change": "Change board…",
+      "set": "Set board…",
+      "clear": "Clear",
+      "pickPlaceholder": "Search the board catalog…",
+      "hint": "Your choice is saved on the host and used for this MCU from now on."
     },
     "sync": {
       "synced": "Firmware in sync",
