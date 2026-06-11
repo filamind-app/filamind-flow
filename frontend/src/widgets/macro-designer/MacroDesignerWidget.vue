@@ -5,11 +5,27 @@ import { useI18n } from 'vue-i18n'
 import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
+import { fetchConfigFiles } from '@/widgets/config-editor/api'
 
-import { fetchLimits, fetchLiveMacros, fetchMacros, simulateGcode } from './api'
+import {
+  appendScaffold,
+  fetchLimits,
+  fetchLiveMacros,
+  fetchMacros,
+  fetchScaffold,
+  simulateGcode,
+} from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { LiveMacro, MachineLimits, MacroDef, SimResult, SimViolation } from './types'
+import type {
+  LiveMacro,
+  MachineLimits,
+  MacroDef,
+  ScaffoldNote,
+  ScaffoldResult,
+  SimResult,
+  SimViolation,
+} from './types'
 
 const SAMPLE = [
   'G28',
@@ -365,7 +381,65 @@ function loadLiveMacro(name: string | null): void {
   void doSimulate()
 }
 
+// Scaffold generator: build START_PRINT / END_PRINT tailored to this printer, review, then write
+// to a config file behind the existing gated save (backup + refuse-while-printing) — first write.
+const scaffold = ref<ScaffoldResult | null>(null)
+const scaffoldLoading = ref(false)
+const scaffoldErr = ref<string | null>(null)
+const configFiles = ref<{ value: string; label: string }[]>([])
+const scaffoldTarget = ref<string | null>('printer.cfg')
+const confirmAppend = ref(false)
+const appendBusy = ref(false)
+const appendMsg = ref<string | null>(null)
+const appendErr = ref<string | null>(null)
+
+async function genScaffold(): Promise<void> {
+  scaffoldLoading.value = true
+  scaffoldErr.value = null
+  appendMsg.value = null
+  try {
+    scaffold.value = await fetchScaffold()
+  } catch (e) {
+    scaffoldErr.value = describeError(e)
+    scaffold.value = null
+  } finally {
+    scaffoldLoading.value = false
+  }
+}
+function scaffoldNote(n: ScaffoldNote): string {
+  return t('macroDesigner.scaffold.note.' + n.key, n.params)
+}
+/** Drop one generated macro into the editor for review / simulation. */
+function loadScaffold(which: 'start' | 'end'): void {
+  if (!scaffold.value) return
+  gcode.value = scaffold.value[which]
+  void doSimulate()
+}
+async function appendScaffoldToConfig(): Promise<void> {
+  if (!scaffold.value || !scaffoldTarget.value) return
+  appendBusy.value = true
+  appendErr.value = null
+  appendMsg.value = null
+  try {
+    const block = `${scaffold.value.start}\n${scaffold.value.end}`
+    const r = await appendScaffold(scaffoldTarget.value, block)
+    appendMsg.value = r.backup
+      ? t('macroDesigner.scaffold.savedBackup', { file: scaffoldTarget.value, backup: r.backup })
+      : t('macroDesigner.scaffold.saved', { file: scaffoldTarget.value })
+    confirmAppend.value = false
+  } catch (e) {
+    appendErr.value = describeError(e)
+  } finally {
+    appendBusy.value = false
+  }
+}
+
 onMounted(() => {
+  fetchConfigFiles()
+    .then((r) => {
+      configFiles.value = r.files.map((f) => ({ value: f.path, label: f.path }))
+    })
+    .catch(() => {})
   fetchMacros()
     .then((m) => (macros.value = m))
     .catch(() => {})
@@ -493,6 +567,105 @@ onMounted(() => {
         </button>
       </div>
     </div>
+
+    <!-- Scaffold generator: a START_PRINT / END_PRINT tailored to this printer + gated write -->
+    <details class="nb-card bg-surface p-2 text-[11px]">
+      <summary class="cursor-pointer text-xs font-bold">
+        {{ t('macroDesigner.scaffold.title') }}
+      </summary>
+      <div class="mt-2 space-y-2">
+        <p class="text-[10px] opacity-70">{{ t('macroDesigner.scaffold.hint') }}</p>
+        <button
+          class="nb-btn bg-brand-cyan px-3 py-1 text-xs"
+          :disabled="scaffoldLoading"
+          @click="genScaffold"
+        >
+          {{
+            scaffoldLoading
+              ? t('macroDesigner.scaffold.generating')
+              : t('macroDesigner.scaffold.generate')
+          }}
+        </button>
+        <p v-if="scaffoldErr" class="nb-card bg-brand-red/10 p-2 font-mono text-[10px]">
+          {{ scaffoldErr }}
+        </p>
+
+        <template v-if="scaffold">
+          <!-- What was tailored -->
+          <ul v-if="scaffold.notes.length" class="space-y-0.5 text-[10px] opacity-80">
+            <li v-for="(n, i) in scaffold.notes" :key="i">• {{ scaffoldNote(n) }}</li>
+          </ul>
+
+          <div class="grid gap-2 md:grid-cols-2">
+            <div v-for="which in ['start', 'end'] as const" :key="which">
+              <div class="mb-1 flex items-center gap-2">
+                <span class="font-mono font-bold">{{
+                  which === 'start' ? 'START_PRINT' : 'END_PRINT'
+                }}</span>
+                <button
+                  class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+                  @click="loadScaffold(which)"
+                >
+                  {{ t('macroDesigner.scaffold.loadEditor') }}
+                </button>
+              </div>
+              <pre
+                class="max-h-48 overflow-auto rounded bg-ink/5 p-1 font-mono text-[10px] leading-snug"
+                >{{ scaffold[which] }}</pre
+              >
+            </div>
+          </div>
+
+          <!-- Gated write to a config file -->
+          <div class="nb-card bg-brand-yellow/15 p-2">
+            <p class="mb-1 text-[11px] font-bold">{{ t('macroDesigner.scaffold.writeTitle') }}</p>
+            <div class="flex flex-wrap items-end gap-2">
+              <label class="min-w-[10rem] flex-1">
+                <span class="mb-1 block text-[10px] opacity-70">{{
+                  t('macroDesigner.scaffold.target')
+                }}</span>
+                <ComboSelect
+                  v-model="scaffoldTarget"
+                  :options="configFiles"
+                  :placeholder="'printer.cfg'"
+                />
+              </label>
+              <button
+                v-if="!confirmAppend"
+                class="nb-btn bg-surface px-3 py-1 text-xs"
+                :disabled="!scaffoldTarget"
+                @click="confirmAppend = true"
+              >
+                {{ t('macroDesigner.scaffold.append') }}
+              </button>
+              <template v-else>
+                <button
+                  class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper"
+                  :disabled="appendBusy"
+                  @click="appendScaffoldToConfig"
+                >
+                  {{
+                    appendBusy
+                      ? t('macroDesigner.scaffold.appending')
+                      : t('macroDesigner.scaffold.confirm')
+                  }}
+                </button>
+                <button class="nb-btn bg-surface px-3 py-1 text-xs" @click="confirmAppend = false">
+                  {{ t('macroDesigner.scaffold.cancel') }}
+                </button>
+              </template>
+            </div>
+            <p class="mt-1 text-[10px] opacity-60">{{ t('macroDesigner.scaffold.writeNote') }}</p>
+            <p v-if="appendMsg" class="mt-1 nb-card bg-brand-lime/20 p-1.5 text-[10px]">
+              {{ appendMsg }}
+            </p>
+            <p v-if="appendErr" class="mt-1 nb-card bg-brand-red/10 p-1.5 font-mono text-[10px]">
+              {{ appendErr }}
+            </p>
+          </div>
+        </template>
+      </div>
+    </details>
 
     <!-- Result -->
     <template v-if="result">
