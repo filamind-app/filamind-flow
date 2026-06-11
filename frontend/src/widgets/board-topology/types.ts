@@ -93,3 +93,35 @@ export interface Topology {
   mcu_count: number
   detail?: string
 }
+
+/** One named pin of a board, from `GET /api/topology/pin-atlas/{mcu_name}`. */
+export interface PinAtlasPin {
+  pin: string
+  signal?: string | null
+  config_key?: string | null
+  hint?: string | null
+  category?: string | null
+  port?: string | null
+  used: boolean
+  owners: string[]
+  caveat?: string | null
+}
+
+export interface PinFinding {
+  kind: 'double_assign' | 'caveat' | string
+  pin: string
+  message: string
+  sections: string[]
+}
+
+export interface PinAtlas {
+  mcu_name: string
+  board_id?: string | null
+  board_name?: string | null
+  available: boolean
+  total: number
+  used: number
+  free: number
+  pins: PinAtlasPin[]
+  findings: PinFinding[]
+}

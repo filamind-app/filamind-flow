@@ -141,6 +141,22 @@
         "warn": "dégradé",
         "out": "firmware désynchronisé"
       }
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "Détails",
+        "atlas": "Atlas des broches"
+      },
+      "summary": "{used}/{total} broches utilisées · {free} libres",
+      "loading": "Lecture du plan de broches…",
+      "failed": "Impossible de lire le plan de broches.",
+      "unavailable": "Pas encore de plan de broches pour cette carte.",
+      "search": "Rechercher broches, signaux, sections…",
+      "freeOnly": "Libres seulement",
+      "noMatch": "Aucune broche ne correspond.",
+      "other": "Autres",
+      "conflict": "Conflit de broches",
+      "caveat": "Avertissement de câblage"
     }
   }
 }

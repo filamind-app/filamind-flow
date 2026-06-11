@@ -198,6 +198,119 @@ def _used_pins(sections: dict[str, Any], mcu_name: str) -> set[str]:
     return used
 
 
+def _pin_owners(sections: dict[str, Any], mcu_name: str) -> dict[str, list[dict[str, str]]]:
+    """Every pin the live config uses on a given MCU, mapped to the config sections that drive it —
+    ``{PIN: [{section, key}]}``. A pin owned by >1 distinct section is a real double-assignment."""
+    owners: dict[str, list[dict[str, str]]] = {}
+    for section, cfg in sections.items():
+        if not isinstance(cfg, dict):
+            continue
+        for key, value in cfg.items():
+            if not isinstance(value, str) or not (key.endswith("_pin") or key == "pin"):
+                continue
+            chip, pin = _split_pin(value)
+            if chip == mcu_name and pin:
+                owners.setdefault(pin, []).append({"section": str(section), "key": str(key)})
+    return owners
+
+
+def _caveat_for(pin: str, electronics: dict[str, Any]) -> str | None:
+    """A board electronics caveat that explicitly names this pin (e.g. the SSR/mains warning on the
+    SV08's ``PA0``), so it can be surfaced right on the pin the user is wiring."""
+    for value in electronics.values():
+        if re.search(rf"\b{re.escape(pin)}\b", str(value), re.IGNORECASE):
+            return str(value)
+    return None
+
+
+def build_pin_atlas(
+    sections: dict[str, Any], mcu_name: str, board: dict[str, Any] | None
+) -> dict[str, Any]:
+    """The used-vs-free pin map of ``mcu_name``'s resolved board plus wiring-health findings.
+
+    Pins come from the board's verbatim ``ports[].pinMap``; each is marked used (and by which config
+    section) by intersecting with the live config. Findings: a pin assigned by >1 section
+    (``double_assign``), and a board electronics ``caveat`` that names a used pin."""
+    owners = _pin_owners(sections, mcu_name)
+    findings: list[dict[str, Any]] = []
+    for pin, used_by in owners.items():
+        distinct = sorted({o["section"] for o in used_by})
+        if len(distinct) > 1:
+            findings.append(
+                {
+                    "kind": "double_assign",
+                    "pin": pin,
+                    "message": f"{pin} is assigned in {', '.join(distinct)}",
+                    "sections": distinct,
+                }
+            )
+
+    if not isinstance(board, dict):
+        return {
+            "mcu_name": mcu_name,
+            "board_id": None,
+            "board_name": None,
+            "available": False,
+            "total": 0,
+            "used": 0,
+            "free": 0,
+            "pins": [],
+            "findings": findings,
+        }
+
+    electronics = board.get("electronics")
+    electronics = electronics if isinstance(electronics, dict) else {}
+    pins: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for port in board.get("ports") or []:
+        if not isinstance(port, dict):
+            continue
+        for pm in port.get("pinMap") or []:
+            if not isinstance(pm, dict):
+                continue
+            pin = str(pm.get("pin") or "").strip().upper()
+            if not pin or pin in seen:
+                continue
+            seen.add(pin)
+            used_by = owners.get(pin, [])
+            caveat = _caveat_for(pin, electronics)
+            pins.append(
+                {
+                    "pin": pin,
+                    "signal": pm.get("signal"),
+                    "config_key": pm.get("configKey"),
+                    "hint": pm.get("hint"),
+                    "category": port.get("category"),
+                    "port": port.get("label"),
+                    "used": bool(used_by),
+                    "owners": [f"{o['section']}.{o['key']}" for o in used_by],
+                    "caveat": caveat,
+                }
+            )
+            if caveat and used_by:
+                findings.append(
+                    {
+                        "kind": "caveat",
+                        "pin": pin,
+                        "message": caveat,
+                        "sections": sorted({o["section"] for o in used_by}),
+                    }
+                )
+
+    used = sum(1 for p in pins if p["used"])
+    return {
+        "mcu_name": mcu_name,
+        "board_id": board.get("board_id"),
+        "board_name": board.get("display_name") or board.get("model"),
+        "available": bool(pins),
+        "total": len(pins),
+        "used": used,
+        "free": len(pins) - used,
+        "pins": pins,
+        "findings": findings,
+    }
+
+
 def _board_pin_set(board: dict[str, Any]) -> set[str]:
     """Every pin name in a catalog board's verbatim Klipper pin-maps."""
     pins: set[str] = set()
@@ -422,6 +535,24 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     _mark_integrated_host(result)
     result["reachable"] = True
     return result
+
+
+async def gather_pin_atlas(
+    client: MoonrakerClient, mcu_name: str, data_dir: str = ""
+) -> dict[str, Any]:
+    """The used-vs-free pin atlas for one MCU, using its override-resolved board.
+
+    Raises:
+        httpx.HTTPError: if Moonraker is unreachable.
+    """
+    configfile = await client.query_objects(["configfile"])
+    sections = _sections(configfile.get("configfile"))
+    result = analyze(sections)
+    apply_overrides(result, topology_overrides.read_overrides(data_dir))
+    mcu = next((m for m in result.get("mcus", []) if m.get("name") == mcu_name), None)
+    board_id = mcu.get("board_id") if mcu else None
+    board = reference_data.board_by_id(str(board_id)) if board_id else None
+    return build_pin_atlas(sections, mcu_name, board)
 
 
 def _mark_integrated_host(result: dict[str, Any]) -> None:

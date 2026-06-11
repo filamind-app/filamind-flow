@@ -275,6 +275,55 @@ def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
     assert board_id == "fit-x" and conf >= 0.6
 
 
+# ── pin atlas (used-vs-free + wiring-conflict scanner) ───────────────────────
+def test_pin_atlas_marks_used_free_and_caveats() -> None:
+    board = {
+        "board_id": "acme",
+        "display_name": "Acme",
+        "electronics": {"Bed": "heater_pin PA0 is a 3.3V trigger — never connect mains to PA0."},
+        "ports": [
+            {
+                "label": "Motor X",
+                "category": "motor",
+                "pinMap": [
+                    {"pin": "PE2", "signal": "STEP", "configKey": "step_pin"},
+                    {"pin": "PE3", "signal": "DIR", "configKey": "dir_pin"},
+                ],
+            },
+            {"label": "Bed", "category": "heater", "pinMap": [{"pin": "PA0", "signal": "HEAT"}]},
+            {"label": "Spare", "category": "gpio", "pinMap": [{"pin": "PB9", "signal": "GPIO"}]},
+        ],
+    }
+    sections = {
+        "mcu": {"serial": "x"},
+        "stepper_x": {"step_pin": "PE2", "dir_pin": "PE3"},
+        "heater_bed": {"heater_pin": "PA0"},
+    }
+    atlas = board_topology.build_pin_atlas(sections, "mcu", board)
+    assert atlas["total"] == 4 and atlas["used"] == 3 and atlas["free"] == 1
+    by_pin = {p["pin"]: p for p in atlas["pins"]}
+    assert by_pin["PE2"]["used"] and by_pin["PE2"]["owners"] == ["stepper_x.step_pin"]
+    assert not by_pin["PB9"]["used"]  # the spare GPIO is free
+    # the mains caveat binds to the used PA0 and surfaces as a finding
+    caveats = [f for f in atlas["findings"] if f["kind"] == "caveat"]
+    assert any(f["pin"] == "PA0" and "mains" in f["message"].lower() for f in caveats)
+
+
+def test_pin_atlas_flags_double_assignment() -> None:
+    board = {"board_id": "b", "ports": [{"pinMap": [{"pin": "PA1"}]}]}
+    # PA1 driven by two distinct sections → a real conflict.
+    sections = {"fan generic": {"pin": "PA1"}, "heater_generic h": {"heater_pin": "PA1"}}
+    atlas = board_topology.build_pin_atlas(sections, "mcu", board)
+    dbl = [f for f in atlas["findings"] if f["kind"] == "double_assign"]
+    assert len(dbl) == 1 and dbl[0]["pin"] == "PA1"
+    assert set(dbl[0]["sections"]) == {"fan generic", "heater_generic h"}
+
+
+def test_pin_atlas_unavailable_without_pinmap() -> None:
+    atlas = board_topology.build_pin_atlas({"mcu": {}}, "mcu", None)
+    assert atlas["available"] is False and atlas["total"] == 0
+
+
 # ── integrated-SBC detection (host physically on the mainboard) ──────────────
 def test_integrated_sbc_matches_soc_in_board_host_field() -> None:
     """An SV08-style board declares an onboard CB1-class SBC; when the host SoC matches, the host is
@@ -403,3 +452,30 @@ def test_route_override_sets_and_clears(monkeypatch: Any, tmp_path: Any) -> None
     assert resp.status_code == 200
     mcu = next(m for m in resp.json()["mcus"] if m["name"] == "mcu")
     assert mcu["board_match"] != "confirmed"
+
+
+def test_route_pin_atlas(monkeypatch: Any, tmp_path: Any) -> None:
+    from fastapi.testclient import TestClient
+
+    from app.config import Settings, get_settings
+    from app.main import create_app
+
+    # A serial that fingerprints to a real board so the atlas has a pin-map to work with.
+    sections = {
+        "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103xe_X-if00"},
+        "stepper_x": {"step_pin": "PE2"},
+    }
+
+    async def fake_query(_self: Any, _objects: Any) -> dict[str, Any]:
+        return {"configfile": {"settings": sections}}
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", fake_query)
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(data_dir=str(tmp_path))
+    client = TestClient(app)
+
+    resp = client.get("/api/topology/pin-atlas/mcu")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["mcu_name"] == "mcu"
+    assert "available" in body and "pins" in body and "findings" in body
