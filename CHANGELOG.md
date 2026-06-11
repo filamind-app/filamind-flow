@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.182.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — typed editing for TMC register fields.** In the structured view, a `[tmcXXXX]`
+  section's `driver_*` register params (e.g. `driver_SGTHRS`, `driver_TBL`) now render with the
+  **right control and silicon-fact range** from the driver field-policy: a number input clamped to
+  the register's mask-derived `[min, max]`, a dropdown for enum fields, a checkbox for booleans —
+  instead of free text. Out-of-range entries are clamped at edit time and the change is applied to
+  the file through the surgical round-trip writer for the existing gated save, so a hand-edited
+  StallGuard/chopper value can't silently overflow its register. Frontend-only (reuses the Motor
+  Drivers field-policy endpoint); localised in all 7 languages. (Phase 8 of the Config Editor +
+  Macro Designer programme.)
+
 ## [0.181.0] - 2026-06-12
 
 ### Added

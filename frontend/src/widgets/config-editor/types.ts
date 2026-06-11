@@ -85,3 +85,21 @@ export interface PinDoctorResult {
   mcus: PinDoctorMcu[]
   total: number
 }
+
+/** Editability policy for one TMC register field (from `/api/drivers/field-policy/{model}`). */
+export interface FieldPolicyEntry {
+  risk: string
+  control: 'number' | 'select' | 'toggle' | 'velocity' | string
+  signed: boolean
+  requires_confirm: boolean
+  min?: number
+  max?: number
+  enum?: number[]
+  velocity?: boolean
+  note?: string
+}
+
+export interface FieldPolicyResponse {
+  model: string
+  fields: Record<string, FieldPolicyEntry>
+}

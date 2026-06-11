@@ -19,6 +19,7 @@ import {
   fetchConfigDrift,
   fetchConfigFile,
   fetchConfigFiles,
+  fetchFieldPolicy,
   fetchPinDoctor,
   restartFirmware,
   saveConfigFile,
@@ -30,6 +31,9 @@ import type {
   ConfigDriftResult,
   ConfigFileInfo,
   ConfigFileView,
+  ConfigParamView,
+  ConfigSectionView,
+  FieldPolicyEntry,
   PinDoctorResult,
 } from './types'
 
@@ -85,6 +89,50 @@ async function loadPinDoctor(): Promise<void> {
     pinDoctor.value = await fetchPinDoctor()
   } catch {
     pinDoctor.value = null
+  }
+}
+
+// Typed editing for TMC register fields: per-model field policy (control + mask-derived range).
+const policies = ref<Record<string, Record<string, FieldPolicyEntry>>>({})
+async function ensurePolicy(model: string): Promise<void> {
+  if (!model.toLowerCase().startsWith('tmc') || policies.value[model]) return
+  try {
+    const r = await fetchFieldPolicy(model)
+    policies.value = { ...policies.value, [model]: r.fields }
+  } catch {
+    /* no policy for this model — params stay plain text */
+  }
+}
+function policyFor(sectionType: string, key: string): FieldPolicyEntry | null {
+  const m = policies.value[sectionType]
+  if (!m) return null
+  return m[key.toLowerCase().replace(/^driver_/, '')] ?? null
+}
+function rangeHint(p: FieldPolicyEntry): string {
+  if (p.enum) return p.enum.join(' / ')
+  if (p.velocity) return 'mm/s ≥ 0'
+  if (p.min != null && p.max != null) return `${p.min}…${p.max}`
+  return ''
+}
+function clampNum(p: FieldPolicyEntry, value: string): string {
+  const n = Number(value)
+  if (Number.isNaN(n)) return value
+  let v = n
+  if (p.min != null) v = Math.max(p.min, v)
+  if (p.max != null) v = Math.min(p.max, v)
+  if (p.velocity) v = Math.max(0, v)
+  return String(v)
+}
+async function onTmcEdit(
+  section: ConfigSectionView,
+  param: ConfigParamView,
+  value: string,
+): Promise<void> {
+  param.value = value
+  try {
+    draft.value = await adoptParam(draft.value, section.header, param.key, value)
+  } catch (e) {
+    saveErr.value = describeError(e)
   }
 }
 
@@ -212,9 +260,16 @@ async function loadView(filename: string): Promise<void> {
   }
 }
 
+function toggleSection(i: number, type: string): void {
+  open.value[i] = !open.value[i]
+  if (open.value[i]) void ensurePolicy(type)
+}
 function expandAll(): void {
   const next: Record<number, boolean> = {}
-  ;(view.value?.sections ?? []).forEach((_, i) => (next[i] = true))
+  ;(view.value?.sections ?? []).forEach((s, i) => {
+    next[i] = true
+    void ensurePolicy(s.type)
+  })
   open.value = next
 }
 function collapseAll(): void {
@@ -519,13 +574,22 @@ onMounted(() => {
 
       <!-- Structured: collapsible sections -->
       <template v-if="viewMode === 'structured'">
-        <div class="flex justify-end gap-2">
-          <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="expandAll">
-            {{ t('configEditor.view.expandAll') }}
-          </button>
-          <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="collapseAll">
-            {{ t('configEditor.view.collapseAll') }}
-          </button>
+        <div class="flex items-center justify-between gap-2">
+          <p v-if="dirty" class="font-mono text-[11px] text-brand-red">
+            <span aria-hidden="true">●</span> {{ t('configEditor.save.unsaved') }} —
+            <button class="underline" @click="viewMode = 'raw'">
+              {{ t('configEditor.tmc.review') }}
+            </button>
+          </p>
+          <span v-else></span>
+          <div class="flex gap-2">
+            <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="expandAll">
+              {{ t('configEditor.view.expandAll') }}
+            </button>
+            <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="collapseAll">
+              {{ t('configEditor.view.collapseAll') }}
+            </button>
+          </div>
         </div>
 
         <ul class="space-y-2">
@@ -537,7 +601,7 @@ onMounted(() => {
             <button
               class="flex w-full items-center justify-between gap-2 px-2 py-1.5 text-start"
               :aria-expanded="!!open[i]"
-              @click="open[i] = !open[i]"
+              @click="toggleSection(i, section.type)"
             >
               <span class="min-w-0 truncate font-mono text-xs">
                 <span aria-hidden="true">{{ open[i] ? '▾' : '▸' }}</span>
@@ -573,8 +637,60 @@ onMounted(() => {
                   <tr v-for="(p, pi) in section.params" :key="pi" class="align-top">
                     <td class="py-0.5 pe-2 font-bold">{{ p.key }}</td>
                     <td class="whitespace-pre-wrap break-words py-0.5">
-                      {{ p.value || '—'
-                      }}<span v-if="p.comment" class="opacity-50"> {{ p.comment }}</span>
+                      <!-- Typed control for a TMC register field the policy knows -->
+                      <template v-if="policyFor(section.type, p.key) as FieldPolicyEntry | null">
+                        <span class="inline-flex flex-wrap items-center gap-1">
+                          <input
+                            v-if="policyFor(section.type, p.key)!.control === 'toggle'"
+                            type="checkbox"
+                            :checked="p.value === '1' || p.value.toLowerCase() === 'true'"
+                            @change="
+                              onTmcEdit(
+                                section,
+                                p,
+                                ($event.target as HTMLInputElement).checked ? '1' : '0',
+                              )
+                            "
+                          />
+                          <select
+                            v-else-if="policyFor(section.type, p.key)!.enum"
+                            :value="p.value"
+                            class="rounded-brutal border border-ink bg-surface px-1 py-0.5"
+                            @change="
+                              onTmcEdit(section, p, ($event.target as HTMLSelectElement).value)
+                            "
+                          >
+                            <option v-for="o in policyFor(section.type, p.key)!.enum" :key="o">
+                              {{ o }}
+                            </option>
+                          </select>
+                          <input
+                            v-else
+                            type="number"
+                            :value="p.value"
+                            :min="policyFor(section.type, p.key)!.min"
+                            :max="policyFor(section.type, p.key)!.max"
+                            class="w-20 rounded-brutal border border-ink bg-surface px-1 py-0.5"
+                            @change="
+                              onTmcEdit(
+                                section,
+                                p,
+                                clampNum(
+                                  policyFor(section.type, p.key)!,
+                                  ($event.target as HTMLInputElement).value,
+                                ),
+                              )
+                            "
+                          />
+                          <span class="text-[10px] opacity-50">{{
+                            rangeHint(policyFor(section.type, p.key)!)
+                          }}</span>
+                        </span>
+                      </template>
+                      <template v-else>
+                        {{ p.value || '—'
+                        }}<span v-if="p.comment" class="opacity-50"> {{ p.comment }}</span>
+                      </template>
                     </td>
                   </tr>
                 </tbody>

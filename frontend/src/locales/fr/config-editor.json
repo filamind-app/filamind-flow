@@ -143,6 +143,9 @@
       "title": "Docteur des broches — {n} constat(s) de câblage",
       "conflict": "CONFLIT",
       "caveat": "AVERTISSEMENT"
+    },
+    "tmc": {
+      "review": "vérifier en Brut et enregistrer"
     }
   }
 }
