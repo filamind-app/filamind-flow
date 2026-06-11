@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.177.0] - 2026-06-11
+
+### Added
+
+- **Macro Designer — import and simulate the printer's OWN installed macros.** A new "From the
+  printer" source lists every `[gcode_macro]` defined on your machine; pick one and its real G-code
+  body loads into the editor and simulates — a true **offline dry-run of your own PRINT_START /
+  PAUSE / QGL wrapper** (path + bounds + time, zero motion). The macro's `{ params.X | default() }`
+  parameters are **discovered into editable fields** so you can try different values and re-simulate.
+  Backed by a new read-only `GET /api/macro/live` over the live `configfile` (the first piece of a
+  shared `live_state` snapshot helper). Degrades to the static library when the printer is
+  unreachable. Localised in all 7 languages. (Phase 3 of the Config Editor + Macro Designer
+  programme.)
+
 ## [0.176.0] - 2026-06-11
 
 ### Added

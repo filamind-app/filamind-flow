@@ -25,7 +25,10 @@
           "title": "Macro library",
           "body": "A reference set of common Klipper macros with their name, what they do, and the config sections they need. \"Insert\" drops a macro's high-level commands into the editor as a starting point — note those expand further on the printer (full Jinja/macro expansion is coming)."
         },
-        "glossary": { "title": "Glossary", "body": "" }
+        "glossary": {
+          "title": "Glossary",
+          "body": ""
+        }
       },
       "glossary": {
         "gcode": {
@@ -95,6 +98,13 @@
     },
     "warnings": {
       "title": "Warnings"
+    },
+    "live": {
+      "label": "From the printer",
+      "placeholder": "Pick one of your installed macros…",
+      "hint": "{n} macros found on the printer — pick one to load its G-code and simulate it.",
+      "unreachable": "Printer unreachable — connect to load your installed macros.",
+      "params": "Macro parameters"
     }
   }
 }
