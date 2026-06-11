@@ -70,6 +70,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/reference/macros`    | Built-in Klipper calibration macro definitions. |
 | GET    | `/api/config/files`        | List the editable config files (`.cfg` / `.conf`) under Moonraker's `config` root (Config Editor). |
 | GET    | `/api/config/file`         | Parse one config file (`?filename=`) into a structured view: sections → params + validation issues (read-only). |
+| GET    | `/api/config/drift`        | Compare one file on disk to the live running config (`configfile`): a pending-`SAVE_CONFIG` flag, Klipper's own parse warnings, and per-param drift (disk vs live). `reachable=false` when down. |
+| POST   | `/api/config/adopt`        | Set one param to a given value via the round-trip engine and return the new text — a pure, surgical transform (no write); only the target line is rewritten. |
 | POST   | `/api/config/save`         | Back up then overwrite one config file (refused while printing; auto-backup to `filamind-backups/`). |
 | POST   | `/api/config/restart`      | `FIRMWARE_RESTART` to apply a saved config (refused while printing). |
 | POST   | `/api/maxflow/plan`        | Preview the max-flow test ramp (flow → feedrate per step + StallGuard field); pure compute, no actuation. |

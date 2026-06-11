@@ -131,6 +131,13 @@
       "pickPlaceholder": "Search the catalog…",
       "inserted": "Inserted the block for {name} — review it in Raw and save.",
       "noSnippet": "No config block available for {name}."
+    },
+    "drift": {
+      "title": "What Klipper is running",
+      "pending": "Klipper has unsaved changes (a SAVE_CONFIG is pending) — saving this file now would clobber them. Run SAVE_CONFIG in the console first.",
+      "warningsTitle": "Klipper config warnings",
+      "count": "{n} value(s) on disk differ from what's running (edited but not FIRMWARE_RESTARTed):",
+      "adopt": "adopt live"
     }
   }
 }
