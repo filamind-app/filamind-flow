@@ -22,11 +22,15 @@
         },
         "detection": {
           "title": "Comment fonctionne la détection",
-          "body": "La puce et la carte sont estimées en comparant l'identifiant de connexion (le chemin série ou l'UUID CAN) à une table de motifs. Une estimation de carte affiche un indice de confiance ; lorsque rien ne correspond, la puce/carte indique « inconnu » — la connexion elle-même reste affichée."
+          "body": "La puce et la carte sont devinées en comparant l’identifiant de connexion (le chemin série ou l’UUID CAN) à une table de motifs, plus une empreinte de la carte des broches utilisées par votre configuration. Une proposition de carte affiche un niveau de correspondance ; si rien ne correspond, la puce/carte affiche « inconnu » — la connexion elle-même reste affichée."
         },
         "glossary": {
           "title": "Glossaire",
           "body": ""
+        },
+        "override": {
+          "title": "Confirmer ou changer une carte",
+          "body": "Un identifiant série ne révèle généralement que la puce, donc la carte proposée peut être absente ou erronée. Utilisez « Confirmer cette carte » pour valider une bonne proposition, ou « Changer de carte… » / « Choisir la carte… » pour sélectionner la bonne dans le catalogue. Votre choix est enregistré sur l’hôte et réutilisé à chaque lecture ; « Effacer » rétablit la proposition automatique."
         }
       },
       "glossary": {
@@ -101,6 +105,15 @@
     "sync": {
       "synced": "Firmware synchronisé",
       "outOfSync": "Firmware DÉSYNCHRONISÉ"
+    },
+    "override": {
+      "confirmed": "Confirmé par vous",
+      "confirm": "Confirmer cette carte",
+      "change": "Changer de carte…",
+      "set": "Choisir la carte…",
+      "clear": "Effacer",
+      "pickPlaceholder": "Rechercher dans le catalogue de cartes…",
+      "hint": "Votre choix est enregistré sur l’hôte et utilisé pour ce MCU désormais."
     }
   }
 }

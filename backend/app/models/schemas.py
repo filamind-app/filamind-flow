@@ -1015,3 +1015,16 @@ class Topology(BaseModel):
     mcus: list[TopologyMcu] = []
     mcu_count: int = 0
     detail: str | None = None
+
+
+class BoardOverrideRequest(BaseModel):
+    """Confirm / override the catalog board for an MCU (keyed by its config section name)."""
+
+    mcu_name: str
+    board_id: str
+
+
+class McuKeyRequest(BaseModel):
+    """Identify one MCU by its config section name (to clear its board override)."""
+
+    mcu_name: str

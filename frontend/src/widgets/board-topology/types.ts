@@ -22,7 +22,8 @@ export interface TopologyMcu {
   confidence: number
   /** Link into the board catalog; null when only the chip could be identified. */
   board_id?: string | null
-  board_match?: 'suggested' | null
+  /** `suggested` = auto-detected guess; `confirmed` = the user confirmed / overrode it. */
+  board_match?: 'suggested' | 'confirmed' | null
   board_match_confidence?: number
   /** The components (steppers / drivers / heaters / fans / sensors) that live on this MCU. */
   components?: TopologyComponent[]
