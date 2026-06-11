@@ -138,6 +138,11 @@
       "warningsTitle": "تحذيرات إعداد Klipper",
       "count": "{n} قيمة على القرص تختلف عمّا يعمل (عُدِّلت دون FIRMWARE_RESTART):",
       "adopt": "تبنَّ الحيّة"
+    },
+    "pinDoctor": {
+      "title": "طبيب الأطراف — {n} ملاحظة توصيل",
+      "conflict": "تعارض",
+      "caveat": "تنبيه"
     }
   }
 }

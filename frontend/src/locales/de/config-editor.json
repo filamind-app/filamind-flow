@@ -138,6 +138,11 @@
       "warningsTitle": "Klipper-Konfig-Warnungen",
       "count": "{n} Wert(e) auf der Festplatte weichen vom Laufenden ab (bearbeitet, aber kein FIRMWARE_RESTART):",
       "adopt": "Live übernehmen"
+    },
+    "pinDoctor": {
+      "title": "Pin-Doktor — {n} Verdrahtungsbefund(e)",
+      "conflict": "KONFLIKT",
+      "caveat": "HINWEIS"
     }
   }
 }

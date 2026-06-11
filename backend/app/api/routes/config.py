@@ -17,7 +17,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
-from app.services import config_service
+from app.services import board_topology, config_service
 from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/config", tags=["config"])
@@ -90,6 +90,16 @@ async def config_adopt(body: AdoptParamRequest) -> dict[str, Any]:
     """Set one param to the live value via the round-trip engine and return the new text — a pure,
     surgical transform (no write). The result lands in the editor for review + the gated save."""
     return {"content": config_service.adopt_param(body.content, body.section, body.key, body.value)}
+
+
+@router.get("/pin-doctor")
+async def config_pin_doctor(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """A whole-config pin-conflict scan (every MCU): double-assigned pins + board electronics
+    caveats on a used pin — caught before a FIRMWARE_RESTART. ``reachable=false`` when down."""
+    try:
+        return await board_topology.gather_pin_doctor(_client(settings), settings.data_dir)
+    except httpx.HTTPError:
+        return {"reachable": False, "mcus": [], "total": 0}
 
 
 @router.post("/save")

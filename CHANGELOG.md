@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.180.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — Pin Doctor (whole-config pin-conflict scan).** The editor now runs Board
+  Topology's pin scanner over your **entire live config, every MCU**, and surfaces the wiring errors
+  that brick a `FIRMWARE_RESTART` **before** you trigger one: a **pin driven by more than one config
+  section** (a real conflict) and a **board electronics caveat that names a pin you actually use**
+  (e.g. the SV08's *"never connect mains to PA0"*), each labelled with the offending sections. Backed
+  by a new read-only `GET /api/config/pin-doctor` that aggregates each MCU's pin atlas. Degrades
+  silently when the printer is unreachable; localised in all 7 languages. (Phase 6 of the Config
+  Editor + Macro Designer programme.)
+
 ## [0.179.0] - 2026-06-12
 
 ### Added

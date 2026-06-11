@@ -1,6 +1,12 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { ConfigDriftResult, ConfigFileList, ConfigFileView, ConfigSaveResult } from './types'
+import type {
+  ConfigDriftResult,
+  ConfigFileList,
+  ConfigFileView,
+  ConfigSaveResult,
+  PinDoctorResult,
+} from './types'
 
 /** An Error that carries the HTTP status, so callers can special-case 409 (printer busy). */
 export class ApiError extends Error {
@@ -54,6 +60,16 @@ export async function fetchConfigDrift(filename: string): Promise<ConfigDriftRes
     throw new Error(`Drift request failed (${response.status})`)
   }
   return (await response.json()) as ConfigDriftResult
+}
+
+/** A whole-config pin-conflict scan (every MCU): double-assigned pins + electronics caveats. */
+export async function fetchPinDoctor(): Promise<PinDoctorResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/pin-doctor`)
+  if (!response.ok) {
+    throw new Error(`Pin doctor request failed (${response.status})`)
+  }
+  return (await response.json()) as PinDoctorResult
 }
 
 /** Set one param to its live value via the round-trip engine; returns the new file text (no write). */
