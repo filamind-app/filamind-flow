@@ -5,6 +5,7 @@ import type {
   ConfigFileList,
   ConfigFileView,
   ConfigSaveResult,
+  FieldPolicyResponse,
   PinDoctorResult,
 } from './types'
 
@@ -60,6 +61,18 @@ export async function fetchConfigDrift(filename: string): Promise<ConfigDriftRes
     throw new Error(`Drift request failed (${response.status})`)
   }
   return (await response.json()) as ConfigDriftResult
+}
+
+/** The editable-register policy for one TMC model (control + range per field). */
+export async function fetchFieldPolicy(model: string): Promise<FieldPolicyResponse> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/drivers/field-policy/${encodeURIComponent(model)}`,
+  )
+  if (!response.ok) {
+    throw new Error(`Field policy request failed (${response.status})`)
+  }
+  return (await response.json()) as FieldPolicyResponse
 }
 
 /** A whole-config pin-conflict scan (every MCU): double-assigned pins + electronics caveats. */

@@ -143,6 +143,9 @@
       "title": "Pin-Doktor — {n} Verdrahtungsbefund(e)",
       "conflict": "KONFLIKT",
       "caveat": "HINWEIS"
+    },
+    "tmc": {
+      "review": "in Roh prüfen & speichern"
     }
   }
 }
