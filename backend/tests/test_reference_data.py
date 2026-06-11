@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from fastapi.testclient import TestClient
 
 from app.main import create_app
@@ -42,6 +44,28 @@ def test_hotends_and_boards_and_macros_load() -> None:
     macros = reference_data.macros()
     assert len(macros) >= 10
     assert any(m.get("name") == "QUAD_GANTRY_LEVEL" for m in macros)
+
+
+def test_board_patterns_derived_from_catalog() -> None:
+    """The board / MCU identification patterns are derived from the unified hardware catalog (no
+    standalone file): MCU patterns from the canonical MCU entities (a superset of the legacy table),
+    board patterns from each board's matchPatterns + a brand fallback from board-owning makers."""
+    bp = reference_data.board_patterns()
+    # MCU patterns cover one per canonical MCU entity, including the common chips.
+    mcu_ids = {p["pattern"] for p in bp["mcu_patterns"]}
+    assert len(bp["mcu_patterns"]) == len(reference_data.mcus())
+    assert {"stm32f103", "rp2040", "stm32f446", "lpc1768"} <= mcu_ids
+    # A brand-level fallback exists for BigTreeTech (id + the "btt" alias).
+    assert any(
+        "bigtreetech" in p["pattern"] and "btt" in p["pattern"] for p in bp["board_patterns"]
+    )
+    # Every derived pattern is a usable, non-empty regex string with a label.
+    for p in bp["board_patterns"]:
+        assert p["pattern"] and p["board"]
+        re.compile(p["pattern"])
+    for p in bp["mcu_patterns"]:
+        assert p["pattern"] and p["mcu"]
+        re.compile(p["pattern"])
 
 
 def test_reference_endpoints_serve_the_datasets() -> None:

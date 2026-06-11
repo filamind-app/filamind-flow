@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.168.0] - 2026-06-11
+
+### Changed
+
+- **Board / MCU identification patterns are now derived from the unified hardware catalog** instead
+  of a standalone data file. The MCU chip patterns come from the canonical MCU entities (one per
+  entity — a superset of the previous hand-kept table), and the board patterns come from each
+  catalog board's own `matchPatterns` plus a brand-level fallback built from the manufacturers that
+  actually own boards (their id + aliases). Behaviour-preserving and verified live on the SV08
+  (primary MCU still resolves chip `STM32F103` → `sovol-sv08`); detection now covers every catalog
+  MCU and board brand, not just the curated subset.
+
+### Removed
+
+- Removed the standalone `board_patterns.json` reference file — its data is derived from the
+  catalog at load (see above). One fewer place for board/MCU detection data to drift from the
+  catalog.
+
 ## [0.167.0] - 2026-06-11
 
 ### Fixed
