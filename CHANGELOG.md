@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.191.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — backup timeline with diff and restore.** Every gated save already snapshots the
+  previous file under `filamind-backups/`; those snapshots are now a browsable timeline for the open
+  file (newest first, with timestamp and size). **Diff** a snapshot against your current draft — a
+  compact line diff that folds away unchanged runs and summarises how many lines differ — to see
+  exactly what changed since then. **Restore** loads a snapshot back into the editor for a final
+  review, and saving it rides the same confirm gate (which snapshots the current file first), so a
+  restore is itself reversible. New read-only `GET /api/config/backups` and `GET /api/config/backup`
+  endpoints; the diff is a dependency-free LCS helper. Localised in all 7 languages. (Phase 12 of
+  the Config Editor + Macro Designer programme.)
+
 ## [0.190.0] - 2026-06-12
 
 ### Added

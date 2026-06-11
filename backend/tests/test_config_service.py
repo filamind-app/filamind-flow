@@ -228,6 +228,49 @@ async def test_read_config_file_rejects_unsafe() -> None:
         await config_service.read_config_file(client, "../moonraker.conf")  # type: ignore[arg-type]
 
 
+async def test_list_backups_filters_and_sorts_newest_first() -> None:
+    client = _FakeClient(
+        files=[
+            {
+                "path": "filamind-backups/printer.cfg.20260101-101010.bak",
+                "size": 9,
+                "modified": 1.0,
+            },
+            {
+                "path": "filamind-backups/printer.cfg.20260612-014530.bak",
+                "size": 9,
+                "modified": 3.0,
+            },
+            {
+                "path": "filamind-backups/macros_a.cfg.20260601-000000.bak",
+                "size": 5,
+                "modified": 2.0,
+            },
+            {"path": "printer.cfg", "size": 9, "modified": 4.0},  # not a backup
+        ],
+        text="",
+    )
+    out = await config_service.list_backups(client, "printer.cfg")  # type: ignore[arg-type]
+    assert out["reachable"] is True
+    stamps = [b["stamp"] for b in out["backups"]]
+    assert stamps == ["20260612-014530", "20260101-101010"]  # newest first, only printer.cfg
+    assert out["backups"][0]["when"] == "2026-06-12 01:45:30"
+    # Unfiltered lists every snapshot.
+    allb = await config_service.list_backups(client)  # type: ignore[arg-type]
+    assert len(allb["backups"]) == 3
+
+
+async def test_read_backup_guards_and_reads() -> None:
+    client = _FakeClient(files=[], text="[old]\nk: 1\n")
+    content = await config_service.read_backup(  # type: ignore[arg-type]
+        client, "filamind-backups/printer.cfg.20260612-014530.bak"
+    )
+    assert content == "[old]\nk: 1\n"
+    for bad in ("printer.cfg", "filamind-backups/../secret.bak", "other/x.bak"):
+        with pytest.raises(ValueError):
+            await config_service.read_backup(client, bad)  # type: ignore[arg-type]
+
+
 # ── save / restart path ──────────────────────────────────────────────────────
 async def test_save_backs_up_then_overwrites() -> None:
     client = _FakeClient(text="[old]\nk: 1\n")

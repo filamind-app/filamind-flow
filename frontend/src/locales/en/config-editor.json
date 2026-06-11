@@ -194,6 +194,15 @@
       "quad_gantry_level": "Levels a four-point gantry so it sits parallel to the bed.",
       "filament_switch_sensor": "A filament-runout sensor that pauses the print when filament runs out.",
       "virtual_sdcard": "Lets Klipper print files uploaded to the host (required by Mainsail and Fluidd)."
+    },
+    "backups": {
+      "title": "Backups ({n})",
+      "diff": "Diff",
+      "hideDiff": "Hide diff",
+      "restore": "Restore",
+      "diffHint": "difference from the current file",
+      "unchanged": "⋯ {n} unchanged lines ⋯",
+      "note": "Snapshots are written automatically before each save. Restore loads one into the editor for a final review + save."
     }
   }
 }

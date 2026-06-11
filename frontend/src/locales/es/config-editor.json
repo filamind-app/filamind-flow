@@ -194,6 +194,15 @@
       "quad_gantry_level": "Nivela un pórtico de cuatro puntos para dejarlo paralelo a la cama.",
       "filament_switch_sensor": "Un sensor de fin de filamento que pausa la impresión cuando se agota.",
       "virtual_sdcard": "Permite a Klipper imprimir archivos subidos al host (necesario para Mainsail y Fluidd)."
+    },
+    "backups": {
+      "title": "Copias ({n})",
+      "diff": "Diferencias",
+      "hideDiff": "Ocultar diferencias",
+      "restore": "Restaurar",
+      "diffHint": "diferencia respecto al archivo actual",
+      "unchanged": "⋯ {n} líneas sin cambios ⋯",
+      "note": "Las instantáneas se escriben automáticamente antes de cada guardado. Restaurar carga una en el editor para una revisión final + guardado."
     }
   }
 }
