@@ -6,10 +6,10 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
-import { fetchMacros, simulateGcode } from './api'
+import { fetchLiveMacros, fetchMacros, simulateGcode } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { MacroDef, SimResult } from './types'
+import type { LiveMacro, MacroDef, SimResult } from './types'
 
 const SAMPLE = [
   'G28',
@@ -31,6 +31,16 @@ const error = ref<string | null>(null)
 const macros = ref<MacroDef[]>([])
 const selectedMacro = ref<string | null>(null)
 const hoveredLine = ref<number | null>(null)
+
+// Import the printer's OWN installed [gcode_macro] definitions, with editable discovered params.
+const liveMacros = ref<LiveMacro[]>([])
+const liveReachable = ref(true)
+const selectedLive = ref<string | null>(null)
+const macroParams = ref<Record<string, string>>({})
+const liveOptions = computed(() =>
+  liveMacros.value.map((m) => ({ value: m.name, label: m.name, sublabel: m.description })),
+)
+const paramKeys = computed(() => Object.keys(macroParams.value))
 
 const r1 = (n: number): number => Math.round(n * 10) / 10
 const r2 = (n: number): number => Math.round(n * 100) / 100
@@ -174,7 +184,7 @@ async function doSimulate(): Promise<void> {
   simulating.value = true
   error.value = null
   try {
-    result.value = await simulateGcode(gcode.value)
+    result.value = await simulateGcode(gcode.value, macroParams.value)
   } catch (e) {
     error.value = describeError(e)
     result.value = null
@@ -188,10 +198,26 @@ function insertMacro(macro: MacroDef): void {
   gcode.value = gcode.value.trimEnd() ? `${gcode.value.trimEnd()}\n${block}` : block
 }
 
+/** Load one of the printer's installed macros into the editor (with its params) and simulate it. */
+function loadLiveMacro(name: string | null): void {
+  selectedLive.value = name
+  const def = liveMacros.value.find((m) => m.name === name)
+  if (!def) return
+  gcode.value = def.gcode
+  macroParams.value = { ...def.params }
+  void doSimulate()
+}
+
 onMounted(() => {
   fetchMacros()
     .then((m) => (macros.value = m))
     .catch(() => {})
+  fetchLiveMacros()
+    .then((r) => {
+      liveMacros.value = r.macros
+      liveReachable.value = r.reachable
+    })
+    .catch(() => (liveReachable.value = false))
 })
 </script>
 
@@ -227,6 +253,22 @@ onMounted(() => {
         class="nb-card w-full resize-y bg-surface p-2 font-mono text-[11px] leading-snug"
         :aria-label="t('macroDesigner.editor.label')"
       ></textarea>
+      <!-- Editable macro params (discovered from the loaded macro's { params.X }) -->
+      <div v-if="paramKeys.length" class="nb-card bg-surface p-2">
+        <span class="mb-1 block text-xs font-bold">{{ t('macroDesigner.live.params') }}</span>
+        <div class="flex flex-wrap gap-2">
+          <label v-for="k in paramKeys" :key="k" class="text-[11px]">
+            <span class="me-1 font-mono opacity-60">{{ k }}</span>
+            <input
+              v-model="macroParams[k]"
+              spellcheck="false"
+              class="w-24 rounded-brutal border-2 border-ink bg-surface px-1 py-0.5 font-mono text-[11px]"
+              :aria-label="k"
+            />
+          </label>
+        </div>
+      </div>
+
       <div class="flex flex-wrap gap-2">
         <button
           class="nb-btn bg-brand-cyan px-3 py-1 text-xs"
@@ -245,6 +287,26 @@ onMounted(() => {
         </button>
       </div>
       <p v-if="error" class="font-mono text-[11px] text-brand-red">{{ error }}</p>
+    </div>
+
+    <!-- From the printer: simulate your OWN installed macros -->
+    <div class="nb-card space-y-2 bg-surface p-2">
+      <span class="block text-xs font-bold">{{ t('macroDesigner.live.label') }}</span>
+      <p v-if="!liveReachable" class="font-mono text-[11px] opacity-60">
+        {{ t('macroDesigner.live.unreachable') }}
+      </p>
+      <template v-else>
+        <ComboSelect
+          :model-value="selectedLive"
+          :options="liveOptions"
+          :placeholder="t('macroDesigner.live.placeholder')"
+          clearable
+          @update:model-value="loadLiveMacro"
+        />
+        <p class="font-mono text-[10px] opacity-60">
+          {{ t('macroDesigner.live.hint', { n: liveMacros.length }) }}
+        </p>
+      </template>
     </div>
 
     <!-- Macro library -->

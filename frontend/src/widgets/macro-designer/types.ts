@@ -52,3 +52,17 @@ export interface MacroDef {
   required_sections: string[]
   expands_to: string[]
 }
+
+/** One of the printer's own installed `[gcode_macro]` definitions, from `/api/macro/live`. */
+export interface LiveMacro {
+  name: string
+  gcode: string
+  description: string
+  params: Record<string, string>
+  variables: Record<string, unknown>
+}
+
+export interface LiveMacrosResult {
+  reachable: boolean
+  macros: LiveMacro[]
+}

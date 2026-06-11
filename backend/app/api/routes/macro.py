@@ -8,12 +8,29 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter
+import httpx
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
-from app.services import gcode_sim, macro_render
+from app.config import Settings, get_settings
+from app.services import gcode_sim, live_state, macro_render
+from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/macro", tags=["macro"])
+
+
+@router.get("/live")
+async def macro_live(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """The printer's OWN installed ``[gcode_macro]`` definitions (body + description + discovered
+    params + variables), so they can be loaded into the editor and simulated. Degrades to
+    ``reachable=false`` with an empty list when Moonraker is unreachable."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        configfile = await client.query_objects(["configfile"])
+    except httpx.HTTPError:
+        return {"reachable": False, "macros": []}
+    macros = live_state.gcode_macros(live_state.settings_of(configfile))
+    return {"reachable": True, "macros": macros}
 
 
 class SimulateRequest(BaseModel):
