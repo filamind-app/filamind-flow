@@ -19,12 +19,19 @@ import {
   fetchConfigDrift,
   fetchConfigFile,
   fetchConfigFiles,
+  fetchPinDoctor,
   restartFirmware,
   saveConfigFile,
 } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { ConfigDrift, ConfigDriftResult, ConfigFileInfo, ConfigFileView } from './types'
+import type {
+  ConfigDrift,
+  ConfigDriftResult,
+  ConfigFileInfo,
+  ConfigFileView,
+  PinDoctorResult,
+} from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -68,6 +75,16 @@ async function loadDrift(filename: string): Promise<void> {
     drift.value = await fetchConfigDrift(filename)
   } catch {
     drift.value = null
+  }
+}
+
+// Whole-config pin doctor (double-assigned pins + electronics caveats across every MCU).
+const pinDoctor = ref<PinDoctorResult | null>(null)
+async function loadPinDoctor(): Promise<void> {
+  try {
+    pinDoctor.value = await fetchPinDoctor()
+  } catch {
+    pinDoctor.value = null
   }
 }
 
@@ -273,7 +290,10 @@ watch(selected, (f) => {
   resetWriteState()
   if (f) void loadView(f)
 })
-onMounted(() => void loadFiles())
+onMounted(() => {
+  void loadFiles()
+  void loadPinDoctor()
+})
 </script>
 
 <template>
@@ -388,6 +408,45 @@ onMounted(() => void loadFiles())
             <span class="min-w-0">{{ issue.message }}</span>
           </li>
         </ul>
+      </div>
+
+      <!-- Pin Doctor: whole-config pin-conflict + electronics-caveat scan -->
+      <div
+        v-if="pinDoctor && pinDoctor.reachable && pinDoctor.total > 0"
+        class="nb-card space-y-2 bg-brand-red/10 p-2"
+      >
+        <p class="text-xs font-bold">
+          {{ t('configEditor.pinDoctor.title', { n: pinDoctor.total }) }}
+        </p>
+        <div v-for="m in pinDoctor.mcus" :key="m.name" class="space-y-1">
+          <p class="font-mono text-[11px] opacity-70">
+            {{ m.name }}<span v-if="m.board_name"> · {{ m.board_name }}</span>
+          </p>
+          <ul class="space-y-0.5">
+            <li
+              v-for="(f, i) in m.findings"
+              :key="i"
+              class="flex flex-wrap items-start gap-1 font-mono text-[10px]"
+            >
+              <span
+                class="shrink-0 rounded px-1 font-bold"
+                :class="
+                  f.kind === 'double_assign'
+                    ? 'bg-brand-red text-paper'
+                    : 'bg-brand-yellow text-ink'
+                "
+              >
+                {{
+                  f.kind === 'double_assign'
+                    ? t('configEditor.pinDoctor.conflict')
+                    : t('configEditor.pinDoctor.caveat')
+                }}
+              </span>
+              <b>{{ f.pin }}</b>
+              <span class="min-w-0">{{ f.message }}</span>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Disk vs live: what Klipper is actually running (drift + pending SAVE_CONFIG + warnings) -->

@@ -138,6 +138,11 @@
       "warningsTitle": "Klipper config warnings",
       "count": "{n} value(s) on disk differ from what's running (edited but not FIRMWARE_RESTARTed):",
       "adopt": "adopt live"
+    },
+    "pinDoctor": {
+      "title": "Pin Doctor — {n} wiring finding(s)",
+      "conflict": "CONFLICT",
+      "caveat": "CAVEAT"
     }
   }
 }

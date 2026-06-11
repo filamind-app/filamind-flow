@@ -64,3 +64,24 @@ export interface ConfigDriftResult {
   warnings: string[]
   drifts: ConfigDrift[]
 }
+
+/** A whole-config pin-conflict finding (double-assigned pin / electronics caveat). */
+export interface PinDoctorFinding {
+  kind: string
+  pin: string
+  message: string
+  sections: string[]
+}
+
+export interface PinDoctorMcu {
+  name: string
+  board_id: string | null
+  board_name: string | null
+  findings: PinDoctorFinding[]
+}
+
+export interface PinDoctorResult {
+  reachable: boolean
+  mcus: PinDoctorMcu[]
+  total: number
+}

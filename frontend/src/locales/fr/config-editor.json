@@ -138,6 +138,11 @@
       "warningsTitle": "Avertissements de config Klipper",
       "count": "{n} valeur(s) sur le disque diffèrent de l'exécuté (modifié sans FIRMWARE_RESTART) :",
       "adopt": "adopter live"
+    },
+    "pinDoctor": {
+      "title": "Docteur des broches — {n} constat(s) de câblage",
+      "conflict": "CONFLIT",
+      "caveat": "AVERTISSEMENT"
     }
   }
 }

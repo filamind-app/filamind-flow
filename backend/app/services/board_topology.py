@@ -560,6 +560,37 @@ async def gather_pin_atlas(
     return build_pin_atlas(sections, mcu_name, board)
 
 
+async def gather_pin_doctor(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
+    """Run the pin-conflict scanner over the WHOLE live config (every MCU), so the Config Editor can
+    catch double-assigned pins + mains-on-logic-pin caveats — the #1 restart-bricking errors —
+    before a ``FIRMWARE_RESTART``. Aggregates each MCU's :func:`build_pin_atlas` findings.
+
+    Raises:
+        httpx.HTTPError: if Moonraker is unreachable.
+    """
+    configfile = await client.query_objects(["configfile"])
+    sections = _sections(configfile.get("configfile"))
+    result = analyze(sections)
+    apply_overrides(result, topology_overrides.read_overrides(data_dir))
+    mcus: list[dict[str, Any]] = []
+    total = 0
+    for mcu in result.get("mcus", []):
+        board_id = mcu.get("board_id")
+        board = reference_data.board_by_id(str(board_id)) if board_id else None
+        atlas = build_pin_atlas(sections, str(mcu.get("name", "")), board)
+        if atlas["findings"]:
+            mcus.append(
+                {
+                    "name": atlas["mcu_name"],
+                    "board_id": atlas["board_id"],
+                    "board_name": atlas["board_name"],
+                    "findings": atlas["findings"],
+                }
+            )
+            total += len(atlas["findings"])
+    return {"reachable": True, "mcus": mcus, "total": total}
+
+
 def _mark_integrated_host(result: dict[str, Any]) -> None:
     """Flag when the host SBC is physically integrated onto the primary mainboard (e.g. an SV08 or
     Manta carrying a CB1), so the UI can draw the host *inside* that board instead of as a separate

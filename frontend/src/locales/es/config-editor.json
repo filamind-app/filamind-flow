@@ -138,6 +138,11 @@
       "warningsTitle": "Avisos de config de Klipper",
       "count": "{n} valor(es) en disco difieren de lo que se ejecuta (editado sin FIRMWARE_RESTART):",
       "adopt": "adoptar en vivo"
+    },
+    "pinDoctor": {
+      "title": "Doctor de pines — {n} hallazgo(s) de cableado",
+      "conflict": "CONFLICTO",
+      "caveat": "AVISO"
     }
   }
 }
