@@ -24,6 +24,7 @@ import {
   fetchConfigFile,
   fetchConfigFiles,
   fetchConfigGraph,
+  fetchConfigSanity,
   fetchFieldPolicy,
   fetchPinDoctor,
   fetchPinMap,
@@ -43,6 +44,8 @@ import type {
   ConfigFileView,
   ConfigGraph,
   ConfigParamView,
+  ConfigSanityFinding,
+  ConfigSanityResult,
   ConfigSearchResult,
   ConfigSectionView,
   FieldPolicyEntry,
@@ -106,6 +109,19 @@ async function loadPinDoctor(): Promise<void> {
   } catch {
     pinDoctor.value = null
   }
+}
+
+// Driver value sanity: run_current vs the driver ceiling / mapped-motor rating + microsteps.
+const sanity = ref<ConfigSanityResult | null>(null)
+async function loadSanity(): Promise<void> {
+  try {
+    sanity.value = await fetchConfigSanity()
+  } catch {
+    sanity.value = null
+  }
+}
+function sanityMsg(f: ConfigSanityFinding): string {
+  return t('configEditor.sanity.rule.' + f.rule, { section: f.section, ...f.detail })
 }
 
 // Typed editing for TMC register fields: per-model field policy (control + mask-derived range).
@@ -578,6 +594,7 @@ onMounted(() => {
   void loadPinDoctor()
   void loadPinMap()
   void loadGraph()
+  void loadSanity()
 })
 </script>
 
@@ -781,6 +798,30 @@ onMounted(() => {
             <span class="min-w-0">{{ issue.message }}</span>
           </li>
         </ul>
+      </div>
+
+      <!-- Driver value sanity: run_current vs the driver ceiling / mapped-motor rating + microsteps -->
+      <div
+        v-if="sanity && sanity.reachable && sanity.findings.length"
+        class="nb-card space-y-1 bg-brand-yellow/15 p-2"
+      >
+        <p class="text-xs font-bold">
+          {{ t('configEditor.sanity.title', { n: sanity.findings.length }) }}
+        </p>
+        <ul class="space-y-1 text-[11px]">
+          <li v-for="(f, i) in sanity.findings" :key="i" class="flex flex-wrap items-start gap-1">
+            <span
+              class="shrink-0 rounded px-1 font-bold"
+              :class="f.level === 'error' ? 'bg-brand-red text-paper' : 'bg-brand-yellow text-ink'"
+            >
+              {{ f.level === 'error' ? '✕' : '⚠' }}
+            </span>
+            <span class="min-w-0 font-mono">{{ sanityMsg(f) }}</span>
+          </li>
+        </ul>
+        <p class="text-[10px] opacity-50">
+          {{ t('configEditor.sanity.note', { n: sanity.checked }) }}
+        </p>
       </div>
 
       <!-- Pin Doctor: whole-config pin-conflict + electronics-caveat scan -->

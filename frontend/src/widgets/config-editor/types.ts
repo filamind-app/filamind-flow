@@ -178,3 +178,17 @@ export interface ConfigBackupList {
   filename: string | null
   backups: ConfigBackup[]
 }
+
+/** One driver value-sanity finding (run_current vs driver ceiling / motor rating, microsteps). */
+export interface ConfigSanityFinding {
+  level: 'error' | 'warning' | string
+  rule: string
+  section: string
+  detail: Record<string, string | number>
+}
+
+export interface ConfigSanityResult {
+  reachable: boolean
+  findings: ConfigSanityFinding[]
+  checked: number
+}

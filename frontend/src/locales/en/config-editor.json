@@ -203,6 +203,17 @@
       "diffHint": "difference from the current file",
       "unchanged": "⋯ {n} unchanged lines ⋯",
       "note": "Snapshots are written automatically before each save. Restore loads one into the editor for a final review + save."
+    },
+    "sanity": {
+      "title": "Driver value sanity ({n})",
+      "note": "Checked {n} TMC driver section(s). A driver with no curated ceiling and a stepper with no assigned motor are skipped, not guessed.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} A exceeds the driver’s ~{cap} A full-scale ceiling.",
+        "near_driver_cap": "{section}: run_current {run_current} A is within 10% of the driver’s ~{cap} A ceiling.",
+        "over_motor_rating": "{section}: run_current {run_current} A exceeds the {motor} rating ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A is within 10% of the {motor} rating ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} is not a power of two (1…256)."
+      }
     }
   }
 }
