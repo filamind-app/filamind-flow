@@ -66,7 +66,9 @@
       "extrude": "{mm} mm 挤出",
       "time": "约 {s} 秒",
       "bounds": "包围盒",
-      "empty": "没有可模拟的移动。"
+      "empty": "没有可模拟的移动。",
+      "timeAccel": "（含加速度）",
+      "timeConstant": "（无限制）"
     },
     "path": {
       "title": "工具头路径 (XY)",
@@ -128,6 +130,14 @@
           "fix": "先回零（G28）并加热热端再挤出。"
         }
       }
+    },
+    "heat": {
+      "colorBy": "着色依据",
+      "none": "平面",
+      "speed": "速度",
+      "extrude": "挤出",
+      "legendSpeed": "速度 (mm/s)",
+      "legendExtrude": "挤出 (mm/s)"
     }
   }
 }

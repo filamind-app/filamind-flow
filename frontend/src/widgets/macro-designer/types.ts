@@ -13,6 +13,12 @@ export interface SimSegment {
   e_delta: number
   dist: number
   feedrate: number
+  /** Effective cruise speed (mm/s), commanded feedrate capped at the machine's max_velocity. */
+  v_mm_s?: number
+  /** Accel-aware time for this move (s). */
+  time_s?: number
+  /** Extrusion rate during the move (filament mm/s ≈ mm³/s), 0 for travel moves. */
+  extrude_rate?: number
   extruding: boolean
   out_of_bounds?: boolean
   over_speed?: boolean
@@ -70,6 +76,8 @@ export interface SimResult {
   total_distance_mm: number
   total_extrude_mm: number
   est_time_s: number
+  /** Which time model produced `est_time_s`: 'accel' (trapezoidal) or 'constant' (no limits). */
+  time_model?: 'accel' | 'constant' | string
   move_count: number
   command_count: number
   warnings: string[]

@@ -111,6 +111,25 @@ def lint(gcode: str) -> list[dict[str, Any]]:
     return findings
 
 
+def _move_time(dist: float, cruise_v: float, accel: float | None) -> float:
+    """Time for a single move of length ``dist`` (mm) reaching ``cruise_v`` (mm/s).
+
+    With ``accel`` (mm/s²) this is a rest-to-rest trapezoidal profile (accelerate to the cruise
+    velocity — or a lower triangular peak on a short move — then decelerate), which models a macro's
+    short start/stop moves far better than assuming instant full speed. Without ``accel`` it falls
+    back to the constant-velocity estimate ``dist / cruise_v``.
+    """
+    if dist <= 1e-9 or cruise_v <= 1e-9:
+        return 0.0
+    if accel is None or accel <= 0:
+        return dist / cruise_v
+    accel_dist = cruise_v * cruise_v / (2.0 * accel)  # distance to ramp 0 → cruise_v
+    if 2.0 * accel_dist <= dist:
+        return 2.0 * (cruise_v / accel) + (dist - 2.0 * accel_dist) / cruise_v
+    peak_v = math.sqrt(accel * dist)  # triangular: never reaches cruise_v
+    return 2.0 * peak_v / accel
+
+
 def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]:
     """Simulate a literal G-code program → path, bounds, totals, timeline (pure).
 
@@ -128,6 +147,8 @@ def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]
     lim_min = limits.get("min") if isinstance(limits, dict) else None
     lim_max = limits.get("max") if isinstance(limits, dict) else None
     max_vel = limits.get("max_velocity") if isinstance(limits, dict) else None
+    max_accel = limits.get("max_accel") if isinstance(limits, dict) else None
+    accel_aware = isinstance(max_accel, (int, float)) and max_accel > 0
 
     bounds = {
         "min_x": math.inf,
@@ -179,6 +200,10 @@ def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]
                 e_delta = 0.0
             dist = math.dist((x0, y0, z0), (nx, ny, nz))
             extruding = e_delta > 1e-9 and dist > 1e-9
+            # Effective cruise speed (mm/s): the commanded feedrate, capped at the machine limit.
+            cruise_v = state.f / 60.0
+            if max_vel and cruise_v > max_vel:
+                cruise_v = max_vel
             out_of_bounds = False
             over_speed = False
             if lim_min and lim_max:
@@ -204,6 +229,15 @@ def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]
                             "limit": round(max_vel, 1),
                         }
                     )
+            # Per-segment time: accel-aware trapezoid for XY/Z travel; constant-v for E-only moves.
+            if dist > 1e-9:
+                seg_time = _move_time(dist, cruise_v, max_accel if accel_aware else None)
+                seg_v = cruise_v
+            else:
+                seg_time = abs(e_delta) / cruise_v if cruise_v > 1e-9 else 0.0
+                seg_v = cruise_v
+            # Extrusion rate (mm³/s ≈ filament mm/s here) for the optional extrusion heatmap.
+            extrude_rate = round(e_delta / seg_time, 4) if extruding and seg_time > 1e-9 else 0.0
             segments.append(
                 {
                     "line": lineno,
@@ -212,6 +246,9 @@ def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]
                     "e_delta": round(e_delta, 5),
                     "dist": round(dist, 4),
                     "feedrate": state.f,
+                    "v_mm_s": round(seg_v, 3),
+                    "time_s": round(seg_time, 4),
+                    "extrude_rate": extrude_rate,
                     "extruding": extruding,
                     "out_of_bounds": out_of_bounds,
                     "over_speed": over_speed,
@@ -223,9 +260,7 @@ def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]
             total_distance += dist
             if e_delta > 0:
                 total_extrude += e_delta
-            travel = dist if dist > 1e-9 else abs(e_delta)
-            if state.f > 0 and travel > 0:
-                est_time_s += travel / (state.f / 60.0)
+            est_time_s += seg_time
             move_count += 1
             timeline.append({"line": lineno, "cmd": cmd, "action": "move"})
         elif cmd == "G90":
@@ -268,6 +303,7 @@ def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]
         "total_distance_mm": round(total_distance, 3),
         "total_extrude_mm": round(total_extrude, 4),
         "est_time_s": round(est_time_s, 2),
+        "time_model": "accel" if accel_aware else "constant",
         "move_count": move_count,
         "command_count": len(timeline),
         "warnings": warnings,
