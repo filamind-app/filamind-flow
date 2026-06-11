@@ -170,6 +170,30 @@
         "orphan_driver": "Driver huérfano — sin sección coincidente: ",
         "section_override": "Anulación (definida en varios archivos, gana la última): "
       }
+    },
+    "knowledge": {
+      "viewDriver": "Ver {model} en el catálogo →",
+      "stepper": "Un eje de motor paso a paso — sus pines de driver, distancia de rotación, micropasos y homing/final de carrera.",
+      "tmc": "Un driver paso a paso Trinamic — corriente de marcha/retención, micropasos y ajuste StallGuard/chopper para su motor.",
+      "extruder": "El hotend y el extrusor — tamaño de boquilla, ruta del filamento, calentador, termistor y PID.",
+      "heater_bed": "La cama caliente — su pin de calentador, termistor y límites PID/temperatura.",
+      "fan": "El ventilador de capa que enfría el filamento recién impreso.",
+      "heater_fan": "Un ventilador ligado a un calentador (p. ej. del hotend) que lo protege del sobrecalentamiento.",
+      "controller_fan": "Un ventilador que enfría los drivers/electrónica mientras los motores están activos.",
+      "mcu": "Una placa microcontroladora con Klipper — su conexión serie o CAN.",
+      "printer": "Cinemática global y límites de movimiento (tipo, velocidad máxima, aceleración).",
+      "bed_mesh": "Nivelación automática — sondea una cuadrícula y compensa la planitud de la cama al imprimir.",
+      "probe": "La sonda Z usada para detectar la superficie de la cama para homing y malla.",
+      "gcode_macro": "Una macro G-code personalizada — un comando con nombre invocable desde la consola u otras macros.",
+      "output_pin": "Un pin de salida controlable (un LED, relé o línea de habilitación, por ejemplo).",
+      "neopixel": "LEDs RGB direccionables (NeoPixel / WS2812) y su control de color.",
+      "board_pins": "Alias legibles para los pines físicos de una placa, referenciados en el resto de la config.",
+      "input_shaper": "Compensación de resonancia que reduce el ringing y el ghosting a mayor velocidad.",
+      "safe_z_home": "Hace homing de Z en una posición XY segura (a menudo el centro) para proteger boquilla y cama.",
+      "z_tilt": "Ajusta varios motores Z para nivelar el plano del pórtico/cama.",
+      "quad_gantry_level": "Nivela un pórtico de cuatro puntos para dejarlo paralelo a la cama.",
+      "filament_switch_sensor": "Un sensor de fin de filamento que pausa la impresión cuando se agota.",
+      "virtual_sdcard": "Permite a Klipper imprimir archivos subidos al host (necesario para Mainsail y Fluidd)."
     }
   }
 }

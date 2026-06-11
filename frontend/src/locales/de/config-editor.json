@@ -170,6 +170,30 @@
         "orphan_driver": "Verwaister Treiber — kein passender Abschnitt: ",
         "section_override": "Überschreibung (in mehreren Dateien definiert, die letzte gewinnt): "
       }
+    },
+    "knowledge": {
+      "viewDriver": "{model} im Katalog ansehen →",
+      "stepper": "Eine Schrittmotor-Achse — Treiberpins, Rotationsdistanz, Microsteps und Homing/Endstop.",
+      "tmc": "Ein Trinamic-Schrittmotortreiber — Lauf-/Haltestrom, Microsteps und StallGuard-/Chopper-Tuning für seinen Motor.",
+      "extruder": "Hotend und Extruder — Düsengröße, Filamentweg, Heizung, Thermistor und PID.",
+      "heater_bed": "Das beheizte Bett — Heizungspin, Thermistor und PID-/Temperaturgrenzen.",
+      "fan": "Der Bauteillüfter, der frisch gedrucktes Filament kühlt.",
+      "heater_fan": "Ein an eine Heizung gekoppelter Lüfter (z. B. Hotend-Kühlung), der sie vor Überhitzung schützt.",
+      "controller_fan": "Ein Lüfter, der Treiber/Elektronik kühlt, solange die Motoren aktiv sind.",
+      "mcu": "Eine Mikrocontroller-Platine mit Klipper — ihre serielle oder CAN-Verbindung.",
+      "printer": "Globale Kinematik und Bewegungsgrenzen (Typ, Maximalgeschwindigkeit, Beschleunigung).",
+      "bed_mesh": "Automatische Bett-Nivellierung — tastet ein Raster ab und gleicht die Bettebenheit beim Drucken aus.",
+      "probe": "Der Z-Sensor zur Erkennung der Bettoberfläche für Homing und Bed Mesh.",
+      "gcode_macro": "Ein eigenes G-Code-Makro — ein benannter Befehl, aufrufbar aus der Konsole oder anderen Makros.",
+      "output_pin": "Ein steuerbarer Ausgangspin (z. B. LED, Relais oder Enable-Leitung).",
+      "neopixel": "Adressierbare RGB-LEDs (NeoPixel / WS2812) und ihre Farbsteuerung.",
+      "board_pins": "Lesbare Aliase für die physischen Pins einer Platine, anderswo in der Konfig referenziert.",
+      "input_shaper": "Resonanzkompensation, die Ringing und Ghosting bei höheren Geschwindigkeiten reduziert.",
+      "safe_z_home": "Homt Z an einer sicheren XY-Position (oft Bettmitte), um Düse und Bett zu schützen.",
+      "z_tilt": "Justiert mehrere Z-Motoren, bis die Portal-/Bettebene eben ist.",
+      "quad_gantry_level": "Nivelliert ein Vier-Punkt-Portal, sodass es parallel zum Bett liegt.",
+      "filament_switch_sensor": "Ein Filament-Runout-Sensor, der den Druck bei leerem Filament pausiert.",
+      "virtual_sdcard": "Erlaubt Klipper das Drucken von auf den Host geladenen Dateien (für Mainsail und Fluidd nötig)."
     }
   }
 }

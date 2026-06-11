@@ -170,6 +170,30 @@
         "orphan_driver": "Driver orphelin — aucune section correspondante : ",
         "section_override": "Remplacement (défini dans plusieurs fichiers, le dernier gagne) : "
       }
+    },
+    "knowledge": {
+      "viewDriver": "Voir {model} dans le catalogue →",
+      "stepper": "Un axe à moteur pas à pas — ses broches de driver, distance de rotation, micro-pas et homing/fin de course.",
+      "tmc": "Un driver pas à pas Trinamic — courant de marche/maintien, micro-pas et réglage StallGuard/chopper pour son moteur.",
+      "extruder": "La tête chauffante et l’extrudeur — diamètre de buse, chemin du filament, chauffe, thermistance et PID.",
+      "heater_bed": "Le lit chauffant — sa broche de chauffe, thermistance et limites PID/température.",
+      "fan": "Le ventilateur de pièce qui refroidit le filament fraîchement déposé.",
+      "heater_fan": "Un ventilateur lié à une chauffe (refroidissement de tête, p. ex.) qui la protège de la surchauffe.",
+      "controller_fan": "Un ventilateur qui refroidit les drivers/l’électronique quand les moteurs sont actifs.",
+      "mcu": "Une carte microcontrôleur sous Klipper — sa connexion série ou CAN.",
+      "printer": "Cinématique globale et limites de mouvement (type, vitesse max, accélération).",
+      "bed_mesh": "Nivellement automatique — sonde une grille et compense la planéité du lit pendant l’impression.",
+      "probe": "La sonde Z servant à détecter la surface du lit pour le homing et le maillage.",
+      "gcode_macro": "Une macro G-code personnalisée — une commande nommée appelable depuis la console ou d’autres macros.",
+      "output_pin": "Une broche de sortie pilotable (une LED, un relais ou une ligne d’activation, par exemple).",
+      "neopixel": "LEDs RGB adressables (NeoPixel / WS2812) et leur contrôle de couleur.",
+      "board_pins": "Des alias lisibles pour les broches physiques d’une carte, référencés ailleurs dans la config.",
+      "input_shaper": "Compensation de résonance qui réduit le ringing et le ghosting à plus haute vitesse.",
+      "safe_z_home": "Effectue le homing Z à une position XY sûre (souvent le centre) pour protéger buse et lit.",
+      "z_tilt": "Ajuste plusieurs moteurs Z pour mettre de niveau le plan du portique/lit.",
+      "quad_gantry_level": "Met de niveau un portique à quatre points pour le rendre parallèle au lit.",
+      "filament_switch_sensor": "Un capteur de fin de filament qui met l’impression en pause à l’épuisement.",
+      "virtual_sdcard": "Permet à Klipper d’imprimer des fichiers téléversés sur l’hôte (requis par Mainsail et Fluidd)."
     }
   }
 }
