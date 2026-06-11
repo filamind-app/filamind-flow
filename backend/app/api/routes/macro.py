@@ -9,11 +9,11 @@ from __future__ import annotations
 from typing import Any
 
 import httpx
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
-from app.services import gcode_sim, live_state, macro_render
+from app.services import config_service, gcode_sim, live_state, macro_render, macro_scaffold
 from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/macro", tags=["macro"])
@@ -58,6 +58,37 @@ class SimulateRequest(BaseModel):
     limits: dict[str, Any] | None = Field(
         default=None, description="Printer envelope {min:[x,y,z], max:[x,y,z], max_velocity}"
     )
+
+
+@router.get("/scaffold")
+async def macro_scaffold_get(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Generate START_PRINT / END_PRINT tailored to this printer (kinematics, envelope, configured
+    leveling, heated bed). ``reachable=false`` with a generic template when the printer is down."""
+    return await macro_scaffold.gather(MoonrakerClient(settings.moonraker_url))
+
+
+class ScaffoldAppendRequest(BaseModel):
+    """Body for ``POST /macro/scaffold/append`` — write a generated block to a config file."""
+
+    filename: str = Field(..., description="Config path to append to (e.g. 'printer.cfg')")
+    block: str = Field(..., description="The macro block(s) to append")
+
+
+@router.post("/scaffold/append")
+async def macro_scaffold_append(
+    body: ScaffoldAppendRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Append generated macros to a config file through the gated save (backup + refuse-while-busy).
+    Refuses (409 busy / 400 duplicate macro name). The first Macro Designer write path."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        return await config_service.append_block(client, body.filename, body.block)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except config_service.ConfigBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
 
 
 @router.post("/simulate")

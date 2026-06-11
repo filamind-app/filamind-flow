@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.195.0] - 2026-06-12
+
+### Added
+
+- **Macro Designer — generate a tailored START_PRINT / END_PRINT (with a gated write).** A new panel
+  reads the live printer — its kinematics, the real build envelope, which leveling it actually has
+  (`quad_gantry_level` / `z_tilt` / `bed_mesh`), and whether there's a heated bed — and generates a
+  `START_PRINT` and `END_PRINT` fitted to that machine: the right leveling and mesh steps, bed
+  heating only if there's a bed, and prime/park positions that sit inside the build area. Notes
+  explain what was tailored. You can load either macro into the simulator to review it, then
+  **append both to a config file behind the confirm gate** — a backup is taken first, writes are
+  refused while printing, and a same-named existing macro blocks the write rather than duplicating
+  it. This is the Macro Designer's first write path; it reuses the Config Editor's gated save. New
+  `GET /api/macro/scaffold` and `POST /api/macro/scaffold/append`. Localised in all 7 languages.
+  (Phase 16 of the Config Editor + Macro Designer programme.)
+
 ## [0.194.0] - 2026-06-12
 
 ### Added

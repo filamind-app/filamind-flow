@@ -160,6 +160,31 @@
         "extrude": "Extrusion (mm)",
         "time": "Time (s)"
       }
+    },
+    "scaffold": {
+      "title": "Generate START / END_PRINT",
+      "hint": "Build a START_PRINT and END_PRINT tailored to this printer — its homing, the leveling it actually has, a mesh step, and prime/park positions inside the real build area.",
+      "generate": "Generate",
+      "generating": "Generating…",
+      "loadEditor": "Load into editor",
+      "writeTitle": "Write to config",
+      "target": "Target file",
+      "append": "Append to config…",
+      "confirm": "Confirm append",
+      "cancel": "Cancel",
+      "appending": "Writing…",
+      "writeNote": "Appends both macros to the chosen file behind the confirm gate — a backup is taken first and writes are refused while printing. Refused if a macro with the same name already exists.",
+      "saved": "Saved to {file}.",
+      "savedBackup": "Saved to {file} (backup: {backup}). Restart firmware to apply.",
+      "note": {
+        "kinematics": "Kinematics: {k}.",
+        "bounds": "Build area X {x0}-{x1}, Y {y0}-{y1} (prime/park fit inside).",
+        "leveling_qgl": "Detected quad_gantry_level -> added QUAD_GANTRY_LEVEL.",
+        "leveling_ztilt": "Detected z_tilt -> added Z_TILT_ADJUST.",
+        "leveling_none": "No quad_gantry_level / z_tilt configured — left a placeholder.",
+        "mesh": "Detected bed_mesh -> added BED_MESH_CALIBRATE.",
+        "no_bed": "No heated bed — bed heating steps omitted."
+      }
     }
   }
 }

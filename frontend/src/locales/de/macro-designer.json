@@ -160,6 +160,31 @@
         "extrude": "Extrusion (mm)",
         "time": "Zeit (s)"
       }
+    },
+    "scaffold": {
+      "title": "START / END_PRINT erzeugen",
+      "hint": "Erzeugt ein START_PRINT und END_PRINT, zugeschnitten auf diesen Drucker — Homing, die tatsächlich vorhandene Nivellierung, einen Mesh-Schritt und Prime/Park-Positionen im echten Bauraum.",
+      "generate": "Erzeugen",
+      "generating": "Erzeuge…",
+      "loadEditor": "In Editor laden",
+      "writeTitle": "In Konfig schreiben",
+      "target": "Zieldatei",
+      "append": "An Konfig anhängen…",
+      "confirm": "Anhängen bestätigen",
+      "cancel": "Abbrechen",
+      "appending": "Schreibe…",
+      "writeNote": "Hängt beide Makros hinter der Bestätigung an die gewählte Datei an — zuerst wird ein Backup erstellt, Schreibvorgänge werden während des Drucks abgelehnt. Abgelehnt, wenn ein Makro gleichen Namens existiert.",
+      "saved": "In {file} gespeichert.",
+      "savedBackup": "In {file} gespeichert (Backup: {backup}). Firmware neu starten zum Anwenden.",
+      "note": {
+        "kinematics": "Kinematik: {k}.",
+        "bounds": "Bauraum X {x0}-{x1}, Y {y0}-{y1} (Prime/Park passen hinein).",
+        "leveling_qgl": "quad_gantry_level erkannt -> QUAD_GANTRY_LEVEL ergänzt.",
+        "leveling_ztilt": "z_tilt erkannt -> Z_TILT_ADJUST ergänzt.",
+        "leveling_none": "Kein quad_gantry_level / z_tilt konfiguriert — Platzhalter belassen.",
+        "mesh": "bed_mesh erkannt -> BED_MESH_CALIBRATE ergänzt.",
+        "no_bed": "Kein beheiztes Bett — Bett-Heizschritte weggelassen."
+      }
     }
   }
 }

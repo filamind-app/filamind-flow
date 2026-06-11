@@ -160,6 +160,31 @@
         "extrude": "Extrusión (mm)",
         "time": "Tiempo (s)"
       }
+    },
+    "scaffold": {
+      "title": "Generar START / END_PRINT",
+      "hint": "Crea un START_PRINT y END_PRINT a medida de esta impresora — su homing, la nivelación que realmente tiene, un paso de malla y posiciones de prime/aparcado dentro del área real.",
+      "generate": "Generar",
+      "generating": "Generando…",
+      "loadEditor": "Cargar en el editor",
+      "writeTitle": "Escribir en config",
+      "target": "Archivo destino",
+      "append": "Añadir a config…",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "appending": "Escribiendo…",
+      "writeNote": "Añade ambas macros al archivo elegido tras la confirmación — primero se hace copia y se rechazan escrituras al imprimir. Se rechaza si ya existe una macro con el mismo nombre.",
+      "saved": "Guardado en {file}.",
+      "savedBackup": "Guardado en {file} (copia: {backup}). Reinicia el firmware para aplicar.",
+      "note": {
+        "kinematics": "Cinemática: {k}.",
+        "bounds": "Área X {x0}-{x1}, Y {y0}-{y1} (prime/aparcado dentro).",
+        "leveling_qgl": "Detectado quad_gantry_level -> añadido QUAD_GANTRY_LEVEL.",
+        "leveling_ztilt": "Detectado z_tilt -> añadido Z_TILT_ADJUST.",
+        "leveling_none": "Sin quad_gantry_level / z_tilt — se dejó un marcador.",
+        "mesh": "Detectado bed_mesh -> añadido BED_MESH_CALIBRATE.",
+        "no_bed": "Sin cama caliente — pasos de calentamiento omitidos."
+      }
     }
   }
 }

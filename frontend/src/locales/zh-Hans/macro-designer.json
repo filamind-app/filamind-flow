@@ -160,6 +160,31 @@
         "extrude": "挤出 (mm)",
         "time": "时间 (s)"
       }
+    },
+    "scaffold": {
+      "title": "生成 START / END_PRINT",
+      "hint": "生成为本打印机定制的 START_PRINT 与 END_PRINT — 其归位、实际拥有的调平、建网步骤，以及在真实可打印区域内的 prime/停靠位置。",
+      "generate": "生成",
+      "generating": "生成中…",
+      "loadEditor": "载入编辑器",
+      "writeTitle": "写入配置",
+      "target": "目标文件",
+      "append": "追加到配置…",
+      "confirm": "确认追加",
+      "cancel": "取消",
+      "appending": "写入中…",
+      "writeNote": "在确认后将两个宏追加到所选文件 — 先备份，打印时拒绝写入。若已存在同名宏则拒绝。",
+      "saved": "已保存到 {file}。",
+      "savedBackup": "已保存到 {file}（备份：{backup}）。重启固件以生效。",
+      "note": {
+        "kinematics": "运动学：{k}。",
+        "bounds": "可打印区域 X {x0}-{x1}，Y {y0}-{y1}（prime/停靠在内）。",
+        "leveling_qgl": "检测到 quad_gantry_level -> 已加入 QUAD_GANTRY_LEVEL。",
+        "leveling_ztilt": "检测到 z_tilt -> 已加入 Z_TILT_ADJUST。",
+        "leveling_none": "未配置 quad_gantry_level / z_tilt — 留下占位。",
+        "mesh": "检测到 bed_mesh -> 已加入 BED_MESH_CALIBRATE。",
+        "no_bed": "无热床 — 已省略热床加热步骤。"
+      }
     }
   }
 }

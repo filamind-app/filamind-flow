@@ -542,6 +542,45 @@ async def gather_sanity(client: MoonrakerClient, data_dir: str = "") -> dict[str
     return {"reachable": True, "findings": findings, "checked": checked}
 
 
+async def append_block(client: MoonrakerClient, filename: str, block: str) -> dict[str, Any]:
+    """Append a config ``block`` (e.g. generated macros) to ``filename`` through the gated save.
+
+    Refuses (``ValueError``) if any ``[gcode_macro NAME]`` in the block is already defined in the
+    target file — so a generated START_PRINT never silently duplicates an existing one. Otherwise it
+    reads the current text, appends with a blank-line separator, and writes via ``save_config_file``
+    (which backs up first and refuses while the printer is busy).
+
+    Raises:
+        ValueError: unsafe path or a duplicate macro name.
+        ConfigBusyError: the printer is busy.
+        httpx.HTTPError: Moonraker error.
+    """
+    _reject_unsafe(filename)
+    try:
+        current = await client.get_file_text(filename, root="config")
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code != 404:
+            raise
+        current = ""
+
+    existing = {
+        s.name.strip().lower()
+        for s in klipper_config.parse(current).sections
+        if _section_type(s.header) == "gcode_macro"
+    }
+    dups = [
+        s.name
+        for s in klipper_config.parse(block).sections
+        if _section_type(s.header) == "gcode_macro" and s.name.strip().lower() in existing
+    ]
+    if dups:
+        raise ValueError(f"already defined in {filename}: {', '.join(dups)}")
+
+    body = block.strip() + "\n"
+    new_text = f"{current.rstrip()}\n\n{body}" if current.strip() else body
+    return await save_config_file(client, filename, new_text)
+
+
 async def _is_busy(client: MoonrakerClient) -> bool:
     """True while the printer is printing, paused, or in error — block writes and restarts
     then. Reads ``print_stats.state`` (mirrors the Motor Drivers write guard)."""
