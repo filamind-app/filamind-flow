@@ -25,7 +25,10 @@
           "title": "Bibliothèque de macros",
           "body": "Un ensemble de référence des macros Klipper courantes, avec leur nom, leur rôle et les sections de configuration dont elles ont besoin. « Insérer » dépose les commandes de haut niveau d'une macro dans l'éditeur comme point de départ — notez que celles-ci se développent davantage sur l'imprimante (l'expansion complète Jinja/macro est à venir)."
         },
-        "glossary": { "title": "Glossaire", "body": "" }
+        "glossary": {
+          "title": "Glossaire",
+          "body": ""
+        }
       },
       "glossary": {
         "gcode": {
@@ -77,6 +80,24 @@
     },
     "warnings": {
       "title": "Avertissements"
+    },
+    "explain": {
+      "title": "Expliquer cette macro",
+      "travel": "Déplacement rapide vers X{x} Y{y} à {f} mm/min",
+      "print": "Mouvement d'impression — extruder {e} mm sur {d} mm jusqu'à X{x} Y{y} à {f} mm/min",
+      "retract": "Rétracter {e} mm",
+      "prime": "Extruder {e} mm sur place",
+      "noMove": "Aucun mouvement",
+      "absXYZ": "Passer en positionnement absolu (G90)",
+      "relXYZ": "Passer en positionnement relatif (G91)",
+      "absE": "Passer en extrusion absolue (M82)",
+      "relE": "Passer en extrusion relative (M83)",
+      "setPos": "Définir la position actuelle (G92)",
+      "home": "Origine des axes (G28) → origine",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "jusqu'ici : {d} mm · {e} mm · ~{s} s",
+      "note": "Les lignes avec des expressions non résolues ou un contrôle Jinja ne sont pas simulées et sont omises ici."
     }
   }
 }

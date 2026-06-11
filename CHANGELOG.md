@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.175.0] - 2026-06-11
+
+### Added
+
+- **Macro Designer — "Explain this macro" walkthrough.** A new plain-language, step-by-step view of
+  a simulated program: every command in English ("Rapid travel to X20 Y20 at 6000 mm/min", "Print
+  move — extrude 3 mm over 60 mm…", "Switch to relative extrusion", "Home the axes"), the running
+  positioning mode (ABS/REL) after each step, and cumulative travel / extrusion / time. **Hovering a
+  step lights up its segment on the 2D path** (and vice-versa), so you can trace exactly what each
+  line does. Pure frontend over data the simulator already computes; localised in all 7 languages.
+  (Phase 1 of the Config Editor + Macro Designer enhancement programme.)
+
 ## [0.174.0] - 2026-06-11
 
 ### Fixed
