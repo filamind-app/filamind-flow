@@ -12,6 +12,10 @@
         "A board guess appears when the connection identifier matches a known board."
       ],
       "topics": {
+        "views": {
+          "title": "Physical vs Logical views",
+          "body": "The map draws the same boards two ways. PHYSICAL shows how the machine is actually built: an integrated SBC is drawn inside the mainboard it ships on, CAN toolheads hang off a shared backbone rail, and USB/UART boards are separate units. LOGICAL shows how Klipper sees it: the host at the top with every MCU as a child reached over its serial link. Toggle with the Physical/Logical switch."
+        },
         "mcus": {
           "title": "MCUs",
           "body": "An MCU is a microcontroller board that drives motors, heaters and sensors. A printer has at least one (the mainboard); many add a toolhead board and sometimes a probe or LED board. This panel lists every `[mcu]` section Klipper has."
@@ -61,6 +65,17 @@
       "viewBoard": "View board details",
       "hideBoard": "Hide details"
     },
+    "graph": {
+      "viewLabel": "Diagram view",
+      "view": {
+        "physical": "Physical",
+        "logical": "Logical"
+      },
+      "integrated": "SBC on-board",
+      "integratedNote": "The host SBC is built into the {board} mainboard.",
+      "selectPrompt": "Select a board or MCU in the map to inspect it.",
+      "aria": "Machine map: the host and {n} MCUs"
+    },
     "conn": {
       "canbus": "CAN bus",
       "usb": "USB",
@@ -82,6 +97,7 @@
       "specsTitle": "Specs",
       "portsTitle": "Ports",
       "none": "No catalog details for this board yet.",
+      "noMatch": "No board matched yet — confirm or set one below.",
       "loading": "Loading board…",
       "links": {
         "title": "Links",

@@ -31,6 +31,10 @@
         "override": {
           "title": "Board bestätigen oder ändern",
           "body": "Eine Serien-ID verrät meist nur den Chip, daher kann die Board-Vermutung fehlen oder falsch sein. Nutze „Dieses Board bestätigen“, um eine richtige Vermutung festzulegen, oder „Board ändern…“ / „Board festlegen…“, um das passende aus dem Katalog zu wählen. Deine Auswahl wird auf dem Host gespeichert und bei jedem Auslesen wiederverwendet; „Zurücksetzen“ stellt die automatische Vermutung wieder her."
+        },
+        "views": {
+          "title": "Physische vs. logische Ansicht",
+          "body": "Die Karte zeichnet dieselben Boards auf zwei Arten. PHYSISCH zeigt, wie die Maschine wirklich gebaut ist: ein integrierter SBC wird im Mainboard gezeichnet, auf dem er sitzt, CAN-Toolheads hängen an einer gemeinsamen Backbone-Schiene, USB/UART-Boards sind eigene Einheiten. LOGISCH zeigt, wie Klipper es sieht: der Host oben, jeder MCU ein Kind über seinen seriellen Link. Umschalten mit dem Physisch/Logisch-Schalter."
         }
       },
       "glossary": {
@@ -92,7 +96,8 @@
         "schematic": "Schaltplan",
         "datasheet": "Datenblatt",
         "image": "Foto"
-      }
+      },
+      "noMatch": "Noch kein Board zugeordnet — unten bestätigen oder festlegen."
     },
     "components": {
       "title": "Komponenten",
@@ -114,6 +119,17 @@
       "clear": "Zurücksetzen",
       "pickPlaceholder": "Board-Katalog durchsuchen…",
       "hint": "Deine Auswahl wird auf dem Host gespeichert und ab jetzt für diesen MCU verwendet."
+    },
+    "graph": {
+      "viewLabel": "Diagramm-Ansicht",
+      "view": {
+        "physical": "Physisch",
+        "logical": "Logisch"
+      },
+      "integrated": "SBC on-board",
+      "integratedNote": "Der Host-SBC ist im Mainboard {board} verbaut.",
+      "selectPrompt": "Wähle ein Board oder einen MCU in der Karte, um es zu inspizieren.",
+      "aria": "Maschinenkarte: der Host und {n} MCUs"
     }
   }
 }

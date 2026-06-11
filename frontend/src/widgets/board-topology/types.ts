@@ -81,6 +81,9 @@ export interface TopologyHost {
   host_id?: string | null
   host_match?: 'suggested' | null
   host_match_confidence?: number
+  /** Set to a mainboard id when the host SBC is physically integrated on that board (SV08 / Manta
+   *  + CB1) — lets the map draw the host inside the board. */
+  integrated_into_board_id?: string | null
 }
 
 export interface Topology {

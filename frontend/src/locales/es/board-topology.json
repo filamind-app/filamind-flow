@@ -31,6 +31,10 @@
         "override": {
           "title": "Confirmar o cambiar una placa",
           "body": "Un id serie suele revelar solo el chip, así que la placa propuesta puede faltar o ser incorrecta. Usa «Confirmar esta placa» para fijar una propuesta correcta, o «Cambiar placa…» / «Elegir placa…» para escoger la correcta del catálogo. Tu elección se guarda en el host y se reutiliza en cada lectura; «Borrar» vuelve a la propuesta automática."
+        },
+        "views": {
+          "title": "Vista física vs. lógica",
+          "body": "El mapa dibuja las mismas placas de dos formas. FÍSICA muestra cómo está construida la máquina: un SBC integrado se dibuja dentro de la placa base en la que viene, los cabezales CAN cuelgan de un bus troncal compartido y las placas USB/UART son unidades separadas. LÓGICA muestra cómo lo ve Klipper: el host arriba y cada MCU como hijo a través de su enlace serie. Cambia con el interruptor Física/Lógica."
         }
       },
       "glossary": {
@@ -92,7 +96,8 @@
         "schematic": "Esquema",
         "datasheet": "Hoja de datos",
         "image": "Foto"
-      }
+      },
+      "noMatch": "Ninguna placa coincidente aún — confirma o elige una abajo."
     },
     "components": {
       "title": "Componentes",
@@ -114,6 +119,17 @@
       "clear": "Borrar",
       "pickPlaceholder": "Buscar en el catálogo de placas…",
       "hint": "Tu elección se guarda en el host y se usa para este MCU a partir de ahora."
+    },
+    "graph": {
+      "viewLabel": "Vista del diagrama",
+      "view": {
+        "physical": "Física",
+        "logical": "Lógica"
+      },
+      "integrated": "SBC integrado",
+      "integratedNote": "El SBC anfitrión está integrado en la placa base {board}.",
+      "selectPrompt": "Selecciona una placa o un MCU en el mapa para inspeccionarlo.",
+      "aria": "Mapa de la máquina: el host y {n} MCU"
     }
   }
 }
