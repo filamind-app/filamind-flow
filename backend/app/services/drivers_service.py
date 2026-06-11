@@ -16,7 +16,7 @@ from typing import Any
 
 import httpx
 
-from app.services import driver_catalog, field_policy, motor_mapping, reference_data
+from app.services import field_policy, motor_mapping, reference_data
 from app.services.moonraker_client import MoonrakerClient
 
 #: A TMC driver config section name, e.g. "tmc2209 stepper_x" / "tmc5160 stepper_y".
@@ -220,7 +220,7 @@ async def gather_drivers(moonraker_url: str, data_dir: str = "") -> dict[str, An
         get_status = get_status if isinstance(get_status, dict) else {}
         record = _parse_driver(name, get_status, sections)
         # Annotate with authoritative reference data for the model (None if unknown).
-        record["info"] = driver_catalog.lookup(record["model"])
+        record["info"] = reference_data.driver_info_lookup(record["model"])
         # Attach the motor the user assigned to this stepper (None if unassigned).
         motor = reference_data.motor_spec_lookup(mapping.get(record["stepper"], ""))
         record["motor"] = motor

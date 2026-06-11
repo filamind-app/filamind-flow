@@ -261,19 +261,9 @@ async def test_preflight_rejects_sg2_in_stealthchop() -> None:
 
 
 def test_tmc2240_sg_field_consistent_across_sources() -> None:
-    """C3 lock: the tmc2240 StallGuard field agrees across the 3 sources (all sg4_thrs)."""
-    import json
-    from pathlib import Path
-
+    """C3 lock: the tmc2240 StallGuard field agrees across the sources (all sg4_thrs)."""
     from app.services import reference_data
 
     assert reference_data.stallguard_field("tmc2240") == "sg4_thrs"
-    cat = json.loads(
-        (Path(reference_data.__file__).parent.parent / "data" / "driver_catalog.json").read_text(
-            encoding="utf-8"
-        )
-    )
-    by_model = {
-        d["model"]: d.get("stallguard_field") for d in cat.get("drivers", []) if isinstance(d, dict)
-    }
+    by_model = {d["model"]: d.get("stallguard_field") for d in reference_data.driver_infos()}
     assert by_model.get("tmc2240") == "sg4_thrs"

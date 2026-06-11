@@ -72,15 +72,13 @@ def test_motor_drivers_catalog_backed() -> None:
 
 
 def test_motor_driver_catalog_no_external_refs() -> None:
-    """The Motor Drivers data (exposed by /api/drivers/motors) must not name any other project as
-    its provenance — present the reused reference data as FilaMind's own."""
-    from app.services import driver_catalog
-
+    """The Motor Drivers data (exposed by /api/drivers/motors and /api/drivers/catalog) must not
+    name any other project as its provenance — present the reused reference data as FilaMind's
+    own."""
     blob = json.dumps(
         {
             "ms": reference_data.motor_specs(),
-            "ds": driver_catalog.source(),
-            "dd": driver_catalog.all_drivers(),
+            "dd": reference_data.driver_infos(),
         },
         ensure_ascii=False,
     ).lower()

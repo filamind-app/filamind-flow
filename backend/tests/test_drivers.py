@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings
 from app.main import create_app
-from app.services import driver_catalog, drivers_service
+from app.services import drivers_service
 
 # A deliberately mixed, multi-model printer to prove generic (not SV08-specific) parsing:
 # a 2209 on X (SpreadCycle, sgthrs), a 2240 on Z (StealthChop, sg4_thrs, temperature),
@@ -175,12 +175,14 @@ def test_drivers_status_parses_mixed_models(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 def test_driver_catalog_lookup() -> None:
-    assert driver_catalog.lookup("tmc2209")["sensorless"] is True
-    assert driver_catalog.lookup("tmc2208")["sensorless"] is False
+    from app.services import reference_data
+
+    assert reference_data.driver_info_lookup("tmc2209")["sensorless"] is True
+    assert reference_data.driver_info_lookup("tmc2208")["sensorless"] is False
     # Aliases resolve to their base model (2226 is configured as [tmc2209]).
-    assert driver_catalog.lookup("tmc2226")["model"] == "tmc2209"
-    assert driver_catalog.lookup("TMC2240")["temperature"] is True  # case-insensitive
-    assert driver_catalog.lookup("nope") is None
+    assert reference_data.driver_info_lookup("tmc2226")["model"] == "tmc2209"
+    assert reference_data.driver_info_lookup("TMC2240")["temperature"] is True  # case-insensitive
+    assert reference_data.driver_info_lookup("nope") is None
 
 
 def test_drivers_catalog_route() -> None:
