@@ -262,6 +262,94 @@ async function doSimulate(): Promise<void> {
   }
 }
 
+// A/B compare: simulate a second program (B) and diff it against the current result (A).
+const gcodeB = ref('')
+const resultB = ref<SimResult | null>(null)
+const comparingB = ref(false)
+const errorB = ref<string | null>(null)
+
+async function compareB(): Promise<void> {
+  comparingB.value = true
+  errorB.value = null
+  try {
+    resultB.value = await simulateGcode(gcodeB.value, macroParams.value, machineLimits.value)
+  } catch (e) {
+    errorB.value = describeError(e)
+    resultB.value = null
+  } finally {
+    comparingB.value = false
+  }
+}
+/** Seed B with the current A program so the user starts from a copy to tweak. */
+function copyAtoB(): void {
+  gcodeB.value = gcode.value
+}
+
+/** Overlay both paths in one shared viewBox (A solid, B dashed). */
+const compareView = computed(() => {
+  const a = result.value
+  const b = resultB.value
+  if (!a || !b || !a.segments.length || !b.segments.length) return null
+  let minX = Math.min(a.bounds.min_x, b.bounds.min_x)
+  let maxX = Math.max(a.bounds.max_x, b.bounds.max_x)
+  let minY = Math.min(a.bounds.min_y, b.bounds.min_y)
+  let maxY = Math.max(a.bounds.max_y, b.bounds.max_y)
+  const lim = a.limits ?? b.limits
+  if (lim) {
+    minX = Math.min(minX, lim.min[0])
+    maxX = Math.max(maxX, lim.max[0])
+    minY = Math.min(minY, lim.min[1])
+    maxY = Math.max(maxY, lim.max[1])
+  }
+  const pad = Math.max(1, (maxX - minX + (maxY - minY)) * 0.04)
+  const w = maxX - minX + pad * 2
+  const h = maxY - minY + pad * 2
+  const sx = (x: number): number => x - minX + pad
+  const sy = (y: number): number => maxY - y + pad
+  const proj = (r: SimResult) =>
+    r.segments.map((s) => ({
+      x1: sx(s.from[0]),
+      y1: sy(s.from[1]),
+      x2: sx(s.to[0]),
+      y2: sy(s.to[1]),
+      extruding: s.extruding,
+    }))
+  return { viewBox: `0 0 ${w || 1} ${h || 1}`, a: proj(a), b: proj(b) }
+})
+
+/** Per-stat A / B / Δ rows. */
+const statsDelta = computed(() => {
+  const a = result.value
+  const b = resultB.value
+  if (!a || !b) return null
+  const row = (key: string, av: number, bv: number) => ({
+    key,
+    a: av,
+    b: bv,
+    delta: Math.round((bv - av) * 100) / 100,
+  })
+  return [
+    row('moves', a.move_count, b.move_count),
+    row('distance', a.total_distance_mm, b.total_distance_mm),
+    row('extrude', a.total_extrude_mm, b.total_extrude_mm),
+    row('time', a.est_time_s, b.est_time_s),
+  ]
+})
+
+/** Which lint rules fire in A only, B only, or both. */
+const lintDelta = computed(() => {
+  const a = result.value
+  const b = resultB.value
+  if (!a || !b) return null
+  const ar = new Set(a.lint.map((f) => f.rule))
+  const br = new Set(b.lint.map((f) => f.rule))
+  return {
+    both: [...ar].filter((r) => br.has(r)),
+    aOnly: [...ar].filter((r) => !br.has(r)),
+    bOnly: [...br].filter((r) => !ar.has(r)),
+  }
+})
+
 function insertMacro(macro: MacroDef): void {
   const block = macro.expands_to.join('\n')
   gcode.value = gcode.value.trimEnd() ? `${gcode.value.trimEnd()}\n${block}` : block
@@ -646,6 +734,145 @@ onMounted(() => {
               </tr>
             </tbody>
           </table>
+        </details>
+
+        <!-- A/B compare: simulate a second program and diff it against this result -->
+        <details class="text-[11px]">
+          <summary class="cursor-pointer font-bold">{{ t('macroDesigner.compare.title') }}</summary>
+          <div class="mt-2 space-y-2">
+            <p class="text-[10px] opacity-70">{{ t('macroDesigner.compare.hint') }}</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <button class="nb-btn bg-surface px-2 py-1 text-[11px]" @click="copyAtoB">
+                {{ t('macroDesigner.compare.copyA') }}
+              </button>
+              <button
+                class="nb-btn bg-brand-cyan px-2 py-1 text-[11px]"
+                :disabled="comparingB || !gcodeB.trim()"
+                @click="compareB"
+              >
+                {{
+                  comparingB ? t('macroDesigner.compare.running') : t('macroDesigner.compare.run')
+                }}
+              </button>
+            </div>
+            <textarea
+              v-model="gcodeB"
+              spellcheck="false"
+              rows="5"
+              :placeholder="t('macroDesigner.compare.placeholder')"
+              class="nb-card w-full resize-y bg-surface p-2 font-mono text-[11px] leading-snug"
+              :aria-label="t('macroDesigner.compare.editorB')"
+            ></textarea>
+            <p v-if="errorB" class="nb-card bg-brand-red/10 p-2 font-mono text-[10px]">
+              {{ errorB }}
+            </p>
+
+            <template v-if="resultB && statsDelta">
+              <!-- Overlay: A solid, B dashed -->
+              <svg
+                v-if="compareView"
+                :viewBox="compareView.viewBox"
+                preserveAspectRatio="xMidYMid meet"
+                class="nb-card h-56 w-full bg-paper"
+                role="img"
+                :aria-label="t('macroDesigner.compare.overlay')"
+              >
+                <line
+                  v-for="(l, i) in compareView.a"
+                  :key="'a' + i"
+                  :x1="l.x1"
+                  :y1="l.y1"
+                  :x2="l.x2"
+                  :y2="l.y2"
+                  stroke="rgb(var(--c-ink))"
+                  :stroke-dasharray="l.extruding ? undefined : '1.5,1.5'"
+                  stroke-width="1"
+                  stroke-linecap="round"
+                  vector-effect="non-scaling-stroke"
+                />
+                <line
+                  v-for="(l, i) in compareView.b"
+                  :key="'b' + i"
+                  :x1="l.x1"
+                  :y1="l.y1"
+                  :x2="l.x2"
+                  :y2="l.y2"
+                  stroke="rgb(var(--c-brand-pink))"
+                  stroke-dasharray="3,2"
+                  stroke-width="1.2"
+                  stroke-linecap="round"
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
+              <div class="flex gap-3 text-[10px]">
+                <span
+                  ><span class="me-1 inline-block h-1 w-3 bg-ink align-middle"></span
+                  >{{ t('macroDesigner.compare.legendA') }}</span
+                >
+                <span
+                  ><span class="me-1 inline-block h-1 w-3 bg-brand-pink align-middle"></span
+                  >{{ t('macroDesigner.compare.legendB') }}</span
+                >
+              </div>
+
+              <!-- Stats delta table -->
+              <table class="w-full border-collapse font-mono text-[10px]">
+                <thead>
+                  <tr class="text-start opacity-60">
+                    <th class="pe-2 text-start"></th>
+                    <th class="pe-2 text-end">A</th>
+                    <th class="pe-2 text-end">B</th>
+                    <th class="text-end">Δ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="row in statsDelta" :key="row.key">
+                    <td class="pe-2 font-bold">{{ t('macroDesigner.compare.row.' + row.key) }}</td>
+                    <td class="pe-2 text-end">{{ row.a }}</td>
+                    <td class="pe-2 text-end">{{ row.b }}</td>
+                    <td
+                      class="text-end font-bold"
+                      :class="
+                        row.delta < 0
+                          ? 'text-brand-lime'
+                          : row.delta > 0
+                            ? 'text-brand-red'
+                            : 'opacity-50'
+                      "
+                    >
+                      {{ row.delta > 0 ? '+' : '' }}{{ row.delta }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Lint delta -->
+              <div v-if="lintDelta" class="space-y-1">
+                <p class="font-bold opacity-70">{{ t('macroDesigner.compare.lintDelta') }}</p>
+                <p v-if="!lintDelta.aOnly.length && !lintDelta.bOnly.length" class="opacity-60">
+                  {{ t('macroDesigner.compare.lintSame') }}
+                </p>
+                <div v-else class="flex flex-wrap gap-1">
+                  <span
+                    v-for="r in lintDelta.aOnly"
+                    :key="'ao' + r"
+                    class="rounded bg-ink/10 px-1"
+                    :title="t('macroDesigner.compare.onlyA')"
+                  >
+                    A: {{ t('macroDesigner.lint.rule.' + r + '.msg') }}
+                  </span>
+                  <span
+                    v-for="r in lintDelta.bOnly"
+                    :key="'bo' + r"
+                    class="rounded bg-brand-pink/30 px-1"
+                    :title="t('macroDesigner.compare.onlyB')"
+                  >
+                    B: {{ t('macroDesigner.lint.rule.' + r + '.msg') }}
+                  </span>
+                </div>
+              </div>
+            </template>
+          </div>
         </details>
       </template>
     </template>

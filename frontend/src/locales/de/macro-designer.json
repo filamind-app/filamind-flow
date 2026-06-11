@@ -138,6 +138,28 @@
       "extrude": "Extrusion",
       "legendSpeed": "Geschwindigkeit (mm/s)",
       "legendExtrude": "Extrusion (mm/s)"
+    },
+    "compare": {
+      "title": "Vergleich (A / B)",
+      "hint": "Ein zweites Programm (B) simulieren und mit dem aktuellen Ergebnis (A) vergleichen.",
+      "copyA": "A → B kopieren",
+      "run": "Vergleichen",
+      "running": "Vergleiche…",
+      "placeholder": "Programm B einfügen oder schreiben…",
+      "editorB": "Programm B",
+      "overlay": "Pfad-Overlay A vs. B",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "Linter-Unterschiede",
+      "lintSame": "Gleiche Linter-Befunde in beiden.",
+      "onlyA": "nur in A",
+      "onlyB": "nur in B",
+      "row": {
+        "moves": "Bewegungen",
+        "distance": "Strecke (mm)",
+        "extrude": "Extrusion (mm)",
+        "time": "Zeit (s)"
+      }
     }
   }
 }

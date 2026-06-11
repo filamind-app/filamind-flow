@@ -138,6 +138,28 @@
       "extrude": "挤出",
       "legendSpeed": "速度 (mm/s)",
       "legendExtrude": "挤出 (mm/s)"
+    },
+    "compare": {
+      "title": "对比（A / B）",
+      "hint": "模拟第二个程序（B）并与当前结果（A）对比。",
+      "copyA": "复制 A → B",
+      "run": "对比",
+      "running": "对比中…",
+      "placeholder": "粘贴或编写 B 程序…",
+      "editorB": "程序 B",
+      "overlay": "A 与 B 路径叠加",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "检查差异",
+      "lintSame": "两者检查结果相同。",
+      "onlyA": "仅在 A",
+      "onlyB": "仅在 B",
+      "row": {
+        "moves": "移动",
+        "distance": "距离 (mm)",
+        "extrude": "挤出 (mm)",
+        "time": "时间 (s)"
+      }
     }
   }
 }

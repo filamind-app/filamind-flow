@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.193.0] - 2026-06-12
+
+### Added
+
+- **Macro Designer — A/B compare.** A second program (B) can now be simulated alongside the current
+  one (A) and diffed: the two toolhead paths are **overlaid** (A solid, B dashed), a stats table
+  shows **moves / distance / extrusion / time for A, B, and the delta** (green when B is lower, red
+  when higher), and a linter diff lists which checks fire in **A only / B only**. "Copy A → B" seeds
+  the second editor from the first so you can tweak and measure the effect of a change. Pure
+  frontend over two simulate calls (same params + machine limits). Localised in all 7 languages.
+  (Phase 14 of the Config Editor + Macro Designer programme.)
+
 ## [0.192.0] - 2026-06-12
 
 ### Added
