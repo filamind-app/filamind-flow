@@ -143,6 +143,9 @@
       "title": "Doctor de pines — {n} hallazgo(s) de cableado",
       "conflict": "CONFLICTO",
       "caveat": "AVISO"
+    },
+    "tmc": {
+      "review": "revisar en Raw y guardar"
     }
   }
 }

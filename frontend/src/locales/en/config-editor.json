@@ -143,6 +143,9 @@
       "title": "Pin Doctor — {n} wiring finding(s)",
       "conflict": "CONFLICT",
       "caveat": "CAVEAT"
+    },
+    "tmc": {
+      "review": "review in Raw & save"
     }
   }
 }
