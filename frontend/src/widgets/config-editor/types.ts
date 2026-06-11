@@ -130,9 +130,9 @@ export interface ConfigGraphNode {
   missing: string[]
 }
 
-/** A cross-file lint finding (broken_include / duplicate_section / orphan_driver). */
+/** A cross-file lint finding (broken_include / orphan_driver / section_override). */
 export interface ConfigGraphLint {
-  level: 'error' | 'warning'
+  level: 'error' | 'warning' | 'info'
   rule: string
   file: string
   message: string

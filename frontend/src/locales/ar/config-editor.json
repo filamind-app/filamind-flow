@@ -167,8 +167,8 @@
       "lint": "فحوص عبر الملفات",
       "rule": {
         "broken_include": "تضمين معطوب: ",
-        "duplicate_section": "قسم مكرر: ",
-        "orphan_driver": "محرك يتيم — لا قسم مطابق: "
+        "orphan_driver": "محرك يتيم — لا قسم مطابق: ",
+        "section_override": "تجاوز (مُعرَّف في عدة ملفات، الأخير يفوز): "
       }
     }
   }

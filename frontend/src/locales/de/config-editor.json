@@ -167,8 +167,8 @@
       "lint": "Dateiübergreifende Prüfungen",
       "rule": {
         "broken_include": "Defekter Include: ",
-        "duplicate_section": "Doppelter Abschnitt: ",
-        "orphan_driver": "Verwaister Treiber — kein passender Abschnitt: "
+        "orphan_driver": "Verwaister Treiber — kein passender Abschnitt: ",
+        "section_override": "Überschreibung (in mehreren Dateien definiert, die letzte gewinnt): "
       }
     }
   }

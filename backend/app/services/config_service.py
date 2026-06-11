@@ -357,14 +357,20 @@ def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
                 stepper_like.add(sec.header.strip().lower())
 
     for header, locs in sorted(header_locations.items()):
-        if len(locs) > 1:
+        distinct = sorted(set(locs))
+        # A section defined across more than one *included* file is not an error: Klipper merges
+        # such sections and the later-loaded definition wins — the normal way users override a
+        # stock macro (e.g. redefining Mainsail's PAUSE in a file included later). Surface it as
+        # informational so the override is visible without crying wolf. A duplicate within a single
+        # file is a real problem, but the per-file validator already reports that, so skip it here.
+        if len(distinct) > 1:
             lint.append(
                 {
-                    "level": "warning",
-                    "rule": "duplicate_section",
-                    "file": locs[0],
+                    "level": "info",
+                    "rule": "section_override",
+                    "file": distinct[0],
                     "message": header,
-                    "files": locs,
+                    "files": distinct,
                 }
             )
     for path, name in tmc_pairs:

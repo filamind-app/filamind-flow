@@ -167,8 +167,8 @@
       "lint": "跨文件检查",
       "rule": {
         "broken_include": "包含失效：",
-        "duplicate_section": "重复配置段：",
-        "orphan_driver": "孤立驱动 — 无匹配配置段："
+        "orphan_driver": "孤立驱动 — 无匹配配置段：",
+        "section_override": "覆盖（在多个文件中定义，以最后加载者为准）："
       }
     }
   }
