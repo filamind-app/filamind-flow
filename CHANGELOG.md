@@ -6,6 +6,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.166.0] - 2026-06-11
+
+### Changed
+
+- **Motor-Drivers TMC capability map now served from the unified hardware catalog.** The
+  curated per-model driver reference (interface, current cap, chopper modes, StallGuard field,
+  sensorless / temperature support) is now stored as a `caps` block on the matching
+  `drivers[]` entries in `app/data/reference/hardware.json` and served via
+  `reference_data.driver_infos()` / `driver_info_lookup()`. `/api/drivers/catalog` and the
+  `info` annotation on `/api/drivers/status` read from there — the single source of truth.
+  This is the final piece of the Motor-Drivers / Max-Flow data convergence (motors, hotends,
+  and now drivers all read from the one catalog). Behaviour-preserving: the same fields, the
+  same alias resolution (e.g. `tmc2226` → `tmc2209`), the same lookups.
+
+### Removed
+
+- Removed the standalone `app/data/driver_catalog.json` file and its `driver_catalog.py`
+  loader (superseded by the catalog `drivers[].caps` block above), plus the now-orphaned
+  motor-CSV bake script and its source CSV (the motor catalog had already moved into the
+  hardware reference). No functional change — all data is served from `hardware.json`.
+
 ## [0.165.0] - 2026-06-09
 
 ### Added

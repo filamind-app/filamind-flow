@@ -88,11 +88,12 @@ resonance-analysis routes (`/api/shaper/*` — which vendor Klipper's
 `shaper_calibrate` and add pure-numpy resonance analyses: axes-map,
 spectrogram, and the machine vibrations profile), and the **motor-drivers**
 routes (`/api/drivers/status` — TMC driver state aggregated from the live config +
-per-driver `get_status`, annotated from a curated capability catalog
-(`app/data/driver_catalog.json`) and the user's saved motor assignment;
+per-driver `get_status`, annotated from the unified hardware catalog's driver
+capability map (`drivers[].caps` in `app/data/reference/hardware.json`, served as
+`DriverInfo`) and the user's saved motor assignment;
 `/api/drivers/live/{stepper}` — fast per-driver live telemetry for the monitor;
-`/api/drivers/catalog` — that capability map; `/api/drivers/motors` — a 200+ motor
-database baked to `app/data/motor_catalog.json`; `/api/drivers/mapping` — the persisted
+`/api/drivers/catalog` — that capability map; `/api/drivers/motors` — a 600+ motor
+catalog served from the same hardware reference; `/api/drivers/mapping` — the persisted
 stepper→motor map; `/api/drivers/recommend` — a run-current + register recommendation from
 a built-in `motor_constants` physics model;
 `/api/drivers/{config-block,apply,init,autotune,stallguard,home}` — copy-to-config and the

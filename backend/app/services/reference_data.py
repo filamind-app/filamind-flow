@@ -310,6 +310,35 @@ def driver_by_id(driver_id: str) -> dict[str, Any] | None:
     return _DRIVER_IDX.get(driver_id)
 
 
+# ── TMC driver capability map (the Motor Drivers widget reads it from the catalog, not a silo) ──
+# The machine-readable capability block (interface / current cap / chopper modes / StallGuard field
+# / sensorless / temperature) lives in each driver's ``caps`` block on the catalog drivers[].
+def driver_infos() -> list[dict[str, Any]]:
+    """The TMC driver capability map (``DriverInfo``-shaped) — every catalog driver that carries a
+    ``caps`` block. The single source for ``/api/drivers/catalog``."""
+    return [e["caps"] for e in _HW_DRIVERS if isinstance(e.get("caps"), dict)]
+
+
+def _build_driver_info_index() -> dict[str, dict[str, Any]]:
+    idx: dict[str, dict[str, Any]] = {}
+    for caps in driver_infos():
+        for key in (caps.get("model"), *(caps.get("aliases") or [])):
+            if key:
+                idx.setdefault(re.sub(r"[^a-z0-9]", "", str(key).lower()), caps)
+    return idx
+
+
+_DRIVER_INFO_IDX = _build_driver_info_index()
+
+
+def driver_info_lookup(model: str) -> dict[str, Any] | None:
+    """Resolve a Klipper TMC model (or an alias, e.g. ``tmc2226`` → the ``tmc2209`` caps) to its
+    ``DriverInfo`` capability block. ``None`` if the model has no curated capabilities."""
+    if not model:
+        return None
+    return _DRIVER_INFO_IDX.get(re.sub(r"[^a-z0-9]", "", str(model).lower()))
+
+
 def motors() -> list[dict[str, Any]]:
     """The canonical stepper-motor entities — one per model (lightly deduped), with a
     recommended Klipper ``run_current`` (~0.7 x rated), any community per-axis current
