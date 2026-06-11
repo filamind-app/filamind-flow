@@ -203,6 +203,17 @@
       "diffHint": "différence avec le fichier actuel",
       "unchanged": "⋯ {n} lignes inchangées ⋯",
       "note": "Les instantanés sont écrits automatiquement avant chaque enregistrement. Restaurer en charge un dans l’éditeur pour une revue finale + enregistrement."
+    },
+    "sanity": {
+      "title": "Cohérence des valeurs du driver ({n})",
+      "note": "{n} section(s) de driver TMC vérifiée(s). Un driver sans plafond répertorié et un stepper sans moteur assigné sont ignorés, pas devinés.",
+      "rule": {
+        "over_driver_cap": "{section} : run_current {run_current} A dépasse le plafond pleine échelle ~{cap} A du driver.",
+        "near_driver_cap": "{section} : run_current {run_current} A est à moins de 10% du plafond ~{cap} A du driver.",
+        "over_motor_rating": "{section} : run_current {run_current} A dépasse la valeur nominale de {motor} ({max_current} A).",
+        "near_motor_rating": "{section} : run_current {run_current} A est à moins de 10% de la valeur nominale de {motor} ({max_current} A).",
+        "odd_microsteps": "{section} : microsteps {microsteps} n’est pas une puissance de deux (1…256)."
+      }
     }
   }
 }

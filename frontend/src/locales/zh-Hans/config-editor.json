@@ -203,6 +203,17 @@
       "diffHint": "与当前文件的差异",
       "unchanged": "⋯ {n} 行未变 ⋯",
       "note": "每次保存前会自动写入快照。恢复会将快照载入编辑器以便最终审阅并保存。"
+    },
+    "sanity": {
+      "title": "驱动数值校验（{n}）",
+      "note": "已检查 {n} 个 TMC 驱动段。无收录上限的驱动与未分配电机的步进会被跳过，而非臆测。",
+      "rule": {
+        "over_driver_cap": "{section}：run_current {run_current} A 超过驱动满量程上限约 {cap} A。",
+        "near_driver_cap": "{section}：run_current {run_current} A 处于驱动上限约 {cap} A 的 10% 以内。",
+        "over_motor_rating": "{section}：run_current {run_current} A 超过 {motor} 额定（{max_current} A）。",
+        "near_motor_rating": "{section}：run_current {run_current} A 处于 {motor} 额定（{max_current} A）的 10% 以内。",
+        "odd_microsteps": "{section}：microsteps {microsteps} 不是 2 的幂（1…256）。"
+      }
     }
   }
 }

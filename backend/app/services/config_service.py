@@ -17,7 +17,7 @@ from typing import Any
 
 import httpx
 
-from app.services import klipper_config
+from app.services import field_policy, klipper_config, motor_mapping, reference_data
 from app.services.klipper_config import ConfigFile, ConfigParam, ConfigSection
 from app.services.moonraker_client import MoonrakerClient
 
@@ -422,6 +422,124 @@ async def search_project(client: MoonrakerClient, query: str, limit: int = 300) 
         if truncated:
             break
     return {"reachable": True, "query": query, "matches": matches, "truncated": truncated}
+
+
+def _to_float(value: Any) -> float | None:
+    try:
+        return float(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+async def gather_sanity(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
+    """Cross-check each ``[tmcXXXX NAME]`` driver's configured ``run_current`` / ``microsteps``
+    against authoritative catalog facts: the driver model's full-scale current ceiling and — when a
+    motor is assigned to that stepper in the Motor Drivers mapping — the motor's datasheet rating.
+
+    Findings (``{level, rule, section, detail}``):
+      * ``over_driver_cap`` / ``near_driver_cap`` — run_current above / within 10% of the driver's
+        full-scale RMS ceiling (a current the silicon can't deliver / a thermal-margin warning).
+      * ``over_motor_rating`` / ``near_motor_rating`` — run_current above / within 10% of the
+        mapped motor's rated current (recommended is ~0.7x, so near the rating runs hot).
+      * ``odd_microsteps`` — microsteps not a power of two in 1…256.
+
+    Honest about gaps: a driver with no curated current ceiling (e.g. TMC2240, whose limit depends
+    on an external Rref resistor) and a stepper with no motor assigned simply get no current finding
+    rather than a fabricated one. Degrades to ``reachable=false`` when Moonraker is down.
+    """
+    try:
+        configfile = await client.query_objects(["configfile"])
+    except httpx.HTTPError:
+        return {"reachable": False, "findings": [], "checked": 0}
+    cfobj = configfile.get("configfile")
+    cfobj = cfobj if isinstance(cfobj, dict) else {}
+    config = cfobj.get("config")
+    config = config if isinstance(config, dict) else {}
+    mapping = motor_mapping.read_mapping(data_dir)
+
+    findings: list[dict[str, Any]] = []
+    checked = 0
+    for header, params in config.items():
+        parts = str(header).split(None, 1)
+        if not parts or not parts[0].lower().startswith("tmc"):
+            continue
+        if not isinstance(params, dict):
+            continue
+        checked += 1
+        model = parts[0].lower()
+        name = parts[1].strip().lower() if len(parts) > 1 else ""
+        run_current = _to_float(params.get("run_current"))
+        microsteps = _to_float(params.get("microsteps"))
+
+        # Driver full-scale ceiling (alias-resolved; no rref → TMC2240 is skipped, not fabricated).
+        info = reference_data.driver_info_lookup(model)
+        canonical = str(info.get("model")) if info and info.get("model") else model
+        cap = field_policy.code_cap(canonical.lower())
+        if run_current is not None and cap is not None and cap > 0:
+            if run_current > cap + 1e-9:
+                findings.append(
+                    {
+                        "level": "error",
+                        "rule": "over_driver_cap",
+                        "section": header,
+                        "detail": {"run_current": run_current, "cap": round(cap, 3)},
+                    }
+                )
+            elif run_current > 0.9 * cap:
+                findings.append(
+                    {
+                        "level": "warning",
+                        "rule": "near_driver_cap",
+                        "section": header,
+                        "detail": {"run_current": run_current, "cap": round(cap, 3)},
+                    }
+                )
+
+        # Mapped-motor rating (only when this stepper has a motor assigned).
+        motor_model = mapping.get(name)
+        spec = reference_data.motor_spec_lookup(motor_model) if motor_model else None
+        motor_max = _to_float(spec.get("max_current_A")) if spec else None
+        if run_current is not None and motor_max is not None and motor_max > 0:
+            if run_current > motor_max + 1e-9:
+                findings.append(
+                    {
+                        "level": "error",
+                        "rule": "over_motor_rating",
+                        "section": header,
+                        "detail": {
+                            "run_current": run_current,
+                            "motor": spec.get("name") if spec else motor_model,
+                            "max_current": round(motor_max, 3),
+                        },
+                    }
+                )
+            elif run_current > 0.9 * motor_max:
+                findings.append(
+                    {
+                        "level": "warning",
+                        "rule": "near_motor_rating",
+                        "section": header,
+                        "detail": {
+                            "run_current": run_current,
+                            "motor": spec.get("name") if spec else motor_model,
+                            "max_current": round(motor_max, 3),
+                        },
+                    }
+                )
+
+        if microsteps is not None:
+            ms = int(microsteps)
+            if ms < 1 or ms > 256 or (ms & (ms - 1)) != 0:
+                findings.append(
+                    {
+                        "level": "warning",
+                        "rule": "odd_microsteps",
+                        "section": header,
+                        "detail": {"microsteps": ms},
+                    }
+                )
+
+    return {"reachable": True, "findings": findings, "checked": checked}
 
 
 async def _is_busy(client: MoonrakerClient) -> bool:

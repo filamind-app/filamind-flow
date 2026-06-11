@@ -203,6 +203,17 @@
       "diffHint": "отличие от текущего файла",
       "unchanged": "⋯ {n} строк без изменений ⋯",
       "note": "Снимки создаются автоматически перед каждым сохранением. Восстановление загружает снимок в редактор для финальной проверки и сохранения."
+    },
+    "sanity": {
+      "title": "Проверка значений драйвера ({n})",
+      "note": "Проверено {n} секц. драйверов TMC. Драйвер без известного потолка и шаговик без назначенного мотора пропускаются, а не угадываются.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} А превышает полношкальный потолок драйвера ~{cap} А.",
+        "near_driver_cap": "{section}: run_current {run_current} А в пределах 10% от потолка драйвера ~{cap} А.",
+        "over_motor_rating": "{section}: run_current {run_current} А превышает номинал {motor} ({max_current} А).",
+        "near_motor_rating": "{section}: run_current {run_current} А в пределах 10% от номинала {motor} ({max_current} А).",
+        "odd_microsteps": "{section}: microsteps {microsteps} не степень двойки (1…256)."
+      }
     }
   }
 }

@@ -203,6 +203,17 @@
       "diffHint": "Unterschied zur aktuellen Datei",
       "unchanged": "⋯ {n} unveränderte Zeilen ⋯",
       "note": "Snapshots werden vor jedem Speichern automatisch geschrieben. Wiederherstellen lädt einen in den Editor zur finalen Prüfung + Speicherung."
+    },
+    "sanity": {
+      "title": "Treiber-Wertprüfung ({n})",
+      "note": "{n} TMC-Treiberabschnitt(e) geprüft. Ein Treiber ohne hinterlegte Obergrenze und ein Schrittmotor ohne zugewiesenen Motor werden übersprungen, nicht geraten.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} A übersteigt die ~{cap} A Vollskalengrenze des Treibers.",
+        "near_driver_cap": "{section}: run_current {run_current} A liegt innerhalb von 10% der ~{cap} A Grenze des Treibers.",
+        "over_motor_rating": "{section}: run_current {run_current} A übersteigt die {motor}-Nennung ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A liegt innerhalb von 10% der {motor}-Nennung ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} ist keine Zweierpotenz (1…256)."
+      }
     }
   }
 }

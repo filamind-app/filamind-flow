@@ -203,6 +203,17 @@
       "diffHint": "diferencia respecto al archivo actual",
       "unchanged": "⋯ {n} líneas sin cambios ⋯",
       "note": "Las instantáneas se escriben automáticamente antes de cada guardado. Restaurar carga una en el editor para una revisión final + guardado."
+    },
+    "sanity": {
+      "title": "Sanidad de valores del driver ({n})",
+      "note": "Se revisaron {n} sección(es) de driver TMC. Un driver sin techo curado y un stepper sin motor asignado se omiten, no se adivinan.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} A supera el techo de fondo de escala ~{cap} A del driver.",
+        "near_driver_cap": "{section}: run_current {run_current} A está dentro del 10% del techo ~{cap} A del driver.",
+        "over_motor_rating": "{section}: run_current {run_current} A supera la clasificación de {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A está dentro del 10% de la clasificación de {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} no es potencia de dos (1…256)."
+      }
     }
   }
 }
