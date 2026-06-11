@@ -211,21 +211,50 @@ def _board_pin_set(board: dict[str, Any]) -> set[str]:
     return pins
 
 
+#: Pin-fingerprint acceptance thresholds. A match needs strong containment AND must be
+#: *unambiguous* — the winner either agrees by Jaccard (its pin-map size fits the used set) or
+#: clearly beats the next distinct board. This stops a handful of generic MCU pins shared by many
+#: small boards (e.g. a CAN toolhead with no catalog entry) from producing a confident wrong match.
+_FINGERPRINT_MIN_CONTAINMENT = 0.6
+_FINGERPRINT_MIN_JACCARD = 0.45
+_FINGERPRINT_MIN_MARGIN = 0.15
+
+
 def _fingerprint_board(used: set[str], boards: list[dict[str, Any]]) -> tuple[str | None, float]:
     """Match the printer's used pin set to a catalog board by containment (how many of the used
-    pins exist in the board's pin-map). A strong, board-specific signal — unlike a serial id, which
-    reveals only the chip. Returns ``(board_id, confidence)`` or ``(None, 0)`` below threshold."""
+    pins exist in the board's pin-map), guarded against ambiguous matches. A strong, board-specific
+    signal — unlike a serial id, which reveals only the chip. Returns ``(board_id, confidence)`` or
+    ``(None, 0)`` when no board is a confident, unambiguous match.
+
+    Containment alone favours *large* boards (more pins → more likely to contain any given pin), so
+    a toolhead's few generic pins can tie across many small boards. The guard accepts the top board
+    only when it also clears a Jaccard floor (its pin-map size fits) *or* beats the next distinct
+    board's containment by a margin — otherwise the match is ``None`` (no confident board).
+    """
     if len(used) < 5:
         return None, 0.0  # too few pins to discriminate
-    best: tuple[str | None, float] = (None, 0.0)
+    scored: list[tuple[float, float, str | None]] = []
     for b in boards:
         bp = _board_pin_set(b)
         if len(bp) < 10:
             continue  # board has too sparse a pin-map to fingerprint against
-        score = len(used & bp) / len(used)
-        if score > best[1]:
-            best = (b.get("board_id"), round(score, 2))
-    return best if best[1] >= 0.6 else (None, 0.0)
+        inter = len(used & bp)
+        containment = inter / len(used)
+        union = len(used | bp)
+        jaccard = inter / union if union else 0.0
+        scored.append((containment, jaccard, b.get("board_id")))
+    if not scored:
+        return None, 0.0
+    scored.sort(key=lambda s: (s[0], s[1]), reverse=True)
+    best_containment, best_jaccard, best_id = scored[0]
+    if best_containment < _FINGERPRINT_MIN_CONTAINMENT:
+        return None, 0.0
+    # Containment margin over the next *distinct* board (~0 when several boards tie at the top).
+    runner = next((s for s in scored[1:] if s[2] != best_id), None)
+    margin = best_containment - runner[0] if runner else best_containment
+    if best_jaccard < _FINGERPRINT_MIN_JACCARD and margin < _FINGERPRINT_MIN_MARGIN:
+        return None, 0.0  # weak overlap AND ambiguous → not a real board match
+    return best_id, round(best_containment, 2)
 
 
 def _resolve_host_id(model: str, hosts: list[dict[str, Any]]) -> tuple[str | None, float]:

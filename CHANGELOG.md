@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.167.0] - 2026-06-11
+
+### Fixed
+
+- **Board Topology — the pin-fingerprint no longer emits a confident *wrong* board for a toolhead
+  MCU.** Matching the printer's used pin set against catalog boards by containment alone favours
+  large boards (more pins → more likely to contain any given pin), so an MCU with only a few generic
+  pins — e.g. a CAN toolhead whose board isn't in the catalog — could tie across several small boards
+  and surface one of them as a suggested match. The fingerprint now accepts the top board only when
+  it is *unambiguous*: it clears a Jaccard floor (its pin-map size actually fits the used set) or
+  beats the next distinct board's containment by a margin. Otherwise it reports no board — better an
+  honest "unknown" than a wrong guess. The primary mainboard match is unaffected (verified live: the
+  SV08 mainboard still resolves to `sovol-sv08` at 0.81; its CAN toolhead now correctly shows no
+  confident board instead of a non-Sovol mainboard).
+
 ## [0.166.0] - 2026-06-11
 
 ### Changed
