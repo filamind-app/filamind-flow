@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.185.0] - 2026-06-12
+
+### Changed
+
+- **Config Editor — project lint now scopes to the active config tree.** The cross-file checks
+  (duplicate section, orphan driver, broken include) and the include tree now consider only the
+  files Klipper actually loads — `printer.cfg` and everything it includes, transitively — instead
+  of every `.cfg` in the config folder. Dated backup copies, archived snapshots, and other
+  services' configs that happen to live alongside `printer.cfg` no longer masquerade as
+  duplicate-section errors, and the include tree shows the live configuration's structure rather
+  than a flat list of unrelated files. The graph response gained an `active` file list.
+
 ## [0.184.0] - 2026-06-12
 
 ### Added

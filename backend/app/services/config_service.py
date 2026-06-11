@@ -27,6 +27,9 @@ _TMC_PREFIXES = ("tmc2209", "tmc2208", "tmc2130", "tmc5160", "tmc2660", "tmc2240
 #: Section types whose duplicate header across files is not a merge error (``include`` repeats).
 _REPEATABLE_TYPES = frozenset({"include"})
 
+#: Candidate names for the active config's root, in priority order — what Klipper actually loads.
+_PRIMARY_ROOTS = ("printer.cfg",)
+
 #: File extensions treated as editable Klipper config files.
 _CONFIG_SUFFIXES = (".cfg", ".conf")
 
@@ -243,13 +246,11 @@ def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
     paths = {p for p, _ in files}
     parsed: dict[str, ConfigFile] = {p: klipper_config.parse(raw) for p, raw in files}
 
+    # First pass: resolve include edges per file (no lint yet — that is scoped to the active tree).
     nodes: list[dict[str, Any]] = []
+    includes_of: dict[str, list[str]] = {}
+    missing_of: dict[str, list[str]] = {}
     included_by_someone: set[str] = set()
-    lint: list[dict[str, Any]] = []
-    header_locations: dict[str, list[str]] = {}
-    stepper_like: set[str] = set()
-    tmc_pairs: list[tuple[str, str]] = []  # (file, NAME) for each [tmcXXXX NAME]
-
     for path, cfg in parsed.items():
         includes: list[str] = []
         missing: list[str] = []
@@ -257,18 +258,12 @@ def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
             matched, is_missing = _resolve_include(target, path, paths)
             if is_missing:
                 missing.append(target)
-                lint.append(
-                    {
-                        "level": "error",
-                        "rule": "broken_include",
-                        "file": path,
-                        "message": target,
-                    }
-                )
             for m in matched:
                 included_by_someone.add(m)
                 if m not in includes:
                     includes.append(m)
+        includes_of[path] = includes
+        missing_of[path] = missing
         nodes.append(
             {
                 "file": path,
@@ -280,7 +275,35 @@ def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
             }
         )
 
-        for sec in cfg.sections:
+    # The active config is what Klipper actually loads: the primary root + everything it includes,
+    # transitively. Cross-file lint is scoped to this set so dated backup copies and other services'
+    # configs sitting in the same folder don't masquerade as duplicate-section / orphan errors.
+    all_roots = sorted(p for p in paths if p not in included_by_someone)
+    primary = next((p for p in _PRIMARY_ROOTS if p in paths), None)
+    if primary is None:
+        primary = all_roots[0] if all_roots else None
+    active: set[str] = set()
+    if primary is not None:
+        stack = [primary]
+        while stack:
+            f = stack.pop()
+            if f in active:
+                continue
+            active.add(f)
+            stack.extend(includes_of.get(f, []))
+    else:
+        active = set(paths)
+
+    lint: list[dict[str, Any]] = []
+    header_locations: dict[str, list[str]] = {}
+    stepper_like: set[str] = set()
+    tmc_pairs: list[tuple[str, str]] = []  # (file, NAME) for each [tmcXXXX NAME] in the active tree
+    for path in sorted(active):
+        for target in missing_of.get(path, []):
+            lint.append(
+                {"level": "error", "rule": "broken_include", "file": path, "message": target}
+            )
+        for sec in parsed[path].sections:
             if sec.header == klipper_config.SAVE_CONFIG_MARKER:
                 continue
             stype = _section_type(sec.header)
@@ -313,9 +336,17 @@ def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
                 {"level": "warning", "rule": "orphan_driver", "file": path, "message": name}
             )
 
-    roots = sorted(p for p in paths if p not in included_by_someone)
     nodes.sort(key=lambda n: str(n["file"]))
-    return {"reachable": True, "roots": roots, "nodes": nodes, "lint": lint}
+    # Tree roots = the active config's root only (so backups / other configs don't flood the tree);
+    # fall back to every standalone file when there is no recognisable primary root.
+    roots = [primary] if primary is not None else all_roots
+    return {
+        "reachable": True,
+        "roots": roots,
+        "active": sorted(active),
+        "nodes": nodes,
+        "lint": lint,
+    }
 
 
 async def gather_project(client: MoonrakerClient) -> dict[str, Any]:
@@ -323,7 +354,7 @@ async def gather_project(client: MoonrakerClient) -> dict[str, Any]:
     try:
         files = await _read_all_files(client)
     except httpx.HTTPError:
-        return {"reachable": False, "roots": [], "nodes": [], "lint": []}
+        return {"reachable": False, "roots": [], "active": [], "nodes": [], "lint": []}
     return project_graph_from_files(files)
 
 
