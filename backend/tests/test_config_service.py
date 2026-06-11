@@ -124,6 +124,22 @@ def test_project_graph_same_basename_is_not_double_pulled() -> None:
     assert not any(lt["rule"] == "duplicate_section" for lt in out["lint"])
 
 
+def test_project_graph_glob_include_does_not_cross_directories() -> None:
+    """A ``[include dir/*.cfg]`` matches only direct children — it must not swallow files nested in
+    sub-folders (e.g. a vendor's template/source tree), which Klipper's ``glob.glob`` never does."""
+    files = [
+        ("printer.cfg", "[include pack/*.cfg]\n"),
+        ("pack/a.cfg", "[gcode_macro A]\ngcode:\n  M117 a\n"),
+        ("pack/b.cfg", "[gcode_macro B]\ngcode:\n  M117 b\n"),
+        # A nested source/template copy of A — must NOT be pulled in by `pack/*.cfg`.
+        ("pack/source/a.cfg", "[gcode_macro A]\ngcode:\n  M117 a\n"),
+    ]
+    out = config_service.project_graph_from_files(files)
+    assert "pack/a.cfg" in out["active"] and "pack/b.cfg" in out["active"]
+    assert "pack/source/a.cfg" not in out["active"]
+    assert not any(lt["rule"] == "duplicate_section" for lt in out["lint"])
+
+
 def test_is_config_file() -> None:
     assert config_service._is_config_file("printer.cfg")
     assert config_service._is_config_file("macros/print.CFG")
