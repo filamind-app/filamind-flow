@@ -170,6 +170,30 @@
         "orphan_driver": "孤立驱动 — 无匹配配置段：",
         "section_override": "覆盖（在多个文件中定义，以最后加载者为准）："
       }
+    },
+    "knowledge": {
+      "viewDriver": "在目录中查看 {model} →",
+      "stepper": "一个步进电机轴 — 其驱动引脚、旋转距离、细分以及归位/限位。",
+      "tmc": "Trinamic 步进驱动 — 为其电机设置运行/保持电流、细分及 StallGuard/斩波调校。",
+      "extruder": "热端与挤出机 — 喷嘴尺寸、料路、加热器、热敏电阻与 PID。",
+      "heater_bed": "热床 — 其加热引脚、热敏电阻与 PID/温度上限。",
+      "fan": "冷却刚打印料丝的模型风扇。",
+      "heater_fan": "与加热器联动的风扇（如热端散热），运行以防止其过热。",
+      "controller_fan": "在电机工作时为驱动/电子件散热的风扇。",
+      "mcu": "运行 Klipper 的微控制器主板 — 其串口或 CAN 连接。",
+      "printer": "整机运动学与运动上限（类型、最大速度、加速度）。",
+      "bed_mesh": "自动调平 — 探测网格并在打印时补偿热床平整度。",
+      "probe": "用于探测热床表面以归位和建网的 Z 探针。",
+      "gcode_macro": "自定义 G-code 宏 — 可从控制台或其他宏调用的命名命令。",
+      "output_pin": "可控输出引脚（例如 LED、继电器或使能线）。",
+      "neopixel": "可寻址 RGB 灯（NeoPixel / WS2812）及其颜色控制。",
+      "board_pins": "主板物理引脚的易读别名，在配置其他位置引用。",
+      "input_shaper": "共振补偿，减少高速时的振纹与重影。",
+      "safe_z_home": "在安全的 XY 位置（常为床中心）归位 Z，以保护喷嘴和热床。",
+      "z_tilt": "调整多个 Z 电机，使龙门/热床平面水平。",
+      "quad_gantry_level": "调平四点龙门，使其与热床平行。",
+      "filament_switch_sensor": "断料传感器，在料丝用尽时暂停打印。",
+      "virtual_sdcard": "让 Klipper 打印上传到主机的文件（Mainsail 和 Fluidd 必需）。"
     }
   }
 }

@@ -170,6 +170,30 @@
         "orphan_driver": "Orphan driver — no matching section: ",
         "section_override": "Override (defined in multiple files, last wins): "
       }
+    },
+    "knowledge": {
+      "viewDriver": "View {model} in catalog →",
+      "stepper": "A stepper-motor axis — its driver pins, rotation distance, microsteps, and homing/endstop.",
+      "tmc": "A Trinamic stepper driver — run/hold current, microsteps, and StallGuard/chopper tuning for its stepper.",
+      "extruder": "The hotend and extruder — nozzle size, filament path, heater, thermistor, and PID.",
+      "heater_bed": "The heated bed — its heater pin, thermistor, and PID/temperature limits.",
+      "fan": "The part-cooling fan that cools freshly printed filament.",
+      "heater_fan": "A fan tied to a heater (e.g. hotend cooling) that runs to protect it from overheating.",
+      "controller_fan": "A fan that cools the stepper drivers / electronics while the motors are active.",
+      "mcu": "A microcontroller board running Klipper — its serial or CAN connection.",
+      "printer": "Global machine kinematics and motion limits (type, max velocity, acceleration).",
+      "bed_mesh": "Automatic bed-leveling — probes a grid and compensates for bed flatness while printing.",
+      "probe": "The Z probe used to detect the bed surface for homing and bed mesh.",
+      "gcode_macro": "A custom G-code macro — a named command callable from the console or other macros.",
+      "output_pin": "A controllable output pin (an LED, relay, or enable line, for example).",
+      "neopixel": "Addressable RGB LEDs (NeoPixel / WS2812) and their color control.",
+      "board_pins": "Friendly aliases for a board’s physical pins, referenced elsewhere in the config.",
+      "input_shaper": "Resonance compensation that reduces ringing and ghosting at higher speeds.",
+      "safe_z_home": "Homes Z at a safe XY position (often the bed center) to protect the nozzle and bed.",
+      "z_tilt": "Adjusts multiple Z motors so the gantry/bed plane is level.",
+      "quad_gantry_level": "Levels a four-point gantry so it sits parallel to the bed.",
+      "filament_switch_sensor": "A filament-runout sensor that pauses the print when filament runs out.",
+      "virtual_sdcard": "Lets Klipper print files uploaded to the host (required by Mainsail and Fluidd)."
     }
   }
 }
