@@ -153,6 +153,23 @@
       "double": "mehrfach",
       "doubleHint": "Dieser Pin ist in mehr als einem Abschnitt zugewiesen.",
       "caveat": "Hinweis"
+    },
+    "project": {
+      "title": "Projekt (Includes & Suche)",
+      "lintBadge": "{n} Problem(e)",
+      "searchPlaceholder": "Alle Konfigurationsdateien durchsuchen…",
+      "searchBtn": "Suchen",
+      "noResults": "Keine Treffer.",
+      "matchesCount": "{n} Treffer",
+      "truncated": "erste Ergebnisse",
+      "tree": "Include-Baum",
+      "missing": "fehlende Datei",
+      "lint": "Dateiübergreifende Prüfungen",
+      "rule": {
+        "broken_include": "Defekter Include: ",
+        "duplicate_section": "Doppelter Abschnitt: ",
+        "orphan_driver": "Verwaister Treiber — kein passender Abschnitt: "
+      }
     }
   }
 }

@@ -73,6 +73,33 @@ def test_build_file_view_flags_duplicate_sections() -> None:
     assert any("Duplicate" in i["message"] for i in view["issues"])
 
 
+def test_project_graph_includes_and_cross_file_lint() -> None:
+    files = [
+        (
+            "printer.cfg",
+            "[include steppers.cfg]\n[include missing.cfg]\n"
+            "[tmc2209 stepper_q]\nrun_current: 0.5\n"  # orphan: no [stepper_q] anywhere
+            "[extruder]\nsensor_type: PT1000\n",
+        ),
+        (
+            "steppers.cfg",
+            "[stepper_x]\nstep_pin: PA1\n[tmc2209 stepper_x]\nrun_current: 0.8\n"
+            "[extruder]\nnozzle_diameter: 0.4\n",  # duplicate [extruder] across files
+        ),
+    ]
+    out = config_service.project_graph_from_files(files)
+    assert out["reachable"] is True
+    assert out["roots"] == ["printer.cfg"]  # steppers.cfg is included, so not a root
+    node = next(n for n in out["nodes"] if n["file"] == "printer.cfg")
+    assert "steppers.cfg" in node["includes"] and "missing.cfg" in node["missing"]
+    rules = {(lt["rule"], lt["message"]) for lt in out["lint"]}
+    assert ("broken_include", "missing.cfg") in rules
+    assert ("orphan_driver", "stepper_q") in rules
+    assert ("duplicate_section", "extruder") in rules
+    # The paired [tmc2209 stepper_x] is NOT an orphan (its [stepper_x] exists).
+    assert ("orphan_driver", "stepper_x") not in rules
+
+
 def test_is_config_file() -> None:
     assert config_service._is_config_file("printer.cfg")
     assert config_service._is_config_file("macros/print.CFG")

@@ -153,6 +153,23 @@
       "double": "réutilisée",
       "doubleHint": "Cette broche est affectée dans plus d’une section.",
       "caveat": "mise en garde"
+    },
+    "project": {
+      "title": "Projet (includes et recherche)",
+      "lintBadge": "{n} problème(s)",
+      "searchPlaceholder": "Rechercher dans tous les fichiers de config…",
+      "searchBtn": "Rechercher",
+      "noResults": "Aucun résultat.",
+      "matchesCount": "{n} résultat(s)",
+      "truncated": "premiers résultats",
+      "tree": "Arbre des includes",
+      "missing": "fichier manquant",
+      "lint": "Vérifications inter-fichiers",
+      "rule": {
+        "broken_include": "Include cassé : ",
+        "duplicate_section": "Section en double : ",
+        "orphan_driver": "Driver orphelin — aucune section correspondante : "
+      }
     }
   }
 }

@@ -4,7 +4,9 @@ import type {
   ConfigDriftResult,
   ConfigFileList,
   ConfigFileView,
+  ConfigGraph,
   ConfigSaveResult,
+  ConfigSearchResult,
   FieldPolicyResponse,
   PinDoctorResult,
   PinMapResult,
@@ -84,6 +86,26 @@ export async function fetchPinDoctor(): Promise<PinDoctorResult> {
     throw new Error(`Pin doctor request failed (${response.status})`)
   }
   return (await response.json()) as PinDoctorResult
+}
+
+/** The project `[include]` dependency graph + cross-file lint across every config file. */
+export async function fetchConfigGraph(): Promise<ConfigGraph> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/graph`)
+  if (!response.ok) {
+    throw new Error(`Config graph request failed (${response.status})`)
+  }
+  return (await response.json()) as ConfigGraph
+}
+
+/** Project-wide search: every line containing `q` (file + line number + text), capped. */
+export async function searchConfig(q: string): Promise<ConfigSearchResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/search?q=${encodeURIComponent(q)}`)
+  if (!response.ok) {
+    throw new Error(`Config search request failed (${response.status})`)
+  }
+  return (await response.json()) as ConfigSearchResult
 }
 
 /** Per-MCU board pins (name + owners + caveat) for pin-aware `*_pin` editing. */
