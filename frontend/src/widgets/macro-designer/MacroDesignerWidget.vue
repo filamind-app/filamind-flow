@@ -415,6 +415,33 @@ onMounted(() => {
           </ul>
         </div>
 
+        <!-- Macro linter findings (static safety checks) -->
+        <div v-if="result.lint.length" class="nb-card bg-brand-yellow/15 p-2">
+          <p class="mb-1 text-xs font-bold">
+            {{ t('macroDesigner.lint.title', { n: result.lint.length }) }}
+          </p>
+          <ul class="space-y-1 text-[10px]">
+            <li v-for="(f, i) in result.lint" :key="i" class="flex flex-wrap items-start gap-1">
+              <span
+                class="shrink-0 rounded px-1 font-bold"
+                :class="
+                  f.level === 'error' ? 'bg-brand-red text-paper' : 'bg-brand-yellow text-ink'
+                "
+              >
+                {{ f.level === 'error' ? '✕' : '⚠' }}
+              </span>
+              <span class="min-w-0">
+                <span v-if="f.line" class="font-mono opacity-60"
+                  >{{ t('macroDesigner.timeline.line') }} {{ f.line }}: </span
+                >{{ t('macroDesigner.lint.rule.' + f.rule + '.msg') }}
+                <span class="opacity-70"
+                  >→ {{ t('macroDesigner.lint.rule.' + f.rule + '.fix') }}</span
+                >
+              </span>
+            </li>
+          </ul>
+        </div>
+
         <!-- 2D path -->
         <div>
           <p class="mb-1 text-xs font-bold">

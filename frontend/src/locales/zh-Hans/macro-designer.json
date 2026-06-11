@@ -111,6 +111,23 @@
       "oob": "第 {line} 行：{axis}={value} 超出打印区域（{min}…{max} mm）。",
       "overSpeed": "第 {line} 行：{value} mm/s 超过打印机 {limit} mm/s 上限（Klipper 会限制）。",
       "buildArea": "打印区域 {x}×{y} mm"
+    },
+    "lint": {
+      "title": "宏检查器 — {n} 项发现",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE 没有配对的 RESTORE_GCODE_STATE — 保存的模式永不恢复。",
+          "fix": "添加 RESTORE_GCODE_STATE（或删除 SAVE）。"
+        },
+        "ends_relative": {
+          "msg": "宏以相对模式（G91/M83）结束 — 下一条命令将相对移动。",
+          "fix": "末尾添加 G90 / M82，或用 SAVE_GCODE_STATE … RESTORE_GCODE_STATE 包裹移动。"
+        },
+        "extrude_before_home": {
+          "msg": "在 G28 之前发生挤出移动 — 有冷挤出或未回零挤出的风险。",
+          "fix": "先回零（G28）并加热热端再挤出。"
+        }
+      }
     }
   }
 }

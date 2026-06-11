@@ -111,6 +111,23 @@
       "oob": "Ligne {line} : {axis}={value} est hors de la zone d'impression ({min}…{max} mm).",
       "overSpeed": "Ligne {line} : {value} mm/s dépasse la limite de {limit} mm/s (Klipper la bridera).",
       "buildArea": "zone {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Linter de macros — {n} constat(s)",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE sans RESTORE_GCODE_STATE correspondant — le mode enregistré n'est jamais restauré.",
+          "fix": "Ajoutez un RESTORE_GCODE_STATE (ou retirez le SAVE)."
+        },
+        "ends_relative": {
+          "msg": "La macro se termine en mode relatif (G91/M83) — la commande suivante se déplacera relativement.",
+          "fix": "Ajoutez un G90 / M82 final, ou encadrez les mouvements avec SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
+        },
+        "extrude_before_home": {
+          "msg": "Un mouvement d'extrusion a lieu avant G28 — risque d'extrusion à froid ou sans origine.",
+          "fix": "Faites l'origine (G28) et chauffez la buse avant d'extruder."
+        }
+      }
     }
   }
 }
