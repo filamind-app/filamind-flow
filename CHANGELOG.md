@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.187.0] - 2026-06-12
+
+### Fixed
+
+- **Config Editor — glob includes no longer cross directory boundaries.** A `[include dir/*.cfg]`
+  now matches only the direct children of `dir/`, the way Klipper's own `glob.glob` resolves it —
+  the `*` and `?` wildcards stop at `/`. Previously the match used `fnmatch`, whose `*` greedily
+  spans path separators, so an include like `[include ./macros/*.cfg]` also swallowed files nested
+  in sub-folders (a macro pack's bundled `Other_Files/source/*.cfg` templates, say) that Klipper
+  never loads. Those template copies were inflating the active config tree and generating dozens of
+  spurious duplicate-section warnings for macros that only ever exist once at runtime. `**` is still
+  honoured as a cross-directory wildcard.
+
 ## [0.186.0] - 2026-06-12
 
 ### Fixed

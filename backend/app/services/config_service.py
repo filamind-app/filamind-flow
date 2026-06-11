@@ -11,8 +11,8 @@ Also the gated write path: ``save_config_file`` backs up then overwrites a file,
 from __future__ import annotations
 
 import datetime
-import fnmatch
 import posixpath
+import re
 from typing import Any
 
 import httpx
@@ -219,6 +219,35 @@ def _include_targets(cfg: ConfigFile) -> list[str]:
     return targets
 
 
+def _glob_to_regex(pat: str) -> str:
+    """Translate a Klipper include glob to a regex where ``*``/``?`` do not cross ``/`` (matching
+    :func:`glob.glob` semantics, unlike :mod:`fnmatch` where ``*`` greedily swallows path
+    separators). ``**`` is treated as a cross-directory wildcard."""
+    out = ["^"]
+    i, n = 0, len(pat)
+    while i < n:
+        c = pat[i]
+        if c == "*":
+            if pat[i : i + 2] == "**":
+                out.append(".*")
+                i += 2
+            else:
+                out.append("[^/]*")
+                i += 1
+        elif c == "?":
+            out.append("[^/]")
+            i += 1
+        else:
+            out.append(re.escape(c))
+            i += 1
+    out.append("$")
+    return "".join(out)
+
+
+def _glob_match(pattern: str, path: str) -> bool:
+    return re.match(_glob_to_regex(pattern), path) is not None
+
+
 def _resolve_include(target: str, base: str, paths: set[str]) -> tuple[list[str], bool]:
     """Map an include target (Klipper resolves it relative to its file ``base``) to real file paths.
 
@@ -231,8 +260,8 @@ def _resolve_include(target: str, base: str, paths: set[str]) -> tuple[list[str]
     reported as missing (we simply don't guess).
     """
     rel = posixpath.normpath(posixpath.join(posixpath.dirname(base), target))
-    if any(ch in target for ch in "*?[") or any(ch in rel for ch in "*?["):
-        matched = sorted(p for p in paths if fnmatch.fnmatch(p, target) or fnmatch.fnmatch(p, rel))
+    if any(ch in target for ch in "*?") or any(ch in rel for ch in "*?"):
+        matched = sorted(p for p in paths if _glob_match(target, p) or _glob_match(rel, p))
         return matched, not matched
     if rel in paths:
         return [rel], False
