@@ -153,6 +153,23 @@
       "double": "重复使用",
       "doubleHint": "该引脚在多个配置段中被分配。",
       "caveat": "注意"
+    },
+    "project": {
+      "title": "项目（包含与搜索）",
+      "lintBadge": "{n} 个问题",
+      "searchPlaceholder": "搜索所有配置文件…",
+      "searchBtn": "搜索",
+      "noResults": "无匹配。",
+      "matchesCount": "{n} 处匹配",
+      "truncated": "仅显示前若干结果",
+      "tree": "包含树",
+      "missing": "文件缺失",
+      "lint": "跨文件检查",
+      "rule": {
+        "broken_include": "包含失效：",
+        "duplicate_section": "重复配置段：",
+        "orphan_driver": "孤立驱动 — 无匹配配置段："
+      }
     }
   }
 }

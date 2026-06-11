@@ -153,6 +153,23 @@
       "double": "reused",
       "doubleHint": "This pin is assigned in more than one section.",
       "caveat": "caveat"
+    },
+    "project": {
+      "title": "Project (includes & search)",
+      "lintBadge": "{n} issue(s)",
+      "searchPlaceholder": "Search every config file…",
+      "searchBtn": "Search",
+      "noResults": "No matches.",
+      "matchesCount": "{n} match(es)",
+      "truncated": "showing the first results",
+      "tree": "Include tree",
+      "missing": "missing file",
+      "lint": "Cross-file checks",
+      "rule": {
+        "broken_include": "Broken include: ",
+        "duplicate_section": "Duplicate section: ",
+        "orphan_driver": "Orphan driver — no matching section: "
+      }
     }
   }
 }

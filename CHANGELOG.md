@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.184.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — project view: include graph, project-wide search, cross-file lint.** A new
+  **Project** panel above the file content treats your whole config as one tree, not a pile of
+  separate files. It draws the `[include]` dependency tree from each root (`printer.cfg` →
+  everything it pulls in), flags a **broken include** (a target file that doesn't exist), and runs
+  cross-file checks: a **duplicate section** defined in more than one file (a Klipper load error)
+  and an **orphan TMC driver** (`[tmc2209 stepper_q]` with no matching `[stepper_q]` anywhere).
+  A **search box** finds any text across every config file and jumps you to the file — handy for
+  hunting a pin name or a macro reference scattered across includes. New read-only
+  `GET /api/config/graph` and `GET /api/config/search` endpoints; the graph builder is pure and
+  unit-tested. Localised in all 7 languages. (Phase 10 of the Config Editor + Macro Designer
+  programme.)
+
 ## [0.183.0] - 2026-06-12
 
 ### Added

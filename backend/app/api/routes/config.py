@@ -92,6 +92,22 @@ async def config_adopt(body: AdoptParamRequest) -> dict[str, Any]:
     return {"content": config_service.adopt_param(body.content, body.section, body.key, body.value)}
 
 
+@router.get("/graph")
+async def config_graph(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """The project's `[include]` dependency graph + cross-file lint (broken include / duplicate
+    section / orphan TMC driver) across every config file. ``reachable=false`` when down."""
+    return await config_service.gather_project(_client(settings))
+
+
+@router.get("/search")
+async def config_search(
+    q: str = Query("", description="Case-insensitive substring to find across all config files"),
+    settings: Settings = Depends(get_settings),
+) -> dict[str, Any]:
+    """Project-wide search: every line (file + line number + text) that contains ``q``, capped."""
+    return await config_service.search_project(_client(settings), q)
+
+
 @router.get("/pin-map")
 async def config_pin_map(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """Per-MCU board pins (name + owners + caveat) so a ``*_pin`` field can suggest valid pins and

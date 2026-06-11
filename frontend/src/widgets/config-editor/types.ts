@@ -121,3 +121,41 @@ export interface PinMapResult {
   reachable: boolean
   mcus: PinMapMcu[]
 }
+
+/** One file node in the project include-dependency graph. */
+export interface ConfigGraphNode {
+  file: string
+  sections: number
+  includes: string[]
+  missing: string[]
+}
+
+/** A cross-file lint finding (broken_include / duplicate_section / orphan_driver). */
+export interface ConfigGraphLint {
+  level: 'error' | 'warning'
+  rule: string
+  file: string
+  message: string
+  files?: string[]
+}
+
+export interface ConfigGraph {
+  reachable: boolean
+  roots: string[]
+  nodes: ConfigGraphNode[]
+  lint: ConfigGraphLint[]
+}
+
+/** One project-wide search hit. */
+export interface ConfigSearchMatch {
+  file: string
+  line: number
+  text: string
+}
+
+export interface ConfigSearchResult {
+  reachable: boolean
+  query: string
+  matches: ConfigSearchMatch[]
+  truncated: boolean
+}

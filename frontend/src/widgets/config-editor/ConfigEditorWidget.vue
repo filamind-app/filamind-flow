@@ -19,11 +19,13 @@ import {
   fetchConfigDrift,
   fetchConfigFile,
   fetchConfigFiles,
+  fetchConfigGraph,
   fetchFieldPolicy,
   fetchPinDoctor,
   fetchPinMap,
   restartFirmware,
   saveConfigFile,
+  searchConfig,
 } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
@@ -32,7 +34,9 @@ import type {
   ConfigDriftResult,
   ConfigFileInfo,
   ConfigFileView,
+  ConfigGraph,
   ConfigParamView,
+  ConfigSearchResult,
   ConfigSectionView,
   FieldPolicyEntry,
   PinDoctorResult,
@@ -197,6 +201,67 @@ function pinFlags(value: string): {
   const info = mcu.pins.find((p) => p.pin.toUpperCase() === pin)
   if (!info) return { offBoard: true, doubleAssign: false, caveat: null }
   return { offBoard: false, doubleAssign: info.owners.length > 1, caveat: info.caveat }
+}
+
+// Project view: the `[include]` dependency graph + cross-file lint, and project-wide search.
+const graph = ref<ConfigGraph | null>(null)
+async function loadGraph(): Promise<void> {
+  try {
+    graph.value = await fetchConfigGraph()
+  } catch {
+    graph.value = null
+  }
+}
+/** Flatten the include graph into indented rows (DFS from each root; cycle-guarded). */
+const treeRows = computed<{ file: string; depth: number; broken: boolean }[]>(() => {
+  const g = graph.value
+  if (!g) return []
+  const byFile = new Map(g.nodes.map((n) => [n.file, n]))
+  const rows: { file: string; depth: number; broken: boolean }[] = []
+  const expanded = new Set<string>()
+  const walk = (file: string, depth: number): void => {
+    rows.push({ file, depth, broken: false })
+    const node = byFile.get(file)
+    if (!node || expanded.has(file)) return
+    expanded.add(file)
+    for (const m of node.missing) rows.push({ file: m, depth: depth + 1, broken: true })
+    for (const inc of node.includes) walk(inc, depth + 1)
+  }
+  for (const r of g.roots) walk(r, 0)
+  // Files not reachable from any root (e.g. an unincluded standalone) — list them flat.
+  for (const n of g.nodes) if (!expanded.has(n.file) && !g.roots.includes(n.file)) walk(n.file, 0)
+  return rows
+})
+function ruleLabel(rule: string): string {
+  const key = `configEditor.project.rule.${rule}`
+  const label = t(key)
+  return label === key ? rule : label
+}
+
+const searchQuery = ref('')
+const searchResult = ref<ConfigSearchResult | null>(null)
+const searching = ref(false)
+async function runSearch(): Promise<void> {
+  const q = searchQuery.value.trim()
+  if (!q) {
+    searchResult.value = null
+    return
+  }
+  searching.value = true
+  try {
+    searchResult.value = await searchConfig(q)
+  } catch {
+    searchResult.value = null
+  } finally {
+    searching.value = false
+  }
+}
+/** Jump to a file from the tree / a search hit / a lint finding (loads it into the editor). */
+function openFile(path: string, raw = false): void {
+  if (files.value.some((f) => f.path === path)) {
+    selected.value = path
+    if (raw) viewMode.value = 'raw'
+  }
 }
 
 async function adoptLive(d: ConfigDrift): Promise<void> {
@@ -412,6 +477,7 @@ onMounted(() => {
   void loadFiles()
   void loadPinDoctor()
   void loadPinMap()
+  void loadGraph()
 })
 </script>
 
@@ -456,6 +522,94 @@ onMounted(() => {
         <span aria-hidden="true">↻</span> {{ t('configEditor.file.refresh') }}
       </button>
     </div>
+
+    <!-- Project view: include graph + project-wide search + cross-file lint (whole config tree) -->
+    <details v-if="graph && graph.reachable" class="nb-card bg-surface p-2 text-[11px]">
+      <summary class="cursor-pointer font-bold">
+        {{ t('configEditor.project.title') }}
+        <span v-if="graph.lint.length" class="ms-1 rounded bg-brand-yellow px-1 text-ink">
+          {{ t('configEditor.project.lintBadge', { n: graph.lint.length }) }}
+        </span>
+      </summary>
+
+      <div class="mt-2 space-y-3">
+        <!-- Project-wide search -->
+        <form class="flex flex-wrap items-center gap-1" @submit.prevent="runSearch">
+          <input
+            v-model="searchQuery"
+            type="search"
+            :placeholder="t('configEditor.project.searchPlaceholder')"
+            class="min-w-[10rem] flex-1 rounded-brutal border border-ink bg-surface px-2 py-1"
+          />
+          <button type="submit" class="nb-btn bg-surface px-2 py-1" :disabled="searching">
+            <span aria-hidden="true">🔎</span> {{ t('configEditor.project.searchBtn') }}
+          </button>
+        </form>
+        <div v-if="searchResult" class="space-y-1">
+          <p v-if="!searchResult.matches.length" class="opacity-60">
+            {{ t('configEditor.project.noResults') }}
+          </p>
+          <template v-else>
+            <p class="opacity-60">
+              {{ t('configEditor.project.matchesCount', { n: searchResult.matches.length }) }}
+              <span v-if="searchResult.truncated">· {{ t('configEditor.project.truncated') }}</span>
+            </p>
+            <ul class="max-h-40 space-y-0.5 overflow-auto font-mono">
+              <li v-for="(m, mi) in searchResult.matches" :key="mi">
+                <button
+                  class="w-full truncate text-start hover:underline"
+                  @click="openFile(m.file, true)"
+                >
+                  <span class="opacity-60">{{ m.file }}:{{ m.line }}</span> · {{ m.text }}
+                </button>
+              </li>
+            </ul>
+          </template>
+        </div>
+
+        <!-- Include dependency tree -->
+        <div v-if="treeRows.length" class="space-y-0.5">
+          <p class="font-bold opacity-70">{{ t('configEditor.project.tree') }}</p>
+          <ul class="font-mono">
+            <li v-for="(row, ri) in treeRows" :key="ri">
+              <button
+                class="text-start hover:underline"
+                :class="row.broken ? 'text-brand-red' : ''"
+                :style="{ paddingInlineStart: row.depth * 12 + 'px' }"
+                :disabled="row.broken"
+                @click="openFile(row.file)"
+              >
+                <span aria-hidden="true">{{ row.depth ? '↳ ' : '' }}</span
+                >{{ row.file
+                }}<span v-if="row.broken"> ⚠ {{ t('configEditor.project.missing') }}</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Cross-file lint -->
+        <div v-if="graph.lint.length" class="space-y-1">
+          <p class="font-bold opacity-70">{{ t('configEditor.project.lint') }}</p>
+          <ul class="space-y-1">
+            <li
+              v-for="(lt, li) in graph.lint"
+              :key="li"
+              class="rounded p-1"
+              :class="lt.level === 'error' ? 'bg-brand-red/10' : 'bg-brand-yellow/20'"
+            >
+              <button class="w-full text-start hover:underline" @click="openFile(lt.file)">
+                <b>{{ ruleLabel(lt.rule) }}</b>
+                <span class="font-mono">{{ lt.message }}</span>
+                <span class="opacity-60"> — {{ lt.file }}</span>
+                <span v-if="lt.files && lt.files.length > 1" class="opacity-60">
+                  ({{ lt.files.join(', ') }})
+                </span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </details>
 
     <!-- File-list states -->
     <p v-if="loadingFiles" class="font-mono text-xs opacity-70">
