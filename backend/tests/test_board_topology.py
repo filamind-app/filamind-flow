@@ -258,6 +258,13 @@ def _board(board_id: str, pins: list[str]) -> dict[str, Any]:
     return {"board_id": board_id, "ports": [{"pinMap": [{"pin": p} for p in pins]}]}
 
 
+def test_board_pin_set_strips_config_mcu_prefix() -> None:
+    """A toolhead board's pin-map may carry a config MCU-name prefix (e.g. ``TOOLHEAD_MCU:PA1``);
+    it must be compared as its bare pin so the board still fingerprints against the live config."""
+    board = _board("toolhead", [f"TOOLHEAD_MCU:{p}" for p in ("PA1", "PA5", "PB6", "PB8", "PB9")])
+    assert board_topology._board_pin_set(board) == {"PA1", "PA5", "PB6", "PB8", "PB9"}
+
+
 def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
     """A toolhead-like MCU with only a few *generic* pins that several small boards share equally
     (a tie in containment, low Jaccard) must NOT yield a confident board — better no match than a

@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.174.0] - 2026-06-11
+
+### Fixed
+
+- **Board Topology — stock toolhead boards now auto-detect.** A catalog data bug stored many
+  toolhead / secondary board pin-maps with the example config's **MCU-name prefix baked into the pin
+  name** (e.g. `TOOLHEAD_MCU:PA1` instead of the bare physical pin `PA1`) — affecting **494 pins
+  across 118 boards** (most CAN/USB toolhead boards: `EBBCan:`, `nhk:`, `SB2040:`, `MKS_THR:`,
+  `nozzle_mcu:`, …). Because the live config's used pins are bare, the pin-fingerprint saw **zero
+  overlap** and never matched a board to its own toolhead. Fixed at the root by stripping the
+  prefixes from the catalog pin-maps, and hardened in code so the fingerprint + Pin Atlas always
+  compare a board pin as its bare physical pin. Verified live: the **Sovol SV08 stock toolhead now
+  resolves to `sovol-sv08-toolhead` at full confidence** (was "no confident board").
+
 ## [0.173.0] - 2026-06-11
 
 ### Added
