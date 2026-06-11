@@ -153,6 +153,23 @@
       "double": "مُكرَّر",
       "doubleHint": "هذا الطرف مُسنَد في أكثر من قسم.",
       "caveat": "تحذير"
+    },
+    "project": {
+      "title": "المشروع (التضمينات والبحث)",
+      "lintBadge": "{n} مشكلة",
+      "searchPlaceholder": "ابحث في كل ملفات الإعداد…",
+      "searchBtn": "بحث",
+      "noResults": "لا نتائج.",
+      "matchesCount": "{n} نتيجة",
+      "truncated": "عرض النتائج الأولى",
+      "tree": "شجرة التضمين",
+      "missing": "ملف مفقود",
+      "lint": "فحوص عبر الملفات",
+      "rule": {
+        "broken_include": "تضمين معطوب: ",
+        "duplicate_section": "قسم مكرر: ",
+        "orphan_driver": "محرك يتيم — لا قسم مطابق: "
+      }
     }
   }
 }

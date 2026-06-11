@@ -11,6 +11,8 @@ Also the gated write path: ``save_config_file`` backs up then overwrites a file,
 from __future__ import annotations
 
 import datetime
+import fnmatch
+import posixpath
 from typing import Any
 
 import httpx
@@ -18,6 +20,12 @@ import httpx
 from app.services import klipper_config
 from app.services.klipper_config import ConfigFile, ConfigParam, ConfigSection
 from app.services.moonraker_client import MoonrakerClient
+
+#: TMC driver section prefixes — a ``[tmcXXXX NAME]`` must pair with a ``[NAME]`` stepper/extruder.
+_TMC_PREFIXES = ("tmc2209", "tmc2208", "tmc2130", "tmc5160", "tmc2660", "tmc2240", "tmc")
+
+#: Section types whose duplicate header across files is not a merge error (``include`` repeats).
+_REPEATABLE_TYPES = frozenset({"include"})
 
 #: File extensions treated as editable Klipper config files.
 _CONFIG_SUFFIXES = (".cfg", ".conf")
@@ -182,6 +190,164 @@ def adopt_param(content: str, section: str, key: str, value: str) -> str:
                 sec.raw_lines = []  # rebuild the section so the new value takes effect
                 return klipper_config.dump(cfg)
     return content
+
+
+async def _read_all_files(client: MoonrakerClient) -> list[tuple[str, str]]:
+    """Fetch every editable config file's text. A file that fails to read is skipped (best effort)."""  # noqa: E501
+    files = await list_config_files(client)
+    out: list[tuple[str, str]] = []
+    for f in files:
+        path = str(f["path"])
+        try:
+            out.append((path, await client.get_file_text(path, root="config")))
+        except httpx.HTTPError:
+            continue
+    return out
+
+
+def _include_targets(cfg: ConfigFile) -> list[str]:
+    """Raw ``[include X]`` targets in declaration order (``X`` may be a relative path or a glob)."""
+    targets: list[str] = []
+    for sec in cfg.sections:
+        if _section_type(sec.header) == "include":
+            target = sec.header.split(None, 1)[1].strip() if " " in sec.header.strip() else ""
+            if target:
+                targets.append(target)
+    return targets
+
+
+def _resolve_include(target: str, base: str, paths: set[str]) -> tuple[list[str], bool]:
+    """Map an include target (relative to its file ``base``) to real file paths.
+
+    Returns ``(matched_paths, missing)`` — ``missing`` is True when nothing matched (broken
+    include). A glob that matches at least one file is not missing.
+    """
+    rel = posixpath.normpath(posixpath.join(posixpath.dirname(base), target))
+    if any(ch in target for ch in "*?[") or any(ch in rel for ch in "*?["):
+        matched = sorted(p for p in paths if fnmatch.fnmatch(p, target) or fnmatch.fnmatch(p, rel))
+        return matched, not matched
+    direct = sorted(p for p in paths if p in {rel, target})
+    if direct:
+        return direct, False
+    base_hit = sorted(p for p in paths if posixpath.basename(p) == posixpath.basename(target))
+    return base_hit, not base_hit
+
+
+def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
+    """Build the include-dependency graph + cross-file lint over already-fetched ``(path, raw)``.
+
+    Pure (no I/O) so it is unit-testable. Lint rules: ``broken_include`` (a target file is missing),
+    ``duplicate_section`` (the same non-``include`` header is defined in more than one file — a
+    Klipper load error), and ``orphan_driver`` (a ``[tmcXXXX NAME]`` with no matching ``[NAME]``).
+    """
+    paths = {p for p, _ in files}
+    parsed: dict[str, ConfigFile] = {p: klipper_config.parse(raw) for p, raw in files}
+
+    nodes: list[dict[str, Any]] = []
+    included_by_someone: set[str] = set()
+    lint: list[dict[str, Any]] = []
+    header_locations: dict[str, list[str]] = {}
+    stepper_like: set[str] = set()
+    tmc_pairs: list[tuple[str, str]] = []  # (file, NAME) for each [tmcXXXX NAME]
+
+    for path, cfg in parsed.items():
+        includes: list[str] = []
+        missing: list[str] = []
+        for target in _include_targets(cfg):
+            matched, is_missing = _resolve_include(target, path, paths)
+            if is_missing:
+                missing.append(target)
+                lint.append(
+                    {
+                        "level": "error",
+                        "rule": "broken_include",
+                        "file": path,
+                        "message": target,
+                    }
+                )
+            for m in matched:
+                included_by_someone.add(m)
+                if m not in includes:
+                    includes.append(m)
+        nodes.append(
+            {
+                "file": path,
+                "sections": sum(
+                    1 for s in cfg.sections if s.header != klipper_config.SAVE_CONFIG_MARKER
+                ),
+                "includes": includes,
+                "missing": missing,
+            }
+        )
+
+        for sec in cfg.sections:
+            if sec.header == klipper_config.SAVE_CONFIG_MARKER:
+                continue
+            stype = _section_type(sec.header)
+            if stype not in _REPEATABLE_TYPES:
+                header_locations.setdefault(sec.header.strip().lower(), []).append(path)
+            if stype.startswith(_TMC_PREFIXES) and " " in sec.header.strip():
+                tmc_pairs.append((path, sec.header.split(None, 1)[1].strip().lower()))
+            elif stype in {
+                "stepper",
+                "extruder",
+                "manual_stepper",
+                "heater_bed",
+            } or stype.startswith("stepper_"):
+                stepper_like.add(sec.header.strip().lower())
+
+    for header, locs in sorted(header_locations.items()):
+        if len(locs) > 1:
+            lint.append(
+                {
+                    "level": "warning",
+                    "rule": "duplicate_section",
+                    "file": locs[0],
+                    "message": header,
+                    "files": locs,
+                }
+            )
+    for path, name in tmc_pairs:
+        if name not in stepper_like:
+            lint.append(
+                {"level": "warning", "rule": "orphan_driver", "file": path, "message": name}
+            )
+
+    roots = sorted(p for p in paths if p not in included_by_someone)
+    nodes.sort(key=lambda n: str(n["file"]))
+    return {"reachable": True, "roots": roots, "nodes": nodes, "lint": lint}
+
+
+async def gather_project(client: MoonrakerClient) -> dict[str, Any]:
+    """Fetch every config file and build the include graph + cross-file lint. Degrades when down."""
+    try:
+        files = await _read_all_files(client)
+    except httpx.HTTPError:
+        return {"reachable": False, "roots": [], "nodes": [], "lint": []}
+    return project_graph_from_files(files)
+
+
+async def search_project(client: MoonrakerClient, query: str, limit: int = 300) -> dict[str, Any]:
+    """Case-insensitive substring search across every config file. Capped at ``limit`` matches."""
+    q = query.strip().lower()
+    if not q:
+        return {"reachable": True, "query": query, "matches": [], "truncated": False}
+    try:
+        files = await _read_all_files(client)
+    except httpx.HTTPError:
+        return {"reachable": False, "query": query, "matches": [], "truncated": False}
+    matches: list[dict[str, Any]] = []
+    truncated = False
+    for path, raw in files:
+        for lineno, line in enumerate(raw.splitlines(), start=1):
+            if q in line.lower():
+                if len(matches) >= limit:
+                    truncated = True
+                    break
+                matches.append({"file": path, "line": lineno, "text": line.rstrip()[:300]})
+        if truncated:
+            break
+    return {"reachable": True, "query": query, "matches": matches, "truncated": truncated}
 
 
 async def _is_busy(client: MoonrakerClient) -> bool:

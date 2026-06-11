@@ -153,6 +153,23 @@
       "double": "reutilizado",
       "doubleHint": "Este pin está asignado en más de una sección.",
       "caveat": "advertencia"
+    },
+    "project": {
+      "title": "Proyecto (includes y búsqueda)",
+      "lintBadge": "{n} problema(s)",
+      "searchPlaceholder": "Buscar en todos los archivos de configuración…",
+      "searchBtn": "Buscar",
+      "noResults": "Sin coincidencias.",
+      "matchesCount": "{n} coincidencia(s)",
+      "truncated": "primeros resultados",
+      "tree": "Árbol de includes",
+      "missing": "archivo faltante",
+      "lint": "Comprobaciones entre archivos",
+      "rule": {
+        "broken_include": "Include roto: ",
+        "duplicate_section": "Sección duplicada: ",
+        "orphan_driver": "Driver huérfano — sin sección coincidente: "
+      }
     }
   }
 }
