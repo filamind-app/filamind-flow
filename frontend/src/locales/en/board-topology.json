@@ -74,7 +74,18 @@
       "integrated": "SBC on-board",
       "integratedNote": "The host SBC is built into the {board} mainboard.",
       "selectPrompt": "Select a board or MCU in the map to inspect it.",
-      "aria": "Machine map: the host and {n} MCUs"
+      "aria": "Machine map: the host and {n} MCUs",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} retransmits",
+        "load": "{pct}% load"
+      },
+      "health": {
+        "title": "Link health",
+        "ok": "healthy",
+        "warn": "degraded",
+        "out": "firmware out of sync"
+      }
     },
     "conn": {
       "canbus": "CAN bus",

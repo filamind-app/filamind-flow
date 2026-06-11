@@ -7,6 +7,7 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
 import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 
 import { fetchBoardDetail } from './api'
@@ -17,7 +18,7 @@ const props = defineProps<{
   host: TopologyHost | null
   isHost: boolean
   busy: boolean
-  fwSync: boolean | null | undefined
+  fw: McuFirmware | undefined
 }>()
 const emit = defineEmits<{
   openInBrowser: [ref: RelatedRef]
@@ -137,16 +138,32 @@ function onPick(id: string | null): void {
       <div class="flex items-center justify-between gap-2">
         <span class="min-w-0 truncate font-display text-sm font-bold">{{ mcu.name }}</span>
         <span
-          v-if="fwSync === true || fwSync === false"
+          v-if="fw?.in_sync === true || fw?.in_sync === false"
           class="shrink-0 rounded px-1 text-[10px] font-bold"
-          :class="fwSync ? 'bg-brand-lime text-ink' : 'bg-brand-red text-surface'"
+          :class="fw.in_sync ? 'bg-brand-lime text-ink' : 'bg-brand-red text-surface'"
         >
           {{
-            fwSync
+            fw.in_sync
               ? '✓ ' + t('boardTopology.sync.synced')
               : '⚠ ' + t('boardTopology.sync.outOfSync')
           }}
         </span>
+      </div>
+
+      <!-- live link vitals (freq / retransmits / load) from the firmware status -->
+      <div
+        v-if="fw && (fw.freq != null || fw.retransmits != null || fw.awake != null)"
+        class="flex flex-wrap items-center gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-75"
+      >
+        <span v-if="fw.freq != null">{{
+          t('boardTopology.graph.vitals.freq', { mhz: (fw.freq / 1e6).toFixed(2) })
+        }}</span>
+        <span v-if="fw.retransmits != null">{{
+          t('boardTopology.graph.vitals.retx', { n: fw.retransmits })
+        }}</span>
+        <span v-if="fw.awake != null">{{
+          t('boardTopology.graph.vitals.load', { pct: Math.round(fw.awake * 100) })
+        }}</span>
       </div>
 
       <div class="font-mono">
