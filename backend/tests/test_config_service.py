@@ -87,17 +87,26 @@ def test_project_graph_includes_and_cross_file_lint() -> None:
             "[extruder]\nnozzle_diameter: 0.4\n",  # duplicate [extruder] across files
         ),
     ]
+    files.append(
+        # A dated backup copy sitting in the same folder: NOT included by printer.cfg, so its
+        # [extruder] must not masquerade as a cross-file duplicate of the active config.
+        ("printer-20260101.cfg", "[extruder]\nnozzle_diameter: 0.4\n[stepper_z]\nstep_pin: PB0\n"),
+    )
     out = config_service.project_graph_from_files(files)
     assert out["reachable"] is True
-    assert out["roots"] == ["printer.cfg"]  # steppers.cfg is included, so not a root
+    assert out["roots"] == ["printer.cfg"]  # only the active root drives the tree
+    assert "printer-20260101.cfg" not in out["active"]  # the backup is not part of the live config
     node = next(n for n in out["nodes"] if n["file"] == "printer.cfg")
     assert "steppers.cfg" in node["includes"] and "missing.cfg" in node["missing"]
     rules = {(lt["rule"], lt["message"]) for lt in out["lint"]}
     assert ("broken_include", "missing.cfg") in rules
     assert ("orphan_driver", "stepper_q") in rules
-    assert ("duplicate_section", "extruder") in rules
+    assert ("duplicate_section", "extruder") in rules  # printer.cfg + steppers.cfg (both active)
     # The paired [tmc2209 stepper_x] is NOT an orphan (its [stepper_x] exists).
     assert ("orphan_driver", "stepper_x") not in rules
+    # The backup's [extruder] is excluded, so the duplicate is only flagged across active files.
+    dup = next(lt for lt in out["lint"] if lt["rule"] == "duplicate_section")
+    assert "printer-20260101.cfg" not in dup["files"]
 
 
 def test_is_config_file() -> None:

@@ -141,7 +141,10 @@ export interface ConfigGraphLint {
 
 export interface ConfigGraph {
   reachable: boolean
+  /** Tree roots — the active config's root (so on-disk backups don't flood the include tree). */
   roots: string[]
+  /** Files Klipper actually loads (the primary root + everything it includes, transitively). */
+  active: string[]
   nodes: ConfigGraphNode[]
   lint: ConfigGraphLint[]
 }
