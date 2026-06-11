@@ -6,6 +6,7 @@ import type {
   ConfigFileList,
   ConfigFileView,
   ConfigGraph,
+  ConfigSanityResult,
   ConfigSaveResult,
   ConfigSearchResult,
   FieldPolicyResponse,
@@ -87,6 +88,16 @@ export async function fetchPinDoctor(): Promise<PinDoctorResult> {
     throw new Error(`Pin doctor request failed (${response.status})`)
   }
   return (await response.json()) as PinDoctorResult
+}
+
+/** Driver value-sanity: run_current vs the driver ceiling / mapped-motor rating + microsteps. */
+export async function fetchConfigSanity(): Promise<ConfigSanityResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/sanity`)
+  if (!response.ok) {
+    throw new Error(`Sanity request failed (${response.status})`)
+  }
+  return (await response.json()) as ConfigSanityResult
 }
 
 /** List timestamped backup snapshots (newest first), optionally limited to one file. */

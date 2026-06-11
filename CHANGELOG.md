@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.194.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — driver value sanity check.** A new panel cross-checks every `[tmcXXXX …]`
+  driver's configured `run_current` and `microsteps` against authoritative catalog facts: the
+  driver model's full-scale current ceiling (a `run_current` the silicon can't deliver is an error;
+  within 10% is a thermal-margin warning) and, when a motor is assigned to that stepper in the Motor
+  Drivers mapping, the motor's datasheet rating (recommended is ~0.7×, so near the rating runs hot).
+  Microsteps that aren't a power of two in 1–256 are flagged too. It is **honest about gaps** — a
+  driver with no curated ceiling (e.g. TMC2240, whose limit depends on an external Rref resistor)
+  and a stepper with no assigned motor are skipped rather than guessed, and the panel says how many
+  drivers it actually checked. New read-only `GET /api/config/sanity`. Localised in all 7 languages.
+  (Phase 15 of the Config Editor + Macro Designer programme.)
+
 ## [0.193.0] - 2026-06-12
 
 ### Added

@@ -142,6 +142,30 @@ def test_project_graph_glob_include_does_not_cross_directories() -> None:
     assert not any(lt["rule"] == "section_override" for lt in out["lint"])
 
 
+async def test_gather_sanity_flags_overcurrent_and_odd_microsteps() -> None:
+    class _CfgClient:
+        async def query_objects(self, objects: list[str]) -> dict[str, Any]:
+            return {
+                "configfile": {
+                    "config": {
+                        "tmc2209 stepper_x": {"run_current": "2.5", "microsteps": "16"},
+                        "tmc2209 stepper_y": {"run_current": "0.8", "microsteps": "15"},
+                        "tmc5160 stepper_z": {"run_current": "1.0", "microsteps": "32"},
+                    }
+                }
+            }
+
+    out = await config_service.gather_sanity(_CfgClient())  # type: ignore[arg-type]
+    assert out["reachable"] is True and out["checked"] == 3
+    by_rule = {(f["rule"], f["section"]) for f in out["findings"]}
+    # 2.5 A exceeds the TMC2209's ~2.0 A full-scale ceiling.
+    assert ("over_driver_cap", "tmc2209 stepper_x") in by_rule
+    # 15 microsteps is not a power of two.
+    assert ("odd_microsteps", "tmc2209 stepper_y") in by_rule
+    # 1.0 A on a TMC5160 (~10.6 A ceiling) at 32 microsteps is fine — no finding for stepper_z.
+    assert not any(f["section"] == "tmc5160 stepper_z" for f in out["findings"])
+
+
 def test_is_config_file() -> None:
     assert config_service._is_config_file("printer.cfg")
     assert config_service._is_config_file("macros/print.CFG")

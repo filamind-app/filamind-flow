@@ -145,6 +145,14 @@ async def config_pin_map(settings: Settings = Depends(get_settings)) -> dict[str
         return {"reachable": False, "mcus": []}
 
 
+@router.get("/sanity")
+async def config_sanity(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Cross-check each TMC driver's run_current / microsteps against the driver's full-scale
+    ceiling and the mapped motor's rating (honest when no reference exists). Down → reachable=false.
+    """
+    return await config_service.gather_sanity(_client(settings), settings.data_dir)
+
+
 @router.get("/pin-doctor")
 async def config_pin_doctor(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """A whole-config pin-conflict scan (every MCU): double-assigned pins + board electronics

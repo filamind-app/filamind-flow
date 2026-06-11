@@ -203,6 +203,17 @@
       "diffHint": "الفرق عن الملف الحالي",
       "unchanged": "⋯ {n} سطر دون تغيير ⋯",
       "note": "تُكتب النسخ تلقائيًا قبل كل حفظ. الاسترجاع يحمّل نسخة في المحرر لمراجعة أخيرة ثم الحفظ."
+    },
+    "sanity": {
+      "title": "سلامة قيم المشغّل ({n})",
+      "note": "فُحص {n} قسم مشغّل TMC. يُتخطّى المشغّل بلا سقف موثّق والمحرك غير المُسنَد — دون تخمين.",
+      "rule": {
+        "over_driver_cap": "{section}: تيار التشغيل {run_current} أمبير يتجاوز سقف المشغّل ~{cap} أمبير.",
+        "near_driver_cap": "{section}: تيار التشغيل {run_current} أمبير ضمن 10% من سقف المشغّل ~{cap} أمبير.",
+        "over_motor_rating": "{section}: تيار التشغيل {run_current} أمبير يتجاوز تقييم {motor} ({max_current} أمبير).",
+        "near_motor_rating": "{section}: تيار التشغيل {run_current} أمبير ضمن 10% من تقييم {motor} ({max_current} أمبير).",
+        "odd_microsteps": "{section}: الميكروستِب {microsteps} ليس من قوى الاثنين (1…256)."
+      }
     }
   }
 }
