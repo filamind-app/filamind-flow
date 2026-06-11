@@ -6,6 +6,7 @@ import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 import { useNav } from '@/core/nav'
 import { fetchFirmwareStatus } from '@/widgets/firmware-upgrade/api'
+import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
 import { targetFor, useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 
 import { clearBoardOverride, fetchTopology, setBoardOverride } from './api'
@@ -22,7 +23,7 @@ const { focusEntity } = useEntityFocus()
 const topology = ref<Topology | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
-const fwSync = ref<Record<string, boolean | null>>({})
+const fwMcus = ref<Record<string, McuFirmware>>({})
 
 const view = ref<'logical' | 'physical'>('physical')
 const selected = ref<string | null>(null)
@@ -33,8 +34,8 @@ const selectedMcu = computed(() => {
   return topology.value.mcus.find((m) => 'mcu:' + m.name === selected.value) ?? null
 })
 const isHost = computed(() => selected.value === 'host')
-const selectedFwSync = computed(() =>
-  selectedMcu.value ? fwSync.value[selectedMcu.value.name] : null,
+const selectedFw = computed(() =>
+  selectedMcu.value ? fwMcus.value[selectedMcu.value.name] : undefined,
 )
 
 /** Deep-link a related entity into the Hardware Browser (topology unmounts, the browser mounts and
@@ -65,10 +66,10 @@ async function load(): Promise<void> {
     }
     fetchFirmwareStatus()
       .then((fw) => {
-        fwSync.value = Object.fromEntries((fw.mcus ?? []).map((m) => [m.name, m.in_sync]))
+        fwMcus.value = Object.fromEntries((fw.mcus ?? []).map((m) => [m.name, m]))
       })
       .catch(() => {
-        fwSync.value = {}
+        fwMcus.value = {}
       })
   } catch (e) {
     error.value = describeError(e)
@@ -196,6 +197,11 @@ onMounted(() => void load())
           >✓ {{ t('boardTopology.override.confirmed') }} · ◉
           {{ t('boardTopology.board.suggested') }}</span
         >
+        <span class="opacity-70"
+          >{{ t('boardTopology.graph.health.title') }}: <span class="text-brand-lime">✓</span>
+          {{ t('boardTopology.graph.health.ok') }} · <span class="text-brand-red">✕</span>
+          {{ t('boardTopology.graph.health.out') }}</span
+        >
       </div>
 
       <div class="grid gap-3 lg:grid-cols-[1.4fr_1fr]">
@@ -203,6 +209,7 @@ onMounted(() => void load())
           :topology="topology"
           :view="view"
           :selected="selected"
+          :health="fwMcus"
           @select="(id) => (selected = id)"
         />
         <NodeInspector
@@ -210,7 +217,7 @@ onMounted(() => void load())
           :host="topology.host"
           :is-host="isHost"
           :busy="overrideBusy"
-          :fw-sync="selectedFwSync"
+          :fw="selectedFw"
           @open-in-browser="openInBrowser"
           @set-override="setOverride"
           @clear-override="clearOverride"

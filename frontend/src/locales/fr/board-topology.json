@@ -129,7 +129,18 @@
       "integrated": "SBC intégré",
       "integratedNote": "Le SBC hôte est intégré à la carte mère {board}.",
       "selectPrompt": "Sélectionnez une carte ou un MCU dans la carte pour l'inspecter.",
-      "aria": "Carte de la machine : l'hôte et {n} MCU"
+      "aria": "Carte de la machine : l'hôte et {n} MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} retransmissions",
+        "load": "{pct}% de charge"
+      },
+      "health": {
+        "title": "Santé du lien",
+        "ok": "sain",
+        "warn": "dégradé",
+        "out": "firmware désynchronisé"
+      }
     }
   }
 }

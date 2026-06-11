@@ -129,7 +129,18 @@
       "integrated": "板载 SBC",
       "integratedNote": "主机 SBC 集成在 {board} 主板上。",
       "selectPrompt": "在图中选择一块主板或 MCU 以查看详情。",
-      "aria": "机器图：主机与 {n} 个 MCU"
+      "aria": "机器图：主机与 {n} 个 MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} 次重传",
+        "load": "{pct}% 负载"
+      },
+      "health": {
+        "title": "链路健康",
+        "ok": "健康",
+        "warn": "降级",
+        "out": "固件不同步"
+      }
     }
   }
 }

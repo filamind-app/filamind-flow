@@ -129,7 +129,18 @@
       "integrated": "SBC integrado",
       "integratedNote": "El SBC anfitrión está integrado en la placa base {board}.",
       "selectPrompt": "Selecciona una placa o un MCU en el mapa para inspeccionarlo.",
-      "aria": "Mapa de la máquina: el host y {n} MCU"
+      "aria": "Mapa de la máquina: el host y {n} MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} retransmisiones",
+        "load": "{pct}% de carga"
+      },
+      "health": {
+        "title": "Salud del enlace",
+        "ok": "saludable",
+        "warn": "degradado",
+        "out": "firmware desincronizado"
+      }
     }
   }
 }
