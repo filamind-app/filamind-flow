@@ -99,7 +99,7 @@
       "abs": "ABS",
       "rel": "REL",
       "cum": "bisher: {d} mm · {e} mm · ~{s} s",
-      "note": "Zeilen mit ungelösten Ausdrücken oder Jinja-Steuerfluss werden nicht simuliert und hier weggelassen."
+      "note": "Schleifen und Bedingungen werden wie am Drucker expandiert; ein Makro, das Live-Druckerstatus braucht, fällt auf eine wörtliche Vorschau zurück."
     },
     "live": {
       "label": "Vom Drucker",

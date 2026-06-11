@@ -90,7 +90,7 @@
       "abs": "ABS",
       "rel": "REL",
       "cum": "so far: {d} mm · {e} mm · ~{s} s",
-      "note": "Lines with unresolved expressions or Jinja control flow aren't simulated and are omitted here."
+      "note": "Loops and conditionals are expanded the way the printer would; a macro that needs live printer state falls back to a literal preview."
     },
     "timeline": {
       "title": "Timeline",
