@@ -6,12 +6,14 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import { describeError } from '@/core/describeError'
+import { useNav } from '@/core/nav'
 import {
   fetchBoardDetail,
   fetchDriverDetail,
   fetchMotorDetail,
 } from '@/widgets/hardware-browser/api'
 import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
+import { useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 
 import {
   adoptParam,
@@ -44,7 +46,9 @@ import type {
   PinMapResult,
 } from './types'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, te } = useI18n({ useScope: 'global' })
+const { go } = useNav()
+const { focusEntity } = useEntityFocus()
 
 const files = ref<ConfigFileInfo[]>([])
 const selected = ref<string | null>(null)
@@ -271,6 +275,35 @@ function openFile(path: string, raw = false): void {
     selected.value = path
     if (raw) viewMode.value = 'raw'
   }
+}
+
+// Inline knowledge: a short, plain-language blurb under each section + a deep-link to the catalog
+// entity for a driver section. Knowledge is keyed by section type, with a few family fallbacks.
+function knowledgeKey(type: string): string | null {
+  const ty = type.toLowerCase()
+  const direct = `configEditor.knowledge.${ty}`
+  if (te(direct)) return direct
+  if (ty.startsWith('tmc')) return 'configEditor.knowledge.tmc'
+  if (ty.startsWith('stepper_')) return 'configEditor.knowledge.stepper'
+  if (ty === 'bltouch' || ty.endsWith('_probe') || ty.startsWith('probe_'))
+    return 'configEditor.knowledge.probe'
+  if (ty === 'heater_fan' || ty === 'controller_fan' || ty === 'temperature_fan') {
+    return te(`configEditor.knowledge.${ty}`) ? `configEditor.knowledge.${ty}` : null
+  }
+  return null
+}
+function sectionBlurb(type: string): string | null {
+  const k = knowledgeKey(type)
+  return k ? t(k) : null
+}
+/** The driver model id for a `[tmcXXXX …]` section (matches the catalog `driver_id`), else null. */
+function tmcModel(type: string): string | null {
+  return type.toLowerCase().startsWith('tmc') ? type.toLowerCase() : null
+}
+/** Deep-link into the Hardware Browser, focused on this driver's catalog entity. */
+function openDriverInBrowser(model: string): void {
+  focusEntity({ tab: 'drivers', id: model, name: model.toUpperCase() })
+  go('hardware-browser')
 }
 
 async function adoptLive(d: ConfigDrift): Promise<void> {
@@ -846,6 +879,26 @@ onMounted(() => {
             </button>
 
             <div v-if="open[i]" class="border-t-2 border-ink/20 px-2 py-1.5">
+              <!-- Inline knowledge: what this section does + a deep-link to its catalog entity -->
+              <div
+                v-if="sectionBlurb(section.type) || tmcModel(section.type)"
+                class="mb-1.5 space-y-1"
+              >
+                <p v-if="sectionBlurb(section.type)" class="text-[11px] italic opacity-70">
+                  {{ sectionBlurb(section.type) }}
+                </p>
+                <button
+                  v-if="tmcModel(section.type)"
+                  class="nb-btn bg-brand-cyan px-2 py-0.5 text-[10px]"
+                  @click="openDriverInBrowser(tmcModel(section.type)!)"
+                >
+                  {{
+                    t('configEditor.knowledge.viewDriver', {
+                      model: tmcModel(section.type)!.toUpperCase(),
+                    })
+                  }}
+                </button>
+              </div>
               <p v-if="!section.params.length" class="font-mono text-[11px] opacity-60">
                 {{ t('configEditor.section.noParams') }}
               </p>

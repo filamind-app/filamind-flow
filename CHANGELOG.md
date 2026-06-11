@@ -6,7 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.189.0] - 2026-06-12
+## [0.190.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — inline knowledge + catalog deep-links.** Expanding a section in the structured
+  view now shows a short, plain-language explanation of what that section does — what a `[bed_mesh]`,
+  `[heater_fan]`, `[safe_z_home]`, `[input_shaper]`, a stepper, or a TMC driver section is for —
+  so you don't have to leave the editor to remember a section's purpose. A `[tmcXXXX …]` driver
+  section also gets a **"View in catalog →"** button that deep-links straight to that driver's entity
+  in the Hardware Browser (specs, Klipper support, copyable snippet). Blurbs cover the most common
+  Klipper section types and are localised in all 7 languages. (Phase 11 of the Config Editor +
+  Macro Designer programme.)
 
 ### Changed
 
