@@ -27,7 +27,6 @@ from app.models.schemas import (
     StepperRequest,
 )
 from app.services import (
-    driver_catalog,
     drivers_apply,
     drivers_service,
     field_policy,
@@ -69,7 +68,7 @@ async def drivers_catalog() -> DriverCatalog:
     """The curated TMC driver capability map — interface, current cap, chopper modes,
     StallGuard field, sensorless / temperature support — keyed by Klipper model."""
     return DriverCatalog.model_validate(
-        {"source": driver_catalog.source(), "drivers": driver_catalog.all_drivers()}
+        {"source": "Curated TMC driver reference", "drivers": reference_data.driver_infos()}
     )
 
 
