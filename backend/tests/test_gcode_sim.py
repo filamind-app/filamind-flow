@@ -113,3 +113,22 @@ def test_simulate_no_violations_within_limits() -> None:
     # Without limits, nothing is flagged (backward-compatible).
     plain = gcode_sim.simulate("G90\nG1 X400 Y10 F99999")
     assert plain["violations"] == [] and plain["segments"][0]["out_of_bounds"] is False
+
+
+# ── macro linter (static safety) ─────────────────────────────────────────────
+def test_lint_flags_unbalanced_gcode_state() -> None:
+    rules = {f["rule"] for f in gcode_sim.lint("SAVE_GCODE_STATE\nG1 X10")}
+    assert "gcode_state_unbalanced" in rules
+    # Balanced SAVE/RESTORE → no imbalance finding.
+    assert "gcode_state_unbalanced" not in {
+        f["rule"] for f in gcode_sim.lint("SAVE_GCODE_STATE\nG1 X10\nRESTORE_GCODE_STATE")
+    }
+
+
+def test_lint_flags_ends_relative_and_extrude_before_home() -> None:
+    # Switches to relative + relative-E and never homes or restores → both warnings.
+    rules = {f["rule"] for f in gcode_sim.lint("G91\nM83\nG1 X5 E1")}
+    assert "ends_relative" in rules
+    assert "extrude_before_home" in rules
+    # A clean, homed, absolute, balanced program lints clean.
+    assert gcode_sim.lint("G28\nG90\nM82\nG1 X10 E1 F1200") == []

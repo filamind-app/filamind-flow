@@ -111,6 +111,23 @@
       "oob": "Zeile {line}: {axis}={value} liegt außerhalb des Bauraums ({min}…{max} mm).",
       "overSpeed": "Zeile {line}: {value} mm/s überschreitet das Limit von {limit} mm/s (Klipper begrenzt es).",
       "buildArea": "Bauraum {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Makro-Linter — {n} Befund(e)",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE ohne passendes RESTORE_GCODE_STATE — der gespeicherte Modus wird nie wiederhergestellt.",
+          "fix": "Ein RESTORE_GCODE_STATE hinzufügen (oder das SAVE entfernen)."
+        },
+        "ends_relative": {
+          "msg": "Das Makro endet im Relativmodus (G91/M83) — der nächste Befehl bewegt sich relativ.",
+          "fix": "Ein abschließendes G90 / M82 hinzufügen oder in SAVE_GCODE_STATE … RESTORE_GCODE_STATE einschließen."
+        },
+        "extrude_before_home": {
+          "msg": "Eine Extrusionsbewegung vor G28 — Risiko einer kalten / ungereferenzierten Extrusion.",
+          "fix": "Vor dem Extrudieren referenzieren (G28) und das Hotend aufheizen."
+        }
+      }
     }
   }
 }
