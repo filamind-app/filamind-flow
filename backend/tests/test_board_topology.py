@@ -282,6 +282,27 @@ def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
     assert board_id == "fit-x" and conf >= 0.6
 
 
+async def test_gather_pin_doctor_aggregates_findings(monkeypatch: Any) -> None:
+    """The whole-config pin doctor runs the atlas per MCU and aggregates double-assign + caveat
+    findings — here a pin driven by two sections on the primary MCU."""
+    sections = {
+        "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103xe_X-if00"},
+        "fan": {"pin": "PA1"},
+        "heater_generic h": {"heater_pin": "PA1"},  # PA1 double-assigned
+    }
+
+    async def fake_query(_self: Any, _objects: Any) -> dict[str, Any]:
+        return {"configfile": {"settings": sections}}
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", fake_query)
+    from app.services.moonraker_client import MoonrakerClient
+
+    out = await board_topology.gather_pin_doctor(MoonrakerClient("http://x"))
+    assert out["reachable"] is True and out["total"] >= 1
+    findings = [f for m in out["mcus"] for f in m["findings"]]
+    assert any(f["kind"] == "double_assign" and f["pin"] == "PA1" for f in findings)
+
+
 # ── hardware snapshot + diff ─────────────────────────────────────────────────
 def test_snapshot_diff_detects_changes(tmp_path: Any) -> None:
     from app.services import topology_snapshot

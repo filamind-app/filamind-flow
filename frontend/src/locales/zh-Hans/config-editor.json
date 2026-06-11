@@ -138,6 +138,11 @@
       "warningsTitle": "Klipper 配置警告",
       "count": "磁盘上有 {n} 个值与运行中的不同（已编辑但未 FIRMWARE_RESTART）：",
       "adopt": "采用实时值"
+    },
+    "pinDoctor": {
+      "title": "引脚医生 — {n} 项接线发现",
+      "conflict": "冲突",
+      "caveat": "提示"
     }
   }
 }
