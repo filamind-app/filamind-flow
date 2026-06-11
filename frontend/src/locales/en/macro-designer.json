@@ -105,6 +105,12 @@
       "hint": "{n} macros found on the printer — pick one to load its G-code and simulate it.",
       "unreachable": "Printer unreachable — connect to load your installed macros.",
       "params": "Macro parameters"
+    },
+    "limits": {
+      "title": "Out of bounds / over speed",
+      "oob": "Line {line}: {axis}={value} is outside the build area ({min}…{max} mm).",
+      "overSpeed": "Line {line}: {value} mm/s exceeds the printer's {limit} mm/s limit (Klipper will clamp it).",
+      "buildArea": "build area {x}×{y} mm"
     }
   }
 }

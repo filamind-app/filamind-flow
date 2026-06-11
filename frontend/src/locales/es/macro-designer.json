@@ -105,6 +105,12 @@
       "hint": "{n} macros encontradas en la impresora — elige una para cargar su G-code y simularla.",
       "unreachable": "Impresora no accesible — conéctate para cargar tus macros instaladas.",
       "params": "Parámetros de la macro"
+    },
+    "limits": {
+      "title": "Fuera de límites / sobrevelocidad",
+      "oob": "Línea {line}: {axis}={value} está fuera del área de impresión ({min}…{max} mm).",
+      "overSpeed": "Línea {line}: {value} mm/s supera el límite de {limit} mm/s (Klipper lo limitará).",
+      "buildArea": "área {x}×{y} mm"
     }
   }
 }

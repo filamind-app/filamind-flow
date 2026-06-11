@@ -14,6 +14,30 @@ export interface SimSegment {
   dist: number
   feedrate: number
   extruding: boolean
+  out_of_bounds?: boolean
+  over_speed?: boolean
+}
+
+/** The printer's real build envelope + speed cap (from `/api/macro/limits`). */
+export interface MachineLimits {
+  min: [number, number, number]
+  max: [number, number, number]
+  max_velocity: number | null
+  max_accel: number | null
+}
+
+export interface MachineLimitsResult {
+  reachable: boolean
+  limits: MachineLimits | null
+}
+
+/** A move that leaves the build area / exceeds the speed cap. */
+export interface SimViolation {
+  line: number
+  kind: 'out_of_bounds' | 'over_speed' | string
+  axis?: string
+  value?: number
+  limit?: number | number[]
 }
 
 export interface TimelineEntry {
@@ -42,6 +66,8 @@ export interface SimResult {
   move_count: number
   command_count: number
   warnings: string[]
+  violations: SimViolation[]
+  limits: MachineLimits | null
 }
 
 export interface MacroDef {

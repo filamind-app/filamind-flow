@@ -43,3 +43,20 @@ def test_gcode_macros_sorted_and_handles_no_gcode() -> None:
     )
     assert [m["name"] for m in macros] == ["alpha", "Zeta"]
     assert macros[0]["gcode"] == "" and macros[0]["params"] == {}
+
+
+def test_limits_of_extracts_envelope_and_caps() -> None:
+    th = {
+        "axis_minimum": [0.0, 0.0, -5.0, 0.0],
+        "axis_maximum": [355.0, 364.0, 347.0, 0.0],
+        "max_velocity": 700.0,
+        "max_accel": 8200.0,
+    }
+    lim = live_state.limits_of(th)
+    assert lim is not None
+    assert lim["min"] == [0.0, 0.0, -5.0] and lim["max"] == [355.0, 364.0, 347.0]
+    assert lim["max_velocity"] == 700.0 and lim["max_accel"] == 8200.0
+    # Missing / malformed shapes degrade to None (the UI then shows a borderless preview).
+    assert live_state.limits_of({}) is None
+    assert live_state.limits_of({"axis_minimum": [0, 0]}) is None
+    assert live_state.limits_of(None) is None

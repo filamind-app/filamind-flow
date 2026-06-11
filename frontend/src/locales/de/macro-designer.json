@@ -105,6 +105,12 @@
       "hint": "{n} Makros auf dem Drucker gefunden — wähle eines, um seinen G-Code zu laden und zu simulieren.",
       "unreachable": "Drucker nicht erreichbar — verbinde dich, um deine Makros zu laden.",
       "params": "Makro-Parameter"
+    },
+    "limits": {
+      "title": "Außerhalb / zu schnell",
+      "oob": "Zeile {line}: {axis}={value} liegt außerhalb des Bauraums ({min}…{max} mm).",
+      "overSpeed": "Zeile {line}: {value} mm/s überschreitet das Limit von {limit} mm/s (Klipper begrenzt es).",
+      "buildArea": "Bauraum {x}×{y} mm"
     }
   }
 }

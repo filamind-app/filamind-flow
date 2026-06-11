@@ -105,6 +105,12 @@
       "hint": "{n} macros trouvées sur l'imprimante — choisissez-en une pour charger son G-code et la simuler.",
       "unreachable": "Imprimante injoignable — connectez-vous pour charger vos macros installées.",
       "params": "Paramètres de la macro"
+    },
+    "limits": {
+      "title": "Hors limites / survitesse",
+      "oob": "Ligne {line} : {axis}={value} est hors de la zone d'impression ({min}…{max} mm).",
+      "overSpeed": "Ligne {line} : {value} mm/s dépasse la limite de {limit} mm/s (Klipper la bridera).",
+      "buildArea": "zone {x}×{y} mm"
     }
   }
 }
