@@ -33,8 +33,21 @@ async def macro_live(settings: Settings = Depends(get_settings)) -> dict[str, An
     return {"reachable": True, "macros": macros}
 
 
+@router.get("/limits")
+async def macro_limits(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """The printer's real build envelope + speed cap (from the live ``toolhead`` object), to ground
+    the simulator's bounds / speed checks. ``reachable=false`` when the printer is down."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        objects = await client.query_objects(["toolhead"])
+    except httpx.HTTPError:
+        return {"reachable": False, "limits": None}
+    return {"reachable": True, "limits": live_state.limits_of(objects.get("toolhead"))}
+
+
 class SimulateRequest(BaseModel):
-    """Body for ``POST /macro/simulate`` — the G-code to simulate, with optional macro params."""
+    """Body for ``POST /macro/simulate`` — the G-code, optional macro params, and optional machine
+    limits to check moves against."""
 
     gcode: str = Field(
         ..., description="G-code program to simulate (may use { params.X } expressions)"
@@ -42,12 +55,16 @@ class SimulateRequest(BaseModel):
     params: dict[str, str] = Field(
         default_factory=dict, description="Macro parameter values for { params.X } substitution"
     )
+    limits: dict[str, Any] | None = Field(
+        default=None, description="Printer envelope {min:[x,y,z], max:[x,y,z], max_velocity}"
+    )
 
 
 @router.post("/simulate")
 async def macro_simulate(body: SimulateRequest) -> dict[str, Any]:
-    """Substitute macro ``{ params.X }`` expressions, then simulate → path / bounds / totals."""
+    """Substitute macro ``{ params.X }`` expressions, then simulate → path / bounds / totals (and,
+    when ``limits`` are given, out-of-bounds / over-speed violations)."""
     rendered, warnings = macro_render.render(body.gcode, body.params)
-    result = gcode_sim.simulate(rendered)
+    result = gcode_sim.simulate(rendered, body.limits)
     result["warnings"] = warnings + result["warnings"]
     return result

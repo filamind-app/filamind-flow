@@ -6,10 +6,10 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
-import { fetchLiveMacros, fetchMacros, simulateGcode } from './api'
+import { fetchLimits, fetchLiveMacros, fetchMacros, simulateGcode } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { LiveMacro, MacroDef, SimResult } from './types'
+import type { LiveMacro, MachineLimits, MacroDef, SimResult, SimViolation } from './types'
 
 const SAMPLE = [
   'G28',
@@ -42,6 +42,25 @@ const liveOptions = computed(() =>
 )
 const paramKeys = computed(() => Object.keys(macroParams.value))
 
+// The printer's real build envelope + speed cap — grounds the simulation in THIS machine's bounds.
+const machineLimits = ref<MachineLimits | null>(null)
+
+function violationMsg(v: SimViolation): string {
+  if (v.kind === 'out_of_bounds' && Array.isArray(v.limit)) {
+    return t('macroDesigner.limits.oob', {
+      line: v.line,
+      axis: v.axis,
+      value: v.value,
+      min: v.limit[0],
+      max: v.limit[1],
+    })
+  }
+  if (v.kind === 'over_speed') {
+    return t('macroDesigner.limits.overSpeed', { line: v.line, value: v.value, limit: v.limit })
+  }
+  return `${t('macroDesigner.timeline.line')} ${v.line}: ${v.kind}`
+}
+
 const r1 = (n: number): number => Math.round(n * 10) / 10
 const r2 = (n: number): number => Math.round(n * 100) / 100
 
@@ -58,11 +77,30 @@ const pathView = computed(() => {
   const segs = result.value?.segments ?? []
   const b = result.value?.bounds
   if (!b || !segs.length) return null
-  const pad = Math.max(1, (b.max_x - b.min_x + (b.max_y - b.min_y)) * 0.04)
-  const w = b.max_x - b.min_x + pad * 2
-  const h = b.max_y - b.min_y + pad * 2
-  const sx = (x: number) => x - b.min_x + pad
-  const sy = (y: number) => b.max_y - y + pad // flip Y (G-code Y up → SVG Y down)
+  const lim = result.value?.limits // the envelope the sim was run against (null when unreachable)
+  let minX = b.min_x
+  let maxX = b.max_x
+  let minY = b.min_y
+  let maxY = b.max_y
+  if (lim) {
+    minX = Math.min(minX, lim.min[0])
+    maxX = Math.max(maxX, lim.max[0])
+    minY = Math.min(minY, lim.min[1])
+    maxY = Math.max(maxY, lim.max[1])
+  }
+  const pad = Math.max(1, (maxX - minX + (maxY - minY)) * 0.04)
+  const w = maxX - minX + pad * 2
+  const h = maxY - minY + pad * 2
+  const sx = (x: number) => x - minX + pad
+  const sy = (y: number) => maxY - y + pad // flip Y (G-code Y up → SVG Y down)
+  const env = lim
+    ? {
+        x: sx(lim.min[0]),
+        y: sy(lim.max[1]),
+        w: lim.max[0] - lim.min[0],
+        h: lim.max[1] - lim.min[1],
+      }
+    : null
   const lines = segs.map((s) => ({
     x1: sx(s.from[0]),
     y1: sy(s.from[1]),
@@ -70,8 +108,9 @@ const pathView = computed(() => {
     y2: sy(s.to[1]),
     extruding: s.extruding,
     line: s.line,
+    violation: !!(s.out_of_bounds || s.over_speed),
   }))
-  return { viewBox: `0 0 ${w || 1} ${h || 1}`, lines }
+  return { viewBox: `0 0 ${w || 1} ${h || 1}`, lines, env }
 })
 
 type StepKind = 'travel' | 'print' | 'retract' | 'prime' | 'mode' | 'home' | 'set' | 'none'
@@ -184,7 +223,7 @@ async function doSimulate(): Promise<void> {
   simulating.value = true
   error.value = null
   try {
-    result.value = await simulateGcode(gcode.value, macroParams.value)
+    result.value = await simulateGcode(gcode.value, macroParams.value, machineLimits.value)
   } catch (e) {
     error.value = describeError(e)
     result.value = null
@@ -218,6 +257,9 @@ onMounted(() => {
       liveReachable.value = r.reachable
     })
     .catch(() => (liveReachable.value = false))
+  fetchLimits()
+    .then((r) => (machineLimits.value = r.limits))
+    .catch(() => (machineLimits.value = null))
 })
 </script>
 
@@ -363,9 +405,29 @@ onMounted(() => {
           }}
         </p>
 
+        <!-- Out-of-bounds / over-speed violations (only when checked against the printer) -->
+        <div v-if="result.violations.length" class="nb-card bg-brand-red/10 p-2">
+          <p class="mb-1 text-xs font-bold">{{ t('macroDesigner.limits.title') }}</p>
+          <ul class="space-y-0.5 font-mono text-[10px]">
+            <li v-for="(v, i) in result.violations" :key="i">
+              <span aria-hidden="true">⚠</span> {{ violationMsg(v) }}
+            </li>
+          </ul>
+        </div>
+
         <!-- 2D path -->
         <div>
-          <p class="mb-1 text-xs font-bold">{{ t('macroDesigner.path.title') }}</p>
+          <p class="mb-1 text-xs font-bold">
+            {{ t('macroDesigner.path.title')
+            }}<span v-if="result.limits" class="ms-2 font-mono text-[10px] font-normal opacity-60">
+              {{
+                t('macroDesigner.limits.buildArea', {
+                  x: result.limits.max[0] - result.limits.min[0],
+                  y: result.limits.max[1] - result.limits.min[1],
+                })
+              }}</span
+            >
+          </p>
           <svg
             v-if="pathView"
             :viewBox="pathView.viewBox"
@@ -374,6 +436,19 @@ onMounted(() => {
             role="img"
             :aria-label="t('macroDesigner.path.title')"
           >
+            <!-- the printer's real build area (when known) -->
+            <rect
+              v-if="pathView.env"
+              :x="pathView.env.x"
+              :y="pathView.env.y"
+              :width="pathView.env.w"
+              :height="pathView.env.h"
+              fill="none"
+              stroke="rgb(var(--c-ink) / 0.4)"
+              stroke-dasharray="2,2"
+              stroke-width="0.7"
+              vector-effect="non-scaling-stroke"
+            />
             <line
               v-for="(l, i) in pathView.lines"
               :key="i"
@@ -381,9 +456,15 @@ onMounted(() => {
               :y1="l.y1"
               :x2="l.x2"
               :y2="l.y2"
-              :stroke="l.extruding ? 'rgb(var(--c-ink))' : 'rgb(var(--c-ink) / 0.35)'"
-              :stroke-dasharray="l.extruding ? undefined : '1.5,1.5'"
-              stroke-width="1"
+              :stroke="
+                l.violation
+                  ? 'rgb(var(--c-brand-red))'
+                  : l.extruding
+                    ? 'rgb(var(--c-ink))'
+                    : 'rgb(var(--c-ink) / 0.35)'
+              "
+              :stroke-dasharray="l.extruding || l.violation ? undefined : '1.5,1.5'"
+              :stroke-width="l.violation ? 1.8 : 1"
               stroke-linecap="round"
               vector-effect="non-scaling-stroke"
               :class="{ 'seg-hi': hoveredLine === l.line }"

@@ -47,14 +47,23 @@ def _strip_comment(line: str) -> str:
     return line if idx == -1 else line[:idx]
 
 
-def simulate(gcode: str) -> dict[str, Any]:
-    """Simulate a literal G-code program → path, bounds, totals, timeline (pure)."""
+def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Simulate a literal G-code program → path, bounds, totals, timeline (pure).
+
+    When ``limits`` is given (the printer's real envelope ``{min, max, max_velocity}`` from
+    ``live_state.limits_of``), each move is checked against it: a destination outside the build area
+    is flagged ``out_of_bounds`` and a feedrate above ``max_velocity`` is flagged ``over_speed``, on
+    the segment + in a structured ``violations`` list (the UI renders them)."""
     state = _State()
     segments: list[dict[str, Any]] = []
     path2d: list[dict[str, Any]] = [{"x": 0.0, "y": 0.0, "extruding": False}]
     timeline: list[dict[str, Any]] = []
     warnings: list[str] = []
     seen_unknown: set[str] = set()
+    violations: list[dict[str, Any]] = []
+    lim_min = limits.get("min") if isinstance(limits, dict) else None
+    lim_max = limits.get("max") if isinstance(limits, dict) else None
+    max_vel = limits.get("max_velocity") if isinstance(limits, dict) else None
 
     bounds = {
         "min_x": math.inf,
@@ -106,6 +115,31 @@ def simulate(gcode: str) -> dict[str, Any]:
                 e_delta = 0.0
             dist = math.dist((x0, y0, z0), (nx, ny, nz))
             extruding = e_delta > 1e-9 and dist > 1e-9
+            out_of_bounds = False
+            over_speed = False
+            if lim_min and lim_max:
+                for i, (coord, axis) in enumerate(((nx, "X"), (ny, "Y"), (nz, "Z"))):
+                    if coord < lim_min[i] - 1e-6 or coord > lim_max[i] + 1e-6:
+                        out_of_bounds = True
+                        violations.append(
+                            {
+                                "line": lineno,
+                                "kind": "out_of_bounds",
+                                "axis": axis,
+                                "value": round(coord, 2),
+                                "limit": [lim_min[i], lim_max[i]],
+                            }
+                        )
+                if max_vel and dist > 1e-9 and state.f / 60.0 > max_vel + 1e-6:
+                    over_speed = True
+                    violations.append(
+                        {
+                            "line": lineno,
+                            "kind": "over_speed",
+                            "value": round(state.f / 60.0, 1),
+                            "limit": round(max_vel, 1),
+                        }
+                    )
             segments.append(
                 {
                     "line": lineno,
@@ -115,6 +149,8 @@ def simulate(gcode: str) -> dict[str, Any]:
                     "dist": round(dist, 4),
                     "feedrate": state.f,
                     "extruding": extruding,
+                    "out_of_bounds": out_of_bounds,
+                    "over_speed": over_speed,
                 }
             )
             path2d.append({"x": round(nx, 4), "y": round(ny, 4), "extruding": extruding})
@@ -171,4 +207,6 @@ def simulate(gcode: str) -> dict[str, Any]:
         "move_count": move_count,
         "command_count": len(timeline),
         "warnings": warnings,
+        "violations": violations,
+        "limits": limits if isinstance(limits, dict) else None,
     }
