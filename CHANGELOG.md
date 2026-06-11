@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.181.0] - 2026-06-12
+
+### Added
+
+- **Macro Designer — static macro linter.** Alongside the simulation, the widget now runs a set of
+  static safety checks over the program and lists each finding with a plain-language explanation +
+  fix: an **unbalanced `SAVE_GCODE_STATE` / `RESTORE_GCODE_STATE`** (the saved mode is never
+  restored), a macro that **ends in relative mode** (`G91` / `M83` with no restore — the next command
+  moves relatively, a classic foot-gun), and an **extruding move before `G28`** (cold / un-homed
+  extrude risk). Catches macro *logic* bugs before the macro ever touches the machine — no Klipper UI
+  does this. Localised in all 7 languages. (Phase 7 of the Config Editor + Macro Designer programme.)
+
 ## [0.180.0] - 2026-06-12
 
 ### Added

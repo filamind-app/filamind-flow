@@ -47,6 +47,70 @@ def _strip_comment(line: str) -> str:
     return line if idx == -1 else line[:idx]
 
 
+def lint(gcode: str) -> list[dict[str, Any]]:
+    """Static safety checks over a macro body (no execution) — the classic Klipper foot-guns:
+
+    * ``gcode_state_unbalanced`` — a ``SAVE_GCODE_STATE`` without a matching ``RESTORE_GCODE_STATE``
+      (or vice-versa), which leaks the saved positioning / extruder mode.
+    * ``ends_relative`` — the program switches to relative (``G91`` / ``M83``) and ends there
+      without restoring, leaving the printer in relative mode for whatever runs next.
+    * ``extrude_before_home`` — an extruding move before any ``G28`` (cold / un-homed extrude risk).
+
+    Structured findings ``{level, line, rule}`` — the UI renders the message + fix per rule. Some
+    may not apply to a fragment that assumes the caller already homed / set a mode.
+    """
+    abs_xyz = True
+    abs_e = True
+    homed = False
+    used_rel_xyz = False
+    used_rel_e = False
+    saves = 0
+    restores = 0
+    e_pos = 0.0
+    extrude_before_home: int | None = None
+
+    for lineno, raw in enumerate(gcode.splitlines(), start=1):
+        line = _strip_comment(raw).strip()
+        if not line:
+            continue
+        parts = line.split(None, 1)
+        cmd = parts[0].upper()
+        if cmd == "SAVE_GCODE_STATE":
+            saves += 1
+        elif cmd == "RESTORE_GCODE_STATE":
+            restores += 1
+        elif cmd == "G28":
+            homed = True
+        elif cmd == "G90":
+            abs_xyz = True
+        elif cmd == "G91":
+            abs_xyz = False
+            used_rel_xyz = True
+        elif cmd == "M82":
+            abs_e = True
+        elif cmd == "M83":
+            abs_e = False
+            used_rel_e = True
+        elif cmd in ("G0", "G1") and len(parts) > 1:
+            words = _parse_words(parts[1])
+            if "E" in words:
+                delta = words["E"] - e_pos if abs_e else words["E"]
+                e_pos = words["E"] if abs_e else e_pos + words["E"]
+                if delta > 1e-9 and not homed and extrude_before_home is None:
+                    extrude_before_home = lineno
+
+    findings: list[dict[str, Any]] = []
+    if saves != restores:
+        findings.append({"level": "error", "line": None, "rule": "gcode_state_unbalanced"})
+    if restores == 0 and ((used_rel_xyz and not abs_xyz) or (used_rel_e and not abs_e)):
+        findings.append({"level": "warn", "line": None, "rule": "ends_relative"})
+    if extrude_before_home is not None:
+        findings.append(
+            {"level": "warn", "line": extrude_before_home, "rule": "extrude_before_home"}
+        )
+    return findings
+
+
 def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]:
     """Simulate a literal G-code program → path, bounds, totals, timeline (pure).
 

@@ -111,6 +111,23 @@
       "oob": "السطر {line}: {axis}={value} خارج منطقة البناء ({min}…{max} مم).",
       "overSpeed": "السطر {line}: {value} مم/ث يتجاوز حدّ الطابعة {limit} مم/ث (سيقيّده Klipper).",
       "buildArea": "منطقة البناء {x}×{y} مم"
+    },
+    "lint": {
+      "title": "مدقّق الماكرو — {n} ملاحظة",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE دون RESTORE_GCODE_STATE مطابق — الوضع المحفوظ لا يُستعاد أبدًا.",
+          "fix": "أضف RESTORE_GCODE_STATE (أو احذف SAVE)."
+        },
+        "ends_relative": {
+          "msg": "ينتهي الماكرو في الوضع النسبي (G91/M83) — الأمر التالي سيتحرك نسبيًا.",
+          "fix": "أضف G90 / M82 في النهاية، أو لُفّ الحركات بـ SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
+        },
+        "extrude_before_home": {
+          "msg": "حركة بثق قبل G28 — تخاطر ببثق بارد أو دون تصفير.",
+          "fix": "صفّر (G28) وسخّن الهوت-إند قبل البثق."
+        }
+      }
     }
   }
 }

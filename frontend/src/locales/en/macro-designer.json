@@ -111,6 +111,23 @@
       "oob": "Line {line}: {axis}={value} is outside the build area ({min}…{max} mm).",
       "overSpeed": "Line {line}: {value} mm/s exceeds the printer's {limit} mm/s limit (Klipper will clamp it).",
       "buildArea": "build area {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Macro linter — {n} finding(s)",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE without a matching RESTORE_GCODE_STATE — the saved positioning/extruder mode is never restored.",
+          "fix": "Add a RESTORE_GCODE_STATE (or remove the SAVE)."
+        },
+        "ends_relative": {
+          "msg": "The macro ends in relative mode (G91/M83) — the next command will move relatively.",
+          "fix": "Add a final G90 / M82, or wrap the moves in SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
+        },
+        "extrude_before_home": {
+          "msg": "An extruding move happens before G28 — risks a cold or un-homed extrude.",
+          "fix": "Home (G28) and heat the hotend before extruding."
+        }
+      }
     }
   }
 }

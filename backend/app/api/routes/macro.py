@@ -66,5 +66,6 @@ async def macro_simulate(body: SimulateRequest) -> dict[str, Any]:
     when ``limits`` are given, out-of-bounds / over-speed violations)."""
     rendered, warnings = macro_render.render(body.gcode, body.params)
     result = gcode_sim.simulate(rendered, body.limits)
+    result["lint"] = gcode_sim.lint(rendered)
     result["warnings"] = warnings + result["warnings"]
     return result

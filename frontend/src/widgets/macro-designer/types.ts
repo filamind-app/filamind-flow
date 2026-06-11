@@ -40,6 +40,13 @@ export interface SimViolation {
   limit?: number | number[]
 }
 
+/** A static macro-linter finding (rendered to a message + fix per rule). */
+export interface LintFinding {
+  level: 'error' | 'warn' | string
+  line: number | null
+  rule: string
+}
+
 export interface TimelineEntry {
   line: number
   cmd: string
@@ -68,6 +75,7 @@ export interface SimResult {
   warnings: string[]
   violations: SimViolation[]
   limits: MachineLimits | null
+  lint: LintFinding[]
 }
 
 export interface MacroDef {
