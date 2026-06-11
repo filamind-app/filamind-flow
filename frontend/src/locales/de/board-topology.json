@@ -141,6 +141,22 @@
         "warn": "beeinträchtigt",
         "out": "Firmware nicht synchron"
       }
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "Details",
+        "atlas": "Pin-Atlas"
+      },
+      "summary": "{used}/{total} Pins belegt · {free} frei",
+      "loading": "Pin-Map wird gelesen…",
+      "failed": "Pin-Map konnte nicht gelesen werden.",
+      "unavailable": "Noch keine Pin-Map für dieses Board.",
+      "search": "Pins, Signale, Sektionen suchen…",
+      "freeOnly": "Nur freie",
+      "noMatch": "Keine Pins passen.",
+      "other": "Sonstige",
+      "conflict": "Pin-Konflikt",
+      "caveat": "Verdrahtungshinweis"
     }
   }
 }

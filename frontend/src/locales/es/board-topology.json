@@ -141,6 +141,22 @@
         "warn": "degradado",
         "out": "firmware desincronizado"
       }
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "Detalles",
+        "atlas": "Atlas de pines"
+      },
+      "summary": "{used}/{total} pines usados · {free} libres",
+      "loading": "Leyendo el mapa de pines…",
+      "failed": "No se pudo leer el mapa de pines.",
+      "unavailable": "Aún no hay mapa de pines para esta placa.",
+      "search": "Buscar pines, señales, secciones…",
+      "freeOnly": "Solo libres",
+      "noMatch": "Ningún pin coincide.",
+      "other": "Otros",
+      "conflict": "Conflicto de pines",
+      "caveat": "Advertencia de cableado"
     }
   }
 }

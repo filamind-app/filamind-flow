@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.172.0] - 2026-06-11
+
+### Added
+
+- **Board Topology — a Pin Atlas + wiring-conflict scanner.** The node inspector gains a **Pin Atlas**
+  tab: an X-ray of the matched board's pins showing, at a glance, **which pins the live config uses
+  (and for which `section.key`) vs which are free**, grouped by function, with a used/free usage bar,
+  a pin search, and a "free only" filter for planning your next mod. A **wiring-health scanner** runs
+  over the live config and surfaces:
+  - **Pin conflicts** — a physical pin driven by more than one config section (a real wiring bug).
+  - **Wiring caveats** — a board electronics warning that names a pin you're actually using, bound
+    right to that pin (e.g. on the SV08, *"heater_pin PA0 is a 3.3V trigger — never connect mains to
+    PA0"*).
+
+  Backed by a new read-only `GET /api/topology/pin-atlas/{mcu_name}` (honours a confirmed board
+  override). Degrades to "no pin map for this board yet" for sparse/unmatched boards and to a clear
+  message when the printer is unreachable. Localised in all 7 languages.
+
 ## [0.171.0] - 2026-06-11
 
 ### Added

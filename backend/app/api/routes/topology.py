@@ -13,7 +13,7 @@ import httpx
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
-from app.models.schemas import BoardOverrideRequest, McuKeyRequest, Topology
+from app.models.schemas import BoardOverrideRequest, McuKeyRequest, PinAtlas, Topology
 from app.services import board_topology, reference_data, topology_overrides
 from app.services.moonraker_client import MoonrakerClient
 
@@ -55,3 +55,15 @@ async def clear_board_override(
     """Remove an MCU's board override (revert to the auto suggestion)."""
     topology_overrides.clear_override(settings.data_dir, request.mcu_name)
     return await _build(settings)
+
+
+@router.get("/pin-atlas/{mcu_name}", response_model=PinAtlas)
+async def pin_atlas(mcu_name: str, settings: Settings = Depends(get_settings)) -> PinAtlas:
+    """The used-vs-free pin map of one MCU's resolved board + wiring-health findings (double-assign,
+    electronics caveats on a used pin). ``available=false`` when the board has no pin-map."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        data = await board_topology.gather_pin_atlas(client, mcu_name, settings.data_dir)
+        return PinAtlas.model_validate(data)
+    except httpx.HTTPError:
+        return PinAtlas(mcu_name=mcu_name, available=False)
