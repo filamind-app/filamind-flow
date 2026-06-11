@@ -109,6 +109,21 @@ def test_project_graph_includes_and_cross_file_lint() -> None:
     assert "printer-20260101.cfg" not in dup["files"]
 
 
+def test_project_graph_same_basename_is_not_double_pulled() -> None:
+    """An exact-path include must pull only that file, not a same-named file in another folder —
+    otherwise a vendor source copy + the user's active copy fabricate a duplicate-section error."""
+    files = [
+        ("printer.cfg", "[include user/settings.cfg]\n"),
+        ("user/settings.cfg", "[gcode_macro FOO]\ngcode:\n  M117 hi\n"),
+        # A same-named source/template copy living elsewhere — NOT what the include points at.
+        ("vendor/source/settings.cfg", "[gcode_macro FOO]\ngcode:\n  M117 hi\n"),
+    ]
+    out = config_service.project_graph_from_files(files)
+    assert "user/settings.cfg" in out["active"]
+    assert "vendor/source/settings.cfg" not in out["active"]
+    assert not any(lt["rule"] == "duplicate_section" for lt in out["lint"])
+
+
 def test_is_config_file() -> None:
     assert config_service._is_config_file("printer.cfg")
     assert config_service._is_config_file("macros/print.CFG")

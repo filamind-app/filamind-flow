@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.186.0] - 2026-06-12
+
+### Fixed
+
+- **Config Editor — include resolution no longer double-pulls same-named files.** An `[include]`
+  now resolves strictly to the file at its exact relative path; the basename fallback fires only
+  when exactly one file in the config folder carries that name. Previously, when two files shared a
+  basename in different folders (for example a macro pack's bundled template copy and the user's
+  active copy of it), a single include pulled in both — inflating the active config tree and
+  fabricating duplicate-section warnings for every macro they had in common. An ambiguous basename
+  now resolves to nothing rather than guessing, and is not reported as a broken include.
+
 ## [0.185.0] - 2026-06-12
 
 ### Changed

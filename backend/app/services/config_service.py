@@ -220,20 +220,28 @@ def _include_targets(cfg: ConfigFile) -> list[str]:
 
 
 def _resolve_include(target: str, base: str, paths: set[str]) -> tuple[list[str], bool]:
-    """Map an include target (relative to its file ``base``) to real file paths.
+    """Map an include target (Klipper resolves it relative to its file ``base``) to real file paths.
 
-    Returns ``(matched_paths, missing)`` — ``missing`` is True when nothing matched (broken
-    include). A glob that matches at least one file is not missing.
+    Returns ``(matched_paths, missing)`` — ``missing`` is True only when the target genuinely can't
+    be found (a broken include). Resolution prefers the exact relative path; the basename fallback
+    fires *only* when exactly one file carries that basename, so two same-named files in different
+    folders (e.g. a vendor source copy and the user's active copy) are never both pulled in for a
+    single ``[include]`` — which would otherwise fabricate duplicate-section errors. A glob that
+    matches at least one file is not missing; an ambiguous basename resolves to nothing but is not
+    reported as missing (we simply don't guess).
     """
     rel = posixpath.normpath(posixpath.join(posixpath.dirname(base), target))
     if any(ch in target for ch in "*?[") or any(ch in rel for ch in "*?["):
         matched = sorted(p for p in paths if fnmatch.fnmatch(p, target) or fnmatch.fnmatch(p, rel))
         return matched, not matched
-    direct = sorted(p for p in paths if p in {rel, target})
-    if direct:
-        return direct, False
-    base_hit = sorted(p for p in paths if posixpath.basename(p) == posixpath.basename(target))
-    return base_hit, not base_hit
+    if rel in paths:
+        return [rel], False
+    if target in paths:
+        return [target], False
+    base_hits = sorted(p for p in paths if posixpath.basename(p) == posixpath.basename(target))
+    if len(base_hits) == 1:
+        return base_hits, False
+    return [], len(base_hits) == 0  # 0 → missing; >1 → ambiguous, don't guess (not "missing")
 
 
 def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
