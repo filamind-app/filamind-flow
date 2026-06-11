@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.188.0] - 2026-06-12
+
+### Fixed
+
+- **Config parser now accepts a comment after a section header** (`[stepper_z] # Z motor`). Klipper
+  allows a trailing inline comment on a section line, but the parser only recognised a header when
+  the line *ended* with `]`, so any such section — and everything in it — was silently dropped from
+  the structured view, validation, drift, the Pin Doctor, and the project graph. These sections are
+  now parsed (header without the comment), and the raw line still round-trips byte-for-byte so the
+  comment is preserved on save. This also clears false **orphan-driver** project-lint findings
+  (e.g. a multi-`Z` printer whose `[stepper_z1] # …` headers were invisible, making their
+  `[tmc2209 stepper_z1]` drivers look unpaired).
+
 ## [0.187.0] - 2026-06-12
 
 ### Fixed

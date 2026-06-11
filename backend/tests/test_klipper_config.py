@@ -80,6 +80,19 @@ def test_header_name_split() -> None:
     assert cfg.get("extruder").name == ""
 
 
+def test_section_header_with_trailing_inline_comment() -> None:
+    """Klipper accepts a comment after a section header's ``]`` — the section must still parse
+    (header without the comment) and round-trip byte-for-byte (raw line keeps the comment)."""
+    src = "[stepper_z] # Z motor\nstep_pin: PA1\n\n[gcode_macro FOO] ; note\ngcode:\n  M117 hi\n"
+    cfg = kc.parse(src)
+    assert cfg.get("stepper_z") is not None
+    assert cfg.get("stepper_z").value("step_pin") == "PA1"
+    assert cfg.get("gcode_macro FOO") is not None
+    assert kc.dump(cfg) == src  # the trailing comment survives verbatim
+    # A line with non-comment text after ``]`` is not a section header.
+    assert kc.parse("[x] y z\n").get("x") is None
+
+
 def test_inline_comment_preserved_on_param() -> None:
     cfg = kc.parse(SAMPLE)
     rd = cfg.get("stepper_x").get("rotation_distance")
