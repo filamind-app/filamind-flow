@@ -66,7 +66,9 @@
       "extrude": "{mm} mm extruded",
       "time": "~{s} s",
       "bounds": "Bounds",
-      "empty": "No moves to simulate."
+      "empty": "No moves to simulate.",
+      "timeAccel": "(accel-aware)",
+      "timeConstant": "(no limits)"
     },
     "path": {
       "title": "Toolhead path (XY)",
@@ -128,6 +130,14 @@
           "fix": "Home (G28) and heat the hotend before extruding."
         }
       }
+    },
+    "heat": {
+      "colorBy": "Color by",
+      "none": "Flat",
+      "speed": "Speed",
+      "extrude": "Extrusion",
+      "legendSpeed": "Speed (mm/s)",
+      "legendExtrude": "Extrusion (mm/s)"
     }
   }
 }

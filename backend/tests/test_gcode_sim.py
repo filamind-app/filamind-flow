@@ -25,6 +25,31 @@ def test_total_distance_and_time() -> None:
     assert out["est_time_s"] == 1.0
 
 
+def test_accel_aware_time_is_slower_than_constant_velocity() -> None:
+    # A short 10 mm move at 100 mm/s: the constant-velocity model gives 0.1 s; the accel-aware
+    # trapezoid (ramp up + down at 3000 mm/s²) must take longer and tag the model used.
+    g = "G90\nG1 X10 F6000\n"
+    const = gcode_sim.simulate(g)
+    assert const["time_model"] == "constant"
+    assert const["est_time_s"] == 0.1
+    accel = gcode_sim.simulate(
+        g, {"min": [0, 0, 0], "max": [300, 300, 300], "max_velocity": 500, "max_accel": 3000}
+    )
+    assert accel["time_model"] == "accel"
+    assert accel["est_time_s"] > const["est_time_s"]
+    seg = accel["segments"][0]
+    assert seg["v_mm_s"] == 100.0 and seg["time_s"] > 0
+
+
+def test_feedrate_capped_at_max_velocity_in_segment_speed() -> None:
+    # Commanded 600 mm/s but the machine caps at 200 → the segment cruise speed is the cap.
+    out = gcode_sim.simulate(
+        "G90\nG1 X100 F36000\n",
+        {"min": [0, 0, 0], "max": [300, 300, 300], "max_velocity": 200, "max_accel": 5000},
+    )
+    assert out["segments"][0]["v_mm_s"] == 200.0
+
+
 def test_extrusion_absolute_vs_relative() -> None:
     # Absolute E: G1 X10 E5 then G1 X20 E8 → deltas 5 then 3 = 8 total.
     abs_out = gcode_sim.simulate("G90\nM82\nG1 X10 E5 F3000\nG1 X20 E8")

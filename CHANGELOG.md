@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.192.0] - 2026-06-12
+
+### Added
+
+- **Macro Designer — accel-aware timing + a speed / extrusion heatmap.** The time estimate now uses
+  a trapezoidal velocity profile from the printer's real `max_accel` and `max_velocity` (ramp up →
+  cruise → ramp down, or a triangular peak on a short move) instead of assuming instant full speed —
+  far more realistic for a macro's short start/stop moves. Each move carries its own time and
+  effective speed, and the path preview can be recoloured as a **heatmap by speed or by extrusion
+  rate** (blue → red, with a legend), making slow corners and fat extrusion moves obvious at a
+  glance. The time stat is tagged `accel-aware` when limits are available (and the per-step
+  walkthrough uses the same per-segment times). Localised in all 7 languages. (Phase 13 of the
+  Config Editor + Macro Designer programme.)
+
 ## [0.191.0] - 2026-06-12
 
 ### Added

@@ -66,7 +66,9 @@
       "extrude": "{mm} mm extruidos",
       "time": "~{s} s",
       "bounds": "Límites",
-      "empty": "No hay movimientos que simular."
+      "empty": "No hay movimientos que simular.",
+      "timeAccel": "(con aceleración)",
+      "timeConstant": "(sin límites)"
     },
     "path": {
       "title": "Trayectoria del cabezal (XY)",
@@ -128,6 +130,14 @@
           "fix": "Haz home (G28) y calienta el hotend antes de extruir."
         }
       }
+    },
+    "heat": {
+      "colorBy": "Colorear por",
+      "none": "Plano",
+      "speed": "Velocidad",
+      "extrude": "Extrusión",
+      "legendSpeed": "Velocidad (mm/s)",
+      "legendExtrude": "Extrusión (mm/s)"
     }
   }
 }
