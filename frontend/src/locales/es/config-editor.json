@@ -33,7 +33,10 @@
           "title": "Solo lectura (por ahora)",
           "body": "Esta primera versión solo lee y muestra la configuración — no se escribe nada en la impresora. La edición guiada con confirmación (con una copia de seguridad automática antes de cualquier guardado y un reinicio posterior) llegará en una actualización futura."
         },
-        "glossary": { "title": "Glosario", "body": "" }
+        "glossary": {
+          "title": "Glosario",
+          "body": ""
+        }
       },
       "glossary": {
         "section": {
@@ -118,6 +121,16 @@
       "loading": "Leyendo la configuración…",
       "error": "No se pudo leer la configuración de la impresora.",
       "retry": "Reintentar"
+    },
+    "catalog": {
+      "title": "Añadir un bloque de config del catálogo",
+      "hint": "Elige una pieza — su bloque Klipper exacto (run_current, sense_resistor y nombres de pin reales) se añade al archivo para revisarlo y guardarlo.",
+      "drivers": "Drivers",
+      "motors": "Motores",
+      "boards": "Placas",
+      "pickPlaceholder": "Buscar en el catálogo…",
+      "inserted": "Bloque de {name} insertado — revísalo en Raw y guarda.",
+      "noSnippet": "No hay bloque de config para {name}."
     }
   }
 }

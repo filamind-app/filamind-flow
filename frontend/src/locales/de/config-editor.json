@@ -33,7 +33,10 @@
           "title": "Nur lesend (vorerst)",
           "body": "Diese erste Version liest die Konfiguration nur und zeigt sie an — es wird nichts auf den Drucker geschrieben. Geführtes, mit Bestätigung abgesichertes Bearbeiten (mit automatischem Backup vor jedem Speichern und anschließendem Neustart) kommt in einem späteren Update."
         },
-        "glossary": { "title": "Glossar", "body": "" }
+        "glossary": {
+          "title": "Glossar",
+          "body": ""
+        }
       },
       "glossary": {
         "section": {
@@ -118,6 +121,16 @@
       "loading": "Konfiguration wird gelesen…",
       "error": "Die Konfiguration konnte nicht vom Drucker gelesen werden.",
       "retry": "Erneut versuchen"
+    },
+    "catalog": {
+      "title": "Konfigblock aus dem Katalog einfügen",
+      "hint": "Wähle ein Teil — sein hardware-genauer Klipper-Block (echter run_current, sense_resistor, Pin-Namen) wird zur Datei hinzugefügt, zum Prüfen und Speichern.",
+      "drivers": "Treiber",
+      "motors": "Motoren",
+      "boards": "Boards",
+      "pickPlaceholder": "Katalog durchsuchen…",
+      "inserted": "Block für {name} eingefügt — in Roh prüfen und speichern.",
+      "noSnippet": "Kein Konfigblock für {name} verfügbar."
     }
   }
 }

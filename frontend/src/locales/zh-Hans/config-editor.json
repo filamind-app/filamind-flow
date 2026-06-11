@@ -33,7 +33,10 @@
           "title": "只读（目前）",
           "body": "这第一个版本仅读取并显示配置 — 不会向打印机写入任何内容。引导式、需确认的编辑（在任何保存前自动备份、保存后重启）将在后续更新中推出。"
         },
-        "glossary": { "title": "术语表", "body": "" }
+        "glossary": {
+          "title": "术语表",
+          "body": ""
+        }
       },
       "glossary": {
         "section": {
@@ -118,6 +121,16 @@
       "loading": "正在读取配置…",
       "error": "无法从打印机读取配置。",
       "retry": "重试"
+    },
+    "catalog": {
+      "title": "从目录添加配置块",
+      "hint": "选择一个部件 — 其硬件精确的 Klipper 配置块（真实的 run_current、sense_resistor、引脚名）会追加到文件，供你检查并保存。",
+      "drivers": "驱动",
+      "motors": "电机",
+      "boards": "主板",
+      "pickPlaceholder": "搜索目录…",
+      "inserted": "已插入 {name} 的配置块 — 在「原始」中检查并保存。",
+      "noSnippet": "没有 {name} 的配置块。"
     }
   }
 }

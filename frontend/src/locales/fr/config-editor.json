@@ -33,7 +33,10 @@
           "title": "Lecture seule (pour l'instant)",
           "body": "Cette première version se contente de lire et d'afficher la configuration — rien n'est écrit sur l'imprimante. L'édition guidée avec confirmation (incluant une sauvegarde automatique avant tout enregistrement et un redémarrage ensuite) arrivera dans une prochaine mise à jour."
         },
-        "glossary": { "title": "Glossaire", "body": "" }
+        "glossary": {
+          "title": "Glossaire",
+          "body": ""
+        }
       },
       "glossary": {
         "section": {
@@ -118,6 +121,16 @@
       "loading": "Lecture de la configuration…",
       "error": "Impossible de lire la configuration depuis l'imprimante.",
       "retry": "Réessayer"
+    },
+    "catalog": {
+      "title": "Ajouter un bloc de config depuis le catalogue",
+      "hint": "Choisissez une pièce — son bloc Klipper exact (run_current, sense_resistor, noms de broches réels) est ajouté au fichier pour relecture et enregistrement.",
+      "drivers": "Drivers",
+      "motors": "Moteurs",
+      "boards": "Cartes",
+      "pickPlaceholder": "Rechercher dans le catalogue…",
+      "inserted": "Bloc de {name} inséré — relisez-le en Brut et enregistrez.",
+      "noSnippet": "Aucun bloc de config pour {name}."
     }
   }
 }
