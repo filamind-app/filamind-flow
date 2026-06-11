@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.189.0] - 2026-06-12
+
+### Changed
+
+- **Config Editor — a section defined in several included files is now shown as an override, not a
+  duplicate error.** Klipper merges same-named sections across includes and the last-loaded
+  definition wins — that's the normal way a config redefines a stock macro (e.g. overriding
+  Mainsail's `PAUSE` in a file included later). The project lint now reports these as informational
+  **overrides** (neutral styling, listing every file involved) instead of warnings, so the
+  override is visible without falsely flagging a working config. The "issues" badge counts only
+  actionable findings (broken includes, orphan drivers); a within-a-single-file duplicate is left
+  to the per-file validator that already reports it.
+
 ## [0.188.0] - 2026-06-12
 
 ### Fixed

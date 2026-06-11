@@ -167,8 +167,8 @@
       "lint": "Comprobaciones entre archivos",
       "rule": {
         "broken_include": "Include roto: ",
-        "duplicate_section": "Sección duplicada: ",
-        "orphan_driver": "Driver huérfano — sin sección coincidente: "
+        "orphan_driver": "Driver huérfano — sin sección coincidente: ",
+        "section_override": "Anulación (definida en varios archivos, gana la última): "
       }
     }
   }

@@ -167,8 +167,8 @@
       "lint": "Cross-file checks",
       "rule": {
         "broken_include": "Broken include: ",
-        "duplicate_section": "Duplicate section: ",
-        "orphan_driver": "Orphan driver — no matching section: "
+        "orphan_driver": "Orphan driver — no matching section: ",
+        "section_override": "Override (defined in multiple files, last wins): "
       }
     }
   }

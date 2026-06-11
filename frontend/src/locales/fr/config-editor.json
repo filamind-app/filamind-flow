@@ -167,8 +167,8 @@
       "lint": "Vérifications inter-fichiers",
       "rule": {
         "broken_include": "Include cassé : ",
-        "duplicate_section": "Section en double : ",
-        "orphan_driver": "Driver orphelin — aucune section correspondante : "
+        "orphan_driver": "Driver orphelin — aucune section correspondante : ",
+        "section_override": "Remplacement (défini dans plusieurs fichiers, le dernier gagne) : "
       }
     }
   }
