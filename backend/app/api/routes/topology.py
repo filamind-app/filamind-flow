@@ -13,8 +13,19 @@ import httpx
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
-from app.models.schemas import BoardOverrideRequest, McuKeyRequest, PinAtlas, Topology
-from app.services import board_topology, reference_data, topology_overrides
+from app.models.schemas import (
+    BoardOverrideRequest,
+    McuKeyRequest,
+    PinAtlas,
+    Topology,
+    TopologyDiff,
+)
+from app.services import (
+    board_topology,
+    reference_data,
+    topology_overrides,
+    topology_snapshot,
+)
 from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/topology", tags=["topology"])
@@ -55,6 +66,38 @@ async def clear_board_override(
     """Remove an MCU's board override (revert to the auto suggestion)."""
     topology_overrides.clear_override(settings.data_dir, request.mcu_name)
     return await _build(settings)
+
+
+@router.post("/snapshot", response_model=TopologyDiff)
+async def save_snapshot(settings: Settings = Depends(get_settings)) -> TopologyDiff:
+    """Save the current topology as the hardware baseline (for later change detection)."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        topo = await board_topology.gather_topology(client, settings.data_dir)
+    except httpx.HTTPError:
+        return TopologyDiff(has_baseline=False)
+    snap = topology_snapshot.save_snapshot(settings.data_dir, topo.get("mcus", []))
+    return TopologyDiff(has_baseline=True, saved_at=snap.get("saved_at"), changes=[])
+
+
+@router.get("/snapshot/diff", response_model=TopologyDiff)
+async def snapshot_diff(settings: Settings = Depends(get_settings)) -> TopologyDiff:
+    """Compare the live topology to the saved baseline — board swapped / MCU added or removed /
+    connection changed / component count moved. ``has_baseline=false`` until a snapshot is saved."""
+    baseline = topology_snapshot.read_snapshot(settings.data_dir)
+    if not baseline:
+        return TopologyDiff(has_baseline=False)
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        topo = await board_topology.gather_topology(client, settings.data_dir)
+    except httpx.HTTPError:
+        return TopologyDiff(has_baseline=True, saved_at=baseline.get("saved_at"))
+    changes = topology_snapshot.diff(baseline, topo.get("mcus", []))
+    return TopologyDiff(
+        has_baseline=True,
+        saved_at=baseline.get("saved_at"),
+        changes=changes,  # type: ignore[arg-type]
+    )
 
 
 @router.get("/pin-atlas/{mcu_name}", response_model=PinAtlas)

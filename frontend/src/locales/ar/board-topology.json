@@ -157,6 +157,23 @@
       "other": "أخرى",
       "conflict": "تعارض أطراف",
       "caveat": "تنبيه توصيل"
+    },
+    "snapshot": {
+      "save": "حفظ لقطة",
+      "copy": "نسخ الملخّص",
+      "copied": "تم النسخ!",
+      "none": "لا توجد قاعدة محفوظة — احفظ لقطة لاكتشاف التغييرات لاحقًا.",
+      "unchanged": "لا تغييرات في العتاد منذ اللقطة",
+      "changed": "{n} تغيير منذ اللقطة",
+      "summaryTitle": "FilaMind — خريطة الآلة",
+      "change": {
+        "added": "أُضيفت الوحدة «{mcu}»",
+        "removed": "أُزيلت الوحدة «{mcu}»",
+        "board_changed": "تغيّرت لوحة «{mcu}»: {before} → {after}",
+        "connection_changed": "تغيّر اتصال «{mcu}»: {before} → {after}",
+        "chip_changed": "تغيّرت شريحة «{mcu}»: {before} → {after}",
+        "components_changed": "تغيّر عدد مكوّنات «{mcu}»: {before} → {after}"
+      }
     }
   }
 }

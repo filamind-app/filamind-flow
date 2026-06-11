@@ -157,6 +157,23 @@
     "sync": {
       "synced": "Firmware in sync",
       "outOfSync": "Firmware OUT OF SYNC"
+    },
+    "snapshot": {
+      "save": "Save snapshot",
+      "copy": "Copy summary",
+      "copied": "Copied!",
+      "none": "No baseline saved — save a snapshot to detect future changes.",
+      "unchanged": "No hardware changes since the snapshot",
+      "changed": "{n} change(s) since the snapshot",
+      "summaryTitle": "FilaMind — machine map",
+      "change": {
+        "added": "MCU “{mcu}” was added",
+        "removed": "MCU “{mcu}” was removed",
+        "board_changed": "“{mcu}” board changed: {before} → {after}",
+        "connection_changed": "“{mcu}” connection changed: {before} → {after}",
+        "chip_changed": "“{mcu}” chip changed: {before} → {after}",
+        "components_changed": "“{mcu}” component count changed: {before} → {after}"
+      }
     }
   }
 }
