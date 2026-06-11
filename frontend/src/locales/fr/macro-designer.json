@@ -99,7 +99,7 @@
       "abs": "ABS",
       "rel": "REL",
       "cum": "jusqu'ici : {d} mm · {e} mm · ~{s} s",
-      "note": "Les lignes avec des expressions non résolues ou un contrôle Jinja ne sont pas simulées et sont omises ici."
+      "note": "Les boucles et conditions sont développées comme sur l’imprimante ; une macro nécessitant l’état en direct retombe sur un aperçu littéral."
     },
     "live": {
       "label": "Depuis l'imprimante",

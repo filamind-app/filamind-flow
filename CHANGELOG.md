@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.196.0] - 2026-06-12
+
+### Added
+
+- **Macro Designer — real macro expansion (loops, conditionals, `{% set %}`).** The simulator now
+  renders the printer's actual macro template language — single-brace `{ … }` expressions **and**
+  `{% … %}` control flow — instead of only substituting simple `{ params.X }` values. A
+  `{% for %}` loop unrolls, a `{% if params.PURGE %}` branch is taken or skipped from the supplied
+  parameters, and `{% set %}` / math work as on the printer, so what you preview matches what would
+  run. Rendering happens in a **sandbox**, and a macro that depends on live printer state (which an
+  offline render doesn't have) degrades gracefully to a literal preview with a note. The built-in
+  `default(…)` / `int` / `float` behaviour is unchanged.
+
+### Dependencies
+
+- Adds **Jinja2** (`jinja2>=3.1,<4.0`) to the backend, used to render the macro template language.
+
 ## [0.195.0] - 2026-06-12
 
 ### Added
