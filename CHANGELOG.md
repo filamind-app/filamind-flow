@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.183.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — pin-aware editing for `*_pin` params.** In the structured view, any pin field
+  (`step_pin`, `heater_pin`, `uart_pin`, …) now resolves its owning MCU from the pin value's
+  `chip:` prefix and offers that board's **named pins as type-ahead suggestions**, so you pick a
+  pin that physically exists instead of guessing. Inline badges flag a value that isn't in the
+  board's pin map (likely a typo), a pin already assigned in another section, and a pin that carries
+  an electronics caveat — caught right at the field before a `FIRMWARE_RESTART`. Edits ride the same
+  surgical round-trip writer and gated save as the typed TMC controls. New read-only
+  `GET /api/config/pin-map` feed (per-MCU board pins + owners + caveat). Localised in all 7
+  languages. (Phase 9 of the Config Editor + Macro Designer programme.)
+
 ## [0.182.0] - 2026-06-12
 
 ### Added
