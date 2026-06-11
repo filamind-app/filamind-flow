@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.169.0] - 2026-06-11
+
+### Added
+
+- **Board Topology — confirm or override the board for each MCU.** A serial id usually reveals only
+  the chip, so the auto board guess can be missing or wrong. Each MCU card now has **Confirm this
+  board** (locks in a correct guess), **Change board… / Set board…** (pick the right one from the
+  hardware catalog via the shared part picker), and **Clear** (revert to the automatic guess). The
+  choice is saved on the host (`<data_dir>/topology-overrides.json`, keyed by the MCU's config
+  section name) and re-applied on every read — a confirmed match shows a ✓ badge at full confidence.
+  This is the first write path in the otherwise read-only widget; the new
+  `POST /api/topology/override` + `…/override/clear` endpoints validate the board id against the
+  catalog. Inline help + full localisation in all 7 languages.
+
 ## [0.168.0] - 2026-06-11
 
 ### Changed

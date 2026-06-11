@@ -5,10 +5,10 @@
 
 export type HelpIlloKey = 'host' | 'mcu' | 'canbus'
 
-export type HelpTopic = 'glossary' | 'mcus' | 'connections' | 'detection'
+export type HelpTopic = 'glossary' | 'mcus' | 'connections' | 'detection' | 'override'
 
 /** Help topics in display order. Text: `boardTopology.help.topics.<topic>.{title,body}`. */
-export const HELP_TOPICS: HelpTopic[] = ['glossary', 'mcus', 'connections', 'detection']
+export const HELP_TOPICS: HelpTopic[] = ['glossary', 'mcus', 'connections', 'detection', 'override']
 
 /** The illustration each topic shows (identifiers, not translated). */
 export const HELP_ILLO: Partial<Record<HelpTopic, HelpIlloKey>> = {
@@ -16,6 +16,7 @@ export const HELP_ILLO: Partial<Record<HelpTopic, HelpIlloKey>> = {
   mcus: 'mcu',
   connections: 'canbus',
   detection: 'mcu',
+  override: 'mcu',
 }
 
 /** Glossary term keys in display order. Text: `boardTopology.help.glossary.<key>.{term,def}`. */
