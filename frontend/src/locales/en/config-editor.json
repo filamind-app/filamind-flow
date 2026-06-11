@@ -33,7 +33,10 @@
           "title": "Read-only (for now)",
           "body": "This first version only reads and displays the config — nothing is written to the printer. Guided, confirm-gated editing (with an automatic backup before any save and a restart afterwards) arrives in a later update."
         },
-        "glossary": { "title": "Glossary", "body": "" }
+        "glossary": {
+          "title": "Glossary",
+          "body": ""
+        }
       },
       "glossary": {
         "section": {
@@ -118,6 +121,16 @@
       "loading": "Reading the config…",
       "error": "Couldn't read the config from the printer.",
       "retry": "Retry"
+    },
+    "catalog": {
+      "title": "Add a config block from the catalog",
+      "hint": "Pick a part — its hardware-accurate Klipper block (real run_current, sense_resistor, pin names) is appended to the file for you to review and save.",
+      "drivers": "Drivers",
+      "motors": "Motors",
+      "boards": "Boards",
+      "pickPlaceholder": "Search the catalog…",
+      "inserted": "Inserted the block for {name} — review it in Raw and save.",
+      "noSnippet": "No config block available for {name}."
     }
   }
 }

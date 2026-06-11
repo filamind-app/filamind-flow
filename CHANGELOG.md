@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.176.0] - 2026-06-11
+
+### Added
+
+- **Config Editor — insert a hardware-accurate config block from the catalog.** A new "Add a config
+  block from the catalog" panel lets you pick a **driver**, **motor**, or **board** from the hardware
+  database (via the shared part picker) and appends its **verbatim, correct-by-construction Klipper
+  block** to the file — a `[tmcXXXX]` driver with the chip's real `sense_resistor` and a safe
+  `run_current`, a motor's datasheet-derived `run_current`, or a board's actual pin-map — instead of
+  blank scaffolding you fill in by hand. The block lands in the editor's Raw view for review and
+  rides the existing gated save (auto-backup + refused-while-printing + a `FIRMWARE_RESTART` prompt).
+  Frontend-only (reuses the catalog detail endpoints + `HardwarePicker`); localised in all 7
+  languages. (Phase 2 of the Config Editor + Macro Designer programme.)
+
 ## [0.175.0] - 2026-06-11
 
 ### Added
