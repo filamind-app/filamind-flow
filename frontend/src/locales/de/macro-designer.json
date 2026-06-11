@@ -25,7 +25,10 @@
           "title": "Makro-Bibliothek",
           "body": "Eine Referenzsammlung gängiger Klipper-Makros mit ihrem Namen, ihrer Funktion und den benötigten Konfigurationssektionen. \"Einfügen\" setzt die übergeordneten Befehle eines Makros als Ausgangspunkt in den Editor — beachte, dass diese sich auf dem Drucker weiter aufschlüsseln (vollständige Jinja-/Makro-Expansion folgt)."
         },
-        "glossary": { "title": "Glossar", "body": "" }
+        "glossary": {
+          "title": "Glossar",
+          "body": ""
+        }
       },
       "glossary": {
         "gcode": {
@@ -77,6 +80,24 @@
     },
     "warnings": {
       "title": "Warnungen"
+    },
+    "explain": {
+      "title": "Dieses Makro erklären",
+      "travel": "Eilgang nach X{x} Y{y} mit {f} mm/min",
+      "print": "Druckbewegung — {e} mm über {d} mm nach X{x} Y{y} mit {f} mm/min extrudieren",
+      "retract": "{e} mm zurückziehen",
+      "prime": "{e} mm an Ort und Stelle extrudieren",
+      "noMove": "Keine Bewegung",
+      "absXYZ": "Auf absolute Positionierung umschalten (G90)",
+      "relXYZ": "Auf relative Positionierung umschalten (G91)",
+      "absE": "Auf absolute Extrusion umschalten (M82)",
+      "relE": "Auf relative Extrusion umschalten (M83)",
+      "setPos": "Aktuelle Position setzen (G92)",
+      "home": "Achsen referenzieren (G28) → Ursprung",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "bisher: {d} mm · {e} mm · ~{s} s",
+      "note": "Zeilen mit ungelösten Ausdrücken oder Jinja-Steuerfluss werden nicht simuliert und hier weggelassen."
     }
   }
 }

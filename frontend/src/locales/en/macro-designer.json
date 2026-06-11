@@ -69,6 +69,24 @@
       "title": "Toolhead path (XY)",
       "noPath": "Run a simulation to see the path."
     },
+    "explain": {
+      "title": "Explain this macro",
+      "travel": "Rapid travel to X{x} Y{y} at {f} mm/min",
+      "print": "Print move — extrude {e} mm over {d} mm to X{x} Y{y} at {f} mm/min",
+      "retract": "Retract {e} mm",
+      "prime": "Extrude {e} mm in place",
+      "noMove": "No movement",
+      "absXYZ": "Switch to absolute positioning (G90)",
+      "relXYZ": "Switch to relative positioning (G91)",
+      "absE": "Switch to absolute extrusion (M82)",
+      "relE": "Switch to relative extrusion (M83)",
+      "setPos": "Set the current position (G92)",
+      "home": "Home the axes (G28) → origin",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "so far: {d} mm · {e} mm · ~{s} s",
+      "note": "Lines with unresolved expressions or Jinja control flow aren't simulated and are omitted here."
+    },
     "timeline": {
       "title": "Timeline",
       "line": "Line",
