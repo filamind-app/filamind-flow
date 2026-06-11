@@ -30,6 +30,36 @@ def settings_of(configfile: Any) -> dict[str, Any]:
     return settings if isinstance(settings, dict) else {}
 
 
+def _num(value: Any) -> float | None:
+    if isinstance(value, bool):
+        return None
+    return float(value) if isinstance(value, (int, float)) else None
+
+
+def limits_of(toolhead: Any) -> dict[str, Any] | None:
+    """The printer's real build envelope + speed cap from the live ``toolhead`` object
+    (``axis_minimum/maximum`` [x,y,z(,e)] + ``max_velocity`` mm/s + ``max_accel``), or ``None`` if
+    the shape isn't there. Used to ground the offline simulator in THIS machine's bounds."""
+    if not isinstance(toolhead, dict):
+        return None
+    amin = toolhead.get("axis_minimum")
+    amax = toolhead.get("axis_maximum")
+    if not (
+        isinstance(amin, list) and isinstance(amax, list) and len(amin) >= 3 and len(amax) >= 3
+    ):
+        return None
+    lo = [_num(amin[i]) for i in range(3)]
+    hi = [_num(amax[i]) for i in range(3)]
+    if any(v is None for v in lo) or any(v is None for v in hi):
+        return None
+    return {
+        "min": lo,
+        "max": hi,
+        "max_velocity": _num(toolhead.get("max_velocity")),
+        "max_accel": _num(toolhead.get("max_accel")),
+    }
+
+
 def _unquote(text: str) -> str:
     text = text.strip()
     if len(text) >= 2 and text[0] in "'\"" and text[-1] == text[0]:

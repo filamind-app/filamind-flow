@@ -82,6 +82,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/topology/snapshot/diff` | Compare the live topology to the saved baseline → structured changes (MCU added/removed, board/connection/chip/component-count changed). `has_baseline=false` until a snapshot is saved. |
 | POST   | `/api/macro/simulate`      | Offline G-code simulator: macro `{ params.X }` substitution → path / bounds / totals / time / timeline; pure, no printer. |
 | GET    | `/api/macro/live`          | The printer's own installed `[gcode_macro]` definitions from the live `configfile` (body + description + discovered `{ params.X }` + `variable_*`), to load into the editor and simulate. `reachable=false` when Moonraker is down. |
+| GET    | `/api/macro/limits`        | The printer's real build envelope + speed cap (`axis_minimum/maximum`, `max_velocity`) from the live `toolhead` object, to ground the simulator's out-of-bounds / over-speed checks. `reachable=false` when down. |
 | GET    | `/api/hardware`            | Flat free-text search over the raw component rows (`?q=`/`category`/`manufacturer`, paginated). The canonical, deduped, config-carrying entities have their own typed endpoints below. |
 | GET    | `/api/hardware/categories` | The hardware categories + per-category **canonical** `counts` (raw kept as `rawCounts`) + total component count. |
 | GET    | `/api/hardware/facets`     | Distinct values for the filter dropdowns — `boardClass` (boards), `nema` size (motors), `kind` (hosts), and `catalogSubsections` (per mixed catalog category → its sub-types). |

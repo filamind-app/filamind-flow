@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.178.0] - 2026-06-11
+
+### Added
+
+- **Macro Designer — bed-envelope & speed-limit overlay.** The offline simulation is now grounded in
+  **your printer's real build area and speed cap** (read from the live `toolhead` object). The 2D
+  preview draws the actual build rectangle behind the path, and **any move that leaves the build area
+  or exceeds `max_velocity` is drawn in red** and listed as a violation (e.g. *"Line 7: X=400 is
+  outside the build area (0…355 mm)"*, *"Line 12: 800 mm/s exceeds the printer's 700 mm/s limit"*) —
+  so a macro that would crash into a rail or over-speed is caught **before** you run it. The same
+  macro is now green on one printer and red on another. New read-only `GET /api/macro/limits`;
+  `simulate` gains an optional `limits` check. Degrades to the borderless preview when the printer is
+  unreachable. Localised in all 7 languages. (Phase 4 of the Config Editor + Macro Designer
+  programme.)
+
 ## [0.177.0] - 2026-06-11
 
 ### Added

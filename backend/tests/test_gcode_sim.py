@@ -90,3 +90,26 @@ def test_route_simulate() -> None:
     body: dict[str, Any] = resp.json()
     assert body["move_count"] == 1
     assert body["bounds"]["max_x"] == 10
+
+
+# ── machine limits (bed-envelope + speed cap) ────────────────────────────────
+def test_simulate_flags_out_of_bounds_and_over_speed() -> None:
+    limits = {"min": [0.0, 0.0, 0.0], "max": [200.0, 200.0, 200.0], "max_velocity": 100.0}
+    # X400 is past the 200 envelope; F12000 mm/min = 200 mm/s > the 100 mm/s cap.
+    out = gcode_sim.simulate("G90\nG1 X400 Y10 F12000", limits)
+    seg = out["segments"][0]
+    assert seg["out_of_bounds"] is True and seg["over_speed"] is True
+    kinds = {v["kind"] for v in out["violations"]}
+    assert {"out_of_bounds", "over_speed"} <= kinds
+    oob = next(v for v in out["violations"] if v["kind"] == "out_of_bounds")
+    assert oob["axis"] == "X" and oob["value"] == 400.0
+
+
+def test_simulate_no_violations_within_limits() -> None:
+    limits = {"min": [0.0, 0.0, 0.0], "max": [200.0, 200.0, 200.0], "max_velocity": 100.0}
+    out = gcode_sim.simulate("G90\nG1 X100 Y100 F3000", limits)  # F3000 = 50 mm/s, in bounds
+    assert out["violations"] == []
+    assert out["segments"][0]["out_of_bounds"] is False
+    # Without limits, nothing is flagged (backward-compatible).
+    plain = gcode_sim.simulate("G90\nG1 X400 Y10 F99999")
+    assert plain["violations"] == [] and plain["segments"][0]["out_of_bounds"] is False
