@@ -22,8 +22,8 @@ def test_param_overrides_default() -> None:
     assert out == "M140 S75"
 
 
-def test_case_insensitive_lookup() -> None:
-    out, _ = macro_render.render("G1 Z{ params.z }", {"Z": "5"})
+def test_exact_param_name() -> None:
+    out, _ = macro_render.render("G1 Z{ params.Z }", {"Z": "5"})
     assert out == "G1 Z5"
 
 
@@ -32,18 +32,34 @@ def test_int_filter() -> None:
     assert out == "G1 E5"
 
 
-def test_unresolved_left_intact_and_warned() -> None:
-    out, warns = macro_render.render("G1 X{ params.MISSING }", {})
-    assert "{ params.MISSING }" in out
-    assert any("Unresolved" in w for w in warns)
+def test_missing_param_renders_empty() -> None:
+    # Real Jinja: a missing variable with no default renders to nothing (matches the printer).
+    out, warns = macro_render.render("M117{ params.MISSING }", {})
+    assert out == "M117"
+    assert warns == []
 
 
-def test_control_flow_warned_not_evaluated() -> None:
-    src = "{% for i in range(3) %}\nG1 X{ params.STEP|default(10) }\n{% endfor %}"
+def test_for_loop_is_expanded() -> None:
+    src = "{% for i in range(3) %}G1 Z{ i * 5 }\n{% endfor %}"
     out, warns = macro_render.render(src, {})
-    assert "{% for" in out  # control flow left untouched
-    assert "G1 X10" in out  # value expr still substituted
-    assert any("control flow" in w.lower() for w in warns)
+    assert out == "G1 Z0\nG1 Z5\nG1 Z10\n"
+    assert warns == []
+
+
+def test_conditional_on_param() -> None:
+    src = "{% if params.PURGE|default(1)|int %}G1 X50 E10\n{% endif %}G28"
+    skipped, _ = macro_render.render(src, {"PURGE": "0"})
+    taken, _ = macro_render.render(src, {"PURGE": "1"})
+    assert skipped == "G28"
+    assert taken == "G1 X50 E10\nG28"
+
+
+def test_printer_state_macro_falls_back_with_warning() -> None:
+    # An offline render has no live printer state, so arithmetic on it can't evaluate → fall back.
+    src = "{% if printer.heater_bed.temperature > 60 %}M117 hot{% endif %}"
+    out, warns = macro_render.render(src, {})
+    assert any("literal substitution" in w.lower() for w in warns)
+    assert "{% if" in out  # the unevaluated template is left literal for the fallback
 
 
 def test_no_expressions_unchanged() -> None:

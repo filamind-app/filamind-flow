@@ -9,3 +9,6 @@ kconfiglib>=14.1,<15.0
 # Powers the input-shaper resonance math vendored from Klipper
 # (app/vendor/klipper_shaper) for the Input Shaping widget.
 numpy>=1.26,<3.0
+# Renders Klipper's own macro template dialect ({ … } expressions + {% … %} control flow) so the
+# Macro Designer can expand loops / conditionals offline in a sandbox, the way the printer would.
+jinja2>=3.1,<4.0
