@@ -6,6 +6,33 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.170.0] - 2026-06-11
+
+### Added
+
+- **Board Topology is now an interactive "Machine Map".** The flat card list is replaced by a
+  dependency-free SVG node-graph of your printer's control boards, with two views of the same live
+  data:
+  - **Physical** — how the machine is actually built: an **integrated SBC is drawn *inside* the
+    mainboard it ships on** (e.g. an SV08 / Manta carrying a CB1), CAN toolheads hang off a shared
+    **backbone rail**, and USB / UART boards are separate point-to-point units.
+  - **Logical** — how Klipper sees it: the host at the apex with every MCU a child reached over its
+    serial link.
+
+  Edges are colour-coded by bus (USB / CAN / UART), the two views cross-fade when you toggle, and
+  every node is keyboard-focusable with an aria-label. **Click any board, SBC or MCU** to open a
+  side **inspector** that carries over every existing control — the rich catalog board record
+  (specs, ports, electronics caveats, config notes, copyable Klipper snippet), the cross-entity
+  deep-links into the Hardware Browser, and the confirm / change / clear board-override write path.
+- **Integrated-SBC detection.** The backend now flags when the host computer is physically on the
+  primary mainboard by matching the host's SoC against the board's declared onboard SBC
+  (`TopologyHost.integrated_into_board_id`), so the map can tell the truth that, on boards like the
+  Sovol SV08, the SBC and the MCU are one physical unit rather than a separate Pi. An external Pi on
+  the same board still reads as a separate host.
+
+Inline help gains a "Physical vs Logical views" topic; fully localised in all 7 languages. Degrades
+gracefully — an unreachable printer still shows the clear status message.
+
 ## [0.169.0] - 2026-06-11
 
 ### Added

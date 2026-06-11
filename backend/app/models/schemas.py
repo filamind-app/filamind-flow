@@ -1005,6 +1005,9 @@ class TopologyHost(BaseModel):
     host_id: str | None = None
     host_match: str | None = None
     host_match_confidence: float = 0.0
+    # Set to a mainboard id when the host SBC is physically integrated on that board (e.g. an
+    # SV08 / Manta carrying a CB1) — lets the UI draw the host *inside* the board.
+    integrated_into_board_id: str | None = None
 
 
 class Topology(BaseModel):
