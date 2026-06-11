@@ -157,6 +157,23 @@
       "other": "Otros",
       "conflict": "Conflicto de pines",
       "caveat": "Advertencia de cableado"
+    },
+    "snapshot": {
+      "save": "Guardar instantánea",
+      "copy": "Copiar resumen",
+      "copied": "¡Copiado!",
+      "none": "No hay línea base guardada — guarda una instantánea para detectar cambios futuros.",
+      "unchanged": "Sin cambios de hardware desde la instantánea",
+      "changed": "{n} cambio(s) desde la instantánea",
+      "summaryTitle": "FilaMind — mapa de la máquina",
+      "change": {
+        "added": "Se añadió el MCU «{mcu}»",
+        "removed": "Se quitó el MCU «{mcu}»",
+        "board_changed": "La placa de «{mcu}» cambió: {before} → {after}",
+        "connection_changed": "La conexión de «{mcu}» cambió: {before} → {after}",
+        "chip_changed": "El chip de «{mcu}» cambió: {before} → {after}",
+        "components_changed": "El número de componentes de «{mcu}» cambió: {before} → {after}"
+      }
     }
   }
 }

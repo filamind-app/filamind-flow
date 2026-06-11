@@ -157,6 +157,23 @@
       "other": "Sonstige",
       "conflict": "Pin-Konflikt",
       "caveat": "Verdrahtungshinweis"
+    },
+    "snapshot": {
+      "save": "Snapshot speichern",
+      "copy": "Zusammenfassung kopieren",
+      "copied": "Kopiert!",
+      "none": "Keine Baseline gespeichert — speichere einen Snapshot, um künftige Änderungen zu erkennen.",
+      "unchanged": "Keine Hardware-Änderungen seit dem Snapshot",
+      "changed": "{n} Änderung(en) seit dem Snapshot",
+      "summaryTitle": "FilaMind — Maschinenkarte",
+      "change": {
+        "added": "MCU „{mcu}“ wurde hinzugefügt",
+        "removed": "MCU „{mcu}“ wurde entfernt",
+        "board_changed": "Board von „{mcu}“ geändert: {before} → {after}",
+        "connection_changed": "Verbindung von „{mcu}“ geändert: {before} → {after}",
+        "chip_changed": "Chip von „{mcu}“ geändert: {before} → {after}",
+        "components_changed": "Komponentenzahl von „{mcu}“ geändert: {before} → {after}"
+      }
     }
   }
 }

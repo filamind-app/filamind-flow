@@ -1057,6 +1057,24 @@ class PinAtlas(BaseModel):
     findings: list[PinFinding] = []
 
 
+class TopologyChange(BaseModel):
+    """One change between a saved hardware baseline and the current topology."""
+
+    mcu: str
+    # added | removed | board_changed | connection_changed | chip_changed | components_changed
+    kind: str
+    before: str | None = None
+    after: str | None = None
+
+
+class TopologyDiff(BaseModel):
+    """The result of comparing the live topology to the saved baseline snapshot."""
+
+    has_baseline: bool = False
+    saved_at: str | None = None
+    changes: list[TopologyChange] = []
+
+
 class BoardOverrideRequest(BaseModel):
     """Confirm / override the catalog board for an MCU (keyed by its config section name)."""
 

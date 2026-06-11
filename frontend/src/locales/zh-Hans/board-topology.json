@@ -157,6 +157,23 @@
       "other": "其他",
       "conflict": "引脚冲突",
       "caveat": "接线提示"
+    },
+    "snapshot": {
+      "save": "保存快照",
+      "copy": "复制摘要",
+      "copied": "已复制！",
+      "none": "未保存基线 — 保存快照以便检测后续变化。",
+      "unchanged": "自快照以来硬件无变化",
+      "changed": "自快照以来有 {n} 处变化",
+      "summaryTitle": "FilaMind — 机器图",
+      "change": {
+        "added": "新增 MCU「{mcu}」",
+        "removed": "移除 MCU「{mcu}」",
+        "board_changed": "「{mcu}」主板已更换：{before} → {after}",
+        "connection_changed": "「{mcu}」连接已更改：{before} → {after}",
+        "chip_changed": "「{mcu}」芯片已更改：{before} → {after}",
+        "components_changed": "「{mcu}」组件数量已更改：{before} → {after}"
+      }
     }
   }
 }

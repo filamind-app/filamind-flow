@@ -9,12 +9,12 @@ import { fetchFirmwareStatus } from '@/widgets/firmware-upgrade/api'
 import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
 import { targetFor, useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 
-import { clearBoardOverride, fetchTopology, setBoardOverride } from './api'
+import { clearBoardOverride, fetchDiff, fetchTopology, saveSnapshot, setBoardOverride } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import NodeInspector from './NodeInspector.vue'
 import TopologyGraph from './TopologyGraph.vue'
-import type { RelatedRef, Topology } from './types'
+import type { RelatedRef, Topology, TopologyChange, TopologyDiff } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 const { go } = useNav()
@@ -28,6 +28,11 @@ const fwMcus = ref<Record<string, McuFirmware>>({})
 const view = ref<'logical' | 'physical'>('physical')
 const selected = ref<string | null>(null)
 const overrideBusy = ref(false)
+
+// Hardware snapshot / diff (detect a board swap / MCU add-remove / link change vs a saved baseline).
+const diff = ref<TopologyDiff | null>(null)
+const snapshotBusy = ref(false)
+const copied = ref(false)
 
 const selectedMcu = computed(() => {
   if (!topology.value || !selected.value || selected.value === 'host') return null
@@ -71,6 +76,9 @@ async function load(): Promise<void> {
       .catch(() => {
         fwMcus.value = {}
       })
+    fetchDiff()
+      .then((d) => (diff.value = d))
+      .catch(() => (diff.value = null))
   } catch (e) {
     error.value = describeError(e)
     topology.value = null
@@ -97,6 +105,54 @@ async function clearOverride(mcuName: string): Promise<void> {
     error.value = describeError(e)
   } finally {
     overrideBusy.value = false
+  }
+}
+
+async function takeSnapshot(): Promise<void> {
+  snapshotBusy.value = true
+  try {
+    diff.value = await saveSnapshot()
+  } catch (e) {
+    error.value = describeError(e)
+  } finally {
+    snapshotBusy.value = false
+  }
+}
+
+function changeMsg(c: TopologyChange): string {
+  return t('boardTopology.snapshot.change.' + c.kind, {
+    mcu: c.mcu,
+    before: c.before ?? '—',
+    after: c.after ?? '—',
+  })
+}
+
+/** A plain-text machine inventory for pasting into a forum / issue post. */
+async function copySummary(): Promise<void> {
+  const topo = topology.value
+  if (!topo) return
+  const lines: string[] = [t('boardTopology.snapshot.summaryTitle')]
+  if (topo.host) {
+    lines.push(`Host: ${topo.host.name}${topo.host.host_id ? ` (${topo.host.host_id})` : ''}`)
+    if (topo.host.integrated_into_board_id)
+      lines.push(`  SBC integrated on ${topo.host.integrated_into_board_id}`)
+  }
+  for (const m of topo.mcus) {
+    const parts = [
+      `MCU ${m.name}`,
+      m.mcu || m.mcu_id || '?',
+      m.board_id ? `board ${m.board_id}` : 'board ?',
+      `(${m.connection})`,
+    ]
+    if (m.components?.length) parts.push(`${m.components.length} components`)
+    lines.push(parts.join(' · '))
+  }
+  try {
+    await navigator.clipboard?.writeText(lines.join('\n'))
+    copied.value = true
+    setTimeout(() => (copied.value = false), 1500)
+  } catch {
+    /* clipboard unavailable */
   }
 }
 
@@ -222,6 +278,44 @@ onMounted(() => void load())
           @set-override="setOverride"
           @clear-override="clearOverride"
         />
+      </div>
+
+      <!-- Hardware snapshot / diff + share -->
+      <div class="space-y-1 border-t border-ink/15 pt-2">
+        <div class="flex flex-wrap items-center gap-2 text-[11px]">
+          <button
+            type="button"
+            class="nb-btn bg-surface px-2 py-0.5"
+            :disabled="snapshotBusy"
+            @click="takeSnapshot"
+          >
+            <span aria-hidden="true">📸</span> {{ t('boardTopology.snapshot.save') }}
+          </button>
+          <button type="button" class="nb-btn bg-surface px-2 py-0.5" @click="copySummary">
+            {{ copied ? t('boardTopology.snapshot.copied') : t('boardTopology.snapshot.copy') }}
+          </button>
+          <span v-if="diff && !diff.has_baseline" class="opacity-60">{{
+            t('boardTopology.snapshot.none')
+          }}</span>
+          <span
+            v-else-if="diff && diff.has_baseline && !diff.changes.length"
+            class="font-bold text-brand-lime"
+          >
+            ✓ {{ t('boardTopology.snapshot.unchanged') }}
+          </span>
+          <span v-else-if="diff && diff.changes.length" class="font-bold text-brand-red">
+            ⚠ {{ t('boardTopology.snapshot.changed', { n: diff.changes.length }) }}
+          </span>
+        </div>
+        <ul v-if="diff && diff.changes.length" class="space-y-0.5 text-[10px]">
+          <li
+            v-for="(c, i) in diff.changes"
+            :key="i"
+            class="rounded border-l-4 border-brand-red bg-brand-red/10 px-1 py-0.5"
+          >
+            {{ changeMsg(c) }}
+          </li>
+        </ul>
       </div>
     </template>
   </div>

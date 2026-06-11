@@ -125,3 +125,24 @@ export interface PinAtlas {
   pins: PinAtlasPin[]
   findings: PinFinding[]
 }
+
+/** One change between the saved hardware baseline and the live topology. */
+export interface TopologyChange {
+  mcu: string
+  kind:
+    | 'added'
+    | 'removed'
+    | 'board_changed'
+    | 'connection_changed'
+    | 'chip_changed'
+    | 'components_changed'
+    | string
+  before?: string | null
+  after?: string | null
+}
+
+export interface TopologyDiff {
+  has_baseline: boolean
+  saved_at?: string | null
+  changes: TopologyChange[]
+}
