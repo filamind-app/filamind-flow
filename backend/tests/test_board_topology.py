@@ -252,3 +252,24 @@ def test_analyze_fingerprints_board_from_pins() -> None:
     assert m["board_id"] == "acme-x"
     assert m["board_match"] == "suggested"
     assert m["board_match_confidence"] >= 0.6
+
+
+def _board(board_id: str, pins: list[str]) -> dict[str, Any]:
+    return {"board_id": board_id, "ports": [{"pinMap": [{"pin": p} for p in pins]}]}
+
+
+def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
+    """A toolhead-like MCU with only a few *generic* pins that several small boards share equally
+    (a tie in containment, low Jaccard) must NOT yield a confident board — better no match than a
+    wrong one. Reproduces the real SV08 CAN-toolhead case (its board isn't in the catalog)."""
+    used = {"PA1", "PA5", "PA6", "PA8", "PB6", "PB8", "PB9", "PB10"}
+    # Two distinct boards each contain the SAME 6 of the 8 used pins plus their own filler pins,
+    # so both tie at containment 6/8 = 0.75 with a low Jaccard (6/22 ≈ 0.27) → ambiguous.
+    shared = ["PA1", "PA5", "PA6", "PA8", "PB6", "PB8"]
+    board_a = _board("small-a", shared + [f"A{i}" for i in range(14)])
+    board_b = _board("small-b", shared + [f"B{i}" for i in range(14)])
+    assert board_topology._fingerprint_board(used, [board_a, board_b]) == (None, 0.0)
+    # But a single clear winner with a fitting pin-map (high Jaccard) is still accepted.
+    fit = _board("fit-x", sorted(used | {"PC0", "PC1"}))
+    board_id, conf = board_topology._fingerprint_board(used, [fit, board_a])
+    assert board_id == "fit-x" and conf >= 0.6
