@@ -71,6 +71,15 @@ const selectedMacroDef = computed(
   () => macros.value.find((m) => m.id === selectedMacro.value) ?? null,
 )
 
+/** Path recolor mode: a flat draw, a speed heatmap, or an extrusion-rate heatmap. */
+const colorBy = ref<'none' | 'speed' | 'extrude'>('none')
+
+/** Blue (slow / low) → red (fast / high) for a normalised value in [0, 1]. */
+function heatColor(tNorm: number): string {
+  const hue = Math.round(220 - 220 * Math.min(1, Math.max(0, tNorm)))
+  return `hsl(${hue}, 80%, 48%)`
+}
+
 /** Map the simulated path into a flipped-Y SVG (units = mm; non-scaling strokes). Built from the
  *  segments so each drawn line carries its source G-code line (for hover-sync with the explainer). */
 const pathView = computed(() => {
@@ -101,6 +110,20 @@ const pathView = computed(() => {
         h: lim.max[1] - lim.min[1],
       }
     : null
+  // Heatmap normalisation: speed colours every move; extrusion colours only extruding moves.
+  const mode = colorBy.value
+  const valueOf = (s: (typeof segs)[number]): number =>
+    mode === 'speed' ? (s.v_mm_s ?? s.feedrate / 60) : (s.extrude_rate ?? 0)
+  const heatSegs = mode === 'none' ? [] : segs.filter((s) => mode === 'speed' || s.extruding)
+  const vals = heatSegs.map(valueOf)
+  const vmin = vals.length ? Math.min(...vals) : 0
+  const vmax = vals.length ? Math.max(...vals) : 0
+  const heatOf = (s: (typeof segs)[number]): string | null => {
+    if (mode === 'none') return null
+    if (mode === 'extrude' && !s.extruding) return null
+    const t = vmax > vmin ? (valueOf(s) - vmin) / (vmax - vmin) : 0.5
+    return heatColor(t)
+  }
   const lines = segs.map((s) => ({
     x1: sx(s.from[0]),
     y1: sy(s.from[1]),
@@ -109,8 +132,11 @@ const pathView = computed(() => {
     extruding: s.extruding,
     line: s.line,
     violation: !!(s.out_of_bounds || s.over_speed),
+    heat: heatOf(s),
   }))
-  return { viewBox: `0 0 ${w || 1} ${h || 1}`, lines, env }
+  const legend =
+    mode === 'none' || !vals.length ? null : { mode, min: Math.round(vmin), max: Math.round(vmax) }
+  return { viewBox: `0 0 ${w || 1} ${h || 1}`, lines, env, legend }
 })
 
 type StepKind = 'travel' | 'print' | 'retract' | 'prime' | 'mode' | 'home' | 'set' | 'none'
@@ -148,8 +174,12 @@ const explainSteps = computed<ExplainStep[]>(() => {
         isMove = true
         cumDist += s.dist
         if (s.e_delta > 0) cumExtrude += s.e_delta
-        const travel = s.dist > 1e-9 ? s.dist : Math.abs(s.e_delta)
-        if (s.feedrate > 0 && travel > 0) cumTime += travel / (s.feedrate / 60)
+        if (s.time_s != null) {
+          cumTime += s.time_s // accel-aware per-segment time from the simulator
+        } else {
+          const travel = s.dist > 1e-9 ? s.dist : Math.abs(s.e_delta)
+          if (s.feedrate > 0 && travel > 0) cumTime += travel / (s.feedrate / 60)
+        }
         const f = Math.round(s.feedrate)
         if (s.extruding) {
           kind = 'print'
@@ -392,9 +422,14 @@ onMounted(() => {
           <span class="nb-card bg-surface px-2 py-0.5">{{
             t('macroDesigner.result.extrude', { mm: result.total_extrude_mm })
           }}</span>
-          <span class="nb-card bg-surface px-2 py-0.5">{{
-            t('macroDesigner.result.time', { s: result.est_time_s })
-          }}</span>
+          <span class="nb-card bg-surface px-2 py-0.5">
+            {{ t('macroDesigner.result.time', { s: result.est_time_s }) }}
+            <span class="opacity-60">{{
+              result.time_model === 'accel'
+                ? t('macroDesigner.result.timeAccel')
+                : t('macroDesigner.result.timeConstant')
+            }}</span>
+          </span>
         </div>
         <p class="font-mono text-[10px] opacity-60">
           {{ t('macroDesigner.result.bounds') }}: X {{ result.bounds.min_x }}…{{
@@ -444,17 +479,34 @@ onMounted(() => {
 
         <!-- 2D path -->
         <div>
-          <p class="mb-1 text-xs font-bold">
-            {{ t('macroDesigner.path.title')
-            }}<span v-if="result.limits" class="ms-2 font-mono text-[10px] font-normal opacity-60">
-              {{
-                t('macroDesigner.limits.buildArea', {
-                  x: result.limits.max[0] - result.limits.min[0],
-                  y: result.limits.max[1] - result.limits.min[1],
-                })
-              }}</span
-            >
-          </p>
+          <div class="mb-1 flex flex-wrap items-center gap-2">
+            <p class="text-xs font-bold">
+              {{ t('macroDesigner.path.title')
+              }}<span
+                v-if="result.limits"
+                class="ms-2 font-mono text-[10px] font-normal opacity-60"
+              >
+                {{
+                  t('macroDesigner.limits.buildArea', {
+                    x: result.limits.max[0] - result.limits.min[0],
+                    y: result.limits.max[1] - result.limits.min[1],
+                  })
+                }}</span
+              >
+            </p>
+            <span class="flex-1"></span>
+            <label class="flex items-center gap-1 text-[10px] opacity-70">
+              {{ t('macroDesigner.heat.colorBy') }}
+              <select
+                v-model="colorBy"
+                class="rounded-brutal border border-ink bg-surface px-1 py-0.5 text-[10px]"
+              >
+                <option value="none">{{ t('macroDesigner.heat.none') }}</option>
+                <option value="speed">{{ t('macroDesigner.heat.speed') }}</option>
+                <option value="extrude">{{ t('macroDesigner.heat.extrude') }}</option>
+              </select>
+            </label>
+          </div>
           <svg
             v-if="pathView"
             :viewBox="pathView.viewBox"
@@ -486,11 +538,13 @@ onMounted(() => {
               :stroke="
                 l.violation
                   ? 'rgb(var(--c-brand-red))'
-                  : l.extruding
-                    ? 'rgb(var(--c-ink))'
-                    : 'rgb(var(--c-ink) / 0.35)'
+                  : l.heat
+                    ? l.heat
+                    : l.extruding
+                      ? 'rgb(var(--c-ink))'
+                      : 'rgb(var(--c-ink) / 0.35)'
               "
-              :stroke-dasharray="l.extruding || l.violation ? undefined : '1.5,1.5'"
+              :stroke-dasharray="l.extruding || l.violation || l.heat ? undefined : '1.5,1.5'"
               :stroke-width="l.violation ? 1.8 : 1"
               stroke-linecap="round"
               vector-effect="non-scaling-stroke"
@@ -500,6 +554,26 @@ onMounted(() => {
           <p v-else class="font-mono text-[11px] opacity-60">
             {{ t('macroDesigner.path.noPath') }}
           </p>
+          <!-- Heatmap legend (slow/low → fast/high) -->
+          <div
+            v-if="pathView && pathView.legend"
+            class="mt-1 flex items-center gap-2 text-[10px] opacity-70"
+          >
+            <span>{{
+              pathView.legend.mode === 'speed'
+                ? t('macroDesigner.heat.legendSpeed')
+                : t('macroDesigner.heat.legendExtrude')
+            }}</span>
+            <span class="font-mono">{{ pathView.legend.min }}</span>
+            <span
+              class="h-2 w-20 rounded"
+              :style="{
+                background:
+                  'linear-gradient(to right, hsl(220,80%,48%), hsl(140,80%,48%), hsl(0,80%,48%))',
+              }"
+            ></span>
+            <span class="font-mono">{{ pathView.legend.max }}</span>
+          </div>
         </div>
 
         <!-- Warnings -->
