@@ -82,6 +82,25 @@ class ConfigFile:
 
 
 # ── parsing ──────────────────────────────────────────────────────────────────
+def _header_of(stripped: str) -> str | None:
+    """Return the header text of a ``[header]`` section line, or ``None`` if it isn't one.
+
+    Klipper accepts a trailing inline comment after the closing bracket (``[stepper_z] # Z motor``),
+    so the line need not end with ``]`` — only the bracketed text is the header, and any non-comment
+    text after ``]`` disqualifies it (it's not a section line). The raw line is preserved verbatim
+    elsewhere, so the comment still round-trips on dump.
+    """
+    if not stripped.startswith("["):
+        return None
+    end = stripped.find("]")
+    if end == -1:
+        return None
+    rest = stripped[end + 1 :].lstrip()
+    if rest and rest[0] not in "#;":
+        return None
+    return stripped[1:end].strip()
+
+
 def _split_header(header: str) -> tuple[str, str]:
     """Split a header into ``(type, name)`` on the first run of whitespace."""
     parts = header.split(None, 1)
@@ -184,9 +203,9 @@ def parse(text: str) -> ConfigFile:
             i += 1
             continue
 
-        if stripped.startswith("[") and stripped.endswith("]"):
+        header = _header_of(stripped)
+        if header is not None:
             flush_param()
-            header = stripped[1:-1].strip()
             section = ConfigSection(header=header)
             section.header, section.name = header, _split_header(header)[1]
             section.header_comments = pending_comments
