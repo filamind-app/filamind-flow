@@ -98,6 +98,13 @@
       "rel": "REL",
       "cum": "hasta ahora: {d} mm · {e} mm · ~{s} s",
       "note": "Las líneas con expresiones sin resolver o control Jinja no se simulan y se omiten aquí."
+    },
+    "live": {
+      "label": "Desde la impresora",
+      "placeholder": "Elige una de tus macros instaladas…",
+      "hint": "{n} macros encontradas en la impresora — elige una para cargar su G-code y simularla.",
+      "unreachable": "Impresora no accesible — conéctate para cargar tus macros instaladas.",
+      "params": "Parámetros de la macro"
     }
   }
 }
