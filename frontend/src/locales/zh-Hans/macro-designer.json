@@ -25,7 +25,10 @@
           "title": "宏库",
           "body": "一组常用 Klipper 宏的参考集合，包含名称、功能说明及其所需的配置节。“插入”会将一个宏的高级命令放入编辑器作为起点——请注意这些命令在打印机上会进一步展开（完整的 Jinja/宏展开功能即将推出）。"
         },
-        "glossary": { "title": "术语表", "body": "" }
+        "glossary": {
+          "title": "术语表",
+          "body": ""
+        }
       },
       "glossary": {
         "gcode": {
@@ -77,6 +80,24 @@
     },
     "warnings": {
       "title": "警告"
+    },
+    "explain": {
+      "title": "解释此宏",
+      "travel": "快速移动到 X{x} Y{y}，速度 {f} mm/min",
+      "print": "打印移动 — 在 {d} mm 内挤出 {e} mm 到 X{x} Y{y}，速度 {f} mm/min",
+      "retract": "回抽 {e} mm",
+      "prime": "原地挤出 {e} mm",
+      "noMove": "无移动",
+      "absXYZ": "切换到绝对定位 (G90)",
+      "relXYZ": "切换到相对定位 (G91)",
+      "absE": "切换到绝对挤出 (M82)",
+      "relE": "切换到相对挤出 (M83)",
+      "setPos": "设置当前位置 (G92)",
+      "home": "回零各轴 (G28) → 原点",
+      "abs": "绝对",
+      "rel": "相对",
+      "cum": "累计：{d} mm · {e} mm · ~{s} s",
+      "note": "含未解析表达式或 Jinja 控制流的行不会被模拟，此处略去。"
     }
   }
 }

@@ -30,6 +30,10 @@ const simulating = ref(false)
 const error = ref<string | null>(null)
 const macros = ref<MacroDef[]>([])
 const selectedMacro = ref<string | null>(null)
+const hoveredLine = ref<number | null>(null)
+
+const r1 = (n: number): number => Math.round(n * 10) / 10
+const r2 = (n: number): number => Math.round(n * 100) / 100
 
 const macroOptions = computed(() =>
   macros.value.map((m) => ({ value: m.id, label: m.name, sublabel: m.title })),
@@ -38,27 +42,132 @@ const selectedMacroDef = computed(
   () => macros.value.find((m) => m.id === selectedMacro.value) ?? null,
 )
 
-/** Map the simulated path into a flipped-Y SVG (units = mm; non-scaling strokes). */
+/** Map the simulated path into a flipped-Y SVG (units = mm; non-scaling strokes). Built from the
+ *  segments so each drawn line carries its source G-code line (for hover-sync with the explainer). */
 const pathView = computed(() => {
-  const pts = result.value?.path2d ?? []
+  const segs = result.value?.segments ?? []
   const b = result.value?.bounds
-  if (!b || pts.length < 2) return null
+  if (!b || !segs.length) return null
   const pad = Math.max(1, (b.max_x - b.min_x + (b.max_y - b.min_y)) * 0.04)
   const w = b.max_x - b.min_x + pad * 2
   const h = b.max_y - b.min_y + pad * 2
   const sx = (x: number) => x - b.min_x + pad
   const sy = (y: number) => b.max_y - y + pad // flip Y (G-code Y up → SVG Y down)
-  const lines = []
-  for (let i = 1; i < pts.length; i++) {
-    lines.push({
-      x1: sx(pts[i - 1].x),
-      y1: sy(pts[i - 1].y),
-      x2: sx(pts[i].x),
-      y2: sy(pts[i].y),
-      extruding: pts[i].extruding,
+  const lines = segs.map((s) => ({
+    x1: sx(s.from[0]),
+    y1: sy(s.from[1]),
+    x2: sx(s.to[0]),
+    y2: sy(s.to[1]),
+    extruding: s.extruding,
+    line: s.line,
+  }))
+  return { viewBox: `0 0 ${w || 1} ${h || 1}`, lines }
+})
+
+type StepKind = 'travel' | 'print' | 'retract' | 'prime' | 'mode' | 'home' | 'set' | 'none'
+interface ExplainStep {
+  line: number
+  glyph: string
+  kind: StepKind
+  text: string
+  posAbs: boolean
+  isMove: boolean
+  cumDist: number
+  cumExtrude: number
+  cumTime: number
+}
+
+/** A plain-language, step-by-step walkthrough built from the simulation (no backend) — each command
+ *  in English, the running positioning mode, and cumulative travel / extrusion / time. */
+const explainSteps = computed<ExplainStep[]>(() => {
+  const r = result.value
+  if (!r) return []
+  const segByLine = new Map(r.segments.map((s) => [s.line, s]))
+  let posAbs = true
+  let cumDist = 0
+  let cumExtrude = 0
+  let cumTime = 0
+  const out: ExplainStep[] = []
+  for (const e of r.timeline) {
+    let glyph = '·'
+    let kind: StepKind = 'none'
+    let text = ''
+    let isMove = false
+    if (e.action === 'move') {
+      const s = segByLine.get(e.line)
+      if (s) {
+        isMove = true
+        cumDist += s.dist
+        if (s.e_delta > 0) cumExtrude += s.e_delta
+        const travel = s.dist > 1e-9 ? s.dist : Math.abs(s.e_delta)
+        if (s.feedrate > 0 && travel > 0) cumTime += travel / (s.feedrate / 60)
+        const f = Math.round(s.feedrate)
+        if (s.extruding) {
+          kind = 'print'
+          glyph = '🖊'
+          text = t('macroDesigner.explain.print', {
+            e: r2(s.e_delta),
+            d: r1(s.dist),
+            x: r1(s.to[0]),
+            y: r1(s.to[1]),
+            f,
+          })
+        } else if (s.dist > 1e-9) {
+          kind = 'travel'
+          glyph = '↗'
+          text = t('macroDesigner.explain.travel', { x: r1(s.to[0]), y: r1(s.to[1]), f })
+        } else if (s.e_delta < 0) {
+          kind = 'retract'
+          glyph = '⟲'
+          text = t('macroDesigner.explain.retract', { e: r2(-s.e_delta) })
+        } else if (s.e_delta > 0) {
+          kind = 'prime'
+          glyph = '⟳'
+          text = t('macroDesigner.explain.prime', { e: r2(s.e_delta) })
+        } else {
+          text = t('macroDesigner.explain.noMove')
+        }
+      }
+    } else if (e.action === 'absolute XYZ') {
+      posAbs = true
+      kind = 'mode'
+      glyph = '⊞'
+      text = t('macroDesigner.explain.absXYZ')
+    } else if (e.action === 'relative XYZ') {
+      posAbs = false
+      kind = 'mode'
+      glyph = '⊟'
+      text = t('macroDesigner.explain.relXYZ')
+    } else if (e.action === 'absolute E') {
+      kind = 'mode'
+      glyph = '⊞'
+      text = t('macroDesigner.explain.absE')
+    } else if (e.action === 'relative E') {
+      kind = 'mode'
+      glyph = '⊟'
+      text = t('macroDesigner.explain.relE')
+    } else if (e.action === 'set position') {
+      kind = 'set'
+      glyph = '⌖'
+      text = t('macroDesigner.explain.setPos')
+    } else if (e.action === 'home') {
+      kind = 'home'
+      glyph = '⌂'
+      text = t('macroDesigner.explain.home')
+    }
+    out.push({
+      line: e.line,
+      glyph,
+      kind,
+      text,
+      posAbs,
+      isMove,
+      cumDist: r1(cumDist),
+      cumExtrude: r2(cumExtrude),
+      cumTime: r1(cumTime),
     })
   }
-  return { viewBox: `0 0 ${w || 1} ${h || 1}`, lines }
+  return out
 })
 
 async function doSimulate(): Promise<void> {
@@ -215,6 +324,7 @@ onMounted(() => {
               stroke-width="1"
               stroke-linecap="round"
               vector-effect="non-scaling-stroke"
+              :class="{ 'seg-hi': hoveredLine === l.line }"
             />
           </svg>
           <p v-else class="font-mono text-[11px] opacity-60">
@@ -229,6 +339,47 @@ onMounted(() => {
             <li v-for="(w, i) in result.warnings" :key="i">{{ w }}</li>
           </ul>
         </div>
+
+        <!-- Explain (plain-language step-by-step walkthrough) -->
+        <details class="text-[11px]" open>
+          <summary class="cursor-pointer font-bold">{{ t('macroDesigner.explain.title') }}</summary>
+          <ol class="mt-1 space-y-0.5">
+            <li
+              v-for="(st, i) in explainSteps"
+              :key="i"
+              class="flex items-start gap-2 rounded px-1 py-0.5"
+              :class="[
+                st.kind === 'mode' || st.kind === 'home' || st.kind === 'set'
+                  ? 'bg-brand-cyan/15'
+                  : '',
+                hoveredLine === st.line && st.isMove ? 'bg-brand-pink/15' : '',
+              ]"
+              @mouseenter="hoveredLine = st.line"
+              @mouseleave="hoveredLine = null"
+            >
+              <span class="w-7 shrink-0 text-end font-mono opacity-40">{{ st.line }}</span>
+              <span aria-hidden="true" class="shrink-0">{{ st.glyph }}</span>
+              <span class="min-w-0 flex-1">
+                {{ st.text }}
+                <span v-if="st.isMove" class="ms-1 font-mono text-[9px] opacity-50">
+                  ({{
+                    t('macroDesigner.explain.cum', {
+                      d: st.cumDist,
+                      e: st.cumExtrude,
+                      s: st.cumTime,
+                    })
+                  }})
+                </span>
+              </span>
+              <span class="shrink-0 font-mono text-[9px] opacity-40">
+                {{ st.posAbs ? t('macroDesigner.explain.abs') : t('macroDesigner.explain.rel') }}
+              </span>
+            </li>
+          </ol>
+          <p v-if="result.warnings.length" class="mt-1 text-[10px] opacity-60">
+            {{ t('macroDesigner.explain.note') }}
+          </p>
+        </details>
 
         <!-- Timeline -->
         <details class="text-[11px]">
@@ -256,3 +407,11 @@ onMounted(() => {
     </template>
   </div>
 </template>
+
+<style scoped>
+/* Hovering an Explain step lights up its drawn path segment (CSS beats the inline stroke attr). */
+.seg-hi {
+  stroke: rgb(var(--c-brand-pink)) !important;
+  stroke-width: 2.5;
+}
+</style>
