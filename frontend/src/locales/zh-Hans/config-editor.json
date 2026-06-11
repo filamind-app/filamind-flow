@@ -131,6 +131,13 @@
       "pickPlaceholder": "搜索目录…",
       "inserted": "已插入 {name} 的配置块 — 在「原始」中检查并保存。",
       "noSnippet": "没有 {name} 的配置块。"
+    },
+    "drift": {
+      "title": "Klipper 正在运行的配置",
+      "pending": "Klipper 有未保存的更改（SAVE_CONFIG 待处理）— 现在保存此文件会覆盖它们。请先在控制台执行 SAVE_CONFIG。",
+      "warningsTitle": "Klipper 配置警告",
+      "count": "磁盘上有 {n} 个值与运行中的不同（已编辑但未 FIRMWARE_RESTART）：",
+      "adopt": "采用实时值"
     }
   }
 }

@@ -131,6 +131,13 @@
       "pickPlaceholder": "Rechercher dans le catalogue…",
       "inserted": "Bloc de {name} inséré — relisez-le en Brut et enregistrez.",
       "noSnippet": "Aucun bloc de config pour {name}."
+    },
+    "drift": {
+      "title": "Ce que Klipper exécute",
+      "pending": "Klipper a des changements non enregistrés (un SAVE_CONFIG est en attente) — enregistrer ce fichier maintenant les écraserait. Lancez d'abord SAVE_CONFIG dans la console.",
+      "warningsTitle": "Avertissements de config Klipper",
+      "count": "{n} valeur(s) sur le disque diffèrent de l'exécuté (modifié sans FIRMWARE_RESTART) :",
+      "adopt": "adopter live"
     }
   }
 }

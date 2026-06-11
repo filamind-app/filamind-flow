@@ -1,6 +1,6 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { ConfigFileList, ConfigFileView, ConfigSaveResult } from './types'
+import type { ConfigDriftResult, ConfigFileList, ConfigFileView, ConfigSaveResult } from './types'
 
 /** An Error that carries the HTTP status, so callers can special-case 409 (printer busy). */
 export class ApiError extends Error {
@@ -43,6 +43,36 @@ export async function fetchConfigFile(filename: string): Promise<ConfigFileView>
     throw new Error(`Config file request failed (${response.status})`)
   }
   return (await response.json()) as ConfigFileView
+}
+
+/** Compare the on-disk file to the live running config (drift + pending SAVE_CONFIG + warnings). */
+export async function fetchConfigDrift(filename: string): Promise<ConfigDriftResult> {
+  const { backendUrl } = resolveEndpoints()
+  const url = `${backendUrl}/api/config/drift?filename=${encodeURIComponent(filename)}`
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Drift request failed (${response.status})`)
+  }
+  return (await response.json()) as ConfigDriftResult
+}
+
+/** Set one param to its live value via the round-trip engine; returns the new file text (no write). */
+export async function adoptParam(
+  content: string,
+  section: string,
+  key: string,
+  value: string,
+): Promise<string> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/adopt`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content, section, key, value }),
+  })
+  if (!response.ok) {
+    throw new Error(`Adopt failed (${response.status})`)
+  }
+  return ((await response.json()) as { content: string }).content
 }
 
 /** Back up then overwrite one config file. Throws {@link ApiError} (status 409 = printer busy). */

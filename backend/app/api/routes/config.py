@@ -30,6 +30,15 @@ class ConfigSaveRequest(BaseModel):
     content: str = Field(..., description="The full new file content")
 
 
+class AdoptParamRequest(BaseModel):
+    """Body for ``POST /config/adopt`` — set one param to the live value (pure text transform)."""
+
+    content: str = Field(..., description="The current file text to mutate")
+    section: str = Field(..., description="Section header, e.g. 'tmc2209 stepper_x'")
+    key: str = Field(..., description="Param key to set")
+    value: str = Field(..., description="The new (live) value to adopt")
+
+
 def _client(settings: Settings) -> MoonrakerClient:
     return MoonrakerClient(settings.moonraker_url)
 
@@ -61,6 +70,26 @@ async def config_file(
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail=f"Moonraker unreachable: {exc}") from exc
+
+
+@router.get("/drift")
+async def config_drift(
+    filename: str = Query("printer.cfg", description="Config path within the config root"),
+    settings: Settings = Depends(get_settings),
+) -> dict[str, Any]:
+    """Compare the on-disk file to the live running config: a pending-SAVE_CONFIG flag, Klipper's
+    own parse warnings, and per-param drift (disk vs live). ``reachable=false`` when down."""
+    try:
+        return await config_service.gather_drift(_client(settings), filename)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/adopt")
+async def config_adopt(body: AdoptParamRequest) -> dict[str, Any]:
+    """Set one param to the live value via the round-trip engine and return the new text — a pure,
+    surgical transform (no write). The result lands in the editor for review + the gated save."""
+    return {"content": config_service.adopt_param(body.content, body.section, body.key, body.value)}
 
 
 @router.post("/save")
