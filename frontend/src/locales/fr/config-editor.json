@@ -146,6 +146,13 @@
     },
     "tmc": {
       "review": "vérifier en Brut et enregistrer"
+    },
+    "pinEdit": {
+      "offBoard": "absent de la carte",
+      "offBoardHint": "Cette broche n'est pas dans la table de broches connue de la carte — vérifiez une faute ou une broche EXP/virtuelle.",
+      "double": "réutilisée",
+      "doubleHint": "Cette broche est affectée dans plus d’une section.",
+      "caveat": "mise en garde"
     }
   }
 }

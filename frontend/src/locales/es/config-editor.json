@@ -146,6 +146,13 @@
     },
     "tmc": {
       "review": "revisar en Raw y guardar"
+    },
+    "pinEdit": {
+      "offBoard": "no en la placa",
+      "offBoardHint": "Este pin no está en el mapa de pines conocido de la placa — revisa si hay un error o un pin EXP/virtual.",
+      "double": "reutilizado",
+      "doubleHint": "Este pin está asignado en más de una sección.",
+      "caveat": "advertencia"
     }
   }
 }

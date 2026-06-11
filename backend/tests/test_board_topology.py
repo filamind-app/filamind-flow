@@ -303,6 +303,30 @@ async def test_gather_pin_doctor_aggregates_findings(monkeypatch: Any) -> None:
     assert any(f["kind"] == "double_assign" and f["pin"] == "PA1" for f in findings)
 
 
+async def test_gather_pin_map_returns_per_mcu_pins(monkeypatch: Any) -> None:
+    """The pin-map feed lists every MCU with its (possibly empty) board pin set + owners + caveat —
+    the data the Config Editor uses to suggest valid pins and flag a double-assigned pin inline."""
+    sections = {
+        "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103xe_X-if00"},
+        "fan": {"pin": "PA1"},
+        "heater_generic h": {"heater_pin": "PA1"},
+    }
+
+    async def fake_query(_self: Any, _objects: Any) -> dict[str, Any]:
+        return {"configfile": {"settings": sections}}
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", fake_query)
+    from app.services.moonraker_client import MoonrakerClient
+
+    out = await board_topology.gather_pin_map(MoonrakerClient("http://x"))
+    assert out["reachable"] is True
+    mcu = next((m for m in out["mcus"] if m["name"] == "mcu"), None)
+    assert mcu is not None and isinstance(mcu["pins"], list)
+    # Each pin entry carries the inline-flag inputs (owners + caveat).
+    for p in mcu["pins"]:
+        assert "pin" in p and "owners" in p and "caveat" in p
+
+
 # ── hardware snapshot + diff ─────────────────────────────────────────────────
 def test_snapshot_diff_detects_changes(tmp_path: Any) -> None:
     from app.services import topology_snapshot

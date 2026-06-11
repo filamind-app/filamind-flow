@@ -7,6 +7,7 @@ import type {
   ConfigSaveResult,
   FieldPolicyResponse,
   PinDoctorResult,
+  PinMapResult,
 } from './types'
 
 /** An Error that carries the HTTP status, so callers can special-case 409 (printer busy). */
@@ -83,6 +84,16 @@ export async function fetchPinDoctor(): Promise<PinDoctorResult> {
     throw new Error(`Pin doctor request failed (${response.status})`)
   }
   return (await response.json()) as PinDoctorResult
+}
+
+/** Per-MCU board pins (name + owners + caveat) for pin-aware `*_pin` editing. */
+export async function fetchPinMap(): Promise<PinMapResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/pin-map`)
+  if (!response.ok) {
+    throw new Error(`Pin map request failed (${response.status})`)
+  }
+  return (await response.json()) as PinMapResult
 }
 
 /** Set one param to its live value via the round-trip engine; returns the new file text (no write). */

@@ -146,6 +146,13 @@
     },
     "tmc": {
       "review": "in Roh prüfen & speichern"
+    },
+    "pinEdit": {
+      "offBoard": "nicht auf Platine",
+      "offBoardHint": "Dieser Pin ist nicht in der bekannten Pin-Map der Platine — prüfe auf Tippfehler oder einen EXP-/virtuellen Pin.",
+      "double": "mehrfach",
+      "doubleHint": "Dieser Pin ist in mehr als einem Abschnitt zugewiesen.",
+      "caveat": "Hinweis"
     }
   }
 }

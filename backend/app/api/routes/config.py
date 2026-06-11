@@ -92,6 +92,16 @@ async def config_adopt(body: AdoptParamRequest) -> dict[str, Any]:
     return {"content": config_service.adopt_param(body.content, body.section, body.key, body.value)}
 
 
+@router.get("/pin-map")
+async def config_pin_map(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Per-MCU board pins (name + owners + caveat) so a ``*_pin`` field can suggest valid pins and
+    flag a non-existent / double-assigned / caveated pin inline. ``reachable=false`` when down."""
+    try:
+        return await board_topology.gather_pin_map(_client(settings), settings.data_dir)
+    except httpx.HTTPError:
+        return {"reachable": False, "mcus": []}
+
+
 @router.get("/pin-doctor")
 async def config_pin_doctor(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """A whole-config pin-conflict scan (every MCU): double-assigned pins + board electronics

@@ -21,6 +21,7 @@ import {
   fetchConfigFiles,
   fetchFieldPolicy,
   fetchPinDoctor,
+  fetchPinMap,
   restartFirmware,
   saveConfigFile,
 } from './api'
@@ -35,6 +36,8 @@ import type {
   ConfigSectionView,
   FieldPolicyEntry,
   PinDoctorResult,
+  PinMapMcu,
+  PinMapResult,
 } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -134,6 +137,66 @@ async function onTmcEdit(
   } catch (e) {
     saveErr.value = describeError(e)
   }
+}
+
+// Pin-aware editing: for any `*_pin` param, map the value's chip prefix to its MCU's resolved
+// board, then offer that board's named pins as suggestions and flag an off-board / double-assigned
+// / electronics-caveat pin inline. Edits ride the same surgical round-trip as the TMC controls.
+const pinMap = ref<PinMapResult | null>(null)
+async function loadPinMap(): Promise<void> {
+  try {
+    pinMap.value = await fetchPinMap()
+  } catch {
+    pinMap.value = null
+  }
+}
+function isPinParam(p: ConfigParamView): boolean {
+  const k = p.key.toLowerCase()
+  return k === 'pin' || k.endsWith('_pin')
+}
+/** Split a Klipper pin value into its `chip:` prefix (or 'mcu' when bare) and the bare pin name. */
+function splitPin(value: string): { chip: string; pin: string } {
+  const v = value.trim().replace(/^[\^~!]+/, '')
+  const i = v.indexOf(':')
+  if (i >= 0) {
+    const pin = v
+      .slice(i + 1)
+      .replace(/^[\^~!]+/, '')
+      .trim()
+    return { chip: v.slice(0, i).trim(), pin: pin.toUpperCase() }
+  }
+  return { chip: 'mcu', pin: v.toUpperCase() }
+}
+function mcuForPin(value: string): PinMapMcu | null {
+  if (!pinMap.value?.reachable) return null
+  const { chip } = splitPin(value)
+  const mcus = pinMap.value.mcus
+  const exact = mcus.find((m) => m.name === chip)
+  if (exact) return exact
+  return chip === 'mcu' ? (mcus.find((m) => m.name === 'mcu') ?? mcus[0] ?? null) : null
+}
+/** Valid full-form pin strings for this param's MCU, preserving its `chip:` prefix convention. */
+function pinOptions(value: string): string[] {
+  const mcu = mcuForPin(value)
+  if (!mcu) return []
+  const { chip } = splitPin(value)
+  const prefix = chip === 'mcu' ? '' : `${chip}:`
+  return mcu.pins.map((p) => prefix + p.pin)
+}
+/** Inline flags for a pin value: not on the board map, double-assigned, or carries a caveat. */
+function pinFlags(value: string): {
+  offBoard: boolean
+  doubleAssign: boolean
+  caveat: string | null
+} {
+  const mcu = mcuForPin(value)
+  const { pin } = splitPin(value)
+  if (!mcu || !pin || mcu.pins.length === 0) {
+    return { offBoard: false, doubleAssign: false, caveat: null }
+  }
+  const info = mcu.pins.find((p) => p.pin.toUpperCase() === pin)
+  if (!info) return { offBoard: true, doubleAssign: false, caveat: null }
+  return { offBoard: false, doubleAssign: info.owners.length > 1, caveat: info.caveat }
 }
 
 async function adoptLive(d: ConfigDrift): Promise<void> {
@@ -348,6 +411,7 @@ watch(selected, (f) => {
 onMounted(() => {
   void loadFiles()
   void loadPinDoctor()
+  void loadPinMap()
 })
 </script>
 
@@ -685,6 +749,45 @@ onMounted(() => {
                           <span class="text-[10px] opacity-50">{{
                             rangeHint(policyFor(section.type, p.key)!)
                           }}</span>
+                        </span>
+                      </template>
+                      <!-- Pin-aware control for a `*_pin` param whose MCU resolves to a board -->
+                      <template v-else-if="isPinParam(p) && mcuForPin(p.value)">
+                        <span class="inline-flex flex-wrap items-center gap-1">
+                          <input
+                            :value="p.value"
+                            :list="`pins-${i}-${pi}`"
+                            class="w-32 rounded-brutal border border-ink bg-surface px-1 py-0.5"
+                            :aria-label="p.key"
+                            @change="
+                              onTmcEdit(section, p, ($event.target as HTMLInputElement).value)
+                            "
+                          />
+                          <datalist :id="`pins-${i}-${pi}`">
+                            <option v-for="o in pinOptions(p.value)" :key="o" :value="o" />
+                          </datalist>
+                          <span
+                            v-if="pinFlags(p.value).offBoard"
+                            class="rounded bg-ink/10 px-1 text-[10px] opacity-70"
+                            :title="t('configEditor.pinEdit.offBoardHint')"
+                          >
+                            {{ t('configEditor.pinEdit.offBoard') }}
+                          </span>
+                          <span
+                            v-if="pinFlags(p.value).doubleAssign"
+                            class="rounded bg-brand-yellow px-1 text-[10px] font-bold text-ink"
+                            :title="t('configEditor.pinEdit.doubleHint')"
+                          >
+                            {{ t('configEditor.pinEdit.double') }}
+                          </span>
+                          <span
+                            v-if="pinFlags(p.value).caveat"
+                            class="rounded bg-brand-yellow px-1 text-[10px] font-bold text-ink"
+                            :title="pinFlags(p.value).caveat || ''"
+                          >
+                            {{ t('configEditor.pinEdit.caveat') }}
+                          </span>
+                          <span v-if="p.comment" class="opacity-50">{{ p.comment }}</span>
                         </span>
                       </template>
                       <template v-else>
