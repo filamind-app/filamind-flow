@@ -194,6 +194,15 @@
       "quad_gantry_level": "调平四点龙门，使其与热床平行。",
       "filament_switch_sensor": "断料传感器，在料丝用尽时暂停打印。",
       "virtual_sdcard": "让 Klipper 打印上传到主机的文件（Mainsail 和 Fluidd 必需）。"
+    },
+    "backups": {
+      "title": "备份（{n}）",
+      "diff": "对比",
+      "hideDiff": "隐藏对比",
+      "restore": "恢复",
+      "diffHint": "与当前文件的差异",
+      "unchanged": "⋯ {n} 行未变 ⋯",
+      "note": "每次保存前会自动写入快照。恢复会将快照载入编辑器以便最终审阅并保存。"
     }
   }
 }

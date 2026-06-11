@@ -194,6 +194,15 @@
       "quad_gantry_level": "Met de niveau un portique à quatre points pour le rendre parallèle au lit.",
       "filament_switch_sensor": "Un capteur de fin de filament qui met l’impression en pause à l’épuisement.",
       "virtual_sdcard": "Permet à Klipper d’imprimer des fichiers téléversés sur l’hôte (requis par Mainsail et Fluidd)."
+    },
+    "backups": {
+      "title": "Sauvegardes ({n})",
+      "diff": "Comparer",
+      "hideDiff": "Masquer",
+      "restore": "Restaurer",
+      "diffHint": "différence avec le fichier actuel",
+      "unchanged": "⋯ {n} lignes inchangées ⋯",
+      "note": "Les instantanés sont écrits automatiquement avant chaque enregistrement. Restaurer en charge un dans l’éditeur pour une revue finale + enregistrement."
     }
   }
 }

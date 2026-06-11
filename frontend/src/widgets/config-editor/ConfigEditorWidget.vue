@@ -18,6 +18,8 @@ import { useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 import {
   adoptParam,
   ApiError,
+  fetchBackupContent,
+  fetchBackups,
   fetchConfigDrift,
   fetchConfigFile,
   fetchConfigFiles,
@@ -29,9 +31,12 @@ import {
   saveConfigFile,
   searchConfig,
 } from './api'
+import { collapseDiff, type CollapsedRow, diffLines, diffStats } from './diff'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type {
+  ConfigBackup,
+  ConfigBackupList,
   ConfigDrift,
   ConfigDriftResult,
   ConfigFileInfo,
@@ -306,6 +311,58 @@ function openDriverInBrowser(model: string): void {
   go('hardware-browser')
 }
 
+// Backup timeline: every gated save snapshots the previous file under filamind-backups/. List them
+// here, diff a snapshot against the current draft, and restore one by loading it into the editor
+// (the restore then rides the same gated save, which snapshots the current file first).
+const backups = ref<ConfigBackupList | null>(null)
+async function loadBackups(filename: string): Promise<void> {
+  backups.value = null
+  try {
+    backups.value = await fetchBackups(filename)
+  } catch {
+    backups.value = null
+  }
+}
+const diffPath = ref<string | null>(null)
+const diffRows = ref<CollapsedRow[]>([])
+const diffSummary = ref<{ added: number; removed: number } | null>(null)
+const backupBusy = ref<string | null>(null)
+
+async function toggleDiff(b: ConfigBackup): Promise<void> {
+  if (diffPath.value === b.path) {
+    diffPath.value = null
+    return
+  }
+  backupBusy.value = b.path
+  try {
+    const content = await fetchBackupContent(b.path)
+    const rows = diffLines(draft.value, content) // current (draft) → backup
+    diffSummary.value = diffStats(rows)
+    diffRows.value = collapseDiff(rows, 2)
+    diffPath.value = b.path
+  } catch (e) {
+    saveErr.value = describeError(e)
+  } finally {
+    backupBusy.value = null
+  }
+}
+
+/** Restore a snapshot by loading it into the editor (Raw view) — the user then saves through the
+ *  existing confirm gate, which backs up the current file first. */
+async function restoreBackup(b: ConfigBackup): Promise<void> {
+  backupBusy.value = b.path
+  try {
+    draft.value = await fetchBackupContent(b.path)
+    viewMode.value = 'raw'
+    diffPath.value = null
+    saveMsg.value = null
+  } catch (e) {
+    saveErr.value = describeError(e)
+  } finally {
+    backupBusy.value = null
+  }
+}
+
 async function adoptLive(d: ConfigDrift): Promise<void> {
   adopting.value = d.section + '|' + d.key
   try {
@@ -421,6 +478,7 @@ async function loadView(filename: string): Promise<void> {
     errView.value = null
     open.value = {}
     void loadDrift(filename)
+    void loadBackups(filename)
   } catch (e) {
     errView.value = describeError(e)
     view.value = null
@@ -802,6 +860,55 @@ onMounted(() => {
           </ul>
         </div>
       </div>
+
+      <!-- Backup timeline: snapshots from past saves, with diff-vs-current and gated restore -->
+      <details
+        v-if="backups && backups.reachable && backups.backups.length"
+        class="nb-card bg-surface p-2 text-[11px]"
+      >
+        <summary class="cursor-pointer text-xs font-bold">
+          {{ t('configEditor.backups.title', { n: backups.backups.length }) }}
+        </summary>
+        <ul class="mt-2 space-y-1">
+          <li v-for="b in backups.backups" :key="b.path" class="nb-card bg-paper/40 p-1.5">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-mono">{{ b.when }}</span>
+              <span v-if="b.size != null" class="opacity-50">{{ b.size }} B</span>
+              <span class="flex-1"></span>
+              <button
+                class="nb-btn bg-surface px-2 py-0.5 text-[10px]"
+                :disabled="backupBusy === b.path"
+                @click="toggleDiff(b)"
+              >
+                {{
+                  diffPath === b.path
+                    ? t('configEditor.backups.hideDiff')
+                    : t('configEditor.backups.diff')
+                }}
+              </button>
+              <button
+                class="nb-btn bg-brand-yellow px-2 py-0.5 text-[10px]"
+                :disabled="backupBusy === b.path"
+                @click="restoreBackup(b)"
+              >
+                {{ t('configEditor.backups.restore') }}
+              </button>
+            </div>
+            <div v-if="diffPath === b.path" class="mt-1.5 space-y-1">
+              <p class="opacity-70">
+                <span class="text-brand-red">−{{ diffSummary?.removed ?? 0 }}</span>
+                /
+                <span class="text-brand-lime">+{{ diffSummary?.added ?? 0 }}</span>
+                · {{ t('configEditor.backups.diffHint') }}
+              </p>
+              <pre
+                class="max-h-60 overflow-auto rounded bg-ink/5 p-1 font-mono text-[10px] leading-snug"
+              ><template v-for="(r, ri) in diffRows" :key="ri"><div v-if="r.hidden" class="opacity-40">{{ t('configEditor.backups.unchanged', { n: r.hidden }) }}</div><div v-else :class="r.kind === 'del' ? 'text-brand-red' : r.kind === 'add' ? 'text-brand-lime' : 'opacity-60'">{{ r.kind === 'del' ? '− ' : r.kind === 'add' ? '+ ' : '  ' }}{{ r.text }}</div></template></pre>
+            </div>
+          </li>
+        </ul>
+        <p class="mt-1 text-[10px] opacity-50">{{ t('configEditor.backups.note') }}</p>
+      </details>
 
       <!-- Insert a hardware-accurate config block from the catalog -->
       <details class="nb-card bg-surface p-2 text-[11px]">

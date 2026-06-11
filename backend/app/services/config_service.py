@@ -441,6 +441,70 @@ def _backup_path(filename: str, now: datetime.datetime) -> str:
     return f"{_BACKUP_DIR}/{flat}.{stamp}.bak"
 
 
+def _parse_backup_name(path: str) -> tuple[str, str] | None:
+    """Split a backup path ``filamind-backups/<flat>.<stamp>.bak`` into ``(flat, stamp)``, or
+    ``None`` if it isn't a backup we wrote. ``flat`` is the source filename with ``/`` → ``_``."""
+    prefix = _BACKUP_DIR + "/"
+    if not path.startswith(prefix) or not path.endswith(".bak"):
+        return None
+    core = path[len(prefix) : -len(".bak")]
+    flat, _, stamp = core.rpartition(".")
+    if not flat or not stamp:
+        return None
+    return flat, stamp
+
+
+def _pretty_stamp(stamp: str) -> str:
+    """``20260612-014530`` → ``2026-06-12 01:45:30`` (best-effort; pass through if unparseable)."""
+    try:
+        return datetime.datetime.strptime(stamp, "%Y%m%d-%H%M%S").strftime("%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return stamp
+
+
+async def list_backups(client: MoonrakerClient, filename: str | None = None) -> dict[str, Any]:
+    """List timestamped snapshots under ``filamind-backups/`` (newest first). With ``filename``,
+    only that file's snapshots; otherwise all. ``reachable=false`` when Moonraker is down."""
+    try:
+        entries = await client.list_files("config")
+    except httpx.HTTPError:
+        return {"reachable": False, "filename": filename, "backups": []}
+    flat_filter = filename.replace("/", "_") if filename else None
+    items: list[dict[str, Any]] = []
+    for entry in entries:
+        path = str(entry.get("path", ""))
+        parsed = _parse_backup_name(path)
+        if parsed is None:
+            continue
+        flat, stamp = parsed
+        if flat_filter is not None and flat != flat_filter:
+            continue
+        items.append(
+            {
+                "path": path,
+                "flat": flat,
+                "stamp": stamp,
+                "when": _pretty_stamp(stamp),
+                "size": entry.get("size"),
+                "modified": entry.get("modified"),
+            }
+        )
+    items.sort(key=lambda x: str(x["stamp"]), reverse=True)
+    return {"reachable": True, "filename": filename, "backups": items}
+
+
+async def read_backup(client: MoonrakerClient, path: str) -> str:
+    """Fetch one backup snapshot's content (read-only). Guards that ``path`` is a real backup file.
+
+    Raises:
+        ValueError: if ``path`` is not a safe ``filamind-backups/*.bak`` path.
+        httpx.HTTPError: if Moonraker is unreachable or the file is missing.
+    """
+    if _parse_backup_name(path) is None or ".." in path.split("/"):
+        raise ValueError(f"not a backup path: {path!r}")
+    return await client.get_file_text(path, root="config")
+
+
 async def save_config_file(client: MoonrakerClient, filename: str, content: str) -> dict[str, Any]:
     """Back up the current file, then overwrite it with ``content``. Read-after-parse only —
     never auto-restarts (that's a separate, explicit action).

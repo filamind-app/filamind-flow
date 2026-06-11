@@ -194,6 +194,15 @@
       "quad_gantry_level": "Nivelliert ein Vier-Punkt-Portal, sodass es parallel zum Bett liegt.",
       "filament_switch_sensor": "Ein Filament-Runout-Sensor, der den Druck bei leerem Filament pausiert.",
       "virtual_sdcard": "Erlaubt Klipper das Drucken von auf den Host geladenen Dateien (für Mainsail und Fluidd nötig)."
+    },
+    "backups": {
+      "title": "Backups ({n})",
+      "diff": "Diff",
+      "hideDiff": "Diff ausblenden",
+      "restore": "Wiederherstellen",
+      "diffHint": "Unterschied zur aktuellen Datei",
+      "unchanged": "⋯ {n} unveränderte Zeilen ⋯",
+      "note": "Snapshots werden vor jedem Speichern automatisch geschrieben. Wiederherstellen lädt einen in den Editor zur finalen Prüfung + Speicherung."
     }
   }
 }

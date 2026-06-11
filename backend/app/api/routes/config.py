@@ -108,6 +108,33 @@ async def config_search(
     return await config_service.search_project(_client(settings), q)
 
 
+@router.get("/backups")
+async def config_backups(
+    filename: str = Query("", description="Limit to one file's snapshots (empty = all)"),
+    settings: Settings = Depends(get_settings),
+) -> dict[str, Any]:
+    """List timestamped backup snapshots under ``filamind-backups/`` (newest first)."""
+    return await config_service.list_backups(_client(settings), filename or None)
+
+
+@router.get("/backup")
+async def config_backup(
+    path: str = Query(..., description="A filamind-backups/*.bak snapshot path"),
+    settings: Settings = Depends(get_settings),
+) -> dict[str, Any]:
+    """Fetch one backup snapshot's content (read-only) for diff / restore-into-editor."""
+    try:
+        return {"path": path, "content": await config_service.read_backup(_client(settings), path)}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code == 404:
+            raise HTTPException(status_code=404, detail=f"Not found: {path}") from exc
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker unreachable: {exc}") from exc
+
+
 @router.get("/pin-map")
 async def config_pin_map(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """Per-MCU board pins (name + owners + caveat) so a ``*_pin`` field can suggest valid pins and
