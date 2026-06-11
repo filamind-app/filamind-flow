@@ -5,8 +5,10 @@ Static JSON datasets baked under ``app/data/reference/``:
 * ``stallguard_profiles.json`` — per-driver StallGuard slip-detection tuning constants
   (base + per-driver overrides + the StallGuard field name per model). Backs the planned
   Max-Flow widget and the Motor Drivers auto-SGT / slip-detection enhancement.
-* ``board_patterns.json`` — board / MCU identification patterns.
 * ``macros.json`` — built-in Klipper calibration macro definitions.
+
+The board / MCU identification patterns are no longer a standalone file — they are *derived*
+from the unified hardware catalog (``board_patterns``), so the catalog is the single source.
 
 Read once at import — small, static reference data. Also the single source for the Motor Drivers
 stepper-motor catalog (``motor_specs`` / ``motor_spec_lookup``), served via ``/api/drivers/motors``.
@@ -36,7 +38,6 @@ def _load(name: str) -> dict[str, Any]:
 
 
 _STALLGUARD = _load("stallguard_profiles.json")
-_BOARDS = _load("board_patterns.json")
 _MACROS = _load("macros.json")
 _HARDWARE = _load("hardware.json")
 _TEMPLATES = _load("templates.json")
@@ -82,8 +83,9 @@ def hotends() -> list[dict[str, Any]]:
 
 
 def board_patterns() -> dict[str, Any]:
-    """Board + MCU identification patterns (``board_patterns`` + ``mcu_patterns``)."""
-    return _BOARDS
+    """Board + MCU identification patterns (``board_patterns`` + ``mcu_patterns``), derived from
+    the unified hardware catalog (built once at import — see ``_derive_board_patterns``)."""
+    return _BOARD_PATTERNS
 
 
 def macros() -> list[dict[str, Any]]:
@@ -139,6 +141,52 @@ _LINKS: _hwlinks.LinkGraph = _hwlinks.build_links(
     catalog=_HW_CATALOG,
     manufacturers=_HW_MANUFACTURERS,
 )
+
+
+def _derive_board_patterns() -> dict[str, Any]:
+    """Build the board / MCU identification patterns from the unified hardware catalog (the single
+    source), replacing the former standalone ``board_patterns.json`` file.
+
+    * ``mcu_patterns`` — one per canonical MCU entity (a superset of the legacy table); the chip id
+      matched in a serial / CAN signature maps to its display name. Longest id first so a more
+      specific chip wins over any shorter prefix.
+    * ``board_patterns`` — each catalog board's own verbatim ``matchPatterns`` (the specific
+      signal), then a brand-level fallback from the canonical manufacturers that actually own
+      boards (their id + aliases). ``analyze`` takes the first match, so the specific board
+      patterns win and the brand patterns catch the rest.
+    """
+    mcu_patterns = [
+        {"pattern": re.escape(str(m["mcu_id"])), "mcu": m["name"]}
+        for m in sorted(_LINKS.mcus, key=lambda m: -len(str(m.get("mcu_id", ""))))
+        if m.get("mcu_id") and m.get("name")
+    ]
+    board_patterns: list[dict[str, Any]] = []
+    for b in _HW_BOARDS:
+        name = b.get("display_name") or b.get("model")
+        for mp in b.get("matchPatterns") or []:
+            pat = str(mp.get("pattern", "")) if isinstance(mp, dict) else ""
+            if pat and name:
+                board_patterns.append(
+                    {"pattern": pat, "board": name, "confidence": float(mp.get("confidence", 0.5))}
+                )
+    for man in _LINKS.manufacturers:
+        mid = str(man.get("manufacturer_id", ""))
+        rel = _hwlinks.related(_LINKS, "manufacturers", mid)
+        if not rel or not (rel.get("counts") or {}).get("boards"):
+            continue
+        tokens = list(dict.fromkeys(t.lower() for t in [mid, *(man.get("aliases") or [])] if t))
+        if tokens:
+            board_patterns.append(
+                {
+                    "pattern": "|".join(re.escape(t) for t in tokens),
+                    "board": man.get("name", mid),
+                    "confidence": 0.5,
+                }
+            )
+    return {"board_patterns": board_patterns, "mcu_patterns": mcu_patterns}
+
+
+_BOARD_PATTERNS = _derive_board_patterns()
 
 
 def _dataset_etag() -> str:
