@@ -11,6 +11,7 @@ import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
 import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 
 import { fetchBoardDetail } from './api'
+import PinAtlas from './PinAtlas.vue'
 import type { BoardDetail, BoardMedia, RelatedRef, TopologyHost, TopologyMcu } from './types'
 
 const props = defineProps<{
@@ -32,12 +33,14 @@ const detail = ref<BoardDetail | null>(null)
 const loadingBoard = ref(false)
 const pickerOpen = ref(false)
 const copied = ref(false)
+const tab = ref<'details' | 'atlas'>('details')
 
 watch(
-  () => [props.isHost, props.mcu?.board_id] as const,
-  async ([isHost, boardId]) => {
+  () => [props.isHost, props.mcu?.name, props.mcu?.board_id] as const,
+  async ([isHost, , boardId]) => {
     detail.value = null
     pickerOpen.value = false
+    tab.value = 'details'
     if (isHost || !boardId) return
     loadingBoard.value = true
     try {
@@ -201,114 +204,138 @@ function onPick(id: string | null): void {
         </span>
       </div>
 
-      <!-- board detail -->
-      <div v-if="loadingBoard" class="font-mono opacity-70">
-        {{ t('boardTopology.board.loading') }}
+      <!-- tab switcher: catalog details vs the live pin atlas (atlas needs a matched board) -->
+      <div
+        v-if="mcu.board_id"
+        class="inline-flex overflow-hidden rounded-brutal border-2 border-ink text-[10px]"
+        role="group"
+      >
+        <button
+          v-for="tk in ['details', 'atlas'] as const"
+          :key="tk"
+          type="button"
+          class="px-2 py-0.5 font-bold"
+          :class="tab === tk ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
+          :aria-pressed="tab === tk"
+          @click="tab = tk"
+        >
+          {{ t('boardTopology.pinAtlas.tab.' + tk) }}
+        </button>
       </div>
-      <div v-else-if="detail" class="space-y-1 border-t border-ink/15 pt-1">
-        <div class="font-display text-[12px] font-bold">
-          {{ detail.display_name || detail.model }}
+
+      <!-- pin atlas -->
+      <PinAtlas v-if="tab === 'atlas' && mcu.board_id" :mcu-name="mcu.name" />
+
+      <!-- board detail (details tab) -->
+      <template v-else>
+        <div v-if="loadingBoard" class="font-mono opacity-70">
+          {{ t('boardTopology.board.loading') }}
         </div>
-        <div
-          v-if="detail.manufacturer || detail.boardClass"
-          class="flex flex-wrap items-center gap-1 font-mono opacity-70"
-        >
-          <span v-if="detail.manufacturer">{{ detail.manufacturer }}</span>
-          <span v-if="detail.boardClass" class="rounded bg-paper px-1">{{
-            detail.boardClass
-          }}</span>
-        </div>
-        <div v-if="detail.ports?.length" class="font-mono opacity-70">
-          {{ t('boardTopology.board.portsTitle') }}:
-          {{ t('boardTopology.board.ports', { n: detail.ports.length }) }}
-          <span
-            v-for="(n, cat) in detail.portsSummary"
-            :key="cat"
-            class="ml-1 inline-block rounded bg-paper px-1"
-          >
-            {{ cat }}×{{ n }}
-          </span>
-        </div>
-        <dl
-          v-if="Object.keys(detail.specs || {}).length"
-          class="grid grid-cols-[auto_1fr] gap-x-2 font-mono"
-        >
-          <template v-for="(val, key) in detail.specs" :key="key">
-            <dt class="opacity-60">{{ key }}</dt>
-            <dd class="min-w-0 truncate">{{ val }}</dd>
-          </template>
-        </dl>
-        <div
-          v-if="mediaLinks(detail.media).length"
-          class="flex flex-wrap items-center gap-1 pt-0.5"
-        >
-          <span class="opacity-60">{{ t('boardTopology.board.links.title') }}:</span>
-          <a
-            v-for="lnk in mediaLinks(detail.media)"
-            :key="lnk.url"
-            :href="lnk.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="nb-btn bg-paper px-1 py-0 text-[9px]"
-          >
-            {{ lnk.label }}
-          </a>
-        </div>
-        <div v-if="relatedGroups(detail).length" class="space-y-0.5 border-t border-ink/20 pt-1">
-          <span class="opacity-60">{{ t('hardwareBrowser.related.title') }}:</span>
-          <div
-            v-for="g in relatedGroups(detail)"
-            :key="g.key"
-            class="flex flex-wrap items-center gap-1"
-          >
-            <span class="opacity-50">{{ t('hardwareBrowser.related.rel.' + g.key) }}:</span>
-            <button
-              v-for="r in g.refs"
-              :key="r.type + r.id"
-              type="button"
-              class="nb-btn rounded bg-paper px-1 font-mono hover:bg-brand-cyan"
-              @click="emit('openInBrowser', r)"
-            >
-              {{ r.name || r.id }}
-            </button>
+        <div v-else-if="detail" class="space-y-1 border-t border-ink/15 pt-1">
+          <div class="font-display text-[12px] font-bold">
+            {{ detail.display_name || detail.model }}
           </div>
-        </div>
-        <div
-          v-if="Object.keys(detail.electronics || {}).length"
-          class="space-y-0.5 border-t border-ink/20 pt-1"
-        >
-          <span class="opacity-60">{{ t('hardwareBrowser.boards.electronics') }}:</span>
-          <dl class="grid grid-cols-[auto_1fr] gap-x-2">
-            <template v-for="(v, k) in detail.electronics" :key="k">
-              <dt class="opacity-60">{{ k }}</dt>
-              <dd class="min-w-0">{{ v }}</dd>
+          <div
+            v-if="detail.manufacturer || detail.boardClass"
+            class="flex flex-wrap items-center gap-1 font-mono opacity-70"
+          >
+            <span v-if="detail.manufacturer">{{ detail.manufacturer }}</span>
+            <span v-if="detail.boardClass" class="rounded bg-paper px-1">{{
+              detail.boardClass
+            }}</span>
+          </div>
+          <div v-if="detail.ports?.length" class="font-mono opacity-70">
+            {{ t('boardTopology.board.portsTitle') }}:
+            {{ t('boardTopology.board.ports', { n: detail.ports.length }) }}
+            <span
+              v-for="(n, cat) in detail.portsSummary"
+              :key="cat"
+              class="ml-1 inline-block rounded bg-paper px-1"
+            >
+              {{ cat }}×{{ n }}
+            </span>
+          </div>
+          <dl
+            v-if="Object.keys(detail.specs || {}).length"
+            class="grid grid-cols-[auto_1fr] gap-x-2 font-mono"
+          >
+            <template v-for="(val, key) in detail.specs" :key="key">
+              <dt class="opacity-60">{{ key }}</dt>
+              <dd class="min-w-0 truncate">{{ val }}</dd>
             </template>
           </dl>
-        </div>
-        <div v-if="detail.configNotes?.length" class="space-y-0.5">
-          <span class="opacity-60">{{ t('hardwareBrowser.boards.notes') }}:</span>
-          <ul class="list-disc ps-4">
-            <li v-for="(n, ni) in detail.configNotes" :key="ni">{{ n }}</li>
-          </ul>
-        </div>
-        <div v-if="detail.configSnippet" class="space-y-0.5">
-          <div class="flex items-center gap-1">
-            <span class="opacity-60">{{ t('hardwareBrowser.boards.config') }}:</span>
-            <button
-              type="button"
-              class="nb-btn bg-paper px-1 py-0 text-[9px]"
-              @click="copySnippet(detail.configSnippet || '')"
-            >
-              {{ copied ? t('hardwareBrowser.boards.copied') : t('hardwareBrowser.boards.copy') }}
-            </button>
-          </div>
-          <pre
-            class="overflow-x-auto rounded-brutal border border-ink/30 bg-paper p-1 text-[9px] leading-tight"
-            >{{ detail.configSnippet }}</pre
+          <div
+            v-if="mediaLinks(detail.media).length"
+            class="flex flex-wrap items-center gap-1 pt-0.5"
           >
+            <span class="opacity-60">{{ t('boardTopology.board.links.title') }}:</span>
+            <a
+              v-for="lnk in mediaLinks(detail.media)"
+              :key="lnk.url"
+              :href="lnk.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="nb-btn bg-paper px-1 py-0 text-[9px]"
+            >
+              {{ lnk.label }}
+            </a>
+          </div>
+          <div v-if="relatedGroups(detail).length" class="space-y-0.5 border-t border-ink/20 pt-1">
+            <span class="opacity-60">{{ t('hardwareBrowser.related.title') }}:</span>
+            <div
+              v-for="g in relatedGroups(detail)"
+              :key="g.key"
+              class="flex flex-wrap items-center gap-1"
+            >
+              <span class="opacity-50">{{ t('hardwareBrowser.related.rel.' + g.key) }}:</span>
+              <button
+                v-for="r in g.refs"
+                :key="r.type + r.id"
+                type="button"
+                class="nb-btn rounded bg-paper px-1 font-mono hover:bg-brand-cyan"
+                @click="emit('openInBrowser', r)"
+              >
+                {{ r.name || r.id }}
+              </button>
+            </div>
+          </div>
+          <div
+            v-if="Object.keys(detail.electronics || {}).length"
+            class="space-y-0.5 border-t border-ink/20 pt-1"
+          >
+            <span class="opacity-60">{{ t('hardwareBrowser.boards.electronics') }}:</span>
+            <dl class="grid grid-cols-[auto_1fr] gap-x-2">
+              <template v-for="(v, k) in detail.electronics" :key="k">
+                <dt class="opacity-60">{{ k }}</dt>
+                <dd class="min-w-0">{{ v }}</dd>
+              </template>
+            </dl>
+          </div>
+          <div v-if="detail.configNotes?.length" class="space-y-0.5">
+            <span class="opacity-60">{{ t('hardwareBrowser.boards.notes') }}:</span>
+            <ul class="list-disc ps-4">
+              <li v-for="(n, ni) in detail.configNotes" :key="ni">{{ n }}</li>
+            </ul>
+          </div>
+          <div v-if="detail.configSnippet" class="space-y-0.5">
+            <div class="flex items-center gap-1">
+              <span class="opacity-60">{{ t('hardwareBrowser.boards.config') }}:</span>
+              <button
+                type="button"
+                class="nb-btn bg-paper px-1 py-0 text-[9px]"
+                @click="copySnippet(detail.configSnippet || '')"
+              >
+                {{ copied ? t('hardwareBrowser.boards.copied') : t('hardwareBrowser.boards.copy') }}
+              </button>
+            </div>
+            <pre
+              class="overflow-x-auto rounded-brutal border border-ink/30 bg-paper p-1 text-[9px] leading-tight"
+              >{{ detail.configSnippet }}</pre
+            >
+          </div>
         </div>
-      </div>
-      <p v-else-if="!mcu.board_id" class="opacity-60">{{ t('boardTopology.board.noMatch') }}</p>
+        <p v-else-if="!mcu.board_id" class="opacity-60">{{ t('boardTopology.board.noMatch') }}</p>
+      </template>
 
       <!-- confirm / override (the write path) -->
       <div class="flex flex-wrap items-center gap-1 border-t border-ink/15 pt-1 text-[10px]">

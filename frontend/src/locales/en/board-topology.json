@@ -129,6 +129,22 @@
       "fan": "Fans",
       "sensor": "Sensors"
     },
+    "pinAtlas": {
+      "tab": {
+        "details": "Details",
+        "atlas": "Pin Atlas"
+      },
+      "summary": "{used}/{total} pins used · {free} free",
+      "loading": "Reading the pin map…",
+      "failed": "Couldn't read the pin map.",
+      "unavailable": "No pin map for this board yet.",
+      "search": "Search pins, signals, sections…",
+      "freeOnly": "Free only",
+      "noMatch": "No pins match.",
+      "other": "Other",
+      "conflict": "Pin conflict",
+      "caveat": "Wiring caveat"
+    },
     "override": {
       "confirmed": "Confirmed by you",
       "confirm": "Confirm this board",

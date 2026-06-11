@@ -1,6 +1,6 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { BoardDetail, Topology } from './types'
+import type { BoardDetail, PinAtlas, Topology } from './types'
 
 /** Host → MCU topology from the live config (read-only). */
 export async function fetchTopology(): Promise<Topology> {
@@ -25,6 +25,18 @@ export async function setBoardOverride(mcuName: string, boardId: string): Promis
     throw new Error(`Board override failed (${response.status})`)
   }
   return (await response.json()) as Topology
+}
+
+/** The used-vs-free pin map of an MCU's resolved board + wiring-health findings. */
+export async function fetchPinAtlas(mcuName: string): Promise<PinAtlas> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(
+    `${backendUrl}/api/topology/pin-atlas/${encodeURIComponent(mcuName)}`,
+  )
+  if (!response.ok) {
+    throw new Error(`Pin atlas request failed (${response.status})`)
+  }
+  return (await response.json()) as PinAtlas
 }
 
 /** Clear an MCU's board override (revert to the auto suggestion); returns the refreshed topology. */

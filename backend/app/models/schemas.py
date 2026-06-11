@@ -1020,6 +1020,43 @@ class Topology(BaseModel):
     detail: str | None = None
 
 
+class PinAtlasPin(BaseModel):
+    """One named pin of a catalog board, with whether the live config uses it and for what."""
+
+    pin: str
+    signal: str | None = None
+    config_key: str | None = None
+    hint: str | None = None
+    category: str | None = None
+    port: str | None = None
+    used: bool = False
+    owners: list[str] = []  # "section.key" of the config sections using this pin
+    caveat: str | None = None  # a board electronics warning that names this pin
+
+
+class PinFinding(BaseModel):
+    """A wiring-health finding from the pin atlas (a real conflict or a config-affecting caveat)."""
+
+    kind: str  # "double_assign" | "caveat"
+    pin: str
+    message: str
+    sections: list[str] = []
+
+
+class PinAtlas(BaseModel):
+    """The used-vs-free pin map of one MCU's resolved board, plus wiring-health findings."""
+
+    mcu_name: str
+    board_id: str | None = None
+    board_name: str | None = None
+    available: bool = True  # false when the board has no pin-map to atlas
+    total: int = 0
+    used: int = 0
+    free: int = 0
+    pins: list[PinAtlasPin] = []
+    findings: list[PinFinding] = []
+
+
 class BoardOverrideRequest(BaseModel):
     """Confirm / override the catalog board for an MCU (keyed by its config section name)."""
 
