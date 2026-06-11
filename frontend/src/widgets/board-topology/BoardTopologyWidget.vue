@@ -1,26 +1,44 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 import { useNav } from '@/core/nav'
 import { fetchFirmwareStatus } from '@/widgets/firmware-upgrade/api'
-import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 import { targetFor, useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 
-import { clearBoardOverride, fetchBoardDetail, fetchTopology, setBoardOverride } from './api'
+import { clearBoardOverride, fetchTopology, setBoardOverride } from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { BoardDetail, BoardMedia, RelatedRef, Topology, TopologyMcu } from './types'
+import NodeInspector from './NodeInspector.vue'
+import TopologyGraph from './TopologyGraph.vue'
+import type { RelatedRef, Topology } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 const { go } = useNav()
 const { focusEntity } = useEntityFocus()
 
-/** Deep-link a related entity into the Hardware Browser: set the shared focus then switch view.
- *  Topology unmounts and the Hardware Browser mounts + opens the target (its focus watch is
- *  `immediate`, so a focus set before it mounts still applies). */
+const topology = ref<Topology | null>(null)
+const loading = ref(true)
+const error = ref<string | null>(null)
+const fwSync = ref<Record<string, boolean | null>>({})
+
+const view = ref<'logical' | 'physical'>('physical')
+const selected = ref<string | null>(null)
+const overrideBusy = ref(false)
+
+const selectedMcu = computed(() => {
+  if (!topology.value || !selected.value || selected.value === 'host') return null
+  return topology.value.mcus.find((m) => 'mcu:' + m.name === selected.value) ?? null
+})
+const isHost = computed(() => selected.value === 'host')
+const selectedFwSync = computed(() =>
+  selectedMcu.value ? fwSync.value[selectedMcu.value.name] : null,
+)
+
+/** Deep-link a related entity into the Hardware Browser (topology unmounts, the browser mounts and
+ *  opens the target — its focus watch is `immediate`, so a focus set before mount still applies). */
 function openInBrowser(ref: RelatedRef): void {
   const target = targetFor(ref)
   if (!target) return
@@ -28,154 +46,9 @@ function openInBrowser(ref: RelatedRef): void {
   go('hardware-browser')
 }
 
-const topology = ref<Topology | null>(null)
-const loading = ref(true)
-const error = ref<string | null>(null)
-// Per-MCU firmware sync (host vs MCU version), overlaid from the firmware status, keyed by MCU name.
-const fwSync = ref<Record<string, boolean | null>>({})
-
-// Lazy-loaded board catalog details, keyed by board_id, for the suggested matches.
-const openBoard = ref<string | null>(null)
-const boardCache = ref<Record<string, BoardDetail>>({})
-const boardLoading = ref<string | null>(null)
-
-async function toggleBoard(boardId: string): Promise<void> {
-  if (openBoard.value === boardId) {
-    openBoard.value = null
-    return
-  }
-  openBoard.value = boardId
-  if (!boardCache.value[boardId]) {
-    boardLoading.value = boardId
-    try {
-      boardCache.value[boardId] = await fetchBoardDetail(boardId)
-    } catch {
-      openBoard.value = null
-    } finally {
-      boardLoading.value = null
-    }
-  }
-}
-
-const LINK_FIELDS: { key: keyof BoardMedia; tk: string }[] = [
-  { key: 'pinoutUrl', tk: 'pinout' },
-  { key: 'schematicUrl', tk: 'schematic' },
-  { key: 'imageUrl', tk: 'image' },
-  { key: 'productUrl', tk: 'product' },
-  { key: 'repoUrl', tk: 'repo' },
-  { key: 'wikiUrl', tk: 'wiki' },
-  { key: 'datasheetUrl', tk: 'datasheet' },
-]
-
-/** Build the list of available reference links for a board (link-only). */
-function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
-  if (!media) return []
-  return LINK_FIELDS.filter((f) => media[f.key]).map((f) => ({
-    url: media[f.key] as string,
-    label: t(`boardTopology.board.links.${f.tk}`),
-  }))
-}
-
-const REL_ORDER = [
-  'manufacturer',
-  'mcus',
-  'onboardDrivers',
-  'supportedDrivers',
-  'motors',
-  'hosts',
-  'boards',
-  'catalog',
-]
-
-/** A board's non-empty cross-entity link groups (from `?expand=related`), in a stable order, for
- *  display. Navigation (clicking through to the Hardware Browser) is wired in a later phase. */
-function relatedGroups(detail?: BoardDetail): { key: string; refs: RelatedRef[] }[] {
-  const rel = detail?.related
-  if (!rel) return []
-  const keys = [...REL_ORDER, ...Object.keys(rel).filter((k) => !REL_ORDER.includes(k))]
-  return keys.filter((k) => (rel[k]?.length ?? 0) > 0).map((k) => ({ key: k, refs: rel[k] }))
-}
-
-const copiedBoard = ref<string | null>(null)
-
-/** Copy a board's config snippet to the clipboard (brief "copied" feedback). */
-async function copySnippet(text: string, boardId: string): Promise<void> {
-  if (!text) return
-  try {
-    await navigator.clipboard?.writeText(text)
-    copiedBoard.value = boardId
-    setTimeout(() => {
-      if (copiedBoard.value === boardId) copiedBoard.value = null
-    }, 1500)
-  } catch {
-    /* clipboard unavailable — no-op */
-  }
-}
-
-const KIND_ORDER = ['motor', 'driver', 'heater', 'fan', 'sensor']
-
-/** Per-kind counts of the components on an MCU (motors / drivers / heaters / fans / sensors). */
-function componentCounts(m: TopologyMcu): { kind: string; n: number }[] {
-  const comps = m.components ?? []
-  return KIND_ORDER.map((k) => ({ kind: k, n: comps.filter((c) => c.kind === k).length })).filter(
-    (x) => x.n > 0,
-  )
-}
-
-// ── Per-MCU board confirm / override (the only write path) ──────────────────────────────────────
-// Overrides are keyed by the MCU's config section name (unique + stable). The picker is opened for
-// at most one MCU at a time; a set/clear re-fetches the whole topology (the backend re-applies it).
-const pickerOpen = ref<string | null>(null)
-const overrideBusy = ref<string | null>(null)
-
-async function confirmBoard(m: TopologyMcu, boardId: string): Promise<void> {
-  if (!boardId) return
-  overrideBusy.value = m.name
-  try {
-    topology.value = await setBoardOverride(m.name, boardId)
-    pickerOpen.value = null
-  } catch (e) {
-    error.value = describeError(e)
-  } finally {
-    overrideBusy.value = null
-  }
-}
-
-async function clearBoard(m: TopologyMcu): Promise<void> {
-  overrideBusy.value = m.name
-  try {
-    topology.value = await clearBoardOverride(m.name)
-  } catch (e) {
-    error.value = describeError(e)
-  } finally {
-    overrideBusy.value = null
-  }
-}
-
-function connLabel(conn: string): string {
-  switch (conn) {
-    case 'canbus':
-      return t('boardTopology.conn.canbus')
-    case 'usb':
-      return t('boardTopology.conn.usb')
-    case 'uart':
-      return t('boardTopology.conn.uart')
-    default:
-      return t('boardTopology.conn.unknown')
-  }
-}
-
-function connClass(conn: string): string {
-  switch (conn) {
-    case 'canbus':
-      return 'bg-brand-cyan text-ink'
-    case 'usb':
-      return 'bg-brand-lime text-ink'
-    case 'uart':
-      return 'bg-brand-yellow text-ink'
-    default:
-      return 'bg-paper text-ink'
-  }
+function defaultSelection(topo: Topology): string | null {
+  const primary = topo.mcus.find((m) => m.name === 'mcu') ?? topo.mcus[0]
+  return primary ? 'mcu:' + primary.name : topo.host ? 'host' : null
 }
 
 async function load(): Promise<void> {
@@ -184,7 +57,12 @@ async function load(): Promise<void> {
     const data = await fetchTopology()
     topology.value = data
     error.value = data.reachable === false ? t('boardTopology.states.unreachable') : null
-    // Overlay firmware sync (best-effort; never blocks the topology).
+    if (
+      data.mcus.length &&
+      (!selected.value || !data.mcus.some((m) => 'mcu:' + m.name === selected.value))
+    ) {
+      selected.value = defaultSelection(data)
+    }
     fetchFirmwareStatus()
       .then((fw) => {
         fwSync.value = Object.fromEntries((fw.mcus ?? []).map((m) => [m.name, m.in_sync]))
@@ -199,6 +77,33 @@ async function load(): Promise<void> {
     loading.value = false
   }
 }
+
+async function setOverride(mcuName: string, boardId: string): Promise<void> {
+  overrideBusy.value = true
+  try {
+    topology.value = await setBoardOverride(mcuName, boardId)
+  } catch (e) {
+    error.value = describeError(e)
+  } finally {
+    overrideBusy.value = false
+  }
+}
+async function clearOverride(mcuName: string): Promise<void> {
+  overrideBusy.value = true
+  try {
+    topology.value = await clearBoardOverride(mcuName)
+  } catch (e) {
+    error.value = describeError(e)
+  } finally {
+    overrideBusy.value = false
+  }
+}
+
+const LEGEND = [
+  { tk: 'usb', cls: 'bg-brand-lime' },
+  { tk: 'canbus', cls: 'bg-brand-cyan' },
+  { tk: 'uart', cls: 'bg-brand-yellow' },
+]
 
 onMounted(() => void load())
 </script>
@@ -225,7 +130,25 @@ onMounted(() => void load())
       </div>
     </div>
 
-    <div class="flex justify-end">
+    <!-- Controls: view toggle + refresh -->
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div
+        class="inline-flex overflow-hidden rounded-brutal border-2 border-ink"
+        role="group"
+        :aria-label="t('boardTopology.graph.viewLabel')"
+      >
+        <button
+          v-for="v in ['physical', 'logical'] as const"
+          :key="v"
+          type="button"
+          class="px-2 py-1 text-xs font-bold"
+          :class="view === v ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
+          :aria-pressed="view === v"
+          @click="view = v"
+        >
+          {{ t('boardTopology.graph.view.' + v) }}
+        </button>
+      </div>
       <button class="nb-btn bg-surface px-2 py-1 text-xs" :disabled="loading" @click="load">
         <span aria-hidden="true">↻</span> {{ t('boardTopology.states.refresh') }}
       </button>
@@ -246,311 +169,53 @@ onMounted(() => void load())
       {{ t('boardTopology.states.empty') }}
     </p>
 
-    <!-- Topology -->
+    <!-- Machine Map -->
     <template v-if="topology && !error && topology.mcus.length">
-      <!-- Host -->
-      <div class="flex flex-col items-center gap-1">
-        <div class="nb-card bg-brand-yellow px-3 py-2 text-center">
-          <div class="font-display font-bold">
-            <span aria-hidden="true">🖥</span>
-            <button
-              v-if="topology.host?.host_id"
-              type="button"
-              class="nb-btn rounded bg-surface px-1 hover:bg-brand-cyan"
-              :title="t('hardwareBrowser.related.jump', { name: topology.host.name })"
-              @click="
-                openInBrowser({
-                  type: 'host',
-                  id: topology.host.host_id ?? '',
-                  name: topology.host.name,
-                })
-              "
-            >
-              {{ topology.host.name }}
-            </button>
-            <template v-else>{{
-              topology.host && topology.host.name && topology.host.name !== 'host'
-                ? topology.host.name
-                : t('boardTopology.host.label')
-            }}</template>
-          </div>
-          <div class="text-[10px] opacity-70">{{ t('boardTopology.host.role') }}</div>
-        </div>
-        <div class="h-4 w-0.5 bg-ink" aria-hidden="true"></div>
-        <div class="text-[10px] opacity-60">
-          {{ t('boardTopology.count', { n: topology.mcu_count }) }}
-        </div>
+      <p class="text-[10px] opacity-60">
+        {{ t('boardTopology.count', { n: topology.mcu_count }) }}
+      </p>
+
+      <!-- Legend -->
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px]">
+        <span v-for="l in LEGEND" :key="l.tk" class="inline-flex items-center gap-1">
+          <span
+            class="inline-block h-2.5 w-3 rounded-sm border border-ink"
+            :class="l.cls"
+            aria-hidden="true"
+          ></span>
+          {{ t('boardTopology.conn.' + l.tk) }}
+        </span>
+        <span class="inline-flex items-center gap-1">
+          <span
+            class="inline-block h-2.5 w-3 rounded-sm border border-ink bg-brand-blue/55"
+            aria-hidden="true"
+          ></span>
+          {{ t('boardTopology.graph.integrated') }}
+        </span>
+        <span class="opacity-70"
+          >✓ {{ t('boardTopology.override.confirmed') }} · ◉
+          {{ t('boardTopology.board.suggested') }}</span
+        >
       </div>
 
-      <!-- MCU cards -->
-      <ul class="grid gap-2 sm:grid-cols-2">
-        <li v-for="(m, i) in topology.mcus" :key="i" class="nb-card space-y-1 bg-surface p-2">
-          <div class="flex items-center justify-between gap-2">
-            <span class="min-w-0 truncate font-mono text-xs font-bold">{{ m.name }}</span>
-            <span
-              class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold"
-              :class="connClass(m.connection)"
-            >
-              {{ connLabel(m.connection) }}
-            </span>
-          </div>
-          <!-- Firmware sync overlay (host vs MCU version), shown only when known -->
-          <div v-if="fwSync[m.name] === true || fwSync[m.name] === false" class="text-[10px]">
-            <span
-              class="rounded px-1 font-bold"
-              :class="fwSync[m.name] ? 'bg-brand-lime text-ink' : 'bg-brand-red text-surface'"
-            >
-              {{
-                fwSync[m.name]
-                  ? '✓ ' + t('boardTopology.sync.synced')
-                  : '⚠ ' + t('boardTopology.sync.outOfSync')
-              }}
-            </span>
-          </div>
-          <div class="font-mono text-[11px]">
-            <span class="opacity-60">{{ t('boardTopology.mcu.chip') }}:</span>
-            <button
-              v-if="m.mcu_id"
-              type="button"
-              class="nb-btn rounded bg-surface px-1 hover:bg-brand-cyan"
-              :title="t('hardwareBrowser.related.jump', { name: m.mcu || m.mcu_id })"
-              @click="openInBrowser({ type: 'mcu', id: m.mcu_id ?? '', name: m.mcu || m.mcu_id })"
-            >
-              {{ m.mcu || m.mcu_id }}
-            </button>
-            <template v-else>{{ m.mcu || t('boardTopology.mcu.unknown') }}</template>
-            <span v-if="m.mcu_family" class="opacity-50">· {{ m.mcu_family }}</span>
-          </div>
-          <div v-if="m.board" class="font-mono text-[11px]">
-            <span class="opacity-60">{{ t('boardTopology.mcu.board') }}:</span> {{ m.board }}
-            <span v-if="m.confidence > 0" class="opacity-50">
-              ({{ t('boardTopology.mcu.confidence', { pct: Math.round(m.confidence * 100) }) }})
-            </span>
-          </div>
-          <div
-            v-if="m.identifier"
-            class="truncate font-mono text-[10px] opacity-50"
-            :title="m.identifier"
-          >
-            {{ m.identifier }}
-          </div>
-
-          <!-- Components living on this MCU (steppers / drivers / heaters / fans / sensors) -->
-          <div
-            v-if="componentCounts(m).length"
-            class="flex flex-wrap items-center gap-1 font-mono text-[10px]"
-          >
-            <span class="opacity-60">{{ t('boardTopology.components.title') }}:</span>
-            <span v-for="c in componentCounts(m)" :key="c.kind" class="rounded bg-paper px-1">
-              {{ t('boardTopology.components.' + c.kind) }} ×{{ c.n }}
-            </span>
-          </div>
-
-          <!-- Catalog board link (suggested match) -->
-          <template v-if="m.board_id">
-            <button
-              class="nb-btn w-full bg-brand-cyan px-2 py-0.5 text-[10px]"
-              @click="toggleBoard(m.board_id)"
-            >
-              {{
-                openBoard === m.board_id
-                  ? t('boardTopology.mcu.hideBoard')
-                  : t('boardTopology.mcu.viewBoard')
-              }}
-              <span class="opacity-70"
-                >· {{ t('boardTopology.board.suggested')
-                }}<template v-if="m.board_match_confidence">
-                  {{ Math.round(m.board_match_confidence * 100) }}%</template
-                ></span
-              >
-            </button>
-
-            <div v-if="openBoard === m.board_id" class="nb-card space-y-1 bg-paper p-2 text-[10px]">
-              <p v-if="boardLoading === m.board_id" class="font-mono opacity-70">
-                {{ t('boardTopology.board.loading') }}
-              </p>
-              <template v-else-if="boardCache[m.board_id]">
-                <div class="font-display text-[11px] font-bold">
-                  {{ boardCache[m.board_id].display_name || boardCache[m.board_id].model }}
-                </div>
-                <div
-                  v-if="boardCache[m.board_id].manufacturer || boardCache[m.board_id].boardClass"
-                  class="flex flex-wrap items-center gap-1 font-mono opacity-70"
-                >
-                  <span v-if="boardCache[m.board_id].manufacturer">{{
-                    boardCache[m.board_id].manufacturer
-                  }}</span>
-                  <span v-if="boardCache[m.board_id].boardClass" class="rounded bg-surface px-1">{{
-                    boardCache[m.board_id].boardClass
-                  }}</span>
-                </div>
-                <div v-if="boardCache[m.board_id].ports?.length" class="font-mono opacity-70">
-                  {{ t('boardTopology.board.portsTitle') }}:
-                  {{ t('boardTopology.board.ports', { n: boardCache[m.board_id].ports!.length }) }}
-                  <span
-                    v-for="(n, cat) in boardCache[m.board_id].portsSummary"
-                    :key="cat"
-                    class="ml-1 inline-block rounded bg-surface px-1"
-                  >
-                    {{ cat }}×{{ n }}
-                  </span>
-                </div>
-                <dl
-                  v-if="Object.keys(boardCache[m.board_id].specs || {}).length"
-                  class="grid grid-cols-[auto_1fr] gap-x-2 font-mono"
-                >
-                  <template v-for="(val, key) in boardCache[m.board_id].specs" :key="key">
-                    <dt class="opacity-60">{{ key }}</dt>
-                    <dd class="min-w-0 truncate">{{ val }}</dd>
-                  </template>
-                </dl>
-                <div
-                  v-if="mediaLinks(boardCache[m.board_id].media).length"
-                  class="flex flex-wrap items-center gap-1 pt-0.5"
-                >
-                  <span class="opacity-60">{{ t('boardTopology.board.links.title') }}:</span>
-                  <a
-                    v-for="lnk in mediaLinks(boardCache[m.board_id].media)"
-                    :key="lnk.url"
-                    :href="lnk.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="nb-btn bg-surface px-1 py-0 text-[9px]"
-                  >
-                    {{ lnk.label }}
-                  </a>
-                </div>
-                <!-- Linked hardware from the DB graph (manufacturer / MCU / drivers …) -->
-                <div
-                  v-if="relatedGroups(boardCache[m.board_id]).length"
-                  class="space-y-0.5 border-t border-ink/20 pt-1"
-                >
-                  <span class="opacity-60">{{ t('hardwareBrowser.related.title') }}:</span>
-                  <div
-                    v-for="g in relatedGroups(boardCache[m.board_id])"
-                    :key="g.key"
-                    class="flex flex-wrap items-center gap-1"
-                  >
-                    <span class="opacity-50">{{ t('hardwareBrowser.related.rel.' + g.key) }}:</span>
-                    <button
-                      v-for="r in g.refs"
-                      :key="r.type + r.id"
-                      type="button"
-                      class="nb-btn rounded bg-surface px-1 font-mono hover:bg-brand-cyan"
-                      :title="t('hardwareBrowser.related.jump', { name: r.name || r.id })"
-                      @click="openInBrowser(r)"
-                    >
-                      {{ r.name || r.id }}
-                    </button>
-                  </div>
-                </div>
-                <!-- Config-affecting electronics caveats -->
-                <div
-                  v-if="Object.keys(boardCache[m.board_id].electronics || {}).length"
-                  class="space-y-0.5 border-t border-ink/20 pt-1"
-                >
-                  <span class="opacity-60">{{ t('hardwareBrowser.boards.electronics') }}:</span>
-                  <dl class="grid grid-cols-[auto_1fr] gap-x-2">
-                    <template v-for="(v, k) in boardCache[m.board_id].electronics" :key="k">
-                      <dt class="opacity-60">{{ k }}</dt>
-                      <dd class="min-w-0">{{ v }}</dd>
-                    </template>
-                  </dl>
-                </div>
-                <!-- Setup / config notes -->
-                <div v-if="boardCache[m.board_id].configNotes?.length" class="space-y-0.5">
-                  <span class="opacity-60">{{ t('hardwareBrowser.boards.notes') }}:</span>
-                  <ul class="list-disc ps-4">
-                    <li v-for="(n, ni) in boardCache[m.board_id].configNotes" :key="ni">{{ n }}</li>
-                  </ul>
-                </div>
-                <!-- Copyable Klipper config / pin-map snippet -->
-                <div v-if="boardCache[m.board_id].configSnippet" class="space-y-0.5">
-                  <div class="flex items-center gap-1">
-                    <span class="opacity-60">{{ t('hardwareBrowser.boards.config') }}:</span>
-                    <button
-                      type="button"
-                      class="nb-btn bg-surface px-1 py-0 text-[9px]"
-                      @click="copySnippet(boardCache[m.board_id].configSnippet || '', m.board_id)"
-                    >
-                      {{
-                        copiedBoard === m.board_id
-                          ? t('hardwareBrowser.boards.copied')
-                          : t('hardwareBrowser.boards.copy')
-                      }}
-                    </button>
-                  </div>
-                  <pre
-                    class="overflow-x-auto rounded-brutal border border-ink/30 bg-surface p-1 text-[9px] leading-tight"
-                    >{{ boardCache[m.board_id].configSnippet }}</pre
-                  >
-                </div>
-                <p
-                  v-if="
-                    !boardCache[m.board_id].ports?.length &&
-                    !Object.keys(boardCache[m.board_id].specs || {}).length &&
-                    !mediaLinks(boardCache[m.board_id].media).length &&
-                    !relatedGroups(boardCache[m.board_id]).length &&
-                    !boardCache[m.board_id].configSnippet &&
-                    !boardCache[m.board_id].configNotes?.length
-                  "
-                  class="opacity-60"
-                >
-                  {{ t('boardTopology.board.none') }}
-                </p>
-              </template>
-            </div>
-          </template>
-
-          <!-- Confirm / override the board for this MCU (persisted across reboots) -->
-          <div class="flex flex-wrap items-center gap-1 border-t border-ink/15 pt-1 text-[10px]">
-            <span
-              v-if="m.board_match === 'confirmed'"
-              class="rounded bg-brand-lime px-1 font-bold text-ink"
-            >
-              ✓ {{ t('boardTopology.override.confirmed') }}
-            </span>
-            <button
-              v-if="m.board_id && m.board_match !== 'confirmed'"
-              type="button"
-              class="nb-btn bg-surface px-1 py-0 disabled:opacity-50"
-              :disabled="overrideBusy === m.name"
-              @click="confirmBoard(m, m.board_id || '')"
-            >
-              {{ t('boardTopology.override.confirm') }}
-            </button>
-            <button
-              type="button"
-              class="nb-btn bg-surface px-1 py-0 disabled:opacity-50"
-              :disabled="overrideBusy === m.name"
-              @click="pickerOpen = pickerOpen === m.name ? null : m.name"
-            >
-              {{
-                m.board_id ? t('boardTopology.override.change') : t('boardTopology.override.set')
-              }}
-            </button>
-            <button
-              v-if="m.board_match === 'confirmed'"
-              type="button"
-              class="nb-btn bg-surface px-1 py-0 disabled:opacity-50"
-              :disabled="overrideBusy === m.name"
-              @click="clearBoard(m)"
-            >
-              {{ t('boardTopology.override.clear') }}
-            </button>
-          </div>
-          <div v-if="pickerOpen === m.name" class="pt-1">
-            <HardwarePicker
-              type="boards"
-              :model-value="m.board_id ?? null"
-              :placeholder="t('boardTopology.override.pickPlaceholder')"
-              :disabled="overrideBusy === m.name"
-              @update:model-value="(id: string | null) => confirmBoard(m, id || '')"
-            />
-            <p class="pt-0.5 opacity-60">{{ t('boardTopology.override.hint') }}</p>
-          </div>
-        </li>
-      </ul>
+      <div class="grid gap-3 lg:grid-cols-[1.4fr_1fr]">
+        <TopologyGraph
+          :topology="topology"
+          :view="view"
+          :selected="selected"
+          @select="(id) => (selected = id)"
+        />
+        <NodeInspector
+          :mcu="selectedMcu"
+          :host="topology.host"
+          :is-host="isHost"
+          :busy="overrideBusy"
+          :fw-sync="selectedFwSync"
+          @open-in-browser="openInBrowser"
+          @set-override="setOverride"
+          @clear-override="clearOverride"
+        />
+      </div>
     </template>
   </div>
 </template>

@@ -275,6 +275,34 @@ def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
     assert board_id == "fit-x" and conf >= 0.6
 
 
+# ── integrated-SBC detection (host physically on the mainboard) ──────────────
+def test_integrated_sbc_matches_soc_in_board_host_field() -> None:
+    """An SV08-style board declares an onboard CB1-class SBC; when the host SoC matches, the host is
+    integrated. An external Pi (different SoC) on the same board stays a separate host."""
+    sv08 = {
+        "specs": {
+            "Class": "integrated mainboard",
+            "Host": "Ships with a CB1-class SBC (Allwinner H616) running Klipper",
+        }
+    }
+    assert board_topology._integrated_sbc("Allwinner H616", sv08) is True
+    assert board_topology._integrated_sbc("BCM2711", sv08) is False  # external Pi → not integrated
+    # A plain mainboard that declares no SBC is never integrated.
+    plain = {"specs": {"Class": "mainboard", "Host": ""}}
+    assert board_topology._integrated_sbc("Allwinner H616", plain) is False
+    assert board_topology._integrated_sbc("", None) is False
+
+
+def test_mark_integrated_host_sets_board_id() -> None:
+    result = {
+        "host": {"name": "h", "role": "sbc", "host_id": "bigtreetech-cb1"},
+        "mcus": [{"name": "mcu", "board_id": "sovol-sv08"}],
+    }
+    board_topology._mark_integrated_host(result)
+    # sovol-sv08 declares a CB1-class SBC (Allwinner H616) == the CB1 host's SoC → integrated.
+    assert result["host"]["integrated_into_board_id"] == "sovol-sv08"
+
+
 # ── per-MCU board overrides (the only write path) ────────────────────────────
 def test_apply_overrides_confirms_chosen_board() -> None:
     """A saved override replaces the auto suggestion: chosen board wins, match=confirmed."""

@@ -273,6 +273,26 @@ def _resolve_host_id(model: str, hosts: list[dict[str, Any]]) -> tuple[str | Non
     return best
 
 
+def _integrated_sbc(host_soc: str, board: dict[str, Any] | None) -> bool:
+    """True when a mainboard declares an onboard / socketed SBC whose SoC matches the host's — i.e.
+    the host computer is physically *on* this board (a Sovol SV07/SV08, a BTT Manta carrying a CB1 /
+    CM4, …) rather than a separate Pi. Read from the board's catalog ``specs`` (``Class`` /
+    ``Host``); the host's SoC must match when known, so an external Pi on the same board still reads
+    as a separate host. Casing differs by source (host ``soc`` lower, board ``Host``/``Class``
+    title) so both are normalised first."""
+    if not isinstance(board, dict):
+        return False
+    specs = board.get("specs")
+    specs = specs if isinstance(specs, dict) else {}
+    host_field = _norm(specs.get("Host"))
+    board_class = _norm(specs.get("Class"))
+    declares = "integrated" in board_class or "sbc" in host_field or "onboard" in host_field
+    if not declares:
+        return False
+    soc = _norm(host_soc)
+    return soc in host_field if soc else True
+
+
 def host_node(
     system_info: dict[str, Any], hosts: list[dict[str, Any]] | None = None
 ) -> dict[str, Any]:
@@ -399,5 +419,26 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
         result["host"] = host_node(system_info)
     except httpx.HTTPError:
         pass
+    _mark_integrated_host(result)
     result["reachable"] = True
     return result
+
+
+def _mark_integrated_host(result: dict[str, Any]) -> None:
+    """Flag when the host SBC is physically integrated onto the primary mainboard (e.g. an SV08 or
+    Manta carrying a CB1), so the UI can draw the host *inside* that board instead of as a separate
+    node. Sets ``host.integrated_into_board_id`` to the mainboard id, or leaves it unset."""
+    host = result.get("host")
+    if not isinstance(host, dict) or not host.get("host_id"):
+        return
+    mcus = result.get("mcus") or []
+    primary = next((m for m in mcus if m.get("name") == "mcu" and m.get("board_id")), None) or next(
+        (m for m in mcus if m.get("board_id")), None
+    )
+    if not primary:
+        return
+    host_entity = reference_data.host_by_id(str(host["host_id"]))
+    board = reference_data.board_by_id(str(primary["board_id"]))
+    soc = str(host_entity.get("soc", "")) if isinstance(host_entity, dict) else ""
+    if _integrated_sbc(soc, board):
+        host["integrated_into_board_id"] = primary["board_id"]
