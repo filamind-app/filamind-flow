@@ -268,7 +268,7 @@ def build_pin_atlas(
         for pm in port.get("pinMap") or []:
             if not isinstance(pm, dict):
                 continue
-            pin = str(pm.get("pin") or "").strip().upper()
+            _, pin = _split_pin(pm.get("pin") or "")  # bare pin (drop any MCU-name prefix)
             if not pin or pin in seen:
                 continue
             seen.add(pin)
@@ -312,13 +312,18 @@ def build_pin_atlas(
 
 
 def _board_pin_set(board: dict[str, Any]) -> set[str]:
-    """Every pin name in a catalog board's verbatim Klipper pin-maps."""
+    """Every physical pin name in a catalog board's pin-maps, normalised the SAME way the live
+    config's used pins are (``_split_pin``) — so a pin-map entry that still carries a config
+    MCU-name prefix (e.g. ``TOOLHEAD_MCU:PA1`` on a toolhead board) is compared as its bare pin
+    ``PA1`` and still fingerprints. Without this, prefixed toolhead pin-maps never match."""
     pins: set[str] = set()
     for port in board.get("ports") or []:
         if not isinstance(port, dict):
             continue
         for pm in port.get("pinMap") or []:
-            p = str(pm.get("pin") or "").strip().upper() if isinstance(pm, dict) else ""
+            if not isinstance(pm, dict):
+                continue
+            _, p = _split_pin(pm.get("pin") or "")
             if p:
                 pins.add(p)
     return pins
