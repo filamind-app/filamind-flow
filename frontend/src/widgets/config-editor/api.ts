@@ -1,6 +1,7 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
+  ConfigBackupList,
   ConfigDriftResult,
   ConfigFileList,
   ConfigFileView,
@@ -86,6 +87,27 @@ export async function fetchPinDoctor(): Promise<PinDoctorResult> {
     throw new Error(`Pin doctor request failed (${response.status})`)
   }
   return (await response.json()) as PinDoctorResult
+}
+
+/** List timestamped backup snapshots (newest first), optionally limited to one file. */
+export async function fetchBackups(filename?: string): Promise<ConfigBackupList> {
+  const { backendUrl } = resolveEndpoints()
+  const q = filename ? `?filename=${encodeURIComponent(filename)}` : ''
+  const response = await fetch(`${backendUrl}/api/config/backups${q}`)
+  if (!response.ok) {
+    throw new Error(`Backups request failed (${response.status})`)
+  }
+  return (await response.json()) as ConfigBackupList
+}
+
+/** Fetch one backup snapshot's content (for diff / restore-into-editor). */
+export async function fetchBackupContent(path: string): Promise<string> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/backup?path=${encodeURIComponent(path)}`)
+  if (!response.ok) {
+    throw new Error(`Backup content request failed (${response.status})`)
+  }
+  return ((await response.json()) as { content: string }).content
 }
 
 /** The project `[include]` dependency graph + cross-file lint across every config file. */

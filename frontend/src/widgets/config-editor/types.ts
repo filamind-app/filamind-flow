@@ -162,3 +162,19 @@ export interface ConfigSearchResult {
   matches: ConfigSearchMatch[]
   truncated: boolean
 }
+
+/** One timestamped backup snapshot of a config file. */
+export interface ConfigBackup {
+  path: string
+  flat: string
+  stamp: string
+  when: string
+  size: number | null
+  modified: number | null
+}
+
+export interface ConfigBackupList {
+  reachable: boolean
+  filename: string | null
+  backups: ConfigBackup[]
+}
