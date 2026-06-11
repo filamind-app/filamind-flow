@@ -160,6 +160,31 @@
         "extrude": "Extrusion (mm)",
         "time": "Temps (s)"
       }
+    },
+    "scaffold": {
+      "title": "Générer START / END_PRINT",
+      "hint": "Construit un START_PRINT et END_PRINT adaptés à cette imprimante — son homing, le nivellement réellement présent, une étape de maillage et des positions prime/park dans la zone réelle.",
+      "generate": "Générer",
+      "generating": "Génération…",
+      "loadEditor": "Charger dans l'éditeur",
+      "writeTitle": "Écrire dans la config",
+      "target": "Fichier cible",
+      "append": "Ajouter à la config…",
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "appending": "Écriture…",
+      "writeNote": "Ajoute les deux macros au fichier choisi derrière la confirmation — une sauvegarde est faite d'abord et l'écriture est refusée pendant l'impression. Refusé si une macro du même nom existe déjà.",
+      "saved": "Enregistré dans {file}.",
+      "savedBackup": "Enregistré dans {file} (sauvegarde : {backup}). Redémarrez le firmware pour appliquer.",
+      "note": {
+        "kinematics": "Cinématique : {k}.",
+        "bounds": "Zone X {x0}-{x1}, Y {y0}-{y1} (prime/park à l'intérieur).",
+        "leveling_qgl": "quad_gantry_level détecté -> QUAD_GANTRY_LEVEL ajouté.",
+        "leveling_ztilt": "z_tilt détecté -> Z_TILT_ADJUST ajouté.",
+        "leveling_none": "Pas de quad_gantry_level / z_tilt — espace réservé laissé.",
+        "mesh": "bed_mesh détecté -> BED_MESH_CALIBRATE ajouté.",
+        "no_bed": "Pas de lit chauffant — étapes de chauffe omises."
+      }
     }
   }
 }

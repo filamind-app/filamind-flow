@@ -95,6 +95,27 @@ export interface MacroDef {
   expands_to: string[]
 }
 
+/** One structured explanation of what the scaffold tailored (localised on the frontend). */
+export interface ScaffoldNote {
+  key: string
+  params: Record<string, string | number>
+}
+
+/** Generated START_PRINT / END_PRINT tailored to this printer (from `/api/macro/scaffold`). */
+export interface ScaffoldResult {
+  reachable: boolean
+  context: {
+    kinematics?: string
+    bounds?: { min: number[]; max: number[] } | null
+    leveling?: string[]
+    has_bed?: boolean
+    has_extruder?: boolean
+  }
+  start: string
+  end: string
+  notes: ScaffoldNote[]
+}
+
 /** One of the printer's own installed `[gcode_macro]` definitions, from `/api/macro/live`. */
 export interface LiveMacro {
   name: string
