@@ -131,6 +131,13 @@
       "pickPlaceholder": "ابحث في الكاتلوج…",
       "inserted": "أُدرجت كتلة {name} — راجعها في العرض الخام واحفظ.",
       "noSnippet": "لا تتوفّر كتلة إعداد لـ {name}."
+    },
+    "drift": {
+      "title": "ما يشغّله Klipper فعلًا",
+      "pending": "لدى Klipper تغييرات غير محفوظة (SAVE_CONFIG معلّق) — حفظ هذا الملف الآن سيطمسها. شغّل SAVE_CONFIG في الطرفية أولًا.",
+      "warningsTitle": "تحذيرات إعداد Klipper",
+      "count": "{n} قيمة على القرص تختلف عمّا يعمل (عُدِّلت دون FIRMWARE_RESTART):",
+      "adopt": "تبنَّ الحيّة"
     }
   }
 }

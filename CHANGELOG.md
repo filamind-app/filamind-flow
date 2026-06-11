@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.179.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — disk-vs-live drift healer.** The editor now compares the file on disk to **what
+  Klipper is actually running** (the live `configfile`) and surfaces the gaps: a banner when a
+  **`SAVE_CONFIG` is pending** (saving the file now would clobber Klipper's computed values),
+  **Klipper's own config warnings**, and a **per-param drift list** — any value you edited but never
+  `FIRMWARE_RESTART`-ed, shown as *disk → live* with a one-click **"adopt live"** that surgically
+  rewrites just that line through the round-trip engine (every other line untouched) and drops it in
+  the editor for the existing gated save. Backed by new read-only `GET /api/config/drift` + a pure
+  `POST /api/config/adopt` transform. Degrades silently when the printer is unreachable; localised in
+  all 7 languages. (Phase 5 of the Config Editor + Macro Designer programme.)
+
 ## [0.178.0] - 2026-06-11
 
 ### Added

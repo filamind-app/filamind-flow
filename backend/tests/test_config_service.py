@@ -301,3 +301,44 @@ def test_route_restart_ok(monkeypatch: pytest.MonkeyPatch) -> None:
     resp = TestClient(_app()).post("/api/config/restart")
     assert resp.status_code == 200
     assert resp.json()["ok"] is True
+
+
+# ── disk-vs-live drift + adopt (C3) ──────────────────────────────────────────
+def test_adopt_param_surgically_sets_value() -> None:
+    from app.services import config_service
+
+    content = "[tmc2209 stepper_x]\nrun_current: 0.800\nhold_current: 0.5\n"
+    out = config_service.adopt_param(content, "tmc2209 stepper_x", "run_current", "1.000")
+    assert "run_current: 1.000" in out
+    assert "hold_current: 0.5" in out  # the other param is untouched
+    # An unknown param leaves the text unchanged.
+    assert config_service.adopt_param(content, "nope", "x", "1") == content
+
+
+async def test_gather_drift_flags_edited_not_restarted() -> None:
+
+    from app.services import config_service
+
+    # On disk run_current was bumped to 1.2; Klipper is still running the loaded 0.8 → drift.
+    disk = "[tmc2209 stepper_x]\nrun_current: 1.2\nhold_current: 0.5\n"
+    live_config = {"tmc2209 stepper_x": {"run_current": "0.8", "hold_current": "0.5"}}
+
+    class _Client:
+        async def query_objects(self, _objects: list[str]) -> dict[str, Any]:
+            return {
+                "configfile": {
+                    "config": live_config,
+                    "save_config_pending": True,
+                    "warnings": [{"message": "deprecated option"}],
+                }
+            }
+
+        async def get_file_text(self, _path: str, root: str = "config") -> str:
+            return disk
+
+    out = await config_service.gather_drift(_Client(), "printer.cfg")  # type: ignore[arg-type]
+    assert out["reachable"] is True and out["save_config_pending"] is True
+    assert len(out["warnings"]) == 1
+    assert out["drifts"] == [
+        {"section": "tmc2209 stepper_x", "key": "run_current", "disk": "1.2", "live": "0.8"}
+    ]

@@ -103,6 +103,87 @@ async def read_config_file(client: MoonrakerClient, filename: str) -> dict[str, 
     return build_file_view(filename, raw)
 
 
+async def gather_drift(client: MoonrakerClient, filename: str) -> dict[str, Any]:
+    """Compare the on-disk file to what Klipper is actually running (the live ``configfile``).
+
+    Klipper runs the LOADED config, which can diverge from disk — an edit not yet restarted, or a
+    pending ``SAVE_CONFIG`` Klipper computed but hasn't written. Returns the pending flag, Klipper's
+    own parse warnings, and a per-param drift list (single-line params whose on-disk value differs
+    from the live one). Degrades to ``reachable=false`` when Moonraker is down.
+    """
+    _reject_unsafe(filename)
+    try:
+        configfile = await client.query_objects(["configfile"])
+        raw = await client.get_file_text(filename, root="config")
+    except httpx.HTTPError:
+        return {
+            "reachable": False,
+            "save_config_pending": False,
+            "pending_items": {},
+            "warnings": [],
+            "drifts": [],
+        }
+    cfobj = configfile.get("configfile")
+    cfobj = cfobj if isinstance(cfobj, dict) else {}
+    live_raw = cfobj.get("config")
+    live: dict[str, Any] = live_raw if isinstance(live_raw, dict) else {}
+
+    drifts: list[dict[str, str]] = []
+    for sec in klipper_config.parse(raw).sections:
+        if sec.header == klipper_config.SAVE_CONFIG_MARKER:
+            continue  # the SAVE_CONFIG block is Klipper-managed — never diff it
+        live_sec = live.get(sec.header.strip().lower())
+        if not isinstance(live_sec, dict):
+            continue
+        for param in sec.params:
+            disk = (param.value or "").strip()
+            raw_live = live_sec.get(param.key.strip().lower())
+            if raw_live is None:
+                continue
+            live_val = str(raw_live).strip()
+            if "\n" in disk or "\n" in live_val:
+                continue  # skip multi-line values (gcode / bed_mesh points) — too fuzzy to diff
+            if disk and live_val and disk != live_val:
+                drifts.append(
+                    {"section": sec.header, "key": param.key, "disk": disk, "live": live_val}
+                )
+
+    return {
+        "reachable": True,
+        "save_config_pending": bool(cfobj.get("save_config_pending")),
+        "pending_items": cfobj.get("save_config_pending_items") or {},
+        "warnings": [str(w) for w in (cfobj.get("warnings") or [])],
+        "drifts": drifts,
+    }
+
+
+def adopt_param(content: str, section: str, key: str, value: str) -> str:
+    """Set one param's value in ``content`` via the round-trip engine and return the new text.
+
+    Pure (no I/O): only the target param's line is rewritten; every other param re-emits verbatim.
+    Returns ``content`` unchanged if the param isn't found.
+    """
+    cfg = klipper_config.parse(content)
+    target_sec = section.strip().lower()
+    target_key = key.strip().lower()
+    for sec in cfg.sections:
+        if sec.header.strip().lower() != target_sec:
+            continue
+        for param in sec.params:
+            if param.key.strip().lower() == target_key:
+                param.value = value
+                # Rebuild just this line in Klipper's convention (``key: value`` / ``key = value``),
+                # preserving any inline comment; every other param keeps its verbatim ``raw``.
+                sep = " = " if param.separator == "=" else ": "
+                line = f"{param.key}{sep}{value}"
+                if param.comment:
+                    line = f"{line} {param.comment.lstrip()}"
+                param.raw = line + "\n"
+                sec.raw_lines = []  # rebuild the section so the new value takes effect
+                return klipper_config.dump(cfg)
+    return content
+
+
 async def _is_busy(client: MoonrakerClient) -> bool:
     """True while the printer is printing, paused, or in error — block writes and restarts
     then. Reads ``print_stats.state`` (mirrors the Motor Drivers write guard)."""

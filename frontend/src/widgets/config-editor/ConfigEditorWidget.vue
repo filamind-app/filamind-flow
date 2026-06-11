@@ -13,10 +13,18 @@ import {
 } from '@/widgets/hardware-browser/api'
 import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 
-import { ApiError, fetchConfigFile, fetchConfigFiles, restartFirmware, saveConfigFile } from './api'
+import {
+  adoptParam,
+  ApiError,
+  fetchConfigDrift,
+  fetchConfigFile,
+  fetchConfigFiles,
+  restartFirmware,
+  saveConfigFile,
+} from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import type { ConfigFileInfo, ConfigFileView } from './types'
+import type { ConfigDrift, ConfigDriftResult, ConfigFileInfo, ConfigFileView } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -44,6 +52,36 @@ const restartErr = ref<string | null>(null)
 const showRestartPrompt = ref(false)
 
 const dirty = computed(() => view.value != null && draft.value !== view.value.raw)
+
+// Disk-vs-live drift: compare the file to what Klipper is actually running.
+const drift = ref<ConfigDriftResult | null>(null)
+const adopting = ref<string | null>(null)
+const hasLiveInfo = computed(() => {
+  const d = drift.value
+  return (
+    !!d && d.reachable && (d.save_config_pending || d.warnings.length > 0 || d.drifts.length > 0)
+  )
+})
+
+async function loadDrift(filename: string): Promise<void> {
+  try {
+    drift.value = await fetchConfigDrift(filename)
+  } catch {
+    drift.value = null
+  }
+}
+
+async function adoptLive(d: ConfigDrift): Promise<void> {
+  adopting.value = d.section + '|' + d.key
+  try {
+    draft.value = await adoptParam(draft.value, d.section, d.key, d.live)
+    viewMode.value = 'raw'
+  } catch (e) {
+    saveErr.value = describeError(e)
+  } finally {
+    adopting.value = null
+  }
+}
 
 // Insert-from-Catalog: pick a driver / motor / board and append its verbatim, hardware-accurate
 // Klipper config block (run_current / sense_resistor / real pin names) to the draft for review.
@@ -140,12 +178,14 @@ async function loadFiles(): Promise<void> {
 
 async function loadView(filename: string): Promise<void> {
   loadingView.value = true
+  drift.value = null
   try {
     const v = await fetchConfigFile(filename)
     view.value = v
     draft.value = v.raw
     errView.value = null
     open.value = {}
+    void loadDrift(filename)
   } catch (e) {
     errView.value = describeError(e)
     view.value = null
@@ -348,6 +388,45 @@ onMounted(() => void loadFiles())
             <span class="min-w-0">{{ issue.message }}</span>
           </li>
         </ul>
+      </div>
+
+      <!-- Disk vs live: what Klipper is actually running (drift + pending SAVE_CONFIG + warnings) -->
+      <div v-if="hasLiveInfo && drift" class="nb-card space-y-2 bg-brand-yellow/15 p-2">
+        <p class="text-xs font-bold">{{ t('configEditor.drift.title') }}</p>
+        <p v-if="drift.save_config_pending" class="font-mono text-[11px]">
+          <span aria-hidden="true">⚠</span> {{ t('configEditor.drift.pending') }}
+        </p>
+        <div v-if="drift.warnings.length" class="space-y-0.5">
+          <p class="text-[11px] font-bold opacity-70">
+            {{ t('configEditor.drift.warningsTitle') }}
+          </p>
+          <ul class="space-y-0.5 font-mono text-[10px] opacity-80">
+            <li v-for="(w, i) in drift.warnings" :key="i">{{ w }}</li>
+          </ul>
+        </div>
+        <div v-if="drift.drifts.length" class="space-y-1">
+          <p class="text-[11px]">{{ t('configEditor.drift.count', { n: drift.drifts.length }) }}</p>
+          <ul class="space-y-1">
+            <li
+              v-for="(d, i) in drift.drifts"
+              :key="i"
+              class="flex flex-wrap items-center gap-1.5 font-mono text-[10px]"
+            >
+              <span class="opacity-60">[{{ d.section }}]</span>
+              <b>{{ d.key }}</b>
+              <span class="rounded bg-brand-red/20 px-1">{{ d.disk }}</span>
+              <span aria-hidden="true">→</span>
+              <span class="rounded bg-brand-lime/30 px-1">{{ d.live }}</span>
+              <button
+                class="nb-btn bg-surface px-1 py-0 disabled:opacity-50"
+                :disabled="adopting === d.section + '|' + d.key"
+                @click="adoptLive(d)"
+              >
+                {{ t('configEditor.drift.adopt') }}
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Insert a hardware-accurate config block from the catalog -->

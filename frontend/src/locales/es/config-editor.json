@@ -131,6 +131,13 @@
       "pickPlaceholder": "Buscar en el catálogo…",
       "inserted": "Bloque de {name} insertado — revísalo en Raw y guarda.",
       "noSnippet": "No hay bloque de config para {name}."
+    },
+    "drift": {
+      "title": "Lo que Klipper está ejecutando",
+      "pending": "Klipper tiene cambios sin guardar (SAVE_CONFIG pendiente) — guardar este archivo ahora los sobrescribiría. Ejecuta SAVE_CONFIG en la consola primero.",
+      "warningsTitle": "Avisos de config de Klipper",
+      "count": "{n} valor(es) en disco difieren de lo que se ejecuta (editado sin FIRMWARE_RESTART):",
+      "adopt": "adoptar en vivo"
     }
   }
 }

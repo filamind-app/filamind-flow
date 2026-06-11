@@ -47,3 +47,20 @@ export interface ConfigSaveResult {
   issues: ConfigIssue[]
   section_count: number
 }
+
+/** A param whose on-disk value differs from what Klipper is running. */
+export interface ConfigDrift {
+  section: string
+  key: string
+  disk: string
+  live: string
+}
+
+/** Disk-vs-live comparison from `/api/config/drift`. */
+export interface ConfigDriftResult {
+  reachable: boolean
+  save_config_pending: boolean
+  pending_items: Record<string, unknown>
+  warnings: string[]
+  drifts: ConfigDrift[]
+}

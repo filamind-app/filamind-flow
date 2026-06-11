@@ -131,6 +131,13 @@
       "pickPlaceholder": "Katalog durchsuchen…",
       "inserted": "Block für {name} eingefügt — in Roh prüfen und speichern.",
       "noSnippet": "Kein Konfigblock für {name} verfügbar."
+    },
+    "drift": {
+      "title": "Was Klipper ausführt",
+      "pending": "Klipper hat ungespeicherte Änderungen (ein SAVE_CONFIG steht aus) — diese Datei jetzt zu speichern würde sie überschreiben. Führe zuerst SAVE_CONFIG in der Konsole aus.",
+      "warningsTitle": "Klipper-Konfig-Warnungen",
+      "count": "{n} Wert(e) auf der Festplatte weichen vom Laufenden ab (bearbeitet, aber kein FIRMWARE_RESTART):",
+      "adopt": "Live übernehmen"
     }
   }
 }
