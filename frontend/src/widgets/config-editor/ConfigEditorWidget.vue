@@ -6,6 +6,12 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import { describeError } from '@/core/describeError'
+import {
+  fetchBoardDetail,
+  fetchDriverDetail,
+  fetchMotorDetail,
+} from '@/widgets/hardware-browser/api'
+import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 
 import { ApiError, fetchConfigFile, fetchConfigFiles, restartFirmware, saveConfigFile } from './api'
 import HelpIllo from './HelpIllo.vue'
@@ -38,6 +44,59 @@ const restartErr = ref<string | null>(null)
 const showRestartPrompt = ref(false)
 
 const dirty = computed(() => view.value != null && draft.value !== view.value.raw)
+
+// Insert-from-Catalog: pick a driver / motor / board and append its verbatim, hardware-accurate
+// Klipper config block (run_current / sense_resistor / real pin names) to the draft for review.
+const catalogType = ref<'drivers' | 'motors' | 'boards'>('drivers')
+const catalogPick = ref<string | null>(null)
+const inserting = ref(false)
+const insertMsg = ref<string | null>(null)
+const insertErr = ref(false)
+
+const CATALOG_TABS = computed<{ id: 'drivers' | 'motors' | 'boards'; label: string }[]>(() => [
+  { id: 'drivers', label: t('configEditor.catalog.drivers') },
+  { id: 'motors', label: t('configEditor.catalog.motors') },
+  { id: 'boards', label: t('configEditor.catalog.boards') },
+])
+
+async function onCatalogPick(id: string | null): Promise<void> {
+  if (!id) return
+  inserting.value = true
+  insertMsg.value = null
+  insertErr.value = false
+  try {
+    let snippet = ''
+    let label = id
+    if (catalogType.value === 'drivers') {
+      const d = await fetchDriverDetail(id)
+      snippet = d.configSnippet ?? ''
+      label = d.name ?? id
+    } else if (catalogType.value === 'motors') {
+      const m = await fetchMotorDetail(id)
+      snippet = m.configSnippet ?? ''
+      label = m.name ?? id
+    } else {
+      const b = await fetchBoardDetail(id)
+      snippet = b.configSnippet ?? ''
+      label = b.display_name ?? b.model ?? id
+    }
+    if (snippet.trim()) {
+      const base = draft.value.trimEnd()
+      draft.value = base ? `${base}\n\n${snippet.trim()}\n` : `${snippet.trim()}\n`
+      viewMode.value = 'raw'
+      insertMsg.value = t('configEditor.catalog.inserted', { name: label })
+    } else {
+      insertErr.value = true
+      insertMsg.value = t('configEditor.catalog.noSnippet', { name: label })
+    }
+  } catch (e) {
+    insertErr.value = true
+    insertMsg.value = describeError(e)
+  } finally {
+    inserting.value = false
+    catalogPick.value = null
+  }
+}
 
 const VIEW_TABS = computed<{ id: 'structured' | 'raw'; label: string }[]>(() => [
   { id: 'structured', label: t('configEditor.view.structured') },
@@ -290,6 +349,32 @@ onMounted(() => void loadFiles())
           </li>
         </ul>
       </div>
+
+      <!-- Insert a hardware-accurate config block from the catalog -->
+      <details class="nb-card bg-surface p-2 text-[11px]">
+        <summary class="cursor-pointer text-xs font-bold">
+          {{ t('configEditor.catalog.title') }}
+        </summary>
+        <div class="mt-2 space-y-2">
+          <p class="opacity-70">{{ t('configEditor.catalog.hint') }}</p>
+          <WidgetTabs v-model="catalogType" :tabs="CATALOG_TABS" />
+          <HardwarePicker
+            :key="catalogType"
+            :type="catalogType"
+            :model-value="catalogPick"
+            :placeholder="t('configEditor.catalog.pickPlaceholder')"
+            :disabled="inserting"
+            @update:model-value="onCatalogPick"
+          />
+          <p
+            v-if="insertMsg"
+            class="font-mono text-[11px]"
+            :class="insertErr ? 'text-brand-red' : 'text-ink'"
+          >
+            <span aria-hidden="true">{{ insertErr ? '⚠' : '✓' }}</span> {{ insertMsg }}
+          </p>
+        </div>
+      </details>
 
       <!-- View toggle -->
       <WidgetTabs v-model="viewMode" :tabs="VIEW_TABS" />
