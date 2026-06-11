@@ -78,6 +78,8 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/topology/override`   | Confirm / override the catalog board for one MCU (keyed by its config section name). Validates the `board_id` against the catalog; persisted on the host and applied to every read. |
 | POST   | `/api/topology/override/clear` | Remove an MCU's board override (revert to the auto suggestion). |
 | GET    | `/api/topology/pin-atlas/{mcu_name}` | The used-vs-free pin map of an MCU's resolved board (honouring overrides) + a wiring-health scan: pins driven by >1 config section (`double_assign`) and board electronics caveats bound to a used pin (`caveat`). `available=false` when the board has no pin-map. |
+| POST   | `/api/topology/snapshot`   | Save the current topology as the hardware baseline (per-MCU board / chip / connection / component-count, keyed by section name) for later change detection. |
+| GET    | `/api/topology/snapshot/diff` | Compare the live topology to the saved baseline → structured changes (MCU added/removed, board/connection/chip/component-count changed). `has_baseline=false` until a snapshot is saved. |
 | POST   | `/api/macro/simulate`      | Offline G-code simulator: macro `{ params.X }` substitution → path / bounds / totals / time / timeline; pure, no printer. |
 | GET    | `/api/hardware`            | Flat free-text search over the raw component rows (`?q=`/`category`/`manufacturer`, paginated). The canonical, deduped, config-carrying entities have their own typed endpoints below. |
 | GET    | `/api/hardware/categories` | The hardware categories + per-category **canonical** `counts` (raw kept as `rawCounts`) + total component count. |

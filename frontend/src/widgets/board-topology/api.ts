@@ -1,6 +1,6 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { BoardDetail, PinAtlas, Topology } from './types'
+import type { BoardDetail, PinAtlas, Topology, TopologyDiff } from './types'
 
 /** Host → MCU topology from the live config (read-only). */
 export async function fetchTopology(): Promise<Topology> {
@@ -25,6 +25,26 @@ export async function setBoardOverride(mcuName: string, boardId: string): Promis
     throw new Error(`Board override failed (${response.status})`)
   }
   return (await response.json()) as Topology
+}
+
+/** Save the current topology as the hardware baseline (for later change detection). */
+export async function saveSnapshot(): Promise<TopologyDiff> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/snapshot`, { method: 'POST' })
+  if (!response.ok) {
+    throw new Error(`Snapshot failed (${response.status})`)
+  }
+  return (await response.json()) as TopologyDiff
+}
+
+/** Compare the live topology to the saved baseline (board swapped / MCU added/removed / …). */
+export async function fetchDiff(): Promise<TopologyDiff> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/snapshot/diff`)
+  if (!response.ok) {
+    throw new Error(`Diff request failed (${response.status})`)
+  }
+  return (await response.json()) as TopologyDiff
 }
 
 /** The used-vs-free pin map of an MCU's resolved board + wiring-health findings. */

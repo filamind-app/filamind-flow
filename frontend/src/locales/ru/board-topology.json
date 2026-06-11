@@ -157,6 +157,23 @@
       "other": "Прочее",
       "conflict": "Конфликт выводов",
       "caveat": "Предупреждение по подключению"
+    },
+    "snapshot": {
+      "save": "Сохранить снимок",
+      "copy": "Копировать сводку",
+      "copied": "Скопировано!",
+      "none": "Базовая линия не сохранена — сохраните снимок, чтобы отслеживать будущие изменения.",
+      "unchanged": "Нет изменений оборудования с момента снимка",
+      "changed": "Изменений с момента снимка: {n}",
+      "summaryTitle": "FilaMind — карта машины",
+      "change": {
+        "added": "MCU «{mcu}» добавлен",
+        "removed": "MCU «{mcu}» удалён",
+        "board_changed": "Плата «{mcu}» изменилась: {before} → {after}",
+        "connection_changed": "Подключение «{mcu}» изменилось: {before} → {after}",
+        "chip_changed": "Чип «{mcu}» изменился: {before} → {after}",
+        "components_changed": "Число компонентов «{mcu}» изменилось: {before} → {after}"
+      }
     }
   }
 }

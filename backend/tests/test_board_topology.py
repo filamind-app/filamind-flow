@@ -275,6 +275,61 @@ def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
     assert board_id == "fit-x" and conf >= 0.6
 
 
+# ── hardware snapshot + diff ─────────────────────────────────────────────────
+def test_snapshot_diff_detects_changes(tmp_path: Any) -> None:
+    from app.services import topology_snapshot
+
+    data_dir = str(tmp_path)
+    baseline_mcus = [
+        {
+            "name": "mcu",
+            "board_id": "sovol-sv08",
+            "mcu_id": "stm32f103",
+            "connection": "usb",
+            "components": [],
+        },
+        {"name": "gone", "board_id": "x", "mcu_id": "y", "connection": "uart", "components": []},
+    ]
+    assert topology_snapshot.read_snapshot(data_dir) is None
+    topology_snapshot.save_snapshot(data_dir, baseline_mcus)
+    saved = topology_snapshot.read_snapshot(data_dir)
+    assert saved and saved["saved_at"]
+
+    # Current: 'mcu' swapped its board + a new 'toolhead' appeared + 'gone' removed.
+    current = [
+        {
+            "name": "mcu",
+            "board_id": "btt-octopus",
+            "mcu_id": "stm32f103",
+            "connection": "usb",
+            "components": [],
+        },
+        {
+            "name": "toolhead",
+            "board_id": None,
+            "mcu_id": "stm32g0b1",
+            "connection": "canbus",
+            "components": [1],
+        },
+    ]
+    changes = topology_snapshot.diff(saved, current)
+    kinds = {(c["mcu"], c["kind"]) for c in changes}
+    assert ("mcu", "board_changed") in kinds
+    assert ("toolhead", "added") in kinds
+    assert ("gone", "removed") in kinds
+    board = next(c for c in changes if c["mcu"] == "mcu" and c["kind"] == "board_changed")
+    assert board["before"] == "sovol-sv08" and board["after"] == "btt-octopus"
+
+
+def test_snapshot_diff_no_changes_when_identical(tmp_path: Any) -> None:
+    from app.services import topology_snapshot
+
+    mcus = [{"name": "mcu", "board_id": "b", "mcu_id": "m", "connection": "usb", "components": []}]
+    topology_snapshot.save_snapshot(str(tmp_path), mcus)
+    saved = topology_snapshot.read_snapshot(str(tmp_path))
+    assert topology_snapshot.diff(saved, mcus) == []
+
+
 # ── pin atlas (used-vs-free + wiring-conflict scanner) ───────────────────────
 def test_pin_atlas_marks_used_free_and_caveats() -> None:
     board = {

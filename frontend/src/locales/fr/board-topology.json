@@ -157,6 +157,23 @@
       "other": "Autres",
       "conflict": "Conflit de broches",
       "caveat": "Avertissement de câblage"
+    },
+    "snapshot": {
+      "save": "Enregistrer l'instantané",
+      "copy": "Copier le résumé",
+      "copied": "Copié !",
+      "none": "Aucune référence enregistrée — enregistrez un instantané pour détecter les changements à venir.",
+      "unchanged": "Aucun changement matériel depuis l'instantané",
+      "changed": "{n} changement(s) depuis l'instantané",
+      "summaryTitle": "FilaMind — carte de la machine",
+      "change": {
+        "added": "Le MCU « {mcu} » a été ajouté",
+        "removed": "Le MCU « {mcu} » a été retiré",
+        "board_changed": "La carte de « {mcu} » a changé : {before} → {after}",
+        "connection_changed": "La connexion de « {mcu} » a changé : {before} → {after}",
+        "chip_changed": "La puce de « {mcu} » a changé : {before} → {after}",
+        "components_changed": "Le nombre de composants de « {mcu} » a changé : {before} → {after}"
+      }
     }
   }
 }

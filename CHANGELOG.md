@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.173.0] - 2026-06-11
+
+### Added
+
+- **Board Topology — hardware Snapshot & Diff, and a copyable machine summary.** Save the current
+  topology as a **baseline**, and on every later read the widget reports — in plain language — what
+  changed against it: an **MCU added or removed, a board swapped, a connection bus changed, or a
+  component count moved** (keyed by the stable MCU section name, so a serial re-enumeration doesn't
+  read as a swap). Answers "did anything change after I rewired / reflashed?" at a glance. Plus a
+  **Copy summary** button that puts a plain-text machine inventory (host, SBC, each MCU's chip /
+  board / bus / component count) on the clipboard — handy for a forum or issue post. Backed by new
+  read-only-ish `POST /api/topology/snapshot` + `GET /api/topology/snapshot/diff`. Degrades cleanly
+  when no baseline exists or the printer is unreachable; localised in all 7 languages.
+
+This completes the Board Topology "Machine Map" overhaul (interactive graph → live health → pin atlas
+→ snapshot/diff).
+
 ## [0.172.0] - 2026-06-11
 
 ### Added
