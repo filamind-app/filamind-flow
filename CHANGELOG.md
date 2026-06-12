@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.214.0] - 2026-06-12
+
+### Added
+
+- **Config Editor — "Add a part", free-pin aware.** Adding a fan, an LED strip, a filament sensor
+  or an output pin used to mean hunting the board's pinout PDF for an unused pin. The new panel
+  reads your **live config + board pin map** and offers only the pins **nothing uses yet**
+  (electronics caveats marked ⚠ inline), generates the ready section — `[heater_fan]` with its
+  heater line, `[filament_switch_sensor]` with pullup and pause-on-runout, `[neopixel]`,
+  `[output_pin]`, fans — and writes it through the shared safety gate (backup, busy refusal,
+  param-merge). Localised in all 7 languages.
+
 ## [0.213.0] - 2026-06-12
 
 ### Added

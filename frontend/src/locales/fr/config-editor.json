@@ -227,6 +227,17 @@
         "pinMap": "Suggestions de broches",
         "backups": "Sauvegardes"
       }
+    },
+    "addPart": {
+      "title": "Ajouter une pièce (broches libres)",
+      "hint": "Choisissez un type de pièce et une broche que RIEN n’utilise encore (lue en direct depuis votre config + la table de la carte) — la section prête s’écrit via la porte de sécurité, sans deviner de broche.",
+      "kind": "Type de pièce",
+      "name": "Nom",
+      "namePh": "ex. chamber_fan",
+      "mcu": "Carte (MCU)",
+      "pin": "Broche libre",
+      "pinPh": "Choisir une broche libre…",
+      "noFree": "Aucune broche nommée libre dans cette table."
     }
   }
 }
