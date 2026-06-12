@@ -352,7 +352,8 @@
         "complete": "Abstimmung abgeschlossen",
         "stepFailed": "Schritt fehlgeschlagen",
         "copyFailed": "Kopieren fehlgeschlagen — markiere den Text und kopiere ihn manuell.",
-        "summaryNote": "Deine X- und Y-Erfassungen befinden sich im kombinierten {code}-Block unten — kopiere ihn, dann starte Klipper neu. Öffne die geführte Abstimmung jederzeit erneut, um nachzuprüfen."
+        "summaryNote": "Deine X- und Y-Erfassungen befinden sich im kombinierten {code}-Block unten — kopiere ihn, dann starte Klipper neu. Öffne die geführte Abstimmung jederzeit erneut, um nachzuprüfen.",
+        "beltsNotApplicable": "Der Riemenvergleich gilt für CoreXY-Drucker — dieser Drucker meldet '{kin}', der Schritt wird übersprungen."
       }
     },
     "audit": {
@@ -537,7 +538,8 @@
       "vibCancel": "Sweep abbrechen",
       "vibCancelling": "Breche ab…",
       "vibCancelled": "Sweep abgebrochen — Geschwindigkeitslimits wiederhergestellt.",
-      "vibReattached": "Wieder verbunden: dieses Ergebnis wurde fertig, während die Seite weg war."
+      "vibReattached": "Wieder verbunden: dieses Ergebnis wurde fertig, während die Seite weg war.",
+      "beltsCorexyOnly": "Nur CoreXY — dieser Drucker meldet die Kinematik '{kin}', der Zwei-Riemen-Vergleich ist nicht anwendbar."
     },
     "vibrationsView": {
       "title": "Vibrationsprofil",

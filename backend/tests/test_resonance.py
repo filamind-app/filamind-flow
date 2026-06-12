@@ -67,12 +67,14 @@ class _FakeClient:
         write_dir: Path,
         homed: str = "xyz",
         noise: tuple[float, float, float] = (12.0, 15.0, 9.0),
+        kinematics: str = "corexy",
     ) -> None:
         self.printing = printing
         self.has_tester = has_tester
         self.write_dir = write_dir
         self.homed = homed
         self.noise = noise
+        self.kinematics = kinematics
         self.gcodes: list[str] = []
         self._store: list[dict[str, Any]] = []
         self._t = 0.0
@@ -83,7 +85,7 @@ class _FakeClient:
         if "print_stats" in objects:
             out["print_stats"] = {"state": "printing" if self.printing else "ready"}
         if "configfile" in objects:
-            config: dict[str, Any] = {}
+            config: dict[str, Any] = {"printer": {"kinematics": self.kinematics}}
             if self.has_tester:
                 config["resonance_tester"] = {"accel_chip": "adxl345"}
                 config["adxl345"] = {"axes_map": "x,y,z"}
@@ -259,6 +261,37 @@ async def test_compare_belts_runs_both_diagonals(
     assert any("AXIS=1,1 " in g for g in tr)
     assert any("AXIS=1,-1 " in g for g in tr)
     assert result["belt_a"]["source_file"] != result["belt_b"]["source_file"]
+
+
+async def test_compare_belts_refuses_on_non_corexy_kinematics(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The two-belt diagonal test only means something on CoreXY — refused BEFORE homing."""
+    for kin in ("cartesian", "delta", "corexz"):
+        fake = _FakeClient(
+            printing=False, has_tester=True, write_dir=tmp_path, homed="", kinematics=kin
+        )
+        _patch_client(monkeypatch, fake)
+        with pytest.raises(shaper_service.ShaperAnalysisError, match="CoreXY"):
+            await resonance_service.compare_belts("http://x", str(tmp_path))
+        assert fake.gcodes == []  # refused before any motion (no G28, no TEST_RESONANCES)
+
+
+async def test_printer_kinematics_reads_config_or_none(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _patch_client(
+        monkeypatch,
+        _FakeClient(printing=False, has_tester=True, write_dir=tmp_path, kinematics="cartesian"),
+    )
+    assert await resonance_service.printer_kinematics("http://x") == "cartesian"
+
+    class _Down:
+        async def query_objects(self, objects: list[str]) -> dict[str, Any]:
+            raise RuntimeError("unreachable")
+
+    monkeypatch.setattr(resonance_service, "MoonrakerClient", lambda *a, **k: _Down())
+    assert await resonance_service.printer_kinematics("http://x") is None
 
 
 async def test_compare_belts_refuses_while_printing(

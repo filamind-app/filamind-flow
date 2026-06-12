@@ -115,6 +115,15 @@ export async function measureNoise(): Promise<NoiseResult> {
 }
 
 /** Runs a resonance test on each CoreXY belt diagonal (moves the toolhead). */
+/** The printer's configured kinematics (null = unreadable/offline) — gates CoreXY-only tools. */
+export async function fetchKinematics(): Promise<string | null> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/shaper/kinematics`)
+  if (!response.ok) return null
+  const data = (await response.json()) as { kinematics: string | null }
+  return data.kinematics
+}
+
 export async function compareBelts(): Promise<BeltComparison> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/shaper/compare-belts`, { method: 'POST' })

@@ -314,6 +314,12 @@ async def compare_belts(moonraker_url: str, resonance_dirs: str, **kwargs: Any) 
     (two sweeps). Print-guarded; requires a configured resonance tester.
     """
     client = MoonrakerClient(moonraker_url, timeout=_LIVE_TEST_TIMEOUT)
+    kinematics = await _kinematics(client)
+    if "corexy" not in kinematics:
+        raise shaper_service.ShaperAnalysisError(
+            f"Belt comparison applies to CoreXY printers — this printer reports "
+            f"'{kinematics}' kinematics"
+        )
     await _ensure_test_ready(client)
     belt_a = await _capture(
         client, resonance_dirs, axis_arg="1,1", name="belt_a", analyze_axis=None, **kwargs
@@ -374,6 +380,16 @@ async def run_static_excitation(
     with contextlib.suppress(OSError):  # transient capture
         os.remove(target)
     return result
+
+
+async def printer_kinematics(moonraker_url: str) -> str | None:
+    """The configured kinematics, or ``None`` when the printer/config is unreadable —
+    the UI uses this to hide kinematics-specific tools instead of failing at run time."""
+    client = MoonrakerClient(moonraker_url)
+    try:
+        return await _kinematics(client)
+    except shaper_service.ShaperAnalysisError:
+        return None
 
 
 async def _kinematics(client: MoonrakerClient) -> str:
@@ -698,6 +714,8 @@ async def calibrate_axes_map(
     result = axes_map_service.analyze_axesmap(
         raws[0], raws[1], raws[2], current_axes_map=current_map, accel=accel
     )
+    # No CHIP param was passed when detection found none — Klipper's own default for
+    # ACCELEROMETER_MEASURE is adxl345, so the label matches what was actually measured.
     result["chip"] = chip or "adxl345"
     result["source_files"] = [os.path.basename(paths[a]) for a in ("x", "y", "z")]
     for path in paths.values():  # best-effort cleanup of the transient captures

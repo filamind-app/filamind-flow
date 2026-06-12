@@ -62,6 +62,13 @@ async def analyze_resonance(
     return ShaperAnalysis(**result)
 
 
+@router.get("/kinematics")
+async def shaper_kinematics(settings: Settings = Depends(get_settings)) -> dict[str, str | None]:
+    """The printer's configured kinematics (null when unreadable) — the UI hides
+    kinematics-specific tools (the CoreXY belt comparison) with it."""
+    return {"kinematics": await resonance_service.printer_kinematics(settings.moonraker_url)}
+
+
 @router.get("/files", response_model=ResonanceFilesResponse)
 async def list_resonance_files(
     settings: Settings = Depends(get_settings),

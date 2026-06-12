@@ -352,7 +352,8 @@
         "complete": "调校完成",
         "stepFailed": "步骤失败",
         "copyFailed": "复制失败 — 请选中文本并手动复制。",
-        "summaryNote": "你的 X 和 Y 采集已在下方合并的 {code} 块中 — 复制它，然后重启 Klipper。可随时重新打开引导调校以重新检查。"
+        "summaryNote": "你的 X 和 Y 采集已在下方合并的 {code} 块中 — 复制它，然后重启 Klipper。可随时重新打开引导调校以重新检查。",
+        "beltsNotApplicable": "皮带对比适用于 CoreXY 打印机 — 此打印机报告 '{kin}'，已跳过该步骤。"
       }
     },
     "audit": {
@@ -537,7 +538,8 @@
       "vibCancel": "取消扫描",
       "vibCancelling": "取消中…",
       "vibCancelled": "扫描已取消 — 速度限制已恢复。",
-      "vibReattached": "已重新连接：该结果在页面离开期间完成。"
+      "vibReattached": "已重新连接：该结果在页面离开期间完成。",
+      "beltsCorexyOnly": "仅限 CoreXY — 此打印机报告的运动学为 '{kin}'，双皮带对比不适用。"
     },
     "vibrationsView": {
       "title": "振动剖面",
