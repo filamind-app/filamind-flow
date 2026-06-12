@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.217.0] - 2026-06-12
+
+### Changed
+
+- **Faster and smoother on Pi-class hosts.** Three performance refits for the small board the app
+  actually runs on: backend calls to Moonraker now share **one pooled keep-alive connection**
+  instead of opening a fresh TCP connection per request (the config project view alone makes
+  dozens — those become connection reuses), closed cleanly on shutdown; and the **heavy numpy
+  analyses** (resonance shaper fits, spectrograms, the vibrations profile) now run **off the
+  event loop**, so a long analysis no longer freezes every other request — the UI stays live
+  while the math runs.
+
 ## [0.216.0] - 2026-06-12
 
 ### Added
