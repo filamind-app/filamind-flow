@@ -174,6 +174,11 @@
         "chip_changed": "La puce de « {mcu} » a changé : {before} → {after}",
         "components_changed": "Le nombre de composants de « {mcu} » a changé : {before} → {after}"
       }
+    },
+    "jump": {
+      "section": "Ouvrir cette section dans l’éditeur de config",
+      "drivers": "Ouvrir dans Motor Drivers",
+      "firmware": "Ouvrir le gestionnaire de firmware"
     }
   }
 }

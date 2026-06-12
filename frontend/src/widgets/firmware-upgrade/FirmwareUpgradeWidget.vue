@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useHashTab } from '@/core/nav'
 import { useI18n } from 'vue-i18n'
 
 import LogPane from '@/components/ui/LogPane.vue'
@@ -49,6 +50,12 @@ const { t } = useI18n({ useScope: 'global' })
 
 type FwMode = 'guided' | 'status' | 'configure' | 'devices' | 'external'
 const mode = ref<FwMode>('status')
+// Deep link: #firmware-upgrade/<tab> lands on that view (guided / status / configure / devices / external).
+useHashTab('firmware-upgrade', (tab) => {
+  if (['guided', 'status', 'configure', 'devices', 'external'].includes(tab)) {
+    mode.value = tab as FwMode
+  }
+})
 const FW_TABS = computed<{ id: FwMode; label: string }[]>(() => [
   { id: 'guided', label: t('firmware.widget.tabGuided') },
   { id: 'status', label: t('firmware.widget.tabStatus') },

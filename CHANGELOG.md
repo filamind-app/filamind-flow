@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.201.0] - 2026-06-12
+
+### Added
+
+- **Deep links everywhere: widgets now point at each other.** Hashes go one level deeper —
+  `#firmware-upgrade/status`, `#input-shaping/audit`, `#config-editor/raw` open a widget *on* a
+  tab (bookmarkable, and usable by every cross-widget jump). Three new inbound focus channels let
+  diagnostics land exactly where the fix lives:
+  - A **wiring finding in the Machine Map's pin atlas** (a double-assigned pin, an electronics
+    caveat) now lists its owning config sections as buttons — one click opens that exact section,
+    expanded and scrolled-to, in the Config Editor (located via project search when it lives in an
+    included file).
+  - The Machine Map inspector's **motor / driver chips** jump into Motor Drivers, and an
+    **out-of-sync firmware badge** jumps straight to the Firmware Manager's status tab.
+  - Motor Drivers accepts a stepper focus (used by the Machine Map and future doctors): the card
+    scrolls into view and flashes so the eye lands on the right driver.
+  The Machine Map itself accepts node focus (`focusTopologyNode`), making it addressable from
+  anywhere — groundwork for the upcoming health home and Machine Doctor. Localised in all 7
+  languages.
+
 ## [0.200.0] - 2026-06-12
 
 ### Added
