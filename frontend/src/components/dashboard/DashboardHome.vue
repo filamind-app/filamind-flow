@@ -47,6 +47,11 @@ interface Overview {
   hardware: { available: boolean; has_baseline: boolean; changes: number }
   setup?: { boards_identified: number; boards_total: number; motors_assigned: number }
 }
+interface JournalEvent {
+  at: string
+  kind: string
+  params: Record<string, string | number | null>
+}
 
 const data = ref<Overview | null>(null)
 const loading = ref(true)
@@ -64,7 +69,38 @@ async function load(): Promise<void> {
     loading.value = false
   }
 }
-onMounted(() => void load())
+const journal = ref<JournalEvent[]>([])
+async function loadJournal(): Promise<void> {
+  try {
+    const { backendUrl } = resolveEndpoints()
+    const response = await fetch(`${backendUrl}/api/journal`)
+    if (!response.ok) throw new Error(String(response.status))
+    journal.value = ((await response.json()) as { events: JournalEvent[] }).events
+  } catch {
+    journal.value = []
+  }
+}
+function journalText(e: JournalEvent): string {
+  if (e.kind === 'flash') {
+    return t('shell.home.journal.flash', {
+      board: e.params.board ?? '?',
+      version: e.params.version ?? '?',
+    })
+  }
+  if (e.kind === 'config_save') {
+    return t('shell.home.journal.configSave', { file: e.params.file ?? '?' })
+  }
+  return t('shell.home.journal.tuning', {
+    kind: String(e.params.run_kind ?? ''),
+    axis: e.params.axis ? String(e.params.axis).toUpperCase() : '—',
+  })
+}
+const JOURNAL_ICON: Record<string, string> = { flash: '🔧', config_save: '📝', tuning: '📈' }
+
+onMounted(() => {
+  void load()
+  void loadJournal()
+})
 
 function stateBadge(state: string | undefined): { text: string; cls: string } {
   const s = state ?? 'unknown'
@@ -276,6 +312,29 @@ function openMcu(name: string): void {
           </ul>
         </template>
         <p v-else class="text-xs opacity-70">{{ t('shell.home.noTuning') }}</p>
+      </div>
+
+      <!-- Recent activity: the machine's merged journal (flashes / config saves / tuning) -->
+      <div class="nb-card space-y-2 bg-surface p-3 sm:col-span-2">
+        <p class="text-xs font-bold uppercase tracking-wide opacity-60">
+          {{ t('shell.home.journal.title') }}
+        </p>
+        <p v-if="!journal.length" class="text-xs opacity-60">
+          {{ t('shell.home.journal.empty') }}
+        </p>
+        <ul v-else class="space-y-1">
+          <li
+            v-for="(e, i) in journal.slice(0, 8)"
+            :key="i"
+            class="flex items-center gap-2 font-mono text-[11px]"
+          >
+            <span aria-hidden="true">{{ JOURNAL_ICON[e.kind] ?? '·' }}</span>
+            <span class="min-w-0 flex-1 truncate">{{ journalText(e) }}</span>
+            <span class="shrink-0 text-[10px] opacity-50">{{
+              e.at.slice(0, 16).replace('T', ' ')
+            }}</span>
+          </li>
+        </ul>
       </div>
 
       <!-- Hardware baseline -->

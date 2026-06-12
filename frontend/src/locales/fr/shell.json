@@ -48,6 +48,13 @@
         "firmware": "Synchronisez chaque firmware MCU avec l’hôte",
         "motors": "Assignez vos moteurs dans Motor Drivers",
         "tuning": "Réglez l’input shaping pour X et Y (assistant guidé)"
+      },
+      "journal": {
+        "title": "Activité récente",
+        "empty": "Rien d’enregistré — flashs, sauvegardes de config et réglages atterrissent ici.",
+        "flash": "{board} flashé → {version}",
+        "configSave": "{file} enregistré",
+        "tuning": "Réglage : {kind} ({axis})"
       }
     },
     "connection": {

@@ -48,6 +48,13 @@
         "firmware": "Bring every MCU firmware in sync with the host",
         "motors": "Assign your motors in Motor Drivers",
         "tuning": "Tune input shaping for X and Y (guided wizard)"
+      },
+      "journal": {
+        "title": "Recent activity",
+        "empty": "Nothing recorded yet — flashes, config saves and tuning runs land here.",
+        "flash": "Flashed {board} → {version}",
+        "configSave": "Saved {file}",
+        "tuning": "Tuning run: {kind} ({axis})"
       }
     },
     "connection": {

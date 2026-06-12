@@ -48,6 +48,13 @@
         "firmware": "Jede MCU-Firmware mit dem Host synchronisieren",
         "motors": "Motoren in Motor Drivers zuweisen",
         "tuning": "Input Shaping für X und Y tunen (geführter Assistent)"
+      },
+      "journal": {
+        "title": "Letzte Aktivität",
+        "empty": "Noch nichts aufgezeichnet — Flashes, Config-Speicherungen und Tuning-Läufe landen hier.",
+        "flash": "{board} geflasht → {version}",
+        "configSave": "{file} gespeichert",
+        "tuning": "Tuning-Lauf: {kind} ({axis})"
       }
     },
     "connection": {

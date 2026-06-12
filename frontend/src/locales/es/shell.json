@@ -48,6 +48,13 @@
         "firmware": "Sincroniza el firmware de cada MCU con el host",
         "motors": "Asigna tus motores en Motor Drivers",
         "tuning": "Calibra input shaping para X e Y (asistente guiado)"
+      },
+      "journal": {
+        "title": "Actividad reciente",
+        "empty": "Nada registrado aún — flasheos, guardados de config y calibraciones aparecen aquí.",
+        "flash": "Flasheado {board} → {version}",
+        "configSave": "Guardado {file}",
+        "tuning": "Calibración: {kind} ({axis})"
       }
     },
     "connection": {
