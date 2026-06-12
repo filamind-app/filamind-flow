@@ -311,6 +311,15 @@
       "errorsTitle": "问题",
       "showDetails": "显示命令输出",
       "batchStep": "正在刷写 {device}（{step}/{total}）"
+    },
+    "tools": {
+      "optionalTag": "（可选）",
+      "klipper": "Klipper 源码 + 构建系统 — 编译固件所需。",
+      "katapult": "Katapult 引导程序仓库 — serial/CAN 的 Katapult 刷写所需。",
+      "flashtool": "Katapult 的 flashtool.py — 刷写 serial 与 CAN 板卡。",
+      "dfu_util": "dfu-util — 仅用于 DFU（STM32 ROM 引导程序）刷写。",
+      "avrdude": "avrdude — 仅用于 8 位 AVR 板卡。",
+      "can_utils": "可选 — 仅用于手动 CAN 诊断（candump/cansend）。CAN 刷写并不需要它。安装：sudo apt install can-utils"
     }
   }
 }

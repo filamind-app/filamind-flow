@@ -311,6 +311,15 @@
       "errorsTitle": "Проблемы",
       "showDetails": "Показать вывод команд",
       "batchStep": "Прошивка {device} ({step}/{total})"
+    },
+    "tools": {
+      "optionalTag": "(необязательно)",
+      "klipper": "Исходники Klipper + система сборки — нужны для сборки прошивки.",
+      "katapult": "Репозиторий загрузчика Katapult — нужен для прошивки serial/CAN через Katapult.",
+      "flashtool": "flashtool.py из Katapult — прошивает платы serial и CAN.",
+      "dfu_util": "dfu-util — только для прошивки DFU (ROM-загрузчик STM32).",
+      "avrdude": "avrdude — только для 8-битных плат AVR.",
+      "can_utils": "Необязательно — только для ручной диагностики CAN (candump/cansend). Прошивке CAN это НЕ нужно. Установка: sudo apt install can-utils"
     }
   }
 }

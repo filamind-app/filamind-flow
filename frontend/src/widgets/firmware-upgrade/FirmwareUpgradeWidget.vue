@@ -101,14 +101,30 @@ function boardModeClass(mode: string): string {
   return 'bg-surface opacity-70'
 }
 
-const TOOLS: { key: keyof FirmwareTools; label: string }[] = [
+// `optional` tools aren't needed to flash — they're host diagnostics. can-utils in
+// particular is NOT used by CAN flashing (Katapult's flashtool talks to the CAN bus over
+// SocketCAN directly), so its absence is informational, not a problem.
+const TOOLS: { key: keyof FirmwareTools; label: string; optional?: boolean }[] = [
   { key: 'klipper', label: 'Klipper' },
   { key: 'katapult', label: 'Katapult' },
   { key: 'flashtool', label: 'flashtool' },
   { key: 'dfu_util', label: 'dfu-util' },
   { key: 'avrdude', label: 'avrdude' },
-  { key: 'can_utils', label: 'can-utils' },
+  { key: 'can_utils', label: 'can-utils', optional: true },
 ]
+
+function toolPresent(key: keyof FirmwareTools): boolean {
+  return !!status.value?.tools[key]
+}
+/** ✓ present · ✗ a required tool is missing · ○ an optional tool is absent (fine). */
+function toolGlyph(tool: { key: keyof FirmwareTools; optional?: boolean }): string {
+  if (toolPresent(tool.key)) return '✓'
+  return tool.optional ? '○' : '✗'
+}
+function toolBadgeClass(tool: { key: keyof FirmwareTools; optional?: boolean }): string {
+  if (toolPresent(tool.key)) return 'bg-brand-lime'
+  return tool.optional ? 'bg-surface opacity-40' : 'bg-surface opacity-60'
+}
 
 async function load(silent = false): Promise<void> {
   if (!silent) loading.value = true
@@ -572,9 +588,13 @@ onUnmounted(() => {
             v-for="tool in TOOLS"
             :key="tool.key"
             class="nb-badge"
-            :class="status.tools[tool.key] ? 'bg-brand-lime' : 'bg-surface opacity-60'"
+            :class="toolBadgeClass(tool)"
+            :title="t(`firmware.tools.${tool.key}`)"
           >
-            {{ status.tools[tool.key] ? '✓' : '✗' }} {{ tool.label }}
+            {{ toolGlyph(tool) }} {{ tool.label }}
+            <span v-if="tool.optional && !toolPresent(tool.key)" class="opacity-60">{{
+              t('firmware.tools.optionalTag')
+            }}</span>
           </span>
           <span
             v-if="health"
