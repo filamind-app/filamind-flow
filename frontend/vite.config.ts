@@ -27,6 +27,11 @@ export default defineConfig(({ mode }) => {
   })
 
   return {
+    // Relative asset base so the built SPA is portable to ANY mount point — served at
+    // the panel's own origin root (:8090) OR proxied under a subpath (e.g. /filamind/ on
+    // the printer's Mainsail nginx, which a Cloudflare tunnel already exposes). With
+    // relative assets + hash routing, the same dist works at every mount with no rebuild.
+    base: './',
     plugins: [
       vue(),
       // Precompiles the locale JSON in src/locales/** and wires vue-i18n's feature flags.
