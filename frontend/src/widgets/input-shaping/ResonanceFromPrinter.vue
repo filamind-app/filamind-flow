@@ -778,6 +778,8 @@ onMounted(async () => {
       <!-- Supervised-run progress: live step counter + a cancel that always cleans up -->
       <div
         v-if="vibRun.status !== 'idle'"
+        role="status"
+        aria-live="polite"
         class="space-y-1 rounded-brutal border-2 border-ink bg-surface p-2"
       >
         <div class="flex items-center justify-between gap-2 font-mono text-[10px]">
@@ -822,6 +824,6 @@ onMounted(async () => {
     </div>
 
     <div v-if="info" class="nb-badge bg-brand-cyan">{{ info }}</div>
-    <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+    <div v-if="error" role="alert" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
   </div>
 </template>

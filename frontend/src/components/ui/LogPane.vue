@@ -13,7 +13,9 @@ function lineClass(line: string): string {
 </script>
 
 <template>
+  <!-- role="log" so assistive tech treats appended lines as a live log, not noise. -->
   <div
+    role="log"
     class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight"
     :class="maxClass"
   >

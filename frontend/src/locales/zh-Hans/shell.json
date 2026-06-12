@@ -5,7 +5,8 @@
     },
     "nav": {
       "dashboard": "仪表盘",
-      "toggle": "切换导航"
+      "toggle": "切换导航",
+      "label": "主导航"
     },
     "mainsail": {
       "label": "Mainsail",

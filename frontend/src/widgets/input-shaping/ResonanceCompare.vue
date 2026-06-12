@@ -81,7 +81,7 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
       </button>
     </div>
 
-    <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+    <div v-if="error" role="alert" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
 
     <template v-if="plot && rows.length">
       <svg

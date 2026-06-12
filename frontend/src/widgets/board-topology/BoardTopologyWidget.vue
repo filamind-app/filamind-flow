@@ -244,7 +244,7 @@ onMounted(() => void load())
       {{ t('boardTopology.states.loading') }}
     </p>
     <div v-else-if="error" class="nb-card space-y-2 bg-brand-red/10 p-2">
-      <p class="font-mono text-xs">{{ error }}</p>
+      <p role="alert" class="font-mono text-xs">{{ error }}</p>
       <p v-if="topology?.detail" class="font-mono text-[11px] opacity-70">{{ topology.detail }}</p>
       <button class="nb-btn bg-surface px-2 py-1 text-xs" @click="load">
         {{ t('boardTopology.states.retry') }}
@@ -311,6 +311,7 @@ onMounted(() => void load())
       <!-- Action errors (override / snapshot) — a banner, not a map-hiding state -->
       <div
         v-if="actionError"
+        role="alert"
         class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red/10 px-2 py-1"
       >
         <span class="min-w-0 flex-1 font-mono text-[11px]">{{ actionError }}</span>
