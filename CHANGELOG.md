@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.232.0] - 2026-06-13
+
+### Fixed
+
+- **The "sudo not configured" install warnings were false alarms.** The readiness probe ran
+  `sudo -n systemctl --version`, but the passwordless-sudo rule only grants the specific
+  commands flashing uses (`systemctl stop/start/restart klipper`, etc.) — not `--version` — so
+  the check failed whenever sudo's credential cache was cold, even though flashing was actually
+  authorized. It now asks `sudo -n -l systemctl stop klipper`, which reports whether the real
+  command is permitted **without running it**. The "sudoers" check also passes whenever that
+  capability is present, instead of requiring a specifically named `/etc/sudoers.d/filamind`
+  file — so rules provided by an existing setup are recognized.
+
+
 ## [0.231.0] - 2026-06-13
 
 ### Changed

@@ -22,9 +22,13 @@ _FIX = "run: sudo bash deploy/setup-sudoers.sh"
 
 async def gather_health() -> dict[str, Any]:
     """Runs the install-integrity checks; returns a ``healthy`` flag + details."""
+    # What matters is the CAPABILITY, not a specific filename: the NOPASSWD rules may be
+    # provided by FilaMind's own file or an existing one (e.g. a co-installed panel). If the
+    # backend can run the privileged commands, sudo is correctly set up wherever the rule lives.
+    sudo_ok = await _sudo_ready()
     checks: list[dict[str, Any]] = [
-        {"name": "sudoers", "ok": os.path.isfile(_SUDOERS), "detail": _FIX},
-        {"name": "sudo", "ok": await _sudo_ready(), "detail": "backend can sudo non-interactively"},
+        {"name": "sudoers", "ok": sudo_ok or os.path.isfile(_SUDOERS), "detail": _FIX},
+        {"name": "sudo", "ok": sudo_ok, "detail": "backend can sudo non-interactively"},
         {"name": "udev-dfu", "ok": os.path.isfile(_UDEV_DFU), "detail": _FIX},
         {
             "name": "dfu-util",
