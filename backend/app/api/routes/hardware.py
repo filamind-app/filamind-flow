@@ -7,8 +7,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
+from app.config import Settings, get_settings
 from app.services import (
     board_search,
     catalog_search,
@@ -345,3 +346,52 @@ async def entity_related(entity_type: str, entity_id: str) -> dict[str, Any]:
             status_code=404, detail=f"No {entity_type!r} node with id {entity_id!r}"
         )
     return result
+
+
+@router.get("/on-printer")
+async def hardware_on_printer(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Catalog ids of the hardware detected on THIS printer — boards/MCUs/host from the live
+    topology, TMC driver models from the live config, motors from the assignment mapping. The
+    browser uses it for "on this printer" badges and the My-Hardware strip. Degrades to empty
+    sets (``reachable=false``) when Moonraker is down."""
+    from app.services import board_topology, motor_mapping
+    from app.services.moonraker_client import MoonrakerClient
+
+    client = MoonrakerClient(settings.moonraker_url)
+    boards: list[str] = []
+    mcus: list[str] = []
+    drivers: list[str] = []
+    hosts: list[str] = []
+    reachable = True
+    try:
+        topo = await board_topology.gather_topology(client, settings.data_dir)
+        reachable = topo.get("reachable", True) is not False
+        for m in topo.get("mcus", []):
+            if m.get("board_id"):
+                boards.append(str(m["board_id"]))
+            if m.get("mcu_id"):
+                mcus.append(str(m["mcu_id"]))
+        host = topo.get("host")
+        if isinstance(host, dict) and host.get("host_id"):
+            hosts.append(str(host["host_id"]))
+        cf = await client.query_objects(["configfile"])
+        cfobj = cf.get("configfile")
+        cf_settings = cfobj.get("settings") if isinstance(cfobj, dict) else None
+        cf_settings = cf_settings if isinstance(cf_settings, dict) else {}
+        models = {str(k).split(" ", 1)[0].lower() for k in cf_settings if str(k).startswith("tmc")}
+        drivers = sorted(models)
+    except Exception:
+        reachable = False
+    motors: list[str] = []
+    for value in motor_mapping.read_mapping(settings.data_dir).values():
+        spec = reference_data.motor_spec_lookup(value)
+        if spec and spec.get("model"):
+            motors.append(str(spec["model"]))
+    return {
+        "reachable": reachable,
+        "boards": sorted(set(boards)),
+        "mcus": sorted(set(mcus)),
+        "drivers": drivers,
+        "motors": sorted(set(motors)),
+        "hosts": sorted(set(hosts)),
+    }

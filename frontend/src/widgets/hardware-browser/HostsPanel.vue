@@ -8,6 +8,7 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 
 import { fetchHostDetail, fetchHosts } from './api'
 import EntityCatalog from './EntityCatalog.vue'
+import { onPrinter } from './onPrinter'
 import RelatedChips from './RelatedChips.vue'
 import type { HostDetail, HostSummary } from './types'
 import type { FocusTarget } from './useEntityFocus'
@@ -48,6 +49,7 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'hosts'
     :fetch-page="fetchPage"
     :fetch-detail="fetchHostDetail"
     :id-of="idOf"
+    :on-printer-ids="onPrinter.hosts"
     :focus-match="focusMatch"
     :reload-token="reloadToken"
     search-key="hardwareBrowser.hosts.search"

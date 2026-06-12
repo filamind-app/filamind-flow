@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.210.0] - 2026-06-12
+
+### Added
+
+- **The Hardware Browser knows what's on YOUR printer.** A new **"On this printer" strip** at the
+  top lists the hardware actually detected on the connected machine — the matched boards, the TMC
+  driver models read from the live config, the motors you assigned, the host SBC — each chip
+  jumping straight to its catalog entity. Matching rows in the Boards / Drivers / Motors / Hosts
+  catalogs carry a **📍 on-this-printer badge**, so your own hardware stands out among 2,600+
+  entities. One read-only `GET /api/hardware/on-printer` resolves it all (live topology + live
+  config + the motor mapping) and degrades to empty when the printer is unreachable. Localised in
+  all 7 languages.
+
 ## [0.209.0] - 2026-06-12
 
 ### Fixed

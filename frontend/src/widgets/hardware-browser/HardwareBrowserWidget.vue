@@ -19,6 +19,7 @@ import MotorsPanel from './MotorsPanel.vue'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { HardwareSearchResult } from './types'
+import { loadOnPrinter, onPrinter } from './onPrinter'
 import { useEntityFocus } from './useEntityFocus'
 
 const LIMIT = 25
@@ -50,6 +51,22 @@ const TABS = computed(() => [
 // cross-link navigation: a RelatedChips click sets the shared focus → switch to its tab
 // (the destination panel watches the same focus to open the targeted entity).
 const { focus } = useEntityFocus()
+
+// "On this printer": catalog ids detected on the connected machine → badges + this strip.
+onMounted(() => void loadOnPrinter())
+const myHardware = computed(() => {
+  const chips: { tab: 'boards' | 'drivers' | 'motors' | 'hosts'; id: string }[] = []
+  for (const id of onPrinter.boards) chips.push({ tab: 'boards', id })
+  for (const id of onPrinter.drivers) chips.push({ tab: 'drivers', id })
+  for (const id of onPrinter.motors) chips.push({ tab: 'motors', id })
+  for (const id of onPrinter.hosts) chips.push({ tab: 'hosts', id })
+  return chips
+})
+const { focusEntity } = useEntityFocus()
+function openMine(chip: { tab: 'boards' | 'drivers' | 'motors' | 'hosts'; id: string }): void {
+  focusEntity({ tab: chip.tab, id: chip.id })
+  mode.value = chip.tab
+}
 // `immediate` so a focus set by ANOTHER widget (e.g. Board Topology) *before* this widget mounts
 // is still applied on mount — not only on a later change. Harmless when focus is null.
 watch(
@@ -184,6 +201,24 @@ onMounted(() => {
     </div>
 
     <WidgetTabs v-model="mode" :tabs="TABS" />
+
+    <!-- My hardware: what's actually on this printer, one click from its catalog entity -->
+    <div
+      v-if="myHardware.length"
+      class="flex flex-wrap items-center gap-1.5 rounded-brutal border-2 border-ink bg-surface p-2"
+    >
+      <span class="text-[11px] font-bold opacity-70"
+        >📍 {{ t('hardwareBrowser.onPrinter.strip') }}</span
+      >
+      <button
+        v-for="chip in myHardware"
+        :key="chip.tab + ':' + chip.id"
+        class="rounded-brutal border border-ink bg-paper px-1.5 py-0.5 font-mono text-[10px] hover:bg-brand-cyan"
+        @click="openMine(chip)"
+      >
+        {{ chip.id }}
+      </button>
+    </div>
 
     <!-- Catalog: one tile per category + a "search all" tile -->
     <div v-show="mode === 'catalog'" class="grid grid-cols-2 gap-2 sm:grid-cols-3">

@@ -26,6 +26,8 @@ const props = withDefaults(
     fetchDetail: (id: string) => Promise<TDetail>
     /** Extract a row's stable id. */
     idOf: (item: TSummary) => string
+    /** Catalog ids detected on THIS printer — matching rows get an 'on this printer' badge. */
+    onPrinterIds?: Set<string> | null
     /** i18n keys (called with both {n} and {count} so either placeholder works). */
     searchKey: string
     totalKey: string
@@ -39,7 +41,7 @@ const props = withDefaults(
      *  target can't be filtered out (e.g. Drivers clears its Klipper-only checkbox). */
     beforeFocus?: () => void
   }>(),
-  { limit: 24, reloadToken: 0, focusMatch: undefined, beforeFocus: undefined },
+  { limit: 24, reloadToken: 0, focusMatch: undefined, beforeFocus: undefined, onPrinterIds: null },
 )
 
 const { t } = useI18n({ useScope: 'global' })
@@ -199,6 +201,12 @@ defineExpose({ reload, focusItem })
             :open="openId === idOf(item)"
             :toggle="() => toggle(idOf(item))"
           />
+          <p
+            v-if="props.onPrinterIds?.has(idOf(item))"
+            class="mt-1 inline-block rounded bg-brand-lime px-1.5 py-0.5 text-[10px] font-bold text-ink"
+          >
+            📍 {{ t('hardwareBrowser.onPrinter.badge') }}
+          </p>
 
           <div v-if="openId === idOf(item)" class="mt-2 space-y-2 border-t-2 border-ink pt-2">
             <p v-if="detailLoading === idOf(item)" class="font-mono text-[11px] opacity-70">

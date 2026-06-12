@@ -182,6 +182,10 @@
     },
     "picker": {
       "placeholder": "Teil auswählen…"
+    },
+    "onPrinter": {
+      "badge": "Auf diesem Drucker",
+      "strip": "Auf diesem Drucker:"
     }
   }
 }
