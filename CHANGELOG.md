@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.224.0] - 2026-06-12
+
+### Added
+
+- **Flash devices know which board they are.** The Firmware Manager's device registry now
+  joins each registered board to its place on the board map and its catalog entry: a 📍 badge
+  names the board, one click jumps to it on the Board Map, and a device without a build
+  profile gets a *Seed profile from board* button that creates a profile with the right MCU
+  preselected in the build options — open Configure and the chip choice is already correct.
+  Identification reuses what the board map already established; nothing is guessed beyond it.
+
 ## [0.223.0] - 2026-06-12
 
 ### Added

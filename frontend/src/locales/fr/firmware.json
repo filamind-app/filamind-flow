@@ -250,7 +250,11 @@
       "exportFailed": "Échec de l'export",
       "importFailed": "Échec de l'import",
       "backupHint": "Un seul ZIP couvre tout ce que vous avez configuré : cartes, profils de compilation, affectation des moteurs, confirmations de cartes, base de référence matérielle, historique de flash et réglages enregistrés. La restauration remet tout en une étape.",
-      "restoredFull": "{n} profils, {data} fichiers de données, {runs} réglages restaurés{extra}."
+      "restoredFull": "{n} profils, {data} fichiers de données, {runs} réglages restaurés{extra}.",
+      "identifyMap": "Voir sur la carte des cartes",
+      "identifySeed": "Créer le profil depuis la carte",
+      "identifySeeded": "Profil '{name}' créé avec {symbol} présélectionné — ouvrez Configurer pour finaliser les options.",
+      "identifySeedFailed": "Impossible de créer le profil"
     },
     "external": {
       "title": "Firmware externe",

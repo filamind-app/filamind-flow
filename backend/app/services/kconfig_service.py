@@ -79,6 +79,20 @@ class KconfigService:
         """Applies ``values`` onto a base config and writes a ``.config`` file."""
         await asyncio.to_thread(self._write_config, output_path, config_file, values)
 
+    async def find_symbol(self, name: str) -> str | None:
+        """The Kconfig symbol matching ``name`` case-insensitively (e.g. ``MACH_STM32F103``
+        for ``mach_stm32f103``), or ``None``. Klipper mixes cases (``MACH_atmega2560``)."""
+        return await asyncio.to_thread(self._find_symbol, name)
+
+    def _find_symbol(self, name: str) -> str | None:
+        with _KCONFIG_LOCK:
+            kconf = self._load(None)
+            wanted = name.lower()
+            for sym_name in kconf.syms:
+                if sym_name.lower() == wanted:
+                    return str(sym_name)
+        return None
+
     # -- internals (run in a worker thread, serialised by the lock) -------------
 
     def _run_kalico_extras(self) -> None:
