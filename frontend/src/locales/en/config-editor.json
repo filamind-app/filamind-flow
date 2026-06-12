@@ -103,7 +103,9 @@
       "cancel": "Cancel",
       "done": "Saved. Backup: {backup}",
       "busy": "Refused: the printer is busy (printing or paused). Try again when it's idle.",
-      "error": "Save failed."
+      "error": "Save failed.",
+      "stale": "The file changed on disk since it was loaded (a SAVE_CONFIG may have landed, or another app edited it). Saving now would overwrite that change — reload to review (the backup timeline shows what differs).",
+      "staleReload": "Reload the file"
     },
     "restart": {
       "prompt": "Restart the firmware to apply your change?",

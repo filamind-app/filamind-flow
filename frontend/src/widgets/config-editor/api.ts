@@ -171,12 +171,16 @@ export async function adoptParam(
 }
 
 /** Back up then overwrite one config file. Throws {@link ApiError} (status 409 = printer busy). */
-export async function saveConfigFile(filename: string, content: string): Promise<ConfigSaveResult> {
+export async function saveConfigFile(
+  filename: string,
+  content: string,
+  expectedSha256?: string,
+): Promise<ConfigSaveResult> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/save`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filename, content }),
+    body: JSON.stringify({ filename, content, expected_sha256: expectedSha256 ?? null }),
   })
   if (!response.ok) {
     throw await errorFrom(response, `Save failed (${response.status})`)

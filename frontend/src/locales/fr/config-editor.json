@@ -103,7 +103,9 @@
       "cancel": "Annuler",
       "done": "Enregistré. Sauvegarde : {backup}",
       "busy": "Refusé : l'imprimante est occupée (impression ou en pause). Réessayez lorsqu'elle est inactive.",
-      "error": "Échec de l'enregistrement."
+      "error": "Échec de l'enregistrement.",
+      "stale": "Le fichier a changé sur le disque depuis son chargement (un SAVE_CONFIG ou une autre application). Enregistrer maintenant écraserait ce changement — rechargez pour vérifier (la chronologie des sauvegardes montre la différence).",
+      "staleReload": "Recharger le fichier"
     },
     "restart": {
       "prompt": "Redémarrer le firmware pour appliquer votre modification ?",

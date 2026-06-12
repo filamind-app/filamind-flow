@@ -103,7 +103,9 @@
       "cancel": "Abbrechen",
       "done": "Gespeichert. Backup: {backup}",
       "busy": "Abgelehnt: Der Drucker ist beschäftigt (druckt oder pausiert). Versuche es erneut, wenn er im Leerlauf ist.",
-      "error": "Speichern fehlgeschlagen."
+      "error": "Speichern fehlgeschlagen.",
+      "stale": "Die Datei hat sich seit dem Laden auf der Festplatte geändert (ein SAVE_CONFIG oder eine andere App). Jetzt zu speichern würde diese Änderung überschreiben — neu laden und prüfen (die Backup-Zeitleiste zeigt den Unterschied).",
+      "staleReload": "Datei neu laden"
     },
     "restart": {
       "prompt": "Firmware neu starten, um deine Änderung zu übernehmen?",

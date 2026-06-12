@@ -202,6 +202,7 @@ class _FakeClient:
         self.requested: str | None = None
         self.uploads: list[tuple[str, str]] = []
         self.restarted = False
+        self.deleted: list[str] = []
 
     async def list_files(self, root: str = "config") -> list[dict[str, Any]]:
         return self._files
@@ -220,6 +221,9 @@ class _FakeClient:
     async def upload_file(self, path: str, content: str, root: str = "config") -> dict[str, Any]:
         self.uploads.append((path, content))
         return {"item": {"path": path}}
+
+    async def delete_file(self, path: str, root: str = "config") -> None:
+        self.deleted.append(path)
 
     async def firmware_restart(self) -> None:
         self.restarted = True
@@ -327,6 +331,43 @@ async def test_save_refused_when_busy() -> None:
     assert client.uploads == []  # nothing written
 
 
+async def test_save_refuses_stale_write() -> None:
+    # The editor loaded one content, the disk now holds another (a landed SAVE_CONFIG, a
+    # parallel Mainsail edit) — saving with the original fingerprint must 412, not clobber.
+    loaded = "[x]\nk: 1\n"
+    client = _FakeClient(text="[x]\nk: 1\n# changed by SAVE_CONFIG\n")
+    stale_sha = config_service._sha256(loaded)
+    with pytest.raises(config_service.ConfigConflictError):
+        await config_service.save_config_file(  # type: ignore[arg-type]
+            client, "printer.cfg", "[x]\nk: 2\n", stale_sha
+        )
+    assert client.uploads == []  # nothing written, nothing backed up
+    # With the CURRENT fingerprint (or none at all) the save proceeds.
+    fresh_sha = config_service._sha256("[x]\nk: 1\n# changed by SAVE_CONFIG\n")
+    result = await config_service.save_config_file(  # type: ignore[arg-type]
+        client, "printer.cfg", "[x]\nk: 2\n", fresh_sha
+    )
+    assert result["ok"] is True
+    assert result["sha256"] == config_service._sha256("[x]\nk: 2\n")
+
+
+async def test_save_prunes_old_backups_per_file() -> None:
+    # Five existing snapshots of printer.cfg + one of another file; keep_n=3 must delete the
+    # two oldest printer.cfg snapshots and leave the other file's alone.
+    backups = [
+        {"path": f"filamind-backups/printer.cfg.2026010{i}-000000.bak", "size": 1}
+        for i in range(1, 6)
+    ] + [{"path": "filamind-backups/macros.cfg.20260101-000000.bak", "size": 1}]
+    client = _FakeClient(files=backups, text="[old]\n")
+    await config_service.save_config_file(  # type: ignore[arg-type]
+        client, "printer.cfg", "[new]\n", keep_n=3
+    )
+    assert sorted(client.deleted) == [
+        "filamind-backups/printer.cfg.20260101-000000.bak",
+        "filamind-backups/printer.cfg.20260102-000000.bak",
+    ]
+
+
 async def test_save_rejects_unsafe_path() -> None:
     client = _FakeClient(text="[x]\n")
     with pytest.raises(ValueError):
@@ -393,7 +434,9 @@ def test_route_file_unsafe_path_400() -> None:
 def test_route_save_ok(monkeypatch: pytest.MonkeyPatch) -> None:
     from fastapi.testclient import TestClient
 
-    async def fake_save(_client: Any, filename: str, content: str) -> dict[str, Any]:
+    async def fake_save(
+        _client: Any, filename: str, content: str, *a: Any, **k: Any
+    ) -> dict[str, Any]:
         return {"ok": True, "filename": filename, "backup": "filamind-backups/x.bak", "issues": []}
 
     monkeypatch.setattr(config_service, "save_config_file", fake_save)
@@ -407,7 +450,9 @@ def test_route_save_ok(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_route_save_busy_409(monkeypatch: pytest.MonkeyPatch) -> None:
     from fastapi.testclient import TestClient
 
-    async def fake_save(_client: Any, filename: str, content: str) -> dict[str, Any]:
+    async def fake_save(
+        _client: Any, filename: str, content: str, *a: Any, **k: Any
+    ) -> dict[str, Any]:
         raise config_service.ConfigBusyError("busy")
 
     monkeypatch.setattr(config_service, "save_config_file", fake_save)
