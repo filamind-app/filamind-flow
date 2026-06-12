@@ -531,7 +531,13 @@
       "errAxesMapDetection": "La detección de axes-map falló",
       "errCopyFailed": "La copia falló — selecciona el texto y cópialo manualmente.",
       "errSustainTest": "La prueba de frecuencia sostenida falló",
-      "errVibrationsProfile": "El perfil de vibraciones falló"
+      "errVibrationsProfile": "El perfil de vibraciones falló",
+      "vibProgress": "Barrido {step}/{total} — {speed} mm/s · {angle}°",
+      "vibStarting": "Iniciando el barrido…",
+      "vibCancel": "Cancelar barrido",
+      "vibCancelling": "Cancelando…",
+      "vibCancelled": "Barrido cancelado — límites de velocidad restaurados.",
+      "vibReattached": "Reconectado: este resultado terminó mientras la página no estaba."
     },
     "vibrationsView": {
       "title": "Perfil de vibraciones",

@@ -7,6 +7,7 @@ shows before any live test. The actuating run (heat → extrude → sample) land
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import httpx
@@ -14,7 +15,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
-from app.services import max_flow_service, printer_guard
+from app.services import max_flow_service, printer_guard, task_store
 from app.services.max_flow_service import RampParams
 from app.services.moonraker_client import MoonrakerClient
 
@@ -71,3 +72,58 @@ async def maxflow_run(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+
+
+#: Strong refs so background supervised runs aren't garbage-collected mid-flight.
+_background: set[asyncio.Task[None]] = set()
+
+
+async def _run_maxflow_task(task: task_store.Task, params: RampParams, settings: Settings) -> None:
+    """Body of a supervised max-flow run: holds the guard slot, reports per-step progress,
+    holds the result on the task, and honours cancellation (the heater is always cut)."""
+
+    def on_progress(step: int, total: int, detail: dict) -> None:
+        task.progress = {"step": step, "total": total, "detail": detail}
+
+    client = MoonrakerClient(settings.moonraker_url, timeout=_RUN_TIMEOUT_S)
+    try:
+        async with printer_guard.acquire("max_flow"):
+            result = await max_flow_service.run_max_flow(
+                client, params, progress_cb=on_progress, cancel_cb=lambda: task.cancelled
+            )
+        task.result = result
+        task.status = "done"
+    except task_store.TaskCancelled:
+        task.status = "cancelled"
+    except printer_guard.GuardBusyError as exc:
+        task.append(f"!! {exc}\n")
+        task.status = "failed"
+    except (
+        ValueError,
+        max_flow_service.MaxFlowBusyError,
+        max_flow_service.MaxFlowPreflightError,
+    ) as exc:
+        task.append(f"!! {exc}\n")
+        task.status = "failed"
+    except Exception as exc:  # a supervised task must never die silently
+        task.append(f"!! Max-flow run failed: {exc}\n")
+        task.status = "failed"
+
+
+@router.post("/run/start")
+async def maxflow_run_start(
+    body: MaxFlowPlanRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Start the max-flow test as a SUPERVISED background run: returns a task id to poll
+    (``/api/tasks/{id}``) with per-step progress, a Cancel that always cuts the heater, and
+    the result held server-side. Same ramp as ``/run``."""
+    params = RampParams(**body.model_dump())
+    try:
+        max_flow_service.validate(params)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    task = task_store.create_task()
+    background = asyncio.create_task(_run_maxflow_task(task, params, settings))
+    _background.add(background)
+    background.add_done_callback(_background.discard)
+    return {"task_id": task.id}

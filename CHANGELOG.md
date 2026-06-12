@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.207.0] - 2026-06-12
+
+### Added
+
+- **The two longest tests are now supervised runs — progress, cancel, and a result that survives
+  a dropped tab.** The Input Shaping **vibrations profile** (a minutes-long speed×angle sweep) and
+  the **Max-Flow ramp** (heated extrusion) used to be single blind requests: no feedback, no way
+  to stop, and a dropped connection lost the result while the printer kept going. Both now run as
+  background tasks: the widget shows a **live progress bar** (sweep 12/40 · 115 mm/s · 45°, or
+  step 3/12 · 14.0 mm³/s), a **Cancel** button stops the run at its next checkpoint — with the
+  cleanup that always ran still running (velocity limits restored, the **heater always cut**) —
+  and the result is **held server-side**: reload the page mid-run and the widget reattaches to the
+  live run; come back after it finished and the result is collected instead of lost. The runs hold
+  the printer's exclusive slot for their whole life, and the existing one-call flows (the Guided
+  wizard included) gained supervision without changing shape. Localised in all 7 languages.
+
 ## [0.206.0] - 2026-06-12
 
 ### Fixed

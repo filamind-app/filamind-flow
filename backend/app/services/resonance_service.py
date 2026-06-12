@@ -22,6 +22,7 @@ import math
 import os
 import re
 import time
+from collections.abc import Callable
 from typing import Any
 
 from app.services import (
@@ -29,6 +30,7 @@ from app.services import (
     printer_guard,
     shaper_service,
     spectrogram_service,
+    task_store,
     vibrations_service,
 )
 from app.services.moonraker_client import MoonrakerClient
@@ -420,6 +422,8 @@ async def run_vibrations_profile(
     accel: float = 3000.0,
     travel_speed: float = 120.0,
     max_freq: float = 200.0,
+    progress_cb: Callable[[int, int, dict[str, Any]], None] | None = None,
+    cancel_cb: Callable[[], bool] | None = None,
 ) -> dict[str, Any]:
     """Sweeps many speeds along each motor angle and profiles the machine's vibrations.
 
@@ -463,6 +467,8 @@ async def run_vibrations_profile(
 
     f_travel = int(travel_speed * 60)
     nb_samples = int((max_speed - min_speed) / speed_increment + 1)
+    total_segments = len(main_angles) * nb_samples
+    done_segments = 0
     segments: list[dict[str, Any]] = []
     paths: list[str] = []
     try:
@@ -475,6 +481,9 @@ async def run_vibrations_profile(
         for angle in main_angles:
             radian = math.radians(angle)
             for i in range(nb_samples):
+                if cancel_cb is not None and cancel_cb():
+                    # The finally below restores the velocity limits and cleans up captures.
+                    raise task_store.TaskCancelled()
                 speed = min_speed + i * speed_increment
                 # Shorter segments at low speed (1/5 of SIZE, ramping to full at 100mm/s)
                 # gather enough data without wasting travel.
@@ -508,7 +517,14 @@ async def run_vibrations_profile(
                 segments.append({"angle": float(angle), "speed": float(speed), "raw": raw})
                 with contextlib.suppress(OSError):  # keep /tmp clean as we go
                     os.remove(path)
-    except shaper_service.ShaperAnalysisError:
+                done_segments += 1
+                if progress_cb is not None:
+                    progress_cb(
+                        done_segments,
+                        total_segments,
+                        {"angle": float(angle), "speed": float(speed)},
+                    )
+    except (shaper_service.ShaperAnalysisError, task_store.TaskCancelled):
         raise
     except Exception as exc:
         raise shaper_service.ShaperAnalysisError(f"Vibrations profile failed: {exc}") from exc

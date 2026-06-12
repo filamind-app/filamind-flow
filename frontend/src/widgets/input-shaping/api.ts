@@ -161,24 +161,14 @@ export interface VibrationsOptions {
   accel?: number
 }
 
-/** Sweeps speed × motor-angle and profiles machine vibrations (moves the toolhead for minutes). */
+/** Sweeps speed × motor-angle and profiles machine vibrations (moves the toolhead for minutes).
+ *  Runs SUPERVISED: a background task with polled progress, cancel, and a server-held result —
+ *  same signature and result shape as the old blocking call (see supervised.ts). */
 export async function runVibrationsProfile(
   opts: VibrationsOptions = {},
 ): Promise<VibrationsProfile> {
-  const { backendUrl } = resolveEndpoints()
-  const params = new URLSearchParams()
-  if (opts.maxSpeed != null) params.set('max_speed', String(opts.maxSpeed))
-  if (opts.minSpeed != null) params.set('min_speed', String(opts.minSpeed))
-  if (opts.speedIncrement != null) params.set('speed_increment', String(opts.speedIncrement))
-  if (opts.size != null) params.set('size', String(opts.size))
-  if (opts.accel != null) params.set('accel', String(opts.accel))
-  const query = params.toString()
-  const response = await fetch(
-    `${backendUrl}/api/shaper/vibrations-profile${query ? `?${query}` : ''}`,
-    { method: 'POST' },
-  )
-  if (!response.ok) throw new Error(await errorDetail(response, 'Vibrations profile failed'))
-  return (await response.json()) as VibrationsProfile
+  const { runSupervisedVibrations } = await import('./supervised')
+  return runSupervisedVibrations(opts)
 }
 
 /** Lists the saved runs (captures + generated configs) in the on-host archive. */

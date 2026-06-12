@@ -16,10 +16,11 @@ from __future__ import annotations
 
 import contextlib
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from app.services import max_flow, printer_guard, reference_data
+from app.services import max_flow, printer_guard, reference_data, task_store
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
@@ -276,7 +277,12 @@ async def _preflight(client: MoonrakerClient, driver: str) -> None:
         )
 
 
-async def run_max_flow(client: MoonrakerClient, params: RampParams) -> dict[str, Any]:
+async def run_max_flow(
+    client: MoonrakerClient,
+    params: RampParams,
+    progress_cb: Callable[[int, int, dict[str, Any]], None] | None = None,
+    cancel_cb: Callable[[], bool] | None = None,
+) -> dict[str, Any]:
     """Run the live max-flow test: heat, then ramp the flow while sampling StallGuard.
 
     Safe by construction: refused while the printer is busy; the heater is **always turned
@@ -304,7 +310,11 @@ async def run_max_flow(client: MoonrakerClient, params: RampParams) -> dict[str,
         await client.run_gcode(f"M104 S{params.temperature:.0f}")  # start heating
         await client.run_gcode("M83")  # relative extrusion
         await client.run_gcode(f"M109 S{params.temperature:.0f}")  # wait for temp
-        for step in plan_steps:
+        for step_index, step in enumerate(plan_steps):
+            if cancel_cb is not None and cancel_cb():
+                raise task_store.TaskCancelled()  # finally below always cuts the heater
+            if progress_cb is not None:
+                progress_cb(step_index + 1, len(plan_steps), {"flow": step.flow_mm3s})
             samples: list[float] = []
             for _ in range(params.samples_per_step):
                 await client.run_gcode(f"G1 E{sub_mm:.4f} F{step.feedrate_mm_min:.0f}")

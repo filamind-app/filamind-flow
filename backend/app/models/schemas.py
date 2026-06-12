@@ -323,13 +323,17 @@ class BatchRequest(BaseModel):
 
 
 class TaskStatus(BaseModel):
-    """A background batch task's accumulating log and status."""
+    """A background task's accumulating log, status, progress and (when finished) result."""
 
     id: str
     #: running / done / cancelled / failed.
     status: str
     log: str
     cancelled: bool
+    #: Structured progress for supervised runs (step / total / detail), when reported.
+    progress: dict[str, Any] | None = None
+    #: The run's final payload, held server-side so a dropped tab can still collect it.
+    result: dict[str, Any] | None = None
 
 
 class ServiceInfo(BaseModel):

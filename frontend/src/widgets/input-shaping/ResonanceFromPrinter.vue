@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -10,6 +10,7 @@ import {
   runStaticExcitation,
   runVibrationsProfile,
 } from './api'
+import { CANCELLED, cancelVibrations, reattachVibrations, vibRun } from './supervised'
 import {
   type AuditRecord,
   buildAxesMapRecord,
@@ -63,6 +64,7 @@ const staticFreq = ref('50')
 const staticDuration = ref('15')
 const vibResult = ref<VibrationsProfileResult | null>(null)
 const vibBusy = ref(false)
+const info = ref<string | null>(null)
 const vibReady = ref(false)
 const vibMaxSpeed = ref('200')
 const vibIncrement = ref('10')
@@ -211,11 +213,33 @@ async function runVib(): Promise<void> {
     vibReady.value = false
     emit('recorded', buildVibrationsRecord(r))
   } catch (e) {
-    error.value = msg(e, t('inputShaping.fromPrinter.errVibrationsProfile'))
+    if (e instanceof Error && e.message === CANCELLED) {
+      error.value = null
+      info.value = t('inputShaping.fromPrinter.vibCancelled')
+    } else {
+      error.value = msg(e, t('inputShaping.fromPrinter.errVibrationsProfile'))
+    }
   } finally {
     vibBusy.value = false
   }
 }
+
+// After a reload: pick a still-running sweep back up, or collect a finished result the dropped
+// tab never saw — the run survives the browser now, not just the request.
+onMounted(async () => {
+  try {
+    const resumed = await reattachVibrations()
+    if (resumed) {
+      vibResult.value = resumed
+      info.value = t('inputShaping.fromPrinter.vibReattached')
+      emit('recorded', buildVibrationsRecord(resumed))
+    }
+  } catch (e) {
+    if (!(e instanceof Error && e.message === CANCELLED)) {
+      error.value = msg(e, t('inputShaping.fromPrinter.errVibrationsProfile'))
+    }
+  }
+})
 </script>
 
 <template>
@@ -725,9 +749,54 @@ async function runVib(): Promise<void> {
         >
       </i18n-t>
       <HelpNote topic="vibrations" />
+
+      <!-- Supervised-run progress: live step counter + a cancel that always cleans up -->
+      <div
+        v-if="vibRun.status !== 'idle'"
+        class="space-y-1 rounded-brutal border-2 border-ink bg-surface p-2"
+      >
+        <div class="flex items-center justify-between gap-2 font-mono text-[10px]">
+          <span v-if="vibRun.progress">
+            {{
+              t('inputShaping.fromPrinter.vibProgress', {
+                step: vibRun.progress.step,
+                total: vibRun.progress.total,
+                speed: Number(vibRun.progress.detail?.speed ?? 0).toFixed(0),
+                angle: Number(vibRun.progress.detail?.angle ?? 0).toFixed(0),
+              })
+            }}
+          </span>
+          <span v-else>{{ t('inputShaping.fromPrinter.vibStarting') }}</span>
+          <button
+            class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-surface"
+            :disabled="vibRun.status === 'cancelling'"
+            @click="cancelVibrations"
+          >
+            {{
+              vibRun.status === 'cancelling'
+                ? t('inputShaping.fromPrinter.vibCancelling')
+                : t('inputShaping.fromPrinter.vibCancel')
+            }}
+          </button>
+        </div>
+        <div
+          v-if="vibRun.progress"
+          class="h-2 w-full overflow-hidden rounded-full border border-ink bg-paper"
+        >
+          <div
+            class="h-full bg-brand-cyan"
+            :style="{
+              width:
+                Math.round((vibRun.progress.step / Math.max(1, vibRun.progress.total)) * 100) + '%',
+            }"
+          ></div>
+        </div>
+      </div>
+
       <VibrationsProfile v-if="vibResult" :result="vibResult" />
     </div>
 
+    <div v-if="info" class="nb-badge bg-brand-cyan">{{ info }}</div>
     <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
   </div>
 </template>

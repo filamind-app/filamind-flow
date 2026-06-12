@@ -29,7 +29,10 @@
           "title": "Using the result",
           "body": "Put the suggested value into your slicer's \"max volumetric speed\" (per filament). The conservative figure (80% of the measured max) is a safe everyday limit; the balanced figure (90%) pushes a little harder. Higher hotend temperatures usually raise the achievable flow."
         },
-        "glossary": { "title": "Glossary", "body": "" }
+        "glossary": {
+          "title": "Glossary",
+          "body": ""
+        }
       },
       "glossary": {
         "flow": {
@@ -94,7 +97,15 @@
       "cancel": "Cancel",
       "busy": "Refused: the printer is busy (printing or paused). Try again when it's idle.",
       "error": "The test failed.",
-      "noSg": "No StallGuard samples were read — the slip result may be unreliable. The driver's live SG field likely needs adjusting for this model."
+      "noSg": "No StallGuard samples were read — the slip result may be unreliable. The driver's live SG field likely needs adjusting for this model.",
+      "progress": "Step {step}/{total} — {flow} mm³/s",
+      "starting": "Heating / starting…",
+      "abort": "Abort run",
+      "cancelling": "Aborting…",
+      "cancelled": "Run aborted — the heater was turned off.",
+      "reattached": "Reattached: this result finished while the page was away.",
+      "failed": "Max-flow run failed.",
+      "abortNote": "Aborting always turns the heater off."
     },
     "result": {
       "title": "Result",

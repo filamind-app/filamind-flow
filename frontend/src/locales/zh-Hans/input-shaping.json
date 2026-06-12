@@ -531,7 +531,13 @@
       "errAxesMapDetection": "轴映射检测失败",
       "errCopyFailed": "复制失败 — 请选中文本并手动复制。",
       "errSustainTest": "持续频率测试失败",
-      "errVibrationsProfile": "振动剖面失败"
+      "errVibrationsProfile": "振动剖面失败",
+      "vibProgress": "扫描 {step}/{total} — {speed} mm/s · {angle}°",
+      "vibStarting": "正在开始扫描…",
+      "vibCancel": "取消扫描",
+      "vibCancelling": "取消中…",
+      "vibCancelled": "扫描已取消 — 速度限制已恢复。",
+      "vibReattached": "已重新连接：该结果在页面离开期间完成。"
     },
     "vibrationsView": {
       "title": "振动剖面",
