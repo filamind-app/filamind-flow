@@ -16,7 +16,30 @@
       "by": "by DeltaFabs team"
     },
     "home": {
-      "body": "Your panels live in the sidebar — pick one to get started. This home is intentionally empty for now."
+      "body": "Your panels live in the sidebar — pick one to get started. This home is intentionally empty for now.",
+      "title": "Mission Control",
+      "refresh": "Refresh",
+      "loading": "Loading…",
+      "unreachable": "The backend is unreachable.",
+      "printer": "Printer",
+      "statePrinting": "Printing",
+      "statePaused": "Paused",
+      "stateError": "Error",
+      "stateIdle": "Idle",
+      "printerDown": "Moonraker is unreachable.",
+      "doctor": "Machine Doctor",
+      "doctorBody": "One read-only scan across pins, driver values, config drift, firmware sync and more — graded A-F with jump-to-fix links.",
+      "doctorScan": "Scan my printer",
+      "firmware": "Firmware sync",
+      "host": "Host: {version}",
+      "open": "Open",
+      "noData": "No data right now.",
+      "tuning": "Tuning",
+      "noTuning": "No tuning runs archived yet — run the Input Shaping wizard.",
+      "hardware": "Hardware vs baseline",
+      "noBaseline": "No hardware baseline saved yet — save a snapshot in the Machine Map to detect changes.",
+      "hwUnchanged": "No hardware changes since the saved baseline.",
+      "hwChanged": "{n} hardware change(s) since the saved baseline."
     },
     "connection": {
       "connected": "Connected",

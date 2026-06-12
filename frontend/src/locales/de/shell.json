@@ -16,7 +16,30 @@
       "by": "vom DeltaFabs-Team"
     },
     "home": {
-      "body": "Deine Panels findest du in der Seitenleiste — wähle eines aus, um loszulegen. Diese Startseite ist vorerst bewusst leer."
+      "body": "Deine Panels findest du in der Seitenleiste — wähle eines aus, um loszulegen. Diese Startseite ist vorerst bewusst leer.",
+      "title": "Mission Control",
+      "refresh": "Aktualisieren",
+      "loading": "Lade…",
+      "unreachable": "Das Backend ist nicht erreichbar.",
+      "printer": "Drucker",
+      "statePrinting": "Druckt",
+      "statePaused": "Pausiert",
+      "stateError": "Fehler",
+      "stateIdle": "Bereit",
+      "printerDown": "Moonraker ist nicht erreichbar.",
+      "doctor": "Machine Doctor",
+      "doctorBody": "Ein Nur-Lese-Scan über Pins, Treiberwerte, Config-Drift, Firmware-Sync und mehr — benotet A-F mit Spring-zum-Fix-Links.",
+      "doctorScan": "Drucker scannen",
+      "firmware": "Firmware-Sync",
+      "host": "Host: {version}",
+      "open": "Öffnen",
+      "noData": "Gerade keine Daten.",
+      "tuning": "Tuning",
+      "noTuning": "Noch keine Tuning-Läufe archiviert — den Input-Shaping-Assistenten starten.",
+      "hardware": "Hardware vs. Basislinie",
+      "noBaseline": "Noch keine Hardware-Basislinie — in der Machine Map einen Snapshot speichern.",
+      "hwUnchanged": "Keine Hardware-Änderungen seit der Basislinie.",
+      "hwChanged": "{n} Hardware-Änderung(en) seit der Basislinie."
     },
     "connection": {
       "connected": "Verbunden",

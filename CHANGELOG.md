@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.205.0] - 2026-06-12
+
+### Added
+
+- **Mission Control — the home page is no longer empty.** Opening the app now answers *"is my
+  printer healthy?"* at a glance: the **live print state** (with filename and progress bar while
+  printing), the **per-MCU firmware-sync table** (data the backend always computed but never
+  rendered — each row jumps to that MCU's node in the Machine Map), the **latest tuning result per
+  axis** from the input-shaper archive, a **hardware-changed-since-baseline** banner, and a
+  one-click **Machine Doctor** scan tile. One concurrent `GET /api/overview` call powers it all;
+  every block degrades independently and honestly when something is down, and every tile
+  deep-links into the widget that owns it. Localised in all 7 languages.
+
 ## [0.204.0] - 2026-06-12
 
 ### Fixed
