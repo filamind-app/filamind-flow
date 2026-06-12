@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.218.0] - 2026-06-12
+
+### Added
+
+- **Config Templates can write, not just copy.** Every template now carries the same *Apply to
+  printer.cfg…* gate as the tuning widgets — pick the target file, review, acknowledge, and the
+  block is merged through the safety gate (param-level merge, backup first, busy/stale refusals)
+  instead of a copy-paste round-trip. Also hardened the panel against malformed template data.
+
 ## [0.217.0] - 2026-06-12
 
 ### Changed
