@@ -166,6 +166,67 @@ async def test_gather_sanity_flags_overcurrent_and_odd_microsteps() -> None:
     assert not any(f["section"] == "tmc5160 stepper_z" for f in out["findings"])
 
 
+UPSERT_BASE = """\
+[stepper_x]
+step_pin: PF13
+
+[tmc2209 stepper_x]
+uart_pin: PC4   ; keep me
+run_current: 0.8
+
+[extruder]
+nozzle_diameter: 0.4
+
+#*# <---------- SAVE_CONFIG ---------->
+#*# [extruder]
+"""
+
+
+def test_upsert_merges_params_and_inserts_before_save_config() -> None:
+    block = (
+        "[tmc2209 stepper_x]\nrun_current: 1.1\ndriver_hstrt: 7\n\n"
+        "[input_shaper]\nshaper_type_x: mzv\nshaper_freq_x: 57.0"
+    )
+    out, changes = config_service.upsert_sections(UPSERT_BASE, block)
+    # Param-level merge: uart_pin (and its inline comment) survive; the value is updated.
+    assert "uart_pin: PC4   ; keep me" in out
+    assert "run_current: 1.1" in out and "run_current: 0.8" not in out
+    assert "driver_hstrt: 7" in out  # new param appended to the existing section
+    # The new section lands BEFORE the Klipper-managed SAVE_CONFIG tail.
+    assert out.index("[input_shaper]") < out.index("#*#")
+    # Untouched sections re-emit verbatim.
+    assert "[stepper_x]\nstep_pin: PF13" in out
+    assert [c["action"] for c in changes] == ["updated", "added"]
+    # Idempotent: applying the same block again changes nothing.
+    out2, changes2 = config_service.upsert_sections(out, block)
+    assert out2 == out and changes2 == []
+
+
+def test_upsert_rejects_sectionless_block() -> None:
+    with pytest.raises(ValueError):
+        config_service.upsert_sections(UPSERT_BASE, "just some text\n")
+
+
+async def test_apply_section_block_rides_the_gated_save() -> None:
+    client = _FakeClient(text=UPSERT_BASE)
+    result = await config_service.apply_section_block(  # type: ignore[arg-type]
+        client, "printer.cfg", "[input_shaper]\nshaper_freq_x: 57.0\n"
+    )
+    assert result["ok"] is True and result["changes"][0]["action"] == "added"
+    # Backup first, then the merged write.
+    assert client.uploads[0][0].startswith("filamind-backups/")
+    assert "[input_shaper]" in client.uploads[1][1]
+
+
+async def test_apply_section_block_skips_noop_writes() -> None:
+    client = _FakeClient(text=UPSERT_BASE)
+    result = await config_service.apply_section_block(  # type: ignore[arg-type]
+        client, "printer.cfg", "[tmc2209 stepper_x]\nrun_current: 0.8\n"
+    )
+    assert result["ok"] is True and result["changes"] == []
+    assert client.uploads == []  # value already there — nothing written, no backup churn
+
+
 def test_is_config_file() -> None:
     assert config_service._is_config_file("printer.cfg")
     assert config_service._is_config_file("macros/print.CFG")

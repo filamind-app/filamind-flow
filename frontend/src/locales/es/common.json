@@ -24,5 +24,25 @@
       "light": "Claro neobrutalista limpio",
       "contrast": "Máxima legibilidad (a11y)"
     }
+  },
+  "configApply": {
+    "title": "Aplicar a printer.cfg…",
+    "hint": "Escribe este bloque en el archivo elegido a través de la puerta de seguridad: una sección existente se fusiona parámetro a parámetro (sus otras líneas quedan), una ausente se añade. Primero se hace copia; se rechaza al imprimir o si el archivo cambió en disco.",
+    "target": "Archivo destino",
+    "ack": "Revisé el bloque y quiero escribirlo",
+    "apply": "Aplicar",
+    "applying": "Aplicando…",
+    "busy": "La impresora está ocupada (u otra operación en curso) — inténtalo cuando esté libre.",
+    "stale": "El archivo cambió en disco durante la aplicación — no se escribió nada. Reintenta.",
+    "saved": "Guardado (copia: {backup}).",
+    "added": "añadido [{section}]: {params}",
+    "updated": "actualizado [{section}]: {params}",
+    "noop": "Todo ya tenía estos valores — sin cambios.",
+    "restartHint": "Klipper sigue con los valores antiguos hasta reiniciar el firmware.",
+    "restart": "Reiniciar firmware…",
+    "restartConfirm": "Confirmar reinicio",
+    "restarting": "Reiniciando…",
+    "restarted": "Reinicio de firmware enviado.",
+    "cancel": "Cancelar"
   }
 }

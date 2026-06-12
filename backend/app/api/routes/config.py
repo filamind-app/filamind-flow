@@ -90,6 +90,45 @@ async def config_drift(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+class ApplySectionRequest(BaseModel):
+    """Body for ``POST /config/apply-section`` — merge a config block into a file (gated write)."""
+
+    filename: str = Field("printer.cfg", description="Config path within the config root")
+    block: str = Field(..., description="One or more [section] blocks to merge in")
+    expected_sha256: str | None = Field(
+        default=None, description="Optional stale-write precondition (412 on mismatch)"
+    )
+
+
+@router.post("/apply-section")
+async def config_apply_section(
+    body: ApplySectionRequest, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Merge a config block into a file and save through the full gate — param-level merge for
+    existing sections (a `[tmcXXXX]` tune never wipes `uart_pin`), whole-section insert before the
+    SAVE_CONFIG tail otherwise. The tuning widgets' "Apply to printer.cfg" lands here.
+
+    Refused while busy (409) and on a stale file (412). Does not restart — that stays a separate,
+    separately-confirmed action.
+    """
+    try:
+        return await config_service.apply_section_block(
+            _client(settings),
+            body.filename,
+            body.block,
+            body.expected_sha256,
+            keep_n=settings.config_backup_keep_n,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except config_service.ConfigBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except config_service.ConfigConflictError as exc:
+        raise HTTPException(status_code=412, detail=str(exc)) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+
+
 @router.post("/adopt")
 async def config_adopt(body: AdoptParamRequest) -> dict[str, Any]:
     """Set one param to the live value via the round-trip engine and return the new text — a pure,
