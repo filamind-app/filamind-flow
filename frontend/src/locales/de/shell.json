@@ -5,7 +5,8 @@
     },
     "nav": {
       "dashboard": "Dashboard",
-      "toggle": "Navigation umschalten"
+      "toggle": "Navigation umschalten",
+      "label": "Hauptnavigation"
     },
     "mainsail": {
       "label": "Mainsail",

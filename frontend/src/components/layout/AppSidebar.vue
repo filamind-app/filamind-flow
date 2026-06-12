@@ -28,18 +28,22 @@ const items = computed(() => [
   <aside
     class="w-60 shrink-0 flex-col gap-6 border-e-3 border-ink bg-sidebar p-4 md:static md:z-auto md:flex"
     :class="sidebarOpen ? 'fixed inset-y-0 start-0 z-40 flex' : 'hidden'"
+    :role="sidebarOpen ? 'dialog' : undefined"
+    :aria-modal="sidebarOpen ? 'true' : undefined"
+    :aria-label="t('shell.nav.label')"
   >
     <div class="nb-card bg-surface px-3 py-4">
       <p class="font-display text-2xl font-bold leading-none">FilaMind</p>
       <p class="font-mono text-xs tracking-tight">{{ t('shell.brand.tagline') }}</p>
     </div>
 
-    <nav class="flex flex-col gap-2">
+    <nav class="flex flex-col gap-2" :aria-label="t('shell.nav.label')">
       <button
         v-for="item in items"
         :key="item.id"
         class="nb-btn w-full justify-start text-start"
         :class="current === item.id ? 'bg-brand-cyan' : 'bg-surface'"
+        :aria-current="current === item.id ? 'page' : undefined"
         @click="go(item.id)"
       >
         <span class="w-5 shrink-0 text-center" aria-hidden="true">{{ item.icon }}</span>

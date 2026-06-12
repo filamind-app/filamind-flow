@@ -370,7 +370,12 @@ onMounted(async () => {
     </div>
 
     <!-- Supervised-run progress: per-step counter + a cancel that always cuts the heater -->
-    <div v-if="flowRun.status !== 'idle'" class="nb-card space-y-1 bg-surface p-2">
+    <div
+      v-if="flowRun.status !== 'idle'"
+      role="status"
+      aria-live="polite"
+      class="nb-card space-y-1 bg-surface p-2"
+    >
       <div class="flex items-center justify-between gap-2 font-mono text-[11px]">
         <span v-if="flowRun.progress">
           {{

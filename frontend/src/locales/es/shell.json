@@ -5,7 +5,8 @@
     },
     "nav": {
       "dashboard": "Panel",
-      "toggle": "Alternar navegación"
+      "toggle": "Alternar navegación",
+      "label": "Navegación principal"
     },
     "mainsail": {
       "label": "Mainsail",

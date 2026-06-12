@@ -80,7 +80,7 @@ onMounted(() => {
       {{ t('hardwareBrowser.states.loading') }}
     </p>
     <div v-else-if="error" class="nb-card space-y-2 bg-brand-red/10 p-2">
-      <p class="font-mono text-[11px]">{{ error }}</p>
+      <p role="alert" class="font-mono text-[11px]">{{ error }}</p>
       <button class="nb-btn bg-surface px-2 py-1 text-xs" @click="load()">
         {{ t('hardwareBrowser.states.retry') }}
       </button>

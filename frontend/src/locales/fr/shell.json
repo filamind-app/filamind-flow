@@ -5,7 +5,8 @@
     },
     "nav": {
       "dashboard": "Tableau de bord",
-      "toggle": "Afficher/masquer la navigation"
+      "toggle": "Afficher/masquer la navigation",
+      "label": "Navigation principale"
     },
     "mainsail": {
       "label": "Mainsail",

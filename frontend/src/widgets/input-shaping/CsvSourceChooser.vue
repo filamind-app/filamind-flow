@@ -255,6 +255,6 @@ defineExpose({ refresh })
       </div>
     </div>
 
-    <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+    <div v-if="error" role="alert" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
   </div>
 </template>
