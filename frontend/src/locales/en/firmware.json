@@ -250,7 +250,11 @@
       "exportFailed": "Export failed",
       "importFailed": "Import failed",
       "backupHint": "One ZIP covers everything you set up: boards, build profiles, motor mapping, board confirmations, the hardware baseline, flash history and saved tuning runs. Restore puts it all back in one step.",
-      "restoredFull": "Restored {n} profiles, {data} data files, {runs} tuning runs{extra}."
+      "restoredFull": "Restored {n} profiles, {data} data files, {runs} tuning runs{extra}.",
+      "identifyMap": "Show on board map",
+      "identifySeed": "Seed profile from board",
+      "identifySeeded": "Profile '{name}' created with {symbol} preselected — open Configure to finish the build options.",
+      "identifySeedFailed": "Could not seed the profile"
     },
     "external": {
       "title": "External firmware",

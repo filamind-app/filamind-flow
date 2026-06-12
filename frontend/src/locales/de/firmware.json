@@ -250,7 +250,11 @@
       "exportFailed": "Export fehlgeschlagen",
       "importFailed": "Import fehlgeschlagen",
       "backupHint": "Ein ZIP umfasst alles Eingerichtete: Boards, Build-Profile, Motor-Zuordnung, Board-Bestätigungen, die Hardware-Basislinie, Flash-Verlauf und gespeicherte Tuning-Läufe. Wiederherstellen bringt alles in einem Schritt zurück.",
-      "restoredFull": "{n} Profile, {data} Datendateien, {runs} Tuning-Läufe wiederhergestellt{extra}."
+      "restoredFull": "{n} Profile, {data} Datendateien, {runs} Tuning-Läufe wiederhergestellt{extra}.",
+      "identifyMap": "Auf der Board-Karte zeigen",
+      "identifySeed": "Profil vom Board ableiten",
+      "identifySeeded": "Profil '{name}' mit vorausgewähltem {symbol} erstellt — öffnen Sie Konfigurieren, um die Build-Optionen abzuschließen.",
+      "identifySeedFailed": "Profil konnte nicht erstellt werden"
     },
     "external": {
       "title": "Externe Firmware",
