@@ -557,6 +557,145 @@ async def gather_sanity(client: MoonrakerClient, data_dir: str = "") -> dict[str
     return {"reachable": True, "findings": findings, "checked": checked}
 
 
+def upsert_sections(content: str, block: str) -> tuple[str, list[dict[str, Any]]]:
+    """Merge a config ``block`` (one or more ``[section]``s) into ``content`` — the engine behind
+    "Apply to printer.cfg" from the tuning widgets.
+
+    Semantics are *ensure the section exists and set these params*: a section the file already has
+    is *merged at param level* (each incoming param updates the existing line in place — preserving
+    its separator convention and inline comment — or is appended to that section), so applying a
+    ``[tmc2209 stepper_x]`` tune never wipes the section's ``uart_pin``. A section the file lacks
+    is inserted whole, before the Klipper-managed ``SAVE_CONFIG`` tail. Untouched sections re-emit
+    verbatim (the round-trip engine's raw caching).
+
+    Pure (no I/O). Returns ``(new_content, changes)`` where each change is
+    ``{"section", "action": "added" | "updated", "params": [keys...]}``.
+
+    Raises:
+        ValueError: if ``block`` contains no config sections.
+    """
+    cfg = klipper_config.parse(content)
+    incoming = klipper_config.parse(block)
+    new_sections = [s for s in incoming.sections if s.header != klipper_config.SAVE_CONFIG_MARKER]
+    if not new_sections:
+        raise ValueError("the block contains no config sections")
+
+    changes: list[dict[str, Any]] = []
+    for new_sec in new_sections:
+        wanted = new_sec.header.strip().lower()
+        existing = next((s for s in cfg.sections if s.header.strip().lower() == wanted), None)
+        if existing is None:
+            # Insert before the SAVE_CONFIG pseudo-section (it must stay last), else append.
+            save_idx = next(
+                (
+                    i
+                    for i, s in enumerate(cfg.sections)
+                    if s.header == klipper_config.SAVE_CONFIG_MARKER
+                ),
+                None,
+            )
+            insert_at = save_idx if save_idx is not None else len(cfg.sections)
+            # Blank-line padding keeps the file readable (raw_lines is the only thing a verbatim
+            # dump emits, so it must live there): one above — unless the preceding section already
+            # ends blank — and one below.
+            if new_sec.raw_lines:
+                prev = cfg.sections[insert_at - 1] if insert_at > 0 else None
+                prev_ends_blank = bool(prev and prev.raw_lines and not prev.raw_lines[-1].strip())
+                if new_sec.raw_lines[0].strip() and not prev_ends_blank:
+                    new_sec.raw_lines = ["\n", *new_sec.raw_lines]
+                if not new_sec.raw_lines[-1].endswith("\n"):
+                    new_sec.raw_lines[-1] += "\n"
+                if new_sec.raw_lines[-1].strip():
+                    new_sec.raw_lines = [*new_sec.raw_lines, "\n"]
+            cfg.sections.insert(insert_at, new_sec)
+            changes.append(
+                {
+                    "section": new_sec.header,
+                    "action": "added",
+                    "params": [p.key for p in new_sec.params],
+                }
+            )
+            continue
+
+        touched: list[str] = []
+        for new_param in new_sec.params:
+            key = new_param.key.strip().lower()
+            target = next((p for p in existing.params if p.key.strip().lower() == key), None)
+            if target is not None:
+                if (target.value or "").strip() == (new_param.value or "").strip():
+                    continue  # already at this value — don't churn the line
+                target.value = new_param.value
+                sep = " = " if target.separator == "=" else ": "
+                line = f"{target.key}{sep}{new_param.value}"
+                if target.comment:
+                    line = f"{line} {target.comment.lstrip()}"
+                target.raw = line + "\n"
+            else:
+                existing.params.append(
+                    ConfigParam(
+                        key=new_param.key,
+                        value=new_param.value,
+                        separator=":",
+                        comment=None,
+                        raw=f"{new_param.key}: {new_param.value}\n",
+                    )
+                )
+            touched.append(new_param.key)
+        if touched:
+            # Rebuilding drops the section's verbatim raw (incl. its trailing blank line) — keep
+            # the file readable by re-adding the separation as a raw spacer "param" (dump emits
+            # param.raw verbatim; the cfg object is dumped and discarded, never reused).
+            had_trailing_blank = bool(existing.raw_lines) and not existing.raw_lines[-1].strip()
+            existing.raw_lines = []  # rebuild this section so the new values take effect
+            if had_trailing_blank:
+                existing.params.append(
+                    ConfigParam(key="", value="", separator="", comment=None, raw="\n")
+                )
+            changes.append({"section": existing.header, "action": "updated", "params": touched})
+    return klipper_config.dump(cfg), changes
+
+
+async def apply_section_block(
+    client: MoonrakerClient,
+    filename: str,
+    block: str,
+    expected_sha256: str | None = None,
+    *,
+    keep_n: int = 20,
+) -> dict[str, Any]:
+    """Read ``filename``, merge ``block`` into it (:func:`upsert_sections`), and write the result
+    through the full gated save (busy refusal, stale-write precondition, pre-save backup + prune).
+
+    Raises everything :func:`save_config_file` raises, plus ``ValueError`` for an empty block.
+    """
+    _reject_unsafe(filename)
+    try:
+        current = await client.get_file_text(filename, root="config")
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code != 404:
+            raise
+        current = ""
+    new_content, changes = upsert_sections(current, block)
+    if not changes:
+        # Everything is already at these values — no write, no backup churn.
+        view = build_file_view(filename, current)
+        return {
+            "ok": True,
+            "filename": filename,
+            "backup": None,
+            "sha256": view["sha256"],
+            "issues": view["issues"],
+            "section_count": view["section_count"],
+            "changes": [],
+        }
+    # No caller precondition → pin the save to the text the merge was computed on, so a write
+    # that lands between our read and the save is detected (412) instead of clobbered.
+    precondition = expected_sha256 or (_sha256(current) if current else None)
+    result = await save_config_file(client, filename, new_content, precondition, keep_n=keep_n)
+    result["changes"] = changes
+    return result
+
+
 async def append_block(client: MoonrakerClient, filename: str, block: str) -> dict[str, Any]:
     """Append a config ``block`` (e.g. generated macros) to ``filename`` through the gated save.
 

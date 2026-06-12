@@ -6,6 +6,7 @@
  *  server-side too (refused while printing).
  */
 import { computed, ref } from 'vue'
+import ConfigApply from '@/components/ui/ConfigApply.vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -264,6 +265,16 @@ async function copyConfig(): Promise<void> {
             class="overflow-x-auto rounded-brutal border-2 border-ink bg-surface p-1.5 text-[10px] leading-tight"
             >{{ configText }}</pre
           >
+
+          <!-- Write the same block into the config behind the shared gate (no copy-paste). -->
+          <details v-if="configText" class="nb-card mt-1 bg-surface p-2">
+            <summary class="cursor-pointer text-[11px] font-bold">
+              {{ t('configApply.title') }}
+            </summary>
+            <div class="mt-2">
+              <ConfigApply :block="configText" />
+            </div>
+          </details>
         </div>
       </template>
     </div>
