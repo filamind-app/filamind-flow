@@ -23,6 +23,7 @@ import { buildAxesVelocityChart } from './axesChart'
 import { angleClass, axesMapConfig, mappingArrow, matchVerdict, statusBg } from './axesMap'
 import { beltVerdict, buildCompareChart } from './compare'
 import { buildEnergyTimeline, buildSpectrogram } from './spectrogram-chart'
+import { codeText, verdictText } from './verdict'
 import type {
   AxesMapResult,
   BeltComparison,
@@ -39,7 +40,7 @@ const emit = defineEmits<{
   recorded: [Omit<AuditRecord, 'id' | 'source'>]
 }>()
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, te } = useI18n({ useScope: 'global' })
 
 const error = ref<string | null>(null)
 const liveAxis = ref<'x' | 'y'>('x')
@@ -63,6 +64,30 @@ const staticAxis = ref<'x' | 'y'>('x')
 const staticFreq = ref('50')
 const staticDuration = ref('15')
 const vibResult = ref<VibrationsProfileResult | null>(null)
+
+const staticVerdict = computed(() =>
+  staticResult.value
+    ? codeText(
+        t,
+        te,
+        'inputShaping.verdicts.sustain',
+        staticResult.value.verdict_code,
+        staticResult.value.verdict_params,
+        staticResult.value.verdict,
+      )
+    : '',
+)
+const axesQualityText = computed(() =>
+  axesMapResult.value
+    ? verdictText(
+        t,
+        te,
+        'inputShaping.verdicts.axes',
+        axesMapResult.value.message_codes,
+        axesMapResult.value.messages.join(' · '),
+      )
+    : '',
+)
 const vibBusy = ref(false)
 const info = ref<string | null>(null)
 const vibReady = ref(false)
@@ -583,7 +608,7 @@ onMounted(async () => {
         }}</span>
       </div>
       <p v-if="axesMapResult.messages.length" class="text-[10px] opacity-60">
-        {{ axesMapResult.messages.join(' · ') }}
+        {{ axesQualityText }}
       </p>
     </div>
 
@@ -641,7 +666,7 @@ onMounted(async () => {
             })
           }}</span>
         </div>
-        <p class="text-[10px] opacity-80">{{ staticResult.verdict }}</p>
+        <p class="text-[10px] opacity-80">{{ staticVerdict }}</p>
         <svg
           :viewBox="`0 0 ${specChart.width} ${specChart.height}`"
           class="w-full rounded-brutal border-2 border-ink bg-paper"

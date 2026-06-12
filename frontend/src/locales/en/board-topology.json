@@ -174,7 +174,12 @@
         "chip_changed": "“{mcu}” chip changed: {before} → {after}",
         "components_changed": "“{mcu}” component count changed: {before} → {after}"
       },
-      "noCompare": "Could not compare — the printer is unreachable."
+      "noCompare": "Could not compare — the printer is unreachable.",
+      "summaryHost": "Host: {name}",
+      "summaryIntegrated": "SBC integrated on {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "board {board}",
+      "summaryComponents": "{n} components"
     },
     "jump": {
       "section": "Open this section in the Config Editor",

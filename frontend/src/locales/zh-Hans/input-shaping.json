@@ -598,6 +598,30 @@
       "errSave": "保存到归档失败",
       "errDelete": "删除失败",
       "errDownload": "下载失败"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "记录到过多低频运动 — 降低 ACCEL（或增大 SIZE）后重新运行，使测量只包含恒定速度。",
+        "smoothest": "约 {v} mm/s 时最平稳",
+        "avoid": "避免接近 {speeds} mm/s 的速度",
+        "matched": "电机匹配良好（对称度 {pct}%）",
+        "low_symmetry": "电机对称度偏低（{pct}%）— 请检查皮带张力",
+        "motor_freq": "电机共振约 {f} Hz",
+        "complete": "振动剖析完成。"
+      },
+      "sustain": {
+        "not_dominant": "工具头的主要振动不在 {freq} Hz（峰值在 {peak} Hz）— 振源可能没有传到工具头传感器。",
+        "drop": "保持 {freq} Hz — 振动曾下降约 {drop}%；当时触碰的部位是主要贡献源。",
+        "touch": "保持 {freq} Hz — 依次触碰皮带、工具头、龙门连接处和惰轮；让嗡鸣消失的那个部件就是共振源。"
+      },
+      "axes": {
+        "same_axis": "多个机器轴检测到同一个加速度计轴",
+        "low_confidence": "检测置信度低（{pct}%）",
+        "high_angle_error": "角度误差偏大（{deg}°）",
+        "unusual_gravity": "重力读数异常（{g} m/s²）",
+        "high_noise": "噪声水平偏高（{n} mm/s²）",
+        "good": "检测质量：良好"
+      }
     }
   }
 }

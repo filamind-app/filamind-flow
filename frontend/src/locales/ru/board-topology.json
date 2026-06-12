@@ -174,7 +174,12 @@
         "chip_changed": "Чип «{mcu}» изменился: {before} → {after}",
         "components_changed": "Число компонентов «{mcu}» изменилось: {before} → {after}"
       },
-      "noCompare": "Сравнить не удалось — принтер недоступен."
+      "noCompare": "Сравнить не удалось — принтер недоступен.",
+      "summaryHost": "Хост: {name}",
+      "summaryIntegrated": "SBC встроен в {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "плата {board}",
+      "summaryComponents": "компонентов: {n}"
     },
     "jump": {
       "section": "Открыть эту секцию в редакторе конфига",

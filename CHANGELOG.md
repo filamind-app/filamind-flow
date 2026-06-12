@@ -6,7 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.218.0] - 2026-06-12
+## [0.219.0] - 2026-06-12
+
+### Changed
+
+- **Measurement verdicts now speak your language.** The plain-language summaries that come back
+  with a vibrations profile, a sustain-frequency hold and an axes-map detection were composed
+  in English on the backend; they now also carry structured codes, and the UI renders them in
+  all seven languages (older saved results still show their original text). The Board Map's
+  *Copy summary* output and the Config Templates category labels are translated too.
+- **Right-to-left polish.** Tables, lists, badges and accent borders across the Hardware Browser
+  and Board Map now use direction-aware spacing, so Arabic layouts mirror correctly.
 
 ### Added
 

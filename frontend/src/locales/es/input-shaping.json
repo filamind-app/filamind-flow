@@ -598,6 +598,30 @@
       "errSave": "El guardado en el archivo falló",
       "errDelete": "La eliminación falló",
       "errDownload": "La descarga falló"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Se registró demasiado movimiento de baja frecuencia — baja ACCEL (o sube SIZE) y vuelve a ejecutar para medir solo velocidades constantes.",
+        "smoothest": "Más suave alrededor de {v} mm/s",
+        "avoid": "evita velocidades cercanas a {speeds} mm/s",
+        "matched": "los motores están bien emparejados (simetría {pct}%)",
+        "low_symmetry": "la simetría de los motores es baja ({pct}%) — revisa la tensión de las correas",
+        "motor_freq": "resonancia del motor ~{f} Hz",
+        "complete": "Perfil de vibraciones completado."
+      },
+      "sustain": {
+        "not_dominant": "El cabezal no vibra principalmente a {freq} Hz (el pico está en {peak} Hz) — puede que la fuente no llegue al sensor del cabezal.",
+        "drop": "Manteniendo {freq} Hz — la vibración cayó ~{drop}% en algún momento; lo que tocaste entonces contribuye mucho.",
+        "touch": "Manteniendo {freq} Hz — toca correas, cabezal, uniones del gantry y poleas una a una; la pieza que silencia el zumbido es tu fuente de resonancia."
+      },
+      "axes": {
+        "same_axis": "Se detectó el mismo eje del acelerómetro para varios ejes de la máquina",
+        "low_confidence": "Confianza de detección baja ({pct}%)",
+        "high_angle_error": "Error de ángulo alto ({deg}°)",
+        "unusual_gravity": "Lectura de gravedad inusual ({g} m/s²)",
+        "high_noise": "Nivel de ruido alto ({n} mm/s²)",
+        "good": "Calidad de detección: buena"
+      }
     }
   }
 }

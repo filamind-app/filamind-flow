@@ -24,7 +24,10 @@
           "title": "Benötigte Sektionen",
           "body": "Jede Vorlage listet die Konfigurationssektionen auf, die sie definiert oder von denen sie abhängt. Wenn eine Sektion bereits in deiner Konfiguration existiert, füge die Schlüssel zusammen, anstatt ein Duplikat einzufügen (eine doppelte Sektion wird beim Start abgelehnt)."
         },
-        "glossary": { "title": "Glossar", "body": "" }
+        "glossary": {
+          "title": "Glossar",
+          "body": ""
+        }
       },
       "glossary": {
         "template": {
@@ -57,6 +60,10 @@
       "error": "Die Vorlagen konnten nicht geladen werden.",
       "empty": "Keine Vorlagen in dieser Kategorie.",
       "retry": "Erneut versuchen"
+    },
+    "categories": {
+      "config_blocks": "Konfig-Blöcke",
+      "macros": "Makros"
     }
   }
 }

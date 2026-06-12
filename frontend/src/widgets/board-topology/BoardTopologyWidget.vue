@@ -157,18 +157,22 @@ async function copySummary(): Promise<void> {
   if (!topo) return
   const lines: string[] = [t('boardTopology.snapshot.summaryTitle')]
   if (topo.host) {
-    lines.push(`Host: ${topo.host.name}${topo.host.host_id ? ` (${topo.host.host_id})` : ''}`)
+    const id = topo.host.host_id ? ` (${topo.host.host_id})` : ''
+    lines.push(t('boardTopology.snapshot.summaryHost', { name: `${topo.host.name}${id}` }))
     if (topo.host.integrated_into_board_id)
-      lines.push(`  SBC integrated on ${topo.host.integrated_into_board_id}`)
+      lines.push(
+        `  ${t('boardTopology.snapshot.summaryIntegrated', { board: topo.host.integrated_into_board_id })}`,
+      )
   }
   for (const m of topo.mcus) {
     const parts = [
-      `MCU ${m.name}`,
+      t('boardTopology.snapshot.summaryMcu', { name: m.name }),
       m.mcu || m.mcu_id || '?',
-      m.board_id ? `board ${m.board_id}` : 'board ?',
+      t('boardTopology.snapshot.summaryBoard', { board: m.board_id || '?' }),
       `(${m.connection})`,
     ]
-    if (m.components?.length) parts.push(`${m.components.length} components`)
+    if (m.components?.length)
+      parts.push(t('boardTopology.snapshot.summaryComponents', { n: m.components.length }))
     lines.push(parts.join(' · '))
   }
   try {
@@ -355,7 +359,7 @@ onMounted(() => void load())
           <li
             v-for="(c, i) in diff.changes"
             :key="i"
-            class="rounded border-l-4 border-brand-red bg-brand-red/10 px-1 py-0.5"
+            class="rounded border-s-4 border-brand-red bg-brand-red/10 px-1 py-0.5"
           >
             {{ changeMsg(c) }}
           </li>

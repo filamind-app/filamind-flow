@@ -598,6 +598,30 @@
       "errSave": "Échec de l'enregistrement dans l'archive",
       "errDelete": "Échec de la suppression",
       "errDownload": "Échec du téléchargement"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Trop de mouvement basse fréquence enregistré — réduisez ACCEL (ou augmentez SIZE) et relancez pour ne mesurer que des vitesses constantes.",
+        "smoothest": "Le plus fluide autour de {v} mm/s",
+        "avoid": "évitez les vitesses proches de {speeds} mm/s",
+        "matched": "les moteurs sont bien appariés (symétrie {pct}%)",
+        "low_symmetry": "la symétrie des moteurs est faible ({pct}%) — vérifiez la tension des courroies",
+        "motor_freq": "résonance moteur ~{f} Hz",
+        "complete": "Profil de vibrations terminé."
+      },
+      "sustain": {
+        "not_dominant": "La tête ne vibre pas principalement à {freq} Hz (le pic est à {peak} Hz) — la source n'atteint peut-être pas le capteur de la tête.",
+        "drop": "Maintien de {freq} Hz — la vibration a chuté d'environ {drop}% à un moment ; ce que vous touchiez alors y contribue fortement.",
+        "touch": "Maintien de {freq} Hz — touchez courroies, tête, jonctions du portique et poulies une à une ; la pièce qui fait taire le bourdonnement est votre source de résonance."
+      },
+      "axes": {
+        "same_axis": "Même axe d'accéléromètre détecté pour plusieurs axes machine",
+        "low_confidence": "Confiance de détection faible ({pct}%)",
+        "high_angle_error": "Erreur d'angle élevée ({deg}°)",
+        "unusual_gravity": "Lecture de gravité inhabituelle ({g} m/s²)",
+        "high_noise": "Niveau de bruit élevé ({n} mm/s²)",
+        "good": "Qualité de détection : bonne"
+      }
     }
   }
 }

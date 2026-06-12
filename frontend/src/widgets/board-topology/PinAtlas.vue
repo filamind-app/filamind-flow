@@ -122,7 +122,7 @@ function pinTitle(p: PinAtlasPin): string {
         <li
           v-for="(f, i) in atlas.findings"
           :key="i"
-          class="rounded border-l-4 p-1"
+          class="rounded border-s-4 p-1"
           :class="
             f.kind === 'double_assign'
               ? 'border-brand-red bg-brand-red/10'

@@ -24,7 +24,10 @@
           "title": "Secciones requeridas",
           "body": "Cada plantilla enumera las secciones de configuración que define o de las que depende. Si una sección ya existe en tu configuración, fusiona las claves en lugar de pegar un duplicado (una sección duplicada se rechaza al arrancar)."
         },
-        "glossary": { "title": "Glosario", "body": "" }
+        "glossary": {
+          "title": "Glosario",
+          "body": ""
+        }
       },
       "glossary": {
         "template": {
@@ -57,6 +60,10 @@
       "error": "No se pudieron cargar las plantillas.",
       "empty": "No hay plantillas en esta categoría.",
       "retry": "Reintentar"
+    },
+    "categories": {
+      "config_blocks": "Bloques de config",
+      "macros": "Macros"
     }
   }
 }
