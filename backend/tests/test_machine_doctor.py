@@ -103,7 +103,7 @@ async def test_firmware_out_of_sync_needs_a_host_version(monkeypatch: pytest.Mon
     async def status(*_a: Any, **_k: Any) -> dict[str, Any]:
         return {
             "reachable": True,
-            "host_version": None,
+            "host": {"version": None, "state": "ready"},
             "mcus": [{"name": "mcu", "in_sync": False, "version": "v0.13.0"}],
         }
 

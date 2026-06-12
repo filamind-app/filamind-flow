@@ -150,7 +150,8 @@ async def _scan_firmware(settings: Settings) -> dict[str, Any]:
         settings.moonraker_url, settings.klipper_dir, settings.katapult_dir, settings.data_dir
     )
     findings: list[dict[str, Any]] = []
-    host_version = out.get("host_version")
+    host = out.get("host")
+    host_version = host.get("version") if isinstance(host, dict) else None
     for mcu in out.get("mcus", []):
         # in_sync=False is only a real finding when we know what the host runs — without a host
         # version the comparison is meaningless, and reporting it would be a fake warning.
@@ -162,7 +163,7 @@ async def _scan_firmware(settings: Settings) -> dict[str, Any]:
                     {
                         "mcu": mcu.get("name"),
                         "mcu_version": mcu.get("version"),
-                        "host_version": out.get("host_version"),
+                        "host_version": host_version,
                     },
                     {"kind": "topology_node", "value": mcu.get("name")},
                 )
