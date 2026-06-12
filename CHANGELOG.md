@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.230.0] - 2026-06-13
+
+### Fixed
+
+- **CAN toolhead flashing works when the device has a friendly name.** A CAN flash addresses the
+  board by its 12-hex `canbus_uuid`, but a device registered under a name like "Toolhead" was
+  passed verbatim to the flash tool as the UUID, so the node was never found and the flash
+  failed. The UUID is now resolved from the live Klipper config (by matching the `[mcu <name>]`
+  section, or the sole CAN node when unambiguous); if it genuinely can't be resolved the flash
+  refuses up front with a clear message instead of writing the wrong node.
+- **A failed flash now reports as failed.** The flash sequence recorded success and showed
+  "complete" even when the flash tool exited with an error. It now checks the tool's exit code,
+  surfaces a failure (the progress bar turns red, details auto-open), and does not record a
+  bogus flashed-version — while still restarting Klipper either way.
+
+
 ## [0.229.0] - 2026-06-13
 
 ### Changed
