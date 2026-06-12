@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.228.0] - 2026-06-13
+
+### Added
+
+- **Reach the panel through your existing printer URL — works behind a tunnel.** The installer
+  now exposes FilaMind at `/filamind/` on whatever web server already answers on port 80
+  (Mainsail / Fluidd), so the sidebar link is host-relative and opens on LAN, by IP, and
+  through a remote reverse proxy or Cloudflare tunnel with no extra port to forward and no
+  `.local` mDNS. The built UI uses relative asset paths and derives its API/WebSocket base
+  from wherever it is mounted, so the same bundle serves correctly at the panel's own port
+  or under the subpath. Standalone `:8090` access is unchanged.
+
+
 ## [0.227.0] - 2026-06-13
 
 ### Fixed
