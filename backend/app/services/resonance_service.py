@@ -26,6 +26,7 @@ from typing import Any
 
 from app.services import (
     axes_map_service,
+    printer_guard,
     shaper_service,
     spectrogram_service,
     vibrations_service,
@@ -132,12 +133,12 @@ def analyze_file(resonance_dirs: str, path: str, **kwargs: Any) -> dict[str, Any
 
 
 async def _is_printing(client: MoonrakerClient) -> bool:
+    """Shared busy definition (printing / paused / error) — a swallowed query keeps the old
+    fail-open behaviour when Moonraker is flaky (the test itself will surface real errors)."""
     try:
-        data = await client.query_objects(["print_stats"])
+        return await printer_guard.is_busy(client)
     except Exception:
         return False
-    stats = data.get("print_stats")
-    return isinstance(stats, dict) and stats.get("state") in ("printing", "paused")
 
 
 async def _has_resonance_tester(client: MoonrakerClient) -> bool:

@@ -23,7 +23,7 @@ from typing import Any
 import httpx
 
 from app.config import Settings
-from app.services import devices_store
+from app.services import devices_store, printer_guard
 from app.services.firmware_profiles import artifact_path_for, profile_path
 from app.services.moonraker_client import MoonrakerClient
 from app.services.version_store import read_build_info, record_flash
@@ -132,14 +132,13 @@ def _build_command(
 
 
 async def _is_printing(moonraker_url: str) -> bool:
-    """True if Moonraker reports an active or paused print."""
+    """True if Moonraker reports the printer busy (printing / paused / error) — the shared
+    :mod:`printer_guard` definition. Fail-open when Moonraker is unreachable (a dead Moonraker
+    must not block flashing the very MCU that might fix it)."""
     try:
-        data = await MoonrakerClient(moonraker_url).query_objects(["print_stats"])
+        return await printer_guard.is_busy(MoonrakerClient(moonraker_url))
     except httpx.HTTPError:
         return False
-    stats = data.get("print_stats")
-    state = stats.get("state") if isinstance(stats, dict) else None
-    return state in ("printing", "paused")
 
 
 async def _sudo_ready() -> bool:

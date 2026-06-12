@@ -18,7 +18,7 @@ from typing import Any
 
 import httpx
 
-from app.services import field_policy, klipper_config, motor_mapping, reference_data
+from app.services import field_policy, klipper_config, motor_mapping, printer_guard, reference_data
 from app.services.klipper_config import ConfigFile, ConfigParam, ConfigSection
 from app.services.moonraker_client import MoonrakerClient
 
@@ -598,12 +598,8 @@ async def append_block(client: MoonrakerClient, filename: str, block: str) -> di
 
 async def _is_busy(client: MoonrakerClient) -> bool:
     """True while the printer is printing, paused, or in error — block writes and restarts
-    then. Reads ``print_stats.state`` (mirrors the Motor Drivers write guard)."""
-    status = await client.query_objects(["print_stats"])
-    stats = status.get("print_stats")
-    if not isinstance(stats, dict):
-        return False
-    return str(stats.get("state", "")).lower() in ("printing", "paused", "error")
+    then. Delegates to the shared :mod:`printer_guard` busy definition."""
+    return await printer_guard.is_busy(client)
 
 
 def _backup_path(filename: str, now: datetime.datetime) -> str:
@@ -762,13 +758,19 @@ async def save_config_file(
 
 
 async def restart_firmware(client: MoonrakerClient) -> dict[str, Any]:
-    """Trigger ``FIRMWARE_RESTART`` so a saved config takes effect. Refused while busy.
+    """Trigger ``FIRMWARE_RESTART`` so a saved config takes effect. Refused while busy and while
+    another actuating operation (a resonance test, a flash…) holds the printer's exclusive slot —
+    restarting mid-test would abort it with the machine in an arbitrary state.
 
     Raises:
-        ConfigBusyError: if the printer is busy.
+        ConfigBusyError: if the printer is busy or another operation holds the slot.
         httpx.HTTPError: if Moonraker is unreachable or the restart fails.
     """
     if await _is_busy(client):
         raise ConfigBusyError("Refusing to restart while the printer is busy.")
-    await client.firmware_restart()
+    try:
+        async with printer_guard.acquire("firmware_restart"):
+            await client.firmware_restart()
+    except printer_guard.GuardBusyError as exc:
+        raise ConfigBusyError(str(exc)) from exc
     return {"ok": True}

@@ -321,7 +321,8 @@
       "motorsyncNotInstalled": "Das Add-on motors_sync ist nicht installiert — es richtet die Mikroschritt-Phase mehrerer Motoren an einer Achse (Doppel-/Quad-Z, Doppel-X) mithilfe eines Beschleunigungssensors aus.",
       "busySync": "Motor-Synchronisierung wird verweigert, während der Drucker beschäftigt ist (Druck läuft oder pausiert).",
       "syncRan": "{cmd} ausgeführt.",
-      "overCurrentCap": "Abgelehnt: {requested} A auf {stepper} übersteigt die {cap}-A-Grenze (Vollskalenlimit des Treibers / Nennstrom des zugewiesenen Motors)."
+      "overCurrentCap": "Abgelehnt: {requested} A auf {stepper} übersteigt die {cap}-A-Grenze (Vollskalenlimit des Treibers / Nennstrom des zugewiesenen Motors).",
+      "guardLocked": "Abgelehnt: eine andere Operation läuft bereits ({operation})."
     }
   }
 }

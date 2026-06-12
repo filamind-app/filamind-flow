@@ -321,7 +321,8 @@
       "motorsyncNotInstalled": "The motors_sync add-on isn't installed — it aligns the microstep phase of multiple motors on one axis (dual/quad-Z, dual-X) using an accelerometer.",
       "busySync": "Refusing to sync motors while the printer is busy (printing or paused).",
       "syncRan": "Ran {cmd}.",
-      "overCurrentCap": "Refused: {requested} A on {stepper} exceeds the {cap} A ceiling (driver full-scale limit / rated current of the assigned motor)."
+      "overCurrentCap": "Refused: {requested} A on {stepper} exceeds the {cap} A ceiling (driver full-scale limit / rated current of the assigned motor).",
+      "guardLocked": "Refused: another operation is already running ({operation})."
     }
   }
 }

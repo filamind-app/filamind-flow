@@ -66,6 +66,25 @@
         "title": "قوالب التهيئة",
         "description": "كتل تهيئة وماكروهات Klipper جاهزة للّصق، مرتّبة حسب الفئة."
       }
+    },
+    "guard": {
+      "printing": "جارٍ الطباعة — الكتابة مقفلة",
+      "running": "{op} قيد التشغيل — الكتابة مقفلة",
+      "op": {
+        "resonance_test": "اختبار الرنين",
+        "noise_check": "فحص الضوضاء",
+        "belt_comparison": "مقارنة الأحزمة",
+        "axes_map": "معايرة خريطة المحاور",
+        "sustain": "إثارة مستمرة",
+        "vibrations_profile": "ملف الاهتزازات",
+        "max_flow": "اختبار أقصى تدفق",
+        "driver_write": "كتابة للمشغّل",
+        "homing": "التصفير",
+        "motors_sync": "مزامنة المحركات",
+        "firmware_flash": "فلاش الفيرموير",
+        "firmware_batch": "تشغيل فيرموير جماعي",
+        "firmware_restart": "إعادة تشغيل الفيرموير"
+      }
     }
   }
 }

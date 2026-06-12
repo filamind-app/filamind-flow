@@ -66,6 +66,25 @@
         "title": "配置模板",
         "description": "按类别提供可直接粘贴的 Klipper 配置块和宏。"
       }
+    },
+    "guard": {
+      "printing": "打印中 — 写入已锁定",
+      "running": "{op} 进行中 — 写入已锁定",
+      "op": {
+        "resonance_test": "共振测试",
+        "noise_check": "噪声检查",
+        "belt_comparison": "皮带对比",
+        "axes_map": "轴映射校准",
+        "sustain": "持续激振",
+        "vibrations_profile": "振动剖析",
+        "max_flow": "最大流量测试",
+        "driver_write": "驱动写入",
+        "homing": "归位",
+        "motors_sync": "电机同步",
+        "firmware_flash": "固件烧录",
+        "firmware_batch": "固件批量运行",
+        "firmware_restart": "固件重启"
+      }
     }
   }
 }
