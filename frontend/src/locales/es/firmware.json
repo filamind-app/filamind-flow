@@ -296,6 +296,21 @@
       "confirmAck": "Verifiqué que este archivo corresponde a la placa destino",
       "confirmFlash": "Flashear",
       "confirmCancel": "Cancelar"
+    },
+    "flashProgress": {
+      "phase": {
+        "start": "Preparando…",
+        "stop": "Deteniendo Klipper…",
+        "boot": "Entrando al bootloader…",
+        "write": "Escribiendo firmware…",
+        "restart": "Reiniciando Klipper…",
+        "done": "Flasheo completo"
+      },
+      "done": "Flasheo completo ✓",
+      "failed": "Flasheo fallido — ver detalles",
+      "errorsTitle": "Problemas",
+      "showDetails": "Mostrar salida de comandos",
+      "batchStep": "Flasheando {device} ({step}/{total})"
     }
   }
 }

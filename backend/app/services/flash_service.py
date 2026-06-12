@@ -31,6 +31,16 @@ from app.services.version_store import read_build_info, record_flash
 # Methods that must stop services / use sudo to flash.
 _NEEDS_SUDO = ("serial", "can", "dfu", "make", "linux")
 
+#: Machine-readable phase markers emitted alongside the human flash log. The UI consumes
+#: these to drive a progress bar and hides them from the shown output; the readable ">>> …"
+#: lines stay for the details view. Order: start → stop → boot → write → restart → done.
+_PHASE = "::phase::"
+
+
+def _phase(code: str) -> str:
+    return f"{_PHASE}{code}\n"
+
+
 _DEFAULT_OFFSET = "0x08000000"
 # CONFIG_*FLASH_START_<suffix> → application start address (Katapult/DFU bootloaders).
 _OFFSETS = {
@@ -382,21 +392,25 @@ async def run_flash(
         return
 
     method = resolve_method(method, device)
+    yield _phase("start")
     yield f">>> Flashing {os.path.basename(artifact)} → {device} via {method}\n"
 
     # A Linux-process host MCU is installed as a binary, not flashed over a bus.
     if method == "linux":
+        yield _phase("write")
         async for line in _flash_linux(artifact):
             yield line
         record_flash(
             settings.data_dir, device, profile, read_build_info(settings.data_dir, profile) or {}
         )
+        yield _phase("done")
         yield ">>> Flash sequence complete — host MCU reinstalled.\n"
         return
 
     offset = offset_override or (
         flash_offset(profile_path(settings.data_dir, profile)) if profile else _DEFAULT_OFFSET
     )
+    yield _phase("stop")
     yield ">>> Stopping Klipper to free the device…\n"
     async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
         yield line
@@ -407,11 +421,13 @@ async def run_flash(
     # A DFU device is already in its bootloader; only running Katapult boards need
     # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
     if method in ("serial", "can") and is_katapult:
+        yield _phase("boot")
         async for line in _reboot_to_bootloader(method, device, interface or "can0", settings):
             yield line
     elif method in ("serial", "can"):
         yield ">>> Device is not marked Katapult — skipping reboot-to-bootloader.\n"
 
+    yield _phase("write")
     if method == "dfu":
         async for line in _flash_dfu(device, artifact, offset):
             yield line
@@ -421,6 +437,7 @@ async def run_flash(
         async for line in _stream(command, cwd=settings.klipper_dir if method == "make" else None):
             yield line
 
+    yield _phase("restart")
     yield ">>> Restarting Klipper…\n"
     async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
         yield line
@@ -442,6 +459,7 @@ async def run_flash(
     record_flash(
         settings.data_dir, flashed_id, profile, read_build_info(settings.data_dir, profile) or {}
     )
+    yield _phase("done")
     yield ">>> Flash sequence complete — verify the board reconnects in Mainsail.\n"
 
 
