@@ -3,7 +3,7 @@
     "intro": "Déterminez le débit volumétrique le plus élevé (mm³/s) que votre hotend peut soutenir — en augmentant progressivement le débit tout en surveillant la charge StallGuard de l'extrudeur pour détecter le moment où l'engrenage patine. Prévisualisez d'abord le plan ; le test en direct chauffe et extrude, alors préparez l'imprimante avant de lancer.",
     "help": {
       "guide": "Aide",
-      "guideTitle": "À propos de Max-Flow",
+      "guideTitle": "À propos de Débit max",
       "close": "Fermer",
       "howToRead": "Comment l'utiliser",
       "steps": [

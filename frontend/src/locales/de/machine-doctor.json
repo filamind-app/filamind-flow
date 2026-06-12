@@ -24,10 +24,10 @@
       "unknown": "Nicht geprüft"
     },
     "link": {
-      "config_section": "Config Editor",
-      "config_file": "Config Editor",
-      "stepper": "Motor Drivers",
-      "topology_node": "Machine Map",
+      "config_section": "Konfig-Editor",
+      "config_file": "Konfig-Editor",
+      "stepper": "Motortreiber",
+      "topology_node": "Board-Topologie",
       "widget": "Öffnen"
     },
     "finding": {
@@ -56,7 +56,7 @@
       },
       "hardware": {
         "changed": "{mcu}: Hardware geändert ({kind}).",
-        "no_baseline": "Noch keine Hardware-Basislinie — in der Machine Map einen Snapshot speichern."
+        "no_baseline": "Noch keine Hardware-Basislinie — in der Board-Topologie einen Snapshot speichern."
       },
       "install": {
         "check_failed": "Installationsprüfung fehlgeschlagen: {name} — {detail}."

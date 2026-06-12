@@ -106,6 +106,10 @@
       "config-templates": {
         "title": "Config Templates",
         "description": "Ready-to-paste Klipper config blocks and macros, by category."
+      },
+      "machine-doctor": {
+        "title": "Machine Doctor",
+        "description": "One-click full-printer scan with an A-F report card and jump-to-fix links."
       }
     },
     "guard": {

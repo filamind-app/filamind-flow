@@ -21,7 +21,7 @@
         },
         "toolchain": {
           "title": "Badges de la chaîne d'outils",
-          "body": "Ils indiquent quels outils de compilation/flash sont présents sur l'hôte : Klipper (les sources + le système de compilation), Katapult, flashtool, dfu-util, avrdude, can-utils. Un ✗ signifie que cet outil n'est pas installé — vous n'avez besoin que de ceux qu'utilisent vos cartes. Le badge « setup » signale les problèmes de l'hôte (sudoers, règles udev) avec des conseils de correction."
+          "body": "Ils indiquent quels outils de compilation/flash sont présents sur l'hôte : Klipper (les sources + le système de compilation), Katapult, flashtool, dfu-util, avrdude, can-utils. Un ✗ signifie que cet outil n'est pas installé — vous n'avez besoin que de ceux qu'utilisent vos cartes. Le badge « installation » signale les problèmes de l'hôte (sudoers, règles udev) avec des conseils de correction."
         },
         "services": {
           "title": "Services",
@@ -95,9 +95,9 @@
       ],
       "hostKlipper": "Hôte · Klipper",
       "hostFallback": "hôte",
-      "healthOk": "✓ setup",
+      "healthOk": "✓ installation",
       "healthOkTitle": "l'hôte est configuré pour le flash",
-      "healthIssues": "{n} problème de setup | {n} problèmes de setup",
+      "healthIssues": "{n} problème d'installation | {n} problèmes d'installation",
       "servicesHeading": "Services",
       "svcStart": "démarrer",
       "svcStop": "arrêter",
@@ -119,7 +119,7 @@
       "outdatedTitle": "Le firmware en cours diffère du Klipper de l'hôte — compilez et flashez pour mettre à jour",
       "build": "compiler",
       "buildFlash": "compiler & flasher",
-      "boot": "boot",
+      "boot": "bootloader",
       "noDevices": "Aucun périphérique pour l'instant — ajoutez une carte et assignez-lui un profil pour la compiler et la flasher ici.",
       "addFirstBoard": "+ Ajoutez votre première carte →",
       "noStatus": "Aucun statut de firmware pour l'instant — impossible de joindre le backend.",

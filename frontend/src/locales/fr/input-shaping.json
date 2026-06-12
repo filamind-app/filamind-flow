@@ -77,7 +77,7 @@
           "def": "Un effet secondaire du shaping qui arrondit légèrement les angles vifs. Plus bas est mieux ; ≤0.1 est minimal, >0.2 commence à adoucir les détails."
         },
         "vibrationPct": {
-          "term": "Vibration %",
+          "term": "% de vibration",
           "def": "La quantité de résonance restant après le shaper. Plus bas est mieux ; ≤2% est excellent, ≤5% est correct."
         },
         "maxAccel": {
@@ -479,7 +479,7 @@
       "beltsBtnBusy": "comparaison…",
       "beltsBtnTitle": "CoreXY : excite chaque diagonale de courroie et superpose les réponses",
       "beltsDesc": "CoreXY uniquement : effectue deux balayages le long des diagonales de courroie et les superpose. Refusé pendant l'impression.",
-      "axesTitle": "🧭 Axes map",
+      "axesTitle": "🧭 Orientation de l'accéléromètre",
       "axesBtn": "détecter axes_map",
       "axesBtnBusy": "détection…",
       "axesBtnTitle": "Déplacez +X/+Y/+Z pour détecter l'orientation de l'accéléromètre (axes_map)",
@@ -489,7 +489,7 @@
       "beltChartLabel": "Réponse en fréquence courroie A vs B",
       "beltLegendA": "courroie A (1,1)",
       "beltLegendB": "courroie B (1,-1)",
-      "axesResultTitle": "Axes map",
+      "axesResultTitle": "Orientation de l'accéléromètre (axes_map)",
       "copy": "📋 Copier",
       "copied": "✅ Copié",
       "mappingVirtual": " (virtuel)",

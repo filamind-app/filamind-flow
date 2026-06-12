@@ -43,7 +43,7 @@
           "def": "Unidad microcontroladora — una placa de control que ejecuta el firmware de Klipper (placa base, cabezal, etc.)."
         },
         "canbus": {
-          "term": "CAN bus",
+          "term": "Bus CAN",
           "def": "Un bus compartido de dos hilos que enlaza placas mediante un UUID único — popular para el cableado del cabezal."
         },
         "host": {
@@ -66,7 +66,7 @@
       "hideBoard": "Ocultar detalles"
     },
     "conn": {
-      "canbus": "CAN bus",
+      "canbus": "Bus CAN",
       "usb": "USB",
       "uart": "UART",
       "unknown": "desconocido",

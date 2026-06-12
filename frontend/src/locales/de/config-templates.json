@@ -1,9 +1,9 @@
 {
   "configTemplates": {
-    "intro": "Sofort einfügbare Klipper-Konfigurationsblöcke und Makros — Startsequenzen, Filamenthandhabung, Input Shaping, Bed Mesh und mehr. Kopiere einen und füge ihn in deine printer.cfg ein (der Config Editor ist ein guter Ort dafür).",
+    "intro": "Sofort einfügbare Klipper-Konfigurationsblöcke und Makros — Startsequenzen, Filamenthandhabung, Input Shaping, Bed Mesh und mehr. Kopiere einen und füge ihn in deine printer.cfg ein (der Konfig-Editor ist ein guter Ort dafür).",
     "help": {
       "guide": "Hilfe",
-      "guideTitle": "Über Config Templates",
+      "guideTitle": "Über Konfig-Vorlagen",
       "close": "Schließen",
       "howToRead": "Verwendung",
       "steps": [
@@ -18,7 +18,7 @@
         },
         "insert": {
           "title": "Eine Vorlage einfügen",
-          "body": "Kopiere eine Vorlage und füge sie in deine printer.cfg ein — die Raw-Ansicht des Config Editors ist ein praktischer Ort dafür. Nach dem Speichern wird sie durch einen Firmware-Neustart wirksam. Überprüfe immer zuerst die Werte; die Standardwerte hier sind sinnvoll, aber nicht auf deinen Drucker abgestimmt."
+          "body": "Kopiere eine Vorlage und füge sie in deine printer.cfg ein — die Raw-Ansicht des Konfig-Editors ist ein praktischer Ort dafür. Nach dem Speichern wird sie durch einen Firmware-Neustart wirksam. Überprüfe immer zuerst die Werte; die Standardwerte hier sind sinnvoll, aber nicht auf deinen Drucker abgestimmt."
         },
         "sections": {
           "title": "Benötigte Sektionen",

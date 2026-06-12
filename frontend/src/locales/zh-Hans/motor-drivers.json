@@ -29,11 +29,11 @@
         },
         "health": {
           "title": "实时状态",
-          "body": "当电机启用时（归位或点动之后），驱动器会报告实时标志：过温、短路和开路。绿色“ok”表示无故障；“warning”是过温预警或开路；“fault”是短路或严重过温。电机禁用时驱动器不报告任何内容，因此卡片显示“idle”。"
+          "body": "当电机启用时（归位或点动之后），驱动器会报告实时标志：过温、短路和开路。绿色“正常”表示无故障；“警告”是过温预警或开路；“故障”是短路或严重过温。电机禁用时驱动器不报告任何内容，因此卡片显示“空闲”。"
         },
         "temperature": {
           "title": "温度",
-          "body": "只有部分驱动器（例如 TMC2240）内置温度传感器。在没有传感器的型号上 — 比如常见的 TMC2209 — 温度显示为“no sensor”，这是正常的，并非错误。"
+          "body": "只有部分驱动器（例如 TMC2240）内置温度传感器。在没有传感器的型号上 — 比如常见的 TMC2209 — 温度显示为“无传感器”，这是正常的，并非错误。"
         },
         "catalog": {
           "title": "型号信息的来源",
@@ -122,13 +122,13 @@
       "stealthchopThreshold": "StealthChop < {t} mm/s",
       "spreadcycle": "SpreadCycle",
       "health": {
-        "idle": "idle",
+        "idle": "空闲",
         "ok": "ok",
-        "warning": "warning",
-        "fault": "fault"
+        "warning": "警告",
+        "fault": "故障"
       },
       "celsius": "{v} °C",
-      "noSensor": "no sensor",
+      "noSensor": "无传感器",
       "maxCurrent": "≤ {a} A",
       "extruder": "挤出机",
       "extruderN": "挤出机 {n}",
