@@ -43,13 +43,15 @@ async def _firmware_block(settings: Settings) -> dict[str, Any]:
         )
     except Exception:
         return {"available": False, "mcus": []}
+    host = out.get("host")
+    host = host if isinstance(host, dict) else {}
     mcus = [
         {"name": m.get("name"), "version": m.get("version"), "in_sync": m.get("in_sync")}
         for m in out.get("mcus", [])
     ]
     return {
         "available": True,
-        "host_version": out.get("host_version"),
+        "host_version": host.get("version"),
         "mcus": mcus,
         "out_of_sync": sum(1 for m in mcus if m["in_sync"] is False),
     }
@@ -63,7 +65,8 @@ def _tuning_block(data_dir: str) -> dict[str, Any]:
         return {"available": False, "axes": []}
     latest: dict[str, dict[str, Any]] = {}
     for run in runs:  # index is newest-first; keep the first (= latest) per axis
-        if str(run.get("kind", "")) != "shaper":
+        # Saved [input_shaper] configs are archived as kind "config"; older builds used "shaper".
+        if str(run.get("kind", "")) not in ("config", "shaper"):
             continue
         summary = run.get("summary")
         summary = summary if isinstance(summary, dict) else {}
@@ -75,7 +78,7 @@ def _tuning_block(data_dir: str) -> dict[str, Any]:
             "shaper": summary.get("shaper"),
             "freq": summary.get("freq"),
             "grade": summary.get("grade"),
-            "created": run.get("created"),
+            "created": run.get("at") or run.get("created"),
         }
     return {"available": True, "axes": sorted(latest.values(), key=lambda a: str(a["axis"]))}
 
