@@ -13,6 +13,7 @@ from app.api.routes import (
     macro,
     maxflow,
     moonraker,
+    overview,
     reference,
     shaper,
     topology,
@@ -22,6 +23,7 @@ api_router = APIRouter(prefix="/api")
 api_router.include_router(health.router)
 api_router.include_router(guard.router)
 api_router.include_router(doctor.router)
+api_router.include_router(overview.router)
 api_router.include_router(moonraker.router)
 api_router.include_router(firmware.router)
 api_router.include_router(shaper.router)

@@ -16,7 +16,30 @@
       "by": "par l'équipe DeltaFabs"
     },
     "home": {
-      "body": "Vos panneaux se trouvent dans la barre latérale — choisissez-en un pour commencer. Cet accueil est intentionnellement vide pour le moment."
+      "body": "Vos panneaux se trouvent dans la barre latérale — choisissez-en un pour commencer. Cet accueil est intentionnellement vide pour le moment.",
+      "title": "Mission Control",
+      "refresh": "Actualiser",
+      "loading": "Chargement…",
+      "unreachable": "Le backend est injoignable.",
+      "printer": "Imprimante",
+      "statePrinting": "Impression",
+      "statePaused": "En pause",
+      "stateError": "Erreur",
+      "stateIdle": "Au repos",
+      "printerDown": "Moonraker est injoignable.",
+      "doctor": "Machine Doctor",
+      "doctorBody": "Un scan en lecture seule des broches, valeurs des drivers, dérive de config, sync du firmware et plus — noté A-F avec liens vers le correctif.",
+      "doctorScan": "Scanner mon imprimante",
+      "firmware": "Sync du firmware",
+      "host": "Hôte : {version}",
+      "open": "Ouvrir",
+      "noData": "Pas de données pour le moment.",
+      "tuning": "Réglage",
+      "noTuning": "Aucun réglage archivé — lancez l'assistant Input Shaping.",
+      "hardware": "Matériel vs référence",
+      "noBaseline": "Pas de référence matérielle — enregistrez un instantané dans la Carte machine.",
+      "hwUnchanged": "Aucun changement matériel depuis la référence.",
+      "hwChanged": "{n} changement(s) matériel(s) depuis la référence."
     },
     "connection": {
       "connected": "Connecté",
