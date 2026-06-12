@@ -146,7 +146,19 @@ async function remove(fw: ExternalFirmware): Promise<void> {
   }
 }
 
+/** Two-step gate (parity with every other flash path): pick → review the exact file + target →
+ *  acknowledge → flash. A foreign binary is the riskiest flash; it must not be one click. */
+const pendingExternal = ref<string | null>(null)
+const ackExternal = ref(false)
+
+function requestFlash(fw: ExternalFirmware): void {
+  if (busy.value || !flashTo[fw.name]?.device) return
+  ackExternal.value = false
+  pendingExternal.value = fw.name
+}
+
 async function doFlash(fw: ExternalFirmware): Promise<void> {
+  pendingExternal.value = null
   const target = flashTo[fw.name]
   if (busy.value || !target?.device) return
   error.value = null
@@ -382,7 +394,7 @@ onMounted(load)
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-[11px] text-surface"
           :disabled="busy || !flashTo[fw.name].device"
-          @click="doFlash(fw)"
+          @click="requestFlash(fw)"
         >
           {{
             busy && activeName === fw.name
@@ -390,6 +402,32 @@ onMounted(load)
               : t('firmware.external.flash')
           }}
         </button>
+      </div>
+
+      <!-- Confirm gate: a foreign binary is the riskiest flash — review + acknowledge first -->
+      <div
+        v-if="pendingExternal === fw.name"
+        class="space-y-1.5 rounded-brutal border-2 border-brand-red bg-brand-red/10 p-2"
+      >
+        <p class="text-[11px] font-bold">{{ t('firmware.external.confirmTitle') }}</p>
+        <p class="font-mono text-[10px]">{{ fw.filename }} → {{ flashTo[fw.name].device }}</p>
+        <p class="text-[10px] opacity-80">{{ t('firmware.external.confirmWarning') }}</p>
+        <label class="flex items-center gap-1.5 text-[11px]">
+          <input v-model="ackExternal" type="checkbox" />
+          {{ t('firmware.external.confirmAck') }}
+        </label>
+        <div class="flex gap-2">
+          <button
+            class="nb-btn bg-brand-red px-2 py-0.5 text-[11px] text-surface"
+            :disabled="!ackExternal || busy"
+            @click="doFlash(fw)"
+          >
+            {{ t('firmware.external.confirmFlash') }}
+          </button>
+          <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="pendingExternal = null">
+            {{ t('firmware.external.confirmCancel') }}
+          </button>
+        </div>
       </div>
 
       <pre

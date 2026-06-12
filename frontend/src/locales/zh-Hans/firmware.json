@@ -284,7 +284,12 @@
       "uploadFailed": "上传失败",
       "saveFailed": "保存失败",
       "deleteFailed": "删除失败",
-      "flashFailed": "刷写失败"
+      "flashFailed": "刷写失败",
+      "confirmTitle": "烧录此外部文件？",
+      "confirmWarning": "这是外部二进制文件：错误的文件可能使 MCU 无法启动，需经 Katapult/DFU 恢复。请核对文件与主板匹配。",
+      "confirmAck": "我已核对该文件与目标主板匹配",
+      "confirmFlash": "烧录",
+      "confirmCancel": "取消"
     }
   }
 }
