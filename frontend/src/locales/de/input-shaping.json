@@ -598,6 +598,30 @@
       "errSave": "Speichern im Archiv fehlgeschlagen",
       "errDelete": "Löschen fehlgeschlagen",
       "errDownload": "Download fehlgeschlagen"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Zu viel niederfrequente Bewegung aufgezeichnet — ACCEL senken (oder SIZE erhöhen) und erneut ausführen, damit nur konstante Geschwindigkeiten gemessen werden.",
+        "smoothest": "Am ruhigsten um {v} mm/s",
+        "avoid": "Geschwindigkeiten nahe {speeds} mm/s vermeiden",
+        "matched": "Motoren gut aufeinander abgestimmt ({pct}% Symmetrie)",
+        "low_symmetry": "Motor-Symmetrie niedrig ({pct}%) — Riemenspannung prüfen",
+        "motor_freq": "Motorresonanz ~{f} Hz",
+        "complete": "Vibrationsprofil abgeschlossen."
+      },
+      "sustain": {
+        "not_dominant": "Der Druckkopf vibriert nicht hauptsächlich bei {freq} Hz (Spitze bei {peak} Hz) — die Quelle erreicht den Druckkopf-Sensor womöglich nicht.",
+        "drop": "Halte {freq} Hz — die Vibration fiel zwischenzeitlich um ~{drop}%; was Sie in dem Moment berührt haben, trägt stark bei.",
+        "touch": "Halte {freq} Hz — Riemen, Druckkopf, Gantry-Gelenke und Umlenkrollen nacheinander berühren; das Teil, das das Brummen verstummen lässt, ist die Resonanzquelle."
+      },
+      "axes": {
+        "same_axis": "Dieselbe Beschleunigungssensor-Achse für mehrere Maschinenachsen erkannt",
+        "low_confidence": "Geringe Erkennungssicherheit ({pct}%)",
+        "high_angle_error": "Hoher Winkelfehler ({deg}°)",
+        "unusual_gravity": "Ungewöhnlicher Schwerkraftwert ({g} m/s²)",
+        "high_noise": "Hoher Rauschpegel ({n} mm/s²)",
+        "good": "Erkennungsqualität: gut"
+      }
     }
   }
 }

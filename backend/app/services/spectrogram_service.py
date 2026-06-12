@@ -116,16 +116,22 @@ def compute_spectrogram(
     )
 
     if not dominant_ok:
+        verdict_code = "not_dominant"
+        verdict_params: dict[str, object] = {"freq": round(freq), "peak": round(dominant_freq)}
         verdict = (
             f"The toolhead isn't vibrating mainly at {freq:.0f} Hz "
             f"(peak is {dominant_freq:.0f} Hz) — the source may not reach the toolhead sensor."
         )
     elif energy_drop_pct >= 30:
+        verdict_code = "drop"
+        verdict_params = {"freq": round(freq), "drop": round(energy_drop_pct)}
         verdict = (
             f"Holding {freq:.0f} Hz — vibration dropped ~{energy_drop_pct:.0f}% at some point; "
             "whatever you touched then is a strong contributor."
         )
     else:
+        verdict_code = "touch"
+        verdict_params = {"freq": round(freq)}
         verdict = (
             f"Holding {freq:.0f} Hz — touch belts, the toolhead, gantry joints and idlers one "
             "at a time; the part that silences the buzz is your resonance source."
@@ -154,4 +160,6 @@ def compute_spectrogram(
         "dominant_freq": round(dominant_freq, 1),
         "dominant_ok": bool(dominant_ok),
         "verdict": verdict,
+        "verdict_code": verdict_code,
+        "verdict_params": verdict_params,
     }

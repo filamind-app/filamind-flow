@@ -12,7 +12,14 @@ import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { ConfigTemplate } from './types'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, te } = useI18n({ useScope: 'global' })
+
+// Backend categories are English data values — translate via a slug key when one
+// exists, otherwise show the raw value (future categories degrade gracefully).
+function categoryLabel(c: string): string {
+  const key = `configTemplates.categories.${c.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`
+  return te(key) ? t(key) : c
+}
 
 const templates = ref<ConfigTemplate[]>([])
 const category = ref<string | null>(null)
@@ -21,7 +28,9 @@ const error = ref<string | null>(null)
 const copiedId = ref<string | null>(null)
 
 const categories = computed(() => [...new Set(templates.value.map((x) => x.category))])
-const categoryOptions = computed(() => categories.value.map((c) => ({ value: c, label: c })))
+const categoryOptions = computed(() =>
+  categories.value.map((c) => ({ value: c, label: categoryLabel(c) })),
+)
 const filtered = computed(() =>
   category.value ? templates.value.filter((x) => x.category === category.value) : templates.value,
 )
@@ -136,7 +145,7 @@ onMounted(() => void load())
         <div class="flex flex-wrap items-center justify-between gap-2">
           <span class="font-bold">{{ tpl.name }}</span>
           <span class="shrink-0 rounded bg-brand-cyan px-1.5 py-0.5 text-[10px] font-bold text-ink">
-            {{ tpl.category }}
+            {{ categoryLabel(tpl.category) }}
           </span>
         </div>
         <p class="text-[11px] opacity-80">{{ tpl.description }}</p>

@@ -7,11 +7,22 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import type { VibrationsProfile } from './types'
+import { verdictText } from './verdict'
 import { buildPolarAngles, buildSpeedProfile, buildVibHeatmap } from './vibrations'
 
 const props = defineProps<{ result: VibrationsProfile }>()
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, te } = useI18n({ useScope: 'global' })
+
+const verdict = computed(() =>
+  verdictText(
+    t,
+    te,
+    'inputShaping.verdicts.vibrations',
+    props.result.verdict_parts,
+    props.result.verdict,
+  ),
+)
 
 const speedChart = computed(() => buildSpeedProfile(props.result))
 const polar = computed(() => buildPolarAngles(props.result))
@@ -47,8 +58,7 @@ function symmetryClass(pct: number): string {
       }}</span>
     </div>
 
-    <p class="text-[10px] opacity-80">{{ result.verdict }}</p>
-    <!-- result.verdict is built by the vibrations helper (already translated). -->
+    <p class="text-[10px] opacity-80">{{ verdict }}</p>
 
     <!-- Speed-energy profile: the main curve + smoothest bands + peaks to avoid. -->
     <svg

@@ -174,7 +174,12 @@
         "chip_changed": "La puce de « {mcu} » a changé : {before} → {after}",
         "components_changed": "Le nombre de composants de « {mcu} » a changé : {before} → {after}"
       },
-      "noCompare": "Comparaison impossible — imprimante injoignable."
+      "noCompare": "Comparaison impossible — imprimante injoignable.",
+      "summaryHost": "Hôte : {name}",
+      "summaryIntegrated": "SBC intégré sur {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "carte {board}",
+      "summaryComponents": "{n} composants"
     },
     "jump": {
       "section": "Ouvrir cette section dans l’éditeur de config",

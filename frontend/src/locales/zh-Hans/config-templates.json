@@ -24,7 +24,10 @@
           "title": "所需的节",
           "body": "每个模板都会列出它所定义或依赖的配置节。如果某个节在你的配置中已经存在，请合并其键值，而不要粘贴一份重复的（重复的节会在启动时被拒绝）。"
         },
-        "glossary": { "title": "术语表", "body": "" }
+        "glossary": {
+          "title": "术语表",
+          "body": ""
+        }
       },
       "glossary": {
         "template": {
@@ -57,6 +60,10 @@
       "error": "无法加载模板。",
       "empty": "此类别下没有模板。",
       "retry": "重试"
+    },
+    "categories": {
+      "config_blocks": "配置块",
+      "macros": "宏"
     }
   }
 }

@@ -273,7 +273,7 @@ function onPick(id: string | null): void {
             <span
               v-for="(n, cat) in detail.portsSummary"
               :key="cat"
-              class="ml-1 inline-block rounded bg-paper px-1"
+              class="ms-1 inline-block rounded bg-paper px-1"
             >
               {{ cat }}×{{ n }}
             </span>

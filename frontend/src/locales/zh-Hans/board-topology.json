@@ -174,7 +174,12 @@
         "chip_changed": "「{mcu}」芯片已更改：{before} → {after}",
         "components_changed": "「{mcu}」组件数量已更改：{before} → {after}"
       },
-      "noCompare": "无法比较 — 打印机不可达。"
+      "noCompare": "无法比较 — 打印机不可达。",
+      "summaryHost": "主机：{name}",
+      "summaryIntegrated": "SBC 集成于 {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "主板 {board}",
+      "summaryComponents": "{n} 个组件"
     },
     "jump": {
       "section": "在配置编辑器中打开此配置段",

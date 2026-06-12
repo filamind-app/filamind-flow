@@ -24,7 +24,10 @@
           "title": "Sections requises",
           "body": "Chaque modèle indique les sections de configuration qu'il définit ou dont il dépend. Si une section existe déjà dans votre configuration, fusionnez les clés plutôt que de coller un doublon (une section en double est rejetée au démarrage)."
         },
-        "glossary": { "title": "Glossaire", "body": "" }
+        "glossary": {
+          "title": "Glossaire",
+          "body": ""
+        }
       },
       "glossary": {
         "template": {
@@ -57,6 +60,10 @@
       "error": "Impossible de charger les modèles.",
       "empty": "Aucun modèle dans cette catégorie.",
       "retry": "Réessayer"
+    },
+    "categories": {
+      "config_blocks": "Blocs de config",
+      "macros": "Macros"
     }
   }
 }

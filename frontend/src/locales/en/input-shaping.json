@@ -598,6 +598,30 @@
       "errSave": "Save to archive failed",
       "errDelete": "Delete failed",
       "errDownload": "Download failed"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Too much low-frequency motion was recorded — lower the ACCEL (or raise SIZE) and re-run so only constant speeds are measured.",
+        "smoothest": "Smoothest around {v} mm/s",
+        "avoid": "avoid speeds near {speeds} mm/s",
+        "matched": "motors are well matched ({pct}% symmetry)",
+        "low_symmetry": "motor symmetry is low ({pct}%) — check belt tension",
+        "motor_freq": "motor resonance ~{f} Hz",
+        "complete": "Vibrations profile complete."
+      },
+      "sustain": {
+        "not_dominant": "The toolhead isn't vibrating mainly at {freq} Hz (peak is {peak} Hz) — the source may not reach the toolhead sensor.",
+        "drop": "Holding {freq} Hz — vibration dropped ~{drop}% at some point; whatever you touched then is a strong contributor.",
+        "touch": "Holding {freq} Hz — touch belts, the toolhead, gantry joints and idlers one at a time; the part that silences the buzz is your resonance source."
+      },
+      "axes": {
+        "same_axis": "Same accelerometer axis detected for multiple machine axes",
+        "low_confidence": "Low detection confidence ({pct}%)",
+        "high_angle_error": "High angle error ({deg}°)",
+        "unusual_gravity": "Unusual gravity reading ({g} m/s²)",
+        "high_noise": "High noise level ({n} mm/s²)",
+        "good": "Detection quality: good"
+      }
     }
   }
 }
