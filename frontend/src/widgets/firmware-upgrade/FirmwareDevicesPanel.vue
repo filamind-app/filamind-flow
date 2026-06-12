@@ -159,7 +159,15 @@ async function onImportFile(event: Event): Promise<void> {
     const summary = await importBackup(file)
     const extra = summary.restored_devices ? t('firmware.devices.restoredDevicesSuffix') : ''
     const n = summary.restored_profiles.length
-    backupMsg.value = t('firmware.devices.restored', { n, extra }, n)
+    backupMsg.value =
+      summary.restored_data?.length || summary.restored_runs
+        ? t('firmware.devices.restoredFull', {
+            n,
+            data: summary.restored_data?.length ?? 0,
+            runs: summary.restored_runs ?? 0,
+            extra,
+          })
+        : t('firmware.devices.restored', { n, extra }, n)
     await load()
   } catch (e) {
     error.value = e instanceof Error ? e.message : t('firmware.devices.importFailed')
@@ -367,6 +375,7 @@ onUnmounted(() => {
             </label>
           </div>
         </div>
+        <p class="text-[10px] opacity-60">{{ t('firmware.devices.backupHint') }}</p>
         <p v-if="backupMsg" class="font-mono text-[11px] opacity-70">{{ backupMsg }}</p>
       </div>
     </template>

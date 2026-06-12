@@ -248,7 +248,9 @@
       "attachFailed": "Attach failed",
       "removeFailed": "Remove failed",
       "exportFailed": "Export failed",
-      "importFailed": "Import failed"
+      "importFailed": "Import failed",
+      "backupHint": "One ZIP covers everything you set up: boards, build profiles, motor mapping, board confirmations, the hardware baseline, flash history and saved tuning runs. Restore puts it all back in one step.",
+      "restoredFull": "Restored {n} profiles, {data} data files, {runs} tuning runs{extra}."
     },
     "external": {
       "title": "External firmware",

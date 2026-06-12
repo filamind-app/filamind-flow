@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.221.0] - 2026-06-12
+
+### Changed
+
+- **One backup now covers everything.** The backup ZIP grows from boards + build profiles to
+  the full app state: motor mapping, board confirmations, the hardware baseline snapshot,
+  flash history, profile metadata and every saved tuning run — and a single restore puts it
+  all back. Old backups still restore (they simply carry fewer entries), restore is additive
+  (it never deletes what it doesn't know), and unsafe or corrupt archive entries are skipped
+  rather than written.
+
 ## [0.220.0] - 2026-06-12
 
 ### Added

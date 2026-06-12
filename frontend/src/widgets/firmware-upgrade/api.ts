@@ -459,7 +459,8 @@ export async function flashBeacon(device: string, onChunk: (text: string) => voi
   }
 }
 
-/** Downloads a ZIP backup of the registry + profiles (triggers a browser download). */
+/** Downloads a ZIP backup of all app data — registry, profiles, per-printer data files
+ *  and the tuning archive (triggers a browser download). */
 export async function exportBackup(): Promise<void> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/backup/export`)
@@ -475,9 +476,14 @@ export async function exportBackup(): Promise<void> {
 }
 
 /** Restores a backup ZIP (raw bytes). Returns what was put back. */
-export async function importBackup(
-  file: File,
-): Promise<{ restored_devices: boolean; restored_profiles: string[] }> {
+export interface BackupImportSummary {
+  restored_devices: boolean
+  restored_profiles: string[]
+  restored_data?: string[]
+  restored_runs?: number
+}
+
+export async function importBackup(file: File): Promise<BackupImportSummary> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/backup/import`, {
     method: 'POST',
@@ -488,7 +494,7 @@ export async function importBackup(
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
     throw new Error(detail?.detail ?? `Import failed (${response.status})`)
   }
-  return (await response.json()) as { restored_devices: boolean; restored_profiles: string[] }
+  return (await response.json()) as BackupImportSummary
 }
 
 /** Lists the host's Klipper / Moonraker services and their active state. */
