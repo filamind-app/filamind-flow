@@ -215,7 +215,10 @@
       "copyConfig": "انسخ التهيئة",
       "autotune": "autotune",
       "autotuneTitle": "يُشغّل AUTOTUNE_TMC إذا كانت إضافة klipper_tmc_autotune مثبَّتة",
-      "noSpecs": "لا تتوفر بيانات داتاشيت لهذا الموتور — توصية الضبط غير متاحة."
+      "noSpecs": "لا تتوفر بيانات داتاشيت لهذا الموتور — توصية الضبط غير متاحة.",
+      "measured": "مقاس: المحركات ترن عند ~{freq} هرتز",
+      "measuredSym": "تماثل {pct}%",
+      "measuredHint": "حقيقة مقاسة من ملف الاهتزازات على هذه الطابعة — افتح سجل Input Shaping."
     },
     "motorSync": {
       "toggle": "مزامنة المحرّكات",
