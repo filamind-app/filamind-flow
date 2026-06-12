@@ -1,0 +1,66 @@
+{
+  "machineDoctor": {
+    "intro": "Один сканирующий проход только для чтения по всему проверяемому — конфликты пинов, значения драйверов, дрейф конфига, линт проекта, синхронизация прошивки, изменения железа, здоровье установки — с оценкой A-F. Каждая находка ведёт в виджет, который её исправляет.",
+    "scanning": "Сканирование…",
+    "rescan": "Сканировать снова",
+    "scoreLine": "Балл {score} / 100",
+    "counts": "ошибок: {errors} · предупреждений: {warnings}",
+    "scoreHint": "Прозрачный подсчёт: 100 − 25 за ошибку − 8 за предупреждение. Непроверяемое никогда не в минус.",
+    "allClear": "Всё в порядке.",
+    "notChecked": "Не удалось проверить (принтер недоступен или нет базы).",
+    "category": {
+      "pins": "Распиновка",
+      "drivers": "Значения драйверов",
+      "drift": "Дрейф конфига",
+      "project": "Проект конфига",
+      "firmware": "Синхронизация прошивки",
+      "hardware": "Изменения железа",
+      "install": "Здоровье установки"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Предупреждения",
+      "fail": "Проблемы",
+      "unknown": "Не проверено"
+    },
+    "link": {
+      "config_section": "Редактор конфига",
+      "config_file": "Редактор конфига",
+      "stepper": "Motor Drivers",
+      "topology_node": "Карта машины",
+      "widget": "Открыть"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "Пин {pin} на {mcu} назначен более чем в одной секции.",
+        "caveat": "Пин {pin} на {mcu} несёт электронную оговорку."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} А превышает потолок драйвера ~{cap} А.",
+        "near_driver_cap": "{section}: run_current {run_current} А в пределах 10% от потолка ~{cap} А.",
+        "over_motor_rating": "{section}: run_current {run_current} А превышает номинал {motor} ({max_current} А).",
+        "near_motor_rating": "{section}: run_current {run_current} А в пределах 10% от номинала {motor} ({max_current} А).",
+        "odd_microsteps": "{section}: microsteps {microsteps} не степень двойки."
+      },
+      "drift": {
+        "pending": "У Klipper есть несохранённые изменения SAVE_CONFIG.",
+        "param": "[{section}] {key}: диск {disk} ≠ живое {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: include \"{message}\" не указывает на файл.",
+        "orphan_driver": "{file}: секция драйвера \"{message}\" без соответствующего степпера."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: прошивка {mcu_version} отличается от хоста {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: железо изменилось ({kind}).",
+        "no_baseline": "База железа не сохранена — сохраните снимок в Карте машины."
+      },
+      "install": {
+        "check_failed": "Проверка установки не пройдена: {name} — {detail}."
+      }
+    }
+  }
+}

@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.203.0] - 2026-06-12
+
+### Added
+
+- **Machine Doctor — a new widget: one click, one report card for the whole printer.** A single
+  read-only scan runs every analyzer the app ships — pin conflicts, TMC driver values against
+  their real ceilings, disk-vs-live config drift, config-project lint, per-MCU firmware sync,
+  hardware changes against the saved baseline, and install health — and folds them into an **A–F
+  grade with transparent scoring** (100, minus 25 per error and 8 per warning; what couldn't be
+  checked is reported honestly as *not checked* and never counts against you). Every finding
+  carries a **jump-to-fix button** that deep-links into the widget that fixes it: the exact config
+  section, the stepper's card in Motor Drivers, the node in the Machine Map, or the Firmware
+  Manager's status tab. Scanning never runs anything on the printer. Localised in all 7 languages.
+
 ## [0.202.0] - 2026-06-12
 
 ### Added

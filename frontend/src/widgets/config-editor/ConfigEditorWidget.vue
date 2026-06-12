@@ -628,6 +628,11 @@ async function tryApplyConfigFocus(): Promise<void> {
   const v = view.value
   if (!v) return
   const wanted = target.section.trim().toLowerCase()
+  if (!wanted) {
+    // A file-only focus (e.g. a doctor finding about the file itself) — opening it is enough.
+    pendingSection.value = null
+    return
+  }
   const idx = v.sections.findIndex((sec) => {
     const h = sec.header.trim().toLowerCase()
     return h === wanted || h.startsWith(wanted + ' ') || sec.name.trim().toLowerCase() === wanted

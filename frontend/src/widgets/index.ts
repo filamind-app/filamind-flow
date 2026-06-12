@@ -9,6 +9,14 @@ import { registerWidget } from '@/core/registry'
  */
 export function registerWidgets(): void {
   registerWidget({
+    id: 'machine-doctor',
+    title: 'Machine Doctor',
+    icon: '🩺',
+    description: 'One-click full-printer scan with an A-F report card and jump-to-fix links.',
+    component: defineAsyncComponent(() => import('./machine-doctor/MachineDoctorWidget.vue')),
+  })
+
+  registerWidget({
     id: 'firmware-upgrade',
     title: 'Firmware Manager',
     icon: '🔧',
