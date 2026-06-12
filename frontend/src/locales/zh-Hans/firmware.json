@@ -250,7 +250,11 @@
       "exportFailed": "导出失败",
       "importFailed": "导入失败",
       "backupHint": "一个 ZIP 覆盖你设置的全部内容：主板、构建配置、电机映射、主板确认、硬件基线、刷写历史和已保存的调校记录。恢复时一步全部还原。",
-      "restoredFull": "已恢复 {n} 个配置、{data} 个数据文件、{runs} 条调校记录{extra}。"
+      "restoredFull": "已恢复 {n} 个配置、{data} 个数据文件、{runs} 条调校记录{extra}。",
+      "identifyMap": "在主板地图上显示",
+      "identifySeed": "从主板生成配置",
+      "identifySeeded": "已创建配置 '{name}' 并预选 {symbol} — 打开“配置”完成构建选项。",
+      "identifySeedFailed": "无法生成配置"
     },
     "external": {
       "title": "外部固件",

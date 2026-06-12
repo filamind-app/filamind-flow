@@ -333,6 +333,27 @@ export async function flashBoard(
 }
 
 /** Fetches the saved devices (each device enriched with its last-flashed version). */
+/** One registered device joined to its board-map MCU + catalog board (nulls = unidentified). */
+export interface IdentifiedDevice {
+  device_id: string
+  mcu_section: string | null
+  board_id: string | null
+  board_name: string | null
+  manufacturer: string | null
+  mcu: string | null
+  kconfig_symbol: string | null
+}
+
+export async function fetchIdentify(): Promise<{
+  devices: IdentifiedDevice[]
+  kconfig_available: boolean
+}> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/firmware/identify`)
+  if (!response.ok) throw new Error(`Identify failed (${response.status})`)
+  return (await response.json()) as { devices: IdentifiedDevice[]; kconfig_available: boolean }
+}
+
 export async function fetchDevices(): Promise<DevicesResponse> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/devices`)

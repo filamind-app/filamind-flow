@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import asyncio
 import os
+from typing import Any
 
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import FileResponse, StreamingResponse
 
@@ -51,8 +53,10 @@ from app.services import (
     services_service,
     task_store,
 )
+from app.services import firmware_identify as firmware_identify_service
 from app.services.build_service import BuildService
 from app.services.kconfig_service import KconfigError, get_kconfig_service
+from app.services.moonraker_client import MoonrakerClient
 from app.services.task_store import Task
 from app.services.version_store import flash_records, read_build_info
 
@@ -374,6 +378,18 @@ async def firmware_flash(
         ),
         media_type="text/plain",
     )
+
+
+@router.get("/identify")
+async def firmware_identify(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Joins each registered device to its board-map MCU and catalog board, with the Kconfig
+    machine symbol its chip needs — powering the topology deep-link and the profile seed."""
+    client = MoonrakerClient(settings.moonraker_url)
+    service = get_kconfig_service(settings.klipper_dir)
+    try:
+        return await firmware_identify_service.identify_devices(client, settings.data_dir, service)
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker unreachable: {exc}") from exc
 
 
 @router.get("/devices", response_model=DevicesResponse)

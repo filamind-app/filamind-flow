@@ -2,23 +2,34 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { useNav } from '@/core/nav'
+import { focusTopologyNode } from '@/widgets/board-topology/topologyFocus'
+
 import {
   attachIdentity,
   exportBackup,
   fetchBoards,
   fetchDevices,
+  fetchIdentify,
   fetchProfiles,
   importBackup,
   removeDevice,
   saveDevice,
+  saveProfile,
 } from './api'
+import type { IdentifiedDevice } from './api'
 import type { Board, Device, FirmwareProfile } from './types'
 
 defineEmits<{ close: [] }>()
 
 const { t } = useI18n({ useScope: 'global' })
+const { go } = useNav()
 
 const devices = ref<Device[]>([])
+/** Identification report keyed by device id (board-map link + Kconfig seed symbol). */
+const identify = ref<Record<string, IdentifiedDevice>>({})
+const seedBusy = ref<string | null>(null)
+const seedMsg = ref<{ id: string; text: string } | null>(null)
 const boards = ref<Board[]>([])
 const profiles = ref<FirmwareProfile[]>([])
 const loading = ref(true)
@@ -50,6 +61,49 @@ function modeClass(mode: string): string {
   if (mode === 'service') return 'bg-brand-lime'
   if (mode === 'ready' || mode === 'dfu') return 'bg-brand-yellow'
   return 'bg-surface opacity-60'
+}
+
+function loadIdentify(): void {
+  // Best-effort: identification needs the printer host; the registry works without it.
+  fetchIdentify()
+    .then((data) => {
+      identify.value = Object.fromEntries(data.devices.map((d) => [d.device_id, d]))
+    })
+    .catch(() => {
+      identify.value = {}
+    })
+}
+
+/** Create a build profile seeded with the identified board's MCU preselected. */
+async function seedProfile(device: Device): Promise<void> {
+  const info = identify.value[device.id]
+  if (!info?.board_id || !info.kconfig_symbol) return
+  seedBusy.value = device.id
+  seedMsg.value = null
+  error.value = null
+  try {
+    await saveProfile({ name: info.board_id, values: [{ name: info.kconfig_symbol, value: 'y' }] })
+    device.profile = info.board_id
+    await persist(device)
+    await load()
+    seedMsg.value = {
+      id: device.id,
+      text: t('firmware.devices.identifySeeded', {
+        name: info.board_id,
+        symbol: info.kconfig_symbol,
+      }),
+    }
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : t('firmware.devices.identifySeedFailed')
+  } finally {
+    seedBusy.value = null
+  }
+}
+
+function openOnMap(info: IdentifiedDevice): void {
+  if (!info.mcu_section) return
+  focusTopologyNode(info.mcu_section)
+  go('board-topology')
 }
 
 async function load(): Promise<void> {
@@ -178,6 +232,7 @@ async function onImportFile(event: Event): Promise<void> {
 
 onMounted(() => {
   void load()
+  loadIdentify()
   boardsTimer = setInterval(refreshBoards, 6000)
 })
 
@@ -230,6 +285,33 @@ onUnmounted(() => {
           </button>
         </div>
         <div class="font-mono text-[10px] opacity-50">{{ device.id }}</div>
+
+        <!-- Board-map identification: catalog board + jump, and a one-click profile seed. -->
+        <div
+          v-if="identify[device.id]?.board_id"
+          class="flex flex-wrap items-center gap-1.5 text-[10px]"
+        >
+          <span class="nb-badge bg-brand-cyan">
+            📍 {{ identify[device.id].board_name || identify[device.id].board_id }}
+          </span>
+          <span v-if="identify[device.id].mcu" class="font-mono opacity-60">
+            {{ identify[device.id].mcu }}
+          </span>
+          <button class="nb-btn bg-surface px-1.5 py-0.5" @click="openOnMap(identify[device.id])">
+            {{ t('firmware.devices.identifyMap') }}
+          </button>
+          <button
+            v-if="!device.profile && identify[device.id].kconfig_symbol"
+            class="nb-btn bg-brand-lime px-1.5 py-0.5"
+            :disabled="seedBusy === device.id"
+            @click="seedProfile(device)"
+          >
+            {{ t('firmware.devices.identifySeed') }}
+          </button>
+        </div>
+        <p v-if="seedMsg?.id === device.id" role="status" class="text-[10px] opacity-70">
+          {{ seedMsg.text }}
+        </p>
 
         <div class="flex flex-wrap items-center gap-1.5">
           <select v-model="device.profile" :class="inputClass" @change="persist(device)">
