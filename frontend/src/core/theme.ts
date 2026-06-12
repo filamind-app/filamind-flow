@@ -14,13 +14,26 @@ import { ref } from 'vue'
  * component changes.
  */
 
-export type ThemeKey = 'light' | 'dark' | 'neon' | 'contrast'
+export type ThemeKey = 'light' | 'dark' | 'neon' | 'contrast' | 'midnight' | 'ocean' | 'sunset'
+
+/** Static preview colors for the theme menu (hex — previews must not depend on the ACTIVE
+ *  theme's CSS vars, they show what each theme WOULD look like). Keep in sync with main.css. */
+export interface ThemeSwatch {
+  paper: string
+  surface: string
+  ink: string
+  accents: [string, string, string]
+}
 
 export interface ThemeMeta {
   /** Stable key; written to ``<html data-theme>`` and persisted. */
   key: ThemeKey
   /** i18n key for the human label shown in the switcher (``theme.<key>``). */
   labelKey: string
+  /** i18n key for the one-line description shown in the theme menu (``theme.desc.<key>``). */
+  descKey: string
+  /** Mini preview colors for the menu card. */
+  swatch: ThemeSwatch
 }
 
 /**
@@ -28,10 +41,83 @@ export interface ThemeMeta {
  * look the project is designed around).
  */
 export const THEME_META: ThemeMeta[] = [
-  { key: 'neon', labelKey: 'theme.neon' },
-  { key: 'dark', labelKey: 'theme.dark' },
-  { key: 'light', labelKey: 'theme.light' },
-  { key: 'contrast', labelKey: 'theme.contrast' },
+  {
+    key: 'neon',
+    labelKey: 'theme.neon',
+    descKey: 'theme.desc.neon',
+    swatch: {
+      paper: '#190f32',
+      surface: '#281946',
+      ink: '#f5f2ff',
+      accents: ['#00f0dc', '#ff64c8', '#ffeb32'],
+    },
+  },
+  {
+    key: 'midnight',
+    labelKey: 'theme.midnight',
+    descKey: 'theme.desc.midnight',
+    swatch: {
+      paper: '#0f172a',
+      surface: '#1e293b',
+      ink: '#e2e8f0',
+      accents: ['#60a5fa', '#22d3ee', '#facc15'],
+    },
+  },
+  {
+    key: 'dark',
+    labelKey: 'theme.dark',
+    descKey: 'theme.desc.dark',
+    swatch: {
+      paper: '#18181c',
+      surface: '#27272e',
+      ink: '#e8eaf0',
+      accents: ['#2dd4bf', '#60a5fa', '#facc15'],
+    },
+  },
+  {
+    key: 'ocean',
+    labelKey: 'theme.ocean',
+    descKey: 'theme.desc.ocean',
+    swatch: {
+      paper: '#06262d',
+      surface: '#0d3842',
+      ink: '#e0f7f4',
+      accents: ['#40e0d0', '#66b2ff', '#ffd166'],
+    },
+  },
+  {
+    key: 'sunset',
+    labelKey: 'theme.sunset',
+    descKey: 'theme.desc.sunset',
+    swatch: {
+      paper: '#2a1824',
+      surface: '#402634',
+      ink: '#fff1e6',
+      accents: ['#ffc857', '#ff7aa2', '#5eead4'],
+    },
+  },
+  {
+    key: 'light',
+    labelKey: 'theme.light',
+    descKey: 'theme.desc.light',
+    swatch: {
+      paper: '#f5f1e8',
+      surface: '#fffdf5',
+      ink: '#111111',
+      accents: ['#ffd400', '#00e0c6', '#ff5c8a'],
+    },
+  },
+  {
+    key: 'contrast',
+    labelKey: 'theme.contrast',
+    descKey: 'theme.desc.contrast',
+    swatch: {
+      paper: '#050505',
+      surface: '#141414',
+      ink: '#ffffff',
+      accents: ['#ffff00', '#00fff0', '#ff32b4'],
+    },
+  },
 ]
 
 export const DEFAULT_THEME: ThemeKey = 'neon'

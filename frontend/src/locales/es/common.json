@@ -10,6 +10,19 @@
     "light": "Claro",
     "dark": "Oscuro",
     "neon": "Neón",
-    "contrast": "Alto contraste"
+    "contrast": "Alto contraste",
+    "menu": "Elegir tema",
+    "midnight": "Medianoche",
+    "ocean": "Océano",
+    "sunset": "Atardecer",
+    "desc": {
+      "neon": "Violeta profundo con brillo cian — el look distintivo",
+      "midnight": "Oscuro azul profundo profesional",
+      "dark": "Oscuro pizarra moderno y neutro",
+      "ocean": "Verde azulado profundo con acentos aqua",
+      "sunset": "Ciruela cálido con acentos ámbar",
+      "light": "Claro neobrutalista limpio",
+      "contrast": "Máxima legibilidad (a11y)"
+    }
   }
 }

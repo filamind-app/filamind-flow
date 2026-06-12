@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.200.0] - 2026-06-12
+
+### Added
+
+- **Three new themes — and a redesigned theme menu with live previews.** The palette family grows
+  to seven: **Midnight** (professional deep-blue dark), **Ocean** (deep teal with aqua accents),
+  and **Sunset** (warm plum with amber accents) join Neon, Dark, Light, and High Contrast. The
+  header's theme control is now a proper menu: each theme renders as a **miniature preview card**
+  (its own background, surface, text sample, and accent dots — showing what that theme *would*
+  look like, not recolored by the current one) with a one-line description; picking one applies
+  instantly. The **Dark** theme was redesigned into a modern neutral slate — calibrated accent
+  hues and soft layered elevation in place of the hard offset shadow.
+- **A redesigned language menu.** Languages now open in a popover listing every locale in its own
+  native name and writing direction (العربية shown right-to-left even from an English UI), with
+  the active one marked — instead of a plain dropdown. Both menus close on Escape or an outside
+  click and are keyboard-reachable. Localised in all 7 languages.
+
 ## [0.199.0] - 2026-06-12
 
 ### Added

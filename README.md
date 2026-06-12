@@ -35,7 +35,7 @@ the printer host at runtime; a small FastAPI backend handles anything that must
 run server-side.
 
 > **Status:** actively developed and **running on real hardware** (a Sovol SV08), localized in
-> **7 languages** with **4 switchable themes**. **Nine widgets ship today** — Firmware Manager,
+> **7 languages** with **7 switchable themes**. **Nine widgets ship today** — Firmware Manager,
 > Input Shaping, Motor Drivers, Config Editor, Macro Designer, Board Topology, Max-Flow,
 > Config Templates, and the Hardware Browser. A few highlights:
 >
@@ -267,7 +267,7 @@ templates live in [`deploy/`](deploy/).
 - [x] **Internationalization (i18n)** — multilingual UI on an offline-first, extensible
       `vue-i18n` foundation (en · ar · de · zh-Hans · fr · es · ru), RTL + Arabic, and a
       `{ code, params, message }` backend-message contract. _All six phases complete._
-- [x] **Theme system** — 4 switchable themes (Neon · Dark · Light · High-Contrast) driven by
+- [x] **Theme system** — 7 switchable themes (Neon · Midnight · Dark · Ocean · Sunset · Light · High-Contrast), picked from a live-preview menu, driven by
       CSS variables; per-theme recolor of every token with no component edits; no-flash + persisted.
 - [x] **Platform expansion** — the shared data + config-engine foundation plus **Config Editor**,
       **Macro Designer**, **Board Topology**, **Hardware Browser + Config Templates**, and
