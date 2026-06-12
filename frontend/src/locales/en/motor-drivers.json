@@ -189,7 +189,8 @@
       "interp": "interp",
       "sense": "sense {value} Ω",
       "healthTitleIdle": "Enable the motor (home or jog an axis) to read live temperature and fault flags",
-      "healthTitleLive": "Live driver status from drv_status"
+      "healthTitleLive": "Live driver status from drv_status",
+      "staleData": "The last refresh failed — showing the previous data."
     },
     "liveMonitor": {
       "toggle": "live monitor",

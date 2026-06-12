@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.208.0] - 2026-06-12
+
+### Fixed
+
+- **Truthful failure states — never blank, never a false all-clear.** Four widgets stop hiding
+  problems: the **Machine Map**'s baseline check now says *"could not compare — the printer is
+  unreachable"* instead of a false ✓ unchanged; a failed override/snapshot action shows as a
+  dismissible banner instead of replacing the whole map; **Motor Drivers** keeps the live cards on
+  screen when one background refresh fails (a *"last refresh failed — showing previous data"*
+  banner instead of a blanked dashboard); the **Config Editor** discloses which auxiliary panels
+  (Pin Doctor, driver sanity, drift, project view, …) failed to load instead of silently hiding
+  them — a missing Pin Doctor must not read as "no pin problems"; and the **Hardware Browser**
+  consumes a cross-widget focus once instead of re-firing a stale one on the next visit.
+  Localised in all 7 languages.
+
 ## [0.207.0] - 2026-06-12
 
 ### Added

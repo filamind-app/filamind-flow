@@ -91,7 +91,8 @@ async def snapshot_diff(settings: Settings = Depends(get_settings)) -> TopologyD
     try:
         topo = await board_topology.gather_topology(client, settings.data_dir)
     except httpx.HTTPError:
-        return TopologyDiff(has_baseline=True, saved_at=baseline.get("saved_at"))
+        # Honest degradation: an unreachable printer is NOT "unchanged".
+        return TopologyDiff(has_baseline=True, saved_at=baseline.get("saved_at"), reachable=False)
     changes = topology_snapshot.diff(baseline, topo.get("mcus", []))
     return TopologyDiff(
         has_baseline=True,

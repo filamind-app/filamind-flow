@@ -173,7 +173,8 @@
         "connection_changed": "La connexion de « {mcu} » a changé : {before} → {after}",
         "chip_changed": "La puce de « {mcu} » a changé : {before} → {after}",
         "components_changed": "Le nombre de composants de « {mcu} » a changé : {before} → {after}"
-      }
+      },
+      "noCompare": "Comparaison impossible — imprimante injoignable."
     },
     "jump": {
       "section": "Ouvrir cette section dans l’éditeur de config",

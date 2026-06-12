@@ -43,7 +43,7 @@ const props = withDefaults(
 )
 
 const { t } = useI18n({ useScope: 'global' })
-const { focus } = useEntityFocus()
+const { focus, clear } = useEntityFocus()
 
 const q = ref('')
 // cast past UnwrapRef so the generic TSummary / TDetail survive into the template + script
@@ -130,14 +130,21 @@ watch(
 
 // post-mount focus changes (a cross-link chip clicked while already mounted)
 watch(focus, (f) => {
-  if (f && props.focusMatch?.(f)) void focusItem(f.id, f.name)
+  if (f && props.focusMatch?.(f)) {
+    clear() // consume it — a stale focus must not re-fire on the next mount
+    void focusItem(f.id, f.name)
+  }
 })
 
 // at mount, if a focus already targets this catalog open it directly (single load, no race)
 onMounted(() => {
   const f = focus.value
-  if (f && props.focusMatch?.(f)) void focusItem(f.id, f.name)
-  else void load(true)
+  if (f && props.focusMatch?.(f)) {
+    clear()
+    void focusItem(f.id, f.name)
+  } else {
+    void load(true)
+  }
 })
 
 defineExpose({ reload, focusItem })
