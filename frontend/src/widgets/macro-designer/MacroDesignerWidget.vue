@@ -6,6 +6,7 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 import { fetchConfigFiles } from '@/widgets/config-editor/api'
+import { fetchHotends } from '@/widgets/max-flow/api'
 
 import {
   appendScaffold,
@@ -86,6 +87,35 @@ const macroOptions = computed(() =>
 const selectedMacroDef = computed(
   () => macros.value.find((m) => m.id === selectedMacro.value) ?? null,
 )
+
+// Flow check: compare each printing move's volumetric flow against a hotend's real ceiling
+// from the catalog — a macro that silently over-runs the melt zone shows up BEFORE it prints.
+const hotends = ref<{ name: string; expected_max_flow_mm3s?: number | null }[]>([])
+const flowHotend = ref<string | null>(null)
+const flowDiameter = ref(1.75)
+const hotendFlowOptions = computed(() =>
+  hotends.value
+    .filter((h) => typeof h.expected_max_flow_mm3s === 'number')
+    .map((h) => ({ value: h.name, label: `${h.name} (${h.expected_max_flow_mm3s} mm³/s)` })),
+)
+const flowCeiling = computed(() => {
+  const row = hotends.value.find((h) => h.name === flowHotend.value)
+  return typeof row?.expected_max_flow_mm3s === 'number' ? row.expected_max_flow_mm3s : null
+})
+/** Printing moves whose volumetric flow exceeds the selected hotend's ceiling. */
+const flowViolations = computed(() => {
+  const ceiling = flowCeiling.value
+  const r = result.value
+  if (ceiling == null || !r) return []
+  const area = Math.PI * (flowDiameter.value / 2) ** 2 // filament cross-section, mm²
+  const out: { line: number; flow: number }[] = []
+  for (const s of r.segments) {
+    if (!s.extruding || s.extrude_rate == null) continue
+    const flow = s.extrude_rate * area
+    if (flow > ceiling + 1e-6) out.push({ line: s.line, flow: Math.round(flow * 10) / 10 })
+  }
+  return out
+})
 
 /** Path recolor mode: a flat draw, a speed heatmap, or an extrusion-rate heatmap. */
 const colorBy = ref<'none' | 'speed' | 'extrude'>('none')
@@ -435,6 +465,9 @@ async function appendScaffoldToConfig(): Promise<void> {
 }
 
 onMounted(() => {
+  fetchHotends()
+    .then((rows) => (hotends.value = rows))
+    .catch(() => {})
   fetchConfigFiles()
     .then((r) => {
       configFiles.value = r.files.map((f) => ({ value: f.path, label: f.path }))
@@ -737,6 +770,61 @@ onMounted(() => {
             </li>
           </ul>
         </div>
+
+        <!-- Flow check: printing moves vs a hotend's real melt-zone ceiling (from the catalog) -->
+        <details class="text-[11px]">
+          <summary class="cursor-pointer font-bold">{{ t('macroDesigner.flow.title') }}</summary>
+          <div class="mt-2 space-y-2">
+            <p class="text-[10px] opacity-70">{{ t('macroDesigner.flow.hint') }}</p>
+            <div class="flex flex-wrap items-end gap-2">
+              <label class="min-w-[12rem] flex-1">
+                <span class="mb-0.5 block text-[10px] opacity-70">{{
+                  t('macroDesigner.flow.hotend')
+                }}</span>
+                <ComboSelect
+                  v-model="flowHotend"
+                  :options="hotendFlowOptions"
+                  :placeholder="t('macroDesigner.flow.pick')"
+                />
+              </label>
+              <label class="block w-24">
+                <span class="mb-0.5 block text-[10px] opacity-70">{{
+                  t('macroDesigner.flow.diameter')
+                }}</span>
+                <input
+                  v-model.number="flowDiameter"
+                  type="number"
+                  step="0.05"
+                  class="w-full rounded-brutal border-2 border-ink bg-surface px-1.5 py-1 font-mono text-[11px]"
+                />
+              </label>
+            </div>
+            <template v-if="flowCeiling != null">
+              <p v-if="!flowViolations.length" class="text-[11px]">
+                <span class="font-bold text-brand-lime" aria-hidden="true">✓</span>
+                {{ t('macroDesigner.flow.ok', { ceiling: flowCeiling }) }}
+              </p>
+              <div v-else class="nb-card space-y-1 bg-brand-yellow/20 p-2">
+                <p class="text-[11px] font-bold">
+                  {{
+                    t('macroDesigner.flow.overTitle', {
+                      n: flowViolations.length,
+                      ceiling: flowCeiling,
+                    })
+                  }}
+                </p>
+                <ul class="space-y-0.5 font-mono text-[10px]">
+                  <li v-for="v in flowViolations.slice(0, 12)" :key="v.line">
+                    {{ t('macroDesigner.flow.overLine', { line: v.line, flow: v.flow }) }}
+                  </li>
+                  <li v-if="flowViolations.length > 12" class="opacity-60">
+                    +{{ flowViolations.length - 12 }}…
+                  </li>
+                </ul>
+              </div>
+            </template>
+          </div>
+        </details>
 
         <!-- 2D path -->
         <div>

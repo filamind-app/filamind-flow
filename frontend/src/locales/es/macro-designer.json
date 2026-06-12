@@ -185,6 +185,16 @@
         "mesh": "Detectado bed_mesh -> añadido BED_MESH_CALIBRATE.",
         "no_bed": "Sin cama caliente — pasos de calentamiento omitidos."
       }
+    },
+    "flow": {
+      "title": "Comprobación de flujo (techo del hotend)",
+      "hint": "Elige tu hotend del catálogo y cada movimiento de impresión se compara con su techo real de zona de fusión — una macro que lo excede aparece antes de imprimir.",
+      "hotend": "Hotend",
+      "pick": "Elige un hotend…",
+      "diameter": "Ø mm",
+      "ok": "Todos los movimientos están dentro del techo de {ceiling} mm³/s.",
+      "overTitle": "{n} movimiento(s) superan el techo de {ceiling} mm³/s:",
+      "overLine": "Línea {line}: {flow} mm³/s"
     }
   }
 }

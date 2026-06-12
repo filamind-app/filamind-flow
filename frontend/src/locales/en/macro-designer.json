@@ -185,6 +185,16 @@
         "mesh": "Detected bed_mesh -> added BED_MESH_CALIBRATE.",
         "no_bed": "No heated bed — bed heating steps omitted."
       }
+    },
+    "flow": {
+      "title": "Flow check (hotend ceiling)",
+      "hint": "Pick your hotend from the catalog and every printing move is checked against its real melt-zone ceiling — an over-flowing macro shows up before it prints.",
+      "hotend": "Hotend",
+      "pick": "Pick a hotend…",
+      "diameter": "Ø mm",
+      "ok": "All printing moves are within the {ceiling} mm³/s ceiling.",
+      "overTitle": "{n} move(s) exceed the {ceiling} mm³/s ceiling:",
+      "overLine": "Line {line}: {flow} mm³/s"
     }
   }
 }

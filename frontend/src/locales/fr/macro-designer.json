@@ -185,6 +185,16 @@
         "mesh": "bed_mesh détecté -> BED_MESH_CALIBRATE ajouté.",
         "no_bed": "Pas de lit chauffant — étapes de chauffe omises."
       }
+    },
+    "flow": {
+      "title": "Contrôle du débit (plafond hotend)",
+      "hint": "Choisissez votre hotend dans le catalogue — chaque mouvement d’impression est vérifié contre son vrai plafond de zone de fusion ; une macro qui le dépasse apparaît avant l’impression.",
+      "hotend": "Hotend",
+      "pick": "Choisir un hotend…",
+      "diameter": "Ø mm",
+      "ok": "Tous les mouvements restent sous le plafond de {ceiling} mm³/s.",
+      "overTitle": "{n} mouvement(s) dépassent le plafond de {ceiling} mm³/s :",
+      "overLine": "Ligne {line} : {flow} mm³/s"
     }
   }
 }
