@@ -71,6 +71,49 @@ async def test_run_scan_grades_and_links(monkeypatch: pytest.MonkeyPatch) -> Non
     assert by_key["pins"]["findings"][0]["link"] == {"kind": "config_section", "value": "fan"}
 
 
+async def test_pin_caveats_are_informational(monkeypatch: pytest.MonkeyPatch) -> None:
+    # A board caveat describes by-design electronics (e.g. a mains-switched pin) — it must be
+    # listed but never scored: a healthy printer full of caveat notes still grades A.
+    async def doctor_out(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {
+            "reachable": True,
+            "mcus": [
+                {
+                    "name": "mcu",
+                    "findings": [
+                        {"kind": "caveat", "pin": "PA0", "sections": ["heater_bed.heater_pin"]}
+                    ],
+                }
+            ],
+            "total": 1,
+        }
+
+    from app.services import board_topology
+
+    monkeypatch.setattr(board_topology, "gather_pin_doctor", doctor_out)
+
+    from app.services.moonraker_client import MoonrakerClient
+
+    out = await machine_doctor._scan_pins(MoonrakerClient("http://x"), "")
+    assert out["findings"][0]["level"] == "info"
+
+
+async def test_firmware_out_of_sync_needs_a_host_version(monkeypatch: pytest.MonkeyPatch) -> None:
+    # in_sync=False without a known host version is a meaningless comparison — no finding.
+    async def status(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {
+            "reachable": True,
+            "host_version": None,
+            "mcus": [{"name": "mcu", "in_sync": False, "version": "v0.13.0"}],
+        }
+
+    from app.services import firmware_service
+
+    monkeypatch.setattr(firmware_service, "gather_status", status)
+    out = await machine_doctor._scan_firmware(Settings())
+    assert out["findings"] == []
+
+
 async def test_run_scan_degrades_a_crashing_analyzer(monkeypatch: pytest.MonkeyPatch) -> None:
     async def boom(*_a: Any, **_k: Any) -> dict[str, Any]:
         raise RuntimeError("analyzer exploded")

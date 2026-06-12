@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.204.0] - 2026-06-12
+
+### Fixed
+
+- **Machine Doctor grades honestly.** Three refinements found by running the first scan on a real
+  printer: board **pin caveats** (by-design electronics notes, like a mains-switched bed pin) are
+  now informational — listed, never scored — instead of dragging a healthy printer's grade down;
+  a **firmware out-of-sync** finding is only reported when the host's version is actually known
+  (an unknown host made the comparison meaningless); and the **config-drift check no longer
+  reports fake drift** for a value written on a single indented continuation line (its inline
+  comment was being compared against the live value). A clean printer now grades A instead of a
+  spurious F.
+
 ## [0.203.0] - 2026-06-12
 
 ### Added
