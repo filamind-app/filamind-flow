@@ -48,7 +48,8 @@ async def analyze_resonance(
     """
     raw = await request.body()
     try:
-        result = shaper_service.analyze(
+        result = await asyncio.to_thread(
+            shaper_service.analyze,
             raw,
             scv=scv,
             max_freq=max_freq,
