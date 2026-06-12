@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -19,7 +20,13 @@ from app.models.schemas import (
     StaticExcitationResult,
     VibrationsProfile,
 )
-from app.services import printer_guard, resonance_service, shaper_archive, shaper_service
+from app.services import (
+    printer_guard,
+    resonance_service,
+    shaper_archive,
+    shaper_service,
+    task_store,
+)
 
 router = APIRouter(prefix="/shaper", tags=["shaper"])
 
@@ -222,6 +229,73 @@ async def excitate_axis(
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return StaticExcitationResult(**result)
+
+
+#: Strong refs so background supervised runs aren't garbage-collected mid-flight.
+_background: set[asyncio.Task[None]] = set()
+
+
+async def _run_vibrations_task(task: task_store.Task, kwargs: dict, settings: Settings) -> None:
+    """Body of a supervised vibrations run: holds the guard slot, reports progress, holds the
+    result on the task (a dropped tab can still collect it), and honours cancellation."""
+
+    def on_progress(step: int, total: int, detail: dict) -> None:
+        task.progress = {"step": step, "total": total, "detail": detail}
+
+    try:
+        async with printer_guard.acquire("vibrations_profile"):
+            result = await resonance_service.run_vibrations_profile(
+                settings.moonraker_url,
+                settings.resonance_dirs,
+                progress_cb=on_progress,
+                cancel_cb=lambda: task.cancelled,
+                **kwargs,
+            )
+        task.result = result
+        task.status = "done"
+    except task_store.TaskCancelled:
+        task.status = "cancelled"
+    except printer_guard.GuardBusyError as exc:
+        task.append(f"!! {exc}\n")
+        task.status = "failed"
+    except shaper_service.ShaperAnalysisError as exc:
+        task.append(f"!! {exc}\n")
+        task.status = "failed"
+    except Exception as exc:
+        task.append(f"!! Vibrations profile failed: {exc}\n")
+        task.status = "failed"
+
+
+@router.post("/vibrations-profile/start")
+async def vibrations_profile_start(
+    size: float = Query(100.0),
+    z_height: float = Query(20.0),
+    max_speed: float = Query(200.0),
+    min_speed: float = Query(5.0),
+    speed_increment: float = Query(10.0),
+    accel: float = Query(3000.0),
+    travel_speed: float = Query(120.0),
+    max_freq: float = Query(200.0),
+    settings: Settings = Depends(get_settings),
+) -> dict[str, str]:
+    """Start the vibrations profile as a SUPERVISED background run: returns a task id to poll
+    (``/api/tasks/{id}``) with step-by-step progress, a Cancel that aborts through the cleanup
+    paths, and the result held server-side. Same sweep as ``/vibrations-profile``."""
+    task = task_store.create_task()
+    kwargs = {
+        "size": size,
+        "z_height": z_height,
+        "max_speed": max_speed,
+        "min_speed": min_speed,
+        "speed_increment": speed_increment,
+        "accel": accel,
+        "travel_speed": travel_speed,
+        "max_freq": max_freq,
+    }
+    background = asyncio.create_task(_run_vibrations_task(task, kwargs, settings))
+    _background.add(background)
+    background.add_done_callback(_background.discard)
+    return {"task_id": task.id}
 
 
 @router.post("/vibrations-profile", response_model=VibrationsProfile)

@@ -7,6 +7,7 @@ import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
 import { ApiError, fetchHotends, planMaxFlow, runMaxFlow } from './api'
+import { CANCELLED, cancelMaxFlow, flowRun, reattachMaxFlow } from './supervised'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { HotendRow, MaxFlowParams, MaxFlowPlan, MaxFlowResult } from './types'
@@ -88,25 +89,42 @@ async function doPlan(): Promise<void> {
   }
 }
 
+const runInfo = ref<string | null>(null)
+
 async function doRun(): Promise<void> {
   running.value = true
   runErr.value = null
+  runInfo.value = null
   try {
     result.value = await runMaxFlow({ ...params })
     confirmOpen.value = false
   } catch (e) {
     confirmOpen.value = false
-    runErr.value =
-      e instanceof ApiError && e.status === 409 ? t('maxFlow.run.busy') : describeError(e)
+    if (e instanceof Error && e.message === CANCELLED) {
+      runInfo.value = t('maxFlow.run.cancelled')
+    } else {
+      runErr.value =
+        e instanceof ApiError && e.status === 409 ? t('maxFlow.run.busy') : describeError(e)
+    }
   } finally {
     running.value = false
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   fetchHotends()
     .then((rows) => (hotends.value = rows))
     .catch(() => {})
+  // After a reload: resume a still-running test, or collect the result a dropped tab missed.
+  try {
+    const resumed = await reattachMaxFlow()
+    if (resumed) {
+      result.value = resumed
+      runInfo.value = t('maxFlow.run.reattached')
+    }
+  } catch (e) {
+    if (!(e instanceof Error && e.message === CANCELLED)) runErr.value = describeError(e)
+  }
 })
 </script>
 
@@ -296,6 +314,45 @@ onMounted(() => {
       </div>
     </div>
 
+    <!-- Supervised-run progress: per-step counter + a cancel that always cuts the heater -->
+    <div v-if="flowRun.status !== 'idle'" class="nb-card space-y-1 bg-surface p-2">
+      <div class="flex items-center justify-between gap-2 font-mono text-[11px]">
+        <span v-if="flowRun.progress">
+          {{
+            t('maxFlow.run.progress', {
+              step: flowRun.progress.step,
+              total: flowRun.progress.total,
+              flow: Number(flowRun.progress.detail?.flow ?? 0).toFixed(1),
+            })
+          }}
+        </span>
+        <span v-else>{{ t('maxFlow.run.starting') }}</span>
+        <button
+          class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-paper"
+          :disabled="flowRun.status === 'cancelling'"
+          @click="cancelMaxFlow"
+        >
+          {{
+            flowRun.status === 'cancelling' ? t('maxFlow.run.cancelling') : t('maxFlow.run.abort')
+          }}
+        </button>
+      </div>
+      <div
+        v-if="flowRun.progress"
+        class="h-2 w-full overflow-hidden rounded-full border border-ink bg-paper"
+      >
+        <div
+          class="h-full bg-brand-cyan"
+          :style="{
+            width:
+              Math.round((flowRun.progress.step / Math.max(1, flowRun.progress.total)) * 100) + '%',
+          }"
+        ></div>
+      </div>
+      <p class="text-[10px] opacity-60">{{ t('maxFlow.run.abortNote') }}</p>
+    </div>
+
+    <p v-if="runInfo" class="nb-card bg-brand-cyan/20 p-2 font-mono text-[11px]">{{ runInfo }}</p>
     <p v-if="runErr" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">{{ runErr }}</p>
 
     <!-- Result -->

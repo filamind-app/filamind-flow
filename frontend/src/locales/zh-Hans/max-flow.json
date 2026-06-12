@@ -29,7 +29,10 @@
           "title": "使用测试结果",
           "body": "将建议数值填入切片软件的“max volumetric speed”（按料丝设置）。保守数值（实测最大值的 80%）是安全的日常上限；平衡数值（90%）则稍微更激进一些。提高热端温度通常能提升可达到的流量。"
         },
-        "glossary": { "title": "术语表", "body": "" }
+        "glossary": {
+          "title": "术语表",
+          "body": ""
+        }
       },
       "glossary": {
         "flow": {
@@ -94,7 +97,15 @@
       "cancel": "取消",
       "busy": "已拒绝：打印机正忙（打印中或已暂停）。请在其空闲时重试。",
       "error": "测试失败。",
-      "noSg": "未读取到任何 StallGuard 采样——打滑结果可能不可靠。该驱动器的实时 SG 字段可能需要针对此型号进行调整。"
+      "noSg": "未读取到任何 StallGuard 采样——打滑结果可能不可靠。该驱动器的实时 SG 字段可能需要针对此型号进行调整。",
+      "progress": "步骤 {step}/{total} — {flow} mm³/s",
+      "starting": "加热 / 启动中…",
+      "abort": "中止测试",
+      "cancelling": "中止中…",
+      "cancelled": "测试已中止 — 加热器已关闭。",
+      "reattached": "已重新连接：该结果在页面离开期间完成。",
+      "failed": "最大流量测试失败。",
+      "abortNote": "中止总会关闭加热器。"
     },
     "result": {
       "title": "结果",

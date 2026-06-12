@@ -29,7 +29,10 @@
           "title": "Utiliser le résultat",
           "body": "Reportez la valeur suggérée dans le « max volumetric speed » de votre slicer (par filament). La valeur prudente (80 % du maximum mesuré) constitue une limite quotidienne sûre ; la valeur équilibrée (90 %) pousse un peu plus loin. Des températures de hotend plus élevées augmentent généralement le débit atteignable."
         },
-        "glossary": { "title": "Glossaire", "body": "" }
+        "glossary": {
+          "title": "Glossaire",
+          "body": ""
+        }
       },
       "glossary": {
         "flow": {
@@ -94,7 +97,15 @@
       "cancel": "Annuler",
       "busy": "Refusé : l'imprimante est occupée (impression ou pause). Réessayez lorsqu'elle est inactive.",
       "error": "Le test a échoué.",
-      "noSg": "Aucun échantillon StallGuard n'a été lu — le résultat de patinage peut être peu fiable. Le champ SG en direct du driver doit probablement être ajusté pour ce modèle."
+      "noSg": "Aucun échantillon StallGuard n'a été lu — le résultat de patinage peut être peu fiable. Le champ SG en direct du driver doit probablement être ajusté pour ce modèle.",
+      "progress": "Étape {step}/{total} — {flow} mm³/s",
+      "starting": "Chauffe / démarrage…",
+      "abort": "Interrompre",
+      "cancelling": "Interruption…",
+      "cancelled": "Test interrompu — la chauffe a été coupée.",
+      "reattached": "Reconnecté : ce résultat s’est terminé pendant l’absence de la page.",
+      "failed": "Le test de débit max a échoué.",
+      "abortNote": "L’interruption coupe toujours la chauffe."
     },
     "result": {
       "title": "Résultat",

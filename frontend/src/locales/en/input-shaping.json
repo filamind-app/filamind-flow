@@ -531,7 +531,13 @@
       "errAxesMapDetection": "Axes-map detection failed",
       "errCopyFailed": "Copy failed — select the text and copy it manually.",
       "errSustainTest": "Sustain-frequency test failed",
-      "errVibrationsProfile": "Vibrations profile failed"
+      "errVibrationsProfile": "Vibrations profile failed",
+      "vibProgress": "Sweep {step}/{total} — {speed} mm/s · {angle}°",
+      "vibStarting": "Starting the sweep…",
+      "vibCancel": "Cancel sweep",
+      "vibCancelling": "Cancelling…",
+      "vibCancelled": "Sweep cancelled — velocity limits restored.",
+      "vibReattached": "Reattached: this result finished while the page was away."
     },
     "vibrationsView": {
       "title": "Vibrations profile",
