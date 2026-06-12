@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.231.0] - 2026-06-13
+
+### Changed
+
+- **The toolchain badges no longer make optional tools look broken.** `can-utils` is a host
+  diagnostic (`candump`/`cansend`) — CAN *flashing* doesn't use it (Katapult talks to the CAN
+  bus over SocketCAN directly), so its absence was showing an alarming red ✗ for no reason. It
+  now shows a neutral ○ with an "(optional)" tag, and every tool badge gained a tooltip
+  explaining what it's for and when it's actually needed (e.g. dfu-util only for DFU boards,
+  avrdude only for 8-bit AVR), with an install hint for can-utils.
+
+
 ## [0.230.0] - 2026-06-13
 
 ### Fixed

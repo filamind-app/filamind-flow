@@ -311,6 +311,15 @@
       "errorsTitle": "Problèmes",
       "showDetails": "Afficher la sortie des commandes",
       "batchStep": "Flash de {device} ({step}/{total})"
+    },
+    "tools": {
+      "optionalTag": "(optionnel)",
+      "klipper": "Sources Klipper + système de build — nécessaires pour compiler le firmware.",
+      "katapult": "Dépôt du bootloader Katapult — nécessaire pour le flash serial/CAN Katapult.",
+      "flashtool": "flashtool.py de Katapult — flashe les cartes serial et CAN.",
+      "dfu_util": "dfu-util — uniquement pour le flash DFU (bootloader ROM STM32).",
+      "avrdude": "avrdude — uniquement pour les cartes AVR 8 bits.",
+      "can_utils": "Optionnel — uniquement pour le diagnostic CAN manuel (candump/cansend). Le flash CAN n'en a PAS besoin. Installer : sudo apt install can-utils"
     }
   }
 }

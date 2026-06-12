@@ -311,6 +311,15 @@
       "errorsTitle": "Problems",
       "showDetails": "Show command output",
       "batchStep": "Flashing {device} ({step}/{total})"
+    },
+    "tools": {
+      "optionalTag": "(optional)",
+      "klipper": "Klipper sources + build system — needed to build firmware.",
+      "katapult": "Katapult bootloader repo — needed for serial/CAN Katapult flashing.",
+      "flashtool": "Katapult's flashtool.py — flashes serial & CAN boards.",
+      "dfu_util": "dfu-util — only for DFU (STM32 ROM bootloader) flashing.",
+      "avrdude": "avrdude — only for 8-bit AVR boards.",
+      "can_utils": "Optional — only for manual CAN diagnostics (candump/cansend). CAN flashing does NOT need it. Install: sudo apt install can-utils"
     }
   }
 }

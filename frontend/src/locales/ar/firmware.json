@@ -311,6 +311,15 @@
       "errorsTitle": "مشاكل",
       "showDetails": "إظهار مخرجات الأوامر",
       "batchStep": "تفليش {device} ({step}/{total})"
+    },
+    "tools": {
+      "optionalTag": "(اختياري)",
+      "klipper": "مصادر Klipper ونظام البناء — لازمة لبناء الفيرموير.",
+      "katapult": "مستودع بوتلودر Katapult — لازم لتفليش serial/CAN عبر Katapult.",
+      "flashtool": "أداة flashtool.py من Katapult — تفلّش لوحات serial وCAN.",
+      "dfu_util": "dfu-util — فقط لتفليش DFU (بوتلودر STM32 ROM).",
+      "avrdude": "avrdude — فقط للوحات AVR ذات 8 بت.",
+      "can_utils": "اختياري — فقط لتشخيص CAN اليدوي (candump/cansend). تفليش CAN لا يحتاجه. التثبيت: sudo apt install can-utils"
     }
   }
 }
