@@ -39,7 +39,16 @@
       "hardware": "Matériel vs référence",
       "noBaseline": "Pas de référence matérielle — enregistrez un instantané dans la Carte machine.",
       "hwUnchanged": "Aucun changement matériel depuis la référence.",
-      "hwChanged": "{n} changement(s) matériel(s) depuis la référence."
+      "hwChanged": "{n} changement(s) matériel(s) depuis la référence.",
+      "setup": {
+        "title": "Bien démarrer ({done}/{total})",
+        "go": "Aller",
+        "boards": "Confirmez vos cartes dans la Carte machine",
+        "baseline": "Enregistrez une référence matérielle (détecte les changements)",
+        "firmware": "Synchronisez chaque firmware MCU avec l’hôte",
+        "motors": "Assignez vos moteurs dans Motor Drivers",
+        "tuning": "Réglez l’input shaping pour X et Y (assistant guidé)"
+      }
     },
     "connection": {
       "connected": "Connecté",

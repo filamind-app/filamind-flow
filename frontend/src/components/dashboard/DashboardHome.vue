@@ -6,7 +6,7 @@
  *  result per axis from the shaper archive, and whether the hardware changed against the saved
  *  Machine Map baseline. Every tile deep-links into the widget that owns the subject, and a
  *  Machine Doctor tile offers the full graded scan. */
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { resolveEndpoints } from '@/core/moonraker'
@@ -45,6 +45,7 @@ interface Overview {
     }[]
   }
   hardware: { available: boolean; has_baseline: boolean; changes: number }
+  setup?: { boards_identified: number; boards_total: number; motors_assigned: number }
 }
 
 const data = ref<Overview | null>(null)
@@ -74,6 +75,47 @@ function stateBadge(state: string | undefined): { text: string; cls: string } {
   return { text: t('shell.home.stateIdle'), cls: 'bg-brand-lime text-ink' }
 }
 
+/** The Get-Started checklist: every step is detected from server data and jumps to its widget. */
+interface SetupStep {
+  key: string
+  done: boolean
+  go: () => void
+}
+const setupSteps = computed<SetupStep[]>(() => {
+  const d = data.value
+  if (!d) return []
+  const setup = d.setup ?? { boards_identified: 0, boards_total: 0, motors_assigned: 0 }
+  return [
+    {
+      key: 'boards',
+      done: setup.boards_total > 0 && setup.boards_identified === setup.boards_total,
+      go: () => go('board-topology'),
+    },
+    {
+      key: 'baseline',
+      done: d.hardware.has_baseline,
+      go: () => go('board-topology'),
+    },
+    {
+      key: 'firmware',
+      done:
+        d.firmware.available && !!d.firmware.host_version && (d.firmware.out_of_sync ?? 0) === 0,
+      go: () => go('firmware-upgrade', 'status'),
+    },
+    {
+      key: 'motors',
+      done: setup.motors_assigned > 0,
+      go: () => go('motor-drivers'),
+    },
+    {
+      key: 'tuning',
+      done: d.tuning.available && d.tuning.axes.length >= 2,
+      go: () => go('input-shaping', 'guided'),
+    },
+  ]
+})
+const setupDone = computed(() => setupSteps.value.filter((s) => s.done).length)
+
 function openMcu(name: string): void {
   focusTopologyNode(name)
   go('board-topology')
@@ -95,6 +137,38 @@ function openMcu(name: string): void {
     <p v-else-if="!data" class="nb-card bg-brand-red/10 p-3 font-mono text-xs">
       {{ t('shell.home.unreachable') }}
     </p>
+
+    <!-- Get started: the existing wizards, sequenced into one journey (auto-detected) -->
+    <details
+      v-if="data && setupSteps.length"
+      class="nb-card bg-surface p-3"
+      :open="setupDone < setupSteps.length"
+    >
+      <summary class="cursor-pointer text-xs font-bold uppercase tracking-wide opacity-70">
+        🧭 {{ t('shell.home.setup.title', { done: setupDone, total: setupSteps.length }) }}
+      </summary>
+      <ol class="mt-2 space-y-1.5">
+        <li v-for="(step, i) in setupSteps" :key="step.key" class="flex items-center gap-2">
+          <span
+            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-ink text-[10px] font-bold"
+            :class="step.done ? 'bg-brand-lime' : 'bg-paper'"
+            aria-hidden="true"
+          >
+            {{ step.done ? '✓' : i + 1 }}
+          </span>
+          <span class="min-w-0 flex-1 text-xs" :class="{ 'opacity-60': step.done }">
+            {{ t('shell.home.setup.' + step.key) }}
+          </span>
+          <button
+            v-if="!step.done"
+            class="nb-btn shrink-0 bg-brand-cyan px-2 py-0.5 text-[10px]"
+            @click="step.go()"
+          >
+            {{ t('shell.home.setup.go') }} ↗
+          </button>
+        </li>
+      </ol>
+    </details>
 
     <div v-if="data" class="grid gap-3 sm:grid-cols-2">
       <!-- Printer state -->

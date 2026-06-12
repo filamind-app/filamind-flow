@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.215.0] - 2026-06-12
+
+### Added
+
+- **A Get-Started journey on the home page.** Mission Control now opens with a five-step
+  checklist that sequences the app's existing wizards into one product journey: confirm your
+  boards in the Machine Map → save a hardware baseline → bring every MCU's firmware in sync →
+  assign your motors → tune input shaping for X and Y. Each step is **auto-detected from the
+  printer** (✓ when actually done, not when clicked) and jumps straight into the right widget —
+  the panel collapses itself once all five are complete. Localised in all 7 languages.
+
 ## [0.214.0] - 2026-06-12
 
 ### Added
