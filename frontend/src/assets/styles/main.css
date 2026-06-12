@@ -48,22 +48,23 @@
   --nb-radius: 4px;
 }
 
-/* Dark — neutral charcoal, no neon glow, softer ~8px corners. */
+/* Dark — modern professional slate: neutral layered surfaces, calibrated accent hues,
+   soft elevation shadows instead of the hard ink offset, ~10px corners. */
 [data-theme='dark'] {
-  --c-ink: 240 240 240;
-  --c-paper: 30 30 35;
-  --c-surface: 45 45 50;
-  --c-brand-yellow: 255 212 0;
-  --c-brand-pink: 255 140 165;
-  --c-brand-cyan: 100 240 225;
-  --c-brand-lime: 180 240 60;
-  --c-brand-blue: 140 180 255;
-  --c-brand-red: 255 120 110;
-  --c-sidebar: 24 24 28;
-  --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
-  --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
-  --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
-  --nb-radius: 8px;
+  --c-ink: 232 234 240;
+  --c-paper: 24 24 28;
+  --c-surface: 39 39 46;
+  --c-brand-yellow: 250 204 21;
+  --c-brand-pink: 244 114 182;
+  --c-brand-cyan: 45 212 191;
+  --c-brand-lime: 163 230 53;
+  --c-brand-blue: 96 165 250;
+  --c-brand-red: 248 113 113;
+  --c-sidebar: 17 17 21;
+  --nb-shadow-sm: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
+  --nb-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.55);
+  --nb-shadow-lg: 0 8px 28px 0 rgba(0, 0, 0, 0.6);
+  --nb-radius: 10px;
 }
 
 /* Neon (default) — deep indigo/violet bg, near-white text, soft cyan glow in
@@ -102,6 +103,63 @@
   --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
   --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
   --nb-radius: 4px;
+}
+
+/* Midnight — deep blue professional dark: slate-blue layered surfaces, a calm blue-forward
+   accent set, soft elevation. The "serious dashboard" look. */
+[data-theme='midnight'] {
+  --c-ink: 226 232 240;
+  --c-paper: 15 23 42;
+  --c-surface: 30 41 59;
+  --c-brand-yellow: 250 204 21;
+  --c-brand-pink: 232 121 249;
+  --c-brand-cyan: 34 211 238;
+  --c-brand-lime: 134 239 172;
+  --c-brand-blue: 96 165 250;
+  --c-brand-red: 251 113 133;
+  --c-sidebar: 9 14 28;
+  --nb-shadow-sm: 0 2px 8px 0 rgba(2, 8, 23, 0.55);
+  --nb-shadow: 0 5px 16px 0 rgba(2, 8, 23, 0.6);
+  --nb-shadow-lg: 0 10px 30px 0 rgba(2, 8, 23, 0.65);
+  --nb-radius: 10px;
+}
+
+/* Ocean — modern teal: deep sea-green surfaces with aqua/coral accents and a subtle
+   cyan-tinted glow. Fresh without being loud. */
+[data-theme='ocean'] {
+  --c-ink: 224 247 244;
+  --c-paper: 6 38 45;
+  --c-surface: 13 56 66;
+  --c-brand-yellow: 255 209 102;
+  --c-brand-pink: 240 128 180;
+  --c-brand-cyan: 64 224 208;
+  --c-brand-lime: 148 226 142;
+  --c-brand-blue: 102 178 255;
+  --c-brand-red: 255 107 107;
+  --c-sidebar: 4 27 33;
+  --nb-shadow-sm: 0 3px 10px 0 rgba(10, 60, 60, 0.45);
+  --nb-shadow: 0 6px 18px 0 rgba(16, 120, 120, 0.3);
+  --nb-shadow-lg: 0 10px 30px 0 rgba(16, 120, 120, 0.35);
+  --nb-radius: 12px;
+}
+
+/* Sunset — warm modern: dark plum surfaces with amber/coral accents and a warm glow.
+   Cozy evening-workshop feel. */
+[data-theme='sunset'] {
+  --c-ink: 255 241 230;
+  --c-paper: 42 24 36;
+  --c-surface: 64 38 52;
+  --c-brand-yellow: 255 200 87;
+  --c-brand-pink: 255 122 162;
+  --c-brand-cyan: 94 234 212;
+  --c-brand-lime: 190 242 100;
+  --c-brand-blue: 147 197 253;
+  --c-brand-red: 251 113 133;
+  --c-sidebar: 28 15 24;
+  --nb-shadow-sm: 0 3px 10px 0 rgba(40, 15, 15, 0.5);
+  --nb-shadow: 0 6px 18px 0 rgba(255, 120, 80, 0.18);
+  --nb-shadow-lg: 0 10px 30px 0 rgba(255, 120, 80, 0.22);
+  --nb-radius: 12px;
 }
 
 @layer components {

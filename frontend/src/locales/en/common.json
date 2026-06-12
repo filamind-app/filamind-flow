@@ -10,6 +10,19 @@
     "light": "Light",
     "dark": "Dark",
     "neon": "Neon",
-    "contrast": "High Contrast"
+    "contrast": "High Contrast",
+    "menu": "Choose theme",
+    "midnight": "Midnight",
+    "ocean": "Ocean",
+    "sunset": "Sunset",
+    "desc": {
+      "neon": "Deep violet with a cyan glow — the signature look",
+      "midnight": "Professional deep-blue dark",
+      "dark": "Modern neutral slate dark",
+      "ocean": "Deep teal with aqua accents",
+      "sunset": "Warm plum with amber accents",
+      "light": "Clean Neo-Brutalist light",
+      "contrast": "Maximum readability (a11y)"
+    }
   }
 }

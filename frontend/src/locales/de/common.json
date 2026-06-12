@@ -10,6 +10,19 @@
     "light": "Hell",
     "dark": "Dunkel",
     "neon": "Neon",
-    "contrast": "Hoher Kontrast"
+    "contrast": "Hoher Kontrast",
+    "menu": "Theme wählen",
+    "midnight": "Mitternacht",
+    "ocean": "Ozean",
+    "sunset": "Sonnenuntergang",
+    "desc": {
+      "neon": "Tiefes Violett mit Cyan-Glow — der Signature-Look",
+      "midnight": "Professionelles Tiefblau-Dunkel",
+      "dark": "Modernes neutrales Slate-Dunkel",
+      "ocean": "Tiefes Petrol mit Aqua-Akzenten",
+      "sunset": "Warmes Pflaume mit Bernstein-Akzenten",
+      "light": "Sauberes Neo-Brutalist-Hell",
+      "contrast": "Maximale Lesbarkeit (A11y)"
+    }
   }
 }
