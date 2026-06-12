@@ -407,7 +407,7 @@ async def run_flash(
     # A DFU device is already in its bootloader; only running Katapult boards need
     # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
     if method in ("serial", "can") and is_katapult:
-        async for line in _reboot_to_bootloader(method, device, interface, settings):
+        async for line in _reboot_to_bootloader(method, device, interface or "can0", settings):
             yield line
     elif method in ("serial", "can"):
         yield ">>> Device is not marked Katapult — skipping reboot-to-bootloader.\n"

@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.225.0] - 2026-06-12
+
+### Fixed
+
+- **Kinematics-aware tooling — the app now behaves correctly on every Klipper printer.**
+  The CoreXY two-belt comparison refuses politely (before any homing or motion) on
+  cartesian/delta/CoreXZ machines instead of firing diagonal test moves that fail
+  confusingly; the Live-tools panel disables the tool with an explanation, and the Guided
+  wizard walks past the Belts step automatically on printers it doesn't apply to.
+- A CAN-bus flash with no interface saved now falls back to `can0` consistently in the
+  reboot-to-bootloader step (it already did in the flash step).
+- The example systemd/nginx files under `deploy/` now state clearly that they are
+  templates with `/home/pi` placeholders and that the installer generates the real ones
+  for your user and paths.
+
 ## [0.224.1] - 2026-06-12
 
 ### Fixed

@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import {
   compareBelts,
+  fetchKinematics,
   measureNoise,
   runAxesMap,
   runLiveTest,
@@ -64,6 +65,11 @@ const staticAxis = ref<'x' | 'y'>('x')
 const staticFreq = ref('50')
 const staticDuration = ref('15')
 const vibResult = ref<VibrationsProfileResult | null>(null)
+/** Printer kinematics (null until known / when offline) — gates the CoreXY-only belts tool. */
+const kinematics = ref<string | null>(null)
+const beltsSupported = computed(
+  () => kinematics.value == null || kinematics.value.includes('corexy'),
+)
 
 const staticVerdict = computed(() =>
   staticResult.value
@@ -252,6 +258,9 @@ async function runVib(): Promise<void> {
 // After a reload: pick a still-running sweep back up, or collect a finished result the dropped
 // tab never saw — the run survives the browser now, not just the request.
 onMounted(async () => {
+  fetchKinematics()
+    .then((kin) => (kinematics.value = kin))
+    .catch(() => (kinematics.value = null))
   try {
     const resumed = await reattachVibrations()
     if (resumed) {
@@ -362,12 +371,12 @@ onMounted(async () => {
       <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.beltsTitle') }}</span>
         <label class="flex items-center gap-1">
-          <input v-model="beltsReady" type="checkbox" />
+          <input v-model="beltsReady" type="checkbox" :disabled="!beltsSupported" />
           {{ t('inputShaping.fromPrinter.confirmMoves') }}
         </label>
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-surface"
-          :disabled="!beltsReady || motionBusy"
+          :disabled="!beltsReady || motionBusy || !beltsSupported"
           :title="t('inputShaping.fromPrinter.beltsBtnTitle')"
           @click="runBelts"
         >
@@ -378,6 +387,9 @@ onMounted(async () => {
           }}
         </button>
       </div>
+      <p v-if="!beltsSupported" class="text-[10px] text-brand-red">
+        {{ t('inputShaping.fromPrinter.beltsCorexyOnly', { kin: kinematics }) }}
+      </p>
       <p class="font-mono text-[10px] opacity-60">
         {{ t('inputShaping.fromPrinter.beltsDesc') }}
       </p>
