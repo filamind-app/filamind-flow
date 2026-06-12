@@ -84,10 +84,10 @@ async def identify_devices(
             board_id = mcu.get("board_id")
             if isinstance(board_id, str) and board_id:
                 entry["board_id"] = board_id
-                entity = reference_data.catalog_entity_by_id(board_id)
-                if entity:
-                    entry["board_name"] = entity.get("name")
-                    entry["manufacturer"] = entity.get("manufacturer")
+                board = reference_data.board_by_id(board_id)
+                if board:
+                    entry["board_name"] = board.get("display_name") or board.get("model")
+                    entry["manufacturer"] = board.get("manufacturer")
             entry["kconfig_symbol"] = await symbol_for(str(mcu.get("mcu") or ""))
         out.append(entry)
     return {"devices": out, "kconfig_available": kconfig_available}
