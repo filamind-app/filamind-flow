@@ -4,6 +4,7 @@ import { useHashTab } from '@/core/nav'
 import { useI18n } from 'vue-i18n'
 
 import LogPane from '@/components/ui/LogPane.vue'
+import FlashProgress from './FlashProgress.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
@@ -163,6 +164,10 @@ const opBusy = ref(false)
 /** Whose op-log is showing: a device id, or null for the batch log under the batch buttons. */
 const activeDeviceId = ref<string | null>(null)
 const batchTaskId = ref<string | null>(null)
+/** Batch device counter (from the task's progress), drives the batch progress bar. */
+const batchProgress = ref<{ step: number; total: number; detail?: Record<string, unknown> } | null>(
+  null,
+)
 /** A flash awaiting explicit confirmation (the safety gate) + the action to run on confirm. */
 const pendingFlash = ref<FlashIntent | null>(null)
 let pendingExec: (() => void) | null = null
@@ -173,6 +178,7 @@ async function pollTask(): Promise<void> {
   try {
     const task = await fetchTask(batchTaskId.value)
     opLog.value = task.log
+    batchProgress.value = task.progress ?? null
     if (task.status === 'running') {
       pollTimer = setTimeout(pollTask, 1200)
     } else {
@@ -196,6 +202,7 @@ async function runBatch(action: string): Promise<void> {
   error.value = null
   activeDeviceId.value = null
   opLog.value = ''
+  batchProgress.value = null
   opBusy.value = true
   try {
     batchTaskId.value = await startBatch(action)
@@ -682,7 +689,14 @@ onUnmounted(() => {
             </button>
           </div>
 
-          <LogPane v-if="opLog && activeDeviceId === null" :log="opLog" />
+          <FlashProgress
+            v-if="(opLog || opBusy) && activeDeviceId === null"
+            :log="opLog"
+            :busy="opBusy"
+            :step="batchProgress?.step ?? null"
+            :total="batchProgress?.total ?? null"
+            :detail="(batchProgress?.detail?.device as string) ?? null"
+          />
 
           <div
             v-for="device in operationalDevices"
@@ -749,7 +763,11 @@ onUnmounted(() => {
               </button>
             </div>
 
-            <LogPane v-if="opLog && activeDeviceId === device.id" :log="opLog" />
+            <FlashProgress
+              v-if="(opLog || opBusy) && activeDeviceId === device.id"
+              :log="opLog"
+              :busy="opBusy"
+            />
           </div>
           <div v-if="!operationalDevices.length" class="space-y-1.5">
             <p class="font-mono text-xs opacity-70">

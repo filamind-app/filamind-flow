@@ -296,6 +296,21 @@
       "confirmAck": "Я проверил, что файл соответствует целевой плате",
       "confirmFlash": "Прошить",
       "confirmCancel": "Отмена"
+    },
+    "flashProgress": {
+      "phase": {
+        "start": "Подготовка…",
+        "stop": "Остановка Klipper…",
+        "boot": "Вход в загрузчик…",
+        "write": "Запись прошивки…",
+        "restart": "Перезапуск Klipper…",
+        "done": "Прошивка завершена"
+      },
+      "done": "Прошивка завершена ✓",
+      "failed": "Ошибка прошивки — см. детали",
+      "errorsTitle": "Проблемы",
+      "showDetails": "Показать вывод команд",
+      "batchStep": "Прошивка {device} ({step}/{total})"
     }
   }
 }

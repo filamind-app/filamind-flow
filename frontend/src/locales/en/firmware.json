@@ -296,6 +296,21 @@
       "confirmAck": "I verified this file matches the target board",
       "confirmFlash": "Flash it",
       "confirmCancel": "Cancel"
+    },
+    "flashProgress": {
+      "phase": {
+        "start": "Preparing…",
+        "stop": "Stopping Klipper…",
+        "boot": "Entering bootloader…",
+        "write": "Writing firmware…",
+        "restart": "Restarting Klipper…",
+        "done": "Flash complete"
+      },
+      "done": "Flash complete ✓",
+      "failed": "Flash failed — see details",
+      "errorsTitle": "Problems",
+      "showDetails": "Show command output",
+      "batchStep": "Flashing {device} ({step}/{total})"
     }
   }
 }

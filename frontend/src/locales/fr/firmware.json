@@ -296,6 +296,21 @@
       "confirmAck": "J’ai vérifié que ce fichier correspond à la carte cible",
       "confirmFlash": "Flasher",
       "confirmCancel": "Annuler"
+    },
+    "flashProgress": {
+      "phase": {
+        "start": "Préparation…",
+        "stop": "Arrêt de Klipper…",
+        "boot": "Entrée dans le bootloader…",
+        "write": "Écriture du firmware…",
+        "restart": "Redémarrage de Klipper…",
+        "done": "Flash terminé"
+      },
+      "done": "Flash terminé ✓",
+      "failed": "Échec du flash — voir les détails",
+      "errorsTitle": "Problèmes",
+      "showDetails": "Afficher la sortie des commandes",
+      "batchStep": "Flash de {device} ({step}/{total})"
     }
   }
 }

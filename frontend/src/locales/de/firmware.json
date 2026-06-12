@@ -296,6 +296,21 @@
       "confirmAck": "Ich habe geprüft, dass die Datei zur Zielplatine passt",
       "confirmFlash": "Flashen",
       "confirmCancel": "Abbrechen"
+    },
+    "flashProgress": {
+      "phase": {
+        "start": "Vorbereiten…",
+        "stop": "Klipper wird gestoppt…",
+        "boot": "Bootloader wird gestartet…",
+        "write": "Firmware wird geschrieben…",
+        "restart": "Klipper wird neu gestartet…",
+        "done": "Flash abgeschlossen"
+      },
+      "done": "Flash abgeschlossen ✓",
+      "failed": "Flash fehlgeschlagen — Details ansehen",
+      "errorsTitle": "Probleme",
+      "showDetails": "Befehlsausgabe anzeigen",
+      "batchStep": "Flashe {device} ({step}/{total})"
     }
   }
 }
