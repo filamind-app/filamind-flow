@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.216.0] - 2026-06-12
+
+### Added
+
+- **A printer journal on the home page.** Mission Control now shows **Recent activity** — one
+  merged, newest-first timeline of everything that happened to the machine: firmware flashes
+  (board → version), config saves (from the automatic backup snapshots), and tuning runs (from
+  the input-shaper archive). One read-only `GET /api/journal` merges the histories the app
+  already keeps; nothing new is recorded. Localised in all 7 languages.
+
 ## [0.215.0] - 2026-06-12
 
 ### Added

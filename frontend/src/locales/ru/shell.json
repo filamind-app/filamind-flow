@@ -48,6 +48,13 @@
         "firmware": "Синхронизируйте прошивку каждого MCU с хостом",
         "motors": "Назначьте моторы в Motor Drivers",
         "tuning": "Настройте input shaping для X и Y (мастер)"
+      },
+      "journal": {
+        "title": "Недавняя активность",
+        "empty": "Пока пусто — прошивки, сохранения конфига и настройки появятся здесь.",
+        "flash": "Прошито {board} → {version}",
+        "configSave": "Сохранён {file}",
+        "tuning": "Настройка: {kind} ({axis})"
       }
     },
     "connection": {

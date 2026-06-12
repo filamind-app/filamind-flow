@@ -48,6 +48,13 @@
         "firmware": "让每个 MCU 固件与主机同步",
         "motors": "在电机驱动中分配电机",
         "tuning": "为 X 和 Y 调校 input shaping（引导向导）"
+      },
+      "journal": {
+        "title": "近期活动",
+        "empty": "尚无记录 — 烧录、配置保存与调校会显示在这里。",
+        "flash": "已烧录 {board} → {version}",
+        "configSave": "已保存 {file}",
+        "tuning": "调校：{kind}（{axis}）"
       }
     },
     "connection": {
