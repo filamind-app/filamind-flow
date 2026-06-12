@@ -66,6 +66,25 @@
         "title": "Modèles de configuration",
         "description": "Blocs de configuration et macros Klipper prêts à coller, par catégorie."
       }
+    },
+    "guard": {
+      "printing": "Impression en cours — écritures verrouillées",
+      "running": "{op} en cours — écritures verrouillées",
+      "op": {
+        "resonance_test": "Test de résonance",
+        "noise_check": "Contrôle du bruit",
+        "belt_comparison": "Comparaison des courroies",
+        "axes_map": "Calibration axes_map",
+        "sustain": "Excitation soutenue",
+        "vibrations_profile": "Profil de vibrations",
+        "max_flow": "Test de débit max",
+        "driver_write": "Écriture driver",
+        "homing": "Homing",
+        "motors_sync": "Synchro moteurs",
+        "firmware_flash": "Flash du firmware",
+        "firmware_batch": "Lot firmware",
+        "firmware_restart": "Redémarrage firmware"
+      }
     }
   }
 }

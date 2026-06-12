@@ -6,6 +6,7 @@ from app.api.routes import (
     config,
     drivers,
     firmware,
+    guard,
     hardware,
     health,
     macro,
@@ -18,6 +19,7 @@ from app.api.routes import (
 
 api_router = APIRouter(prefix="/api")
 api_router.include_router(health.router)
+api_router.include_router(guard.router)
 api_router.include_router(moonraker.router)
 api_router.include_router(firmware.router)
 api_router.include_router(shaper.router)

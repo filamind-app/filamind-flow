@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
-from app.services import max_flow_service
+from app.services import max_flow_service, printer_guard
 from app.services.max_flow_service import RampParams
 from app.services.moonraker_client import MoonrakerClient
 
@@ -59,7 +59,10 @@ async def maxflow_run(
     client = MoonrakerClient(settings.moonraker_url, timeout=_RUN_TIMEOUT_S)
     params = RampParams(**body.model_dump())
     try:
-        return await max_flow_service.run_max_flow(client, params)
+        async with printer_guard.acquire("max_flow"):
+            return await max_flow_service.run_max_flow(client, params)
+    except printer_guard.GuardBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except max_flow_service.MaxFlowBusyError as exc:

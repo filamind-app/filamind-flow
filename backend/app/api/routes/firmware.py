@@ -47,6 +47,7 @@ from app.services import (
     firmware_service,
     flash_service,
     health_service,
+    printer_guard,
     services_service,
     task_store,
 )
@@ -62,9 +63,14 @@ _background: set[asyncio.Task[None]] = set()
 
 
 async def _run_batch(action: str, settings: Settings, task: Task) -> None:
-    """Wraps the batch run so an unexpected error marks the task failed, not hung."""
+    """Wraps the batch run so an unexpected error marks the task failed, not hung. Holds the
+    printer's exclusive actuating slot for the whole run (flashing reboots MCUs)."""
     try:
-        await batch_service.run_batch(action, settings, task)
+        async with printer_guard.acquire("firmware_batch"):
+            await batch_service.run_batch(action, settings, task)
+    except printer_guard.GuardBusyError as exc:
+        task.append(f"!! {exc}\n")
+        task.status = "failed"
     except Exception as exc:
         task.append(f"!! Batch failed: {exc}\n")
         task.status = "failed"
@@ -306,15 +312,18 @@ async def firmware_external_flash(
         raise HTTPException(status_code=404, detail=f"External firmware '{name}' not found")
     meta = external_firmware.read_meta(settings.data_dir, name)
     return StreamingResponse(
-        flash_service.run_flash(
-            name,
-            meta["method"],
-            request.device,
-            meta.get("interface") or "can0",
-            settings,
-            request.is_katapult,
-            firmware=path,
-            offset_override=meta.get("offset") or None,
+        printer_guard.guarded_stream(
+            "firmware_flash",
+            flash_service.run_flash(
+                name,
+                meta["method"],
+                request.device,
+                meta.get("interface") or "can0",
+                settings,
+                request.is_katapult,
+                firmware=path,
+                offset_override=meta.get("offset") or None,
+            ),
         ),
         media_type="text/plain",
     )
@@ -352,13 +361,16 @@ async def firmware_flash(
 ) -> StreamingResponse:
     """Flashes a board, streaming the log. Refuses while printing or without sudo."""
     return StreamingResponse(
-        flash_service.run_flash(
-            request.profile or "",
-            request.method,
-            request.device,
-            request.interface,
-            settings,
-            request.is_katapult,
+        printer_guard.guarded_stream(
+            "firmware_flash",
+            flash_service.run_flash(
+                request.profile or "",
+                request.method,
+                request.device,
+                request.interface,
+                settings,
+                request.is_katapult,
+            ),
         ),
         media_type="text/plain",
     )
