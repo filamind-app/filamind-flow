@@ -401,6 +401,10 @@ class BackupImportResponse(BaseModel):
 
     restored_devices: bool
     restored_profiles: list[str]
+    #: Data-dir files put back (flash history / motor mapping / topology overrides+snapshot).
+    restored_data: list[str] = []
+    #: Input-shaper archive runs put back.
+    restored_runs: int = 0
 
 
 class HealthCheck(BaseModel):

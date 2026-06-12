@@ -248,7 +248,9 @@
       "attachFailed": "Échec de l'attachement",
       "removeFailed": "Échec du retrait",
       "exportFailed": "Échec de l'export",
-      "importFailed": "Échec de l'import"
+      "importFailed": "Échec de l'import",
+      "backupHint": "Un seul ZIP couvre tout ce que vous avez configuré : cartes, profils de compilation, affectation des moteurs, confirmations de cartes, base de référence matérielle, historique de flash et réglages enregistrés. La restauration remet tout en une étape.",
+      "restoredFull": "{n} profils, {data} fichiers de données, {runs} réglages restaurés{extra}."
     },
     "external": {
       "title": "Firmware externe",

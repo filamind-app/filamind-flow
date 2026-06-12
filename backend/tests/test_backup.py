@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import os
 from pathlib import Path
 
@@ -8,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings
 from app.main import create_app
-from app.services import backup_service, devices_store
+from app.services import backup_service, devices_store, shaper_archive
 from app.services.firmware_profiles import profiles_dir
 
 
@@ -29,6 +30,58 @@ def test_backup_roundtrip(tmp_path: Path) -> None:
     device = devices_store.get_device(restored, "b1")
     assert device is not None and device["name"] == "Board"
     assert os.path.isfile(os.path.join(profiles_dir(restored), "ebb.config"))
+
+
+def test_backup_roundtrip_format2_full_data(tmp_path: Path) -> None:
+    """Format 2 carries the data files + the shaper archive and restores them all."""
+    source = str(tmp_path / "src")
+    devices_store.save_device(source, {"id": "b1", "name": "Board", "profile": "ebb"})
+    with open(os.path.join(source, "motor-mapping.json"), "w") as handle:
+        handle.write('{"stepper_x": "ldo-42sth48"}')
+    with open(os.path.join(source, "topology-overrides.json"), "w") as handle:
+        handle.write('{"mcu": "btt-skr-3"}')
+    run = shaper_archive.save_run(
+        source,
+        kind="config",
+        axis="x",
+        summary={"shaper": "mzv", "freq": 57.0},
+        config_text="[input_shaper]" + chr(10) + "shaper_type_x = mzv" + chr(10),
+    )
+
+    blob = backup_service.export_backup(source)
+    restored = str(tmp_path / "dst")
+    summary = backup_service.import_backup(restored, blob)
+
+    assert sorted(summary["restored_data"]) == ["motor-mapping.json", "topology-overrides.json"]
+    assert summary["restored_runs"] == 1
+    with open(os.path.join(restored, "motor-mapping.json")) as handle:
+        assert "ldo-42sth48" in handle.read()
+    runs = shaper_archive.read_index(restored)
+    assert [r["id"] for r in runs] == [run["id"]]
+    assert shaper_archive.run_file_path(restored, run["id"], "input_shaper.cfg")
+
+
+def test_import_skips_traversing_and_corrupt_entries(tmp_path: Path) -> None:
+    """Unsafe run ids / filenames and corrupt data files never reach the filesystem."""
+    import json
+    import zipfile
+
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as archive:
+        archive.writestr("filamind_backup.json", json.dumps({"format": 2}))
+        archive.writestr("data/flashed.json", "{not json")
+        archive.writestr(
+            "input-shaper-archive/index.json",
+            json.dumps([{"id": "../escape", "files": ["x.cfg"]}]),
+        )
+        archive.writestr("input-shaper-archive/../escape/x.cfg", "boom")
+
+    target = str(tmp_path / "dst")
+    summary = backup_service.import_backup(target, buffer.getvalue())
+    assert summary["restored_data"] == []
+    assert summary["restored_runs"] == 0
+    assert not os.path.exists(os.path.join(target, "flashed.json"))
+    assert not os.path.exists(str(tmp_path / "escape"))
 
 
 def test_import_rejects_non_backup(tmp_path: Path) -> None:
