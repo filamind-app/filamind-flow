@@ -64,7 +64,9 @@
       "endFlow": "End flow (mm³/s)",
       "stepFlow": "Step (mm³/s)",
       "samples": "Samples / step",
-      "extrudePerStep": "Extrude / step (mm)"
+      "extrudePerStep": "Extrude / step (mm)",
+      "driver": "Extruder driver",
+      "driverDetected": "detected from the printer"
     },
     "plan": {
       "button": "Preview plan",
@@ -116,7 +118,8 @@
       "recommendTitle": "Suggested slicer values (max volumetric speed)",
       "conservative": "Conservative (80%)",
       "balanced": "Balanced (90%)",
-      "units": "mm³/s"
+      "units": "mm³/s",
+      "fromBefore": "Measured earlier ({at}) — run again for fresh numbers."
     },
     "states": {
       "loadingHotends": "Loading hotends…"

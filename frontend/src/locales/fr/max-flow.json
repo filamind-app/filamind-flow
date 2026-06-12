@@ -64,7 +64,9 @@
       "endFlow": "Débit de fin (mm³/s)",
       "stepFlow": "Pas (mm³/s)",
       "samples": "Échantillons / palier",
-      "extrudePerStep": "Extrusion / palier (mm)"
+      "extrudePerStep": "Extrusion / palier (mm)",
+      "driver": "Driver de l’extrudeur",
+      "driverDetected": "détecté depuis l’imprimante"
     },
     "plan": {
       "button": "Prévisualiser le plan",
@@ -116,7 +118,8 @@
       "recommendTitle": "Valeurs de slicer suggérées (max volumetric speed)",
       "conservative": "Prudent (80 %)",
       "balanced": "Équilibré (90 %)",
-      "units": "mm³/s"
+      "units": "mm³/s",
+      "fromBefore": "Mesuré plus tôt ({at}) — relancez pour des chiffres frais."
     },
     "states": {
       "loadingHotends": "Chargement des hotends…"

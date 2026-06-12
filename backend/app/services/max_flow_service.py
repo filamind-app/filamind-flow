@@ -20,6 +20,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+import httpx
+
 from app.services import max_flow, printer_guard, reference_data, task_store
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
@@ -275,6 +277,26 @@ async def _preflight(client: MoonrakerClient, driver: str) -> None:
             f"StallGuard2 ({field}) only reads in SpreadCycle — remove/zero the "
             f"stealthchop_threshold on [{d} extruder] before running max-flow."
         )
+
+
+async def detect_extruder_driver(client: MoonrakerClient) -> str | None:
+    """The extruder's TMC model from the live config (``[tmcXXXX extruder]``), or None.
+
+    Lets the UI preselect the right driver instead of assuming TMC2209 — a 2240/5160 extruder
+    would otherwise hit a preflight refusal the user can't fix from the widget.
+    """
+    try:
+        cf = await client.query_objects(["configfile"])
+    except httpx.HTTPError:
+        return None
+    cfobj = cf.get("configfile")
+    settings = cfobj.get("settings") if isinstance(cfobj, dict) else None
+    settings = settings if isinstance(settings, dict) else {}
+    for key in settings:
+        k = str(key)
+        if k.startswith("tmc") and k.split(" ", 1)[-1] == _EXTRUDER:
+            return k.split(" ", 1)[0].lower()
+    return None
 
 
 async def run_max_flow(
