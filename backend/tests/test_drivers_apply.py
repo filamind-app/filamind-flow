@@ -90,6 +90,57 @@ async def test_apply_rejects_unsafe_input(monkeypatch: pytest.MonkeyPatch) -> No
     assert fake.scripts == []
 
 
+async def test_apply_refuses_run_current_over_driver_cap(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # A TMC2209's full-scale ceiling is ~2.0 A — requesting 2.5 A must be refused with the
+    # coded i18n error and nothing written. The cap the UI displays is now enforced.
+    fake = _FakeClient(config={"tmc2209 stepper_x": {"run_current": 0.8}})
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.apply_live("http://x", "stepper_x", 2.5, None, {})
+    assert res["ok"] is False
+    assert res["code"] == "overCurrentCap"
+    assert res["params"]["cap"] == 2.0 and res["params"]["requested"] == 2.5
+    assert fake.scripts == []
+
+
+async def test_apply_refuses_run_current_over_mapped_motor_rating(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    # The mapped motor's datasheet rating binds when it is lower than the driver cap.
+    from app.services import motor_mapping, reference_data
+
+    spec = next(
+        m
+        for m in reference_data.motor_specs()
+        if isinstance(m.get("max_current_A"), (int, float)) and 0 < m["max_current_A"] < 1.9
+    )
+    motor_mapping.assign(str(tmp_path), "stepper_x", spec["model"])
+    fake = _FakeClient(config={"tmc5160 stepper_x": {"run_current": 0.8}})  # 5160 cap ~10.6 A
+    _patch(monkeypatch, fake)
+    over = float(spec["max_current_A"]) + 0.5
+    res = await drivers_apply.apply_live(
+        "http://x", "stepper_x", over, None, {}, data_dir=str(tmp_path)
+    )
+    assert res["ok"] is False and res["code"] == "overCurrentCap"
+    assert res["params"]["cap"] == round(float(spec["max_current_A"]), 2)
+    assert fake.scripts == []
+    # Under the rating it goes through.
+    under = max(0.1, float(spec["max_current_A"]) - 0.2)
+    res2 = await drivers_apply.apply_live(
+        "http://x", "stepper_x", round(under, 2), None, {}, data_dir=str(tmp_path)
+    )
+    assert res2["ok"] is True
+
+
+async def test_apply_allows_when_no_cap_is_known(monkeypatch: pytest.MonkeyPatch) -> None:
+    # No tmc section for the stepper and no mapped motor → no cap is fabricated; apply proceeds.
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.apply_live("http://x", "stepper_q", 3.0, None, {})
+    assert res["ok"] is True
+
+
 async def test_revert_restores_config_current(monkeypatch: pytest.MonkeyPatch) -> None:
     # INIT_TMC alone doesn't restore run_current (#93), so revert must SET_TMC_CURRENT
     # back to the configured value.

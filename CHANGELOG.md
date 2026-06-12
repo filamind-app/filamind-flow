@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.197.0] - 2026-06-12
+
+### Fixed
+
+- **Motor Drivers — the run-current ceiling is now enforced on the live write path.** Applying a
+  tuning used to trust the requested `run_current` blindly: the ceiling shown in the UI (the
+  driver's full-scale limit, and the rated current of the motor assigned to that stepper) was
+  display-only, so an over-rated current — one that can overheat a motor or its wiring — could be
+  written straight to the driver. `POST /api/drivers/apply` now resolves the binding ceiling at
+  write time (driver model and a TMC2240's `rref` from the live config, the motor rating from the
+  assigned-motor mapping) and refuses anything above it with a clear, localised error naming the
+  requested value and the cap. Honest about gaps: when neither a driver ceiling nor a motor rating
+  is known, nothing is fabricated and the apply proceeds as before. Localised in all 7 languages.
+
 ## [0.196.0] - 2026-06-12
 
 ### Added
