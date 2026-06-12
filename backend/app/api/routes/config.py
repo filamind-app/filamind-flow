@@ -28,6 +28,11 @@ class ConfigSaveRequest(BaseModel):
 
     filename: str = Field(..., description="Config path within the config root")
     content: str = Field(..., description="The full new file content")
+    expected_sha256: str | None = Field(
+        default=None,
+        description="Fingerprint of the content the editor loaded; the save is refused (412) "
+        "when the on-disk file no longer matches, so a parallel change isn't clobbered",
+    )
 
 
 class AdoptParamRequest(BaseModel):
@@ -167,16 +172,25 @@ async def config_pin_doctor(settings: Settings = Depends(get_settings)) -> dict[
 async def config_save(
     body: ConfigSaveRequest, settings: Settings = Depends(get_settings)
 ) -> dict[str, Any]:
-    """Back up then overwrite one config file. Refused while the printer is busy (409).
+    """Back up then overwrite one config file. Refused while the printer is busy (409) and when
+    the file changed on disk since it was loaded (412 — reload instead of clobbering).
 
     Does not restart — call ``/config/restart`` to apply.
     """
     try:
-        return await config_service.save_config_file(_client(settings), body.filename, body.content)
+        return await config_service.save_config_file(
+            _client(settings),
+            body.filename,
+            body.content,
+            body.expected_sha256,
+            keep_n=settings.config_backup_keep_n,
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except config_service.ConfigBusyError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except config_service.ConfigConflictError as exc:
+        raise HTTPException(status_code=412, detail=str(exc)) from exc
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
 

@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     # <data_dir>/input-shaper-archive/ (older runs are pruned). Keeps the SD card light.
     shaper_archive_keep_n: int = 20
 
+    # Config Editor: how many pre-save snapshots to keep PER FILE under filamind-backups/
+    # in the config root (older ones are pruned on each save). Keeps the SD card light.
+    config_backup_keep_n: int = 20
+
     # Comma-separated dirs to scan for the resonance CSVs Klipper writes.
     # TEST_RESONANCES/SHAPER_CALIBRATE default to /tmp, but many setups also keep
     # captures under printer_data/config. Override with FILAMIND_RESONANCE_DIRS

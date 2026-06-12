@@ -11,6 +11,7 @@ Also the gated write path: ``save_config_file`` backs up then overwrites a file,
 from __future__ import annotations
 
 import datetime
+import hashlib
 import posixpath
 import re
 from typing import Any
@@ -41,6 +42,11 @@ class ConfigBusyError(RuntimeError):
     """Raised when a write/restart is refused because the printer is busy."""
 
 
+class ConfigConflictError(RuntimeError):
+    """Raised when a save is refused because the file changed on disk since it was loaded
+    (e.g. a ``SAVE_CONFIG`` landed, or another UI edited it) — saving would clobber that."""
+
+
 def _param_view(param: ConfigParam) -> dict[str, Any]:
     return {
         "key": param.key,
@@ -65,12 +71,21 @@ def _section_view(section: ConfigSection) -> dict[str, Any]:
     }
 
 
+def _sha256(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def build_file_view(filename: str, raw: str) -> dict[str, Any]:
-    """Parse ``raw`` config text into the structured editor view (pure, no I/O)."""
+    """Parse ``raw`` config text into the structured editor view (pure, no I/O).
+
+    ``sha256`` fingerprints the loaded content — the client echoes it back on save so a file
+    that changed on disk in the meantime is detected instead of silently clobbered.
+    """
     cfg: ConfigFile = klipper_config.parse(raw)
     return {
         "filename": filename,
         "raw": raw,
+        "sha256": _sha256(raw),
         "sections": [_section_view(s) for s in cfg.sections],
         "section_count": sum(
             1 for s in cfg.sections if s.header != klipper_config.SAVE_CONFIG_MARKER
@@ -662,16 +677,53 @@ async def read_backup(client: MoonrakerClient, path: str) -> str:
     return await client.get_file_text(path, root="config")
 
 
-async def save_config_file(client: MoonrakerClient, filename: str, content: str) -> dict[str, Any]:
+async def _prune_backups(client: MoonrakerClient, flat: str, keep_n: int) -> None:
+    """Keep only the newest ``keep_n`` snapshots of one source file under ``filamind-backups/``.
+
+    Best-effort housekeeping: a listing or per-file delete failure never fails the save that
+    triggered it (the new backup is already written).
+    """
+    if keep_n <= 0:
+        return
+    try:
+        entries = await client.list_files("config")
+    except httpx.HTTPError:
+        return
+    mine: list[tuple[str, str]] = []  # (stamp, path)
+    for entry in entries:
+        path = str(entry.get("path", ""))
+        parsed = _parse_backup_name(path)
+        if parsed is not None and parsed[0] == flat:
+            mine.append((parsed[1], path))
+    mine.sort(reverse=True)  # newest stamp first
+    for _, path in mine[keep_n:]:
+        try:
+            await client.delete_file(path, root="config")
+        except httpx.HTTPError:
+            continue
+
+
+async def save_config_file(
+    client: MoonrakerClient,
+    filename: str,
+    content: str,
+    expected_sha256: str | None = None,
+    *,
+    keep_n: int = 20,
+) -> dict[str, Any]:
     """Back up the current file, then overwrite it with ``content``. Read-after-parse only —
     never auto-restarts (that's a separate, explicit action).
 
-    Refuses while the printer is busy (printing / paused / error). The existing file (if any)
-    is copied to ``filamind-backups/`` first, so a bad edit is always recoverable.
+    Refuses while the printer is busy (printing / paused / error). With ``expected_sha256``
+    (the fingerprint of the content the editor loaded), refuses when the file changed on disk
+    in the meantime — a landed ``SAVE_CONFIG`` or a parallel edit would otherwise be silently
+    clobbered. The existing file (if any) is copied to ``filamind-backups/`` first, and that
+    file's snapshots are pruned to the newest ``keep_n``.
 
     Raises:
         ValueError: if ``filename`` is not a safe in-root path.
         ConfigBusyError: if the printer is busy.
+        ConfigConflictError: if the on-disk content no longer matches ``expected_sha256``.
         httpx.HTTPError: if Moonraker is unreachable or rejects the write.
     """
     _reject_unsafe(filename)
@@ -686,9 +738,15 @@ async def save_config_file(client: MoonrakerClient, filename: str, content: str)
         if exc.response.status_code != 404:
             raise
         current = None
+    if expected_sha256 and current is not None and _sha256(current) != expected_sha256:
+        raise ConfigConflictError(
+            f"{filename} changed on disk since it was loaded — saving would overwrite that "
+            "change. Reload the file (the backup timeline shows what differs)."
+        )
     if current is not None:
         backup = _backup_path(filename, datetime.datetime.now())
         await client.upload_file(backup, current, root="config")
+        await _prune_backups(client, filename.replace("/", "_"), keep_n)
 
     await client.upload_file(filename, content, root="config")
 
@@ -697,6 +755,7 @@ async def save_config_file(client: MoonrakerClient, filename: str, content: str)
         "ok": True,
         "filename": filename,
         "backup": backup,
+        "sha256": view["sha256"],
         "issues": view["issues"],
         "section_count": view["section_count"],
     }

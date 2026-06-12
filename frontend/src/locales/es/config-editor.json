@@ -103,7 +103,9 @@
       "cancel": "Cancelar",
       "done": "Guardado. Copia de seguridad: {backup}",
       "busy": "Rechazado: la impresora está ocupada (imprimiendo o en pausa). Inténtalo de nuevo cuando esté inactiva.",
-      "error": "Error al guardar."
+      "error": "Error al guardar.",
+      "stale": "El archivo cambió en disco desde que se cargó (quizá un SAVE_CONFIG u otra app). Guardar ahora sobrescribiría ese cambio — recarga para revisar (la línea de copias muestra la diferencia).",
+      "staleReload": "Recargar el archivo"
     },
     "restart": {
       "prompt": "¿Reiniciar el firmware para aplicar tu cambio?",
