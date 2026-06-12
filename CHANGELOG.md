@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.227.0] - 2026-06-13
+
+### Fixed
+
+- **Shared driver buses no longer flagged as pin conflicts.** Boards that put several stepper
+  drivers on one software-SPI bus (TMC5160/2130 stacks) or one single-wire UART line shared
+  the same `spi_software_*` / `uart_pin` pins across sections — valid Klipper wiring that
+  Machine Doctor and the Pin Atlas were wrongly reporting as double-assignments, dragging the
+  health grade to F on those printers. A pin is now a conflict only when an *exclusive* pin
+  (step, heater, CS, …) collides; an all-shared bus is recognized as legitimate. (UART-per-
+  driver boards never hit this; SPI-driver and shared-UART boards did.)
+
 ## [0.226.2] - 2026-06-12
 
 ### Fixed
