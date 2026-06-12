@@ -117,6 +117,21 @@ def method_for(connection: str, is_avr: bool) -> str:
     return {"usb": "serial", "can": "can", "dfu": "dfu", "linux": "linux"}.get(connection, "serial")
 
 
+def _saved_baudrate(settings: Settings, device: str) -> int:
+    """The baudrate stored on the saved device matching this serial path (default 250000).
+
+    The Devices panel lets users edit a baudrate per board; serial flashes must actually use it
+    (a 115200 board flashed at the 250000 default just times out).
+    """
+    for saved in devices_store.read_devices(settings.data_dir):
+        if saved.get("device") == device:
+            raw = saved.get("baudrate")
+            if isinstance(raw, int) and raw > 0:
+                return raw
+            break
+    return 250000
+
+
 def _build_command(
     method: str, settings: Settings, device: str, firmware: str, interface: str, offset: str
 ) -> list[str]:
@@ -128,7 +143,9 @@ def _build_command(
         return make_flash_command(device)
     if method == "linux":
         return ["sudo", "-n", "cp", firmware, "/usr/local/bin/klipper_mcu"]
-    return serial_command(settings.katapult_dir, device, firmware)
+    return serial_command(
+        settings.katapult_dir, device, firmware, _saved_baudrate(settings, device)
+    )
 
 
 async def _is_printing(moonraker_url: str) -> bool:

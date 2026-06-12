@@ -284,7 +284,12 @@
       "uploadFailed": "La subida falló",
       "saveFailed": "El guardado falló",
       "deleteFailed": "La eliminación falló",
-      "flashFailed": "el grabado falló"
+      "flashFailed": "el grabado falló",
+      "confirmTitle": "¿Flashear este archivo externo?",
+      "confirmWarning": "Es un binario externo: un archivo equivocado puede dejar el MCU sin arrancar hasta recuperarlo por Katapult/DFU. Verifica que el archivo corresponde a la placa.",
+      "confirmAck": "Verifiqué que este archivo corresponde a la placa destino",
+      "confirmFlash": "Flashear",
+      "confirmCancel": "Cancelar"
     }
   }
 }

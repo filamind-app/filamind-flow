@@ -284,7 +284,12 @@
       "uploadFailed": "Upload fehlgeschlagen",
       "saveFailed": "Speichern fehlgeschlagen",
       "deleteFailed": "Löschen fehlgeschlagen",
-      "flashFailed": "Flash fehlgeschlagen"
+      "flashFailed": "Flash fehlgeschlagen",
+      "confirmTitle": "Diese externe Datei flashen?",
+      "confirmWarning": "Dies ist eine fremde Binärdatei: eine falsche Datei kann den MCU unbootbar machen, bis er über Katapult/DFU wiederhergestellt wird. Prüfe, ob die Datei zur Platine passt.",
+      "confirmAck": "Ich habe geprüft, dass die Datei zur Zielplatine passt",
+      "confirmFlash": "Flashen",
+      "confirmCancel": "Abbrechen"
     }
   }
 }

@@ -284,7 +284,12 @@
       "uploadFailed": "فشل الرفع",
       "saveFailed": "فشل الحفظ",
       "deleteFailed": "فشل الحذف",
-      "flashFailed": "فشل الرفع"
+      "flashFailed": "فشل الرفع",
+      "confirmTitle": "فلاش هذا الملف الخارجي؟",
+      "confirmWarning": "هذا ملف ثنائي خارجي: ملف خاطئ لهذه اللوحة قد يترك المتحكم غير قابل للإقلاع حتى يُستعاد عبر Katapult/DFU. تحقق من مطابقة الملف للوحة.",
+      "confirmAck": "تحققت من مطابقة هذا الملف للوحة الهدف",
+      "confirmFlash": "نفّذ الفلاش",
+      "confirmCancel": "إلغاء"
     }
   }
 }

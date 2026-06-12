@@ -284,7 +284,12 @@
       "uploadFailed": "Upload failed",
       "saveFailed": "Save failed",
       "deleteFailed": "Delete failed",
-      "flashFailed": "flash failed"
+      "flashFailed": "flash failed",
+      "confirmTitle": "Flash this external file?",
+      "confirmWarning": "This is a foreign binary: a wrong file for this board can leave the MCU unbootable until recovered over Katapult/DFU. Verify the file matches the board.",
+      "confirmAck": "I verified this file matches the target board",
+      "confirmFlash": "Flash it",
+      "confirmCancel": "Cancel"
     }
   }
 }

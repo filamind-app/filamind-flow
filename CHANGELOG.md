@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.209.0] - 2026-06-12
+
+### Fixed
+
+- **Firmware flash-path hardening.** Four gaps closed: flashing an **external firmware file** —
+  the riskiest flash there is — now goes through a review-and-acknowledge gate (file → target →
+  explicit confirmation) instead of a single click; the **batch confirmation dialog lists exactly
+  the devices the run will touch** (devices marked *excluded from batch* no longer appear in the
+  preview the user approves); a **batch run survives a page reload** — reopening the widget
+  reattaches to the running task and its live log; and a **serial flash now uses the board's saved
+  baudrate** (an edited baudrate was stored but silently ignored — a 115200 board was always
+  flashed at the 250000 default). Localised in all 7 languages.
+
 ## [0.208.0] - 2026-06-12
 
 ### Fixed

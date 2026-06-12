@@ -177,12 +177,19 @@ async function pollTask(): Promise<void> {
       pollTimer = setTimeout(pollTask, 1200)
     } else {
       opBusy.value = false
+      try {
+        localStorage.removeItem('filamind-fw-batch-task')
+      } catch {
+        /* ignore */
+      }
       await load(true)
     }
   } catch {
     opBusy.value = false
   }
 }
+
+const BATCH_TASK_KEY = 'filamind-fw-batch-task'
 
 async function runBatch(action: string): Promise<void> {
   if (opBusy.value) return
@@ -192,10 +199,43 @@ async function runBatch(action: string): Promise<void> {
   opBusy.value = true
   try {
     batchTaskId.value = await startBatch(action)
+    try {
+      localStorage.setItem(BATCH_TASK_KEY, batchTaskId.value)
+    } catch {
+      /* best-effort */
+    }
     await pollTask()
   } catch (e) {
     error.value = e instanceof Error ? e.message : t('firmware.widget.errBatch')
     opBusy.value = false
+  }
+}
+
+/** After a reload: reattach to a batch run that is still going (its log resumes live). */
+async function reattachBatch(): Promise<void> {
+  let stored: string | null = null
+  try {
+    stored = localStorage.getItem(BATCH_TASK_KEY)
+  } catch {
+    return
+  }
+  if (!stored) return
+  try {
+    const task = await fetchTask(stored)
+    if (task.status === 'running') {
+      batchTaskId.value = stored
+      opLog.value = task.log
+      opBusy.value = true
+      await pollTask()
+      return
+    }
+  } catch {
+    /* unknown/expired task — fall through to clear */
+  }
+  try {
+    localStorage.removeItem(BATCH_TASK_KEY)
+  } catch {
+    /* ignore */
   }
 }
 
@@ -355,7 +395,9 @@ function requestBuildFlash(device: Device): void {
 function requestBatch(action: string): void {
   if (opBusy.value) return
   const label = BATCH_ACTIONS.value.find((b) => b.action === action)?.label ?? action
+  // The preview must match what the backend will actually touch: excluded devices are skipped.
   const affected = operationalDevices.value
+    .filter((d) => !d.exclude_from_batch)
     .filter((d) => action !== 'flash-ready' || liveMode.value[d.id] === 'ready')
     .map((d) => d.name)
   pendingFlash.value = {
@@ -429,6 +471,7 @@ async function doService(action: string): Promise<void> {
 let timer: ReturnType<typeof setInterval> | null = null
 
 onMounted(() => {
+  void reattachBatch()
   // First-run: if no board is set up yet, land on the Guided walkthrough (#118).
   void load().then(() => {
     if (operationalDevices.value.length === 0) mode.value = 'guided'
