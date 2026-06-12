@@ -1,0 +1,66 @@
+{
+  "machineDoctor": {
+    "intro": "Un escaneo de solo lectura de todo lo comprobable — conflictos de pines, valores de drivers, deriva de config, lint del proyecto, sync de firmware, cambios de hardware y salud de la instalación — calificado A-F. Cada hallazgo enlaza al widget que lo arregla.",
+    "scanning": "Escaneando…",
+    "rescan": "Escanear de nuevo",
+    "scoreLine": "Puntuación {score} / 100",
+    "counts": "{errors} error(es) · {warnings} aviso(s)",
+    "scoreHint": "Puntuación transparente: 100 − 25 por error − 8 por aviso. Lo no comprobable nunca cuenta en contra.",
+    "allClear": "Todo en orden.",
+    "notChecked": "No se pudo comprobar (impresora inaccesible o sin línea base).",
+    "category": {
+      "pins": "Cableado de pines",
+      "drivers": "Valores de drivers",
+      "drift": "Deriva de config",
+      "project": "Proyecto de config",
+      "firmware": "Sync de firmware",
+      "hardware": "Cambios de hardware",
+      "install": "Salud de instalación"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Avisos",
+      "fail": "Problemas",
+      "unknown": "Sin comprobar"
+    },
+    "link": {
+      "config_section": "Editor de config",
+      "config_file": "Editor de config",
+      "stepper": "Motor Drivers",
+      "topology_node": "Mapa de máquina",
+      "widget": "Abrir"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "El pin {pin} de {mcu} está asignado en más de una sección.",
+        "caveat": "El pin {pin} de {mcu} lleva una advertencia electrónica."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A supera el techo del driver ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A está dentro del 10% del techo ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A supera la clasificación de {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A está dentro del 10% de la clasificación de {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} no es potencia de dos."
+      },
+      "drift": {
+        "pending": "Klipper tiene cambios SAVE_CONFIG pendientes sin guardar.",
+        "param": "[{section}] {key}: disco {disk} ≠ vivo {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: el include \"{message}\" no apunta a ningún archivo.",
+        "orphan_driver": "{file}: la sección de driver \"{message}\" no tiene stepper."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: el firmware {mcu_version} difiere del host {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: hardware cambiado ({kind}).",
+        "no_baseline": "Sin línea base de hardware — guarda una instantánea en el Mapa de máquina."
+      },
+      "install": {
+        "check_failed": "Falló la comprobación de instalación: {name} — {detail}."
+      }
+    }
+  }
+}

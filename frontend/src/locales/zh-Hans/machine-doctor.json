@@ -1,0 +1,66 @@
+{
+  "machineDoctor": {
+    "intro": "一次只读扫描覆盖所有可检查项 — 引脚冲突、驱动数值、配置漂移、项目检查、固件同步、硬件变更、安装健康 — 以 A-F 评级。每条结果都链接到能修复它的组件。",
+    "scanning": "扫描中…",
+    "rescan": "重新扫描",
+    "scoreLine": "得分 {score} / 100",
+    "counts": "{errors} 个错误 · {warnings} 个警告",
+    "scoreHint": "透明计分：100 − 每错误 25 − 每警告 8。无法检查的项不计入扣分。",
+    "allClear": "一切正常。",
+    "notChecked": "无法检查（打印机不可达或无基线）。",
+    "category": {
+      "pins": "引脚接线",
+      "drivers": "驱动数值",
+      "drift": "配置漂移",
+      "project": "配置项目",
+      "firmware": "固件同步",
+      "hardware": "硬件变更",
+      "install": "安装健康"
+    },
+    "status": {
+      "ok": "正常",
+      "warn": "警告",
+      "fail": "问题",
+      "unknown": "未检查"
+    },
+    "link": {
+      "config_section": "配置编辑器",
+      "config_file": "配置编辑器",
+      "stepper": "电机驱动",
+      "topology_node": "机器图谱",
+      "widget": "打开"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "{mcu} 上的引脚 {pin} 在多个配置段中被分配。",
+        "caveat": "{mcu} 上的引脚 {pin} 带有电子注意事项。"
+      },
+      "drivers": {
+        "over_driver_cap": "{section}：run_current {run_current} A 超过驱动上限约 {cap} A。",
+        "near_driver_cap": "{section}：run_current {run_current} A 处于上限约 {cap} A 的 10% 以内。",
+        "over_motor_rating": "{section}：run_current {run_current} A 超过 {motor} 额定（{max_current} A）。",
+        "near_motor_rating": "{section}：run_current {run_current} A 处于 {motor} 额定（{max_current} A）的 10% 以内。",
+        "odd_microsteps": "{section}：microsteps {microsteps} 不是 2 的幂。"
+      },
+      "drift": {
+        "pending": "Klipper 有未保存的 SAVE_CONFIG 更改。",
+        "param": "[{section}] {key}：磁盘 {disk} ≠ 运行 {live}。",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}：包含 \"{message}\" 未指向任何文件。",
+        "orphan_driver": "{file}：驱动配置段 \"{message}\" 无匹配步进。"
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}：固件 {mcu_version} 与主机 {host_version} 不同。"
+      },
+      "hardware": {
+        "changed": "{mcu}：硬件已变更（{kind}）。",
+        "no_baseline": "尚未保存硬件基线 — 请在机器图谱中保存快照以检测变更。"
+      },
+      "install": {
+        "check_failed": "安装检查失败：{name} — {detail}。"
+      }
+    }
+  }
+}
