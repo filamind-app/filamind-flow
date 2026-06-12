@@ -38,6 +38,16 @@ export interface ShaperAnalysis {
   source_file: string | null
 }
 
+/** Comparable numbers behind a recorded shaper result — what proof-of-tune diffs. */
+export interface ProofMetrics {
+  shaper?: string | null
+  freq?: number | null
+  /** Estimated remaining vibrations of the recommended shaper (%; lower is better). */
+  vibrations_pct?: number | null
+  smoothing?: number | null
+  max_accel?: number | null
+}
+
 /** A resonance CSV Klipper wrote on the printer host. */
 export interface ResonanceFile {
   name: string

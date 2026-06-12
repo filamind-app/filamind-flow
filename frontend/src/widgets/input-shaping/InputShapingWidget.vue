@@ -11,6 +11,7 @@ import CsvSourceChooser from './CsvSourceChooser.vue'
 import DiagnosticIllo from './DiagnosticIllo.vue'
 import GuidedTune from './GuidedTune.vue'
 import HelpNote from './HelpNote.vue'
+import ProofOfTune from './ProofOfTune.vue'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import ResonanceCompare from './ResonanceCompare.vue'
@@ -223,9 +224,15 @@ async function copyConfig(): Promise<void> {
 async function saveConfig(): Promise<void> {
   if (!configText.value) return
   try {
+    const rec = analysis.value?.shapers.find((s) => s.recommended)
     await saveConfigToArchive(configText.value, analysis.value?.axis ?? null, {
       shaper: analysis.value?.recommended_shaper ?? null,
       freq: analysis.value?.recommended_freq ?? null,
+      // Comparable metrics + grade make the saved run usable as a proof-of-tune side.
+      vibrations_pct: rec?.vibrations_pct ?? null,
+      smoothing: rec?.smoothing ?? null,
+      max_accel: rec?.max_accel ?? null,
+      ...(grade.value ? { grade: grade.value.letter, score: grade.value.score } : {}),
     })
     savedToArchive.value = true
     window.setTimeout(() => (savedToArchive.value = false), 1500)
@@ -342,6 +349,8 @@ async function saveConfig(): Promise<void> {
         </button>
       </div>
       <HelpNote topic="history" />
+      <!-- Before/after tuning report built from the same merged records listed below. -->
+      <ProofOfTune :records="auditView" />
       <p v-if="!auditView.length" class="font-mono text-[11px] opacity-60">
         {{ t('inputShaping.widget.auditEmpty') }}
       </p>

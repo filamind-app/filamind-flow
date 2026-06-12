@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.220.0] - 2026-06-12
+
+### Added
+
+- **Proof of tune.** The Input Shaping Audit tab gains a before/after report: pick any two
+  recorded results on an axis (defaults to oldest vs newest) and see exactly what the tuning
+  changed — measurement grade, remaining vibration %, smoothing, suggested max accel, shaper
+  and frequency — with colour-coded improvements and a copyable plain-text summary for
+  sharing. Saved shaper configs now archive their comparable metrics so both sides of the
+  report survive across browsers; results recorded before this release participate with
+  whatever numbers they already carry.
+
 ## [0.219.0] - 2026-06-12
 
 ### Changed

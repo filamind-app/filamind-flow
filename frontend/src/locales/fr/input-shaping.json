@@ -622,6 +622,25 @@
         "high_noise": "Niveau de bruit élevé ({n} mm/s²)",
         "good": "Qualité de détection : bonne"
       }
+    },
+    "proof": {
+      "title": "Preuve du réglage",
+      "empty": "Nécessite deux résultats enregistrés sur cet axe — mesurez avant le réglage, appliquez le shaper, mesurez à nouveau et enregistrez les deux.",
+      "before": "Avant",
+      "after": "Après",
+      "samePick": "Choisissez deux résultats différents à comparer.",
+      "metricHead": "Mesure",
+      "delta": "Évolution",
+      "copy": "Copier le rapport",
+      "copied": "Copié ✓",
+      "metric": {
+        "score": "Qualité de la mesure",
+        "vibrations": "Vibration restante %",
+        "smoothing": "Lissage",
+        "maxAccel": "Accél. max suggérée (mm/s²)",
+        "freq": "Fréquence du shaper (Hz)",
+        "shaper": "Shaper"
+      }
     }
   }
 }

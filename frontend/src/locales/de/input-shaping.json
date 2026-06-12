@@ -622,6 +622,25 @@
         "high_noise": "Hoher Rauschpegel ({n} mm/s²)",
         "good": "Erkennungsqualität: gut"
       }
+    },
+    "proof": {
+      "title": "Tuning-Nachweis",
+      "empty": "Braucht zwei aufgezeichnete Ergebnisse auf dieser Achse — vor dem Tuning messen, Shaper anwenden, erneut messen und beide speichern.",
+      "before": "Vorher",
+      "after": "Nachher",
+      "samePick": "Zwei verschiedene Ergebnisse zum Vergleich wählen.",
+      "metricHead": "Messgröße",
+      "delta": "Änderung",
+      "copy": "Bericht kopieren",
+      "copied": "Kopiert ✓",
+      "metric": {
+        "score": "Messqualität",
+        "vibrations": "Restvibration %",
+        "smoothing": "Glättung",
+        "maxAccel": "Empf. max. Beschleunigung (mm/s²)",
+        "freq": "Shaper-Frequenz (Hz)",
+        "shaper": "Shaper"
+      }
     }
   }
 }
