@@ -66,6 +66,25 @@
         "title": "Plantillas de configuración",
         "description": "Bloques de configuración y macros de Klipper listos para pegar, por categoría."
       }
+    },
+    "guard": {
+      "printing": "Imprimiendo — escrituras bloqueadas",
+      "running": "{op} en curso — escrituras bloqueadas",
+      "op": {
+        "resonance_test": "Prueba de resonancia",
+        "noise_check": "Comprobación de ruido",
+        "belt_comparison": "Comparación de correas",
+        "axes_map": "Calibración axes_map",
+        "sustain": "Excitación sostenida",
+        "vibrations_profile": "Perfil de vibraciones",
+        "max_flow": "Prueba de flujo máximo",
+        "driver_write": "Escritura al driver",
+        "homing": "Homing",
+        "motors_sync": "Sincronización de motores",
+        "firmware_flash": "Flasheo de firmware",
+        "firmware_batch": "Lote de firmware",
+        "firmware_restart": "Reinicio de firmware"
+      }
     }
   }
 }

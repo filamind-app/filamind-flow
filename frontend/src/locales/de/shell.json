@@ -66,6 +66,25 @@
         "title": "Config Templates",
         "description": "Sofort einfügbare Klipper-Konfigurationsblöcke und Makros, nach Kategorie."
       }
+    },
+    "guard": {
+      "printing": "Druck läuft — Schreiben gesperrt",
+      "running": "{op} läuft — Schreiben gesperrt",
+      "op": {
+        "resonance_test": "Resonanztest",
+        "noise_check": "Rauschprüfung",
+        "belt_comparison": "Riemenvergleich",
+        "axes_map": "Achsen-Map-Kalibrierung",
+        "sustain": "Daueranregung",
+        "vibrations_profile": "Vibrationsprofil",
+        "max_flow": "Max-Flow-Test",
+        "driver_write": "Treiber-Schreibvorgang",
+        "homing": "Referenzfahrt",
+        "motors_sync": "Motor-Sync",
+        "firmware_flash": "Firmware-Flash",
+        "firmware_batch": "Firmware-Batchlauf",
+        "firmware_restart": "Firmware-Neustart"
+      }
     }
   }
 }

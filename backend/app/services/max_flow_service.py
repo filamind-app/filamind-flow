@@ -19,7 +19,7 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
-from app.services import max_flow, reference_data
+from app.services import max_flow, printer_guard, reference_data
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
@@ -182,12 +182,9 @@ def plan(params: RampParams) -> dict[str, Any]:
 
 # ── Live measurement loop (actuating — heat + extrude + sample StallGuard) ──────
 async def _is_busy(client: MoonrakerClient) -> bool:
-    """True while the printer is printing, paused, or in error — block a run then."""
-    status = await client.query_objects(["print_stats"])
-    stats = status.get("print_stats")
-    if not isinstance(stats, dict):
-        return False
-    return str(stats.get("state", "")).lower() in ("printing", "paused", "error")
+    """True while the printer is printing, paused, or in error — block a run then.
+    Delegates to the shared :mod:`printer_guard` busy definition."""
+    return await printer_guard.is_busy(client)
 
 
 def _extract_sg(obj: dict[str, Any]) -> float | None:

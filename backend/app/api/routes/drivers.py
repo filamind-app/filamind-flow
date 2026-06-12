@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
@@ -31,11 +33,32 @@ from app.services import (
     drivers_service,
     field_policy,
     motor_mapping,
+    printer_guard,
     recommender,
     reference_data,
 )
 
 router = APIRouter(prefix="/drivers", tags=["drivers"])
+
+
+async def _guarded(operation: str, call: Any, /, *args: Any, **kwargs: Any) -> dict[str, Any]:
+    """Run an actuating drivers_apply call while holding the printer's exclusive slot.
+
+    A taken slot becomes the widget's soft-error result shape (code ``guardLocked``) rather
+    than an HTTP error, matching how every other apply refusal reaches the UI.
+    """
+    try:
+        async with printer_guard.acquire(operation):
+            result: dict[str, Any] = await call(*args, **kwargs)
+            return result
+    except printer_guard.GuardBusyError as exc:
+        return {
+            "ok": False,
+            "applied": [],
+            "message": str(exc),
+            "code": "guardLocked",
+            "params": {"operation": exc.operation},
+        }
 
 
 @router.get("/status", response_model=DriversStatus)
@@ -142,7 +165,9 @@ async def apply_tuning(
 ) -> ApplyResponse:
     """Write tuning to a driver now via SET_TMC_CURRENT / SET_TMC_FIELD. Refuses while
     printing; reversible with /init. The UI also requires an explicit confirm."""
-    data = await drivers_apply.apply_live(
+    data = await _guarded(
+        "driver_write",
+        drivers_apply.apply_live,
         settings.moonraker_url,
         request.stepper,
         request.run_current,
@@ -158,7 +183,9 @@ async def init_driver(
     request: StepperRequest, settings: Settings = Depends(get_settings)
 ) -> ApplyResponse:
     """INIT_TMC — re-apply the stepper's configured registers (undo a live apply)."""
-    data = await drivers_apply.revert(settings.moonraker_url, request.stepper)
+    data = await _guarded(
+        "driver_write", drivers_apply.revert, settings.moonraker_url, request.stepper
+    )
     return ApplyResponse.model_validate(data)
 
 
@@ -167,7 +194,9 @@ async def autotune(
     request: StepperRequest, settings: Settings = Depends(get_settings)
 ) -> ApplyResponse:
     """Drive AUTOTUNE_TMC if a TMC autotune host extra is installed for this stepper."""
-    data = await drivers_apply.run_autotune(settings.moonraker_url, request.stepper)
+    data = await _guarded(
+        "driver_write", drivers_apply.run_autotune, settings.moonraker_url, request.stepper
+    )
     return ApplyResponse.model_validate(data)
 
 
@@ -176,8 +205,13 @@ async def set_stallguard(
     request: StallguardRequest, settings: Settings = Depends(get_settings)
 ) -> ApplyResponse:
     """Set a StallGuard threshold (sensorless-homing sensitivity). Gated; refused while printing."""
-    data = await drivers_apply.set_stallguard(
-        settings.moonraker_url, request.stepper, request.field, request.value
+    data = await _guarded(
+        "driver_write",
+        drivers_apply.set_stallguard,
+        settings.moonraker_url,
+        request.stepper,
+        request.field,
+        request.value,
     )
     return ApplyResponse.model_validate(data)
 
@@ -196,8 +230,14 @@ async def set_field(
     """Write one editable TMC register field live via SET_TMC_FIELD. Gated (refused while
     printing / paused / error) and clamped server-side by the field_policy allowlist; raw
     current-scaling and protection-defeat fields are blocked. Reversible with /init."""
-    data = await drivers_apply.set_field(
-        settings.moonraker_url, request.stepper, request.field, request.value, model=request.model
+    data = await _guarded(
+        "driver_write",
+        drivers_apply.set_field,
+        settings.moonraker_url,
+        request.stepper,
+        request.field,
+        request.value,
+        model=request.model,
     )
     return ApplyResponse.model_validate(data)
 
@@ -208,8 +248,13 @@ async def coolstep(
 ) -> ApplyResponse:
     """Enable CoolStep with a single vetted register set (semin/semax/seup/sedn/seimin), or
     disable it. Gated + clamped like any register write; reversible with /init."""
-    data = await drivers_apply.set_coolstep(
-        settings.moonraker_url, request.stepper, request.enable, model=request.model
+    data = await _guarded(
+        "driver_write",
+        drivers_apply.set_coolstep,
+        settings.moonraker_url,
+        request.stepper,
+        request.enable,
+        model=request.model,
     )
     return ApplyResponse.model_validate(data)
 
@@ -218,7 +263,7 @@ async def coolstep(
 async def home(request: HomeRequest, settings: Settings = Depends(get_settings)) -> ApplyResponse:
     """Home one axis (G28) as a sensorless test — moves the toolhead. Gated; the UI warns
     about crash risk and requires a confirm."""
-    data = await drivers_apply.home_axis(settings.moonraker_url, request.axis)
+    data = await _guarded("homing", drivers_apply.home_axis, settings.moonraker_url, request.axis)
     return ApplyResponse.model_validate(data)
 
 
@@ -235,5 +280,10 @@ async def motors_sync(
 ) -> ApplyResponse:
     """Run motor synchronization (dual/quad-Z, dual-X) via the motors_sync add-on — moves the
     toolhead. Gated; refused while printing and when the add-on isn't installed."""
-    data = await drivers_apply.run_motors_sync(settings.moonraker_url, calibrate=request.calibrate)
+    data = await _guarded(
+        "motors_sync",
+        drivers_apply.run_motors_sync,
+        settings.moonraker_url,
+        calibrate=request.calibrate,
+    )
     return ApplyResponse.model_validate(data)

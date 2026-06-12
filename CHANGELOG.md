@@ -6,6 +6,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.199.0] - 2026-06-12
+
+### Added
+
+- **A unified printer guard: one machine, one operation at a time.** Every actuating operation —
+  resonance tests, the belt comparison, axes-map calibration, sustained excitation, the vibrations
+  profile, a max-flow run, driver writes, sensorless homing, motor sync, firmware flashes and batch
+  runs, and `FIRMWARE_RESTART` — now holds a single printer-wide exclusive slot. Two browser tabs
+  (or a retried request after a proxy timeout) can no longer interleave G-code on a hot, moving
+  machine: the second caller is refused with the name of the operation already running, as a 409
+  (or the widget's own localised error style). Flash log streams hold the slot for as long as they
+  stream; a batch run holds it for its whole background life.
+- **The shell now knows when writes are locked.** A new `GET /api/guard/status` reports the
+  exclusive slot plus the live print state, and the header polls it (pausing in hidden tabs):
+  a red **Printing — writes locked** badge appears during a print, and a yellow **⚙ <operation>
+  running** badge while any actuating operation owns the machine — so gated actions stop being a
+  surprise refusal. Localised in all 7 languages.
+
+### Changed
+
+- The five per-service "is the printer busy?" checks (config save, driver writes, flashes,
+  resonance tests, max-flow) had drifted apart; they now share one definition — printing, paused,
+  or in an error state — with one documented exception: flashing stays allowed when Moonraker is
+  unreachable, since a dead Moonraker must not block flashing the MCU that might fix it. Resonance
+  tests are now also refused while Klipper is in an error state (previously only printing/paused).
+
 ## [0.198.0] - 2026-06-12
 
 ### Fixed

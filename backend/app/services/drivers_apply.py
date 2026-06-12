@@ -25,7 +25,7 @@ from typing import Any
 
 import httpx
 
-from app.services import field_policy, motor_mapping, reference_data
+from app.services import field_policy, motor_mapping, printer_guard, reference_data
 from app.services.moonraker_client import MoonrakerClient
 
 #: Recommendation keys that map directly to ``SET_TMC_FIELD FIELD=`` names.
@@ -80,11 +80,8 @@ def config_block(
 
 async def _is_busy(client: MoonrakerClient) -> bool:
     """True while the printer is printing, paused, or in an error state — block all register
-    writes and motion then (not just while actively printing). Reads ``print_stats.state``."""
-    status = await client.query_objects(["print_stats"])
-    stats = status.get("print_stats")
-    stats = stats if isinstance(stats, dict) else {}
-    return str(stats.get("state", "")).lower() in ("printing", "paused", "error")
+    writes and motion then. Delegates to the shared :mod:`printer_guard` busy definition."""
+    return await printer_guard.is_busy(client)
 
 
 def _commands(

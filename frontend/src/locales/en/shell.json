@@ -66,6 +66,25 @@
         "title": "Config Templates",
         "description": "Ready-to-paste Klipper config blocks and macros, by category."
       }
+    },
+    "guard": {
+      "printing": "Printing — writes locked",
+      "running": "{op} running — writes locked",
+      "op": {
+        "resonance_test": "Resonance test",
+        "noise_check": "Noise check",
+        "belt_comparison": "Belt comparison",
+        "axes_map": "Axes-map calibration",
+        "sustain": "Sustained excitation",
+        "vibrations_profile": "Vibrations profile",
+        "max_flow": "Max-flow test",
+        "driver_write": "Driver write",
+        "homing": "Homing",
+        "motors_sync": "Motor sync",
+        "firmware_flash": "Firmware flash",
+        "firmware_batch": "Firmware batch run",
+        "firmware_restart": "Firmware restart"
+      }
     }
   }
 }

@@ -321,7 +321,8 @@
       "motorsyncNotInstalled": "未安装 motors_sync 插件 — 它使用加速度计对齐同一轴上多个电机（双/四 Z、双 X）的微步相位。",
       "busySync": "打印机忙碌时（正在打印或已暂停）拒绝同步电机。",
       "syncRan": "已运行 {cmd}。",
-      "overCurrentCap": "已拒绝：{stepper} 上的 {requested} A 超过 {cap} A 上限（驱动满量程限制 / 所分配电机的额定电流）。"
+      "overCurrentCap": "已拒绝：{stepper} 上的 {requested} A 超过 {cap} A 上限（驱动满量程限制 / 所分配电机的额定电流）。",
+      "guardLocked": "已拒绝：另一项操作正在运行（{operation}）。"
     }
   }
 }

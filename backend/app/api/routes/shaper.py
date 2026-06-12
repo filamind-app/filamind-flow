@@ -19,7 +19,7 @@ from app.models.schemas import (
     StaticExcitationResult,
     VibrationsProfile,
 )
-from app.services import resonance_service, shaper_archive, shaper_service
+from app.services import printer_guard, resonance_service, shaper_archive, shaper_service
 
 router = APIRouter(prefix="/shaper", tags=["shaper"])
 
@@ -103,9 +103,16 @@ async def live_resonance_test(
     tester; returns HTTP 400 with a clear message if either check fails.
     """
     try:
-        result = await resonance_service.run_live_test(
-            settings.moonraker_url, settings.resonance_dirs, axis=axis, scv=scv, max_freq=max_freq
-        )
+        async with printer_guard.acquire("resonance_test"):
+            result = await resonance_service.run_live_test(
+                settings.moonraker_url,
+                settings.resonance_dirs,
+                axis=axis,
+                scv=scv,
+                max_freq=max_freq,
+            )
+    except printer_guard.GuardBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return ShaperAnalysis(**result)
@@ -120,7 +127,10 @@ async def measure_axes_noise(settings: Settings = Depends(get_settings)) -> Nois
     if either check fails.
     """
     try:
-        result = await resonance_service.measure_noise(settings.moonraker_url)
+        async with printer_guard.acquire("noise_check"):
+            result = await resonance_service.measure_noise(settings.moonraker_url)
+    except printer_guard.GuardBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return NoiseResult(**result)
@@ -138,9 +148,12 @@ async def compare_belts(
     Print-guarded and requires a configured resonance tester.
     """
     try:
-        result = await resonance_service.compare_belts(
-            settings.moonraker_url, settings.resonance_dirs, scv=scv, max_freq=max_freq
-        )
+        async with printer_guard.acquire("belt_comparison"):
+            result = await resonance_service.compare_belts(
+                settings.moonraker_url, settings.resonance_dirs, scv=scv, max_freq=max_freq
+            )
+    except printer_guard.GuardBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return BeltComparison(
@@ -164,14 +177,17 @@ async def calibrate_axes_map(
     check fails.
     """
     try:
-        result = await resonance_service.calibrate_axes_map(
-            settings.moonraker_url,
-            settings.resonance_dirs,
-            z_height=z_height,
-            speed=speed,
-            accel=accel,
-            travel_speed=travel_speed,
-        )
+        async with printer_guard.acquire("axes_map"):
+            result = await resonance_service.calibrate_axes_map(
+                settings.moonraker_url,
+                settings.resonance_dirs,
+                z_height=z_height,
+                speed=speed,
+                accel=accel,
+                travel_speed=travel_speed,
+            )
+    except printer_guard.GuardBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return AxesMapResult(**result)
@@ -192,14 +208,17 @@ async def excitate_axis(
     requires a configured resonance tester.
     """
     try:
-        result = await resonance_service.run_static_excitation(
-            settings.moonraker_url,
-            settings.resonance_dirs,
-            axis=axis,
-            freq=freq,
-            duration=duration,
-            max_freq=max_freq,
-        )
+        async with printer_guard.acquire("sustain"):
+            result = await resonance_service.run_static_excitation(
+                settings.moonraker_url,
+                settings.resonance_dirs,
+                axis=axis,
+                freq=freq,
+                duration=duration,
+                max_freq=max_freq,
+            )
+    except printer_guard.GuardBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return StaticExcitationResult(**result)
@@ -225,18 +244,21 @@ async def vibrations_profile(
     returns HTTP 400 with a clear message if a check fails.
     """
     try:
-        result = await resonance_service.run_vibrations_profile(
-            settings.moonraker_url,
-            settings.resonance_dirs,
-            size=size,
-            z_height=z_height,
-            max_speed=max_speed,
-            min_speed=min_speed,
-            speed_increment=speed_increment,
-            accel=accel,
-            travel_speed=travel_speed,
-            max_freq=max_freq,
-        )
+        async with printer_guard.acquire("vibrations_profile"):
+            result = await resonance_service.run_vibrations_profile(
+                settings.moonraker_url,
+                settings.resonance_dirs,
+                size=size,
+                z_height=z_height,
+                max_speed=max_speed,
+                min_speed=min_speed,
+                speed_increment=speed_increment,
+                accel=accel,
+                travel_speed=travel_speed,
+                max_freq=max_freq,
+            )
+    except printer_guard.GuardBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return VibrationsProfile(**result)
