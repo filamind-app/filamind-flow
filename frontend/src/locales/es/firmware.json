@@ -311,6 +311,15 @@
       "errorsTitle": "Problemas",
       "showDetails": "Mostrar salida de comandos",
       "batchStep": "Flasheando {device} ({step}/{total})"
+    },
+    "tools": {
+      "optionalTag": "(opcional)",
+      "klipper": "Fuentes de Klipper + sistema de compilación — necesarios para compilar firmware.",
+      "katapult": "Repo del bootloader Katapult — necesario para flasheo serial/CAN con Katapult.",
+      "flashtool": "flashtool.py de Katapult — flashea placas serial y CAN.",
+      "dfu_util": "dfu-util — solo para flasheo DFU (bootloader ROM de STM32).",
+      "avrdude": "avrdude — solo para placas AVR de 8 bits.",
+      "can_utils": "Opcional — solo para diagnóstico CAN manual (candump/cansend). El flasheo CAN NO lo necesita. Instalar: sudo apt install can-utils"
     }
   }
 }
