@@ -6,6 +6,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.224.1] - 2026-06-12
+
+### Fixed
+
+- The device-identification badge now shows the board's proper display name and maker
+  (it previously fell back to the raw board id).
+
 ## [0.224.0] - 2026-06-12
 
 ### Added
