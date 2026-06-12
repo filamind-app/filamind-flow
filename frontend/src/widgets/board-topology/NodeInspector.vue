@@ -29,7 +29,19 @@ const emit = defineEmits<{
   clearOverride: [mcuName: string]
 }>()
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, te } = useI18n({ useScope: 'global' })
+
+// Catalog labels (port categories / spec keys / board classes) are English data values —
+// translate via a slugged key when one exists, otherwise show the raw value (new catalog
+// vocabulary degrades gracefully instead of breaking).
+function catalogLabel(kind: 'portCat' | 'spec' | 'class', raw: string): string {
+  const slug = raw
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+  const key = `boardTopology.board.${kind}.${slug}`
+  return te(key) ? t(key) : raw
+}
 const { go } = useNav()
 
 const detail = ref<BoardDetail | null>(null)
@@ -264,7 +276,7 @@ function onPick(id: string | null): void {
           >
             <span v-if="detail.manufacturer">{{ detail.manufacturer }}</span>
             <span v-if="detail.boardClass" class="rounded bg-paper px-1">{{
-              detail.boardClass
+              catalogLabel('class', detail.boardClass)
             }}</span>
           </div>
           <div v-if="detail.ports?.length" class="font-mono opacity-70">
@@ -275,7 +287,7 @@ function onPick(id: string | null): void {
               :key="cat"
               class="ms-1 inline-block rounded bg-paper px-1"
             >
-              {{ cat }}×{{ n }}
+              {{ catalogLabel('portCat', cat) }}×{{ n }}
             </span>
           </div>
           <dl
@@ -283,8 +295,10 @@ function onPick(id: string | null): void {
             class="grid grid-cols-[auto_1fr] gap-x-2 font-mono"
           >
             <template v-for="(val, key) in detail.specs" :key="key">
-              <dt class="opacity-60">{{ key }}</dt>
-              <dd class="min-w-0 truncate">{{ val }}</dd>
+              <dt class="opacity-60">{{ catalogLabel('spec', key) }}</dt>
+              <!-- dir=auto: catalog values are Latin free-text — keeps "72 MHz" from
+                   bidi-scrambling into "MHz 72" in RTL locales. -->
+              <dd dir="auto" class="min-w-0 truncate">{{ val }}</dd>
             </template>
           </dl>
           <div

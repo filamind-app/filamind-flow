@@ -304,7 +304,7 @@ function vitals(id: string): string {
     <svg
       :viewBox="`0 0 ${layout.w} ${layout.h}`"
       class="h-auto w-full select-none"
-      :style="{ maxHeight: '460px' }"
+      :style="{ maxHeight: '460px', direction: 'ltr' }"
       role="img"
       :aria-label="t('boardTopology.graph.aria', { n: mcus.length })"
     >
