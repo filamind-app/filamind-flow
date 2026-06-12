@@ -127,3 +127,10 @@ async def maxflow_run_start(
     _background.add(background)
     background.add_done_callback(_background.discard)
     return {"task_id": task.id}
+
+
+@router.get("/extruder-driver")
+async def maxflow_extruder_driver(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """The extruder's TMC model detected from the live config (None when unreachable/absent)."""
+    client = MoonrakerClient(settings.moonraker_url)
+    return {"driver": await max_flow_service.detect_extruder_driver(client)}

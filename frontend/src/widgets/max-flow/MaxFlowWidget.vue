@@ -6,7 +6,7 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
-import { ApiError, fetchHotends, planMaxFlow, runMaxFlow } from './api'
+import { ApiError, fetchExtruderDriver, fetchHotends, planMaxFlow, runMaxFlow } from './api'
 import { CANCELLED, cancelMaxFlow, flowRun, reattachMaxFlow } from './supervised'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
@@ -38,6 +38,20 @@ const ack = ref(false)
 const confirmOpen = ref(false)
 const running = ref(false)
 const result = ref<MaxFlowResult | null>(null)
+/** When the shown result came from a previous session (localStorage), its timestamp. */
+const resultFrom = ref<string | null>(null)
+/** The TMC model detected on the extruder (preselects the driver param honestly). */
+const detectedDriver = ref<string | null>(null)
+const DRIVER_OPTIONS = ['tmc2209', 'tmc2208', 'tmc2226', 'tmc2130', 'tmc2240', 'tmc5160', 'tmc2660']
+const LAST_RESULT_KEY = 'filamind-maxflow-last'
+
+function rememberResult(r: MaxFlowResult): void {
+  try {
+    localStorage.setItem(LAST_RESULT_KEY, JSON.stringify({ at: new Date().toISOString(), r }))
+  } catch {
+    /* best-effort */
+  }
+}
 const runErr = ref<string | null>(null)
 
 const hotendOptions = computed(() =>
@@ -97,6 +111,8 @@ async function doRun(): Promise<void> {
   runInfo.value = null
   try {
     result.value = await runMaxFlow({ ...params })
+    resultFrom.value = null
+    rememberResult(result.value)
     confirmOpen.value = false
   } catch (e) {
     confirmOpen.value = false
@@ -115,15 +131,37 @@ onMounted(async () => {
   fetchHotends()
     .then((rows) => (hotends.value = rows))
     .catch(() => {})
+  // Detect the extruder's real TMC model so the driver param starts honest (a 2240/5160
+  // extruder would otherwise hit a preflight refusal the user can't fix from here).
+  fetchExtruderDriver()
+    .then((d) => {
+      detectedDriver.value = d
+      if (d) params.driver = d
+    })
+    .catch(() => {})
   // After a reload: resume a still-running test, or collect the result a dropped tab missed.
   try {
     const resumed = await reattachMaxFlow()
     if (resumed) {
       result.value = resumed
       runInfo.value = t('maxFlow.run.reattached')
+      rememberResult(resumed)
+      return
     }
   } catch (e) {
     if (!(e instanceof Error && e.message === CANCELLED)) runErr.value = describeError(e)
+  }
+  // Nothing live — restore the last session's result so minutes of grinding aren't lost to
+  // a navigation (clearly labeled with when it was measured).
+  try {
+    const stored = localStorage.getItem(LAST_RESULT_KEY)
+    if (stored && !result.value) {
+      const parsed = JSON.parse(stored) as { at: string; r: MaxFlowResult }
+      result.value = parsed.r
+      resultFrom.value = parsed.at
+    }
+  } catch {
+    /* ignore a corrupt entry */
   }
 })
 </script>
@@ -170,6 +208,23 @@ onMounted(async () => {
             type="number"
             class="w-full rounded-brutal border-2 border-ink bg-paper px-1.5 py-1"
           />
+        </label>
+
+        <label class="block">
+          <span class="mb-0.5 block opacity-70">
+            {{ t('maxFlow.params.driver') }}
+            <span v-if="detectedDriver" class="opacity-60">
+              ({{ t('maxFlow.params.driverDetected') }})</span
+            >
+          </span>
+          <select
+            v-model="params.driver"
+            class="w-full rounded-brutal border-2 border-ink bg-surface px-1.5 py-1 font-mono text-[11px]"
+          >
+            <option v-for="d in DRIVER_OPTIONS" :key="d" :value="d">
+              {{ d.toUpperCase() }}{{ d === detectedDriver ? ' ✓' : '' }}
+            </option>
+          </select>
         </label>
         <label class="block">
           <span class="mb-0.5 block opacity-70">{{ t('maxFlow.params.filamentDiameter') }}</span>
@@ -358,6 +413,9 @@ onMounted(async () => {
     <!-- Result -->
     <div v-if="result" class="nb-card space-y-2 bg-brand-lime/20 p-2">
       <p class="text-xs font-bold">{{ t('maxFlow.result.title') }}</p>
+      <p v-if="resultFrom" class="font-mono text-[10px] opacity-60">
+        {{ t('maxFlow.result.fromBefore', { at: resultFrom.slice(0, 16).replace('T', ' ') }) }}
+      </p>
       <p class="font-mono text-sm">
         <b>{{ t('maxFlow.result.maxFlow') }}:</b>
         {{ result.max_flow_mm3s ?? '—' }} {{ t('maxFlow.result.units') }}

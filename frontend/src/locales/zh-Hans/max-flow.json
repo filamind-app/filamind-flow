@@ -64,7 +64,9 @@
       "endFlow": "结束流量（mm³/s）",
       "stepFlow": "步进（mm³/s）",
       "samples": "每步采样数",
-      "extrudePerStep": "每步挤出量（mm）"
+      "extrudePerStep": "每步挤出量（mm）",
+      "driver": "挤出机驱动",
+      "driverDetected": "已从打印机检测"
     },
     "plan": {
       "button": "预览方案",
@@ -116,7 +118,8 @@
       "recommendTitle": "建议的切片软件数值（max volumetric speed）",
       "conservative": "保守（80%）",
       "balanced": "平衡（90%）",
-      "units": "mm³/s"
+      "units": "mm³/s",
+      "fromBefore": "此前测得（{at}）— 重新运行以获取新数据。"
     },
     "states": {
       "loadingHotends": "正在加载热端……"

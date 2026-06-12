@@ -64,7 +64,9 @@
       "endFlow": "Flujo final (mm³/s)",
       "stepFlow": "Paso (mm³/s)",
       "samples": "Muestras / paso",
-      "extrudePerStep": "Extrusión / paso (mm)"
+      "extrudePerStep": "Extrusión / paso (mm)",
+      "driver": "Driver del extrusor",
+      "driverDetected": "detectado de la impresora"
     },
     "plan": {
       "button": "Previsualizar plan",
@@ -116,7 +118,8 @@
       "recommendTitle": "Valores sugeridos para el laminador (max volumetric speed)",
       "conservative": "Conservador (80 %)",
       "balanced": "Equilibrado (90 %)",
-      "units": "mm³/s"
+      "units": "mm³/s",
+      "fromBefore": "Medido antes ({at}) — vuelve a ejecutar para datos frescos."
     },
     "states": {
       "loadingHotends": "Cargando hotends…"

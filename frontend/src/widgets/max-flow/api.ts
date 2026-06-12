@@ -52,6 +52,14 @@ export async function runMaxFlow(params: MaxFlowParams): Promise<MaxFlowResult> 
   return runSupervisedMaxFlow(params)
 }
 
+/** The extruder's TMC model detected from the live config (null when unknown). */
+export async function fetchExtruderDriver(): Promise<string | null> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/maxflow/extruder-driver`)
+  if (!response.ok) return null
+  return ((await response.json()) as { driver: string | null }).driver
+}
+
 /** Start the supervised run; returns the task id (used by supervised.ts). */
 export async function startMaxFlowTask(params: MaxFlowParams): Promise<string> {
   const { backendUrl } = resolveEndpoints()
