@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.202.0] - 2026-06-12
+
+### Added
+
+- **The tuning last mile: Apply to printer.cfg.** A 20-minute resonance wizard used to end in
+  copy-paste; now both tuning widgets can write their result straight into the config, behind the
+  same safety gate as every other config write. **Input Shaping**'s ready `[input_shaper]` block
+  and **Motor Drivers**' recommended driver tune gain an *Apply to printer.cfg…* panel: pick the
+  target file, review the block, acknowledge, apply — then trigger the separately-confirmed
+  firmware restart, all without leaving the widget.
+- Under the hood this is a new **param-level section merge** (`POST /api/config/apply-section`):
+  an existing section is updated parameter-by-parameter — applying a `[tmc2209 stepper_x]` tune
+  never wipes its `uart_pin`, inline comments survive, and unchanged values aren't rewritten
+  (an apply with nothing to change writes nothing — no backup churn). A missing section is
+  inserted before the Klipper-managed `SAVE_CONFIG` tail. Every apply rides the full gate:
+  busy refusal, a changed-on-disk precondition (nothing is clobbered), automatic pre-save backup
+  with retention. Localised in all 7 languages.
+
 ## [0.201.0] - 2026-06-12
 
 ### Added

@@ -24,5 +24,25 @@
       "light": "Clean Neo-Brutalist light",
       "contrast": "Maximum readability (a11y)"
     }
+  },
+  "configApply": {
+    "title": "Apply to printer.cfg…",
+    "hint": "Writes this block into the chosen file through the safety gate: an existing section is merged param-by-param (its other lines stay), a missing one is added. A backup is taken first; refused while printing or if the file changed on disk.",
+    "target": "Target file",
+    "ack": "I reviewed the block and want to write it",
+    "apply": "Apply",
+    "applying": "Applying…",
+    "busy": "The printer is busy (or another operation is running) — try again when it is idle.",
+    "stale": "The file changed on disk while applying — nothing was written. Try again.",
+    "saved": "Saved (backup: {backup}).",
+    "added": "added [{section}]: {params}",
+    "updated": "updated [{section}]: {params}",
+    "noop": "Everything was already at these values — nothing changed.",
+    "restartHint": "Klipper still runs the old values until a firmware restart.",
+    "restart": "Restart firmware…",
+    "restartConfirm": "Confirm restart",
+    "restarting": "Restarting…",
+    "restarted": "Firmware restart sent.",
+    "cancel": "Cancel"
   }
 }

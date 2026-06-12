@@ -151,6 +151,40 @@ export async function fetchPinMap(): Promise<PinMapResult> {
   return (await response.json()) as PinMapResult
 }
 
+/** One section-level change reported by `applySection`. */
+export interface ApplySectionChange {
+  section: string
+  action: 'added' | 'updated' | string
+  params: string[]
+}
+
+export interface ApplySectionResult {
+  ok: boolean
+  filename: string
+  backup: string | null
+  sha256?: string
+  changes: ApplySectionChange[]
+}
+
+/** Merge a config block into a file through the full gated save (param-level merge for existing
+ *  sections, insert before SAVE_CONFIG otherwise). Throws ApiError with 409 (busy) / 412 (stale). */
+export async function applySection(
+  filename: string,
+  block: string,
+  expectedSha256?: string,
+): Promise<ApplySectionResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/apply-section`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename, block, expected_sha256: expectedSha256 ?? null }),
+  })
+  if (!response.ok) {
+    throw await errorFrom(response, `Apply failed (${response.status})`)
+  }
+  return (await response.json()) as ApplySectionResult
+}
+
 /** Set one param to its live value via the round-trip engine; returns the new file text (no write). */
 export async function adoptParam(
   content: string,

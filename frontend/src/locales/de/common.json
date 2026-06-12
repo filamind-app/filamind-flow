@@ -24,5 +24,25 @@
       "light": "Sauberes Neo-Brutalist-Hell",
       "contrast": "Maximale Lesbarkeit (A11y)"
     }
+  },
+  "configApply": {
+    "title": "In printer.cfg übernehmen…",
+    "hint": "Schreibt diesen Block über das Sicherheits-Gate in die gewählte Datei: ein vorhandener Abschnitt wird Param für Param zusammengeführt (seine anderen Zeilen bleiben), ein fehlender wird ergänzt. Zuerst Backup; abgelehnt während des Drucks oder wenn sich die Datei geändert hat.",
+    "target": "Zieldatei",
+    "ack": "Ich habe den Block geprüft und will ihn schreiben",
+    "apply": "Übernehmen",
+    "applying": "Übernehme…",
+    "busy": "Der Drucker ist beschäftigt (oder eine andere Operation läuft) — später erneut versuchen.",
+    "stale": "Die Datei änderte sich währenddessen auf der Festplatte — nichts geschrieben. Erneut versuchen.",
+    "saved": "Gespeichert (Backup: {backup}).",
+    "added": "ergänzt [{section}]: {params}",
+    "updated": "aktualisiert [{section}]: {params}",
+    "noop": "Alle Werte waren bereits so — nichts geändert.",
+    "restartHint": "Klipper läuft bis zum Firmware-Neustart mit den alten Werten.",
+    "restart": "Firmware neu starten…",
+    "restartConfirm": "Neustart bestätigen",
+    "restarting": "Starte neu…",
+    "restarted": "Firmware-Neustart gesendet.",
+    "cancel": "Abbrechen"
   }
 }

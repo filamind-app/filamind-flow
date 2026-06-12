@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useHashTab } from '@/core/nav'
+import ConfigApply from '@/components/ui/ConfigApply.vue'
 import { useI18n } from 'vue-i18n'
 
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
@@ -663,6 +664,16 @@ async function saveConfig(): Promise<void> {
       >
         <template #cfg><code>printer.cfg</code></template>
       </i18n-t>
+
+      <!-- The last mile: write the block straight into the config, behind the shared gate. -->
+      <details class="nb-card bg-surface p-2">
+        <summary class="cursor-pointer text-xs font-bold">
+          {{ t('configApply.title') }}
+        </summary>
+        <div class="mt-2">
+          <ConfigApply :block="configText" />
+        </div>
+      </details>
       <HelpNote topic="config" />
     </div>
   </div>
