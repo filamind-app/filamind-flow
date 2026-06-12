@@ -362,8 +362,13 @@ async def run_static_excitation(
         raise shaper_service.ShaperAnalysisError("Capture landed outside the allowed dirs")
     with open(target, "rb") as handle:
         raw = handle.read(128_000_000)
-    result = spectrogram_service.compute_spectrogram(
-        raw, freq=freq, duration=duration, axis=ax, max_freq=max_freq
+    result = await asyncio.to_thread(
+        spectrogram_service.compute_spectrogram,
+        raw,
+        freq=freq,
+        duration=duration,
+        axis=ax,
+        max_freq=max_freq,
     )
     result["source_file"] = os.path.basename(target)
     with contextlib.suppress(OSError):  # transient capture
@@ -537,8 +542,12 @@ async def run_vibrations_profile(
             with contextlib.suppress(Exception):
                 await client.run_gcode(f"SET_VELOCITY_LIMIT ACCEL={int(old_accel)}{scv}")
 
-    result = vibrations_service.analyze_vibrations(
-        segments, kinematics=kinematics, accel=accel, max_freq=max_freq
+    result = await asyncio.to_thread(
+        vibrations_service.analyze_vibrations,
+        segments,
+        kinematics=kinematics,
+        accel=accel,
+        max_freq=max_freq,
     )
     result["segments_captured"] = len(segments)
     return result

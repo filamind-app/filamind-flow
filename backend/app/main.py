@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,10 +29,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
     configure_logging(settings.log_level)
 
+    @asynccontextmanager
+    async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:  # pragma: no cover - plumbing
+        yield
+        # Shutdown: close the pooled keep-alive connection to Moonraker.
+        from app.services.moonraker_client import close_shared_client
+
+        await close_shared_client()
+
     app = FastAPI(
         title="FilaMind Flow",
         version=__version__,
         summary="Extensible Neo-Brutalist control panel for Klipper / Moonraker.",
+        lifespan=_lifespan,
     )
 
     app.add_middleware(

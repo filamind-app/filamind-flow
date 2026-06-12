@@ -5,6 +5,26 @@ from urllib.parse import quote
 
 import httpx
 
+#: One pooled, keep-alive connection to Moonraker for the whole process. Opening a fresh TCP
+#: connection per request was the biggest avoidable cost on a Pi-class host (the project graph
+#: alone makes dozens of calls). Per-request timeouts still apply (passed on each call).
+_shared: httpx.AsyncClient | None = None
+
+
+def _pool() -> httpx.AsyncClient:
+    global _shared
+    if _shared is None or _shared.is_closed:
+        _shared = httpx.AsyncClient(timeout=None)
+    return _shared
+
+
+async def close_shared_client() -> None:
+    """Close the pooled connection (called from the app's shutdown hook)."""
+    global _shared
+    if _shared is not None and not _shared.is_closed:
+        await _shared.aclose()
+    _shared = None
+
 
 class MoonrakerClient:
     """Minimal async client for Moonraker's HTTP API (server-side calls only).
@@ -27,10 +47,9 @@ class MoonrakerClient:
         Raises:
             httpx.HTTPError: if Moonraker is unreachable or returns an error status.
         """
-        async with httpx.AsyncClient(timeout=self._timeout) as client:
-            response = await client.get(f"{self._base_url}{path}")
-            response.raise_for_status()
-            payload: object = response.json()
+        response = await _pool().get(f"{self._base_url}{path}", timeout=self._timeout)
+        response.raise_for_status()
+        payload: object = response.json()
         if isinstance(payload, dict):
             result = payload.get("result", payload)
             if isinstance(result, dict):
@@ -95,12 +114,11 @@ class MoonrakerClient:
         ``{"path": str, "modified": float, "size": int, "permissions": str}``. Returns
         an empty list if the root is empty or the result is not a list.
         """
-        async with httpx.AsyncClient(timeout=self._timeout) as client:
-            response = await client.get(
-                f"{self._base_url}/server/files/list", params={"root": root}
-            )
-            response.raise_for_status()
-            payload: object = response.json()
+        response = await _pool().get(
+            f"{self._base_url}/server/files/list", params={"root": root}, timeout=self._timeout
+        )
+        response.raise_for_status()
+        payload: object = response.json()
         result = payload.get("result", []) if isinstance(payload, dict) else []
         return [e for e in result if isinstance(e, dict)] if isinstance(result, list) else []
 
@@ -114,10 +132,11 @@ class MoonrakerClient:
             httpx.HTTPError: if Moonraker is unreachable or the file is missing (404).
         """
         safe = "/".join(quote(part) for part in path.split("/"))
-        async with httpx.AsyncClient(timeout=self._timeout) as client:
-            response = await client.get(f"{self._base_url}/server/files/{root}/{safe}")
-            response.raise_for_status()
-            return response.text
+        response = await _pool().get(
+            f"{self._base_url}/server/files/{root}/{safe}", timeout=self._timeout
+        )
+        response.raise_for_status()
+        return response.text
 
     async def run_gcode(self, script: str) -> None:
         """Runs a G-code script via ``/printer/gcode/script``.
@@ -129,11 +148,12 @@ class MoonrakerClient:
         Raises:
             httpx.HTTPError: if Moonraker is unreachable or the command errors.
         """
-        async with httpx.AsyncClient(timeout=self._timeout) as client:
-            response = await client.post(
-                f"{self._base_url}/printer/gcode/script", params={"script": script}
-            )
-            response.raise_for_status()
+        response = await _pool().post(
+            f"{self._base_url}/printer/gcode/script",
+            params={"script": script},
+            timeout=self._timeout,
+        )
+        response.raise_for_status()
 
     async def upload_file(self, path: str, content: str, root: str = "config") -> dict[str, Any]:
         """Create or overwrite a file via ``POST /server/files/upload`` (multipart).
@@ -150,12 +170,11 @@ class MoonrakerClient:
         data = {"root": root}
         if directory:
             data["path"] = directory
-        async with httpx.AsyncClient(timeout=self._timeout) as client:
-            response = await client.post(
-                f"{self._base_url}/server/files/upload", files=files, data=data
-            )
-            response.raise_for_status()
-            payload: object = response.json()
+        response = await _pool().post(
+            f"{self._base_url}/server/files/upload", files=files, data=data, timeout=self._timeout
+        )
+        response.raise_for_status()
+        payload: object = response.json()
         return payload if isinstance(payload, dict) else {}
 
     async def delete_file(self, path: str, root: str = "config") -> None:
@@ -163,9 +182,10 @@ class MoonrakerClient:
 
         Used to prune old config backups. Raises ``httpx.HTTPError`` on failure.
         """
-        async with httpx.AsyncClient(timeout=self._timeout) as client:
-            response = await client.delete(f"{self._base_url}/server/files/{root}/{path}")
-            response.raise_for_status()
+        response = await _pool().delete(
+            f"{self._base_url}/server/files/{root}/{path}", timeout=self._timeout
+        )
+        response.raise_for_status()
 
     async def firmware_restart(self) -> None:
         """Request a Klipper ``FIRMWARE_RESTART`` via ``POST /printer/firmware_restart``.
@@ -176,6 +196,7 @@ class MoonrakerClient:
         Raises:
             httpx.HTTPError: if Moonraker is unreachable or the restart request fails.
         """
-        async with httpx.AsyncClient(timeout=max(self._timeout, 30.0)) as client:
-            response = await client.post(f"{self._base_url}/printer/firmware_restart")
-            response.raise_for_status()
+        response = await _pool().post(
+            f"{self._base_url}/printer/firmware_restart", timeout=max(self._timeout, 30.0)
+        )
+        response.raise_for_status()
