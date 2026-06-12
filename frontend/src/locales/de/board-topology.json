@@ -173,7 +173,8 @@
         "connection_changed": "Verbindung von „{mcu}“ geändert: {before} → {after}",
         "chip_changed": "Chip von „{mcu}“ geändert: {before} → {after}",
         "components_changed": "Komponentenzahl von „{mcu}“ geändert: {before} → {after}"
-      }
+      },
+      "noCompare": "Vergleich nicht möglich — der Drucker ist nicht erreichbar."
     },
     "jump": {
       "section": "Diesen Abschnitt im Config Editor öffnen",

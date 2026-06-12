@@ -173,7 +173,8 @@
         "connection_changed": "“{mcu}” connection changed: {before} → {after}",
         "chip_changed": "“{mcu}” chip changed: {before} → {after}",
         "components_changed": "“{mcu}” component count changed: {before} → {after}"
-      }
+      },
+      "noCompare": "Could not compare — the printer is unreachable."
     },
     "jump": {
       "section": "Open this section in the Config Editor",

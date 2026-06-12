@@ -53,6 +53,8 @@ const overrideBusy = ref(false)
 
 // Hardware snapshot / diff (detect a board swap / MCU add-remove / link change vs a saved baseline).
 const diff = ref<TopologyDiff | null>(null)
+/** Errors from override/snapshot ACTIONS — shown as a banner; never hides the loaded map. */
+const actionError = ref<string | null>(null)
 const snapshotBusy = ref(false)
 const copied = ref(false)
 
@@ -114,7 +116,7 @@ async function setOverride(mcuName: string, boardId: string): Promise<void> {
   try {
     topology.value = await setBoardOverride(mcuName, boardId)
   } catch (e) {
-    error.value = describeError(e)
+    actionError.value = describeError(e)
   } finally {
     overrideBusy.value = false
   }
@@ -124,7 +126,7 @@ async function clearOverride(mcuName: string): Promise<void> {
   try {
     topology.value = await clearBoardOverride(mcuName)
   } catch (e) {
-    error.value = describeError(e)
+    actionError.value = describeError(e)
   } finally {
     overrideBusy.value = false
   }
@@ -135,7 +137,7 @@ async function takeSnapshot(): Promise<void> {
   try {
     diff.value = await saveSnapshot()
   } catch (e) {
-    error.value = describeError(e)
+    actionError.value = describeError(e)
   } finally {
     snapshotBusy.value = false
   }
@@ -302,6 +304,20 @@ onMounted(() => void load())
         />
       </div>
 
+      <!-- Action errors (override / snapshot) — a banner, not a map-hiding state -->
+      <div
+        v-if="actionError"
+        class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red/10 px-2 py-1"
+      >
+        <span class="min-w-0 flex-1 font-mono text-[11px]">{{ actionError }}</span>
+        <button
+          class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[10px]"
+          @click="actionError = null"
+        >
+          ✕
+        </button>
+      </div>
+
       <!-- Hardware snapshot / diff + share -->
       <div class="space-y-1 border-t border-ink/15 pt-2">
         <div class="flex flex-wrap items-center gap-2 text-[11px]">
@@ -319,6 +335,12 @@ onMounted(() => void load())
           <span v-if="diff && !diff.has_baseline" class="opacity-60">{{
             t('boardTopology.snapshot.none')
           }}</span>
+          <span
+            v-else-if="diff && diff.has_baseline && diff.reachable === false"
+            class="font-bold opacity-70"
+          >
+            ? {{ t('boardTopology.snapshot.noCompare') }}
+          </span>
           <span
             v-else-if="diff && diff.has_baseline && !diff.changes.length"
             class="font-bold text-brand-lime"

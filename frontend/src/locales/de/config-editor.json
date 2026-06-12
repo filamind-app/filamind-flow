@@ -216,6 +216,17 @@
         "near_motor_rating": "{section}: run_current {run_current} A liegt innerhalb von 10% der {motor}-Nennung ({max_current} A).",
         "odd_microsteps": "{section}: microsteps {microsteps} ist keine Zweierpotenz (1…256)."
       }
+    },
+    "panels": {
+      "failed": "Einige Panels konnten nicht laden und sind ausgeblendet: {panels}. Was sie prüfen würden, ist gerade unbekannt — nicht zwingend in Ordnung.",
+      "name": {
+        "drift": "Datei vs. live",
+        "pinDoctor": "Pin Doctor",
+        "sanity": "Treiberprüfung",
+        "project": "Projektansicht",
+        "pinMap": "Pin-Vorschläge",
+        "backups": "Backups"
+      }
     }
   }
 }

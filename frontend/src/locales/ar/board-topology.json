@@ -173,7 +173,8 @@
         "connection_changed": "تغيّر اتصال «{mcu}»: {before} → {after}",
         "chip_changed": "تغيّرت شريحة «{mcu}»: {before} → {after}",
         "components_changed": "تغيّر عدد مكوّنات «{mcu}»: {before} → {after}"
-      }
+      },
+      "noCompare": "تعذرت المقارنة — الطابعة غير متاحة."
     },
     "jump": {
       "section": "افتح هذا القسم في محرر الإعداد",

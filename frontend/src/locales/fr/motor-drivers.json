@@ -189,7 +189,8 @@
       "interp": "interp",
       "sense": "sense {value} Ω",
       "healthTitleIdle": "Activez le moteur (homing ou jog d'un axe) pour lire la température en direct et les indicateurs d'anomalie",
-      "healthTitleLive": "Statut du driver en direct depuis drv_status"
+      "healthTitleLive": "Statut du driver en direct depuis drv_status",
+      "staleData": "La dernière actualisation a échoué — données précédentes affichées."
     },
     "liveMonitor": {
       "toggle": "moniteur en direct",

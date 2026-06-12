@@ -216,6 +216,17 @@
         "near_motor_rating": "{section}：run_current {run_current} A 处于 {motor} 额定（{max_current} A）的 10% 以内。",
         "odd_microsteps": "{section}：microsteps {microsteps} 不是 2 的幂（1…256）。"
       }
+    },
+    "panels": {
+      "failed": "部分面板未能加载，已隐藏：{panels}。它们本应检查的内容目前未知 — 不代表没问题。",
+      "name": {
+        "drift": "磁盘与运行",
+        "pinDoctor": "引脚医生",
+        "sanity": "驱动校验",
+        "project": "项目视图",
+        "pinMap": "引脚建议",
+        "backups": "备份"
+      }
     }
   }
 }

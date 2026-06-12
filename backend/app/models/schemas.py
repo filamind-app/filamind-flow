@@ -1077,6 +1077,9 @@ class TopologyDiff(BaseModel):
     has_baseline: bool = False
     saved_at: str | None = None
     changes: list[TopologyChange] = []
+    #: False when the live topology could not be read — "no changes" then means "could not
+    #: compare", and the UI must say so instead of reporting a false all-clear.
+    reachable: bool = True
 
 
 class BoardOverrideRequest(BaseModel):

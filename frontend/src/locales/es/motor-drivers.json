@@ -189,7 +189,8 @@
       "interp": "interp",
       "sense": "detección {value} Ω",
       "healthTitleIdle": "Habilita el motor (haz homing o jog de un eje) para leer la temperatura en vivo y los indicadores de fallo",
-      "healthTitleLive": "Estado en vivo del controlador desde drv_status"
+      "healthTitleLive": "Estado en vivo del controlador desde drv_status",
+      "staleData": "La última actualización falló — mostrando los datos anteriores."
     },
     "liveMonitor": {
       "toggle": "monitor en vivo",

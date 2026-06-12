@@ -216,6 +216,17 @@
         "near_motor_rating": "{section}: run_current {run_current} A está dentro del 10% de la clasificación de {motor} ({max_current} A).",
         "odd_microsteps": "{section}: microsteps {microsteps} no es potencia de dos (1…256)."
       }
+    },
+    "panels": {
+      "failed": "Algunos paneles no cargaron y están ocultos: {panels}. Lo que comprobarían se desconoce ahora — no necesariamente está bien.",
+      "name": {
+        "drift": "Disco vs vivo",
+        "pinDoctor": "Pin Doctor",
+        "sanity": "Sanidad de drivers",
+        "project": "Vista de proyecto",
+        "pinMap": "Sugerencias de pines",
+        "backups": "Copias"
+      }
     }
   }
 }
