@@ -189,7 +189,8 @@
       "interp": "interp",
       "sense": "Mess {value} Ω",
       "healthTitleIdle": "Aktiviere den Motor (home oder jogge eine Achse), um Live-Temperatur und Fehler-Flags zu lesen",
-      "healthTitleLive": "Live-Treiberstatus aus drv_status"
+      "healthTitleLive": "Live-Treiberstatus aus drv_status",
+      "staleData": "Die letzte Aktualisierung schlug fehl — vorherige Daten werden gezeigt."
     },
     "liveMonitor": {
       "toggle": "Live-Monitor",

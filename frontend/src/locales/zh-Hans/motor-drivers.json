@@ -189,7 +189,8 @@
       "interp": "interp",
       "sense": "采样 {value} Ω",
       "healthTitleIdle": "启用电机（归位或点动一个轴）以读取实时温度和故障标志",
-      "healthTitleLive": "来自 drv_status 的实时驱动器状态"
+      "healthTitleLive": "来自 drv_status 的实时驱动器状态",
+      "staleData": "上次刷新失败 — 显示先前数据。"
     },
     "liveMonitor": {
       "toggle": "实时监控",

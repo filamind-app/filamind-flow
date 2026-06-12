@@ -216,6 +216,17 @@
         "near_motor_rating": "{section}: run_current {run_current} A is within 10% of the {motor} rating ({max_current} A).",
         "odd_microsteps": "{section}: microsteps {microsteps} is not a power of two (1…256)."
       }
+    },
+    "panels": {
+      "failed": "Some panels could not load and are hidden: {panels}. What they would check is unknown right now — not necessarily fine.",
+      "name": {
+        "drift": "Disk-vs-live",
+        "pinDoctor": "Pin Doctor",
+        "sanity": "Driver sanity",
+        "project": "Project view",
+        "pinMap": "Pin suggestions",
+        "backups": "Backups"
+      }
     }
   }
 }

@@ -189,7 +189,8 @@
       "interp": "استيفاء",
       "sense": "استشعار {value} Ω",
       "healthTitleIdle": "مكّن المحرّك (صفّر أو حرّك محورًا) لقراءة الحرارة المباشرة وأعلام الأعطال",
-      "healthTitleLive": "حالة المشغّل المباشرة من drv_status"
+      "healthTitleLive": "حالة المشغّل المباشرة من drv_status",
+      "staleData": "فشل التحديث الأخير — تُعرض البيانات السابقة."
     },
     "liveMonitor": {
       "toggle": "مراقبة مباشرة",

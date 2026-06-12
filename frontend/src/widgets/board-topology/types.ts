@@ -145,4 +145,6 @@ export interface TopologyDiff {
   has_baseline: boolean
   saved_at?: string | null
   changes: TopologyChange[]
+  /** False when the live topology could not be read — "no changes" means "could not compare". */
+  reachable?: boolean
 }

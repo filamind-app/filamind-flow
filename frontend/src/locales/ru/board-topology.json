@@ -173,7 +173,8 @@
         "connection_changed": "Подключение «{mcu}» изменилось: {before} → {after}",
         "chip_changed": "Чип «{mcu}» изменился: {before} → {after}",
         "components_changed": "Число компонентов «{mcu}» изменилось: {before} → {after}"
-      }
+      },
+      "noCompare": "Сравнить не удалось — принтер недоступен."
     },
     "jump": {
       "section": "Открыть эту секцию в редакторе конфига",

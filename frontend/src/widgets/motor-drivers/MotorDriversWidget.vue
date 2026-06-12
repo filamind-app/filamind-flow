@@ -147,13 +147,30 @@ onUnmounted(() => {
       {{ t('motorDrivers.widget.loading') }}
     </div>
 
+    <!-- A failed poll with NO prior data is a real empty/error state; with data on screen it
+         becomes a stale-data banner — one bad 6s poll must not blank a live dashboard. -->
     <div
-      v-else-if="error"
+      v-else-if="error && !status"
       class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red px-2 py-1 text-surface"
     >
       <span class="min-w-0 flex-1 text-[11px]">{{ error }}</span>
       <button
         class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[11px] text-ink"
+        :disabled="loading"
+        @click="load()"
+      >
+        {{ loading ? t('motorDrivers.widget.retrying') : t('motorDrivers.widget.retry') }}
+      </button>
+    </div>
+
+    <!-- Stale-data banner: the dashboard stays, the failed refresh is disclosed. -->
+    <div
+      v-if="error && status"
+      class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-yellow/30 px-2 py-1"
+    >
+      <span class="min-w-0 flex-1 text-[11px]">{{ t('motorDrivers.widget.staleData') }}</span>
+      <button
+        class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[11px]"
         :disabled="loading"
         @click="load()"
       >

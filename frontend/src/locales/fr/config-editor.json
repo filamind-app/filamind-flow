@@ -216,6 +216,17 @@
         "near_motor_rating": "{section} : run_current {run_current} A est à moins de 10% de la valeur nominale de {motor} ({max_current} A).",
         "odd_microsteps": "{section} : microsteps {microsteps} n’est pas une puissance de deux (1…256)."
       }
+    },
+    "panels": {
+      "failed": "Certains panneaux ne se sont pas chargés et sont masqués : {panels}. Ce qu’ils vérifieraient est inconnu pour le moment — pas forcément correct.",
+      "name": {
+        "drift": "Disque vs live",
+        "pinDoctor": "Pin Doctor",
+        "sanity": "Cohérence drivers",
+        "project": "Vue projet",
+        "pinMap": "Suggestions de broches",
+        "backups": "Sauvegardes"
+      }
     }
   }
 }

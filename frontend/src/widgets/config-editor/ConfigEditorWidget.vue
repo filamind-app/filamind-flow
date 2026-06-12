@@ -88,6 +88,16 @@ const showRestartPrompt = ref(false)
 
 const dirty = computed(() => view.value != null && draft.value !== view.value.raw)
 
+/** Auxiliary panels that failed to load this session — disclosed in one slim banner instead of
+ *  silently vanishing (a missing Pin Doctor must not read as "no pin problems"). */
+const failedPanels = ref<Set<string>>(new Set())
+function markPanel(name: string, ok: boolean): void {
+  const next = new Set(failedPanels.value)
+  if (ok) next.delete(name)
+  else next.add(name)
+  failedPanels.value = next
+}
+
 // Disk-vs-live drift: compare the file to what Klipper is actually running.
 const drift = ref<ConfigDriftResult | null>(null)
 const adopting = ref<string | null>(null)
@@ -101,8 +111,10 @@ const hasLiveInfo = computed(() => {
 async function loadDrift(filename: string): Promise<void> {
   try {
     drift.value = await fetchConfigDrift(filename)
+    markPanel('drift', true)
   } catch {
     drift.value = null
+    markPanel('drift', false)
   }
 }
 
@@ -111,8 +123,10 @@ const pinDoctor = ref<PinDoctorResult | null>(null)
 async function loadPinDoctor(): Promise<void> {
   try {
     pinDoctor.value = await fetchPinDoctor()
+    markPanel('pinDoctor', true)
   } catch {
     pinDoctor.value = null
+    markPanel('pinDoctor', false)
   }
 }
 
@@ -121,8 +135,10 @@ const sanity = ref<ConfigSanityResult | null>(null)
 async function loadSanity(): Promise<void> {
   try {
     sanity.value = await fetchConfigSanity()
+    markPanel('sanity', true)
   } catch {
     sanity.value = null
+    markPanel('sanity', false)
   }
 }
 function sanityMsg(f: ConfigSanityFinding): string {
@@ -180,8 +196,10 @@ const pinMap = ref<PinMapResult | null>(null)
 async function loadPinMap(): Promise<void> {
   try {
     pinMap.value = await fetchPinMap()
+    markPanel('pinMap', true)
   } catch {
     pinMap.value = null
+    markPanel('pinMap', false)
   }
 }
 function isPinParam(p: ConfigParamView): boolean {
@@ -238,8 +256,10 @@ const graph = ref<ConfigGraph | null>(null)
 async function loadGraph(): Promise<void> {
   try {
     graph.value = await fetchConfigGraph()
+    markPanel('project', true)
   } catch {
     graph.value = null
+    markPanel('project', false)
   }
 }
 /** Flatten the include graph into indented rows (DFS from each root; cycle-guarded). */
@@ -340,8 +360,10 @@ async function loadBackups(filename: string): Promise<void> {
   backups.value = null
   try {
     backups.value = await fetchBackups(filename)
+    markPanel('backups', true)
   } catch {
     backups.value = null
+    markPanel('backups', false)
   }
 }
 const diffPath = ref<string | null>(null)
@@ -722,6 +744,15 @@ onMounted(() => {
         <span aria-hidden="true">↻</span> {{ t('configEditor.file.refresh') }}
       </button>
     </div>
+
+    <!-- Disclosed degradation: which auxiliary panels failed to load (none = no banner) -->
+    <p v-if="failedPanels.size" class="nb-card bg-brand-yellow/20 p-2 text-[11px]">
+      {{
+        t('configEditor.panels.failed', {
+          panels: [...failedPanels].map((p) => t('configEditor.panels.name.' + p)).join(', '),
+        })
+      }}
+    </p>
 
     <!-- Project view: include graph + project-wide search + cross-file lint (whole config tree) -->
     <details v-if="graph && graph.reachable" class="nb-card bg-surface p-2 text-[11px]">

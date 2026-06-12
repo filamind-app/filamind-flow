@@ -216,6 +216,17 @@
         "near_motor_rating": "{section}: run_current {run_current} А в пределах 10% от номинала {motor} ({max_current} А).",
         "odd_microsteps": "{section}: microsteps {microsteps} не степень двойки (1…256)."
       }
+    },
+    "panels": {
+      "failed": "Некоторые панели не загрузились и скрыты: {panels}. Что они проверили бы — сейчас неизвестно, и не факт, что всё в порядке.",
+      "name": {
+        "drift": "Диск и живое",
+        "pinDoctor": "Доктор пинов",
+        "sanity": "Проверка драйверов",
+        "project": "Вид проекта",
+        "pinMap": "Подсказки пинов",
+        "backups": "Резервные копии"
+      }
     }
   }
 }
