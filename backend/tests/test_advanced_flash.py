@@ -116,3 +116,58 @@ async def test_stream_reports_127_when_the_binary_is_missing() -> None:
     lines = [ln async for ln in flash_service._stream(["definitely-not-a-binary"], result=result)]
     assert result["rc"] == 127
     assert any(ln.startswith("!! cannot run") for ln in lines)
+
+
+class _VersionClient:
+    """Stub client: a configfile with a CAN node + that node's mcu_version."""
+
+    def __init__(self, uuid: str, version: str) -> None:
+        self._uuid = uuid
+        self._version = version
+
+    async def query_objects(self, objects: list[str]) -> dict:
+        if "configfile" in objects:
+            return {"configfile": {"config": {"mcu Toolhead": {"canbus_uuid": self._uuid}}}}
+        return {objects[0]: {"mcu_version": self._version}}
+
+
+async def test_can_node_runs_version_confirms_a_matching_node(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        flash_service,
+        "MoonrakerClient",
+        lambda *a, **k: _VersionClient("f837f305a66f", "v0.13.0-697-g430a2a8a0"),
+    )
+    ok = await flash_service._can_node_runs_version(
+        "f837f305a66f", "v0.13.0-697-g430a2a8a0", "http://x", attempts=1, delay=0.0
+    )
+    assert ok is True
+
+
+async def test_can_node_runs_version_rejects_a_stale_version(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        flash_service,
+        "MoonrakerClient",
+        lambda *a, **k: _VersionClient("f837f305a66f", "v0.13.0-687-ga0d276963"),
+    )
+    ok = await flash_service._can_node_runs_version(
+        "f837f305a66f", "v0.13.0-697-g430a2a8a0", "http://x", attempts=1, delay=0.0
+    )
+    assert ok is False
+
+
+async def test_can_node_runs_version_gives_up_when_node_absent(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        flash_service,
+        "MoonrakerClient",
+        lambda *a, **k: _VersionClient("other-uuid-0", "v1"),
+    )
+    ok = await flash_service._can_node_runs_version(
+        "f837f305a66f", "v1", "http://x", attempts=2, delay=0.0
+    )
+    assert ok is False

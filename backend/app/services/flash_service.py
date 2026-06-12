@@ -185,6 +185,40 @@ async def _live_config(moonraker_url: str) -> dict[str, Any]:
     return config if isinstance(config, dict) else {}
 
 
+async def _can_node_runs_version(
+    uuid: str, expected: str, moonraker_url: str, *, attempts: int = 12, delay: float = 2.5
+) -> bool:
+    """True if the CAN node with ``uuid`` reports ``expected`` as its firmware version.
+
+    Polls Klipper (which we just restarted) until it connects and exposes the node's
+    ``mcu_version`` — up to ~30 s. Finds the node's ``[mcu …]`` section by matching its
+    ``canbus_uuid`` in the live config, then reads that object's version.
+    """
+    client = MoonrakerClient(moonraker_url)
+    for _ in range(attempts):
+        await asyncio.sleep(delay)
+        try:
+            config = (await client.query_objects(["configfile"])).get("configfile", {})
+            sections = config.get("config", {})
+            section = next(
+                (
+                    name
+                    for name, cfg in sections.items()
+                    if isinstance(cfg, dict) and str(cfg.get("canbus_uuid", "")).strip() == uuid
+                ),
+                None,
+            )
+            if not section:
+                continue
+            status_ = await client.query_objects([section])
+            version = str((status_.get(section) or {}).get("mcu_version") or "")
+            if version:
+                return version == expected or version.startswith(expected)
+        except httpx.HTTPError:
+            continue
+    return False
+
+
 async def resolve_can_uuid(device: str, moonraker_url: str) -> tuple[str | None, str | None]:
     """Resolve the CAN node UUID to flash. CAN flashing needs the 12-hex ``canbus_uuid``, but a
     device may be registered under a friendly id ("Toolhead"). Returns ``(uuid, error)``:
@@ -523,10 +557,34 @@ async def run_flash(
     async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
         yield line
 
-    # The flash tool failed (non-zero exit) — Klipper is back up but the board was NOT
-    # written. Report it honestly instead of recording a success.
+    # The flash tool failed (non-zero exit). For CAN this is often the read-back VERIFY
+    # phase dying on the USB-CAN adapter (sustained node→host flood) AFTER the write
+    # completed — the board actually runs the new firmware. Check the real outcome via
+    # Klipper before declaring failure: if the node now reports the built version, the
+    # flash took.
     rc = flash_result.get("rc", 0)
     if rc != 0:
+        expected = str((read_build_info(settings.data_dir, profile) or {}).get("version") or "")
+        if method == "can" and expected:
+            yield (
+                ">>> Flash tool reported an error — checking via Klipper whether the "
+                "board took the new firmware anyway…\n"
+            )
+            if await _can_node_runs_version(target, expected, settings.moonraker_url):
+                yield f">>> Verified: the board reports {expected} — the flash DID succeed.\n"
+                yield (
+                    ">>> (The tool's error was in its read-back verify, a known limitation "
+                    "of some USB-CAN adapters under sustained load.)\n"
+                )
+                record_flash(
+                    settings.data_dir,
+                    device,
+                    profile,
+                    read_build_info(settings.data_dir, profile) or {},
+                )
+                yield _phase("done")
+                yield ">>> Flash sequence complete — verified through Klipper.\n"
+                return
         yield (
             f"!! Flash failed — {flash_tool or 'the flash tool'} exited with code {rc}. "
             "The board was not flashed; see the output above.\n"
