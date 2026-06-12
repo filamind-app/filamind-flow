@@ -123,9 +123,11 @@ function changeLine(c: ApplySectionChange): string {
       </button>
     </div>
 
-    <p v-if="error" class="nb-card bg-brand-red/10 p-2 font-mono text-[10px]">{{ error }}</p>
+    <p v-if="error" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-[10px]">
+      {{ error }}
+    </p>
 
-    <div v-if="changes" class="nb-card space-y-1.5 bg-brand-lime/20 p-2">
+    <div v-if="changes" role="status" class="nb-card space-y-1.5 bg-brand-lime/20 p-2">
       <p class="font-bold">{{ t('configApply.saved', { backup: savedBackup ?? '—' }) }}</p>
       <ul v-if="changes.length" class="space-y-0.5 font-mono text-[10px]">
         <li v-for="(c, i) in changes" :key="i">• {{ changeLine(c) }}</li>

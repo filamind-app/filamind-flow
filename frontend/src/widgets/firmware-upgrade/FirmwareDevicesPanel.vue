@@ -200,7 +200,7 @@ onUnmounted(() => {
       {{ t('firmware.devices.intro') }}
     </p>
 
-    <div v-if="error" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+    <div v-if="error" role="alert" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
     <div v-if="loading" class="font-mono text-xs">{{ t('firmware.devices.loading') }}</div>
 
     <template v-else>
@@ -376,7 +376,7 @@ onUnmounted(() => {
           </div>
         </div>
         <p class="text-[10px] opacity-60">{{ t('firmware.devices.backupHint') }}</p>
-        <p v-if="backupMsg" class="font-mono text-[11px] opacity-70">{{ backupMsg }}</p>
+        <p v-if="backupMsg" role="status" class="font-mono text-[11px] opacity-70">{{ backupMsg }}</p>
       </div>
     </template>
   </div>

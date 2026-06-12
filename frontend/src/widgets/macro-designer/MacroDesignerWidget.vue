@@ -553,7 +553,7 @@ onMounted(() => {
           {{ t('macroDesigner.editor.clear') }}
         </button>
       </div>
-      <p v-if="error" class="font-mono text-[11px] text-brand-red">{{ error }}</p>
+      <p v-if="error" role="alert" class="font-mono text-[11px] text-brand-red">{{ error }}</p>
     </div>
 
     <!-- From the printer: simulate your OWN installed macros -->

@@ -5,7 +5,8 @@
     },
     "nav": {
       "dashboard": "Dashboard",
-      "toggle": "Toggle navigation"
+      "toggle": "Toggle navigation",
+      "label": "Main navigation"
     },
     "mainsail": {
       "label": "Mainsail",

@@ -5,7 +5,8 @@
     },
     "nav": {
       "dashboard": "لوحة المعلومات",
-      "toggle": "تبديل التنقّل"
+      "toggle": "تبديل التنقّل",
+      "label": "التنقل الرئيسي"
     },
     "mainsail": {
       "label": "Mainsail",

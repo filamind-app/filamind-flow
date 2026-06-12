@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.222.0] - 2026-06-12
+
+### Changed
+
+- **Screen-reader pass.** Error banners across every widget are now announced as alerts the
+  moment they appear; long-running progress (vibrations profile, max-flow run), apply
+  confirmations, the backup summary and the printer-busy badge are polite live regions;
+  build/flash logs are marked as live logs; the mobile sidebar announces itself as a modal
+  dialog and the navigation marks the current page.
+
 ## [0.221.0] - 2026-06-12
 
 ### Changed

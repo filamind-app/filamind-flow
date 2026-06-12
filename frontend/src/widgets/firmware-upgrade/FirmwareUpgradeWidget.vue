@@ -534,7 +534,7 @@ onUnmounted(() => {
         v-else-if="error"
         class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red px-2 py-1 text-surface"
       >
-        <span class="min-w-0 flex-1 text-[11px]">{{ error }}</span>
+        <span role="alert" class="min-w-0 flex-1 text-[11px]">{{ error }}</span>
         <button
           class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[11px] text-ink"
           :disabled="loading"

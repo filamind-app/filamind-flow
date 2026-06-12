@@ -200,6 +200,7 @@ async function copyConfig(): Promise<void> {
 
       <p
         v-if="error"
+        role="alert"
         class="rounded-brutal border-2 border-ink bg-brand-red px-1.5 py-0.5 text-surface"
       >
         {{ error }}
