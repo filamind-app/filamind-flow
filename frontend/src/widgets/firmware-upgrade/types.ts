@@ -221,6 +221,8 @@ export interface TaskStatus {
   status: string
   log: string
   cancelled: boolean
+  /** Batch device counter ({step,total,detail}) — drives the batch progress bar. */
+  progress?: { step: number; total: number; detail?: Record<string, unknown> } | null
 }
 
 /** A Klipper / Moonraker systemd service and whether it is active. */

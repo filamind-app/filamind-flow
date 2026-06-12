@@ -296,6 +296,21 @@
       "confirmAck": "تحققت من مطابقة هذا الملف للوحة الهدف",
       "confirmFlash": "نفّذ الفلاش",
       "confirmCancel": "إلغاء"
+    },
+    "flashProgress": {
+      "phase": {
+        "start": "تحضير…",
+        "stop": "إيقاف Klipper…",
+        "boot": "دخول البوتلودر…",
+        "write": "كتابة الفيرموير…",
+        "restart": "إعادة تشغيل Klipper…",
+        "done": "اكتمل التفليش"
+      },
+      "done": "اكتمل التفليش ✓",
+      "failed": "فشل التفليش — انظر التفاصيل",
+      "errorsTitle": "مشاكل",
+      "showDetails": "إظهار مخرجات الأوامر",
+      "batchStep": "تفليش {device} ({step}/{total})"
     }
   }
 }

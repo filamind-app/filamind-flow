@@ -296,6 +296,21 @@
       "confirmAck": "我已核对该文件与目标主板匹配",
       "confirmFlash": "烧录",
       "confirmCancel": "取消"
+    },
+    "flashProgress": {
+      "phase": {
+        "start": "准备中…",
+        "stop": "正在停止 Klipper…",
+        "boot": "进入引导程序…",
+        "write": "正在写入固件…",
+        "restart": "正在重启 Klipper…",
+        "done": "刷写完成"
+      },
+      "done": "刷写完成 ✓",
+      "failed": "刷写失败 — 查看详情",
+      "errorsTitle": "问题",
+      "showDetails": "显示命令输出",
+      "batchStep": "正在刷写 {device}（{step}/{total}）"
     }
   }
 }

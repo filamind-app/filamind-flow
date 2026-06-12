@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.229.0] - 2026-06-13
+
+### Changed
+
+- **Flashing shows a progress bar, not a wall of commands.** The Firmware Manager replaces the
+  raw command-output window during a flash with a phase progress bar — *Preparing → Stopping
+  Klipper → Entering bootloader → Writing firmware → Restarting → Complete* for a single board,
+  and a *device N of M* bar for a batch. Only genuine failures are surfaced (in a red callout);
+  the benign operational chatter that previously looked alarming (Klipper stop/start, "not
+  marked Katapult — skipping", subprocess output) is tucked into a collapsible **Show command
+  output** section that opens automatically if a flash fails, so nothing is lost for diagnosis.
+
+
 ## [0.228.0] - 2026-06-13
 
 ### Added

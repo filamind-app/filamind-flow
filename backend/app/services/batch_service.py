@@ -55,6 +55,9 @@ async def _flash_phase(
     devices: list[dict], settings: Settings, task: Task, avr: dict[str, bool], ready_only: bool
 ) -> None:
     ready = await _ready_ids(settings) if ready_only else None
+    # Progress total = the devices this batch will actually try (excludes opted-out + beacon).
+    total = sum(1 for d in devices if not d.get("exclude_from_batch") and d["method"] != "beacon")
+    done = 0
     for device in devices:
         if task.cancelled:
             return
@@ -65,6 +68,8 @@ async def _flash_phase(
         if device["method"] == "beacon":
             task.append(f">>> {name}: Beacon flashing is not supported yet — skipped.\n")
             continue
+        done += 1
+        task.progress = {"step": done, "total": total, "detail": {"device": name}}
         profile = device.get("profile")
         if not profile:
             task.append(f">>> {name}: no profile assigned — skipped.\n")
