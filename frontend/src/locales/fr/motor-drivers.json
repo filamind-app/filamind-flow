@@ -320,7 +320,8 @@
       "homed": "Prise d'origine de {ax} effectuée.",
       "motorsyncNotInstalled": "L'extension motors_sync n'est pas installée — elle aligne la phase de micro-pas de plusieurs moteurs sur un même axe (Z double/quadruple, X double) à l'aide d'un accéléromètre.",
       "busySync": "Synchronisation des moteurs refusée pendant que l'imprimante est occupée (impression ou en pause).",
-      "syncRan": "{cmd} exécuté."
+      "syncRan": "{cmd} exécuté.",
+      "overCurrentCap": "Refusé : {requested} A sur {stepper} dépasse le plafond de {cap} A (limite pleine échelle du driver / courant nominal du moteur assigné)."
     }
   }
 }
