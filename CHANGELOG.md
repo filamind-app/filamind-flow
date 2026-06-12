@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.223.0] - 2026-06-12
+
+### Added
+
+- **End-to-end smoke gate.** CI gains a dedicated job that boots the real backend against an
+  in-process HTTP printer stub and walks the critical paths — health, guard, overview, doctor
+  scan, board topology, config view — plus the full gated write: section merge with a backup
+  taken first, the stale-file 412 refusal, the printing 409 refusal and the idempotent no-op.
+  The supervised-run write path (start → poll → result, cancel, failure detail,
+  reattach-after-reload) is now covered by frontend unit tests at the HTTP boundary too.
+
 ## [0.222.0] - 2026-06-12
 
 ### Changed

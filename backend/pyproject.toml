@@ -36,6 +36,9 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Path", "f
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "e2e: end-to-end smoke against the in-process Moonraker stub",
+]
 
 [tool.mypy]
 python_version = "3.10"
