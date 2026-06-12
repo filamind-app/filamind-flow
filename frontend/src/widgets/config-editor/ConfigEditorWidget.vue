@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import ComboSelect from '@/components/ui/ComboSelect.vue'
+import ConfigApply from '@/components/ui/ConfigApply.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import { describeError } from '@/core/describeError'
@@ -197,6 +198,7 @@ async function loadPinMap(): Promise<void> {
   try {
     pinMap.value = await fetchPinMap()
     markPanel('pinMap', true)
+    if (!partMcu.value && pinMap.value?.mcus.length) partMcu.value = pinMap.value.mcus[0].name
   } catch {
     pinMap.value = null
     markPanel('pinMap', false)
@@ -250,6 +252,100 @@ function pinFlags(value: string): {
   if (!info) return { offBoard: true, doubleAssign: false, caveat: null }
   return { offBoard: false, doubleAssign: info.owners.length > 1, caveat: info.caveat }
 }
+
+// "Add a part": pick a part type + a FREE pin (from the live board pin map) + a name, get a
+// ready section, and write it through the shared gated apply — no pin guessing, no copy-paste.
+type PartKind =
+  | 'fan'
+  | 'heater_fan'
+  | 'controller_fan'
+  | 'output_pin'
+  | 'filament_switch_sensor'
+  | 'neopixel'
+const PART_KINDS: PartKind[] = [
+  'fan',
+  'heater_fan',
+  'controller_fan',
+  'output_pin',
+  'filament_switch_sensor',
+  'neopixel',
+]
+/** Part types whose only param is `pin` need no section name (singletons like [fan]). */
+const NAMED_PARTS: Record<PartKind, boolean> = {
+  fan: false,
+  heater_fan: true,
+  controller_fan: true,
+  output_pin: true,
+  filament_switch_sensor: true,
+  neopixel: true,
+}
+const partKind = ref<PartKind>('fan')
+const partName = ref('')
+const partMcu = ref<string | null>(null)
+const partPin = ref<string | null>(null)
+
+const partMcuOptions = computed(
+  () =>
+    pinMap.value?.mcus.map((m) => ({
+      value: m.name,
+      label: `${m.name} — ${m.board_name ?? '?'}`,
+    })) ?? [],
+)
+/** Free pins on the chosen MCU: named board pins no config section owns yet. */
+const freePinOptions = computed(() => {
+  const mcu = pinMap.value?.mcus.find((m) => m.name === partMcu.value)
+  if (!mcu) return []
+  return mcu.pins
+    .filter((p) => p.owners.length === 0)
+    .map((p) => ({
+      value: p.pin,
+      label: p.caveat ? `${p.pin} ⚠` : p.pin,
+      sublabel: p.caveat ?? undefined,
+    }))
+})
+const partBlock = computed(() => {
+  if (!partPin.value) return ''
+  const named = NAMED_PARTS[partKind.value]
+  const name = partName.value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_]+/g, '_')
+  if (named && !name) return ''
+  const header = named ? `[${partKind.value} ${name}]` : `[${partKind.value}]`
+  const prefix = partMcu.value && partMcu.value !== 'mcu' ? `${partMcu.value}:` : ''
+  const pin = `${prefix}${partPin.value}`
+  switch (partKind.value) {
+    case 'heater_fan':
+      return `${header}
+pin: ${pin}
+heater: extruder
+heater_temp: 50.0
+`
+    case 'controller_fan':
+      return `${header}
+pin: ${pin}
+`
+    case 'output_pin':
+      return `${header}
+pin: ${pin}
+value: 0
+`
+    case 'filament_switch_sensor':
+      return `${header}
+switch_pin: ^${pin}
+pause_on_runout: True
+`
+    case 'neopixel':
+      return `${header}
+pin: ${pin}
+chain_count: 1
+`
+    default:
+      return `${header}
+pin: ${pin}
+`
+  }
+})
 
 // Project view: the `[include]` dependency graph + cross-file lint, and project-wide search.
 const graph = ref<ConfigGraph | null>(null)
@@ -1015,6 +1111,62 @@ onMounted(() => {
           </ul>
         </div>
       </div>
+
+      <!-- Add a part: pick a type + a FREE pin from the live board map, get a ready section -->
+      <details class="nb-card bg-surface p-2 text-[11px]">
+        <summary class="cursor-pointer text-xs font-bold">
+          {{ t('configEditor.addPart.title') }}
+        </summary>
+        <div class="mt-2 space-y-2">
+          <p class="text-[10px] opacity-70">{{ t('configEditor.addPart.hint') }}</p>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <label class="block">
+              <span class="mb-0.5 block text-[10px] opacity-70">{{
+                t('configEditor.addPart.kind')
+              }}</span>
+              <select
+                v-model="partKind"
+                class="w-full rounded-brutal border-2 border-ink bg-surface px-1.5 py-1 font-mono text-[11px]"
+              >
+                <option v-for="k in PART_KINDS" :key="k" :value="k">[{{ k }}]</option>
+              </select>
+            </label>
+            <label v-if="NAMED_PARTS[partKind]" class="block">
+              <span class="mb-0.5 block text-[10px] opacity-70">{{
+                t('configEditor.addPart.name')
+              }}</span>
+              <input
+                v-model="partName"
+                type="text"
+                :placeholder="t('configEditor.addPart.namePh')"
+                class="w-full rounded-brutal border-2 border-ink bg-surface px-1.5 py-1 font-mono text-[11px]"
+              />
+            </label>
+            <label class="block">
+              <span class="mb-0.5 block text-[10px] opacity-70">{{
+                t('configEditor.addPart.mcu')
+              }}</span>
+              <ComboSelect v-model="partMcu" :options="partMcuOptions" />
+            </label>
+            <label class="block">
+              <span class="mb-0.5 block text-[10px] opacity-70">{{
+                t('configEditor.addPart.pin')
+              }}</span>
+              <ComboSelect
+                v-model="partPin"
+                :options="freePinOptions"
+                :placeholder="t('configEditor.addPart.pinPh')"
+              />
+            </label>
+          </div>
+          <p v-if="partMcu && !freePinOptions.length" class="text-[10px] opacity-60">
+            {{ t('configEditor.addPart.noFree') }}
+          </p>
+          <template v-if="partBlock">
+            <ConfigApply :block="partBlock" />
+          </template>
+        </div>
+      </details>
 
       <!-- Backup timeline: snapshots from past saves, with diff-vs-current and gated restore -->
       <details

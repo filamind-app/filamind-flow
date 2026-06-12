@@ -227,6 +227,17 @@
         "pinMap": "Pin-Vorschläge",
         "backups": "Backups"
       }
+    },
+    "addPart": {
+      "title": "Teil hinzufügen (freie Pins)",
+      "hint": "Wähle einen Teiletyp und einen Board-Pin, den noch NICHTS nutzt (live aus Konfig + Board-Map gelesen) — der fertige Abschnitt wird durchs Sicherheits-Gate geschrieben, ohne Pin-Raten.",
+      "kind": "Teiletyp",
+      "name": "Name",
+      "namePh": "z. B. chamber_fan",
+      "mcu": "Platine (MCU)",
+      "pin": "Freier Pin",
+      "pinPh": "Freien Pin wählen…",
+      "noFree": "Keine freien benannten Pins in dieser Board-Map."
     }
   }
 }

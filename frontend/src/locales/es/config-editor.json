@@ -227,6 +227,17 @@
         "pinMap": "Sugerencias de pines",
         "backups": "Copias"
       }
+    },
+    "addPart": {
+      "title": "Añadir una pieza (pines libres)",
+      "hint": "Elige un tipo de pieza y un pin de la placa que NADA usa aún (leído en vivo de tu config + mapa de la placa), y obtén una sección lista escrita por la puerta de seguridad — sin adivinar pines.",
+      "kind": "Tipo de pieza",
+      "name": "Nombre",
+      "namePh": "p. ej. chamber_fan",
+      "mcu": "Placa (MCU)",
+      "pin": "Pin libre",
+      "pinPh": "Elige un pin libre…",
+      "noFree": "No hay pines con nombre libres en este mapa."
     }
   }
 }

@@ -227,6 +227,17 @@
         "pinMap": "Pin suggestions",
         "backups": "Backups"
       }
+    },
+    "addPart": {
+      "title": "Add a part (free-pin aware)",
+      "hint": "Pick a part type and one of the board pins NOTHING uses yet (read live from your config + board map), and get a ready section written through the safety gate — no pin guessing.",
+      "kind": "Part type",
+      "name": "Name",
+      "namePh": "e.g. chamber_fan",
+      "mcu": "Board (MCU)",
+      "pin": "Free pin",
+      "pinPh": "Pick a free pin…",
+      "noFree": "No free named pins on this board map."
     }
   }
 }
