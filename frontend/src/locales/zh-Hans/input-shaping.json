@@ -622,6 +622,25 @@
         "high_noise": "噪声水平偏高（{n} mm/s²）",
         "good": "检测质量：良好"
       }
+    },
+    "proof": {
+      "title": "调校对比",
+      "empty": "需要该轴上的两条已保存结果 — 调校前先测量，应用整形器后再次测量并都保存。",
+      "before": "之前",
+      "after": "之后",
+      "samePick": "请选择两条不同的结果进行对比。",
+      "metricHead": "指标",
+      "delta": "变化",
+      "copy": "复制报告",
+      "copied": "已复制 ✓",
+      "metric": {
+        "score": "测量质量",
+        "vibrations": "剩余振动 %",
+        "smoothing": "平滑量",
+        "maxAccel": "建议最大加速度 (mm/s²)",
+        "freq": "整形器频率 (Hz)",
+        "shaper": "整形器"
+      }
     }
   }
 }
