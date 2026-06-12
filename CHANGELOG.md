@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.206.0] - 2026-06-12
+
+### Fixed
+
+- **Mission Control and the Machine Doctor now read the host firmware version from the right
+  field**, so the per-MCU sync check works: a host running a newer Klipper than its MCUs is
+  reported as the real out-of-sync warning it is (verified on a live printer where the host runs
+  a newer build than both MCUs — previously the comparison silently disabled itself).
+- **The home's tuning tile reads the archive as it is actually written** — saved `[input_shaper]`
+  configs are archived under the `config` kind with an `at` timestamp; the tile now lists the
+  latest result per axis instead of showing empty.
+
 ## [0.205.0] - 2026-06-12
 
 ### Added
