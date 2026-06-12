@@ -15,6 +15,7 @@ import type {
   AxesMapResult,
   BeltComparison,
   NoiseResult,
+  ProofMetrics,
   ShaperAnalysis,
   StaticExcitationResult,
   VibrationsProfile,
@@ -44,6 +45,8 @@ export interface AuditRecord {
   /** Where the record came from: this browser, or the on-host archive. */
   source: 'local' | 'archive'
   grade?: { letter: string; score: number }
+  /** Comparable numbers behind a shaper result (what proof-of-tune diffs). */
+  metrics?: ProofMetrics
   verdict?: string
   /** The result's properties, each in its own labelled field (the "engineered" layout). */
   fields: AuditField[]
@@ -125,6 +128,13 @@ export function buildShaperRecord(
     kind: 'shaper',
     axis: analysis.axis,
     grade: { letter: grade.letter, score: grade.score },
+    metrics: {
+      shaper: analysis.recommended_shaper,
+      freq: analysis.recommended_freq,
+      vibrations_pct: rec?.vibrations_pct ?? null,
+      smoothing: rec?.smoothing ?? null,
+      max_accel: rec?.max_accel ?? null,
+    },
     verdict: grade.verdict,
     fields,
   }
@@ -313,6 +323,19 @@ export function archiveToRecord(run: ArchiveRun): AuditRecord {
     typeof summary.grade === 'string' && typeof summary.score === 'number'
       ? { letter: summary.grade, score: summary.score }
       : undefined
+  const num = (v: unknown): number | null => (typeof v === 'number' ? v : null)
+  const hasMetrics = ['shaper', 'freq', 'vibrations_pct', 'smoothing', 'max_accel'].some(
+    (k) => summary[k] != null,
+  )
+  const metrics: ProofMetrics | undefined = hasMetrics
+    ? {
+        shaper: typeof summary.shaper === 'string' ? summary.shaper : null,
+        freq: num(summary.freq),
+        vibrations_pct: num(summary.vibrations_pct),
+        smoothing: num(summary.smoothing),
+        max_accel: num(summary.max_accel),
+      }
+    : undefined
   return {
     id: `archive-${run.id}`,
     at: run.at,
@@ -320,6 +343,7 @@ export function archiveToRecord(run: ArchiveRun): AuditRecord {
     axis: run.axis,
     source: 'archive',
     grade,
+    metrics,
     verdict: typeof summary.verdict === 'string' ? summary.verdict : undefined,
     fields,
     runId: run.id,

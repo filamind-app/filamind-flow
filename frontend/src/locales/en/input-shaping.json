@@ -622,6 +622,25 @@
         "high_noise": "High noise level ({n} mm/s²)",
         "good": "Detection quality: good"
       }
+    },
+    "proof": {
+      "title": "Proof of tune",
+      "empty": "Needs two recorded results on this axis — measure before tuning, apply the shaper, then measure again and save both.",
+      "before": "Before",
+      "after": "After",
+      "samePick": "Pick two different results to compare.",
+      "metricHead": "Metric",
+      "delta": "Change",
+      "copy": "Copy report",
+      "copied": "Copied ✓",
+      "metric": {
+        "score": "Measurement grade",
+        "vibrations": "Remaining vibration %",
+        "smoothing": "Smoothing",
+        "maxAccel": "Suggested max accel (mm/s²)",
+        "freq": "Shaper frequency (Hz)",
+        "shaper": "Shaper"
+      }
     }
   }
 }
