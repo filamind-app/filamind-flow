@@ -284,7 +284,12 @@
       "uploadFailed": "Échec de l'envoi",
       "saveFailed": "Échec de l'enregistrement",
       "deleteFailed": "Échec de la suppression",
-      "flashFailed": "échec du flash"
+      "flashFailed": "échec du flash",
+      "confirmTitle": "Flasher ce fichier externe ?",
+      "confirmWarning": "Binaire externe : un mauvais fichier peut rendre le MCU non amorçable jusqu’à récupération via Katapult/DFU. Vérifiez que le fichier correspond à la carte.",
+      "confirmAck": "J’ai vérifié que ce fichier correspond à la carte cible",
+      "confirmFlash": "Flasher",
+      "confirmCancel": "Annuler"
     }
   }
 }
