@@ -215,7 +215,10 @@
       "copyConfig": "copy config",
       "autotune": "autotune",
       "autotuneTitle": "Runs AUTOTUNE_TMC if the klipper_tmc_autotune add-on is installed",
-      "noSpecs": "No datasheet specs for this motor — tuning recommendation unavailable."
+      "noSpecs": "No datasheet specs for this motor — tuning recommendation unavailable.",
+      "measured": "Measured: motors resonate at ~{freq} Hz",
+      "measuredSym": "symmetry {pct}%",
+      "measuredHint": "Ground truth from the vibrations profile run on this printer — open the Input Shaping audit."
     },
     "motorSync": {
       "toggle": "motor synchronization",

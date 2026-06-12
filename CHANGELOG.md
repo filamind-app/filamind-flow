@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.213.0] - 2026-06-12
+
+### Added
+
+- **Measured meets predicted: the vibrations profile feeds Motor Drivers.** A supervised
+  vibrations run now archives its summary on the host (measured motor resonance, symmetry,
+  smoothest speed), and the Motor Drivers recommendation panel shows that **measured ground
+  truth** — *"motors resonate at ~146 Hz · symmetry 100%"* — right beside the datasheet-based
+  physics, with a jump into the Input Shaping audit. The number comes from your printer, not a
+  prediction. Localised in all 7 languages.
+
 ## [0.212.0] - 2026-06-12
 
 ### Added

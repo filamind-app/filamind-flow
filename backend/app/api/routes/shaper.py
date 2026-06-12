@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import os
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -253,6 +254,20 @@ async def _run_vibrations_task(task: task_store.Task, kwargs: dict, settings: Se
             )
         task.result = result
         task.status = "done"
+        # Durable summary (no CSVs): the measured motor resonance / symmetry becomes ground
+        # truth other widgets can read (Motor Drivers shows it beside the datasheet physics).
+        with contextlib.suppress(Exception):  # archiving is best-effort; the run succeeded
+            shaper_archive.save_run(
+                settings.data_dir,
+                kind="vibrations",
+                summary={
+                    "motor_freq": result.get("motor_freq"),
+                    "symmetry_pct": result.get("symmetry_pct"),
+                    "recommended_speed": result.get("recommended_speed"),
+                    "kinematics": result.get("kinematics"),
+                },
+                keep_n=settings.shaper_archive_keep_n,
+            )
     except task_store.TaskCancelled:
         task.status = "cancelled"
     except printer_guard.GuardBusyError as exc:

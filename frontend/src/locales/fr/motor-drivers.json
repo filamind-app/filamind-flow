@@ -215,7 +215,10 @@
       "copyConfig": "copier la config",
       "autotune": "autotune",
       "autotuneTitle": "Exécute AUTOTUNE_TMC si l'add-on klipper_tmc_autotune est installé",
-      "noSpecs": "Aucune caractéristique de fiche technique pour ce moteur — recommandation de réglage indisponible."
+      "noSpecs": "Aucune caractéristique de fiche technique pour ce moteur — recommandation de réglage indisponible.",
+      "measured": "Mesuré : les moteurs résonnent à ~{freq} Hz",
+      "measuredSym": "symétrie {pct}%",
+      "measuredHint": "Réalité mesurée par le profil de vibrations de cette imprimante — ouvre l’audit Input Shaping."
     },
     "motorSync": {
       "toggle": "synchronisation des moteurs",
