@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import ConfigApply from '@/components/ui/ConfigApply.vue'
 import { useI18n } from 'vue-i18n'
 
 import ComboSelect from '@/components/ui/ComboSelect.vue'
@@ -139,7 +140,7 @@ onMounted(() => void load())
           </span>
         </div>
         <p class="text-[11px] opacity-80">{{ tpl.description }}</p>
-        <p v-if="tpl.required_sections.length" class="font-mono text-[10px] opacity-60">
+        <p v-if="tpl.required_sections?.length" class="font-mono text-[10px] opacity-60">
           {{
             t('configTemplates.template.requires', { sections: tpl.required_sections.join(', ') })
           }}
@@ -155,6 +156,16 @@ onMounted(() => void load())
               : t('configTemplates.template.copy')
           }}
         </button>
+
+        <!-- Write it straight into the config behind the shared gate (no copy-paste). -->
+        <details class="nb-card mt-1 bg-surface p-2">
+          <summary class="cursor-pointer text-[11px] font-bold">
+            {{ t('configApply.title') }}
+          </summary>
+          <div class="mt-2">
+            <ConfigApply :block="tpl.body" />
+          </div>
+        </details>
       </li>
     </ul>
   </div>
