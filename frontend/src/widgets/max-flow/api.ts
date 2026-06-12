@@ -44,14 +44,22 @@ export async function planMaxFlow(params: MaxFlowParams): Promise<MaxFlowPlan> {
   return (await response.json()) as MaxFlowPlan
 }
 
-/** Run the live max-flow test (ACTUATING: heat + extrude + sample). 409 = printer busy. */
+/** Run the live max-flow test (ACTUATING: heat + extrude + sample) as a SUPERVISED background
+ *  task: polled per-step progress, cancel (the heater is always cut), a server-held result, and
+ *  reattach-after-reload. Same result shape as the old blocking call. */
 export async function runMaxFlow(params: MaxFlowParams): Promise<MaxFlowResult> {
+  const { runSupervisedMaxFlow } = await import('./supervised')
+  return runSupervisedMaxFlow(params)
+}
+
+/** Start the supervised run; returns the task id (used by supervised.ts). */
+export async function startMaxFlowTask(params: MaxFlowParams): Promise<string> {
   const { backendUrl } = resolveEndpoints()
-  const response = await fetch(`${backendUrl}/api/maxflow/run`, {
+  const response = await fetch(`${backendUrl}/api/maxflow/run/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
   })
-  if (!response.ok) throw await errorFrom(response, `Run failed (${response.status})`)
-  return (await response.json()) as MaxFlowResult
+  if (!response.ok) throw await errorFrom(response, `Run failed to start (${response.status})`)
+  return ((await response.json()) as { task_id: string }).task_id
 }

@@ -531,7 +531,13 @@
       "errAxesMapDetection": "axes_map-Erkennung fehlgeschlagen",
       "errCopyFailed": "Kopieren fehlgeschlagen — markiere den Text und kopiere ihn manuell.",
       "errSustainTest": "Halte-Frequenz-Test fehlgeschlagen",
-      "errVibrationsProfile": "Vibrationsprofil fehlgeschlagen"
+      "errVibrationsProfile": "Vibrationsprofil fehlgeschlagen",
+      "vibProgress": "Sweep {step}/{total} — {speed} mm/s · {angle}°",
+      "vibStarting": "Starte den Sweep…",
+      "vibCancel": "Sweep abbrechen",
+      "vibCancelling": "Breche ab…",
+      "vibCancelled": "Sweep abgebrochen — Geschwindigkeitslimits wiederhergestellt.",
+      "vibReattached": "Wieder verbunden: dieses Ergebnis wurde fertig, während die Seite weg war."
     },
     "vibrationsView": {
       "title": "Vibrationsprofil",

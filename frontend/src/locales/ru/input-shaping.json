@@ -531,7 +531,13 @@
       "errAxesMapDetection": "Определение axes-map не удалось",
       "errCopyFailed": "Копирование не удалось — выделите текст и скопируйте вручную.",
       "errSustainTest": "Тест удержания частоты не удался",
-      "errVibrationsProfile": "Профиль вибраций не удался"
+      "errVibrationsProfile": "Профиль вибраций не удался",
+      "vibProgress": "Проход {step}/{total} — {speed} мм/с · {angle}°",
+      "vibStarting": "Запуск прохода…",
+      "vibCancel": "Отменить проход",
+      "vibCancelling": "Отмена…",
+      "vibCancelled": "Проход отменён — лимиты скорости восстановлены.",
+      "vibReattached": "Возобновлено: результат завершился, пока страница была закрыта."
     },
     "vibrationsView": {
       "title": "Профиль вибраций",

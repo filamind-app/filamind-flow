@@ -13,8 +13,13 @@ import uuid
 _MAX_TASKS = 50
 
 
+class TaskCancelled(Exception):
+    """Raised inside a supervised run when its task was flagged to stop — the run's ``finally``
+    blocks (heater off, velocity-limit restore, cleanup) execute on the way out."""
+
+
 class Task:
-    """A single background run: its accumulating log, status, and cancel flag."""
+    """A single background run: its accumulating log, status, progress, result, cancel flag."""
 
     def __init__(self, task_id: str) -> None:
         self.id = task_id
@@ -22,12 +27,23 @@ class Task:
         self.status = "running"
         self.log = ""
         self.cancelled = False
+        #: Optional structured progress (e.g. ``{"step": 3, "total": 40, "detail": {...}}``).
+        self.progress: dict[str, object] | None = None
+        #: The run's final payload, held server-side so a dropped tab can still collect it.
+        self.result: dict[str, object] | None = None
 
     def append(self, text: str) -> None:
         self.log += text
 
     def as_dict(self) -> dict[str, object]:
-        return {"id": self.id, "status": self.status, "log": self.log, "cancelled": self.cancelled}
+        return {
+            "id": self.id,
+            "status": self.status,
+            "log": self.log,
+            "cancelled": self.cancelled,
+            "progress": self.progress,
+            "result": self.result,
+        }
 
 
 _tasks: dict[str, Task] = {}

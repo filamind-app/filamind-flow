@@ -531,7 +531,13 @@
       "errAxesMapDetection": "Échec de la détection de l'axes-map",
       "errCopyFailed": "Échec de la copie — sélectionnez le texte et copiez-le manuellement.",
       "errSustainTest": "Échec du test de fréquence soutenue",
-      "errVibrationsProfile": "Échec du profil de vibrations"
+      "errVibrationsProfile": "Échec du profil de vibrations",
+      "vibProgress": "Balayage {step}/{total} — {speed} mm/s · {angle}°",
+      "vibStarting": "Démarrage du balayage…",
+      "vibCancel": "Annuler le balayage",
+      "vibCancelling": "Annulation…",
+      "vibCancelled": "Balayage annulé — limites de vitesse restaurées.",
+      "vibReattached": "Reconnecté : ce résultat s’est terminé pendant l’absence de la page."
     },
     "vibrationsView": {
       "title": "Profil de vibrations",

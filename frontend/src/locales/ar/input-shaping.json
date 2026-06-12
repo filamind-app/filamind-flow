@@ -531,7 +531,13 @@
       "errAxesMapDetection": "فشل كشف خريطة المحاور",
       "errCopyFailed": "فشل النسخ — حدّد النص وانسخه يدويًا.",
       "errSustainTest": "فشل اختبار تردّد الإدامة",
-      "errVibrationsProfile": "فشل ملف الاهتزازات"
+      "errVibrationsProfile": "فشل ملف الاهتزازات",
+      "vibProgress": "المسح {step}/{total} — {speed} مم/ث عند {angle}°",
+      "vibStarting": "بدء المسح…",
+      "vibCancel": "إلغاء المسح",
+      "vibCancelling": "جارٍ الإلغاء…",
+      "vibCancelled": "أُلغي المسح — استُعيدت حدود السرعة.",
+      "vibReattached": "أُعيد الالتصاق: اكتملت هذه النتيجة أثناء غياب الصفحة."
     },
     "vibrationsView": {
       "title": "ملف الاهتزازات",

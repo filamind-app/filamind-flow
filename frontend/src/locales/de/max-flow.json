@@ -29,7 +29,10 @@
           "title": "Das Ergebnis nutzen",
           "body": "Trage den vorgeschlagenen Wert in den \"max volumetric speed\" deines Slicers ein (pro Filament). Der konservative Wert (80 % des gemessenen Maximums) ist eine sichere Alltagsgrenze; der ausgewogene Wert (90 %) reizt es etwas weiter aus. Höhere Hotend-Temperaturen erhöhen in der Regel den erreichbaren Fluss."
         },
-        "glossary": { "title": "Glossar", "body": "" }
+        "glossary": {
+          "title": "Glossar",
+          "body": ""
+        }
       },
       "glossary": {
         "flow": {
@@ -94,7 +97,15 @@
       "cancel": "Abbrechen",
       "busy": "Verweigert: Der Drucker ist beschäftigt (druckt oder pausiert). Versuche es erneut, wenn er im Leerlauf ist.",
       "error": "Der Test ist fehlgeschlagen.",
-      "noSg": "Es wurden keine StallGuard-Messungen erfasst — das Schlupf-Ergebnis ist möglicherweise unzuverlässig. Wahrscheinlich muss das Live-SG-Feld des Treibers für dieses Modell angepasst werden."
+      "noSg": "Es wurden keine StallGuard-Messungen erfasst — das Schlupf-Ergebnis ist möglicherweise unzuverlässig. Wahrscheinlich muss das Live-SG-Feld des Treibers für dieses Modell angepasst werden.",
+      "progress": "Schritt {step}/{total} — {flow} mm³/s",
+      "starting": "Heize / starte…",
+      "abort": "Lauf abbrechen",
+      "cancelling": "Breche ab…",
+      "cancelled": "Lauf abgebrochen — die Heizung wurde ausgeschaltet.",
+      "reattached": "Wieder verbunden: dieses Ergebnis wurde fertig, während die Seite weg war.",
+      "failed": "Max-Flow-Lauf fehlgeschlagen.",
+      "abortNote": "Abbrechen schaltet die Heizung immer aus."
     },
     "result": {
       "title": "Ergebnis",

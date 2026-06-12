@@ -29,7 +29,10 @@
           "title": "Uso del resultado",
           "body": "Pon el valor sugerido en el campo \"max volumetric speed\" de tu laminador (por filamento). La cifra conservadora (80 % del máximo medido) es un límite seguro para el día a día; la cifra equilibrada (90 %) fuerza un poco más. Temperaturas de hotend más altas suelen aumentar el flujo alcanzable."
         },
-        "glossary": { "title": "Glosario", "body": "" }
+        "glossary": {
+          "title": "Glosario",
+          "body": ""
+        }
       },
       "glossary": {
         "flow": {
@@ -94,7 +97,15 @@
       "cancel": "Cancelar",
       "busy": "Rechazado: la impresora está ocupada (imprimiendo o en pausa). Inténtalo de nuevo cuando esté inactiva.",
       "error": "La prueba falló.",
-      "noSg": "No se leyeron muestras de StallGuard — el resultado de patinaje puede no ser fiable. Probablemente haya que ajustar el campo SG en vivo del controlador para este modelo."
+      "noSg": "No se leyeron muestras de StallGuard — el resultado de patinaje puede no ser fiable. Probablemente haya que ajustar el campo SG en vivo del controlador para este modelo.",
+      "progress": "Paso {step}/{total} — {flow} mm³/s",
+      "starting": "Calentando / iniciando…",
+      "abort": "Abortar prueba",
+      "cancelling": "Abortando…",
+      "cancelled": "Prueba abortada — el calentador se apagó.",
+      "reattached": "Reconectado: este resultado terminó mientras la página no estaba.",
+      "failed": "La prueba de flujo máximo falló.",
+      "abortNote": "Abortar siempre apaga el calentador."
     },
     "result": {
       "title": "Resultado",

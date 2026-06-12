@@ -16,6 +16,7 @@ from app.api.routes import (
     overview,
     reference,
     shaper,
+    tasks,
     topology,
 )
 
@@ -24,6 +25,7 @@ api_router.include_router(health.router)
 api_router.include_router(guard.router)
 api_router.include_router(doctor.router)
 api_router.include_router(overview.router)
+api_router.include_router(tasks.router)
 api_router.include_router(moonraker.router)
 api_router.include_router(firmware.router)
 api_router.include_router(shaper.router)
