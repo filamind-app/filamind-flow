@@ -221,7 +221,7 @@
       "failed": "Algunos paneles no cargaron y están ocultos: {panels}. Lo que comprobarían se desconoce ahora — no necesariamente está bien.",
       "name": {
         "drift": "Disco vs vivo",
-        "pinDoctor": "Pin Doctor",
+        "pinDoctor": "Doctor de pines",
         "sanity": "Sanidad de drivers",
         "project": "Vista de proyecto",
         "pinMap": "Sugerencias de pines",

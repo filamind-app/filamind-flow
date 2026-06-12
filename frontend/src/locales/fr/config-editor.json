@@ -221,7 +221,7 @@
       "failed": "Certains panneaux ne se sont pas chargés et sont masqués : {panels}. Ce qu’ils vérifieraient est inconnu pour le moment — pas forcément correct.",
       "name": {
         "drift": "Disque vs live",
-        "pinDoctor": "Pin Doctor",
+        "pinDoctor": "Docteur des broches",
         "sanity": "Cohérence drivers",
         "project": "Vue projet",
         "pinMap": "Suggestions de broches",

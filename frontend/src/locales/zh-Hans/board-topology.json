@@ -18,7 +18,7 @@
         },
         "connections": {
           "title": "连接类型",
-          "body": "USB —— 通过 USB 的串口连接（常见的主板连接方式）。CAN bus —— 一条共享的双线总线，常用于工具头板卡。UART —— 通过 GPIO 的直接串口连接。连接类型根据每个 MCU 的 `serial` / `canbus_uuid` 设置推断得出。"
+          "body": "USB —— 通过 USB 的串口连接（常见的主板连接方式）。CAN 总线 —— 一条共享的双线总线，常用于工具头板卡。UART —— 通过 GPIO 的直接串口连接。连接类型根据每个 MCU 的 `serial` / `canbus_uuid` 设置推断得出。"
         },
         "detection": {
           "title": "检测原理",
@@ -43,7 +43,7 @@
           "def": "微控制器单元 —— 运行 Klipper 固件的控制板卡（主板、工具头等）。"
         },
         "canbus": {
-          "term": "CAN bus",
+          "term": "CAN 总线",
           "def": "一条通过唯一 UUID 连接各板卡的双线共享总线 —— 在工具头布线中广受欢迎。"
         },
         "host": {
@@ -66,7 +66,7 @@
       "hideBoard": "隐藏详情"
     },
     "conn": {
-      "canbus": "CAN bus",
+      "canbus": "CAN 总线",
       "usb": "USB",
       "uart": "UART",
       "unknown": "未知",

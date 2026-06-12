@@ -8,7 +8,7 @@
       "howToRead": "So liest du es",
       "steps": [
         "Der Host (dein SBC, z. B. ein Raspberry Pi oder CB1) steht ganz oben.",
-        "Jede MCU-Karte zeigt, wie sie verbunden ist (USB / CAN bus / UART) und ihren Chip.",
+        "Jede MCU-Karte zeigt, wie sie verbunden ist (USB / CAN-Bus / UART) und ihren Chip.",
         "Eine Platinen-Schätzung erscheint, wenn die Verbindungskennung mit einer bekannten Platine übereinstimmt."
       ],
       "topics": {
@@ -18,7 +18,7 @@
         },
         "connections": {
           "title": "Verbindungstypen",
-          "body": "USB — eine Serial-over-USB-Verbindung (die übliche Mainboard-Anbindung). CAN bus — ein gemeinsam genutzter Zweidraht-Bus, üblich für Toolhead-Platinen. UART — eine direkte serielle Verbindung über GPIO. Der Typ wird aus der `serial`- / `canbus_uuid`-Einstellung jedes MCUs abgeleitet."
+          "body": "USB — eine Serial-over-USB-Verbindung (die übliche Mainboard-Anbindung). CAN-Bus — ein gemeinsam genutzter Zweidraht-Bus, üblich für Toolhead-Platinen. UART — eine direkte serielle Verbindung über GPIO. Der Typ wird aus der `serial`- / `canbus_uuid`-Einstellung jedes MCUs abgeleitet."
         },
         "detection": {
           "title": "Wie die Erkennung funktioniert",
@@ -43,7 +43,7 @@
           "def": "Microcontroller Unit — eine Steuerplatine, auf der Klippers Firmware läuft (Mainboard, Toolhead usw.)."
         },
         "canbus": {
-          "term": "CAN bus",
+          "term": "CAN-Bus",
           "def": "Ein gemeinsam genutzter Zweidraht-Bus, der Platinen über eine eindeutige UUID verbindet — beliebt für die Toolhead-Verkabelung."
         },
         "host": {
@@ -66,7 +66,7 @@
       "hideBoard": "Details ausblenden"
     },
     "conn": {
-      "canbus": "CAN bus",
+      "canbus": "CAN-Bus",
       "usb": "USB",
       "uart": "UART",
       "unknown": "unbekannt",
@@ -126,7 +126,7 @@
         "physical": "Physisch",
         "logical": "Logisch"
       },
-      "integrated": "SBC on-board",
+      "integrated": "SBC integriert",
       "integratedNote": "Der Host-SBC ist im Mainboard {board} verbaut.",
       "selectPrompt": "Wähle ein Board oder einen MCU in der Karte, um es zu inspizieren.",
       "aria": "Maschinenkarte: der Host und {n} MCUs",
@@ -182,9 +182,9 @@
       "summaryComponents": "{n} Komponenten"
     },
     "jump": {
-      "section": "Diesen Abschnitt im Config Editor öffnen",
-      "drivers": "In Motor Drivers öffnen",
-      "firmware": "Firmware Manager öffnen"
+      "section": "Diesen Abschnitt im Konfig-Editor öffnen",
+      "drivers": "Im Motortreiber-Panel öffnen",
+      "firmware": "Firmware-Manager öffnen"
     }
   }
 }

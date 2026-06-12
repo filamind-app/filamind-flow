@@ -61,7 +61,7 @@
       },
       "glossary": {
         "inputShaper": {
-          "term": "Input shaper",
+          "term": "Инпут-шейпер",
           "def": "Фильтр, который Klipper применяет к движению, гасящий основную вибрацию принтера, чтобы вы могли печатать быстрее без ringing / ghosting."
         },
         "resonance": {
@@ -86,7 +86,7 @@
         }
       },
       "guide": "Справка",
-      "guideTitle": "Руководство по Input Shaping",
+      "guideTitle": "Руководство по инпут-шейперу",
       "close": "Закрыть"
     },
     "grade": {
@@ -291,12 +291,12 @@
         },
         "shaperX": {
           "label": "Шейпер X",
-          "title": "Input shaper — X",
+          "title": "Инпут-шейпер — X",
           "why": "Найдите резонанс X и лучший шейпер."
         },
         "shaperY": {
           "label": "Шейпер Y",
-          "title": "Input shaper — Y",
+          "title": "Инпут-шейпер — Y",
           "why": "Найдите резонанс Y и лучший шейпер."
         },
         "vibrations": {
@@ -306,7 +306,7 @@
         },
         "pressure": {
           "label": "Давление",
-          "title": "Pressure advance",
+          "title": "Pressure Advance",
           "why": "Настройте pressure advance в последнюю очередь, чтобы заострить углы и швы."
         },
         "done": {

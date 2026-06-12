@@ -26,7 +26,7 @@
     "link": {
       "config_section": "Редактор конфига",
       "config_file": "Редактор конфига",
-      "stepper": "Motor Drivers",
+      "stepper": "Драйверы моторов",
       "topology_node": "Карта машины",
       "widget": "Открыть"
     },

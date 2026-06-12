@@ -26,8 +26,8 @@
     "link": {
       "config_section": "配置编辑器",
       "config_file": "配置编辑器",
-      "stepper": "电机驱动",
-      "topology_node": "机器图谱",
+      "stepper": "电机驱动器",
+      "topology_node": "板卡拓扑",
       "widget": "打开"
     },
     "finding": {

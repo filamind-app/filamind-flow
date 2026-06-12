@@ -3,7 +3,7 @@
     "intro": "Durchsuche eine kuratierte Referenz für 3D-Druck-Hardware — Schrittmotoren, Treiber, Boards, Sensoren, Hotends, Lüfter, Hosts, Düsen, Extruder, Filamente und mehr — nach Name, Hersteller, Kategorie oder beliebiger Spezifikation.",
     "help": {
       "guide": "Hilfe",
-      "guideTitle": "Über den Hardware Browser",
+      "guideTitle": "Über den Hardware-Browser",
       "close": "Schließen",
       "howToRead": "Verwendung",
       "steps": [

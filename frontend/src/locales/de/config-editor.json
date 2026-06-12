@@ -3,7 +3,7 @@
     "intro": "Lies die aktive Konfiguration deines Druckers direkt aus Moonraker — jede Datei, aufgeteilt in Sektionen und Parameter, mit Hinweisen auf strukturelle Probleme. Vorerst nur lesend; geführtes Bearbeiten folgt als Nächstes.",
     "help": {
       "guide": "Hilfe",
-      "guideTitle": "Über den Config Editor",
+      "guideTitle": "Über den Konfig-Editor",
       "close": "Schließen",
       "howToRead": "So geht's",
       "steps": [
@@ -221,7 +221,7 @@
       "failed": "Einige Panels konnten nicht laden und sind ausgeblendet: {panels}. Was sie prüfen würden, ist gerade unbekannt — nicht zwingend in Ordnung.",
       "name": {
         "drift": "Datei vs. live",
-        "pinDoctor": "Pin Doctor",
+        "pinDoctor": "Pin-Doktor",
         "sanity": "Treiberprüfung",
         "project": "Projektansicht",
         "pinMap": "Pin-Vorschläge",

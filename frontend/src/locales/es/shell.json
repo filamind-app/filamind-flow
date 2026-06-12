@@ -18,7 +18,7 @@
     },
     "home": {
       "body": "Tus paneles están en la barra lateral — elige uno para empezar. Esta página de inicio está intencionadamente vacía por ahora.",
-      "title": "Mission Control",
+      "title": "Centro de control",
       "refresh": "Actualizar",
       "loading": "Cargando…",
       "unreachable": "El backend no responde.",
@@ -28,7 +28,7 @@
       "stateError": "Error",
       "stateIdle": "Inactiva",
       "printerDown": "Moonraker no responde.",
-      "doctor": "Machine Doctor",
+      "doctor": "Doctor de máquina",
       "doctorBody": "Un escaneo de solo lectura de pines, valores de drivers, deriva de config, sync de firmware y más — calificado A-F con enlaces para ir al arreglo.",
       "doctorScan": "Escanear mi impresora",
       "firmware": "Sync de firmware",
@@ -88,7 +88,7 @@
         "description": "Explora los archivos de configuración de tu impresora, analizados en secciones con validación."
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "Flujo máximo",
         "description": "Mide el flujo volumétrico más alto que tu hotend puede mantener (StallGuard)."
       },
       "board-topology": {
@@ -106,6 +106,10 @@
       "config-templates": {
         "title": "Plantillas de configuración",
         "description": "Bloques de configuración y macros de Klipper listos para pegar, por categoría."
+      },
+      "machine-doctor": {
+        "title": "Doctor de máquina",
+        "description": "Escaneo completo de la impresora con un clic — calificación A-F y enlaces para ir al arreglo."
       }
     },
     "guard": {

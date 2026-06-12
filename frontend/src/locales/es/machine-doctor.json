@@ -24,10 +24,10 @@
       "unknown": "Sin comprobar"
     },
     "link": {
-      "config_section": "Editor de config",
-      "config_file": "Editor de config",
-      "stepper": "Motor Drivers",
-      "topology_node": "Mapa de máquina",
+      "config_section": "Editor de configuración",
+      "config_file": "Editor de configuración",
+      "stepper": "Controladores de motor",
+      "topology_node": "Topología de placas",
       "widget": "Abrir"
     },
     "finding": {

@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.226.1] - 2026-06-12
+
+### Fixed
+
+- **Untranslated UI strings, including the sidebar.** The Machine Doctor entry had no
+  localized name at all, so the sidebar (and home tile) showed its English title in every
+  language — it is now translated in all seven, along with the Max-Flow widget title. A full
+  audit of all locale files then fixed every genuinely untranslated string it surfaced
+  (German widget titles and headings, French TMC health/flag labels, Russian Input-Shaper
+  naming, Chinese driver states, "CAN bus" localized everywhere, and more — ~130 fixes),
+  while deliberately keeping technical terms (StealthChop, printer.cfg, Katapult) and
+  genuine cognates as they are.
+
 ## [0.226.0] - 2026-06-12
 
 ### Changed

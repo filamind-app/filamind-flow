@@ -18,7 +18,7 @@
     },
     "home": {
       "body": "Deine Panels findest du in der Seitenleiste — wähle eines aus, um loszulegen. Diese Startseite ist vorerst bewusst leer.",
-      "title": "Mission Control",
+      "title": "Kommandozentrale",
       "refresh": "Aktualisieren",
       "loading": "Lade…",
       "unreachable": "Das Backend ist nicht erreichbar.",
@@ -28,7 +28,7 @@
       "stateError": "Fehler",
       "stateIdle": "Bereit",
       "printerDown": "Moonraker ist nicht erreichbar.",
-      "doctor": "Machine Doctor",
+      "doctor": "Maschinen-Doktor",
       "doctorBody": "Ein Nur-Lese-Scan über Pins, Treiberwerte, Config-Drift, Firmware-Sync und mehr — benotet A-F mit Spring-zum-Fix-Links.",
       "doctorScan": "Drucker scannen",
       "firmware": "Firmware-Sync",
@@ -38,16 +38,16 @@
       "tuning": "Tuning",
       "noTuning": "Noch keine Tuning-Läufe archiviert — den Input-Shaping-Assistenten starten.",
       "hardware": "Hardware vs. Basislinie",
-      "noBaseline": "Noch keine Hardware-Basislinie — in der Machine Map einen Snapshot speichern.",
+      "noBaseline": "Noch keine Hardware-Basislinie — in der Board-Topologie einen Snapshot speichern.",
       "hwUnchanged": "Keine Hardware-Änderungen seit der Basislinie.",
       "hwChanged": "{n} Hardware-Änderung(en) seit der Basislinie.",
       "setup": {
         "title": "Erste Schritte ({done}/{total})",
         "go": "Los",
-        "boards": "Platinen in der Machine Map bestätigen",
+        "boards": "Platinen in der Board-Topologie bestätigen",
         "baseline": "Hardware-Basislinie speichern (erkennt spätere Änderungen)",
         "firmware": "Jede MCU-Firmware mit dem Host synchronisieren",
-        "motors": "Motoren in Motor Drivers zuweisen",
+        "motors": "Motoren im Motortreiber-Panel zuweisen",
         "tuning": "Input Shaping für X und Y tunen (geführter Assistent)"
       },
       "journal": {
@@ -84,11 +84,11 @@
         "description": "Live-Inventar der TMC-Schrittmotortreiber: Strom, Modus, Microsteps und Status."
       },
       "config-editor": {
-        "title": "Config Editor",
+        "title": "Konfig-Editor",
         "description": "Durchsuche die Konfigurationsdateien deines Druckers, aufgeteilt in Sektionen mit Validierung."
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "Max. Durchfluss",
         "description": "Miss den höchsten volumetrischen Fluss, den dein Hotend dauerhaft halten kann (StallGuard)."
       },
       "board-topology": {
@@ -96,16 +96,20 @@
         "description": "Sieh, wie Host und MCUs verbunden sind (USB / CAN / UART) + eine Platinen-Schätzung."
       },
       "macro-designer": {
-        "title": "Macro Designer",
+        "title": "Makro-Designer",
         "description": "Simuliere G-code offline — Werkzeugkopf-Pfad, Grenzen, Summen und eine Makro-Bibliothek."
       },
       "hardware-browser": {
-        "title": "Hardware Browser",
+        "title": "Hardware-Browser",
         "description": "Durchsuche eine kuratierte 3D-Druck-Hardware-Referenz nach Name, Hersteller oder Spezifikation."
       },
       "config-templates": {
-        "title": "Config Templates",
+        "title": "Konfig-Vorlagen",
         "description": "Sofort einfügbare Klipper-Konfigurationsblöcke und Makros, nach Kategorie."
+      },
+      "machine-doctor": {
+        "title": "Maschinen-Doktor",
+        "description": "Ein-Klick-Komplettscan des Druckers — A-F-Zeugnis und Spring-zum-Fix-Links."
       }
     },
     "guard": {
@@ -118,7 +122,7 @@
         "axes_map": "Achsen-Map-Kalibrierung",
         "sustain": "Daueranregung",
         "vibrations_profile": "Vibrationsprofil",
-        "max_flow": "Max-Flow-Test",
+        "max_flow": "Max-Durchfluss-Test",
         "driver_write": "Treiber-Schreibvorgang",
         "homing": "Referenzfahrt",
         "motors_sync": "Motor-Sync",

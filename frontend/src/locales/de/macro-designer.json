@@ -3,7 +3,7 @@
     "intro": "Simuliere G-code offline — füge ein Programm ein oder schreibe es und sieh den Werkzeugkopf-Pfad, die Begrenzungsbox, Verfahr- und Extrusionssummen sowie eine Zeitschätzung, ohne den Drucker anzufassen. Durchstöbere die integrierte Makro-Bibliothek als Referenz.",
     "help": {
       "guide": "Hilfe",
-      "guideTitle": "Über den Macro Designer",
+      "guideTitle": "Über den Makro-Designer",
       "close": "Schließen",
       "howToRead": "Verwendung",
       "steps": [

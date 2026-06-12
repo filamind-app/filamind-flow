@@ -8,7 +8,7 @@
       "howToRead": "Comment lire",
       "steps": [
         "L'hôte (votre SBC, par ex. un Raspberry Pi ou un CB1) se trouve en haut.",
-        "Chaque carte MCU indique comment elle se connecte (USB / CAN bus / UART) et sa puce.",
+        "Chaque carte MCU indique comment elle se connecte (USB / Bus CAN / UART) et sa puce.",
         "Une estimation de la carte apparaît lorsque l'identifiant de connexion correspond à une carte connue."
       ],
       "topics": {
@@ -18,7 +18,7 @@
         },
         "connections": {
           "title": "Types de connexion",
-          "body": "USB — une liaison série sur USB (la connexion habituelle de la carte mère). CAN bus — un bus partagé à deux fils, courant pour les cartes de tête d'impression. UART — une liaison série directe via GPIO. Le type est déduit du paramètre `serial` / `canbus_uuid` de chaque MCU."
+          "body": "USB — une liaison série sur USB (la connexion habituelle de la carte mère). Bus CAN — un bus partagé à deux fils, courant pour les cartes de tête d'impression. UART — une liaison série directe via GPIO. Le type est déduit du paramètre `serial` / `canbus_uuid` de chaque MCU."
         },
         "detection": {
           "title": "Comment fonctionne la détection",
@@ -43,7 +43,7 @@
           "def": "Microcontroller unit — une carte de contrôle exécutant le firmware de Klipper (carte mère, tête d'impression, etc.)."
         },
         "canbus": {
-          "term": "CAN bus",
+          "term": "Bus CAN",
           "def": "Un bus partagé à deux fils reliant les cartes par un UUID unique — populaire pour le câblage des têtes d'impression."
         },
         "host": {
@@ -66,7 +66,7 @@
       "hideBoard": "Masquer les détails"
     },
     "conn": {
-      "canbus": "CAN bus",
+      "canbus": "Bus CAN",
       "usb": "USB",
       "uart": "UART",
       "unknown": "inconnu",
@@ -183,7 +183,7 @@
     },
     "jump": {
       "section": "Ouvrir cette section dans l’éditeur de config",
-      "drivers": "Ouvrir dans Motor Drivers",
+      "drivers": "Ouvrir dans Drivers moteur",
       "firmware": "Ouvrir le gestionnaire de firmware"
     }
   }
