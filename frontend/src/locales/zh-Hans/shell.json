@@ -16,7 +16,30 @@
       "by": "由 DeltaFabs 团队打造"
     },
     "home": {
-      "body": "你的面板都在侧边栏 — 选择一个开始使用。此主页目前刻意保持为空。"
+      "body": "你的面板都在侧边栏 — 选择一个开始使用。此主页目前刻意保持为空。",
+      "title": "任务控制台",
+      "refresh": "刷新",
+      "loading": "加载中…",
+      "unreachable": "后端不可达。",
+      "printer": "打印机",
+      "statePrinting": "打印中",
+      "statePaused": "已暂停",
+      "stateError": "错误",
+      "stateIdle": "空闲",
+      "printerDown": "Moonraker 不可达。",
+      "doctor": "机器医生",
+      "doctorBody": "一次只读扫描：引脚、驱动数值、配置漂移、固件同步等 — A-F 评级并附跳转修复链接。",
+      "doctorScan": "扫描我的打印机",
+      "firmware": "固件同步",
+      "host": "主机：{version}",
+      "open": "打开",
+      "noData": "暂无数据。",
+      "tuning": "调校",
+      "noTuning": "尚无归档的调校 — 运行 Input Shaping 向导。",
+      "hardware": "硬件与基线",
+      "noBaseline": "尚未保存硬件基线 — 请在机器图谱中保存快照。",
+      "hwUnchanged": "自保存基线以来硬件无变化。",
+      "hwChanged": "自保存基线以来有 {n} 处硬件变化。"
     },
     "connection": {
       "connected": "已连接",
