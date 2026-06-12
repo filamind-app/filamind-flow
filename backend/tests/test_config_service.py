@@ -166,6 +166,26 @@ async def test_gather_sanity_flags_overcurrent_and_odd_microsteps() -> None:
     assert not any(f["section"] == "tmc5160 stepper_z" for f in out["findings"])
 
 
+async def test_drift_skips_single_continuation_line_values() -> None:
+    # "probe_points:" with its value on ONE indented continuation line strips to something that
+    # looks single-line (inline comment embedded) — it must be treated as multi-line and skipped,
+    # not reported as fake drift against the comment-free live value.
+    class _Client:
+        async def query_objects(self, objects: list[str]) -> dict[str, Any]:
+            return {
+                "configfile": {
+                    "config": {"resonance_tester": {"probe_points": "175, 175, 30"}},
+                }
+            }
+
+        async def get_file_text(self, path: str, root: str = "config") -> str:
+            return "[resonance_tester]\nprobe_points:\n    175, 175, 30  # an example\n"
+
+    out = await config_service.gather_drift(_Client(), "printer.cfg")  # type: ignore[arg-type]
+    assert out["reachable"] is True
+    assert out["drifts"] == []
+
+
 UPSERT_BASE = """\
 [stepper_x]
 step_pin: PF13

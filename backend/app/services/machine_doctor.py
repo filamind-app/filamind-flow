@@ -73,8 +73,10 @@ async def _scan_pins(client: MoonrakerClient, data_dir: str) -> dict[str, Any]:
             else:
                 findings.append(
                     _finding(
+                        # A board caveat is a heads-up about electronics that are wired BY DESIGN
+                        # (e.g. a mains-switched pin) — informational, never scored.
                         "pins.caveat",
-                        "warning",
+                        "info",
                         {"pin": f.get("pin"), "mcu": mcu.get("name")},
                         _config_link(owner) if owner else None,
                     )
@@ -148,8 +150,11 @@ async def _scan_firmware(settings: Settings) -> dict[str, Any]:
         settings.moonraker_url, settings.klipper_dir, settings.katapult_dir, settings.data_dir
     )
     findings: list[dict[str, Any]] = []
+    host_version = out.get("host_version")
     for mcu in out.get("mcus", []):
-        if mcu.get("in_sync") is False:
+        # in_sync=False is only a real finding when we know what the host runs — without a host
+        # version the comparison is meaningless, and reporting it would be a fake warning.
+        if mcu.get("in_sync") is False and host_version:
             findings.append(
                 _finding(
                     "firmware.out_of_sync",

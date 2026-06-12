@@ -162,13 +162,18 @@ async def gather_drift(client: MoonrakerClient, filename: str) -> dict[str, Any]
         if not isinstance(live_sec, dict):
             continue
         for param in sec.params:
-            disk = (param.value or "").strip()
+            raw_disk = param.value or ""
             raw_live = live_sec.get(param.key.strip().lower())
             if raw_live is None:
                 continue
             live_val = str(raw_live).strip()
-            if "\n" in disk or "\n" in live_val:
+            # Multi-line check BEFORE stripping: a value written as a single continuation line
+            # ("key:" then an indented "value  # note") strips to something that looks
+            # single-line — with its inline comment still embedded — and would otherwise diff
+            # as fake drift against the live value.
+            if "\n" in raw_disk or "\n" in live_val:
                 continue  # skip multi-line values (gcode / bed_mesh points) — too fuzzy to diff
+            disk = raw_disk.strip()
             if disk and live_val and disk != live_val:
                 drifts.append(
                     {"section": sec.header, "key": param.key, "disk": disk, "live": live_val}
