@@ -159,19 +159,19 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
       <div v-if="detail.ports?.length" class="overflow-x-auto">
         <table class="w-full border-collapse font-mono text-[9px]">
           <thead>
-            <tr class="border-b-2 border-ink text-left">
-              <th class="pr-2">{{ t('hardwareBrowser.boards.connector') }}</th>
-              <th class="pr-2">{{ t('hardwareBrowser.boards.function') }}</th>
-              <th class="pr-2">{{ t('hardwareBrowser.boards.pins') }}</th>
-              <th class="pr-2">{{ t('hardwareBrowser.boards.use') }}</th>
+            <tr class="border-b-2 border-ink text-start">
+              <th class="pe-2">{{ t('hardwareBrowser.boards.connector') }}</th>
+              <th class="pe-2">{{ t('hardwareBrowser.boards.function') }}</th>
+              <th class="pe-2">{{ t('hardwareBrowser.boards.pins') }}</th>
+              <th class="pe-2">{{ t('hardwareBrowser.boards.use') }}</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(p, i) in detail.ports" :key="i" class="border-b border-ink/20 align-top">
-              <td class="pr-2">{{ p.connectorStyle || p.label }}</td>
-              <td class="pr-2">{{ p.portFunction }}</td>
-              <td class="whitespace-nowrap pr-2">{{ p.pins }}</td>
-              <td class="min-w-[12rem] pr-2 opacity-80">
+              <td class="pe-2">{{ p.connectorStyle || p.label }}</td>
+              <td class="pe-2">{{ p.portFunction }}</td>
+              <td class="whitespace-nowrap pe-2">{{ p.pins }}</td>
+              <td class="min-w-[12rem] pe-2 opacity-80">
                 {{ p.hint }}
                 <span v-if="p.configKey" class="opacity-60">[{{ p.configKey }}]</span>
               </td>
@@ -196,7 +196,7 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
       <!-- config notes -->
       <div v-if="detail.configNotes?.length">
         <div class="text-[10px] font-bold opacity-70">{{ t('hardwareBrowser.boards.notes') }}</div>
-        <ul class="list-disc pl-4 text-[10px]">
+        <ul class="list-disc ps-4 text-[10px]">
           <li v-for="(n, i) in detail.configNotes" :key="i">{{ n }}</li>
         </ul>
       </div>

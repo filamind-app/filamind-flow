@@ -24,7 +24,10 @@
           "title": "Required sections",
           "body": "Each template lists the config sections it defines or depends on. If a section already exists in your config, merge the keys rather than pasting a duplicate (a duplicate section is rejected at startup)."
         },
-        "glossary": { "title": "Glossary", "body": "" }
+        "glossary": {
+          "title": "Glossary",
+          "body": ""
+        }
       },
       "glossary": {
         "template": {
@@ -57,6 +60,10 @@
       "error": "Couldn't load the templates.",
       "empty": "No templates in this category.",
       "retry": "Retry"
+    },
+    "categories": {
+      "config_blocks": "Config blocks",
+      "macros": "Macros"
     }
   }
 }

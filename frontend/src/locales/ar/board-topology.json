@@ -174,7 +174,12 @@
         "chip_changed": "تغيّرت شريحة «{mcu}»: {before} → {after}",
         "components_changed": "تغيّر عدد مكوّنات «{mcu}»: {before} → {after}"
       },
-      "noCompare": "تعذرت المقارنة — الطابعة غير متاحة."
+      "noCompare": "تعذرت المقارنة — الطابعة غير متاحة.",
+      "summaryHost": "المضيف: {name}",
+      "summaryIntegrated": "حاسوب مدمج على {board}",
+      "summaryMcu": "متحكم {name}",
+      "summaryBoard": "لوحة {board}",
+      "summaryComponents": "{n} مكوّنات"
     },
     "jump": {
       "section": "افتح هذا القسم في محرر الإعداد",

@@ -111,6 +111,8 @@ export interface AxesMapResult {
   chip: string
   status: 'ok' | 'warning' | 'error'
   messages: string[]
+  /** Translatable quality-message codes parallel to `messages`. */
+  message_codes?: VerdictPart[]
   mappings: AxisMapping[]
   euler: Record<string, number>
   /** Gravity magnitude (m/s²). */
@@ -191,6 +193,14 @@ export interface VibrationsProfile {
   spectrogram: number[][]
   recommended_speed: number | null
   verdict: string
+  /** Structured verdict parts ({code, params}) — translated client-side when available. */
+  verdict_parts?: VerdictPart[]
+}
+
+/** A translatable fragment of a backend verdict/quality message. */
+export interface VerdictPart {
+  code: string
+  params: Record<string, string | number>
 }
 
 /** Result of a sustain-frequency hold — a time-frequency spectrogram + timeline. */
@@ -212,5 +222,8 @@ export interface StaticExcitationResult {
   dominant_freq: number
   dominant_ok: boolean
   verdict: string
+  /** Translatable verdict code + params — translated client-side when available. */
+  verdict_code?: string
+  verdict_params?: Record<string, string | number>
   source_file: string | null
 }

@@ -275,7 +275,7 @@ def analyze_axesmap(
     roll, pitch, yaw = _extract_euler_xyz(rotation)
     axes_map = _format_direction_vector(direction_vectors)
 
-    status, messages = _validate(
+    status, messages, message_codes = _validate(
         direction_vectors, confidences, angle_errors, noise_level, gravity, accel
     )
     noise_grade = "ok" if noise_level <= 350 else "warning" if noise_level <= 700 else "error"
@@ -326,6 +326,7 @@ def analyze_axesmap(
         "axes_map": axes_map,
         "status": status,
         "messages": messages,
+        "message_codes": message_codes,
         "mappings": mappings,
         "euler": {"x": round(roll, 1), "y": round(pitch, 1), "z": round(yaw, 1)},
         "gravity": round(gravity / 1000.0, 3),  # m/s^2
@@ -346,20 +347,24 @@ def _validate(
     noise_level: float,
     gravity: float,
     accel: float,
-) -> tuple[str, list[str]]:
+) -> tuple[str, list[str], list[dict[str, object]]]:
     messages: list[str] = []
+    codes: list[dict[str, object]] = []
     status = "ok"
     detected = [int(np.argmax(np.abs(dv))) for dv in direction_vectors]
     if len(set(detected)) != 3:
         status = "error"
         messages.append("Same accelerometer axis detected for multiple machine axes")
+        codes.append({"code": "same_axis", "params": {}})
     avg_conf = float(np.mean(confidences))
     if avg_conf < MIN_CONFIDENCE:
         status = "warning" if status == "ok" else status
         messages.append(f"Low detection confidence ({avg_conf:.0%})")
+        codes.append({"code": "low_confidence", "params": {"pct": round(avg_conf * 100)}})
     if max(angle_errors) > MAX_ANGLE_ERROR:
         status = "warning" if status == "ok" else status
         messages.append(f"High angle error ({max(angle_errors):.1f}°)")
+        codes.append({"code": "high_angle_error", "params": {"deg": round(max(angle_errors), 1)}})
     low, high = (
         EXPECTED_GRAVITY * (1 - GRAVITY_TOLERANCE),
         EXPECTED_GRAVITY * (1 + GRAVITY_TOLERANCE),
@@ -367,9 +372,12 @@ def _validate(
     if not (low <= gravity <= high):
         status = "warning" if status == "ok" else status
         messages.append(f"Unusual gravity reading ({gravity / 1000:.2f} m/s²)")
+        codes.append({"code": "unusual_gravity", "params": {"g": round(gravity / 1000, 2)}})
     if accel and noise_level > accel * 0.3:
         status = "warning" if status == "ok" else status
         messages.append(f"High noise level ({noise_level:.0f} mm/s²)")
+        codes.append({"code": "high_noise", "params": {"n": round(noise_level)}})
     if status == "ok":
         messages.append("Detection quality: good")
-    return status, messages
+        codes.append({"code": "good", "params": {}})
+    return status, messages, codes

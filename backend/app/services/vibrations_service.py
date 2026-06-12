@@ -496,7 +496,36 @@ def analyze_vibrations(
         "spectrogram": [[round(float(v), 4) for v in row] for row in grid_ds.tolist()],
         "recommended_speed": recommended_speed,
         "verdict": _verdict(recommended_speed, peak_speed_vals, symmetry, motor_fr, lowfreq_max),
+        "verdict_parts": _verdict_parts(
+            recommended_speed, peak_speed_vals, symmetry, motor_fr, lowfreq_max
+        ),
     }
+
+
+def _verdict_parts(
+    recommended_speed: float | None,
+    peak_speeds: list[float],
+    symmetry: float,
+    motor_freq: float | None,
+    low_freq_warning: bool,
+) -> list[dict[str, object]]:
+    """The verdict as structured ``{code, params}`` parts — the UI translates them (the
+    English ``verdict`` string stays as a fallback)."""
+    if low_freq_warning:
+        return [{"code": "low_freq", "params": {}}]
+    parts: list[dict[str, object]] = []
+    if recommended_speed is not None:
+        parts.append({"code": "smoothest", "params": {"v": round(recommended_speed)}})
+    if peak_speeds:
+        shown = ", ".join(f"{p:.0f}" for p in peak_speeds[:4])
+        parts.append({"code": "avoid", "params": {"speeds": shown}})
+    if symmetry >= 70:
+        parts.append({"code": "matched", "params": {"pct": round(symmetry)}})
+    elif symmetry > 0:
+        parts.append({"code": "low_symmetry", "params": {"pct": round(symmetry)}})
+    if motor_freq is not None:
+        parts.append({"code": "motor_freq", "params": {"f": round(motor_freq)}})
+    return parts or [{"code": "complete", "params": {}}]
 
 
 def _verdict(

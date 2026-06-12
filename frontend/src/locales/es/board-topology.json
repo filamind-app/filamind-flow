@@ -174,7 +174,12 @@
         "chip_changed": "El chip de «{mcu}» cambió: {before} → {after}",
         "components_changed": "El número de componentes de «{mcu}» cambió: {before} → {after}"
       },
-      "noCompare": "No se pudo comparar — la impresora no responde."
+      "noCompare": "No se pudo comparar — la impresora no responde.",
+      "summaryHost": "Host: {name}",
+      "summaryIntegrated": "SBC integrado en {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "placa {board}",
+      "summaryComponents": "{n} componentes"
     },
     "jump": {
       "section": "Abrir esta sección en el Editor de configuración",
