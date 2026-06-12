@@ -158,6 +158,15 @@ class MoonrakerClient:
             payload: object = response.json()
         return payload if isinstance(payload, dict) else {}
 
+    async def delete_file(self, path: str, root: str = "config") -> None:
+        """Delete a file via ``DELETE /server/files/{root}/{path}``.
+
+        Used to prune old config backups. Raises ``httpx.HTTPError`` on failure.
+        """
+        async with httpx.AsyncClient(timeout=self._timeout) as client:
+            response = await client.delete(f"{self._base_url}/server/files/{root}/{path}")
+            response.raise_for_status()
+
     async def firmware_restart(self) -> None:
         """Request a Klipper ``FIRMWARE_RESTART`` via ``POST /printer/firmware_restart``.
 

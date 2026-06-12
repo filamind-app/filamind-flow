@@ -547,24 +547,44 @@ function cancelConfirm(): void {
   confirmMode.value = null
 }
 
+/** Set when a save was refused because the file changed on disk (412) — offers a reload. */
+const staleConflict = ref(false)
+
 async function doSave(): Promise<void> {
   if (!selected.value) return
   saving.value = true
   saveErr.value = null
   saveMsg.value = null
+  staleConflict.value = false
   try {
-    const res = await saveConfigFile(selected.value, draft.value)
+    // The loaded fingerprint is the save's precondition: a file that changed on disk in the
+    // meantime (a landed SAVE_CONFIG, a parallel edit) is refused instead of clobbered.
+    const res = await saveConfigFile(selected.value, draft.value, view.value?.sha256)
     confirmMode.value = null
     await loadView(selected.value) // reload → draft resets to the saved content (dirty = false)
     saveMsg.value = t('configEditor.save.done', { backup: res.backup ?? '—' })
     showRestartPrompt.value = true
   } catch (e) {
     confirmMode.value = null
-    saveErr.value =
-      e instanceof ApiError && e.status === 409 ? t('configEditor.save.busy') : describeError(e)
+    if (e instanceof ApiError && e.status === 412) {
+      staleConflict.value = true
+      saveErr.value = t('configEditor.save.stale')
+    } else {
+      saveErr.value =
+        e instanceof ApiError && e.status === 409 ? t('configEditor.save.busy') : describeError(e)
+    }
   } finally {
     saving.value = false
   }
+}
+
+/** Reload after a stale-save conflict: the draft is replaced by the on-disk content. The user's
+ *  edit isn't lost silently — this only runs from the explicit button on the 412 message. */
+async function reloadAfterConflict(): Promise<void> {
+  if (!selected.value) return
+  staleConflict.value = false
+  saveErr.value = null
+  await loadView(selected.value)
 }
 
 async function doRestart(): Promise<void> {
@@ -1227,9 +1247,16 @@ onMounted(() => {
         </div>
 
         <!-- Save error -->
-        <p v-if="saveErr" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">
-          {{ saveErr }}
-        </p>
+        <div v-if="saveErr" class="nb-card space-y-2 bg-brand-red/10 p-2">
+          <p class="font-mono text-[11px]">{{ saveErr }}</p>
+          <button
+            v-if="staleConflict"
+            class="nb-btn bg-surface px-2 py-1 text-xs"
+            @click="reloadAfterConflict"
+          >
+            <span aria-hidden="true">↻</span> {{ t('configEditor.save.staleReload') }}
+          </button>
+        </div>
 
         <!-- Saved + restart prompt -->
         <div v-if="saveMsg" class="nb-card space-y-2 bg-brand-lime/20 p-2">

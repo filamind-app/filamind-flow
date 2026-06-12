@@ -70,6 +70,12 @@ class _FakeClient:
     async def get_file_text(self, path: str, root: str = "config") -> str:
         return self._text
 
+    async def list_files(self, root: str = "config") -> list[dict[str, Any]]:
+        return []
+
+    async def delete_file(self, path: str, root: str = "config") -> None:
+        return None
+
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
         return {"print_stats": {"state": self._state}}
 

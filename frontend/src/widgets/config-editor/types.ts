@@ -24,6 +24,8 @@ export interface ConfigIssue {
 export interface ConfigFileView {
   filename: string
   raw: string
+  /** Fingerprint of `raw` — echoed back on save so a parallel on-disk change is detected (412). */
+  sha256?: string
   sections: ConfigSectionView[]
   section_count: number
   issues: ConfigIssue[]
@@ -44,6 +46,8 @@ export interface ConfigSaveResult {
   filename: string
   /** Path of the pre-save backup under `filamind-backups/`, or null for a brand-new file. */
   backup: string | null
+  /** Fingerprint of the newly saved content — becomes the next save's precondition. */
+  sha256?: string
   issues: ConfigIssue[]
   section_count: number
 }

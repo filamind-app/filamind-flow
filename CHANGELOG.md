@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.198.0] - 2026-06-12
+
+### Fixed
+
+- **Config Editor — a save can no longer silently overwrite a file that changed on disk.** The
+  editor now fingerprints the content it loaded and sends that fingerprint with the save; if the
+  on-disk file changed in the meantime — a `SAVE_CONFIG` landing after a calibration, or a parallel
+  edit from another app — the save is refused with a clear message and a one-click **Reload the
+  file** action instead of clobbering the change (the backup timeline shows what differs). Saving
+  from a fresh load is unaffected.
+- **Config Editor — pre-save backups are pruned per file.** `filamind-backups/` grew without bound
+  (every save added a snapshot forever). Each file now keeps its newest snapshots only
+  (`FILAMIND_CONFIG_BACKUP_KEEP_N`, default 20), pruned automatically on save — keeping the host's
+  SD card light. Localised in all 7 languages.
+
 ## [0.197.0] - 2026-06-12
 
 ### Fixed
