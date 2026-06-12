@@ -3,3 +3,5 @@ pytest>=8.3,<9.0
 pytest-asyncio>=0.24,<1.0
 ruff>=0.8,<1.0
 mypy>=1.13,<2.0
+# The e2e smoke's Moonraker stub accepts multipart uploads (test-only).
+python-multipart>=0.0.9,<1.0
