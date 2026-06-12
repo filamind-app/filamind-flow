@@ -376,7 +376,9 @@ onUnmounted(() => {
           </div>
         </div>
         <p class="text-[10px] opacity-60">{{ t('firmware.devices.backupHint') }}</p>
-        <p v-if="backupMsg" role="status" class="font-mono text-[11px] opacity-70">{{ backupMsg }}</p>
+        <p v-if="backupMsg" role="status" class="font-mono text-[11px] opacity-70">
+          {{ backupMsg }}
+        </p>
       </div>
     </template>
   </div>

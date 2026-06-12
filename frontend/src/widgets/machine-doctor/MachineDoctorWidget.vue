@@ -101,7 +101,9 @@ const STATUS_BG: Record<string, string> = {
       </button>
     </div>
 
-    <p v-if="error" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">{{ error }}</p>
+    <p v-if="error" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">
+      {{ error }}
+    </p>
     <p v-else-if="scanning && !report" class="font-mono text-xs opacity-70">
       {{ t('machineDoctor.scanning') }}
     </p>
