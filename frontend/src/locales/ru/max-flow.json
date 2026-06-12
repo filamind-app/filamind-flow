@@ -64,7 +64,9 @@
       "endFlow": "Конечный поток (mm³/s)",
       "stepFlow": "Шаг (mm³/s)",
       "samples": "Замеров / шаг",
-      "extrudePerStep": "Экструзия / шаг (mm)"
+      "extrudePerStep": "Экструзия / шаг (mm)",
+      "driver": "Драйвер экструдера",
+      "driverDetected": "определён с принтера"
     },
     "plan": {
       "button": "Посмотреть план",
@@ -116,7 +118,8 @@
       "recommendTitle": "Предложенные значения для слайсера (max volumetric speed)",
       "conservative": "Консервативное (80%)",
       "balanced": "Сбалансированное (90%)",
-      "units": "mm³/s"
+      "units": "mm³/s",
+      "fromBefore": "Измерено ранее ({at}) — запустите снова для свежих цифр."
     },
     "states": {
       "loadingHotends": "Загрузка хотендов…"

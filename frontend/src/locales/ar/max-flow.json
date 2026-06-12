@@ -64,7 +64,9 @@
       "endFlow": "تدفّق النهاية (mm³/s)",
       "stepFlow": "الخطوة (mm³/s)",
       "samples": "العيّنات / الخطوة",
-      "extrudePerStep": "البثق / الخطوة (mm)"
+      "extrudePerStep": "البثق / الخطوة (mm)",
+      "driver": "مشغّل الباثق",
+      "driverDetected": "مكتشف من الطابعة"
     },
     "plan": {
       "button": "معاينة الخطة",
@@ -116,7 +118,8 @@
       "recommendTitle": "القيم المقترحة للمُقطّع (max volumetric speed)",
       "conservative": "متحفّظ (80%)",
       "balanced": "متوازن (90%)",
-      "units": "mm³/s"
+      "units": "mm³/s",
+      "fromBefore": "قيست سابقًا ({at}) — أعد التشغيل لأرقام حديثة."
     },
     "states": {
       "loadingHotends": "جارٍ تحميل رؤوس التسخين…"

@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.211.0] - 2026-06-12
+
+### Added
+
+- **Max-Flow knows your extruder driver and remembers its results.** The test no longer assumes a
+  TMC2209: the extruder's actual driver model is **detected from the live config** and preselected
+  (with a full model picker for overrides), so a TMC2240/5160 extruder stops hitting a preflight
+  refusal it couldn't fix. And a finished measurement — minutes of heating and grinding — now
+  **survives navigation**: the last result is restored when you come back, clearly labelled with
+  when it was measured. Localised in all 7 languages.
+
 ## [0.210.0] - 2026-06-12
 
 ### Added
