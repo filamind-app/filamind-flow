@@ -182,6 +182,10 @@
         "expansion": "Expansion",
         "host": "Host SBC"
       }
+    },
+    "onPrinter": {
+      "badge": "On this printer",
+      "strip": "On this printer:"
     }
   }
 }

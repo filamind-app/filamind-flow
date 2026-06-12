@@ -182,6 +182,10 @@
     },
     "picker": {
       "placeholder": "选择部件…"
+    },
+    "onPrinter": {
+      "badge": "在本打印机上",
+      "strip": "本打印机上的硬件："
     }
   }
 }

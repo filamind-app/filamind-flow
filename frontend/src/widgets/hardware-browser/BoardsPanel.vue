@@ -8,6 +8,7 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 
 import { fetchBoardDetail, fetchBoards } from './api'
 import EntityCatalog from './EntityCatalog.vue'
+import { onPrinter } from './onPrinter'
 import RelatedChips from './RelatedChips.vue'
 import type { BoardDetail, BoardMedia, BoardSummary } from './types'
 import type { FocusTarget } from './useEntityFocus'
@@ -65,6 +66,7 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
     :fetch-page="fetchPage"
     :fetch-detail="fetchBoardDetail"
     :id-of="idOf"
+    :on-printer-ids="onPrinter.boards"
     :focus-match="focusMatch"
     :reload-token="reloadToken"
     search-key="hardwareBrowser.boards.search"
