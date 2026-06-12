@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.233.0] - 2026-06-13
+
+### Fixed
+
+- **A CAN flash that actually succeeded is no longer reported as failed.** On some USB-CAN
+  adapters the flash tool's read-back *verify* phase dies under the sustained node-to-host
+  data flood — after the write already completed — so the tool exits with an error even
+  though the board is running the new firmware. When the tool errors on a CAN flash,
+  FilaMind now checks the real outcome through Klipper: it waits for the node to reconnect
+  and compares its reported firmware version against the build. If they match, the flash is
+  confirmed as successful (and recorded); only a genuine mismatch reports failure.
+
+
 ## [0.232.0] - 2026-06-13
 
 ### Fixed
