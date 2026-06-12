@@ -39,7 +39,16 @@
       "hardware": "Hardware vs. Basislinie",
       "noBaseline": "Noch keine Hardware-Basislinie — in der Machine Map einen Snapshot speichern.",
       "hwUnchanged": "Keine Hardware-Änderungen seit der Basislinie.",
-      "hwChanged": "{n} Hardware-Änderung(en) seit der Basislinie."
+      "hwChanged": "{n} Hardware-Änderung(en) seit der Basislinie.",
+      "setup": {
+        "title": "Erste Schritte ({done}/{total})",
+        "go": "Los",
+        "boards": "Platinen in der Machine Map bestätigen",
+        "baseline": "Hardware-Basislinie speichern (erkennt spätere Änderungen)",
+        "firmware": "Jede MCU-Firmware mit dem Host synchronisieren",
+        "motors": "Motoren in Motor Drivers zuweisen",
+        "tuning": "Input Shaping für X und Y tunen (geführter Assistent)"
+      }
     },
     "connection": {
       "connected": "Verbunden",
