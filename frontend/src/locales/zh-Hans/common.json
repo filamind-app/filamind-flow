@@ -10,6 +10,19 @@
     "light": "明亮",
     "dark": "暗黑",
     "neon": "霓虹",
-    "contrast": "高对比度"
+    "contrast": "高对比度",
+    "menu": "选择主题",
+    "midnight": "午夜",
+    "ocean": "海洋",
+    "sunset": "日落",
+    "desc": {
+      "neon": "深紫罗兰配青色光晕 — 标志性外观",
+      "midnight": "专业深蓝暗色",
+      "dark": "现代中性石板暗色",
+      "ocean": "深蓝绿配水色点缀",
+      "sunset": "暖梅紫配琥珀点缀",
+      "light": "干净的新粗野主义亮色",
+      "contrast": "最大可读性（无障碍）"
+    }
   }
 }

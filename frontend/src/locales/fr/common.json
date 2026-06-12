@@ -10,6 +10,19 @@
     "light": "Clair",
     "dark": "Sombre",
     "neon": "Néon",
-    "contrast": "Contraste élevé"
+    "contrast": "Contraste élevé",
+    "menu": "Choisir le thème",
+    "midnight": "Minuit",
+    "ocean": "Océan",
+    "sunset": "Crépuscule",
+    "desc": {
+      "neon": "Violet profond à lueur cyan — le look signature",
+      "midnight": "Sombre bleu profond professionnel",
+      "dark": "Sombre ardoise moderne et neutre",
+      "ocean": "Sarcelle profond aux accents aqua",
+      "sunset": "Prune chaud aux accents ambre",
+      "light": "Clair néo-brutaliste épuré",
+      "contrast": "Lisibilité maximale (a11y)"
+    }
   }
 }

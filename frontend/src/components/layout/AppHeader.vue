@@ -2,9 +2,9 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import LanguageMenu from '@/components/layout/LanguageMenu.vue'
+import ThemeMenu from '@/components/layout/ThemeMenu.vue'
 import ConnectionStatus from '@/components/system/ConnectionStatus.vue'
-import LanguageSelect from '@/components/layout/LanguageSelect.vue'
-import ThemeSelect from '@/components/ui/ThemeSelect.vue'
 import { useNav } from '@/core/nav'
 import { refreshGuard, usePrinterGuard } from '@/core/printerGuard'
 import { usePolling } from '@/core/usePolling'
@@ -70,9 +70,9 @@ const guardBadge = computed<{ text: string; printing: boolean } | null>(() => {
       </span>
     </div>
     <div class="flex shrink-0 items-center gap-2">
-      <ThemeSelect />
+      <ThemeMenu />
       <!-- Renders only once a second locale's catalog exists (hidden in the en-only build). -->
-      <LanguageSelect />
+      <LanguageMenu />
       <ConnectionStatus />
     </div>
   </header>

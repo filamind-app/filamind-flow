@@ -27,7 +27,8 @@
     },
     "language": {
       "label": "语言",
-      "select": "选择语言"
+      "select": "选择语言",
+      "menu": "选择语言"
     },
     "widgets": {
       "firmware-upgrade": {
