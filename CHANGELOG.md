@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.226.2] - 2026-06-12
+
+### Fixed
+
+- **The Board Map reads correctly in Arabic (and every locale).** Three fixes from an RTL
+  review of the board card: the graph's node labels no longer spill out of their boxes in
+  right-to-left locales (SVG text geometry is now direction-stable); the board card's
+  spec labels, port-category badges and class chip — previously raw English data values —
+  are translated in all seven languages (~70 catalog vocabulary labels), with unknown
+  future vocabulary still shown raw instead of breaking; and Latin spec values such as
+  "72 MHz" no longer bidi-scramble into "MHz 72" inside Arabic text.
+
 ## [0.226.1] - 2026-06-12
 
 ### Fixed
