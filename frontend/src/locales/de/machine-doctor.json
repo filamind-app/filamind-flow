@@ -1,0 +1,66 @@
+{
+  "machineDoctor": {
+    "intro": "Ein Nur-Lese-Scan über alles Prüfbare — Pin-Konflikte, Treiberwerte, Config-Drift, Projekt-Lint, Firmware-Sync, Hardware-Änderungen, Installations-Gesundheit — benotet A-F. Jeder Befund verlinkt zum Widget, das ihn behebt.",
+    "scanning": "Scanne…",
+    "rescan": "Erneut scannen",
+    "scoreLine": "Punktzahl {score} / 100",
+    "counts": "{errors} Fehler · {warnings} Warnung(en)",
+    "scoreHint": "Transparente Wertung: 100 − 25 je Fehler − 8 je Warnung. Nicht Prüfbares zählt nie gegen dich.",
+    "allClear": "Alles in Ordnung.",
+    "notChecked": "Konnte nicht geprüft werden (Drucker nicht erreichbar oder keine Basislinie).",
+    "category": {
+      "pins": "Pin-Verdrahtung",
+      "drivers": "Treiberwerte",
+      "drift": "Config-Drift",
+      "project": "Config-Projekt",
+      "firmware": "Firmware-Sync",
+      "hardware": "Hardware-Änderungen",
+      "install": "Installation"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Warnungen",
+      "fail": "Probleme",
+      "unknown": "Nicht geprüft"
+    },
+    "link": {
+      "config_section": "Config Editor",
+      "config_file": "Config Editor",
+      "stepper": "Motor Drivers",
+      "topology_node": "Machine Map",
+      "widget": "Öffnen"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "Pin {pin} auf {mcu} ist in mehreren Abschnitten belegt.",
+        "caveat": "Pin {pin} auf {mcu} trägt einen Elektronik-Hinweis."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A übersteigt die ~{cap}-A-Treibergrenze.",
+        "near_driver_cap": "{section}: run_current {run_current} A liegt innerhalb 10% der ~{cap}-A-Grenze.",
+        "over_motor_rating": "{section}: run_current {run_current} A übersteigt die {motor}-Nennung ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A liegt innerhalb 10% der {motor}-Nennung ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} ist keine Zweierpotenz."
+      },
+      "drift": {
+        "pending": "Klipper hat ungespeicherte SAVE_CONFIG-Änderungen.",
+        "param": "[{section}] {key}: Datei {disk} ≠ live {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: Include \"{message}\" zeigt auf keine Datei.",
+        "orphan_driver": "{file}: Treiberabschnitt \"{message}\" ohne passenden Stepper."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: Firmware {mcu_version} weicht vom Host {host_version} ab."
+      },
+      "hardware": {
+        "changed": "{mcu}: Hardware geändert ({kind}).",
+        "no_baseline": "Noch keine Hardware-Basislinie — in der Machine Map einen Snapshot speichern."
+      },
+      "install": {
+        "check_failed": "Installationsprüfung fehlgeschlagen: {name} — {detail}."
+      }
+    }
+  }
+}

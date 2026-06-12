@@ -8,6 +8,7 @@ import enHardwareBrowser from '../locales/en/hardware-browser.json'
 import enFirmware from '../locales/en/firmware.json'
 import enInputShaping from '../locales/en/input-shaping.json'
 import enMacroDesigner from '../locales/en/macro-designer.json'
+import enMachineDoctor from '../locales/en/machine-doctor.json'
 import enMaxFlow from '../locales/en/max-flow.json'
 import enMotorDrivers from '../locales/en/motor-drivers.json'
 import enShell from '../locales/en/shell.json'
@@ -76,6 +77,7 @@ const en = {
   ...enMotorDrivers,
   ...enConfigEditor,
   ...enMaxFlow,
+  ...enMachineDoctor,
   ...enBoardTopology,
   ...enMacroDesigner,
   ...enHardwareBrowser,

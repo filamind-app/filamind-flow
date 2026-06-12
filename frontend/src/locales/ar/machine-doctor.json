@@ -1,0 +1,66 @@
+{
+  "machineDoctor": {
+    "intro": "فحص واحد للقراءة فقط عبر كل ما يستطيع التطبيق فحصه — تعارضات الأطراف، قيم المشغّلات، انحراف الإعداد، فحص المشروع، تزامن الفيرموير، تغيّرات العتاد، وصحة التثبيت — بتقدير من A إلى F. كل نتيجة ترتبط بالودجت الذي يصلحها.",
+    "scanning": "جارٍ الفحص…",
+    "rescan": "أعد الفحص",
+    "scoreLine": "النتيجة {score} / 100",
+    "counts": "{errors} خطأ · {warnings} تحذير",
+    "scoreHint": "تقييم شفاف: 100 − 25 لكل خطأ − 8 لكل تحذير. ما تعذّر فحصه لا يُحتسب ضدك.",
+    "allClear": "كل شيء سليم.",
+    "notChecked": "تعذّر الفحص (الطابعة غير متاحة أو لا أساس محفوظ).",
+    "category": {
+      "pins": "توصيلات الأطراف",
+      "drivers": "قيم المشغّلات",
+      "drift": "انحراف الإعداد",
+      "project": "مشروع الإعداد",
+      "firmware": "تزامن الفيرموير",
+      "hardware": "تغيّرات العتاد",
+      "install": "صحة التثبيت"
+    },
+    "status": {
+      "ok": "سليم",
+      "warn": "تحذيرات",
+      "fail": "مشاكل",
+      "unknown": "لم يُفحص"
+    },
+    "link": {
+      "config_section": "محرر الإعداد",
+      "config_file": "محرر الإعداد",
+      "stepper": "مشغلات المحركات",
+      "topology_node": "خريطة الآلة",
+      "widget": "افتح"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "الطرف {pin} على {mcu} مُسنَد في أكثر من قسم.",
+        "caveat": "الطرف {pin} على {mcu} عليه تحذير إلكترونيات."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: تيار التشغيل {run_current} أمبير يتجاوز سقف المشغّل ~{cap} أمبير.",
+        "near_driver_cap": "{section}: تيار التشغيل {run_current} أمبير ضمن 10% من السقف ~{cap} أمبير.",
+        "over_motor_rating": "{section}: تيار التشغيل {run_current} أمبير يتجاوز تقييم {motor} ({max_current} أمبير).",
+        "near_motor_rating": "{section}: تيار التشغيل {run_current} أمبير ضمن 10% من تقييم {motor} ({max_current} أمبير).",
+        "odd_microsteps": "{section}: الميكروستِب {microsteps} ليس قوة للعدد 2."
+      },
+      "drift": {
+        "pending": "لدى Klipper تغييرات SAVE_CONFIG معلّقة غير محفوظة.",
+        "param": "[{section}] {key}: القرص {disk} ≠ الحي {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: التضمين \"{message}\" لا يشير إلى ملف.",
+        "orphan_driver": "{file}: قسم المشغّل \"{message}\" بلا محرك مطابق."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: الفيرموير {mcu_version} يختلف عن المضيف {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: تغيّر العتاد ({kind}).",
+        "no_baseline": "لا أساس عتاد محفوظ بعد — احفظ لقطة في خريطة الآلة لاكتشاف التغيّرات."
+      },
+      "install": {
+        "check_failed": "فشل فحص التثبيت: {name} — {detail}."
+      }
+    }
+  }
+}

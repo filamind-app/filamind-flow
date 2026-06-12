@@ -1,0 +1,66 @@
+{
+  "machineDoctor": {
+    "intro": "One read-only scan across everything the app can check — pin conflicts, driver values, config drift, project lint, firmware sync, hardware changes, and install health — graded A-F. Every finding links to the widget that fixes it.",
+    "scanning": "Scanning…",
+    "rescan": "Scan again",
+    "scoreLine": "Score {score} / 100",
+    "counts": "{errors} error(s) · {warnings} warning(s)",
+    "scoreHint": "Transparent scoring: 100 − 25 per error − 8 per warning. Unknown checks never count against you.",
+    "allClear": "All clear.",
+    "notChecked": "Could not be checked (printer unreachable or no baseline).",
+    "category": {
+      "pins": "Pin wiring",
+      "drivers": "Driver values",
+      "drift": "Config drift",
+      "project": "Config project",
+      "firmware": "Firmware sync",
+      "hardware": "Hardware changes",
+      "install": "Install health"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Warnings",
+      "fail": "Problems",
+      "unknown": "Not checked"
+    },
+    "link": {
+      "config_section": "Config Editor",
+      "config_file": "Config Editor",
+      "stepper": "Motor Drivers",
+      "topology_node": "Machine Map",
+      "widget": "Open"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "Pin {pin} on {mcu} is assigned in more than one section.",
+        "caveat": "Pin {pin} on {mcu} carries an electronics caveat."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A exceeds the ~{cap} A driver ceiling.",
+        "near_driver_cap": "{section}: run_current {run_current} A is within 10% of the ~{cap} A ceiling.",
+        "over_motor_rating": "{section}: run_current {run_current} A exceeds the {motor} rating ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A is within 10% of the {motor} rating ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} is not a power of two."
+      },
+      "drift": {
+        "pending": "Klipper has unsaved SAVE_CONFIG changes pending.",
+        "param": "[{section}] {key}: disk {disk} ≠ live {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: include \"{message}\" points at no file.",
+        "orphan_driver": "{file}: driver section \"{message}\" has no matching stepper."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: firmware {mcu_version} differs from host {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: hardware changed ({kind}).",
+        "no_baseline": "No hardware baseline saved yet — save a snapshot in the Machine Map to detect changes."
+      },
+      "install": {
+        "check_failed": "Install check failed: {name} — {detail}."
+      }
+    }
+  }
+}

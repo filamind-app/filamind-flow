@@ -1,0 +1,66 @@
+{
+  "machineDoctor": {
+    "intro": "Un scan en lecture seule de tout ce qui est vérifiable — conflits de broches, valeurs des drivers, dérive de config, lint du projet, sync du firmware, changements matériels, santé de l'installation — noté A-F. Chaque constat pointe vers le widget qui le corrige.",
+    "scanning": "Scan…",
+    "rescan": "Relancer le scan",
+    "scoreLine": "Score {score} / 100",
+    "counts": "{errors} erreur(s) · {warnings} avertissement(s)",
+    "scoreHint": "Notation transparente : 100 − 25 par erreur − 8 par avertissement. L'invérifiable ne compte jamais contre vous.",
+    "allClear": "Rien à signaler.",
+    "notChecked": "Impossible à vérifier (imprimante injoignable ou pas de référence).",
+    "category": {
+      "pins": "Câblage des broches",
+      "drivers": "Valeurs des drivers",
+      "drift": "Dérive de config",
+      "project": "Projet de config",
+      "firmware": "Sync du firmware",
+      "hardware": "Changements matériels",
+      "install": "Santé de l'installation"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Avertissements",
+      "fail": "Problèmes",
+      "unknown": "Non vérifié"
+    },
+    "link": {
+      "config_section": "Éditeur de config",
+      "config_file": "Éditeur de config",
+      "stepper": "Motor Drivers",
+      "topology_node": "Carte machine",
+      "widget": "Ouvrir"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "La broche {pin} de {mcu} est affectée dans plusieurs sections.",
+        "caveat": "La broche {pin} de {mcu} porte une mise en garde électronique."
+      },
+      "drivers": {
+        "over_driver_cap": "{section} : run_current {run_current} A dépasse le plafond du driver ~{cap} A.",
+        "near_driver_cap": "{section} : run_current {run_current} A est à moins de 10% du plafond ~{cap} A.",
+        "over_motor_rating": "{section} : run_current {run_current} A dépasse la valeur nominale de {motor} ({max_current} A).",
+        "near_motor_rating": "{section} : run_current {run_current} A est à moins de 10% de la valeur nominale de {motor} ({max_current} A).",
+        "odd_microsteps": "{section} : microsteps {microsteps} n'est pas une puissance de deux."
+      },
+      "drift": {
+        "pending": "Klipper a des changements SAVE_CONFIG en attente.",
+        "param": "[{section}] {key} : disque {disk} ≠ live {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file} : l'include \"{message}\" ne pointe vers aucun fichier.",
+        "orphan_driver": "{file} : la section driver \"{message}\" n'a pas de stepper correspondant."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu} : le firmware {mcu_version} diffère de l'hôte {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu} : matériel modifié ({kind}).",
+        "no_baseline": "Pas de référence matérielle — enregistrez un instantané dans la Carte machine."
+      },
+      "install": {
+        "check_failed": "Contrôle d'installation échoué : {name} — {detail}."
+      }
+    }
+  }
+}
