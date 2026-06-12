@@ -25,7 +25,7 @@ from typing import Any
 
 import httpx
 
-from app.services import field_policy
+from app.services import field_policy, motor_mapping, reference_data
 from app.services.moonraker_client import MoonrakerClient
 
 #: Recommendation keys that map directly to ``SET_TMC_FIELD FIELD=`` names.
@@ -106,6 +106,43 @@ def _commands(
     return cmds
 
 
+async def _resolve_current_cap(
+    client: MoonrakerClient, stepper: str, data_dir: str
+) -> float | None:
+    """The binding run-current ceiling for this stepper: ``min(driver full-scale cap, mapped
+    motor's rated current)``.
+
+    The driver model (and a TMC2240's ``rref``) come from the stepper's live ``[tmcXXXX]``
+    section; the motor rating from the Motor Drivers mapping + catalog specs. Returns ``None``
+    when nothing is known — no fabricated cap (and a failed lookup never blocks the apply;
+    the write itself would surface a real Moonraker error anyway).
+    """
+    try:
+        cf = await client.query_objects(["configfile"])
+    except httpx.HTTPError:
+        return None
+    configfile = cf.get("configfile")
+    settings = configfile.get("settings") if isinstance(configfile, dict) else None
+    settings = settings if isinstance(settings, dict) else {}
+    model = ""
+    rref: float | None = None
+    for key, value in settings.items():
+        if key.startswith("tmc") and key.split(" ", 1)[-1] == stepper and isinstance(value, dict):
+            model = key.split(" ", 1)[0]
+            raw_rref = value.get("rref")
+            if isinstance(raw_rref, (int, float)) and not isinstance(raw_rref, bool):
+                rref = float(raw_rref)
+            break
+    motor_rated: float | None = None
+    mapped = motor_mapping.read_mapping(data_dir).get(stepper)
+    if mapped:
+        spec = reference_data.motor_spec_lookup(mapped)
+        raw_max = spec.get("max_current_A") if spec else None
+        if isinstance(raw_max, (int, float)) and not isinstance(raw_max, bool):
+            motor_rated = float(raw_max)
+    return field_policy.current_cap(model, motor_rated, rref)
+
+
 async def apply_live(
     moonraker_url: str,
     stepper: str,
@@ -113,9 +150,12 @@ async def apply_live(
     hold_current: float | None,
     fields: dict[str, Any],
     *,
+    data_dir: str = "",
     timeout: float = 20.0,
 ) -> dict[str, Any]:
-    """Pushes the values to the driver now. Refuses while printing. Reversible via ``revert``."""
+    """Pushes the values to the driver now. Refuses while printing, and refuses a ``run_current``
+    above the binding ceiling (driver full-scale cap / mapped motor rating) — the cap the UI
+    displays is enforced here, on the write path itself. Reversible via ``revert``."""
     try:
         commands = _commands(stepper, run_current, hold_current, fields)
     except ValueError as exc:
@@ -132,6 +172,21 @@ async def apply_live(
                 "Refusing to write to a driver while the printer is busy (printing or paused).",
                 "busyApply",
             )
+        if run_current is not None:
+            cap = await _resolve_current_cap(client, stepper, data_dir)
+            if cap is not None and run_current > cap + 1e-9:
+                cap_r = round(cap, 2)
+                return _res(
+                    False,
+                    [],
+                    f"Refusing run_current {run_current} A on {stepper}: it exceeds the "
+                    f"{cap_r} A ceiling (driver full-scale limit / rated current of the "
+                    "assigned motor).",
+                    "overCurrentCap",
+                    stepper=stepper,
+                    requested=run_current,
+                    cap=cap_r,
+                )
         for cmd in commands:
             await client.run_gcode(cmd)
     except httpx.HTTPError as exc:

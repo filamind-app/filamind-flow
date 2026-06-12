@@ -320,7 +320,8 @@
       "homed": "Homing de {ax} completado.",
       "motorsyncNotInstalled": "El complemento motors_sync no está instalado — alinea la fase de micropasos de varios motores en un mismo eje (Z doble/cuádruple, X doble) mediante un acelerómetro.",
       "busySync": "Se rechaza la sincronización de motores mientras la impresora está ocupada (imprimiendo o en pausa).",
-      "syncRan": "Se ejecutó {cmd}."
+      "syncRan": "Se ejecutó {cmd}.",
+      "overCurrentCap": "Rechazado: {requested} A en {stepper} supera el techo de {cap} A (límite de fondo de escala del driver / corriente nominal del motor asignado)."
     }
   }
 }

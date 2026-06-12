@@ -148,6 +148,7 @@ async def apply_tuning(
         request.run_current,
         request.hold_current,
         request.fields,
+        data_dir=settings.data_dir,
     )
     return ApplyResponse.model_validate(data)
 
