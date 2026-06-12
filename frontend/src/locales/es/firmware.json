@@ -248,7 +248,9 @@
       "attachFailed": "La vinculación falló",
       "removeFailed": "El quitado falló",
       "exportFailed": "La exportación falló",
-      "importFailed": "La importación falló"
+      "importFailed": "La importación falló",
+      "backupHint": "Un solo ZIP cubre todo lo configurado: placas, perfiles de compilación, asignación de motores, confirmaciones de placas, la línea base de hardware, el historial de flasheo y los ajustes guardados. Restaurar lo devuelve todo en un paso.",
+      "restoredFull": "Restaurados {n} perfiles, {data} archivos de datos, {runs} ajustes{extra}."
     },
     "external": {
       "title": "Firmware externo",

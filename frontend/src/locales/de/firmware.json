@@ -248,7 +248,9 @@
       "attachFailed": "Anbinden fehlgeschlagen",
       "removeFailed": "Entfernen fehlgeschlagen",
       "exportFailed": "Export fehlgeschlagen",
-      "importFailed": "Import fehlgeschlagen"
+      "importFailed": "Import fehlgeschlagen",
+      "backupHint": "Ein ZIP umfasst alles Eingerichtete: Boards, Build-Profile, Motor-Zuordnung, Board-Bestätigungen, die Hardware-Basislinie, Flash-Verlauf und gespeicherte Tuning-Läufe. Wiederherstellen bringt alles in einem Schritt zurück.",
+      "restoredFull": "{n} Profile, {data} Datendateien, {runs} Tuning-Läufe wiederhergestellt{extra}."
     },
     "external": {
       "title": "Externe Firmware",
