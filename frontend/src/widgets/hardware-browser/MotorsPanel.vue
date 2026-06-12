@@ -8,6 +8,7 @@ import ComboSelect from '@/components/ui/ComboSelect.vue'
 
 import { fetchMotorDetail, fetchMotors } from './api'
 import EntityCatalog from './EntityCatalog.vue'
+import { onPrinter } from './onPrinter'
 import RelatedChips from './RelatedChips.vue'
 import type { MotorDetail, MotorSummary } from './types'
 import type { FocusTarget } from './useEntityFocus'
@@ -48,6 +49,7 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'motors'
     :fetch-page="fetchPage"
     :fetch-detail="fetchMotorDetail"
     :id-of="idOf"
+    :on-printer-ids="onPrinter.motors"
     :focus-match="focusMatch"
     :reload-token="reloadToken"
     search-key="hardwareBrowser.motors.search"

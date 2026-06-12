@@ -182,6 +182,10 @@
     },
     "picker": {
       "placeholder": "Elegir una pieza…"
+    },
+    "onPrinter": {
+      "badge": "En esta impresora",
+      "strip": "En esta impresora:"
     }
   }
 }

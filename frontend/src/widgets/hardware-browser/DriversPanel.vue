@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 
 import { fetchDriverDetail, fetchDrivers } from './api'
 import EntityCatalog from './EntityCatalog.vue'
+import { onPrinter } from './onPrinter'
 import RelatedChips from './RelatedChips.vue'
 import type { DriverDetail, DriverSummary } from './types'
 import type { FocusTarget } from './useEntityFocus'
@@ -44,6 +45,7 @@ function resetFacets(): void {
     :fetch-page="fetchPage"
     :fetch-detail="fetchDriverDetail"
     :id-of="idOf"
+    :on-printer-ids="onPrinter.drivers"
     :focus-match="focusMatch"
     :before-focus="resetFacets"
     :reload-token="reloadToken"
