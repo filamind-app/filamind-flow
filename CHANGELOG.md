@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.226.0] - 2026-06-12
+
+### Changed
+
+- **All seven themes redesigned as calibrated palettes.** Each theme now follows one
+  deliberate system: the badge colors (pass / warning / active) sit at a depth where their
+  text reads clearly in every theme, the signal colors (charts, danger button) run brighter,
+  and every ratio is verified — status chips in the dark themes were previously near-white
+  text on bright pastel (about 1.1–1.5:1 contrast, effectively unreadable) and now hold
+  4.3–6.2:1. New identities: daylight-cream Light with the signature yellow rail,
+  steel-slate Dark, the violet-glow Neon signature, true-black High Contrast, navy
+  "ops deck" Midnight with crisp hard shadows, abyssal-teal Ocean, and dusk-plum Sunset.
+  Theme-menu preview cards match the new palettes.
+- A new automated contrast guard parses the theme stylesheet and fails the build if any
+  future color tweak breaks badge readability, chart visibility, or text contrast.
+
 ## [0.225.0] - 2026-06-12
 
 ### Fixed

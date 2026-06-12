@@ -46,10 +46,10 @@ export const THEME_META: ThemeMeta[] = [
     labelKey: 'theme.neon',
     descKey: 'theme.desc.neon',
     swatch: {
-      paper: '#190f32',
-      surface: '#281946',
-      ink: '#f5f2ff',
-      accents: ['#00f0dc', '#ff64c8', '#ffeb32'],
+      paper: '#160f2e',
+      surface: '#251a4e',
+      ink: '#f4efff',
+      accents: ['#6e7cff', '#ff4fd8', '#ff3355'],
     },
   },
   {
@@ -57,10 +57,10 @@ export const THEME_META: ThemeMeta[] = [
     labelKey: 'theme.midnight',
     descKey: 'theme.desc.midnight',
     swatch: {
-      paper: '#0f172a',
-      surface: '#1e293b',
-      ink: '#e2e8f0',
-      accents: ['#60a5fa', '#22d3ee', '#facc15'],
+      paper: '#0a1322',
+      surface: '#13223c',
+      ink: '#e8f1fd',
+      accents: ['#4c8dff', '#087890', '#d05fa2'],
     },
   },
   {
@@ -68,10 +68,10 @@ export const THEME_META: ThemeMeta[] = [
     labelKey: 'theme.dark',
     descKey: 'theme.desc.dark',
     swatch: {
-      paper: '#18181c',
-      surface: '#27272e',
-      ink: '#e8eaf0',
-      accents: ['#2dd4bf', '#60a5fa', '#facc15'],
+      paper: '#15191f',
+      surface: '#21272f',
+      ink: '#edf1f7',
+      accents: ['#5b9bf5', '#c2608e', '#a16207'],
     },
   },
   {
@@ -79,10 +79,10 @@ export const THEME_META: ThemeMeta[] = [
     labelKey: 'theme.ocean',
     descKey: 'theme.desc.ocean',
     swatch: {
-      paper: '#06262d',
-      surface: '#0d3842',
-      ink: '#e0f7f4',
-      accents: ['#40e0d0', '#66b2ff', '#ffd166'],
+      paper: '#062420',
+      surface: '#0b332d',
+      ink: '#e7faf3',
+      accents: ['#008080', '#fb6f84', '#f25a3c'],
     },
   },
   {
@@ -90,10 +90,10 @@ export const THEME_META: ThemeMeta[] = [
     labelKey: 'theme.sunset',
     descKey: 'theme.desc.sunset',
     swatch: {
-      paper: '#2a1824',
-      surface: '#402634',
-      ink: '#fff1e6',
-      accents: ['#ffc857', '#ff7aa2', '#5eead4'],
+      paper: '#2a1226',
+      surface: '#3d1d36',
+      ink: '#fdf1e3',
+      accents: ['#f0452e', '#ff7aa8', '#8a7cf0'],
     },
   },
   {
@@ -101,10 +101,10 @@ export const THEME_META: ThemeMeta[] = [
     labelKey: 'theme.light',
     descKey: 'theme.desc.light',
     swatch: {
-      paper: '#f5f1e8',
-      surface: '#fffdf5',
-      ink: '#111111',
-      accents: ['#ffd400', '#00e0c6', '#ff5c8a'],
+      paper: '#f3e8cd',
+      surface: '#fffcf0',
+      ink: '#1a1408',
+      accents: ['#ffd60a', '#d61f6f', '#2b4fd8'],
     },
   },
   {
@@ -112,10 +112,10 @@ export const THEME_META: ThemeMeta[] = [
     labelKey: 'theme.contrast',
     descKey: 'theme.desc.contrast',
     swatch: {
-      paper: '#050505',
-      surface: '#141414',
+      paper: '#000000',
+      surface: '#181818',
       ink: '#ffffff',
-      accents: ['#ffff00', '#00fff0', '#ff32b4'],
+      accents: ['#3d7bff', '#ff3da6', '#ff2424'],
     },
   },
 ]
