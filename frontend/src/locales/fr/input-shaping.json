@@ -352,7 +352,8 @@
         "complete": "Réglage terminé",
         "stepFailed": "Étape échouée",
         "copyFailed": "Échec de la copie — sélectionnez le texte et copiez-le manuellement.",
-        "summaryNote": "Vos captures X et Y sont dans le bloc {code} combiné ci-dessous — copiez-le, puis redémarrez Klipper. Rouvrez le réglage guidé à tout moment pour revérifier."
+        "summaryNote": "Vos captures X et Y sont dans le bloc {code} combiné ci-dessous — copiez-le, puis redémarrez Klipper. Rouvrez le réglage guidé à tout moment pour revérifier.",
+        "beltsNotApplicable": "La comparaison des courroies concerne les imprimantes CoreXY — cette imprimante signale '{kin}', cette étape est donc ignorée."
       }
     },
     "audit": {
@@ -537,7 +538,8 @@
       "vibCancel": "Annuler le balayage",
       "vibCancelling": "Annulation…",
       "vibCancelled": "Balayage annulé — limites de vitesse restaurées.",
-      "vibReattached": "Reconnecté : ce résultat s’est terminé pendant l’absence de la page."
+      "vibReattached": "Reconnecté : ce résultat s’est terminé pendant l’absence de la page.",
+      "beltsCorexyOnly": "CoreXY uniquement — cette imprimante signale une cinématique '{kin}', la comparaison des deux courroies ne s'applique pas."
     },
     "vibrationsView": {
       "title": "Profil de vibrations",

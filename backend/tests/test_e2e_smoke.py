@@ -70,6 +70,10 @@ def test_core_reads_come_up(client: TestClient) -> None:
     assert identify.status_code == 200
     assert identify.json()["kconfig_available"] is False  # no Klipper checkout in CI
 
+    kin = client.get("/api/shaper/kinematics")
+    assert kin.status_code == 200
+    assert kin.json()["kinematics"] == "corexy"
+
 
 def test_gated_write_path_end_to_end(client: TestClient, stub: StubServer) -> None:
     view = client.get("/api/config/file", params={"filename": "printer.cfg"}).json()

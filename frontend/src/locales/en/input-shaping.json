@@ -352,7 +352,8 @@
         "complete": "Tuning complete",
         "stepFailed": "Step failed",
         "copyFailed": "Copy failed — select the text and copy it manually.",
-        "summaryNote": "Your X and Y captures are in the combined {code} block below — copy it, then restart Klipper. Re-open guided tune any time to re-check."
+        "summaryNote": "Your X and Y captures are in the combined {code} block below — copy it, then restart Klipper. Re-open guided tune any time to re-check.",
+        "beltsNotApplicable": "Belt comparison applies to CoreXY printers — this printer reports '{kin}', so this step is skipped."
       }
     },
     "audit": {
@@ -537,7 +538,8 @@
       "vibCancel": "Cancel sweep",
       "vibCancelling": "Cancelling…",
       "vibCancelled": "Sweep cancelled — velocity limits restored.",
-      "vibReattached": "Reattached: this result finished while the page was away."
+      "vibReattached": "Reattached: this result finished while the page was away.",
+      "beltsCorexyOnly": "CoreXY only — this printer reports '{kin}' kinematics, so the two-belt comparison doesn't apply."
     },
     "vibrationsView": {
       "title": "Vibrations profile",

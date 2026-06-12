@@ -4,10 +4,16 @@
  *  A thin client conductor: it calls the SAME endpoints as the manual panel and emits
  *  each shaper result up via `analyzed`, so the combined config + grade-history just work.
  */
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { compareBelts, measureNoise, runLiveTest, runVibrationsProfile } from './api'
+import {
+  compareBelts,
+  fetchKinematics,
+  measureNoise,
+  runLiveTest,
+  runVibrationsProfile,
+} from './api'
 import { beltVerdict } from './compare'
 import {
   type Gate,
@@ -64,6 +70,22 @@ const results = reactive<{
 }>({})
 
 const step = computed(() => STEPS[idx.value])
+/** Printer kinematics (null until known) — the belts step only applies to CoreXY. */
+const kinematics = ref<string | null>(null)
+const beltsSupported = computed(
+  () => kinematics.value == null || kinematics.value.includes('corexy'),
+)
+
+onMounted(() => {
+  fetchKinematics()
+    .then((kin) => {
+      kinematics.value = kin
+      // Pre-mark the CoreXY-only step on other kinematics so the wizard walks past it.
+      if (kin != null && !kin.includes('corexy') && statuses.belts === 'pending')
+        statuses.belts = 'skipped'
+    })
+    .catch(() => (kinematics.value = null))
+})
 const canProceed = computed(() => gate.value?.status === 'passed' || gate.value?.status === 'warn')
 const paGcode = PA_TOWER_GCODE
 const paSuggestions = recommendPressure()
@@ -107,6 +129,11 @@ async function run(): Promise<void> {
       gate.value = gateNoise(r)
       suggestions.value = recommendNoise(r)
     } else if (s.id === 'belts') {
+      if (!beltsSupported.value) {
+        statuses.belts = 'skipped'
+        advance()
+        return
+      }
       const r = await compareBelts()
       results.belts = r
       gate.value = gateBelts(r.belt_a, r.belt_b)
@@ -136,6 +163,10 @@ async function run(): Promise<void> {
 
 function advance(): void {
   idx.value = STEPS.findIndex((s) => s.id === nextStep(step.value.id))
+  if (step.value.id === 'belts' && !beltsSupported.value) {
+    statuses.belts = 'skipped'
+    idx.value = STEPS.findIndex((s) => s.id === nextStep('belts'))
+  }
   gate.value = null
   suggestions.value = []
   error.value = null
@@ -222,6 +253,9 @@ function review(i: number): void {
 
       <!-- Endpoint step (noise / belts / shaper). -->
       <div v-else class="flex flex-wrap items-center gap-2 text-[11px]">
+        <p v-if="step.id === 'belts' && !beltsSupported" class="w-full text-[11px] text-brand-red">
+          {{ t('inputShaping.guided.ui.beltsNotApplicable', { kin: kinematics }) }}
+        </p>
         <label v-if="step.motion" class="flex items-center gap-1">
           <input v-model="ready" type="checkbox" /> {{ t('inputShaping.guided.ui.motionReady') }}
         </label>

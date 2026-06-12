@@ -1,5 +1,8 @@
-# FilaMind Flow backend — systemd unit.
-# Copy to /etc/systemd/system/filamind-flow.service, edit User/paths, then:
+# FilaMind Flow backend — systemd unit (EXAMPLE).
+# The recommended installer (scripts/install.sh) generates this file with YOUR real
+# user and install path. If installing manually instead: replace every `pi` /
+# `/home/pi` below with your user/home (e.g. biqu on a BTT CB1, mks, or any other
+# host user), copy to /etc/systemd/system/filamind-flow.service, then:
 #   sudo systemctl daemon-reload && sudo systemctl enable --now filamind-flow
 [Unit]
 Description=FilaMind Flow backend (Klipper / Moonraker panel)
