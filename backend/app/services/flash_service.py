@@ -18,6 +18,7 @@ import asyncio
 import glob
 import os
 import re
+import shutil
 from collections.abc import AsyncIterator
 from typing import Any
 
@@ -221,18 +222,23 @@ async def resolve_can_uuid(device: str, moonraker_url: str) -> tuple[str | None,
 
 
 async def _sudo_ready() -> bool:
-    """True if the backend can sudo without a password.
+    """True if the backend can run the flash's privileged commands without a password.
 
-    The sudoers rule only grants NOPASSWD for specific binaries, so we probe one
-    of them (``systemctl --version``) rather than ``true`` — which would not match
-    the rule and would always look unauthorised.
+    Probes ``sudo -n -l systemctl stop klipper`` — ``sudo -l <cmd>`` reports whether the
+    command is *authorised* (exit 0) WITHOUT running it, and ``-n`` never prompts. This
+    matches an actual flash command, so it is correct regardless of which sudoers file
+    grants it. (The old probe ran ``systemctl --version``, which the NOPASSWD rules don't
+    cover — so it false-failed whenever sudo's credential cache was cold.)
     """
+    systemctl = shutil.which("systemctl") or "/usr/bin/systemctl"
     try:
         proc = await asyncio.create_subprocess_exec(
             "sudo",
             "-n",
-            "systemctl",
-            "--version",
+            "-l",
+            systemctl,
+            "stop",
+            "klipper",
             stdout=asyncio.subprocess.DEVNULL,
             stderr=asyncio.subprocess.DEVNULL,
         )
