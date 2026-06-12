@@ -39,7 +39,16 @@
       "hardware": "硬件与基线",
       "noBaseline": "尚未保存硬件基线 — 请在机器图谱中保存快照。",
       "hwUnchanged": "自保存基线以来硬件无变化。",
-      "hwChanged": "自保存基线以来有 {n} 处硬件变化。"
+      "hwChanged": "自保存基线以来有 {n} 处硬件变化。",
+      "setup": {
+        "title": "快速上手（{done}/{total}）",
+        "go": "前往",
+        "boards": "在机器图谱中确认你的主板",
+        "baseline": "保存硬件基线（用于检测未来变化）",
+        "firmware": "让每个 MCU 固件与主机同步",
+        "motors": "在电机驱动中分配电机",
+        "tuning": "为 X 和 Y 调校 input shaping（引导向导）"
+      }
     },
     "connection": {
       "connected": "已连接",

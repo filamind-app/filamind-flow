@@ -39,7 +39,16 @@
       "hardware": "Hardware vs línea base",
       "noBaseline": "Sin línea base de hardware — guarda una instantánea en el Mapa de máquina.",
       "hwUnchanged": "Sin cambios de hardware desde la línea base.",
-      "hwChanged": "{n} cambio(s) de hardware desde la línea base."
+      "hwChanged": "{n} cambio(s) de hardware desde la línea base.",
+      "setup": {
+        "title": "Primeros pasos ({done}/{total})",
+        "go": "Ir",
+        "boards": "Confirma tus placas en el Mapa de máquina",
+        "baseline": "Guarda una línea base de hardware (detecta cambios futuros)",
+        "firmware": "Sincroniza el firmware de cada MCU con el host",
+        "motors": "Asigna tus motores en Motor Drivers",
+        "tuning": "Calibra input shaping para X e Y (asistente guiado)"
+      }
     },
     "connection": {
       "connected": "Conectado",

@@ -39,7 +39,16 @@
       "hardware": "Hardware vs baseline",
       "noBaseline": "No hardware baseline saved yet — save a snapshot in the Machine Map to detect changes.",
       "hwUnchanged": "No hardware changes since the saved baseline.",
-      "hwChanged": "{n} hardware change(s) since the saved baseline."
+      "hwChanged": "{n} hardware change(s) since the saved baseline.",
+      "setup": {
+        "title": "Get started ({done}/{total})",
+        "go": "Go",
+        "boards": "Confirm your boards in the Machine Map",
+        "baseline": "Save a hardware baseline (detects future changes)",
+        "firmware": "Bring every MCU firmware in sync with the host",
+        "motors": "Assign your motors in Motor Drivers",
+        "tuning": "Tune input shaping for X and Y (guided wizard)"
+      }
     },
     "connection": {
       "connected": "Connected",
