@@ -426,6 +426,50 @@ def test_pin_atlas_flags_double_assignment() -> None:
     assert set(dbl[0]["sections"]) == {"fan generic", "heater_generic h"}
 
 
+def test_pin_atlas_allows_shared_software_spi_bus() -> None:
+    """A stack of TMC5160 drivers sharing one software-SPI bus is valid wiring, not a conflict
+    (this was a false F-grade on SPI-driver Vorons; UART-per-driver SV08s never hit it)."""
+    board = {
+        "board_id": "b",
+        "ports": [{"pinMap": [{"pin": "PC6"}, {"pin": "PC7"}, {"pin": "PC8"}]}],
+    }
+    shared = {
+        "spi_software_sclk_pin": "PC6",
+        "spi_software_miso_pin": "PC7",
+        "spi_software_mosi_pin": "PC8",
+    }
+    sections = {
+        "tmc5160 stepper_x": shared,
+        "tmc5160 stepper_y": shared,
+        "tmc5160 stepper_z": shared,
+    }
+    atlas = board_topology.build_pin_atlas(sections, "mcu", board)
+    assert [f for f in atlas["findings"] if f["kind"] == "double_assign"] == []
+
+
+def test_pin_atlas_flags_exclusive_pin_colliding_with_shared_bus() -> None:
+    """If a bus pin is ALSO grabbed as an exclusive pin (e.g. a step_pin), that IS a conflict."""
+    board = {"board_id": "b", "ports": [{"pinMap": [{"pin": "PC6"}]}]}
+    sections = {
+        "tmc5160 stepper_x": {"spi_software_sclk_pin": "PC6"},
+        "stepper_y": {"step_pin": "PC6"},
+    }
+    atlas = board_topology.build_pin_atlas(sections, "mcu", board)
+    dbl = [f for f in atlas["findings"] if f["kind"] == "double_assign"]
+    assert len(dbl) == 1 and dbl[0]["pin"] == "PC6"
+
+
+def test_pin_atlas_allows_shared_tmc_uart_line() -> None:
+    """Several TMC2209s on one single-wire UART (addressed separately) share uart_pin — valid."""
+    board = {"board_id": "b", "ports": [{"pinMap": [{"pin": "PD0"}]}]}
+    sections = {
+        "tmc2209 stepper_x": {"uart_pin": "PD0", "uart_address": "0"},
+        "tmc2209 stepper_y": {"uart_pin": "PD0", "uart_address": "1"},
+    }
+    atlas = board_topology.build_pin_atlas(sections, "mcu", board)
+    assert [f for f in atlas["findings"] if f["kind"] == "double_assign"] == []
+
+
 def test_pin_atlas_unavailable_without_pinmap() -> None:
     atlas = board_topology.build_pin_atlas({"mcu": {}}, "mcu", None)
     assert atlas["available"] is False and atlas["total"] == 0

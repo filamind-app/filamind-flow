@@ -115,6 +115,22 @@ _COMPONENT_KINDS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"^probe_eddy_current\s+\S"), "sensor"),
 ]
 
+#: Config keys whose pins name a SHARED bus, not an exclusive assignment. Klipper lets the
+#: same software-SPI / software-I2C / single-wire-UART pins recur across many sections — a
+#: stack of TMC51xx drivers sharing one software-SPI bus, several drivers on one UART line
+#: addressed separately, an accelerometer sharing the toolhead's SPI. Repetition of these is
+#: valid wiring, NOT a double-assignment (which only an exclusive pin — step/heater/cs/… — is).
+_SHARED_BUS_PIN_KEYS: frozenset[str] = frozenset(
+    {
+        "spi_software_miso_pin",
+        "spi_software_mosi_pin",
+        "spi_software_sclk_pin",
+        "i2c_software_scl_pin",
+        "i2c_software_sda_pin",
+        "uart_pin",
+    }
+)
+
 #: Primary-pin candidate keys per kind — the pin whose chip prefix names the owning MCU.
 _PRIMARY_PIN: dict[str, tuple[str, ...]] = {
     "motor": ("step_pin", "dir_pin", "enable_pin"),
@@ -235,15 +251,21 @@ def build_pin_atlas(
     findings: list[dict[str, Any]] = []
     for pin, used_by in owners.items():
         distinct = sorted({o["section"] for o in used_by})
-        if len(distinct) > 1:
-            findings.append(
-                {
-                    "kind": "double_assign",
-                    "pin": pin,
-                    "message": f"{pin} is assigned in {', '.join(distinct)}",
-                    "sections": distinct,
-                }
-            )
+        if len(distinct) <= 1:
+            continue
+        # A shared bus (software SPI/I2C, single-wire UART) legitimately repeats a pin across
+        # sections. It's a real conflict only when an EXCLUSIVE pin (step/heater/cs/…) is among
+        # the owners — an exclusive output can't be shared. All-shared owners = valid wiring.
+        if not any(o["key"] not in _SHARED_BUS_PIN_KEYS for o in used_by):
+            continue
+        findings.append(
+            {
+                "kind": "double_assign",
+                "pin": pin,
+                "message": f"{pin} is assigned in {', '.join(distinct)}",
+                "sections": distinct,
+            }
+        )
 
     if not isinstance(board, dict):
         return {
