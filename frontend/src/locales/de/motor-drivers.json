@@ -215,7 +215,10 @@
       "copyConfig": "Konfiguration kopieren",
       "autotune": "autotune",
       "autotuneTitle": "Führt AUTOTUNE_TMC aus, falls das Add-on klipper_tmc_autotune installiert ist",
-      "noSpecs": "Keine Datenblattwerte für diesen Motor – Tuning-Empfehlung nicht verfügbar."
+      "noSpecs": "Keine Datenblattwerte für diesen Motor – Tuning-Empfehlung nicht verfügbar.",
+      "measured": "Gemessen: Motoren resonieren bei ~{freq} Hz",
+      "measuredSym": "Symmetrie {pct}%",
+      "measuredHint": "Gemessene Realität aus dem Vibrationsprofil dieses Druckers — öffnet das Input-Shaping-Audit."
     },
     "motorSync": {
       "toggle": "Motorsynchronisierung",

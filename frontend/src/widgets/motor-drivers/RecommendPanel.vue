@@ -5,7 +5,7 @@
  *  live (SET_TMC_*) behind an explicit confirm — and reverted (INIT_TMC). Writes are gated
  *  server-side too (refused while printing).
  */
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ConfigApply from '@/components/ui/ConfigApply.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -16,10 +16,37 @@ import {
   revertDriver,
   runAutotune,
 } from './api'
+import { listArchive } from '@/widgets/input-shaping/api'
+import { useNav } from '@/core/nav'
+
 import { applyResultText, recommendationRows } from './format'
 import type { ApplyResponse, DriverRecommendation, TmcDriver } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
+const { go } = useNav()
+
+/** Latest MEASURED motor resonance from the vibrations archive — ground truth shown beside the
+ *  datasheet physics (the measurement comes from the printer, not a prediction). */
+const measured = ref<{ freq: number; symmetry: number | null; at: string } | null>(null)
+onMounted(() => {
+  listArchive()
+    .then((r) => {
+      const run = r.runs.find(
+        (x) => x.kind === 'vibrations' && typeof x.summary?.motor_freq === 'number',
+      )
+      if (run) {
+        measured.value = {
+          freq: run.summary.motor_freq as number,
+          symmetry:
+            typeof run.summary.symmetry_pct === 'number'
+              ? (run.summary.symmetry_pct as number)
+              : null,
+          at: String(run.at ?? ''),
+        }
+      }
+    })
+    .catch(() => {})
+})
 
 const props = defineProps<{ driver: TmcDriver; defaultOpen?: boolean }>()
 const emit = defineEmits<{ applied: [] }>()
@@ -179,6 +206,27 @@ async function copyConfig(): Promise<void> {
       </p>
 
       <template v-if="rec">
+        <!-- Measured ground truth beside the datasheet physics: the vibrations profile's real
+             motor resonance, from the printer itself (not a prediction). -->
+        <button
+          v-if="measured"
+          class="mb-1 flex w-full flex-wrap items-center gap-1.5 rounded-brutal border border-ink/40 bg-paper px-2 py-1 text-start text-[10px] hover:bg-brand-cyan/20"
+          :title="t('motorDrivers.recommendPanel.measuredHint')"
+          @click="go('input-shaping', 'audit')"
+        >
+          <span aria-hidden="true">📈</span>
+          <span class="font-bold">{{
+            t('motorDrivers.recommendPanel.measured', { freq: measured.freq.toFixed(0) })
+          }}</span>
+          <span v-if="measured.symmetry != null" class="opacity-70">
+            ·
+            {{
+              t('motorDrivers.recommendPanel.measuredSym', { pct: measured.symmetry.toFixed(0) })
+            }}
+          </span>
+          <span class="flex-1"></span>
+          <span class="opacity-50">{{ measured.at.slice(0, 10) }} ↗</span>
+        </button>
         <table class="w-full">
           <thead class="opacity-60">
             <tr>

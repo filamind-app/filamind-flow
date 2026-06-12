@@ -215,7 +215,10 @@
       "copyConfig": "copiar config",
       "autotune": "autotune",
       "autotuneTitle": "Ejecuta AUTOTUNE_TMC si el complemento klipper_tmc_autotune está instalado",
-      "noSpecs": "Sin datos de hoja de datos para este motor: recomendación de ajuste no disponible."
+      "noSpecs": "Sin datos de hoja de datos para este motor: recomendación de ajuste no disponible.",
+      "measured": "Medido: los motores resuenan a ~{freq} Hz",
+      "measuredSym": "simetría {pct}%",
+      "measuredHint": "Verdad medida del perfil de vibraciones de esta impresora — abre la auditoría de Input Shaping."
     },
     "motorSync": {
       "toggle": "sincronización de motores",
