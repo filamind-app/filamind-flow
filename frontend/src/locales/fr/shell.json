@@ -18,7 +18,7 @@
     },
     "home": {
       "body": "Vos panneaux se trouvent dans la barre latérale — choisissez-en un pour commencer. Cet accueil est intentionnellement vide pour le moment.",
-      "title": "Mission Control",
+      "title": "Centre de contrôle",
       "refresh": "Actualiser",
       "loading": "Chargement…",
       "unreachable": "Le backend est injoignable.",
@@ -28,7 +28,7 @@
       "stateError": "Erreur",
       "stateIdle": "Au repos",
       "printerDown": "Moonraker est injoignable.",
-      "doctor": "Machine Doctor",
+      "doctor": "Docteur machine",
       "doctorBody": "Un scan en lecture seule des broches, valeurs des drivers, dérive de config, sync du firmware et plus — noté A-F avec liens vers le correctif.",
       "doctorScan": "Scanner mon imprimante",
       "firmware": "Sync du firmware",
@@ -38,16 +38,16 @@
       "tuning": "Réglage",
       "noTuning": "Aucun réglage archivé — lancez l'assistant Input Shaping.",
       "hardware": "Matériel vs référence",
-      "noBaseline": "Pas de référence matérielle — enregistrez un instantané dans la Carte machine.",
+      "noBaseline": "Pas de référence matérielle — enregistrez un instantané dans la Topologie des cartes.",
       "hwUnchanged": "Aucun changement matériel depuis la référence.",
       "hwChanged": "{n} changement(s) matériel(s) depuis la référence.",
       "setup": {
         "title": "Bien démarrer ({done}/{total})",
         "go": "Aller",
-        "boards": "Confirmez vos cartes dans la Carte machine",
+        "boards": "Confirmez vos cartes dans la Topologie des cartes",
         "baseline": "Enregistrez une référence matérielle (détecte les changements)",
         "firmware": "Synchronisez chaque firmware MCU avec l’hôte",
-        "motors": "Assignez vos moteurs dans Motor Drivers",
+        "motors": "Assignez vos moteurs dans Drivers moteur",
         "tuning": "Réglez l’input shaping pour X et Y (assistant guidé)"
       },
       "journal": {
@@ -88,7 +88,7 @@
         "description": "Parcourez les fichiers de configuration de votre imprimante, analysés en sections avec validation."
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "Débit max",
         "description": "Mesurez le débit volumétrique le plus élevé que votre hotend peut soutenir (StallGuard)."
       },
       "board-topology": {
@@ -106,6 +106,10 @@
       "config-templates": {
         "title": "Modèles de configuration",
         "description": "Blocs de configuration et macros Klipper prêts à coller, par catégorie."
+      },
+      "machine-doctor": {
+        "title": "Docteur machine",
+        "description": "Scan complet de l'imprimante en un clic, avec un bulletin noté A-F et des liens vers le correctif."
       }
     },
     "guard": {
@@ -120,7 +124,7 @@
         "vibrations_profile": "Profil de vibrations",
         "max_flow": "Test de débit max",
         "driver_write": "Écriture driver",
-        "homing": "Homing",
+        "homing": "Prise d'origine",
         "motors_sync": "Synchro moteurs",
         "firmware_flash": "Flash du firmware",
         "firmware_batch": "Lot firmware",

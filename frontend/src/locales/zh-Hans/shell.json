@@ -88,7 +88,7 @@
         "description": "浏览打印机的配置文件，解析为各个节并进行校验。"
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "最大流量",
         "description": "测量热端能够持续达到的最高体积流量（StallGuard）。"
       },
       "board-topology": {
@@ -106,6 +106,10 @@
       "config-templates": {
         "title": "配置模板",
         "description": "按类别提供可直接粘贴的 Klipper 配置块和宏。"
+      },
+      "machine-doctor": {
+        "title": "机器医生",
+        "description": "一键全机扫描，生成 A-F 评级报告，并附跳转修复链接。"
       }
     },
     "guard": {

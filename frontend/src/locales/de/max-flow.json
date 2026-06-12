@@ -3,7 +3,7 @@
     "intro": "Finde den höchsten volumetrischen Fluss (mm³/s), den dein Hotend dauerhaft halten kann — indem der Fluss schrittweise erhöht wird, während die StallGuard-Last des Extruders auf den Moment des Durchrutschens beobachtet wird. Sieh dir zuerst den Plan an; der Live-Test heizt und extrudiert, also bereite den Drucker vor dem Start vor.",
     "help": {
       "guide": "Hilfe",
-      "guideTitle": "Über Max-Flow",
+      "guideTitle": "Über den Max-Durchfluss-Test",
       "close": "Schließen",
       "howToRead": "Verwendung",
       "steps": [
@@ -93,7 +93,7 @@
     "run": {
       "button": "Live-Test starten",
       "running": "Läuft… (heizt + extrudiert)",
-      "confirmTitle": "Den Live-Max-Flow-Test starten?",
+      "confirmTitle": "Den Live-Max-Durchfluss-Test starten?",
       "confirmBody": "Dies heizt das Hotend auf {temp} °C und extrudiert bis zu {mm} mm Filament, mit steigender Rampe bis der Extruder durchrutscht.",
       "confirm": "Jetzt starten",
       "cancel": "Abbrechen",
@@ -106,7 +106,7 @@
       "cancelling": "Breche ab…",
       "cancelled": "Lauf abgebrochen — die Heizung wurde ausgeschaltet.",
       "reattached": "Wieder verbunden: dieses Ergebnis wurde fertig, während die Seite weg war.",
-      "failed": "Max-Flow-Lauf fehlgeschlagen.",
+      "failed": "Max-Durchfluss-Lauf fehlgeschlagen.",
       "abortNote": "Abbrechen schaltet die Heizung immer aus."
     },
     "result": {

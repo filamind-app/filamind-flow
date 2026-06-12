@@ -359,7 +359,7 @@
     "audit": {
       "recommended": "Recomendado",
       "recommendedValue": "{shaper} {'@'} {freq} Hz",
-      "maxAccel": "Max accel",
+      "maxAccel": "Acel. máx.",
       "maxAccelValue": "≤{accel} mm/s²",
       "noise": {
         "verdict": "Ruido máx en reposo {max} (normal < {threshold}).",
@@ -443,7 +443,7 @@
       "colFreq": "frec",
       "colVibr": "vibr",
       "colSmooth": "suave",
-      "colAccel": "accel",
+      "colAccel": "acel",
       "rowFreq": "{v} Hz",
       "rowVibr": "{v}%",
       "rowAccel": "≤{v}",
@@ -497,7 +497,7 @@
       "axesChartLabel": "Secuencia de velocidad de eje",
       "zoneVirtual": "virtual",
       "zonePct": "{pct}%",
-      "legendAccelX": "accel x",
+      "legendAccelX": "acel x",
       "legendY": "y",
       "legendZ": "z",
       "tilt": "inclinación {x}° / {y}° / {z}°",

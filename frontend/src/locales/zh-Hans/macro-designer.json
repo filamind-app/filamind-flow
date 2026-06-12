@@ -191,7 +191,7 @@
       "hint": "从目录选择热端，每个打印移动都会对照其真实熔融区上限检查 — 超流量的宏在打印前即可发现。",
       "hotend": "热端",
       "pick": "选择热端…",
-      "diameter": "Ø mm",
+      "diameter": "直径 Ø（mm）",
       "ok": "所有打印移动均在 {ceiling} mm³/s 上限内。",
       "overTitle": "{n} 个移动超过 {ceiling} mm³/s 上限：",
       "overLine": "第 {line} 行：{flow} mm³/s"

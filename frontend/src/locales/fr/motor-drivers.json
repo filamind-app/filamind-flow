@@ -29,11 +29,11 @@
         },
         "health": {
           "title": "Statut en direct",
-          "body": "Quand un moteur est activé (après le homing ou un jog), le driver signale des indicateurs en direct : surchauffe, court-circuit et circuit ouvert. Un « ok » vert signifie aucune anomalie ; « warning » est un pré-avertissement de surchauffe ou un circuit ouvert ; « fault » est un court-circuit ou une surchauffe sévère. Tant que le moteur est désactivé, le driver ne signale rien, donc la carte affiche « idle »."
+          "body": "Quand un moteur est activé (après le homing ou un jog), le driver signale des indicateurs en direct : surchauffe, court-circuit et circuit ouvert. Un « ok » vert signifie aucune anomalie ; « alerte » est un pré-avertissement de surchauffe ou un circuit ouvert ; « défaut » est un court-circuit ou une surchauffe sévère. Tant que le moteur est désactivé, le driver ne signale rien, donc la carte affiche « repos »."
         },
         "temperature": {
           "title": "Température",
-          "body": "Seuls certains drivers (p. ex. le TMC2240) ont un capteur de température intégré. Sur les modèles qui n'en ont pas — comme le courant TMC2209 — la température affiche « no sensor », ce qui est normal, pas une erreur."
+          "body": "Seuls certains drivers (p. ex. le TMC2240) ont un capteur de température intégré. Sur les modèles qui n'en ont pas — comme le courant TMC2209 — la température affiche « sans capteur », ce qui est normal, pas une erreur."
         },
         "catalog": {
           "title": "D'où viennent les infos du modèle",
@@ -122,13 +122,13 @@
       "stealthchopThreshold": "StealthChop < {t} mm/s",
       "spreadcycle": "SpreadCycle",
       "health": {
-        "idle": "idle",
+        "idle": "repos",
         "ok": "ok",
-        "warning": "warning",
-        "fault": "fault"
+        "warning": "alerte",
+        "fault": "défaut"
       },
       "celsius": "{v} °C",
-      "noSensor": "no sensor",
+      "noSensor": "sans capteur",
       "maxCurrent": "≤ {a} A",
       "extruder": "Extrudeur",
       "extruderN": "Extrudeur {n}",
@@ -151,13 +151,13 @@
         "mh": "{v} mH"
       },
       "flag": {
-        "overtemp": "overtemp",
-        "tempWarn": "temp-warn",
+        "overtemp": "surchauffe",
+        "tempWarn": "alerte temp",
         "shortA": "court A",
         "shortB": "court B",
-        "openLoadA": "open-load A",
-        "openLoadB": "open-load B",
-        "standstill": "standstill"
+        "openLoadA": "circuit ouvert A",
+        "openLoadB": "circuit ouvert B",
+        "standstill": "à l'arrêt"
       },
       "runCurrent": "courant de marche (A)"
     },
@@ -171,7 +171,7 @@
         "Chaque carte est un driver de moteur pas-à-pas — son titre est l'axe (X / Y / Z / Extrudeur) et le badge est le modèle de puce.",
         "Le courant de marche indique avec quelle force le moteur est entraîné ; la valeur en direct peut différer légèrement de la valeur configurée « réglé » — c'est normal.",
         "Le mode vous indique SpreadCycle (précis, plus bruyant) ou StealthChop (silencieux) ; les microsteps indiquent la fluidité du mouvement.",
-        "Faites le homing d'un axe ou un jog du moteur pour le réveiller — la température en direct et les indicateurs d'anomalie n'apparaissent que tant qu'un moteur est activé (les drivers au repos affichent « idle »).",
+        "Faites le homing d'un axe ou un jog du moteur pour le réveiller — la température en direct et les indicateurs d'anomalie n'apparaissent que tant qu'un moteur est activé (les drivers inactifs affichent « repos »).",
         "Ouvrez « registres avancés » sur une carte pour inspecter les valeurs de réglage brutes utilisées par le driver."
       ],
       "loading": "Chargement des drivers moteur…",
@@ -199,7 +199,7 @@
       "cs": "CS {cs}",
       "updates": "· mises à jour ~1.5s",
       "noFaults": "aucune anomalie",
-      "idle": "Idle — activez le moteur (homing ou jog de l'axe) pour lire SG / courant / température en direct."
+      "idle": "Au repos — activez le moteur (homing ou jog de l'axe) pour lire SG / courant / température en direct."
     },
     "recommendPanel": {
       "toggle": "recommander un réglage",
@@ -209,9 +209,9 @@
       "colCurrent": "actuel",
       "colRecommended": "recommandé",
       "basis": "courant de marche = {basis} ; StealthChop tient jusqu'à ~{rps} rev/s à {voltage} V.",
-      "confirm": "Écrire ceci sur le driver {stepper} maintenant. Réversible (Revert / un redémarrage restaure votre config) ; refusé pendant l'impression.",
+      "confirm": "Écrire ceci sur le driver {stepper} maintenant. Réversible (« rétablir » ou un redémarrage restaure votre config) ; refusé pendant l'impression.",
       "applyToDriver": "appliquer au driver",
-      "revert": "↺ revert",
+      "revert": "↺ rétablir",
       "copyConfig": "copier la config",
       "autotune": "autotune",
       "autotuneTitle": "Exécute AUTOTUNE_TMC si l'add-on klipper_tmc_autotune est installé",
@@ -243,7 +243,7 @@
       "testHome": "test de homing {axis}"
     },
     "homing": {
-      "homing": "homing",
+      "homing": "prise d'origine",
       "unreachable": "imprimante injoignable",
       "physicalIntroLead": "Cet axe fait son homing contre un interrupteur d'endstop physique",
       "physicalIntroTail": ". Appuyez sur l'interrupteur à la main et revérifiez pour confirmer le câblage avant le homing.",
@@ -283,7 +283,7 @@
     "registerEditor": {
       "toggle": "régler les registres (avancé)",
       "resetTitle": "INIT_TMC — réappliquer les registres configurés de ce driver + le courant",
-      "resetLabel": "↺ reset to config",
+      "resetLabel": "↺ revenir à la config",
       "liveOnly": "Les modifications sont {live} — non enregistrées. {initTmc} (reset), un redémarrage du firmware ou une coupure d'alimentation restaure les valeurs configurées. Les valeurs hors plage sont rejetées par la politique de sécurité côté imprimante ; le courant brut et les registres de protection ne sont pas modifiables ici.",
       "liveOnlyEmphasis": "en direct uniquement",
       "loading": "Chargement des registres modifiables…",
