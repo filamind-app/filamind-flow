@@ -185,6 +185,16 @@
         "mesh": "bed_mesh erkannt -> BED_MESH_CALIBRATE ergänzt.",
         "no_bed": "Kein beheiztes Bett — Bett-Heizschritte weggelassen."
       }
+    },
+    "flow": {
+      "title": "Flow-Check (Hotend-Grenze)",
+      "hint": "Wähle dein Hotend aus dem Katalog — jeder Druckzug wird gegen seine reale Schmelzzonen-Grenze geprüft; ein überlaufendes Makro fällt vor dem Druck auf.",
+      "hotend": "Hotend",
+      "pick": "Hotend wählen…",
+      "diameter": "Ø mm",
+      "ok": "Alle Druckzüge liegen unter der {ceiling}-mm³/s-Grenze.",
+      "overTitle": "{n} Zug/Züge über der {ceiling}-mm³/s-Grenze:",
+      "overLine": "Zeile {line}: {flow} mm³/s"
     }
   }
 }

@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.212.0] - 2026-06-12
+
+### Added
+
+- **Macro Designer — flow check against your hotend's real ceiling.** Pick a hotend from the
+  catalog (109 models with measured melt-zone ceilings) and every printing move in the simulated
+  macro is checked volumetrically (filament Ø configurable): moves whose flow exceeds what the
+  hotend can actually melt are listed with their line numbers and mm³/s — a purge or prime line
+  that silently over-runs the melt zone shows up *before* it prints. Localised in all 7 languages.
+
 ## [0.211.0] - 2026-06-12
 
 ### Added
