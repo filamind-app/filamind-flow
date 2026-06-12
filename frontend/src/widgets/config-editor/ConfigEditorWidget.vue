@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import { describeError } from '@/core/describeError'
-import { useNav } from '@/core/nav'
+import { useHashTab, useNav } from '@/core/nav'
 import {
   fetchBoardDetail,
   fetchDriverDetail,
@@ -33,6 +33,7 @@ import {
   searchConfig,
 } from './api'
 import { collapseDiff, type CollapsedRow, diffLines, diffStats } from './diff'
+import { pendingSection } from './configFocus'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type {
@@ -66,6 +67,10 @@ const loadingView = ref(false)
 const errFiles = ref<string | null>(null)
 const errView = ref<string | null>(null)
 const viewMode = ref<'structured' | 'raw'>('structured')
+// Deep link: #config-editor/<structured|raw> lands on that view.
+useHashTab('config-editor', (tab) => {
+  if (tab === 'structured' || tab === 'raw') viewMode.value = tab
+})
 /** Per-section disclosure (keyed by index, since headers can repeat — e.g. duplicate sections). */
 const open = ref<Record<number, boolean>>({})
 
@@ -609,6 +614,59 @@ watch(selected, (f) => {
   resetWriteState()
   if (f) void loadView(f)
 })
+
+// Inbound section focus (from the Machine Map pin atlas, doctor findings, …): open the file,
+// expand the section in the structured view and scroll to it. Unknown file → current file first,
+// then locate via project-wide search (one attempt — no retry loops on a missing section).
+async function tryApplyConfigFocus(): Promise<void> {
+  const target = pendingSection.value
+  if (!target) return
+  if (target.file && target.file !== selected.value) {
+    if (files.value.some((f) => f.path === target.file)) selected.value = target.file
+    return // the view watcher re-runs this once the file is loaded
+  }
+  const v = view.value
+  if (!v) return
+  const wanted = target.section.trim().toLowerCase()
+  const idx = v.sections.findIndex((sec) => {
+    const h = sec.header.trim().toLowerCase()
+    return h === wanted || h.startsWith(wanted + ' ') || sec.name.trim().toLowerCase() === wanted
+  })
+  if (idx >= 0) {
+    pendingSection.value = null
+    viewMode.value = 'structured'
+    open.value[idx] = true
+    void ensurePolicy(v.sections[idx].type)
+    await nextTick()
+    document
+      .getElementById(`cfg-sec-${idx}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    return
+  }
+  // Not in this file — locate it once via the project search, then jump to that file.
+  if (!target.file) {
+    try {
+      const hits = await searchConfig('[' + target.section)
+      const hit = hits.matches.find((m) =>
+        m.text
+          .trim()
+          .toLowerCase()
+          .startsWith('[' + wanted),
+      )
+      if (hit && files.value.some((f) => f.path === hit.file)) {
+        pendingSection.value = { section: target.section, file: hit.file }
+        selected.value = hit.file
+        return
+      }
+    } catch {
+      /* search unavailable — give up quietly */
+    }
+  }
+  pendingSection.value = null // section nowhere to be found — don't loop
+}
+watch(pendingSection, () => void tryApplyConfigFocus())
+watch(view, () => void tryApplyConfigFocus())
+
 onMounted(() => {
   void loadFiles()
   void loadPinDoctor()
@@ -1023,6 +1081,7 @@ onMounted(() => {
         <ul class="space-y-2">
           <li
             v-for="(section, i) in view.sections"
+            :id="`cfg-sec-${i}`"
             :key="i"
             class="nb-card overflow-hidden bg-surface"
           >

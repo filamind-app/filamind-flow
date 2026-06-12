@@ -5,12 +5,23 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { useNav } from '@/core/nav'
+import { focusConfigSection } from '@/widgets/config-editor/configFocus'
+
 import { fetchPinAtlas } from './api'
 import type { PinAtlas, PinAtlasPin } from './types'
 
 const props = defineProps<{ mcuName: string }>()
 
 const { t } = useI18n({ useScope: 'global' })
+const { go } = useNav()
+
+/** Jump from a wiring finding straight to the offending section in the Config Editor. */
+function openSection(owner: string): void {
+  const dot = owner.lastIndexOf('.')
+  focusConfigSection(dot > 0 ? owner.slice(0, dot) : owner)
+  go('config-editor')
+}
 
 const atlas = ref<PinAtlas | null>(null)
 const loading = ref(false)
@@ -124,6 +135,17 @@ function pinTitle(p: PinAtlasPin): string {
               : '⚠ ' + t('boardTopology.pinAtlas.caveat')
           }}</span>
           · <span class="font-mono font-bold">{{ f.pin }}</span> — {{ f.message }}
+          <span v-if="f.sections.length" class="mt-0.5 flex flex-wrap gap-1">
+            <button
+              v-for="sec in f.sections"
+              :key="sec"
+              class="rounded border border-ink/40 bg-surface px-1 font-mono text-[10px] hover:bg-ink/10"
+              :title="t('boardTopology.jump.section')"
+              @click="openSection(sec)"
+            >
+              {{ sec }} ↗
+            </button>
+          </span>
         </li>
       </ul>
 

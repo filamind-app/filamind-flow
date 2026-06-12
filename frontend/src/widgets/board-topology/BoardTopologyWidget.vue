@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
@@ -13,6 +13,7 @@ import { clearBoardOverride, fetchDiff, fetchTopology, saveSnapshot, setBoardOve
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import NodeInspector from './NodeInspector.vue'
+import { pendingNode } from './topologyFocus'
 import TopologyGraph from './TopologyGraph.vue'
 import type { RelatedRef, Topology, TopologyChange, TopologyDiff } from './types'
 
@@ -27,6 +28,27 @@ const fwMcus = ref<Record<string, McuFirmware>>({})
 
 const view = ref<'logical' | 'physical'>('physical')
 const selected = ref<string | null>(null)
+
+// Inbound cross-widget focus: another widget asked us to select a node (by MCU section name,
+// or 'host'). Applied once the topology is loaded; cleared after applying.
+function applyTopologyFocus(): void {
+  const wanted = pendingNode.value
+  const topo = topology.value
+  if (!wanted || !topo) return
+  if (wanted === 'host') {
+    if (topo.host) {
+      selected.value = 'host'
+      pendingNode.value = null
+    }
+    return
+  }
+  if (topo.mcus.some((m) => m.name === wanted)) {
+    selected.value = 'mcu:' + wanted
+    pendingNode.value = null
+  }
+}
+watch(pendingNode, applyTopologyFocus)
+watch(topology, applyTopologyFocus)
 const overrideBusy = ref(false)
 
 // Hardware snapshot / diff (detect a board swap / MCU add-remove / link change vs a saved baseline).

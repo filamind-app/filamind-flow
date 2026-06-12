@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useHashTab } from '@/core/nav'
 import { useI18n } from 'vue-i18n'
 
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
@@ -36,6 +37,10 @@ const { t } = useI18n({ useScope: 'global' })
  *  are the manual / on-printer paths; Audit aggregates every past result. */
 type Mode = 'guided' | 'analyze' | 'live' | 'audit'
 const mode = ref<Mode>('guided')
+// Deep link: #input-shaping/<tab> lands on that view (guided / analyze / live / audit).
+useHashTab('input-shaping', (tab) => {
+  if (['guided', 'analyze', 'live', 'audit'].includes(tab)) mode.value = tab as Mode
+})
 const TABS = computed<{ id: Mode; label: string }[]>(() => [
   { id: 'guided', label: t('inputShaping.widget.tabGuided') },
   { id: 'analyze', label: t('inputShaping.widget.tabAnalyze') },

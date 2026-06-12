@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { fetchDriverStatus, fetchMotorCatalog, saveMotorAssignment } from './api'
+import { pendingStepper } from './driverFocus'
 import HelpIllo from './HelpIllo.vue'
 import GuidedWizard from './GuidedWizard.vue'
 import HomingPanel from './HomingPanel.vue'
@@ -48,6 +49,26 @@ const MODE_TABS = computed<{ id: 'dashboard' | 'guided'; label: string }[]>(() =
 const openDetails = ref<Record<string, boolean>>({})
 
 const drivers = computed(() => status.value?.drivers ?? [])
+
+// Inbound cross-widget focus: jump to one stepper's card (from the Machine Map, a doctor
+// finding, …) and flash it so the eye lands on the right driver.
+const highlightStepper = ref<string | null>(null)
+function applyDriverFocus(): void {
+  const stepper = pendingStepper.value
+  if (!stepper || !drivers.value.some((d) => d.stepper === stepper)) return
+  pendingStepper.value = null
+  highlightStepper.value = stepper
+  void nextTick(() => {
+    document
+      .getElementById(`drv-${stepper}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  })
+  window.setTimeout(() => {
+    if (highlightStepper.value === stepper) highlightStepper.value = null
+  }, 2500)
+}
+watch(pendingStepper, applyDriverFocus)
+watch(drivers, applyDriverFocus)
 const reachable = computed(() => status.value?.reachable ?? false)
 
 function healthTitle(d: TmcDriver): string {
@@ -156,8 +177,10 @@ onUnmounted(() => {
       <div class="grid gap-2 sm:grid-cols-2">
         <section
           v-for="d in drivers"
+          :id="`drv-${d.stepper}`"
           :key="d.stepper"
           class="space-y-1.5 rounded-brutal border-2 border-ink bg-surface p-2"
+          :class="{ 'ring-4 ring-brand-cyan': highlightStepper === d.stepper }"
         >
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0">

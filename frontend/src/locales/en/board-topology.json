@@ -174,6 +174,11 @@
         "chip_changed": "“{mcu}” chip changed: {before} → {after}",
         "components_changed": "“{mcu}” component count changed: {before} → {after}"
       }
+    },
+    "jump": {
+      "section": "Open this section in the Config Editor",
+      "drivers": "Open in Motor Drivers",
+      "firmware": "Open Firmware Manager"
     }
   }
 }

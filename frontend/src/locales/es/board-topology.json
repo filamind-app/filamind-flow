@@ -174,6 +174,11 @@
         "chip_changed": "El chip de «{mcu}» cambió: {before} → {after}",
         "components_changed": "El número de componentes de «{mcu}» cambió: {before} → {after}"
       }
+    },
+    "jump": {
+      "section": "Abrir esta sección en el Editor de configuración",
+      "drivers": "Abrir en Motor Drivers",
+      "firmware": "Abrir el Gestor de firmware"
     }
   }
 }

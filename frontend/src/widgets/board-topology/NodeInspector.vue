@@ -7,6 +7,8 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { useNav } from '@/core/nav'
+
 import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
 import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 
@@ -28,6 +30,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n({ useScope: 'global' })
+const { go } = useNav()
 
 const detail = ref<BoardDetail | null>(null)
 const loadingBoard = ref(false)
@@ -151,6 +154,13 @@ function onPick(id: string | null): void {
               : '⚠ ' + t('boardTopology.sync.outOfSync')
           }}
         </span>
+        <button
+          v-if="fw && fw.in_sync === false"
+          class="nb-btn bg-brand-yellow px-1.5 py-0.5 text-[10px]"
+          @click="go('firmware-upgrade', 'status')"
+        >
+          {{ t('boardTopology.jump.firmware') }} ↗
+        </button>
       </div>
 
       <!-- live link vitals (freq / retransmits / load) from the firmware status -->
@@ -199,9 +209,22 @@ function onPick(id: string | null): void {
         class="flex flex-wrap items-center gap-1 font-mono text-[10px]"
       >
         <span class="opacity-60">{{ t('boardTopology.components.title') }}:</span>
-        <span v-for="c in componentCounts(mcu)" :key="c.kind" class="rounded bg-paper px-1">
-          {{ t('boardTopology.components.' + c.kind) }} ×{{ c.n }}
-        </span>
+        <component
+          :is="c.kind === 'motor' || c.kind === 'driver' ? 'button' : 'span'"
+          v-for="c in componentCounts(mcu)"
+          :key="c.kind"
+          class="rounded bg-paper px-1"
+          :class="
+            c.kind === 'motor' || c.kind === 'driver' ? 'hover:bg-brand-cyan hover:text-ink' : ''
+          "
+          :title="
+            c.kind === 'motor' || c.kind === 'driver' ? t('boardTopology.jump.drivers') : undefined
+          "
+          @click="c.kind === 'motor' || c.kind === 'driver' ? go('motor-drivers') : undefined"
+        >
+          {{ t('boardTopology.components.' + c.kind) }} ×{{ c.n
+          }}{{ c.kind === 'motor' || c.kind === 'driver' ? ' ↗' : '' }}
+        </component>
       </div>
 
       <!-- tab switcher: catalog details vs the live pin atlas (atlas needs a matched board) -->
