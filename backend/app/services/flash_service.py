@@ -17,6 +17,7 @@ from __future__ import annotations
 import asyncio
 import glob
 import os
+import re
 from collections.abc import AsyncIterator
 from typing import Any
 
@@ -168,6 +169,57 @@ async def _is_printing(moonraker_url: str) -> bool:
         return False
 
 
+#: A Klipper canbus UUID is exactly 12 lowercase hex digits — what Katapult's flashtool
+#: expects after ``-u``. A friendly device name ("Toolhead") is not one.
+_CAN_UUID_RE = re.compile(r"^[0-9a-f]{12}$")
+
+
+async def _live_config(moonraker_url: str) -> dict[str, Any]:
+    """The live ``configfile.config`` mapping, or ``{}`` when Moonraker is unreachable."""
+    try:
+        data = await MoonrakerClient(moonraker_url).query_objects(["configfile"])
+    except httpx.HTTPError:
+        return {}
+    config = data.get("configfile", {}).get("config", {})
+    return config if isinstance(config, dict) else {}
+
+
+async def resolve_can_uuid(device: str, moonraker_url: str) -> tuple[str | None, str | None]:
+    """Resolve the CAN node UUID to flash. CAN flashing needs the 12-hex ``canbus_uuid``, but a
+    device may be registered under a friendly id ("Toolhead"). Returns ``(uuid, error)``:
+
+    * the id itself if it already is a UUID;
+    * the ``canbus_uuid`` of the live ``[mcu <id>]`` section (name match);
+    * the only ``canbus_uuid`` in the config if there is exactly one (unambiguous);
+    * ``(None, message)`` when it can't be resolved — better to refuse than flash the wrong node.
+    """
+    if _CAN_UUID_RE.match(device):
+        return device, None
+    config = await _live_config(moonraker_url)
+    uuids: dict[str, str] = {}
+    for section, cfg in config.items():
+        if not isinstance(cfg, dict):
+            continue
+        uuid = cfg.get("canbus_uuid")
+        if isinstance(uuid, str) and _CAN_UUID_RE.match(uuid.strip()):
+            # section is "mcu" or "mcu <name>"
+            name = section.split(" ", 1)[1] if section.startswith("mcu ") else section
+            uuids[name] = uuid.strip()
+    if device in uuids:
+        return uuids[device], None
+    if len(set(uuids.values())) == 1:
+        return next(iter(uuids.values())), None
+    if not uuids:
+        return None, (
+            f"!! Could not find a canbus_uuid for '{device}' in the live config — "
+            "set this device's id to its 12-hex CAN UUID in the Manager, then flash.\n"
+        )
+    return None, (
+        f"!! '{device}' did not match a unique CAN node ({len(uuids)} found) — set this "
+        "device's id to its 12-hex canbus_uuid in the Manager so the right board is flashed.\n"
+    )
+
+
 async def _sudo_ready() -> bool:
     """True if the backend can sudo without a password.
 
@@ -226,8 +278,12 @@ async def flash_plan(
     }
 
 
-async def _stream(cmd: list[str], cwd: str | None = None) -> AsyncIterator[str]:
-    """Runs a command, yielding stdout+stderr lines (tolerant of a missing binary)."""
+async def _stream(
+    cmd: list[str], cwd: str | None = None, result: dict[str, int] | None = None
+) -> AsyncIterator[str]:
+    """Runs a command, yielding stdout+stderr lines (tolerant of a missing binary). When
+    ``result`` is given, its ``"rc"`` is set to the process exit code (127 if it couldn't
+    start) so a caller can tell a failed flash from a successful one."""
     try:
         proc = await asyncio.create_subprocess_exec(
             *cmd,
@@ -237,6 +293,8 @@ async def _stream(cmd: list[str], cwd: str | None = None) -> AsyncIterator[str]:
         )
     except (OSError, NotImplementedError) as exc:
         yield f"!! cannot run '{cmd[0]}': {exc}\n"
+        if result is not None:
+            result["rc"] = 127
         return
     assert proc.stdout is not None
     while True:
@@ -244,7 +302,9 @@ async def _stream(cmd: list[str], cwd: str | None = None) -> AsyncIterator[str]:
         if not raw:
             break
         yield raw.decode(errors="replace")
-    await proc.wait()
+    rc = await proc.wait()
+    if result is not None:
+        result["rc"] = rc
 
 
 async def _reboot_to_bootloader(
@@ -410,6 +470,16 @@ async def run_flash(
     offset = offset_override or (
         flash_offset(profile_path(settings.data_dir, profile)) if profile else _DEFAULT_OFFSET
     )
+    # CAN flashing addresses the node by its 12-hex canbus_uuid, not a friendly name —
+    # resolve it from the live config so a device registered as "Toolhead" still flashes.
+    target = device
+    if method == "can":
+        resolved, uuid_err = await resolve_can_uuid(device, settings.moonraker_url)
+        if resolved is None:
+            yield uuid_err or "!! Could not resolve the CAN node to flash.\n"
+            return
+        target = resolved
+
     yield _phase("stop")
     yield ">>> Stopping Klipper to free the device…\n"
     async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
@@ -422,25 +492,40 @@ async def run_flash(
     # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
     if method in ("serial", "can") and is_katapult:
         yield _phase("boot")
-        async for line in _reboot_to_bootloader(method, device, interface or "can0", settings):
+        async for line in _reboot_to_bootloader(method, target, interface or "can0", settings):
             yield line
     elif method in ("serial", "can"):
         yield ">>> Device is not marked Katapult — skipping reboot-to-bootloader.\n"
 
     yield _phase("write")
+    flash_result: dict[str, int] = {}
+    flash_tool = ""
     if method == "dfu":
         async for line in _flash_dfu(device, artifact, offset):
             yield line
     else:
-        command = _build_command(method, settings, device, artifact, interface or "can0", offset)
+        command = _build_command(method, settings, target, artifact, interface or "can0", offset)
+        flash_tool = os.path.basename(command[0])
         yield f">>> {' '.join(command)}\n"
-        async for line in _stream(command, cwd=settings.klipper_dir if method == "make" else None):
+        async for line in _stream(
+            command, cwd=settings.klipper_dir if method == "make" else None, result=flash_result
+        ):
             yield line
 
     yield _phase("restart")
     yield ">>> Restarting Klipper…\n"
     async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
         yield line
+
+    # The flash tool failed (non-zero exit) — Klipper is back up but the board was NOT
+    # written. Report it honestly instead of recording a success.
+    rc = flash_result.get("rc", 0)
+    if rc != 0:
+        yield (
+            f"!! Flash failed — {flash_tool or 'the flash tool'} exited with code {rc}. "
+            "The board was not flashed; see the output above.\n"
+        )
+        return
 
     # Pick up a serial board's new id (re-enumeration) and carry it into the registry.
     flashed_id = device
