@@ -385,24 +385,28 @@ async def run_scan(settings: Settings) -> dict[str, Any]:
     svc_score, svc_detail = _services_pillar(services["units"])
     tun_score, tun_detail = _tuning_pillar(tuning)
     flow_score, flow_detail = _flow_pillar(last_flow)
-    raw = {
+    raw: dict[str, tuple[float | None, dict[str, Any]]] = {
         "config": (config_score, {"errors": errors, "warnings": warnings}),
         "firmware": (fw_score, fw_detail),
         "services": (svc_score, svc_detail),
         "tuning": (tun_score, tun_detail),
         "flow": (flow_score, flow_detail),
     }
-    pillars = [
-        {
-            "key": key,
-            "score": round(raw[key][0], 1) if raw[key][0] is not None else None,
-            "weight": _PILLAR_WEIGHTS[key],
-            "status": _pillar_status(raw[key][0]),
-            "detail": raw[key][1],
-        }
-        for key in _PILLAR_ORDER
-    ]
-    contributing = [(p["key"], p["score"]) for p in pillars if p["score"] is not None]
+    pillars: list[dict[str, Any]] = []
+    contributing: list[tuple[str, float]] = []
+    for key in _PILLAR_ORDER:
+        raw_score, detail = raw[key]
+        pillars.append(
+            {
+                "key": key,
+                "score": round(raw_score, 1) if raw_score is not None else None,
+                "weight": _PILLAR_WEIGHTS[key],
+                "status": _pillar_status(raw_score),
+                "detail": detail,
+            }
+        )
+        if raw_score is not None:
+            contributing.append((key, raw_score))
     total_w = sum(_PILLAR_WEIGHTS[k] for k, _ in contributing)
     composite = (
         sum(_PILLAR_WEIGHTS[k] * s for k, s in contributing) / total_w if total_w else config_score
