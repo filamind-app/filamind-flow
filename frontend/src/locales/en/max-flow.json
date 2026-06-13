@@ -68,7 +68,14 @@
       "driver": "Extruder driver",
       "driverDetected": "detected from the printer",
       "autoStealthchop": "Auto-enable StealthChop for the test",
-      "autoStealthchopHint": "TMC2209/2240 only: temporarily writes a stealthchop_threshold to the extruder so StallGuard can read, then comments it out after the test. Restores printer.cfg; firmware restart each way."
+      "autoStealthchopHint": "TMC2209/2240 only: temporarily writes a stealthchop_threshold to the extruder so StallGuard can read, then comments it out after the test. Restores printer.cfg; firmware restart each way.",
+      "method": "Detection method",
+      "methodHint": "Auto uses StallGuard, falling back to the toolhead accelerometer (vibration) when StallGuard can't read. The accelerometer method is experimental."
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Accelerometer"
     },
     "plan": {
       "button": "Preview plan",
@@ -150,7 +157,9 @@
       "units": "mm³/s",
       "fromBefore": "Measured earlier ({at}) — run again for fresh numbers.",
       "unreliableTitle": "Unreliable — no StallGuard signal",
-      "unmeasured": "reached, not confirmed"
+      "unmeasured": "reached, not confirmed",
+      "via": "Measured via {method}",
+      "accelExperimental": "Measured by vibration (accelerometer) — experimental; treat the number as a guide, not an exact ceiling."
     },
     "states": {
       "loadingHotends": "Loading hotends…"

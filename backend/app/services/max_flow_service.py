@@ -23,7 +23,14 @@ from typing import Any
 
 import httpx
 
-from app.services import config_stealthchop, max_flow, printer_guard, reference_data, task_store
+from app.services import (
+    config_stealthchop,
+    max_flow,
+    max_flow_accel,
+    printer_guard,
+    reference_data,
+    task_store,
+)
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
@@ -104,6 +111,9 @@ class RampParams:
     #: For an SG4 extruder in SpreadCycle: temporarily write a stealthchop_threshold so the test
     #: can run, then comment it out afterward (restores printer.cfg; a firmware restart each way).
     auto_stealthchop: bool = False
+    #: Slip-detection method: "auto" (StallGuard, falling back to the accelerometer when the live
+    #: SG signal is unusable and an accel chip exists), "stallguard", or "accel" (vibration).
+    method: str = "auto"
 
 
 @dataclass(frozen=True)
@@ -482,26 +492,28 @@ async def run_max_flow(
     params: RampParams,
     progress_cb: Callable[[int, int, dict[str, Any]], None] | None = None,
     cancel_cb: Callable[[], bool] | None = None,
+    resonance_dirs: str = "/tmp",
 ) -> dict[str, Any]:
-    """Run the live max-flow test: park for a clear view, heat, sanity-check StallGuard, then
-    ramp the flow while sampling StallGuard.
+    """Run the live max-flow test: park for a clear view, heat, then ramp the flow while watching
+    for the extruder slip — via StallGuard, or via the toolhead accelerometer (vibration).
 
     Safe by construction: refused while the printer is busy; the heater is **always turned
     off** in a ``finally`` (even on error); the ramp **stops as soon as slip is detected** so no
     filament is ground past the first slip; and (the fix for #319) a short StallGuard sanity
-    pre-check **bails out before the ramp** if the live SG field is unusable on this extruder, so
-    a meaningless "no slip" can't come out of a full heat-and-grind cycle. When
-    ``park_for_view`` is set the nozzle is homed (if needed) and centered at a clear height first,
-    for a visible run. When ``auto_stealthchop`` is set and the SG4 extruder is in SpreadCycle, a
-    marker-tagged ``stealthchop_threshold`` is written to printer.cfg so the preflight passes, then
-    commented out again afterward (restored even on error). The client should be created with a
-    long timeout (heating + extrusion + two firmware restarts block for minutes).
+    pre-check **bails out before the ramp** if the live SG field is unusable on this extruder.
+
+    ``method`` selects the slip detector: ``"stallguard"``, ``"accel"`` (vibration), or ``"auto"``
+    — StallGuard, falling back to the accelerometer when the SG config/signal is unusable and a
+    chip is configured. When ``park_for_view`` is set the nozzle is homed (if needed) and centered
+    first. When ``auto_stealthchop`` is set (StallGuard path only) a marker-tagged
+    ``stealthchop_threshold`` is written to printer.cfg so the preflight passes, then commented out
+    again afterward (restored even on error). The client should use a long timeout.
 
     Raises:
         ValueError: on invalid params.
         MaxFlowBusyError: if the printer is busy.
-        MaxFlowPreflightError: if the extruder driver can't read StallGuard for this test.
-        MaxFlowSignalError: if the live StallGuard field yields no usable reading.
+        MaxFlowPreflightError: if the StallGuard path can't read and there's no accel fallback.
+        MaxFlowSignalError: if neither StallGuard nor an accelerometer can measure here.
         httpx.HTTPError: if Moonraker is unreachable or a command fails.
     """
     validate(params)
@@ -514,20 +526,35 @@ async def run_max_flow(
     sub_mm = params.extrude_per_step / params.samples_per_step
     sg_floor = _sg_floor(params.driver)  # C2: drop SG4 bias-region noise (below the min velocity)
     measurements: list[StepMeasurement] = []
-    # Whenever we *intend* to write a temporary StealthChop line, the outer finally must revert it.
-    # Gate the revert on the intent — set before the write can fail — not on the enable's return:
-    # if the firmware restart raises after printer.cfg was already overwritten, we must still undo.
-    stealthchop_intended = params.auto_stealthchop and params.driver.lower() in _SG4_DRIVERS
+
+    method = params.method.lower()
+    accel_chip = await max_flow_accel.detect_chip(client) if method in ("auto", "accel") else None
+    if method == "accel" and not accel_chip:
+        raise MaxFlowSignalError(
+            "No accelerometer is configured — the vibration method needs an ADXL345/LIS2DW "
+            "on the toolhead."
+        )
+    use_accel = method == "accel"
+    # StealthChop only matters for the StallGuard path; the revert is gated on intent (see #319).
+    stealthchop_intended = (
+        params.auto_stealthchop and params.driver.lower() in _SG4_DRIVERS and not use_accel
+    )
 
     try:
-        # Optionally enable StealthChop temporarily so an SG4 extruder passes the preflight.
         if stealthchop_intended:
             if cancel_cb is not None and cancel_cb():
                 raise task_store.TaskCancelled()
             if progress_cb is not None:
                 progress_cb(0, total, {"phase": "enabling"})
             await _enable_stealthchop_temp(client, params.driver)
-        await _preflight(client, params.driver)  # C1: refuse a config that can't read StallGuard
+        if not use_accel:
+            try:
+                await _preflight(client, params.driver)  # C1: needs a StallGuard-readable config
+            except MaxFlowPreflightError:
+                if method == "auto" and accel_chip:
+                    use_accel = True  # SG config can't read → fall back to vibration
+                else:
+                    raise
 
         # Home + center the nozzle for a clear view *before* heating (no heater on yet).
         if params.park_for_view:
@@ -541,34 +568,59 @@ async def run_max_flow(
             await client.run_gcode(f"M104 S{params.temperature:.0f}")  # start heating
             await client.run_gcode("M83")  # relative extrusion
             await client.run_gcode(f"M109 S{params.temperature:.0f}")  # wait for temp
-            # The fix (#319): refuse the ramp if the live StallGuard field is unusable here.
             if cancel_cb is not None and cancel_cb():
                 raise task_store.TaskCancelled()  # finally below always cuts the heater
-            await _sg_precheck(client, params, driver_section, total, progress_cb)
-            for step_index, step in enumerate(plan_steps):
-                if cancel_cb is not None and cancel_cb():
-                    raise task_store.TaskCancelled()  # finally below always cuts the heater
-                if progress_cb is not None:
-                    progress_cb(step_index + 1, total, {"flow": step.flow_mm3s, "phase": "ramp"})
-                samples: list[float] = []
-                for _ in range(params.samples_per_step):
-                    await client.run_gcode(f"G1 E{sub_mm:.4f} F{step.feedrate_mm_min:.0f}")
-                    await client.run_gcode("M400")  # finish the move before sampling
-                    status = await client.query_objects([driver_section])
-                    obj = status.get(driver_section)
-                    sg = _extract_sg(obj if isinstance(obj, dict) else {})
-                    if sg is not None and sg >= sg_floor:
-                        samples.append(sg)
-                measurements.append(StepMeasurement(flow_mm3s=step.flow_mm3s, sg_samples=samples))
-                # Stop the moment slip is detected — don't grind filament past the first slip.
-                if max_flow.analyze(measurements, params.driver).slip_flow is not None:
-                    break
+            if not use_accel:
+                # The fix (#319): refuse the ramp if the live StallGuard field is unusable here.
+                try:
+                    await _sg_precheck(client, params, driver_section, total, progress_cb)
+                except MaxFlowSignalError:
+                    if method == "auto" and accel_chip:
+                        use_accel = True  # live SG unusable → fall back to vibration
+                    else:
+                        raise
+            if use_accel:
+                steps_tuples = [(s.flow_mm3s, s.feedrate_mm_min, s.extrude_mm) for s in plan_steps]
+                measurements = await max_flow_accel.ramp(
+                    client,
+                    accel_chip,
+                    resonance_dirs,
+                    steps_tuples,
+                    params.samples_per_step,
+                    total,
+                    progress_cb,
+                    cancel_cb,
+                )
+                result = max_flow_accel.analyze(measurements)
+            else:
+                for step_index, step in enumerate(plan_steps):
+                    if cancel_cb is not None and cancel_cb():
+                        raise task_store.TaskCancelled()  # finally below always cuts the heater
+                    if progress_cb is not None:
+                        progress_cb(
+                            step_index + 1, total, {"flow": step.flow_mm3s, "phase": "ramp"}
+                        )
+                    samples: list[float] = []
+                    for _ in range(params.samples_per_step):
+                        await client.run_gcode(f"G1 E{sub_mm:.4f} F{step.feedrate_mm_min:.0f}")
+                        await client.run_gcode("M400")  # finish the move before sampling
+                        status = await client.query_objects([driver_section])
+                        obj = status.get(driver_section)
+                        sg = _extract_sg(obj if isinstance(obj, dict) else {})
+                        if sg is not None and sg >= sg_floor:
+                            samples.append(sg)
+                    measurements.append(
+                        StepMeasurement(flow_mm3s=step.flow_mm3s, sg_samples=samples)
+                    )
+                    # Stop the moment slip is detected — don't grind filament past the first slip.
+                    if max_flow.analyze(measurements, params.driver).slip_flow is not None:
+                        break
+                result = max_flow.analyze(measurements, params.driver)
         finally:
             # Always cut the heater, even if a command raised mid-run (best-effort).
             with contextlib.suppress(Exception):
                 await client.run_gcode("M104 S0")
 
-        result = max_flow.analyze(measurements, params.driver)
         return {
             "ok": True,
             "max_flow_mm3s": result.max_flow_mm3s,
@@ -580,8 +632,11 @@ async def run_max_flow(
             ],
             "recommend": recommend(result.max_flow_mm3s),
             "driver": params.driver.lower(),
-            "stallguard_field": reference_data.stallguard_field(params.driver),
+            "stallguard_field": (
+                None if use_accel else reference_data.stallguard_field(params.driver)
+            ),
             "sg_samples_seen": any(m.sg_samples for m in measurements),
+            "method": "accel" if use_accel else "stallguard",
         }
     finally:
         # Revert any temporary StealthChop edit — idempotent (a no-op when nothing was written), so
