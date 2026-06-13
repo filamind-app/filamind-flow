@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
 
+import HelpNote from './HelpNote.vue'
 import {
   activateTheme,
   createTheme,
@@ -505,6 +506,8 @@ onMounted(() => void loadStatus())
       </div>
     </details>
 
+    <HelpNote topic="glossary" />
+
     <p v-if="checking" class="font-mono text-xs opacity-70">
       {{ t('klipperscreenStudio.status.checking') }}
     </p>
@@ -550,6 +553,7 @@ onMounted(() => void loadStatus())
       </div>
 
       <template v-if="view === 'config'">
+        <HelpNote topic="config" />
         <!-- Raw editor -->
         <p v-if="loadingConf" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.editor.loading') }}
@@ -647,6 +651,7 @@ onMounted(() => void loadStatus())
 
       <!-- Settings view: a friendly form over the common [main] options -->
       <template v-else-if="view === 'settings'">
+        <HelpNote topic="settings" />
         <p
           v-if="settingsBusy && !Object.keys(settingsValues).length"
           class="font-mono text-xs opacity-70"
@@ -746,6 +751,7 @@ onMounted(() => void loadStatus())
 
       <!-- Menus view: design the on-screen menu tree (what's on each screen + what it does) -->
       <template v-else-if="view === 'menus'">
+        <HelpNote topic="menus" />
         <p v-if="menusBusy && !menuItems.length && !menuSha" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.menus.loading') }}
         </p>
@@ -947,6 +953,7 @@ onMounted(() => void loadStatus())
 
       <!-- Themes view: palette pickers + live preview + theme management -->
       <template v-else-if="view === 'themes'">
+        <HelpNote topic="themes" />
         <p v-if="themesBusy && !tokens.length" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.themes.loading') }}
         </p>
@@ -1112,6 +1119,7 @@ onMounted(() => void loadStatus())
 
       <!-- Kiosk view: turn the touchscreen into FilaMind itself (reversible swap) -->
       <template v-else-if="view === 'kiosk'">
+        <HelpNote topic="kiosk" />
         <p v-if="kioskBusy && !kiosk" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.kiosk.loading') }}
         </p>

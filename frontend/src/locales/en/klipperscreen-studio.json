@@ -7,7 +7,59 @@
       "step1": "Edit the configuration text below (or leave it as-is).",
       "step2": "Save — the current file is backed up first, and the save is refused while the printer is busy.",
       "step3": "Restart KlipperScreen to apply the change on the physical screen.",
-      "lfNote": "Lines use UNIX (LF) endings, enforced automatically on save."
+      "lfNote": "Lines use UNIX (LF) endings, enforced automatically on save.",
+      "topics": {
+        "glossary": {
+          "title": "Glossary",
+          "body": "Quick definitions of the KlipperScreen terms used here."
+        },
+        "config": {
+          "title": "What's the Config tab?",
+          "body": "The raw KlipperScreen.conf. Edit any setting by hand; the save backs the file up first, is refused while the printer is busy, and warns if the file changed on the screen since you loaded it. Most people use the Settings / Menus / Themes tabs instead."
+        },
+        "settings": {
+          "title": "What's the Settings tab?",
+          "body": "The most-used [main] options as a form — theme, language, screen sleep, font size, and toggles. Pre-filled from the live config; only the options you change are written. Restart to apply."
+        },
+        "menus": {
+          "title": "What's the Menus tab?",
+          "body": "Design the touchscreen's button grids. Each tree (__main is the home grid, __print the print screen) lists its buttons; add, rename, reorder and nest them, and set each to open a sub-menu, open a built-in screen, or run G-code."
+        },
+        "themes": {
+          "title": "What's the Themes tab?",
+          "body": "Build a KlipperScreen theme: pick a colour per palette token and a corner radius, watch the live preview, then create and apply it to the screen. The preview is approximate — the real screen renders in GTK."
+        },
+        "kiosk": {
+          "title": "What's the Kiosk tab?",
+          "body": "Put FilaMind Flow itself on the touchscreen as a fullscreen browser — total control of what the screen shows. It's a reversible swap with KlipperScreen (temporary by default; a reboot restores KlipperScreen). Needs the one-time installer on the printer host."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "The touchscreen UI that runs on a small display attached to the printer — separate from this web panel."
+        },
+        "theme": {
+          "term": "Theme",
+          "def": "A KlipperScreen look — colours, icons and corner radius. Lives in a styles/<name> folder on the host; cosmetic only (it can't change the layout)."
+        },
+        "menu": {
+          "term": "Menu (__main / __print)",
+          "def": "The grids of buttons KlipperScreen shows. __main is the home screen, __print the screen shown while printing, __splashscreen the startup screen."
+        },
+        "panel": {
+          "term": "Panel",
+          "def": "A built-in KlipperScreen screen a button can open (move, temperature, extrude, bed mesh, …). Their internal contents are fixed by KlipperScreen."
+        },
+        "autoBlock": {
+          "term": "Auto-generated block (#~#)",
+          "def": "The section KlipperScreen writes for itself at the bottom of the conf, after the #~# marker. FilaMind never edits it — only your settings above it."
+        },
+        "kiosk": {
+          "term": "Kiosk",
+          "def": "Running a fullscreen browser on the touchscreen instead of KlipperScreen, so the screen shows FilaMind Flow. Fully reversible."
+        }
+      }
     },
     "status": {
       "checking": "Checking for KlipperScreen…",

@@ -7,7 +7,59 @@
       "step1": "Edita el texto de configuración abajo (o déjalo igual).",
       "step2": "Guardar — el archivo se respalda primero, y el guardado se rechaza mientras la impresora está ocupada.",
       "step3": "Reinicia KlipperScreen para aplicar el cambio en la pantalla física.",
-      "lfNote": "Las líneas usan finales UNIX (LF), aplicados automáticamente al guardar."
+      "lfNote": "Las líneas usan finales UNIX (LF), aplicados automáticamente al guardar.",
+      "topics": {
+        "glossary": {
+          "title": "Glosario",
+          "body": "Definiciones rápidas de los términos de KlipperScreen que se usan aquí."
+        },
+        "config": {
+          "title": "¿Qué es la pestaña Config?",
+          "body": "El KlipperScreen.conf en crudo. Edita cualquier ajuste a mano; al guardar se respalda el archivo primero, se rechaza mientras la impresora está ocupada y avisa si el archivo cambió en la pantalla desde que lo cargaste. La mayoría usa en su lugar las pestañas Ajustes / Menús / Temas."
+        },
+        "settings": {
+          "title": "¿Qué es la pestaña Ajustes?",
+          "body": "Las opciones de [main] más usadas como formulario — tema, idioma, apagado de pantalla, tamaño de fuente y conmutadores. Se rellenan desde la config en vivo; solo se escriben las opciones que cambias. Reinicia para aplicar."
+        },
+        "menus": {
+          "title": "¿Qué es la pestaña Menús?",
+          "body": "Diseña las cuadrículas de botones de la pantalla táctil. Cada árbol (__main es la cuadrícula de inicio, __print la pantalla de impresión) lista sus botones; añádelos, renómbralos, reordénalos y anídalos, y configura cada uno para abrir un submenú, abrir una pantalla integrada o ejecutar G-code."
+        },
+        "themes": {
+          "title": "¿Qué es la pestaña Temas?",
+          "body": "Crea un tema de KlipperScreen: elige un color por cada token de la paleta y un radio de esquina, observa la vista previa en vivo y luego créalo y aplícalo a la pantalla. La vista previa es aproximada — la pantalla real se dibuja con GTK."
+        },
+        "kiosk": {
+          "title": "¿Qué es la pestaña Quiosco?",
+          "body": "Pon el propio FilaMind Flow en la pantalla táctil como un navegador a pantalla completa — control total de lo que muestra la pantalla. Es un intercambio reversible con KlipperScreen (temporal por defecto; un reinicio restaura KlipperScreen). Requiere el instalador único en el host de la impresora."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "La interfaz de pantalla táctil que se ejecuta en una pantalla pequeña conectada a la impresora — independiente de este panel web."
+        },
+        "theme": {
+          "term": "Tema",
+          "def": "Un aspecto de KlipperScreen — colores, iconos y radio de esquina. Vive en una carpeta styles/<name> del host; solo es cosmético (no puede cambiar la disposición)."
+        },
+        "menu": {
+          "term": "Menú (__main / __print)",
+          "def": "Las cuadrículas de botones que muestra KlipperScreen. __main es la pantalla de inicio, __print la pantalla que se muestra durante la impresión, __splashscreen la pantalla de arranque."
+        },
+        "panel": {
+          "term": "Pantalla",
+          "def": "Una pantalla integrada de KlipperScreen que un botón puede abrir (mover, temperatura, extruir, malla de cama, …). Su contenido interno está fijado por KlipperScreen."
+        },
+        "autoBlock": {
+          "term": "Bloque autogenerado (#~#)",
+          "def": "La sección que KlipperScreen escribe para sí mismo al final del conf, después del marcador #~#. FilaMind nunca la edita — solo tus ajustes situados encima de ella."
+        },
+        "kiosk": {
+          "term": "Quiosco",
+          "def": "Ejecutar un navegador a pantalla completa en la pantalla táctil en lugar de KlipperScreen, para que la pantalla muestre FilaMind Flow. Totalmente reversible."
+        }
+      }
     },
     "status": {
       "checking": "Buscando KlipperScreen…",
@@ -44,7 +96,12 @@
       "savedRestart": "Guardado — reinicia KlipperScreen para aplicar.",
       "unset": "Dejar sin definir (predeterminado)",
       "never": "Nunca (siempre encendida)",
-      "fontSize": { "small": "Pequeña", "medium": "Mediana", "large": "Grande", "max": "Máx." },
+      "fontSize": {
+        "small": "Pequeña",
+        "medium": "Mediana",
+        "large": "Grande",
+        "max": "Máx."
+      },
       "label": {
         "theme": "Tema",
         "language": "Idioma",
