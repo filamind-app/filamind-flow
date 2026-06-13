@@ -81,3 +81,62 @@ async def save_conf(
 async def restart(client: MoonrakerClient) -> None:
     """Restart the KlipperScreen service so an edited config / theme takes effect."""
     await client.restart_service(SERVICE)
+
+
+# ── Graphical [main] options editor ──────────────────────────────────────────
+# These read/write individual options in [main] as plain text so the form editor never has to
+# round-trip the whole file through a parser, and KlipperScreen's auto-generated #~# block is
+# always left untouched (only the user-authored portion above it is edited).
+_KV = re.compile(r"^\s*([A-Za-z0-9_]+)\s*[:=]\s*(.*?)\s*$")
+_KEY = re.compile(r"^[A-Za-z0-9_]{1,40}$")
+
+
+def _split_auto(raw: str) -> tuple[list[str], list[str]]:
+    lines = raw.split("\n")
+    cut = next((i for i, ln in enumerate(lines) if ln.lstrip().startswith("#~#")), len(lines))
+    return lines[:cut], lines[cut:]
+
+
+def read_main_options(raw: str) -> dict[str, str]:
+    """Parse the user-authored ``[main]`` section into ``{key: value}`` (ignores the #~# block)."""
+    user, _ = _split_auto(raw)
+    start = next((i for i, ln in enumerate(user) if ln.strip().lower() == "[main]"), None)
+    out: dict[str, str] = {}
+    if start is None:
+        return out
+    j = start + 1
+    while j < len(user) and not user[j].strip().startswith("["):
+        line = user[j]
+        if not line.lstrip().startswith("#"):
+            m = _KV.match(line)
+            if m:
+                out[m.group(1).lower()] = m.group(2)
+        j += 1
+    return out
+
+
+def set_options(raw: str, section: str, options: dict[str, str]) -> str:
+    """Set several params in ``[section]`` (add or replace each), preserving the #~# auto-block."""
+    out = raw
+    for key, value in options.items():
+        if not _KEY.match(key):
+            continue
+        out = _set_one(out, section, key, str(value))
+    return out
+
+
+def _set_one(raw: str, section: str, key: str, value: str) -> str:
+    user, auto = _split_auto(raw)
+    header = f"[{section}]"
+    sec = next((i for i, ln in enumerate(user) if ln.strip().lower() == header.lower()), None)
+    key_re = re.compile(rf"^\s*{re.escape(key)}\s*[:=].*$", re.IGNORECASE)
+    if sec is not None:
+        j = sec + 1
+        while j < len(user) and not user[j].strip().startswith("["):
+            if key_re.match(user[j]) and not user[j].lstrip().startswith("#"):
+                user[j] = f"{key} = {value}"
+                return "\n".join([*user, *auto])
+            j += 1
+        user.insert(sec + 1, f"{key} = {value}")
+        return "\n".join([*user, *auto])
+    return "\n".join([header, f"{key} = {value}", "", *user, *auto])

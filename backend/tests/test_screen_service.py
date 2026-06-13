@@ -77,3 +77,29 @@ async def test_save_normalizes_crlf_to_lf(monkeypatch: Any) -> None:
     await screen_service.save_conf(_Client(), "a\r\nb\rc\n", "sha")  # type: ignore[arg-type]
     assert captured["filename"] == "KlipperScreen.conf"
     assert captured["content"] == "a\nb\nc\n"  # CRLF and lone CR both become LF
+
+
+def test_read_main_options_parses_user_section_only() -> None:
+    raw = (
+        "[main]\ntheme: z-bolt\n24htime = True\n"
+        "#~# --- auto --- #~#\n#~# [main]\n#~# theme = saved\n"
+    )
+    assert screen_service.read_main_options(raw) == {"theme": "z-bolt", "24htime": "True"}
+
+
+def test_set_options_adds_and_replaces_preserving_auto_block() -> None:
+    raw = "[main]\ntheme: z-bolt\n#~# --- auto --- #~#\n#~# x = 1\n"
+    out = screen_service.set_options(raw, "main", {"theme": "mocha", "use_dpms": "False"})
+    assert "theme = mocha" in out and "z-bolt" not in out  # replaced in place
+    assert "use_dpms = False" in out  # added under [main]
+    assert "#~# x = 1" in out  # auto-generated block left intact
+
+
+def test_set_options_creates_section_when_missing() -> None:
+    out = screen_service.set_options("language = en\n", "main", {"theme": "mocha"})
+    assert out.startswith("[main]\ntheme = mocha")
+
+
+def test_set_options_ignores_unsafe_keys() -> None:
+    out = screen_service.set_options("[main]\n", "main", {"bad key": "x", "ok": "y"})
+    assert "ok = y" in out and "bad key" not in out
