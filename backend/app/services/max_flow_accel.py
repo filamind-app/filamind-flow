@@ -24,18 +24,24 @@ from app.services import max_flow, resonance_service, task_store
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
-#: Ratio-based detection thresholds for vibration RMS (scale-independent). Absolute trips are
-#: disabled (vibration units vary by machine); slip is a jump versus the recent clean baseline.
+#: Detection thresholds for the vibration signal (scale-independent — units vary by machine).
+#: The within-step *spread* detectors (CV/IQR ratio) are disabled: vibration spread is noisy and
+#: rises naturally as the extruder speeds up, so they false-trip on the early ramp (observed on the
+#: SV08: a 9→35 IQR jump at the 2nd step). Detection rests on the *run-outlier* — a step whose
+#: vibration LEVEL jumps clear of the established baseline + its MAD band — which is what grinding
+#: actually does, and which needs several clean steps first.
 ACCEL_CONSTANTS: dict[str, float] = {
-    "CV_HIGH_VARIANCE": 1.0e9,  # disable the absolute CV ceiling
-    "CV_JUMP_RATIO_COARSE": 2.2,  # within-step spread doubling+ = grinding irregularity
-    "CV_JUMP_MIN_COARSE": 0.0,
-    "IQR_ABSOLUTE_TRIGGER": 1.0e9,  # disable the absolute IQR trip
-    "IQR_RATIO_COARSE": 2.2,
-    "IQR_RATIO_MIN_ABS": 0.0,
-    "OUTLIER_MAD_RATIO": 5.0,
-    "OUTLIER_MIN_REL": 0.5,  # the step's vibration level must jump ≥50% above the run + MAD band
+    "CV_HIGH_VARIANCE": 1.0e12,  # off (absolute CV ceiling)
+    "CV_JUMP_RATIO_COARSE": 1.0e12,  # off (CV ratio jump — too noisy for vibration spread)
+    "IQR_ABSOLUTE_TRIGGER": 1.0e12,  # off (absolute IQR trip)
+    "IQR_RATIO_COARSE": 1.0e12,  # off (IQR ratio jump — too noisy for vibration spread)
+    "OUTLIER_MAD_RATIO": 5.0,  # a level jump >= 5x the run's MAD band ...
+    "OUTLIER_MIN_REL": 0.6,  # ... and >= 60% over the established level = grinding
 }
+
+#: Don't allow a slip until this many steps are measured — the vibration ramps up before any
+#: grind, so the first steps are an unsettled baseline, not a slip.
+_WARMUP_STEPS = 4
 
 #: Per-step accelerometer capture is split into this many windows → one vibration-RMS sample each.
 _WINDOWS = 8
@@ -80,7 +86,7 @@ def step_energy_samples(csv_text: str, windows: int = _WINDOWS) -> list[float]:
 
 def analyze(measurements: list[StepMeasurement]) -> max_flow.FlowResult:
     """Find the slip point from per-step vibration samples (reuses the StallGuard jump detector)."""
-    return max_flow.analyze(measurements, "accel", constants=ACCEL_CONSTANTS)
+    return max_flow.analyze(measurements, "accel", constants=ACCEL_CONSTANTS, warmup=_WARMUP_STEPS)
 
 
 async def detect_chip(client: MoonrakerClient) -> str | None:

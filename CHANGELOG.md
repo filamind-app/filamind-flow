@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.241.1] - 2026-06-13
+
+### Fixed
+
+- **Max-Flow accelerometer method: no more early false slip.** A live SV08 run exposed the
+  vibration detector tripping on the natural ramp-up (a 9 → 35 within-step IQR jump at the *2nd*
+  step, reported as a bogus "slip at 7.5 mm³/s"). The noisy within-step *spread* detectors are now
+  disabled for the accelerometer path; detection rests on a vibration *level* jump clear of an
+  established baseline (the run-outlier), and a **warm-up** suppresses any detection until several
+  steps have been measured. Still experimental, but it no longer false-trips on the opening steps.
+
 ## [0.241.0] - 2026-06-13
 
 ### Added
