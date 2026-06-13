@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.241.0] - 2026-06-13
+
+### Added
+
+- **Max-Flow: accelerometer (vibration) slip detection — a fallback for when StallGuard can't
+  read.** On an extruder whose driver doesn't expose a live StallGuard load (e.g. some TMC2209
+  toolheads), the slip point can now be read from the toolhead accelerometer instead: each flow
+  step is captured with the ADXL345, reduced to a per-window vibration RMS, and the same jump
+  detector flags the grinding. A **Detection method** selector (Auto / StallGuard / Accelerometer)
+  is added; **Auto** uses StallGuard and falls back to the accelerometer automatically when
+  StallGuard is unusable and a chip is configured. The result shows which method produced it, and
+  the accelerometer method is clearly flagged as experimental (it reuses the Input Shaping
+  accelerometer-capture plumbing).
+
 ## [0.240.1] - 2026-06-13
 
 ### Fixed

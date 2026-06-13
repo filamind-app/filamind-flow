@@ -68,7 +68,9 @@
       "driver": "Extruder-Treiber",
       "driverDetected": "vom Drucker erkannt",
       "autoStealthchop": "StealthChop für den Test automatisch aktivieren",
-      "autoStealthchopHint": "Nur TMC2209/2240: schreibt temporär einen stealthchop_threshold in den Extruder, damit StallGuard auslesen kann, dann wird er nach dem Test auskommentiert. Stellt printer.cfg wieder her; Firmware-Neustart in beide Richtungen."
+      "autoStealthchopHint": "Nur TMC2209/2240: schreibt temporär einen stealthchop_threshold in den Extruder, damit StallGuard auslesen kann, dann wird er nach dem Test auskommentiert. Stellt printer.cfg wieder her; Firmware-Neustart in beide Richtungen.",
+      "method": "Erkennungsmethode",
+      "methodHint": "Auto nutzt StallGuard und fällt auf den Beschleunigungsmesser der Druckerkopf-Baugruppe (Vibration) zurück, wenn StallGuard nicht auslesen kann. Die Beschleunigungsmesser-Methode ist experimentell."
     },
     "plan": {
       "button": "Plan anzeigen",
@@ -140,7 +142,9 @@
       "units": "mm³/s",
       "fromBefore": "Früher gemessen ({at}) — für frische Zahlen erneut ausführen.",
       "unreliableTitle": "Unzuverlässig — kein StallGuard-Signal",
-      "unmeasured": "erreicht, nicht bestätigt"
+      "unmeasured": "erreicht, nicht bestätigt",
+      "via": "Gemessen via {method}",
+      "accelExperimental": "Gemessen durch Vibration (Beschleunigungsmesser) — experimentell; behandle die Zahl als Orientierungswert, nicht als exakte Grenze."
     },
     "states": {
       "loadingHotends": "Hotends werden geladen…"
@@ -154,6 +158,11 @@
       "maximize": "Maximieren",
       "enlarge": "Vergrößern",
       "shrink": "Verkleinern"
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Beschleunigungsmesser"
     }
   }
 }

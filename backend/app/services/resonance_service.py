@@ -48,7 +48,7 @@ _PATTERNS = ("resonances_*.csv", "calibration_data_*.csv", "raw_data_*.csv")
 #: are transient — captured, read, then deleted by the orchestrators — so they are
 #: matched for the capture-await but kept OUT of the user-facing import list (which
 #: uses _PATTERNS only) to avoid clutter.
-_CAPTURE_PATTERNS = ("*-axesmap_*.csv", "*-filamind_static-*.csv", "*-vib_*.csv")
+_CAPTURE_PATTERNS = ("*-axesmap_*.csv", "*-filamind_static-*.csv", "*-vib_*.csv", "*-maxflow_*.csv")
 _ALL_PATTERNS = _PATTERNS + _CAPTURE_PATTERNS
 #: Best-effort axis guess from the filename (…_x_… / …_y.csv).
 _AXIS_RE = re.compile(r"_(x|y)(?:[._]|$)", re.IGNORECASE)

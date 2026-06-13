@@ -68,7 +68,9 @@
       "driver": "Driver de l’extrudeur",
       "driverDetected": "détecté depuis l’imprimante",
       "autoStealthchop": "Activation automatique de StealthChop pour le test",
-      "autoStealthchopHint": "TMC2209/2240 uniquement : écrit temporairement un seuil stealthchop_threshold sur l'extrudeur pour que StallGuard puisse le lire, puis le désactive après le test. Restaure printer.cfg ; redémarrage firmware requis."
+      "autoStealthchopHint": "TMC2209/2240 uniquement : écrit temporairement un seuil stealthchop_threshold sur l'extrudeur pour que StallGuard puisse le lire, puis le désactive après le test. Restaure printer.cfg ; redémarrage firmware requis.",
+      "method": "Méthode de détection",
+      "methodHint": "Auto utilise StallGuard, avec secours vers l'accéléromètre du porte-outil (vibration) quand StallGuard ne peut pas lire. La méthode par accéléromètre est expérimentale."
     },
     "plan": {
       "button": "Prévisualiser le plan",
@@ -140,7 +142,9 @@
       "units": "mm³/s",
       "fromBefore": "Mesuré plus tôt ({at}) — relancez pour des chiffres frais.",
       "unreliableTitle": "Non fiable — aucun signal StallGuard",
-      "unmeasured": "atteint, non confirmé"
+      "unmeasured": "atteint, non confirmé",
+      "via": "Mesuré via {method}",
+      "accelExperimental": "Mesuré par vibration (accéléromètre) — expérimental ; considérez le chiffre comme un repère, pas un plafond exact."
     },
     "states": {
       "loadingHotends": "Chargement des hotends…"
@@ -154,6 +158,11 @@
       "maximize": "Agrandir",
       "enlarge": "Élargir",
       "shrink": "Rétrécir"
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Accéléromètre"
     }
   }
 }

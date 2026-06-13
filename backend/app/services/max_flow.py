@@ -236,20 +236,30 @@ _DETECTORS = (
 
 
 # ── Top-level analysis ─────────────────────────────────────────────────────────
-def analyze(steps: list[StepMeasurement], driver: str) -> FlowResult:
-    """Find the sustainable max flow from a ramp of per-step StallGuard captures.
+def analyze(
+    steps: list[StepMeasurement], driver: str, constants: dict[str, Any] | None = None
+) -> FlowResult:
+    """Find the sustainable max flow from a ramp of per-step load captures.
 
     Steps are evaluated in ascending flow order. For each step the slip detectors
     run against the running history; the first step that trips any detector sets
     ``slip_flow`` and ``max_flow_mm3s`` becomes the last clean step before it. If
     no step trips, the run is treated as never-slipping and ``max_flow_mm3s`` is
     the last (highest) tested flow.
+
+    ``constants`` overrides the per-driver detection thresholds — the accelerometer
+    (vibration) fallback passes its own ratio-based set rather than the StallGuard ones.
     """
     if not steps:
         return FlowResult(None, None, [], "no steps supplied")
 
     ordered = sorted(steps, key=lambda s: s.flow_mm3s)
-    constants = _constants(driver)
+    if constants is None:
+        constants = _constants(driver)
+    else:
+        merged = dict(_DEFAULTS)
+        merged.update({k: float(v) for k, v in constants.items() if isinstance(v, (int, float))})
+        constants = merged
     history: list[StepStats] = []
     last_clean: StepStats | None = None
 
