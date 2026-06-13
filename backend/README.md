@@ -116,6 +116,28 @@ contract: `code` (+ `params`) is a stable key the UI translates (`motorDrivers.a
 `message` is the English fallback. Passthrough errors (Moonraker failures, `field_policy` /
 value-validation text) carry `code: null` — their raw English text is shown verbatim.
 
+### Firmware flashing — printer-agnostic by design
+
+`POST /api/firmware/flash` streams a plain-text log of the real flash sequence, and several
+details exist specifically so it behaves the same across very different boards (validated on a
+USB/UART SV08 and a CAN/SPI Voron-class machine):
+
+- **Phase markers** — the stream carries machine-readable `::phase::<code>` lines
+  (`start → stop → boot → write → restart → done`) interleaved with the human `>>> …` log, so
+  the UI can render a progress bar instead of a raw console. The frontend strips the markers and
+  keeps the full log for a collapsible details view.
+- **CAN UUID resolution** — a CAN flash addresses the node by its 12-hex `canbus_uuid`, but a
+  device may be registered under a friendly name. `flash_service.resolve_can_uuid()` resolves the
+  real UUID from the live `configfile.config` (by `[mcu <name>]` match, or the sole CAN node when
+  unambiguous) and refuses with a clear message rather than flashing the wrong node.
+- **Honest outcomes + a CAN salvage** — `_stream()` captures the flash tool's exit code; a
+  non-zero exit reports a real failure and skips recording a flashed-version. For CAN, where some
+  USB-CAN adapters error in their *read-back verify* after the write completed, the sequence then
+  confirms the true result by polling the node's reported firmware version through Klipper.
+- **sudo capability probe** — privileged steps (stop/start Klipper, flash) need passwordless
+  sudo; readiness is checked with `sudo -n -l systemctl stop klipper` (an authorization lookup
+  that doesn't execute), so it's correct regardless of which `/etc/sudoers.d/` file grants it.
+
 ## Development
 
 ```bash
