@@ -7,7 +7,59 @@
       "step1": "Bearbeite den Konfigurationstext unten (oder lass ihn unverändert).",
       "step2": "Speichern — die Datei wird zuerst gesichert, und das Speichern wird abgelehnt, während der Drucker beschäftigt ist.",
       "step3": "Starte KlipperScreen neu, um die Änderung auf dem Bildschirm anzuwenden.",
-      "lfNote": "Zeilen verwenden UNIX-Zeilenenden (LF), die beim Speichern automatisch erzwungen werden."
+      "lfNote": "Zeilen verwenden UNIX-Zeilenenden (LF), die beim Speichern automatisch erzwungen werden.",
+      "topics": {
+        "glossary": {
+          "title": "Glossar",
+          "body": "Kurze Definitionen der hier verwendeten KlipperScreen-Begriffe."
+        },
+        "config": {
+          "title": "Was ist der Konfig-Tab?",
+          "body": "Die rohe KlipperScreen.conf. Bearbeite jede Option von Hand; das Speichern sichert die Datei zuerst, wird abgelehnt, während der Drucker beschäftigt ist, und warnt, wenn die Datei seit dem Laden am Bildschirm geändert wurde. Die meisten nutzen stattdessen die Tabs Optionen / Menüs / Themes."
+        },
+        "settings": {
+          "title": "Was ist der Optionen-Tab?",
+          "body": "Die meistgenutzten [main]-Optionen als Formular — Theme, Sprache, Bildschirm-Ruhezustand, Schriftgröße und Schalter. Aus der aktiven Konfig vorausgefüllt; nur die Optionen, die du änderst, werden geschrieben. Zum Anwenden neu starten."
+        },
+        "menus": {
+          "title": "Was ist der Menüs-Tab?",
+          "body": "Gestalte die Knopf-Raster des Touchscreens. Jeder Baum (__main ist das Startraster, __print der Druckbildschirm) listet seine Knöpfe; füge sie hinzu, benenne sie um, ordne sie neu und verschachtle sie, und stelle jeden so ein, dass er ein Untermenü öffnet, einen eingebauten Bildschirm öffnet oder G-code ausführt."
+        },
+        "themes": {
+          "title": "Was ist der Themes-Tab?",
+          "body": "Baue ein KlipperScreen-Theme: wähle eine Farbe pro Paletten-Token und einen Eckenradius, beobachte die Live-Vorschau und erstelle es dann und wende es auf den Bildschirm an. Die Vorschau ist ungefähr — der echte Bildschirm rendert mit GTK."
+        },
+        "kiosk": {
+          "title": "Was ist der Kiosk-Tab?",
+          "body": "Zeige FilaMind Flow selbst als Vollbild-Browser auf dem Touchscreen — volle Kontrolle über das, was der Bildschirm zeigt. Es ist ein umkehrbarer Tausch mit KlipperScreen (standardmäßig temporär; ein Neustart stellt KlipperScreen wieder her). Benötigt den einmaligen Installer auf dem Drucker-Host."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "Die Touchscreen-Oberfläche, die auf einem kleinen am Drucker angeschlossenen Display läuft — getrennt von diesem Web-Panel."
+        },
+        "theme": {
+          "term": "Theme",
+          "def": "Ein KlipperScreen-Look — Farben, Symbole und Eckenradius. Liegt in einem styles/<name>-Ordner auf dem Host; rein kosmetisch (es kann das Layout nicht ändern)."
+        },
+        "menu": {
+          "term": "Menü (__main / __print)",
+          "def": "Die Knopf-Raster, die KlipperScreen zeigt. __main ist der Startbildschirm, __print der während des Druckens gezeigte Bildschirm, __splashscreen der Startbildschirm."
+        },
+        "panel": {
+          "term": "Bildschirm",
+          "def": "Ein eingebauter KlipperScreen-Bildschirm, den ein Knopf öffnen kann (Bewegen, Temperatur, Extrudieren, Bett-Mesh, …). Ihre internen Inhalte sind von KlipperScreen festgelegt."
+        },
+        "autoBlock": {
+          "term": "Automatisch erzeugter Block (#~#)",
+          "def": "Der Abschnitt, den KlipperScreen für sich selbst am Ende der conf nach der #~#-Markierung schreibt. FilaMind bearbeitet ihn nie — nur deine Optionen darüber."
+        },
+        "kiosk": {
+          "term": "Kiosk",
+          "def": "Einen Vollbild-Browser auf dem Touchscreen statt KlipperScreen laufen lassen, damit der Bildschirm FilaMind Flow zeigt. Vollständig umkehrbar."
+        }
+      }
     },
     "status": {
       "checking": "Suche nach KlipperScreen…",
@@ -44,7 +96,12 @@
       "savedRestart": "Gespeichert — starte KlipperScreen neu, um es anzuwenden.",
       "unset": "Nicht setzen (Standard)",
       "never": "Nie (immer an)",
-      "fontSize": { "small": "Klein", "medium": "Mittel", "large": "Groß", "max": "Max" },
+      "fontSize": {
+        "small": "Klein",
+        "medium": "Mittel",
+        "large": "Groß",
+        "max": "Max"
+      },
       "label": {
         "theme": "Theme",
         "language": "Sprache",

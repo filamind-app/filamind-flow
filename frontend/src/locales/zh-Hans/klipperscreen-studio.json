@@ -7,7 +7,59 @@
       "step1": "在下方编辑配置文本（或保持不变）。",
       "step2": "保存——文件会先备份，且在打印机忙碌时拒绝保存。",
       "step3": "重启 KlipperScreen 以在实体屏幕上应用更改。",
-      "lfNote": "行使用 UNIX (LF) 换行符，保存时自动强制。"
+      "lfNote": "行使用 UNIX (LF) 换行符，保存时自动强制。",
+      "topics": {
+        "glossary": {
+          "title": "术语表",
+          "body": "这里使用的 KlipperScreen 术语的简明定义。"
+        },
+        "config": {
+          "title": "“配置”标签是什么？",
+          "body": "原始的 KlipperScreen.conf。可手动编辑任意设置；保存时会先备份文件，在打印机忙碌时拒绝保存，并在文件自加载以来已在屏幕上更改时发出警告。大多数人会改用“设置 / 菜单 / 主题”标签。"
+        },
+        "settings": {
+          "title": "“设置”标签是什么？",
+          "body": "以表单形式提供最常用的 [main] 选项——主题、语言、息屏、字体大小及各项开关。从实时配置预填；只有你更改的选项才会写入。重启后生效。"
+        },
+        "menus": {
+          "title": "“菜单”标签是什么？",
+          "body": "设计触摸屏的按钮网格。每棵树（__main 是主屏网格，__print 是打印屏）都列出其按钮；可添加、重命名、重新排序和嵌套它们，并设置每个按钮去打开子菜单、打开内置屏幕或运行 G-code。"
+        },
+        "themes": {
+          "title": "“主题”标签是什么？",
+          "body": "构建一个 KlipperScreen 主题：为每个调色板色键选择颜色并设置圆角半径，查看实时预览，然后创建并应用到屏幕。预览仅为近似——实际屏幕由 GTK 渲染。"
+        },
+        "kiosk": {
+          "title": "“自助屏”标签是什么？",
+          "body": "把 FilaMind Flow 本身以全屏浏览器形式显示在触摸屏上——完全掌控屏幕显示内容。它与 KlipperScreen 是可逆互换的（默认临时；重启会恢复 KlipperScreen）。需要在打印机主机上执行一次安装程序。"
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "在连接到打印机的小型显示屏上运行的触摸屏界面——与此网页面板相互独立。"
+        },
+        "theme": {
+          "term": "主题",
+          "def": "一种 KlipperScreen 外观——颜色、图标和圆角半径。存放在主机上的 styles/<name> 文件夹中；仅为外观，不能改变布局。"
+        },
+        "menu": {
+          "term": "菜单（__main / __print）",
+          "def": "KlipperScreen 显示的按钮网格。__main 是主屏，__print 是打印时显示的屏幕，__splashscreen 是启动屏幕。"
+        },
+        "panel": {
+          "term": "屏幕",
+          "def": "按钮可打开的 KlipperScreen 内置屏幕（移动、温度、挤出、热床网格……）。它们的内部内容由 KlipperScreen 固定。"
+        },
+        "autoBlock": {
+          "term": "自动生成块（#~#）",
+          "def": "KlipperScreen 在配置文件底部、#~# 标记之后为自身写入的区段。FilaMind 从不编辑它——只编辑它上方的设置。"
+        },
+        "kiosk": {
+          "term": "自助屏",
+          "def": "在触摸屏上运行全屏浏览器而非 KlipperScreen，使屏幕显示 FilaMind Flow。完全可逆。"
+        }
+      }
     },
     "status": {
       "checking": "正在检测 KlipperScreen…",
@@ -44,7 +96,12 @@
       "savedRestart": "已保存——重启 KlipperScreen 以生效。",
       "unset": "保持未设置（默认）",
       "never": "从不（常亮）",
-      "fontSize": { "small": "小", "medium": "中", "large": "大", "max": "最大" },
+      "fontSize": {
+        "small": "小",
+        "medium": "中",
+        "large": "大",
+        "max": "最大"
+      },
       "label": {
         "theme": "主题",
         "language": "语言",

@@ -6,7 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.258.0] - 2026-06-13
+## [0.259.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — illustrated guide.** The widget now carries the same inline help layer as
+  the other widgets: a collapsible **Glossary** (KlipperScreen, theme, menu `__main`/`__print`,
+  panel, the `#~#` auto-block, kiosk) and a per-tab **"ℹ what's this?"** note on every view
+  (Config, Settings, Menus, Themes, Kiosk), each with a small hand-drawn illustration explaining
+  what the tab does and how to use it safely. Fully translated across the seven languages.
 
 ### Fixed
 
