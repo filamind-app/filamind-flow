@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.252.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — menu tree (backend).** Endpoints to read the touchscreen's full menu
+  structure (the `[menu ...]` trees that _are_ the home / print / splash button grids) as a flat
+  list — each item with its path, parent, and properties (name, icon, style, the panel it opens or
+  the gcode/Moonraker action it runs, visibility condition, confirm) — and to rewrite the whole
+  menu set through the gated save (preserving non-menu sections + KlipperScreen's auto-generated
+  block), plus the list of panels a button can target. Foundation for a graphical screen designer;
+  the visual tree editor lands next.
+
 ## [0.251.0] - 2026-06-13
 
 ### Added
