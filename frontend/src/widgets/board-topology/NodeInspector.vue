@@ -129,12 +129,14 @@ function onPick(id: string | null): void {
 </script>
 
 <template>
-  <div class="nb-card space-y-2 bg-surface p-2 text-[11px]">
+  <div class="nb-card min-w-0 space-y-2 bg-surface p-2 text-sm">
     <!-- Host inspector -->
     <template v-if="isHost && host">
-      <div class="font-display text-sm font-bold">
-        <span aria-hidden="true">🖥 </span
-        >{{ host.name && host.name !== 'host' ? host.name : t('boardTopology.host.label') }}
+      <div class="flex min-w-0 items-center gap-1 font-display text-sm font-bold">
+        <span aria-hidden="true">🖥</span>
+        <span class="min-w-0 truncate">{{
+          host.name && host.name !== 'host' ? host.name : t('boardTopology.host.label')
+        }}</span>
       </div>
       <div class="opacity-70">{{ t('boardTopology.host.role') }}</div>
       <button
@@ -157,7 +159,7 @@ function onPick(id: string | null): void {
         <span class="min-w-0 truncate font-display text-sm font-bold">{{ mcu.name }}</span>
         <span
           v-if="fw?.in_sync === true || fw?.in_sync === false"
-          class="shrink-0 rounded px-1 text-[10px] font-bold"
+          class="shrink-0 rounded px-1 text-[11px] font-bold"
           :class="fw.in_sync ? 'bg-brand-lime text-ink' : 'bg-brand-red text-surface'"
         >
           {{
@@ -168,7 +170,7 @@ function onPick(id: string | null): void {
         </span>
         <button
           v-if="fw && fw.in_sync === false"
-          class="nb-btn bg-brand-yellow px-1.5 py-0.5 text-[10px]"
+          class="nb-btn shrink-0 bg-brand-yellow px-1.5 py-0.5 text-[11px]"
           @click="go('firmware-upgrade', 'status')"
         >
           {{ t('boardTopology.jump.firmware') }} ↗
@@ -178,7 +180,7 @@ function onPick(id: string | null): void {
       <!-- live link vitals (freq / retransmits / load) from the firmware status -->
       <div
         v-if="fw && (fw.freq != null || fw.retransmits != null || fw.awake != null)"
-        class="flex flex-wrap items-center gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-75"
+        class="flex flex-wrap items-center gap-x-3 gap-y-0.5 font-mono text-[11px] opacity-75"
       >
         <span v-if="fw.freq != null">{{
           t('boardTopology.graph.vitals.freq', { mhz: (fw.freq / 1e6).toFixed(2) })
@@ -209,7 +211,7 @@ function onPick(id: string | null): void {
 
       <div
         v-if="mcu.identifier"
-        class="truncate font-mono text-[10px] opacity-50"
+        class="truncate font-mono text-[11px] opacity-50"
         :title="mcu.identifier"
       >
         {{ mcu.identifier }}
@@ -218,7 +220,7 @@ function onPick(id: string | null): void {
       <!-- components -->
       <div
         v-if="componentCounts(mcu).length"
-        class="flex flex-wrap items-center gap-1 font-mono text-[10px]"
+        class="flex flex-wrap items-center gap-1 font-mono text-[11px]"
       >
         <span class="opacity-60">{{ t('boardTopology.components.title') }}:</span>
         <component
@@ -242,14 +244,14 @@ function onPick(id: string | null): void {
       <!-- tab switcher: catalog details vs the live pin atlas (atlas needs a matched board) -->
       <div
         v-if="mcu.board_id"
-        class="inline-flex overflow-hidden rounded-brutal border-2 border-ink text-[10px]"
+        class="inline-flex overflow-hidden rounded-brutal border-2 border-ink"
         role="group"
       >
         <button
           v-for="tk in ['details', 'atlas'] as const"
           :key="tk"
           type="button"
-          class="px-2 py-0.5 font-bold"
+          class="nb-seg"
           :class="tab === tk ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
           :aria-pressed="tab === tk"
           @click="tab = tk"
@@ -267,7 +269,7 @@ function onPick(id: string | null): void {
           {{ t('boardTopology.board.loading') }}
         </div>
         <div v-else-if="detail" class="space-y-1 border-t border-ink/15 pt-1">
-          <div class="font-display text-[12px] font-bold">
+          <div class="font-display text-sm font-bold">
             {{ detail.display_name || detail.model }}
           </div>
           <div
@@ -292,7 +294,7 @@ function onPick(id: string | null): void {
           </div>
           <dl
             v-if="Object.keys(detail.specs || {}).length"
-            class="grid grid-cols-[auto_1fr] gap-x-2 font-mono"
+            class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-2 font-mono"
           >
             <template v-for="(val, key) in detail.specs" :key="key">
               <dt class="opacity-60">{{ catalogLabel('spec', key) }}</dt>
@@ -312,7 +314,7 @@ function onPick(id: string | null): void {
               :href="lnk.url"
               target="_blank"
               rel="noopener noreferrer"
-              class="nb-btn bg-paper px-1 py-0 text-[9px]"
+              class="nb-btn bg-paper px-1 py-0 text-[11px]"
             >
               {{ lnk.label }}
             </a>
@@ -341,10 +343,10 @@ function onPick(id: string | null): void {
             class="space-y-0.5 border-t border-ink/20 pt-1"
           >
             <span class="opacity-60">{{ t('hardwareBrowser.boards.electronics') }}:</span>
-            <dl class="grid grid-cols-[auto_1fr] gap-x-2">
+            <dl class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-2">
               <template v-for="(v, k) in detail.electronics" :key="k">
                 <dt class="opacity-60">{{ k }}</dt>
-                <dd class="min-w-0">{{ v }}</dd>
+                <dd dir="auto" class="min-w-0">{{ v }}</dd>
               </template>
             </dl>
           </div>
@@ -359,14 +361,14 @@ function onPick(id: string | null): void {
               <span class="opacity-60">{{ t('hardwareBrowser.boards.config') }}:</span>
               <button
                 type="button"
-                class="nb-btn bg-paper px-1 py-0 text-[9px]"
+                class="nb-btn bg-paper px-1 py-0 text-[11px]"
                 @click="copySnippet(detail.configSnippet || '')"
               >
                 {{ copied ? t('hardwareBrowser.boards.copied') : t('hardwareBrowser.boards.copy') }}
               </button>
             </div>
             <pre
-              class="overflow-x-auto rounded-brutal border border-ink/30 bg-paper p-1 text-[9px] leading-tight"
+              class="max-w-full overflow-x-auto rounded-brutal border border-ink/30 bg-paper p-1 text-[11px] leading-tight"
               >{{ detail.configSnippet }}</pre
             >
           </div>
@@ -375,7 +377,7 @@ function onPick(id: string | null): void {
       </template>
 
       <!-- confirm / override (the write path) -->
-      <div class="flex flex-wrap items-center gap-1 border-t border-ink/15 pt-1 text-[10px]">
+      <div class="flex flex-wrap items-center gap-1 border-t border-ink/15 pt-1 text-[11px]">
         <span
           v-if="mcu.board_match === 'confirmed'"
           class="rounded bg-brand-lime px-1 font-bold text-ink"

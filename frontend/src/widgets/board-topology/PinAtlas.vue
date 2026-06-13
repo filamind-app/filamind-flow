@@ -139,7 +139,7 @@ function pinTitle(p: PinAtlasPin): string {
             <button
               v-for="sec in f.sections"
               :key="sec"
-              class="rounded border border-ink/40 bg-surface px-1 font-mono text-[10px] hover:bg-ink/10"
+              class="rounded border border-ink/40 bg-surface px-1 font-mono text-[11px] hover:bg-ink/10"
               :title="t('boardTopology.jump.section')"
               @click="openSection(sec)"
             >
@@ -154,7 +154,7 @@ function pinTitle(p: PinAtlasPin): string {
         <input
           v-model="query"
           type="search"
-          class="flex-1 rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-[11px]"
+          class="min-w-[8rem] flex-1 rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-[11px]"
           :placeholder="t('boardTopology.pinAtlas.search')"
           :aria-label="t('boardTopology.pinAtlas.search')"
         />
@@ -167,12 +167,12 @@ function pinTitle(p: PinAtlasPin): string {
       <!-- pin grid grouped by function -->
       <p v-if="!groups.length" class="opacity-60">{{ t('boardTopology.pinAtlas.noMatch') }}</p>
       <div v-for="[cat, pins] in groups" :key="cat" class="space-y-0.5">
-        <div class="font-mono text-[10px] uppercase opacity-50">{{ cat }}</div>
+        <div class="font-mono text-[11px] uppercase opacity-50">{{ cat }}</div>
         <div class="flex flex-wrap gap-1">
           <span
             v-for="p in pins"
             :key="p.pin"
-            class="inline-flex items-center gap-0.5 rounded border px-1 py-0.5 font-mono text-[10px]"
+            class="inline-flex items-center gap-0.5 rounded border px-1 py-0.5 font-mono text-[11px]"
             :class="
               p.used
                 ? p.caveat
@@ -184,7 +184,9 @@ function pinTitle(p: PinAtlasPin): string {
           >
             <span class="font-bold">{{ p.pin }}</span>
             <span v-if="p.caveat" aria-hidden="true">⚠</span>
-            <span v-if="p.used && p.signal" class="opacity-70">{{ p.signal }}</span>
+            <span v-if="p.used && p.signal" class="max-w-[10rem] truncate opacity-70">{{
+              p.signal
+            }}</span>
           </span>
         </div>
       </div>

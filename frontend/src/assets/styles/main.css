@@ -203,6 +203,11 @@
     @apply inline-flex items-center gap-1.5 rounded-brutal border-2 border-ink px-2 py-0.5
       text-xs font-bold uppercase tracking-wide;
   }
+
+  /* Segmented-control button (view toggles / tabs). Matches .nb-btn's touch height below. */
+  .nb-seg {
+    @apply px-3 py-1.5 text-xs font-bold;
+  }
 }
 
 /* Touch-target floor: on touch devices the many compact buttons (e.g. the firmware
@@ -210,7 +215,8 @@
    every branded button a 44px min-height on coarse pointers only, leaving the dense
    desktop layout untouched. */
 @media (pointer: coarse) {
-  .nb-btn {
+  .nb-btn,
+  .nb-seg {
     min-height: 2.75rem;
   }
 }
