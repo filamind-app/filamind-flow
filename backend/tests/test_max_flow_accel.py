@@ -39,11 +39,19 @@ def _meas(flow: float, level: float, spread: float = 0.05) -> StepMeasurement:
 
 
 def test_analyze_detects_vibration_jump() -> None:
-    # vibration rises gently, then jumps (grinding) at the last step
-    steps = [_meas(5, 2.0), _meas(6, 2.2), _meas(7, 2.4), _meas(8, 12.0)]
+    # vibration rises gently through the warm-up, then a level outlier (jump) past it
+    steps = [
+        _meas(5, 2.0),
+        _meas(7.5, 2.1),
+        _meas(10, 2.2),
+        _meas(12.5, 2.3),
+        _meas(15, 2.4),
+        _meas(17.5, 2.5),
+        _meas(20, 12.0),
+    ]
     res = mfa.analyze(steps)
-    assert res.slip_flow == 8
-    assert res.max_flow_mm3s == 7  # last clean step before the jump
+    assert res.slip_flow == 20
+    assert res.max_flow_mm3s == 17.5  # last clean step before the jump
 
 
 def test_analyze_no_slip_on_gentle_rise() -> None:
