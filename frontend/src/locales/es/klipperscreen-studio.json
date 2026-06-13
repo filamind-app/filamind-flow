@@ -31,9 +31,32 @@
     },
     "view": {
       "config": "Config",
+      "settings": "Ajustes",
       "menus": "Menús",
       "themes": "Temas",
       "kiosk": "Quiosco"
+    },
+    "settings": {
+      "loading": "Cargando ajustes…",
+      "intro": "Las opciones de pantalla de KlipperScreen más usadas como formulario. Solo se escribe lo que cambias — lo demás mantiene su valor. Reinicia para aplicar.",
+      "onlyChanged": "Solo los ajustes que cambies aquí se escriben en KlipperScreen.conf.",
+      "save": "Guardar ajustes",
+      "savedRestart": "Guardado — reinicia KlipperScreen para aplicar.",
+      "unset": "Dejar sin definir (predeterminado)",
+      "never": "Nunca (siempre encendida)",
+      "fontSize": { "small": "Pequeña", "medium": "Mediana", "large": "Grande", "max": "Máx." },
+      "label": {
+        "theme": "Tema",
+        "language": "Idioma",
+        "screen_blanking": "Apagar pantalla tras",
+        "font_size": "Tamaño de fuente",
+        "24htime": "Reloj de 24 horas",
+        "use_dpms": "Usar DPMS para apagar la pantalla",
+        "show_cursor": "Mostrar el cursor del ratón",
+        "confirm_estop": "Confirmar antes de la parada de emergencia",
+        "show_heater_power": "Mostrar % de potencia del calentador",
+        "autoclose_popups": "Cerrar automáticamente los avisos"
+      }
     },
     "kiosk": {
       "loading": "Comprobando la pantalla…",

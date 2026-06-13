@@ -52,6 +52,35 @@ export async function restartScreen(): Promise<void> {
   if (!r.ok) throw new Error(`Restart failed (${r.status})`)
 }
 
+// ── Graphical [main] options (Settings form) ──────────────────────────────────
+
+export interface ScreenOptions {
+  options: Record<string, string>
+  sha256: string | null
+}
+
+/** Current `[main]` options (key → value) + the conf fingerprint, for the form editor. */
+export async function fetchScreenOptions(): Promise<ScreenOptions> {
+  const r = await fetch(`${base()}/api/screen/options`)
+  if (!r.ok) throw new Error(`Could not read settings (${r.status})`)
+  return (await r.json()) as ScreenOptions
+}
+
+/** Set `[main]` options (gated save; adds/replaces each, #~# preserved). Throws ScreenSaveError. */
+export async function saveScreenOptions(
+  options: Record<string, string>,
+  expectedSha256: string | null,
+): Promise<ScreenConf> {
+  const r = await fetch(`${base()}/api/screen/options`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ options, expected_sha256: expectedSha256 }),
+  })
+  const body = (await r.json().catch(() => ({}))) as { detail?: string } & Partial<ScreenConf>
+  if (!r.ok) throw new ScreenSaveError(body.detail || `Save failed (${r.status})`, r.status)
+  return body as ScreenConf
+}
+
 // ── Theme builder ────────────────────────────────────────────────────────────
 
 export interface ScreenTheme {

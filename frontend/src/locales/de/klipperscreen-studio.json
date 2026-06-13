@@ -31,9 +31,32 @@
     },
     "view": {
       "config": "Konfig",
+      "settings": "Optionen",
       "menus": "Menüs",
       "themes": "Themes",
       "kiosk": "Kiosk"
+    },
+    "settings": {
+      "loading": "Lade Optionen…",
+      "intro": "Die meistgenutzten KlipperScreen-Anzeigeoptionen als Formular. Nur was du änderst, wird geschrieben — alles andere behält seinen Wert. Zum Anwenden neu starten.",
+      "onlyChanged": "Nur die hier geänderten Optionen werden in KlipperScreen.conf geschrieben.",
+      "save": "Optionen speichern",
+      "savedRestart": "Gespeichert — starte KlipperScreen neu, um es anzuwenden.",
+      "unset": "Nicht setzen (Standard)",
+      "never": "Nie (immer an)",
+      "fontSize": { "small": "Klein", "medium": "Mittel", "large": "Groß", "max": "Max" },
+      "label": {
+        "theme": "Theme",
+        "language": "Sprache",
+        "screen_blanking": "Bildschirm aus nach",
+        "font_size": "Schriftgröße",
+        "24htime": "24-Stunden-Format",
+        "use_dpms": "DPMS zum Abschalten nutzen",
+        "show_cursor": "Mauszeiger anzeigen",
+        "confirm_estop": "Not-Aus bestätigen",
+        "show_heater_power": "Heizleistung % anzeigen",
+        "autoclose_popups": "Pop-ups automatisch schließen"
+      }
     },
     "kiosk": {
       "loading": "Prüfe den Bildschirm…",

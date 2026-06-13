@@ -31,9 +31,32 @@
     },
     "view": {
       "config": "Config",
+      "settings": "Réglages",
       "menus": "Menus",
       "themes": "Thèmes",
       "kiosk": "Kiosque"
+    },
+    "settings": {
+      "loading": "Chargement des réglages…",
+      "intro": "Les options d'affichage KlipperScreen les plus utilisées, sous forme de formulaire. Seul ce que vous changez est écrit — le reste garde sa valeur. Redémarrez pour appliquer.",
+      "onlyChanged": "Seuls les réglages que vous changez ici sont écrits dans KlipperScreen.conf.",
+      "save": "Enregistrer les réglages",
+      "savedRestart": "Enregistré — redémarrez KlipperScreen pour appliquer.",
+      "unset": "Laisser non défini (par défaut)",
+      "never": "Jamais (toujours allumé)",
+      "fontSize": { "small": "Petite", "medium": "Moyenne", "large": "Grande", "max": "Max" },
+      "label": {
+        "theme": "Thème",
+        "language": "Langue",
+        "screen_blanking": "Éteindre l'écran après",
+        "font_size": "Taille de police",
+        "24htime": "Horloge 24 h",
+        "use_dpms": "Utiliser DPMS pour éteindre l'écran",
+        "show_cursor": "Afficher le curseur de la souris",
+        "confirm_estop": "Confirmer avant l'arrêt d'urgence",
+        "show_heater_power": "Afficher la puissance % du chauffage",
+        "autoclose_popups": "Fermer automatiquement les pop-ups"
+      }
     },
     "kiosk": {
       "loading": "Vérification de l'écran…",
