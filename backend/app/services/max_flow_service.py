@@ -50,9 +50,33 @@ class MaxFlowPreflightError(RuntimeError):
     """Raised when the extruder driver is not configured to read StallGuard for this test."""
 
 
+class MaxFlowSignalError(RuntimeError):
+    """Raised when the live StallGuard field yields no usable reading on this extruder/host.
+
+    Distinct from :class:`MaxFlowPreflightError`: the config *looks* right (driver supports
+    StallGuard, chopper mode is correct), but a short calibration burst at temperature shows the
+    live ``SG_RESULT`` is absent or stuck at a constant — so a ramp would only ever measure
+    nothing. Caught before the long ramp so no filament is ground for a meaningless result.
+    """
+
+
 #: StallGuard families. SG4 (2209 / 2240) reads only in StealthChop; SG2 reads in SpreadCycle.
 _SG4_DRIVERS = frozenset({"tmc2209", "tmc2240"})
 _SG2_DRIVERS = frozenset({"tmc2130", "tmc5160", "tmc2660"})
+
+#: StallGuard sanity pre-check (the fix for issue #319): after reaching temperature, extrude a
+#: short calibration burst and confirm the live SG field is actually populated and varies before
+#: committing to the full ramp. Without this a driver/host that never exposes SG_RESULT (a 2209
+#: extruder is the common case) runs the whole heat-and-grind cycle and reports a misleading
+#: "no slip → highest tested flow".
+_PRECHECK_SAMPLES = 6
+_PRECHECK_SUB_MM = 0.5  # filament per calibration sub-move (≈3 mm total)
+
+#: Home + center the toolhead before heating so the nozzle is clearly visible (in person and on
+#: a webcam). Z is a comfortable gap above the bed, never above the machine's Z travel.
+_VIEW_Z = 80.0
+_VIEW_Z_MARGIN = 10.0  # keep the parked Z at least this far below Z max
+_TRAVEL_F = 6000.0  # mm/min for the positioning move
 
 
 @dataclass(frozen=True)
@@ -67,6 +91,8 @@ class RampParams:
     extrude_per_step: float = 5.0
     samples_per_step: int = 20
     driver: str = "tmc2209"
+    #: Home (if needed) and center the nozzle at a clear height before heating, for a visible run.
+    park_for_view: bool = True
 
 
 @dataclass(frozen=True)
@@ -299,23 +325,125 @@ async def detect_extruder_driver(client: MoonrakerClient) -> str | None:
     return None
 
 
+async def _homed_axes(client: MoonrakerClient) -> str:
+    """Klipper's homed-axes string (e.g. ``'xyz'``), or ``''`` if unknown."""
+    try:
+        data = await client.query_objects(["toolhead"])
+    except httpx.HTTPError:
+        return ""
+    toolhead = data.get("toolhead", {})
+    return str(toolhead.get("homed_axes", "")) if isinstance(toolhead, dict) else ""
+
+
+async def _view_position(client: MoonrakerClient) -> tuple[float, float, float] | None:
+    """``(x, y, z)`` that parks the nozzle for a clear view — bed center at a comfortable Z gap,
+    from the toolhead's axis limits. ``None`` when the limits can't be read."""
+    try:
+        data = await client.query_objects(["toolhead"])
+    except httpx.HTTPError:
+        return None
+    toolhead = data.get("toolhead", {})
+    lo, hi = toolhead.get("axis_minimum"), toolhead.get("axis_maximum")
+    if not (isinstance(lo, list) and isinstance(hi, list) and len(lo) >= 3 and len(hi) >= 3):
+        return None
+    mid_x = (lo[0] + hi[0]) / 2.0
+    mid_y = (lo[1] + hi[1]) / 2.0
+    # A comfortable height, but never above the machine's Z travel (so the move can't exceed it).
+    z = max(0.0, min(_VIEW_Z, hi[2] - _VIEW_Z_MARGIN))
+    return float(mid_x), float(mid_y), float(z)
+
+
+async def _park_for_view(
+    client: MoonrakerClient,
+    total: int,
+    progress_cb: Callable[[int, int, dict[str, Any]], None] | None = None,
+) -> None:
+    """Home (if needed) and center the nozzle at a clear height, before heating.
+
+    Best-effort positioning so the nozzle is plainly visible in person and on a webcam: G28 if
+    the printer isn't fully homed, then move to bed center at a comfortable Z. If the bed center
+    can't be determined the toolhead is left where homing put it (extrusion doesn't need XY/Z).
+    """
+    homed = await _homed_axes(client)
+    if not all(axis in homed for axis in "xyz"):
+        if progress_cb is not None:
+            progress_cb(0, total, {"phase": "homing"})
+        await client.run_gcode("G28")
+    pos = await _view_position(client)
+    if pos is None:
+        return
+    x, y, z = pos
+    if progress_cb is not None:
+        progress_cb(0, total, {"phase": "centering"})
+    await client.run_gcode("G90")  # absolute positioning for the move
+    await client.run_gcode(f"G1 X{x:.1f} Y{y:.1f} Z{z:.1f} F{_TRAVEL_F:.0f}")
+    await client.run_gcode("M400")
+
+
+async def _sg_precheck(
+    client: MoonrakerClient,
+    params: RampParams,
+    driver_section: str,
+    total: int,
+    progress_cb: Callable[[int, int, dict[str, Any]], None] | None = None,
+) -> None:
+    """Confirm the live StallGuard field is usable before the ramp (issue #319).
+
+    Extrudes a short burst at the start-flow feedrate and reads the *raw* SG field each time
+    (no bias floor — we want to know if the field appears at all). Raises
+    :class:`MaxFlowSignalError` if no reading ever appears, or if every reading is a constant 0:
+    either means the ramp could only measure nothing on this extruder/host, so there's no point
+    heating and grinding through it.
+    """
+    if progress_cb is not None:
+        progress_cb(0, total, {"phase": "checking"})
+    feedrate = flow_to_feedrate(params.start_flow, params.filament_diameter)
+    readings: list[float] = []
+    for _ in range(_PRECHECK_SAMPLES):
+        await client.run_gcode(f"G1 E{_PRECHECK_SUB_MM:.4f} F{feedrate:.0f}")
+        await client.run_gcode("M400")
+        status = await client.query_objects([driver_section])
+        obj = status.get(driver_section)
+        sg = _extract_sg(obj if isinstance(obj, dict) else {})
+        if sg is not None:
+            readings.append(sg)
+    field = reference_data.stallguard_field(params.driver) or "SG_RESULT"
+    if not readings:
+        raise MaxFlowSignalError(
+            f"No live StallGuard reading from [{params.driver.lower()} {_EXTRUDER}] — the "
+            f"driver's {field} field isn't exposed during extrusion on this host, so slip can't "
+            "be measured. Max-flow can't run reliably on this extruder."
+        )
+    if all(r == 0.0 for r in readings):
+        raise MaxFlowSignalError(
+            f"StallGuard ({field}) reads a constant 0 during extrusion — no usable load signal, "
+            "so slip can't be measured. Max-flow can't run reliably on this extruder."
+        )
+
+
 async def run_max_flow(
     client: MoonrakerClient,
     params: RampParams,
     progress_cb: Callable[[int, int, dict[str, Any]], None] | None = None,
     cancel_cb: Callable[[], bool] | None = None,
 ) -> dict[str, Any]:
-    """Run the live max-flow test: heat, then ramp the flow while sampling StallGuard.
+    """Run the live max-flow test: park for a clear view, heat, sanity-check StallGuard, then
+    ramp the flow while sampling StallGuard.
 
     Safe by construction: refused while the printer is busy; the heater is **always turned
-    off** in a ``finally`` (even on error); and the ramp **stops as soon as slip is detected**
-    so no filament is ground past the first slip. The client should be created with a long
-    timeout (heating + extrusion blocks for minutes).
+    off** in a ``finally`` (even on error); the ramp **stops as soon as slip is detected** so no
+    filament is ground past the first slip; and (the fix for #319) a short StallGuard sanity
+    pre-check **bails out before the ramp** if the live SG field is unusable on this extruder, so
+    a meaningless "no slip" can't come out of a full heat-and-grind cycle. When
+    ``park_for_view`` is set the nozzle is homed (if needed) and centered at a clear height first,
+    for a visible run. The client should be created with a long timeout (heating + extrusion
+    blocks for minutes).
 
     Raises:
         ValueError: on invalid params.
         MaxFlowBusyError: if the printer is busy.
         MaxFlowPreflightError: if the extruder driver can't read StallGuard for this test.
+        MaxFlowSignalError: if the live StallGuard field yields no usable reading.
         httpx.HTTPError: if Moonraker is unreachable or a command fails.
     """
     validate(params)
@@ -324,19 +452,33 @@ async def run_max_flow(
     await _preflight(client, params.driver)  # C1: refuse a config that can't read StallGuard
 
     plan_steps = plan_ramp(params)
+    total = len(plan_steps)
     driver_section = f"{params.driver.lower()} {_EXTRUDER}"
     sub_mm = params.extrude_per_step / params.samples_per_step
     sg_floor = _sg_floor(params.driver)  # C2: drop SG4 bias-region noise (below the min velocity)
     measurements: list[StepMeasurement] = []
+
+    # Home + center the nozzle for a clear view *before* heating (no heater on yet → no cleanup).
+    if params.park_for_view:
+        if cancel_cb is not None and cancel_cb():
+            raise task_store.TaskCancelled()
+        await _park_for_view(client, total, progress_cb)
+
     try:
+        if progress_cb is not None:
+            progress_cb(0, total, {"phase": "heating"})
         await client.run_gcode(f"M104 S{params.temperature:.0f}")  # start heating
         await client.run_gcode("M83")  # relative extrusion
         await client.run_gcode(f"M109 S{params.temperature:.0f}")  # wait for temp
+        # The fix (#319): refuse to run the ramp if the live StallGuard field is unusable here.
+        if cancel_cb is not None and cancel_cb():
+            raise task_store.TaskCancelled()  # finally below always cuts the heater
+        await _sg_precheck(client, params, driver_section, total, progress_cb)
         for step_index, step in enumerate(plan_steps):
             if cancel_cb is not None and cancel_cb():
                 raise task_store.TaskCancelled()  # finally below always cuts the heater
             if progress_cb is not None:
-                progress_cb(step_index + 1, len(plan_steps), {"flow": step.flow_mm3s})
+                progress_cb(step_index + 1, total, {"flow": step.flow_mm3s, "phase": "ramp"})
             samples: list[float] = []
             for _ in range(params.samples_per_step):
                 await client.run_gcode(f"G1 E{sub_mm:.4f} F{step.feedrate_mm_min:.0f}")

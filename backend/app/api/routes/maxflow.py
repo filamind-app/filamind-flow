@@ -36,6 +36,9 @@ class MaxFlowPlanRequest(BaseModel):
     extrude_per_step: float = Field(5.0, description="Filament pushed per step (mm)")
     samples_per_step: int = Field(20, description="StallGuard samples captured per step")
     driver: str = Field("tmc2209", description="Extruder TMC driver model")
+    park_for_view: bool = Field(
+        True, description="Home (if needed) + center the nozzle for a clear view before heating"
+    )
 
 
 @router.post("/plan")
@@ -68,7 +71,10 @@ async def maxflow_run(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except max_flow_service.MaxFlowBusyError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
-    except max_flow_service.MaxFlowPreflightError as exc:
+    except (
+        max_flow_service.MaxFlowPreflightError,
+        max_flow_service.MaxFlowSignalError,
+    ) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
@@ -102,6 +108,7 @@ async def _run_maxflow_task(task: task_store.Task, params: RampParams, settings:
         ValueError,
         max_flow_service.MaxFlowBusyError,
         max_flow_service.MaxFlowPreflightError,
+        max_flow_service.MaxFlowSignalError,
     ) as exc:
         task.append(f"!! {exc}\n")
         task.status = "failed"
