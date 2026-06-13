@@ -103,3 +103,55 @@ def test_set_options_creates_section_when_missing() -> None:
 def test_set_options_ignores_unsafe_keys() -> None:
     out = screen_service.set_options("[main]\n", "main", {"bad key": "x", "ok": "y"})
     assert "ok = y" in out and "bad key" not in out
+
+
+def test_read_menus_parses_tree_and_props() -> None:
+    raw = (
+        "[main]\ntheme = z-bolt\n"
+        "[menu __main move]\nname: Move\nicon: move\npanel: move\n"
+        "[menu __main homing homeall]\nname: Home All\nmethod: printer.gcode.script\n"
+        'params: {"script":"G28"}\nenable: {{ True }}\n'
+        "#~# --- auto --- #~#\n#~# [main]\n"
+    )
+    by = {it["id"]: it for it in screen_service.read_menus(raw)}
+    assert set(by) == {"__main move", "__main homing homeall"}
+    assert by["__main move"]["tree"] == "__main" and by["__main move"]["parent"] == "__main"
+    assert by["__main move"]["props"]["panel"] == "move"
+    home = by["__main homing homeall"]
+    assert home["parent"] == "__main homing"
+    assert home["props"]["params"] == '{"script":"G28"}'  # JSON value (inner colon) preserved
+    assert home["props"]["enable"] == "{{ True }}"
+
+
+def test_write_menus_replaces_and_preserves() -> None:
+    raw = "[main]\ntheme = z-bolt\n[menu __main old]\nname: Old\n#~# --- auto --- #~#\n#~# x = 1\n"
+    items = [
+        {"id": "__main move", "props": {"name": "Move", "icon": "move", "panel": "move"}},
+        {
+            "id": "__main run",
+            "props": {"name": "Run", "method": "printer.gcode.script", "params": '{"script":"M"}'},
+        },
+    ]
+    out = screen_service.write_menus(raw, items)
+    assert "[main]\ntheme = z-bolt" in out  # non-menu section kept
+    assert "[menu __main old]" not in out and "Old" not in out  # old menu stripped
+    assert "[menu __main move]" in out and "panel: move" in out
+    assert "[menu __main run]" in out and 'params: {"script":"M"}' in out
+    assert "#~# x = 1" in out  # auto block preserved
+
+
+def test_write_menus_skips_unsafe_ids() -> None:
+    out = screen_service.write_menus("", [{"id": "__main ../evil", "props": {"name": "x"}}])
+    assert "evil" not in out
+
+
+def test_menus_round_trip() -> None:
+    raw = "[menu __main move]\nname: Move\npanel: move\n[menu __main more]\nname: More\n"
+    again = {
+        i["id"]: i
+        for i in screen_service.read_menus(
+            screen_service.write_menus(raw, screen_service.read_menus(raw))
+        )
+    }
+    assert set(again) == {"__main move", "__main more"}
+    assert again["__main move"]["props"].get("panel") == "move"
