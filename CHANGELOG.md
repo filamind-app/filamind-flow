@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.243.0] - 2026-06-13
+
+### Changed
+
+- **Light is now the default theme, and the brand accent is a warm mocha brown — no more yellow.**
+  First load (no stored choice) opens in the daylight-brutalism Light theme. Its signature accent
+  — the sidebar rail, badges, highlights, and the browser favicon — changes from yellow to a deep
+  mocha brown (`#8C6A4A`). The accent flows from a single source-of-truth token, so the whole app
+  (every theme utility and in-app illustration) recolors at once. The other six themes are
+  unchanged and still selectable from the theme menu; your saved theme choice still wins.
+- Because the mocha accent is darker than the other themes' bright badge tier, text drawn on a
+  solid accent fill is now light (a new `--c-on-accent` token) instead of ink, keeping it readable.
+  The automated theme-contrast test was extended to guard the new pairing.
+
 ## [0.242.0] - 2026-06-13
 
 ### Added
