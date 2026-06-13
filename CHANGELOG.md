@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.240.1] - 2026-06-13
+
+### Fixed
+
+- **Max-Flow: the picture-in-picture camera no longer covers the phase stepper.** During a run
+  the live-run card now reserves inline-end space for the corner PiP, so the
+  Home → Center → Heat → Check → Ramp stepper (and the rest of the run UI) stays fully visible
+  alongside the camera. Works in both LTR and RTL.
+
 ## [0.240.0] - 2026-06-13
 
 ### Added

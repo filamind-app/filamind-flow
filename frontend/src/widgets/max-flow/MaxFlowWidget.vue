@@ -440,12 +440,14 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Supervised-run progress: phase/step + live camera + a cancel that always cuts the heater -->
+    <!-- Supervised-run progress: phase/step + live camera + a cancel that always cuts the heater.
+         When the corner PiP is shown, reserve inline-end space so it never covers the stepper. -->
     <div
       v-if="flowRun.status !== 'idle'"
       role="status"
       aria-live="polite"
       class="nb-card space-y-2 bg-surface p-2"
+      :class="cameraAvailable ? 'sm:pe-[300px]' : ''"
     >
       <div class="flex items-center justify-between gap-2 font-mono text-[11px]">
         <span class="font-bold">{{ phaseLabel }}</span>
