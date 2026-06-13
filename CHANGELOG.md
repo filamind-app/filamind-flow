@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.235.0] - 2026-06-13
+
+### Changed
+
+- **Documentation: keep deployment notes generic.** Reworded the subpath / remote-access notes
+  across the README, ROADMAP and CHANGELOG to describe only the generic capability — the panel
+  serves at its own port or proxied under a subpath on the host's existing web server — without
+  any specifics of a private remote-access setup.
+
+
 ## [0.234.0] - 2026-06-13
 
 ### Changed
@@ -93,13 +103,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Reach the panel through your existing printer URL — works behind a tunnel.** The installer
-  now exposes FilaMind at `/filamind/` on whatever web server already answers on port 80
-  (Mainsail / Fluidd), so the sidebar link is host-relative and opens on LAN, by IP, and
-  through a remote reverse proxy or Cloudflare tunnel with no extra port to forward and no
-  `.local` mDNS. The built UI uses relative asset paths and derives its API/WebSocket base
-  from wherever it is mounted, so the same bundle serves correctly at the panel's own port
-  or under the subpath. Standalone `:8090` access is unchanged.
+- **Reach the panel through your existing printer URL — on a subpath.** The installer now
+  exposes FilaMind at `/filamind/` on whatever web server already answers on port 80
+  (Mainsail / Fluidd), so the sidebar link is host-relative and opens on LAN, by IP, or under
+  that subpath — no extra port to forward and no `.local` mDNS. The built UI uses relative asset
+  paths and derives its API/WebSocket base from wherever it is mounted, so the same bundle serves
+  correctly at the panel's own port or under the subpath. Standalone `:8090` access is unchanged.
 
 
 ## [0.227.0] - 2026-06-13
