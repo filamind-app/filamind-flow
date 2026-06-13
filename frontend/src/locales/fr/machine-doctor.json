@@ -8,6 +8,37 @@
     "scoreHint": "Notation transparente : 100 − 25 par erreur − 8 par avertissement. L'invérifiable ne compte jamais contre vous.",
     "allClear": "Rien à signaler.",
     "notChecked": "Impossible à vérifier (imprimante injoignable ou pas de référence).",
+    "assessment": {
+      "healthy": "En bonne santé — tout ce qui peut être vérifié est correct.",
+      "attention": "Globalement sain, mais {pillar} nécessite de l'attention.",
+      "critical": "{pillar} présente un problème à corriger."
+    },
+    "pillars": {
+      "title": "Détail de santé",
+      "notMeasured": "non mesuré"
+    },
+    "pillar": {
+      "config": "Intégrité config",
+      "firmware": "Sync firmware",
+      "services": "Services",
+      "tuning": "Input shaping",
+      "flow": "Débit max"
+    },
+    "services": {
+      "title": "Services",
+      "active": "actif",
+      "inactive": "arrêté",
+      "none": "Aucun service."
+    },
+    "stats": {
+      "title": "En un coup d'œil",
+      "maxFlow": "Débit max",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} désynchronisé(s)",
+      "allSynced": "tout synchronisé",
+      "none": "Pas encore de mesures."
+    },
     "category": {
       "pins": "Câblage des broches",
       "drivers": "Valeurs des drivers",

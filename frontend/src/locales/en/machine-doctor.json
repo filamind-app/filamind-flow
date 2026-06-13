@@ -8,6 +8,37 @@
     "scoreHint": "Transparent scoring: 100 − 25 per error − 8 per warning. Unknown checks never count against you.",
     "allClear": "All clear.",
     "notChecked": "Could not be checked (printer unreachable or no baseline).",
+    "assessment": {
+      "healthy": "Healthy — everything the app can check looks good.",
+      "attention": "Mostly healthy, but {pillar} needs attention.",
+      "critical": "{pillar} has a problem worth fixing."
+    },
+    "pillars": {
+      "title": "Health breakdown",
+      "notMeasured": "not measured"
+    },
+    "pillar": {
+      "config": "Config integrity",
+      "firmware": "Firmware sync",
+      "services": "Services",
+      "tuning": "Input shaping",
+      "flow": "Max flow"
+    },
+    "services": {
+      "title": "Services",
+      "active": "active",
+      "inactive": "stopped",
+      "none": "No services reported."
+    },
+    "stats": {
+      "title": "At a glance",
+      "maxFlow": "Max flow",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} out of sync",
+      "allSynced": "all synced",
+      "none": "No measurements yet."
+    },
     "category": {
       "pins": "Pin wiring",
       "drivers": "Driver values",

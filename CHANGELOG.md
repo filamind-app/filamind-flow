@@ -6,7 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.245.0] - 2026-06-13
+## [0.246.0] - 2026-06-13
+
+### Added
+
+- **The home dashboard now shows your printer's health at a glance.** The Machine Doctor tile on
+  the main page is no longer just a button — it shows the live A–F grade, a one-line assessment,
+  the score with error/warning counts, and your last **Max-Flow** measurement, with the full scan
+  one tap away. (Fetched lazily, so it never slows the rest of the page.)
+- **The Machine Doctor widget renders the full new report.** Beyond the grade, it now shows the
+  weighted **pillar breakdown** (config / firmware / services / tuning / max-flow as labeled bars),
+  a panel of **all running services with their state**, and an **at-a-glance stats** strip
+  (Max-Flow, per-axis input-shaping, firmware sync) — all translated across the seven languages.
+
+### Changed
+
+- The Machine Doctor grade hero now leads with the plain-language assessment.
 
 ### Changed
 

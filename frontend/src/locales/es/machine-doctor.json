@@ -8,6 +8,37 @@
     "scoreHint": "Puntuación transparente: 100 − 25 por error − 8 por aviso. Lo no comprobable nunca cuenta en contra.",
     "allClear": "Todo en orden.",
     "notChecked": "No se pudo comprobar (impresora inaccesible o sin línea base).",
+    "assessment": {
+      "healthy": "Saludable: todo lo que se puede comprobar se ve bien.",
+      "attention": "Mayormente saludable, pero {pillar} necesita atención.",
+      "critical": "{pillar} tiene un problema que conviene corregir."
+    },
+    "pillars": {
+      "title": "Desglose de salud",
+      "notMeasured": "sin medir"
+    },
+    "pillar": {
+      "config": "Integridad de config",
+      "firmware": "Sincronía de firmware",
+      "services": "Servicios",
+      "tuning": "Input shaping",
+      "flow": "Flujo máximo"
+    },
+    "services": {
+      "title": "Servicios",
+      "active": "activo",
+      "inactive": "detenido",
+      "none": "Sin servicios."
+    },
+    "stats": {
+      "title": "De un vistazo",
+      "maxFlow": "Flujo máximo",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} desincronizado(s)",
+      "allSynced": "todo sincronizado",
+      "none": "Aún sin mediciones."
+    },
     "category": {
       "pins": "Cableado de pines",
       "drivers": "Valores de drivers",
