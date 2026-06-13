@@ -83,6 +83,31 @@ support lands, reach the panel by URL (`http://<your-printer-ip>:8090`) — a bo
 browser start page works well. (Editing Fluidd's built assets to inject a link is
 possible but not recommended: it breaks on every update.)
 
+## 6. FilaMind Kiosk (optional — run FilaMind on the touchscreen)
+
+To put FilaMind Flow **on the printer's physical touchscreen** instead of (or alongside)
+KlipperScreen, install the kiosk once on the host:
+
+```bash
+sudo bash deploy/install-kiosk.sh            # user + http://localhost:8090 by default
+sudo bash deploy/install-kiosk.sh biqu http://localhost:8090
+sudo bash deploy/install-kiosk.sh --uninstall
+```
+
+It installs a Wayland kiosk compositor (`cage`) + Chromium and writes a `filamind-kiosk`
+systemd service that **conflicts with KlipperScreen** (starting one stops the other). It is **not**
+enabled at boot — KlipperScreen stays the default. Switch from the app
+(**KlipperScreen Studio → Kiosk**) or over SSH:
+
+```bash
+sudo systemctl start filamind-kiosk     # FilaMind takes the screen
+sudo systemctl start KlipperScreen      # hand it back (also recovers a dark screen)
+```
+
+A plain switch is reboot-recoverable; "Make FilaMind the default" in the widget (or
+`sudo systemctl enable filamind-kiosk && sudo systemctl disable KlipperScreen`) persists it.
+The app's toggle uses the same passwordless-sudo rule as the flasher (`deploy/setup-sudoers.sh`).
+
 ## Notes
 
 - `install.sh` requires Node.js and Python 3.10+ on the host.
