@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.245.0] - 2026-06-13
+
+### Changed
+
+- **Machine Doctor health grade is now a weighted composite, not just config integrity.** The A–F
+  grade blends five pillars — config integrity (45%), firmware sync (15%), running services (15%),
+  input-shaping tuning (15%) and max-flow headroom (10%) — and renormalizes over whatever can
+  actually be measured, so an unmeasured signal (no shaper runs yet, Moonraker down) never drags
+  the grade down. The scan also now returns the per-pillar breakdown, a translatable assessment
+  verdict, the list of running printer services with their state, and a cross-widget stats block.
+  _(The widget UI that renders these lands in the next release; the broader grade is already in
+  effect.)_
+
+### Added
+
+- **Max-Flow remembers its last result server-side.** A run now persists its headline numbers
+  (max flow, recommendation, driver, method, and the selected hotend + its rated flow when known)
+  to a small store, so the Machine Doctor can fold real flow headroom into the health score and a
+  reopened session can show the last measurement.
+
 ## [0.244.0] - 2026-06-13
 
 ### Changed
