@@ -8,6 +8,37 @@
     "scoreHint": "Transparente Wertung: 100 − 25 je Fehler − 8 je Warnung. Nicht Prüfbares zählt nie gegen dich.",
     "allClear": "Alles in Ordnung.",
     "notChecked": "Konnte nicht geprüft werden (Drucker nicht erreichbar oder keine Basislinie).",
+    "assessment": {
+      "healthy": "Gesund — alles Prüfbare sieht gut aus.",
+      "attention": "Größtenteils gesund, aber {pillar} braucht Aufmerksamkeit.",
+      "critical": "{pillar} hat ein Problem, das behoben werden sollte."
+    },
+    "pillars": {
+      "title": "Gesundheits-Aufschlüsselung",
+      "notMeasured": "nicht gemessen"
+    },
+    "pillar": {
+      "config": "Konfig-Integrität",
+      "firmware": "Firmware-Sync",
+      "services": "Dienste",
+      "tuning": "Input Shaping",
+      "flow": "Max. Fluss"
+    },
+    "services": {
+      "title": "Dienste",
+      "active": "aktiv",
+      "inactive": "gestoppt",
+      "none": "Keine Dienste."
+    },
+    "stats": {
+      "title": "Auf einen Blick",
+      "maxFlow": "Max. Fluss",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} nicht synchron",
+      "allSynced": "alle synchron",
+      "none": "Noch keine Messungen."
+    },
     "category": {
       "pins": "Pin-Verdrahtung",
       "drivers": "Treiberwerte",

@@ -8,6 +8,37 @@
     "scoreHint": "透明计分：100 − 每错误 25 − 每警告 8。无法检查的项不计入扣分。",
     "allClear": "一切正常。",
     "notChecked": "无法检查（打印机不可达或无基线）。",
+    "assessment": {
+      "healthy": "健康——所有可检查项均正常。",
+      "attention": "总体健康，但{pillar}需要关注。",
+      "critical": "{pillar}存在需要修复的问题。"
+    },
+    "pillars": {
+      "title": "健康明细",
+      "notMeasured": "未测量"
+    },
+    "pillar": {
+      "config": "配置完整性",
+      "firmware": "固件同步",
+      "services": "服务",
+      "tuning": "输入整形",
+      "flow": "最大流量"
+    },
+    "services": {
+      "title": "服务",
+      "active": "运行中",
+      "inactive": "已停止",
+      "none": "无服务。"
+    },
+    "stats": {
+      "title": "概览",
+      "maxFlow": "最大流量",
+      "tuningAxis": "整形器 {axis}",
+      "firmware": "固件",
+      "outOfSync": "{n} 个不同步",
+      "allSynced": "全部同步",
+      "none": "暂无测量。"
+    },
     "category": {
       "pins": "引脚接线",
       "drivers": "驱动数值",

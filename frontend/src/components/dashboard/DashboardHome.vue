@@ -12,8 +12,10 @@ import { useI18n } from 'vue-i18n'
 import { resolveEndpoints } from '@/core/moonraker'
 import { useNav } from '@/core/nav'
 import { focusTopologyNode } from '@/widgets/board-topology/topologyFocus'
+import { fetchDoctorScan } from '@/widgets/machine-doctor/api'
+import type { DoctorReport } from '@/widgets/machine-doctor/types'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, te } = useI18n({ useScope: 'global' })
 const { go } = useNav()
 
 interface OverviewMcu {
@@ -69,6 +71,40 @@ async function load(): Promise<void> {
     loading.value = false
   }
 }
+// Machine Doctor summary, surfaced right on the home (full detail lives in the widget). Fetched
+// lazily alongside the overview — its own loading/error state, so it never blocks the other tiles.
+const doctor = ref<DoctorReport | null>(null)
+const doctorLoading = ref(true)
+async function loadDoctor(): Promise<void> {
+  doctorLoading.value = true
+  try {
+    doctor.value = await fetchDoctorScan()
+  } catch {
+    doctor.value = null
+  } finally {
+    doctorLoading.value = false
+  }
+}
+const GRADE_BG: Record<string, string> = {
+  A: 'bg-brand-lime',
+  B: 'bg-brand-cyan',
+  C: 'bg-brand-yellow',
+  D: 'bg-brand-pink',
+  F: 'bg-brand-red',
+}
+function doctorPillarLabel(key: string): string {
+  const k = `machineDoctor.pillar.${key}`
+  return te(k) ? t(k) : key
+}
+const doctorAssessment = computed(() => {
+  const a = doctor.value?.assessment
+  if (!a) return ''
+  const key = `machineDoctor.assessment.${a.code}`
+  if (!te(key)) return ''
+  const pillar = a.params.pillar ? doctorPillarLabel(String(a.params.pillar)) : ''
+  return t(key, { ...a.params, pillar } as Record<string, unknown>)
+})
+
 const journal = ref<JournalEvent[]>([])
 async function loadJournal(): Promise<void> {
   try {
@@ -97,10 +133,12 @@ function journalText(e: JournalEvent): string {
 }
 const JOURNAL_ICON: Record<string, string> = { flash: '🔧', config_save: '📝', tuning: '📈' }
 
-onMounted(() => {
+function refresh(): void {
   void load()
   void loadJournal()
-})
+  void loadDoctor()
+}
+onMounted(refresh)
 
 function stateBadge(state: string | undefined): { text: string; cls: string } {
   const s = state ?? 'unknown'
@@ -162,7 +200,7 @@ function openMcu(name: string): void {
   <div class="mx-auto max-w-4xl space-y-3">
     <div class="flex items-center justify-between gap-2">
       <h2 class="font-display text-2xl font-bold">{{ t('shell.home.title') }}</h2>
-      <button class="nb-btn bg-surface px-2 py-1 text-xs" :disabled="loading" @click="load">
+      <button class="nb-btn bg-surface px-2 py-1 text-xs" :disabled="loading" @click="refresh">
         <span aria-hidden="true">↻</span> {{ t('shell.home.refresh') }}
       </button>
     </div>
@@ -238,15 +276,51 @@ function openMcu(name: string): void {
         <p v-else class="font-mono text-xs opacity-70">{{ t('shell.home.printerDown') }}</p>
       </div>
 
-      <!-- Machine Doctor -->
+      <!-- Machine Doctor — live grade + assessment + Max-Flow, with the full scan one tap away -->
       <div class="nb-card space-y-2 bg-surface p-3">
-        <p class="text-xs font-bold uppercase tracking-wide opacity-60">
-          {{ t('shell.home.doctor') }}
+        <div class="flex items-center justify-between gap-2">
+          <p class="text-xs font-bold uppercase tracking-wide opacity-60">
+            {{ t('shell.home.doctor') }}
+          </p>
+          <button class="nb-btn bg-surface px-1.5 py-0.5 text-[11px]" @click="go('machine-doctor')">
+            {{ t('shell.home.open') }} ↗
+          </button>
+        </div>
+        <template v-if="doctor">
+          <div class="flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-brutal border-3 border-ink font-display text-2xl font-bold text-ink"
+              :class="GRADE_BG[doctor.grade] ?? 'bg-ink/10'"
+            >
+              {{ doctor.grade }}
+            </span>
+            <div class="min-w-0">
+              <p v-if="doctorAssessment" class="text-xs font-bold">{{ doctorAssessment }}</p>
+              <p class="font-mono text-[11px] opacity-70">
+                {{ t('machineDoctor.scoreLine', { score: doctor.score }) }} ·
+                {{
+                  t('machineDoctor.counts', { errors: doctor.errors, warnings: doctor.warnings })
+                }}
+              </p>
+            </div>
+          </div>
+          <p
+            v-if="doctor.stats?.max_flow?.max_flow_mm3s != null"
+            class="flex items-center gap-1.5 font-mono text-[11px]"
+          >
+            <span class="opacity-60">{{ t('machineDoctor.stats.maxFlow') }}:</span>
+            <span class="font-bold">{{ doctor.stats.max_flow.max_flow_mm3s }} mm³/s</span>
+          </p>
+        </template>
+        <p v-else-if="doctorLoading" class="font-mono text-xs opacity-70">
+          {{ t('machineDoctor.scanning') }}
         </p>
-        <p class="text-xs opacity-70">{{ t('shell.home.doctorBody') }}</p>
-        <button class="nb-btn bg-brand-cyan px-3 py-1 text-xs" @click="go('machine-doctor')">
-          🩺 {{ t('shell.home.doctorScan') }}
-        </button>
+        <template v-else>
+          <p class="text-xs opacity-70">{{ t('shell.home.doctorBody') }}</p>
+          <button class="nb-btn bg-brand-cyan px-3 py-1 text-xs" @click="go('machine-doctor')">
+            🩺 {{ t('shell.home.doctorScan') }}
+          </button>
+        </template>
       </div>
 
       <!-- Firmware sync -->
