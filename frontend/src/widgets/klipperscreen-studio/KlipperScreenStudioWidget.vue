@@ -4,7 +4,7 @@
  *  Phase 1: a safe raw editor for `KlipperScreen.conf` (gated save = timestamped backup +
  *  stale-write guard + refused while printing, reusing the Config Editor's machinery) plus a
  *  one-tap service restart. The graphical option editor + theme builder build on this. */
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
@@ -13,10 +13,13 @@ import {
   activateTheme,
   createTheme,
   deleteTheme,
+  fetchMenus,
   fetchScreenConf,
   fetchScreenStatus,
   fetchThemes,
+  type MenuItem,
   restartScreen,
+  saveMenus,
   saveScreenConf,
   ScreenSaveError,
   type ScreenTheme,
@@ -45,7 +48,7 @@ const restarted = ref(false)
 const restartError = ref<string | null>(null)
 
 // Theme builder
-type View = 'config' | 'themes'
+type View = 'config' | 'menus' | 'themes'
 const view = ref<View>('config')
 const themes = ref<ScreenTheme[]>([])
 const tokens = ref<string[]>([])
@@ -55,6 +58,18 @@ const themeName = ref('')
 const themesBusy = ref(false)
 const themesError = ref<string | null>(null)
 const themesNote = ref<string | null>(null)
+
+// Menu tree editor
+const menuItems = ref<MenuItem[]>([])
+const panels = ref<string[]>([])
+const menuSha = ref<string | null>(null)
+const menusBusy = ref(false)
+const menusError = ref<string | null>(null)
+const menusNote = ref<string | null>(null)
+const menusDirty = ref(false)
+const selectedMenuId = ref<string | null>(null)
+const MENU_TREES = ['__main', '__print', '__splashscreen']
+let menuSeq = 0
 
 async function loadConf(): Promise<void> {
   loadingConf.value = true
@@ -145,6 +160,7 @@ async function loadThemes(): Promise<void> {
 function switchView(v: View): void {
   view.value = v
   if (v === 'themes' && !tokens.value.length) void loadThemes()
+  if (v === 'menus' && !menuItems.value.length && !menuSha.value) void loadMenus()
 }
 
 async function createAndApply(apply: boolean): Promise<void> {
@@ -191,6 +207,130 @@ async function removeTheme(name: string): Promise<void> {
     themesError.value = describeError(e)
   } finally {
     themesBusy.value = false
+  }
+}
+
+async function loadMenus(): Promise<void> {
+  menusBusy.value = true
+  menusError.value = null
+  try {
+    const cat = await fetchMenus()
+    menuItems.value = cat.items
+    panels.value = cat.panels
+    menuSha.value = cat.sha256
+    menusDirty.value = false
+  } catch (e) {
+    menusError.value = describeError(e)
+  } finally {
+    menusBusy.value = false
+  }
+}
+
+/** The menu trees (the standard three + any present), each as a DFS-ordered row list with depth. */
+const menuTrees = computed(() => {
+  const trees = new Set<string>(MENU_TREES)
+  for (const it of menuItems.value) trees.add(it.tree)
+  const byParent: Record<string, MenuItem[]> = {}
+  for (const it of menuItems.value) (byParent[it.parent] ??= []).push(it)
+  return [...trees].map((tree) => {
+    const rows: { item: MenuItem; depth: number }[] = []
+    const walk = (parent: string, depth: number): void => {
+      for (const it of byParent[parent] ?? []) {
+        rows.push({ item: it, depth })
+        walk(it.id, depth + 1)
+      }
+    }
+    walk(tree, 0)
+    return { tree, rows }
+  })
+})
+
+function addMenuItem(parent: string, tree: string): void {
+  const existing = new Set(menuItems.value.map((i) => i.id))
+  let token = ''
+  do {
+    menuSeq += 1
+    token = `item${menuSeq}`
+  } while (existing.has(`${parent} ${token}`))
+  const item: MenuItem = {
+    id: `${parent} ${token}`,
+    tree,
+    parent,
+    props: { name: t('klipperscreenStudio.menus.newItem') },
+  }
+  menuItems.value.push(item)
+  selectedMenuId.value = item.id
+  menusDirty.value = true
+}
+
+function removeMenuItem(item: MenuItem): void {
+  const prefix = item.id + ' '
+  menuItems.value = menuItems.value.filter((i) => i.id !== item.id && !i.id.startsWith(prefix))
+  if (selectedMenuId.value === item.id) selectedMenuId.value = null
+  menusDirty.value = true
+}
+
+function moveMenuItem(item: MenuItem, dir: -1 | 1): void {
+  const sibs = menuItems.value.filter((i) => i.parent === item.parent)
+  const swapWith = sibs[sibs.indexOf(item) + dir]
+  if (!swapWith) return
+  const arr = menuItems.value
+  const a = arr.indexOf(item)
+  const b = arr.indexOf(swapWith)
+  ;[arr[a], arr[b]] = [arr[b], arr[a]]
+  menusDirty.value = true
+}
+
+function menuActionType(it: MenuItem): 'panel' | 'gcode' | 'submenu' {
+  if (it.props.panel) return 'panel'
+  if (it.props.method) return 'gcode'
+  return 'submenu'
+}
+
+function setMenuActionType(it: MenuItem, type: string): void {
+  delete it.props.panel
+  delete it.props.method
+  delete it.props.params
+  if (type === 'panel') it.props.panel = panels.value[0] ?? 'move'
+  else if (type === 'gcode') {
+    it.props.method = 'printer.gcode.script'
+    it.props.params = '{"script": "G28"}'
+  }
+  menusDirty.value = true
+}
+
+function menuGcode(it: MenuItem): string {
+  try {
+    return String((JSON.parse(it.props.params || '{}') as { script?: string }).script ?? '')
+  } catch {
+    return it.props.params ?? ''
+  }
+}
+
+function setMenuGcode(it: MenuItem, script: string): void {
+  it.props.method = 'printer.gcode.script'
+  it.props.params = JSON.stringify({ script })
+  menusDirty.value = true
+}
+
+async function saveMenusHandler(): Promise<void> {
+  menusBusy.value = true
+  menusError.value = null
+  menusNote.value = null
+  try {
+    const payload = menuItems.value.map((i) => ({ id: i.id, props: { ...i.props } }))
+    const c = await saveMenus(payload, menuSha.value)
+    menuSha.value = c.sha256
+    menusDirty.value = false
+    menusNote.value = t('klipperscreenStudio.menus.savedRestart')
+  } catch (e) {
+    if (e instanceof ScreenSaveError && e.status === 412)
+      menusError.value = t('klipperscreenStudio.save.stale')
+    else if (e instanceof ScreenSaveError && e.status === 409)
+      menusError.value = t('klipperscreenStudio.save.busy')
+    else menusError.value = describeError(e)
+  } finally {
+    menusBusy.value = false
   }
 }
 
@@ -247,7 +387,7 @@ onMounted(() => void loadStatus())
       <!-- Config / Themes view toggle -->
       <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
         <button
-          v-for="v in ['config', 'themes'] as const"
+          v-for="v in ['config', 'menus', 'themes'] as const"
           :key="v"
           type="button"
           class="nb-seg"
@@ -352,6 +492,207 @@ onMounted(() => void loadStatus())
               </button>
             </div>
           </div>
+        </template>
+      </template>
+
+      <!-- Menus view: design the on-screen menu tree (what's on each screen + what it does) -->
+      <template v-else-if="view === 'menus'">
+        <p v-if="menusBusy && !menuItems.length && !menuSha" class="font-mono text-xs opacity-70">
+          {{ t('klipperscreenStudio.menus.loading') }}
+        </p>
+        <template v-else>
+          <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.menus.intro') }}</p>
+
+          <div v-for="grp in menuTrees" :key="grp.tree" class="nb-card space-y-1 bg-surface p-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[11px] font-bold">{{ grp.tree }}</span>
+              <button
+                class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
+                @click="addMenuItem(grp.tree, grp.tree)"
+              >
+                + {{ t('klipperscreenStudio.menus.addItem') }}
+              </button>
+            </div>
+            <p v-if="!grp.rows.length" class="text-[11px] opacity-50">
+              {{ t('klipperscreenStudio.menus.empty') }}
+            </p>
+            <template v-for="row in grp.rows" :key="row.item.id">
+              <div
+                class="flex items-center gap-1 rounded px-1 py-0.5 text-[11px]"
+                :class="selectedMenuId === row.item.id ? 'bg-brand-cyan/30' : 'hover:bg-ink/5'"
+                :style="{ marginInlineStart: row.depth * 14 + 'px' }"
+              >
+                <button
+                  class="min-w-0 flex-1 truncate text-start"
+                  @click="selectedMenuId = selectedMenuId === row.item.id ? null : row.item.id"
+                >
+                  <span class="font-bold">{{
+                    row.item.props.name || row.item.id.split(' ').pop()
+                  }}</span>
+                  <span class="ms-1 opacity-50">{{
+                    menuActionType(row.item) === 'panel'
+                      ? '▸ ' + row.item.props.panel
+                      : menuActionType(row.item) === 'gcode'
+                        ? '⌨'
+                        : '📁'
+                  }}</span>
+                </button>
+                <button
+                  class="shrink-0 px-1 opacity-60 hover:opacity-100"
+                  :aria-label="t('klipperscreenStudio.menus.up')"
+                  @click="moveMenuItem(row.item, -1)"
+                >
+                  ▲
+                </button>
+                <button
+                  class="shrink-0 px-1 opacity-60 hover:opacity-100"
+                  :aria-label="t('klipperscreenStudio.menus.down')"
+                  @click="moveMenuItem(row.item, 1)"
+                >
+                  ▼
+                </button>
+                <button
+                  class="shrink-0 px-1 opacity-60 hover:opacity-100"
+                  :aria-label="t('klipperscreenStudio.menus.addChild')"
+                  @click="addMenuItem(row.item.id, grp.tree)"
+                >
+                  ＋
+                </button>
+                <button
+                  class="shrink-0 px-1 text-brand-red opacity-70 hover:opacity-100"
+                  :aria-label="t('klipperscreenStudio.menus.delete')"
+                  @click="removeMenuItem(row.item)"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div
+                v-if="selectedMenuId === row.item.id"
+                class="space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2 text-[11px]"
+                :style="{ marginInlineStart: row.depth * 14 + 12 + 'px' }"
+              >
+                <label class="flex items-center gap-2">
+                  <span class="w-16 shrink-0 opacity-60">{{
+                    t('klipperscreenStudio.menus.name')
+                  }}</span>
+                  <input
+                    v-model="row.item.props.name"
+                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5"
+                    @input="menusDirty = true"
+                  />
+                </label>
+                <label class="flex items-center gap-2">
+                  <span class="w-16 shrink-0 opacity-60">{{
+                    t('klipperscreenStudio.menus.icon')
+                  }}</span>
+                  <input
+                    v-model="row.item.props.icon"
+                    placeholder="home"
+                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                    @input="menusDirty = true"
+                  />
+                </label>
+                <label class="flex items-center gap-2">
+                  <span class="w-16 shrink-0 opacity-60">{{
+                    t('klipperscreenStudio.menus.action')
+                  }}</span>
+                  <select
+                    :value="menuActionType(row.item)"
+                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5"
+                    @change="
+                      setMenuActionType(row.item, ($event.target as HTMLSelectElement).value)
+                    "
+                  >
+                    <option value="submenu">{{ t('klipperscreenStudio.menus.actSubmenu') }}</option>
+                    <option value="panel">{{ t('klipperscreenStudio.menus.actPanel') }}</option>
+                    <option value="gcode">{{ t('klipperscreenStudio.menus.actGcode') }}</option>
+                  </select>
+                </label>
+                <label v-if="menuActionType(row.item) === 'panel'" class="flex items-center gap-2">
+                  <span class="w-16 shrink-0 opacity-60">{{
+                    t('klipperscreenStudio.menus.panel')
+                  }}</span>
+                  <select
+                    v-model="row.item.props.panel"
+                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                    @change="menusDirty = true"
+                  >
+                    <option v-for="p in panels" :key="p" :value="p">{{ p }}</option>
+                  </select>
+                </label>
+                <label
+                  v-else-if="menuActionType(row.item) === 'gcode'"
+                  class="flex items-center gap-2"
+                >
+                  <span class="w-16 shrink-0 opacity-60">{{
+                    t('klipperscreenStudio.menus.gcode')
+                  }}</span>
+                  <input
+                    :value="menuGcode(row.item)"
+                    placeholder="G28"
+                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                    @input="setMenuGcode(row.item, ($event.target as HTMLInputElement).value)"
+                  />
+                </label>
+                <label class="flex items-center gap-2">
+                  <span class="w-16 shrink-0 opacity-60">{{
+                    t('klipperscreenStudio.menus.enable')
+                  }}</span>
+                  <input
+                    v-model="row.item.props.enable"
+                    :placeholder="'{{ printer.extruders.count > 0 }}'"
+                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                    @input="menusDirty = true"
+                  />
+                </label>
+              </div>
+            </template>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+              :disabled="menusBusy || !menusDirty"
+              @click="saveMenusHandler"
+            >
+              {{
+                menusBusy
+                  ? t('klipperscreenStudio.editor.saving')
+                  : t('klipperscreenStudio.menus.save')
+              }}
+            </button>
+            <span v-if="menusDirty" class="text-[11px] opacity-60">{{
+              t('klipperscreenStudio.editor.unsaved')
+            }}</span>
+          </div>
+          <p
+            v-if="menusNote"
+            class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
+          >
+            <span class="min-w-0 flex-1">{{ menusNote }}</span>
+            <button
+              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
+              :disabled="restarting"
+              @click="doRestart"
+            >
+              {{
+                restarting
+                  ? t('klipperscreenStudio.restart.restarting')
+                  : t('klipperscreenStudio.restart.button')
+              }}
+            </button>
+          </p>
+          <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
+            ✓ {{ t('klipperscreenStudio.restart.done') }}
+          </p>
+          <p
+            v-if="menusError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+          >
+            {{ menusError }}
+          </p>
         </template>
       </template>
 

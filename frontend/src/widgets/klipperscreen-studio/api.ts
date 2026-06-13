@@ -108,3 +108,40 @@ export async function deleteTheme(name: string): Promise<void> {
   })
   if (!r.ok) throw new Error(await detailOf(r))
 }
+
+// ── Menu tree editor ─────────────────────────────────────────────────────────
+
+export interface MenuItem {
+  id: string
+  tree: string
+  parent: string
+  props: Record<string, string>
+}
+
+export interface MenuCatalog {
+  items: MenuItem[]
+  panels: string[]
+  sha256: string | null
+}
+
+/** The menu tree (flat items) + the panels a button can open. */
+export async function fetchMenus(): Promise<MenuCatalog> {
+  const r = await fetch(`${base()}/api/screen/menus`)
+  if (!r.ok) throw new Error(`Could not read menus (${r.status})`)
+  return (await r.json()) as MenuCatalog
+}
+
+/** Rewrite the whole menu set (gated save). Throws ScreenSaveError(status) on busy/stale. */
+export async function saveMenus(
+  items: { id: string; props: Record<string, string> }[],
+  expectedSha256: string | null,
+): Promise<ScreenConf> {
+  const r = await fetch(`${base()}/api/screen/menus`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ items, expected_sha256: expectedSha256 }),
+  })
+  const body = (await r.json().catch(() => ({}))) as { detail?: string } & Partial<ScreenConf>
+  if (!r.ok) throw new ScreenSaveError(body.detail || `Save failed (${r.status})`, r.status)
+  return body as ScreenConf
+}

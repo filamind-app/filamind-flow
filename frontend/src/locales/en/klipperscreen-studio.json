@@ -31,7 +31,30 @@
     },
     "view": {
       "config": "Config",
+      "menus": "Menus",
       "themes": "Themes"
+    },
+    "menus": {
+      "loading": "Loading menus…",
+      "intro": "Design what the touchscreen shows: each menu's buttons, their order, and what each does. The home-screen grid is the __main tree; the print screen is __print.",
+      "addItem": "Add button",
+      "empty": "No items yet — add one.",
+      "up": "Move up",
+      "down": "Move down",
+      "addChild": "Add sub-item",
+      "delete": "Delete",
+      "name": "Name",
+      "icon": "Icon",
+      "action": "Action",
+      "actSubmenu": "Open a sub-menu",
+      "actPanel": "Open a screen",
+      "actGcode": "Run G-code",
+      "panel": "Screen",
+      "gcode": "G-code",
+      "enable": "Show if",
+      "save": "Save menus",
+      "newItem": "New button",
+      "savedRestart": "Menus saved — restart KlipperScreen to see them."
     },
     "themes": {
       "loading": "Loading themes…",
