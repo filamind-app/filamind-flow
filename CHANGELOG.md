@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.250.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — theme builder UI.** The widget gains a **Themes** tab: pick colors for
+  each palette token, set the corner radius, and watch a **live preview** mock update instantly,
+  then **Create & apply** to write the theme to the screen and restart it. Lists installed themes
+  (apply any; delete the ones made here), all translated across the seven languages. (Generating a
+  theme writes to KlipperScreen's `styles/` folder on the host, so it needs FilaMind running on the
+  printer host.)
+
 ## [0.249.0] - 2026-06-13
 
 ### Added

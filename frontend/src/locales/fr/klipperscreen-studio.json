@@ -29,6 +29,28 @@
       "busy": "Refusé pendant que l'imprimante est occupée — réessayez quand elle est inactive.",
       "stale": "KlipperScreen.conf a changé sur le disque depuis son chargement (probablement modifié sur l'écran). Rechargez avant d'enregistrer pour ne pas écraser ce changement."
     },
+    "view": {
+      "config": "Config",
+      "themes": "Thèmes"
+    },
+    "themes": {
+      "loading": "Chargement des thèmes…",
+      "palette": "Palette",
+      "radius": "Rayon des coins",
+      "preview": "Aperçu en direct",
+      "btn": "Bouton",
+      "previewWarn": "avertissement",
+      "previewApprox": "Aperçu approximatif — l'écran réel s'affiche en GTK ; de légères différences sont attendues.",
+      "namePlaceholder": "Nom du nouveau thème",
+      "createApply": "Créer et appliquer",
+      "createOnly": "Créer seulement",
+      "installed": "Thèmes installés",
+      "apply": "Appliquer",
+      "delete": "Supprimer le thème",
+      "generated": "Créé ici",
+      "created": "Thème créé. Appliquez-le depuis la liste, puis redémarrez.",
+      "appliedRestart": "Thème défini — redémarrez KlipperScreen pour le voir."
+    },
     "restart": {
       "button": "Redémarrer KlipperScreen",
       "restarting": "Redémarrage…",
