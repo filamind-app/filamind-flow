@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.242.0] - 2026-06-13
+
+### Added
+
+- **Max-Flow remembers your hotend.** The hotend you pick is now pinned across reloads and
+  navigations — reopen the widget and it's reselected, with its suggested temperature and target
+  flow already filled in, so you don't re-choose it every time. Change it whenever you like (the new
+  pick is remembered), or clear it to go back to manual values. The restore is sequenced so it never
+  clears a previously measured result that's being restored alongside it.
+
 ## [0.241.3] - 2026-06-13
 
 ### Fixed
