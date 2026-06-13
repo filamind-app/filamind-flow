@@ -237,7 +237,10 @@ _DETECTORS = (
 
 # ── Top-level analysis ─────────────────────────────────────────────────────────
 def analyze(
-    steps: list[StepMeasurement], driver: str, constants: dict[str, Any] | None = None
+    steps: list[StepMeasurement],
+    driver: str,
+    constants: dict[str, Any] | None = None,
+    warmup: int = 1,
 ) -> FlowResult:
     """Find the sustainable max flow from a ramp of per-step load captures.
 
@@ -249,6 +252,8 @@ def analyze(
 
     ``constants`` overrides the per-driver detection thresholds — the accelerometer
     (vibration) fallback passes its own ratio-based set rather than the StallGuard ones.
+    ``warmup`` suppresses detection until at least that many steps have been measured, so a
+    detector can't trip on the unsettled first steps (the vibration ramps up before grinding).
     """
     if not steps:
         return FlowResult(None, None, [], "no steps supplied")
@@ -266,7 +271,7 @@ def analyze(
     for measurement in ordered:
         stats = step_stats(measurement)
         history.append(stats)
-        for name, detector in _DETECTORS:
+        for name, detector in _DETECTORS if len(history) >= warmup else ():
             tripped, why = detector(history, constants)
             if tripped:
                 if last_clean is None:

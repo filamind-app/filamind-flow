@@ -53,6 +53,15 @@ def test_analyze_no_slip_on_gentle_rise() -> None:
     assert res.max_flow_mm3s == 8  # reached the highest tested flow
 
 
+def test_analyze_warmup_ignores_early_jump() -> None:
+    # Regression: a big vibration jump within the warm-up window must NOT trip (the SV08
+    # false-positive was a 9→35 IQR jump at the 2nd step reported as "slip at 7.5").
+    steps = [_meas(5, 2.0), _meas(6, 25.0)]  # huge jump at the 2nd step
+    res = mfa.analyze(steps)
+    assert res.slip_flow is None
+    assert res.max_flow_mm3s == 6  # reached the highest tested flow, no false slip
+
+
 def test_analyze_empty() -> None:
     assert mfa.analyze([]).max_flow_mm3s is None
 
