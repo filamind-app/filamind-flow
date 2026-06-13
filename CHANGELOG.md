@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.255.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — Kiosk panel.** The widget gains a **Kiosk** tab that drives the reversible
+  touchscreen takeover from v0.254.0: it shows which service currently owns the screen
+  (KlipperScreen / FilaMind kiosk / neither), a one-time setup hint with the exact install command
+  when the kiosk isn't provisioned yet, and — once installed — a **Switch to FilaMind ⟷ Restore
+  KlipperScreen** toggle behind a confirm, with a "make it the default at boot" option (otherwise the
+  swap is temporary) and a plain-language safety note including the SSH recovery command. Fully
+  translated across the seven languages.
+
 ## [0.254.0] - 2026-06-13
 
 ### Added

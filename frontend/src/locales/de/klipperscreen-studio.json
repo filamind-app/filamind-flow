@@ -32,7 +32,32 @@
     "view": {
       "config": "Konfig",
       "menus": "Menüs",
-      "themes": "Themes"
+      "themes": "Themes",
+      "kiosk": "Kiosk"
+    },
+    "kiosk": {
+      "loading": "Prüfe den Bildschirm…",
+      "intro": "Zeige FilaMind Flow selbst als Vollbild-Browser auf dem Touchscreen — volle Kontrolle über das, was der Bildschirm zeigt. Es tauscht mit KlipperScreen: das Starten des einen stoppt das andere.",
+      "current": "Bildschirm jetzt",
+      "mode": {
+        "kiosk": "FilaMind-Kiosk",
+        "klipperscreen": "KlipperScreen",
+        "none": "Keines läuft"
+      },
+      "notInstalled": "Kiosk noch nicht installiert",
+      "setupHint": "Einmalig auf dem Drucker-Host ausführen (installiert einen Vollbild-Browser + den Kiosk-Dienst):",
+      "persist": "Beim Booten zum Standard machen (sonst ist der Wechsel temporär — ein Neustart stellt das andere wieder her).",
+      "safety": "Standardmäßig temporär: ein Neustart bringt das andere zurück. Wird der Bildschirm dunkel, per SSH: sudo systemctl start KlipperScreen",
+      "switchBtn": "Zu FilaMind wechseln",
+      "restoreBtn": "KlipperScreen wiederherstellen",
+      "refresh": "Aktualisieren",
+      "confirmSwitchTitle": "FilaMind auf den Bildschirm bringen?",
+      "confirmRestoreTitle": "KlipperScreen wiederherstellen?",
+      "confirmBody": "Dies stoppt einen Bildschirmdienst und startet den anderen. Ein laufender Druck ist nicht betroffen, aber der Touchscreen wird beim Umschalten einige Sekunden schwarz.",
+      "confirm": "Ausführen",
+      "cancel": "Abbrechen",
+      "switchedNote": "FilaMind übernimmt den Bildschirm — es erscheint in wenigen Sekunden.",
+      "restoredNote": "KlipperScreen kommt zurück — der Bildschirm sollte gleich erscheinen."
     },
     "menus": {
       "loading": "Lade Menüs…",

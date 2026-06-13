@@ -32,7 +32,32 @@
     "view": {
       "config": "Config",
       "menus": "Menús",
-      "themes": "Temas"
+      "themes": "Temas",
+      "kiosk": "Quiosco"
+    },
+    "kiosk": {
+      "loading": "Comprobando la pantalla…",
+      "intro": "Pon FilaMind Flow en la pantalla táctil como un navegador a pantalla completa — control total de lo que muestra. Se intercambia con KlipperScreen: iniciar uno detiene el otro.",
+      "current": "Pantalla ahora",
+      "mode": {
+        "kiosk": "Quiosco FilaMind",
+        "klipperscreen": "KlipperScreen",
+        "none": "Ninguno activo"
+      },
+      "notInstalled": "Quiosco aún no instalado",
+      "setupHint": "Ejecuta esto una vez en el host de la impresora (instala un navegador a pantalla completa + el servicio del quiosco):",
+      "persist": "Hazlo el predeterminado al arrancar (si no, el cambio es temporal — un reinicio restaura el otro).",
+      "safety": "Temporal por defecto: un reinicio devuelve el otro. Si la pantalla se queda negra, por SSH: sudo systemctl start KlipperScreen",
+      "switchBtn": "Cambiar a FilaMind",
+      "restoreBtn": "Restaurar KlipperScreen",
+      "refresh": "Actualizar",
+      "confirmSwitchTitle": "¿Poner FilaMind en la pantalla?",
+      "confirmRestoreTitle": "¿Restaurar KlipperScreen?",
+      "confirmBody": "Esto detiene un servicio de pantalla e inicia el otro. No afecta una impresión activa, pero la pantalla táctil se apagará unos segundos al cambiar.",
+      "confirm": "Hacerlo",
+      "cancel": "Cancelar",
+      "switchedNote": "FilaMind está tomando la pantalla — aparecerá en unos segundos.",
+      "restoredNote": "KlipperScreen vuelve — la pantalla debería regresar pronto."
     },
     "menus": {
       "loading": "Cargando menús…",

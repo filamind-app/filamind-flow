@@ -32,7 +32,32 @@
     "view": {
       "config": "Config",
       "menus": "Menus",
-      "themes": "Themes"
+      "themes": "Themes",
+      "kiosk": "Kiosk"
+    },
+    "kiosk": {
+      "loading": "Checking the screen…",
+      "intro": "Put FilaMind Flow itself on the touchscreen as a fullscreen browser — total control of what the screen shows. It swaps with KlipperScreen: starting one stops the other.",
+      "current": "Screen now",
+      "mode": {
+        "kiosk": "FilaMind kiosk",
+        "klipperscreen": "KlipperScreen",
+        "none": "Neither running"
+      },
+      "notInstalled": "Kiosk not installed yet",
+      "setupHint": "Run this once on the printer host (installs a fullscreen browser + the kiosk service):",
+      "persist": "Make it the default at boot (otherwise the swap is temporary — a reboot restores the other).",
+      "safety": "Temporary by default: a reboot brings the other one back. If the screen ever goes dark, over SSH run: sudo systemctl start KlipperScreen",
+      "switchBtn": "Switch to FilaMind",
+      "restoreBtn": "Restore KlipperScreen",
+      "refresh": "Refresh",
+      "confirmSwitchTitle": "Put FilaMind on the screen?",
+      "confirmRestoreTitle": "Restore KlipperScreen?",
+      "confirmBody": "This stops one screen service and starts the other. It doesn't affect an active print, but the touchscreen will go black for a few seconds while it switches.",
+      "confirm": "Do it",
+      "cancel": "Cancel",
+      "switchedNote": "FilaMind is taking over the screen — it should appear in a few seconds.",
+      "restoredNote": "KlipperScreen is coming back — the screen should return shortly."
     },
     "menus": {
       "loading": "Loading menus…",
