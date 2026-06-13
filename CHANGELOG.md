@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.251.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — graphical options (backend).** Endpoints to read the touchscreen's
+  `[main]` options as a key→value map and set several at once through the gated save — the
+  foundation for a form-based settings editor (toggles / dropdowns) instead of hand-editing the
+  raw conf. Each option is added or replaced in place while KlipperScreen's auto-generated block is
+  left untouched. The form UI lands next.
+
 ## [0.250.0] - 2026-06-13
 
 ### Added
