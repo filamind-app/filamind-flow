@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
-from app.services import config_service, screen_service, screen_theme_service
+from app.services import config_service, kiosk_service, screen_service, screen_theme_service
 from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/screen", tags=["screen"])
@@ -262,3 +262,33 @@ async def screen_theme_delete(
     except OSError as exc:
         raise HTTPException(status_code=500, detail=f"Could not delete theme: {exc}") from exc
     return {"status": "deleted"}
+
+
+# ── FilaMind Kiosk — reversible swap of the touchscreen (KlipperScreen ⟷ FilaMind) ─────────────
+class KioskSwitchBody(BaseModel):
+    """Body for the kiosk switch/restore — whether to also flip the *boot* default."""
+
+    persist: bool = Field(
+        False, description="Also flip the boot default (else a reboot-recoverable swap)"
+    )
+
+
+@router.get("/kiosk")
+async def screen_kiosk_status() -> dict[str, Any]:
+    """Current screen mode + whether the kiosk is installed / active / boot-enabled."""
+    return await kiosk_service.status()
+
+
+@router.post("/kiosk/switch")
+async def screen_kiosk_switch(body: KioskSwitchBody) -> dict[str, Any]:
+    """Put FilaMind on the touchscreen (stops KlipperScreen via ``Conflicts=``)."""
+    try:
+        return await kiosk_service.switch_to_kiosk(body.persist)
+    except kiosk_service.KioskNotInstalledError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@router.post("/kiosk/restore")
+async def screen_kiosk_restore(body: KioskSwitchBody) -> dict[str, Any]:
+    """Hand the touchscreen back to KlipperScreen."""
+    return await kiosk_service.restore_screen(body.persist)
