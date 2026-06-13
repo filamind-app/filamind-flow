@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.241.2] - 2026-06-13
+
+### Changed
+
+- **Max-Flow accelerometer method: tuned to the real grind signature (now produces a usable
+  number).** A full live SV08 ramp showed grinding is an explosion of the within-step coefficient
+  of variation (CV%) — settled extrusion sat at 1–12%, then the gear skipping at ~32.5 mm³/s jumped
+  it to 26 → 66 → 71% — while the vibration *level* stayed flat. Detection now keys off an absolute
+  CV% ceiling (20%, with a CV ratio-jump backup) rather than the level, which on the SV08 pins the
+  max sustained flow at ~30 mm³/s (the CHCB-SV08's real ceiling). Still experimental; the CV ceiling
+  may need per-printer adjustment.
+
 ## [0.241.1] - 2026-06-13
 
 ### Fixed
