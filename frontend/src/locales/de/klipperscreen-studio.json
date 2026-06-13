@@ -31,7 +31,30 @@
     },
     "view": {
       "config": "Konfig",
+      "menus": "Menüs",
       "themes": "Themes"
+    },
+    "menus": {
+      "loading": "Lade Menüs…",
+      "intro": "Gestalte, was der Touchscreen zeigt: die Knöpfe jedes Menüs, ihre Reihenfolge und was jeder tut. Das Startbildschirm-Raster ist der __main-Baum, der Druckbildschirm __print.",
+      "addItem": "Knopf hinzufügen",
+      "empty": "Noch keine Einträge — füge einen hinzu.",
+      "up": "Hoch",
+      "down": "Runter",
+      "addChild": "Untereintrag hinzufügen",
+      "delete": "Löschen",
+      "name": "Name",
+      "icon": "Symbol",
+      "action": "Aktion",
+      "actSubmenu": "Untermenü öffnen",
+      "actPanel": "Bildschirm öffnen",
+      "actGcode": "G-Code ausführen",
+      "panel": "Bildschirm",
+      "gcode": "G-Code",
+      "enable": "Anzeigen wenn",
+      "save": "Menüs speichern",
+      "newItem": "Neuer Knopf",
+      "savedRestart": "Menüs gespeichert — starte KlipperScreen neu, um sie zu sehen."
     },
     "themes": {
       "loading": "Lade Themes…",

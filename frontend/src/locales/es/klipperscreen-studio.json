@@ -31,7 +31,30 @@
     },
     "view": {
       "config": "Config",
+      "menus": "Menús",
       "themes": "Temas"
+    },
+    "menus": {
+      "loading": "Cargando menús…",
+      "intro": "Diseña lo que muestra la pantalla táctil: los botones de cada menú, su orden y qué hace cada uno. La cuadrícula de inicio es el árbol __main; la pantalla de impresión, __print.",
+      "addItem": "Añadir botón",
+      "empty": "Sin elementos aún — añade uno.",
+      "up": "Subir",
+      "down": "Bajar",
+      "addChild": "Añadir subelemento",
+      "delete": "Eliminar",
+      "name": "Nombre",
+      "icon": "Icono",
+      "action": "Acción",
+      "actSubmenu": "Abrir un submenú",
+      "actPanel": "Abrir una pantalla",
+      "actGcode": "Ejecutar G-code",
+      "panel": "Pantalla",
+      "gcode": "G-code",
+      "enable": "Mostrar si",
+      "save": "Guardar menús",
+      "newItem": "Nuevo botón",
+      "savedRestart": "Menús guardados — reinicia KlipperScreen para verlos."
     },
     "themes": {
       "loading": "Cargando temas…",
