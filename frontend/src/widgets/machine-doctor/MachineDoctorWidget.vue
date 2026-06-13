@@ -6,7 +6,7 @@
  *  baseline, install health) into an A–F grade with transparent scoring, and every finding
  *  carries a deep-link button into the widget that fixes it. Read-only: scanning never runs
  *  anything on the printer. */
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
@@ -86,6 +86,33 @@ const STATUS_BG: Record<string, string> = {
   fail: 'bg-brand-red/10',
   unknown: 'bg-ink/5',
 }
+
+const PILLAR_BAR: Record<string, string> = {
+  ok: 'bg-brand-lime',
+  warn: 'bg-brand-yellow',
+  fail: 'bg-brand-red',
+  unknown: 'bg-ink/20',
+}
+
+function pillarLabel(key: string): string {
+  const k = `machineDoctor.pillar.${key}`
+  return te(k) ? t(k) : key
+}
+
+/** The headline verdict, with the weakest pillar's key resolved to its localized label. */
+const assessmentText = computed(() => {
+  const a = report.value?.assessment
+  if (!a) return ''
+  const key = `machineDoctor.assessment.${a.code}`
+  if (!te(key)) return ''
+  const pillar = a.params.pillar ? pillarLabel(String(a.params.pillar)) : ''
+  return t(key, { ...a.params, pillar } as Record<string, unknown>)
+})
+
+const hasStats = computed(() => {
+  const s = report.value?.stats
+  return !!(s && (s.max_flow?.max_flow_mm3s != null || s.tuning?.length || s.firmware))
+})
 </script>
 
 <template>
@@ -118,11 +145,107 @@ const STATUS_BG: Record<string, string> = {
           {{ report.grade }}
         </span>
         <div class="min-w-0 space-y-0.5">
-          <p class="font-bold">{{ t('machineDoctor.scoreLine', { score: report.score }) }}</p>
+          <p v-if="assessmentText" class="font-bold">{{ assessmentText }}</p>
           <p class="font-mono text-[11px] opacity-70">
+            {{ t('machineDoctor.scoreLine', { score: report.score }) }} ·
             {{ t('machineDoctor.counts', { errors: report.errors, warnings: report.warnings }) }}
           </p>
-          <p class="text-[10px] opacity-50">{{ t('machineDoctor.scoreHint') }}</p>
+          <p class="text-[11px] opacity-50">{{ t('machineDoctor.scoreHint') }}</p>
+        </div>
+      </div>
+
+      <!-- Health pillars -->
+      <div v-if="report.pillars?.length" class="nb-card space-y-2 bg-surface p-3">
+        <p class="text-xs font-bold">{{ t('machineDoctor.pillars.title') }}</p>
+        <div v-for="p in report.pillars" :key="p.key" class="space-y-1">
+          <div class="flex items-center justify-between gap-2 text-[11px]">
+            <span class="min-w-0 truncate">
+              {{ t('machineDoctor.pillar.' + p.key) }}
+              <span class="opacity-50">· {{ Math.round(p.weight * 100) }}%</span>
+            </span>
+            <span class="shrink-0 font-mono" :class="p.score === null ? 'opacity-50' : 'font-bold'">
+              {{ p.score === null ? t('machineDoctor.pillars.notMeasured') : Math.round(p.score) }}
+            </span>
+          </div>
+          <div class="h-2 overflow-hidden rounded-full border border-ink bg-paper">
+            <div
+              class="h-full"
+              :class="PILLAR_BAR[p.status] ?? 'bg-ink/20'"
+              :style="{ width: (p.score ?? 0) + '%' }"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Running services -->
+      <div v-if="report.services?.units?.length" class="nb-card space-y-1 bg-surface p-3">
+        <p class="text-xs font-bold">{{ t('machineDoctor.services.title') }}</p>
+        <ul class="space-y-1">
+          <li
+            v-for="s in report.services.units"
+            :key="s.name"
+            class="flex items-center gap-2 text-[11px]"
+          >
+            <span
+              class="shrink-0 font-bold"
+              :class="s.active ? 'text-brand-lime' : 'text-brand-red'"
+              aria-hidden="true"
+            >
+              {{ s.active ? '✓' : '✕' }}
+            </span>
+            <span class="min-w-0 flex-1 truncate font-mono">{{ s.name }}</span>
+            <span class="shrink-0 font-mono text-[11px] opacity-60">
+              {{
+                s.sub_state ||
+                (s.active
+                  ? t('machineDoctor.services.active')
+                  : t('machineDoctor.services.inactive'))
+              }}
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- At a glance (cross-widget stats) -->
+      <div v-if="hasStats" class="nb-card space-y-1.5 bg-surface p-3">
+        <p class="text-xs font-bold">{{ t('machineDoctor.stats.title') }}</p>
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div
+            v-if="report.stats.max_flow?.max_flow_mm3s != null"
+            class="rounded-brutal border-2 border-ink bg-paper p-1.5"
+          >
+            <div class="text-[11px] opacity-60">{{ t('machineDoctor.stats.maxFlow') }}</div>
+            <div class="font-mono text-xs font-bold">
+              {{ report.stats.max_flow.max_flow_mm3s }} mm³/s
+            </div>
+          </div>
+          <div
+            v-for="ax in report.stats.tuning || []"
+            :key="ax.axis"
+            class="rounded-brutal border-2 border-ink bg-paper p-1.5"
+          >
+            <div class="text-[11px] opacity-60">
+              {{ t('machineDoctor.stats.tuningAxis', { axis: ax.axis.toUpperCase() }) }}
+            </div>
+            <div class="font-mono text-xs font-bold">
+              {{ (ax.shaper || '—').toUpperCase()
+              }}{{ ax.freq != null ? ' · ' + ax.freq.toFixed(1) + ' Hz' : '' }}
+              <span v-if="ax.grade">· {{ ax.grade }}</span>
+            </div>
+          </div>
+          <div
+            v-if="report.stats.firmware"
+            class="rounded-brutal border-2 border-ink bg-paper p-1.5"
+          >
+            <div class="text-[11px] opacity-60">{{ t('machineDoctor.stats.firmware') }}</div>
+            <div class="font-mono text-xs font-bold">
+              {{
+                report.stats.firmware.out_of_sync
+                  ? t('machineDoctor.stats.outOfSync', { n: report.stats.firmware.out_of_sync })
+                  : t('machineDoctor.stats.allSynced')
+              }}
+            </div>
+          </div>
         </div>
       </div>
 
