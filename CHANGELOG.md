@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.249.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — theme builder (backend).** Endpoints to generate a KlipperScreen
+  touchscreen theme from a color palette and manage it: preview/render the theme's `style.css` +
+  `style.conf` from a palette of GTK `@define-color` tokens, write the theme folder to the host's
+  `styles/` directory (with a generated-theme marker so stock themes are never overwritten or
+  deleted), list installed themes, delete a generated one, and activate a theme by setting
+  `[main] theme` in `KlipperScreen.conf` (preserving KlipperScreen's auto-generated block). The
+  color-picker UI + live preview that drive these land in the next release.
+
 ## [0.248.0] - 2026-06-13
 
 ### Added

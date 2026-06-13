@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     klipper_dir: str = "~/klipper"
     katapult_dir: str = "~/katapult"
 
+    # KlipperScreen install dir — its themes live under <klipperscreen_dir>/styles/ (outside any
+    # Moonraker file root, so the theme builder writes there host-side). KlipperScreen Studio.
+    klipperscreen_dir: str = "~/KlipperScreen"
+
     # Where FilaMind keeps its own data (per-board firmware profiles, etc.).
     data_dir: str = "~/printer_data/config/filamind"
 
