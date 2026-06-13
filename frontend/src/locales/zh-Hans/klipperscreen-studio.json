@@ -29,6 +29,28 @@
       "busy": "打印机忙碌时被拒绝——空闲时再试。",
       "stale": "自加载以来 KlipperScreen.conf 在磁盘上已更改（可能在屏幕上编辑过）。保存前请重新加载，以免覆盖该更改。"
     },
+    "view": {
+      "config": "配置",
+      "themes": "主题"
+    },
+    "themes": {
+      "loading": "正在加载主题…",
+      "palette": "调色板",
+      "radius": "圆角半径",
+      "preview": "实时预览",
+      "btn": "按钮",
+      "previewWarn": "警告",
+      "previewApprox": "近似预览——实际屏幕由 GTK 渲染，可能略有差异。",
+      "namePlaceholder": "新主题名称",
+      "createApply": "创建并应用",
+      "createOnly": "仅创建",
+      "installed": "已安装主题",
+      "apply": "应用",
+      "delete": "删除主题",
+      "generated": "本工具创建",
+      "created": "主题已创建。从列表中应用，然后重启。",
+      "appliedRestart": "已设置主题——重启 KlipperScreen 以查看。"
+    },
     "restart": {
       "button": "重启 KlipperScreen",
       "restarting": "重启中…",

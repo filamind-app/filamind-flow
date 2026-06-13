@@ -29,6 +29,28 @@
       "busy": "Abgelehnt, während der Drucker beschäftigt ist — versuche es erneut im Leerlauf.",
       "stale": "KlipperScreen.conf wurde seit dem Laden auf der Festplatte geändert (wahrscheinlich am Bildschirm bearbeitet). Lade neu, bevor du speicherst, um diese Änderung nicht zu überschreiben."
     },
+    "view": {
+      "config": "Konfig",
+      "themes": "Themes"
+    },
+    "themes": {
+      "loading": "Lade Themes…",
+      "palette": "Palette",
+      "radius": "Eckenradius",
+      "preview": "Live-Vorschau",
+      "btn": "Knopf",
+      "previewWarn": "Warnung",
+      "previewApprox": "Ungefähre Vorschau — der echte Bildschirm rendert mit GTK; kleine Abweichungen sind normal.",
+      "namePlaceholder": "Name des neuen Themes",
+      "createApply": "Erstellen & anwenden",
+      "createOnly": "Nur erstellen",
+      "installed": "Installierte Themes",
+      "apply": "Anwenden",
+      "delete": "Theme löschen",
+      "generated": "Hier erstellt",
+      "created": "Theme erstellt. Wende es aus der Liste an, dann neu starten.",
+      "appliedRestart": "Theme gesetzt — starte KlipperScreen neu, um es zu sehen."
+    },
     "restart": {
       "button": "KlipperScreen neu starten",
       "restarting": "Starte neu…",
