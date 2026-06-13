@@ -17,6 +17,7 @@ from app.api.routes import (
     moonraker,
     overview,
     reference,
+    screen,
     shaper,
     tasks,
     topology,
@@ -40,3 +41,4 @@ api_router.include_router(topology.router)
 api_router.include_router(macro.router)
 api_router.include_router(hardware.router)
 api_router.include_router(camera.router)
+api_router.include_router(screen.router)
