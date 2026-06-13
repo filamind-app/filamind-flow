@@ -30,12 +30,18 @@ const params = reactive<MaxFlowParams>({
   samples_per_step: 20,
   driver: 'tmc2209',
   park_for_view: true,
+  auto_stealthchop: false,
 })
 
 /** Webcams configured on the printer — the live view is shown during a run when one exists. */
 const cameras = ref<{ name: string; service: string }[]>([])
 const cameraName = computed(() => cameras.value[0]?.name)
 const cameraAvailable = computed(() => cameras.value.length > 0)
+
+/** SG4 drivers (TMC2209/2240) read StallGuard only in StealthChop — the auto-StealthChop option
+ *  (temporarily set + revert a stealthchop_threshold) is offered only for them. */
+const SG4_DRIVERS = ['tmc2209', 'tmc2240']
+const isSg4 = computed(() => SG4_DRIVERS.includes(params.driver))
 
 const hotends = ref<HotendRow[]>([])
 const selectedHotend = ref<string | null>(null)
@@ -114,12 +120,12 @@ async function doPlan(): Promise<void> {
 const runInfo = ref<string | null>(null)
 
 /** Pre-ramp phases report step 0 with a `phase` tag; the ramp reports step/total + flow. */
-const PRE_RAMP_PHASES = ['homing', 'centering', 'heating', 'checking'] as const
+const PRE_RAMP_PHASES = ['enabling', 'homing', 'centering', 'heating', 'checking', 'reverting']
 const phaseLabel = computed(() => {
   const p = flowRun.progress
   if (!p) return t('maxFlow.run.starting')
   const phase = String(p.detail?.phase ?? '')
-  if ((PRE_RAMP_PHASES as readonly string[]).includes(phase)) {
+  if (PRE_RAMP_PHASES.includes(phase)) {
     return t(`maxFlow.run.phase.${phase}`)
   }
   if (p.step > 0) {
@@ -130,6 +136,21 @@ const phaseLabel = computed(() => {
     })
   }
   return t('maxFlow.run.starting')
+})
+
+/** The 5 core phases shown as a horizontal stepper; `enabling`/`reverting` are config bookends. */
+const STEPPER = [
+  { key: 'home', phases: ['homing'] },
+  { key: 'center', phases: ['centering'] },
+  { key: 'heat', phases: ['heating'] },
+  { key: 'check', phases: ['checking'] },
+  { key: 'ramp', phases: ['ramp'] },
+] as const
+/** Index of the active stepper cell from the current phase (−1 before it starts / during bookends). */
+const stepperActive = computed(() => {
+  const phase = String(flowRun.progress?.detail?.phase ?? '')
+  if (phase === 'reverting') return STEPPER.length // all done, restoring config
+  return STEPPER.findIndex((s) => (s.phases as readonly string[]).includes(phase))
 })
 /** True when a finished run produced no usable StallGuard samples (result is unreliable). */
 const noSignal = computed(() => result.value != null && result.value.sg_samples_seen === false)
@@ -312,6 +333,19 @@ onMounted(async () => {
           />
         </label>
       </div>
+      <!-- SG4 only: offer to flip the extruder to StealthChop just for the test, then undo it. -->
+      <label
+        v-if="isSg4"
+        class="flex items-start gap-2 rounded-brutal border-2 border-dashed border-ink/40 bg-paper/60 p-1.5 text-[11px]"
+      >
+        <input v-model="params.auto_stealthchop" type="checkbox" class="mt-0.5" />
+        <span>
+          <span class="font-bold">{{ t('maxFlow.params.autoStealthchop') }}</span>
+          <span class="block text-[10px] opacity-70">{{
+            t('maxFlow.params.autoStealthchopHint')
+          }}</span>
+        </span>
+      </label>
       <button class="nb-btn bg-brand-cyan px-3 py-1 text-xs" :disabled="planning" @click="doPlan">
         {{ t('maxFlow.plan.button') }}
       </button>
@@ -439,10 +473,33 @@ onMounted(async () => {
           }"
         ></div>
       </div>
-      <!-- Watch the nozzle while it runs (only when the printer has a webcam). -->
-      <CameraView v-if="cameraAvailable" :active="true" :name="cameraName" />
+      <!-- Phase stepper: home → center → heat → check → ramp (done = lime, active = cyan). -->
+      <div class="flex items-stretch gap-1">
+        <div
+          v-for="(s, i) in STEPPER"
+          :key="s.key"
+          class="flex-1 rounded-brutal border-2 border-ink px-1 py-1 text-center text-[9px] font-bold uppercase tracking-wide transition-colors"
+          :class="
+            i < stepperActive
+              ? 'bg-brand-lime'
+              : i === stepperActive
+                ? 'bg-brand-cyan'
+                : 'bg-paper opacity-50'
+          "
+        >
+          {{ t(`maxFlow.run.step.${s.key}`) }}
+        </div>
+      </div>
       <p class="text-[10px] opacity-60">{{ t('maxFlow.run.abortNote') }}</p>
     </div>
+
+    <!-- Live nozzle camera as a fixed, compact PiP while a run is active (only when one exists). -->
+    <CameraView
+      v-if="cameraAvailable && flowRun.status !== 'idle'"
+      pip
+      :active="true"
+      :name="cameraName"
+    />
 
     <p v-if="runInfo" class="nb-card bg-brand-cyan/20 p-2 font-mono text-[11px]">{{ runInfo }}</p>
     <p v-if="runErr" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">{{ runErr }}</p>

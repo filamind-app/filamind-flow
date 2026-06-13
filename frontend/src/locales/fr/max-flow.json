@@ -66,7 +66,9 @@
       "samples": "Échantillons / palier",
       "extrudePerStep": "Extrusion / palier (mm)",
       "driver": "Driver de l’extrudeur",
-      "driverDetected": "détecté depuis l’imprimante"
+      "driverDetected": "détecté depuis l’imprimante",
+      "autoStealthchop": "Activation automatique de StealthChop pour le test",
+      "autoStealthchopHint": "TMC2209/2240 uniquement : écrit temporairement un seuil stealthchop_threshold sur l'extrudeur pour que StallGuard puisse le lire, puis le désactive après le test. Restaure printer.cfg ; redémarrage firmware requis."
     },
     "plan": {
       "button": "Prévisualiser le plan",
@@ -113,7 +115,17 @@
         "homing": "Homing de l'imprimante…",
         "centering": "Centrage de la buse…",
         "heating": "Chauffage du hotend…",
-        "checking": "Vérification du signal StallGuard…"
+        "checking": "Vérification du signal StallGuard…",
+        "enabling": "Activation de StealthChop…",
+        "ramp": "Augmentation du débit…",
+        "reverting": "Restauration de la configuration…"
+      },
+      "step": {
+        "home": "Homing",
+        "center": "Centrage",
+        "heat": "Chauffage",
+        "check": "Vérification",
+        "ramp": "Montée"
       }
     },
     "result": {
@@ -137,7 +149,11 @@
       "title": "Caméra en direct",
       "live": "EN DIRECT",
       "error": "Caméra indisponible.",
-      "willShow": "Une vue en direct de la caméra montrera la buse pendant le test."
+      "willShow": "Une vue en direct de la caméra montrera la buse pendant le test.",
+      "minimize": "Réduire",
+      "maximize": "Agrandir",
+      "enlarge": "Élargir",
+      "shrink": "Rétrécir"
     }
   }
 }

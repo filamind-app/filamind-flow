@@ -66,7 +66,9 @@
       "samples": "Muestras / paso",
       "extrudePerStep": "Extrusión / paso (mm)",
       "driver": "Driver del extrusor",
-      "driverDetected": "detectado de la impresora"
+      "driverDetected": "detectado de la impresora",
+      "autoStealthchop": "Auto-habilitar StealthChop para la prueba",
+      "autoStealthchopHint": "Solo TMC2209/2240: escribe temporalmente un stealthchop_threshold en el extrusor para que StallGuard pueda leer, luego lo comenta después de la prueba. Restaura printer.cfg; reinicio del firmware cada camino."
     },
     "plan": {
       "button": "Previsualizar plan",
@@ -113,7 +115,17 @@
         "homing": "Haciendo Homing de la impresora…",
         "centering": "Centrando la boquilla…",
         "heating": "Calentando el hotend…",
-        "checking": "Comprobando la señal de StallGuard…"
+        "checking": "Comprobando la señal de StallGuard…",
+        "enabling": "Habilitando StealthChop…",
+        "ramp": "Ramificando el flujo…",
+        "reverting": "Restaurando la configuración…"
+      },
+      "step": {
+        "home": "Homing",
+        "center": "Centrar",
+        "heat": "Calentar",
+        "check": "Comprobar",
+        "ramp": "Ramificar"
       }
     },
     "result": {
@@ -137,7 +149,11 @@
       "title": "Cámara en vivo",
       "live": "EN VIVO",
       "error": "Cámara no disponible.",
-      "willShow": "Una vista de cámara en vivo mostrará la boquilla durante la prueba."
+      "willShow": "Una vista de cámara en vivo mostrará la boquilla durante la prueba.",
+      "minimize": "Minimizar",
+      "maximize": "Maximizar",
+      "enlarge": "Ampliar",
+      "shrink": "Reducir"
     }
   }
 }

@@ -66,7 +66,9 @@
       "samples": "العيّنات / الخطوة",
       "extrudePerStep": "البثق / الخطوة (mm)",
       "driver": "مشغّل الباثق",
-      "driverDetected": "مكتشف من الطابعة"
+      "driverDetected": "مكتشف من الطابعة",
+      "autoStealthchop": "تفعيل StealthChop تلقائياً للاختبار",
+      "autoStealthchopHint": "TMC2209/2240 فقط: يكتب مؤقتاً stealthchop_threshold إلى الباثق حتى يتمكّن StallGuard من القراءة، ثم يُعلّق عليه بعد الاختبار. يستعيد printer.cfg؛ إعادة تشغيل الثابت في كلا الاتجاهين."
     },
     "plan": {
       "button": "معاينة الخطة",
@@ -113,7 +115,17 @@
         "homing": "جارٍ منزلة الطابعة…",
         "centering": "جارٍ تركيز الفوّهة…",
         "heating": "جارٍ تسخين رأس التسخين…",
-        "checking": "جارٍ فحص إشارة StallGuard…"
+        "checking": "جارٍ فحص إشارة StallGuard…",
+        "enabling": "تفعيل StealthChop…",
+        "ramp": "جارٍ رفع التدفّق…",
+        "reverting": "جارٍ استعادة التكوين…"
+      },
+      "step": {
+        "home": "منزلة",
+        "center": "تركيز",
+        "heat": "تسخين",
+        "check": "فحص",
+        "ramp": "رفع"
       }
     },
     "result": {
@@ -137,7 +149,11 @@
       "title": "كاميرا مباشرة",
       "live": "مباشر",
       "error": "الكاميرا غير متاحة.",
-      "willShow": "ستظهر رؤية كاميرا مباشرة للفوّهة أثناء الاختبار."
+      "willShow": "ستظهر رؤية كاميرا مباشرة للفوّهة أثناء الاختبار.",
+      "minimize": "تصغير",
+      "maximize": "تكبير",
+      "enlarge": "توسيع",
+      "shrink": "تضييق"
     }
   }
 }

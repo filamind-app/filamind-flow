@@ -12,17 +12,24 @@ const props = withDefaults(
     active?: boolean
     /** Snapshot refresh interval (ms). */
     intervalMs?: number
+    /** Render as a fixed, compact picture-in-picture pinned to the corner. */
+    pip?: boolean
   }>(),
-  { name: undefined, active: true, intervalMs: 700 },
+  { name: undefined, active: true, intervalMs: 700, pip: false },
 )
 
 const { t } = useI18n({ useScope: 'global' })
 
 const tick = ref(0)
 const failed = ref(false)
+const collapsed = ref(false)
+const large = ref(false)
 let timer: ReturnType<typeof setInterval> | null = null
 
 const src = computed(() => snapshotUrl(props.name, tick.value))
+const widthClass = computed(() =>
+  !props.pip ? '' : large.value ? 'w-[clamp(280px,42vw,460px)]' : 'w-[clamp(190px,26vw,270px)]',
+)
 
 function stop(): void {
   if (timer !== null) {
@@ -42,12 +49,16 @@ function start(): void {
   )
 }
 
+// Poll only while active AND expanded — no point fetching snapshots behind a collapsed PiP.
 watch(
-  () => props.active,
-  (on) => {
-    failed.value = false
-    if (on) start()
-    else stop()
+  [() => props.active, collapsed],
+  ([on, isCollapsed]) => {
+    if (on && !isCollapsed) {
+      failed.value = false
+      start()
+    } else {
+      stop()
+    }
   },
   { immediate: true },
 )
@@ -63,18 +74,52 @@ function onLoad(): void {
 </script>
 
 <template>
-  <div class="nb-card overflow-hidden bg-paper p-0">
-    <div class="flex items-center justify-between border-b-2 border-ink bg-surface px-2 py-1">
-      <span class="text-[11px] font-bold">📷 {{ t('maxFlow.camera.title') }}</span>
-      <span
-        v-if="active && !failed"
-        class="flex items-center gap-1 font-mono text-[10px] text-brand-red"
-      >
-        <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-brand-red"></span>
-        {{ t('maxFlow.camera.live') }}
-      </span>
+  <div
+    class="nb-card overflow-hidden bg-paper p-0"
+    :class="
+      pip ? ['fixed bottom-3 end-3 z-40 shadow-[4px_4px_0_0_var(--color-ink)]', widthClass] : ''
+    "
+    :role="pip ? 'complementary' : undefined"
+    :aria-label="pip ? t('maxFlow.camera.title') : undefined"
+  >
+    <div class="flex items-center justify-between gap-2 border-b-2 border-ink bg-surface px-2 py-1">
+      <span class="truncate text-[11px] font-bold">📷 {{ t('maxFlow.camera.title') }}</span>
+      <div class="flex shrink-0 items-center gap-1.5">
+        <span
+          v-if="active && !failed"
+          class="flex items-center gap-1 font-mono text-[10px] text-brand-red"
+        >
+          <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-brand-red"></span>
+          {{ t('maxFlow.camera.live') }}
+        </span>
+        <template v-if="pip">
+          <button
+            type="button"
+            class="rounded border border-ink px-1 text-[10px] leading-none hover:bg-paper"
+            :title="large ? t('maxFlow.camera.shrink') : t('maxFlow.camera.enlarge')"
+            :aria-label="large ? t('maxFlow.camera.shrink') : t('maxFlow.camera.enlarge')"
+            @click="large = !large"
+          >
+            {{ large ? '▢' : '▣' }}
+          </button>
+          <button
+            type="button"
+            class="rounded border border-ink px-1 text-[10px] leading-none hover:bg-paper"
+            :title="collapsed ? t('maxFlow.camera.maximize') : t('maxFlow.camera.minimize')"
+            :aria-label="collapsed ? t('maxFlow.camera.maximize') : t('maxFlow.camera.minimize')"
+            @click="collapsed = !collapsed"
+          >
+            {{ collapsed ? '▸' : '▾' }}
+          </button>
+        </template>
+      </div>
     </div>
-    <div class="relative bg-ink/90" style="aspect-ratio: 16 / 9">
+    <div
+      v-show="!collapsed"
+      data-testid="cam-feed"
+      class="relative bg-ink/90"
+      style="aspect-ratio: 16 / 9"
+    >
       <img
         v-show="!failed"
         :src="src"
