@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.256.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — Settings form.** A new **Settings** tab turns the most-used
+  `KlipperScreen.conf` `[main]` options into a friendly form — theme (from the installed themes),
+  language, screen-sleep timeout (shown as 30 s / 10 min / 1 h), font size, and toggles for
+  24-hour clock, DPMS blanking, mouse cursor, emergency-stop confirm, heater-power %, and
+  auto-closing pop-ups. Values are pre-filled from the live config, **only the options you change
+  are written** (through the same gated save), and a restart applies them. Fully translated across
+  the seven languages. This completes the KlipperScreen Studio widget (config · settings · menus ·
+  themes · kiosk).
+
 ## [0.255.0] - 2026-06-13
 
 ### Added

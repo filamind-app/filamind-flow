@@ -31,9 +31,32 @@
     },
     "view": {
       "config": "配置",
+      "settings": "设置",
       "menus": "菜单",
       "themes": "主题",
       "kiosk": "自助屏"
+    },
+    "settings": {
+      "loading": "正在加载设置…",
+      "intro": "以表单形式提供最常用的 KlipperScreen 显示选项。只写入你更改的项——其余保持原值。重启后生效。",
+      "onlyChanged": "只有你在此更改的设置才会写入 KlipperScreen.conf。",
+      "save": "保存设置",
+      "savedRestart": "已保存——重启 KlipperScreen 以生效。",
+      "unset": "保持未设置（默认）",
+      "never": "从不（常亮）",
+      "fontSize": { "small": "小", "medium": "中", "large": "大", "max": "最大" },
+      "label": {
+        "theme": "主题",
+        "language": "语言",
+        "screen_blanking": "息屏延时",
+        "font_size": "字体大小",
+        "24htime": "24 小时制",
+        "use_dpms": "使用 DPMS 息屏",
+        "show_cursor": "显示鼠标指针",
+        "confirm_estop": "急停前确认",
+        "show_heater_power": "显示加热器功率 %",
+        "autoclose_popups": "自动关闭弹窗"
+      }
     },
     "kiosk": {
       "loading": "正在检查屏幕…",

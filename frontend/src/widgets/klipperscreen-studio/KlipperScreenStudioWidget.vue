@@ -16,6 +16,7 @@ import {
   fetchKioskStatus,
   fetchMenus,
   fetchScreenConf,
+  fetchScreenOptions,
   fetchScreenStatus,
   fetchThemes,
   type KioskStatus,
@@ -24,6 +25,7 @@ import {
   restoreScreen,
   saveMenus,
   saveScreenConf,
+  saveScreenOptions,
   ScreenSaveError,
   type ScreenTheme,
   switchToKiosk,
@@ -52,7 +54,7 @@ const restarted = ref(false)
 const restartError = ref<string | null>(null)
 
 // Theme builder
-type View = 'config' | 'menus' | 'themes' | 'kiosk'
+type View = 'config' | 'settings' | 'menus' | 'themes' | 'kiosk'
 const view = ref<View>('config')
 const themes = ref<ScreenTheme[]>([])
 const tokens = ref<string[]>([])
@@ -82,6 +84,32 @@ const kioskError = ref<string | null>(null)
 const kioskNote = ref<string | null>(null)
 const kioskPersist = ref(false)
 const confirmKiosk = ref<null | 'switch' | 'restore'>(null)
+
+// Settings — friendly form over the common [main] options
+type SettingField = { key: string; type: 'bool' | 'select'; options?: string[] }
+const SETTINGS_FIELDS: SettingField[] = [
+  { key: 'theme', type: 'select' }, // options filled from installed themes
+  { key: 'language', type: 'select', options: ['', 'en', 'de', 'es', 'fr', 'ru', 'zh_CN'] },
+  {
+    key: 'screen_blanking',
+    type: 'select',
+    options: ['off', '30', '60', '120', '300', '600', '1800', '3600', '14400'],
+  },
+  { key: 'font_size', type: 'select', options: ['small', 'medium', 'large', 'max'] },
+  { key: '24htime', type: 'bool' },
+  { key: 'use_dpms', type: 'bool' },
+  { key: 'show_cursor', type: 'bool' },
+  { key: 'confirm_estop', type: 'bool' },
+  { key: 'show_heater_power', type: 'bool' },
+  { key: 'autoclose_popups', type: 'bool' },
+]
+const settingsLoaded = ref<Record<string, string>>({})
+const settingsValues = reactive<Record<string, string>>({})
+const settingsSha = ref<string | null>(null)
+const settingsTouched = reactive(new Set<string>())
+const settingsBusy = ref(false)
+const settingsError = ref<string | null>(null)
+const settingsSaved = ref(false)
 
 async function loadConf(): Promise<void> {
   loadingConf.value = true
@@ -174,6 +202,7 @@ function switchView(v: View): void {
   if (v === 'themes' && !tokens.value.length) void loadThemes()
   if (v === 'menus' && !menuItems.value.length && !menuSha.value) void loadMenus()
   if (v === 'kiosk' && !kiosk.value) void loadKiosk()
+  if (v === 'settings' && !Object.keys(settingsValues).length) void loadSettings()
 }
 
 async function loadKiosk(): Promise<void> {
@@ -207,6 +236,78 @@ async function doKiosk(action: 'switch' | 'restore'): Promise<void> {
     kioskError.value = describeError(e)
   } finally {
     kioskBusy.value = false
+  }
+}
+
+const themeOptions = computed(() => themes.value.map((th) => th.name))
+
+/** The selectable values for a settings field — always offers "unset" + the current value. */
+function settingOptions(f: SettingField): string[] {
+  let opts = f.key === 'theme' ? themeOptions.value : (f.options ?? [])
+  if (!opts.includes('')) opts = ['', ...opts]
+  const cur = settingsValues[f.key]
+  if (cur && !opts.includes(cur)) opts = [...opts, cur]
+  return opts
+}
+
+/** A human label for an option value (seconds → 30 s / 5 min / 1 h, font sizes, "unset"). */
+function settingOptionLabel(key: string, v: string): string {
+  if (v === '') return t('klipperscreenStudio.settings.unset')
+  if (key === 'screen_blanking') {
+    if (v === 'off') return t('klipperscreenStudio.settings.never')
+    const n = Number(v)
+    if (!Number.isFinite(n)) return v
+    if (n >= 3600) return `${n / 3600} h`
+    if (n >= 60) return `${n / 60} min`
+    return `${n} s`
+  }
+  if (key === 'font_size') return t('klipperscreenStudio.settings.fontSize.' + v)
+  return v
+}
+
+async function loadSettings(): Promise<void> {
+  settingsBusy.value = true
+  settingsError.value = null
+  try {
+    const s = await fetchScreenOptions()
+    settingsLoaded.value = s.options
+    settingsSha.value = s.sha256
+    settingsTouched.clear()
+    for (const f of SETTINGS_FIELDS) settingsValues[f.key] = s.options[f.key] ?? ''
+    if (!themes.value.length) await loadThemes() // populate the theme dropdown
+  } catch (e) {
+    settingsError.value = describeError(e)
+  } finally {
+    settingsBusy.value = false
+  }
+}
+
+function onSetting(key: string, value: string): void {
+  settingsValues[key] = value
+  settingsTouched.add(key)
+  settingsSaved.value = false
+}
+
+async function saveSettings(): Promise<void> {
+  const changed: Record<string, string> = {}
+  for (const k of settingsTouched) changed[k] = settingsValues[k]
+  if (!Object.keys(changed).length) return
+  settingsBusy.value = true
+  settingsError.value = null
+  try {
+    const c = await saveScreenOptions(changed, settingsSha.value)
+    settingsSha.value = c.sha256
+    settingsLoaded.value = { ...settingsLoaded.value, ...changed }
+    settingsTouched.clear()
+    settingsSaved.value = true
+  } catch (e) {
+    if (e instanceof ScreenSaveError && e.status === 412)
+      settingsError.value = t('klipperscreenStudio.save.stale')
+    else if (e instanceof ScreenSaveError && e.status === 409)
+      settingsError.value = t('klipperscreenStudio.save.busy')
+    else settingsError.value = describeError(e)
+  } finally {
+    settingsBusy.value = false
   }
 }
 
@@ -431,19 +532,21 @@ onMounted(() => void loadStatus())
         >
       </div>
 
-      <!-- Config / Menus / Themes / Kiosk view toggle -->
-      <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
-        <button
-          v-for="v in ['config', 'menus', 'themes', 'kiosk'] as const"
-          :key="v"
-          type="button"
-          class="nb-seg"
-          :class="view === v ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
-          :aria-pressed="view === v"
-          @click="switchView(v)"
-        >
-          {{ t('klipperscreenStudio.view.' + v) }}
-        </button>
+      <!-- Config / Settings / Menus / Themes / Kiosk view toggle -->
+      <div class="-mx-1 overflow-x-auto px-1">
+        <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
+          <button
+            v-for="v in ['config', 'settings', 'menus', 'themes', 'kiosk'] as const"
+            :key="v"
+            type="button"
+            class="nb-seg whitespace-nowrap"
+            :class="view === v ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
+            :aria-pressed="view === v"
+            @click="switchView(v)"
+          >
+            {{ t('klipperscreenStudio.view.' + v) }}
+          </button>
+        </div>
       </div>
 
       <template v-if="view === 'config'">
@@ -539,6 +642,105 @@ onMounted(() => void loadStatus())
               </button>
             </div>
           </div>
+        </template>
+      </template>
+
+      <!-- Settings view: a friendly form over the common [main] options -->
+      <template v-else-if="view === 'settings'">
+        <p
+          v-if="settingsBusy && !Object.keys(settingsValues).length"
+          class="font-mono text-xs opacity-70"
+        >
+          {{ t('klipperscreenStudio.settings.loading') }}
+        </p>
+        <template v-else>
+          <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.settings.intro') }}</p>
+
+          <div class="nb-card space-y-2 bg-surface p-3">
+            <div
+              v-for="f in SETTINGS_FIELDS"
+              :key="f.key"
+              class="flex flex-wrap items-center gap-x-3 gap-y-1"
+            >
+              <label v-if="f.type === 'bool'" class="flex items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  class="h-4 w-4"
+                  :checked="settingsValues[f.key] === 'True'"
+                  @change="
+                    onSetting(f.key, ($event.target as HTMLInputElement).checked ? 'True' : 'False')
+                  "
+                />
+                <span class="font-medium">{{
+                  t('klipperscreenStudio.settings.label.' + f.key)
+                }}</span>
+              </label>
+              <template v-else>
+                <label :for="'set-' + f.key" class="min-w-[8rem] text-xs font-medium">
+                  {{ t('klipperscreenStudio.settings.label.' + f.key) }}
+                </label>
+                <select
+                  :id="'set-' + f.key"
+                  class="min-w-0 flex-1 rounded-brutal border-2 border-ink bg-paper px-2 py-1 text-xs"
+                  :value="settingsValues[f.key]"
+                  @change="onSetting(f.key, ($event.target as HTMLSelectElement).value)"
+                >
+                  <option v-for="opt in settingOptions(f)" :key="opt" :value="opt">
+                    {{ settingOptionLabel(f.key, opt) }}
+                  </option>
+                </select>
+              </template>
+            </div>
+          </div>
+
+          <p class="text-[11px] opacity-60">{{ t('klipperscreenStudio.settings.onlyChanged') }}</p>
+
+          <button
+            class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+            :disabled="settingsBusy || !settingsTouched.size"
+            @click="saveSettings"
+          >
+            {{
+              settingsBusy
+                ? t('klipperscreenStudio.editor.saving')
+                : t('klipperscreenStudio.settings.save')
+            }}
+          </button>
+
+          <p
+            v-if="settingsSaved"
+            class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
+          >
+            <span class="min-w-0 flex-1">{{ t('klipperscreenStudio.settings.savedRestart') }}</span>
+            <button
+              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
+              :disabled="restarting"
+              @click="doRestart"
+            >
+              {{
+                restarting
+                  ? t('klipperscreenStudio.restart.restarting')
+                  : t('klipperscreenStudio.restart.button')
+              }}
+            </button>
+          </p>
+          <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
+            ✓ {{ t('klipperscreenStudio.restart.done') }}
+          </p>
+          <p
+            v-if="settingsError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+          >
+            {{ settingsError }}
+          </p>
+          <p
+            v-if="restartError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+          >
+            {{ restartError }}
+          </p>
         </template>
       </template>
 
