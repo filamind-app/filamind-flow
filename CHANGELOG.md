@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.238.0] - 2026-06-13
+
+### Changed
+
+- **CHCB-SV08 hotend corrected to its high-flow capability.** Research (cross-checked against the
+  Micro Swiss FlowTech ceramic-core hotend measured on the SV08: brass 22.2 → CHT 34.0 mm³/s, and
+  the SV08 stock ~25–27 mm³/s) showed the Trianglelab CHCB-SV08 is a high-flow-capable ceramic-core
+  hot side, not a standard-flow V6. Its catalog max flow was raised from a too-low ~15 to a
+  researched ~30 mm³/s (≈24 with the stock 0.4 brass nozzle, ~34–42 with a CHT/high-flow nozzle),
+  with a wider Max-Flow test preset (10→45) — so a measurement run brackets the real ceiling.
+
+
 ## [0.237.0] - 2026-06-13
 
 ### Added
