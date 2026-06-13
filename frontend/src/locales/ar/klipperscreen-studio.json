@@ -32,7 +32,32 @@
     "view": {
       "config": "الإعدادات",
       "menus": "القوائم",
-      "themes": "الثيمات"
+      "themes": "الثيمات",
+      "kiosk": "الكشك"
+    },
+    "kiosk": {
+      "loading": "جارٍ فحص الشاشة…",
+      "intro": "اعرض FilaMind Flow نفسه على الشاشة اللمسية كمتصفح بملء الشاشة — تحكم كامل بما تعرضه الشاشة. يتبادل مع KlipperScreen: تشغيل أحدهما يوقف الآخر.",
+      "current": "الشاشة الآن",
+      "mode": {
+        "kiosk": "كشك FilaMind",
+        "klipperscreen": "KlipperScreen",
+        "none": "لا شيء يعمل"
+      },
+      "notInstalled": "الكشك غير مثبّت بعد",
+      "setupHint": "نفّذ هذا مرة واحدة على مضيف الطابعة (يثبّت متصفحًا بملء الشاشة + خدمة الكشك):",
+      "persist": "اجعله الافتراضي عند الإقلاع (وإلا فالتبديل مؤقت — إعادة التشغيل تستعيد الآخر).",
+      "safety": "مؤقت افتراضيًا: إعادة التشغيل تستعيد الآخر. إذا أظلمت الشاشة، نفّذ عبر SSH: sudo systemctl start KlipperScreen",
+      "switchBtn": "التبديل إلى FilaMind",
+      "restoreBtn": "استعادة KlipperScreen",
+      "refresh": "تحديث",
+      "confirmSwitchTitle": "عرض FilaMind على الشاشة؟",
+      "confirmRestoreTitle": "استعادة KlipperScreen؟",
+      "confirmBody": "هذا يوقف خدمة شاشة ويشغّل الأخرى. لا يؤثر على طباعة جارية، لكن الشاشة اللمسية ستظلم لبضع ثوانٍ أثناء التبديل.",
+      "confirm": "نفّذ",
+      "cancel": "إلغاء",
+      "switchedNote": "FilaMind يتولّى الشاشة — سيظهر خلال ثوانٍ.",
+      "restoredNote": "KlipperScreen يعود — ستعود الشاشة قريبًا."
     },
     "menus": {
       "loading": "جارٍ تحميل القوائم…",
