@@ -6,7 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.259.0] - 2026-06-13
+## [0.260.0] - 2026-06-13
+
+### Fixed
+
+- **`deploy/install-kiosk.sh` is now robust across display stacks.** The first version assumed a
+  Wayland/`cage` setup and could silently write a kiosk unit that wouldn't start on an X11-driven
+  panel (how most KlipperScreen images, including the BTT CB1, run). It now **auto-detects X11 vs
+  Wayland** (reading how `KlipperScreen.service` drives the screen and mirroring its user / TTY),
+  installs the right packages, picks an X11 (`xinit` + Chromium) or Wayland (`cage` + Chromium)
+  launcher accordingly, **validates a browser is actually present**, and **stops with a clear
+  message** (instead of writing a broken unit) when it can't find a browser or a usable display
+  stack. Output now reports the detected mode + browser + the `journalctl` command to inspect a
+  failed start.
 
 ### Added
 

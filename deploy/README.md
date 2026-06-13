@@ -94,9 +94,12 @@ sudo bash deploy/install-kiosk.sh biqu http://localhost:8090
 sudo bash deploy/install-kiosk.sh --uninstall
 ```
 
-It installs a Wayland kiosk compositor (`cage`) + Chromium and writes a `filamind-kiosk`
-systemd service that **conflicts with KlipperScreen** (starting one stops the other). It is **not**
-enabled at boot — KlipperScreen stays the default. Switch from the app
+It **auto-detects** how your screen is driven — **X11** (Xorg/`xinit`, how most KlipperScreen
+images run) or **Wayland** (`cage` on KMS) — by reading `KlipperScreen.service`, installs Chromium +
+the right compositor, and writes a `filamind-kiosk` systemd service that **conflicts with
+KlipperScreen** (starting one stops the other). It is **not** enabled at boot — KlipperScreen stays
+the default. The installer prints the detected mode/browser and stops with a clear message if it
+can't find a browser or a usable display stack. Switch from the app
 (**KlipperScreen Studio → Kiosk**) or over SSH:
 
 ```bash
@@ -107,6 +110,13 @@ sudo systemctl start KlipperScreen      # hand it back (also recovers a dark scr
 A plain switch is reboot-recoverable; "Make FilaMind the default" in the widget (or
 `sudo systemctl enable filamind-kiosk && sudo systemctl disable KlipperScreen`) persists it.
 The app's toggle uses the same passwordless-sudo rule as the flasher (`deploy/setup-sudoers.sh`).
+
+If the screen stays dark after switching, inspect why:
+
+```bash
+systemctl status filamind-kiosk --no-pager
+journalctl -u filamind-kiosk -b --no-pager | tail -40
+```
 
 ## Notes
 
