@@ -167,10 +167,12 @@ shipped; DB-4's silo convergence shipped — only optional component images rema
 | ✅ **DB-3 — UI reuse + cross-links** (a–d all shipped) | **DB-3a ✅ v0.140.0** — **cross-link chips** on every entity (manufacturer / MCU / on-board+supported drivers, click → jump to the related entity, in-widget deep-linking) + two new browse tabs (**Brands**, **MCUs**) + illustrated help, localised ×7. **DB-3b ✅ v0.141.0** — extracted one shared `EntityCatalog` component (the 5 near-clone detail panels are now thin wrappers — search/list/pagination/expand/copy/deep-link shell shared; bespoke summary + detail via slots; behaviour-preserving). **DB-3c ✅ v0.142.0** — surfaced the **faceted filters** via the shared facet slot: boards by class, motors by NEMA, hosts by kind, all by manufacturer; backed by a new `GET /api/hardware/facets`. **DB-3d ✅ v0.152.0** — a reusable **`HardwarePicker`** (type-driven, pages the canonical catalog into a `ComboSelect`, emits the picked id + full summary for auto-fill) so any widget can embed "pick a part". The catalog mixed categories also got a **sub-type facet** (v0.150.0). | low |
 | 🟡 **DB-4 — Polish + convergence** | **Convergence ✅** — the Motor-Drivers motor + TMC-driver capability silos and the Max-Flow hotend silo now all read from the unified hardware catalog (`motors[]`, `drivers[].caps`, the "Hotends & Heaters" catalog), with the standalone data files removed. **Remaining 📋** — images/thumbnails from `media.imageUrl` + an optional detail drawer. | low |
 
-**Storage end-state (only when triggered):** migrate to a **read-only SQLite + FTS5** index
-*built from the JSON* if the dataset grows ≥2–3×, a second writer appears, or as-you-type search
-becomes laggy after DB-1. Not needed at current scale — the in-memory model with indexes is faster
-for point lookups and graph traversal, and keeps the dataset reviewable as text in git.
+**Storage end-state ✅ (v0.257.0):** the catalog now ships as a compiled **read-only SQLite**
+(`hardware.sqlite`, built from a local source by `scripts/build_hardware_db.py`); the editable JSON
+is no longer in the repo. `reference_data` reconstructs the same in-memory structure at startup, so
+the indexes / haystacks / link graph / facets / ETag — and every API response — are unchanged
+(FTS5 deliberately skipped: the in-memory haystack is already fast at this scale; revisit only if
+the dataset grows ≥2–3× or as-you-type search becomes laggy).
 
 ## Cross-printer validation
 
