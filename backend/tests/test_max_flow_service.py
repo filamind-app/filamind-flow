@@ -10,6 +10,7 @@ import pytest
 
 from app.services import max_flow_service as mfs
 from app.services import reference_data
+from app.services.max_flow import StepMeasurement
 from app.services.max_flow_service import RampParams
 
 
@@ -413,6 +414,60 @@ async def test_auto_stealthchop_reverts_when_enable_restart_fails() -> None:
     # the marker line was written then commented back out despite the restart failure
     assert _active_stealthchop_lines(client.printer_cfg) == []
     assert client.uploads.count("printer.cfg") == 2  # enable wrote it, revert rewrote it
+
+
+# ── method routing: accelerometer (vibration) fallback ───────────────────────────────────────
+async def test_auto_falls_back_to_accel_when_sg_unusable(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake_detect(_client: object) -> str:
+        return "adxl345"
+
+    async def fake_ramp(*_a: object, **_k: object) -> list:
+        return [StepMeasurement(5.0, [2.0] * 4), StepMeasurement(7.0, [2.0] * 4)]
+
+    monkeypatch.setattr(mfs.max_flow_accel, "detect_chip", fake_detect)
+    monkeypatch.setattr(mfs.max_flow_accel, "ramp", fake_ramp)
+    client = _RunClient([], sg_absent=True)  # SG config OK but no live reading → fall back
+    out = await mfs.run_max_flow(client, RampParams(method="auto", **_RUN_PARAMS))  # type: ignore[arg-type]
+    assert out["method"] == "accel"
+    assert out["max_flow_mm3s"] == 7
+    assert "M104 S0" in client.gcodes  # heater still cut
+
+
+async def test_method_accel_skips_stallguard(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake_detect(_client: object) -> str:
+        return "adxl345"
+
+    async def fake_ramp(*_a: object, **_k: object) -> list:
+        return [StepMeasurement(5.0, [2.0] * 4), StepMeasurement(7.0, [2.0] * 4)]
+
+    monkeypatch.setattr(mfs.max_flow_accel, "detect_chip", fake_detect)
+    monkeypatch.setattr(mfs.max_flow_accel, "ramp", fake_ramp)
+    # No StallGuard config at all — the accel method must not care.
+    client = _RunClient([], config={"tmc2209 extruder": {"run_current": "0.8"}})
+    out = await mfs.run_max_flow(client, RampParams(method="accel", **_RUN_PARAMS))  # type: ignore[arg-type]
+    assert out["method"] == "accel"
+    assert out["max_flow_mm3s"] == 7
+
+
+async def test_method_accel_without_chip_raises(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake_detect(_client: object) -> None:
+        return None
+
+    monkeypatch.setattr(mfs.max_flow_accel, "detect_chip", fake_detect)
+    client = _RunClient([])
+    with pytest.raises(mfs.MaxFlowSignalError):
+        await mfs.run_max_flow(client, RampParams(method="accel", **_RUN_PARAMS))  # type: ignore[arg-type]
+    assert client.gcodes == []  # refused before any motion or heat
+
+
+async def test_method_stallguard_does_not_fall_back(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake_detect(_client: object) -> str:
+        return "adxl345"
+
+    monkeypatch.setattr(mfs.max_flow_accel, "detect_chip", fake_detect)  # available but unused
+    client = _RunClient([], sg_absent=True)
+    with pytest.raises(mfs.MaxFlowSignalError):
+        await mfs.run_max_flow(client, RampParams(method="stallguard", **_RUN_PARAMS))  # type: ignore[arg-type]
 
 
 async def test_enable_disable_stealthchop_helpers_round_trip() -> None:

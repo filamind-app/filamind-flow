@@ -31,7 +31,10 @@ const params = reactive<MaxFlowParams>({
   driver: 'tmc2209',
   park_for_view: true,
   auto_stealthchop: false,
+  method: 'auto',
 })
+
+const METHOD_OPTIONS = ['auto', 'stallguard', 'accel']
 
 /** Webcams configured on the printer — the live view is shown during a run when one exists. */
 const cameras = ref<{ name: string; service: string }[]>([])
@@ -333,9 +336,24 @@ onMounted(async () => {
           />
         </label>
       </div>
+      <!-- Detection method: StallGuard, the accelerometer (vibration) fallback, or auto. -->
+      <label class="block text-[11px]">
+        <span class="mb-0.5 block font-bold">{{ t('maxFlow.params.method') }}</span>
+        <select
+          v-model="params.method"
+          class="w-full rounded-brutal border-2 border-ink bg-surface px-1.5 py-1 font-mono text-[11px] sm:w-auto"
+        >
+          <option v-for="m in METHOD_OPTIONS" :key="m" :value="m">
+            {{ t(`maxFlow.method.${m}`) }}
+          </option>
+        </select>
+        <span class="mt-0.5 block text-[10px] opacity-70">{{
+          t('maxFlow.params.methodHint')
+        }}</span>
+      </label>
       <!-- SG4 only: offer to flip the extruder to StealthChop just for the test, then undo it. -->
       <label
-        v-if="isSg4"
+        v-if="isSg4 && params.method !== 'accel'"
         class="flex items-start gap-2 rounded-brutal border-2 border-dashed border-ink/40 bg-paper/60 p-1.5 text-[11px]"
       >
         <input v-model="params.auto_stealthchop" type="checkbox" class="mt-0.5" />
@@ -516,9 +534,20 @@ onMounted(async () => {
       <p v-if="resultFrom" class="font-mono text-[10px] opacity-60">
         {{ t('maxFlow.result.fromBefore', { at: resultFrom.slice(0, 16).replace('T', ' ') }) }}
       </p>
+      <p v-if="result.method" class="font-mono text-[10px] opacity-70">
+        {{ t('maxFlow.result.via', { method: t(`maxFlow.method.${result.method}`) }) }}
+      </p>
+      <!-- The accel method is experimental — say so whenever it produced the result. -->
+      <p v-if="result.method === 'accel'" class="rounded bg-brand-yellow/20 p-1.5 text-[11px]">
+        ⚗ {{ t('maxFlow.result.accelExperimental') }}
+      </p>
 
-      <!-- No StallGuard signal → the number is not a real measurement. Say so, first and loud. -->
-      <div v-if="noSignal" class="space-y-1 rounded border-2 border-brand-red bg-brand-red/15 p-2">
+      <!-- No StallGuard signal → the number is not a real measurement. StallGuard wording only;
+           an empty accel capture is conveyed by the experimental note + "(not confirmed)". -->
+      <div
+        v-if="noSignal && result.method !== 'accel'"
+        class="space-y-1 rounded border-2 border-brand-red bg-brand-red/15 p-2"
+      >
         <p class="text-[11px] font-bold text-brand-red">
           ⚠ {{ t('maxFlow.result.unreliableTitle') }}
         </p>

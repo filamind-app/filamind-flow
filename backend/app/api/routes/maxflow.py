@@ -44,6 +44,11 @@ class MaxFlowPlanRequest(BaseModel):
         description="SG4 extruder: temporarily write a stealthchop_threshold so the test can run, "
         "then comment it out afterward (restores printer.cfg; firmware restart each way)",
     )
+    method: str = Field(
+        "auto",
+        description="Slip detector: 'auto' (StallGuard, falling back to the toolhead "
+        "accelerometer when SG is unusable), 'stallguard', or 'accel' (vibration).",
+    )
 
 
 @router.post("/plan")
@@ -69,7 +74,9 @@ async def maxflow_run(
     params = RampParams(**body.model_dump())
     try:
         async with printer_guard.acquire("max_flow"):
-            return await max_flow_service.run_max_flow(client, params)
+            return await max_flow_service.run_max_flow(
+                client, params, resonance_dirs=settings.resonance_dirs
+            )
     except printer_guard.GuardBusyError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
@@ -100,7 +107,11 @@ async def _run_maxflow_task(task: task_store.Task, params: RampParams, settings:
     try:
         async with printer_guard.acquire("max_flow"):
             result = await max_flow_service.run_max_flow(
-                client, params, progress_cb=on_progress, cancel_cb=lambda: task.cancelled
+                client,
+                params,
+                progress_cb=on_progress,
+                cancel_cb=lambda: task.cancelled,
+                resonance_dirs=settings.resonance_dirs,
             )
         task.result = result
         task.status = "done"

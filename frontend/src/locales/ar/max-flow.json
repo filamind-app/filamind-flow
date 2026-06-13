@@ -68,7 +68,9 @@
       "driver": "مشغّل الباثق",
       "driverDetected": "مكتشف من الطابعة",
       "autoStealthchop": "تفعيل StealthChop تلقائياً للاختبار",
-      "autoStealthchopHint": "TMC2209/2240 فقط: يكتب مؤقتاً stealthchop_threshold إلى الباثق حتى يتمكّن StallGuard من القراءة، ثم يُعلّق عليه بعد الاختبار. يستعيد printer.cfg؛ إعادة تشغيل الثابت في كلا الاتجاهين."
+      "autoStealthchopHint": "TMC2209/2240 فقط: يكتب مؤقتاً stealthchop_threshold إلى الباثق حتى يتمكّن StallGuard من القراءة، ثم يُعلّق عليه بعد الاختبار. يستعيد printer.cfg؛ إعادة تشغيل الثابت في كلا الاتجاهين.",
+      "method": "طريقة الكشف",
+      "methodHint": "الوضع التلقائي يستخدم StallGuard مع الانتقال إلى مقياس التسارع بالفوّهة (الاهتزاز) عندما لا يستطيع StallGuard القراءة. طريقة مقياس التسارع تجريبية."
     },
     "plan": {
       "button": "معاينة الخطة",
@@ -140,7 +142,9 @@
       "units": "mm³/s",
       "fromBefore": "قيست سابقًا ({at}) — أعد التشغيل لأرقام حديثة.",
       "unreliableTitle": "غير موثوق — لا إشارة StallGuard",
-      "unmeasured": "تم بلوغها، لم تُؤكّد"
+      "unmeasured": "تم بلوغها، لم تُؤكّد",
+      "via": "مقيس عبر {method}",
+      "accelExperimental": "مقيس بالاهتزاز (مقياس التسارع) — تجريبي؛ عامِل الرقم كدليل وليس كحدّ أقصى دقيق."
     },
     "states": {
       "loadingHotends": "جارٍ تحميل رؤوس التسخين…"
@@ -154,6 +158,11 @@
       "maximize": "تكبير",
       "enlarge": "توسيع",
       "shrink": "تضييق"
+    },
+    "method": {
+      "auto": "تلقائي",
+      "stallguard": "StallGuard",
+      "accel": "مقياس التسارع"
     }
   }
 }

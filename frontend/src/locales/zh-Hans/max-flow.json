@@ -68,7 +68,9 @@
       "driver": "挤出机驱动",
       "driverDetected": "已从打印机检测",
       "autoStealthchop": "为测试自动启用 StealthChop",
-      "autoStealthchopHint": "仅 TMC2209/2240：临时向挤出机写入 stealthchop_threshold 以便 StallGuard 读取，测试后注释掉。恢复 printer.cfg；每次都需要固件重启。"
+      "autoStealthchopHint": "仅 TMC2209/2240：临时向挤出机写入 stealthchop_threshold 以便 StallGuard 读取，测试后注释掉。恢复 printer.cfg；每次都需要固件重启。",
+      "method": "检测方法",
+      "methodHint": "自动会使用 StallGuard，当 StallGuard 无法读取时回退到工具头加速度计（振动）。加速度计方法是实验性的。"
     },
     "plan": {
       "button": "预览方案",
@@ -140,7 +142,9 @@
       "units": "mm³/s",
       "fromBefore": "此前测得（{at}）— 重新运行以获取新数据。",
       "unreliableTitle": "不可靠 — 未检测到 StallGuard 信号",
-      "unmeasured": "已达到，但未确认"
+      "unmeasured": "已达到，但未确认",
+      "via": "通过 {method} 测量",
+      "accelExperimental": "通过振动（加速度计）测量 — 实验性的；请将该数值视为参考指南，而非准确的上限。"
     },
     "states": {
       "loadingHotends": "正在加载热端……"
@@ -154,6 +158,11 @@
       "maximize": "最大化",
       "enlarge": "放大",
       "shrink": "缩小"
+    },
+    "method": {
+      "auto": "自动",
+      "stallguard": "StallGuard",
+      "accel": "加速度计"
     }
   }
 }

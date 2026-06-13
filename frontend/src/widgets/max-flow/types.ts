@@ -21,6 +21,8 @@ export interface MaxFlowParams {
   park_for_view?: boolean
   /** SG4 extruder: temporarily write a stealthchop_threshold for the test, then comment it out. */
   auto_stealthchop?: boolean
+  /** Slip detector: 'auto' (StallGuard → accelerometer fallback), 'stallguard', or 'accel'. */
+  method?: string
 }
 
 export interface PlanStep {
@@ -64,4 +66,6 @@ export interface MaxFlowResult {
   driver: string
   stallguard_field: string | null
   sg_samples_seen: boolean
+  /** Which detector produced this result: 'stallguard' or 'accel' (vibration). */
+  method?: string
 }
