@@ -45,6 +45,8 @@ interface NodeBox {
   w: number
   h: number
   title: string
+  /** Full, untruncated name for the node's <title> tooltip (the visible label is truncated). */
+  full?: string
   sub?: string
   conn?: TopologyMcu['connection']
   match?: TopologyMcu['board_match']
@@ -100,6 +102,7 @@ function hostBox(x: number, y: number, w: number, h: number, nested = false): No
       hh?.name && hh.name !== 'host' ? hh.name : t('boardTopology.host.label'),
       nested ? 22 : 24,
     ),
+    full: hh?.name && hh.name !== 'host' ? hh.name : t('boardTopology.host.label'),
     sub: t('boardTopology.host.role'),
     nested,
   }
@@ -114,6 +117,7 @@ function mcuBox(m: TopologyMcu, x: number, y: number, w = NW, h = NH, chassis = 
     w,
     h,
     title: trunc(m.name, 18),
+    full: m.name,
     sub: m.mcu || m.mcu_family || undefined,
     conn: m.connection,
     match: m.board_match,
@@ -300,146 +304,155 @@ function vitals(id: string): string {
 </script>
 
 <template>
-  <div class="nb-card overflow-hidden bg-paper p-1">
-    <svg
-      :viewBox="`0 0 ${layout.w} ${layout.h}`"
-      class="h-auto w-full select-none"
-      :style="{ maxHeight: '460px', direction: 'ltr' }"
-      role="img"
-      :aria-label="t('boardTopology.graph.aria', { n: mcus.length })"
-    >
-      <Transition name="vfade">
-        <g :key="view">
-          <!-- Edges first (under nodes) -->
-          <path
-            v-for="e in layout.edges"
-            :key="e.id"
-            :d="e.d"
-            class="edge"
-            :class="[
-              busClass(e.bus),
-              { backbone: e.backbone, 'edge-alert': targetHealth(e.target) === 'out' },
-            ]"
-            fill="none"
-          />
-          <!-- Nodes -->
-          <g
-            v-for="n in layout.nodes"
-            :key="n.id"
-            :transform="`translate(${n.x},${n.y})`"
-            class="node"
-            :class="{
-              'is-selected': selected === n.id,
-              nested: n.nested,
-              'is-alert': healthOf(n.id) === 'out',
-            }"
-            role="button"
-            tabindex="0"
-            :aria-label="ariaFor(n)"
-            @click="emit('select', n.id)"
-            @keydown.enter.prevent="emit('select', n.id)"
-            @keydown.space.prevent="emit('select', n.id)"
-          >
-            <title v-if="n.kind === 'mcu' && healthOf(n.id) !== 'unknown'">
-              {{ vitals(n.id) }}
-            </title>
-            <rect
-              :width="n.w"
-              :height="n.h"
-              rx="5"
-              class="node-rect stroke-ink"
-              :class="
-                n.kind === 'host'
-                  ? n.nested
-                    ? 'fill-sbc'
-                    : 'fill-host'
-                  : n.chassis
-                    ? 'fill-board'
-                    : 'fill-mcu'
-              "
+  <div class="nb-card min-w-0 overflow-hidden bg-paper p-1">
+    <!-- Scroll wrapper: on a wide column the SVG fills it (scales up, readable); on a narrow
+         phone min-width holds it at full intrinsic size and this pans, instead of shrinking the
+         graph to an illegible thumbnail. -->
+    <div class="overflow-x-auto" style="-webkit-overflow-scrolling: touch">
+      <svg
+        :viewBox="`0 0 ${layout.w} ${layout.h}`"
+        class="block h-auto select-none md:max-h-[460px]"
+        :style="{ width: '100%', minWidth: layout.w + 'px', direction: 'ltr' }"
+        role="img"
+        :aria-label="t('boardTopology.graph.aria', { n: mcus.length })"
+      >
+        <Transition name="vfade">
+          <g :key="view">
+            <!-- Edges first (under nodes) -->
+            <path
+              v-for="e in layout.edges"
+              :key="e.id"
+              :d="e.d"
+              class="edge"
+              :class="[
+                busClass(e.bus),
+                { backbone: e.backbone, 'edge-alert': targetHealth(e.target) === 'out' },
+              ]"
+              fill="none"
             />
-            <!-- live link-health: left-edge bar + status glyph (colour + glyph, never colour-only) -->
-            <template v-if="n.kind === 'mcu' && healthOf(n.id) !== 'unknown'">
-              <rect
-                x="2.5"
-                y="3"
-                width="3.5"
-                :height="n.h - 6"
-                rx="1.5"
-                :class="'health-bar h-' + healthOf(n.id)"
-              />
-              <text
-                :x="n.w - 8"
-                :y="n.chassis ? n.h - 8 : 15"
-                text-anchor="end"
-                :class="'t-health h-' + healthOf(n.id)"
-              >
-                {{ HEALTH_GLYPH[healthOf(n.id)] }}
-              </text>
-            </template>
-            <!-- chassis label (mainboard) -->
-            <text v-if="n.chassis" x="10" y="18" class="t-title text-ink">{{ n.title }}</text>
-            <text
-              v-else-if="n.kind === 'host'"
-              :x="10"
-              :y="n.nested ? 16 : 20"
-              class="t-title text-ink"
-            >
-              <tspan v-if="n.nested" class="t-soc">🖥</tspan>
-              {{ n.title }}
-            </text>
-            <text v-else x="10" y="20" class="t-title text-ink">{{ n.title }}</text>
-
-            <!-- sub line (chip / role) -->
-            <text
-              v-if="n.sub"
-              x="10"
-              :y="n.kind === 'host' && n.nested ? 30 : 36"
-              class="t-sub text-ink"
-            >
-              {{ n.sub }}
-            </text>
-
-            <!-- integrated badge on the chassis -->
-            <g v-if="n.integratedBadge" :transform="`translate(${n.w - 92},8)`">
-              <rect width="84" height="16" rx="3" class="fill-sbc stroke-ink badge-rect" />
-              <text x="42" y="12" text-anchor="middle" class="t-badge text-ink">
-                {{ t('boardTopology.graph.integrated') }}
-              </text>
-            </g>
-
-            <!-- connection badge + board match on a regular MCU node -->
+            <!-- Nodes -->
             <g
-              v-if="n.kind === 'mcu' && !n.chassis && n.conn"
-              :transform="`translate(10,${n.h - 18})`"
+              v-for="n in layout.nodes"
+              :key="n.id"
+              :transform="`translate(${n.x},${n.y})`"
+              class="node"
+              :class="{
+                'is-selected': selected === n.id,
+                nested: n.nested,
+                'is-alert': healthOf(n.id) === 'out',
+              }"
+              role="button"
+              tabindex="0"
+              :aria-label="ariaFor(n)"
+              @click="emit('select', n.id)"
+              @keydown.enter.prevent="emit('select', n.id)"
+              @keydown.space.prevent="emit('select', n.id)"
             >
+              <title>
+                {{
+                  n.kind === 'mcu' && healthOf(n.id) !== 'unknown'
+                    ? n.full + ' — ' + vitals(n.id)
+                    : n.full
+                }}
+              </title>
               <rect
-                width="46"
-                height="13"
-                rx="3"
-                class="stroke-ink badge-rect"
-                :class="busClass(n.conn)"
+                :width="n.w"
+                :height="n.h"
+                rx="5"
+                class="node-rect stroke-ink"
+                :class="
+                  n.kind === 'host'
+                    ? n.nested
+                      ? 'fill-sbc'
+                      : 'fill-host'
+                    : n.chassis
+                      ? 'fill-board'
+                      : 'fill-mcu'
+                "
               />
-              <text x="23" y="10" text-anchor="middle" class="t-badge text-ink">
-                {{ connLabel(n.conn) }}
-              </text>
-            </g>
-            <g
-              v-if="n.kind === 'mcu' && n.board && !n.chassis"
-              :transform="`translate(${n.w - 22},${n.h - 18})`"
-            >
+              <!-- live link-health: left-edge bar + status glyph (colour + glyph, never colour-only) -->
+              <template v-if="n.kind === 'mcu' && healthOf(n.id) !== 'unknown'">
+                <rect
+                  x="2.5"
+                  y="3"
+                  width="3.5"
+                  :height="n.h - 6"
+                  rx="1.5"
+                  :class="'health-bar h-' + healthOf(n.id)"
+                />
+                <text
+                  :x="n.w - 8"
+                  :y="n.chassis ? n.h - 8 : 15"
+                  text-anchor="end"
+                  :class="'t-health h-' + healthOf(n.id)"
+                >
+                  {{ HEALTH_GLYPH[healthOf(n.id)] }}
+                </text>
+              </template>
+              <!-- chassis label (mainboard) -->
+              <text v-if="n.chassis" x="10" y="18" class="t-title text-ink">{{ n.title }}</text>
               <text
-                class="t-badge"
-                :class="n.match === 'confirmed' ? 'ok-text' : 'sug-text'"
-                text-anchor="end"
+                v-else-if="n.kind === 'host'"
+                :x="10"
+                :y="n.nested ? 16 : 20"
+                class="t-title text-ink"
               >
-                {{ n.match === 'confirmed' ? '✓' : '◉' }}
+                <tspan v-if="n.nested" class="t-soc">🖥</tspan>
+                {{ n.title }}
               </text>
+              <text v-else x="10" y="20" class="t-title text-ink">{{ n.title }}</text>
+
+              <!-- sub line (chip / role) -->
+              <text
+                v-if="n.sub"
+                x="10"
+                :y="n.kind === 'host' && n.nested ? 30 : 36"
+                class="t-sub text-ink"
+              >
+                {{ n.sub }}
+              </text>
+
+              <!-- integrated badge on the chassis -->
+              <g v-if="n.integratedBadge" :transform="`translate(${n.w - 92},8)`">
+                <rect width="84" height="16" rx="3" class="fill-sbc stroke-ink badge-rect" />
+                <text x="42" y="12" text-anchor="middle" class="t-badge text-ink">
+                  {{ t('boardTopology.graph.integrated') }}
+                </text>
+              </g>
+
+              <!-- connection badge + board match on a regular MCU node -->
+              <g
+                v-if="n.kind === 'mcu' && !n.chassis && n.conn"
+                :transform="`translate(10,${n.h - 18})`"
+              >
+                <rect
+                  width="46"
+                  height="13"
+                  rx="3"
+                  class="stroke-ink badge-rect"
+                  :class="busClass(n.conn)"
+                />
+                <text x="23" y="10" text-anchor="middle" class="t-badge text-ink">
+                  {{ connLabel(n.conn) }}
+                </text>
+              </g>
+              <g
+                v-if="n.kind === 'mcu' && n.board && !n.chassis"
+                :transform="`translate(${n.w - 22},${n.h - 18})`"
+              >
+                <text
+                  class="t-badge"
+                  :class="n.match === 'confirmed' ? 'ok-text' : 'sug-text'"
+                  text-anchor="end"
+                >
+                  {{ n.match === 'confirmed' ? '✓' : '◉' }}
+                </text>
+              </g>
             </g>
           </g>
-        </g>
-      </Transition>
-    </svg>
+        </Transition>
+      </svg>
+    </div>
   </div>
 </template>
 
