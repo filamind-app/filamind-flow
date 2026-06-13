@@ -226,7 +226,7 @@ onMounted(() => void load())
           v-for="v in ['physical', 'logical'] as const"
           :key="v"
           type="button"
-          class="px-2 py-1 text-xs font-bold"
+          class="nb-seg"
           :class="view === v ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
           :aria-pressed="view === v"
           @click="view = v"
@@ -256,12 +256,12 @@ onMounted(() => void load())
 
     <!-- Machine Map -->
     <template v-if="topology && !error && topology.mcus.length">
-      <p class="text-[10px] opacity-60">
+      <p class="text-xs opacity-60">
         {{ t('boardTopology.count', { n: topology.mcu_count }) }}
       </p>
 
       <!-- Legend -->
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px]">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" dir="auto">
         <span v-for="l in LEGEND" :key="l.tk" class="inline-flex items-center gap-1">
           <span
             class="inline-block h-2.5 w-3 rounded-sm border border-ink"
@@ -288,7 +288,7 @@ onMounted(() => void load())
         >
       </div>
 
-      <div class="grid gap-3 lg:grid-cols-[1.4fr_1fr]">
+      <div class="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <TopologyGraph
           :topology="topology"
           :view="view"
@@ -315,17 +315,14 @@ onMounted(() => void load())
         class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red/10 px-2 py-1"
       >
         <span class="min-w-0 flex-1 font-mono text-[11px]">{{ actionError }}</span>
-        <button
-          class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[10px]"
-          @click="actionError = null"
-        >
+        <button class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-xs" @click="actionError = null">
           ✕
         </button>
       </div>
 
       <!-- Hardware snapshot / diff + share -->
       <div class="space-y-1 border-t border-ink/15 pt-2">
-        <div class="flex flex-wrap items-center gap-2 text-[11px]">
+        <div class="flex flex-wrap items-center gap-2 text-xs">
           <button
             type="button"
             class="nb-btn bg-surface px-2 py-0.5"
@@ -356,7 +353,7 @@ onMounted(() => void load())
             ⚠ {{ t('boardTopology.snapshot.changed', { n: diff.changes.length }) }}
           </span>
         </div>
-        <ul v-if="diff && diff.changes.length" class="space-y-0.5 text-[10px]">
+        <ul v-if="diff && diff.changes.length" class="space-y-0.5 text-xs">
           <li
             v-for="(c, i) in diff.changes"
             :key="i"

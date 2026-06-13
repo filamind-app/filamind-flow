@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.244.0] - 2026-06-13
+
+### Changed
+
+- **Board Topology is now properly responsive — readable on phones, narrow, and portrait screens.**
+  The machine-map graph no longer shrinks to an illegible thumbnail on a small screen: on a wide
+  column it fills the width as before, but on a narrow one it holds full, legible size and scrolls
+  horizontally instead. The graph + inspector now stack into one column earlier (at the `md`
+  breakpoint), and long board/MCU/host names, config snippets, and spec values can no longer push
+  text outside the card (a `min-w-0` / `minmax(0,…)` / truncation pass, plus `dir="auto"` so Latin
+  values read correctly in Arabic/RTL).
+- **Consistent, larger typography and touch targets.** Every text size below 11px was raised, and
+  the view/details segmented toggles use a new `.nb-seg` control that meets the 44px touch-target
+  minimum on touch devices (matching the buttons). Every graph node now has a hover tooltip with
+  its full, untruncated name.
+
 ## [0.243.0] - 2026-06-13
 
 ### Changed
