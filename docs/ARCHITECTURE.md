@@ -148,7 +148,7 @@ Neo-Brutalism, expressed as Tailwind tokens (`frontend/tailwind.config.ts`) and 
 few component classes (`frontend/src/assets/styles/main.css`):
 
 - **Color** — warm paper background, ink (`#111`) foreground, saturated flat
-  accents (yellow/pink/cyan/lime).
+  accents (mocha-brown brand/pink/cyan/lime).
 - **Borders** — thick (`3px`) ink borders, near-sharp corners.
 - **Shadows** — hard, blur-free offsets (`4px 4px 0 #111`); buttons "press" by
   shrinking the shadow and translating on `:active`.
@@ -163,9 +163,9 @@ The Tailwind tokens reference the variables (`ink: 'rgb(var(--c-ink) / <alpha-va
 (`bg-paper`, `border-ink`, `bg-brand-cyan`, `shadow-brutal`, `rounded-brutal`) recolors per theme with
 no component edits. `main.css` holds `:root` (Light defaults) plus a `[data-theme="…"]` block per theme.
 
-- **Themes (7):** `neon` (default — deep violet + electric glow), `midnight` (navy ops deck),
-  `dark` (steel slate), `ocean` (abyssal teal), `sunset` (dusk plum), `light` (daylight brutalism),
-  and `contrast` (near-black/white, a11y). All seven are **calibrated palettes** — a two-tier accent
+- **Themes (7):** `light` (default — daylight brutalism, warm cream + mocha-brown brand accent),
+  `neon` (deep violet + electric glow), `midnight` (navy ops deck), `dark` (steel slate),
+  `ocean` (abyssal teal), `sunset` (dusk plum), and `contrast` (near-black/white, a11y). All seven are **calibrated palettes** — a two-tier accent
   ramp (status-badge colors held at a depth where their text passes WCAG, signal colors brighter for
   charts/danger) — guarded by an automated contrast test that fails the build on a regression
   (v0.226.0). Mirrors the i18n design: `core/theme.ts` (registry + detect + `localStorage`

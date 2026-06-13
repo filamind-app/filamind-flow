@@ -38,7 +38,7 @@ type RGB = [number, number, number]
 const STOPS: [number, string, RGB][] = [
   [0.0, '--c-paper', [245, 241, 232]],
   [0.4, '--c-brand-cyan', [0, 224, 198]],
-  [0.7, '--c-brand-yellow', [255, 212, 0]],
+  [0.7, '--c-brand-yellow', [140, 106, 74]],
   [1.0, '--c-brand-red', [255, 82, 71]],
 ]
 

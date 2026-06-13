@@ -7,15 +7,15 @@
     <meta name="color-scheme" content="light dark" />
     <title>FilaMind Flow</title>
     <!--
-      No-flash theme: apply the stored (or default 'neon') theme to <html> BEFORE any CSS/JS loads,
-      so the page never flashes the light default before the runtime (src/core/theme.ts) hydrates.
-      Keep the key/default in sync with theme.ts (STORAGE_KEY 'filamind-theme', DEFAULT 'neon').
+      No-flash theme: apply the stored (or default 'light') theme to <html> BEFORE any CSS/JS loads,
+      so the page never flashes a non-default theme before the runtime (src/core/theme.ts) hydrates.
+      Keep the key/default in sync with theme.ts (STORAGE_KEY 'filamind-theme', DEFAULT 'light').
     -->
     <script>
       try {
-        document.documentElement.dataset.theme = localStorage.getItem('filamind-theme') || 'neon'
+        document.documentElement.dataset.theme = localStorage.getItem('filamind-theme') || 'light'
       } catch (e) {
-        document.documentElement.dataset.theme = 'neon'
+        document.documentElement.dataset.theme = 'light'
       }
     </script>
     <!--

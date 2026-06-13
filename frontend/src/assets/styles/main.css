@@ -28,22 +28,26 @@
    (bg-ink/50). Shadow vars hold full box-shadow values; --nb-radius a length.
 
    :root holds the LIGHT defaults; [data-theme] blocks override. The default
-   theme applied by the app shell is "neon".
+   theme applied by the app shell is "light".
    ─────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* Light — daylight brutalism: warm cream sheet, the signature pure-yellow rail
-     (warning amber is deliberately DEEPER than the rail so badges never vanish on
-     it), signal-saturated mid accents, hard ink-block shadows. */
+  /* Light — daylight brutalism: warm cream sheet, a deep mocha-brown brand accent that
+     doubles as the sidebar rail, signal-saturated mid accents, hard ink-block shadows.
+     The mocha accent is darker than the other themes' badge tier, so text ON it is light
+     (--c-on-accent) rather than ink — see the [class~='bg-brand-yellow'] rule below. */
   --c-ink: 26 20 8;
   --c-paper: 243 232 205;
   --c-surface: 255 252 240;
-  --c-brand-yellow: 201 138 0;
+  --c-brand-yellow: 140 106 74;
   --c-brand-pink: 214 31 111;
   --c-brand-cyan: 7 147 171;
   --c-brand-lime: 97 160 6;
   --c-brand-blue: 43 79 216;
   --c-brand-red: 222 31 38;
-  --c-sidebar: 255 214 10;
+  --c-sidebar: var(--c-brand-yellow);
+  /* Text drawn on a solid accent fill. White everywhere by default (inherited by all themes):
+     it clears AA on the light theme's deep mocha accent AND on every dark theme's dark rail. */
+  --c-on-accent: 255 255 255;
   --nb-glow: rgba(26, 20, 8, 0.18);
   --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
   --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
@@ -56,7 +60,9 @@
    yellow / cyan — they carry ink-colored text in status chips) sits at
    mid-depth so it holds >= 4.0:1 against ink in every theme, while the
    SIGNAL tier (blue / pink / red — chart strokes + the danger button) runs
-   brighter. --nb-glow is each theme's halo color (used by the neon shadows
+   brighter. (Exception: the LIGHT theme's yellow is a deep mocha brand brown
+   that carries light --c-on-accent text, not ink — see the rule near the end.)
+   --nb-glow is each theme's halo color (used by the neon shadows
    today; available as a token for focus/glow effects).
    ────────────────────────────────────────────────────────────────────────── */
 
@@ -207,6 +213,15 @@
   .nb-btn {
     min-height: 2.75rem;
   }
+}
+
+/* Light theme only: its accent is a deep mocha brown, so text on a SOLID brand-yellow fill
+   must be light (--c-on-accent), not the ink the other themes use. `[class~='bg-brand-yellow']`
+   matches only the solid fill — the translucent `bg-brand-yellow/NN` tint washes (text sits on
+   paper, not the fill) are a different class token and are left ink. Other themes are unaffected
+   (rule is scoped to [data-theme='light']); their bright badge tier keeps ink text. */
+[data-theme='light'] [class~='bg-brand-yellow'] {
+  color: rgb(var(--c-on-accent));
 }
 
 /* Arabic / RTL. The document direction flips via <html dir> (set per-locale in core/i18n.ts), and

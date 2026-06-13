@@ -19,6 +19,8 @@ export default {
         paper: 'rgb(var(--c-paper) / <alpha-value>)',
         surface: 'rgb(var(--c-surface) / <alpha-value>)',
         sidebar: 'rgb(var(--c-sidebar) / <alpha-value>)',
+        // Text drawn on a solid accent fill (see --c-on-accent in main.css).
+        'on-accent': 'rgb(var(--c-on-accent) / <alpha-value>)',
         brand: {
           yellow: 'rgb(var(--c-brand-yellow) / <alpha-value>)',
           pink: 'rgb(var(--c-brand-pink) / <alpha-value>)',

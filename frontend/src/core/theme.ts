@@ -37,8 +37,8 @@ export interface ThemeMeta {
 }
 
 /**
- * Every theme the app ships, in switcher order. ``neon`` is the default (the dark-neon mockup
- * look the project is designed around).
+ * Every theme the app ships, in switcher order. ``light`` is the default (warm daylight
+ * brutalism with the mocha brand accent); ``neon`` is the original dark-neon mockup look.
  */
 export const THEME_META: ThemeMeta[] = [
   {
@@ -104,7 +104,7 @@ export const THEME_META: ThemeMeta[] = [
       paper: '#f3e8cd',
       surface: '#fffcf0',
       ink: '#1a1408',
-      accents: ['#ffd60a', '#d61f6f', '#2b4fd8'],
+      accents: ['#8c6a4a', '#d61f6f', '#2b4fd8'],
     },
   },
   {
@@ -120,7 +120,7 @@ export const THEME_META: ThemeMeta[] = [
   },
 ]
 
-export const DEFAULT_THEME: ThemeKey = 'neon'
+export const DEFAULT_THEME: ThemeKey = 'light'
 const STORAGE_KEY = 'filamind-theme'
 
 /** Themes offered by the switcher, in ``THEME_META`` order. */
@@ -133,7 +133,7 @@ function isThemeKey(value: string | null): value is ThemeKey {
 /** The active theme, reactive so the switcher reflects the current choice. */
 export const currentTheme = ref<ThemeKey>(DEFAULT_THEME)
 
-/** Stored choice → default (``neon``). Only ever returns a known theme key. */
+/** Stored choice → default (``light``). Only ever returns a known theme key. */
 export function detectTheme(): ThemeKey {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)

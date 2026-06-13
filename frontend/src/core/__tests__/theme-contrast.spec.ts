@@ -52,10 +52,17 @@ describe.each(Object.entries(themes))('theme %s', (_name, p) => {
     expect(ratio(p.ink, p.surface)).toBeGreaterThanOrEqual(8)
   })
 
-  it('keeps ink-texted badges readable (lime / yellow / cyan)', () => {
-    for (const accent of ['brand-lime', 'brand-yellow', 'brand-cyan'] as const) {
+  it('keeps ink-texted badges readable (lime / cyan)', () => {
+    for (const accent of ['brand-lime', 'brand-cyan'] as const) {
       expect(ratio(p[accent], p.ink), accent).toBeGreaterThanOrEqual(4)
     }
+  })
+
+  it('keeps the brand-yellow accent text readable', () => {
+    // The light theme pairs its deep mocha accent with light --c-on-accent text; the other
+    // themes keep ink on their bright yellow badge. Check against whichever this theme uses.
+    const onAccent = p['on-accent'] ?? p.ink
+    expect(ratio(p['brand-yellow'], onAccent)).toBeGreaterThanOrEqual(4)
   })
 
   it('keeps the danger button readable (surface text on red)', () => {
