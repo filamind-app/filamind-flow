@@ -39,6 +39,11 @@ class MaxFlowPlanRequest(BaseModel):
     park_for_view: bool = Field(
         True, description="Home (if needed) + center the nozzle for a clear view before heating"
     )
+    auto_stealthchop: bool = Field(
+        False,
+        description="SG4 extruder: temporarily write a stealthchop_threshold so the test can run, "
+        "then comment it out afterward (restores printer.cfg; firmware restart each way)",
+    )
 
 
 @router.post("/plan")

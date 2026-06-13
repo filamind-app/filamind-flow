@@ -66,7 +66,9 @@
       "samples": "每步采样数",
       "extrudePerStep": "每步挤出量（mm）",
       "driver": "挤出机驱动",
-      "driverDetected": "已从打印机检测"
+      "driverDetected": "已从打印机检测",
+      "autoStealthchop": "为测试自动启用 StealthChop",
+      "autoStealthchopHint": "仅 TMC2209/2240：临时向挤出机写入 stealthchop_threshold 以便 StallGuard 读取，测试后注释掉。恢复 printer.cfg；每次都需要固件重启。"
     },
     "plan": {
       "button": "预览方案",
@@ -113,7 +115,17 @@
         "homing": "打印机归位中…",
         "centering": "喷嘴中心定位中…",
         "heating": "热端加热中…",
-        "checking": "检查 StallGuard 信号中…"
+        "checking": "检查 StallGuard 信号中…",
+        "enabling": "启用 StealthChop 中…",
+        "ramp": "升流中…",
+        "reverting": "恢复配置中…"
+      },
+      "step": {
+        "home": "归位",
+        "center": "中心",
+        "heat": "加热",
+        "check": "检查",
+        "ramp": "升流"
       }
     },
     "result": {
@@ -137,7 +149,11 @@
       "title": "实时摄像头",
       "live": "实时",
       "error": "摄像头不可用。",
-      "willShow": "实时摄像头视图将在测试期间显示喷嘴。"
+      "willShow": "实时摄像头视图将在测试期间显示喷嘴。",
+      "minimize": "最小化",
+      "maximize": "最大化",
+      "enlarge": "放大",
+      "shrink": "缩小"
     }
   }
 }

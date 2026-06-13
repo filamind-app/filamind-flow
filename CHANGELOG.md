@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.240.0] - 2026-06-13
+
+### Added
+
+- **Max-Flow: optional auto-StealthChop for the test (TMC2209/2240).** A new option temporarily
+  writes a `stealthchop_threshold` to the extruder's TMC section so the StallGuard preflight
+  passes, runs the test, then **comments it out** again afterward — your printer.cfg is restored
+  (a backup is taken first, and a firmware restart happens before and after). This lets an SG4
+  extruder sitting in SpreadCycle run the test without a manual config edit, and the change is
+  reverted even if the run errors or is cancelled.
+- **Max-Flow: a phase stepper.** The live run shows a Home → Center → Heat → Check → Ramp
+  stepper, so you can see which stage it's in at a glance.
+
+### Changed
+
+- **Max-Flow: the live camera is now a compact, fixed picture-in-picture.** During a run it pins
+  to the corner at a smaller size with collapse and enlarge/shrink controls, so it stays visible
+  while you scroll through the progress and result.
+
 ## [0.239.0] - 2026-06-13
 
 ### Added

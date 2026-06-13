@@ -139,6 +139,8 @@ class _RunClient:
         config: dict[str, Any] | None = None,
         homed: str = "xyz",
         sg_absent: bool = False,
+        printer_cfg: str | None = None,
+        restart_fails: bool = False,
     ) -> None:
         self._sg = iter(sg_values)
         self._state = state
@@ -151,11 +153,17 @@ class _RunClient:
         )
         self._homed = homed  # toolhead.homed_axes reported to the park-for-view step
         self._sg_absent = sg_absent  # when True the extruder status omits the SG field entirely
+        self.printer_cfg = printer_cfg or "[tmc2209 extruder]\nrun_current: 0.8\n"
+        self._restart_fails = restart_fails
         self.gcodes: list[str] = []
+        self.uploads: list[str] = []
+        self.restarts = 0
 
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
         if "print_stats" in objects:
             return {"print_stats": {"state": self._state}}
+        if "webhooks" in objects:  # _wait_klippy_ready after a firmware restart
+            return {"webhooks": {"state": "ready"}}
         if "configfile" in objects:
             return {"configfile": {"settings": self._config}}
         if "toolhead" in objects:  # park-for-view: homed state + bed-center limits
@@ -179,6 +187,30 @@ class _RunClient:
         self.gcodes.append(script)
         if self._fail_on and self._fail_on in script:
             raise httpx.HTTPError("simulated command failure")
+
+    async def get_file_text(self, path: str, root: str = "config") -> str:
+        return self.printer_cfg
+
+    async def upload_file(self, path: str, content: str, root: str = "config") -> dict[str, Any]:
+        self.uploads.append(path)
+        if path == "printer.cfg":
+            self.printer_cfg = content
+            # Reflect the active StealthChop state into the configfile the preflight reads.
+            active = any(
+                ln.strip().startswith("stealthchop_threshold") and not ln.strip().startswith("#")
+                for ln in content.split("\n")
+            )
+            self._config = {
+                "tmc2209 extruder": (
+                    {"stealthchop_threshold": 999999} if active else {"run_current": "0.8"}
+                )
+            }
+        return {}
+
+    async def firmware_restart(self) -> None:
+        self.restarts += 1
+        if self._restart_fails:
+            raise httpx.HTTPError("simulated restart failure")
 
 
 _RUN_PARAMS: dict[str, Any] = {
@@ -299,6 +331,99 @@ async def test_run_park_for_view_disabled() -> None:
     )
     assert "G28" not in client.gcodes
     assert not any(g.startswith("G1 X") for g in client.gcodes)  # no positioning move
+
+
+# ── auto-StealthChop: temporary config write for SG4, reverted (commented) afterward ──────────
+def _active_stealthchop_lines(cfg: str) -> list[str]:
+    return [
+        ln
+        for ln in cfg.split("\n")
+        if ln.strip().startswith("stealthchop_threshold") and not ln.strip().startswith("#")
+    ]
+
+
+async def test_auto_stealthchop_writes_and_reverts_on_success() -> None:
+    # SG4 extruder in SpreadCycle (preflight would fail) → auto enables, runs, then reverts.
+    client = _RunClient(
+        _PRECHECK_OK + [100.0] * 12,
+        config={"tmc2209 extruder": {"run_current": "0.8"}},  # no stealthchop → preflight fails
+        printer_cfg="[tmc2209 extruder]\nrun_current: 0.8\nsense_resistor: 0.150\n",
+    )
+    out = await mfs.run_max_flow(
+        client,
+        RampParams(auto_stealthchop=True, **_RUN_PARAMS),  # type: ignore[arg-type]
+    )
+    assert out["max_flow_mm3s"] == 7  # the run completed (preflight passed after enabling)
+    assert client.uploads.count("printer.cfg") == 2  # written (enable) then rewritten (revert)
+    assert mfs._CFG_BACKUP_PATH in client.uploads  # a safety backup was taken
+    assert client.restarts == 2  # one restart to apply, one to revert
+    # ends commented out (reverted), with no ACTIVE stealthchop line left behind
+    assert "# stealthchop_threshold: 999999" in client.printer_cfg
+    assert _active_stealthchop_lines(client.printer_cfg) == []
+
+
+async def test_auto_stealthchop_reverts_even_when_signal_aborts() -> None:
+    # Enable succeeds, preflight passes, but the live SG is absent → pre-check aborts mid-run.
+    client = _RunClient(
+        [],
+        sg_absent=True,
+        config={"tmc2209 extruder": {"run_current": "0.8"}},
+        printer_cfg="[tmc2209 extruder]\nrun_current: 0.8\n",
+    )
+    with pytest.raises(mfs.MaxFlowSignalError):
+        await mfs.run_max_flow(
+            client,
+            RampParams(auto_stealthchop=True, **_RUN_PARAMS),  # type: ignore[arg-type]
+        )
+    assert "M104 S0" in client.gcodes  # heater cut
+    assert client.restarts == 2  # enabled then reverted despite the abort
+    assert _active_stealthchop_lines(client.printer_cfg) == []  # config restored
+
+
+async def test_auto_stealthchop_noop_when_user_already_has_it() -> None:
+    # The extruder already has its own stealthchop_threshold → nothing is written or restarted.
+    client = _RunClient(
+        _PRECHECK_OK + [100.0] * 12,
+        config={"tmc2209 extruder": {"stealthchop_threshold": 500}},
+        printer_cfg="[tmc2209 extruder]\nrun_current: 0.8\nstealthchop_threshold: 500\n",
+    )
+    out = await mfs.run_max_flow(
+        client,
+        RampParams(auto_stealthchop=True, **_RUN_PARAMS),  # type: ignore[arg-type]
+    )
+    assert out["max_flow_mm3s"] == 7
+    assert "printer.cfg" not in client.uploads  # the user's own config was never touched
+    assert client.restarts == 0
+
+
+async def test_auto_stealthchop_reverts_when_enable_restart_fails() -> None:
+    # The cfg is written, then the firmware restart fails mid-enable. printer.cfg must NOT be left
+    # with an active stealthchop line — the revert is gated on intent, not the enable's return.
+    client = _RunClient(
+        _PRECHECK_OK + [100.0] * 12,
+        config={"tmc2209 extruder": {"run_current": "0.8"}},
+        printer_cfg="[tmc2209 extruder]\nrun_current: 0.8\n",
+        restart_fails=True,
+    )
+    with pytest.raises(httpx.HTTPError):
+        await mfs.run_max_flow(
+            client,
+            RampParams(auto_stealthchop=True, **_RUN_PARAMS),  # type: ignore[arg-type]
+        )
+    # the marker line was written then commented back out despite the restart failure
+    assert _active_stealthchop_lines(client.printer_cfg) == []
+    assert client.uploads.count("printer.cfg") == 2  # enable wrote it, revert rewrote it
+
+
+async def test_enable_disable_stealthchop_helpers_round_trip() -> None:
+    client = _RunClient([], printer_cfg="[tmc2209 extruder]\nrun_current: 0.8\n")
+    added = await mfs._enable_stealthchop_temp(client, "tmc2209")
+    assert added is True
+    assert _active_stealthchop_lines(client.printer_cfg)  # active line present
+    assert client.restarts == 1
+    await mfs._disable_stealthchop_temp(client, "tmc2209")
+    assert _active_stealthchop_lines(client.printer_cfg) == []  # commented out
+    assert client.restarts == 2
 
 
 # ── C1: chopper-mode / StallGuard preflight ───────────────────────────────────

@@ -66,7 +66,9 @@
       "samples": "Samples / step",
       "extrudePerStep": "Extrude / step (mm)",
       "driver": "Extruder driver",
-      "driverDetected": "detected from the printer"
+      "driverDetected": "detected from the printer",
+      "autoStealthchop": "Auto-enable StealthChop for the test",
+      "autoStealthchopHint": "TMC2209/2240 only: temporarily writes a stealthchop_threshold to the extruder so StallGuard can read, then comments it out after the test. Restores printer.cfg; firmware restart each way."
     },
     "plan": {
       "button": "Preview plan",
@@ -110,17 +112,31 @@
       "abortNote": "Aborting always turns the heater off.",
       "parkNote": "Before heating, the printer homes (if needed) and centers the nozzle for a clear view.",
       "phase": {
+        "enabling": "Enabling StealthChop…",
         "homing": "Homing the printer…",
         "centering": "Centering the nozzle…",
         "heating": "Heating the hotend…",
-        "checking": "Checking the StallGuard signal…"
+        "checking": "Checking the StallGuard signal…",
+        "ramp": "Ramping the flow…",
+        "reverting": "Restoring the config…"
+      },
+      "step": {
+        "home": "Home",
+        "center": "Center",
+        "heat": "Heat",
+        "check": "Check",
+        "ramp": "Ramp"
       }
     },
     "camera": {
       "title": "Live camera",
       "live": "LIVE",
       "error": "Camera unavailable.",
-      "willShow": "A live camera view will show the nozzle during the test."
+      "willShow": "A live camera view will show the nozzle during the test.",
+      "minimize": "Minimize",
+      "maximize": "Maximize",
+      "enlarge": "Enlarge",
+      "shrink": "Shrink"
     },
     "result": {
       "title": "Result",
