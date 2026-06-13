@@ -29,6 +29,28 @@
       "busy": "Refused while the printer is busy — try again when it's idle.",
       "stale": "KlipperScreen.conf changed on disk since it was loaded (likely edited on the screen). Reload before saving so you don't overwrite that change."
     },
+    "view": {
+      "config": "Config",
+      "themes": "Themes"
+    },
+    "themes": {
+      "loading": "Loading themes…",
+      "palette": "Palette",
+      "radius": "Corner radius",
+      "preview": "Live preview",
+      "btn": "Button",
+      "previewWarn": "warning",
+      "previewApprox": "Approximate preview — the real screen renders with GTK; minor differences are expected.",
+      "namePlaceholder": "New theme name",
+      "createApply": "Create & apply",
+      "createOnly": "Create only",
+      "installed": "Installed themes",
+      "apply": "Apply",
+      "delete": "Delete theme",
+      "generated": "Made here",
+      "created": "Theme created. Apply it from the list, then restart.",
+      "appliedRestart": "Theme set — restart KlipperScreen to see it."
+    },
     "restart": {
       "button": "Restart KlipperScreen",
       "restarting": "Restarting…",

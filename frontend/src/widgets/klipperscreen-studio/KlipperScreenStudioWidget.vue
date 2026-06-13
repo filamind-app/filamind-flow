@@ -4,17 +4,22 @@
  *  Phase 1: a safe raw editor for `KlipperScreen.conf` (gated save = timestamped backup +
  *  stale-write guard + refused while printing, reusing the Config Editor's machinery) plus a
  *  one-tap service restart. The graphical option editor + theme builder build on this. */
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
 
 import {
+  activateTheme,
+  createTheme,
+  deleteTheme,
   fetchScreenConf,
   fetchScreenStatus,
+  fetchThemes,
   restartScreen,
   saveScreenConf,
   ScreenSaveError,
+  type ScreenTheme,
 } from './api'
 import type { ScreenStatus } from './types'
 
@@ -38,6 +43,18 @@ const confirmRestart = ref(false)
 const restarting = ref(false)
 const restarted = ref(false)
 const restartError = ref<string | null>(null)
+
+// Theme builder
+type View = 'config' | 'themes'
+const view = ref<View>('config')
+const themes = ref<ScreenTheme[]>([])
+const tokens = ref<string[]>([])
+const palette = reactive<Record<string, string>>({})
+const radius = ref(8)
+const themeName = ref('')
+const themesBusy = ref(false)
+const themesError = ref<string | null>(null)
+const themesNote = ref<string | null>(null)
 
 async function loadConf(): Promise<void> {
   loadingConf.value = true
@@ -108,6 +125,75 @@ async function doRestart(): Promise<void> {
   }
 }
 
+async function loadThemes(): Promise<void> {
+  themesBusy.value = true
+  themesError.value = null
+  try {
+    const cat = await fetchThemes()
+    themes.value = cat.themes
+    tokens.value = cat.tokens
+    if (!Object.keys(palette).length) {
+      for (const k of cat.tokens) palette[k] = cat.defaults[k] ?? '#000000'
+    }
+  } catch (e) {
+    themesError.value = describeError(e)
+  } finally {
+    themesBusy.value = false
+  }
+}
+
+function switchView(v: View): void {
+  view.value = v
+  if (v === 'themes' && !tokens.value.length) void loadThemes()
+}
+
+async function createAndApply(apply: boolean): Promise<void> {
+  themesBusy.value = true
+  themesError.value = null
+  themesNote.value = null
+  try {
+    await createTheme(themeName.value.trim(), { ...palette }, radius.value)
+    if (apply) {
+      await activateTheme(themeName.value.trim())
+      themesNote.value = t('klipperscreenStudio.themes.appliedRestart')
+    } else {
+      themesNote.value = t('klipperscreenStudio.themes.created')
+    }
+    await loadThemes()
+  } catch (e) {
+    themesError.value = describeError(e)
+  } finally {
+    themesBusy.value = false
+  }
+}
+
+async function applyExisting(name: string): Promise<void> {
+  themesBusy.value = true
+  themesError.value = null
+  themesNote.value = null
+  try {
+    await activateTheme(name)
+    themesNote.value = t('klipperscreenStudio.themes.appliedRestart')
+  } catch (e) {
+    themesError.value = describeError(e)
+  } finally {
+    themesBusy.value = false
+  }
+}
+
+async function removeTheme(name: string): Promise<void> {
+  themesBusy.value = true
+  themesError.value = null
+  try {
+    await deleteTheme(name)
+    await loadThemes()
+  } catch (e) {
+    themesError.value = describeError(e)
+  } finally {
+    themesBusy.value = false
+  }
+}
+
 onMounted(() => void loadStatus())
 </script>
 
@@ -158,92 +244,280 @@ onMounted(() => void loadStatus())
         >
       </div>
 
-      <!-- Raw editor -->
-      <p v-if="loadingConf" class="font-mono text-xs opacity-70">
-        {{ t('klipperscreenStudio.editor.loading') }}
-      </p>
-      <p v-else-if="confError" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">
-        {{ confError }}
-      </p>
-      <template v-else>
-        <div class="flex items-center justify-between gap-2">
-          <span class="font-mono text-[11px] opacity-60">KlipperScreen.conf</span>
-          <button
-            class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
-            :disabled="loadingConf"
-            @click="loadConf"
-          >
-            ↻ {{ t('klipperscreenStudio.editor.reload') }}
-          </button>
-        </div>
-        <textarea
-          v-model="content"
-          spellcheck="false"
-          dir="ltr"
-          class="h-72 w-full rounded-brutal border-3 border-ink bg-paper p-2 font-mono text-[11px] leading-snug"
-          @input="onEdit"
-        ></textarea>
-
-        <div class="flex flex-wrap items-center gap-2">
-          <button
-            class="nb-btn bg-brand-lime px-3 py-1 text-xs"
-            :disabled="saving || !dirty"
-            @click="save"
-          >
-            {{
-              saving ? t('klipperscreenStudio.editor.saving') : t('klipperscreenStudio.editor.save')
-            }}
-          </button>
-          <span v-if="saved" class="text-[11px] font-bold text-brand-lime"
-            >✓ {{ t('klipperscreenStudio.editor.saved') }}</span
-          >
-          <span v-else-if="dirty" class="text-[11px] opacity-60">{{
-            t('klipperscreenStudio.editor.unsaved')
-          }}</span>
-          <span class="flex-1"></span>
-          <button
-            class="nb-btn bg-brand-yellow px-3 py-1 text-xs"
-            :disabled="restarting"
-            @click="confirmRestart = true"
-          >
-            {{
-              restarting
-                ? t('klipperscreenStudio.restart.restarting')
-                : t('klipperscreenStudio.restart.button')
-            }}
-          </button>
-        </div>
-
-        <p v-if="saveError" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">
-          {{ saveError }}
-        </p>
-        <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
-          ✓ {{ t('klipperscreenStudio.restart.done') }}
-        </p>
-        <p
-          v-if="restartError"
-          role="alert"
-          class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+      <!-- Config / Themes view toggle -->
+      <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
+        <button
+          v-for="v in ['config', 'themes'] as const"
+          :key="v"
+          type="button"
+          class="nb-seg"
+          :class="view === v ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
+          :aria-pressed="view === v"
+          @click="switchView(v)"
         >
-          {{ restartError }}
-        </p>
+          {{ t('klipperscreenStudio.view.' + v) }}
+        </button>
+      </div>
 
-        <!-- Restart confirm -->
-        <div
-          v-if="confirmRestart"
-          class="nb-card space-y-2 border-brand-red bg-brand-yellow/20 p-2"
-        >
-          <p class="text-xs font-bold">{{ t('klipperscreenStudio.restart.confirmTitle') }}</p>
-          <p class="text-[11px] opacity-80">{{ t('klipperscreenStudio.restart.confirmBody') }}</p>
-          <div class="flex gap-2">
-            <button class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper" @click="doRestart">
-              {{ t('klipperscreenStudio.restart.confirm') }}
-            </button>
-            <button class="nb-btn bg-surface px-3 py-1 text-xs" @click="confirmRestart = false">
-              {{ t('klipperscreenStudio.restart.cancel') }}
+      <template v-if="view === 'config'">
+        <!-- Raw editor -->
+        <p v-if="loadingConf" class="font-mono text-xs opacity-70">
+          {{ t('klipperscreenStudio.editor.loading') }}
+        </p>
+        <p v-else-if="confError" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">
+          {{ confError }}
+        </p>
+        <template v-else>
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-[11px] opacity-60">KlipperScreen.conf</span>
+            <button
+              class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
+              :disabled="loadingConf"
+              @click="loadConf"
+            >
+              ↻ {{ t('klipperscreenStudio.editor.reload') }}
             </button>
           </div>
-        </div>
+          <textarea
+            v-model="content"
+            spellcheck="false"
+            dir="ltr"
+            class="h-72 w-full rounded-brutal border-3 border-ink bg-paper p-2 font-mono text-[11px] leading-snug"
+            @input="onEdit"
+          ></textarea>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+              :disabled="saving || !dirty"
+              @click="save"
+            >
+              {{
+                saving
+                  ? t('klipperscreenStudio.editor.saving')
+                  : t('klipperscreenStudio.editor.save')
+              }}
+            </button>
+            <span v-if="saved" class="text-[11px] font-bold text-brand-lime"
+              >✓ {{ t('klipperscreenStudio.editor.saved') }}</span
+            >
+            <span v-else-if="dirty" class="text-[11px] opacity-60">{{
+              t('klipperscreenStudio.editor.unsaved')
+            }}</span>
+            <span class="flex-1"></span>
+            <button
+              class="nb-btn bg-brand-yellow px-3 py-1 text-xs"
+              :disabled="restarting"
+              @click="confirmRestart = true"
+            >
+              {{
+                restarting
+                  ? t('klipperscreenStudio.restart.restarting')
+                  : t('klipperscreenStudio.restart.button')
+              }}
+            </button>
+          </div>
+
+          <p
+            v-if="saveError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+          >
+            {{ saveError }}
+          </p>
+          <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
+            ✓ {{ t('klipperscreenStudio.restart.done') }}
+          </p>
+          <p
+            v-if="restartError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+          >
+            {{ restartError }}
+          </p>
+
+          <!-- Restart confirm -->
+          <div
+            v-if="confirmRestart"
+            class="nb-card space-y-2 border-brand-red bg-brand-yellow/20 p-2"
+          >
+            <p class="text-xs font-bold">{{ t('klipperscreenStudio.restart.confirmTitle') }}</p>
+            <p class="text-[11px] opacity-80">{{ t('klipperscreenStudio.restart.confirmBody') }}</p>
+            <div class="flex gap-2">
+              <button class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper" @click="doRestart">
+                {{ t('klipperscreenStudio.restart.confirm') }}
+              </button>
+              <button class="nb-btn bg-surface px-3 py-1 text-xs" @click="confirmRestart = false">
+                {{ t('klipperscreenStudio.restart.cancel') }}
+              </button>
+            </div>
+          </div>
+        </template>
+      </template>
+
+      <!-- Themes view: palette pickers + live preview + theme management -->
+      <template v-else>
+        <p v-if="themesBusy && !tokens.length" class="font-mono text-xs opacity-70">
+          {{ t('klipperscreenStudio.themes.loading') }}
+        </p>
+        <template v-else>
+          <div class="grid gap-3 md:grid-cols-2">
+            <!-- palette editor -->
+            <div class="min-w-0 space-y-1.5">
+              <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.palette') }}</p>
+              <div v-for="tok in tokens" :key="tok" class="flex items-center gap-2 text-[11px]">
+                <input
+                  v-model="palette[tok]"
+                  type="color"
+                  class="h-7 w-9 shrink-0 rounded border-2 border-ink"
+                  :aria-label="tok"
+                />
+                <span class="min-w-0 flex-1 truncate font-mono">{{ tok }}</span>
+                <span class="shrink-0 font-mono opacity-60">{{ palette[tok] }}</span>
+              </div>
+              <label class="flex items-center gap-2 pt-1 text-[11px]">
+                <span class="shrink-0 font-mono">{{ t('klipperscreenStudio.themes.radius') }}</span>
+                <input
+                  v-model.number="radius"
+                  type="range"
+                  min="0"
+                  max="30"
+                  class="min-w-0 flex-1"
+                />
+                <span class="shrink-0 font-mono">{{ radius }}px</span>
+              </label>
+            </div>
+
+            <!-- live preview (an approximate mock, not the real GTK screen) -->
+            <div class="min-w-0 space-y-1">
+              <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.preview') }}</p>
+              <div
+                class="rounded-brutal border-3 border-ink p-2"
+                :style="{ backgroundColor: palette.bg, color: palette.text }"
+              >
+                <div
+                  class="mb-2 flex items-center justify-between rounded px-2 py-1 text-[11px]"
+                  :style="{ backgroundColor: palette.active }"
+                >
+                  <span>SV08</span><span :style="{ color: palette.color3 }">●</span>
+                </div>
+                <div class="grid grid-cols-2 gap-1.5">
+                  <div
+                    v-for="(c, i) in ['color1', 'color2', 'color3', 'color4']"
+                    :key="c"
+                    class="border-2 px-2 py-2 text-center text-[11px] font-bold"
+                    :style="{
+                      backgroundColor: palette.active,
+                      color: palette['text-inv'],
+                      borderColor: palette[c],
+                      borderRadius: radius + 'px',
+                    }"
+                  >
+                    {{ t('klipperscreenStudio.themes.btn') }} {{ i + 1 }}
+                  </div>
+                </div>
+                <p class="mt-2 text-[11px]" :style="{ color: palette.warning }">
+                  ⚠ {{ t('klipperscreenStudio.themes.previewWarn') }}
+                </p>
+              </div>
+              <p class="text-[11px] opacity-60">
+                {{ t('klipperscreenStudio.themes.previewApprox') }}
+              </p>
+            </div>
+          </div>
+
+          <!-- create -->
+          <div class="flex flex-wrap items-center gap-2">
+            <input
+              v-model="themeName"
+              :placeholder="t('klipperscreenStudio.themes.namePlaceholder')"
+              class="min-w-[8rem] flex-1 rounded-brutal border-3 border-ink bg-paper px-2 py-1 text-xs"
+            />
+            <button
+              class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+              :disabled="themesBusy || !themeName.trim()"
+              @click="createAndApply(true)"
+            >
+              {{ t('klipperscreenStudio.themes.createApply') }}
+            </button>
+            <button
+              class="nb-btn bg-surface px-3 py-1 text-xs"
+              :disabled="themesBusy || !themeName.trim()"
+              @click="createAndApply(false)"
+            >
+              {{ t('klipperscreenStudio.themes.createOnly') }}
+            </button>
+          </div>
+
+          <!-- installed themes -->
+          <div v-if="themes.length" class="space-y-1">
+            <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.installed') }}</p>
+            <ul class="space-y-1">
+              <li v-for="th in themes" :key="th.name" class="flex items-center gap-2 text-[11px]">
+                <span class="min-w-0 flex-1 truncate font-mono"
+                  >{{ th.name
+                  }}<span
+                    v-if="th.generated"
+                    class="ms-1 opacity-50"
+                    :title="t('klipperscreenStudio.themes.generated')"
+                    >★</span
+                  ></span
+                >
+                <button
+                  class="nb-btn shrink-0 bg-surface px-2 py-0.5"
+                  :disabled="themesBusy"
+                  @click="applyExisting(th.name)"
+                >
+                  {{ t('klipperscreenStudio.themes.apply') }}
+                </button>
+                <button
+                  v-if="th.generated"
+                  class="nb-btn shrink-0 bg-surface px-2 py-0.5"
+                  :disabled="themesBusy"
+                  :aria-label="t('klipperscreenStudio.themes.delete')"
+                  @click="removeTheme(th.name)"
+                >
+                  ✕
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <p
+            v-if="themesNote"
+            class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
+          >
+            <span class="min-w-0 flex-1">{{ themesNote }}</span>
+            <button
+              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
+              :disabled="restarting"
+              @click="doRestart"
+            >
+              {{
+                restarting
+                  ? t('klipperscreenStudio.restart.restarting')
+                  : t('klipperscreenStudio.restart.button')
+              }}
+            </button>
+          </p>
+          <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
+            ✓ {{ t('klipperscreenStudio.restart.done') }}
+          </p>
+          <p
+            v-if="themesError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+          >
+            {{ themesError }}
+          </p>
+          <p
+            v-if="restartError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+          >
+            {{ restartError }}
+          </p>
+        </template>
       </template>
     </template>
   </div>
