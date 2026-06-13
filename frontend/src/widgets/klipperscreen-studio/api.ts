@@ -145,3 +145,48 @@ export async function saveMenus(
   if (!r.ok) throw new ScreenSaveError(body.detail || `Save failed (${r.status})`, r.status)
   return body as ScreenConf
 }
+
+// ── FilaMind Kiosk ─────────────────────────────────────────────────────────────
+
+export interface KioskStatus {
+  /** Which service currently owns the touchscreen. */
+  mode: 'kiosk' | 'klipperscreen' | 'none'
+  kiosk_installed: boolean
+  kiosk_active: boolean
+  kiosk_enabled: boolean
+  screen_installed: boolean
+  screen_active: boolean
+  /** The on-host URL the kiosk browser opens. */
+  url: string
+}
+
+/** Current screen mode + whether the kiosk is installed / active / boot-enabled. */
+export async function fetchKioskStatus(): Promise<KioskStatus> {
+  const r = await fetch(`${base()}/api/screen/kiosk`)
+  if (!r.ok) throw new Error(`Could not read kiosk status (${r.status})`)
+  return (await r.json()) as KioskStatus
+}
+
+/** Put FilaMind on the touchscreen. `persist` also makes it the boot default. */
+export async function switchToKiosk(persist: boolean): Promise<KioskStatus> {
+  const r = await fetch(`${base()}/api/screen/kiosk/switch`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ persist }),
+  })
+  if (!r.ok) throw new Error(await detailOf(r))
+  const body = (await r.json()) as { status: KioskStatus }
+  return body.status
+}
+
+/** Hand the touchscreen back to KlipperScreen. `persist` also makes it the boot default. */
+export async function restoreScreen(persist: boolean): Promise<KioskStatus> {
+  const r = await fetch(`${base()}/api/screen/kiosk/restore`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ persist }),
+  })
+  if (!r.ok) throw new Error(await detailOf(r))
+  const body = (await r.json()) as { status: KioskStatus }
+  return body.status
+}

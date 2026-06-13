@@ -13,16 +13,20 @@ import {
   activateTheme,
   createTheme,
   deleteTheme,
+  fetchKioskStatus,
   fetchMenus,
   fetchScreenConf,
   fetchScreenStatus,
   fetchThemes,
+  type KioskStatus,
   type MenuItem,
   restartScreen,
+  restoreScreen,
   saveMenus,
   saveScreenConf,
   ScreenSaveError,
   type ScreenTheme,
+  switchToKiosk,
 } from './api'
 import type { ScreenStatus } from './types'
 
@@ -48,7 +52,7 @@ const restarted = ref(false)
 const restartError = ref<string | null>(null)
 
 // Theme builder
-type View = 'config' | 'menus' | 'themes'
+type View = 'config' | 'menus' | 'themes' | 'kiosk'
 const view = ref<View>('config')
 const themes = ref<ScreenTheme[]>([])
 const tokens = ref<string[]>([])
@@ -70,6 +74,14 @@ const menusDirty = ref(false)
 const selectedMenuId = ref<string | null>(null)
 const MENU_TREES = ['__main', '__print', '__splashscreen']
 let menuSeq = 0
+
+// FilaMind Kiosk — reversible swap of the touchscreen
+const kiosk = ref<KioskStatus | null>(null)
+const kioskBusy = ref(false)
+const kioskError = ref<string | null>(null)
+const kioskNote = ref<string | null>(null)
+const kioskPersist = ref(false)
+const confirmKiosk = ref<null | 'switch' | 'restore'>(null)
 
 async function loadConf(): Promise<void> {
   loadingConf.value = true
@@ -161,6 +173,41 @@ function switchView(v: View): void {
   view.value = v
   if (v === 'themes' && !tokens.value.length) void loadThemes()
   if (v === 'menus' && !menuItems.value.length && !menuSha.value) void loadMenus()
+  if (v === 'kiosk' && !kiosk.value) void loadKiosk()
+}
+
+async function loadKiosk(): Promise<void> {
+  kioskBusy.value = true
+  kioskError.value = null
+  try {
+    kiosk.value = await fetchKioskStatus()
+  } catch (e) {
+    kioskError.value = describeError(e)
+  } finally {
+    kioskBusy.value = false
+  }
+}
+
+async function doKiosk(action: 'switch' | 'restore'): Promise<void> {
+  confirmKiosk.value = null
+  kioskBusy.value = true
+  kioskError.value = null
+  kioskNote.value = null
+  try {
+    kiosk.value =
+      action === 'switch'
+        ? await switchToKiosk(kioskPersist.value)
+        : await restoreScreen(kioskPersist.value)
+    kioskNote.value = t(
+      action === 'switch'
+        ? 'klipperscreenStudio.kiosk.switchedNote'
+        : 'klipperscreenStudio.kiosk.restoredNote',
+    )
+  } catch (e) {
+    kioskError.value = describeError(e)
+  } finally {
+    kioskBusy.value = false
+  }
 }
 
 async function createAndApply(apply: boolean): Promise<void> {
@@ -384,10 +431,10 @@ onMounted(() => void loadStatus())
         >
       </div>
 
-      <!-- Config / Themes view toggle -->
+      <!-- Config / Menus / Themes / Kiosk view toggle -->
       <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
         <button
-          v-for="v in ['config', 'menus', 'themes'] as const"
+          v-for="v in ['config', 'menus', 'themes', 'kiosk'] as const"
           :key="v"
           type="button"
           class="nb-seg"
@@ -697,7 +744,7 @@ onMounted(() => void loadStatus())
       </template>
 
       <!-- Themes view: palette pickers + live preview + theme management -->
-      <template v-else>
+      <template v-else-if="view === 'themes'">
         <p v-if="themesBusy && !tokens.length" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.themes.loading') }}
         </p>
@@ -857,6 +904,117 @@ onMounted(() => void loadStatus())
             class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
           >
             {{ restartError }}
+          </p>
+        </template>
+      </template>
+
+      <!-- Kiosk view: turn the touchscreen into FilaMind itself (reversible swap) -->
+      <template v-else-if="view === 'kiosk'">
+        <p v-if="kioskBusy && !kiosk" class="font-mono text-xs opacity-70">
+          {{ t('klipperscreenStudio.kiosk.loading') }}
+        </p>
+        <template v-else>
+          <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.kiosk.intro') }}</p>
+
+          <!-- current screen mode -->
+          <div
+            class="nb-card flex flex-wrap items-center gap-x-3 gap-y-1 bg-surface p-3 text-[11px]"
+          >
+            <span class="font-bold uppercase tracking-wide opacity-60">{{
+              t('klipperscreenStudio.kiosk.current')
+            }}</span>
+            <span
+              class="nb-badge"
+              :class="kiosk?.mode === 'kiosk' ? 'bg-brand-lime' : 'bg-brand-cyan'"
+            >
+              {{ t('klipperscreenStudio.kiosk.mode.' + (kiosk?.mode ?? 'none')) }}
+            </span>
+            <span v-if="kiosk?.url" class="font-mono opacity-70">{{ kiosk.url }}</span>
+          </div>
+
+          <!-- not installed yet: how to provision -->
+          <div
+            v-if="kiosk && !kiosk.kiosk_installed"
+            class="nb-card space-y-1 bg-brand-yellow/15 p-3 text-[11px]"
+          >
+            <p class="font-bold">{{ t('klipperscreenStudio.kiosk.notInstalled') }}</p>
+            <p class="opacity-80">{{ t('klipperscreenStudio.kiosk.setupHint') }}</p>
+            <code class="block rounded bg-ink/5 p-1.5 font-mono"
+              >sudo bash deploy/install-kiosk.sh</code
+            >
+          </div>
+
+          <!-- installed: the reversible toggle -->
+          <template v-else-if="kiosk">
+            <label class="flex items-center gap-2 text-[11px]">
+              <input v-model="kioskPersist" type="checkbox" class="h-4 w-4" />
+              <span>{{ t('klipperscreenStudio.kiosk.persist') }}</span>
+            </label>
+            <p class="text-[11px] opacity-60">{{ t('klipperscreenStudio.kiosk.safety') }}</p>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                v-if="kiosk.mode !== 'kiosk'"
+                class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+                :disabled="kioskBusy"
+                @click="confirmKiosk = 'switch'"
+              >
+                {{ t('klipperscreenStudio.kiosk.switchBtn') }}
+              </button>
+              <button
+                v-if="kiosk.mode === 'kiosk' || !kiosk.screen_active"
+                class="nb-btn bg-surface px-3 py-1 text-xs"
+                :disabled="kioskBusy"
+                @click="confirmKiosk = 'restore'"
+              >
+                {{ t('klipperscreenStudio.kiosk.restoreBtn') }}
+              </button>
+              <span class="flex-1"></span>
+              <button
+                class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
+                :disabled="kioskBusy"
+                @click="loadKiosk"
+              >
+                ↻ {{ t('klipperscreenStudio.kiosk.refresh') }}
+              </button>
+            </div>
+
+            <!-- confirm -->
+            <div
+              v-if="confirmKiosk"
+              class="nb-card space-y-2 border-brand-red bg-brand-yellow/20 p-2"
+            >
+              <p class="text-xs font-bold">
+                {{
+                  t(
+                    confirmKiosk === 'switch'
+                      ? 'klipperscreenStudio.kiosk.confirmSwitchTitle'
+                      : 'klipperscreenStudio.kiosk.confirmRestoreTitle',
+                  )
+                }}
+              </p>
+              <p class="text-[11px] opacity-80">{{ t('klipperscreenStudio.kiosk.confirmBody') }}</p>
+              <div class="flex gap-2">
+                <button
+                  class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper"
+                  @click="confirmKiosk && doKiosk(confirmKiosk)"
+                >
+                  {{ t('klipperscreenStudio.kiosk.confirm') }}
+                </button>
+                <button class="nb-btn bg-surface px-3 py-1 text-xs" @click="confirmKiosk = null">
+                  {{ t('klipperscreenStudio.kiosk.cancel') }}
+                </button>
+              </div>
+            </div>
+          </template>
+
+          <p v-if="kioskNote" class="text-[11px] font-bold text-brand-lime">✓ {{ kioskNote }}</p>
+          <p
+            v-if="kioskError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+          >
+            {{ kioskError }}
           </p>
         </template>
       </template>

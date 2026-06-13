@@ -32,7 +32,32 @@
     "view": {
       "config": "配置",
       "menus": "菜单",
-      "themes": "主题"
+      "themes": "主题",
+      "kiosk": "自助屏"
+    },
+    "kiosk": {
+      "loading": "正在检查屏幕…",
+      "intro": "把 FilaMind Flow 本身以全屏浏览器形式显示在触摸屏上——完全掌控屏幕显示内容。它与 KlipperScreen 互换：启动一个会停止另一个。",
+      "current": "当前屏幕",
+      "mode": {
+        "kiosk": "FilaMind 自助屏",
+        "klipperscreen": "KlipperScreen",
+        "none": "均未运行"
+      },
+      "notInstalled": "自助屏尚未安装",
+      "setupHint": "在打印机主机上执行一次（安装全屏浏览器 + 自助屏服务）：",
+      "persist": "设为开机默认（否则切换是临时的——重启会恢复另一个）。",
+      "safety": "默认临时：重启会恢复另一个。若屏幕变黑，通过 SSH 运行：sudo systemctl start KlipperScreen",
+      "switchBtn": "切换到 FilaMind",
+      "restoreBtn": "恢复 KlipperScreen",
+      "refresh": "刷新",
+      "confirmSwitchTitle": "把 FilaMind 显示到屏幕上？",
+      "confirmRestoreTitle": "恢复 KlipperScreen？",
+      "confirmBody": "这会停止一个屏幕服务并启动另一个。不影响正在进行的打印，但切换时触摸屏会黑屏几秒。",
+      "confirm": "执行",
+      "cancel": "取消",
+      "switchedNote": "FilaMind 正在接管屏幕——稍后即会出现。",
+      "restoredNote": "KlipperScreen 正在恢复——屏幕稍后返回。"
     },
     "menus": {
       "loading": "正在加载菜单…",
