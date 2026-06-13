@@ -19,6 +19,8 @@ export interface MaxFlowParams {
   driver: string
   /** Home (if needed) + center the nozzle for a clear view before heating. */
   park_for_view?: boolean
+  /** SG4 extruder: temporarily write a stealthchop_threshold for the test, then comment it out. */
+  auto_stealthchop?: boolean
 }
 
 export interface PlanStep {

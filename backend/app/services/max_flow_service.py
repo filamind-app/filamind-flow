@@ -14,6 +14,7 @@ analysis itself lives in :mod:`app.services.max_flow`.
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import math
 from collections.abc import Callable
@@ -22,7 +23,7 @@ from typing import Any
 
 import httpx
 
-from app.services import max_flow, printer_guard, reference_data, task_store
+from app.services import config_stealthchop, max_flow, printer_guard, reference_data, task_store
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
@@ -78,6 +79,13 @@ _VIEW_Z = 80.0
 _VIEW_Z_MARGIN = 10.0  # keep the parked Z at least this far below Z max
 _TRAVEL_F = 6000.0  # mm/min for the positioning move
 
+#: Threshold written by the optional auto-StealthChop helper — high enough to keep an SG4 extruder
+#: in StealthChop across the whole ramp. Backed up + reverted (commented out) after the test.
+_STEALTHCHOP_VALUE = 999999
+_RESTART_WAIT_S = 60.0  # how long to wait for Klippy to return to 'ready' after a FIRMWARE_RESTART
+#: One-shot backup of printer.cfg taken before the temporary edit (under the Moonraker config root).
+_CFG_BACKUP_PATH = "filamind-backups/printer-maxflow-pretest.cfg"
+
 
 @dataclass(frozen=True)
 class RampParams:
@@ -93,6 +101,9 @@ class RampParams:
     driver: str = "tmc2209"
     #: Home (if needed) and center the nozzle at a clear height before heating, for a visible run.
     park_for_view: bool = True
+    #: For an SG4 extruder in SpreadCycle: temporarily write a stealthchop_threshold so the test
+    #: can run, then comment it out afterward (restores printer.cfg; a firmware restart each way).
+    auto_stealthchop: bool = False
 
 
 @dataclass(frozen=True)
@@ -421,6 +432,51 @@ async def _sg_precheck(
         )
 
 
+async def _wait_klippy_ready(client: MoonrakerClient, timeout_s: float = _RESTART_WAIT_S) -> None:
+    """Poll until Klippy reports ``ready`` after a FIRMWARE_RESTART (tolerating the disconnect).
+
+    Sleeps *before* the first poll so a stale pre-restart ``ready`` (Moonraker returns as soon as
+    the restart is *initiated*) isn't mistaken for the restart having completed.
+    """
+    attempts = max(1, int(timeout_s / 1.5))
+    for _ in range(attempts):
+        await asyncio.sleep(1.5)
+        with contextlib.suppress(httpx.HTTPError):
+            data = await client.query_objects(["webhooks"])
+            webhooks = data.get("webhooks")
+            if isinstance(webhooks, dict) and str(webhooks.get("state")) == "ready":
+                return
+
+
+async def _enable_stealthchop_temp(client: MoonrakerClient, driver: str) -> bool:
+    """Temporarily write a marker-tagged ``stealthchop_threshold`` to ``[<driver> extruder]``.
+
+    Backs up printer.cfg, applies the edit, restarts firmware, waits for ready. Returns True only
+    if it actually changed the config (so the caller knows to revert); False when the extruder
+    already has an active threshold or the section isn't in printer.cfg (nothing to undo).
+    """
+    cfg = await client.get_file_text("printer.cfg")
+    new_cfg, changed = config_stealthchop.apply_stealthchop(cfg, driver, _STEALTHCHOP_VALUE)
+    if not changed:
+        return False
+    await client.upload_file(_CFG_BACKUP_PATH, cfg)  # one-shot safety backup
+    await client.upload_file("printer.cfg", new_cfg)
+    await client.firmware_restart()
+    await _wait_klippy_ready(client)
+    return True
+
+
+async def _disable_stealthchop_temp(client: MoonrakerClient, driver: str) -> None:
+    """Comment out the marker-tagged line we added and restart, restoring the user's config."""
+    cfg = await client.get_file_text("printer.cfg")
+    new_cfg, changed = config_stealthchop.comment_stealthchop(cfg, driver)
+    if not changed:
+        return
+    await client.upload_file("printer.cfg", new_cfg)
+    await client.firmware_restart()
+    await _wait_klippy_ready(client)
+
+
 async def run_max_flow(
     client: MoonrakerClient,
     params: RampParams,
@@ -436,8 +492,10 @@ async def run_max_flow(
     pre-check **bails out before the ramp** if the live SG field is unusable on this extruder, so
     a meaningless "no slip" can't come out of a full heat-and-grind cycle. When
     ``park_for_view`` is set the nozzle is homed (if needed) and centered at a clear height first,
-    for a visible run. The client should be created with a long timeout (heating + extrusion
-    blocks for minutes).
+    for a visible run. When ``auto_stealthchop`` is set and the SG4 extruder is in SpreadCycle, a
+    marker-tagged ``stealthchop_threshold`` is written to printer.cfg so the preflight passes, then
+    commented out again afterward (restored even on error). The client should be created with a
+    long timeout (heating + extrusion + two firmware restarts block for minutes).
 
     Raises:
         ValueError: on invalid params.
@@ -449,7 +507,6 @@ async def run_max_flow(
     validate(params)
     if await _is_busy(client):
         raise MaxFlowBusyError("Refusing to run a max-flow test while the printer is busy.")
-    await _preflight(client, params.driver)  # C1: refuse a config that can't read StallGuard
 
     plan_steps = plan_ramp(params)
     total = len(plan_steps)
@@ -457,58 +514,80 @@ async def run_max_flow(
     sub_mm = params.extrude_per_step / params.samples_per_step
     sg_floor = _sg_floor(params.driver)  # C2: drop SG4 bias-region noise (below the min velocity)
     measurements: list[StepMeasurement] = []
-
-    # Home + center the nozzle for a clear view *before* heating (no heater on yet → no cleanup).
-    if params.park_for_view:
-        if cancel_cb is not None and cancel_cb():
-            raise task_store.TaskCancelled()
-        await _park_for_view(client, total, progress_cb)
+    # Whenever we *intend* to write a temporary StealthChop line, the outer finally must revert it.
+    # Gate the revert on the intent — set before the write can fail — not on the enable's return:
+    # if the firmware restart raises after printer.cfg was already overwritten, we must still undo.
+    stealthchop_intended = params.auto_stealthchop and params.driver.lower() in _SG4_DRIVERS
 
     try:
-        if progress_cb is not None:
-            progress_cb(0, total, {"phase": "heating"})
-        await client.run_gcode(f"M104 S{params.temperature:.0f}")  # start heating
-        await client.run_gcode("M83")  # relative extrusion
-        await client.run_gcode(f"M109 S{params.temperature:.0f}")  # wait for temp
-        # The fix (#319): refuse to run the ramp if the live StallGuard field is unusable here.
-        if cancel_cb is not None and cancel_cb():
-            raise task_store.TaskCancelled()  # finally below always cuts the heater
-        await _sg_precheck(client, params, driver_section, total, progress_cb)
-        for step_index, step in enumerate(plan_steps):
+        # Optionally enable StealthChop temporarily so an SG4 extruder passes the preflight.
+        if stealthchop_intended:
+            if cancel_cb is not None and cancel_cb():
+                raise task_store.TaskCancelled()
+            if progress_cb is not None:
+                progress_cb(0, total, {"phase": "enabling"})
+            await _enable_stealthchop_temp(client, params.driver)
+        await _preflight(client, params.driver)  # C1: refuse a config that can't read StallGuard
+
+        # Home + center the nozzle for a clear view *before* heating (no heater on yet).
+        if params.park_for_view:
+            if cancel_cb is not None and cancel_cb():
+                raise task_store.TaskCancelled()
+            await _park_for_view(client, total, progress_cb)
+
+        try:
+            if progress_cb is not None:
+                progress_cb(0, total, {"phase": "heating"})
+            await client.run_gcode(f"M104 S{params.temperature:.0f}")  # start heating
+            await client.run_gcode("M83")  # relative extrusion
+            await client.run_gcode(f"M109 S{params.temperature:.0f}")  # wait for temp
+            # The fix (#319): refuse the ramp if the live StallGuard field is unusable here.
             if cancel_cb is not None and cancel_cb():
                 raise task_store.TaskCancelled()  # finally below always cuts the heater
-            if progress_cb is not None:
-                progress_cb(step_index + 1, total, {"flow": step.flow_mm3s, "phase": "ramp"})
-            samples: list[float] = []
-            for _ in range(params.samples_per_step):
-                await client.run_gcode(f"G1 E{sub_mm:.4f} F{step.feedrate_mm_min:.0f}")
-                await client.run_gcode("M400")  # finish the move before sampling
-                status = await client.query_objects([driver_section])
-                obj = status.get(driver_section)
-                sg = _extract_sg(obj if isinstance(obj, dict) else {})
-                if sg is not None and sg >= sg_floor:
-                    samples.append(sg)
-            measurements.append(StepMeasurement(flow_mm3s=step.flow_mm3s, sg_samples=samples))
-            # Stop the moment slip is detected — don't grind filament past the first slip.
-            if max_flow.analyze(measurements, params.driver).slip_flow is not None:
-                break
-    finally:
-        # Always cut the heater, even if a command raised mid-run (best-effort).
-        with contextlib.suppress(Exception):
-            await client.run_gcode("M104 S0")
+            await _sg_precheck(client, params, driver_section, total, progress_cb)
+            for step_index, step in enumerate(plan_steps):
+                if cancel_cb is not None and cancel_cb():
+                    raise task_store.TaskCancelled()  # finally below always cuts the heater
+                if progress_cb is not None:
+                    progress_cb(step_index + 1, total, {"flow": step.flow_mm3s, "phase": "ramp"})
+                samples: list[float] = []
+                for _ in range(params.samples_per_step):
+                    await client.run_gcode(f"G1 E{sub_mm:.4f} F{step.feedrate_mm_min:.0f}")
+                    await client.run_gcode("M400")  # finish the move before sampling
+                    status = await client.query_objects([driver_section])
+                    obj = status.get(driver_section)
+                    sg = _extract_sg(obj if isinstance(obj, dict) else {})
+                    if sg is not None and sg >= sg_floor:
+                        samples.append(sg)
+                measurements.append(StepMeasurement(flow_mm3s=step.flow_mm3s, sg_samples=samples))
+                # Stop the moment slip is detected — don't grind filament past the first slip.
+                if max_flow.analyze(measurements, params.driver).slip_flow is not None:
+                    break
+        finally:
+            # Always cut the heater, even if a command raised mid-run (best-effort).
+            with contextlib.suppress(Exception):
+                await client.run_gcode("M104 S0")
 
-    result = max_flow.analyze(measurements, params.driver)
-    return {
-        "ok": True,
-        "max_flow_mm3s": result.max_flow_mm3s,
-        "slip_flow": result.slip_flow,
-        "reason": result.reason,
-        "steps": [
-            {"flow": s.flow, "median": s.median, "iqr": s.iqr, "cv_pct": s.cv_pct, "n": s.n}
-            for s in result.steps
-        ],
-        "recommend": recommend(result.max_flow_mm3s),
-        "driver": params.driver.lower(),
-        "stallguard_field": reference_data.stallguard_field(params.driver),
-        "sg_samples_seen": any(m.sg_samples for m in measurements),
-    }
+        result = max_flow.analyze(measurements, params.driver)
+        return {
+            "ok": True,
+            "max_flow_mm3s": result.max_flow_mm3s,
+            "slip_flow": result.slip_flow,
+            "reason": result.reason,
+            "steps": [
+                {"flow": s.flow, "median": s.median, "iqr": s.iqr, "cv_pct": s.cv_pct, "n": s.n}
+                for s in result.steps
+            ],
+            "recommend": recommend(result.max_flow_mm3s),
+            "driver": params.driver.lower(),
+            "stallguard_field": reference_data.stallguard_field(params.driver),
+            "sg_samples_seen": any(m.sg_samples for m in measurements),
+        }
+    finally:
+        # Revert any temporary StealthChop edit — idempotent (a no-op when nothing was written), so
+        # even a restart failure mid-enable can't leave an active stealthchop line in printer.cfg.
+        if stealthchop_intended:
+            if progress_cb is not None:
+                progress_cb(0, total, {"phase": "reverting"})
+            with contextlib.suppress(Exception):
+                await _disable_stealthchop_temp(client, params.driver)

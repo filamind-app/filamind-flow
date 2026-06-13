@@ -66,7 +66,9 @@
       "samples": "Messungen / Schritt",
       "extrudePerStep": "Extrusion / Schritt (mm)",
       "driver": "Extruder-Treiber",
-      "driverDetected": "vom Drucker erkannt"
+      "driverDetected": "vom Drucker erkannt",
+      "autoStealthchop": "StealthChop für den Test automatisch aktivieren",
+      "autoStealthchopHint": "Nur TMC2209/2240: schreibt temporär einen stealthchop_threshold in den Extruder, damit StallGuard auslesen kann, dann wird er nach dem Test auskommentiert. Stellt printer.cfg wieder her; Firmware-Neustart in beide Richtungen."
     },
     "plan": {
       "button": "Plan anzeigen",
@@ -113,7 +115,17 @@
         "homing": "Richtet den Drucker aus…",
         "centering": "Zentriert die Düse…",
         "heating": "Heizt das Hotend…",
-        "checking": "Prüft das StallGuard-Signal…"
+        "checking": "Prüft das StallGuard-Signal…",
+        "enabling": "StealthChop wird aktiviert…",
+        "ramp": "Rampe des Flusses läuft…",
+        "reverting": "Stelle die Konfiguration wieder her…"
+      },
+      "step": {
+        "home": "Ausrichtung",
+        "center": "Zentriert",
+        "heat": "Heizen",
+        "check": "Prüfung",
+        "ramp": "Rampe"
       }
     },
     "result": {
@@ -137,7 +149,11 @@
       "title": "Live-Kamera",
       "live": "LIVE",
       "error": "Kamera nicht verfügbar.",
-      "willShow": "Eine Live-Kameraansicht zeigt die Düse während des Tests."
+      "willShow": "Eine Live-Kameraansicht zeigt die Düse während des Tests.",
+      "minimize": "Minimieren",
+      "maximize": "Maximieren",
+      "enlarge": "Vergrößern",
+      "shrink": "Verkleinern"
     }
   }
 }
