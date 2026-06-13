@@ -24,19 +24,22 @@ from app.services import max_flow, resonance_service, task_store
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
-#: Detection thresholds for the vibration signal (scale-independent — units vary by machine).
-#: The within-step *spread* detectors (CV/IQR ratio) are disabled: vibration spread is noisy and
-#: rises naturally as the extruder speeds up, so they false-trip on the early ramp (observed on the
-#: SV08: a 9→35 IQR jump at the 2nd step). Detection rests on the *run-outlier* — a step whose
-#: vibration LEVEL jumps clear of the established baseline + its MAD band — which is what grinding
-#: actually does, and which needs several clean steps first.
+#: Detection thresholds for the vibration signal, derived from a live SV08 ramp (CHCB-SV08).
+#: Grinding shows up as an explosion of the within-step *coefficient of variation* (CV%), NOT a
+#: change in the vibration *level*: the per-step median stayed flat (~590-710) across the whole
+#: ramp, while CV% sat at 1-12% while gripping cleanly (the rise to ~12% is just the early
+#: speed-up) and then jumped to 26% -> 66% -> 71% once the gear started skipping at ~32.5 mm3/s.
+#: So detection is an ABSOLUTE CV ceiling (scale-independent — it's a ratio), with a CV ratio-jump
+#: as backup. The IQR (absolute spread) detectors stay off — that signal is machine-scaled. The
+#: run-outlier (level jump) is kept as a harmless extra; it won't fire on a flat median.
 ACCEL_CONSTANTS: dict[str, float] = {
-    "CV_HIGH_VARIANCE": 1.0e12,  # off (absolute CV ceiling)
-    "CV_JUMP_RATIO_COARSE": 1.0e12,  # off (CV ratio jump — too noisy for vibration spread)
-    "IQR_ABSOLUTE_TRIGGER": 1.0e12,  # off (absolute IQR trip)
-    "IQR_RATIO_COARSE": 1.0e12,  # off (IQR ratio jump — too noisy for vibration spread)
-    "OUTLIER_MAD_RATIO": 5.0,  # a level jump >= 5x the run's MAD band ...
-    "OUTLIER_MIN_REL": 0.6,  # ... and >= 60% over the established level = grinding
+    "CV_HIGH_VARIANCE": 20.0,  # CV% >= 20 = grinding (settled ramp peaked ~12%, grind hit 26-71%)
+    "CV_JUMP_RATIO_COARSE": 3.0,  # backup: CV jumps >= 3x its recent baseline ...
+    "CV_JUMP_MIN_COARSE": 10.0,  # ... once it is also >= 10% (so tiny-baseline jitter doesn't trip)
+    "IQR_ABSOLUTE_TRIGGER": 1.0e12,  # off (absolute spread is machine-scaled)
+    "IQR_RATIO_COARSE": 1.0e12,  # off (IQR ratio jump — too noisy on the early ramp)
+    "OUTLIER_MAD_RATIO": 5.0,  # harmless extra: a level jump (won't fire on a flat median)
+    "OUTLIER_MIN_REL": 0.6,
 }
 
 #: Don't allow a slip until this many steps are measured — the vibration ramps up before any

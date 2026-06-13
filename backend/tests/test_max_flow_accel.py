@@ -53,6 +53,24 @@ def test_analyze_no_slip_on_gentle_rise() -> None:
     assert res.max_flow_mm3s == 8  # reached the highest tested flow
 
 
+def test_analyze_detects_cv_explosion() -> None:
+    # The real SV08 grind signature: the within-step CV% explodes (settled ~0-12%, grind 26-71%)
+    # while the level stays flat. A late high-CV step must be flagged as the slip.
+    clean = [600.0, 605.0, 598.0, 602.0]  # CV ~0.4%
+    grind = [600.0, 900.0, 300.0, 900.0]  # CV ~37%
+    steps = [
+        StepMeasurement(5, clean),
+        StepMeasurement(7.5, clean),
+        StepMeasurement(10, clean),
+        StepMeasurement(12.5, clean),
+        StepMeasurement(15, clean),
+        StepMeasurement(17.5, grind),
+    ]
+    res = mfa.analyze(steps)
+    assert res.slip_flow == 17.5
+    assert res.max_flow_mm3s == 15  # last clean step before the CV explosion
+
+
 def test_analyze_warmup_ignores_early_jump() -> None:
     # Regression: a big vibration jump within the warm-up window must NOT trip (the SV08
     # false-positive was a 9→35 IQR jump at the 2nd step reported as "slip at 7.5").
