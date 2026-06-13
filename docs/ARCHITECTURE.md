@@ -46,7 +46,7 @@ src/
 │  ├─ store/       # state: Pinia mirror of Moonraker status
 │  └─ i18n.ts      # i18n: catalog loading, locale detection, switching
 ├─ components/     # presentation: app shell + dashboard (design-system driven)
-├─ widgets/        # features: self-registering widgets (Firmware Manager · Input Shaping · Motor Drivers · Config Editor · Macro Designer · Board Topology · Max-Flow · Config Templates · Hardware Browser)
+├─ widgets/        # features: 10 self-registering widgets (Machine Doctor · Firmware Manager · Input Shaping · Motor Drivers · Config Editor · Macro Designer · Board Topology · Max-Flow · Config Templates · Hardware Browser)
 ├─ locales/        # i18n message catalogs, one folder per language (en bundled; others lazy)
 └─ assets/styles/  # Neo-Brutalist design tokens + component classes
 ```
@@ -163,11 +163,16 @@ The Tailwind tokens reference the variables (`ink: 'rgb(var(--c-ink) / <alpha-va
 (`bg-paper`, `border-ink`, `bg-brand-cyan`, `shadow-brutal`, `rounded-brutal`) recolors per theme with
 no component edits. `main.css` holds `:root` (Light defaults) plus a `[data-theme="…"]` block per theme.
 
-- **Themes:** `neon` (default — deep violet + soft glow + rounded), `dark` (neutral charcoal), `light`
-  (the original brutalist look), `contrast` (near-black/white, a11y). Mirrors the i18n design:
-  `core/theme.ts` (registry + detect + `localStorage` persistence + reactive `data-theme`), a
-  `ThemeSelect` header control, and a no-flash inline `<head>` script that applies the saved theme
-  before first paint. **Adding a theme = one `[data-theme]` block + a `THEME_META` entry + locale names.**
+- **Themes (7):** `neon` (default — deep violet + electric glow), `midnight` (navy ops deck),
+  `dark` (steel slate), `ocean` (abyssal teal), `sunset` (dusk plum), `light` (daylight brutalism),
+  and `contrast` (near-black/white, a11y). All seven are **calibrated palettes** — a two-tier accent
+  ramp (status-badge colors held at a depth where their text passes WCAG, signal colors brighter for
+  charts/danger) — guarded by an automated contrast test that fails the build on a regression
+  (v0.226.0). Mirrors the i18n design: `core/theme.ts` (registry + detect + `localStorage`
+  persistence + reactive `data-theme`), a `ThemeMenu` live-preview header control, and a no-flash
+  inline `<head>` script that applies the saved theme before first paint. **Adding a new theme = one
+  `[data-theme]` block in `main.css` + a `THEME_META` entry + locale names** (the three added in
+  v0.226.0 followed exactly this path).
 - Theme is **orthogonal to locale/RTL** — the `:lang(ar)`/`[dir=rtl]` rules are independent.
 - SVG charts read the same token variables (not hardcoded hex), so they recolor with the theme.
 

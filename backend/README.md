@@ -29,7 +29,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | ------ | -------------------------- | --------------------------------------------------------------- |
 | GET    | `/api/health`              | Backend liveness probe.                                         |
 | GET    | `/api/moonraker/status`    | Server-side Moonraker reachability check.                       |
-| —      | `/api/firmware/*`          | Firmware build / flash / devices / config-profiles (Firmware Upgrade widget). |
+| (group) | `/api/firmware/*`         | Firmware build / flash / devices / config-profiles / identify / backup (Firmware Manager widget). |
 | POST   | `/api/shaper/analyze`      | Analyze an uploaded resonance CSV → recommended shaper + curves. |
 | GET    | `/api/shaper/files`        | List the resonance CSVs Klipper wrote on the host.              |
 | POST   | `/api/shaper/analyze-file` | Analyze a resonance CSV already on the host (by path).          |
