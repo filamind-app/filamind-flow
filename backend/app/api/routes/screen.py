@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
-from app.services import config_service, screen_service
+from app.services import config_service, screen_service, screen_theme_service
 from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/screen", tags=["screen"])
@@ -77,3 +77,86 @@ async def screen_restart(settings: Settings = Depends(get_settings)) -> dict[str
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
     return {"status": "restarting"}
+
+
+# ── Theme builder ────────────────────────────────────────────────────────────
+class ScreenThemeBody(BaseModel):
+    """A theme to preview or generate: a name, a palette of token→#RRGGBB, a corner radius."""
+
+    name: str = Field(..., description="Theme folder name (letters/numbers/space/-/_)")
+    palette: dict[str, str] = Field(
+        default_factory=dict, description="Palette token → #RRGGBB overrides (unknown keys ignored)"
+    )
+    radius: int = Field(8, description="Button corner radius, px")
+
+
+class ScreenThemeActivate(BaseModel):
+    name: str = Field(..., description="Theme to set as [main] theme in KlipperScreen.conf")
+
+
+@router.get("/themes")
+async def screen_themes(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Installed themes (each flagged ``generated`` if FilaMind made it) + the palette schema."""
+    return {
+        "themes": screen_theme_service.list_themes(settings.klipperscreen_dir),
+        "tokens": list(screen_theme_service.PALETTE_TOKENS),
+        "defaults": screen_theme_service.DEFAULT_PALETTE,
+    }
+
+
+@router.post("/themes/preview")
+async def screen_theme_preview(body: ScreenThemeBody) -> dict[str, str]:
+    """Render the style.css / style.conf for a palette without writing anything."""
+    return {
+        "style_css": screen_theme_service.render_style_css(
+            body.name or "preview", body.palette, body.radius
+        ),
+        "style_conf": screen_theme_service.render_style_conf(body.palette),
+    }
+
+
+@router.post("/themes")
+async def screen_theme_create(
+    body: ScreenThemeBody, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Generate + write the theme folder (host-side). Refuses to overwrite a stock theme."""
+    try:
+        return screen_theme_service.generate_theme(
+            settings.klipperscreen_dir, body.name, body.palette, body.radius
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except OSError as exc:
+        raise HTTPException(status_code=500, detail=f"Could not write theme: {exc}") from exc
+
+
+@router.post("/themes/activate")
+async def screen_theme_activate(
+    body: ScreenThemeActivate, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Set ``[main] theme`` to this theme (gated conf save). Restart applies it on the screen."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        return await screen_theme_service.activate_theme(client, body.name)
+    except config_service.ConfigBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except config_service.ConfigConflictError as exc:
+        raise HTTPException(status_code=412, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+
+
+@router.delete("/themes/{name}")
+async def screen_theme_delete(
+    name: str, settings: Settings = Depends(get_settings)
+) -> dict[str, str]:
+    """Delete a FilaMind-generated theme (refuses to delete a stock one)."""
+    try:
+        screen_theme_service.delete_theme(settings.klipperscreen_dir, name)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except OSError as exc:
+        raise HTTPException(status_code=500, detail=f"Could not delete theme: {exc}") from exc
+    return {"status": "deleted"}
