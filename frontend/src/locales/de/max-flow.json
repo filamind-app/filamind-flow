@@ -112,9 +112,9 @@
       "reattached": "Wieder verbunden: dieses Ergebnis wurde fertig, während die Seite weg war.",
       "failed": "Max-Durchfluss-Lauf fehlgeschlagen.",
       "abortNote": "Abbrechen schaltet die Heizung immer aus.",
-      "parkNote": "Vor dem Heizen richtet der Drucker sich selbst aus (falls nötig) und zentriert die Düse für eine freie Sicht.",
+      "parkNote": "Vor dem Heizen referenziert der Drucker (falls nötig) und zentriert die Düse für eine freie Sicht.",
       "phase": {
-        "homing": "Richtet den Drucker aus…",
+        "homing": "Drucker wird referenziert…",
         "centering": "Zentriert die Düse…",
         "heating": "Heizt das Hotend…",
         "checking": "Prüft das StallGuard-Signal…",
@@ -123,7 +123,7 @@
         "reverting": "Stelle die Konfiguration wieder her…"
       },
       "step": {
-        "home": "Ausrichtung",
+        "home": "Referenzieren",
         "center": "Zentriert",
         "heat": "Heizen",
         "check": "Prüfung",

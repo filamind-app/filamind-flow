@@ -6,7 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.257.0] - 2026-06-13
+## [0.258.0] - 2026-06-13
+
+### Fixed
+
+- **Translation corrections across 5 locales (i18n).** A per-locale audit caught 23 value-level
+  wording problems and they're fixed: the Max-Flow run-phase labels rendered the wrong *action* —
+  "homing" came out as "place/rank" (ar) and "align" (de), and "ramp" as "branch" (es) — now use the
+  correct Klipper homing/flow-ramp terms; German register and terminology cleanups ("Sie"→"du" in a
+  few leaked strings, motor "rating" → "Nennstrom" not "Nennung"); a Russian grammatical-gender fix
+  on "sensorless homing" and an untranslated "placeholder"; and a handful of short English labels
+  left untranslated in Chinese/Spanish (motor status `ok`/`on`/`off`/`interp`, "run"/"use"). French
+  was already clean. No keys changed — values only.
 
 ### Changed
 

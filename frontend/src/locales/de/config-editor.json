@@ -212,8 +212,8 @@
       "rule": {
         "over_driver_cap": "{section}: run_current {run_current} A übersteigt die ~{cap} A Vollskalengrenze des Treibers.",
         "near_driver_cap": "{section}: run_current {run_current} A liegt innerhalb von 10% der ~{cap} A Grenze des Treibers.",
-        "over_motor_rating": "{section}: run_current {run_current} A übersteigt die {motor}-Nennung ({max_current} A).",
-        "near_motor_rating": "{section}: run_current {run_current} A liegt innerhalb von 10% der {motor}-Nennung ({max_current} A).",
+        "over_motor_rating": "{section}: run_current {run_current} A übersteigt den Nennstrom des {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A liegt innerhalb von 10% des Nennstroms des {motor} ({max_current} A).",
         "odd_microsteps": "{section}: microsteps {microsteps} ist keine Zweierpotenz (1…256)."
       }
     },

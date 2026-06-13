@@ -123,7 +123,7 @@
       "spreadcycle": "SpreadCycle",
       "health": {
         "idle": "空闲",
-        "ok": "ok",
+        "ok": "正常",
         "warning": "警告",
         "fault": "故障"
       },
@@ -171,7 +171,7 @@
         "每张卡片是一个步进驱动器 — 标题是轴 (X / Y / Z / 挤出机)，徽章是芯片型号。",
         "运行电流显示电机被驱动的力度；实时值可能与配置的“设定”值略有不同 — 这是正常的。",
         "模式告诉你 SpreadCycle（精确、较响）还是 StealthChop（安静）；微步显示运动的平滑程度。",
-        "归位某个轴或点动电机以唤醒它 — 实时温度和故障标志只在电机启用时出现（空闲驱动器显示“idle”）。",
+        "归位某个轴或点动电机以唤醒它 — 实时温度和故障标志只在电机启用时出现（空闲驱动器显示“空闲”）。",
         "打开某张卡片上的“高级寄存器”以检视驱动器正在使用的原始调校值。"
       ],
       "loading": "正在加载电机驱动器…",
@@ -186,7 +186,7 @@
       "sg": "SG {field} {threshold}",
       "detailsShow": "▸ 详情",
       "detailsHide": "▾ 收起",
-      "interp": "interp",
+      "interp": "插值",
       "sense": "采样 {value} Ω",
       "healthTitleIdle": "启用电机（归位或点动一个轴）以读取实时温度和故障标志",
       "healthTitleLive": "来自 drv_status 的实时驱动器状态",
@@ -288,8 +288,8 @@
       "liveOnlyEmphasis": "仅实时",
       "loading": "正在加载可编辑寄存器…",
       "coolstep": "CoolStep",
-      "on": "on",
-      "off": "off",
+      "on": "开",
+      "off": "关",
       "coolstepEnableTitle": "应用经 autotune 验证的 CoolStep 配置 (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
       "enable": "启用",
       "riskyTitle": "较有风险的旋钮 — 写入前请确认",
