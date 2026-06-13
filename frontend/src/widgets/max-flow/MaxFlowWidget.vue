@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import ComboSelect from '@/components/ui/ComboSelect.vue'
@@ -61,6 +61,8 @@ const resultFrom = ref<string | null>(null)
 const detectedDriver = ref<string | null>(null)
 const DRIVER_OPTIONS = ['tmc2209', 'tmc2208', 'tmc2226', 'tmc2130', 'tmc2240', 'tmc5160', 'tmc2660']
 const LAST_RESULT_KEY = 'filamind-maxflow-last'
+/** Remembers the user's hotend pick so it's restored (and its temp/flow prefilled) next visit. */
+const LAST_HOTEND_KEY = 'filamind-maxflow-hotend'
 
 function rememberResult(r: MaxFlowResult): void {
   try {
@@ -91,6 +93,13 @@ function resetDownstream(): void {
 }
 
 watch(selectedHotend, (name) => {
+  // Pin the choice so a reload restores it; clear the pin when the user deselects.
+  try {
+    if (name) localStorage.setItem(LAST_HOTEND_KEY, name)
+    else localStorage.removeItem(LAST_HOTEND_KEY)
+  } catch {
+    /* best-effort */
+  }
   const row = hotends.value.find((h) => h.name === name)
   if (row) {
     if (typeof row.suggested_temp_c === 'number') params.temperature = row.suggested_temp_c
@@ -181,21 +190,33 @@ async function doRun(): Promise<void> {
 }
 
 onMounted(async () => {
-  fetchHotends()
-    .then((rows) => (hotends.value = rows))
-    .catch(() => {})
   // A webcam is optional — only show the live view if the printer has one configured.
   fetchCameras()
     .then((cams) => (cameras.value = cams))
     .catch(() => {})
-  // Detect the extruder's real TMC model so the driver param starts honest (a 2240/5160
-  // extruder would otherwise hit a preflight refusal the user can't fix from here).
-  fetchExtruderDriver()
-    .then((d) => {
-      detectedDriver.value = d
-      if (d) params.driver = d
-    })
-    .catch(() => {})
+  // Load hotends, then restore the pinned pick; detect the extruder's real TMC model so the
+  // driver param starts honest (a 2240/5160 extruder would otherwise hit a preflight refusal the
+  // user can't fix from here). These mutate params, so do them — and let their resetDownstream
+  // flush (await nextTick) — BEFORE restoring a saved result, or the restore would wipe it.
+  try {
+    hotends.value = await fetchHotends()
+  } catch {
+    /* leave hotends empty — the test still runs from manual params */
+  }
+  try {
+    const saved = localStorage.getItem(LAST_HOTEND_KEY)
+    if (saved && hotends.value.some((h) => h.name === saved)) selectedHotend.value = saved
+  } catch {
+    /* ignore a corrupt entry */
+  }
+  try {
+    const d = await fetchExtruderDriver()
+    detectedDriver.value = d
+    if (d) params.driver = d
+  } catch {
+    /* keep the default driver */
+  }
+  await nextTick()
   // After a reload: resume a still-running test, or collect the result a dropped tab missed.
   try {
     const resumed = await reattachMaxFlow()
