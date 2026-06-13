@@ -1,0 +1,42 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Modifiez en toute sécurité la configuration de l'écran tactile KlipperScreen de votre imprimante, puis redémarrez KlipperScreen pour l'appliquer. Chaque enregistrement est sauvegardé au préalable.",
+    "help": {
+      "title": "Comment ça marche",
+      "body": "KlipperScreen.conf contrôle l'écran tactile relié à votre imprimante — thème, langue, menus et options d'affichage. Cet éditeur lit et écrit ce fichier via le même chemin sécurisé que l'Éditeur de config.",
+      "step1": "Modifiez le texte de configuration ci-dessous (ou laissez-le tel quel).",
+      "step2": "Enregistrez — le fichier est d'abord sauvegardé, et l'enregistrement est refusé pendant que l'imprimante est occupée.",
+      "step3": "Redémarrez KlipperScreen pour appliquer le changement sur l'écran physique.",
+      "lfNote": "Les lignes utilisent des fins de ligne UNIX (LF), imposées automatiquement à l'enregistrement."
+    },
+    "status": {
+      "checking": "Recherche de KlipperScreen…",
+      "absent": "KlipperScreen n'a pas été détecté sur cette imprimante (pas de KlipperScreen.conf, et non signalé par Moonraker). Installez KlipperScreen pour utiliser cet outil.",
+      "present": "KlipperScreen détecté",
+      "theme": "Thème",
+      "language": "Langue",
+      "notRestartable": "Moonraker ne peut pas redémarrer KlipperScreen automatiquement — redémarrez-le manuellement après l'enregistrement."
+    },
+    "editor": {
+      "loading": "Lecture de KlipperScreen.conf…",
+      "reload": "Recharger",
+      "save": "Enregistrer la config",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré (sauvegardé)",
+      "unsaved": "Modifications non enregistrées"
+    },
+    "save": {
+      "busy": "Refusé pendant que l'imprimante est occupée — réessayez quand elle est inactive.",
+      "stale": "KlipperScreen.conf a changé sur le disque depuis son chargement (probablement modifié sur l'écran). Rechargez avant d'enregistrer pour ne pas écraser ce changement."
+    },
+    "restart": {
+      "button": "Redémarrer KlipperScreen",
+      "restarting": "Redémarrage…",
+      "done": "KlipperScreen redémarre — l'écran se rechargera sous peu.",
+      "confirmTitle": "Redémarrer KlipperScreen ?",
+      "confirmBody": "Cela redémarre le service de l'écran tactile pour appliquer vos changements. Cela n'affecte pas une impression en cours, mais l'écran s'éteindra quelques secondes.",
+      "confirm": "Redémarrer",
+      "cancel": "Annuler"
+    }
+  }
+}

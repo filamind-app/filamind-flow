@@ -88,6 +88,17 @@ export function registerWidgets(): void {
   })
 
   registerWidget({
+    id: 'klipperscreen-studio',
+    title: 'KlipperScreen Studio',
+    icon: '🖥',
+    description: "Edit your printer's KlipperScreen touchscreen config and restart it to apply.",
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(
+      () => import('./klipperscreen-studio/KlipperScreenStudioWidget.vue'),
+    ),
+  })
+
+  registerWidget({
     id: 'config-templates',
     title: 'Config Templates',
     icon: '📋',
