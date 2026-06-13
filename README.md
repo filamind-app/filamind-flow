@@ -34,8 +34,10 @@ on your machine and deployed as **static files**, so it adds virtually nothing t
 the printer host at runtime; a small FastAPI backend handles anything that must
 run server-side.
 
-> **Status:** actively developed and **running on real hardware** (a Sovol SV08), localized in
-> **7 languages** with **7 switchable themes**. **Ten widgets ship today** — Machine Doctor, Firmware Manager,
+> **Status:** actively developed and **proven on two very different real printers** — a
+> **Sovol SV08** and a **Voron-class CoreXY** — spanning two MCU families, both TMC driver
+> buses (UART *and* SPI), and USB *and* CAN toolheads. Localized in **7 languages** with
+> **7 switchable themes**. **Ten widgets ship today** — Machine Doctor, Firmware Manager,
 > Input Shaping, Motor Drivers, Config Editor, Macro Designer, Board Topology, Max-Flow,
 > Config Templates, and the Hardware Browser. A few highlights:
 >
@@ -65,6 +67,40 @@ run server-side.
 >
 > The full set is in the table below; new widgets are added under `frontend/src/widgets/`.
 
+## Proven across real, different printers
+
+FilaMind is **printer-agnostic by design**, and that claim is earned on hardware — not one
+reference machine, but two that disagree on almost everything that matters to a control panel:
+
+| | **Sovol SV08** | **Voron-class CoreXY** |
+| --- | --- | --- |
+| Kinematics | CoreXY | CoreXY |
+| Mainboard MCU | STM32**F103** | STM32**H723** |
+| Stepper drivers | TMC**2209** — UART, one pin per driver | TMC**5160** ×6 — a **shared software-SPI** bus |
+| Toolhead link | **USB** (toolhead ADXL345) | **CAN bus** |
+| Host SBC | BTT CB1 (Allwinner H616) | Raspberry Pi 4 |
+| Reached over | LAN | a remote reverse-proxy **tunnel** |
+
+Two boards, two MCU families, two driver buses, two toolhead transports, two host SBCs, two
+access paths. Bringing the second printer online deliberately hunted the *"works on my printer"*
+class of bug — and each one it surfaced became a **generic fix**, not a special case:
+
+- **Shared-bus pins are no longer false conflicts** — a stack of TMC5160s sharing one
+  software-SPI bus is valid wiring; Machine Doctor now scores it correctly (the UART-per-driver
+  SV08 never hit this path).
+- **CAN flashing resolves the node's UUID from the live config** — a toolhead registered under
+  a friendly name still flashes, instead of the bus address being taken literally.
+- **Kinematics-aware tooling** — CoreXY-only tools (belt comparison) are gated and explained on
+  Cartesian / CoreXZ / Delta machines rather than firing meaningless test moves.
+- **Honest flash outcomes** — a flash reports success or failure by the tool's real exit code,
+  with a CAN read-back-verify *salvage* that confirms the true result through Klipper when a
+  USB-CAN adapter chokes on the verify flood.
+- **Reachable anywhere** — the UI serves from a host-relative subpath, so it works on the LAN,
+  by IP, and through a remote tunnel with no `.local` mDNS and no extra port to forward.
+
+The result: a panel validated where it counts, with the rough edges of cross-hardware support
+filed down on the bench. Different mainboard? Different driver family? CAN toolhead? It's been there.
+
 ## Widgets
 
 | Widget | What it does | Status |
@@ -90,12 +126,14 @@ On your Klipper / Moonraker host, run as your normal printer user (e.g. `pi` / `
 curl -fsSL https://raw.githubusercontent.com/filamind-app/filamind-flow/main/scripts/install.sh | bash
 ```
 
-It installs the backend service, serves the (pre-built) UI via nginx on port `8090`,
-adds a **FilaMind Flow** entry to the Mainsail sidebar, and registers it with
-Moonraker's update manager for one-click updates. Re-runnable; ports are overridable
-(`FILAMIND_UI_PORT`, `FILAMIND_API_PORT`), and the sidebar-link host with
-`FILAMIND_PUBLIC_HOST` (defaults to the LAN IP — more portable than `<hostname>.local`,
-which needs mDNS the client may not have). See [`scripts/install.sh`](scripts/install.sh).
+It installs the backend service, serves the (pre-built) UI via nginx on port `8090`, and
+registers it with Moonraker's update manager for one-click updates. Where it can, it also
+exposes the panel at **`/filamind/` on the host's primary web server** (the one that already
+answers Mainsail/Fluidd) and adds a **host-relative** sidebar link — so the UI opens on the
+LAN, by IP, and **through a remote reverse-proxy tunnel**, with no `.local` mDNS and no extra
+port to forward. Re-runnable; ports are overridable (`FILAMIND_UI_PORT`, `FILAMIND_API_PORT`),
+and an explicit public host can be forced with `FILAMIND_PUBLIC_HOST` (used as the fallback
+absolute `host:port` link when no primary site is found). See [`scripts/install.sh`](scripts/install.sh).
 
 ## Why it exists
 
