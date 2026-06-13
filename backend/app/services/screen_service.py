@@ -140,3 +140,111 @@ def _set_one(raw: str, section: str, key: str, value: str) -> str:
         user.insert(sec + 1, f"{key} = {value}")
         return "\n".join([*user, *auto])
     return "\n".join([header, f"{key} = {value}", "", *user, *auto])
+
+
+# ── Menu tree editor ─────────────────────────────────────────────────────────
+# The on-screen menus are config-defined trees of [menu <tree> <tok> <tok>...] sections. We read
+# them into a flat list (the frontend rebuilds the tree from the path) and write them back by
+# stripping every existing [menu ...] block from the user portion and re-emitting the supplied
+# ones — KlipperScreen resolves menus by their path, not file order, so this is safe. The #~#
+# auto-block and all non-menu sections are preserved.
+_MENU_HEADER = re.compile(r"^\[menu\s+(.+?)\]\s*$", re.IGNORECASE)
+_TOKEN = re.compile(r"^[A-Za-z0-9_]+$")
+_MENU_PROPS = ("name", "icon", "style", "panel", "method", "params", "enable", "confirm")
+
+#: Built-in panels a menu item's ``panel:`` can open (for the action picker).
+PANELS = (
+    "move",
+    "temperature",
+    "extrude",
+    "fan",
+    "fine_tune",
+    "gcodes",
+    "job_status",
+    "bed_level",
+    "bed_mesh",
+    "zcalibrate",
+    "input_shaper",
+    "limits",
+    "retraction",
+    "network",
+    "power",
+    "led",
+    "pins",
+    "spoolman",
+    "console",
+    "gcode_macros",
+    "notifications",
+    "settings",
+    "system",
+    "updater",
+    "camera",
+    "lock_screen",
+)
+
+
+def read_menus(raw: str) -> list[dict[str, Any]]:
+    """Flatten the user-portion ``[menu ...]`` sections into ``{id, tree, parent, props}`` items."""
+    user, _ = _split_auto(raw)
+    items: list[dict[str, Any]] = []
+    i = 0
+    while i < len(user):
+        m = _MENU_HEADER.match(user[i].strip())
+        if not m:
+            i += 1
+            continue
+        path = m.group(1).split()
+        props: dict[str, str] = {}
+        i += 1
+        while i < len(user) and not user[i].strip().startswith("["):
+            if not user[i].lstrip().startswith("#"):
+                kv = _KV.match(user[i])
+                if kv:
+                    props[kv.group(1).lower()] = kv.group(2)
+            i += 1
+        if path:
+            items.append(
+                {
+                    "id": " ".join(path),
+                    "tree": path[0],
+                    "parent": " ".join(path[:-1]) if len(path) > 1 else path[0],
+                    "props": props,
+                }
+            )
+    return items
+
+
+def write_menus(raw: str, items: list[dict[str, Any]]) -> str:
+    """Replace every ``[menu ...]`` section with the supplied items, preserving the rest + #~#."""
+    user, auto = _split_auto(raw)
+    kept: list[str] = []
+    i = 0
+    while i < len(user):
+        if _MENU_HEADER.match(user[i].strip()):
+            i += 1
+            while i < len(user) and not user[i].strip().startswith("["):
+                i += 1
+            continue
+        kept.append(user[i])
+        i += 1
+    while kept and kept[-1].strip() == "":
+        kept.pop()
+
+    out: list[str] = []
+    for item in items:
+        path = str(item.get("id") or "").strip()
+        if not path or not all(_TOKEN.match(tok) for tok in path.split()):
+            continue
+        out.append("")
+        out.append(f"[menu {path}]")
+        props = item.get("props") or {}
+        ordered = [*_MENU_PROPS, *(k for k in props if k not in _MENU_PROPS)]
+        for key in ordered:
+            if not _TOKEN.match(key):
+                continue
+            value = props.get(key)
+            if value is None or str(value) == "":
+                continue
+            # one option per line, LF — values can't span lines, so strip any embedded newlines.
+            out.append(f"{key}: {str(value).replace(chr(10), ' ').strip()}")
+    return "\n".join([*kept, *out, "", *auto])

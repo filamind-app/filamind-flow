@@ -127,6 +127,60 @@ async def screen_options_save(
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
 
 
+# ── Menu tree editor ─────────────────────────────────────────────────────────
+class ScreenMenusSave(BaseModel):
+    """Body for ``POST /screen/menus`` — the full menu item list + the loaded fingerprint."""
+
+    items: list[dict[str, Any]] = Field(
+        default_factory=list, description="Menu items: {id, props:{name,icon,panel,method,...}}"
+    )
+    expected_sha256: str | None = Field(
+        None, description="SHA-256 of the loaded conf (stale guard)"
+    )
+
+
+@router.get("/menus")
+async def screen_menus(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """The menu tree (flat items) + the panels a button can open, for the menu editor."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        view = await screen_service.read_conf(client)
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code == 404:
+            return {"items": [], "panels": list(screen_service.PANELS), "sha256": None}
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+    raw = str(view.get("raw", ""))
+    return {
+        "items": screen_service.read_menus(raw),
+        "panels": list(screen_service.PANELS),
+        "sha256": view.get("sha256"),
+    }
+
+
+@router.post("/menus")
+async def screen_menus_save(
+    body: ScreenMenusSave, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Rewrite the ``[menu ...]`` sections from the supplied items (gated save; #~# preserved)."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        view = await screen_service.read_conf(client)
+        new_raw = screen_service.write_menus(str(view.get("raw", "")), body.items)
+        return await screen_service.save_conf(client, new_raw, body.expected_sha256)
+    except config_service.ConfigBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except config_service.ConfigConflictError as exc:
+        raise HTTPException(status_code=412, detail=str(exc)) from exc
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code == 404:
+            raise HTTPException(status_code=404, detail="KlipperScreen.conf not found") from exc
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
+
+
 # ── Theme builder ────────────────────────────────────────────────────────────
 class ScreenThemeBody(BaseModel):
     """A theme to preview or generate: a name, a palette of token→#RRGGBB, a corner radius."""
