@@ -86,13 +86,17 @@ possible but not recommended: it breaks on every update.)
 ## 6. FilaMind Kiosk (optional — run FilaMind on the touchscreen)
 
 To put FilaMind Flow **on the printer's physical touchscreen** instead of (or alongside)
-KlipperScreen, install the kiosk once on the host:
+KlipperScreen, install the kiosk once on the host. **Run it from inside the cloned repo** (the
+script path is relative — from your home directory `deploy/install-kiosk.sh` won't be found):
 
 ```bash
+cd ~/filamind-flow                           # the directory you cloned the repo into
 sudo bash deploy/install-kiosk.sh            # user + http://localhost:8090 by default
 sudo bash deploy/install-kiosk.sh biqu http://localhost:8090
 sudo bash deploy/install-kiosk.sh --uninstall
 ```
+
+(Or give the full path from anywhere: `sudo bash ~/filamind-flow/deploy/install-kiosk.sh`.)
 
 It **auto-detects** how your screen is driven — **X11** (Xorg/`xinit`, how most KlipperScreen
 images run) or **Wayland** (`cage` on KMS) — by reading `KlipperScreen.service`, installs Chromium +

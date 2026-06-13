@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.261.0] - 2026-06-13
+
+### Fixed
+
+- **Kiosk install command now shows the repo path.** `deploy/install-kiosk.sh` is a repo-relative
+  path, so running `sudo bash deploy/install-kiosk.sh` from the home directory failed with
+  "No such file or directory". The in-app setup hint (KlipperScreen Studio → Kiosk) and the deploy
+  README now show `cd ~/filamind-flow && sudo bash deploy/install-kiosk.sh` (with the full-path
+  alternative), so the command works as written.
+
 ## [0.260.0] - 2026-06-13
 
 ### Fixed
