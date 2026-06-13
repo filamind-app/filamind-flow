@@ -118,7 +118,7 @@
       "total": "{n} motores",
       "none": "No se encontraron motores.",
       "rated": "nominal",
-      "run": "run",
+      "run": "marcha",
       "config": "Config de Klipper"
     },
     "hosts": {
