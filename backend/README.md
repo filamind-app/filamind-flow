@@ -116,6 +116,12 @@ firmware API has many routes beyond the summary above).
 Curated Klipper reference datasets (StallGuard tuning, hotends, board/MCU patterns, macros) live
 under `app/data/reference/` and are served read-only by `app/services/reference_data.py`.
 
+The large curated **hardware catalog** ships there as a compiled, read-only **`hardware.sqlite`**
+(boards / drivers / motors / hosts / catalog / manufacturers). Its editable source is kept *outside*
+the repo; after editing it, regenerate the database with `python scripts/build_hardware_db.py` and
+commit the rebuilt `hardware.sqlite`. `reference_data` reconstructs the same in-memory structure at
+startup, so all indexes / search haystacks / the link graph / ETag are unaffected by the format.
+
 The driver write endpoints return an `ApplyResponse` with an i18n **`{ code, params, message }`**
 contract: `code` (+ `params`) is a stable key the UI translates (`motorDrivers.apply.*`), and
 `message` is the English fallback. Passthrough errors (Moonraker failures, `field_policy` /

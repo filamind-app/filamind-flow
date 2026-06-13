@@ -89,7 +89,7 @@ resonance-analysis routes (`/api/shaper/*` — which vendor Klipper's
 spectrogram, and the machine vibrations profile), and the **motor-drivers**
 routes (`/api/drivers/status` — TMC driver state aggregated from the live config +
 per-driver `get_status`, annotated from the unified hardware catalog's driver
-capability map (`drivers[].caps` in `app/data/reference/hardware.json`, served as
+capability map (`drivers[].caps` in the hardware catalog, served as
 `DriverInfo`) and the user's saved motor assignment;
 `/api/drivers/live/{stepper}` — fast per-driver live telemetry for the monitor;
 `/api/drivers/catalog` — that capability map; `/api/drivers/motors` — a 600+ motor
@@ -109,8 +109,9 @@ multi-call aggregations, or scheduled jobs — added as new route modules under
 
 ### Hardware database (`/api/hardware/*`)
 
-A curated, **read-only** reference dataset — `app/data/reference/hardware.json` (~7.5 MB)
-loaded **once at import** into a module-global dict (`reference_data.py`) and immutable
+A curated, **read-only** reference dataset — compiled into `app/data/reference/hardware.sqlite`
+(~7 MB; built from a local source by `scripts/build_hardware_db.py`, which is not in the repo) and
+reconstructed **once at import** into a module-global dict (`reference_data.py`), immutable
 thereafter (handlers only read; no locks). The raw rows (`items[]`) are deduped/enriched at
 build time into **canonical entity arrays** — `boards`, `drivers`, `motors`, `hosts`, and a generic
 `catalog` (9 more categories) — each entity carrying its specs **plus a copyable Klipper config

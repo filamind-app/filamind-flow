@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.257.0] - 2026-06-13
+
+### Changed
+
+- **Hardware catalog now ships as a compiled, read-only SQLite database.** The curated catalog
+  (boards / drivers / motors / hosts / catalog / manufacturers) is served from
+  `app/data/reference/hardware.sqlite` instead of a raw JSON file. `reference_data` reconstructs the
+  exact same in-memory structure at startup, so **every `/api/hardware/*` and `/api/reference/*`
+  response, the search haystacks, the link graph, the facets and the ETag are unchanged** — purely a
+  storage/packaging change. The editable source is compiled by a new maintainer script,
+  `scripts/build_hardware_db.py`, and the human-readable JSON is no longer part of the repository.
+
 ## [0.256.0] - 2026-06-13
 
 ### Added
