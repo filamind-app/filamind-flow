@@ -24,27 +24,29 @@ from app.services import max_flow, resonance_service, task_store
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
-#: Detection thresholds for the vibration signal, derived from a live SV08 ramp (CHCB-SV08).
+#: Detection thresholds for the vibration signal, derived from live SV08 ramps (CHCB-SV08).
 #: Grinding shows up as an explosion of the within-step *coefficient of variation* (CV%), NOT a
 #: change in the vibration *level*: the per-step median stayed flat (~590-710) across the whole
-#: ramp, while CV% sat at 1-12% while gripping cleanly (the rise to ~12% is just the early
+#: ramp, while CV% sat at ~3-7% once cruising (with a transient rise to ~12% during the opening
 #: speed-up) and then jumped to 26% -> 66% -> 71% once the gear started skipping at ~32.5 mm3/s.
-#: So detection is an ABSOLUTE CV ceiling (scale-independent — it's a ratio), with a CV ratio-jump
-#: as backup. The IQR (absolute spread) detectors stay off — that signal is machine-scaled. The
+#: So detection is a single, robust signal: an ABSOLUTE CV ceiling (scale-independent — it's a
+#: ratio). The CV/IQR *ratio*-jump detectors are OFF: they false-tripped on the noisy opening ramp
+#: (one live run stopped at 12.5 mm3/s because the early CV rise looked like a jump). The
 #: run-outlier (level jump) is kept as a harmless extra; it won't fire on a flat median.
 ACCEL_CONSTANTS: dict[str, float] = {
-    "CV_HIGH_VARIANCE": 20.0,  # CV% >= 20 = grinding (settled ramp peaked ~12%, grind hit 26-71%)
-    "CV_JUMP_RATIO_COARSE": 3.0,  # backup: CV jumps >= 3x its recent baseline ...
-    "CV_JUMP_MIN_COARSE": 10.0,  # ... once it is also >= 10% (so tiny-baseline jitter doesn't trip)
+    "CV_HIGH_VARIANCE": 20.0,  # CV% >= 20 = grinding (cruise sits ~3-7%, grind hit 26-71%)
+    "CV_JUMP_RATIO_COARSE": 1.0e12,  # off (CV ratio jump — false-tripped on the opening ramp)
     "IQR_ABSOLUTE_TRIGGER": 1.0e12,  # off (absolute spread is machine-scaled)
     "IQR_RATIO_COARSE": 1.0e12,  # off (IQR ratio jump — too noisy on the early ramp)
     "OUTLIER_MAD_RATIO": 5.0,  # harmless extra: a level jump (won't fire on a flat median)
     "OUTLIER_MIN_REL": 0.6,
 }
 
-#: Don't allow a slip until this many steps are measured — the vibration ramps up before any
-#: grind, so the first steps are an unsettled baseline, not a slip.
-_WARMUP_STEPS = 4
+#: Don't judge a slip until this many steps are measured. The first steps are the extruder's
+#: vibration *ramping up* (not steady) — a live run false-tripped at the 4th step (flow 12.5), so
+#: the warm-up now clears the ramp-up entirely (with the default 2.5 mm3/s step that is ~flow 17.5,
+#: where the data shows vibration has settled). Lower the step size to detect a sub-17.5 grind.
+_WARMUP_STEPS = 6
 
 #: Per-step accelerometer capture is split into this many windows → one vibration-RMS sample each.
 _WINDOWS = 8

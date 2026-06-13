@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.241.3] - 2026-06-13
+
+### Fixed
+
+- **Max-Flow accelerometer method: no more occasional early trip on the opening ramp.** On some
+  runs the detector stopped at the 4th step (flow 12.5) — the warm-up edge — because the extruder's
+  opening vibration *ramp-up* looked like a jump to the CV ratio backup, giving a too-low number.
+  The warm-up now clears the whole ramp-up (it doesn't judge until the vibration has settled,
+  ~flow 17.5 at the default step), and detection rests solely on the robust absolute CV% ceiling
+  (the over-eager CV ratio-jump is removed). The result now lands consistently at the real ceiling
+  (~30 mm³/s on the SV08) instead of varying at the start.
+
 ## [0.241.2] - 2026-06-13
 
 ### Changed
