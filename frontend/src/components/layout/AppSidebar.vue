@@ -51,7 +51,7 @@ const items = computed(() => [
       </button>
     </nav>
 
-    <p class="mt-auto font-mono text-[11px] leading-tight opacity-70">
+    <p class="mt-auto font-mono text-[11px] leading-tight text-on-accent opacity-70">
       {{ t('shell.footer.stack') }}<br />{{ t('shell.footer.by') }}
     </p>
   </aside>

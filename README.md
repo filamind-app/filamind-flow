@@ -307,7 +307,7 @@ templates live in [`deploy/`](deploy/).
 - [x] **Internationalization (i18n)** — multilingual UI on an offline-first, extensible
       `vue-i18n` foundation (en · ar · de · zh-Hans · fr · es · ru), RTL + Arabic, and a
       `{ code, params, message }` backend-message contract. _All six phases complete._
-- [x] **Theme system** — 7 switchable themes (Neon · Midnight · Dark · Ocean · Sunset · Light · High-Contrast), picked from a live-preview menu, driven by
+- [x] **Theme system** — 7 switchable themes (Light _default_ · Neon · Midnight · Dark · Ocean · Sunset · High-Contrast), picked from a live-preview menu, driven by
       CSS variables; per-theme recolor of every token with no component edits; no-flash + persisted.
 - [x] **Platform expansion** — the shared data + config-engine foundation plus **Config Editor**,
       **Macro Designer**, **Board Topology**, **Hardware Browser + Config Templates**, and
