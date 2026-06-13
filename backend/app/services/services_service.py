@@ -64,6 +64,49 @@ async def list_services() -> list[dict[str, Any]]:
     return _parse_services(out)
 
 
+#: The printer-stack units the Machine Doctor surfaces when it falls back to systemd (Moonraker's
+#: own ``service_state`` is the preferred, curated source). NOT the start/stop set.
+_DOCTOR_PATTERNS = (
+    "klipper*",
+    "moonraker*",
+    "KlipperScreen*",
+    "crowsnest*",
+    "webcamd*",
+    "sonar*",
+    "MoonCord*",
+)
+
+
+async def list_all_services(patterns: tuple[str, ...] = _DOCTOR_PATTERNS) -> list[dict[str, Any]]:
+    """READ-ONLY: the printer-stack systemd units + active/sub state, for the Machine Doctor panel.
+
+    Distinct from :func:`list_services` / :func:`manage_services` (klipper*/moonraker* only — the
+    start/stop blast radius). This never starts or stops anything, so it does not drop the panel's
+    own unit (that filter only protects the *manageable* set). Returns ``sub_state`` too.
+    """
+    _, out = await _run(
+        ["systemctl", "list-units", "--type=service", "--all", "--plain", "--no-legend", *patterns]
+    )
+    services: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for line in out.splitlines():
+        parts = line.split()
+        if len(parts) < 3 or not parts[0].endswith(".service"):
+            continue
+        name = parts[0][: -len(".service")]
+        if name in seen:
+            continue
+        seen.add(name)
+        services.append(
+            {
+                "name": name,
+                "active": parts[2] == "active",
+                "sub_state": parts[3] if len(parts) > 3 else None,
+            }
+        )
+    return services
+
+
 def _order_key(name: str, action: str) -> int:
     """Orders units so dependencies start before, and stop after, their users."""
     rank = next((i for i, part in enumerate(_ORDER) if part in name), len(_ORDER))

@@ -15,7 +15,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
-from app.services import max_flow_service, printer_guard, task_store
+from app.services import max_flow_service, max_flow_store, printer_guard, task_store
 from app.services.max_flow_service import RampParams
 from app.services.moonraker_client import MoonrakerClient
 
@@ -49,12 +49,19 @@ class MaxFlowPlanRequest(BaseModel):
         description="Slip detector: 'auto' (StallGuard, falling back to the toolhead "
         "accelerometer when SG is unusable), 'stallguard', or 'accel' (vibration).",
     )
+    hotend: str | None = Field(
+        None, description="Selected hotend name — recorded with the result for the Machine Doctor."
+    )
+    expected_max_flow_mm3s: float | None = Field(
+        None,
+        description="The selected hotend's rated max flow — lets the Doctor score flow headroom.",
+    )
 
 
 @router.post("/plan")
 async def maxflow_plan(body: MaxFlowPlanRequest) -> dict[str, Any]:
     """Preview the flow ramp (pure compute; no printer interaction)."""
-    params = RampParams(**body.model_dump())
+    params = RampParams(**body.model_dump(exclude={"hotend", "expected_max_flow_mm3s"}))
     try:
         return max_flow_service.plan(params)
     except ValueError as exc:
@@ -71,12 +78,16 @@ async def maxflow_run(
     and the ramp stops as soon as slip is detected.
     """
     client = MoonrakerClient(settings.moonraker_url, timeout=_RUN_TIMEOUT_S)
-    params = RampParams(**body.model_dump())
+    params = RampParams(**body.model_dump(exclude={"hotend", "expected_max_flow_mm3s"}))
     try:
         async with printer_guard.acquire("max_flow"):
-            return await max_flow_service.run_max_flow(
+            result = await max_flow_service.run_max_flow(
                 client, params, resonance_dirs=settings.resonance_dirs
             )
+        max_flow_store.write_last(
+            settings.data_dir, result, body.hotend, body.expected_max_flow_mm3s
+        )
+        return result
     except printer_guard.GuardBusyError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
@@ -96,7 +107,13 @@ async def maxflow_run(
 _background: set[asyncio.Task[None]] = set()
 
 
-async def _run_maxflow_task(task: task_store.Task, params: RampParams, settings: Settings) -> None:
+async def _run_maxflow_task(
+    task: task_store.Task,
+    params: RampParams,
+    settings: Settings,
+    hotend: str | None = None,
+    expected_max_flow_mm3s: float | None = None,
+) -> None:
     """Body of a supervised max-flow run: holds the guard slot, reports per-step progress,
     holds the result on the task, and honours cancellation (the heater is always cut)."""
 
@@ -114,6 +131,7 @@ async def _run_maxflow_task(task: task_store.Task, params: RampParams, settings:
                 resonance_dirs=settings.resonance_dirs,
             )
         task.result = result
+        max_flow_store.write_last(settings.data_dir, result, hotend, expected_max_flow_mm3s)
         task.status = "done"
     except task_store.TaskCancelled:
         task.status = "cancelled"
@@ -140,13 +158,15 @@ async def maxflow_run_start(
     """Start the max-flow test as a SUPERVISED background run: returns a task id to poll
     (``/api/tasks/{id}``) with per-step progress, a Cancel that always cuts the heater, and
     the result held server-side. Same ramp as ``/run``."""
-    params = RampParams(**body.model_dump())
+    params = RampParams(**body.model_dump(exclude={"hotend", "expected_max_flow_mm3s"}))
     try:
         max_flow_service.validate(params)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     task = task_store.create_task()
-    background = asyncio.create_task(_run_maxflow_task(task, params, settings))
+    background = asyncio.create_task(
+        _run_maxflow_task(task, params, settings, body.hotend, body.expected_max_flow_mm3s)
+    )
     _background.add(background)
     background.add_done_callback(_background.discard)
     return {"task_id": task.id}
