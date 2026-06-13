@@ -1150,7 +1150,7 @@ onMounted(() => void loadStatus())
             <p class="font-bold">{{ t('klipperscreenStudio.kiosk.notInstalled') }}</p>
             <p class="opacity-80">{{ t('klipperscreenStudio.kiosk.setupHint') }}</p>
             <code class="block rounded bg-ink/5 p-1.5 font-mono"
-              >sudo bash deploy/install-kiosk.sh</code
+              >cd ~/filamind-flow && sudo bash deploy/install-kiosk.sh</code
             >
           </div>
 
