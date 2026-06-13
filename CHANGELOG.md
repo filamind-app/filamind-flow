@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.236.0] - 2026-06-13
+
+### Changed
+
+- **Documentation accuracy & formatting pass.** A multi-file audit (README, ROADMAP, backend
+  README, CONTRIBUTING, ARCHITECTURE) reconciled every status claim against what actually shipped:
+  the README roadmap checklist no longer shows completed work (Hardware-DB DB-3 a–d, silo
+  convergence) as unchecked, and gains Machine Doctor / Mission Control / flash-UX entries;
+  ROADMAP markers for shipped features (Macro Designer full Jinja control-flow, writing
+  `[input_shaper]` to `printer.cfg`, Pin-Doctor pin-conflict validation, DB-3) are corrected, and
+  the legend documents the 🟡 "partly done" state; ARCHITECTURE lists all 10 widgets and all 7
+  calibrated themes; CONTRIBUTING reflects i18n as shipped (not in-progress); and the backend
+  README names the Firmware Manager widget correctly.
+
+
 ## [0.235.0] - 2026-06-13
 
 ### Changed

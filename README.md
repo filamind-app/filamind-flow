@@ -312,17 +312,30 @@ templates live in [`deploy/`](deploy/).
 - [x] **Platform expansion** — the shared data + config-engine foundation plus **Config Editor**,
       **Macro Designer**, **Board Topology**, **Hardware Browser + Config Templates**, and
       **Max-Flow** (planner + gated run) all shipped. _See [ROADMAP.md](ROADMAP.md)._
+- [x] **Machine Doctor + Mission Control** — a one-click whole-printer health scan graded **A–F**
+      with jump-to-fix deep links (10th widget), and a **Mission Control** home page summarizing
+      print state, firmware sync, recent tuning and a get-started checklist.
+- [x] **Flash & tuning UX** — the firmware flash view is a **phase progress bar** (not a raw
+      command window), supervised long-runs report progress / cancel / reattach, and tuning results
+      can be **applied straight to `printer.cfg`** behind a backup-first confirm gate.
 - [x] **Hardware database** — the catalog deduped into canonical, config-carrying entities
       (boards / drivers / motors / hosts / catalog) served under `/api/hardware/*`, with O(1)
       id lookups + cached reads (**DB-1**), and a canonical-manufacturer / first-class-MCU
       **linking graph** (`/related` + `?expand=related`, **DB-2**).
-- [x] **Hardware DB — cross-link UI (DB-3a)** — clickable cross-link chips (board → its
-      manufacturer / MCU / drivers) + browsable **Brands** and **MCUs** tabs + in-widget
-      deep-linking.
-- [ ] **Hardware DB backbone — remaining** — shared `EntityCatalog` + faceted filters + a
-      reusable part-picker (DB-3b), images / silo convergence (DB-4). _See [ROADMAP.md](ROADMAP.md)._
-- [ ] Max-Flow: a live validation run on the printer · Motor-Drivers auto-SGT / SG4 sensorless wizard
-- [ ] Self-hosted fonts for fully offline hosts · optional auth / oneshot-token flow for secured setups
+- [x] **Hardware DB — cross-widget backbone (DB-3)** — clickable cross-link chips + browsable
+      **Brands** and **MCUs** tabs + in-widget deep-linking (DB-3a), a shared `EntityCatalog`
+      shell (DB-3b), faceted filters (DB-3c), and a reusable `HardwarePicker` part-picker (DB-3d).
+- [x] **Hardware DB — silo convergence (DB-4)** — Motor Drivers, Max-Flow and the TMC driver
+      capability data now all read from the unified catalog (the standalone data files removed);
+      only optional component **images** remain (deferred — no reliably-sourced URLs).
+- [x] **Cross-printer hardening** — validated on a second, very different printer (see
+      [Proven across real, different printers](#proven-across-real-different-printers)):
+      shared-bus pin awareness, CAN UUID resolution, kinematics-aware tooling, honest flash
+      outcomes with a CAN read-back salvage, and host-relative subpath serving.
+- [ ] **Max-Flow** — a live heat-and-extrude validation run on real hardware (the last actuating
+      path not yet bench-run) · **Motor Drivers** — an auto-SGT / SG4 sensorless-homing wizard.
+- [ ] **Offline & secured hosts** — self-hosted fonts for fully offline installs · optional
+      auth / one-shot-token flow for secured setups.
 
 See [ROADMAP.md](ROADMAP.md) for the full phase-by-phase plan.
 
