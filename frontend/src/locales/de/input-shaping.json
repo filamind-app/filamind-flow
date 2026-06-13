@@ -613,8 +613,8 @@
       },
       "sustain": {
         "not_dominant": "Der Druckkopf vibriert nicht hauptsächlich bei {freq} Hz (Spitze bei {peak} Hz) — die Quelle erreicht den Druckkopf-Sensor womöglich nicht.",
-        "drop": "Halte {freq} Hz — die Vibration fiel zwischenzeitlich um ~{drop}%; was Sie in dem Moment berührt haben, trägt stark bei.",
-        "touch": "Halte {freq} Hz — Riemen, Druckkopf, Gantry-Gelenke und Umlenkrollen nacheinander berühren; das Teil, das das Brummen verstummen lässt, ist die Resonanzquelle."
+        "drop": "Halte {freq} Hz — die Vibration fiel zwischenzeitlich um ~{drop}%; was du in dem Moment berührt hast, trägt stark bei.",
+        "touch": "Halte {freq} Hz — taste Riemen, den Toolhead, Gantry-Gelenke und Umlenkrollen nacheinander an; das Teil, das das Brummen verstummen lässt, ist die Resonanzquelle."
       },
       "axes": {
         "same_axis": "Dieselbe Beschleunigungssensor-Achse für mehrere Maschinenachsen erkannt",

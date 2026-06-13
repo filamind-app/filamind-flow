@@ -253,7 +253,7 @@
       "restoredFull": "{n} Profile, {data} Datendateien, {runs} Tuning-Läufe wiederhergestellt{extra}.",
       "identifyMap": "Auf der Board-Karte zeigen",
       "identifySeed": "Profil vom Board ableiten",
-      "identifySeeded": "Profil '{name}' mit vorausgewähltem {symbol} erstellt — öffnen Sie Konfigurieren, um die Build-Optionen abzuschließen.",
+      "identifySeeded": "Profil '{name}' mit vorausgewähltem {symbol} erstellt — öffne Konfigurieren, um die Build-Optionen abzuschließen.",
       "identifySeedFailed": "Profil konnte nicht erstellt werden"
     },
     "external": {
