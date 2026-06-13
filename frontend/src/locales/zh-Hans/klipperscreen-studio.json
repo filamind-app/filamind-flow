@@ -1,0 +1,42 @@
+{
+  "klipperscreenStudio": {
+    "intro": "安全地编辑打印机的 KlipperScreen 触摸屏配置，然后重启 KlipperScreen 以应用。每次保存前都会先备份。",
+    "help": {
+      "title": "工作原理",
+      "body": "KlipperScreen.conf 控制连接到打印机的触摸屏——主题、语言、菜单和显示选项。此编辑器通过与配置编辑器相同的安全路径读写该文件。",
+      "step1": "在下方编辑配置文本（或保持不变）。",
+      "step2": "保存——文件会先备份，且在打印机忙碌时拒绝保存。",
+      "step3": "重启 KlipperScreen 以在实体屏幕上应用更改。",
+      "lfNote": "行使用 UNIX (LF) 换行符，保存时自动强制。"
+    },
+    "status": {
+      "checking": "正在检测 KlipperScreen…",
+      "absent": "未在此打印机上检测到 KlipperScreen（没有 KlipperScreen.conf，且 Moonraker 未报告）。请安装 KlipperScreen 以使用此工具。",
+      "present": "已检测到 KlipperScreen",
+      "theme": "主题",
+      "language": "语言",
+      "notRestartable": "Moonraker 无法自动重启 KlipperScreen——保存后请手动重启。"
+    },
+    "editor": {
+      "loading": "正在读取 KlipperScreen.conf…",
+      "reload": "重新加载",
+      "save": "保存配置",
+      "saving": "保存中…",
+      "saved": "已保存（已备份）",
+      "unsaved": "未保存的更改"
+    },
+    "save": {
+      "busy": "打印机忙碌时被拒绝——空闲时再试。",
+      "stale": "自加载以来 KlipperScreen.conf 在磁盘上已更改（可能在屏幕上编辑过）。保存前请重新加载，以免覆盖该更改。"
+    },
+    "restart": {
+      "button": "重启 KlipperScreen",
+      "restarting": "重启中…",
+      "done": "KlipperScreen 正在重启——屏幕稍后会刷新。",
+      "confirmTitle": "重启 KlipperScreen？",
+      "confirmBody": "这会重启触摸屏服务以应用更改。不会影响正在进行的打印，但屏幕会黑屏几秒。",
+      "confirm": "重启",
+      "cancel": "取消"
+    }
+  }
+}

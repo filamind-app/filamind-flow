@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.248.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio widget — edit your touchscreen's config from the panel.** A new sidebar
+  page that detects KlipperScreen, shows its current theme/language, and gives a safe editor for
+  `KlipperScreen.conf`: every save is backed up first, refused while the printer is busy, guarded
+  against overwriting a change made on the screen itself, and forced to UNIX (LF) line endings.
+  A one-tap "Restart KlipperScreen" (behind a confirm) applies the change. Inline help explains the
+  workflow; localized across all seven languages. When KlipperScreen isn't installed, the widget
+  says so plainly. _(The graphical option editor and theme builder build on this in later releases.)_
+
 ## [0.247.0] - 2026-06-13
 
 ### Added

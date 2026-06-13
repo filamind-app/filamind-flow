@@ -1,0 +1,42 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Edita de forma segura la configuración de la pantalla táctil KlipperScreen de tu impresora y reinicia KlipperScreen para aplicarla. Cada guardado se respalda primero.",
+    "help": {
+      "title": "Cómo funciona",
+      "body": "KlipperScreen.conf controla la pantalla táctil conectada a tu impresora — tema, idioma, menús y opciones de visualización. Este editor lee y escribe ese archivo por la misma ruta segura que el Editor de Config.",
+      "step1": "Edita el texto de configuración abajo (o déjalo igual).",
+      "step2": "Guardar — el archivo se respalda primero, y el guardado se rechaza mientras la impresora está ocupada.",
+      "step3": "Reinicia KlipperScreen para aplicar el cambio en la pantalla física.",
+      "lfNote": "Las líneas usan finales UNIX (LF), aplicados automáticamente al guardar."
+    },
+    "status": {
+      "checking": "Buscando KlipperScreen…",
+      "absent": "No se detectó KlipperScreen en esta impresora (sin KlipperScreen.conf, y no reportado por Moonraker). Instala KlipperScreen para usar esta herramienta.",
+      "present": "KlipperScreen detectado",
+      "theme": "Tema",
+      "language": "Idioma",
+      "notRestartable": "Moonraker no puede reiniciar KlipperScreen automáticamente — reinícialo manualmente tras guardar."
+    },
+    "editor": {
+      "loading": "Leyendo KlipperScreen.conf…",
+      "reload": "Recargar",
+      "save": "Guardar config",
+      "saving": "Guardando…",
+      "saved": "Guardado (respaldado)",
+      "unsaved": "Cambios sin guardar"
+    },
+    "save": {
+      "busy": "Rechazado mientras la impresora está ocupada — inténtalo cuando esté inactiva.",
+      "stale": "KlipperScreen.conf cambió en disco desde que se cargó (probablemente editado en la pantalla). Recarga antes de guardar para no sobrescribir ese cambio."
+    },
+    "restart": {
+      "button": "Reiniciar KlipperScreen",
+      "restarting": "Reiniciando…",
+      "done": "KlipperScreen se está reiniciando — la pantalla se recargará pronto.",
+      "confirmTitle": "¿Reiniciar KlipperScreen?",
+      "confirmBody": "Esto reinicia el servicio de la pantalla táctil para aplicar tus cambios. No afecta una impresión activa, pero la pantalla se apagará unos segundos.",
+      "confirm": "Reiniciar",
+      "cancel": "Cancelar"
+    }
+  }
+}

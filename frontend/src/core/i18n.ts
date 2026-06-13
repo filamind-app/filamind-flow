@@ -7,6 +7,7 @@ import enConfigTemplates from '../locales/en/config-templates.json'
 import enHardwareBrowser from '../locales/en/hardware-browser.json'
 import enFirmware from '../locales/en/firmware.json'
 import enInputShaping from '../locales/en/input-shaping.json'
+import enKlipperScreen from '../locales/en/klipperscreen-studio.json'
 import enMacroDesigner from '../locales/en/macro-designer.json'
 import enMachineDoctor from '../locales/en/machine-doctor.json'
 import enMaxFlow from '../locales/en/max-flow.json'
@@ -78,6 +79,7 @@ const en = {
   ...enConfigEditor,
   ...enMaxFlow,
   ...enMachineDoctor,
+  ...enKlipperScreen,
   ...enBoardTopology,
   ...enMacroDesigner,
   ...enHardwareBrowser,
