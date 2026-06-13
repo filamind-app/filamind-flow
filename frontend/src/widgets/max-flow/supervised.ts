@@ -32,7 +32,9 @@ async function pollToCompletion(taskId: string): Promise<MaxFlowResult> {
     if (task.status === 'done' && task.result) return task.result as unknown as MaxFlowResult
     if (task.status === 'cancelled') throw new Error(CANCELLED)
     if (task.status !== 'running') {
-      throw new Error(lastLogLine(task.log) || i18n.global.t('maxFlow.run.failed'))
+      // Failed tasks log the reason with a "!! " prefix — strip it for a clean message.
+      const line = (lastLogLine(task.log) || '').replace(/^!!\s*/, '')
+      throw new Error(line || i18n.global.t('maxFlow.run.failed'))
     }
     await sleep(POLL_MS)
   }

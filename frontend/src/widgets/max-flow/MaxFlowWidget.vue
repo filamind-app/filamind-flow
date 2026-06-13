@@ -7,6 +7,8 @@ import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
 import { ApiError, fetchExtruderDriver, fetchHotends, planMaxFlow, runMaxFlow } from './api'
+import { fetchCameras } from './camera'
+import CameraView from './CameraView.vue'
 import { CANCELLED, cancelMaxFlow, flowRun, reattachMaxFlow } from './supervised'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
@@ -27,7 +29,13 @@ const params = reactive<MaxFlowParams>({
   extrude_per_step: 5,
   samples_per_step: 20,
   driver: 'tmc2209',
+  park_for_view: true,
 })
+
+/** Webcams configured on the printer — the live view is shown during a run when one exists. */
+const cameras = ref<{ name: string; service: string }[]>([])
+const cameraName = computed(() => cameras.value[0]?.name)
+const cameraAvailable = computed(() => cameras.value.length > 0)
 
 const hotends = ref<HotendRow[]>([])
 const selectedHotend = ref<string | null>(null)
@@ -105,6 +113,27 @@ async function doPlan(): Promise<void> {
 
 const runInfo = ref<string | null>(null)
 
+/** Pre-ramp phases report step 0 with a `phase` tag; the ramp reports step/total + flow. */
+const PRE_RAMP_PHASES = ['homing', 'centering', 'heating', 'checking'] as const
+const phaseLabel = computed(() => {
+  const p = flowRun.progress
+  if (!p) return t('maxFlow.run.starting')
+  const phase = String(p.detail?.phase ?? '')
+  if ((PRE_RAMP_PHASES as readonly string[]).includes(phase)) {
+    return t(`maxFlow.run.phase.${phase}`)
+  }
+  if (p.step > 0) {
+    return t('maxFlow.run.progress', {
+      step: p.step,
+      total: p.total,
+      flow: Number(p.detail?.flow ?? 0).toFixed(1),
+    })
+  }
+  return t('maxFlow.run.starting')
+})
+/** True when a finished run produced no usable StallGuard samples (result is unreliable). */
+const noSignal = computed(() => result.value != null && result.value.sg_samples_seen === false)
+
 async function doRun(): Promise<void> {
   running.value = true
   runErr.value = null
@@ -130,6 +159,10 @@ async function doRun(): Promise<void> {
 onMounted(async () => {
   fetchHotends()
     .then((rows) => (hotends.value = rows))
+    .catch(() => {})
+  // A webcam is optional — only show the live view if the printer has one configured.
+  fetchCameras()
+    .then((cams) => (cameras.value = cams))
     .catch(() => {})
   // Detect the extruder's real TMC model so the driver param starts honest (a 2240/5160
   // extruder would otherwise hit a preflight refusal the user can't fix from here).
@@ -331,6 +364,10 @@ onMounted(async () => {
         {{ t('maxFlow.safety.ack') }}
       </label>
       <p class="text-[10px] opacity-60">{{ t('maxFlow.safety.note') }}</p>
+      <p class="text-[10px] opacity-70">🎯 {{ t('maxFlow.run.parkNote') }}</p>
+      <p v-if="cameraAvailable" class="text-[10px] opacity-70">
+        📷 {{ t('maxFlow.camera.willShow') }}
+      </p>
       <button
         class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper"
         :disabled="!ack || running"
@@ -369,24 +406,15 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Supervised-run progress: per-step counter + a cancel that always cuts the heater -->
+    <!-- Supervised-run progress: phase/step + live camera + a cancel that always cuts the heater -->
     <div
       v-if="flowRun.status !== 'idle'"
       role="status"
       aria-live="polite"
-      class="nb-card space-y-1 bg-surface p-2"
+      class="nb-card space-y-2 bg-surface p-2"
     >
       <div class="flex items-center justify-between gap-2 font-mono text-[11px]">
-        <span v-if="flowRun.progress">
-          {{
-            t('maxFlow.run.progress', {
-              step: flowRun.progress.step,
-              total: flowRun.progress.total,
-              flow: Number(flowRun.progress.detail?.flow ?? 0).toFixed(1),
-            })
-          }}
-        </span>
-        <span v-else>{{ t('maxFlow.run.starting') }}</span>
+        <span class="font-bold">{{ phaseLabel }}</span>
         <button
           class="nb-btn bg-brand-red px-2 py-0.5 text-[10px] text-paper"
           :disabled="flowRun.status === 'cancelling'"
@@ -398,17 +426,21 @@ onMounted(async () => {
         </button>
       </div>
       <div
-        v-if="flowRun.progress"
         class="h-2 w-full overflow-hidden rounded-full border border-ink bg-paper"
+        :class="{ 'animate-pulse': !flowRun.progress || flowRun.progress.step === 0 }"
       >
         <div
-          class="h-full bg-brand-cyan"
+          class="h-full bg-brand-cyan transition-[width] duration-300"
           :style="{
             width:
-              Math.round((flowRun.progress.step / Math.max(1, flowRun.progress.total)) * 100) + '%',
+              Math.round(
+                ((flowRun.progress?.step ?? 0) / Math.max(1, flowRun.progress?.total ?? 1)) * 100,
+              ) + '%',
           }"
         ></div>
       </div>
+      <!-- Watch the nozzle while it runs (only when the printer has a webcam). -->
+      <CameraView v-if="cameraAvailable" :active="true" :name="cameraName" />
       <p class="text-[10px] opacity-60">{{ t('maxFlow.run.abortNote') }}</p>
     </div>
 
@@ -416,14 +448,30 @@ onMounted(async () => {
     <p v-if="runErr" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">{{ runErr }}</p>
 
     <!-- Result -->
-    <div v-if="result" class="nb-card space-y-2 bg-brand-lime/20 p-2">
+    <div
+      v-if="result"
+      class="nb-card space-y-2 p-2"
+      :class="noSignal ? 'border-brand-red bg-brand-red/10' : 'bg-brand-lime/20'"
+    >
       <p class="text-xs font-bold">{{ t('maxFlow.result.title') }}</p>
       <p v-if="resultFrom" class="font-mono text-[10px] opacity-60">
         {{ t('maxFlow.result.fromBefore', { at: resultFrom.slice(0, 16).replace('T', ' ') }) }}
       </p>
+
+      <!-- No StallGuard signal → the number is not a real measurement. Say so, first and loud. -->
+      <div v-if="noSignal" class="space-y-1 rounded border-2 border-brand-red bg-brand-red/15 p-2">
+        <p class="text-[11px] font-bold text-brand-red">
+          ⚠ {{ t('maxFlow.result.unreliableTitle') }}
+        </p>
+        <p class="text-[11px] opacity-90">{{ t('maxFlow.run.noSg') }}</p>
+      </div>
+
       <p class="font-mono text-sm">
         <b>{{ t('maxFlow.result.maxFlow') }}:</b>
         {{ result.max_flow_mm3s ?? '—' }} {{ t('maxFlow.result.units') }}
+        <span v-if="noSignal" class="text-[10px] opacity-70"
+          >({{ t('maxFlow.result.unmeasured') }})</span
+        >
       </p>
       <p class="font-mono text-[11px]">
         {{
@@ -432,10 +480,10 @@ onMounted(async () => {
             : t('maxFlow.result.noSlip')
         }}
       </p>
-      <p v-if="!result.sg_samples_seen" class="rounded bg-brand-red/20 p-1.5 text-[11px]">
-        ⚠ {{ t('maxFlow.run.noSg') }}
-      </p>
-      <div v-if="result.recommend.max != null" class="space-y-0.5 font-mono text-[11px]">
+      <div
+        v-if="!noSignal && result.recommend.max != null"
+        class="space-y-0.5 font-mono text-[11px]"
+      >
         <p class="font-bold">{{ t('maxFlow.result.recommendTitle') }}</p>
         <p>
           {{ t('maxFlow.result.conservative') }}: {{ result.recommend.conservative }}

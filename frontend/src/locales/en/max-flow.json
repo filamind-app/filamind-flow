@@ -107,7 +107,20 @@
       "cancelled": "Run aborted — the heater was turned off.",
       "reattached": "Reattached: this result finished while the page was away.",
       "failed": "Max-flow run failed.",
-      "abortNote": "Aborting always turns the heater off."
+      "abortNote": "Aborting always turns the heater off.",
+      "parkNote": "Before heating, the printer homes (if needed) and centers the nozzle for a clear view.",
+      "phase": {
+        "homing": "Homing the printer…",
+        "centering": "Centering the nozzle…",
+        "heating": "Heating the hotend…",
+        "checking": "Checking the StallGuard signal…"
+      }
+    },
+    "camera": {
+      "title": "Live camera",
+      "live": "LIVE",
+      "error": "Camera unavailable.",
+      "willShow": "A live camera view will show the nozzle during the test."
     },
     "result": {
       "title": "Result",
@@ -119,7 +132,9 @@
       "conservative": "Conservative (80%)",
       "balanced": "Balanced (90%)",
       "units": "mm³/s",
-      "fromBefore": "Measured earlier ({at}) — run again for fresh numbers."
+      "fromBefore": "Measured earlier ({at}) — run again for fresh numbers.",
+      "unreliableTitle": "Unreliable — no StallGuard signal",
+      "unmeasured": "reached, not confirmed"
     },
     "states": {
       "loadingHotends": "Loading hotends…"
