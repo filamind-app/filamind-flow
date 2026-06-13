@@ -211,3 +211,19 @@ class MoonrakerClient:
             f"{self._base_url}/printer/firmware_restart", timeout=max(self._timeout, 30.0)
         )
         response.raise_for_status()
+
+    async def restart_service(self, service: str) -> None:
+        """Restart a host service Moonraker manages via ``POST /machine/services/restart``.
+
+        Used to apply a KlipperScreen change (it doesn't hot-reload). The service must be in
+        Moonraker's allowed list (``available_services`` from ``/machine/system_info``).
+
+        Raises:
+            httpx.HTTPError: if Moonraker is unreachable, or the service isn't allowed/known.
+        """
+        response = await _pool().post(
+            f"{self._base_url}/machine/services/restart",
+            params={"service": service},
+            timeout=max(self._timeout, 30.0),
+        )
+        response.raise_for_status()

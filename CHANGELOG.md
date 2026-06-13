@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.247.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — foundation (backend).** New endpoints to read and safely edit the
+  touchscreen's `KlipperScreen.conf` and restart KlipperScreen to apply changes: a presence/status
+  probe (is KlipperScreen installed + restartable, current theme/language), a config read, a gated
+  save (timestamped backup + busy-refusal + stale-write guard, reusing the Config Editor's
+  machinery, with UNIX line endings enforced), and a service restart via Moonraker. The graphical
+  editor and theme builder that build on these land in following releases.
+
 ## [0.246.0] - 2026-06-13
 
 ### Added
