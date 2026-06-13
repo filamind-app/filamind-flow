@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.237.0] - 2026-06-13
+
+### Added
+
+- **Hardware catalog: Trianglelab CHCB-SV08 hotend.** Added the CHCB-SV08 (a popular Sovol SV08
+  hot-side upgrade — 80W ceramic heater, E3D V6 brass nozzle, works with either an NTC B3950 or
+  an optional PT1000) to the Hotends catalog, so it shows up in the Hardware Browser and as a
+  selectable hotend in Max-Flow. The entry is **sensor-agnostic** — its config snippet documents
+  both thermistor options so any owner can use it regardless of which sensor they fit.
+
+### Fixed
+
+- **Hardware catalog: the generic Trianglelab CHC hotend entry.** It had an empty manufacturer
+  and a mis-parsed max temperature of 24 °C (from the heater's "24 V" rating); corrected to
+  Trianglelab / ~290 °C with the electrical rating moved to the notes.
+
+
 ## [0.236.0] - 2026-06-13
 
 ### Changed
