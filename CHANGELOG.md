@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.254.0] - 2026-06-13
+
+### Added
+
+- **FilaMind Kiosk — reversible touchscreen takeover (backend + installer).** For total control of
+  the printer's physical screen (beyond what KlipperScreen's config allows), the screen can now run
+  **FilaMind Flow itself** as a fullscreen browser. A one-time `deploy/install-kiosk.sh` (run on the
+  host) installs a Wayland kiosk compositor + Chromium and writes a `filamind-kiosk` systemd service
+  that **conflicts with KlipperScreen** — so starting one stops the other. New endpoints report the
+  current screen mode and switch between the two: the swap is **temporary by default** (a reboot
+  restores KlipperScreen) with an explicit option to make either the boot default, and if the kiosk
+  fails to start, KlipperScreen is brought back so the screen never stays dark. The in-widget Kiosk
+  panel lands next.
+
 ## [0.253.0] - 2026-06-13
 
 ### Added
