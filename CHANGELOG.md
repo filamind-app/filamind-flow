@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.234.0] - 2026-06-13
+
+### Changed
+
+- **Documentation now reflects multi-printer validation.** The README, ROADMAP and backend
+  README no longer describe FilaMind as running on a single reference machine. A new
+  *"Proven across real, different printers"* matrix contrasts the two validation machines — a
+  Sovol SV08 and a Voron-class CoreXY — across MCU family, TMC driver bus (UART vs SPI),
+  toolhead transport (USB vs CAN) and host SBC, and explains how each difference became a
+  generic, printer-agnostic fix (shared-bus pin awareness, CAN UUID resolution, kinematics-aware
+  tooling, honest flash outcomes with a CAN read-back salvage, host-relative subpath access). The
+  ROADMAP gains a *Cross-printer validation* section, the install notes document the `/filamind/`
+  subpath integration, and the backend README documents the firmware-flash design.
+
+
 ## [0.233.0] - 2026-06-13
 
 ### Fixed
