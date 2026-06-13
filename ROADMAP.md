@@ -181,7 +181,7 @@ turned a batch of *"works on my printer"* assumptions into generic fixes:
 | ✅ **CAN UUID resolution** | A CAN device registered under a friendly name flashes correctly — the node's `canbus_uuid` is resolved from the live config (or refused clearly when ambiguous). |
 | ✅ **Kinematics-aware tooling** | CoreXY-only tools (belt comparison) are gated, disabled and explained on Cartesian / CoreXZ / Delta instead of firing meaningless test moves; the Guided wizard auto-skips them. |
 | ✅ **Honest flash outcomes + CAN salvage** | Flash success/failure follows the tool's real exit code; on CAN, a read-back-verify failure is salvaged by confirming the board's actual firmware version through Klipper. |
-| ✅ **Host-relative subpath access** | The UI serves from `/filamind/` on the host's primary web server, so it works on the LAN, by IP, and through a remote reverse-proxy tunnel — no `.local` mDNS, no extra port. |
+| ✅ **Host-relative subpath access** | The UI serves from `/filamind/` on the host's primary web server, so it works on the LAN, by IP, or under that subpath — no `.local` mDNS, no extra port. The built bundle uses relative assets + a runtime mount-prefix, so the same files serve at the panel's own port or proxied under a subpath. |
 | 📋 **Cartesian / Delta bench run** | The kinematics-specific paths are gated and unit-tested; a live run on a non-CoreXY machine is the next validation step. |
 
 ## Platform

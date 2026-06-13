@@ -79,11 +79,10 @@ reference machine, but two that disagree on almost everything that matters to a 
 | Stepper drivers | TMC**2209** — UART, one pin per driver | TMC**5160** ×6 — a **shared software-SPI** bus |
 | Toolhead link | **USB** (toolhead ADXL345) | **CAN bus** |
 | Host SBC | BTT CB1 (Allwinner H616) | Raspberry Pi 4 |
-| Reached over | LAN | a remote reverse-proxy **tunnel** |
 
-Two boards, two MCU families, two driver buses, two toolhead transports, two host SBCs, two
-access paths. Bringing the second printer online deliberately hunted the *"works on my printer"*
-class of bug — and each one it surfaced became a **generic fix**, not a special case:
+Two boards, two MCU families, two driver buses, two toolhead transports, two host SBCs.
+Bringing the second printer online deliberately hunted the *"works on my printer"* class of
+bug — and each one it surfaced became a **generic fix**, not a special case:
 
 - **Shared-bus pins are no longer false conflicts** — a stack of TMC5160s sharing one
   software-SPI bus is valid wiring; Machine Doctor now scores it correctly (the UART-per-driver
@@ -95,8 +94,10 @@ class of bug — and each one it surfaced became a **generic fix**, not a specia
 - **Honest flash outcomes** — a flash reports success or failure by the tool's real exit code,
   with a CAN read-back-verify *salvage* that confirms the true result through Klipper when a
   USB-CAN adapter chokes on the verify flood.
-- **Reachable anywhere** — the UI serves from a host-relative subpath, so it works on the LAN,
-  by IP, and through a remote tunnel with no `.local` mDNS and no extra port to forward.
+- **Serves at its own port *or* a subpath** — the built UI uses relative asset paths and derives
+  its API/WebSocket base from wherever it is mounted (`mountPrefix()`), so the same bundle works
+  at the panel's own `:8090` root and proxied under a subpath on the host's existing web server —
+  no `.local` mDNS, no extra port to expose.
 
 The result: a panel validated where it counts, with the rough edges of cross-hardware support
 filed down on the bench. Different mainboard? Different driver family? CAN toolhead? It's been there.
@@ -130,10 +131,10 @@ It installs the backend service, serves the (pre-built) UI via nginx on port `80
 registers it with Moonraker's update manager for one-click updates. Where it can, it also
 exposes the panel at **`/filamind/` on the host's primary web server** (the one that already
 answers Mainsail/Fluidd) and adds a **host-relative** sidebar link — so the UI opens on the
-LAN, by IP, and **through a remote reverse-proxy tunnel**, with no `.local` mDNS and no extra
-port to forward. Re-runnable; ports are overridable (`FILAMIND_UI_PORT`, `FILAMIND_API_PORT`),
-and an explicit public host can be forced with `FILAMIND_PUBLIC_HOST` (used as the fallback
-absolute `host:port` link when no primary site is found). See [`scripts/install.sh`](scripts/install.sh).
+LAN, by IP, or under that subpath, with no `.local` mDNS and no extra port to forward.
+Re-runnable; ports are overridable (`FILAMIND_UI_PORT`, `FILAMIND_API_PORT`), and an explicit
+public host can be forced with `FILAMIND_PUBLIC_HOST` (used as the fallback absolute `host:port`
+link when no primary site is found). See [`scripts/install.sh`](scripts/install.sh).
 
 ## Why it exists
 
