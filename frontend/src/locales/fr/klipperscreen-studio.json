@@ -7,7 +7,59 @@
       "step1": "Modifiez le texte de configuration ci-dessous (ou laissez-le tel quel).",
       "step2": "Enregistrez — le fichier est d'abord sauvegardé, et l'enregistrement est refusé pendant que l'imprimante est occupée.",
       "step3": "Redémarrez KlipperScreen pour appliquer le changement sur l'écran physique.",
-      "lfNote": "Les lignes utilisent des fins de ligne UNIX (LF), imposées automatiquement à l'enregistrement."
+      "lfNote": "Les lignes utilisent des fins de ligne UNIX (LF), imposées automatiquement à l'enregistrement.",
+      "topics": {
+        "glossary": {
+          "title": "Glossaire",
+          "body": "Définitions rapides des termes KlipperScreen utilisés ici."
+        },
+        "config": {
+          "title": "Qu'est-ce que l'onglet Config ?",
+          "body": "Le fichier KlipperScreen.conf brut. Modifiez n'importe quel réglage à la main ; l'enregistrement sauvegarde d'abord le fichier, il est refusé pendant que l'imprimante est occupée, et il vous avertit si le fichier a changé sur l'écran depuis son chargement. La plupart des gens utilisent plutôt les onglets Réglages / Menus / Thèmes."
+        },
+        "settings": {
+          "title": "Qu'est-ce que l'onglet Réglages ?",
+          "body": "Les options [main] les plus utilisées, sous forme de formulaire — thème, langue, mise en veille de l'écran, taille de police et options à activer. Pré-rempli depuis la config en direct ; seules les options que vous changez sont écrites. Redémarrez pour appliquer."
+        },
+        "menus": {
+          "title": "Qu'est-ce que l'onglet Menus ?",
+          "body": "Concevez les grilles de boutons de l'écran tactile. Chaque arbre (__main est la grille d'accueil, __print l'écran d'impression) liste ses boutons ; ajoutez-les, renommez-les, réordonnez-les et imbriquez-les, et réglez chacun pour ouvrir un sous-menu, ouvrir un écran intégré ou exécuter du G-code."
+        },
+        "themes": {
+          "title": "Qu'est-ce que l'onglet Thèmes ?",
+          "body": "Composez un thème KlipperScreen : choisissez une couleur par jeton de palette et un rayon de coins, regardez l'aperçu en direct, puis créez-le et appliquez-le à l'écran. L'aperçu est approximatif — l'écran réel s'affiche en GTK."
+        },
+        "kiosk": {
+          "title": "Qu'est-ce que l'onglet Kiosque ?",
+          "body": "Affichez FilaMind Flow lui-même sur l'écran tactile en navigateur plein écran — contrôle total de ce que montre l'écran. C'est un échange réversible avec KlipperScreen (temporaire par défaut ; un redémarrage restaure KlipperScreen). Nécessite l'installation unique sur l'hôte de l'imprimante."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "L'interface à écran tactile qui s'exécute sur un petit afficheur relié à l'imprimante — distincte de ce panneau web."
+        },
+        "theme": {
+          "term": "Thème",
+          "def": "Un habillage KlipperScreen — couleurs, icônes et rayon des coins. Il réside dans un dossier styles/<name> sur l'hôte ; purement cosmétique (il ne peut pas changer la disposition)."
+        },
+        "menu": {
+          "term": "Menu (__main / __print)",
+          "def": "Les grilles de boutons qu'affiche KlipperScreen. __main est l'écran d'accueil, __print l'écran montré pendant l'impression, __splashscreen l'écran de démarrage."
+        },
+        "panel": {
+          "term": "Écran",
+          "def": "Un écran KlipperScreen intégré qu'un bouton peut ouvrir (déplacement, température, extrusion, maillage du plateau, …). Leur contenu interne est fixé par KlipperScreen."
+        },
+        "autoBlock": {
+          "term": "Bloc auto-généré (#~#)",
+          "def": "La section que KlipperScreen écrit pour lui-même au bas du conf, après le marqueur #~#. FilaMind ne la modifie jamais — seulement vos réglages au-dessus."
+        },
+        "kiosk": {
+          "term": "Kiosque",
+          "def": "Exécuter un navigateur plein écran sur l'écran tactile à la place de KlipperScreen, pour que l'écran affiche FilaMind Flow. Entièrement réversible."
+        }
+      }
     },
     "status": {
       "checking": "Recherche de KlipperScreen…",
@@ -44,7 +96,12 @@
       "savedRestart": "Enregistré — redémarrez KlipperScreen pour appliquer.",
       "unset": "Laisser non défini (par défaut)",
       "never": "Jamais (toujours allumé)",
-      "fontSize": { "small": "Petite", "medium": "Moyenne", "large": "Grande", "max": "Max" },
+      "fontSize": {
+        "small": "Petite",
+        "medium": "Moyenne",
+        "large": "Grande",
+        "max": "Max"
+      },
       "label": {
         "theme": "Thème",
         "language": "Langue",
