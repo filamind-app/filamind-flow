@@ -77,9 +77,10 @@ reference. Apply this to new widgets up front, and retrofit older ones over time
 
 ## Internationalization (strings & locales)
 
-User-facing copy is being moved into `vue-i18n` catalogs under `src/locales/` (offline-first,
-extensible; see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). While the migration is in progress
-(phase-by-phase, see [ROADMAP.md](ROADMAP.md)), follow these rules so nothing regresses:
+All user-facing copy lives in `vue-i18n` catalogs under `src/locales/` (offline-first, extensible;
+see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). The UI ships fully localized in **7 languages**
+(en · ar · de · zh-Hans · fr · es · ru, Arabic RTL); keep it that way — follow these rules so
+nothing regresses:
 
 - **New user-facing text goes through `t()`**, not a hardcoded literal. Add the key to the matching
   `en` namespace JSON (`common` / `shell` / `<widget>`) — `en` is the source of truth.
