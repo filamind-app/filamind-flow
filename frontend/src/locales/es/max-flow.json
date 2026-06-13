@@ -107,7 +107,14 @@
       "cancelled": "Prueba abortada — el calentador se apagó.",
       "reattached": "Reconectado: este resultado terminó mientras la página no estaba.",
       "failed": "La prueba de flujo máximo falló.",
-      "abortNote": "Abortar siempre apaga el calentador."
+      "abortNote": "Abortar siempre apaga el calentador.",
+      "parkNote": "Antes de calentar, la impresora hace Homing (si es necesario) y centra la boquilla para una vista clara.",
+      "phase": {
+        "homing": "Haciendo Homing de la impresora…",
+        "centering": "Centrando la boquilla…",
+        "heating": "Calentando el hotend…",
+        "checking": "Comprobando la señal de StallGuard…"
+      }
     },
     "result": {
       "title": "Resultado",
@@ -119,10 +126,18 @@
       "conservative": "Conservador (80 %)",
       "balanced": "Equilibrado (90 %)",
       "units": "mm³/s",
-      "fromBefore": "Medido antes ({at}) — vuelve a ejecutar para datos frescos."
+      "fromBefore": "Medido antes ({at}) — vuelve a ejecutar para datos frescos.",
+      "unreliableTitle": "No fiable — sin señal de StallGuard",
+      "unmeasured": "alcanzado, no confirmado"
     },
     "states": {
       "loadingHotends": "Cargando hotends…"
+    },
+    "camera": {
+      "title": "Cámara en vivo",
+      "live": "EN VIVO",
+      "error": "Cámara no disponible.",
+      "willShow": "Una vista de cámara en vivo mostrará la boquilla durante la prueba."
     }
   }
 }

@@ -107,7 +107,14 @@
       "cancelled": "Lauf abgebrochen — die Heizung wurde ausgeschaltet.",
       "reattached": "Wieder verbunden: dieses Ergebnis wurde fertig, während die Seite weg war.",
       "failed": "Max-Durchfluss-Lauf fehlgeschlagen.",
-      "abortNote": "Abbrechen schaltet die Heizung immer aus."
+      "abortNote": "Abbrechen schaltet die Heizung immer aus.",
+      "parkNote": "Vor dem Heizen richtet der Drucker sich selbst aus (falls nötig) und zentriert die Düse für eine freie Sicht.",
+      "phase": {
+        "homing": "Richtet den Drucker aus…",
+        "centering": "Zentriert die Düse…",
+        "heating": "Heizt das Hotend…",
+        "checking": "Prüft das StallGuard-Signal…"
+      }
     },
     "result": {
       "title": "Ergebnis",
@@ -119,10 +126,18 @@
       "conservative": "Konservativ (80 %)",
       "balanced": "Ausgewogen (90 %)",
       "units": "mm³/s",
-      "fromBefore": "Früher gemessen ({at}) — für frische Zahlen erneut ausführen."
+      "fromBefore": "Früher gemessen ({at}) — für frische Zahlen erneut ausführen.",
+      "unreliableTitle": "Unzuverlässig — kein StallGuard-Signal",
+      "unmeasured": "erreicht, nicht bestätigt"
     },
     "states": {
       "loadingHotends": "Hotends werden geladen…"
+    },
+    "camera": {
+      "title": "Live-Kamera",
+      "live": "LIVE",
+      "error": "Kamera nicht verfügbar.",
+      "willShow": "Eine Live-Kameraansicht zeigt die Düse während des Tests."
     }
   }
 }

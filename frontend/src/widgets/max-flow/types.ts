@@ -17,6 +17,8 @@ export interface MaxFlowParams {
   extrude_per_step: number
   samples_per_step: number
   driver: string
+  /** Home (if needed) + center the nozzle for a clear view before heating. */
+  park_for_view?: boolean
 }
 
 export interface PlanStep {

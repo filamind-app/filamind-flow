@@ -107,7 +107,14 @@
       "cancelled": "Test interrompu — la chauffe a été coupée.",
       "reattached": "Reconnecté : ce résultat s’est terminé pendant l’absence de la page.",
       "failed": "Le test de débit max a échoué.",
-      "abortNote": "L’interruption coupe toujours la chauffe."
+      "abortNote": "L’interruption coupe toujours la chauffe.",
+      "parkNote": "Avant de chauffer, l'imprimante effectue le homing (si nécessaire) et centre la buse pour une vue dégagée.",
+      "phase": {
+        "homing": "Homing de l'imprimante…",
+        "centering": "Centrage de la buse…",
+        "heating": "Chauffage du hotend…",
+        "checking": "Vérification du signal StallGuard…"
+      }
     },
     "result": {
       "title": "Résultat",
@@ -119,10 +126,18 @@
       "conservative": "Prudent (80 %)",
       "balanced": "Équilibré (90 %)",
       "units": "mm³/s",
-      "fromBefore": "Mesuré plus tôt ({at}) — relancez pour des chiffres frais."
+      "fromBefore": "Mesuré plus tôt ({at}) — relancez pour des chiffres frais.",
+      "unreliableTitle": "Non fiable — aucun signal StallGuard",
+      "unmeasured": "atteint, non confirmé"
     },
     "states": {
       "loadingHotends": "Chargement des hotends…"
+    },
+    "camera": {
+      "title": "Caméra en direct",
+      "live": "EN DIRECT",
+      "error": "Caméra indisponible.",
+      "willShow": "Une vue en direct de la caméra montrera la buse pendant le test."
     }
   }
 }

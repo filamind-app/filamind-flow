@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app.api.routes import (
+    camera,
     config,
     doctor,
     drivers,
@@ -38,3 +39,4 @@ api_router.include_router(maxflow.router)
 api_router.include_router(topology.router)
 api_router.include_router(macro.router)
 api_router.include_router(hardware.router)
+api_router.include_router(camera.router)

@@ -6,6 +6,33 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.239.0] - 2026-06-13
+
+### Added
+
+- **Max-Flow: live camera view.** When the printer has a webcam configured (via Moonraker), the
+  Max-Flow widget now shows a live view of the nozzle while the test runs, so you can watch the
+  extrusion as the flow ramps. The snapshot is proxied through the backend so it loads same-origin
+  regardless of how the panel is served; nothing is shown when no camera is configured.
+- **Max-Flow: home + center the nozzle before the test.** Before heating, the printer now homes
+  (if needed) and centers the nozzle at a comfortable height, so it's clearly visible — in person
+  and on the camera — and the ooze falls clear of the bed.
+
+### Fixed
+
+- **Max-Flow no longer reports a misleading "no slip" on extruders that can't read StallGuard.**
+  After reaching temperature, a short StallGuard sanity pre-check confirms the live load signal is
+  actually present (and not stuck at a constant) before the ramp begins. If it can't be read on
+  this extruder, the run stops immediately with a clear, actionable message instead of heating and
+  grinding through the whole ramp only to return an unmeasured "highest tested flow". An
+  unusable-signal result is now surfaced prominently rather than as a footnote.
+
+### Changed
+
+- **Max-Flow: clearer run UI.** Phase-by-phase progress (homing → centering → heating → checking
+  the signal → ramping), a prominent "unreliable — no StallGuard signal" result state, and a note
+  that the printer homes and centers the nozzle before heating.
+
 ## [0.238.0] - 2026-06-13
 
 ### Changed

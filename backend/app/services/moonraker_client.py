@@ -86,6 +86,17 @@ class MoonrakerClient:
         status = result.get("status", {})
         return status if isinstance(status, dict) else {}
 
+    async def list_webcams(self) -> list[dict[str, Any]]:
+        """Configured webcams via ``/server/webcams/list``.
+
+        Each entry is ``{"name", "service", "stream_url", "snapshot_url", "enabled", ...}``. The
+        URLs are as configured (usually host-relative, e.g. ``/webcam/?action=snapshot``). Returns
+        an empty list if no webcam is configured or the result isn't a list.
+        """
+        result = await self._get("/server/webcams/list")
+        cams = result.get("webcams", [])
+        return [c for c in cams if isinstance(c, dict)] if isinstance(cams, list) else []
+
     async def query_endstops(self) -> dict[str, Any]:
         """Live endstop trigger state via ``/printer/query_endstops/status``.
 

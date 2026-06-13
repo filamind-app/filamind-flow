@@ -121,6 +121,13 @@ def test_route_plan_bad_temp_400() -> None:
 
 
 # ── live measurement loop (mocked client; no real motion) ─────────────────────
+#: The StallGuard sanity pre-check (issue #319) extrudes this many calibration samples at
+#: temperature before the ramp; scripted sg lists must front-load enough usable readings.
+_PRECHECK = mfs._PRECHECK_SAMPLES
+#: Clean, above-floor readings that satisfy the pre-check (present and not constant-zero).
+_PRECHECK_OK = [100.0] * _PRECHECK
+
+
 class _RunClient:
     """Stub MoonrakerClient for the run loop: scripted StallGuard samples + recorded g-code."""
 
@@ -130,6 +137,8 @@ class _RunClient:
         state: str = "standby",
         fail_on: str | None = None,
         config: dict[str, Any] | None = None,
+        homed: str = "xyz",
+        sg_absent: bool = False,
     ) -> None:
         self._sg = iter(sg_values)
         self._state = state
@@ -140,6 +149,8 @@ class _RunClient:
             if config is not None
             else {"tmc2209 extruder": {"stealthchop_threshold": 999999}}
         )
+        self._homed = homed  # toolhead.homed_axes reported to the park-for-view step
+        self._sg_absent = sg_absent  # when True the extruder status omits the SG field entirely
         self.gcodes: list[str] = []
 
     async def query_objects(self, objects: list[str]) -> dict[str, Any]:
@@ -147,7 +158,17 @@ class _RunClient:
             return {"print_stats": {"state": self._state}}
         if "configfile" in objects:
             return {"configfile": {"settings": self._config}}
+        if "toolhead" in objects:  # park-for-view: homed state + bed-center limits
+            return {
+                "toolhead": {
+                    "homed_axes": self._homed,
+                    "axis_minimum": [0.0, 0.0, 0.0],
+                    "axis_maximum": [300.0, 300.0, 300.0],
+                }
+            }
         section = objects[0]
+        if self._sg_absent:
+            return {section: {}}  # no sg_result → _extract_sg returns None
         try:
             value = next(self._sg)
         except StopIteration:
@@ -171,7 +192,7 @@ _RUN_PARAMS: dict[str, Any] = {
 
 
 async def test_run_clean_no_slip() -> None:
-    client = _RunClient([100.0] * 12)  # 3 steps x 4 samples, perfectly steady
+    client = _RunClient(_PRECHECK_OK + [100.0] * 12)  # pre-check OK, then 3 steps x 4, steady
     out = await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
     assert out["slip_flow"] is None
     assert out["max_flow_mm3s"] == 7  # reached the highest tested flow
@@ -184,7 +205,7 @@ async def test_run_clean_no_slip() -> None:
 async def test_run_detects_slip_and_stops() -> None:
     # Steps at flow 5 and 6 are steady; flow 7 is wildly erratic → slip there.
     # (All values stay above the SG4 bias floor of 50 so none are dropped by C2.)
-    sg = [100.0] * 8 + [200.0, 1000.0, 200.0, 1000.0]
+    sg = _PRECHECK_OK + [100.0] * 8 + [200.0, 1000.0, 200.0, 1000.0]
     client = _RunClient(sg)
     out = await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
     assert out["slip_flow"] == 7
@@ -223,12 +244,61 @@ def test_sg_floor_per_driver() -> None:
 async def test_run_drops_bias_region_samples() -> None:
     # Each step interleaves real load (100) with bias-region noise (40 < 50 floor → dropped),
     # so every step reduces to steady [100, 100] → no spurious slip.
-    sg = [100.0, 40.0] * 6  # 3 steps x 4 samples
+    sg = _PRECHECK_OK + [100.0, 40.0] * 6  # pre-check OK, then 3 steps x 4 samples
     client = _RunClient(sg)
     out = await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
     assert out["slip_flow"] is None
     assert out["max_flow_mm3s"] == 7
     assert out["sg_samples_seen"] is True
+
+
+# ── #319: StallGuard sanity pre-check (bail out before the ramp on an unusable signal) ────────
+async def test_run_aborts_when_sg_field_absent() -> None:
+    # The extruder status never carries an SG field → the live signal is unreadable here.
+    client = _RunClient([], sg_absent=True)
+    with pytest.raises(mfs.MaxFlowSignalError):
+        await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
+    assert "M104 S0" in client.gcodes  # heater cut even though we bailed before the ramp
+    # The ramp never started: only the pre-check's calibration extrudes ran, never a full step set.
+    extrudes = [g for g in client.gcodes if g.startswith("G1 E")]
+    assert len(extrudes) == _PRECHECK  # pre-check only — no ramp steps
+
+
+async def test_run_aborts_when_sg_constant_zero() -> None:
+    # The SG field is present but stuck at 0 → no usable load signal.
+    client = _RunClient([0.0] * _PRECHECK)
+    with pytest.raises(mfs.MaxFlowSignalError):
+        await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
+    assert "M104 S0" in client.gcodes  # heater still cut
+
+
+# ── home + center the nozzle for a clear view before heating ──────────────────────────────────
+async def test_run_homes_when_not_homed() -> None:
+    client = _RunClient(_PRECHECK_OK + [100.0] * 12, homed="")  # nothing homed yet
+    await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
+    assert "G28" in client.gcodes  # homed before the test
+    g28_at = client.gcodes.index("G28")
+    heat_at = client.gcodes.index("M109 S240")
+    assert g28_at < heat_at  # parking happens before heating
+
+
+async def test_run_centers_nozzle_before_heating() -> None:
+    client = _RunClient(_PRECHECK_OK + [100.0] * 12)  # already homed (default)
+    await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
+    assert "G28" not in client.gcodes  # already homed → no re-home
+    centering = [g for g in client.gcodes if g.startswith("G1 X150.0 Y150.0")]
+    assert centering, "nozzle centered at the bed center"
+    assert client.gcodes.index(centering[0]) < client.gcodes.index("M104 S240")
+
+
+async def test_run_park_for_view_disabled() -> None:
+    client = _RunClient(_PRECHECK_OK + [100.0] * 12)
+    await mfs.run_max_flow(
+        client,
+        RampParams(park_for_view=False, **_RUN_PARAMS),  # type: ignore[arg-type]
+    )
+    assert "G28" not in client.gcodes
+    assert not any(g.startswith("G1 X") for g in client.gcodes)  # no positioning move
 
 
 # ── C1: chopper-mode / StallGuard preflight ───────────────────────────────────
