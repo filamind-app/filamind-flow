@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.252.0] - 2026-06-13
+## [0.253.0] - 2026-06-13
+
+### Added
+
+- **KlipperScreen Studio — visual menu editor.** The widget gains a **Menus** tab: a live tree of
+  the touchscreen's button grids (`__main` home, `__print`, `__splashscreen`) where you add, rename,
+  reorder (up/down), nest, and delete buttons, and set what each one does — **open a sub-menu**,
+  **open a screen** (pick from the built-in panels), or **run G-code** — plus an optional
+  visibility condition. Save writes the whole menu set back through the gated path and prompts a
+  restart to apply. Fully translated across the seven languages.
 
 ### Added
 

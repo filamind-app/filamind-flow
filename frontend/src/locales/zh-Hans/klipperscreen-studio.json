@@ -31,7 +31,30 @@
     },
     "view": {
       "config": "配置",
+      "menus": "菜单",
       "themes": "主题"
+    },
+    "menus": {
+      "loading": "正在加载菜单…",
+      "intro": "设计触摸屏显示的内容：每个菜单的按钮、顺序及其作用。主屏网格是 __main 树，打印屏是 __print。",
+      "addItem": "添加按钮",
+      "empty": "暂无项目——添加一个。",
+      "up": "上移",
+      "down": "下移",
+      "addChild": "添加子项",
+      "delete": "删除",
+      "name": "名称",
+      "icon": "图标",
+      "action": "动作",
+      "actSubmenu": "打开子菜单",
+      "actPanel": "打开屏幕",
+      "actGcode": "运行 G-code",
+      "panel": "屏幕",
+      "gcode": "G-code",
+      "enable": "显示条件",
+      "save": "保存菜单",
+      "newItem": "新按钮",
+      "savedRestart": "菜单已保存——重启 KlipperScreen 以查看。"
     },
     "themes": {
       "loading": "正在加载主题…",

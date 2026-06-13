@@ -31,7 +31,30 @@
     },
     "view": {
       "config": "Config",
+      "menus": "Menus",
       "themes": "Thèmes"
+    },
+    "menus": {
+      "loading": "Chargement des menus…",
+      "intro": "Concevez ce qu'affiche l'écran tactile : les boutons de chaque menu, leur ordre et ce que fait chacun. La grille d'accueil est l'arbre __main ; l'écran d'impression, __print.",
+      "addItem": "Ajouter un bouton",
+      "empty": "Aucun élément — ajoutez-en un.",
+      "up": "Monter",
+      "down": "Descendre",
+      "addChild": "Ajouter un sous-élément",
+      "delete": "Supprimer",
+      "name": "Nom",
+      "icon": "Icône",
+      "action": "Action",
+      "actSubmenu": "Ouvrir un sous-menu",
+      "actPanel": "Ouvrir un écran",
+      "actGcode": "Exécuter du G-code",
+      "panel": "Écran",
+      "gcode": "G-code",
+      "enable": "Afficher si",
+      "save": "Enregistrer les menus",
+      "newItem": "Nouveau bouton",
+      "savedRestart": "Menus enregistrés — redémarrez KlipperScreen pour les voir."
     },
     "themes": {
       "loading": "Chargement des thèmes…",
