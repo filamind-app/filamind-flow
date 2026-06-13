@@ -1,0 +1,42 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Bearbeite die KlipperScreen-Touchscreen-Konfiguration deines Druckers sicher und starte KlipperScreen neu, um sie anzuwenden. Jeder Speichervorgang wird zuvor gesichert.",
+    "help": {
+      "title": "So funktioniert es",
+      "body": "KlipperScreen.conf steuert den am Drucker angeschlossenen Touchscreen — Theme, Sprache, Menüs und Anzeigeoptionen. Dieser Editor liest und schreibt die Datei über denselben sicheren Pfad wie der Config-Editor.",
+      "step1": "Bearbeite den Konfigurationstext unten (oder lass ihn unverändert).",
+      "step2": "Speichern — die Datei wird zuerst gesichert, und das Speichern wird abgelehnt, während der Drucker beschäftigt ist.",
+      "step3": "Starte KlipperScreen neu, um die Änderung auf dem Bildschirm anzuwenden.",
+      "lfNote": "Zeilen verwenden UNIX-Zeilenenden (LF), die beim Speichern automatisch erzwungen werden."
+    },
+    "status": {
+      "checking": "Suche nach KlipperScreen…",
+      "absent": "KlipperScreen wurde auf diesem Drucker nicht erkannt (keine KlipperScreen.conf, und nicht von Moonraker gemeldet). Installiere KlipperScreen, um dieses Werkzeug zu nutzen.",
+      "present": "KlipperScreen erkannt",
+      "theme": "Theme",
+      "language": "Sprache",
+      "notRestartable": "Moonraker kann KlipperScreen nicht automatisch neu starten — starte es nach dem Speichern manuell neu."
+    },
+    "editor": {
+      "loading": "Lese KlipperScreen.conf…",
+      "reload": "Neu laden",
+      "save": "Konfig speichern",
+      "saving": "Speichere…",
+      "saved": "Gespeichert (gesichert)",
+      "unsaved": "Ungespeicherte Änderungen"
+    },
+    "save": {
+      "busy": "Abgelehnt, während der Drucker beschäftigt ist — versuche es erneut im Leerlauf.",
+      "stale": "KlipperScreen.conf wurde seit dem Laden auf der Festplatte geändert (wahrscheinlich am Bildschirm bearbeitet). Lade neu, bevor du speicherst, um diese Änderung nicht zu überschreiben."
+    },
+    "restart": {
+      "button": "KlipperScreen neu starten",
+      "restarting": "Starte neu…",
+      "done": "KlipperScreen startet neu — der Bildschirm lädt gleich neu.",
+      "confirmTitle": "KlipperScreen neu starten?",
+      "confirmBody": "Dies startet den Touchscreen-Dienst neu, um deine Änderungen anzuwenden. Ein laufender Druck ist nicht betroffen, aber der Bildschirm wird einige Sekunden schwarz.",
+      "confirm": "Neu starten",
+      "cancel": "Abbrechen"
+    }
+  }
+}

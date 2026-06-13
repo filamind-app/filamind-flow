@@ -1,0 +1,42 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Edit your printer's KlipperScreen touchscreen configuration safely, then restart KlipperScreen to apply. Every save is backed up first.",
+    "help": {
+      "title": "How this works",
+      "body": "KlipperScreen.conf controls the touchscreen attached to your printer — its theme, language, menus, and display options. This editor reads and writes that file through the same safe path as the Config Editor.",
+      "step1": "Edit the configuration text below (or leave it as-is).",
+      "step2": "Save — the current file is backed up first, and the save is refused while the printer is busy.",
+      "step3": "Restart KlipperScreen to apply the change on the physical screen.",
+      "lfNote": "Lines use UNIX (LF) endings, enforced automatically on save."
+    },
+    "status": {
+      "checking": "Checking for KlipperScreen…",
+      "absent": "KlipperScreen was not detected on this printer (no KlipperScreen.conf, and not reported by Moonraker). Install KlipperScreen to use this tool.",
+      "present": "KlipperScreen detected",
+      "theme": "Theme",
+      "language": "Language",
+      "notRestartable": "Moonraker can't restart KlipperScreen automatically — restart it manually after saving."
+    },
+    "editor": {
+      "loading": "Reading KlipperScreen.conf…",
+      "reload": "Reload",
+      "save": "Save config",
+      "saving": "Saving…",
+      "saved": "Saved (backed up)",
+      "unsaved": "Unsaved changes"
+    },
+    "save": {
+      "busy": "Refused while the printer is busy — try again when it's idle.",
+      "stale": "KlipperScreen.conf changed on disk since it was loaded (likely edited on the screen). Reload before saving so you don't overwrite that change."
+    },
+    "restart": {
+      "button": "Restart KlipperScreen",
+      "restarting": "Restarting…",
+      "done": "KlipperScreen is restarting — the screen will reload shortly.",
+      "confirmTitle": "Restart KlipperScreen?",
+      "confirmBody": "This restarts the touchscreen service to apply your changes. It won't affect an active print, but the screen goes blank for a few seconds.",
+      "confirm": "Restart",
+      "cancel": "Cancel"
+    }
+  }
+}
