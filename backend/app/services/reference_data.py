@@ -7,6 +7,10 @@ Static JSON datasets baked under ``app/data/reference/``:
   Max-Flow widget and the Motor Drivers auto-SGT / slip-detection enhancement.
 * ``macros.json`` — built-in Klipper calibration macro definitions.
 
+The curated hardware catalog ships as a read-only **``hardware.sqlite``** (built from a local,
+git-ignored ``hardware.json`` by ``scripts/build_hardware_db.py``); :func:`_read_hardware_db`
+reconstructs the same structure ``json.load`` produced, so everything downstream is unchanged.
+
 The board / MCU identification patterns are no longer a standalone file — they are *derived*
 from the unified hardware catalog (``board_patterns``), so the catalog is the single source.
 
@@ -19,6 +23,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import sqlite3
 from pathlib import Path
 from typing import Any
 
@@ -37,9 +42,54 @@ def _load(name: str) -> dict[str, Any]:
     return data if isinstance(data, dict) else {}
 
 
+def _read_hardware_db(path: Path) -> dict[str, Any]:
+    """Reconstruct the exact ``hardware.json`` structure from the read-only ``hardware.sqlite``.
+
+    Each entity is stored as a JSON ``data`` column (original key order intact), so the dict
+    returned here is identical to what ``json.load`` produced — every downstream index / haystack /
+    link-graph is unchanged. Built by ``scripts/build_hardware_db.py``.
+    """
+    con = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+    try:
+        cur = con.cursor()
+        meta = dict(cur.execute("SELECT key, value FROM meta").fetchall())
+        out: dict[str, Any] = {
+            "_meta": json.loads(meta.get("_meta", "{}")),
+            "categories": json.loads(meta.get("categories", "[]")),
+        }
+        for kind in ("manufacturers", "items", "boards", "drivers", "motors", "hosts"):
+            rows = cur.execute(
+                "SELECT data FROM entities WHERE kind = ? ORDER BY pos", (kind,)
+            ).fetchall()
+            out[kind] = [json.loads(r[0]) for r in rows]
+        catalog: dict[str, list[Any]] = {
+            c: [] for c in json.loads(meta.get("catalog_categories", "[]"))
+        }
+        for category, data in cur.execute(
+            "SELECT category, data FROM catalog ORDER BY category, pos"
+        ):
+            catalog.setdefault(category, []).append(json.loads(data))
+        out["catalog"] = catalog
+        return out
+    finally:
+        con.close()
+
+
+def _load_hardware() -> dict[str, Any]:
+    """The curated hardware DB. Ships as the read-only ``hardware.sqlite``; the human-readable
+    ``hardware.json`` is kept locally (git-ignored) and used as a fallback for maintainers."""
+    db = _DIR / "hardware.sqlite"
+    if db.exists():
+        try:
+            return _read_hardware_db(db)
+        except (sqlite3.Error, json.JSONDecodeError, OSError):
+            pass
+    return _load("hardware.json")
+
+
 _STALLGUARD = _load("stallguard_profiles.json")
 _MACROS = _load("macros.json")
-_HARDWARE = _load("hardware.json")
+_HARDWARE = _load_hardware()
 _TEMPLATES = _load("templates.json")
 
 
