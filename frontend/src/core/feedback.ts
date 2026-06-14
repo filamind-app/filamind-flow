@@ -97,6 +97,10 @@ async function captureScreenshot(): Promise<Blob | null> {
     return await toBlob(target, {
       backgroundColor: !bg || bg === 'rgba(0, 0, 0, 0)' ? '#ffffff' : bg,
       pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+      // Skip web-font inlining: the fonts come from a cross-origin stylesheet (Google Fonts) whose
+      // cssRules can't be read, so embedding always fails anyway — skipping it avoids a burst of
+      // SecurityError console noise and speeds up capture (the rasterised text is unaffected).
+      skipFonts: true,
       // Drop the feedback dialog / menu so the shot shows the app, not the report UI.
       filter: (node) => !(node instanceof HTMLElement && 'feedbackNoshot' in node.dataset),
     })

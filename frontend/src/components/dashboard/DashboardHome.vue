@@ -46,6 +46,13 @@ interface Overview {
       created: string | null
     }[]
   }
+  max_flow?: {
+    available: boolean
+    max_flow_mm3s?: number | null
+    expected_max_flow_mm3s?: number | null
+    hotend?: string | null
+    at?: string | null
+  }
   hardware: { available: boolean; has_baseline: boolean; changes: number }
   setup?: { boards_identified: number; boards_total: number; motors_assigned: number }
 }
@@ -307,18 +314,54 @@ function openMcu(name: string): void {
       {{ t('shell.home.unreachable') }}
     </p>
 
-    <!-- Host summary — time/timezone/temp/uptime/disk; independent of the printer/overview. -->
-    <div v-if="host" class="nb-card space-y-2 bg-surface p-3">
+    <!-- Printer state + Host summary, merged into one card. Independent of each other: the host
+         half still renders when Moonraker (the printer/overview) is down, and vice-versa. -->
+    <div v-if="data || host" class="nb-card space-y-2 bg-surface p-3">
       <div class="flex items-center justify-between gap-2">
         <p class="text-xs font-bold uppercase tracking-wide opacity-60">
-          {{ t('shell.home.hostInfo.title') }}
+          {{ t('shell.home.printerHost') }}
         </p>
-        <button class="nb-btn bg-surface px-1.5 py-0.5 text-[10px]" @click="go('host-control')">
+        <button
+          v-if="host"
+          class="nb-btn bg-surface px-1.5 py-0.5 text-[10px]"
+          @click="go('host-control')"
+        >
           {{ t('shell.home.open') }} ↗
         </button>
       </div>
+
+      <!-- Printer state -->
+      <template v-if="data">
+        <template v-if="data.printer.reachable">
+          <span
+            class="inline-block rounded-brutal border-2 border-ink px-2 py-0.5 text-sm font-bold"
+            :class="stateBadge(data.printer.state).cls"
+          >
+            {{ stateBadge(data.printer.state).text }}
+          </span>
+          <template v-if="data.printer.state === 'printing' || data.printer.state === 'paused'">
+            <p class="truncate font-mono text-xs">{{ data.printer.filename }}</p>
+            <div
+              v-if="data.printer.progress != null"
+              class="h-2 w-full overflow-hidden rounded-full border border-ink bg-paper"
+            >
+              <div
+                class="h-full bg-brand-cyan"
+                :style="{ width: Math.round((data.printer.progress ?? 0) * 100) + '%' }"
+              ></div>
+            </div>
+            <p v-if="data.printer.progress != null" class="font-mono text-[11px] opacity-70">
+              {{ Math.round((data.printer.progress ?? 0) * 100) }}%
+            </p>
+          </template>
+        </template>
+        <p v-else class="font-mono text-xs opacity-70">{{ t('shell.home.printerDown') }}</p>
+      </template>
+
+      <!-- Host summary — time/timezone/temp/uptime/disk -->
       <dl
-        class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-[11px] sm:grid-cols-[auto_1fr_auto_1fr]"
+        v-if="host"
+        class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 border-t-2 border-ink/10 pt-2 font-mono text-[11px] sm:grid-cols-[auto_1fr_auto_1fr]"
       >
         <dt class="opacity-60">{{ t('shell.home.hostInfo.time') }}</dt>
         <dd>
@@ -375,35 +418,37 @@ function openMcu(name: string): void {
     </details>
 
     <div v-if="data" class="grid gap-3 sm:grid-cols-2">
-      <!-- Printer state -->
+      <!-- Max flow — the last test's headline number, with the full tool one tap away -->
       <div class="nb-card space-y-2 bg-surface p-3">
-        <p class="text-xs font-bold uppercase tracking-wide opacity-60">
-          {{ t('shell.home.printer') }}
-        </p>
-        <template v-if="data.printer.reachable">
-          <span
-            class="inline-block rounded-brutal border-2 border-ink px-2 py-0.5 text-sm font-bold"
-            :class="stateBadge(data.printer.state).cls"
+        <div class="flex items-center justify-between gap-2">
+          <p class="text-xs font-bold uppercase tracking-wide opacity-60">
+            {{ t('shell.home.maxFlow.title') }}
+          </p>
+          <button class="nb-btn bg-surface px-1.5 py-0.5 text-[10px]" @click="go('max-flow')">
+            {{ t('shell.home.open') }} ↗
+          </button>
+        </div>
+        <template v-if="data.max_flow?.available">
+          <p class="font-mono text-sm">
+            <span class="text-lg font-bold">{{ data.max_flow.max_flow_mm3s }}</span> mm³/s
+          </p>
+          <p
+            v-if="data.max_flow.expected_max_flow_mm3s != null"
+            class="font-mono text-[11px] opacity-70"
           >
-            {{ stateBadge(data.printer.state).text }}
-          </span>
-          <template v-if="data.printer.state === 'printing' || data.printer.state === 'paused'">
-            <p class="truncate font-mono text-xs">{{ data.printer.filename }}</p>
-            <div
-              v-if="data.printer.progress != null"
-              class="h-2 w-full overflow-hidden rounded-full border border-ink bg-paper"
-            >
-              <div
-                class="h-full bg-brand-cyan"
-                :style="{ width: Math.round((data.printer.progress ?? 0) * 100) + '%' }"
-              ></div>
-            </div>
-            <p v-if="data.printer.progress != null" class="font-mono text-[11px] opacity-70">
-              {{ Math.round((data.printer.progress ?? 0) * 100) }}%
-            </p>
-          </template>
+            {{ t('shell.home.maxFlow.expected', { n: data.max_flow.expected_max_flow_mm3s }) }}
+          </p>
+          <p v-if="data.max_flow.hotend" class="truncate font-mono text-[11px] opacity-70">
+            {{ data.max_flow.hotend }}
+          </p>
+          <p v-if="data.max_flow.at" class="text-[10px] opacity-50">{{ data.max_flow.at }}</p>
         </template>
-        <p v-else class="font-mono text-xs opacity-70">{{ t('shell.home.printerDown') }}</p>
+        <template v-else>
+          <p class="text-xs opacity-70">{{ t('shell.home.maxFlow.empty') }}</p>
+          <button class="nb-btn bg-brand-cyan px-3 py-1 text-xs" @click="go('max-flow')">
+            💧 {{ t('shell.home.maxFlow.test') }}
+          </button>
+        </template>
       </div>
 
       <!-- Machine Doctor — live grade + assessment + Max-Flow, with the full scan one tap away -->
