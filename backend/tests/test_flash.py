@@ -142,3 +142,19 @@ async def test_flash_skips_reboot_when_not_katapult(tmp_path: Path, monkeypatch)
 
     on = await run(is_katapult=True)
     assert "enter its bootloader" in on
+
+
+def test_bootloader_serial_path(monkeypatch) -> None:
+    """A board in the Katapult bootloader is found under usb-katapult_<id>, not usb-Klipper_<id>."""
+    kl = "/dev/serial/by-id/usb-Klipper_stm32f103xe_36FFD8054755303931861457-if00"
+    kat = "/dev/serial/by-id/usb-katapult_stm32f103xe_36FFD8054755303931861457-if00"
+    # Board sitting in the bootloader: the katapult endpoint exists -> return it.
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda p: p == kat)
+    monkeypatch.setattr(flash_service.glob, "glob", lambda pat: [kat])
+    assert flash_service.bootloader_serial_path(kl) == kat
+    # Board running normally: no katapult endpoint present -> None (flash uses the Klipper path).
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda p: False)
+    monkeypatch.setattr(flash_service.glob, "glob", lambda pat: [])
+    assert flash_service.bootloader_serial_path(kl) is None
+    # Not a /dev/serial/by-id device.
+    assert flash_service.bootloader_serial_path("/dev/ttyACM0") is None
