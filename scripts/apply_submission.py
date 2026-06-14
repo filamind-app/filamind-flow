@@ -62,7 +62,9 @@ TARGET_ARRAY: dict[str, str] = {
 }
 # These top-level fields, when present, must be JSON objects.
 _DICT_FIELDS = ("specs", "autotune", "caps", "maxFlow")
-_SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+# Matches the frontend slugify() output: lowercase alphanumeric segments joined by single hyphens
+# (no leading/trailing/double hyphens). Digit-leading slugs are allowed — real part ids have them.
+_SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
 def infer_type(fragment: dict[str, Any]) -> str | None:
