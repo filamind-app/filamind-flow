@@ -6,7 +6,7 @@
  *  result per axis from the shaper archive, and whether the hardware changed against the saved
  *  Machine Map baseline. Every tile deep-links into the widget that owns the subject, and a
  *  Machine Doctor tile offers the full graded scan. */
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { resolveEndpoints } from '@/core/moonraker'
@@ -69,6 +69,66 @@ async function load(): Promise<void> {
     data.value = null
   } finally {
     loading.value = false
+  }
+}
+
+// Host summary (time/timezone, CPU temp, uptime, NTP, disk) from the Host Control monitor.
+// Degrades silently — on a non-host backend the card just doesn't render.
+interface HostInfo {
+  time: { timezone: string; ntp_synced: boolean }
+  cpu: { temp_c: number | null }
+  host: { uptime_s: number | null }
+  disk: { label: string; pct: number }[]
+}
+const host = ref<HostInfo | null>(null)
+async function loadHost(): Promise<void> {
+  try {
+    const { backendUrl } = resolveEndpoints()
+    const response = await fetch(`${backendUrl}/api/host/monitor`)
+    if (!response.ok) throw new Error(String(response.status))
+    host.value = (await response.json()) as HostInfo
+  } catch {
+    host.value = null
+  }
+}
+
+// A live clock ticking in the HOST's timezone (answers "what time is it on the printer?").
+const clock = ref(new Date())
+let clockTimer: ReturnType<typeof setInterval> | null = null
+const hostClock = computed(() => {
+  const tz = host.value?.time.timezone
+  if (!tz) return ''
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }).format(clock.value)
+  } catch {
+    return ''
+  }
+})
+function fmtUptime(s: number | null): string {
+  if (s == null) return '—'
+  const d = Math.floor(s / 86400)
+  const h = Math.floor((s % 86400) / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  return [d ? `${d}d` : '', h || d ? `${h}h` : '', `${m}m`].filter(Boolean).join(' ')
+}
+const rootDisk = computed(
+  () => host.value?.disk?.find((x) => x.label === '/') ?? host.value?.disk?.[0],
+)
+
+// Pulsing mission banner — dismissible, remembered across sessions.
+const BANNER_KEY = 'filamind.missionBannerDismissed'
+const showBanner = ref(true)
+function dismissBanner(): void {
+  showBanner.value = false
+  try {
+    localStorage.setItem(BANNER_KEY, '1')
+  } catch {
+    // private mode / sandboxed: the banner just won't stay dismissed across reloads.
   }
 }
 // Machine Doctor summary, surfaced right on the home (full detail lives in the widget). Fetched
@@ -137,8 +197,25 @@ function refresh(): void {
   void load()
   void loadJournal()
   void loadDoctor()
+  void loadHost()
 }
-onMounted(refresh)
+onMounted(() => {
+  try {
+    showBanner.value = localStorage.getItem(BANNER_KEY) !== '1'
+  } catch {
+    /* keep default */
+  }
+  refresh()
+  clockTimer = setInterval(() => {
+    clock.value = new Date()
+  }, 1000)
+})
+onUnmounted(() => {
+  if (clockTimer) {
+    clearInterval(clockTimer)
+    clockTimer = null
+  }
+})
 
 function stateBadge(state: string | undefined): { text: string; cls: string } {
   const s = state ?? 'unknown'
@@ -198,6 +275,24 @@ function openMcu(name: string): void {
 
 <template>
   <div class="mx-auto max-w-4xl space-y-3">
+    <!-- Mission banner: a gently pulsing glow; dismissible (remembered across sessions). -->
+    <section
+      v-if="showBanner"
+      class="nb-card nb-glow-pulse relative overflow-hidden bg-brand-cyan/15 p-3"
+      role="note"
+    >
+      <button
+        class="absolute end-2 top-2 rounded-brutal border-2 border-ink bg-surface px-1.5 py-0.5 text-xs leading-none opacity-60 transition-opacity hover:opacity-100"
+        :aria-label="t('shell.mission.dismiss')"
+        @click="dismissBanner"
+      >
+        ✕
+      </button>
+      <p class="pe-8 text-xs leading-snug">{{ t('shell.mission.body') }}</p>
+      <!-- An English brand signature — intentionally not localized (like the app name). -->
+      <p class="mt-1.5 font-display text-sm font-bold">{{ t('shell.mission.tagline') }}</p>
+    </section>
+
     <div class="flex items-center justify-between gap-2">
       <h2 class="font-display text-2xl font-bold">{{ t('shell.home.title') }}</h2>
       <button class="nb-btn bg-surface px-2 py-1 text-xs" :disabled="loading" @click="refresh">
@@ -211,6 +306,41 @@ function openMcu(name: string): void {
     <p v-else-if="!data" class="nb-card bg-brand-red/10 p-3 font-mono text-xs">
       {{ t('shell.home.unreachable') }}
     </p>
+
+    <!-- Host summary — time/timezone/temp/uptime/disk; independent of the printer/overview. -->
+    <div v-if="host" class="nb-card space-y-2 bg-surface p-3">
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-xs font-bold uppercase tracking-wide opacity-60">
+          {{ t('shell.home.hostInfo.title') }}
+        </p>
+        <button class="nb-btn bg-surface px-1.5 py-0.5 text-[10px]" @click="go('host-control')">
+          {{ t('shell.home.open') }} ↗
+        </button>
+      </div>
+      <dl
+        class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-[11px] sm:grid-cols-[auto_1fr_auto_1fr]"
+      >
+        <dt class="opacity-60">{{ t('shell.home.hostInfo.time') }}</dt>
+        <dd>
+          <span class="font-bold">{{ hostClock || '—' }}</span>
+          <span class="opacity-60"> {{ host.time.timezone }}</span>
+        </dd>
+        <dt class="opacity-60">{{ t('shell.home.hostInfo.clock') }}</dt>
+        <dd>
+          {{
+            host.time.ntp_synced
+              ? t('shell.home.hostInfo.synced')
+              : t('shell.home.hostInfo.notSynced')
+          }}
+        </dd>
+        <dt class="opacity-60">{{ t('shell.home.hostInfo.temp') }}</dt>
+        <dd>{{ typeof host.cpu.temp_c === 'number' ? host.cpu.temp_c + ' °C' : '—' }}</dd>
+        <dt class="opacity-60">{{ t('shell.home.hostInfo.uptime') }}</dt>
+        <dd>{{ fmtUptime(host.host.uptime_s) }}</dd>
+        <dt class="opacity-60">{{ t('shell.home.hostInfo.disk') }}</dt>
+        <dd>{{ rootDisk ? rootDisk.pct + '%' : '—' }}</dd>
+      </dl>
+    </div>
 
     <!-- Get started: the existing wizards, sequenced into one journey (auto-detected) -->
     <details
