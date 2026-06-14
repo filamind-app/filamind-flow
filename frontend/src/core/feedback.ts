@@ -141,7 +141,18 @@ async function deliverScreenshot(blob: Blob): Promise<Exclude<ScreenshotMethod, 
 
 // --- actions ---------------------------------------------------------------
 
+// Each capture gets a generation number; only the latest may write to the state. This stops a
+// slow capture from a previous open() (or a closed dialog) from overwriting a newer screenshot.
+let captureGen = 0
+
+function setScreenshot(blob: Blob | null): void {
+  if (feedback.screenshotUrl) URL.revokeObjectURL(feedback.screenshotUrl)
+  feedback.screenshot = blob
+  feedback.screenshotUrl = blob ? URL.createObjectURL(blob) : null
+}
+
 function resetScreenshot(): void {
+  captureGen++ // invalidate any capture still in flight
   if (feedback.screenshotUrl) URL.revokeObjectURL(feedback.screenshotUrl)
   feedback.screenshot = null
   feedback.screenshotUrl = null
@@ -160,18 +171,19 @@ export function openReport(mode: ReportMode, opts?: { error?: string }): void {
   feedback.open = true
 
   if (mode === 'bug') {
+    const gen = ++captureGen
     feedback.capturing = true
     void captureScreenshot()
       .then((blob) => {
-        // Ignore if the dialog was closed/reopened meanwhile.
-        if (!feedback.open || feedback.mode !== 'bug') return
-        feedback.screenshot = blob
-        feedback.screenshotUrl = blob ? URL.createObjectURL(blob) : null
+        // Drop the result if a newer capture started or the dialog was closed/reopened meanwhile.
+        if (gen !== captureGen || !feedback.open || feedback.mode !== 'bug') return
+        setScreenshot(blob)
       })
       .finally(() => {
-        feedback.capturing = false
+        if (gen === captureGen) feedback.capturing = false
       })
   } else {
+    captureGen++ // invalidate any bug capture still in flight from a previous open
     feedback.capturing = false
   }
 }
@@ -206,7 +218,7 @@ function buildBody(description: string): string {
   lines.push(`- **Language:** ${d.locale}`)
   lines.push(`- **Theme:** ${d.theme}`)
   lines.push(`- **Screen:** ${d.screen}`)
-  lines.push(`- **Browser:** ${d.userAgent}`)
+  lines.push(`- **Browser:** ${d.userAgent.slice(0, 300)}`)
   lines.push(`- **Time:** ${d.time}`)
   if (feedback.mode === 'bug' && feedback.attachScreenshot && feedback.screenshot) {
     lines.push('')
