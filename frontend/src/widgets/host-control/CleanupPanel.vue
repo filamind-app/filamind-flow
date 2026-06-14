@@ -18,7 +18,8 @@ const { t } = useI18n({ useScope: 'global' })
 
 const targets = ref<CleanupTarget[]>([])
 const loading = ref(true)
-const error = ref<string | null>(null)
+const error = ref<string | null>(null) // fatal scan/run failure (replaces the whole list)
+const runError = ref<string | null>(null) // a partial-cleanup failure shown beside the result
 const selected = ref<Set<string>>(new Set())
 
 const busy = ref(false)
@@ -28,6 +29,7 @@ const result = ref<{ freed: number; details: CleanupResult[] } | null>(null)
 async function scan(): Promise<void> {
   loading.value = true
   error.value = null
+  runError.value = null
   result.value = null
   try {
     targets.value = await fetchCleanup()
@@ -61,10 +63,20 @@ async function run(): Promise<void> {
   busy.value = true
   error.value = null
   confirm.value = false
+  runError.value = null
   try {
     const res = await runCleanup([...selected.value])
+    await scan() // re-scan first so the figures reflect what's left (this clears result/runError)…
+    // …then publish the run result so the freed-summary + any partial-failure note persist. A
+    // failed target (e.g. apt/journal need passwordless sudo) shows beside the result — NOT via
+    // `error`, which would collapse the whole panel and hide what DID free.
     result.value = { freed: res.freed_bytes, details: res.results }
-    await scan() // re-scan so the figures reflect what's left
+    const failed = res.results.filter((r) => !r.ok)
+    if (failed.length) {
+      runError.value = failed.some((r) => r.needs_setup)
+        ? t('hostControl.system.needsSetup')
+        : t('hostControl.cleanup.someFailed')
+    }
   } catch (e) {
     error.value = describeError(e)
   } finally {
@@ -126,9 +138,12 @@ async function run(): Promise<void> {
         </li>
       </ul>
 
-      <!-- Result of the last run -->
+      <!-- Result of the last run (kept visible even when some targets failed) -->
       <p v-if="result" class="nb-card bg-brand-green/10 p-2 font-mono text-xs text-brand-green">
         ✓ {{ t('hostControl.cleanup.freed', { size: humanSize(result.freed) }) }}
+      </p>
+      <p v-if="runError" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">
+        {{ runError }}
       </p>
 
       <!-- Footer: total + clean button / confirm -->

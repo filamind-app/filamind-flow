@@ -143,6 +143,14 @@ class PowerReq(BaseModel):
     action: str
 
 
+class NetworkReq(BaseModel):
+    method: str  # 'auto' | 'manual'
+    address: str = ""
+    cidr: int | None = None
+    gateway: str = ""
+    dns: str = ""  # comma/space-separated IPv4 list
+
+
 async def _apply(coro: Any) -> dict[str, Any]:
     """Run a setter coroutine, mapping ValueError → 400 and a refusal → 403."""
     try:
@@ -198,3 +206,14 @@ async def host_set_wifi(req: WifiReq) -> dict[str, Any]:
 @router.post("/system/power")
 async def host_power(req: PowerReq, settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     return await _apply(host_control_service.power(req.action, settings.moonraker_url))
+
+
+@router.post("/system/network")
+async def host_set_network(
+    req: NetworkReq, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    return await _apply(
+        host_control_service.set_network(
+            req.method, req.address, req.cidr, req.gateway, req.dns, settings.moonraker_url
+        )
+    )

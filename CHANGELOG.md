@@ -6,6 +6,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.270.0] - 2026-06-14
+
+### Added
+
+- **Host Control · System — Network (IPv4) control.** The System tab now shows the panel host's
+  active connection (device, method, IP, gateway, DNS) and lets you switch it between **DHCP (auto)**
+  and a **static IPv4** (address + subnet CIDR + gateway + DNS), via NetworkManager. The connection
+  to change is resolved server-side (the one serving the panel — never taken from the client), the
+  static config is validated before anything is applied (valid IPv4/CIDR, gateway in the same subnet,
+  no network/broadcast addresses — the classic lock-out typos are rejected), and the change is
+  refused while a print is in progress. Because changing the address drops this panel's own
+  connection, it needs a typed confirmation and warns you to reconnect at the new IP. IPv4 only.
+  Endpoint: `POST /api/host/system/network`. Fully translated across all seven languages.
+
+### Fixed
+
+- **System/Services/Cleanup actions no longer show a failure as success.** A privileged action that
+  failed only because passwordless sudo isn't set up returned `ok:false` with HTTP 200, and the UI
+  rendered it as a green "✓ done" — so a change that didn't apply (e.g. setting the timezone) looked
+  like it worked. Every action path now shows `ok:false` as a clear error, and when the cause is the
+  missing sudo grant it shows an actionable hint: run `sudo bash deploy/setup-sudoers.sh` on the
+  printer. Detection is locale-robust (privileged commands run under `LC_ALL=C`, and the matcher
+  also covers "not allowed to execute" / "must have a tty"). The Cleanup tab now reports per-target
+  failures while keeping the reclaimed-space summary visible, and `delete-unit` derives its result
+  from all of its privileged steps rather than just one.
+
 ## [0.269.0] - 2026-06-14
 
 ### Added

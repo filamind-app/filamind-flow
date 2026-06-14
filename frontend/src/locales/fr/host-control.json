@@ -32,6 +32,10 @@
         "system": {
           "title": "Paramètres système",
           "body": "Modifiez le fuseau horaire et l'horloge, la langue et le clavier, le nom d'hôte ou le Wi-Fi de l'hôte, ou redémarrez-le / éteignez-le. Chaque modification s'applique immédiatement. Le redémarrage et l'arrêt sont refusés pendant une impression. Modifier le Wi-Fi peut couper brièvement votre connexion à ce panneau."
+        },
+        "network": {
+          "title": "DHCP ou IP statique",
+          "body": "Le DHCP (automatique) laisse votre routeur attribuer l'adresse automatiquement. Le statique (manuel) fixe une adresse — définissez l'IP, le sous-réseau (CIDR, p. ex. /24), la passerelle (généralement votre routeur) et le DNS. IPv4 uniquement. Changer l'adresse de la connexion qui dessert ce panneau coupera votre session ; reconnectez-vous à la nouvelle IP. Une adresse statique ou une passerelle erronée peut rendre l'imprimante inaccessible jusqu'à correction sur l'appareil lui-même ; les réglages sont donc validés et exigent une confirmation saisie."
         }
       },
       "glossary": {
@@ -151,7 +155,9 @@
       "deleteConfirm": "Supprimer définitivement",
       "deleted": "Fichier d'unité supprimé.",
       "logs": "Journal récent",
-      "noLogs": "Aucune sortie de journal."
+      "noLogs": "Aucune sortie de journal.",
+      "actionFailed": "Échec de {action}.",
+      "deleteFailed": "Impossible de supprimer le fichier d'unité."
     },
     "cleanup": {
       "subtitle": "Cochez ce qu'il faut supprimer, puis nettoyez. Caches et anciens journaux uniquement — vos impressions et configurations restent intactes.",
@@ -187,7 +193,8 @@
           "label": "Journaux pivotés",
           "desc": "Anciens journaux Klipper/Moonraker pivotés (le journal actif est conservé)."
         }
-      }
+      },
+      "someFailed": "Certains éléments n'ont pas pu être nettoyés."
     },
     "system": {
       "loading": "Lecture des paramètres système…",
@@ -216,7 +223,27 @@
       "confirmReboot": "Redémarrer l'hôte maintenant ?",
       "confirmShutdown": "Éteindre l'hôte maintenant ?",
       "confirmYes": "Oui",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "needsSetup": "Cette action nécessite sudo sans mot de passe. Sur l'imprimante, exécutez : sudo bash deploy/setup-sudoers.sh — puis réessayez.",
+      "failed": "La modification n'a pas été appliquée.",
+      "network": {
+        "title": "Réseau (IPv4)",
+        "unavailable": "La modification du réseau n'est pas disponible sur cet hôte (NetworkManager non installé).",
+        "device": "Périphérique",
+        "method": "Méthode IP",
+        "auto": "DHCP (automatique)",
+        "manual": "Statique (manuel)",
+        "address": "Adresse IP",
+        "cidr": "Sous-réseau (CIDR)",
+        "gateway": "Passerelle",
+        "dns": "Serveurs DNS",
+        "dnsHint": "Séparés par des virgules, p. ex. 1.1.1.1, 8.8.8.8 (facultatif)",
+        "warning": "Changer l'IP peut couper ce panneau — vous devrez peut-être vous reconnecter à la nouvelle adresse.",
+        "apply": "Appliquer les réglages réseau",
+        "confirmPrompt": "Cela peut rendre le panneau inaccessible. Tapez le nom du périphérique « {device} » pour confirmer.",
+        "confirmYes": "Appliquer et basculer",
+        "applyingReconnect": "Application… si le panneau ne répond plus, reconnectez-vous à la nouvelle IP de l'imprimante."
+      }
     }
   }
 }

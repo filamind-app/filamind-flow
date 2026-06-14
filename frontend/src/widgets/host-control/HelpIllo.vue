@@ -56,11 +56,19 @@ defineProps<{ illo: HelpIlloKey }>()
     </g>
 
     <!-- System: a gear (settings) -->
-    <g v-else>
+    <g v-else-if="illo === 'system'">
       <circle cx="12" cy="12" r="3" />
       <path
         d="M12 2 v3 M12 19 v3 M2 12 h3 M19 12 h3 M4.9 4.9 l2.1 2.1 M17 17 l2.1 2.1 M19.1 4.9 l-2.1 2.1 M7 17 l-2.1 2.1"
       />
+    </g>
+
+    <!-- Network: nodes linked to a hub (LAN) -->
+    <g v-else>
+      <rect x="9" y="3" width="6" height="4" rx="1" />
+      <rect x="3" y="17" width="6" height="4" rx="1" />
+      <rect x="15" y="17" width="6" height="4" rx="1" />
+      <path d="M12 7 v4 M12 11 H6 v6 M12 11 h6 v6" />
     </g>
   </svg>
 </template>

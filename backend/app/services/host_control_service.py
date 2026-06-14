@@ -12,6 +12,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import glob
+import ipaddress
 import os
 import platform
 import re
@@ -347,10 +348,16 @@ def _is_critical(name: str) -> bool:
 
 
 async def _run_rc(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
-    """Run a command, returning (returncode, combined stdout+stderr). 127 if it can't be run."""
+    """Run a command, returning (returncode, combined stdout+stderr). 127 if it can't be run.
+
+    Forces the C locale so tool/sudo messages come back in English — both so our parsers (systemctl,
+    timedatectl, nmcli ``-t``/``-g`` are already locale-stable, but sudo's error text isn't) and so
+    the "sudo: a password is required" signature stays detectable on a non-English host.
+    """
+    env = {**os.environ, "LC_ALL": "C", "LANG": "C"}
     try:
         proc = await asyncio.create_subprocess_exec(
-            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
+            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT, env=env
         )
         out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout)
     except (FileNotFoundError, NotImplementedError):
@@ -480,7 +487,14 @@ async def manage_unit(name: str, action: str) -> dict[str, Any]:
             "output": f"'{name}' is protected — {action} is not allowed.",
         }
     rc, out = await _run_rc(["sudo", "-n", "systemctl", action, _with_suffix(name)])
-    return {"name": name, "action": action, "ok": rc == 0, "refused": False, "output": out.strip()}
+    return {
+        "name": name,
+        "action": action,
+        "ok": rc == 0,
+        "refused": False,
+        "output": out.strip(),
+        "needs_setup": rc != 0 and _needs_setup(out),
+    }
 
 
 async def delete_unit(name: str, confirm: str) -> dict[str, Any]:
@@ -501,15 +515,20 @@ async def delete_unit(name: str, confirm: str) -> dict[str, Any]:
             "output": "Only user-installed unit files under /etc/systemd/system can be removed.",
         }
     unit = _with_suffix(name)
-    # Stop + disable first so nothing keeps a dangling reference, then remove and reload.
-    await _run_rc(["sudo", "-n", "systemctl", "disable", "--now", unit])
-    rc, out = await _run_rc(["sudo", "-n", "rm", "-f", frag])
+    # Stop + disable first so nothing keeps a dangling reference, then remove and reload. Derive the
+    # result from BOTH privileged steps (disable + rm), not just rm — a sudo-grant failure can show
+    # up on the disable while rm -f still returns 0 on an already-absent file.
+    rc_dis, out_dis = await _run_rc(["sudo", "-n", "systemctl", "disable", "--now", unit])
+    rc_rm, out_rm = await _run_rc(["sudo", "-n", "rm", "-f", frag])
     await _run_rc(["sudo", "-n", "systemctl", "daemon-reload"])
+    ok = rc_dis == 0 and rc_rm == 0
+    needs_setup = (rc_dis != 0 and _needs_setup(out_dis)) or (rc_rm != 0 and _needs_setup(out_rm))
     return {
         "name": name,
-        "ok": rc == 0,
+        "ok": ok,
         "refused": False,
-        "output": out.strip() or f"Removed {frag}",
+        "output": (out_rm or out_dis).strip() or f"Removed {frag}",
+        "needs_setup": needs_setup,
     }
 
 
@@ -686,47 +705,82 @@ async def _scan_target(tid: str, data_dir: str) -> dict[str, Any]:
     raise ValueError("unknown cleanup target")
 
 
+def _clean_files(paths: list[str]) -> tuple[int, int]:
+    """Delete a list of files (no sudo), returning (freed bytes, removed count)."""
+    freed = 0
+    removed = 0
+    for fp in paths:
+        try:
+            size = os.path.getsize(fp)
+            os.remove(fp)
+            freed += size
+            removed += 1
+        except OSError:
+            continue
+    return freed, removed
+
+
 async def _clean_target(tid: str, data_dir: str) -> dict[str, Any]:
-    """Perform a target's cleanup. Returns freed bytes + items removed."""
+    """Perform a target's cleanup. Returns freed bytes + items removed + per-target ok/needs_setup.
+
+    The sudo-backed targets (apt, journal) report ``ok``/``needs_setup`` from the privileged command
+    so the UI can flag a missing passwordless-sudo grant instead of silently claiming success.
+    """
     if tid == "apt":
         debs = _apt_debs()
         before = _sum_sizes(debs)
+        ok = True
+        needs_setup = False
         if debs:
-            await _run_rc(["sudo", "-n", "rm", "-f", *debs])
+            rc, out = await _run_rc(["sudo", "-n", "rm", "-f", *debs])
+            ok = rc == 0
+            needs_setup = rc != 0 and _needs_setup(out)
         freed = before - _sum_sizes(_apt_debs())
-        return {"id": tid, "freed_bytes": max(0, freed), "removed": len(debs), "ok": True}
+        return {
+            "id": tid,
+            "freed_bytes": max(0, freed),
+            "removed": len(debs),
+            "ok": ok,
+            "needs_setup": needs_setup,
+        }
     if tid == "journal":
         before, _ = await _scan_journal_bytes()
-        await _run_rc(["sudo", "-n", "journalctl", f"--vacuum-size={_JOURNAL_KEEP}"])
+        rc, out = await _run_rc(["sudo", "-n", "journalctl", f"--vacuum-size={_JOURNAL_KEEP}"])
         after, _ = await _scan_journal_bytes()
-        return {"id": tid, "freed_bytes": max(0, before - after), "removed": 0, "ok": True}
+        return {
+            "id": tid,
+            "freed_bytes": max(0, before - after),
+            "removed": 0,
+            "ok": rc == 0,
+            "needs_setup": rc != 0 and _needs_setup(out),
+        }
     if tid == "cache":
         freed, removed = _rm_contents("~/.cache")
-        return {"id": tid, "freed_bytes": freed, "removed": removed, "ok": True}
+        return {
+            "id": tid,
+            "freed_bytes": freed,
+            "removed": removed,
+            "ok": True,
+            "needs_setup": False,
+        }
     if tid == "tmp":
-        freed = 0
-        removed = 0
-        for fp in _tmp_old_files():
-            try:
-                size = os.path.getsize(fp)
-                os.remove(fp)
-                freed += size
-                removed += 1
-            except OSError:
-                continue
-        return {"id": tid, "freed_bytes": freed, "removed": removed, "ok": True}
+        freed, removed = _clean_files(_tmp_old_files())
+        return {
+            "id": tid,
+            "freed_bytes": freed,
+            "removed": removed,
+            "ok": True,
+            "needs_setup": False,
+        }
     if tid == "logs":
-        freed = 0
-        removed = 0
-        for fp in _rotated_logs(data_dir):
-            try:
-                size = os.path.getsize(fp)
-                os.remove(fp)
-                freed += size
-                removed += 1
-            except OSError:
-                continue
-        return {"id": tid, "freed_bytes": freed, "removed": removed, "ok": True}
+        freed, removed = _clean_files(_rotated_logs(data_dir))
+        return {
+            "id": tid,
+            "freed_bytes": freed,
+            "removed": removed,
+            "ok": True,
+            "needs_setup": False,
+        }
     raise ValueError("unknown cleanup target")
 
 
@@ -758,12 +812,30 @@ _KEYMAP_RE = re.compile(r"^[A-Za-z0-9_.\-]+$")
 POWER_ACTIONS = ("reboot", "shutdown")
 
 
+# A passwordless-sudo command fails like this when the sudoers grant isn't installed yet — the one
+# manual step (deploy/setup-sudoers.sh). We flag it so the UI can show an actionable hint instead
+# of a meaningless "sudo: a password is required".
+_SUDO_NOT_GRANTED_RE = re.compile(
+    r"a password is required|not allowed to execute|must have a tty|sudo:.*(askpass|required)",
+    re.IGNORECASE,
+)
+
+
+def _needs_setup(out: str) -> bool:
+    return bool(_SUDO_NOT_GRANTED_RE.search(out))
+
+
 def _result(rc: int, out: str) -> dict[str, Any]:
-    return {"ok": rc == 0, "refused": False, "output": out.strip()}
+    return {
+        "ok": rc == 0,
+        "refused": False,
+        "output": out.strip(),
+        "needs_setup": rc != 0 and _needs_setup(out),
+    }
 
 
 def _refused(message: str) -> dict[str, Any]:
-    return {"ok": False, "refused": True, "output": message}
+    return {"ok": False, "refused": True, "output": message, "needs_setup": False}
 
 
 def _has_cmd(name: str) -> bool:
@@ -784,7 +856,7 @@ async def system_info() -> dict[str, Any]:
         _list_lines(["localectl", "list-locales"]),
         _list_lines(["localectl", "list-keymaps"]),
     )
-    time_b, locale_b = await asyncio.gather(_time_block(), _locale_block())
+    time_b, locale_b, network = await asyncio.gather(_time_block(), _locale_block(), network_info())
     return {
         "timezone": time_b["timezone"],
         "ntp_enabled": time_b["ntp_enabled"],
@@ -796,6 +868,7 @@ async def system_info() -> dict[str, Any]:
         "keymaps": keymaps,
         "hostname": socket.gethostname(),
         "wifi_available": _has_cmd("nmcli"),
+        "network": network,
     }
 
 
@@ -874,3 +947,172 @@ async def power(action: str, moonraker_url: str) -> dict[str, Any]:
         return _refused("Refused: a print is in progress.")
     unit_action = "reboot" if action == "reboot" else "poweroff"
     return _result(*await _run_rc(["sudo", "-n", "systemctl", unit_action]))
+
+
+# ── Network / IPv4 (NetworkManager) ────────────────────────────────────────────
+# View and switch the panel's active connection between DHCP (auto) and a static IPv4
+# (address/CIDR + gateway + DNS). IPv4-only by design. The connection to modify is resolved
+# SERVER-SIDE (the active connection on the device that owns the panel's IP) — never taken from the
+# client — so a request can't retarget an unrelated profile. Changing the IP of the serving
+# connection will drop this panel; the UI warns and tells the user where to reconnect. Refused while
+# a print is in progress (a network drop can orphan Moonraker mid-print). nmcli is already granted
+# in setup-sudoers.sh, so no new sudoers entry is needed.
+
+NETWORK_MODES = ("auto", "manual")
+
+
+async def _nmcli_get(field: str, *target: str) -> str:
+    """`nmcli -g <field> <target...>` → the raw value (empty on any error)."""
+    rc, out = await _run_rc(["nmcli", "-g", field, *target])
+    return out.strip() if rc == 0 else ""
+
+
+async def _nmcli_get_lines(field: str, *target: str) -> list[str]:
+    rc, out = await _run_rc(["nmcli", "-g", field, *target])
+    return [ln.strip() for ln in out.splitlines() if ln.strip()] if rc == 0 else []
+
+
+async def network_info() -> dict[str, Any]:
+    """The panel's active connection IPv4 config (read-only, no sudo). ``configurable`` is False
+    when NetworkManager isn't present or no NM connection owns the panel's interface."""
+    empty = {
+        "available": _has_cmd("nmcli"),
+        "configurable": False,
+        "device": "",
+        "connection": "",
+        "type": "",
+        "method": "",
+        "address": "",
+        "cidr": None,
+        "gateway": "",
+        "dns": [],
+    }
+    if not _has_cmd("nmcli"):
+        return empty
+    net = await _network_block()
+    dev = net["iface"]
+    if not dev:
+        return empty
+    conn = await _nmcli_get("GENERAL.CONNECTION", "device", "show", dev)
+    if not conn:
+        return {**empty, "device": dev}
+    ctype, method, gateway = await asyncio.gather(
+        _nmcli_get("GENERAL.TYPE", "device", "show", dev),
+        _nmcli_get("ipv4.method", "connection", "show", conn),
+        _nmcli_get("IP4.GATEWAY", "device", "show", dev),
+    )
+    addrs, dns = await asyncio.gather(
+        _nmcli_get_lines("IP4.ADDRESS", "device", "show", dev),
+        _nmcli_get_lines("IP4.DNS", "device", "show", dev),
+    )
+    address, _, cidr = (addrs[0] if addrs else "").partition("/")
+    return {
+        "available": True,
+        "configurable": True,
+        "device": dev,
+        "connection": conn,
+        "type": ctype,
+        "method": method or "auto",
+        "address": address,
+        "cidr": int(cidr) if cidr.isdigit() else None,
+        "gateway": gateway,
+        "dns": dns,
+    }
+
+
+def _validate_static(
+    address: str, cidr: int | None, gateway: str, dns: str
+) -> tuple[str, str, str]:
+    """Validate a static IPv4 config → (addr/prefix, gateway, comma-DNS). Raises ValueError."""
+    try:
+        iface = ipaddress.ip_interface(f"{address}/{cidr}")
+    except (ValueError, TypeError) as exc:
+        raise ValueError("Enter a valid IPv4 address and subnet prefix.") from exc
+    if not isinstance(iface, ipaddress.IPv4Interface):
+        raise ValueError("IPv4 addresses only.")
+    prefix = iface.network.prefixlen
+    if not (1 <= prefix <= 30):
+        raise ValueError("Subnet prefix must be between 1 and 30.")
+    ip = iface.ip
+    net = iface.network
+    if ip.is_loopback or ip.is_multicast or ip.is_link_local or ip.is_unspecified:
+        raise ValueError("That host IP address isn't usable.")
+    if ip in (net.network_address, net.broadcast_address):
+        raise ValueError("That IP is the subnet's network or broadcast address.")
+    try:
+        gw = ipaddress.IPv4Address(gateway)
+    except (ValueError, TypeError) as exc:
+        raise ValueError("Enter a valid gateway address.") from exc
+    if gw not in net:
+        raise ValueError("The gateway must be in the same subnet as the address.")
+    if gw == ip:
+        raise ValueError("The gateway can't be the same as the host address.")
+    if gw in (net.network_address, net.broadcast_address):
+        raise ValueError("The gateway can't be the network or broadcast address.")
+    dns_list: list[str] = []
+    for raw in re.split(r"[,\s]+", dns.strip()):
+        if not raw:
+            continue
+        try:
+            ipaddress.IPv4Address(raw)
+        except ValueError as exc:
+            raise ValueError(f"Invalid DNS server: {raw}") from exc
+        dns_list.append(raw)
+    if len(dns_list) > 3:
+        raise ValueError("At most 3 DNS servers.")
+    return f"{ip}/{prefix}", str(gw), ",".join(dns_list)
+
+
+async def set_network(
+    method: str,
+    address: str,
+    cidr: int | None,
+    gateway: str,
+    dns: str,
+    moonraker_url: str,
+) -> dict[str, Any]:
+    """Switch the panel's active connection to DHCP (auto) or a static IPv4 (manual)."""
+    if method not in NETWORK_MODES:
+        raise ValueError("invalid network mode")
+    if not _has_cmd("nmcli"):
+        return _refused("Network editing needs NetworkManager (nmcli), which isn't installed here.")
+    # Validate static input BEFORE touching anything (cheap, prevents a lockout from a typo).
+    static_args: tuple[str, str, str] | None = None
+    if method == "manual":
+        static_args = _validate_static(address, cidr, gateway, dns)
+    info = await network_info()
+    conn = info.get("connection")
+    if not conn:
+        return _refused("No active NetworkManager connection to modify.")
+    try:
+        busy = await printer_guard.is_busy(MoonrakerClient(moonraker_url))
+    except httpx.HTTPError:
+        busy = False
+    if busy:
+        return _refused("Refused: a print is in progress.")
+    if method == "auto":
+        # Clear the static fields too, or a stale address/gateway/DNS would linger in the profile.
+        mod = [
+            "ipv4.method", "auto",
+            "ipv4.addresses", "", "ipv4.gateway", "", "ipv4.dns", "",
+            "ipv4.ignore-auto-dns", "no",
+        ]  # fmt: skip
+    else:
+        assert static_args is not None
+        addr_cidr, gw, dns_csv = static_args
+        mod = [
+            "ipv4.method", "manual",
+            "ipv4.addresses", addr_cidr, "ipv4.gateway", gw, "ipv4.dns", dns_csv,
+            "ipv4.ignore-auto-dns", "yes" if dns_csv else "no",
+        ]  # fmt: skip
+    rc, out = await _run_rc(
+        ["sudo", "-n", "nmcli", "connection", "modify", conn, *mod], timeout=30.0
+    )
+    if rc != 0:
+        return _result(rc, out)  # carries needs_setup when sudo isn't granted
+    # Reactivate so the change takes effect. On a real self-disconnect the client never receives
+    # this response (the socket dies first) and the frontend treats that as "applied, reconnect".
+    # If the call instead returns/timeouts here, the old link is still up and a non-zero rc is a
+    # genuine reactivation failure, so we report ok:false (the modify did persist to the profile).
+    rc2, out2 = await _run_rc(["sudo", "-n", "nmcli", "connection", "up", conn], timeout=30.0)
+    return _result(rc2, out2)
