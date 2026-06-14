@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.274.0] - 2026-06-14
+
+### Added
+
+- **In-app feedback & issue reporting.** A new **Feedback** menu in the header lets you **report a
+  bug** or **request a feature** without leaving the app. The dialog composes a pre-filled GitHub
+  issue — including a short description, the app version, the active view, language, theme, screen
+  size, browser and time — and opens it in a new tab for you to review and submit. Nothing is sent
+  automatically.
+- **One-click error reporting.** Error messages across the app (and failed operation logs) now
+  carry a small **⚐ Report** button that opens a bug report pre-filled with the exact error text.
+- **Automatic screenshots.** A bug report captures a picture of the current screen and, on submit,
+  copies it to your clipboard (or saves it to your downloads where the clipboard isn't available)
+  so you can attach it to the issue with one paste. The screenshot is captured only when you ask
+  for it and never includes the report dialog itself.
+
+### Changed
+
+- The app version is now embedded in the build and shown in feedback reports.
+
 ## [0.273.0] - 2026-06-14
 
 ### Added

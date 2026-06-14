@@ -11,6 +11,7 @@ import LiveMonitor from './LiveMonitor.vue'
 import MotorPicker from './MotorPicker.vue'
 import MotorSyncPanel from './MotorSyncPanel.vue'
 import RecommendPanel from './RecommendPanel.vue'
+import ReportErrorButton from '@/components/feedback/ReportErrorButton.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
@@ -154,13 +155,16 @@ onUnmounted(() => {
       class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red px-2 py-1 text-surface"
     >
       <span role="alert" class="min-w-0 flex-1 text-[11px]">{{ error }}</span>
-      <button
-        class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[11px] text-ink"
-        :disabled="loading"
-        @click="load()"
-      >
-        {{ loading ? t('motorDrivers.widget.retrying') : t('motorDrivers.widget.retry') }}
-      </button>
+      <div class="flex shrink-0 items-center gap-2">
+        <button
+          class="nb-btn bg-surface px-2 py-0.5 text-[11px] text-ink"
+          :disabled="loading"
+          @click="load()"
+        >
+          {{ loading ? t('motorDrivers.widget.retrying') : t('motorDrivers.widget.retry') }}
+        </button>
+        <ReportErrorButton :error="error" />
+      </div>
     </div>
 
     <!-- Stale-data banner: the dashboard stays, the failed refresh is disclosed. -->

@@ -1,9 +1,17 @@
 /// <reference types="vitest/config" />
+import { readFileSync } from 'node:fs'
 import { fileURLToPath, URL } from 'node:url'
 
 import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig, loadEnv, type ProxyOptions } from 'vite'
+
+// The app's own version, read from package.json at build time and injected as a compile-time
+// constant (see __APP_VERSION__ in env.d.ts). Used in the in-app feedback/bug-report diagnostics
+// so a report names the exact build it came from.
+const pkgVersion = JSON.parse(
+  readFileSync(fileURLToPath(new URL('./package.json', import.meta.url)), 'utf-8'),
+).version as string
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -32,6 +40,9 @@ export default defineConfig(({ mode }) => {
     // the printer's Mainsail nginx, which a Cloudflare tunnel already exposes). With
     // relative assets + hash routing, the same dist works at every mount with no rebuild.
     base: './',
+    define: {
+      __APP_VERSION__: JSON.stringify(pkgVersion),
+    },
     plugins: [
       vue(),
       // Precompiles the locale JSON in src/locales/** and wires vue-i18n's feature flags.

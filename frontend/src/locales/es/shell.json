@@ -153,6 +153,53 @@
       "body": "FilaMind Flow reúne las mejores herramientas para la impresión 3D — desde la primera configuración hasta el dominio — para que makers de todos los niveles diagnostiquen, solucionen e impriman mejor. El proyecto está en desarrollo e investigación activos, y siempre damos la bienvenida a nuevas ideas prácticas. Las contribuciones están abiertas a todos.",
       "tagline": "Built by Egyptian makers, for world makers. Happy printing.",
       "dismiss": "Descartar"
+    },
+    "feedback": {
+      "menu": "Comentarios",
+      "menuTitle": "Enviar comentarios",
+      "bug": "Informar de un error",
+      "bugDesc": "Algo no funciona",
+      "feature": "Solicitar una función",
+      "featureDesc": "Sugerir una mejora",
+      "reportError": "Informar",
+      "reportErrorAria": "Informar de este error en GitHub",
+      "dialog": {
+        "bugTitle": "Informar de un error",
+        "featureTitle": "Solicitar una función",
+        "introBug": "Describe qué salió mal. Abriremos una incidencia rellenada previamente en GitHub para que la revises y la envíes; no se envía nada automáticamente.",
+        "introFeature": "Describe la función que te gustaría. Abriremos una incidencia rellenada previamente en GitHub para que la revises y la envíes.",
+        "descLabel": "Descripción",
+        "descPlaceholderBug": "¿Qué hiciste y qué ocurrió en su lugar?",
+        "descPlaceholderFeature": "¿Qué te gustaría poder hacer?",
+        "attach": "Adjuntar una captura de pantalla",
+        "attachHint": "Una imagen de la pantalla actual nos ayuda a entender el problema.",
+        "capturing": "Capturando pantalla…",
+        "screenshotReady": "Vista previa de la captura",
+        "noScreenshot": "No se pudo capturar la pantalla; puedes adjuntar una manualmente.",
+        "includes": "Qué se incluirá",
+        "includesNote": "Estos detalles se añaden a la incidencia para ayudar con el diagnóstico. Revísalos en GitHub antes de enviar.",
+        "languageNote": "La incidencia se redacta en inglés para que los mantenedores puedan atenderla.",
+        "submit": "Abrir incidencia en GitHub",
+        "cancel": "Cancelar",
+        "close": "Cerrar"
+      },
+      "field": {
+        "version": "Versión de la app",
+        "view": "Vista activa",
+        "locale": "Idioma",
+        "theme": "Tema",
+        "screen": "Pantalla",
+        "browser": "Navegador",
+        "time": "Hora",
+        "error": "Error"
+      },
+      "sent": {
+        "title": "Incidencia abierta en una pestaña nueva",
+        "body": "Revisa los detalles rellenados en GitHub y envía la incidencia allí.",
+        "copied": "Captura copiada: pégala en la incidencia con Ctrl/⌘+V.",
+        "saved": "Captura guardada en tus descargas: arrástrala a la incidencia.",
+        "failed": "No se pudo adjuntar la captura automáticamente: puedes añadir una en GitHub."
+      }
     }
   }
 }

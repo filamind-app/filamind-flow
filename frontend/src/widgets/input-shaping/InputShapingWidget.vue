@@ -4,6 +4,7 @@ import { useHashTab } from '@/core/nav'
 import ConfigApply from '@/components/ui/ConfigApply.vue'
 import { useI18n } from 'vue-i18n'
 
+import ReportErrorButton from '@/components/feedback/ReportErrorButton.vue'
 import WidgetTabs from '@/components/ui/WidgetTabs.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 
@@ -403,7 +404,10 @@ async function saveConfig(): Promise<void> {
       </div>
     </div>
 
-    <div v-if="error" role="alert" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+    <div v-if="error" role="alert" class="flex flex-wrap items-center gap-2">
+      <span class="nb-badge bg-brand-red text-surface">{{ error }}</span>
+      <ReportErrorButton :error="error" />
+    </div>
 
     <!-- Shared result view — the recommended shaper, A–F grade, frequency chart and shaper table.
          Shown in EVERY working view (Analyze, Live, and Guided — which otherwise shows only

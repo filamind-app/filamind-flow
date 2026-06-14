@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import ReportErrorButton from '@/components/feedback/ReportErrorButton.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 import { useNav } from '@/core/nav'
@@ -246,9 +247,12 @@ onMounted(() => void load())
     <div v-else-if="error" class="nb-card space-y-2 bg-brand-red/10 p-2">
       <p role="alert" class="font-mono text-xs">{{ error }}</p>
       <p v-if="topology?.detail" class="font-mono text-[11px] opacity-70">{{ topology.detail }}</p>
-      <button class="nb-btn bg-surface px-2 py-1 text-xs" @click="load">
-        {{ t('boardTopology.states.retry') }}
-      </button>
+      <div class="flex flex-wrap items-center gap-2">
+        <button class="nb-btn bg-surface px-2 py-1 text-xs" @click="load">
+          {{ t('boardTopology.states.retry') }}
+        </button>
+        <ReportErrorButton :error="error" />
+      </div>
     </div>
     <p v-else-if="topology && !topology.mcus.length" class="font-mono text-xs opacity-70">
       {{ t('boardTopology.states.empty') }}

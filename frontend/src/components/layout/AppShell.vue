@@ -3,6 +3,7 @@ import { computed, onMounted } from 'vue'
 
 import DashboardHome from '@/components/dashboard/DashboardHome.vue'
 import WidgetFrame from '@/components/dashboard/WidgetFrame.vue'
+import ReportDialog from '@/components/feedback/ReportDialog.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import { useNav } from '@/core/nav'
@@ -33,5 +34,8 @@ onMounted(() => {
         <DashboardHome v-else />
       </main>
     </div>
+    <!-- Mounted once: the shared bug/feature report dialog, opened from the header menu or any
+         "Report this error" button. -->
+    <ReportDialog />
   </div>
 </template>

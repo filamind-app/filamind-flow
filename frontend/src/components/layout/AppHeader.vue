@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import FeedbackMenu from '@/components/feedback/FeedbackMenu.vue'
 import LanguageMenu from '@/components/layout/LanguageMenu.vue'
 import ThemeMenu from '@/components/layout/ThemeMenu.vue'
 import ConnectionStatus from '@/components/system/ConnectionStatus.vue'
@@ -73,6 +74,7 @@ const guardBadge = computed<{ text: string; printing: boolean } | null>(() => {
       <ThemeMenu />
       <!-- Renders only once a second locale's catalog exists (hidden in the en-only build). -->
       <LanguageMenu />
+      <FeedbackMenu />
       <ConnectionStatus />
     </div>
   </header>

@@ -153,6 +153,53 @@
       "body": "FilaMind Flow vereint die besten Werkzeuge für den 3D-Druck — von der ersten Einrichtung bis zur Meisterschaft — damit Maker auf jedem Niveau besser diagnostizieren, beheben und drucken können. Das Projekt befindet sich in aktiver Entwicklung und Forschung, und neue praktische Ideen sind immer willkommen. Beiträge stehen allen offen.",
       "tagline": "Built by Egyptian makers, for world makers. Happy printing.",
       "dismiss": "Ausblenden"
+    },
+    "feedback": {
+      "menu": "Feedback",
+      "menuTitle": "Feedback geben",
+      "bug": "Fehler melden",
+      "bugDesc": "Etwas funktioniert nicht",
+      "feature": "Funktion vorschlagen",
+      "featureDesc": "Eine Verbesserung vorschlagen",
+      "reportError": "Melden",
+      "reportErrorAria": "Diesen Fehler auf GitHub melden",
+      "dialog": {
+        "bugTitle": "Fehler melden",
+        "featureTitle": "Funktion vorschlagen",
+        "introBug": "Beschreibe, was schiefgelaufen ist. Wir öffnen ein vorausgefülltes Issue auf GitHub, das du prüfen und absenden kannst – es wird nichts automatisch gesendet.",
+        "introFeature": "Beschreibe die gewünschte Funktion. Wir öffnen ein vorausgefülltes Issue auf GitHub, das du prüfen und absenden kannst.",
+        "descLabel": "Beschreibung",
+        "descPlaceholderBug": "Was hast du getan und was ist stattdessen passiert?",
+        "descPlaceholderFeature": "Was möchtest du tun können?",
+        "attach": "Screenshot anhängen",
+        "attachHint": "Ein Bild des aktuellen Bildschirms hilft uns, das Problem zu verstehen.",
+        "capturing": "Screenshot wird erstellt…",
+        "screenshotReady": "Screenshot-Vorschau",
+        "noScreenshot": "Screenshot konnte nicht erstellt werden – du kannst manuell einen anhängen.",
+        "includes": "Was wir mitschicken",
+        "includesNote": "Diese Angaben werden dem Issue zur Diagnose beigefügt. Prüfe sie vor dem Absenden auf GitHub.",
+        "languageNote": "Das Issue wird auf Englisch verfasst, damit die Maintainer darauf reagieren können.",
+        "submit": "Issue auf GitHub öffnen",
+        "cancel": "Abbrechen",
+        "close": "Schließen"
+      },
+      "field": {
+        "version": "App-Version",
+        "view": "Aktive Ansicht",
+        "locale": "Sprache",
+        "theme": "Design",
+        "screen": "Bildschirm",
+        "browser": "Browser",
+        "time": "Zeit",
+        "error": "Fehler"
+      },
+      "sent": {
+        "title": "Issue in neuem Tab geöffnet",
+        "body": "Prüfe die vorausgefüllten Angaben auf GitHub und sende das Issue dort ab.",
+        "copied": "Screenshot kopiert – füge ihn mit Strg/⌘+V in das Issue ein.",
+        "saved": "Screenshot in deinen Downloads gespeichert – ziehe ihn in das Issue.",
+        "failed": "Screenshot konnte nicht automatisch angehängt werden – du kannst auf GitHub einen hinzufügen."
+      }
     }
   }
 }

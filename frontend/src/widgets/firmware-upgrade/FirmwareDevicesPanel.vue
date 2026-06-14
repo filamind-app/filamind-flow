@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import ReportErrorButton from '@/components/feedback/ReportErrorButton.vue'
 import { useNav } from '@/core/nav'
 import { focusTopologyNode } from '@/widgets/board-topology/topologyFocus'
 
@@ -255,7 +256,10 @@ onUnmounted(() => {
       {{ t('firmware.devices.intro') }}
     </p>
 
-    <div v-if="error" role="alert" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+    <div v-if="error" role="alert" class="flex flex-wrap items-center gap-2">
+      <span class="nb-badge bg-brand-red text-surface">{{ error }}</span>
+      <ReportErrorButton :error="error" />
+    </div>
     <div v-if="loading" class="font-mono text-xs">{{ t('firmware.devices.loading') }}</div>
 
     <template v-else>

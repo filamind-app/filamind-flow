@@ -75,6 +75,11 @@ Build these in from the start (don't bolt them on later):
   pass–fail outcomes (see the Input Shaping 🧭 Guided view).
 - **Illustrations** — hand-drawn inline **SVG** diagrams (see `HelpIllo.vue`); no binary
   image assets — inline SVGs are theme-aware and diff cleanly in git.
+- **Error reporting** — wherever a widget shows an error message, drop the shared
+  **`ReportErrorButton`** (`components/feedback/ReportErrorButton.vue`) next to it: a `⚐ Report`
+  control that opens a pre-filled GitHub bug report from that exact error text (plus an
+  auto-captured screenshot and diagnostics). The shared `LogPane` exposes this via its
+  `reportable` prop, so operation logs get it for free.
 
 The **Board Topology** / **Input Shaping** widgets are the reference for the `HelpDrawer`
 wiring + `help.ts` shape. Apply this to new widgets up front.

@@ -153,6 +153,53 @@
       "body": "FilaMind Flow 汇集了最好的 3D 打印工具——从初次设置到精通——让各个水平的创客都能更好地诊断、修复并打印。项目正在积极开发和研究中，我们始终欢迎新的实用想法，并欢迎所有人参与贡献。",
       "tagline": "Built by Egyptian makers, for world makers. Happy printing.",
       "dismiss": "关闭"
+    },
+    "feedback": {
+      "menu": "反馈",
+      "menuTitle": "分享反馈",
+      "bug": "报告问题",
+      "bugDesc": "有功能无法正常工作",
+      "feature": "建议新功能",
+      "featureDesc": "提出改进建议",
+      "reportError": "报告",
+      "reportErrorAria": "在 GitHub 上报告此错误",
+      "dialog": {
+        "bugTitle": "报告问题",
+        "featureTitle": "建议新功能",
+        "introBug": "描述出了什么问题。我们会在 GitHub 上打开一个预填写的工单供你检查并提交——不会自动发送任何内容。",
+        "introFeature": "描述你想要的功能。我们会在 GitHub 上打开一个预填写的工单供你检查并提交。",
+        "descLabel": "描述",
+        "descPlaceholderBug": "你做了什么操作，结果发生了什么？",
+        "descPlaceholderFeature": "你希望能够做什么？",
+        "attach": "附加屏幕截图",
+        "attachHint": "当前屏幕的截图有助于我们理解问题。",
+        "capturing": "正在截屏…",
+        "screenshotReady": "截图预览",
+        "noScreenshot": "无法截屏——你可以手动附加一张。",
+        "includes": "将包含的信息",
+        "includesNote": "这些信息会添加到工单中以便诊断。提交前请在 GitHub 上核对。",
+        "languageNote": "工单以英文撰写，以便维护者处理。",
+        "submit": "在 GitHub 上打开工单",
+        "cancel": "取消",
+        "close": "关闭"
+      },
+      "field": {
+        "version": "应用版本",
+        "view": "当前视图",
+        "locale": "语言",
+        "theme": "主题",
+        "screen": "屏幕",
+        "browser": "浏览器",
+        "time": "时间",
+        "error": "错误"
+      },
+      "sent": {
+        "title": "已在新标签页中打开工单",
+        "body": "在 GitHub 上检查预填写的内容，然后在那里提交工单。",
+        "copied": "截图已复制——用 Ctrl/⌘+V 粘贴到工单中。",
+        "saved": "截图已保存到下载文件夹——将其拖入工单中。",
+        "failed": "无法自动附加截图——你可以在 GitHub 上添加一张。"
+      }
     }
   }
 }
