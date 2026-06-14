@@ -13,7 +13,7 @@
       "title": "Zurück zu Mainsail"
     },
     "footer": {
-      "stack": "Moonraker · Klipper",
+      "stack": "FilaMind Flow — Built by Egyptian makers, for world makers. Happy printing",
       "by": "vom DeltaFabs-Team"
     },
     "home": {
@@ -56,6 +56,16 @@
         "flash": "{board} geflasht → {version}",
         "configSave": "{file} gespeichert",
         "tuning": "Tuning-Lauf: {kind} ({axis})"
+      },
+      "hostInfo": {
+        "title": "Host",
+        "time": "Zeit",
+        "clock": "Uhr-Synchronisation",
+        "synced": "Synchronisiert",
+        "notSynced": "Nicht synchronisiert",
+        "temp": "CPU-Temp.",
+        "uptime": "Laufzeit",
+        "disk": "Datenträger"
       }
     },
     "connection": {
@@ -138,6 +148,11 @@
         "firmware_batch": "Firmware-Batchlauf",
         "firmware_restart": "Firmware-Neustart"
       }
+    },
+    "mission": {
+      "body": "FilaMind Flow vereint die besten Werkzeuge für den 3D-Druck — von der ersten Einrichtung bis zur Meisterschaft — damit Maker auf jedem Niveau besser diagnostizieren, beheben und drucken können. Das Projekt befindet sich in aktiver Entwicklung und Forschung, und neue praktische Ideen sind immer willkommen. Beiträge stehen allen offen.",
+      "tagline": "Built by Egyptian makers, for world makers. Happy printing.",
+      "dismiss": "Ausblenden"
     }
   }
 }

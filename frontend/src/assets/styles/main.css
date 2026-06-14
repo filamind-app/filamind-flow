@@ -257,3 +257,23 @@
 [dir='rtl'] .nb-btn:active {
   transform: translate(-0.125rem, 0.125rem);
 }
+
+/* Mission banner: a gentle theme-aware glow pulse (uses the per-theme --nb-glow var). Disabled for
+   users who prefer reduced motion. */
+@keyframes nb-glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--nb-glow);
+  }
+  50% {
+    box-shadow: 0 0 18px 2px var(--nb-glow);
+  }
+}
+.nb-glow-pulse {
+  animation: nb-glow-pulse 2.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nb-glow-pulse {
+    animation: none;
+  }
+}
