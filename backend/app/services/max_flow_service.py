@@ -613,9 +613,15 @@ async def run_max_flow(
                         StepMeasurement(flow_mm3s=step.flow_mm3s, sg_samples=samples)
                     )
                     # Stop the moment slip is detected — don't grind filament past the first slip.
-                    if max_flow.analyze(measurements, params.driver).slip_flow is not None:
+                    # warmup=2 excuses the unsettled opening step: its load CV transiently spikes as
+                    # the ramp starts (notably on noisier SG2 drivers like the TMC5160) and is not a
+                    # slip — it must form the baseline rather than trip.
+                    if (
+                        max_flow.analyze(measurements, params.driver, warmup=2).slip_flow
+                        is not None
+                    ):
                         break
-                result = max_flow.analyze(measurements, params.driver)
+                result = max_flow.analyze(measurements, params.driver, warmup=2)
         finally:
             # Always cut the heater, even if a command raised mid-run (best-effort).
             with contextlib.suppress(Exception):

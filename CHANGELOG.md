@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.280.0] - 2026-06-14
+
+### Fixed
+
+- **Max-Flow on TMC5160 no longer false-trips at the first step.** On noisier SG2 drivers (e.g. the
+  TMC5160) the StallGuard load CV spikes transiently as the ramp opens; the detector read that as a
+  slip at the very first flow step and reported no result. The StallGuard path now excuses the
+  unsettled opening step (it forms the baseline instead of tripping), and the TMC5160 gains its own
+  detection profile (higher CV / IQR ceilings) — so the ramp runs and the genuine grind is what
+  stops it. Validated on a Voron 5160.
+
 ## [0.279.0] - 2026-06-14
 
 ### Fixed
