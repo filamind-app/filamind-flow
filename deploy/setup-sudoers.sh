@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 #
-# Grants the FilaMind Flow backend the narrow passwordless-sudo rights it needs
-# to FLASH firmware: stop/start the Klipper services, run dfu-util, and install
-# a Linux-process MCU binary. Nothing else uses sudo.
+# Grants the FilaMind Flow backend the narrow passwordless-sudo rights it needs:
+#   - Firmware flashing: stop/start the Klipper services, run dfu-util, install a
+#     Linux-process MCU binary.
+#   - Host Control widget: manage systemd units (systemctl), read unit logs
+#     (journalctl), and remove user-installed unit files (rm — path-guarded in
+#     the backend to /etc/systemd/system only).
+# Nothing else uses sudo.
 #
 # Run once, as root:
 #     sudo bash deploy/setup-sudoers.sh [user]
@@ -25,19 +29,21 @@ DFU_UTIL="$(command -v dfu-util || echo /usr/bin/dfu-util)"
 CP_BIN="$(command -v cp || echo /bin/cp)"
 CHMOD_BIN="$(command -v chmod || echo /bin/chmod)"
 FUSER_BIN="$(command -v fuser || echo /usr/bin/fuser)"
+JOURNALCTL="$(command -v journalctl || echo /usr/bin/journalctl)"
+RM_BIN="$(command -v rm || echo /bin/rm)"
 
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 cat > "$TMP" <<EOF
-# Managed by FilaMind Flow (deploy/setup-sudoers.sh) — firmware flashing only.
-$USER_NAME ALL=(root) NOPASSWD: $SYSTEMCTL, $DFU_UTIL, $CP_BIN, $CHMOD_BIN, $FUSER_BIN
+# Managed by FilaMind Flow (deploy/setup-sudoers.sh) — firmware flashing + Host Control.
+$USER_NAME ALL=(root) NOPASSWD: $SYSTEMCTL, $DFU_UTIL, $CP_BIN, $CHMOD_BIN, $FUSER_BIN, $JOURNALCTL, $RM_BIN
 EOF
 
 # Validate syntax BEFORE installing so a mistake can never lock you out of sudo.
 visudo -cf "$TMP"
 install -m 0440 -o root -g root "$TMP" "$SUDOERS_FILE"
 
-echo "Installed $SUDOERS_FILE — '$USER_NAME' can now flash firmware without a password."
+echo "Installed $SUDOERS_FILE — '$USER_NAME' can now flash firmware and manage host services without a password."
 
 # DFU access: let the user talk to STM32 ROM bootloaders (0483:df11) directly, so
 # dfu-util can flash without sudo. Ships beside this script.

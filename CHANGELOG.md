@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.267.0] - 2026-06-14
+
+### Added
+
+- **Host Control · Services (Phase 2) — a systemd service manager.** A new Services tab lists every
+  `.service` unit on the host with its live state (active / inactive / failed) and boot setting
+  (enabled / disabled / static / masked), searchable and filterable. Select a unit to start, stop,
+  restart, enable, disable, mask or unmask it, read its recent journal, and — for unit files you
+  installed yourself — delete it. Safety is enforced in the backend: destructive actions (stop /
+  restart / disable / mask / delete) are refused outright on a protected set (SSH, dbus, journald,
+  logind, udevd, polkit and FilaMind's own services) so you can't lock yourself out or kill the
+  panel; critical printer/network/systemd units are flagged with an extra warning; deleting a unit
+  file is path-guarded to `/etc/systemd/system` (user-installed units only) and needs the unit name
+  typed to confirm. The UI mirrors those rules and asks for an inline confirmation before any
+  destructive action. Endpoints: `GET /api/host/services`, `/services/detail`, `/services/logs`,
+  `POST /api/host/services/action` and `/services/delete`. The `deploy/setup-sudoers.sh` grant now
+  also covers `journalctl` (read logs) and `rm` (remove unit files). Fully translated across all
+  seven languages. Disk cleanup and system settings (time / locale / hostname / power) follow next.
+
 ## [0.266.0] - 2026-06-14
 
 ### Added

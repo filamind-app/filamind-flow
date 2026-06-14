@@ -1,9 +1,13 @@
 {
   "hostControl": {
-    "intro": "Gérez l'hôte Linux de l'imprimante — vérifiez son état et celui du système d'exploitation. Les services, le nettoyage du disque et les réglages système arriveront dans des phases ultérieures.",
+    "intro": "Gérez l'hôte Linux de l'imprimante — vérifiez son état et celui du système d'exploitation et contrôlez ses services en arrière-plan. Le nettoyage du disque et les réglages système arriveront dans des phases ultérieures.",
+    "view": {
+      "monitor": "Moniteur",
+      "services": "Services"
+    },
     "help": {
       "title": "Qu'est-ce que c'est ?",
-      "body": "FilaMind s'exécute sur le petit ordinateur Linux de l'imprimante (l'hôte). Ce panneau lit l'état en direct de cette machine et de son système d'exploitation pour repérer les problèmes — un processeur en surchauffe, un disque plein, une horloge non synchronisée — sans ouvrir de terminal.",
+      "body": "FilaMind s'exécute sur le petit ordinateur Linux de l'imprimante (l'hôte). Ce panneau lit l'état en direct de cette machine et de son système d'exploitation pour repérer les problèmes — un processeur en surchauffe, un disque plein, une horloge non synchronisée — sans ouvrir de terminal, et vous laisse contrôler les services en arrière-plan qu'il exécute.",
       "step1": "Lisez d'un coup d'œil les cartes de température du processeur, de mémoire, de disque et de réseau.",
       "step2": "Surveillez le tableau des principaux processus pour voir ce qui sollicite le processeur en ce moment.",
       "step3": "Laissez l'actualisation automatique activée pour une vue en direct, ou désactivez-la et actualisez manuellement.",
@@ -14,6 +18,10 @@
         "monitor": {
           "title": "Lire le moniteur",
           "body": "Tout est en lecture seule ici. Les barres deviennent ambre au-delà de 75 % et rouges au-delà de 90 %. La température du processeur devient ambre à 70 °C et rouge à 80 °C. L'avertissement de bridage n'apparaît que sur les cartes qui le signalent (principalement Raspberry Pi)."
+        },
+        "services": {
+          "title": "Gérer les services",
+          "body": "Chaque ligne est un service systemd. Cliquez sur l'un d'eux pour le démarrer/arrêter/redémarrer, l'activer/le désactiver au démarrage, le masquer, lire son journal ou — pour les services que vous avez installés — supprimer son fichier d'unité. Arrêter ou désactiver un service demande une confirmation. Les services critiques et protégés sont marqués ; les protégés (comme SSH et ce panneau) ne peuvent pas être arrêtés, pour ne pas vous verrouiller dehors."
         }
       },
       "glossary": {
@@ -40,6 +48,18 @@
         "locale": {
           "term": "Paramètres régionaux (locale)",
           "def": "Les réglages de langue et de disposition du clavier de l'hôte, utilisés par le système d'exploitation pour le texte, les dates et la disposition du clavier de la console."
+        },
+        "service": {
+          "term": "Service (unité)",
+          "def": "Un programme en arrière-plan géré par systemd — Klipper, Moonraker, le diffuseur de la webcam et la pile réseau s'exécutent tous comme des services."
+        },
+        "enabled": {
+          "term": "Activé / désactivé",
+          "def": "Si un service démarre automatiquement au boot. « enabled » démarre au boot ; « disabled » non ; « static » n'est démarré que par un autre service."
+        },
+        "mask": {
+          "term": "Masquer (mask)",
+          "def": "Une forme plus forte de désactivation — le service ne peut pas du tout être démarré (même par un autre service) tant qu'il n'est pas démasqué. À utiliser avec prudence."
         }
       }
     },
@@ -79,6 +99,49 @@
       "cpuPct": "CPU %",
       "memPct": "MÉM %",
       "pid": "PID"
+    },
+    "services": {
+      "warning": "Arrêter ou désactiver le mauvais service peut mettre l'imprimante hors ligne. Les services critiques sont marqués ; les protégés ne peuvent pas être arrêtés.",
+      "search": "Rechercher des services…",
+      "refresh": "Actualiser",
+      "loading": "Liste des services…",
+      "loadingDetail": "Lecture du service…",
+      "loadingLogs": "Lecture du journal…",
+      "summary": "{total} services · {active} actifs · {failed} en échec",
+      "filter": {
+        "all": "Tous",
+        "active": "Actifs",
+        "inactive": "Inactifs",
+        "failed": "En échec",
+        "enabled": "Activés"
+      },
+      "stateActive": "Actif",
+      "stateInactive": "Inactif",
+      "stateFailed": "En échec",
+      "critical": "Critique",
+      "protected": "Protégé",
+      "state": "État",
+      "startup": "Démarrage",
+      "unitFile": "Fichier d'unité",
+      "action": {
+        "start": "Démarrer",
+        "stop": "Arrêter",
+        "restart": "Redémarrer",
+        "enable": "Activer",
+        "disable": "Désactiver",
+        "mask": "Masquer",
+        "unmask": "Démasquer"
+      },
+      "actionOk": "{action} terminé.",
+      "confirmAction": "{action} « {name} » ?",
+      "confirmYes": "Oui, faire",
+      "cancel": "Annuler",
+      "deleteUnit": "Supprimer le fichier d'unité…",
+      "deletePrompt": "Cela supprime définitivement le fichier d'unité. Tapez « {name} » pour confirmer.",
+      "deleteConfirm": "Supprimer définitivement",
+      "deleted": "Fichier d'unité supprimé.",
+      "logs": "Journal récent",
+      "noLogs": "Aucune sortie de journal."
     }
   }
 }

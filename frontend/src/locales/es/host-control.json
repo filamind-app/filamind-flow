@@ -1,9 +1,13 @@
 {
   "hostControl": {
-    "intro": "Administra el host Linux de la impresora — revisa su estado y el del sistema operativo. Los servicios, la limpieza de disco y los ajustes del sistema llegarán en fases posteriores.",
+    "intro": "Administra el host Linux de la impresora — revisa su estado y el del sistema operativo y controla sus servicios en segundo plano. La limpieza de disco y los ajustes del sistema llegarán en fases posteriores.",
+    "view": {
+      "monitor": "Monitor",
+      "services": "Servicios"
+    },
     "help": {
       "title": "¿Qué es esto?",
-      "body": "FilaMind se ejecuta en el pequeño ordenador Linux de la impresora (el host). Este panel lee el estado en vivo de esa máquina y de su sistema operativo para que detectes problemas — una CPU sobrecalentada, un disco lleno, un reloj sin sincronizar — sin abrir una terminal.",
+      "body": "FilaMind se ejecuta en el pequeño ordenador Linux de la impresora (el host). Este panel lee el estado en vivo de esa máquina y de su sistema operativo para que detectes problemas — una CPU sobrecalentada, un disco lleno, un reloj sin sincronizar — sin abrir una terminal, y te permite controlar los servicios en segundo plano que ejecuta.",
       "step1": "Lee de un vistazo las tarjetas de temperatura de CPU, memoria, disco y red.",
       "step2": "Observa la tabla de procesos principales para ver qué está usando la CPU ahora.",
       "step3": "Deja la actualización automática activada para una vista en vivo, o desactívala y actualiza manualmente.",
@@ -14,6 +18,10 @@
         "monitor": {
           "title": "Leer el monitor",
           "body": "Todo aquí es de solo lectura. Las barras se vuelven ámbar a partir del 75 % y rojas a partir del 90 %. La temperatura de la CPU se vuelve ámbar a 70 °C y roja a 80 °C. La advertencia de limitación solo aparece en placas que la informan (principalmente Raspberry Pi)."
+        },
+        "services": {
+          "title": "Gestionar servicios",
+          "body": "Cada fila es un servicio de systemd. Haz clic en uno para iniciarlo/detenerlo/reiniciarlo, activarlo/desactivarlo al arranque, enmascararlo, leer su registro o — en los servicios que instalaste tú — eliminar su archivo de unidad. Detener o desactivar un servicio requiere una confirmación. Los servicios críticos y protegidos están marcados; los protegidos (como SSH y este panel) no se pueden detener para no dejarte fuera."
         }
       },
       "glossary": {
@@ -40,6 +48,18 @@
         "locale": {
           "term": "Configuración regional (locale)",
           "def": "Los ajustes de idioma y distribución de teclado del host, que el sistema operativo usa para texto, fechas y el mapa de teclado de la consola."
+        },
+        "service": {
+          "term": "Servicio (unidad)",
+          "def": "Un programa en segundo plano gestionado por systemd — Klipper, Moonraker, el emisor de la webcam y la pila de red se ejecutan todos como servicios."
+        },
+        "enabled": {
+          "term": "Activado / desactivado",
+          "def": "Si un servicio arranca automáticamente al inicio. «enabled» arranca al inicio; «disabled» no; «static» solo lo inicia otro servicio."
+        },
+        "mask": {
+          "term": "Enmascarar (mask)",
+          "def": "Una forma más fuerte de desactivar — el servicio no puede iniciarse en absoluto (ni siquiera por otro servicio) hasta que se desenmascara. Úsalo con cuidado."
         }
       }
     },
@@ -79,6 +99,49 @@
       "cpuPct": "CPU %",
       "memPct": "MEM %",
       "pid": "PID"
+    },
+    "services": {
+      "warning": "Detener o desactivar el servicio equivocado puede dejar la impresora sin conexión. Los servicios críticos están marcados; los protegidos no se pueden detener.",
+      "search": "Buscar servicios…",
+      "refresh": "Actualizar",
+      "loading": "Listando servicios…",
+      "loadingDetail": "Leyendo servicio…",
+      "loadingLogs": "Leyendo registro…",
+      "summary": "{total} servicios · {active} activos · {failed} fallidos",
+      "filter": {
+        "all": "Todos",
+        "active": "Activos",
+        "inactive": "Inactivos",
+        "failed": "Fallidos",
+        "enabled": "Activados"
+      },
+      "stateActive": "Activo",
+      "stateInactive": "Inactivo",
+      "stateFailed": "Fallido",
+      "critical": "Crítico",
+      "protected": "Protegido",
+      "state": "Estado",
+      "startup": "Arranque",
+      "unitFile": "Archivo de unidad",
+      "action": {
+        "start": "Iniciar",
+        "stop": "Detener",
+        "restart": "Reiniciar",
+        "enable": "Activar",
+        "disable": "Desactivar",
+        "mask": "Enmascarar",
+        "unmask": "Desenmascarar"
+      },
+      "actionOk": "{action} hecho.",
+      "confirmAction": "¿{action} «{name}»?",
+      "confirmYes": "Sí, hacerlo",
+      "cancel": "Cancelar",
+      "deleteUnit": "Eliminar archivo de unidad…",
+      "deletePrompt": "Esto elimina permanentemente el archivo de unidad. Escribe «{name}» para confirmar.",
+      "deleteConfirm": "Eliminar permanentemente",
+      "deleted": "Archivo de unidad eliminado.",
+      "logs": "Registro reciente",
+      "noLogs": "Sin salida de registro."
     }
   }
 }

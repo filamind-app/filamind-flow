@@ -1,9 +1,26 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { HostMonitor } from './types'
+import type {
+  HostMonitor,
+  ServiceAction,
+  ServiceActionResult,
+  ServiceDetail,
+  ServiceUnit,
+} from './types'
 
 function base(): string {
   return resolveEndpoints().backendUrl
+}
+
+/** A host-action error carrying the HTTP status so the UI can tell refused (403) from other faults. */
+export class HostActionError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message)
+    this.name = 'HostActionError'
+  }
 }
 
 /** Read-only snapshot of host health + OS state (CPU / memory / disk / network / time / locale). */
@@ -11,4 +28,55 @@ export async function fetchMonitor(): Promise<HostMonitor> {
   const r = await fetch(`${base()}/api/host/monitor`)
   if (!r.ok) throw new Error(`Host monitor failed (${r.status})`)
   return (await r.json()) as HostMonitor
+}
+
+// ── Services (Phase 2) ─────────────────────────────────────────────────────────
+
+/** All systemd .service units with their state (read-only). */
+export async function fetchServices(): Promise<ServiceUnit[]> {
+  const r = await fetch(`${base()}/api/host/services`)
+  if (!r.ok) throw new Error(`Could not list services (${r.status})`)
+  return ((await r.json()) as { services: ServiceUnit[] }).services
+}
+
+/** Per-unit detail + whether its unit file is safe to delete. */
+export async function fetchServiceDetail(name: string): Promise<ServiceDetail> {
+  const r = await fetch(`${base()}/api/host/services/detail?name=${encodeURIComponent(name)}`)
+  if (!r.ok) throw new Error(`Could not read service detail (${r.status})`)
+  return (await r.json()) as ServiceDetail
+}
+
+/** Recent journal lines for a unit (read-only). */
+export async function fetchServiceLogs(name: string, lines = 200): Promise<string> {
+  const r = await fetch(
+    `${base()}/api/host/services/logs?name=${encodeURIComponent(name)}&lines=${lines}`,
+  )
+  if (!r.ok) throw new Error(`Could not read logs (${r.status})`)
+  return ((await r.json()) as { logs: string }).logs
+}
+
+async function postAction(path: string, body: unknown): Promise<ServiceActionResult> {
+  const r = await fetch(`${base()}/api/host/services/${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const data = (await r.json().catch(() => ({}))) as {
+    detail?: string
+  } & Partial<ServiceActionResult>
+  if (!r.ok) throw new HostActionError(data.detail || `Action failed (${r.status})`, r.status)
+  return data as ServiceActionResult
+}
+
+/** Run a systemctl action on a unit. Throws HostActionError(403) if the backend refuses it. */
+export async function serviceAction(
+  name: string,
+  action: ServiceAction,
+): Promise<ServiceActionResult> {
+  return postAction('action', { name, action })
+}
+
+/** Remove a user-installed unit file (typed-confirm). Throws HostActionError(403) if refused. */
+export async function deleteService(name: string, confirm: string): Promise<ServiceActionResult> {
+  return postAction('delete', { name, confirm })
 }
