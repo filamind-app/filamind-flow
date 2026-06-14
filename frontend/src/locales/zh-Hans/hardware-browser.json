@@ -280,7 +280,10 @@
         "portFunction": "功能",
         "signal": "信号",
         "pin": "引脚"
-      }
+      },
+      "tooLong": "此提交内容过大，无法自动预填。请复制 JSON 并手动新建工单。",
+      "copyJson": "复制 JSON",
+      "copied": "已复制"
     }
   }
 }
