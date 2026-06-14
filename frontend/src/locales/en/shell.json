@@ -153,6 +153,53 @@
       "body": "FilaMind Flow brings together the best tools for 3D printing — from first setup to mastery — so makers at every level can diagnose, fix, and print better. The project is under active development and research, and new practical ideas are always welcome. Contributions are open to everyone.",
       "tagline": "Built by Egyptian makers, for world makers. Happy printing.",
       "dismiss": "Dismiss"
+    },
+    "feedback": {
+      "menu": "Feedback",
+      "menuTitle": "Share feedback",
+      "bug": "Report a bug",
+      "bugDesc": "Something isn't working",
+      "feature": "Request a feature",
+      "featureDesc": "Suggest an improvement",
+      "reportError": "Report",
+      "reportErrorAria": "Report this error on GitHub",
+      "dialog": {
+        "bugTitle": "Report a bug",
+        "featureTitle": "Request a feature",
+        "introBug": "Describe what went wrong. We'll open a pre-filled issue on GitHub for you to review and submit — nothing is sent automatically.",
+        "introFeature": "Describe the feature you'd like. We'll open a pre-filled issue on GitHub for you to review and submit.",
+        "descLabel": "Description",
+        "descPlaceholderBug": "What did you do, and what happened instead?",
+        "descPlaceholderFeature": "What would you like to be able to do?",
+        "attach": "Attach a screenshot",
+        "attachHint": "A picture of the current screen helps us understand the problem.",
+        "capturing": "Capturing screenshot…",
+        "screenshotReady": "Screenshot preview",
+        "noScreenshot": "Couldn't capture a screenshot — you can attach one manually.",
+        "includes": "What we'll include",
+        "includesNote": "These details are added to the issue to help with diagnosis. Review them on GitHub before submitting.",
+        "languageNote": "The issue is written in English so maintainers can act on it.",
+        "submit": "Open issue on GitHub",
+        "cancel": "Cancel",
+        "close": "Close"
+      },
+      "field": {
+        "version": "App version",
+        "view": "Active view",
+        "locale": "Language",
+        "theme": "Theme",
+        "screen": "Screen",
+        "browser": "Browser",
+        "time": "Time",
+        "error": "Error"
+      },
+      "sent": {
+        "title": "Issue opened in a new tab",
+        "body": "Review the pre-filled details on GitHub, then submit the issue there.",
+        "copied": "Screenshot copied — paste it into the issue with Ctrl/⌘+V.",
+        "saved": "Screenshot saved to your downloads — drag it into the issue.",
+        "failed": "Couldn't attach the screenshot automatically — you can add one on GitHub."
+      }
     }
   }
 }

@@ -7,6 +7,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import ReportErrorButton from '@/components/feedback/ReportErrorButton.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
@@ -175,9 +176,14 @@ function signalLabel(sig: number | null): string {
         </span>
       </div>
 
-      <p v-if="error" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">
-        {{ error }}
-      </p>
+      <div
+        v-if="error"
+        role="alert"
+        class="nb-card flex items-start justify-between gap-2 bg-brand-red/10 p-2 font-mono text-xs"
+      >
+        <span class="min-w-0 break-words">{{ error }}</span>
+        <ReportErrorButton :error="error" />
+      </div>
 
       <template v-if="monitor">
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">

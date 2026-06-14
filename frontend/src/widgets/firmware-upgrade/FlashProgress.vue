@@ -108,7 +108,7 @@ const pct = computed(() => Math.round(fraction.value * 100))
       <summary class="cursor-pointer text-[10px] opacity-60">
         {{ t('firmware.flashProgress.showDetails') }}
       </summary>
-      <LogPane :log="cleanLog" max-class="max-h-48" class="mt-1" />
+      <LogPane :log="cleanLog" max-class="max-h-48" class="mt-1" reportable />
     </details>
   </div>
 </template>
