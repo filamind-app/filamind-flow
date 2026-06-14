@@ -62,8 +62,11 @@
   },
   "overrides": {
     "tmc5160": {
-      "CV_HIGH_VARIANCE": 16.0,
-      "IQR_ABSOLUTE_TRIGGER": 60.0
+      "CV_HIGH_VARIANCE": 30.0,
+      "CV_JUMP_RATIO_COARSE": 2.0,
+      "CV_JUMP_MIN_COARSE": 25.0,
+      "IQR_ABSOLUTE_TRIGGER": 60.0,
+      "OUTLIER_MIN_REL": 0.15
     },
     "tmc2240": {
       "WARMUP_DRIFT_THRESHOLD": 0.04,

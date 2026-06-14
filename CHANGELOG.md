@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.281.0] - 2026-06-14
+
+### Fixed
+
+- **Max-Flow on the TMC5160 no longer false-trips inside the driver's own noise floor.** On this
+  driver family the StallGuard load reading is intrinsically noisy: its coefficient of variation
+  sits at a flat ~15–18% across low flows even with a perfectly clean grip, with no rising trend
+  until a genuine grind much higher up. The previous absolute CV ceiling (16%) landed *inside* that
+  noise band, so the ramp stopped a few steps in and reported an artificially low max flow. The
+  TMC5160 profile now lifts the absolute ceilings clear of the measured noise floor and leans on the
+  relative jump detectors instead — a slip is judged by a sharp rise *above* the established floor,
+  not by an absolute value that the floor itself reaches. Concretely: the CV ceiling moves to 30%,
+  the relative CV-jump path becomes the primary grind trigger (fires at ≥2× the floor baseline and
+  ≥25% absolute), and the median-shift band is widened so ordinary load wobble is not read as a
+  slip. The ramp now runs through the noisy low-flow region and is stopped by a real grind.
+
 ## [0.280.0] - 2026-06-14
 
 ### Fixed
