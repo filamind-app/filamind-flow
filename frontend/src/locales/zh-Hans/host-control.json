@@ -32,6 +32,10 @@
         "system": {
           "title": "系统设置",
           "body": "更改主机的时区和时钟、语言和键盘、主机名或 Wi-Fi，或重启/关闭它。每项更改会立即生效。打印进行时会拒绝重启和关机。更改 Wi-Fi 可能会短暂中断你与本面板的连接。"
+        },
+        "network": {
+          "title": "DHCP 与静态 IP",
+          "body": "DHCP（自动）让路由器自动分配地址。静态（手动）固定一个地址——设置 IP、子网（CIDR，例如 /24）、网关（通常是你的路由器）和 DNS。仅 IPv4。更改为本面板提供服务的连接地址会断开你的会话；请在新 IP 上重新连接。错误的静态地址或网关可能使打印机无法访问，直到你在设备本身上修复，因此设置会经过校验并需要输入确认。"
         }
       },
       "glossary": {
@@ -151,7 +155,9 @@
       "deleteConfirm": "永久删除",
       "deleted": "单元文件已删除。",
       "logs": "最近日志",
-      "noLogs": "无日志输出。"
+      "noLogs": "无日志输出。",
+      "actionFailed": "{action}失败。",
+      "deleteFailed": "无法删除单元文件。"
     },
     "cleanup": {
       "subtitle": "勾选要删除的项，然后清理。仅清理缓存和旧日志——你的打印件和配置不受影响。",
@@ -187,7 +193,8 @@
           "label": "已轮转日志",
           "desc": "旧的、已轮转的 Klipper/Moonraker 日志（保留活动日志）。"
         }
-      }
+      },
+      "someFailed": "部分项目无法清理。"
     },
     "system": {
       "loading": "正在读取系统设置…",
@@ -216,7 +223,27 @@
       "confirmReboot": "现在重启主机？",
       "confirmShutdown": "现在关闭主机？",
       "confirmYes": "是",
-      "cancel": "取消"
+      "cancel": "取消",
+      "needsSetup": "此操作需要免密 sudo。请在打印机上运行：sudo bash deploy/setup-sudoers.sh，然后重试。",
+      "failed": "更改未生效。",
+      "network": {
+        "title": "网络（IPv4）",
+        "unavailable": "此主机不支持编辑网络（未安装 NetworkManager）。",
+        "device": "设备",
+        "method": "IP 方式",
+        "auto": "DHCP（自动）",
+        "manual": "静态（手动）",
+        "address": "IP 地址",
+        "cidr": "子网（CIDR）",
+        "gateway": "网关",
+        "dns": "DNS 服务器",
+        "dnsHint": "用逗号分隔，例如 1.1.1.1, 8.8.8.8（可选）",
+        "warning": "更改 IP 可能会断开本面板——你可能需要在新地址重新连接。",
+        "apply": "应用网络设置",
+        "confirmPrompt": "这可能使面板无法访问。输入设备名称“{device}”以确认。",
+        "confirmYes": "应用并切换",
+        "applyingReconnect": "正在应用……如果面板停止响应，请在打印机的新 IP 上重新连接。"
+      }
     }
   }
 }

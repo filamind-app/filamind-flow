@@ -112,6 +112,7 @@ export interface ServiceActionResult {
   ok: boolean
   refused: boolean
   output: string
+  needs_setup?: boolean
 }
 
 export type ServiceAction = 'start' | 'stop' | 'restart' | 'enable' | 'disable' | 'mask' | 'unmask'
@@ -130,6 +131,7 @@ export interface CleanupResult {
   freed_bytes: number
   removed: number
   ok: boolean
+  needs_setup?: boolean
 }
 
 export interface CleanupRunResult {
@@ -138,6 +140,19 @@ export interface CleanupRunResult {
 }
 
 // ── System settings (Phase 4) ──────────────────────────────────────────────────
+
+export interface NetworkConfig {
+  available: boolean
+  configurable: boolean
+  device: string
+  connection: string
+  type: string
+  method: string // 'auto' | 'manual' | ''
+  address: string
+  cidr: number | null
+  gateway: string
+  dns: string[]
+}
 
 export interface SystemInfo {
   timezone: string
@@ -150,12 +165,22 @@ export interface SystemInfo {
   keymaps: string[]
   hostname: string
   wifi_available: boolean
+  network: NetworkConfig
 }
 
 export interface SystemActionResult {
   ok: boolean
   refused: boolean
   output: string
+  needs_setup?: boolean
 }
 
 export type PowerAction = 'reboot' | 'shutdown'
+
+export interface NetworkSetReq {
+  method: 'auto' | 'manual'
+  address?: string
+  cidr?: number | null
+  gateway?: string
+  dns?: string
+}

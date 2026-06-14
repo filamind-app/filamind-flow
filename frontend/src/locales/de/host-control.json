@@ -32,6 +32,10 @@
         "system": {
           "title": "Systemeinstellungen",
           "body": "Ändere Zeitzone und Uhr, Sprache und Tastatur, Hostname oder WLAN des Hosts, oder starte ihn neu / fahre ihn herunter. Jede Änderung wird sofort wirksam. Neustart und Herunterfahren werden während eines Drucks abgelehnt. Eine WLAN-Änderung kann die Verbindung zu diesem Panel kurz unterbrechen."
+        },
+        "network": {
+          "title": "DHCP vs. statische IP",
+          "body": "DHCP (automatisch) lässt deinen Router die Adresse automatisch vergeben. Statisch (manuell) legt eine feste Adresse fest — setze IP, Subnetz (CIDR, z. B. /24), Gateway (meist dein Router) und DNS. Nur IPv4. Das Ändern der Adresse der Verbindung, die dieses Panel bedient, trennt deine Sitzung; verbinde dich an der neuen IP neu. Eine falsche statische Adresse oder ein falsches Gateway kann den Drucker unerreichbar machen, bis du es am Gerät selbst behebst — daher werden die Einstellungen validiert und brauchen eine getippte Bestätigung."
         }
       },
       "glossary": {
@@ -151,7 +155,9 @@
       "deleteConfirm": "Endgültig löschen",
       "deleted": "Unit-Datei entfernt.",
       "logs": "Letztes Protokoll",
-      "noLogs": "Keine Protokollausgabe."
+      "noLogs": "Keine Protokollausgabe.",
+      "actionFailed": "{action} fehlgeschlagen.",
+      "deleteFailed": "Unit-Datei konnte nicht entfernt werden."
     },
     "cleanup": {
       "subtitle": "Hake an, was entfernt werden soll, dann bereinige. Nur Caches und alte Protokolle — Drucke und Konfigurationen bleiben sicher.",
@@ -187,7 +193,8 @@
           "label": "Rotierte Protokolle",
           "desc": "Alte, rotierte Klipper/Moonraker-Protokolle (das aktive bleibt erhalten)."
         }
-      }
+      },
+      "someFailed": "Einige Elemente konnten nicht bereinigt werden."
     },
     "system": {
       "loading": "Systemeinstellungen werden gelesen…",
@@ -216,7 +223,27 @@
       "confirmReboot": "Den Host jetzt neu starten?",
       "confirmShutdown": "Den Host jetzt herunterfahren?",
       "confirmYes": "Ja",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "needsSetup": "Diese Aktion braucht passwortloses sudo. Führe auf dem Drucker aus: sudo bash deploy/setup-sudoers.sh — dann erneut versuchen.",
+      "failed": "Die Änderung wurde nicht übernommen.",
+      "network": {
+        "title": "Netzwerk (IPv4)",
+        "unavailable": "Netzwerk-Bearbeitung ist auf diesem Host nicht verfügbar (NetworkManager nicht installiert).",
+        "device": "Gerät",
+        "method": "IP-Methode",
+        "auto": "DHCP (automatisch)",
+        "manual": "Statisch (manuell)",
+        "address": "IP-Adresse",
+        "cidr": "Subnetz (CIDR)",
+        "gateway": "Gateway",
+        "dns": "DNS-Server",
+        "dnsHint": "Kommagetrennt, z. B. 1.1.1.1, 8.8.8.8 (optional)",
+        "warning": "Eine IP-Änderung kann dieses Panel trennen — du musst dich evtl. an der neuen Adresse neu verbinden.",
+        "apply": "Netzwerkeinstellungen übernehmen",
+        "confirmPrompt": "Dies kann das Panel unerreichbar machen. Tippe den Gerätenamen „{device}\" zur Bestätigung.",
+        "confirmYes": "Übernehmen & umschalten",
+        "applyingReconnect": "Wird übernommen… reagiert das Panel nicht mehr, verbinde dich an der neuen IP des Druckers."
+      }
     }
   }
 }

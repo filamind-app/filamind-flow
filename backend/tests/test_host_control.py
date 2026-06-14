@@ -354,3 +354,142 @@ async def test_wifi_rejects_short_password(monkeypatch: pytest.MonkeyPatch) -> N
     monkeypatch.setattr(hc, "_has_cmd", lambda name: True)
     with pytest.raises(ValueError):
         await hc.wifi_connect("MyNet", "short")  # < 8 chars
+
+
+# ── needs_setup detection (the sudo-not-granted UX bug) ─────────────────────────
+
+
+def test_result_flags_needs_setup_on_sudo_auth_failure() -> None:
+    assert hc._result(1, "sudo: a password is required")["needs_setup"] is True
+    assert hc._result(0, "")["needs_setup"] is False
+    # A genuine non-sudo failure is ok:false but NOT needs_setup.
+    assert hc._result(1, "Failed to set hostname: boom")["needs_setup"] is False
+
+
+async def test_clean_apt_reports_needs_setup(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(hc, "_apt_debs", lambda: ["/var/cache/apt/archives/x.deb"])
+    monkeypatch.setattr(hc, "_sum_sizes", lambda paths: 100)
+
+    async def fake(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+        return 1, "sudo: a password is required"
+
+    monkeypatch.setattr(hc, "_run_rc", fake)
+    r = await hc._clean_target("apt", "~/printer_data/config/filamind")
+    assert r["ok"] is False and r["needs_setup"] is True
+
+
+# ── Network / IPv4 (Phase: network) ────────────────────────────────────────────
+
+
+def test_validate_static_accepts_a_good_config() -> None:
+    addr, gw, dns = hc._validate_static("192.168.0.50", 24, "192.168.0.1", "1.1.1.1, 8.8.8.8")
+    assert addr == "192.168.0.50/24"
+    assert gw == "192.168.0.1"
+    assert dns == "1.1.1.1,8.8.8.8"
+
+
+def test_validate_static_rejects_bad_input() -> None:
+    with pytest.raises(ValueError):
+        hc._validate_static("999.1.1.1", 24, "192.168.0.1", "")  # bad address
+    with pytest.raises(ValueError):
+        hc._validate_static("192.168.0.50", 33, "192.168.0.1", "")  # bad prefix
+    with pytest.raises(ValueError):
+        hc._validate_static("192.168.0.50", 24, "10.0.0.1", "")  # gateway off-subnet (lockout)
+    with pytest.raises(ValueError):
+        hc._validate_static("192.168.0.50", 24, "192.168.0.50", "")  # gateway == host
+    with pytest.raises(ValueError):
+        hc._validate_static("192.168.0.50", 24, "192.168.0.1", "1.1.1.1, notanip")  # bad DNS
+
+
+def test_validate_static_rejects_network_and_broadcast() -> None:
+    # Using the subnet's network or broadcast address as the host IP / gateway is a guaranteed
+    # lockout — the validator must reject both (the review's HIGH finding).
+    with pytest.raises(ValueError):
+        hc._validate_static("192.168.0.0", 24, "192.168.0.1", "")  # host = network address
+    with pytest.raises(ValueError):
+        hc._validate_static("192.168.0.255", 24, "192.168.0.1", "")  # host = broadcast address
+    with pytest.raises(ValueError):
+        hc._validate_static("192.168.0.50", 24, "192.168.0.0", "")  # gateway = network address
+    with pytest.raises(ValueError):
+        hc._validate_static("192.168.0.50", 24, "192.168.0.255", "")  # gateway = broadcast address
+
+
+def test_needs_setup_matches_localized_and_variant_sudo_errors() -> None:
+    assert hc._needs_setup("sudo: a password is required")
+    assert hc._needs_setup("Sorry, user biqu is not allowed to execute '/usr/bin/nmcli'")
+    assert hc._needs_setup("sudo: sorry, you must have a tty to run sudo")
+    assert not hc._needs_setup("Error: nmcli connection not found")
+
+
+async def test_set_network_rejects_bad_mode() -> None:
+    with pytest.raises(ValueError):
+        await hc.set_network("bridge", "", None, "", "", "http://x")
+
+
+async def test_set_network_unavailable_without_nmcli(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(hc, "_has_cmd", lambda name: False)
+    res = await hc.set_network("auto", "", None, "", "", "http://x")
+    assert res["refused"] is True
+
+
+def _patch_network(
+    monkeypatch: pytest.MonkeyPatch, calls: list[list[str]], conn: str = "MyCon"
+) -> None:
+    monkeypatch.setattr(hc, "_has_cmd", lambda name: True)
+
+    async def fake_info() -> dict:
+        return {"available": True, "configurable": True, "connection": conn, "device": "wlan0"}
+
+    async def idle(client: object, **_kw: object) -> bool:
+        return False
+
+    async def fake_run(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+        calls.append(cmd)
+        return 0, ""
+
+    monkeypatch.setattr(hc, "network_info", fake_info)
+    monkeypatch.setattr(hc.printer_guard, "is_busy", idle)
+    monkeypatch.setattr(hc, "_run_rc", fake_run)
+
+
+async def test_set_network_dhcp_clears_static(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[list[str]] = []
+    _patch_network(monkeypatch, calls)
+    res = await hc.set_network("auto", "", None, "", "", "http://x")
+    assert res["ok"] is True
+    modify = next(c for c in calls if "modify" in c)
+    assert "auto" in modify and modify[modify.index("ipv4.addresses") + 1] == ""
+    assert any(c[:4] == ["sudo", "-n", "nmcli", "connection"] and "up" in c for c in calls)
+
+
+async def test_set_network_static_passes_validated_args(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[list[str]] = []
+    _patch_network(monkeypatch, calls)
+    res = await hc.set_network("manual", "192.168.0.50", 24, "192.168.0.1", "1.1.1.1", "http://x")
+    assert res["ok"] is True
+    modify = next(c for c in calls if "modify" in c)
+    assert modify[modify.index("ipv4.addresses") + 1] == "192.168.0.50/24"
+    assert modify[modify.index("ipv4.gateway") + 1] == "192.168.0.1"
+    assert modify[modify.index("ipv4.dns") + 1] == "1.1.1.1"
+    assert "manual" in modify
+
+
+async def test_set_network_refuses_while_printing(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(hc, "_has_cmd", lambda name: True)
+
+    async def fake_info() -> dict:
+        return {"available": True, "configurable": True, "connection": "MyCon", "device": "wlan0"}
+
+    async def busy(client: object, **_kw: object) -> bool:
+        return True
+
+    monkeypatch.setattr(hc, "network_info", fake_info)
+    monkeypatch.setattr(hc.printer_guard, "is_busy", busy)
+    res = await hc.set_network("auto", "", None, "", "", "http://x")
+    assert res["ok"] is False and res["refused"] is True
+
+
+async def test_network_info_unavailable_without_nmcli(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(hc, "_has_cmd", lambda name: False)
+    info = await hc.network_info()
+    assert info["available"] is False and info["configurable"] is False

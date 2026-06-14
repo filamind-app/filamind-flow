@@ -32,6 +32,10 @@
         "system": {
           "title": "Ajustes del sistema",
           "body": "Cambia la zona horaria y el reloj, el idioma y el teclado, el nombre de host o el Wi-Fi del host, o reinícialo/apágalo. Cada cambio se aplica de inmediato. El reinicio y el apagado se rechazan mientras hay una impresión en curso. Cambiar el Wi-Fi puede cortar brevemente tu conexión con este panel."
+        },
+        "network": {
+          "title": "DHCP frente a IP estática",
+          "body": "DHCP (automático) deja que tu router asigne la dirección automáticamente. Estática (manual) fija una dirección — define la IP, la subred (CIDR, p. ej. /24), la puerta de enlace (normalmente tu router) y el DNS. Solo IPv4. Cambiar la dirección de la conexión que sirve este panel cortará tu sesión; reconéctate en la nueva IP. Una dirección o puerta de enlace estática incorrecta puede dejar la impresora inaccesible hasta arreglarla en el propio dispositivo, por eso los ajustes se validan y requieren una confirmación escrita."
         }
       },
       "glossary": {
@@ -151,7 +155,9 @@
       "deleteConfirm": "Eliminar permanentemente",
       "deleted": "Archivo de unidad eliminado.",
       "logs": "Registro reciente",
-      "noLogs": "Sin salida de registro."
+      "noLogs": "Sin salida de registro.",
+      "actionFailed": "{action} falló.",
+      "deleteFailed": "No se pudo eliminar el archivo de unidad."
     },
     "cleanup": {
       "subtitle": "Marca lo que quieras eliminar y limpia. Solo cachés y registros antiguos — tus impresiones y configuraciones quedan a salvo.",
@@ -187,7 +193,8 @@
           "label": "Registros rotados",
           "desc": "Registros antiguos rotados de Klipper/Moonraker (se conserva el activo)."
         }
-      }
+      },
+      "someFailed": "Algunos elementos no se pudieron limpiar."
     },
     "system": {
       "loading": "Leyendo los ajustes del sistema…",
@@ -216,7 +223,27 @@
       "confirmReboot": "¿Reiniciar el host ahora?",
       "confirmShutdown": "¿Apagar el host ahora?",
       "confirmYes": "Sí",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "needsSetup": "Esta acción necesita sudo sin contraseña. En la impresora, ejecuta: sudo bash deploy/setup-sudoers.sh y vuelve a intentarlo.",
+      "failed": "El cambio no se aplicó.",
+      "network": {
+        "title": "Red (IPv4)",
+        "unavailable": "La edición de red no está disponible en este host (NetworkManager no instalado).",
+        "device": "Dispositivo",
+        "method": "Método de IP",
+        "auto": "DHCP (automático)",
+        "manual": "Estática (manual)",
+        "address": "Dirección IP",
+        "cidr": "Subred (CIDR)",
+        "gateway": "Puerta de enlace",
+        "dns": "Servidores DNS",
+        "dnsHint": "Separados por comas, p. ej. 1.1.1.1, 8.8.8.8 (opcional)",
+        "warning": "Cambiar la IP puede cortar este panel — quizá debas reconectarte en la nueva dirección.",
+        "apply": "Aplicar ajustes de red",
+        "confirmPrompt": "Esto puede dejar el panel inaccesible. Escribe el nombre del dispositivo «{device}» para confirmar.",
+        "confirmYes": "Aplicar y cambiar",
+        "applyingReconnect": "Aplicando… si el panel deja de responder, reconéctate en la nueva IP de la impresora."
+      }
     }
   }
 }
