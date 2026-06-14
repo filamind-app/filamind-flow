@@ -106,4 +106,14 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./config-templates/ConfigTemplatesWidget.vue')),
   })
+
+  registerWidget({
+    id: 'host-control',
+    title: 'Host Control',
+    icon: '🖧',
+    description:
+      "Manage the printer host's Linux OS: health, services, disk cleanup, and system settings.",
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./host-control/HostControlWidget.vue')),
+  })
 }

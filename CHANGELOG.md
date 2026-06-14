@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.266.0] - 2026-06-14
+
+### Added
+
+- **New "Host Control" widget — manage the printer's Linux host.** Phase 1 adds a read-only health
+  and OS-state monitor that reads the host machine directly (no terminal needed): CPU temperature
+  and load, memory and swap with usage bars, disk usage per filesystem, network interface / IP /
+  Wi-Fi signal, timezone and clock-sync (NTP) status, language and keymap, and a live top-processes
+  table. Bars turn amber past 75% and red past 90%; CPU temperature turns amber at 70 °C and red at
+  80 °C; an under-voltage / throttling warning appears on boards that report it (mainly Raspberry
+  Pi). The view auto-refreshes every 5 s (toggle-able) and ships with the standard inline guide,
+  glossary and "what's this?" help notes, fully translated across all seven languages. Backend:
+  `GET /api/host/monitor`. Services control, disk cleanup and system settings (time / locale /
+  hostname / power) follow in later phases.
+
 ## [0.265.0] - 2026-06-14
 
 ### Fixed

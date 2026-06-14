@@ -1,0 +1,84 @@
+{
+  "hostControl": {
+    "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand und den des Betriebssystems. Dienste, Datenträger-Bereinigung und Systemeinstellungen folgen in späteren Phasen.",
+    "help": {
+      "title": "Was ist das?",
+      "body": "FilaMind läuft auf dem kleinen Linux-Computer des Druckers (dem Host). Dieses Panel liest dessen Live-Zustand und Betriebssystem-Status, damit du Probleme erkennst — eine überhitzte CPU, eine volle Festplatte, eine nicht synchronisierte Uhr — ohne ein Terminal zu öffnen.",
+      "step1": "Lies die Karten für CPU-Temperatur, Speicher, Datenträger und Netzwerk auf einen Blick.",
+      "step2": "Beobachte die Tabelle der Top-Prozesse, um zu sehen, was die CPU gerade auslastet.",
+      "step3": "Lass die automatische Aktualisierung für eine Live-Ansicht an, oder schalte sie aus und aktualisiere manuell.",
+      "topics": {
+        "glossary": {
+          "title": "Hier verwendete Begriffe"
+        },
+        "monitor": {
+          "title": "Den Monitor lesen",
+          "body": "Alles hier ist schreibgeschützt. Balken werden ab 75 % bernsteinfarben und ab 90 % rot. Die CPU-Temperatur wird bei 70 °C bernsteinfarben und bei 80 °C rot. Die Drosselungs-Warnung erscheint nur auf Boards, die sie melden (hauptsächlich Raspberry Pi)."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Host",
+          "def": "Der kleine Linux-Computer (z. B. ein Raspberry Pi oder BTT CB1), der Klipper, Moonraker und FilaMind ausführt — getrennt von den Mikrocontrollern des Druckers."
+        },
+        "load": {
+          "term": "Lastdurchschnitt",
+          "def": "Wie viele Prozesse auf Ausführung warteten, gemittelt über 1 / 5 / 15 Minuten. Grob: ein Wert nahe der Kernzahl bedeutet, die CPU ist beschäftigt; deutlich darüber bedeutet Überlastung."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Festplattenspeicher, der als Überlauf genutzt wird, wenn der RAM voll ist. Starke Swap-Nutzung verlangsamt den Host — ein Zeichen für Speichermangel."
+        },
+        "throttle": {
+          "term": "Drosselung",
+          "def": "Wenn das Board die Geschwindigkeit reduziert, um sich selbst zu schützen — meist wegen einer schwachen Stromversorgung (Unterspannung) oder Überhitzung. Wird hauptsächlich beim Raspberry Pi gemeldet."
+        },
+        "ntp": {
+          "term": "NTP / Uhr-Synchronisation",
+          "def": "Das Network Time Protocol hält die Host-Uhr genau. Eine nicht synchronisierte Uhr kann Zeitraffer, Protokolle und TLS-Zertifikate stören."
+        },
+        "locale": {
+          "term": "Locale",
+          "def": "Die Sprach- und Tastaturlayout-Einstellungen des Hosts, die das Betriebssystem für Text, Datumsangaben und das Konsolen-Tastaturlayout nutzt."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Aktualisieren",
+      "autoRefresh": "Auto-Aktualisierung",
+      "loading": "Host-Status wird gelesen…",
+      "host": "Host",
+      "hostname": "Hostname",
+      "distro": "Betriebssystem",
+      "kernel": "Kernel",
+      "uptime": "Laufzeit",
+      "cpu": "CPU",
+      "temp": "Temperatur",
+      "load": "Last (1·5·15 Min)",
+      "cores": "Kerne",
+      "throttled": "Gedrosselt",
+      "memory": "Speicher",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Datenträger",
+      "network": "Netzwerk",
+      "iface": "Schnittstelle",
+      "ip": "IP-Adresse",
+      "ssid": "WLAN",
+      "signal": "Signal",
+      "timeLocale": "Zeit & Locale",
+      "timezone": "Zeitzone",
+      "ntp": "Uhr-Synchronisation",
+      "synced": "Synchronisiert",
+      "syncing": "Wird synchronisiert…",
+      "ntpOff": "Aus",
+      "language": "Sprache",
+      "keymap": "Tastaturlayout",
+      "topProcesses": "Top-Prozesse",
+      "command": "Befehl",
+      "cpuPct": "CPU %",
+      "memPct": "RAM %",
+      "pid": "PID"
+    }
+  }
+}

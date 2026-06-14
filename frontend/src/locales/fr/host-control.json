@@ -1,0 +1,84 @@
+{
+  "hostControl": {
+    "intro": "Gérez l'hôte Linux de l'imprimante — vérifiez son état et celui du système d'exploitation. Les services, le nettoyage du disque et les réglages système arriveront dans des phases ultérieures.",
+    "help": {
+      "title": "Qu'est-ce que c'est ?",
+      "body": "FilaMind s'exécute sur le petit ordinateur Linux de l'imprimante (l'hôte). Ce panneau lit l'état en direct de cette machine et de son système d'exploitation pour repérer les problèmes — un processeur en surchauffe, un disque plein, une horloge non synchronisée — sans ouvrir de terminal.",
+      "step1": "Lisez d'un coup d'œil les cartes de température du processeur, de mémoire, de disque et de réseau.",
+      "step2": "Surveillez le tableau des principaux processus pour voir ce qui sollicite le processeur en ce moment.",
+      "step3": "Laissez l'actualisation automatique activée pour une vue en direct, ou désactivez-la et actualisez manuellement.",
+      "topics": {
+        "glossary": {
+          "title": "Termes utilisés ici"
+        },
+        "monitor": {
+          "title": "Lire le moniteur",
+          "body": "Tout est en lecture seule ici. Les barres deviennent ambre au-delà de 75 % et rouges au-delà de 90 %. La température du processeur devient ambre à 70 °C et rouge à 80 °C. L'avertissement de bridage n'apparaît que sur les cartes qui le signalent (principalement Raspberry Pi)."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Hôte",
+          "def": "Le petit ordinateur Linux (par ex. un Raspberry Pi ou un BTT CB1) qui exécute Klipper, Moonraker et FilaMind — distinct des microcontrôleurs de l'imprimante."
+        },
+        "load": {
+          "term": "Charge moyenne",
+          "def": "Le nombre de processus en attente d'exécution, moyenné sur 1 / 5 / 15 minutes. En gros : une valeur proche du nombre de cœurs indique un processeur occupé ; bien au-dessus indique une surcharge."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Espace disque utilisé comme débordement lorsque la RAM est pleine. Un usage intensif du swap ralentit l'hôte — signe d'un manque de mémoire."
+        },
+        "throttle": {
+          "term": "Bridage (throttling)",
+          "def": "Lorsque la carte réduit sa vitesse pour se protéger — généralement à cause d'une alimentation insuffisante (sous-tension) ou d'une surchauffe. Signalé surtout sur Raspberry Pi."
+        },
+        "ntp": {
+          "term": "NTP / synchronisation de l'horloge",
+          "def": "Le protocole NTP maintient l'horloge de l'hôte précise. Une horloge non synchronisée peut casser les timelapses, les journaux et les certificats TLS."
+        },
+        "locale": {
+          "term": "Paramètres régionaux (locale)",
+          "def": "Les réglages de langue et de disposition du clavier de l'hôte, utilisés par le système d'exploitation pour le texte, les dates et la disposition du clavier de la console."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Actualiser",
+      "autoRefresh": "Actualisation automatique",
+      "loading": "Lecture de l'état de l'hôte…",
+      "host": "Hôte",
+      "hostname": "Nom d'hôte",
+      "distro": "Système d'exploitation",
+      "kernel": "Noyau",
+      "uptime": "Temps de fonctionnement",
+      "cpu": "Processeur",
+      "temp": "Température",
+      "load": "Charge (1·5·15 min)",
+      "cores": "Cœurs",
+      "throttled": "Bridé",
+      "memory": "Mémoire",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Disque",
+      "network": "Réseau",
+      "iface": "Interface",
+      "ip": "Adresse IP",
+      "ssid": "Wi-Fi",
+      "signal": "Signal",
+      "timeLocale": "Heure et paramètres régionaux",
+      "timezone": "Fuseau horaire",
+      "ntp": "Synchronisation de l'horloge",
+      "synced": "Synchronisé",
+      "syncing": "Synchronisation…",
+      "ntpOff": "Désactivé",
+      "language": "Langue",
+      "keymap": "Disposition du clavier",
+      "topProcesses": "Principaux processus",
+      "command": "Commande",
+      "cpuPct": "CPU %",
+      "memPct": "MÉM %",
+      "pid": "PID"
+    }
+  }
+}

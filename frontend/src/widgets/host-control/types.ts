@@ -1,0 +1,80 @@
+/** Shapes returned by the Host Control backend (`/api/host/*`). Phase 1 is the read-only monitor;
+ *  later phases add services, disk cleanup and the system-changing actions.
+ */
+
+export interface HostBlock {
+  hostname: string
+  distro: string
+  kernel: string
+  arch: string
+  uptime_s: number | null
+}
+
+export interface CpuBlock {
+  temp_c: number | null
+  load: number[] | null
+  cores: number | null
+}
+
+export interface MemoryBlock {
+  total_kb: number
+  available_kb: number
+  used_kb: number
+  swap_total_kb: number
+  swap_used_kb: number
+}
+
+export interface DiskBlock {
+  label: string
+  path: string
+  total: number
+  used: number
+  free: number
+  pct: number
+}
+
+export interface ThrottleBlock {
+  supported: boolean
+  value: number | null
+  undervoltage: boolean | null
+  flags: string[]
+}
+
+export interface ProcessBlock {
+  pid: number
+  cpu: number
+  mem: number
+  command: string
+}
+
+export interface NetworkBlock {
+  iface: string
+  ip: string
+  ssid: string
+  signal: number | null
+}
+
+export interface TimeBlock {
+  now: string
+  timezone: string
+  ntp_enabled: boolean
+  ntp_synced: boolean
+  rtc: string
+}
+
+export interface LocaleBlock {
+  lang: string
+  keymap: string
+}
+
+export interface HostMonitor {
+  host: HostBlock
+  cpu: CpuBlock
+  memory: MemoryBlock
+  disk: DiskBlock[]
+  throttle: ThrottleBlock
+  processes: ProcessBlock[]
+  network: NetworkBlock
+  time: TimeBlock
+  locale: LocaleBlock
+}
