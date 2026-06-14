@@ -6,7 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.261.0] - 2026-06-13
+## [0.262.0] - 2026-06-14
+
+### Added
+
+- **Motor specs filled in for 26 more motors (Motor Drivers recommender).** Motors missing the
+  electrical data the run-current recommender needs (phase resistance, inductance, holding torque,
+  rated current, steps/rev) showed up in the picker with **Recommend disabled**. 26 of them are now
+  complete — 10 promoted from data already in the catalog, and 16 researched from manufacturer
+  datasheets (specific Oriental Motor PKP, Lin Engineering 4118/5718/8718, Nanotec, Sumtor, Wantai,
+  Bondtech, ACT, Bambu parts). The remaining gaps are motors with **no published winding data** —
+  series/family catalog rows that conflate several distinct part numbers, 3/5-phase motors, and
+  generic unbranded clones — which are deliberately left blank rather than filled with guessed
+  values (the recommender stays disabled for those, as before).
 
 ### Fixed
 
