@@ -408,6 +408,32 @@ def _serial_by_id() -> set[str]:
     return set(glob.glob("/dev/serial/by-id/*"))
 
 
+def bootloader_serial_path(device: str) -> str | None:
+    """If the board whose *running-firmware* path is ``device`` is currently sitting in its Katapult
+    bootloader, return the bootloader's ``/dev/serial/by-id`` path, else ``None``.
+
+    A USB STM32 enumerates under a different name in each mode — ``usb-Klipper_<chip-id>-if00``
+    when running Klipper, ``usb-katapult_<chip-id>-if00`` when in the Katapult bootloader. Once a
+    board is in the bootloader the Klipper path disappears, so a flash must target the katapult
+    path, not the stored running-firmware path. Matched by the trailing chip id (prefix-robust).
+    """
+    if "/serial/by-id/" not in device:
+        return None
+    base = os.path.basename(device)
+    swapped = re.sub(r"(?i)(usb-)Klipper(_)", r"\1katapult\2", base)
+    if swapped != base:
+        candidate = "/dev/serial/by-id/" + swapped
+        if os.path.exists(candidate):
+            return candidate
+    # Fallback: any present *katapult* endpoint carrying the same trailing chip id.
+    hit = re.search(r"_([0-9A-Za-z]{8,})-if\d", base)
+    if hit:
+        for path in glob.glob("/dev/serial/by-id/*katapult*"):
+            if hit.group(1) in path:
+                return path
+    return None
+
+
 async def _magic_baud(device: str) -> None:
     """1200-baud 'touch' — a native-USB STM32 resets into DFU on a 1200 open/close.
 
@@ -532,8 +558,27 @@ async def run_flash(
     # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
     if method in ("serial", "can") and is_katapult:
         yield _phase("boot")
-        async for line in _reboot_to_bootloader(method, target, interface or "can0", settings):
-            yield line
+        # A USB serial board renames itself once it's in the bootloader (usb-Klipper_<id> →
+        # usb-katapult_<id>), so the stored running-firmware path is gone. If it's already in the
+        # bootloader (e.g. a previous flash didn't finish), flash it directly; otherwise reboot it
+        # and then retarget to the bootloader path that appears. Without this, the flash keeps
+        # pointing at the vanished Klipper path and can never complete — leaving Klipper unable to
+        # connect to the MCU.
+        already = bootloader_serial_path(target) if method == "serial" else None
+        if already:
+            yield (
+                f">>> Board is already in the Katapult bootloader ({os.path.basename(already)}) — "
+                "flashing it directly.\n"
+            )
+            target = already
+        else:
+            async for line in _reboot_to_bootloader(method, target, interface or "can0", settings):
+                yield line
+            if method == "serial":
+                booted = bootloader_serial_path(target)
+                if booted:
+                    yield f">>> Board entered the bootloader as {os.path.basename(booted)}.\n"
+                    target = booted
     elif method in ("serial", "can"):
         yield ">>> Device is not marked Katapult — skipping reboot-to-bootloader.\n"
 
