@@ -1,10 +1,11 @@
 {
   "hostControl": {
-    "intro": "Manage the printer's Linux host — check its health and OS state and control its background services. Disk cleanup and system settings arrive in later phases.",
+    "intro": "Manage the printer's Linux host — check its health, control its background services, free disk space, and change system settings (time, locale, hostname, Wi-Fi, power).",
     "view": {
       "monitor": "Monitor",
       "services": "Services",
-      "cleanup": "Cleanup"
+      "cleanup": "Cleanup",
+      "system": "System"
     },
     "help": {
       "title": "What is this?",
@@ -27,6 +28,10 @@
         "cleanup": {
           "title": "Freeing disk space",
           "body": "Each row is scanned first to show how much it would free. Tick the ones to clear and confirm. Only regenerable data is offered — the apt download cache, old systemd journal, ~/.cache, your old /tmp files, and rotated (non-live) logs. Your G-code, timelapses and configs are never touched."
+        },
+        "system": {
+          "title": "System settings",
+          "body": "Change the host's timezone and clock, language and keyboard, hostname or Wi-Fi, or reboot/shut it down. Each change applies immediately. Reboot and shutdown are refused while a print is running. Changing Wi-Fi may briefly drop your connection to this panel."
         }
       },
       "glossary": {
@@ -183,6 +188,35 @@
           "desc": "Old, rotated Klipper/Moonraker logs (the live log is kept)."
         }
       }
+    },
+    "system": {
+      "loading": "Reading system settings…",
+      "done": "Done.",
+      "apply": "Apply",
+      "timeTitle": "Time & Date",
+      "timezone": "Timezone",
+      "ntp": "Set time automatically (NTP)",
+      "manualTime": "Set the clock manually",
+      "manualTimeHint": "Turn off automatic time to set the clock by hand.",
+      "localeTitle": "Language & Keyboard",
+      "language": "Language",
+      "keymap": "Console keymap",
+      "hostnameTitle": "Hostname",
+      "hostnameHint": "Letters, digits and hyphens only. Takes full effect after a reboot.",
+      "wifiTitle": "Wi-Fi",
+      "wifiUnavailable": "Wi-Fi editing isn't available on this host (NetworkManager not installed).",
+      "wifiWarning": "Changing Wi-Fi may briefly drop the connection to this panel.",
+      "ssid": "Network name (SSID)",
+      "password": "Password",
+      "connect": "Connect",
+      "powerTitle": "Power",
+      "powerWarning": "Reboot and shutdown are refused while a print is running.",
+      "reboot": "Reboot",
+      "shutdown": "Shut down",
+      "confirmReboot": "Reboot the host now?",
+      "confirmShutdown": "Shut down the host now?",
+      "confirmYes": "Yes",
+      "cancel": "Cancel"
     }
   }
 }

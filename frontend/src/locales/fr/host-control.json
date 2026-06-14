@@ -1,10 +1,11 @@
 {
   "hostControl": {
-    "intro": "Gérez l'hôte Linux de l'imprimante — vérifiez son état et celui du système d'exploitation et contrôlez ses services en arrière-plan. Le nettoyage du disque et les réglages système arriveront dans des phases ultérieures.",
+    "intro": "Gérez l'hôte Linux de l'imprimante — vérifiez son état, contrôlez ses services en arrière-plan, libérez de l'espace disque et modifiez les réglages système (heure, langue, nom d'hôte, Wi-Fi, alimentation).",
     "view": {
       "monitor": "Moniteur",
       "services": "Services",
-      "cleanup": "Nettoyage"
+      "cleanup": "Nettoyage",
+      "system": "Système"
     },
     "help": {
       "title": "Qu'est-ce que c'est ?",
@@ -27,6 +28,10 @@
         "cleanup": {
           "title": "Libérer de l'espace disque",
           "body": "Chaque ligne est d'abord analysée pour montrer ce qu'elle libérerait. Cochez celles à vider et confirmez. Seules les données régénérables sont proposées — le cache de téléchargement apt, l'ancien journal systemd, ~/.cache, vos anciens fichiers /tmp et les journaux pivotés (non actifs). Vos G-code, timelapses et configurations ne sont jamais touchés."
+        },
+        "system": {
+          "title": "Paramètres système",
+          "body": "Modifiez le fuseau horaire et l'horloge, la langue et le clavier, le nom d'hôte ou le Wi-Fi de l'hôte, ou redémarrez-le / éteignez-le. Chaque modification s'applique immédiatement. Le redémarrage et l'arrêt sont refusés pendant une impression. Modifier le Wi-Fi peut couper brièvement votre connexion à ce panneau."
         }
       },
       "glossary": {
@@ -183,6 +188,35 @@
           "desc": "Anciens journaux Klipper/Moonraker pivotés (le journal actif est conservé)."
         }
       }
+    },
+    "system": {
+      "loading": "Lecture des paramètres système…",
+      "done": "Terminé.",
+      "apply": "Appliquer",
+      "timeTitle": "Heure et date",
+      "timezone": "Fuseau horaire",
+      "ntp": "Régler l'heure automatiquement (NTP)",
+      "manualTime": "Régler l'horloge manuellement",
+      "manualTimeHint": "Désactivez l'heure automatique pour régler l'horloge à la main.",
+      "localeTitle": "Langue et clavier",
+      "language": "Langue",
+      "keymap": "Disposition clavier console",
+      "hostnameTitle": "Nom d'hôte",
+      "hostnameHint": "Lettres, chiffres et traits d'union uniquement. Pleinement effectif après un redémarrage.",
+      "wifiTitle": "Wi-Fi",
+      "wifiUnavailable": "La modification du Wi-Fi n'est pas disponible sur cet hôte (NetworkManager non installé).",
+      "wifiWarning": "Modifier le Wi-Fi peut couper brièvement la connexion à ce panneau.",
+      "ssid": "Nom du réseau (SSID)",
+      "password": "Mot de passe",
+      "connect": "Se connecter",
+      "powerTitle": "Alimentation",
+      "powerWarning": "Le redémarrage et l'arrêt sont refusés pendant une impression.",
+      "reboot": "Redémarrer",
+      "shutdown": "Éteindre",
+      "confirmReboot": "Redémarrer l'hôte maintenant ?",
+      "confirmShutdown": "Éteindre l'hôte maintenant ?",
+      "confirmYes": "Oui",
+      "cancel": "Annuler"
     }
   }
 }

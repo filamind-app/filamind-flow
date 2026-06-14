@@ -47,12 +47,20 @@ defineProps<{ illo: HelpIlloKey }>()
     </g>
 
     <!-- Cleanup: a waste bin with a lid -->
-    <g v-else>
+    <g v-else-if="illo === 'cleanup'">
       <line x1="4" y1="6" x2="20" y2="6" />
       <path d="M9 6 V4 h6 V6" />
       <path d="M6 6 l1 14 a1 1 0 0 0 1 1 h8 a1 1 0 0 0 1 -1 l1 -14" />
       <line x1="10" y1="10" x2="10.5" y2="17" stroke-opacity="0.5" />
       <line x1="14" y1="10" x2="13.5" y2="17" stroke-opacity="0.5" />
+    </g>
+
+    <!-- System: a gear (settings) -->
+    <g v-else>
+      <circle cx="12" cy="12" r="3" />
+      <path
+        d="M12 2 v3 M12 19 v3 M2 12 h3 M19 12 h3 M4.9 4.9 l2.1 2.1 M17 17 l2.1 2.1 M19.1 4.9 l-2.1 2.1 M7 17 l-2.1 2.1"
+      />
     </g>
   </svg>
 </template>

@@ -21,6 +21,11 @@ import stat
 import time
 from typing import Any
 
+import httpx
+
+from app.services import printer_guard
+from app.services.moonraker_client import MoonrakerClient
+
 
 async def _run(cmd: list[str], timeout: float = 5.0) -> str:
     """Run a read-only command, returning stdout (empty string on any error/timeout)."""
@@ -737,3 +742,135 @@ async def cleanup_run(ids: list[str], data_dir: str) -> dict[str, Any]:
         if tid in CLEANUP_TARGETS:
             results.append(await _clean_target(tid, data_dir))
     return {"results": results, "freed_bytes": sum(r["freed_bytes"] for r in results)}
+
+
+# ── System settings (Phase 4) ──────────────────────────────────────────────────
+# Time / locale / hostname / Wi-Fi / power. Each setter validates its input (and, where there's a
+# canonical list, checks membership) before shelling out through the host's passwordless-sudo rule.
+# Power actions refuse while a print is in progress. Wi-Fi needs NetworkManager (nmcli); when it's
+# absent the feature reports unavailable rather than guessing at the network stack.
+
+_HOSTNAME_RE = re.compile(r"^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$")
+_TIME_RE = re.compile(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$")
+_TZ_RE = re.compile(r"^[A-Za-z0-9_+\-/]+$")
+_LOCALE_RE = re.compile(r"^[A-Za-z0-9_.@\-]+$")
+_KEYMAP_RE = re.compile(r"^[A-Za-z0-9_.\-]+$")
+POWER_ACTIONS = ("reboot", "shutdown")
+
+
+def _result(rc: int, out: str) -> dict[str, Any]:
+    return {"ok": rc == 0, "refused": False, "output": out.strip()}
+
+
+def _refused(message: str) -> dict[str, Any]:
+    return {"ok": False, "refused": True, "output": message}
+
+
+def _has_cmd(name: str) -> bool:
+    return shutil.which(name) is not None
+
+
+async def _list_lines(cmd: list[str]) -> list[str]:
+    rc, out = await _run_rc(cmd)
+    if rc != 0:
+        return []
+    return [ln.strip() for ln in out.splitlines() if ln.strip()]
+
+
+async def system_info() -> dict[str, Any]:
+    """Current time/locale/hostname/Wi-Fi settings + the option lists the System form offers."""
+    timezones, locales, keymaps = await asyncio.gather(
+        _list_lines(["timedatectl", "list-timezones"]),
+        _list_lines(["localectl", "list-locales"]),
+        _list_lines(["localectl", "list-keymaps"]),
+    )
+    time_b, locale_b = await asyncio.gather(_time_block(), _locale_block())
+    return {
+        "timezone": time_b["timezone"],
+        "ntp_enabled": time_b["ntp_enabled"],
+        "ntp_synced": time_b["ntp_synced"],
+        "timezones": timezones,
+        "lang": locale_b["lang"],
+        "keymap": locale_b["keymap"],
+        "locales": locales,
+        "keymaps": keymaps,
+        "hostname": socket.gethostname(),
+        "wifi_available": _has_cmd("nmcli"),
+    }
+
+
+async def set_timezone(tz: str) -> dict[str, Any]:
+    if not _TZ_RE.match(tz):
+        raise ValueError("invalid timezone")
+    valid = await _list_lines(["timedatectl", "list-timezones"])
+    if valid and tz not in valid:
+        raise ValueError("unknown timezone")
+    return _result(*await _run_rc(["sudo", "-n", "timedatectl", "set-timezone", tz]))
+
+
+async def set_ntp(enabled: bool) -> dict[str, Any]:
+    flag = "true" if enabled else "false"
+    return _result(*await _run_rc(["sudo", "-n", "timedatectl", "set-ntp", flag]))
+
+
+async def set_time(value: str) -> dict[str, Any]:
+    if not _TIME_RE.match(value):
+        raise ValueError("time must be 'YYYY-MM-DD HH:MM:SS'")
+    rc, out = await _run_rc(["sudo", "-n", "timedatectl", "set-time", value])
+    # timedatectl refuses to set the clock while NTP is on — surface that as a friendly refusal.
+    if rc != 0 and "NTP" in out:
+        return _refused("Turn off automatic time (NTP) before setting the clock manually.")
+    return _result(rc, out)
+
+
+async def set_locale(lang: str) -> dict[str, Any]:
+    if not _LOCALE_RE.match(lang):
+        raise ValueError("invalid locale")
+    valid = await _list_lines(["localectl", "list-locales"])
+    if valid and lang not in valid:
+        raise ValueError("unknown locale")
+    return _result(*await _run_rc(["sudo", "-n", "localectl", "set-locale", f"LANG={lang}"]))
+
+
+async def set_keymap(keymap: str) -> dict[str, Any]:
+    if not _KEYMAP_RE.match(keymap):
+        raise ValueError("invalid keymap")
+    valid = await _list_lines(["localectl", "list-keymaps"])
+    if valid and keymap not in valid:
+        raise ValueError("unknown keymap")
+    return _result(*await _run_rc(["sudo", "-n", "localectl", "set-keymap", keymap]))
+
+
+async def set_hostname(name: str) -> dict[str, Any]:
+    if not _HOSTNAME_RE.match(name):
+        raise ValueError("invalid hostname")
+    return _result(*await _run_rc(["sudo", "-n", "hostnamectl", "set-hostname", name]))
+
+
+async def wifi_connect(ssid: str, password: str) -> dict[str, Any]:
+    """Join a Wi-Fi network via NetworkManager. The password is never logged."""
+    if not _has_cmd("nmcli"):
+        return _refused("Wi-Fi editing needs NetworkManager (nmcli), which isn't installed here.")
+    if not ssid or len(ssid) > 64 or any(ord(c) < 32 for c in ssid):
+        raise ValueError("invalid SSID")
+    if password and not (8 <= len(password) <= 63):
+        raise ValueError("Wi-Fi password must be 8-63 characters")
+    cmd = ["sudo", "-n", "nmcli", "dev", "wifi", "connect", ssid]
+    if password:
+        cmd += ["password", password]
+    rc, out = await _run_rc(cmd, timeout=30.0)
+    return _result(rc, out)
+
+
+async def power(action: str, moonraker_url: str) -> dict[str, Any]:
+    """Reboot or shut down the host — refused while a print is in progress."""
+    if action not in POWER_ACTIONS:
+        raise ValueError("invalid power action")
+    try:
+        busy = await printer_guard.is_busy(MoonrakerClient(moonraker_url))
+    except httpx.HTTPError:
+        busy = False  # no reachable Moonraker → Klipper isn't printing
+    if busy:
+        return _refused("Refused: a print is in progress.")
+    unit_action = "reboot" if action == "reboot" else "poweroff"
+    return _result(*await _run_rc(["sudo", "-n", "systemctl", unit_action]))

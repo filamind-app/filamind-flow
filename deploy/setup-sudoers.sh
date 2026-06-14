@@ -4,8 +4,10 @@
 #   - Firmware flashing: stop/start the Klipper services, run dfu-util, install a
 #     Linux-process MCU binary.
 #   - Host Control widget: manage systemd units (systemctl), read unit logs
-#     (journalctl), and remove user-installed unit files (rm — path-guarded in
-#     the backend to /etc/systemd/system only).
+#     (journalctl), remove user-installed unit files (rm — path-guarded in the
+#     backend to /etc/systemd/system only), and change system settings:
+#     timedatectl (time/timezone/NTP), localectl (language/keymap), hostnamectl
+#     (hostname) and nmcli (Wi-Fi).
 # Nothing else uses sudo.
 #
 # Run once, as root:
@@ -31,12 +33,16 @@ CHMOD_BIN="$(command -v chmod || echo /bin/chmod)"
 FUSER_BIN="$(command -v fuser || echo /usr/bin/fuser)"
 JOURNALCTL="$(command -v journalctl || echo /usr/bin/journalctl)"
 RM_BIN="$(command -v rm || echo /bin/rm)"
+TIMEDATECTL="$(command -v timedatectl || echo /usr/bin/timedatectl)"
+LOCALECTL="$(command -v localectl || echo /usr/bin/localectl)"
+HOSTNAMECTL="$(command -v hostnamectl || echo /usr/bin/hostnamectl)"
+NMCLI="$(command -v nmcli || echo /usr/bin/nmcli)"
 
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 cat > "$TMP" <<EOF
 # Managed by FilaMind Flow (deploy/setup-sudoers.sh) — firmware flashing + Host Control.
-$USER_NAME ALL=(root) NOPASSWD: $SYSTEMCTL, $DFU_UTIL, $CP_BIN, $CHMOD_BIN, $FUSER_BIN, $JOURNALCTL, $RM_BIN
+$USER_NAME ALL=(root) NOPASSWD: $SYSTEMCTL, $DFU_UTIL, $CP_BIN, $CHMOD_BIN, $FUSER_BIN, $JOURNALCTL, $RM_BIN, $TIMEDATECTL, $LOCALECTL, $HOSTNAMECTL, $NMCLI
 EOF
 
 # Validate syntax BEFORE installing so a mistake can never lock you out of sudo.
