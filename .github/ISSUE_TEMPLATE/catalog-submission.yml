@@ -1,0 +1,51 @@
+name: Catalog submission
+description: Suggest a new hardware part for the FilaMind Flow catalog
+title: "[Catalog]: "
+labels: ["catalog-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping grow the hardware catalog! The easiest way is
+        **Hardware Browser → ➕ Suggest a part** in the app — it builds the JSON below for you and
+        pre-fills this issue. You can also fill it in by hand.
+
+        A maintainer will review the data and merge it into the catalog
+        (`scripts/apply_submission.py`), after which it appears in the next release.
+  - type: dropdown
+    id: part-type
+    attributes:
+      label: Part type
+      options:
+        - Stepper motor
+        - Stepper driver
+        - Hotend
+        - Host / SBC
+        - Manufacturer
+        - Board
+        - Other catalog item
+    validations:
+      required: true
+  - type: input
+    id: manufacturer
+    attributes:
+      label: Manufacturer
+      placeholder: e.g. LDO Motors
+  - type: input
+    id: name
+    attributes:
+      label: Name / model
+      placeholder: e.g. 42STH48-2804
+    validations:
+      required: true
+  - type: textarea
+    id: json
+    attributes:
+      label: Part data (JSON)
+      description: Paste the JSON fragment from the app's "Suggest a part" form, if you have it.
+      render: json
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes & sources
+      description: Datasheet links or anything that helps verify the values.
