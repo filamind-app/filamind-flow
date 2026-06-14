@@ -6,7 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.264.0] - 2026-06-14
+## [0.265.0] - 2026-06-14
+
+### Fixed
+
+- **Flashing the Linux host MCU no longer fails with "No Serial Device found".** The Linux-process
+  host MCU is installed as a binary (the `linux` method: copy the ELF to `klipper_mcu`), but if its
+  registry entry stored a serial/CAN method, "build & flash" ran Katapult's `flashtool.py -d
+  linux_process` and failed (`FlashError: No Serial Device found at linux_process`). The flash now
+  forces the `linux` method for the `linux_process` device regardless of the stored method (and the
+  read-only flash plan reflects it), so updating the host MCU works.
 
 ### Fixed
 
