@@ -13,7 +13,13 @@ import asyncio
 from typing import Any
 
 from app.config import Settings
-from app.services import board_topology, firmware_service, shaper_archive, topology_snapshot
+from app.services import (
+    board_topology,
+    firmware_service,
+    max_flow_store,
+    shaper_archive,
+    topology_snapshot,
+)
 from app.services.moonraker_client import MoonrakerClient
 
 
@@ -83,6 +89,22 @@ def _tuning_block(data_dir: str) -> dict[str, Any]:
     return {"available": True, "axes": sorted(latest.values(), key=lambda a: str(a["axis"]))}
 
 
+def _maxflow_block(data_dir: str) -> dict[str, Any]:
+    """The last Max-Flow run's headline numbers, from the small store the widget writes after a
+    test (summaries only; never reruns anything). Degrades to ``available: False`` when no run
+    has been recorded yet."""
+    last = max_flow_store.read_last(data_dir)
+    if not isinstance(last, dict) or not isinstance(last.get("max_flow_mm3s"), (int, float)):
+        return {"available": False}
+    return {
+        "available": True,
+        "max_flow_mm3s": last.get("max_flow_mm3s"),
+        "expected_max_flow_mm3s": last.get("expected_max_flow_mm3s"),
+        "hotend": last.get("hotend"),
+        "at": last.get("at"),
+    }
+
+
 async def _setup_block(client: MoonrakerClient, data_dir: str) -> dict[str, Any]:
     """Onboarding facts the home's Get-Started checklist needs: how many MCUs have an
     identified board, and whether any motors are assigned. (Baseline / firmware / tuning
@@ -132,6 +154,7 @@ async def gather_overview(settings: Settings) -> dict[str, Any]:
         "printer": printer,
         "firmware": firmware,
         "tuning": _tuning_block(settings.data_dir),
+        "max_flow": _maxflow_block(settings.data_dir),
         "hardware": hardware,
         "setup": setup,
     }

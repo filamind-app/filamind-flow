@@ -66,6 +66,13 @@
         "temp": "Temp. CPU",
         "uptime": "Tiempo activo",
         "disk": "Disco"
+      },
+      "printerHost": "Impresora y host",
+      "maxFlow": {
+        "title": "Flujo máx.",
+        "expected": "Esperado: {n} mm³/s",
+        "empty": "Aún sin prueba de flujo máximo.",
+        "test": "Probar flujo máximo"
       }
     },
     "connection": {
