@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.269.0] - 2026-06-14
+
+### Added
+
+- **Host Control · System settings (Phase 4) — completes the widget.** A new System tab lets you
+  change the host's **timezone** and **clock** (with an automatic-time / NTP toggle; manual time
+  is allowed only when NTP is off), **language** and **console keymap**, **hostname**, and **Wi-Fi**
+  (via NetworkManager, when present), and **reboot** or **shut down** the host. Each setter is
+  validated server-side (timezone / locale / keymap checked against the canonical list, hostname
+  against RFC-1123, time against a strict format) before shelling out through passwordless sudo.
+  Power actions are **refused while a print is in progress** (via the shared printer-busy guard),
+  and the Wi-Fi password is never logged. Where NetworkManager isn't installed, Wi-Fi editing
+  reports unavailable rather than guessing at the network stack. Endpoints under `/api/host/system`
+  (`GET` info + `POST` timezone / ntp / time / locale / keymap / hostname / wifi / power). The
+  `deploy/setup-sudoers.sh` grant now also covers `timedatectl`, `localectl`, `hostnamectl` and
+  `nmcli`. Fully translated across all seven languages.
+
+  With this, the **Host Control widget is complete**: Monitor (health), Services (control + logs +
+  delete), Cleanup (reclaim disk space) and System (time / locale / hostname / Wi-Fi / power).
+
 ## [0.268.0] - 2026-06-14
 
 ### Added

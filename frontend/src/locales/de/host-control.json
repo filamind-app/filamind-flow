@@ -1,10 +1,11 @@
 {
   "hostControl": {
-    "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand und den des Betriebssystems und steuere seine Hintergrunddienste. Datenträger-Bereinigung und Systemeinstellungen folgen in späteren Phasen.",
+    "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand, steuere seine Hintergrunddienste, gib Speicherplatz frei und ändere Systemeinstellungen (Zeit, Sprache, Hostname, WLAN, Energie).",
     "view": {
       "monitor": "Monitor",
       "services": "Dienste",
-      "cleanup": "Bereinigung"
+      "cleanup": "Bereinigung",
+      "system": "System"
     },
     "help": {
       "title": "Was ist das?",
@@ -27,6 +28,10 @@
         "cleanup": {
           "title": "Speicherplatz freigeben",
           "body": "Jede Zeile wird zuerst gescannt, um zu zeigen, wie viel sie freigeben würde. Hake die zu leerenden an und bestätige. Nur regenerierbare Daten werden angeboten — der apt-Download-Cache, das alte systemd-Journal, ~/.cache, deine alten /tmp-Dateien und rotierte (nicht aktive) Protokolle. Deine G-Codes, Zeitraffer und Konfigurationen werden nie angetastet."
+        },
+        "system": {
+          "title": "Systemeinstellungen",
+          "body": "Ändere Zeitzone und Uhr, Sprache und Tastatur, Hostname oder WLAN des Hosts, oder starte ihn neu / fahre ihn herunter. Jede Änderung wird sofort wirksam. Neustart und Herunterfahren werden während eines Drucks abgelehnt. Eine WLAN-Änderung kann die Verbindung zu diesem Panel kurz unterbrechen."
         }
       },
       "glossary": {
@@ -183,6 +188,35 @@
           "desc": "Alte, rotierte Klipper/Moonraker-Protokolle (das aktive bleibt erhalten)."
         }
       }
+    },
+    "system": {
+      "loading": "Systemeinstellungen werden gelesen…",
+      "done": "Fertig.",
+      "apply": "Übernehmen",
+      "timeTitle": "Zeit & Datum",
+      "timezone": "Zeitzone",
+      "ntp": "Zeit automatisch einstellen (NTP)",
+      "manualTime": "Uhr manuell stellen",
+      "manualTimeHint": "Schalte die automatische Zeit aus, um die Uhr von Hand zu stellen.",
+      "localeTitle": "Sprache & Tastatur",
+      "language": "Sprache",
+      "keymap": "Konsolen-Tastaturbelegung",
+      "hostnameTitle": "Hostname",
+      "hostnameHint": "Nur Buchstaben, Ziffern und Bindestriche. Voll wirksam nach einem Neustart.",
+      "wifiTitle": "WLAN",
+      "wifiUnavailable": "WLAN-Bearbeitung ist auf diesem Host nicht verfügbar (NetworkManager nicht installiert).",
+      "wifiWarning": "Eine WLAN-Änderung kann die Verbindung zu diesem Panel kurz unterbrechen.",
+      "ssid": "Netzwerkname (SSID)",
+      "password": "Passwort",
+      "connect": "Verbinden",
+      "powerTitle": "Energie",
+      "powerWarning": "Neustart und Herunterfahren werden während eines Drucks abgelehnt.",
+      "reboot": "Neu starten",
+      "shutdown": "Herunterfahren",
+      "confirmReboot": "Den Host jetzt neu starten?",
+      "confirmShutdown": "Den Host jetzt herunterfahren?",
+      "confirmYes": "Ja",
+      "cancel": "Abbrechen"
     }
   }
 }

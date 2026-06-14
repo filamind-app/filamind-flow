@@ -136,3 +136,26 @@ export interface CleanupRunResult {
   results: CleanupResult[]
   freed_bytes: number
 }
+
+// ── System settings (Phase 4) ──────────────────────────────────────────────────
+
+export interface SystemInfo {
+  timezone: string
+  ntp_enabled: boolean
+  ntp_synced: boolean
+  timezones: string[]
+  lang: string
+  keymap: string
+  locales: string[]
+  keymaps: string[]
+  hostname: string
+  wifi_available: boolean
+}
+
+export interface SystemActionResult {
+  ok: boolean
+  refused: boolean
+  output: string
+}
+
+export type PowerAction = 'reboot' | 'shutdown'
