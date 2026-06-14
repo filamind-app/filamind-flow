@@ -280,7 +280,10 @@
         "portFunction": "Función",
         "signal": "Señal",
         "pin": "Pin"
-      }
+      },
+      "tooLong": "Este envío es demasiado grande para rellenarlo automáticamente. Copia el JSON y abre una incidencia manualmente.",
+      "copyJson": "Copiar JSON",
+      "copied": "Copiado"
     }
   }
 }

@@ -3,10 +3,10 @@
  *  pre-filled GitHub issue for review (no token, never auto-posts). Field structure comes from
  *  contributeSchema; labels come from i18n (hardwareBrowser.suggest.*). Mirrors the report dialog:
  *  Teleport + backdrop + Escape, a form phase and a sent phase. */
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { openSubmission } from '@/core/contribute'
+import { openSubmission, submissionTooLong } from '@/core/contribute'
 
 import {
   buildFragment,
@@ -78,6 +78,9 @@ watch(type, resetForm)
 function onKey(e: KeyboardEvent): void {
   if (e.key === 'Escape') emit('close')
 }
+// Guaranteed cleanup: the dialog lives inside an unmountable widget, so the open-watcher's
+// remove-on-close won't run if the user navigates away while it's open.
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 function labelFor(f: FieldDef): string {
   const key = `hardwareBrowser.suggest.f.${f.key}`
@@ -104,6 +107,12 @@ const canSubmit = computed(() =>
     .every((f) => String(values[f.key] ?? '').trim() !== ''),
 )
 
+const labelText = computed(() =>
+  type.value === 'board'
+    ? `${values.manufacturer ?? ''} ${values.model ?? ''}`.trim()
+    : `${values.manufacturer ?? ''} ${values.name ?? ''}`.trim(),
+)
+
 const fragment = computed(() =>
   buildFragment(type.value, {
     values: { ...values },
@@ -113,6 +122,21 @@ const fragment = computed(() =>
   }),
 )
 const fragmentJson = computed(() => JSON.stringify(fragment.value, null, 2))
+
+// A very large submission (e.g. a board with many ports) would overflow the GitHub prefill URL.
+// Block submit and offer the JSON for a manual issue instead of opening a doomed tab.
+const urlTooLong = computed(() =>
+  submissionTooLong({ type: type.value, label: labelText.value, fragment: fragment.value }),
+)
+const copied = ref(false)
+async function copyJson(): Promise<void> {
+  try {
+    await navigator.clipboard?.writeText(fragmentJson.value)
+    copied.value = true
+  } catch {
+    // best-effort — the JSON is shown in the preview for manual copy when the clipboard is blocked
+  }
+}
 
 function addSpec(): void {
   specs.value.push({ key: '', value: '' })
@@ -125,13 +149,10 @@ function addPin(p: PortEntry): void {
 }
 
 function submit(): void {
-  if (!canSubmit.value) return
-  const label =
-    type.value === 'board'
-      ? `${values.manufacturer ?? ''} ${values.model ?? ''}`.trim()
-      : `${values.manufacturer ?? ''} ${values.name ?? ''}`.trim()
-  openSubmission({ type: type.value, label, fragment: fragment.value })
-  phase.value = 'sent'
+  if (!canSubmit.value || urlTooLong.value) return
+  if (openSubmission({ type: type.value, label: labelText.value, fragment: fragment.value })) {
+    phase.value = 'sent'
+  }
 }
 </script>
 
@@ -353,6 +374,20 @@ function submit(): void {
             >
           </details>
 
+          <p
+            v-if="urlTooLong"
+            class="nb-card flex flex-wrap items-center gap-2 bg-brand-yellow/20 p-2 text-[11px]"
+          >
+            <span class="min-w-0 flex-1">
+              <span aria-hidden="true">⚠</span> {{ t('hardwareBrowser.suggest.tooLong') }}
+            </span>
+            <button class="nb-btn shrink-0 bg-surface px-2 py-0.5 text-[10px]" @click="copyJson">
+              {{
+                copied ? t('hardwareBrowser.suggest.copied') : t('hardwareBrowser.suggest.copyJson')
+              }}
+            </button>
+          </p>
+
           <p class="text-[11px] opacity-60">{{ t('hardwareBrowser.suggest.languageNote') }}</p>
         </div>
 
@@ -371,7 +406,7 @@ function submit(): void {
             </button>
             <button
               class="nb-btn bg-brand-lime px-3 py-1.5 text-sm"
-              :disabled="!canSubmit"
+              :disabled="!canSubmit || urlTooLong"
               @click="submit"
             >
               <span aria-hidden="true">↗</span> {{ t('hardwareBrowser.suggest.submit') }}

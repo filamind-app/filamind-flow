@@ -280,7 +280,10 @@
         "portFunction": "Fonction",
         "signal": "Signal",
         "pin": "Broche"
-      }
+      },
+      "tooLong": "Cette soumission est trop volumineuse pour être pré-remplie automatiquement. Copiez le JSON et ouvrez un ticket manuellement.",
+      "copyJson": "Copier le JSON",
+      "copied": "Copié"
     }
   }
 }

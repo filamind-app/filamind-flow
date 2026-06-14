@@ -44,7 +44,18 @@ export function buildSubmissionUrl(sub: CatalogSubmission): string {
   return `https://github.com/${REPO}/issues/new?${params.toString()}`
 }
 
-/** Open the pre-filled submission issue in a new tab. Call from a user gesture. */
-export function openSubmission(sub: CatalogSubmission): void {
+/** GitHub rejects an over-long issue-prefill URL with 414; keep a safe margin under ~8 KB so we
+ *  never open a tab that lands on an error page while the dialog reports success. */
+export const MAX_ISSUE_URL = 7000
+
+export function submissionTooLong(sub: CatalogSubmission): boolean {
+  return buildSubmissionUrl(sub).length > MAX_ISSUE_URL
+}
+
+/** Open the pre-filled submission issue in a new tab. Call from a user gesture. Returns false
+ *  (without opening) when the URL would be too long for GitHub to accept. */
+export function openSubmission(sub: CatalogSubmission): boolean {
+  if (submissionTooLong(sub)) return false
   window.open(buildSubmissionUrl(sub), '_blank', 'noopener,noreferrer')
+  return true
 }
