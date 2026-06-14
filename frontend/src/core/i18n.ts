@@ -5,6 +5,7 @@ import enCommon from '../locales/en/common.json'
 import enConfigEditor from '../locales/en/config-editor.json'
 import enConfigTemplates from '../locales/en/config-templates.json'
 import enHardwareBrowser from '../locales/en/hardware-browser.json'
+import enHostControl from '../locales/en/host-control.json'
 import enFirmware from '../locales/en/firmware.json'
 import enInputShaping from '../locales/en/input-shaping.json'
 import enKlipperScreen from '../locales/en/klipperscreen-studio.json'
@@ -84,6 +85,7 @@ const en = {
   ...enMacroDesigner,
   ...enHardwareBrowser,
   ...enConfigTemplates,
+  ...enHostControl,
 }
 
 // en is excluded — it's bundled eagerly above, so the dynamic glob must not also claim it

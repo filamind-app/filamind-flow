@@ -1,0 +1,84 @@
+{
+  "hostControl": {
+    "intro": "Manage the printer's Linux host — check its health and OS state. Services, disk cleanup and system settings arrive in later phases.",
+    "help": {
+      "title": "What is this?",
+      "body": "FilaMind runs on the printer's small Linux computer (the host). This panel reads that machine's live health and OS state so you can spot problems — an overheating CPU, a full disk, an unsynced clock — without opening a terminal.",
+      "step1": "Read the cards for CPU temperature, memory, disk and network at a glance.",
+      "step2": "Watch the top-processes table to see what is using the CPU right now.",
+      "step3": "Leave auto-refresh on for a live view, or turn it off and refresh manually.",
+      "topics": {
+        "glossary": {
+          "title": "Terms used here"
+        },
+        "monitor": {
+          "title": "Reading the monitor",
+          "body": "Everything here is read-only. Bars turn amber past 75% and red past 90%. CPU temperature turns amber at 70 °C and red at 80 °C. The throttle warning only appears on boards that report it (mainly Raspberry Pi)."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Host",
+          "def": "The small Linux computer (e.g. a Raspberry Pi or BTT CB1) that runs Klipper, Moonraker and FilaMind — separate from the printer's microcontrollers."
+        },
+        "load": {
+          "term": "Load average",
+          "def": "How many processes were waiting to run, averaged over 1 / 5 / 15 minutes. Roughly: a value near the core count means the CPU is busy; well above it means it is overloaded."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Disk space used as overflow when RAM fills up. Heavy swap use slows the host down — a sign it is short on memory."
+        },
+        "throttle": {
+          "term": "Throttling",
+          "def": "When the board reduces speed to protect itself — usually from an under-powered supply (under-voltage) or overheating. Reported mainly on Raspberry Pi."
+        },
+        "ntp": {
+          "term": "NTP / clock sync",
+          "def": "Network Time Protocol keeps the host clock accurate. An unsynced clock can break timelapses, logs and TLS certificates."
+        },
+        "locale": {
+          "term": "Locale",
+          "def": "The host's language and keyboard layout settings, used by the OS for text, dates and the console keymap."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Refresh",
+      "autoRefresh": "Auto-refresh",
+      "loading": "Reading host state…",
+      "host": "Host",
+      "hostname": "Hostname",
+      "distro": "OS",
+      "kernel": "Kernel",
+      "uptime": "Uptime",
+      "cpu": "CPU",
+      "temp": "Temperature",
+      "load": "Load (1·5·15m)",
+      "cores": "Cores",
+      "throttled": "Throttled",
+      "memory": "Memory",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Disk",
+      "network": "Network",
+      "iface": "Interface",
+      "ip": "IP address",
+      "ssid": "Wi-Fi",
+      "signal": "Signal",
+      "timeLocale": "Time & Locale",
+      "timezone": "Timezone",
+      "ntp": "Clock sync",
+      "synced": "Synced",
+      "syncing": "Syncing…",
+      "ntpOff": "Off",
+      "language": "Language",
+      "keymap": "Keymap",
+      "topProcesses": "Top processes",
+      "command": "Command",
+      "cpuPct": "CPU%",
+      "memPct": "MEM%",
+      "pid": "PID"
+    }
+  }
+}
