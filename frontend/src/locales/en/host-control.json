@@ -3,7 +3,8 @@
     "intro": "Manage the printer's Linux host — check its health and OS state and control its background services. Disk cleanup and system settings arrive in later phases.",
     "view": {
       "monitor": "Monitor",
-      "services": "Services"
+      "services": "Services",
+      "cleanup": "Cleanup"
     },
     "help": {
       "title": "What is this?",
@@ -22,6 +23,10 @@
         "services": {
           "title": "Managing services",
           "body": "Each row is a systemd service. Click one to start/stop/restart it, enable/disable it at boot, mask it, read its log, or — for services you installed yourself — delete its unit file. Stopping or disabling a service takes a typed or one-tap confirmation. Critical and protected services are marked; protected ones (like SSH and this panel) can't be stopped, to avoid locking you out."
+        },
+        "cleanup": {
+          "title": "Freeing disk space",
+          "body": "Each row is scanned first to show how much it would free. Tick the ones to clear and confirm. Only regenerable data is offered — the apt download cache, old systemd journal, ~/.cache, your old /tmp files, and rotated (non-live) logs. Your G-code, timelapses and configs are never touched."
         }
       },
       "glossary": {
@@ -142,6 +147,42 @@
       "deleted": "Unit file removed.",
       "logs": "Recent log",
       "noLogs": "No log output."
+    },
+    "cleanup": {
+      "subtitle": "Tick what to remove, then clean. Caches and old logs only — prints and configs stay safe.",
+      "rescan": "Re-scan",
+      "scanning": "Scanning disk…",
+      "na": "n/a",
+      "items": "{n} files",
+      "freed": "Freed {size}.",
+      "selectedTotal": "Selected: {size}",
+      "clean": "Clean selected",
+      "confirmBody": "Delete the selected items?",
+      "confirmYes": "Yes, clean",
+      "cancel": "Cancel",
+      "running": "Cleaning…",
+      "targets": {
+        "apt": {
+          "label": "Package cache",
+          "desc": "Downloaded .deb installer files apt no longer needs."
+        },
+        "journal": {
+          "label": "System journal",
+          "desc": "Old systemd logs — vacuumed down to the most recent 50 MB."
+        },
+        "cache": {
+          "label": "User cache",
+          "desc": "Regenerable files in ~/.cache (thumbnails, pip, etc.)."
+        },
+        "tmp": {
+          "label": "Temp files",
+          "desc": "Your own files in /tmp older than a day."
+        },
+        "logs": {
+          "label": "Rotated logs",
+          "desc": "Old, rotated Klipper/Moonraker logs (the live log is kept)."
+        }
+      }
     }
   }
 }

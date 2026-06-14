@@ -3,7 +3,8 @@
     "intro": "Gérez l'hôte Linux de l'imprimante — vérifiez son état et celui du système d'exploitation et contrôlez ses services en arrière-plan. Le nettoyage du disque et les réglages système arriveront dans des phases ultérieures.",
     "view": {
       "monitor": "Moniteur",
-      "services": "Services"
+      "services": "Services",
+      "cleanup": "Nettoyage"
     },
     "help": {
       "title": "Qu'est-ce que c'est ?",
@@ -22,6 +23,10 @@
         "services": {
           "title": "Gérer les services",
           "body": "Chaque ligne est un service systemd. Cliquez sur l'un d'eux pour le démarrer/arrêter/redémarrer, l'activer/le désactiver au démarrage, le masquer, lire son journal ou — pour les services que vous avez installés — supprimer son fichier d'unité. Arrêter ou désactiver un service demande une confirmation. Les services critiques et protégés sont marqués ; les protégés (comme SSH et ce panneau) ne peuvent pas être arrêtés, pour ne pas vous verrouiller dehors."
+        },
+        "cleanup": {
+          "title": "Libérer de l'espace disque",
+          "body": "Chaque ligne est d'abord analysée pour montrer ce qu'elle libérerait. Cochez celles à vider et confirmez. Seules les données régénérables sont proposées — le cache de téléchargement apt, l'ancien journal systemd, ~/.cache, vos anciens fichiers /tmp et les journaux pivotés (non actifs). Vos G-code, timelapses et configurations ne sont jamais touchés."
         }
       },
       "glossary": {
@@ -142,6 +147,42 @@
       "deleted": "Fichier d'unité supprimé.",
       "logs": "Journal récent",
       "noLogs": "Aucune sortie de journal."
+    },
+    "cleanup": {
+      "subtitle": "Cochez ce qu'il faut supprimer, puis nettoyez. Caches et anciens journaux uniquement — vos impressions et configurations restent intactes.",
+      "rescan": "Réanalyser",
+      "scanning": "Analyse du disque…",
+      "na": "n/d",
+      "items": "{n} fichiers",
+      "freed": "{size} libérés.",
+      "selectedTotal": "Sélectionné : {size}",
+      "clean": "Nettoyer la sélection",
+      "confirmBody": "Supprimer les éléments sélectionnés ?",
+      "confirmYes": "Oui, nettoyer",
+      "cancel": "Annuler",
+      "running": "Nettoyage…",
+      "targets": {
+        "apt": {
+          "label": "Cache de paquets",
+          "desc": "Fichiers d'installation .deb téléchargés dont apt n'a plus besoin."
+        },
+        "journal": {
+          "label": "Journal système",
+          "desc": "Anciens journaux systemd — réduits aux 50 derniers Mo."
+        },
+        "cache": {
+          "label": "Cache utilisateur",
+          "desc": "Fichiers régénérables dans ~/.cache (miniatures, pip, etc.)."
+        },
+        "tmp": {
+          "label": "Fichiers temporaires",
+          "desc": "Vos propres fichiers dans /tmp de plus d'un jour."
+        },
+        "logs": {
+          "label": "Journaux pivotés",
+          "desc": "Anciens journaux Klipper/Moonraker pivotés (le journal actif est conservé)."
+        }
+      }
     }
   }
 }

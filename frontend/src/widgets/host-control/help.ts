@@ -4,15 +4,16 @@
  *  behind a collapsed "ℹ what's this?" toggle — matching the other widgets' help pattern.
  */
 
-export type HelpIlloKey = 'host' | 'monitor' | 'services'
+export type HelpIlloKey = 'host' | 'monitor' | 'services' | 'cleanup'
 
-export type HelpTopic = 'glossary' | 'monitor' | 'services'
+export type HelpTopic = 'glossary' | 'monitor' | 'services' | 'cleanup'
 
 /** The illustration each topic shows (illustration keys are identifiers, not translated). */
 export const HELP_ILLO: Partial<Record<HelpTopic, HelpIlloKey>> = {
   glossary: 'host',
   monitor: 'monitor',
   services: 'services',
+  cleanup: 'cleanup',
 }
 
 /** Glossary term keys, in display order. Text: `hostControl.help.glossary.<key>.{term,def}`. */

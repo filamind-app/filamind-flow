@@ -84,3 +84,24 @@ async def host_service_delete(req: ServiceDelete) -> dict[str, Any]:
     if result.get("refused"):
         raise HTTPException(status_code=403, detail=result["output"])
     return result
+
+
+# ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+
+
+class CleanupRun(BaseModel):
+    ids: list[str]
+
+
+@router.get("/cleanup")
+async def host_cleanup_scan(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Dry-run: how much each cleanup target would free (no deletion)."""
+    return {"targets": await host_control_service.cleanup_scan(settings.data_dir)}
+
+
+@router.post("/cleanup/run")
+async def host_cleanup_run(
+    req: CleanupRun, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Clean the requested targets and report the space reclaimed."""
+    return await host_control_service.cleanup_run(req.ids, settings.data_dir)

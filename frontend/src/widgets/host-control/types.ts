@@ -115,3 +115,24 @@ export interface ServiceActionResult {
 }
 
 export type ServiceAction = 'start' | 'stop' | 'restart' | 'enable' | 'disable' | 'mask' | 'unmask'
+
+// ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+
+export interface CleanupTarget {
+  id: string
+  bytes: number
+  count: number
+  available: boolean
+}
+
+export interface CleanupResult {
+  id: string
+  freed_bytes: number
+  removed: number
+  ok: boolean
+}
+
+export interface CleanupRunResult {
+  results: CleanupResult[]
+  freed_bytes: number
+}
