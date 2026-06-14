@@ -1,10 +1,11 @@
 {
   "hostControl": {
-    "intro": "管理打印机的 Linux 主机——查看其健康状况和操作系统状态，并控制其后台服务。磁盘清理和系统设置将在后续阶段加入。",
+    "intro": "管理打印机的 Linux 主机——查看其健康状况、控制后台服务、释放磁盘空间，并更改系统设置（时间、语言、主机名、Wi-Fi、电源）。",
     "view": {
       "monitor": "监视",
       "services": "服务",
-      "cleanup": "清理"
+      "cleanup": "清理",
+      "system": "系统"
     },
     "help": {
       "title": "这是什么？",
@@ -27,6 +28,10 @@
         "cleanup": {
           "title": "释放磁盘空间",
           "body": "每一行会先扫描，显示可释放多少空间。勾选要清除的项并确认。仅提供可重新生成的数据——apt 下载缓存、旧的 systemd 日志、~/.cache、你在 /tmp 中的旧文件，以及已轮转（非活动）的日志。你的 G-code、延时摄影和配置永远不会被触及。"
+        },
+        "system": {
+          "title": "系统设置",
+          "body": "更改主机的时区和时钟、语言和键盘、主机名或 Wi-Fi，或重启/关闭它。每项更改会立即生效。打印进行时会拒绝重启和关机。更改 Wi-Fi 可能会短暂中断你与本面板的连接。"
         }
       },
       "glossary": {
@@ -183,6 +188,35 @@
           "desc": "旧的、已轮转的 Klipper/Moonraker 日志（保留活动日志）。"
         }
       }
+    },
+    "system": {
+      "loading": "正在读取系统设置…",
+      "done": "完成。",
+      "apply": "应用",
+      "timeTitle": "时间与日期",
+      "timezone": "时区",
+      "ntp": "自动设置时间（NTP）",
+      "manualTime": "手动设置时钟",
+      "manualTimeHint": "关闭自动时间以手动设置时钟。",
+      "localeTitle": "语言与键盘",
+      "language": "语言",
+      "keymap": "控制台键盘布局",
+      "hostnameTitle": "主机名",
+      "hostnameHint": "仅限字母、数字和连字符。重启后完全生效。",
+      "wifiTitle": "Wi-Fi",
+      "wifiUnavailable": "此主机不支持编辑 Wi-Fi（未安装 NetworkManager）。",
+      "wifiWarning": "更改 Wi-Fi 可能会短暂中断与本面板的连接。",
+      "ssid": "网络名称（SSID）",
+      "password": "密码",
+      "connect": "连接",
+      "powerTitle": "电源",
+      "powerWarning": "打印进行时会拒绝重启和关机。",
+      "reboot": "重启",
+      "shutdown": "关机",
+      "confirmReboot": "现在重启主机？",
+      "confirmShutdown": "现在关闭主机？",
+      "confirmYes": "是",
+      "cancel": "取消"
     }
   }
 }

@@ -4,10 +4,13 @@ import type {
   CleanupRunResult,
   CleanupTarget,
   HostMonitor,
+  PowerAction,
   ServiceAction,
   ServiceActionResult,
   ServiceDetail,
   ServiceUnit,
+  SystemActionResult,
+  SystemInfo,
 } from './types'
 
 function base(): string {
@@ -103,3 +106,34 @@ export async function runCleanup(ids: string[]): Promise<CleanupRunResult> {
   if (!r.ok) throw new HostActionError(data.detail || `Cleanup failed (${r.status})`, r.status)
   return data as CleanupRunResult
 }
+
+// ── System settings (Phase 4) ──────────────────────────────────────────────────
+
+/** Current time/locale/hostname/Wi-Fi settings + the option lists for the System form. */
+export async function fetchSystemInfo(): Promise<SystemInfo> {
+  const r = await fetch(`${base()}/api/host/system`)
+  if (!r.ok) throw new Error(`Could not read system settings (${r.status})`)
+  return (await r.json()) as SystemInfo
+}
+
+async function postSystem(path: string, body: unknown): Promise<SystemActionResult> {
+  const r = await fetch(`${base()}/api/host/system/${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const data = (await r.json().catch(() => ({}))) as {
+    detail?: string
+  } & Partial<SystemActionResult>
+  if (!r.ok) throw new HostActionError(data.detail || `Failed (${r.status})`, r.status)
+  return data as SystemActionResult
+}
+
+export const setTimezone = (timezone: string) => postSystem('timezone', { timezone })
+export const setNtp = (enabled: boolean) => postSystem('ntp', { enabled })
+export const setTime = (value: string) => postSystem('time', { value })
+export const setLocaleLang = (lang: string) => postSystem('locale', { lang })
+export const setKeymap = (keymap: string) => postSystem('keymap', { keymap })
+export const setHostname = (hostname: string) => postSystem('hostname', { hostname })
+export const setWifi = (ssid: string, password: string) => postSystem('wifi', { ssid, password })
+export const power = (action: PowerAction) => postSystem('power', { action })

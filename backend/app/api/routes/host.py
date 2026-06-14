@@ -105,3 +105,96 @@ async def host_cleanup_run(
 ) -> dict[str, Any]:
     """Clean the requested targets and report the space reclaimed."""
     return await host_control_service.cleanup_run(req.ids, settings.data_dir)
+
+
+# ── System settings (Phase 4) ──────────────────────────────────────────────────
+
+
+class TimezoneReq(BaseModel):
+    timezone: str
+
+
+class NtpReq(BaseModel):
+    enabled: bool
+
+
+class TimeReq(BaseModel):
+    value: str
+
+
+class LocaleReq(BaseModel):
+    lang: str
+
+
+class KeymapReq(BaseModel):
+    keymap: str
+
+
+class HostnameReq(BaseModel):
+    hostname: str
+
+
+class WifiReq(BaseModel):
+    ssid: str
+    password: str = ""
+
+
+class PowerReq(BaseModel):
+    action: str
+
+
+async def _apply(coro: Any) -> dict[str, Any]:
+    """Run a setter coroutine, mapping ValueError → 400 and a refusal → 403."""
+    try:
+        result = await coro
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if result.get("refused"):
+        raise HTTPException(status_code=403, detail=result["output"])
+    return result
+
+
+@router.get("/system")
+async def host_system_info() -> dict[str, Any]:
+    """Current time/locale/hostname/Wi-Fi settings + the option lists for the System form."""
+    return await host_control_service.system_info()
+
+
+@router.post("/system/timezone")
+async def host_set_timezone(req: TimezoneReq) -> dict[str, Any]:
+    return await _apply(host_control_service.set_timezone(req.timezone))
+
+
+@router.post("/system/ntp")
+async def host_set_ntp(req: NtpReq) -> dict[str, Any]:
+    return await _apply(host_control_service.set_ntp(req.enabled))
+
+
+@router.post("/system/time")
+async def host_set_time(req: TimeReq) -> dict[str, Any]:
+    return await _apply(host_control_service.set_time(req.value))
+
+
+@router.post("/system/locale")
+async def host_set_locale(req: LocaleReq) -> dict[str, Any]:
+    return await _apply(host_control_service.set_locale(req.lang))
+
+
+@router.post("/system/keymap")
+async def host_set_keymap(req: KeymapReq) -> dict[str, Any]:
+    return await _apply(host_control_service.set_keymap(req.keymap))
+
+
+@router.post("/system/hostname")
+async def host_set_hostname(req: HostnameReq) -> dict[str, Any]:
+    return await _apply(host_control_service.set_hostname(req.hostname))
+
+
+@router.post("/system/wifi")
+async def host_set_wifi(req: WifiReq) -> dict[str, Any]:
+    return await _apply(host_control_service.wifi_connect(req.ssid, req.password))
+
+
+@router.post("/system/power")
+async def host_power(req: PowerReq, settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    return await _apply(host_control_service.power(req.action, settings.moonraker_url))

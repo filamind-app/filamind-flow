@@ -1,10 +1,11 @@
 {
   "hostControl": {
-    "intro": "Administra el host Linux de la impresora — revisa su estado y el del sistema operativo y controla sus servicios en segundo plano. La limpieza de disco y los ajustes del sistema llegarán en fases posteriores.",
+    "intro": "Administra el host Linux de la impresora — revisa su estado, controla sus servicios en segundo plano, libera espacio en disco y cambia los ajustes del sistema (hora, idioma, nombre de host, Wi-Fi, energía).",
     "view": {
       "monitor": "Monitor",
       "services": "Servicios",
-      "cleanup": "Limpieza"
+      "cleanup": "Limpieza",
+      "system": "Sistema"
     },
     "help": {
       "title": "¿Qué es esto?",
@@ -27,6 +28,10 @@
         "cleanup": {
           "title": "Liberar espacio en disco",
           "body": "Cada fila se escanea primero para mostrar cuánto liberaría. Marca las que quieras vaciar y confirma. Solo se ofrecen datos regenerables — la caché de descargas de apt, el registro antiguo de systemd, ~/.cache, tus archivos antiguos de /tmp y los registros rotados (no activos). Tu G-code, timelapses y configuraciones no se tocan nunca."
+        },
+        "system": {
+          "title": "Ajustes del sistema",
+          "body": "Cambia la zona horaria y el reloj, el idioma y el teclado, el nombre de host o el Wi-Fi del host, o reinícialo/apágalo. Cada cambio se aplica de inmediato. El reinicio y el apagado se rechazan mientras hay una impresión en curso. Cambiar el Wi-Fi puede cortar brevemente tu conexión con este panel."
         }
       },
       "glossary": {
@@ -183,6 +188,35 @@
           "desc": "Registros antiguos rotados de Klipper/Moonraker (se conserva el activo)."
         }
       }
+    },
+    "system": {
+      "loading": "Leyendo los ajustes del sistema…",
+      "done": "Hecho.",
+      "apply": "Aplicar",
+      "timeTitle": "Hora y fecha",
+      "timezone": "Zona horaria",
+      "ntp": "Ajustar la hora automáticamente (NTP)",
+      "manualTime": "Ajustar el reloj manualmente",
+      "manualTimeHint": "Desactiva la hora automática para ajustar el reloj a mano.",
+      "localeTitle": "Idioma y teclado",
+      "language": "Idioma",
+      "keymap": "Distribución de teclado de consola",
+      "hostnameTitle": "Nombre de host",
+      "hostnameHint": "Solo letras, dígitos y guiones. Surte pleno efecto tras reiniciar.",
+      "wifiTitle": "Wi-Fi",
+      "wifiUnavailable": "La edición de Wi-Fi no está disponible en este host (NetworkManager no instalado).",
+      "wifiWarning": "Cambiar el Wi-Fi puede cortar brevemente la conexión con este panel.",
+      "ssid": "Nombre de red (SSID)",
+      "password": "Contraseña",
+      "connect": "Conectar",
+      "powerTitle": "Energía",
+      "powerWarning": "El reinicio y el apagado se rechazan mientras hay una impresión en curso.",
+      "reboot": "Reiniciar",
+      "shutdown": "Apagar",
+      "confirmReboot": "¿Reiniciar el host ahora?",
+      "confirmShutdown": "¿Apagar el host ahora?",
+      "confirmYes": "Sí",
+      "cancel": "Cancelar"
     }
   }
 }

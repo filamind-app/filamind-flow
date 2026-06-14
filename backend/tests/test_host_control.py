@@ -263,3 +263,94 @@ async def test_scan_journal_parses_disk_usage(monkeypatch: pytest.MonkeyPatch) -
     monkeypatch.setattr(hc, "_run_rc", fake)
     b, available = await hc._scan_journal_bytes()
     assert available is True and b == int(120.0 * 1024**2)
+
+
+# ── System settings (Phase 4) ──────────────────────────────────────────────────
+
+
+async def test_set_hostname_validates() -> None:
+    with pytest.raises(ValueError):
+        await hc.set_hostname("bad host name")  # spaces
+    with pytest.raises(ValueError):
+        await hc.set_hostname("-leadinghyphen")
+    with pytest.raises(ValueError):
+        await hc.set_hostname("has/slash")
+
+
+async def test_set_timezone_rejects_garbage() -> None:
+    with pytest.raises(ValueError):
+        await hc.set_timezone("../etc/passwd")
+
+
+async def test_set_time_rejects_bad_format() -> None:
+    with pytest.raises(ValueError):
+        await hc.set_time("not-a-time")
+
+
+async def test_power_rejects_bad_action() -> None:
+    with pytest.raises(ValueError):
+        await hc.power("explode", "http://x")
+
+
+async def test_set_hostname_runs_sudo(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[list[str]] = []
+
+    async def fake(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+        calls.append(cmd)
+        return 0, ""
+
+    monkeypatch.setattr(hc, "_run_rc", fake)
+    res = await hc.set_hostname("printer1")
+    assert res["ok"] is True
+    assert calls[0] == ["sudo", "-n", "hostnamectl", "set-hostname", "printer1"]
+
+
+async def test_set_timezone_checks_membership(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+        if "list-timezones" in cmd:
+            return 0, "Europe/Berlin\nUTC\n"
+        return 0, ""
+
+    monkeypatch.setattr(hc, "_run_rc", fake)
+    res = await hc.set_timezone("UTC")
+    assert res["ok"] is True
+    with pytest.raises(ValueError):
+        await hc.set_timezone("Mars/Phobos")  # passes regex, not in the list
+
+
+async def test_power_refuses_while_printing(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def busy(client: object, **_kw: object) -> bool:
+        return True
+
+    monkeypatch.setattr(hc.printer_guard, "is_busy", busy)
+    res = await hc.power("reboot", "http://x")
+    assert res["ok"] is False and res["refused"] is True
+
+
+async def test_power_runs_when_idle(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def idle(client: object, **_kw: object) -> bool:
+        return False
+
+    calls: list[list[str]] = []
+
+    async def fake(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+        calls.append(cmd)
+        return 0, ""
+
+    monkeypatch.setattr(hc.printer_guard, "is_busy", idle)
+    monkeypatch.setattr(hc, "_run_rc", fake)
+    res = await hc.power("reboot", "http://x")
+    assert res["ok"] is True
+    assert ["sudo", "-n", "systemctl", "reboot"] in calls
+
+
+async def test_wifi_unavailable_without_nmcli(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(hc, "_has_cmd", lambda name: False)
+    res = await hc.wifi_connect("MyNet", "password1")
+    assert res["refused"] is True
+
+
+async def test_wifi_rejects_short_password(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(hc, "_has_cmd", lambda name: True)
+    with pytest.raises(ValueError):
+        await hc.wifi_connect("MyNet", "short")  # < 8 chars
