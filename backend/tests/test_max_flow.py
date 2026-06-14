@@ -116,6 +116,21 @@ def test_slip_on_first_step_yields_no_max() -> None:
     assert "no clean step" in result.reason
 
 
+def test_opening_transient_excused_by_warmup_for_noisy_5160() -> None:
+    """Regression (Voron TMC5160): the unsettled opening step's load-CV transient — which spikes as
+    the ramp starts on a noisy SG2 driver — must not register as slip. With warmup=2 the opening
+    forms the baseline and the genuine grind later is what trips. (The service passes warmup=2 for
+    the StallGuard path; the 5160 also carries a higher CV/IQR ceiling override.)"""
+    opening = StepMeasurement(5.0, [400.0 + d for d in (-90.0, -45.0, 0.0, 45.0, 90.0)])
+    steps = [opening, _clean(7.5), _clean(10.0), _clean(12.5), _clean(15.0), _erratic(17.5)]
+    # warmup=1 false-trips on the opening transient — the failure this fix addresses.
+    assert max_flow.analyze(steps, "tmc5160", warmup=1).max_flow_mm3s is None
+    # warmup=2 excuses the opening; the real grind at 17.5 is the slip.
+    fixed = max_flow.analyze(steps, "tmc5160", warmup=2)
+    assert fixed.slip_flow == 17.5
+    assert fixed.max_flow_mm3s == 15.0
+
+
 def test_empty_input() -> None:
     result = max_flow.analyze([], "tmc5160")
     assert result.max_flow_mm3s is None
