@@ -2,12 +2,16 @@
   "klipperscreenStudio": {
     "intro": "Modifiez en toute sécurité la configuration de l'écran tactile KlipperScreen de votre imprimante, puis redémarrez KlipperScreen pour l'appliquer. Chaque enregistrement est sauvegardé au préalable.",
     "help": {
-      "title": "Comment ça marche",
-      "body": "KlipperScreen.conf contrôle l'écran tactile relié à votre imprimante — thème, langue, menus et options d'affichage. Cet éditeur lit et écrit ce fichier via le même chemin sécurisé que l'Éditeur de config.",
-      "step1": "Modifiez le texte de configuration ci-dessous (ou laissez-le tel quel).",
-      "step2": "Enregistrez — le fichier est d'abord sauvegardé, et l'enregistrement est refusé pendant que l'imprimante est occupée.",
-      "step3": "Redémarrez KlipperScreen pour appliquer le changement sur l'écran physique.",
-      "lfNote": "Les lignes utilisent des fins de ligne UNIX (LF), imposées automatiquement à l'enregistrement.",
+      "guide": "Aide",
+      "guideTitle": "À propos de KlipperScreen Studio",
+      "close": "Fermer",
+      "howToRead": "Comment lire",
+      "steps": [
+        "Modifiez le texte de configuration ci-dessous (ou laissez-le tel quel).",
+        "Enregistrez — le fichier est d'abord sauvegardé, et l'enregistrement est refusé pendant que l'imprimante est occupée.",
+        "Redémarrez KlipperScreen pour appliquer le changement sur l'écran physique.",
+        "Les lignes utilisent des fins de ligne UNIX (LF), imposées automatiquement à l'enregistrement."
+      ],
       "topics": {
         "glossary": {
           "title": "Glossaire",

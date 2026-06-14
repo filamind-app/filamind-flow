@@ -21,7 +21,6 @@ import {
   setTime,
   setTimezone,
 } from './api'
-import HelpNote from './HelpNote.vue'
 import type { NetworkSetReq, PowerAction, SystemActionResult, SystemInfo } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -203,8 +202,6 @@ async function applyNetwork(): Promise<void> {
 
 <template>
   <div class="space-y-3">
-    <HelpNote topic="system" />
-
     <p v-if="loading" class="font-mono text-xs opacity-70">
       {{ t('hostControl.system.loading') }}
     </p>
@@ -364,7 +361,6 @@ async function applyNetwork(): Promise<void> {
         <h3 class="text-xs font-bold uppercase tracking-wide opacity-60">
           {{ t('hostControl.system.network.title') }}
         </h3>
-        <HelpNote topic="network" />
         <p v-if="!info.network.configurable" class="text-[11px] opacity-60">
           {{ t('hostControl.system.network.unavailable') }}
         </p>

@@ -66,14 +66,23 @@ Keep components lazy (`defineAsyncComponent`) so each widget is its own chunk.
 Every widget must be approachable to a newcomer — bare data panels aren't enough.
 Build these in from the start (don't bolt them on later):
 
-- **Explanations** — inline, collapsible help for each section (see `HelpNote.vue`).
+- **Explanations** — the shared **`HelpDrawer`** (`components/ui/HelpDrawer.vue`): a single
+  `❓ Help` button that opens one off-canvas guide (how-to-read steps + every topic with its
+  illustration + the glossary). This is the **adopted pattern** — do not hand-roll inline
+  `<details>` / per-section "what's this?" notes. Each widget supplies a `help.ts`
+  (`HELP_TOPICS` / `HELP_ILLO` / `GLOSSARY_KEYS`) + a local `HelpIllo.vue`.
 - **Practical steps** — for any procedural tool, a numbered / guided flow with clear
   pass–fail outcomes (see the Input Shaping 🧭 Guided view).
 - **Illustrations** — hand-drawn inline **SVG** diagrams (see `HelpIllo.vue`); no binary
   image assets — inline SVGs are theme-aware and diff cleanly in git.
 
-The **Input Shaping** widget (`HelpNote` / `HelpIllo` / `help.ts` + Guided) is the
-reference. Apply this to new widgets up front, and retrofit older ones over time.
+The **Board Topology** / **Input Shaping** widgets are the reference for the `HelpDrawer`
+wiring + `help.ts` shape. Apply this to new widgets up front.
+
+> **Enforced in CI:** `src/core/__tests__/widgets.spec.ts` fails the build if any registered
+> widget lacks a translated sidebar entry (`shell.widgets.<id>.{title,description}`) or doesn't
+> render the shared `<HelpDrawer>`. The 7-locale parity test then requires the sidebar entry in
+> every language. These rules can't be skipped — a new widget won't merge without them.
 
 ## Internationalization (strings & locales)
 

@@ -110,6 +110,14 @@
       "machine-doctor": {
         "title": "Maschinen-Doktor",
         "description": "Ein-Klick-Komplettscan des Druckers — A-F-Zeugnis und Spring-zum-Fix-Links."
+      },
+      "host-control": {
+        "title": "Host-Steuerung",
+        "description": "Verwalte das Linux-Betriebssystem des Druckerhosts: Zustand, Dienste, Datenträger-Bereinigung und Systemeinstellungen."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "Bearbeite die KlipperScreen-Touchscreen-Konfiguration deines Druckers und starte sie neu, um sie anzuwenden."
       }
     },
     "guard": {

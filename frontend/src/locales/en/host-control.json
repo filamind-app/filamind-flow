@@ -8,11 +8,15 @@
       "system": "System"
     },
     "help": {
-      "title": "What is this?",
-      "body": "FilaMind runs on the printer's small Linux computer (the host). This panel reads that machine's live health and OS state so you can spot problems — an overheating CPU, a full disk, an unsynced clock — without opening a terminal, and lets you control the background services it runs.",
-      "step1": "Read the cards for CPU temperature, memory, disk and network at a glance.",
-      "step2": "Watch the top-processes table to see what is using the CPU right now.",
-      "step3": "Leave auto-refresh on for a live view, or turn it off and refresh manually.",
+      "guide": "Help",
+      "guideTitle": "About Host Control",
+      "close": "Close",
+      "howToRead": "How to read",
+      "steps": [
+        "Read the cards for CPU temperature, memory, disk and network at a glance.",
+        "Watch the top-processes table to see what is using the CPU right now.",
+        "Leave auto-refresh on for a live view, or turn it off and refresh manually."
+      ],
       "topics": {
         "glossary": {
           "title": "Terms used here"

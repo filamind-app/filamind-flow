@@ -92,6 +92,48 @@
       "install": {
         "check_failed": "Installationsprüfung fehlgeschlagen: {name} — {detail}."
       }
+    },
+    "help": {
+      "guide": "Hilfe",
+      "guideTitle": "Über Machine Doctor",
+      "close": "Schließen",
+      "howToRead": "So liest du es",
+      "steps": [
+        "Drücke „Erneut scannen“ für einen schreibgeschützten Rundum-Check des Druckers.",
+        "Lies die A–F-Note und die Säulen-Balken, um die Schwachstellen zu sehen.",
+        "Öffne den Link eines Befunds, um direkt zum Widget zu springen, das ihn behebt."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Was der Scan prüft",
+          "body": "Ein schreibgeschützter Durchlauf über alles, was die App prüfen kann — Pin-Konflikte, Treiberwerte, Konfig-Abweichung zwischen gespeichert und live, Projekt-Lint, Firmware-Sync, Hardware-Änderungen gegenüber der Baseline und Installations-Gesundheit. Es wird nichts auf dem Drucker ausgeführt."
+        },
+        "grade": {
+          "title": "Die A–F-Note",
+          "body": "Jede Gesundheitssäule (Konfig-Integrität, Firmware-Sync, Dienste, Input Shaping, Max-Flow) wird bewertet; die schwächsten ziehen die Gesamtnote nach unten. Die Score-Zeile zeigt genau, wie die Note zustande kam — nichts ist verborgen."
+        },
+        "fixes": {
+          "title": "Sprung-zur-Lösung-Links",
+          "body": "Jeder Befund hat eine Schaltfläche, die direkt in das Widget verlinkt, das ihn behebt (Config-Editor, Motortreiber, die Maschinen-Karte…) — von Problem zu Lösung mit einem Klick."
+        },
+        "glossary": {
+          "title": "Hier verwendete Begriffe"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Note (A–F)",
+          "def": "Ein einzelner Buchstabe, der die Druckergesundheit zusammenfasst, abgeleitet aus den Säulen-Scores; A ist gesund, F braucht Aufmerksamkeit."
+        },
+        "pillar": {
+          "term": "Säule",
+          "def": "Eine eigenständig bewertete Gesundheitskategorie — z. B. Konfig-Integrität, Firmware-Sync, Dienste, Input Shaping, Max-Flow."
+        },
+        "finding": {
+          "term": "Befund",
+          "def": "Ein konkretes vom Scan erkanntes Problem, mit Schweregrad und einem Link zum Widget, das es behebt."
+        }
+      }
     }
   }
 }

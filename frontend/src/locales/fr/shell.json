@@ -110,6 +110,14 @@
       "machine-doctor": {
         "title": "Docteur machine",
         "description": "Scan complet de l'imprimante en un clic, avec un bulletin noté A-F et des liens vers le correctif."
+      },
+      "host-control": {
+        "title": "Contrôle de l'hôte",
+        "description": "Gérez le système Linux de l'hôte de l'imprimante : état, services, nettoyage du disque et réglages système."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "Modifiez la configuration de l'écran tactile KlipperScreen de votre imprimante et redémarrez-le pour l'appliquer."
       }
     },
     "guard": {
