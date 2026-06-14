@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.277.0] - 2026-06-14
+
+### Added
+
+- **Suggest a part — community catalog contributions.** The Hardware Browser gains a **➕ Suggest a
+  part** button that opens a category-aware form (stepper motor, driver, hotend, host/SBC,
+  manufacturer, board, or a generic catalog item), each with the fields that matter for that type —
+  including a motor's autotune electricals, a driver's capability flags, a hotend's max-flow preset,
+  and a board's ports with their signal→pin maps. The form derives the catalog id, validates the
+  required fields, shows a live JSON preview, and on submit opens a **pre-filled GitHub issue** for
+  review and merge into the database. No token is used and nothing is posted automatically — it only
+  opens the issue form for you to review and submit. Localized in all 7 languages.
+
 ## [0.276.0] - 2026-06-14
 
 ### Added
