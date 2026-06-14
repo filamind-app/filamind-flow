@@ -1,2 +1,0 @@
-import{C as s}from"./index-4HUkqrIs.js";async function a(e){const{backendUrl:t}=s(),n=await fetch(`${t}/api/tasks/${encodeURIComponent(e)}`);if(!n.ok)throw new Error(`Task lookup failed (${n.status})`);return await n.json()}async function c(e){const{backendUrl:t}=s(),n=await fetch(`${t}/api/tasks/${encodeURIComponent(e)}/cancel`,{method:"POST"});if(!n.ok)throw new Error(`Cancel failed (${n.status})`)}function r(e){const t=e.split(`
-`).filter(n=>n.trim());return t.length?t[t.length-1].replace(/^!+\s*/,""):""}export{c,a as f,r as l};

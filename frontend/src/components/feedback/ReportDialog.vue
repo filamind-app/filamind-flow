@@ -3,7 +3,7 @@
  *  request from the shared feedback state, shows the diagnostics that will be attached, and on
  *  submit opens a pre-filled GitHub issue in a new tab — it never posts anything by itself.
  *  Marked data-feedback-noshot so it's excluded from the screenshot. */
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -18,6 +18,9 @@ const { t } = useI18n({ useScope: 'global' })
 
 const description = ref('')
 const diag = ref<Diagnostics | null>(null)
+const descEl = ref<HTMLTextAreaElement | null>(null)
+// The element focused before the dialog opened, so focus can return there on close.
+let lastFocused: HTMLElement | null = null
 
 const isBug = computed(() => feedback.mode === 'bug')
 const canSubmit = computed(
@@ -30,8 +33,14 @@ watch(
   () => feedback.open,
   (open) => {
     if (open) {
+      lastFocused = (document.activeElement as HTMLElement) ?? null
       description.value = ''
       diag.value = collectDiagnostics()
+      void nextTick(() => descEl.value?.focus())
+    } else {
+      // Return focus to whatever opened the dialog (the menu item or error button).
+      lastFocused?.focus?.()
+      lastFocused = null
     }
   },
 )
@@ -117,8 +126,10 @@ const diagRows = computed(() => {
           <label class="block space-y-1">
             <span class="text-xs font-bold">{{ t('shell.feedback.dialog.descLabel') }}</span>
             <textarea
+              ref="descEl"
               v-model="description"
               rows="4"
+              maxlength="4000"
               class="w-full rounded-brutal border-2 border-ink bg-surface p-2 text-sm"
               :placeholder="
                 isBug
