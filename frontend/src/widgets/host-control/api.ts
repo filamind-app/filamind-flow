@@ -4,6 +4,7 @@ import type {
   CleanupRunResult,
   CleanupTarget,
   HostMonitor,
+  NetworkSetReq,
   PowerAction,
   ServiceAction,
   ServiceActionResult,
@@ -137,3 +138,5 @@ export const setKeymap = (keymap: string) => postSystem('keymap', { keymap })
 export const setHostname = (hostname: string) => postSystem('hostname', { hostname })
 export const setWifi = (ssid: string, password: string) => postSystem('wifi', { ssid, password })
 export const power = (action: PowerAction) => postSystem('power', { action })
+/** Switch the panel's active connection to DHCP (auto) or a static IPv4 (manual). */
+export const setNetwork = (req: NetworkSetReq) => postSystem('network', req)

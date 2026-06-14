@@ -32,6 +32,10 @@
         "system": {
           "title": "System settings",
           "body": "Change the host's timezone and clock, language and keyboard, hostname or Wi-Fi, or reboot/shut it down. Each change applies immediately. Reboot and shutdown are refused while a print is running. Changing Wi-Fi may briefly drop your connection to this panel."
+        },
+        "network": {
+          "title": "DHCP vs Static IP",
+          "body": "DHCP (auto) lets your router assign the address automatically. Static (manual) pins a fixed address — set the IP, subnet (CIDR, e.g. /24), gateway (usually your router) and DNS. IPv4 only. Changing the address of the connection that serves this panel will drop your session; reconnect at the new IP. A wrong static address or gateway can make the printer unreachable until you fix it on the device itself, so the settings are validated and need a typed confirmation."
         }
       },
       "glossary": {
@@ -143,6 +147,8 @@
         "unmask": "Unmask"
       },
       "actionOk": "{action} done.",
+      "actionFailed": "{action} failed.",
+      "deleteFailed": "Could not remove the unit file.",
       "confirmAction": "{action} \"{name}\"?",
       "confirmYes": "Yes, do it",
       "cancel": "Cancel",
@@ -166,6 +172,7 @@
       "confirmYes": "Yes, clean",
       "cancel": "Cancel",
       "running": "Cleaning…",
+      "someFailed": "Some items couldn't be cleaned.",
       "targets": {
         "apt": {
           "label": "Package cache",
@@ -216,7 +223,27 @@
       "confirmReboot": "Reboot the host now?",
       "confirmShutdown": "Shut down the host now?",
       "confirmYes": "Yes",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "needsSetup": "This action needs passwordless sudo. On the printer, run: sudo bash deploy/setup-sudoers.sh — then retry.",
+      "failed": "That change didn't apply.",
+      "network": {
+        "title": "Network (IPv4)",
+        "unavailable": "Network editing isn't available on this host (NetworkManager not installed).",
+        "device": "Device",
+        "method": "IP method",
+        "auto": "DHCP (auto)",
+        "manual": "Static (manual)",
+        "address": "IP address",
+        "cidr": "Subnet (CIDR)",
+        "gateway": "Gateway",
+        "dns": "DNS servers",
+        "dnsHint": "Comma-separated, e.g. 1.1.1.1, 8.8.8.8 (optional)",
+        "warning": "Changing the IP can drop this panel — you may need to reconnect at the new address.",
+        "apply": "Apply network settings",
+        "confirmPrompt": "This may make the panel unreachable. Type the device name \"{device}\" to confirm.",
+        "confirmYes": "Apply & switch",
+        "applyingReconnect": "Applying… if the panel stops responding, reconnect at the printer's new IP."
+      }
     }
   }
 }

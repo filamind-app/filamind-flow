@@ -4,7 +4,7 @@
  *  Each section reads the current value and applies a change through a guarded backend setter
  *  (validated server-side). Reboot and shutdown ask for an inline confirm and are refused by the
  *  backend while a print is running; changing Wi-Fi warns that it may drop the connection. */
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
@@ -16,13 +16,14 @@ import {
   setHostname,
   setKeymap,
   setLocaleLang,
+  setNetwork,
   setNtp,
   setTime,
   setTimezone,
   setWifi,
 } from './api'
 import HelpNote from './HelpNote.vue'
-import type { PowerAction, SystemActionResult, SystemInfo } from './types'
+import type { NetworkSetReq, PowerAction, SystemActionResult, SystemInfo } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -40,9 +41,19 @@ const hostname = ref('')
 const ssid = ref('')
 const wifiPw = ref('')
 
+// Network (IPv4) form state
+const netMethod = ref<'auto' | 'manual'>('auto')
+const netAddress = ref('')
+const netCidr = ref('')
+const netGateway = ref('')
+const netDns = ref('')
+const netConfirm = ref(false)
+const netConfirmText = ref('')
+
 const busy = ref<string | null>(null)
 const note = ref<string | null>(null)
 const actErr = ref<string | null>(null)
+const netInfo = ref<string | null>(null) // amber "applying, reconnect" — neither success nor error
 const confirmPower = ref<PowerAction | null>(null)
 
 async function reload(): Promise<void> {
@@ -56,6 +67,12 @@ async function reload(): Promise<void> {
     lang.value = i.lang
     keymap.value = i.keymap
     hostname.value = i.hostname
+    const n = i.network
+    netMethod.value = n.method === 'manual' ? 'manual' : 'auto'
+    netAddress.value = n.address
+    netCidr.value = n.cidr != null ? String(n.cidr) : ''
+    netGateway.value = n.gateway
+    netDns.value = n.dns.join(', ')
   } catch (e) {
     error.value = describeError(e)
   } finally {
@@ -65,14 +82,29 @@ async function reload(): Promise<void> {
 
 onMounted(reload)
 
+/** Map a result onto the green note (ok) or the red error bar (failure / needs-setup). */
+function showResult(r: SystemActionResult): void {
+  if (r.ok) {
+    note.value = r.output || t('hostControl.system.done')
+  } else {
+    actErr.value = r.needs_setup
+      ? t('hostControl.system.needsSetup')
+      : r.output || t('hostControl.system.failed')
+  }
+}
+
+function clearMessages(): void {
+  note.value = null
+  actErr.value = null
+  netInfo.value = null
+}
+
 /** Run a setter, surface its message, and re-read system state. */
 async function apply(id: string, fn: () => Promise<SystemActionResult>): Promise<void> {
   busy.value = id
-  note.value = null
-  actErr.value = null
+  clearMessages()
   try {
-    const r = await fn()
-    note.value = r.output || t('hostControl.system.done')
+    showResult(await fn())
     await reload()
   } catch (e) {
     actErr.value = e instanceof HostActionError ? e.message : describeError(e)
@@ -97,6 +129,84 @@ async function runPower(): Promise<void> {
   confirmPower.value = null
   await apply('power', () => power(action))
 }
+
+// ── Network (IPv4) ─────────────────────────────────────────────────────────────
+const netDevice = computed(() => info.value?.network.device ?? '')
+
+/** Enough filled in to attempt an apply (server re-validates authoritatively). */
+const netReady = computed(() => {
+  if (netMethod.value === 'auto') return true
+  return Boolean(netAddress.value.trim() && netCidr.value.trim() && netGateway.value.trim())
+})
+
+/** The typed-confirm must echo the device name shown in the warning. */
+const netConfirmReady = computed(
+  () => !!netDevice.value && netConfirmText.value.trim() === netDevice.value,
+)
+
+/** Will this change likely move/drop the panel's own address (so the socket may die)? Used to tell
+ *  an expected self-disconnect (show "reconnect" info) from a genuine fault (show a red error). */
+const netChangesReachability = computed(() => {
+  const cur = info.value?.network
+  if (!cur) return true
+  if (netMethod.value === 'auto') return cur.method === 'manual' // static → DHCP moves the IP
+  if (cur.method !== 'manual') return true // DHCP → static
+  // Both static: only an address/prefix change moves us (a DNS-only edit keeps the link up).
+  return netAddress.value.trim() !== cur.address || (Number(netCidr.value) || null) !== cur.cidr
+})
+
+function cancelNetwork(): void {
+  netConfirm.value = false
+  netConfirmText.value = ''
+}
+
+async function applyNetwork(): Promise<void> {
+  if (!netConfirmReady.value) return // belt-and-suspenders: the lockout confirm must have matched
+  const req: NetworkSetReq =
+    netMethod.value === 'manual'
+      ? {
+          method: 'manual',
+          address: netAddress.value.trim(),
+          cidr: Number(netCidr.value) || null,
+          gateway: netGateway.value.trim(),
+          dns: netDns.value.trim(),
+        }
+      : { method: 'auto' }
+  const drops = netChangesReachability.value
+  busy.value = 'network'
+  clearMessages()
+  netConfirm.value = false
+  netConfirmText.value = ''
+  try {
+    const r = await setNetwork(req)
+    if (!r.ok) {
+      actErr.value = r.needs_setup
+        ? t('hostControl.system.needsSetup')
+        : r.output || t('hostControl.system.failed')
+    } else if (drops) {
+      // The response came back but `nmcli connection up` may still drop our IP a moment later —
+      // don't reload() over a link that's about to die (it would hang). Tell the user to reconnect.
+      netInfo.value = t('hostControl.system.network.applyingReconnect')
+    } else {
+      note.value = r.output || t('hostControl.system.done')
+      await reload() // safe: a DNS-only change keeps the connection up
+    }
+  } catch (e) {
+    // A real HTTP error (400/403) is a backend rejection — always show it red. Any other failure
+    // (the fetch never completing) means no response: if this change was going to drop our own
+    // connection, that's the expected self-disconnect → "reconnect" info; otherwise nothing applied
+    // (backend down/unreachable) → a genuine red error.
+    if (e instanceof HostActionError) {
+      actErr.value = e.message
+    } else if (drops) {
+      netInfo.value = t('hostControl.system.network.applyingReconnect')
+    } else {
+      actErr.value = describeError(e)
+    }
+  } finally {
+    busy.value = null
+  }
+}
 </script>
 
 <template>
@@ -114,6 +224,9 @@ async function runPower(): Promise<void> {
       <!-- Shared result/error bar -->
       <p v-if="note" class="nb-card bg-brand-green/10 p-2 font-mono text-[11px] text-brand-green">
         ✓ {{ note }}
+      </p>
+      <p v-if="netInfo" role="status" class="nb-card bg-brand-yellow/15 p-2 font-mono text-[11px]">
+        ⟳ {{ netInfo }}
       </p>
       <p v-if="actErr" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">
         {{ actErr }}
@@ -252,6 +365,155 @@ async function runPower(): Promise<void> {
           </button>
         </div>
         <p class="text-[11px] opacity-60">{{ t('hostControl.system.hostnameHint') }}</p>
+      </section>
+
+      <!-- Network (IPv4) -->
+      <section class="nb-card space-y-2 bg-surface p-3">
+        <h3 class="text-xs font-bold uppercase tracking-wide opacity-60">
+          {{ t('hostControl.system.network.title') }}
+        </h3>
+        <HelpNote topic="network" />
+        <p v-if="!info.network.configurable" class="text-[11px] opacity-60">
+          {{ t('hostControl.system.network.unavailable') }}
+        </p>
+        <template v-else>
+          <!-- Current config summary -->
+          <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-[11px]">
+            <dt class="opacity-60">{{ t('hostControl.system.network.device') }}</dt>
+            <dd class="font-bold">{{ info.network.device }} ({{ info.network.connection }})</dd>
+            <dt class="opacity-60">{{ t('hostControl.system.network.method') }}</dt>
+            <dd>
+              {{
+                info.network.method === 'manual'
+                  ? t('hostControl.system.network.manual')
+                  : t('hostControl.system.network.auto')
+              }}
+            </dd>
+            <dt class="opacity-60">{{ t('hostControl.system.network.address') }}</dt>
+            <dd>
+              {{ info.network.address || '—'
+              }}{{ info.network.cidr != null ? '/' + info.network.cidr : '' }}
+            </dd>
+            <dt class="opacity-60">{{ t('hostControl.system.network.gateway') }}</dt>
+            <dd>{{ info.network.gateway || '—' }}</dd>
+            <dt class="opacity-60">{{ t('hostControl.system.network.dns') }}</dt>
+            <dd>{{ info.network.dns.length ? info.network.dns.join(', ') : '—' }}</dd>
+          </dl>
+
+          <!-- DHCP / Static toggle -->
+          <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
+            <button
+              v-for="m in ['auto', 'manual'] as const"
+              :key="m"
+              type="button"
+              class="nb-seg whitespace-nowrap text-[11px]"
+              :class="
+                netMethod === m ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'
+              "
+              :aria-pressed="netMethod === m"
+              @click="netMethod = m"
+            >
+              {{ t('hostControl.system.network.' + m) }}
+            </button>
+          </div>
+
+          <!-- Static fields -->
+          <div v-if="netMethod === 'manual'" class="space-y-2">
+            <div class="flex flex-wrap items-end gap-2">
+              <label class="min-w-0 flex-1">
+                <span class="mb-0.5 block text-[11px] opacity-60">{{
+                  t('hostControl.system.network.address')
+                }}</span>
+                <input
+                  v-model="netAddress"
+                  type="text"
+                  placeholder="192.168.0.50"
+                  class="w-full rounded-brutal border-2 border-ink bg-paper px-2 py-1 font-mono text-xs"
+                />
+              </label>
+              <label class="w-24">
+                <span class="mb-0.5 block text-[11px] opacity-60">{{
+                  t('hostControl.system.network.cidr')
+                }}</span>
+                <input
+                  v-model="netCidr"
+                  type="number"
+                  min="1"
+                  max="30"
+                  placeholder="24"
+                  class="w-full rounded-brutal border-2 border-ink bg-paper px-2 py-1 font-mono text-xs"
+                />
+              </label>
+            </div>
+            <label class="block">
+              <span class="mb-0.5 block text-[11px] opacity-60">{{
+                t('hostControl.system.network.gateway')
+              }}</span>
+              <input
+                v-model="netGateway"
+                type="text"
+                placeholder="192.168.0.1"
+                class="w-full rounded-brutal border-2 border-ink bg-paper px-2 py-1 font-mono text-xs"
+              />
+            </label>
+            <label class="block">
+              <span class="mb-0.5 block text-[11px] opacity-60">{{
+                t('hostControl.system.network.dns')
+              }}</span>
+              <input
+                v-model="netDns"
+                type="text"
+                placeholder="1.1.1.1, 8.8.8.8"
+                class="w-full rounded-brutal border-2 border-ink bg-paper px-2 py-1 font-mono text-xs"
+              />
+              <span class="mt-0.5 block text-[11px] opacity-50">{{
+                t('hostControl.system.network.dnsHint')
+              }}</span>
+            </label>
+          </div>
+
+          <p class="text-[11px] text-brand-red">⚠ {{ t('hostControl.system.network.warning') }}</p>
+
+          <!-- Apply + typed-confirm -->
+          <button
+            v-if="!netConfirm"
+            type="button"
+            class="nb-btn border-brand-red text-xs text-brand-red"
+            :disabled="busy === 'network' || !netReady"
+            @click="netConfirm = true"
+          >
+            {{ t('hostControl.system.network.apply') }}
+          </button>
+          <div v-else class="nb-card space-y-1.5 bg-brand-red/10 p-2" role="alertdialog">
+            <p class="text-xs">
+              {{ t('hostControl.system.network.confirmPrompt', { device: netDevice }) }}
+            </p>
+            <input
+              v-model="netConfirmText"
+              type="text"
+              :placeholder="netDevice"
+              class="w-full rounded-brutal border-2 border-ink bg-paper px-2 py-1 font-mono text-[11px]"
+            />
+            <div class="flex gap-1">
+              <button
+                type="button"
+                class="nb-btn border-brand-red text-[11px] text-brand-red"
+                :disabled="busy === 'network' || !netConfirmReady"
+                @click="applyNetwork"
+              >
+                {{ t('hostControl.system.network.confirmYes') }}
+              </button>
+              <button
+                type="button"
+                class="nb-btn text-[11px]"
+                :disabled="busy === 'network'"
+                @click="cancelNetwork"
+              >
+                {{ t('hostControl.system.cancel') }}
+              </button>
+            </div>
+          </div>
+        </template>
       </section>
 
       <!-- Wi-Fi -->

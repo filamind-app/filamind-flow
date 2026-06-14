@@ -185,7 +185,13 @@ async function runAction(a: ServiceAction): Promise<void> {
   actionError.value = null
   try {
     const res = await serviceAction(selected.value, a)
-    actionNote.value = res.output || t('hostControl.services.actionOk', { action: a })
+    if (res.ok) {
+      actionNote.value = res.output || t('hostControl.services.actionOk', { action: a })
+    } else {
+      actionError.value = res.needs_setup
+        ? t('hostControl.system.needsSetup')
+        : res.output || t('hostControl.services.actionFailed', { action: a })
+    }
     await Promise.all([load(), loadDetail(selected.value)])
   } catch (e) {
     actionError.value = e instanceof HostActionError ? e.message : describeError(e)
@@ -207,12 +213,18 @@ async function runDelete(): Promise<void> {
   actionError.value = null
   try {
     const res = await deleteService(selected.value, deleteText.value)
-    actionNote.value = res.output || t('hostControl.services.deleted')
-    confirmDelete.value = false
-    deleteText.value = ''
-    selected.value = null
-    resetDetailState()
-    await load()
+    if (res.ok) {
+      actionNote.value = res.output || t('hostControl.services.deleted')
+      confirmDelete.value = false
+      deleteText.value = ''
+      selected.value = null
+      resetDetailState()
+      await load()
+    } else {
+      actionError.value = res.needs_setup
+        ? t('hostControl.system.needsSetup')
+        : res.output || t('hostControl.services.deleteFailed')
+    }
   } catch (e) {
     actionError.value = e instanceof HostActionError ? e.message : describeError(e)
   } finally {
