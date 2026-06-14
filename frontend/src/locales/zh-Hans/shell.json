@@ -207,6 +207,9 @@
         "saved": "截图已保存到下载文件夹——将其拖入工单中。",
         "failed": "无法自动附加截图——你可以在 GitHub 上添加一张。"
       }
+    },
+    "support": {
+      "kofi": "支持 FilaMind Flow"
     }
   }
 }

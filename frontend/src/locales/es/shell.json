@@ -207,6 +207,9 @@
         "saved": "Captura guardada en tus descargas: arrástrala a la incidencia.",
         "failed": "No se pudo adjuntar la captura automáticamente: puedes añadir una en GitHub."
       }
+    },
+    "support": {
+      "kofi": "Apoyar FilaMind Flow"
     }
   }
 }

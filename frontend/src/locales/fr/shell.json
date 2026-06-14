@@ -207,6 +207,9 @@
         "saved": "Capture enregistrée dans vos téléchargements — glissez-la dans le ticket.",
         "failed": "Impossible de joindre automatiquement la capture — vous pouvez en ajouter une sur GitHub."
       }
+    },
+    "support": {
+      "kofi": "Soutenir FilaMind Flow"
     }
   }
 }
