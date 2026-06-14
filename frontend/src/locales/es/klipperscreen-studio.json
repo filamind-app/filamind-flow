@@ -181,7 +181,8 @@
       "delete": "Eliminar tema",
       "generated": "Creado aquí",
       "created": "Tema creado. Aplícalo desde la lista y reinicia.",
-      "appliedRestart": "Tema establecido — reinicia KlipperScreen para verlo."
+      "appliedRestart": "Tema establecido — reinicia KlipperScreen para verlo.",
+      "previewTitle": "Impresora"
     },
     "restart": {
       "button": "Reiniciar KlipperScreen",

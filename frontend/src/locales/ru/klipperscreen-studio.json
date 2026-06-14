@@ -181,7 +181,8 @@
       "delete": "Удалить тему",
       "generated": "Создано здесь",
       "created": "Тема создана. Примените её из списка, затем перезапустите.",
-      "appliedRestart": "Тема выбрана — перезапустите KlipperScreen, чтобы увидеть её."
+      "appliedRestart": "Тема выбрана — перезапустите KlipperScreen, чтобы увидеть её.",
+      "previewTitle": "Принтер"
     },
     "restart": {
       "button": "Перезапустить KlipperScreen",
