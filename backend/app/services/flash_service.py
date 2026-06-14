@@ -309,7 +309,7 @@ async def flash_plan(
         warnings.append("No firmware has been built for this profile yet.")
     if needs_sudo and not sudo:
         warnings.append(
-            "Passwordless sudo not configured — run deploy/setup-sudoers.sh on the host."
+            "Passwordless sudo not configured — run 'scripts/install.sh sudoers' on the host."
         )
     ready = bool(artifact) and not printing and (sudo or not needs_sudo)
     return {
@@ -522,7 +522,7 @@ async def run_flash(
         return
     if method in _NEEDS_SUDO and not await _sudo_ready():
         yield "!! Passwordless sudo is not configured — required to stop Klipper and flash.\n"
-        yield "!! Run once on the host:  sudo bash deploy/setup-sudoers.sh\n"
+        yield "!! Run once on the host:  sudo bash scripts/install.sh sudoers\n"
         return
 
     method = resolve_method(method, device)

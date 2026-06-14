@@ -134,11 +134,6 @@ class HostnameReq(BaseModel):
     hostname: str
 
 
-class WifiReq(BaseModel):
-    ssid: str
-    password: str = ""
-
-
 class PowerReq(BaseModel):
     action: str
 
@@ -164,7 +159,7 @@ async def _apply(coro: Any) -> dict[str, Any]:
 
 @router.get("/system")
 async def host_system_info() -> dict[str, Any]:
-    """Current time/locale/hostname/Wi-Fi settings + the option lists for the System form."""
+    """Current time/locale/hostname/network settings + the option lists for the System form."""
     return await host_control_service.system_info()
 
 
@@ -196,11 +191,6 @@ async def host_set_keymap(req: KeymapReq) -> dict[str, Any]:
 @router.post("/system/hostname")
 async def host_set_hostname(req: HostnameReq) -> dict[str, Any]:
     return await _apply(host_control_service.set_hostname(req.hostname))
-
-
-@router.post("/system/wifi")
-async def host_set_wifi(req: WifiReq) -> dict[str, Any]:
-    return await _apply(host_control_service.wifi_connect(req.ssid, req.password))
 
 
 @router.post("/system/power")

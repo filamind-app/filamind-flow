@@ -1,6 +1,6 @@
 {
   "hostControl": {
-    "intro": "Manage the printer's Linux host — check its health, control its background services, free disk space, and change system settings (time, locale, hostname, Wi-Fi, power).",
+    "intro": "Manage the printer's Linux host — check its health, control its background services, free disk space, and change system settings (time, locale, hostname, network, power).",
     "view": {
       "monitor": "Monitor",
       "services": "Services",
@@ -31,7 +31,7 @@
         },
         "system": {
           "title": "System settings",
-          "body": "Change the host's timezone and clock, language and keyboard, hostname or Wi-Fi, or reboot/shut it down. Each change applies immediately. Reboot and shutdown are refused while a print is running. Changing Wi-Fi may briefly drop your connection to this panel."
+          "body": "Change the host's timezone and clock, language and keyboard, hostname or network (DHCP / static IP), or reboot/shut it down. Each change applies immediately. Reboot and shutdown are refused while a print is running. Changing the IP may briefly drop your connection to this panel."
         },
         "network": {
           "title": "DHCP vs Static IP",
@@ -210,12 +210,6 @@
       "keymap": "Console keymap",
       "hostnameTitle": "Hostname",
       "hostnameHint": "Letters, digits and hyphens only. Takes full effect after a reboot.",
-      "wifiTitle": "Wi-Fi",
-      "wifiUnavailable": "Wi-Fi editing isn't available on this host (NetworkManager not installed).",
-      "wifiWarning": "Changing Wi-Fi may briefly drop the connection to this panel.",
-      "ssid": "Network name (SSID)",
-      "password": "Password",
-      "connect": "Connect",
       "powerTitle": "Power",
       "powerWarning": "Reboot and shutdown are refused while a print is running.",
       "reboot": "Reboot",
@@ -224,7 +218,7 @@
       "confirmShutdown": "Shut down the host now?",
       "confirmYes": "Yes",
       "cancel": "Cancel",
-      "needsSetup": "This action needs passwordless sudo. On the printer, run: sudo bash deploy/setup-sudoers.sh — then retry.",
+      "needsSetup": "This action needs passwordless sudo. On the printer, run: sudo bash scripts/install.sh sudoers — then retry.",
       "failed": "That change didn't apply.",
       "network": {
         "title": "Network (IPv4)",

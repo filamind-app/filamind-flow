@@ -1,6 +1,6 @@
 {
   "hostControl": {
-    "intro": "Administra el host Linux de la impresora — revisa su estado, controla sus servicios en segundo plano, libera espacio en disco y cambia los ajustes del sistema (hora, idioma, nombre de host, Wi-Fi, energía).",
+    "intro": "Administra el host Linux de la impresora — revisa su estado, controla sus servicios en segundo plano, libera espacio en disco y cambia los ajustes del sistema (hora, idioma, nombre de host, red, energía).",
     "view": {
       "monitor": "Monitor",
       "services": "Servicios",
@@ -31,7 +31,7 @@
         },
         "system": {
           "title": "Ajustes del sistema",
-          "body": "Cambia la zona horaria y el reloj, el idioma y el teclado, el nombre de host o el Wi-Fi del host, o reinícialo/apágalo. Cada cambio se aplica de inmediato. El reinicio y el apagado se rechazan mientras hay una impresión en curso. Cambiar el Wi-Fi puede cortar brevemente tu conexión con este panel."
+          "body": "Cambia la zona horaria y el reloj, el idioma y el teclado, el nombre de host o la red (DHCP / IP estática) del host, o reinícialo/apágalo. Cada cambio se aplica de inmediato. El reinicio y el apagado se rechazan mientras hay una impresión en curso. Cambiar la IP puede cortar brevemente tu conexión con este panel."
         },
         "network": {
           "title": "DHCP frente a IP estática",
@@ -210,12 +210,6 @@
       "keymap": "Distribución de teclado de consola",
       "hostnameTitle": "Nombre de host",
       "hostnameHint": "Solo letras, dígitos y guiones. Surte pleno efecto tras reiniciar.",
-      "wifiTitle": "Wi-Fi",
-      "wifiUnavailable": "La edición de Wi-Fi no está disponible en este host (NetworkManager no instalado).",
-      "wifiWarning": "Cambiar el Wi-Fi puede cortar brevemente la conexión con este panel.",
-      "ssid": "Nombre de red (SSID)",
-      "password": "Contraseña",
-      "connect": "Conectar",
       "powerTitle": "Energía",
       "powerWarning": "El reinicio y el apagado se rechazan mientras hay una impresión en curso.",
       "reboot": "Reiniciar",
@@ -224,7 +218,7 @@
       "confirmShutdown": "¿Apagar el host ahora?",
       "confirmYes": "Sí",
       "cancel": "Cancelar",
-      "needsSetup": "Esta acción necesita sudo sin contraseña. En la impresora, ejecuta: sudo bash deploy/setup-sudoers.sh y vuelve a intentarlo.",
+      "needsSetup": "Esta acción necesita sudo sin contraseña. En la impresora, ejecuta: sudo bash scripts/install.sh sudoers y vuelve a intentarlo.",
       "failed": "El cambio no se aplicó.",
       "network": {
         "title": "Red (IPv4)",

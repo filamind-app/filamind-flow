@@ -10,7 +10,17 @@ curl -fsSL https://raw.githubusercontent.com/filamind-app/filamind-flow/main/scr
 ```
 
 That single command performs everything below (service, nginx, sidebar, update
-manager). The steps that follow are for a manual install or to understand what it does.
+manager) **and grants the panel its passwordless-sudo rights** (firmware flashing +
+the Host Control widget). The steps that follow are for a manual install or to
+understand what it does.
+
+`scripts/install.sh` is the one installer; everything else is a subcommand of it:
+
+```bash
+sudo bash scripts/install.sh sudoers          # (re)grant the passwordless-sudo rights only
+sudo bash scripts/install.sh kiosk            # put FilaMind on the touchscreen (see §6)
+     bash scripts/install.sh update           # refresh the backend venv (Moonraker's update hook)
+```
 
 ## 1. Get the code on the host
 
@@ -87,16 +97,16 @@ possible but not recommended: it breaks on every update.)
 
 To put FilaMind Flow **on the printer's physical touchscreen** instead of (or alongside)
 KlipperScreen, install the kiosk once on the host. **Run it from inside the cloned repo** (the
-script path is relative — from your home directory `deploy/install-kiosk.sh` won't be found):
+script path is relative — from your home directory `scripts/install.sh kiosk` won't be found):
 
 ```bash
 cd ~/filamind-flow                           # the directory you cloned the repo into
-sudo bash deploy/install-kiosk.sh            # user + http://localhost:8090 by default
-sudo bash deploy/install-kiosk.sh biqu http://localhost:8090
-sudo bash deploy/install-kiosk.sh --uninstall
+sudo bash scripts/install.sh kiosk            # user + http://localhost:8090 by default
+sudo bash scripts/install.sh kiosk biqu http://localhost:8090
+sudo bash scripts/install.sh kiosk --uninstall
 ```
 
-(Or give the full path from anywhere: `sudo bash ~/filamind-flow/deploy/install-kiosk.sh`.)
+(Or give the full path from anywhere: `sudo bash ~/filamind-flow/scripts/install.sh kiosk`.)
 
 It **auto-detects** how your screen is driven — **X11** (Xorg/`xinit`, how most KlipperScreen
 images run) or **Wayland** (`cage` on KMS) — by reading `KlipperScreen.service`, installs Chromium +
@@ -113,7 +123,7 @@ sudo systemctl start KlipperScreen      # hand it back (also recovers a dark scr
 
 A plain switch is reboot-recoverable; "Make FilaMind the default" in the widget (or
 `sudo systemctl enable filamind-kiosk && sudo systemctl disable KlipperScreen`) persists it.
-The app's toggle uses the same passwordless-sudo rule as the flasher (`deploy/setup-sudoers.sh`).
+The app's toggle uses the same passwordless-sudo rule as the flasher (`scripts/install.sh sudoers`).
 
 If the screen stays dark after switching, inspect why:
 

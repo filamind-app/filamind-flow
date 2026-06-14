@@ -271,7 +271,7 @@ async def monitor(data_dir: str) -> dict[str, Any]:
 # A general systemd unit manager. The backend is the security boundary: it validates the unit
 # name, refuses destructive actions on a protected set (so the user can't lock themselves out or
 # kill this panel), and path-guards unit-file deletion to /etc/systemd/system. Privileged actions
-# go through the host's passwordless-sudo rule (deploy/setup-sudoers.sh).
+# go through the host's passwordless-sudo rule (scripts/install.sh sudoers).
 
 _SVC = ".service"
 _SVC_LEN = len(_SVC)
@@ -799,10 +799,10 @@ async def cleanup_run(ids: list[str], data_dir: str) -> dict[str, Any]:
 
 
 # ── System settings (Phase 4) ──────────────────────────────────────────────────
-# Time / locale / hostname / Wi-Fi / power. Each setter validates its input (and, where there's a
+# Time / locale / hostname / network / power. Each setter validates its input (and, where there's a
 # canonical list, checks membership) before shelling out through the host's passwordless-sudo rule.
-# Power actions refuse while a print is in progress. Wi-Fi needs NetworkManager (nmcli); when it's
-# absent the feature reports unavailable rather than guessing at the network stack.
+# Power actions refuse while a print is in progress. The network (IPv4) controls need NetworkManager
+# (nmcli); when it's absent the feature reports unavailable rather than guessing the network stack.
 
 _HOSTNAME_RE = re.compile(r"^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$")
 _TIME_RE = re.compile(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$")
@@ -812,9 +812,9 @@ _KEYMAP_RE = re.compile(r"^[A-Za-z0-9_.\-]+$")
 POWER_ACTIONS = ("reboot", "shutdown")
 
 
-# A passwordless-sudo command fails like this when the sudoers grant isn't installed yet — the one
-# manual step (deploy/setup-sudoers.sh). We flag it so the UI can show an actionable hint instead
-# of a meaningless "sudo: a password is required".
+# A passwordless-sudo command fails like this when the sudoers grant isn't installed yet
+# (scripts/install.sh sudoers). We flag it so the UI can show an actionable hint instead of a
+# meaningless "sudo: a password is required".
 _SUDO_NOT_GRANTED_RE = re.compile(
     r"a password is required|not allowed to execute|must have a tty|sudo:.*(askpass|required)",
     re.IGNORECASE,
@@ -850,7 +850,7 @@ async def _list_lines(cmd: list[str]) -> list[str]:
 
 
 async def system_info() -> dict[str, Any]:
-    """Current time/locale/hostname/Wi-Fi settings + the option lists the System form offers."""
+    """Current time/locale/hostname/network settings + the option lists the System form offers."""
     timezones, locales, keymaps = await asyncio.gather(
         _list_lines(["timedatectl", "list-timezones"]),
         _list_lines(["localectl", "list-locales"]),
@@ -867,7 +867,6 @@ async def system_info() -> dict[str, Any]:
         "locales": locales,
         "keymaps": keymaps,
         "hostname": socket.gethostname(),
-        "wifi_available": _has_cmd("nmcli"),
         "network": network,
     }
 
@@ -920,21 +919,6 @@ async def set_hostname(name: str) -> dict[str, Any]:
     return _result(*await _run_rc(["sudo", "-n", "hostnamectl", "set-hostname", name]))
 
 
-async def wifi_connect(ssid: str, password: str) -> dict[str, Any]:
-    """Join a Wi-Fi network via NetworkManager. The password is never logged."""
-    if not _has_cmd("nmcli"):
-        return _refused("Wi-Fi editing needs NetworkManager (nmcli), which isn't installed here.")
-    if not ssid or len(ssid) > 64 or any(ord(c) < 32 for c in ssid):
-        raise ValueError("invalid SSID")
-    if password and not (8 <= len(password) <= 63):
-        raise ValueError("Wi-Fi password must be 8-63 characters")
-    cmd = ["sudo", "-n", "nmcli", "dev", "wifi", "connect", ssid]
-    if password:
-        cmd += ["password", password]
-    rc, out = await _run_rc(cmd, timeout=30.0)
-    return _result(rc, out)
-
-
 async def power(action: str, moonraker_url: str) -> dict[str, Any]:
     """Reboot or shut down the host — refused while a print is in progress."""
     if action not in POWER_ACTIONS:
@@ -956,7 +940,7 @@ async def power(action: str, moonraker_url: str) -> dict[str, Any]:
 # client — so a request can't retarget an unrelated profile. Changing the IP of the serving
 # connection will drop this panel; the UI warns and tells the user where to reconnect. Refused while
 # a print is in progress (a network drop can orphan Moonraker mid-print). nmcli is already granted
-# in setup-sudoers.sh, so no new sudoers entry is needed.
+# by 'scripts/install.sh sudoers', so no new sudoers entry is needed.
 
 NETWORK_MODES = ("auto", "manual")
 

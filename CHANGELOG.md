@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.271.0] - 2026-06-14
+
+### Changed
+
+- **One installer instead of several.** `scripts/install.sh` is now the single script users run, with
+  subcommands: `sudoers` (grant the passwordless-sudo rights — replaces `deploy/setup-sudoers.sh`),
+  `kiosk` (touchscreen takeover — replaces `deploy/install-kiosk.sh`), and `update` (backend venv
+  refresh). The one-line full install now **also grants the sudo rights automatically**, so firmware
+  flashing and the Host Control writes (timezone, locale, hostname, network, cleanup) work out of
+  the box — no separate manual step. `deploy/install-host.sh` remains only as Moonraker's internal
+  auto-update hook (a thin shim to `install.sh update`) so existing update-manager setups keep
+  working. `deploy/setup-sudoers.sh` and `deploy/install-kiosk.sh` are removed; all in-app hints and
+  docs now point at the `install.sh` subcommands.
+
+### Removed
+
+- **Host Control · System — the Wi-Fi *connect* control.** Joining a new SSID over the very link the
+  panel is served on was awkward and rarely the right tool. The **Network (IPv4) DHCP ↔ Static**
+  control stays — that's the useful part. (No backend Wi-Fi endpoint anymore.)
+
 ## [0.270.0] - 2026-06-14
 
 ### Added
