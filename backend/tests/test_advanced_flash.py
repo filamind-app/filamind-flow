@@ -22,6 +22,19 @@ def test_resolve_method_redirects_can_bridge_to_serial() -> None:
     assert flash_service.resolve_method("serial", "/dev/ttyACM0") == "serial"
 
 
+def test_resolve_method_forces_linux_for_host_mcu() -> None:
+    # The Linux-process host MCU is installed as a binary, never flashed over serial/CAN —
+    # even if its registry entry stored a serial/can method (a serial flash on it fails with
+    # "No Serial Device found at linux_process").
+    assert flash_service.resolve_method("serial", "linux_process") == "linux"
+    assert flash_service.resolve_method("can", "linux_process") == "linux"
+    assert flash_service.resolve_method("linux", "linux_process") == "linux"
+    # Real boards are unaffected.
+    assert (
+        flash_service.resolve_method("serial", "/dev/serial/by-id/usb-Klipper_x-if00") == "serial"
+    )
+
+
 def test_reenumerated_id_detects_a_single_new_endpoint() -> None:
     before = {"/dev/serial/by-id/usb-katapult_x-if00"}
     after = {"/dev/serial/by-id/usb-Klipper_x-if00"}
