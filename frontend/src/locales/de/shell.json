@@ -66,6 +66,13 @@
         "temp": "CPU-Temp.",
         "uptime": "Laufzeit",
         "disk": "Datenträger"
+      },
+      "printerHost": "Drucker & Host",
+      "maxFlow": {
+        "title": "Max. Fluss",
+        "expected": "Erwartet: {n} mm³/s",
+        "empty": "Noch kein Max-Fluss-Test.",
+        "test": "Max. Fluss testen"
       }
     },
     "connection": {

@@ -66,6 +66,13 @@
         "temp": "CPU 温度",
         "uptime": "运行时间",
         "disk": "磁盘"
+      },
+      "printerHost": "打印机与主机",
+      "maxFlow": {
+        "title": "最大流量",
+        "expected": "预期：{n} mm³/s",
+        "empty": "尚未进行最大流量测试。",
+        "test": "测试最大流量"
       }
     },
     "connection": {

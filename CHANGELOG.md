@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.275.0] - 2026-06-14
+
+### Changed
+
+- **Dashboard: Printer and Host are now one card.** The home page merges the live printer state and
+  the host summary (clock, timezone, NTP, CPU temp, uptime, disk) into a single "Printer & Host"
+  card; each half still shows on its own when the other is unavailable.
+
+### Added
+
+- **Max-flow summary on the dashboard.** A new home tile shows the last max-flow test's headline
+  (mm³/s, the expected value, hotend, and date) with one tap to the full tool — or a prompt to run
+  a test when none has been recorded yet.
+
+### Fixed
+
+- Quieter bug-report screenshots: skip inlining cross-origin web fonts (which always failed and
+  logged a burst of console errors) — the captured image is unchanged and capture is faster.
+
 ## [0.274.0] - 2026-06-14
 
 ### Added
