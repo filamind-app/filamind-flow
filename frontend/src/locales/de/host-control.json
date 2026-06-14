@@ -1,9 +1,13 @@
 {
   "hostControl": {
-    "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand und den des Betriebssystems. Dienste, Datenträger-Bereinigung und Systemeinstellungen folgen in späteren Phasen.",
+    "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand und den des Betriebssystems und steuere seine Hintergrunddienste. Datenträger-Bereinigung und Systemeinstellungen folgen in späteren Phasen.",
+    "view": {
+      "monitor": "Monitor",
+      "services": "Dienste"
+    },
     "help": {
       "title": "Was ist das?",
-      "body": "FilaMind läuft auf dem kleinen Linux-Computer des Druckers (dem Host). Dieses Panel liest dessen Live-Zustand und Betriebssystem-Status, damit du Probleme erkennst — eine überhitzte CPU, eine volle Festplatte, eine nicht synchronisierte Uhr — ohne ein Terminal zu öffnen.",
+      "body": "FilaMind läuft auf dem kleinen Linux-Computer des Druckers (dem Host). Dieses Panel liest dessen Live-Zustand und Betriebssystem-Status, damit du Probleme erkennst — eine überhitzte CPU, eine volle Festplatte, eine nicht synchronisierte Uhr — ohne ein Terminal zu öffnen, und lässt dich die Hintergrunddienste steuern, die er ausführt.",
       "step1": "Lies die Karten für CPU-Temperatur, Speicher, Datenträger und Netzwerk auf einen Blick.",
       "step2": "Beobachte die Tabelle der Top-Prozesse, um zu sehen, was die CPU gerade auslastet.",
       "step3": "Lass die automatische Aktualisierung für eine Live-Ansicht an, oder schalte sie aus und aktualisiere manuell.",
@@ -14,6 +18,10 @@
         "monitor": {
           "title": "Den Monitor lesen",
           "body": "Alles hier ist schreibgeschützt. Balken werden ab 75 % bernsteinfarben und ab 90 % rot. Die CPU-Temperatur wird bei 70 °C bernsteinfarben und bei 80 °C rot. Die Drosselungs-Warnung erscheint nur auf Boards, die sie melden (hauptsächlich Raspberry Pi)."
+        },
+        "services": {
+          "title": "Dienste verwalten",
+          "body": "Jede Zeile ist ein systemd-Dienst. Klicke einen an, um ihn zu starten/stoppen/neu zu starten, beim Booten zu aktivieren/deaktivieren, zu maskieren, sein Protokoll zu lesen oder — bei selbst installierten Diensten — seine Unit-Datei zu löschen. Einen Dienst zu stoppen oder zu deaktivieren erfordert eine Bestätigung. Kritische und geschützte Dienste sind markiert; geschützte (wie SSH und dieses Panel) lassen sich nicht stoppen, damit du dich nicht aussperrst."
         }
       },
       "glossary": {
@@ -40,6 +48,18 @@
         "locale": {
           "term": "Locale",
           "def": "Die Sprach- und Tastaturlayout-Einstellungen des Hosts, die das Betriebssystem für Text, Datumsangaben und das Konsolen-Tastaturlayout nutzt."
+        },
+        "service": {
+          "term": "Dienst (Unit)",
+          "def": "Ein von systemd verwaltetes Hintergrundprogramm — Klipper, Moonraker, der Webcam-Streamer und der Netzwerk-Stack laufen alle als Dienste."
+        },
+        "enabled": {
+          "term": "Aktiviert / deaktiviert",
+          "def": "Ob ein Dienst beim Booten automatisch startet. „enabled“ startet beim Booten; „disabled“ nicht; „static“ wird nur von einem anderen Dienst gestartet."
+        },
+        "mask": {
+          "term": "Maskieren",
+          "def": "Eine stärkere Form des Deaktivierens — der Dienst kann gar nicht gestartet werden (auch nicht von einem anderen Dienst), bis er demaskiert wird. Mit Vorsicht verwenden."
         }
       }
     },
@@ -79,6 +99,49 @@
       "cpuPct": "CPU %",
       "memPct": "RAM %",
       "pid": "PID"
+    },
+    "services": {
+      "warning": "Den falschen Dienst zu stoppen oder zu deaktivieren kann den Drucker offline nehmen. Kritische Dienste sind markiert; geschützte lassen sich nicht stoppen.",
+      "search": "Dienste suchen…",
+      "refresh": "Aktualisieren",
+      "loading": "Dienste werden aufgelistet…",
+      "loadingDetail": "Dienst wird gelesen…",
+      "loadingLogs": "Protokoll wird gelesen…",
+      "summary": "{total} Dienste · {active} aktiv · {failed} fehlgeschlagen",
+      "filter": {
+        "all": "Alle",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "failed": "Fehlgeschlagen",
+        "enabled": "Aktiviert"
+      },
+      "stateActive": "Aktiv",
+      "stateInactive": "Inaktiv",
+      "stateFailed": "Fehlgeschlagen",
+      "critical": "Kritisch",
+      "protected": "Geschützt",
+      "state": "Status",
+      "startup": "Autostart",
+      "unitFile": "Unit-Datei",
+      "action": {
+        "start": "Starten",
+        "stop": "Stoppen",
+        "restart": "Neu starten",
+        "enable": "Aktivieren",
+        "disable": "Deaktivieren",
+        "mask": "Maskieren",
+        "unmask": "Demaskieren"
+      },
+      "actionOk": "{action} erledigt.",
+      "confirmAction": "„{name}“ {action}?",
+      "confirmYes": "Ja, ausführen",
+      "cancel": "Abbrechen",
+      "deleteUnit": "Unit-Datei löschen…",
+      "deletePrompt": "Dies entfernt die Unit-Datei dauerhaft. Tippe „{name}“ zur Bestätigung.",
+      "deleteConfirm": "Endgültig löschen",
+      "deleted": "Unit-Datei entfernt.",
+      "logs": "Letztes Protokoll",
+      "noLogs": "Keine Protokollausgabe."
     }
   }
 }

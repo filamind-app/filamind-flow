@@ -1,9 +1,13 @@
 {
   "hostControl": {
-    "intro": "Manage the printer's Linux host — check its health and OS state. Services, disk cleanup and system settings arrive in later phases.",
+    "intro": "Manage the printer's Linux host — check its health and OS state and control its background services. Disk cleanup and system settings arrive in later phases.",
+    "view": {
+      "monitor": "Monitor",
+      "services": "Services"
+    },
     "help": {
       "title": "What is this?",
-      "body": "FilaMind runs on the printer's small Linux computer (the host). This panel reads that machine's live health and OS state so you can spot problems — an overheating CPU, a full disk, an unsynced clock — without opening a terminal.",
+      "body": "FilaMind runs on the printer's small Linux computer (the host). This panel reads that machine's live health and OS state so you can spot problems — an overheating CPU, a full disk, an unsynced clock — without opening a terminal, and lets you control the background services it runs.",
       "step1": "Read the cards for CPU temperature, memory, disk and network at a glance.",
       "step2": "Watch the top-processes table to see what is using the CPU right now.",
       "step3": "Leave auto-refresh on for a live view, or turn it off and refresh manually.",
@@ -14,6 +18,10 @@
         "monitor": {
           "title": "Reading the monitor",
           "body": "Everything here is read-only. Bars turn amber past 75% and red past 90%. CPU temperature turns amber at 70 °C and red at 80 °C. The throttle warning only appears on boards that report it (mainly Raspberry Pi)."
+        },
+        "services": {
+          "title": "Managing services",
+          "body": "Each row is a systemd service. Click one to start/stop/restart it, enable/disable it at boot, mask it, read its log, or — for services you installed yourself — delete its unit file. Stopping or disabling a service takes a typed or one-tap confirmation. Critical and protected services are marked; protected ones (like SSH and this panel) can't be stopped, to avoid locking you out."
         }
       },
       "glossary": {
@@ -40,6 +48,18 @@
         "locale": {
           "term": "Locale",
           "def": "The host's language and keyboard layout settings, used by the OS for text, dates and the console keymap."
+        },
+        "service": {
+          "term": "Service (unit)",
+          "def": "A background program managed by systemd — Klipper, Moonraker, the webcam streamer and the network stack all run as services."
+        },
+        "enabled": {
+          "term": "Enabled / disabled",
+          "def": "Whether a service starts automatically at boot. 'enabled' starts on boot; 'disabled' doesn't; 'static' is only started by another service."
+        },
+        "mask": {
+          "term": "Mask",
+          "def": "A stronger form of disable — the service can't be started at all (even by another service) until it's unmasked. Use with care."
         }
       }
     },
@@ -79,6 +99,49 @@
       "cpuPct": "CPU%",
       "memPct": "MEM%",
       "pid": "PID"
+    },
+    "services": {
+      "warning": "Stopping or disabling the wrong service can take the printer offline. Critical services are marked; protected ones can't be stopped.",
+      "search": "Search services…",
+      "refresh": "Refresh",
+      "loading": "Listing services…",
+      "loadingDetail": "Reading service…",
+      "loadingLogs": "Reading log…",
+      "summary": "{total} services · {active} active · {failed} failed",
+      "filter": {
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive",
+        "failed": "Failed",
+        "enabled": "Enabled"
+      },
+      "stateActive": "Active",
+      "stateInactive": "Inactive",
+      "stateFailed": "Failed",
+      "critical": "Critical",
+      "protected": "Protected",
+      "state": "State",
+      "startup": "Startup",
+      "unitFile": "Unit file",
+      "action": {
+        "start": "Start",
+        "stop": "Stop",
+        "restart": "Restart",
+        "enable": "Enable",
+        "disable": "Disable",
+        "mask": "Mask",
+        "unmask": "Unmask"
+      },
+      "actionOk": "{action} done.",
+      "confirmAction": "{action} \"{name}\"?",
+      "confirmYes": "Yes, do it",
+      "cancel": "Cancel",
+      "deleteUnit": "Delete unit file…",
+      "deletePrompt": "This permanently removes the unit file. Type \"{name}\" to confirm.",
+      "deleteConfirm": "Delete permanently",
+      "deleted": "Unit file removed.",
+      "logs": "Recent log",
+      "noLogs": "No log output."
     }
   }
 }

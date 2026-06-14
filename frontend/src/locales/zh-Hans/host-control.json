@@ -1,9 +1,13 @@
 {
   "hostControl": {
-    "intro": "管理打印机的 Linux 主机——查看其健康状况和操作系统状态。服务、磁盘清理和系统设置将在后续阶段加入。",
+    "intro": "管理打印机的 Linux 主机——查看其健康状况和操作系统状态，并控制其后台服务。磁盘清理和系统设置将在后续阶段加入。",
+    "view": {
+      "monitor": "监视",
+      "services": "服务"
+    },
     "help": {
       "title": "这是什么？",
-      "body": "FilaMind 运行在打印机的小型 Linux 计算机（主机）上。此面板读取该计算机的实时健康状况和操作系统状态，让你无需打开终端即可发现问题——CPU 过热、磁盘已满、时钟未同步等。",
+      "body": "FilaMind 运行在打印机的小型 Linux 计算机（主机）上。此面板读取该计算机的实时健康状况和操作系统状态，让你无需打开终端即可发现问题——CPU 过热、磁盘已满、时钟未同步等，并让你控制它运行的后台服务。",
       "step1": "一眼浏览 CPU 温度、内存、磁盘和网络的卡片。",
       "step2": "查看占用最高的进程表格，了解当前是什么在使用 CPU。",
       "step3": "保持自动刷新开启以获得实时视图，或将其关闭并手动刷新。",
@@ -14,6 +18,10 @@
         "monitor": {
           "title": "读懂监视器",
           "body": "此处全部为只读。进度条超过 75% 变为琥珀色，超过 90% 变为红色。CPU 温度在 70 °C 变为琥珀色，在 80 °C 变为红色。降频警告仅在会报告该信息的主板上显示（主要是 Raspberry Pi）。"
+        },
+        "services": {
+          "title": "管理服务",
+          "body": "每一行都是一个 systemd 服务。点击某项可启动/停止/重启它，在开机时启用/禁用它，屏蔽（mask）它，读取其日志，或——对于你自己安装的服务——删除其单元文件。停止或禁用服务需要确认。关键和受保护的服务会被标记；受保护的（如 SSH 和本面板）无法停止，以免把你锁在外面。"
         }
       },
       "glossary": {
@@ -40,6 +48,18 @@
         "locale": {
           "term": "区域设置（Locale）",
           "def": "主机的语言和键盘布局设置，操作系统用它来处理文本、日期和控制台键盘映射。"
+        },
+        "service": {
+          "term": "服务（单元）",
+          "def": "由 systemd 管理的后台程序——Klipper、Moonraker、网络摄像头推流和网络栈都作为服务运行。"
+        },
+        "enabled": {
+          "term": "已启用 / 已禁用",
+          "def": "服务是否在开机时自动启动。“enabled”开机启动；“disabled”不启动；“static”仅由另一个服务启动。"
+        },
+        "mask": {
+          "term": "屏蔽（Mask）",
+          "def": "比禁用更强的形式——在取消屏蔽之前，该服务完全无法启动（即使由另一个服务也不行）。请谨慎使用。"
         }
       }
     },
@@ -79,6 +99,49 @@
       "cpuPct": "CPU%",
       "memPct": "内存%",
       "pid": "PID"
+    },
+    "services": {
+      "warning": "停止或禁用错误的服务可能使打印机离线。关键服务会被标记；受保护的服务无法停止。",
+      "search": "搜索服务…",
+      "refresh": "刷新",
+      "loading": "正在列出服务…",
+      "loadingDetail": "正在读取服务…",
+      "loadingLogs": "正在读取日志…",
+      "summary": "{total} 个服务 · {active} 个活动 · {failed} 个失败",
+      "filter": {
+        "all": "全部",
+        "active": "活动",
+        "inactive": "未活动",
+        "failed": "失败",
+        "enabled": "已启用"
+      },
+      "stateActive": "活动",
+      "stateInactive": "未活动",
+      "stateFailed": "失败",
+      "critical": "关键",
+      "protected": "受保护",
+      "state": "状态",
+      "startup": "开机启动",
+      "unitFile": "单元文件",
+      "action": {
+        "start": "启动",
+        "stop": "停止",
+        "restart": "重启",
+        "enable": "启用",
+        "disable": "禁用",
+        "mask": "屏蔽",
+        "unmask": "取消屏蔽"
+      },
+      "actionOk": "{action}完成。",
+      "confirmAction": "{action}“{name}”？",
+      "confirmYes": "是，执行",
+      "cancel": "取消",
+      "deleteUnit": "删除单元文件…",
+      "deletePrompt": "这将永久删除单元文件。输入“{name}”以确认。",
+      "deleteConfirm": "永久删除",
+      "deleted": "单元文件已删除。",
+      "logs": "最近日志",
+      "noLogs": "无日志输出。"
     }
   }
 }
