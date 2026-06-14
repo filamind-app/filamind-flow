@@ -200,3 +200,66 @@ async def test_delete_unit_removes_user_installed(monkeypatch: pytest.MonkeyPatc
     assert res["ok"] is True and res["refused"] is False
     assert any(c[:3] == ["sudo", "-n", "rm"] for c in calls)
     assert any("daemon-reload" in c for c in calls)
+
+
+# ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+
+
+def test_parse_size_human_units() -> None:
+    assert hc._parse_size("120.0M in the file system.") == int(120.0 * 1024**2)
+    assert hc._parse_size("1.5G") == int(1.5 * 1024**3)
+    assert hc._parse_size("512K") == 512 * 1024
+    assert hc._parse_size("nonsense") == 0
+
+
+def test_rotated_logs_keeps_live_log(tmp_path) -> None:
+    logs = tmp_path / "printer_data" / "logs"
+    logs.mkdir(parents=True)
+    (logs / "klippy.log").write_text("live")  # kept
+    (logs / "klippy.log.2026-06-01").write_text("rotated")  # dropped
+    (logs / "moonraker.log.1").write_text("rotated")  # dropped
+    (logs / "crowsnest.log.gz").write_bytes(b"gz")  # dropped
+    data_dir = str(tmp_path / "printer_data" / "config" / "filamind")
+    found = {hc.os.path.basename(p) for p in hc._rotated_logs(data_dir)}
+    assert found == {"klippy.log.2026-06-01", "moonraker.log.1", "crowsnest.log.gz"}
+
+
+def test_dir_size_counts_regular_files(tmp_path) -> None:
+    (tmp_path / "a").write_bytes(b"x" * 10)
+    sub = tmp_path / "sub"
+    sub.mkdir()
+    (sub / "b").write_bytes(b"y" * 5)
+    total, count = hc._dir_size(str(tmp_path))
+    assert total == 15 and count == 2
+
+
+def test_rm_contents_clears_dir_but_keeps_it(tmp_path) -> None:
+    (tmp_path / "f1").write_bytes(b"x" * 4)
+    (tmp_path / "d1").mkdir()
+    (tmp_path / "d1" / "f2").write_bytes(b"y" * 6)
+    freed, removed = hc._rm_contents(str(tmp_path))
+    assert freed == 10 and removed == 2
+    assert tmp_path.is_dir() and not list(tmp_path.iterdir())
+
+
+async def test_cleanup_scan_returns_all_targets() -> None:
+    targets = await hc.cleanup_scan("~/printer_data/config/filamind")
+    ids = {t["id"] for t in targets}
+    assert ids == set(hc.CLEANUP_TARGETS)
+    for t in targets:
+        assert set(t) == {"id", "bytes", "count", "available"}
+        assert isinstance(t["bytes"], int)
+
+
+async def test_cleanup_run_ignores_unknown_ids() -> None:
+    out = await hc.cleanup_run(["not-a-target"], "~/printer_data/config/filamind")
+    assert out["results"] == [] and out["freed_bytes"] == 0
+
+
+async def test_scan_journal_parses_disk_usage(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+        return 0, "Archived and active journals take up 120.0M in the file system.\n"
+
+    monkeypatch.setattr(hc, "_run_rc", fake)
+    b, available = await hc._scan_journal_bytes()
+    assert available is True and b == int(120.0 * 1024**2)

@@ -11,11 +11,14 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import glob
 import os
 import platform
 import re
 import shutil
 import socket
+import stat
+import time
 from typing import Any
 
 
@@ -68,8 +71,6 @@ def _host_block() -> dict[str, Any]:
 def _cpu_block() -> dict[str, Any]:
     temp_c: float | None = None
     # Prefer the thermal zone whose type looks like a CPU/SoC sensor; else the first one.
-    import glob
-
     zones = sorted(glob.glob("/sys/class/thermal/thermal_zone*"))
     for z in zones:
         raw = _read(os.path.join(z, "temp")).strip()
@@ -505,3 +506,234 @@ async def delete_unit(name: str, confirm: str) -> dict[str, Any]:
         "refused": False,
         "output": out.strip() or f"Removed {frag}",
     }
+
+
+# ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+# Reclaim space from caches and rotated logs the user never needs to keep. Every target offers a
+# dry-run "frees X" scan before anything is deleted, and the deletes are tightly scoped: only the
+# user's own caches/temp files and rotated (non-live) logs, plus the apt download cache and the
+# systemd journal (vacuumed, not erased). User data — G-code, timelapses, configs — is untouched.
+
+#: The cleanup targets, in display order.
+CLEANUP_TARGETS = ("apt", "journal", "cache", "tmp", "logs")
+#: Only remove /tmp files this old (seconds) — younger files may be in active use.
+_TMP_AGE_S = 24 * 3600
+#: Vacuum the systemd journal down to this size (keeps recent logs).
+_JOURNAL_KEEP = "50M"
+#: A file under a log dir is "rotated" (safe to drop) if it isn't the live ``<name>.log``.
+_ROTATED_RE = re.compile(r"(\.gz|\.old|\.zip|\.log\.[^/]+|\.\d+)$")
+
+
+def _dir_size(path: str) -> tuple[int, int]:
+    """(total bytes, file count) of a directory tree, ignoring unreadable entries."""
+    total = 0
+    count = 0
+    for root, _dirs, files in os.walk(path, onerror=lambda _e: None):
+        for name in files:
+            try:
+                st = os.lstat(os.path.join(root, name))
+            except OSError:
+                continue
+            if stat.S_ISREG(st.st_mode):
+                total += st.st_size
+                count += 1
+    return total, count
+
+
+def _rm_contents(path: str) -> tuple[int, int]:
+    """Delete the *contents* of a directory (not the directory). Returns (freed bytes, items)."""
+    real = os.path.realpath(os.path.expanduser(path))
+    if not os.path.isdir(real):
+        return 0, 0
+    freed = 0
+    removed = 0
+    for name in os.listdir(real):
+        child = os.path.join(real, name)
+        try:
+            if os.path.islink(child) or os.path.isfile(child):
+                size = os.path.getsize(child)
+                os.remove(child)
+                freed += size
+                removed += 1
+            elif os.path.isdir(child):
+                b, c = _dir_size(child)
+                shutil.rmtree(child, ignore_errors=True)
+                freed += b
+                removed += c
+        except OSError:
+            continue
+    return freed, removed
+
+
+def _parse_size(text: str) -> int:
+    """Parse a human size like ``120.0M`` / ``1.2G`` (journalctl --disk-usage) into bytes."""
+    m = re.search(r"([\d.]+)\s*([KMGTP])?", text)
+    if not m:
+        return 0
+    value = float(m.group(1))
+    mult = {"K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4, "P": 1024**5}
+    return int(value * mult.get(m.group(2) or "", 1))
+
+
+def _apt_debs() -> list[str]:
+    return glob.glob("/var/cache/apt/archives/*.deb") + glob.glob(
+        "/var/cache/apt/archives/partial/*.deb"
+    )
+
+
+def _sum_sizes(paths: list[str]) -> int:
+    total = 0
+    for p in paths:
+        try:
+            total += os.path.getsize(p)
+        except OSError:
+            continue
+    return total
+
+
+def _logs_dir(data_dir: str) -> str:
+    """The printer's log directory (``~/printer_data/logs``), derived from the data dir."""
+    p = os.path.realpath(os.path.expanduser(data_dir))
+    for _ in range(4):
+        cand = os.path.join(p, "logs")
+        if os.path.isdir(cand):
+            return cand
+        p = os.path.dirname(p)
+    home_logs = os.path.expanduser("~/printer_data/logs")
+    return home_logs if os.path.isdir(home_logs) else ""
+
+
+def _rotated_logs(data_dir: str) -> list[str]:
+    d = _logs_dir(data_dir)
+    if not d:
+        return []
+    out: list[str] = []
+    for root, _dirs, files in os.walk(d, onerror=lambda _e: None):
+        for name in files:
+            if name.endswith(".log"):
+                continue  # keep the live log
+            if _ROTATED_RE.search(name):
+                out.append(os.path.join(root, name))
+    return out
+
+
+def _tmp_old_files() -> list[str]:
+    """Our own regular files under /tmp older than the age cutoff (safe to drop)."""
+    if not os.path.isdir("/tmp"):
+        return []
+    cutoff = time.time() - _TMP_AGE_S
+    uid = getattr(os, "getuid", lambda: None)()
+    out: list[str] = []
+    for name in os.listdir("/tmp"):
+        fp = os.path.join("/tmp", name)
+        try:
+            st = os.lstat(fp)
+        except OSError:
+            continue
+        if not stat.S_ISREG(st.st_mode) or st.st_mtime > cutoff:
+            continue
+        if uid is not None and st.st_uid != uid:
+            continue  # don't touch other users' temp files
+        out.append(fp)
+    return out
+
+
+async def _scan_journal_bytes() -> tuple[int, bool]:
+    rc, out = await _run_rc(["sudo", "-n", "journalctl", "--disk-usage"])
+    if rc != 0 or "take up" not in out:
+        return 0, rc != 127
+    return _parse_size(out.split("take up", 1)[1]), True
+
+
+async def _scan_target(tid: str, data_dir: str) -> dict[str, Any]:
+    """Dry-run: how much a target would free, without deleting anything."""
+    if tid == "apt":
+        debs = _apt_debs()
+        return {
+            "id": tid,
+            "bytes": _sum_sizes(debs),
+            "count": len(debs),
+            "available": os.path.isdir("/var/cache/apt/archives"),
+        }
+    if tid == "journal":
+        b, av = await _scan_journal_bytes()
+        return {"id": tid, "bytes": b, "count": 0, "available": av}
+    if tid == "cache":
+        d = os.path.expanduser("~/.cache")
+        b, c = _dir_size(d) if os.path.isdir(d) else (0, 0)
+        return {"id": tid, "bytes": b, "count": c, "available": os.path.isdir(d)}
+    if tid == "tmp":
+        files = _tmp_old_files()
+        return {
+            "id": tid,
+            "bytes": _sum_sizes(files),
+            "count": len(files),
+            "available": os.path.isdir("/tmp"),
+        }
+    if tid == "logs":
+        files = _rotated_logs(data_dir)
+        return {
+            "id": tid,
+            "bytes": _sum_sizes(files),
+            "count": len(files),
+            "available": bool(_logs_dir(data_dir)),
+        }
+    raise ValueError("unknown cleanup target")
+
+
+async def _clean_target(tid: str, data_dir: str) -> dict[str, Any]:
+    """Perform a target's cleanup. Returns freed bytes + items removed."""
+    if tid == "apt":
+        debs = _apt_debs()
+        before = _sum_sizes(debs)
+        if debs:
+            await _run_rc(["sudo", "-n", "rm", "-f", *debs])
+        freed = before - _sum_sizes(_apt_debs())
+        return {"id": tid, "freed_bytes": max(0, freed), "removed": len(debs), "ok": True}
+    if tid == "journal":
+        before, _ = await _scan_journal_bytes()
+        await _run_rc(["sudo", "-n", "journalctl", f"--vacuum-size={_JOURNAL_KEEP}"])
+        after, _ = await _scan_journal_bytes()
+        return {"id": tid, "freed_bytes": max(0, before - after), "removed": 0, "ok": True}
+    if tid == "cache":
+        freed, removed = _rm_contents("~/.cache")
+        return {"id": tid, "freed_bytes": freed, "removed": removed, "ok": True}
+    if tid == "tmp":
+        freed = 0
+        removed = 0
+        for fp in _tmp_old_files():
+            try:
+                size = os.path.getsize(fp)
+                os.remove(fp)
+                freed += size
+                removed += 1
+            except OSError:
+                continue
+        return {"id": tid, "freed_bytes": freed, "removed": removed, "ok": True}
+    if tid == "logs":
+        freed = 0
+        removed = 0
+        for fp in _rotated_logs(data_dir):
+            try:
+                size = os.path.getsize(fp)
+                os.remove(fp)
+                freed += size
+                removed += 1
+            except OSError:
+                continue
+        return {"id": tid, "freed_bytes": freed, "removed": removed, "ok": True}
+    raise ValueError("unknown cleanup target")
+
+
+async def cleanup_scan(data_dir: str) -> list[dict[str, Any]]:
+    """Dry-run every cleanup target (no deletion)."""
+    return [await _scan_target(tid, data_dir) for tid in CLEANUP_TARGETS]
+
+
+async def cleanup_run(ids: list[str], data_dir: str) -> dict[str, Any]:
+    """Clean the requested targets; ignores unknown ids. Returns per-target + total freed."""
+    results: list[dict[str, Any]] = []
+    for tid in ids:
+        if tid in CLEANUP_TARGETS:
+            results.append(await _clean_target(tid, data_dir))
+    return {"results": results, "freed_bytes": sum(r["freed_bytes"] for r in results)}

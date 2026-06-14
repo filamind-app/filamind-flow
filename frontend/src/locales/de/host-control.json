@@ -3,7 +3,8 @@
     "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand und den des Betriebssystems und steuere seine Hintergrunddienste. Datenträger-Bereinigung und Systemeinstellungen folgen in späteren Phasen.",
     "view": {
       "monitor": "Monitor",
-      "services": "Dienste"
+      "services": "Dienste",
+      "cleanup": "Bereinigung"
     },
     "help": {
       "title": "Was ist das?",
@@ -22,6 +23,10 @@
         "services": {
           "title": "Dienste verwalten",
           "body": "Jede Zeile ist ein systemd-Dienst. Klicke einen an, um ihn zu starten/stoppen/neu zu starten, beim Booten zu aktivieren/deaktivieren, zu maskieren, sein Protokoll zu lesen oder — bei selbst installierten Diensten — seine Unit-Datei zu löschen. Einen Dienst zu stoppen oder zu deaktivieren erfordert eine Bestätigung. Kritische und geschützte Dienste sind markiert; geschützte (wie SSH und dieses Panel) lassen sich nicht stoppen, damit du dich nicht aussperrst."
+        },
+        "cleanup": {
+          "title": "Speicherplatz freigeben",
+          "body": "Jede Zeile wird zuerst gescannt, um zu zeigen, wie viel sie freigeben würde. Hake die zu leerenden an und bestätige. Nur regenerierbare Daten werden angeboten — der apt-Download-Cache, das alte systemd-Journal, ~/.cache, deine alten /tmp-Dateien und rotierte (nicht aktive) Protokolle. Deine G-Codes, Zeitraffer und Konfigurationen werden nie angetastet."
         }
       },
       "glossary": {
@@ -142,6 +147,42 @@
       "deleted": "Unit-Datei entfernt.",
       "logs": "Letztes Protokoll",
       "noLogs": "Keine Protokollausgabe."
+    },
+    "cleanup": {
+      "subtitle": "Hake an, was entfernt werden soll, dann bereinige. Nur Caches und alte Protokolle — Drucke und Konfigurationen bleiben sicher.",
+      "rescan": "Neu scannen",
+      "scanning": "Datenträger wird gescannt…",
+      "na": "n. v.",
+      "items": "{n} Dateien",
+      "freed": "{size} freigegeben.",
+      "selectedTotal": "Ausgewählt: {size}",
+      "clean": "Auswahl bereinigen",
+      "confirmBody": "Die ausgewählten Elemente löschen?",
+      "confirmYes": "Ja, bereinigen",
+      "cancel": "Abbrechen",
+      "running": "Wird bereinigt…",
+      "targets": {
+        "apt": {
+          "label": "Paket-Cache",
+          "desc": "Heruntergeladene .deb-Installationsdateien, die apt nicht mehr braucht."
+        },
+        "journal": {
+          "label": "System-Journal",
+          "desc": "Alte systemd-Protokolle — auf die letzten 50 MB verkleinert."
+        },
+        "cache": {
+          "label": "Benutzer-Cache",
+          "desc": "Regenerierbare Dateien in ~/.cache (Vorschaubilder, pip usw.)."
+        },
+        "tmp": {
+          "label": "Temporäre Dateien",
+          "desc": "Deine eigenen Dateien in /tmp, älter als ein Tag."
+        },
+        "logs": {
+          "label": "Rotierte Protokolle",
+          "desc": "Alte, rotierte Klipper/Moonraker-Protokolle (das aktive bleibt erhalten)."
+        }
+      }
     }
   }
 }

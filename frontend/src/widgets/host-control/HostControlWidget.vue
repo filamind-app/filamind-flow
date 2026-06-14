@@ -10,13 +10,14 @@ import { useI18n } from 'vue-i18n'
 import { describeError } from '@/core/describeError'
 
 import { fetchMonitor } from './api'
+import CleanupPanel from './CleanupPanel.vue'
 import HelpNote from './HelpNote.vue'
 import ServicesPanel from './ServicesPanel.vue'
 import type { HostMonitor } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
-type View = 'monitor' | 'services'
+type View = 'monitor' | 'services' | 'cleanup'
 const view = ref<View>('monitor')
 
 const monitor = ref<HostMonitor | null>(null)
@@ -145,7 +146,7 @@ function signalLabel(sig: number | null): string {
     <div class="-mx-1 overflow-x-auto px-1">
       <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
         <button
-          v-for="v in ['monitor', 'services'] as View[]"
+          v-for="v in ['monitor', 'services', 'cleanup'] as View[]"
           :key="v"
           type="button"
           class="nb-seg whitespace-nowrap"
@@ -344,5 +345,7 @@ function signalLabel(sig: number | null): string {
     </template>
 
     <ServicesPanel v-else-if="view === 'services'" />
+
+    <CleanupPanel v-else-if="view === 'cleanup'" />
   </div>
 </template>
