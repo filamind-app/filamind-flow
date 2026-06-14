@@ -181,7 +181,8 @@
       "delete": "Delete theme",
       "generated": "Made here",
       "created": "Theme created. Apply it from the list, then restart.",
-      "appliedRestart": "Theme set — restart KlipperScreen to see it."
+      "appliedRestart": "Theme set — restart KlipperScreen to see it.",
+      "previewTitle": "Printer"
     },
     "restart": {
       "button": "Restart KlipperScreen",

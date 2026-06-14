@@ -181,7 +181,8 @@
       "delete": "Supprimer le thème",
       "generated": "Créé ici",
       "created": "Thème créé. Appliquez-le depuis la liste, puis redémarrez.",
-      "appliedRestart": "Thème défini — redémarrez KlipperScreen pour le voir."
+      "appliedRestart": "Thème défini — redémarrez KlipperScreen pour le voir.",
+      "previewTitle": "Imprimante"
     },
     "restart": {
       "button": "Redémarrer KlipperScreen",

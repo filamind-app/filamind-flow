@@ -181,7 +181,8 @@
       "delete": "حذف الثيم",
       "generated": "من هنا",
       "created": "أُنشئ الثيم. طبّقه من القائمة ثم أعد التشغيل.",
-      "appliedRestart": "ضُبط الثيم — أعد تشغيل KlipperScreen لرؤيته."
+      "appliedRestart": "ضُبط الثيم — أعد تشغيل KlipperScreen لرؤيته.",
+      "previewTitle": "الطابعة"
     },
     "restart": {
       "button": "أعد تشغيل KlipperScreen",

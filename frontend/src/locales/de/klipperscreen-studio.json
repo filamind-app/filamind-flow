@@ -181,7 +181,8 @@
       "delete": "Theme löschen",
       "generated": "Hier erstellt",
       "created": "Theme erstellt. Wende es aus der Liste an, dann neu starten.",
-      "appliedRestart": "Theme gesetzt — starte KlipperScreen neu, um es zu sehen."
+      "appliedRestart": "Theme gesetzt — starte KlipperScreen neu, um es zu sehen.",
+      "previewTitle": "Drucker"
     },
     "restart": {
       "button": "KlipperScreen neu starten",

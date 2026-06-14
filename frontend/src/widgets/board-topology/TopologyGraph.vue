@@ -70,9 +70,18 @@ interface Layout {
   h: number
 }
 
-function trunc(s: string, n = 20): string {
+/** A DOM-safe id for a per-node clipPath (node ids contain ':' etc.). */
+function cid(id: string): string {
+  return id.replace(/[^a-zA-Z0-9_-]/g, '-')
+}
+
+/** Truncate a node title to its box WIDTH (not a fixed char count) so it never overflows the frame.
+ *  Uses a conservative advance for the bold label font; a clip-path is the hard backstop. */
+const TITLE_CHAR_PX = 9.5
+function fitTitle(s: string, boxW: number, reserve = 18): string {
   s = (s || '').trim()
-  return s.length > n ? s.slice(0, n - 1) + '…' : s
+  const max = Math.max(4, Math.floor((boxW - reserve) / TITLE_CHAR_PX))
+  return s.length > max ? s.slice(0, max - 1) + '…' : s
 }
 
 /** A vertical (parent-below) connector. */
@@ -98,9 +107,10 @@ function hostBox(x: number, y: number, w: number, h: number, nested = false): No
     y,
     w,
     h,
-    title: trunc(
+    title: fitTitle(
       hh?.name && hh.name !== 'host' ? hh.name : t('boardTopology.host.label'),
-      nested ? 22 : 24,
+      w,
+      nested ? 34 : 18, // nested host shows a 🖥 glyph before the name — reserve room for it
     ),
     full: hh?.name && hh.name !== 'host' ? hh.name : t('boardTopology.host.label'),
     sub: t('boardTopology.host.role'),
@@ -116,7 +126,7 @@ function mcuBox(m: TopologyMcu, x: number, y: number, w = NW, h = NH, chassis = 
     y,
     w,
     h,
-    title: trunc(m.name, 18),
+    title: fitTitle(m.name, w),
     full: m.name,
     sub: m.mcu || m.mcu_family || undefined,
     conn: m.connection,
@@ -389,28 +399,34 @@ function vitals(id: string): string {
                   {{ HEALTH_GLYPH[healthOf(n.id)] }}
                 </text>
               </template>
-              <!-- chassis label (mainboard) -->
-              <text v-if="n.chassis" x="10" y="18" class="t-title text-ink">{{ n.title }}</text>
-              <text
-                v-else-if="n.kind === 'host'"
-                :x="10"
-                :y="n.nested ? 16 : 20"
-                class="t-title text-ink"
-              >
-                <tspan v-if="n.nested" class="t-soc">🖥</tspan>
-                {{ n.title }}
-              </text>
-              <text v-else x="10" y="20" class="t-title text-ink">{{ n.title }}</text>
+              <!-- Clip the labels to the box so a long name/chip can never spill past the frame. -->
+              <clipPath :id="`nclip-${cid(n.id)}`">
+                <rect x="0" y="0" :width="n.w - 6" :height="n.h" />
+              </clipPath>
+              <g :clip-path="`url(#nclip-${cid(n.id)})`">
+                <!-- chassis label (mainboard) -->
+                <text v-if="n.chassis" x="10" y="18" class="t-title text-ink">{{ n.title }}</text>
+                <text
+                  v-else-if="n.kind === 'host'"
+                  :x="10"
+                  :y="n.nested ? 16 : 20"
+                  class="t-title text-ink"
+                >
+                  <tspan v-if="n.nested" class="t-soc">🖥</tspan>
+                  {{ n.title }}
+                </text>
+                <text v-else x="10" y="20" class="t-title text-ink">{{ n.title }}</text>
 
-              <!-- sub line (chip / role) -->
-              <text
-                v-if="n.sub"
-                x="10"
-                :y="n.kind === 'host' && n.nested ? 30 : 36"
-                class="t-sub text-ink"
-              >
-                {{ n.sub }}
-              </text>
+                <!-- sub line (chip / role) -->
+                <text
+                  v-if="n.sub"
+                  x="10"
+                  :y="n.kind === 'host' && n.nested ? 30 : 36"
+                  class="t-sub text-ink"
+                >
+                  {{ n.sub }}
+                </text>
+              </g>
 
               <!-- integrated badge on the chassis -->
               <g v-if="n.integratedBadge" :transform="`translate(${n.w - 92},8)`">

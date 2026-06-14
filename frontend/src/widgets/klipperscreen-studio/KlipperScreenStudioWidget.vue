@@ -991,7 +991,8 @@ onMounted(() => void loadStatus())
                   class="mb-2 flex items-center justify-between rounded px-2 py-1 text-[11px]"
                   :style="{ backgroundColor: palette.active }"
                 >
-                  <span>SV08</span><span :style="{ color: palette.color3 }">●</span>
+                  <span>{{ t('klipperscreenStudio.themes.previewTitle') }}</span
+                  ><span :style="{ color: palette.color3 }">●</span>
                 </div>
                 <div class="grid grid-cols-2 gap-1.5">
                   <div
