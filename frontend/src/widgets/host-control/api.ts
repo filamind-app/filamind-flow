@@ -1,6 +1,8 @@
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
+  CleanupRunResult,
+  CleanupTarget,
   HostMonitor,
   ServiceAction,
   ServiceActionResult,
@@ -79,4 +81,25 @@ export async function serviceAction(
 /** Remove a user-installed unit file (typed-confirm). Throws HostActionError(403) if refused. */
 export async function deleteService(name: string, confirm: string): Promise<ServiceActionResult> {
   return postAction('delete', { name, confirm })
+}
+
+// ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+
+/** Dry-run: how much each cleanup target would free (no deletion). */
+export async function fetchCleanup(): Promise<CleanupTarget[]> {
+  const r = await fetch(`${base()}/api/host/cleanup`)
+  if (!r.ok) throw new Error(`Could not scan disk (${r.status})`)
+  return ((await r.json()) as { targets: CleanupTarget[] }).targets
+}
+
+/** Clean the requested targets and report the space reclaimed. */
+export async function runCleanup(ids: string[]): Promise<CleanupRunResult> {
+  const r = await fetch(`${base()}/api/host/cleanup/run`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids }),
+  })
+  const data = (await r.json().catch(() => ({}))) as { detail?: string } & Partial<CleanupRunResult>
+  if (!r.ok) throw new HostActionError(data.detail || `Cleanup failed (${r.status})`, r.status)
+  return data as CleanupRunResult
 }

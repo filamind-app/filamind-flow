@@ -37,13 +37,22 @@ defineProps<{ illo: HelpIlloKey }>()
     </g>
 
     <!-- Services: a stack of toggleable rows (gears would over-crowd) -->
-    <g v-else>
+    <g v-else-if="illo === 'services'">
       <rect x="3" y="4" width="18" height="4.5" rx="1" />
       <rect x="3" y="10" width="18" height="4.5" rx="1" />
       <rect x="3" y="16" width="18" height="4.5" rx="1" />
       <circle cx="7" cy="6.25" r="1" fill="currentColor" stroke="none" />
       <circle cx="7" cy="12.25" r="1" fill="currentColor" stroke="none" />
       <circle cx="7" cy="18.25" r="1" fill="currentColor" stroke="none" stroke-opacity="0.4" />
+    </g>
+
+    <!-- Cleanup: a waste bin with a lid -->
+    <g v-else>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <path d="M9 6 V4 h6 V6" />
+      <path d="M6 6 l1 14 a1 1 0 0 0 1 1 h8 a1 1 0 0 0 1 -1 l1 -14" />
+      <line x1="10" y1="10" x2="10.5" y2="17" stroke-opacity="0.5" />
+      <line x1="14" y1="10" x2="13.5" y2="17" stroke-opacity="0.5" />
     </g>
   </svg>
 </template>

@@ -3,7 +3,8 @@
     "intro": "Administra el host Linux de la impresora — revisa su estado y el del sistema operativo y controla sus servicios en segundo plano. La limpieza de disco y los ajustes del sistema llegarán en fases posteriores.",
     "view": {
       "monitor": "Monitor",
-      "services": "Servicios"
+      "services": "Servicios",
+      "cleanup": "Limpieza"
     },
     "help": {
       "title": "¿Qué es esto?",
@@ -22,6 +23,10 @@
         "services": {
           "title": "Gestionar servicios",
           "body": "Cada fila es un servicio de systemd. Haz clic en uno para iniciarlo/detenerlo/reiniciarlo, activarlo/desactivarlo al arranque, enmascararlo, leer su registro o — en los servicios que instalaste tú — eliminar su archivo de unidad. Detener o desactivar un servicio requiere una confirmación. Los servicios críticos y protegidos están marcados; los protegidos (como SSH y este panel) no se pueden detener para no dejarte fuera."
+        },
+        "cleanup": {
+          "title": "Liberar espacio en disco",
+          "body": "Cada fila se escanea primero para mostrar cuánto liberaría. Marca las que quieras vaciar y confirma. Solo se ofrecen datos regenerables — la caché de descargas de apt, el registro antiguo de systemd, ~/.cache, tus archivos antiguos de /tmp y los registros rotados (no activos). Tu G-code, timelapses y configuraciones no se tocan nunca."
         }
       },
       "glossary": {
@@ -142,6 +147,42 @@
       "deleted": "Archivo de unidad eliminado.",
       "logs": "Registro reciente",
       "noLogs": "Sin salida de registro."
+    },
+    "cleanup": {
+      "subtitle": "Marca lo que quieras eliminar y limpia. Solo cachés y registros antiguos — tus impresiones y configuraciones quedan a salvo.",
+      "rescan": "Reescanear",
+      "scanning": "Escaneando el disco…",
+      "na": "n/d",
+      "items": "{n} archivos",
+      "freed": "Se liberaron {size}.",
+      "selectedTotal": "Seleccionado: {size}",
+      "clean": "Limpiar lo seleccionado",
+      "confirmBody": "¿Eliminar los elementos seleccionados?",
+      "confirmYes": "Sí, limpiar",
+      "cancel": "Cancelar",
+      "running": "Limpiando…",
+      "targets": {
+        "apt": {
+          "label": "Caché de paquetes",
+          "desc": "Archivos .deb descargados que apt ya no necesita."
+        },
+        "journal": {
+          "label": "Registro del sistema",
+          "desc": "Registros antiguos de systemd — reducidos a los 50 MB más recientes."
+        },
+        "cache": {
+          "label": "Caché de usuario",
+          "desc": "Archivos regenerables en ~/.cache (miniaturas, pip, etc.)."
+        },
+        "tmp": {
+          "label": "Archivos temporales",
+          "desc": "Tus propios archivos en /tmp con más de un día."
+        },
+        "logs": {
+          "label": "Registros rotados",
+          "desc": "Registros antiguos rotados de Klipper/Moonraker (se conserva el activo)."
+        }
+      }
     }
   }
 }

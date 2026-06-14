@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.268.0] - 2026-06-14
+
+### Added
+
+- **Host Control · Disk cleanup (Phase 3) — reclaim space safely.** A new Cleanup tab dry-run scans
+  each target to show how much it would free, you tick what to remove, and a single confirmation
+  runs the delete. Targets: the apt download cache (`*.deb`), the systemd journal (vacuumed to the
+  most recent 50 MB, not erased), `~/.cache`, your own `/tmp` files older than a day, and rotated
+  (non-live) Klipper/Moonraker logs. Only regenerable data is offered — G-code, timelapses and
+  configs are never touched, the live log is always kept, and `/tmp` cleanup only removes files you
+  own. Unavailable targets (e.g. no apt on a non-Debian host) are shown as n/a. Endpoints:
+  `GET /api/host/cleanup` (scan) and `POST /api/host/cleanup/run`. Fully translated across all seven
+  languages. System settings (time / locale / hostname / network / power) follow next.
+
 ## [0.267.0] - 2026-06-14
 
 ### Added
