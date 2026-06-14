@@ -51,8 +51,23 @@ const items = computed(() => [
       </button>
     </nav>
 
-    <p class="mt-auto font-mono text-[11px] leading-tight text-on-accent opacity-70">
-      {{ t('shell.footer.stack') }}<br />{{ t('shell.footer.by') }}
-    </p>
+    <div class="mt-auto flex flex-col gap-2">
+      <!-- Support / donate: a native button in the app's own style (offline-safe, no external
+           widget script) linking to the project's Ko-fi page, in Ko-fi's brand colour. -->
+      <a
+        class="nb-btn w-full justify-center text-center text-sm font-bold text-ink"
+        style="background-color: #f27b7b"
+        href="https://ko-fi.com/I2I119XEIV"
+        target="_blank"
+        rel="noopener noreferrer"
+        :title="t('shell.support.kofi')"
+      >
+        <span aria-hidden="true">☕</span>
+        <span class="truncate">{{ t('shell.support.kofi') }}</span>
+      </a>
+      <p class="font-mono text-[11px] leading-tight text-on-accent opacity-70">
+        {{ t('shell.footer.stack') }}<br />{{ t('shell.footer.by') }}
+      </p>
+    </div>
   </aside>
 </template>

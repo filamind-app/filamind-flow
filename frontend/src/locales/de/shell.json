@@ -207,6 +207,9 @@
         "saved": "Screenshot in deinen Downloads gespeichert – ziehe ihn in das Issue.",
         "failed": "Screenshot konnte nicht automatisch angehängt werden – du kannst auf GitHub einen hinzufügen."
       }
+    },
+    "support": {
+      "kofi": "FilaMind Flow unterstützen"
     }
   }
 }

@@ -207,6 +207,9 @@
         "saved": "Screenshot saved to your downloads — drag it into the issue.",
         "failed": "Couldn't attach the screenshot automatically — you can add one on GitHub."
       }
+    },
+    "support": {
+      "kofi": "Support FilaMind Flow"
     }
   }
 }

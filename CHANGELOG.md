@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.276.0] - 2026-06-14
+
+### Added
+
+- **Support the project.** A **Support FilaMind Flow** button now lives at the bottom of the
+  sidebar, linking to the project's Ko-fi page. The README gains a project mission statement and a
+  matching Ko-fi badge. The app button is native (no third-party widget script), so it stays
+  on-brand and works offline.
+
 ## [0.275.0] - 2026-06-14
 
 ### Changed

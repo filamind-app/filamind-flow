@@ -5,6 +5,15 @@
 **An extensible, Neo-Brutalist control panel for Klipper / Moonraker** — built to live
 alongside Mainsail and Fluidd and grow one widget at a time.
 
+FilaMind Flow brings together the best tools for 3D printing — from first setup to mastery —
+so makers at every level can diagnose, fix, and print better. The project is under active
+development and research, and new practical ideas are always welcome. Contributions are open
+to everyone.
+
+**_Built by Egyptian makers, for world makers. Happy printing._** 🇪🇬
+
+[![Support on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I119XEIV)
+
 [![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/filamind-app/filamind-flow?color=111111&label=release&sort=semver)](https://github.com/filamind-app/filamind-flow/releases/latest)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-111111.svg)](LICENSE)
@@ -22,7 +31,7 @@ alongside Mainsail and Fluidd and grow one widget at a time.
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org)
 
-[Install](#install-on-a-printer-one-line) · [Widgets](#widgets) · [Architecture](#architecture) · [Quickstart](#quickstart) · [Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md)
+[Install](#install-on-a-printer-one-line) · [Widgets](#widgets) · [Architecture](#architecture) · [Quickstart](#quickstart) · [Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md) · [Support ❤](#support-filamind-flow)
 
 </div>
 
@@ -341,6 +350,21 @@ templates live in [`deploy/`](deploy/).
       auth / one-shot-token flow for secured setups.
 
 See [ROADMAP.md](ROADMAP.md) for the full phase-by-phase plan.
+
+## Support FilaMind Flow
+
+FilaMind Flow is free and open source, built and maintained in makers' spare time. If it
+saved you a tuning session — or you just want to see it grow — a coffee keeps the research,
+new widgets, and hardware testing coming. Every bit helps, and contributions of code, data,
+and ideas are just as welcome.
+
+<div align="center">
+
+[![Support on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I119XEIV)
+
+**_Built by Egyptian makers, for world makers. Happy printing._** 🇪🇬
+
+</div>
 
 ## Credits
 
