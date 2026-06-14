@@ -99,9 +99,16 @@ def dfu_leave_command(offset: str, serial: str | None = None) -> list[str]:
 
 
 def resolve_method(method: str, device: str) -> str:
-    """Corrects a USB-to-CAN bridge: it is configured as CAN but enumerates as a
-    serial ``/dev/`` path, so a ``/dev/`` device given for CAN is flashed over serial.
+    """Normalises the flash method to what the device actually needs.
+
+    * The Linux-process host MCU (id ``linux_process``) is installed as a binary, never flashed
+      over a bus — force ``linux`` even if its registry entry stored a serial/CAN method (it isn't
+      a serial device, so a serial flash fails with "No Serial Device found at linux_process").
+    * A USB-to-CAN bridge is configured as CAN but enumerates as a serial ``/dev/`` path, so a
+      ``/dev/`` device given for CAN is flashed over serial.
     """
+    if device == "linux_process":
+        return "linux"
     if method == "can" and device.startswith("/dev/"):
         return "serial"
     return method
@@ -285,6 +292,7 @@ async def flash_plan(
     profile: str, method: str, device: str, interface: str, settings: Settings
 ) -> dict[str, Any]:
     """Read-only: reports the command + guards for flashing, without running it."""
+    method = resolve_method(method, device)
     artifact = artifact_path_for(settings.data_dir, profile) if profile else None
     offset = flash_offset(profile_path(settings.data_dir, profile)) if profile else "0x08000000"
     command = _build_command(
