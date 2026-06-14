@@ -6,7 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.262.0] - 2026-06-14
+## [0.263.0] - 2026-06-14
+
+### Fixed
+
+- **Firmware flash now targets the Katapult bootloader path — fixes a board stuck in the
+  bootloader.** A USB STM32 enumerates under a different `/dev/serial/by-id` name in each mode
+  (`usb-Klipper_<id>` while running firmware, `usb-katapult_<id>` while in the Katapult bootloader).
+  The flash sequence always pointed the flash tool at the stored *running-firmware* path, which
+  vanishes once the board reboots into the bootloader — so the tool flashed a path that no longer
+  existed and exited non-zero, and a board left in the bootloader by an interrupted flash could
+  **never be re-flashed** (every retry failed the same way, and Klipper reported `mcu: Unable to
+  connect`). The flash now detects a board already in the bootloader (and the bootloader path that
+  appears after a reboot) and **flashes `usb-katapult_<id>` directly**, so a stuck board recovers.
 
 ### Added
 
