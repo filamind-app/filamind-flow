@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.273.0] - 2026-06-14
+
+### Added
+
+- **Host summary on the dashboard.** Mission Control now shows a compact host card — a live clock
+  in the host's timezone, clock-sync (NTP) state, CPU temperature, uptime, and root-disk usage — so
+  the host's status is visible at a glance. The card appears only when host data is available and
+  degrades silently otherwise.
+- **A mission banner on the home page.** A dismissible, gently pulsing banner introduces the
+  project; once dismissed it stays hidden, and it respects reduced-motion preferences.
+
+### Changed
+
+- **Footer brand line.** The sidebar footer now shows the project's brand line.
+
 ## [0.272.0] - 2026-06-14
 
 ### Changed
