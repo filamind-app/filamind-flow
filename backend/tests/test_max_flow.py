@@ -131,6 +131,65 @@ def test_opening_transient_excused_by_warmup_for_noisy_5160() -> None:
     assert fixed.max_flow_mm3s == 15.0
 
 
+def _noisy_flat(flow: float, center: float = 400.0) -> StepMeasurement:
+    """A TMC5160-style noisy-but-clean step: CV ~17%, modest IQR (~8), steady median.
+
+    Mirrors the real Voron 5160 extruder, whose StallGuard load CV rides a flat ~15-18%
+    even with a clean grip and no rising trend. Such a step must NOT register as slip.
+    """
+    samples = [center - 110.0, center - 4.0, center, center + 4.0, center + 110.0]
+    return StepMeasurement(flow, samples)
+
+
+def _grind(flow: float, center: float = 400.0) -> StepMeasurement:
+    """A genuine grind: CV explodes (~45%) and the spread blows far past the noise floor."""
+    samples = [center - 232.0, center - 132.0, center - 32.0, center + 128.0, center + 268.0]
+    return StepMeasurement(flow, samples)
+
+
+def test_flat_noise_floor_not_tripped_on_5160() -> None:
+    """Regression (Voron TMC5160): a flat ~17% CV noise floor across the whole low-flow ramp must
+    read as clean. The bug was the absolute CV ceiling (16%) sitting inside that band, stopping the
+    ramp a few steps in. The retuned 5160 profile lifts the ceilings clear of the floor and leans on
+    the relative jump detectors, so the ramp rides the noise out and only a real grind stops it."""
+    noise = [_noisy_flat(f) for f in (5.0, 10.0, 15.0, 20.0, 25.0, 30.0)]
+    flat = max_flow.analyze(noise, "tmc5160", warmup=2)
+    assert flat.slip_flow is None  # flat noise is not slip
+    assert flat.max_flow_mm3s == 30.0  # ramps clean to the top
+
+    # Same noisy floor, then a genuine grind at 35 -> caught; max sustained = last clean (30).
+    grind = [*noise, _grind(35.0)]
+    hit = max_flow.analyze(grind, "tmc5160", warmup=2)
+    assert hit.slip_flow == 35.0
+    assert hit.max_flow_mm3s == 30.0
+
+
+def test_5160_noise_floor_would_trip_under_old_ceiling() -> None:
+    """Pin the fix independently of the shipped profile: the same flat ~17% noise floor false-trips
+    under the OLD absolute CV ceiling (16) but rides clean under the new one (30)."""
+    steps = [_noisy_flat(f) for f in (5.0, 7.5, 10.0)]
+    old = max_flow.analyze(
+        steps,
+        "tmc5160",
+        constants={"CV_HIGH_VARIANCE": 16.0, "IQR_ABSOLUTE_TRIGGER": 60.0},
+        warmup=2,
+    )
+    assert old.slip_flow is not None  # 17% CV >= old 16% ceiling -> false trip
+    new = max_flow.analyze(
+        steps,
+        "tmc5160",
+        constants={
+            "CV_HIGH_VARIANCE": 30.0,
+            "CV_JUMP_RATIO_COARSE": 2.0,
+            "CV_JUMP_MIN_COARSE": 25.0,
+            "IQR_ABSOLUTE_TRIGGER": 60.0,
+            "OUTLIER_MIN_REL": 0.15,
+        },
+        warmup=2,
+    )
+    assert new.slip_flow is None  # the retuned ceiling rides the flat floor out
+
+
 def test_empty_input() -> None:
     result = max_flow.analyze([], "tmc5160")
     assert result.max_flow_mm3s is None
