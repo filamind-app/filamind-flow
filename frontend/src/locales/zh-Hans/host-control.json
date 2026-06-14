@@ -1,0 +1,84 @@
+{
+  "hostControl": {
+    "intro": "管理打印机的 Linux 主机——查看其健康状况和操作系统状态。服务、磁盘清理和系统设置将在后续阶段加入。",
+    "help": {
+      "title": "这是什么？",
+      "body": "FilaMind 运行在打印机的小型 Linux 计算机（主机）上。此面板读取该计算机的实时健康状况和操作系统状态，让你无需打开终端即可发现问题——CPU 过热、磁盘已满、时钟未同步等。",
+      "step1": "一眼浏览 CPU 温度、内存、磁盘和网络的卡片。",
+      "step2": "查看占用最高的进程表格，了解当前是什么在使用 CPU。",
+      "step3": "保持自动刷新开启以获得实时视图，或将其关闭并手动刷新。",
+      "topics": {
+        "glossary": {
+          "title": "此处使用的术语"
+        },
+        "monitor": {
+          "title": "读懂监视器",
+          "body": "此处全部为只读。进度条超过 75% 变为琥珀色，超过 90% 变为红色。CPU 温度在 70 °C 变为琥珀色，在 80 °C 变为红色。降频警告仅在会报告该信息的主板上显示（主要是 Raspberry Pi）。"
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "主机",
+          "def": "运行 Klipper、Moonraker 和 FilaMind 的小型 Linux 计算机（例如 Raspberry Pi 或 BTT CB1）——与打印机的微控制器相互独立。"
+        },
+        "load": {
+          "term": "平均负载",
+          "def": "在 1 / 5 / 15 分钟内等待运行的进程数量的平均值。大致来说：接近核心数的值表示 CPU 繁忙；远高于核心数表示已过载。"
+        },
+        "swap": {
+          "term": "交换分区（Swap）",
+          "def": "内存占满时用作溢出的磁盘空间。频繁使用交换会拖慢主机——这是内存不足的信号。"
+        },
+        "throttle": {
+          "term": "降频限速",
+          "def": "主板为保护自身而降低速度——通常是因为供电不足（欠压）或过热。主要在 Raspberry Pi 上报告。"
+        },
+        "ntp": {
+          "term": "NTP / 时钟同步",
+          "def": "网络时间协议使主机时钟保持准确。未同步的时钟可能导致延时摄影、日志和 TLS 证书出错。"
+        },
+        "locale": {
+          "term": "区域设置（Locale）",
+          "def": "主机的语言和键盘布局设置，操作系统用它来处理文本、日期和控制台键盘映射。"
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "刷新",
+      "autoRefresh": "自动刷新",
+      "loading": "正在读取主机状态…",
+      "host": "主机",
+      "hostname": "主机名",
+      "distro": "操作系统",
+      "kernel": "内核",
+      "uptime": "运行时间",
+      "cpu": "CPU",
+      "temp": "温度",
+      "load": "负载 (1·5·15 分钟)",
+      "cores": "核心数",
+      "throttled": "已降频",
+      "memory": "内存",
+      "ram": "RAM",
+      "swap": "交换",
+      "disk": "磁盘",
+      "network": "网络",
+      "iface": "接口",
+      "ip": "IP 地址",
+      "ssid": "Wi-Fi",
+      "signal": "信号",
+      "timeLocale": "时间与区域",
+      "timezone": "时区",
+      "ntp": "时钟同步",
+      "synced": "已同步",
+      "syncing": "同步中…",
+      "ntpOff": "关闭",
+      "language": "语言",
+      "keymap": "键盘布局",
+      "topProcesses": "占用最高的进程",
+      "command": "命令",
+      "cpuPct": "CPU%",
+      "memPct": "内存%",
+      "pid": "PID"
+    }
+  }
+}

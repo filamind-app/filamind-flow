@@ -1,0 +1,84 @@
+{
+  "hostControl": {
+    "intro": "Administra el host Linux de la impresora — revisa su estado y el del sistema operativo. Los servicios, la limpieza de disco y los ajustes del sistema llegarán en fases posteriores.",
+    "help": {
+      "title": "¿Qué es esto?",
+      "body": "FilaMind se ejecuta en el pequeño ordenador Linux de la impresora (el host). Este panel lee el estado en vivo de esa máquina y de su sistema operativo para que detectes problemas — una CPU sobrecalentada, un disco lleno, un reloj sin sincronizar — sin abrir una terminal.",
+      "step1": "Lee de un vistazo las tarjetas de temperatura de CPU, memoria, disco y red.",
+      "step2": "Observa la tabla de procesos principales para ver qué está usando la CPU ahora.",
+      "step3": "Deja la actualización automática activada para una vista en vivo, o desactívala y actualiza manualmente.",
+      "topics": {
+        "glossary": {
+          "title": "Términos usados aquí"
+        },
+        "monitor": {
+          "title": "Leer el monitor",
+          "body": "Todo aquí es de solo lectura. Las barras se vuelven ámbar a partir del 75 % y rojas a partir del 90 %. La temperatura de la CPU se vuelve ámbar a 70 °C y roja a 80 °C. La advertencia de limitación solo aparece en placas que la informan (principalmente Raspberry Pi)."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Host",
+          "def": "El pequeño ordenador Linux (p. ej. una Raspberry Pi o BTT CB1) que ejecuta Klipper, Moonraker y FilaMind — separado de los microcontroladores de la impresora."
+        },
+        "load": {
+          "term": "Carga media",
+          "def": "Cuántos procesos esperaban para ejecutarse, promediados sobre 1 / 5 / 15 minutos. A grandes rasgos: un valor cercano al número de núcleos significa que la CPU está ocupada; muy por encima significa que está sobrecargada."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Espacio de disco usado como desbordamiento cuando la RAM se llena. Un uso intenso de swap ralentiza el host — señal de que le falta memoria."
+        },
+        "throttle": {
+          "term": "Limitación (throttling)",
+          "def": "Cuando la placa reduce su velocidad para protegerse — normalmente por una fuente de alimentación insuficiente (subtensión) o sobrecalentamiento. Se informa sobre todo en Raspberry Pi."
+        },
+        "ntp": {
+          "term": "NTP / sincronización del reloj",
+          "def": "El Protocolo de Tiempo de Red mantiene preciso el reloj del host. Un reloj sin sincronizar puede romper timelapses, registros y certificados TLS."
+        },
+        "locale": {
+          "term": "Configuración regional (locale)",
+          "def": "Los ajustes de idioma y distribución de teclado del host, que el sistema operativo usa para texto, fechas y el mapa de teclado de la consola."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Actualizar",
+      "autoRefresh": "Actualización automática",
+      "loading": "Leyendo el estado del host…",
+      "host": "Host",
+      "hostname": "Nombre de host",
+      "distro": "Sistema operativo",
+      "kernel": "Kernel",
+      "uptime": "Tiempo activo",
+      "cpu": "CPU",
+      "temp": "Temperatura",
+      "load": "Carga (1·5·15 min)",
+      "cores": "Núcleos",
+      "throttled": "Limitado",
+      "memory": "Memoria",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Disco",
+      "network": "Red",
+      "iface": "Interfaz",
+      "ip": "Dirección IP",
+      "ssid": "Wi-Fi",
+      "signal": "Señal",
+      "timeLocale": "Hora y configuración regional",
+      "timezone": "Zona horaria",
+      "ntp": "Sincronización del reloj",
+      "synced": "Sincronizado",
+      "syncing": "Sincronizando…",
+      "ntpOff": "Desactivado",
+      "language": "Idioma",
+      "keymap": "Distribución de teclado",
+      "topProcesses": "Procesos principales",
+      "command": "Comando",
+      "cpuPct": "CPU %",
+      "memPct": "MEM %",
+      "pid": "PID"
+    }
+  }
+}

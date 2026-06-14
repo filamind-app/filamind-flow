@@ -11,6 +11,7 @@ from app.api.routes import (
     guard,
     hardware,
     health,
+    host,
     journal,
     macro,
     maxflow,
@@ -42,3 +43,4 @@ api_router.include_router(macro.router)
 api_router.include_router(hardware.router)
 api_router.include_router(camera.router)
 api_router.include_router(screen.router)
+api_router.include_router(host.router)
