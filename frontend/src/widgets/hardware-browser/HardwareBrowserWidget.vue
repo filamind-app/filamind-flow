@@ -16,6 +16,8 @@ import HostsPanel from './HostsPanel.vue'
 import ManufacturersPanel from './ManufacturersPanel.vue'
 import McusPanel from './McusPanel.vue'
 import MotorsPanel from './MotorsPanel.vue'
+import SuggestPartDialog from './SuggestPartDialog.vue'
+import type { PartType } from './contributeSchema'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import type { HardwareSearchResult } from './types'
@@ -81,6 +83,21 @@ watch(
     }
   },
   { immediate: true },
+)
+
+// "Suggest a part": opens the submission form, pre-set to the active tab's type when it maps to one.
+const suggestOpen = ref(false)
+const MODE_TO_TYPE: Partial<Record<Mode, PartType>> = {
+  boards: 'board',
+  drivers: 'driver',
+  motors: 'motor',
+  hosts: 'host',
+  manufacturers: 'manufacturer',
+  category: 'catalog',
+}
+const suggestType = computed<PartType>(() => MODE_TO_TYPE[mode.value] ?? 'motor')
+const suggestPresetCategory = computed(() =>
+  mode.value === 'category' ? selectedCategory.value : undefined,
 )
 
 const q = ref('')
@@ -184,6 +201,14 @@ onMounted(() => {
     <div class="flex items-start justify-between gap-2">
       <p class="min-w-0 flex-1 text-xs opacity-70">{{ t('hardwareBrowser.intro') }}</p>
       <div class="flex shrink-0 items-center gap-2">
+        <button
+          class="nb-btn bg-brand-lime px-2 py-1 text-xs"
+          :title="t('hardwareBrowser.suggest.button')"
+          @click="suggestOpen = true"
+        >
+          <span aria-hidden="true">➕</span>
+          <span class="hidden sm:inline">{{ t('hardwareBrowser.suggest.button') }}</span>
+        </button>
         <HelpDrawer
           namespace="hardwareBrowser"
           :topics="HELP_TOPICS"
@@ -392,5 +417,13 @@ onMounted(() => {
         </div>
       </template>
     </div>
+
+    <!-- Suggest a part: per-category form → pre-filled GitHub issue for review (no token). -->
+    <SuggestPartDialog
+      :open="suggestOpen"
+      :initial-type="suggestType"
+      :preset-category="suggestPresetCategory"
+      @close="suggestOpen = false"
+    />
   </div>
 </template>
