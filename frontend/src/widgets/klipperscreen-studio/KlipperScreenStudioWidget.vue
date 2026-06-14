@@ -7,9 +7,11 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
-import HelpNote from './HelpNote.vue'
+import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
+import HelpIllo from './HelpIllo.vue'
 import {
   activateTheme,
   createTheme,
@@ -488,25 +490,22 @@ onMounted(() => void loadStatus())
 
 <template>
   <div class="space-y-3 text-sm">
-    <p class="text-xs opacity-70">{{ t('klipperscreenStudio.intro') }}</p>
-
-    <!-- Inline help: what this is + the safe workflow -->
-    <details class="nb-card bg-surface p-2">
-      <summary class="cursor-pointer text-xs font-bold uppercase tracking-wide opacity-70">
-        {{ t('klipperscreenStudio.help.title') }}
-      </summary>
-      <div class="mt-2 space-y-1 text-[11px] opacity-80">
-        <p>{{ t('klipperscreenStudio.help.body') }}</p>
-        <ol class="list-decimal space-y-0.5 ps-4">
-          <li>{{ t('klipperscreenStudio.help.step1') }}</li>
-          <li>{{ t('klipperscreenStudio.help.step2') }}</li>
-          <li>{{ t('klipperscreenStudio.help.step3') }}</li>
-        </ol>
-        <p class="opacity-70">{{ t('klipperscreenStudio.help.lfNote') }}</p>
-      </div>
-    </details>
-
-    <HelpNote topic="glossary" />
+    <div class="flex items-start justify-between gap-2">
+      <p class="min-w-0 flex-1 text-xs opacity-70">{{ t('klipperscreenStudio.intro') }}</p>
+      <HelpDrawer
+        class="shrink-0"
+        namespace="klipperscreenStudio"
+        :topics="HELP_TOPICS"
+        :illo-map="HELP_ILLO"
+        :illo="HelpIllo"
+        :glossary-keys="GLOSSARY_KEYS"
+        steps-key="klipperscreenStudio.help.steps"
+        :button-label="t('klipperscreenStudio.help.guide')"
+        :title="t('klipperscreenStudio.help.guideTitle')"
+        :close-label="t('klipperscreenStudio.help.close')"
+        :steps-title="t('klipperscreenStudio.help.howToRead')"
+      />
+    </div>
 
     <p v-if="checking" class="font-mono text-xs opacity-70">
       {{ t('klipperscreenStudio.status.checking') }}
@@ -553,7 +552,6 @@ onMounted(() => void loadStatus())
       </div>
 
       <template v-if="view === 'config'">
-        <HelpNote topic="config" />
         <!-- Raw editor -->
         <p v-if="loadingConf" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.editor.loading') }}
@@ -651,7 +649,6 @@ onMounted(() => void loadStatus())
 
       <!-- Settings view: a friendly form over the common [main] options -->
       <template v-else-if="view === 'settings'">
-        <HelpNote topic="settings" />
         <p
           v-if="settingsBusy && !Object.keys(settingsValues).length"
           class="font-mono text-xs opacity-70"
@@ -751,7 +748,6 @@ onMounted(() => void loadStatus())
 
       <!-- Menus view: design the on-screen menu tree (what's on each screen + what it does) -->
       <template v-else-if="view === 'menus'">
-        <HelpNote topic="menus" />
         <p v-if="menusBusy && !menuItems.length && !menuSha" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.menus.loading') }}
         </p>
@@ -953,7 +949,6 @@ onMounted(() => void loadStatus())
 
       <!-- Themes view: palette pickers + live preview + theme management -->
       <template v-else-if="view === 'themes'">
-        <HelpNote topic="themes" />
         <p v-if="themesBusy && !tokens.length" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.themes.loading') }}
         </p>
@@ -1119,7 +1114,6 @@ onMounted(() => void loadStatus())
 
       <!-- Kiosk view: turn the touchscreen into FilaMind itself (reversible swap) -->
       <template v-else-if="view === 'kiosk'">
-        <HelpNote topic="kiosk" />
         <p v-if="kioskBusy && !kiosk" class="font-mono text-xs opacity-70">
           {{ t('klipperscreenStudio.kiosk.loading') }}
         </p>

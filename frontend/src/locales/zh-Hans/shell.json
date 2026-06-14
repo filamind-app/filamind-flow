@@ -110,6 +110,14 @@
       "machine-doctor": {
         "title": "机器医生",
         "description": "一键全机扫描，生成 A-F 评级报告，并附跳转修复链接。"
+      },
+      "host-control": {
+        "title": "主机控制",
+        "description": "管理打印机主机的 Linux 系统：健康状况、服务、磁盘清理和系统设置。"
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "编辑打印机的 KlipperScreen 触摸屏配置并重启以应用。"
       }
     },
     "guard": {

@@ -92,6 +92,48 @@
       "install": {
         "check_failed": "Contrôle d'installation échoué : {name} — {detail}."
       }
+    },
+    "help": {
+      "guide": "Aide",
+      "guideTitle": "À propos de Machine Doctor",
+      "close": "Fermer",
+      "howToRead": "Comment lire",
+      "steps": [
+        "Appuyez sur Rescanner pour une vérification en lecture seule de toute l'imprimante.",
+        "Lisez la note A–F et les barres de piliers pour repérer les points faibles.",
+        "Ouvrez le lien d'un résultat pour aller droit au widget qui le corrige."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Ce que couvre l'analyse",
+          "body": "Un passage en lecture seule sur tout ce que l'app peut vérifier — conflits de broches, valeurs des drivers, écart entre la config enregistrée et active, lint du projet, synchro du firmware, changements matériels vs la référence, et santé de l'installation. Elle n'exécute jamais rien sur l'imprimante."
+        },
+        "grade": {
+          "title": "La note A–F",
+          "body": "Chaque pilier de santé (intégrité de la config, synchro firmware, services, input shaping, débit max) est noté ; les plus faibles tirent la note globale vers le bas. La ligne de score montre exactement comment la note a été obtenue — rien n'est caché."
+        },
+        "fixes": {
+          "title": "Liens de saut vers la correction",
+          "body": "Chaque résultat porte un bouton qui renvoie directement au widget qui le résout (Éditeur de config, Moteurs, la Carte de la machine…), du problème à la solution en un clic."
+        },
+        "glossary": {
+          "title": "Termes utilisés ici"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Note (A–F)",
+          "def": "Une seule lettre résumant la santé de l'imprimante, dérivée des scores des piliers ; A est sain, F demande de l'attention."
+        },
+        "pillar": {
+          "term": "Pilier",
+          "def": "Une catégorie de santé notée indépendamment — p. ex. intégrité de la config, synchro firmware, services, input shaping, débit max."
+        },
+        "finding": {
+          "term": "Résultat",
+          "def": "Un problème précis détecté par l'analyse, avec sa gravité et un lien vers le widget qui le corrige."
+        }
+      }
     }
   }
 }

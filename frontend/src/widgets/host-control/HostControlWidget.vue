@@ -7,11 +7,13 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
 import { fetchMonitor } from './api'
 import CleanupPanel from './CleanupPanel.vue'
-import HelpNote from './HelpNote.vue'
+import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
+import HelpIllo from './HelpIllo.vue'
 import ServicesPanel from './ServicesPanel.vue'
 import SystemPanel from './SystemPanel.vue'
 import type { HostMonitor } from './types'
@@ -124,24 +126,22 @@ function signalLabel(sig: number | null): string {
 
 <template>
   <div class="space-y-3 text-sm">
-    <p class="text-xs opacity-70">{{ t('hostControl.intro') }}</p>
-
-    <!-- Inline help: what this is + how to read it -->
-    <details class="nb-card bg-surface p-2">
-      <summary class="cursor-pointer text-xs font-bold uppercase tracking-wide opacity-70">
-        {{ t('hostControl.help.title') }}
-      </summary>
-      <div class="mt-2 space-y-1 text-[11px] opacity-80">
-        <p>{{ t('hostControl.help.body') }}</p>
-        <ol class="list-decimal space-y-0.5 ps-4">
-          <li>{{ t('hostControl.help.step1') }}</li>
-          <li>{{ t('hostControl.help.step2') }}</li>
-          <li>{{ t('hostControl.help.step3') }}</li>
-        </ol>
-      </div>
-    </details>
-
-    <HelpNote topic="glossary" />
+    <div class="flex items-start justify-between gap-2">
+      <p class="min-w-0 flex-1 text-xs opacity-70">{{ t('hostControl.intro') }}</p>
+      <HelpDrawer
+        class="shrink-0"
+        namespace="hostControl"
+        :topics="HELP_TOPICS"
+        :illo-map="HELP_ILLO"
+        :illo="HelpIllo"
+        :glossary-keys="GLOSSARY_KEYS"
+        steps-key="hostControl.help.steps"
+        :button-label="t('hostControl.help.guide')"
+        :title="t('hostControl.help.guideTitle')"
+        :close-label="t('hostControl.help.close')"
+        :steps-title="t('hostControl.help.howToRead')"
+      />
+    </div>
 
     <!-- Monitor / Services view toggle -->
     <div class="-mx-1 overflow-x-auto px-1">
@@ -178,8 +178,6 @@ function signalLabel(sig: number | null): string {
       <p v-if="error" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">
         {{ error }}
       </p>
-
-      <HelpNote topic="monitor" />
 
       <template v-if="monitor">
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">

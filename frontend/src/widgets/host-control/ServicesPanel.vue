@@ -19,7 +19,6 @@ import {
   HostActionError,
   serviceAction,
 } from './api'
-import HelpNote from './HelpNote.vue'
 import type { ServiceAction, ServiceDetail, ServiceUnit } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -242,8 +241,6 @@ function stateLabel(s: ServiceUnit): string {
 
 <template>
   <div class="space-y-3">
-    <HelpNote topic="services" />
-
     <p class="nb-card bg-brand-yellow/15 p-2 text-[11px] leading-snug" role="note">
       ⚠ {{ t('hostControl.services.warning') }}
     </p>

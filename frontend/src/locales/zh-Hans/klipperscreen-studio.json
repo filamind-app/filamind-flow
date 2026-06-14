@@ -2,12 +2,16 @@
   "klipperscreenStudio": {
     "intro": "安全地编辑打印机的 KlipperScreen 触摸屏配置，然后重启 KlipperScreen 以应用。每次保存前都会先备份。",
     "help": {
-      "title": "工作原理",
-      "body": "KlipperScreen.conf 控制连接到打印机的触摸屏——主题、语言、菜单和显示选项。此编辑器通过与配置编辑器相同的安全路径读写该文件。",
-      "step1": "在下方编辑配置文本（或保持不变）。",
-      "step2": "保存——文件会先备份，且在打印机忙碌时拒绝保存。",
-      "step3": "重启 KlipperScreen 以在实体屏幕上应用更改。",
-      "lfNote": "行使用 UNIX (LF) 换行符，保存时自动强制。",
+      "guide": "帮助",
+      "guideTitle": "关于 KlipperScreen Studio",
+      "close": "关闭",
+      "howToRead": "如何阅读",
+      "steps": [
+        "在下方编辑配置文本（或保持不变）。",
+        "保存——文件会先备份，且在打印机忙碌时拒绝保存。",
+        "重启 KlipperScreen 以在实体屏幕上应用更改。",
+        "行使用 UNIX (LF) 换行符，保存时自动强制。"
+      ],
       "topics": {
         "glossary": {
           "title": "术语表",
