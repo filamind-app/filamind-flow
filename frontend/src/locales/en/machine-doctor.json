@@ -92,6 +92,48 @@
       "install": {
         "check_failed": "Install check failed: {name} — {detail}."
       }
+    },
+    "help": {
+      "guide": "Help",
+      "guideTitle": "About Machine Doctor",
+      "close": "Close",
+      "howToRead": "How to read",
+      "steps": [
+        "Press Rescan to run one read-only check across the whole printer.",
+        "Read the A–F grade and the pillar bars to see where it's weakest.",
+        "Open any finding's link to jump straight to the widget that fixes it."
+      ],
+      "topics": {
+        "scan": {
+          "title": "What the scan covers",
+          "body": "One read-only pass over everything the app can check — pin conflicts, driver values, config drift between the saved and live config, project lint, firmware sync, hardware changes vs your baseline, and install health. It never runs anything on the printer."
+        },
+        "grade": {
+          "title": "The A–F grade",
+          "body": "Each health pillar (config integrity, firmware sync, services, input shaping, max flow) is scored, and the weakest ones pull the overall grade down. The score line shows exactly how the grade was reached — nothing is hidden."
+        },
+        "fixes": {
+          "title": "Jump-to-fix links",
+          "body": "Every finding carries a button that deep-links into the widget that resolves it (Config Editor, Motor Drivers, the Machine Map…), so you go from problem to fix in one click."
+        },
+        "glossary": {
+          "title": "Terms used here"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Grade (A–F)",
+          "def": "A single letter summarizing the printer's health, derived from the pillar scores; A is healthy, F needs attention."
+        },
+        "pillar": {
+          "term": "Pillar",
+          "def": "A health category scored independently — e.g. config integrity, firmware sync, services, input shaping, max flow."
+        },
+        "finding": {
+          "term": "Finding",
+          "def": "A specific issue the scan detected, with its severity and a link to the widget that fixes it."
+        }
+      }
     }
   }
 }

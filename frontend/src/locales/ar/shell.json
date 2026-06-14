@@ -110,6 +110,14 @@
       "machine-doctor": {
         "title": "طبيب الآلة",
         "description": "فحص كامل للطابعة بنقرة واحدة مع بطاقة تقييم بتقدير A-F وروابط قفز للإصلاح."
+      },
+      "host-control": {
+        "title": "التحكم بالمضيف",
+        "description": "أدِر نظام لينكس لمضيف الطابعة: الصحة والخدمات وتنظيف القرص وإعدادات النظام."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "حرّر إعدادات شاشة KlipperScreen اللمسية لطابعتك وأعد تشغيلها للتطبيق."
       }
     },
     "guard": {

@@ -8,11 +8,15 @@
       "system": "Sistema"
     },
     "help": {
-      "title": "¿Qué es esto?",
-      "body": "FilaMind se ejecuta en el pequeño ordenador Linux de la impresora (el host). Este panel lee el estado en vivo de esa máquina y de su sistema operativo para que detectes problemas — una CPU sobrecalentada, un disco lleno, un reloj sin sincronizar — sin abrir una terminal, y te permite controlar los servicios en segundo plano que ejecuta.",
-      "step1": "Lee de un vistazo las tarjetas de temperatura de CPU, memoria, disco y red.",
-      "step2": "Observa la tabla de procesos principales para ver qué está usando la CPU ahora.",
-      "step3": "Deja la actualización automática activada para una vista en vivo, o desactívala y actualiza manualmente.",
+      "guide": "Ayuda",
+      "guideTitle": "Acerca del control del host",
+      "close": "Cerrar",
+      "howToRead": "Cómo interpretarlo",
+      "steps": [
+        "Lee de un vistazo las tarjetas de temperatura de CPU, memoria, disco y red.",
+        "Observa la tabla de procesos principales para ver qué está usando la CPU ahora.",
+        "Deja la actualización automática activada para una vista en vivo, o desactívala y actualiza manualmente."
+      ],
       "topics": {
         "glossary": {
           "title": "Términos usados aquí"

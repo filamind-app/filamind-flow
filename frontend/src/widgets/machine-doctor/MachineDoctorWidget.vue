@@ -9,6 +9,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 import { useNav } from '@/core/nav'
 import { focusTopologyNode } from '@/widgets/board-topology/topologyFocus'
@@ -16,6 +17,8 @@ import { focusConfigSection } from '@/widgets/config-editor/configFocus'
 import { focusStepper } from '@/widgets/motor-drivers/driverFocus'
 
 import { fetchDoctorScan } from './api'
+import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
+import HelpIllo from './HelpIllo.vue'
 import type { DoctorFinding, DoctorLink, DoctorReport } from './types'
 
 const { t, te } = useI18n({ useScope: 'global' })
@@ -119,13 +122,23 @@ const hasStats = computed(() => {
   <div class="space-y-3 text-sm">
     <div class="flex items-start justify-between gap-2">
       <p class="min-w-0 flex-1 text-xs opacity-70">{{ t('machineDoctor.intro') }}</p>
-      <button
-        class="nb-btn shrink-0 bg-brand-cyan px-3 py-1.5 text-xs"
-        :disabled="scanning"
-        @click="scan"
-      >
-        {{ scanning ? t('machineDoctor.scanning') : t('machineDoctor.rescan') }}
-      </button>
+      <div class="flex shrink-0 items-center gap-2">
+        <HelpDrawer
+          namespace="machineDoctor"
+          :topics="HELP_TOPICS"
+          :illo-map="HELP_ILLO"
+          :illo="HelpIllo"
+          :glossary-keys="GLOSSARY_KEYS"
+          steps-key="machineDoctor.help.steps"
+          :button-label="t('machineDoctor.help.guide')"
+          :title="t('machineDoctor.help.guideTitle')"
+          :close-label="t('machineDoctor.help.close')"
+          :steps-title="t('machineDoctor.help.howToRead')"
+        />
+        <button class="nb-btn bg-brand-cyan px-3 py-1.5 text-xs" :disabled="scanning" @click="scan">
+          {{ scanning ? t('machineDoctor.scanning') : t('machineDoctor.rescan') }}
+        </button>
+      </div>
     </div>
 
     <p v-if="error" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">

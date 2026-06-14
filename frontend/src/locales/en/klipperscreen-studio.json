@@ -2,12 +2,16 @@
   "klipperscreenStudio": {
     "intro": "Edit your printer's KlipperScreen touchscreen configuration safely, then restart KlipperScreen to apply. Every save is backed up first.",
     "help": {
-      "title": "How this works",
-      "body": "KlipperScreen.conf controls the touchscreen attached to your printer — its theme, language, menus, and display options. This editor reads and writes that file through the same safe path as the Config Editor.",
-      "step1": "Edit the configuration text below (or leave it as-is).",
-      "step2": "Save — the current file is backed up first, and the save is refused while the printer is busy.",
-      "step3": "Restart KlipperScreen to apply the change on the physical screen.",
-      "lfNote": "Lines use UNIX (LF) endings, enforced automatically on save.",
+      "guide": "Help",
+      "guideTitle": "About KlipperScreen Studio",
+      "close": "Close",
+      "howToRead": "How to read",
+      "steps": [
+        "Edit the configuration text below (or leave it as-is).",
+        "Save — the current file is backed up first, and the save is refused while the printer is busy.",
+        "Restart KlipperScreen to apply the change on the physical screen.",
+        "Lines use UNIX (LF) endings, enforced automatically on save."
+      ],
       "topics": {
         "glossary": {
           "title": "Glossary",
@@ -96,7 +100,12 @@
       "savedRestart": "Saved — restart KlipperScreen to apply.",
       "unset": "Leave unset (default)",
       "never": "Never (always on)",
-      "fontSize": { "small": "Small", "medium": "Medium", "large": "Large", "max": "Max" },
+      "fontSize": {
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large",
+        "max": "Max"
+      },
       "label": {
         "theme": "Theme",
         "language": "Language",

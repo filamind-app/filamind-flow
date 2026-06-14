@@ -2,12 +2,16 @@
   "klipperscreenStudio": {
     "intro": "Edita de forma segura la configuración de la pantalla táctil KlipperScreen de tu impresora y reinicia KlipperScreen para aplicarla. Cada guardado se respalda primero.",
     "help": {
-      "title": "Cómo funciona",
-      "body": "KlipperScreen.conf controla la pantalla táctil conectada a tu impresora — tema, idioma, menús y opciones de visualización. Este editor lee y escribe ese archivo por la misma ruta segura que el Editor de Config.",
-      "step1": "Edita el texto de configuración abajo (o déjalo igual).",
-      "step2": "Guardar — el archivo se respalda primero, y el guardado se rechaza mientras la impresora está ocupada.",
-      "step3": "Reinicia KlipperScreen para aplicar el cambio en la pantalla física.",
-      "lfNote": "Las líneas usan finales UNIX (LF), aplicados automáticamente al guardar.",
+      "guide": "Ayuda",
+      "guideTitle": "Acerca de KlipperScreen Studio",
+      "close": "Cerrar",
+      "howToRead": "Cómo interpretarlo",
+      "steps": [
+        "Edita el texto de configuración abajo (o déjalo igual).",
+        "Guardar — el archivo se respalda primero, y el guardado se rechaza mientras la impresora está ocupada.",
+        "Reinicia KlipperScreen para aplicar el cambio en la pantalla física.",
+        "Las líneas usan finales UNIX (LF), aplicados automáticamente al guardar."
+      ],
       "topics": {
         "glossary": {
           "title": "Glosario",

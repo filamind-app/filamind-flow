@@ -6,6 +6,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.272.0] - 2026-06-14
+
+### Changed
+
+- **Every widget now uses the same guide.** Host Control and KlipperScreen Studio were still using
+  the older inline `<details>` / scattered "what's this?" notes; they're migrated to the shared
+  **`❓ Help` drawer** (how-to-read steps + every topic with its illustration + the glossary) that
+  the other widgets use, so the help experience is identical everywhere.
+- **Machine Doctor gained its guide.** It was the only widget without one — it now has the same
+  `❓ Help` drawer (what the scan covers, the A–F grade, jump-to-fix links + a glossary), translated
+  across all seven languages.
+- **Sidebar labels are now translated for every widget.** Host Control and KlipperScreen Studio
+  had no `shell.widgets` entry, so their sidebar title/description showed in English regardless of
+  locale; both now have translated entries in all seven languages.
+
+### Added
+
+- **CI now enforces the widget conventions** (`widgets.spec.ts`): a registered widget that lacks a
+  translated sidebar entry or doesn't render the shared `<HelpDrawer>` fails the build — the rule
+  can't be skipped. Documented in CONTRIBUTING.md.
+
 ## [0.271.0] - 2026-06-14
 
 ### Changed

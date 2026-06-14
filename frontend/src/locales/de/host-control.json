@@ -8,11 +8,15 @@
       "system": "System"
     },
     "help": {
-      "title": "Was ist das?",
-      "body": "FilaMind läuft auf dem kleinen Linux-Computer des Druckers (dem Host). Dieses Panel liest dessen Live-Zustand und Betriebssystem-Status, damit du Probleme erkennst — eine überhitzte CPU, eine volle Festplatte, eine nicht synchronisierte Uhr — ohne ein Terminal zu öffnen, und lässt dich die Hintergrunddienste steuern, die er ausführt.",
-      "step1": "Lies die Karten für CPU-Temperatur, Speicher, Datenträger und Netzwerk auf einen Blick.",
-      "step2": "Beobachte die Tabelle der Top-Prozesse, um zu sehen, was die CPU gerade auslastet.",
-      "step3": "Lass die automatische Aktualisierung für eine Live-Ansicht an, oder schalte sie aus und aktualisiere manuell.",
+      "guide": "Hilfe",
+      "guideTitle": "Über die Host-Steuerung",
+      "close": "Schließen",
+      "howToRead": "So liest du es",
+      "steps": [
+        "Lies die Karten für CPU-Temperatur, Speicher, Datenträger und Netzwerk auf einen Blick.",
+        "Beobachte die Tabelle der Top-Prozesse, um zu sehen, was die CPU gerade auslastet.",
+        "Lass die automatische Aktualisierung für eine Live-Ansicht an, oder schalte sie aus und aktualisiere manuell."
+      ],
       "topics": {
         "glossary": {
           "title": "Hier verwendete Begriffe"

@@ -1,13 +1,22 @@
 /** Structure for the KlipperScreen Studio help layer. The translatable text (titles, bodies,
  *  glossary terms/defs) lives in the i18n catalog under `klipperscreenStudio.help.*`; this module
- *  only holds the non-translatable structure: which topics exist, their illustration, and the
- *  glossary term order. Rendered by `HelpNote.vue` behind a collapsed "ℹ what's this?" toggle, one
- *  per view, matching the Input Shaping / Motor Drivers widgets.
+ *  only holds the non-translatable structure: which topics exist (in order), their illustration,
+ *  and the glossary term order. Rendered by the shared `HelpDrawer` — the adopted guide pattern.
  */
 
 export type HelpIlloKey = 'screen' | 'config' | 'settings' | 'menu' | 'theme' | 'kiosk'
 
 export type HelpTopic = 'glossary' | 'config' | 'settings' | 'menus' | 'themes' | 'kiosk'
+
+/** Help topics in display order. Text: `klipperscreenStudio.help.topics.<topic>.{title,body}`. */
+export const HELP_TOPICS: HelpTopic[] = [
+  'config',
+  'settings',
+  'menus',
+  'themes',
+  'kiosk',
+  'glossary',
+]
 
 /** The illustration each topic shows (illustration keys are identifiers, not translated). */
 export const HELP_ILLO: Partial<Record<HelpTopic, HelpIlloKey>> = {

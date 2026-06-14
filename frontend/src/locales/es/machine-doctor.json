@@ -92,6 +92,48 @@
       "install": {
         "check_failed": "Falló la comprobación de instalación: {name} — {detail}."
       }
+    },
+    "help": {
+      "guide": "Ayuda",
+      "guideTitle": "Acerca de Machine Doctor",
+      "close": "Cerrar",
+      "howToRead": "Cómo interpretarlo",
+      "steps": [
+        "Pulsa Reescanear para una comprobación de solo lectura de toda la impresora.",
+        "Lee la nota A–F y las barras de pilares para ver los puntos más débiles.",
+        "Abre el enlace de cualquier hallazgo para ir directo al widget que lo soluciona."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Qué cubre el análisis",
+          "body": "Una pasada de solo lectura sobre todo lo que la app puede comprobar — conflictos de pines, valores de drivers, desviación entre la config guardada y la activa, lint del proyecto, sincronización de firmware, cambios de hardware frente a la referencia y salud de la instalación. Nunca ejecuta nada en la impresora."
+        },
+        "grade": {
+          "title": "La nota A–F",
+          "body": "Cada pilar de salud (integridad de config, sincronización de firmware, servicios, input shaping, flujo máximo) se puntúa, y los más débiles bajan la nota global. La línea de puntuación muestra exactamente cómo se obtuvo la nota — nada se oculta."
+        },
+        "fixes": {
+          "title": "Enlaces de salto a la solución",
+          "body": "Cada hallazgo lleva un botón que enlaza directamente con el widget que lo resuelve (Editor de config, Motores, el Mapa de la máquina…), del problema a la solución en un clic."
+        },
+        "glossary": {
+          "title": "Términos usados aquí"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Nota (A–F)",
+          "def": "Una sola letra que resume la salud de la impresora, derivada de las puntuaciones de los pilares; A es saludable, F necesita atención."
+        },
+        "pillar": {
+          "term": "Pilar",
+          "def": "Una categoría de salud puntuada de forma independiente — p. ej. integridad de config, sincronización de firmware, servicios, input shaping, flujo máximo."
+        },
+        "finding": {
+          "term": "Hallazgo",
+          "def": "Un problema concreto detectado por el análisis, con su gravedad y un enlace al widget que lo soluciona."
+        }
+      }
     }
   }
 }

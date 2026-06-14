@@ -11,7 +11,6 @@ import { describeError } from '@/core/describeError'
 
 import { fetchCleanup, runCleanup } from './api'
 import { humanSize } from './format'
-import HelpNote from './HelpNote.vue'
 import type { CleanupResult, CleanupTarget } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -87,8 +86,6 @@ async function run(): Promise<void> {
 
 <template>
   <div class="space-y-3">
-    <HelpNote topic="cleanup" />
-
     <div class="flex items-center justify-between gap-2">
       <p class="font-mono text-[11px] opacity-60">{{ t('hostControl.cleanup.subtitle') }}</p>
       <button type="button" class="nb-btn text-xs" :disabled="loading || busy" @click="scan">

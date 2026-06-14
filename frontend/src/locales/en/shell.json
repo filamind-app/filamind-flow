@@ -110,6 +110,14 @@
       "machine-doctor": {
         "title": "Machine Doctor",
         "description": "One-click full-printer scan with an A-F report card and jump-to-fix links."
+      },
+      "host-control": {
+        "title": "Host Control",
+        "description": "Manage the printer host's Linux OS: health, services, disk cleanup, and system settings."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "Edit your printer's KlipperScreen touchscreen config and restart it to apply."
       }
     },
     "guard": {

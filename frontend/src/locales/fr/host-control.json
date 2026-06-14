@@ -8,11 +8,15 @@
       "system": "Système"
     },
     "help": {
-      "title": "Qu'est-ce que c'est ?",
-      "body": "FilaMind s'exécute sur le petit ordinateur Linux de l'imprimante (l'hôte). Ce panneau lit l'état en direct de cette machine et de son système d'exploitation pour repérer les problèmes — un processeur en surchauffe, un disque plein, une horloge non synchronisée — sans ouvrir de terminal, et vous laisse contrôler les services en arrière-plan qu'il exécute.",
-      "step1": "Lisez d'un coup d'œil les cartes de température du processeur, de mémoire, de disque et de réseau.",
-      "step2": "Surveillez le tableau des principaux processus pour voir ce qui sollicite le processeur en ce moment.",
-      "step3": "Laissez l'actualisation automatique activée pour une vue en direct, ou désactivez-la et actualisez manuellement.",
+      "guide": "Aide",
+      "guideTitle": "À propos du contrôle de l'hôte",
+      "close": "Fermer",
+      "howToRead": "Comment lire",
+      "steps": [
+        "Lisez d'un coup d'œil les cartes de température du processeur, de mémoire, de disque et de réseau.",
+        "Surveillez le tableau des principaux processus pour voir ce qui sollicite le processeur en ce moment.",
+        "Laissez l'actualisation automatique activée pour une vue en direct, ou désactivez-la et actualisez manuellement."
+      ],
       "topics": {
         "glossary": {
           "title": "Termes utilisés ici"
