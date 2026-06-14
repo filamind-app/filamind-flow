@@ -3,7 +3,7 @@
 Surfaces whether the host is set up for firmware flashing — the passwordless sudo
 rule, the STM32 DFU udev rule, and the dfu-util tool — so the UI can show a clear
 green / amber light and tell the user exactly what to run if something is missing
-(``deploy/setup-sudoers.sh``). FilaMind never edits these privileged files itself;
+(``scripts/install.sh sudoers``). FilaMind never edits these privileged files itself;
 it only reports on them.
 """
 
@@ -17,7 +17,7 @@ from app.services.flash_service import _sudo_ready
 
 _SUDOERS = "/etc/sudoers.d/filamind"
 _UDEV_DFU = "/etc/udev/rules.d/99-stm32-dfu.rules"
-_FIX = "run: sudo bash deploy/setup-sudoers.sh"
+_FIX = "run: sudo bash scripts/install.sh sudoers"
 
 
 async def gather_health() -> dict[str, Any]:

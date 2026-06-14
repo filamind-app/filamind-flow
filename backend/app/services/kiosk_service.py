@@ -3,7 +3,7 @@
 KlipperScreen has no plugin API and its panels are hardcoded, so the only way to put *arbitrary*
 content on the physical screen is to turn it into a fullscreen browser pointed at FilaMind Flow.
 This module owns the **reversible swap** between the two: a ``filamind-kiosk`` systemd service
-(installed once by ``deploy/install-kiosk.sh``) declares ``Conflicts=KlipperScreen.service``, so
+(installed once by ``scripts/install.sh kiosk``) declares ``Conflicts=KlipperScreen.service``, so
 starting one stops the other.
 
 Switching is **temporary by default** — a plain ``start``, so a reboot restores whichever service
@@ -106,7 +106,7 @@ async def switch_to_kiosk(persist: bool = False) -> dict[str, Any]:
     if not await _unit_installed(KIOSK_UNIT):
         raise KioskNotInstalledError(
             "The FilaMind kiosk service isn't installed yet — "
-            "run deploy/install-kiosk.sh on the printer host first."
+            "run 'sudo bash scripts/install.sh kiosk' on the printer host first."
         )
     steps: list[dict[str, Any]] = []
     if persist:

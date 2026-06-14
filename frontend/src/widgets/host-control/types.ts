@@ -164,7 +164,6 @@ export interface SystemInfo {
   locales: string[]
   keymaps: string[]
   hostname: string
-  wifi_available: boolean
   network: NetworkConfig
 }
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-/** Host Control · System — time / locale / hostname / Wi-Fi / power.
+/** Host Control · System — time / locale / hostname / network (IPv4) / power.
  *
  *  Each section reads the current value and applies a change through a guarded backend setter
  *  (validated server-side). Reboot and shutdown ask for an inline confirm and are refused by the
- *  backend while a print is running; changing Wi-Fi warns that it may drop the connection. */
+ *  backend while a print is running; changing the IP warns that it may drop the connection. */
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -20,7 +20,6 @@ import {
   setNtp,
   setTime,
   setTimezone,
-  setWifi,
 } from './api'
 import HelpNote from './HelpNote.vue'
 import type { NetworkSetReq, PowerAction, SystemActionResult, SystemInfo } from './types'
@@ -38,8 +37,6 @@ const manualTime = ref('')
 const lang = ref('')
 const keymap = ref('')
 const hostname = ref('')
-const ssid = ref('')
-const wifiPw = ref('')
 
 // Network (IPv4) form state
 const netMethod = ref<'auto' | 'manual'>('auto')
@@ -116,11 +113,6 @@ async function apply(id: string, fn: () => Promise<SystemActionResult>): Promise
 function onNtpToggle(e: Event): void {
   ntp.value = (e.target as HTMLInputElement).checked
   void apply('ntp', () => setNtp(ntp.value))
-}
-
-async function applyWifi(): Promise<void> {
-  await apply('wifi', () => setWifi(ssid.value, wifiPw.value))
-  wifiPw.value = '' // never keep the password around
 }
 
 async function runPower(): Promise<void> {
@@ -513,48 +505,6 @@ async function applyNetwork(): Promise<void> {
               </button>
             </div>
           </div>
-        </template>
-      </section>
-
-      <!-- Wi-Fi -->
-      <section class="nb-card space-y-2 bg-surface p-3">
-        <h3 class="text-xs font-bold uppercase tracking-wide opacity-60">
-          {{ t('hostControl.system.wifiTitle') }}
-        </h3>
-        <p v-if="!info.wifi_available" class="text-[11px] opacity-60">
-          {{ t('hostControl.system.wifiUnavailable') }}
-        </p>
-        <template v-else>
-          <p class="text-[11px] text-brand-red">⚠ {{ t('hostControl.system.wifiWarning') }}</p>
-          <label class="block">
-            <span class="mb-0.5 block text-[11px] opacity-60">{{
-              t('hostControl.system.ssid')
-            }}</span>
-            <input
-              v-model="ssid"
-              type="text"
-              class="w-full rounded-brutal border-2 border-ink bg-paper px-2 py-1 font-mono text-xs"
-            />
-          </label>
-          <label class="block">
-            <span class="mb-0.5 block text-[11px] opacity-60">{{
-              t('hostControl.system.password')
-            }}</span>
-            <input
-              v-model="wifiPw"
-              type="password"
-              autocomplete="off"
-              class="w-full rounded-brutal border-2 border-ink bg-paper px-2 py-1 font-mono text-xs"
-            />
-          </label>
-          <button
-            type="button"
-            class="nb-btn text-xs"
-            :disabled="busy === 'wifi' || !ssid"
-            @click="applyWifi"
-          >
-            {{ t('hostControl.system.connect') }}
-          </button>
         </template>
       </section>
 

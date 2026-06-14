@@ -344,18 +344,6 @@ async def test_power_runs_when_idle(monkeypatch: pytest.MonkeyPatch) -> None:
     assert ["sudo", "-n", "systemctl", "reboot"] in calls
 
 
-async def test_wifi_unavailable_without_nmcli(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(hc, "_has_cmd", lambda name: False)
-    res = await hc.wifi_connect("MyNet", "password1")
-    assert res["refused"] is True
-
-
-async def test_wifi_rejects_short_password(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(hc, "_has_cmd", lambda name: True)
-    with pytest.raises(ValueError):
-        await hc.wifi_connect("MyNet", "short")  # < 8 chars
-
-
 # ── needs_setup detection (the sudo-not-granted UX bug) ─────────────────────────
 
 

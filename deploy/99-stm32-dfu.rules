@@ -1,4 +1,4 @@
 # FilaMind Flow — let the logged-in user talk to STM32 ROM DFU bootloaders
 # (USB 0483:df11) without sudo, so dfu-util can flash without elevated rights.
-# Installed by deploy/setup-sudoers.sh to /etc/udev/rules.d/.
+# Installed by 'scripts/install.sh sudoers' to /etc/udev/rules.d/.
 SUBSYSTEM=="usb", ATTR{idVendor}=="0483", ATTR{idProduct}=="df11", MODE="0660", TAG+="uaccess"

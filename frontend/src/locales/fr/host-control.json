@@ -1,6 +1,6 @@
 {
   "hostControl": {
-    "intro": "Gérez l'hôte Linux de l'imprimante — vérifiez son état, contrôlez ses services en arrière-plan, libérez de l'espace disque et modifiez les réglages système (heure, langue, nom d'hôte, Wi-Fi, alimentation).",
+    "intro": "Gérez l'hôte Linux de l'imprimante — vérifiez son état, contrôlez ses services en arrière-plan, libérez de l'espace disque et modifiez les réglages système (heure, langue, nom d'hôte, réseau, alimentation).",
     "view": {
       "monitor": "Moniteur",
       "services": "Services",
@@ -31,7 +31,7 @@
         },
         "system": {
           "title": "Paramètres système",
-          "body": "Modifiez le fuseau horaire et l'horloge, la langue et le clavier, le nom d'hôte ou le Wi-Fi de l'hôte, ou redémarrez-le / éteignez-le. Chaque modification s'applique immédiatement. Le redémarrage et l'arrêt sont refusés pendant une impression. Modifier le Wi-Fi peut couper brièvement votre connexion à ce panneau."
+          "body": "Modifiez le fuseau horaire et l'horloge, la langue et le clavier, le nom d'hôte ou le réseau (DHCP / IP statique) de l'hôte, ou redémarrez-le / éteignez-le. Chaque modification s'applique immédiatement. Le redémarrage et l'arrêt sont refusés pendant une impression. Modifier l'IP peut couper brièvement votre connexion à ce panneau."
         },
         "network": {
           "title": "DHCP ou IP statique",
@@ -210,12 +210,6 @@
       "keymap": "Disposition clavier console",
       "hostnameTitle": "Nom d'hôte",
       "hostnameHint": "Lettres, chiffres et traits d'union uniquement. Pleinement effectif après un redémarrage.",
-      "wifiTitle": "Wi-Fi",
-      "wifiUnavailable": "La modification du Wi-Fi n'est pas disponible sur cet hôte (NetworkManager non installé).",
-      "wifiWarning": "Modifier le Wi-Fi peut couper brièvement la connexion à ce panneau.",
-      "ssid": "Nom du réseau (SSID)",
-      "password": "Mot de passe",
-      "connect": "Se connecter",
       "powerTitle": "Alimentation",
       "powerWarning": "Le redémarrage et l'arrêt sont refusés pendant une impression.",
       "reboot": "Redémarrer",
@@ -224,7 +218,7 @@
       "confirmShutdown": "Éteindre l'hôte maintenant ?",
       "confirmYes": "Oui",
       "cancel": "Annuler",
-      "needsSetup": "Cette action nécessite sudo sans mot de passe. Sur l'imprimante, exécutez : sudo bash deploy/setup-sudoers.sh — puis réessayez.",
+      "needsSetup": "Cette action nécessite sudo sans mot de passe. Sur l'imprimante, exécutez : sudo bash scripts/install.sh sudoers — puis réessayez.",
       "failed": "La modification n'a pas été appliquée.",
       "network": {
         "title": "Réseau (IPv4)",

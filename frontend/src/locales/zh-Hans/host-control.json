@@ -1,6 +1,6 @@
 {
   "hostControl": {
-    "intro": "管理打印机的 Linux 主机——查看其健康状况、控制后台服务、释放磁盘空间，并更改系统设置（时间、语言、主机名、Wi-Fi、电源）。",
+    "intro": "管理打印机的 Linux 主机——查看其健康状况、控制后台服务、释放磁盘空间，并更改系统设置（时间、语言、主机名、网络、电源）。",
     "view": {
       "monitor": "监视",
       "services": "服务",
@@ -31,7 +31,7 @@
         },
         "system": {
           "title": "系统设置",
-          "body": "更改主机的时区和时钟、语言和键盘、主机名或 Wi-Fi，或重启/关闭它。每项更改会立即生效。打印进行时会拒绝重启和关机。更改 Wi-Fi 可能会短暂中断你与本面板的连接。"
+          "body": "更改主机的时区和时钟、语言和键盘、主机名或网络（DHCP / 静态 IP），或重启/关闭它。每项更改会立即生效。打印进行时会拒绝重启和关机。更改 IP 可能会短暂中断你与本面板的连接。"
         },
         "network": {
           "title": "DHCP 与静态 IP",
@@ -210,12 +210,6 @@
       "keymap": "控制台键盘布局",
       "hostnameTitle": "主机名",
       "hostnameHint": "仅限字母、数字和连字符。重启后完全生效。",
-      "wifiTitle": "Wi-Fi",
-      "wifiUnavailable": "此主机不支持编辑 Wi-Fi（未安装 NetworkManager）。",
-      "wifiWarning": "更改 Wi-Fi 可能会短暂中断与本面板的连接。",
-      "ssid": "网络名称（SSID）",
-      "password": "密码",
-      "connect": "连接",
       "powerTitle": "电源",
       "powerWarning": "打印进行时会拒绝重启和关机。",
       "reboot": "重启",
@@ -224,7 +218,7 @@
       "confirmShutdown": "现在关闭主机？",
       "confirmYes": "是",
       "cancel": "取消",
-      "needsSetup": "此操作需要免密 sudo。请在打印机上运行：sudo bash deploy/setup-sudoers.sh，然后重试。",
+      "needsSetup": "此操作需要免密 sudo。请在打印机上运行：sudo bash scripts/install.sh sudoers，然后重试。",
       "failed": "更改未生效。",
       "network": {
         "title": "网络（IPv4）",
