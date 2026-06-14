@@ -61,7 +61,10 @@
     "SGT_AUTOTUNE_MAX_ITERATIONS": 5
   },
   "overrides": {
-    "tmc5160": {},
+    "tmc5160": {
+      "CV_HIGH_VARIANCE": 16.0,
+      "IQR_ABSOLUTE_TRIGGER": 60.0
+    },
     "tmc2240": {
       "WARMUP_DRIFT_THRESHOLD": 0.04,
       "PLATEAU_RATIO": 0.2,
