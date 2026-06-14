@@ -1,6 +1,6 @@
 {
   "hostControl": {
-    "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand, steuere seine Hintergrunddienste, gib Speicherplatz frei und ändere Systemeinstellungen (Zeit, Sprache, Hostname, WLAN, Energie).",
+    "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand, steuere seine Hintergrunddienste, gib Speicherplatz frei und ändere Systemeinstellungen (Zeit, Sprache, Hostname, Netzwerk, Energie).",
     "view": {
       "monitor": "Monitor",
       "services": "Dienste",
@@ -31,7 +31,7 @@
         },
         "system": {
           "title": "Systemeinstellungen",
-          "body": "Ändere Zeitzone und Uhr, Sprache und Tastatur, Hostname oder WLAN des Hosts, oder starte ihn neu / fahre ihn herunter. Jede Änderung wird sofort wirksam. Neustart und Herunterfahren werden während eines Drucks abgelehnt. Eine WLAN-Änderung kann die Verbindung zu diesem Panel kurz unterbrechen."
+          "body": "Ändere Zeitzone und Uhr, Sprache und Tastatur, Hostname oder Netzwerk (DHCP / statische IP) des Hosts, oder starte ihn neu / fahre ihn herunter. Jede Änderung wird sofort wirksam. Neustart und Herunterfahren werden während eines Drucks abgelehnt. Eine IP-Änderung kann die Verbindung zu diesem Panel kurz unterbrechen."
         },
         "network": {
           "title": "DHCP vs. statische IP",
@@ -210,12 +210,6 @@
       "keymap": "Konsolen-Tastaturbelegung",
       "hostnameTitle": "Hostname",
       "hostnameHint": "Nur Buchstaben, Ziffern und Bindestriche. Voll wirksam nach einem Neustart.",
-      "wifiTitle": "WLAN",
-      "wifiUnavailable": "WLAN-Bearbeitung ist auf diesem Host nicht verfügbar (NetworkManager nicht installiert).",
-      "wifiWarning": "Eine WLAN-Änderung kann die Verbindung zu diesem Panel kurz unterbrechen.",
-      "ssid": "Netzwerkname (SSID)",
-      "password": "Passwort",
-      "connect": "Verbinden",
       "powerTitle": "Energie",
       "powerWarning": "Neustart und Herunterfahren werden während eines Drucks abgelehnt.",
       "reboot": "Neu starten",
@@ -224,7 +218,7 @@
       "confirmShutdown": "Den Host jetzt herunterfahren?",
       "confirmYes": "Ja",
       "cancel": "Abbrechen",
-      "needsSetup": "Diese Aktion braucht passwortloses sudo. Führe auf dem Drucker aus: sudo bash deploy/setup-sudoers.sh — dann erneut versuchen.",
+      "needsSetup": "Diese Aktion braucht passwortloses sudo. Führe auf dem Drucker aus: sudo bash scripts/install.sh sudoers — dann erneut versuchen.",
       "failed": "Die Änderung wurde nicht übernommen.",
       "network": {
         "title": "Netzwerk (IPv4)",

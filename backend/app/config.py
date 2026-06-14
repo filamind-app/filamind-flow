@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     klipperscreen_dir: str = "~/KlipperScreen"
 
     # FilaMind Kiosk: the on-host URL the touchscreen browser opens when the kiosk takes over the
-    # screen (same-origin nginx bundle; deploy/install-kiosk.sh bakes this into the systemd unit).
+    # screen (same-origin nginx bundle; scripts/install.sh kiosk bakes this into the systemd unit).
     kiosk_url: str = "http://localhost:8090"
 
     # Where FilaMind keeps its own data (per-board firmware profiles, etc.).
