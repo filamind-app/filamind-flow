@@ -320,10 +320,13 @@ function deviceFirmware(device: Device): string | null {
   return boards.value.find((b) => b.id === device.id)?.version ?? device.flashed_version
 }
 
-/** Out of date = the board's running firmware differs from the host's running Klipper. */
+/** Out of date = the board's firmware differs from the host's running Klipper. Uses the same
+ *  version source as the displayed one (live MCU report, falling back to the recorded flashed
+ *  version) so a board that doesn't report a live version — e.g. the Linux host MCU — still gets
+ *  the "update available" badge when it's behind the host. */
 function isOutdated(device: Device): boolean {
   const host = normalizeVer(status.value?.host.version)
-  const dev = normalizeVer(boards.value.find((b) => b.id === device.id)?.version)
+  const dev = normalizeVer(deviceFirmware(device))
   return host !== '' && dev !== '' && dev !== host
 }
 

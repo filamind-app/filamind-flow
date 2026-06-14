@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.264.0] - 2026-06-14
+
+### Fixed
+
+- **The Linux host MCU now shows the "update available" badge when it's behind the host.** The
+  out-of-date check compared the host's Klipper version against each board's *live MCU-reported*
+  version only — but the Linux-process host MCU doesn't report a live version, so the check saw an
+  empty value and never flagged it, even though its row already displayed the recorded flashed
+  version (e.g. `v0.13.0-660` next to a `v0.13.0-689` host). The check now uses the same version
+  source as the displayed one (live report, falling back to the recorded flashed version), so the
+  Linux host MCU correctly gets the update badge when it's out of sync.
+
 ## [0.263.0] - 2026-06-14
 
 ### Fixed
