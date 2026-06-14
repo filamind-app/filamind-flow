@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.279.0] - 2026-06-14
+
+### Fixed
+
+- **Board Topology: node labels no longer overflow their frame.** Long board / host names (e.g. a
+  full SBC name + version) are now truncated to the node's width with an ellipsis and hard-clipped
+  to the box, so text can never spill past the card edge regardless of font or zoom.
+- **KlipperScreen Studio: removed a hardcoded printer name.** The theme-builder preview showed a
+  literal "SV08" in its mock title bar; it's now a translated generic label. (The rest of the
+  widget was already fully localized in all 7 languages.)
+
 ## [0.278.0] - 2026-06-14
 
 ### Added
