@@ -280,7 +280,10 @@
         "portFunction": "Function",
         "signal": "Signal",
         "pin": "Pin"
-      }
+      },
+      "tooLong": "This submission is too large to pre-fill automatically. Copy the JSON and open a new issue manually.",
+      "copyJson": "Copy JSON",
+      "copied": "Copied"
     }
   }
 }
