@@ -28,12 +28,22 @@ defineProps<{ illo: HelpIlloKey }>()
     </g>
 
     <!-- Monitor: a gauge / health dial with a needle -->
-    <g v-else>
+    <g v-else-if="illo === 'monitor'">
       <path d="M4 16 a8 8 0 0 1 16 0" />
       <line x1="12" y1="16" x2="16" y2="11" />
       <circle cx="12" cy="16" r="1.3" fill="currentColor" stroke="none" />
       <line x1="6.5" y1="13.5" x2="7.5" y2="14.2" stroke-opacity="0.5" />
       <line x1="17.5" y1="13.5" x2="16.5" y2="14.2" stroke-opacity="0.5" />
+    </g>
+
+    <!-- Services: a stack of toggleable rows (gears would over-crowd) -->
+    <g v-else>
+      <rect x="3" y="4" width="18" height="4.5" rx="1" />
+      <rect x="3" y="10" width="18" height="4.5" rx="1" />
+      <rect x="3" y="16" width="18" height="4.5" rx="1" />
+      <circle cx="7" cy="6.25" r="1" fill="currentColor" stroke="none" />
+      <circle cx="7" cy="12.25" r="1" fill="currentColor" stroke="none" />
+      <circle cx="7" cy="18.25" r="1" fill="currentColor" stroke="none" stroke-opacity="0.4" />
     </g>
   </svg>
 </template>

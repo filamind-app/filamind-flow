@@ -13,6 +13,7 @@ import asyncio
 import contextlib
 import os
 import platform
+import re
 import shutil
 import socket
 from typing import Any
@@ -256,4 +257,251 @@ async def monitor(data_dir: str) -> dict[str, Any]:
         "network": network,
         "time": time_b,
         "locale": locale,
+    }
+
+
+# ── Services (Phase 2) ─────────────────────────────────────────────────────────
+# A general systemd unit manager. The backend is the security boundary: it validates the unit
+# name, refuses destructive actions on a protected set (so the user can't lock themselves out or
+# kill this panel), and path-guards unit-file deletion to /etc/systemd/system. Privileged actions
+# go through the host's passwordless-sudo rule (deploy/setup-sudoers.sh).
+
+_SVC = ".service"
+_SVC_LEN = len(_SVC)
+
+#: Actions the Services tab can run on a unit.
+SERVICE_ACTIONS = ("start", "stop", "restart", "enable", "disable", "mask", "unmask")
+#: Actions that take a service away (stop it, prevent it starting, or remove it). These are refused
+#: outright on protected units and require a typed confirmation in the UI for everything else.
+_DESTRUCTIVE = {"stop", "restart", "disable", "mask", "delete"}
+
+#: Units whose loss would lock the user out, break the host, or kill this panel mid-action.
+#: Destructive actions (and deletion) are refused on these regardless of confirmation.
+_PROTECTED = {
+    "filamind",
+    "filamind-flow",
+    "filamind-agent",
+    "dbus",
+    "dbus-broker",
+    "systemd-journald",
+    "systemd-logind",
+    "systemd-udevd",
+    "ssh",
+    "sshd",
+    "polkit",
+}
+#: Marked "critical" in the UI (extra warning) but still manageable with a typed confirmation.
+_CRITICAL_EXTRA = {
+    "klipper",
+    "klipper-mcu",
+    "moonraker",
+    "KlipperScreen",
+    "NetworkManager",
+    "wpa_supplicant",
+    "networking",
+    "systemd-networkd",
+    "systemd-resolved",
+    "getty",
+}
+
+#: A unit name is a safe argument when it has no shell-hostile or path characters. (We never use a
+#: shell — this is belt-and-suspenders + a guard against absurd input.)
+_UNIT_RE = re.compile(r"^[A-Za-z0-9@._:\-\\]+$")
+
+
+def _valid_unit(name: str) -> bool:
+    return bool(name) and len(name) <= 255 and _UNIT_RE.match(name) is not None
+
+
+def _base(name: str) -> str:
+    """The template base of an instanced unit (``getty@tty1`` → ``getty``)."""
+    return name.split("@", 1)[0]
+
+
+def _with_suffix(name: str) -> str:
+    return name if name.endswith(_SVC) else name + _SVC
+
+
+def _strip_suffix(name: str) -> str:
+    return name[:-_SVC_LEN] if name.endswith(_SVC) else name
+
+
+def _is_protected(name: str) -> bool:
+    base = _strip_suffix(name)
+    return base in _PROTECTED or _base(base) in _PROTECTED
+
+
+def _is_critical(name: str) -> bool:
+    base = _strip_suffix(name)
+    if _is_protected(name):
+        return True
+    if base in _CRITICAL_EXTRA or _base(base) in _CRITICAL_EXTRA:
+        return True
+    return base.startswith("systemd-")
+
+
+async def _run_rc(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+    """Run a command, returning (returncode, combined stdout+stderr). 127 if it can't be run."""
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
+        )
+        out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout)
+    except (FileNotFoundError, NotImplementedError):
+        return 127, ""
+    except (OSError, asyncio.TimeoutError) as exc:
+        return 1, str(exc)
+    return proc.returncode or 0, out.decode(errors="replace")
+
+
+async def list_units() -> list[dict[str, Any]]:
+    """All systemd .service units (loaded + installed-but-inactive) with their state. Read-only."""
+    _, units_out = await _run_rc(
+        ["systemctl", "list-units", "--type=service", "--all", "--plain", "--no-legend"]
+    )
+    _, files_out = await _run_rc(["systemctl", "list-unit-files", "--type=service", "--no-legend"])
+
+    enabled: dict[str, str] = {}
+    for line in files_out.splitlines():
+        parts = line.split()
+        if len(parts) >= 2 and parts[0].endswith(_SVC):
+            enabled[parts[0][:-_SVC_LEN]] = parts[1]  # STATE: enabled/disabled/static/masked/…
+
+    result: dict[str, dict[str, Any]] = {}
+    for line in units_out.splitlines():
+        parts = line.split(None, 4)
+        if len(parts) < 4 or not parts[0].endswith(_SVC):
+            continue
+        name = parts[0][:-_SVC_LEN]
+        result[name] = {
+            "name": name,
+            "load_state": parts[1],
+            "active": parts[2] == "active",
+            "active_state": parts[2],
+            "sub_state": parts[3],
+            "description": parts[4] if len(parts) > 4 else "",
+            "enabled": enabled.get(name, ""),
+            "critical": _is_critical(name),
+            "protected": _is_protected(name),
+        }
+    # Installed unit files that aren't currently loaded (inactive, absent from list-units).
+    for name, state in enabled.items():
+        if name not in result:
+            result[name] = {
+                "name": name,
+                "load_state": "",
+                "active": False,
+                "active_state": "inactive",
+                "sub_state": "dead",
+                "description": "",
+                "enabled": state,
+                "critical": _is_critical(name),
+                "protected": _is_protected(name),
+            }
+    return sorted(result.values(), key=lambda s: s["name"])
+
+
+async def unit_detail(name: str) -> dict[str, Any]:
+    """Per-unit detail (fragment path, states) + whether its unit file is safe to delete."""
+    if not _valid_unit(name):
+        raise ValueError("invalid unit name")
+    unit = _with_suffix(name)
+    _, out = await _run_rc(
+        [
+            "systemctl",
+            "show",
+            unit,
+            "--property=Id,Description,LoadState,ActiveState,SubState,UnitFileState,FragmentPath",
+        ]
+    )
+    props: dict[str, str] = {}
+    for line in out.splitlines():
+        key, _, val = line.partition("=")
+        if key:
+            props[key] = val
+    frag = props.get("FragmentPath", "")
+    # Only user-installed units (under /etc/systemd/system) are deletable, and never protected ones.
+    can_delete = bool(frag) and frag.startswith("/etc/systemd/system/") and not _is_protected(name)
+    return {
+        "name": _strip_suffix(name),
+        "description": props.get("Description", ""),
+        "load_state": props.get("LoadState", ""),
+        "active_state": props.get("ActiveState", ""),
+        "sub_state": props.get("SubState", ""),
+        "enabled": props.get("UnitFileState", ""),
+        "fragment_path": frag,
+        "can_delete": can_delete,
+        "critical": _is_critical(name),
+        "protected": _is_protected(name),
+    }
+
+
+async def unit_logs(name: str, lines: int = 200) -> str:
+    """Recent journal lines for a unit (read-only)."""
+    if not _valid_unit(name):
+        raise ValueError("invalid unit name")
+    lines = max(1, min(lines, 1000))
+    rc, out = await _run_rc(
+        [
+            "sudo",
+            "-n",
+            "journalctl",
+            "-u",
+            _with_suffix(name),
+            "-n",
+            str(lines),
+            "--no-pager",
+            "--output=short-iso",
+        ]
+    )
+    if rc == 127:
+        return "journalctl is not available on this host."
+    return out
+
+
+async def manage_unit(name: str, action: str) -> dict[str, Any]:
+    """Run a systemctl action on a unit. Destructive actions are refused on protected units."""
+    if action not in SERVICE_ACTIONS:
+        raise ValueError("invalid action")
+    if not _valid_unit(name):
+        raise ValueError("invalid unit name")
+    if action in _DESTRUCTIVE and _is_protected(name):
+        return {
+            "name": name,
+            "action": action,
+            "ok": False,
+            "refused": True,
+            "output": f"'{name}' is protected — {action} is not allowed.",
+        }
+    rc, out = await _run_rc(["sudo", "-n", "systemctl", action, _with_suffix(name)])
+    return {"name": name, "action": action, "ok": rc == 0, "refused": False, "output": out.strip()}
+
+
+async def delete_unit(name: str, confirm: str) -> dict[str, Any]:
+    """Remove a user-installed unit file (stop + disable + rm + daemon-reload). Typed-confirm."""
+    if not _valid_unit(name):
+        raise ValueError("invalid unit name")
+    if confirm != _strip_suffix(name):
+        return {"name": name, "ok": False, "refused": True, "output": "Confirmation did not match."}
+    if _is_protected(name):
+        return {"name": name, "ok": False, "refused": True, "output": f"'{name}' is protected."}
+    detail = await unit_detail(name)
+    frag = detail["fragment_path"]
+    if not detail["can_delete"]:
+        return {
+            "name": name,
+            "ok": False,
+            "refused": True,
+            "output": "Only user-installed unit files under /etc/systemd/system can be removed.",
+        }
+    unit = _with_suffix(name)
+    # Stop + disable first so nothing keeps a dangling reference, then remove and reload.
+    await _run_rc(["sudo", "-n", "systemctl", "disable", "--now", unit])
+    rc, out = await _run_rc(["sudo", "-n", "rm", "-f", frag])
+    await _run_rc(["sudo", "-n", "systemctl", "daemon-reload"])
+    return {
+        "name": name,
+        "ok": rc == 0,
+        "refused": False,
+        "output": out.strip() or f"Removed {frag}",
     }

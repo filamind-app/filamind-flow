@@ -78,3 +78,40 @@ export interface HostMonitor {
   time: TimeBlock
   locale: LocaleBlock
 }
+
+// ── Services (Phase 2) ─────────────────────────────────────────────────────────
+
+export interface ServiceUnit {
+  name: string
+  load_state: string
+  active: boolean
+  active_state: string
+  sub_state: string
+  description: string
+  enabled: string
+  critical: boolean
+  protected: boolean
+}
+
+export interface ServiceDetail {
+  name: string
+  description: string
+  load_state: string
+  active_state: string
+  sub_state: string
+  enabled: string
+  fragment_path: string
+  can_delete: boolean
+  critical: boolean
+  protected: boolean
+}
+
+export interface ServiceActionResult {
+  name: string
+  action?: string
+  ok: boolean
+  refused: boolean
+  output: string
+}
+
+export type ServiceAction = 'start' | 'stop' | 'restart' | 'enable' | 'disable' | 'mask' | 'unmask'
