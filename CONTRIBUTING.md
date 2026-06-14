@@ -124,6 +124,32 @@ Keep the **repository's GitHub metadata** current too: the **About description**
 **topics** should reflect what ships today — update them with `gh repo edit` whenever a
 new widget or major capability lands.
 
+## Contributing hardware catalog data
+
+The Hardware Browser is backed by a curated catalog. Its editable source — `hardware.json` — is
+**git-ignored** (kept locally by maintainers); only the compiled, read-only `hardware.sqlite` ships
+in the repo. So new parts come in as **submissions** that a maintainer merges, rather than direct
+edits to the catalog.
+
+**For contributors:** open the app → **Hardware Browser → ➕ Suggest a part**, pick the part type,
+fill in what you know, and submit. It opens a pre-filled GitHub issue (label `catalog-submission`)
+with a JSON fragment — review it and submit on GitHub. No account data leaves the app; nothing is
+posted automatically. You can also file the [Catalog submission](.github/ISSUE_TEMPLATE/catalog-submission.yml)
+issue form by hand.
+
+**For maintainers:** review the submitted fragment, then merge it with:
+
+```bash
+python scripts/apply_submission.py fragment.json   # validate → merge into hardware.json → rebuild sqlite
+#   --type <t>   override the inferred part type      --force   replace an existing entry by id
+#   --no-build   merge only (skip the sqlite rebuild)
+```
+
+It validates the required fields and shapes, dedupes by id (manufacturers by name), merges into the
+right array (`motors` / `drivers` / `boards` / `hosts` / `manufacturers`) or `catalog[<category>]`,
+and reruns `build_hardware_db.py`. Review the `hardware.sqlite` diff and commit it. The submission
+shape is mirrored in the app's `frontend/src/widgets/hardware-browser/contributeSchema.ts`.
+
 ## Code style
 
 - **Frontend** — TypeScript (no `any` where avoidable), Prettier formatting

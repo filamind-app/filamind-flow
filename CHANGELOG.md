@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.278.0] - 2026-06-14
+
+### Added
+
+- **Maintainer tooling for catalog submissions.** `scripts/apply_submission.py` validates a
+  community part submission (the JSON produced by "Suggest a part") and merges it into the catalog —
+  into the right entity array or category bucket, deduped by id — then rebuilds the database. A
+  GitHub **Catalog submission** issue-form template and a CONTRIBUTING section document the
+  submit → review → merge flow.
+
 ## [0.277.0] - 2026-06-14
 
 ### Added
