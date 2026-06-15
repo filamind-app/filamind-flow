@@ -6,7 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.288.0] - 2026-06-15
+## [0.289.0] - 2026-06-15
+
+### Fixed
+
+- **Board Topology: USB eddy-current scanner probes can now be assigned to an MCU.** Standalone
+  scanner boards (BTT Eddy, Cartographer, Beacon, IDM) carry their own microcontroller and show up
+  as an MCU in the topology, but they were only catalogued as probes, so the "set board" picker
+  (which lists boards) couldn't select them. They are now also catalogued as boards with a `probe`
+  class, so they can be confirmed or set on an MCU node (and auto-detected by name).
+
+### Changed
+
+- The "Suggest a part" board form offers `probe` as a board class.
 
 ### Changed
 
