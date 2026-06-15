@@ -6,6 +6,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.288.0] - 2026-06-15
+
+### Changed
+
+- English UI copy now uses plain ASCII punctuation throughout (hyphens in place of em/en dashes)
+  across every widget's strings, so the text renders consistently on any font or terminal.
+
 ## [0.287.0] - 2026-06-15
 
 ### Security

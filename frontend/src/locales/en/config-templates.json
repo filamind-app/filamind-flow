@@ -1,6 +1,6 @@
 {
   "configTemplates": {
-    "intro": "Ready-to-paste Klipper config blocks and macros — start sequences, filament handling, input shaping, bed mesh and more. Copy one and drop it into your printer.cfg (the Config Editor is a good place to paste it).",
+    "intro": "Ready-to-paste Klipper config blocks and macros - start sequences, filament handling, input shaping, bed mesh and more. Copy one and drop it into your printer.cfg (the Config Editor is a good place to paste it).",
     "help": {
       "guide": "Help",
       "guideTitle": "About Config Templates",
@@ -14,11 +14,11 @@
       "topics": {
         "what": {
           "title": "What these are",
-          "body": "A curated set of common Klipper building blocks: gcode_macros (PRINT_START, PAUSE/RESUME, filament load/unload, M600) and config sections ([input_shaper], [bed_mesh], [firmware_retraction], …). They're starting points — read each one and tune it for your machine."
+          "body": "A curated set of common Klipper building blocks: gcode_macros (PRINT_START, PAUSE/RESUME, filament load/unload, M600) and config sections ([input_shaper], [bed_mesh], [firmware_retraction], …). They're starting points - read each one and tune it for your machine."
         },
         "insert": {
           "title": "Inserting a template",
-          "body": "Copy a template, then paste it into your printer.cfg — the Config Editor's Raw view is a convenient spot. After saving, a firmware restart applies it. Always review the values first; defaults here are sensible but not tuned to your printer."
+          "body": "Copy a template, then paste it into your printer.cfg - the Config Editor's Raw view is a convenient spot. After saving, a firmware restart applies it. Always review the values first; defaults here are sensible but not tuned to your printer."
         },
         "sections": {
           "title": "Required sections",
@@ -40,7 +40,7 @@
         },
         "section": {
           "term": "Section",
-          "def": "A [bracketed] config block, e.g. [bed_mesh] — the unit Klipper configuration is grouped into."
+          "def": "A [bracketed] config block, e.g. [bed_mesh] - the unit Klipper configuration is grouped into."
         }
       }
     },
@@ -52,7 +52,7 @@
       "copy": "Copy",
       "copied": "Copied!",
       "requires": "Sections: {sections}",
-      "requiresNone": "—"
+      "requiresNone": "-"
     },
     "count": "{n} templates",
     "states": {

@@ -8,7 +8,7 @@
       "howToRead": "How to read",
       "steps": [
         "Edit the configuration text below (or leave it as-is).",
-        "Save — the current file is backed up first, and the save is refused while the printer is busy.",
+        "Save - the current file is backed up first, and the save is refused while the printer is busy.",
         "Restart KlipperScreen to apply the change on the physical screen.",
         "Lines use UNIX (LF) endings, enforced automatically on save."
       ],
@@ -23,7 +23,7 @@
         },
         "settings": {
           "title": "What's the Settings tab?",
-          "body": "The most-used [main] options as a form — theme, language, screen sleep, font size, and toggles. Pre-filled from the live config; only the options you change are written. Restart to apply."
+          "body": "The most-used [main] options as a form - theme, language, screen sleep, font size, and toggles. Pre-filled from the live config; only the options you change are written. Restart to apply."
         },
         "menus": {
           "title": "What's the Menus tab?",
@@ -31,21 +31,21 @@
         },
         "themes": {
           "title": "What's the Themes tab?",
-          "body": "Build a KlipperScreen theme: pick a colour per palette token and a corner radius, watch the live preview, then create and apply it to the screen. The preview is approximate — the real screen renders in GTK."
+          "body": "Build a KlipperScreen theme: pick a colour per palette token and a corner radius, watch the live preview, then create and apply it to the screen. The preview is approximate - the real screen renders in GTK."
         },
         "kiosk": {
           "title": "What's the Kiosk tab?",
-          "body": "Put FilaMind Flow itself on the touchscreen as a fullscreen browser — total control of what the screen shows. It's a reversible swap with KlipperScreen (temporary by default; a reboot restores KlipperScreen). Needs the one-time installer on the printer host."
+          "body": "Put FilaMind Flow itself on the touchscreen as a fullscreen browser - total control of what the screen shows. It's a reversible swap with KlipperScreen (temporary by default; a reboot restores KlipperScreen). Needs the one-time installer on the printer host."
         }
       },
       "glossary": {
         "klipperScreen": {
           "term": "KlipperScreen",
-          "def": "The touchscreen UI that runs on a small display attached to the printer — separate from this web panel."
+          "def": "The touchscreen UI that runs on a small display attached to the printer - separate from this web panel."
         },
         "theme": {
           "term": "Theme",
-          "def": "A KlipperScreen look — colours, icons and corner radius. Lives in a styles/<name> folder on the host; cosmetic only (it can't change the layout)."
+          "def": "A KlipperScreen look - colours, icons and corner radius. Lives in a styles/<name> folder on the host; cosmetic only (it can't change the layout)."
         },
         "menu": {
           "term": "Menu (__main / __print)",
@@ -57,7 +57,7 @@
         },
         "autoBlock": {
           "term": "Auto-generated block (#~#)",
-          "def": "The section KlipperScreen writes for itself at the bottom of the conf, after the #~# marker. FilaMind never edits it — only your settings above it."
+          "def": "The section KlipperScreen writes for itself at the bottom of the conf, after the #~# marker. FilaMind never edits it - only your settings above it."
         },
         "kiosk": {
           "term": "Kiosk",
@@ -71,7 +71,7 @@
       "present": "KlipperScreen detected",
       "theme": "Theme",
       "language": "Language",
-      "notRestartable": "Moonraker can't restart KlipperScreen automatically — restart it manually after saving."
+      "notRestartable": "Moonraker can't restart KlipperScreen automatically - restart it manually after saving."
     },
     "editor": {
       "loading": "Reading KlipperScreen.conf…",
@@ -82,7 +82,7 @@
       "unsaved": "Unsaved changes"
     },
     "save": {
-      "busy": "Refused while the printer is busy — try again when it's idle.",
+      "busy": "Refused while the printer is busy - try again when it's idle.",
       "stale": "KlipperScreen.conf changed on disk since it was loaded (likely edited on the screen). Reload before saving so you don't overwrite that change."
     },
     "view": {
@@ -94,10 +94,10 @@
     },
     "settings": {
       "loading": "Loading settings…",
-      "intro": "The most-used KlipperScreen display options as a form. Only options you change are written — everything else keeps its current value. Restart to apply.",
+      "intro": "The most-used KlipperScreen display options as a form. Only options you change are written - everything else keeps its current value. Restart to apply.",
       "onlyChanged": "Only the settings you change here are written to KlipperScreen.conf.",
       "save": "Save settings",
-      "savedRestart": "Saved — restart KlipperScreen to apply.",
+      "savedRestart": "Saved - restart KlipperScreen to apply.",
       "unset": "Leave unset (default)",
       "never": "Never (always on)",
       "fontSize": {
@@ -121,7 +121,7 @@
     },
     "kiosk": {
       "loading": "Checking the screen…",
-      "intro": "Put FilaMind Flow itself on the touchscreen as a fullscreen browser — total control of what the screen shows. It swaps with KlipperScreen: starting one stops the other.",
+      "intro": "Put FilaMind Flow itself on the touchscreen as a fullscreen browser - total control of what the screen shows. It swaps with KlipperScreen: starting one stops the other.",
       "current": "Screen now",
       "mode": {
         "kiosk": "FilaMind kiosk",
@@ -130,7 +130,7 @@
       },
       "notInstalled": "Kiosk not installed yet",
       "setupHint": "Run this once on the printer host (installs a fullscreen browser + the kiosk service):",
-      "persist": "Make it the default at boot (otherwise the swap is temporary — a reboot restores the other).",
+      "persist": "Make it the default at boot (otherwise the swap is temporary - a reboot restores the other).",
       "safety": "Temporary by default: a reboot brings the other one back. If the screen ever goes dark, over SSH run: sudo systemctl start KlipperScreen",
       "switchBtn": "Switch to FilaMind",
       "restoreBtn": "Restore KlipperScreen",
@@ -140,14 +140,14 @@
       "confirmBody": "This stops one screen service and starts the other. It doesn't affect an active print, but the touchscreen will go black for a few seconds while it switches.",
       "confirm": "Do it",
       "cancel": "Cancel",
-      "switchedNote": "FilaMind is taking over the screen — it should appear in a few seconds.",
-      "restoredNote": "KlipperScreen is coming back — the screen should return shortly."
+      "switchedNote": "FilaMind is taking over the screen - it should appear in a few seconds.",
+      "restoredNote": "KlipperScreen is coming back - the screen should return shortly."
     },
     "menus": {
       "loading": "Loading menus…",
       "intro": "Design what the touchscreen shows: each menu's buttons, their order, and what each does. The home-screen grid is the __main tree; the print screen is __print.",
       "addItem": "Add button",
-      "empty": "No items yet — add one.",
+      "empty": "No items yet - add one.",
       "up": "Move up",
       "down": "Move down",
       "addChild": "Add sub-item",
@@ -163,7 +163,7 @@
       "enable": "Show if",
       "save": "Save menus",
       "newItem": "New button",
-      "savedRestart": "Menus saved — restart KlipperScreen to see them."
+      "savedRestart": "Menus saved - restart KlipperScreen to see them."
     },
     "themes": {
       "loading": "Loading themes…",
@@ -172,7 +172,7 @@
       "preview": "Live preview",
       "btn": "Button",
       "previewWarn": "warning",
-      "previewApprox": "Approximate preview — the real screen renders with GTK; minor differences are expected.",
+      "previewApprox": "Approximate preview - the real screen renders with GTK; minor differences are expected.",
       "namePlaceholder": "New theme name",
       "createApply": "Create & apply",
       "createOnly": "Create only",
@@ -181,13 +181,13 @@
       "delete": "Delete theme",
       "generated": "Made here",
       "created": "Theme created. Apply it from the list, then restart.",
-      "appliedRestart": "Theme set — restart KlipperScreen to see it.",
+      "appliedRestart": "Theme set - restart KlipperScreen to see it.",
       "previewTitle": "Printer"
     },
     "restart": {
       "button": "Restart KlipperScreen",
       "restarting": "Restarting…",
-      "done": "KlipperScreen is restarting — the screen will reload shortly.",
+      "done": "KlipperScreen is restarting - the screen will reload shortly.",
       "confirmTitle": "Restart KlipperScreen?",
       "confirmBody": "This restarts the touchscreen service to apply your changes. It won't affect an active print, but the screen goes blank for a few seconds.",
       "confirm": "Restart",

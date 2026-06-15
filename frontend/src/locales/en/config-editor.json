@@ -1,13 +1,13 @@
 {
   "configEditor": {
-    "intro": "Read your printer's live configuration straight from Moonraker — every file, parsed into sections and parameters, with structural problems flagged. Read-only for now; guided editing arrives next.",
+    "intro": "Read your printer's live configuration straight from Moonraker - every file, parsed into sections and parameters, with structural problems flagged. Read-only for now; guided editing arrives next.",
     "help": {
       "guide": "Help",
       "guideTitle": "About the Config Editor",
       "close": "Close",
       "howToRead": "How to use",
       "steps": [
-        "Pick a config file from the dropdown — printer.cfg is selected by default.",
+        "Pick a config file from the dropdown - printer.cfg is selected by default.",
         "Browse its sections; click one to expand its parameters.",
         "Check the Validation banner for structural issues like a duplicate section.",
         "Switch to Raw to read the exact file text."
@@ -15,7 +15,7 @@
       "topics": {
         "sections": {
           "title": "Sections & parameters",
-          "body": "A Klipper config is a list of [section] blocks, each holding key: value parameters. This widget parses every section — including ones with a name like [tmc2209 stepper_x] — and lists its parameters with their value and any inline comment. Multi-line values (like a macro's gcode:) are kept intact."
+          "body": "A Klipper config is a list of [section] blocks, each holding key: value parameters. This widget parses every section - including ones with a name like [tmc2209 stepper_x] - and lists its parameters with their value and any inline comment. Multi-line values (like a macro's gcode:) are kept intact."
         },
         "includes": {
           "title": "Included files",
@@ -23,15 +23,15 @@
         },
         "validation": {
           "title": "Validation",
-          "body": "After parsing, the config is checked for structural problems that are wrong regardless of the section type — a duplicate section header, an empty section name, or a parameter sitting outside any section. These appear in the Validation banner; they don't change your file."
+          "body": "After parsing, the config is checked for structural problems that are wrong regardless of the section type - a duplicate section header, an empty section name, or a parameter sitting outside any section. These appear in the Validation banner; they don't change your file."
         },
         "saveConfig": {
           "title": "The SAVE_CONFIG block",
-          "body": "Klipper appends an auto-generated block at the end of printer.cfg (after the #*# marker) when you run SAVE_CONFIG — calibration results like PID and Z offsets. It's shown but flagged as auto-saved, and is excluded from the editable section count because you shouldn't hand-edit it."
+          "body": "Klipper appends an auto-generated block at the end of printer.cfg (after the #*# marker) when you run SAVE_CONFIG - calibration results like PID and Z offsets. It's shown but flagged as auto-saved, and is excluded from the editable section count because you shouldn't hand-edit it."
         },
         "readonly": {
           "title": "Read-only (for now)",
-          "body": "This first version only reads and displays the config — nothing is written to the printer. Guided, confirm-gated editing (with an automatic backup before any save and a restart afterwards) arrives in a later update."
+          "body": "This first version only reads and displays the config - nothing is written to the printer. Guided, confirm-gated editing (with an automatic backup before any save and a restart afterwards) arrives in a later update."
         },
         "glossary": {
           "title": "Glossary",
@@ -53,7 +53,7 @@
         },
         "saveConfig": {
           "term": "SAVE_CONFIG",
-          "def": "The auto-generated block (after #*#) where Klipper stores calibration results — don't hand-edit it."
+          "def": "The auto-generated block (after #*#) where Klipper stores calibration results - don't hand-edit it."
         }
       }
     },
@@ -104,7 +104,7 @@
       "done": "Saved. Backup: {backup}",
       "busy": "Refused: the printer is busy (printing or paused). Try again when it's idle.",
       "error": "Save failed.",
-      "stale": "The file changed on disk since it was loaded (a SAVE_CONFIG may have landed, or another app edited it). Saving now would overwrite that change — reload to review (the backup timeline shows what differs).",
+      "stale": "The file changed on disk since it was loaded (a SAVE_CONFIG may have landed, or another app edited it). Saving now would overwrite that change - reload to review (the backup timeline shows what differs).",
       "staleReload": "Reload the file"
     },
     "restart": {
@@ -126,23 +126,23 @@
     },
     "catalog": {
       "title": "Add a config block from the catalog",
-      "hint": "Pick a part — its hardware-accurate Klipper block (real run_current, sense_resistor, pin names) is appended to the file for you to review and save.",
+      "hint": "Pick a part - its hardware-accurate Klipper block (real run_current, sense_resistor, pin names) is appended to the file for you to review and save.",
       "drivers": "Drivers",
       "motors": "Motors",
       "boards": "Boards",
       "pickPlaceholder": "Search the catalog…",
-      "inserted": "Inserted the block for {name} — review it in Raw and save.",
+      "inserted": "Inserted the block for {name} - review it in Raw and save.",
       "noSnippet": "No config block available for {name}."
     },
     "drift": {
       "title": "What Klipper is running",
-      "pending": "Klipper has unsaved changes (a SAVE_CONFIG is pending) — saving this file now would clobber them. Run SAVE_CONFIG in the console first.",
+      "pending": "Klipper has unsaved changes (a SAVE_CONFIG is pending) - saving this file now would clobber them. Run SAVE_CONFIG in the console first.",
       "warningsTitle": "Klipper config warnings",
       "count": "{n} value(s) on disk differ from what's running (edited but not FIRMWARE_RESTARTed):",
       "adopt": "adopt live"
     },
     "pinDoctor": {
-      "title": "Pin Doctor — {n} wiring finding(s)",
+      "title": "Pin Doctor - {n} wiring finding(s)",
       "conflict": "CONFLICT",
       "caveat": "CAVEAT"
     },
@@ -151,7 +151,7 @@
     },
     "pinEdit": {
       "offBoard": "not on board",
-      "offBoardHint": "This pin isn't in the board's known pin map — check for a typo or an EXP/virtual pin.",
+      "offBoardHint": "This pin isn't in the board's known pin map - check for a typo or an EXP/virtual pin.",
       "double": "reused",
       "doubleHint": "This pin is assigned in more than one section.",
       "caveat": "caveat"
@@ -169,24 +169,24 @@
       "lint": "Cross-file checks",
       "rule": {
         "broken_include": "Broken include: ",
-        "orphan_driver": "Orphan driver — no matching section: ",
+        "orphan_driver": "Orphan driver - no matching section: ",
         "section_override": "Override (defined in multiple files, last wins): "
       }
     },
     "knowledge": {
       "viewDriver": "View {model} in catalog →",
-      "stepper": "A stepper-motor axis — its driver pins, rotation distance, microsteps, and homing/endstop.",
-      "tmc": "A Trinamic stepper driver — run/hold current, microsteps, and StallGuard/chopper tuning for its stepper.",
-      "extruder": "The hotend and extruder — nozzle size, filament path, heater, thermistor, and PID.",
-      "heater_bed": "The heated bed — its heater pin, thermistor, and PID/temperature limits.",
+      "stepper": "A stepper-motor axis - its driver pins, rotation distance, microsteps, and homing/endstop.",
+      "tmc": "A Trinamic stepper driver - run/hold current, microsteps, and StallGuard/chopper tuning for its stepper.",
+      "extruder": "The hotend and extruder - nozzle size, filament path, heater, thermistor, and PID.",
+      "heater_bed": "The heated bed - its heater pin, thermistor, and PID/temperature limits.",
       "fan": "The part-cooling fan that cools freshly printed filament.",
       "heater_fan": "A fan tied to a heater (e.g. hotend cooling) that runs to protect it from overheating.",
       "controller_fan": "A fan that cools the stepper drivers / electronics while the motors are active.",
-      "mcu": "A microcontroller board running Klipper — its serial or CAN connection.",
+      "mcu": "A microcontroller board running Klipper - its serial or CAN connection.",
       "printer": "Global machine kinematics and motion limits (type, max velocity, acceleration).",
-      "bed_mesh": "Automatic bed-leveling — probes a grid and compensates for bed flatness while printing.",
+      "bed_mesh": "Automatic bed-leveling - probes a grid and compensates for bed flatness while printing.",
       "probe": "The Z probe used to detect the bed surface for homing and bed mesh.",
-      "gcode_macro": "A custom G-code macro — a named command callable from the console or other macros.",
+      "gcode_macro": "A custom G-code macro - a named command callable from the console or other macros.",
       "output_pin": "A controllable output pin (an LED, relay, or enable line, for example).",
       "neopixel": "Addressable RGB LEDs (NeoPixel / WS2812) and their color control.",
       "board_pins": "Friendly aliases for a board’s physical pins, referenced elsewhere in the config.",
@@ -218,7 +218,7 @@
       }
     },
     "panels": {
-      "failed": "Some panels could not load and are hidden: {panels}. What they would check is unknown right now — not necessarily fine.",
+      "failed": "Some panels could not load and are hidden: {panels}. What they would check is unknown right now - not necessarily fine.",
       "name": {
         "drift": "Disk-vs-live",
         "pinDoctor": "Pin Doctor",
@@ -230,7 +230,7 @@
     },
     "addPart": {
       "title": "Add a part (free-pin aware)",
-      "hint": "Pick a part type and one of the board pins NOTHING uses yet (read live from your config + board map), and get a ready section written through the safety gate — no pin guessing.",
+      "hint": "Pick a part type and one of the board pins NOTHING uses yet (read live from your config + board map), and get a ready section written through the safety gate - no pin guessing.",
       "kind": "Part type",
       "name": "Name",
       "namePh": "e.g. chamber_fan",

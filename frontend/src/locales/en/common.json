@@ -2,7 +2,7 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "Cannot reach the FilaMind backend — check that the filamind-flow service is running and reachable."
+      "backendUnreachable": "Cannot reach the FilaMind backend - check that the filamind-flow service is running and reachable."
     }
   },
   "theme": {
@@ -16,7 +16,7 @@
     "ocean": "Ocean",
     "sunset": "Sunset",
     "desc": {
-      "neon": "Deep violet night with an electric glow — the signature look",
+      "neon": "Deep violet night with an electric glow - the signature look",
       "midnight": "Professional deep-blue dark",
       "dark": "Modern neutral slate dark",
       "ocean": "Deep teal with aqua accents",
@@ -32,12 +32,12 @@
     "ack": "I reviewed the block and want to write it",
     "apply": "Apply",
     "applying": "Applying…",
-    "busy": "The printer is busy (or another operation is running) — try again when it is idle.",
-    "stale": "The file changed on disk while applying — nothing was written. Try again.",
+    "busy": "The printer is busy (or another operation is running) - try again when it is idle.",
+    "stale": "The file changed on disk while applying - nothing was written. Try again.",
     "saved": "Saved (backup: {backup}).",
     "added": "added [{section}]: {params}",
     "updated": "updated [{section}]: {params}",
-    "noop": "Everything was already at these values — nothing changed.",
+    "noop": "Everything was already at these values - nothing changed.",
     "restartHint": "Klipper still runs the old values until a firmware restart.",
     "restart": "Restart firmware…",
     "restartConfirm": "Confirm restart",

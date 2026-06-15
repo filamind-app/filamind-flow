@@ -1,6 +1,6 @@
 {
   "macroDesigner": {
-    "intro": "Simulate G-code offline — paste or write a program and see the toolhead path, bounding box, travel and extrusion totals, and a time estimate, without touching the printer. Browse the built-in macro library for reference.",
+    "intro": "Simulate G-code offline - paste or write a program and see the toolhead path, bounding box, travel and extrusion totals, and a time estimate, without touching the printer. Browse the built-in macro library for reference.",
     "help": {
       "guide": "Help",
       "guideTitle": "About the Macro Designer",
@@ -8,7 +8,7 @@
       "howToRead": "How to use",
       "steps": [
         "Type or paste G-code in the editor (a sample square is loaded to start).",
-        "Press Simulate — the 2D path and the stats update.",
+        "Press Simulate - the 2D path and the stats update.",
         "Solid lines are extrusion moves; faint dashed lines are travel.",
         "Browse the macro library and Insert one to start from its commands."
       ],
@@ -19,11 +19,11 @@
         },
         "motion": {
           "title": "Path & time",
-          "body": "The 2D view is the XY path (Z is in the bounds). The time estimate divides each move's length by its feedrate — it ignores acceleration, so it's a rough lower bound, not the exact print time. Commands the simulator doesn't model (e.g. M-codes, high-level macros) are listed as warnings and skipped."
+          "body": "The 2D view is the XY path (Z is in the bounds). The time estimate divides each move's length by its feedrate - it ignores acceleration, so it's a rough lower bound, not the exact print time. Commands the simulator doesn't model (e.g. M-codes, high-level macros) are listed as warnings and skipped."
         },
         "macros": {
           "title": "Macro library",
-          "body": "A reference set of common Klipper macros with their name, what they do, and the config sections they need. \"Insert\" drops a macro's high-level commands into the editor as a starting point — note those expand further on the printer (full Jinja/macro expansion is coming)."
+          "body": "A reference set of common Klipper macros with their name, what they do, and the config sections they need. \"Insert\" drops a macro's high-level commands into the editor as a starting point - note those expand further on the printer (full Jinja/macro expansion is coming)."
         },
         "glossary": {
           "title": "Glossary",
@@ -37,7 +37,7 @@
         },
         "feedrate": {
           "term": "Feedrate (F)",
-          "def": "Move speed in mm/min — F1200 is 20 mm/s. Sets how fast each move runs."
+          "def": "Move speed in mm/min - F1200 is 20 mm/s. Sets how fast each move runs."
         },
         "macro": {
           "term": "Macro",
@@ -57,7 +57,7 @@
       "placeholder": "Browse macros…",
       "insert": "Insert into editor",
       "requires": "Needs: {sections}",
-      "none": "—"
+      "none": "-"
     },
     "result": {
       "title": "Simulation",
@@ -77,7 +77,7 @@
     "explain": {
       "title": "Explain this macro",
       "travel": "Rapid travel to X{x} Y{y} at {f} mm/min",
-      "print": "Print move — extrude {e} mm over {d} mm to X{x} Y{y} at {f} mm/min",
+      "print": "Print move - extrude {e} mm over {d} mm to X{x} Y{y} at {f} mm/min",
       "retract": "Retract {e} mm",
       "prime": "Extrude {e} mm in place",
       "noMove": "No movement",
@@ -104,8 +104,8 @@
     "live": {
       "label": "From the printer",
       "placeholder": "Pick one of your installed macros…",
-      "hint": "{n} macros found on the printer — pick one to load its G-code and simulate it.",
-      "unreachable": "Printer unreachable — connect to load your installed macros.",
+      "hint": "{n} macros found on the printer - pick one to load its G-code and simulate it.",
+      "unreachable": "Printer unreachable - connect to load your installed macros.",
       "params": "Macro parameters"
     },
     "limits": {
@@ -115,18 +115,18 @@
       "buildArea": "build area {x}×{y} mm"
     },
     "lint": {
-      "title": "Macro linter — {n} finding(s)",
+      "title": "Macro linter - {n} finding(s)",
       "rule": {
         "gcode_state_unbalanced": {
-          "msg": "SAVE_GCODE_STATE without a matching RESTORE_GCODE_STATE — the saved positioning/extruder mode is never restored.",
+          "msg": "SAVE_GCODE_STATE without a matching RESTORE_GCODE_STATE - the saved positioning/extruder mode is never restored.",
           "fix": "Add a RESTORE_GCODE_STATE (or remove the SAVE)."
         },
         "ends_relative": {
-          "msg": "The macro ends in relative mode (G91/M83) — the next command will move relatively.",
+          "msg": "The macro ends in relative mode (G91/M83) - the next command will move relatively.",
           "fix": "Add a final G90 / M82, or wrap the moves in SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
         },
         "extrude_before_home": {
-          "msg": "An extruding move happens before G28 — risks a cold or un-homed extrude.",
+          "msg": "An extruding move happens before G28 - risks a cold or un-homed extrude.",
           "fix": "Home (G28) and heat the hotend before extruding."
         }
       }
@@ -163,7 +163,7 @@
     },
     "scaffold": {
       "title": "Generate START / END_PRINT",
-      "hint": "Build a START_PRINT and END_PRINT tailored to this printer — its homing, the leveling it actually has, a mesh step, and prime/park positions inside the real build area.",
+      "hint": "Build a START_PRINT and END_PRINT tailored to this printer - its homing, the leveling it actually has, a mesh step, and prime/park positions inside the real build area.",
       "generate": "Generate",
       "generating": "Generating…",
       "loadEditor": "Load into editor",
@@ -173,7 +173,7 @@
       "confirm": "Confirm append",
       "cancel": "Cancel",
       "appending": "Writing…",
-      "writeNote": "Appends both macros to the chosen file behind the confirm gate — a backup is taken first and writes are refused while printing. Refused if a macro with the same name already exists.",
+      "writeNote": "Appends both macros to the chosen file behind the confirm gate - a backup is taken first and writes are refused while printing. Refused if a macro with the same name already exists.",
       "saved": "Saved to {file}.",
       "savedBackup": "Saved to {file} (backup: {backup}). Restart firmware to apply.",
       "note": {
@@ -181,14 +181,14 @@
         "bounds": "Build area X {x0}-{x1}, Y {y0}-{y1} (prime/park fit inside).",
         "leveling_qgl": "Detected quad_gantry_level -> added QUAD_GANTRY_LEVEL.",
         "leveling_ztilt": "Detected z_tilt -> added Z_TILT_ADJUST.",
-        "leveling_none": "No quad_gantry_level / z_tilt configured — left a placeholder.",
+        "leveling_none": "No quad_gantry_level / z_tilt configured - left a placeholder.",
         "mesh": "Detected bed_mesh -> added BED_MESH_CALIBRATE.",
-        "no_bed": "No heated bed — bed heating steps omitted."
+        "no_bed": "No heated bed - bed heating steps omitted."
       }
     },
     "flow": {
       "title": "Flow check (hotend ceiling)",
-      "hint": "Pick your hotend from the catalog and every printing move is checked against its real melt-zone ceiling — an over-flowing macro shows up before it prints.",
+      "hint": "Pick your hotend from the catalog and every printing move is checked against its real melt-zone ceiling - an over-flowing macro shows up before it prints.",
       "hotend": "Hotend",
       "pick": "Pick a hotend…",
       "diameter": "Ø mm",
