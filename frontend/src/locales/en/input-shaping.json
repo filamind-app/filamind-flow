@@ -8,11 +8,11 @@
         },
         "analyze": {
           "title": "Analyzing a resonance CSV",
-          "body": "Capture data on the printer with TEST_RESONANCES (or use 🔴 Live tools), then load the .csv here. FilaMind runs Klipper’s own shaper math and recommends a shaper + frequency. Do the X file and the Y file in turn — they combine into one config block."
+          "body": "Capture data on the printer with TEST_RESONANCES (or use 🔴 Live tools), then load the .csv here. FilaMind runs Klipper’s own shaper math and recommends a shaper + frequency. Do the X file and the Y file in turn - they combine into one config block."
         },
         "grade": {
-          "title": "What the A–F grade means",
-          "body": "A measurement-quality score from five equal parts: peak clarity, leftover vibration, smoothing, frequency (40–90 Hz is healthy), and how clean the resonance is. A/B → apply it; C → usable, skim the tips; D/F → fix the mechanics and re-test."
+          "title": "What the A-F grade means",
+          "body": "A measurement-quality score from five equal parts: peak clarity, leftover vibration, smoothing, frequency (40-90 Hz is healthy), and how clean the resonance is. A/B → apply it; C → usable, skim the tips; D/F → fix the mechanics and re-test."
         },
         "diagnostics": {
           "title": "Reading the diagnostics",
@@ -20,7 +20,7 @@
         },
         "chart": {
           "title": "Reading the frequency chart",
-          "body": "Solid curves are the measured vibration energy (X+Y+Z total plus each axis). The ▲ marks the dominant resonance. The faint curves are each shaper’s leftover vibration across frequency — the recommended one (pink) dips deepest at your peak."
+          "body": "Solid curves are the measured vibration energy (X+Y+Z total plus each axis). The ▲ marks the dominant resonance. The faint curves are each shaper’s leftover vibration across frequency - the recommended one (pink) dips deepest at your peak."
         },
         "shapers": {
           "title": "Choosing a shaper",
@@ -28,15 +28,15 @@
         },
         "config": {
           "title": "Applying the config",
-          "body": "This [input_shaper] block carries your X and/or Y result. Copy it into printer.cfg and restart Klipper. The badges show which axes are captured — capture both X and Y for a complete block."
+          "body": "This [input_shaper] block carries your X and/or Y result. Copy it into printer.cfg and restart Klipper. The badges show which axes are captured - capture both X and Y for a complete block."
         },
         "noise": {
           "title": "Noise check",
-          "body": "Reads the accelerometer’s idle vibration without moving — a quick mount check before testing. Klipper’s rule of thumb: ~1–100 is normal, ~1000+ means a loose sensor or wiring. Fix a noisy mount first or every test is unreliable."
+          "body": "Reads the accelerometer’s idle vibration without moving - a quick mount check before testing. Klipper’s rule of thumb: ~1-100 is normal, ~1000+ means a loose sensor or wiring. Fix a noisy mount first or every test is unreliable."
         },
         "belts": {
           "title": "Belt comparison (CoreXY)",
-          "body": "Excites each belt diagonal and overlays the two responses. Matched peak frequencies = even tension. A gap means the lower-frequency belt is looser — tighten it and re-run until the peaks line up."
+          "body": "Excites each belt diagonal and overlays the two responses. Matched peak frequencies = even tension. A gap means the lower-frequency belt is looser - tighten it and re-run until the peaks line up."
         },
         "axesMap": {
           "title": "Axes-map detection",
@@ -52,11 +52,11 @@
         },
         "guided": {
           "title": "Guided vs. manual",
-          "body": "Guided walks the whole flow — Noise → Belts → Shaper X → Shaper Y → Vibrations → Pressure — with a pass / fail gate at each step. Use it for a full tune. Switch to 📈 Analyze or 🔴 Live tools when you just want one specific tool."
+          "body": "Guided walks the whole flow - Noise → Belts → Shaper X → Shaper Y → Vibrations → Pressure - with a pass / fail gate at each step. Use it for a full tune. Switch to 📈 Analyze or 🔴 Live tools when you just want one specific tool."
         },
         "history": {
           "title": "History & trends",
-          "body": "Each calibration is saved (in this browser) with its grade and score. The ▲/▼ arrow compares a run to the previous test of the same axis — up means a cleaner capture or a stiffer axis, down means more noise or a softer axis."
+          "body": "Each calibration is saved (in this browser) with its grade and score. The ▲/▼ arrow compares a run to the previous test of the same axis - up means a cleaner capture or a stiffer axis, down means more noise or a softer axis."
         }
       },
       "glossary": {
@@ -66,11 +66,11 @@
         },
         "resonance": {
           "term": "Resonance",
-          "def": "The frequency (Hz) at which an axis naturally vibrates when pushed. Lower = softer / heavier axis; ~40–90 Hz is a healthy printer."
+          "def": "The frequency (Hz) at which an axis naturally vibrates when pushed. Lower = softer / heavier axis; ~40-90 Hz is a healthy printer."
         },
         "psd": {
           "term": "PSD",
-          "def": "Power spectral density — how much vibration energy sits at each frequency. The tall peak is the resonance the shaper targets."
+          "def": "Power spectral density - how much vibration energy sits at each frequency. The tall peak is the resonance the shaper targets."
         },
         "smoothing": {
           "term": "Smoothing",
@@ -82,7 +82,7 @@
         },
         "maxAccel": {
           "term": "max_accel",
-          "def": "The acceleration the shaper can sustain without too much smoothing — a suggested SET_VELOCITY_LIMIT / printer.cfg value."
+          "def": "The acceleration the shaper can sustain without too much smoothing - a suggested SET_VELOCITY_LIMIT / printer.cfg value."
         }
       },
       "guide": "Guide",
@@ -97,7 +97,7 @@
           "none": "No spectrum to assess.",
           "good": "Sharp peak, well above the noise.",
           "ok": "Peak visible above the noise.",
-          "poor": "Weak peak — noisy or very stiff."
+          "poor": "Weak peak - noisy or very stiff."
         }
       },
       "vibration": {
@@ -114,7 +114,7 @@
         "note": {
           "good": "Minimal corner rounding.",
           "ok": "Some rounding at high accel.",
-          "poor": "Heavy smoothing — rounds corners."
+          "poor": "Heavy smoothing - rounds corners."
         }
       },
       "freq": {
@@ -139,12 +139,12 @@
         }
       },
       "verdict": {
-        "a": "Excellent — clean capture, well-tuned axis.",
-        "b": "Good — solid result, minor room to improve.",
-        "c": "Fair — usable; see the suggestions below.",
-        "d": "Poor — mechanical tuning + a re-test advised.",
-        "f": "Unreliable — re-run the test (check the sensor mount).",
-        "none": "No usable result — re-run TEST_RESONANCES."
+        "a": "Excellent - clean capture, well-tuned axis.",
+        "b": "Good - solid result, minor room to improve.",
+        "c": "Fair - usable; see the suggestions below.",
+        "d": "Poor - mechanical tuning + a re-test advised.",
+        "f": "Unreliable - re-run the test (check the sensor mount).",
+        "none": "No usable result - re-run TEST_RESONANCES."
       }
     },
     "diagnose": {
@@ -160,7 +160,7 @@
       },
       "lowFreq": {
         "title": "Low resonance frequency",
-        "advice": "Soft or heavy axis — tighten the belts and check frame rigidity. A stiffer axis resonates higher and prints faster.",
+        "advice": "Soft or heavy axis - tighten the belts and check frame rigidity. A stiffer axis resonates higher and prints faster.",
         "detail": "{freq} Hz"
       },
       "softAxis": {
@@ -184,7 +184,7 @@
       },
       "healthy": {
         "title": "Healthy axis",
-        "advice": "Clean capture and a stiff axis — good to go. Apply the config and restart Klipper.",
+        "advice": "Clean capture and a stiff axis - good to go. Apply the config and restart Klipper.",
         "detail": "{shaper} {'@'} {freq} Hz"
       },
       "axesDiffer": {
@@ -210,11 +210,11 @@
       "belt": {
         "matched": {
           "title": "Belts matched",
-          "advice": "The two belt responses line up — tension looks balanced."
+          "advice": "The two belt responses line up - tension looks balanced."
         },
         "differ": {
           "title": "Belts differ",
-          "advice": "The belt resonances differ — re-tension the looser belt until both peaks line up."
+          "advice": "The belt resonances differ - re-tension the looser belt until both peaks line up."
         }
       }
     },
@@ -230,13 +230,13 @@
         },
         "bad": {
           "title": "Fix the accelerometer before testing",
-          "why": "Noise {max} is too high — re-seat the sensor and check its wiring."
+          "why": "Noise {max} is too high - re-seat the sensor and check its wiring."
         }
       },
       "belts": {
         "matched": {
           "title": "Belts balanced",
-          "why": "Tension is even — calibrate the shaper next."
+          "why": "Tension is even - calibrate the shaper next."
         },
         "mismatch": {
           "title": "Re-tension belt {looser}",
@@ -246,19 +246,19 @@
       "vibrations": {
         "lowFreq": {
           "title": "Re-run at a lower acceleration",
-          "why": "Too much low-frequency motion was recorded — lower ACCEL (or raise SIZE) so only constant speeds are measured, then re-run."
+          "why": "Too much low-frequency motion was recorded - lower ACCEL (or raise SIZE) so only constant speeds are measured, then re-run."
         },
         "favour": {
           "title": "Favour ~{speed} mm/s",
-          "why": "Smoothest band {start}–{end} mm/s — set slicer print / travel speeds here when you can."
+          "why": "Smoothest band {start}-{end} mm/s - set slicer print / travel speeds here when you can."
         },
         "avoid": {
           "title": "Avoid {shown} mm/s",
-          "why": "These speeds hit a resonance — keep print + travel moves away from them in the slicer."
+          "why": "These speeds hit a resonance - keep print + travel moves away from them in the slicer."
         },
         "symmetry": {
           "title": "Check belt tension / motor match",
-          "why": "Motor symmetry {pct}% is low — re-tension the belts (compare belts) and verify both motor currents match."
+          "why": "Motor symmetry {pct}% is low - re-tension the belts (compare belts) and verify both motor currents match."
         },
         "fine": {
           "title": "Vibrations look fine",
@@ -287,16 +287,16 @@
         "belts": {
           "label": "Belts",
           "title": "CoreXY belt balance",
-          "why": "Match the two belt tensions. CoreXY only — skip on a cartesian / bed-slinger."
+          "why": "Match the two belt tensions. CoreXY only - skip on a cartesian / bed-slinger."
         },
         "shaperX": {
           "label": "Shaper X",
-          "title": "Input shaper — X",
+          "title": "Input shaper - X",
           "why": "Find the X resonance and the best shaper."
         },
         "shaperY": {
           "label": "Shaper Y",
-          "title": "Input shaper — Y",
+          "title": "Input shaper - Y",
           "why": "Find the Y resonance and the best shaper."
         },
         "vibrations": {
@@ -317,7 +317,7 @@
         "noise": {
           "passed": "Sensor is quiet",
           "warn": "Noise is a bit high",
-          "failed": "Too noisy — fix the mount"
+          "failed": "Too noisy - fix the mount"
         },
         "belts": {
           "passed": "Belts matched",
@@ -325,12 +325,12 @@
           "mismatched": "Belts mismatched (Δ{diffPct}%)"
         },
         "shaper": {
-          "healthy": "Grade {letter} — healthy axis",
-          "usable": "Grade C — usable",
-          "tune": "Grade {letter} — tune + re-test"
+          "healthy": "Grade {letter} - healthy axis",
+          "usable": "Grade C - usable",
+          "tune": "Grade {letter} - tune + re-test"
         },
         "vibrations": {
-          "lowFreq": "Too much low-freq motion — lower accel & re-run",
+          "lowFreq": "Too much low-freq motion - lower accel & re-run",
           "mismatched": "Motors mismatched ({pct}%)",
           "smoothest": "Smoothest ~{rec} mm/s",
           "complete": "Profile complete"
@@ -339,7 +339,7 @@
       "ui": {
         "title": "🧭 Guided tune",
         "exit": "✕ exit",
-        "motionReady": "⚠ moves the toolhead — I'm ready",
+        "motionReady": "⚠ moves the toolhead - I'm ready",
         "running": "running…",
         "run": "run",
         "rerun": "↻ re-run",
@@ -351,9 +351,9 @@
         "skipAnyway": "skip anyway",
         "complete": "Tuning complete",
         "stepFailed": "Step failed",
-        "copyFailed": "Copy failed — select the text and copy it manually.",
-        "summaryNote": "Your X and Y captures are in the combined {code} block below — copy it, then restart Klipper. Re-open guided tune any time to re-check.",
-        "beltsNotApplicable": "Belt comparison applies to CoreXY printers — this printer reports '{kin}', so this step is skipped."
+        "copyFailed": "Copy failed - select the text and copy it manually.",
+        "summaryNote": "Your X and Y captures are in the combined {code} block below - copy it, then restart Klipper. Re-open guided tune any time to re-check.",
+        "beltsNotApplicable": "Belt comparison applies to CoreXY printers - this printer reports '{kin}', so this step is skipped."
       }
     },
     "audit": {
@@ -410,7 +410,7 @@
       "tabAnalyze": "📈 Analyze",
       "tabLive": "🔴 Live tools",
       "tabHistory": "🕘 History",
-      "intro": "Tune input shaping from a Klipper resonance capture — no command line. New here? Start with {guided}. Or pick {analyze} to work a {csv} yourself, {live} to capture on the printer, or {history} to review past runs.",
+      "intro": "Tune input shaping from a Klipper resonance capture - no command line. New here? Start with {guided}. Or pick {analyze} to work a {csv} yourself, {live} to capture on the printer, or {history} to review past runs.",
       "cfgReady": "printer.cfg ready",
       "copy": "📋 Copy",
       "copied": "✅ Copied",
@@ -421,7 +421,7 @@
       "blankDefault": "blank = Klipper default",
       "auditTitle": "Audit",
       "refresh": "↻ refresh",
-      "auditEmpty": "No results yet — run a tune, or save one to the archive.",
+      "auditEmpty": "No results yet - run a tune, or save one to the archive.",
       "trendTitle": "score {score} vs the previous {axis} test",
       "sourceSaved": "💾 saved",
       "sourceLocal": "local",
@@ -451,14 +451,14 @@
       "clear": "clear",
       "pasteHint": "Paste into your {cfg}, then restart Klipper.",
       "errAnalysisFailed": "Analysis failed",
-      "errCopyFailed": "Copy failed — select the text and copy it manually.",
+      "errCopyFailed": "Copy failed - select the text and copy it manually.",
       "errSaveFailed": "Save to archive failed"
     },
     "fromPrinter": {
       "liveTools": "Live tools",
-      "intro": "⏳ These move the toolhead and can take {duration} (a belt comparison runs two full sweeps) — keep this page open until the result appears.",
-      "introDuration": "1–5 minutes",
-      "confirmMoves": "⚠ moves the toolhead — I'm ready",
+      "intro": "⏳ These move the toolhead and can take {duration} (a belt comparison runs two full sweeps) - keep this page open until the result appears.",
+      "introDuration": "1-5 minutes",
+      "confirmMoves": "⚠ moves the toolhead - I'm ready",
       "axisX": "axis X",
       "axisY": "axis Y",
       "noiseTitle": "🔊 Noise check",
@@ -510,36 +510,36 @@
       "sustainSec": "sec",
       "sustainBtn": "run",
       "sustainBtnBusy": "holding…",
-      "sustainDesc": "Buzzes the toolhead in place near the frequency — touch belts, the toolhead and frame to find what rattles. Refused while printing.",
+      "sustainDesc": "Buzzes the toolhead in place near the frequency - touch belts, the toolhead and frame to find what rattles. Refused while printing.",
       "sustainHolding": "✅ holding",
       "sustainOffTarget": "⚠ off-target",
       "sustainPeak": "peak {freq} Hz · {pct}% in band",
       "specChartLabel": "Frequency-time spectrogram",
       "energyChartLabel": "Vibration energy over time",
       "specAxes": "freq → · time ↓",
-      "energyLegend": "energy vs time — the cyan dip is where a touch helped",
+      "energyLegend": "energy vs time - the cyan dip is where a touch helped",
       "vibTitle": "📊 Vibrations profile",
       "vibMax": "max",
       "vibStep": "step",
       "vibUnit": "mm/s",
       "vibBtn": "run sweep",
       "vibBtnBusy": "sweeping…",
-      "vibDesc": "Sweeps speed × motor angle around bed center — a long run (minutes). A smaller {step} is finer but slower. Reports the smoothest speeds, the speeds to avoid, motor symmetry and the motor resonance. Refused while printing.",
+      "vibDesc": "Sweeps speed × motor angle around bed center - a long run (minutes). A smaller {step} is finer but slower. Reports the smoothest speeds, the speeds to avoid, motor symmetry and the motor resonance. Refused while printing.",
       "vibDescStep": "step",
       "errNoiseCheck": "Noise check failed",
       "errLiveTest": "Live test failed",
       "errBeltComparison": "Belt comparison failed",
       "errAxesMapDetection": "Axes-map detection failed",
-      "errCopyFailed": "Copy failed — select the text and copy it manually.",
+      "errCopyFailed": "Copy failed - select the text and copy it manually.",
       "errSustainTest": "Sustain-frequency test failed",
       "errVibrationsProfile": "Vibrations profile failed",
-      "vibProgress": "Sweep {step}/{total} — {speed} mm/s · {angle}°",
+      "vibProgress": "Sweep {step}/{total} - {speed} mm/s · {angle}°",
       "vibStarting": "Starting the sweep…",
       "vibCancel": "Cancel sweep",
       "vibCancelling": "Cancelling…",
-      "vibCancelled": "Sweep cancelled — velocity limits restored.",
+      "vibCancelled": "Sweep cancelled - velocity limits restored.",
       "vibReattached": "Reattached: this result finished while the page was away.",
-      "beltsCorexyOnly": "CoreXY only — this printer reports '{kin}' kinematics, so the two-belt comparison doesn't apply."
+      "beltsCorexyOnly": "CoreXY only - this printer reports '{kin}' kinematics, so the two-belt comparison doesn't apply."
     },
     "vibrationsView": {
       "title": "Vibrations profile",
@@ -553,11 +553,11 @@
       "avoid": "avoid",
       "svgPolarLabel": "Vibration energy by travel direction",
       "svgHeatmapLabel": "Vibration energy heatmap by angle and speed",
-      "goodSpeedRange": "✓ {start}–{end} mm/s",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
       "peakSpeed": "✕ {v}",
       "motorResonance": "motor resonance {v} Hz",
       "motorDamping": "· ζ {v}",
-      "smoothestDirection": "smoothest direction ~{start}–{end}°",
+      "smoothestDirection": "smoothest direction ~{start}-{end}°",
       "captures": "{n} captures"
     },
     "compareView": {
@@ -591,7 +591,7 @@
       "saveTitle": "Copy this capture into the archive",
       "save": "💾 save",
       "archive": "Archive",
-      "archiveEmpty": "Nothing saved yet — use 💾 save above, or \"save to archive\" under a config.",
+      "archiveEmpty": "Nothing saved yet - use 💾 save above, or \"save to archive\" under a config.",
       "downloadTitle": "download {fn}",
       "cfg": "cfg",
       "csv": "csv",
@@ -603,18 +603,18 @@
     },
     "verdicts": {
       "vibrations": {
-        "low_freq": "Too much low-frequency motion was recorded — lower the ACCEL (or raise SIZE) and re-run so only constant speeds are measured.",
+        "low_freq": "Too much low-frequency motion was recorded - lower the ACCEL (or raise SIZE) and re-run so only constant speeds are measured.",
         "smoothest": "Smoothest around {v} mm/s",
         "avoid": "avoid speeds near {speeds} mm/s",
         "matched": "motors are well matched ({pct}% symmetry)",
-        "low_symmetry": "motor symmetry is low ({pct}%) — check belt tension",
+        "low_symmetry": "motor symmetry is low ({pct}%) - check belt tension",
         "motor_freq": "motor resonance ~{f} Hz",
         "complete": "Vibrations profile complete."
       },
       "sustain": {
-        "not_dominant": "The toolhead isn't vibrating mainly at {freq} Hz (peak is {peak} Hz) — the source may not reach the toolhead sensor.",
-        "drop": "Holding {freq} Hz — vibration dropped ~{drop}% at some point; whatever you touched then is a strong contributor.",
-        "touch": "Holding {freq} Hz — touch belts, the toolhead, gantry joints and idlers one at a time; the part that silences the buzz is your resonance source."
+        "not_dominant": "The toolhead isn't vibrating mainly at {freq} Hz (peak is {peak} Hz) - the source may not reach the toolhead sensor.",
+        "drop": "Holding {freq} Hz - vibration dropped ~{drop}% at some point; whatever you touched then is a strong contributor.",
+        "touch": "Holding {freq} Hz - touch belts, the toolhead, gantry joints and idlers one at a time; the part that silences the buzz is your resonance source."
       },
       "axes": {
         "same_axis": "Same accelerometer axis detected for multiple machine axes",
@@ -627,7 +627,7 @@
     },
     "proof": {
       "title": "Proof of tune",
-      "empty": "Needs two recorded results on this axis — measure before tuning, apply the shaper, then measure again and save both.",
+      "empty": "Needs two recorded results on this axis - measure before tuning, apply the shaper, then measure again and save both.",
       "before": "Before",
       "after": "After",
       "samePick": "Pick two different results to compare.",

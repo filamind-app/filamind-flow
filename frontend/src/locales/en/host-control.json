@@ -1,6 +1,6 @@
 {
   "hostControl": {
-    "intro": "Manage the printer's Linux host — check its health, control its background services, free disk space, and change system settings (time, locale, hostname, network, power).",
+    "intro": "Manage the printer's Linux host - check its health, control its background services, free disk space, and change system settings (time, locale, hostname, network, power).",
     "view": {
       "monitor": "Monitor",
       "services": "Services",
@@ -27,11 +27,11 @@
         },
         "services": {
           "title": "Managing services",
-          "body": "Each row is a systemd service. Click one to start/stop/restart it, enable/disable it at boot, mask it, read its log, or — for services you installed yourself — delete its unit file. Stopping or disabling a service takes a typed or one-tap confirmation. Critical and protected services are marked; protected ones (like SSH and this panel) can't be stopped, to avoid locking you out."
+          "body": "Each row is a systemd service. Click one to start/stop/restart it, enable/disable it at boot, mask it, read its log, or - for services you installed yourself - delete its unit file. Stopping or disabling a service takes a typed or one-tap confirmation. Critical and protected services are marked; protected ones (like SSH and this panel) can't be stopped, to avoid locking you out."
         },
         "cleanup": {
           "title": "Freeing disk space",
-          "body": "Each row is scanned first to show how much it would free. Tick the ones to clear and confirm. Only regenerable data is offered — the apt download cache, old systemd journal, ~/.cache, your old /tmp files, and rotated (non-live) logs. Your G-code, timelapses and configs are never touched."
+          "body": "Each row is scanned first to show how much it would free. Tick the ones to clear and confirm. Only regenerable data is offered - the apt download cache, old systemd journal, ~/.cache, your old /tmp files, and rotated (non-live) logs. Your G-code, timelapses and configs are never touched."
         },
         "system": {
           "title": "System settings",
@@ -39,13 +39,13 @@
         },
         "network": {
           "title": "DHCP vs Static IP",
-          "body": "DHCP (auto) lets your router assign the address automatically. Static (manual) pins a fixed address — set the IP, subnet (CIDR, e.g. /24), gateway (usually your router) and DNS. IPv4 only. Changing the address of the connection that serves this panel will drop your session; reconnect at the new IP. A wrong static address or gateway can make the printer unreachable until you fix it on the device itself, so the settings are validated and need a typed confirmation."
+          "body": "DHCP (auto) lets your router assign the address automatically. Static (manual) pins a fixed address - set the IP, subnet (CIDR, e.g. /24), gateway (usually your router) and DNS. IPv4 only. Changing the address of the connection that serves this panel will drop your session; reconnect at the new IP. A wrong static address or gateway can make the printer unreachable until you fix it on the device itself, so the settings are validated and need a typed confirmation."
         }
       },
       "glossary": {
         "host": {
           "term": "Host",
-          "def": "The small Linux computer (e.g. a Raspberry Pi or BTT CB1) that runs Klipper, Moonraker and FilaMind — separate from the printer's microcontrollers."
+          "def": "The small Linux computer (e.g. a Raspberry Pi or BTT CB1) that runs Klipper, Moonraker and FilaMind - separate from the printer's microcontrollers."
         },
         "load": {
           "term": "Load average",
@@ -53,11 +53,11 @@
         },
         "swap": {
           "term": "Swap",
-          "def": "Disk space used as overflow when RAM fills up. Heavy swap use slows the host down — a sign it is short on memory."
+          "def": "Disk space used as overflow when RAM fills up. Heavy swap use slows the host down - a sign it is short on memory."
         },
         "throttle": {
           "term": "Throttling",
-          "def": "When the board reduces speed to protect itself — usually from an under-powered supply (under-voltage) or overheating. Reported mainly on Raspberry Pi."
+          "def": "When the board reduces speed to protect itself - usually from an under-powered supply (under-voltage) or overheating. Reported mainly on Raspberry Pi."
         },
         "ntp": {
           "term": "NTP / clock sync",
@@ -69,7 +69,7 @@
         },
         "service": {
           "term": "Service (unit)",
-          "def": "A background program managed by systemd — Klipper, Moonraker, the webcam streamer and the network stack all run as services."
+          "def": "A background program managed by systemd - Klipper, Moonraker, the webcam streamer and the network stack all run as services."
         },
         "enabled": {
           "term": "Enabled / disabled",
@@ -77,7 +77,7 @@
         },
         "mask": {
           "term": "Mask",
-          "def": "A stronger form of disable — the service can't be started at all (even by another service) until it's unmasked. Use with care."
+          "def": "A stronger form of disable - the service can't be started at all (even by another service) until it's unmasked. Use with care."
         }
       }
     },
@@ -164,7 +164,7 @@
       "noLogs": "No log output."
     },
     "cleanup": {
-      "subtitle": "Tick what to remove, then clean. Caches and old logs only — prints and configs stay safe.",
+      "subtitle": "Tick what to remove, then clean. Caches and old logs only - prints and configs stay safe.",
       "rescan": "Re-scan",
       "scanning": "Scanning disk…",
       "na": "n/a",
@@ -184,7 +184,7 @@
         },
         "journal": {
           "label": "System journal",
-          "desc": "Old systemd logs — vacuumed down to the most recent 50 MB."
+          "desc": "Old systemd logs - vacuumed down to the most recent 50 MB."
         },
         "cache": {
           "label": "User cache",
@@ -222,7 +222,7 @@
       "confirmShutdown": "Shut down the host now?",
       "confirmYes": "Yes",
       "cancel": "Cancel",
-      "needsSetup": "This action needs passwordless sudo. On the printer, run: sudo bash scripts/install.sh sudoers — then retry.",
+      "needsSetup": "This action needs passwordless sudo. On the printer, run: sudo bash scripts/install.sh sudoers - then retry.",
       "failed": "That change didn't apply.",
       "network": {
         "title": "Network (IPv4)",
@@ -236,7 +236,7 @@
         "gateway": "Gateway",
         "dns": "DNS servers",
         "dnsHint": "Comma-separated, e.g. 1.1.1.1, 8.8.8.8 (optional)",
-        "warning": "Changing the IP can drop this panel — you may need to reconnect at the new address.",
+        "warning": "Changing the IP can drop this panel - you may need to reconnect at the new address.",
         "apply": "Apply network settings",
         "confirmPrompt": "This may make the panel unreachable. Type the device name \"{device}\" to confirm.",
         "confirmYes": "Apply & switch",

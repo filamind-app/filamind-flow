@@ -1,6 +1,6 @@
 {
   "hardwareBrowser": {
-    "intro": "Search a curated reference of 3D-printing hardware — steppers, drivers, boards, sensors, hotends, fans, hosts, nozzles, extruders, filaments and more — by name, manufacturer, category, or any spec.",
+    "intro": "Search a curated reference of 3D-printing hardware - steppers, drivers, boards, sensors, hotends, fans, hosts, nozzles, extruders, filaments and more - by name, manufacturer, category, or any spec.",
     "help": {
       "guide": "Help",
       "guideTitle": "About the Hardware Browser",
@@ -14,7 +14,7 @@
       "topics": {
         "search": {
           "title": "Searching",
-          "body": "The search matches anywhere — manufacturer, model name, category, sub-section, or any spec value. Combine it with the category and manufacturer filters to narrow down. Results are paginated; the total count reflects everything that matches, not just the current page."
+          "body": "The search matches anywhere - manufacturer, model name, category, sub-section, or any spec value. Combine it with the category and manufacturer filters to narrow down. Results are paginated; the total count reflects everything that matches, not just the current page."
         },
         "categories": {
           "title": "Categories",
@@ -22,7 +22,7 @@
         },
         "manufacturers": {
           "title": "Manufacturers & specs",
-          "body": "This is a curated reference for comparison, not a store — values come from manufacturer datasheets and community data and may lag the latest products. Always confirm against the manufacturer before buying or configuring."
+          "body": "This is a curated reference for comparison, not a store - values come from manufacturer datasheets and community data and may lag the latest products. Always confirm against the manufacturer before buying or configuring."
         },
         "relationships": {
           "title": "Linked hardware",
@@ -44,11 +44,11 @@
         },
         "spec": {
           "term": "Spec",
-          "def": "A datasheet attribute of a component — current, voltage, max temp, dimensions, and so on."
+          "def": "A datasheet attribute of a component - current, voltage, max temp, dimensions, and so on."
         },
         "links": {
           "term": "Linked hardware",
-          "def": "Cross-links between parts — a board's manufacturer, its MCU, and the drivers it supports — shown as clickable chips that jump to the related entity."
+          "def": "Cross-links between parts - a board's manufacturer, its MCU, and the drivers it supports - shown as clickable chips that jump to the related entity."
         }
       }
     },
@@ -63,7 +63,7 @@
     "results": {
       "total": "{count} matches",
       "none": "No components match your search.",
-      "showing": "Showing {from}–{to} of {total}",
+      "showing": "Showing {from}-{to} of {total}",
       "prev": "Prev",
       "next": "Next"
     },
@@ -190,7 +190,7 @@
     "suggest": {
       "button": "Suggest a part",
       "title": "Suggest a part",
-      "intro": "Fill in what you know — we'll open a pre-filled GitHub issue for review. Nothing is sent automatically.",
+      "intro": "Fill in what you know - we'll open a pre-filled GitHub issue for review. Nothing is sent automatically.",
       "typeLabel": "Part type",
       "cancel": "Cancel",
       "close": "Close",

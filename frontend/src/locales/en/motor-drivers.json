@@ -9,11 +9,11 @@
         },
         "overview": {
           "title": "What this shows",
-          "body": "Every TMC stepper driver your printer has, read straight from its live Klipper config — one card per motor (X, Y, each Z, the extruder…). This view is read-only: it reports what is configured and what the driver is doing right now. Tuning comes in a later step."
+          "body": "Every TMC stepper driver your printer has, read straight from its live Klipper config - one card per motor (X, Y, each Z, the extruder…). This view is read-only: it reports what is configured and what the driver is doing right now. Tuning comes in a later step."
         },
         "current": {
           "title": "Run / hold current",
-          "body": "Run current is how hard the motor is pushed while moving; hold current is the lower idle level. The live figure is what the chip actually applies — it can sit a hair off the configured value because currents come in discrete steps. A driver running hot usually means the run current is set too high for the motor."
+          "body": "Run current is how hard the motor is pushed while moving; hold current is the lower idle level. The live figure is what the chip actually applies - it can sit a hair off the configured value because currents come in discrete steps. A driver running hot usually means the run current is set too high for the motor."
         },
         "chopper": {
           "title": "StealthChop vs SpreadCycle",
@@ -33,49 +33,49 @@
         },
         "temperature": {
           "title": "Temperature",
-          "body": "Only some drivers (e.g. the TMC2240) have a built-in temperature sensor. On models without one — like the common TMC2209 — temperature reads “no sensor”, which is normal, not an error."
+          "body": "Only some drivers (e.g. the TMC2240) have a built-in temperature sensor. On models without one - like the common TMC2209 - temperature reads “no sensor”, which is normal, not an error."
         },
         "catalog": {
           "title": "Where the model facts come from",
-          "body": "The interface (UART / SPI), the current cap, and the supported features shown on each card come from a built-in capability map of the TMC family — verified against the Klipper / Kalico driver code. It tells you, for example, that a TMC2208 can’t do sensorless homing while a TMC2209 can, or that only the TMC2240 reports its own temperature. Electrical figures are datasheet-typical; your board, sense resistor, and cooling set the real limits."
+          "body": "The interface (UART / SPI), the current cap, and the supported features shown on each card come from a built-in capability map of the TMC family - verified against the Klipper / Kalico driver code. It tells you, for example, that a TMC2208 can’t do sensorless homing while a TMC2209 can, or that only the TMC2240 reports its own temperature. Electrical figures are datasheet-typical; your board, sense resistor, and cooling set the real limits."
         },
         "motor": {
           "title": "Assigning a motor",
-          "body": "Pick the stepper motor wired to each axis from a built-in catalog of 200+ motors. Klipper doesn’t know which motor you fitted — telling FilaMind unlocks its datasheet specs (holding torque, rated current, resistance, inductance), which a later step uses to recommend a safe run current and driver tuning. It’s saved on the printer and changes nothing on the driver by itself."
+          "body": "Pick the stepper motor wired to each axis from a built-in catalog of 200+ motors. Klipper doesn’t know which motor you fitted - telling FilaMind unlocks its datasheet specs (holding torque, rated current, resistance, inductance), which a later step uses to recommend a safe run current and driver tuning. It’s saved on the printer and changes nothing on the driver by itself."
         },
         "motorsync": {
           "title": "Motor synchronization",
-          "body": "When one axis is driven by two or more motors (dual or quad-Z, dual-X), their microstep phases can drift apart and fight each other — adding noise and losing torque. The motors_sync add-on measures each motor with an accelerometer and nudges them back into phase. It’s a separate add-on; if it’s installed FilaMind can run or calibrate it here (it moves the toolhead, so it’s gated). If not installed, this just explains what it does."
+          "body": "When one axis is driven by two or more motors (dual or quad-Z, dual-X), their microstep phases can drift apart and fight each other - adding noise and losing torque. The motors_sync add-on measures each motor with an accelerometer and nudges them back into phase. It’s a separate add-on; if it’s installed FilaMind can run or calibrate it here (it moves the toolhead, so it’s gated). If not installed, this just explains what it does."
         },
         "monitor": {
           "title": "Live monitor",
-          "body": "Watch a driver in real time while it runs: temperature, StallGuard load (SG_RESULT — it falls toward zero as mechanical load rises), current scale (CS_ACTUAL), and any fault flags (overtemperature, short, open-load). The driver only reports these while the motor is enabled, so move or home the axis to see live data. Read-only — it just observes."
+          "body": "Watch a driver in real time while it runs: temperature, StallGuard load (SG_RESULT - it falls toward zero as mechanical load rises), current scale (CS_ACTUAL), and any fault flags (overtemperature, short, open-load). The driver only reports these while the motor is enabled, so move or home the axis to see live data. Read-only - it just observes."
         },
         "homing": {
           "title": "How this axis homes",
-          "body": "Klipper finds each axis’s zero one of a few ways, and FilaMind reads which from your config rather than guessing: a physical endstop switch (the classic microswitch — most printers), sensorless homing (the TMC driver senses the motor stalling at the end of travel — no switch), or the Z probe (the same sensor used for bed mesh finds Z=0). This panel adapts to whichever your axis uses — live switch state and a plain test-home for a physical endstop, a StallGuard tuner for sensorless, or a pointer to the probe tools for a probed Z. Extra motors sharing a rail (a second Z, the extruder) don’t home on their own, so they show nothing here."
+          "body": "Klipper finds each axis’s zero one of a few ways, and FilaMind reads which from your config rather than guessing: a physical endstop switch (the classic microswitch - most printers), sensorless homing (the TMC driver senses the motor stalling at the end of travel - no switch), or the Z probe (the same sensor used for bed mesh finds Z=0). This panel adapts to whichever your axis uses - live switch state and a plain test-home for a physical endstop, a StallGuard tuner for sensorless, or a pointer to the probe tools for a probed Z. Extra motors sharing a rail (a second Z, the extruder) don’t home on their own, so they show nothing here."
         },
         "sensorless": {
           "title": "Sensorless homing",
-          "body": "Some axes home without an endstop switch: the driver detects the gentle “stall” when the toolhead reaches the end of travel. The StallGuard threshold sets how sensitive that is — too low and it triggers early (stops short), too high and it never triggers (the axis grinds into the frame). This helper lets you set the threshold and test-home one axis, both behind a confirm. Adjust by feel: lower if it stops early, raise if it doesn’t stop — and keep a hand near the power the first few times. If your axis uses a physical endstop, you don’t need this."
+          "body": "Some axes home without an endstop switch: the driver detects the gentle “stall” when the toolhead reaches the end of travel. The StallGuard threshold sets how sensitive that is - too low and it triggers early (stops short), too high and it never triggers (the axis grinds into the frame). This helper lets you set the threshold and test-home one axis, both behind a confirm. Adjust by feel: lower if it stops early, raise if it doesn’t stop - and keep a hand near the power the first few times. If your axis uses a physical endstop, you don’t need this."
         },
         "coolstep": {
           "title": "CoolStep (load-adaptive current)",
-          "body": "CoolStep lets the driver lower the coil current when the motor isn’t working hard, then raise it back under load — saving heat and noise. It’s a coupled feedback loop with five interacting registers (semin/semax/seup/sedn/seimin), so instead of five raw knobs this is a single on/off that applies a vetted, known-good set (semin 2, semax 4, seup 3, sedn 2, seimin 1). It only acts above a velocity threshold, and being too aggressive under high acceleration can drop steps — leave it off unless you know you want it. Live only: a restart or “reset to config” restores your saved values."
+          "body": "CoolStep lets the driver lower the coil current when the motor isn’t working hard, then raise it back under load - saving heat and noise. It’s a coupled feedback loop with five interacting registers (semin/semax/seup/sedn/seimin), so instead of five raw knobs this is a single on/off that applies a vetted, known-good set (semin 2, semax 4, seup 3, sedn 2, seimin 1). It only acts above a velocity threshold, and being too aggressive under high acceleration can drop steps - leave it off unless you know you want it. Live only: a restart or “reset to config” restores your saved values."
         },
         "registers": {
           "title": "Editing registers (advanced)",
-          "body": "The advanced editor writes individual TMC tuning registers to the driver live — chopper timing (toff/tbl/hstrt/hend), StealthChop PWM (pwm_grad/pwm_ofs/…), CoolStep, StallGuard sensitivity, and the StealthChop↔SpreadCycle speed threshold (in mm/s). Which fields appear, and their valid range, come from the printer-side safety policy — not the browser — because the driver silently truncates an out-of-range value instead of erroring, so the server clamps and rejects. Raw current-scaling and short/overtemp-protection registers are deliberately not editable here (current goes through the recommender/run-current path; microsteps need a config change + restart). Every edit is live only: INIT_TMC (the “reset to config” button), a firmware restart, or a power-cycle restores your saved values. Riskier knobs need a per-field confirm, and all writes are refused while the printer is printing or paused."
+          "body": "The advanced editor writes individual TMC tuning registers to the driver live - chopper timing (toff/tbl/hstrt/hend), StealthChop PWM (pwm_grad/pwm_ofs/…), CoolStep, StallGuard sensitivity, and the StealthChop↔SpreadCycle speed threshold (in mm/s). Which fields appear, and their valid range, come from the printer-side safety policy - not the browser - because the driver silently truncates an out-of-range value instead of erroring, so the server clamps and rejects. Raw current-scaling and short/overtemp-protection registers are deliberately not editable here (current goes through the recommender/run-current path; microsteps need a config change + restart). Every edit is live only: INIT_TMC (the “reset to config” button), a firmware restart, or a power-cycle restores your saved values. Riskier knobs need a per-field confirm, and all writes are refused while the printer is printing or paused."
         },
         "recommend": {
           "title": "Recommended tuning",
-          "body": "Once a motor is assigned, FilaMind can compute a suggested run current and the StealthChop / SpreadCycle register values (pwm_grad, pwm_ofs, hstrt, hend) from the motor’s datasheet specs and your supply voltage — so it works even without the autotune add-on installed. The run current defaults to a conservative 70% of the motor’s rating. The result is diffed against your live config; you can then copy it to printer.cfg, or write it live behind a confirm (reversible with Revert, and refused while printing). If the autotune add-on is installed, you can run it instead."
+          "body": "Once a motor is assigned, FilaMind can compute a suggested run current and the StealthChop / SpreadCycle register values (pwm_grad, pwm_ofs, hstrt, hend) from the motor’s datasheet specs and your supply voltage - so it works even without the autotune add-on installed. The run current defaults to a conservative 70% of the motor’s rating. The result is diffed against your live config; you can then copy it to printer.cfg, or write it live behind a confirm (reversible with Revert, and refused while printing). If the autotune add-on is installed, you can run it instead."
         }
       },
       "glossary": {
         "tmcDriver": {
           "term": "TMC driver",
-          "def": "The chip that turns Klipper’s step/dir signals into the coil currents that spin a stepper motor — e.g. TMC2209, TMC2240, TMC5160. Each motor has one."
+          "def": "The chip that turns Klipper’s step/dir signals into the coil currents that spin a stepper motor - e.g. TMC2209, TMC2240, TMC5160. Each motor has one."
         },
         "runCurrent": {
           "term": "Run current",
@@ -141,8 +141,8 @@
         "inherited": "Shared rail"
       },
       "stallguard": {
-        "signed": "Signed −64…63 — LOWER is more sensitive (stops sooner). Raise it if the axis stops short; lower it if it never stops.",
-        "unsigned": "Range 0–255 — HIGHER is more sensitive (stops sooner). Lower it if the axis stops short; raise it if it never stops."
+        "signed": "Signed −64…63 - LOWER is more sensitive (stops sooner). Raise it if the axis stops short; lower it if it never stops.",
+        "unsigned": "Range 0-255 - HIGHER is more sensitive (stops sooner). Lower it if the axis stops short; raise it if it never stops."
       },
       "spec": {
         "nm": "{v} Nm",
@@ -162,22 +162,22 @@
       "runCurrent": "run current (A)"
     },
     "widget": {
-      "intro": "Every TMC stepper driver on your printer, read live from its Klipper config — inspect, get tuning recommendations, and apply them (gated). New here? Try 🧭 Guided.",
+      "intro": "Every TMC stepper driver on your printer, read live from its Klipper config - inspect, get tuning recommendations, and apply them (gated). New here? Try 🧭 Guided.",
       "tabDashboard": "Dashboard",
       "tabGuided": "🧭 Guided",
       "howToReadShow": "▸ how to read this",
       "howToReadHide": "▾ how to read this",
       "steps": [
-        "Each card is one stepper driver — its heading is the axis (X / Y / Z / Extruder) and the badge is the chip model.",
-        "Run current shows how hard the motor is driven; the live value may differ slightly from the configured “set” value — that’s normal.",
+        "Each card is one stepper driver - its heading is the axis (X / Y / Z / Extruder) and the badge is the chip model.",
+        "Run current shows how hard the motor is driven; the live value may differ slightly from the configured “set” value - that’s normal.",
         "Mode tells you SpreadCycle (precise, louder) or StealthChop (quiet); microsteps shows how smooth the motion is.",
-        "Home an axis or jog the motor to wake it — live temperature and fault flags only appear while a motor is enabled (idle drivers show “idle”).",
+        "Home an axis or jog the motor to wake it - live temperature and fault flags only appear while a motor is enabled (idle drivers show “idle”).",
         "Open “advanced registers” on a card to inspect the raw tuning values the driver is using."
       ],
       "loading": "Loading motor drivers…",
       "retry": "↻ retry",
       "retrying": "retrying…",
-      "unreachable": "Can’t reach the printer’s Moonraker — driver data is unavailable right now.",
+      "unreachable": "Can’t reach the printer’s Moonraker - driver data is unavailable right now.",
       "noDrivers": "No TMC drivers found in the Klipper config. (Only TMC stepper drivers appear here.)",
       "runCurrent": "Run {value}",
       "nearCapTitle": "Near this model's rated cap ({max})",
@@ -190,7 +190,7 @@
       "sense": "sense {value} Ω",
       "healthTitleIdle": "Enable the motor (home or jog an axis) to read live temperature and fault flags",
       "healthTitleLive": "Live driver status from drv_status",
-      "staleData": "The last refresh failed — showing the previous data."
+      "staleData": "The last refresh failed - showing the previous data."
     },
     "liveMonitor": {
       "toggle": "live monitor",
@@ -199,7 +199,7 @@
       "cs": "CS {cs}",
       "updates": "· updates ~1.5s",
       "noFaults": "no faults",
-      "idle": "Idle — enable the motor (home or jog the axis) to read live SG / current / temperature."
+      "idle": "Idle - enable the motor (home or jog the axis) to read live SG / current / temperature."
     },
     "recommendPanel": {
       "toggle": "recommend tuning",
@@ -215,10 +215,10 @@
       "copyConfig": "copy config",
       "autotune": "autotune",
       "autotuneTitle": "Runs AUTOTUNE_TMC if the klipper_tmc_autotune add-on is installed",
-      "noSpecs": "No datasheet specs for this motor — tuning recommendation unavailable.",
+      "noSpecs": "No datasheet specs for this motor - tuning recommendation unavailable.",
       "measured": "Measured: motors resonate at ~{freq} Hz",
       "measuredSym": "symmetry {pct}%",
-      "measuredHint": "Ground truth from the vibrations profile run on this printer — open the Input Shaping audit."
+      "measuredHint": "Ground truth from the vibrations profile run on this printer - open the Input Shaping audit."
     },
     "motorSync": {
       "toggle": "motor synchronization",
@@ -227,19 +227,19 @@
       "checking": "checking…",
       "notInstalled": "Not installed on this printer. Install the motors_sync add-on to enable it here.",
       "warning": "⚠ This moves the toolhead for a while (it probes each motor). Keep clear and ready to cut power.",
-      "confirm": "I'm watching the printer — run motor synchronization now.",
+      "confirm": "I'm watching the printer - run motor synchronization now.",
       "syncMotors": "sync motors",
       "calibrate": "calibrate"
     },
     "sensorless": {
-      "noRegister": "⚠ This driver exposes no StallGuard threshold register, so sensorless homing can’t be tuned here — check the printer’s homing configuration.",
+      "noRegister": "⚠ This driver exposes no StallGuard threshold register, so sensorless homing can’t be tuned here - check the printer’s homing configuration.",
       "intro": "StallGuard {field} sets sensorless-homing sensitivity.",
       "threshold": "threshold",
       "nowRange": "now: {now} · range {min}…{max}",
       "confirmSet": "Write this threshold to the driver now (reversible; refused while printing).",
       "setThreshold": "set threshold",
-      "testHomeWarning": "⚠ Test-home moves the {axis} axis now. With a wrong threshold it may not stop — keep a hand on the power. Sensorless axes only.",
-      "confirmHome": "I’m watching the printer and ready to cut power — home {axis}.",
+      "testHomeWarning": "⚠ Test-home moves the {axis} axis now. With a wrong threshold it may not stop - keep a hand on the power. Sensorless axes only.",
+      "confirmHome": "I’m watching the printer and ready to cut power - home {axis}.",
       "testHome": "test-home {axis}"
     },
     "homing": {
@@ -249,11 +249,11 @@
       "physicalIntroTail": ". Press the switch by hand and re-check to confirm the wiring before homing.",
       "switchLabel": "switch:",
       "check": "↻ check",
-      "testHomeWarn": "⚠ Test-home moves the {axis} axis to its endstop now — make sure the path is clear.",
-      "pathClear": "Path is clear — home {axis}.",
+      "testHomeWarn": "⚠ Test-home moves the {axis} axis to its endstop now - make sure the path is clear.",
+      "pathClear": "Path is clear - home {axis}.",
       "testHome": "test-home {axis}",
       "probeNote": "This axis homes with the Z probe (the same sensor used for bed mesh), so there’s no StallGuard threshold to tune here. Set the probe offset and mesh in the bed-leveling tools.",
-      "virtualNote": "This axis homes against a virtual endstop that isn’t a TMC StallGuard pin — it’s managed by its own host module, so there’s nothing to tune here."
+      "virtualNote": "This axis homes against a virtual endstop that isn’t a TMC StallGuard pin - it’s managed by its own host module, so there’s nothing to tune here."
     },
     "guidedWizard": {
       "title": "🧭 Guided tuning",
@@ -282,9 +282,9 @@
     },
     "registerEditor": {
       "toggle": "tune registers (advanced)",
-      "resetTitle": "INIT_TMC — re-apply this driver's configured registers + current",
+      "resetTitle": "INIT_TMC - re-apply this driver's configured registers + current",
       "resetLabel": "↺ reset to config",
-      "liveOnly": "Edits are {live} — not saved. {initTmc} (reset), a firmware restart, or a power-cycle restores the configured values. Out-of-range values are rejected by the printer-side safety policy; raw current and protection registers aren't editable here.",
+      "liveOnly": "Edits are {live} - not saved. {initTmc} (reset), a firmware restart, or a power-cycle restores the configured values. Out-of-range values are rejected by the printer-side safety policy; raw current and protection registers aren't editable here.",
       "liveOnlyEmphasis": "live only",
       "loading": "Loading editable registers…",
       "coolstep": "CoolStep",
@@ -292,7 +292,7 @@
       "off": "off",
       "coolstepEnableTitle": "Apply the autotune-vetted CoolStep set (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
       "enable": "enable",
-      "riskyTitle": "Riskier knob — confirm before writing",
+      "riskyTitle": "Riskier knob - confirm before writing",
       "now": "now:",
       "confirm": "confirm",
       "set": "set",
@@ -312,17 +312,17 @@
       "applied": "Applied {n} change(s) to {stepper}.",
       "busyReinit": "Refusing to re-init while the printer is busy (printing or paused).",
       "reinitialized": "Re-initialized {stepper} and restored its configured current.",
-      "autotuneNotInstalled": "klipper_tmc_autotune is not installed for this stepper — use the recommendation or copy-to-config instead.",
+      "autotuneNotInstalled": "klipper_tmc_autotune is not installed for this stepper - use the recommendation or copy-to-config instead.",
       "busyAutotune": "Refusing to autotune while the printer is busy (printing or paused).",
       "autotuneRan": "Ran AUTOTUNE_TMC on {stepper}.",
       "busyWrite": "Refusing to write while the printer is busy (printing or paused).",
       "stallguardSet": "Set {field} = {num} on {stepper}.",
-      "fieldSet": "Set {field} = {num} on {stepper} (live only — INIT_TMC or a restart restores the configured value).",
-      "coolstepEnabled": "CoolStep enabled on {stepper} (live only — INIT_TMC or a restart restores the configured values).",
-      "coolstepDisabled": "CoolStep disabled on {stepper} (live only — INIT_TMC or a restart restores the configured values).",
+      "fieldSet": "Set {field} = {num} on {stepper} (live only - INIT_TMC or a restart restores the configured value).",
+      "coolstepEnabled": "CoolStep enabled on {stepper} (live only - INIT_TMC or a restart restores the configured values).",
+      "coolstepDisabled": "CoolStep disabled on {stepper} (live only - INIT_TMC or a restart restores the configured values).",
       "busyHome": "Refusing to home while the printer is busy (printing or paused).",
       "homed": "Homed {ax}.",
-      "motorsyncNotInstalled": "The motors_sync add-on isn't installed — it aligns the microstep phase of multiple motors on one axis (dual/quad-Z, dual-X) using an accelerometer.",
+      "motorsyncNotInstalled": "The motors_sync add-on isn't installed - it aligns the microstep phase of multiple motors on one axis (dual/quad-Z, dual-X) using an accelerometer.",
       "busySync": "Refusing to sync motors while the printer is busy (printing or paused).",
       "syncRan": "Ran {cmd}.",
       "overCurrentCap": "Refused: {requested} A on {stepper} exceeds the {cap} A ceiling (driver full-scale limit / rated current of the assigned motor).",
