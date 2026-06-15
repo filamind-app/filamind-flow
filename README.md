@@ -31,7 +31,7 @@ to everyone.
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org)
 
-[Install](#install-on-a-printer-one-line) · [Widgets](#widgets) · [Architecture](#architecture) · [Quickstart](#quickstart) · [Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md) · [Support ❤](#support-filamind-flow)
+[Install](#install-on-a-printer-one-line) · [Uninstall](#uninstall) · [Widgets](#widgets) · [Architecture](#architecture) · [Quickstart](#quickstart) · [Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md) · [Support ❤](#support-filamind-flow)
 
 </div>
 
@@ -145,6 +145,18 @@ LAN, by IP, or under that subpath, with no `.local` mDNS and no extra port to fo
 Re-runnable; ports are overridable (`FILAMIND_UI_PORT`, `FILAMIND_API_PORT`), and an explicit
 public host can be forced with `FILAMIND_PUBLIC_HOST` (used as the fallback absolute `host:port`
 link when no primary site is found). See [`scripts/install.sh`](scripts/install.sh).
+
+## Uninstall
+
+From the cloned repo, run as your printer user (it uses `sudo` only where needed):
+
+```bash
+bash scripts/install.sh uninstall
+```
+
+It removes the service, the nginx site (and the `/filamind/` subpath block), the Mainsail sidebar
+entry, the Moonraker `update_manager` registration, and the sudo / udev rules. The app files stay
+at `~/filamind-flow` — delete those too with `rm -rf ~/filamind-flow`.
 
 ## Why it exists
 
