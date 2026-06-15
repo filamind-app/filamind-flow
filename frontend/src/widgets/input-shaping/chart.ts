@@ -1,4 +1,4 @@
-/** Pure builder for the frequency-response chart — maps an analysis's data
+/** Pure builder for the frequency-response chart - maps an analysis's data
  *  series onto SVG polyline coordinates so the widget can draw them with no
  *  charting dependency. Two y-axes (like Klipper's calibrate_shaper plot): the
  *  PSD curves scale to the peak power, the shaper curves to the 0..1 reduction
@@ -43,7 +43,7 @@ export interface ResponseChart {
 
 // Theme-aware: resolve to the live brand tokens so the curves recolor per theme.
 const PSD_COLORS: Record<string, string> = {
-  sum: 'rgb(var(--c-ink))', // ink — the X+Y+Z total
+  sum: 'rgb(var(--c-ink))', // ink - the X+Y+Z total
   x: 'rgb(var(--c-brand-red))', // brand-red
   y: 'rgb(var(--c-brand-blue))', // brand-blue
   z: 'rgb(var(--c-brand-cyan))', // brand-cyan

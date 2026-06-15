@@ -49,7 +49,7 @@ function start(): void {
   )
 }
 
-// Poll only while active AND expanded — no point fetching snapshots behind a collapsed PiP.
+// Poll only while active AND expanded - no point fetching snapshots behind a collapsed PiP.
 watch(
   [() => props.active, collapsed],
   ([on, isCollapsed]) => {

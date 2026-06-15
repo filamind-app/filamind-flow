@@ -73,7 +73,7 @@ async def test_snapshot_raises_when_no_camera() -> None:
         await cam.snapshot("http://localhost:7125", _CamClient([]))  # type: ignore[arg-type]
 
 
-# ── route-level ────────────────────────────────────────────────────────────────
+# -- route-level ----------------------------------------------------------------
 def test_route_camera_list_empty_when_unreachable() -> None:
     from fastapi.testclient import TestClient
 

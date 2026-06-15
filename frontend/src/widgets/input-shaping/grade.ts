@@ -1,5 +1,5 @@
 /** Grades the QUALITY of a resonance capture + its best shaper, so the widget can
- *  show "how good is this measurement" at a glance — a letter + score, plus a
+ *  show "how good is this measurement" at a glance - a letter + score, plus a
  *  breakdown of the factors behind it. Pure + testable; derived entirely from an
  *  existing ShaperAnalysis (no extra capture needed).
  */
@@ -38,7 +38,7 @@ function clarityFactor(psdSum: number[]): QualityFactor {
   if (ratio == null)
     return {
       ...base,
-      value: '—',
+      value: '-',
       rating: 'ok',
       points: 12,
       note: i18n.global.t('inputShaping.grade.clarity.note.none'),
@@ -132,7 +132,7 @@ function freqFactor(freq: number | null): QualityFactor {
   if (freq == null)
     return {
       ...base,
-      value: '—',
+      value: '-',
       rating: 'poor',
       points: 5,
       note: i18n.global.t('inputShaping.grade.freq.note.none'),

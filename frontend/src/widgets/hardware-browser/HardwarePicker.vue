@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends Record<string, unknown>">
-/** DB-3d — a reusable "pick a part" control backed by the hardware DB. Generalises MotorPicker:
+/** DB-3d - a reusable "pick a part" control backed by the hardware DB. Generalises MotorPicker:
  *  give it a `type` (boards / drivers / motors / hosts) and it loads that canonical catalog into a
  *  typeahead `ComboSelect`, then emits the chosen id AND the full summary so a host widget can
  *  auto-fill from it (e.g. Motor Drivers pre-filling run_current). Any widget can embed it. */
@@ -23,7 +23,7 @@ const props = withDefaults(
 )
 const emit = defineEmits<{
   'update:modelValue': [value: string | null]
-  /** The full summary of the picked entity (or null when cleared) — for auto-fill. */
+  /** The full summary of the picked entity (or null when cleared) - for auto-fill. */
   select: [entity: T | null]
 }>()
 

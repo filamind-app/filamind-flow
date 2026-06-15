@@ -2,29 +2,20 @@
 
 # FilaMind Flow
 
-A control panel for Klipper and Moonraker that lives next to Mainsail and Fluidd.
-It grows one widget at a time, and each one earns its place by being genuinely useful.
+A control panel for Klipper and Moonraker that lives next to Mainsail and Fluidd,
+and grows one widget at a time.
 
 **Built by Egyptian makers, for world makers. Happy printing.** 🇪🇬
+
+_A two-person hobby project, built with heavy AI assistance and tested on real printers. The code is all here to read._
 
 [![Support on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I119XEIV)
 
 [![CI](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/filamind-app/filamind-flow/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/filamind-app/filamind-flow?color=111111&label=release&sort=semver)](https://github.com/filamind-app/filamind-flow/releases/latest)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-111111.svg)](LICENSE)
-[![Last commit](https://img.shields.io/github/last-commit/filamind-app/filamind-flow?color=111111&label=updated)](https://github.com/filamind-app/filamind-flow/commits/main)
-
 [![Klipper](https://img.shields.io/badge/Klipper-compatible-111111)](https://www.klipper3d.org)
 [![Moonraker](https://img.shields.io/badge/Moonraker-API-111111)](https://moonraker.readthedocs.io)
-[![Mainsail](https://img.shields.io/badge/Mainsail-sidebar-111111)](https://docs.mainsail.xyz)
-[![Fluidd](https://img.shields.io/badge/Fluidd-ready-111111)](https://docs.fluidd.xyz)
-
-[![Vue.js](https://img.shields.io/badge/Vue.js-3-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org)
-[![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vite.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org)
 
 [Install](#install) · [Uninstall](#uninstall) · [Widgets](#widgets) · [Docs](#documentation) · [Support](#support)
 
@@ -66,9 +57,9 @@ This removes the service, the nginx site, the sidebar entry, the Moonraker regis
 
 Every widget has its own page under [docs/widgets/](docs/widgets/).
 
-## Proven on real printers
+## Tested on real printers
 
-FilaMind Flow is validated on two machines that disagree on almost everything that matters to a control panel. The first is a Sovol SV08: an STM32F103 mainboard, TMC2209 drivers over UART, a USB toolhead, and a BTT CB1 host. The second is a Voron-class CoreXY: an STM32H723 mainboard, six TMC5160 drivers on a shared software-SPI bus, a CAN toolhead, and a Raspberry Pi 4. Bringing the second printer online hunted the "works on my printer" class of bug. Each one it surfaced became a generic fix rather than a special case.
+FilaMind Flow is tested on two machines that disagree on almost everything that matters to a control panel. The first is a Sovol SV08: an STM32F103 mainboard, TMC2209 drivers over UART, a USB toolhead, and a BTT CB1 host. The second is a Voron-class CoreXY: an STM32H723 mainboard, six TMC5160 drivers on a shared software-SPI bus, a CAN toolhead, and a Raspberry Pi 4. Bringing the second printer online surfaced the "works on my printer" class of bug, and each one turned into a generic fix.
 
 ## How it's built
 
@@ -103,8 +94,8 @@ FilaMind Flow is free and open source, built and maintained in spare time. If it
 
 Built and maintained by the DeltaFabs team:
 
-- abdelmonem awad — <eg2@live.com>
-- Ahmed bebars — <Ahmedbebars1@gmail.com>
+- abdelmonem awad - <eg2@live.com>
+- Ahmed bebars - <Ahmedbebars1@gmail.com>
 
 ## License
 

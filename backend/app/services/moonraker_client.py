@@ -66,7 +66,7 @@ class MoonrakerClient:
 
     async def machine_system_info(self) -> dict[str, Any]:
         """Moonraker ``/machine/system_info`` → the ``system_info`` object (cpu_info / distribution
-        / …). Used to identify the host SBC. May be absent on older Moonraker — callers guard."""
+        / …). Used to identify the host SBC. May be absent on older Moonraker - callers guard."""
         result = await self._get("/machine/system_info")
         info = result.get("system_info")
         return info if isinstance(info, dict) else {}

@@ -1,5 +1,5 @@
 /** Turns a step's result into ranked, concrete "do this next" suggestions. A thin
- *  mapping over the EXISTING scorers (diagnose, beltVerdict, NoiseResult.grade) — no
+ *  mapping over the EXISTING scorers (diagnose, beltVerdict, NoiseResult.grade) - no
  *  new physics. Pure + testable.
  */
 

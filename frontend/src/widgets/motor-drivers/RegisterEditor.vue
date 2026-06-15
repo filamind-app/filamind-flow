@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** Advanced register editor (P10b). Lets you edit the safe subset of a driver's TMC registers
- *  live, driven entirely by the SERVER's field policy — the client never decides what's editable
+ *  live, driven entirely by the SERVER's field policy - the client never decides what's editable
  *  or the bounds (the backend clamps + rejects, because SET_TMC_FIELD silently mask-truncates).
  *  Each write is gated (refused while printing/paused), reversible (INIT_TMC / restart), and risky
  *  fields require a per-field confirm. Non-editable registers are shown read-only beneath.
@@ -121,7 +121,7 @@ function hintFor(field: string, entry: FieldPolicyEntry): string | null {
   return entry.note ?? null
 }
 
-/** Raw driver_* registers that aren't editable — shown read-only for full visibility. */
+/** Raw driver_* registers that aren't editable - shown read-only for full visibility. */
 const readOnlyRegisters = computed<[string, string][]>(() => {
   const p = policy.value ?? {}
   return Object.entries(props.driver.registers)
@@ -285,7 +285,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
         </div>
       </section>
 
-      <!-- Editable fields — grouped into labelled sections, each an aligned column grid so the
+      <!-- Editable fields - grouped into labelled sections, each an aligned column grid so the
            names, controls, ranges, live values and Set buttons line up instead of wrapping. -->
       <section
         v-for="group in groupedFields"
@@ -342,7 +342,7 @@ function canWrite(field: string, entry: FieldPolicyEntry): boolean {
                 >{{ entry.min }}…{{ entry.max }}</span
               >
               <span class="opacity-60"
-                >{{ t('motorDrivers.registerEditor.now') }} {{ currentValue(field) ?? '—' }}</span
+                >{{ t('motorDrivers.registerEditor.now') }} {{ currentValue(field) ?? '-' }}</span
               >
             </span>
 

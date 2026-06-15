@@ -1,7 +1,7 @@
 """A minimal in-process Moonraker stub for end-to-end smoke tests.
 
-Serves just enough of the Moonraker HTTP API — printer info, object queries, the
-``config`` file root (in-memory), G-code script, upload/delete — for the real app
+Serves just enough of the Moonraker HTTP API - printer info, object queries, the
+``config`` file root (in-memory), G-code script, upload/delete - for the real app
 to come up against a real HTTP boundary and exercise its read AND gated-write
 paths without a printer. State lives in :class:`StubState` so tests can seed
 files and inspect what the app wrote.

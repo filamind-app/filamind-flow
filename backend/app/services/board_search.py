@@ -1,4 +1,4 @@
-"""Board-DB search — pure filtering/pagination over the canonical board entities.
+"""Board-DB search - pure filtering/pagination over the canonical board entities.
 
 Hardware-free. The list endpoint returns lightweight summaries (no per-port detail);
 the full ``ports[]`` record is served by ``GET /api/boards/{board_id}``. Backs the

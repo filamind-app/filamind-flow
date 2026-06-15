@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Neutral teaching illustrations for the help notes — one per HelpIlloKey. Same
+/** Neutral teaching illustrations for the help notes - one per HelpIlloKey. Same
  *  dependency-free recipe as DiagnosticIllo (24×24, currentColor), but these explain
  *  a concept rather than flag a problem, so they live separately. Kept to ≤6 strokes.
  */
@@ -63,7 +63,7 @@ defineProps<{ illo: HelpIlloKey }>()
       <path d="M16 16 l2 2 l-2 2" />
     </g>
 
-    <!-- Speed sweep — rising bars -->
+    <!-- Speed sweep - rising bars -->
     <g v-else>
       <line x1="3" y1="20" x2="21" y2="20" />
       <line x1="6" y1="20" x2="6" y2="16" />

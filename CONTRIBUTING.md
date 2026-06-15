@@ -95,11 +95,11 @@ Before you ship layout-sensitive copy, eyeball it for expansion and RTL issues w
 
 When a change adds or changes a user-facing feature, an `/api` endpoint, or a config setting, update the docs in the same PR. Stale docs are a bug. Depending on what you changed, that means:
 
-- **`CHANGELOG.md`** — every release (Keep a Changelog format).
-- **`README.md`** — the status blurb, the Widgets table, and the roadmap list. The release badge is dynamic, tracking the latest GitHub Release, so it needs no manual bump.
-- **`ROADMAP.md`** — mark the shipped phase ✅.
-- **`backend/README.md`** — new or changed `/api` endpoints and `FILAMIND_*` settings.
-- **`docs/ARCHITECTURE.md`** — only when the structure or data flow changes.
+- **`CHANGELOG.md`** - every release (Keep a Changelog format).
+- **`README.md`** - the status blurb, the Widgets table, and the roadmap list. The release badge is dynamic, tracking the latest GitHub Release, so it needs no manual bump.
+- **`ROADMAP.md`** - mark the shipped phase ✅.
+- **`backend/README.md`** - new or changed `/api` endpoints and `FILAMIND_*` settings.
+- **`docs/ARCHITECTURE.md`** - only when the structure or data flow changes.
 
 Keep the repository's GitHub metadata current too. The About description and topics should reflect what ships today, so update them with `gh repo edit` whenever a new widget or major capability lands.
 
@@ -153,7 +153,7 @@ To cut a release:
 # 1. Bump the version in all three places:
 #    frontend/package.json · backend/pyproject.toml · backend/app/__init__.py
 # 2. Add the CHANGELOG.md entry, rebuild frontend/dist, open the PR, merge.
-# 3. Tag the merge commit and push the tag — the workflow does the rest:
-git tag -a vX.Y.Z -m "vX.Y.Z — <summary>"
+# 3. Tag the merge commit and push the tag - the workflow does the rest:
+git tag -a vX.Y.Z -m "vX.Y.Z - <summary>"
 git push origin vX.Y.Z
 ```

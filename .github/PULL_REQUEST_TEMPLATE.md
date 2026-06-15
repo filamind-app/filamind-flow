@@ -4,8 +4,8 @@
 
 ## Type
 
-- [ ] feat — new widget or capability
-- [ ] fix — bug fix
+- [ ] feat - new widget or capability
+- [ ] fix - bug fix
 - [ ] docs / chore / refactor / test
 
 ## Checklist

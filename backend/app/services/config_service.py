@@ -1,11 +1,11 @@
-"""Config-file service — read the live Klipper config for the Config Editor widget.
+"""Config-file service - read the live Klipper config for the Config Editor widget.
 
 Reads ``printer.cfg`` (and its includes) from Moonraker's ``config`` file root, parses
 each file with the round-trip :mod:`klipper_config` engine, and returns a structured,
 JSON-friendly view (sections → params) plus light validation issues.
 
 Also the gated write path: ``save_config_file`` backs up then overwrites a file, and
-``restart_firmware`` applies it — both refused while the printer is busy.
+``restart_firmware`` applies it - both refused while the printer is busy.
 """
 
 from __future__ import annotations
@@ -22,13 +22,13 @@ from app.services import field_policy, klipper_config, motor_mapping, printer_gu
 from app.services.klipper_config import ConfigFile, ConfigParam, ConfigSection
 from app.services.moonraker_client import MoonrakerClient
 
-#: TMC driver section prefixes — a ``[tmcXXXX NAME]`` must pair with a ``[NAME]`` stepper/extruder.
+#: TMC driver section prefixes - a ``[tmcXXXX NAME]`` must pair with a ``[NAME]`` stepper/extruder.
 _TMC_PREFIXES = ("tmc2209", "tmc2208", "tmc2130", "tmc5160", "tmc2660", "tmc2240", "tmc")
 
 #: Section types whose duplicate header across files is not a merge error (``include`` repeats).
 _REPEATABLE_TYPES = frozenset({"include"})
 
-#: Candidate names for the active config's root, in priority order — what Klipper actually loads.
+#: Candidate names for the active config's root, in priority order - what Klipper actually loads.
 _PRIMARY_ROOTS = ("printer.cfg",)
 
 #: File extensions treated as editable Klipper config files.
@@ -44,7 +44,7 @@ class ConfigBusyError(RuntimeError):
 
 class ConfigConflictError(RuntimeError):
     """Raised when a save is refused because the file changed on disk since it was loaded
-    (e.g. a ``SAVE_CONFIG`` landed, or another UI edited it) — saving would clobber that."""
+    (e.g. a ``SAVE_CONFIG`` landed, or another UI edited it) - saving would clobber that."""
 
 
 def _param_view(param: ConfigParam) -> dict[str, Any]:
@@ -78,7 +78,7 @@ def _sha256(text: str) -> str:
 def build_file_view(filename: str, raw: str) -> dict[str, Any]:
     """Parse ``raw`` config text into the structured editor view (pure, no I/O).
 
-    ``sha256`` fingerprints the loaded content — the client echoes it back on save so a file
+    ``sha256`` fingerprints the loaded content - the client echoes it back on save so a file
     that changed on disk in the meantime is detected instead of silently clobbered.
     """
     cfg: ConfigFile = klipper_config.parse(raw)
@@ -99,7 +99,7 @@ def _is_config_file(path: str) -> bool:
 
 
 def _reject_unsafe(filename: str) -> None:
-    """Guard against path traversal — only plain paths within the config root are allowed."""
+    """Guard against path traversal - only plain paths within the config root are allowed."""
     parts = filename.split("/")
     if filename.startswith("/") or filename == "" or ".." in parts:
         raise ValueError(f"invalid config path: {filename!r}")
@@ -132,7 +132,7 @@ async def read_config_file(client: MoonrakerClient, filename: str) -> dict[str, 
 async def gather_drift(client: MoonrakerClient, filename: str) -> dict[str, Any]:
     """Compare the on-disk file to what Klipper is actually running (the live ``configfile``).
 
-    Klipper runs the LOADED config, which can diverge from disk — an edit not yet restarted, or a
+    Klipper runs the LOADED config, which can diverge from disk - an edit not yet restarted, or a
     pending ``SAVE_CONFIG`` Klipper computed but hasn't written. Returns the pending flag, Klipper's
     own parse warnings, and a per-param drift list (single-line params whose on-disk value differs
     from the live one). Degrades to ``reachable=false`` when Moonraker is down.
@@ -157,7 +157,7 @@ async def gather_drift(client: MoonrakerClient, filename: str) -> dict[str, Any]
     drifts: list[dict[str, str]] = []
     for sec in klipper_config.parse(raw).sections:
         if sec.header == klipper_config.SAVE_CONFIG_MARKER:
-            continue  # the SAVE_CONFIG block is Klipper-managed — never diff it
+            continue  # the SAVE_CONFIG block is Klipper-managed - never diff it
         live_sec = live.get(sec.header.strip().lower())
         if not isinstance(live_sec, dict):
             continue
@@ -169,10 +169,10 @@ async def gather_drift(client: MoonrakerClient, filename: str) -> dict[str, Any]
             live_val = str(raw_live).strip()
             # Multi-line check BEFORE stripping: a value written as a single continuation line
             # ("key:" then an indented "value  # note") strips to something that looks
-            # single-line — with its inline comment still embedded — and would otherwise diff
+            # single-line - with its inline comment still embedded - and would otherwise diff
             # as fake drift against the live value.
             if "\n" in raw_disk or "\n" in live_val:
-                continue  # skip multi-line values (gcode / bed_mesh points) — too fuzzy to diff
+                continue  # skip multi-line values (gcode / bed_mesh points) - too fuzzy to diff
             disk = raw_disk.strip()
             if disk and live_val and disk != live_val:
                 drifts.append(
@@ -271,11 +271,11 @@ def _glob_match(pattern: str, path: str) -> bool:
 def _resolve_include(target: str, base: str, paths: set[str]) -> tuple[list[str], bool]:
     """Map an include target (Klipper resolves it relative to its file ``base``) to real file paths.
 
-    Returns ``(matched_paths, missing)`` — ``missing`` is True only when the target genuinely can't
+    Returns ``(matched_paths, missing)`` - ``missing`` is True only when the target genuinely can't
     be found (a broken include). Resolution prefers the exact relative path; the basename fallback
     fires *only* when exactly one file carries that basename, so two same-named files in different
     folders (e.g. a vendor source copy and the user's active copy) are never both pulled in for a
-    single ``[include]`` — which would otherwise fabricate duplicate-section errors. A glob that
+    single ``[include]`` - which would otherwise fabricate duplicate-section errors. A glob that
     matches at least one file is not missing; an ambiguous basename resolves to nothing but is not
     reported as missing (we simply don't guess).
     """
@@ -297,13 +297,13 @@ def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
     """Build the include-dependency graph + cross-file lint over already-fetched ``(path, raw)``.
 
     Pure (no I/O) so it is unit-testable. Lint rules: ``broken_include`` (a target file is missing),
-    ``duplicate_section`` (the same non-``include`` header is defined in more than one file — a
+    ``duplicate_section`` (the same non-``include`` header is defined in more than one file - a
     Klipper load error), and ``orphan_driver`` (a ``[tmcXXXX NAME]`` with no matching ``[NAME]``).
     """
     paths = {p for p, _ in files}
     parsed: dict[str, ConfigFile] = {p: klipper_config.parse(raw) for p, raw in files}
 
-    # First pass: resolve include edges per file (no lint yet — that is scoped to the active tree).
+    # First pass: resolve include edges per file (no lint yet - that is scoped to the active tree).
     nodes: list[dict[str, Any]] = []
     includes_of: dict[str, list[str]] = {}
     missing_of: dict[str, list[str]] = {}
@@ -379,7 +379,7 @@ def project_graph_from_files(files: list[tuple[str, str]]) -> dict[str, Any]:
     for header, locs in sorted(header_locations.items()):
         distinct = sorted(set(locs))
         # A section defined across more than one *included* file is not an error: Klipper merges
-        # such sections and the later-loaded definition wins — the normal way users override a
+        # such sections and the later-loaded definition wins - the normal way users override a
         # stock macro (e.g. redefining Mainsail's PAUSE in a file included later). Surface it as
         # informational so the override is visible without crying wolf. A duplicate within a single
         # file is a real problem, but the per-file validator already reports that, so skip it here.
@@ -453,15 +453,15 @@ def _to_float(value: Any) -> float | None:
 
 async def gather_sanity(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
     """Cross-check each ``[tmcXXXX NAME]`` driver's configured ``run_current`` / ``microsteps``
-    against authoritative catalog facts: the driver model's full-scale current ceiling and — when a
-    motor is assigned to that stepper in the Motor Drivers mapping — the motor's datasheet rating.
+    against authoritative catalog facts: the driver model's full-scale current ceiling and - when a
+    motor is assigned to that stepper in the Motor Drivers mapping - the motor's datasheet rating.
 
     Findings (``{level, rule, section, detail}``):
-      * ``over_driver_cap`` / ``near_driver_cap`` — run_current above / within 10% of the driver's
+      * ``over_driver_cap`` / ``near_driver_cap`` - run_current above / within 10% of the driver's
         full-scale RMS ceiling (a current the silicon can't deliver / a thermal-margin warning).
-      * ``over_motor_rating`` / ``near_motor_rating`` — run_current above / within 10% of the
+      * ``over_motor_rating`` / ``near_motor_rating`` - run_current above / within 10% of the
         mapped motor's rated current (recommended is ~0.7x, so near the rating runs hot).
-      * ``odd_microsteps`` — microsteps not a power of two in 1…256.
+      * ``odd_microsteps`` - microsteps not a power of two in 1…256.
 
     Honest about gaps: a driver with no curated current ceiling (e.g. TMC2240, whose limit depends
     on an external Rref resistor) and a stepper with no motor assigned simply get no current finding
@@ -563,12 +563,12 @@ async def gather_sanity(client: MoonrakerClient, data_dir: str = "") -> dict[str
 
 
 def upsert_sections(content: str, block: str) -> tuple[str, list[dict[str, Any]]]:
-    """Merge a config ``block`` (one or more ``[section]``s) into ``content`` — the engine behind
+    """Merge a config ``block`` (one or more ``[section]``s) into ``content`` - the engine behind
     "Apply to printer.cfg" from the tuning widgets.
 
     Semantics are *ensure the section exists and set these params*: a section the file already has
-    is *merged at param level* (each incoming param updates the existing line in place — preserving
-    its separator convention and inline comment — or is appended to that section), so applying a
+    is *merged at param level* (each incoming param updates the existing line in place - preserving
+    its separator convention and inline comment - or is appended to that section), so applying a
     ``[tmc2209 stepper_x]`` tune never wipes the section's ``uart_pin``. A section the file lacks
     is inserted whole, before the Klipper-managed ``SAVE_CONFIG`` tail. Untouched sections re-emit
     verbatim (the round-trip engine's raw caching).
@@ -601,8 +601,8 @@ def upsert_sections(content: str, block: str) -> tuple[str, list[dict[str, Any]]
             )
             insert_at = save_idx if save_idx is not None else len(cfg.sections)
             # Blank-line padding keeps the file readable (raw_lines is the only thing a verbatim
-            # dump emits, so it must live there): one above — unless the preceding section already
-            # ends blank — and one below.
+            # dump emits, so it must live there): one above - unless the preceding section already
+            # ends blank - and one below.
             if new_sec.raw_lines:
                 prev = cfg.sections[insert_at - 1] if insert_at > 0 else None
                 prev_ends_blank = bool(prev and prev.raw_lines and not prev.raw_lines[-1].strip())
@@ -628,7 +628,7 @@ def upsert_sections(content: str, block: str) -> tuple[str, list[dict[str, Any]]
             target = next((p for p in existing.params if p.key.strip().lower() == key), None)
             if target is not None:
                 if (target.value or "").strip() == (new_param.value or "").strip():
-                    continue  # already at this value — don't churn the line
+                    continue  # already at this value - don't churn the line
                 target.value = new_param.value
                 sep = " = " if target.separator == "=" else ": "
                 line = f"{target.key}{sep}{new_param.value}"
@@ -647,7 +647,7 @@ def upsert_sections(content: str, block: str) -> tuple[str, list[dict[str, Any]]
                 )
             touched.append(new_param.key)
         if touched:
-            # Rebuilding drops the section's verbatim raw (incl. its trailing blank line) — keep
+            # Rebuilding drops the section's verbatim raw (incl. its trailing blank line) - keep
             # the file readable by re-adding the separation as a raw spacer "param" (dump emits
             # param.raw verbatim; the cfg object is dumped and discarded, never reused).
             had_trailing_blank = bool(existing.raw_lines) and not existing.raw_lines[-1].strip()
@@ -682,7 +682,7 @@ async def apply_section_block(
         current = ""
     new_content, changes = upsert_sections(current, block)
     if not changes:
-        # Everything is already at these values — no write, no backup churn.
+        # Everything is already at these values - no write, no backup churn.
         view = build_file_view(filename, current)
         return {
             "ok": True,
@@ -705,7 +705,7 @@ async def append_block(client: MoonrakerClient, filename: str, block: str) -> di
     """Append a config ``block`` (e.g. generated macros) to ``filename`` through the gated save.
 
     Refuses (``ValueError``) if any ``[gcode_macro NAME]`` in the block is already defined in the
-    target file — so a generated START_PRINT never silently duplicates an existing one. Otherwise it
+    target file - so a generated START_PRINT never silently duplicates an existing one. Otherwise it
     reads the current text, appends with a blank-line separator, and writes via ``save_config_file``
     (which backs up first and refuses while the printer is busy).
 
@@ -741,7 +741,7 @@ async def append_block(client: MoonrakerClient, filename: str, block: str) -> di
 
 
 async def _is_busy(client: MoonrakerClient) -> bool:
-    """True while the printer is printing, paused, or in error — block writes and restarts
+    """True while the printer is printing, paused, or in error - block writes and restarts
     then. Delegates to the shared :mod:`printer_guard` busy definition."""
     return await printer_guard.is_busy(client)
 
@@ -851,12 +851,12 @@ async def save_config_file(
     *,
     keep_n: int = 20,
 ) -> dict[str, Any]:
-    """Back up the current file, then overwrite it with ``content``. Read-after-parse only —
+    """Back up the current file, then overwrite it with ``content``. Read-after-parse only -
     never auto-restarts (that's a separate, explicit action).
 
     Refuses while the printer is busy (printing / paused / error). With ``expected_sha256``
     (the fingerprint of the content the editor loaded), refuses when the file changed on disk
-    in the meantime — a landed ``SAVE_CONFIG`` or a parallel edit would otherwise be silently
+    in the meantime - a landed ``SAVE_CONFIG`` or a parallel edit would otherwise be silently
     clobbered. The existing file (if any) is copied to ``filamind-backups/`` first, and that
     file's snapshots are pruned to the newest ``keep_n``.
 
@@ -880,7 +880,7 @@ async def save_config_file(
         current = None
     if expected_sha256 and current is not None and _sha256(current) != expected_sha256:
         raise ConfigConflictError(
-            f"{filename} changed on disk since it was loaded — saving would overwrite that "
+            f"{filename} changed on disk since it was loaded - saving would overwrite that "
             "change. Reload the file (the backup timeline shows what differs)."
         )
     if current is not None:
@@ -903,7 +903,7 @@ async def save_config_file(
 
 async def restart_firmware(client: MoonrakerClient) -> dict[str, Any]:
     """Trigger ``FIRMWARE_RESTART`` so a saved config takes effect. Refused while busy and while
-    another actuating operation (a resonance test, a flash…) holds the printer's exclusive slot —
+    another actuating operation (a resonance test, a flash…) holds the printer's exclusive slot -
     restarting mid-test would abort it with the machine in an arbitrary state.
 
     Raises:

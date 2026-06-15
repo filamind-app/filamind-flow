@@ -46,7 +46,7 @@ const MODE_TABS = computed<{ id: 'dashboard' | 'guided'; label: string }[]>(() =
   { id: 'dashboard', label: t('motorDrivers.widget.tabDashboard') },
   { id: 'guided', label: t('motorDrivers.widget.tabGuided') },
 ])
-/** Per-card "details" disclosure — keeps the secondary specs off the baseline card (#119). */
+/** Per-card "details" disclosure - keeps the secondary specs off the baseline card (#119). */
 const openDetails = ref<Record<string, boolean>>({})
 
 const drivers = computed(() => status.value?.drivers ?? [])
@@ -104,7 +104,7 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
 let timer: ReturnType<typeof setInterval> | null = null
 onMounted(() => {
   void load()
-  // The motor catalog is static reference data — fetch once (best-effort).
+  // The motor catalog is static reference data - fetch once (best-effort).
   fetchMotorCatalog()
     .then((c) => (motorCatalog.value = c.motors))
     .catch(() => {})
@@ -117,7 +117,7 @@ onUnmounted(() => {
 
 <template>
   <div class="space-y-3 text-sm">
-    <!-- Intro + help layer (collapsed by default — zero clutter) -->
+    <!-- Intro + help layer (collapsed by default - zero clutter) -->
     <div class="flex items-start justify-between gap-2">
       <p class="min-w-0 flex-1 text-xs opacity-70">
         {{ t('motorDrivers.widget.intro') }}
@@ -139,7 +139,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Dashboard / Guided mode strip — shown once the printer is reachable, so the Guided
+    <!-- Dashboard / Guided mode strip - shown once the printer is reachable, so the Guided
          wizard is discoverable even before any driver is assigned a motor (#119). -->
     <WidgetTabs v-if="reachable" v-model="mode" :tabs="MODE_TABS" />
 
@@ -149,7 +149,7 @@ onUnmounted(() => {
     </div>
 
     <!-- A failed poll with NO prior data is a real empty/error state; with data on screen it
-         becomes a stale-data banner — one bad 6s poll must not blank a live dashboard. -->
+         becomes a stale-data banner - one bad 6s poll must not blank a live dashboard. -->
     <div
       v-else-if="error && !status"
       class="flex flex-wrap items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-red px-2 py-1 text-surface"

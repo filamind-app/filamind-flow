@@ -1,4 +1,4 @@
-"""FilaMind Kiosk — run FilaMind Flow itself on the printer's touchscreen.
+"""FilaMind Kiosk - run FilaMind Flow itself on the printer's touchscreen.
 
 KlipperScreen has no plugin API and its panels are hardcoded, so the only way to put *arbitrary*
 content on the physical screen is to turn it into a fullscreen browser pointed at FilaMind Flow.
@@ -6,10 +6,10 @@ This module owns the **reversible swap** between the two: a ``filamind-kiosk`` s
 (installed once by ``scripts/install.sh kiosk``) declares ``Conflicts=KlipperScreen.service``, so
 starting one stops the other.
 
-Switching is **temporary by default** — a plain ``start``, so a reboot restores whichever service
+Switching is **temporary by default** - a plain ``start``, so a reboot restores whichever service
 is boot-enabled (KlipperScreen, unless the user persists the kiosk). ``persist`` also flips the
 boot default (``enable``/``disable``). All actuation goes through ``sudo -n systemctl`` (the same
-passwordless-sudo rule the flasher uses); nothing here installs packages or writes unit files —
+passwordless-sudo rule the flasher uses); nothing here installs packages or writes unit files -
 that's the one-time install script. If the kiosk fails to come up, KlipperScreen is brought back
 so the screen never stays dark.
 """
@@ -105,7 +105,7 @@ async def switch_to_kiosk(persist: bool = False) -> dict[str, Any]:
     """
     if not await _unit_installed(KIOSK_UNIT):
         raise KioskNotInstalledError(
-            "The FilaMind kiosk service isn't installed yet — "
+            "The FilaMind kiosk service isn't installed yet - "
             "run 'sudo bash scripts/install.sh kiosk' on the printer host first."
         )
     steps: list[dict[str, Any]] = []
@@ -115,7 +115,7 @@ async def switch_to_kiosk(persist: bool = False) -> dict[str, Any]:
     start_step = await _do("start", KIOSK_UNIT)
     steps.append(start_step)
     if not start_step["ok"]:
-        # Kiosk didn't come up — never leave a dark screen; bring KlipperScreen back.
+        # Kiosk didn't come up - never leave a dark screen; bring KlipperScreen back.
         steps.append(await _do("start", SCREEN_UNIT))
     return {"action": "kiosk", "persist": persist, "steps": steps, "status": await status()}
 

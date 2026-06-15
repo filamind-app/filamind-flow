@@ -238,7 +238,7 @@ export function buildFragment(type: PartType, input: FragmentInput): Record<stri
 
   for (const f of def.fields) {
     const raw = v[f.key]
-    // Omit empties and unchecked booleans — only `true` checkboxes and non-empty values are kept.
+    // Omit empties and unchecked booleans - only `true` checkboxes and non-empty values are kept.
     if (raw === '' || raw == null || raw === false) continue
     const value = f.type === 'number' ? num(raw) : raw
     if (value === undefined) continue

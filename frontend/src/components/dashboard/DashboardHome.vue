@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Mission Control — the home page that answers "is my printer healthy?".
+/** Mission Control - the home page that answers "is my printer healthy?".
  *
  *  One `/api/overview` call renders: the live print state, the per-MCU firmware-sync table
  *  (computed by the backend since forever, rendered here for the first time), the latest tuning
@@ -80,7 +80,7 @@ async function load(): Promise<void> {
 }
 
 // Host summary (time/timezone, CPU temp, uptime, NTP, disk) from the Host Control monitor.
-// Degrades silently — on a non-host backend the card just doesn't render.
+// Degrades silently - on a non-host backend the card just doesn't render.
 interface HostInfo {
   time: { timezone: string; ntp_synced: boolean }
   cpu: { temp_c: number | null }
@@ -117,7 +117,7 @@ const hostClock = computed(() => {
   }
 })
 function fmtUptime(s: number | null): string {
-  if (s == null) return '—'
+  if (s == null) return '-'
   const d = Math.floor(s / 86400)
   const h = Math.floor((s % 86400) / 3600)
   const m = Math.floor((s % 3600) / 60)
@@ -127,7 +127,7 @@ const rootDisk = computed(
   () => host.value?.disk?.find((x) => x.label === '/') ?? host.value?.disk?.[0],
 )
 
-// Pulsing mission banner — dismissible, remembered across sessions.
+// Pulsing mission banner - dismissible, remembered across sessions.
 const BANNER_KEY = 'filamind.missionBannerDismissed'
 const showBanner = ref(true)
 function dismissBanner(): void {
@@ -139,7 +139,7 @@ function dismissBanner(): void {
   }
 }
 // Machine Doctor summary, surfaced right on the home (full detail lives in the widget). Fetched
-// lazily alongside the overview — its own loading/error state, so it never blocks the other tiles.
+// lazily alongside the overview - its own loading/error state, so it never blocks the other tiles.
 const doctor = ref<DoctorReport | null>(null)
 const doctorLoading = ref(true)
 async function loadDoctor(): Promise<void> {
@@ -195,7 +195,7 @@ function journalText(e: JournalEvent): string {
   }
   return t('shell.home.journal.tuning', {
     kind: String(e.params.run_kind ?? ''),
-    axis: e.params.axis ? String(e.params.axis).toUpperCase() : '—',
+    axis: e.params.axis ? String(e.params.axis).toUpperCase() : '-',
   })
 }
 const JOURNAL_ICON: Record<string, string> = { flash: '🔧', config_save: '📝', tuning: '📈' }
@@ -296,7 +296,7 @@ function openMcu(name: string): void {
         ✕
       </button>
       <p class="pe-8 text-xs leading-snug">{{ t('shell.mission.body') }}</p>
-      <!-- An English brand signature — intentionally not localized (like the app name). -->
+      <!-- An English brand signature - intentionally not localized (like the app name). -->
       <p class="mt-1.5 font-display text-sm font-bold">{{ t('shell.mission.tagline') }}</p>
     </section>
 
@@ -358,14 +358,14 @@ function openMcu(name: string): void {
         <p v-else class="font-mono text-xs opacity-70">{{ t('shell.home.printerDown') }}</p>
       </template>
 
-      <!-- Host summary — time/timezone/temp/uptime/disk -->
+      <!-- Host summary - time/timezone/temp/uptime/disk -->
       <dl
         v-if="host"
         class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 border-t-2 border-ink/10 pt-2 font-mono text-[11px] sm:grid-cols-[auto_1fr_auto_1fr]"
       >
         <dt class="opacity-60">{{ t('shell.home.hostInfo.time') }}</dt>
         <dd>
-          <span class="font-bold">{{ hostClock || '—' }}</span>
+          <span class="font-bold">{{ hostClock || '-' }}</span>
           <span class="opacity-60"> {{ host.time.timezone }}</span>
         </dd>
         <dt class="opacity-60">{{ t('shell.home.hostInfo.clock') }}</dt>
@@ -377,11 +377,11 @@ function openMcu(name: string): void {
           }}
         </dd>
         <dt class="opacity-60">{{ t('shell.home.hostInfo.temp') }}</dt>
-        <dd>{{ typeof host.cpu.temp_c === 'number' ? host.cpu.temp_c + ' °C' : '—' }}</dd>
+        <dd>{{ typeof host.cpu.temp_c === 'number' ? host.cpu.temp_c + ' °C' : '-' }}</dd>
         <dt class="opacity-60">{{ t('shell.home.hostInfo.uptime') }}</dt>
         <dd>{{ fmtUptime(host.host.uptime_s) }}</dd>
         <dt class="opacity-60">{{ t('shell.home.hostInfo.disk') }}</dt>
-        <dd>{{ rootDisk ? rootDisk.pct + '%' : '—' }}</dd>
+        <dd>{{ rootDisk ? rootDisk.pct + '%' : '-' }}</dd>
       </dl>
     </div>
 
@@ -418,7 +418,7 @@ function openMcu(name: string): void {
     </details>
 
     <div v-if="data" class="grid gap-3 sm:grid-cols-2">
-      <!-- Max flow — the last test's headline number, with the full tool one tap away -->
+      <!-- Max flow - the last test's headline number, with the full tool one tap away -->
       <div class="nb-card space-y-2 bg-surface p-3">
         <div class="flex items-center justify-between gap-2">
           <p class="text-xs font-bold uppercase tracking-wide opacity-60">
@@ -451,7 +451,7 @@ function openMcu(name: string): void {
         </template>
       </div>
 
-      <!-- Machine Doctor — live grade + assessment + Max-Flow, with the full scan one tap away -->
+      <!-- Machine Doctor - live grade + assessment + Max-Flow, with the full scan one tap away -->
       <div class="nb-card space-y-2 bg-surface p-3">
         <div class="flex items-center justify-between gap-2">
           <p class="text-xs font-bold uppercase tracking-wide opacity-60">
@@ -513,7 +513,7 @@ function openMcu(name: string): void {
         </div>
         <template v-if="data.firmware.available && data.firmware.mcus.length">
           <p class="font-mono text-[11px] opacity-70">
-            {{ t('shell.home.host', { version: data.firmware.host_version ?? '—' }) }}
+            {{ t('shell.home.host', { version: data.firmware.host_version ?? '-' }) }}
           </p>
           <ul class="space-y-1">
             <li v-for="m in data.firmware.mcus" :key="m.name">
@@ -528,7 +528,7 @@ function openMcu(name: string): void {
                   >{{ m.in_sync === false ? '⚠' : '✓' }}</span
                 >
                 <span class="min-w-0 flex-1 truncate">{{ m.name }}</span>
-                <span class="shrink-0 opacity-60">{{ m.version ?? '—' }}</span>
+                <span class="shrink-0 opacity-60">{{ m.version ?? '-' }}</span>
               </button>
             </li>
           </ul>
@@ -553,7 +553,7 @@ function openMcu(name: string): void {
           <ul class="space-y-1 font-mono text-[11px]">
             <li v-for="a in data.tuning.axes" :key="a.axis" class="flex items-center gap-2">
               <span class="font-bold uppercase">{{ a.axis }}</span>
-              <span>{{ a.shaper ?? '—' }}{{ a.freq != null ? ` @ ${a.freq} Hz` : '' }}</span>
+              <span>{{ a.shaper ?? '-' }}{{ a.freq != null ? ` @ ${a.freq} Hz` : '' }}</span>
               <span v-if="a.grade" class="nb-badge bg-brand-cyan">{{ a.grade }}</span>
               <span class="flex-1"></span>
               <span class="text-[10px] opacity-50">{{ a.created?.slice(0, 10) ?? '' }}</span>

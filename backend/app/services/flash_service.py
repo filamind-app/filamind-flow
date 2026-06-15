@@ -1,4 +1,4 @@
-"""Firmware flash — pushes a built artifact onto a board. The hardware phase.
+"""Firmware flash - pushes a built artifact onto a board. The hardware phase.
 
 Safety first. A flash is only allowed when:
   * no print is running (refused otherwise),
@@ -6,8 +6,8 @@ Safety first. A flash is only allowed when:
   * passwordless sudo is configured (needed to stop Klipper + run the flasher).
 
 The byte-pushing itself is delegated to the same standard tools a user would run
-by hand — Katapult's ``flashtool.py`` (serial / CAN), ``dfu-util`` (DFU), or
-Klipper's ``make flash`` (AVR) — and a Linux-process MCU is installed as the
+by hand - Katapult's ``flashtool.py`` (serial / CAN), ``dfu-util`` (DFU), or
+Klipper's ``make flash`` (AVR) - and a Linux-process MCU is installed as the
 ``klipper-mcu`` binary. The plan endpoint reports exactly what *would* run
 (read-only) so the UI can show it before anything touches the board.
 """
@@ -91,7 +91,7 @@ def dfu_command(firmware: str, offset: str, serial: str | None = None) -> list[s
 
 
 def dfu_leave_command(offset: str, serial: str | None = None) -> list[str]:
-    """dfu-util exit — returns a board from DFU back to firmware (``:leave``)."""
+    """dfu-util exit - returns a board from DFU back to firmware (``:leave``)."""
     cmd = ["sudo", "-n", "dfu-util", "-a", "0", "-d", "0483:df11", "-s", f"{offset}:leave"]
     if serial and len(serial) > 5 and not serial.startswith("/dev/"):
         cmd += ["-S", serial]
@@ -102,7 +102,7 @@ def resolve_method(method: str, device: str) -> str:
     """Normalises the flash method to what the device actually needs.
 
     * The Linux-process host MCU (id ``linux_process``) is installed as a binary, never flashed
-      over a bus — force ``linux`` even if its registry entry stored a serial/CAN method (it isn't
+      over a bus - force ``linux`` even if its registry entry stored a serial/CAN method (it isn't
       a serial device, so a serial flash fails with "No Serial Device found at linux_process").
     * A USB-to-CAN bridge is configured as CAN but enumerates as a serial ``/dev/`` path, so a
       ``/dev/`` device given for CAN is flashed over serial.
@@ -168,7 +168,7 @@ def _build_command(
 
 
 async def _is_printing(moonraker_url: str) -> bool:
-    """True if Moonraker reports the printer busy (printing / paused / error) — the shared
+    """True if Moonraker reports the printer busy (printing / paused / error) - the shared
     :mod:`printer_guard` definition. Fail-open when Moonraker is unreachable (a dead Moonraker
     must not block flashing the very MCU that might fix it)."""
     try:
@@ -177,7 +177,7 @@ async def _is_printing(moonraker_url: str) -> bool:
         return False
 
 
-#: A Klipper canbus UUID is exactly 12 lowercase hex digits — what Katapult's flashtool
+#: A Klipper canbus UUID is exactly 12 lowercase hex digits - what Katapult's flashtool
 #: expects after ``-u``. A friendly device name ("Toolhead") is not one.
 _CAN_UUID_RE = re.compile(r"^[0-9a-f]{12}$")
 
@@ -198,7 +198,7 @@ async def _can_node_runs_version(
     """True if the CAN node with ``uuid`` reports ``expected`` as its firmware version.
 
     Polls Klipper (which we just restarted) until it connects and exposes the node's
-    ``mcu_version`` — up to ~30 s. Finds the node's ``[mcu …]`` section by matching its
+    ``mcu_version`` - up to ~30 s. Finds the node's ``[mcu …]`` section by matching its
     ``canbus_uuid`` in the live config, then reads that object's version.
     """
     client = MoonrakerClient(moonraker_url)
@@ -233,7 +233,7 @@ async def resolve_can_uuid(device: str, moonraker_url: str) -> tuple[str | None,
     * the id itself if it already is a UUID;
     * the ``canbus_uuid`` of the live ``[mcu <id>]`` section (name match);
     * the only ``canbus_uuid`` in the config if there is exactly one (unambiguous);
-    * ``(None, message)`` when it can't be resolved — better to refuse than flash the wrong node.
+    * ``(None, message)`` when it can't be resolved - better to refuse than flash the wrong node.
     """
     if _CAN_UUID_RE.match(device):
         return device, None
@@ -253,11 +253,11 @@ async def resolve_can_uuid(device: str, moonraker_url: str) -> tuple[str | None,
         return next(iter(uuids.values())), None
     if not uuids:
         return None, (
-            f"!! Could not find a canbus_uuid for '{device}' in the live config — "
+            f"!! Could not find a canbus_uuid for '{device}' in the live config - "
             "set this device's id to its 12-hex CAN UUID in the Manager, then flash.\n"
         )
     return None, (
-        f"!! '{device}' did not match a unique CAN node ({len(uuids)} found) — set this "
+        f"!! '{device}' did not match a unique CAN node ({len(uuids)} found) - set this "
         "device's id to its 12-hex canbus_uuid in the Manager so the right board is flashed.\n"
     )
 
@@ -265,11 +265,11 @@ async def resolve_can_uuid(device: str, moonraker_url: str) -> tuple[str | None,
 async def _sudo_ready() -> bool:
     """True if the backend can run the flash's privileged commands without a password.
 
-    Probes ``sudo -n -l systemctl stop klipper`` — ``sudo -l <cmd>`` reports whether the
+    Probes ``sudo -n -l systemctl stop klipper`` - ``sudo -l <cmd>`` reports whether the
     command is *authorised* (exit 0) WITHOUT running it, and ``-n`` never prompts. This
     matches an actual flash command, so it is correct regardless of which sudoers file
     grants it. (The old probe ran ``systemctl --version``, which the NOPASSWD rules don't
-    cover — so it false-failed whenever sudo's credential cache was cold.)
+    cover - so it false-failed whenever sudo's credential cache was cold.)
     """
     systemctl = shutil.which("systemctl") or "/usr/bin/systemctl"
     try:
@@ -304,12 +304,12 @@ async def flash_plan(
 
     warnings: list[str] = []
     if printing:
-        warnings.append("A print is in progress — flashing is blocked.")
+        warnings.append("A print is in progress - flashing is blocked.")
     if not artifact:
         warnings.append("No firmware has been built for this profile yet.")
     if needs_sudo and not sudo:
         warnings.append(
-            "Passwordless sudo not configured — run 'scripts/install.sh sudoers' on the host."
+            "Passwordless sudo not configured - run 'scripts/install.sh sudoers' on the host."
         )
     ready = bool(artifact) and not printing and (sudo or not needs_sudo)
     return {
@@ -408,7 +408,7 @@ async def _flash_linux(firmware: str) -> AsyncIterator[str]:
             yield ">>> klipper-mcu is running.\n"
             return
     yield "!! klipper-mcu did not come up. If its journal shows 'sched_setscheduler',\n"
-    yield "!! this kernel blocks realtime — drop the -r flag from the klipper-mcu unit.\n"
+    yield "!! this kernel blocks realtime - drop the -r flag from the klipper-mcu unit.\n"
 
 
 def _serial_by_id() -> set[str]:
@@ -420,7 +420,7 @@ def bootloader_serial_path(device: str) -> str | None:
     """If the board whose *running-firmware* path is ``device`` is currently sitting in its Katapult
     bootloader, return the bootloader's ``/dev/serial/by-id`` path, else ``None``.
 
-    A USB STM32 enumerates under a different name in each mode — ``usb-Klipper_<chip-id>-if00``
+    A USB STM32 enumerates under a different name in each mode - ``usb-Klipper_<chip-id>-if00``
     when running Klipper, ``usb-katapult_<chip-id>-if00`` when in the Katapult bootloader. Once a
     board is in the bootloader the Klipper path disappears, so a flash must target the katapult
     path, not the stored running-firmware path. Matched by the trailing chip id (prefix-robust).
@@ -443,7 +443,7 @@ def bootloader_serial_path(device: str) -> str | None:
 
 
 async def _magic_baud(device: str) -> None:
-    """1200-baud 'touch' — a native-USB STM32 resets into DFU on a 1200 open/close.
+    """1200-baud 'touch' - a native-USB STM32 resets into DFU on a 1200 open/close.
 
     Done with stdlib termios (Unix only; this only ever runs on the Linux host) so
     no extra dependency is needed.
@@ -471,7 +471,7 @@ async def reboot_to_dfu(device: str) -> AsyncIterator[str]:
         yield "!! Enter DFU manually (hold BOOT0, tap RESET) and retry.\n"
         return
     await asyncio.sleep(1)
-    yield ">>> Touch sent — the board should now enumerate as a DFU device.\n"
+    yield ">>> Touch sent - the board should now enumerate as a DFU device.\n"
 
 
 async def _flash_dfu(
@@ -489,7 +489,7 @@ async def _flash_dfu(
         if ok:
             break
         if attempt < attempts:
-            yield ">>> DFU failed — retrying…\n"
+            yield ">>> DFU failed - retrying…\n"
             await asyncio.sleep(2)
     yield ">>> Exiting DFU (:leave) to return to firmware…\n"
     async for line in _stream(dfu_leave_command(offset, device)):
@@ -521,7 +521,7 @@ async def run_flash(
         yield f"!! No firmware file to flash for '{profile or firmware}'.\n"
         return
     if method in _NEEDS_SUDO and not await _sudo_ready():
-        yield "!! Passwordless sudo is not configured — required to stop Klipper and flash.\n"
+        yield "!! Passwordless sudo is not configured - required to stop Klipper and flash.\n"
         yield "!! Run once on the host:  sudo bash scripts/install.sh sudoers\n"
         return
 
@@ -538,13 +538,13 @@ async def run_flash(
             settings.data_dir, device, profile, read_build_info(settings.data_dir, profile) or {}
         )
         yield _phase("done")
-        yield ">>> Flash sequence complete — host MCU reinstalled.\n"
+        yield ">>> Flash sequence complete - host MCU reinstalled.\n"
         return
 
     offset = offset_override or (
         flash_offset(profile_path(settings.data_dir, profile)) if profile else _DEFAULT_OFFSET
     )
-    # CAN flashing addresses the node by its 12-hex canbus_uuid, not a friendly name —
+    # CAN flashing addresses the node by its 12-hex canbus_uuid, not a friendly name -
     # resolve it from the live config so a device registered as "Toolhead" still flashes.
     target = device
     if method == "can":
@@ -559,7 +559,7 @@ async def run_flash(
     async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
         yield line
 
-    # A board can re-appear under a new /dev id after a serial flash — snapshot first.
+    # A board can re-appear under a new /dev id after a serial flash - snapshot first.
     before = _serial_by_id() if method == "serial" else set()
 
     # A DFU device is already in its bootloader; only running Katapult boards need
@@ -570,12 +570,12 @@ async def run_flash(
         # usb-katapult_<id>), so the stored running-firmware path is gone. If it's already in the
         # bootloader (e.g. a previous flash didn't finish), flash it directly; otherwise reboot it
         # and then retarget to the bootloader path that appears. Without this, the flash keeps
-        # pointing at the vanished Klipper path and can never complete — leaving Klipper unable to
+        # pointing at the vanished Klipper path and can never complete - leaving Klipper unable to
         # connect to the MCU.
         already = bootloader_serial_path(target) if method == "serial" else None
         if already:
             yield (
-                f">>> Board is already in the Katapult bootloader ({os.path.basename(already)}) — "
+                f">>> Board is already in the Katapult bootloader ({os.path.basename(already)}) - "
                 "flashing it directly.\n"
             )
             target = already
@@ -588,7 +588,7 @@ async def run_flash(
                     yield f">>> Board entered the bootloader as {os.path.basename(booted)}.\n"
                     target = booted
     elif method in ("serial", "can"):
-        yield ">>> Device is not marked Katapult — skipping reboot-to-bootloader.\n"
+        yield ">>> Device is not marked Katapult - skipping reboot-to-bootloader.\n"
 
     yield _phase("write")
     flash_result: dict[str, int] = {}
@@ -612,7 +612,7 @@ async def run_flash(
 
     # The flash tool failed (non-zero exit). For CAN this is often the read-back VERIFY
     # phase dying on the USB-CAN adapter (sustained node→host flood) AFTER the write
-    # completed — the board actually runs the new firmware. Check the real outcome via
+    # completed - the board actually runs the new firmware. Check the real outcome via
     # Klipper before declaring failure: if the node now reports the built version, the
     # flash took.
     rc = flash_result.get("rc", 0)
@@ -620,11 +620,11 @@ async def run_flash(
         expected = str((read_build_info(settings.data_dir, profile) or {}).get("version") or "")
         if method == "can" and expected:
             yield (
-                ">>> Flash tool reported an error — checking via Klipper whether the "
+                ">>> Flash tool reported an error - checking via Klipper whether the "
                 "board took the new firmware anyway…\n"
             )
             if await _can_node_runs_version(target, expected, settings.moonraker_url):
-                yield f">>> Verified: the board reports {expected} — the flash DID succeed.\n"
+                yield f">>> Verified: the board reports {expected} - the flash DID succeed.\n"
                 yield (
                     ">>> (The tool's error was in its read-back verify, a known limitation "
                     "of some USB-CAN adapters under sustained load.)\n"
@@ -636,10 +636,10 @@ async def run_flash(
                     read_build_info(settings.data_dir, profile) or {},
                 )
                 yield _phase("done")
-                yield ">>> Flash sequence complete — verified through Klipper.\n"
+                yield ">>> Flash sequence complete - verified through Klipper.\n"
                 return
         yield (
-            f"!! Flash failed — {flash_tool or 'the flash tool'} exited with code {rc}. "
+            f"!! Flash failed - {flash_tool or 'the flash tool'} exited with code {rc}. "
             "The board was not flashed; see the output above.\n"
         )
         return
@@ -650,7 +650,7 @@ async def run_flash(
         await asyncio.sleep(3)
         new_id = reenumerated_id(device, before, _serial_by_id())
         if new_id:
-            yield f">>> Board re-appeared as {new_id} — updating the registry.\n"
+            yield f">>> Board re-appeared as {new_id} - updating the registry.\n"
             existing = devices_store.get_device(settings.data_dir, device)
             if existing:
                 devices_store.save_device(
@@ -662,7 +662,7 @@ async def run_flash(
         settings.data_dir, flashed_id, profile, read_build_info(settings.data_dir, profile) or {}
     )
     yield _phase("done")
-    yield ">>> Flash sequence complete — verify the board reconnects in Mainsail.\n"
+    yield ">>> Flash sequence complete - verify the board reconnects in Mainsail.\n"
 
 
 async def run_reboot(
@@ -684,4 +684,4 @@ async def run_reboot(
     method = resolve_method(method, device)
     async for line in _reboot_to_bootloader(method, device, interface or "can0", settings):
         yield line
-    yield ">>> Reboot requested — the board should re-appear in its bootloader.\n"
+    yield ">>> Reboot requested - the board should re-appear in its bootloader.\n"

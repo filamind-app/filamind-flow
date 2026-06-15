@@ -1,7 +1,7 @@
 /** Minimal line-level diff (LCS) for the Config Editor backup timeline. Dependency-free.
  *
- * `diffLines(a, b)` returns one row per line: `eq` (unchanged), `del` (in `a` only — removed by
- * going a→b) or `add` (in `b` only — added by going a→b). `collapseDiff` folds long runs of
+ * `diffLines(a, b)` returns one row per line: `eq` (unchanged), `del` (in `a` only - removed by
+ * going a→b) or `add` (in `b` only - added by going a→b). `collapseDiff` folds long runs of
  * unchanged lines into a single marker so a near-identical file shows only what actually changed. */
 
 export type DiffKind = 'eq' | 'add' | 'del'

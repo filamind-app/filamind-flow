@@ -1,11 +1,11 @@
 <script setup lang="ts">
-/** Per-axis homing panel (P9). Adapts to how the axis actually homes — read from the Klipper
+/** Per-axis homing panel (P9). Adapts to how the axis actually homes - read from the Klipper
  *  config (`homing_method`), not guessed from "has a StallGuard register":
  *    • sensorless    → the StallGuard tuner (SensorlessPanel)
  *    • physical      → live endstop-switch state + a plain test-home
  *    • probe         → a pointer to the Z-probe / bed-mesh tools (no StallGuard to tune)
  *    • other_virtual → a note (a virtual endstop managed by its own host module)
- *  Extra motors on a shared rail (`inherited`) get no panel — they don't home on their own.
+ *  Extra motors on a shared rail (`inherited`) get no panel - they don't home on their own.
  */
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -24,7 +24,7 @@ const open = ref(false)
 const method = props.driver.homing_method
 const axis = props.driver.axis && /^[XYZ]$/.test(props.driver.axis) ? props.driver.axis : null
 
-// Physical-endstop live state — queried on demand (the query uses the g-code mutex, so we
+// Physical-endstop live state - queried on demand (the query uses the g-code mutex, so we
 // never poll it; we read it when the panel opens and on an explicit re-check).
 const endstopState = ref<string | null>(null)
 const endstopErr = ref<string | null>(null)
@@ -44,7 +44,7 @@ async function checkEndstop(): Promise<void> {
   }
 }
 
-// Plain test-home for a physical axis — the switch stops the move, so the crash risk is far
+// Plain test-home for a physical axis - the switch stops the move, so the crash risk is far
 // lower than a sensorless home (which carries its own loud warning inside SensorlessPanel).
 const confirmHome = ref(false)
 const homing = ref(false)
@@ -114,7 +114,7 @@ function toggle(): void {
           <span
             class="nb-badge"
             :class="endstopState === 'TRIGGERED' ? 'bg-brand-lime' : 'bg-surface'"
-            >{{ endstopState ?? '—' }}</span
+            >{{ endstopState ?? '-' }}</span
           >
           <button
             class="nb-btn bg-surface px-2 py-0.5 text-[11px]"

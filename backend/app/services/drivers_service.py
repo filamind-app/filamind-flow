@@ -1,7 +1,7 @@
 """Read-only TMC stepper-driver inventory for the Motor Drivers widget.
 
 Generic across every Klipper printer: drivers are *discovered* from the live config
-(``configfile``), never assumed — any axis names, any number of Z / extruder steppers,
+(``configfile``), never assumed - any axis names, any number of Z / extruder steppers,
 any TMC model (2209 / 2208 / 2130 / 2240 / 5160 / 2660 …). Model-specific differences
 (temperature sensor only on 2240, the StallGuard register name) are handled by reading
 what the running config actually exposes rather than a hard-coded table.
@@ -20,7 +20,7 @@ from app.services import field_policy, motor_mapping, reference_data
 from app.services.moonraker_client import MoonrakerClient
 
 #: A TMC driver config section name, e.g. "tmc2209 stepper_x" / "tmc5160 stepper_y".
-#: ``tmc`` is always followed by digits — the trailing token is the stepper section.
+#: ``tmc`` is always followed by digits - the trailing token is the stepper section.
 _DRIVER_SECTION = re.compile(r"^(tmc\d\w*)\s+(\S.*)$")
 
 #: StallGuard threshold register, by the field Klipper exposes per model family:
@@ -29,7 +29,7 @@ _STALLGUARD_FIELDS = ("driver_sgthrs", "driver_sg4_thrs", "driver_sgt")
 
 
 def _as_float(value: Any) -> float | None:
-    # bool is a subclass of int — exclude it so True/False never become 1.0/0.0.
+    # bool is a subclass of int - exclude it so True/False never become 1.0/0.0.
     if isinstance(value, bool):
         return None
     return float(value) if isinstance(value, (int, float)) else None
@@ -54,13 +54,13 @@ def _axis_label(stepper: str) -> str | None:
         return "E"
     if s.startswith("extruder"):
         return "E" + s[len("extruder") :]
-    return stepper  # unknown kinematics — show the raw section name
+    return stepper  # unknown kinematics - show the raw section name
 
 
 def _chopper_mode(stealthchop_threshold: float | None) -> str:
-    """0 (or unset — Klipper's default) => SpreadCycle; > 0 => StealthChop below that velocity.
+    """0 (or unset - Klipper's default) => SpreadCycle; > 0 => StealthChop below that velocity.
 
-    An absent ``stealthchop_threshold`` means the default 0, i.e. SpreadCycle — so report that
+    An absent ``stealthchop_threshold`` means the default 0, i.e. SpreadCycle - so report that
     rather than an unknown mode (#85).
     """
     return "SpreadCycle" if not stealthchop_threshold else "StealthChop"
@@ -80,7 +80,7 @@ def _registers(config: dict[str, Any]) -> dict[str, Any]:
 
 
 def _capabilities(config: dict[str, Any], temperature: float | None) -> dict[str, bool]:
-    """Driver capabilities inferred from config presence — generic, no static table.
+    """Driver capabilities inferred from config presence - generic, no static table.
 
     (A curated per-model capability map is a later phase; inferring from the running
     config keeps this correct for any driver the printer actually has.)
@@ -99,8 +99,8 @@ def _classify_homing(stepper_cfg: dict[str, Any], model: str) -> tuple[str, str 
     parsing. Returns (method, endstop_pin, note).
 
     Klipper resolves an endstop pin as ``chip:pin`` split on the *first* colon with whitespace
-    stripped from each side, so a stray space — ``tmc2209_stepper_x: virtual_endstop``, which
-    appears verbatim in real SV08 configs (#104) — is still a sensorless virtual endstop. We
+    stripped from each side, so a stray space - ``tmc2209_stepper_x: virtual_endstop``, which
+    appears verbatim in real SV08 configs (#104) - is still a sensorless virtual endstop. We
     normalise the same way (and compare case-insensitively) rather than an exact substring test.
 
     Methods: ``physical`` (a real switch) / ``sensorless`` (TMC StallGuard) / ``probe``
@@ -129,7 +129,7 @@ def _classify_homing(stepper_cfg: dict[str, Any], model: str) -> tuple[str, str 
         if not chip_low.startswith("tmc"):
             return "other_virtual", pin, None
         if model == "tmc2208":
-            return "sensorless", pin, "misconfigured — TMC2208 has no StallGuard"
+            return "sensorless", pin, "misconfigured - TMC2208 has no StallGuard"
         return "sensorless", pin, None
     if is_virtual:
         return "other_virtual", pin, None
@@ -166,7 +166,7 @@ def _parse_driver(
         "run_current_config": _as_float(config.get("run_current")),
         "hold_current_config": _as_float(config.get("hold_current")),
         "sense_resistor": _as_float(config.get("sense_resistor")),
-        # The 2240's external reference resistor — its full-scale current (and so the cap) is
+        # The 2240's external reference resistor - its full-scale current (and so the cap) is
         # derived from this, since the 2240 has no fixed MAX_CURRENT constant like other models.
         "rref": _as_float(config.get("rref")),
         "microsteps": _as_int(stepper_cfg.get("microsteps")),
@@ -186,7 +186,7 @@ def _parse_driver(
 
 
 def _sections(configfile: Any) -> dict[str, Any]:
-    """Parsed config sections — prefer typed ``settings``, fall back to raw ``config``."""
+    """Parsed config sections - prefer typed ``settings``, fall back to raw ``config``."""
     if not isinstance(configfile, dict):
         return {}
     for key in ("settings", "config"):
@@ -251,7 +251,7 @@ async def gather_endstops(moonraker_url: str) -> dict[str, Any]:
 
 
 async def gather_live(moonraker_url: str, stepper: str) -> dict[str, Any]:
-    """Fast, focused live telemetry for ONE driver — for the live monitor's quick polling.
+    """Fast, focused live telemetry for ONE driver - for the live monitor's quick polling.
 
     Returns just that driver's ``get_status`` (temperature / run_current / drv_status) without
     re-reading the whole config. ``drv_status`` is ``None`` while the motor is disabled.

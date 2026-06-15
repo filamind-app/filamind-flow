@@ -1,9 +1,9 @@
-"""Linux host control — read the printer host's OS state (and, in later phases, change it).
+"""Linux host control - read the printer host's OS state (and, in later phases, change it).
 
 The FilaMind backend runs *on* the printer host, so most of the read-only monitor comes straight
 from stdlib (``os``/``shutil``/``/proc``/``/sys``) with no subprocess and no sudo; a few items
 (top processes, Wi-Fi, timezone/NTP, locale) shell out to read-only commands. Phase 1 is the
-monitor only — services, cleanup and the system-changing actions (time/locale/hostname/power) build
+monitor only - services, cleanup and the system-changing actions (time/locale/hostname/power) build
 on this in later phases and are the parts that gate behind confirmations + sudo.
 """
 
@@ -56,7 +56,7 @@ def _host_block() -> dict[str, Any]:
             distro = line.split("=", 1)[1].strip().strip('"')
             break
     # os.uname() is POSIX-only; platform.uname() is the cross-platform fallback (keeps the local
-    # Windows dev/test run from crashing — the real host is always Linux).
+    # Windows dev/test run from crashing - the real host is always Linux).
     uname = platform.uname()
     uptime_s: float | None = None
     up = _read("/proc/uptime").split()
@@ -124,7 +124,7 @@ def _disk_block(data_dir: str) -> list[dict[str, Any]]:
         except OSError:
             continue
         key = f"{usage.total}:{usage.free}"
-        if key in seen:  # data_dir often lives on / — don't list the same filesystem twice
+        if key in seen:  # data_dir often lives on / - don't list the same filesystem twice
             continue
         seen.add(key)
         pct = round(usage.used / usage.total * 100) if usage.total else 0
@@ -267,7 +267,7 @@ async def monitor(data_dir: str) -> dict[str, Any]:
     }
 
 
-# ── Services (Phase 2) ─────────────────────────────────────────────────────────
+# -- Services (Phase 2) ---------------------------------------------------------
 # A general systemd unit manager. The backend is the security boundary: it validates the unit
 # name, refuses destructive actions on a protected set (so the user can't lock themselves out or
 # kill this panel), and path-guards unit-file deletion to /etc/systemd/system. Privileged actions
@@ -312,7 +312,7 @@ _CRITICAL_EXTRA = {
 }
 
 #: A unit name is a safe argument when it has no shell-hostile or path characters. (We never use a
-#: shell — this is belt-and-suspenders + a guard against absurd input.)
+#: shell - this is belt-and-suspenders + a guard against absurd input.)
 _UNIT_RE = re.compile(r"^[A-Za-z0-9@._:\-\\]+$")
 
 
@@ -350,7 +350,7 @@ def _is_critical(name: str) -> bool:
 async def _run_rc(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
     """Run a command, returning (returncode, combined stdout+stderr). 127 if it can't be run.
 
-    Forces the C locale so tool/sudo messages come back in English — both so our parsers (systemctl,
+    Forces the C locale so tool/sudo messages come back in English - both so our parsers (systemctl,
     timedatectl, nmcli ``-t``/``-g`` are already locale-stable, but sudo's error text isn't) and so
     the "sudo: a password is required" signature stays detectable on a non-English host.
     """
@@ -484,7 +484,7 @@ async def manage_unit(name: str, action: str) -> dict[str, Any]:
             "action": action,
             "ok": False,
             "refused": True,
-            "output": f"'{name}' is protected — {action} is not allowed.",
+            "output": f"'{name}' is protected - {action} is not allowed.",
         }
     rc, out = await _run_rc(["sudo", "-n", "systemctl", action, _with_suffix(name)])
     return {
@@ -516,7 +516,7 @@ async def delete_unit(name: str, confirm: str) -> dict[str, Any]:
         }
     unit = _with_suffix(name)
     # Stop + disable first so nothing keeps a dangling reference, then remove and reload. Derive the
-    # result from BOTH privileged steps (disable + rm), not just rm — a sudo-grant failure can show
+    # result from BOTH privileged steps (disable + rm), not just rm - a sudo-grant failure can show
     # up on the disable while rm -f still returns 0 on an already-absent file.
     rc_dis, out_dis = await _run_rc(["sudo", "-n", "systemctl", "disable", "--now", unit])
     rc_rm, out_rm = await _run_rc(["sudo", "-n", "rm", "-f", frag])
@@ -532,15 +532,15 @@ async def delete_unit(name: str, confirm: str) -> dict[str, Any]:
     }
 
 
-# ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+# -- Disk cleanup (Phase 3) -----------------------------------------------------
 # Reclaim space from caches and rotated logs the user never needs to keep. Every target offers a
 # dry-run "frees X" scan before anything is deleted, and the deletes are tightly scoped: only the
 # user's own caches/temp files and rotated (non-live) logs, plus the apt download cache and the
-# systemd journal (vacuumed, not erased). User data — G-code, timelapses, configs — is untouched.
+# systemd journal (vacuumed, not erased). User data - G-code, timelapses, configs - is untouched.
 
 #: The cleanup targets, in display order.
 CLEANUP_TARGETS = ("apt", "journal", "cache", "tmp", "logs")
-#: Only remove /tmp files this old (seconds) — younger files may be in active use.
+#: Only remove /tmp files this old (seconds) - younger files may be in active use.
 _TMP_AGE_S = 24 * 3600
 #: Vacuum the systemd journal down to this size (keeps recent logs).
 _JOURNAL_KEEP = "50M"
@@ -798,7 +798,7 @@ async def cleanup_run(ids: list[str], data_dir: str) -> dict[str, Any]:
     return {"results": results, "freed_bytes": sum(r["freed_bytes"] for r in results)}
 
 
-# ── System settings (Phase 4) ──────────────────────────────────────────────────
+# -- System settings (Phase 4) --------------------------------------------------
 # Time / locale / hostname / network / power. Each setter validates its input (and, where there's a
 # canonical list, checks membership) before shelling out through the host's passwordless-sudo rule.
 # Power actions refuse while a print is in progress. The network (IPv4) controls need NetworkManager
@@ -889,7 +889,7 @@ async def set_time(value: str) -> dict[str, Any]:
     if not _TIME_RE.match(value):
         raise ValueError("time must be 'YYYY-MM-DD HH:MM:SS'")
     rc, out = await _run_rc(["sudo", "-n", "timedatectl", "set-time", value])
-    # timedatectl refuses to set the clock while NTP is on — surface that as a friendly refusal.
+    # timedatectl refuses to set the clock while NTP is on - surface that as a friendly refusal.
     if rc != 0 and "NTP" in out:
         return _refused("Turn off automatic time (NTP) before setting the clock manually.")
     return _result(rc, out)
@@ -920,7 +920,7 @@ async def set_hostname(name: str) -> dict[str, Any]:
 
 
 async def power(action: str, moonraker_url: str) -> dict[str, Any]:
-    """Reboot or shut down the host — refused while a print is in progress."""
+    """Reboot or shut down the host - refused while a print is in progress."""
     if action not in POWER_ACTIONS:
         raise ValueError("invalid power action")
     try:
@@ -933,11 +933,11 @@ async def power(action: str, moonraker_url: str) -> dict[str, Any]:
     return _result(*await _run_rc(["sudo", "-n", "systemctl", unit_action]))
 
 
-# ── Network / IPv4 (NetworkManager) ────────────────────────────────────────────
+# -- Network / IPv4 (NetworkManager) --------------------------------------------
 # View and switch the panel's active connection between DHCP (auto) and a static IPv4
 # (address/CIDR + gateway + DNS). IPv4-only by design. The connection to modify is resolved
-# SERVER-SIDE (the active connection on the device that owns the panel's IP) — never taken from the
-# client — so a request can't retarget an unrelated profile. Changing the IP of the serving
+# SERVER-SIDE (the active connection on the device that owns the panel's IP) - never taken from the
+# client - so a request can't retarget an unrelated profile. Changing the IP of the serving
 # connection will drop this panel; the UI warns and tells the user where to reconnect. Refused while
 # a print is in progress (a network drop can orphan Moonraker mid-print). nmcli is already granted
 # by 'scripts/install.sh sudoers', so no new sudoers entry is needed.

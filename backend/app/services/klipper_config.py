@@ -1,17 +1,17 @@
-"""Round-trip Klipper INI engine — the Track A foundation for config-editing widgets.
+"""Round-trip Klipper INI engine - the Track A foundation for config-editing widgets.
 
 Klipper's ``printer.cfg`` is an INI-like dialect with a few quirks the stdlib
 ``configparser`` mangles, so this engine parses and re-emits it losslessly:
 
 * ``[section name]`` headers where the name may contain spaces (e.g. ``stepper_x``,
   ``tmc2209 stepper_x``).
-* ``key: value`` and ``key = value`` params — the separator is preserved per param.
+* ``key: value`` and ``key = value`` params - the separator is preserved per param.
 * Full-line comments (``#``/``;`` lines) and inline comments (`` #`` after a value).
 * Blank lines and arbitrary indentation, kept verbatim.
 * Multi-line values: continuation lines indented under a key (Klipper's ``gcode:`` /
   ``points:`` style) are folded into the owning param's value.
 * The auto-generated ``#*# <---------- SAVE_CONFIG ---------->`` block at the tail of a
-  saved config — its ``#*#`` lines are kept as raw section content, never reformatted.
+  saved config - its ``#*#`` lines are kept as raw section content, never reformatted.
 
 The contract that matters: ``dump(parse(text)) == text`` for representative configs.
 Each section/param caches its original ``raw`` text and is re-emitted verbatim unless a
@@ -81,12 +81,12 @@ class ConfigFile:
         return next((s for s in self.sections if s.header.lower() == lowered), None)
 
 
-# ── parsing ──────────────────────────────────────────────────────────────────
+# -- parsing ------------------------------------------------------------------
 def _header_of(stripped: str) -> str | None:
     """Return the header text of a ``[header]`` section line, or ``None`` if it isn't one.
 
     Klipper accepts a trailing inline comment after the closing bracket (``[stepper_z] # Z motor``),
-    so the line need not end with ``]`` — only the bracketed text is the header, and any non-comment
+    so the line need not end with ``]`` - only the bracketed text is the header, and any non-comment
     text after ``]`` disqualifies it (it's not a section line). The raw line is preserved verbatim
     elsewhere, so the comment still round-trips on dump.
     """
@@ -249,7 +249,7 @@ def parse(text: str) -> ConfigFile:
     return cfg
 
 
-# ── dumping ──────────────────────────────────────────────────────────────────
+# -- dumping ------------------------------------------------------------------
 def _dump_section(section: ConfigSection) -> str:
     """Re-emit a section: verbatim from ``raw_lines`` when present, else rebuilt."""
     if section.raw_lines:
@@ -285,7 +285,7 @@ def dump(cfg: ConfigFile) -> str:
     return "".join(out)
 
 
-# ── validation ───────────────────────────────────────────────────────────────
+# -- validation ---------------------------------------------------------------
 def validate(cfg: ConfigFile) -> list[dict[str, Any]]:
     """Light structural checks. Returns a list of ``{level, message, section?, line?}``.
 

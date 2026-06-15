@@ -3,7 +3,7 @@
 Pure, hardware-free helpers for the Max-Flow widget:
 
 * convert a volumetric flow (mm³/s) to an extruder feedrate (mm/min) for a filament,
-* plan the ramp of flow steps a run would execute — a preview shown *before* any actuation,
+* plan the ramp of flow steps a run would execute - a preview shown *before* any actuation,
 * turn a measured max flow into conservative slicer values,
 * match a hotend to the reference melt-zone / expected-flow table.
 
@@ -34,7 +34,7 @@ from app.services import (
 from app.services.max_flow import StepMeasurement
 from app.services.moonraker_client import MoonrakerClient
 
-# Safety bounds for a run request — rejected outside these.
+# Safety bounds for a run request - rejected outside these.
 # Safe-extrusion floor: a max-flow test below this risks reading cold-extrusion grind as slip.
 _TEMP_MIN, _TEMP_MAX = 180.0, 350.0
 _DIAM_MIN, _DIAM_MAX = 1.0, 3.5
@@ -63,7 +63,7 @@ class MaxFlowSignalError(RuntimeError):
 
     Distinct from :class:`MaxFlowPreflightError`: the config *looks* right (driver supports
     StallGuard, chopper mode is correct), but a short calibration burst at temperature shows the
-    live ``SG_RESULT`` is absent or stuck at a constant — so a ramp would only ever measure
+    live ``SG_RESULT`` is absent or stuck at a constant - so a ramp would only ever measure
     nothing. Caught before the long ramp so no filament is ground for a meaningless result.
     """
 
@@ -86,7 +86,7 @@ _VIEW_Z = 80.0
 _VIEW_Z_MARGIN = 10.0  # keep the parked Z at least this far below Z max
 _TRAVEL_F = 6000.0  # mm/min for the positioning move
 
-#: Threshold written by the optional auto-StealthChop helper — high enough to keep an SG4 extruder
+#: Threshold written by the optional auto-StealthChop helper - high enough to keep an SG4 extruder
 #: in StealthChop across the whole ramp. Backed up + reverted (commented out) after the test.
 _STEALTHCHOP_VALUE = 999999
 _RESTART_WAIT_S = 60.0  # how long to wait for Klippy to return to 'ready' after a FIRMWARE_RESTART
@@ -185,8 +185,8 @@ def recommend(max_flow_mm3s: float | None) -> dict[str, Any]:
         return {"max": None, "conservative": None, "balanced": None}
     return {
         "max": round(max_flow_mm3s, 1),
-        "conservative": round(max_flow_mm3s * _CONSERVATIVE, 1),  # 80% — safe everyday
-        "balanced": round(max_flow_mm3s * _BALANCED, 1),  # 90% — pushing it
+        "conservative": round(max_flow_mm3s * _CONSERVATIVE, 1),  # 80% - safe everyday
+        "balanced": round(max_flow_mm3s * _BALANCED, 1),  # 90% - pushing it
     }
 
 
@@ -207,7 +207,7 @@ def hotend_hint(name: str | None) -> dict[str, Any] | None:
 def plan(params: RampParams) -> dict[str, Any]:
     """Full dry-run preview: the ramp + the driver's StallGuard field + totals.
 
-    Pure — no actuation. The UI shows this so the operator sees exactly what *would* run
+    Pure - no actuation. The UI shows this so the operator sees exactly what *would* run
     (every flow step, feedrate, total filament pushed) before committing to a live test.
     """
     steps = plan_ramp(params)
@@ -230,9 +230,9 @@ def plan(params: RampParams) -> dict[str, Any]:
     }
 
 
-# ── Live measurement loop (actuating — heat + extrude + sample StallGuard) ──────
+# -- Live measurement loop (actuating - heat + extrude + sample StallGuard) ------
 async def _is_busy(client: MoonrakerClient) -> bool:
-    """True while the printer is printing, paused, or in error — block a run then.
+    """True while the printer is printing, paused, or in error - block a run then.
     Delegates to the shared :mod:`printer_guard` busy definition."""
     return await printer_guard.is_busy(client)
 
@@ -269,7 +269,7 @@ def _as_float(value: Any) -> float | None:
 
 def _sg_floor(driver: str) -> float:
     """Below this StallGuard reading is bias-region noise (SG4 sticks low under the min velocity),
-    not real load — drop such samples. 0 for SG2 (no floor)."""
+    not real load - drop such samples. 0 for SG2 (no floor)."""
     consts = reference_data.resolved_profile(driver).get("constants", {})
     value = consts.get("SG_MIN_INFORMATIVE") if isinstance(consts, dict) else None
     return _as_float(value) or 0.0
@@ -294,7 +294,7 @@ async def _preflight(client: MoonrakerClient, driver: str) -> None:
     """Verify the extruder driver can actually read StallGuard for this test (C1).
 
     Refuses a driver with no StallGuard, a missing ``[<driver> extruder]`` section, or a chopper
-    mode that makes StallGuard meaningless (SG4 needs StealthChop; SG2 needs SpreadCycle) — so the
+    mode that makes StallGuard meaningless (SG4 needs StealthChop; SG2 needs SpreadCycle) - so the
     run can't silently measure garbage.
 
     Raises:
@@ -304,24 +304,24 @@ async def _preflight(client: MoonrakerClient, driver: str) -> None:
     field = reference_data.stallguard_field(d)
     if not field:
         raise MaxFlowPreflightError(
-            f"Driver '{driver}' has no StallGuard — max-flow needs a StallGuard-capable "
+            f"Driver '{driver}' has no StallGuard - max-flow needs a StallGuard-capable "
             "extruder driver."
         )
     section = await _extruder_section(client, d)
     if section is None:
         raise MaxFlowPreflightError(
-            f"No [{d} extruder] section found — the extruder's TMC driver must be configured first."
+            f"No [{d} extruder] section found - the extruder's TMC driver must be configured first."
         )
     stealth = _as_float(section.get("stealthchop_threshold"))
     stealth_on = stealth is not None and stealth > 0
     if d in _SG4_DRIVERS and not stealth_on:
         raise MaxFlowPreflightError(
-            f"StallGuard4 ({field}) only reads in StealthChop — set a non-zero "
+            f"StallGuard4 ({field}) only reads in StealthChop - set a non-zero "
             f"stealthchop_threshold on [{d} extruder] before running max-flow."
         )
     if d in _SG2_DRIVERS and stealth_on:
         raise MaxFlowPreflightError(
-            f"StallGuard2 ({field}) only reads in SpreadCycle — remove/zero the "
+            f"StallGuard2 ({field}) only reads in SpreadCycle - remove/zero the "
             f"stealthchop_threshold on [{d} extruder] before running max-flow."
         )
 
@@ -329,7 +329,7 @@ async def _preflight(client: MoonrakerClient, driver: str) -> None:
 async def detect_extruder_driver(client: MoonrakerClient) -> str | None:
     """The extruder's TMC model from the live config (``[tmcXXXX extruder]``), or None.
 
-    Lets the UI preselect the right driver instead of assuming TMC2209 — a 2240/5160 extruder
+    Lets the UI preselect the right driver instead of assuming TMC2209 - a 2240/5160 extruder
     would otherwise hit a preflight refusal the user can't fix from the widget.
     """
     try:
@@ -357,7 +357,7 @@ async def _homed_axes(client: MoonrakerClient) -> str:
 
 
 async def _view_position(client: MoonrakerClient) -> tuple[float, float, float] | None:
-    """``(x, y, z)`` that parks the nozzle for a clear view — bed center at a comfortable Z gap,
+    """``(x, y, z)`` that parks the nozzle for a clear view - bed center at a comfortable Z gap,
     from the toolhead's axis limits. ``None`` when the limits can't be read."""
     try:
         data = await client.query_objects(["toolhead"])
@@ -411,7 +411,7 @@ async def _sg_precheck(
     """Confirm the live StallGuard field is usable before the ramp (issue #319).
 
     Extrudes a short burst at the start-flow feedrate and reads the *raw* SG field each time
-    (no bias floor — we want to know if the field appears at all). Raises
+    (no bias floor - we want to know if the field appears at all). Raises
     :class:`MaxFlowSignalError` if no reading ever appears, or if every reading is a constant 0:
     either means the ramp could only measure nothing on this extruder/host, so there's no point
     heating and grinding through it.
@@ -431,13 +431,13 @@ async def _sg_precheck(
     field = reference_data.stallguard_field(params.driver) or "SG_RESULT"
     if not readings:
         raise MaxFlowSignalError(
-            f"No live StallGuard reading from [{params.driver.lower()} {_EXTRUDER}] — the "
+            f"No live StallGuard reading from [{params.driver.lower()} {_EXTRUDER}] - the "
             f"driver's {field} field isn't exposed during extrusion on this host, so slip can't "
             "be measured. Max-flow can't run reliably on this extruder."
         )
     if all(r == 0.0 for r in readings):
         raise MaxFlowSignalError(
-            f"StallGuard ({field}) reads a constant 0 during extrusion — no usable load signal, "
+            f"StallGuard ({field}) reads a constant 0 during extrusion - no usable load signal, "
             "so slip can't be measured. Max-flow can't run reliably on this extruder."
         )
 
@@ -495,7 +495,7 @@ async def run_max_flow(
     resonance_dirs: str = "/tmp",
 ) -> dict[str, Any]:
     """Run the live max-flow test: park for a clear view, heat, then ramp the flow while watching
-    for the extruder slip — via StallGuard, or via the toolhead accelerometer (vibration).
+    for the extruder slip - via StallGuard, or via the toolhead accelerometer (vibration).
 
     Safe by construction: refused while the printer is busy; the heater is **always turned
     off** in a ``finally`` (even on error); the ramp **stops as soon as slip is detected** so no
@@ -503,7 +503,7 @@ async def run_max_flow(
     pre-check **bails out before the ramp** if the live SG field is unusable on this extruder.
 
     ``method`` selects the slip detector: ``"stallguard"``, ``"accel"`` (vibration), or ``"auto"``
-    — StallGuard, falling back to the accelerometer when the SG config/signal is unusable and a
+    - StallGuard, falling back to the accelerometer when the SG config/signal is unusable and a
     chip is configured. When ``park_for_view`` is set the nozzle is homed (if needed) and centered
     first. When ``auto_stealthchop`` is set (StallGuard path only) a marker-tagged
     ``stealthchop_threshold`` is written to printer.cfg so the preflight passes, then commented out
@@ -531,7 +531,7 @@ async def run_max_flow(
     accel_chip = await max_flow_accel.detect_chip(client) if method in ("auto", "accel") else None
     if method == "accel" and not accel_chip:
         raise MaxFlowSignalError(
-            "No accelerometer is configured — the vibration method needs an ADXL345/LIS2DW "
+            "No accelerometer is configured - the vibration method needs an ADXL345/LIS2DW "
             "on the toolhead."
         )
     use_accel = method == "accel"
@@ -612,10 +612,10 @@ async def run_max_flow(
                     measurements.append(
                         StepMeasurement(flow_mm3s=step.flow_mm3s, sg_samples=samples)
                     )
-                    # Stop the moment slip is detected — don't grind filament past the first slip.
+                    # Stop the moment slip is detected - don't grind filament past the first slip.
                     # warmup=2 excuses the unsettled opening step: its load CV transiently spikes as
                     # the ramp starts (notably on noisier SG2 drivers like the TMC5160) and is not a
-                    # slip — it must form the baseline rather than trip.
+                    # slip - it must form the baseline rather than trip.
                     if (
                         max_flow.analyze(measurements, params.driver, warmup=2).slip_flow
                         is not None
@@ -645,7 +645,7 @@ async def run_max_flow(
             "method": "accel" if use_accel else "stallguard",
         }
     finally:
-        # Revert any temporary StealthChop edit — idempotent (a no-op when nothing was written), so
+        # Revert any temporary StealthChop edit - idempotent (a no-op when nothing was written), so
         # even a restart failure mid-enable can't leave an active stealthchop line in printer.cfg.
         if stealthchop_intended:
             if progress_cb is not None:

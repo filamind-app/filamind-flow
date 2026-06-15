@@ -1,8 +1,8 @@
-"""Offline G-code motion simulator — the Macro Designer core (Track A).
+"""Offline G-code motion simulator - the Macro Designer core (Track A).
 
 Pure and hardware-free: parse a G-code program and compute the toolhead path, bounding box,
 total travel / extrusion, a rough time estimate, and a per-command timeline. Literal G-code in
-— macro / Jinja expansion and the built-in macro library are a later slice.
+- macro / Jinja expansion and the built-in macro library are a later slice.
 
 Supported: ``G0`` / ``G1`` moves (X/Y/Z/E/F), ``G90`` / ``G91`` (absolute / relative XYZ),
 ``M82`` / ``M83`` (absolute / relative extrusion), ``G92`` (set position), ``G28`` (home → 0).
@@ -48,15 +48,15 @@ def _strip_comment(line: str) -> str:
 
 
 def lint(gcode: str) -> list[dict[str, Any]]:
-    """Static safety checks over a macro body (no execution) — the classic Klipper foot-guns:
+    """Static safety checks over a macro body (no execution) - the classic Klipper foot-guns:
 
-    * ``gcode_state_unbalanced`` — a ``SAVE_GCODE_STATE`` without a matching ``RESTORE_GCODE_STATE``
+    * ``gcode_state_unbalanced`` - a ``SAVE_GCODE_STATE`` without a matching ``RESTORE_GCODE_STATE``
       (or vice-versa), which leaks the saved positioning / extruder mode.
-    * ``ends_relative`` — the program switches to relative (``G91`` / ``M83``) and ends there
+    * ``ends_relative`` - the program switches to relative (``G91`` / ``M83``) and ends there
       without restoring, leaving the printer in relative mode for whatever runs next.
-    * ``extrude_before_home`` — an extruding move before any ``G28`` (cold / un-homed extrude risk).
+    * ``extrude_before_home`` - an extruding move before any ``G28`` (cold / un-homed extrude risk).
 
-    Structured findings ``{level, line, rule}`` — the UI renders the message + fix per rule. Some
+    Structured findings ``{level, line, rule}`` - the UI renders the message + fix per rule. Some
     may not apply to a fragment that assumes the caller already homed / set a mode.
     """
     abs_xyz = True
@@ -115,7 +115,7 @@ def _move_time(dist: float, cruise_v: float, accel: float | None) -> float:
     """Time for a single move of length ``dist`` (mm) reaching ``cruise_v`` (mm/s).
 
     With ``accel`` (mm/s²) this is a rest-to-rest trapezoidal profile (accelerate to the cruise
-    velocity — or a lower triangular peak on a short move — then decelerate), which models a macro's
+    velocity - or a lower triangular peak on a short move - then decelerate), which models a macro's
     short start/stop moves far better than assuming instant full speed. Without ``accel`` it falls
     back to the constant-velocity estimate ``dist / cruise_v``.
     """
@@ -290,7 +290,7 @@ def simulate(gcode: str, limits: dict[str, Any] | None = None) -> dict[str, Any]
         else:
             if cmd not in seen_unknown:
                 seen_unknown.add(cmd)
-                warnings.append(f"Unsupported command '{cmd}' (line {lineno}) — skipped")
+                warnings.append(f"Unsupported command '{cmd}' (line {lineno}) - skipped")
 
     if move_count == 0:  # no moves → collapse the seeded infinities to a zero box
         bounds = dict.fromkeys(bounds, 0.0)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** Guided new-board walkthrough (#118). A checklist that reflects the LIVE firmware state and
- *  deep-links into the existing tabs — it deliberately does NOT duplicate the build/flash logic
+ *  deep-links into the existing tabs - it deliberately does NOT duplicate the build/flash logic
  *  (firmware flashing is hands-on: bootloader, confirms, …). Each step turns green once the live
  *  state satisfies it, and its button opens the tab where you do that step.
  */

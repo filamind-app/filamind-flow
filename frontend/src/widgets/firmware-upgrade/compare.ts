@@ -2,7 +2,7 @@
  *
  * Both files already carry their inspected metadata + baked-in `config` in the
  * list response (see the backend `external_firmware` inspector), so a comparison
- * is a plain client-side diff — no extra request, no re-reading the binary.
+ * is a plain client-side diff - no extra request, no re-reading the binary.
  * Read-only: comparing never mutates either file.
  */
 

@@ -2,7 +2,7 @@
  *
  *  The backend emits machine-readable `::phase::<code>` markers alongside the human `>>> …`
  *  lines. This module parses those (and the `!!` error lines) into a compact status the UI
- *  renders as a progress bar instead of a raw command window — while keeping the full log for
+ *  renders as a progress bar instead of a raw command window - while keeping the full log for
  *  a collapsible details view. Pure + testable; the component owns all rendering and i18n.
  */
 
@@ -27,7 +27,7 @@ export interface FlashStatus {
   failed: boolean
 }
 
-/** The log with the machine `::phase::` markers stripped — what the details view shows. */
+/** The log with the machine `::phase::` markers stripped - what the details view shows. */
 export function stripPhaseMarkers(log: string): string {
   return log
     .split('\n')

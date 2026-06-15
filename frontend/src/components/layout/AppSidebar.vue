@@ -9,7 +9,7 @@ import { widgetRegistry } from '@/core/registry'
 const { t } = useI18n({ useScope: 'global' })
 const { current, go, sidebarOpen } = useNav()
 
-// Dashboard (the empty home) plus one entry per registered widget — each widget
+// Dashboard (the empty home) plus one entry per registered widget - each widget
 // gets its own page, reached from here. Icons come from each widget's definition.
 const items = computed(() => [
   { id: 'dashboard', label: t('shell.nav.dashboard'), icon: '▣' },

@@ -1,4 +1,4 @@
-# FilaMind Flow — Backend
+# FilaMind Flow - Backend
 
 FastAPI service that backs the FilaMind Flow panel. It exposes health and
 diagnostics, the **firmware** build / flash API, and the **input-shaping**
@@ -46,24 +46,24 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/shaper/archive/save-config` | Save a generated `[input_shaper]` config to the archive. |
 | POST   | `/api/shaper/archive/save-file` | Copy an existing host resonance CSV into the archive.      |
 | GET    | `/api/drivers/status`      | Live TMC stepper-driver inventory: current / mode / microsteps / StallGuard / temperature / health + each axis's homing method (physical / sensorless / probe / …, from `endstop_pin`) + the effective run-current cap (`current_cap` = min(model code cap, motor rating)), each annotated with its model's catalog facts (Motor Drivers widget). |
-| GET    | `/api/drivers/endstops`    | Live endstop trigger state (open / TRIGGERED), actively queried on demand — for the physical-homing panel. |
+| GET    | `/api/drivers/endstops`    | Live endstop trigger state (open / TRIGGERED), actively queried on demand - for the physical-homing panel. |
 | GET    | `/api/drivers/live/{stepper}` | Fast live telemetry for one driver (temperature / SG_RESULT / CS_ACTUAL / faults) for the live monitor. |
 | GET    | `/api/drivers/catalog`     | The curated TMC driver capability map (interface, current cap, chopper modes, StallGuard field, sensorless / temperature) keyed by model. |
-| GET    | `/api/drivers/motors`      | The stepper-motor catalog (datasheet parameters) for the motor picker — served from the unified hardware database. |
+| GET    | `/api/drivers/motors`      | The stepper-motor catalog (datasheet parameters) for the motor picker - served from the unified hardware database. |
 | GET    | `/api/drivers/mapping`     | The saved stepper → motor assignments. |
 | POST   | `/api/drivers/mapping`     | Assign a catalogued motor to a stepper (empty `motor_model` clears it). |
 | POST   | `/api/drivers/recommend`   | Recommend a run current + StealthChop/SpreadCycle registers for a motor (compute-only; faithful `motor_constants` port). |
 | POST   | `/api/drivers/config-block`| Render a printer.cfg override block to copy (no write). |
 | POST   | `/api/drivers/apply`       | Write tuning live via `SET_TMC_CURRENT` / `SET_TMC_FIELD` (refused while printing; validated). |
-| POST   | `/api/drivers/init`        | `INIT_TMC` — re-apply the stepper's configured registers (revert a live apply). |
+| POST   | `/api/drivers/init`        | `INIT_TMC` - re-apply the stepper's configured registers (revert a live apply). |
 | POST   | `/api/drivers/autotune`    | Drive `AUTOTUNE_TMC` if the `klipper_tmc_autotune` add-on is installed for the stepper. |
-| POST   | `/api/drivers/stallguard`  | Set a StallGuard threshold (`sgthrs` / `sgt` / `sg4_thrs`) — sensorless-homing sensitivity (gated + server-clamped). |
-| GET    | `/api/drivers/field-policy/{model}` | The editable-register policy for a model — which fields the editor may expose, with control type + clamp range. |
+| POST   | `/api/drivers/stallguard`  | Set a StallGuard threshold (`sgthrs` / `sgt` / `sg4_thrs`) - sensorless-homing sensitivity (gated + server-clamped). |
+| GET    | `/api/drivers/field-policy/{model}` | The editable-register policy for a model - which fields the editor may expose, with control type + clamp range. |
 | POST   | `/api/drivers/field`       | Write one editable TMC register field live via `SET_TMC_FIELD` (gated; server-side allowlist + per-field clamp; velocity thresholds sent as mm/s). |
-| POST   | `/api/drivers/coolstep`    | Enable CoolStep with a vetted register set (semin/semax/seup/sedn/seimin) or disable it — a single gated toggle. |
-| POST   | `/api/drivers/home`        | Home one axis (`G28 <axis>`) as a sensorless test — moves the toolhead (gated). |
+| POST   | `/api/drivers/coolstep`    | Enable CoolStep with a vetted register set (semin/semax/seup/sedn/seimin) or disable it - a single gated toggle. |
+| POST   | `/api/drivers/home`        | Home one axis (`G28 <axis>`) as a sensorless test - moves the toolhead (gated). |
 | GET    | `/api/drivers/motors-sync` | Whether the `motors_sync` add-on is installed. |
-| POST   | `/api/drivers/motors-sync` | Run `SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE` (multi-motor phase alignment) — moves the toolhead (gated). |
+| POST   | `/api/drivers/motors-sync` | Run `SYNC_MOTORS` / `SYNC_MOTORS_CALIBRATE` (multi-motor phase alignment) - moves the toolhead (gated). |
 | GET    | `/api/reference/stallguard` (+ `/{driver}`) | Per-driver StallGuard slip-detection tuning constants (base + overrides; `{driver}` = merged effective set + SG field). Static reference data. |
 | GET    | `/api/reference/hotends`   | Hotend melt-zone / expected max-flow / test presets. |
 | GET    | `/api/reference/boards`    | Board + MCU identification patterns. |
@@ -71,16 +71,16 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/config/files`        | List the editable config files (`.cfg` / `.conf`) under Moonraker's `config` root (Config Editor). |
 | GET    | `/api/config/file`         | Parse one config file (`?filename=`) into a structured view: sections → params + validation issues (read-only). |
 | GET    | `/api/config/drift`        | Compare one file on disk to the live running config (`configfile`): a pending-`SAVE_CONFIG` flag, Klipper's own parse warnings, and per-param drift (disk vs live). `reachable=false` when down. |
-| POST   | `/api/config/adopt`        | Set one param to a given value via the round-trip engine and return the new text — a pure, surgical transform (no write); only the target line is rewritten. |
+| POST   | `/api/config/adopt`        | Set one param to a given value via the round-trip engine and return the new text - a pure, surgical transform (no write); only the target line is rewritten. |
 | GET    | `/api/config/pin-doctor`   | Whole-config pin-conflict scan (every MCU): double-assigned pins + board electronics caveats on a used pin, aggregated from each MCU's pin atlas. `reachable=false` when down. |
 | POST   | `/api/config/save`         | Back up then overwrite one config file (refused while printing; auto-backup to `filamind-backups/`). |
 | POST   | `/api/config/restart`      | `FIRMWARE_RESTART` to apply a saved config (refused while printing). |
 | POST   | `/api/maxflow/plan`        | Preview the max-flow test ramp (flow → feedrate per step + StallGuard field); pure compute, no actuation. |
-| POST   | `/api/maxflow/run`         | Run the live max-flow test ((optional auto-StealthChop config write) → home + center → heat → StallGuard sanity pre-check → ramp + sample); preflight (chopper-mode/StallGuard) + SG4 bias-floor + ≥180 °C; aborts before the ramp if the live SG signal is unusable; refused while printing; heater always cut; any temporary stealthchop_threshold reverted (commented out) afterward. `method` = auto / stallguard / accel — **auto** falls back to the toolhead accelerometer (vibration RMS per step) when StallGuard is unusable and an accel chip is configured. The result carries `method`. |
+| POST   | `/api/maxflow/run`         | Run the live max-flow test ((optional auto-StealthChop config write) → home + center → heat → StallGuard sanity pre-check → ramp + sample); preflight (chopper-mode/StallGuard) + SG4 bias-floor + ≥180 °C; aborts before the ramp if the live SG signal is unusable; refused while printing; heater always cut; any temporary stealthchop_threshold reverted (commented out) afterward. `method` = auto / stallguard / accel - **auto** falls back to the toolhead accelerometer (vibration RMS per step) when StallGuard is unusable and an accel chip is configured. The result carries `method`. |
 | POST   | `/api/maxflow/run/start`   | Same run as a supervised background task (returns a `task_id` to poll for per-step progress + result; cancel always cuts the heater). |
 | GET    | `/api/maxflow/extruder-driver` | The extruder's TMC model detected from the live config (preselects the driver). |
-| GET    | `/api/camera/list`         | Configured webcams (name + service) via Moonraker; empty when none — the UI then hides the live view. |
-| GET    | `/api/camera/snapshot`     | Proxy one JPEG snapshot of the named (or default) webcam, same-origin and uncached — lets the panel show the nozzle during a run regardless of how it's served. |
+| GET    | `/api/camera/list`         | Configured webcams (name + service) via Moonraker; empty when none - the UI then hides the live view. |
+| GET    | `/api/camera/snapshot`     | Proxy one JPEG snapshot of the named (or default) webcam, same-origin and uncached - lets the panel show the nozzle during a run regardless of how it's served. |
 | GET    | `/api/topology`            | Host → MCU topology from the live config: the host SBC (identified via `/machine/system_info`, linked to a catalog host; flagged `integrated_into_board_id` when its SoC matches the primary mainboard's declared onboard SBC) + each MCU's connection (CAN/USB/UART) + chip (linked to a catalog MCU) + a suggested board (serial-signature match, strengthened by a used-pin-set fingerprint vs each board's pin-map) + the components (steppers/drivers/heaters/fans/sensors) on it, attached by each pin's chip prefix. A saved per-MCU override (below) is re-applied as a `confirmed` board. |
 | POST   | `/api/topology/override`   | Confirm / override the catalog board for one MCU (keyed by its config section name). Validates the `board_id` against the catalog; persisted on the host and applied to every read. |
 | POST   | `/api/topology/override/clear` | Remove an MCU's board override (revert to the auto suggestion). |
@@ -92,23 +92,23 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/macro/limits`        | The printer's real build envelope + speed cap (`axis_minimum/maximum`, `max_velocity`) from the live `toolhead` object, to ground the simulator's out-of-bounds / over-speed checks. `reachable=false` when down. |
 | GET    | `/api/hardware`            | Flat free-text search over the raw component rows (`?q=`/`category`/`manufacturer`, paginated). The canonical, deduped, config-carrying entities have their own typed endpoints below. |
 | GET    | `/api/hardware/categories` | The hardware categories + per-category **canonical** `counts` (raw kept as `rawCounts`) + total component count. |
-| GET    | `/api/hardware/facets`     | Distinct values for the filter dropdowns — `boardClass` (boards), `nema` size (motors), `kind` (hosts), and `catalogSubsections` (per mixed catalog category → its sub-types). |
-| GET    | `/api/hardware/manufacturers` | Canonical manufacturer entities (`?q`) — each with a stable `manufacturer_id`, auto-derived `aliases` and a `memberCount`, sorted most-connected first. |
+| GET    | `/api/hardware/facets`     | Distinct values for the filter dropdowns - `boardClass` (boards), `nema` size (motors), `kind` (hosts), and `catalogSubsections` (per mixed catalog category → its sub-types). |
+| GET    | `/api/hardware/manufacturers` | Canonical manufacturer entities (`?q`) - each with a stable `manufacturer_id`, auto-derived `aliases` and a `memberCount`, sorted most-connected first. |
 | GET    | `/api/hardware/manufacturers/{manufacturer_id}` | One manufacturer's record (`?expand=related` adds its linked hardware, grouped by type). |
-| GET    | `/api/hardware/mcus`       | Canonical MCU entities (`?q`/`family`) parsed from board `specs.MCU` (normalised to a canonical part) — each with `family`, `arch`, `boardCount`. |
+| GET    | `/api/hardware/mcus`       | Canonical MCU entities (`?q`/`family`) parsed from board `specs.MCU` (normalised to a canonical part) - each with `family`, `arch`, `boardCount`. |
 | GET    | `/api/hardware/mcus/{mcu_id}` | One MCU's record (`?expand=related` adds the boards that use it). |
-| GET    | `/api/hardware/boards`     | Canonical control-board entities (summaries; `?q`/`manufacturer`/`board_class`, paginated) — each board's connectors aggregated into one `ports[]`. |
+| GET    | `/api/hardware/boards`     | Canonical control-board entities (summaries; `?q`/`manufacturer`/`board_class`, paginated) - each board's connectors aggregated into one `ports[]`. |
 | GET    | `/api/hardware/boards/{board_id}` | One board's full record (identity + specs + aggregated `ports[]` + detection `matchPatterns`; `?expand=related` adds links). |
-| GET    | `/api/hardware/drivers`    | Canonical stepper-driver entities (summaries; `?q`/`manufacturer`/`klipper_only`, paginated) — one per chip, deduped. |
+| GET    | `/api/hardware/drivers`    | Canonical stepper-driver entities (summaries; `?q`/`manufacturer`/`klipper_only`, paginated) - one per chip, deduped. |
 | GET    | `/api/hardware/drivers/{driver_id}` | One driver's full record (specs + Klipper support + copyable `[tmcXXXX]` config snippet; `?expand=related`). |
-| GET    | `/api/hardware/motors`     | Canonical stepper-motor entities (summaries; `?q`/`manufacturer`/`nema`, paginated) — one per model, deduped. |
+| GET    | `/api/hardware/motors`     | Canonical stepper-motor entities (summaries; `?q`/`manufacturer`/`nema`, paginated) - one per model, deduped. |
 | GET    | `/api/hardware/motors/{motor_id}` | One motor's full record (specs + recommended `run_current` + current presets + copyable config snippet; `?expand=related`). |
-| GET    | `/api/hardware/hosts`      | Canonical host-computer entities (summaries; `?q`/`manufacturer`/`kind`, paginated) — SBC / x86 / OS-image, deduped. |
+| GET    | `/api/hardware/hosts`      | Canonical host-computer entities (summaries; `?q`/`manufacturer`/`kind`, paginated) - SBC / x86 / OS-image, deduped. |
 | GET    | `/api/hardware/hosts/{host_id}` | One host's full record (specs + Klipper-open flag + copyable `[mcu host]` config snippet; `?expand=related`). |
-| GET    | `/api/hardware/catalog`    | Canonical entities for one remaining category (`?category=…`, summaries; `?q`/`manufacturer`/`subsection`, paginated) — sensors / hotends / extruders / fans / displays / motion / nozzles / filament / electronics, deduped. `subsection` filters a mixed category by sub-type. |
+| GET    | `/api/hardware/catalog`    | Canonical entities for one remaining category (`?category=…`, summaries; `?q`/`manufacturer`/`subsection`, paginated) - sensors / hotends / extruders / fans / displays / motion / nozzles / filament / electronics, deduped. `subsection` filters a mixed category by sub-type. |
 | GET    | `/api/hardware/catalog/{catalog_id}` | One catalog entity's full record (specs + copyable Klipper config snippet; `?expand=related`). |
 | GET    | `/api/hardware/{type}/{id}/related` | Cross-entity relationships for any node (`boards`/`drivers`/`motors`/`hosts`/`catalog`/`manufacturers`/`mcus`), grouped by relation (O(1) graph walk). |
-| (group) | `/api/screen/*`           | Control the printer's KlipperScreen touchscreen (KlipperScreen Studio widget): read/save `KlipperScreen.conf` (`conf`, behind the gated config save — backup + busy-refusal + stale-write guard) + `restart`; the `[main]` options as a key→value map (`options`); the menu tree (`menus`) — the `[menu …]` button grids read as a flat list and rewritten whole (preserving non-menu sections + the auto-generated block) plus the targetable panels; and on-host themes (`themes`: list / `preview` / create / `activate` / delete). `status` reports presence + restartability. Also the **FilaMind Kiosk** (`kiosk`): report the current screen mode and reversibly swap the touchscreen between KlipperScreen and a fullscreen FilaMind browser (`kiosk/switch`, `kiosk/restore` — temporary by default, optional `persist` to flip the boot default) via `sudo systemctl` on a `filamind-kiosk` unit installed once by `scripts/install.sh kiosk`. |
+| (group) | `/api/screen/*`           | Control the printer's KlipperScreen touchscreen (KlipperScreen Studio widget): read/save `KlipperScreen.conf` (`conf`, behind the gated config save - backup + busy-refusal + stale-write guard) + `restart`; the `[main]` options as a key→value map (`options`); the menu tree (`menus`) - the `[menu …]` button grids read as a flat list and rewritten whole (preserving non-menu sections + the auto-generated block) plus the targetable panels; and on-host themes (`themes`: list / `preview` / create / `activate` / delete). `status` reports presence + restartability. Also the **FilaMind Kiosk** (`kiosk`): report the current screen mode and reversibly swap the touchscreen between KlipperScreen and a fullscreen FilaMind browser (`kiosk/switch`, `kiosk/restore` - temporary by default, optional `persist` to flip the boot default) via `sudo systemctl` on a `filamind-kiosk` unit installed once by `scripts/install.sh kiosk`. |
 
 The interactive `/docs` page is the authoritative, always-current list. The
 firmware API in particular has many more routes than the summary above shows.
@@ -133,7 +133,7 @@ fallback. Passthrough errors are the exception: Moonraker failures and
 `field_policy` or value-validation text come back with `code: null`, and their
 raw English text is shown verbatim.
 
-### Firmware flashing — printer-agnostic by design
+### Firmware flashing - printer-agnostic by design
 
 `POST /api/firmware/flash` streams a plain-text log of the real flash sequence.
 A handful of details exist specifically to make it behave the same across very
@@ -148,7 +148,7 @@ Voron-class machine.
 - **CAN UUID resolution.** A CAN flash addresses the node by its 12-hex
   `canbus_uuid`, but a device may be registered under a friendly name.
   `flash_service.resolve_can_uuid()` resolves the real UUID from the live
-  `configfile.config` — either by `[mcu <name>]` match, or as the sole CAN node
+  `configfile.config` - either by `[mcu <name>]` match, or as the sole CAN node
   when that's unambiguous. If it can't resolve cleanly it refuses with a clear
   message rather than flashing the wrong node.
 - **Honest outcomes, plus a CAN salvage.** `_stream()` captures the flash tool's
@@ -157,8 +157,8 @@ Voron-class machine.
   read-back verify even though the write itself completed. When that happens the
   sequence confirms the true result by polling the node's reported firmware
   version through Klipper.
-- **sudo capability probe.** The privileged steps — stop/start Klipper and the
-  flash itself — need passwordless sudo. Readiness is checked with
+- **sudo capability probe.** The privileged steps - stop/start Klipper and the
+  flash itself - need passwordless sudo. Readiness is checked with
   `sudo -n -l systemctl stop klipper`, an authorization lookup that doesn't
   actually run the command, so the check is correct no matter which
   `/etc/sudoers.d/` file grants the permission.

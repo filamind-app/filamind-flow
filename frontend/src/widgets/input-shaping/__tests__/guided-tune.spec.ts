@@ -14,7 +14,7 @@ describe('GuidedTune.vue (renders through i18n)', () => {
     expect(text).toContain('Belts') // steps.belts.label (rail)
     expect(text).toContain('Accelerometer noise') // steps.noise.title (active step)
     expect(text).toContain('Confirm the sensor is mounted solidly') // steps.noise.why
-    // Any unresolved key would render its dotted path — guard against that.
+    // Any unresolved key would render its dotted path - guard against that.
     expect(text).not.toContain('inputShaping.guided')
   })
 })

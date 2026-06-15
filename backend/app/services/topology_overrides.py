@@ -1,7 +1,7 @@
 """Persistent per-MCU board overrides for Board Topology.
 
 The topology suggests a catalog board for each MCU from its serial / CAN signature plus a pin-map
-fingerprint, but a serial id usually reveals only the chip — so the suggestion can be absent or
+fingerprint, but a serial id usually reveals only the chip - so the suggestion can be absent or
 wrong. This store lets the user *confirm* the suggestion or pick the correct board; the choice is
 remembered across reboots and applied on every topology read (the first write path in the
 otherwise read-only widget).

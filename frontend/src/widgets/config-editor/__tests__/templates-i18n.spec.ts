@@ -11,7 +11,7 @@ function plugins() {
 }
 
 describe('Config Editor template renders through i18n (no leaked keys)', () => {
-  it('ConfigEditorWidget — intro + help chrome, no raw key paths', () => {
+  it('ConfigEditorWidget - intro + help chrome, no raw key paths', () => {
     const w = mount(ConfigEditorWidget, plugins())
     const text = w.text()
     const leaked = text.match(/configEditor\.[a-zA-Z]/)

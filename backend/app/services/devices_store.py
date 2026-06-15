@@ -1,4 +1,4 @@
-"""Devices — a saved registry of the printer's boards and how to flash each.
+"""Devices - a saved registry of the printer's boards and how to flash each.
 
 Board *discovery* (``board_service``) reports what is on the bus right now; the
 registry remembers your *intent*: which build profile belongs to each board, how to
@@ -7,7 +7,7 @@ a board takes on when it drops into Katapult or DFU to be flashed (a board often
 enumerates under a *different* id while in its bootloader, so we store both).
 
 Persisted as a JSON list under ``<data_dir>/devices.json`` with atomic writes. The
-firmware *version* of each device is deliberately not stored here — it is read
+firmware *version* of each device is deliberately not stored here - it is read
 back from the flash records in ``version_store`` so there is one source of truth.
 """
 
@@ -133,7 +133,7 @@ def attach_identity(
 
 
 def managed_identities(data_dir: str) -> set[str]:
-    """Every identity the registry claims — runtime ids plus bootloader ids.
+    """Every identity the registry claims - runtime ids plus bootloader ids.
 
     Lets board discovery flag which scanned boards are already in the registry.
     """

@@ -3,9 +3,9 @@
 Two printer-side conveniences on top of the pure ``shaper_service`` analysis:
 
 1. **Import** the resonance CSVs Klipper writes on the printer host (``/tmp`` by
-   default) — list them and analyse one by path, so the user need not download
+   default) - list them and analyse one by path, so the user need not download
    and re-upload anything.
-2. **Live test** — trigger ``TEST_RESONANCES`` on a chosen axis via Moonraker,
+2. **Live test** - trigger ``TEST_RESONANCES`` on a chosen axis via Moonraker,
    wait for the run, then analyse the CSV it produced.
 
 These only do something useful when FilaMind runs on the printer host. Listing /
@@ -45,7 +45,7 @@ _FILE_WAIT_TIMEOUT = 120.0
 #: Filenames Klipper produces for resonance data (raw accel + PSD calibration).
 _PATTERNS = ("resonances_*.csv", "calibration_data_*.csv", "raw_data_*.csv")
 #: Intermediate raw-accel files ACCELEROMETER_MEASURE writes (axes-map etc.). These
-#: are transient — captured, read, then deleted by the orchestrators — so they are
+#: are transient - captured, read, then deleted by the orchestrators - so they are
 #: matched for the capture-await but kept OUT of the user-facing import list (which
 #: uses _PATTERNS only) to avoid clutter.
 _CAPTURE_PATTERNS = ("*-axesmap_*.csv", "*-filamind_static-*.csv", "*-vib_*.csv", "*-maxflow_*.csv")
@@ -67,7 +67,7 @@ _NOISE_RE = re.compile(
 _NOISE_OK = 100.0
 _NOISE_HIGH = 1000.0
 #: A sustain-frequency hold is a slow TEST_RESONANCES sweep this wide (Hz) around the
-#: target — close enough to a constant hold, using only stock Klipper g-code.
+#: target - close enough to a constant hold, using only stock Klipper g-code.
 _STATIC_BAND = 3.0
 #: A vibrations profile is a long speed x angle sweep. Each Moonraker call is short,
 #: but the whole blocking sweep must finish inside nginx's /api proxy_read_timeout
@@ -142,7 +142,7 @@ def analyze_file(resonance_dirs: str, path: str, **kwargs: Any) -> dict[str, Any
 
 
 async def _is_printing(client: MoonrakerClient) -> bool:
-    """Shared busy definition (printing / paused / error) — a swallowed query keeps the old
+    """Shared busy definition (printing / paused / error) - a swallowed query keeps the old
     fail-open behaviour when Moonraker is flaky (the test itself will surface real errors)."""
     try:
         return await printer_guard.is_busy(client)
@@ -152,7 +152,7 @@ async def _is_printing(client: MoonrakerClient) -> bool:
 
 async def _has_resonance_tester(client: MoonrakerClient) -> bool:
     # `resonance_tester` is a config *section*, not a queryable status object, so
-    # it never shows up in /printer/objects/list — check the parsed config map.
+    # it never shows up in /printer/objects/list - check the parsed config map.
     try:
         data = await client.query_objects(["configfile"])
     except Exception:
@@ -191,14 +191,14 @@ def _parse_noise(messages: list[str]) -> list[dict[str, Any]]:
 async def measure_noise(moonraker_url: str) -> dict[str, Any]:
     """Runs ``MEASURE_AXES_NOISE`` and returns the accelerometer's idle noise floor.
 
-    A pre-flight check for the sensor mount — **does not move the toolhead** (it just
+    A pre-flight check for the sensor mount - **does not move the toolhead** (it just
     dwells while reading the accelerometer). Print-guarded and requires a configured
     resonance tester. The result is parsed from the G-code console output.
     """
     client = MoonrakerClient(moonraker_url, timeout=_NOISE_TIMEOUT)
     if await _is_printing(client):
         raise shaper_service.ShaperAnalysisError(
-            "Printer is printing or paused — refusing to measure noise"
+            "Printer is printing or paused - refusing to measure noise"
         )
     if not await _has_resonance_tester(client):
         raise shaper_service.ShaperAnalysisError(
@@ -244,13 +244,13 @@ async def _ensure_test_ready(client: MoonrakerClient) -> None:
     """Shared guards + homing for any live capture (raises ShaperAnalysisError)."""
     if await _is_printing(client):
         raise shaper_service.ShaperAnalysisError(
-            "Printer is printing or paused — refusing to run a resonance test"
+            "Printer is printing or paused - refusing to run a resonance test"
         )
     if not await _has_resonance_tester(client):
         raise shaper_service.ShaperAnalysisError(
             "No [resonance_tester] / accelerometer is configured on this printer"
         )
-    # TEST_RESONANCES moves to the probe point, which requires homed axes —
+    # TEST_RESONANCES moves to the probe point, which requires homed axes -
     # home first if the printer isn't already fully homed.
     homed = await _homed_axes(client)
     if not all(axis in homed for axis in "xyz"):
@@ -318,7 +318,7 @@ async def run_live_test(
 async def compare_belts(moonraker_url: str, resonance_dirs: str, **kwargs: Any) -> dict[str, Any]:
     """Runs a belt-direction resonance test on each CoreXY belt and returns both.
 
-    Excites the ``(1,1)`` and ``(1,-1)`` diagonals — the two belts — so their
+    Excites the ``(1,1)`` and ``(1,-1)`` diagonals - the two belts - so their
     responses can be overlaid to spot a tension mismatch. **Moves the toolhead**
     (two sweeps). Print-guarded; requires a configured resonance tester.
     """
@@ -326,7 +326,7 @@ async def compare_belts(moonraker_url: str, resonance_dirs: str, **kwargs: Any) 
     kinematics = await _kinematics(client)
     if "corexy" not in kinematics:
         raise shaper_service.ShaperAnalysisError(
-            f"Belt comparison applies to CoreXY printers — this printer reports "
+            f"Belt comparison applies to CoreXY printers - this printer reports "
             f"'{kinematics}' kinematics"
         )
     await _ensure_test_ready(client)
@@ -349,7 +349,7 @@ async def run_static_excitation(
     max_freq: float = 200.0,
 ) -> dict[str, Any]:
     """Holds an axis vibrating near ``freq`` for ``duration`` s (a slow, narrow
-    ``TEST_RESONANCES`` sweep around the target — no custom macro needed) so the user
+    ``TEST_RESONANCES`` sweep around the target - no custom macro needed) so the user
     can touch parts to find the resonance source, then returns a time-frequency
     spectrogram + an energy-vs-time timeline.
 
@@ -391,7 +391,7 @@ async def run_static_excitation(
 
 
 async def printer_kinematics(moonraker_url: str) -> str | None:
-    """The configured kinematics, or ``None`` when the printer/config is unreadable —
+    """The configured kinematics, or ``None`` when the printer/config is unreadable -
     the UI uses this to hide kinematics-specific tools instead of failing at run time."""
     client = MoonrakerClient(moonraker_url)
     try:
@@ -463,7 +463,7 @@ async def run_vibrations_profile(
 
     **Moves the toolhead a lot** (a minutes-long sweep around bed center). Print-guarded;
     requires a configured resonance tester + accelerometer. The whole sweep runs as one
-    blocking call — kept under nginx's 1200s budget by the coarse default increment.
+    blocking call - kept under nginx's 1200s budget by the coarse default increment.
     """
     size = max(50.0, float(size))
     max_speed = max(10.0, float(max_speed))
@@ -471,7 +471,7 @@ async def run_vibrations_profile(
     min_speed = max(1.0, float(min_speed))
     if size / (max_speed / 60.0) < 0.25:
         raise shaper_service.ShaperAnalysisError(
-            "Movement is too small for the speed — increase SIZE or lower MAX_SPEED"
+            "Movement is too small for the speed - increase SIZE or lower MAX_SPEED"
         )
 
     client = MoonrakerClient(moonraker_url, timeout=_VIB_TIMEOUT)
@@ -720,7 +720,7 @@ async def calibrate_axes_map(
     result = axes_map_service.analyze_axesmap(
         raws[0], raws[1], raws[2], current_axes_map=current_map, accel=accel
     )
-    # No CHIP param was passed when detection found none — Klipper's own default for
+    # No CHIP param was passed when detection found none - Klipper's own default for
     # ACCELEROMETER_MEASURE is adxl345, so the label matches what was actually measured.
     result["chip"] = chip or "adxl345"
     result["source_files"] = [os.path.basename(paths[a]) for a in ("x", "y", "z")]

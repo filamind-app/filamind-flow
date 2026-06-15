@@ -53,7 +53,7 @@ sudo nginx -t && sudo systemctl reload nginx
 The nginx template runs in **reverse-proxy mode**: it serves the SPA and proxies
 Moonraker (`/server`, `/printer`, `/access`, `/machine`, `/websocket`) and the
 backend (`/api`) on the same origin, so no CORS is involved. Serve the pre-built
-`frontend/dist` **as-is** — it resolves Moonraker, the websocket and the backend
+`frontend/dist` **as-is** - it resolves Moonraker, the websocket and the backend
 from `window.location`, so it works at whatever host/IP you reach it by. Do **not**
 set any `VITE_*` override (that would hardcode a host and break other clients).
 
@@ -73,7 +73,7 @@ panel appears in Mainsail/Fluidd's update manager and updates with one click.
 Mainsail supports custom sidebar links via `navi.json`. Place
 `deploy/mainsail-navi.json` at `~/printer_data/config/.theme/navi.json` (merge into
 the existing array if the file is already there) and set `href` to your panel URL.
-Prefer the **LAN IP** (ideally a DHCP-reserved one) over `<hostname>.local` — mDNS
+Prefer the **LAN IP** (ideally a DHCP-reserved one) over `<hostname>.local` - mDNS
 fails on many clients (Windows without Bonjour, Android, other subnets, VPN). The
 one-line installer uses the LAN IP by default; override with `FILAMIND_PUBLIC_HOST`.
 The `icon` field is an SVG path string on a 24×24 viewBox (Material-Design-Icon
@@ -86,18 +86,18 @@ style); the bundled entry uses a brutalist "F". Docs:
 
 ### Fluidd
 
-Fluidd does **not** support custom sidebar links yet — it is an open feature request
+Fluidd does **not** support custom sidebar links yet - it is an open feature request
 ([fluidd-core/fluidd#472](https://github.com/fluidd-core/fluidd/issues/472)). Its
 `.fluidd-theme` folder customizes only styling/logo, not navigation. Until native
-support lands, reach the panel by URL (`http://<your-printer-ip>:8090`) — a bookmark or
+support lands, reach the panel by URL (`http://<your-printer-ip>:8090`) - a bookmark or
 browser start page works well. (Editing Fluidd's built assets to inject a link is
 possible but not recommended: it breaks on every update.)
 
-## 6. FilaMind Kiosk (optional — run FilaMind on the touchscreen)
+## 6. FilaMind Kiosk (optional - run FilaMind on the touchscreen)
 
 To put FilaMind Flow **on the printer's physical touchscreen** instead of (or alongside)
 KlipperScreen, install the kiosk once on the host. **Run it from inside the cloned repo** (the
-script path is relative — from your home directory `scripts/install.sh kiosk` won't be found):
+script path is relative - from your home directory `scripts/install.sh kiosk` won't be found):
 
 ```bash
 cd ~/filamind-flow                           # the directory you cloned the repo into
@@ -108,10 +108,10 @@ sudo bash scripts/install.sh kiosk --uninstall
 
 (Or give the full path from anywhere: `sudo bash ~/filamind-flow/scripts/install.sh kiosk`.)
 
-It **auto-detects** how your screen is driven — **X11** (Xorg/`xinit`, how most KlipperScreen
-images run) or **Wayland** (`cage` on KMS) — by reading `KlipperScreen.service`, installs Chromium +
+It **auto-detects** how your screen is driven - **X11** (Xorg/`xinit`, how most KlipperScreen
+images run) or **Wayland** (`cage` on KMS) - by reading `KlipperScreen.service`, installs Chromium +
 the right compositor, and writes a `filamind-kiosk` systemd service that **conflicts with
-KlipperScreen** (starting one stops the other). It is **not** enabled at boot — KlipperScreen stays
+KlipperScreen** (starting one stops the other). It is **not** enabled at boot - KlipperScreen stays
 the default. The installer prints the detected mode/browser and stops with a clear message if it
 can't find a browser or a usable display stack. Switch from the app
 (**KlipperScreen Studio → Kiosk**) or over SSH:

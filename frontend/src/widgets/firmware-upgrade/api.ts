@@ -480,7 +480,7 @@ export async function flashBeacon(device: string, onChunk: (text: string) => voi
   }
 }
 
-/** Downloads a ZIP backup of all app data — registry, profiles, per-printer data files
+/** Downloads a ZIP backup of all app data - registry, profiles, per-printer data files
  *  and the tuning archive (triggers a browser download). */
 export async function exportBackup(): Promise<void> {
   const { backendUrl } = resolveEndpoints()

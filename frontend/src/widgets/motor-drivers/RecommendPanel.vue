@@ -2,7 +2,7 @@
 /** Per-driver tuning recommendation + apply. Given the assigned motor + a supply voltage,
  *  asks the backend for a suggested run current + StealthChop/SpreadCycle registers, shown
  *  diffed against the live config. The values can then be copied to printer.cfg, or written
- *  live (SET_TMC_*) behind an explicit confirm — and reverted (INIT_TMC). Writes are gated
+ *  live (SET_TMC_*) behind an explicit confirm - and reverted (INIT_TMC). Writes are gated
  *  server-side too (refused while printing).
  */
 import { computed, onMounted, ref } from 'vue'
@@ -25,7 +25,7 @@ import type { ApplyResponse, DriverRecommendation, TmcDriver } from './types'
 const { t } = useI18n({ useScope: 'global' })
 const { go } = useNav()
 
-/** Latest MEASURED motor resonance from the vibrations archive — ground truth shown beside the
+/** Latest MEASURED motor resonance from the vibrations archive - ground truth shown beside the
  *  datasheet physics (the measurement comes from the printer, not a prediction). */
 const measured = ref<{ freq: number; symmetry: number | null; at: string } | null>(null)
 onMounted(() => {
@@ -243,7 +243,7 @@ async function copyConfig(): Promise<void> {
           <tbody>
             <tr v-for="r in rows" :key="r.label" :class="r.changed ? 'text-ink' : 'opacity-60'">
               <td class="text-start">{{ r.label }}</td>
-              <td class="text-end">{{ r.current ?? '—' }}</td>
+              <td class="text-end">{{ r.current ?? '-' }}</td>
               <td class="text-end font-bold" :class="{ 'text-brand-blue': r.changed }">
                 {{ r.recommended }}
               </td>

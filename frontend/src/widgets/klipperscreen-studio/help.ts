@@ -1,7 +1,7 @@
 /** Structure for the KlipperScreen Studio help layer. The translatable text (titles, bodies,
  *  glossary terms/defs) lives in the i18n catalog under `klipperscreenStudio.help.*`; this module
  *  only holds the non-translatable structure: which topics exist (in order), their illustration,
- *  and the glossary term order. Rendered by the shared `HelpDrawer` — the adopted guide pattern.
+ *  and the glossary term order. Rendered by the shared `HelpDrawer` - the adopted guide pattern.
  */
 
 export type HelpIlloKey = 'screen' | 'config' | 'settings' | 'menu' | 'theme' | 'kiosk'

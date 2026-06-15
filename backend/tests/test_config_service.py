@@ -112,12 +112,12 @@ def test_project_graph_includes_and_cross_file_lint() -> None:
 
 
 def test_project_graph_same_basename_is_not_double_pulled() -> None:
-    """An exact-path include must pull only that file, not a same-named file in another folder —
+    """An exact-path include must pull only that file, not a same-named file in another folder -
     otherwise a vendor source copy + the user's active copy fabricate a duplicate-section error."""
     files = [
         ("printer.cfg", "[include user/settings.cfg]\n"),
         ("user/settings.cfg", "[gcode_macro FOO]\ngcode:\n  M117 hi\n"),
-        # A same-named source/template copy living elsewhere — NOT what the include points at.
+        # A same-named source/template copy living elsewhere - NOT what the include points at.
         ("vendor/source/settings.cfg", "[gcode_macro FOO]\ngcode:\n  M117 hi\n"),
     ]
     out = config_service.project_graph_from_files(files)
@@ -127,13 +127,13 @@ def test_project_graph_same_basename_is_not_double_pulled() -> None:
 
 
 def test_project_graph_glob_include_does_not_cross_directories() -> None:
-    """A ``[include dir/*.cfg]`` matches only direct children — it must not swallow files nested in
+    """A ``[include dir/*.cfg]`` matches only direct children - it must not swallow files nested in
     sub-folders (e.g. a vendor's template/source tree), which Klipper's ``glob.glob`` never does."""
     files = [
         ("printer.cfg", "[include pack/*.cfg]\n"),
         ("pack/a.cfg", "[gcode_macro A]\ngcode:\n  M117 a\n"),
         ("pack/b.cfg", "[gcode_macro B]\ngcode:\n  M117 b\n"),
-        # A nested source/template copy of A — must NOT be pulled in by `pack/*.cfg`.
+        # A nested source/template copy of A - must NOT be pulled in by `pack/*.cfg`.
         ("pack/source/a.cfg", "[gcode_macro A]\ngcode:\n  M117 a\n"),
     ]
     out = config_service.project_graph_from_files(files)
@@ -162,13 +162,13 @@ async def test_gather_sanity_flags_overcurrent_and_odd_microsteps() -> None:
     assert ("over_driver_cap", "tmc2209 stepper_x") in by_rule
     # 15 microsteps is not a power of two.
     assert ("odd_microsteps", "tmc2209 stepper_y") in by_rule
-    # 1.0 A on a TMC5160 (~10.6 A ceiling) at 32 microsteps is fine — no finding for stepper_z.
+    # 1.0 A on a TMC5160 (~10.6 A ceiling) at 32 microsteps is fine - no finding for stepper_z.
     assert not any(f["section"] == "tmc5160 stepper_z" for f in out["findings"])
 
 
 async def test_drift_skips_single_continuation_line_values() -> None:
     # "probe_points:" with its value on ONE indented continuation line strips to something that
-    # looks single-line (inline comment embedded) — it must be treated as multi-line and skipped,
+    # looks single-line (inline comment embedded) - it must be treated as multi-line and skipped,
     # not reported as fake drift against the comment-free live value.
     class _Client:
         async def query_objects(self, objects: list[str]) -> dict[str, Any]:
@@ -244,7 +244,7 @@ async def test_apply_section_block_skips_noop_writes() -> None:
         client, "printer.cfg", "[tmc2209 stepper_x]\nrun_current: 0.8\n"
     )
     assert result["ok"] is True and result["changes"] == []
-    assert client.uploads == []  # value already there — nothing written, no backup churn
+    assert client.uploads == []  # value already there - nothing written, no backup churn
 
 
 def test_is_config_file() -> None:
@@ -380,7 +380,7 @@ async def test_read_backup_guards_and_reads() -> None:
             await config_service.read_backup(client, bad)  # type: ignore[arg-type]
 
 
-# ── save / restart path ──────────────────────────────────────────────────────
+# -- save / restart path ------------------------------------------------------
 async def test_save_backs_up_then_overwrites() -> None:
     client = _FakeClient(text="[old]\nk: 1\n")
     new = "[new]\nk: 2\n"
@@ -414,7 +414,7 @@ async def test_save_refused_when_busy() -> None:
 
 async def test_save_refuses_stale_write() -> None:
     # The editor loaded one content, the disk now holds another (a landed SAVE_CONFIG, a
-    # parallel Mainsail edit) — saving with the original fingerprint must 412, not clobber.
+    # parallel Mainsail edit) - saving with the original fingerprint must 412, not clobber.
     loaded = "[x]\nk: 1\n"
     client = _FakeClient(text="[x]\nk: 1\n# changed by SAVE_CONFIG\n")
     stale_sha = config_service._sha256(loaded)
@@ -470,7 +470,7 @@ async def test_restart_refused_when_busy() -> None:
     assert client.restarted is False
 
 
-# ── route-level tests ────────────────────────────────────────────────────────
+# -- route-level tests --------------------------------------------------------
 def _app() -> Any:
     from app.config import Settings, get_settings
     from app.main import create_app
@@ -565,7 +565,7 @@ def test_route_restart_ok(monkeypatch: pytest.MonkeyPatch) -> None:
     assert resp.json()["ok"] is True
 
 
-# ── disk-vs-live drift + adopt (C3) ──────────────────────────────────────────
+# -- disk-vs-live drift + adopt (C3) ------------------------------------------
 def test_adopt_param_surgically_sets_value() -> None:
     from app.services import config_service
 

@@ -1,4 +1,4 @@
-/** Pure display helpers for the Motor Drivers dashboard — kept out of the component
+/** Pure display helpers for the Motor Drivers dashboard - kept out of the component
  *  so they're unit-testable and the template stays declarative.
  */
 import { i18n } from '@/core/i18n'
@@ -28,7 +28,7 @@ export function currentLabel(live: number | null, config: number | null): string
     return base
   }
   if (config != null) return i18n.global.t('motorDrivers.format.amps', { a: config.toFixed(2) })
-  return '—'
+  return '-'
 }
 
 /** Human chopper-mode description, including the StealthChop velocity threshold. */
@@ -40,7 +40,7 @@ export function chopperLabel(d: TmcDriver): string {
       : i18n.global.t('motorDrivers.format.stealthchop')
   }
   if (d.chopper_mode === 'SpreadCycle') return i18n.global.t('motorDrivers.format.spreadcycle')
-  return d.chopper_mode ?? '—'
+  return d.chopper_mode ?? '-'
 }
 
 export type DriverHealthTone = 'idle' | 'ok' | 'warn' | 'error'
@@ -75,7 +75,7 @@ export function healthClass(tone: DriverHealthTone): string {
 export function temperatureLabel(d: TmcDriver): string {
   if (d.temperature != null)
     return i18n.global.t('motorDrivers.format.celsius', { v: d.temperature.toFixed(1) })
-  return d.model === 'tmc2240' ? '—' : i18n.global.t('motorDrivers.format.noSensor')
+  return d.model === 'tmc2240' ? '-' : i18n.global.t('motorDrivers.format.noSensor')
 }
 
 /** Authoritative capabilities from the driver catalog when known, else the
@@ -105,7 +105,7 @@ export function interfaceLabel(d: TmcDriver): string {
 
 /** The effective run-current ceiling: the server's `current_cap` (= min(model code cap, the
  *  assigned motor's rating)) when known, else the catalog's model cap. Preferring `current_cap`
- *  fixes the misleading "≤ 10.6 A" a TMC5160's *sanity ceiling* would otherwise show (#102) —
+ *  fixes the misleading "≤ 10.6 A" a TMC5160's *sanity ceiling* would otherwise show (#102) -
  *  once a motor is assigned, the real (motor-bound) limit is used. */
 export function effectiveCap(d: TmcDriver): number | null {
   return d.current_cap ?? d.info?.max_current_a ?? null
@@ -117,14 +117,14 @@ export function maxCurrentLabel(d: TmcDriver): string {
   return a != null ? i18n.global.t('motorDrivers.format.maxCurrent', { a: a.toFixed(1) }) : ''
 }
 
-/** Whether the run current is close to (or over) the effective cap — a gentle warning. */
+/** Whether the run current is close to (or over) the effective cap - a gentle warning. */
 export function nearCurrentCap(d: TmcDriver): boolean {
   const cap = effectiveCap(d)
   const run = d.run_current ?? d.run_current_config
   return cap != null && run != null && run >= cap * 0.9
 }
 
-/** "stepper_x" -> "X axis" / "extruder" -> "Extruder" — a friendly card heading. */
+/** "stepper_x" -> "X axis" / "extruder" -> "Extruder" - a friendly card heading. */
 export function axisHeading(d: TmcDriver): string {
   if (d.axis && /^E\d*$/.test(d.axis))
     return d.axis === 'E'
@@ -148,7 +148,7 @@ export function homingMethodLabel(method: string | null): string {
     case 'inherited':
       return i18n.global.t('motorDrivers.format.homing.inherited')
     default:
-      return '—'
+      return '-'
   }
 }
 
@@ -165,7 +165,7 @@ export function homingApplies(method: string | null): boolean {
 
 /** The live trigger state for an axis from the `/api/drivers/endstops` map. Moonraker keys
  *  endstops by the rail/stepper name, which is `stepper_x` on some printers (the SV08) and the
- *  bare axis letter `x` on others — so try the stepper section name first, then the axis letter. */
+ *  bare axis letter `x` on others - so try the stepper section name first, then the axis letter. */
 export function endstopStateFor(
   states: Record<string, string>,
   stepper: string,
@@ -177,7 +177,7 @@ export function endstopStateFor(
   return null
 }
 
-/** Input range + polarity hint for a StallGuard threshold register — which differs by model,
+/** Input range + polarity hint for a StallGuard threshold register - which differs by model,
  *  and getting it wrong makes the control feel backwards. `sgthrs` (2209) and `sg4_thrs` (2240)
  *  are unsigned 0–255 where HIGHER is more sensitive; `sgt` (2130 / 5160 / 2660) is a signed
  *  −64…63 where LOWER is more sensitive. */
@@ -209,7 +209,7 @@ export function motorSpecLabel(m: MotorSpec): string {
     parts.push(
       i18n.global.t('motorDrivers.format.spec.mh', { v: (m.inductance_H * 1000).toFixed(1) }),
     )
-  return parts.join(' · ') || '—'
+  return parts.join(' · ') || '-'
 }
 
 /** Filters the motor catalog by a free-text query over name + model + manufacturer. */

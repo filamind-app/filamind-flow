@@ -66,7 +66,7 @@ def test_analyze_raw_accelerometer_csv() -> None:
 
 
 def test_analyze_tolerates_a_truncated_final_row() -> None:
-    # A capture read mid-write can end in a truncated (2-column) line — the parser
+    # A capture read mid-write can end in a truncated (2-column) line - the parser
     # must skip it rather than erroring on "the number of columns changed".
     raw = _raw_accel_csv().rstrip(b"\n") + b"\n8183.379,1924.5\n"
     result = shaper_service.analyze(raw, shapers=["mzv"])
@@ -94,7 +94,7 @@ def test_analyze_route() -> None:
 
 
 def test_analyze_surfaces_a_failed_init_as_a_clean_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    # A missing dependency (e.g. numpy not installed) must not 500 — it should be
+    # A missing dependency (e.g. numpy not installed) must not 500 - it should be
     # caught and reported, since ShaperCalibrate imports numpy on construction.
     def boom(*_a: object, **_k: object) -> object:
         raise Exception("Failed to import `numpy` module")

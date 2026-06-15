@@ -1,4 +1,4 @@
-"""External firmware — register pre-built firmware files (``.bin`` / ``.uf2`` /
+"""External firmware - register pre-built firmware files (``.bin`` / ``.uf2`` /
 ``.elf`` / ``.hex``) that were produced *elsewhere* and flash them directly,
 each with its own editable flash properties.
 
@@ -6,7 +6,7 @@ Unlike a *profile* (which FilaMind builds from Kconfig), an external firmware is
 a binary the user brings in. We store the bytes under ``<data_dir>/external-firmware/``
 next to a ``<name>.meta.json`` sidecar holding the editable properties (a display
 label, flash method, bootloader offset, CAN interface, notes). No build step is
-involved — the file is flashed as-is.
+involved - the file is flashed as-is.
 """
 
 from __future__ import annotations
@@ -129,7 +129,7 @@ def inspect_firmware(path: str) -> dict[str, Any]:
     Klipper stores a data dictionary (zlib-compressed JSON) that records the git
     version, the app, and a ``config`` section of build-time constants (MCU, clock
     frequency, comm pins, enabled features, …). We surface all of those read-only
-    — they're compiled in and cannot be edited without rebuilding from source.
+    - they're compiled in and cannot be edited without rebuilding from source.
     """
     info: dict[str, Any] = {
         "detected_version": None,

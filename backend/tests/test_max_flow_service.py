@@ -73,7 +73,7 @@ def test_hotend_hint() -> None:
 
 def test_hotend_table_expanded_and_contract() -> None:
     """Phase 7: the table was expanded (8 → ~96) and every row carries the key the
-    frontend reads (``expected_max_flow_mm3s``) — the bug was the data using a
+    frontend reads (``expected_max_flow_mm3s``) - the bug was the data using a
     different key so the flow-hint / max auto-fill never fired."""
     rows = reference_data.hotends()
     assert len(rows) > 50, "hotend table should be expanded from the big DB"
@@ -96,7 +96,7 @@ def test_plan_shape() -> None:
     assert out["steps"][0]["flow_mm3s"] == 5
 
 
-# ── route-level ──────────────────────────────────────────────────────────────
+# -- route-level --------------------------------------------------------------
 def test_route_plan_ok() -> None:
     from fastapi.testclient import TestClient
 
@@ -121,7 +121,7 @@ def test_route_plan_bad_temp_400() -> None:
     assert resp.status_code == 400
 
 
-# ── live measurement loop (mocked client; no real motion) ─────────────────────
+# -- live measurement loop (mocked client; no real motion) ---------------------
 #: The StallGuard sanity pre-check (issue #319) extrudes this many calibration samples at
 #: temperature before the ramp; scripted sg lists must front-load enough usable readings.
 _PRECHECK = mfs._PRECHECK_SAMPLES
@@ -260,14 +260,14 @@ async def test_run_turns_heater_off_on_error() -> None:
     assert "M104 S0" in client.gcodes  # heater cut despite the failure
 
 
-# ── H1: safe-extrusion temperature floor (180 °C) ─────────────────────────────
+# -- H1: safe-extrusion temperature floor (180 °C) -----------------------------
 def test_temp_floor_is_180() -> None:
     with pytest.raises(ValueError):
         mfs.validate(RampParams(temperature=170))  # below the 180 floor
     mfs.validate(RampParams(temperature=180))  # exactly the floor is allowed
 
 
-# ── C2: SG4 bias-region floor ─────────────────────────────────────────────────
+# -- C2: SG4 bias-region floor -------------------------------------------------
 def test_sg_floor_per_driver() -> None:
     assert mfs._sg_floor("tmc2209") == 50.0
     assert mfs._sg_floor("tmc2240") == 50.0
@@ -285,7 +285,7 @@ async def test_run_drops_bias_region_samples() -> None:
     assert out["sg_samples_seen"] is True
 
 
-# ── #319: StallGuard sanity pre-check (bail out before the ramp on an unusable signal) ────────
+# -- #319: StallGuard sanity pre-check (bail out before the ramp on an unusable signal) --------
 async def test_run_aborts_when_sg_field_absent() -> None:
     # The extruder status never carries an SG field → the live signal is unreadable here.
     client = _RunClient([], sg_absent=True)
@@ -294,7 +294,7 @@ async def test_run_aborts_when_sg_field_absent() -> None:
     assert "M104 S0" in client.gcodes  # heater cut even though we bailed before the ramp
     # The ramp never started: only the pre-check's calibration extrudes ran, never a full step set.
     extrudes = [g for g in client.gcodes if g.startswith("G1 E")]
-    assert len(extrudes) == _PRECHECK  # pre-check only — no ramp steps
+    assert len(extrudes) == _PRECHECK  # pre-check only - no ramp steps
 
 
 async def test_run_aborts_when_sg_constant_zero() -> None:
@@ -305,7 +305,7 @@ async def test_run_aborts_when_sg_constant_zero() -> None:
     assert "M104 S0" in client.gcodes  # heater still cut
 
 
-# ── home + center the nozzle for a clear view before heating ──────────────────────────────────
+# -- home + center the nozzle for a clear view before heating ----------------------------------
 async def test_run_homes_when_not_homed() -> None:
     client = _RunClient(_PRECHECK_OK + [100.0] * 12, homed="")  # nothing homed yet
     await mfs.run_max_flow(client, RampParams(**_RUN_PARAMS))  # type: ignore[arg-type]
@@ -334,7 +334,7 @@ async def test_run_park_for_view_disabled() -> None:
     assert not any(g.startswith("G1 X") for g in client.gcodes)  # no positioning move
 
 
-# ── auto-StealthChop: temporary config write for SG4, reverted (commented) afterward ──────────
+# -- auto-StealthChop: temporary config write for SG4, reverted (commented) afterward ----------
 def _active_stealthchop_lines(cfg: str) -> list[str]:
     return [
         ln
@@ -399,7 +399,7 @@ async def test_auto_stealthchop_noop_when_user_already_has_it() -> None:
 
 async def test_auto_stealthchop_reverts_when_enable_restart_fails() -> None:
     # The cfg is written, then the firmware restart fails mid-enable. printer.cfg must NOT be left
-    # with an active stealthchop line — the revert is gated on intent, not the enable's return.
+    # with an active stealthchop line - the revert is gated on intent, not the enable's return.
     client = _RunClient(
         _PRECHECK_OK + [100.0] * 12,
         config={"tmc2209 extruder": {"run_current": "0.8"}},
@@ -416,7 +416,7 @@ async def test_auto_stealthchop_reverts_when_enable_restart_fails() -> None:
     assert client.uploads.count("printer.cfg") == 2  # enable wrote it, revert rewrote it
 
 
-# ── method routing: accelerometer (vibration) fallback ───────────────────────────────────────
+# -- method routing: accelerometer (vibration) fallback ---------------------------------------
 async def test_auto_falls_back_to_accel_when_sg_unusable(monkeypatch: pytest.MonkeyPatch) -> None:
     async def fake_detect(_client: object) -> str:
         return "adxl345"
@@ -442,7 +442,7 @@ async def test_method_accel_skips_stallguard(monkeypatch: pytest.MonkeyPatch) ->
 
     monkeypatch.setattr(mfs.max_flow_accel, "detect_chip", fake_detect)
     monkeypatch.setattr(mfs.max_flow_accel, "ramp", fake_ramp)
-    # No StallGuard config at all — the accel method must not care.
+    # No StallGuard config at all - the accel method must not care.
     client = _RunClient([], config={"tmc2209 extruder": {"run_current": "0.8"}})
     out = await mfs.run_max_flow(client, RampParams(method="accel", **_RUN_PARAMS))  # type: ignore[arg-type]
     assert out["method"] == "accel"
@@ -481,7 +481,7 @@ async def test_enable_disable_stealthchop_helpers_round_trip() -> None:
     assert client.restarts == 2
 
 
-# ── C1: chopper-mode / StallGuard preflight ───────────────────────────────────
+# -- C1: chopper-mode / StallGuard preflight -----------------------------------
 async def test_preflight_rejects_non_stallguard_driver() -> None:
     client = _RunClient([100.0] * 12)
     with pytest.raises(mfs.MaxFlowPreflightError):

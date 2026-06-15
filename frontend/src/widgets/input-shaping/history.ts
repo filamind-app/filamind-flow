@@ -1,5 +1,5 @@
 /** A small, browser-local calibration history (localStorage) so you can see how
- *  an axis's recommended shaper / frequency drifts over time. Frontend-only — no
+ *  an axis's recommended shaper / frequency drifts over time. Frontend-only - no
  *  backend or printer needed.
  */
 
@@ -9,9 +9,9 @@ export interface HistoryEntry {
   axis: string | null
   shaper: string
   freq: number
-  /** Measurement quality grade (A–F) — optional for entries saved before v0.38. */
+  /** Measurement quality grade (A–F) - optional for entries saved before v0.38. */
   grade?: string
-  /** 0–100 quality score — optional for older entries. */
+  /** 0–100 quality score - optional for older entries. */
   score?: number
 }
 
@@ -42,13 +42,13 @@ export function addHistory(entry: HistoryEntry): HistoryEntry[] {
   try {
     localStorage.setItem(KEY, JSON.stringify(next))
   } catch {
-    /* storage unavailable (private mode / quota) — keep the in-memory list */
+    /* storage unavailable (private mode / quota) - keep the in-memory list */
   }
   return next
 }
 
 /** Annotates each entry (newest-first) with how its score compares to the previous
- *  calibration of the *same axis* — so the effect of a mechanical fix is visible. */
+ *  calibration of the *same axis* - so the effect of a mechanical fix is visible. */
 export function withTrends(entries: HistoryEntry[]): HistoryEntryWithTrend[] {
   return entries.map((entry, i) => {
     if (entry.score == null) return { ...entry, trend: 'none' }

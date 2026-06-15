@@ -16,7 +16,7 @@ _SETTINGS: dict[str, Any] = {
     "stepper_x": {
         "microsteps": 16,
         "rotation_distance": 40,
-        # Mirror the real SV08 printer.cfg: a stray space after the colon (#104) — still sensorless.
+        # Mirror the real SV08 printer.cfg: a stray space after the colon (#104) - still sensorless.
         "endstop_pin": "tmc2209_stepper_x: virtual_endstop",
     },
     "tmc2209 stepper_x": {
@@ -60,7 +60,7 @@ _LIVE: dict[str, Any] = {
     "tmc2209 stepper_x": {
         "run_current": 1.08,
         "hold_current": 0.79,
-        "drv_status": None,  # idle — motor disabled
+        "drv_status": None,  # idle - motor disabled
         "temperature": None,  # 2209 has no sensor
     },
     "tmc2240 stepper_z": {
@@ -157,7 +157,7 @@ def test_drivers_status_parses_mixed_models(monkeypatch: pytest.MonkeyPatch) -> 
 
     # Homing method is classified from endstop_pin, not from "has a StallGuard field" (#101).
     assert x["homing_method"] == "sensorless"  # tmc2209_stepper_x:virtual_endstop
-    assert z["homing_method"] == "probe"  # probe:z_virtual_endstop — NOT sensorless
+    assert z["homing_method"] == "probe"  # probe:z_virtual_endstop - NOT sensorless
     assert e["homing_method"] == "inherited"  # extruder has no endstop_pin
 
     # Effective run-current cap (P10): a 2209 with no assigned motor falls back to its 2.0 A
@@ -212,7 +212,7 @@ def test_driver_live_idle(monkeypatch: pytest.MonkeyPatch) -> None:
     client = TestClient(create_app())
     body = client.get("/api/drivers/live/stepper_x").json()
     assert body["model"] == "tmc2209"
-    assert body["drv_status"] is None  # idle — motor disabled
+    assert body["drv_status"] is None  # idle - motor disabled
 
 
 def test_motor_catalog_route() -> None:
@@ -224,7 +224,7 @@ def test_motor_catalog_route() -> None:
     assert body["manufacturers"]
     first = body["motors"][0]
     assert {"manufacturer", "model", "resistance_ohm", "holding_torque_Nm"} <= first.keys()
-    # Models must be unique — duplicate keys break the picker's filtered v-for (#89).
+    # Models must be unique - duplicate keys break the picker's filtered v-for (#89).
     models = [m["model"] for m in body["motors"]]
     assert len(models) == len(set(models)), "duplicate motor models in the catalog"
 
@@ -275,7 +275,7 @@ def test_classify_homing() -> None:
     # sensorless: a TMC virtual endstop
     assert c({"endstop_pin": "tmc2209_stepper_x:virtual_endstop"}, "tmc2209")[0] == "sensorless"
     assert c({"endstop_pin": "^tmc5160_stepper_y:virtual_endstop"}, "tmc5160")[0] == "sensorless"
-    # whitespace after the colon is still a sensorless virtual endstop — Klipper strips it,
+    # whitespace after the colon is still a sensorless virtual endstop - Klipper strips it,
     # and the real SV08 printer.cfg has exactly this on stepper_x (#104).
     assert c({"endstop_pin": "tmc2209_stepper_x: virtual_endstop"}, "tmc2209")[0] == "sensorless"
     # probe-homed Z (with or without a stray space)
@@ -286,7 +286,7 @@ def test_classify_homing() -> None:
     assert c({"endstop_pin": "!EBBCan:PB6"}, "tmc2240")[0] == "physical"
     # extra stepper with no endstop_pin → inherited
     assert c({"microsteps": 16}, "tmc2209")[0] == "inherited"
-    # TMC2208 can't do sensorless — flagged misconfigured
+    # TMC2208 can't do sensorless - flagged misconfigured
     method, _pin, note = c({"endstop_pin": "tmc2208_stepper_x:virtual_endstop"}, "tmc2208")
     assert method == "sensorless" and note is not None and "2208" in note
     # explicit override off downgrades a virtual pin away from sensorless

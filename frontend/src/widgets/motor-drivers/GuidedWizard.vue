@@ -1,6 +1,6 @@
 <script setup lang="ts">
-/** Guided driver-tuning wizard (P7). Walks one driver through the existing steps —
- *  choose → assign motor → recommend & apply → (sensorless) → done — reusing the same
+/** Guided driver-tuning wizard (P7). Walks one driver through the existing steps -
+ *  choose → assign motor → recommend & apply → (sensorless) → done - reusing the same
  *  panels the dashboard uses, so there's one source of truth and the same safety gating.
  */
 import { computed, ref } from 'vue'
@@ -91,7 +91,7 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
       >
     </div>
 
-    <!-- Step 1 — choose a driver -->
+    <!-- Step 1 - choose a driver -->
     <div v-if="step === 1" class="space-y-1.5">
       <p class="text-xs opacity-70">{{ t('motorDrivers.guidedWizard.step1Intro') }}</p>
       <div class="grid gap-1.5 sm:grid-cols-2">

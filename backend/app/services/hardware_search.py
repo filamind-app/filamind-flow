@@ -1,4 +1,4 @@
-"""Hardware-DB search — pure filtering/pagination over the reference component list.
+"""Hardware-DB search - pure filtering/pagination over the reference component list.
 
 Hardware-free: filters the curated component rows by free-text query, category and
 manufacturer, and paginates. Backs the Hardware Browser widget's ``/api/hardware`` route.

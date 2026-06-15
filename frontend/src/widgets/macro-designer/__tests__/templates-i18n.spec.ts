@@ -11,7 +11,7 @@ function plugins() {
 }
 
 describe('Macro Designer template renders through i18n (no leaked keys)', () => {
-  it('MacroDesignerWidget — intro + editor + help, no raw key paths', () => {
+  it('MacroDesignerWidget - intro + editor + help, no raw key paths', () => {
     const w = mount(MacroDesignerWidget, plugins())
     const text = w.text()
     const leaked = text.match(/macroDesigner\.[a-zA-Z]/)

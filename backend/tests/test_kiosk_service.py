@@ -1,4 +1,4 @@
-"""Tests for the FilaMind Kiosk service — status derivation + the reversible-swap command
+"""Tests for the FilaMind Kiosk service - status derivation + the reversible-swap command
 sequences (systemctl is stubbed; nothing is actually started)."""
 
 from __future__ import annotations
@@ -96,7 +96,7 @@ async def test_switch_to_kiosk_not_installed_raises(monkeypatch: pytest.MonkeyPa
 async def test_switch_to_kiosk_temporary_just_starts(monkeypatch: pytest.MonkeyPatch) -> None:
     ctl = _install(monkeypatch, FakeCtl(kiosk_installed=True, screen_active=True))
     out = await kiosk_service.switch_to_kiosk(persist=False)
-    # Temporary swap: only starts the kiosk (Conflicts= stops KlipperScreen) — no enable/disable.
+    # Temporary swap: only starts the kiosk (Conflicts= stops KlipperScreen) - no enable/disable.
     assert ctl.actions == ["start filamind-kiosk.service"]
     assert out["action"] == "kiosk"
     assert out["persist"] is False

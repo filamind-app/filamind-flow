@@ -65,7 +65,7 @@ const staticAxis = ref<'x' | 'y'>('x')
 const staticFreq = ref('50')
 const staticDuration = ref('15')
 const vibResult = ref<VibrationsProfileResult | null>(null)
-/** Printer kinematics (null until known / when offline) — gates the CoreXY-only belts tool. */
+/** Printer kinematics (null until known / when offline) - gates the CoreXY-only belts tool. */
 const kinematics = ref<string | null>(null)
 const beltsSupported = computed(
   () => kinematics.value == null || kinematics.value.includes('corexy'),
@@ -256,7 +256,7 @@ async function runVib(): Promise<void> {
 }
 
 // After a reload: pick a still-running sweep back up, or collect a finished result the dropped
-// tab never saw — the run survives the browser now, not just the request.
+// tab never saw - the run survives the browser now, not just the request.
 onMounted(async () => {
   fetchKinematics()
     .then((kin) => (kinematics.value = kin))
@@ -292,7 +292,7 @@ onMounted(async () => {
       >
     </i18n-t>
 
-    <!-- Accelerometer noise pre-check — motion-free, validates the sensor mount. -->
+    <!-- Accelerometer noise pre-check - motion-free, validates the sensor mount. -->
     <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
       <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.noiseTitle') }}</span>
@@ -366,7 +366,7 @@ onMounted(async () => {
       </i18n-t>
     </div>
 
-    <!-- Compare belts (CoreXY) — its own confirm. -->
+    <!-- Compare belts (CoreXY) - its own confirm. -->
     <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
       <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.beltsTitle') }}</span>
@@ -396,7 +396,7 @@ onMounted(async () => {
       <HelpNote topic="belts" />
     </div>
 
-    <!-- Axes map — its own confirm. -->
+    <!-- Axes map - its own confirm. -->
     <div class="space-y-1 rounded-brutal border-2 border-ink p-2">
       <div class="flex flex-wrap items-center gap-2 text-[11px]">
         <span class="font-bold">{{ t('inputShaping.fromPrinter.axesTitle') }}</span>

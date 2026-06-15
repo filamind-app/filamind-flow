@@ -14,7 +14,7 @@ import type { ConfigTemplate } from './types'
 
 const { t, te } = useI18n({ useScope: 'global' })
 
-// Backend categories are English data values — translate via a slug key when one
+// Backend categories are English data values - translate via a slug key when one
 // exists, otherwise show the raw value (future categories degrade gracefully).
 function categoryLabel(c: string): string {
   const key = `configTemplates.categories.${c.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`

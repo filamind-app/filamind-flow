@@ -139,7 +139,7 @@ def test_optional_options_shown_as_toggles(tmp_path: Path) -> None:
         client.post("/api/firmware/config/tree", json={"values": [], "show_optional": True}).json()
     )
     assert "WANT_DEMO_FEATURE" in shown
-    # Shown as a normal toggle (matching the reference tool), not locked — Klipper
+    # Shown as a normal toggle (matching the reference tool), not locked - Klipper
     # gates these behind HAVE_LIMITED_CODE_SIZE (select-only for <64KB MCUs).
     assert shown["WANT_DEMO_FEATURE"]["readonly"] is False
 

@@ -31,7 +31,7 @@ async function errorFrom(response: Response, fallback: string): Promise<ApiError
     const body = (await response.json()) as { detail?: string }
     if (body?.detail) detail = body.detail
   } catch {
-    // non-JSON error body — keep the fallback
+    // non-JSON error body - keep the fallback
   }
   return new ApiError(detail, response.status)
 }

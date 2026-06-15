@@ -1,7 +1,7 @@
 """Read-only reference-data endpoints (Phase 0 foundation).
 
 Serve the curated Klipper datasets (StallGuard tuning, hotend table, board/MCU patterns,
-built-in macros) to the frontend. Pure static reads — no Moonraker, no writes, no gating.
+built-in macros) to the frontend. Pure static reads - no Moonraker, no writes, no gating.
 Payloads are returned verbatim (no response_model) so no extracted field is ever dropped.
 """
 

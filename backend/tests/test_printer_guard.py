@@ -39,7 +39,7 @@ async def test_acquire_is_exclusive_and_names_the_holder() -> None:
             async with printer_guard.acquire("max_flow"):
                 pass
         assert exc_info.value.operation == "resonance_test"
-    # Released on exit — a new operation can run.
+    # Released on exit - a new operation can run.
     assert printer_guard.status() == {"locked": False, "operation": None}
     async with printer_guard.acquire("max_flow"):
         assert printer_guard.status()["operation"] == "max_flow"

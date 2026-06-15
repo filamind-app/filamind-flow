@@ -1,9 +1,9 @@
-"""Machine Doctor — one scan, one graded report.
+"""Machine Doctor - one scan, one graded report.
 
 A thin aggregator over analyzers that already exist (no new analysis code): the pin doctor,
 the TMC value-sanity check, disk-vs-live drift, the project include/lint graph, per-MCU
 firmware sync, the hardware-change diff against the saved baseline, and the install health
-checks. Each source's findings are normalized into ``{code, level, params, link}`` — the
+checks. Each source's findings are normalized into ``{code, level, params, link}`` - the
 frontend translates ``code`` + ``params`` (no English leaks from here) and turns ``link``
 into a deep-link button into the widget that fixes the problem.
 
@@ -43,7 +43,7 @@ def _grade(score: float) -> str:
 
 #: Weighted health pillars. Each contributes a 0-100 sub-score; weights are renormalized over the
 #: pillars that COULD be measured, so an unmeasurable signal (no shaper runs yet, Moonraker down)
-#: never penalizes the grade — it just drops out. Config integrity (the original additive score)
+#: never penalizes the grade - it just drops out. Config integrity (the original additive score)
 #: always contributes, so the denominator is never zero.
 _PILLAR_WEIGHTS = {"config": 0.45, "firmware": 0.15, "services": 0.15, "tuning": 0.15, "flow": 0.10}
 _PILLAR_ORDER = ("config", "firmware", "services", "tuning", "flow")
@@ -110,7 +110,7 @@ def _flow_pillar(last: dict[str, Any] | None) -> tuple[float | None, dict[str, A
 
 def _assessment(grade: str, pillars: list[dict[str, Any]]) -> dict[str, Any]:
     """A translatable verdict code: ``healthy``, or ``attention`` / ``critical`` naming the
-    weakest measured pillar. No English here — the frontend renders the code + params."""
+    weakest measured pillar. No English here - the frontend renders the code + params."""
     failing = sorted(
         (p for p in pillars if p["score"] is not None and p["status"] in ("warn", "fail")),
         key=lambda p: p["score"],
@@ -185,7 +185,7 @@ async def _scan_pins(client: MoonrakerClient, data_dir: str) -> dict[str, Any]:
                 findings.append(
                     _finding(
                         # A board caveat is a heads-up about electronics that are wired BY DESIGN
-                        # (e.g. a mains-switched pin) — informational, never scored.
+                        # (e.g. a mains-switched pin) - informational, never scored.
                         "pins.caveat",
                         "info",
                         {"pin": f.get("pin"), "mcu": mcu.get("name")},
@@ -264,7 +264,7 @@ async def _scan_firmware(settings: Settings) -> dict[str, Any]:
     host = out.get("host")
     host_version = host.get("version") if isinstance(host, dict) else None
     for mcu in out.get("mcus", []):
-        # in_sync=False is only a real finding when we know what the host runs — without a host
+        # in_sync=False is only a real finding when we know what the host runs - without a host
         # version the comparison is meaningless, and reporting it would be a fake warning.
         if mcu.get("in_sync") is False and host_version:
             findings.append(
@@ -327,7 +327,7 @@ _CATEGORIES = ("pins", "drivers", "drift", "project", "firmware", "hardware", "i
 async def run_scan(settings: Settings) -> dict[str, Any]:
     """Run every analyzer concurrently and fold the results into one graded report.
 
-    A category whose analyzer raises degrades to ``status: "unknown"`` with no findings —
+    A category whose analyzer raises degrades to ``status: "unknown"`` with no findings -
     the report says what it could not check instead of failing the whole scan.
     """
     client = MoonrakerClient(settings.moonraker_url)
@@ -369,7 +369,7 @@ async def run_scan(settings: Settings) -> dict[str, Any]:
             }
         )
 
-    # Config integrity — the original transparent additive score; always measured.
+    # Config integrity - the original transparent additive score; always measured.
     config_score = max(0.0, 100.0 - 25.0 * errors - 8.0 * warnings)
 
     # The other pillars draw on data the app already computes elsewhere; each degrades to None

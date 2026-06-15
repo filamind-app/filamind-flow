@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** "Suggest a part" — a per-category form that composes a catalog-shaped JSON fragment and opens a
+/** "Suggest a part" - a per-category form that composes a catalog-shaped JSON fragment and opens a
  *  pre-filled GitHub issue for review (no token, never auto-posts). Field structure comes from
  *  contributeSchema; labels come from i18n (hardwareBrowser.suggest.*). Mirrors the report dialog:
  *  Teleport + backdrop + Escape, a form phase and a sent phase. */
@@ -134,7 +134,7 @@ async function copyJson(): Promise<void> {
     await navigator.clipboard?.writeText(fragmentJson.value)
     copied.value = true
   } catch {
-    // best-effort — the JSON is shown in the preview for manual copy when the clipboard is blocked
+    // best-effort - the JSON is shown in the preview for manual copy when the clipboard is blocked
   }
 }
 
@@ -215,7 +215,7 @@ function submit(): void {
                 v-model="values[f.key]"
                 class="w-full rounded-brutal border-2 border-ink bg-surface p-1.5 text-xs"
               >
-                <option value="">—</option>
+                <option value="">-</option>
                 <option v-for="o in f.options" :key="o" :value="o">{{ o }}</option>
               </select>
               <label v-else-if="f.type === 'checkbox'" class="flex items-center gap-2 pt-1">
@@ -249,7 +249,7 @@ function submit(): void {
                   v-model="values[f.key]"
                   class="w-full rounded-brutal border-2 border-ink bg-surface p-1 text-xs"
                 >
-                  <option value="">—</option>
+                  <option value="">-</option>
                   <option v-for="o in f.options" :key="o" :value="o">{{ o }}</option>
                 </select>
                 <label v-else-if="f.type === 'checkbox'" class="flex items-center gap-1.5 pt-1">

@@ -63,18 +63,18 @@ testable in isolation.
 
 A single long-lived client (`core/moonraker/client.ts`) owns the WebSocket:
 
-- **Request/response** — each `call()` gets an incrementing id. Responses resolve
+- **Request/response** - each `call()` gets an incrementing id. Responses resolve
   the matching pending promise, with a timeout as a safety net.
-- **Notifications** — `notify_*` messages are fanned out to listeners registered
+- **Notifications** - `notify_*` messages are fanned out to listeners registered
   by method name. The store, for example, listens for `notify_status_update`.
-- **Reconnection** — exponential backoff. On reconnect the remembered subscription
+- **Reconnection** - exponential backoff. On reconnect the remembered subscription
   set is re-sent, so widgets keep receiving updates transparently.
 
 ### Widget lifecycle
 
 1. At startup, `registerWidgets()` calls `registerWidget(...)` for each feature.
 2. On connect, the store subscribes to `widgetRegistry.aggregateSubscriptions()`
-   — the merged set of every widget's required printer objects — in one call.
+   - the merged set of every widget's required printer objects - in one call.
 3. `notify_status_update` deltas are shallow-merged into the reactive store.
 4. The dashboard renders each registered widget inside a Neo-Brutalist frame.
    Widgets read from the store and send commands through the shared client.
@@ -105,7 +105,7 @@ a 600+ motor catalog from the same hardware reference. `/api/drivers/mapping` is
 persisted stepper→motor map, and `/api/drivers/recommend` produces a run-current and
 register recommendation from a built-in `motor_constants` physics model. Finally,
 `/api/drivers/{config-block,apply,init,autotune,stallguard,home}` handle copy-to-config
-and the gated live writes — `SET_TMC_*`, `INIT_TMC`, `AUTOTUNE_TMC` — plus the
+and the gated live writes - `SET_TMC_*`, `INIT_TMC`, `AUTOTUNE_TMC` - plus the
 sensorless-homing threshold and test-home. All of those writes are refused while the
 printer is running.
 
@@ -125,12 +125,12 @@ This is a curated, read-only reference dataset. It compiles into
 `app/data/reference/hardware.sqlite` (~7 MB), built from a local source by
 `scripts/build_hardware_db.py`, which is not in the repo. At import time it is
 reconstructed once into a module-global dict (`reference_data.py`) and is immutable
-after that — handlers only ever read, so there are no locks.
+after that - handlers only ever read, so there are no locks.
 
 At build time the raw rows (`items[]`) are deduped and enriched into canonical entity
 arrays: `boards`, `drivers`, `motors`, `hosts`, and a generic `catalog` covering nine
 more categories. Each entity carries its specs along with a copyable Klipper config
-snippet — a board pin-map, a `[tmcXXXX]` driver block, a recommended motor
+snippet - a board pin-map, a `[tmcXXXX]` driver block, a recommended motor
 `run_current`, an `[mcu host]` block, and so on. Per type there is a small
 `*_search.py` that filters and paginates down to lightweight summaries, plus two
 routes: a paginated list and a `/{id}` full record. A `manufacturers` directory and a
@@ -150,7 +150,7 @@ canonicalises manufacturers, giving each a stable `manufacturer_id` plus auto-de
 aliases so variant spellings collapse to one id, with junk and placeholders excluded.
 It promotes the MCU to a first-class entity by parsing board `specs.MCU` through a
 chip-family whitelist down to a canonical part. And it builds an adjacency map keyed by
-composite `<type>:<id>` ids, which matters because ids are not unique across types —
+composite `<type>:<id>` ids, which matters because ids are not unique across types -
 `sovol-sv08` is both a board and a host. That graph powers
 `GET /api/hardware/manufacturers[/{id}]`, `/mcus[/{id}]`, a generic
 `GET /api/hardware/{type}/{id}/related`, and `?expand=related` on the detail routes,
@@ -158,12 +158,12 @@ all O(1). A widget can pull an entity and everything related to it in a single c
 CI edge-validator proves the graph has no dangling edges.
 
 The Hardware Browser surfaces this graph (DB-3a). Every entity's detail shows clickable
-cross-link chips — manufacturer, MCU, drivers — that deep-link to the related entity,
+cross-link chips - manufacturer, MCU, drivers - that deep-link to the related entity,
 and **Brands** and **MCUs** tabs let you browse outward from a maker or a chip. The five
 detail panels share one `EntityCatalog.vue` shell that handles search, list, pagination,
 expand, copy, and deep-link. Each panel is a thin wrapper supplying a `fetchPage` closure
 plus its own summary and detail slots (DB-3b). The shell's `#facets` slot carries each
-panel's filters — class, NEMA, kind, manufacturer — backed by `GET /api/hardware/facets`
+panel's filters - class, NEMA, kind, manufacturer - backed by `GET /api/hardware/facets`
 (DB-3c). See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
 
 ## Design system
@@ -171,12 +171,12 @@ panel's filters — class, NEMA, kind, manufacturer — backed by `GET /api/hard
 Neo-Brutalism, expressed as Tailwind tokens (`frontend/tailwind.config.ts`) and a
 few component classes (`frontend/src/assets/styles/main.css`):
 
-- **Color** — warm paper background, ink (`#111`) foreground, saturated flat
+- **Color** - warm paper background, ink (`#111`) foreground, saturated flat
   accents (mocha-brown brand/pink/cyan/lime).
-- **Borders** — thick (`3px`) ink borders, near-sharp corners.
-- **Shadows** — hard, blur-free offsets (`4px 4px 0 #111`); buttons "press" by
+- **Borders** - thick (`3px`) ink borders, near-sharp corners.
+- **Shadows** - hard, blur-free offsets (`4px 4px 0 #111`); buttons "press" by
   shrinking the shadow and translating on `:active`.
-- **Type** — a chunky display face (Space Grotesk) with monospace (JetBrains
+- **Type** - a chunky display face (Space Grotesk) with monospace (JetBrains
   Mono) for data.
 
 ### Theming
@@ -184,12 +184,12 @@ few component classes (`frontend/src/assets/styles/main.css`):
 Every visual token is a CSS custom property, so the whole app restyles from a single
 switch. The Tailwind tokens reference those variables
 (`ink: 'rgb(var(--c-ink) / <alpha-value>)'`, `boxShadow` → `var(--nb-shadow*)`,
-`borderRadius.brutal` → `var(--nb-radius)`). That means every existing utility —
-`bg-paper`, `border-ink`, `bg-brand-cyan`, `shadow-brutal`, `rounded-brutal` —
+`borderRadius.brutal` → `var(--nb-radius)`). That means every existing utility -
+`bg-paper`, `border-ink`, `bg-brand-cyan`, `shadow-brutal`, `rounded-brutal` -
 recolors per theme with no component edits. `main.css` holds `:root` for the Light
 defaults plus one `[data-theme="…"]` block per theme.
 
-- **Themes (7):** `light` (default — daylight brutalism, warm cream + mocha-brown brand accent),
+- **Themes (7):** `light` (default - daylight brutalism, warm cream + mocha-brown brand accent),
   `neon` (deep violet + electric glow), `midnight` (navy ops deck), `dark` (steel slate),
   `ocean` (abyssal teal), `sunset` (dusk plum), and `contrast` (near-black/white, a11y).
   All seven are calibrated palettes. Each uses a two-tier accent ramp: status-badge
@@ -199,9 +199,9 @@ defaults plus one `[data-theme="…"]` block per theme.
   handles the registry, detection, `localStorage` persistence, and the reactive
   `data-theme`; a `ThemeMenu` header control gives live preview; and a no-flash inline
   `<head>` script applies the saved theme before first paint. Adding a new theme means
-  one `[data-theme]` block in `main.css`, a `THEME_META` entry, and locale names — the
+  one `[data-theme]` block in `main.css`, a `THEME_META` entry, and locale names - the
   three added in v0.226.0 followed exactly that path.
-- Theme is **orthogonal to locale/RTL** — the `:lang(ar)`/`[dir=rtl]` rules are independent.
+- Theme is **orthogonal to locale/RTL** - the `:lang(ar)`/`[dir=rtl]` rules are independent.
 - SVG charts read the same token variables (not hardcoded hex), so they recolor with the theme.
 
 ### Offline note
@@ -227,14 +227,14 @@ type-safe.
   `hardware-browser`). Each JSON file carries a single top-level namespace key (such as
   `shell`) that is merged into the locale's messages.
 - **Drop-in extensibility.** `availableLocales` is derived from which catalog folders
-  exist, so adding a language is just dropping in `src/locales/<code>/` — no component
+  exist, so adding a language is just dropping in `src/locales/<code>/` - no component
   or registry edits. The switcher (`LanguageSelect`, reusing `ComboSelect`) appears
   once more than one locale ships.
 - **Type-safe keys.** `en` is the single source of truth. `src/types/i18n.d.ts`
   augments vue-i18n's `DefineLocaleMessage` from the `en` catalog, so `t('…')` is
   autocompleted and a wrong key fails `type-check`. Other locales are checked
   structurally against `en` by `scripts/i18n-keydiff.mjs`, a CI gate. Keys are often
-  built dynamically — for example `t('inputShaping.grade.verdict.' + letter)` — which
+  built dynamically - for example `t('inputShaping.grade.verdict.' + letter)` - which
   defeats eslint's `no-unused-keys`.
 - **Numbers, dates, direction.** Per-locale `numberFormats` and `datetimeFormats` route
   values through `Intl` for locale separators and digit systems instead of gluing
@@ -243,15 +243,15 @@ type-safe.
   and `dir` are set reactively from the active locale's metadata, so RTL flips with the
   language.
 - **Tooling.** `npm run i18n:keydiff` checks key-set parity in CI. `npm run i18n:pseudo`
-  runs pseudo-localization — accents, ~40% padding, brackets — to surface
+  runs pseudo-localization - accents, ~40% padding, brackets - to surface
   text-expansion or RTL overflow and any un-externalized strings before a translator is
   involved.
 - **Backend messages.** Write endpoints return a `{ code, params, message }` contract.
   The backend picks a stable `code` (such as `motorDrivers.apply.applied`) plus
   interpolation `params`, and keeps an English `message` as a fallback. The UI renders
   `t(code, params)` (`applyResultText`) so localized copy lives in the frontend catalog,
-  not the server. Raw upstream or validation errors — Moonraker failures, `field_policy`
-  text — carry no `code` and surface their English text verbatim. They are technical
+  not the server. Raw upstream or validation errors - Moonraker failures, `field_policy`
+  text - carry no `code` and surface their English text verbatim. They are technical
   strings, not product copy.
 
 SI unit symbols (Hz, A, °C, Ω, Nm, mH, mm/s²) and brand, protocol, register, and

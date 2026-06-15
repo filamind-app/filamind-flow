@@ -80,7 +80,7 @@ async def endstops(settings: Settings = Depends(get_settings)) -> EndstopStates:
 
 @router.get("/live/{stepper}", response_model=DriverLive)
 async def driver_live(stepper: str, settings: Settings = Depends(get_settings)) -> DriverLive:
-    """Fast live telemetry for one driver (temperature / SG_RESULT / CS_ACTUAL / faults) —
+    """Fast live telemetry for one driver (temperature / SG_RESULT / CS_ACTUAL / faults) -
     for the live monitor's quick polling. ``drv_status`` is null while the motor is disabled."""
     data = await drivers_service.gather_live(settings.moonraker_url, stepper)
     return DriverLive.model_validate(data)
@@ -88,8 +88,8 @@ async def driver_live(stepper: str, settings: Settings = Depends(get_settings)) 
 
 @router.get("/catalog", response_model=DriverCatalog)
 async def drivers_catalog() -> DriverCatalog:
-    """The curated TMC driver capability map — interface, current cap, chopper modes,
-    StallGuard field, sensorless / temperature support — keyed by Klipper model."""
+    """The curated TMC driver capability map - interface, current cap, chopper modes,
+    StallGuard field, sensorless / temperature support - keyed by Klipper model."""
     return DriverCatalog.model_validate(
         {"source": "Curated TMC driver reference", "drivers": reference_data.driver_infos()}
     )
@@ -97,7 +97,7 @@ async def drivers_catalog() -> DriverCatalog:
 
 @router.get("/motors", response_model=MotorCatalog)
 async def drivers_motors() -> MotorCatalog:
-    """The stepper-motor catalog (datasheet parameters) backing the motor picker — served from
+    """The stepper-motor catalog (datasheet parameters) backing the motor picker - served from
     the unified hardware catalog (the single source of truth)."""
     motors = reference_data.motor_specs()
     return MotorCatalog.model_validate(
@@ -152,7 +152,7 @@ async def recommend_tuning(request: RecommendRequest) -> DriverRecommendation:
 
 @router.post("/config-block", response_model=ConfigBlockResponse)
 async def config_block(request: ConfigBlockRequest) -> ConfigBlockResponse:
-    """Render a printer.cfg override block to copy — no write, always safe."""
+    """Render a printer.cfg override block to copy - no write, always safe."""
     text = drivers_apply.config_block(
         request.stepper, request.model, request.run_current, request.fields
     )
@@ -182,7 +182,7 @@ async def apply_tuning(
 async def init_driver(
     request: StepperRequest, settings: Settings = Depends(get_settings)
 ) -> ApplyResponse:
-    """INIT_TMC — re-apply the stepper's configured registers (undo a live apply)."""
+    """INIT_TMC - re-apply the stepper's configured registers (undo a live apply)."""
     data = await _guarded(
         "driver_write", drivers_apply.revert, settings.moonraker_url, request.stepper
     )
@@ -218,7 +218,7 @@ async def set_stallguard(
 
 @router.get("/field-policy/{model}", response_model=FieldPolicyResponse)
 async def field_policy_for_model(model: str) -> FieldPolicyResponse:
-    """The editable-register policy for one TMC model — which fields the editor may expose, with
+    """The editable-register policy for one TMC model - which fields the editor may expose, with
     each one's control type + clamp range. Blocked and non-applicable fields are omitted."""
     return FieldPolicyResponse(model=model, fields=field_policy.policy_for(model))
 
@@ -261,7 +261,7 @@ async def coolstep(
 
 @router.post("/home", response_model=ApplyResponse)
 async def home(request: HomeRequest, settings: Settings = Depends(get_settings)) -> ApplyResponse:
-    """Home one axis (G28) as a sensorless test — moves the toolhead. Gated; the UI warns
+    """Home one axis (G28) as a sensorless test - moves the toolhead. Gated; the UI warns
     about crash risk and requires a confirm."""
     data = await _guarded("homing", drivers_apply.home_axis, settings.moonraker_url, request.axis)
     return ApplyResponse.model_validate(data)
@@ -278,7 +278,7 @@ async def motors_sync_status(settings: Settings = Depends(get_settings)) -> Moto
 async def motors_sync(
     request: MotorsSyncRequest, settings: Settings = Depends(get_settings)
 ) -> ApplyResponse:
-    """Run motor synchronization (dual/quad-Z, dual-X) via the motors_sync add-on — moves the
+    """Run motor synchronization (dual/quad-Z, dual-X) via the motors_sync add-on - moves the
     toolhead. Gated; refused while printing and when the add-on isn't installed."""
     data = await _guarded(
         "motors_sync",

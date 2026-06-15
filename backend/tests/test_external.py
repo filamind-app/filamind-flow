@@ -63,7 +63,7 @@ def test_external_reads_embedded_properties(tmp_path: Path) -> None:
 
 def test_external_reads_version_from_zlib_data_dict(tmp_path: Path) -> None:
     # Klipper raw .bin stores the version/MCU in a zlib-compressed data dictionary,
-    # not plain strings — the inspector must decompress it.
+    # not plain strings - the inspector must decompress it.
     import zlib
 
     client = _client(tmp_path)

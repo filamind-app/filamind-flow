@@ -1,9 +1,9 @@
 <script setup lang="ts">
-/** Host Control · Disk cleanup — reclaim space from caches and rotated logs.
+/** Host Control · Disk cleanup - reclaim space from caches and rotated logs.
  *
  *  Every target is dry-run scanned first ("frees X"), the user ticks what to remove, and a single
  *  confirmation runs the delete. Only regenerable data is offered (apt cache, journal, ~/.cache,
- *  old /tmp files, rotated logs) — user data (G-code, timelapses, configs) is never touched. */
+ *  old /tmp files, rotated logs) - user data (G-code, timelapses, configs) is never touched. */
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -67,7 +67,7 @@ async function run(): Promise<void> {
     const res = await runCleanup([...selected.value])
     await scan() // re-scan first so the figures reflect what's left (this clears result/runError)…
     // …then publish the run result so the freed-summary + any partial-failure note persist. A
-    // failed target (e.g. apt/journal need passwordless sudo) shows beside the result — NOT via
+    // failed target (e.g. apt/journal need passwordless sudo) shows beside the result - NOT via
     // `error`, which would collapse the whole panel and hide what DID free.
     result.value = { freed: res.freed_bytes, details: res.results }
     const failed = res.results.filter((r) => !r.ok)

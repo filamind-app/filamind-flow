@@ -82,11 +82,11 @@ async def test_time_block_reads_timedatectl(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 async def test_run_returns_empty_on_missing_binary() -> None:
-    # A read-only command that does not exist must not raise — it yields "".
+    # A read-only command that does not exist must not raise - it yields "".
     assert await hc._run(["definitely-not-a-real-binary-xyz"]) == ""
 
 
-# ── Services (Phase 2) ─────────────────────────────────────────────────────────
+# -- Services (Phase 2) ---------------------------------------------------------
 
 
 def test_unit_name_validation() -> None:
@@ -202,7 +202,7 @@ async def test_delete_unit_removes_user_installed(monkeypatch: pytest.MonkeyPatc
     assert any("daemon-reload" in c for c in calls)
 
 
-# ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+# -- Disk cleanup (Phase 3) -----------------------------------------------------
 
 
 def test_parse_size_human_units() -> None:
@@ -265,7 +265,7 @@ async def test_scan_journal_parses_disk_usage(monkeypatch: pytest.MonkeyPatch) -
     assert available is True and b == int(120.0 * 1024**2)
 
 
-# ── System settings (Phase 4) ──────────────────────────────────────────────────
+# -- System settings (Phase 4) --------------------------------------------------
 
 
 async def test_set_hostname_validates() -> None:
@@ -344,7 +344,7 @@ async def test_power_runs_when_idle(monkeypatch: pytest.MonkeyPatch) -> None:
     assert ["sudo", "-n", "systemctl", "reboot"] in calls
 
 
-# ── needs_setup detection (the sudo-not-granted UX bug) ─────────────────────────
+# -- needs_setup detection (the sudo-not-granted UX bug) -------------------------
 
 
 def test_result_flags_needs_setup_on_sudo_auth_failure() -> None:
@@ -366,7 +366,7 @@ async def test_clean_apt_reports_needs_setup(monkeypatch: pytest.MonkeyPatch) ->
     assert r["ok"] is False and r["needs_setup"] is True
 
 
-# ── Network / IPv4 (Phase: network) ────────────────────────────────────────────
+# -- Network / IPv4 (Phase: network) --------------------------------------------
 
 
 def test_validate_static_accepts_a_good_config() -> None:
@@ -391,7 +391,7 @@ def test_validate_static_rejects_bad_input() -> None:
 
 def test_validate_static_rejects_network_and_broadcast() -> None:
     # Using the subnet's network or broadcast address as the host IP / gateway is a guaranteed
-    # lockout — the validator must reject both (the review's HIGH finding).
+    # lockout - the validator must reject both (the review's HIGH finding).
     with pytest.raises(ValueError):
         hc._validate_static("192.168.0.0", 24, "192.168.0.1", "")  # host = network address
     with pytest.raises(ValueError):

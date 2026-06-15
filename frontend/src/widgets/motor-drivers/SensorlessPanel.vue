@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /** Sensorless-homing StallGuard tuner. Set the StallGuard threshold and test-home one axis.
  *  Both actions are gated: an explicit confirm here, and refused server-side while printing.
- *  Test-home moves the toolhead and — with a wrong threshold — may not stop, so it carries a
+ *  Test-home moves the toolhead and - with a wrong threshold - may not stop, so it carries a
  *  loud crash warning. Rendered (by HomingPanel / the wizard) only for sensorless axes; the
  *  threshold range + polarity hint adapt to the model's register (sgthrs/sg4_thrs vs signed sgt).
  */
@@ -64,7 +64,7 @@ function testHome(): Promise<void> {
     <p class="opacity-70">
       <i18n-t keypath="motorDrivers.sensorless.intro" tag="span" scope="global">
         <template #field
-          ><b>{{ driver.stallguard_field ?? '—' }}</b></template
+          ><b>{{ driver.stallguard_field ?? '-' }}</b></template
         >
       </i18n-t>
       {{ range.hint }}
@@ -85,7 +85,7 @@ function testHome(): Promise<void> {
       />
       <span class="opacity-60">{{
         t('motorDrivers.sensorless.nowRange', {
-          now: driver.stallguard_threshold ?? '—',
+          now: driver.stallguard_threshold ?? '-',
           min: range.min,
           max: range.max,
         })

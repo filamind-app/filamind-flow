@@ -1,8 +1,8 @@
-"""Per-board firmware profiles — each profile is a saved Klipper ``.config``.
+"""Per-board firmware profiles - each profile is a saved Klipper ``.config``.
 
 A printer has several MCUs (main board, toolhead, a Linux host MCU, …) and each
 needs its *own* build configuration, so one shared ``klipper/.config`` is not
-enough — Klipper overwrites it on every build. Profiles keep one ``.config`` per
+enough - Klipper overwrites it on every build. Profiles keep one ``.config`` per
 board under the FilaMind data directory, ready to be applied for a build.
 """
 

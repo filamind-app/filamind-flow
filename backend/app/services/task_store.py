@@ -2,7 +2,7 @@
 
 A batch operation can take minutes and the user wants to watch it and be able to
 stop it, so it runs as a background task whose log + status the UI polls. Tasks
-are ephemeral — held in memory, lost on restart — which is fine for something you
+are ephemeral - held in memory, lost on restart - which is fine for something you
 start and watch live. Completed tasks are capped so the store can't grow forever.
 """
 
@@ -14,7 +14,7 @@ _MAX_TASKS = 50
 
 
 class TaskCancelled(Exception):
-    """Raised inside a supervised run when its task was flagged to stop — the run's ``finally``
+    """Raised inside a supervised run when its task was flagged to stop - the run's ``finally``
     blocks (heater off, velocity-limit restore, cleanup) execute on the way out."""
 
 

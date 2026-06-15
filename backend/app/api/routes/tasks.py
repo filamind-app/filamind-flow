@@ -1,4 +1,4 @@
-"""Generic supervised-task endpoints — poll progress / collect the result / cancel.
+"""Generic supervised-task endpoints - poll progress / collect the result / cancel.
 
 Long actuating runs (the vibrations profile, a max-flow ramp) start via their own widget
 endpoints, run in the background under the printer guard, and report here. The result is held

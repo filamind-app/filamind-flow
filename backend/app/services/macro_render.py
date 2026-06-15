@@ -1,4 +1,4 @@
-"""Macro expansion for the G-code simulator — renders Klipper's own macro template dialect.
+"""Macro expansion for the G-code simulator - renders Klipper's own macro template dialect.
 
 Klipper macros are Jinja2 templates with **single-brace** value expressions (``{ params.X }``) and
 ``{% … %}`` control flow. This module renders that exact dialect in a
@@ -8,7 +8,7 @@ simulator can expand loops, conditionals and ``{% set %}`` the way the printer w
 Missing ``printer`` state is tolerated (a :class:`~jinja2.ChainableUndefined` renders to nothing and
 chains through attribute access), since an offline render has no live machine. If a template can't
 render at all (e.g. arithmetic on absent printer state), it falls back to the dependency-free
-literal substitution of ``{ params.X | default(…) }`` so a partial preview still works — with a
+literal substitution of ``{ params.X | default(…) }`` so a partial preview still works - with a
 warning. ``render`` returns ``(text, warnings)``.
 """
 
@@ -42,7 +42,7 @@ _ENV = SandboxedEnvironment(
 
 
 def _noop(*_args: object, **_kwargs: object) -> str:
-    """Stub for Klipper's ``action_*`` side-effect globals — they produce no G-code text."""
+    """Stub for Klipper's ``action_*`` side-effect globals - they produce no G-code text."""
     return ""
 
 
@@ -114,7 +114,7 @@ def render_literal(gcode: str, params: dict[str, str] | None = None) -> tuple[st
     warnings: list[str] = []
     if "{%" in gcode:
         warnings.append(
-            "Jinja control flow ({% … %}) is not simulated — those lines may be skipped."
+            "Jinja control flow ({% … %}) is not simulated - those lines may be skipped."
         )
     unresolved: set[str] = set()
 
@@ -126,7 +126,7 @@ def render_literal(gcode: str, params: dict[str, str] | None = None) -> tuple[st
         if value is None:
             if expr not in unresolved:
                 unresolved.add(expr)
-                warnings.append(f"Unresolved expression {{ {expr} }} — left as-is.")
+                warnings.append(f"Unresolved expression {{ {expr} }} - left as-is.")
             return match.group(0)
         return value
 
@@ -141,8 +141,8 @@ def render(
     """Render a Klipper macro body with real (sandboxed) Jinja → ``(text, warnings)``.
 
     Expands ``{ … }`` expressions and ``{% … %}`` control flow against ``params`` (and an optional
-    ``printer`` state map; missing state renders to nothing). Falls back to literal substitution —
-    with a warning — if the template raises (e.g. it depends on live printer state this offline
+    ``printer`` state map; missing state renders to nothing). Falls back to literal substitution -
+    with a warning - if the template raises (e.g. it depends on live printer state this offline
     render doesn't have).
     """
     params = params or {}

@@ -1,6 +1,6 @@
 """Hardware Browser endpoints (Track A, read-only).
 
-A searchable curated 3D-printing hardware reference. All static data — no Moonraker, no writes.
+A searchable curated 3D-printing hardware reference. All static data - no Moonraker, no writes.
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ async def hardware_categories() -> dict[str, Any]:
 
 @router.get("/facets")
 async def hardware_facets() -> dict[str, Any]:
-    """Distinct values for the catalog filter dropdowns — ``boardClass`` (boards),
+    """Distinct values for the catalog filter dropdowns - ``boardClass`` (boards),
     ``nema`` size (motors), ``kind`` (hosts), and ``catalogSubsections`` (per mixed catalog
     category, its sub-types)."""
     return reference_data.hardware_facets()
@@ -92,7 +92,7 @@ async def hardware_facets() -> dict[str, Any]:
 async def hardware_manufacturers(
     q: str = Query("", description="Free-text search (name / alias)"),
 ) -> list[dict[str, Any]]:
-    """The canonical manufacturer entities — each with a stable ``manufacturer_id``, auto-derived
+    """The canonical manufacturer entities - each with a stable ``manufacturer_id``, auto-derived
     ``aliases`` and a ``memberCount`` (how many hardware entities link to it), sorted
     most-connected first. Use ``GET /manufacturers/{id}?expand=related`` to list its hardware."""
     rows = reference_data.manufacturers_canonical()
@@ -125,7 +125,7 @@ async def mcus(
     family: str = Query("", description="Family substring filter (e.g. STM32F4 / AVR / RP2xxx)"),
 ) -> dict[str, Any]:
     """The canonical MCU entities (parsed + normalised from board ``specs.MCU``), each with a
-    ``family``, ``arch`` and ``boardCount``. Small set — returned unpaginated."""
+    ``family``, ``arch`` and ``boardCount``. Small set - returned unpaginated."""
     rows = reference_data.mcus()
     ql, fam = q.strip().lower(), family.strip().lower()
     if ql:
@@ -197,7 +197,7 @@ async def drivers(
 ) -> dict[str, Any]:
     """Search the canonical stepper-driver entities (lightweight summaries, paginated).
 
-    The full record — including the copyable Klipper ``[tmcXXXX]`` config snippet — is
+    The full record - including the copyable Klipper ``[tmcXXXX]`` config snippet - is
     served by ``GET /api/hardware/drivers/{driver_id}``.
     """
     return driver_search.search(
@@ -233,8 +233,8 @@ async def motors(
 ) -> dict[str, Any]:
     """Search the canonical stepper-motor entities (lightweight summaries, paginated).
 
-    The full record — including the recommended ``run_current`` and the copyable Klipper
-    config snippet — is served by ``GET /api/hardware/motors/{motor_id}``.
+    The full record - including the recommended ``run_current`` and the copyable Klipper
+    config snippet - is served by ``GET /api/hardware/motors/{motor_id}``.
     """
     return motor_search.search(
         reference_data.motors(),
@@ -269,7 +269,7 @@ async def hosts(
 ) -> dict[str, Any]:
     """Search the canonical host-computer entities (lightweight summaries, paginated).
 
-    The full record — including the copyable Klipper HOST config snippet — is served by
+    The full record - including the copyable Klipper HOST config snippet - is served by
     ``GET /api/hardware/hosts/{host_id}``.
     """
     return host_search.search(
@@ -307,8 +307,8 @@ async def catalog(
     """Search one category's canonical catalog entities (lightweight summaries, paginated).
 
     ``subsection`` filters within a mixed category by sub-type (the catalog equivalent of a board's
-    class — values come from ``GET /api/hardware/facets`` ``catalogSubsections``). The full record —
-    including the copyable Klipper config snippet — is served by ``GET /api/hardware/catalog/{id}``.
+    class - values come from ``GET /api/hardware/facets`` ``catalogSubsections``). The full record -
+    including the copyable Klipper config snippet - is served by ``GET /api/hardware/catalog/{id}``.
     """
     entities = reference_data.catalog_entities(category)
     if not entities and category not in reference_data.catalog_categories():
@@ -350,7 +350,7 @@ async def entity_related(entity_type: str, entity_id: str) -> dict[str, Any]:
 
 @router.get("/on-printer")
 async def hardware_on_printer(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
-    """Catalog ids of the hardware detected on THIS printer — boards/MCUs/host from the live
+    """Catalog ids of the hardware detected on THIS printer - boards/MCUs/host from the live
     topology, TMC driver models from the live config, motors from the assignment mapping. The
     browser uses it for "on this printer" badges and the My-Hardware strip. Degrades to empty
     sets (``reachable=false``) when Moonraker is down."""

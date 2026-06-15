@@ -27,7 +27,7 @@ export interface ComparePlot {
 
 function fmtHz(value: number | null): string {
   return value == null
-    ? '—'
+    ? '-'
     : i18n.global.t('inputShaping.compare.hz.value', { value: value.toFixed(1) })
 }
 
@@ -60,8 +60,8 @@ export function compareAnalyses(a: ShaperAnalysis, b: ShaperAnalysis): CompareRo
   const rows: CompareRow[] = [
     {
       label: i18n.global.t('inputShaping.compare.row.recommended'),
-      a: (a.recommended_shaper ?? '—').toUpperCase(),
-      b: (b.recommended_shaper ?? '—').toUpperCase(),
+      a: (a.recommended_shaper ?? '-').toUpperCase(),
+      b: (b.recommended_shaper ?? '-').toUpperCase(),
       trend: a.recommended_shaper === b.recommended_shaper ? 'same' : 'neutral',
     },
     {

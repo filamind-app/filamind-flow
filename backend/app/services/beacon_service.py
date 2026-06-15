@@ -120,4 +120,4 @@ async def flash_beacon(device: str, settings: Settings) -> AsyncIterator[str]:
             break
         yield raw.decode(errors="replace")
     await proc.wait()
-    yield ">>> Beacon update complete — verify it reconnects in Mainsail.\n"
+    yield ">>> Beacon update complete - verify it reconnects in Mainsail.\n"

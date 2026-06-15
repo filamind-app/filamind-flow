@@ -28,7 +28,7 @@ const METHODS = ['serial', 'can', 'dfu', 'make']
 const inputClass = 'rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-xs'
 
 /** Per-firmware flash target + katapult choice (keyed by name). Always populated
- *  in load() — never created during render (which would loop the renderer). */
+ *  in load() - never created during render (which would loop the renderer). */
 const flashTo = reactive<Record<string, { device: string; katapult: boolean }>>({})
 
 /** Which firmware rows have their baked-in config expanded (toggled in a handler). */
@@ -75,7 +75,7 @@ function rowClass(status: DiffStatus): string {
 /** One side of a diff row, formatting the size field as KB. */
 function cell(row: DiffRow, side: 'a' | 'b'): string {
   const value = side === 'a' ? row.a : row.b
-  if (value === null) return '—'
+  if (value === null) return '-'
   return row.key === 'size' ? kb(Number(value)) : value
 }
 
@@ -404,7 +404,7 @@ onMounted(load)
         </button>
       </div>
 
-      <!-- Confirm gate: a foreign binary is the riskiest flash — review + acknowledge first -->
+      <!-- Confirm gate: a foreign binary is the riskiest flash - review + acknowledge first -->
       <div
         v-if="pendingExternal === fw.name"
         class="space-y-1.5 rounded-brutal border-2 border-brand-red bg-brand-red/10 p-2"

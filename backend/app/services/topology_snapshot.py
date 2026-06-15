@@ -1,4 +1,4 @@
-"""A saved hardware baseline for Board Topology, so a later read can announce what changed —
+"""A saved hardware baseline for Board Topology, so a later read can announce what changed -
 a board swapped, an MCU added or removed, a connection bus changed, a component count moved.
 
 A single JSON file ``<data_dir>/topology-snapshot.json`` holds a compact per-MCU summary keyed by
@@ -74,7 +74,7 @@ def diff(
 ) -> list[dict[str, Any]]:
     """Structured changes between a saved baseline and the current topology, keyed by MCU name.
 
-    Each change is ``{mcu, kind, before, after}`` — ``kind`` ∈ added / removed / board_changed /
+    Each change is ``{mcu, kind, before, after}`` - ``kind`` ∈ added / removed / board_changed /
     connection_changed / chip_changed / components_changed. Plain-language rendering is the UI's job
     (so no English leaks into the backend)."""
     base = baseline.get("mcus", {}) if isinstance(baseline, dict) else {}

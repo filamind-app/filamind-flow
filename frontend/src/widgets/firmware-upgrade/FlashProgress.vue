@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Flash progress — replaces the raw command window during a flash with a phase progress
+/** Flash progress - replaces the raw command window during a flash with a phase progress
  *  bar + a current-step label, surfacing only REAL errors (the `!!` lines) and keeping the
  *  full command output behind a collapsible "details" disclosure for diagnosis. Works for a
  *  single-board flash (phases parsed from the log) and a batch (explicit step/total). */

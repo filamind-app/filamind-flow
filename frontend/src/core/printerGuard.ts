@@ -27,7 +27,7 @@ const state = reactive({
   },
 })
 
-/** The shared, reactive guard state (singleton — every consumer sees the same object). */
+/** The shared, reactive guard state (singleton - every consumer sees the same object). */
 export function usePrinterGuard(): PrinterGuardState {
   return state
 }

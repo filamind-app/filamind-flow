@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bake the curated hardware data into the read-only ``hardware.sqlite`` that ships in the repo.
 
-Maintainer-only. The editable source — ``hardware.json`` — is kept **locally** and is NOT committed
+Maintainer-only. The editable source - ``hardware.json`` - is kept **locally** and is NOT committed
 (it's git-ignored); only the compiled ``hardware.sqlite`` ships. After editing the JSON, run this to
 regenerate the database, then commit the new ``hardware.sqlite``:
 
@@ -9,7 +9,7 @@ regenerate the database, then commit the new ``hardware.sqlite``:
 
 The schema is intentionally simple: one row per entity (the entity object stored as JSON in a
 ``data`` column, original order preserved via ``pos``), so :mod:`app.services.reference_data` can
-reconstruct the exact same in-memory structure it built from the JSON — the public contract and all
+reconstruct the exact same in-memory structure it built from the JSON - the public contract and all
 downstream indexes/haystacks/graph are unchanged. Inserts are ordered + the file is VACUUMed so the
 output is stable for the same input (small git diffs).
 """
@@ -37,14 +37,14 @@ _ENTITY_KINDS = {
 
 
 def _dumps(obj: object) -> str:
-    # Compact, UTF-8, original key order preserved (json.loads kept insertion order) — so an
+    # Compact, UTF-8, original key order preserved (json.loads kept insertion order) - so an
     # entity round-trips byte-identically and the build is deterministic for the same input.
     return json.dumps(obj, ensure_ascii=False, separators=(",", ":"))
 
 
 def build() -> None:
     if not JSON_PATH.exists():
-        sys.exit(f"Source not found: {JSON_PATH} (the curated JSON is kept locally — restore it).")
+        sys.exit(f"Source not found: {JSON_PATH} (the curated JSON is kept locally - restore it).")
     data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
     if DB_PATH.exists():
         DB_PATH.unlink()
@@ -103,7 +103,7 @@ def build() -> None:
 
     counts = {k: len(data.get(k) or []) for k in _ENTITY_KINDS}
     counts["catalog"] = sum(len(v) for v in catalog.values())
-    print(f"Built {DB_PATH} ({DB_PATH.stat().st_size:,} bytes) — {counts}")
+    print(f"Built {DB_PATH} ({DB_PATH.stat().st_size:,} bytes) - {counts}")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** KlipperScreen Studio — edit the touchscreen's config and restart it to apply.
+/** KlipperScreen Studio - edit the touchscreen's config and restart it to apply.
  *
  *  Phase 1: a safe raw editor for `KlipperScreen.conf` (gated save = timestamped backup +
  *  stale-write guard + refused while printing, reusing the Config Editor's machinery) plus a
@@ -80,7 +80,7 @@ const selectedMenuId = ref<string | null>(null)
 const MENU_TREES = ['__main', '__print', '__splashscreen']
 let menuSeq = 0
 
-// FilaMind Kiosk — reversible swap of the touchscreen
+// FilaMind Kiosk - reversible swap of the touchscreen
 const kiosk = ref<KioskStatus | null>(null)
 const kioskBusy = ref(false)
 const kioskError = ref<string | null>(null)
@@ -88,7 +88,7 @@ const kioskNote = ref<string | null>(null)
 const kioskPersist = ref(false)
 const confirmKiosk = ref<null | 'switch' | 'restore'>(null)
 
-// Settings — friendly form over the common [main] options
+// Settings - friendly form over the common [main] options
 type SettingField = { key: string; type: 'bool' | 'select'; options?: string[] }
 const SETTINGS_FIELDS: SettingField[] = [
   { key: 'theme', type: 'select' }, // options filled from installed themes
@@ -244,7 +244,7 @@ async function doKiosk(action: 'switch' | 'restore'): Promise<void> {
 
 const themeOptions = computed(() => themes.value.map((th) => th.name))
 
-/** The selectable values for a settings field — always offers "unset" + the current value. */
+/** The selectable values for a settings field - always offers "unset" + the current value. */
 function settingOptions(f: SettingField): string[] {
   let opts = f.key === 'theme' ? themeOptions.value : (f.options ?? [])
   if (!opts.includes('')) opts = ['', ...opts]

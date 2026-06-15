@@ -37,7 +37,7 @@ async def test_sudo_ready_probes_authorisation_not_systemctl_version(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """`sudo -n -l systemctl stop klipper` (a non-destructive authorisation check that the
-    NOPASSWD rules actually grant) — not `systemctl --version`, which they don't."""
+    NOPASSWD rules actually grant) - not `systemctl --version`, which they don't."""
     captured: list[str] = []
 
     class _Proc:

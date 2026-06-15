@@ -109,7 +109,7 @@ describe('currentLabel', () => {
     expect(currentLabel(null, 0.8)).toBe('0.80 A')
   })
   it('renders an em dash when nothing is known', () => {
-    expect(currentLabel(null, null)).toBe('—')
+    expect(currentLabel(null, null)).toBe('-')
   })
 })
 
@@ -232,7 +232,7 @@ describe('homing helpers', () => {
     expect(homingMethodLabel('probe')).toBe('Z probe')
     expect(homingMethodLabel('other_virtual')).toBe('Virtual endstop')
     expect(homingMethodLabel('inherited')).toBe('Shared rail')
-    expect(homingMethodLabel(null)).toBe('—')
+    expect(homingMethodLabel(null)).toBe('-')
   })
   it('applies a homing panel to homing axes but not shared/inherited rails', () => {
     expect(homingApplies('sensorless')).toBe(true)
@@ -293,7 +293,7 @@ describe('motorSpecLabel', () => {
           max_current_A: null,
         }),
       ),
-    ).toBe('—')
+    ).toBe('-')
   })
 })
 

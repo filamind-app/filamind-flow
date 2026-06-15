@@ -7,7 +7,7 @@ function ref(partial: Partial<RelatedRef>): RelatedRef {
   return { type: 'board', id: 'x', ...partial }
 }
 
-describe('targetFor — maps a related ref to its hosting tab', () => {
+describe('targetFor - maps a related ref to its hosting tab', () => {
   it('maps each entity type to the correct tab', () => {
     expect(targetFor(ref({ type: 'board', id: 'skr' }))?.tab).toBe('boards')
     expect(targetFor(ref({ type: 'driver', id: 'tmc2209' }))?.tab).toBe('drivers')
@@ -37,7 +37,7 @@ describe('targetFor — maps a related ref to its hosting tab', () => {
   })
 })
 
-describe('useEntityFocus — the shared focus channel', () => {
+describe('useEntityFocus - the shared focus channel', () => {
   it('focusEntity publishes a fresh object so repeat clicks still trigger watchers', () => {
     const { focus, focusEntity, clear } = useEntityFocus()
     focusEntity({ tab: 'boards', id: 'a' })

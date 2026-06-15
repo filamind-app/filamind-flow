@@ -1,4 +1,4 @@
-"""Driver-DB search — pure filtering/pagination over the canonical stepper-driver entities.
+"""Driver-DB search - pure filtering/pagination over the canonical stepper-driver entities.
 
 Hardware-free. The list endpoint returns lightweight summaries (no copyable config snippet
 or full spec sheet); the full record is served by ``GET /api/hardware/drivers/{driver_id}``.

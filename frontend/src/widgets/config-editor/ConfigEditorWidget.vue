@@ -72,7 +72,7 @@ const viewMode = ref<'structured' | 'raw'>('structured')
 useHashTab('config-editor', (tab) => {
   if (tab === 'structured' || tab === 'raw') viewMode.value = tab
 })
-/** Per-section disclosure (keyed by index, since headers can repeat — e.g. duplicate sections). */
+/** Per-section disclosure (keyed by index, since headers can repeat - e.g. duplicate sections). */
 const open = ref<Record<number, boolean>>({})
 
 // Edit / save / restart state (the gated write path lives in the Raw view).
@@ -89,7 +89,7 @@ const showRestartPrompt = ref(false)
 
 const dirty = computed(() => view.value != null && draft.value !== view.value.raw)
 
-/** Auxiliary panels that failed to load this session — disclosed in one slim banner instead of
+/** Auxiliary panels that failed to load this session - disclosed in one slim banner instead of
  *  silently vanishing (a missing Pin Doctor must not read as "no pin problems"). */
 const failedPanels = ref<Set<string>>(new Set())
 function markPanel(name: string, ok: boolean): void {
@@ -154,7 +154,7 @@ async function ensurePolicy(model: string): Promise<void> {
     const r = await fetchFieldPolicy(model)
     policies.value = { ...policies.value, [model]: r.fields }
   } catch {
-    /* no policy for this model — params stay plain text */
+    /* no policy for this model - params stay plain text */
   }
 }
 function policyFor(sectionType: string, key: string): FieldPolicyEntry | null {
@@ -254,7 +254,7 @@ function pinFlags(value: string): {
 }
 
 // "Add a part": pick a part type + a FREE pin (from the live board pin map) + a name, get a
-// ready section, and write it through the shared gated apply — no pin guessing, no copy-paste.
+// ready section, and write it through the shared gated apply - no pin guessing, no copy-paste.
 type PartKind =
   | 'fan'
   | 'heater_fan'
@@ -288,7 +288,7 @@ const partMcuOptions = computed(
   () =>
     pinMap.value?.mcus.map((m) => ({
       value: m.name,
-      label: `${m.name} — ${m.board_name ?? '?'}`,
+      label: `${m.name} - ${m.board_name ?? '?'}`,
     })) ?? [],
 )
 /** Free pins on the chosen MCU: named board pins no config section owns yet. */
@@ -374,7 +374,7 @@ const treeRows = computed<{ file: string; depth: number; broken: boolean }[]>(()
     for (const inc of node.includes) walk(inc, depth + 1)
   }
   for (const r of g.roots) walk(r, 0)
-  // Files not reachable from any root (e.g. an unincluded standalone) — list them flat.
+  // Files not reachable from any root (e.g. an unincluded standalone) - list them flat.
   for (const n of g.nodes) if (!expanded.has(n.file) && !g.roots.includes(n.file)) walk(n.file, 0)
   return rows
 })
@@ -383,7 +383,7 @@ function ruleLabel(rule: string): string {
   const label = t(key)
   return label === key ? rule : label
 }
-/** Number of actionable findings (errors + warnings) — informational overrides don't count. */
+/** Number of actionable findings (errors + warnings) - informational overrides don't count. */
 const lintActionable = computed(
   () => graph.value?.lint.filter((l) => l.level !== 'info').length ?? 0,
 )
@@ -486,7 +486,7 @@ async function toggleDiff(b: ConfigBackup): Promise<void> {
   }
 }
 
-/** Restore a snapshot by loading it into the editor (Raw view) — the user then saves through the
+/** Restore a snapshot by loading it into the editor (Raw view) - the user then saves through the
  *  existing confirm gate, which backs up the current file first. */
 async function restoreBackup(b: ConfigBackup): Promise<void> {
   backupBusy.value = b.path
@@ -670,7 +670,7 @@ function cancelConfirm(): void {
   confirmMode.value = null
 }
 
-/** Set when a save was refused because the file changed on disk (412) — offers a reload. */
+/** Set when a save was refused because the file changed on disk (412) - offers a reload. */
 const staleConflict = ref(false)
 
 async function doSave(): Promise<void> {
@@ -685,7 +685,7 @@ async function doSave(): Promise<void> {
     const res = await saveConfigFile(selected.value, draft.value, view.value?.sha256)
     confirmMode.value = null
     await loadView(selected.value) // reload → draft resets to the saved content (dirty = false)
-    saveMsg.value = t('configEditor.save.done', { backup: res.backup ?? '—' })
+    saveMsg.value = t('configEditor.save.done', { backup: res.backup ?? '-' })
     showRestartPrompt.value = true
   } catch (e) {
     confirmMode.value = null
@@ -702,7 +702,7 @@ async function doSave(): Promise<void> {
 }
 
 /** Reload after a stale-save conflict: the draft is replaced by the on-disk content. The user's
- *  edit isn't lost silently — this only runs from the explicit button on the 412 message. */
+ *  edit isn't lost silently - this only runs from the explicit button on the 412 message. */
 async function reloadAfterConflict(): Promise<void> {
   if (!selected.value) return
   staleConflict.value = false
@@ -735,7 +735,7 @@ watch(selected, (f) => {
 
 // Inbound section focus (from the Machine Map pin atlas, doctor findings, …): open the file,
 // expand the section in the structured view and scroll to it. Unknown file → current file first,
-// then locate via project-wide search (one attempt — no retry loops on a missing section).
+// then locate via project-wide search (one attempt - no retry loops on a missing section).
 async function tryApplyConfigFocus(): Promise<void> {
   const target = pendingSection.value
   if (!target) return
@@ -747,7 +747,7 @@ async function tryApplyConfigFocus(): Promise<void> {
   if (!v) return
   const wanted = target.section.trim().toLowerCase()
   if (!wanted) {
-    // A file-only focus (e.g. a doctor finding about the file itself) — opening it is enough.
+    // A file-only focus (e.g. a doctor finding about the file itself) - opening it is enough.
     pendingSection.value = null
     return
   }
@@ -766,7 +766,7 @@ async function tryApplyConfigFocus(): Promise<void> {
       ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     return
   }
-  // Not in this file — locate it once via the project search, then jump to that file.
+  // Not in this file - locate it once via the project search, then jump to that file.
   if (!target.file) {
     try {
       const hits = await searchConfig('[' + target.section)
@@ -782,10 +782,10 @@ async function tryApplyConfigFocus(): Promise<void> {
         return
       }
     } catch {
-      /* search unavailable — give up quietly */
+      /* search unavailable - give up quietly */
     }
   }
-  pendingSection.value = null // section nowhere to be found — don't loop
+  pendingSection.value = null // section nowhere to be found - don't loop
 }
 watch(pendingSection, () => void tryApplyConfigFocus())
 watch(view, () => void tryApplyConfigFocus())
@@ -927,7 +927,7 @@ onMounted(() => {
               <button class="w-full text-start hover:underline" @click="openFile(lt.file)">
                 <b>{{ ruleLabel(lt.rule) }}</b>
                 <span class="font-mono">{{ lt.message }}</span>
-                <span class="opacity-60"> — {{ lt.file }}</span>
+                <span class="opacity-60"> - {{ lt.file }}</span>
                 <span v-if="lt.files && lt.files.length > 1" class="opacity-60">
                   ({{ lt.files.join(', ') }})
                 </span>
@@ -1250,7 +1250,7 @@ onMounted(() => {
       <template v-if="viewMode === 'structured'">
         <div class="flex items-center justify-between gap-2">
           <p v-if="dirty" class="font-mono text-[11px] text-brand-red">
-            <span aria-hidden="true">●</span> {{ t('configEditor.save.unsaved') }} —
+            <span aria-hidden="true">●</span> {{ t('configEditor.save.unsaved') }} -
             <button class="underline" @click="viewMode = 'raw'">
               {{ t('configEditor.tmc.review') }}
             </button>
@@ -1422,7 +1422,7 @@ onMounted(() => {
                         </span>
                       </template>
                       <template v-else>
-                        {{ p.value || '—'
+                        {{ p.value || '-'
                         }}<span v-if="p.comment" class="opacity-50"> {{ p.comment }}</span>
                       </template>
                     </td>

@@ -69,7 +69,7 @@ def test_analyze_resolves_board_id_from_matchpatterns() -> None:
 
 
 def test_analyze_board_id_null_when_chip_only() -> None:
-    """A chip-only signature (no board hint) yields no board_id — never a false match."""
+    """A chip-only signature (no board hint) yields no board_id - never a false match."""
     catalog = [
         {"board_id": "btt-octopus", "model": "Octopus", "matchPatterns": [{"pattern": "octopus"}]}
     ]
@@ -98,7 +98,7 @@ def test_analyze_ignores_non_mcu_and_bad_input() -> None:
 
 
 def test_analyze_with_real_reference_data() -> None:
-    # Uses the catalog-derived patterns — just assert it runs and returns the right shape.
+    # Uses the catalog-derived patterns - just assert it runs and returns the right shape.
     out = board_topology.analyze(SECTIONS, reference_data.board_patterns())
     assert out["mcu_count"] == 3
     assert all("connection" in m for m in out["mcus"])
@@ -110,7 +110,7 @@ def test_sections_helper() -> None:
     assert board_topology._sections(None) == {}
 
 
-# ── route ────────────────────────────────────────────────────────────────────
+# -- route --------------------------------------------------------------------
 def test_route_topology_unreachable() -> None:
     from fastapi.testclient import TestClient
 
@@ -174,7 +174,7 @@ def test_analyze_component_edges_across_mcus() -> None:
 
 
 def test_analyze_never_invents_phantom_mcu() -> None:
-    """A component pin referencing an undeclared chip is dropped — never turned into an MCU node."""
+    """A component pin referencing an undeclared chip is dropped - never turned into an MCU node."""
     sections = {"mcu": {"serial": "x"}, "stepper_x": {"step_pin": "ghost: PA1"}}
     out = board_topology.analyze(sections, PATTERNS)
     assert out["mcu_count"] == 1
@@ -184,7 +184,7 @@ def test_analyze_never_invents_phantom_mcu() -> None:
 def test_analyze_joins_chip_to_db_mcu_entity() -> None:
     """Phase P4: the detected chip resolves to a canonical DB MCU entity (mcu_id + family)."""
     by_name = {m["name"]: m for m in board_topology.analyze(SECTIONS, PATTERNS)["mcus"]}
-    # SECTIONS' primary mcu is an stm32f103 (from its serial) — a real DB MCU entity.
+    # SECTIONS' primary mcu is an stm32f103 (from its serial) - a real DB MCU entity.
     assert by_name["mcu"]["mcu_id"] == "stm32f103"
     assert by_name["mcu"]["mcu_family"] == "STM32F1"
 
@@ -267,7 +267,7 @@ def test_board_pin_set_strips_config_mcu_prefix() -> None:
 
 def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
     """A toolhead-like MCU with only a few *generic* pins that several small boards share equally
-    (a tie in containment, low Jaccard) must NOT yield a confident board — better no match than a
+    (a tie in containment, low Jaccard) must NOT yield a confident board - better no match than a
     wrong one. Reproduces the real SV08 CAN-toolhead case (its board isn't in the catalog)."""
     used = {"PA1", "PA5", "PA6", "PA8", "PB6", "PB8", "PB9", "PB10"}
     # Two distinct boards each contain the SAME 6 of the 8 used pins plus their own filler pins,
@@ -284,7 +284,7 @@ def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
 
 async def test_gather_pin_doctor_aggregates_findings(monkeypatch: Any) -> None:
     """The whole-config pin doctor runs the atlas per MCU and aggregates double-assign + caveat
-    findings — here a pin driven by two sections on the primary MCU."""
+    findings - here a pin driven by two sections on the primary MCU."""
     sections = {
         "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103xe_X-if00"},
         "fan": {"pin": "PA1"},
@@ -304,7 +304,7 @@ async def test_gather_pin_doctor_aggregates_findings(monkeypatch: Any) -> None:
 
 
 async def test_gather_pin_map_returns_per_mcu_pins(monkeypatch: Any) -> None:
-    """The pin-map feed lists every MCU with its (possibly empty) board pin set + owners + caveat —
+    """The pin-map feed lists every MCU with its (possibly empty) board pin set + owners + caveat -
     the data the Config Editor uses to suggest valid pins and flag a double-assigned pin inline."""
     sections = {
         "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103xe_X-if00"},
@@ -327,7 +327,7 @@ async def test_gather_pin_map_returns_per_mcu_pins(monkeypatch: Any) -> None:
         assert "pin" in p and "owners" in p and "caveat" in p
 
 
-# ── hardware snapshot + diff ─────────────────────────────────────────────────
+# -- hardware snapshot + diff -------------------------------------------------
 def test_snapshot_diff_detects_changes(tmp_path: Any) -> None:
     from app.services import topology_snapshot
 
@@ -382,12 +382,12 @@ def test_snapshot_diff_no_changes_when_identical(tmp_path: Any) -> None:
     assert topology_snapshot.diff(saved, mcus) == []
 
 
-# ── pin atlas (used-vs-free + wiring-conflict scanner) ───────────────────────
+# -- pin atlas (used-vs-free + wiring-conflict scanner) -----------------------
 def test_pin_atlas_marks_used_free_and_caveats() -> None:
     board = {
         "board_id": "acme",
         "display_name": "Acme",
-        "electronics": {"Bed": "heater_pin PA0 is a 3.3V trigger — never connect mains to PA0."},
+        "electronics": {"Bed": "heater_pin PA0 is a 3.3V trigger - never connect mains to PA0."},
         "ports": [
             {
                 "label": "Motor X",
@@ -460,7 +460,7 @@ def test_pin_atlas_flags_exclusive_pin_colliding_with_shared_bus() -> None:
 
 
 def test_pin_atlas_allows_shared_tmc_uart_line() -> None:
-    """Several TMC2209s on one single-wire UART (addressed separately) share uart_pin — valid."""
+    """Several TMC2209s on one single-wire UART (addressed separately) share uart_pin - valid."""
     board = {"board_id": "b", "ports": [{"pinMap": [{"pin": "PD0"}]}]}
     sections = {
         "tmc2209 stepper_x": {"uart_pin": "PD0", "uart_address": "0"},
@@ -475,7 +475,7 @@ def test_pin_atlas_unavailable_without_pinmap() -> None:
     assert atlas["available"] is False and atlas["total"] == 0
 
 
-# ── integrated-SBC detection (host physically on the mainboard) ──────────────
+# -- integrated-SBC detection (host physically on the mainboard) --------------
 def test_integrated_sbc_matches_soc_in_board_host_field() -> None:
     """An SV08-style board declares an onboard CB1-class SBC; when the host SoC matches, the host is
     integrated. An external Pi (different SoC) on the same board stays a separate host."""
@@ -503,7 +503,7 @@ def test_mark_integrated_host_sets_board_id() -> None:
     assert result["host"]["integrated_into_board_id"] == "sovol-sv08"
 
 
-# ── per-MCU board overrides (the only write path) ────────────────────────────
+# -- per-MCU board overrides (the only write path) ----------------------------
 def test_apply_overrides_confirms_chosen_board() -> None:
     """A saved override replaces the auto suggestion: chosen board wins, match=confirmed."""
     result = {

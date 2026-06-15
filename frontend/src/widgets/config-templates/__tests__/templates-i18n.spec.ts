@@ -11,7 +11,7 @@ function plugins() {
 }
 
 describe('Config Templates template renders through i18n (no leaked keys)', () => {
-  it('ConfigTemplatesWidget — intro + filter + help, no raw key paths', () => {
+  it('ConfigTemplatesWidget - intro + filter + help, no raw key paths', () => {
     const w = mount(ConfigTemplatesWidget, plugins())
     const text = w.text()
     const leaked = text.match(/configTemplates\.[a-zA-Z]/)

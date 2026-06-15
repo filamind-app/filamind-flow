@@ -1,16 +1,16 @@
-"""Pure max-flow analysis core — StallGuard-based extrusion slip detection.
+"""Pure max-flow analysis core - StallGuard-based extrusion slip detection.
 
 The max-flow test ramps the requested volumetric flow rate step by step. At each
 step a short burst of StallGuard load samples is captured. As long as the
 extruder grips the filament cleanly the StallGuard readings stay tight (low
-spread); once the hobbed gear starts to slip the readings become erratic — the
+spread); once the hobbed gear starts to slip the readings become erratic - the
 per-step variance and inter-quartile spread jump. This module turns those raw
 per-step sample arrays into a verdict: the highest flow rate the extruder
 sustained before slip, and the flow at which slip first appeared.
 
 Everything here is pure: it takes the captured samples plus the per-driver
 detection constants and returns a result. No motion, no hardware, no host
-dependency — the constants come from :mod:`app.services.reference_data`, which
+dependency - the constants come from :mod:`app.services.reference_data`, which
 provides ``resolved_profile(driver)`` (base thresholds merged with per-driver
 overrides). Different driver families expose StallGuard differently (some report
 a wide 0-1023 range, others a narrow 0-255), so the trip thresholds are
@@ -25,7 +25,7 @@ from typing import Any
 
 from app.services import reference_data
 
-# ── Fallback constants ─────────────────────────────────────────────────────────
+# -- Fallback constants ---------------------------------------------------------
 # Used when a driver profile omits a key. Kept conservative so an unknown driver
 # still trips on genuinely erratic data without firing on ordinary noise.
 _DEFAULTS: dict[str, float] = {
@@ -43,7 +43,7 @@ _DEFAULTS: dict[str, float] = {
 _BASELINE_WINDOW = 3
 
 
-# ── Data shapes ────────────────────────────────────────────────────────────────
+# -- Data shapes ----------------------------------------------------------------
 @dataclass(frozen=True)
 class StepMeasurement:
     """Raw StallGuard load samples captured at one requested flow rate."""
@@ -75,7 +75,7 @@ class FlowResult:
     reason: str = ""
 
 
-# ── Pure statistics helpers ────────────────────────────────────────────────────
+# -- Pure statistics helpers ----------------------------------------------------
 def _median(values: list[float]) -> float:
     """Median of a non-empty list (mean of the two middle values when even)."""
     ordered = sorted(values)
@@ -140,7 +140,7 @@ def step_stats(measurement: StepMeasurement) -> StepStats:
     )
 
 
-# ── Internal helpers ───────────────────────────────────────────────────────────
+# -- Internal helpers -----------------------------------------------------------
 def _constants(driver: str) -> dict[str, Any]:
     """Resolved detection constants for ``driver`` with safe fallbacks."""
     merged = dict(_DEFAULTS)
@@ -161,13 +161,13 @@ def _baseline(values: list[float]) -> float | None:
     return _median(window)
 
 
-# ── Slip detectors ─────────────────────────────────────────────────────────────
+# -- Slip detectors -------------------------------------------------------------
 def cv_spike(history: list[StepStats], constants: dict[str, Any]) -> tuple[bool, str]:
     """Trip when the latest step's coefficient of variation spikes.
 
     Fires if the CV crosses the absolute high-variance ceiling, or if it rises
     sharply versus the recent clean baseline (ratio jump) once it is also above a
-    minimum absolute floor — so a ratio jump against a near-zero clean baseline
+    minimum absolute floor - so a ratio jump against a near-zero clean baseline
     (ordinary measurement jitter) does not register as slip.
     """
     if not history:
@@ -235,7 +235,7 @@ _DETECTORS = (
 )
 
 
-# ── Top-level analysis ─────────────────────────────────────────────────────────
+# -- Top-level analysis ---------------------------------------------------------
 def analyze(
     steps: list[StepMeasurement],
     driver: str,
@@ -250,7 +250,7 @@ def analyze(
     no step trips, the run is treated as never-slipping and ``max_flow_mm3s`` is
     the last (highest) tested flow.
 
-    ``constants`` overrides the per-driver detection thresholds — the accelerometer
+    ``constants`` overrides the per-driver detection thresholds - the accelerometer
     (vibration) fallback passes its own ratio-based set rather than the StallGuard ones.
     ``warmup`` suppresses detection until at least that many steps have been measured, so a
     detector can't trip on the unsettled first steps (the vibration ramps up before grinding).

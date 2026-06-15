@@ -1,12 +1,12 @@
-"""START_PRINT / END_PRINT scaffold generator — tailored to THIS printer.
+"""START_PRINT / END_PRINT scaffold generator - tailored to THIS printer.
 
 Reads the live config (kinematics, build envelope, which leveling sections are configured, whether a
 heated bed exists) and emits two ready-to-edit macros whose homing / leveling / mesh / park steps
-and prime-line coordinates fit the actual machine — rather than a generic copy-paste a user has to
+and prime-line coordinates fit the actual machine - rather than a generic copy-paste a user has to
 fix up. Pure ``generate(ctx)`` for testability; ``gather`` owns the (graceful) Moonraker fetch.
 
 The macros are written through the Config Editor's existing gated save (backup + refuse-while-
-printing) via ``config_service.append_block`` — this is the Macro Designer's first write path.
+printing) via ``config_service.append_block`` - this is the Macro Designer's first write path.
 """
 
 from __future__ import annotations

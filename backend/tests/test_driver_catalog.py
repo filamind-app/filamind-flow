@@ -44,7 +44,7 @@ def test_route_drivers_list_and_detail() -> None:
     assert r.status_code == 200
     body = r.json()
     assert body["total"] >= 40 and body["drivers"]
-    # summary stays light — no snippet in the list
+    # summary stays light - no snippet in the list
     assert "configSnippet" not in body["drivers"][0]
 
     klip = client.get("/api/hardware/drivers", params={"klipper_only": True})

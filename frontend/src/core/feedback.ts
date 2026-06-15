@@ -1,7 +1,7 @@
 /** In-app feedback / issue reporting.
  *
- *  A single shared state drives three entry points — the header Feedback menu (bug / feature),
- *  and a small "Report" button on error surfaces — so any of them can open the same dialog. We
+ *  A single shared state drives three entry points - the header Feedback menu (bug / feature),
+ *  and a small "Report" button on error surfaces - so any of them can open the same dialog. We
  *  never post anything on the user's behalf: submitting just opens a *pre-filled* GitHub
  *  `issues/new` form in a new tab for the user to review and submit themselves.
  *
@@ -9,7 +9,7 @@
  *  locale, so maintainers can act on every report. The dialog's own labels are localized.
  *
  *  Screenshots are best-effort and never block a report: html-to-image renders the current view,
- *  then we copy it to the clipboard where that's allowed (a secure context — https or localhost)
+ *  then we copy it to the clipboard where that's allowed (a secure context - https or localhost)
  *  and fall back to a file download on the plain-http LAN the printer is usually served over.
  */
 import { reactive } from 'vue'
@@ -19,7 +19,7 @@ import { useNav } from './nav'
 import { widgetRegistry } from './registry'
 import { currentTheme } from './theme'
 
-/** The project's own repository — issues are opened here. */
+/** The project's own repository - issues are opened here. */
 const REPO = 'filamind-app/filamind-flow'
 
 export type ReportMode = 'bug' | 'feature'
@@ -66,7 +66,7 @@ export const feedback = reactive<FeedbackState>({
 
 const { current } = useNav()
 
-/** The English title of the active widget (or "Dashboard") — for the diagnostics, not the UI. */
+/** The English title of the active widget (or "Dashboard") - for the diagnostics, not the UI. */
 function activeViewLabel(): string {
   const id = current.value
   if (!id || id === 'dashboard') return 'Dashboard'
@@ -98,7 +98,7 @@ async function captureScreenshot(): Promise<Blob | null> {
       backgroundColor: !bg || bg === 'rgba(0, 0, 0, 0)' ? '#ffffff' : bg,
       pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
       // Skip web-font inlining: the fonts come from a cross-origin stylesheet (Google Fonts) whose
-      // cssRules can't be read, so embedding always fails anyway — skipping it avoids a burst of
+      // cssRules can't be read, so embedding always fails anyway - skipping it avoids a burst of
       // SecurityError console noise and speeds up capture (the rasterised text is unaffected).
       skipFonts: true,
       // Drop the feedback dialog / menu so the shot shows the app, not the report UI.
@@ -133,7 +133,7 @@ async function deliverScreenshot(blob: Blob): Promise<Exclude<ScreenshotMethod, 
       return 'clipboard'
     }
   } catch {
-    // Fall through to a download — e.g. clipboard permission denied.
+    // Fall through to a download - e.g. clipboard permission denied.
   }
   try {
     downloadBlob(blob)
@@ -227,7 +227,7 @@ function buildBody(description: string): string {
   if (feedback.mode === 'bug' && feedback.attachScreenshot && feedback.screenshot) {
     lines.push('')
     lines.push(
-      '_A screenshot was captured — paste it here with Ctrl/⌘+V, or drag in the downloaded image._',
+      '_A screenshot was captured - paste it here with Ctrl/⌘+V, or drag in the downloaded image._',
     )
   }
   lines.push('')

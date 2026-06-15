@@ -1,13 +1,13 @@
 /** Open a pre-filled GitHub issue for a Hardware Browser catalog submission.
  *
- *  Like the feedback flow, this NEVER posts on the user's behalf and uses no token — it only opens
+ *  Like the feedback flow, this NEVER posts on the user's behalf and uses no token - it only opens
  *  a pre-filled `issues/new` form in a new tab for the user to review and submit. A maintainer then
  *  validates the JSON fragment and merges it into the catalog (scripts/apply_submission.py). */
 
 const REPO = 'filamind-app/filamind-flow'
 
 export interface CatalogSubmission {
-  /** Part type (motor, driver, hotend, …) — used in the title and label. */
+  /** Part type (motor, driver, hotend, …) - used in the title and label. */
   type: string
   /** Human title fragment, e.g. "LDO Motors 42STH48". */
   label: string
@@ -19,7 +19,7 @@ function buildBody(sub: CatalogSubmission): string {
   const version = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'unknown'
   const json = JSON.stringify(sub.fragment, null, 2)
   return [
-    `### New catalog part — ${sub.type}`,
+    `### New catalog part - ${sub.type}`,
     '',
     `**${sub.label || '(unnamed)'}**`,
     '',

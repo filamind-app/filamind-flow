@@ -1,4 +1,4 @@
-"""Machine vibrations profile — find the speeds and directions that vibrate least.
+"""Machine vibrations profile - find the speeds and directions that vibrate least.
 
 Pure numpy analysis (no Klipper host, no matplotlib). Given many short
 constant-speed back-and-forth captures taken at the kinematic motor angles (0/90 for
@@ -509,7 +509,7 @@ def _verdict_parts(
     motor_freq: float | None,
     low_freq_warning: bool,
 ) -> list[dict[str, object]]:
-    """The verdict as structured ``{code, params}`` parts — the UI translates them (the
+    """The verdict as structured ``{code, params}`` parts - the UI translates them (the
     English ``verdict`` string stays as a fallback)."""
     if low_freq_warning:
         return [{"code": "low_freq", "params": {}}]

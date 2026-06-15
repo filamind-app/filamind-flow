@@ -1,6 +1,6 @@
 /** Help-layer structure for the Machine Doctor widget. Translatable text lives in the i18n catalog
  *  under `machineDoctor.help.*`; this only holds the non-translatable structure (topic order, each
- *  topic's illustration, glossary order). Rendered by the shared `HelpDrawer` — the adopted pattern.
+ *  topic's illustration, glossary order). Rendered by the shared `HelpDrawer` - the adopted pattern.
  */
 
 export type HelpIlloKey = 'doctor' | 'grade' | 'fix'

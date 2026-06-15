@@ -1,4 +1,4 @@
-"""Linux host control endpoints — read (and, in later phases, change) the printer host's OS state.
+"""Linux host control endpoints - read (and, in later phases, change) the printer host's OS state.
 
 Phase 1: a read-only health + OS-state monitor (CPU / temp / memory / disk / network / time /
 locale). Phase 2: a systemd service manager (list / control / logs / delete). The remaining
@@ -25,7 +25,7 @@ async def host_monitor(settings: Settings = Depends(get_settings)) -> dict[str, 
     return await host_control_service.monitor(settings.data_dir)
 
 
-# ── Services (Phase 2) ─────────────────────────────────────────────────────────
+# -- Services (Phase 2) ---------------------------------------------------------
 
 
 class ServiceAction(BaseModel):
@@ -86,7 +86,7 @@ async def host_service_delete(req: ServiceDelete) -> dict[str, Any]:
     return result
 
 
-# ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+# -- Disk cleanup (Phase 3) -----------------------------------------------------
 
 
 class CleanupRun(BaseModel):
@@ -107,7 +107,7 @@ async def host_cleanup_run(
     return await host_control_service.cleanup_run(req.ids, settings.data_dir)
 
 
-# ── System settings (Phase 4) ──────────────────────────────────────────────────
+# -- System settings (Phase 4) --------------------------------------------------
 
 
 class TimezoneReq(BaseModel):

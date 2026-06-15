@@ -63,7 +63,7 @@ TARGET_ARRAY: dict[str, str] = {
 # These top-level fields, when present, must be JSON objects.
 _DICT_FIELDS = ("specs", "autotune", "caps", "maxFlow")
 # Matches the frontend slugify() output: lowercase alphanumeric segments joined by single hyphens
-# (no leading/trailing/double hyphens). Digit-leading slugs are allowed — real part ids have them.
+# (no leading/trailing/double hyphens). Digit-leading slugs are allowed - real part ids have them.
 _SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
@@ -142,7 +142,7 @@ def merge(
     if existing is not None:
         if not force:
             raise ValueError(
-                f"{dup_desc} already exists — re-run with --force to replace it"
+                f"{dup_desc} already exists - re-run with --force to replace it"
             )
         bucket[existing] = fragment
         return "replaced"
@@ -153,7 +153,7 @@ def merge(
 def _rebuild_sqlite() -> None:
     """Regenerate hardware.sqlite via the sibling build script (imported lazily)."""
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    import build_hardware_db  # noqa: PLC0415 — lazy so importing this module never triggers a build
+    import build_hardware_db  # noqa: PLC0415 - lazy so importing this module never triggers a build
 
     build_hardware_db.build()
 
@@ -193,7 +193,7 @@ def main(argv: list[str] | None = None) -> int:
 
     part_type = args.part_type or infer_type(fragment)
     if not part_type:
-        return _fail("could not infer the part type — pass --type")
+        return _fail("could not infer the part type - pass --type")
 
     problems = validate(part_type, fragment)
     if problems:
@@ -201,7 +201,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not JSON_PATH.exists():
         return _fail(
-            f"{JSON_PATH} not found. This is a maintainer tool — it edits the curated, git-ignored "
+            f"{JSON_PATH} not found. This is a maintainer tool - it edits the curated, git-ignored "
             "hardware.json, which only maintainers hold locally."
         )
     data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
@@ -218,7 +218,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.no_build:
         _rebuild_sqlite()
-        print("Rebuilt hardware.sqlite — review the diff and commit it.")
+        print("Rebuilt hardware.sqlite - review the diff and commit it.")
     return 0
 
 

@@ -1,5 +1,5 @@
 /** Supervised vibrations-profile run: start → poll → result, with shared reactive progress,
- *  cancel, and reattach-after-reload. The minutes-long sweep is no longer a blind blocking POST —
+ *  cancel, and reattach-after-reload. The minutes-long sweep is no longer a blind blocking POST -
  *  the task id is persisted so a dropped tab can pick the run (or its finished result) back up. */
 import { reactive } from 'vue'
 
@@ -13,7 +13,7 @@ import type { VibrationsProfile } from './types'
 const STORAGE_KEY = 'filamind-vibrations-task'
 const POLL_MS = 1500
 
-/** Thrown (as Error.message) when the run was cancelled — callers show it as info, not failure. */
+/** Thrown (as Error.message) when the run was cancelled - callers show it as info, not failure. */
 export const CANCELLED = '__vibrations_cancelled__'
 
 export const vibRun = reactive({
@@ -117,7 +117,7 @@ export async function reattachVibrations(): Promise<VibrationsProfile | null> {
   try {
     task = await fetchTask(stored)
   } catch {
-    untrack() // unknown/expired task — clear the stale pointer
+    untrack() // unknown/expired task - clear the stale pointer
     return null
   }
   if (task.status === 'running') {

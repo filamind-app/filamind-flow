@@ -1,15 +1,15 @@
-"""Board discovery — finds every flashable MCU on any printer.
+"""Board discovery - finds every flashable MCU on any printer.
 
 Boards are discovered from four independent sources and merged by identity so a
 single physical board appears once, enriched with whatever each source knows:
 
-* **Moonraker** — the configured ``[mcu]`` sections (name, running firmware
+* **Moonraker** - the configured ``[mcu]`` sections (name, running firmware
   version, serial / CAN UUID identity). Tells us what is *in service*.
-* **USB / serial** — ``/dev/serial/by-id`` + ``ttyACM``/``ttyUSB``. The by-id
+* **USB / serial** - ``/dev/serial/by-id`` + ``ttyACM``/``ttyUSB``. The by-id
   name reveals the mode: a ``klipper``/``kalico`` device is running firmware, a
   ``katapult``/``canboot`` device sits in its bootloader ready to flash.
-* **CAN** — Katapult's ``flashtool.py -q`` on each ``can`` interface.
-* **DFU** — ``dfu-util -l`` (boards sitting in the STM32 ROM bootloader).
+* **CAN** - Katapult's ``flashtool.py -q`` on each ``can`` interface.
+* **DFU** - ``dfu-util -l`` (boards sitting in the STM32 ROM bootloader).
 
 Everything is read-only: discovery only *queries* buses, it never flashes.
 """

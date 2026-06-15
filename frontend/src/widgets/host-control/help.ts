@@ -1,7 +1,7 @@
 /** Structure for the Host Control help layer. Translatable text (titles, bodies, glossary) lives in
  *  the i18n catalog under `hostControl.help.*`; this module only holds non-translatable structure:
  *  which topics exist (in order), their illustration, and the glossary term order. Rendered by the
- *  shared `HelpDrawer` — the adopted guide pattern across the app.
+ *  shared `HelpDrawer` - the adopted guide pattern across the app.
  */
 
 export type HelpIlloKey = 'host' | 'monitor' | 'services' | 'cleanup' | 'system' | 'network'

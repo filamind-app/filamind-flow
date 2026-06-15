@@ -101,7 +101,7 @@ async function loadAudit(): Promise<void> {
   try {
     archiveRuns.value = (await listArchive()).runs
   } catch {
-    /* the archive lives on the printer host — fine to be unavailable off-host */
+    /* the archive lives on the printer host - fine to be unavailable off-host */
   }
 }
 onMounted(loadAudit)
@@ -126,7 +126,7 @@ function diagClass(level: DiagnosticLevel): string {
   if (level === 'warn') return 'bg-brand-yellow'
   return 'bg-brand-red text-surface'
 }
-/** Keeps the peak label inside the plot — flips to the left of the marker near
+/** Keeps the peak label inside the plot - flips to the left of the marker near
  *  the right edge. */
 function peakLabelX(x: number, width: number): number {
   return x > width * 0.78 ? x - 3 : x + 3
@@ -168,7 +168,7 @@ function applyResult(result: ShaperAnalysis): void {
   }
 }
 
-/** Analyses whichever source the chooser picked — an upload or a host/archive file —
+/** Analyses whichever source the chooser picked - an upload or a host/archive file -
  *  applying the shared advanced params either way, then files the result. */
 async function onSourceAnalyze(req: {
   kind: 'upload' | 'host'
@@ -199,7 +199,7 @@ async function onSourceAnalyze(req: {
   }
 }
 
-/** A live tool (noise / belts / axes-map / sustain / vibrations) reported a result —
+/** A live tool (noise / belts / axes-map / sustain / vibrations) reported a result -
  *  file it into the audit so every test type is aggregated in one place. */
 function onRecorded(record: Omit<AuditRecord, 'id' | 'source'>): void {
   localAudit.value = recordAudit(record)
@@ -293,13 +293,13 @@ async function saveConfig(): Promise<void> {
       </button>
     </div>
 
-    <!-- GUIDED — kept mounted (v-show) so an in-progress wizard survives a tab switch. -->
+    <!-- GUIDED - kept mounted (v-show) so an in-progress wizard survives a tab switch. -->
     <div v-show="mode === 'guided'" class="space-y-2">
       <HelpNote topic="guided" />
       <GuidedTune @analyzed="applyResult" @exit="mode = 'analyze'" />
     </div>
 
-    <!-- ANALYZE — pick a CSV (upload or from the host / archive), tune the knobs, compare. -->
+    <!-- ANALYZE - pick a CSV (upload or from the host / archive), tune the knobs, compare. -->
     <div v-show="mode === 'analyze'" class="space-y-3">
       <CsvSourceChooser ref="chooserRef" :busy="busy" @analyze="onSourceAnalyze" />
       <div class="flex flex-wrap items-center gap-2">
@@ -322,10 +322,10 @@ async function saveConfig(): Promise<void> {
           >scv <input v-model="params.scv" :class="numClass"
         /></label>
         <label class="flex items-center gap-1"
-          >max_smoothing <input v-model="params.maxSmoothing" placeholder="—" :class="numClass"
+          >max_smoothing <input v-model="params.maxSmoothing" placeholder="-" :class="numClass"
         /></label>
         <label class="flex items-center gap-1"
-          >damping_ratio <input v-model="params.dampingRatio" placeholder="—" :class="numClass"
+          >damping_ratio <input v-model="params.dampingRatio" placeholder="-" :class="numClass"
         /></label>
         <span class="opacity-50">{{ t('inputShaping.widget.blankDefault') }}</span>
       </div>
@@ -333,10 +333,10 @@ async function saveConfig(): Promise<void> {
       <ResonanceCompare v-if="showCompare" />
     </div>
 
-    <!-- LIVE TOOLS — on-printer captures. Kept mounted (v-show) so results persist. -->
+    <!-- LIVE TOOLS - on-printer captures. Kept mounted (v-show) so results persist. -->
     <ResonanceFromPrinter v-show="mode === 'live'" @analyzed="applyResult" @recorded="onRecorded" />
 
-    <!-- AUDIT — every past result (local + the on-host archive), per-property. -->
+    <!-- AUDIT - every past result (local + the on-host archive), per-property. -->
     <div
       v-show="mode === 'audit'"
       class="space-y-2 rounded-brutal border-2 border-ink bg-paper p-2"
@@ -409,8 +409,8 @@ async function saveConfig(): Promise<void> {
       <ReportErrorButton :error="error" />
     </div>
 
-    <!-- Shared result view — the recommended shaper, A–F grade, frequency chart and shaper table.
-         Shown in EVERY working view (Analyze, Live, and Guided — which otherwise shows only
+    <!-- Shared result view - the recommended shaper, A–F grade, frequency chart and shaper table.
+         Shown in EVERY working view (Analyze, Live, and Guided - which otherwise shows only
          per-step gate badges, so the full result was previously invisible there). #116 -->
     <template v-if="analysis && mode !== 'audit'">
       <div
@@ -479,7 +479,7 @@ async function saveConfig(): Promise<void> {
           <span class="inline-block h-2 w-2 rounded-full" :class="dotClass(f.rating)" />
           <span class="font-medium">{{ f.label }}</span>
           <span class="font-mono opacity-70">{{ f.value }}</span>
-          <span class="text-[10px] opacity-50">— {{ f.note }}</span>
+          <span class="text-[10px] opacity-50">- {{ f.note }}</span>
         </div>
       </div>
 
@@ -521,7 +521,7 @@ async function saveConfig(): Promise<void> {
             stroke-opacity="0.12"
             stroke-width="0.5"
           />
-          <!-- Noise floor (median PSD) — anything near it is just noise. -->
+          <!-- Noise floor (median PSD) - anything near it is just noise. -->
           <line
             v-if="chart.noiseY != null"
             :x1="4"
@@ -642,7 +642,7 @@ async function saveConfig(): Promise<void> {
       <HelpNote topic="shapers" />
     </template>
 
-    <!-- Combined config block (accumulates across the X and Y captures) — shown in
+    <!-- Combined config block (accumulates across the X and Y captures) - shown in
          any working view (Guided / Analyze / Live), hidden while reviewing History. -->
     <div v-if="configText && mode !== 'audit'" class="space-y-1">
       <div class="flex items-center justify-between gap-2">

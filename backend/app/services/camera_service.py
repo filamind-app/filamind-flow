@@ -3,7 +3,7 @@
 The panel is served on its own port; the printer's webcam is served by the host's main web
 server (``/webcam/…`` on port 80), which the panel's nginx does not proxy. So the browser can't
 reach the camera at the panel's origin directly. This service lets the backend (which *is* on the
-host) fetch the snapshot and hand it back through ``/api/camera/snapshot`` — same origin as the
+host) fetch the snapshot and hand it back through ``/api/camera/snapshot`` - same origin as the
 panel, no host/port assumptions in the build.
 
 Pure URL helpers are unit-testable; the snapshot fetch needs a live host.
@@ -18,7 +18,7 @@ import httpx
 
 from app.services.moonraker_client import MoonrakerClient
 
-#: Snapshot fetches are small JPEGs from the local host — keep the timeout short.
+#: Snapshot fetches are small JPEGs from the local host - keep the timeout short.
 _SNAPSHOT_TIMEOUT_S = 10.0
 
 
@@ -30,7 +30,7 @@ def host_root(moonraker_url: str) -> str:
     """The host's web root for webcam URLs.
 
     Webcam paths from Moonraker are relative to the host's main web server (port 80), not
-    Moonraker's own port — so drop the port from ``moonraker_url`` and keep scheme + host.
+    Moonraker's own port - so drop the port from ``moonraker_url`` and keep scheme + host.
     """
     parts = urlsplit(moonraker_url)
     scheme = parts.scheme or "http"

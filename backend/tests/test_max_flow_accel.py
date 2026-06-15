@@ -1,4 +1,4 @@
-"""Tests for the accelerometer (vibration) max-flow fallback — pure parsing + slip detection."""
+"""Tests for the accelerometer (vibration) max-flow fallback - pure parsing + slip detection."""
 
 from __future__ import annotations
 

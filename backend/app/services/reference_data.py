@@ -1,20 +1,20 @@
-"""Phase 0 reference-data layer — curated Klipper datasets reused across upcoming widgets.
+"""Phase 0 reference-data layer - curated Klipper datasets reused across upcoming widgets.
 
 Static JSON datasets baked under ``app/data/reference/``:
 
-* ``stallguard_profiles.json`` — per-driver StallGuard slip-detection tuning constants
+* ``stallguard_profiles.json`` - per-driver StallGuard slip-detection tuning constants
   (base + per-driver overrides + the StallGuard field name per model). Backs the planned
   Max-Flow widget and the Motor Drivers auto-SGT / slip-detection enhancement.
-* ``macros.json`` — built-in Klipper calibration macro definitions.
+* ``macros.json`` - built-in Klipper calibration macro definitions.
 
 The curated hardware catalog ships as a read-only **``hardware.sqlite``** (built from a local,
 git-ignored ``hardware.json`` by ``scripts/build_hardware_db.py``); :func:`_read_hardware_db`
 reconstructs the same structure ``json.load`` produced, so everything downstream is unchanged.
 
-The board / MCU identification patterns are no longer a standalone file — they are *derived*
+The board / MCU identification patterns are no longer a standalone file - they are *derived*
 from the unified hardware catalog (``board_patterns``), so the catalog is the single source.
 
-Read once at import — small, static reference data. Also the single source for the Motor Drivers
+Read once at import - small, static reference data. Also the single source for the Motor Drivers
 stepper-motor catalog (``motor_specs`` / ``motor_spec_lookup``), served via ``/api/drivers/motors``.
 """
 
@@ -27,8 +27,8 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from app.services import hardware_links as _hwlinks  # pure (no reference_data import) — no cycle
-from app.services import hardware_search as _hwsearch  # pure (no reference_data import) — no cycle
+from app.services import hardware_links as _hwlinks  # pure (no reference_data import) - no cycle
+from app.services import hardware_search as _hwsearch  # pure (no reference_data import) - no cycle
 
 _DIR = Path(__file__).resolve().parent.parent / "data" / "reference"
 
@@ -46,7 +46,7 @@ def _read_hardware_db(path: Path) -> dict[str, Any]:
     """Reconstruct the exact ``hardware.json`` structure from the read-only ``hardware.sqlite``.
 
     Each entity is stored as a JSON ``data`` column (original key order intact), so the dict
-    returned here is identical to what ``json.load`` produced — every downstream index / haystack /
+    returned here is identical to what ``json.load`` produced - every downstream index / haystack /
     link-graph is unchanged. Built by ``scripts/build_hardware_db.py``.
     """
     con = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
@@ -93,7 +93,7 @@ _HARDWARE = _load_hardware()
 _TEMPLATES = _load("templates.json")
 
 
-# ── StallGuard ───────────────────────────────────────────────────────────────
+# -- StallGuard ---------------------------------------------------------------
 def stallguard_profiles() -> dict[str, Any]:
     """The full StallGuard dataset (``base`` + per-driver ``overrides`` + ``field_by_driver``)."""
     return _STALLGUARD
@@ -119,7 +119,7 @@ def resolved_profile(driver: str) -> dict[str, Any]:
     return {"driver": driver.lower(), "field": stallguard_field(driver), "constants": merged}
 
 
-# ── Hotends / boards / macros ────────────────────────────────────────────────
+# -- Hotends / boards / macros ------------------------------------------------
 def hotends() -> list[dict[str, Any]]:
     """The Max-Flow hotend rows (max-flow / melt-zone / suggested temp / test preset), derived from
     the unified hardware catalog: every "Hotends & Heaters" product carrying a ``maxFlow`` block,
@@ -134,7 +134,7 @@ def hotends() -> list[dict[str, Any]]:
 
 def board_patterns() -> dict[str, Any]:
     """Board + MCU identification patterns (``board_patterns`` + ``mcu_patterns``), derived from
-    the unified hardware catalog (built once at import — see ``_derive_board_patterns``)."""
+    the unified hardware catalog (built once at import - see ``_derive_board_patterns``)."""
     return _BOARD_PATTERNS
 
 
@@ -144,7 +144,7 @@ def macros() -> list[dict[str, Any]]:
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
 
 
-# ── Hardware reference DB (loaded once at import; cached + indexed for O(1) reads) ─────
+# -- Hardware reference DB (loaded once at import; cached + indexed for O(1) reads) -----
 def _rows(key: str) -> list[dict[str, Any]]:
     rows = _HARDWARE.get(key, [])
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
@@ -197,10 +197,10 @@ def _derive_board_patterns() -> dict[str, Any]:
     """Build the board / MCU identification patterns from the unified hardware catalog (the single
     source), replacing the former standalone ``board_patterns.json`` file.
 
-    * ``mcu_patterns`` — one per canonical MCU entity (a superset of the legacy table); the chip id
+    * ``mcu_patterns`` - one per canonical MCU entity (a superset of the legacy table); the chip id
       matched in a serial / CAN signature maps to its display name. Longest id first so a more
       specific chip wins over any shorter prefix.
-    * ``board_patterns`` — each catalog board's own verbatim ``matchPatterns`` (the specific
+    * ``board_patterns`` - each catalog board's own verbatim ``matchPatterns`` (the specific
       signal), then a brand-level fallback from the canonical manufacturers that actually own
       boards (their id + aliases). ``analyze`` takes the first match, so the specific board
       patterns win and the brand patterns catch the rest.
@@ -286,9 +286,9 @@ def hardware_manufacturers() -> list[dict[str, Any]]:
     return _HW_MANUFACTURERS
 
 
-# ── DB-2 linking backbone (canonical manufacturers / MCUs + cross-entity graph) ───────
+# -- DB-2 linking backbone (canonical manufacturers / MCUs + cross-entity graph) -------
 def manufacturers_canonical() -> list[dict[str, Any]]:
-    """The canonical manufacturer entities — directory entries (deduped, each with a stable
+    """The canonical manufacturer entities - directory entries (deduped, each with a stable
     ``manufacturer_id``, auto-derived ``aliases`` and a ``memberCount``) plus a few recurring
     real brands derived from entity usage. Sorted most-connected first."""
     return _LINKS.manufacturers
@@ -326,7 +326,7 @@ def link_graph() -> _hwlinks.LinkGraph:
 
 def _facets() -> dict[str, list[str]]:
     board_class = sorted({str(b["boardClass"]) for b in _HW_BOARDS if b.get("boardClass")})
-    # the raw nema field is inconsistent ("17", "17 (42mm)", "23 (57)") — facet on the size number
+    # the raw nema field is inconsistent ("17", "17 (42mm)", "23 (57)") - facet on the size number
     nema_sizes: set[str] = set()
     for m in _HW_MOTORS:
         hit = re.match(r"\d+", str(m.get("nema", "")))
@@ -339,7 +339,7 @@ def _facets() -> dict[str, list[str]]:
 
 def _catalog_subsections() -> dict[str, list[str]]:
     """Per-category distinct sub-types (e.g. Fans / Power supplies / Heated beds) for the catalog
-    sub-type facet — the catalog equivalent of a board's class."""
+    sub-type facet - the catalog equivalent of a board's class."""
     out: dict[str, list[str]] = {}
     for cat, rows in _HW_CATALOG.items():
         subs = sorted({str(e["subsection"]) for e in rows if e.get("subsection")})
@@ -361,7 +361,7 @@ def hardware_facets() -> dict[str, Any]:
 
 def canonical_category_counts() -> dict[str, int]:
     """Per-category counts using the CANONICAL deduped entity sets where one exists
-    (boards / drivers / motors / hosts / the 9 catalog categories), else the raw item count —
+    (boards / drivers / motors / hosts / the 9 catalog categories), else the raw item count -
     so the browser's category tiles match what each panel actually lists."""
     from collections import Counter
 
@@ -385,7 +385,7 @@ def canonical_category_counts() -> dict[str, int]:
 
 
 def boards() -> list[dict[str, Any]]:
-    """The canonical control-board entities — each board's connectors aggregated into
+    """The canonical control-board entities - each board's connectors aggregated into
     a single ``ports[]`` list (instead of one flat row per pin), joined to its spec
     row, with detection ``matchPatterns``. Built from the ``MCU & Boards`` category."""
     return _HW_BOARDS
@@ -397,7 +397,7 @@ def board_by_id(board_id: str) -> dict[str, Any] | None:
 
 
 def drivers() -> list[dict[str, Any]]:
-    """The canonical stepper-driver entities — one per chip (deduped from the flat
+    """The canonical stepper-driver entities - one per chip (deduped from the flat
     ``Stepper Drivers`` rows), with a copyable Klipper ``[tmcXXXX]`` config snippet
     (or an honest note for standalone step/dir and closed-loop parts)."""
     return _HW_DRIVERS
@@ -408,11 +408,11 @@ def driver_by_id(driver_id: str) -> dict[str, Any] | None:
     return _DRIVER_IDX.get(driver_id)
 
 
-# ── TMC driver capability map (the Motor Drivers widget reads it from the catalog, not a silo) ──
+# -- TMC driver capability map (the Motor Drivers widget reads it from the catalog, not a silo) --
 # The machine-readable capability block (interface / current cap / chopper modes / StallGuard field
 # / sensorless / temperature) lives in each driver's ``caps`` block on the catalog drivers[].
 def driver_infos() -> list[dict[str, Any]]:
-    """The TMC driver capability map (``DriverInfo``-shaped) — every catalog driver that carries a
+    """The TMC driver capability map (``DriverInfo``-shaped) - every catalog driver that carries a
     ``caps`` block. The single source for ``/api/drivers/catalog``."""
     return [e["caps"] for e in _HW_DRIVERS if isinstance(e.get("caps"), dict)]
 
@@ -438,7 +438,7 @@ def driver_info_lookup(model: str) -> dict[str, Any] | None:
 
 
 def motors() -> list[dict[str, Any]]:
-    """The canonical stepper-motor entities — one per model (lightly deduped), with a
+    """The canonical stepper-motor entities - one per model (lightly deduped), with a
     recommended Klipper ``run_current`` (~0.7 x rated), any community per-axis current
     presets, and a copyable config snippet."""
     return _HW_MOTORS
@@ -449,7 +449,7 @@ def motor_by_id(motor_id: str) -> dict[str, Any] | None:
     return _MOTOR_IDX.get(motor_id)
 
 
-# ── Motor-spec adapter (the Motor Drivers widget reads motors from the catalog, not a silo) ──
+# -- Motor-spec adapter (the Motor Drivers widget reads motors from the catalog, not a silo) --
 # Presents each catalog motor in the flat ``MotorSpec`` shape the recommender / picker expect:
 # the ``autotune`` block is flattened to top level, ``model`` is the unique ``motor_id`` and
 # ``name`` the display label. A motor resolves by motor_id / name / alias, so a previously saved
@@ -488,7 +488,7 @@ _MOTOR_SPEC_IDX = _build_motor_spec_index()
 
 def motor_specs() -> list[dict[str, Any]]:
     """Every catalog motor in the flat ``MotorSpec`` shape (``model`` = motor_id, plus ``name``
-    and the flattened autotune params) — the stepper-motor catalog the Motor Drivers widget reads.
+    and the flattened autotune params) - the stepper-motor catalog the Motor Drivers widget reads.
     Motors with no datasheet ``autotune`` block carry ``None`` for the electrical fields."""
     return _MOTOR_SPECS
 
@@ -507,7 +507,7 @@ def motor_spec_manufacturers() -> list[str]:
 
 
 def hosts() -> list[dict[str, Any]]:
-    """The canonical host-computer entities — SBCs / x86 hosts / Klipper OS images (deduped),
+    """The canonical host-computer entities - SBCs / x86 hosts / Klipper OS images (deduped),
     each with a copyable Klipper HOST config (the ``[mcu host]`` Linux-process-MCU block + setup
     note for open Linux hosts; an honest note for locked-proprietary hosts and OS images)."""
     return _HW_HOSTS
@@ -520,7 +520,7 @@ def host_by_id(host_id: str) -> dict[str, Any] | None:
 
 def catalog() -> dict[str, Any]:
     """Generic canonical catalog for the remaining categories (sensors, hotends, extruders,
-    fans/power/bed, displays/cameras, motion, nozzles, filament, electronics) — each a deduped
+    fans/power/bed, displays/cameras, motion, nozzles, filament, electronics) - each a deduped
     entity with a copyable Klipper config snippet. Keyed by category name."""
     return _HW_CATALOG
 
@@ -540,7 +540,7 @@ def catalog_entity_by_id(catalog_id: str) -> dict[str, Any] | None:
     return _CATALOG_IDX.get(catalog_id)
 
 
-# ── Config / macro templates ──────────────────────────────────────────────────
+# -- Config / macro templates --------------------------------------------------
 def templates() -> list[dict[str, Any]]:
     """Insertable Klipper config / macro templates (id / name / category / description / body)."""
     rows = _TEMPLATES.get("templates", [])

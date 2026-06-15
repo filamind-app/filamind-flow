@@ -1,4 +1,4 @@
-"""Printer-guard status — one poll for the shell's global "writes locked" awareness.
+"""Printer-guard status - one poll for the shell's global "writes locked" awareness.
 
 Combines the exclusive-slot state (which actuating operation is running, if any) with the live
 print state, so the frontend learns *before* a refused write that the printer is printing or

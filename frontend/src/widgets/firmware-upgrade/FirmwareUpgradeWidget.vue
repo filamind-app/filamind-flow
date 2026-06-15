@@ -101,7 +101,7 @@ function boardModeClass(mode: string): string {
   return 'bg-surface opacity-70'
 }
 
-// `optional` tools aren't needed to flash — they're host diagnostics. can-utils in
+// `optional` tools aren't needed to flash - they're host diagnostics. can-utils in
 // particular is NOT used by CAN flashing (Katapult's flashtool talks to the CAN bus over
 // SocketCAN directly), so its absence is informational, not a problem.
 const TOOLS: { key: keyof FirmwareTools; label: string; optional?: boolean }[] = [
@@ -150,17 +150,17 @@ async function load(silent = false): Promise<void> {
   try {
     services.value = (await fetchServices()).services
   } catch {
-    /* services are optional context — ignore */
+    /* services are optional context - ignore */
   }
   try {
     beacon.value = await fetchBeacon()
   } catch {
-    /* beacon probes are optional — ignore */
+    /* beacon probes are optional - ignore */
   }
   try {
     health.value = await fetchHealth()
   } catch {
-    /* health is optional context — ignore */
+    /* health is optional context - ignore */
   }
 }
 
@@ -253,7 +253,7 @@ async function reattachBatch(): Promise<void> {
       return
     }
   } catch {
-    /* unknown/expired task — fall through to clear */
+    /* unknown/expired task - fall through to clear */
   }
   try {
     localStorage.removeItem(BATCH_TASK_KEY)
@@ -315,14 +315,14 @@ function normalizeVer(v: string | null | undefined): string {
 }
 
 /** The board's actual running firmware, as the live MCU reports it to Moonraker
- *  (NOT the repo build version) — falls back to the recorded flashed version. */
+ *  (NOT the repo build version) - falls back to the recorded flashed version. */
 function deviceFirmware(device: Device): string | null {
   return boards.value.find((b) => b.id === device.id)?.version ?? device.flashed_version
 }
 
 /** Out of date = the board's firmware differs from the host's running Klipper. Uses the same
  *  version source as the displayed one (live MCU report, falling back to the recorded flashed
- *  version) so a board that doesn't report a live version — e.g. the Linux host MCU — still gets
+ *  version) so a board that doesn't report a live version - e.g. the Linux host MCU - still gets
  *  the "update available" badge when it's behind the host. */
 function isOutdated(device: Device): boolean {
   const host = normalizeVer(status.value?.host.version)
@@ -341,7 +341,7 @@ function flashRequest(device: Device): FlashRequest {
   }
 }
 
-/** Flashes a device's assigned profile directly — uses its already-built artifact.
+/** Flashes a device's assigned profile directly - uses its already-built artifact.
  *  Not called on click: the flash buttons go through requestFlash() -> the confirm gate. */
 async function flashDevice(device: Device): Promise<void> {
   if (opBusy.value || !device.profile) return
@@ -361,7 +361,7 @@ async function flashDevice(device: Device): Promise<void> {
   }
 }
 
-/** Builds a device's profile, then flashes it — but only if the build succeeded. */
+/** Builds a device's profile, then flashes it - but only if the build succeeded. */
 async function buildAndFlash(device: Device): Promise<void> {
   if (opBusy.value || !device.profile) return
   error.value = null
@@ -530,7 +530,7 @@ onUnmounted(() => {
       />
     </div>
 
-    <!-- House navigation: one persistent tab strip (#117) — replaces the footer-button nav. -->
+    <!-- House navigation: one persistent tab strip (#117) - replaces the footer-button nav. -->
     <WidgetTabs v-model="mode" :tabs="FW_TABS" />
 
     <div v-if="mode === 'guided'" class="space-y-2">
@@ -572,14 +572,14 @@ onUnmounted(() => {
 
       <template v-else-if="status">
         <div class="space-y-1.5">
-          <!-- Host runs the Klipper host software — the reference every MCU syncs to. -->
+          <!-- Host runs the Klipper host software - the reference every MCU syncs to. -->
           <div
             class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink bg-brand-cyan px-2 py-1"
           >
             <span class="min-w-0 flex-1 truncate font-bold">{{
               t('firmware.widget.hostKlipper')
             }}</span>
-            <span class="font-mono text-[11px] opacity-80">{{ status.host.version ?? '—' }}</span>
+            <span class="font-mono text-[11px] opacity-80">{{ status.host.version ?? '-' }}</span>
             <span class="nb-badge shrink-0 bg-surface">{{
               status.host.state ?? t('firmware.widget.hostFallback')
             }}</span>

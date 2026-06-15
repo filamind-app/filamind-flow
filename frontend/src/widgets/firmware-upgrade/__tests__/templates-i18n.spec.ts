@@ -28,7 +28,7 @@ async function mountExpand(component: unknown): Promise<void> {
 }
 
 describe('Firmware templates render through i18n (no leaked keys)', () => {
-  it('FirmwareUpgradeWidget — chrome + steps via tm()', () => {
+  it('FirmwareUpgradeWidget - chrome + steps via tm()', () => {
     noLeak(mount(FirmwareUpgradeWidget, plugins()).text())
   })
   it('FirmwareConfigEditor', () => mountExpand(FirmwareConfigEditor))

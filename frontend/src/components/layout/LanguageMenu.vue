@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Language picker menu — a popover listing every available locale in its own native name and
+/** Language picker menu - a popover listing every available locale in its own native name and
  *  direction (Arabic shown RTL even from an LTR UI), with the active one marked. Renders nothing
  *  until more than one locale catalog exists. Esc or clicking outside closes. */
 import { computed, onMounted, onUnmounted, ref } from 'vue'

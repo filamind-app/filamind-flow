@@ -1,14 +1,14 @@
-"""Version tracking — captures the Klipper version a profile was built with, and
+"""Version tracking - captures the Klipper version a profile was built with, and
 records what was flashed to each board.
 
 This lets the UI show a firmware version even for a board Moonraker can't report
-— most importantly an *unconfigured* Linux host MCU (no ``[mcu host]`` section),
+- most importantly an *unconfigured* Linux host MCU (no ``[mcu host]`` section),
 whose running binary FilaMind installed but which never appears as a live MCU.
 
 Two small JSON stores live under the data dir:
-  * ``artifacts/<profile>.build_info.json`` — the Klipper version/commit/date a
+  * ``artifacts/<profile>.build_info.json`` - the Klipper version/commit/date a
     profile was last built with.
-  * ``flashed.json`` — ``{board_id: {profile, version, commit, flashed_at}}``,
+  * ``flashed.json`` - ``{board_id: {profile, version, commit, flashed_at}}``,
     written after a successful flash.
 """
 

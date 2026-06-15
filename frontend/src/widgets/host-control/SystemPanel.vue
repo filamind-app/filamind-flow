@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Host Control · System — time / locale / hostname / network (IPv4) / power.
+/** Host Control · System - time / locale / hostname / network (IPv4) / power.
  *
  *  Each section reads the current value and applies a change through a guarded backend setter
  *  (validated server-side). Reboot and shutdown ask for an inline confirm and are refused by the
@@ -49,7 +49,7 @@ const netConfirmText = ref('')
 const busy = ref<string | null>(null)
 const note = ref<string | null>(null)
 const actErr = ref<string | null>(null)
-const netInfo = ref<string | null>(null) // amber "applying, reconnect" — neither success nor error
+const netInfo = ref<string | null>(null) // amber "applying, reconnect" - neither success nor error
 const confirmPower = ref<PowerAction | null>(null)
 
 async function reload(): Promise<void> {
@@ -175,7 +175,7 @@ async function applyNetwork(): Promise<void> {
         ? t('hostControl.system.needsSetup')
         : r.output || t('hostControl.system.failed')
     } else if (drops) {
-      // The response came back but `nmcli connection up` may still drop our IP a moment later —
+      // The response came back but `nmcli connection up` may still drop our IP a moment later -
       // don't reload() over a link that's about to die (it would hang). Tell the user to reconnect.
       netInfo.value = t('hostControl.system.network.applyingReconnect')
     } else {
@@ -183,7 +183,7 @@ async function applyNetwork(): Promise<void> {
       await reload() // safe: a DNS-only change keeps the connection up
     }
   } catch (e) {
-    // A real HTTP error (400/403) is a backend rejection — always show it red. Any other failure
+    // A real HTTP error (400/403) is a backend rejection - always show it red. Any other failure
     // (the fetch never completing) means no response: if this change was going to drop our own
     // connection, that's the expected self-disconnect → "reconnect" info; otherwise nothing applied
     // (backend down/unreachable) → a genuine red error.
@@ -379,13 +379,13 @@ async function applyNetwork(): Promise<void> {
             </dd>
             <dt class="opacity-60">{{ t('hostControl.system.network.address') }}</dt>
             <dd>
-              {{ info.network.address || '—'
+              {{ info.network.address || '-'
               }}{{ info.network.cidr != null ? '/' + info.network.cidr : '' }}
             </dd>
             <dt class="opacity-60">{{ t('hostControl.system.network.gateway') }}</dt>
-            <dd>{{ info.network.gateway || '—' }}</dd>
+            <dd>{{ info.network.gateway || '-' }}</dd>
             <dt class="opacity-60">{{ t('hostControl.system.network.dns') }}</dt>
-            <dd>{{ info.network.dns.length ? info.network.dns.join(', ') : '—' }}</dd>
+            <dd>{{ info.network.dns.length ? info.network.dns.join(', ') : '-' }}</dd>
           </dl>
 
           <!-- DHCP / Static toggle -->

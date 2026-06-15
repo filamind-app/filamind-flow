@@ -54,7 +54,7 @@ const overrideBusy = ref(false)
 
 // Hardware snapshot / diff (detect a board swap / MCU add-remove / link change vs a saved baseline).
 const diff = ref<TopologyDiff | null>(null)
-/** Errors from override/snapshot ACTIONS — shown as a banner; never hides the loaded map. */
+/** Errors from override/snapshot ACTIONS - shown as a banner; never hides the loaded map. */
 const actionError = ref<string | null>(null)
 const snapshotBusy = ref(false)
 const copied = ref(false)
@@ -69,7 +69,7 @@ const selectedFw = computed(() =>
 )
 
 /** Deep-link a related entity into the Hardware Browser (topology unmounts, the browser mounts and
- *  opens the target — its focus watch is `immediate`, so a focus set before mount still applies). */
+ *  opens the target - its focus watch is `immediate`, so a focus set before mount still applies). */
 function openInBrowser(ref: RelatedRef): void {
   const target = targetFor(ref)
   if (!target) return
@@ -147,8 +147,8 @@ async function takeSnapshot(): Promise<void> {
 function changeMsg(c: TopologyChange): string {
   return t('boardTopology.snapshot.change.' + c.kind, {
     mcu: c.mcu,
-    before: c.before ?? '—',
-    after: c.after ?? '—',
+    before: c.before ?? '-',
+    after: c.after ?? '-',
   })
 }
 
@@ -312,7 +312,7 @@ onMounted(() => void load())
         />
       </div>
 
-      <!-- Action errors (override / snapshot) — a banner, not a map-hiding state -->
+      <!-- Action errors (override / snapshot) - a banner, not a map-hiding state -->
       <div
         v-if="actionError"
         role="alert"

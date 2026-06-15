@@ -1,7 +1,7 @@
 """Identify registered flash devices against the live board map and the hardware catalog.
 
 A registered device (the flash registry) and a detected MCU (the board map) describe the
-same physical board from two sides — this joins them on the connection identifier, then
+same physical board from two sides - this joins them on the connection identifier, then
 resolves the board's catalog entity and the Kconfig machine symbol its chip needs, so the
 firmware widget can deep-link a device to its place on the board map and seed a build
 profile with the right MCU preselected.
@@ -32,7 +32,7 @@ def match_devices(
     devices: list[dict[str, Any]], mcus: list[dict[str, Any]]
 ) -> dict[str, dict[str, Any]]:
     """Join devices to topology MCUs on the connection identifier (exact, then substring
-    either way — a Katapult id carries the same usb serial inside a longer path).
+    either way - a Katapult id carries the same usb serial inside a longer path).
     Returns ``{device_id: mcu}`` for the matches."""
     matched: dict[str, dict[str, Any]] = {}
     for device in devices:

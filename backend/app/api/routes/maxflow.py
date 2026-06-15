@@ -1,7 +1,7 @@
-"""Max-Flow endpoints (Track B). Slice 1 is the dry-run planner only — no actuation.
+"""Max-Flow endpoints (Track B). Slice 1 is the dry-run planner only - no actuation.
 
 ``POST /api/maxflow/plan`` previews the flow ramp a run would execute (every step's flow,
-feedrate, and filament pushed) plus the driver's StallGuard field — a pure compute the UI
+feedrate, and filament pushed) plus the driver's StallGuard field - a pure compute the UI
 shows before any live test. The actuating run (heat → extrude → sample) lands in a later slice.
 """
 
@@ -21,12 +21,12 @@ from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/maxflow", tags=["maxflow"])
 
-#: Heating + the extrusion ramp block for minutes — the run client needs a long timeout.
+#: Heating + the extrusion ramp block for minutes - the run client needs a long timeout.
 _RUN_TIMEOUT_S = 1200.0
 
 
 class MaxFlowPlanRequest(BaseModel):
-    """Body for ``POST /maxflow/plan`` — the parameters a max-flow run would use."""
+    """Body for ``POST /maxflow/plan`` - the parameters a max-flow run would use."""
 
     temperature: float = Field(..., description="Hotend temperature for the test (°C)")
     start_flow: float = Field(5.0, description="First flow step (mm³/s)")
@@ -50,11 +50,11 @@ class MaxFlowPlanRequest(BaseModel):
         "accelerometer when SG is unusable), 'stallguard', or 'accel' (vibration).",
     )
     hotend: str | None = Field(
-        None, description="Selected hotend name — recorded with the result for the Machine Doctor."
+        None, description="Selected hotend name - recorded with the result for the Machine Doctor."
     )
     expected_max_flow_mm3s: float | None = Field(
         None,
-        description="The selected hotend's rated max flow — lets the Doctor score flow headroom.",
+        description="The selected hotend's rated max flow - lets the Doctor score flow headroom.",
     )
 
 

@@ -1,9 +1,9 @@
-/** Proof of tune — an honest before/after comparison built from two recorded shaper
+/** Proof of tune - an honest before/after comparison built from two recorded shaper
  *  results on the same axis. Pure + testable; the component supplies the audit records
  *  (local + archive, the same merged list the Audit tab shows).
  *
  *  Only records that carry real numbers participate: a measurement grade and/or the
- *  recommended shaper's metrics. Nothing is interpolated — a missing metric renders
+ *  recommended shaper's metrics. Nothing is interpolated - a missing metric renders
  *  as a dash on that row.
  */
 
@@ -33,7 +33,7 @@ export function proofCandidates(records: AuditRecord[], axis: string): AuditReco
 }
 
 function fmt(v: number | null | undefined, digits = 1): string {
-  return typeof v === 'number' && Number.isFinite(v) ? v.toFixed(digits) : '—'
+  return typeof v === 'number' && Number.isFinite(v) ? v.toFixed(digits) : '-'
 }
 
 function deltaOf(
@@ -60,7 +60,7 @@ function metricsOf(r: AuditRecord): ProofMetrics {
   return r.metrics ?? {}
 }
 
-/** The comparison table — score + the recommended shaper's metrics, row per metric. */
+/** The comparison table - score + the recommended shaper's metrics, row per metric. */
 export function buildProofRows(before: AuditRecord, after: AuditRecord): ProofRow[] {
   const mb = metricsOf(before)
   const ma = metricsOf(after)
@@ -69,8 +69,8 @@ export function buildProofRows(before: AuditRecord, after: AuditRecord): ProofRo
   const score = deltaOf(before.grade?.score, after.grade?.score, 0, false)
   rows.push({
     key: 'score',
-    before: before.grade ? `${before.grade.letter} (${before.grade.score})` : '—',
-    after: after.grade ? `${after.grade.letter} (${after.grade.score})` : '—',
+    before: before.grade ? `${before.grade.letter} (${before.grade.score})` : '-',
+    after: after.grade ? `${after.grade.letter} (${after.grade.score})` : '-',
     ...score,
   })
 
@@ -109,8 +109,8 @@ export function buildProofRows(before: AuditRecord, after: AuditRecord): ProofRo
 
   rows.push({
     key: 'shaper',
-    before: mb.shaper ? mb.shaper.toUpperCase() : '—',
-    after: ma.shaper ? ma.shaper.toUpperCase() : '—',
+    before: mb.shaper ? mb.shaper.toUpperCase() : '-',
+    after: ma.shaper ? ma.shaper.toUpperCase() : '-',
     delta: '',
     better: null,
   })

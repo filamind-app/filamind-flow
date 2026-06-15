@@ -93,7 +93,7 @@ async def test_apply_rejects_unsafe_input(monkeypatch: pytest.MonkeyPatch) -> No
 async def test_apply_refuses_run_current_over_driver_cap(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    # A TMC2209's full-scale ceiling is ~2.0 A — requesting 2.5 A must be refused with the
+    # A TMC2209's full-scale ceiling is ~2.0 A - requesting 2.5 A must be refused with the
     # coded i18n error and nothing written. The cap the UI displays is now enforced.
     fake = _FakeClient(config={"tmc2209 stepper_x": {"run_current": 0.8}})
     _patch(monkeypatch, fake)
@@ -226,7 +226,7 @@ async def test_set_stallguard_signed_sgt_round_trip(monkeypatch: pytest.MonkeyPa
 
 
 async def test_writes_refused_while_paused(monkeypatch: pytest.MonkeyPatch) -> None:
-    # _is_busy covers paused (and error), not just printing — a paused print still blocks writes.
+    # _is_busy covers paused (and error), not just printing - a paused print still blocks writes.
     paused = _FakeClient(state="paused")
     _patch(monkeypatch, paused)
     assert (await drivers_apply.set_stallguard("http://x", "stepper_x", "sgthrs", 70))[

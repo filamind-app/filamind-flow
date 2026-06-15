@@ -202,7 +202,7 @@ async function build(): Promise<void> {
   try {
     // Auto-save pending edits into the profile so the build reflects them.
     if (dirtyCount.value > 0) {
-      // Build-log lines are technical console output — kept English (not externalized).
+      // Build-log lines are technical console output - kept English (not externalized).
       buildLog.value += `>>> saving ${dirtyCount.value} pending edit(s) to ${baseProfile.value}…\n`
       await saveProfile({
         name: baseProfile.value,
@@ -338,7 +338,7 @@ onMounted(async () => {
         {{
           selectedProfile.built
             ? t('firmware.configEditor.builtVersion', {
-                version: selectedProfile.built_version ?? '—',
+                version: selectedProfile.built_version ?? '-',
               })
             : t('firmware.configEditor.notBuilt')
         }}

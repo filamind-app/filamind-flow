@@ -4,7 +4,7 @@
  *  Machine Map watches the shared ref and selects that node once the topology is loaded. */
 import { ref } from 'vue'
 
-/** The MCU section name (e.g. `mcu`, `toolhead_mcu`) — or `host` — awaiting selection. */
+/** The MCU section name (e.g. `mcu`, `toolhead_mcu`) - or `host` - awaiting selection. */
 export const pendingNode = ref<string | null>(null)
 
 export function focusTopologyNode(section: string): void {

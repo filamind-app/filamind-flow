@@ -62,7 +62,7 @@ export async function analyzeResonance(
       const body = (await response.json()) as { detail?: string }
       if (body.detail) detail = body.detail
     } catch {
-      /* non-JSON error body — keep the status message */
+      /* non-JSON error body - keep the status message */
     }
     throw new Error(detail)
   }
@@ -115,7 +115,7 @@ export async function measureNoise(): Promise<NoiseResult> {
 }
 
 /** Runs a resonance test on each CoreXY belt diagonal (moves the toolhead). */
-/** The printer's configured kinematics (null = unreadable/offline) — gates CoreXY-only tools. */
+/** The printer's configured kinematics (null = unreadable/offline) - gates CoreXY-only tools. */
 export async function fetchKinematics(): Promise<string | null> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/shaper/kinematics`)
@@ -171,7 +171,7 @@ export interface VibrationsOptions {
 }
 
 /** Sweeps speed × motor-angle and profiles machine vibrations (moves the toolhead for minutes).
- *  Runs SUPERVISED: a background task with polled progress, cancel, and a server-held result —
+ *  Runs SUPERVISED: a background task with polled progress, cancel, and a server-held result -
  *  same signature and result shape as the old blocking call (see supervised.ts). */
 export async function runVibrationsProfile(
   opts: VibrationsOptions = {},

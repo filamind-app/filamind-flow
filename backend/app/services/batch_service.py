@@ -1,8 +1,8 @@
-"""Batch operations — build and/or flash every device in the registry as one
+"""Batch operations - build and/or flash every device in the registry as one
 cancellable background task.
 
 It reuses the single-board build and flash services unchanged, so a batch flash
-behaves exactly like clicking *flash* on each board in turn — same bootloader
+behaves exactly like clicking *flash* on each board in turn - same bootloader
 reboot, same print guard, same version recording. The orchestration on top adds:
 de-duplicating builds by profile, skipping ``exclude_from_batch`` devices, an
 optional *ready-only* filter (boards already sitting in a bootloader), and a
@@ -32,10 +32,10 @@ async def _build_phase(devices: list[dict], settings: Settings, task: Task) -> N
             return
         profile = device.get("profile")
         if not profile:
-            task.append(f">>> {device['name']}: no profile assigned — skipped.\n")
+            task.append(f">>> {device['name']}: no profile assigned - skipped.\n")
             continue
         if profile in built:
-            task.append(f">>> {device['name']}: {profile} already built this run — skipped.\n")
+            task.append(f">>> {device['name']}: {profile} already built this run - skipped.\n")
             continue
         built.add(profile)
         try:
@@ -63,19 +63,19 @@ async def _flash_phase(
             return
         name = device["name"]
         if device.get("exclude_from_batch"):
-            task.append(f">>> {name}: excluded from batch — skipped.\n")
+            task.append(f">>> {name}: excluded from batch - skipped.\n")
             continue
         if device["method"] == "beacon":
-            task.append(f">>> {name}: Beacon flashing is not supported yet — skipped.\n")
+            task.append(f">>> {name}: Beacon flashing is not supported yet - skipped.\n")
             continue
         done += 1
         task.progress = {"step": done, "total": total, "detail": {"device": name}}
         profile = device.get("profile")
         if not profile:
-            task.append(f">>> {name}: no profile assigned — skipped.\n")
+            task.append(f">>> {name}: no profile assigned - skipped.\n")
             continue
         if ready is not None and device["id"] not in ready:
-            task.append(f">>> {name}: not in a bootloader — skipped (Flash Ready).\n")
+            task.append(f">>> {name}: not in a bootloader - skipped (Flash Ready).\n")
             continue
         method = "make" if avr.get(profile) else device["method"]
         task.append(f">>> Flashing {name} ({profile}) via {method}…\n")
@@ -105,7 +105,7 @@ async def run_batch(action: str, settings: Settings, task: Task) -> None:
 
     devices = devices_store.read_devices(settings.data_dir)
     if not devices:
-        task.append("!! No devices in the registry — add some first.\n")
+        task.append("!! No devices in the registry - add some first.\n")
         task.status = "done"
         return
 

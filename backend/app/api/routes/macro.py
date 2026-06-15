@@ -1,7 +1,7 @@
 """Macro Designer endpoints (Track A). Slice 1 = the offline G-code motion simulator.
 
 ``POST /api/macro/simulate`` takes a literal G-code program and returns the simulated toolhead
-path, bounding box, totals, time estimate, and timeline — pure compute, no printer interaction.
+path, bounding box, totals, time estimate, and timeline - pure compute, no printer interaction.
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ async def macro_limits(settings: Settings = Depends(get_settings)) -> dict[str, 
 
 
 class SimulateRequest(BaseModel):
-    """Body for ``POST /macro/simulate`` — the G-code, optional macro params, and optional machine
+    """Body for ``POST /macro/simulate`` - the G-code, optional macro params, and optional machine
     limits to check moves against."""
 
     gcode: str = Field(
@@ -68,7 +68,7 @@ async def macro_scaffold_get(settings: Settings = Depends(get_settings)) -> dict
 
 
 class ScaffoldAppendRequest(BaseModel):
-    """Body for ``POST /macro/scaffold/append`` — write a generated block to a config file."""
+    """Body for ``POST /macro/scaffold/append`` - write a generated block to a config file."""
 
     filename: str = Field(..., description="Config path to append to (e.g. 'printer.cfg')")
     block: str = Field(..., description="The macro block(s) to append")

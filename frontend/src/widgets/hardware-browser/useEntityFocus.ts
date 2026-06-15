@@ -22,7 +22,7 @@ export interface FocusTarget {
   tab: EntityTab
   id: string
   name?: string
-  /** Only set for catalog entities — the category whose panel hosts them. */
+  /** Only set for catalog entities - the category whose panel hosts them. */
   category?: string
 }
 
