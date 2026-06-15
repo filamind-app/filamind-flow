@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.290.0] - 2026-06-15
+
+### Added
+
+- **Board Topology auto-detects USB/CAN eddy scanners by their config section name.** An eddy
+  scanner's serial or CAN id only reveals the chip (e.g. rp2040), not the board, so these boards
+  never auto-identified. Topology now also matches the MCU's section name (e.g. `[mcu eddy]`)
+  against the catalog, as a discounted secondary signal, so an Eddy / Cartographer / Beacon / IDM
+  is recognised automatically (still confirmable or overridable per MCU). Generic section names
+  (`mcu`, `toolhead_mcu`) are guarded against false matches.
+
+### Changed
+
+- Catalog: the Cartographer board lists its connectivity as USB / CAN.
+
 ## [0.289.0] - 2026-06-15
 
 ### Fixed

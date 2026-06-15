@@ -48,24 +48,37 @@ def _norm(s: Any) -> str:
 
 
 def _resolve_board_id(
-    board_name: str | None, signature: str, boards: list[dict[str, Any]]
+    board_name: str | None,
+    signature: str,
+    boards: list[dict[str, Any]],
+    section: str = "",
 ) -> tuple[str | None, float]:
     """Map a detected MCU to a catalog ``board_id``.
 
-    First tries each board's folded ``matchPatterns`` against the connection signature
-    (the unified detection path); falls back to a normalized-name match against the
-    board guess from ``board_patterns``. Returns ``(board_id, confidence)`` - often
-    ``(None, 0)`` because a serial/canbus id usually reveals only the chip, not the board.
+    Tries each board's folded ``matchPatterns`` against the connection signature (serial / canbus
+    id) and, as a weaker signal, the MCU's config section name (e.g. ``[mcu eddy]`` -> ``eddy``) -
+    how standalone accessory boards such as eddy scanners are usually named, since their serial id
+    reveals only the chip. Falls back to a normalized-name match against the ``board_patterns``
+    guess. Returns ``(board_id, confidence)`` - often ``(None, 0)``, as a serial / canbus id
+    usually reveals only the chip, not the board.
     """
     sig = signature.lower()
+    sec = (section or "").lower()
     best: tuple[str | None, float] = (None, 0.0)
     for b in boards:
         for mp in b.get("matchPatterns", []) or []:
             pat = str(mp.get("pattern", "")) if isinstance(mp, dict) else ""
-            if pat and re.search(pat, sig):
-                conf = float(mp.get("confidence", 0.5))
+            if not pat:
+                continue
+            conf = float(mp.get("confidence", 0.5))
+            if re.search(pat, sig):
                 if conf > best[1]:
                     best = (b.get("board_id"), conf)
+            elif sec and re.search(pat, sec):
+                # The section name is a weaker signal than the connection id, so discount it.
+                sconf = round(conf * 0.8, 3)
+                if sconf > best[1]:
+                    best = (b.get("board_id"), sconf)
     if best[0]:
         return best
     if board_name:
@@ -483,7 +496,7 @@ def analyze(
             signature = str(conn.get("id") or "")
             chip, _ = _match(mpats, signature, "mcu")
             board, confidence = _match(bpats, signature, "board")
-            board_id, board_id_conf = _resolve_board_id(board, signature, catalog)
+            board_id, board_id_conf = _resolve_board_id(board, signature, catalog, mcu_name)
             # Pin-fingerprint: match the printer's used pin set on this MCU against each board's
             # verbatim pin-map - a board-specific signal a serial id can't give. Use it when it
             # beats (or fills in for) the signature-based guess.
