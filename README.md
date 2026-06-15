@@ -34,10 +34,10 @@ This installs the backend service, serves the prebuilt UI through nginx on port 
 ## Uninstall
 
 ```bash
-bash scripts/install.sh uninstall
+curl -fsSL https://raw.githubusercontent.com/filamind-app/filamind-flow/main/scripts/install.sh | bash -s uninstall
 ```
 
-This removes the service, the nginx site, the sidebar entry, the Moonraker registration, and the sudo and udev rules, while leaving the app files in place.
+This removes the service, the nginx site, the sidebar entry, the Moonraker registration, and the sudo and udev rules, while leaving the app files in place. (If you cloned the repo, `cd ~/filamind-flow && bash scripts/install.sh uninstall` does the same thing.)
 
 ## Screenshots
 
