@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.282.0] - 2026-06-15
+
+### Fixed
+
+- **Installer: the web UI no longer 403s on hosts with a restrictive home directory.** On distros
+  whose home directory defaults to `0750`, nginx (running as `www-data`) couldn't traverse into it
+  to read the pre-built bundle — the API kept working but the UI returned 403. The installer now
+  grants traverse-only access along the path to `frontend/dist`, and warns loudly if the bundle is
+  still unreadable instead of leaving a silent 403.
+- **Installer: the subpath integration on the host's primary web server now runs with the right
+  privileges.** Writing the `/filamind/` proxy block is done as root, so it no longer fails with a
+  permission error and silently falls back to an absolute link.
+- **Installer: granting the panel's passwordless-sudo rights no longer reports a spurious failure.**
+  A cleanup trap referenced an out-of-scope variable, which under strict mode printed an "unbound
+  variable" error and a misleading "could not grant sudo automatically" message even though the
+  grant had actually succeeded.
+
 ## [0.281.0] - 2026-06-14
 
 ### Fixed
