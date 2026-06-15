@@ -13,6 +13,7 @@
 #   sudo bash scripts/install.sh kiosk [user] [url]     put FilaMind on the printer's touchscreen
 #   sudo bash scripts/install.sh kiosk --uninstall      remove the kiosk, restore KlipperScreen
 #        bash scripts/install.sh update                 refresh the backend venv (Moonraker's hook)
+#        bash scripts/install.sh uninstall              remove FilaMind from the host (keeps app files)
 set -euo pipefail
 
 REPO="${FILAMIND_REPO:-https://github.com/filamind-app/filamind-flow.git}"
@@ -381,7 +382,15 @@ open(path, 'w').write(out)
 print('   integrated /filamind/ into %s' % path)
 PY
     then
-      if sudo nginx -t 2>/dev/null; then sudo systemctl reload nginx && SUBPATH_OK=1; fi
+      if sudo nginx -t 2>/dev/null; then
+        sudo systemctl reload nginx && SUBPATH_OK=1
+      else
+        # The injected block isn't valid on this host (e.g. the primary site lacks the
+        # $connection_upgrade map) — revert from the backup so nginx is never left broken.
+        latest_bak="$(ls -t "$PRIMARY_SITE".bak.filamind.* 2>/dev/null | head -1)"
+        [ -n "$latest_bak" ] && sudo cp "$latest_bak" "$PRIMARY_SITE" \
+          && info "  subpath skipped (nginx config check failed) — reverted $PRIMARY_SITE"
+      fi
     fi
   fi
 
@@ -455,6 +464,65 @@ EOF
   echo "  Service: sudo systemctl status $SERVICE"
 }
 
+# ── uninstall: reverse the full install (run as your printer user; uses sudo for /etc) ──────────
+do_uninstall() {
+  [ "$(id -u)" -eq 0 ] && { echo "Please run as your printer user, not root."; exit 1; }
+
+  info "Stopping and removing the service"
+  sudo systemctl disable --now ${SERVICE} 2>/dev/null || true
+  sudo rm -f /etc/systemd/system/${SERVICE}.service
+  sudo systemctl daemon-reload || true
+
+  info "Removing the nginx site + the /filamind/ subpath block"
+  sudo rm -f /etc/nginx/sites-enabled/${SERVICE} /etc/nginx/sites-available/${SERVICE}
+  for cand in /etc/nginx/sites-available/*; do
+    [ -f "$cand" ] || continue
+    if grep -q 'filamind-flow subpath' "$cand" 2>/dev/null; then
+      sudo sed -i '/# >>> filamind-flow subpath >>>/,/# <<< filamind-flow subpath <<</d' "$cand" || true
+    fi
+  done
+  sudo nginx -t >/dev/null 2>&1 && sudo systemctl reload nginx 2>/dev/null || true
+
+  info "Removing the Mainsail sidebar entry + Moonraker registration"
+  local navi="$PRINTER_DATA/config/.theme/navi.json"
+  local mconf="$PRINTER_DATA/config/moonraker.conf"
+  local asvc="$PRINTER_DATA/moonraker.asvc"
+  if [ -f "$navi" ]; then
+    python3 - "$navi" <<'PY' || true
+import json, sys
+p = sys.argv[1]
+try:
+    data = json.load(open(p))
+except Exception:
+    sys.exit(0)
+if isinstance(data, list):
+    data = [e for e in data if not (isinstance(e, dict) and e.get("title") == "FilaMind Flow")]
+    with open(p, "w") as f:
+        json.dump(data, f, indent=2)
+        f.write("\n")
+PY
+  fi
+  if [ -f "$mconf" ] && grep -q "update_manager ${SERVICE}" "$mconf"; then
+    cp "$mconf" "$mconf.bak.filamind.$(date +%s)" || true
+    python3 - "$mconf" <<'PY' || true
+import re, sys
+p = sys.argv[1]
+src = open(p).read()
+with open(p, "w") as f:
+    f.write(re.sub(r"\n\[update_manager filamind-flow\][^\[]*", "\n", src))
+PY
+  fi
+  [ -f "$asvc" ] && sed -i "/^${SERVICE}\$/d" "$asvc" 2>/dev/null || true
+  sudo systemctl restart moonraker 2>/dev/null || true
+
+  info "Removing the sudo + udev rules"
+  sudo rm -f /etc/sudoers.d/filamind /etc/udev/rules.d/99-stm32-dfu.rules
+  sudo udevadm control --reload-rules 2>/dev/null || true
+
+  info "Done — system integration removed. The app files are still at $APP."
+  echo "  Delete them too with:  rm -rf \"$APP\""
+}
+
 # ── dispatch ───────────────────────────────────────────────────────────────────
 CMD="${1:-install}"
 case "$CMD" in
@@ -462,9 +530,10 @@ case "$CMD" in
   kiosk) shift; do_kiosk "$@" ;;
   update) do_update ;;
   install) do_install ;;
+  uninstall) do_uninstall ;;
   *)
     echo "Unknown command: $CMD" >&2
-    echo "Usage: install.sh [install|sudoers [user]|kiosk [user] [url]|kiosk --uninstall|update]" >&2
+    echo "Usage: install.sh [install|uninstall|sudoers [user]|kiosk [user] [url]|kiosk --uninstall|update]" >&2
     exit 2
     ;;
 esac

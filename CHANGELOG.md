@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.283.0] - 2026-06-15
+
+### Added
+
+- **Installer: a one-command uninstall.** `bash scripts/install.sh uninstall` reverses the install —
+  it removes the service, the nginx site (and the `/filamind/` subpath block), the Mainsail sidebar
+  entry, the Moonraker `update_manager` registration, and the sudo / udev rules, leaving the cloned
+  app files in place to delete at your discretion. Documented in the README.
+
+### Fixed
+
+- **Installer: the subpath integration reverts itself if it would break the web server.** If the
+  `/filamind/` proxy block fails nginx's config check on a host whose primary site lacks the
+  required `$connection_upgrade` map, the installer now restores the original config (and falls back
+  to the absolute sidebar link) instead of leaving nginx in a broken state.
+
 ## [0.282.0] - 2026-06-15
 
 ### Fixed
