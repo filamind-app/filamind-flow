@@ -64,9 +64,10 @@ do_sudoers() {
   hostnamectl="$(command -v hostnamectl || echo /usr/bin/hostnamectl)"
   nmcli="$(command -v nmcli || echo /usr/bin/nmcli)"
 
-  local tmp
+  # NOT `local`: the EXIT trap below fires at *script* exit — after this function has returned —
+  # so $tmp must still be in scope, and ${tmp:-} keeps the trap safe under `set -u`.
   tmp="$(mktemp)"
-  trap 'rm -f "$tmp"' EXIT  # always clean up, even if `install` fails under set -e
+  trap 'rm -f "${tmp:-}"' EXIT  # always clean up, even if `install` fails under set -e
   cat > "$tmp" <<EOF
 # Managed by FilaMind Flow (scripts/install.sh sudoers) — firmware flashing + Host Control.
 $user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli
@@ -324,6 +325,15 @@ EOF
   sudo ln -sf /etc/nginx/sites-available/${SERVICE} /etc/nginx/sites-enabled/${SERVICE}
   sudo nginx -t && sudo systemctl reload nginx
 
+  # nginx workers (www-data) must be able to TRAVERSE into the home dir to read the bundle. Newer
+  # distros default the home dir to 0750, which blocks them — the API keeps working but the UI 403s.
+  # Grant traverse-only (o+x, NOT o+r) along the path to dist; harmless where it's already 0755.
+  chmod o+x "$HOME" "$APP" "$APP/frontend" "$APP/frontend/dist" 2>/dev/null || true
+  if command -v curl >/dev/null 2>&1 \
+     && [ "$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$UI_PORT/" 2>/dev/null)" = "403" ]; then
+    info "WARNING: the UI returned 403 — nginx can't read $APP/frontend/dist. Check permissions on $HOME."
+  fi
+
   info "Subpath integration on the host's primary web server"
   # Expose FilaMind under /filamind/ on whatever server already answers on :80 (Mainsail /
   # Fluidd). That server is the one a remote reverse proxy or a Cloudflare tunnel already
@@ -340,10 +350,10 @@ EOF
     fi
   done
   if [ -n "$PRIMARY_SITE" ]; then
-    if FILAMIND_UI_PORT="$UI_PORT" python3 - "$PRIMARY_SITE" <<'PY'
+    if sudo python3 - "$PRIMARY_SITE" "$UI_PORT" <<'PY'
 import os, re, sys, time
 path = sys.argv[1]
-port = os.environ.get('FILAMIND_UI_PORT', '8090')
+port = sys.argv[2] if len(sys.argv) > 2 else '8090'
 src = open(path).read()
 if 'filamind-flow subpath' in src:
     sys.exit(0)  # already integrated
