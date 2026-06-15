@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.284.0] - 2026-06-15
+
+### Changed
+
+- **Documentation improvement.** The README is now a slim landing page — Install and Uninstall up
+  top, and a one-line-per-widget table — instead of a wall of detail. Every widget has its own page
+  under `docs/widgets/`, and the README, those widget pages, the architecture, contributing, and
+  backend docs were reworked for clarity and readability. No behavior change.
+
 ## [0.283.0] - 2026-06-15
 
 ### Added

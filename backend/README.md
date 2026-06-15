@@ -2,9 +2,9 @@
 
 FastAPI service that backs the FilaMind Flow panel. It exposes health and
 diagnostics, the **firmware** build / flash API, and the **input-shaping**
-resonance-analysis API, and is the home for privileged or aggregated operations as
-features are added. Live printer data is read by the browser directly from
-Moonraker; this service is for work that belongs server-side.
+resonance-analysis API. It's also where privileged and aggregated operations
+land as new features arrive. The browser reads live printer data straight from
+Moonraker. This service handles the work that belongs on the server.
 
 ## Requirements
 
@@ -110,44 +110,58 @@ Interactive API docs: <http://localhost:8000/docs>
 | GET    | `/api/hardware/{type}/{id}/related` | Cross-entity relationships for any node (`boards`/`drivers`/`motors`/`hosts`/`catalog`/`manufacturers`/`mcus`), grouped by relation (O(1) graph walk). |
 | (group) | `/api/screen/*`           | Control the printer's KlipperScreen touchscreen (KlipperScreen Studio widget): read/save `KlipperScreen.conf` (`conf`, behind the gated config save — backup + busy-refusal + stale-write guard) + `restart`; the `[main]` options as a key→value map (`options`); the menu tree (`menus`) — the `[menu …]` button grids read as a flat list and rewritten whole (preserving non-menu sections + the auto-generated block) plus the targetable panels; and on-host themes (`themes`: list / `preview` / create / `activate` / delete). `status` reports presence + restartability. Also the **FilaMind Kiosk** (`kiosk`): report the current screen mode and reversibly swap the touchscreen between KlipperScreen and a fullscreen FilaMind browser (`kiosk/switch`, `kiosk/restore` — temporary by default, optional `persist` to flip the boot default) via `sudo systemctl` on a `filamind-kiosk` unit installed once by `scripts/install.sh kiosk`. |
 
-The interactive `/docs` page is the always-current, authoritative list (the
-firmware API has many routes beyond the summary above).
+The interactive `/docs` page is the authoritative, always-current list. The
+firmware API in particular has many more routes than the summary above shows.
 
-Curated Klipper reference datasets (StallGuard tuning, hotends, board/MCU patterns, macros) live
-under `app/data/reference/` and are served read-only by `app/services/reference_data.py`.
+Curated Klipper reference datasets live under `app/data/reference/` and are
+served read-only by `app/services/reference_data.py`. These cover StallGuard
+tuning, hotends, board/MCU patterns, and macros.
 
-The large curated **hardware catalog** ships there as a compiled, read-only **`hardware.sqlite`**
-(boards / drivers / motors / hosts / catalog / manufacturers). Its editable source is kept *outside*
-the repo; after editing it, regenerate the database with `python scripts/build_hardware_db.py` and
-commit the rebuilt `hardware.sqlite`. `reference_data` reconstructs the same in-memory structure at
-startup, so all indexes / search haystacks / the link graph / ETag are unaffected by the format.
+The large curated **hardware catalog** ships in the same place, but as a
+compiled, read-only **`hardware.sqlite`** holding the boards, drivers, motors,
+hosts, catalog, and manufacturers. The editable source is deliberately kept
+outside the repo. After you edit it, regenerate the database with
+`python scripts/build_hardware_db.py` and commit the rebuilt `hardware.sqlite`.
+At startup `reference_data` reconstructs the same in-memory structure, so the
+indexes, search haystacks, link graph, and ETag are all unaffected by the
+storage format.
 
-The driver write endpoints return an `ApplyResponse` with an i18n **`{ code, params, message }`**
-contract: `code` (+ `params`) is a stable key the UI translates (`motorDrivers.apply.*`), and
-`message` is the English fallback. Passthrough errors (Moonraker failures, `field_policy` /
-value-validation text) carry `code: null` — their raw English text is shown verbatim.
+The driver write endpoints return an `ApplyResponse` carrying an i18n
+`{ code, params, message }` contract. The `code` (plus `params`) is a stable key
+the UI translates under `motorDrivers.apply.*`, and `message` is the English
+fallback. Passthrough errors are the exception: Moonraker failures and
+`field_policy` or value-validation text come back with `code: null`, and their
+raw English text is shown verbatim.
 
 ### Firmware flashing — printer-agnostic by design
 
-`POST /api/firmware/flash` streams a plain-text log of the real flash sequence, and several
-details exist specifically so it behaves the same across very different boards (validated on a
-USB/UART SV08 and a CAN/SPI Voron-class machine):
+`POST /api/firmware/flash` streams a plain-text log of the real flash sequence.
+A handful of details exist specifically to make it behave the same across very
+different boards. It's been validated on a USB/UART SV08 and a CAN/SPI
+Voron-class machine.
 
-- **Phase markers** — the stream carries machine-readable `::phase::<code>` lines
-  (`start → stop → boot → write → restart → done`) interleaved with the human `>>> …` log, so
-  the UI can render a progress bar instead of a raw console. The frontend strips the markers and
-  keeps the full log for a collapsible details view.
-- **CAN UUID resolution** — a CAN flash addresses the node by its 12-hex `canbus_uuid`, but a
-  device may be registered under a friendly name. `flash_service.resolve_can_uuid()` resolves the
-  real UUID from the live `configfile.config` (by `[mcu <name>]` match, or the sole CAN node when
-  unambiguous) and refuses with a clear message rather than flashing the wrong node.
-- **Honest outcomes + a CAN salvage** — `_stream()` captures the flash tool's exit code; a
-  non-zero exit reports a real failure and skips recording a flashed-version. For CAN, where some
-  USB-CAN adapters error in their *read-back verify* after the write completed, the sequence then
-  confirms the true result by polling the node's reported firmware version through Klipper.
-- **sudo capability probe** — privileged steps (stop/start Klipper, flash) need passwordless
-  sudo; readiness is checked with `sudo -n -l systemctl stop klipper` (an authorization lookup
-  that doesn't execute), so it's correct regardless of which `/etc/sudoers.d/` file grants it.
+- **Phase markers.** The stream carries machine-readable `::phase::<code>` lines
+  (`start`, `stop`, `boot`, `write`, `restart`, `done`) interleaved with the
+  human `>>> …` log. That lets the UI render a progress bar instead of a raw
+  console. The frontend strips the markers and keeps the full log for a
+  collapsible details view.
+- **CAN UUID resolution.** A CAN flash addresses the node by its 12-hex
+  `canbus_uuid`, but a device may be registered under a friendly name.
+  `flash_service.resolve_can_uuid()` resolves the real UUID from the live
+  `configfile.config` — either by `[mcu <name>]` match, or as the sole CAN node
+  when that's unambiguous. If it can't resolve cleanly it refuses with a clear
+  message rather than flashing the wrong node.
+- **Honest outcomes, plus a CAN salvage.** `_stream()` captures the flash tool's
+  exit code. A non-zero exit reports a real failure and skips recording a
+  flashed-version. CAN is the tricky case: some USB-CAN adapters error in their
+  read-back verify even though the write itself completed. When that happens the
+  sequence confirms the true result by polling the node's reported firmware
+  version through Klipper.
+- **sudo capability probe.** The privileged steps — stop/start Klipper and the
+  flash itself — need passwordless sudo. Readiness is checked with
+  `sudo -n -l systemctl stop klipper`, an authorization lookup that doesn't
+  actually run the command, so the check is correct no matter which
+  `/etc/sudoers.d/` file grants the permission.
 
 ## Development
 
