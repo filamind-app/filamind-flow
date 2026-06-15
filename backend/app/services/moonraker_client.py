@@ -14,7 +14,9 @@ _shared: httpx.AsyncClient | None = None
 def _pool() -> httpx.AsyncClient:
     global _shared
     if _shared is None or _shared.is_closed:
-        _shared = httpx.AsyncClient(timeout=None)
+        # No default read timeout (long printer ops pass their own per call), but bound the
+        # connect so an unreachable Moonraker fails fast instead of hanging the request.
+        _shared = httpx.AsyncClient(timeout=httpx.Timeout(None, connect=5.0))
     return _shared
 
 

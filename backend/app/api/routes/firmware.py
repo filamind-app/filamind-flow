@@ -246,6 +246,9 @@ async def firmware_external_upload(
 ) -> ExternalFirmware:
     """Uploads an external firmware file (raw body; ``name`` / ``ext`` are query params)."""
     try:
+        cl = request.headers.get("content-length")
+        if cl and cl.isdigit() and int(cl) > 64 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="Firmware file too large (max 64 MB)")
         saved = external_firmware.save_firmware(settings.data_dir, name, ext, await request.body())
     except external_firmware.ExternalNameError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -540,6 +543,9 @@ async def firmware_backup_import(
 ) -> BackupImportResponse:
     """Restores a ZIP backup (raw body). Overwrites the registry + named profiles."""
     try:
+        cl = request.headers.get("content-length")
+        if cl and cl.isdigit() and int(cl) > 64 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="Backup file too large (max 64 MB)")
         summary = backup_service.import_backup(settings.data_dir, await request.body())
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.287.0] - 2026-06-15
+
+### Security
+
+- **Host power actions fail closed.** If the panel can't reach Moonraker to confirm the printer is
+  idle, a reboot or shutdown is now refused instead of proceeding.
+- **Request-body size caps** on the resonance-CSV, external-firmware, and backup-import endpoints:
+  an oversized upload gets a 413 instead of an unbounded read into memory on a Pi-class host.
+- **Flash request validation**: `method` is checked against the known set, and `device` /
+  `interface` can no longer start with `-` (argument-injection guard).
+
+### Changed
+
+- The shared Moonraker HTTP client now bounds connection setup, so an unreachable Moonraker fails
+  fast (long printer operations keep their own per-call read timeouts).
+- Removed a dead component, corrected the motor-catalog count in the docs, and added a Dependabot
+  config for the pip / npm / GitHub-Actions dependencies.
+
 ## [0.286.0] - 2026-06-15
 
 ### Changed

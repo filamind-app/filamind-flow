@@ -46,6 +46,9 @@ async def analyze_resonance(
     The request body is the raw ``.csv`` (Klipper PSD ``freq,psd_x,…`` or raw
     accelerometer ``time,accel_x,…``). Stateless: no printer or data dir needed.
     """
+    cl = request.headers.get("content-length")
+    if cl and cl.isdigit() and int(cl) > 128 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="CSV too large (max 128 MB)")
     raw = await request.body()
     try:
         result = await asyncio.to_thread(

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class HealthResponse(BaseModel):
@@ -203,6 +203,22 @@ class FlashRequest(BaseModel):
     interface: str = "can0"
     #: Whether the board carries a Katapult bootloader (drives the reboot step).
     is_katapult: bool = True
+
+    @field_validator("method")
+    @classmethod
+    def _method_allowed(cls, v: str) -> str:
+        allowed = {"serial", "can", "dfu", "make", "linux"}
+        if v not in allowed:
+            raise ValueError(f"method must be one of {sorted(allowed)}")
+        return v
+
+    @field_validator("device", "interface")
+    @classmethod
+    def _no_arg_injection(cls, v: str) -> str:
+        # These become argv to the flash tool; a leading '-' could inject a flag.
+        if v.startswith("-"):
+            raise ValueError("must not start with '-'")
+        return v
 
 
 class FlashPlan(BaseModel):
