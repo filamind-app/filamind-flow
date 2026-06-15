@@ -926,7 +926,8 @@ async def power(action: str, moonraker_url: str) -> dict[str, Any]:
     try:
         busy = await printer_guard.is_busy(MoonrakerClient(moonraker_url))
     except httpx.HTTPError:
-        busy = False  # no reachable Moonraker → Klipper isn't printing
+        # Can't confirm the printer is idle, so refuse rather than risk a power-off mid-print.
+        return _refused("Refused: could not reach Moonraker to confirm the printer is idle.")
     if busy:
         return _refused("Refused: a print is in progress.")
     unit_action = "reboot" if action == "reboot" else "poweroff"
