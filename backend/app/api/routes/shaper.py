@@ -92,7 +92,8 @@ async def analyze_resonance_file(
 ) -> ShaperAnalysis:
     """Analyses a resonance CSV that already exists on the printer host (no upload)."""
     try:
-        result = resonance_service.analyze_file(
+        result = await asyncio.to_thread(
+            resonance_service.analyze_file,
             settings.resonance_dirs,
             path,
             axis=axis,

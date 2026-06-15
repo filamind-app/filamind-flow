@@ -14,6 +14,7 @@ accelerometer-capture plumbing from :mod:`app.services.resonance_service` (the I
 
 from __future__ import annotations
 
+import asyncio
 import io
 from collections.abc import Callable
 from typing import Any
@@ -141,8 +142,8 @@ async def ramp(
         await client.run_gcode("M400")
         await client.run_gcode(measure)  # stop → flush CSV
         path = await resonance_service._await_new_file(resonance_dirs, before, name)
-        with open(path, "rb") as handle:
-            csv_text = handle.read().decode("utf-8", errors="replace")
+        raw = await asyncio.to_thread(resonance_service._read_bytes, path)
+        csv_text = raw.decode("utf-8", errors="replace")
         with contextlib.suppress(OSError):
             os.remove(path)  # the capture is transient — don't clutter the import list
         measurements.append(

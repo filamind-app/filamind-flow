@@ -116,6 +116,13 @@ def is_allowed_path(path: str, resonance_dirs: str) -> bool:
     return _is_allowed(path, resonance_dirs)
 
 
+def _read_bytes(path: str, limit: int = -1) -> bytes:
+    """Read a capture file's bytes. Call this via ``asyncio.to_thread`` from async code so the
+    (potentially large) file read doesn't block the event loop."""
+    with open(path, "rb") as handle:
+        return handle.read(limit)
+
+
 def analyze_file(resonance_dirs: str, path: str, **kwargs: Any) -> dict[str, Any]:
     """Reads a resonance CSV from the host (within the allowed dirs) and analyses it."""
     if not _is_allowed(path, resonance_dirs):
@@ -279,7 +286,9 @@ async def _capture(
 ) -> dict[str, Any]:
     """Runs one ``TEST_RESONANCES`` and analyses the CSV it writes."""
     target = await _run_resonances(client, resonance_dirs, axis_arg=axis_arg, name=name)
-    return analyze_file(resonance_dirs, target, axis=analyze_axis, **kwargs)
+    return await asyncio.to_thread(
+        analyze_file, resonance_dirs, target, axis=analyze_axis, **kwargs
+    )
 
 
 async def run_live_test(
@@ -366,8 +375,7 @@ async def run_static_excitation(
 
     if not _is_allowed(target, resonance_dirs):
         raise shaper_service.ShaperAnalysisError("Capture landed outside the allowed dirs")
-    with open(target, "rb") as handle:
-        raw = handle.read(128_000_000)
+    raw = await asyncio.to_thread(_read_bytes, target, 128_000_000)
     result = await asyncio.to_thread(
         spectrogram_service.compute_spectrogram,
         raw,
@@ -533,8 +541,7 @@ async def run_vibrations_profile(
                     raise shaper_service.ShaperAnalysisError(
                         "Capture landed outside the allowed dirs"
                     )
-                with open(path, "rb") as handle:
-                    raw = handle.read(64_000_000)
+                raw = await asyncio.to_thread(_read_bytes, path, 64_000_000)
                 segments.append({"angle": float(angle), "speed": float(speed), "raw": raw})
                 with contextlib.suppress(OSError):  # keep /tmp clean as we go
                     os.remove(path)
@@ -709,8 +716,7 @@ async def calibrate_axes_map(
     for axis in ("x", "y", "z"):
         if not _is_allowed(paths[axis], resonance_dirs):
             raise shaper_service.ShaperAnalysisError("Capture landed outside the allowed dirs")
-        with open(paths[axis], "rb") as handle:
-            raws.append(handle.read(64_000_000))
+        raws.append(await asyncio.to_thread(_read_bytes, paths[axis], 64_000_000))
     result = axes_map_service.analyze_axesmap(
         raws[0], raws[1], raws[2], current_axes_map=current_map, accel=accel
     )
