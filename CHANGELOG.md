@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.285.0] - 2026-06-15
+
+### Changed
+
+- **Backend: capture-file reads no longer block the event loop.** The Input Shaping and Max-Flow
+  services read accelerometer CSV captures synchronously from inside async code; those reads, and
+  the heavier CSV analysis, now run in a worker thread via `asyncio.to_thread`. The Moonraker
+  WebSocket and other requests stay responsive during a measurement. No behavior change.
+
 ## [0.284.0] - 2026-06-15
 
 ### Changed
