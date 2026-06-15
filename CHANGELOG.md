@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.291.0] - 2026-06-15
+
+### Changed
+
+- **Fonts are now self-hosted and bundled, with no external font CDN.** The four UI faces
+  (Space Grotesk, JetBrains Mono, IBM Plex Sans Arabic, Noto Sans Arabic) were loaded from Google
+  Fonts at runtime, which broke the intended look on an offline printer host and pinged a third
+  party on every load. They are now bundled via `@fontsource` (subset-split, so each language
+  downloads only what it needs), so the panel renders fully offline and contacts no one.
+
 ## [0.290.0] - 2026-06-15
 
 ### Added
