@@ -79,6 +79,34 @@ def test_analyze_board_id_null_when_chip_only() -> None:
     assert m["board_match"] is None
 
 
+def test_analyze_resolves_board_id_from_section_name() -> None:
+    """An accessory MCU whose serial reveals only the chip (e.g. an eddy scanner's rp2040) is
+    still identified by its config section name: [mcu eddy] -> the Eddy board, at a discounted
+    confidence (weaker signal than a direct connection-signature match)."""
+    catalog = [
+        {
+            "board_id": "btt-eddy",
+            "model": "Eddy",
+            "display_name": "BigTreeTech Eddy",
+            "aliases": [],
+            "matchPatterns": [{"pattern": "eddy", "confidence": 0.5}],
+        }
+    ]
+    sections = {"mcu eddy": {"serial": "/dev/serial/by-id/usb-Klipper_rp2040_AB-if00"}}
+    m = board_topology.analyze(sections, PATTERNS, boards=catalog)["mcus"][0]
+    assert m["board_id"] == "btt-eddy"
+    assert m["board_match"] == "suggested"
+    assert m["board_match_confidence"] == 0.4
+
+
+def test_analyze_section_name_does_not_false_match() -> None:
+    """A generic MCU section name must not pull in an unrelated board."""
+    catalog = [{"board_id": "btt-eddy", "model": "Eddy", "matchPatterns": [{"pattern": "eddy"}]}]
+    sections = {"mcu toolhead_mcu": {"serial": "/dev/serial/by-id/usb-Klipper_rp2040_X-if00"}}
+    m = board_topology.analyze(sections, PATTERNS, boards=catalog)["mcus"][0]
+    assert m["board_id"] is None
+
+
 def test_analyze_uart_and_unknown() -> None:
     sections = {
         "mcu a": {"serial": "/dev/ttyAMA0"},  # not usb -> uart
