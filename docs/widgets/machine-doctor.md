@@ -1,5 +1,7 @@
 # Machine Doctor
 
+![Machine Doctor in FilaMind Flow, running on a Sovol SV08](../screenshots/machine-doctor.png)
+
 Machine Doctor runs a single read-only scan across everything FilaMind can check and hands you back a graded report. It's the widget to open when something feels off, or when you just want a health check before a long print.
 
 ## What it does

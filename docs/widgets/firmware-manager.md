@@ -1,5 +1,7 @@
 # Firmware Manager
 
+![Firmware Manager in FilaMind Flow, running on a Sovol SV08](../screenshots/firmware-manager.png)
+
 Build and flash Klipper firmware on every MCU your printer has, without the SSH
 session and the half-remembered commands. It is meant for anyone who has ever
 stared at a `make menuconfig` screen and wished for a map: first-time board

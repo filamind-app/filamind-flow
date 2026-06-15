@@ -1,5 +1,7 @@
 # Input Shaping
 
+![Input Shaping in FilaMind Flow, running on a Sovol SV08](../screenshots/input-shaping.png)
+
 Input Shaping turns a Klipper resonance capture into a ready `[input_shaper]` config, without touching the command line. It is for anyone fighting ghosting and ringing in their prints, whether you have run resonance tuning a dozen times or never once.
 
 ## What it does

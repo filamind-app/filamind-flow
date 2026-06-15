@@ -1,5 +1,7 @@
 # Max-Flow
 
+![Max-Flow in FilaMind Flow, running on a Sovol SV08](../screenshots/max-flow.png)
+
 Max-Flow finds the highest volumetric flow rate your hotend can actually sustain, in mm3/s. It pushes the extrusion flow higher and higher until the extruder gear slips, then reports the number you can trust. This is the figure you plug into your slicer as a maximum volumetric speed, so it helps anyone tuning for faster, more reliable prints.
 
 ## What it does

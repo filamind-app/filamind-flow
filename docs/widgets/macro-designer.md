@@ -1,5 +1,7 @@
 # Macro Designer
 
+![Macro Designer in FilaMind Flow, running on a Sovol SV08](../screenshots/macro-designer.png)
+
 Macro Designer is an offline G-code simulator. You write or paste a program, and it shows you the toolhead path, the numbers behind the move, and a plain-language walkthrough of what each command does. Nothing is sent to the printer, so it is a safe place to draft and check a macro before you ever run it. It helps if you are writing a new macro, trying to understand one you inherited, or just want to see what your START_PRINT actually does.
 
 ## What it does

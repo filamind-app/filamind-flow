@@ -1,5 +1,7 @@
 # Hardware Browser
 
+![Hardware Browser in FilaMind Flow, running on a Sovol SV08](../screenshots/hardware-browser.png)
+
 The Hardware Browser is a curated reference of 3D-printing hardware. It pulls a large pile of overlapping part data into clean, canonical entities, and for each one it gives you the full spec sheet plus a copy-ready Klipper config. If you are wiring up a new board, picking a motor, or just trying to remember which driver a part uses, this is where you look it up.
 
 ## What it does

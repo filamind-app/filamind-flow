@@ -1,5 +1,7 @@
 # Config Editor
 
+![Config Editor in FilaMind Flow, running on a Sovol SV08](../screenshots/config-editor.png)
+
 A place to read and change your printer's Klipper configuration without leaving FilaMind Flow. It is meant for anyone who edits `printer.cfg` by hand today and wants the same control with a few more guardrails: backups, validation, and hardware-aware help.
 
 ## What it does
