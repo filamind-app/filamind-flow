@@ -17,7 +17,7 @@ _A two-person hobby project, built with heavy AI assistance and tested on real p
 [![Klipper](https://img.shields.io/badge/Klipper-compatible-111111)](https://www.klipper3d.org)
 [![Moonraker](https://img.shields.io/badge/Moonraker-API-111111)](https://moonraker.readthedocs.io)
 
-[Install](#install) · [Uninstall](#uninstall) · [Widgets](#widgets) · [Docs](#documentation) · [Support](#support)
+[Install](#install) · [Uninstall](#uninstall) · [Screenshots](#screenshots) · [Widgets](#widgets) · [Docs](#documentation) · [Support](#support)
 
 </div>
 
@@ -38,6 +38,14 @@ bash scripts/install.sh uninstall
 ```
 
 This removes the service, the nginx site, the sidebar entry, the Moonraker registration, and the sudo and udev rules, while leaving the app files in place.
+
+## Screenshots
+
+Real screenshots from a Sovol SV08 (CoreXY), with live data from the printer.
+
+[![FilaMind Flow dashboard](docs/screenshots/dashboard.png)](docs/screenshots/)
+
+More in the [screenshot gallery](docs/screenshots/), and at the top of each [widget page](docs/widgets/).
 
 ## Widgets
 

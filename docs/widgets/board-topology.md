@@ -1,5 +1,7 @@
 # Board Topology
 
+![Board Topology in FilaMind Flow, running on a Sovol SV08](../screenshots/board-topology.png)
+
 Board Topology draws an interactive map of the control boards inside your printer. If you have ever lost track of which MCU is your mainboard, which one rides on the toolhead, or what is actually plugged into what, this widget lays it out for you and links each part straight to its catalog record.
 
 ## What it does

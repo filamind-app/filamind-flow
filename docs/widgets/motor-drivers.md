@@ -1,5 +1,7 @@
 # Motor Drivers
 
+![Motor Drivers in FilaMind Flow, running on a Sovol SV08](../screenshots/motor-drivers.png)
+
 The Motor Drivers widget gives you a live view of every TMC stepper driver on your printer and the tools to tune them safely. It reads straight from the Klipper config, so it works on any printer without setup, and it's aimed at anyone who wants to dial in run current, homing, and chopper settings without memorizing register names.
 
 ## What it does

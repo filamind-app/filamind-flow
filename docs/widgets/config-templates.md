@@ -1,5 +1,7 @@
 # Config Templates
 
+![Config Templates in FilaMind Flow, running on a Sovol SV08](../screenshots/config-templates.png)
+
 A library of ready-to-paste Klipper config blocks and macros. If you have ever stared at a blank `printer.cfg` wondering how to write a clean start sequence or a working `M600`, this is for you.
 
 ## What it does

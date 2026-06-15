@@ -1,5 +1,7 @@
 # KlipperScreen Studio
 
+![KlipperScreen Studio in FilaMind Flow, running on a Sovol SV08](../screenshots/klipperscreen-studio.png)
+
 KlipperScreen Studio lets you manage the printer's physical touchscreen without dropping to the command line. It's for anyone who wants to retheme that screen, rearrange its menus, or change how it behaves, and would rather not hand-edit `KlipperScreen.conf` over SSH.
 
 ## What it does
