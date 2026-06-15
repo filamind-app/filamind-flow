@@ -12,11 +12,11 @@ start see the root [README](../README.md).
 
 ## Integration model
 
-The panel is a standalone SPA that talks **directly to Moonraker** and is linked
-from the Mainsail sidebar (Fluidd has no custom-link API yet, so it is reached by
-URL there). This is the same pattern other ecosystem tools use: there is no stable
-third-party plugin API inside Mainsail/Fluidd, so a sibling page sharing the same
-Moonraker instance is the clean, durable approach.
+The panel is a standalone SPA that talks directly to Moonraker. We link it from
+the Mainsail sidebar. Fluidd has no custom-link API yet, so there you reach it by
+URL instead. Other ecosystem tools settle on the same pattern for a simple reason:
+there is no stable third-party plugin API inside Mainsail or Fluidd. A sibling page
+that shares the same Moonraker instance is the clean, durable approach.
 
 ```
 Browser (phone / desktop)
@@ -27,14 +27,18 @@ Browser (phone / desktop)
 
 ## Resource footprint
 
-- **Frontend** is built on a developer machine and deployed as static files
-  served by nginx (the same web server that already serves Mainsail/Fluidd). At
-  runtime the printer host only serves a few static assets; the browser on the
-  client device executes the app. Cost on the Pi ≈ that of serving static files.
-- **Backend** is a single async Uvicorn process: idle ≈ 30–60 MB RAM and ~0% CPU,
-  comparable to Moonraker's own footprint. It is event-driven — no polling loops.
-- **WebSocket** subscriptions are limited to the union of the printer objects the
-  active widgets actually need, keeping notification traffic minimal.
+The **frontend** is built on a developer machine and deployed as static files,
+served by the same nginx that already serves Mainsail and Fluidd. At runtime the
+printer host only hands out a few static assets; the app itself runs in the browser
+on the client device. So the cost on the Pi is roughly the cost of serving static
+files.
+
+The **backend** is a single async Uvicorn process. Idle, it sits around 30-60 MB
+of RAM and close to 0% CPU, comparable to Moonraker's own footprint. It is
+event-driven, with no polling loops.
+
+**WebSocket** subscriptions are kept to just the union of printer objects the
+active widgets actually need. That keeps notification traffic minimal.
 
 ## Frontend layers
 
@@ -51,20 +55,20 @@ src/
 └─ assets/styles/  # Neo-Brutalist design tokens + component classes
 ```
 
-Dependencies point inward: `widgets` and `components` depend on `core`; `core`
-depends on nothing app-specific. This keeps the transport and registry reusable
-and testable in isolation.
+Dependencies point inward. `widgets` and `components` depend on `core`, and `core`
+depends on nothing app-specific. That keeps the transport and registry reusable and
+testable in isolation.
 
 ### MoonrakerClient
 
 A single long-lived client (`core/moonraker/client.ts`) owns the WebSocket:
 
-- **Request/response** — each `call()` gets an incrementing id; responses resolve
-  the matching pending promise, with a timeout safety net.
+- **Request/response** — each `call()` gets an incrementing id. Responses resolve
+  the matching pending promise, with a timeout as a safety net.
 - **Notifications** — `notify_*` messages are fanned out to listeners registered
-  by method name (e.g. the store listens for `notify_status_update`).
-- **Reconnection** — exponential backoff; on reconnect the remembered subscription
-  set is re-sent so widgets keep receiving updates transparently.
+  by method name. The store, for example, listens for `notify_status_update`.
+- **Reconnection** — exponential backoff. On reconnect the remembered subscription
+  set is re-sent, so widgets keep receiving updates transparently.
 
 ### Widget lifecycle
 
@@ -72,76 +76,95 @@ A single long-lived client (`core/moonraker/client.ts`) owns the WebSocket:
 2. On connect, the store subscribes to `widgetRegistry.aggregateSubscriptions()`
    — the merged set of every widget's required printer objects — in one call.
 3. `notify_status_update` deltas are shallow-merged into the reactive store.
-4. The dashboard renders each registered widget inside a Neo-Brutalist frame;
-   widgets read from the store and send commands through the shared client.
+4. The dashboard renders each registered widget inside a Neo-Brutalist frame.
+   Widgets read from the store and send commands through the shared client.
 
 Because widgets declare their data needs and render from shared state, adding a
-feature never requires touching the transport or other widgets.
+feature never means touching the transport or the other widgets.
 
 ## Backend
 
 A FastAPI application factory (`create_app`) wires settings, logging, CORS, and a
-versioned `/api` router. It exposes liveness (`/api/health`), a server-side
-Moonraker reachability probe (`/api/moonraker/status`), the **firmware**
-build / flash / device routes (`/api/firmware/*`), the **input-shaping**
-resonance-analysis routes (`/api/shaper/*` — which vendor Klipper's
-`shaper_calibrate` and add pure-numpy resonance analyses: axes-map,
-spectrogram, and the machine vibrations profile), and the **motor-drivers**
-routes (`/api/drivers/status` — TMC driver state aggregated from the live config +
-per-driver `get_status`, annotated from the unified hardware catalog's driver
-capability map (`drivers[].caps` in the hardware catalog, served as
-`DriverInfo`) and the user's saved motor assignment;
-`/api/drivers/live/{stepper}` — fast per-driver live telemetry for the monitor;
-`/api/drivers/catalog` — that capability map; `/api/drivers/motors` — a 600+ motor
-catalog served from the same hardware reference; `/api/drivers/mapping` — the persisted
-stepper→motor map; `/api/drivers/recommend` — a run-current + register recommendation from
-a built-in `motor_constants` physics model;
-`/api/drivers/{config-block,apply,init,autotune,stallguard,home}` — copy-to-config and the
-gated live `SET_TMC_*` / `INIT_TMC` / `AUTOTUNE_TMC` writes + sensorless-homing threshold and
-test-home, all refused while printing), and the **config** routes (`/api/config/files`,
-`/api/config/file` — list and parse the live `printer.cfg` and its includes through the
-round-trip `klipper_config` engine into sections → params + validation issues; read-only,
-the keystone of the planned Config Editor). It is the right home for
-operations that should not run in the browser — privileged file or system actions,
-the live `ACCELEROMETER_MEASURE` / `TEST_RESONANCES` capture orchestration,
-multi-call aggregations, or scheduled jobs — added as new route modules under
-`app/api/routes/`.
+versioned `/api` router. From there it exposes a handful of endpoint groups.
+
+Liveness lives at `/api/health`, and a server-side Moonraker reachability probe at
+`/api/moonraker/status`. The **firmware** routes (`/api/firmware/*`) handle build,
+flash, and device operations.
+
+The **input-shaping** resonance-analysis routes are at `/api/shaper/*`. They vendor
+Klipper's `shaper_calibrate` and add pure-numpy resonance analyses of their own:
+axes-map, spectrogram, and the machine vibrations profile.
+
+The **motor-drivers** routes cover several jobs. `/api/drivers/status` aggregates
+TMC driver state from the live config plus each driver's `get_status`, annotated
+from the unified hardware catalog's driver capability map (`drivers[].caps` in the
+hardware catalog, served as `DriverInfo`) and the user's saved motor assignment.
+`/api/drivers/live/{stepper}` gives fast per-driver live telemetry for the monitor.
+`/api/drivers/catalog` returns that capability map, and `/api/drivers/motors` serves
+a 600+ motor catalog from the same hardware reference. `/api/drivers/mapping` is the
+persisted stepper→motor map, and `/api/drivers/recommend` produces a run-current and
+register recommendation from a built-in `motor_constants` physics model. Finally,
+`/api/drivers/{config-block,apply,init,autotune,stallguard,home}` handle copy-to-config
+and the gated live writes — `SET_TMC_*`, `INIT_TMC`, `AUTOTUNE_TMC` — plus the
+sensorless-homing threshold and test-home. All of those writes are refused while the
+printer is running.
+
+The **config** routes are read-only for now. `/api/config/files` and
+`/api/config/file` list and parse the live `printer.cfg` and its includes through the
+round-trip `klipper_config` engine, turning them into sections → params with
+validation issues. This is the keystone of the planned Config Editor.
+
+The backend is the right home for anything that should not run in the browser:
+privileged file or system actions, the live `ACCELEROMETER_MEASURE` /
+`TEST_RESONANCES` capture orchestration, multi-call aggregations, or scheduled jobs.
+Each arrives as a new route module under `app/api/routes/`.
 
 ### Hardware database (`/api/hardware/*`)
 
-A curated, **read-only** reference dataset — compiled into `app/data/reference/hardware.sqlite`
-(~7 MB; built from a local source by `scripts/build_hardware_db.py`, which is not in the repo) and
-reconstructed **once at import** into a module-global dict (`reference_data.py`), immutable
-thereafter (handlers only read; no locks). The raw rows (`items[]`) are deduped/enriched at
-build time into **canonical entity arrays** — `boards`, `drivers`, `motors`, `hosts`, and a generic
-`catalog` (9 more categories) — each entity carrying its specs **plus a copyable Klipper config
-snippet** (a board pin-map, a `[tmcXXXX]` driver block, a recommended motor `run_current`, an
-`[mcu host]` block, etc.). Per type there is a small `*_search.py` (filter + paginate to lightweight
-summaries) and two routes: a paginated list and a `/{id}` full record. A `manufacturers` directory
-and `categories` round it out. CI guards keep it honest (per-category floors so a regen can't gut a
-category; data-hygiene checks; lossless port-aggregation locks).
+This is a curated, read-only reference dataset. It compiles into
+`app/data/reference/hardware.sqlite` (~7 MB), built from a local source by
+`scripts/build_hardware_db.py`, which is not in the repo. At import time it is
+reconstructed once into a module-global dict (`reference_data.py`) and is immutable
+after that — handlers only ever read, so there are no locks.
 
-**Performance (DB-1):** lists, `id→entity` index dicts and a precomputed per-item search haystack
-are built once at load, so every `*_by_id` is O(1) and the flat free-text search never rebuilds its
-haystacks per request; the read-only `/api/hardware/*` responses carry a weak `ETag` + `Cache-Control`
-(304 on a match, busting on redeploy).
+At build time the raw rows (`items[]`) are deduped and enriched into canonical entity
+arrays: `boards`, `drivers`, `motors`, `hosts`, and a generic `catalog` covering nine
+more categories. Each entity carries its specs along with a copyable Klipper config
+snippet — a board pin-map, a `[tmcXXXX]` driver block, a recommended motor
+`run_current`, an `[mcu host]` block, and so on. Per type there is a small
+`*_search.py` that filters and paginates down to lightweight summaries, plus two
+routes: a paginated list and a `/{id}` full record. A `manufacturers` directory and a
+`categories` listing round it out. CI guards keep the data honest with per-category
+floors so a regen can't gut a category, data-hygiene checks, and lossless
+port-aggregation locks.
 
-**Linking backbone (DB-2):** `hardware_links.py` (a pure module) turns the formerly-islanded
-relationships into a precomputed in-memory graph, built once at load. It canonicalises
-**manufacturers** (a stable `manufacturer_id` + auto-derived aliases — variant spellings collapse to
-one id — with junk/placeholders excluded), promotes the **MCU** to a first-class entity (board
-`specs.MCU` parsed via a chip-family whitelist → canonical part), and builds an adjacency map keyed by
-composite `<type>:<id>` ids (ids are *not* unique across types — `sovol-sv08` is both a board and a
-host). That powers `GET /api/hardware/manufacturers[/{id}]`, `/mcus[/{id}]`, a generic
-`GET /api/hardware/{type}/{id}/related`, and `?expand=related` on the detail routes — all O(1) — so a
-widget can pull an entity *and everything related to it* in one call. A CI edge-validator proves the
-graph has no dangling edges. The Hardware Browser **surfaces** this graph (DB-3a): every entity's
-detail shows clickable **cross-link chips** (manufacturer / MCU / drivers) that deep-link to the
-related entity, and **Brands** / **MCUs** tabs let you browse from a maker or a chip outward. The five
-detail panels share one `EntityCatalog.vue` shell (search / list / pagination / expand / copy /
-deep-link), each a thin wrapper supplying a `fetchPage` closure + bespoke summary/detail slots (DB-3b),
-and the shell's `#facets` slot carries each panel's filters — class / NEMA / kind / manufacturer —
-backed by `GET /api/hardware/facets` (DB-3c). See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
+**Performance (DB-1):** lists, `id→entity` index dicts, and a precomputed per-item
+search haystack are all built once at load. So every `*_by_id` is O(1), and the flat
+free-text search never rebuilds its haystacks per request. The read-only
+`/api/hardware/*` responses carry a weak `ETag` and `Cache-Control`, returning 304 on
+a match and busting on redeploy.
+
+**Linking backbone (DB-2):** `hardware_links.py` is a pure module that turns the
+once-islanded relationships into a precomputed in-memory graph, built once at load. It
+canonicalises manufacturers, giving each a stable `manufacturer_id` plus auto-derived
+aliases so variant spellings collapse to one id, with junk and placeholders excluded.
+It promotes the MCU to a first-class entity by parsing board `specs.MCU` through a
+chip-family whitelist down to a canonical part. And it builds an adjacency map keyed by
+composite `<type>:<id>` ids, which matters because ids are not unique across types —
+`sovol-sv08` is both a board and a host. That graph powers
+`GET /api/hardware/manufacturers[/{id}]`, `/mcus[/{id}]`, a generic
+`GET /api/hardware/{type}/{id}/related`, and `?expand=related` on the detail routes,
+all O(1). A widget can pull an entity and everything related to it in a single call. A
+CI edge-validator proves the graph has no dangling edges.
+
+The Hardware Browser surfaces this graph (DB-3a). Every entity's detail shows clickable
+cross-link chips — manufacturer, MCU, drivers — that deep-link to the related entity,
+and **Brands** and **MCUs** tabs let you browse outward from a maker or a chip. The five
+detail panels share one `EntityCatalog.vue` shell that handles search, list, pagination,
+expand, copy, and deep-link. Each panel is a thin wrapper supplying a `fetchPage` closure
+plus its own summary and detail slots (DB-3b). The shell's `#facets` slot carries each
+panel's filters — class, NEMA, kind, manufacturer — backed by `GET /api/hardware/facets`
+(DB-3c). See the Hardware-DB section in [ROADMAP.md](../ROADMAP.md).
 
 ## Design system
 
@@ -158,22 +181,26 @@ few component classes (`frontend/src/assets/styles/main.css`):
 
 ### Theming
 
-Every visual token is a **CSS custom property**, so the whole app restyles from a single switch.
-The Tailwind tokens reference the variables (`ink: 'rgb(var(--c-ink) / <alpha-value>)'`, `boxShadow`
-→ `var(--nb-shadow*)`, `borderRadius.brutal` → `var(--nb-radius)`), so **every existing utility**
-(`bg-paper`, `border-ink`, `bg-brand-cyan`, `shadow-brutal`, `rounded-brutal`) recolors per theme with
-no component edits. `main.css` holds `:root` (Light defaults) plus a `[data-theme="…"]` block per theme.
+Every visual token is a CSS custom property, so the whole app restyles from a single
+switch. The Tailwind tokens reference those variables
+(`ink: 'rgb(var(--c-ink) / <alpha-value>)'`, `boxShadow` → `var(--nb-shadow*)`,
+`borderRadius.brutal` → `var(--nb-radius)`). That means every existing utility —
+`bg-paper`, `border-ink`, `bg-brand-cyan`, `shadow-brutal`, `rounded-brutal` —
+recolors per theme with no component edits. `main.css` holds `:root` for the Light
+defaults plus one `[data-theme="…"]` block per theme.
 
 - **Themes (7):** `light` (default — daylight brutalism, warm cream + mocha-brown brand accent),
   `neon` (deep violet + electric glow), `midnight` (navy ops deck), `dark` (steel slate),
-  `ocean` (abyssal teal), `sunset` (dusk plum), and `contrast` (near-black/white, a11y). All seven are **calibrated palettes** — a two-tier accent
-  ramp (status-badge colors held at a depth where their text passes WCAG, signal colors brighter for
-  charts/danger) — guarded by an automated contrast test that fails the build on a regression
-  (v0.226.0). Mirrors the i18n design: `core/theme.ts` (registry + detect + `localStorage`
-  persistence + reactive `data-theme`), a `ThemeMenu` live-preview header control, and a no-flash
-  inline `<head>` script that applies the saved theme before first paint. **Adding a new theme = one
-  `[data-theme]` block in `main.css` + a `THEME_META` entry + locale names** (the three added in
-  v0.226.0 followed exactly this path).
+  `ocean` (abyssal teal), `sunset` (dusk plum), and `contrast` (near-black/white, a11y).
+  All seven are calibrated palettes. Each uses a two-tier accent ramp: status-badge
+  colors are held at a depth where their text passes WCAG, while signal colors run
+  brighter for charts and danger. An automated contrast test guards this and fails the
+  build on a regression (v0.226.0). The setup mirrors the i18n design: `core/theme.ts`
+  handles the registry, detection, `localStorage` persistence, and the reactive
+  `data-theme`; a `ThemeMenu` header control gives live preview; and a no-flash inline
+  `<head>` script applies the saved theme before first paint. Adding a new theme means
+  one `[data-theme]` block in `main.css`, a `THEME_META` entry, and locale names — the
+  three added in v0.226.0 followed exactly that path.
 - Theme is **orthogonal to locale/RTL** — the `:lang(ar)`/`[dir=rtl]` rules are independent.
 - SVG charts read the same token variables (not hardcoded hex), so they recolor with the theme.
 
@@ -185,44 +212,52 @@ fonts and replace the `<link>` in `index.html` with local `@font-face` rules.
 
 ## Internationalization (i18n)
 
-`vue-i18n` v11 (Composition API), set up in `src/core/i18n.ts` and registered in `main.ts`. The
-design mirrors the rest of the app: offline-first, extensible, and type-safe.
+`vue-i18n` v11 (Composition API), set up in `src/core/i18n.ts` and registered in
+`main.ts`. The design mirrors the rest of the app: offline-first, extensible, and
+type-safe.
 
-- **Offline-first.** `en` is bundled eagerly so first paint never waits on a network fetch (a
-  printer host is usually offline). Every other locale is a dynamic `import()` chunk loaded on
-  switch — combined with each widget's `defineAsyncComponent` chunk, switching to Arabic and
-  opening one widget downloads only that locale's catalog for that widget.
-- **Namespaced catalogs** under `src/locales/<code>/` mirror the code-split: `common`, `shell`, and
-  one per widget (`firmware`, `input-shaping`, `motor-drivers`, `config-editor`, `macro-designer`,
-  `board-topology`, `max-flow`, `config-templates`, `hardware-browser`). Each JSON file carries a single
-  top-level namespace key (e.g. `shell`) that is merged into the locale's messages.
-- **Drop-in extensibility.** `availableLocales` is derived from which catalog folders exist, so a
-  new language is *dropping in `src/locales/<code>/`* — no component or registry edits. The switcher
-  (`LanguageSelect`, reusing `ComboSelect`) appears once more than one locale ships.
-- **Type-safe keys.** `en` is the single source of truth; `src/types/i18n.d.ts` augments vue-i18n's
-  `DefineLocaleMessage` from the `en` catalog, so `t('…')` is autocompleted and a wrong key fails
-  `type-check`. Other locales are checked **structurally** against `en` by `scripts/i18n-keydiff.mjs`
-  (a CI gate) — keys are often built dynamically (e.g. `t('inputShaping.grade.verdict.' + letter)`),
-  which defeats eslint's `no-unused-keys`.
-- **Numbers, dates, direction.** Per-locale `numberFormats` / `datetimeFormats` route values through
-  `Intl` (locale separators / digit system) instead of `.toFixed()` string-gluing. Arabic pins
-  Western digits (`numberingSystem: 'latn'`) — engineers cross-reference G-code and datasheets in
-  `1.7 A` form. `<html lang>` / `dir` are set reactively from the active locale's metadata, so RTL
-  flips with the language.
-- **Tooling.** `npm run i18n:keydiff` (key-set parity, in CI) and `npm run i18n:pseudo`
-  (pseudo-localization — accents + ~40% padding + brackets — to surface text-expansion / RTL overflow
-  and any un-externalized strings before a translator is involved).
-- **Backend messages.** Write endpoints return a `{ code, params, message }` contract: the backend
-  picks a stable `code` (e.g. `motorDrivers.apply.applied`) plus interpolation `params`, and keeps an
-  English `message` as a fallback. The UI renders `t(code, params)` (`applyResultText`) so localized
-  copy lives in the frontend catalog, not the server. Raw upstream / validation errors (Moonraker
-  failures, `field_policy` text) carry **no** `code` and surface their English text verbatim — they
-  are technical strings, not product copy.
+- **Offline-first.** `en` is bundled eagerly so first paint never waits on a network
+  fetch, since a printer host is usually offline. Every other locale is a dynamic
+  `import()` chunk loaded on switch. Combined with each widget's
+  `defineAsyncComponent` chunk, switching to Arabic and opening one widget downloads
+  only that locale's catalog for that widget.
+- **Namespaced catalogs** under `src/locales/<code>/` mirror the code-split: `common`,
+  `shell`, and one per widget (`firmware`, `input-shaping`, `motor-drivers`,
+  `config-editor`, `macro-designer`, `board-topology`, `max-flow`, `config-templates`,
+  `hardware-browser`). Each JSON file carries a single top-level namespace key (such as
+  `shell`) that is merged into the locale's messages.
+- **Drop-in extensibility.** `availableLocales` is derived from which catalog folders
+  exist, so adding a language is just dropping in `src/locales/<code>/` — no component
+  or registry edits. The switcher (`LanguageSelect`, reusing `ComboSelect`) appears
+  once more than one locale ships.
+- **Type-safe keys.** `en` is the single source of truth. `src/types/i18n.d.ts`
+  augments vue-i18n's `DefineLocaleMessage` from the `en` catalog, so `t('…')` is
+  autocompleted and a wrong key fails `type-check`. Other locales are checked
+  structurally against `en` by `scripts/i18n-keydiff.mjs`, a CI gate. Keys are often
+  built dynamically — for example `t('inputShaping.grade.verdict.' + letter)` — which
+  defeats eslint's `no-unused-keys`.
+- **Numbers, dates, direction.** Per-locale `numberFormats` and `datetimeFormats` route
+  values through `Intl` for locale separators and digit systems instead of gluing
+  strings with `.toFixed()`. Arabic pins Western digits (`numberingSystem: 'latn'`),
+  since engineers cross-reference G-code and datasheets in `1.7 A` form. `<html lang>`
+  and `dir` are set reactively from the active locale's metadata, so RTL flips with the
+  language.
+- **Tooling.** `npm run i18n:keydiff` checks key-set parity in CI. `npm run i18n:pseudo`
+  runs pseudo-localization — accents, ~40% padding, brackets — to surface
+  text-expansion or RTL overflow and any un-externalized strings before a translator is
+  involved.
+- **Backend messages.** Write endpoints return a `{ code, params, message }` contract.
+  The backend picks a stable `code` (such as `motorDrivers.apply.applied`) plus
+  interpolation `params`, and keeps an English `message` as a fallback. The UI renders
+  `t(code, params)` (`applyResultText`) so localized copy lives in the frontend catalog,
+  not the server. Raw upstream or validation errors — Moonraker failures, `field_policy`
+  text — carry no `code` and surface their English text verbatim. They are technical
+  strings, not product copy.
 
-SI **unit symbols** (Hz, A, °C, Ω, Nm, mH, mm/s²) and brand / protocol / register / G-code tokens
-stay Latin in every locale; only the surrounding plain-language copy is translated. All six i18n
-phases (scaffolding → widgets → RTL/Arabic → backend message codes) are complete (see
-[ROADMAP.md](../ROADMAP.md)).
+SI unit symbols (Hz, A, °C, Ω, Nm, mH, mm/s²) and brand, protocol, register, and
+G-code tokens stay Latin in every locale; only the surrounding plain-language copy is
+translated. All six i18n phases (scaffolding → widgets → RTL/Arabic → backend message
+codes) are complete (see [ROADMAP.md](../ROADMAP.md)).
 
 ## Conventions
 
