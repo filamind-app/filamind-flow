@@ -1,3 +1,15 @@
+// Self-hosted fonts, bundled by Vite so the panel renders fully offline and pings no third party
+// (no Google Fonts). Weights mirror what the UI uses; Arabic faces are included for the RTL UI.
+import '@fontsource/ibm-plex-sans-arabic/400.css'
+import '@fontsource/ibm-plex-sans-arabic/500.css'
+import '@fontsource/ibm-plex-sans-arabic/700.css'
+import '@fontsource/jetbrains-mono/400.css'
+import '@fontsource/jetbrains-mono/700.css'
+import '@fontsource/noto-sans-arabic/400.css'
+import '@fontsource/noto-sans-arabic/700.css'
+import '@fontsource/space-grotesk/400.css'
+import '@fontsource/space-grotesk/500.css'
+import '@fontsource/space-grotesk/700.css'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 

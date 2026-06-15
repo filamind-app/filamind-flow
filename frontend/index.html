@@ -19,25 +19,10 @@
       }
     </script>
     <!--
-      Fonts load from Google with system fallbacks so the panel still renders on
-      an offline printer host. For fully offline installs, self-host these (see
-      docs/ARCHITECTURE.md).
+      Fonts (Space Grotesk, JetBrains Mono, IBM Plex Sans Arabic, Noto Sans Arabic) are self-hosted
+      and bundled by the build via @fontsource (imported in src/main.ts), so the panel renders fully
+      offline and contacts no third party. No external font CDN.
     -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <!--
-      Arabic faces (loaded only when the Arabic UI is used; scoped via :lang(ar) in main.css).
-      Same Google-Fonts-with-system-fallback model as above; self-hosting for fully offline hosts
-      is tracked in ROADMAP.md.
-    -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
     <div id="app"></div>

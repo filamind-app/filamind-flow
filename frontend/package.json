@@ -1,6 +1,6 @@
 {
   "name": "filamind-flow-frontend",
-  "version": "0.290.0",
+  "version": "0.291.0",
   "private": true,
   "type": "module",
   "description": "Extensible Neo-Brutalist control panel for Klipper / Moonraker - frontend.",
@@ -35,6 +35,10 @@
     "i18n:pseudo": "node scripts/i18n-pseudo.mjs"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans-arabic": "^5.2.9",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/noto-sans-arabic": "^5.2.10",
+    "@fontsource/space-grotesk": "^5.2.10",
     "html-to-image": "1.11.13",
     "pinia": "^2.2.6",
     "vue": "^3.5.13",
