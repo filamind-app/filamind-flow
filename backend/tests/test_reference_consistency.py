@@ -1,6 +1,6 @@
 """Lock the TMC-capability data so the three sources can't drift (audit §4c.2).
 
-Driver StallGuard fields live in three places — the catalog ``drivers[].caps`` block (typed,
+Driver StallGuard fields live in three places - the catalog ``drivers[].caps`` block (typed,
 served as ``DriverInfo`` via ``reference_data.driver_infos``), ``stallguard_profiles.json``
 (field_by_driver), and ``field_policy._POLICY`` (editable fields per model). These tests assert
 they agree, so a future edit to one without the others fails CI.

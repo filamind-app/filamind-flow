@@ -2,7 +2,7 @@
 
 Pure analysis: given the printer's parsed config sections plus the reference board / MCU
 pattern tables, identify each MCU (its connection type and a best-effort chip / board guess)
-and assemble a host → MCU topology. No hardware access — the route feeds it the live
+and assemble a host → MCU topology. No hardware access - the route feeds it the live
 ``configfile`` sections from Moonraker.
 """
 
@@ -21,7 +21,7 @@ _MCU_SECTION = re.compile(r"^mcu(?:\s+(?P<name>.+))?$")
 
 
 def _sections(configfile: Any) -> dict[str, Any]:
-    """Parsed config sections — prefer typed ``settings``, fall back to raw ``config``."""
+    """Parsed config sections - prefer typed ``settings``, fall back to raw ``config``."""
     if not isinstance(configfile, dict):
         return {}
     for key in ("settings", "config"):
@@ -54,7 +54,7 @@ def _resolve_board_id(
 
     First tries each board's folded ``matchPatterns`` against the connection signature
     (the unified detection path); falls back to a normalized-name match against the
-    board guess from ``board_patterns``. Returns ``(board_id, confidence)`` — often
+    board guess from ``board_patterns``. Returns ``(board_id, confidence)`` - often
     ``(None, 0)`` because a serial/canbus id usually reveals only the chip, not the board.
     """
     sig = signature.lower()
@@ -93,10 +93,10 @@ def _connection(cfg: dict[str, Any]) -> dict[str, Any]:
     return {"type": "unknown", "id": None}
 
 
-# ── Component → MCU edges (which steppers / drivers / heaters / fans / sensors live on each MCU) ──
+# -- Component → MCU edges (which steppers / drivers / heaters / fans / sensors live on each MCU) --
 # A component is attached to the MCU named by the chip prefix of its primary pin (a bare pin lives
-# on the primary ``mcu``). MCU NODES come only from ``[mcu]`` sections — components merely attach to
-# them — so a stray pin can never invent a phantom MCU.
+# on the primary ``mcu``). MCU NODES come only from ``[mcu]`` sections - components merely attach to
+# them - so a stray pin can never invent a phantom MCU.
 _COMPONENT_KINDS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"^stepper_\S+$"), "motor"),
     (re.compile(r"^manual_stepper\s+\S"), "motor"),
@@ -116,10 +116,10 @@ _COMPONENT_KINDS: list[tuple[re.Pattern[str], str]] = [
 ]
 
 #: Config keys whose pins name a SHARED bus, not an exclusive assignment. Klipper lets the
-#: same software-SPI / software-I2C / single-wire-UART pins recur across many sections — a
+#: same software-SPI / software-I2C / single-wire-UART pins recur across many sections - a
 #: stack of TMC51xx drivers sharing one software-SPI bus, several drivers on one UART line
 #: addressed separately, an accelerometer sharing the toolhead's SPI. Repetition of these is
-#: valid wiring, NOT a double-assignment (which only an exclusive pin — step/heater/cs/… — is).
+#: valid wiring, NOT a double-assignment (which only an exclusive pin - step/heater/cs/… - is).
 _SHARED_BUS_PIN_KEYS: frozenset[str] = frozenset(
     {
         "spi_software_miso_pin",
@@ -131,7 +131,7 @@ _SHARED_BUS_PIN_KEYS: frozenset[str] = frozenset(
     }
 )
 
-#: Primary-pin candidate keys per kind — the pin whose chip prefix names the owning MCU.
+#: Primary-pin candidate keys per kind - the pin whose chip prefix names the owning MCU.
 _PRIMARY_PIN: dict[str, tuple[str, ...]] = {
     "motor": ("step_pin", "dir_pin", "enable_pin"),
     "driver": ("uart_pin", "cs_pin", "step_pin"),
@@ -183,7 +183,7 @@ def _attach_components(sections: dict[str, Any], mcus: list[dict[str, Any]]) -> 
             continue
         target = by_name.get(owner) or (by_name.get("mcu") if owner == "mcu" else None)
         if target is None:
-            continue  # pin references an MCU with no [mcu] section — skip (never invent a node)
+            continue  # pin references an MCU with no [mcu] section - skip (never invent a node)
         target["components"].append({"section": str(name), "kind": kind})
 
 
@@ -215,7 +215,7 @@ def _used_pins(sections: dict[str, Any], mcu_name: str) -> set[str]:
 
 
 def _pin_owners(sections: dict[str, Any], mcu_name: str) -> dict[str, list[dict[str, str]]]:
-    """Every pin the live config uses on a given MCU, mapped to the config sections that drive it —
+    """Every pin the live config uses on a given MCU, mapped to the config sections that drive it -
     ``{PIN: [{section, key}]}``. A pin owned by >1 distinct section is a real double-assignment."""
     owners: dict[str, list[dict[str, str]]] = {}
     for section, cfg in sections.items():
@@ -255,7 +255,7 @@ def build_pin_atlas(
             continue
         # A shared bus (software SPI/I2C, single-wire UART) legitimately repeats a pin across
         # sections. It's a real conflict only when an EXCLUSIVE pin (step/heater/cs/…) is among
-        # the owners — an exclusive output can't be shared. All-shared owners = valid wiring.
+        # the owners - an exclusive output can't be shared. All-shared owners = valid wiring.
         if not any(o["key"] not in _SHARED_BUS_PIN_KEYS for o in used_by):
             continue
         findings.append(
@@ -335,7 +335,7 @@ def build_pin_atlas(
 
 def _board_pin_set(board: dict[str, Any]) -> set[str]:
     """Every physical pin name in a catalog board's pin-maps, normalised the SAME way the live
-    config's used pins are (``_split_pin``) — so a pin-map entry that still carries a config
+    config's used pins are (``_split_pin``) - so a pin-map entry that still carries a config
     MCU-name prefix (e.g. ``TOOLHEAD_MCU:PA1`` on a toolhead board) is compared as its bare pin
     ``PA1`` and still fingerprints. Without this, prefixed toolhead pin-maps never match."""
     pins: set[str] = set()
@@ -352,7 +352,7 @@ def _board_pin_set(board: dict[str, Any]) -> set[str]:
 
 
 #: Pin-fingerprint acceptance thresholds. A match needs strong containment AND must be
-#: *unambiguous* — the winner either agrees by Jaccard (its pin-map size fits the used set) or
+#: *unambiguous* - the winner either agrees by Jaccard (its pin-map size fits the used set) or
 #: clearly beats the next distinct board. This stops a handful of generic MCU pins shared by many
 #: small boards (e.g. a CAN toolhead with no catalog entry) from producing a confident wrong match.
 _FINGERPRINT_MIN_CONTAINMENT = 0.6
@@ -363,13 +363,13 @@ _FINGERPRINT_MIN_MARGIN = 0.15
 def _fingerprint_board(used: set[str], boards: list[dict[str, Any]]) -> tuple[str | None, float]:
     """Match the printer's used pin set to a catalog board by containment (how many of the used
     pins exist in the board's pin-map), guarded against ambiguous matches. A strong, board-specific
-    signal — unlike a serial id, which reveals only the chip. Returns ``(board_id, confidence)`` or
+    signal - unlike a serial id, which reveals only the chip. Returns ``(board_id, confidence)`` or
     ``(None, 0)`` when no board is a confident, unambiguous match.
 
     Containment alone favours *large* boards (more pins → more likely to contain any given pin), so
     a toolhead's few generic pins can tie across many small boards. The guard accepts the top board
     only when it also clears a Jaccard floor (its pin-map size fits) *or* beats the next distinct
-    board's containment by a margin — otherwise the match is ``None`` (no confident board).
+    board's containment by a margin - otherwise the match is ``None`` (no confident board).
     """
     if len(used) < 5:
         return None, 0.0  # too few pins to discriminate
@@ -399,7 +399,7 @@ def _fingerprint_board(used: set[str], boards: list[dict[str, Any]]) -> tuple[st
 
 def _resolve_host_id(model: str, hosts: list[dict[str, Any]]) -> tuple[str | None, float]:
     """Best-effort link of the host's CPU/SoC string to a catalog ``host_id`` (a normalized
-    substring match against each host's name / soc / cpu). Low-confidence *suggested* link —
+    substring match against each host's name / soc / cpu). Low-confidence *suggested* link -
     SBC SoC strings are generic, so ``(None, 0)`` is common."""
     nm = _norm(model)
     if len(nm) < 4:
@@ -414,7 +414,7 @@ def _resolve_host_id(model: str, hosts: list[dict[str, Any]]) -> tuple[str | Non
 
 
 def _integrated_sbc(host_soc: str, board: dict[str, Any] | None) -> bool:
-    """True when a mainboard declares an onboard / socketed SBC whose SoC matches the host's — i.e.
+    """True when a mainboard declares an onboard / socketed SBC whose SoC matches the host's - i.e.
     the host computer is physically *on* this board (a Sovol SV07/SV08, a BTT Manta carrying a CB1 /
     CM4, …) rather than a separate Pi. Read from the board's catalog ``specs`` (``Class`` /
     ``Host``); the host's SoC must match when known, so an external Pi on the same board still reads
@@ -485,12 +485,12 @@ def analyze(
             board, confidence = _match(bpats, signature, "board")
             board_id, board_id_conf = _resolve_board_id(board, signature, catalog)
             # Pin-fingerprint: match the printer's used pin set on this MCU against each board's
-            # verbatim pin-map — a board-specific signal a serial id can't give. Use it when it
+            # verbatim pin-map - a board-specific signal a serial id can't give. Use it when it
             # beats (or fills in for) the signature-based guess.
             fp_id, fp_conf = _fingerprint_board(_used_pins(sections, mcu_name), catalog)
             if fp_id and (board_id is None or fp_conf > board_id_conf):
                 board_id, board_id_conf = fp_id, fp_conf
-            # Join the detected chip to a canonical DB MCU entity (one of the first-class MCUs) —
+            # Join the detected chip to a canonical DB MCU entity (one of the first-class MCUs) -
             # a reliable DB anchor even when no board_id resolves. null for unrecognised chips.
             norm = hardware_links.normalize_mcu(chip or signature or "")
             mcu_id: str | None = None
@@ -509,7 +509,7 @@ def analyze(
                     "mcu_id": mcu_id,
                     "mcu_family": mcu_family,
                     # Link into the board catalog (GET /api/hardware/boards/{id}); may be
-                    # null — a serial/canbus id usually reveals only the chip. Surfaced as
+                    # null - a serial/canbus id usually reveals only the chip. Surfaced as
                     # a *suggested* match the user can override.
                     "board_id": board_id,
                     "board_match": "suggested" if board_id else None,
@@ -552,7 +552,7 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     sections = _sections(configfile.get("configfile"))
     result = analyze(sections)
     apply_overrides(result, topology_overrides.read_overrides(data_dir))
-    # Identify the host SBC (optional — older Moonraker may lack /machine/system_info; degrade
+    # Identify the host SBC (optional - older Moonraker may lack /machine/system_info; degrade
     # gracefully so the topology still returns).
     try:
         system_info = await client.machine_system_info()
@@ -614,7 +614,7 @@ async def gather_pin_map(client: MoonrakerClient, data_dir: str = "") -> dict[st
 
 async def gather_pin_doctor(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
     """Run the pin-conflict scanner over the WHOLE live config (every MCU), so the Config Editor can
-    catch double-assigned pins + mains-on-logic-pin caveats — the #1 restart-bricking errors —
+    catch double-assigned pins + mains-on-logic-pin caveats - the #1 restart-bricking errors -
     before a ``FIRMWARE_RESTART``. Aggregates each MCU's :func:`build_pin_atlas` findings.
 
     Raises:

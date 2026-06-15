@@ -1,4 +1,4 @@
-"""Printer-journal endpoint — one merged timeline of flashes, config saves and tuning runs."""
+"""Printer-journal endpoint - one merged timeline of flashes, config saves and tuning runs."""
 
 from __future__ import annotations
 

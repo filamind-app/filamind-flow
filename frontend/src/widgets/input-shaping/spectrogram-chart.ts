@@ -26,7 +26,7 @@ export interface EnergyChart {
   width: number
   height: number
   points: string
-  /** The lowest-energy point — where a touch likely helped. */
+  /** The lowest-energy point - where a touch likely helped. */
   minMark: { x: number; y: number } | null
 }
 
@@ -107,7 +107,7 @@ export function buildSpectrogram(
   return { width, height, cells, freqTicks, guideX }
 }
 
-/** Energy vs time — the dip marks when touching a part reduced the vibration. */
+/** Energy vs time - the dip marks when touching a part reduced the vibration. */
 export function buildEnergyTimeline(
   result: StaticExcitationResult,
   width = 320,

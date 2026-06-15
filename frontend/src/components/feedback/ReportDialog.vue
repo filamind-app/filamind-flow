@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /** The shared report dialog (mounted once at the app shell). Composes a bug report or feature
  *  request from the shared feedback state, shows the diagnostics that will be attached, and on
- *  submit opens a pre-filled GitHub issue in a new tab — it never posts anything by itself.
+ *  submit opens a pre-filled GitHub issue in a new tab - it never posts anything by itself.
  *  Marked data-feedback-noshot so it's excluded from the screenshot. */
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

@@ -17,7 +17,7 @@ const OK_LOG = [
   '::phase::restart',
   '>>> Restarting Klipper…',
   '::phase::done',
-  '>>> Flash sequence complete — verify the board reconnects in Mainsail.',
+  '>>> Flash sequence complete - verify the board reconnects in Mainsail.',
 ].join('\n')
 
 describe('stripPhaseMarkers', () => {
@@ -67,7 +67,7 @@ describe('parseFlashStatus', () => {
     const noisy = [
       '::phase::stop',
       '>>> Stopping Klipper to free the device…',
-      'Device is not marked Katapult — skipping reboot-to-bootloader.',
+      'Device is not marked Katapult - skipping reboot-to-bootloader.',
       '::phase::write',
       'make: Nothing to be done.',
       '::phase::done',

@@ -63,7 +63,7 @@ def test_search_limit_capped() -> None:
     assert out["limit"] <= 200
 
 
-# ── shipped dataset sanity + data-quality gates ───────────────────────────────
+# -- shipped dataset sanity + data-quality gates -------------------------------
 def test_dataset_loaded_and_clean() -> None:
     items = reference_data.hardware_items()
     assert len(items) > 3000  # the curated component DB
@@ -111,7 +111,7 @@ def test_data_quality_gates() -> None:
 def test_no_category_was_gutted() -> None:
     """Regression: the v0.108.0 over-clean dropped 605 stepper products; they were
     restored in v0.109.0. Lock per-category floors so a regen can never silently
-    gut a whole category again (audit follow-up — restore-not-delete)."""
+    gut a whole category again (audit follow-up - restore-not-delete)."""
     from collections import Counter
 
     items = reference_data.hardware_items()
@@ -124,11 +124,11 @@ def test_no_category_was_gutted() -> None:
     }
     for cat, floor in floors.items():
         assert by_cat[cat] >= floor, (
-            f"{cat} has {by_cat[cat]} rows, below floor {floor} — data loss?"
+            f"{cat} has {by_cat[cat]} rows, below floor {floor} - data loss?"
         )
 
 
-# ── routes ────────────────────────────────────────────────────────────────────
+# -- routes --------------------------------------------------------------------
 def test_route_hardware_search() -> None:
     from fastapi.testclient import TestClient
 

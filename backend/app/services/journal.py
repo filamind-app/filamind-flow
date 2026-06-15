@@ -1,7 +1,7 @@
-"""Printer journal — one timeline of everything that happened to the machine.
+"""Printer journal - one timeline of everything that happened to the machine.
 
-Merges the per-feature histories the app already keeps — firmware flashes (``flashed.json``),
-config saves (the ``filamind-backups/`` snapshots), and tuning runs (the input-shaper archive) —
+Merges the per-feature histories the app already keeps - firmware flashes (``flashed.json``),
+config saves (the ``filamind-backups/`` snapshots), and tuning runs (the input-shaper archive) -
 into a single newest-first event list. Events carry stable ``kind`` + ``params`` (the frontend
 translates; no English leaks from here).
 """

@@ -3,7 +3,7 @@
 No klippy dependency: each function takes the motor's datasheet parameters plus the
 operating conditions and returns the value autotune would compute. Used by the
 recommender to suggest StealthChop PWM (``pwm_grad`` / ``pwm_ofs``) and SpreadCycle
-hysteresis (``hstrt`` / ``hend``) from a motor's specs — so a recommendation works even
+hysteresis (``hstrt`` / ``hend``) from a motor's specs - so a recommendation works even
 without the ``klipper_tmc_autotune`` host extra installed.
 
 Formulas derive each value from the datasheet parameters and operating point.
@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import math
 
-#: TMC internal clock (Hz) and default supply voltage — autotune's defaults.
+#: TMC internal clock (Hz) and default supply voltage - autotune's defaults.
 DEFAULT_FCLK = 12.5e6
 DEFAULT_VOLTS = 24.0
 
@@ -57,7 +57,7 @@ def hysteresis(
     extra: int = 0,
     fclk: float = DEFAULT_FCLK,
 ) -> tuple[int, int]:
-    """SpreadCycle hysteresis register values ``(hstrt, hend)`` — faithful to autotune."""
+    """SpreadCycle hysteresis register values ``(hstrt, hend)`` - faithful to autotune."""
     tsd = (12.0 + 32.0 * toff) / fclk
     dcoilblank = volts * (tblank_cycles / fclk) / inductance_h
     dcoilsd = resistance_ohm * current_a * 2.0 * tsd / inductance_h

@@ -1,4 +1,4 @@
-"""Tests for scripts/apply_submission.py — the maintainer tool that merges a community catalog
+"""Tests for scripts/apply_submission.py - the maintainer tool that merges a community catalog
 submission into the hardware database. The script lives outside the package, so it's loaded by path;
 these tests cover inference, validation and merge logic without touching the real JSON.
 """

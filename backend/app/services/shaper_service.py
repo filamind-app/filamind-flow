@@ -6,7 +6,7 @@ and the frequency-response series for plotting in the browser.
 
 The heavy lifting is Klipper's vendored ``shaper_calibrate`` (see
 ``app.vendor.klipper_shaper``). ``ShaperCalibrate(printer=None)`` runs serially
-with only numpy — no Klipper host, no multiprocessing — so this works on any
+with only numpy - no Klipper host, no multiprocessing - so this works on any
 machine with no printer attached.
 """
 
@@ -29,7 +29,7 @@ class ShaperAnalysisError(ValueError):
 
 
 def _first_data_header(text: str) -> str:
-    """Returns the first non-comment line — a PSD header or the first data row."""
+    """Returns the first non-comment line - a PSD header or the first data row."""
     for line in text.splitlines():
         if line and not line.startswith("#"):
             return line
@@ -59,7 +59,7 @@ def _parse_csv(raw: bytes, helper: Any) -> Any:
             cd.normalize_to_frequencies()
         return cd
     # Raw accelerometer samples: time, accel_x, accel_y, accel_z. Tolerant of a
-    # ragged row (e.g. a truncated final line) — fall back to skipping bad rows.
+    # ragged row (e.g. a truncated final line) - fall back to skipping bad rows.
     try:
         data = np.loadtxt(buf, comments="#", delimiter=",")
     except ValueError:

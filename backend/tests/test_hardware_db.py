@@ -1,6 +1,6 @@
 """The curated hardware catalog ships as a read-only SQLite database (compiled from a local JSON
 source by ``scripts/build_hardware_db.py``). These guard that the compiled DB is committed and that
-``reference_data`` reconstructs the same in-memory structure from it — so the public contract and
+``reference_data`` reconstructs the same in-memory structure from it - so the public contract and
 every downstream index / haystack / link-graph are unaffected by the storage change."""
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ def test_compiled_sqlite_is_committed() -> None:
     db = Path(rd.__file__).resolve().parent.parent / "data" / "reference" / "hardware.sqlite"
     # The repo ships the compiled DB (the human-readable source is kept local / git-ignored).
     assert db.exists(), (
-        "hardware.sqlite is missing — run scripts/build_hardware_db.py and commit it"
+        "hardware.sqlite is missing - run scripts/build_hardware_db.py and commit it"
     )
     assert db.stat().st_size > 1_000_000
 

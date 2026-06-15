@@ -59,7 +59,7 @@ const liveOptions = computed(() =>
 )
 const paramKeys = computed(() => Object.keys(macroParams.value))
 
-// The printer's real build envelope + speed cap — grounds the simulation in THIS machine's bounds.
+// The printer's real build envelope + speed cap - grounds the simulation in THIS machine's bounds.
 const machineLimits = ref<MachineLimits | null>(null)
 
 function violationMsg(v: SimViolation): string {
@@ -89,7 +89,7 @@ const selectedMacroDef = computed(
 )
 
 // Flow check: compare each printing move's volumetric flow against a hotend's real ceiling
-// from the catalog — a macro that silently over-runs the melt zone shows up BEFORE it prints.
+// from the catalog - a macro that silently over-runs the melt zone shows up BEFORE it prints.
 const hotends = ref<{ name: string; expected_max_flow_mm3s?: number | null }[]>([])
 const flowHotend = ref<string | null>(null)
 const flowDiameter = ref(1.75)
@@ -198,7 +198,7 @@ interface ExplainStep {
   cumTime: number
 }
 
-/** A plain-language, step-by-step walkthrough built from the simulation (no backend) — each command
+/** A plain-language, step-by-step walkthrough built from the simulation (no backend) - each command
  *  in English, the running positioning mode, and cumulative travel / extrusion / time. */
 const explainSteps = computed<ExplainStep[]>(() => {
   const r = result.value
@@ -412,7 +412,7 @@ function loadLiveMacro(name: string | null): void {
 }
 
 // Scaffold generator: build START_PRINT / END_PRINT tailored to this printer, review, then write
-// to a config file behind the existing gated save (backup + refuse-while-printing) — first write.
+// to a config file behind the existing gated save (backup + refuse-while-printing) - first write.
 const scaffold = ref<ScaffoldResult | null>(null)
 const scaffoldLoading = ref(false)
 const scaffoldErr = ref<string | null>(null)

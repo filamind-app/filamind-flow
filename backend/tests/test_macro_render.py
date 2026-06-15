@@ -69,7 +69,7 @@ def test_no_expressions_unchanged() -> None:
     assert warns == []
 
 
-# ── route integration ─────────────────────────────────────────────────────────
+# -- route integration ---------------------------------------------------------
 def test_route_simulate_renders_params() -> None:
     from fastapi.testclient import TestClient
 

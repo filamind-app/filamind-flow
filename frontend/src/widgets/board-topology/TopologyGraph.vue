@@ -1,10 +1,10 @@
 <script setup lang="ts">
-/** The "Machine Map" — a dependency-free SVG node-graph of the printer's control boards.
+/** The "Machine Map" - a dependency-free SVG node-graph of the printer's control boards.
  *
  *  Two layouts of the SAME live data, cross-faded by the `view` prop:
- *   - LOGICAL: how Klipper sees it — the host at the apex, every MCU a child reached over its serial
+ *   - LOGICAL: how Klipper sees it - the host at the apex, every MCU a child reached over its serial
  *     link (USB / CAN / UART), edges colour-coded by bus.
- *   - PHYSICAL: how it's actually built — an integrated SBC is drawn INSIDE the mainboard it ships
+ *   - PHYSICAL: how it's actually built - an integrated SBC is drawn INSIDE the mainboard it ships
  *     on (e.g. an SV08 / Manta carrying a CB1), CAN MCUs hang off a shared backbone rail, and
  *     USB / UART boards are separate point-to-point units.
  *
@@ -60,7 +60,7 @@ interface EdgeLine {
   d: string
   bus: string
   backbone?: boolean
-  /** The MCU this edge leads to — so an out-of-sync MCU can flash its link. */
+  /** The MCU this edge leads to - so an out-of-sync MCU can flash its link. */
   target?: string
 }
 interface Layout {
@@ -110,7 +110,7 @@ function hostBox(x: number, y: number, w: number, h: number, nested = false): No
     title: fitTitle(
       hh?.name && hh.name !== 'host' ? hh.name : t('boardTopology.host.label'),
       w,
-      nested ? 34 : 18, // nested host shows a 🖥 glyph before the name — reserve room for it
+      nested ? 34 : 18, // nested host shows a 🖥 glyph before the name - reserve room for it
     ),
     full: hh?.name && hh.name !== 'host' ? hh.name : t('boardTopology.host.label'),
     sub: t('boardTopology.host.role'),
@@ -286,7 +286,7 @@ function mcuNameOf(id: string): string {
 function healthOf(id: string): Health {
   const f = props.health[mcuNameOf(id)]
   if (!f || f.in_sync == null) return 'unknown'
-  if (f.in_sync === false) return 'out' // firmware out of sync with the host — needs a restart/flash
+  if (f.in_sync === false) return 'out' // firmware out of sync with the host - needs a restart/flash
   if ((f.retransmits ?? 0) > 1000 || (f.awake ?? 0) > 0.6) return 'warn' // flaky link / high load
   return 'ok'
 }
@@ -361,7 +361,7 @@ function vitals(id: string): string {
               <title>
                 {{
                   n.kind === 'mcu' && healthOf(n.id) !== 'unknown'
-                    ? n.full + ' — ' + vitals(n.id)
+                    ? n.full + ' - ' + vitals(n.id)
                     : n.full
                 }}
               </title>
@@ -525,7 +525,7 @@ function vitals(id: string): string {
   stroke-width: 3.5;
   filter: drop-shadow(3px 3px 0 rgb(var(--c-ink)));
 }
-/* Live link-health — left-edge bar + status glyph (green ✓ / amber ⚠ / red ✕). */
+/* Live link-health - left-edge bar + status glyph (green ✓ / amber ⚠ / red ✕). */
 .health-bar {
   stroke: rgb(var(--c-ink) / 0.5);
   stroke-width: 0.5;

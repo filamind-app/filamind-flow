@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Hand-drawn line illustrations for the resonance diagnostics — one per IlloKey.
+/** Hand-drawn line illustrations for the resonance diagnostics - one per IlloKey.
  *  Dependency-free inline SVG, stroked with `currentColor` so the parent tints it
  *  by severity. 24×24 viewBox; size via a width/height class on the element.
  */

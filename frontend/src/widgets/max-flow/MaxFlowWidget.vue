@@ -36,12 +36,12 @@ const params = reactive<MaxFlowParams>({
 
 const METHOD_OPTIONS = ['auto', 'stallguard', 'accel']
 
-/** Webcams configured on the printer — the live view is shown during a run when one exists. */
+/** Webcams configured on the printer - the live view is shown during a run when one exists. */
 const cameras = ref<{ name: string; service: string }[]>([])
 const cameraName = computed(() => cameras.value[0]?.name)
 const cameraAvailable = computed(() => cameras.value.length > 0)
 
-/** SG4 drivers (TMC2209/2240) read StallGuard only in StealthChop — the auto-StealthChop option
+/** SG4 drivers (TMC2209/2240) read StallGuard only in StealthChop - the auto-StealthChop option
  *  (temporarily set + revert a stealthchop_threshold) is offered only for them. */
 const SG4_DRIVERS = ['tmc2209', 'tmc2240']
 const isSg4 = computed(() => SG4_DRIVERS.includes(params.driver))
@@ -112,7 +112,7 @@ watch(selectedHotend, (name) => {
   }
 })
 
-// Any parameter edit invalidates a previous plan/result — force a fresh preview.
+// Any parameter edit invalidates a previous plan/result - force a fresh preview.
 watch(params, () => resetDownstream(), { deep: true })
 
 async function doPlan(): Promise<void> {
@@ -190,18 +190,18 @@ async function doRun(): Promise<void> {
 }
 
 onMounted(async () => {
-  // A webcam is optional — only show the live view if the printer has one configured.
+  // A webcam is optional - only show the live view if the printer has one configured.
   fetchCameras()
     .then((cams) => (cameras.value = cams))
     .catch(() => {})
   // Load hotends, then restore the pinned pick; detect the extruder's real TMC model so the
   // driver param starts honest (a 2240/5160 extruder would otherwise hit a preflight refusal the
-  // user can't fix from here). These mutate params, so do them — and let their resetDownstream
-  // flush (await nextTick) — BEFORE restoring a saved result, or the restore would wipe it.
+  // user can't fix from here). These mutate params, so do them - and let their resetDownstream
+  // flush (await nextTick) - BEFORE restoring a saved result, or the restore would wipe it.
   try {
     hotends.value = await fetchHotends()
   } catch {
-    /* leave hotends empty — the test still runs from manual params */
+    /* leave hotends empty - the test still runs from manual params */
   }
   try {
     const saved = localStorage.getItem(LAST_HOTEND_KEY)
@@ -229,7 +229,7 @@ onMounted(async () => {
   } catch (e) {
     if (!(e instanceof Error && e.message === CANCELLED)) runErr.value = describeError(e)
   }
-  // Nothing live — restore the last session's result so minutes of grinding aren't lost to
+  // Nothing live - restore the last session's result so minutes of grinding aren't lost to
   // a navigation (clearly labeled with when it was measured).
   try {
     const stored = localStorage.getItem(LAST_RESULT_KEY)
@@ -558,7 +558,7 @@ onMounted(async () => {
       <p v-if="result.method" class="font-mono text-[10px] opacity-70">
         {{ t('maxFlow.result.via', { method: t(`maxFlow.method.${result.method}`) }) }}
       </p>
-      <!-- The accel method is experimental — say so whenever it produced the result. -->
+      <!-- The accel method is experimental - say so whenever it produced the result. -->
       <p v-if="result.method === 'accel'" class="rounded bg-brand-yellow/20 p-1.5 text-[11px]">
         ⚗ {{ t('maxFlow.result.accelExperimental') }}
       </p>
@@ -577,7 +577,7 @@ onMounted(async () => {
 
       <p class="font-mono text-sm">
         <b>{{ t('maxFlow.result.maxFlow') }}:</b>
-        {{ result.max_flow_mm3s ?? '—' }} {{ t('maxFlow.result.units') }}
+        {{ result.max_flow_mm3s ?? '-' }} {{ t('maxFlow.result.units') }}
         <span v-if="noSignal" class="text-[10px] opacity-70"
           >({{ t('maxFlow.result.unmeasured') }})</span
         >

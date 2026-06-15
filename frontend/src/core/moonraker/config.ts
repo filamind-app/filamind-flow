@@ -25,8 +25,8 @@ export function mountPrefix(): string {
 /**
  * Resolves endpoints, defaulting to the **same origin + mount prefix**.
  *
- * The panel is served behind a proxy that forwards Moonraker + backend traffic — nginx in
- * production, the Vite dev server in development — so by default there is no CORS and no
+ * The panel is served behind a proxy that forwards Moonraker + backend traffic - nginx in
+ * production, the Vite dev server in development - so by default there is no CORS and no
  * host/port baked into the build. It also works when mounted under a subpath (the prefix is
  * derived at runtime). Override with VITE_MOONRAKER_* / VITE_BACKEND_URL to talk to a
  * different origin directly.

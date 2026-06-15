@@ -24,7 +24,7 @@ def test_gcode_macros_body_params_and_variables() -> None:
             "description": "Prime + level",
             "variable_z_offset": 0.2,
         },
-        "stepper_x": {"step_pin": "PA1"},  # not a macro — ignored
+        "stepper_x": {"step_pin": "PA1"},  # not a macro - ignored
     }
     macros = live_state.gcode_macros(settings)
     assert len(macros) == 1

@@ -2,7 +2,7 @@
 
 Lists the host's firmware-related systemd units and starts / stops / restarts
 them, so the user (or a flash workflow) can free or restore Klipper without a
-shell. Privileged actions go through passwordless sudo — the same sudoers rule
+shell. Privileged actions go through passwordless sudo - the same sudoers rule
 the flasher relies on. The panel's own service is never touched.
 """
 
@@ -80,7 +80,7 @@ _DOCTOR_PATTERNS = (
 async def list_all_services(patterns: tuple[str, ...] = _DOCTOR_PATTERNS) -> list[dict[str, Any]]:
     """READ-ONLY: the printer-stack systemd units + active/sub state, for the Machine Doctor panel.
 
-    Distinct from :func:`list_services` / :func:`manage_services` (klipper*/moonraker* only — the
+    Distinct from :func:`list_services` / :func:`manage_services` (klipper*/moonraker* only - the
     start/stop blast radius). This never starts or stops anything, so it does not drop the panel's
     own unit (that filter only protects the *manageable* set). Returns ``sub_state`` too.
     """

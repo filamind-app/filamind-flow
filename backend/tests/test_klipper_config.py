@@ -8,7 +8,7 @@ from app.services import klipper_config as kc
 # inline comment, a [tmc2209 stepper_x] (header with a name), an [extruder] using '=' as
 # the separator, a full-line comment, and an auto-saved SAVE_CONFIG block.
 SAMPLE = """\
-# printer.cfg — representative sample
+# printer.cfg - representative sample
 [stepper_x]
 step_pin: PF13
 dir_pin: !PF12
@@ -81,7 +81,7 @@ def test_header_name_split() -> None:
 
 
 def test_section_header_with_trailing_inline_comment() -> None:
-    """Klipper accepts a comment after a section header's ``]`` — the section must still parse
+    """Klipper accepts a comment after a section header's ``]`` - the section must still parse
     (header without the comment) and round-trip byte-for-byte (raw line keeps the comment)."""
     src = "[stepper_z] # Z motor\nstep_pin: PA1\n\n[gcode_macro FOO] ; note\ngcode:\n  M117 hi\n"
     cfg = kc.parse(src)

@@ -102,7 +102,7 @@ def test_empty_program() -> None:
     assert out["total_distance_mm"] == 0.0
 
 
-# ── route ────────────────────────────────────────────────────────────────────
+# -- route --------------------------------------------------------------------
 def test_route_simulate() -> None:
     from fastapi.testclient import TestClient
 
@@ -117,7 +117,7 @@ def test_route_simulate() -> None:
     assert body["bounds"]["max_x"] == 10
 
 
-# ── machine limits (bed-envelope + speed cap) ────────────────────────────────
+# -- machine limits (bed-envelope + speed cap) --------------------------------
 def test_simulate_flags_out_of_bounds_and_over_speed() -> None:
     limits = {"min": [0.0, 0.0, 0.0], "max": [200.0, 200.0, 200.0], "max_velocity": 100.0}
     # X400 is past the 200 envelope; F12000 mm/min = 200 mm/s > the 100 mm/s cap.
@@ -140,7 +140,7 @@ def test_simulate_no_violations_within_limits() -> None:
     assert plain["violations"] == [] and plain["segments"][0]["out_of_bounds"] is False
 
 
-# ── macro linter (static safety) ─────────────────────────────────────────────
+# -- macro linter (static safety) ---------------------------------------------
 def test_lint_flags_unbalanced_gcode_state() -> None:
     rules = {f["rule"] for f in gcode_sim.lint("SAVE_GCODE_STATE\nG1 X10")}
     assert "gcode_state_unbalanced" in rules

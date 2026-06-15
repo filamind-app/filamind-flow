@@ -1,11 +1,11 @@
 <script setup lang="ts">
-/** Host Control · Services — a general systemd unit manager.
+/** Host Control · Services - a general systemd unit manager.
  *
  *  Lists every .service unit with its state, and lets the user start / stop / restart / enable /
  *  disable / mask / unmask each one, read its journal, and delete a user-installed unit file.
  *  Destructive actions need an inline confirm; deleting a unit file needs the name typed exactly.
  *  The backend is the real guard (it refuses destructive actions on a protected set and path-guards
- *  deletion) — the UI mirrors those rules so dangerous buttons are clearly marked. */
+ *  deletion) - the UI mirrors those rules so dangerous buttons are clearly marked. */
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -345,7 +345,7 @@ function stateLabel(s: ServiceUnit): string {
               <dt class="opacity-60">{{ t('hostControl.services.state') }}</dt>
               <dd>{{ detail.active_state }} / {{ detail.sub_state }}</dd>
               <dt class="opacity-60">{{ t('hostControl.services.startup') }}</dt>
-              <dd>{{ detail.enabled || '—' }}</dd>
+              <dd>{{ detail.enabled || '-' }}</dd>
               <dt v-if="detail.fragment_path" class="opacity-60">
                 {{ t('hostControl.services.unitFile') }}
               </dt>

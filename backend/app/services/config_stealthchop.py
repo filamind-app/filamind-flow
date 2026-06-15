@@ -4,7 +4,7 @@ The Max-Flow test's StallGuard preflight reads the *config* (``configfile.settin
 SG4 extruder (TMC2209/2240) sitting in SpreadCycle the only way to let the test run is to add a
 ``stealthchop_threshold`` to the extruder's TMC section and ``FIRMWARE_RESTART``. These helpers do
 that as a **temporary, reversible** edit: the line we add carries a unique marker comment so we
-only ever touch our own line — never the user's settings — and the revert simply **comments it
+only ever touch our own line - never the user's settings - and the revert simply **comments it
 out** (leaving a visible, inert trace), so the printer.cfg is restored after the test.
 
 Everything here is pure text manipulation and unit-testable; the actual file write + restart live
@@ -52,7 +52,7 @@ def apply_stealthchop(cfg_text: str, driver: str, value: int) -> tuple[str, bool
     start, end = bounds
     our_line = f"stealthchop_threshold: {value}  {MARKER}"
     # Scan the whole section before deciding: a user's own active line must win even if a
-    # commented marker from a previous run sits above it (otherwise we'd produce two active lines —
+    # commented marker from a previous run sits above it (otherwise we'd produce two active lines -
     # a fatal duplicate-option config error). Remember our marker line to reactivate, if present.
     marker_idx: int | None = None
     for i in range(start, end):
@@ -62,7 +62,7 @@ def apply_stealthchop(cfg_text: str, driver: str, value: int) -> tuple[str, bool
                 marker_idx = i
             continue
         if stripped.startswith("stealthchop_threshold") and not stripped.startswith("#"):
-            return cfg_text, False  # the user has their own active line — never override it
+            return cfg_text, False  # the user has their own active line - never override it
     if marker_idx is not None:
         lines[marker_idx] = our_line  # reactivate / refresh our own line (no duplicate)
         return "\n".join(lines), True

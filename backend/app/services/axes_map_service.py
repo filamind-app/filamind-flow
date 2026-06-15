@@ -1,8 +1,8 @@
-"""Axes-map calibration — detect the accelerometer's mounting orientation.
+"""Axes-map calibration - detect the accelerometer's mounting orientation.
 
 Pure numpy analysis (no Klipper host). Given three raw
-accelerometer captures — one per machine axis X/Y/Z, each a short constant-velocity
-stroke — it recovers the accelerometer's orientation by low-pass filtering, velocity
+accelerometer captures - one per machine axis X/Y/Z, each a short constant-velocity
+stroke - it recovers the accelerometer's orientation by low-pass filtering, velocity
 integration and peak detection, and returns the Klipper ``axes_map`` string to use.
 
 Analog of ``shaper_service`` (which vendors Klipper's ``shaper_calibrate``): the
@@ -27,7 +27,7 @@ MIN_CONFIDENCE = 0.5
 MAX_ANGLE_ERROR = 15.0  # degrees
 EXPECTED_GRAVITY = 9810.0  # mm/s^2
 GRAVITY_TOLERANCE = 0.20
-FILTER_CUTOFF = 25.0  # Hz — removes structural ringing while preserving motion
+FILTER_CUTOFF = 25.0  # Hz - removes structural ringing while preserving motion
 # Velocity series sent to the browser is downsampled to roughly this many points.
 _SERIES_POINTS = 200
 
@@ -192,7 +192,7 @@ def _detect_noise_only_axis(confidences: list[float], peak_mags: list[float]) ->
     if len(noise_axes) == 1:
         return noise_axes[0]
     raise ShaperAnalysisError(
-        "Multiple axes have no accelerometer signal — check that the sensor is mounted "
+        "Multiple axes have no accelerometer signal - check that the sensor is mounted "
         "on the toolhead and moves with it."
     )
 

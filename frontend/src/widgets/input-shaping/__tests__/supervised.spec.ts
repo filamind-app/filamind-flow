@@ -133,7 +133,7 @@ describe('reattachVibrations', () => {
   it('resumes a still-running task to completion', async () => {
     localStorage.setItem(STORAGE_KEY, 't2')
     let polls = 0
-    // Call 1 = reattach's own lookup, call 2 = the first poll — still running so the
+    // Call 1 = reattach's own lookup, call 2 = the first poll - still running so the
     // resumed run is observable mid-flight; call 3 completes it.
     handler = () => {
       polls += 1

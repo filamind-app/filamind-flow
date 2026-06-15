@@ -1,7 +1,7 @@
 """End-to-end smoke: the real app against a real HTTP Moonraker stub.
 
 Boots the stub (in-process uvicorn on an ephemeral port), points the app at it, and
-walks the critical reads PLUS the full gated write path — apply-section merge, the
+walks the critical reads PLUS the full gated write path - apply-section merge, the
 backup it takes, the stale-write 412 and the busy 409. This is the test that fails
 if the app can no longer talk to a Moonraker-shaped boundary end to end.
 """

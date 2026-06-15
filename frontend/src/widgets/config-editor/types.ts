@@ -24,7 +24,7 @@ export interface ConfigIssue {
 export interface ConfigFileView {
   filename: string
   raw: string
-  /** Fingerprint of `raw` — echoed back on save so a parallel on-disk change is detected (412). */
+  /** Fingerprint of `raw` - echoed back on save so a parallel on-disk change is detected (412). */
   sha256?: string
   sections: ConfigSectionView[]
   section_count: number
@@ -46,7 +46,7 @@ export interface ConfigSaveResult {
   filename: string
   /** Path of the pre-save backup under `filamind-backups/`, or null for a brand-new file. */
   backup: string | null
-  /** Fingerprint of the newly saved content — becomes the next save's precondition. */
+  /** Fingerprint of the newly saved content - becomes the next save's precondition. */
   sha256?: string
   issues: ConfigIssue[]
   section_count: number
@@ -145,7 +145,7 @@ export interface ConfigGraphLint {
 
 export interface ConfigGraph {
   reachable: boolean
-  /** Tree roots — the active config's root (so on-disk backups don't flood the include tree). */
+  /** Tree roots - the active config's root (so on-disk backups don't flood the include tree). */
   roots: string[]
   /** Files Klipper actually loads (the primary root + everything it includes, transitively). */
   active: string[]

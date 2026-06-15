@@ -1,9 +1,9 @@
-"""KlipperScreen theme builder — generate a touchscreen theme from a color palette, write it to
+"""KlipperScreen theme builder - generate a touchscreen theme from a color palette, write it to
 the host, list/delete generated themes, and activate one.
 
 A KlipperScreen theme is a folder ``<klipperscreen_dir>/styles/<name>/`` holding ``style.css`` (GTK
 CSS whose palette is a block of ``@define-color`` variables) + ``style.conf`` (JSON graph colors).
-That folder is OUTSIDE every Moonraker file root, so — unlike the conf — it is written **host-side**
+That folder is OUTSIDE every Moonraker file root, so - unlike the conf - it is written **host-side**
 (plain file I/O; the backend runs as the printer user). The CSS is rendered from FilaMind's own
 template (not copied from any upstream theme). Activating a theme just sets ``[main] theme`` in
 ``KlipperScreen.conf`` (which IS in the config root), preserving KlipperScreen's auto-generated
@@ -74,11 +74,11 @@ def _clean_palette(palette: dict[str, Any] | None) -> dict[str, str]:
 
 def render_style_css(name: str, palette: dict[str, Any] | None, radius: int = 8) -> str:
     """FilaMind's own GTK-CSS template: a ``@define-color`` palette block + the selectors that
-    reference it. No upstream theme's CSS is copied — this is an original, minimal layout."""
+    reference it. No upstream theme's CSS is copied - this is an original, minimal layout."""
     p = _clean_palette(palette)
     r = max(0, min(int(radius) if isinstance(radius, (int, float)) else 8, 30))
     defs = "\n".join(f"@define-color {tok} {p[tok]};" for tok in PALETTE_TOKENS)
-    return f"""/* FilaMind Flow — theme "{name}" (recolor from the panel) */
+    return f"""/* FilaMind Flow - theme "{name}" (recolor from the panel) */
 {defs}
 
 window {{ background-color: @bg; color: @text; }}
@@ -104,7 +104,7 @@ dialog, .dialog {{ background-color: @bg; color: @text; }}
 
 
 def render_style_conf(palette: dict[str, Any] | None) -> str:
-    """The JSON ``style.conf`` sidecar — per-sensor graph colors, drawn from the accent palette."""
+    """The JSON ``style.conf`` sidecar - per-sensor graph colors, drawn from the accent palette."""
     p = _clean_palette(palette)
     return json.dumps(
         {
@@ -151,7 +151,7 @@ def generate_theme(
     styles = _styles_dir(klipperscreen_dir)
     dest = os.path.join(styles, name)
     if os.path.isdir(dest) and not os.path.exists(os.path.join(dest, MARKER)):
-        raise ValueError(f'"{name}" is an existing theme not created here — pick another name.')
+        raise ValueError(f'"{name}" is an existing theme not created here - pick another name.')
     if os.path.isdir(dest):  # back up our prior version before overwriting
         backup = os.path.join(styles, f".filamind-backup-{name}")
         shutil.rmtree(backup, ignore_errors=True)
@@ -173,7 +173,7 @@ def delete_theme(klipperscreen_dir: str, name: str) -> None:
     if not os.path.isdir(dest):
         raise ValueError(f'Theme "{name}" does not exist.')
     if not os.path.exists(os.path.join(dest, MARKER)):
-        raise ValueError(f'"{name}" was not created here — refusing to delete a stock theme.')
+        raise ValueError(f'"{name}" was not created here - refusing to delete a stock theme.')
     shutil.rmtree(dest)
 
 

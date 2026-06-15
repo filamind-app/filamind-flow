@@ -11,7 +11,7 @@ function plugins() {
 }
 
 describe('Board Topology template renders through i18n (no leaked keys)', () => {
-  it('BoardTopologyWidget — intro + help chrome, no raw key paths', () => {
+  it('BoardTopologyWidget - intro + help chrome, no raw key paths', () => {
     const w = mount(BoardTopologyWidget, plugins())
     const text = w.text()
     const leaked = text.match(/boardTopology\.[a-zA-Z]/)

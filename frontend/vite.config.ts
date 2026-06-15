@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
   })
 
   return {
-    // Relative asset base so the built SPA is portable to ANY mount point — served at
+    // Relative asset base so the built SPA is portable to ANY mount point - served at
     // the panel's own origin root (:8090) OR proxied under a subpath (e.g. /filamind/ on
     // the printer's Mainsail nginx, which a Cloudflare tunnel already exposes). With
     // relative assets + hash routing, the same dist works at every mount with no rebuild.
@@ -46,12 +46,11 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       // Precompiles the locale JSON in src/locales/** and wires vue-i18n's feature flags.
-      // runtimeOnly stays off for now so the message compiler is available for the catalogs
-      // loaded dynamically via import.meta.glob; a later phase can enable it once precompilation
-      // of every catalog is verified, to drop the compiler from the bundle.
+      // Every catalog (including the lazy-loaded ones) lives under the include glob, so they are
+      // all precompiled at build time. runtimeOnly then drops the message compiler from the bundle.
       vueI18n({
         include: [fileURLToPath(new URL('./src/locales/**', import.meta.url))],
-        runtimeOnly: false,
+        runtimeOnly: true,
         compositionOnly: true,
         strictMessage: false,
         escapeHtml: false,
@@ -76,6 +75,13 @@ export default defineConfig(({ mode }) => {
     build: {
       target: 'es2020',
       sourcemap: false,
+      // Split the framework into a long-lived vendor chunk so an app update doesn't force a
+      // re-download of Vue / Pinia / vue-i18n on this auto-updating panel.
+      rollupOptions: {
+        output: {
+          manualChunks: { vendor: ['vue', 'vue-i18n', 'pinia'] },
+        },
+      },
     },
     test: {
       environment: 'jsdom',

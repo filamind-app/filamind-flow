@@ -57,7 +57,7 @@ describe('buildProofRows', () => {
   it('renders dashes and no delta when a side has no metrics', () => {
     const rows = buildProofRows(rec({ id: 'b', grade: { letter: 'C', score: 70 } }), after)
     const byKey = Object.fromEntries(rows.map((r) => [r.key, r]))
-    expect(byKey.vibrations.before).toBe('—')
+    expect(byKey.vibrations.before).toBe('-')
     expect(byKey.vibrations.delta).toBe('')
     expect(byKey.vibrations.better).toBeNull()
     expect(byKey.score.delta).toBe('+22')

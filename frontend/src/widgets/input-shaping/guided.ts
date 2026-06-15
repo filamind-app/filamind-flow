@@ -1,5 +1,5 @@
 /** Guided-tuning state machine + pass/fail gates. Pure logic + i18n copy. The gates DELEGATE
- *  to the existing scorers (NoiseResult.grade, beltVerdict, gradeAnalysis) — there is one
+ *  to the existing scorers (NoiseResult.grade, beltVerdict, gradeAnalysis) - there is one
  *  definition of "pass", shared with the manual tools. The step text (label/title/why) lives in
  *  the i18n catalog under inputShaping.guided.steps.<id>; this module keeps only the structure.
  */

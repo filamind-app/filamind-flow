@@ -112,7 +112,7 @@ export async function applyTuning(body: ApplyRequest): Promise<ApplyResponse> {
   return postJson('/api/drivers/apply', body)
 }
 
-/** INIT_TMC — re-apply the stepper's configured registers (undo a live apply). */
+/** INIT_TMC - re-apply the stepper's configured registers (undo a live apply). */
 export async function revertDriver(stepper: string): Promise<ApplyResponse> {
   return postJson('/api/drivers/init', { stepper })
 }
@@ -131,7 +131,7 @@ export async function setStallguard(
   return postJson('/api/drivers/stallguard', { stepper, field, value })
 }
 
-/** Home one axis (G28) as a sensorless test — moves the toolhead. Gated server-side. */
+/** Home one axis (G28) as a sensorless test - moves the toolhead. Gated server-side. */
 export async function homeAxis(axis: string): Promise<ApplyResponse> {
   return postJson('/api/drivers/home', { axis })
 }
@@ -177,7 +177,7 @@ export async function fetchMotorsSyncStatus(): Promise<MotorsSyncStatus> {
   return (await response.json()) as MotorsSyncStatus
 }
 
-/** Run motor synchronization (dual/quad-Z, dual-X) — moves the toolhead. Gated server-side. */
+/** Run motor synchronization (dual/quad-Z, dual-X) - moves the toolhead. Gated server-side. */
 export async function runMotorsSync(calibrate: boolean): Promise<ApplyResponse> {
   return postJson('/api/drivers/motors-sync', { calibrate })
 }

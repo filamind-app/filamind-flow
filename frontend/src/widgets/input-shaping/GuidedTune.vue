@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Guided tuning wizard — walks Noise → Belts → Shaper X → Shaper Y with automated
+/** Guided tuning wizard - walks Noise → Belts → Shaper X → Shaper Y with automated
  *  pass/fail gates (reusing the existing scorers) and concrete next-step suggestions.
  *  A thin client conductor: it calls the SAME endpoints as the manual panel and emits
  *  each shaper result up via `analyzed`, so the combined config + grade-history just work.
@@ -41,7 +41,7 @@ import VibrationsProfileView from './VibrationsProfile.vue'
 const emit = defineEmits<{ analyzed: [ShaperAnalysis]; exit: [] }>()
 
 const { t } = useI18n({ useScope: 'global' })
-// Step keys are built from the (typed) step id at runtime — use a string-accepting view of t.
+// Step keys are built from the (typed) step id at runtime - use a string-accepting view of t.
 const tt = t as unknown as (key: string) => string
 
 type StepState = GateStatus | 'pending' | 'skipped'
@@ -70,7 +70,7 @@ const results = reactive<{
 }>({})
 
 const step = computed(() => STEPS[idx.value])
-/** Printer kinematics (null until known) — the belts step only applies to CoreXY. */
+/** Printer kinematics (null until known) - the belts step only applies to CoreXY. */
 const kinematics = ref<string | null>(null)
 const beltsSupported = computed(
   () => kinematics.value == null || kinematics.value.includes('corexy'),

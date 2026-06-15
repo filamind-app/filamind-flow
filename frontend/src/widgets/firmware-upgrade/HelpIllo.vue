@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Teaching illustrations for the Firmware Upgrade help notes — dependency-free 24×24 line
+/** Teaching illustrations for the Firmware Upgrade help notes - dependency-free 24×24 line
  *  art (currentColor), ≤6 strokes each, theme-aware. One per HelpIlloKey.
  */
 import type { HelpIlloKey } from './help'

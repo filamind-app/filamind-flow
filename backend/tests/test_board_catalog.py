@@ -49,7 +49,7 @@ def test_board_search_filters() -> None:
     assert board_search.search(BOARDS, manufacturer="bigtreetech")["total"] == 2
 
 
-# ── shipped dataset ───────────────────────────────────────────────────────────
+# -- shipped dataset -----------------------------------------------------------
 def test_boards_dataset_aggregated_and_lossless() -> None:
     boards = reference_data.boards()
     assert len(boards) > 100, "boards entity should be built from MCU & Boards"
@@ -66,7 +66,7 @@ def test_boards_dataset_aggregated_and_lossless() -> None:
     )
     # Lossless: the aggregation preserved every flat port row. Tracked by each board's
     # xlsx_source_rows.portRowCount provenance (survives even when ports[] is later
-    # upgraded to a Klipper pin map — the original connectors move to `connectors`).
+    # upgraded to a Klipper pin map - the original connectors move to `connectors`).
     # Hardware-verified boards (SV08, from the printer's own config) are excluded.
     agg = sum(
         b.get("xlsx_source_rows", {}).get("portRowCount", 0)
@@ -81,7 +81,7 @@ def test_boards_dataset_aggregated_and_lossless() -> None:
 
 
 def test_sv08_fully_ingested() -> None:
-    """Gold proof: the printer under test (Sovol SV08) is fully in the catalog —
+    """Gold proof: the printer under test (Sovol SV08) is fully in the catalog -
     mainboard + toolhead, verified against the unit's own printer.cfg."""
     boards = reference_data.boards()
     main = reference_data.board_by_id("sovol-sv08")
@@ -163,7 +163,7 @@ def test_toolhead_boards_are_classified() -> None:
             f"{bid} should be 'toolhead', got {by_id[bid]['boardClass']!r}"
         )
     counts = Counter(b.get("boardClass") for b in reference_data.boards())
-    assert counts["toolhead"] >= 50, f"only {counts['toolhead']} toolhead boards — likely regressed"
+    assert counts["toolhead"] >= 50, f"only {counts['toolhead']} toolhead boards - likely regressed"
     assert counts["printer-preset"] > 50  # presets stay their own class, not swept in
 
 

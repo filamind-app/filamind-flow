@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Header "Feedback" menu — a small popover offering "Report a bug" and "Request a feature".
+/** Header "Feedback" menu - a small popover offering "Report a bug" and "Request a feature".
  *  Both open the shared report dialog (see core/feedback). Mirrors ThemeMenu / LanguageMenu:
  *  click-outside + Esc to close. Marked data-feedback-noshot so it never lands in a screenshot. */
 import { onMounted, onUnmounted, ref } from 'vue'

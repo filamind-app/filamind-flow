@@ -70,7 +70,7 @@ function openMine(chip: { tab: 'boards' | 'drivers' | 'motors' | 'hosts'; id: st
   mode.value = chip.tab
 }
 // `immediate` so a focus set by ANOTHER widget (e.g. Board Topology) *before* this widget mounts
-// is still applied on mount — not only on a later change. Harmless when focus is null.
+// is still applied on mount - not only on a later change. Harmless when focus is null.
 watch(
   focus,
   (f) => {

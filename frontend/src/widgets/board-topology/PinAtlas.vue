@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Pin Atlas — an X-ray of a board's pins: which the live config uses (and for what) vs which are
+/** Pin Atlas - an X-ray of a board's pins: which the live config uses (and for what) vs which are
  *  free, grouped by function, plus a wiring-conflict scanner (double-assigned pins, electronics
  *  caveats bound to a used pin). Read-only over `GET /api/topology/pin-atlas/{mcu_name}`. */
 import { computed, ref, watch } from 'vue'
@@ -134,7 +134,7 @@ function pinTitle(p: PinAtlasPin): string {
               ? '✕ ' + t('boardTopology.pinAtlas.conflict')
               : '⚠ ' + t('boardTopology.pinAtlas.caveat')
           }}</span>
-          · <span class="font-mono font-bold">{{ f.pin }}</span> — {{ f.message }}
+          · <span class="font-mono font-bold">{{ f.pin }}</span> - {{ f.message }}
           <span v-if="f.sections.length" class="mt-0.5 flex flex-wrap gap-1">
             <button
               v-for="sec in f.sections"

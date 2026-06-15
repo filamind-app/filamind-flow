@@ -1,4 +1,4 @@
-/** Pure helpers for the axes-map result — the paste-ready config, verdict text and
+/** Pure helpers for the axes-map result - the paste-ready config, verdict text and
  *  Neo-Brutalist badge classes. Testable like grade.ts / diagnose.ts.
  */
 

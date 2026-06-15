@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Neutral teaching illustrations for the KlipperScreen Studio help notes — one per HelpIlloKey.
+/** Neutral teaching illustrations for the KlipperScreen Studio help notes - one per HelpIlloKey.
  *  Dependency-free 24×24 line art (currentColor), ≤6 strokes each, theme-aware.
  */
 import type { HelpIlloKey } from './help'

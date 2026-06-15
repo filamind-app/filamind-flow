@@ -25,7 +25,7 @@ export async function cancelTask(id: string): Promise<void> {
   if (!response.ok) throw new Error(`Cancel failed (${response.status})`)
 }
 
-/** The last non-empty log line — the human-facing error a failed task left behind. */
+/** The last non-empty log line - the human-facing error a failed task left behind. */
 export function lastLogLine(log: string): string {
   const lines = log.split('\n').filter((l) => l.trim())
   return lines.length ? lines[lines.length - 1].replace(/^!+\s*/, '') : ''

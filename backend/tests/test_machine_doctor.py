@@ -91,7 +91,7 @@ async def test_run_scan_grades_and_links(monkeypatch: pytest.MonkeyPatch) -> Non
 
 
 async def test_pin_caveats_are_informational(monkeypatch: pytest.MonkeyPatch) -> None:
-    # A board caveat describes by-design electronics (e.g. a mains-switched pin) — it must be
+    # A board caveat describes by-design electronics (e.g. a mains-switched pin) - it must be
     # listed but never scored: a healthy printer full of caveat notes still grades A.
     async def doctor_out(*_a: Any, **_k: Any) -> dict[str, Any]:
         return {
@@ -118,7 +118,7 @@ async def test_pin_caveats_are_informational(monkeypatch: pytest.MonkeyPatch) ->
 
 
 async def test_firmware_out_of_sync_needs_a_host_version(monkeypatch: pytest.MonkeyPatch) -> None:
-    # in_sync=False without a known host version is a meaningless comparison — no finding.
+    # in_sync=False without a known host version is a meaningless comparison - no finding.
     async def status(*_a: Any, **_k: Any) -> dict[str, Any]:
         return {
             "reachable": True,

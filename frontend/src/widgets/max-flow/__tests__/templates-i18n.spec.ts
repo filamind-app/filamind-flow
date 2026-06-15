@@ -11,7 +11,7 @@ function plugins() {
 }
 
 describe('Max-Flow template renders through i18n (no leaked keys)', () => {
-  it('MaxFlowWidget — intro + help chrome + safety items, no raw key paths', () => {
+  it('MaxFlowWidget - intro + help chrome + safety items, no raw key paths', () => {
     const w = mount(MaxFlowWidget, plugins())
     const text = w.text()
     const leaked = text.match(/maxFlow\.[a-zA-Z]/)

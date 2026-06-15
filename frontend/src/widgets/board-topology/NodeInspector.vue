@@ -31,7 +31,7 @@ const emit = defineEmits<{
 
 const { t, te } = useI18n({ useScope: 'global' })
 
-// Catalog labels (port categories / spec keys / board classes) are English data values —
+// Catalog labels (port categories / spec keys / board classes) are English data values -
 // translate via a slugged key when one exists, otherwise show the raw value (new catalog
 // vocabulary degrades gracefully instead of breaking).
 function catalogLabel(kind: 'portCat' | 'spec' | 'class', raw: string): string {
@@ -298,7 +298,7 @@ function onPick(id: string | null): void {
           >
             <template v-for="(val, key) in detail.specs" :key="key">
               <dt class="opacity-60">{{ catalogLabel('spec', key) }}</dt>
-              <!-- dir=auto: catalog values are Latin free-text — keeps "72 MHz" from
+              <!-- dir=auto: catalog values are Latin free-text - keeps "72 MHz" from
                    bidi-scrambling into "MHz 72" in RTL locales. -->
               <dd dir="auto" class="min-w-0 truncate">{{ val }}</dd>
             </template>

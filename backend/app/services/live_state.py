@@ -1,4 +1,4 @@
-"""Shared "live snapshot" accessors for the printer's running state — the ground truth Klipper is
+"""Shared "live snapshot" accessors for the printer's running state - the ground truth Klipper is
 actually executing, read via Moonraker's ``configfile`` object. Backs the Macro Designer's
 live-macro import (+ later the bed-envelope overlay) and the Config Editor's disk-vs-live healer.
 
@@ -79,7 +79,7 @@ def _params_of(gcode: str) -> dict[str, str]:
 
 def gcode_macros(settings: dict[str, Any]) -> list[dict[str, Any]]:
     """Every ``[gcode_macro NAME]`` in the live config → its body, description, discovered params,
-    and initial ``variable_*`` values — sorted by name. Pure over ``settings_of(configfile)``."""
+    and initial ``variable_*`` values - sorted by name. Pure over ``settings_of(configfile)``."""
     out: list[dict[str, Any]] = []
     for key, cfg in settings.items():
         if not isinstance(cfg, dict) or not str(key).lower().startswith(_MACRO_PREFIX):

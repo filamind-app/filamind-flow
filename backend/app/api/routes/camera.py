@@ -1,4 +1,4 @@
-"""Webcam endpoints — discovery + a same-origin snapshot proxy.
+"""Webcam endpoints - discovery + a same-origin snapshot proxy.
 
 The panel's nginx doesn't proxy the host's ``/webcam/`` path, so the browser can't load the
 camera at the panel origin. ``GET /api/camera/snapshot`` fetches the JPEG host-side and returns
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/camera", tags=["camera"])
 
 @router.get("/list")
 async def camera_list(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
-    """Configured webcams (empty when none / Moonraker unreachable — the UI then hides the view)."""
+    """Configured webcams (empty when none / Moonraker unreachable - the UI then hides the view)."""
     client = MoonrakerClient(settings.moonraker_url)
     try:
         cameras = await camera_service.list_cameras(client)

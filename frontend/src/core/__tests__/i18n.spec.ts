@@ -54,7 +54,7 @@ describe('locale detection & switching', () => {
     try {
       localStorage.clear()
     } catch {
-      // ignore — jsdom always provides localStorage, this is belt-and-braces
+      // ignore - jsdom always provides localStorage, this is belt-and-braces
     }
   })
 

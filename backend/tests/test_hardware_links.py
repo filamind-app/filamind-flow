@@ -12,7 +12,7 @@ from app.services import hardware_links, reference_data
 client = TestClient(create_app())
 
 
-# ── graph integrity (the CI edge-validator) ───────────────────────────────────
+# -- graph integrity (the CI edge-validator) -----------------------------------
 def test_no_dangling_edges() -> None:
     g = reference_data.link_graph()
     for key, neighbours in g.adjacency.items():
@@ -23,7 +23,7 @@ def test_no_dangling_edges() -> None:
 
 
 def test_every_referenced_manufacturer_and_mcu_exists() -> None:
-    # walk the ACTUAL adjacency edges (the data path the API serves), not the pre-guarded map —
+    # walk the ACTUAL adjacency edges (the data path the API serves), not the pre-guarded map -
     # so this would genuinely fail if resolution ever emitted a hub-less edge.
     g = reference_data.link_graph()
     for neighbours in g.adjacency.values():
@@ -66,7 +66,7 @@ def test_relations_are_symmetric() -> None:
         assert any(s["id"] == dboard for s in back["groups"].get("boards", []))
 
 
-# ── manufacturer canonicalisation ─────────────────────────────────────────────
+# -- manufacturer canonicalisation ---------------------------------------------
 def test_manufacturer_aliases_resolve_to_one_id() -> None:
     resolver = hardware_links.ManufacturerResolver(reference_data.hardware_manufacturers())
     variants = ("BigTreeTech", "BTT", "BIGTREETECH (BTT)", "BigTreeTech / BIQU")
@@ -132,7 +132,7 @@ def test_manufacturer_membercount_matches_edges() -> None:
         assert man["memberCount"] == member_edges
 
 
-# ── MCU whitelist extraction ──────────────────────────────────────────────────
+# -- MCU whitelist extraction --------------------------------------------------
 def test_mcu_normalisation_strips_package_and_rejects_noise() -> None:
     assert hardware_links.normalize_mcu("STM32F407VET6")[0] == "stm32f407"
     assert hardware_links.normalize_mcu("STM32G0B1CBT6")[0] == "stm32g0b1"
@@ -153,7 +153,7 @@ def test_mcu_entities_present_and_clean() -> None:
         assert m["boardCount"] >= 1
 
 
-# ── endpoints ─────────────────────────────────────────────────────────────────
+# -- endpoints -----------------------------------------------------------------
 def test_facets_endpoint() -> None:
     body = client.get("/api/hardware/facets").json()
     assert "mainboard" in body["boardClass"]

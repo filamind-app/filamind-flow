@@ -1,7 +1,7 @@
 """Install-integrity health checks.
 
-Surfaces whether the host is set up for firmware flashing — the passwordless sudo
-rule, the STM32 DFU udev rule, and the dfu-util tool — so the UI can show a clear
+Surfaces whether the host is set up for firmware flashing - the passwordless sudo
+rule, the STM32 DFU udev rule, and the dfu-util tool - so the UI can show a clear
 green / amber light and tell the user exactly what to run if something is missing
 (``scripts/install.sh sudoers``). FilaMind never edits these privileged files itself;
 it only reports on them.

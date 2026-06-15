@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Clickable cross-link chips for one entity — the visible face of the DB linking graph.
+/** Clickable cross-link chips for one entity - the visible face of the DB linking graph.
  *  Fetches `GET /api/hardware/{type}/{id}/related` and renders its grouped neighbours as chips;
  *  clicking a chip jumps the browser to that entity (via the shared entity-focus channel). */
 import { computed, ref, watch } from 'vue'

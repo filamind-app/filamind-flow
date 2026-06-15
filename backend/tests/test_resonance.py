@@ -266,7 +266,7 @@ async def test_compare_belts_runs_both_diagonals(
 async def test_compare_belts_refuses_on_non_corexy_kinematics(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """The two-belt diagonal test only means something on CoreXY — refused BEFORE homing."""
+    """The two-belt diagonal test only means something on CoreXY - refused BEFORE homing."""
     for kin in ("cartesian", "delta", "corexz"):
         fake = _FakeClient(
             printing=False, has_tester=True, write_dir=tmp_path, homed="", kinematics=kin

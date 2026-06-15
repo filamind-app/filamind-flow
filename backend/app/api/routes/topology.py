@@ -3,7 +3,7 @@
 ``GET /api/topology`` returns the host → MCU topology built from the live ``configfile``: each
 MCU's connection type (CAN bus / USB / UART) and a best-effort chip / board guess. The board guess
 can be *confirmed* or *overridden* per MCU (``POST /api/topology/override`` and
-``…/override/clear``) — a persisted user choice applied to every subsequent read (the only write
+``…/override/clear``) - a persisted user choice applied to every subsequent read (the only write
 path here).
 """
 
@@ -82,7 +82,7 @@ async def save_snapshot(settings: Settings = Depends(get_settings)) -> TopologyD
 
 @router.get("/snapshot/diff", response_model=TopologyDiff)
 async def snapshot_diff(settings: Settings = Depends(get_settings)) -> TopologyDiff:
-    """Compare the live topology to the saved baseline — board swapped / MCU added or removed /
+    """Compare the live topology to the saved baseline - board swapped / MCU added or removed /
     connection changed / component count moved. ``has_baseline=false`` until a snapshot is saved."""
     baseline = topology_snapshot.read_snapshot(settings.data_dir)
     if not baseline:

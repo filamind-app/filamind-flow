@@ -3,7 +3,7 @@
 Stores which catalogued motor the user assigned to each stepper, in
 ``<data_dir>/motor-mapping.json`` (``{stepper_name: motor_model}``). The live config
 keeps owning currents/registers; this is purely the user's "this stepper runs this
-motor" annotation — used to surface the motor's datasheet specs and (later) drive
+motor" annotation - used to surface the motor's datasheet specs and (later) drive
 current/register recommendations.
 """
 
@@ -30,7 +30,7 @@ def read_mapping(data_dir: str) -> dict[str, str]:
 
 
 def assign(data_dir: str, stepper: str, motor_model: str | None) -> dict[str, str]:
-    """Assigns a motor to ``stepper`` — or clears it when ``motor_model`` is falsy.
+    """Assigns a motor to ``stepper`` - or clears it when ``motor_model`` is falsy.
 
     Returns the updated mapping. Writes atomically (tmp + replace).
     """

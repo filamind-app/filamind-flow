@@ -1,4 +1,4 @@
-"""KlipperScreen Studio endpoints — read/edit ``KlipperScreen.conf`` and restart it to apply.
+"""KlipperScreen Studio endpoints - read/edit ``KlipperScreen.conf`` and restart it to apply.
 
 Phase 1: a status probe (is KlipperScreen present + restartable, current theme/language), a gated
 config read/save (reuses the Config Editor's backup + stale-write machinery), and a service
@@ -21,11 +21,11 @@ router = APIRouter(prefix="/screen", tags=["screen"])
 
 
 class ScreenConfSave(BaseModel):
-    """Body for ``POST /screen/conf`` — the full file text plus the loaded fingerprint."""
+    """Body for ``POST /screen/conf`` - the full file text plus the loaded fingerprint."""
 
     content: str = Field(..., description="Full KlipperScreen.conf text to write")
     expected_sha256: str | None = Field(
-        None, description="SHA-256 of the loaded content — refuses a stale-overwrite when set."
+        None, description="SHA-256 of the loaded content - refuses a stale-overwrite when set."
     )
 
 
@@ -79,9 +79,9 @@ async def screen_restart(settings: Settings = Depends(get_settings)) -> dict[str
     return {"status": "restarting"}
 
 
-# ── Graphical [main] options editor ──────────────────────────────────────────
+# -- Graphical [main] options editor ------------------------------------------
 class ScreenOptionsSave(BaseModel):
-    """Body for ``POST /screen/options`` — ``[main]`` options to set + the loaded fingerprint."""
+    """Body for ``POST /screen/options`` - ``[main]`` options to set + the loaded fingerprint."""
 
     options: dict[str, str] = Field(default_factory=dict, description="[main] option key → value")
     expected_sha256: str | None = Field(
@@ -127,9 +127,9 @@ async def screen_options_save(
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
 
 
-# ── Menu tree editor ─────────────────────────────────────────────────────────
+# -- Menu tree editor ---------------------------------------------------------
 class ScreenMenusSave(BaseModel):
-    """Body for ``POST /screen/menus`` — the full menu item list + the loaded fingerprint."""
+    """Body for ``POST /screen/menus`` - the full menu item list + the loaded fingerprint."""
 
     items: list[dict[str, Any]] = Field(
         default_factory=list, description="Menu items: {id, props:{name,icon,panel,method,...}}"
@@ -181,7 +181,7 @@ async def screen_menus_save(
         raise HTTPException(status_code=502, detail=f"Moonraker error: {exc}") from exc
 
 
-# ── Theme builder ────────────────────────────────────────────────────────────
+# -- Theme builder ------------------------------------------------------------
 class ScreenThemeBody(BaseModel):
     """A theme to preview or generate: a name, a palette of token→#RRGGBB, a corner radius."""
 
@@ -264,9 +264,9 @@ async def screen_theme_delete(
     return {"status": "deleted"}
 
 
-# ── FilaMind Kiosk — reversible swap of the touchscreen (KlipperScreen ⟷ FilaMind) ─────────────
+# -- FilaMind Kiosk - reversible swap of the touchscreen (KlipperScreen ⟷ FilaMind) -------------
 class KioskSwitchBody(BaseModel):
-    """Body for the kiosk switch/restore — whether to also flip the *boot* default."""
+    """Body for the kiosk switch/restore - whether to also flip the *boot* default."""
 
     persist: bool = Field(
         False, description="Also flip the boot default (else a reboot-recoverable swap)"

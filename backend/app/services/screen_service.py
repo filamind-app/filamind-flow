@@ -1,8 +1,8 @@
-"""KlipperScreen control — read/edit its config and restart it to apply.
+"""KlipperScreen control - read/edit its config and restart it to apply.
 
 KlipperScreen's config (``KlipperScreen.conf``) lives in Moonraker's ``config`` file root, right
 next to ``printer.cfg``, so reading and the gated, backed-up write reuse the Config Editor's
-machinery wholesale (:mod:`app.services.config_service` — busy-refusal, SHA-256 stale-write guard,
+machinery wholesale (:mod:`app.services.config_service` - busy-refusal, SHA-256 stale-write guard,
 timestamped pre-save backup + prune). Applying a change means restarting the KlipperScreen
 *service* (it doesn't hot-reload), which Moonraker does via ``/machine/services/restart`` when
 KlipperScreen is in its allowed-services list. Everything here is read-only except the explicit
@@ -27,7 +27,7 @@ _MAIN_OPTION = re.compile(r"(?im)^\s*(theme|language|lang)\s*[:=]\s*(\S+)")
 
 async def status(client: MoonrakerClient) -> dict[str, Any]:
     """Whether KlipperScreen is present + restartable, whether its conf exists, and the current
-    theme / language — so the widget can offer itself only when there's something to control."""
+    theme / language - so the widget can offer itself only when there's something to control."""
     out: dict[str, Any] = {
         "present": False,
         "restartable": False,
@@ -83,7 +83,7 @@ async def restart(client: MoonrakerClient) -> None:
     await client.restart_service(SERVICE)
 
 
-# ── Graphical [main] options editor ──────────────────────────────────────────
+# -- Graphical [main] options editor ------------------------------------------
 # These read/write individual options in [main] as plain text so the form editor never has to
 # round-trip the whole file through a parser, and KlipperScreen's auto-generated #~# block is
 # always left untouched (only the user-authored portion above it is edited).
@@ -142,11 +142,11 @@ def _set_one(raw: str, section: str, key: str, value: str) -> str:
     return "\n".join([header, f"{key} = {value}", "", *user, *auto])
 
 
-# ── Menu tree editor ─────────────────────────────────────────────────────────
+# -- Menu tree editor ---------------------------------------------------------
 # The on-screen menus are config-defined trees of [menu <tree> <tok> <tok>...] sections. We read
 # them into a flat list (the frontend rebuilds the tree from the path) and write them back by
 # stripping every existing [menu ...] block from the user portion and re-emitting the supplied
-# ones — KlipperScreen resolves menus by their path, not file order, so this is safe. The #~#
+# ones - KlipperScreen resolves menus by their path, not file order, so this is safe. The #~#
 # auto-block and all non-menu sections are preserved.
 _MENU_HEADER = re.compile(r"^\[menu\s+(.+?)\]\s*$", re.IGNORECASE)
 _TOKEN = re.compile(r"^[A-Za-z0-9_]+$")
@@ -245,6 +245,6 @@ def write_menus(raw: str, items: list[dict[str, Any]]) -> str:
             value = props.get(key)
             if value is None or str(value) == "":
                 continue
-            # one option per line, LF — values can't span lines, so strip any embedded newlines.
+            # one option per line, LF - values can't span lines, so strip any embedded newlines.
             out.append(f"{key}: {str(value).replace(chr(10), ' ').strip()}")
     return "\n".join([*kept, *out, "", *auto])

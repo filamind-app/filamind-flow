@@ -57,7 +57,7 @@ def test_catalog_names_are_products_not_swapped_specs() -> None:
                 or re.match(r"^[\d.]+\s*v(\s*(or|/)\s*[\d.]+\s*v)?$", nl)
                 or re.match(r"^m\d+\s*[×x]\s*[\d.]+$", nl)  # noqa: RUF001 (data uses mult-sign)
             )
-            if looks_spec and mfr and not mfr.lower().startswith("generic") and mfr != "—":
+            if looks_spec and mfr and not mfr.lower().startswith("generic") and mfr != "-":
                 offenders.append((e.get("catalog_id"), name, mfr))
     assert not offenders, (
         f"{len(offenders)} catalog rows still have a swapped spec-as-name, e.g. {offenders[:5]}"
@@ -85,7 +85,7 @@ def test_manufacturer_field_has_no_junk() -> None:
                 continue
             if (
                 re.fullmatch(r"[\d.,/×x\s-]+", m)  # noqa: RUF001 (data uses mult-sign)
-                or m == "—"
+                or m == "-"
                 or re.search(r"stallguard|tstep", m, re.I)
             ):
                 bad.append((e.get("catalog_id"), m))

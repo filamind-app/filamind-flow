@@ -5,7 +5,7 @@ doesn't surface ``SG_RESULT``), the slip point can instead be read from a toolhe
 as the extruder gear starts to grind/skip it produces a sharp rise in vibration intensity and
 irregular impulsive "clicks". This module captures the ADXL345 (or other configured chip) during
 each flow step, reduces it to per-window vibration-RMS samples, and reuses the same jump detector
-as the StallGuard path — just with ratio-based thresholds tuned for vibration rather than SG load.
+as the StallGuard path - just with ratio-based thresholds tuned for vibration rather than SG load.
 
 Experimental by design: the absolute scale of the vibration depends on the printer, so detection
 is purely *relative* (a jump versus the recent clean baseline). It reuses the proven
@@ -30,21 +30,21 @@ from app.services.moonraker_client import MoonrakerClient
 #: change in the vibration *level*: the per-step median stayed flat (~590-710) across the whole
 #: ramp, while CV% sat at ~3-7% once cruising (with a transient rise to ~12% during the opening
 #: speed-up) and then jumped to 26% -> 66% -> 71% once the gear started skipping at ~32.5 mm3/s.
-#: So detection is a single, robust signal: an ABSOLUTE CV ceiling (scale-independent — it's a
+#: So detection is a single, robust signal: an ABSOLUTE CV ceiling (scale-independent - it's a
 #: ratio). The CV/IQR *ratio*-jump detectors are OFF: they false-tripped on the noisy opening ramp
 #: (one live run stopped at 12.5 mm3/s because the early CV rise looked like a jump). The
 #: run-outlier (level jump) is kept as a harmless extra; it won't fire on a flat median.
 ACCEL_CONSTANTS: dict[str, float] = {
     "CV_HIGH_VARIANCE": 20.0,  # CV% >= 20 = grinding (cruise sits ~3-7%, grind hit 26-71%)
-    "CV_JUMP_RATIO_COARSE": 1.0e12,  # off (CV ratio jump — false-tripped on the opening ramp)
+    "CV_JUMP_RATIO_COARSE": 1.0e12,  # off (CV ratio jump - false-tripped on the opening ramp)
     "IQR_ABSOLUTE_TRIGGER": 1.0e12,  # off (absolute spread is machine-scaled)
-    "IQR_RATIO_COARSE": 1.0e12,  # off (IQR ratio jump — too noisy on the early ramp)
+    "IQR_RATIO_COARSE": 1.0e12,  # off (IQR ratio jump - too noisy on the early ramp)
     "OUTLIER_MAD_RATIO": 5.0,  # harmless extra: a level jump (won't fire on a flat median)
     "OUTLIER_MIN_REL": 0.6,
 }
 
 #: Don't judge a slip until this many steps are measured. The first steps are the extruder's
-#: vibration *ramping up* (not steady) — a live run false-tripped at the 4th step (flow 12.5), so
+#: vibration *ramping up* (not steady) - a live run false-tripped at the 4th step (flow 12.5), so
 #: the warm-up now clears the ramp-up entirely (with the default 2.5 mm3/s step that is ~flow 17.5,
 #: where the data shows vibration has settled). Lower the step size to detect a sub-17.5 grind.
 _WARMUP_STEPS = 6
@@ -56,7 +56,7 @@ _WINDOWS = 8
 def _parse_accel(text: str) -> np.ndarray:
     """Parse a Klipper raw-accel CSV (``#time,accel_x,accel_y,accel_z``) to an Nx4 float array."""
     if not any(ln.strip() and not ln.strip().startswith("#") for ln in text.splitlines()):
-        return np.empty((0, 4))  # no data rows — skip numpy's empty-input warning
+        return np.empty((0, 4))  # no data rows - skip numpy's empty-input warning
     try:
         data = np.loadtxt(io.StringIO(text), comments="#", delimiter=",")
     except ValueError:
@@ -80,7 +80,7 @@ def step_energy_samples(csv_text: str, windows: int = _WINDOWS) -> list[float]:
 
     The acceleration magnitude is split into ``windows`` equal time slices; each yields the
     standard deviation of the magnitude in that slice (its RMS about the local mean = how hard it
-    is vibrating). Returns one value per window — the "samples" the jump detector consumes.
+    is vibrating). Returns one value per window - the "samples" the jump detector consumes.
     """
     data = _parse_accel(csv_text)
     if data.shape[0] < 4:
@@ -145,7 +145,7 @@ async def ramp(
         raw = await asyncio.to_thread(resonance_service._read_bytes, path)
         csv_text = raw.decode("utf-8", errors="replace")
         with contextlib.suppress(OSError):
-            os.remove(path)  # the capture is transient — don't clutter the import list
+            os.remove(path)  # the capture is transient - don't clutter the import list
         measurements.append(
             StepMeasurement(flow_mm3s=flow, sg_samples=step_energy_samples(csv_text))
         )

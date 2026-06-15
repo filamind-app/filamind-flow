@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Generic category catalog view — the remaining categories (sensors, hotends, extruders,
+/** Generic category catalog view - the remaining categories (sensors, hotends, extruders,
  *  fans/power/bed, displays/cameras, motion, nozzles, filament, electronics). Thin wrapper over
  *  the shared EntityCatalog; re-mounts per category via :key so each switch starts fresh. */
 import { computed, ref } from 'vue'

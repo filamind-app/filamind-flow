@@ -70,7 +70,7 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
       <div v-else-if="plan" class="space-y-1 rounded-brutal border-2 border-ink p-2">
         <div class="flex items-center justify-between gap-2">
           <span class="min-w-0 truncate font-mono text-[11px]"
-            >{{ plan.method }} → {{ plan.artifact ?? '—' }}</span
+            >{{ plan.method }} → {{ plan.artifact ?? '-' }}</span
           >
           <span
             class="nb-badge shrink-0 text-[11px]"

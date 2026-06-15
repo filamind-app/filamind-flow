@@ -26,7 +26,7 @@ const props = withDefaults(
     fetchDetail: (id: string) => Promise<TDetail>
     /** Extract a row's stable id. */
     idOf: (item: TSummary) => string
-    /** Catalog ids detected on THIS printer — matching rows get an 'on this printer' badge. */
+    /** Catalog ids detected on THIS printer - matching rows get an 'on this printer' badge. */
     onPrinterIds?: Set<string> | null
     /** i18n keys (called with both {n} and {count} so either placeholder works). */
     searchKey: string
@@ -37,7 +37,7 @@ const props = withDefaults(
     reloadToken?: number | string
     /** Return true when a cross-link focus targets this catalog (drives deep-link open). */
     focusMatch?: (f: FocusTarget) => boolean
-    /** Run synchronously before a deep-link search — lets a wrapper clear its own facets so the
+    /** Run synchronously before a deep-link search - lets a wrapper clear its own facets so the
      *  target can't be filtered out (e.g. Drivers clears its Klipper-only checkbox). */
     beforeFocus?: () => void
   }>(),
@@ -133,7 +133,7 @@ watch(
 // post-mount focus changes (a cross-link chip clicked while already mounted)
 watch(focus, (f) => {
   if (f && props.focusMatch?.(f)) {
-    clear() // consume it — a stale focus must not re-fire on the next mount
+    clear() // consume it - a stale focus must not re-fire on the next mount
     void focusItem(f.id, f.name)
   }
 })

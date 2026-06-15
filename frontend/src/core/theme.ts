@@ -1,22 +1,22 @@
 import { ref } from 'vue'
 
 /**
- * App-wide theme runtime — mirrors the i18n module's shape (see core/i18n.ts).
+ * App-wide theme runtime - mirrors the i18n module's shape (see core/i18n.ts).
  *
  * Mechanism: themes are pure CSS. Every design token (colors, shadows, radius) is a CSS custom
  * property defined per ``[data-theme]`` in src/assets/styles/main.css, and Tailwind reads those
- * vars (see tailwind.config.ts). So switching a theme is one DOM attribute write —
- * ``<html data-theme="…">`` — and every existing utility (bg-paper, border-ink, shadow-brutal,
+ * vars (see tailwind.config.ts). So switching a theme is one DOM attribute write -
+ * ``<html data-theme="…">`` - and every existing utility (bg-paper, border-ink, shadow-brutal,
  * rounded-brutal, …) recolors with NO component edits.
  *
  * Drop-in extensibility: a new theme becomes selectable the moment its key is added to
- * ``THEME_META`` here *and* a matching ``[data-theme="…"]`` block exists in main.css — no
+ * ``THEME_META`` here *and* a matching ``[data-theme="…"]`` block exists in main.css - no
  * component changes.
  */
 
 export type ThemeKey = 'light' | 'dark' | 'neon' | 'contrast' | 'midnight' | 'ocean' | 'sunset'
 
-/** Static preview colors for the theme menu (hex — previews must not depend on the ACTIVE
+/** Static preview colors for the theme menu (hex - previews must not depend on the ACTIVE
  *  theme's CSS vars, they show what each theme WOULD look like). Keep in sync with main.css. */
 export interface ThemeSwatch {
   paper: string
@@ -139,7 +139,7 @@ export function detectTheme(): ThemeKey {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (isThemeKey(stored)) return stored
   } catch {
-    // localStorage can throw in private mode / sandboxed iframes — fall through to the default.
+    // localStorage can throw in private mode / sandboxed iframes - fall through to the default.
   }
   return DEFAULT_THEME
 }

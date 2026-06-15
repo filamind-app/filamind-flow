@@ -82,7 +82,7 @@ export interface TopologyHost {
   host_match?: 'suggested' | null
   host_match_confidence?: number
   /** Set to a mainboard id when the host SBC is physically integrated on that board (SV08 / Manta
-   *  + CB1) — lets the map draw the host inside the board. */
+   *  + CB1) - lets the map draw the host inside the board. */
   integrated_into_board_id?: string | null
 }
 
@@ -145,6 +145,6 @@ export interface TopologyDiff {
   has_baseline: boolean
   saved_at?: string | null
   changes: TopologyChange[]
-  /** False when the live topology could not be read — "no changes" means "could not compare". */
+  /** False when the live topology could not be read - "no changes" means "could not compare". */
   reachable?: boolean
 }

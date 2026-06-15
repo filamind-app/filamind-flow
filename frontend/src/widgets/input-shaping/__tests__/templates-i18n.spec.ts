@@ -47,33 +47,33 @@ const vibResult: VibrationsProfile = {
 }
 
 describe('Input Shaping templates render through i18n (no leaked keys)', () => {
-  it('InputShapingWidget — chrome + intro <i18n-t>', () => {
+  it('InputShapingWidget - chrome + intro <i18n-t>', () => {
     const w = mount(InputShapingWidget, plugins())
     const text = w.text()
     noLeak(text)
     expect(text).toContain('Guided') // tab label
   })
 
-  it('ResonanceFromPrinter — live tools + 3 <i18n-t> descriptions', () => {
+  it('ResonanceFromPrinter - live tools + 3 <i18n-t> descriptions', () => {
     const w = mount(ResonanceFromPrinter, plugins())
     const text = w.text()
     noLeak(text)
     expect(text).toContain('Live tools')
   })
 
-  it('VibrationsProfile — labels + interpolated values', () => {
+  it('VibrationsProfile - labels + interpolated values', () => {
     const w = mount(VibrationsProfileView, { props: { result: vibResult }, ...plugins() })
     const text = w.text()
     noLeak(text)
     expect(text).toContain('Vibrations profile')
   })
 
-  it('ResonanceCompare — picker chrome', () => {
+  it('ResonanceCompare - picker chrome', () => {
     const w = mount(ResonanceCompare, plugins())
     noLeak(w.text())
   })
 
-  it('CsvSourceChooser — source tabs', () => {
+  it('CsvSourceChooser - source tabs', () => {
     const w = mount(CsvSourceChooser, { props: { busy: false }, ...plugins() })
     const text = w.text()
     noLeak(text)

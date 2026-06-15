@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** A shared, off-canvas "guide" drawer — one organised home for a widget's help, instead of a
+/** A shared, off-canvas "guide" drawer - one organised home for a widget's help, instead of a
  *  scattered row of identical "what's this?" links. A single labelled button opens it; the drawer
  *  lists an optional "how to read" step list, every help topic (title + illustration + body), and
  *  the glossary. All copy comes from the widget's i18n namespace; the per-widget illustration
@@ -12,13 +12,13 @@ import { onBeforeUnmount, ref, watch, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
-  /** i18n namespace, e.g. 'motorDrivers' — topic/glossary keys are built from it. */
+  /** i18n namespace, e.g. 'motorDrivers' - topic/glossary keys are built from it. */
   namespace: string
   /** Help topics in display order (the glossary topic is rendered separately at the end). */
   topics: readonly string[]
   /** topic -> illustration key (passed straight to the injected `illo` component). */
   illoMap: Partial<Record<string, string>>
-  /** The widget's HelpIllo component (kept generic — each widget has its own art). */
+  /** The widget's HelpIllo component (kept generic - each widget has its own art). */
   illo: Component
   /** Glossary term keys in display order. */
   glossaryKeys: readonly string[]

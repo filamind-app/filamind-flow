@@ -1,4 +1,4 @@
-"""Mission-control overview — one call that answers "is my printer healthy?".
+"""Mission-control overview - one call that answers "is my printer healthy?".
 
 A thin, concurrent fan-out over data the app already computes: the live print state, per-MCU
 firmware sync (computed for the Firmware Manager but never rendered as a table until now), the
@@ -64,7 +64,7 @@ async def _firmware_block(settings: Settings) -> dict[str, Any]:
 
 
 def _tuning_block(data_dir: str) -> dict[str, Any]:
-    """Latest shaper run per axis from the archive index (summaries only — never reads CSVs)."""
+    """Latest shaper run per axis from the archive index (summaries only - never reads CSVs)."""
     try:
         runs = shaper_archive.read_index(data_dir)
     except Exception:

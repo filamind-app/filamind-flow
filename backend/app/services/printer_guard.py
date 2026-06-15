@@ -2,11 +2,11 @@
 
 Two protections, shared by all widgets:
 
-* :func:`is_busy` — the single definition of "the printer is busy" (printing / paused / error),
+* :func:`is_busy` - the single definition of "the printer is busy" (printing / paused / error),
   replacing the per-service copies that had drifted apart.
-* :func:`acquire` — a process-wide mutual-exclusion slot for operations that move the machine or
+* :func:`acquire` - a process-wide mutual-exclusion slot for operations that move the machine or
   write to it (resonance tests, max-flow runs, driver writes, firmware flashes, restarts). Two
-  browser tabs — or a retried request after a proxy timeout — can no longer interleave G-code on
+  browser tabs - or a retried request after a proxy timeout - can no longer interleave G-code on
   a hot, moving machine: the second caller is refused with the name of the operation already
   running.
 
@@ -47,7 +47,7 @@ class GuardBusyError(RuntimeError):
 async def is_busy(client: _QueryClient, *, block_on_error: bool = True) -> bool:
     """True while the printer is printing / paused (and, by default, in an error state).
 
-    The one shared busy definition — every gated write/motion path should call this instead of
+    The one shared busy definition - every gated write/motion path should call this instead of
     re-reading ``print_stats`` itself.
     """
     status_ = await client.query_objects(["print_stats"])
@@ -75,7 +75,7 @@ async def acquire(operation: str) -> AsyncIterator[None]:
 
 
 def status() -> dict[str, Any]:
-    """The slot's current state — ``{"locked": bool, "operation": key | None}``."""
+    """The slot's current state - ``{"locked": bool, "operation": key | None}``."""
     return {"locked": _current_op is not None, "operation": _current_op}
 
 

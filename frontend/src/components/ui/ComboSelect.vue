@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /** A typeahead combobox (dropdown) for long option lists (#120). One control that opens a
  *  filtered dropdown with keyboard navigation (↑/↓/Enter/Esc), instead of an always-open inline
- *  list. Shared UI primitive — the convention for every long picker (motors today, filaments /
+ *  list. Shared UI primitive - the convention for every long picker (motors today, filaments /
  *  boards / profiles tomorrow). Generic over `{ value, label, sublabel }` options. The dropdown
  *  shows the WHOLE list (scrollable) so a user who doesn't remember the name can browse (#130).
  */
@@ -41,7 +41,7 @@ const selected = computed(() => props.options.find((o) => o.value === props.mode
 function matches(o: ComboOption, q: string): boolean {
   return o.label.toLowerCase().includes(q) || (o.sublabel ?? '').toLowerCase().includes(q)
 }
-// The full filtered list — no cap, so the whole catalog is browsable (the dropdown scrolls).
+// The full filtered list - no cap, so the whole catalog is browsable (the dropdown scrolls).
 const shown = computed(() => {
   const q = query.value.trim().toLowerCase()
   return q ? props.options.filter((o) => matches(o, q)) : props.options

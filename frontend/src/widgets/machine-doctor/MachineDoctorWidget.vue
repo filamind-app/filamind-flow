@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Machine Doctor — one click, one graded report card for the whole printer.
+/** Machine Doctor - one click, one graded report card for the whole printer.
  *
  *  Aggregates every read-only analyzer the app already ships (pin conflicts, driver values,
  *  disk-vs-live drift, config-project lint, firmware sync, hardware changes vs the saved
@@ -247,7 +247,7 @@ const hasStats = computed(() => {
               {{ t('machineDoctor.stats.tuningAxis', { axis: ax.axis.toUpperCase() }) }}
             </div>
             <div class="font-mono text-xs font-bold">
-              {{ (ax.shaper || '—').toUpperCase()
+              {{ (ax.shaper || '-').toUpperCase()
               }}{{ ax.freq != null ? ' · ' + ax.freq.toFixed(1) + ' Hz' : '' }}
               <span v-if="ax.grade">· {{ ax.grade }}</span>
             </div>

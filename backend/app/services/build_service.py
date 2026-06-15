@@ -1,8 +1,8 @@
-"""Firmware build — compiles a profile's ``.config`` into a flashable artifact.
+"""Firmware build - compiles a profile's ``.config`` into a flashable artifact.
 
 The build mirrors what a user does by hand: stage the profile's ``.config`` as
 ``klipper/.config``, ``make clean`` + ``make olddefconfig`` (so the config is
-valid for the installed Klipper), then ``make`` — streaming every line so the
+valid for the installed Klipper), then ``make`` - streaming every line so the
 browser shows a live log. The resulting ``out/klipper.{bin,uf2,elf}`` is copied
 into the artifacts directory under the profile's name, ready to flash.
 
@@ -68,7 +68,7 @@ class BuildService:
             yield f">>> Built with Klipper {version['version']}\n"
             yield f">>> Saved artifact(s): {', '.join(saved)}\n>>> BUILD OK\n"
         else:
-            yield ">>> BUILD FAILED — no firmware artifact was produced\n"
+            yield ">>> BUILD FAILED - no firmware artifact was produced\n"
 
     def _collect(self, profile_name: str) -> list[str]:
         """Copies freshly built ``out/klipper.*`` into the artifacts directory."""

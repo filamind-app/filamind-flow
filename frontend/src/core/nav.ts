@@ -1,10 +1,10 @@
 import { onMounted, ref, watch } from 'vue'
 
 /**
- * App-wide view switch (a tiny router stand-in — the app ships no vue-router).
+ * App-wide view switch (a tiny router stand-in - the app ships no vue-router).
  *
  * ``current`` is either ``'dashboard'`` (the empty home) or a widget id. It is synced to
- * ``location.hash`` (#117/#121) so a view can be bookmarked and survives a reload — important
+ * ``location.hash`` (#117/#121) so a view can be bookmarked and survives a reload - important
  * for the tablet-at-the-printer case. A module-level ref keeps it a single shared singleton
  * across every component that calls ``useNav()``.
  *

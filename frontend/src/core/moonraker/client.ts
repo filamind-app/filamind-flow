@@ -40,7 +40,7 @@ const DEFAULT_MAX_RECONNECT_DELAY_MS = 15_000
  *  - fan out `notify_*` notifications to method-scoped listeners;
  *  - transparently restore subscriptions after a reconnect.
  *
- * It deliberately knows nothing about specific printer objects or widgets — that
+ * It deliberately knows nothing about specific printer objects or widgets - that
  * domain logic lives in the store and feature widgets, keeping this class reusable.
  */
 export class MoonrakerClient {

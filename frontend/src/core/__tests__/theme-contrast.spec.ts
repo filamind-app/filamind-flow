@@ -1,7 +1,7 @@
 /** Contrast regression guard for the theme palettes.
  *
  *  Parses every `[data-theme]` block (and the `:root` light defaults) out of main.css and
- *  asserts the token contract's hard WCAG constraints — the ones the palettes are calibrated
+ *  asserts the token contract's hard WCAG constraints - the ones the palettes are calibrated
  *  against. If a future color tweak breaks badge readability or chart visibility, this fails
  *  with the exact theme/token/ratio.
  */

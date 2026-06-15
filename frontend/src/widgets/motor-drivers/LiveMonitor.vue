@@ -27,7 +27,7 @@ async function poll(): Promise<void> {
     const sg = drvNum(data.drv_status, 'sg_result')
     if (sg !== null) sgHistory.value = [...sgHistory.value.slice(-39), sg]
   } catch {
-    /* transient poll failure — keep the last sample */
+    /* transient poll failure - keep the last sample */
   }
 }
 

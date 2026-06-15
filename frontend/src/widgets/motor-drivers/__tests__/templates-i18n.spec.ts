@@ -61,22 +61,22 @@ async function mountExpand(component: unknown, props: Record<string, unknown> = 
 }
 
 describe('Motor Drivers templates render through i18n (no leaked keys)', () => {
-  it('MotorDriversWidget — chrome, intro <i18n-t>, steps via tm()', () => {
+  it('MotorDriversWidget - chrome, intro <i18n-t>, steps via tm()', () => {
     const w = mount(MotorDriversWidget, plugins())
     const text = w.text()
     noLeak(text)
     expect(text).toContain('Every TMC stepper driver') // intro (always rendered)
   })
 
-  it('MotorSyncPanel — about <i18n-t>', () => mountExpand(MotorSyncPanel))
+  it('MotorSyncPanel - about <i18n-t>', () => mountExpand(MotorSyncPanel))
   it('LiveMonitor', () => mountExpand(LiveMonitor, { driver: drv }))
   it('RecommendPanel', () => mountExpand(RecommendPanel, { driver: drv, defaultOpen: true }))
-  it('HomingPanel — sensorless path', () => mountExpand(HomingPanel, { driver: drv }))
-  it('SensorlessPanel — intro/testHome <i18n-t>', () =>
+  it('HomingPanel - sensorless path', () => mountExpand(HomingPanel, { driver: drv }))
+  it('SensorlessPanel - intro/testHome <i18n-t>', () =>
     mountExpand(SensorlessPanel, { driver: drv }))
-  it('RegisterEditor — liveOnly <i18n-t>', () => mountExpand(RegisterEditor, { driver: drv }))
+  it('RegisterEditor - liveOnly <i18n-t>', () => mountExpand(RegisterEditor, { driver: drv }))
   it('MotorPicker', () =>
     mountExpand(MotorPicker, { stepper: 'stepper_x', assigned: null, catalog: [] }))
-  it('GuidedWizard — tuningHeader/step <i18n-t>', () =>
+  it('GuidedWizard - tuningHeader/step <i18n-t>', () =>
     mountExpand(GuidedWizard, { drivers: [drv], catalog: [] }))
 })

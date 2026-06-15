@@ -221,7 +221,7 @@ export interface TaskStatus {
   status: string
   log: string
   cancelled: boolean
-  /** Batch device counter ({step,total,detail}) — drives the batch progress bar. */
+  /** Batch device counter ({step,total,detail}) - drives the batch progress bar. */
   progress?: { step: number; total: number; detail?: Record<string, unknown> } | null
 }
 

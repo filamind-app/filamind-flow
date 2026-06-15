@@ -1,11 +1,11 @@
-"""Config Editor endpoints — read the live Klipper config (Track A keystone).
+"""Config Editor endpoints - read the live Klipper config (Track A keystone).
 
 List the files under Moonraker's ``config`` root and return a structured, parsed view of
 any one of them (sections → params + validation issues), built on the round-trip
 :mod:`klipper_config` engine. Read-only: the gated save path lands in a later phase.
 
-Payloads are returned as plain dicts (no ``response_model``) so no parsed field — including
-optional issue keys and multi-line values — is ever dropped.
+Payloads are returned as plain dicts (no ``response_model``) so no parsed field - including
+optional issue keys and multi-line values - is ever dropped.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ router = APIRouter(prefix="/config", tags=["config"])
 
 
 class ConfigSaveRequest(BaseModel):
-    """Body for ``POST /config/save`` — overwrite one config file with new text."""
+    """Body for ``POST /config/save`` - overwrite one config file with new text."""
 
     filename: str = Field(..., description="Config path within the config root")
     content: str = Field(..., description="The full new file content")
@@ -36,7 +36,7 @@ class ConfigSaveRequest(BaseModel):
 
 
 class AdoptParamRequest(BaseModel):
-    """Body for ``POST /config/adopt`` — set one param to the live value (pure text transform)."""
+    """Body for ``POST /config/adopt`` - set one param to the live value (pure text transform)."""
 
     content: str = Field(..., description="The current file text to mutate")
     section: str = Field(..., description="Section header, e.g. 'tmc2209 stepper_x'")
@@ -91,7 +91,7 @@ async def config_drift(
 
 
 class ApplySectionRequest(BaseModel):
-    """Body for ``POST /config/apply-section`` — merge a config block into a file (gated write)."""
+    """Body for ``POST /config/apply-section`` - merge a config block into a file (gated write)."""
 
     filename: str = Field("printer.cfg", description="Config path within the config root")
     block: str = Field(..., description="One or more [section] blocks to merge in")
@@ -104,11 +104,11 @@ class ApplySectionRequest(BaseModel):
 async def config_apply_section(
     body: ApplySectionRequest, settings: Settings = Depends(get_settings)
 ) -> dict[str, Any]:
-    """Merge a config block into a file and save through the full gate — param-level merge for
+    """Merge a config block into a file and save through the full gate - param-level merge for
     existing sections (a `[tmcXXXX]` tune never wipes `uart_pin`), whole-section insert before the
     SAVE_CONFIG tail otherwise. The tuning widgets' "Apply to printer.cfg" lands here.
 
-    Refused while busy (409) and on a stale file (412). Does not restart — that stays a separate,
+    Refused while busy (409) and on a stale file (412). Does not restart - that stays a separate,
     separately-confirmed action.
     """
     try:
@@ -131,7 +131,7 @@ async def config_apply_section(
 
 @router.post("/adopt")
 async def config_adopt(body: AdoptParamRequest) -> dict[str, Any]:
-    """Set one param to the live value via the round-trip engine and return the new text — a pure,
+    """Set one param to the live value via the round-trip engine and return the new text - a pure,
     surgical transform (no write). The result lands in the editor for review + the gated save."""
     return {"content": config_service.adopt_param(body.content, body.section, body.key, body.value)}
 
@@ -200,7 +200,7 @@ async def config_sanity(settings: Settings = Depends(get_settings)) -> dict[str,
 @router.get("/pin-doctor")
 async def config_pin_doctor(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """A whole-config pin-conflict scan (every MCU): double-assigned pins + board electronics
-    caveats on a used pin — caught before a FIRMWARE_RESTART. ``reachable=false`` when down."""
+    caveats on a used pin - caught before a FIRMWARE_RESTART. ``reachable=false`` when down."""
     try:
         return await board_topology.gather_pin_doctor(_client(settings), settings.data_dir)
     except httpx.HTTPError:
@@ -212,9 +212,9 @@ async def config_save(
     body: ConfigSaveRequest, settings: Settings = Depends(get_settings)
 ) -> dict[str, Any]:
     """Back up then overwrite one config file. Refused while the printer is busy (409) and when
-    the file changed on disk since it was loaded (412 — reload instead of clobbering).
+    the file changed on disk since it was loaded (412 - reload instead of clobbering).
 
-    Does not restart — call ``/config/restart`` to apply.
+    Does not restart - call ``/config/restart`` to apply.
     """
     try:
         return await config_service.save_config_file(

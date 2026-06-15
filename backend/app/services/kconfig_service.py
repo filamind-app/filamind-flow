@@ -1,10 +1,10 @@
-"""Kconfig config editor — reads Klipper's firmware menu and writes ``.config`` files.
+"""Kconfig config editor - reads Klipper's firmware menu and writes ``.config`` files.
 
 Klipper drives ``make menuconfig`` with the same ``kconfiglib`` that the kernel
 uses, shipped under ``<klipper>/lib/kconfiglib``. We load that bundled copy
 (falling back to a system install), parse ``src/Kconfig`` into a JSON-friendly
 menu tree the browser can render as a form, apply the user's choices, and write
-the resulting ``.config`` — exactly what a board's firmware build consumes.
+the resulting ``.config`` - exactly what a board's firmware build consumes.
 
 All Kconfig work is funnelled through one lock and an ``asyncio.to_thread`` hop:
 ``kconfiglib`` relies on process-wide CWD + ``srctree`` env, which is not safe to
@@ -28,7 +28,7 @@ _kconfiglib: Any = None
 _KCONFIG_LOCK = threading.Lock()
 
 #: Gate symbols Klipper hides the optimization / low-level menus behind. We force
-#: them on after loading so those menus are always visible in the editor — the
+#: them on after loading so those menus are always visible in the editor - the
 #: revealed options keep their defaults, so a build is unchanged unless the user
 #: edits one. Without this, whole sub-menus silently never appear.
 _FORCE_VISIBLE = ("HAVE_LIMITED_CODE_SIZE", "LOW_LEVEL_OPTIONS")

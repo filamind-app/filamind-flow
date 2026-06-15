@@ -23,7 +23,7 @@ export interface DriverInfo {
 /** A stepper motor's datasheet parameters, from the motor catalog. */
 export interface MotorSpec {
   manufacturer: string
-  /** Stable unique key (catalog motor_id) — the picker value + mapping/recommend key. */
+  /** Stable unique key (catalog motor_id) - the picker value + mapping/recommend key. */
   model: string
   /** Human-readable model name for display (not unique across manufacturers). */
   name: string
@@ -154,7 +154,7 @@ export interface MotorsSyncStatus {
   available: boolean
 }
 
-/** One editable register's policy (from the server — the client doesn't decide these). */
+/** One editable register's policy (from the server - the client doesn't decide these). */
 export interface FieldPolicyEntry {
   risk: 'safe' | 'risky' | 'dangerous'
   control: 'number' | 'toggle' | 'select' | 'velocity'

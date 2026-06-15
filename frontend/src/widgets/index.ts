@@ -73,7 +73,7 @@ export function registerWidgets(): void {
     id: 'macro-designer',
     title: 'Macro Designer',
     icon: '🧩',
-    description: 'Simulate G-code offline — toolhead path, bounds, totals, and a macro library.',
+    description: 'Simulate G-code offline - toolhead path, bounds, totals, and a macro library.',
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./macro-designer/MacroDesignerWidget.vue')),
   })

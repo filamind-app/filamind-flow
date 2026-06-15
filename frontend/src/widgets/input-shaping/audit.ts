@@ -1,4 +1,4 @@
-/** The Input Shaping "audit" — one aggregated, per-property record of every result
+/** The Input Shaping "audit" - one aggregated, per-property record of every result
  *  (shaper analysis + the live tools: noise / belts / axes-map / sustain / vibrations),
  *  merged with the on-host archive. Browser-local (localStorage), additive: it never
  *  clears the legacy history, it folds it in once. Pure + testable; the component
@@ -81,7 +81,7 @@ function save(records: AuditRecord[]): void {
   try {
     localStorage.setItem(KEY, JSON.stringify(records))
   } catch {
-    /* storage unavailable (private mode / quota) — keep the in-memory list */
+    /* storage unavailable (private mode / quota) - keep the in-memory list */
   }
 }
 

@@ -1,11 +1,11 @@
-"""Apply driver tuning — the Motor Drivers widget's first *write* path.
+"""Apply driver tuning - the Motor Drivers widget's first *write* path.
 
 Three mechanisms, in increasing risk:
-  1. ``config_block`` — render a printer.cfg override block to copy (no write at all).
-  2. ``apply_live`` — push values now via ``SET_TMC_CURRENT`` / ``SET_TMC_FIELD``;
+  1. ``config_block`` - render a printer.cfg override block to copy (no write at all).
+  2. ``apply_live`` - push values now via ``SET_TMC_CURRENT`` / ``SET_TMC_FIELD``;
      gated: refuses while the printer is *printing*. ``revert`` (``INIT_TMC``) restores
      the configured values.
-  3. ``run_autotune`` — drive the ``klipper_tmc_autotune`` extra's ``AUTOTUNE_TMC`` if it
+  3. ``run_autotune`` - drive the ``klipper_tmc_autotune`` extra's ``AUTOTUNE_TMC`` if it
      is configured (``[autotune_tmc <stepper>]`` present).
 
 Live writes are reversible (INIT_TMC re-reads the config, a restart fully restores), but
@@ -13,8 +13,8 @@ they touch the driver, so the UI also requires an explicit confirm. The actual n
 come from the recommender (read-only physics); this module only sends g-code.
 
 Each result carries an i18n ``code`` (+ ``params``) for the UI to translate, alongside the
-English ``message`` (kept as a fallback). Passthrough errors — Moonraker failures, field_policy /
-ValueError validation text — surface their raw English text with no ``code`` (they are technical /
+English ``message`` (kept as a fallback). Passthrough errors - Moonraker failures, field_policy /
+ValueError validation text - surface their raw English text with no ``code`` (they are technical /
 upstream strings, not localizable copy).
 """
 
@@ -31,7 +31,7 @@ from app.services.moonraker_client import MoonrakerClient
 #: Recommendation keys that map directly to ``SET_TMC_FIELD FIELD=`` names.
 _FIELDS = ("pwm_grad", "pwm_ofs", "hstrt", "hend")
 
-#: Field/current values must be plain numbers — never interpolate arbitrary text into g-code.
+#: Field/current values must be plain numbers - never interpolate arbitrary text into g-code.
 _NUM = re.compile(r"^-?\d+(\.\d+)?$")
 #: A stepper section name is a safe identifier (e.g. "stepper_x", "extruder1").
 _NAME = re.compile(r"^[A-Za-z][\w-]*$")
@@ -68,7 +68,7 @@ def _safe_num(value: Any) -> str:
 def config_block(
     stepper: str, model: str, run_current: float | None, fields: dict[str, Any]
 ) -> str:
-    """A printer.cfg override block the user can paste — pure, no side effects."""
+    """A printer.cfg override block the user can paste - pure, no side effects."""
     lines = [f"[{model} {stepper}]"]
     if run_current is not None:
         lines.append(f"run_current: {run_current}")
@@ -79,7 +79,7 @@ def config_block(
 
 
 async def _is_busy(client: MoonrakerClient) -> bool:
-    """True while the printer is printing, paused, or in an error state — block all register
+    """True while the printer is printing, paused, or in an error state - block all register
     writes and motion then. Delegates to the shared :mod:`printer_guard` busy definition."""
     return await printer_guard.is_busy(client)
 
@@ -111,7 +111,7 @@ async def _resolve_current_cap(
 
     The driver model (and a TMC2240's ``rref``) come from the stepper's live ``[tmcXXXX]``
     section; the motor rating from the Motor Drivers mapping + catalog specs. Returns ``None``
-    when nothing is known — no fabricated cap (and a failed lookup never blocks the apply;
+    when nothing is known - no fabricated cap (and a failed lookup never blocks the apply;
     the write itself would surface a real Moonraker error anyway).
     """
     try:
@@ -151,7 +151,7 @@ async def apply_live(
     timeout: float = 20.0,
 ) -> dict[str, Any]:
     """Pushes the values to the driver now. Refuses while printing, and refuses a ``run_current``
-    above the binding ceiling (driver full-scale cap / mapped motor rating) — the cap the UI
+    above the binding ceiling (driver full-scale cap / mapped motor rating) - the cap the UI
     displays is enforced here, on the write path itself. Reversible via ``revert``."""
     try:
         commands = _commands(stepper, run_current, hold_current, fields)
@@ -232,7 +232,7 @@ async def _restore_current_cmd(client: MoonrakerClient, stepper: str) -> str | N
 
 async def revert(moonraker_url: str, stepper: str, *, timeout: float = 20.0) -> dict[str, Any]:
     """Undo a live apply: ``INIT_TMC`` re-applies the configured register fields, and we
-    restore the configured run/hold current too (INIT_TMC alone doesn't — #93)."""
+    restore the configured run/hold current too (INIT_TMC alone doesn't - #93)."""
     try:
         stepper = _safe_name(stepper)
     except ValueError as exc:
@@ -289,7 +289,7 @@ async def run_autotune(
             False,
             [],
             "klipper_tmc_autotune is not installed for this stepper "
-            "— use the recommendation or copy-to-config instead.",
+            "- use the recommendation or copy-to-config instead.",
             "autotuneNotInstalled",
         )
     client = MoonrakerClient(moonraker_url, timeout=timeout)
@@ -395,7 +395,7 @@ async def set_field(
         True,
         [cmd],
         f"Set {field} = {_safe_num(validated)} on {stepper} "
-        "(live only — INIT_TMC or a restart restores the configured value).",
+        "(live only - INIT_TMC or a restart restores the configured value).",
         "fieldSet",
         field=field,
         num=_safe_num(validated),
@@ -403,7 +403,7 @@ async def set_field(
     )
 
 
-#: CoolStep is a coupled loop — rather than five scattered 0-15 boxes, expose one toggle that
+#: CoolStep is a coupled loop - rather than five scattered 0-15 boxes, expose one toggle that
 #: applies the klipper_tmc_autotune-vetted set (or semin=0 to disable, which turns CoolStep off).
 _COOLSTEP_ON = {"semin": 2, "semax": 4, "seup": 3, "sedn": 2, "seimin": 1}
 _COOLSTEP_OFF = {"semin": 0}
@@ -446,14 +446,14 @@ async def set_coolstep(
         True,
         cmds,
         f"CoolStep {state} on {stepper} "
-        "(live only — INIT_TMC or a restart restores the configured values).",
+        "(live only - INIT_TMC or a restart restores the configured values).",
         "coolstepEnabled" if enable else "coolstepDisabled",
         stepper=stepper,
     )
 
 
 async def home_axis(moonraker_url: str, axis: str, *, timeout: float = 120.0) -> dict[str, Any]:
-    """Home a single axis (``G28 <axis>``) — a sensorless-homing test. Gated; refused
+    """Home a single axis (``G28 <axis>``) - a sensorless-homing test. Gated; refused
     while printing. The caller (UI) warns about crash risk and requires a confirm."""
     ax = str(axis).strip().upper()
     if ax not in _AXES:
@@ -493,14 +493,14 @@ async def run_motors_sync(
     """Drive the motors_sync add-on to align multi-motor axes (dual/quad-Z, dual-X).
 
     ``SYNC_MOTORS`` aligns now; ``SYNC_MOTORS_CALIBRATE`` runs the longer calibration. Gated:
-    requires the add-on installed and refused while printing. Accelerometer-based — it moves
+    requires the add-on installed and refused while printing. Accelerometer-based - it moves
     the toolhead for a while, so the UI warns and requires a confirm.
     """
     if not await motors_sync_available(moonraker_url):
         return _res(
             False,
             [],
-            "The motors_sync add-on isn't installed — it aligns the microstep phase "
+            "The motors_sync add-on isn't installed - it aligns the microstep phase "
             "of multiple motors on one axis (dual/quad-Z, dual-X) using an accelerometer.",
             "motorsyncNotInstalled",
         )

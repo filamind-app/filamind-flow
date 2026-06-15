@@ -53,7 +53,7 @@ async def test_status_absent_when_no_conf_and_not_listed() -> None:
 
 
 async def test_status_conf_without_allowed_service_is_still_present_not_restartable() -> None:
-    # Older Moonraker may not report KlipperScreen in available_services — the editor still works.
+    # Older Moonraker may not report KlipperScreen in available_services - the editor still works.
     client = _Client(
         available=[], files=[{"path": "KlipperScreen.conf"}], conf="theme: material-dark\n"
     )

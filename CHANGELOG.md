@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.286.0] - 2026-06-15
+
+### Changed
+
+- **Smaller frontend bundle.** Dropped the i18n message compiler from the build (`runtimeOnly`) and
+  split Vue / Pinia / vue-i18n into a cached vendor chunk. The main app chunk drops from ~387 KB to
+  ~254 KB, and framework code no longer re-downloads on every app update. All seven locales verified
+  intact.
+- **Docs and style pass.** Trimmed the README (fewer badges, plainer wording, and an explicit note
+  that the project is AI-assisted and tested on real hardware), and switched comments and docs to
+  plain ASCII punctuation. No behavior change.
+
 ## [0.285.0] - 2026-06-15
 
 ### Changed
@@ -19,8 +31,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Documentation improvement.** The README is now a slim landing page — Install and Uninstall up
-  top, and a one-line-per-widget table — instead of a wall of detail. Every widget has its own page
+- **Documentation improvement.** The README is now a slim landing page - Install and Uninstall up
+  top, and a one-line-per-widget table - instead of a wall of detail. Every widget has its own page
   under `docs/widgets/`, and the README, those widget pages, the architecture, contributing, and
   backend docs were reworked for clarity and readability. No behavior change.
 
@@ -28,7 +40,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Installer: a one-command uninstall.** `bash scripts/install.sh uninstall` reverses the install —
+- **Installer: a one-command uninstall.** `bash scripts/install.sh uninstall` reverses the install -
   it removes the service, the nginx site (and the `/filamind/` subpath block), the Mainsail sidebar
   entry, the Moonraker `update_manager` registration, and the sudo / udev rules, leaving the cloned
   app files in place to delete at your discretion. Documented in the README.
@@ -46,7 +58,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Installer: the web UI no longer 403s on hosts with a restrictive home directory.** On distros
   whose home directory defaults to `0750`, nginx (running as `www-data`) couldn't traverse into it
-  to read the pre-built bundle — the API kept working but the UI returned 403. The installer now
+  to read the pre-built bundle - the API kept working but the UI returned 403. The installer now
   grants traverse-only access along the path to `frontend/dist`, and warns loudly if the bundle is
   still unreadable instead of leaving a silent 403.
 - **Installer: the subpath integration on the host's primary web server now runs with the right
@@ -67,7 +79,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   until a genuine grind much higher up. The previous absolute CV ceiling (16%) landed *inside* that
   noise band, so the ramp stopped a few steps in and reported an artificially low max flow. The
   TMC5160 profile now lifts the absolute ceilings clear of the measured noise floor and leans on the
-  relative jump detectors instead — a slip is judged by a sharp rise *above* the established floor,
+  relative jump detectors instead - a slip is judged by a sharp rise *above* the established floor,
   not by an absolute value that the floor itself reaches. Concretely: the CV ceiling moves to 30%,
   the relative CV-jump path becomes the primary grind trigger (fires at ≥2× the floor baseline and
   ≥25% absolute), and the median-shift band is widened so ordinary load wobble is not read as a
@@ -81,7 +93,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   TMC5160) the StallGuard load CV spikes transiently as the ramp opens; the detector read that as a
   slip at the very first flow step and reported no result. The StallGuard path now excuses the
   unsettled opening step (it forms the baseline instead of tripping), and the TMC5160 gains its own
-  detection profile (higher CV / IQR ceilings) — so the ramp runs and the genuine grind is what
+  detection profile (higher CV / IQR ceilings) - so the ramp runs and the genuine grind is what
   stops it. Validated on a Voron 5160.
 
 ## [0.279.0] - 2026-06-14
@@ -100,8 +112,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **Maintainer tooling for catalog submissions.** `scripts/apply_submission.py` validates a
-  community part submission (the JSON produced by "Suggest a part") and merges it into the catalog —
-  into the right entity array or category bucket, deduped by id — then rebuilds the database. A
+  community part submission (the JSON produced by "Suggest a part") and merges it into the catalog -
+  into the right entity array or category bucket, deduped by id - then rebuilds the database. A
   GitHub **Catalog submission** issue-form template and a CONTRIBUTING section document the
   submit → review → merge flow.
 
@@ -109,13 +121,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Suggest a part — community catalog contributions.** The Hardware Browser gains a **➕ Suggest a
+- **Suggest a part - community catalog contributions.** The Hardware Browser gains a **➕ Suggest a
   part** button that opens a category-aware form (stepper motor, driver, hotend, host/SBC,
-  manufacturer, board, or a generic catalog item), each with the fields that matter for that type —
+  manufacturer, board, or a generic catalog item), each with the fields that matter for that type -
   including a motor's autotune electricals, a driver's capability flags, a hotend's max-flow preset,
   and a board's ports with their signal→pin maps. The form derives the catalog id, validates the
   required fields, shows a live JSON preview, and on submit opens a **pre-filled GitHub issue** for
-  review and merge into the database. No token is used and nothing is posted automatically — it only
+  review and merge into the database. No token is used and nothing is posted automatically - it only
   opens the issue form for you to review and submit. Localized in all 7 languages.
 
 ## [0.276.0] - 2026-06-14
@@ -138,13 +150,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **Max-flow summary on the dashboard.** A new home tile shows the last max-flow test's headline
-  (mm³/s, the expected value, hotend, and date) with one tap to the full tool — or a prompt to run
+  (mm³/s, the expected value, hotend, and date) with one tap to the full tool - or a prompt to run
   a test when none has been recorded yet.
 
 ### Fixed
 
 - Quieter bug-report screenshots: skip inlining cross-origin web fonts (which always failed and
-  logged a burst of console errors) — the captured image is unchanged and capture is faster.
+  logged a burst of console errors) - the captured image is unchanged and capture is faster.
 
 ## [0.274.0] - 2026-06-14
 
@@ -152,8 +164,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **In-app feedback & issue reporting.** A new **Feedback** menu in the header lets you **report a
   bug** or **request a feature** without leaving the app. The dialog composes a pre-filled GitHub
-  issue — including a short description, the app version, the active view, language, theme, screen
-  size, browser and time — and opens it in a new tab for you to review and submit. Nothing is sent
+  issue - including a short description, the app version, the active view, language, theme, screen
+  size, browser and time - and opens it in a new tab for you to review and submit. Nothing is sent
   automatically.
 - **One-click error reporting.** Error messages across the app (and failed operation logs) now
   carry a small **⚐ Report** button that opens a bug report pre-filled with the exact error text.
@@ -170,8 +182,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Host summary on the dashboard.** Mission Control now shows a compact host card — a live clock
-  in the host's timezone, clock-sync (NTP) state, CPU temperature, uptime, and root-disk usage — so
+- **Host summary on the dashboard.** Mission Control now shows a compact host card - a live clock
+  in the host's timezone, clock-sync (NTP) state, CPU temperature, uptime, and root-disk usage - so
   the host's status is visible at a glance. The card appears only when host data is available and
   degrades silently otherwise.
 - **A mission banner on the home page.** A dismissible, gently pulsing banner introduces the
@@ -189,7 +201,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the older inline `<details>` / scattered "what's this?" notes; they're migrated to the shared
   **`❓ Help` drawer** (how-to-read steps + every topic with its illustration + the glossary) that
   the other widgets use, so the help experience is identical everywhere.
-- **Machine Doctor gained its guide.** It was the only widget without one — it now has the same
+- **Machine Doctor gained its guide.** It was the only widget without one - it now has the same
   `❓ Help` drawer (what the scan covers, the A–F grade, jump-to-fix links + a glossary), translated
   across all seven languages.
 - **Sidebar labels are now translated for every widget.** Host Control and KlipperScreen Studio
@@ -199,7 +211,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **CI now enforces the widget conventions** (`widgets.spec.ts`): a registered widget that lacks a
-  translated sidebar entry or doesn't render the shared `<HelpDrawer>` fails the build — the rule
+  translated sidebar entry or doesn't render the shared `<HelpDrawer>` fails the build - the rule
   can't be skipped. Documented in CONTRIBUTING.md.
 
 ## [0.271.0] - 2026-06-14
@@ -207,31 +219,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - **One installer instead of several.** `scripts/install.sh` is now the single script users run, with
-  subcommands: `sudoers` (grant the passwordless-sudo rights — replaces `deploy/setup-sudoers.sh`),
-  `kiosk` (touchscreen takeover — replaces `deploy/install-kiosk.sh`), and `update` (backend venv
+  subcommands: `sudoers` (grant the passwordless-sudo rights - replaces `deploy/setup-sudoers.sh`),
+  `kiosk` (touchscreen takeover - replaces `deploy/install-kiosk.sh`), and `update` (backend venv
   refresh). The one-line full install now **also grants the sudo rights automatically**, so firmware
   flashing and the Host Control writes (timezone, locale, hostname, network, cleanup) work out of
-  the box — no separate manual step. `deploy/install-host.sh` remains only as Moonraker's internal
+  the box - no separate manual step. `deploy/install-host.sh` remains only as Moonraker's internal
   auto-update hook (a thin shim to `install.sh update`) so existing update-manager setups keep
   working. `deploy/setup-sudoers.sh` and `deploy/install-kiosk.sh` are removed; all in-app hints and
   docs now point at the `install.sh` subcommands.
 
 ### Removed
 
-- **Host Control · System — the Wi-Fi *connect* control.** Joining a new SSID over the very link the
+- **Host Control · System - the Wi-Fi *connect* control.** Joining a new SSID over the very link the
   panel is served on was awkward and rarely the right tool. The **Network (IPv4) DHCP ↔ Static**
-  control stays — that's the useful part. (No backend Wi-Fi endpoint anymore.)
+  control stays - that's the useful part. (No backend Wi-Fi endpoint anymore.)
 
 ## [0.270.0] - 2026-06-14
 
 ### Added
 
-- **Host Control · System — Network (IPv4) control.** The System tab now shows the panel host's
+- **Host Control · System - Network (IPv4) control.** The System tab now shows the panel host's
   active connection (device, method, IP, gateway, DNS) and lets you switch it between **DHCP (auto)**
   and a **static IPv4** (address + subnet CIDR + gateway + DNS), via NetworkManager. The connection
-  to change is resolved server-side (the one serving the panel — never taken from the client), the
+  to change is resolved server-side (the one serving the panel - never taken from the client), the
   static config is validated before anything is applied (valid IPv4/CIDR, gateway in the same subnet,
-  no network/broadcast addresses — the classic lock-out typos are rejected), and the change is
+  no network/broadcast addresses - the classic lock-out typos are rejected), and the change is
   refused while a print is in progress. Because changing the address drops this panel's own
   connection, it needs a typed confirmation and warns you to reconnect at the new IP. IPv4 only.
   Endpoint: `POST /api/host/system/network`. Fully translated across all seven languages.
@@ -240,7 +252,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **System/Services/Cleanup actions no longer show a failure as success.** A privileged action that
   failed only because passwordless sudo isn't set up returned `ok:false` with HTTP 200, and the UI
-  rendered it as a green "✓ done" — so a change that didn't apply (e.g. setting the timezone) looked
+  rendered it as a green "✓ done" - so a change that didn't apply (e.g. setting the timezone) looked
   like it worked. Every action path now shows `ok:false` as a clear error, and when the cause is the
   missing sudo grant it shows an actionable hint: run `sudo bash deploy/setup-sudoers.sh` on the
   printer. Detection is locale-robust (privileged commands run under `LC_ALL=C`, and the matcher
@@ -252,7 +264,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Host Control · System settings (Phase 4) — completes the widget.** A new System tab lets you
+- **Host Control · System settings (Phase 4) - completes the widget.** A new System tab lets you
   change the host's **timezone** and **clock** (with an automatic-time / NTP toggle; manual time
   is allowed only when NTP is off), **language** and **console keymap**, **hostname**, and **Wi-Fi**
   (via NetworkManager, when present), and **reboot** or **shut down** the host. Each setter is
@@ -272,11 +284,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Host Control · Disk cleanup (Phase 3) — reclaim space safely.** A new Cleanup tab dry-run scans
+- **Host Control · Disk cleanup (Phase 3) - reclaim space safely.** A new Cleanup tab dry-run scans
   each target to show how much it would free, you tick what to remove, and a single confirmation
   runs the delete. Targets: the apt download cache (`*.deb`), the systemd journal (vacuumed to the
   most recent 50 MB, not erased), `~/.cache`, your own `/tmp` files older than a day, and rotated
-  (non-live) Klipper/Moonraker logs. Only regenerable data is offered — G-code, timelapses and
+  (non-live) Klipper/Moonraker logs. Only regenerable data is offered - G-code, timelapses and
   configs are never touched, the live log is always kept, and `/tmp` cleanup only removes files you
   own. Unavailable targets (e.g. no apt on a non-Debian host) are shown as n/a. Endpoints:
   `GET /api/host/cleanup` (scan) and `POST /api/host/cleanup/run`. Fully translated across all seven
@@ -286,11 +298,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Host Control · Services (Phase 2) — a systemd service manager.** A new Services tab lists every
+- **Host Control · Services (Phase 2) - a systemd service manager.** A new Services tab lists every
   `.service` unit on the host with its live state (active / inactive / failed) and boot setting
   (enabled / disabled / static / masked), searchable and filterable. Select a unit to start, stop,
-  restart, enable, disable, mask or unmask it, read its recent journal, and — for unit files you
-  installed yourself — delete it. Safety is enforced in the backend: destructive actions (stop /
+  restart, enable, disable, mask or unmask it, read its recent journal, and - for unit files you
+  installed yourself - delete it. Safety is enforced in the backend: destructive actions (stop /
   restart / disable / mask / delete) are refused outright on a protected set (SSH, dbus, journald,
   logind, udevd, polkit and FilaMind's own services) so you can't lock yourself out or kill the
   panel; critical printer/network/systemd units are flagged with an extra warning; deleting a unit
@@ -305,7 +317,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **New "Host Control" widget — manage the printer's Linux host.** Phase 1 adds a read-only health
+- **New "Host Control" widget - manage the printer's Linux host.** Phase 1 adds a read-only health
   and OS-state monitor that reads the host machine directly (no terminal needed): CPU temperature
   and load, memory and swap with usage bars, disk usage per filesystem, network interface / IP /
   Wi-Fi signal, timezone and clock-sync (NTP) status, language and keymap, and a live top-processes
@@ -331,7 +343,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **The Linux host MCU now shows the "update available" badge when it's behind the host.** The
   out-of-date check compared the host's Klipper version against each board's *live MCU-reported*
-  version only — but the Linux-process host MCU doesn't report a live version, so the check saw an
+  version only - but the Linux-process host MCU doesn't report a live version, so the check saw an
   empty value and never flagged it, even though its row already displayed the recorded flashed
   version (e.g. `v0.13.0-660` next to a `v0.13.0-689` host). The check now uses the same version
   source as the displayed one (live report, falling back to the recorded flashed version), so the
@@ -341,11 +353,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Firmware flash now targets the Katapult bootloader path — fixes a board stuck in the
+- **Firmware flash now targets the Katapult bootloader path - fixes a board stuck in the
   bootloader.** A USB STM32 enumerates under a different `/dev/serial/by-id` name in each mode
   (`usb-Klipper_<id>` while running firmware, `usb-katapult_<id>` while in the Katapult bootloader).
   The flash sequence always pointed the flash tool at the stored *running-firmware* path, which
-  vanishes once the board reboots into the bootloader — so the tool flashed a path that no longer
+  vanishes once the board reboots into the bootloader - so the tool flashed a path that no longer
   existed and exited non-zero, and a board left in the bootloader by an interrupted flash could
   **never be re-flashed** (every retry failed the same way, and Klipper reported `mcu: Unable to
   connect`). The flash now detects a board already in the bootloader (and the bootloader path that
@@ -356,11 +368,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Motor specs filled in for 26 more motors (Motor Drivers recommender).** Motors missing the
   electrical data the run-current recommender needs (phase resistance, inductance, holding torque,
   rated current, steps/rev) showed up in the picker with **Recommend disabled**. 26 of them are now
-  complete — 10 promoted from data already in the catalog, and 16 researched from manufacturer
+  complete - 10 promoted from data already in the catalog, and 16 researched from manufacturer
   datasheets (specific Oriental Motor PKP, Lin Engineering 4118/5718/8718, Nanotec, Sumtor, Wantai,
-  Bondtech, ACT, Bambu parts). The remaining gaps are motors with **no published winding data** —
+  Bondtech, ACT, Bambu parts). The remaining gaps are motors with **no published winding data** -
   series/family catalog rows that conflate several distinct part numbers, 3/5-phase motors, and
-  generic unbranded clones — which are deliberately left blank rather than filled with guessed
+  generic unbranded clones - which are deliberately left blank rather than filled with guessed
   values (the recommender stays disabled for those, as before).
 
 ### Fixed
@@ -387,7 +399,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio — illustrated guide.** The widget now carries the same inline help layer as
+- **KlipperScreen Studio - illustrated guide.** The widget now carries the same inline help layer as
   the other widgets: a collapsible **Glossary** (KlipperScreen, theme, menu `__main`/`__print`,
   panel, the `#~#` auto-block, kiosk) and a per-tab **"ℹ what's this?"** note on every view
   (Config, Settings, Menus, Themes, Kiosk), each with a small hand-drawn illustration explaining
@@ -396,13 +408,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - **Translation corrections across 5 locales (i18n).** A per-locale audit caught 23 value-level
-  wording problems and they're fixed: the Max-Flow run-phase labels rendered the wrong *action* —
-  "homing" came out as "place/rank" (ar) and "align" (de), and "ramp" as "branch" (es) — now use the
+  wording problems and they're fixed: the Max-Flow run-phase labels rendered the wrong *action* -
+  "homing" came out as "place/rank" (ar) and "align" (de), and "ramp" as "branch" (es) - now use the
   correct Klipper homing/flow-ramp terms; German register and terminology cleanups ("Sie"→"du" in a
   few leaked strings, motor "rating" → "Nennstrom" not "Nennung"); a Russian grammatical-gender fix
   on "sensorless homing" and an untranslated "placeholder"; and a handful of short English labels
   left untranslated in Chinese/Spanish (motor status `ok`/`on`/`off`/`interp`, "run"/"use"). French
-  was already clean. No keys changed — values only.
+  was already clean. No keys changed - values only.
 
 ### Changed
 
@@ -410,7 +422,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (boards / drivers / motors / hosts / catalog / manufacturers) is served from
   `app/data/reference/hardware.sqlite` instead of a raw JSON file. `reference_data` reconstructs the
   exact same in-memory structure at startup, so **every `/api/hardware/*` and `/api/reference/*`
-  response, the search haystacks, the link graph, the facets and the ETag are unchanged** — purely a
+  response, the search haystacks, the link graph, the facets and the ETag are unchanged** - purely a
   storage/packaging change. The editable source is compiled by a new maintainer script,
   `scripts/build_hardware_db.py`, and the human-readable JSON is no longer part of the repository.
 
@@ -418,8 +430,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio — Settings form.** A new **Settings** tab turns the most-used
-  `KlipperScreen.conf` `[main]` options into a friendly form — theme (from the installed themes),
+- **KlipperScreen Studio - Settings form.** A new **Settings** tab turns the most-used
+  `KlipperScreen.conf` `[main]` options into a friendly form - theme (from the installed themes),
   language, screen-sleep timeout (shown as 30 s / 10 min / 1 h), font size, and toggles for
   24-hour clock, DPMS blanking, mouse cursor, emergency-stop confirm, heater-power %, and
   auto-closing pop-ups. Values are pre-filled from the live config, **only the options you change
@@ -431,10 +443,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio — Kiosk panel.** The widget gains a **Kiosk** tab that drives the reversible
+- **KlipperScreen Studio - Kiosk panel.** The widget gains a **Kiosk** tab that drives the reversible
   touchscreen takeover from v0.254.0: it shows which service currently owns the screen
   (KlipperScreen / FilaMind kiosk / neither), a one-time setup hint with the exact install command
-  when the kiosk isn't provisioned yet, and — once installed — a **Switch to FilaMind ⟷ Restore
+  when the kiosk isn't provisioned yet, and - once installed - a **Switch to FilaMind ⟷ Restore
   KlipperScreen** toggle behind a confirm, with a "make it the default at boot" option (otherwise the
   swap is temporary) and a plain-language safety note including the SSH recovery command. Fully
   translated across the seven languages.
@@ -443,11 +455,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **FilaMind Kiosk — reversible touchscreen takeover (backend + installer).** For total control of
+- **FilaMind Kiosk - reversible touchscreen takeover (backend + installer).** For total control of
   the printer's physical screen (beyond what KlipperScreen's config allows), the screen can now run
   **FilaMind Flow itself** as a fullscreen browser. A one-time `deploy/install-kiosk.sh` (run on the
   host) installs a Wayland kiosk compositor + Chromium and writes a `filamind-kiosk` systemd service
-  that **conflicts with KlipperScreen** — so starting one stops the other. New endpoints report the
+  that **conflicts with KlipperScreen** - so starting one stops the other. New endpoints report the
   current screen mode and switch between the two: the swap is **temporary by default** (a reboot
   restores KlipperScreen) with an explicit option to make either the boot default, and if the kiosk
   fails to start, KlipperScreen is brought back so the screen never stays dark. The in-widget Kiosk
@@ -457,19 +469,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio — visual menu editor.** The widget gains a **Menus** tab: a live tree of
+- **KlipperScreen Studio - visual menu editor.** The widget gains a **Menus** tab: a live tree of
   the touchscreen's button grids (`__main` home, `__print`, `__splashscreen`) where you add, rename,
-  reorder (up/down), nest, and delete buttons, and set what each one does — **open a sub-menu**,
-  **open a screen** (pick from the built-in panels), or **run G-code** — plus an optional
+  reorder (up/down), nest, and delete buttons, and set what each one does - **open a sub-menu**,
+  **open a screen** (pick from the built-in panels), or **run G-code** - plus an optional
   visibility condition. Save writes the whole menu set back through the gated path and prompts a
   restart to apply. Fully translated across the seven languages.
 
 ### Added
 
-- **KlipperScreen Studio — menu tree (backend).** Endpoints to read the touchscreen's full menu
+- **KlipperScreen Studio - menu tree (backend).** Endpoints to read the touchscreen's full menu
   structure (the `[menu ...]` trees that _are_ the home / print / splash button grids) as a flat
-  list — each item with its path, parent, and properties (name, icon, style, the panel it opens or
-  the gcode/Moonraker action it runs, visibility condition, confirm) — and to rewrite the whole
+  list - each item with its path, parent, and properties (name, icon, style, the panel it opens or
+  the gcode/Moonraker action it runs, visibility condition, confirm) - and to rewrite the whole
   menu set through the gated save (preserving non-menu sections + KlipperScreen's auto-generated
   block), plus the list of panels a button can target. Foundation for a graphical screen designer;
   the visual tree editor lands next.
@@ -478,8 +490,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio — graphical options (backend).** Endpoints to read the touchscreen's
-  `[main]` options as a key→value map and set several at once through the gated save — the
+- **KlipperScreen Studio - graphical options (backend).** Endpoints to read the touchscreen's
+  `[main]` options as a key→value map and set several at once through the gated save - the
   foundation for a form-based settings editor (toggles / dropdowns) instead of hand-editing the
   raw conf. Each option is added or replaced in place while KlipperScreen's auto-generated block is
   left untouched. The form UI lands next.
@@ -488,7 +500,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio — theme builder UI.** The widget gains a **Themes** tab: pick colors for
+- **KlipperScreen Studio - theme builder UI.** The widget gains a **Themes** tab: pick colors for
   each palette token, set the corner radius, and watch a **live preview** mock update instantly,
   then **Create & apply** to write the theme to the screen and restart it. Lists installed themes
   (apply any; delete the ones made here), all translated across the seven languages. (Generating a
@@ -499,7 +511,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio — theme builder (backend).** Endpoints to generate a KlipperScreen
+- **KlipperScreen Studio - theme builder (backend).** Endpoints to generate a KlipperScreen
   touchscreen theme from a color palette and manage it: preview/render the theme's `style.css` +
   `style.conf` from a palette of GTK `@define-color` tokens, write the theme folder to the host's
   `styles/` directory (with a generated-theme marker so stock themes are never overwritten or
@@ -511,7 +523,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio widget — edit your touchscreen's config from the panel.** A new sidebar
+- **KlipperScreen Studio widget - edit your touchscreen's config from the panel.** A new sidebar
   page that detects KlipperScreen, shows its current theme/language, and gives a safe editor for
   `KlipperScreen.conf`: every save is backed up first, refused while the printer is busy, guarded
   against overwriting a change made on the screen itself, and forced to UNIX (LF) line endings.
@@ -523,7 +535,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **KlipperScreen Studio — foundation (backend).** New endpoints to read and safely edit the
+- **KlipperScreen Studio - foundation (backend).** New endpoints to read and safely edit the
   touchscreen's `KlipperScreen.conf` and restart KlipperScreen to apply changes: a presence/status
   probe (is KlipperScreen installed + restartable, current theme/language), a config read, a gated
   save (timestamped backup + busy-refusal + stale-write guard, reusing the Config Editor's
@@ -535,13 +547,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **The home dashboard now shows your printer's health at a glance.** The Machine Doctor tile on
-  the main page is no longer just a button — it shows the live A–F grade, a one-line assessment,
+  the main page is no longer just a button - it shows the live A–F grade, a one-line assessment,
   the score with error/warning counts, and your last **Max-Flow** measurement, with the full scan
   one tap away. (Fetched lazily, so it never slows the rest of the page.)
 - **The Machine Doctor widget renders the full new report.** Beyond the grade, it now shows the
   weighted **pillar breakdown** (config / firmware / services / tuning / max-flow as labeled bars),
   a panel of **all running services with their state**, and an **at-a-glance stats** strip
-  (Max-Flow, per-axis input-shaping, firmware sync) — all translated across the seven languages.
+  (Max-Flow, per-axis input-shaping, firmware sync) - all translated across the seven languages.
 
 ### Changed
 
@@ -550,8 +562,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - **Machine Doctor health grade is now a weighted composite, not just config integrity.** The A–F
-  grade blends five pillars — config integrity (45%), firmware sync (15%), running services (15%),
-  input-shaping tuning (15%) and max-flow headroom (10%) — and renormalizes over whatever can
+  grade blends five pillars - config integrity (45%), firmware sync (15%), running services (15%),
+  input-shaping tuning (15%) and max-flow headroom (10%) - and renormalizes over whatever can
   actually be measured, so an unmeasured signal (no shaper runs yet, Moonraker down) never drags
   the grade down. The scan also now returns the per-pillar breakdown, a translatable assessment
   verdict, the list of running printer services with their state, and a cross-widget stats block.
@@ -569,7 +581,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Board Topology is now properly responsive — readable on phones, narrow, and portrait screens.**
+- **Board Topology is now properly responsive - readable on phones, narrow, and portrait screens.**
   The machine-map graph no longer shrinks to an illegible thumbnail on a small screen: on a wide
   column it fills the width as before, but on a narrow one it holds full, legible size and scrolls
   horizontally instead. The graph + inspector now stack into one column earlier (at the `md`
@@ -585,9 +597,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Light is now the default theme, and the brand accent is a warm mocha brown — no more yellow.**
+- **Light is now the default theme, and the brand accent is a warm mocha brown - no more yellow.**
   First load (no stored choice) opens in the daylight-brutalism Light theme. Its signature accent
-  — the sidebar rail, badges, highlights, and the browser favicon — changes from yellow to a deep
+  - the sidebar rail, badges, highlights, and the browser favicon - changes from yellow to a deep
   mocha brown (`#8C6A4A`). The accent flows from a single source-of-truth token, so the whole app
   (every theme utility and in-app illustration) recolors at once. The other six themes are
   unchanged and still selectable from the theme menu; your saved theme choice still wins.
@@ -600,7 +612,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **Max-Flow remembers your hotend.** The hotend you pick is now pinned across reloads and
-  navigations — reopen the widget and it's reselected, with its suggested temperature and target
+  navigations - reopen the widget and it's reselected, with its suggested temperature and target
   flow already filled in, so you don't re-choose it every time. Change it whenever you like (the new
   pick is remembered), or clear it to go back to manual values. The restore is sequenced so it never
   clears a previously measured result that's being restored alongside it.
@@ -610,7 +622,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - **Max-Flow accelerometer method: no more occasional early trip on the opening ramp.** On some
-  runs the detector stopped at the 4th step (flow 12.5) — the warm-up edge — because the extruder's
+  runs the detector stopped at the 4th step (flow 12.5) - the warm-up edge - because the extruder's
   opening vibration *ramp-up* looked like a jump to the CV ratio backup, giving a too-low number.
   The warm-up now clears the whole ramp-up (it doesn't judge until the vibration has settled,
   ~flow 17.5 at the default step), and detection rests solely on the robust absolute CV% ceiling
@@ -623,8 +635,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Max-Flow accelerometer method: tuned to the real grind signature (now produces a usable
   number).** A full live SV08 ramp showed grinding is an explosion of the within-step coefficient
-  of variation (CV%) — settled extrusion sat at 1–12%, then the gear skipping at ~32.5 mm³/s jumped
-  it to 26 → 66 → 71% — while the vibration *level* stayed flat. Detection now keys off an absolute
+  of variation (CV%) - settled extrusion sat at 1–12%, then the gear skipping at ~32.5 mm³/s jumped
+  it to 26 → 66 → 71% - while the vibration *level* stayed flat. Detection now keys off an absolute
   CV% ceiling (20%, with a CV ratio-jump backup) rather than the level, which on the SV08 pins the
   max sustained flow at ~30 mm³/s (the CHCB-SV08's real ceiling). Still experimental; the CV ceiling
   may need per-printer adjustment.
@@ -644,7 +656,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Max-Flow: accelerometer (vibration) slip detection — a fallback for when StallGuard can't
+- **Max-Flow: accelerometer (vibration) slip detection - a fallback for when StallGuard can't
   read.** On an extruder whose driver doesn't expose a live StallGuard load (e.g. some TMC2209
   toolheads), the slip point can now be read from the toolhead accelerometer instead: each flow
   step is captured with the ADXL345, reduced to a per-window vibration RMS, and the same jump
@@ -669,7 +681,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Max-Flow: optional auto-StealthChop for the test (TMC2209/2240).** A new option temporarily
   writes a `stealthchop_threshold` to the extruder's TMC section so the StallGuard preflight
-  passes, runs the test, then **comments it out** again afterward — your printer.cfg is restored
+  passes, runs the test, then **comments it out** again afterward - your printer.cfg is restored
   (a backup is taken first, and a firmware restart happens before and after). This lets an SG4
   extruder sitting in SpreadCycle run the test without a manual config edit, and the change is
   reverted even if the run errors or is cancelled.
@@ -691,8 +703,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   extrusion as the flow ramps. The snapshot is proxied through the backend so it loads same-origin
   regardless of how the panel is served; nothing is shown when no camera is configured.
 - **Max-Flow: home + center the nozzle before the test.** Before heating, the printer now homes
-  (if needed) and centers the nozzle at a comfortable height, so it's clearly visible — in person
-  and on the camera — and the ooze falls clear of the bed.
+  (if needed) and centers the nozzle at a comfortable height, so it's clearly visible - in person
+  and on the camera - and the ooze falls clear of the bed.
 
 ### Fixed
 
@@ -706,7 +718,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - **Max-Flow: clearer run UI.** Phase-by-phase progress (homing → centering → heating → checking
-  the signal → ramping), a prominent "unreliable — no StallGuard signal" result state, and a note
+  the signal → ramping), a prominent "unreliable - no StallGuard signal" result state, and a note
   that the printer homes and centers the nozzle before heating.
 
 ## [0.238.0] - 2026-06-13
@@ -718,7 +730,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the SV08 stock ~25–27 mm³/s) showed the Trianglelab CHCB-SV08 is a high-flow-capable ceramic-core
   hot side, not a standard-flow V6. Its catalog max flow was raised from a too-low ~15 to a
   researched ~30 mm³/s (≈24 with the stock 0.4 brass nozzle, ~34–42 with a CHT/high-flow nozzle),
-  with a wider Max-Flow test preset (10→45) — so a measurement run brackets the real ceiling.
+  with a wider Max-Flow test preset (10→45) - so a measurement run brackets the real ceiling.
 
 
 ## [0.237.0] - 2026-06-13
@@ -726,9 +738,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **Hardware catalog: Trianglelab CHCB-SV08 hotend.** Added the CHCB-SV08 (a popular Sovol SV08
-  hot-side upgrade — 80W ceramic heater, E3D V6 brass nozzle, works with either an NTC B3950 or
+  hot-side upgrade - 80W ceramic heater, E3D V6 brass nozzle, works with either an NTC B3950 or
   an optional PT1000) to the Hotends catalog, so it shows up in the Hardware Browser and as a
-  selectable hotend in Max-Flow. The entry is **sensor-agnostic** — its config snippet documents
+  selectable hotend in Max-Flow. The entry is **sensor-agnostic** - its config snippet documents
   both thermistor options so any owner can use it regardless of which sensor they fit.
 
 ### Fixed
@@ -758,8 +770,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - **Documentation: keep deployment notes generic.** Reworded the subpath / remote-access notes
-  across the README, ROADMAP and CHANGELOG to describe only the generic capability — the panel
-  serves at its own port or proxied under a subpath on the host's existing web server — without
+  across the README, ROADMAP and CHANGELOG to describe only the generic capability - the panel
+  serves at its own port or proxied under a subpath on the host's existing web server - without
   any specifics of a private remote-access setup.
 
 
@@ -769,8 +781,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Documentation now reflects multi-printer validation.** The README, ROADMAP and backend
   README no longer describe FilaMind as running on a single reference machine. A new
-  *"Proven across real, different printers"* matrix contrasts the two validation machines — a
-  Sovol SV08 and a Voron-class CoreXY — across MCU family, TMC driver bus (UART vs SPI),
+  *"Proven across real, different printers"* matrix contrasts the two validation machines - a
+  Sovol SV08 and a Voron-class CoreXY - across MCU family, TMC driver bus (UART vs SPI),
   toolhead transport (USB vs CAN) and host SBC, and explains how each difference became a
   generic, printer-agnostic fix (shared-bus pin awareness, CAN UUID resolution, kinematics-aware
   tooling, honest flash outcomes with a CAN read-back salvage, host-relative subpath access). The
@@ -784,7 +796,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **A CAN flash that actually succeeded is no longer reported as failed.** On some USB-CAN
   adapters the flash tool's read-back *verify* phase dies under the sustained node-to-host
-  data flood — after the write already completed — so the tool exits with an error even
+  data flood - after the write already completed - so the tool exits with an error even
   though the board is running the new firmware. When the tool errors on a CAN flash,
   FilaMind now checks the real outcome through Klipper: it waits for the node to reconnect
   and compares its reported firmware version against the build. If they match, the flash is
@@ -797,12 +809,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **The "sudo not configured" install warnings were false alarms.** The readiness probe ran
   `sudo -n systemctl --version`, but the passwordless-sudo rule only grants the specific
-  commands flashing uses (`systemctl stop/start/restart klipper`, etc.) — not `--version` — so
+  commands flashing uses (`systemctl stop/start/restart klipper`, etc.) - not `--version` - so
   the check failed whenever sudo's credential cache was cold, even though flashing was actually
   authorized. It now asks `sudo -n -l systemctl stop klipper`, which reports whether the real
   command is permitted **without running it**. The "sudoers" check also passes whenever that
   capability is present, instead of requiring a specifically named `/etc/sudoers.d/filamind`
-  file — so rules provided by an existing setup are recognized.
+  file - so rules provided by an existing setup are recognized.
 
 
 ## [0.231.0] - 2026-06-13
@@ -810,7 +822,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - **The toolchain badges no longer make optional tools look broken.** `can-utils` is a host
-  diagnostic (`candump`/`cansend`) — CAN *flashing* doesn't use it (Katapult talks to the CAN
+  diagnostic (`candump`/`cansend`) - CAN *flashing* doesn't use it (Katapult talks to the CAN
   bus over SocketCAN directly), so its absence was showing an alarming red ✗ for no reason. It
   now shows a neutral ○ with an "(optional)" tag, and every tool badge gained a tooltip
   explaining what it's for and when it's actually needed (e.g. dfu-util only for DFU boards,
@@ -830,7 +842,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **A failed flash now reports as failed.** The flash sequence recorded success and showed
   "complete" even when the flash tool exited with an error. It now checks the tool's exit code,
   surfaces a failure (the progress bar turns red, details auto-open), and does not record a
-  bogus flashed-version — while still restarting Klipper either way.
+  bogus flashed-version - while still restarting Klipper either way.
 
 
 ## [0.229.0] - 2026-06-13
@@ -838,11 +850,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - **Flashing shows a progress bar, not a wall of commands.** The Firmware Manager replaces the
-  raw command-output window during a flash with a phase progress bar — *Preparing → Stopping
+  raw command-output window during a flash with a phase progress bar - *Preparing → Stopping
   Klipper → Entering bootloader → Writing firmware → Restarting → Complete* for a single board,
   and a *device N of M* bar for a batch. Only genuine failures are surfaced (in a red callout);
   the benign operational chatter that previously looked alarming (Klipper stop/start, "not
-  marked Katapult — skipping", subprocess output) is tucked into a collapsible **Show command
+  marked Katapult - skipping", subprocess output) is tucked into a collapsible **Show command
   output** section that opens automatically if a flash fails, so nothing is lost for diagnosis.
 
 
@@ -850,10 +862,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Reach the panel through your existing printer URL — on a subpath.** The installer now
+- **Reach the panel through your existing printer URL - on a subpath.** The installer now
   exposes FilaMind at `/filamind/` on whatever web server already answers on port 80
   (Mainsail / Fluidd), so the sidebar link is host-relative and opens on LAN, by IP, or under
-  that subpath — no extra port to forward and no `.local` mDNS. The built UI uses relative asset
+  that subpath - no extra port to forward and no `.local` mDNS. The built UI uses relative asset
   paths and derives its API/WebSocket base from wherever it is mounted, so the same bundle serves
   correctly at the panel's own port or under the subpath. Standalone `:8090` access is unchanged.
 
@@ -864,7 +876,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Shared driver buses no longer flagged as pin conflicts.** Boards that put several stepper
   drivers on one software-SPI bus (TMC5160/2130 stacks) or one single-wire UART line shared
-  the same `spi_software_*` / `uart_pin` pins across sections — valid Klipper wiring that
+  the same `spi_software_*` / `uart_pin` pins across sections - valid Klipper wiring that
   Machine Doctor and the Pin Atlas were wrongly reporting as double-assignments, dragging the
   health grade to F on those printers. A pin is now a conflict only when an *exclusive* pin
   (step, heater, CS, …) collides; an all-shared bus is recognized as legitimate. (UART-per-
@@ -877,7 +889,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **The Board Map reads correctly in Arabic (and every locale).** Three fixes from an RTL
   review of the board card: the graph's node labels no longer spill out of their boxes in
   right-to-left locales (SVG text geometry is now direction-stable); the board card's
-  spec labels, port-category badges and class chip — previously raw English data values —
+  spec labels, port-category badges and class chip - previously raw English data values -
   are translated in all seven languages (~70 catalog vocabulary labels), with unknown
   future vocabulary still shown raw instead of breaking; and Latin spec values such as
   "72 MHz" no longer bidi-scramble into "MHz 72" inside Arabic text.
@@ -888,10 +900,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Untranslated UI strings, including the sidebar.** The Machine Doctor entry had no
   localized name at all, so the sidebar (and home tile) showed its English title in every
-  language — it is now translated in all seven, along with the Max-Flow widget title. A full
+  language - it is now translated in all seven, along with the Max-Flow widget title. A full
   audit of all locale files then fixed every genuinely untranslated string it surfaced
   (German widget titles and headings, French TMC health/flag labels, Russian Input-Shaper
-  naming, Chinese driver states, "CAN bus" localized everywhere, and more — ~130 fixes),
+  naming, Chinese driver states, "CAN bus" localized everywhere, and more - ~130 fixes),
   while deliberately keeping technical terms (StealthChop, printer.cfg, Katapult) and
   genuine cognates as they are.
 
@@ -902,7 +914,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **All seven themes redesigned as calibrated palettes.** Each theme now follows one
   deliberate system: the badge colors (pass / warning / active) sit at a depth where their
   text reads clearly in every theme, the signal colors (charts, danger button) run brighter,
-  and every ratio is verified — status chips in the dark themes were previously near-white
+  and every ratio is verified - status chips in the dark themes were previously near-white
   text on bright pastel (about 1.1–1.5:1 contrast, effectively unreadable) and now hold
   4.3–6.2:1. New identities: daylight-cream Light with the signature yellow rail,
   steel-slate Dark, the violet-glow Neon signature, true-black High Contrast, navy
@@ -915,7 +927,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Kinematics-aware tooling — the app now behaves correctly on every Klipper printer.**
+- **Kinematics-aware tooling - the app now behaves correctly on every Klipper printer.**
   The CoreXY two-belt comparison refuses politely (before any homing or motion) on
   cartesian/delta/CoreXZ machines instead of firing diagonal test moves that fail
   confusingly; the Live-tools panel disables the tool with an explanation, and the Guided
@@ -941,7 +953,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   joins each registered board to its place on the board map and its catalog entry: a 📍 badge
   names the board, one click jumps to it on the Board Map, and a device without a build
   profile gets a *Seed profile from board* button that creates a profile with the right MCU
-  preselected in the build options — open Configure and the chip choice is already correct.
+  preselected in the build options - open Configure and the chip choice is already correct.
   Identification reuses what the board map already established; nothing is guessed beyond it.
 
 ## [0.223.0] - 2026-06-12
@@ -949,8 +961,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **End-to-end smoke gate.** CI gains a dedicated job that boots the real backend against an
-  in-process HTTP printer stub and walks the critical paths — health, guard, overview, doctor
-  scan, board topology, config view — plus the full gated write: section merge with a backup
+  in-process HTTP printer stub and walks the critical paths - health, guard, overview, doctor
+  scan, board topology, config view - plus the full gated write: section merge with a backup
   taken first, the stale-file 412 refusal, the printing 409 refusal and the idempotent no-op.
   The supervised-run write path (start → poll → result, cancel, failure detail,
   reattach-after-reload) is now covered by frontend unit tests at the HTTP boundary too.
@@ -971,7 +983,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **One backup now covers everything.** The backup ZIP grows from boards + build profiles to
   the full app state: motor mapping, board confirmations, the hardware baseline snapshot,
-  flash history, profile metadata and every saved tuning run — and a single restore puts it
+  flash history, profile metadata and every saved tuning run - and a single restore puts it
   all back. Old backups still restore (they simply carry fewer entries), restore is additive
   (it never deletes what it doesn't know), and unsafe or corrupt archive entries are skipped
   rather than written.
@@ -982,8 +994,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Proof of tune.** The Input Shaping Audit tab gains a before/after report: pick any two
   recorded results on an axis (defaults to oldest vs newest) and see exactly what the tuning
-  changed — measurement grade, remaining vibration %, smoothing, suggested max accel, shaper
-  and frequency — with colour-coded improvements and a copyable plain-text summary for
+  changed - measurement grade, remaining vibration %, smoothing, suggested max accel, shaper
+  and frequency - with colour-coded improvements and a copyable plain-text summary for
   sharing. Saved shaper configs now archive their comparable metrics so both sides of the
   report survive across browsers; results recorded before this release participate with
   whatever numbers they already carry.
@@ -1003,7 +1015,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **Config Templates can write, not just copy.** Every template now carries the same *Apply to
-  printer.cfg…* gate as the tuning widgets — pick the target file, review, acknowledge, and the
+  printer.cfg…* gate as the tuning widgets - pick the target file, review, acknowledge, and the
   block is merged through the safety gate (param-level merge, backup first, busy/stale refusals)
   instead of a copy-paste round-trip. Also hardened the panel against malformed template data.
 
@@ -1014,16 +1026,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Faster and smoother on Pi-class hosts.** Three performance refits for the small board the app
   actually runs on: backend calls to Moonraker now share **one pooled keep-alive connection**
   instead of opening a fresh TCP connection per request (the config project view alone makes
-  dozens — those become connection reuses), closed cleanly on shutdown; and the **heavy numpy
+  dozens - those become connection reuses), closed cleanly on shutdown; and the **heavy numpy
   analyses** (resonance shaper fits, spectrograms, the vibrations profile) now run **off the
-  event loop**, so a long analysis no longer freezes every other request — the UI stays live
+  event loop**, so a long analysis no longer freezes every other request - the UI stays live
   while the math runs.
 
 ## [0.216.0] - 2026-06-12
 
 ### Added
 
-- **A printer journal on the home page.** Mission Control now shows **Recent activity** — one
+- **A printer journal on the home page.** Mission Control now shows **Recent activity** - one
   merged, newest-first timeline of everything that happened to the machine: firmware flashes
   (board → version), config saves (from the automatic backup snapshots), and tuning runs (from
   the input-shaper archive). One read-only `GET /api/journal` merges the histories the app
@@ -1037,19 +1049,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   checklist that sequences the app's existing wizards into one product journey: confirm your
   boards in the Machine Map → save a hardware baseline → bring every MCU's firmware in sync →
   assign your motors → tune input shaping for X and Y. Each step is **auto-detected from the
-  printer** (✓ when actually done, not when clicked) and jumps straight into the right widget —
+  printer** (✓ when actually done, not when clicked) and jumps straight into the right widget -
   the panel collapses itself once all five are complete. Localised in all 7 languages.
 
 ## [0.214.0] - 2026-06-12
 
 ### Added
 
-- **Config Editor — "Add a part", free-pin aware.** Adding a fan, an LED strip, a filament sensor
+- **Config Editor - "Add a part", free-pin aware.** Adding a fan, an LED strip, a filament sensor
   or an output pin used to mean hunting the board's pinout PDF for an unused pin. The new panel
   reads your **live config + board pin map** and offers only the pins **nothing uses yet**
-  (electronics caveats marked ⚠ inline), generates the ready section — `[heater_fan]` with its
+  (electronics caveats marked ⚠ inline), generates the ready section - `[heater_fan]` with its
   heater line, `[filament_switch_sensor]` with pullup and pause-on-runout, `[neopixel]`,
-  `[output_pin]`, fans — and writes it through the shared safety gate (backup, busy refusal,
+  `[output_pin]`, fans - and writes it through the shared safety gate (backup, busy refusal,
   param-merge). Localised in all 7 languages.
 
 ## [0.213.0] - 2026-06-12
@@ -1059,7 +1071,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Measured meets predicted: the vibrations profile feeds Motor Drivers.** A supervised
   vibrations run now archives its summary on the host (measured motor resonance, symmetry,
   smoothest speed), and the Motor Drivers recommendation panel shows that **measured ground
-  truth** — *"motors resonate at ~146 Hz · symmetry 100%"* — right beside the datasheet-based
+  truth** - *"motors resonate at ~146 Hz · symmetry 100%"* - right beside the datasheet-based
   physics, with a jump into the Input Shaping audit. The number comes from your printer, not a
   prediction. Localised in all 7 languages.
 
@@ -1067,10 +1079,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — flow check against your hotend's real ceiling.** Pick a hotend from the
+- **Macro Designer - flow check against your hotend's real ceiling.** Pick a hotend from the
   catalog (109 models with measured melt-zone ceilings) and every printing move in the simulated
   macro is checked volumetrically (filament Ø configurable): moves whose flow exceeds what the
-  hotend can actually melt are listed with their line numbers and mm³/s — a purge or prime line
+  hotend can actually melt are listed with their line numbers and mm³/s - a purge or prime line
   that silently over-runs the melt zone shows up *before* it prints. Localised in all 7 languages.
 
 ## [0.211.0] - 2026-06-12
@@ -1080,7 +1092,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Max-Flow knows your extruder driver and remembers its results.** The test no longer assumes a
   TMC2209: the extruder's actual driver model is **detected from the live config** and preselected
   (with a full model picker for overrides), so a TMC2240/5160 extruder stops hitting a preflight
-  refusal it couldn't fix. And a finished measurement — minutes of heating and grinding — now
+  refusal it couldn't fix. And a finished measurement - minutes of heating and grinding - now
   **survives navigation**: the last result is restored when you come back, clearly labelled with
   when it was measured. Localised in all 7 languages.
 
@@ -1089,8 +1101,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - **The Hardware Browser knows what's on YOUR printer.** A new **"On this printer" strip** at the
-  top lists the hardware actually detected on the connected machine — the matched boards, the TMC
-  driver models read from the live config, the motors you assigned, the host SBC — each chip
+  top lists the hardware actually detected on the connected machine - the matched boards, the TMC
+  driver models read from the live config, the motors you assigned, the host SBC - each chip
   jumping straight to its catalog entity. Matching rows in the Boards / Drivers / Motors / Hosts
   catalogs carry a **📍 on-this-printer badge**, so your own hardware stands out among 2,600+
   entities. One read-only `GET /api/hardware/on-printer` resolves it all (live topology + live
@@ -1101,27 +1113,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Firmware flash-path hardening.** Four gaps closed: flashing an **external firmware file** —
-  the riskiest flash there is — now goes through a review-and-acknowledge gate (file → target →
+- **Firmware flash-path hardening.** Four gaps closed: flashing an **external firmware file** -
+  the riskiest flash there is - now goes through a review-and-acknowledge gate (file → target →
   explicit confirmation) instead of a single click; the **batch confirmation dialog lists exactly
   the devices the run will touch** (devices marked *excluded from batch* no longer appear in the
-  preview the user approves); a **batch run survives a page reload** — reopening the widget
+  preview the user approves); a **batch run survives a page reload** - reopening the widget
   reattaches to the running task and its live log; and a **serial flash now uses the board's saved
-  baudrate** (an edited baudrate was stored but silently ignored — a 115200 board was always
+  baudrate** (an edited baudrate was stored but silently ignored - a 115200 board was always
   flashed at the 250000 default). Localised in all 7 languages.
 
 ## [0.208.0] - 2026-06-12
 
 ### Fixed
 
-- **Truthful failure states — never blank, never a false all-clear.** Four widgets stop hiding
-  problems: the **Machine Map**'s baseline check now says *"could not compare — the printer is
+- **Truthful failure states - never blank, never a false all-clear.** Four widgets stop hiding
+  problems: the **Machine Map**'s baseline check now says *"could not compare - the printer is
   unreachable"* instead of a false ✓ unchanged; a failed override/snapshot action shows as a
   dismissible banner instead of replacing the whole map; **Motor Drivers** keeps the live cards on
-  screen when one background refresh fails (a *"last refresh failed — showing previous data"*
+  screen when one background refresh fails (a *"last refresh failed - showing previous data"*
   banner instead of a blanked dashboard); the **Config Editor** discloses which auxiliary panels
   (Pin Doctor, driver sanity, drift, project view, …) failed to load instead of silently hiding
-  them — a missing Pin Doctor must not read as "no pin problems"; and the **Hardware Browser**
+  them - a missing Pin Doctor must not read as "no pin problems"; and the **Hardware Browser**
   consumes a cross-widget focus once instead of re-firing a stale one on the next visit.
   Localised in all 7 languages.
 
@@ -1129,13 +1141,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **The two longest tests are now supervised runs — progress, cancel, and a result that survives
+- **The two longest tests are now supervised runs - progress, cancel, and a result that survives
   a dropped tab.** The Input Shaping **vibrations profile** (a minutes-long speed×angle sweep) and
   the **Max-Flow ramp** (heated extrusion) used to be single blind requests: no feedback, no way
   to stop, and a dropped connection lost the result while the printer kept going. Both now run as
   background tasks: the widget shows a **live progress bar** (sweep 12/40 · 115 mm/s · 45°, or
-  step 3/12 · 14.0 mm³/s), a **Cancel** button stops the run at its next checkpoint — with the
-  cleanup that always ran still running (velocity limits restored, the **heater always cut**) —
+  step 3/12 · 14.0 mm³/s), a **Cancel** button stops the run at its next checkpoint - with the
+  cleanup that always ran still running (velocity limits restored, the **heater always cut**) -
   and the result is **held server-side**: reload the page mid-run and the widget reattaches to the
   live run; come back after it finished and the result is collected instead of lost. The runs hold
   the printer's exclusive slot for their whole life, and the existing one-call flows (the Guided
@@ -1148,8 +1160,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Mission Control and the Machine Doctor now read the host firmware version from the right
   field**, so the per-MCU sync check works: a host running a newer Klipper than its MCUs is
   reported as the real out-of-sync warning it is (verified on a live printer where the host runs
-  a newer build than both MCUs — previously the comparison silently disabled itself).
-- **The home's tuning tile reads the archive as it is actually written** — saved `[input_shaper]`
+  a newer build than both MCUs - previously the comparison silently disabled itself).
+- **The home's tuning tile reads the archive as it is actually written** - saved `[input_shaper]`
   configs are archived under the `config` kind with an `at` timestamp; the tile now lists the
   latest result per axis instead of showing empty.
 
@@ -1157,10 +1169,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Mission Control — the home page is no longer empty.** Opening the app now answers *"is my
+- **Mission Control - the home page is no longer empty.** Opening the app now answers *"is my
   printer healthy?"* at a glance: the **live print state** (with filename and progress bar while
   printing), the **per-MCU firmware-sync table** (data the backend always computed but never
-  rendered — each row jumps to that MCU's node in the Machine Map), the **latest tuning result per
+  rendered - each row jumps to that MCU's node in the Machine Map), the **latest tuning result per
   axis** from the input-shaper archive, a **hardware-changed-since-baseline** banner, and a
   one-click **Machine Doctor** scan tile. One concurrent `GET /api/overview` call powers it all;
   every block degrades independently and honestly when something is down, and every tile
@@ -1172,7 +1184,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Machine Doctor grades honestly.** Three refinements found by running the first scan on a real
   printer: board **pin caveats** (by-design electronics notes, like a mains-switched bed pin) are
-  now informational — listed, never scored — instead of dragging a healthy printer's grade down;
+  now informational - listed, never scored - instead of dragging a healthy printer's grade down;
   a **firmware out-of-sync** finding is only reported when the host's version is actually known
   (an unknown host made the comparison meaningless); and the **config-drift check no longer
   reports fake drift** for a value written on a single indented continuation line (its inline
@@ -1183,10 +1195,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Machine Doctor — a new widget: one click, one report card for the whole printer.** A single
-  read-only scan runs every analyzer the app ships — pin conflicts, TMC driver values against
+- **Machine Doctor - a new widget: one click, one report card for the whole printer.** A single
+  read-only scan runs every analyzer the app ships - pin conflicts, TMC driver values against
   their real ceilings, disk-vs-live config drift, config-project lint, per-MCU firmware sync,
-  hardware changes against the saved baseline, and install health — and folds them into an **A–F
+  hardware changes against the saved baseline, and install health - and folds them into an **A–F
   grade with transparent scoring** (100, minus 25 per error and 8 per warning; what couldn't be
   checked is reported honestly as *not checked* and never counts against you). Every finding
   carries a **jump-to-fix button** that deep-links into the widget that fixes it: the exact config
@@ -1201,12 +1213,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   copy-paste; now both tuning widgets can write their result straight into the config, behind the
   same safety gate as every other config write. **Input Shaping**'s ready `[input_shaper]` block
   and **Motor Drivers**' recommended driver tune gain an *Apply to printer.cfg…* panel: pick the
-  target file, review the block, acknowledge, apply — then trigger the separately-confirmed
+  target file, review the block, acknowledge, apply - then trigger the separately-confirmed
   firmware restart, all without leaving the widget.
 - Under the hood this is a new **param-level section merge** (`POST /api/config/apply-section`):
-  an existing section is updated parameter-by-parameter — applying a `[tmc2209 stepper_x]` tune
+  an existing section is updated parameter-by-parameter - applying a `[tmc2209 stepper_x]` tune
   never wipes its `uart_pin`, inline comments survive, and unchanged values aren't rewritten
-  (an apply with nothing to change writes nothing — no backup churn). A missing section is
+  (an apply with nothing to change writes nothing - no backup churn). A missing section is
   inserted before the Klipper-managed `SAVE_CONFIG` tail. Every apply rides the full gate:
   busy refusal, a changed-on-disk precondition (nothing is clobbered), automatic pre-save backup
   with retention. Localised in all 7 languages.
@@ -1215,12 +1227,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Deep links everywhere: widgets now point at each other.** Hashes go one level deeper —
+- **Deep links everywhere: widgets now point at each other.** Hashes go one level deeper -
   `#firmware-upgrade/status`, `#input-shaping/audit`, `#config-editor/raw` open a widget *on* a
   tab (bookmarkable, and usable by every cross-widget jump). Three new inbound focus channels let
   diagnostics land exactly where the fix lives:
   - A **wiring finding in the Machine Map's pin atlas** (a double-assigned pin, an electronics
-    caveat) now lists its owning config sections as buttons — one click opens that exact section,
+    caveat) now lists its owning config sections as buttons - one click opens that exact section,
     expanded and scrolled-to, in the Config Editor (located via project search when it lives in an
     included file).
   - The Machine Map inspector's **motor / driver chips** jump into Motor Drivers, and an
@@ -1228,49 +1240,49 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - Motor Drivers accepts a stepper focus (used by the Machine Map and future doctors): the card
     scrolls into view and flashes so the eye lands on the right driver.
   The Machine Map itself accepts node focus (`focusTopologyNode`), making it addressable from
-  anywhere — groundwork for the upcoming health home and Machine Doctor. Localised in all 7
+  anywhere - groundwork for the upcoming health home and Machine Doctor. Localised in all 7
   languages.
 
 ## [0.200.0] - 2026-06-12
 
 ### Added
 
-- **Three new themes — and a redesigned theme menu with live previews.** The palette family grows
+- **Three new themes - and a redesigned theme menu with live previews.** The palette family grows
   to seven: **Midnight** (professional deep-blue dark), **Ocean** (deep teal with aqua accents),
   and **Sunset** (warm plum with amber accents) join Neon, Dark, Light, and High Contrast. The
   header's theme control is now a proper menu: each theme renders as a **miniature preview card**
-  (its own background, surface, text sample, and accent dots — showing what that theme *would*
+  (its own background, surface, text sample, and accent dots - showing what that theme *would*
   look like, not recolored by the current one) with a one-line description; picking one applies
-  instantly. The **Dark** theme was redesigned into a modern neutral slate — calibrated accent
+  instantly. The **Dark** theme was redesigned into a modern neutral slate - calibrated accent
   hues and soft layered elevation in place of the hard offset shadow.
 - **A redesigned language menu.** Languages now open in a popover listing every locale in its own
   native name and writing direction (العربية shown right-to-left even from an English UI), with
-  the active one marked — instead of a plain dropdown. Both menus close on Escape or an outside
+  the active one marked - instead of a plain dropdown. Both menus close on Escape or an outside
   click and are keyboard-reachable. Localised in all 7 languages.
 
 ## [0.199.0] - 2026-06-12
 
 ### Added
 
-- **A unified printer guard: one machine, one operation at a time.** Every actuating operation —
+- **A unified printer guard: one machine, one operation at a time.** Every actuating operation -
   resonance tests, the belt comparison, axes-map calibration, sustained excitation, the vibrations
   profile, a max-flow run, driver writes, sensorless homing, motor sync, firmware flashes and batch
-  runs, and `FIRMWARE_RESTART` — now holds a single printer-wide exclusive slot. Two browser tabs
+  runs, and `FIRMWARE_RESTART` - now holds a single printer-wide exclusive slot. Two browser tabs
   (or a retried request after a proxy timeout) can no longer interleave G-code on a hot, moving
   machine: the second caller is refused with the name of the operation already running, as a 409
   (or the widget's own localised error style). Flash log streams hold the slot for as long as they
   stream; a batch run holds it for its whole background life.
 - **The shell now knows when writes are locked.** A new `GET /api/guard/status` reports the
   exclusive slot plus the live print state, and the header polls it (pausing in hidden tabs):
-  a red **Printing — writes locked** badge appears during a print, and a yellow **⚙ <operation>
-  running** badge while any actuating operation owns the machine — so gated actions stop being a
+  a red **Printing - writes locked** badge appears during a print, and a yellow **⚙ <operation>
+  running** badge while any actuating operation owns the machine - so gated actions stop being a
   surprise refusal. Localised in all 7 languages.
 
 ### Changed
 
 - The five per-service "is the printer busy?" checks (config save, driver writes, flashes,
-  resonance tests, max-flow) had drifted apart; they now share one definition — printing, paused,
-  or in an error state — with one documented exception: flashing stays allowed when Moonraker is
+  resonance tests, max-flow) had drifted apart; they now share one definition - printing, paused,
+  or in an error state - with one documented exception: flashing stays allowed when Moonraker is
   unreachable, since a dead Moonraker must not block flashing the MCU that might fix it. Resonance
   tests are now also refused while Klipper is in an error state (previously only printing/paused).
 
@@ -1278,25 +1290,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Config Editor — a save can no longer silently overwrite a file that changed on disk.** The
+- **Config Editor - a save can no longer silently overwrite a file that changed on disk.** The
   editor now fingerprints the content it loaded and sends that fingerprint with the save; if the
-  on-disk file changed in the meantime — a `SAVE_CONFIG` landing after a calibration, or a parallel
-  edit from another app — the save is refused with a clear message and a one-click **Reload the
+  on-disk file changed in the meantime - a `SAVE_CONFIG` landing after a calibration, or a parallel
+  edit from another app - the save is refused with a clear message and a one-click **Reload the
   file** action instead of clobbering the change (the backup timeline shows what differs). Saving
   from a fresh load is unaffected.
-- **Config Editor — pre-save backups are pruned per file.** `filamind-backups/` grew without bound
+- **Config Editor - pre-save backups are pruned per file.** `filamind-backups/` grew without bound
   (every save added a snapshot forever). Each file now keeps its newest snapshots only
-  (`FILAMIND_CONFIG_BACKUP_KEEP_N`, default 20), pruned automatically on save — keeping the host's
+  (`FILAMIND_CONFIG_BACKUP_KEEP_N`, default 20), pruned automatically on save - keeping the host's
   SD card light. Localised in all 7 languages.
 
 ## [0.197.0] - 2026-06-12
 
 ### Fixed
 
-- **Motor Drivers — the run-current ceiling is now enforced on the live write path.** Applying a
+- **Motor Drivers - the run-current ceiling is now enforced on the live write path.** Applying a
   tuning used to trust the requested `run_current` blindly: the ceiling shown in the UI (the
   driver's full-scale limit, and the rated current of the motor assigned to that stepper) was
-  display-only, so an over-rated current — one that can overheat a motor or its wiring — could be
+  display-only, so an over-rated current - one that can overheat a motor or its wiring - could be
   written straight to the driver. `POST /api/drivers/apply` now resolves the binding ceiling at
   write time (driver model and a TMC2240's `rref` from the live config, the motor rating from the
   assigned-motor mapping) and refuses anything above it with a clear, localised error naming the
@@ -1307,9 +1319,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — real macro expansion (loops, conditionals, `{% set %}`).** The simulator now
-  renders the printer's actual macro template language — single-brace `{ … }` expressions **and**
-  `{% … %}` control flow — instead of only substituting simple `{ params.X }` values. A
+- **Macro Designer - real macro expansion (loops, conditionals, `{% set %}`).** The simulator now
+  renders the printer's actual macro template language - single-brace `{ … }` expressions **and**
+  `{% … %}` control flow - instead of only substituting simple `{ params.X }` values. A
   `{% for %}` loop unrolls, a `{% if params.PURGE %}` branch is taken or skipped from the supplied
   parameters, and `{% set %}` / math work as on the printer, so what you preview matches what would
   run. Rendering happens in a **sandbox**, and a macro that depends on live printer state (which an
@@ -1324,13 +1336,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — generate a tailored START_PRINT / END_PRINT (with a gated write).** A new panel
-  reads the live printer — its kinematics, the real build envelope, which leveling it actually has
-  (`quad_gantry_level` / `z_tilt` / `bed_mesh`), and whether there's a heated bed — and generates a
+- **Macro Designer - generate a tailored START_PRINT / END_PRINT (with a gated write).** A new panel
+  reads the live printer - its kinematics, the real build envelope, which leveling it actually has
+  (`quad_gantry_level` / `z_tilt` / `bed_mesh`), and whether there's a heated bed - and generates a
   `START_PRINT` and `END_PRINT` fitted to that machine: the right leveling and mesh steps, bed
   heating only if there's a bed, and prime/park positions that sit inside the build area. Notes
   explain what was tailored. You can load either macro into the simulator to review it, then
-  **append both to a config file behind the confirm gate** — a backup is taken first, writes are
+  **append both to a config file behind the confirm gate** - a backup is taken first, writes are
   refused while printing, and a same-named existing macro blocks the write rather than duplicating
   it. This is the Macro Designer's first write path; it reuses the Config Editor's gated save. New
   `GET /api/macro/scaffold` and `POST /api/macro/scaffold/append`. Localised in all 7 languages.
@@ -1340,12 +1352,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Config Editor — driver value sanity check.** A new panel cross-checks every `[tmcXXXX …]`
+- **Config Editor - driver value sanity check.** A new panel cross-checks every `[tmcXXXX …]`
   driver's configured `run_current` and `microsteps` against authoritative catalog facts: the
   driver model's full-scale current ceiling (a `run_current` the silicon can't deliver is an error;
   within 10% is a thermal-margin warning) and, when a motor is assigned to that stepper in the Motor
   Drivers mapping, the motor's datasheet rating (recommended is ~0.7×, so near the rating runs hot).
-  Microsteps that aren't a power of two in 1–256 are flagged too. It is **honest about gaps** — a
+  Microsteps that aren't a power of two in 1–256 are flagged too. It is **honest about gaps** - a
   driver with no curated ceiling (e.g. TMC2240, whose limit depends on an external Rref resistor)
   and a stepper with no assigned motor are skipped rather than guessed, and the panel says how many
   drivers it actually checked. New read-only `GET /api/config/sanity`. Localised in all 7 languages.
@@ -1355,7 +1367,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — A/B compare.** A second program (B) can now be simulated alongside the current
+- **Macro Designer - A/B compare.** A second program (B) can now be simulated alongside the current
   one (A) and diffed: the two toolhead paths are **overlaid** (A solid, B dashed), a stats table
   shows **moves / distance / extrusion / time for A, B, and the delta** (green when B is lower, red
   when higher), and a linter diff lists which checks fire in **A only / B only**. "Copy A → B" seeds
@@ -1367,9 +1379,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — accel-aware timing + a speed / extrusion heatmap.** The time estimate now uses
+- **Macro Designer - accel-aware timing + a speed / extrusion heatmap.** The time estimate now uses
   a trapezoidal velocity profile from the printer's real `max_accel` and `max_velocity` (ramp up →
-  cruise → ramp down, or a triangular peak on a short move) instead of assuming instant full speed —
+  cruise → ramp down, or a triangular peak on a short move) instead of assuming instant full speed -
   far more realistic for a macro's short start/stop moves. Each move carries its own time and
   effective speed, and the path preview can be recoloured as a **heatmap by speed or by extrusion
   rate** (blue → red, with a legend), making slow corners and fat extrusion moves obvious at a
@@ -1381,10 +1393,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Config Editor — backup timeline with diff and restore.** Every gated save already snapshots the
+- **Config Editor - backup timeline with diff and restore.** Every gated save already snapshots the
   previous file under `filamind-backups/`; those snapshots are now a browsable timeline for the open
-  file (newest first, with timestamp and size). **Diff** a snapshot against your current draft — a
-  compact line diff that folds away unchanged runs and summarises how many lines differ — to see
+  file (newest first, with timestamp and size). **Diff** a snapshot against your current draft - a
+  compact line diff that folds away unchanged runs and summarises how many lines differ - to see
   exactly what changed since then. **Restore** loads a snapshot back into the editor for a final
   review, and saving it rides the same confirm gate (which snapshots the current file first), so a
   restore is itself reversible. New read-only `GET /api/config/backups` and `GET /api/config/backup`
@@ -1395,9 +1407,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Config Editor — inline knowledge + catalog deep-links.** Expanding a section in the structured
-  view now shows a short, plain-language explanation of what that section does — what a `[bed_mesh]`,
-  `[heater_fan]`, `[safe_z_home]`, `[input_shaper]`, a stepper, or a TMC driver section is for —
+- **Config Editor - inline knowledge + catalog deep-links.** Expanding a section in the structured
+  view now shows a short, plain-language explanation of what that section does - what a `[bed_mesh]`,
+  `[heater_fan]`, `[safe_z_home]`, `[input_shaper]`, a stepper, or a TMC driver section is for -
   so you don't have to leave the editor to remember a section's purpose. A `[tmcXXXX …]` driver
   section also gets a **"View in catalog →"** button that deep-links straight to that driver's entity
   in the Hardware Browser (specs, Klipper support, copyable snippet). Blurbs cover the most common
@@ -1406,9 +1418,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Config Editor — a section defined in several included files is now shown as an override, not a
+- **Config Editor - a section defined in several included files is now shown as an override, not a
   duplicate error.** Klipper merges same-named sections across includes and the last-loaded
-  definition wins — that's the normal way a config redefines a stock macro (e.g. overriding
+  definition wins - that's the normal way a config redefines a stock macro (e.g. overriding
   Mainsail's `PAUSE` in a file included later). The project lint now reports these as informational
   **overrides** (neutral styling, listing every file involved) instead of warnings, so the
   override is visible without falsely flagging a working config. The "issues" badge counts only
@@ -1421,7 +1433,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Config parser now accepts a comment after a section header** (`[stepper_z] # Z motor`). Klipper
   allows a trailing inline comment on a section line, but the parser only recognised a header when
-  the line *ended* with `]`, so any such section — and everything in it — was silently dropped from
+  the line *ended* with `]`, so any such section - and everything in it - was silently dropped from
   the structured view, validation, drift, the Pin Doctor, and the project graph. These sections are
   now parsed (header without the comment), and the raw line still round-trips byte-for-byte so the
   comment is preserved on save. This also clears false **orphan-driver** project-lint findings
@@ -1432,8 +1444,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Config Editor — glob includes no longer cross directory boundaries.** A `[include dir/*.cfg]`
-  now matches only the direct children of `dir/`, the way Klipper's own `glob.glob` resolves it —
+- **Config Editor - glob includes no longer cross directory boundaries.** A `[include dir/*.cfg]`
+  now matches only the direct children of `dir/`, the way Klipper's own `glob.glob` resolves it -
   the `*` and `?` wildcards stop at `/`. Previously the match used `fnmatch`, whose `*` greedily
   spans path separators, so an include like `[include ./macros/*.cfg]` also swallowed files nested
   in sub-folders (a macro pack's bundled `Other_Files/source/*.cfg` templates, say) that Klipper
@@ -1445,11 +1457,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Config Editor — include resolution no longer double-pulls same-named files.** An `[include]`
+- **Config Editor - include resolution no longer double-pulls same-named files.** An `[include]`
   now resolves strictly to the file at its exact relative path; the basename fallback fires only
   when exactly one file in the config folder carries that name. Previously, when two files shared a
   basename in different folders (for example a macro pack's bundled template copy and the user's
-  active copy of it), a single include pulled in both — inflating the active config tree and
+  active copy of it), a single include pulled in both - inflating the active config tree and
   fabricating duplicate-section warnings for every macro they had in common. An ambiguous basename
   now resolves to nothing rather than guessing, and is not reported as a broken include.
 
@@ -1457,9 +1469,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Config Editor — project lint now scopes to the active config tree.** The cross-file checks
+- **Config Editor - project lint now scopes to the active config tree.** The cross-file checks
   (duplicate section, orphan driver, broken include) and the include tree now consider only the
-  files Klipper actually loads — `printer.cfg` and everything it includes, transitively — instead
+  files Klipper actually loads - `printer.cfg` and everything it includes, transitively - instead
   of every `.cfg` in the config folder. Dated backup copies, archived snapshots, and other
   services' configs that happen to live alongside `printer.cfg` no longer masquerade as
   duplicate-section errors, and the include tree shows the live configuration's structure rather
@@ -1469,13 +1481,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Config Editor — project view: include graph, project-wide search, cross-file lint.** A new
+- **Config Editor - project view: include graph, project-wide search, cross-file lint.** A new
   **Project** panel above the file content treats your whole config as one tree, not a pile of
   separate files. It draws the `[include]` dependency tree from each root (`printer.cfg` →
   everything it pulls in), flags a **broken include** (a target file that doesn't exist), and runs
   cross-file checks: a **duplicate section** defined in more than one file (a Klipper load error)
   and an **orphan TMC driver** (`[tmc2209 stepper_q]` with no matching `[stepper_q]` anywhere).
-  A **search box** finds any text across every config file and jumps you to the file — handy for
+  A **search box** finds any text across every config file and jumps you to the file - handy for
   hunting a pin name or a macro reference scattered across includes. New read-only
   `GET /api/config/graph` and `GET /api/config/search` endpoints; the graph builder is pure and
   unit-tested. Localised in all 7 languages. (Phase 10 of the Config Editor + Macro Designer
@@ -1485,12 +1497,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Config Editor — pin-aware editing for `*_pin` params.** In the structured view, any pin field
+- **Config Editor - pin-aware editing for `*_pin` params.** In the structured view, any pin field
   (`step_pin`, `heater_pin`, `uart_pin`, …) now resolves its owning MCU from the pin value's
   `chip:` prefix and offers that board's **named pins as type-ahead suggestions**, so you pick a
   pin that physically exists instead of guessing. Inline badges flag a value that isn't in the
   board's pin map (likely a typo), a pin already assigned in another section, and a pin that carries
-  an electronics caveat — caught right at the field before a `FIRMWARE_RESTART`. Edits ride the same
+  an electronics caveat - caught right at the field before a `FIRMWARE_RESTART`. Edits ride the same
   surgical round-trip writer and gated save as the typed TMC controls. New read-only
   `GET /api/config/pin-map` feed (per-MCU board pins + owners + caveat). Localised in all 7
   languages. (Phase 9 of the Config Editor + Macro Designer programme.)
@@ -1499,10 +1511,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Config Editor — typed editing for TMC register fields.** In the structured view, a `[tmcXXXX]`
+- **Config Editor - typed editing for TMC register fields.** In the structured view, a `[tmcXXXX]`
   section's `driver_*` register params (e.g. `driver_SGTHRS`, `driver_TBL`) now render with the
   **right control and silicon-fact range** from the driver field-policy: a number input clamped to
-  the register's mask-derived `[min, max]`, a dropdown for enum fields, a checkbox for booleans —
+  the register's mask-derived `[min, max]`, a dropdown for enum fields, a checkbox for booleans -
   instead of free text. Out-of-range entries are clamped at edit time and the change is applied to
   the file through the surgical round-trip writer for the existing gated save, so a hand-edited
   StallGuard/chopper value can't silently overflow its register. Frontend-only (reuses the Motor
@@ -1513,19 +1525,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — static macro linter.** Alongside the simulation, the widget now runs a set of
+- **Macro Designer - static macro linter.** Alongside the simulation, the widget now runs a set of
   static safety checks over the program and lists each finding with a plain-language explanation +
   fix: an **unbalanced `SAVE_GCODE_STATE` / `RESTORE_GCODE_STATE`** (the saved mode is never
-  restored), a macro that **ends in relative mode** (`G91` / `M83` with no restore — the next command
+  restored), a macro that **ends in relative mode** (`G91` / `M83` with no restore - the next command
   moves relatively, a classic foot-gun), and an **extruding move before `G28`** (cold / un-homed
-  extrude risk). Catches macro *logic* bugs before the macro ever touches the machine — no Klipper UI
+  extrude risk). Catches macro *logic* bugs before the macro ever touches the machine - no Klipper UI
   does this. Localised in all 7 languages. (Phase 7 of the Config Editor + Macro Designer programme.)
 
 ## [0.180.0] - 2026-06-12
 
 ### Added
 
-- **Config Editor — Pin Doctor (whole-config pin-conflict scan).** The editor now runs Board
+- **Config Editor - Pin Doctor (whole-config pin-conflict scan).** The editor now runs Board
   Topology's pin scanner over your **entire live config, every MCU**, and surfaces the wiring errors
   that brick a `FIRMWARE_RESTART` **before** you trigger one: a **pin driven by more than one config
   section** (a real conflict) and a **board electronics caveat that names a pin you actually use**
@@ -1538,10 +1550,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Config Editor — disk-vs-live drift healer.** The editor now compares the file on disk to **what
+- **Config Editor - disk-vs-live drift healer.** The editor now compares the file on disk to **what
   Klipper is actually running** (the live `configfile`) and surfaces the gaps: a banner when a
   **`SAVE_CONFIG` is pending** (saving the file now would clobber Klipper's computed values),
-  **Klipper's own config warnings**, and a **per-param drift list** — any value you edited but never
+  **Klipper's own config warnings**, and a **per-param drift list** - any value you edited but never
   `FIRMWARE_RESTART`-ed, shown as *disk → live* with a one-click **"adopt live"** that surgically
   rewrites just that line through the round-trip engine (every other line untouched) and drops it in
   the editor for the existing gated save. Backed by new read-only `GET /api/config/drift` + a pure
@@ -1552,11 +1564,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — bed-envelope & speed-limit overlay.** The offline simulation is now grounded in
+- **Macro Designer - bed-envelope & speed-limit overlay.** The offline simulation is now grounded in
   **your printer's real build area and speed cap** (read from the live `toolhead` object). The 2D
   preview draws the actual build rectangle behind the path, and **any move that leaves the build area
   or exceeds `max_velocity` is drawn in red** and listed as a violation (e.g. *"Line 7: X=400 is
-  outside the build area (0…355 mm)"*, *"Line 12: 800 mm/s exceeds the printer's 700 mm/s limit"*) —
+  outside the build area (0…355 mm)"*, *"Line 12: 800 mm/s exceeds the printer's 700 mm/s limit"*) -
   so a macro that would crash into a rail or over-speed is caught **before** you run it. The same
   macro is now green on one printer and red on another. New read-only `GET /api/macro/limits`;
   `simulate` gains an optional `limits` check. Degrades to the borderless preview when the printer is
@@ -1567,9 +1579,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — import and simulate the printer's OWN installed macros.** A new "From the
+- **Macro Designer - import and simulate the printer's OWN installed macros.** A new "From the
   printer" source lists every `[gcode_macro]` defined on your machine; pick one and its real G-code
-  body loads into the editor and simulates — a true **offline dry-run of your own PRINT_START /
+  body loads into the editor and simulates - a true **offline dry-run of your own PRINT_START /
   PAUSE / QGL wrapper** (path + bounds + time, zero motion). The macro's `{ params.X | default() }`
   parameters are **discovered into editable fields** so you can try different values and re-simulate.
   Backed by a new read-only `GET /api/macro/live` over the live `configfile` (the first piece of a
@@ -1581,11 +1593,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Config Editor — insert a hardware-accurate config block from the catalog.** A new "Add a config
+- **Config Editor - insert a hardware-accurate config block from the catalog.** A new "Add a config
   block from the catalog" panel lets you pick a **driver**, **motor**, or **board** from the hardware
   database (via the shared part picker) and appends its **verbatim, correct-by-construction Klipper
-  block** to the file — a `[tmcXXXX]` driver with the chip's real `sense_resistor` and a safe
-  `run_current`, a motor's datasheet-derived `run_current`, or a board's actual pin-map — instead of
+  block** to the file - a `[tmcXXXX]` driver with the chip's real `sense_resistor` and a safe
+  `run_current`, a motor's datasheet-derived `run_current`, or a board's actual pin-map - instead of
   blank scaffolding you fill in by hand. The block lands in the editor's Raw view for review and
   rides the existing gated save (auto-backup + refused-while-printing + a `FIRMWARE_RESTART` prompt).
   Frontend-only (reuses the catalog detail endpoints + `HardwarePicker`); localised in all 7
@@ -1595,9 +1607,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Macro Designer — "Explain this macro" walkthrough.** A new plain-language, step-by-step view of
+- **Macro Designer - "Explain this macro" walkthrough.** A new plain-language, step-by-step view of
   a simulated program: every command in English ("Rapid travel to X20 Y20 at 6000 mm/min", "Print
-  move — extrude 3 mm over 60 mm…", "Switch to relative extrusion", "Home the axes"), the running
+  move - extrude 3 mm over 60 mm…", "Switch to relative extrusion", "Home the axes"), the running
   positioning mode (ABS/REL) after each step, and cumulative travel / extrusion / time. **Hovering a
   step lights up its segment on the 2D path** (and vice-versa), so you can trace exactly what each
   line does. Pure frontend over data the simulator already computes; localised in all 7 languages.
@@ -1607,9 +1619,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Board Topology — stock toolhead boards now auto-detect.** A catalog data bug stored many
+- **Board Topology - stock toolhead boards now auto-detect.** A catalog data bug stored many
   toolhead / secondary board pin-maps with the example config's **MCU-name prefix baked into the pin
-  name** (e.g. `TOOLHEAD_MCU:PA1` instead of the bare physical pin `PA1`) — affecting **494 pins
+  name** (e.g. `TOOLHEAD_MCU:PA1` instead of the bare physical pin `PA1`) - affecting **494 pins
   across 118 boards** (most CAN/USB toolhead boards: `EBBCan:`, `nhk:`, `SB2040:`, `MKS_THR:`,
   `nozzle_mcu:`, …). Because the live config's used pins are bare, the pin-fingerprint saw **zero
   overlap** and never matched a board to its own toolhead. Fixed at the root by stripping the
@@ -1621,13 +1633,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Board Topology — hardware Snapshot & Diff, and a copyable machine summary.** Save the current
-  topology as a **baseline**, and on every later read the widget reports — in plain language — what
+- **Board Topology - hardware Snapshot & Diff, and a copyable machine summary.** Save the current
+  topology as a **baseline**, and on every later read the widget reports - in plain language - what
   changed against it: an **MCU added or removed, a board swapped, a connection bus changed, or a
   component count moved** (keyed by the stable MCU section name, so a serial re-enumeration doesn't
   read as a swap). Answers "did anything change after I rewired / reflashed?" at a glance. Plus a
   **Copy summary** button that puts a plain-text machine inventory (host, SBC, each MCU's chip /
-  board / bus / component count) on the clipboard — handy for a forum or issue post. Backed by new
+  board / bus / component count) on the clipboard - handy for a forum or issue post. Backed by new
   read-only-ish `POST /api/topology/snapshot` + `GET /api/topology/snapshot/diff`. Degrades cleanly
   when no baseline exists or the printer is unreachable; localised in all 7 languages.
 
@@ -1638,14 +1650,14 @@ This completes the Board Topology "Machine Map" overhaul (interactive graph → 
 
 ### Added
 
-- **Board Topology — a Pin Atlas + wiring-conflict scanner.** The node inspector gains a **Pin Atlas**
+- **Board Topology - a Pin Atlas + wiring-conflict scanner.** The node inspector gains a **Pin Atlas**
   tab: an X-ray of the matched board's pins showing, at a glance, **which pins the live config uses
   (and for which `section.key`) vs which are free**, grouped by function, with a used/free usage bar,
   a pin search, and a "free only" filter for planning your next mod. A **wiring-health scanner** runs
   over the live config and surfaces:
-  - **Pin conflicts** — a physical pin driven by more than one config section (a real wiring bug).
-  - **Wiring caveats** — a board electronics warning that names a pin you're actually using, bound
-    right to that pin (e.g. on the SV08, *"heater_pin PA0 is a 3.3V trigger — never connect mains to
+  - **Pin conflicts** - a physical pin driven by more than one config section (a real wiring bug).
+  - **Wiring caveats** - a board electronics warning that names a pin you're actually using, bound
+    right to that pin (e.g. on the SV08, *"heater_pin PA0 is a 3.3V trigger - never connect mains to
     PA0"*).
 
   Backed by a new read-only `GET /api/topology/pin-atlas/{mcu_name}` (honours a confirmed board
@@ -1656,12 +1668,12 @@ This completes the Board Topology "Machine Map" overhaul (interactive graph → 
 
 ### Added
 
-- **Board Topology — live link-health on the Machine Map.** Each MCU node now carries a status from
+- **Board Topology - live link-health on the Machine Map.** Each MCU node now carries a status from
   the live firmware telemetry the widget already fetches: a coloured left-edge bar + a glyph
-  (✓ healthy / ⚠ degraded / ✕ firmware out-of-sync — colour *and* glyph, never colour-only), and an
+  (✓ healthy / ⚠ degraded / ✕ firmware out-of-sync - colour *and* glyph, never colour-only), and an
   **out-of-sync MCU gently pulses while its link to the host flashes red**, so a firmware mismatch
   reads as a machine-wide warning at a glance. Hovering a node (and the inspector) shows the live
-  **vitals**: MCU frequency, retransmit count (link quality) and load. Honest degradation — with no
+  **vitals**: MCU frequency, retransmit count (link quality) and load. Honest degradation - with no
   telemetry the nodes are simply neutral. Respects `prefers-reduced-motion`. No backend change (the
   data was already in `/api/firmware/status`); localised in all 7 languages.
 
@@ -1672,15 +1684,15 @@ This completes the Board Topology "Machine Map" overhaul (interactive graph → 
 - **Board Topology is now an interactive "Machine Map".** The flat card list is replaced by a
   dependency-free SVG node-graph of your printer's control boards, with two views of the same live
   data:
-  - **Physical** — how the machine is actually built: an **integrated SBC is drawn *inside* the
+  - **Physical** - how the machine is actually built: an **integrated SBC is drawn *inside* the
     mainboard it ships on** (e.g. an SV08 / Manta carrying a CB1), CAN toolheads hang off a shared
     **backbone rail**, and USB / UART boards are separate point-to-point units.
-  - **Logical** — how Klipper sees it: the host at the apex with every MCU a child reached over its
+  - **Logical** - how Klipper sees it: the host at the apex with every MCU a child reached over its
     serial link.
 
   Edges are colour-coded by bus (USB / CAN / UART), the two views cross-fade when you toggle, and
   every node is keyboard-focusable with an aria-label. **Click any board, SBC or MCU** to open a
-  side **inspector** that carries over every existing control — the rich catalog board record
+  side **inspector** that carries over every existing control - the rich catalog board record
   (specs, ports, electronics caveats, config notes, copyable Klipper snippet), the cross-entity
   deep-links into the Hardware Browser, and the confirm / change / clear board-override write path.
 - **Integrated-SBC detection.** The backend now flags when the host computer is physically on the
@@ -1690,18 +1702,18 @@ This completes the Board Topology "Machine Map" overhaul (interactive graph → 
   the same board still reads as a separate host.
 
 Inline help gains a "Physical vs Logical views" topic; fully localised in all 7 languages. Degrades
-gracefully — an unreachable printer still shows the clear status message.
+gracefully - an unreachable printer still shows the clear status message.
 
 ## [0.169.0] - 2026-06-11
 
 ### Added
 
-- **Board Topology — confirm or override the board for each MCU.** A serial id usually reveals only
+- **Board Topology - confirm or override the board for each MCU.** A serial id usually reveals only
   the chip, so the auto board guess can be missing or wrong. Each MCU card now has **Confirm this
   board** (locks in a correct guess), **Change board… / Set board…** (pick the right one from the
   hardware catalog via the shared part picker), and **Clear** (revert to the automatic guess). The
   choice is saved on the host (`<data_dir>/topology-overrides.json`, keyed by the MCU's config
-  section name) and re-applied on every read — a confirmed match shows a ✓ badge at full confidence.
+  section name) and re-applied on every read - a confirmed match shows a ✓ badge at full confidence.
   This is the first write path in the otherwise read-only widget; the new
   `POST /api/topology/override` + `…/override/clear` endpoints validate the board id against the
   catalog. Inline help + full localisation in all 7 languages.
@@ -1712,7 +1724,7 @@ gracefully — an unreachable printer still shows the clear status message.
 
 - **Board / MCU identification patterns are now derived from the unified hardware catalog** instead
   of a standalone data file. The MCU chip patterns come from the canonical MCU entities (one per
-  entity — a superset of the previous hand-kept table), and the board patterns come from each
+  entity - a superset of the previous hand-kept table), and the board patterns come from each
   catalog board's own `matchPatterns` plus a brand-level fallback built from the manufacturers that
   actually own boards (their id + aliases). Behaviour-preserving and verified live on the SV08
   (primary MCU still resolves chip `STM32F103` → `sovol-sv08`); detection now covers every catalog
@@ -1720,7 +1732,7 @@ gracefully — an unreachable printer still shows the clear status message.
 
 ### Removed
 
-- Removed the standalone `board_patterns.json` reference file — its data is derived from the
+- Removed the standalone `board_patterns.json` reference file - its data is derived from the
   catalog at load (see above). One fewer place for board/MCU detection data to drift from the
   catalog.
 
@@ -1728,13 +1740,13 @@ gracefully — an unreachable printer still shows the clear status message.
 
 ### Fixed
 
-- **Board Topology — the pin-fingerprint no longer emits a confident *wrong* board for a toolhead
+- **Board Topology - the pin-fingerprint no longer emits a confident *wrong* board for a toolhead
   MCU.** Matching the printer's used pin set against catalog boards by containment alone favours
   large boards (more pins → more likely to contain any given pin), so an MCU with only a few generic
-  pins — e.g. a CAN toolhead whose board isn't in the catalog — could tie across several small boards
+  pins - e.g. a CAN toolhead whose board isn't in the catalog - could tie across several small boards
   and surface one of them as a suggested match. The fingerprint now accepts the top board only when
   it is *unambiguous*: it clears a Jaccard floor (its pin-map size actually fits the used set) or
-  beats the next distinct board's containment by a margin. Otherwise it reports no board — better an
+  beats the next distinct board's containment by a margin. Otherwise it reports no board - better an
   honest "unknown" than a wrong guess. The primary mainboard match is unaffected (verified live: the
   SV08 mainboard still resolves to `sovol-sv08` at 0.81; its CAN toolhead now correctly shows no
   confident board instead of a non-Sovol mainboard).
@@ -1748,7 +1760,7 @@ gracefully — an unreachable printer still shows the clear status message.
   sensorless / temperature support) is now stored as a `caps` block on the matching
   `drivers[]` entries in `app/data/reference/hardware.json` and served via
   `reference_data.driver_infos()` / `driver_info_lookup()`. `/api/drivers/catalog` and the
-  `info` annotation on `/api/drivers/status` read from there — the single source of truth.
+  `info` annotation on `/api/drivers/status` read from there - the single source of truth.
   This is the final piece of the Motor-Drivers / Max-Flow data convergence (motors, hotends,
   and now drivers all read from the one catalog). Behaviour-preserving: the same fields, the
   same alias resolution (e.g. `tmc2226` → `tmc2209`), the same lookups.
@@ -1758,16 +1770,16 @@ gracefully — an unreachable printer still shows the clear status message.
 - Removed the standalone `app/data/driver_catalog.json` file and its `driver_catalog.py`
   loader (superseded by the catalog `drivers[].caps` block above), plus the now-orphaned
   motor-CSV bake script and its source CSV (the motor catalog had already moved into the
-  hardware reference). No functional change — all data is served from `hardware.json`.
+  hardware reference). No functional change - all data is served from `hardware.json`.
 
 ## [0.165.0] - 2026-06-09
 
 ### Added
 
-- **Board Topology — pin-fingerprint board matching (DB-link uplift, phase 9 of 9 — final).** When a
+- **Board Topology - pin-fingerprint board matching (DB-link uplift, phase 9 of 9 - final).** When a
   serial / CAN id reveals only the chip, the topology now matches the printer's **used pin set** on
   each MCU against every catalog board's verbatim pin-map (a containment score) to resolve the
-  actual board — a board-specific signal a serial id can't give. The fingerprint strengthens the
+  actual board - a board-specific signal a serial id can't give. The fingerprint strengthens the
   suggested board link (used when it beats, or fills in for, the serial-signature guess), with its
   confidence shown on the node.
 
@@ -1778,25 +1790,25 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Board Topology — the board card now shows the full catalog record (DB-link uplift, phase 8 of
+- **Board Topology - the board card now shows the full catalog record (DB-link uplift, phase 8 of
   9).** Opening a suggested board now also shows its **config-affecting electronics caveats**, its
   **setup / config notes**, and a **copyable verbatim Klipper config / pin-map snippet** from the
-  hardware database — the same rich record the Hardware Browser shows, right inside the topology.
+  hardware database - the same rich record the Hardware Browser shows, right inside the topology.
   Frontend-only (the full record was already returned by the board detail endpoint); reuses the
   existing board strings (no new i18n keys).
 
 ### Added
 
-- **Board Topology — firmware-sync overlay on each MCU (DB-link uplift, phase 7 of 9).** Each MCU
+- **Board Topology - firmware-sync overlay on each MCU (DB-link uplift, phase 7 of 9).** Each MCU
   node now shows whether its firmware is in sync with the host (✓ in sync / ⚠ out of sync), joined
-  from the firmware status by MCU name — a real health signal right where you look at the MCUs.
+  from the firmware status by MCU name - a real health signal right where you look at the MCUs.
   Shown only when known; the status fetch is best-effort and never blocks the topology. Frontend-only
   (pure consumption of the existing firmware status); the badge uses an icon + colour + text (not
   colour alone).
 
 ### Fixed
 
-- **Board Topology — host identification now works on SBCs that leave `cpu_info` empty.** Many
+- **Board Topology - host identification now works on SBCs that leave `cpu_info` empty.** Many
   hosts (e.g. a BTT CB1) report an empty `cpu_info.model` and put the board/OS string in
   `distribution.name`; the host matcher now falls through to that, so the host node links to the
   correct catalog host instead of showing an unmatched stub.
@@ -1805,37 +1817,37 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Board Topology — the host node is now identified and linked to the hardware database (DB-link
+- **Board Topology - the host node is now identified and linked to the hardware database (DB-link
   uplift, phase 6 of 9).** The topology reads the host's CPU / SoC from Moonraker
   (`/machine/system_info`) and best-effort matches it to a catalog host (e.g. *BIGTREETECH CB1*),
   so the host node shows the real machine and links through to it in the Hardware Browser instead of
-  a generic "host" stub. The Moonraker call is optional — an older Moonraker without it degrades
+  a generic "host" stub. The Moonraker call is optional - an older Moonraker without it degrades
   gracefully (the topology still returns). (`GET /api/topology` host gained `host_id` /
   `host_match` / `host_match_confidence`.)
 
 ### Changed
 
-- **Board Topology — each MCU's chip now links to its canonical entry in the hardware database
+- **Board Topology - each MCU's chip now links to its canonical entry in the hardware database
   (DB-link uplift, phase 5 of 9).** The detected chip is joined to one of the first-class DB MCU
   entities (e.g. `stm32f446`, `rp2040`), so each MCU node shows its chip family and the chip name is
-  a clickable link that jumps to that MCU in the Hardware Browser — a reliable database anchor even
+  a clickable link that jumps to that MCU in the Hardware Browser - a reliable database anchor even
   when no specific board could be matched. (`GET /api/topology` MCUs gained `mcu_id` + `mcu_family`.)
 
 ### Added
 
-- **Board Topology — a real wiring graph: each MCU now lists the components that live on it
+- **Board Topology - a real wiring graph: each MCU now lists the components that live on it
   (DB-link uplift, phase 4 of 9).** The backend parses every config section's pins and attaches
   each **stepper / driver / heater / fan / sensor** to the MCU named by the chip prefix of its
   primary pin (a bare pin → the primary `mcu`; a `chip:`-prefixed pin → that CAN/USB MCU). Each MCU
   node now shows per-kind component counts (e.g. *Motors ×4 · Drivers ×4 · Heaters ×2 · Fans ×3*),
   so a CAN toolhead's motor/heater/accelerometer correctly appear under the toolhead MCU. MCU nodes
-  still come only from `[mcu]` sections — a stray pin can never invent a phantom MCU.
+  still come only from `[mcu]` sections - a stray pin can never invent a phantom MCU.
 - `GET /api/topology` now has a typed response contract (Pydantic `Topology` / `TopologyMcu` /
   `TopologyComponent`).
 
 ### Changed
 
-- **Board Topology — its DB cross-links now deep-link into the Hardware Browser (DB-link uplift,
+- **Board Topology - its DB cross-links now deep-link into the Hardware Browser (DB-link uplift,
   phase 3 of 9).** Clicking a board's linked-hardware chip (manufacturer / MCU / driver) on a
   topology node jumps straight to that entity in the Hardware Browser. Reuses the existing
   cross-entity focus channel; the Hardware Browser now applies a focus set before it mounts (its
@@ -1844,19 +1856,19 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Board Topology — show each board's linked hardware from the database graph (DB-link uplift,
+- **Board Topology - show each board's linked hardware from the database graph (DB-link uplift,
   phase 2 of 9).** The expanded board card now lists the board's cross-entity links from the
-  hardware DB — its **manufacturer, MCU(s), and on-board / supported drivers** — fetched in one
+  hardware DB - its **manufacturer, MCU(s), and on-board / supported drivers** - fetched in one
   round-trip via `?expand=related` on the board detail endpoint. Display-only for now; clicking
   through to the Hardware Browser is wired in the next phase. Frontend-only (reuses the existing
   `related` strings); no backend change.
 
 ### Changed
 
-- **Board Topology — surface more of the catalog record on each detected board (DB-link uplift,
+- **Board Topology - surface more of the catalog record on each detected board (DB-link uplift,
   phase 1 of 9).** A suggested board match now shows its **match confidence** next to the
   "suggested" badge, and the expanded board card shows the board's **manufacturer** and **board
-  class** (mainboard / toolhead / …) from the hardware database — fields the catalog already
+  class** (mainboard / toolhead / …) from the hardware database - fields the catalog already
   returns but the widget was dropping. Frontend-only; no new strings. First step of linking the
   Board Topology widget fully to the hardware DB (see ROADMAP).
 
@@ -1869,7 +1881,7 @@ user-confirm board override remain as follow-ups.)
   instead of a separate table file.
   - **Completed every hotend's data** (109 products): 75 from the existing calibration set, and **34
     filled in from manufacturer / community sources** (Phaetus Dragon & Rapido, Bambu, Micro Swiss
-    FlowTech, Mellow Goliath/HeatCore, E3D ObXidian, Slice, generic V6/MK classes, …) — so the
+    FlowTech, Mellow Goliath/HeatCore, E3D ObXidian, Slice, generic V6/MK classes, …) - so the
     catalog is the complete source. Representative values for generic clones are flagged in research.
 
 ### Removed
@@ -1886,7 +1898,7 @@ user-confirm board override remain as follow-ups.)
   copies, and the full catalog (671 motors, 589 with datasheet autotune params) is now available to
   the picker instead of a smaller subset.
   - **Zero migration:** every previously-saved `motor-mapping.json` assignment on a printer still
-    resolves — a motor is found by its id, display name, or alias.
+    resolves - a motor is found by its id, display name, or alias.
   - The picker now shows the model **name** (with the manufacturer) and keys on a stable unique id,
     so motors that share a model number across manufacturers are no longer ambiguous.
   - Motors without datasheet specs are listed but their **Recommend** action is disabled (with a
@@ -1910,7 +1922,7 @@ user-confirm board override remain as follow-ups.)
   across ~30 brands (Nanotec, Japan Servo / Nidec, Sanyo Denki, Phytron, Oriental Motor, Trinamic,
   Lin Engineering, MOONS', Leadshine, StepperOnline, Wantai, MotionKing, FAULHABER, LDO,
   MinebeaMitsumi, Applied Motion, Soyo, Creality and more). Only datasheet-verified values were
-  recorded — **no fabrication**; the remaining ~82 entries are series/placeholder rows, multi-phase
+  recorded - **no fabrication**; the remaining ~82 entries are series/placeholder rows, multi-phase
   motors, or parts with no published phase resistance/inductance and are intentionally left blank.
   Step angle is now stored faithfully (1.8° → 200, 0.9° → 400, and large-step can-stack motors such
   as the FAULHABER AM2224 at 24 steps/rev). This is the data foundation for driving Motor Drivers
@@ -1932,8 +1944,8 @@ user-confirm board override remain as follow-ups.)
 ### Added
 
 - **Motor autotune parameters on the hardware DB (toward Motor-Drivers convergence).** 188 of the
-  671 canonical motors now carry a numeric `autotune` block — `resistance_ohm`, `inductance_H`,
-  `holding_torque_Nm`, `max_current_A`, `steps_per_rev` — the datasheet parameters the Motor Drivers
+  671 canonical motors now carry a numeric `autotune` block - `resistance_ohm`, `inductance_H`,
+  `holding_torque_Nm`, `max_current_A`, `steps_per_rev` - the datasheet parameters the Motor Drivers
   autotune / `motor_constants` recommender needs. Merged from the existing curated motor database
   (no fabrication). This is the data foundation that lets the Motor Drivers tab eventually drive
   autotune from the full hardware catalog; the remaining motors await a datasheet-enrichment pass.
@@ -1943,7 +1955,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **`HardwarePicker` — a reusable, DB-backed "pick a part" control (DB-3d).** Generalises the
+- **`HardwarePicker` - a reusable, DB-backed "pick a part" control (DB-3d).** Generalises the
   Motor Drivers `MotorPicker` into a type-driven component: give it `type` (`boards` / `drivers` /
   `motors` / `hosts`) and it pages the full canonical catalog from `/api/hardware/*` into a
   typeahead `ComboSelect`, emitting both the chosen id (`v-model`) and the full entity summary
@@ -1955,7 +1967,7 @@ user-confirm board override remain as follow-ups.)
 ### Fixed
 
 - **I2C temperature-sensor snippets (deferred Wave-5 follow-up).** The 6 I2C chip sensors that still
-  shipped a generic ADC-thermistor placeholder now carry correct Klipper config — `sensor_type:
+  shipped a generic ADC-thermistor placeholder now carry correct Klipper config - `sensor_type:
   BME280` / `HTU21D` / `LM75` with an `i2c_address` (and commented `i2c_mcu` / `i2c_bus`). Three
   also had a broken `name` (`sensor_type: BME280`, `I2C (SPI on some)`) restored to the real chip
   family. Regression test extended.
@@ -1964,7 +1976,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Catalog sub-type facet — the mixed categories are now filterable like boards.** Several catalog
+- **Catalog sub-type facet - the mixed categories are now filterable like boards.** Several catalog
   categories lump different component types together (Fans, Power & Bed = fans / power supplies /
   heated beds / build surfaces; Electronics & Wiring = connectors / power electronics / endstops /
   wire / filament sensors; Cameras & Displays; Motion & Mechanical; Sensors & Probes; Hotends &
@@ -1978,11 +1990,11 @@ user-confirm board override remain as follow-ups.)
 
 ### Fixed
 
-- **Hardware DB data audit, Wave 6 — text hygiene.** Fixed the doubled-word artefact in two board
+- **Hardware DB data audit, Wave 6 - text hygiene.** Fixed the doubled-word artefact in two board
   aliases (`Creality Creality 4.2.2/4.2.7` → `Creality 4.2.x`). The broad audit confirmed the rest
   of the dataset is clean here: **zero** mojibake (U+FFFD) and no doubled words in any spec value or
   config body (the only other matches were inside config comments). Regression test added. Duplicate
-  board/catalog entries were intentionally **not** merged — they're kept by request (variant siblings
+  board/catalog entries were intentionally **not** merged - they're kept by request (variant siblings
   resolve via aliases), so dedup remains a separate, deliberate decision rather than an audit fix.
 
 ### Notes
@@ -1993,22 +2005,22 @@ user-confirm board override remain as follow-ups.)
 
 ### Fixed
 
-- **Hardware DB data audit, Wave 5 — config / snippet integrity.** Cleared **39** `configSource`
+- **Hardware DB data audit, Wave 5 - config / snippet integrity.** Cleared **39** `configSource`
   fields that held a description instead of a URL (so nothing renders a broken link); fixed **3**
   board snippets whose Klipper section header had a parenthetical annotation inside the brackets
   (`[lis2dw (accelerometer)]` → `[lis2dw]  # accelerometer`); corrected **8** sensor snippets that
-  shipped a generic ADC-thermistor template for SPI / internal sensors — the MAX6675 / MAX31855 /
+  shipped a generic ADC-thermistor template for SPI / internal sensors - the MAX6675 / MAX31855 /
   MAX31856 / MAX31865 thermocouple+RTD amplifiers now carry the right `sensor_type` + SPI pins (and
   RTD params), and the MCU/host internal sensors use `temperature_mcu` / `temperature_host`. Fixed 3
-  stale `mediaStatus: none` flags on boards that do have media links. (The I2C sensor snippets —
-  BME280/HTU21D/LM75, where exact `sensor_type` support and i2c addressing need care — were left for
+  stale `mediaStatus: none` flags on boards that do have media links. (The I2C sensor snippets -
+  BME280/HTU21D/LM75, where exact `sensor_type` support and i2c addressing need care - were left for
   a focused pass rather than risk a wrong config.) Regression test added.
 
 ## [0.147.0] - 2026-06-08
 
 ### Fixed
 
-- **Hardware DB data audit, Wave 4 — motor NEMA + step-angle normalisation.** **124** motors that
+- **Hardware DB data audit, Wave 4 - motor NEMA + step-angle normalisation.** **124** motors that
   had no NEMA size now show one, back-filled from the high-confidence frame code in their part number
   (`42STH…`/`17H…` → NEMA 17, `35BYGF…`/`36STH…` → NEMA 14, etc.); only 28 truly-unparseable rows
   remain sizeless. The `stepAngle` field, previously written three ways (`1.8°`, `1.8 deg`, bare
@@ -2020,42 +2032,42 @@ user-confirm board override remain as follow-ups.)
 
 ### Fixed
 
-- **Hardware DB data audit, Wave 3 — manufacturer-field junk.** Cleaned 71 entries whose
+- **Hardware DB data audit, Wave 3 - manufacturer-field junk.** Cleaned 71 entries whose
   `manufacturer` held a spec or junk value instead of a maker: bare AWG wire rows (`elec-10-55`)
   rebuilt to `10 AWG` + a `Max current (A)` spec; AC fan/bed rows folded their `300×300` dimension
   into the name; heater-cartridge / silicone-heater / build-plate / buck-module rows moved the real
   product out of `manufacturer` into `name`; StallGuard endstop descriptions, bare gauge numbers
   and em-dashes blanked; the Raspberry Pi Compute Modules' truncated `Compute` manufacturer fixed to
   `Raspberry Pi`; and the open-hardware community boards (RAMPS 1.4 / Melzi / CRAMPS) had their prose
-  "manufacturer" blanked (no single maker). Conservative + scoped to genuine errors — valid short
+  "manufacturer" blanked (no single maker). Conservative + scoped to genuine errors - valid short
   names (MK8, V6, a 608 bearing) and real manufacturers were left untouched. Regression test added.
 
 ## [0.145.0] - 2026-06-07
 
 ### Fixed
 
-- **Hardware DB data audit, Wave 2 — board class taxonomy.** The `boardClass` enum was just
+- **Hardware DB data audit, Wave 2 - board class taxonomy.** The `boardClass` enum was just
   `mainboard` / `toolhead` / `printer-preset`, so two kinds of non-controller board had no correct
   home and were lumped in as `mainboard`. Added two classes: **`expansion`** for the 7 Duet 3 CAN-FD
-  expansion / external-driver boards (3HC, 1XD, 1HCL family — they daisy-chain off a mainboard, they
+  expansion / external-driver boards (3HC, 1XD, 1HCL family - they daisy-chain off a mainboard, they
   aren't standalone controllers), and **`host`** for the 10 host SBCs / SoCs / carriers that were
   mis-filed in `boards[]` (CB1, CB2, MKS Pi, Nebula/Sonic/Speeder pads, the K1 host pad, the Pi
   carriers) so they no longer masquerade as selectable main controllers. Both new classes get a
-  localised filter label and appear in the Boards "class" facet. (Retagged rather than removed — three
+  localised filter label and appear in the Boards "class" facet. (Retagged rather than removed - three
   carry real GPIO port data and the lossless-aggregation invariant must hold.) Regression test added.
 
 ## [0.144.0] - 2026-06-07
 
 ### Fixed
 
-- **Hardware DB data audit, Wave 1 — catalog product identity restored.** A broad read-only audit
+- **Hardware DB data audit, Wave 1 - catalog product identity restored.** A broad read-only audit
   found catalog rows where the real product had been swapped into the `manufacturer` column while
   `name` held only a generic word or a bare spec. Recovered **80** rows: thermocouple/sensor chips
   shown as `SPI`/`I2C` → `MAX6675` / `MAX31865` / `HTU21D` …; power connectors shown as `Connectors`
   → `XT30` / `XT60` / `XT90` …; heater cartridges shown as `12 V`/`24 V` → `Ceramic cartridge 12 V
   30 W (6×20)` …; nozzles shown as a thread `M6 × 1.0` → `E3D V6` / `MK8` … (the thread moved to a
   spec); and 7 linear-rail rows all mislabelled `EGH25CA / EGW25CA` renamed to their real family
-  (`MGW7/9/12/15`). A regression test locks it. (The audit's larger raw counts were over-stated —
+  (`MGW7/9/12/15`). A regression test locks it. (The audit's larger raw counts were over-stated -
   generic material/mechanical types like `PLA` or a `T8` leadscrew correctly have no manufacturer
   and were left untouched.)
 
@@ -2063,10 +2075,10 @@ user-confirm board override remain as follow-ups.)
 
 ### Fixed
 
-- **Hardware DB data audit — toolhead boards were mis-classified.** Most toolhead boards
+- **Hardware DB data audit - toolhead boards were mis-classified.** Most toolhead boards
   (BigTreeTech EBB36/EBB42 and EBB-SB, SB2209 / SB2240 / SB2040, Mellow Fly-SHT / Fly-SB2040,
   LDO Nitehawk / Orbitool O2, MKS/LDO THR36/THR42, FYSETC SB CAN, Caramba, the K1 nozzle
-  sub-board, …) were tagged `mainboard` instead of `toolhead` — the catalog showed only 10
+  sub-board, …) were tagged `mainboard` instead of `toolhead` - the catalog showed only 10
   toolheads when there are 55. Reclassified the 45 affected boards from a curated set of
   toolhead families plus each board's own `Class` / `Form factor` / `Role` spec signal (the
   Duet 1HCL closed-loop high-current CAN *expansion* boards are intentionally kept out of the
@@ -2089,9 +2101,9 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Hardware Browser internal refactor (DB-3b) — shared `EntityCatalog` component, no behaviour
+- **Hardware Browser internal refactor (DB-3b) - shared `EntityCatalog` component, no behaviour
   change.** The five near-clone detail panels (Boards / Drivers / Motors / Hosts / Catalog) each
-  repeated the same shell — search box, result list, pagination, per-row expand with a detail cache,
+  repeated the same shell - search box, result list, pagination, per-row expand with a detail cache,
   copy-config helper, loading / error states and cross-link deep-link focus. That shell is now one
   shared `EntityCatalog.vue`; each panel is a thin wrapper that supplies a `fetchPage` / `fetchDetail`
   closure and renders only its own bespoke summary + detail markup via slots. Behaviour and layout
@@ -2102,13 +2114,13 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Hardware Browser cross-links + brand / MCU browsing (DB-3a) — the linking graph is now
+- **Hardware Browser cross-links + brand / MCU browsing (DB-3a) - the linking graph is now
   visible and navigable.** Building on the DB-2 backbone, the browser surfaces the relationships
   in the UI:
-  - **Cross-link chips** on every expanded entity (board / driver / motor / host / catalog) — its
+  - **Cross-link chips** on every expanded entity (board / driver / motor / host / catalog) - its
     manufacturer, MCU(s) and on-board / supported drivers shown as clickable chips. Click one to
     **jump straight to that entity** (the right tab opens and the target is expanded).
-  - **Two new browse tabs** — **Brands** (the canonical manufacturers, each with its part count and
+  - **Two new browse tabs** - **Brands** (the canonical manufacturers, each with its part count and
     its linked hardware) and **MCUs** (the chips parsed from board specs, each with the boards that
     use it). Start from a brand or a chip and see everything that uses it.
   - An illustrated **"Linked hardware"** help topic + glossary entry explain the feature.
@@ -2118,16 +2130,16 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Hardware-DB linking backbone (DB-2) — the reference DB is now a connected graph.** The data's
+- **Hardware-DB linking backbone (DB-2) - the reference DB is now a connected graph.** The data's
   relationships used to be islands (free-text `manufacturer`, the MCU buried in a board's specs,
   driver compatibility hidden in a spec string). DB-2 turns them into a precomputed, in-memory
   cross-entity graph (built once at load) with O(1) lookups:
-  - **Canonical manufacturers** — every directory entry gets a stable `manufacturer_id`, auto-derived
+  - **Canonical manufacturers** - every directory entry gets a stable `manufacturer_id`, auto-derived
     aliases (parenthetical acronyms, `/`-separated co-brands) and a `memberCount`; variant spellings
     collapse (`BTT` / `BigTreeTech` / `BIGTREETECH (BTT)` → one id), recurring real brands missing
     from the directory are derived, and "no single maker" placeholders (generic / clone / RepRap) are
     excluded so they never become misleading link hubs.
-  - **MCU as a first-class entity** — board `specs.MCU` strings are parsed with a whitelist of
+  - **MCU as a first-class entity** - board `specs.MCU` strings are parsed with a whitelist of
     chip-family rules and normalised to a canonical part (`STM32F407VET6` → `stm32f407`), so package
     fragments, host SoCs and noise never become phantom MCUs.
   - **Edges** use composite keys (`<type>:<id>`, since ids are not unique across types) linking each
@@ -2143,14 +2155,14 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Hardware-DB performance foundation (DB-1) — invisible speedups, zero behaviour change.**
+- **Hardware-DB performance foundation (DB-1) - invisible speedups, zero behaviour change.**
   `reference_data` now builds its entity lists, **`id→entity` index dicts**, and a **precomputed
   per-item search haystack** once at load (no more per-request rebuilds / per-call re-filtering):
   every `*_by_id` lookup is O(1), and the flat `/api/hardware` free-text search no longer rebuilds
   3.8k lowercased strings on each query (~16× faster on a Pi). The precomputed haystacks are kept in
   a parallel list (not on the entities) so nothing leaks into API responses.
 - **Cache-Control + ETag on the immutable `/api/hardware/*` reads** (weak ETag derived from the
-  dataset version/sizes; `304 Not Modified` on a match) — card-expand detail re-fetches become free
+  dataset version/sizes; `304 Not Modified` on a match) - card-expand detail re-fetches become free
   over the wire, and the browser serves repeats from cache. Busts automatically on redeploy.
 
 ### Fixed
@@ -2167,10 +2179,10 @@ user-confirm board override remain as follow-ups.)
 - **Professional documentation refresh + the Hardware-DB backbone plan.** Updated the main
   **README** (the status callout now reflects all **nine** shipped widgets, not three; the Hardware
   Browser is described as the canonical, config-carrying database it has become; the stale bottom
-  "Roadmap" — which listed already-shipped widgets as *planned* — was rewritten). **ARCHITECTURE.md**
+  "Roadmap" - which listed already-shipped widgets as *planned* - was rewritten). **ARCHITECTURE.md**
   gained a "Hardware database (`/api/hardware/*`)" section and its widget / i18n-catalog lists were
   brought current. **backend/README** flat-search row clarified. **ROADMAP** gained a new
-  **"Hardware DB — cross-widget data backbone"** phased plan (DB-1 performance foundation →
+  **"Hardware DB - cross-widget data backbone"** phased plan (DB-1 performance foundation →
   DB-2 linking/`links` layer + `/related` API → DB-3 shared `EntityCatalog` + `HardwarePicker` +
   facets/cross-links → DB-4 media + silo convergence; SQLite+FTS5 documented as the only-if-triggered
   storage end-state). No code changes.
@@ -2179,7 +2191,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Missing-manufacturer sweep across the catalog categories — +79 branded entities, 22 new makers
+- **Missing-manufacturer sweep across the catalog categories - +79 branded entities, 22 new makers
   (catalog 1,224 → 1,303).** Hotends: **Phaetus** (Dragon/Dragonfly/Rapido/Rapido 2), **Slice
   Engineering** (Mosquito/Copperhead), **Trianglelab**. Extruders: **Orbiter** (v1.5/v2), **Bondtech
   LGX/LGX-Lite**, **LDO Galileo/Galileo 2**, **Voron Clockwork CW1/CW2** (gear ratios from the
@@ -2199,7 +2211,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Deep OEM motor-series coverage — +82 part numbers (589 → 671 canonical motors).** Expanded the
+- **Deep OEM motor-series coverage - +82 part numbers (589 → 671 canonical motors).** Expanded the
   Nidec Servo / Japan Servo **KH** family (KH42HM2/JM2/KM2 -801/-851/-901/-951 windings, the
   KH42xx-B900 series KH4234/4238/4242/4248/4254-B901xx/B951xx, KH56 NEMA-23 B900, KH39 NEMA-16) and
   the Sanyo Denki **103** series (103H52 NEMA-17, 103H67 NEMA-20, 103H712 NEMA-23, 103H782 NEMA-24,
@@ -2213,27 +2225,27 @@ user-confirm board override remain as follow-ups.)
 ### Added
 
 - **Every remaining catalog category now gets the canonical-entity + copyable-config treatment.**
-  The 9 still-flat categories — Sensors & Probes, Hotends & Heaters, Extruders, Fans/Power/Bed,
-  Cameras & Displays, Motion & Mechanical, Nozzles, Filament Materials, Electronics & Wiring —
+  The 9 still-flat categories - Sensors & Probes, Hotends & Heaters, Extruders, Fans/Power/Bed,
+  Cameras & Displays, Motion & Mechanical, Nozzles, Filament Materials, Electronics & Wiring -
   are deduped into **1,224 canonical entities**, each with a **copyable Klipper config snippet**
-  (real config where it applies — `[adxl345]`/`[probe]` for sensors, `[extruder] gear_ratio` for
+  (real config where it applies - `[adxl345]`/`[probe]` for sensors, `[extruder] gear_ratio` for
   extruders, `lcd_type:` for displays, `rotation_distance` for leadscrews/belts, `sensor_type`/
-  `max_temp` for hotends, filament temp presets — or an honest note otherwise). Reads each row's
+  `max_temp` for hotends, filament temp presets - or an honest note otherwise). Reads each row's
   existing `Klipper` spec hint where present; fixed a source-data column swap in Filament / Cameras
   & Displays / Motion (product was in the manufacturer field).
 - Backend: generic `GET /api/hardware/catalog?category=…` (summaries, paginated) +
   `GET /api/hardware/catalog/{catalog_id}` (full record incl. snippet). Frontend: a generic
-  `CatalogPanel.vue` — clicking any category tile opens a rich deduped view with the copy section
+  `CatalogPanel.vue` - clicking any category tile opens a rich deduped view with the copy section
   (no extra top-level tabs; the tab bar stays at 6). New `test_catalog_entities.py`.
 
 ## [0.133.0] - 2026-06-07
 
 ### Added
 
-- **Missing global stepper-motor manufacturers — 12 new makers, 55 new motors (534 → 589 canonical).**
+- **Missing global stepper-motor manufacturers - 12 new makers, 55 new motors (534 → 589 canonical).**
   Added Japan Servo / Nidec Servo (incl. the exact `KH42KM2R015A` NEMA-17 OEM motor + the KH42/56/
   39/60/86 + KV28 families), Minebea / MinebeaMitsumi / Astrosyn, Applied Motion Products, Sonceboz,
-  Tamagawa Seiki, Rtelligent, Fulling Motor, McLennan, Nippon Pulse, and Phidgets — all from
+  Tamagawa Seiki, Rtelligent, Fulling Motor, McLennan, Nippon Pulse, and Phidgets - all from
   authoritative datasheets (rated current / R / L / holding torque / frame), each getting the same
   recommended `run_current` + copyable config snippet as the rest of the motor catalog. The 11 new
   vendors are added to the manufacturer directory (274 → 285). Per-axis community current presets
@@ -2243,13 +2255,13 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Host-computer catalog with copyable Klipper host config — a dedicated Hosts tab in the Hardware
+- **Host-computer catalog with copyable Klipper host config - a dedicated Hosts tab in the Hardware
   Browser.** The 222 `Host Computers` rows become **220 canonical host entities** (185 SBCs, 22 x86
   hosts, 12 Klipper OS images, 1 locked/proprietary), each with unified specs (SoC / CPU / RAM /
   storage / suggested Klipper OS) and a **copyable config snippet**: the 208 open Linux hosts emit
   the `[mcu host]` Linux-process-MCU block (`serial: /tmp/klipper_host_mcu`) + a setup note (runs
   the Klipper host stack; flash the printer MCU separately; suggested OS image); OS-image rows and
-  locked/proprietary hosts (Bambu) get an honest note instead — no `[mcu host]` block.
+  locked/proprietary hosts (Bambu) get an honest note instead - no `[mcu host]` block.
 - Backend: `GET /api/hardware/hosts` (summaries, `?q`/`manufacturer`/`kind`, paginated) +
   `GET /api/hardware/hosts/{host_id}` (full record incl. snippet). Frontend: `HostsPanel.vue` on a
   new **Hosts** tab (the "Host Computers" catalog tile opens it). i18n ×7. New `test_host_catalog.py`
@@ -2259,11 +2271,11 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Stepper-motor catalog with a recommended `run_current` + copyable config — a dedicated Motors
+- **Stepper-motor catalog with a recommended `run_current` + copyable config - a dedicated Motors
   tab in the Hardware Browser.** The 577 `Stepper Motors` rows become **534 canonical motor
   entities** (43 community slug-rows merged into their marketing twin). Each motor carries unified
   specs (NEMA / step angle / rated current / holding torque / R / L), a **recommended Klipper
-  `run_current`** (~0.7 × rated phase current, RMS — present on 526) and a **copyable config
+  `run_current`** (~0.7 × rated phase current, RMS - present on 526) and a **copyable config
   snippet** (`[tmc2209 stepper_x] run_current: …` + a `full_steps_per_rotation`/`microsteps`/
   `rotation_distance` skeleton). Where community per-axis current presets exist they're attached
   and shown in the snippet.
@@ -2276,13 +2288,13 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Stepper-driver catalog with copyable Klipper config — a dedicated Drivers tab in the Hardware
+- **Stepper-driver catalog with copyable Klipper config - a dedicated Drivers tab in the Hardware
   Browser.** The 84 flat `Stepper Drivers` rows are deduped into **55 canonical driver entities**
   (one per chip), each with unified specs, manufacturer, interface, Klipper-support flag, and a
   **copyable config snippet**: the 14 Klipper-managed TMC chips emit a ready `[tmcXXXX stepper_*]`
   block (run_current / sense_resistor / stealthchop_threshold / interpolate, UART or SPI per chip);
   the 41 standalone step/dir and closed-loop parts (A4988, DRV8825, TB6600, LV8729, L6470, MKS
-  Servo…) get an honest note (current set by Vref pot / runs its own firmware — no `[tmc]` section).
+  Servo…) get an honest note (current set by Vref pot / runs its own firmware - no `[tmc]` section).
 - Backend: `GET /api/hardware/drivers` (summaries, `?q`/`manufacturer`/`klipper_only`, paginated) +
   `GET /api/hardware/drivers/{driver_id}` (full record incl. snippet). Frontend: `DriversPanel.vue`
   (mirrors BoardsPanel) on a new **Drivers** tab; the "Stepper Drivers" catalog tile opens it.
@@ -2293,7 +2305,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Deduplicated same-product board entities — 408 → 380 boards** (272 standalone + 108 printer
+- **Deduplicated same-product board entities - 408 → 380 boards** (272 standalone + 108 printer
   presets). 28 redundant entries (created when the same physical board appeared in multiple source
   files, e.g. `creality-v4.2.7`/`creality-4-2-7`/`4-2-7`, `skr-v1-4`/`skr-1-4`/`skr-v1-4-2`, the
   `duet-3-mainboard-6hc`/`-6hc-2` pairs) were merged into one canonical each. **Lossless merge, not
@@ -2307,10 +2319,10 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Copyable pin-map (`configSnippet`) on every board — all 408 now have the copy section.** Was
+- **Copyable pin-map (`configSnippet`) on every board - all 408 now have the copy section.** Was
   188/408; the 220 standalone control boards that lacked one now have it. **366 carry a real,
   verbatim Klipper pin map** copied from authoritative sources (Klipper repo `generic-*.cfg` +
-  official vendor GitHub Klipper sample configs — BigTreeTech, Mellow, MKS, FYSETC, Duet3D,
+  official vendor GitHub Klipper sample configs - BigTreeTech, Mellow, MKS, FYSETC, Duet3D,
   Creality, Anycubic, LDO, Qidi, etc.), with a `configSource` link. For those boards the `ports[]`
   table was also upgraded from connector-level to real Klipper pins (the connector data is preserved
   under `connectors`).
@@ -2341,7 +2353,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Printer-model preset enrichment — all 108 presets. The entire hardware database is now
+- **Printer-model preset enrichment - all 108 presets. The entire hardware database is now
   enriched: 406 web-enriched + 2 hardware-verified = every one of the 408 board entities.** The
   printer presets already carried Klipper pin-maps; this adds printer-level data: stock control
   board (`boardHint`, set on 106/108), kinematics, build volume, bed, hotend, stock extruder,
@@ -2362,7 +2374,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Web enrichment waves 8 + 9 + 10 — the final 75 boards. Board enrichment is now complete:
+- **Web enrichment waves 8 + 9 + 10 - the final 75 boards. Board enrichment is now complete:
   every one of the 300 standalone control boards in the database is web-enriched** (the remaining
   108 entries are printer-model pin-map presets, a separate category). Same bounded Agent-tool
   method (4 agents/wave writing results to files; no runaway). **+462 specs, +164 media links,
@@ -2384,7 +2396,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Web enrichment waves 6 + 7 — 64 more boards (now 223 web-enriched).** Bounded 4-agent method,
+- **Web enrichment waves 6 + 7 - 64 more boards (now 223 web-enriched).** Bounded 4-agent method,
   agents write results to files directly. +274 specs, +102 media links, +197 electronics facts, +181
   config notes. Covers the full Duet 2/3 line + 1LC/1HCL/1XD/3HC toolheads & expansions, classic AVR
   boards (RAMPS 1.4, Melzi, Megatronics, MKS Gen, Azteeg X3), Smoothieboard, Replicape, Prusa
@@ -2397,7 +2409,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Web enrichment wave 5 — 32 more boards (now 159 web-enriched).** Same bounded 4-agent method;
+- **Web enrichment wave 5 - 32 more boards (now 159 web-enriched).** Same bounded 4-agent method;
   agents now write their results to files directly (no manual transcription). +68 specs, +32 media,
   +96 electronics facts, +96 config notes. Covers the BigTreeTech SKR (1.3/1.4/2/3/Pico/Mini-E3) +
   Octopus + Manta (M4P/M5P/M8P/E3EZ) + Kraken + GTR + EBB/SB toolheads, FYSETC Spider/S6/Cheetah/
@@ -2432,15 +2444,15 @@ user-confirm board override remain as follow-ups.)
     (STM32F402 + RK3328), ZNP Robin Nano DW, MKS THR36/42 + SGEN_L V2, BTT Octopus V1.0 / SKR V1.4
     Turbo / U2C v1.x & v2.x / EBB36 v1.0–v1.2 & GEN2, FYSETC Spider v2.2/v3.0-F446 / S6 v2, Hurakan.
   - Config-critical facts: *EBB36 hotend pin PA2 (v1.0/v1.1) → PB13 (v1.2)*, *EBB GEN2 uses LIS2DW
-    not ADXL345*, *Anycubic boards use soldered GC6609/TMC clones — manual run_current, no sensorless*,
-    *ZNP K1 stock MCU firmware is non-standard — a plain Klipper .bin won't work*.
+    not ADXL345*, *Anycubic boards use soldered GC6609/TMC clones - manual run_current, no sensorless*,
+    *ZNP K1 stock MCU firmware is non-standard - a plain Klipper .bin won't work*.
 
 ## [0.121.0] - 2026-06-07
 
 ### Added
 
 - **Web-researched enrichment for 31 more boards (wave 2).** Same bounded method (4 research agents,
-  fixed batches — clean, no runaway). Now **63 boards web-enriched** total.
+  fixed batches - clean, no runaway). Now **63 boards web-enriched** total.
   - **+122 specs, +50 media links, +101 electronics facts, +93 config notes** from manufacturer /
     OSH-repo / wiki / Klipper-config sources.
   - Covers Creality 4.2.2 / 4.2.7 / 4.2.10 / Ender-3 V3 SE, Prusa Buddy & xBuddy, the full Duet 3
@@ -2455,11 +2467,11 @@ user-confirm board override remain as follow-ups.)
 ### Added
 
 - **Web-researched enrichment for 32 boards (wave 1).** Using 4 bounded research agents (each given
-  a fixed batch — no runaway), enriched 32 popular boards that had no Klipper config, from
+  a fixed batch - no runaway), enriched 32 popular boards that had no Klipper config, from
   authoritative manufacturer / OSH-repo / wiki sources:
   - **+107 confirmed specs**, **+57 media links** (product/repo/wiki/pinout/schematic/datasheet),
     **+100 config-affecting electronics facts**, **+96 Klipper config notes**.
-  - The electronics are the high-value part — e.g. *LDO Nitehawk-SB uses a 2.2 kΩ thermistor pull-up
+  - The electronics are the high-value part - e.g. *LDO Nitehawk-SB uses a 2.2 kΩ thermistor pull-up
     → set `pullup_resistor: 2200`*; *Octopus Pro per-driver 60 V MOTOR_POWER vs 28 V jumper*;
     *Manta M8P V2 PT1000 pull-up jumper*; *Spider v3 permanent 120 Ω CAN termination*; *Duet 2 =
     SPI TMC2660, current set in firmware*. All shown in the board detail (electronics + config notes
@@ -2475,7 +2487,7 @@ user-confirm board override remain as follow-ups.)
   local authoritative data pass: each sample printer config is parsed into a **`printer-preset`**
   board record (printer model + board hint from the header + MCU + the real pin map as structured
   ports + a copy-ready config snippet + `configSource` URL). Great for owners of a specific machine
-  (Creality, Anet, Anycubic, Sovol, Voron kits, …) — search your printer, get the exact pins.
+  (Creality, Anet, Anycubic, Sovol, Voron kits, …) - search your printer, get the exact pins.
   - **+108 printer-preset boards → 408 total** (290 mainboards · 108 printer-presets · 10 toolheads).
   - Coverage: **188 boards with a full copy-ready pin map**, **384 with a known MCU**.
   - All deterministic + traceable (no guessing). Next: bounded web-agent waves to enrich the boards
@@ -2487,13 +2499,13 @@ user-confirm board override remain as follow-ups.)
 
 - **Real pin maps for the remaining boards, from Klipper's official board configs.** Parsed all
   **84 `generic-*` board configs** from `Klipper3d/klipper/config/` (authoritative, deterministic
-  parse — no guessing) and folded them into the catalog:
+  parse - no guessing) and folded them into the catalog:
   - **49 existing boards enriched** with their real Klipper pin map (every section's pins as a
     structured port: signal/role + `invert`/`pull-up` flags + the Klipper config key + a usage hint),
     the **MCU** from the config header, and a **copy-ready config snippet**; the prior connector
     aggregation is preserved under `connectors`.
   - **35 new boards added** that weren't in the catalog before → **300 boards total**.
-  - Each carries `configSource` (the exact Klipper file URL) — every datum is traceable.
+  - Each carries `configSource` (the exact Klipper file URL) - every datum is traceable.
   - Coverage now: **80 boards with a full copy-ready pin map**, **277 with a known MCU**.
 
 ## [0.117.0] - 2026-06-07
@@ -2504,9 +2516,9 @@ user-confirm board override remain as follow-ups.)
   the Klipper config key** it feeds (added to **all 265 boards / ~960 ports**), so you know exactly
   where each connector goes in `printer.cfg`.
 - **SV08 built to full reference depth** (mainboard + toolhead):
-  - A **structured pin map** per port — each pin with its signal/role, the Klipper key, and
+  - A **structured pin map** per port - each pin with its signal/role, the Klipper key, and
     `invert` (`!`) / `pull-up` (`^`) flags + a per-pin hint.
-  - An **Electronics** block of config-affecting facts (e.g. *bed is mains-AC via SSR — PA0 is a
+  - An **Electronics** block of config-affecting facts (e.g. *bed is mains-AC via SSR - PA0 is a
     3.3V trigger, never wire mains*; *PT1000 on the default 4700Ω pull-up*; *sensorless homing via
     diag pins*; 3.3V logic).
   - **Config notes** + a **copy-ready config snippet** of the verified pin map.
@@ -2517,14 +2529,14 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Sovol SV08 fully ingested — the printer under test, mapped from its own config (gold proof).**
+- **Sovol SV08 fully ingested - the printer under test, mapped from its own config (gold proof).**
   The SV08 was missing from the board catalog entirely (it existed only as a "Host Computers" row).
   It is now two complete, hardware-verified board records:
-  - **`sovol-sv08` (mainboard)** — STM32F103xE, CoreXY quad-gantry, **6 integrated TMC2209** (X, Y,
+  - **`sovol-sv08` (mainboard)** - STM32F103xE, CoreXY quad-gantry, **6 integrated TMC2209** (X, Y,
     Z1–Z4), with **14 ports** carrying their real Klipper pins (every stepper's step/dir/enable/uart/
     diag, heated bed, exhaust/controller/MCU fans, filament sensor, RGB, LED, EXP display).
-  - **`sovol-sv08-toolhead`** — STM32F103xE, 1× TMC2209 extruder, hotend + PT1000, probe, part &
-    hotend fans, onboard ADXL345 — **6 ports** with real pins.
+  - **`sovol-sv08-toolhead`** - STM32F103xE, 1× TMC2209 extruder, hotend + PT1000, probe, part &
+    hotend fans, onboard ADXL345 - **6 ports** with real pins.
   - Every pin verified against the unit's own `printer.cfg`; media links to the Sovol3d/SV08 repo +
     mainboard pin-definition PDFs + product page. New `test_sv08_fully_ingested` locks it in.
 
@@ -2532,7 +2544,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Hardware Browser → "Boards" tab — the enriched board catalog is now visible.** The aggregated
+- **Hardware Browser → "Boards" tab - the enriched board catalog is now visible.** The aggregated
   `boards[]` entity (263 boards with their aggregated `ports[]`, specs, and reference media) was
   reachable only via the API and the Board-Topology card (which stays empty when detection is
   chip-only, e.g. the SV08). A new **Boards** tab lists every board with a search box; each card
@@ -2552,7 +2564,7 @@ user-confirm board override remain as follow-ups.)
   + **23 inferred manufacturers**, each from an authoritative manufacturer / open-source-hardware
   source.
 - **Per-board media is exposed as a `media` block** (product page, OSH repo, wiki, image, pinout,
-  schematic, datasheet) — **link-only** (verified `http(s)` URLs to the manufacturer's own source),
+  schematic, datasheet) - **link-only** (verified `http(s)` URLs to the manufacturer's own source),
   not re-hosted binaries, to respect asset licensing and keep the repo lean. The Board Topology
   board card now renders these as a row of **reference links** (i18n labels ×7 locales).
 - CI: media URLs are validated as real `http(s)` links (never fabricated/relative paths).
@@ -2561,7 +2573,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Hardware Browser — sectioned catalog + "Search all" (Phase 9 of the DB overhaul, item 9).**
+- **Hardware Browser - sectioned catalog + "Search all" (Phase 9 of the DB overhaul, item 9).**
   The browser now opens on a **Catalog** view: a tile per category with a hand-drawn illustration,
   the category name, and a **live item count**, plus a prominent **"Search all"** tile. Clicking a
   tile drops into the **Search** view pre-filtered to that category. The two views are a persistent
@@ -2579,7 +2591,7 @@ user-confirm board override remain as follow-ups.)
   `matchPatterns` (with a normalized-name fallback). When a board is identified, the topology card
   shows a **"View board details"** button that lazy-loads `GET /api/hardware/boards/{board_id}` and
   shows the aggregated `ports[]` summary + spec sheet inline.
-  - Surfaced as a **suggested** match the user can ignore — a serial/canbus id usually reveals only
+  - Surfaced as a **suggested** match the user can ignore - a serial/canbus id usually reveals only
     the chip, so `board_id` is `null` rather than a false guess (locked by tests).
   - New board-detail i18n keys across all 7 locales.
 
@@ -2587,9 +2599,9 @@ user-confirm board override remain as follow-ups.)
 
 ### Fixed
 
-- **Max-Flow hotend table — fixed the key mismatch + expanded 8 → 96 (Phase 7 of the DB overhaul).**
+- **Max-Flow hotend table - fixed the key mismatch + expanded 8 → 96 (Phase 7 of the DB overhaul).**
   The widget read `expected_max_flow_mm3s` / `suggested_temp_c` but the data shipped
-  `expected_flow_mm3s` and no temp — so the flow hint and the temp/max auto-fill **never fired**.
+  `expected_flow_mm3s` and no temp - so the flow hint and the temp/max auto-fill **never fired**.
   - Standardised every row on `expected_max_flow_mm3s` (kept `expected_flow_mm3s` as an alias);
     added `suggested_temp_c` to the curated rows so the auto-fill works.
   - **Generated 88 more hotends** from the big-DB `Hotends` sub-category (96 total), with a careful
@@ -2603,16 +2615,16 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Canonical board entities — connectors aggregated into `ports[]` (Phase 2-4 of the DB overhaul).**
+- **Canonical board entities - connectors aggregated into `ports[]` (Phase 2-4 of the DB overhaul).**
   Fixes the structural "duplication" where each control board was repeated once per pin/connector
-  (963 flat rows for ~116 boards). The board data is now a proper `boards[]` entity — **263 boards**
+  (963 flat rows for ~116 boards). The board data is now a proper `boards[]` entity - **263 boards**
   (116 with aggregated ports, 147 spec-only), all **963 connector rows aggregated losslessly** into
   per-board `ports[]` (a `count`-sum proof guarantees no row is dropped). Each port carries a
   controlled `category` (motor / heater-bed / heater-hotend / thermistor / fan / power / endstop /
   probe / can / usb / …), connector style, pins, pitch and MPN (real MPNs kept, "not published"
   placeholders → `null`). Each board has a stable `board_id` slug, inferred manufacturer, a join to
   its spec row (`MCU`/`Arch`/`Drivers`/…; 87 joined), and detection `matchPatterns` folded in.
-  - Purely **additive** — the flat `items[]` are untouched (the Hardware Browser keeps working);
+  - Purely **additive** - the flat `items[]` are untouched (the Hardware Browser keeps working);
     the new entity is exposed at **`GET /api/hardware/boards`** (summaries) and
     **`GET /api/hardware/boards/{board_id}`** (full record with `ports[]`).
   - This is the foundation the next phases build on (enrichment, media, Board-Topology link, the
@@ -2630,7 +2642,7 @@ user-confirm board override remain as follow-ups.)
   - **Restored 20 wiring/endstop reference rows** (wire-ampacity guidance + endstop/switch types)
     dropped from Electronics & Wiring (176 → **195**), with names derived from their own specs.
   - The manufacturer **directory stays in `manufacturers[]`** (274) instead of polluting the product
-    list — no directory data lost.
+    list - no directory data lost.
   - **Tightened the dataset to its technical reference values** and added a CI guard to keep it that way.
   - New CI regression: **per-category floors** (`test_no_category_was_gutted`) so a future regen can
     never silently gut a whole category again.
@@ -2656,10 +2668,10 @@ user-confirm board override remain as follow-ups.)
 ### Changed
 
 - **Max-Flow safety hardening (from the post-sprint audit).** Before any live run can read garbage:
-  - **Chopper-mode / StallGuard preflight** — `run_max_flow` now refuses a driver with no StallGuard,
+  - **Chopper-mode / StallGuard preflight** - `run_max_flow` now refuses a driver with no StallGuard,
     a missing `[<driver> extruder]` section, or the wrong chopper mode (SG4 needs StealthChop, SG2
     needs SpreadCycle); returns 422 with an actionable message instead of measuring noise.
-  - **SG4 bias-region floor** — StallGuard samples below `SG_MIN_INFORMATIVE` (50 for tmc2209/tmc2240)
+  - **SG4 bias-region floor** - StallGuard samples below `SG_MIN_INFORMATIVE` (50 for tmc2209/tmc2240)
     are dropped, so the 2209's low bias-region readings aren't analyzed as real load.
   - **Safe-extrusion floor raised to 180 °C** (was 150) to avoid reading cold-extrusion grind as slip.
   - Locked the tmc2240 StallGuard field (`sg4_thrs`) consistent across driver_catalog / stallguard_profiles
@@ -2669,18 +2681,18 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Macro Designer — macro variable substitution (Track A, completes A2).** The G-code simulator
+- **Macro Designer - macro variable substitution (Track A, completes A2).** The G-code simulator
   now renders Klipper-macro `{ ... }` value expressions before simulating: `{ params.X }`,
   `{ params.X | default(N) }`, bare `{ NAME }`, and simple `int` / `float` / `upper` / `lower`
   filters. `POST /api/macro/simulate` accepts an optional `params` map; unresolved expressions are
-  left intact and warned, and `{% … %}` control flow is reported (not evaluated — full Jinja is
+  left intact and warned, and `{% … %}` control flow is reported (not evaluated - full Jinja is
   future work). Dependency-free `macro_render.py`; +10 backend tests.
 
 ## [0.105.0] - 2026-06-06
 
 ### Added
 
-- **Config Templates library (Track A — completes A4).** A curated set of ready-to-paste Klipper
+- **Config Templates library (Track A - completes A4).** A curated set of ready-to-paste Klipper
   config blocks and macros baked into the backend (`templates.json`): start/end sequences,
   pause/resume/cancel, filament load/unload, M600, `[input_shaper]`, `[bed_mesh]`,
   `[firmware_retraction]`, `[exclude_object]`, and more.
@@ -2693,7 +2705,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Hardware Browser — widget UI (Track A).** A new widget on `/api/hardware`: a search box +
+- **Hardware Browser - widget UI (Track A).** A new widget on `/api/hardware`: a search box +
   manufacturer field + category filter (`ComboSelect`), paginated result cards each showing the
   component's manufacturer, name, category badge, and full spec sheet. Match count + "showing
   X–Y of N" + Prev/Next paging. New `hardwareBrowser` namespace + sidebar label across all 7
@@ -2703,10 +2715,10 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Hardware Browser — data + search backend (Track A).** A curated 3D-printing hardware
+- **Hardware Browser - data + search backend (Track A).** A curated 3D-printing hardware
   reference baked into the backend (`hardware.json`: **3,671 components** across 13 categories +
   a **274-manufacturer** directory), with a pure search service and read-only endpoints:
-  - `GET /api/hardware` — free-text (`?q=`) + `category` + `manufacturer` filters, paginated
+  - `GET /api/hardware` - free-text (`?q=`) + `category` + `manufacturer` filters, paginated
     (server-capped page size).
   - `GET /api/hardware/categories` and `GET /api/hardware/manufacturers`.
   - +8 backend tests (incl. a dataset-integrity check). The browser UI + a template library follow.
@@ -2715,8 +2727,8 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Macro Designer — editor UI (Track A).** A new widget on `POST /api/macro/simulate`: a G-code
-  editor (with a sample + clear), a **Simulate** button, and the results — a **2D toolhead path**
+- **Macro Designer - editor UI (Track A).** A new widget on `POST /api/macro/simulate`: a G-code
+  editor (with a sample + clear), a **Simulate** button, and the results - a **2D toolhead path**
   drawn as SVG (solid = extrusion, dashed = travel, theme-aware, flipped-Y), stat badges
   (moves / travel / extrusion / time estimate), the bounding box, a collapsible per-command
   timeline, and any warnings. Plus a **built-in macro reference library** (from `/api/reference/macros`)
@@ -2727,7 +2739,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Macro Designer — G-code simulator core (Track A).** `gcode_sim.py` + `POST /api/macro/simulate`:
+- **Macro Designer - G-code simulator core (Track A).** `gcode_sim.py` + `POST /api/macro/simulate`:
   parses a literal G-code program (`G0`/`G1` moves, `G90`/`G91`, `M82`/`M83`, `G92`, `G28`) and
   returns the toolhead path (2D), bounding box, total travel + extrusion, a rough time estimate,
   and a per-command timeline. Inline comments stripped; unsupported commands recorded as warnings.
@@ -2737,7 +2749,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Board Topology — widget UI (Track A).** A new read-only widget on `GET /api/topology`: the
+- **Board Topology - widget UI (Track A).** A new read-only widget on `GET /api/topology`: the
   host (SBC) node above a grid of MCU cards, each showing its connection type (USB / CAN bus /
   UART, colour + label coded), chip, a best-effort board guess with match confidence, and its
   identifier. Refresh, loading / unreachable / empty states, and an illustrated help drawer.
@@ -2747,8 +2759,8 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Board Topology — detection backend (Track A).** `board_topology.py` + `GET /api/topology`:
-  reads the live `configfile` sections and builds a host → MCU topology — each MCU's connection
+- **Board Topology - detection backend (Track A).** `board_topology.py` + `GET /api/topology`:
+  reads the live `configfile` sections and builds a host → MCU topology - each MCU's connection
   type (CAN bus / USB / UART), its identifier, and a best-effort chip / board guess from the
   reference pattern tables. Read-only; returns `reachable=false` when Moonraker is down.
   +9 backend tests. The topology-graph UI and a pin-conflict validator follow.
@@ -2757,10 +2769,10 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Max-Flow — measurement loop + widget (Track B).**
+- **Max-Flow - measurement loop + widget (Track B).**
   - `POST /api/maxflow/run` (actuating): heats the hotend, ramps the extrusion flow while
     sampling the extruder's TMC StallGuard load, and feeds each step to the `max_flow` analysis
-    core. **Safe by construction** — refused while the printer is busy (409); the heater is
+    core. **Safe by construction** - refused while the printer is busy (409); the heater is
     **always turned off in a `finally`**; and the ramp **stops at the first detected slip** so no
     filament is ground past it. `MoonrakerClient.upload_file` was added earlier; this adds the
     extruder StallGuard sampling. +4 backend tests (clean run, slip + early-stop, busy-refused,
@@ -2776,12 +2788,12 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Max-Flow — planner foundation (Track B).** `max_flow_service.py` (pure, hardware-free):
+- **Max-Flow - planner foundation (Track B).** `max_flow_service.py` (pure, hardware-free):
   - `flow_to_feedrate` (mm³/s → extruder mm/min for a given filament) + `plan_ramp` (the
     ascending flow steps a run would execute) + `recommend` (conservative 80 % / 90 % slicer
     values from a measured max) + `hotend_hint` (match the reference melt-zone table) +
     safety-bounded `validate`.
-  - `POST /api/maxflow/plan` — a dry-run preview: every flow step's feedrate + filament pushed,
+  - `POST /api/maxflow/plan` - a dry-run preview: every flow step's feedrate + filament pushed,
     the driver's StallGuard field, and totals. **Pure compute, no actuation.**
   - +16 backend tests. The gated measurement loop (heat → extrude → sample StallGuard) and the
     live run land in a later slice.
@@ -2790,11 +2802,11 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Config Editor — gated save path (Track A).** The Raw view is now editable, with a
+- **Config Editor - gated save path (Track A).** The Raw view is now editable, with a
   confirm-gated write back to the printer:
-  - `POST /api/config/save` — backs the current file up to `filamind-backups/<name>.<ts>.bak`
+  - `POST /api/config/save` - backs the current file up to `filamind-backups/<name>.<ts>.bak`
     first, then overwrites it. **Refused while the printer is busy** (printing / paused / error → 409).
-  - `POST /api/config/restart` — triggers `FIRMWARE_RESTART` to apply a saved change (also
+  - `POST /api/config/restart` - triggers `FIRMWARE_RESTART` to apply a saved change (also
     refused while busy).
   - UI: edit the raw text → **Save** opens a confirm panel ("I understand this writes to the
     printer") → on success it shows the backup path and offers a one-click **Restart firmware**
@@ -2806,13 +2818,13 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Config Editor — viewer UI (Track A).** A new widget that reads the live config through the
+- **Config Editor - viewer UI (Track A).** A new widget that reads the live config through the
   `/api/config/*` routes and presents it:
   - A file picker (`ComboSelect`) over every `.cfg` / `.conf` file on the printer, defaulting to
     `printer.cfg`.
   - Collapsible `[section]` cards → a parameter table (key / value + inline comment, multi-line
     values intact), the `SAVE_CONFIG` block flagged, with expand/collapse-all.
-  - A validation banner that surfaces structural issues (e.g. a duplicate section) — colour- **and**
+  - A validation banner that surfaces structural issues (e.g. a duplicate section) - colour- **and**
     label-coded (Error / Warning), not colour alone.
   - Structured and raw views (`WidgetTabs`), section/parameter counts, and an illustrated
     `HelpDrawer` (topics + glossary + how-to steps).
@@ -2823,11 +2835,11 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Config Editor — read path (Track A keystone).** Backend endpoints that read the live
+- **Config Editor - read path (Track A keystone).** Backend endpoints that read the live
   Klipper config through the round-trip `klipper_config` engine:
-  - `GET /api/config/files` — list the editable config files (`.cfg` / `.conf`) under
+  - `GET /api/config/files` - list the editable config files (`.cfg` / `.conf`) under
     Moonraker's `config` root.
-  - `GET /api/config/file?filename=` — parse one file into a structured view: sections →
+  - `GET /api/config/file?filename=` - parse one file into a structured view: sections →
     params (key / value / separator / inline comment, multi-line values preserved), the
     `SAVE_CONFIG` block flagged, plus light validation issues. Read-only; a path-traversal
     guard restricts reads to the config root.
@@ -2845,13 +2857,13 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Phase 0.2 (foundation) — config engine + flow-analysis core.** Two internal backend modules
+- **Phase 0.2 (foundation) - config engine + flow-analysis core.** Two internal backend modules
   the upcoming widgets build on (pure logic; no Moonraker, no motion):
-  - `klipper_config.py` — a round-trip Klipper INI engine (`parse` / `dump` / `validate`): preserves
+  - `klipper_config.py` - a round-trip Klipper INI engine (`parse` / `dump` / `validate`): preserves
     comments, `:`/`=` separators, section order, multi-line values and the auto-saved `SAVE_CONFIG`
     block, so `dump(parse(x)) == x`. Light validation (duplicate sections, empty names, stray params).
     Backs the planned Config Editor.
-  - `max_flow.py` — a pure StallGuard slip-detection analysis core: per-step median / IQR / CV stats +
+  - `max_flow.py` - a pure StallGuard slip-detection analysis core: per-step median / IQR / CV stats +
     CV-spike / IQR-spread / run-outlier detectors driven by the per-driver reference constants; turns a
     flow sweep's samples into a max-flow result. Backs the planned Max-Flow widget.
   - +23 backend tests (12 config round-trip/validate + 11 flow-analysis).
@@ -2866,21 +2878,21 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Phase 0 (foundation) — reference-data layer.** First build step of the planned expansion: a
+- **Phase 0 (foundation) - reference-data layer.** First build step of the planned expansion: a
   backend module that serves curated Klipper reference datasets the upcoming widgets reuse.
   Baked under `backend/app/data/reference/` and exposed read-only:
-  - `GET /api/reference/stallguard` + `/stallguard/{driver}` — per-driver StallGuard slip-detection
+  - `GET /api/reference/stallguard` + `/stallguard/{driver}` - per-driver StallGuard slip-detection
     tuning constants (base + overrides; `{driver}` returns the merged effective set + the SG field).
-  - `GET /api/reference/hotends` — hotend melt-zone / expected max-flow / test presets (8 classes).
-  - `GET /api/reference/boards` — board (34) + MCU (15) identification patterns.
-  - `GET /api/reference/macros` — 11 built-in calibration macro definitions.
+  - `GET /api/reference/hotends` - hotend melt-zone / expected max-flow / test presets (8 classes).
+  - `GET /api/reference/boards` - board (34) + MCU (15) identification patterns.
+  - `GET /api/reference/macros` - 11 built-in calibration macro definitions.
   - Pure static reads (no Moonraker / writes / gating); payloads returned verbatim. +4 backend tests.
 
 ### Docs
 
 - **Roadmap expanded with a planned widget/data program.** Documented a phased plan extending
   FilaMind across the full Klipper tuning + configuration surface: a shared **Phase 0 foundation**
-  (reference-data layer + a config engine), then two parallel tracks — **Config Editor · Macro
+  (reference-data layer + a config engine), then two parallel tracks - **Config Editor · Macro
   Designer · Board Topology · Hardware Browser + Templates** and **Max-Flow · Motor-Drivers
   auto-SGT/slip-detection + Sensorless wizard**. See [ROADMAP.md](ROADMAP.md) + README.
 
@@ -2890,16 +2902,16 @@ user-confirm board override remain as follow-ups.)
 
 - **Sidebar now themes (was stuck bright yellow in dark themes).** The app sidebar hardcoded
   `bg-brand-yellow`, so it stayed loud yellow in Neon/Dark/High-Contrast and clashed with the dark
-  content. Added a dedicated `--c-sidebar` token (yellow in Light — the signature look — and a dark
+  content. Added a dedicated `--c-sidebar` token (yellow in Light - the signature look - and a dark
   rail in the other themes) and pointed the sidebar at it. (Caught by live browser verification.)
 
 ## [0.91.0] - 2026-06-06
 
 ### Added
 
-- **Theme system — 4 themes with a header switcher (Neon default).** The whole look is now driven by
+- **Theme system - 4 themes with a header switcher (Neon default).** The whole look is now driven by
   CSS custom properties, so a single switch restyles the entire app. Ships **Neon** (deep indigo/violet
-  with a soft glow + rounded corners — the new default), **Dark** (neutral charcoal), **Light** (the
+  with a soft glow + rounded corners - the new default), **Dark** (neutral charcoal), **Light** (the
   original warm Neo-Brutalist look), and **High Contrast** (near-black/white for accessibility).
   - **How it works:** every design token (the 9 colors + the shadow/radius style tokens) is a CSS
     variable; the Tailwind tokens reference them (`rgb(var(--c-*) / <alpha-value>)`, `var(--nb-*)`), so
@@ -2907,7 +2919,7 @@ user-confirm board override remain as follow-ups.)
     recolors per theme with no component changes. Adding a theme = one `[data-theme]` block + a registry entry.
   - **No-flash:** an inline `<head>` script applies the saved theme before first paint. Choice persists
     (`localStorage`), and is exposed via a header **theme selector** (translated in all 7 locales).
-  - **Charts follow the theme:** the Input Shaping SVG charts/heatmaps no longer hardcode hex — they use
+  - **Charts follow the theme:** the Input Shaping SVG charts/heatmaps no longer hardcode hex - they use
     the token variables, so they recolor correctly in dark/neon/contrast.
   - Built by a specialized multi-agent workflow (spec → tokens+CSS / runtime+switcher / chart-decouple →
     adversarial review), then verified live in the browser across all four themes.
@@ -2916,12 +2928,12 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Density & legibility pass (all widgets) — bigger text, clean card borders.** The dense data UI
+- **Density & legibility pass (all widgets) - bigger text, clean card borders.** The dense data UI
   used `text-[10px]`/`text-[9px]` throughout and **dashed** borders on every collapsible sub-panel,
   which read as cramped and unfinished. Bumped the type one step across the three widgets + shared UI
   (`text-[9px]`→`10px`, `text-[10px]`→`11px`; existing 11px kept), so the new hierarchy is 14 / 12 /
   11 / 10 px. Replaced every **dashed** sub-panel/divider border with a **solid** one, so panels read
-  as clean cards. No layout, copy, or behaviour change — purely visual legibility. Completes the UX
+  as clean cards. No layout, copy, or behaviour change - purely visual legibility. Completes the UX
   series (help reorg + this).
 
 ## [0.89.0] - 2026-06-06
@@ -2930,12 +2942,12 @@ user-confirm board override remain as follow-ups.)
 
 - **Help reorganised across Input Shaping + Firmware Manager (same kit as Motor Drivers).** Applied
   the v0.88.0 help pattern to the other two widgets so the whole app is consistent:
-  - **Named contextual hints** — every inline `HelpNote` in Input Shaping and the Firmware Manager
+  - **Named contextual hints** - every inline `HelpNote` in Input Shaping and the Firmware Manager
     now shows its **topic title** as the trigger instead of a generic "what's this?".
-  - **One Guide drawer per widget** — a single **"❓ Guide"** button (in each widget's header,
+  - **One Guide drawer per widget** - a single **"❓ Guide"** button (in each widget's header,
     reachable from every tab) opens the shared `HelpDrawer`: Input Shaping's gathers every topic +
     glossary; the Firmware Manager's also includes the build→flash "how to read" steps.
-  - **Removed the scattered link rows** — the Firmware Status tab's 7-link help dump + its steps
+  - **Removed the scattered link rows** - the Firmware Status tab's 7-link help dump + its steps
     toggle are gone (now in the drawer), and Input Shaping's stray standalone glossary link is gone
     (the co-located, now-named hints per view remain).
   - Adds `{inputShaping,firmware}.help.{guide,guideTitle,close[,howToRead]}` across all 7 locales
@@ -2946,7 +2958,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Fixed
 
-- **Guide drawer — "how to read" steps rendered as raw message objects.** `HelpDrawer` resolved its
+- **Guide drawer - "how to read" steps rendered as raw message objects.** `HelpDrawer` resolved its
   ordered steps with `tm(stepsKey)` over a **dynamic** key and rendered each item directly, which
   shows vue-i18n's raw compiled message nodes (`{t,b,s,i…}`) instead of text. Resolve each item with
   `rt()` so the steps render as readable text. (Caught by live browser verification on the printer.)
@@ -2955,18 +2967,18 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Help reorganised — named hints + one Guide drawer (Motor Drivers).** The help layer was
+- **Help reorganised - named hints + one Guide drawer (Motor Drivers).** The help layer was
   scattered and undiscoverable: every hint was an identical generic "what's this?" link, and the
   Motor Drivers widget ended in a row of **13 indistinguishable** such links (plus two more at the
   top). You couldn't tell what any of them revealed without clicking each. Now:
-  - **Named contextual hints** — each inline `HelpNote` shows its **topic title** as the trigger
+  - **Named contextual hints** - each inline `HelpNote` shows its **topic title** as the trigger
     (e.g. "Run / hold current") instead of a generic "what's this?", so hints are distinguishable at
     a glance.
-  - **One Guide drawer** — a new shared `components/ui/HelpDrawer.vue` (off-canvas, RTL-aware,
+  - **One Guide drawer** - a new shared `components/ui/HelpDrawer.vue` (off-canvas, RTL-aware,
     closes on backdrop/✕/Esc) gathers the whole help layer in one organised place: the "how to read"
     steps, every topic (title + illustration + body), and the glossary. A single **"❓ Guide"** button
     in the widget header opens it.
-  - **Removed the scattered link rows** — the 13-link bottom dump and the duplicate top links are
+  - **Removed the scattered link rows** - the 13-link bottom dump and the duplicate top links are
     gone (their content now lives in the drawer + the co-located named hints).
   - Adds `motorDrivers.help.{guide,guideTitle,close,howToRead}` across all 7 locales (872 keys/locale).
 
@@ -2977,14 +2989,14 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Motor Drivers — register editor reorganised (layout only).** The advanced register editor was a
-  single flat, `flex-wrap` list of ~20 registers with no alignment — controls, ranges, live values and
+- **Motor Drivers - register editor reorganised (layout only).** The advanced register editor was a
+  single flat, `flex-wrap` list of ~20 registers with no alignment - controls, ranges, live values and
   the per-field **Set** buttons packed left and wrapped independently, so nothing lined up (it read as
   a scattered wall). It is now split into **labelled sections** (Chopper · StealthChop (PWM) ·
   StallGuard · Thresholds & timing · CoolStep · Other) that mirror the backend `field_policy` catalog
   groups, each laid out as an **aligned CSS-grid** (name · control · range/live-value · Set) so every
   column lines up and the Set buttons form a single right-hand column. **Every control and button is
-  unchanged** — same fields, same gated write paths, same per-field confirms; this is purely
+  unchanged** - same fields, same gated write paths, same per-field confirms; this is purely
   layout/organisation. Section headers are fully translated across the 7 locales. Also unified the
   collapsible sub-panel toggles across the widget (Register editor / Recommend / Live monitor /
   Homing) into consistent full-width section headers (chevron + icon + bold label). No behaviour
@@ -2994,16 +3006,16 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **i18n Phase 4 complete (backend message codes) — the i18n epic is done.** The Motor Drivers write
+- **i18n Phase 4 complete (backend message codes) - the i18n epic is done.** The Motor Drivers write
   path (`drivers_apply.py`) now tags every user-facing result with an i18n `code` + `params` alongside
   its English `message`: the `ApplyResponse` schema gained `code: str | None` and `params: dict`, and
   each structured result (nothing-to-apply, busy-refusals, applied / re-initialized / autotuned /
   field-set / CoolStep / homed / motors-synced) carries a stable `motorDrivers.apply.*` code with its
   interpolation args. The frontend renders these through a new `applyResultText(res)` helper
   (`t('motorDrivers.apply.' + res.code, res.params)`, falling back to `res.message`), wired into the
-  five panels that surface a write result (Recommend, RegisterEditor, Sensorless, Homing, MotorSync) —
+  five panels that surface a write result (Recommend, RegisterEditor, Sensorless, Homing, MotorSync) -
   so apply/revert/home/sync toasts now follow the selected language. **Passthrough errors stay English
-  by design** (Moonraker failures, `field_policy` / value-validation text carry no `code` — they are
+  by design** (Moonraker failures, `field_policy` / value-validation text carry no `code` - they are
   technical upstream strings). Added the 18 `motorDrivers.apply.*` keys (English source + the six
   translations) so `i18n:keydiff` parity holds (863 keys/locale). The English values are byte-identical
   to the backend `message`, so the fallback is exact. **No g-code or behavior changed.**
@@ -3014,14 +3026,14 @@ user-confirm board override remain as follow-ups.)
 
 - **Arabic RTL layout polish.** With Arabic selected (`<html dir=rtl>`), the Neo-Brutalist UI now lays
   out correctly right-to-left:
-  - **Logical-property sweep** — migrated the directional Tailwind utilities to their logical
+  - **Logical-property sweep** - migrated the directional Tailwind utilities to their logical
     equivalents across the components (`ml-/mr-`→`ms-/me-`, `pl-/pr-`→`ps-/pe-`,
     `text-left/right`→`text-start/end`, the sidebar's `border-r`→`border-e` and the mobile drawer's
     `left-0`→`start-0`), so margins, padding, text alignment, and the sidebar/drawer flip with `dir`.
-  - **Arabic font stack** — IBM Plex Sans Arabic / Noto Sans Arabic, applied via `:lang(ar)` to the
+  - **Arabic font stack** - IBM Plex Sans Arabic / Noto Sans Arabic, applied via `:lang(ar)` to the
     prose + display faces (data stays in JetBrains Mono); loaded with a system fallback like the Latin
     faces. (Self-hosting for fully-offline hosts remains the existing roadmap item.)
-  - **Brutalist tweaks that don't translate** — under `:lang(ar)`, `uppercase` and `letter-spacing`
+  - **Brutalist tweaks that don't translate** - under `:lang(ar)`, `uppercase` and `letter-spacing`
     are dropped (Arabic has no case and tracking breaks its cursive joining); the bold weight keeps the
     "shout". The hard offset shadow stays put (a fixed light source, not a reading-direction cue) while
     the button press-translate is mirrored.
@@ -3032,15 +3044,15 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Six languages — the UI is now multilingual.** Added full translations for **Arabic, German,
-  Simplified Chinese, French, Spanish, and Russian** — every one of the 845 catalog keys, across all
+- **Six languages - the UI is now multilingual.** Added full translations for **Arabic, German,
+  Simplified Chinese, French, Spanish, and Russian** - every one of the 845 catalog keys, across all
   five namespaces (`common` / `shell` / `firmware` / `input-shaping` / `motor-drivers`). A
   **language switcher** now appears in the header (it was hidden while only English shipped); picking
   a language lazy-loads its catalog and updates `<html lang>` / `dir` (Arabic switches the document to
   RTL). Each translation keeps brand / protocol / register / G-code tokens and SI unit symbols in
   Latin, preserves every `{placeholder}` and emoji, and uses the correct **per-locale plural rules**
   (registered for Arabic = 6 forms, Russian = 3, Chinese = 1; en/de/es/fr = 2). Adding a language was
-  exactly "drop in a `src/locales/<code>/` folder" — no component changed. CI `i18n:keydiff` now
+  exactly "drop in a `src/locales/<code>/` folder" - no component changed. CI `i18n:keydiff` now
   enforces that every locale carries the exact `en` key set.
 
   *Arabic note:* the document flips to RTL automatically; the Neo-Brutalist **RTL layout polish**
@@ -3050,23 +3062,23 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **i18n Phase 2 complete (Firmware Manager — templates).** Externalized all of the Firmware Manager
-  widget's template strings — `FirmwareUpgradeWidget.vue` (tabs, the build→flash steps, status /
+- **i18n Phase 2 complete (Firmware Manager - templates).** Externalized all of the Firmware Manager
+  widget's template strings - `FirmwareUpgradeWidget.vue` (tabs, the build→flash steps, status /
   services / devices / batch actions, confirm copy, errors) and the panels `FirmwareGuided`,
-  `FirmwareFlashConfirm`, `FirmwareConfigEditor`, `FirmwareDevicesPanel`, `ExternalFirmwarePanel` —
+  `FirmwareFlashConfirm`, `FirmwareConfigEditor`, `FirmwareDevicesPanel`, `ExternalFirmwarePanel` -
   into the `vue-i18n` catalog (`firmware.{widget,guided,flashConfirm,configEditor,devices,external}.*`;
   **845 `en` keys**). Real counts use **vue-i18n pipe plurals** (e.g. `{n} setup issue | {n} setup
   issues`, edits badge, "Restored N profile(s)"); the `STEPS` guide moved to the catalog (`tm()`);
   tab / batch arrays became `computed`; inline markup uses `<i18n-t>`; units / tokens stay literal.
   Build-log lines (`>>> compiling…`) are kept English as technical console output. **No visible
-  change.** New mount + pipe-plural test suite. **This completes i18n Phase 2** — all three widgets
+  change.** New mount + pipe-plural test suite. **This completes i18n Phase 2** - all three widgets
   (Input Shaping, Motor Drivers, Firmware Manager) and the app shell are now fully localizable.
 
 ## [0.82.0] - 2026-06-06
 
 ### Changed
 
-- **i18n Phase 2 (Firmware Manager — help layer).** Externalized the Firmware Manager widget's help
+- **i18n Phase 2 (Firmware Manager - help layer).** Externalized the Firmware Manager widget's help
   copy (10 `HelpNote` topics + a 6-term glossary) into the `vue-i18n` catalog (`firmware.help.*`;
   **652 `en` keys**), mirroring the shipped Input Shaping / Motor Drivers pattern: `help.ts` is now
   structural (`HELP_TOPICS` / `HELP_ILLO` / `GLOSSARY_KEYS`; the `STEPS` build→flash guide stays for
@@ -3078,8 +3090,8 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **i18n Phase 2 (Motor Drivers — templates; widget complete).** Externalized all of the Motor
-  Drivers widget's template strings — `MotorDriversWidget.vue` (intro, tabs, the "how to read this"
+- **i18n Phase 2 (Motor Drivers - templates; widget complete).** Externalized all of the Motor
+  Drivers widget's template strings - `MotorDriversWidget.vue` (intro, tabs, the "how to read this"
   steps, card labels, states) and every panel (`LiveMonitor`, `RecommendPanel`, `MotorSyncPanel`,
   `SensorlessPanel`, `HomingPanel`, `GuidedWizard`, `MotorPicker`, `RegisterEditor`) into the
   `vue-i18n` catalog (`motorDrivers.{widget,liveMonitor,recommendPanel,motorSync,sensorless,homing,
@@ -3087,20 +3099,20 @@ user-confirm board override remain as follow-ups.)
   `help.ts` into the catalog (rendered via `tm()`); sentences with inline markup use `<i18n-t>`; tab
   arrays became `computed`; units / tokens stay literal. **No visible change.** A new mount-test
   suite renders every panel and the orchestrator, guarding against leaked keys. **With this, the
-  entire Motor Drivers widget is localizable** — only the Firmware Manager widget remains for Phase 2.
+  entire Motor Drivers widget is localizable** - only the Firmware Manager widget remains for Phase 2.
 
 ## [0.80.0] - 2026-06-05
 
 ### Changed
 
-- **i18n Phase 2 begins (Motor Drivers — help layer + format helpers).** Externalized the Motor
+- **i18n Phase 2 begins (Motor Drivers - help layer + format helpers).** Externalized the Motor
   Drivers widget's help copy (17 `HelpNote` topics + a 9-term glossary) and the `format.ts` display
   helpers (current / chopper / health / temperature / homing-method / StallGuard-range hints / motor
   spec line / fault flags / recommendation labels) into the `vue-i18n` catalog
   (`motorDrivers.{help,format}.*`; **510 `en` keys**), mirroring the shipped Input Shaping pattern:
   `help.ts` is now structural (`HELP_TOPICS` / `HELP_ILLO` / `GLOSSARY_KEYS`; the `STEPS` const stays
   for now), `HelpNote.vue` renders through `t()`, and `format.ts` uses the global translator (option
-  A — no signature changes, so `format.spec.ts`'s 44 assertions pass unchanged). **No visible
+  A - no signature changes, so `format.spec.ts`'s 44 assertions pass unchanged). **No visible
   change.** New `help.spec.ts` mount test guards the rendering. The Motor Drivers templates follow
   next.
 
@@ -3108,42 +3120,42 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **i18n Phase 1 complete (Input Shaping — templates).** Externalized the Input Shaping widget's own
-  template strings — `InputShapingWidget.vue` (tabs, intro, result / chart labels, the cfg block,
+- **i18n Phase 1 complete (Input Shaping - templates).** Externalized the Input Shaping widget's own
+  template strings - `InputShapingWidget.vue` (tabs, intro, result / chart labels, the cfg block,
   the audit view) and the sub-panels `ResonanceFromPrinter.vue`, `VibrationsProfile.vue`,
-  `ResonanceCompare.vue`, `CsvSourceChooser.vue` — into the `vue-i18n` catalog
+  `ResonanceCompare.vue`, `CsvSourceChooser.vue` - into the `vue-i18n` catalog
   (`inputShaping.{widget,fromPrinter,vibrationsView,compareView,csvSource}.*`; **423 `en` keys**).
   Sentences with inline markup use `<i18n-t>` (keeping their `<code>` / `<strong>` tags); the
   tab-label arrays became `computed`; units / tokens stay literal. **No visible change.** New mount
   tests render every Input Shaping panel and guard that no raw key path leaks. **This completes i18n
-  Phase 1** — the app shell and the entire Input Shaping widget are now fully localizable.
+  Phase 1** - the app shell and the entire Input Shaping widget are now fully localizable.
 
 ## [0.78.0] - 2026-06-05
 
 ### Changed
 
-- **i18n Phase 1 (Input Shaping — guided wizard + audit).** Externalized the last two prose helpers
+- **i18n Phase 1 (Input Shaping - guided wizard + audit).** Externalized the last two prose helpers
   and the Guided wizard UI. **`guided.ts`** keeps only the step *structure* (id / motion / manual);
   the step labels / titles / why-text move to `inputShaping.guided.steps.<id>`, and the gate
   headlines resolve through `t()`. **`audit.ts`** routes its per-property record labels, verdicts,
-  and value formats through `inputShaping.audit.*`. **`GuidedTune.vue`** is now fully localized — it
+  and value formats through `inputShaping.audit.*`. **`GuidedTune.vue`** is now fully localized - it
   reads the step text via `t()` and its own chrome (buttons, the motion-confirm, the summary) comes
   from the catalog (the summary's inline `printer.cfg` uses `<i18n-t>` to keep the `<code>` tag). A
   new **mount test** guards that the wizard renders from the catalog with no raw keys leaking.
   **No visible change** (English identical; 244 `en` keys; 135 tests). With this, all of Input
-  Shaping's display helpers are externalized — the widget's own template strings follow next.
+  Shaping's display helpers are externalized - the widget's own template strings follow next.
 
 ## [0.77.0] - 2026-06-05
 
 ### Changed
 
-- **i18n Phase 1 (Input Shaping — prose helpers).** Externalized the user-facing copy returned by
-  five pure display helpers — `grade.ts` (A–F verdicts + factor labels/notes), `diagnose.ts`
+- **i18n Phase 1 (Input Shaping - prose helpers).** Externalized the user-facing copy returned by
+  five pure display helpers - `grade.ts` (A–F verdicts + factor labels/notes), `diagnose.ts`
   (mechanical-diagnostic cards), `compare.ts` (A⇄B metric rows + belt verdict), `recommend.ts`
-  (next-step suggestions), and `axesMap.ts` (the axes-map verdict) — into the `vue-i18n` catalog
+  (next-step suggestions), and `axesMap.ts` (the axes-map verdict) - into the `vue-i18n` catalog
   under `inputShaping.*` (159 `en` keys now). Each helper resolves its strings through the global
   translator, so function signatures, call sites, and unit tests are unchanged. **No visible
-  change** — English renders identically, numeric values keep their exact formatting, and units /
+  change** - English renders identically, numeric values keep their exact formatting, and units /
   tokens (Hz, %, ×, `max_accel`, `TEST_RESONANCES`, …) stay literal. `guided.ts` (its `STEPS`
   template coupling) and `audit.ts` (persisted records) follow in later slices.
 
@@ -3151,7 +3163,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **i18n Phase 1 (Input Shaping — help layer).** Externalized the Input Shaping widget's help copy
+- **i18n Phase 1 (Input Shaping - help layer).** Externalized the Input Shaping widget's help copy
   (the 14 `HelpNote` topics + the 6-term glossary) into the `vue-i18n` catalog. `help.ts` is now
   pure structure (topic order, per-topic illustration, glossary key order); the translatable text
   lives under `inputShaping.help.*` and `HelpNote.vue` renders it through `t()`. **No visible
@@ -3162,36 +3174,36 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **i18n Phase 1 (shell).** Externalized the app chrome into the `vue-i18n` catalogs — the first
+- **i18n Phase 1 (shell).** Externalized the app chrome into the `vue-i18n` catalogs - the first
   slice of the string migration. The sidebar (nav, brand tagline, footer), header (Mainsail link +
   nav toggle), the connection-status badge, the empty-home copy, the per-widget **nav titles /
   descriptions**, and the shared `describeError` backend-unreachable message now render through
   `t()`. A small `widgetTitle` / `widgetDescription` helper prefers a `shell.widgets.<id>` key and
   falls back to the widget's registered English, so a widget without a catalog entry still shows a
-  sane label. **No visible change** — English renders identically and the language switcher stays
+  sane label. **No visible change** - English renders identically and the language switcher stays
   hidden until a second locale ships in a later phase.
 
 ## [0.74.0] - 2026-06-05
 
 ### Added
 
-- **Internationalization (i18n) — Phase 0 scaffolding.** Stood up an extensible, offline-first
-  multi-language foundation. **No user-visible change yet** — existing English copy is externalized
+- **Internationalization (i18n) - Phase 0 scaffolding.** Stood up an extensible, offline-first
+  multi-language foundation. **No user-visible change yet** - existing English copy is externalized
   in the following phases; this phase only wires the plumbing.
   - **`vue-i18n` v11** (Composition API) + **`@intlify/unplugin-vue-i18n`** wired into Vite. A new
-    **`src/core/i18n.ts`** bundles `en` eagerly (first paint never waits on a fetch — a printer host
+    **`src/core/i18n.ts`** bundles `en` eagerly (first paint never waits on a fetch - a printer host
     is usually offline) and **lazy-loads** every other locale on demand.
   - **Namespaced catalogs** under `src/locales/<code>/` (`common` / `shell` / `firmware` /
     `input-shaping` / `motor-drivers`), mirroring the widget code-split. **Drop-in extensibility:** a
-    language becomes selectable the moment its folder exists — no component edits.
-  - **Type-safe keys** — `en` is the schema source (`src/types/i18n.d.ts`), so `t('…')` is
+    language becomes selectable the moment its folder exists - no component edits.
+  - **Type-safe keys** - `en` is the schema source (`src/types/i18n.d.ts`), so `t('…')` is
     autocompleted and a wrong key fails `npm run type-check`.
   - **Detection** (stored → browser → `en`) + `localStorage` persistence, a reactive
     `<html lang/dir>` update on locale switch, and a **`LanguageSelect`** in the header (reusing
     `ComboSelect`) that stays hidden until a second locale ships.
   - **`latn` (Western) digits pinned for Arabic** and RTL declared in the locale metadata, ahead of
     the Arabic phase; per-locale `numberFormats` / `datetimeFormats` established.
-  - **CI/dev tooling:** `npm run i18n:keydiff` (a structural key-diff gate — every locale must carry
+  - **CI/dev tooling:** `npm run i18n:keydiff` (a structural key-diff gate - every locale must carry
     exactly the `en` key set; now a CI step) and `npm run i18n:pseudo` (pseudo-localization to
     surface text-expansion / RTL overflow and any un-externalized strings).
 
@@ -3213,8 +3225,8 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Firmware Manager — Guided new-board wizard (#118).** A new **🧭 Guided** tab walks a new
-  control board through four steps — detect the board, configure & build a profile, add & assign
+- **Firmware Manager - Guided new-board wizard (#118).** A new **🧭 Guided** tab walks a new
+  control board through four steps - detect the board, configure & build a profile, add & assign
   the device, then build & flash and verify it's in sync with the host. Each step reflects the
   **live** firmware state (it turns green when satisfied) and deep-links into the tab where you do
   it; it doesn't duplicate the build/flash logic or bypass any confirm. The widget now lands on
@@ -3222,9 +3234,9 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Input Shaping — the result is reunited with the action (#116).** The recommended shaper,
+- **Input Shaping - the result is reunited with the action (#116).** The recommended shaper,
   A–F measurement grade, frequency-response chart and shaper table now render in **every working
-  view** — including **Guided**, which previously showed only per-step pass/fail badges and hid
+  view** - including **Guided**, which previously showed only per-step pass/fail badges and hid
   the rich result the wizard had just computed. A pinned **“printer.cfg ready”** bar (captured
   axes + 📋 Copy + 💾 Archive) now sits at the top of every working view, so after a capture the
   widget's payoff is one tap away instead of buried below the on-printer panels. *(The optional
@@ -3236,17 +3248,17 @@ user-confirm board override remain as follow-ups.)
   After per-widget icons were added (#121), the Firmware entry's long label wrapped next to the
   icon, making the button look oversized. Sidebar nav items now use a fixed-width icon slot + a
   truncating single-line label, so every entry is the same compact height. The widget's display
-  title is now **Firmware Manager** (it builds, flashes, and manages firmware across MCUs — not
+  title is now **Firmware Manager** (it builds, flashes, and manages firmware across MCUs - not
   only "upgrades"); its id/route (`firmware-upgrade`) is unchanged.
 
 ### Added
 
-- **App shell — deep-linking, mobile navigation, and wayfinding (#121).**
+- **App shell - deep-linking, mobile navigation, and wayfinding (#121).**
   - The current view is now synced to `location.hash` (e.g. `#motor-drivers`), so a widget page
-    can be **bookmarked and survives a reload** — back/forward work too. (The empty Dashboard
+    can be **bookmarked and survives a reload** - back/forward work too. (The empty Dashboard
     clears the hash cleanly.)
   - On narrow screens the sidebar is now an **off-canvas drawer** with a ☰ toggle in the header
-    and a tap-to-dismiss backdrop — previously there was *no* navigation at all below the `md`
+    and a tap-to-dismiss backdrop - previously there was *no* navigation at all below the `md`
     breakpoint (a portrait tablet had no way to switch widgets).
   - Each widget carries its own **sidebar icon** (`WidgetDefinition.icon`: 🔧 / 📈 / ⚙) instead of
     the same generic glyph for all.
@@ -3258,7 +3270,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Accessibility pass — completed (#114).** Accessible names on the shared primitives: the
+- **Accessibility pass - completed (#114).** Accessible names on the shared primitives: the
   `WidgetTabs` tablist (`aria-label="Views"`) and the `ComboSelect` search input + options
   listbox. This closes out the a11y review item: the resonance/vibration **charts already carry
   `role="img"` + `aria-label`**, the motor sparkline is `aria-hidden` (its value is shown as
@@ -3270,8 +3282,8 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Firmware Upgrade — information-architecture reorg (#117).** The widget now uses the house
-  **`WidgetTabs`** strip — **🩺 Status / 🔧 Configure / 🖥 Devices / 📦 External** — instead of a
+- **Firmware Upgrade - information-architecture reorg (#117).** The widget now uses the house
+  **`WidgetTabs`** strip - **🩺 Status / 🔧 Configure / 🖥 Devices / 📦 External** - instead of a
   full-screen mode swap + footer buttons, so every area is one tap away (and navigation matches
   the other widgets). **External firmware** is promoted from a buried last-child of the Devices
   manager to its own top-level tab. The Configure and External screens gained touch-accessible
@@ -3282,7 +3294,7 @@ user-confirm board override remain as follow-ups.)
 ### Fixed
 
 - **The motor dropdown showed only the first 50 motors (#130).** `ComboSelect` capped the rendered
-  list at 50, so with no search text you couldn't reach the rest — bad when you don't remember a
+  list at 50, so with no search text you couldn't reach the rest - bad when you don't remember a
   model name and want to browse. It now renders the full filtered list (the dropdown scrolls), is
   taller for easier browsing, scrolls the highlighted option into view during ↑/↓ keyboard
   navigation, and gives each combobox instance unique option ids (fixes a latent duplicate-id
@@ -3295,14 +3307,14 @@ user-confirm board override remain as follow-ups.)
   the intro + help topic); the Analyze tab's compare button is **⇄ compare CSVs** to distinguish
   it from the Live "compare belts" tool; the Firmware Configure screen's `help` checkbox is now
   **option docs** (distinct from the standard ℹ help layer) and its build button is **build
-  profile** (vs the per-device build on Status — and the Devices caption no longer contradicts
+  profile** (vs the per-device build on Status - and the Devices caption no longer contradicts
   it); the Firmware empty state is now an actionable **"+ Add your first board →"** button.
 
 ## [0.68.0] - 2026-06-05
 
 ### Changed
 
-- **Motor Drivers — lower card density + earlier wizard access (#119).** Each driver card now
+- **Motor Drivers - lower card density + earlier wizard access (#119).** Each driver card now
   keeps only the live-tuning essentials inline (chopper mode, microsteps, temperature, StallGuard);
   the secondary specs (sense resistor, interpolation, interface, current cap, capability chips)
   collapse behind a per-card **▸ details** toggle. The Dashboard / 🧭 Guided tab strip now shows
@@ -3325,7 +3337,7 @@ user-confirm board override remain as follow-ups.)
 - **Shared `ComboSelect` dropdown/combobox primitive (#120).** A reusable typeahead select
   (`components/ui/ComboSelect.vue`): one control that opens a filtered dropdown with keyboard
   navigation (↑/↓/Enter/Esc), ARIA `combobox`/`listbox`/`option` roles, optional clear, and a
-  capped result list — the convention for every long option list going forward.
+  capped result list - the convention for every long option list going forward.
 
 ### Changed
 
@@ -3353,9 +3365,9 @@ user-confirm board override remain as follow-ups.)
 
 ### Fixed
 
-- **Firmware flashing now requires explicit confirmation (#111, P0).** Every flash entry point —
+- **Firmware flashing now requires explicit confirmation (#111, P0).** Every flash entry point -
   per-device **flash** / **build & flash**, the **batch** flash actions, and the **Beacon** probe
-  flash — previously wrote firmware **immediately on click**, with no preview or confirm, while the
+  flash - previously wrote firmware **immediately on click**, with no preview or confirm, while the
   help text promised FilaMind "confirms before irreversible steps". Flashing is destructive (a
   mid-flash interruption can brick a board), so this was a safety gap. A new `FirmwareFlashConfirm`
   dialog now stands in front of every flash: it previews the flash plan (`command` + warnings +
@@ -3366,16 +3378,16 @@ user-confirm board override remain as follow-ups.)
 
 ### Removed
 
-- The orphaned `FirmwareFlashPanel.vue` (imported nowhere) — its plan→confirm→flash pattern is now
+- The orphaned `FirmwareFlashPanel.vue` (imported nowhere) - its plan→confirm→flash pattern is now
   served by the gated flash path above, removing a second, dead flash UI.
 
 ### Added
 
-- **Motor Drivers — register-editor polish (P10c, #102).** Completes the advanced editor:
+- **Motor Drivers - register-editor polish (P10c, #102).** Completes the advanced editor:
   - **CoolStep as a single toggle.** CoolStep is a coupled five-register feedback loop, so
     instead of five raw boxes the editor offers one **enable / off** control that applies the
     a community-vetted set (`semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1`) or
-    disables it (`semin 0`) — via a new gated `POST /api/drivers/coolstep`, with its own
+    disables it (`semin 0`) - via a new gated `POST /api/drivers/coolstep`, with its own
     illustrated help note.
   - **StallGuard polarity hints.** The `sgthrs` / `sg4_thrs` / `sgt` rows now show the per-model
     polarity inline ("higher = more sensitive" vs the signed `sgt`'s "lower = more sensitive"),
@@ -3386,7 +3398,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Motor Drivers — advanced register editor (P10b, #102).** Each driver card gains a
+- **Motor Drivers - advanced register editor (P10b, #102).** Each driver card gains a
   **⚙ tune registers (advanced)** panel that edits the safe subset of its TMC registers live,
   driven entirely by the server's `field_policy` (the browser never decides what's editable or
   the bounds):
@@ -3394,10 +3406,10 @@ user-confirm board override remain as follow-ups.)
     / `pwm_freq` / …), CoolStep (`semin` / `semax` / …), StallGuard sensitivity, and the
     StealthChop↔SpreadCycle crossover threshold **in mm/s** (Klipper does the TSTEP conversion
     via `VELOCITY=`, and refuses it on a clock-less driver like the 2660);
-  - the right control per field — number (with the server's clamp range), toggle, select, or a
-    mm/s field — with **per-field confirm** on riskier knobs, and non-editable `driver_*`
+  - the right control per field - number (with the server's clamp range), toggle, select, or a
+    mm/s field - with **per-field confirm** on riskier knobs, and non-editable `driver_*`
     registers shown read-only beneath;
-  - a **"↺ reset to config"** (`INIT_TMC`) undo and a persistent "live only — a restart restores
+  - a **"↺ reset to config"** (`INIT_TMC`) undo and a persistent "live only - a restart restores
     it" note; raw current-scaling and protection registers are not editable here.
   - New `POST /api/drivers/field` (gated + server-clamped) and `GET /api/drivers/field-policy/{model}`.
 
@@ -3405,20 +3417,20 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Motor Drivers — register-edit safety foundation (P10a, #102).** A new server-side
+- **Motor Drivers - register-edit safety foundation (P10a, #102).** A new server-side
   `field_policy` module is the single source of truth for which TMC registers may be edited
-  live and within what bounds — the load-bearing safety layer for advanced-register editing,
+  live and within what bounds - the load-bearing safety layer for advanced-register editing,
   because `SET_TMC_FIELD VALUE=` *silently mask-truncates* out-of-range values rather than
   erroring. It provides:
   - an **allowlist** (only catalogued fields are editable; everything else is display-only);
   - a **per-field clamp** whose range is derived from the register **bit-mask** (so it provably
-    matches the silicon), with **per-model signedness** — `sgt` is a signed −64…63, while
+    matches the silicon), with **per-model signedness** - `sgt` is a signed −64…63, while
     `sgthrs` / `sg4_thrs` are unsigned 0–255;
   - a **blocklist** of raw current-scaling (`irun`, `globalscaler`, `vsense`, …) and
     protection-defeat (`diss2g`, `test_mode`, `overvoltage_vth`, …) fields, plus `mres` /
     `microsteps` (which would desync Klipper's step distance), that are never written live;
-  - a **per-model current cap** `I_cap = min(code_cap[model], motor rating)` — the TMC2240 cap
-    is computed from its `rref` — surfaced per driver as `current_cap` on `/api/drivers/status`.
+  - a **per-model current cap** `I_cap = min(code_cap[model], motor rating)` - the TMC2240 cap
+    is computed from its `rref` - surfaced per driver as `current_cap` on `/api/drivers/status`.
 
 ### Changed
 
@@ -3433,7 +3445,7 @@ user-confirm board override remain as follow-ups.)
 
 - **The current-cap warning used the driver's sanity-ceiling, not the real limit (#102).** A
   TMC5160's catalog cap (10.6 A) is only a board sanity ceiling, so the dashboard would show
-  "≤ 10.6 A" and not warn until ~9.5 A — dangerously permissive. The "near cap" warning and the
+  "≤ 10.6 A" and not warn until ~9.5 A - dangerously permissive. The "near cap" warning and the
   cap label now use the effective `current_cap` (min of the model code cap and the assigned
   motor's rating), so once a motor is assigned the real motor-bound limit drives the warning.
 
@@ -3441,7 +3453,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Fixed
 
-- **Physical-endstop switch state could show `—` on printers that key endstops by stepper name
+- **Physical-endstop switch state could show `-` on printers that key endstops by stepper name
   (#106).** `GET /api/drivers/endstops` returns Moonraker's raw keys, which are `stepper_x` on
   some printers (the SV08) and the bare axis letter `x` on others. The P9 physical-homing panel
   looked up only the axis letter, so the live switch state wouldn't render on the former. A new
@@ -3453,7 +3465,7 @@ user-confirm board override remain as follow-ups.)
 
 - **Homing classifier missed sensorless when the endstop pin had whitespace after the colon
   (#104).** Klipper parses `endstop_pin` as `chip:pin` split on the first colon with whitespace
-  stripped from each side, so `tmc2209_stepper_x: virtual_endstop` (a stray space — present
+  stripped from each side, so `tmc2209_stepper_x: virtual_endstop` (a stray space - present
   verbatim in the SV08's own `printer.cfg`) is a valid sensorless virtual endstop. The P9
   classifier used an exact `:virtual_endstop` substring test and wrongly classified that axis
   as a **physical endstop**. It now normalises the pin the way Klipper does (split + strip,
@@ -3464,7 +3476,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Motor Drivers — homing coverage (P9, #101).** Each axis's homing method is now classified
+- **Motor Drivers - homing coverage (P9, #101).** Each axis's homing method is now classified
   from its `[stepper_*].endstop_pin` using Klipper's own rule, and surfaced on the card as a
   method-aware **🏠 homing** panel instead of assuming "has a StallGuard register ⇒ sensorless":
   - **Physical endstop** → live switch state (open / TRIGGERED), an on-demand **↻ check**, and a
@@ -3472,38 +3484,38 @@ user-confirm board override remain as follow-ups.)
   - **Sensorless (StallGuard)** → the StallGuard tuner, now with **per-model polarity**: the
     signed `sgt` register (TMC2130 / 5160 / 2660) uses its true −64…63 range where _lower_ is
     more sensitive, while `sgthrs` / `sg4_thrs` (2209 / 2240) stay unsigned 0–255 where _higher_
-    is more sensitive — so the control no longer feels backwards on SPI drivers.
+    is more sensitive - so the control no longer feels backwards on SPI drivers.
   - **Z probe** → a pointer to the bed-leveling tools (no StallGuard to tune here).
   - **Virtual / shared** → a clear note; extra motors on a shared rail (a second Z, the extruder)
     show no homing UI.
 
   The sensorless tuner (and the Guided wizard's sensorless step) now appear **only** for axes that
-  actually home sensorless — fixing the case where a probe-homed Z or a switch-homed axis on a
+  actually home sensorless - fixing the case where a probe-homed Z or a switch-homed axis on a
   StallGuard-capable driver wrongly offered sensorless tuning. New `GET /api/drivers/endstops`.
 
 ## [0.60.0] - 2026-06-03
 
 ### Added
 
-- **Firmware Upgrade widget — built-in help layer (#82).** Per the project's widget-UX rule
+- **Firmware Upgrade widget - built-in help layer (#82).** Per the project's widget-UX rule
   (already used by Input Shaping and Motor Drivers), the Firmware Upgrade widget now has a
   collapsed help row: a **glossary**, **"what's this?" explanations** for each section
   (host/MCU sync, toolchain badges, services, devices, flashing) with **inline SVG
-  illustrations**, and a **"build → flash" quick guide**. Collapsed by default — zero clutter.
+  illustrations**, and a **"build → flash" quick guide**. Collapsed by default - zero clutter.
 
 ## [0.59.1] - 2026-06-03
 
 ### Fixed
 
 - **Motor Drivers: a driver with no `stealthchop_threshold` set now shows "SpreadCycle"
-  instead of "—".** An unset threshold means Klipper's default of 0, i.e. SpreadCycle — so
+  instead of "-".** An unset threshold means Klipper's default of 0, i.e. SpreadCycle - so
   the card reports the real mode rather than an unknown one (e.g. the SV08 extruder). (#85)
 
 ## [0.59.0] - 2026-06-03
 
 ### Added
 
-- **Motor Drivers P8 — motor synchronization (roadmap complete).** A printer-level panel
+- **Motor Drivers P8 - motor synchronization (roadmap complete).** A printer-level panel
   drives the optional **motors_sync** add-on to align the microstep phase of multiple motors
   on one axis (dual / quad-Z, dual-X). It detects whether the add-on is installed; if so it
   offers **Sync motors** / **Calibrate** behind a confirm + crash warning (accelerometer-based,
@@ -3516,22 +3528,22 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Motor Drivers P7 — guided tuning wizard.** A new **🧭 Guided** view walks one driver
-  through the whole flow in order — **choose axis → assign motor → recommend & apply →
-  (sensorless) → done** — with a step breadcrumb, per-step guidance, and Back/Next (the
+- **Motor Drivers P7 - guided tuning wizard.** A new **🧭 Guided** view walks one driver
+  through the whole flow in order - **choose axis → assign motor → recommend & apply →
+  (sensorless) → done** - with a step breadcrumb, per-step guidance, and Back/Next (the
   sensorless step is skipped automatically when the model doesn't support it). It **reuses the
   same panels** as the dashboard, so there's one source of truth and the same safety gating.
   A Dashboard / Guided mode strip switches between the full dashboard and the wizard.
 
 ### Changed
 
-- Motor Drivers intro updated (it's no longer read-only — it inspects, recommends, and applies).
+- Motor Drivers intro updated (it's no longer read-only - it inspects, recommends, and applies).
 
 ## [0.57.0] - 2026-06-03
 
 ### Added
 
-- **Motor Drivers P6 — live monitor.** A per-driver, read-only "live monitor" panel polls
+- **Motor Drivers P6 - live monitor.** A per-driver, read-only "live monitor" panel polls
   the driver's telemetry (~1.5 s) and shows **temperature**, **StallGuard load (SG_RESULT)**
   with an inline sparkline, **current scale (CS_ACTUAL)**, and any **fault flags**
   (overtemperature / short / open-load / standstill). The driver only reports this while the
@@ -3543,9 +3555,9 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Motor Drivers P5 — sensorless-homing helper.** For drivers that support sensorless
+- **Motor Drivers P5 - sensorless-homing helper.** For drivers that support sensorless
   homing, a new panel lets you tune the **StallGuard threshold** (`sgthrs` / `sgt` /
-  `sg4_thrs`) and **test-home one axis** — both behind an explicit confirm and refused
+  `sg4_thrs`) and **test-home one axis** - both behind an explicit confirm and refused
   server-side while printing. The test-home carries a loud crash warning (a wrong threshold
   can drive the axis into the frame). Guidance: lower if it stops early, raise if it doesn't
   stop. Shown only where the model actually supports sensorless homing.
@@ -3566,7 +3578,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Motor Drivers P4 — apply tuning.** The recommendation can now be acted on, three ways:
+- **Motor Drivers P4 - apply tuning.** The recommendation can now be acted on, three ways:
   **copy a printer.cfg block** (always safe, no write); **apply it live** to the driver via
   `SET_TMC_CURRENT` / `SET_TMC_FIELD` behind an **explicit confirm**; or **run AUTOTUNE_TMC**
   when a TMC autotune host add-on is installed. A **Revert** button (`INIT_TMC`)
@@ -3578,21 +3590,21 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- The "Recommended tuning" panel is no longer preview-only — it now offers copy / apply /
+- The "Recommended tuning" panel is no longer preview-only - it now offers copy / apply /
   revert / autotune.
 
 ## [0.54.0] - 2026-06-03
 
 ### Added
 
-- **Motor Drivers P3 — tuning recommender.** Once a motor is assigned to a stepper, each
+- **Motor Drivers P3 - tuning recommender.** Once a motor is assigned to a stepper, each
   card can compute a suggested **run current** plus the StealthChop / SpreadCycle register
   values (**pwm_grad, pwm_ofs, hstrt, hend**) from the motor's datasheet specs and your
-  supply voltage — a built-in `motor_constants` physics model, so
+  supply voltage - a built-in `motor_constants` physics model, so
   it works **even without any host add-on installed**. The run current defaults to a conservative
   70% of the motor's rating (overridable). Results are shown as a **preview diffed against the
   live config** (changed values highlighted), with the max StealthChop speed; **nothing is
-  written to the driver** — applying is a later, safety-gated step (P4).
+  written to the driver** - applying is a later, safety-gated step (P4).
   - Backend: pure `motor_constants` + `recommender` services; **`POST /api/drivers/recommend`**
     (404 unknown motor, 422 if the motor lacks the needed datasheet specs).
 
@@ -3610,10 +3622,10 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Motor Drivers P2b — motor picker.** Each driver card now lets you assign the stepper
+- **Motor Drivers P2b - motor picker.** Each driver card now lets you assign the stepper
   **motor** wired to that axis from a built-in catalog of **200+ motors** (searchable by
-  model or manufacturer). The assigned motor's datasheet specs — holding torque, rated
-  current, resistance, inductance — show on the card, and the choice is **persisted on the
+  model or manufacturer). The assigned motor's datasheet specs - holding torque, rated
+  current, resistance, inductance - show on the card, and the choice is **persisted on the
   printer** (`<data_dir>/motor-mapping.json`). This sets up the upcoming current/register
   recommender; it changes nothing on the driver by itself.
   - Backend: motor database baked to `backend/app/data/motor_catalog.json` (via
@@ -3626,11 +3638,11 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Motor Drivers P2a — driver capability map.** Each driver card is now annotated with
+- **Motor Drivers P2a - driver capability map.** Each driver card is now annotated with
   authoritative reference data for its TMC model, from a curated capability catalog
   (verified against the Klipper driver code): **communication interface**
   (UART / SPI / both), the **current cap**, and accurate **capabilities** (StealthChop /
-  SpreadCycle / CoolStep / StallGuard / temperature) — so the chips reflect what the model
+  SpreadCycle / CoolStep / StallGuard / temperature) - so the chips reflect what the model
   truly supports rather than only what the config exposes. A ⚠ hint flags a run current
   near the model's rated cap, and a new "where the model facts come from" help note explains
   the source.
@@ -3644,14 +3656,14 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **New widget — Motor Drivers (P1: read-only dashboard).** A live inventory of every
-  TMC stepper driver on the printer, discovered straight from the Klipper config — one
+- **New widget - Motor Drivers (P1: read-only dashboard).** A live inventory of every
+  TMC stepper driver on the printer, discovered straight from the Klipper config - one
   card per motor (X / Y / each Z / extruder…). Each card shows the driver model, run &
   hold current (live vs configured), chopper mode (SpreadCycle / StealthChop + threshold),
   microsteps, sense resistor, StallGuard threshold, live temperature (or “no sensor” on
   models without one), a live health badge (idle / ok / warning / fault from `drv_status`),
   capability chips, and a collapsible advanced-register view.
-  - **Generic across every Klipper printer** — drivers are detected from config, not
+  - **Generic across every Klipper printer** - drivers are detected from config, not
     assumed; all TMC models are handled (2209 / 2208 / 2130 / 2240 / 5160 / 2660…), with
     model-specific fields (temperature sensor, StallGuard register name) resolved from
     what the running config actually exposes.
@@ -3668,7 +3680,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Docs
 
-- **CONTRIBUTING**: documented three project norms — the widget-UX rule (every widget
+- **CONTRIBUTING**: documented three project norms - the widget-UX rule (every widget
   ships explanations + practical steps + inline SVG illustrations), the
   discovered-problem → typed GitHub issue → patch-PR rule, and the release process.
 
@@ -3680,15 +3692,15 @@ user-confirm board override remain as follow-ups.)
   backend was briefly unreachable, the silent 6 s refresh cleared the error and left no fresh
   data, so the widget rendered an **empty panel** (and the initial failure showed only the raw
   `Failed to fetch`). It now keeps the last good data on a transient refresh failure, shows a
-  clear **"Cannot reach the FilaMind backend — check that the filamind-flow service is running"**
+  clear **"Cannot reach the FilaMind backend - check that the filamind-flow service is running"**
   message with a **Retry** button, and a fallback line instead of a blank panel.
 
 ## [0.50.0] - 2026-06-03
 
-### Added — Input Shaping: every test type feeds the Audit (UX overhaul, 7 of 7 — complete)
+### Added - Input Shaping: every test type feeds the Audit (UX overhaul, 7 of 7 - complete)
 
-- **The Audit now aggregates every result, not just shaper runs.** Each live tool — accelerometer
-  noise, belt comparison, axes-map, sustain frequency, and the vibrations profile — records an
+- **The Audit now aggregates every result, not just shaper runs.** Each live tool - accelerometer
+  noise, belt comparison, axes-map, sustain frequency, and the vibrations profile - records an
   entry when it completes, rendered as a per-property card alongside the shaper calibrations and
   the archived configs/captures. One organized, engineered place to review every test by property.
 - New pure record builders in `audit.ts` (one per tool, reusing the existing belt / axes-map /
@@ -3699,29 +3711,29 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.49.0] - 2026-06-03
 
-### Changed — Input Shaping: History becomes the aggregated Audit (UX overhaul, 6 of N)
+### Changed - Input Shaping: History becomes the aggregated Audit (UX overhaul, 6 of N)
 
-- **The History tab is now "Audit"** — one place that aggregates past results, merging this
+- **The History tab is now "Audit"** - one place that aggregates past results, merging this
   browser's records with the on-host **archive** (saved configs + captures). Each result renders
   as a card with its properties in **separate labelled fields** (the shaper factor breakdown,
   grade, and trend ▲/▼ vs the previous same-axis run), newest-first.
 - New pure `audit.ts` (unified `AuditRecord` model + per-kind retention + a one-time, idempotent
-  fold-in of the legacy grade-history — additive, the old localStorage is never cleared) with a
+  fold-in of the legacy grade-history - additive, the old localStorage is never cleared) with a
   unit-test suite. Shaper analyses now also record an audit entry.
 - The other live-tool results (noise / belts / axes-map / sustain / vibrations) join the Audit in
   the next release.
 
 ## [0.48.0] - 2026-06-03
 
-### Added — Input Shaping: unified CSV source + archive browser (UX overhaul, 5 of N)
+### Added - Input Shaping: unified CSV source + archive browser (UX overhaul, 5 of N)
 
 - **One place to pick the CSV to analyse.** The Analyze view now has a `CsvSourceChooser` with a
   segmented **📤 Upload** ⟷ **🖥 From printer** control. "From printer" lists both the resonance
   CSVs on the host *and* the persistent archive, so the previously-separate upload and host-import
-  paths are unified — all flowing into the one analysis path (and carrying the advanced params
+  paths are unified - all flowing into the one analysis path (and carrying the advanced params
   either way).
 - **Archive browser.** Saved runs are listed with per-file **download** and **delete**, a 💾 **save**
-  on each host capture, and a 💾 **Archive** button beside the config block's Copy — so a generated
+  on each host capture, and a 💾 **Archive** button beside the config block's Copy - so a generated
   `[input_shaper]` or a scan CSV can be kept as a deletable historical record. (Backend from v0.47.0.)
 - The host-file list moved out of **Live tools** (now motion-only) into the chooser, removing the
   duplication. `/analyze-file` now also accepts `max_smoothing` / `damping_ratio` so a local-file
@@ -3729,12 +3741,12 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.47.0] - 2026-06-03
 
-### Added — Input Shaping: persistent on-host archive (backend, UX overhaul 4 of N)
+### Added - Input Shaping: persistent on-host archive (backend, UX overhaul 4 of N)
 
 - **A persistent archive of captures + generated configs.** New `shaper_archive` service +
   `/api/shaper/archive` routes keep recent resonance CSVs and generated `[input_shaper]`
   configs under `<data_dir>/input-shaper-archive/<run_id>/`, so results survive a reboot and
-  the browser — reviewable, **downloadable**, and **deletable** as a historical record. A
+  the browser - reviewable, **downloadable**, and **deletable** as a historical record. A
   single `index.json` stores only a compact per-run summary (never the multi-thousand-element
   PSD / spectrogram arrays), and retention is bounded **per kind** (`FILAMIND_SHAPER_ARCHIVE_KEEP_N`,
   default 20) to stay light on the SD card.
@@ -3745,10 +3757,10 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.46.1] - 2026-06-03
 
-### Changed — Input Shaping: per-tool motion confirm (UX overhaul, 3 of N)
+### Changed - Input Shaping: per-tool motion confirm (UX overhaul, 3 of N)
 
-- **Each on-printer tool now has its own "moves the toolhead — I'm ready" confirm.** Previously a
-  single checkbox armed the live test, the belt comparison *and* axes-map together — so ticking it
+- **Each on-printer tool now has its own "moves the toolhead - I'm ready" confirm.** Previously a
+  single checkbox armed the live test, the belt comparison *and* axes-map together - so ticking it
   for a quick live test also armed the much larger belt sweep. The live test, belt comparison and
   axes-map are now three self-contained panels, each with its own confirm + run button (consistent
   with the Sustain and Vibrations panels). Safer and clearer; the shared concurrency lock and the
@@ -3761,10 +3773,10 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.46.0] - 2026-06-03
 
-### Added — Input Shaping: built-in explanations + illustrations (UX overhaul, 2 of N)
+### Added - Input Shaping: built-in explanations + illustrations (UX overhaul, 2 of N)
 
 - **The widget now teaches as it works.** A collapsed-by-default **"ℹ what's this?"** note sits
-  beside each section — glossary (6 core terms), how to read the A–F grade, the frequency chart,
+  beside each section - glossary (6 core terms), how to read the A–F grade, the frequency chart,
   the shaper table, the config block, and every live tool (noise / belts / axes-map / sustain /
   vibrations) plus a "guided vs. manual" primer. Each expands a short plain-language explanation
   and, where it helps, a **hand-drawn SVG illustration** (resonance peak, shaper impulses, belt
@@ -3776,14 +3788,14 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.45.0] - 2026-06-03
 
-### Changed — Input Shaping: widget reorganized (UX overhaul, 1 of N)
+### Changed - Input Shaping: widget reorganized (UX overhaul, 1 of N)
 
 - **Four clear views instead of six stacked toggles.** The Input Shaping widget now opens on a
-  tab strip — **🧭 Guided** (the default landing view), **📈 Analyze**, **🔴 Live tools**,
-  **🕘 History** — so only one task is on screen at a time instead of a long scroll of
+  tab strip - **🧭 Guided** (the default landing view), **📈 Analyze**, **🔴 Live tools**,
+  **🕘 History** - so only one task is on screen at a time instead of a long scroll of
   independently-toggled panels. The guided wizard is kept mounted, so an in-progress run
   (including its minutes-long on-printer captures) survives a tab switch. Behavior-preserving:
-  every existing tool, the result view, and the combined `printer.cfg` block are unchanged —
+  every existing tool, the result view, and the combined `printer.cfg` block are unchanged -
   just better organized. First step of a multi-PR Input Shaping UX overhaul.
 - **CI now fails on a stale `frontend/dist`.** The printer host serves the pre-built UI bundle
   straight from git, so a forgotten rebuild would silently ship an old UI. CI now runs
@@ -3792,7 +3804,7 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.44.1] - 2026-06-03
 
-### Docs — resonance-tuning suite complete (5 of 5)
+### Docs - resonance-tuning suite complete (5 of 5)
 
 - Documentation sweep closing out the resonance-tuning suite effort (part 3/3): the ROADMAP
   gains phase 13 (vibrations profile) and the parity section is marked **✅ COMPLETE (5 of
@@ -3802,13 +3814,13 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.44.0] - 2026-06-03
 
-### Added — Input Shaping: vibrations profile UI + wizard (resonance-tuning suite, 5 of 5 — part 2/3)
+### Added - Input Shaping: vibrations profile UI + wizard (resonance-tuning suite, 5 of 5 - part 2/3)
 
 - **Machine vibrations profile (browser).** A new 📊 panel in the "From the printer" view
   runs the sweep (with adjustable top speed + step) and renders it as a **speed-vs-energy
   curve** (smoothest bands highlighted, resonance speeds to avoid flagged, the recommended
   speed marked), a **polar plot** of vibration energy by travel direction, and an **angle ×
-  speed heatmap** — plus the motor **symmetry**, the motor **resonant frequency / damping**,
+  speed heatmap** - plus the motor **symmetry**, the motor **resonant frequency / damping**,
   and a plain-language verdict. All dependency-free SVG.
 - **Guided wizard: the Vibrations step is now measured.** What was a manual "did you see
   VFAs?" self-report now runs the real vibrations profile, gates on motor symmetry +
@@ -3819,11 +3831,11 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.43.0] - 2026-06-03
 
-### Added — Input Shaping: vibrations profile backend (resonance-tuning suite, 5 of 5 — part 1/3)
+### Added - Input Shaping: vibrations profile backend (resonance-tuning suite, 5 of 5 - part 1/3)
 
 - **Machine vibrations profile (backend).** New `POST /api/shaper/vibrations-profile` and a
   pure `vibrations_service` (a numpy vibrations computation, reusing
-  the vendored Klipper `ShaperCalibrate` for the per-segment PSD — no matplotlib, no Klipper
+  the vendored Klipper `ShaperCalibrate` for the per-segment PSD - no matplotlib, no Klipper
   host). It sweeps a range of speeds along each kinematic motor angle (0/90 for
   Cartesian/CoreXZ, 45/135 for CoreXY) while `ACCELEROMETER_MEASURE` brackets each constant-
   speed burst, then reports the **smoothest speed ranges**, the **resonance speeds to avoid**,
@@ -3838,8 +3850,8 @@ user-confirm board override remain as follow-ups.)
 ### Fixed
 
 - **Long resonance tests no longer 504.** The nginx `/api/` proxy used the default 60s
-  `proxy_read_timeout`, so any operation that moves the toolhead for more than a minute —
-  a belt comparison (two full sweeps), a live test, axes-map, or sustain-frequency —
+  `proxy_read_timeout`, so any operation that moves the toolhead for more than a minute -
+  a belt comparison (two full sweeps), a live test, axes-map, or sustain-frequency -
   returned **504 Gateway Timeout** even though the backend was still running and would have
   finished. Raised the `/api/` `proxy_read_timeout` / `proxy_send_timeout` to 1200s in both
   the installer (`scripts/install.sh`) and the deploy template. Added a UI note that live
@@ -3848,7 +3860,7 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.42.0] - 2026-06-03
 
-### Added — Input Shaping: guided wizard completes the workflow (resonance-tuning suite, 4 of 5)
+### Added - Input Shaping: guided wizard completes the workflow (resonance-tuning suite, 4 of 5)
 
 - The 🧭 guided wizard now covers the full resonance tuning flow with two guided-manual steps
   after the shaper calibration: **Vibrations / VFAs** (a quick "do you see vertical fine
@@ -3859,10 +3871,10 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.41.0] - 2026-06-03
 
-### Added — Input Shaping: guided tuning wizard (resonance-tuning suite, 3 of 5)
+### Added - Input Shaping: guided tuning wizard (resonance-tuning suite, 3 of 5)
 
 - **🧭 Guided tune.** A step-by-step wizard that walks Noise → Belts → Shaper X → Shaper Y
-  with automated **pass/fail gates** (reusing the existing scorers — the A–F grade, the belt
+  with automated **pass/fail gates** (reusing the existing scorers - the A–F grade, the belt
   verdict and the noise grade) and concrete **next-step suggestions** per result. A progress
   rail, per-step verdicts + ranked recommendation cards (do-now / consider / ok), and
   Next / Re-run / Skip controls; the X and Y captures flow into the same combined
@@ -3872,11 +3884,11 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.40.0] - 2026-06-03
 
-### Added — Input Shaping: sustain frequency (resonance-tuning suite, 2 of 5)
+### Added - Input Shaping: sustain frequency (resonance-tuning suite, 2 of 5)
 
 - **Hold-a-frequency hands-on diagnostic.** A new `🎯 sustain frequency` action buzzes the
-  toolhead in place near a chosen frequency for a few seconds — a slow, narrow
-  `TEST_RESONANCES` sweep, so **no custom macro or printer-config change is needed** — and
+  toolhead in place near a chosen frequency for a few seconds - a slow, narrow
+  `TEST_RESONANCES` sweep, so **no custom macro or printer-config change is needed** - and
   you touch belts / toolhead / frame to feel which part is the resonance source. Returns a
   frequency×time **spectrogram** + an **energy-vs-time "touch timeline"** (the cyan dip marks
   when a touch reduced the vibration) + a verdict on whether the requested frequency
@@ -3885,18 +3897,18 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.39.0] - 2026-06-02
 
-### Added — Input Shaping: axes-map calibration (resonance-tuning suite, 1 of 5)
+### Added - Input Shaping: axes-map calibration (resonance-tuning suite, 1 of 5)
 
 - **Accelerometer orientation detection.** A new `🧭 axes map` action jogs the toolhead
   ~30 mm in +X/+Y/+Z, integrates the accelerometer signal to velocity, and detects the
-  Klipper `axes_map` to use (e.g. `-z, y, x`) plus per-axis tilt + confidence — so every
+  Klipper `axes_map` to use (e.g. `-z, y, x`) plus per-axis tilt + confidence - so every
   Input Shaping graph reads with X/Y/Z aligned. Reconstructs the no-signal axis on 2-axis
   / bed-slinger machines. Shows a paste-ready `[<chip>] axes_map: …` (Copy) + a
   "matches your config?" verdict + a velocity-sequence chart.
 - New backend `POST /api/shaper/axes-map` (**moves the toolhead**; print-guarded; auto-homes).
   The pure-numpy detection (`axes_map_service`) computes the accelerometer axes-map; the
   capture is orchestrated over Moonraker REST with
-  `ACCELEROMETER_MEASURE` bracketing the moves — the reusable capture spine for the coming
+  `ACCELEROMETER_MEASURE` bracketing the moves - the reusable capture spine for the coming
   sustain-frequency and vibrations features.
 
 ## [0.38.1] - 2026-06-02
@@ -3905,11 +3917,11 @@ user-confirm board override remain as follow-ups.)
 
 - **Portable Mainsail sidebar link.** The installer hard-coded the sidebar link to
   `http://<hostname>.local:8090`, which is dead for any client that can't resolve mDNS
-  (Windows without Bonjour, Android, a different subnet, VPN) — a real user saw it land
+  (Windows without Bonjour, Android, a different subnet, VPN) - a real user saw it land
   on an unreachable `…​.local:8090`. It now defaults to the primary **LAN IP** (resolves
   everywhere on the network), opens in a new tab, and accepts a `FILAMIND_PUBLIC_HOST`
   override (`FILAMIND_PUBLIC_HOST=printer.example` or a fixed IP). The app itself was
-  always fine — same-origin — so the broken case was purely the link host. (A fully
+  always fine - same-origin - so the broken case was purely the link host. (A fully
   host-preserving subpath link, working at *any* address, is the next step.)
 
 ## [0.38.0] - 2026-06-02
@@ -3919,7 +3931,7 @@ user-confirm board override remain as follow-ups.)
 - **Grade-tracked calibration history.** The Input Shaping history now records the
   measurement quality grade (A–F + score) for each calibration and shows it inline,
   with a trend arrow (▲ improved / ▼ declined) versus the previous test of the same
-  axis — so the effect of a mechanical fix on measurement quality is visible at a
+  axis - so the effect of a mechanical fix on measurement quality is visible at a
   glance. Frontend-only; entries saved before v0.38 (without a grade) still load.
 
 ## [0.37.0] - 2026-06-02
@@ -3927,7 +3939,7 @@ user-confirm board override remain as follow-ups.)
 ### Added
 
 - **CoreXY belt comparison.** A `🟰 compare belts` action in the Input Shaping "from the
-  printer" panel runs a resonance test along each belt diagonal — `(1,1)` and `(1,-1)` —
+  printer" panel runs a resonance test along each belt diagonal - `(1,1)` and `(1,-1)` -
   and overlays the two responses with a verdict (belts matched vs a tension mismatch,
   judged from the dominant-peak frequencies), so you can balance CoreXY belt tension.
   New backend route `POST /api/shaper/compare-belts` (print-guarded; **moves the
@@ -3939,7 +3951,7 @@ user-confirm board override remain as follow-ups.)
 
 - **Accelerometer noise pre-check.** A motion-free `MEASURE_AXES_NOISE` button in the
   Input Shaping "from the printer" panel reads the accelerometer's idle noise floor and
-  grades it (quiet / elevated / too noisy — Klipper's normal range is ~1-100), so you
+  grades it (quiet / elevated / too noisy - Klipper's normal range is ~1-100), so you
   can validate the sensor mount before running a resonance test. New backend route
   `POST /api/shaper/noise` (print-guarded; does **not** move the toolhead).
 
@@ -3953,11 +3965,11 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.35.0] - 2026-06-02
 
-### Added — Input Shaping advanced insights
+### Added - Input Shaping advanced insights
 
 - **Measurement quality grade (A–F).** Each capture gets a letter grade + a 0–100
-  score from five factors — peak clarity (signal-to-noise), residual vibration,
-  smoothing, frequency band, and single-vs-multi resonance — with a per-factor
+  score from five factors - peak clarity (signal-to-noise), residual vibration,
+  smoothing, frequency band, and single-vs-multi resonance - with a per-factor
   breakdown and a plain verdict, so a trustworthy, well-tuned result is obvious at a
   glance from one that needs a re-test.
 - **Visual diagnostics + fixes.** Rule-based cards map the measurement to the likely
@@ -3978,20 +3990,20 @@ user-confirm board override remain as follow-ups.)
 
 ## [0.34.0] - 2026-06-02
 
-### Changed / Fixed — portability (works for any user on any printer, not just the dev's)
+### Changed / Fixed - portability (works for any user on any printer, not just the dev's)
 
 - **Import finds resonance CSVs beyond `/tmp`.** Default scan dirs are now
   `/tmp,~/printer_data/config,~/printer_data/config/input_shaper` (override with
   `FILAMIND_RESONANCE_DIRS`), so captures saved by the usual input-shaper flows show
-  up — not just the volatile `/tmp` (which is wiped on reboot and empty off-host).
+  up - not just the volatile `/tmp` (which is wiped on reboot and empty off-host).
 - **Large live captures are no longer silently truncated.** The host-file read cap
   was 20 MB; a long sweep exceeds that (a real SV08 capture was 30 MB), feeding the
   parser a truncated file. Raised to 128 MB.
 - **Deploy templates are consistent + host-portable.** The nginx site, the Mainsail
-  `navi.json` and the deploy docs used port 8080 while `install.sh` uses 8090 —
+  `navi.json` and the deploy docs used port 8080 while `install.sh` uses 8090 -
   aligned to 8090. Removed the misleading advice to bake `VITE_*` host URLs into the
   build: the pre-built UI resolves Moonraker/backend/Mainsail from `window.location`
-  (same origin), so it already works at whatever IP/hostname you reach it by — no
+  (same origin), so it already works at whatever IP/hostname you reach it by - no
   host is baked in. (A fully host-preserving Mainsail sidebar link via a subpath
   reverse-proxy is the documented next step.)
 
@@ -4002,7 +4014,7 @@ user-confirm board override remain as follow-ups.)
 - **Live resonance test failed to parse the captured CSV** ("the number of columns
   changed from 4 to 2"). Klipper writes the raw accelerometer data from a
   background process, so `TEST_RESONANCES` returns before the (often hundreds of
-  thousands of rows) file is fully flushed — the analysis read it mid-write and
+  thousands of rows) file is fully flushed - the analysis read it mid-write and
   hit a truncated final row. The live test now waits for the file size to
   stabilise before reading it, and the raw-CSV parser tolerates a ragged row.
 
@@ -4013,7 +4025,7 @@ user-confirm board override remain as follow-ups.)
 - **Live resonance test failed with "Must home axis first".** `TEST_RESONANCES`
   moves the toolhead to the probe point, which needs homed axes. The live test now
   homes the printer (`G28`) first when it isn't already fully homed, then runs the
-  test — so the button works from cold.
+  test - so the button works from cold.
 
 ## [0.33.2] - 2026-06-02
 
@@ -4021,7 +4033,7 @@ user-confirm board override remain as follow-ups.)
 
 - **Live resonance test wrongly reported "No `[resonance_tester]`".** The guard
   looked for `resonance_tester` in `/printer/objects/list`, but that's a Klipper
-  config *section*, not a queryable status object — it never appears there, so the
+  config *section*, not a queryable status object - it never appears there, so the
   live test always refused, even on printers that have it configured (e.g. a Sovol
   SV08 with its toolhead ADXL345). It now checks the parsed `configfile` config,
   where the section actually lives.
@@ -4035,17 +4047,17 @@ user-confirm board override remain as follow-ups.)
   `deploy/install-host.sh` (or the Moonraker update manager) lacked numpy and every
   analysis failed with an unhandled HTTP 500. The shaper helper is now built inside
   the guarded block, so a missing dependency surfaces as a clear 400 instead. (The
-  real fix is installing the dependency — run `install-host.sh` / the update
+  real fix is installing the dependency - run `install-host.sh` / the update
   manager after pulling new backend requirements.)
 
 ## [0.33.0] - 2026-06-02
 
 ### Added
 
-- **Input Shaping — connected to the printer.** A new "from printer" panel:
+- **Input Shaping - connected to the printer.** A new "from printer" panel:
   - **Import** the resonance CSVs Klipper already wrote on the host (scans `/tmp`
-    by default) and analyse one with a click — no download/re-upload.
-  - **Run a live test** — trigger `TEST_RESONANCES` on a chosen axis via Moonraker
+    by default) and analyse one with a click - no download/re-upload.
+  - **Run a live test** - trigger `TEST_RESONANCES` on a chosen axis via Moonraker
     (gated behind a "moves the toolhead" confirm), then auto-analyse the captured
     CSV. Print-guarded; refuses unless a `[resonance_tester]` is configured.
 
@@ -4057,7 +4069,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Input Shaping — interpretation hints + calibration history.** Each analysis now
+- **Input Shaping - interpretation hints + calibration history.** Each analysis now
   comes with plain-language guidance: the suggested `max_accel`, warnings for a low
   shaper frequency or high smoothing, and a note when a multi-hump shaper is
   chosen. A browser-local **history** records each calibration (date · axis ·
@@ -4068,9 +4080,9 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Input Shaping — compare two captures (A ⇄ B).** A new compare panel: load two
+- **Input Shaping - compare two captures (A ⇄ B).** A new compare panel: load two
   resonance CSVs (e.g. before/after a belt-tension fix, or the same axis re-tested)
-  and see them side by side — an overlaid total-PSD chart plus a metric table
+  and see them side by side - an overlaid total-PSD chart plus a metric table
   (recommended shaper, frequencies, peak frequency, remaining vibrations,
   `max_accel`) that flags whether **B improved or regressed** versus A.
 
@@ -4078,21 +4090,21 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Input Shaping — per-axis X/Y config + advanced parameters.** Analyze the X and
+- **Input Shaping - per-axis X/Y config + advanced parameters.** Analyze the X and
   Y resonance files in turn and the widget accumulates both into a single
   `[input_shaper]` block (`shaper_type_x` / `_y` + frequencies), with chips showing
   which axes are captured and a clear button. A new **advanced** panel exposes the
-  knobs the desktop tool hardcodes — `max_freq`, `scv`, `max_smoothing`,
+  knobs the desktop tool hardcodes - `max_freq`, `scv`, `max_smoothing`,
   `damping_ratio` (blank = Klipper's default).
 
 ## [0.29.0] - 2026-06-02
 
 ### Added
 
-- **Input Shaping — frequency-response chart.** The widget now draws the resonance
+- **Input Shaping - frequency-response chart.** The widget now draws the resonance
   **frequency-response graph** inline as a dependency-free SVG: the X / Y / Z and
   combined PSD curves layered over each shaper's vibration-reduction curve, with
-  the recommended shaper accented and the rest dashed — the same picture as
+  the recommended shaper accented and the rest dashed - the same picture as
   Klipper's `calibrate_shaper` plot, rendered in the browser.
 
 ## [0.28.0] - 2026-06-02
@@ -4110,7 +4122,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Input Shaping — resonance analysis backend.** A new `POST /api/shaper/analyze`
+- **Input Shaping - resonance analysis backend.** A new `POST /api/shaper/analyze`
   endpoint runs Klipper's own input-shaper calibration on an uploaded resonance
   CSV (a PSD `freq,psd_x,…` file or raw accelerometer `time,accel_x,…` samples)
   and returns the recommended shaper, every tested shaper's metrics (frequency,
@@ -4126,7 +4138,7 @@ user-confirm board override remain as follow-ups.)
 
 - **Compare two external firmware files side by side.** A `compare A ⇄ B` picker
   at the top of the External firmware section diffs the two files' detected
-  properties — app, version, MCU, size, and every baked-in `config` constant —
+  properties - app, version, MCU, size, and every baked-in `config` constant -
   into a read-only table that highlights what **changed**, what's **only in A**,
   what's **only in B**, and what's the **same** (with a per-config-key tally). The
   diff runs entirely client-side from the already-inspected properties, so it
@@ -4137,12 +4149,12 @@ user-confirm board override remain as follow-ups.)
 
 - **External firmware shows the full build config baked into the file (read-only).**
   Beyond the Klipper version, the inspector now decompresses the firmware's data
-  dictionary and surfaces every constant compiled into the binary — `MCU`,
+  dictionary and surfaces every constant compiled into the binary - `MCU`,
   `CLOCK_FREQ`, the reserved USB / SPI / I2C bus pins, `STEPPER_BOTH_EDGE`,
-  `ADC_MAX` / `PWM_MAX`, … — in a collapsible, read-only list under each file
+  `ADC_MAX` / `PWM_MAX`, … - in a collapsible, read-only list under each file
   (e.g. an SV08 `.bin` reveals its 14 baked-in settings). These are compiled into
   the machine code and **cannot be edited**: to change them, build a profile in
-  Configure and flash that instead — the panel says so explicitly rather than
+  Configure and flash that instead - the panel says so explicitly rather than
   implying the values are editable.
 
 ## [0.24.1] - 2026-05-31
@@ -4186,7 +4198,7 @@ user-confirm board override remain as follow-ups.)
 
 - **External firmware section.** A new section in the Devices manager to register
   pre-built firmware files (`.bin` / `.uf2` / `.elf` / `.hex`) and flash them
-  directly — no build step. Upload a file, edit its flash properties (label,
+  directly - no build step. Upload a file, edit its flash properties (label,
   flash method, bootloader offset, CAN interface, notes), pick a target board,
   and flash; files can also be downloaded or removed. Backed by new
   `/api/firmware/external` endpoints.
@@ -4197,8 +4209,8 @@ user-confirm board override remain as follow-ups.)
 
 - **Per-device Katapult toggle.** Each serial / CAN device in the Devices manager
   now has a **katapult** checkbox (the flag was stored but never surfaced). When
-  it's off, a flash **skips the Katapult reboot-to-bootloader** step — for boards
-  flashed directly or via `make flash` — matching how the reference tool models
+  it's off, a flash **skips the Katapult reboot-to-bootloader** step - for boards
+  flashed directly or via `make flash` - matching how the reference tool models
   Katapult per device.
 
 ## [0.21.2] - 2026-05-31
@@ -4217,7 +4229,7 @@ user-confirm board override remain as follow-ups.)
 
 - **Config options are easier to toggle.** A bool option's **whole row** is now a
   click target (not just the small badge on the right), with a pointer cursor and
-  a hover highlight — so options like *Optimize stepper code…* are obviously and
+  a hover highlight - so options like *Optimize stepper code…* are obviously and
   reliably controllable. Options that Kconfig locks (forced by another symbol)
   now show a 🔒 and a tooltip explaining why they can't be changed.
 - **Browsers always load the latest build.** nginx now serves `index.html` with
@@ -4229,18 +4241,18 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Discovered boards show their bootloader mode** — the Devices manager's
+- **Discovered boards show their bootloader mode** - the Devices manager's
   *Discovered* list now badges each unregistered board with its live mode /
   bootloader (KATAPULT, READY, DFU, …), and no longer offers the Linux host MCU
   as an addable board (it is managed separately).
 
 ### Changed
 
-- **Linked bootloader identities are clearer** — a board's attached Katapult /
+- **Linked bootloader identities are clearer** - a board's attached Katapult /
   DFU identity now renders as an indented, connected sub-card with an *unlink*
   button, instead of a flat badge row; the discovered-board action is labelled
   **🔗 link**.
-- **Firmware configurator shows the whole config** — the Kconfig editor no longer
+- **Firmware configurator shows the whole config** - the Kconfig editor no longer
   scrolls inside a fixed-height box; every option is visible and the page scrolls
   normally.
 
@@ -4250,7 +4262,7 @@ user-confirm board override remain as follow-ups.)
 
 - **Configurator no longer 500s when switching processor architectures** (STM32,
   ATSAM, LPC176x, RP2040, PRU, AR100). Those architectures expose Kconfig **menu /
-  comment** nodes, which — unlike symbols — have no `help` attribute in
+  comment** nodes, which - unlike symbols - have no `help` attribute in
   kconfiglib; reading it raised `AttributeError`. The serializer now reads it
   safely. (Surfaced by v0.18.0 forcing the low-level menus visible.)
 
@@ -4258,11 +4270,11 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Inline help** — a *help* toggle renders each option's help text under it
+- **Inline help** - a *help* toggle renders each option's help text under it
   (previously only a hover tooltip).
-- **Profile Info card** — the selected profile's built status, version, and flags
+- **Profile Info card** - the selected profile's built status, version, and flags
   (linux / avr / CAN bridge) at a glance.
-- **Raw symbol names** — a *raw* toggle shows the underlying Kconfig symbol name
+- **Raw symbol names** - a *raw* toggle shows the underlying Kconfig symbol name
   and, for gated options, the dependency that controls them.
 - **Kconfig comments** are now rendered in the editor (informational notes that
   were previously dropped).
@@ -4278,14 +4290,14 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Rename a profile** — renames its `.config`, moves any built binary +
+- **Rename a profile** - renames its `.config`, moves any built binary +
   build-info, and rewrites every device that pointed at it, in one step.
-- **Duplicate / save-as a profile** — copies a profile's config (and any built
+- **Duplicate / save-as a profile** - copies a profile's config (and any built
   binary) under a new name to branch from an existing setup.
 
 ### Changed
 
-- **Build auto-saves pending edits** — clicking *build* with unsaved Kconfig
+- **Build auto-saves pending edits** - clicking *build* with unsaved Kconfig
   edits now saves them into the profile first, so the compiled firmware always
   reflects what's on screen.
 
@@ -4305,7 +4317,7 @@ user-confirm board override remain as follow-ups.)
 - **Configurator: low-level options are always visible.** The firmware config
   editor now force-enables Klipper's `LOW_LEVEL_OPTIONS` (and
   `HAVE_LIMITED_CODE_SIZE`) gates, so the optimization / low-level menus Klipper
-  hides by default always show. Revealed options keep their defaults — a build
+  hides by default always show. Revealed options keep their defaults - a build
   is unchanged unless you edit one.
 - **Download the built firmware binary.** Built profiles get a **↓ .bin** button
   (backed by `GET /api/firmware/config/profiles/{name}/artifact`) to download the
@@ -4313,14 +4325,14 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- README refreshed — it described an "empty scaffold"; it now documents the
+- README refreshed - it described an "empty scaffold"; it now documents the
   shipped Firmware Upgrade widget.
 
 ## [0.17.1] - 2026-05-31
 
 ### Fixed
 
-- **Update alert compares the right versions** — a device's **⚠ update** badge
+- **Update alert compares the right versions** - a device's **⚠ update** badge
   now compares its **live MCU firmware** (what Moonraker reports the board
   running) against the **host's running Klipper** (`software_version`), instead
   of the repo build version. Both come from the live printer, matching how
@@ -4328,7 +4340,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- Roadmap **Phase 14 — Configurator / profile parity**, capturing the
+- Roadmap **Phase 14 - Configurator / profile parity**, capturing the
   profile-creation gaps found vs the reference (rename, duplicate / save-as,
   download the built binary, forced low-level symbols, inline help text, …).
 
@@ -4336,20 +4348,20 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Sidebar pages** — the FilaMind sidebar now lists each panel (e.g. **Firmware
+- **Sidebar pages** - the FilaMind sidebar now lists each panel (e.g. **Firmware
   Upgrade**) as its own entry; clicking it opens that panel on its own page. The
   **Dashboard** home is intentionally empty for now, ready for future widgets.
-- **Per-device "build & flash"** — a third button on each device card builds the
+- **Per-device "build & flash"** - a third button on each device card builds the
   assigned profile then flashes it in one go (it only flashes if the build
   succeeded).
-- **Outdated-firmware alert** — a device card shows a **⚠ update** badge when its
+- **Outdated-firmware alert** - a device card shows a **⚠ update** badge when its
   flashed firmware differs from the host's Klipper version.
 
 ## [0.16.2] - 2026-05-31
 
 ### Fixed
 
-- **Per-device flash runs the built firmware directly** — clicking **flash** on a
+- **Per-device flash runs the built firmware directly** - clicking **flash** on a
   device card now flashes its assigned profile (reusing the artifact you just
   built) instead of opening a separate profile-picker. The streamed command log
   appears **right under that device's build / flash buttons**, and the batch log
@@ -4359,7 +4371,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- Slimmed the main screen — removed the per-MCU status rows and the Linux host
+- Slimmed the main screen - removed the per-MCU status rows and the Linux host
   MCU row; the operational **Devices** cards now carry each board's live status.
   The host Klipper row, tool / setup badges, services, and Devices section stay.
 
@@ -4367,7 +4379,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Changed
 
-- **Operational dashboard** — your registered devices now live on the **main
+- **Operational dashboard** - your registered devices now live on the **main
   screen** as operational cards (live status, profile, version, per-device
   **build / flash / boot**), and the **batch** buttons (Build all / Flash all /
   Flash ready / Build & flash) moved there too. A device appears on the main
@@ -4379,7 +4391,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Health & install integrity (Phase 13)** — a new `/firmware/health` check
+- **Health & install integrity (Phase 13)** - a new `/firmware/health` check
   reports whether the host is set up for flashing (the passwordless **sudo**
   rule, the **STM32 DFU udev rule**, and **dfu-util**), shown as a **setup**
   badge with a fix-it tooltip. `deploy/setup-sudoers.sh` now also installs a
@@ -4390,7 +4402,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Backup & restore (Phase 12)** — **export** the device registry + every
+- **Backup & restore (Phase 12)** - **export** the device registry + every
   Kconfig profile as a single portable ZIP, and **import** it back. Firmware
   binaries are excluded (they rebuild from the profiles), and restore is hardened
   against zip path-traversal (only `devices.json` + validated profile names are
@@ -4400,17 +4412,17 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Beacon (Phase 11)** — FilaMind now detects connected **Beacon eddy-current
+- **Beacon (Phase 11)** - FilaMind now detects connected **Beacon eddy-current
   probes** and updates their firmware through the Beacon plugin's own
   `update_firmware.py` (located via Moonraker's update_manager). The widget shows
   each probe with its revision, the version available in the plugin checkout, and
-  a **flash** button — and only appears when a probe is present.
+  a **flash** button - and only appears when a probe is present.
 
 ## [0.12.0] - 2026-05-31
 
 ### Added
 
-- **Advanced flash (Phase 10)** — sturdier flashing for more boards: DFU now
+- **Advanced flash (Phase 10)** - sturdier flashing for more boards: DFU now
   **retries** (up to 3×) and **exits via `:leave`** to return to firmware; a
   **USB-to-CAN bridge** (a CAN board that enumerates as a serial path) is flashed
   over serial automatically; a serial board that **re-enumerates** under a new
@@ -4422,7 +4434,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Live status & services (Phase 9)** — the widget now **auto-refreshes**
+- **Live status & services (Phase 9)** - the widget now **auto-refreshes**
   every few seconds, so each board's live mode (service / ready / dfu / offline)
   stays current. A new **Services** bar lists the host's Klipper / Moonraker
   units and can **start / stop / restart** them all (ordered so host MCUs come
@@ -4433,7 +4445,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Batch operations (Phase 8)** — build and/or flash every device in one go:
+- **Batch operations (Phase 8)** - build and/or flash every device in one go:
   **Build all**, **Flash all**, **Flash ready** (only boards already sitting in
   a bootloader), and **Build & flash**. It runs as a cancellable background task
   with a live, colorized log; **cancel** stops it at the next checkpoint. Builds
@@ -4453,7 +4465,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Devices (Phase 7)** — FilaMind now keeps a saved device registry
+- **Devices (Phase 7)** - FilaMind now keeps a saved device registry
   (`devices.json`): each board remembers its build profile, how it is flashed
   (method, baudrate, CAN interface), free-form notes, an exclude-from-batch
   flag, an optional custom make command, and the separate Katapult / DFU
@@ -4466,12 +4478,12 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Firmware version tracking (Phase 6)** — FilaMind now captures the Klipper
+- **Firmware version tracking (Phase 6)** - FilaMind now captures the Klipper
   version / commit / date a profile is built with (`<profile>.build_info.json`
   via `get_klipper_version`) and records what it flashes to each board
   (`flashed.json`). The **Linux host MCU** and other boards now show their
   firmware version even when Moonraker can't report it (e.g. an unconfigured
-  host MCU) — and each profile carries its `built_version`. Closes the
+  host MCU) - and each profile carries its `built_version`. Closes the
   host-MCU version-display gap.
 
 ## [0.7.1] - 2026-05-31
@@ -4480,7 +4492,7 @@ user-confirm board override remain as follow-ups.)
 
 - The **Linux host MCU** flash now matches the standard install: stop
   `klipper-mcu`, free the binary with `fuser -k`, install it executable, restart
-  the service, and wait for it to come up — warning (instead of leaving it
+  the service, and wait for it to come up - warning (instead of leaving it
   silently broken) if the kernel blocks realtime, in which case the `-r` flag
   should be dropped from the klipper-mcu unit. `setup-sudoers.sh` now also grants
   `fuser`.
@@ -4489,7 +4501,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Live MCU telemetry** in the firmware status — each MCU now shows its actual
+- **Live MCU telemetry** in the firmware status - each MCU now shows its actual
   clock frequency, awake load, and retransmitted-bytes count (the key host↔MCU
   comms-health signal, highlighted when non-zero), pulled from the MCU's
   `last_stats`. First of the Firmware Upgrade widget's planned enhancements.
@@ -4506,7 +4518,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- `deploy/setup-sudoers.sh` — grants the backend the narrow passwordless-sudo
+- `deploy/setup-sudoers.sh` - grants the backend the narrow passwordless-sudo
   rights flashing needs (`systemctl`, `dfu-util`, `cp`, `chmod`). Run once with
   sudo to enable the Flash phase; until then the UI reports flashing as blocked
   and points to this script.
@@ -4521,10 +4533,10 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Firmware flash (Phase 5 — Flash)**: push a built artifact onto a board from
-  the browser. `POST /api/firmware/flash` runs the right tool for the board —
+- **Firmware flash (Phase 5 - Flash)**: push a built artifact onto a board from
+  the browser. `POST /api/firmware/flash` runs the right tool for the board -
   Katapult `flashtool.py` (serial / CAN), `dfu-util` (DFU), or `make flash`
-  (AVR) — rebooting it to its bootloader first, and streams the log. A read-only
+  (AVR) - rebooting it to its bootloader first, and streams the log. A read-only
   `POST /api/firmware/flash-plan` previews the exact command + safety gates.
   Flashing is **refused while a print is running**, requires a built artifact,
   and needs passwordless sudo; the UI shows the plan, warnings, and a hard
@@ -4535,7 +4547,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Firmware build (Phase 4 — Build)**: compile a saved profile into a flashable
+- **Firmware build (Phase 4 - Build)**: compile a saved profile into a flashable
   artifact from the browser. `GET /api/firmware/build/{profile}` stages the
   profile's `.config`, runs `make clean` + `make olddefconfig` + `make`, and
   **streams the build log live** (with stall / total timeouts); the resulting
@@ -4547,7 +4559,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Firmware config editor (Phase 3 — Configure)**: edit Klipper's
+- **Firmware config editor (Phase 3 - Configure)**: edit Klipper's
   `make menuconfig` options from the browser. The backend loads Klipper's bundled
   `kconfiglib`, serialises `src/Kconfig` into a live menu tree (dependencies
   re-evaluate as values change), and writes a `.config`. Edits are saved as
@@ -4561,7 +4573,7 @@ user-confirm board override remain as follow-ups.)
 
 ### Added
 
-- **Board discovery** (`GET /api/firmware/boards`) — finds every flashable MCU on
+- **Board discovery** (`GET /api/firmware/boards`) - finds every flashable MCU on
   any printer by merging four independent sources: configured `[mcu]` sections
   from Moonraker, USB/serial (`/dev/serial/by-id` + ttyACM/ttyUSB), CAN (Katapult
   `flashtool.py -q` on each CAN interface), and DFU (`dfu-util -l`). Each board
@@ -4574,8 +4586,8 @@ user-confirm board override remain as follow-ups.)
 ### Added
 
 - Firmware Upgrade widget now surfaces the optional **Linux host MCU** (Klipper
-  "Linux process" MCU) explicitly — `active` / `available · not configured` /
-  `not installed` — based on the host's `klipper-mcu` service and whether a host
+  "Linux process" MCU) explicitly - `active` / `available · not configured` /
+  `not installed` - based on the host's `klipper-mcu` service and whether a host
   MCU is wired into the running config. Each MCU row also shows its connection
   kind (host / canbus / usb / serial).
 
@@ -4584,20 +4596,20 @@ user-confirm board override remain as follow-ups.)
 ### Changed
 
 - Firmware Upgrade widget: the **host** is now shown as a first-class row in the
-  device list — the reference version every MCU is compared against — styled
+  device list - the reference version every MCU is compared against - styled
   distinctly instead of a separate header line.
 
 ## [0.2.0] - 2026-05-31
 
 ### Added
 
-- **Firmware Upgrade widget — Phase 1**: read-only firmware status showing each
+- **Firmware Upgrade widget - Phase 1**: read-only firmware status showing each
   MCU's version, host↔MCU sync detection, and toolchain readiness
   (`GET /api/firmware/status`). The first FilaMind widget.
 - A living [`ROADMAP.md`](ROADMAP.md).
 - Dev test harness (`dev/virtual-printer/`): develop against any Moonraker through
   the Vite dev proxy via `MOONRAKER_PROXY_TARGET` (strips the browser Origin, so no
-  printer CORS changes are needed) — plus an optional Docker simulated printer.
+  printer CORS changes are needed) - plus an optional Docker simulated printer.
 - Verified the full on-device deployment on a real **BigTreeTech CB1**: backend
   systemd service + nginx-served UI + a **FilaMind Flow entry in the Mainsail
   sidebar**, with klippy `ready` and a live Connected badge.

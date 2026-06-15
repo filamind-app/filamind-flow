@@ -1,4 +1,4 @@
-"""Host-DB search — pure filtering/pagination over the canonical host-computer entities.
+"""Host-DB search - pure filtering/pagination over the canonical host-computer entities.
 
 Hardware-free. The list endpoint returns lightweight summaries (no copyable config snippet
 or full spec sheet); the full record is served by ``GET /api/hardware/hosts/{host_id}``.

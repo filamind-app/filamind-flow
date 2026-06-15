@@ -383,7 +383,7 @@ async def firmware_flash(
 @router.get("/identify")
 async def firmware_identify(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """Joins each registered device to its board-map MCU and catalog board, with the Kconfig
-    machine symbol its chip needs — powering the topology deep-link and the profile seed."""
+    machine symbol its chip needs - powering the topology deep-link and the profile seed."""
     client = MoonrakerClient(settings.moonraker_url)
     service = get_kconfig_service(settings.klipper_dir)
     try:

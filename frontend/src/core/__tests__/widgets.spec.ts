@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest'
 /**
  * Non-negotiable widget conventions, enforced in CI so they can't be skipped (a prose rule in
  * CONTRIBUTING.md was being missed). Every registered widget MUST:
- *   1. have a translated sidebar entry — shell.widgets.<id>.{title,description} — so the sidebar
+ *   1. have a translated sidebar entry - shell.widgets.<id>.{title,description} - so the sidebar
  *      never falls back to the raw English registry label; and
  *   2. render the shared <HelpDrawer> guide (the adopted help pattern), not an ad-hoc inline guide.
  * The 7-locale key-parity test (locales.spec.ts) then guarantees the sidebar entry exists in every
@@ -31,7 +31,7 @@ function usesHelpDrawer(id: string): boolean {
     .some((f) => readFileSync(resolve(dir, f), 'utf8').includes('HelpDrawer'))
 }
 
-describe('widget conventions (enforced — do not bypass)', () => {
+describe('widget conventions (enforced - do not bypass)', () => {
   it('discovered the registered widgets', () => {
     expect(REGISTERED_IDS.length).toBeGreaterThanOrEqual(12)
     expect(new Set(REGISTERED_IDS).size).toBe(REGISTERED_IDS.length) // ids are unique
@@ -42,7 +42,7 @@ describe('widget conventions (enforced — do not bypass)', () => {
       const entry = shellWidgets[id]
       expect(
         entry,
-        `Missing shell.widgets.${id} — add { title, description } to every locale's shell.json so the sidebar isn't an English fallback.`,
+        `Missing shell.widgets.${id} - add { title, description } to every locale's shell.json so the sidebar isn't an English fallback.`,
       ).toBeTruthy()
       expect(entry.title ?? '').not.toHaveLength(0)
       expect(entry.description ?? '').not.toHaveLength(0)
@@ -51,7 +51,7 @@ describe('widget conventions (enforced — do not bypass)', () => {
     it(`${id}: renders the shared <HelpDrawer> guide`, () => {
       expect(
         usesHelpDrawer(id),
-        `Widget '${id}' must use the shared <HelpDrawer> guide (the adopted help pattern) — not an ad-hoc <details>/inline note.`,
+        `Widget '${id}' must use the shared <HelpDrawer> guide (the adopted help pattern) - not an ad-hoc <details>/inline note.`,
       ).toBe(true)
     })
   }

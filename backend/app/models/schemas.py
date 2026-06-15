@@ -39,9 +39,9 @@ class McuFirmware(BaseModel):
     kind: str = "serial"
     #: Live telemetry from the MCU's ``last_stats`` (None when unavailable).
     freq: int | None = None
-    #: Fraction of time the MCU was awake (0 to 1) — a rough load indicator.
+    #: Fraction of time the MCU was awake (0 to 1) - a rough load indicator.
     awake: float | None = None
-    #: Retransmitted bytes — the key host↔MCU comms-health signal.
+    #: Retransmitted bytes - the key host↔MCU comms-health signal.
     retransmits: int | None = None
 
 
@@ -484,7 +484,7 @@ class ResonanceFilesResponse(BaseModel):
 
 
 class NoiseChip(BaseModel):
-    """One accelerometer chip's idle noise — the mean PSD per axis."""
+    """One accelerometer chip's idle noise - the mean PSD per axis."""
 
     #: The chip's mounting-axis label as Klipper reports it (e.g. "xy").
     label: str
@@ -494,7 +494,7 @@ class NoiseChip(BaseModel):
 
 
 class NoiseResult(BaseModel):
-    """Result of ``MEASURE_AXES_NOISE`` — the accelerometer's idle noise floor.
+    """Result of ``MEASURE_AXES_NOISE`` - the accelerometer's idle noise floor.
 
     Validates the sensor mount before a resonance test. Per Klipper's guidance,
     ~1-100 is normal; values of ~1000+ indicate a problem.
@@ -545,7 +545,7 @@ class VelocitySeries(BaseModel):
 
 
 class AxesMapResult(BaseModel):
-    """Result of axes-map calibration — the accelerometer's detected orientation."""
+    """Result of axes-map calibration - the accelerometer's detected orientation."""
 
     #: The detected Klipper ``axes_map`` string, e.g. "-z, y, x".
     axes_map: str
@@ -572,15 +572,15 @@ class AxesMapResult(BaseModel):
 
 
 class StaticExcitationResult(BaseModel):
-    """Result of a sustain-frequency hold — a time-frequency spectrogram + timeline."""
+    """Result of a sustain-frequency hold - a time-frequency spectrogram + timeline."""
 
     axis: str
     freq: float
     duration: float
     max_freq: float
-    #: Frequency-bin centres (Hz) — the heatmap rows.
+    #: Frequency-bin centres (Hz) - the heatmap rows.
     freqs: list[float] = []
-    #: Segment centre times (s) — the heatmap columns + the energy timeline.
+    #: Segment centre times (s) - the heatmap columns + the energy timeline.
     times: list[float] = []
     #: Log-normalised power grid ``[freq][time]``, 0..1.
     spectrogram: list[list[float]] = []
@@ -619,7 +619,7 @@ class AngleRange(BaseModel):
 
 
 class VibrationsProfile(BaseModel):
-    """Result of a machine vibrations profile — smoothest speeds/angles + motor health."""
+    """Result of a machine vibrations profile - smoothest speeds/angles + motor health."""
 
     kinematics: str
     accel: float
@@ -632,7 +632,7 @@ class VibrationsProfile(BaseModel):
     segments_captured: int = 0
     #: Speed axis (mm/s) shared by the energy profile + spectrogram columns.
     speeds: list[float] = []
-    #: Normalised vibration metric per speed (0..1) — the speed-energy profile.
+    #: Normalised vibration metric per speed (0..1) - the speed-energy profile.
     energy_profile: list[float] = []
     #: Normalised max-energy curve per speed (0..1).
     max_profile: list[float] = []
@@ -642,7 +642,7 @@ class VibrationsProfile(BaseModel):
     good_speed_ranges: list[SpeedRange] = []
     #: Angle axis (deg, 0..360) shared by the polar energy + spectrogram rows.
     angles: list[float] = []
-    #: Normalised vibration energy per travel direction (0..1) — the polar curve.
+    #: Normalised vibration energy per travel direction (0..1) - the polar curve.
     angle_energy: list[float] = []
     #: Smoothest travel-direction bands, best-first.
     good_angle_ranges: list[AngleRange] = []
@@ -689,7 +689,7 @@ class ArchiveListResponse(BaseModel):
 
 
 class ArchiveSaveConfigRequest(BaseModel):
-    """Saves a generated ``[input_shaper]`` config — to a new run, or attached to ``run_id``."""
+    """Saves a generated ``[input_shaper]`` config - to a new run, or attached to ``run_id``."""
 
     config_text: str
     axis: str | None = None
@@ -722,7 +722,7 @@ class MotorSpec(BaseModel):
     """A stepper motor's datasheet parameters, from the hardware catalog."""
 
     manufacturer: str = ""
-    #: Stable unique key (the catalog ``motor_id``) — the picker value + mapping/recommend key.
+    #: Stable unique key (the catalog ``motor_id``) - the picker value + mapping/recommend key.
     model: str
     #: Human-readable model name for display (e.g. "17HS4401"); not unique across manufacturers.
     name: str = ""
@@ -737,7 +737,7 @@ class MotorSpec(BaseModel):
 class TmcDriver(BaseModel):
     """One TMC stepper driver: who it is, its configured tuning, and live telemetry.
 
-    Generic across models — fields a given driver doesn't expose are ``None`` (e.g.
+    Generic across models - fields a given driver doesn't expose are ``None`` (e.g.
     ``temperature`` only on the TMC2240; ``drv_status`` only while the motor is enabled).
     """
 
@@ -748,7 +748,7 @@ class TmcDriver(BaseModel):
     #: Best-effort axis label derived from the stepper name: "X" / "Z1" / "E" / ….
     axis: str | None = None
 
-    #: Live applied current (A) from get_status — may differ slightly from the configured
+    #: Live applied current (A) from get_status - may differ slightly from the configured
     #: value because the TMC quantises it to an achievable step.
     run_current: float | None = None
     hold_current: float | None = None
@@ -771,10 +771,10 @@ class TmcDriver(BaseModel):
     stallguard_field: str | None = None  # "sgthrs" | "sg4_thrs" | "sgt"
     stallguard_threshold: int | None = None
 
-    #: °C — only the TMC2240 has a sensor; ``None`` on other models.
+    #: °C - only the TMC2240 has a sensor; ``None`` on other models.
     temperature: float | None = None
     #: Live driver flags (overtemp / short / open-load / sg_result / cs_actual). Present
-    #: only while the motor is enabled — ``None`` when idle.
+    #: only while the motor is enabled - ``None`` when idle.
     drv_status: dict[str, Any] | None = None
 
     #: Capabilities inferred from the running config (stealthchop / spreadcycle /
@@ -783,12 +783,12 @@ class TmcDriver(BaseModel):
     #: Raw ``driver_*`` tuning registers for an advanced view (toff / hstrt / pwm_* / …).
     registers: dict[str, Any] = {}
     #: Authoritative reference data for this model from the driver catalog (None if the
-    #: model isn't in the catalog — the card still renders from the live config).
+    #: model isn't in the catalog - the card still renders from the live config).
     info: DriverInfo | None = None
     #: The motor the user assigned to this stepper (from the motor catalog), or None.
     motor: MotorSpec | None = None
     #: Effective run-current ceiling (A): min(model code cap, assigned motor's rating). The
-    #: real safe limit for live current edits — None if neither is known.
+    #: real safe limit for live current edits - None if neither is known.
     current_cap: float | None = None
     #: How this axis homes, from its ``endstop_pin``: physical / sensorless / probe /
     #: other_virtual / inherited. StallGuard tuning is offered ONLY for ``sensorless``.
@@ -953,7 +953,7 @@ class SetFieldRequest(BaseModel):
 
 
 class FieldPolicyResponse(BaseModel):
-    """The editable-register policy for one model (GET /api/drivers/field-policy/{model}) —
+    """The editable-register policy for one model (GET /api/drivers/field-policy/{model}) -
     which fields may be edited, with their control type + clamp range, for the editor UI."""
 
     model: str
@@ -1014,7 +1014,7 @@ class TopologyHost(BaseModel):
     host_match: str | None = None
     host_match_confidence: float = 0.0
     # Set to a mainboard id when the host SBC is physically integrated on that board (e.g. an
-    # SV08 / Manta carrying a CB1) — lets the UI draw the host *inside* the board.
+    # SV08 / Manta carrying a CB1) - lets the UI draw the host *inside* the board.
     integrated_into_board_id: str | None = None
 
 
@@ -1081,7 +1081,7 @@ class TopologyDiff(BaseModel):
     has_baseline: bool = False
     saved_at: str | None = None
     changes: list[TopologyChange] = []
-    #: False when the live topology could not be read — "no changes" then means "could not
+    #: False when the live topology could not be read - "no changes" then means "could not
     #: compare", and the UI must say so instead of reporting a false all-clear.
     reachable: bool = True
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Proof of tune — pick a before and an after shaper result on one axis and see what
+/** Proof of tune - pick a before and an after shaper result on one axis and see what
  *  actually changed: grade, remaining vibration, smoothing, usable accel. Copyable as
  *  plain text. Pure presentation over the merged audit records the Audit tab already has.
  */
@@ -140,7 +140,7 @@ async function copyReport(): Promise<void> {
             <td class="pe-2 opacity-70">{{ t(`inputShaping.proof.metric.${row.key}`) }}</td>
             <td class="pe-2">{{ row.before }}</td>
             <td class="pe-2 font-bold">{{ row.after }}</td>
-            <td :class="deltaClass(row.better)">{{ row.delta || '—' }}</td>
+            <td :class="deltaClass(row.better)">{{ row.delta || '-' }}</td>
           </tr>
         </tbody>
       </table>

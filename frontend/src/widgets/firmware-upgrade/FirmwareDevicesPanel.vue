@@ -181,13 +181,13 @@ async function remove(device: Device): Promise<void> {
   }
 }
 
-// Refresh only the live board modes on a timer — never the editable device rows.
+// Refresh only the live board modes on a timer - never the editable device rows.
 let boardsTimer: ReturnType<typeof setInterval> | null = null
 async function refreshBoards(): Promise<void> {
   try {
     boards.value = (await fetchBoards()).boards
   } catch {
-    /* transient — keep the last good modes */
+    /* transient - keep the last good modes */
   }
 }
 
@@ -360,7 +360,7 @@ onUnmounted(() => {
           @change="persist(device)"
         />
 
-        <!-- Linked bootloader identities — a board enumerates under a separate id
+        <!-- Linked bootloader identities - a board enumerates under a separate id
              when it drops into Katapult / DFU; show each as a connected sub-card. -->
         <div
           v-if="device.serial_id"

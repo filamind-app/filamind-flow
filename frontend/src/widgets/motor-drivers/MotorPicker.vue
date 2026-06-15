@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** Per-stepper motor picker: shows the assigned motor (+ specs) and a dropdown/combobox to
- *  choose from the catalogued motors (#120 — a typeahead `<ComboSelect>`, not an inline list,
+ *  choose from the catalogued motors (#120 - a typeahead `<ComboSelect>`, not an inline list,
  *  the convention for long pickers). Emits `assign` (stepper, model | null); the parent persists
  *  it and refreshes.
  */

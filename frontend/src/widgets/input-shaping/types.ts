@@ -38,7 +38,7 @@ export interface ShaperAnalysis {
   source_file: string | null
 }
 
-/** Comparable numbers behind a recorded shaper result — what proof-of-tune diffs. */
+/** Comparable numbers behind a recorded shaper result - what proof-of-tune diffs. */
 export interface ProofMetrics {
   shaper?: string | null
   freq?: number | null
@@ -72,7 +72,7 @@ export interface NoiseChip {
   z: number
 }
 
-/** Result of MEASURE_AXES_NOISE — the accelerometer's idle noise floor. */
+/** Result of MEASURE_AXES_NOISE - the accelerometer's idle noise floor. */
 export interface NoiseResult {
   chips: NoiseChip[]
   max_noise: number
@@ -114,7 +114,7 @@ export interface VelocitySeries {
   extrapolated: boolean
 }
 
-/** Result of axes-map calibration — the accelerometer's detected orientation. */
+/** Result of axes-map calibration - the accelerometer's detected orientation. */
 export interface AxesMapResult {
   axes_map: string
   /** Accelerometer config section the axes_map goes in (e.g. "adxl345"). */
@@ -171,7 +171,7 @@ export interface AngleRange {
   energy_pct: number
 }
 
-/** Result of a machine vibrations profile — smoothest speeds/angles + motor health. */
+/** Result of a machine vibrations profile - smoothest speeds/angles + motor health. */
 export interface VibrationsProfile {
   kinematics: string
   accel: number
@@ -182,7 +182,7 @@ export interface VibrationsProfile {
   segments_captured: number
   /** Speed axis (mm/s) shared by the energy profile + spectrogram columns. */
   speeds: number[]
-  /** Normalised vibration metric per speed (0..1) — the speed-energy profile. */
+  /** Normalised vibration metric per speed (0..1) - the speed-energy profile. */
   energy_profile: number[]
   /** Normalised max-energy curve per speed (0..1). */
   max_profile: number[]
@@ -191,7 +191,7 @@ export interface VibrationsProfile {
   good_speed_ranges: SpeedRange[]
   /** Angle axis (deg, 0..360) shared by the polar energy + spectrogram rows. */
   angles: number[]
-  /** Normalised vibration energy per travel direction (0..1) — the polar curve. */
+  /** Normalised vibration energy per travel direction (0..1) - the polar curve. */
   angle_energy: number[]
   good_angle_ranges: AngleRange[]
   /** How alike the two motors behave (0-100%); low suggests a belt-tension mismatch. */
@@ -203,7 +203,7 @@ export interface VibrationsProfile {
   spectrogram: number[][]
   recommended_speed: number | null
   verdict: string
-  /** Structured verdict parts ({code, params}) — translated client-side when available. */
+  /** Structured verdict parts ({code, params}) - translated client-side when available. */
   verdict_parts?: VerdictPart[]
 }
 
@@ -213,15 +213,15 @@ export interface VerdictPart {
   params: Record<string, string | number>
 }
 
-/** Result of a sustain-frequency hold — a time-frequency spectrogram + timeline. */
+/** Result of a sustain-frequency hold - a time-frequency spectrogram + timeline. */
 export interface StaticExcitationResult {
   axis: string
   freq: number
   duration: number
   max_freq: number
-  /** Frequency-bin centres (Hz) — heatmap rows. */
+  /** Frequency-bin centres (Hz) - heatmap rows. */
   freqs: number[]
-  /** Segment centre times (s) — heatmap columns + energy timeline. */
+  /** Segment centre times (s) - heatmap columns + energy timeline. */
   times: number[]
   /** Log-normalised power grid [freq][time], 0..1. */
   spectrogram: number[][]
@@ -232,7 +232,7 @@ export interface StaticExcitationResult {
   dominant_freq: number
   dominant_ok: boolean
   verdict: string
-  /** Translatable verdict code + params — translated client-side when available. */
+  /** Translatable verdict code + params - translated client-side when available. */
   verdict_code?: string
   verdict_params?: Record<string, string | number>
   source_file: string | null

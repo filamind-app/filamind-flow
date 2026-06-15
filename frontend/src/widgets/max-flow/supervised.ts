@@ -12,7 +12,7 @@ import type { MaxFlowParams, MaxFlowResult } from './types'
 const STORAGE_KEY = 'filamind-maxflow-task'
 const POLL_MS = 1500
 
-/** Thrown (as Error.message) when the run was cancelled — callers show it as info, not failure. */
+/** Thrown (as Error.message) when the run was cancelled - callers show it as info, not failure. */
 export const CANCELLED = '__maxflow_cancelled__'
 
 export const flowRun = reactive({
@@ -32,7 +32,7 @@ async function pollToCompletion(taskId: string): Promise<MaxFlowResult> {
     if (task.status === 'done' && task.result) return task.result as unknown as MaxFlowResult
     if (task.status === 'cancelled') throw new Error(CANCELLED)
     if (task.status !== 'running') {
-      // Failed tasks log the reason with a "!! " prefix — strip it for a clean message.
+      // Failed tasks log the reason with a "!! " prefix - strip it for a clean message.
       const line = (lastLogLine(task.log) || '').replace(/^!!\s*/, '')
       throw new Error(line || i18n.global.t('maxFlow.run.failed'))
     }

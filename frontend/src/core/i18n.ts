@@ -16,18 +16,18 @@ import enMotorDrivers from '../locales/en/motor-drivers.json'
 import enShell from '../locales/en/shell.json'
 
 /**
- * App-wide internationalization (i18n Phase 0 — scaffolding).
+ * App-wide internationalization (i18n Phase 0 - scaffolding).
  *
  * Design goals:
  *  - **Offline-first:** ``en`` is bundled eagerly so first paint never waits on a network fetch
  *    (a Klipper host is usually offline). Every other locale is a lazy chunk.
  *  - **Drop-in extensibility:** a language becomes selectable the moment a catalog folder exists
- *    under ``src/locales/<code>/`` — no component edits (see ``availableLocales``).
+ *    under ``src/locales/<code>/`` - no component edits (see ``availableLocales``).
  *  - **Namespaced catalogs** mirror the code-split: ``common`` / ``shell`` / ``firmware`` /
  *    ``input-shaping`` / ``motor-drivers``. Each JSON file carries a single top-level namespace
  *    key that is merged into the locale's message object.
  *
- * Catalogs are intentionally near-empty in Phase 0 — externalizing the existing English copy
+ * Catalogs are intentionally near-empty in Phase 0 - externalizing the existing English copy
  * lands in later phases. This module only stands up the plumbing (no user-visible change).
  */
 
@@ -41,7 +41,7 @@ export interface LocaleMeta {
   dir: Direction
   /**
    * Forced Unicode numbering system, if any. Arabic pins Western digits (``latn``) because this
-   * is an engineering tool — operators cross-reference G-code and datasheets in ``1.7 A`` form.
+   * is an engineering tool - operators cross-reference G-code and datasheets in ``1.7 A`` form.
    */
   numberingSystem?: string
 }
@@ -68,7 +68,7 @@ const STORAGE_KEY = 'filamind.locale'
 
 type JsonModule = { default: Record<string, unknown> }
 
-// en is bundled eagerly (no fetch on first paint). Static imports keep it fully typed — it is the
+// en is bundled eagerly (no fetch on first paint). Static imports keep it fully typed - it is the
 // schema source for type-safe keys (see types/i18n.d.ts). Every other locale is a dynamic chunk,
 // discovered and loaded on demand via the glob below.
 const en = {
@@ -88,7 +88,7 @@ const en = {
   ...enHostControl,
 }
 
-// en is excluded — it's bundled eagerly above, so the dynamic glob must not also claim it
+// en is excluded - it's bundled eagerly above, so the dynamic glob must not also claim it
 // (that would split it into a never-used chunk and warn at build).
 const lazyCatalogs = import.meta.glob<JsonModule>(['../locales/*/*.json', '!../locales/en/*.json'])
 
@@ -103,7 +103,7 @@ function codeFromPath(path: string): string | null {
   return m ? m[1] : null
 }
 
-/** Locales with a catalog on disk, in ``LOCALE_META`` order — the switcher offers exactly these. */
+/** Locales with a catalog on disk, in ``LOCALE_META`` order - the switcher offers exactly these. */
 export const availableLocales: LocaleMeta[] = (() => {
   const codes = new Set<string>([DEFAULT_LOCALE])
   for (const path of Object.keys(lazyCatalogs)) {
@@ -173,7 +173,7 @@ const PLURAL_RULES: Record<string, PluralRule> = {
     if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 1
     return 2
   },
-  // Chinese has no plural inflection — a single form.
+  // Chinese has no plural inflection - a single form.
   'zh-Hans': () => 0,
 }
 
@@ -210,7 +210,7 @@ export function detectLocale(): string {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored && isAvailable(stored)) return stored
   } catch {
-    // localStorage can throw in private mode / sandboxed iframes — fall through to detection.
+    // localStorage can throw in private mode / sandboxed iframes - fall through to detection.
   }
   const prefs = (typeof navigator !== 'undefined' && navigator.languages) || []
   for (const p of prefs) {
@@ -264,7 +264,7 @@ export async function initLocale(): Promise<void> {
 // --- widget display labels ------------------------------------------------
 // Widget titles/descriptions are registered (in English) in widgets/index.ts and rendered in the
 // shell (sidebar + frame). These resolve a per-widget shell key when one exists, falling back to
-// the registry English — so a widget without a catalog entry still shows a sane label. Reading
+// the registry English - so a widget without a catalog entry still shows a sane label. Reading
 // ``locale`` via ``t`` makes them re-translate on switch when called inside a computed/template.
 
 // The schema-typed ``t`` only accepts literal keys; the widget key is built at runtime, so use a

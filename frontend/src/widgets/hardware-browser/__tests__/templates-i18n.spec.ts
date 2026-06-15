@@ -11,7 +11,7 @@ function plugins() {
 }
 
 describe('Hardware Browser template renders through i18n (no leaked keys)', () => {
-  it('HardwareBrowserWidget — intro + search controls + help, no raw key paths', () => {
+  it('HardwareBrowserWidget - intro + search controls + help, no raw key paths', () => {
     const w = mount(HardwareBrowserWidget, plugins())
     const text = w.text()
     const leaked = text.match(/hardwareBrowser\.[a-zA-Z]/)

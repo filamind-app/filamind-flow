@@ -1,6 +1,6 @@
 import { i18n } from './i18n'
 
-/** Maps a raw fetch / HTTP failure to a clear, actionable message — never a bare "Failed to
+/** Maps a raw fetch / HTTP failure to a clear, actionable message - never a bare "Failed to
  *  fetch". Shared so every widget degrades the same way when the backend is unreachable. The
  *  network-failure copy is translated; an upstream error's own text is passed through as-is. */
 export function describeError(e: unknown): string {

@@ -88,7 +88,7 @@ def test_code_cap_per_model() -> None:
     assert field_policy.code_cap("tmc2660") == 2.4
     assert field_policy.code_cap("tmc5160") == 10.6
     assert field_policy.code_cap("nope") is None
-    # The 2240 has no constant — it's computed from rref = (36000/rref)/√2.
+    # The 2240 has no constant - it's computed from rref = (36000/rref)/√2.
     assert field_policy.code_cap("tmc2240") is None  # no rref → unknown
     assert field_policy.code_cap("tmc2240", rref=12000) == pytest.approx(
         (36000 / 12000) / math.sqrt(2)
@@ -101,7 +101,7 @@ def test_current_cap_binds_to_the_lower_of_code_and_motor() -> None:
     assert cc("tmc2209", motor_rated_A=1.5) == 1.5
     assert cc("tmc2209", motor_rated_A=3.0) == 2.0  # code cap binds
     assert cc("tmc2209") == 2.0  # no motor → just the code cap
-    # 5160's 10.6 is only a sanity ceiling — a real 4 A motor binds.
+    # 5160's 10.6 is only a sanity ceiling - a real 4 A motor binds.
     assert cc("tmc5160", motor_rated_A=4.0) == 4.0
     assert cc("tmc5160") == 10.6
     # 2240 cap from rref, motor still binds if lower.

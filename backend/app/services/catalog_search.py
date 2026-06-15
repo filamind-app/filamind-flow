@@ -1,4 +1,4 @@
-"""Generic catalog search — pure filtering/pagination over a category's canonical entities.
+"""Generic catalog search - pure filtering/pagination over a category's canonical entities.
 
 Hardware-free. The list endpoint returns lightweight summaries (no copyable config snippet
 or full spec sheet); the full record is served by ``GET /api/hardware/catalog/{catalog_id}``.

@@ -1,4 +1,4 @@
-"""Time-frequency spectrogram of a raw accelerometer capture — backs the "sustain
+"""Time-frequency spectrogram of a raw accelerometer capture - backs the "sustain
 frequency" hands-on diagnostic (hold a frequency, touch parts to find what rattles).
 
 Pure numpy STFT. The vendored ``shaper_calibrate`` collapses time (Welch mean), so it
@@ -120,20 +120,20 @@ def compute_spectrogram(
         verdict_params: dict[str, object] = {"freq": round(freq), "peak": round(dominant_freq)}
         verdict = (
             f"The toolhead isn't vibrating mainly at {freq:.0f} Hz "
-            f"(peak is {dominant_freq:.0f} Hz) — the source may not reach the toolhead sensor."
+            f"(peak is {dominant_freq:.0f} Hz) - the source may not reach the toolhead sensor."
         )
     elif energy_drop_pct >= 30:
         verdict_code = "drop"
         verdict_params = {"freq": round(freq), "drop": round(energy_drop_pct)}
         verdict = (
-            f"Holding {freq:.0f} Hz — vibration dropped ~{energy_drop_pct:.0f}% at some point; "
+            f"Holding {freq:.0f} Hz - vibration dropped ~{energy_drop_pct:.0f}% at some point; "
             "whatever you touched then is a strong contributor."
         )
     else:
         verdict_code = "touch"
         verdict_params = {"freq": round(freq)}
         verdict = (
-            f"Holding {freq:.0f} Hz — touch belts, the toolhead, gantry joints and idlers one "
+            f"Holding {freq:.0f} Hz - touch belts, the toolhead, gantry joints and idlers one "
             "at a time; the part that silences the buzz is your resonance source."
         )
 

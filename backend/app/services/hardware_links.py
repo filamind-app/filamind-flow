@@ -1,18 +1,18 @@
-"""DB-2 linking backbone — a precomputed cross-entity graph over the hardware DB.
+"""DB-2 linking backbone - a precomputed cross-entity graph over the hardware DB.
 
 The reference DB's relationships were islands: ``manufacturer`` was free-text (only
 ~73 % of entity rows matched the directory exactly), the MCU lived as free text inside
 a board's ``specs``, and board↔driver compatibility was buried in a ``Supported drivers``
 spec string. This module turns those into a real graph, built once at load:
 
-* **Manufacturer canonicalisation** — every directory entry gets a stable ``manufacturer_id``
+* **Manufacturer canonicalisation** - every directory entry gets a stable ``manufacturer_id``
   slug plus auto-derived aliases (parenthetical acronyms, ``/``-separated brands, token
   fallbacks); recurring real brands missing from the directory are derived as entities. Each
   entity's free-text ``manufacturer`` resolves to an id (or ``None`` for junk / one-offs).
-* **MCU as a first-class entity** — board ``specs.MCU`` strings are parsed with a *whitelist*
+* **MCU as a first-class entity** - board ``specs.MCU`` strings are parsed with a *whitelist*
   of chip-family rules (so package fragments / host SoCs / noise never become fake MCUs) and
   normalised to a canonical part (e.g. ``STM32F407VET6`` → ``stm32f407``).
-* **Edges** use composite keys ``"<type>:<id>"`` (ids are not globally unique across types —
+* **Edges** use composite keys ``"<type>:<id>"`` (ids are not globally unique across types -
   ``sovol-sv08`` is both a board and a host) and are stored as an in-memory adjacency map for
   O(1) :func:`related` lookups.
 
@@ -27,7 +27,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any
 
-# ── slug / manufacturer normalisation ─────────────────────────────────────────
+# -- slug / manufacturer normalisation -----------------------------------------
 _REPL = "�"  # the unicode replacement char that leaks in from bad source encodings
 
 #: Generic corporate / descriptor tokens dropped when comparing brand names.
@@ -71,7 +71,7 @@ _MAN_STOP = {
 
 #: Common English / product-line words that, even when they happen to be a single-token directory
 #: candidate (e.g. MatterHackers' "PRO" / "Build" lines), must never become an unambiguous brand
-#: token — too many unrelated free-text manufacturers contain them.
+#: token - too many unrelated free-text manufacturers contain them.
 _GENERIC_FALLBACK_BLOCK = {
     "pro",
     "build",
@@ -110,7 +110,7 @@ def manufacturer_candidates(name: str) -> list[str]:
     """Normalised brand-candidate strings for a manufacturer name.
 
     Splits parentheticals and ``/``-separated co-brands into separate candidates, drops
-    generic corporate tokens, and collapses punctuation — so ``"OMC / StepperOnline"``
+    generic corporate tokens, and collapses punctuation - so ``"OMC / StepperOnline"``
     yields ``["omc", "stepperonline"]`` and ``"BIGTREETECH (BTT)"`` yields
     ``["bigtreetech", "btt"]``.
     """
@@ -133,11 +133,11 @@ class ManufacturerResolver:
 
     Built from the directory: an exact alias index (full normalised brand candidates, also keyed
     space-collapsed so ``MeanWell`` finds ``Mean Well``) plus an *unambiguous single-token-brand*
-    fallback. Only a candidate that is **itself a single token** seeds that fallback — descriptor
+    fallback. Only a candidate that is **itself a single token** seeds that fallback - descriptor
     words buried inside a multi-word brand name (``module`` in "Toshiba-class (module brand)",
     ``smart`` in "Smart Materials 3D") must never be promoted to a brand identifier, or unrelated
     parts whose free-text manufacturer merely *contains* that word would link to the wrong brand.
-    Junk and one-off strings resolve to ``None`` — they keep their free-text label but gain no link.
+    Junk and one-off strings resolve to ``None`` - they keep their free-text label but gain no link.
     """
 
     def __init__(self, directory: list[dict[str, Any]]) -> None:
@@ -184,7 +184,7 @@ class ManufacturerResolver:
 
 
 #: Strings that denote "no single maker" (community / open / generic / clone). These must never
-#: become a manufacturer link-hub — neither when derived from usage nor from the directory. All
+#: become a manufacturer link-hub - neither when derived from usage nor from the directory. All
 #: alternatives are word-bounded so a real brand like ``ReprapWorld`` is NOT caught by ``reprap``.
 _PLACEHOLDER_RE = re.compile(
     r"\bgeneric\b|\bvarious\b|\bunknown\b|\bdiy\b|\bcustom\b|\breprap\b|\baliexpress\b|"
@@ -196,7 +196,7 @@ _PLACEHOLDER_RE = re.compile(
 def _is_placeholder_manufacturer(name: str) -> bool:
     """True if a manufacturer name is a 'no single maker' placeholder, not a real brand.
 
-    Only the **primary** brand chunk (first ``/``-separated, paren-stripped part — the part the
+    Only the **primary** brand chunk (first ``/``-separated, paren-stripped part - the part the
     slug is built from) is tested, so a real brand with a placeholder-ish *co-brand* survives
     (e.g. "Aus3D / Reprapworld" → primary "Aus3D" → not a placeholder)."""
     primary = re.sub(r"\(.*?\)", "", str(name).replace(_REPL, "")).split("/")[0]
@@ -205,7 +205,7 @@ def _is_placeholder_manufacturer(name: str) -> bool:
 
 def _is_plausible_brand(text: str) -> bool:
     """True if a residual (directory-unmatched) string looks like a real brand worth deriving
-    an entity for — filters out numeric junk, spec fragments and encoding noise."""
+    an entity for - filters out numeric junk, spec fragments and encoding noise."""
     s = str(text).replace(_REPL, "").strip()
     if not s or s.isdigit():
         return False
@@ -216,9 +216,9 @@ def _is_plausible_brand(text: str) -> bool:
     return not _is_placeholder_manufacturer(s)
 
 
-# ── MCU canonicalisation (whitelist of chip-family rules) ──────────────────────
+# -- MCU canonicalisation (whitelist of chip-family rules) ----------------------
 #: Ordered ``(compiled regex, family-builder)``. A board MCU token becomes an entity only if
-#: it matches a rule — so package fragments (``ZGT6``), host SoCs (``RK3566``, ``CB1``) and
+#: it matches a rule - so package fragments (``ZGT6``), host SoCs (``RK3566``, ``CB1``) and
 #: stray tokens (``NEMA23``, ``DDR3``) never create phantom MCUs. The regex's group(1) is the
 #: canonical core (→ lowercase ``mcu_id`` + uppercase display name).
 def _stm_family(core: str) -> str:
@@ -267,7 +267,7 @@ def board_mcu_ids(board: dict[str, Any]) -> list[tuple[str, str, str]]:
     return list(seen.values())
 
 
-# ── the graph ─────────────────────────────────────────────────────────────────
+# -- the graph -----------------------------------------------------------------
 @dataclass
 class LinkGraph:
     """The fully built, immutable link graph (composite-key adjacency + canonical entities)."""
@@ -344,7 +344,7 @@ def build_links(
             g.adjacency.setdefault(key, [])
             entity_keys[key] = str(row.get("manufacturer", "")).strip()
 
-    # ── manufacturers: directory FIRST, then resolution, then derived recurring brands ──
+    # -- manufacturers: directory FIRST, then resolution, then derived recurring brands --
     # canonical entities from the directory (skipping 'no single maker' placeholders)
     member_counts: Counter[str] = Counter()
     for row in manufacturers:
@@ -403,7 +403,7 @@ def build_links(
             },
         )
 
-    # ── MCU entities (from boards) ──
+    # -- MCU entities (from boards) --
     mcu_archs: dict[str, Counter[str]] = {}
     for board in boards:
         spec = board.get("specs", {})
@@ -441,7 +441,7 @@ def build_links(
         }
         g.adjacency.setdefault(key, [])
 
-    # ── edges ──
+    # -- edges --
     def link(a: str, b: str, rel_ab: str, rel_ba: str) -> None:
         g.adjacency.setdefault(a, []).append({"key": b, "rel": rel_ab})
         g.adjacency.setdefault(b, []).append({"key": a, "rel": rel_ba})
@@ -498,7 +498,7 @@ def build_links(
         if not bid or not isinstance(spec, dict):
             continue
         bkey = f"board:{bid}"
-        # tokenise the spec into DISCRETE driver entries — matching a term against a
+        # tokenise the spec into DISCRETE driver entries - matching a term against a
         # punctuation-stripped concatenation bled across boundaries (driver "TMC5160T" falsely
         # matched "TMC5160/TMC5161" because the joined "...tmc5160tmc5161..." contains "tmc5160t").
         onboard = set(re.findall(r"[a-z0-9]+", str(spec.get("Onboard drivers", "")).lower()))

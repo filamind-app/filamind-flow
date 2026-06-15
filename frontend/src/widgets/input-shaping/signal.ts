@@ -10,7 +10,7 @@ export function median(xs: number[]): number {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2
 }
 
-/** Ratio of the tallest PSD bin to the median bin — how far the resonance peak
+/** Ratio of the tallest PSD bin to the median bin - how far the resonance peak
  *  rises above the noise floor. A large value means a clean, trustworthy
  *  capture; ~1 means noise. `null` when there is no spectrum. Capped at 999. */
 export function peakSnr(psdSum: number[]): number | null {

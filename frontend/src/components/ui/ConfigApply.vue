@@ -1,9 +1,9 @@
 <script setup lang="ts">
-/** Shared "Apply to printer.cfg" flow — the tuning widgets' last mile.
+/** Shared "Apply to printer.cfg" flow - the tuning widgets' last mile.
  *
  *  Takes a ready config block (an `[input_shaper]` result, a driver tune) and writes it through
  *  the Config Editor's proven gate: pick the target file, review the block, acknowledge, apply
- *  (param-level merge server-side — an existing section keeps its other params), then optionally
+ *  (param-level merge server-side - an existing section keeps its other params), then optionally
  *  trigger the separately-confirmed FIRMWARE_RESTART. Busy (409) and changed-on-disk (412)
  *  refusals surface as clear messages. */
 import { onMounted, ref } from 'vue'
@@ -128,7 +128,7 @@ function changeLine(c: ApplySectionChange): string {
     </p>
 
     <div v-if="changes" role="status" class="nb-card space-y-1.5 bg-brand-lime/20 p-2">
-      <p class="font-bold">{{ t('configApply.saved', { backup: savedBackup ?? '—' }) }}</p>
+      <p class="font-bold">{{ t('configApply.saved', { backup: savedBackup ?? '-' }) }}</p>
       <ul v-if="changes.length" class="space-y-0.5 font-mono text-[10px]">
         <li v-for="(c, i) in changes" :key="i">• {{ changeLine(c) }}</li>
       </ul>

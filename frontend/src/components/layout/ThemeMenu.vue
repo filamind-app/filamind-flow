@@ -1,8 +1,8 @@
 <script setup lang="ts">
-/** Theme picker menu — a popover of preview cards, one per theme.
+/** Theme picker menu - a popover of preview cards, one per theme.
  *
  *  Each card is a miniature of that theme (its own paper/surface/ink + accent dots, from the
- *  static swatch in THEME_META — NOT the live CSS vars, so every card shows what *that* theme
+ *  static swatch in THEME_META - NOT the live CSS vars, so every card shows what *that* theme
  *  would look like). Clicking applies + persists instantly; the active card is marked. Esc or
  *  clicking outside closes. */
 import { computed, onMounted, onUnmounted, ref } from 'vue'

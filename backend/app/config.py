@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     klipper_dir: str = "~/klipper"
     katapult_dir: str = "~/katapult"
 
-    # KlipperScreen install dir — its themes live under <klipperscreen_dir>/styles/ (outside any
+    # KlipperScreen install dir - its themes live under <klipperscreen_dir>/styles/ (outside any
     # Moonraker file root, so the theme builder writes there host-side). KlipperScreen Studio.
     klipperscreen_dir: str = "~/KlipperScreen"
 
@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     # Comma-separated dirs to scan for the resonance CSVs Klipper writes.
     # TEST_RESONANCES/SHAPER_CALIBRATE default to /tmp, but many setups also keep
     # captures under printer_data/config. Override with FILAMIND_RESONANCE_DIRS
-    # (e.g. when FilaMind runs off the printer host). — Input Shaping widget.
+    # (e.g. when FilaMind runs off the printer host). - Input Shaping widget.
     resonance_dirs: str = "/tmp,~/printer_data/config,~/printer_data/config/input_shaper"
 
     # Comma-separated browser origins allowed to call this API.

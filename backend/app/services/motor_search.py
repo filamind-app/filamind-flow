@@ -1,4 +1,4 @@
-"""Motor-DB search — pure filtering/pagination over the canonical stepper-motor entities.
+"""Motor-DB search - pure filtering/pagination over the canonical stepper-motor entities.
 
 Hardware-free. The list endpoint returns lightweight summaries (no copyable config snippet
 or full spec sheet); the full record is served by ``GET /api/hardware/motors/{motor_id}``.

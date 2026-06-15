@@ -1,12 +1,12 @@
-"""Server-side TMC register-edit safety policy — the one load-bearing primitive for the
+"""Server-side TMC register-edit safety policy - the one load-bearing primitive for the
 Motor Drivers widget's advanced-register editing (P10).
 
 The hardware reality this guards against: ``SET_TMC_FIELD VALUE=`` *silently mask-truncates*
 (a 5-bit field given 300 becomes ``300 & 31 = 12``, no error), and ``SET_TMC_CURRENT`` accepts
-any value Klipper's own ``max_cur`` allows — which can still cook an under-rated motor. So the
+any value Klipper's own ``max_cur`` allows - which can still cook an under-rated motor. So the
 server is the real protection layer. This module is that layer:
 
-* an **allowlist** — only catalogued fields are editable; everything else is display-only;
+* an **allowlist** - only catalogued fields are editable; everything else is display-only;
 * a **per-field clamp** whose range is derived from the register **bit-mask** (the silicon
   fact), with **per-model signedness** (``sgt`` is a signed 7-bit value, ``sgthrs`` is not);
 * a **blocklist** of raw current-scaling and protection-defeat fields that must NEVER be
@@ -16,7 +16,7 @@ server is the real protection layer. This module is that layer:
 
 Ranges are computed from the mask rather than hand-typed so the clamp provably matches the
 register width (see ``test_field_policy``). Out-of-range values are *rejected*, not silently
-clamped — a truncated safety/threshold value is worse than a clear error.
+clamped - a truncated safety/threshold value is worse than a clear error.
 """
 
 from __future__ import annotations
@@ -88,7 +88,7 @@ _SGT_MODELS = frozenset({"tmc2130", "tmc2240", "tmc5160", "tmc2660"})  # signed 
 _HV = frozenset({"tmc2130", "tmc2240", "tmc5160"})
 
 _POLICY: dict[str, FieldPolicy] = {
-    # Group 2 — SpreadCycle / chopper
+    # Group 2 - SpreadCycle / chopper
     "toff": FieldPolicy(
         "risky", mask=0xF, lo=1, requires_confirm=True, note="0 disables the motor"
     ),
@@ -99,7 +99,7 @@ _POLICY: dict[str, FieldPolicy] = {
     "chm": FieldPolicy("risky", mask=0x1, control="toggle", models=_HV, requires_confirm=True),
     "vhighfs": FieldPolicy("safe", mask=0x1, control="toggle", models=_HV),
     "vhighchm": FieldPolicy("safe", mask=0x1, control="toggle", models=_HV),
-    # Group 3 — StealthChop PWM
+    # Group 3 - StealthChop PWM
     "pwm_ofs": FieldPolicy("safe", mask=0xFF, models=_STEALTH),
     "pwm_grad": FieldPolicy("safe", mask=0xFF, models=_STEALTH),
     "pwm_freq": FieldPolicy("risky", mask=0x3, control="select", models=_STEALTH),
@@ -107,18 +107,18 @@ _POLICY: dict[str, FieldPolicy] = {
     "pwm_autograd": FieldPolicy("safe", mask=0x1, control="toggle", models=_STEALTH),
     "pwm_reg": FieldPolicy("safe", mask=0xF, models=_STEALTH),
     "pwm_lim": FieldPolicy("safe", mask=0xF, models=_STEALTH),
-    # Group 4 — CoolStep
+    # Group 4 - CoolStep
     "semin": FieldPolicy("risky", mask=0xF, models=_COOLSTEP, requires_confirm=True),
     "semax": FieldPolicy("safe", mask=0xF, models=_COOLSTEP),
     "seup": FieldPolicy("safe", mask=0x3, control="select", models=_COOLSTEP),
     "sedn": FieldPolicy("safe", mask=0x3, control="select", models=_COOLSTEP),
     "seimin": FieldPolicy("risky", mask=0x1, control="toggle", models=_COOLSTEP),
     "sfilt": FieldPolicy("safe", mask=0x1, control="toggle", models=_COOLSTEP),
-    # Group 5 — StallGuard (polarity differs by model — see the UI labels)
+    # Group 5 - StallGuard (polarity differs by model - see the UI labels)
     "sgthrs": FieldPolicy("safe", mask=0xFF, models=frozenset({"tmc2209"})),
     "sg4_thrs": FieldPolicy("safe", mask=0xFF, models=frozenset({"tmc2240"})),
     "sgt": FieldPolicy("safe", mask=0x7F, signed=True, models=_SGT_MODELS),
-    # Group 6 — velocity thresholds (mm/s on the user side; Klipper TSTEP-encodes via VELOCITY=).
+    # Group 6 - velocity thresholds (mm/s on the user side; Klipper TSTEP-encodes via VELOCITY=).
     # Keyed by friendly name; `reg` is the register field SET_TMC_FIELD actually writes.
     "stealthchop_threshold": FieldPolicy(
         "safe", control="velocity", velocity=True, reg="tpwmthrs", models=_STEALTH
@@ -133,12 +133,12 @@ _POLICY: dict[str, FieldPolicy] = {
     "iholddelay": FieldPolicy("safe", mask=0xF),
     "irundelay": FieldPolicy("safe", mask=0xF, models=frozenset({"tmc2240"})),
     "slope_control": FieldPolicy("safe", mask=0x3, control="select", models=frozenset({"tmc2240"})),
-    # Group 7 — misc motion-quality (bool tuning that's safe to flip live)
+    # Group 7 - misc motion-quality (bool tuning that's safe to flip live)
     "intpol": FieldPolicy("safe", mask=0x1, control="toggle"),
     "multistep_filt": FieldPolicy("safe", mask=0x1, control="toggle"),
 }
 
-#: Raw current-scaling + protection-defeat + positional-corruption fields — NEVER written live.
+#: Raw current-scaling + protection-defeat + positional-corruption fields - NEVER written live.
 #: Current goes only through the current-aware SET_TMC_CURRENT path (enforcing ``current_cap``);
 #: ``mres``/``microsteps`` would desync Klipper's step distance mid-session → positional error.
 BLOCKED: frozenset[str] = frozenset(
@@ -183,7 +183,7 @@ def is_velocity(field: str) -> bool:
 
 
 def register_name(field: str) -> str:
-    """The TMC register field name to put in ``SET_TMC_FIELD FIELD=`` — the policy's ``reg``
+    """The TMC register field name to put in ``SET_TMC_FIELD FIELD=`` - the policy's ``reg``
     override when set (e.g. ``stealthchop_threshold`` → ``tpwmthrs``), else the field itself."""
     fp = _POLICY.get(field)
     return fp.reg if fp and fp.reg else field
@@ -200,12 +200,12 @@ def validate(field: str, value: float, model: str | None = None) -> float | int:
     """Validate a requested field write against policy, returning the accepted numeric value.
 
     Rejects (raises :class:`PolicyError`) when the field is blocked, unknown, not applicable to
-    the model, or out of range — out-of-range values are *not* silently clamped, because a
+    the model, or out of range - out-of-range values are *not* silently clamped, because a
     mask-truncated threshold is more dangerous than a clear error.
     """
     if field in BLOCKED:
         raise PolicyError(
-            f"{field!r} cannot be edited live — it bypasses the current cap or driver protection; "
+            f"{field!r} cannot be edited live - it bypasses the current cap or driver protection; "
             "use copy-to-config instead."
         )
     fp = _POLICY.get(field)
@@ -262,7 +262,7 @@ def policy_for(model: str) -> dict[str, dict[str, object]]:
 
 # --- Per-model current cap (I_cap) -----------------------------------------------------------
 #: Hard current ceilings that already bound ``SET_TMC_CURRENT`` in Klipper, per driver model.
-#: 2160/5160's 10.6 A is a *sanity* ceiling far above any real board — the motor rating binds.
+#: 2160/5160's 10.6 A is a *sanity* ceiling far above any real board - the motor rating binds.
 _CODE_CAP: dict[str, float] = {
     "tmc2130": 2.0,
     "tmc2208": 2.0,
@@ -274,7 +274,7 @@ _CODE_CAP: dict[str, float] = {
 
 
 def code_cap(model: str, rref: float | None = None) -> float | None:
-    """The driver model's full-scale current ceiling. The 2240 has no constant — its limit is
+    """The driver model's full-scale current ceiling. The 2240 has no constant - its limit is
     ``IFS_rms(range 3) = (36000 / rref) / √2`` from the configured external reference resistor."""
     m = model.lower()
     if m == "tmc2240":
@@ -287,7 +287,7 @@ def code_cap(model: str, rref: float | None = None) -> float | None:
 def current_cap(
     model: str, motor_rated_A: float | None = None, rref: float | None = None
 ) -> float | None:
-    """``I_cap = min(code_cap[model], motor_rated_A)`` — the binding run-current ceiling. The
+    """``I_cap = min(code_cap[model], motor_rated_A)`` - the binding run-current ceiling. The
     motor's datasheet rating is almost always the real limit. Returns ``None`` if nothing is
     known (don't fabricate a cap)."""
     caps = [c for c in (code_cap(model, rref), motor_rated_A) if c is not None and c > 0]

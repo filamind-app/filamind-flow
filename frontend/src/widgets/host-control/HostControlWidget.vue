@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Host Control — manage the printer host's Linux OS.
+/** Host Control - manage the printer host's Linux OS.
  *
  *  Phase 1: a read-only health + OS-state monitor (CPU / temp / memory / disk / network / time /
  *  locale + top processes), auto-refreshing while visible. Services, disk cleanup and the
@@ -67,7 +67,7 @@ onUnmounted(stopAuto)
 
 // ── formatters ───────────────────────────────────────────────────────────────
 function fmtUptime(s: number | null): string {
-  if (s == null) return '—'
+  if (s == null) return '-'
   const d = Math.floor(s / 86400)
   const h = Math.floor((s % 86400) / 3600)
   const m = Math.floor((s % 3600) / 60)
@@ -120,7 +120,7 @@ function tempClass(c: number | null): string {
 
 /** Wi-Fi signal level (/proc/net/wireless link quality) → a short label. */
 function signalLabel(sig: number | null): string {
-  if (sig == null) return '—'
+  if (sig == null) return '-'
   return `${sig}`
 }
 </script>
@@ -194,11 +194,11 @@ function signalLabel(sig: number | null): string {
             </h3>
             <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-[11px]">
               <dt class="opacity-60">{{ t('hostControl.monitor.hostname') }}</dt>
-              <dd class="font-bold">{{ monitor.host.hostname || '—' }}</dd>
+              <dd class="font-bold">{{ monitor.host.hostname || '-' }}</dd>
               <dt class="opacity-60">{{ t('hostControl.monitor.distro') }}</dt>
-              <dd>{{ monitor.host.distro || '—' }}</dd>
+              <dd>{{ monitor.host.distro || '-' }}</dd>
               <dt class="opacity-60">{{ t('hostControl.monitor.kernel') }}</dt>
-              <dd>{{ monitor.host.kernel || '—' }} ({{ monitor.host.arch }})</dd>
+              <dd>{{ monitor.host.kernel || '-' }} ({{ monitor.host.arch }})</dd>
               <dt class="opacity-60">{{ t('hostControl.monitor.uptime') }}</dt>
               <dd>{{ fmtUptime(monitor.host.uptime_s) }}</dd>
             </dl>
@@ -212,12 +212,12 @@ function signalLabel(sig: number | null): string {
             <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-[11px]">
               <dt class="opacity-60">{{ t('hostControl.monitor.temp') }}</dt>
               <dd class="font-bold" :class="tempClass(monitor.cpu.temp_c)">
-                {{ monitor.cpu.temp_c != null ? monitor.cpu.temp_c + ' °C' : '—' }}
+                {{ monitor.cpu.temp_c != null ? monitor.cpu.temp_c + ' °C' : '-' }}
               </dd>
               <dt class="opacity-60">{{ t('hostControl.monitor.load') }}</dt>
-              <dd>{{ monitor.cpu.load ? monitor.cpu.load.join(' · ') : '—' }}</dd>
+              <dd>{{ monitor.cpu.load ? monitor.cpu.load.join(' · ') : '-' }}</dd>
               <dt class="opacity-60">{{ t('hostControl.monitor.cores') }}</dt>
-              <dd>{{ monitor.cpu.cores ?? '—' }}</dd>
+              <dd>{{ monitor.cpu.cores ?? '-' }}</dd>
             </dl>
             <p
               v-if="monitor.throttle.supported && monitor.throttle.flags.length"
@@ -282,9 +282,9 @@ function signalLabel(sig: number | null): string {
             </h3>
             <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-[11px]">
               <dt class="opacity-60">{{ t('hostControl.monitor.iface') }}</dt>
-              <dd class="font-bold">{{ monitor.network.iface || '—' }}</dd>
+              <dd class="font-bold">{{ monitor.network.iface || '-' }}</dd>
               <dt class="opacity-60">{{ t('hostControl.monitor.ip') }}</dt>
-              <dd>{{ monitor.network.ip || '—' }}</dd>
+              <dd>{{ monitor.network.ip || '-' }}</dd>
               <template v-if="monitor.network.ssid">
                 <dt class="opacity-60">{{ t('hostControl.monitor.ssid') }}</dt>
                 <dd>{{ monitor.network.ssid }}</dd>
@@ -301,7 +301,7 @@ function signalLabel(sig: number | null): string {
             </h3>
             <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-[11px]">
               <dt class="opacity-60">{{ t('hostControl.monitor.timezone') }}</dt>
-              <dd class="font-bold">{{ monitor.time.timezone || '—' }}</dd>
+              <dd class="font-bold">{{ monitor.time.timezone || '-' }}</dd>
               <dt class="opacity-60">{{ t('hostControl.monitor.ntp') }}</dt>
               <dd>
                 <span v-if="monitor.time.ntp_synced" class="text-brand-green"
@@ -313,7 +313,7 @@ function signalLabel(sig: number | null): string {
                 <span v-else class="opacity-70">{{ t('hostControl.monitor.ntpOff') }}</span>
               </dd>
               <dt class="opacity-60">{{ t('hostControl.monitor.language') }}</dt>
-              <dd>{{ monitor.locale.lang || '—' }}</dd>
+              <dd>{{ monitor.locale.lang || '-' }}</dd>
               <dt v-if="monitor.locale.keymap" class="opacity-60">
                 {{ t('hostControl.monitor.keymap') }}
               </dt>
