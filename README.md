@@ -7,7 +7,7 @@ and grows one widget at a time.
 
 **Built by Egyptian makers, for world makers. Happy printing.** 🇪🇬
 
-_A two-person hobby project, built with heavy AI assistance and tested on real printers. The code is all here to read._
+_A two-person hobby project, built and tested on real printers. The code is all here to read, thers AI assistance._
 
 [![Support on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I119XEIV)
 
