@@ -12,6 +12,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `command -v nginx`, but nginx lives in `/usr/sbin`, which isn't on a normal user's PATH on Debian
   / Pi OS - so running the one-line install as the printer user failed with `Missing dependency:
   nginx` even with nginx present. The check now also looks in `/usr/sbin` and `/sbin`.
+- **Installer builds the backend venv even when `python3-venv` is missing.** On Debian / Pi OS the
+  `venv` module is a separate apt package; without it `python3 -m venv` leaves a broken, pip-less
+  `.venv`, and a re-run skipped rebuilding it (it only checked the directory) and then failed with
+  `./.venv/bin/pip: No such file or directory`. The installer now rebuilds the venv when pip is
+  absent and installs `python3-venv` if creation fails.
 
 ## [0.291.0] - 2026-06-15
 
