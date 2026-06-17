@@ -6,6 +6,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Installer no longer reports a missing nginx when it is installed.** The dependency check used
+  `command -v nginx`, but nginx lives in `/usr/sbin`, which isn't on a normal user's PATH on Debian
+  / Pi OS - so running the one-line install as the printer user failed with `Missing dependency:
+  nginx` even with nginx present. The check now also looks in `/usr/sbin` and `/sbin`.
+
 ## [0.291.0] - 2026-06-15
 
 ### Changed

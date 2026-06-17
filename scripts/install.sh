@@ -250,7 +250,12 @@ EOF
 do_install() {
   [ "$(id -u)" -eq 0 ] && { echo "Please run as your printer user, not root."; exit 1; }
   local c
-  for c in git python3 nginx; do command -v "$c" >/dev/null || { echo "Missing dependency: $c"; exit 1; }; done
+  # nginx (and other daemons) live in /usr/sbin, which is not in a normal user's PATH on Debian /
+  # Pi OS - look there too so an installed nginx is detected when run as the printer user.
+  export PATH="$PATH:/usr/sbin:/sbin"
+  for c in git python3 nginx; do
+    command -v "$c" >/dev/null || { echo "Missing dependency: $c (install it first, e.g. sudo apt install $c)"; exit 1; }
+  done
 
   info "Fetching FilaMind Flow into $APP"
   if [ -d "$APP/.git" ]; then git -C "$APP" pull --ff-only; else git clone "$REPO" "$APP"; fi
