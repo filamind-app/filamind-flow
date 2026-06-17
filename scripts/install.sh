@@ -262,7 +262,18 @@ do_install() {
 
   info "Backend virtualenv"
   cd "$APP/backend"
-  [ -d .venv ] || python3 -m venv .venv
+  # python3's venv module ships as a SEPARATE apt package on Debian / Pi OS (python3-venv); without
+  # it, `python3 -m venv` leaves a broken, pip-less .venv. Test for pip (not just the dir) so a
+  # partial venv from an earlier failed run is rebuilt, and install the venv package if creation
+  # fails, so the one-line install just works.
+  if [ ! -x .venv/bin/pip ]; then
+    rm -rf .venv
+    if ! python3 -m venv .venv 2>/dev/null; then
+      info "Installing python3-venv (the backend environment needs it)"
+      sudo apt-get install -y python3-venv 2>/dev/null || true
+      python3 -m venv .venv || { echo "Could not create the Python venv. Install your python3's venv module (e.g. sudo apt install python3-venv) and re-run."; exit 1; }
+    fi
+  fi
   ./.venv/bin/pip install -q -U pip
   ./.venv/bin/pip install -q -r requirements.txt
 
