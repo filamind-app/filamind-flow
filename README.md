@@ -17,7 +17,7 @@ _A two-person hobby project, built and tested on real printers. The code is all 
 [![Klipper](https://img.shields.io/badge/Klipper-compatible-111111)](https://www.klipper3d.org)
 [![Moonraker](https://img.shields.io/badge/Moonraker-API-111111)](https://moonraker.readthedocs.io)
 
-[Install](#install) · [Uninstall](#uninstall) · [Screenshots](#screenshots) · [Widgets](#widgets) · [Docs](#documentation) · [Support](#support)
+[Install](#install) · [Uninstall](#uninstall) · [Screenshots](#screenshots) · [Widgets](#widgets) · [Languages](#languages) · [Docs](#documentation) · [Support](#support)
 
 </div>
 
@@ -71,7 +71,21 @@ FilaMind Flow is tested on two machines that disagree on almost everything that 
 
 ## How it's built
 
-The frontend is a Vue 3 and Vite single-page app, and a small FastAPI backend handles anything that has to run server-side. State flows through one reconnecting Moonraker WebSocket, mirrored into a shared store every widget reads from. Adding a feature means registering a widget; the core does not change. The UI ships in 7 languages, including right-to-left Arabic, with 7 switchable themes. For the full picture, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+The frontend is a Vue 3 and Vite single-page app, and a small FastAPI backend handles anything that has to run server-side. State flows through one reconnecting Moonraker WebSocket, mirrored into a shared store every widget reads from. Adding a feature means registering a widget; the core does not change. The UI ships in [19 languages](#languages), including right-to-left Arabic, with 7 switchable themes. For the full picture, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Languages
+
+The whole interface is translated into **19 languages** - every widget, not just the chrome, all 2,352 strings each. Pick one from the 🌐 menu in the header; your choice is remembered, and on first run the app matches your browser's language.
+
+| | | | |
+| --- | --- | --- | --- |
+| English | Español | 简体中文 (Simplified Chinese) | 日本語 (Japanese) |
+| العربية (Arabic, RTL) | Français | 繁體中文 (Traditional Chinese) | 한국어 (Korean) |
+| Deutsch (German) | Русский (Russian) | Português (Brasil) | Tiếng Việt (Vietnamese) |
+| Italiano | Nederlands (Dutch) | Polski (Polish) | Bahasa Indonesia |
+| Türkçe (Turkish) | Українська (Ukrainian) | हिन्दी (Hindi) | |
+
+Each language is a drop-in catalog folder, so adding another needs no code changes - see [Internationalization](CONTRIBUTING.md#internationalization-strings--locales).
 
 ## Develop
 
