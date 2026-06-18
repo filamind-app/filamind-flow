@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.295.1] - 2026-06-18
+
+### Fixed
+
+- **The KlipperScreen Studio name now localizes.** Its widget title was kept in Latin
+  ("KlipperScreen Studio") in every language, so it stood out as untranslated in the sidebar and
+  the widget header next to the fully localized widgets. The descriptive part is now shown in the
+  local script for the non-Latin languages (Arabic, Russian, Ukrainian, Simplified and Traditional
+  Chinese, Japanese, Korean, Hindi), while the "KlipperScreen" product name stays as is. The
+  widget's content itself was already fully translated.
+
 ## [0.295.0] - 2026-06-18
 
 ### Added

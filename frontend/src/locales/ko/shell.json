@@ -133,7 +133,7 @@
         "description": "프린터 호스트의 Linux OS 관리: 상태, 서비스, 디스크 정리, 시스템 설정."
       },
       "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
+        "title": "KlipperScreen 스튜디오",
         "description": "프린터의 KlipperScreen 터치스크린 설정을 편집하고 재시작하여 적용합니다."
       }
     },

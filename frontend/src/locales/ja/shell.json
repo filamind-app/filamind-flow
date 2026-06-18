@@ -133,7 +133,7 @@
         "description": "プリンターホストの Linux OS を管理: 状態、サービス、ディスククリーンアップ、システム設定。"
       },
       "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
+        "title": "KlipperScreen スタジオ",
         "description": "プリンターの KlipperScreen タッチスクリーン設定を編集し、再起動して反映します。"
       }
     },
