@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.293.0] - 2026-06-18
+
+### Fixed
+
+- **Guided input-shaping wizard: a correct "Done" state and a stable layout.** The final **Done**
+  step now turns green when the run completes (it previously stayed grey). And every step's controls
+  are pinned to a single action bar at the bottom of the panel, so the Run / Next buttons no longer
+  jump between the top and bottom of the step as results (gate, suggestions, the vibrations chart)
+  appear.
+
 ## [0.292.0] - 2026-06-18
 
 ### Added
