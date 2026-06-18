@@ -127,9 +127,7 @@ def test_analyze_archive_run_route(tmp_path: Path) -> None:
         missing = client.post("/api/shaper/archive/2099-01-01_00-00-00_shaper/analyze")
         assert missing.status_code == 404
         # a config-only run (no capture) has nothing to chart -> 400
-        cfg = shaper_archive.save_run(
-            str(tmp_path), kind="config", config_text="[input_shaper]\n"
-        )
+        cfg = shaper_archive.save_run(str(tmp_path), kind="config", config_text="[input_shaper]\n")
         assert client.post(f"/api/shaper/archive/{cfg['id']}/analyze").status_code == 400
     finally:
         app.dependency_overrides.clear()
