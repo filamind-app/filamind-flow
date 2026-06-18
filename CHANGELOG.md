@@ -6,6 +6,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.294.0] - 2026-06-18
+
+### Changed
+
+- **Guided input-shaping wizard: stage controls pinned to the top, and every stage keeps its own
+  result and chart.** The step rail and the action bar (Run / Next / Skip) now stay pinned at the
+  top of the panel, so the buttons no longer slide below long results. Each completed stage (Noise,
+  Belts, Shaper X, Shaper Y, Vibrations) keeps its own result and chart in an accumulating,
+  collapsible "Results so far" section, so the Shaper Y chart no longer replaces the Shaper X chart.
+  The belt test now appears there too, with its own comparison chart. The combined `printer.cfg`
+  block (copy, archive, and apply) is shown only in the final step, and the tuned config is saved to
+  the on-printer archive automatically when the run completes.
+
+### Fixed
+
+- **Copy buttons now work when the panel is served over plain http.** On the printer the panel is
+  served over http, where the browser clipboard API is unavailable, so the pressure-advance "Copy"
+  button (and a few others) reported a copy error. They now fall back to a legacy copy path and work
+  in that context.
+
 ## [0.293.0] - 2026-06-18
 
 ### Fixed

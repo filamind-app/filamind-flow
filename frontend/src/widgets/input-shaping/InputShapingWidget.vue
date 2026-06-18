@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useHashTab } from '@/core/nav'
+import { copyText } from '@/core/clipboard'
 import ConfigApply from '@/components/ui/ConfigApply.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -17,6 +18,7 @@ import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import ResonanceCompare from './ResonanceCompare.vue'
 import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
+import ShaperChart from './ShaperChart.vue'
 import {
   analyzeArchiveRun,
   analyzeResonance,
@@ -33,7 +35,6 @@ import {
   withAuditTrends,
   type AuditRecord,
 } from './audit'
-import { buildResponseChart } from './chart'
 import { inputShaperConfig } from './config'
 import { diagnose, diagnoseAxes, type DiagnosticLevel } from './diagnose'
 import { gradeAnalysis, type Rating } from './grade'
@@ -83,7 +84,6 @@ const configText = computed(() => {
   const list = ['x', 'y', 'generic'].map((k) => byAxis[k]).filter(Boolean) as ShaperAnalysis[]
   return list.length ? inputShaperConfig(list) : ''
 })
-const chart = computed(() => (analysis.value ? buildResponseChart(analysis.value) : null))
 const rec = computed(() => analysis.value?.shapers.find((s) => s.recommended) ?? null)
 const grade = computed(() => (analysis.value ? gradeAnalysis(analysis.value) : null))
 const diagnostics = computed(() => {
@@ -131,11 +131,6 @@ function diagClass(level: DiagnosticLevel): string {
   if (level === 'good') return 'bg-brand-lime'
   if (level === 'warn') return 'bg-brand-yellow'
   return 'bg-brand-red text-surface'
-}
-/** Keeps the peak label inside the plot - flips to the left of the marker near
- *  the right edge. */
-function peakLabelX(x: number, width: number): number {
-  return x > width * 0.78 ? x - 3 : x + 3
 }
 function fmtDate(iso: string): string {
   const d = new Date(iso)
@@ -221,11 +216,10 @@ function clearResults(): void {
 
 async function copyConfig(): Promise<void> {
   if (!configText.value) return
-  try {
-    await navigator.clipboard.writeText(configText.value)
+  if (await copyText(configText.value)) {
     copied.value = true
     window.setTimeout(() => (copied.value = false), 1500)
-  } catch {
+  } else {
     error.value = t('inputShaping.widget.errCopyFailed')
   }
 }
@@ -284,9 +278,10 @@ async function saveConfig(): Promise<void> {
     <WidgetTabs v-model="mode" :tabs="TABS" />
 
     <!-- Pinned "config ready" bar (#116): the widget's payoff is otherwise the last element, so
-         after a capture it's surfaced at the top of every working view with one-tap Copy/Archive. -->
+         after a capture it's surfaced at the top of every working view with one-tap Copy/Archive.
+         Hidden in Guided - that wizard shows the combined config in its final step instead. -->
     <div
-      v-if="configText && mode !== 'audit'"
+      v-if="configText && mode !== 'audit' && mode !== 'guided'"
       class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink bg-brand-lime px-2 py-1 text-[11px]"
     >
       <span class="font-bold uppercase tracking-wide">{{ t('inputShaping.widget.cfgReady') }}</span>
@@ -419,9 +414,9 @@ async function saveConfig(): Promise<void> {
     </div>
 
     <!-- Shared result view - the recommended shaper, A–F grade, frequency chart and shaper table.
-         Shown in EVERY working view (Analyze, Live, and Guided - which otherwise shows only
-         per-step gate badges, so the full result was previously invisible there). #116 -->
-    <template v-if="analysis && mode !== 'audit'">
+         Shown in the Analyze and Live views. Guided renders its own accumulated per-stage
+         results + charts (so an X chart is not replaced by the later Y chart). -->
+    <template v-if="analysis && mode !== 'audit' && mode !== 'guided'">
       <div
         v-if="analysis.recommended_shaper"
         class="flex flex-wrap items-center gap-2 rounded-brutal border-2 border-ink bg-brand-lime px-3 py-2"
@@ -512,111 +507,8 @@ async function saveConfig(): Promise<void> {
       </div>
 
       <!-- Frequency response: PSD curves (front) over shaper-reduction curves (behind). -->
-      <div v-if="chart && chart.psd.length" class="space-y-1">
-        <svg
-          :viewBox="`0 0 ${chart.width} ${chart.height}`"
-          class="w-full rounded-brutal border-2 border-ink bg-paper"
-          role="img"
-          :aria-label="t('inputShaping.widget.chartAria')"
-        >
-          <line
-            v-for="tick in chart.xTicks"
-            :key="'g' + tick.label"
-            :x1="tick.x"
-            :x2="tick.x"
-            :y1="6"
-            :y2="chart.height - 12"
-            class="stroke-ink"
-            stroke-opacity="0.12"
-            stroke-width="0.5"
-          />
-          <!-- Noise floor (median PSD) - anything near it is just noise. -->
-          <line
-            v-if="chart.noiseY != null"
-            :x1="4"
-            :x2="chart.width - 4"
-            :y1="chart.noiseY"
-            :y2="chart.noiseY"
-            class="stroke-ink"
-            stroke-opacity="0.3"
-            stroke-width="0.5"
-            stroke-dasharray="3 2"
-          />
-          <polyline
-            v-for="s in chart.shapers"
-            :key="'sh' + s.name"
-            :points="s.points"
-            fill="none"
-            :stroke="s.color"
-            stroke-width="0.8"
-            :stroke-dasharray="s.dashed ? '2 2' : ''"
-          />
-          <polyline
-            v-for="s in chart.psd"
-            :key="'psd' + s.name"
-            :points="s.points"
-            fill="none"
-            :stroke="s.color"
-            stroke-width="1"
-          />
-          <!-- Dominant resonance peak. -->
-          <g v-if="chart.peak">
-            <line
-              :x1="chart.peak.x"
-              :x2="chart.peak.x"
-              :y1="6"
-              :y2="chart.height - 12"
-              class="stroke-brand-red"
-              stroke-width="0.6"
-              stroke-dasharray="2 1.5"
-            />
-            <circle
-              :cx="chart.peak.x"
-              :cy="chart.peak.y"
-              r="2.2"
-              class="fill-brand-red stroke-ink"
-              stroke-width="0.5"
-            />
-            <text
-              :x="peakLabelX(chart.peak.x, chart.width)"
-              :y="11"
-              font-size="6.5"
-              font-weight="bold"
-              class="fill-brand-red"
-              :text-anchor="chart.peak.x > chart.width * 0.78 ? 'end' : 'start'"
-            >
-              {{ t('inputShaping.widget.peakLabel', { v: chart.peak.label }) }}
-            </text>
-          </g>
-          <text
-            v-for="tick in chart.xTicks"
-            :key="'t' + tick.label"
-            :x="tick.x"
-            :y="chart.height - 2"
-            font-size="6"
-            class="fill-ink"
-            fill-opacity="0.6"
-            text-anchor="middle"
-          >
-            {{ tick.label }}
-          </text>
-        </svg>
-        <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[10px]">
-          <span v-for="s in chart.psd" :key="'lg' + s.name" class="flex items-center gap-1">
-            <span class="inline-block h-2 w-3 rounded-sm" :style="{ background: s.color }" />
-            {{ s.name }}
-          </span>
-          <span class="flex items-center gap-1 opacity-70">
-            <span class="inline-block h-0 w-3 border-t-2 border-brand-pink" />
-            {{ t('inputShaping.widget.legendRecommended') }}
-          </span>
-          <span class="flex items-center gap-1 text-brand-red">{{
-            t('inputShaping.widget.legendPeak')
-          }}</span>
-          <span class="opacity-50">{{ t('inputShaping.widget.legendAxisHint') }}</span>
-        </div>
-        <HelpNote topic="chart" />
-      </div>
+      <ShaperChart :analysis="analysis" />
+      <HelpNote v-if="analysis.freqs.length" topic="chart" />
 
       <div class="space-y-1">
         <div
@@ -651,9 +543,9 @@ async function saveConfig(): Promise<void> {
       <HelpNote topic="shapers" />
     </template>
 
-    <!-- Combined config block (accumulates across the X and Y captures) - shown in
-         any working view (Guided / Analyze / Live), hidden while reviewing History. -->
-    <div v-if="configText && mode !== 'audit'" class="space-y-1">
+    <!-- Combined config block (accumulates across the X and Y captures) - shown in the Analyze
+         and Live views. In Guided the wizard shows it only in its final step. -->
+    <div v-if="configText && mode !== 'audit' && mode !== 'guided'" class="space-y-1">
       <div class="flex items-center justify-between gap-2">
         <span class="text-xs font-bold uppercase tracking-wide">{{
           t('inputShaping.widget.printerCfg')

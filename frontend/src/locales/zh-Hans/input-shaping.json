@@ -353,7 +353,12 @@
         "stepFailed": "步骤失败",
         "copyFailed": "复制失败 — 请选中文本并手动复制。",
         "summaryNote": "你的 X 和 Y 采集已在下方合并的 {code} 块中 — 复制它，然后重启 Klipper。可随时重新打开引导调校以重新检查。",
-        "beltsNotApplicable": "皮带对比适用于 CoreXY 打印机 — 此打印机报告 '{kin}'，已跳过该步骤。"
+        "beltsNotApplicable": "皮带对比适用于 CoreXY 打印机 — 此打印机报告 '{kin}'，已跳过该步骤。",
+        "resultsSoFar": "目前的结果",
+        "archived": "已保存",
+        "autoSaved": "已自动保存到打印机存档。",
+        "beltA": "皮带 A (1,1)",
+        "beltB": "皮带 B (1,-1)"
       }
     },
     "audit": {

@@ -353,7 +353,12 @@
         "stepFailed": "Schritt fehlgeschlagen",
         "copyFailed": "Kopieren fehlgeschlagen — markiere den Text und kopiere ihn manuell.",
         "summaryNote": "Deine X- und Y-Erfassungen befinden sich im kombinierten {code}-Block unten — kopiere ihn, dann starte Klipper neu. Öffne die geführte Abstimmung jederzeit erneut, um nachzuprüfen.",
-        "beltsNotApplicable": "Der Riemenvergleich gilt für CoreXY-Drucker — dieser Drucker meldet '{kin}', der Schritt wird übersprungen."
+        "beltsNotApplicable": "Der Riemenvergleich gilt für CoreXY-Drucker — dieser Drucker meldet '{kin}', der Schritt wird übersprungen.",
+        "resultsSoFar": "Bisherige Ergebnisse",
+        "archived": "Gespeichert",
+        "autoSaved": "Automatisch im Drucker-Archiv gespeichert.",
+        "beltA": "Riemen A (1,1)",
+        "beltB": "Riemen B (1,-1)"
       }
     },
     "audit": {
