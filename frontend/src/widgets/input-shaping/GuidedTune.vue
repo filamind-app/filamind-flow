@@ -312,11 +312,7 @@ function review(i: number): void {
           >
             {{ t('inputShaping.guided.ui.skipBelts') }}
           </button>
-          <button
-            v-if="gate && !canProceed"
-            class="nb-btn px-2 py-0.5 text-[11px]"
-            @click="skip"
-          >
+          <button v-if="gate && !canProceed" class="nb-btn px-2 py-0.5 text-[11px]" @click="skip">
             {{ t('inputShaping.guided.ui.skipAnyway') }}
           </button>
         </template>
