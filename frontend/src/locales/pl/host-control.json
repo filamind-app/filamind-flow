@@ -1,0 +1,247 @@
+{
+  "hostControl": {
+    "intro": "Zarządzaj hostem Linux drukarki - sprawdzaj jego kondycję, steruj usługami działającymi w tle, zwalniaj miejsce na dysku i zmieniaj ustawienia systemowe (czas, ustawienia regionalne, nazwę hosta, sieć, zasilanie).",
+    "view": {
+      "monitor": "Monitor",
+      "services": "Usługi",
+      "cleanup": "Czyszczenie",
+      "system": "System"
+    },
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "O sterowaniu hostem",
+      "close": "Zamknij",
+      "howToRead": "Jak czytać",
+      "steps": [
+        "Czytaj karty temperatury CPU, pamięci, dysku i sieci jednym rzutem oka.",
+        "Obserwuj tabelę najaktywniejszych procesów, aby zobaczyć, co obciąża CPU w tej chwili.",
+        "Zostaw automatyczne odświeżanie włączone dla widoku na żywo lub wyłącz je i odświeżaj ręcznie."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Używane tu pojęcia"
+        },
+        "monitor": {
+          "title": "Odczyt monitora",
+          "body": "Wszystko tutaj jest tylko do odczytu. Paski stają się bursztynowe powyżej 75% i czerwone powyżej 90%. Temperatura CPU staje się bursztynowa przy 70 °C i czerwona przy 80 °C. Ostrzeżenie o ograniczeniu wydajności pojawia się tylko na płytkach, które je raportują (głównie Raspberry Pi)."
+        },
+        "services": {
+          "title": "Zarządzanie usługami",
+          "body": "Każdy wiersz to usługa systemd. Kliknij ją, aby uruchomić/zatrzymać/zrestartować ją, włączyć/wyłączyć przy starcie, zamaskować ją, odczytać jej dziennik lub - w przypadku usług zainstalowanych przez Ciebie - usunąć jej plik jednostki. Zatrzymanie lub wyłączenie usługi wymaga wpisanego lub jednodotykowego potwierdzenia. Usługi krytyczne i chronione są oznaczone; chronionych (jak SSH i ten panel) nie można zatrzymać, aby uniknąć zablokowania sobie dostępu."
+        },
+        "cleanup": {
+          "title": "Zwalnianie miejsca na dysku",
+          "body": "Każdy wiersz jest najpierw skanowany, aby pokazać, ile by zwolnił. Zaznacz te do wyczyszczenia i potwierdź. Oferowane są tylko dane, które można odtworzyć - pamięć podręczna pobierania apt, stary dziennik systemd, ~/.cache, Twoje stare pliki /tmp i zrotowane (nieaktywne) dzienniki. Twój G-code, timelapse i konfiguracje nigdy nie są naruszane."
+        },
+        "system": {
+          "title": "Ustawienia systemowe",
+          "body": "Zmień strefę czasową i zegar hosta, język i klawiaturę, nazwę hosta lub sieć (DHCP / statyczny IP) albo zrestartuj/wyłącz go. Każda zmiana jest stosowana natychmiast. Restart i wyłączenie są odrzucane podczas trwającego wydruku. Zmiana IP może na chwilę przerwać Twoje połączenie z tym panelem."
+        },
+        "network": {
+          "title": "DHCP a statyczny IP",
+          "body": "DHCP (automatycznie) pozwala routerowi przydzielić adres automatycznie. Statyczny (ręcznie) przypina stały adres - ustaw IP, podsieć (CIDR, np. /24), bramę (zwykle Twój router) i DNS. Tylko IPv4. Zmiana adresu połączenia, które obsługuje ten panel, zakończy Twoją sesję; połącz się ponownie pod nowym IP. Błędny statyczny adres lub brama mogą sprawić, że drukarka będzie nieosiągalna, dopóki nie naprawisz tego na samym urządzeniu, dlatego ustawienia są walidowane i wymagają wpisanego potwierdzenia."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Host",
+          "def": "Mały komputer Linux (np. Raspberry Pi lub BTT CB1), na którym działają Klipper, Moonraker i FilaMind - oddzielny od mikrokontrolerów drukarki."
+        },
+        "load": {
+          "term": "Średnie obciążenie",
+          "def": "Ile procesów czekało na uruchomienie, uśrednione w ciągu 1 / 5 / 15 minut. W przybliżeniu: wartość bliska liczbie rdzeni oznacza, że CPU jest zajęty; znacznie powyżej oznacza, że jest przeciążony."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Miejsce na dysku używane jako bufor, gdy RAM się zapełnia. Intensywne używanie swapu spowalnia hosta - to znak, że brakuje mu pamięci."
+        },
+        "throttle": {
+          "term": "Ograniczanie wydajności",
+          "def": "Gdy płytka zmniejsza prędkość, aby chronić siebie - zwykle z powodu zbyt słabego zasilacza (zbyt niskie napięcie) lub przegrzania. Raportowane głównie na Raspberry Pi."
+        },
+        "ntp": {
+          "term": "NTP / synchronizacja zegara",
+          "def": "Network Time Protocol utrzymuje dokładność zegara hosta. Niezsynchronizowany zegar może zepsuć timelapse, dzienniki i certyfikaty TLS."
+        },
+        "locale": {
+          "term": "Ustawienia regionalne",
+          "def": "Ustawienia języka i układu klawiatury hosta, używane przez system operacyjny do tekstu, dat i mapy klawiszy konsoli."
+        },
+        "service": {
+          "term": "Usługa (jednostka)",
+          "def": "Program działający w tle zarządzany przez systemd - Klipper, Moonraker, streamer kamery i stos sieciowy działają jako usługi."
+        },
+        "enabled": {
+          "term": "Włączona / wyłączona",
+          "def": "Czy usługa uruchamia się automatycznie przy starcie. „enabled” uruchamia się przy starcie; „disabled” nie; „static” jest uruchamiana tylko przez inną usługę."
+        },
+        "mask": {
+          "term": "Maskowanie",
+          "def": "Silniejsza forma wyłączenia - usługi nie można uruchomić w ogóle (nawet przez inną usługę), dopóki nie zostanie odmaskowana. Używaj ostrożnie."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Odśwież",
+      "autoRefresh": "Automatyczne odświeżanie",
+      "loading": "Odczyt stanu hosta…",
+      "host": "Host",
+      "hostname": "Nazwa hosta",
+      "distro": "System",
+      "kernel": "Jądro",
+      "uptime": "Czas pracy",
+      "cpu": "CPU",
+      "temp": "Temperatura",
+      "load": "Obciążenie (1·5·15m)",
+      "cores": "Rdzenie",
+      "throttled": "Ograniczone",
+      "memory": "Pamięć",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Dysk",
+      "network": "Sieć",
+      "iface": "Interfejs",
+      "ip": "Adres IP",
+      "ssid": "Wi-Fi",
+      "signal": "Sygnał",
+      "timeLocale": "Czas i ustawienia regionalne",
+      "timezone": "Strefa czasowa",
+      "ntp": "Synchronizacja zegara",
+      "synced": "Zsynchronizowano",
+      "syncing": "Synchronizowanie…",
+      "ntpOff": "Wył.",
+      "language": "Język",
+      "keymap": "Mapa klawiszy",
+      "topProcesses": "Najaktywniejsze procesy",
+      "command": "Polecenie",
+      "cpuPct": "CPU%",
+      "memPct": "MEM%",
+      "pid": "PID"
+    },
+    "services": {
+      "warning": "Zatrzymanie lub wyłączenie niewłaściwej usługi może odłączyć drukarkę. Usługi krytyczne są oznaczone; chronionych nie można zatrzymać.",
+      "search": "Szukaj usług…",
+      "refresh": "Odśwież",
+      "loading": "Tworzenie listy usług…",
+      "loadingDetail": "Odczyt usługi…",
+      "loadingLogs": "Odczyt dziennika…",
+      "summary": "{total} usług · {active} aktywnych · {failed} z błędem",
+      "filter": {
+        "all": "Wszystkie",
+        "active": "Aktywne",
+        "inactive": "Nieaktywne",
+        "failed": "Z błędem",
+        "enabled": "Włączone"
+      },
+      "stateActive": "Aktywna",
+      "stateInactive": "Nieaktywna",
+      "stateFailed": "Z błędem",
+      "critical": "Krytyczna",
+      "protected": "Chroniona",
+      "state": "Stan",
+      "startup": "Uruchamianie",
+      "unitFile": "Plik jednostki",
+      "action": {
+        "start": "Uruchom",
+        "stop": "Zatrzymaj",
+        "restart": "Zrestartuj",
+        "enable": "Włącz",
+        "disable": "Wyłącz",
+        "mask": "Zamaskuj",
+        "unmask": "Odmaskuj"
+      },
+      "actionOk": "{action} wykonano.",
+      "actionFailed": "{action} nie powiodło się.",
+      "deleteFailed": "Nie udało się usunąć pliku jednostki.",
+      "confirmAction": "{action} „{name}”?",
+      "confirmYes": "Tak, zrób to",
+      "cancel": "Anuluj",
+      "deleteUnit": "Usuń plik jednostki…",
+      "deletePrompt": "To trwale usuwa plik jednostki. Wpisz „{name}”, aby potwierdzić.",
+      "deleteConfirm": "Usuń trwale",
+      "deleted": "Plik jednostki usunięto.",
+      "logs": "Ostatni dziennik",
+      "noLogs": "Brak wyjścia dziennika."
+    },
+    "cleanup": {
+      "subtitle": "Zaznacz, co usunąć, a następnie wyczyść. Tylko pamięci podręczne i stare dzienniki - wydruki i konfiguracje pozostają bezpieczne.",
+      "rescan": "Skanuj ponownie",
+      "scanning": "Skanowanie dysku…",
+      "na": "nd.",
+      "items": "{n} plików",
+      "freed": "Zwolniono {size}.",
+      "selectedTotal": "Wybrano: {size}",
+      "clean": "Wyczyść zaznaczone",
+      "confirmBody": "Usunąć wybrane elementy?",
+      "confirmYes": "Tak, wyczyść",
+      "cancel": "Anuluj",
+      "running": "Czyszczenie…",
+      "someFailed": "Niektórych elementów nie udało się wyczyścić.",
+      "targets": {
+        "apt": {
+          "label": "Pamięć podręczna pakietów",
+          "desc": "Pobrane pliki instalacyjne .deb, których apt już nie potrzebuje."
+        },
+        "journal": {
+          "label": "Dziennik systemowy",
+          "desc": "Stare dzienniki systemd - ograniczone do ostatnich 50 MB."
+        },
+        "cache": {
+          "label": "Pamięć podręczna użytkownika",
+          "desc": "Odtwarzalne pliki w ~/.cache (miniatury, pip itp.)."
+        },
+        "tmp": {
+          "label": "Pliki tymczasowe",
+          "desc": "Twoje własne pliki w /tmp starsze niż dzień."
+        },
+        "logs": {
+          "label": "Zrotowane dzienniki",
+          "desc": "Stare, zrotowane dzienniki Klipper/Moonraker (aktywny dziennik jest zachowany)."
+        }
+      }
+    },
+    "system": {
+      "loading": "Odczyt ustawień systemowych…",
+      "done": "Gotowe.",
+      "apply": "Zastosuj",
+      "timeTitle": "Czas i data",
+      "timezone": "Strefa czasowa",
+      "ntp": "Ustaw czas automatycznie (NTP)",
+      "manualTime": "Ustaw zegar ręcznie",
+      "manualTimeHint": "Wyłącz automatyczny czas, aby ustawić zegar ręcznie.",
+      "localeTitle": "Język i klawiatura",
+      "language": "Język",
+      "keymap": "Mapa klawiszy konsoli",
+      "hostnameTitle": "Nazwa hosta",
+      "hostnameHint": "Tylko litery, cyfry i myślniki. Pełny efekt po restarcie.",
+      "powerTitle": "Zasilanie",
+      "powerWarning": "Restart i wyłączenie są odrzucane podczas trwającego wydruku.",
+      "reboot": "Zrestartuj",
+      "shutdown": "Wyłącz",
+      "confirmReboot": "Zrestartować host teraz?",
+      "confirmShutdown": "Wyłączyć host teraz?",
+      "confirmYes": "Tak",
+      "cancel": "Anuluj",
+      "needsSetup": "To działanie wymaga sudo bez hasła. Na drukarce uruchom: sudo bash scripts/install.sh sudoers - następnie spróbuj ponownie.",
+      "failed": "Tej zmiany nie udało się zastosować.",
+      "network": {
+        "title": "Sieć (IPv4)",
+        "unavailable": "Edycja sieci nie jest dostępna na tym hoście (NetworkManager nie jest zainstalowany).",
+        "device": "Urządzenie",
+        "method": "Metoda IP",
+        "auto": "DHCP (automatycznie)",
+        "manual": "Statyczny (ręcznie)",
+        "address": "Adres IP",
+        "cidr": "Podsieć (CIDR)",
+        "gateway": "Brama",
+        "dns": "Serwery DNS",
+        "dnsHint": "Rozdzielone przecinkami, np. 1.1.1.1, 8.8.8.8 (opcjonalne)",
+        "warning": "Zmiana IP może przerwać działanie tego panelu - może być konieczne ponowne połączenie pod nowym adresem.",
+        "apply": "Zastosuj ustawienia sieci",
+        "confirmPrompt": "To może sprawić, że panel będzie nieosiągalny. Wpisz nazwę urządzenia „{device}”, aby potwierdzić.",
+        "confirmYes": "Zastosuj i przełącz",
+        "applyingReconnect": "Stosowanie… jeśli panel przestanie odpowiadać, połącz się ponownie pod nowym IP drukarki."
+      }
+    }
+  }
+}

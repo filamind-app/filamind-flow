@@ -1,0 +1,268 @@
+{
+  "boardTopology": {
+    "intro": "Lihat bagaimana board kontrol printer Anda terhubung: host (SBC) dan setiap MCU yang berkomunikasi dengannya, lengkap dengan tipe koneksi dan tebakan board / chip semaksimal mungkin - dibaca langsung dari config.",
+    "help": {
+      "guide": "Bantuan",
+      "guideTitle": "Tentang Board Topology",
+      "close": "Tutup",
+      "howToRead": "Cara membaca",
+      "steps": [
+        "Host (SBC Anda, mis. Raspberry Pi atau CB1) berada di paling atas.",
+        "Setiap kartu MCU menampilkan cara koneksinya (USB / CAN bus / UART) dan chip-nya.",
+        "Tebakan board muncul ketika pengenal koneksi cocok dengan board yang dikenal."
+      ],
+      "topics": {
+        "views": {
+          "title": "Tampilan Fisik vs Logis",
+          "body": "Peta menggambar board yang sama dengan dua cara. FISIK menunjukkan bagaimana mesin sebenarnya dibangun: SBC terintegrasi digambar di dalam mainboard tempatnya dipasang, toolhead CAN tergantung pada rel backbone bersama, dan board USB/UART adalah unit terpisah. LOGIS menunjukkan bagaimana Klipper melihatnya: host di atas dengan setiap MCU sebagai anak yang dijangkau lewat tautan serial-nya. Beralih dengan sakelar Fisik/Logis."
+        },
+        "mcus": {
+          "title": "MCU",
+          "body": "MCU adalah board mikrokontroler yang menggerakkan motor, heater, dan sensor. Sebuah printer memiliki setidaknya satu (mainboard); banyak yang menambah board toolhead dan terkadang board probe atau LED. Panel ini mencantumkan setiap bagian `[mcu]` yang dimiliki Klipper."
+        },
+        "connections": {
+          "title": "Tipe koneksi",
+          "body": "USB - tautan serial-over-USB (koneksi mainboard yang umum). CAN bus - bus dua kabel bersama, umum untuk board toolhead. UART - tautan serial langsung lewat GPIO. Tipe ditentukan dari setelan `serial` / `canbus_uuid` setiap MCU."
+        },
+        "detection": {
+          "title": "Cara deteksi bekerja",
+          "body": "Chip dan board ditebak dengan mencocokkan pengenal koneksi (jalur serial atau CAN UUID) terhadap tabel pola, plus sidik jari pin-map dari pin yang dipakai config Anda. Tebakan board menampilkan tingkat keyakinan kecocokan; ketika tidak ada yang cocok, chip/board terbaca \"unknown\" - koneksinya sendiri tetap ditampilkan."
+        },
+        "override": {
+          "title": "Konfirmasi atau ubah board",
+          "body": "Sebuah id serial biasanya hanya mengungkap chip, jadi tebakan board bisa hilang atau salah. Gunakan \"Konfirmasi board ini\" untuk mengunci tebakan yang benar, atau \"Ubah board…\" / \"Setel board…\" untuk memilih yang tepat dari katalog. Pilihan Anda disimpan di host dan dipakai ulang setiap kali dibaca; \"Bersihkan\" mengembalikan ke tebakan otomatis."
+        },
+        "glossary": {
+          "title": "Glosarium",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Microcontroller unit - board kontrol yang menjalankan firmware Klipper (mainboard, toolhead, dll.)."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Bus dua kabel bersama yang menautkan board lewat UUID unik - populer untuk pengkabelan toolhead."
+        },
+        "host": {
+          "term": "Host / SBC",
+          "def": "Komputer papan tunggal (Pi, CB1, …) yang menjalankan Klipper dan berkomunikasi dengan MCU."
+        }
+      }
+    },
+    "host": {
+      "label": "Host",
+      "role": "Komputer papan tunggal - menjalankan Klipper"
+    },
+    "mcu": {
+      "chip": "Chip",
+      "board": "Board",
+      "unknown": "unknown",
+      "identifier": "Pengenal",
+      "confidence": "cocok {pct}%",
+      "viewBoard": "Lihat detail board",
+      "hideBoard": "Sembunyikan detail"
+    },
+    "graph": {
+      "viewLabel": "Tampilan diagram",
+      "view": {
+        "physical": "Fisik",
+        "logical": "Logis"
+      },
+      "integrated": "SBC on-board",
+      "integratedNote": "SBC host tertanam di mainboard {board}.",
+      "selectPrompt": "Pilih board atau MCU di peta untuk memeriksanya.",
+      "aria": "Peta mesin: host dan {n} MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} retransmit",
+        "load": "beban {pct}%"
+      },
+      "health": {
+        "title": "Kesehatan tautan",
+        "ok": "sehat",
+        "warn": "menurun",
+        "out": "firmware tidak sinkron"
+      }
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "unknown",
+      "via": "via {type}"
+    },
+    "count": "{n} MCU",
+    "states": {
+      "loading": "Membaca topologi…",
+      "unreachable": "Tidak dapat menjangkau printer.",
+      "empty": "Tidak ada MCU yang ditemukan di config.",
+      "retry": "Coba lagi",
+      "refresh": "Segarkan"
+    },
+    "board": {
+      "suggested": "disarankan",
+      "ports": "{n} port",
+      "specsTitle": "Spesifikasi",
+      "portsTitle": "Port",
+      "none": "Belum ada detail katalog untuk board ini.",
+      "noMatch": "Belum ada board yang cocok - konfirmasi atau setel satu di bawah.",
+      "loading": "Memuat board…",
+      "links": {
+        "title": "Tautan",
+        "product": "Produk",
+        "repo": "Repo",
+        "wiki": "Wiki",
+        "pinout": "Pinout",
+        "schematic": "Skematik",
+        "datasheet": "Datasheet",
+        "image": "Foto"
+      },
+      "portCat": {
+        "motor": "motor",
+        "heater_hotend": "heater hotend",
+        "heater_bed": "heater bed",
+        "accelerometer": "akselerometer",
+        "filament_sensor": "sensor filamen",
+        "fan": "kipas",
+        "probe": "probe",
+        "other": "lainnya",
+        "power": "daya",
+        "thermistor": "termistor",
+        "usb": "USB",
+        "can": "CAN",
+        "swd": "SWD",
+        "display": "tampilan",
+        "rgb": "RGB",
+        "network": "jaringan",
+        "endstop": "endstop",
+        "wifi": "Wi-Fi",
+        "spi": "SPI",
+        "uart": "UART"
+      },
+      "spec": {
+        "mcu": "MCU",
+        "arch": "Arsitektur",
+        "flash_method": "Metode flash",
+        "voltage": "Tegangan",
+        "driver_slots": "Slot driver",
+        "usb": "USB",
+        "onboard_drivers": "Driver onboard",
+        "clock": "Clock",
+        "can": "CAN",
+        "drivers": "Driver",
+        "dimensions_mm": "Dimensi (mm)",
+        "role_era": "Peran / era",
+        "kinematics": "Kinematika",
+        "build_volume_mm": "Volume cetak (mm)",
+        "bed": "Bed",
+        "hotend": "Hotend",
+        "stock_extruder": "Extruder bawaan",
+        "year": "Tahun",
+        "control_board": "Board kontrol",
+        "stock_drivers": "Driver bawaan",
+        "uart": "UART",
+        "connectivity": "Konektivitas",
+        "max_hotend_temp": "Suhu maks hotend",
+        "max_bed_temp": "Suhu maks bed",
+        "spi": "SPI",
+        "notes": "Catatan",
+        "eth_wifi": "Eth/WiFi",
+        "class": "Kelas",
+        "supported_drivers": "Driver yang didukung",
+        "form_factor": "Faktor bentuk",
+        "flash": "Flash",
+        "all_metal_accel": "All-metal / akselerasi",
+        "ethernet_wifi": "Ethernet/WiFi",
+        "i2c": "I2C",
+        "driver": "Driver",
+        "i2cspi": "I2C/SPI",
+        "printer_board": "Printer / board",
+        "accelerometer": "Akselerometer",
+        "printers": "Printer",
+        "bootloader": "Bootloader",
+        "flash_offset": "Offset flash",
+        "soc": "SoC",
+        "ram": "RAM",
+        "role": "Peran",
+        "connection": "Koneksi",
+        "storage": "Penyimpanan",
+        "host": "Host"
+      },
+      "class": {
+        "mainboard": "mainboard",
+        "printer_preset": "preset printer",
+        "toolhead": "toolhead",
+        "host": "host",
+        "expansion": "ekspansi"
+      }
+    },
+    "components": {
+      "title": "Komponen",
+      "motor": "Motor",
+      "driver": "Driver",
+      "heater": "Heater",
+      "fan": "Kipas",
+      "sensor": "Sensor"
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "Detail",
+        "atlas": "Pin Atlas"
+      },
+      "summary": "{used}/{total} pin terpakai · {free} bebas",
+      "loading": "Membaca pin map…",
+      "failed": "Tidak dapat membaca pin map.",
+      "unavailable": "Belum ada pin map untuk board ini.",
+      "search": "Cari pin, sinyal, bagian…",
+      "freeOnly": "Hanya yang bebas",
+      "noMatch": "Tidak ada pin yang cocok.",
+      "other": "Lainnya",
+      "conflict": "Konflik pin",
+      "caveat": "Catatan pengkabelan"
+    },
+    "override": {
+      "confirmed": "Dikonfirmasi oleh Anda",
+      "confirm": "Konfirmasi board ini",
+      "change": "Ubah board…",
+      "set": "Setel board…",
+      "clear": "Bersihkan",
+      "pickPlaceholder": "Cari katalog board…",
+      "hint": "Pilihan Anda disimpan di host dan dipakai untuk MCU ini mulai sekarang."
+    },
+    "sync": {
+      "synced": "Firmware sinkron",
+      "outOfSync": "Firmware TIDAK SINKRON"
+    },
+    "snapshot": {
+      "save": "Simpan snapshot",
+      "copy": "Salin ringkasan",
+      "copied": "Tersalin!",
+      "none": "Belum ada baseline yang disimpan - simpan snapshot untuk mendeteksi perubahan mendatang.",
+      "unchanged": "Tidak ada perubahan perangkat keras sejak snapshot",
+      "changed": "{n} perubahan sejak snapshot",
+      "summaryTitle": "FilaMind - peta mesin",
+      "change": {
+        "added": "MCU “{mcu}” ditambahkan",
+        "removed": "MCU “{mcu}” dihapus",
+        "board_changed": "board “{mcu}” berubah: {before} → {after}",
+        "connection_changed": "koneksi “{mcu}” berubah: {before} → {after}",
+        "chip_changed": "chip “{mcu}” berubah: {before} → {after}",
+        "components_changed": "jumlah komponen “{mcu}” berubah: {before} → {after}"
+      },
+      "noCompare": "Tidak dapat membandingkan - printer tidak terjangkau.",
+      "summaryHost": "Host: {name}",
+      "summaryIntegrated": "SBC terintegrasi pada {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "board {board}",
+      "summaryComponents": "{n} komponen"
+    },
+    "jump": {
+      "section": "Buka bagian ini di Config Editor",
+      "drivers": "Buka di Motor Drivers",
+      "firmware": "Buka Firmware Manager"
+    }
+  }
+}

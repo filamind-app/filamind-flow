@@ -1,0 +1,69 @@
+{
+  "configTemplates": {
+    "intro": "바로 붙여넣을 수 있는 Klipper 설정 블록과 매크로 - 시작 시퀀스, 필라멘트 처리, 입력 셰이핑, 베드 메시 등. 하나를 복사해 printer.cfg에 넣으세요 (Config Editor가 붙여넣기 좋은 곳입니다).",
+    "help": {
+      "guide": "도움말",
+      "guideTitle": "설정 템플릿 정보",
+      "close": "닫기",
+      "howToRead": "사용 방법",
+      "steps": [
+        "카테고리로 필터링해 매크로나 설정 블록을 찾으세요.",
+        "설명과 필요한 섹션을 확인하세요.",
+        "템플릿을 복사해 설정에 붙여넣고 값을 조정하세요."
+      ],
+      "topics": {
+        "what": {
+          "title": "이것이 무엇인가요",
+          "body": "자주 쓰는 Klipper 빌딩 블록을 엄선한 모음입니다: gcode_macros (PRINT_START, PAUSE/RESUME, 필라멘트 로드/언로드, M600)와 설정 섹션 ([input_shaper], [bed_mesh], [firmware_retraction], …). 이들은 출발점일 뿐이니 각각 읽어보고 본인 장비에 맞게 튜닝하세요."
+        },
+        "insert": {
+          "title": "템플릿 삽입하기",
+          "body": "템플릿을 복사한 뒤 printer.cfg에 붙여넣으세요 - Config Editor의 Raw 보기가 편리한 위치입니다. 저장 후 펌웨어 재시작으로 적용됩니다. 항상 값을 먼저 검토하세요. 여기 기본값은 합리적이지만 본인 프린터에 맞춰진 것은 아닙니다."
+        },
+        "sections": {
+          "title": "필요한 섹션",
+          "body": "각 템플릿은 자신이 정의하거나 의존하는 설정 섹션을 나열합니다. 어떤 섹션이 설정에 이미 있다면 중복을 붙여넣지 말고 키를 병합하세요 (중복 섹션은 시작 시 거부됩니다)."
+        },
+        "glossary": {
+          "title": "용어집",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "template": {
+          "term": "템플릿",
+          "def": "printer.cfg에 복사해 넣는, 바로 붙여넣을 수 있는 Klipper 설정 또는 매크로 G-code 조각입니다."
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "설정에서 정의하는 이름이 붙은 명령어(예: PRINT_START)로, 일련의 G-code를 실행합니다."
+        },
+        "section": {
+          "term": "섹션",
+          "def": "[대괄호]로 묶인 설정 블록(예: [bed_mesh])으로, Klipper 설정이 묶이는 단위입니다."
+        }
+      }
+    },
+    "category": {
+      "label": "카테고리",
+      "all": "전체 카테고리"
+    },
+    "template": {
+      "copy": "복사",
+      "copied": "복사됨!",
+      "requires": "섹션: {sections}",
+      "requiresNone": "-"
+    },
+    "count": "템플릿 {n}개",
+    "states": {
+      "loading": "템플릿 불러오는 중…",
+      "error": "템플릿을 불러오지 못했습니다.",
+      "empty": "이 카테고리에 템플릿이 없습니다.",
+      "retry": "다시 시도"
+    },
+    "categories": {
+      "config_blocks": "설정 블록",
+      "macros": "매크로"
+    }
+  }
+}

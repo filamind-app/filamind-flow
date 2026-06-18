@@ -1,0 +1,69 @@
+{
+  "configTemplates": {
+    "intro": "Blocchi di configurazione Klipper e macro pronti da incollare - sequenze di avvio, gestione del filamento, input shaping, bed mesh e altro. Copiane uno e inseriscilo nel tuo printer.cfg (il Config Editor è un buon posto dove incollarlo).",
+    "help": {
+      "guide": "Aiuto",
+      "guideTitle": "Informazioni sui modelli di configurazione",
+      "close": "Chiudi",
+      "howToRead": "Come usarli",
+      "steps": [
+        "Filtra per categoria per trovare una macro o un blocco di configurazione.",
+        "Leggi la descrizione e quali sezioni richiede.",
+        "Copia il modello, incollalo nella tua configurazione e regola i valori."
+      ],
+      "topics": {
+        "what": {
+          "title": "Cosa sono",
+          "body": "Una raccolta curata di blocchi Klipper comuni: gcode_macros (PRINT_START, PAUSE/RESUME, caricamento/scaricamento filamento, M600) e sezioni di configurazione ([input_shaper], [bed_mesh], [firmware_retraction], …). Sono punti di partenza - leggi ciascuno e adattalo alla tua macchina."
+        },
+        "insert": {
+          "title": "Inserire un modello",
+          "body": "Copia un modello, poi incollalo nel tuo printer.cfg - la vista Raw del Config Editor è un punto comodo. Dopo il salvataggio, un riavvio del firmware lo applica. Controlla sempre prima i valori; i valori predefiniti qui sono ragionevoli ma non ottimizzati per la tua stampante."
+        },
+        "sections": {
+          "title": "Sezioni richieste",
+          "body": "Ogni modello elenca le sezioni di configurazione che definisce o da cui dipende. Se una sezione esiste già nella tua configurazione, unisci le chiavi invece di incollare un duplicato (una sezione duplicata viene rifiutata all'avvio)."
+        },
+        "glossary": {
+          "title": "Glossario",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "template": {
+          "term": "Modello",
+          "def": "Uno snippet pronto da incollare di configurazione Klipper o G-code di macro da copiare in printer.cfg."
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "Un comando con nome che definisci nella configurazione (es. PRINT_START) che esegue una sequenza di G-code."
+        },
+        "section": {
+          "term": "Sezione",
+          "def": "Un blocco di configurazione tra [parentesi], es. [bed_mesh] - l'unità in cui è raggruppata la configurazione di Klipper."
+        }
+      }
+    },
+    "category": {
+      "label": "Categoria",
+      "all": "Tutte le categorie"
+    },
+    "template": {
+      "copy": "Copia",
+      "copied": "Copiato!",
+      "requires": "Sezioni: {sections}",
+      "requiresNone": "-"
+    },
+    "count": "{n} modelli",
+    "states": {
+      "loading": "Caricamento modelli…",
+      "error": "Impossibile caricare i modelli.",
+      "empty": "Nessun modello in questa categoria.",
+      "retry": "Riprova"
+    },
+    "categories": {
+      "config_blocks": "Blocchi di configurazione",
+      "macros": "Macro"
+    }
+  }
+}

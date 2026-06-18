@@ -1,0 +1,243 @@
+{
+  "configEditor": {
+    "intro": "Leggi la configurazione live della stampante direttamente da Moonraker - ogni file, analizzato in sezioni e parametri, con i problemi strutturali segnalati. Per ora in sola lettura; la modifica guidata arriverà prossimamente.",
+    "help": {
+      "guide": "Aiuto",
+      "guideTitle": "Informazioni sull'Editor di Configurazione",
+      "close": "Chiudi",
+      "howToRead": "Come si usa",
+      "steps": [
+        "Scegli un file di configurazione dal menu a tendina - printer.cfg è selezionato per impostazione predefinita.",
+        "Sfoglia le sezioni; clicca su una per espanderne i parametri.",
+        "Controlla il banner di Validazione per problemi strutturali come una sezione duplicata.",
+        "Passa a Grezzo per leggere il testo esatto del file."
+      ],
+      "topics": {
+        "sections": {
+          "title": "Sezioni e parametri",
+          "body": "Una configurazione Klipper è un elenco di blocchi [section], ciascuno contenente parametri chiave: valore. Questo widget analizza ogni sezione - incluse quelle con un nome come [tmc2209 stepper_x] - ed elenca i suoi parametri con il valore e ogni eventuale commento in linea. I valori multi-riga (come il gcode: di una macro) vengono mantenuti intatti."
+        },
+        "includes": {
+          "title": "File inclusi",
+          "body": "printer.cfg spesso richiama altri file con [include other.cfg] (o un glob come [include configs/*.cfg]). Ogni include è mostrato come voce a sé stante; scegli il file incluso dal menu a tendina per ispezionare ciò che definisce."
+        },
+        "validation": {
+          "title": "Validazione",
+          "body": "Dopo l'analisi, la configurazione viene controllata per problemi strutturali che sono errati indipendentemente dal tipo di sezione - un'intestazione di sezione duplicata, un nome di sezione vuoto, o un parametro che si trova al di fuori di qualsiasi sezione. Questi compaiono nel banner di Validazione; non modificano il file."
+        },
+        "saveConfig": {
+          "title": "Il blocco SAVE_CONFIG",
+          "body": "Klipper aggiunge un blocco generato automaticamente alla fine di printer.cfg (dopo il marcatore #*#) quando esegui SAVE_CONFIG - risultati di calibrazione come PID e offset Z. Viene mostrato ma contrassegnato come salvato automaticamente, ed è escluso dal conteggio delle sezioni modificabili perché non dovresti modificarlo manualmente."
+        },
+        "readonly": {
+          "title": "Sola lettura (per ora)",
+          "body": "Questa prima versione legge e mostra soltanto la configurazione - nulla viene scritto sulla stampante. La modifica guidata con conferma (con un backup automatico prima di ogni salvataggio e un riavvio successivo) arriverà in un aggiornamento futuro."
+        },
+        "glossary": {
+          "title": "Glossario",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "section": {
+          "term": "Sezione",
+          "def": "Un blocco [header] che raggruppa impostazioni correlate, es. [stepper_x] o [extruder]."
+        },
+        "parameter": {
+          "term": "Parametro",
+          "def": "Una riga chiave: valore (o chiave = valore) all'interno di una sezione, opzionalmente con un commento finale #."
+        },
+        "include": {
+          "term": "[include]",
+          "def": "Una direttiva che richiama un altro file di configurazione in printer.cfg, così le impostazioni possono essere suddivise su più file."
+        },
+        "saveConfig": {
+          "term": "SAVE_CONFIG",
+          "def": "Il blocco generato automaticamente (dopo #*#) dove Klipper memorizza i risultati di calibrazione - non modificarlo manualmente."
+        }
+      }
+    },
+    "file": {
+      "label": "File di configurazione",
+      "placeholder": "Seleziona un file…",
+      "refresh": "Aggiorna",
+      "loadingList": "Caricamento dei file…",
+      "emptyList": "Nessun file di configurazione trovato sulla stampante."
+    },
+    "summary": {
+      "sections": "{count} sezioni",
+      "params": "{count} parametri",
+      "size": "{kb} KB"
+    },
+    "validation": {
+      "title": "Validazione",
+      "clean": "Nessun problema strutturale rilevato.",
+      "error": "Errore",
+      "warning": "Avviso"
+    },
+    "view": {
+      "structured": "Strutturato",
+      "raw": "Grezzo",
+      "expandAll": "Espandi tutto",
+      "collapseAll": "Comprimi tutto"
+    },
+    "section": {
+      "saveBadge": "salvato automaticamente",
+      "noParams": "(nessun parametro)",
+      "paramsCount": "{count} parametri",
+      "paramHead": "Parametro",
+      "valueHead": "Valore"
+    },
+    "edit": {
+      "hint": "Modifica il testo grezzo qui sotto, poi Salva. Viene creato un backup con marca temporale prima di ogni scrittura."
+    },
+    "save": {
+      "button": "Salva",
+      "saving": "Salvataggio…",
+      "unsaved": "Modifiche non salvate",
+      "revert": "Annulla",
+      "confirmTitle": "Salvare sulla stampante?",
+      "confirmBody": "Questo sovrascrive {file} sulla stampante. Viene salvato prima un backup con marca temporale, ed è necessario un riavvio del firmware per applicare la modifica.",
+      "ack": "Capisco che questo scrive sulla stampante",
+      "confirm": "Salva",
+      "cancel": "Annulla",
+      "done": "Salvato. Backup: {backup}",
+      "busy": "Rifiutato: la stampante è occupata (in stampa o in pausa). Riprova quando è inattiva.",
+      "error": "Salvataggio non riuscito.",
+      "stale": "Il file è cambiato sul disco da quando è stato caricato (potrebbe essere arrivato un SAVE_CONFIG, o un'altra app lo ha modificato). Salvare ora sovrascriverebbe quella modifica - ricarica per controllare (la cronologia dei backup mostra le differenze).",
+      "staleReload": "Ricarica il file"
+    },
+    "restart": {
+      "prompt": "Riavviare il firmware per applicare la modifica?",
+      "button": "Riavvia firmware",
+      "restarting": "Riavvio…",
+      "confirmTitle": "Riavviare il firmware?",
+      "confirmBody": "FIRMWARE_RESTART ricarica la configurazione e interrompe brevemente la stampante. Eseguilo solo quando è inattiva.",
+      "confirm": "Riavvia ora",
+      "cancel": "Annulla",
+      "done": "Riavvio del firmware richiesto.",
+      "busy": "Rifiutato: la stampante è occupata. Riavvia quando è inattiva.",
+      "error": "Riavvio non riuscito."
+    },
+    "states": {
+      "loading": "Lettura della configurazione…",
+      "error": "Impossibile leggere la configurazione dalla stampante.",
+      "retry": "Riprova"
+    },
+    "catalog": {
+      "title": "Aggiungi un blocco di configurazione dal catalogo",
+      "hint": "Scegli un componente - il suo blocco Klipper accurato per l'hardware (run_current, sense_resistor, nomi dei pin reali) viene aggiunto al file per consentirti di rivederlo e salvarlo.",
+      "drivers": "Driver",
+      "motors": "Motori",
+      "boards": "Schede",
+      "pickPlaceholder": "Cerca nel catalogo…",
+      "inserted": "Blocco inserito per {name} - rivedilo in Grezzo e salva.",
+      "noSnippet": "Nessun blocco di configurazione disponibile per {name}."
+    },
+    "drift": {
+      "title": "Cosa sta eseguendo Klipper",
+      "pending": "Klipper ha modifiche non salvate (un SAVE_CONFIG è in sospeso) - salvare questo file ora le cancellerebbe. Esegui prima SAVE_CONFIG nella console.",
+      "warningsTitle": "Avvisi di configurazione Klipper",
+      "count": "{n} valore/i sul disco differiscono da quanto in esecuzione (modificati ma senza FIRMWARE_RESTART):",
+      "adopt": "adotta live"
+    },
+    "pinDoctor": {
+      "title": "Pin Doctor - {n} rilevamento/i di cablaggio",
+      "conflict": "CONFLITTO",
+      "caveat": "AVVERTENZA"
+    },
+    "tmc": {
+      "review": "rivedi in Grezzo e salva"
+    },
+    "pinEdit": {
+      "offBoard": "non sulla scheda",
+      "offBoardHint": "Questo pin non è nella mappa dei pin nota della scheda - controlla un errore di battitura o un pin EXP/virtuale.",
+      "double": "riutilizzato",
+      "doubleHint": "Questo pin è assegnato in più di una sezione.",
+      "caveat": "avvertenza"
+    },
+    "project": {
+      "title": "Progetto (include e ricerca)",
+      "lintBadge": "{n} problema/i",
+      "searchPlaceholder": "Cerca in ogni file di configurazione…",
+      "searchBtn": "Cerca",
+      "noResults": "Nessuna corrispondenza.",
+      "matchesCount": "{n} corrispondenza/e",
+      "truncated": "vengono mostrati i primi risultati",
+      "tree": "Albero degli include",
+      "missing": "file mancante",
+      "lint": "Controlli tra file",
+      "rule": {
+        "broken_include": "Include interrotto: ",
+        "orphan_driver": "Driver orfano - nessuna sezione corrispondente: ",
+        "section_override": "Sovrascrittura (definita in più file, vince l'ultima): "
+      }
+    },
+    "knowledge": {
+      "viewDriver": "Vedi {model} nel catalogo →",
+      "stepper": "Un asse a motore passo-passo - i suoi pin del driver, distanza di rotazione, microstep e homing/finecorsa.",
+      "tmc": "Un driver passo-passo Trinamic - corrente di esercizio/mantenimento, microstep e regolazione StallGuard/chopper per il suo motore.",
+      "extruder": "L'hotend e l'estrusore - dimensione dell'ugello, percorso del filamento, riscaldatore, termistore e PID.",
+      "heater_bed": "Il piano riscaldato - il suo pin del riscaldatore, termistore e limiti PID/temperatura.",
+      "fan": "La ventola di raffreddamento del pezzo che raffredda il filamento appena stampato.",
+      "heater_fan": "Una ventola legata a un riscaldatore (es. raffreddamento dell'hotend) che funziona per proteggerlo dal surriscaldamento.",
+      "controller_fan": "Una ventola che raffredda i driver passo-passo / l'elettronica mentre i motori sono attivi.",
+      "mcu": "Una scheda a microcontrollore che esegue Klipper - la sua connessione seriale o CAN.",
+      "printer": "Cinematica globale della macchina e limiti di movimento (tipo, velocità massima, accelerazione).",
+      "bed_mesh": "Livellamento automatico del piano - sonda una griglia e compensa la planarità del piano durante la stampa.",
+      "probe": "La sonda Z usata per rilevare la superficie del piano per l'homing e la mesh del piano.",
+      "gcode_macro": "Una macro G-code personalizzata - un comando con nome richiamabile dalla console o da altre macro.",
+      "output_pin": "Un pin di uscita controllabile (un LED, relè o linea di abilitazione, per esempio).",
+      "neopixel": "LED RGB indirizzabili (NeoPixel / WS2812) e il loro controllo del colore.",
+      "board_pins": "Alias intuitivi per i pin fisici di una scheda, referenziati altrove nella configurazione.",
+      "input_shaper": "Compensazione delle risonanze che riduce ringing e ghosting alle velocità più elevate.",
+      "safe_z_home": "Esegue l'homing di Z in una posizione XY sicura (spesso il centro del piano) per proteggere l'ugello e il piano.",
+      "z_tilt": "Regola più motori Z in modo che il piano del portale/letto sia livellato.",
+      "quad_gantry_level": "Livella un portale a quattro punti in modo che sia parallelo al piano.",
+      "filament_switch_sensor": "Un sensore di esaurimento filamento che mette in pausa la stampa quando il filamento finisce.",
+      "virtual_sdcard": "Permette a Klipper di stampare i file caricati sull'host (richiesto da Mainsail e Fluidd)."
+    },
+    "backups": {
+      "title": "Backup ({n})",
+      "diff": "Differenza",
+      "hideDiff": "Nascondi differenza",
+      "restore": "Ripristina",
+      "diffHint": "differenza rispetto al file corrente",
+      "unchanged": "⋯ {n} righe invariate ⋯",
+      "note": "Le istantanee vengono scritte automaticamente prima di ogni salvataggio. Ripristina ne carica una nell'editor per una revisione finale + salvataggio."
+    },
+    "sanity": {
+      "title": "Verifica di plausibilità dei valori driver ({n})",
+      "note": "Controllate {n} sezione/i driver TMC. Un driver senza limite massimo curato e un motore passo-passo senza motore assegnato vengono saltati, non stimati.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} A supera il limite massimo di fondo scala del driver di ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A è entro il 10% del limite massimo del driver di ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A supera il valore nominale di {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A è entro il 10% del valore nominale di {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} non è una potenza di due (1…256)."
+      }
+    },
+    "panels": {
+      "failed": "Alcuni pannelli non sono stati caricati e sono nascosti: {panels}. Ciò che verificherebbero è sconosciuto al momento - non necessariamente a posto.",
+      "name": {
+        "drift": "Disco-vs-live",
+        "pinDoctor": "Pin Doctor",
+        "sanity": "Plausibilità driver",
+        "project": "Vista progetto",
+        "pinMap": "Suggerimenti pin",
+        "backups": "Backup"
+      }
+    },
+    "addPart": {
+      "title": "Aggiungi un componente (consapevole dei pin liberi)",
+      "hint": "Scegli un tipo di componente e uno dei pin della scheda che NESSUNO usa ancora (letti live dalla tua configurazione + mappa della scheda), e ottieni una sezione pronta scritta attraverso il filtro di sicurezza - nessuna ipotesi sui pin.",
+      "kind": "Tipo di componente",
+      "name": "Nome",
+      "namePh": "es. chamber_fan",
+      "mcu": "Scheda (MCU)",
+      "pin": "Pin libero",
+      "pinPh": "Scegli un pin libero…",
+      "noFree": "Nessun pin libero con nome su questa mappa della scheda."
+    }
+  }
+}

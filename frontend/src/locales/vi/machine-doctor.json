@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "Một lần quét chỉ đọc trên mọi thứ ứng dụng có thể kiểm tra - xung đột chân, giá trị driver, lệch cấu hình, lint dự án, đồng bộ firmware, thay đổi phần cứng và tình trạng cài đặt - chấm điểm A-F. Mỗi phát hiện đều liên kết tới widget khắc phục nó.",
+    "scanning": "Đang quét…",
+    "rescan": "Quét lại",
+    "scoreLine": "Điểm {score} / 100",
+    "counts": "{errors} lỗi · {warnings} cảnh báo",
+    "scoreHint": "Chấm điểm minh bạch: 100 − 25 mỗi lỗi − 8 mỗi cảnh báo. Các mục không xác định không bao giờ bị trừ điểm.",
+    "allClear": "Tất cả ổn.",
+    "notChecked": "Không thể kiểm tra (không kết nối được máy in hoặc chưa có mốc tham chiếu).",
+    "assessment": {
+      "healthy": "Khỏe mạnh - mọi thứ ứng dụng có thể kiểm tra đều ổn.",
+      "attention": "Hầu hết ổn, nhưng {pillar} cần lưu ý.",
+      "critical": "{pillar} có vấn đề đáng khắc phục."
+    },
+    "pillars": {
+      "title": "Phân tích sức khỏe",
+      "notMeasured": "chưa đo"
+    },
+    "pillar": {
+      "config": "Tính toàn vẹn cấu hình",
+      "firmware": "Đồng bộ firmware",
+      "services": "Dịch vụ",
+      "tuning": "Input shaping",
+      "flow": "Lưu lượng tối đa"
+    },
+    "services": {
+      "title": "Dịch vụ",
+      "active": "đang chạy",
+      "inactive": "đã dừng",
+      "none": "Không có dịch vụ nào được báo cáo."
+    },
+    "stats": {
+      "title": "Tổng quan nhanh",
+      "maxFlow": "Lưu lượng tối đa",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} chưa đồng bộ",
+      "allSynced": "đã đồng bộ tất cả",
+      "none": "Chưa có phép đo nào."
+    },
+    "category": {
+      "pins": "Đấu dây chân",
+      "drivers": "Giá trị driver",
+      "drift": "Lệch cấu hình",
+      "project": "Dự án cấu hình",
+      "firmware": "Đồng bộ firmware",
+      "hardware": "Thay đổi phần cứng",
+      "install": "Tình trạng cài đặt"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Cảnh báo",
+      "fail": "Vấn đề",
+      "unknown": "Chưa kiểm tra"
+    },
+    "link": {
+      "config_section": "Trình sửa cấu hình",
+      "config_file": "Trình sửa cấu hình",
+      "stepper": "Motor Drivers",
+      "topology_node": "Sơ đồ máy",
+      "widget": "Mở"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "Chân {pin} trên {mcu} được gán ở nhiều hơn một section.",
+        "caveat": "Chân {pin} trên {mcu} có một lưu ý về điện tử."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A vượt ngưỡng driver ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A nằm trong khoảng 10% của ngưỡng ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A vượt định mức {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A nằm trong khoảng 10% của định mức {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} không phải lũy thừa của hai."
+      },
+      "drift": {
+        "pending": "Klipper đang có thay đổi SAVE_CONFIG chưa lưu.",
+        "param": "[{section}] {key}: đĩa {disk} ≠ live {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: include \"{message}\" không trỏ tới tệp nào.",
+        "orphan_driver": "{file}: section driver \"{message}\" không có stepper tương ứng."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: firmware {mcu_version} khác với host {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: phần cứng đã thay đổi ({kind}).",
+        "no_baseline": "Chưa lưu mốc tham chiếu phần cứng - hãy lưu một ảnh chụp trong Sơ đồ máy để phát hiện thay đổi."
+      },
+      "install": {
+        "check_failed": "Kiểm tra cài đặt thất bại: {name} - {detail}."
+      }
+    },
+    "help": {
+      "guide": "Trợ giúp",
+      "guideTitle": "Về Machine Doctor",
+      "close": "Đóng",
+      "howToRead": "Cách đọc",
+      "steps": [
+        "Nhấn Quét lại để chạy một lần kiểm tra chỉ đọc trên toàn bộ máy in.",
+        "Đọc điểm A-F và các thanh trụ cột để thấy nơi yếu nhất.",
+        "Mở liên kết của bất kỳ phát hiện nào để tới thẳng widget khắc phục nó."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Phạm vi quét bao gồm những gì",
+          "body": "Một lần quét chỉ đọc trên mọi thứ ứng dụng có thể kiểm tra - xung đột chân, giá trị driver, lệch cấu hình giữa cấu hình đã lưu và live, lint dự án, đồng bộ firmware, thay đổi phần cứng so với mốc tham chiếu, và tình trạng cài đặt. Nó không bao giờ chạy bất cứ thứ gì trên máy in."
+        },
+        "grade": {
+          "title": "Điểm A-F",
+          "body": "Mỗi trụ cột sức khỏe (tính toàn vẹn cấu hình, đồng bộ firmware, dịch vụ, input shaping, lưu lượng tối đa) được chấm điểm, và những trụ cột yếu nhất kéo điểm tổng thể xuống. Dòng điểm cho thấy chính xác cách đạt được điểm - không có gì bị giấu."
+        },
+        "fixes": {
+          "title": "Liên kết tới-cách-khắc-phục",
+          "body": "Mỗi phát hiện đều có một nút liên kết sâu vào widget giải quyết nó (Trình sửa cấu hình, Motor Drivers, Sơ đồ máy…), để bạn đi từ vấn đề tới cách khắc phục chỉ trong một cú nhấp."
+        },
+        "glossary": {
+          "title": "Thuật ngữ dùng ở đây"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Điểm (A-F)",
+          "def": "Một chữ cái duy nhất tóm tắt sức khỏe của máy in, suy ra từ điểm các trụ cột; A là khỏe mạnh, F cần lưu ý."
+        },
+        "pillar": {
+          "term": "Trụ cột",
+          "def": "Một hạng mục sức khỏe được chấm điểm độc lập - ví dụ tính toàn vẹn cấu hình, đồng bộ firmware, dịch vụ, input shaping, lưu lượng tối đa."
+        },
+        "finding": {
+          "term": "Phát hiện",
+          "def": "Một vấn đề cụ thể mà lần quét phát hiện, kèm mức độ nghiêm trọng và một liên kết tới widget khắc phục nó."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "co to jest?",
+      "topics": {
+        "glossary": {
+          "title": "Pojęcia kształtowania sygnału"
+        },
+        "analyze": {
+          "title": "Analiza pliku CSV rezonansu",
+          "body": "Zarejestruj dane na drukarce za pomocą TEST_RESONANCES (lub użyj 🔴 Narzędzi na żywo), a następnie wczytaj plik .csv tutaj. FilaMind uruchamia własne obliczenia kształtowania Klippera i zaleca shaper oraz częstotliwość. Zrób kolejno plik X i plik Y - łączą się w jeden blok konfiguracji."
+        },
+        "grade": {
+          "title": "Co oznacza ocena A-F",
+          "body": "Ocena jakości pomiaru złożona z pięciu równych części: wyrazistość piku, pozostałe drgania, wygładzanie, częstotliwość (40-90 Hz jest zdrowa) oraz to, jak czysty jest rezonans. A/B → zastosuj; C → użyteczne, przejrzyj wskazówki; D/F → popraw mechanikę i przetestuj ponownie."
+        },
+        "diagnostics": {
+          "title": "Odczyt diagnostyki",
+          "body": "Każda karta odwzorowuje pomiar na prawdopodobną przyczynę mechaniczną i poprawkę. Limonkowy = zdrowy, żółty = warto poprawić, czerwony = popraw, zanim zaufasz wynikowi. Zastosuj poprawkę, uruchom ponownie i obserwuj, jak karta robi się zielona."
+        },
+        "chart": {
+          "title": "Odczyt wykresu częstotliwości",
+          "body": "Ciągłe krzywe to zmierzona energia drgań (suma X+Y+Z oraz każda oś). ▲ oznacza dominujący rezonans. Słabe krzywe to pozostałe drgania każdego shapera w funkcji częstotliwości - zalecany (różowy) opada najgłębiej przy Twoim piku."
+        },
+        "shapers": {
+          "title": "Wybór shapera",
+          "body": "Każdy wiersz to kompromis między pozostałymi drganiami a wygładzaniem. ZV / MZV są najlżejsze (czysty pojedynczy rezonans); EI jest bardziej odporny; 2-/3-hump radzą sobie z szerokim lub wieloma rezonansami, ale mocniej wygładzają. FilaMind wyróżnia najlepszą równowagę."
+        },
+        "config": {
+          "title": "Stosowanie konfiguracji",
+          "body": "Ten blok [input_shaper] zawiera wynik dla osi X i/lub Y. Skopiuj go do printer.cfg i uruchom Klippera ponownie. Plakietki pokazują, które osie zostały zarejestrowane - zarejestruj zarówno X, jak i Y, aby uzyskać kompletny blok."
+        },
+        "noise": {
+          "title": "Kontrola szumu",
+          "body": "Odczytuje drgania spoczynkowe akcelerometru bez ruchu - szybka kontrola montażu przed testem. Reguła kciuka Klippera: ~1-100 jest normalne, ~1000+ oznacza luźny czujnik lub okablowanie. Najpierw napraw głośny montaż, inaczej każdy test będzie niewiarygodny."
+        },
+        "belts": {
+          "title": "Porównanie pasków (CoreXY)",
+          "body": "Wzbudza każdą przekątną paska i nakłada obie odpowiedzi. Zgodne częstotliwości pików = równe napięcie. Różnica oznacza, że pasek o niższej częstotliwości jest luźniejszy - napnij go i uruchom ponownie, aż piki się zrównają."
+        },
+        "axesMap": {
+          "title": "Wykrywanie axes-map",
+          "body": "Przesuwa głowicę nieco w X, potem Y, potem Z, aby ustalić, jak zamontowany jest akcelerometr, i podaje linię axes_map do printer.cfg. Uruchom raz po zamontowaniu lub przeniesieniu czujnika, aby każdy późniejszy test odczytywał właściwe osie."
+        },
+        "sustain": {
+          "title": "Częstotliwość podtrzymania",
+          "body": "Utrzymuje brzęczenie głowicy na jednej częstotliwości, abyś mógł ręcznie dotknąć pasków, wózka i ramy, by znaleźć, co grzechocze. Spektrogram + oś czasu pokazują, czy Twoja docelowa częstotliwość dominuje i kiedy dotknięcie ją wyciszyło."
+        },
+        "vibrations": {
+          "title": "Profil drgań",
+          "body": "Przemiata wiele prędkości wzdłuż każdego kąta silnika, aby zmapować, gdzie maszyna pracuje najpłynniej i które prędkości trafiają w rezonans. Preferuj najpłynniejsze prędkości dla ruchów druku / przejazdu i unikaj oznaczonych. Symetria % pokazuje, jak dobrze dopasowane są oba silniki."
+        },
+        "guided": {
+          "title": "Z przewodnikiem vs. ręcznie",
+          "body": "Przewodnik prowadzi przez cały proces - Szum → Paski → Shaper X → Shaper Y → Drgania → Ciśnienie - z bramką zaliczenia / niezaliczenia na każdym kroku. Użyj go do pełnego strojenia. Przełącz na 📈 Analizę lub 🔴 Narzędzia na żywo, gdy chcesz tylko jednego konkretnego narzędzia."
+        },
+        "history": {
+          "title": "Historia i trendy",
+          "body": "Każda kalibracja jest zapisywana (w tej przeglądarce) wraz z oceną i wynikiem. Strzałka ▲/▼ porównuje przebieg z poprzednim testem tej samej osi - w górę oznacza czystszą rejestrację lub sztywniejszą oś, w dół oznacza więcej szumu lub bardziej miękką oś."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input shaper",
+          "def": "Filtr, który Klipper stosuje do ruchu, anulując główne drgania drukarki, dzięki czemu można drukować szybciej bez ringingu / ghostingu."
+        },
+        "resonance": {
+          "term": "Rezonans",
+          "def": "Częstotliwość (Hz), przy której oś naturalnie drga pod obciążeniem. Niższa = bardziej miękka / cięższa oś; ~40-90 Hz to zdrowa drukarka."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Widmowa gęstość mocy - ile energii drgań przypada na każdą częstotliwość. Wysoki pik to rezonans, w który celuje shaper."
+        },
+        "smoothing": {
+          "term": "Wygładzanie",
+          "def": "Efekt uboczny kształtowania, który lekko zaokrągla ostre narożniki. Niżej jest lepiej; ≤0,1 jest minimalne, >0,2 zaczyna zmiękczać detale."
+        },
+        "vibrationPct": {
+          "term": "Drgania %",
+          "def": "Ile rezonansu pozostaje po shaperze. Niżej jest lepiej; ≤2% jest doskonałe, ≤5% jest w porządku."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "Przyspieszenie, jakie shaper może utrzymać bez zbytniego wygładzania - sugerowana wartość SET_VELOCITY_LIMIT / printer.cfg."
+        }
+      },
+      "guide": "Przewodnik",
+      "guideTitle": "Przewodnik po kształtowaniu sygnału",
+      "close": "Zamknij"
+    },
+    "grade": {
+      "clarity": {
+        "label": "Wyrazistość piku",
+        "value": "{ratio}×",
+        "note": {
+          "none": "Brak widma do oceny.",
+          "good": "Ostry pik, znacznie ponad szumem.",
+          "ok": "Pik widoczny ponad szumem.",
+          "poor": "Słaby pik - szumno lub bardzo sztywno."
+        }
+      },
+      "vibration": {
+        "label": "Drgania resztkowe",
+        "value": "{pct}%",
+        "note": {
+          "good": "Niemal cały rezonans usunięty.",
+          "ok": "Większość rezonansu usunięta.",
+          "poor": "Pozostają znaczne drgania."
+        }
+      },
+      "smoothing": {
+        "label": "Wygładzanie",
+        "note": {
+          "good": "Minimalne zaokrąglanie narożników.",
+          "ok": "Pewne zaokrąglanie przy wysokim przyspieszeniu.",
+          "poor": "Mocne wygładzanie - zaokrągla narożniki."
+        }
+      },
+      "freq": {
+        "label": "Częstotliwość",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "Nie znaleziono częstotliwości.",
+          "good": "Zdrowa, sztywna oś.",
+          "ok": "Nieco miękka lub bardzo sztywna.",
+          "soft": "Miękka / ciężka oś.",
+          "high": "Niezwykle wysoka."
+        }
+      },
+      "shaper": {
+        "label": "Kształt rezonansu",
+        "note": {
+          "clean": "Czysty pojedynczy rezonans.",
+          "robust": "Pojedynczy rezonans, odporny shaper.",
+          "twin": "Szeroki lub podwójny rezonans.",
+          "multiple": "Wiele rezonansów.",
+          "atypical": "Nietypowy shaper."
+        }
+      },
+      "verdict": {
+        "a": "Doskonale - czysta rejestracja, dobrze nastrojona oś.",
+        "b": "Dobrze - solidny wynik, niewielkie pole do poprawy.",
+        "c": "Dostatecznie - użyteczne; zobacz sugestie poniżej.",
+        "d": "Słabo - zalecane strojenie mechaniki + ponowny test.",
+        "f": "Niewiarygodne - uruchom test ponownie (sprawdź montaż czujnika).",
+        "none": "Brak użytecznego wyniku - uruchom TEST_RESONANCES ponownie."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "Brak użytecznego rezonansu",
+        "advice": "Uruchom TEST_RESONANCES ponownie. Sprawdź, czy akcelerometr jest podłączony i mocno zamontowany na głowicy.",
+        "detail": "nie wykryto wyraźnego piku"
+      },
+      "noisy": {
+        "title": "Zaszumiona rejestracja",
+        "advice": "Zabezpiecz montaż akcelerometru i uruchom ponownie. Unikaj wentylatorów i innego ruchu podczas testu.",
+        "detail": "stosunek sygnał-szum {snr}×"
+      },
+      "lowFreq": {
+        "title": "Niska częstotliwość rezonansu",
+        "advice": "Miękka lub ciężka oś - napnij paski i sprawdź sztywność ramy. Sztywniejsza oś rezonuje wyżej i drukuje szybciej.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Nieco miękka oś",
+        "advice": "Częstotliwość jest po niskiej stronie. Usztywnienie pasków lub ramy ją podnosi i pozwala drukować szybciej.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "Wysokie wygładzanie",
+        "advice": "Zaokrągli narożniki. Wybierz sztywniejszy shaper lub obniż max_accel.",
+        "detail": "wygładzanie {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Wiele rezonansów",
+        "advice": "Często luźna głowica, pasek lub element. Osadź głowicę ponownie i sprawdź napięcie pasków."
+      },
+      "vibrationRemains": {
+        "title": "Pozostają drgania",
+        "advice": "Strojenie mechaniki (paski, rama, masa głowicy) mogłoby to obniżyć.",
+        "detail": "{vibrations}% pozostało po kształtowaniu"
+      },
+      "healthy": {
+        "title": "Zdrowa oś",
+        "advice": "Czysta rejestracja i sztywna oś - gotowe. Zastosuj konfigurację i uruchom Klippera ponownie.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X i Y znacznie się różnią",
+        "advice": "Asymetryczna sztywność. Sprawdź napięcie paska na bardziej miękkiej osi; w CoreXY upewnij się, że oba paski są dopasowane i napięte.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "zalecane",
+        "shaperFreq": "częst. shapera",
+        "peakFreq": "częst. piku",
+        "remainingVibr": "drgania resztk.",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Paski dopasowane",
+          "advice": "Obie odpowiedzi pasków pokrywają się - napięcie wygląda na zrównoważone."
+        },
+        "differ": {
+          "title": "Paski się różnią",
+          "advice": "Rezonanse pasków się różnią - napnij ponownie luźniejszy pasek, aż oba piki się zrównają."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Czujnik jest cichy",
+          "why": "Można kontynuować."
+        },
+        "elevated": {
+          "title": "Zmniejsz szum czujnika",
+          "why": "Maks. {max} ≥ {threshold}. Wyłącz wentylator głowicy i sprawdź montaż, a następnie uruchom ponownie."
+        },
+        "bad": {
+          "title": "Napraw akcelerometr przed testem",
+          "why": "Szum {max} jest zbyt wysoki - osadź czujnik ponownie i sprawdź jego okablowanie."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Paski zrównoważone",
+          "why": "Napięcie jest równe - następnie skalibruj shaper."
+        },
+        "mismatch": {
+          "title": "Napnij ponownie pasek {looser}",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). Napnij pasek o niższej częstotliwości, aż oba piki się zrównają, a potem uruchom ponownie."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Uruchom ponownie przy niższym przyspieszeniu",
+          "why": "Zarejestrowano zbyt dużo ruchu niskoczęstotliwościowego - obniż ACCEL (lub zwiększ SIZE), aby mierzone były tylko stałe prędkości, a potem uruchom ponownie."
+        },
+        "favour": {
+          "title": "Preferuj ~{speed} mm/s",
+          "why": "Najpłynniejszy zakres {start}-{end} mm/s - ustaw tu prędkości druku / przejazdu w slicerze, gdy to możliwe."
+        },
+        "avoid": {
+          "title": "Unikaj {shown} mm/s",
+          "why": "Te prędkości trafiają w rezonans - trzymaj ruchy druku + przejazdu z dala od nich w slicerze."
+        },
+        "symmetry": {
+          "title": "Sprawdź napięcie pasków / dopasowanie silników",
+          "why": "Symetria silników {pct}% jest niska - napnij ponownie paski (porównaj paski) i sprawdź, czy prądy obu silników są zgodne."
+        },
+        "fine": {
+          "title": "Drgania wyglądają dobrze",
+          "why": "Nie wyróżniły się żadne problematyczne prędkości."
+        }
+      },
+      "pressure": {
+        "title": "Uruchom wieżę pressure-advance",
+        "why": "Wydrukuj wieżę PA, odczytaj wysokość, na której narożniki wyglądają najostrzej, a następnie `SET_PRESSURE_ADVANCE ADVANCE=<wartość>` i `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "Twoja skonfigurowana axes_map jest już poprawna.",
+        "update": "Zaktualizuj konfigurację do: {axes_map}",
+        "add": "Dodaj to, aby każdy wykres kształtowania sygnału odczytywał wyrównane X/Y/Z."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Szum",
+          "title": "Szum akcelerometru",
+          "why": "Potwierdź, że czujnik jest solidnie zamontowany przed jakimkolwiek testem (bez ruchu)."
+        },
+        "belts": {
+          "label": "Paski",
+          "title": "Balans pasków CoreXY",
+          "why": "Dopasuj napięcie obu pasków. Tylko CoreXY - pomiń na kartezjańskiej / bed-slinger."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper - X",
+          "why": "Znajdź rezonans X i najlepszy shaper."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper - Y",
+          "why": "Znajdź rezonans Y i najlepszy shaper."
+        },
+        "vibrations": {
+          "label": "Drgania",
+          "title": "Profil drgań",
+          "why": "Przemieć prędkość × kąt silnika, aby znaleźć najpłynniejsze prędkości i rezonanse, których należy unikać."
+        },
+        "pressure": {
+          "label": "Ciśnienie",
+          "title": "Pressure advance",
+          "why": "Nastrój pressure advance na końcu, aby wyostrzyć narożniki i szwy."
+        },
+        "done": {
+          "label": "Gotowe"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Czujnik jest cichy",
+          "warn": "Szum jest nieco wysoki",
+          "failed": "Zbyt głośno - napraw montaż"
+        },
+        "belts": {
+          "passed": "Paski dopasowane",
+          "differ": "Paski się różnią (Δ{diffPct}%)",
+          "mismatched": "Paski niedopasowane (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "Ocena {letter} - zdrowa oś",
+          "usable": "Ocena C - użyteczna",
+          "tune": "Ocena {letter} - nastrój + przetestuj ponownie"
+        },
+        "vibrations": {
+          "lowFreq": "Zbyt dużo ruchu niskoczęstotliwościowego - obniż przyspieszenie i uruchom ponownie",
+          "mismatched": "Silniki niedopasowane ({pct}%)",
+          "smoothest": "Najpłynniej ~{rec} mm/s",
+          "complete": "Profil ukończony"
+        }
+      },
+      "ui": {
+        "title": "🧭 Strojenie z przewodnikiem",
+        "exit": "✕ wyjdź",
+        "motionReady": "⚠ porusza głowicą - jestem gotów",
+        "running": "trwa…",
+        "run": "uruchom",
+        "rerun": "↻ uruchom ponownie",
+        "skipBelts": "pomiń (nie CoreXY)",
+        "copyPa": "📋 Kopiuj wieżę PA",
+        "copied": "✅ Skopiowano",
+        "finish": "Zakończ →",
+        "nextStep": "Następny krok →",
+        "skipAnyway": "pomiń mimo to",
+        "complete": "Strojenie ukończone",
+        "stepFailed": "Krok nie powiódł się",
+        "copyFailed": "Kopiowanie nie powiodło się - zaznacz tekst i skopiuj ręcznie.",
+        "summaryNote": "Twoje rejestracje X i Y są w połączonym bloku {code} poniżej - skopiuj go, a następnie uruchom Klippera ponownie. Otwórz strojenie z przewodnikiem ponownie w dowolnej chwili, aby sprawdzić ponownie.",
+        "beltsNotApplicable": "Porównanie pasków dotyczy drukarek CoreXY - ta drukarka zgłasza '{kin}', więc ten krok jest pomijany.",
+        "resultsSoFar": "Dotychczasowe wyniki",
+        "archived": "Zapisano",
+        "autoSaved": "Zapisano automatycznie w archiwum na drukarce.",
+        "beltA": "Pasek A (1,1)",
+        "beltB": "Pasek B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "Zalecane",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Maks. przyspieszenie",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Maks. szum spoczynkowy {max} (normalny < {threshold}).",
+        "status": "Status",
+        "maxNoise": "Maks. szum",
+        "threshold": "Próg",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Dopasowanie",
+        "beltA": "Pik paska A",
+        "beltB": "Pik paska B",
+        "difference": "Różnica",
+        "matched": "dopasowane",
+        "mismatch": "niedopasowane",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Status",
+        "gravity": "Grawitacja",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Szum"
+      },
+      "sustain": {
+        "target": "Cel",
+        "dominant": "Dominująca",
+        "inBand": "W paśmie",
+        "onTarget": "Na celu",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "tak",
+        "no": "nie"
+      },
+      "vibrations": {
+        "smoothest": "Najpłynniej",
+        "symmetry": "Symetria",
+        "motorResonance": "Rezonans silnika",
+        "avoid": "Unikaj",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Z przewodnikiem",
+      "tabAnalyze": "📈 Analiza",
+      "tabLive": "🔴 Narzędzia na żywo",
+      "tabHistory": "🕘 Historia",
+      "intro": "Nastrój kształtowanie sygnału z rejestracji rezonansu Klippera - bez wiersza poleceń. Nowy tutaj? Zacznij od {guided}. Albo wybierz {analyze}, aby samodzielnie obrobić {csv}, {live}, aby rejestrować na drukarce, lub {history}, aby przejrzeć poprzednie przebiegi.",
+      "cfgReady": "printer.cfg gotowy",
+      "copy": "📋 Kopiuj",
+      "copied": "✅ Skopiowano",
+      "archive": "💾 Archiwizuj",
+      "saved": "✅ Zapisano",
+      "advanced": "⚙ zaawansowane",
+      "compareCsvs": "⇄ porównaj pliki CSV",
+      "blankDefault": "puste = domyślne Klippera",
+      "auditTitle": "Audyt",
+      "refresh": "↻ odśwież",
+      "auditEmpty": "Brak wyników - uruchom strojenie lub zapisz jedno do archiwum.",
+      "trendTitle": "wynik {score} vs poprzedni test {axis}",
+      "sourceSaved": "💾 zapisane",
+      "sourceLocal": "lokalne",
+      "recommended": "Zalecane",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "oś {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "Brak zalecanego shapera dla tych danych.",
+      "measurementQuality": "Jakość pomiaru",
+      "scoreOutOf": "{v}/100",
+      "hide": "ukryj",
+      "details": "szczegóły",
+      "chartAria": "Odpowiedź częstotliwościowa i shapery",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "zalecane",
+      "legendPeak": "▲ pik",
+      "legendAxisHint": "częstotliwość (Hz) → · ciągła = zmierzona · słaba = drgania resztk. shapera",
+      "colShaper": "shaper",
+      "colFreq": "częst.",
+      "colVibr": "drgania",
+      "colSmooth": "wygładz.",
+      "colAccel": "przysp.",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "wyczyść",
+      "pasteHint": "Wklej do swojego {cfg}, a następnie uruchom Klippera ponownie.",
+      "errAnalysisFailed": "Analiza nie powiodła się",
+      "errCopyFailed": "Kopiowanie nie powiodło się - zaznacz tekst i skopiuj ręcznie.",
+      "errSaveFailed": "Zapis do archiwum nie powiódł się"
+    },
+    "fromPrinter": {
+      "liveTools": "Narzędzia na żywo",
+      "intro": "⏳ Te poruszają głowicą i mogą zająć {duration} (porównanie pasków uruchamia dwa pełne przemiatania) - nie zamykaj tej strony, aż pojawi się wynik.",
+      "introDuration": "1-5 minut",
+      "confirmMoves": "⚠ porusza głowicą - jestem gotów",
+      "axisX": "oś X",
+      "axisY": "oś Y",
+      "noiseTitle": "🔊 Kontrola szumu",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "pomiar…",
+      "noiseHint": "bez ruchu · uruchom przed testem",
+      "noiseVerdictQuiet": "✅ cicho",
+      "noiseVerdictElevated": "⚠ podwyższone",
+      "noiseVerdictTooNoisy": "⛔ zbyt głośno",
+      "noiseMaxNormal": "maks. {max} · normalny < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Test na żywo",
+      "liveBtn": "uruchom TEST_RESONANCES",
+      "liveBtnBusy": "trwa…",
+      "liveDesc": "Bazuje drukarkę, jeśli potrzeba, a następnie uruchamia TEST_RESONANCES na wybranej osi (potrzebny akcelerometr + {section}). Odmawiane podczas druku.",
+      "beltsTitle": "🟰 Porównaj paski",
+      "beltsBtn": "porównaj paski",
+      "beltsBtnBusy": "porównywanie…",
+      "beltsBtnTitle": "CoreXY: wzbudź każdą przekątną paska i nałóż odpowiedzi",
+      "beltsDesc": "Tylko CoreXY: uruchamia dwa przemiatania wzdłuż przekątnych pasków i nakłada je. Odmawiane podczas druku.",
+      "axesTitle": "🧭 Mapa osi",
+      "axesBtn": "wykryj axes_map",
+      "axesBtnBusy": "wykrywanie…",
+      "axesBtnTitle": "Przesuń +X/+Y/+Z, aby wykryć orientację akcelerometru (axes_map)",
+      "axesDesc": "Przesuwa ~30 mm w X, potem Y, potem Z, aby wykryć orientację akcelerometru. Odmawiane podczas druku.",
+      "beltResultTitle": "Porównanie pasków",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "Odpowiedź częstotliwościowa paska A vs B",
+      "beltLegendA": "pasek A (1,1)",
+      "beltLegendB": "pasek B (1,-1)",
+      "axesResultTitle": "Mapa osi",
+      "copy": "📋 Kopiuj",
+      "copied": "✅ Skopiowano",
+      "mappingVirtual": " (wirtualna)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "Sekwencja prędkości osi",
+      "zoneVirtual": "wirtualna",
+      "zonePct": "{pct}%",
+      "legendAccelX": "przysp. x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "pochylenie {x}° / {y}° / {z}°",
+      "gravity": "grawitacja {v} m/s²",
+      "noiseValue": "szum {v}",
+      "sustainTitle": "🎯 Częstotliwość podtrzymania",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "sek",
+      "sustainBtn": "uruchom",
+      "sustainBtnBusy": "podtrzymywanie…",
+      "sustainDesc": "Buczy głowicą w miejscu w pobliżu częstotliwości - dotknij pasków, głowicy i ramy, aby znaleźć, co grzechocze. Odmawiane podczas druku.",
+      "sustainHolding": "✅ podtrzymuje",
+      "sustainOffTarget": "⚠ poza celem",
+      "sustainPeak": "pik {freq} Hz · {pct}% w paśmie",
+      "specChartLabel": "Spektrogram częstotliwość-czas",
+      "energyChartLabel": "Energia drgań w czasie",
+      "specAxes": "częst. → · czas ↓",
+      "energyLegend": "energia vs czas - cyjanowy dołek to miejsce, gdzie dotknięcie pomogło",
+      "vibTitle": "📊 Profil drgań",
+      "vibMax": "maks.",
+      "vibStep": "krok",
+      "vibUnit": "mm/s",
+      "vibBtn": "uruchom przemiatanie",
+      "vibBtnBusy": "przemiatanie…",
+      "vibDesc": "Przemiata prędkość × kąt silnika wokół środka stołu - długi przebieg (minuty). Mniejszy {step} jest dokładniejszy, ale wolniejszy. Raportuje najpłynniejsze prędkości, prędkości do unikania, symetrię silników i rezonans silnika. Odmawiane podczas druku.",
+      "vibDescStep": "krok",
+      "errNoiseCheck": "Kontrola szumu nie powiodła się",
+      "errLiveTest": "Test na żywo nie powiódł się",
+      "errBeltComparison": "Porównanie pasków nie powiodło się",
+      "errAxesMapDetection": "Wykrywanie axes-map nie powiodło się",
+      "errCopyFailed": "Kopiowanie nie powiodło się - zaznacz tekst i skopiuj ręcznie.",
+      "errSustainTest": "Test częstotliwości podtrzymania nie powiódł się",
+      "errVibrationsProfile": "Profil drgań nie powiódł się",
+      "vibProgress": "Przemiatanie {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "Rozpoczynanie przemiatania…",
+      "vibCancel": "Anuluj przemiatanie",
+      "vibCancelling": "Anulowanie…",
+      "vibCancelled": "Przemiatanie anulowane - przywrócono limity prędkości.",
+      "vibReattached": "Ponownie połączono: ten wynik zakończył się, gdy strona była nieaktywna.",
+      "beltsCorexyOnly": "Tylko CoreXY - ta drukarka zgłasza kinematykę '{kin}', więc porównanie dwóch pasków nie ma zastosowania."
+    },
+    "vibrationsView": {
+      "title": "Profil drgań",
+      "lowFreqNoise": "⚠ szum niskoczęstotl.",
+      "smoothest": "▼ najpłynniej ~{v} mm/s",
+      "symmetry": "symetria {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "Energia drgań w funkcji prędkości",
+      "axisLegend": "prędkość (mm/s) → · energia drgań ↑",
+      "smooth": "płynnie",
+      "avoid": "unikaj",
+      "svgPolarLabel": "Energia drgań według kierunku przejazdu",
+      "svgHeatmapLabel": "Mapa cieplna energii drgań według kąta i prędkości",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "rezonans silnika {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "najpłynniejszy kierunek ~{start}-{end}°",
+      "captures": "{n} rejestracji"
+    },
+    "compareView": {
+      "title": "Porównaj dwie rejestracje (A ⇄ B)",
+      "intro": "Przed/po naprawie mechanicznej lub ta sama oś przetestowana ponownie. (Porównuj pliki tej samej osi.)",
+      "selectA": "A: wybierz",
+      "selectB": "B: wybierz",
+      "busy": "…",
+      "compare": "porównaj",
+      "comparisonFailed": "Porównanie nie powiodło się",
+      "chartAriaLabel": "Widmowa gęstość mocy A vs B",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "Źródło CSV",
+      "tabUpload": "📤 Prześlij",
+      "tabHost": "🖥 Z drukarki",
+      "selectCsv": "📈 Wybierz CSV",
+      "axisTitle": "Oś, do której należą te dane",
+      "axisAuto": "oś: auto",
+      "axisX": "oś: X",
+      "axisY": "oś: Y",
+      "analyzing": "Analizowanie…",
+      "analyze": "🚀 Analizuj",
+      "onHost": "na hoście drukarki",
+      "refresh": "↻ odśwież",
+      "noFiles": "Nie znaleziono plików CSV rezonansu.",
+      "noFilesInDirs": "Nie znaleziono plików CSV rezonansu w {dirs}.",
+      "analyzeFile": "analizuj",
+      "saveTitle": "Skopiuj tę rejestrację do archiwum",
+      "save": "💾 zapisz",
+      "archive": "Archiwum",
+      "archiveEmpty": "Nic jeszcze nie zapisano - użyj 💾 zapisz powyżej lub \"zapisz do archiwum\" pod konfiguracją.",
+      "downloadTitle": "pobierz {fn}",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "Nie udało się wyświetlić plików drukarki",
+      "errListArchive": "Nie udało się wyświetlić archiwum",
+      "errSave": "Zapis do archiwum nie powiódł się",
+      "errDelete": "Usuwanie nie powiodło się",
+      "errDownload": "Pobieranie nie powiodło się",
+      "viewChart": "Wykres",
+      "viewChartTitle": "Otwórz ponownie wykres tego zapisanego przebiegu"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Zarejestrowano zbyt dużo ruchu niskoczęstotliwościowego - obniż ACCEL (lub zwiększ SIZE) i uruchom ponownie, aby mierzone były tylko stałe prędkości.",
+        "smoothest": "Najpłynniej w okolicach {v} mm/s",
+        "avoid": "unikaj prędkości w pobliżu {speeds} mm/s",
+        "matched": "silniki są dobrze dopasowane ({pct}% symetrii)",
+        "low_symmetry": "symetria silników jest niska ({pct}%) - sprawdź napięcie pasków",
+        "motor_freq": "rezonans silnika ~{f} Hz",
+        "complete": "Profil drgań ukończony."
+      },
+      "sustain": {
+        "not_dominant": "Głowica nie drga głównie przy {freq} Hz (pik to {peak} Hz) - źródło może nie docierać do czujnika głowicy.",
+        "drop": "Podtrzymywanie {freq} Hz - drgania spadły o ~{drop}% w pewnym momencie; to, czego wtedy dotknąłeś, jest silnym czynnikiem.",
+        "touch": "Podtrzymywanie {freq} Hz - dotykaj pasków, głowicy, połączeń bramy i napinaczy po kolei; element, który wycisza brzęczenie, jest Twoim źródłem rezonansu."
+      },
+      "axes": {
+        "same_axis": "Wykryto tę samą oś akcelerometru dla wielu osi maszyny",
+        "low_confidence": "Niska pewność wykrycia ({pct}%)",
+        "high_angle_error": "Wysoki błąd kąta ({deg}°)",
+        "unusual_gravity": "Nietypowy odczyt grawitacji ({g} m/s²)",
+        "high_noise": "Wysoki poziom szumu ({n} mm/s²)",
+        "good": "Jakość wykrycia: dobra"
+      }
+    },
+    "proof": {
+      "title": "Dowód strojenia",
+      "empty": "Wymaga dwóch zarejestrowanych wyników na tej osi - zmierz przed strojeniem, zastosuj shaper, a następnie zmierz ponownie i zapisz oba.",
+      "before": "Przed",
+      "after": "Po",
+      "samePick": "Wybierz dwa różne wyniki do porównania.",
+      "metricHead": "Metryka",
+      "delta": "Zmiana",
+      "copy": "Kopiuj raport",
+      "copied": "Skopiowano ✓",
+      "metric": {
+        "score": "Ocena pomiaru",
+        "vibrations": "Pozostałe drgania %",
+        "smoothing": "Wygładzanie",
+        "maxAccel": "Sugerowane maks. przyspieszenie (mm/s²)",
+        "freq": "Częstotliwość shapera (Hz)",
+        "shaper": "Shaper"
+      }
+    }
+  }
+}

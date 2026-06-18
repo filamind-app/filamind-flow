@@ -1,0 +1,48 @@
+{
+  "common": {
+    "appName": "FilaMind Flow",
+    "errors": {
+      "backendUnreachable": "無法連線到 FilaMind 後端 — 請確認 filamind-flow 服務正在執行且可連線。"
+    }
+  },
+  "theme": {
+    "label": "佈景主題",
+    "light": "淺色",
+    "dark": "深色",
+    "neon": "霓虹",
+    "contrast": "高對比",
+    "menu": "選擇佈景主題",
+    "midnight": "午夜",
+    "ocean": "海洋",
+    "sunset": "夕陽",
+    "desc": {
+      "neon": "深紫夜色搭配電光輝芒 — 招牌外觀",
+      "midnight": "專業的深藍深色",
+      "dark": "現代中性的板岩深色",
+      "ocean": "深青藍搭配水藍點綴",
+      "sunset": "暖梅紫搭配琥珀點綴",
+      "light": "簡潔的新粗獷風淺色",
+      "contrast": "最高可讀性（無障礙）"
+    }
+  },
+  "configApply": {
+    "title": "套用至 printer.cfg…",
+    "hint": "透過安全閘門將此區塊寫入選定的檔案：既有的區段會逐一參數合併（其他行保留），缺少的區段則會新增。會先進行備份；列印中或檔案在磁碟上已變更時則拒絕寫入。",
+    "target": "目標檔案",
+    "ack": "我已檢視此區塊並要寫入",
+    "apply": "套用",
+    "applying": "套用中…",
+    "busy": "印表機忙碌中（或有其他作業正在執行）— 請於閒置時再試一次。",
+    "stale": "套用時檔案在磁碟上已變更 — 未寫入任何內容。請再試一次。",
+    "saved": "已儲存（備份：{backup}）。",
+    "added": "已新增 [{section}]：{params}",
+    "updated": "已更新 [{section}]：{params}",
+    "noop": "所有值原本就是這些 — 未變更任何內容。",
+    "restartHint": "在韌體重新啟動前，Klipper 仍會沿用舊的值。",
+    "restart": "重新啟動韌體…",
+    "restartConfirm": "確認重新啟動",
+    "restarting": "重新啟動中…",
+    "restarted": "已送出韌體重新啟動指令。",
+    "cancel": "取消"
+  }
+}

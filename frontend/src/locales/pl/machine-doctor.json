@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "Jedno skanowanie tylko do odczytu obejmujące wszystko, co aplikacja potrafi sprawdzić - konflikty pinów, wartości sterowników, rozbieżności konfiguracji, lint projektu, synchronizację firmware'u, zmiany sprzętu i kondycję instalacji - ocenione w skali A-F. Każde wykrycie prowadzi do widżetu, który je naprawia.",
+    "scanning": "Skanowanie…",
+    "rescan": "Skanuj ponownie",
+    "scoreLine": "Wynik {score} / 100",
+    "counts": "{errors} błąd(ów) · {warnings} ostrzeżeń",
+    "scoreHint": "Przejrzysta punktacja: 100 − 25 za każdy błąd − 8 za każde ostrzeżenie. Niesprawdzone testy nigdy nie obniżają wyniku.",
+    "allClear": "Wszystko w porządku.",
+    "notChecked": "Nie udało się sprawdzić (drukarka nieosiągalna lub brak punktu odniesienia).",
+    "assessment": {
+      "healthy": "Sprawna - wszystko, co aplikacja potrafi sprawdzić, wygląda dobrze.",
+      "attention": "Przeważnie sprawna, ale {pillar} wymaga uwagi.",
+      "critical": "{pillar} ma problem wart naprawienia."
+    },
+    "pillars": {
+      "title": "Podział kondycji",
+      "notMeasured": "nie zmierzono"
+    },
+    "pillar": {
+      "config": "Integralność konfiguracji",
+      "firmware": "Synchronizacja firmware'u",
+      "services": "Usługi",
+      "tuning": "Kształtowanie sygnału",
+      "flow": "Maksymalny przepływ"
+    },
+    "services": {
+      "title": "Usługi",
+      "active": "aktywna",
+      "inactive": "zatrzymana",
+      "none": "Nie zgłoszono żadnych usług."
+    },
+    "stats": {
+      "title": "W skrócie",
+      "maxFlow": "Maksymalny przepływ",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} niezsynchronizowanych",
+      "allSynced": "wszystko zsynchronizowane",
+      "none": "Brak pomiarów."
+    },
+    "category": {
+      "pins": "Okablowanie pinów",
+      "drivers": "Wartości sterowników",
+      "drift": "Rozbieżności konfiguracji",
+      "project": "Projekt konfiguracji",
+      "firmware": "Synchronizacja firmware'u",
+      "hardware": "Zmiany sprzętu",
+      "install": "Kondycja instalacji"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Ostrzeżenia",
+      "fail": "Problemy",
+      "unknown": "Nie sprawdzono"
+    },
+    "link": {
+      "config_section": "Edytor konfiguracji",
+      "config_file": "Edytor konfiguracji",
+      "stepper": "Sterowniki silników",
+      "topology_node": "Mapa maszyny",
+      "widget": "Otwórz"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "Pin {pin} na {mcu} jest przypisany w więcej niż jednej sekcji.",
+        "caveat": "Pin {pin} na {mcu} wiąże się z zastrzeżeniem elektronicznym."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A przekracza limit sterownika ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A mieści się w 10% limitu ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A przekracza wartość znamionową {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A mieści się w 10% wartości znamionowej {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} nie jest potęgą dwójki."
+      },
+      "drift": {
+        "pending": "Klipper ma oczekujące niezapisane zmiany SAVE_CONFIG.",
+        "param": "[{section}] {key}: dysk {disk} ≠ na żywo {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: include \"{message}\" nie wskazuje żadnego pliku.",
+        "orphan_driver": "{file}: sekcja sterownika \"{message}\" nie ma pasującego steppera."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: firmware {mcu_version} różni się od hosta {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: sprzęt zmieniony ({kind}).",
+        "no_baseline": "Brak zapisanego punktu odniesienia sprzętu - zapisz migawkę w Mapie maszyny, aby wykrywać zmiany."
+      },
+      "install": {
+        "check_failed": "Sprawdzenie instalacji nie powiodło się: {name} - {detail}."
+      }
+    },
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "O Machine Doctor",
+      "close": "Zamknij",
+      "howToRead": "Jak czytać",
+      "steps": [
+        "Naciśnij Skanuj ponownie, aby uruchomić jedno sprawdzenie tylko do odczytu całej drukarki.",
+        "Odczytaj ocenę A-F i paski filarów, aby zobaczyć, gdzie jest najsłabiej.",
+        "Otwórz link dowolnego wykrycia, aby przejść prosto do widżetu, który je naprawia."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Co obejmuje skanowanie",
+          "body": "Jedno przejście tylko do odczytu obejmujące wszystko, co aplikacja potrafi sprawdzić - konflikty pinów, wartości sterowników, rozbieżności między zapisaną a działającą konfiguracją, lint projektu, synchronizację firmware'u, zmiany sprzętu względem punktu odniesienia oraz kondycję instalacji. Nigdy niczego nie uruchamia na drukarce."
+        },
+        "grade": {
+          "title": "Ocena A-F",
+          "body": "Każdy filar kondycji (integralność konfiguracji, synchronizacja firmware'u, usługi, kształtowanie sygnału, maksymalny przepływ) jest punktowany, a najsłabsze obniżają ogólną ocenę. Wiersz wyniku pokazuje dokładnie, jak osiągnięto ocenę - nic nie jest ukryte."
+        },
+        "fixes": {
+          "title": "Linki do naprawy",
+          "body": "Każde wykrycie ma przycisk z głębokim linkiem do widżetu, który je rozwiązuje (Edytor konfiguracji, Sterowniki silników, Mapa maszyny…), więc od problemu do naprawy przechodzisz jednym kliknięciem."
+        },
+        "glossary": {
+          "title": "Terminy używane tutaj"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Ocena (A-F)",
+          "def": "Pojedyncza litera podsumowująca kondycję drukarki, wyprowadzona z wyników filarów; A oznacza zdrowie, F wymaga uwagi."
+        },
+        "pillar": {
+          "term": "Filar",
+          "def": "Kategoria kondycji punktowana niezależnie - np. integralność konfiguracji, synchronizacja firmware'u, usługi, kształtowanie sygnału, maksymalny przepływ."
+        },
+        "finding": {
+          "term": "Wykrycie",
+          "def": "Konkretny problem wykryty przez skanowanie, z jego wagą i linkiem do widżetu, który go naprawia."
+        }
+      }
+    }
+  }
+}

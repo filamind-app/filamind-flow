@@ -1,0 +1,168 @@
+{
+  "maxFlow": {
+    "intro": "Descubra o maior fluxo volumétrico (mm³/s) que o seu hotend consegue sustentar - aumentando o fluxo enquanto observa a carga do StallGuard do extrusor para flagrar o momento em que a engrenagem patina. Visualize o plano primeiro; o teste ao vivo aquece e extruda, então prepare a impressora antes de executar.",
+    "help": {
+      "guide": "Ajuda",
+      "guideTitle": "Sobre o Max-Flow",
+      "close": "Fechar",
+      "howToRead": "Como usar",
+      "steps": [
+        "Defina a temperatura do teste e o diâmetro do seu filamento (escolha um hotend para preencher automaticamente).",
+        "Visualize o plano - ele mostra cada passo de fluxo e quanto filamento empurra.",
+        "Marque a lista de segurança e execute o teste ao vivo (aquece + extruda).",
+        "Leia o fluxo máximo sustentado e copie o valor sugerido para o fatiador."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Como o teste funciona",
+          "body": "O extrusor empurra o filamento em um fluxo volumétrico que aumenta de forma constante. Enquanto a engrenagem dentada agarra bem, a leitura de carga do StallGuard permanece estável; quando começa a patinar, as leituras passam a oscilar. O maior fluxo alcançado antes desse salto é o seu fluxo máximo sustentável. A rampa para assim que o deslizamento é detectado, então nenhum filamento é triturado além do primeiro deslizamento."
+        },
+        "stallguard": {
+          "title": "Detecção de deslizamento por StallGuard",
+          "body": "O StallGuard é um recurso do driver TMC que reporta a carga do motor. Este teste o amostra muitas vezes por passo de fluxo e procura uma elevação súbita na dispersão (IQR) ou na variação (CV) - a assinatura da engrenagem perdendo aderência. Os limiares vêm de um perfil por driver. Observação: em um extrusor com TMC2209 isso usa o caminho experimental SG4, então trate a primeira execução como uma calibração."
+        },
+        "safety": {
+          "title": "Segurança",
+          "body": "Este é um teste quente e em movimento que faz o extrusor patinar de propósito. Carregue o filamento, garanta que o bico esteja livre (sobre a mesa ou uma área de descarte) e fique por perto. A execução é recusada enquanto a impressora estiver imprimindo, e o aquecedor é sempre desligado ao terminar."
+        },
+        "slicer": {
+          "title": "Usando o resultado",
+          "body": "Coloque o valor sugerido na \"velocidade volumétrica máxima\" do seu fatiador (por filamento). O número conservador (80% do máximo medido) é um limite seguro para o dia a dia; o número equilibrado (90%) força um pouco mais. Temperaturas mais altas no hotend costumam elevar o fluxo alcançável."
+        },
+        "glossary": {
+          "title": "Glossário",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Fluxo volumétrico",
+          "def": "Quanto plástico o hotend derrete por segundo (mm³/s) - o real limite de velocidade para impressões rápidas."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Um sinal do driver TMC que reporta a carga mecânica do motor, usado aqui para detectar o deslizamento do extrusor."
+        },
+        "slip": {
+          "term": "Deslizamento",
+          "def": "Quando a engrenagem do extrusor não consegue mais agarrar o filamento rápido o suficiente e patina - o teto do fluxo."
+        },
+        "meltzone": {
+          "term": "Zona de fusão",
+          "def": "O comprimento aquecido do hotend; uma zona de fusão mais longa (ex.: Volcano) sustenta um fluxo maior."
+        }
+      }
+    },
+    "params": {
+      "title": "Parâmetros do teste",
+      "temperature": "Temperatura (°C)",
+      "filamentDiameter": "Ø do filamento (mm)",
+      "hotend": "Hotend (opcional)",
+      "hotendNone": "- nenhum -",
+      "hotendHint": "Esperado ~{flow} mm³/s",
+      "startFlow": "Fluxo inicial (mm³/s)",
+      "endFlow": "Fluxo final (mm³/s)",
+      "stepFlow": "Passo (mm³/s)",
+      "samples": "Amostras / passo",
+      "extrudePerStep": "Extrusão / passo (mm)",
+      "driver": "Driver do extrusor",
+      "driverDetected": "detectado da impressora",
+      "autoStealthchop": "Ativar StealthChop automaticamente para o teste",
+      "autoStealthchopHint": "Apenas TMC2209/2240: grava temporariamente um stealthchop_threshold no extrusor para que o StallGuard possa ler e o comenta após o teste. Restaura o printer.cfg; reinício do firmware em cada etapa.",
+      "method": "Método de detecção",
+      "methodHint": "O modo Auto usa o StallGuard, recorrendo ao acelerômetro da cabeça de impressão (vibração) quando o StallGuard não consegue ler. O método por acelerômetro é experimental."
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Acelerômetro"
+    },
+    "plan": {
+      "button": "Visualizar plano",
+      "title": "Rampa planejada",
+      "stepCount": "{count} passos",
+      "totalExtrude": "{mm} mm de filamento",
+      "sgField": "Campo StallGuard: {field}",
+      "sgFieldUnknown": "Nenhum campo StallGuard conhecido para este driver",
+      "flowHead": "Fluxo (mm³/s)",
+      "feedrateHead": "Avanço (mm/min)",
+      "warning": "O teste ao vivo aquece o hotend e extruda filamento, propositalmente até o ponto de deslizamento. Apenas visualização - nada é executado ainda."
+    },
+    "safety": {
+      "title": "Antes de executar - lista de segurança",
+      "items": [
+        "O filamento está carregado e avança livremente.",
+        "O bico está livre - sobre a mesa ou uma lixeira, não no ar sobre peças.",
+        "Aceito que isto vai triturar/deslizar algum filamento de propósito.",
+        "Vou ficar com a impressora durante todo o teste."
+      ],
+      "ack": "Fiz tudo acima e a impressora está pronta",
+      "note": "A execução é recusada durante a impressão; o aquecedor é desligado automaticamente ao final."
+    },
+    "run": {
+      "button": "Executar teste ao vivo",
+      "running": "Executando… (aquecendo + extrudando)",
+      "confirmTitle": "Iniciar o teste de max-flow ao vivo?",
+      "confirmBody": "Isto aquece o hotend a {temp} °C e extruda até {mm} mm de filamento, aumentando o fluxo até o extrusor patinar.",
+      "confirm": "Executar agora",
+      "cancel": "Cancelar",
+      "busy": "Recusado: a impressora está ocupada (imprimindo ou pausada). Tente novamente quando estiver ociosa.",
+      "error": "O teste falhou.",
+      "noSg": "Nenhuma amostra do StallGuard foi lida - o resultado de deslizamento pode não ser confiável. O campo SG ao vivo do driver provavelmente precisa de ajuste para este modelo.",
+      "progress": "Passo {step}/{total} - {flow} mm³/s",
+      "starting": "Aquecendo / iniciando…",
+      "abort": "Abortar execução",
+      "cancelling": "Abortando…",
+      "cancelled": "Execução abortada - o aquecedor foi desligado.",
+      "reattached": "Reconectado: este resultado terminou enquanto a página estava ausente.",
+      "failed": "A execução do max-flow falhou.",
+      "abortNote": "Abortar sempre desliga o aquecedor.",
+      "parkNote": "Antes de aquecer, a impressora faz o homing (se necessário) e centraliza o bico para uma visão clara.",
+      "phase": {
+        "enabling": "Ativando o StealthChop…",
+        "homing": "Fazendo o homing da impressora…",
+        "centering": "Centralizando o bico…",
+        "heating": "Aquecendo o hotend…",
+        "checking": "Verificando o sinal do StallGuard…",
+        "ramp": "Aumentando o fluxo…",
+        "reverting": "Restaurando a configuração…"
+      },
+      "step": {
+        "home": "Homing",
+        "center": "Centralizar",
+        "heat": "Aquecer",
+        "check": "Verificar",
+        "ramp": "Rampa"
+      }
+    },
+    "camera": {
+      "title": "Câmera ao vivo",
+      "live": "AO VIVO",
+      "error": "Câmera indisponível.",
+      "willShow": "Uma visão da câmera ao vivo mostrará o bico durante o teste.",
+      "minimize": "Minimizar",
+      "maximize": "Maximizar",
+      "enlarge": "Ampliar",
+      "shrink": "Reduzir"
+    },
+    "result": {
+      "title": "Resultado",
+      "maxFlow": "Fluxo máximo sustentado",
+      "slipAt": "Deslizamento detectado em {flow} mm³/s",
+      "noSlip": "Sem deslizamento até o maior fluxo testado",
+      "reason": "Detalhe",
+      "recommendTitle": "Valores sugeridos para o fatiador (velocidade volumétrica máxima)",
+      "conservative": "Conservador (80%)",
+      "balanced": "Equilibrado (90%)",
+      "units": "mm³/s",
+      "fromBefore": "Medido anteriormente ({at}) - execute novamente para números atualizados.",
+      "unreliableTitle": "Não confiável - sem sinal do StallGuard",
+      "unmeasured": "alcançado, não confirmado",
+      "via": "Medido via {method}",
+      "accelExperimental": "Medido por vibração (acelerômetro) - experimental; trate o número como referência, não como um teto exato."
+    },
+    "states": {
+      "loadingHotends": "Carregando hotends…"
+    }
+  }
+}

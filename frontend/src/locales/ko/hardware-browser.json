@@ -1,0 +1,289 @@
+{
+  "hardwareBrowser": {
+    "intro": "스테퍼, 드라이버, 보드, 센서, 핫엔드, 팬, 호스트, 노즐, 익스트루더, 필라멘트 등 엄선된 3D 프린팅 하드웨어 자료를 이름, 제조사, 카테고리 또는 사양으로 검색하세요.",
+    "help": {
+      "guide": "도움말",
+      "guideTitle": "하드웨어 브라우저 소개",
+      "close": "닫기",
+      "howToRead": "사용 방법",
+      "steps": [
+        "검색창에 입력하면 이름, 제조사 또는 사양 값과 일치하는 항목을 찾습니다.",
+        "필터로 카테고리나 제조사를 좁혀보세요.",
+        "각 결과 카드는 부품의 사양을 보여줍니다. 이전 / 다음으로 페이지를 넘기세요."
+      ],
+      "topics": {
+        "search": {
+          "title": "검색",
+          "body": "검색은 제조사, 모델명, 카테고리, 하위 섹션, 사양 값 등 어디서든 일치하는 항목을 찾습니다. 카테고리 및 제조사 필터와 함께 사용해 범위를 좁히세요. 결과는 페이지로 나뉘며, 전체 개수는 현재 페이지가 아니라 일치하는 모든 항목을 반영합니다."
+        },
+        "categories": {
+          "title": "카테고리",
+          "body": "부품은 카테고리(스테퍼 모터, 드라이버, 보드, 센서, 핫엔드, 팬/전원, 호스트, 모션, 노즐, 익스트루더, 필라멘트, 전자부품, 카메라/디스플레이)로 분류됩니다. 하나를 선택하면 해당 유형만 둘러볼 수 있습니다."
+        },
+        "manufacturers": {
+          "title": "제조사 및 사양",
+          "body": "이것은 구매처가 아니라 비교를 위해 엄선된 자료입니다. 값은 제조사 데이터시트와 커뮤니티 데이터에서 가져온 것으로 최신 제품과 차이가 있을 수 있습니다. 구매하거나 설정하기 전에 항상 제조사를 통해 확인하세요."
+        },
+        "relationships": {
+          "title": "연결된 하드웨어",
+          "body": "모든 보드, 드라이버, 모터, 호스트는 제조사로 연결되며, 각 보드는 MCU와 지원하는 드라이버에도 연결됩니다. 항목을 열고 하단의 교차 링크 칩을 사용해 관련 부품으로 바로 이동하세요. 제조사 및 MCU 탭에서는 브랜드나 칩에서 시작해 그것을 사용하는 모든 것을 볼 수 있습니다."
+        },
+        "glossary": {
+          "title": "용어집",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "category": {
+          "term": "카테고리",
+          "def": "부품이 속한 하드웨어 유형입니다(예: 핫엔드, 스테퍼 모터, 센서)."
+        },
+        "manufacturer": {
+          "term": "제조사",
+          "def": "부품을 만드는 회사입니다(예: E3D, BIGTREETECH, LDO Motors)."
+        },
+        "spec": {
+          "term": "사양",
+          "def": "부품의 데이터시트 속성입니다. 전류, 전압, 최대 온도, 치수 등."
+        },
+        "links": {
+          "term": "연결된 하드웨어",
+          "def": "부품 간 교차 링크입니다. 보드의 제조사, MCU, 지원하는 드라이버를 클릭 가능한 칩으로 보여주며 관련 항목으로 이동합니다."
+        }
+      }
+    },
+    "search": {
+      "placeholder": "하드웨어 검색…",
+      "button": "검색",
+      "category": "카테고리",
+      "allCategories": "모든 카테고리",
+      "manufacturer": "제조사",
+      "manufacturerPlaceholder": "모든 제조사"
+    },
+    "results": {
+      "total": "{count}개 일치",
+      "none": "검색과 일치하는 부품이 없습니다.",
+      "showing": "{total}개 중 {from}-{to} 표시",
+      "prev": "이전",
+      "next": "다음"
+    },
+    "states": {
+      "loading": "검색 중…",
+      "error": "하드웨어 데이터베이스를 불러올 수 없습니다.",
+      "retry": "다시 시도"
+    },
+    "tabs": {
+      "catalog": "카탈로그",
+      "search": "전체 검색",
+      "boards": "보드",
+      "drivers": "드라이버",
+      "motors": "모터",
+      "hosts": "호스트",
+      "manufacturers": "브랜드",
+      "mcus": "MCU"
+    },
+    "catalog": {
+      "searchAll": "전체 검색",
+      "items": "{n}개 항목",
+      "back": "카탈로그"
+    },
+    "boards": {
+      "search": "보드 검색",
+      "total": "{n}개 보드",
+      "none": "보드를 찾을 수 없습니다.",
+      "view": "상세",
+      "hide": "숨기기",
+      "connector": "커넥터",
+      "function": "기능",
+      "pins": "핀",
+      "use": "사용하기",
+      "electronics": "전자부품 (설정에 영향)",
+      "notes": "설정 참고",
+      "config": "설정 스니펫",
+      "copy": "복사",
+      "copied": "복사됨!"
+    },
+    "drivers": {
+      "search": "드라이버 검색",
+      "klipperOnly": "Klipper (TMC) 전용",
+      "total": "{n}개 드라이버",
+      "none": "드라이버를 찾을 수 없습니다.",
+      "standalone": "독립형",
+      "sensorless": "센서리스",
+      "config": "Klipper 설정",
+      "reference": "Klipper 참조 →"
+    },
+    "motors": {
+      "search": "모터 검색",
+      "total": "{n}개 모터",
+      "none": "모터를 찾을 수 없습니다.",
+      "rated": "정격",
+      "run": "구동",
+      "config": "Klipper 설정"
+    },
+    "hosts": {
+      "search": "호스트 검색",
+      "total": "{n}개 호스트",
+      "none": "호스트를 찾을 수 없습니다.",
+      "config": "호스트 설정",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "OS 이미지",
+        "locked": "잠김"
+      }
+    },
+    "manufacturers": {
+      "search": "브랜드 검색",
+      "total": "{n}개 브랜드",
+      "none": "브랜드를 찾을 수 없습니다.",
+      "members": "{n}개 부품",
+      "specialty": "전문 분야",
+      "aliases": "다른 이름",
+      "website": "웹사이트 →",
+      "derived": "커뮤니티"
+    },
+    "mcus": {
+      "search": "MCU 검색",
+      "total": "{n}개 MCU",
+      "none": "MCU를 찾을 수 없습니다.",
+      "boards": "{n}개 보드"
+    },
+    "related": {
+      "title": "연결된 하드웨어",
+      "loading": "링크 불러오는 중…",
+      "more": "+{n}개 더",
+      "jump": "{name} 열기",
+      "rel": {
+        "manufacturer": "제조사",
+        "mcus": "MCU",
+        "onboardDrivers": "온보드 드라이버",
+        "supportedDrivers": "지원 드라이버",
+        "boards": "보드",
+        "motors": "모터",
+        "hosts": "호스트",
+        "catalog": "부품"
+      }
+    },
+    "picker": {
+      "placeholder": "부품 선택…"
+    },
+    "facets": {
+      "manufacturer": "제조사",
+      "anyClass": "모든 등급",
+      "anyNema": "모든 크기",
+      "anyKind": "모든 종류",
+      "anyType": "모든 유형",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "메인보드",
+        "toolhead": "툴헤드",
+        "printer-preset": "프린터 프리셋",
+        "expansion": "확장 보드",
+        "host": "호스트 SBC"
+      }
+    },
+    "onPrinter": {
+      "badge": "이 프린터에 장착됨",
+      "strip": "이 프린터에 장착됨:"
+    },
+    "suggest": {
+      "button": "부품 제안",
+      "title": "부품 제안",
+      "intro": "아는 내용을 입력하면 검토용으로 미리 채워진 GitHub 이슈를 엽니다. 자동으로 전송되는 것은 없습니다.",
+      "typeLabel": "부품 유형",
+      "cancel": "취소",
+      "close": "닫기",
+      "submit": "GitHub에 이슈 열기",
+      "preview": "제출 내용 미리보기 (JSON)",
+      "languageNote": "관리자가 처리할 수 있도록 이슈는 영어로 작성됩니다.",
+      "sentTitle": "제출 내용이 새 탭에서 열렸습니다",
+      "sentBody": "GitHub에서 미리 채워진 내용을 검토한 다음 그곳에서 이슈를 제출하세요. 기여해 주셔서 감사합니다!",
+      "yes": "예",
+      "specs": "추가 사양",
+      "specKey": "사양",
+      "specValue": "값",
+      "addSpec": "사양 추가",
+      "ports": "포트 및 핀",
+      "addPort": "포트 추가",
+      "addPin": "핀 추가",
+      "remove": "제거",
+      "configSnippet": "Klipper 설정 스니펫",
+      "types": {
+        "motor": "스테퍼 모터",
+        "driver": "스테퍼 드라이버",
+        "hotend": "핫엔드",
+        "host": "호스트 / SBC",
+        "manufacturer": "제조사",
+        "board": "보드",
+        "catalog": "기타 카탈로그 항목"
+      },
+      "group": {
+        "autotune": "오토튠 (전기적)",
+        "caps": "기능",
+        "maxFlow": "최대 유량",
+        "preset": "최대 유량 프리셋"
+      },
+      "f": {
+        "manufacturer": "제조사",
+        "name": "이름",
+        "model": "모델",
+        "display_name": "표시 이름",
+        "boardClass": "보드 등급",
+        "mcu": "MCU",
+        "clock": "클럭",
+        "voltage": "전압",
+        "driver_slots": "드라이버 슬롯",
+        "usb": "USB",
+        "can": "CAN",
+        "ethernet": "이더넷",
+        "nema": "NEMA",
+        "stepAngle": "스텝 각도",
+        "ratedCurrent": "정격 전류",
+        "holdingTorque": "홀딩 토크",
+        "recommendedRunCurrent": "권장 구동 전류",
+        "resistance_ohm": "저항",
+        "inductance_H": "인덕턴스",
+        "holding_torque_Nm": "홀딩 토크",
+        "max_current_A": "최대 전류",
+        "steps_per_rev": "회전당 스텝",
+        "chip": "칩",
+        "interface": "인터페이스",
+        "klipperSection": "Klipper 섹션",
+        "sensorless": "센서리스",
+        "max_current_a": "최대 전류",
+        "microsteps": "마이크로스텝",
+        "stealthchop": "StealthChop",
+        "spreadcycle": "SpreadCycle",
+        "coolstep": "CoolStep",
+        "stallguard": "StallGuard",
+        "stallguard_field": "StallGuard 필드",
+        "max_temp_c": "최대 온도",
+        "suggested_temp_c": "권장 온도",
+        "expected_max_flow_mm3s": "예상 최대 유량",
+        "melt_zone_mm": "용융 구간",
+        "START": "START",
+        "MAX": "MAX",
+        "COARSE_STEP": "COARSE_STEP",
+        "kind": "종류",
+        "soc": "SoC",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "klipperOpen": "오픈 Klipper 구동",
+        "country": "국가",
+        "website": "웹사이트",
+        "specialty": "전문 분야",
+        "category": "카테고리",
+        "subsection": "하위 섹션",
+        "portLabel": "포트 라벨",
+        "portCategory": "포트 카테고리",
+        "portFunction": "기능",
+        "signal": "신호",
+        "pin": "핀"
+      },
+      "tooLong": "이 제출 내용은 너무 커서 자동으로 미리 채울 수 없습니다. JSON을 복사한 뒤 새 이슈를 수동으로 여세요.",
+      "copyJson": "JSON 복사",
+      "copied": "복사됨"
+    }
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "boardTopology": {
+    "intro": "Veja como as placas de controle da sua impressora se conectam: o host (SBC) e cada MCU com que ele se comunica, com cada tipo de conexão e o melhor palpite possível de placa / chip - lido ao vivo da config.",
+    "help": {
+      "guide": "Ajuda",
+      "guideTitle": "Sobre a Topologia de Placas",
+      "close": "Fechar",
+      "howToRead": "Como ler",
+      "steps": [
+        "O host (seu SBC, por exemplo um Raspberry Pi ou CB1) fica no topo.",
+        "Cada cartão de MCU mostra como ele se conecta (USB / barramento CAN / UART) e seu chip.",
+        "Um palpite de placa aparece quando o identificador da conexão coincide com uma placa conhecida."
+      ],
+      "topics": {
+        "views": {
+          "title": "Visão física vs lógica",
+          "body": "O mapa desenha as mesmas placas de duas formas. FÍSICA mostra como a máquina é realmente construída: um SBC integrado é desenhado dentro da placa-mãe em que vem, cabeçotes CAN se conectam a um trilho de backbone compartilhado, e placas USB/UART são unidades separadas. LÓGICA mostra como o Klipper a enxerga: o host no topo com cada MCU como filho alcançado por seu link serial. Alterne com o seletor Física/Lógica."
+        },
+        "mcus": {
+          "title": "MCUs",
+          "body": "Um MCU é uma placa microcontroladora que comanda motores, aquecedores e sensores. Uma impressora tem pelo menos um (a placa-mãe); muitas adicionam uma placa de cabeçote e às vezes uma placa de probe ou LED. Este painel lista cada seção `[mcu]` que o Klipper tem."
+        },
+        "connections": {
+          "title": "Tipos de conexão",
+          "body": "USB - um link serial-sobre-USB (a conexão usual da placa-mãe). Barramento CAN - um barramento compartilhado de dois fios, comum para placas de cabeçote. UART - um link serial direto via GPIO. O tipo é inferido da configuração `serial` / `canbus_uuid` de cada MCU."
+        },
+        "detection": {
+          "title": "Como a detecção funciona",
+          "body": "O chip e a placa são deduzidos comparando o identificador da conexão (o caminho serial ou UUID CAN) com uma tabela de padrões, além de uma impressão digital do mapa de pinos que sua config usa. Um palpite de placa mostra uma confiança da coincidência; quando nada coincide, o chip/placa aparece como \"desconhecido\" - a conexão em si continua sendo mostrada."
+        },
+        "override": {
+          "title": "Confirmar ou trocar uma placa",
+          "body": "Um id serial normalmente revela apenas o chip, então o palpite de placa pode estar ausente ou errado. Use \"Confirmar esta placa\" para fixar um palpite correto, ou \"Trocar placa…\" / \"Definir placa…\" para escolher a certa no catálogo. Sua escolha é salva no host e reutilizada a cada leitura; \"Limpar\" reverte para o palpite automático."
+        },
+        "glossary": {
+          "title": "Glossário",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Unidade microcontroladora - uma placa de controle rodando o firmware do Klipper (placa-mãe, cabeçote, etc.)."
+        },
+        "canbus": {
+          "term": "Barramento CAN",
+          "def": "Um barramento compartilhado de dois fios que liga placas por um UUID único - popular para a fiação de cabeçotes."
+        },
+        "host": {
+          "term": "Host / SBC",
+          "def": "O computador de placa única (Pi, CB1, …) que roda o Klipper e se comunica com os MCUs."
+        }
+      }
+    },
+    "host": {
+      "label": "Host",
+      "role": "Computador de placa única - roda o Klipper"
+    },
+    "mcu": {
+      "chip": "Chip",
+      "board": "Placa",
+      "unknown": "desconhecido",
+      "identifier": "Identificador",
+      "confidence": "{pct}% de coincidência",
+      "viewBoard": "Ver detalhes da placa",
+      "hideBoard": "Ocultar detalhes"
+    },
+    "graph": {
+      "viewLabel": "Visão do diagrama",
+      "view": {
+        "physical": "Física",
+        "logical": "Lógica"
+      },
+      "integrated": "SBC integrado",
+      "integratedNote": "O SBC do host é embutido na placa-mãe {board}.",
+      "selectPrompt": "Selecione uma placa ou MCU no mapa para inspecioná-la.",
+      "aria": "Mapa da máquina: o host e {n} MCUs",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} retransmissões",
+        "load": "{pct}% de carga"
+      },
+      "health": {
+        "title": "Saúde do link",
+        "ok": "saudável",
+        "warn": "degradado",
+        "out": "firmware dessincronizado"
+      }
+    },
+    "conn": {
+      "canbus": "Barramento CAN",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "desconhecido",
+      "via": "via {type}"
+    },
+    "count": "{n} MCUs",
+    "states": {
+      "loading": "Lendo a topologia…",
+      "unreachable": "Não foi possível alcançar a impressora.",
+      "empty": "Nenhum MCU encontrado na config.",
+      "retry": "Tentar novamente",
+      "refresh": "Atualizar"
+    },
+    "board": {
+      "suggested": "sugerido",
+      "ports": "{n} portas",
+      "specsTitle": "Especificações",
+      "portsTitle": "Portas",
+      "none": "Ainda não há detalhes de catálogo para esta placa.",
+      "noMatch": "Nenhuma placa coincidiu ainda - confirme ou defina uma abaixo.",
+      "loading": "Carregando placa…",
+      "links": {
+        "title": "Links",
+        "product": "Produto",
+        "repo": "Repo",
+        "wiki": "Wiki",
+        "pinout": "Pinagem",
+        "schematic": "Esquemático",
+        "datasheet": "Datasheet",
+        "image": "Foto"
+      },
+      "portCat": {
+        "motor": "motor",
+        "heater_hotend": "aquecedor do hotend",
+        "heater_bed": "aquecedor da mesa",
+        "accelerometer": "acelerômetro",
+        "filament_sensor": "sensor de filamento",
+        "fan": "ventoinha",
+        "probe": "probe",
+        "other": "outro",
+        "power": "alimentação",
+        "thermistor": "termistor",
+        "usb": "USB",
+        "can": "CAN",
+        "swd": "SWD",
+        "display": "display",
+        "rgb": "RGB",
+        "network": "rede",
+        "endstop": "endstop",
+        "wifi": "Wi-Fi",
+        "spi": "SPI",
+        "uart": "UART"
+      },
+      "spec": {
+        "mcu": "MCU",
+        "arch": "Arquitetura",
+        "flash_method": "Método de flash",
+        "voltage": "Tensão",
+        "driver_slots": "Slots de driver",
+        "usb": "USB",
+        "onboard_drivers": "Drivers integrados",
+        "clock": "Clock",
+        "can": "CAN",
+        "drivers": "Drivers",
+        "dimensions_mm": "Dimensões (mm)",
+        "role_era": "Função / era",
+        "kinematics": "Cinemática",
+        "build_volume_mm": "Volume de impressão (mm)",
+        "bed": "Mesa",
+        "hotend": "Hotend",
+        "stock_extruder": "Extrusor de fábrica",
+        "year": "Ano",
+        "control_board": "Placa de controle",
+        "stock_drivers": "Drivers de fábrica",
+        "uart": "UART",
+        "connectivity": "Conectividade",
+        "max_hotend_temp": "Temp. máx. do hotend",
+        "max_bed_temp": "Temp. máx. da mesa",
+        "spi": "SPI",
+        "notes": "Notas",
+        "eth_wifi": "Eth/WiFi",
+        "class": "Classe",
+        "supported_drivers": "Drivers suportados",
+        "form_factor": "Formato",
+        "flash": "Flash",
+        "all_metal_accel": "All-metal / acel.",
+        "ethernet_wifi": "Ethernet/WiFi",
+        "i2c": "I2C",
+        "driver": "Driver",
+        "i2cspi": "I2C/SPI",
+        "printer_board": "Impressora / placa",
+        "accelerometer": "Acelerômetro",
+        "printers": "Impressoras",
+        "bootloader": "Bootloader",
+        "flash_offset": "Offset de flash",
+        "soc": "SoC",
+        "ram": "RAM",
+        "role": "Função",
+        "connection": "Conexão",
+        "storage": "Armazenamento",
+        "host": "Host"
+      },
+      "class": {
+        "mainboard": "placa-mãe",
+        "printer_preset": "predefinição de impressora",
+        "toolhead": "cabeçote",
+        "host": "host",
+        "expansion": "expansão"
+      }
+    },
+    "components": {
+      "title": "Componentes",
+      "motor": "Motores",
+      "driver": "Drivers",
+      "heater": "Aquecedores",
+      "fan": "Ventoinhas",
+      "sensor": "Sensores"
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "Detalhes",
+        "atlas": "Atlas de Pinos"
+      },
+      "summary": "{used}/{total} pinos usados · {free} livres",
+      "loading": "Lendo o mapa de pinos…",
+      "failed": "Não foi possível ler o mapa de pinos.",
+      "unavailable": "Ainda não há mapa de pinos para esta placa.",
+      "search": "Buscar pinos, sinais, seções…",
+      "freeOnly": "Apenas livres",
+      "noMatch": "Nenhum pino corresponde.",
+      "other": "Outro",
+      "conflict": "Conflito de pinos",
+      "caveat": "Ressalva de fiação"
+    },
+    "override": {
+      "confirmed": "Confirmado por você",
+      "confirm": "Confirmar esta placa",
+      "change": "Trocar placa…",
+      "set": "Definir placa…",
+      "clear": "Limpar",
+      "pickPlaceholder": "Buscar no catálogo de placas…",
+      "hint": "Sua escolha é salva no host e usada para este MCU a partir de agora."
+    },
+    "sync": {
+      "synced": "Firmware sincronizado",
+      "outOfSync": "Firmware DESSINCRONIZADO"
+    },
+    "snapshot": {
+      "save": "Salvar snapshot",
+      "copy": "Copiar resumo",
+      "copied": "Copiado!",
+      "none": "Nenhuma referência salva - salve um snapshot para detectar mudanças futuras.",
+      "unchanged": "Nenhuma mudança de hardware desde o snapshot",
+      "changed": "{n} mudança(s) desde o snapshot",
+      "summaryTitle": "FilaMind - mapa da máquina",
+      "change": {
+        "added": "MCU “{mcu}” foi adicionado",
+        "removed": "MCU “{mcu}” foi removido",
+        "board_changed": "placa de “{mcu}” mudou: {before} → {after}",
+        "connection_changed": "conexão de “{mcu}” mudou: {before} → {after}",
+        "chip_changed": "chip de “{mcu}” mudou: {before} → {after}",
+        "components_changed": "contagem de componentes de “{mcu}” mudou: {before} → {after}"
+      },
+      "noCompare": "Não foi possível comparar - a impressora está inacessível.",
+      "summaryHost": "Host: {name}",
+      "summaryIntegrated": "SBC integrado em {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "placa {board}",
+      "summaryComponents": "{n} componentes"
+    },
+    "jump": {
+      "section": "Abrir esta seção no Editor de Config",
+      "drivers": "Abrir em Drivers de Motor",
+      "firmware": "Abrir Gerenciador de Firmware"
+    }
+  }
+}

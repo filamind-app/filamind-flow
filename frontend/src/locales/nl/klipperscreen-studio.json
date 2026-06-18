@@ -1,0 +1,197 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Bewerk de KlipperScreen-touchscreenconfiguratie van je printer veilig en herstart KlipperScreen om toe te passen. Bij elke opslag wordt er eerst een back-up gemaakt.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "Over KlipperScreen Studio",
+      "close": "Sluiten",
+      "howToRead": "Hoe te lezen",
+      "steps": [
+        "Bewerk de configuratietekst hieronder (of laat hem ongewijzigd).",
+        "Opslaan - van het huidige bestand wordt eerst een back-up gemaakt, en opslaan wordt geweigerd zolang de printer bezig is.",
+        "Herstart KlipperScreen om de wijziging op het fysieke scherm toe te passen.",
+        "Regels gebruiken UNIX (LF) regeleinden, automatisch afgedwongen bij opslaan."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Woordenlijst",
+          "body": "Korte definities van de hier gebruikte KlipperScreen-termen."
+        },
+        "config": {
+          "title": "Wat is het tabblad Config?",
+          "body": "De ruwe KlipperScreen.conf. Bewerk elke instelling met de hand; bij opslaan wordt eerst een back-up gemaakt, wordt geweigerd zolang de printer bezig is, en wordt gewaarschuwd als het bestand op het scherm is gewijzigd sinds je het hebt geladen. De meeste mensen gebruiken in plaats daarvan de tabbladen Instellingen / Menu's / Thema's."
+        },
+        "settings": {
+          "title": "Wat is het tabblad Instellingen?",
+          "body": "De meestgebruikte [main]-opties als formulier - thema, taal, schermslaap, tekengrootte en schakelaars. Vooraf ingevuld vanuit de live config; alleen de opties die je wijzigt worden weggeschreven. Herstart om toe te passen."
+        },
+        "menus": {
+          "title": "Wat is het tabblad Menu's?",
+          "body": "Ontwerp de knoppenrasters van het touchscreen. Elke boom (__main is het startraster, __print het printscherm) toont zijn knoppen; voeg ze toe, hernoem, herorden en nest ze, en stel elke knop in om een submenu te openen, een ingebouwd scherm te openen of G-code uit te voeren."
+        },
+        "themes": {
+          "title": "Wat is het tabblad Thema's?",
+          "body": "Bouw een KlipperScreen-thema: kies een kleur per palettoken en een hoekradius, bekijk de live preview en maak het thema aan om het op het scherm toe te passen. De preview is bij benadering - het echte scherm wordt met GTK weergegeven."
+        },
+        "kiosk": {
+          "title": "Wat is het tabblad Kiosk?",
+          "body": "Zet FilaMind Flow zelf op het touchscreen als fullscreen browser - volledige controle over wat het scherm toont. Het is een omkeerbare wissel met KlipperScreen (standaard tijdelijk; een herstart herstelt KlipperScreen). Vereist het eenmalige installatieprogramma op de printerhost."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "De touchscreen-UI die draait op een klein display aan de printer - los van dit webpaneel."
+        },
+        "theme": {
+          "term": "Thema",
+          "def": "Een KlipperScreen-uiterlijk - kleuren, pictogrammen en hoekradius. Staat in een map styles/<name> op de host; alleen cosmetisch (kan de lay-out niet wijzigen)."
+        },
+        "menu": {
+          "term": "Menu (__main / __print)",
+          "def": "De knoppenrasters die KlipperScreen toont. __main is het startscherm, __print het scherm dat tijdens het printen wordt getoond, __splashscreen het opstartscherm."
+        },
+        "panel": {
+          "term": "Paneel",
+          "def": "Een ingebouwd KlipperScreen-scherm dat een knop kan openen (bewegen, temperatuur, extruderen, bed mesh, …). De interne inhoud ervan ligt vast in KlipperScreen."
+        },
+        "autoBlock": {
+          "term": "Automatisch gegenereerd blok (#~#)",
+          "def": "Het deel dat KlipperScreen voor zichzelf onderaan de conf schrijft, na de #~#-markering. FilaMind bewerkt dit nooit - alleen jouw instellingen erboven."
+        },
+        "kiosk": {
+          "term": "Kiosk",
+          "def": "Een fullscreen browser op het touchscreen draaien in plaats van KlipperScreen, zodat het scherm FilaMind Flow toont. Volledig omkeerbaar."
+        }
+      }
+    },
+    "status": {
+      "checking": "Controleren op KlipperScreen…",
+      "absent": "KlipperScreen is niet op deze printer gedetecteerd (geen KlipperScreen.conf, en niet gemeld door Moonraker). Installeer KlipperScreen om deze tool te gebruiken.",
+      "present": "KlipperScreen gedetecteerd",
+      "theme": "Thema",
+      "language": "Taal",
+      "notRestartable": "Moonraker kan KlipperScreen niet automatisch herstarten - herstart het handmatig na het opslaan."
+    },
+    "editor": {
+      "loading": "KlipperScreen.conf lezen…",
+      "reload": "Opnieuw laden",
+      "save": "Config opslaan",
+      "saving": "Opslaan…",
+      "saved": "Opgeslagen (back-up gemaakt)",
+      "unsaved": "Niet-opgeslagen wijzigingen"
+    },
+    "save": {
+      "busy": "Geweigerd zolang de printer bezig is - probeer opnieuw wanneer hij inactief is.",
+      "stale": "KlipperScreen.conf is op schijf gewijzigd sinds het laden (waarschijnlijk op het scherm bewerkt). Laad opnieuw vóór het opslaan zodat je die wijziging niet overschrijft."
+    },
+    "view": {
+      "config": "Config",
+      "settings": "Instellingen",
+      "menus": "Menu's",
+      "themes": "Thema's",
+      "kiosk": "Kiosk"
+    },
+    "settings": {
+      "loading": "Instellingen laden…",
+      "intro": "De meestgebruikte KlipperScreen-weergaveopties als formulier. Alleen de opties die je wijzigt worden weggeschreven - al het andere behoudt zijn huidige waarde. Herstart om toe te passen.",
+      "onlyChanged": "Alleen de instellingen die je hier wijzigt worden naar KlipperScreen.conf geschreven.",
+      "save": "Instellingen opslaan",
+      "savedRestart": "Opgeslagen - herstart KlipperScreen om toe te passen.",
+      "unset": "Niet instellen (standaard)",
+      "never": "Nooit (altijd aan)",
+      "fontSize": {
+        "small": "Klein",
+        "medium": "Middel",
+        "large": "Groot",
+        "max": "Max"
+      },
+      "label": {
+        "theme": "Thema",
+        "language": "Taal",
+        "screen_blanking": "Schermslaap na",
+        "font_size": "Tekengrootte",
+        "24htime": "24-uursklok",
+        "use_dpms": "DPMS gebruiken om het scherm uit te schakelen",
+        "show_cursor": "Muisaanwijzer tonen",
+        "confirm_estop": "Bevestigen vóór noodstop",
+        "show_heater_power": "Verwarmervermogen % tonen",
+        "autoclose_popups": "Pop-ups automatisch sluiten"
+      }
+    },
+    "kiosk": {
+      "loading": "Het scherm controleren…",
+      "intro": "Zet FilaMind Flow zelf op het touchscreen als fullscreen browser - volledige controle over wat het scherm toont. Het wisselt met KlipperScreen: de een starten stopt de ander.",
+      "current": "Scherm nu",
+      "mode": {
+        "kiosk": "FilaMind-kiosk",
+        "klipperscreen": "KlipperScreen",
+        "none": "Geen van beide actief"
+      },
+      "notInstalled": "Kiosk nog niet geïnstalleerd",
+      "setupHint": "Voer dit eenmalig uit op de printerhost (installeert een fullscreen browser + de kioskservice):",
+      "persist": "Maak het de standaard bij opstarten (anders is de wissel tijdelijk - een herstart herstelt de ander).",
+      "safety": "Standaard tijdelijk: een herstart brengt de ander terug. Als het scherm ooit zwart wordt, voer via SSH uit: sudo systemctl start KlipperScreen",
+      "switchBtn": "Overschakelen naar FilaMind",
+      "restoreBtn": "KlipperScreen herstellen",
+      "refresh": "Vernieuwen",
+      "confirmSwitchTitle": "FilaMind op het scherm zetten?",
+      "confirmRestoreTitle": "KlipperScreen herstellen?",
+      "confirmBody": "Dit stopt de ene schermservice en start de andere. Het beïnvloedt geen actieve print, maar het touchscreen wordt enkele seconden zwart tijdens het wisselen.",
+      "confirm": "Doen",
+      "cancel": "Annuleren",
+      "switchedNote": "FilaMind neemt het scherm over - het zou binnen enkele seconden moeten verschijnen.",
+      "restoredNote": "KlipperScreen komt terug - het scherm zou kort moeten terugkeren."
+    },
+    "menus": {
+      "loading": "Menu's laden…",
+      "intro": "Ontwerp wat het touchscreen toont: de knoppen van elk menu, hun volgorde en wat elke doet. Het startschermraster is de __main-boom; het printscherm is __print.",
+      "addItem": "Knop toevoegen",
+      "empty": "Nog geen items - voeg er een toe.",
+      "up": "Omhoog",
+      "down": "Omlaag",
+      "addChild": "Subitem toevoegen",
+      "delete": "Verwijderen",
+      "name": "Naam",
+      "icon": "Pictogram",
+      "action": "Actie",
+      "actSubmenu": "Een submenu openen",
+      "actPanel": "Een scherm openen",
+      "actGcode": "G-code uitvoeren",
+      "panel": "Scherm",
+      "gcode": "G-code",
+      "enable": "Tonen als",
+      "save": "Menu's opslaan",
+      "newItem": "Nieuwe knop",
+      "savedRestart": "Menu's opgeslagen - herstart KlipperScreen om ze te zien."
+    },
+    "themes": {
+      "loading": "Thema's laden…",
+      "palette": "Palet",
+      "radius": "Hoekradius",
+      "preview": "Live preview",
+      "btn": "Knop",
+      "previewWarn": "waarschuwing",
+      "previewApprox": "Benaderende preview - het echte scherm wordt met GTK weergegeven; kleine verschillen zijn te verwachten.",
+      "namePlaceholder": "Naam nieuw thema",
+      "createApply": "Aanmaken en toepassen",
+      "createOnly": "Alleen aanmaken",
+      "installed": "Geïnstalleerde thema's",
+      "apply": "Toepassen",
+      "delete": "Thema verwijderen",
+      "generated": "Hier gemaakt",
+      "created": "Thema aangemaakt. Pas het toe vanuit de lijst en herstart daarna.",
+      "appliedRestart": "Thema ingesteld - herstart KlipperScreen om het te zien.",
+      "previewTitle": "Printer"
+    },
+    "restart": {
+      "button": "KlipperScreen herstarten",
+      "restarting": "Herstarten…",
+      "done": "KlipperScreen wordt herstart - het scherm laadt kort opnieuw.",
+      "confirmTitle": "KlipperScreen herstarten?",
+      "confirmBody": "Dit herstart de touchscreenservice om je wijzigingen toe te passen. Het beïnvloedt geen actieve print, maar het scherm wordt enkele seconden zwart.",
+      "confirm": "Herstarten",
+      "cancel": "Annuleren"
+    }
+  }
+}

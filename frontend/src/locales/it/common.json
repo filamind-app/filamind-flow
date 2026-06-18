@@ -1,0 +1,48 @@
+{
+  "common": {
+    "appName": "FilaMind Flow",
+    "errors": {
+      "backendUnreachable": "Impossibile raggiungere il backend FilaMind - verifica che il servizio filamind-flow sia in esecuzione e raggiungibile."
+    }
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "neon": "Neon",
+    "contrast": "Contrasto elevato",
+    "menu": "Scegli il tema",
+    "midnight": "Mezzanotte",
+    "ocean": "Oceano",
+    "sunset": "Tramonto",
+    "desc": {
+      "neon": "Notte viola profondo con un bagliore elettrico - lo stile distintivo",
+      "midnight": "Scuro blu profondo professionale",
+      "dark": "Scuro ardesia neutro moderno",
+      "ocean": "Verde acqua profondo con accenti aqua",
+      "sunset": "Prugna caldo con accenti ambra",
+      "light": "Chiaro Neo-Brutalista pulito",
+      "contrast": "Massima leggibilità (a11y)"
+    }
+  },
+  "configApply": {
+    "title": "Applica a printer.cfg…",
+    "hint": "Scrive questo blocco nel file scelto attraverso il gate di sicurezza: una sezione esistente viene unita parametro per parametro (le altre righe restano), una mancante viene aggiunta. Viene prima creato un backup; rifiutato durante la stampa o se il file è cambiato sul disco.",
+    "target": "File di destinazione",
+    "ack": "Ho esaminato il blocco e voglio scriverlo",
+    "apply": "Applica",
+    "applying": "Applicazione in corso…",
+    "busy": "La stampante è occupata (o un'altra operazione è in corso) - riprova quando è inattiva.",
+    "stale": "Il file è cambiato sul disco durante l'applicazione - non è stato scritto nulla. Riprova.",
+    "saved": "Salvato (backup: {backup}).",
+    "added": "aggiunto [{section}]: {params}",
+    "updated": "aggiornato [{section}]: {params}",
+    "noop": "Tutto era già su questi valori - nessuna modifica.",
+    "restartHint": "Klipper continua a usare i vecchi valori fino a un riavvio del firmware.",
+    "restart": "Riavvia firmware…",
+    "restartConfirm": "Conferma riavvio",
+    "restarting": "Riavvio in corso…",
+    "restarted": "Riavvio del firmware inviato.",
+    "cancel": "Annulla"
+  }
+}

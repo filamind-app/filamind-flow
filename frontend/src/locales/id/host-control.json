@@ -1,0 +1,247 @@
+{
+  "hostControl": {
+    "intro": "Kelola host Linux printer - periksa kesehatannya, kendalikan layanan latar belakangnya, kosongkan ruang disk, dan ubah pengaturan sistem (waktu, lokal, hostname, jaringan, daya).",
+    "view": {
+      "monitor": "Monitor",
+      "services": "Layanan",
+      "cleanup": "Pembersihan",
+      "system": "Sistem"
+    },
+    "help": {
+      "guide": "Bantuan",
+      "guideTitle": "Tentang Kendali Host",
+      "close": "Tutup",
+      "howToRead": "Cara membaca",
+      "steps": [
+        "Baca kartu suhu CPU, memori, disk, dan jaringan secara sekilas.",
+        "Perhatikan tabel proses teratas untuk melihat apa yang sedang memakai CPU saat ini.",
+        "Biarkan refresh otomatis aktif untuk tampilan langsung, atau matikan dan refresh secara manual."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Istilah yang digunakan di sini"
+        },
+        "monitor": {
+          "title": "Membaca monitor",
+          "body": "Semua di sini hanya-baca. Bilah berubah kuning melewati 75% dan merah melewati 90%. Suhu CPU berubah kuning pada 70 °C dan merah pada 80 °C. Peringatan throttle hanya muncul di papan yang melaporkannya (terutama Raspberry Pi)."
+        },
+        "services": {
+          "title": "Mengelola layanan",
+          "body": "Setiap baris adalah layanan systemd. Klik salah satunya untuk menjalankan/menghentikan/memulai ulang, mengaktifkan/menonaktifkan saat boot, mask, membaca lognya, atau - untuk layanan yang Anda pasang sendiri - menghapus berkas unitnya. Menghentikan atau menonaktifkan layanan memerlukan konfirmasi ketik atau satu ketukan. Layanan kritis dan terlindungi ditandai; yang terlindungi (seperti SSH dan panel ini) tidak bisa dihentikan, agar Anda tidak terkunci."
+        },
+        "cleanup": {
+          "title": "Mengosongkan ruang disk",
+          "body": "Setiap baris dipindai dulu untuk menunjukkan berapa banyak yang akan dibebaskan. Centang yang ingin dibersihkan lalu konfirmasi. Hanya data yang bisa dibuat ulang yang ditawarkan - cache unduhan apt, jurnal systemd lama, ~/.cache, berkas /tmp lama Anda, dan log yang dirotasi (non-langsung). G-code, timelapse, dan konfigurasi Anda tidak pernah disentuh."
+        },
+        "system": {
+          "title": "Pengaturan sistem",
+          "body": "Ubah zona waktu dan jam host, bahasa dan keyboard, hostname atau jaringan (DHCP / IP statis), atau reboot/matikan. Setiap perubahan berlaku langsung. Reboot dan matikan ditolak saat pencetakan sedang berjalan. Mengubah IP bisa sesaat memutus koneksi Anda ke panel ini."
+        },
+        "network": {
+          "title": "DHCP vs IP Statis",
+          "body": "DHCP (otomatis) membiarkan router Anda menetapkan alamat secara otomatis. Statis (manual) mengunci alamat tetap - atur IP, subnet (CIDR, mis. /24), gateway (biasanya router Anda) dan DNS. Hanya IPv4. Mengubah alamat koneksi yang melayani panel ini akan memutus sesi Anda; hubungkan kembali di IP baru. Alamat atau gateway statis yang salah bisa membuat printer tidak terjangkau hingga Anda memperbaikinya di perangkat itu sendiri, jadi pengaturannya divalidasi dan memerlukan konfirmasi ketik."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Host",
+          "def": "Komputer Linux kecil (mis. Raspberry Pi atau BTT CB1) yang menjalankan Klipper, Moonraker, dan FilaMind - terpisah dari mikrokontroler printer."
+        },
+        "load": {
+          "term": "Rata-rata beban",
+          "def": "Berapa banyak proses yang menunggu untuk dijalankan, dirata-ratakan selama 1 / 5 / 15 menit. Kasarnya: nilai mendekati jumlah core berarti CPU sibuk; jauh di atasnya berarti kelebihan beban."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Ruang disk yang dipakai sebagai luapan saat RAM penuh. Penggunaan swap berat memperlambat host - tanda kekurangan memori."
+        },
+        "throttle": {
+          "term": "Throttling",
+          "def": "Saat papan menurunkan kecepatan untuk melindungi dirinya - biasanya akibat catu daya kurang bertenaga (tegangan rendah) atau panas berlebih. Dilaporkan terutama di Raspberry Pi."
+        },
+        "ntp": {
+          "term": "NTP / sinkronisasi jam",
+          "def": "Network Time Protocol menjaga jam host tetap akurat. Jam yang tidak tersinkron bisa merusak timelapse, log, dan sertifikat TLS."
+        },
+        "locale": {
+          "term": "Lokal",
+          "def": "Pengaturan bahasa dan tata letak keyboard host, dipakai OS untuk teks, tanggal, dan keymap konsol."
+        },
+        "service": {
+          "term": "Layanan (unit)",
+          "def": "Program latar belakang yang dikelola systemd - Klipper, Moonraker, streamer webcam, dan tumpukan jaringan semuanya berjalan sebagai layanan."
+        },
+        "enabled": {
+          "term": "Aktif / nonaktif",
+          "def": "Apakah suatu layanan dijalankan otomatis saat boot. 'enabled' berjalan saat boot; 'disabled' tidak; 'static' hanya dijalankan oleh layanan lain."
+        },
+        "mask": {
+          "term": "Mask",
+          "def": "Bentuk penonaktifan yang lebih kuat - layanan tidak bisa dijalankan sama sekali (bahkan oleh layanan lain) sampai di-unmask. Gunakan dengan hati-hati."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Refresh",
+      "autoRefresh": "Refresh otomatis",
+      "loading": "Membaca status host…",
+      "host": "Host",
+      "hostname": "Hostname",
+      "distro": "OS",
+      "kernel": "Kernel",
+      "uptime": "Waktu aktif",
+      "cpu": "CPU",
+      "temp": "Suhu",
+      "load": "Beban (1·5·15m)",
+      "cores": "Core",
+      "throttled": "Di-throttle",
+      "memory": "Memori",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Disk",
+      "network": "Jaringan",
+      "iface": "Antarmuka",
+      "ip": "Alamat IP",
+      "ssid": "Wi-Fi",
+      "signal": "Sinyal",
+      "timeLocale": "Waktu & Lokal",
+      "timezone": "Zona waktu",
+      "ntp": "Sinkronisasi jam",
+      "synced": "Tersinkron",
+      "syncing": "Menyinkronkan…",
+      "ntpOff": "Mati",
+      "language": "Bahasa",
+      "keymap": "Keymap",
+      "topProcesses": "Proses teratas",
+      "command": "Perintah",
+      "cpuPct": "CPU%",
+      "memPct": "MEM%",
+      "pid": "PID"
+    },
+    "services": {
+      "warning": "Menghentikan atau menonaktifkan layanan yang salah bisa membuat printer offline. Layanan kritis ditandai; yang terlindungi tidak bisa dihentikan.",
+      "search": "Cari layanan…",
+      "refresh": "Refresh",
+      "loading": "Mendaftar layanan…",
+      "loadingDetail": "Membaca layanan…",
+      "loadingLogs": "Membaca log…",
+      "summary": "{total} layanan · {active} aktif · {failed} gagal",
+      "filter": {
+        "all": "Semua",
+        "active": "Aktif",
+        "inactive": "Tidak aktif",
+        "failed": "Gagal",
+        "enabled": "Diaktifkan"
+      },
+      "stateActive": "Aktif",
+      "stateInactive": "Tidak aktif",
+      "stateFailed": "Gagal",
+      "critical": "Kritis",
+      "protected": "Terlindungi",
+      "state": "Status",
+      "startup": "Saat startup",
+      "unitFile": "Berkas unit",
+      "action": {
+        "start": "Jalankan",
+        "stop": "Hentikan",
+        "restart": "Mulai ulang",
+        "enable": "Aktifkan",
+        "disable": "Nonaktifkan",
+        "mask": "Mask",
+        "unmask": "Unmask"
+      },
+      "actionOk": "{action} selesai.",
+      "actionFailed": "{action} gagal.",
+      "deleteFailed": "Tidak bisa menghapus berkas unit.",
+      "confirmAction": "{action} \"{name}\"?",
+      "confirmYes": "Ya, lakukan",
+      "cancel": "Batal",
+      "deleteUnit": "Hapus berkas unit…",
+      "deletePrompt": "Ini menghapus berkas unit secara permanen. Ketik \"{name}\" untuk konfirmasi.",
+      "deleteConfirm": "Hapus permanen",
+      "deleted": "Berkas unit dihapus.",
+      "logs": "Log terbaru",
+      "noLogs": "Tidak ada keluaran log."
+    },
+    "cleanup": {
+      "subtitle": "Centang yang ingin dihapus, lalu bersihkan. Hanya cache dan log lama - pencetakan dan konfigurasi tetap aman.",
+      "rescan": "Pindai ulang",
+      "scanning": "Memindai disk…",
+      "na": "n/a",
+      "items": "{n} berkas",
+      "freed": "Dibebaskan {size}.",
+      "selectedTotal": "Dipilih: {size}",
+      "clean": "Bersihkan yang dipilih",
+      "confirmBody": "Hapus item yang dipilih?",
+      "confirmYes": "Ya, bersihkan",
+      "cancel": "Batal",
+      "running": "Membersihkan…",
+      "someFailed": "Beberapa item tidak bisa dibersihkan.",
+      "targets": {
+        "apt": {
+          "label": "Cache paket",
+          "desc": "Berkas pemasang .deb terunduh yang tidak lagi dibutuhkan apt."
+        },
+        "journal": {
+          "label": "Jurnal sistem",
+          "desc": "Log systemd lama - dikosongkan hingga tersisa 50 MB terbaru."
+        },
+        "cache": {
+          "label": "Cache pengguna",
+          "desc": "Berkas yang bisa dibuat ulang di ~/.cache (thumbnail, pip, dll.)."
+        },
+        "tmp": {
+          "label": "Berkas sementara",
+          "desc": "Berkas Anda sendiri di /tmp yang lebih lama dari sehari."
+        },
+        "logs": {
+          "label": "Log yang dirotasi",
+          "desc": "Log Klipper/Moonraker lama yang dirotasi (log langsung tetap disimpan)."
+        }
+      }
+    },
+    "system": {
+      "loading": "Membaca pengaturan sistem…",
+      "done": "Selesai.",
+      "apply": "Terapkan",
+      "timeTitle": "Waktu & Tanggal",
+      "timezone": "Zona waktu",
+      "ntp": "Atur waktu otomatis (NTP)",
+      "manualTime": "Atur jam secara manual",
+      "manualTimeHint": "Matikan waktu otomatis untuk mengatur jam secara manual.",
+      "localeTitle": "Bahasa & Keyboard",
+      "language": "Bahasa",
+      "keymap": "Keymap konsol",
+      "hostnameTitle": "Hostname",
+      "hostnameHint": "Hanya huruf, angka, dan tanda hubung. Berlaku penuh setelah reboot.",
+      "powerTitle": "Daya",
+      "powerWarning": "Reboot dan matikan ditolak saat pencetakan sedang berjalan.",
+      "reboot": "Reboot",
+      "shutdown": "Matikan",
+      "confirmReboot": "Reboot host sekarang?",
+      "confirmShutdown": "Matikan host sekarang?",
+      "confirmYes": "Ya",
+      "cancel": "Batal",
+      "needsSetup": "Tindakan ini membutuhkan sudo tanpa kata sandi. Di printer, jalankan: sudo bash scripts/install.sh sudoers - lalu coba lagi.",
+      "failed": "Perubahan itu tidak berhasil diterapkan.",
+      "network": {
+        "title": "Jaringan (IPv4)",
+        "unavailable": "Pengeditan jaringan tidak tersedia di host ini (NetworkManager tidak terpasang).",
+        "device": "Perangkat",
+        "method": "Metode IP",
+        "auto": "DHCP (otomatis)",
+        "manual": "Statis (manual)",
+        "address": "Alamat IP",
+        "cidr": "Subnet (CIDR)",
+        "gateway": "Gateway",
+        "dns": "Server DNS",
+        "dnsHint": "Dipisah koma, mis. 1.1.1.1, 8.8.8.8 (opsional)",
+        "warning": "Mengubah IP bisa memutus panel ini - Anda mungkin perlu menghubungkan kembali di alamat baru.",
+        "apply": "Terapkan pengaturan jaringan",
+        "confirmPrompt": "Ini bisa membuat panel tidak terjangkau. Ketik nama perangkat \"{device}\" untuk konfirmasi.",
+        "confirmYes": "Terapkan & alihkan",
+        "applyingReconnect": "Menerapkan… jika panel berhenti merespons, hubungkan kembali di IP baru printer."
+      }
+    }
+  }
+}

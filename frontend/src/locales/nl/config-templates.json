@@ -1,0 +1,69 @@
+{
+  "configTemplates": {
+    "intro": "Kant-en-klare Klipper-configblokken en macro's - startsequenties, filamentbeheer, input shaping, bed mesh en meer. Kopieer er een en plak die in je printer.cfg (de Config Editor is een goede plek om te plakken).",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "Over configsjablonen",
+      "close": "Sluiten",
+      "howToRead": "Hoe te gebruiken",
+      "steps": [
+        "Filter op categorie om een macro of configblok te vinden.",
+        "Lees de beschrijving en welke secties nodig zijn.",
+        "Kopieer het sjabloon, plak het in je config en pas de waarden aan."
+      ],
+      "topics": {
+        "what": {
+          "title": "Wat dit zijn",
+          "body": "Een samengestelde set veelgebruikte Klipper-bouwstenen: gcode_macros (PRINT_START, PAUSE/RESUME, filament laden/lossen, M600) en configsecties ([input_shaper], [bed_mesh], [firmware_retraction], …). Het zijn startpunten - lees ze door en stem ze af op je machine."
+        },
+        "insert": {
+          "title": "Een sjabloon invoegen",
+          "body": "Kopieer een sjabloon en plak het in je printer.cfg - de Raw-weergave van de Config Editor is een handige plek. Na opslaan wordt het toegepast met een firmwareherstart. Controleer altijd eerst de waarden; de standaardwaarden hier zijn zinvol maar niet afgestemd op jouw printer."
+        },
+        "sections": {
+          "title": "Vereiste secties",
+          "body": "Elk sjabloon vermeldt de configsecties die het definieert of nodig heeft. Als een sectie al in je config bestaat, voeg dan de sleutels samen in plaats van een duplicaat te plakken (een dubbele sectie wordt bij het opstarten geweigerd)."
+        },
+        "glossary": {
+          "title": "Woordenlijst",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "template": {
+          "term": "Sjabloon",
+          "def": "Een kant-en-klaar fragment Klipper-config of macro-G-code dat je in printer.cfg kopieert."
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "Een benoemd commando dat je in de config definieert (bijv. PRINT_START) en dat een reeks G-code uitvoert."
+        },
+        "section": {
+          "term": "Sectie",
+          "def": "Een configblok tussen [haken], bijv. [bed_mesh] - de eenheid waarin Klipper-configuratie is gegroepeerd."
+        }
+      }
+    },
+    "category": {
+      "label": "Categorie",
+      "all": "Alle categorieën"
+    },
+    "template": {
+      "copy": "Kopiëren",
+      "copied": "Gekopieerd!",
+      "requires": "Secties: {sections}",
+      "requiresNone": "-"
+    },
+    "count": "{n} sjablonen",
+    "states": {
+      "loading": "Sjablonen laden…",
+      "error": "Kon de sjablonen niet laden.",
+      "empty": "Geen sjablonen in deze categorie.",
+      "retry": "Opnieuw proberen"
+    },
+    "categories": {
+      "config_blocks": "Configblokken",
+      "macros": "Macro's"
+    }
+  }
+}

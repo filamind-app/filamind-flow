@@ -1,0 +1,215 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · panel klipper"
+    },
+    "nav": {
+      "dashboard": "Pulpit",
+      "toggle": "Przełącz nawigację",
+      "label": "Nawigacja główna"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Powrót do Mainsail"
+    },
+    "footer": {
+      "stack": "FilaMind Flow - Stworzone przez egipskich makerów dla makerów na całym świecie. Udanego drukowania",
+      "by": "przez zespół DeltaFabs"
+    },
+    "home": {
+      "body": "Twoje panele znajdują się na pasku bocznym - wybierz jeden, aby zacząć. Ten ekran główny jest na razie celowo pusty.",
+      "title": "Centrum sterowania",
+      "refresh": "Odśwież",
+      "loading": "Ładowanie…",
+      "unreachable": "Backend jest nieosiągalny.",
+      "printer": "Drukarka",
+      "statePrinting": "Drukowanie",
+      "statePaused": "Wstrzymano",
+      "stateError": "Błąd",
+      "stateIdle": "Bezczynna",
+      "printerDown": "Moonraker jest nieosiągalny.",
+      "doctor": "Doktor maszyny",
+      "doctorBody": "Jeden skan tylko do odczytu obejmujący piny, wartości sterowników, rozjazd konfiguracji, synchronizację firmware i więcej - z oceną A-F oraz linkami do szybkich poprawek.",
+      "doctorScan": "Przeskanuj moją drukarkę",
+      "firmware": "Synchronizacja firmware",
+      "host": "Host: {version}",
+      "open": "Otwórz",
+      "noData": "Brak danych w tej chwili.",
+      "tuning": "Strojenie",
+      "noTuning": "Nie zarchiwizowano jeszcze żadnych przebiegów strojenia - uruchom kreatora Input Shaping.",
+      "hardware": "Sprzęt vs punkt odniesienia",
+      "noBaseline": "Nie zapisano jeszcze punktu odniesienia sprzętu - zapisz migawkę w Mapie maszyny, aby wykrywać zmiany.",
+      "hwUnchanged": "Brak zmian sprzętowych od zapisanego punktu odniesienia.",
+      "hwChanged": "{n} zmian sprzętowych od zapisanego punktu odniesienia.",
+      "setup": {
+        "title": "Zacznij ({done}/{total})",
+        "go": "Przejdź",
+        "boards": "Potwierdź swoje płyty w Mapie maszyny",
+        "baseline": "Zapisz punkt odniesienia sprzętu (wykrywa przyszłe zmiany)",
+        "firmware": "Zsynchronizuj firmware każdego MCU z hostem",
+        "motors": "Przypisz swoje silniki w Sterownikach silników",
+        "tuning": "Wystrój input shaping dla X i Y (kreator z asystą)"
+      },
+      "journal": {
+        "title": "Ostatnia aktywność",
+        "empty": "Nic jeszcze nie zarejestrowano - wgrania firmware, zapisy konfiguracji i przebiegi strojenia pojawią się tutaj.",
+        "flash": "Wgrano {board} → {version}",
+        "configSave": "Zapisano {file}",
+        "tuning": "Przebieg strojenia: {kind} ({axis})"
+      },
+      "hostInfo": {
+        "title": "Host",
+        "time": "Czas",
+        "clock": "Synchronizacja zegara",
+        "synced": "Zsynchronizowano",
+        "notSynced": "Niezsynchronizowano",
+        "temp": "Temperatura CPU",
+        "uptime": "Czas działania",
+        "disk": "Dysk"
+      },
+      "printerHost": "Drukarka i host",
+      "maxFlow": {
+        "title": "Maks. przepływ",
+        "expected": "Oczekiwany: {n} mm³/s",
+        "empty": "Brak testu maks. przepływu.",
+        "test": "Testuj maks. przepływ"
+      }
+    },
+    "connection": {
+      "connected": "Połączono",
+      "connecting": "Łączenie",
+      "error": "Błąd",
+      "offline": "Offline",
+      "idle": "Bezczynny"
+    },
+    "language": {
+      "label": "Język",
+      "select": "Wybierz język",
+      "menu": "Wybierz język"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Menedżer firmware",
+        "description": "Wersje firmware MCU, status synchronizacji z hostem i gotowość zestawu narzędzi."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Przeanalizuj plik CSV rezonansu i znajdź najlepszy input shaper."
+      },
+      "motor-drivers": {
+        "title": "Sterowniki silników",
+        "description": "Inwentarz sterowników krokowych TMC na żywo: prąd, tryb, mikrokroki i status."
+      },
+      "config-editor": {
+        "title": "Edytor konfiguracji",
+        "description": "Przeglądaj pliki konfiguracji drukarki, sparsowane na sekcje z walidacją."
+      },
+      "max-flow": {
+        "title": "Maks. przepływ",
+        "description": "Zmierz najwyższy przepływ objętościowy, jaki utrzyma Twój hotend (StallGuard)."
+      },
+      "board-topology": {
+        "title": "Topologia płyt",
+        "description": "Zobacz, jak host i MCU są połączone (USB / CAN / UART) + odgadnięcie płyty."
+      },
+      "macro-designer": {
+        "title": "Projektant makr",
+        "description": "Symuluj G-code offline - ścieżka głowicy, granice, sumy i biblioteka makr."
+      },
+      "hardware-browser": {
+        "title": "Przeglądarka sprzętu",
+        "description": "Przeszukaj wyselekcjonowaną bazę sprzętu do druku 3D wg nazwy, producenta lub specyfikacji."
+      },
+      "config-templates": {
+        "title": "Szablony konfiguracji",
+        "description": "Gotowe do wklejenia bloki konfiguracji Klipper i makra, według kategorii."
+      },
+      "machine-doctor": {
+        "title": "Doktor maszyny",
+        "description": "Pełny skan drukarki jednym kliknięciem z kartą ocen A-F i linkami do szybkich poprawek."
+      },
+      "host-control": {
+        "title": "Sterowanie hostem",
+        "description": "Zarządzaj systemem Linux na hoście drukarki: kondycja, usługi, czyszczenie dysku i ustawienia systemowe."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "Edytuj konfigurację ekranu dotykowego KlipperScreen drukarki i zrestartuj go, aby zastosować zmiany."
+      }
+    },
+    "guard": {
+      "printing": "Drukowanie - zapis zablokowany",
+      "running": "{op} w toku - zapis zablokowany",
+      "op": {
+        "resonance_test": "Test rezonansu",
+        "noise_check": "Kontrola szumu",
+        "belt_comparison": "Porównanie pasków",
+        "axes_map": "Kalibracja mapy osi",
+        "sustain": "Wzbudzenie ciągłe",
+        "vibrations_profile": "Profil wibracji",
+        "max_flow": "Test maks. przepływu",
+        "driver_write": "Zapis do sterownika",
+        "homing": "Bazowanie",
+        "motors_sync": "Synchronizacja silników",
+        "firmware_flash": "Wgrywanie firmware",
+        "firmware_batch": "Wsadowe wgrywanie firmware",
+        "firmware_restart": "Restart firmware"
+      }
+    },
+    "mission": {
+      "body": "FilaMind Flow zbiera najlepsze narzędzia do druku 3D - od pierwszej konfiguracji po mistrzostwo - aby makerzy na każdym poziomie mogli diagnozować, naprawiać i drukować lepiej. Projekt jest aktywnie rozwijany i badany, a nowe praktyczne pomysły są zawsze mile widziane. Wkład jest otwarty dla każdego.",
+      "tagline": "Stworzone przez egipskich makerów dla makerów na całym świecie. Udanego drukowania.",
+      "dismiss": "Zamknij"
+    },
+    "feedback": {
+      "menu": "Opinie",
+      "menuTitle": "Podziel się opinią",
+      "bug": "Zgłoś błąd",
+      "bugDesc": "Coś nie działa",
+      "feature": "Zaproponuj funkcję",
+      "featureDesc": "Zasugeruj ulepszenie",
+      "reportError": "Zgłoś",
+      "reportErrorAria": "Zgłoś ten błąd na GitHubie",
+      "dialog": {
+        "bugTitle": "Zgłoś błąd",
+        "featureTitle": "Zaproponuj funkcję",
+        "introBug": "Opisz, co poszło nie tak. Otworzymy dla Ciebie wstępnie wypełnione zgłoszenie na GitHubie do przejrzenia i wysłania - nic nie jest wysyłane automatycznie.",
+        "introFeature": "Opisz funkcję, której potrzebujesz. Otworzymy dla Ciebie wstępnie wypełnione zgłoszenie na GitHubie do przejrzenia i wysłania.",
+        "descLabel": "Opis",
+        "descPlaceholderBug": "Co zrobiłeś i co zamiast tego się stało?",
+        "descPlaceholderFeature": "Co chciałbyś móc zrobić?",
+        "attach": "Załącz zrzut ekranu",
+        "attachHint": "Obraz bieżącego ekranu pomaga nam zrozumieć problem.",
+        "capturing": "Przechwytywanie zrzutu ekranu…",
+        "screenshotReady": "Podgląd zrzutu ekranu",
+        "noScreenshot": "Nie udało się przechwycić zrzutu ekranu - możesz załączyć go ręcznie.",
+        "includes": "Co dołączymy",
+        "includesNote": "Te szczegóły są dodawane do zgłoszenia, aby pomóc w diagnozie. Przejrzyj je na GitHubie przed wysłaniem.",
+        "languageNote": "Zgłoszenie jest napisane po angielsku, aby opiekunowie projektu mogli na nie zareagować.",
+        "submit": "Otwórz zgłoszenie na GitHubie",
+        "cancel": "Anuluj",
+        "close": "Zamknij"
+      },
+      "field": {
+        "version": "Wersja aplikacji",
+        "view": "Aktywny widok",
+        "locale": "Język",
+        "theme": "Motyw",
+        "screen": "Ekran",
+        "browser": "Przeglądarka",
+        "time": "Czas",
+        "error": "Błąd"
+      },
+      "sent": {
+        "title": "Zgłoszenie otwarte w nowej karcie",
+        "body": "Przejrzyj wstępnie wypełnione szczegóły na GitHubie, a następnie wyślij tam zgłoszenie.",
+        "copied": "Zrzut ekranu skopiowany - wklej go do zgłoszenia za pomocą Ctrl/⌘+V.",
+        "saved": "Zrzut ekranu zapisany w pobranych - przeciągnij go do zgłoszenia.",
+        "failed": "Nie udało się automatycznie załączyć zrzutu ekranu - możesz dodać go na GitHubie."
+      }
+    },
+    "support": {
+      "kofi": "Wesprzyj FilaMind Flow"
+    }
+  }
+}

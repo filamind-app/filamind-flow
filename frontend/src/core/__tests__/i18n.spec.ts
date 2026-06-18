@@ -58,9 +58,29 @@ describe('locale detection & switching', () => {
     }
   })
 
-  it('offers every locale that has a catalog (en + the 6 translations)', () => {
+  it('offers every locale that has a catalog (en + the 18 translations)', () => {
     expect(availableLocales.map((m) => m.code).sort()).toEqual(
-      ['ar', 'de', 'en', 'es', 'fr', 'ru', 'zh-Hans'].sort(),
+      [
+        'ar',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'hi',
+        'id',
+        'it',
+        'ja',
+        'ko',
+        'nl',
+        'pl',
+        'pt-BR',
+        'ru',
+        'tr',
+        'uk',
+        'vi',
+        'zh-Hans',
+        'zh-Hant',
+      ].sort(),
     )
   })
 
@@ -69,6 +89,8 @@ describe('locale detection & switching', () => {
     expect(matchLocale('ar-EG')).toBe('ar')
     expect(matchLocale('fr')).toBe('fr')
     expect(matchLocale('zh')).toBe('zh-Hans') // base zh → Simplified
+    expect(matchLocale('zh-TW')).toBe('zh-Hant') // Traditional region → Hant
+    expect(matchLocale('pt')).toBe('pt-BR') // base pt → Brazilian
     expect(matchLocale('xx-YY')).toBeNull() // unknown stays null
   })
 

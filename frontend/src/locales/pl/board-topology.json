@@ -1,0 +1,268 @@
+{
+  "boardTopology": {
+    "intro": "Zobacz, jak łączą się płyty sterujące Twojej drukarki: host (SBC) i każdy MCU, z którym się komunikuje, wraz z typem każdego połączenia oraz najlepszym przybliżeniem płyty / układu - odczytane na żywo z konfiguracji.",
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "O topologii płyt",
+      "close": "Zamknij",
+      "howToRead": "Jak czytać",
+      "steps": [
+        "Host (Twój SBC, np. Raspberry Pi lub CB1) znajduje się na górze.",
+        "Każda karta MCU pokazuje sposób połączenia (USB / magistrala CAN / UART) oraz jego układ.",
+        "Przybliżenie płyty pojawia się, gdy identyfikator połączenia pasuje do znanej płyty."
+      ],
+      "topics": {
+        "views": {
+          "title": "Widok fizyczny vs logiczny",
+          "body": "Mapa rysuje te same płyty na dwa sposoby. FIZYCZNY pokazuje, jak maszyna jest faktycznie zbudowana: zintegrowany SBC rysowany jest wewnątrz płyty głównej, na której jest dostarczany, głowice CAN wiszą na wspólnej szynie magistrali, a płyty USB/UART to oddzielne moduły. LOGICZNY pokazuje, jak widzi to Klipper: host na górze, a każdy MCU jako element podrzędny osiągalny przez swoje łącze szeregowe. Przełączaj przełącznikiem Fizyczny/Logiczny."
+        },
+        "mcus": {
+          "title": "MCU",
+          "body": "MCU to płyta z mikrokontrolerem, która steruje silnikami, grzałkami i czujnikami. Drukarka ma co najmniej jeden (płytę główną); wiele dodaje płytę głowicy, a czasem płytę sondy lub LED. Ten panel wymienia każdą sekcję `[mcu]`, którą zna Klipper."
+        },
+        "connections": {
+          "title": "Typy połączeń",
+          "body": "USB - łącze szeregowe przez USB (typowe połączenie płyty głównej). Magistrala CAN - wspólna dwuprzewodowa magistrala, częsta dla płyt głowic. UART - bezpośrednie łącze szeregowe przez GPIO. Typ jest wnioskowany z ustawienia `serial` / `canbus_uuid` każdego MCU."
+        },
+        "detection": {
+          "title": "Jak działa wykrywanie",
+          "body": "Układ i płyta są przybliżane poprzez dopasowanie identyfikatora połączenia (ścieżki szeregowej lub CAN UUID) do tabeli wzorców oraz odcisku mapy pinów, których używa Twoja konfiguracja. Przybliżenie płyty pokazuje pewność dopasowania; gdy nic nie pasuje, układ/płyta są oznaczone jako \"nieznane\" - samo połączenie jest nadal pokazywane."
+        },
+        "override": {
+          "title": "Potwierdź lub zmień płytę",
+          "body": "Identyfikator szeregowy zwykle ujawnia tylko układ, więc przybliżenie płyty może być brakujące lub błędne. Użyj \"Potwierdź tę płytę\", aby zatwierdzić poprawne przybliżenie, lub \"Zmień płytę…\" / \"Ustaw płytę…\", aby wybrać właściwą z katalogu. Twój wybór jest zapisywany na hoście i używany przy każdym odczycie; \"Wyczyść\" przywraca automatyczne przybliżenie."
+        },
+        "glossary": {
+          "title": "Słowniczek",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Jednostka mikrokontrolera - płyta sterująca z firmware Klipper (płyta główna, głowica itp.)."
+        },
+        "canbus": {
+          "term": "Magistrala CAN",
+          "def": "Dwuprzewodowa wspólna magistrala łącząca płyty przez unikalny UUID - popularna w okablowaniu głowic."
+        },
+        "host": {
+          "term": "Host / SBC",
+          "def": "Komputer jednopłytkowy (Pi, CB1, …), który uruchamia Klipper i komunikuje się z MCU."
+        }
+      }
+    },
+    "host": {
+      "label": "Host",
+      "role": "Komputer jednopłytkowy - uruchamia Klipper"
+    },
+    "mcu": {
+      "chip": "Układ",
+      "board": "Płyta",
+      "unknown": "nieznany",
+      "identifier": "Identyfikator",
+      "confidence": "{pct}% dopasowania",
+      "viewBoard": "Pokaż szczegóły płyty",
+      "hideBoard": "Ukryj szczegóły"
+    },
+    "graph": {
+      "viewLabel": "Widok diagramu",
+      "view": {
+        "physical": "Fizyczny",
+        "logical": "Logiczny"
+      },
+      "integrated": "SBC na płycie",
+      "integratedNote": "Host SBC jest wbudowany w płytę główną {board}.",
+      "selectPrompt": "Wybierz płytę lub MCU na mapie, aby ją sprawdzić.",
+      "aria": "Mapa maszyny: host i {n} MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} retransmisji",
+        "load": "{pct}% obciążenia"
+      },
+      "health": {
+        "title": "Stan łącza",
+        "ok": "sprawne",
+        "warn": "osłabione",
+        "out": "firmware niezsynchronizowany"
+      }
+    },
+    "conn": {
+      "canbus": "Magistrala CAN",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "nieznane",
+      "via": "przez {type}"
+    },
+    "count": "{n} MCU",
+    "states": {
+      "loading": "Odczytywanie topologii…",
+      "unreachable": "Nie można połączyć się z drukarką.",
+      "empty": "Nie znaleziono MCU w konfiguracji.",
+      "retry": "Ponów",
+      "refresh": "Odśwież"
+    },
+    "board": {
+      "suggested": "sugerowane",
+      "ports": "{n} portów",
+      "specsTitle": "Specyfikacja",
+      "portsTitle": "Porty",
+      "none": "Brak szczegółów katalogowych dla tej płyty.",
+      "noMatch": "Nie dopasowano jeszcze płyty - potwierdź lub ustaw ją poniżej.",
+      "loading": "Ładowanie płyty…",
+      "links": {
+        "title": "Linki",
+        "product": "Produkt",
+        "repo": "Repozytorium",
+        "wiki": "Wiki",
+        "pinout": "Rozkład pinów",
+        "schematic": "Schemat",
+        "datasheet": "Karta katalogowa",
+        "image": "Zdjęcie"
+      },
+      "portCat": {
+        "motor": "silnik",
+        "heater_hotend": "grzałka hotendu",
+        "heater_bed": "grzałka stołu",
+        "accelerometer": "akcelerometr",
+        "filament_sensor": "czujnik filamentu",
+        "fan": "wentylator",
+        "probe": "sonda",
+        "other": "inne",
+        "power": "zasilanie",
+        "thermistor": "termistor",
+        "usb": "USB",
+        "can": "CAN",
+        "swd": "SWD",
+        "display": "wyświetlacz",
+        "rgb": "RGB",
+        "network": "sieć",
+        "endstop": "krańcówka",
+        "wifi": "Wi-Fi",
+        "spi": "SPI",
+        "uart": "UART"
+      },
+      "spec": {
+        "mcu": "MCU",
+        "arch": "Architektura",
+        "flash_method": "Metoda wgrywania",
+        "voltage": "Napięcie",
+        "driver_slots": "Sloty sterowników",
+        "usb": "USB",
+        "onboard_drivers": "Sterowniki wbudowane",
+        "clock": "Zegar",
+        "can": "CAN",
+        "drivers": "Sterowniki",
+        "dimensions_mm": "Wymiary (mm)",
+        "role_era": "Rola / epoka",
+        "kinematics": "Kinematyka",
+        "build_volume_mm": "Przestrzeń robocza (mm)",
+        "bed": "Stół",
+        "hotend": "Hotend",
+        "stock_extruder": "Ekstruder fabryczny",
+        "year": "Rok",
+        "control_board": "Płyta sterująca",
+        "stock_drivers": "Sterowniki fabryczne",
+        "uart": "UART",
+        "connectivity": "Łączność",
+        "max_hotend_temp": "Maks. temp. hotendu",
+        "max_bed_temp": "Maks. temp. stołu",
+        "spi": "SPI",
+        "notes": "Uwagi",
+        "eth_wifi": "Eth/WiFi",
+        "class": "Klasa",
+        "supported_drivers": "Obsługiwane sterowniki",
+        "form_factor": "Format",
+        "flash": "Flash",
+        "all_metal_accel": "Pełnometalowy / akcel.",
+        "ethernet_wifi": "Ethernet/WiFi",
+        "i2c": "I2C",
+        "driver": "Sterownik",
+        "i2cspi": "I2C/SPI",
+        "printer_board": "Drukarka / płyta",
+        "accelerometer": "Akcelerometr",
+        "printers": "Drukarki",
+        "bootloader": "Bootloader",
+        "flash_offset": "Przesunięcie flash",
+        "soc": "SoC",
+        "ram": "RAM",
+        "role": "Rola",
+        "connection": "Połączenie",
+        "storage": "Pamięć masowa",
+        "host": "Host"
+      },
+      "class": {
+        "mainboard": "płyta główna",
+        "printer_preset": "preset drukarki",
+        "toolhead": "głowica",
+        "host": "host",
+        "expansion": "rozszerzenie"
+      }
+    },
+    "components": {
+      "title": "Komponenty",
+      "motor": "Silniki",
+      "driver": "Sterowniki",
+      "heater": "Grzałki",
+      "fan": "Wentylatory",
+      "sensor": "Czujniki"
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "Szczegóły",
+        "atlas": "Atlas pinów"
+      },
+      "summary": "{used}/{total} pinów użytych · {free} wolnych",
+      "loading": "Odczytywanie mapy pinów…",
+      "failed": "Nie można odczytać mapy pinów.",
+      "unavailable": "Brak mapy pinów dla tej płyty.",
+      "search": "Szukaj pinów, sygnałów, sekcji…",
+      "freeOnly": "Tylko wolne",
+      "noMatch": "Brak pasujących pinów.",
+      "other": "Inne",
+      "conflict": "Konflikt pinów",
+      "caveat": "Uwaga dot. okablowania"
+    },
+    "override": {
+      "confirmed": "Potwierdzone przez Ciebie",
+      "confirm": "Potwierdź tę płytę",
+      "change": "Zmień płytę…",
+      "set": "Ustaw płytę…",
+      "clear": "Wyczyść",
+      "pickPlaceholder": "Przeszukaj katalog płyt…",
+      "hint": "Twój wybór jest zapisywany na hoście i od teraz używany dla tego MCU."
+    },
+    "sync": {
+      "synced": "Firmware zsynchronizowany",
+      "outOfSync": "Firmware NIEZSYNCHRONIZOWANY"
+    },
+    "snapshot": {
+      "save": "Zapisz migawkę",
+      "copy": "Kopiuj podsumowanie",
+      "copied": "Skopiowano!",
+      "none": "Brak zapisanej linii bazowej - zapisz migawkę, aby wykrywać przyszłe zmiany.",
+      "unchanged": "Brak zmian sprzętowych od czasu migawki",
+      "changed": "{n} zmian(y) od czasu migawki",
+      "summaryTitle": "FilaMind - mapa maszyny",
+      "change": {
+        "added": "Dodano MCU „{mcu}”",
+        "removed": "Usunięto MCU „{mcu}”",
+        "board_changed": "Płyta „{mcu}” zmieniona: {before} → {after}",
+        "connection_changed": "Połączenie „{mcu}” zmienione: {before} → {after}",
+        "chip_changed": "Układ „{mcu}” zmieniony: {before} → {after}",
+        "components_changed": "Liczba komponentów „{mcu}” zmieniona: {before} → {after}"
+      },
+      "noCompare": "Nie można porównać - drukarka jest nieosiągalna.",
+      "summaryHost": "Host: {name}",
+      "summaryIntegrated": "SBC zintegrowany z {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "płyta {board}",
+      "summaryComponents": "{n} komponentów"
+    },
+    "jump": {
+      "section": "Otwórz tę sekcję w Edytorze konfiguracji",
+      "drivers": "Otwórz w Sterownikach silników",
+      "firmware": "Otwórz Menedżera firmware"
+    }
+  }
+}

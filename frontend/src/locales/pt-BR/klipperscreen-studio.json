@@ -1,0 +1,197 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Edite a configuração da tela de toque KlipperScreen da sua impressora com segurança e reinicie o KlipperScreen para aplicar. Todo salvamento é feito com backup primeiro.",
+    "help": {
+      "guide": "Ajuda",
+      "guideTitle": "Sobre o KlipperScreen Studio",
+      "close": "Fechar",
+      "howToRead": "Como ler",
+      "steps": [
+        "Edite o texto de configuração abaixo (ou deixe como está).",
+        "Salvar - o arquivo atual recebe backup primeiro, e o salvamento é recusado enquanto a impressora está ocupada.",
+        "Reinicie o KlipperScreen para aplicar a alteração na tela física.",
+        "As linhas usam terminações UNIX (LF), aplicadas automaticamente ao salvar."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Glossário",
+          "body": "Definições rápidas dos termos do KlipperScreen usados aqui."
+        },
+        "config": {
+          "title": "O que é a aba Config?",
+          "body": "O KlipperScreen.conf bruto. Edite qualquer ajuste à mão; o salvamento faz backup do arquivo primeiro, é recusado enquanto a impressora está ocupada e avisa se o arquivo mudou na tela desde que você o carregou. A maioria das pessoas usa as abas Ajustes / Menus / Temas em vez disso."
+        },
+        "settings": {
+          "title": "O que é a aba Ajustes?",
+          "body": "As opções [main] mais usadas em forma de formulário - tema, idioma, suspensão da tela, tamanho da fonte e alternâncias. Pré-preenchidas a partir da configuração ativa; só as opções que você muda são gravadas. Reinicie para aplicar."
+        },
+        "menus": {
+          "title": "O que é a aba Menus?",
+          "body": "Projete as grades de botões da tela de toque. Cada árvore (__main é a grade inicial, __print a tela de impressão) lista seus botões; adicione, renomeie, reordene e aninhe-os, e defina cada um para abrir um submenu, abrir uma tela embutida ou executar G-code."
+        },
+        "themes": {
+          "title": "O que é a aba Temas?",
+          "body": "Crie um tema do KlipperScreen: escolha uma cor por token da paleta e um raio de canto, veja a prévia ao vivo e então crie e aplique-o à tela. A prévia é aproximada - a tela real renderiza em GTK."
+        },
+        "kiosk": {
+          "title": "O que é a aba Quiosque?",
+          "body": "Coloque o próprio FilaMind Flow na tela de toque como um navegador em tela cheia - controle total do que a tela mostra. É uma troca reversível com o KlipperScreen (temporária por padrão; uma reinicialização restaura o KlipperScreen). Precisa do instalador único no host da impressora."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "A interface de tela de toque que roda em um pequeno display acoplado à impressora - separada deste painel web."
+        },
+        "theme": {
+          "term": "Tema",
+          "def": "A aparência do KlipperScreen - cores, ícones e raio de canto. Fica em uma pasta styles/<name> no host; apenas estético (não pode mudar o layout)."
+        },
+        "menu": {
+          "term": "Menu (__main / __print)",
+          "def": "As grades de botões que o KlipperScreen mostra. __main é a tela inicial, __print a tela exibida durante a impressão, __splashscreen a tela de inicialização."
+        },
+        "panel": {
+          "term": "Painel",
+          "def": "Uma tela embutida do KlipperScreen que um botão pode abrir (mover, temperatura, extrusão, malha da mesa, …). Seu conteúdo interno é fixo pelo KlipperScreen."
+        },
+        "autoBlock": {
+          "term": "Bloco gerado automaticamente (#~#)",
+          "def": "A seção que o KlipperScreen escreve para si mesmo no fim do conf, após o marcador #~#. O FilaMind nunca a edita - apenas seus ajustes acima dela."
+        },
+        "kiosk": {
+          "term": "Quiosque",
+          "def": "Rodar um navegador em tela cheia na tela de toque em vez do KlipperScreen, para que a tela mostre o FilaMind Flow. Totalmente reversível."
+        }
+      }
+    },
+    "status": {
+      "checking": "Verificando o KlipperScreen…",
+      "absent": "O KlipperScreen não foi detectado nesta impressora (sem KlipperScreen.conf, e não reportado pelo Moonraker). Instale o KlipperScreen para usar esta ferramenta.",
+      "present": "KlipperScreen detectado",
+      "theme": "Tema",
+      "language": "Idioma",
+      "notRestartable": "O Moonraker não pode reiniciar o KlipperScreen automaticamente - reinicie-o manualmente após salvar."
+    },
+    "editor": {
+      "loading": "Lendo o KlipperScreen.conf…",
+      "reload": "Recarregar",
+      "save": "Salvar config",
+      "saving": "Salvando…",
+      "saved": "Salvo (com backup)",
+      "unsaved": "Alterações não salvas"
+    },
+    "save": {
+      "busy": "Recusado enquanto a impressora está ocupada - tente novamente quando estiver ociosa.",
+      "stale": "O KlipperScreen.conf mudou no disco desde que foi carregado (provavelmente editado na tela). Recarregue antes de salvar para não sobrescrever essa alteração."
+    },
+    "view": {
+      "config": "Config",
+      "settings": "Ajustes",
+      "menus": "Menus",
+      "themes": "Temas",
+      "kiosk": "Quiosque"
+    },
+    "settings": {
+      "loading": "Carregando ajustes…",
+      "intro": "As opções de exibição mais usadas do KlipperScreen em forma de formulário. Só as opções que você muda são gravadas - tudo o mais mantém seu valor atual. Reinicie para aplicar.",
+      "onlyChanged": "Só os ajustes que você muda aqui são gravados no KlipperScreen.conf.",
+      "save": "Salvar ajustes",
+      "savedRestart": "Salvo - reinicie o KlipperScreen para aplicar.",
+      "unset": "Deixar sem definir (padrão)",
+      "never": "Nunca (sempre ligado)",
+      "fontSize": {
+        "small": "Pequeno",
+        "medium": "Médio",
+        "large": "Grande",
+        "max": "Máximo"
+      },
+      "label": {
+        "theme": "Tema",
+        "language": "Idioma",
+        "screen_blanking": "Suspender a tela após",
+        "font_size": "Tamanho da fonte",
+        "24htime": "Relógio de 24 horas",
+        "use_dpms": "Usar DPMS para apagar a tela",
+        "show_cursor": "Mostrar o cursor do mouse",
+        "confirm_estop": "Confirmar antes da parada de emergência",
+        "show_heater_power": "Mostrar % de potência do aquecedor",
+        "autoclose_popups": "Fechar pop-ups automaticamente"
+      }
+    },
+    "kiosk": {
+      "loading": "Verificando a tela…",
+      "intro": "Coloque o próprio FilaMind Flow na tela de toque como um navegador em tela cheia - controle total do que a tela mostra. Ele troca com o KlipperScreen: iniciar um para o outro.",
+      "current": "Tela agora",
+      "mode": {
+        "kiosk": "Quiosque FilaMind",
+        "klipperscreen": "KlipperScreen",
+        "none": "Nenhum em execução"
+      },
+      "notInstalled": "Quiosque ainda não instalado",
+      "setupHint": "Execute isto uma vez no host da impressora (instala um navegador em tela cheia + o serviço de quiosque):",
+      "persist": "Tornar o padrão na inicialização (caso contrário a troca é temporária - uma reinicialização restaura o outro).",
+      "safety": "Temporário por padrão: uma reinicialização traz o outro de volta. Se a tela ficar escura, via SSH execute: sudo systemctl start KlipperScreen",
+      "switchBtn": "Mudar para o FilaMind",
+      "restoreBtn": "Restaurar o KlipperScreen",
+      "refresh": "Atualizar",
+      "confirmSwitchTitle": "Colocar o FilaMind na tela?",
+      "confirmRestoreTitle": "Restaurar o KlipperScreen?",
+      "confirmBody": "Isto para um serviço de tela e inicia o outro. Não afeta uma impressão ativa, mas a tela de toque fica preta por alguns segundos durante a troca.",
+      "confirm": "Fazer",
+      "cancel": "Cancelar",
+      "switchedNote": "O FilaMind está assumindo a tela - deve aparecer em alguns segundos.",
+      "restoredNote": "O KlipperScreen está voltando - a tela deve retornar em breve."
+    },
+    "menus": {
+      "loading": "Carregando menus…",
+      "intro": "Projete o que a tela de toque mostra: os botões de cada menu, sua ordem e o que cada um faz. A grade da tela inicial é a árvore __main; a tela de impressão é __print.",
+      "addItem": "Adicionar botão",
+      "empty": "Nenhum item ainda - adicione um.",
+      "up": "Mover para cima",
+      "down": "Mover para baixo",
+      "addChild": "Adicionar subitem",
+      "delete": "Excluir",
+      "name": "Nome",
+      "icon": "Ícone",
+      "action": "Ação",
+      "actSubmenu": "Abrir um submenu",
+      "actPanel": "Abrir uma tela",
+      "actGcode": "Executar G-code",
+      "panel": "Tela",
+      "gcode": "G-code",
+      "enable": "Mostrar se",
+      "save": "Salvar menus",
+      "newItem": "Novo botão",
+      "savedRestart": "Menus salvos - reinicie o KlipperScreen para vê-los."
+    },
+    "themes": {
+      "loading": "Carregando temas…",
+      "palette": "Paleta",
+      "radius": "Raio de canto",
+      "preview": "Prévia ao vivo",
+      "btn": "Botão",
+      "previewWarn": "aviso",
+      "previewApprox": "Prévia aproximada - a tela real renderiza com GTK; pequenas diferenças são esperadas.",
+      "namePlaceholder": "Nome do novo tema",
+      "createApply": "Criar e aplicar",
+      "createOnly": "Apenas criar",
+      "installed": "Temas instalados",
+      "apply": "Aplicar",
+      "delete": "Excluir tema",
+      "generated": "Feito aqui",
+      "created": "Tema criado. Aplique-o pela lista e então reinicie.",
+      "appliedRestart": "Tema definido - reinicie o KlipperScreen para vê-lo.",
+      "previewTitle": "Impressora"
+    },
+    "restart": {
+      "button": "Reiniciar o KlipperScreen",
+      "restarting": "Reiniciando…",
+      "done": "O KlipperScreen está reiniciando - a tela vai recarregar em breve.",
+      "confirmTitle": "Reiniciar o KlipperScreen?",
+      "confirmBody": "Isto reinicia o serviço da tela de toque para aplicar suas alterações. Não afeta uma impressão ativa, mas a tela fica em branco por alguns segundos.",
+      "confirm": "Reiniciar",
+      "cancel": "Cancelar"
+    }
+  }
+}

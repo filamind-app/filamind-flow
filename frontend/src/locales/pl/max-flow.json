@@ -1,0 +1,168 @@
+{
+  "maxFlow": {
+    "intro": "Znajdź najwyższy przepływ objętościowy (mm³/s), jaki Twój hotend utrzyma - zwiększając przepływ i obserwując odczyt obciążenia StallGuard ekstrudera w poszukiwaniu momentu poślizgu koła. Najpierw podejrzyj plan; test na żywo nagrzewa i wytłacza, więc przygotuj drukarkę przed uruchomieniem.",
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "O Max-Flow",
+      "close": "Zamknij",
+      "howToRead": "Jak używać",
+      "steps": [
+        "Ustaw temperaturę testu i średnicę filamentu (wybierz hotend, by uzupełnić pola).",
+        "Podejrzyj plan - pokazuje każdy krok przepływu i ile filamentu wytłacza.",
+        "Odhacz listę kontrolną bezpieczeństwa, a następnie uruchom test na żywo (nagrzewa + wytłacza).",
+        "Odczytaj maksymalny utrzymywany przepływ i skopiuj sugerowaną wartość do slicera."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Jak działa test",
+          "body": "Ekstruder wytłacza filament ze stale rosnącym przepływem objętościowym. Dopóki radełkowane koło chwyta czysto, odczyt obciążenia StallGuard pozostaje stabilny; gdy zaczyna się poślizg, odczyty zaczynają skakać. Najwyższy przepływ osiągnięty przed tym skokiem to Twój utrzymywany maksymalny przepływ. Narastanie zatrzymuje się natychmiast po wykryciu poślizgu, więc żaden filament nie jest mielony po pierwszym poślizgu."
+        },
+        "stallguard": {
+          "title": "Wykrywanie poślizgu StallGuard",
+          "body": "StallGuard to funkcja sterownika TMC raportująca obciążenie silnika. Ten test próbkuje je wielokrotnie na każdym kroku przepływu i szuka nagłego wzrostu rozrzutu (IQR) lub zmienności (CV) - sygnatury utraty chwytu przez koło. Progi pochodzą z profilu dla danego sterownika. Uwaga: na ekstruderze z TMC2209 wykorzystywana jest eksperymentalna ścieżka SG4, więc potraktuj pierwsze uruchomienie jako kalibrację."
+        },
+        "safety": {
+          "title": "Bezpieczeństwo",
+          "body": "To gorący, ruchomy test, który celowo doprowadza do poślizgu ekstrudera. Załaduj filament, upewnij się, że dysza jest swobodna (nad stołem lub strefą odpadową) i pozostań w pobliżu. Uruchomienie jest odrzucane podczas drukowania, a grzałka jest zawsze wyłączana po zakończeniu."
+        },
+        "slicer": {
+          "title": "Wykorzystanie wyniku",
+          "body": "Wpisz sugerowaną wartość do \"maksymalnej prędkości objętościowej\" w slicerze (dla danego filamentu). Wartość zachowawcza (80% zmierzonego maksimum) to bezpieczny limit na co dzień; wartość zrównoważona (90%) wyciska nieco więcej. Wyższe temperatury hotendu zwykle zwiększają osiągalny przepływ."
+        },
+        "glossary": {
+          "title": "Słowniczek",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Przepływ objętościowy",
+          "def": "Ile plastiku hotend topi na sekundę (mm³/s) - rzeczywisty limit prędkości szybkiego druku."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Sygnał sterownika TMC raportujący mechaniczne obciążenie silnika, tu używany do wykrywania poślizgu ekstrudera."
+        },
+        "slip": {
+          "term": "Poślizg",
+          "def": "Gdy koło ekstrudera nie nadąża z chwytem filamentu i przeskakuje - sufit przepływu."
+        },
+        "meltzone": {
+          "term": "Strefa topienia",
+          "def": "Grzana długość hotendu; dłuższa strefa topienia (np. Volcano) utrzymuje wyższy przepływ."
+        }
+      }
+    },
+    "params": {
+      "title": "Parametry testu",
+      "temperature": "Temperatura (°C)",
+      "filamentDiameter": "Ø filamentu (mm)",
+      "hotend": "Hotend (opcjonalnie)",
+      "hotendNone": "- brak -",
+      "hotendHint": "Oczekiwane ~{flow} mm³/s",
+      "startFlow": "Przepływ początkowy (mm³/s)",
+      "endFlow": "Przepływ końcowy (mm³/s)",
+      "stepFlow": "Krok (mm³/s)",
+      "samples": "Próbki / krok",
+      "extrudePerStep": "Wytłaczanie / krok (mm)",
+      "driver": "Sterownik ekstrudera",
+      "driverDetected": "wykryty z drukarki",
+      "autoStealthchop": "Automatycznie włącz StealthChop na czas testu",
+      "autoStealthchopHint": "Tylko TMC2209/2240: tymczasowo zapisuje stealthchop_threshold do ekstrudera, aby StallGuard mógł odczytywać, po teście zakomentowuje to z powrotem. Przywraca printer.cfg; restart firmware w obie strony.",
+      "method": "Metoda wykrywania",
+      "methodHint": "Auto używa StallGuard, wracając do akcelerometru głowicy (wibracje), gdy StallGuard nie może odczytywać. Metoda akcelerometru jest eksperymentalna."
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Akcelerometr"
+    },
+    "plan": {
+      "button": "Podejrzyj plan",
+      "title": "Zaplanowane narastanie",
+      "stepCount": "{count} kroków",
+      "totalExtrude": "{mm} mm filamentu",
+      "sgField": "Pole StallGuard: {field}",
+      "sgFieldUnknown": "Brak znanego pola StallGuard dla tego sterownika",
+      "flowHead": "Przepływ (mm³/s)",
+      "feedrateHead": "Posuw (mm/min)",
+      "warning": "Test na żywo nagrzewa hotend i wytłacza filament, celowo aż do poślizgu. To tylko podgląd - nic jeszcze nie jest uruchamiane."
+    },
+    "safety": {
+      "title": "Przed uruchomieniem - lista kontrolna bezpieczeństwa",
+      "items": [
+        "Filament jest załadowany i swobodnie się podaje.",
+        "Dysza jest swobodna - nad stołem lub pojemnikiem na odpady, nie w powietrzu nad częściami.",
+        "Akceptuję, że celowo zmieli/prześlizgnie się trochę filamentu.",
+        "Pozostanę przy drukarce przez cały test."
+      ],
+      "ack": "Wykonałem wszystkie powyższe punkty i drukarka jest gotowa",
+      "note": "Uruchomienie jest odrzucane podczas drukowania; grzałka jest automatycznie wyłączana na końcu."
+    },
+    "run": {
+      "button": "Uruchom test na żywo",
+      "running": "Trwa… (nagrzewanie + wytłaczanie)",
+      "confirmTitle": "Uruchomić test max-flow na żywo?",
+      "confirmBody": "To nagrzewa hotend do {temp} °C i wytłacza do {mm} mm filamentu, zwiększając przepływ aż do poślizgu ekstrudera.",
+      "confirm": "Uruchom teraz",
+      "cancel": "Anuluj",
+      "busy": "Odrzucono: drukarka jest zajęta (drukuje lub wstrzymana). Spróbuj ponownie, gdy będzie bezczynna.",
+      "error": "Test nie powiódł się.",
+      "noSg": "Nie odczytano żadnych próbek StallGuard - wynik poślizgu może być niewiarygodny. Pole SG sterownika na żywo prawdopodobnie wymaga dostosowania dla tego modelu.",
+      "progress": "Krok {step}/{total} - {flow} mm³/s",
+      "starting": "Nagrzewanie / uruchamianie…",
+      "abort": "Przerwij uruchomienie",
+      "cancelling": "Przerywanie…",
+      "cancelled": "Uruchomienie przerwane - grzałka została wyłączona.",
+      "reattached": "Ponownie podłączono: ten wynik zakończył się, gdy strona była nieaktywna.",
+      "failed": "Uruchomienie max-flow nie powiodło się.",
+      "abortNote": "Przerwanie zawsze wyłącza grzałkę.",
+      "parkNote": "Przed nagrzewaniem drukarka bazuje (jeśli trzeba) i centruje dyszę dla czystego widoku.",
+      "phase": {
+        "enabling": "Włączanie StealthChop…",
+        "homing": "Bazowanie drukarki…",
+        "centering": "Centrowanie dyszy…",
+        "heating": "Nagrzewanie hotendu…",
+        "checking": "Sprawdzanie sygnału StallGuard…",
+        "ramp": "Zwiększanie przepływu…",
+        "reverting": "Przywracanie konfiguracji…"
+      },
+      "step": {
+        "home": "Bazuj",
+        "center": "Centruj",
+        "heat": "Nagrzej",
+        "check": "Sprawdź",
+        "ramp": "Narastaj"
+      }
+    },
+    "camera": {
+      "title": "Kamera na żywo",
+      "live": "NA ŻYWO",
+      "error": "Kamera niedostępna.",
+      "willShow": "Widok kamery na żywo pokaże dyszę podczas testu.",
+      "minimize": "Minimalizuj",
+      "maximize": "Maksymalizuj",
+      "enlarge": "Powiększ",
+      "shrink": "Zmniejsz"
+    },
+    "result": {
+      "title": "Wynik",
+      "maxFlow": "Maksymalny utrzymywany przepływ",
+      "slipAt": "Poślizg wykryty przy {flow} mm³/s",
+      "noSlip": "Brak poślizgu aż do najwyższego testowanego przepływu",
+      "reason": "Szczegóły",
+      "recommendTitle": "Sugerowane wartości do slicera (maks. prędkość objętościowa)",
+      "conservative": "Zachowawczo (80%)",
+      "balanced": "Zrównoważona (90%)",
+      "units": "mm³/s",
+      "fromBefore": "Zmierzone wcześniej ({at}) - uruchom ponownie po świeże wartości.",
+      "unreliableTitle": "Niewiarygodne - brak sygnału StallGuard",
+      "unmeasured": "osiągnięte, niepotwierdzone",
+      "via": "Zmierzone metodą {method}",
+      "accelExperimental": "Zmierzone przez wibracje (akcelerometr) - eksperymentalne; traktuj wartość jako wskazówkę, a nie dokładny sufit."
+    },
+    "states": {
+      "loadingHotends": "Ładowanie hotendów…"
+    }
+  }
+}

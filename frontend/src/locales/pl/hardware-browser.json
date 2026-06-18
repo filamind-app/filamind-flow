@@ -1,0 +1,289 @@
+{
+  "hardwareBrowser": {
+    "intro": "Przeszukuj wyselekcjonowaną bazę podzespołów do druku 3D - silniki krokowe, sterowniki, płyty, czujniki, hotendy, wentylatory, hosty, dysze, ekstrudery, filamenty i więcej - według nazwy, producenta, kategorii lub dowolnego parametru.",
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "O przeglądarce sprzętu",
+      "close": "Zamknij",
+      "howToRead": "Jak używać",
+      "steps": [
+        "Wpisz w polu wyszukiwania, aby dopasować nazwę, producenta lub dowolną wartość parametru.",
+        "Zawęź wyniki według kategorii lub producenta za pomocą filtrów.",
+        "Każda karta wyniku pokazuje parametry podzespołu; przechodź między stronami przyciskami Wstecz / Dalej."
+      ],
+      "topics": {
+        "search": {
+          "title": "Wyszukiwanie",
+          "body": "Wyszukiwarka dopasowuje wszędzie - producenta, nazwę modelu, kategorię, podsekcję lub dowolną wartość parametru. Połącz ją z filtrami kategorii i producenta, aby zawęzić wyniki. Wyniki są stronicowane; łączna liczba odzwierciedla wszystko, co pasuje, nie tylko bieżącą stronę."
+        },
+        "categories": {
+          "title": "Kategorie",
+          "body": "Podzespoły są pogrupowane w kategorie (silniki krokowe, sterowniki, płyty, czujniki, hotendy, wentylatory/zasilanie, hosty, mechanika, dysze, ekstrudery, filamenty, elektronika, kamery/wyświetlacze). Wybierz jedną, aby przeglądać tylko ten typ."
+        },
+        "manufacturers": {
+          "title": "Producenci i parametry",
+          "body": "To wyselekcjonowana baza do porównań, a nie sklep - wartości pochodzą z kart katalogowych producentów i danych społeczności i mogą nie nadążać za najnowszymi produktami. Zawsze sprawdzaj u producenta przed zakupem lub konfiguracją."
+        },
+        "relationships": {
+          "title": "Powiązany sprzęt",
+          "body": "Każda płyta, sterownik, silnik i host są powiązane z producentem, a każda płyta łączy się też ze swoim MCU oraz sterownikami, które obsługuje. Otwórz dowolny element i użyj chipów odnośników na dole, aby przejść bezpośrednio do powiązanej części. Karty Producenci i MCU pozwalają zacząć od marki lub chipu i zobaczyć wszystko, co go używa."
+        },
+        "glossary": {
+          "title": "Słowniczek",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "category": {
+          "term": "Kategoria",
+          "def": "Typ sprzętu, do którego należy podzespół (np. Hotendy, Silniki krokowe, Czujniki)."
+        },
+        "manufacturer": {
+          "term": "Producent",
+          "def": "Firma, która wytwarza część (np. E3D, BIGTREETECH, LDO Motors)."
+        },
+        "spec": {
+          "term": "Parametr",
+          "def": "Atrybut podzespołu z karty katalogowej - prąd, napięcie, maks. temperatura, wymiary i tak dalej."
+        },
+        "links": {
+          "term": "Powiązany sprzęt",
+          "def": "Odnośniki między częściami - producent płyty, jej MCU oraz obsługiwane sterowniki - wyświetlane jako klikalne chipy prowadzące do powiązanego elementu."
+        }
+      }
+    },
+    "search": {
+      "placeholder": "Szukaj sprzętu…",
+      "button": "Szukaj",
+      "category": "Kategoria",
+      "allCategories": "Wszystkie kategorie",
+      "manufacturer": "Producent",
+      "manufacturerPlaceholder": "Dowolny producent"
+    },
+    "results": {
+      "total": "Dopasowania: {count}",
+      "none": "Żaden podzespół nie pasuje do wyszukiwania.",
+      "showing": "Wyświetlanie {from}-{to} z {total}",
+      "prev": "Wstecz",
+      "next": "Dalej"
+    },
+    "states": {
+      "loading": "Wyszukiwanie…",
+      "error": "Nie udało się wczytać bazy sprzętu.",
+      "retry": "Ponów"
+    },
+    "tabs": {
+      "catalog": "Katalog",
+      "search": "Szukaj wszędzie",
+      "boards": "Płyty",
+      "drivers": "Sterowniki",
+      "motors": "Silniki",
+      "hosts": "Hosty",
+      "manufacturers": "Marki",
+      "mcus": "MCU"
+    },
+    "catalog": {
+      "searchAll": "Szukaj wszędzie",
+      "items": "Elementów: {n}",
+      "back": "Katalog"
+    },
+    "boards": {
+      "search": "Szukaj płyt",
+      "total": "Płyt: {n}",
+      "none": "Nie znaleziono płyt.",
+      "view": "Szczegóły",
+      "hide": "Ukryj",
+      "connector": "Złącze",
+      "function": "Funkcja",
+      "pins": "Piny",
+      "use": "Użyj",
+      "electronics": "Elektronika (wpływa na konfigurację)",
+      "notes": "Uwagi do konfiguracji",
+      "config": "Fragment konfiguracji",
+      "copy": "Kopiuj",
+      "copied": "Skopiowano!"
+    },
+    "drivers": {
+      "search": "Szukaj sterowników",
+      "klipperOnly": "Tylko Klipper (TMC)",
+      "total": "Sterowników: {n}",
+      "none": "Nie znaleziono sterowników.",
+      "standalone": "samodzielny",
+      "sensorless": "bezczujnikowy",
+      "config": "Konfiguracja Klipper",
+      "reference": "Dokumentacja Klipper →"
+    },
+    "motors": {
+      "search": "Szukaj silników",
+      "total": "Silników: {n}",
+      "none": "Nie znaleziono silników.",
+      "rated": "znamionowy",
+      "run": "roboczy",
+      "config": "Konfiguracja Klipper"
+    },
+    "hosts": {
+      "search": "Szukaj hostów",
+      "total": "Hostów: {n}",
+      "none": "Nie znaleziono hostów.",
+      "config": "Konfiguracja hosta",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "Obraz OS",
+        "locked": "zablokowany"
+      }
+    },
+    "manufacturers": {
+      "search": "Szukaj marek",
+      "total": "Marek: {n}",
+      "none": "Nie znaleziono marek.",
+      "members": "Części: {n}",
+      "specialty": "Specjalizacja",
+      "aliases": "Znany też jako",
+      "website": "Strona →",
+      "derived": "społeczność"
+    },
+    "mcus": {
+      "search": "Szukaj MCU",
+      "total": "MCU: {n}",
+      "none": "Nie znaleziono MCU.",
+      "boards": "Płyt: {n}"
+    },
+    "related": {
+      "title": "Powiązany sprzęt",
+      "loading": "Wczytywanie odnośników…",
+      "more": "+{n} więcej",
+      "jump": "Otwórz {name}",
+      "rel": {
+        "manufacturer": "Producent",
+        "mcus": "MCU",
+        "onboardDrivers": "Sterowniki wbudowane",
+        "supportedDrivers": "Obsługiwane sterowniki",
+        "boards": "Płyty",
+        "motors": "Silniki",
+        "hosts": "Hosty",
+        "catalog": "Części"
+      }
+    },
+    "picker": {
+      "placeholder": "Wybierz część…"
+    },
+    "facets": {
+      "manufacturer": "Producent",
+      "anyClass": "Dowolna klasa",
+      "anyNema": "Dowolny rozmiar",
+      "anyKind": "Dowolny typ",
+      "anyType": "Wszystkie typy",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Płyta główna",
+        "toolhead": "Głowica",
+        "printer-preset": "Preset drukarki",
+        "expansion": "Rozszerzenie",
+        "host": "Host SBC"
+      }
+    },
+    "onPrinter": {
+      "badge": "W tej drukarce",
+      "strip": "W tej drukarce:"
+    },
+    "suggest": {
+      "button": "Zaproponuj część",
+      "title": "Zaproponuj część",
+      "intro": "Wypełnij, co wiesz - otworzymy wstępnie wypełnione zgłoszenie GitHub do przeglądu. Nic nie jest wysyłane automatycznie.",
+      "typeLabel": "Typ części",
+      "cancel": "Anuluj",
+      "close": "Zamknij",
+      "submit": "Otwórz zgłoszenie na GitHub",
+      "preview": "Podgląd zgłoszenia (JSON)",
+      "languageNote": "Zgłoszenie jest napisane po angielsku, aby opiekunowie mogli na nie zareagować.",
+      "sentTitle": "Zgłoszenie otwarte w nowej karcie",
+      "sentBody": "Przejrzyj wstępnie wypełnione szczegóły na GitHub, a następnie wyślij tam zgłoszenie. Dziękujemy za wkład!",
+      "yes": "Tak",
+      "specs": "Dodatkowe parametry",
+      "specKey": "Parametr",
+      "specValue": "Wartość",
+      "addSpec": "Dodaj parametr",
+      "ports": "Porty i piny",
+      "addPort": "Dodaj port",
+      "addPin": "Dodaj pin",
+      "remove": "Usuń",
+      "configSnippet": "Fragment konfiguracji Klipper",
+      "types": {
+        "motor": "Silnik krokowy",
+        "driver": "Sterownik silnika",
+        "hotend": "Hotend",
+        "host": "Host / SBC",
+        "manufacturer": "Producent",
+        "board": "Płyta",
+        "catalog": "Inny element katalogu"
+      },
+      "group": {
+        "autotune": "Autotune (elektryczne)",
+        "caps": "Możliwości",
+        "maxFlow": "Maks. przepływ",
+        "preset": "Preset maks. przepływu"
+      },
+      "f": {
+        "manufacturer": "Producent",
+        "name": "Nazwa",
+        "model": "Model",
+        "display_name": "Nazwa wyświetlana",
+        "boardClass": "Klasa płyty",
+        "mcu": "MCU",
+        "clock": "Zegar",
+        "voltage": "Napięcie",
+        "driver_slots": "Gniazda sterowników",
+        "usb": "USB",
+        "can": "CAN",
+        "ethernet": "Ethernet",
+        "nema": "NEMA",
+        "stepAngle": "Kąt kroku",
+        "ratedCurrent": "Prąd znamionowy",
+        "holdingTorque": "Moment trzymający",
+        "recommendedRunCurrent": "Zalecany prąd roboczy",
+        "resistance_ohm": "Rezystancja",
+        "inductance_H": "Indukcyjność",
+        "holding_torque_Nm": "Moment trzymający",
+        "max_current_A": "Maks. prąd",
+        "steps_per_rev": "Kroki / obrót",
+        "chip": "Chip",
+        "interface": "Interfejs",
+        "klipperSection": "Sekcja Klipper",
+        "sensorless": "Bezczujnikowy",
+        "max_current_a": "Maks. prąd",
+        "microsteps": "Mikrokroki",
+        "stealthchop": "StealthChop",
+        "spreadcycle": "SpreadCycle",
+        "coolstep": "CoolStep",
+        "stallguard": "StallGuard",
+        "stallguard_field": "Pole StallGuard",
+        "max_temp_c": "Maks. temperatura",
+        "suggested_temp_c": "Sugerowana temperatura",
+        "expected_max_flow_mm3s": "Oczekiwany maks. przepływ",
+        "melt_zone_mm": "Strefa topienia",
+        "START": "START",
+        "MAX": "MAX",
+        "COARSE_STEP": "COARSE_STEP",
+        "kind": "Rodzaj",
+        "soc": "SoC",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "klipperOpen": "Uruchamia otwarty Klipper",
+        "country": "Kraj",
+        "website": "Strona",
+        "specialty": "Specjalizacja",
+        "category": "Kategoria",
+        "subsection": "Podsekcja",
+        "portLabel": "Etykieta portu",
+        "portCategory": "Kategoria portu",
+        "portFunction": "Funkcja",
+        "signal": "Sygnał",
+        "pin": "Pin"
+      },
+      "tooLong": "To zgłoszenie jest zbyt duże, aby wypełnić je automatycznie. Skopiuj JSON i otwórz nowe zgłoszenie ręcznie.",
+      "copyJson": "Kopiuj JSON",
+      "copied": "Skopiowano"
+    }
+  }
+}

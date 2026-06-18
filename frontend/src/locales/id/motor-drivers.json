@@ -1,0 +1,332 @@
+{
+  "motorDrivers": {
+    "help": {
+      "whatsThis": "apa ini?",
+      "topics": {
+        "glossary": {
+          "title": "Istilah driver",
+          "body": "Glosarium singkat untuk dasbor ini:"
+        },
+        "overview": {
+          "title": "Apa yang ditampilkan",
+          "body": "Setiap driver stepper TMC yang dimiliki printer Anda, dibaca langsung dari konfigurasi Klipper yang aktif - satu kartu per motor (X, Y, tiap Z, ekstruder…). Tampilan ini hanya-baca: ia melaporkan apa yang dikonfigurasi dan apa yang sedang dilakukan driver saat ini. Penyetelan datang di langkah berikutnya."
+        },
+        "current": {
+          "title": "Arus jalan / tahan",
+          "body": "Arus jalan adalah seberapa kuat motor didorong saat bergerak; arus tahan adalah level diam yang lebih rendah. Angka langsung adalah yang benar-benar diterapkan chip - bisa sedikit melenceng dari nilai yang dikonfigurasi karena arus datang dalam langkah diskret. Driver yang panas biasanya berarti arus jalan disetel terlalu tinggi untuk motornya."
+        },
+        "chopper": {
+          "title": "StealthChop vs SpreadCycle",
+          "body": "Mode chopper adalah cara driver membentuk arus kumparan. SpreadCycle presisi dan bertorsi tinggi (bagus untuk X/Y cepat) tapi terdengar; StealthChop nyaris hening (bagus untuk Z dan diam) tapi sedikit lebih lembek pada kecepatan. “StealthChop < N mm/s” berarti ia tetap tenang di bawah kecepatan itu, lalu beralih ke SpreadCycle di atasnya."
+        },
+        "microsteps": {
+          "title": "Microstepping",
+          "body": "Setiap langkah penuh motor dibagi secara elektronik menjadi microstep (16, 32, … 256). Lebih banyak microstep = gerakan lebih halus dan lebih senyap. Dengan interpolasi aktif, driver memuluskan hingga 256 secara internal terlepas dari nilai yang dikonfigurasi."
+        },
+        "stallguard": {
+          "title": "StallGuard (homing tanpa sensor)",
+          "body": "StallGuard mengukur beban motor agar sumbu bisa homing dengan mendeteksi stall lembut alih-alih menggunakan endstop fisik. Register ambang berbeda menurut model (sgthrs pada 2209, sgt pada 2130/5160, sg4_thrs pada 2240). Penyetelannya adalah langkah berikutnya; di sini kami hanya menampilkan nilai yang dikonfigurasi."
+        },
+        "health": {
+          "title": "Status langsung",
+          "body": "Saat motor diaktifkan (setelah homing atau jog), driver melaporkan flag langsung: suhu berlebih, korsleting, dan beban terbuka. “ok” hijau berarti tanpa kesalahan; “warning” adalah pra-peringatan suhu berlebih atau beban terbuka; “fault” adalah korsleting atau suhu berlebih parah. Saat motor dinonaktifkan, driver tidak melaporkan apa pun, jadi kartu menampilkan “idle”."
+        },
+        "temperature": {
+          "title": "Suhu",
+          "body": "Hanya sebagian driver (mis. TMC2240) yang memiliki sensor suhu bawaan. Pada model tanpa sensor - seperti TMC2209 yang umum - suhu terbaca “no sensor”, yang wajar, bukan kesalahan."
+        },
+        "catalog": {
+          "title": "Dari mana fakta model berasal",
+          "body": "Antarmuka (UART / SPI), batas arus, dan fitur yang didukung yang ditampilkan di tiap kartu berasal dari peta kemampuan bawaan keluarga TMC - diverifikasi terhadap kode driver Klipper. Ia memberi tahu Anda, misalnya, bahwa TMC2208 tidak bisa homing tanpa sensor sementara TMC2209 bisa, atau bahwa hanya TMC2240 yang melaporkan suhunya sendiri. Angka kelistrikan adalah tipikal datasheet; papan, resistor sense, dan pendinginan Anda yang menentukan batas sebenarnya."
+        },
+        "motor": {
+          "title": "Menetapkan motor",
+          "body": "Pilih motor stepper yang terhubung ke tiap sumbu dari katalog bawaan berisi 200+ motor. Klipper tidak tahu motor mana yang Anda pasang - memberi tahu FilaMind membuka spesifikasi datasheet-nya (torsi tahan, arus terukur, resistansi, induktansi), yang dipakai langkah berikutnya untuk merekomendasikan arus jalan yang aman dan penyetelan driver. Itu disimpan di printer dan tidak mengubah apa pun pada driver dengan sendirinya."
+        },
+        "motorsync": {
+          "title": "Sinkronisasi motor",
+          "body": "Saat satu sumbu digerakkan oleh dua motor atau lebih (dual atau quad-Z, dual-X), fase microstep-nya bisa melenceng dan saling melawan - menambah derau dan kehilangan torsi. Add-on motors_sync mengukur tiap motor dengan akselerometer dan mengembalikannya ke fase. Ini add-on terpisah; jika terpasang, FilaMind bisa menjalankan atau mengkalibrasinya di sini (ia menggerakkan toolhead, jadi dibatasi). Jika tidak terpasang, ini hanya menjelaskan apa yang dilakukannya."
+        },
+        "monitor": {
+          "title": "Monitor langsung",
+          "body": "Pantau driver secara real-time saat berjalan: suhu, beban StallGuard (SG_RESULT - turun mendekati nol saat beban mekanis naik), skala arus (CS_ACTUAL), dan flag kesalahan apa pun (suhu berlebih, korsleting, beban terbuka). Driver hanya melaporkan ini saat motor diaktifkan, jadi gerakkan atau homing sumbu untuk melihat data langsung. Hanya-baca - hanya mengamati."
+        },
+        "homing": {
+          "title": "Cara sumbu ini homing",
+          "body": "Klipper menemukan titik nol tiap sumbu dengan beberapa cara, dan FilaMind membaca yang mana dari konfigurasi Anda alih-alih menebak: sakelar endstop fisik (microswitch klasik - kebanyakan printer), homing tanpa sensor (driver TMC merasakan motor stall di ujung jalur - tanpa sakelar), atau probe Z (sensor yang sama untuk bed mesh menemukan Z=0). Panel ini menyesuaikan dengan apa pun yang dipakai sumbu Anda - status sakelar langsung dan uji-homing sederhana untuk endstop fisik, penyetel StallGuard untuk tanpa sensor, atau penunjuk ke alat probe untuk Z yang di-probe. Motor tambahan yang berbagi rel (Z kedua, ekstruder) tidak homing sendiri, jadi tidak menampilkan apa pun di sini."
+        },
+        "sensorless": {
+          "title": "Homing tanpa sensor",
+          "body": "Sebagian sumbu homing tanpa sakelar endstop: driver mendeteksi “stall” lembut saat toolhead mencapai ujung jalur. Ambang StallGuard mengatur seberapa sensitif itu - terlalu rendah dan ia terpicu dini (berhenti terlalu awal), terlalu tinggi dan ia tak pernah terpicu (sumbu menggerus rangka). Pembantu ini memungkinkan Anda menyetel ambang dan uji-homing satu sumbu, keduanya di balik konfirmasi. Sesuaikan dengan rasa: turunkan jika berhenti dini, naikkan jika tidak berhenti - dan jaga tangan dekat tombol daya beberapa kali pertama. Jika sumbu Anda memakai endstop fisik, Anda tidak memerlukan ini."
+        },
+        "coolstep": {
+          "title": "CoolStep (arus adaptif beban)",
+          "body": "CoolStep memungkinkan driver menurunkan arus kumparan saat motor tidak bekerja keras, lalu menaikkannya kembali di bawah beban - menghemat panas dan derau. Ia adalah loop umpan balik gandeng dengan lima register yang saling memengaruhi (semin/semax/seup/sedn/seimin), jadi alih-alih lima kenop mentah ini adalah satu hidup/mati yang menerapkan set teruji yang dikenal baik (semin 2, semax 4, seup 3, sedn 2, seimin 1). Ia hanya bekerja di atas ambang kecepatan, dan terlalu agresif di bawah akselerasi tinggi bisa menjatuhkan langkah - biarkan mati kecuali Anda tahu Anda menginginkannya. Hanya langsung: restart atau “reset ke konfigurasi” mengembalikan nilai tersimpan Anda."
+        },
+        "registers": {
+          "title": "Mengedit register (lanjutan)",
+          "body": "Editor lanjutan menulis register penyetelan TMC individual ke driver secara langsung - timing chopper (toff/tbl/hstrt/hend), PWM StealthChop (pwm_grad/pwm_ofs/…), CoolStep, sensitivitas StallGuard, dan ambang kecepatan StealthChop↔SpreadCycle (dalam mm/s). Field mana yang muncul, dan rentang validnya, berasal dari kebijakan keamanan sisi-printer - bukan browser - karena driver diam-diam memotong nilai di luar rentang alih-alih menampilkan kesalahan, jadi server membatasi dan menolak. Register penskalaan arus mentah dan proteksi korsleting/suhu berlebih sengaja tidak dapat diedit di sini (arus melalui jalur recommender/arus-jalan; microstep perlu perubahan konfigurasi + restart). Setiap edit hanya langsung: INIT_TMC (tombol “reset ke konfigurasi”), restart firmware, atau power-cycle mengembalikan nilai tersimpan Anda. Kenop yang lebih berisiko butuh konfirmasi per-field, dan semua penulisan ditolak saat printer mencetak atau dijeda."
+        },
+        "recommend": {
+          "title": "Penyetelan yang direkomendasikan",
+          "body": "Setelah motor ditetapkan, FilaMind bisa menghitung arus jalan yang disarankan dan nilai register StealthChop / SpreadCycle (pwm_grad, pwm_ofs, hstrt, hend) dari spesifikasi datasheet motor dan tegangan suplai Anda - jadi ia bekerja bahkan tanpa add-on autotune terpasang. Arus jalan default ke 70% konservatif dari rating motor. Hasilnya dibandingkan dengan konfigurasi langsung Anda; Anda lalu bisa menyalinnya ke printer.cfg, atau menulisnya langsung di balik konfirmasi (dapat dibalik dengan Revert, dan ditolak saat mencetak). Jika add-on autotune terpasang, Anda bisa menjalankannya sebagai gantinya."
+        }
+      },
+      "glossary": {
+        "tmcDriver": {
+          "term": "Driver TMC",
+          "def": "Chip yang mengubah sinyal step/dir Klipper menjadi arus kumparan yang memutar motor stepper - mis. TMC2209, TMC2240, TMC5160. Tiap motor punya satu."
+        },
+        "runCurrent": {
+          "term": "Arus jalan",
+          "def": "Seberapa kuat motor digerakkan saat bergerak (amper). Terlalu rendah → langkah terlewat; terlalu tinggi → panas berlebih. Nilai langsung bisa sedikit berbeda dari yang dikonfigurasi karena chip mengkuantisasinya."
+        },
+        "holdCurrent": {
+          "term": "Arus tahan",
+          "def": "Arus yang dikurangi yang diterapkan saat motor diam, untuk menghemat panas dan derau."
+        },
+        "microsteps": {
+          "term": "Microstep",
+          "def": "Seberapa halus tiap langkah penuh motor dibagi (16/32/…/256). Lebih tinggi = gerakan lebih halus dan senyap, tanpa kehilangan torsi nyata berkat interpolasi."
+        },
+        "stealthChop": {
+          "term": "StealthChop",
+          "def": "Mode penggerak nyaris hening, bagus untuk Z dan diam. Halus tapi sedikit kurang presisi pada kecepatan tinggi."
+        },
+        "spreadCycle": {
+          "term": "SpreadCycle",
+          "def": "Mode penggerak presisi dan bertorsi tinggi, lebih baik untuk gerak X/Y cepat. Terdengar tapi akurat."
+        },
+        "stallGuard": {
+          "term": "StallGuard",
+          "def": "Sensor beban driver. Ia memungkinkan homing tanpa sensor (mendeteksi stall alih-alih memakai sakelar endstop). Register ambangnya bervariasi menurut model (sgthrs / sgt / sg4_thrs)."
+        },
+        "senseResistor": {
+          "term": "Resistor sense",
+          "def": "Resistor mungil yang mengatur skala arus driver. Ia harus cocok dengan papan Anda; dasbor menampilkan nilai yang dikonfigurasi."
+        },
+        "interface": {
+          "term": "Antarmuka (UART / SPI)",
+          "def": "Cara MCU berkomunikasi dengan driver. UART adalah satu kabel (keluarga TMC220x); SPI adalah bus multi-kabel yang lebih cepat yang dipakai bagian performa (2130 / 5160). TMC2240 bisa keduanya."
+        }
+      },
+      "guide": "Panduan",
+      "guideTitle": "Panduan Motor Drivers",
+      "close": "Tutup",
+      "howToRead": "Cara membaca panel ini"
+    },
+    "format": {
+      "amps": "{a} A",
+      "ampsSet": "{base} (set {set})",
+      "stealthchop": "StealthChop",
+      "stealthchopThreshold": "StealthChop < {t} mm/s",
+      "spreadcycle": "SpreadCycle",
+      "health": {
+        "idle": "idle",
+        "ok": "ok",
+        "warning": "warning",
+        "fault": "fault"
+      },
+      "celsius": "{v} °C",
+      "noSensor": "no sensor",
+      "maxCurrent": "≤ {a} A",
+      "extruder": "Ekstruder",
+      "extruderN": "Ekstruder {n}",
+      "axis": "sumbu {axis}",
+      "homing": {
+        "sensorless": "Tanpa sensor (StallGuard)",
+        "physical": "Endstop fisik",
+        "probe": "Probe Z",
+        "otherVirtual": "Endstop virtual",
+        "inherited": "Rel bersama"
+      },
+      "stallguard": {
+        "signed": "Bertanda −64…63 - LEBIH RENDAH lebih sensitif (berhenti lebih cepat). Naikkan jika sumbu berhenti terlalu awal; turunkan jika tak pernah berhenti.",
+        "unsigned": "Rentang 0-255 - LEBIH TINGGI lebih sensitif (berhenti lebih cepat). Turunkan jika sumbu berhenti terlalu awal; naikkan jika tak pernah berhenti."
+      },
+      "spec": {
+        "nm": "{v} Nm",
+        "amps": "{v} A",
+        "ohm": "{v} Ω",
+        "mh": "{v} mH"
+      },
+      "flag": {
+        "overtemp": "suhu berlebih",
+        "tempWarn": "peringatan suhu",
+        "shortA": "korsleting A",
+        "shortB": "korsleting B",
+        "openLoadA": "beban terbuka A",
+        "openLoadB": "beban terbuka B",
+        "standstill": "diam"
+      },
+      "runCurrent": "arus jalan (A)"
+    },
+    "widget": {
+      "intro": "Setiap driver stepper TMC pada printer Anda, dibaca langsung dari konfigurasi Klipper-nya - inspeksi, dapatkan rekomendasi penyetelan, dan terapkan (dibatasi). Baru di sini? Coba 🧭 Terpandu.",
+      "tabDashboard": "Dasbor",
+      "tabGuided": "🧭 Terpandu",
+      "howToReadShow": "▸ cara membaca ini",
+      "howToReadHide": "▾ cara membaca ini",
+      "steps": [
+        "Tiap kartu adalah satu driver stepper - judulnya adalah sumbu (X / Y / Z / Ekstruder) dan lencananya adalah model chip.",
+        "Arus jalan menunjukkan seberapa kuat motor digerakkan; nilai langsung mungkin sedikit berbeda dari nilai “set” yang dikonfigurasi - itu wajar.",
+        "Mode memberi tahu Anda SpreadCycle (presisi, lebih berisik) atau StealthChop (tenang); microstep menunjukkan seberapa halus gerakannya.",
+        "Homing sebuah sumbu atau jog motor untuk membangunkannya - suhu langsung dan flag kesalahan hanya muncul saat motor diaktifkan (driver diam menampilkan “idle”).",
+        "Buka “register lanjutan” pada kartu untuk memeriksa nilai penyetelan mentah yang dipakai driver."
+      ],
+      "loading": "Memuat motor driver…",
+      "retry": "↻ coba lagi",
+      "retrying": "mencoba lagi…",
+      "unreachable": "Tidak bisa menjangkau Moonraker printer - data driver tidak tersedia saat ini.",
+      "noDrivers": "Tidak ada driver TMC ditemukan di konfigurasi Klipper. (Hanya driver stepper TMC yang muncul di sini.)",
+      "runCurrent": "Jalan {value}",
+      "nearCapTitle": "Mendekati batas rating model ini ({max})",
+      "holdCurrent": "Tahan {value}",
+      "microsteps": "{n} µstep",
+      "sg": "SG {field} {threshold}",
+      "detailsShow": "▸ detail",
+      "detailsHide": "▾ ringkas",
+      "interp": "interp",
+      "sense": "sense {value} Ω",
+      "healthTitleIdle": "Aktifkan motor (homing atau jog sebuah sumbu) untuk membaca suhu langsung dan flag kesalahan",
+      "healthTitleLive": "Status driver langsung dari drv_status",
+      "staleData": "Penyegaran terakhir gagal - menampilkan data sebelumnya."
+    },
+    "liveMonitor": {
+      "toggle": "monitor langsung",
+      "temp": "suhu {temp} °C",
+      "sg": "SG {sg}",
+      "cs": "CS {cs}",
+      "updates": "· pembaruan ~1.5s",
+      "noFaults": "tanpa kesalahan",
+      "idle": "Idle - aktifkan motor (homing atau jog sumbu) untuk membaca SG / arus / suhu langsung."
+    },
+    "recommendPanel": {
+      "toggle": "rekomendasi penyetelan",
+      "supply": "suplai",
+      "recompute": "hitung ulang",
+      "recommend": "rekomendasikan",
+      "colCurrent": "saat ini",
+      "colRecommended": "direkomendasikan",
+      "basis": "arus jalan = {basis}; StealthChop bertahan hingga ~{rps} put/s pada {voltage} V.",
+      "confirm": "Tulis ini ke driver {stepper} sekarang. Dapat dibalik (Revert / restart mengembalikan konfigurasi Anda); ditolak saat mencetak.",
+      "applyToDriver": "terapkan ke driver",
+      "revert": "↺ batalkan",
+      "copyConfig": "salin konfigurasi",
+      "autotune": "autotune",
+      "autotuneTitle": "Menjalankan AUTOTUNE_TMC jika add-on klipper_tmc_autotune terpasang",
+      "noSpecs": "Tidak ada spesifikasi datasheet untuk motor ini - rekomendasi penyetelan tidak tersedia.",
+      "measured": "Terukur: motor beresonansi pada ~{freq} Hz",
+      "measuredSym": "simetri {pct}%",
+      "measuredHint": "Kebenaran dasar dari profil getaran yang dijalankan pada printer ini - buka audit Input Shaping."
+    },
+    "motorSync": {
+      "toggle": "sinkronisasi motor",
+      "notInstalledTag": "(add-on tidak terpasang)",
+      "about": "Menyelaraskan fase microstep beberapa motor pada satu sumbu (dual / quad-Z, dual-X) menggunakan akselerometer, agar tidak saling melawan. Disediakan oleh add-on {addon} yang terpisah.",
+      "checking": "memeriksa…",
+      "notInstalled": "Tidak terpasang pada printer ini. Pasang add-on motors_sync untuk mengaktifkannya di sini.",
+      "warning": "⚠ Ini menggerakkan toolhead untuk sementara (ia menyelidik tiap motor). Jaga jarak dan siap memutus daya.",
+      "confirm": "Saya mengawasi printer - jalankan sinkronisasi motor sekarang.",
+      "syncMotors": "sinkronkan motor",
+      "calibrate": "kalibrasi"
+    },
+    "sensorless": {
+      "noRegister": "⚠ Driver ini tidak mengekspos register ambang StallGuard, jadi homing tanpa sensor tidak bisa disetel di sini - periksa konfigurasi homing printer.",
+      "intro": "StallGuard {field} mengatur sensitivitas homing tanpa sensor.",
+      "threshold": "ambang",
+      "nowRange": "sekarang: {now} · rentang {min}…{max}",
+      "confirmSet": "Tulis ambang ini ke driver sekarang (dapat dibalik; ditolak saat mencetak).",
+      "setThreshold": "atur ambang",
+      "testHomeWarning": "⚠ Uji-homing menggerakkan sumbu {axis} sekarang. Dengan ambang yang salah ia mungkin tidak berhenti - jaga tangan pada tombol daya. Hanya untuk sumbu tanpa sensor.",
+      "confirmHome": "Saya mengawasi printer dan siap memutus daya - homing {axis}.",
+      "testHome": "uji-homing {axis}"
+    },
+    "homing": {
+      "homing": "homing",
+      "unreachable": "printer tak terjangkau",
+      "physicalIntroLead": "Sumbu ini homing terhadap sakelar endstop fisik",
+      "physicalIntroTail": ". Tekan sakelar dengan tangan dan periksa ulang untuk mengonfirmasi kabel sebelum homing.",
+      "switchLabel": "sakelar:",
+      "check": "↻ periksa",
+      "testHomeWarn": "⚠ Uji-homing menggerakkan sumbu {axis} ke endstop-nya sekarang - pastikan jalurnya bersih.",
+      "pathClear": "Jalur bersih - homing {axis}.",
+      "testHome": "uji-homing {axis}",
+      "probeNote": "Sumbu ini homing dengan probe Z (sensor yang sama untuk bed mesh), jadi tidak ada ambang StallGuard untuk disetel di sini. Atur offset probe dan mesh di alat bed-leveling.",
+      "virtualNote": "Sumbu ini homing terhadap endstop virtual yang bukan pin StallGuard TMC - ia dikelola oleh modul host-nya sendiri, jadi tidak ada yang perlu disetel di sini."
+    },
+    "guidedWizard": {
+      "title": "🧭 Penyetelan terpandu",
+      "backToDashboard": "← dasbor",
+      "stepChoose": "Pilih",
+      "stepMotor": "Motor",
+      "stepTune": "Setel",
+      "stepSensorless": "Tanpa sensor",
+      "stepDone": "Selesai",
+      "step1Intro": "Pilih sumbu yang akan disetel.",
+      "tuningHeader": "Menyetel {axis} · {model}",
+      "step2Intro": "Motor mana yang terhubung ke sumbu ini? Pilih agar FilaMind mengetahui spesifikasi datasheet-nya.",
+      "assignToContinue": "Tetapkan motor untuk melanjutkan.",
+      "step3Intro": "Dapatkan rekomendasi dari spesifikasi motor, lalu salin ke konfigurasi Anda atau terapkan langsung (dibatasi).",
+      "step4Intro": "Opsional: setel homing tanpa sensor. Lewati jika sumbu ini memakai sakelar endstop.",
+      "step5Intro": "Selesai dengan {axis}. Pantau langsung saat Anda menggerakkan sumbu, atau setel yang lain.",
+      "tuneAnother": "setel sumbu lain",
+      "back": "← kembali",
+      "next": "berikutnya →",
+      "finish": "selesai"
+    },
+    "motorPicker": {
+      "motorLabel": "motor:",
+      "notSet": "belum diatur",
+      "searchPlaceholder": "cari 200+ motor (model atau pembuat)…"
+    },
+    "registerEditor": {
+      "toggle": "setel register (lanjutan)",
+      "resetTitle": "INIT_TMC - terapkan ulang register + arus yang dikonfigurasi driver ini",
+      "resetLabel": "↺ reset ke konfigurasi",
+      "liveOnly": "Edit bersifat {live} - tidak disimpan. {initTmc} (reset), restart firmware, atau power-cycle mengembalikan nilai yang dikonfigurasi. Nilai di luar rentang ditolak oleh kebijakan keamanan sisi-printer; arus mentah dan register proteksi tidak dapat diedit di sini.",
+      "liveOnlyEmphasis": "hanya langsung",
+      "loading": "Memuat register yang dapat diedit…",
+      "coolstep": "CoolStep",
+      "on": "hidup",
+      "off": "mati",
+      "coolstepEnableTitle": "Terapkan set CoolStep teruji-autotune (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
+      "enable": "aktifkan",
+      "riskyTitle": "Kenop lebih berisiko - konfirmasi sebelum menulis",
+      "now": "sekarang:",
+      "confirm": "konfirmasi",
+      "set": "atur",
+      "readOnly": "register hanya-baca",
+      "toffHint": "Jika Anda mengatur toff ke 1, jaga juga tbl ≥ 1 (blank time 16-siklus memerlukannya).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Ambang & timing",
+        "other": "Lainnya"
+      }
+    },
+    "apply": {
+      "nothingToApply": "Tidak ada yang diterapkan.",
+      "busyApply": "Menolak menulis ke driver saat printer sibuk (mencetak atau dijeda).",
+      "applied": "Menerapkan {n} perubahan ke {stepper}.",
+      "busyReinit": "Menolak re-init saat printer sibuk (mencetak atau dijeda).",
+      "reinitialized": "Menginisialisasi ulang {stepper} dan memulihkan arus yang dikonfigurasinya.",
+      "autotuneNotInstalled": "klipper_tmc_autotune tidak terpasang untuk stepper ini - gunakan rekomendasi atau salin-ke-konfigurasi sebagai gantinya.",
+      "busyAutotune": "Menolak autotune saat printer sibuk (mencetak atau dijeda).",
+      "autotuneRan": "Menjalankan AUTOTUNE_TMC pada {stepper}.",
+      "busyWrite": "Menolak menulis saat printer sibuk (mencetak atau dijeda).",
+      "stallguardSet": "Mengatur {field} = {num} pada {stepper}.",
+      "fieldSet": "Mengatur {field} = {num} pada {stepper} (hanya langsung - INIT_TMC atau restart mengembalikan nilai yang dikonfigurasi).",
+      "coolstepEnabled": "CoolStep diaktifkan pada {stepper} (hanya langsung - INIT_TMC atau restart mengembalikan nilai yang dikonfigurasi).",
+      "coolstepDisabled": "CoolStep dinonaktifkan pada {stepper} (hanya langsung - INIT_TMC atau restart mengembalikan nilai yang dikonfigurasi).",
+      "busyHome": "Menolak homing saat printer sibuk (mencetak atau dijeda).",
+      "homed": "Homing {ax} selesai.",
+      "motorsyncNotInstalled": "Add-on motors_sync tidak terpasang - ia menyelaraskan fase microstep beberapa motor pada satu sumbu (dual/quad-Z, dual-X) menggunakan akselerometer.",
+      "busySync": "Menolak menyinkronkan motor saat printer sibuk (mencetak atau dijeda).",
+      "syncRan": "Menjalankan {cmd}.",
+      "overCurrentCap": "Ditolak: {requested} A pada {stepper} melebihi batas {cap} A (batas skala-penuh driver / arus terukur motor yang ditetapkan).",
+      "guardLocked": "Ditolak: operasi lain sedang berjalan ({operation})."
+    }
+  }
+}

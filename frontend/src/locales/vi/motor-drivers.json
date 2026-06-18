@@ -1,0 +1,332 @@
+{
+  "motorDrivers": {
+    "help": {
+      "whatsThis": "đây là gì?",
+      "topics": {
+        "glossary": {
+          "title": "Thuật ngữ driver",
+          "body": "Bảng thuật ngữ nhanh cho bảng điều khiển này:"
+        },
+        "overview": {
+          "title": "Phần này hiển thị gì",
+          "body": "Mọi driver bước TMC mà máy in của bạn có, đọc trực tiếp từ config Klipper đang chạy - mỗi motor một thẻ (X, Y, từng Z, extruder…). Chế độ xem này chỉ đọc: nó báo cáo những gì đang được cấu hình và driver đang làm gì ngay lúc này. Việc tinh chỉnh sẽ đến ở bước sau."
+        },
+        "current": {
+          "title": "Dòng chạy / dòng giữ",
+          "body": "Dòng chạy là mức đẩy motor khi đang di chuyển; dòng giữ là mức nghỉ thấp hơn. Con số trực tiếp là giá trị mà chip thực sự áp dụng - nó có thể lệch một chút so với giá trị cấu hình vì dòng điện chia thành các bước rời rạc. Driver chạy nóng thường nghĩa là dòng chạy được đặt quá cao cho motor."
+        },
+        "chopper": {
+          "title": "StealthChop vs SpreadCycle",
+          "body": "Chế độ chopper là cách driver định hình dòng cuộn dây. SpreadCycle chính xác và mô-men cao (tốt cho X/Y tốc độ cao) nhưng ồn; StealthChop gần như im lặng (tốt cho Z và lúc nghỉ) nhưng hơi yếu khi chạy nhanh. “StealthChop < N mm/s” nghĩa là nó giữ im lặng dưới tốc độ đó, rồi chuyển sang SpreadCycle khi vượt qua."
+        },
+        "microsteps": {
+          "title": "Vi bước",
+          "body": "Mỗi bước motor đầy đủ được chia nhỏ điện tử thành các vi bước (16, 32, … 256). Càng nhiều vi bước = chuyển động càng mượt, càng êm. Khi bật nội suy, driver làm mượt lên tới 256 ở bên trong bất kể giá trị cấu hình."
+        },
+        "stallguard": {
+          "title": "StallGuard (homing không cảm biến)",
+          "body": "StallGuard đo tải motor để trục có thể homing bằng cách phát hiện một cú kẹt nhẹ thay vì dùng công tắc hành trình vật lý. Thanh ghi ngưỡng khác nhau theo model (sgthrs trên 2209, sgt trên 2130/5160, sg4_thrs trên 2240). Tinh chỉnh nó là bước sau; ở đây chúng tôi chỉ hiển thị giá trị đã cấu hình."
+        },
+        "health": {
+          "title": "Trạng thái trực tiếp",
+          "body": "Khi một motor được bật (sau khi homing hoặc jog), driver báo cáo các cờ trực tiếp: quá nhiệt, ngắn mạch, và hở tải. Màu xanh “ok” nghĩa là không có lỗi; “warning” là cảnh báo sớm quá nhiệt hoặc hở tải; “fault” là ngắn mạch hoặc quá nhiệt nặng. Khi motor bị tắt, driver không báo cáo gì, nên thẻ hiển thị “idle”."
+        },
+        "temperature": {
+          "title": "Nhiệt độ",
+          "body": "Chỉ một số driver (ví dụ TMC2240) có cảm biến nhiệt độ tích hợp. Trên các model không có - như TMC2209 phổ biến - nhiệt độ hiển thị “no sensor”, điều này là bình thường, không phải lỗi."
+        },
+        "catalog": {
+          "title": "Thông tin model lấy từ đâu",
+          "body": "Giao tiếp (UART / SPI), giới hạn dòng, và các tính năng được hỗ trợ hiển thị trên mỗi thẻ đến từ một bản đồ năng lực tích hợp của dòng TMC - đã được kiểm chứng với mã driver Klipper. Nó cho bạn biết, ví dụ, một TMC2208 không thể homing không cảm biến trong khi TMC2209 thì có thể, hoặc chỉ TMC2240 báo cáo nhiệt độ của chính nó. Các con số điện là điển hình theo datasheet; bo mạch, điện trở cảm biến và làm mát của bạn mới đặt ra giới hạn thực sự."
+        },
+        "motor": {
+          "title": "Gán một motor",
+          "body": "Chọn motor bước được nối vào mỗi trục từ catalog tích hợp hơn 200 motor. Klipper không biết bạn lắp motor nào - cho FilaMind biết sẽ mở khóa thông số datasheet của nó (mô-men giữ, dòng định mức, điện trở, độ tự cảm), mà một bước sau dùng để gợi ý dòng chạy an toàn và tinh chỉnh driver. Nó được lưu trên máy in và tự nó không thay đổi gì trên driver."
+        },
+        "motorsync": {
+          "title": "Đồng bộ motor",
+          "body": "Khi một trục được dẫn động bởi hai motor trở lên (Z đôi hoặc Z bốn, X đôi), pha vi bước của chúng có thể lệch nhau và chống lại nhau - thêm tiếng ồn và mất mô-men. Add-on motors_sync đo từng motor bằng gia tốc kế và đưa chúng về đúng pha. Đây là add-on riêng; nếu được cài đặt, FilaMind có thể chạy hoặc hiệu chuẩn nó ở đây (nó di chuyển đầu in, nên có khóa bảo vệ). Nếu chưa cài, phần này chỉ giải thích nó làm gì."
+        },
+        "monitor": {
+          "title": "Giám sát trực tiếp",
+          "body": "Theo dõi một driver theo thời gian thực khi nó chạy: nhiệt độ, tải StallGuard (SG_RESULT - giảm dần về không khi tải cơ học tăng), thang dòng (CS_ACTUAL), và mọi cờ lỗi (quá nhiệt, ngắn mạch, hở tải). Driver chỉ báo cáo những thứ này khi motor được bật, nên hãy di chuyển hoặc homing trục để thấy dữ liệu trực tiếp. Chỉ đọc - nó chỉ quan sát."
+        },
+        "homing": {
+          "title": "Trục này homing thế nào",
+          "body": "Klipper tìm điểm không của mỗi trục theo một vài cách, và FilaMind đọc cách nào từ config của bạn thay vì đoán: công tắc hành trình vật lý (microswitch cổ điển - hầu hết máy in), homing không cảm biến (driver TMC cảm nhận motor kẹt ở cuối hành trình - không cần công tắc), hoặc đầu dò Z (cùng cảm biến dùng cho bed mesh tìm Z=0). Bảng này thích ứng với loại trục của bạn dùng - trạng thái công tắc trực tiếp và test-home đơn giản cho công tắc vật lý, bộ tinh chỉnh StallGuard cho không cảm biến, hoặc một con trỏ tới công cụ đầu dò cho Z dùng đầu dò. Các motor phụ chia sẻ một ray (Z thứ hai, extruder) không tự homing, nên ở đây chúng không hiển thị gì."
+        },
+        "sensorless": {
+          "title": "Homing không cảm biến",
+          "body": "Một số trục homing mà không cần công tắc hành trình: driver phát hiện cú “kẹt” nhẹ khi đầu in chạm cuối hành trình. Ngưỡng StallGuard đặt độ nhạy của nó - quá thấp thì kích hoạt sớm (dừng non), quá cao thì không bao giờ kích hoạt (trục nghiến vào khung). Trợ giúp này cho phép bạn đặt ngưỡng và test-home một trục, cả hai đều có xác nhận. Điều chỉnh theo cảm giác: hạ xuống nếu nó dừng sớm, nâng lên nếu nó không dừng - và giữ tay gần nguồn điện vài lần đầu. Nếu trục của bạn dùng công tắc hành trình vật lý, bạn không cần cái này."
+        },
+        "coolstep": {
+          "title": "CoolStep (dòng thích ứng theo tải)",
+          "body": "CoolStep cho phép driver hạ dòng cuộn dây khi motor không làm việc nặng, rồi nâng lại khi có tải - tiết kiệm nhiệt và tiếng ồn. Đây là vòng phản hồi ghép nối với năm thanh ghi tương tác (semin/semax/seup/sedn/seimin), nên thay vì năm núm thô, đây là một công tắc bật/tắt duy nhất áp dụng một bộ đã được kiểm chứng, biết là tốt (semin 2, semax 4, seup 3, sedn 2, seimin 1). Nó chỉ hoạt động trên một ngưỡng vận tốc, và quá mạnh tay khi gia tốc cao có thể làm mất bước - hãy để tắt trừ khi bạn chắc chắn muốn dùng. Chỉ trực tiếp: khởi động lại hoặc “reset về config” khôi phục giá trị đã lưu của bạn."
+        },
+        "registers": {
+          "title": "Chỉnh thanh ghi (nâng cao)",
+          "body": "Trình chỉnh sửa nâng cao ghi từng thanh ghi tinh chỉnh TMC vào driver trực tiếp - định thời chopper (toff/tbl/hstrt/hend), PWM StealthChop (pwm_grad/pwm_ofs/…), CoolStep, độ nhạy StallGuard, và ngưỡng tốc độ chuyển StealthChop↔SpreadCycle (tính bằng mm/s). Trường nào xuất hiện, và khoảng hợp lệ của chúng, đến từ chính sách an toàn phía máy in - không phải trình duyệt - vì driver lặng lẽ cắt cụt một giá trị ngoài khoảng thay vì báo lỗi, nên máy chủ kẹp và từ chối. Thanh ghi thang dòng thô và bảo vệ ngắn mạch/quá nhiệt cố ý không cho chỉnh ở đây (dòng đi qua đường recommender/run-current; vi bước cần thay đổi config + khởi động lại). Mọi chỉnh sửa chỉ là trực tiếp: INIT_TMC (nút “reset về config”), khởi động lại firmware, hoặc tắt bật nguồn sẽ khôi phục giá trị đã lưu của bạn. Các núm rủi ro hơn cần xác nhận theo từng trường, và mọi thao tác ghi đều bị từ chối khi máy in đang in hoặc tạm dừng."
+        },
+        "recommend": {
+          "title": "Tinh chỉnh được đề xuất",
+          "body": "Khi một motor đã được gán, FilaMind có thể tính dòng chạy gợi ý và các giá trị thanh ghi StealthChop / SpreadCycle (pwm_grad, pwm_ofs, hstrt, hend) từ thông số datasheet của motor và điện áp nguồn của bạn - nên nó hoạt động ngay cả khi không cài add-on autotune. Dòng chạy mặc định là mức thận trọng 70% định mức của motor. Kết quả được so sánh với config trực tiếp của bạn; sau đó bạn có thể sao chép nó vào printer.cfg, hoặc ghi trực tiếp sau khi xác nhận (có thể đảo ngược bằng Revert, và bị từ chối khi đang in). Nếu add-on autotune đã được cài, bạn có thể chạy nó thay thế."
+        }
+      },
+      "glossary": {
+        "tmcDriver": {
+          "term": "Driver TMC",
+          "def": "Chip biến tín hiệu step/dir của Klipper thành dòng cuộn dây làm quay motor bước - ví dụ TMC2209, TMC2240, TMC5160. Mỗi motor có một cái."
+        },
+        "runCurrent": {
+          "term": "Dòng chạy",
+          "def": "Mức đẩy motor khi di chuyển (ampe). Quá thấp → mất bước; quá cao → quá nhiệt. Giá trị trực tiếp có thể khác chút so với giá trị cấu hình vì chip lượng tử hóa nó."
+        },
+        "holdCurrent": {
+          "term": "Dòng giữ",
+          "def": "Dòng giảm bớt áp dụng khi motor nghỉ, để tiết kiệm nhiệt và tiếng ồn."
+        },
+        "microsteps": {
+          "term": "Vi bước",
+          "def": "Mức chia nhỏ mỗi bước motor đầy đủ (16/32/…/256). Cao hơn = chuyển động mượt hơn và êm hơn, không thực sự mất mô-men nhờ nội suy."
+        },
+        "stealthChop": {
+          "term": "StealthChop",
+          "def": "Chế độ dẫn động gần như im lặng, tuyệt cho Z và lúc nghỉ. Mượt nhưng hơi kém chính xác ở tốc độ cao."
+        },
+        "spreadCycle": {
+          "term": "SpreadCycle",
+          "def": "Chế độ dẫn động chính xác, mô-men cao, tốt hơn cho các chuyển động X/Y nhanh. Ồn nhưng chính xác."
+        },
+        "stallGuard": {
+          "term": "StallGuard",
+          "def": "Cảm biến tải của driver. Nó cho phép homing không cảm biến (phát hiện cú kẹt thay vì dùng công tắc hành trình). Thanh ghi ngưỡng của nó khác nhau theo model (sgthrs / sgt / sg4_thrs)."
+        },
+        "senseResistor": {
+          "term": "Điện trở cảm biến",
+          "def": "Một điện trở nhỏ đặt thang dòng của driver. Nó phải khớp với bo mạch của bạn; bảng điều khiển hiển thị giá trị đã cấu hình."
+        },
+        "interface": {
+          "term": "Giao tiếp (UART / SPI)",
+          "def": "Cách MCU nói chuyện với driver. UART là một dây đơn (dòng TMC220x); SPI là bus nhiều dây nhanh hơn dùng cho các bộ phận hiệu năng cao (2130 / 5160). TMC2240 có thể dùng cả hai."
+        }
+      },
+      "guide": "Hướng dẫn",
+      "guideTitle": "Hướng dẫn Driver Motor",
+      "close": "Đóng",
+      "howToRead": "Cách đọc bảng này"
+    },
+    "format": {
+      "amps": "{a} A",
+      "ampsSet": "{base} (đặt {set})",
+      "stealthchop": "StealthChop",
+      "stealthchopThreshold": "StealthChop < {t} mm/s",
+      "spreadcycle": "SpreadCycle",
+      "health": {
+        "idle": "nghỉ",
+        "ok": "ok",
+        "warning": "cảnh báo",
+        "fault": "lỗi"
+      },
+      "celsius": "{v} °C",
+      "noSensor": "không có cảm biến",
+      "maxCurrent": "≤ {a} A",
+      "extruder": "Extruder",
+      "extruderN": "Extruder {n}",
+      "axis": "trục {axis}",
+      "homing": {
+        "sensorless": "Không cảm biến (StallGuard)",
+        "physical": "Công tắc hành trình vật lý",
+        "probe": "Đầu dò Z",
+        "otherVirtual": "Công tắc hành trình ảo",
+        "inherited": "Ray chia sẻ"
+      },
+      "stallguard": {
+        "signed": "Có dấu −64…63 - THẤP HƠN thì nhạy hơn (dừng sớm hơn). Nâng lên nếu trục dừng non; hạ xuống nếu nó không bao giờ dừng.",
+        "unsigned": "Khoảng 0-255 - CAO HƠN thì nhạy hơn (dừng sớm hơn). Hạ xuống nếu trục dừng non; nâng lên nếu nó không bao giờ dừng."
+      },
+      "spec": {
+        "nm": "{v} Nm",
+        "amps": "{v} A",
+        "ohm": "{v} Ω",
+        "mh": "{v} mH"
+      },
+      "flag": {
+        "overtemp": "quá nhiệt",
+        "tempWarn": "cảnh báo nhiệt",
+        "shortA": "ngắn mạch A",
+        "shortB": "ngắn mạch B",
+        "openLoadA": "hở tải A",
+        "openLoadB": "hở tải B",
+        "standstill": "đứng yên"
+      },
+      "runCurrent": "dòng chạy (A)"
+    },
+    "widget": {
+      "intro": "Mọi driver bước TMC trên máy in của bạn, đọc trực tiếp từ config Klipper - kiểm tra, nhận đề xuất tinh chỉnh, và áp dụng chúng (có khóa bảo vệ). Mới ở đây? Hãy thử 🧭 Hướng dẫn.",
+      "tabDashboard": "Bảng điều khiển",
+      "tabGuided": "🧭 Hướng dẫn",
+      "howToReadShow": "▸ cách đọc phần này",
+      "howToReadHide": "▾ cách đọc phần này",
+      "steps": [
+        "Mỗi thẻ là một driver bước - tiêu đề là trục (X / Y / Z / Extruder) và huy hiệu là model chip.",
+        "Dòng chạy cho thấy mức đẩy motor; giá trị trực tiếp có thể lệch chút so với giá trị “đặt” đã cấu hình - đó là bình thường.",
+        "Chế độ cho bạn biết SpreadCycle (chính xác, ồn hơn) hay StealthChop (êm); vi bước cho biết chuyển động mượt thế nào.",
+        "Homing một trục hoặc jog motor để đánh thức nó - nhiệt độ trực tiếp và cờ lỗi chỉ xuất hiện khi motor được bật (driver nghỉ hiển thị “idle”).",
+        "Mở “thanh ghi nâng cao” trên một thẻ để kiểm tra các giá trị tinh chỉnh thô mà driver đang dùng."
+      ],
+      "loading": "Đang tải driver motor…",
+      "retry": "↻ thử lại",
+      "retrying": "đang thử lại…",
+      "unreachable": "Không thể kết nối tới Moonraker của máy in - dữ liệu driver hiện không có sẵn.",
+      "noDrivers": "Không tìm thấy driver TMC nào trong config Klipper. (Chỉ driver bước TMC mới xuất hiện ở đây.)",
+      "runCurrent": "Chạy {value}",
+      "nearCapTitle": "Gần giới hạn định mức của model này ({max})",
+      "holdCurrent": "Giữ {value}",
+      "microsteps": "{n} vi bước",
+      "sg": "SG {field} {threshold}",
+      "detailsShow": "▸ chi tiết",
+      "detailsHide": "▾ thu gọn",
+      "interp": "nội suy",
+      "sense": "cảm biến {value} Ω",
+      "healthTitleIdle": "Bật motor (homing hoặc jog một trục) để đọc nhiệt độ trực tiếp và cờ lỗi",
+      "healthTitleLive": "Trạng thái driver trực tiếp từ drv_status",
+      "staleData": "Lần làm mới cuối thất bại - đang hiển thị dữ liệu trước đó."
+    },
+    "liveMonitor": {
+      "toggle": "giám sát trực tiếp",
+      "temp": "nhiệt {temp} °C",
+      "sg": "SG {sg}",
+      "cs": "CS {cs}",
+      "updates": "· cập nhật ~1.5s",
+      "noFaults": "không có lỗi",
+      "idle": "Nghỉ - bật motor (homing hoặc jog trục) để đọc SG / dòng / nhiệt độ trực tiếp."
+    },
+    "recommendPanel": {
+      "toggle": "đề xuất tinh chỉnh",
+      "supply": "nguồn",
+      "recompute": "tính lại",
+      "recommend": "đề xuất",
+      "colCurrent": "hiện tại",
+      "colRecommended": "đề xuất",
+      "basis": "dòng chạy = {basis}; StealthChop giữ tới ~{rps} vòng/s ở {voltage} V.",
+      "confirm": "Ghi các giá trị này vào driver {stepper} ngay. Có thể đảo ngược (Revert / khởi động lại khôi phục config của bạn); bị từ chối khi đang in.",
+      "applyToDriver": "áp dụng vào driver",
+      "revert": "↺ hoàn nguyên",
+      "copyConfig": "sao chép config",
+      "autotune": "autotune",
+      "autotuneTitle": "Chạy AUTOTUNE_TMC nếu add-on klipper_tmc_autotune đã được cài",
+      "noSpecs": "Không có thông số datasheet cho motor này - không có đề xuất tinh chỉnh.",
+      "measured": "Đo được: motor cộng hưởng ở ~{freq} Hz",
+      "measuredSym": "đối xứng {pct}%",
+      "measuredHint": "Sự thật nền tảng từ lần chạy hồ sơ rung trên máy in này - mở phần kiểm tra Input Shaping."
+    },
+    "motorSync": {
+      "toggle": "đồng bộ motor",
+      "notInstalledTag": "(add-on chưa được cài)",
+      "about": "Căn chỉnh pha vi bước của nhiều motor trên một trục (Z đôi / Z bốn, X đôi) bằng gia tốc kế, để chúng không chống lại nhau. Cung cấp bởi add-on riêng {addon}.",
+      "checking": "đang kiểm tra…",
+      "notInstalled": "Chưa được cài trên máy in này. Cài add-on motors_sync để bật nó ở đây.",
+      "warning": "⚠ Việc này di chuyển đầu in một lúc (nó dò từng motor). Hãy tránh xa và sẵn sàng cắt nguồn.",
+      "confirm": "Tôi đang theo dõi máy in - chạy đồng bộ motor ngay.",
+      "syncMotors": "đồng bộ motor",
+      "calibrate": "hiệu chuẩn"
+    },
+    "sensorless": {
+      "noRegister": "⚠ Driver này không có thanh ghi ngưỡng StallGuard, nên không thể tinh chỉnh homing không cảm biến ở đây - kiểm tra cấu hình homing của máy in.",
+      "intro": "StallGuard {field} đặt độ nhạy homing không cảm biến.",
+      "threshold": "ngưỡng",
+      "nowRange": "hiện tại: {now} · khoảng {min}…{max}",
+      "confirmSet": "Ghi ngưỡng này vào driver ngay (có thể đảo ngược; bị từ chối khi đang in).",
+      "setThreshold": "đặt ngưỡng",
+      "testHomeWarning": "⚠ Test-home di chuyển trục {axis} ngay bây giờ. Với ngưỡng sai, nó có thể không dừng - giữ tay trên nguồn điện. Chỉ dành cho trục không cảm biến.",
+      "confirmHome": "Tôi đang theo dõi máy in và sẵn sàng cắt nguồn - homing {axis}.",
+      "testHome": "test-home {axis}"
+    },
+    "homing": {
+      "homing": "homing",
+      "unreachable": "không kết nối được máy in",
+      "physicalIntroLead": "Trục này homing bằng công tắc hành trình vật lý",
+      "physicalIntroTail": ". Nhấn công tắc bằng tay và kiểm tra lại để xác nhận dây nối trước khi homing.",
+      "switchLabel": "công tắc:",
+      "check": "↻ kiểm tra",
+      "testHomeWarn": "⚠ Test-home di chuyển trục {axis} đến hành trình của nó ngay bây giờ - đảm bảo đường đi thông thoáng.",
+      "pathClear": "Đường đi thông thoáng - homing {axis}.",
+      "testHome": "test-home {axis}",
+      "probeNote": "Trục này homing bằng đầu dò Z (cùng cảm biến dùng cho bed mesh), nên không có ngưỡng StallGuard để tinh chỉnh ở đây. Đặt offset đầu dò và mesh trong công cụ cân chỉnh bàn.",
+      "virtualNote": "Trục này homing bằng công tắc hành trình ảo không phải chân StallGuard của TMC - nó được quản lý bởi mô-đun host riêng của nó, nên không có gì để tinh chỉnh ở đây."
+    },
+    "guidedWizard": {
+      "title": "🧭 Tinh chỉnh có hướng dẫn",
+      "backToDashboard": "← bảng điều khiển",
+      "stepChoose": "Chọn",
+      "stepMotor": "Motor",
+      "stepTune": "Tinh chỉnh",
+      "stepSensorless": "Không cảm biến",
+      "stepDone": "Xong",
+      "step1Intro": "Chọn trục để tinh chỉnh.",
+      "tuningHeader": "Đang tinh chỉnh {axis} · {model}",
+      "step2Intro": "Motor nào được nối vào trục này? Chọn nó để FilaMind biết thông số datasheet của nó.",
+      "assignToContinue": "Gán một motor để tiếp tục.",
+      "step3Intro": "Nhận đề xuất từ thông số của motor, rồi sao chép nó vào config của bạn hoặc áp dụng trực tiếp (có khóa bảo vệ).",
+      "step4Intro": "Tùy chọn: tinh chỉnh homing không cảm biến. Bỏ qua nếu trục này dùng công tắc hành trình.",
+      "step5Intro": "Đã xong với {axis}. Theo dõi trực tiếp khi bạn di chuyển trục, hoặc tinh chỉnh trục khác.",
+      "tuneAnother": "tinh chỉnh trục khác",
+      "back": "← quay lại",
+      "next": "tiếp →",
+      "finish": "hoàn tất"
+    },
+    "motorPicker": {
+      "motorLabel": "motor:",
+      "notSet": "chưa đặt",
+      "searchPlaceholder": "tìm hơn 200 motor (model hoặc hãng)…"
+    },
+    "registerEditor": {
+      "toggle": "tinh chỉnh thanh ghi (nâng cao)",
+      "resetTitle": "INIT_TMC - áp dụng lại các thanh ghi và dòng đã cấu hình của driver này",
+      "resetLabel": "↺ reset về config",
+      "liveOnly": "Các chỉnh sửa là {live} - không được lưu. {initTmc} (reset), khởi động lại firmware, hoặc tắt bật nguồn sẽ khôi phục giá trị đã cấu hình. Giá trị ngoài khoảng bị từ chối bởi chính sách an toàn phía máy in; thanh ghi dòng thô và bảo vệ không thể chỉnh ở đây.",
+      "liveOnlyEmphasis": "chỉ trực tiếp",
+      "loading": "Đang tải các thanh ghi có thể chỉnh…",
+      "coolstep": "CoolStep",
+      "on": "bật",
+      "off": "tắt",
+      "coolstepEnableTitle": "Áp dụng bộ CoolStep đã kiểm chứng bằng autotune (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
+      "enable": "bật",
+      "riskyTitle": "Núm rủi ro hơn - xác nhận trước khi ghi",
+      "now": "hiện tại:",
+      "confirm": "xác nhận",
+      "set": "đặt",
+      "readOnly": "thanh ghi chỉ đọc",
+      "toffHint": "Nếu bạn đặt toff thành 1, hãy giữ tbl ≥ 1 (thời gian trống 16 chu kỳ cần điều này).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Ngưỡng & định thời",
+        "other": "Khác"
+      }
+    },
+    "apply": {
+      "nothingToApply": "Không có gì để áp dụng.",
+      "busyApply": "Từ chối ghi vào driver khi máy in đang bận (đang in hoặc tạm dừng).",
+      "applied": "Đã áp dụng {n} thay đổi vào {stepper}.",
+      "busyReinit": "Từ chối khởi tạo lại khi máy in đang bận (đang in hoặc tạm dừng).",
+      "reinitialized": "Đã khởi tạo lại {stepper} và khôi phục dòng đã cấu hình của nó.",
+      "autotuneNotInstalled": "klipper_tmc_autotune chưa được cài cho stepper này - dùng đề xuất hoặc sao chép vào config thay thế.",
+      "busyAutotune": "Từ chối autotune khi máy in đang bận (đang in hoặc tạm dừng).",
+      "autotuneRan": "Đã chạy AUTOTUNE_TMC trên {stepper}.",
+      "busyWrite": "Từ chối ghi khi máy in đang bận (đang in hoặc tạm dừng).",
+      "stallguardSet": "Đã đặt {field} = {num} trên {stepper}.",
+      "fieldSet": "Đã đặt {field} = {num} trên {stepper} (chỉ trực tiếp - INIT_TMC hoặc khởi động lại khôi phục giá trị đã cấu hình).",
+      "coolstepEnabled": "Đã bật CoolStep trên {stepper} (chỉ trực tiếp - INIT_TMC hoặc khởi động lại khôi phục giá trị đã cấu hình).",
+      "coolstepDisabled": "Đã tắt CoolStep trên {stepper} (chỉ trực tiếp - INIT_TMC hoặc khởi động lại khôi phục giá trị đã cấu hình).",
+      "busyHome": "Từ chối homing khi máy in đang bận (đang in hoặc tạm dừng).",
+      "homed": "Đã homing {ax}.",
+      "motorsyncNotInstalled": "Add-on motors_sync chưa được cài - nó căn chỉnh pha vi bước của nhiều motor trên một trục (Z đôi/Z bốn, X đôi) bằng gia tốc kế.",
+      "busySync": "Từ chối đồng bộ motor khi máy in đang bận (đang in hoặc tạm dừng).",
+      "syncRan": "Đã chạy {cmd}.",
+      "overCurrentCap": "Bị từ chối: {requested} A trên {stepper} vượt giới hạn trần {cap} A (giới hạn toàn thang driver / dòng định mức của motor đã gán).",
+      "guardLocked": "Bị từ chối: một thao tác khác đang chạy ({operation})."
+    }
+  }
+}

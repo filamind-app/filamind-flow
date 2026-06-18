@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "對所有可檢查項目進行一次唯讀掃描——腳位衝突、驅動數值、設定漂移、專案檢查、韌體同步、硬體變更與安裝狀態——並評為 A-F 等級。每項發現都會連到能修正它的工具。",
+    "scanning": "掃描中…",
+    "rescan": "重新掃描",
+    "scoreLine": "分數 {score} / 100",
+    "counts": "{errors} 個錯誤 · {warnings} 個警告",
+    "scoreHint": "透明計分：100 − 每個錯誤扣 25 − 每個警告扣 8。無法判定的檢查項目不會扣分。",
+    "allClear": "一切正常。",
+    "notChecked": "無法檢查（印表機無法連線或無基準）。",
+    "assessment": {
+      "healthy": "健康——所有可檢查的項目都正常。",
+      "attention": "大致健康，但 {pillar} 需要留意。",
+      "critical": "{pillar} 有值得修正的問題。"
+    },
+    "pillars": {
+      "title": "健康細項",
+      "notMeasured": "未測量"
+    },
+    "pillar": {
+      "config": "設定完整性",
+      "firmware": "韌體同步",
+      "services": "服務",
+      "tuning": "輸入整形",
+      "flow": "最大流量"
+    },
+    "services": {
+      "title": "服務",
+      "active": "運行中",
+      "inactive": "已停止",
+      "none": "沒有回報的服務。"
+    },
+    "stats": {
+      "title": "概覽",
+      "maxFlow": "最大流量",
+      "tuningAxis": "整形器 {axis}",
+      "firmware": "韌體",
+      "outOfSync": "{n} 個未同步",
+      "allSynced": "全部已同步",
+      "none": "尚無測量結果。"
+    },
+    "category": {
+      "pins": "腳位接線",
+      "drivers": "驅動數值",
+      "drift": "設定漂移",
+      "project": "設定專案",
+      "firmware": "韌體同步",
+      "hardware": "硬體變更",
+      "install": "安裝狀態"
+    },
+    "status": {
+      "ok": "正常",
+      "warn": "警告",
+      "fail": "問題",
+      "unknown": "未檢查"
+    },
+    "link": {
+      "config_section": "設定編輯器",
+      "config_file": "設定編輯器",
+      "stepper": "馬達驅動",
+      "topology_node": "機台地圖",
+      "widget": "開啟"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "{mcu} 上的腳位 {pin} 在多個區段中被指派。",
+        "caveat": "{mcu} 上的腳位 {pin} 帶有電子相關注意事項。"
+      },
+      "drivers": {
+        "over_driver_cap": "{section}：run_current {run_current} A 超過約 {cap} A 的驅動上限。",
+        "near_driver_cap": "{section}：run_current {run_current} A 已在約 {cap} A 上限的 10% 之內。",
+        "over_motor_rating": "{section}：run_current {run_current} A 超過 {motor} 的額定值（{max_current} A）。",
+        "near_motor_rating": "{section}：run_current {run_current} A 已在 {motor} 額定值（{max_current} A）的 10% 之內。",
+        "odd_microsteps": "{section}：microsteps {microsteps} 不是 2 的次方。"
+      },
+      "drift": {
+        "pending": "Klipper 有尚未儲存的 SAVE_CONFIG 變更待處理。",
+        "param": "[{section}] {key}：磁碟 {disk} ≠ 即時 {live}。",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}：include「{message}」未指向任何檔案。",
+        "orphan_driver": "{file}：驅動區段「{message}」沒有對應的 stepper。"
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}：韌體 {mcu_version} 與主機 {host_version} 不一致。"
+      },
+      "hardware": {
+        "changed": "{mcu}：硬體已變更（{kind}）。",
+        "no_baseline": "尚未儲存硬體基準——在機台地圖中儲存快照以偵測變更。"
+      },
+      "install": {
+        "check_failed": "安裝檢查失敗：{name} - {detail}。"
+      }
+    },
+    "help": {
+      "guide": "說明",
+      "guideTitle": "關於機台醫生",
+      "close": "關閉",
+      "howToRead": "如何解讀",
+      "steps": [
+        "按下重新掃描，對整台印表機執行一次唯讀檢查。",
+        "查看 A-F 等級與支柱長條圖，找出最弱的環節。",
+        "開啟任一發現的連結，直接跳到能修正它的工具。"
+      ],
+      "topics": {
+        "scan": {
+          "title": "掃描涵蓋範圍",
+          "body": "對所有可檢查項目進行一次唯讀檢查——腳位衝突、驅動數值、已儲存設定與即時設定間的漂移、專案檢查、韌體同步、與基準相比的硬體變更，以及安裝狀態。它絕不會在印表機上執行任何動作。"
+        },
+        "grade": {
+          "title": "A-F 等級",
+          "body": "每個健康支柱（設定完整性、韌體同步、服務、輸入整形、最大流量）都會計分，最弱的項目會拉低整體等級。分數列會清楚顯示等級的計算方式——絕無隱藏。"
+        },
+        "fixes": {
+          "title": "前往修正的連結",
+          "body": "每項發現都帶有一個按鈕，可深層連結至能解決它的工具（設定編輯器、馬達驅動、機台地圖…），讓你一鍵從問題前往修正。"
+        },
+        "glossary": {
+          "title": "此處使用的名詞"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "等級（A-F）",
+          "def": "以單一字母概括印表機的健康狀況，由各支柱分數推導；A 代表健康，F 代表需要留意。"
+        },
+        "pillar": {
+          "term": "支柱",
+          "def": "獨立計分的健康類別——例如設定完整性、韌體同步、服務、輸入整形、最大流量。"
+        },
+        "finding": {
+          "term": "發現",
+          "def": "掃描偵測到的特定問題，附帶其嚴重程度以及連到能修正它的工具的連結。"
+        }
+      }
+    }
+  }
+}

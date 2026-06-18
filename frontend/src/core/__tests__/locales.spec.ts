@@ -2,13 +2,52 @@ import { afterAll, describe, expect, it } from 'vitest'
 
 import { availableLocales, i18n, loadLocaleMessages, setLocale } from '../i18n'
 
-const LANGS = ['ar', 'de', 'zh-Hans', 'fr', 'es', 'ru']
+const LANGS = [
+  'ar',
+  'de',
+  'zh-Hans',
+  'fr',
+  'es',
+  'ru',
+  'pt-BR',
+  'it',
+  'ja',
+  'ko',
+  'pl',
+  'tr',
+  'nl',
+  'zh-Hant',
+  'uk',
+  'hi',
+  'vi',
+  'id',
+]
 const t = i18n.global.t as unknown as (k: string, named?: object, plural?: number) => string
 
 describe('all shipped locales', () => {
-  it('the switcher now offers en + the 6 translations', () => {
+  it('the switcher now offers en + the 18 translations', () => {
     expect(availableLocales.map((m) => m.code).sort()).toEqual(
-      ['ar', 'de', 'en', 'es', 'fr', 'ru', 'zh-Hans'].sort(),
+      [
+        'ar',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'hi',
+        'id',
+        'it',
+        'ja',
+        'ko',
+        'nl',
+        'pl',
+        'pt-BR',
+        'ru',
+        'tr',
+        'uk',
+        'vi',
+        'zh-Hans',
+        'zh-Hant',
+      ].sort(),
     )
   })
 

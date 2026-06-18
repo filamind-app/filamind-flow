@@ -1,0 +1,48 @@
+{
+  "common": {
+    "appName": "FilaMind Flow",
+    "errors": {
+      "backendUnreachable": "Kan de FilaMind-backend niet bereiken - controleer of de filamind-flow-service draait en bereikbaar is."
+    }
+  },
+  "theme": {
+    "label": "Thema",
+    "light": "Licht",
+    "dark": "Donker",
+    "neon": "Neon",
+    "contrast": "Hoog contrast",
+    "menu": "Kies thema",
+    "midnight": "Middernacht",
+    "ocean": "Oceaan",
+    "sunset": "Zonsondergang",
+    "desc": {
+      "neon": "Diepviolette nacht met een elektrische gloed - de kenmerkende look",
+      "midnight": "Professioneel diepblauw donker",
+      "dark": "Modern neutraal leigrijs donker",
+      "ocean": "Diep blauwgroen met aqua-accenten",
+      "sunset": "Warm pruimpaars met amberkleurige accenten",
+      "light": "Strak Neo-Brutalistisch licht",
+      "contrast": "Maximale leesbaarheid (a11y)"
+    }
+  },
+  "configApply": {
+    "title": "Toepassen op printer.cfg…",
+    "hint": "Schrijft dit blok via de veiligheidsgate naar het gekozen bestand: een bestaande sectie wordt parameter voor parameter samengevoegd (de overige regels blijven staan), een ontbrekende wordt toegevoegd. Eerst wordt een back-up gemaakt; geweigerd tijdens het printen of als het bestand op schijf is gewijzigd.",
+    "target": "Doelbestand",
+    "ack": "Ik heb het blok bekeken en wil het schrijven",
+    "apply": "Toepassen",
+    "applying": "Bezig met toepassen…",
+    "busy": "De printer is bezig (of er loopt een andere bewerking) - probeer het opnieuw wanneer hij inactief is.",
+    "stale": "Het bestand is tijdens het toepassen op schijf gewijzigd - er is niets geschreven. Probeer het opnieuw.",
+    "saved": "Opgeslagen (back-up: {backup}).",
+    "added": "toegevoegd [{section}]: {params}",
+    "updated": "bijgewerkt [{section}]: {params}",
+    "noop": "Alles stond al op deze waarden - er is niets gewijzigd.",
+    "restartHint": "Klipper gebruikt de oude waarden totdat de firmware opnieuw wordt gestart.",
+    "restart": "Firmware opnieuw starten…",
+    "restartConfirm": "Herstart bevestigen",
+    "restarting": "Bezig met herstarten…",
+    "restarted": "Firmwareherstart verzonden.",
+    "cancel": "Annuleren"
+  }
+}

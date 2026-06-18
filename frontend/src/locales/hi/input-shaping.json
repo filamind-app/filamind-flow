@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "यह क्या है?",
+      "topics": {
+        "glossary": {
+          "title": "Input shaping शब्दावली"
+        },
+        "analyze": {
+          "title": "रेज़ोनेंस CSV का विश्लेषण",
+          "body": "प्रिंटर पर TEST_RESONANCES से डेटा कैप्चर करें (या 🔴 Live tools का उपयोग करें), फिर .csv यहाँ लोड करें। FilaMind Klipper का अपना shaper गणित चलाता है और एक shaper + फ़्रीक्वेंसी की सिफारिश करता है। X फ़ाइल और Y फ़ाइल बारी-बारी से करें - ये मिलकर एक config ब्लॉक बनती हैं।"
+        },
+        "grade": {
+          "title": "A-F ग्रेड का क्या अर्थ है",
+          "body": "पाँच बराबर हिस्सों से बना मापन-गुणवत्ता स्कोर: peak स्पष्टता, बची हुई कंपन, smoothing, फ़्रीक्वेंसी (40-90 Hz स्वस्थ है), और रेज़ोनेंस कितना साफ़ है। A/B → इसे लागू करें; C → उपयोग योग्य, सुझाव देख लें; D/F → यांत्रिकी ठीक करें और दोबारा परखें।"
+        },
+        "diagnostics": {
+          "title": "डायग्नॉस्टिक्स पढ़ना",
+          "body": "हर कार्ड मापन को संभावित यांत्रिक कारण और उसके समाधान से जोड़ता है। हरा = स्वस्थ, पीला = सुधार लायक, लाल = परिणाम पर भरोसा करने से पहले ठीक करें। कोई सुधार लागू करें, दोबारा चलाएँ, और कार्ड को हरा होते देखें।"
+        },
+        "chart": {
+          "title": "फ़्रीक्वेंसी चार्ट पढ़ना",
+          "body": "ठोस वक्र मापी गई कंपन ऊर्जा हैं (X+Y+Z कुल और हर अक्ष)। ▲ प्रमुख रेज़ोनेंस को चिह्नित करता है। हल्के वक्र हर shaper की बची हुई कंपन को फ़्रीक्वेंसी पर दिखाते हैं - सिफारिश किया गया (गुलाबी) आपके peak पर सबसे गहरा गिरता है।"
+        },
+        "shapers": {
+          "title": "shaper चुनना",
+          "body": "हर पंक्ति बची हुई कंपन और smoothing के बीच संतुलन बनाती है। ZV / MZV सबसे हल्के हैं (साफ़ एकल रेज़ोनेंस); EI अधिक मज़बूत है; 2-/3-hump व्यापक या कई रेज़ोनेंस संभालते हैं पर अधिक smooth करते हैं। FilaMind सर्वोत्तम संतुलन को उजागर करता है।"
+        },
+        "config": {
+          "title": "config लागू करना",
+          "body": "यह [input_shaper] ब्लॉक आपका X और/या Y परिणाम रखता है। इसे printer.cfg में कॉपी करें और Klipper को पुनः चालू करें। बैज दिखाते हैं कि कौन-से अक्ष कैप्चर हुए - पूर्ण ब्लॉक के लिए X और Y दोनों कैप्चर करें।"
+        },
+        "noise": {
+          "title": "noise जाँच",
+          "body": "बिना हिले-डुले accelerometer की निष्क्रिय कंपन पढ़ता है - परखने से पहले एक त्वरित माउंट जाँच। Klipper का अंगूठा-नियम: ~1-100 सामान्य है, ~1000+ का अर्थ है ढीला सेंसर या वायरिंग। पहले शोरगुल वाला माउंट ठीक करें वरना हर परीक्षण अविश्वसनीय रहेगा।"
+        },
+        "belts": {
+          "title": "बेल्ट तुलना (CoreXY)",
+          "body": "हर बेल्ट विकर्ण को उत्तेजित करता है और दोनों प्रतिक्रियाओं को ओवरले करता है। मेल खाती peak फ़्रीक्वेंसी = समान तनाव। अंतर का मतलब है कम-फ़्रीक्वेंसी वाला बेल्ट अधिक ढीला है - इसे कसें और तब तक दोबारा चलाएँ जब तक peaks पंक्तिबद्ध न हो जाएँ।"
+        },
+        "axesMap": {
+          "title": "Axes-map पहचान",
+          "body": "toolhead को थोड़ा X में, फिर Y में, फिर Z में जॉग करता है ताकि पता चले कि accelerometer कैसे लगा है, और आपको printer.cfg के लिए axes_map लाइन देता है। सेंसर लगाने या हिलाने के बाद इसे एक बार चलाएँ ताकि हर बाद का परीक्षण सही अक्ष पढ़े।"
+        },
+        "sustain": {
+          "title": "Sustain फ़्रीक्वेंसी",
+          "body": "toolhead को एक फ़्रीक्वेंसी पर भनभनाते रखता है ताकि आप बेल्ट, carriage और फ़्रेम को हाथ से छूकर पता लगा सकें कि क्या खड़खड़ाता है। spectrogram + timeline दिखाते हैं कि आपकी लक्षित फ़्रीक्वेंसी हावी है या नहीं और किसी स्पर्श ने इसे कब शांत किया।"
+        },
+        "vibrations": {
+          "title": "कंपन प्रोफ़ाइल",
+          "body": "हर मोटर कोण पर कई गतियों को स्वीप करता है ताकि पता चले कि मशीन कहाँ सबसे सहज चलती है और कौन-सी गतियाँ रेज़ोनेंस से टकराती हैं। प्रिंट / travel चालों के लिए सबसे सहज गतियाँ अपनाएँ और चिह्नित गतियों से बचें। Symmetry % दिखाता है कि दोनों मोटर कितनी अच्छी तरह मेल खाते हैं।"
+        },
+        "guided": {
+          "title": "गाइडेड बनाम मैन्युअल",
+          "body": "गाइडेड पूरी प्रक्रिया चलाता है - Noise → Belts → Shaper X → Shaper Y → Vibrations → Pressure - हर चरण पर पास / फ़ेल गेट के साथ। पूर्ण ट्यून के लिए इसका उपयोग करें। जब आपको बस एक विशेष टूल चाहिए तो 📈 Analyze या 🔴 Live tools पर जाएँ।"
+        },
+        "history": {
+          "title": "इतिहास और रुझान",
+          "body": "हर कैलिब्रेशन (इसी ब्राउज़र में) उसके ग्रेड और स्कोर के साथ सहेजा जाता है। ▲/▼ तीर किसी रन की उसी अक्ष के पिछले परीक्षण से तुलना करता है - ऊपर का मतलब साफ़ कैप्चर या सख़्त अक्ष, नीचे का मतलब अधिक शोर या नरम अक्ष।"
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input shaper",
+          "def": "एक फ़िल्टर जो Klipper गति पर लागू करता है जो प्रिंटर की मुख्य कंपन को रद्द करता है, ताकि आप ringing / ghosting के बिना तेज़ प्रिंट कर सकें।"
+        },
+        "resonance": {
+          "term": "रेज़ोनेंस",
+          "def": "वह फ़्रीक्वेंसी (Hz) जिस पर धकेले जाने पर कोई अक्ष स्वाभाविक रूप से कंपन करता है। कम = नरम / भारी अक्ष; ~40-90 Hz एक स्वस्थ प्रिंटर है।"
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Power spectral density - हर फ़्रीक्वेंसी पर कितनी कंपन ऊर्जा है। ऊँचा peak वही रेज़ोनेंस है जिसे shaper लक्षित करता है।"
+        },
+        "smoothing": {
+          "term": "Smoothing",
+          "def": "shaping का एक दुष्प्रभाव जो तीखे कोनों को थोड़ा गोल कर देता है। कम बेहतर है; ≤0.1 न्यूनतम है, >0.2 विवरण को नरम करने लगता है।"
+        },
+        "vibrationPct": {
+          "term": "कंपन %",
+          "def": "shaper के बाद कितना रेज़ोनेंस बचा रहता है। कम बेहतर है; ≤2% उत्कृष्ट है, ≤5% ठीक है।"
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "वह त्वरण जिसे shaper बहुत अधिक smoothing के बिना संभाल सकता है - एक सुझाया गया SET_VELOCITY_LIMIT / printer.cfg मान।"
+        }
+      },
+      "guide": "गाइड",
+      "guideTitle": "Input Shaping गाइड",
+      "close": "बंद करें"
+    },
+    "grade": {
+      "clarity": {
+        "label": "Peak स्पष्टता",
+        "value": "{ratio}×",
+        "note": {
+          "none": "आकलन के लिए कोई स्पेक्ट्रम नहीं।",
+          "good": "तीखा peak, शोर से काफ़ी ऊपर।",
+          "ok": "Peak शोर से ऊपर दिखता है।",
+          "poor": "कमज़ोर peak - शोरगुल वाला या बहुत सख़्त।"
+        }
+      },
+      "vibration": {
+        "label": "अवशिष्ट कंपन",
+        "value": "{pct}%",
+        "note": {
+          "good": "लगभग पूरा रेज़ोनेंस हटा दिया गया।",
+          "ok": "अधिकांश रेज़ोनेंस हटा दिया गया।",
+          "poor": "काफ़ी कंपन बची हुई है।"
+        }
+      },
+      "smoothing": {
+        "label": "Smoothing",
+        "note": {
+          "good": "न्यूनतम कोना गोलाई।",
+          "ok": "अधिक त्वरण पर कुछ गोलाई।",
+          "poor": "भारी smoothing - कोनों को गोल करता है।"
+        }
+      },
+      "freq": {
+        "label": "फ़्रीक्वेंसी",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "कोई फ़्रीक्वेंसी नहीं मिली।",
+          "good": "स्वस्थ, सख़्त अक्ष।",
+          "ok": "थोड़ा नरम या बहुत सख़्त।",
+          "soft": "नरम / भारी अक्ष।",
+          "high": "असामान्य रूप से उच्च।"
+        }
+      },
+      "shaper": {
+        "label": "रेज़ोनेंस आकार",
+        "note": {
+          "clean": "साफ़ एकल रेज़ोनेंस।",
+          "robust": "एकल रेज़ोनेंस, मज़बूत shaper।",
+          "twin": "व्यापक या दोहरा रेज़ोनेंस।",
+          "multiple": "कई रेज़ोनेंस।",
+          "atypical": "असामान्य shaper।"
+        }
+      },
+      "verdict": {
+        "a": "उत्कृष्ट - साफ़ कैप्चर, अच्छी तरह ट्यून किया अक्ष।",
+        "b": "अच्छा - ठोस परिणाम, सुधार की थोड़ी गुंजाइश।",
+        "c": "ठीक-ठाक - उपयोग योग्य; नीचे दिए सुझाव देखें।",
+        "d": "कमज़ोर - यांत्रिक ट्यूनिंग + दोबारा परखने की सलाह।",
+        "f": "अविश्वसनीय - परीक्षण दोबारा चलाएँ (सेंसर माउंट जाँचें)।",
+        "none": "कोई उपयोग योग्य परिणाम नहीं - TEST_RESONANCES दोबारा चलाएँ।"
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "कोई उपयोग योग्य रेज़ोनेंस नहीं",
+        "advice": "TEST_RESONANCES दोबारा चलाएँ। जाँचें कि accelerometer वायर्ड है और toolhead पर मज़बूती से लगा है।",
+        "detail": "कोई स्पष्ट peak नहीं मिला"
+      },
+      "noisy": {
+        "title": "शोरगुल वाला कैप्चर",
+        "advice": "accelerometer माउंट को सुरक्षित करें और दोबारा चलाएँ। परीक्षण के दौरान fans या अन्य गति से बचें।",
+        "detail": "signal-to-noise {snr}×"
+      },
+      "lowFreq": {
+        "title": "कम रेज़ोनेंस फ़्रीक्वेंसी",
+        "advice": "नरम या भारी अक्ष - बेल्ट कसें और फ़्रेम की कठोरता जाँचें। सख़्त अक्ष उच्चतर रेज़ोनेट करता है और तेज़ प्रिंट करता है।",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "कुछ हद तक नरम अक्ष",
+        "advice": "फ़्रीक्वेंसी थोड़ी कम है। बेल्ट या फ़्रेम को मज़बूत करने से यह बढ़ती है और आपको तेज़ प्रिंट करने देती है।",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "उच्च smoothing",
+        "advice": "कोनों को गोल करेगा। अधिक सख़्त shaper चुनें या max_accel कम करें।",
+        "detail": "smoothing {smoothing}"
+      },
+      "multiResonance": {
+        "title": "कई रेज़ोनेंस",
+        "advice": "अक्सर ढीला toolhead, बेल्ट या पुर्ज़ा। toolhead दोबारा बैठाएँ और बेल्ट तनाव दोबारा जाँचें।"
+      },
+      "vibrationRemains": {
+        "title": "कंपन बची हुई है",
+        "advice": "यांत्रिक ट्यूनिंग (बेल्ट, फ़्रेम, toolhead द्रव्यमान) इसे और नीचे ले जा सकती है।",
+        "detail": "shaping के बाद {vibrations}% बची"
+      },
+      "healthy": {
+        "title": "स्वस्थ अक्ष",
+        "advice": "साफ़ कैप्चर और सख़्त अक्ष - चलने को तैयार। config लागू करें और Klipper को पुनः चालू करें।",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X और Y में काफ़ी अंतर है",
+        "advice": "असममित कठोरता। नरम अक्ष पर बेल्ट तनाव जाँचें; CoreXY पर सुनिश्चित करें कि दोनों बेल्ट मेल खाते और कसे हुए हैं।",
+        "detail": "X {fx} Hz बनाम Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "सिफारिश की गई",
+        "shaperFreq": "shaper फ़्रीक्वेंसी",
+        "peakFreq": "peak फ़्रीक्वेंसी",
+        "remainingVibr": "बची कंपन",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "बेल्ट मेल खाते हैं",
+          "advice": "दोनों बेल्ट प्रतिक्रियाएँ पंक्तिबद्ध हैं - तनाव संतुलित लगता है।"
+        },
+        "differ": {
+          "title": "बेल्ट में अंतर है",
+          "advice": "बेल्ट रेज़ोनेंस भिन्न हैं - ढीले बेल्ट को तब तक दोबारा कसें जब तक दोनों peaks पंक्तिबद्ध न हो जाएँ।"
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "सेंसर शांत है",
+          "why": "जारी रखने के लिए अच्छा।"
+        },
+        "elevated": {
+          "title": "सेंसर शोर कम करें",
+          "why": "अधिकतम {max} ≥ {threshold}। toolhead fan बंद करें और माउंट दोबारा जाँचें, फिर दोबारा चलाएँ।"
+        },
+        "bad": {
+          "title": "परखने से पहले accelerometer ठीक करें",
+          "why": "शोर {max} बहुत अधिक है - सेंसर दोबारा बैठाएँ और उसकी वायरिंग जाँचें।"
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "बेल्ट संतुलित हैं",
+          "why": "तनाव समान है - अगला कदम shaper कैलिब्रेट करें।"
+        },
+        "mismatch": {
+          "title": "बेल्ट {looser} दोबारा कसें",
+          "why": "A {peakA} Hz बनाम B {peakB} Hz (Δ{diffPct}%)। कम-फ़्रीक्वेंसी वाले बेल्ट को तब तक कसें जब तक दोनों peaks पंक्तिबद्ध न हो जाएँ, फिर दोबारा चलाएँ।"
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "कम त्वरण पर दोबारा चलाएँ",
+          "why": "बहुत अधिक कम-फ़्रीक्वेंसी गति दर्ज हुई - ACCEL कम करें (या SIZE बढ़ाएँ) ताकि केवल स्थिर गतियाँ मापी जाएँ, फिर दोबारा चलाएँ।"
+        },
+        "favour": {
+          "title": "~{speed} mm/s को प्राथमिकता दें",
+          "why": "सबसे सहज बैंड {start}-{end} mm/s - जब संभव हो स्लाइसर प्रिंट / travel गतियाँ यहाँ सेट करें।"
+        },
+        "avoid": {
+          "title": "{shown} mm/s से बचें",
+          "why": "ये गतियाँ रेज़ोनेंस से टकराती हैं - स्लाइसर में प्रिंट + travel चालों को इनसे दूर रखें।"
+        },
+        "symmetry": {
+          "title": "बेल्ट तनाव / मोटर मेल जाँचें",
+          "why": "मोटर symmetry {pct}% कम है - बेल्ट दोबारा कसें (बेल्ट तुलना करें) और दोनों मोटर धाराओं का मेल पुष्टि करें।"
+        },
+        "fine": {
+          "title": "कंपन ठीक लगती है",
+          "why": "कोई समस्याग्रस्त गति सामने नहीं आई।"
+        }
+      },
+      "pressure": {
+        "title": "एक pressure-advance टावर चलाएँ",
+        "why": "PA टावर प्रिंट करें, वह ऊँचाई पढ़ें जहाँ कोने सबसे तीखे दिखें, फिर `SET_PRESSURE_ADVANCE ADVANCE=<value>` और `SAVE_CONFIG`।"
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "आपका कॉन्फ़िगर किया axes_map पहले से सही है।",
+        "update": "अपना config इस पर अपडेट करें: {axes_map}",
+        "add": "इसे जोड़ें ताकि हर Input Shaping ग्राफ़ X/Y/Z संरेखित पढ़े।"
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Noise",
+          "title": "Accelerometer शोर",
+          "why": "किसी भी परीक्षण से पहले पुष्टि करें कि सेंसर ठोस रूप से लगा है (गति-रहित)।"
+        },
+        "belts": {
+          "label": "Belts",
+          "title": "CoreXY बेल्ट संतुलन",
+          "why": "दोनों बेल्ट तनावों का मेल करें। केवल CoreXY - cartesian / bed-slinger पर छोड़ें।"
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper - X",
+          "why": "X रेज़ोनेंस और सर्वोत्तम shaper खोजें।"
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper - Y",
+          "why": "Y रेज़ोनेंस और सर्वोत्तम shaper खोजें।"
+        },
+        "vibrations": {
+          "label": "Vibrations",
+          "title": "कंपन प्रोफ़ाइल",
+          "why": "सबसे सहज गतियाँ और बचने योग्य रेज़ोनेंस खोजने के लिए गति × मोटर कोण स्वीप करें।"
+        },
+        "pressure": {
+          "label": "Pressure",
+          "title": "Pressure advance",
+          "why": "कोनों और seams को तीखा करने के लिए सबसे अंत में pressure advance ट्यून करें।"
+        },
+        "done": {
+          "label": "हो गया"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "सेंसर शांत है",
+          "warn": "शोर थोड़ा अधिक है",
+          "failed": "बहुत शोरगुल - माउंट ठीक करें"
+        },
+        "belts": {
+          "passed": "बेल्ट मेल खाते हैं",
+          "differ": "बेल्ट में अंतर है (Δ{diffPct}%)",
+          "mismatched": "बेल्ट बेमेल हैं (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "ग्रेड {letter} - स्वस्थ अक्ष",
+          "usable": "ग्रेड C - उपयोग योग्य",
+          "tune": "ग्रेड {letter} - ट्यून + दोबारा परखें"
+        },
+        "vibrations": {
+          "lowFreq": "बहुत अधिक कम-फ़्रीक्वेंसी गति - त्वरण कम करें और दोबारा चलाएँ",
+          "mismatched": "मोटर बेमेल ({pct}%)",
+          "smoothest": "सबसे सहज ~{rec} mm/s",
+          "complete": "प्रोफ़ाइल पूर्ण"
+        }
+      },
+      "ui": {
+        "title": "🧭 गाइडेड ट्यून",
+        "exit": "✕ बाहर निकलें",
+        "motionReady": "⚠ toolhead हिलाता है - मैं तैयार हूँ",
+        "running": "चल रहा है…",
+        "run": "चलाएँ",
+        "rerun": "↻ दोबारा चलाएँ",
+        "skipBelts": "छोड़ें (CoreXY नहीं)",
+        "copyPa": "📋 PA टावर कॉपी करें",
+        "copied": "✅ कॉपी हो गया",
+        "finish": "समाप्त करें →",
+        "nextStep": "अगला कदम →",
+        "skipAnyway": "फिर भी छोड़ें",
+        "complete": "ट्यूनिंग पूर्ण",
+        "stepFailed": "चरण विफल",
+        "copyFailed": "कॉपी विफल - टेक्स्ट चुनें और इसे मैन्युअल रूप से कॉपी करें।",
+        "summaryNote": "आपके X और Y कैप्चर नीचे संयुक्त {code} ब्लॉक में हैं - इसे कॉपी करें, फिर Klipper पुनः चालू करें। दोबारा जाँचने के लिए कभी भी गाइडेड ट्यून फिर से खोलें।",
+        "beltsNotApplicable": "बेल्ट तुलना CoreXY प्रिंटरों पर लागू होती है - यह प्रिंटर '{kin}' बताता है, इसलिए यह चरण छोड़ दिया गया।",
+        "resultsSoFar": "अब तक के परिणाम",
+        "archived": "सहेजा गया",
+        "autoSaved": "प्रिंटर पर के संग्रह में स्वतः सहेजा गया।",
+        "beltA": "बेल्ट A (1,1)",
+        "beltB": "बेल्ट B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "सिफारिश की गई",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "अधिकतम त्वरण",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "अधिकतम निष्क्रिय शोर {max} (सामान्य < {threshold})।",
+        "status": "स्थिति",
+        "maxNoise": "अधिकतम शोर",
+        "threshold": "सीमा",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "मेल",
+        "beltA": "बेल्ट A peak",
+        "beltB": "बेल्ट B peak",
+        "difference": "अंतर",
+        "matched": "मेल खाते हैं",
+        "mismatch": "बेमेल",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "स्थिति",
+        "gravity": "गुरुत्वाकर्षण",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "शोर"
+      },
+      "sustain": {
+        "target": "लक्ष्य",
+        "dominant": "प्रमुख",
+        "inBand": "बैंड में",
+        "onTarget": "लक्ष्य पर",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "हाँ",
+        "no": "नहीं"
+      },
+      "vibrations": {
+        "smoothest": "सबसे सहज",
+        "symmetry": "Symmetry",
+        "motorResonance": "मोटर रेज़ोनेंस",
+        "avoid": "बचें",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 गाइडेड",
+      "tabAnalyze": "📈 विश्लेषण",
+      "tabLive": "🔴 Live tools",
+      "tabHistory": "🕘 इतिहास",
+      "intro": "Klipper रेज़ोनेंस कैप्चर से input shaping ट्यून करें - कोई कमांड लाइन नहीं। यहाँ नए हैं? {guided} से शुरू करें। या स्वयं {csv} पर काम करने के लिए {analyze} चुनें, प्रिंटर पर कैप्चर करने के लिए {live}, या पिछले रन देखने के लिए {history}।",
+      "cfgReady": "printer.cfg तैयार",
+      "copy": "📋 कॉपी",
+      "copied": "✅ कॉपी हो गया",
+      "archive": "💾 संग्रह",
+      "saved": "✅ सहेजा गया",
+      "advanced": "⚙ उन्नत",
+      "compareCsvs": "⇄ CSVs तुलना करें",
+      "blankDefault": "खाली = Klipper डिफ़ॉल्ट",
+      "auditTitle": "ऑडिट",
+      "refresh": "↻ रीफ़्रेश",
+      "auditEmpty": "अभी कोई परिणाम नहीं - कोई ट्यून चलाएँ, या एक संग्रह में सहेजें।",
+      "trendTitle": "स्कोर {score} बनाम पिछला {axis} परीक्षण",
+      "sourceSaved": "💾 सहेजा गया",
+      "sourceLocal": "स्थानीय",
+      "recommended": "सिफारिश की गई",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "अक्ष {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "इस डेटा के लिए कोई shaper सिफारिश नहीं की गई।",
+      "measurementQuality": "मापन गुणवत्ता",
+      "scoreOutOf": "{v}/100",
+      "hide": "छिपाएँ",
+      "details": "विवरण",
+      "chartAria": "फ़्रीक्वेंसी प्रतिक्रिया और shapers",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "सिफारिश की गई",
+      "legendPeak": "▲ peak",
+      "legendAxisHint": "फ़्रीक्वेंसी (Hz) → · ठोस = मापी गई · हल्की = shaper बची हुई",
+      "colShaper": "shaper",
+      "colFreq": "फ़्रीक्वेंसी",
+      "colVibr": "कंपन",
+      "colSmooth": "smooth",
+      "colAccel": "त्वरण",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "साफ़ करें",
+      "pasteHint": "अपने {cfg} में पेस्ट करें, फिर Klipper पुनः चालू करें।",
+      "errAnalysisFailed": "विश्लेषण विफल",
+      "errCopyFailed": "कॉपी विफल - टेक्स्ट चुनें और इसे मैन्युअल रूप से कॉपी करें।",
+      "errSaveFailed": "संग्रह में सहेजना विफल"
+    },
+    "fromPrinter": {
+      "liveTools": "Live tools",
+      "intro": "⏳ ये toolhead हिलाते हैं और {duration} ले सकते हैं (बेल्ट तुलना दो पूर्ण स्वीप चलाती है) - परिणाम आने तक यह पेज खुला रखें।",
+      "introDuration": "1-5 मिनट",
+      "confirmMoves": "⚠ toolhead हिलाता है - मैं तैयार हूँ",
+      "axisX": "अक्ष X",
+      "axisY": "अक्ष Y",
+      "noiseTitle": "🔊 noise जाँच",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "माप रहा है…",
+      "noiseHint": "गति-रहित · परखने से पहले चलाएँ",
+      "noiseVerdictQuiet": "✅ शांत",
+      "noiseVerdictElevated": "⚠ बढ़ा हुआ",
+      "noiseVerdictTooNoisy": "⛔ बहुत शोरगुल",
+      "noiseMaxNormal": "अधिकतम {max} · सामान्य < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Live परीक्षण",
+      "liveBtn": "TEST_RESONANCES चलाएँ",
+      "liveBtnBusy": "चल रहा है…",
+      "liveDesc": "ज़रूरत पड़ने पर प्रिंटर को होम करता है, फिर चुने गए अक्ष पर TEST_RESONANCES चलाता है (एक accelerometer + एक {section} चाहिए)। प्रिंट के दौरान अस्वीकृत।",
+      "beltsTitle": "🟰 बेल्ट तुलना करें",
+      "beltsBtn": "बेल्ट तुलना करें",
+      "beltsBtnBusy": "तुलना कर रहा है…",
+      "beltsBtnTitle": "CoreXY: हर बेल्ट विकर्ण को उत्तेजित करें और प्रतिक्रियाओं को ओवरले करें",
+      "beltsDesc": "केवल CoreXY: बेल्ट विकर्णों के साथ दो स्वीप चलाता है और उन्हें ओवरले करता है। प्रिंट के दौरान अस्वीकृत।",
+      "axesTitle": "🧭 Axes map",
+      "axesBtn": "axes_map पहचानें",
+      "axesBtnBusy": "पहचान रहा है…",
+      "axesBtnTitle": "accelerometer अभिविन्यास (axes_map) पहचानने के लिए +X/+Y/+Z जॉग करें",
+      "axesDesc": "accelerometer अभिविन्यास पहचानने के लिए ~30 mm X में, फिर Y में, फिर Z में जॉग करता है। प्रिंट के दौरान अस्वीकृत।",
+      "beltResultTitle": "बेल्ट तुलना",
+      "beltPeaks": "A {a} Hz बनाम B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "बेल्ट A बनाम B फ़्रीक्वेंसी प्रतिक्रिया",
+      "beltLegendA": "बेल्ट A (1,1)",
+      "beltLegendB": "बेल्ट B (1,-1)",
+      "axesResultTitle": "Axes map",
+      "copy": "📋 कॉपी",
+      "copied": "✅ कॉपी हो गया",
+      "mappingVirtual": " (वर्चुअल)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "अक्ष वेग अनुक्रम",
+      "zoneVirtual": "वर्चुअल",
+      "zonePct": "{pct}%",
+      "legendAccelX": "त्वरण x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "झुकाव {x}° / {y}° / {z}°",
+      "gravity": "गुरुत्वाकर्षण {v} m/s²",
+      "noiseValue": "शोर {v}",
+      "sustainTitle": "🎯 Sustain फ़्रीक्वेंसी",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "सेकंड",
+      "sustainBtn": "चलाएँ",
+      "sustainBtnBusy": "रोके रखे है…",
+      "sustainDesc": "toolhead को फ़्रीक्वेंसी के पास जगह पर भनभनाता है - बेल्ट, toolhead और फ़्रेम को छूकर पता लगाएँ कि क्या खड़खड़ाता है। प्रिंट के दौरान अस्वीकृत।",
+      "sustainHolding": "✅ रोके रखे है",
+      "sustainOffTarget": "⚠ लक्ष्य से दूर",
+      "sustainPeak": "peak {freq} Hz · {pct}% बैंड में",
+      "specChartLabel": "फ़्रीक्वेंसी-समय spectrogram",
+      "energyChartLabel": "समय के साथ कंपन ऊर्जा",
+      "specAxes": "फ़्रीक्वेंसी → · समय ↓",
+      "energyLegend": "ऊर्जा बनाम समय - cyan गिरावट वहाँ है जहाँ एक स्पर्श ने मदद की",
+      "vibTitle": "📊 कंपन प्रोफ़ाइल",
+      "vibMax": "अधिकतम",
+      "vibStep": "step",
+      "vibUnit": "mm/s",
+      "vibBtn": "स्वीप चलाएँ",
+      "vibBtnBusy": "स्वीप कर रहा है…",
+      "vibDesc": "bed केंद्र के चारों ओर गति × मोटर कोण स्वीप करता है - एक लंबा रन (मिनट)। छोटा {step} अधिक बारीक पर धीमा होता है। सबसे सहज गतियाँ, बचने योग्य गतियाँ, मोटर symmetry और मोटर रेज़ोनेंस बताता है। प्रिंट के दौरान अस्वीकृत।",
+      "vibDescStep": "step",
+      "errNoiseCheck": "noise जाँच विफल",
+      "errLiveTest": "Live परीक्षण विफल",
+      "errBeltComparison": "बेल्ट तुलना विफल",
+      "errAxesMapDetection": "Axes-map पहचान विफल",
+      "errCopyFailed": "कॉपी विफल - टेक्स्ट चुनें और इसे मैन्युअल रूप से कॉपी करें।",
+      "errSustainTest": "Sustain-फ़्रीक्वेंसी परीक्षण विफल",
+      "errVibrationsProfile": "कंपन प्रोफ़ाइल विफल",
+      "vibProgress": "स्वीप {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "स्वीप शुरू हो रहा है…",
+      "vibCancel": "स्वीप रद्द करें",
+      "vibCancelling": "रद्द कर रहा है…",
+      "vibCancelled": "स्वीप रद्द - वेग सीमाएँ बहाल कर दी गईं।",
+      "vibReattached": "पुनः जुड़ा: यह परिणाम पेज दूर रहते हुए पूरा हुआ।",
+      "beltsCorexyOnly": "केवल CoreXY - यह प्रिंटर '{kin}' kinematics बताता है, इसलिए दो-बेल्ट तुलना लागू नहीं होती।"
+    },
+    "vibrationsView": {
+      "title": "कंपन प्रोफ़ाइल",
+      "lowFreqNoise": "⚠ कम-फ़्रीक्वेंसी शोर",
+      "smoothest": "▼ सबसे सहज ~{v} mm/s",
+      "symmetry": "symmetry {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "गति बनाम कंपन ऊर्जा",
+      "axisLegend": "गति (mm/s) → · कंपन ऊर्जा ↑",
+      "smooth": "सहज",
+      "avoid": "बचें",
+      "svgPolarLabel": "travel दिशा के अनुसार कंपन ऊर्जा",
+      "svgHeatmapLabel": "कोण और गति के अनुसार कंपन ऊर्जा heatmap",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "मोटर रेज़ोनेंस {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "सबसे सहज दिशा ~{start}-{end}°",
+      "captures": "{n} कैप्चर"
+    },
+    "compareView": {
+      "title": "दो कैप्चर तुलना करें (A ⇄ B)",
+      "intro": "किसी यांत्रिक सुधार के पहले/बाद, या वही अक्ष दोबारा परखा गया। (समान-अक्ष फ़ाइलें तुलना करें।)",
+      "selectA": "A: चुनें",
+      "selectB": "B: चुनें",
+      "busy": "…",
+      "compare": "तुलना करें",
+      "comparisonFailed": "तुलना विफल",
+      "chartAriaLabel": "A बनाम B power spectral density",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "CSV स्रोत",
+      "tabUpload": "📤 अपलोड",
+      "tabHost": "🖥 प्रिंटर से",
+      "selectCsv": "📈 CSV चुनें",
+      "axisTitle": "यह डेटा जिस अक्ष का है",
+      "axisAuto": "अक्ष: स्वतः",
+      "axisX": "अक्ष: X",
+      "axisY": "अक्ष: Y",
+      "analyzing": "विश्लेषण हो रहा है…",
+      "analyze": "🚀 विश्लेषण",
+      "onHost": "प्रिंटर होस्ट पर",
+      "refresh": "↻ रीफ़्रेश",
+      "noFiles": "कोई रेज़ोनेंस CSV नहीं मिली।",
+      "noFilesInDirs": "{dirs} में कोई रेज़ोनेंस CSV नहीं मिली।",
+      "analyzeFile": "विश्लेषण",
+      "saveTitle": "इस कैप्चर को संग्रह में कॉपी करें",
+      "save": "💾 सहेजें",
+      "archive": "संग्रह",
+      "archiveEmpty": "अभी कुछ सहेजा नहीं गया - ऊपर 💾 सहेजें का उपयोग करें, या किसी config के नीचे \"संग्रह में सहेजें\"।",
+      "downloadTitle": "{fn} डाउनलोड करें",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "प्रिंटर फ़ाइलें सूचीबद्ध नहीं हो सकीं",
+      "errListArchive": "संग्रह सूचीबद्ध नहीं हो सका",
+      "errSave": "संग्रह में सहेजना विफल",
+      "errDelete": "हटाना विफल",
+      "errDownload": "डाउनलोड विफल",
+      "viewChart": "चार्ट",
+      "viewChartTitle": "इस सहेजे गए रन का चार्ट फिर से खोलें"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "बहुत अधिक कम-फ़्रीक्वेंसी गति दर्ज हुई - ACCEL कम करें (या SIZE बढ़ाएँ) और दोबारा चलाएँ ताकि केवल स्थिर गतियाँ मापी जाएँ।",
+        "smoothest": "{v} mm/s के आसपास सबसे सहज",
+        "avoid": "{speeds} mm/s के पास की गतियों से बचें",
+        "matched": "मोटर अच्छी तरह मेल खाते हैं ({pct}% symmetry)",
+        "low_symmetry": "मोटर symmetry कम है ({pct}%) - बेल्ट तनाव जाँचें",
+        "motor_freq": "मोटर रेज़ोनेंस ~{f} Hz",
+        "complete": "कंपन प्रोफ़ाइल पूर्ण।"
+      },
+      "sustain": {
+        "not_dominant": "toolhead मुख्य रूप से {freq} Hz पर कंपन नहीं कर रहा (peak {peak} Hz है) - स्रोत toolhead सेंसर तक नहीं पहुँच रहा होगा।",
+        "drop": "{freq} Hz रोके रखे है - किसी बिंदु पर कंपन ~{drop}% गिरी; जो आपने तब छुआ वह मज़बूत योगदानकर्ता है।",
+        "touch": "{freq} Hz रोके रखे है - बेल्ट, toolhead, gantry जोड़ और idlers एक-एक करके छूएँ; जो हिस्सा भनभनाहट को शांत करता है वही आपका रेज़ोनेंस स्रोत है।"
+      },
+      "axes": {
+        "same_axis": "कई मशीन अक्षों के लिए एक ही accelerometer अक्ष पहचाना गया",
+        "low_confidence": "कम पहचान विश्वास ({pct}%)",
+        "high_angle_error": "उच्च कोण त्रुटि ({deg}°)",
+        "unusual_gravity": "असामान्य गुरुत्वाकर्षण रीडिंग ({g} m/s²)",
+        "high_noise": "उच्च शोर स्तर ({n} mm/s²)",
+        "good": "पहचान गुणवत्ता: अच्छी"
+      }
+    },
+    "proof": {
+      "title": "ट्यून का प्रमाण",
+      "empty": "इस अक्ष पर दो दर्ज परिणाम चाहिए - ट्यून करने से पहले मापें, shaper लागू करें, फिर दोबारा मापें और दोनों सहेजें।",
+      "before": "पहले",
+      "after": "बाद",
+      "samePick": "तुलना के लिए दो अलग परिणाम चुनें।",
+      "metricHead": "मेट्रिक",
+      "delta": "बदलाव",
+      "copy": "रिपोर्ट कॉपी करें",
+      "copied": "कॉपी हो गया ✓",
+      "metric": {
+        "score": "मापन ग्रेड",
+        "vibrations": "बची हुई कंपन %",
+        "smoothing": "Smoothing",
+        "maxAccel": "सुझाया अधिकतम त्वरण (mm/s²)",
+        "freq": "shaper फ़्रीक्वेंसी (Hz)",
+        "shaper": "Shaper"
+      }
+    }
+  }
+}

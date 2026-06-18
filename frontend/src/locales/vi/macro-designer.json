@@ -1,0 +1,200 @@
+{
+  "macroDesigner": {
+    "intro": "Mô phỏng G-code ngoại tuyến - dán hoặc viết một chương trình và xem đường đi của đầu in, hộp bao, tổng quãng đường di chuyển và đùn, cùng ước tính thời gian, mà không cần chạm vào máy in. Duyệt thư viện macro tích hợp để tham khảo.",
+    "help": {
+      "guide": "Trợ giúp",
+      "guideTitle": "Giới thiệu Macro Designer",
+      "close": "Đóng",
+      "howToRead": "Cách dùng",
+      "steps": [
+        "Gõ hoặc dán G-code vào trình soạn thảo (một hình vuông mẫu được nạp sẵn để bắt đầu).",
+        "Nhấn Mô phỏng - đường đi 2D và các thống kê sẽ cập nhật.",
+        "Đường liền là các chuyển động đùn; đường đứt nét mờ là di chuyển không đùn.",
+        "Duyệt thư viện macro và Chèn một macro để bắt đầu từ các lệnh của nó."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "Trình mô phỏng",
+          "body": "Nó chạy chương trình trên một đầu in ảo: chuyển động G0/G1, G90/G91 (tuyệt đối/tương đối), M82/M83 (chế độ đùn), G92 (đặt vị trí) và G28 (về gốc → điểm gốc). Nó báo cáo đường đi, hộp bao, tổng quãng đường di chuyển và đùn, ước tính thời gian thô từ tốc độ tiến (feedrate), và một dòng thời gian theo từng lệnh. Không có gì được gửi đến máy in."
+        },
+        "motion": {
+          "title": "Đường đi & thời gian",
+          "body": "Khung nhìn 2D là đường đi XY (Z nằm trong hộp bao). Ước tính thời gian chia chiều dài mỗi chuyển động cho tốc độ tiến của nó - bỏ qua gia tốc, nên đây là cận dưới thô chứ không phải thời gian in chính xác. Các lệnh mà trình mô phỏng không mô hình hóa (ví dụ M-code, macro cấp cao) được liệt kê dưới dạng cảnh báo và bỏ qua."
+        },
+        "macros": {
+          "title": "Thư viện macro",
+          "body": "Một bộ tham khảo các macro Klipper phổ biến với tên, chức năng, và các phần cấu hình chúng cần. \"Chèn\" đưa các lệnh cấp cao của macro vào trình soạn thảo làm điểm khởi đầu - lưu ý chúng sẽ được mở rộng thêm trên máy in (mở rộng Jinja/macro đầy đủ sắp ra mắt)."
+        },
+        "glossary": {
+          "title": "Thuật ngữ",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "Ngôn ngữ chuyển động từng dòng mà máy in chạy (di chuyển, nhiệt độ, quạt, …)."
+        },
+        "feedrate": {
+          "term": "Tốc độ tiến (F)",
+          "def": "Tốc độ chuyển động tính bằng mm/min - F1200 là 20 mm/s. Quy định mỗi chuyển động chạy nhanh đến đâu."
+        },
+        "macro": {
+          "term": "Macro",
+          "def": "Một lệnh có tên, tái sử dụng được (ví dụ QUAD_GANTRY_LEVEL) mở rộng thành một chuỗi G-code."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Mô phỏng",
+      "simulating": "Đang mô phỏng…",
+      "sample": "Nạp mẫu",
+      "clear": "Xóa"
+    },
+    "library": {
+      "label": "Macro tích hợp",
+      "placeholder": "Duyệt macro…",
+      "insert": "Chèn vào trình soạn thảo",
+      "requires": "Cần: {sections}",
+      "none": "-"
+    },
+    "result": {
+      "title": "Mô phỏng",
+      "moves": "{count} chuyển động",
+      "distance": "{mm} mm di chuyển",
+      "extrude": "{mm} mm đùn",
+      "time": "~{s} s",
+      "bounds": "Hộp bao",
+      "empty": "Không có chuyển động để mô phỏng.",
+      "timeAccel": "(có tính gia tốc)",
+      "timeConstant": "(không giới hạn)"
+    },
+    "path": {
+      "title": "Đường đi đầu in (XY)",
+      "noPath": "Chạy mô phỏng để xem đường đi."
+    },
+    "explain": {
+      "title": "Giải thích macro này",
+      "travel": "Di chuyển nhanh tới X{x} Y{y} ở {f} mm/min",
+      "print": "Chuyển động in - đùn {e} mm trên {d} mm tới X{x} Y{y} ở {f} mm/min",
+      "retract": "Rút lại {e} mm",
+      "prime": "Đùn {e} mm tại chỗ",
+      "noMove": "Không di chuyển",
+      "absXYZ": "Chuyển sang định vị tuyệt đối (G90)",
+      "relXYZ": "Chuyển sang định vị tương đối (G91)",
+      "absE": "Chuyển sang đùn tuyệt đối (M82)",
+      "relE": "Chuyển sang đùn tương đối (M83)",
+      "setPos": "Đặt vị trí hiện tại (G92)",
+      "home": "Đưa các trục về gốc (G28) → điểm gốc",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "đến nay: {d} mm · {e} mm · ~{s} s",
+      "note": "Vòng lặp và điều kiện được mở rộng theo cách máy in sẽ làm; một macro cần trạng thái máy in trực tiếp sẽ chuyển sang xem trước theo nghĩa đen."
+    },
+    "timeline": {
+      "title": "Dòng thời gian",
+      "line": "Dòng",
+      "cmd": "Lệnh",
+      "action": "Hành động"
+    },
+    "warnings": {
+      "title": "Cảnh báo"
+    },
+    "live": {
+      "label": "Từ máy in",
+      "placeholder": "Chọn một trong các macro đã cài của bạn…",
+      "hint": "Tìm thấy {n} macro trên máy in - chọn một để nạp G-code và mô phỏng nó.",
+      "unreachable": "Không kết nối được máy in - hãy kết nối để nạp các macro đã cài của bạn.",
+      "params": "Tham số macro"
+    },
+    "limits": {
+      "title": "Ngoài giới hạn / vượt tốc độ",
+      "oob": "Dòng {line}: {axis}={value} nằm ngoài vùng in ({min}…{max} mm).",
+      "overSpeed": "Dòng {line}: {value} mm/s vượt giới hạn {limit} mm/s của máy in (Klipper sẽ ghim lại).",
+      "buildArea": "vùng in {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Trình kiểm tra macro - {n} phát hiện",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE không có RESTORE_GCODE_STATE tương ứng - chế độ định vị/đùn đã lưu không bao giờ được khôi phục.",
+          "fix": "Thêm một RESTORE_GCODE_STATE (hoặc bỏ SAVE)."
+        },
+        "ends_relative": {
+          "msg": "Macro kết thúc ở chế độ tương đối (G91/M83) - lệnh kế tiếp sẽ di chuyển theo tương đối.",
+          "fix": "Thêm G90 / M82 ở cuối, hoặc bọc các chuyển động trong SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
+        },
+        "extrude_before_home": {
+          "msg": "Một chuyển động đùn xảy ra trước G28 - rủi ro đùn khi nguội hoặc chưa về gốc.",
+          "fix": "Về gốc (G28) và làm nóng hotend trước khi đùn."
+        }
+      }
+    },
+    "heat": {
+      "colorBy": "Tô màu theo",
+      "none": "Phẳng",
+      "speed": "Tốc độ",
+      "extrude": "Đùn",
+      "legendSpeed": "Tốc độ (mm/s)",
+      "legendExtrude": "Đùn (mm/s)"
+    },
+    "compare": {
+      "title": "So sánh (A / B)",
+      "hint": "Mô phỏng một chương trình thứ hai (B) và so sánh khác biệt với kết quả hiện tại (A).",
+      "copyA": "Sao chép A → B",
+      "run": "So sánh",
+      "running": "Đang so sánh…",
+      "placeholder": "Dán hoặc viết chương trình B…",
+      "editorB": "Chương trình B",
+      "overlay": "Đường đi A so với B chồng lên nhau",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "Khác biệt của trình kiểm tra",
+      "lintSame": "Cùng các phát hiện của trình kiểm tra ở cả hai.",
+      "onlyA": "chỉ ở A",
+      "onlyB": "chỉ ở B",
+      "row": {
+        "moves": "Chuyển động",
+        "distance": "Quãng đường (mm)",
+        "extrude": "Đùn (mm)",
+        "time": "Thời gian (s)"
+      }
+    },
+    "scaffold": {
+      "title": "Tạo START / END_PRINT",
+      "hint": "Tạo một START_PRINT và END_PRINT phù hợp với máy in này - cách về gốc, kiểu cân chỉnh mà nó thực sự có, một bước lưới (mesh), và vị trí mồi/đậu nằm trong vùng in thực tế.",
+      "generate": "Tạo",
+      "generating": "Đang tạo…",
+      "loadEditor": "Nạp vào trình soạn thảo",
+      "writeTitle": "Ghi vào cấu hình",
+      "target": "Tệp đích",
+      "append": "Thêm vào cấu hình…",
+      "confirm": "Xác nhận thêm",
+      "cancel": "Hủy",
+      "appending": "Đang ghi…",
+      "writeNote": "Thêm cả hai macro vào tệp đã chọn sau cổng xác nhận - một bản sao lưu được tạo trước và việc ghi bị từ chối khi đang in. Bị từ chối nếu đã tồn tại một macro cùng tên.",
+      "saved": "Đã lưu vào {file}.",
+      "savedBackup": "Đã lưu vào {file} (sao lưu: {backup}). Khởi động lại firmware để áp dụng.",
+      "note": {
+        "kinematics": "Động học: {k}.",
+        "bounds": "Vùng in X {x0}-{x1}, Y {y0}-{y1} (mồi/đậu nằm gọn bên trong).",
+        "leveling_qgl": "Phát hiện quad_gantry_level -> đã thêm QUAD_GANTRY_LEVEL.",
+        "leveling_ztilt": "Phát hiện z_tilt -> đã thêm Z_TILT_ADJUST.",
+        "leveling_none": "Chưa cấu hình quad_gantry_level / z_tilt - để lại một chỗ giữ.",
+        "mesh": "Phát hiện bed_mesh -> đã thêm BED_MESH_CALIBRATE.",
+        "no_bed": "Không có bàn nhiệt - bỏ qua các bước làm nóng bàn."
+      }
+    },
+    "flow": {
+      "title": "Kiểm tra lưu lượng (trần hotend)",
+      "hint": "Chọn hotend của bạn từ danh mục và mọi chuyển động in sẽ được kiểm tra so với trần vùng nóng chảy thực của nó - một macro đùn quá mức sẽ lộ ra trước khi in.",
+      "hotend": "Hotend",
+      "pick": "Chọn một hotend…",
+      "diameter": "Ø mm",
+      "ok": "Mọi chuyển động in đều nằm trong trần {ceiling} mm³/s.",
+      "overTitle": "{n} chuyển động vượt trần {ceiling} mm³/s:",
+      "overLine": "Dòng {line}: {flow} mm³/s"
+    }
+  }
+}

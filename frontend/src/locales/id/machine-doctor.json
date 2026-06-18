@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "Satu pemindaian baca-saja untuk semua yang bisa diperiksa aplikasi - konflik pin, nilai driver, pergeseran konfigurasi, lint proyek, sinkronisasi firmware, perubahan perangkat keras, dan kesehatan instalasi - dinilai A-F. Setiap temuan tertaut ke widget yang memperbaikinya.",
+    "scanning": "Memindai…",
+    "rescan": "Pindai ulang",
+    "scoreLine": "Skor {score} / 100",
+    "counts": "{errors} kesalahan · {warnings} peringatan",
+    "scoreHint": "Penilaian transparan: 100 − 25 per kesalahan − 8 per peringatan. Pemeriksaan yang tidak diketahui tidak pernah mengurangi nilai Anda.",
+    "allClear": "Semua aman.",
+    "notChecked": "Tidak dapat diperiksa (printer tidak terjangkau atau tidak ada baseline).",
+    "assessment": {
+      "healthy": "Sehat - semua yang bisa diperiksa aplikasi terlihat baik.",
+      "attention": "Sebagian besar sehat, tetapi {pillar} perlu perhatian.",
+      "critical": "{pillar} punya masalah yang perlu diperbaiki."
+    },
+    "pillars": {
+      "title": "Rincian kesehatan",
+      "notMeasured": "tidak diukur"
+    },
+    "pillar": {
+      "config": "Integritas konfigurasi",
+      "firmware": "Sinkronisasi firmware",
+      "services": "Layanan",
+      "tuning": "Input shaping",
+      "flow": "Aliran maksimum"
+    },
+    "services": {
+      "title": "Layanan",
+      "active": "aktif",
+      "inactive": "berhenti",
+      "none": "Tidak ada layanan yang dilaporkan."
+    },
+    "stats": {
+      "title": "Sekilas",
+      "maxFlow": "Aliran maksimum",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} tidak sinkron",
+      "allSynced": "semua sinkron",
+      "none": "Belum ada pengukuran."
+    },
+    "category": {
+      "pins": "Pengkabelan pin",
+      "drivers": "Nilai driver",
+      "drift": "Pergeseran konfigurasi",
+      "project": "Proyek konfigurasi",
+      "firmware": "Sinkronisasi firmware",
+      "hardware": "Perubahan perangkat keras",
+      "install": "Kesehatan instalasi"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Peringatan",
+      "fail": "Masalah",
+      "unknown": "Tidak diperiksa"
+    },
+    "link": {
+      "config_section": "Editor Konfigurasi",
+      "config_file": "Editor Konfigurasi",
+      "stepper": "Driver Motor",
+      "topology_node": "Peta Mesin",
+      "widget": "Buka"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "Pin {pin} pada {mcu} ditetapkan di lebih dari satu bagian.",
+        "caveat": "Pin {pin} pada {mcu} memiliki catatan elektronik."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A melebihi batas maksimum driver ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A berada dalam 10% dari batas maksimum ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A melebihi peringkat {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A berada dalam 10% dari peringkat {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} bukan kelipatan pangkat dua."
+      },
+      "drift": {
+        "pending": "Klipper memiliki perubahan SAVE_CONFIG yang belum disimpan dan tertunda.",
+        "param": "[{section}] {key}: disk {disk} ≠ live {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: include \"{message}\" tidak menunjuk ke file mana pun.",
+        "orphan_driver": "{file}: bagian driver \"{message}\" tidak memiliki stepper yang cocok."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: firmware {mcu_version} berbeda dari host {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: perangkat keras berubah ({kind}).",
+        "no_baseline": "Belum ada baseline perangkat keras yang disimpan - simpan snapshot di Peta Mesin untuk mendeteksi perubahan."
+      },
+      "install": {
+        "check_failed": "Pemeriksaan instalasi gagal: {name} - {detail}."
+      }
+    },
+    "help": {
+      "guide": "Bantuan",
+      "guideTitle": "Tentang Machine Doctor",
+      "close": "Tutup",
+      "howToRead": "Cara membaca",
+      "steps": [
+        "Tekan Pindai ulang untuk menjalankan satu pemeriksaan baca-saja pada seluruh printer.",
+        "Baca nilai A-F dan bilah pilar untuk melihat di mana titik terlemahnya.",
+        "Buka tautan temuan mana pun untuk langsung menuju widget yang memperbaikinya."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Apa yang dicakup pemindaian",
+          "body": "Satu pemindaian baca-saja untuk semua yang bisa diperiksa aplikasi - konflik pin, nilai driver, pergeseran konfigurasi antara konfigurasi tersimpan dan live, lint proyek, sinkronisasi firmware, perubahan perangkat keras terhadap baseline Anda, dan kesehatan instalasi. Tidak pernah menjalankan apa pun pada printer."
+        },
+        "grade": {
+          "title": "Nilai A-F",
+          "body": "Setiap pilar kesehatan (integritas konfigurasi, sinkronisasi firmware, layanan, input shaping, aliran maksimum) dinilai, dan yang terlemah menurunkan nilai keseluruhan. Baris skor menunjukkan persis bagaimana nilai itu dicapai - tidak ada yang disembunyikan."
+        },
+        "fixes": {
+          "title": "Tautan langsung-perbaiki",
+          "body": "Setiap temuan dilengkapi tombol yang menautkan langsung ke widget yang menyelesaikannya (Editor Konfigurasi, Driver Motor, Peta Mesin…), sehingga Anda beralih dari masalah ke perbaikan dalam satu klik."
+        },
+        "glossary": {
+          "title": "Istilah yang dipakai di sini"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Nilai (A-F)",
+          "def": "Satu huruf yang merangkum kesehatan printer, diturunkan dari skor pilar; A berarti sehat, F berarti perlu perhatian."
+        },
+        "pillar": {
+          "term": "Pilar",
+          "def": "Kategori kesehatan yang dinilai secara independen - mis. integritas konfigurasi, sinkronisasi firmware, layanan, input shaping, aliran maksimum."
+        },
+        "finding": {
+          "term": "Temuan",
+          "def": "Masalah spesifik yang terdeteksi pemindaian, lengkap dengan tingkat keparahan dan tautan ke widget yang memperbaikinya."
+        }
+      }
+    }
+  }
+}

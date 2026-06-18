@@ -1,0 +1,197 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Modifica in sicurezza la configurazione del touchscreen KlipperScreen della stampante, poi riavvia KlipperScreen per applicarla. Ogni salvataggio viene prima sottoposto a backup.",
+    "help": {
+      "guide": "Aiuto",
+      "guideTitle": "Informazioni su KlipperScreen Studio",
+      "close": "Chiudi",
+      "howToRead": "Come leggere",
+      "steps": [
+        "Modifica il testo di configurazione qui sotto (oppure lascialo invariato).",
+        "Salva: il file attuale viene prima sottoposto a backup e il salvataggio viene rifiutato mentre la stampante è occupata.",
+        "Riavvia KlipperScreen per applicare la modifica sullo schermo fisico.",
+        "Le righe usano terminatori UNIX (LF), applicati automaticamente al salvataggio."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Glossario",
+          "body": "Definizioni rapide dei termini di KlipperScreen usati qui."
+        },
+        "config": {
+          "title": "Cos'è la scheda Config?",
+          "body": "Il file KlipperScreen.conf grezzo. Modifica qualsiasi impostazione a mano; il salvataggio esegue prima il backup del file, viene rifiutato mentre la stampante è occupata e avvisa se il file è cambiato sullo schermo da quando lo hai caricato. La maggior parte delle persone usa invece le schede Impostazioni / Menu / Temi."
+        },
+        "settings": {
+          "title": "Cos'è la scheda Impostazioni?",
+          "body": "Le opzioni [main] più usate sotto forma di modulo: tema, lingua, sospensione dello schermo, dimensione del carattere e interruttori. Precompilate dalla configurazione attiva; vengono scritte solo le opzioni che modifichi. Riavvia per applicare."
+        },
+        "menus": {
+          "title": "Cos'è la scheda Menu?",
+          "body": "Progetta le griglie di pulsanti del touchscreen. Ogni albero (__main è la griglia principale, __print la schermata di stampa) elenca i suoi pulsanti; aggiungili, rinominali, riordinali e annidali, e imposta ognuno per aprire un sotto-menu, aprire una schermata integrata o eseguire G-code."
+        },
+        "themes": {
+          "title": "Cos'è la scheda Temi?",
+          "body": "Crea un tema KlipperScreen: scegli un colore per ogni token della palette e un raggio degli angoli, osserva l'anteprima dal vivo, poi crealo e applicalo allo schermo. L'anteprima è approssimativa: lo schermo reale viene renderizzato in GTK."
+        },
+        "kiosk": {
+          "title": "Cos'è la scheda Kiosk?",
+          "body": "Metti FilaMind Flow stesso sul touchscreen come browser a schermo intero: controllo totale di ciò che lo schermo mostra. È uno scambio reversibile con KlipperScreen (temporaneo per impostazione predefinita; un riavvio ripristina KlipperScreen). Richiede l'installer una tantum sull'host della stampante."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "L'interfaccia touchscreen che gira su un piccolo display collegato alla stampante, separata da questo pannello web."
+        },
+        "theme": {
+          "term": "Tema",
+          "def": "Un aspetto di KlipperScreen: colori, icone e raggio degli angoli. Risiede in una cartella styles/<name> sull'host; solo estetico (non può cambiare il layout)."
+        },
+        "menu": {
+          "term": "Menu (__main / __print)",
+          "def": "Le griglie di pulsanti che KlipperScreen mostra. __main è la schermata principale, __print la schermata mostrata durante la stampa, __splashscreen la schermata di avvio."
+        },
+        "panel": {
+          "term": "Pannello",
+          "def": "Una schermata integrata di KlipperScreen che un pulsante può aprire (movimento, temperatura, estrusione, bed mesh, …). I loro contenuti interni sono fissati da KlipperScreen."
+        },
+        "autoBlock": {
+          "term": "Blocco generato automaticamente (#~#)",
+          "def": "La sezione che KlipperScreen scrive per sé in fondo al file conf, dopo il marcatore #~#. FilaMind non la modifica mai: solo le tue impostazioni sopra di essa."
+        },
+        "kiosk": {
+          "term": "Kiosk",
+          "def": "Eseguire un browser a schermo intero sul touchscreen al posto di KlipperScreen, così lo schermo mostra FilaMind Flow. Completamente reversibile."
+        }
+      }
+    },
+    "status": {
+      "checking": "Ricerca di KlipperScreen in corso…",
+      "absent": "KlipperScreen non è stato rilevato su questa stampante (nessun KlipperScreen.conf e non segnalato da Moonraker). Installa KlipperScreen per usare questo strumento.",
+      "present": "KlipperScreen rilevato",
+      "theme": "Tema",
+      "language": "Lingua",
+      "notRestartable": "Moonraker non può riavviare KlipperScreen automaticamente: riavvialo manualmente dopo il salvataggio."
+    },
+    "editor": {
+      "loading": "Lettura di KlipperScreen.conf…",
+      "reload": "Ricarica",
+      "save": "Salva config",
+      "saving": "Salvataggio…",
+      "saved": "Salvato (backup eseguito)",
+      "unsaved": "Modifiche non salvate"
+    },
+    "save": {
+      "busy": "Rifiutato mentre la stampante è occupata: riprova quando è inattiva.",
+      "stale": "KlipperScreen.conf è cambiato su disco da quando è stato caricato (probabilmente modificato sullo schermo). Ricarica prima di salvare per non sovrascrivere quella modifica."
+    },
+    "view": {
+      "config": "Config",
+      "settings": "Impostazioni",
+      "menus": "Menu",
+      "themes": "Temi",
+      "kiosk": "Kiosk"
+    },
+    "settings": {
+      "loading": "Caricamento impostazioni…",
+      "intro": "Le opzioni di visualizzazione di KlipperScreen più usate sotto forma di modulo. Vengono scritte solo le opzioni che modifichi: tutto il resto mantiene il valore attuale. Riavvia per applicare.",
+      "onlyChanged": "Solo le impostazioni che modifichi qui vengono scritte in KlipperScreen.conf.",
+      "save": "Salva impostazioni",
+      "savedRestart": "Salvato: riavvia KlipperScreen per applicare.",
+      "unset": "Lascia non impostato (predefinito)",
+      "never": "Mai (sempre acceso)",
+      "fontSize": {
+        "small": "Piccolo",
+        "medium": "Medio",
+        "large": "Grande",
+        "max": "Massimo"
+      },
+      "label": {
+        "theme": "Tema",
+        "language": "Lingua",
+        "screen_blanking": "Sospensione schermo dopo",
+        "font_size": "Dimensione carattere",
+        "24htime": "Orologio a 24 ore",
+        "use_dpms": "Usa DPMS per spegnere lo schermo",
+        "show_cursor": "Mostra il cursore del mouse",
+        "confirm_estop": "Conferma prima dell'arresto di emergenza",
+        "show_heater_power": "Mostra la potenza del riscaldatore %",
+        "autoclose_popups": "Chiudi automaticamente i pop-up"
+      }
+    },
+    "kiosk": {
+      "loading": "Verifica dello schermo…",
+      "intro": "Metti FilaMind Flow stesso sul touchscreen come browser a schermo intero: controllo totale di ciò che lo schermo mostra. Si scambia con KlipperScreen: avviarne uno ferma l'altro.",
+      "current": "Schermo ora",
+      "mode": {
+        "kiosk": "Kiosk FilaMind",
+        "klipperscreen": "KlipperScreen",
+        "none": "Nessuno in esecuzione"
+      },
+      "notInstalled": "Kiosk non ancora installato",
+      "setupHint": "Esegui questo una volta sull'host della stampante (installa un browser a schermo intero + il servizio kiosk):",
+      "persist": "Rendilo predefinito all'avvio (altrimenti lo scambio è temporaneo: un riavvio ripristina l'altro).",
+      "safety": "Temporaneo per impostazione predefinita: un riavvio riporta l'altro. Se lo schermo diventa nero, via SSH esegui: sudo systemctl start KlipperScreen",
+      "switchBtn": "Passa a FilaMind",
+      "restoreBtn": "Ripristina KlipperScreen",
+      "refresh": "Aggiorna",
+      "confirmSwitchTitle": "Mettere FilaMind sullo schermo?",
+      "confirmRestoreTitle": "Ripristinare KlipperScreen?",
+      "confirmBody": "Questo ferma un servizio dello schermo e avvia l'altro. Non influisce su una stampa attiva, ma il touchscreen diventerà nero per alcuni secondi durante il cambio.",
+      "confirm": "Procedi",
+      "cancel": "Annulla",
+      "switchedNote": "FilaMind sta prendendo il controllo dello schermo: dovrebbe comparire in pochi secondi.",
+      "restoredNote": "KlipperScreen sta tornando: lo schermo dovrebbe riapparire a breve."
+    },
+    "menus": {
+      "loading": "Caricamento menu…",
+      "intro": "Progetta ciò che il touchscreen mostra: i pulsanti di ogni menu, il loro ordine e cosa fa ciascuno. La griglia della schermata principale è l'albero __main; la schermata di stampa è __print.",
+      "addItem": "Aggiungi pulsante",
+      "empty": "Ancora nessun elemento: aggiungine uno.",
+      "up": "Sposta su",
+      "down": "Sposta giù",
+      "addChild": "Aggiungi sotto-elemento",
+      "delete": "Elimina",
+      "name": "Nome",
+      "icon": "Icona",
+      "action": "Azione",
+      "actSubmenu": "Apri un sotto-menu",
+      "actPanel": "Apri una schermata",
+      "actGcode": "Esegui G-code",
+      "panel": "Schermata",
+      "gcode": "G-code",
+      "enable": "Mostra se",
+      "save": "Salva menu",
+      "newItem": "Nuovo pulsante",
+      "savedRestart": "Menu salvati: riavvia KlipperScreen per vederli."
+    },
+    "themes": {
+      "loading": "Caricamento temi…",
+      "palette": "Palette",
+      "radius": "Raggio degli angoli",
+      "preview": "Anteprima dal vivo",
+      "btn": "Pulsante",
+      "previewWarn": "avviso",
+      "previewApprox": "Anteprima approssimativa: lo schermo reale viene renderizzato con GTK; sono previste lievi differenze.",
+      "namePlaceholder": "Nome del nuovo tema",
+      "createApply": "Crea e applica",
+      "createOnly": "Crea soltanto",
+      "installed": "Temi installati",
+      "apply": "Applica",
+      "delete": "Elimina tema",
+      "generated": "Creato qui",
+      "created": "Tema creato. Applicalo dall'elenco, poi riavvia.",
+      "appliedRestart": "Tema impostato: riavvia KlipperScreen per vederlo.",
+      "previewTitle": "Stampante"
+    },
+    "restart": {
+      "button": "Riavvia KlipperScreen",
+      "restarting": "Riavvio…",
+      "done": "KlipperScreen si sta riavviando: lo schermo si ricaricherà a breve.",
+      "confirmTitle": "Riavviare KlipperScreen?",
+      "confirmBody": "Questo riavvia il servizio del touchscreen per applicare le modifiche. Non influisce su una stampa attiva, ma lo schermo diventa nero per alcuni secondi.",
+      "confirm": "Riavvia",
+      "cancel": "Annulla"
+    }
+  }
+}

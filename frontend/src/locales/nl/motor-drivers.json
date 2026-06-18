@@ -1,0 +1,332 @@
+{
+  "motorDrivers": {
+    "help": {
+      "whatsThis": "wat is dit?",
+      "topics": {
+        "glossary": {
+          "title": "Driver-termen",
+          "body": "Een korte begrippenlijst voor dit dashboard:"
+        },
+        "overview": {
+          "title": "Wat dit toont",
+          "body": "Elke TMC-stepperdriver die je printer heeft, rechtstreeks uit zijn live Klipper-config gelezen - één kaart per motor (X, Y, elke Z, de extruder…). Deze weergave is alleen-lezen: ze rapporteert wat geconfigureerd is en wat de driver op dit moment doet. Afstellen komt in een latere stap."
+        },
+        "current": {
+          "title": "Loop- / houdstroom",
+          "body": "De loopstroom is hoe hard de motor tijdens beweging wordt aangedreven; de houdstroom is het lagere niveau in rust. De live waarde is wat de chip daadwerkelijk toepast - die kan een tikje afwijken van de ingestelde waarde omdat stromen in discrete stappen komen. Een driver die warm loopt betekent meestal dat de loopstroom te hoog is ingesteld voor de motor."
+        },
+        "chopper": {
+          "title": "StealthChop vs SpreadCycle",
+          "body": "De choppermodus is hoe de driver de spoelstroom vormgeeft. SpreadCycle is nauwkeurig en koppelsterk (goed voor snelle X/Y) maar hoorbaar; StealthChop is bijna geruisloos (goed voor Z en rust) maar bij snelheid iets zachter. “StealthChop < N mm/s” betekent dat hij onder die snelheid stil blijft en daarboven overschakelt op SpreadCycle."
+        },
+        "microsteps": {
+          "title": "Microstapping",
+          "body": "Elke volledige motorstap wordt elektronisch onderverdeeld in microstappen (16, 32, … 256). Meer microstappen = vloeiendere, stillere beweging. Met interpolatie aan vlakt de driver intern af tot 256, ongeacht de ingestelde waarde."
+        },
+        "stallguard": {
+          "title": "StallGuard (sensorloos homen)",
+          "body": "StallGuard meet de motorbelasting zodat de as kan homen door een zachte blokkering te detecteren in plaats van een fysieke eindstop te gebruiken. Het drempelregister verschilt per model (sgthrs op 2209, sgt op 2130/5160, sg4_thrs op 2240). Het afstellen is een latere stap; hier tonen we alleen de geconfigureerde waarde."
+        },
+        "health": {
+          "title": "Live status",
+          "body": "Wanneer een motor is ingeschakeld (na het homen of een jog) rapporteert de driver live vlaggen: oververhitting, kortsluiting en open belasting. Een groen “ok” betekent geen fouten; “waarschuwing” is een oververhittingsvoorwaarschuwing of open belasting; “fout” is een kortsluiting of harde oververhitting. Zolang de motor is uitgeschakeld rapporteert de driver niets, dus toont de kaart “inactief”."
+        },
+        "temperature": {
+          "title": "Temperatuur",
+          "body": "Slechts sommige drivers (bijv. de TMC2240) hebben een ingebouwde temperatuursensor. Op modellen zonder - zoals de gangbare TMC2209 - leest de temperatuur “geen sensor”, wat normaal is, geen fout."
+        },
+        "catalog": {
+          "title": "Waar de modelgegevens vandaan komen",
+          "body": "De interface (UART / SPI), het stroomplafond en de ondersteunde functies die op elke kaart staan komen uit een ingebouwde capaciteitenkaart van de TMC-familie - geverifieerd tegen de Klipper / Kalico driver-code. Ze vertelt je bijvoorbeeld dat een TMC2208 geen sensorloos homen kan terwijl een TMC2209 dat wel kan, of dat alleen de TMC2240 zijn eigen temperatuur rapporteert. Elektrische waarden zijn datasheet-typisch; je bord, meetweerstand en koeling bepalen de werkelijke grenzen."
+        },
+        "motor": {
+          "title": "Een motor toewijzen",
+          "body": "Kies de stappenmotor die op elke as is aangesloten uit een ingebouwde catalogus van 200+ motoren. Klipper weet niet welke motor je hebt gemonteerd - door het FilaMind te vertellen ontgrendel je de datasheet-specs (houdkoppel, nominale stroom, weerstand, inductantie), die een latere stap gebruikt om een veilige loopstroom en driverafstemming aan te bevelen. Het wordt op de printer opgeslagen en verandert op zichzelf niets aan de driver."
+        },
+        "motorsync": {
+          "title": "Motorsynchronisatie",
+          "body": "Wanneer één as door twee of meer motoren wordt aangedreven (dubbele of quad-Z, dubbele X), kunnen hun microstapfasen uit elkaar drijven en tegen elkaar in werken - met meer geluid en koppelverlies. De motors_sync-uitbreiding meet elke motor met een accelerometer en duwt ze terug in fase. Het is een aparte uitbreiding; als ze geïnstalleerd is kan FilaMind ze hier uitvoeren of kalibreren (het verplaatst de printkop, dus het is afgeschermd). Indien niet geïnstalleerd, legt dit gewoon uit wat het doet."
+        },
+        "monitor": {
+          "title": "Live monitor",
+          "body": "Volg een driver in realtime terwijl hij draait: temperatuur, StallGuard-belasting (SG_RESULT - die zakt richting nul naarmate de mechanische belasting stijgt), stroomschaal (CS_ACTUAL) en eventuele foutvlaggen (oververhitting, kortsluiting, open belasting). De driver rapporteert deze alleen terwijl de motor is ingeschakeld, dus beweeg of home de as om live data te zien. Alleen-lezen - het observeert alleen."
+        },
+        "homing": {
+          "title": "Hoe deze as homet",
+          "body": "Klipper vindt het nulpunt van elke as op een van een paar manieren, en FilaMind leest welke uit je config in plaats van te gokken: een fysieke eindstopschakelaar (de klassieke microschakelaar - de meeste printers), sensorloos homen (de TMC-driver voelt de motor blokkeren aan het einde van de slag - geen schakelaar), of de Z-probe (dezelfde sensor die voor de bedmesh wordt gebruikt vindt Z=0). Dit paneel past zich aan welke jouw as ook gebruikt - live schakelaarstand en een eenvoudige test-home voor een fysieke eindstop, een StallGuard-afsteller voor sensorloos, of een verwijzing naar de probe-tools voor een geprobede Z. Extra motoren die een rail delen (een tweede Z, de extruder) homen niet zelfstandig, dus tonen hier niets."
+        },
+        "sensorless": {
+          "title": "Sensorloos homen",
+          "body": "Sommige assen homen zonder eindstopschakelaar: de driver detecteert de zachte “blokkering” wanneer de printkop het einde van de slag bereikt. De StallGuard-drempel bepaalt hoe gevoelig dat is - te laag en hij triggert vroeg (stopt te kort), te hoog en hij triggert nooit (de as maalt in het frame). Met deze helper kun je de drempel instellen en één as test-homen, beide achter een bevestiging. Stel op gevoel bij: lager als hij vroeg stopt, hoger als hij niet stopt - en houd de eerste keren een hand bij de voeding. Als je as een fysieke eindstop gebruikt, heb je dit niet nodig."
+        },
+        "coolstep": {
+          "title": "CoolStep (belastingsadaptieve stroom)",
+          "body": "CoolStep laat de driver de spoelstroom verlagen wanneer de motor niet hard werkt en deze onder belasting weer verhogen - wat warmte en geluid bespaart. Het is een gekoppelde feedbacklus met vijf op elkaar inwerkende registers (semin/semax/seup/sedn/seimin), dus in plaats van vijf ruwe knoppen is dit één enkele aan/uit die een gecontroleerde, bekend-goede set toepast (semin 2, semax 4, seup 3, sedn 2, seimin 1). Het werkt alleen boven een snelheidsdrempel, en te agressief zijn bij hoge versnelling kan stappen verliezen - laat het uit tenzij je weet dat je het wilt. Alleen live: een herstart of “terugzetten naar config” herstelt je opgeslagen waarden."
+        },
+        "registers": {
+          "title": "Registers bewerken (geavanceerd)",
+          "body": "De geavanceerde editor schrijft individuele TMC-afstemregisters live naar de driver - choppertiming (toff/tbl/hstrt/hend), StealthChop PWM (pwm_grad/pwm_ofs/…), CoolStep, StallGuard-gevoeligheid en de StealthChop↔SpreadCycle-snelheidsdrempel (in mm/s). Welke velden verschijnen en hun geldige bereik komen uit het printerzijdige veiligheidsbeleid - niet uit de browser - omdat de driver een waarde buiten bereik stilletjes afkapt in plaats van een fout te geven, dus de server begrenst en weigert. Ruwe stroomschaling- en kortsluiting-/oververhittingsbeveiligingsregisters zijn hier bewust niet bewerkbaar (stroom loopt via het aanbevelings-/loopstroompad; microstappen vereisen een configwijziging + herstart). Elke bewerking is alleen live: INIT_TMC (de “terugzetten naar config”-knop), een firmware-herstart of een power-cycle herstelt je opgeslagen waarden. Risicovollere knoppen vereisen een bevestiging per veld, en alle schrijfacties worden geweigerd terwijl de printer print of gepauzeerd is."
+        },
+        "recommend": {
+          "title": "Aanbevolen afstemming",
+          "body": "Zodra een motor is toegewezen, kan FilaMind een voorgestelde loopstroom en de StealthChop / SpreadCycle-registerwaarden (pwm_grad, pwm_ofs, hstrt, hend) berekenen uit de datasheet-specs van de motor en je voedingsspanning - zodat het zelfs werkt zonder de autotune-uitbreiding geïnstalleerd. De loopstroom valt standaard terug op een conservatieve 70% van de nominale waarde van de motor. Het resultaat wordt vergeleken met je live config; je kunt het vervolgens naar printer.cfg kopiëren of live wegschrijven achter een bevestiging (omkeerbaar met Terugdraaien, en geweigerd tijdens het printen). Als de autotune-uitbreiding geïnstalleerd is, kun je die in plaats daarvan uitvoeren."
+        }
+      },
+      "glossary": {
+        "tmcDriver": {
+          "term": "TMC-driver",
+          "def": "De chip die Klippers step/dir-signalen omzet in de spoelstromen die een stappenmotor laten draaien - bijv. TMC2209, TMC2240, TMC5160. Elke motor heeft er één."
+        },
+        "runCurrent": {
+          "term": "Loopstroom",
+          "def": "Hoe hard de motor tijdens beweging wordt aangedreven (ampère). Te laag → overgeslagen stappen; te hoog → oververhitting. De live waarde kan licht afwijken van de geconfigureerde omdat de chip ze kwantiseert."
+        },
+        "holdCurrent": {
+          "term": "Houdstroom",
+          "def": "De verlaagde stroom die wordt toegepast terwijl de motor in rust is, om warmte en geluid te besparen."
+        },
+        "microsteps": {
+          "term": "Microstappen",
+          "def": "Hoe fijn elke volledige motorstap wordt onderverdeeld (16/32/…/256). Hoger = vloeiendere en stillere beweging, zonder echt koppelverlies dankzij interpolatie."
+        },
+        "stealthChop": {
+          "term": "StealthChop",
+          "def": "Een bijna geruisloze aandrijfmodus, ideaal voor Z en rust. Vloeiend maar bij hoge snelheid iets minder nauwkeurig."
+        },
+        "spreadCycle": {
+          "term": "SpreadCycle",
+          "def": "Een nauwkeurige, koppelsterke aandrijfmodus, beter voor snelle X/Y-bewegingen. Hoorbaar maar accuraat."
+        },
+        "stallGuard": {
+          "term": "StallGuard",
+          "def": "De belastingssensor van de driver. Hij maakt sensorloos homen mogelijk (een blokkering detecteren in plaats van een eindstopschakelaar gebruiken). Het drempelregister verschilt per model (sgthrs / sgt / sg4_thrs)."
+        },
+        "senseResistor": {
+          "term": "Meetweerstand",
+          "def": "Een minuscule weerstand die de stroomschaal van de driver instelt. Hij moet bij je bord passen; het dashboard toont de geconfigureerde waarde."
+        },
+        "interface": {
+          "term": "Interface (UART / SPI)",
+          "def": "Hoe de MCU met de driver praat. UART is één draad (TMC220x-familie); SPI is een snellere bus met meerdere draden die door de prestatieonderdelen wordt gebruikt (2130 / 5160). De TMC2240 kan beide."
+        }
+      },
+      "guide": "Gids",
+      "guideTitle": "Gids Motordrivers",
+      "close": "Sluiten",
+      "howToRead": "Hoe dit paneel te lezen"
+    },
+    "format": {
+      "amps": "{a} A",
+      "ampsSet": "{base} (ingesteld {set})",
+      "stealthchop": "StealthChop",
+      "stealthchopThreshold": "StealthChop < {t} mm/s",
+      "spreadcycle": "SpreadCycle",
+      "health": {
+        "idle": "inactief",
+        "ok": "ok",
+        "warning": "waarschuwing",
+        "fault": "fout"
+      },
+      "celsius": "{v} °C",
+      "noSensor": "geen sensor",
+      "maxCurrent": "≤ {a} A",
+      "extruder": "Extruder",
+      "extruderN": "Extruder {n}",
+      "axis": "{axis}-as",
+      "homing": {
+        "sensorless": "Sensorloos (StallGuard)",
+        "physical": "Fysieke eindstop",
+        "probe": "Z-probe",
+        "otherVirtual": "Virtuele eindstop",
+        "inherited": "Gedeelde rail"
+      },
+      "stallguard": {
+        "signed": "Met teken −64…63 - LAGER is gevoeliger (stopt eerder). Verhoog het als de as te kort stopt; verlaag het als hij nooit stopt.",
+        "unsigned": "Bereik 0-255 - HOGER is gevoeliger (stopt eerder). Verlaag het als de as te kort stopt; verhoog het als hij nooit stopt."
+      },
+      "spec": {
+        "nm": "{v} Nm",
+        "amps": "{v} A",
+        "ohm": "{v} Ω",
+        "mh": "{v} mH"
+      },
+      "flag": {
+        "overtemp": "oververhit",
+        "tempWarn": "temp-waarsch",
+        "shortA": "kortsl A",
+        "shortB": "kortsl B",
+        "openLoadA": "open belasting A",
+        "openLoadB": "open belasting B",
+        "standstill": "stilstand"
+      },
+      "runCurrent": "loopstroom (A)"
+    },
+    "widget": {
+      "intro": "Elke TMC-stepperdriver op je printer, live uit zijn Klipper-config gelezen - inspecteer, krijg afstemaanbevelingen en pas ze toe (afgeschermd). Nieuw hier? Probeer 🧭 Begeleid.",
+      "tabDashboard": "Dashboard",
+      "tabGuided": "🧭 Begeleid",
+      "howToReadShow": "▸ hoe dit te lezen",
+      "howToReadHide": "▾ hoe dit te lezen",
+      "steps": [
+        "Elke kaart is één stepperdriver - de kop is de as (X / Y / Z / Extruder) en het label is het chipmodel.",
+        "Loopstroom toont hoe hard de motor wordt aangedreven; de live waarde kan licht afwijken van de geconfigureerde “ingestelde” waarde - dat is normaal.",
+        "Modus vertelt je SpreadCycle (nauwkeurig, luider) of StealthChop (stil); microstappen toont hoe vloeiend de beweging is.",
+        "Home een as of jog de motor om hem te wekken - live temperatuur en foutvlaggen verschijnen alleen terwijl een motor is ingeschakeld (inactieve drivers tonen “inactief”).",
+        "Open “geavanceerde registers” op een kaart om de ruwe afstemwaarden te bekijken die de driver gebruikt."
+      ],
+      "loading": "Motordrivers laden…",
+      "retry": "↻ opnieuw",
+      "retrying": "opnieuw proberen…",
+      "unreachable": "Kan de Moonraker van de printer niet bereiken - driverdata is nu niet beschikbaar.",
+      "noDrivers": "Geen TMC-drivers gevonden in de Klipper-config. (Alleen TMC-stepperdrivers verschijnen hier.)",
+      "runCurrent": "Loop {value}",
+      "nearCapTitle": "Dicht bij het nominale plafond van dit model ({max})",
+      "holdCurrent": "Houd {value}",
+      "microsteps": "{n} µstappen",
+      "sg": "SG {field} {threshold}",
+      "detailsShow": "▸ details",
+      "detailsHide": "▾ minder",
+      "interp": "interp",
+      "sense": "meet {value} Ω",
+      "healthTitleIdle": "Schakel de motor in (home of jog een as) om live temperatuur en foutvlaggen te lezen",
+      "healthTitleLive": "Live driverstatus uit drv_status",
+      "staleData": "De laatste vernieuwing mislukte - de vorige data wordt getoond."
+    },
+    "liveMonitor": {
+      "toggle": "live monitor",
+      "temp": "temp {temp} °C",
+      "sg": "SG {sg}",
+      "cs": "CS {cs}",
+      "updates": "· vernieuwt ~1.5s",
+      "noFaults": "geen fouten",
+      "idle": "Inactief - schakel de motor in (home of jog de as) om live SG / stroom / temperatuur te lezen."
+    },
+    "recommendPanel": {
+      "toggle": "afstemming aanbevelen",
+      "supply": "voeding",
+      "recompute": "herberekenen",
+      "recommend": "aanbevelen",
+      "colCurrent": "huidig",
+      "colRecommended": "aanbevolen",
+      "basis": "loopstroom = {basis}; StealthChop houdt tot ~{rps} omw/s bij {voltage} V.",
+      "confirm": "Schrijf deze nu naar de {stepper}-driver. Omkeerbaar (Terugdraaien / een herstart herstelt je config); geweigerd tijdens het printen.",
+      "applyToDriver": "toepassen op driver",
+      "revert": "↺ terugdraaien",
+      "copyConfig": "config kopiëren",
+      "autotune": "autotune",
+      "autotuneTitle": "Voert AUTOTUNE_TMC uit als de klipper_tmc_autotune-uitbreiding geïnstalleerd is",
+      "noSpecs": "Geen datasheet-specs voor deze motor - afstemaanbeveling niet beschikbaar.",
+      "measured": "Gemeten: motoren resoneren op ~{freq} Hz",
+      "measuredSym": "symmetrie {pct}%",
+      "measuredHint": "Grondwaarheid uit het trillingsprofiel dat op deze printer is uitgevoerd - open de Input Shaping-audit."
+    },
+    "motorSync": {
+      "toggle": "motorsynchronisatie",
+      "notInstalledTag": "(uitbreiding niet geïnstalleerd)",
+      "about": "Lijnt de microstapfase van meerdere motoren op één as uit (dubbele / quad-Z, dubbele X) met een accelerometer, zodat ze niet tegen elkaar in werken. Geleverd door de aparte {addon}-uitbreiding.",
+      "checking": "controleren…",
+      "notInstalled": "Niet geïnstalleerd op deze printer. Installeer de motors_sync-uitbreiding om het hier in te schakelen.",
+      "warning": "⚠ Dit beweegt de printkop een tijdje (het probet elke motor). Blijf op afstand en klaar om de voeding af te schakelen.",
+      "confirm": "Ik kijk naar de printer - voer nu de motorsynchronisatie uit.",
+      "syncMotors": "motoren synchroniseren",
+      "calibrate": "kalibreren"
+    },
+    "sensorless": {
+      "noRegister": "⚠ Deze driver heeft geen StallGuard-drempelregister, dus sensorloos homen kan hier niet worden afgesteld - controleer de homing-configuratie van de printer.",
+      "intro": "StallGuard {field} stelt de gevoeligheid voor sensorloos homen in.",
+      "threshold": "drempel",
+      "nowRange": "nu: {now} · bereik {min}…{max}",
+      "confirmSet": "Schrijf deze drempel nu naar de driver (omkeerbaar; geweigerd tijdens het printen).",
+      "setThreshold": "drempel instellen",
+      "testHomeWarning": "⚠ Test-home beweegt nu de {axis}-as. Bij een verkeerde drempel stopt hij mogelijk niet - houd een hand bij de voeding. Alleen sensorloze assen.",
+      "confirmHome": "Ik kijk naar de printer en sta klaar om de voeding af te schakelen - home {axis}.",
+      "testHome": "test-home {axis}"
+    },
+    "homing": {
+      "homing": "homen",
+      "unreachable": "printer onbereikbaar",
+      "physicalIntroLead": "Deze as homet tegen een fysieke eindstopschakelaar",
+      "physicalIntroTail": ". Druk de schakelaar met de hand in en controleer opnieuw om de bedrading te bevestigen voordat je homet.",
+      "switchLabel": "schakelaar:",
+      "check": "↻ controleren",
+      "testHomeWarn": "⚠ Test-home beweegt de {axis}-as nu naar zijn eindstop - zorg dat het pad vrij is.",
+      "pathClear": "Pad is vrij - home {axis}.",
+      "testHome": "test-home {axis}",
+      "probeNote": "Deze as homet met de Z-probe (dezelfde sensor die voor de bedmesh wordt gebruikt), dus er is hier geen StallGuard-drempel om af te stellen. Stel de probe-offset en mesh in bij de bednivelleringstools.",
+      "virtualNote": "Deze as homet tegen een virtuele eindstop die geen TMC StallGuard-pin is - hij wordt beheerd door zijn eigen hostmodule, dus er is hier niets af te stellen."
+    },
+    "guidedWizard": {
+      "title": "🧭 Begeleide afstemming",
+      "backToDashboard": "← dashboard",
+      "stepChoose": "Kiezen",
+      "stepMotor": "Motor",
+      "stepTune": "Afstellen",
+      "stepSensorless": "Sensorloos",
+      "stepDone": "Klaar",
+      "step1Intro": "Kies de as om af te stellen.",
+      "tuningHeader": "{axis} afstellen · {model}",
+      "step2Intro": "Welke motor is op deze as aangesloten? Kies hem zodat FilaMind zijn datasheet-specs kent.",
+      "assignToContinue": "Wijs een motor toe om door te gaan.",
+      "step3Intro": "Krijg een aanbeveling op basis van de specs van de motor, kopieer die vervolgens naar je config of pas ze live toe (afgeschermd).",
+      "step4Intro": "Optioneel: stel sensorloos homen in. Sla over als deze as een eindstopschakelaar gebruikt.",
+      "step5Intro": "Klaar met {axis}. Bekijk het live terwijl je de as beweegt, of stel een andere af.",
+      "tuneAnother": "een andere as afstellen",
+      "back": "← terug",
+      "next": "volgende →",
+      "finish": "voltooien"
+    },
+    "motorPicker": {
+      "motorLabel": "motor:",
+      "notSet": "niet ingesteld",
+      "searchPlaceholder": "zoek in 200+ motoren (model of fabrikant)…"
+    },
+    "registerEditor": {
+      "toggle": "registers afstellen (geavanceerd)",
+      "resetTitle": "INIT_TMC - de geconfigureerde registers + stroom van deze driver opnieuw toepassen",
+      "resetLabel": "↺ terugzetten naar config",
+      "liveOnly": "Bewerkingen zijn {live} - niet opgeslagen. {initTmc} (reset), een firmware-herstart of een power-cycle herstelt de geconfigureerde waarden. Waarden buiten bereik worden geweigerd door het printerzijdige veiligheidsbeleid; ruwe stroom- en beveiligingsregisters zijn hier niet bewerkbaar.",
+      "liveOnlyEmphasis": "alleen live",
+      "loading": "Bewerkbare registers laden…",
+      "coolstep": "CoolStep",
+      "on": "aan",
+      "off": "uit",
+      "coolstepEnableTitle": "Pas de autotune-gecontroleerde CoolStep-set toe (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
+      "enable": "inschakelen",
+      "riskyTitle": "Risicovollere knop - bevestig voor het schrijven",
+      "now": "nu:",
+      "confirm": "bevestigen",
+      "set": "instellen",
+      "readOnly": "alleen-lezen registers",
+      "toffHint": "Als je toff op 1 zet, houd tbl dan ook ≥ 1 (de 16-cyclus blanktijd vereist dat).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Drempels & timing",
+        "other": "Overig"
+      }
+    },
+    "apply": {
+      "nothingToApply": "Niets toe te passen.",
+      "busyApply": "Weigert naar een driver te schrijven terwijl de printer bezig is (print of gepauzeerd).",
+      "applied": "{n} wijziging(en) toegepast op {stepper}.",
+      "busyReinit": "Weigert opnieuw te initialiseren terwijl de printer bezig is (print of gepauzeerd).",
+      "reinitialized": "{stepper} opnieuw geïnitialiseerd en zijn geconfigureerde stroom hersteld.",
+      "autotuneNotInstalled": "klipper_tmc_autotune is niet geïnstalleerd voor deze stepper - gebruik in plaats daarvan de aanbeveling of kopieer-naar-config.",
+      "busyAutotune": "Weigert te autotunen terwijl de printer bezig is (print of gepauzeerd).",
+      "autotuneRan": "AUTOTUNE_TMC uitgevoerd op {stepper}.",
+      "busyWrite": "Weigert te schrijven terwijl de printer bezig is (print of gepauzeerd).",
+      "stallguardSet": "{field} = {num} ingesteld op {stepper}.",
+      "fieldSet": "{field} = {num} ingesteld op {stepper} (alleen live - INIT_TMC of een herstart herstelt de geconfigureerde waarde).",
+      "coolstepEnabled": "CoolStep ingeschakeld op {stepper} (alleen live - INIT_TMC of een herstart herstelt de geconfigureerde waarden).",
+      "coolstepDisabled": "CoolStep uitgeschakeld op {stepper} (alleen live - INIT_TMC of een herstart herstelt de geconfigureerde waarden).",
+      "busyHome": "Weigert te homen terwijl de printer bezig is (print of gepauzeerd).",
+      "homed": "{ax} gehomet.",
+      "motorsyncNotInstalled": "De motors_sync-uitbreiding is niet geïnstalleerd - ze lijnt de microstapfase van meerdere motoren op één as uit (dubbele/quad-Z, dubbele X) met een accelerometer.",
+      "busySync": "Weigert motoren te synchroniseren terwijl de printer bezig is (print of gepauzeerd).",
+      "syncRan": "{cmd} uitgevoerd.",
+      "overCurrentCap": "Geweigerd: {requested} A op {stepper} overschrijdt het plafond van {cap} A (volledige-schaallimiet van de driver / nominale stroom van de toegewezen motor).",
+      "guardLocked": "Geweigerd: er draait al een andere bewerking ({operation})."
+    }
+  }
+}

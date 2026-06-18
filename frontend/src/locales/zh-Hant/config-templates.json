@@ -1,0 +1,69 @@
+{
+  "configTemplates": {
+    "intro": "可直接貼上的 Klipper 設定區塊與巨集——啟動程序、耗材處理、輸入整形、熱床網格等。複製一個並貼進你的 printer.cfg（用設定編輯器來貼很方便）。",
+    "help": {
+      "guide": "說明",
+      "guideTitle": "關於設定範本",
+      "close": "關閉",
+      "howToRead": "使用方式",
+      "steps": [
+        "依類別篩選，找到想要的巨集或設定區塊。",
+        "閱讀說明，以及它需要哪些區塊。",
+        "複製範本，貼進你的設定，再調整數值。"
+      ],
+      "topics": {
+        "what": {
+          "title": "這些是什麼",
+          "body": "一組精選的常用 Klipper 構件：gcode_macros（PRINT_START、PAUSE/RESUME、耗材載入／退出、M600）以及設定區塊（[input_shaper]、[bed_mesh]、[firmware_retraction]…）。它們是起點——請逐一閱讀，並針對你的機器進行調校。"
+        },
+        "insert": {
+          "title": "插入範本",
+          "body": "複製範本，再貼進你的 printer.cfg——設定編輯器的原始檢視是個方便的位置。儲存後，重啟韌體即可套用。請務必先檢視數值；此處的預設值合理，但並未針對你的印表機調校。"
+        },
+        "sections": {
+          "title": "需要的區塊",
+          "body": "每個範本都會列出它所定義或依賴的設定區塊。若某區塊已存在於你的設定中，請合併其中的鍵，而不要貼上重複的（重複的區塊會在啟動時被拒絕）。"
+        },
+        "glossary": {
+          "title": "詞彙表",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "template": {
+          "term": "範本",
+          "def": "一段可直接貼上的 Klipper 設定或巨集 G-code，可複製到 printer.cfg 中。"
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "你在設定中定義的具名指令（例如 PRINT_START），執行一連串的 G-code。"
+        },
+        "section": {
+          "term": "區塊",
+          "def": "以 [方括號] 標示的設定區塊，例如 [bed_mesh]——Klipper 設定分組的單位。"
+        }
+      }
+    },
+    "category": {
+      "label": "類別",
+      "all": "所有類別"
+    },
+    "template": {
+      "copy": "複製",
+      "copied": "已複製！",
+      "requires": "區塊：{sections}",
+      "requiresNone": "-"
+    },
+    "count": "{n} 個範本",
+    "states": {
+      "loading": "正在載入範本…",
+      "error": "無法載入範本。",
+      "empty": "此類別中沒有範本。",
+      "retry": "重試"
+    },
+    "categories": {
+      "config_blocks": "設定區塊",
+      "macros": "巨集"
+    }
+  }
+}

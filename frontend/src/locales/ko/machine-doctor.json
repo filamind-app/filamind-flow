@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "앱이 점검할 수 있는 모든 항목을 읽기 전용으로 한 번에 스캔합니다 - 핀 충돌, 드라이버 값, 설정 불일치, 프로젝트 린트, 펌웨어 동기화, 하드웨어 변경, 설치 상태 - A-F 등급으로 평가됩니다. 모든 발견 항목은 이를 해결하는 위젯으로 연결됩니다.",
+    "scanning": "스캔 중…",
+    "rescan": "다시 스캔",
+    "scoreLine": "점수 {score} / 100",
+    "counts": "오류 {errors}건 · 경고 {warnings}건",
+    "scoreHint": "투명한 점수 산정: 100 − 오류당 25 − 경고당 8. 확인할 수 없는 점검은 감점되지 않습니다.",
+    "allClear": "모두 정상입니다.",
+    "notChecked": "점검할 수 없습니다 (프린터에 연결할 수 없거나 기준값이 없음).",
+    "assessment": {
+      "healthy": "정상 - 앱이 점검할 수 있는 모든 항목이 양호합니다.",
+      "attention": "대체로 정상이지만 {pillar} 항목에 주의가 필요합니다.",
+      "critical": "{pillar} 항목에 해결이 필요한 문제가 있습니다."
+    },
+    "pillars": {
+      "title": "상태 분석",
+      "notMeasured": "측정되지 않음"
+    },
+    "pillar": {
+      "config": "설정 무결성",
+      "firmware": "펌웨어 동기화",
+      "services": "서비스",
+      "tuning": "Input shaping",
+      "flow": "최대 유량"
+    },
+    "services": {
+      "title": "서비스",
+      "active": "활성",
+      "inactive": "중지됨",
+      "none": "보고된 서비스가 없습니다."
+    },
+    "stats": {
+      "title": "한눈에 보기",
+      "maxFlow": "최대 유량",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "펌웨어",
+      "outOfSync": "{n}개 동기화 안 됨",
+      "allSynced": "모두 동기화됨",
+      "none": "아직 측정값이 없습니다."
+    },
+    "category": {
+      "pins": "핀 배선",
+      "drivers": "드라이버 값",
+      "drift": "설정 불일치",
+      "project": "설정 프로젝트",
+      "firmware": "펌웨어 동기화",
+      "hardware": "하드웨어 변경",
+      "install": "설치 상태"
+    },
+    "status": {
+      "ok": "정상",
+      "warn": "경고",
+      "fail": "문제",
+      "unknown": "점검 안 됨"
+    },
+    "link": {
+      "config_section": "설정 편집기",
+      "config_file": "설정 편집기",
+      "stepper": "모터 드라이버",
+      "topology_node": "머신 맵",
+      "widget": "열기"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "{mcu}의 핀 {pin}이(가) 여러 섹션에 할당되어 있습니다.",
+        "caveat": "{mcu}의 핀 {pin}에 전자 회로 관련 주의 사항이 있습니다."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A이(가) 드라이버 한계 ~{cap} A을(를) 초과합니다.",
+        "near_driver_cap": "{section}: run_current {run_current} A이(가) 한계 ~{cap} A의 10% 이내입니다.",
+        "over_motor_rating": "{section}: run_current {run_current} A이(가) {motor} 정격({max_current} A)을 초과합니다.",
+        "near_motor_rating": "{section}: run_current {run_current} A이(가) {motor} 정격({max_current} A)의 10% 이내입니다.",
+        "odd_microsteps": "{section}: microsteps {microsteps}이(가) 2의 거듭제곱이 아닙니다."
+      },
+      "drift": {
+        "pending": "Klipper에 저장되지 않은 SAVE_CONFIG 변경 사항이 대기 중입니다.",
+        "param": "[{section}] {key}: 디스크 {disk} ≠ 실행 중 {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: include \"{message}\"이(가) 존재하지 않는 파일을 가리킵니다.",
+        "orphan_driver": "{file}: 드라이버 섹션 \"{message}\"에 일치하는 stepper가 없습니다."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: 펌웨어 {mcu_version}이(가) 호스트 {host_version}과(와) 다릅니다."
+      },
+      "hardware": {
+        "changed": "{mcu}: 하드웨어가 변경되었습니다 ({kind}).",
+        "no_baseline": "아직 저장된 하드웨어 기준값이 없습니다 - 변경을 감지하려면 머신 맵에서 스냅샷을 저장하세요."
+      },
+      "install": {
+        "check_failed": "설치 점검 실패: {name} - {detail}."
+      }
+    },
+    "help": {
+      "guide": "도움말",
+      "guideTitle": "Machine Doctor 소개",
+      "close": "닫기",
+      "howToRead": "읽는 방법",
+      "steps": [
+        "다시 스캔을 눌러 프린터 전체를 읽기 전용으로 한 번 점검하세요.",
+        "A-F 등급과 항목 막대를 보고 어디가 가장 취약한지 확인하세요.",
+        "발견 항목의 링크를 열어 이를 해결하는 위젯으로 바로 이동하세요."
+      ],
+      "topics": {
+        "scan": {
+          "title": "스캔 범위",
+          "body": "앱이 점검할 수 있는 모든 항목을 읽기 전용으로 한 번에 검사합니다 - 핀 충돌, 드라이버 값, 저장된 설정과 실행 중 설정 간의 불일치, 프로젝트 린트, 펌웨어 동기화, 기준값 대비 하드웨어 변경, 설치 상태. 프린터에서 어떤 작업도 실행하지 않습니다."
+        },
+        "grade": {
+          "title": "A-F 등급",
+          "body": "각 상태 항목(설정 무결성, 펌웨어 동기화, 서비스, input shaping, 최대 유량)이 점수화되며, 가장 취약한 항목이 전체 등급을 끌어내립니다. 점수 줄에는 등급이 어떻게 산출되었는지 정확히 표시됩니다 - 숨겨지는 것은 없습니다."
+        },
+        "fixes": {
+          "title": "해결 위젯으로 이동하는 링크",
+          "body": "모든 발견 항목에는 이를 해결하는 위젯(설정 편집기, 모터 드라이버, 머신 맵 등)으로 직접 연결되는 버튼이 있어, 한 번의 클릭으로 문제에서 해결로 이동합니다."
+        },
+        "glossary": {
+          "title": "여기서 사용된 용어"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "등급 (A-F)",
+          "def": "항목 점수에서 도출된, 프린터 상태를 요약하는 단일 문자입니다. A는 정상, F는 주의가 필요함을 나타냅니다."
+        },
+        "pillar": {
+          "term": "항목",
+          "def": "독립적으로 점수가 매겨지는 상태 범주입니다 - 예: 설정 무결성, 펌웨어 동기화, 서비스, input shaping, 최대 유량."
+        },
+        "finding": {
+          "term": "발견 항목",
+          "def": "스캔이 감지한 특정 문제로, 심각도와 이를 해결하는 위젯으로의 링크가 함께 표시됩니다."
+        }
+      }
+    }
+  }
+}

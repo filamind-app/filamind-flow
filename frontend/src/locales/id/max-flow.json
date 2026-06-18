@@ -1,0 +1,168 @@
+{
+  "maxFlow": {
+    "intro": "Temukan aliran volumetrik tertinggi (mm³/s) yang dapat dipertahankan hotend Anda - dengan menaikkan aliran sambil mengawasi pembacaan beban StallGuard ekstruder untuk mendeteksi saat gigi tergelincir. Pratinjau rencana terlebih dahulu; uji langsung memanaskan dan mengekstrusi, jadi siapkan printer sebelum menjalankannya.",
+    "help": {
+      "guide": "Bantuan",
+      "guideTitle": "Tentang Max-Flow",
+      "close": "Tutup",
+      "howToRead": "Cara penggunaan",
+      "steps": [
+        "Atur suhu uji dan diameter filamen Anda (pilih hotend untuk mengisi otomatis).",
+        "Pratinjau rencana - menampilkan setiap langkah aliran dan berapa banyak filamen yang didorong.",
+        "Centang daftar keselamatan, lalu jalankan uji langsung (memanaskan + mengekstrusi).",
+        "Baca aliran berkelanjutan maksimum dan salin nilai slicer yang disarankan."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Cara kerja uji",
+          "body": "Ekstruder mendorong filamen pada aliran volumetrik yang terus meningkat. Selama gigi bergerigi mencengkeram dengan baik, pembacaan beban StallGuard tetap rapat; begitu mulai tergelincir, pembacaan akan melonjak tak menentu. Aliran tertinggi yang dicapai sebelum lonjakan itu adalah aliran maksimum berkelanjutan Anda. Kenaikan berhenti segera setelah selip terdeteksi, jadi tidak ada filamen yang tergerus melewati selip pertama."
+        },
+        "stallguard": {
+          "title": "Deteksi selip StallGuard",
+          "body": "StallGuard adalah fitur driver TMC yang melaporkan beban motor. Uji ini mengambil sampelnya berkali-kali per langkah aliran dan mencari kenaikan mendadak pada sebaran (IQR) atau variasi (CV) - tanda gigi kehilangan cengkeraman. Ambang batas berasal dari profil per-driver. Catatan: pada ekstruder TMC2209 ini menggunakan jalur eksperimental SG4, jadi perlakukan jalannya yang pertama sebagai kalibrasi."
+        },
+        "safety": {
+          "title": "Keselamatan",
+          "body": "Ini adalah uji yang panas dan bergerak yang sengaja membuat ekstruder tergelincir. Muat filamen, pastikan nozel bersih (di atas bed atau area buangan), dan tetaplah di dekatnya. Uji ditolak saat printer sedang mencetak, dan pemanas selalu dimatikan saat selesai."
+        },
+        "slicer": {
+          "title": "Menggunakan hasil",
+          "body": "Masukkan nilai yang disarankan ke \"max volumetric speed\" pada slicer Anda (per filamen). Angka konservatif (80% dari maksimum terukur) adalah batas harian yang aman; angka seimbang (90%) mendorong sedikit lebih keras. Suhu hotend yang lebih tinggi biasanya menaikkan aliran yang dapat dicapai."
+        },
+        "glossary": {
+          "title": "Glosarium",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Aliran volumetrik",
+          "def": "Berapa banyak plastik yang dilelehkan hotend per detik (mm³/s) - batas kecepatan sebenarnya untuk pencetakan cepat."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Sinyal driver TMC yang melaporkan beban mekanis motor, digunakan di sini untuk mendeteksi selip ekstruder."
+        },
+        "slip": {
+          "term": "Selip",
+          "def": "Saat gigi ekstruder tidak lagi dapat mencengkeram filamen cukup cepat sehingga melompat - batas atas aliran."
+        },
+        "meltzone": {
+          "term": "Zona leleh",
+          "def": "Panjang bagian hotend yang dipanaskan; zona leleh yang lebih panjang (mis. Volcano) mempertahankan aliran lebih tinggi."
+        }
+      }
+    },
+    "params": {
+      "title": "Parameter uji",
+      "temperature": "Suhu (°C)",
+      "filamentDiameter": "Ø Filamen (mm)",
+      "hotend": "Hotend (opsional)",
+      "hotendNone": "- tidak ada -",
+      "hotendHint": "Diperkirakan ~{flow} mm³/s",
+      "startFlow": "Aliran awal (mm³/s)",
+      "endFlow": "Aliran akhir (mm³/s)",
+      "stepFlow": "Langkah (mm³/s)",
+      "samples": "Sampel / langkah",
+      "extrudePerStep": "Ekstrusi / langkah (mm)",
+      "driver": "Driver ekstruder",
+      "driverDetected": "terdeteksi dari printer",
+      "autoStealthchop": "Aktifkan StealthChop otomatis untuk uji",
+      "autoStealthchopHint": "Hanya TMC2209/2240: menulis stealthchop_threshold sementara ke ekstruder agar StallGuard dapat membaca, lalu menonaktifkannya dengan komentar setelah uji. Memulihkan printer.cfg; firmware restart di kedua arah.",
+      "method": "Metode deteksi",
+      "methodHint": "Auto menggunakan StallGuard, beralih ke akselerometer toolhead (getaran) saat StallGuard tidak dapat membaca. Metode akselerometer bersifat eksperimental."
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Akselerometer"
+    },
+    "plan": {
+      "button": "Pratinjau rencana",
+      "title": "Kenaikan terencana",
+      "stepCount": "{count} langkah",
+      "totalExtrude": "{mm} mm filamen",
+      "sgField": "Bidang StallGuard: {field}",
+      "sgFieldUnknown": "Tidak ada bidang StallGuard yang dikenal untuk driver ini",
+      "flowHead": "Aliran (mm³/s)",
+      "feedrateHead": "Feedrate (mm/min)",
+      "warning": "Uji langsung memanaskan hotend dan mengekstrusi filamen, sengaja hingga titik selip. Hanya pratinjau - belum ada yang berjalan."
+    },
+    "safety": {
+      "title": "Sebelum menjalankan - daftar keselamatan",
+      "items": [
+        "Filamen sudah dimuat dan mengalir dengan lancar.",
+        "Nozel bersih - di atas bed atau tempat buangan, tidak menggantung ke arah komponen.",
+        "Saya menerima bahwa ini akan sengaja menggerus/menggelincirkan sebagian filamen.",
+        "Saya akan tetap berada di dekat printer selama uji berlangsung."
+      ],
+      "ack": "Saya telah melakukan semua hal di atas dan printer siap",
+      "note": "Uji ditolak saat mencetak; pemanas dimatikan otomatis di akhir."
+    },
+    "run": {
+      "button": "Jalankan uji langsung",
+      "running": "Berjalan… (memanaskan + mengekstrusi)",
+      "confirmTitle": "Mulai uji max-flow langsung?",
+      "confirmBody": "Ini memanaskan hotend hingga {temp} °C dan mengekstrusi hingga {mm} mm filamen, menaikkan aliran sampai ekstruder tergelincir.",
+      "confirm": "Jalankan sekarang",
+      "cancel": "Batal",
+      "busy": "Ditolak: printer sedang sibuk (mencetak atau dijeda). Coba lagi saat sedang menganggur.",
+      "error": "Uji gagal.",
+      "noSg": "Tidak ada sampel StallGuard yang terbaca - hasil selip mungkin tidak dapat diandalkan. Bidang SG langsung driver kemungkinan perlu disesuaikan untuk model ini.",
+      "progress": "Langkah {step}/{total} - {flow} mm³/s",
+      "starting": "Memanaskan / memulai…",
+      "abort": "Hentikan uji",
+      "cancelling": "Menghentikan…",
+      "cancelled": "Uji dihentikan - pemanas telah dimatikan.",
+      "reattached": "Tersambung kembali: hasil ini selesai saat halaman tidak aktif.",
+      "failed": "Uji max-flow gagal.",
+      "abortNote": "Menghentikan selalu mematikan pemanas.",
+      "parkNote": "Sebelum memanaskan, printer melakukan homing (jika perlu) dan memposisikan nozel di tengah untuk tampilan yang jelas.",
+      "phase": {
+        "enabling": "Mengaktifkan StealthChop…",
+        "homing": "Melakukan homing printer…",
+        "centering": "Memposisikan nozel di tengah…",
+        "heating": "Memanaskan hotend…",
+        "checking": "Memeriksa sinyal StallGuard…",
+        "ramp": "Menaikkan aliran…",
+        "reverting": "Memulihkan konfigurasi…"
+      },
+      "step": {
+        "home": "Home",
+        "center": "Tengah",
+        "heat": "Panaskan",
+        "check": "Periksa",
+        "ramp": "Naikkan"
+      }
+    },
+    "camera": {
+      "title": "Kamera langsung",
+      "live": "LANGSUNG",
+      "error": "Kamera tidak tersedia.",
+      "willShow": "Tampilan kamera langsung akan menampilkan nozel selama uji.",
+      "minimize": "Minimalkan",
+      "maximize": "Maksimalkan",
+      "enlarge": "Perbesar",
+      "shrink": "Perkecil"
+    },
+    "result": {
+      "title": "Hasil",
+      "maxFlow": "Aliran berkelanjutan maksimum",
+      "slipAt": "Selip terdeteksi pada {flow} mm³/s",
+      "noSlip": "Tidak ada selip hingga aliran tertinggi yang diuji",
+      "reason": "Detail",
+      "recommendTitle": "Nilai slicer yang disarankan (max volumetric speed)",
+      "conservative": "Konservatif (80%)",
+      "balanced": "Seimbang (90%)",
+      "units": "mm³/s",
+      "fromBefore": "Diukur sebelumnya ({at}) - jalankan lagi untuk angka terbaru.",
+      "unreliableTitle": "Tidak andal - tidak ada sinyal StallGuard",
+      "unmeasured": "tercapai, tidak terkonfirmasi",
+      "via": "Diukur melalui {method}",
+      "accelExperimental": "Diukur dengan getaran (akselerometer) - eksperimental; perlakukan angkanya sebagai panduan, bukan batas atas yang pasti."
+    },
+    "states": {
+      "loadingHotends": "Memuat hotend…"
+    }
+  }
+}

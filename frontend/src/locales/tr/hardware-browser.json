@@ -1,0 +1,289 @@
+{
+  "hardwareBrowser": {
+    "intro": "3D baskı donanımlarının özenle hazırlanmış bir referansını - step motorlar, sürücüler, kartlar, sensörler, hotend'ler, fanlar, hostlar, nozüller, ekstruderler, filamentler ve daha fazlası - ada, üreticiye, kategoriye veya herhangi bir teknik özelliğe göre arayın.",
+    "help": {
+      "guide": "Yardım",
+      "guideTitle": "Donanım Tarayıcı Hakkında",
+      "close": "Kapat",
+      "howToRead": "Nasıl kullanılır",
+      "steps": [
+        "Bir adı, üreticiyi veya herhangi bir teknik özellik değerini eşleştirmek için arama kutusuna yazın.",
+        "Filtrelerle kategoriye veya üreticiye göre daraltın.",
+        "Her sonuç kartı bileşenin teknik özelliklerini gösterir; Önceki / Sonraki ile sayfalar arasında gezinin."
+      ],
+      "topics": {
+        "search": {
+          "title": "Arama",
+          "body": "Arama her yerde eşleşir - üretici, model adı, kategori, alt bölüm veya herhangi bir teknik özellik değeri. Daraltmak için kategori ve üretici filtreleriyle birleştirin. Sonuçlar sayfalanır; toplam sayı yalnızca mevcut sayfayı değil, eşleşen her şeyi yansıtır."
+        },
+        "categories": {
+          "title": "Kategoriler",
+          "body": "Bileşenler kategorilere ayrılır (step motorlar, sürücüler, kartlar, sensörler, hotend'ler, fanlar/güç, hostlar, hareket, nozüller, ekstruderler, filamentler, elektronik, kameralar/ekranlar). Yalnızca o türü gözden geçirmek için birini seçin."
+        },
+        "manufacturers": {
+          "title": "Üreticiler ve teknik özellikler",
+          "body": "Bu, karşılaştırma için özenle hazırlanmış bir referanstır, bir mağaza değil - değerler üretici veri sayfalarından ve topluluk verilerinden gelir ve en yeni ürünlerin gerisinde kalabilir. Satın almadan veya yapılandırmadan önce her zaman üreticiye karşı doğrulayın."
+        },
+        "relationships": {
+          "title": "Bağlantılı donanım",
+          "body": "Her kart, sürücü, motor ve host üreticisiyle bağlantılıdır ve her kart ayrıca MCU'suna ve desteklediği sürücülere bağlanır. Herhangi bir öğeyi açın ve doğrudan ilgili bir parçaya atlamak için alttaki çapraz bağlantı etiketlerini kullanın. Üreticiler ve MCU'lar sekmeleri, bir markadan veya bir çipten başlamanıza ve onu kullanan her şeyi görmenize olanak tanır."
+        },
+        "glossary": {
+          "title": "Sözlük",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "category": {
+          "term": "Kategori",
+          "def": "Bir bileşenin ait olduğu donanım türü (ör. Hotend'ler, Step Motorlar, Sensörler)."
+        },
+        "manufacturer": {
+          "term": "Üretici",
+          "def": "Parçayı üreten şirket (ör. E3D, BIGTREETECH, LDO Motors)."
+        },
+        "spec": {
+          "term": "Teknik özellik",
+          "def": "Bir bileşenin veri sayfası niteliği - akım, gerilim, maksimum sıcaklık, boyutlar vb."
+        },
+        "links": {
+          "term": "Bağlantılı donanım",
+          "def": "Parçalar arasındaki çapraz bağlantılar - bir kartın üreticisi, MCU'su ve desteklediği sürücüler - ilgili varlığa atlayan tıklanabilir etiketler olarak gösterilir."
+        }
+      }
+    },
+    "search": {
+      "placeholder": "Donanım ara…",
+      "button": "Ara",
+      "category": "Kategori",
+      "allCategories": "Tüm kategoriler",
+      "manufacturer": "Üretici",
+      "manufacturerPlaceholder": "Herhangi bir üretici"
+    },
+    "results": {
+      "total": "{count} eşleşme",
+      "none": "Aramanızla eşleşen bileşen yok.",
+      "showing": "{total} içinden {from}-{to} gösteriliyor",
+      "prev": "Önceki",
+      "next": "Sonraki"
+    },
+    "states": {
+      "loading": "Aranıyor…",
+      "error": "Donanım veritabanı yüklenemedi.",
+      "retry": "Yeniden dene"
+    },
+    "tabs": {
+      "catalog": "Katalog",
+      "search": "Tümünü ara",
+      "boards": "Kartlar",
+      "drivers": "Sürücüler",
+      "motors": "Motorlar",
+      "hosts": "Hostlar",
+      "manufacturers": "Markalar",
+      "mcus": "MCU'lar"
+    },
+    "catalog": {
+      "searchAll": "Tümünü ara",
+      "items": "{n} öğe",
+      "back": "Katalog"
+    },
+    "boards": {
+      "search": "Kartları ara",
+      "total": "{n} kart",
+      "none": "Kart bulunamadı.",
+      "view": "Ayrıntılar",
+      "hide": "Gizle",
+      "connector": "Konnektör",
+      "function": "İşlev",
+      "pins": "Pinler",
+      "use": "Kullan",
+      "electronics": "Elektronik (yapılandırmayı etkiler)",
+      "notes": "Yapılandırma notları",
+      "config": "Yapılandırma parçacığı",
+      "copy": "Kopyala",
+      "copied": "Kopyalandı!"
+    },
+    "drivers": {
+      "search": "Sürücüleri ara",
+      "klipperOnly": "Yalnızca Klipper (TMC)",
+      "total": "{n} sürücü",
+      "none": "Sürücü bulunamadı.",
+      "standalone": "bağımsız",
+      "sensorless": "sensörsüz",
+      "config": "Klipper yapılandırması",
+      "reference": "Klipper referansı →"
+    },
+    "motors": {
+      "search": "Motorları ara",
+      "total": "{n} motor",
+      "none": "Motor bulunamadı.",
+      "rated": "nominal",
+      "run": "çalışma",
+      "config": "Klipper yapılandırması"
+    },
+    "hosts": {
+      "search": "Hostları ara",
+      "total": "{n} host",
+      "none": "Host bulunamadı.",
+      "config": "Host yapılandırması",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "OS imajı",
+        "locked": "kilitli"
+      }
+    },
+    "manufacturers": {
+      "search": "Markaları ara",
+      "total": "{n} marka",
+      "none": "Marka bulunamadı.",
+      "members": "{n} parça",
+      "specialty": "Uzmanlık",
+      "aliases": "Şu adlarla da bilinir",
+      "website": "Web sitesi →",
+      "derived": "topluluk"
+    },
+    "mcus": {
+      "search": "MCU'ları ara",
+      "total": "{n} MCU",
+      "none": "MCU bulunamadı.",
+      "boards": "{n} kart"
+    },
+    "related": {
+      "title": "Bağlantılı donanım",
+      "loading": "Bağlantılar yükleniyor…",
+      "more": "+{n} daha",
+      "jump": "{name} öğesini aç",
+      "rel": {
+        "manufacturer": "Üretici",
+        "mcus": "MCU",
+        "onboardDrivers": "Kart üzeri sürücüler",
+        "supportedDrivers": "Desteklenen sürücüler",
+        "boards": "Kartlar",
+        "motors": "Motorlar",
+        "hosts": "Hostlar",
+        "catalog": "Parçalar"
+      }
+    },
+    "picker": {
+      "placeholder": "Bir parça seçin…"
+    },
+    "facets": {
+      "manufacturer": "Üretici",
+      "anyClass": "Herhangi bir sınıf",
+      "anyNema": "Herhangi bir boyut",
+      "anyKind": "Herhangi bir tür",
+      "anyType": "Tüm türler",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Ana kart",
+        "toolhead": "Tool head",
+        "printer-preset": "Yazıcı ön ayarı",
+        "expansion": "Genişletme",
+        "host": "Host SBC"
+      }
+    },
+    "onPrinter": {
+      "badge": "Bu yazıcıda",
+      "strip": "Bu yazıcıda:"
+    },
+    "suggest": {
+      "button": "Bir parça öner",
+      "title": "Bir parça öner",
+      "intro": "Bildiklerinizi doldurun - inceleme için önceden doldurulmuş bir GitHub sorunu açacağız. Hiçbir şey otomatik olarak gönderilmez.",
+      "typeLabel": "Parça türü",
+      "cancel": "İptal",
+      "close": "Kapat",
+      "submit": "GitHub'da sorun aç",
+      "preview": "Gönderimi önizle (JSON)",
+      "languageNote": "Sorun, geliştiricilerin üzerinde işlem yapabilmesi için İngilizce yazılır.",
+      "sentTitle": "Gönderim yeni bir sekmede açıldı",
+      "sentBody": "GitHub'daki önceden doldurulmuş ayrıntıları inceleyin, ardından sorunu orada gönderin. Katkıda bulunduğunuz için teşekkürler!",
+      "yes": "Evet",
+      "specs": "Ek teknik özellikler",
+      "specKey": "Teknik özellik",
+      "specValue": "Değer",
+      "addSpec": "Teknik özellik ekle",
+      "ports": "Portlar ve pinler",
+      "addPort": "Port ekle",
+      "addPin": "Pin ekle",
+      "remove": "Kaldır",
+      "configSnippet": "Klipper yapılandırma parçacığı",
+      "types": {
+        "motor": "Step motor",
+        "driver": "Step sürücüsü",
+        "hotend": "Hotend",
+        "host": "Host / SBC",
+        "manufacturer": "Üretici",
+        "board": "Kart",
+        "catalog": "Diğer katalog öğesi"
+      },
+      "group": {
+        "autotune": "Autotune (elektriksel)",
+        "caps": "Yetenekler",
+        "maxFlow": "Maks akış",
+        "preset": "Maks akış ön ayarı"
+      },
+      "f": {
+        "manufacturer": "Üretici",
+        "name": "Ad",
+        "model": "Model",
+        "display_name": "Görünen ad",
+        "boardClass": "Kart sınıfı",
+        "mcu": "MCU",
+        "clock": "Saat",
+        "voltage": "Gerilim",
+        "driver_slots": "Sürücü yuvaları",
+        "usb": "USB",
+        "can": "CAN",
+        "ethernet": "Ethernet",
+        "nema": "NEMA",
+        "stepAngle": "Adım açısı",
+        "ratedCurrent": "Nominal akım",
+        "holdingTorque": "Tutma torku",
+        "recommendedRunCurrent": "Önerilen çalışma akımı",
+        "resistance_ohm": "Direnç",
+        "inductance_H": "Endüktans",
+        "holding_torque_Nm": "Tutma torku",
+        "max_current_A": "Maks akım",
+        "steps_per_rev": "Adım / tur",
+        "chip": "Çip",
+        "interface": "Arayüz",
+        "klipperSection": "Klipper bölümü",
+        "sensorless": "Sensörsüz",
+        "max_current_a": "Maks akım",
+        "microsteps": "Mikroadım",
+        "stealthchop": "StealthChop",
+        "spreadcycle": "SpreadCycle",
+        "coolstep": "CoolStep",
+        "stallguard": "StallGuard",
+        "stallguard_field": "StallGuard alanı",
+        "max_temp_c": "Maks sıcaklık",
+        "suggested_temp_c": "Önerilen sıcaklık",
+        "expected_max_flow_mm3s": "Beklenen maks akış",
+        "melt_zone_mm": "Erime bölgesi",
+        "START": "START",
+        "MAX": "MAX",
+        "COARSE_STEP": "COARSE_STEP",
+        "kind": "Tür",
+        "soc": "SoC",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "klipperOpen": "Açık Klipper çalıştırır",
+        "country": "Ülke",
+        "website": "Web sitesi",
+        "specialty": "Uzmanlık",
+        "category": "Kategori",
+        "subsection": "Alt bölüm",
+        "portLabel": "Port etiketi",
+        "portCategory": "Port kategorisi",
+        "portFunction": "İşlev",
+        "signal": "Sinyal",
+        "pin": "Pin"
+      },
+      "tooLong": "Bu gönderim otomatik olarak önceden doldurulamayacak kadar büyük. JSON'u kopyalayın ve manuel olarak yeni bir sorun açın.",
+      "copyJson": "JSON'u kopyala",
+      "copied": "Kopyalandı"
+    }
+  }
+}

@@ -1,0 +1,289 @@
+{
+  "hardwareBrowser": {
+    "intro": "Tìm kiếm trong thư viện tham khảo phần cứng in 3D được tuyển chọn - động cơ bước, driver, board mạch, cảm biến, hotend, quạt, host, nozzle, extruder, sợi nhựa và nhiều hơn nữa - theo tên, nhà sản xuất, danh mục hoặc bất kỳ thông số nào.",
+    "help": {
+      "guide": "Trợ giúp",
+      "guideTitle": "Về Trình duyệt phần cứng",
+      "close": "Đóng",
+      "howToRead": "Cách sử dụng",
+      "steps": [
+        "Gõ vào ô tìm kiếm để khớp với tên, nhà sản xuất hoặc bất kỳ giá trị thông số nào.",
+        "Thu hẹp theo danh mục hoặc nhà sản xuất bằng các bộ lọc.",
+        "Mỗi thẻ kết quả hiển thị thông số của linh kiện; chuyển trang bằng Trước / Tiếp."
+      ],
+      "topics": {
+        "search": {
+          "title": "Tìm kiếm",
+          "body": "Tìm kiếm khớp ở mọi nơi - nhà sản xuất, tên model, danh mục, phân mục hoặc bất kỳ giá trị thông số nào. Kết hợp với bộ lọc danh mục và nhà sản xuất để thu hẹp. Kết quả được phân trang; tổng số phản ánh tất cả những gì khớp, không chỉ trang hiện tại."
+        },
+        "categories": {
+          "title": "Danh mục",
+          "body": "Linh kiện được nhóm theo danh mục (động cơ bước, driver, board mạch, cảm biến, hotend, quạt/nguồn, host, chuyển động, nozzle, extruder, sợi nhựa, điện tử, camera/màn hình). Chọn một để chỉ duyệt loại đó."
+        },
+        "manufacturers": {
+          "title": "Nhà sản xuất & thông số",
+          "body": "Đây là thư viện tham khảo được tuyển chọn để so sánh, không phải cửa hàng - các giá trị đến từ datasheet của nhà sản xuất và dữ liệu cộng đồng, có thể chậm hơn so với sản phẩm mới nhất. Luôn xác nhận với nhà sản xuất trước khi mua hoặc cấu hình."
+        },
+        "relationships": {
+          "title": "Phần cứng liên kết",
+          "body": "Mỗi board mạch, driver, động cơ và host đều được liên kết theo nhà sản xuất, và mỗi board mạch cũng liên kết tới MCU cùng các driver mà nó hỗ trợ. Mở bất kỳ mục nào và dùng các chip liên kết chéo ở dưới cùng để nhảy thẳng tới linh kiện liên quan. Các tab Nhà sản xuất và MCU cho phép bạn bắt đầu từ một thương hiệu hoặc một chip và xem mọi thứ sử dụng nó."
+        },
+        "glossary": {
+          "title": "Thuật ngữ",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "category": {
+          "term": "Danh mục",
+          "def": "Loại phần cứng mà một linh kiện thuộc về (ví dụ: Hotend, Động cơ bước, Cảm biến)."
+        },
+        "manufacturer": {
+          "term": "Nhà sản xuất",
+          "def": "Công ty làm ra linh kiện (ví dụ: E3D, BIGTREETECH, LDO Motors)."
+        },
+        "spec": {
+          "term": "Thông số",
+          "def": "Một thuộc tính datasheet của linh kiện - dòng điện, điện áp, nhiệt độ tối đa, kích thước, v.v."
+        },
+        "links": {
+          "term": "Phần cứng liên kết",
+          "def": "Liên kết chéo giữa các linh kiện - nhà sản xuất của board mạch, MCU của nó và các driver mà nó hỗ trợ - hiển thị dưới dạng chip có thể nhấp để nhảy tới thực thể liên quan."
+        }
+      }
+    },
+    "search": {
+      "placeholder": "Tìm phần cứng…",
+      "button": "Tìm kiếm",
+      "category": "Danh mục",
+      "allCategories": "Tất cả danh mục",
+      "manufacturer": "Nhà sản xuất",
+      "manufacturerPlaceholder": "Bất kỳ nhà sản xuất nào"
+    },
+    "results": {
+      "total": "{count} kết quả",
+      "none": "Không có linh kiện nào khớp với tìm kiếm của bạn.",
+      "showing": "Hiển thị {from}-{to} trên {total}",
+      "prev": "Trước",
+      "next": "Tiếp"
+    },
+    "states": {
+      "loading": "Đang tìm…",
+      "error": "Không thể tải cơ sở dữ liệu phần cứng.",
+      "retry": "Thử lại"
+    },
+    "tabs": {
+      "catalog": "Danh mục",
+      "search": "Tìm tất cả",
+      "boards": "Board mạch",
+      "drivers": "Driver",
+      "motors": "Động cơ",
+      "hosts": "Host",
+      "manufacturers": "Thương hiệu",
+      "mcus": "MCU"
+    },
+    "catalog": {
+      "searchAll": "Tìm tất cả",
+      "items": "{n} mục",
+      "back": "Danh mục"
+    },
+    "boards": {
+      "search": "Tìm board mạch",
+      "total": "{n} board mạch",
+      "none": "Không tìm thấy board mạch.",
+      "view": "Chi tiết",
+      "hide": "Ẩn",
+      "connector": "Đầu nối",
+      "function": "Chức năng",
+      "pins": "Chân",
+      "use": "Sử dụng",
+      "electronics": "Điện tử (ảnh hưởng cấu hình)",
+      "notes": "Ghi chú cấu hình",
+      "config": "Đoạn cấu hình",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép!"
+    },
+    "drivers": {
+      "search": "Tìm driver",
+      "klipperOnly": "Chỉ Klipper (TMC)",
+      "total": "{n} driver",
+      "none": "Không tìm thấy driver.",
+      "standalone": "độc lập",
+      "sensorless": "không cảm biến",
+      "config": "Cấu hình Klipper",
+      "reference": "Tài liệu Klipper →"
+    },
+    "motors": {
+      "search": "Tìm động cơ",
+      "total": "{n} động cơ",
+      "none": "Không tìm thấy động cơ.",
+      "rated": "định mức",
+      "run": "vận hành",
+      "config": "Cấu hình Klipper"
+    },
+    "hosts": {
+      "search": "Tìm host",
+      "total": "{n} host",
+      "none": "Không tìm thấy host.",
+      "config": "Cấu hình host",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "Ảnh OS",
+        "locked": "bị khóa"
+      }
+    },
+    "manufacturers": {
+      "search": "Tìm thương hiệu",
+      "total": "{n} thương hiệu",
+      "none": "Không tìm thấy thương hiệu.",
+      "members": "{n} linh kiện",
+      "specialty": "Chuyên môn",
+      "aliases": "Còn được gọi là",
+      "website": "Trang web →",
+      "derived": "cộng đồng"
+    },
+    "mcus": {
+      "search": "Tìm MCU",
+      "total": "{n} MCU",
+      "none": "Không tìm thấy MCU.",
+      "boards": "{n} board mạch"
+    },
+    "related": {
+      "title": "Phần cứng liên kết",
+      "loading": "Đang tải liên kết…",
+      "more": "+{n} nữa",
+      "jump": "Mở {name}",
+      "rel": {
+        "manufacturer": "Nhà sản xuất",
+        "mcus": "MCU",
+        "onboardDrivers": "Driver tích hợp",
+        "supportedDrivers": "Driver hỗ trợ",
+        "boards": "Board mạch",
+        "motors": "Động cơ",
+        "hosts": "Host",
+        "catalog": "Linh kiện"
+      }
+    },
+    "picker": {
+      "placeholder": "Chọn một linh kiện…"
+    },
+    "facets": {
+      "manufacturer": "Nhà sản xuất",
+      "anyClass": "Mọi loại",
+      "anyNema": "Mọi kích thước",
+      "anyKind": "Mọi kiểu",
+      "anyType": "Tất cả các loại",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Mainboard",
+        "toolhead": "Toolhead",
+        "printer-preset": "Cấu hình máy in",
+        "expansion": "Mở rộng",
+        "host": "Host SBC"
+      }
+    },
+    "onPrinter": {
+      "badge": "Trên máy in này",
+      "strip": "Trên máy in này:"
+    },
+    "suggest": {
+      "button": "Đề xuất linh kiện",
+      "title": "Đề xuất linh kiện",
+      "intro": "Điền những gì bạn biết - chúng tôi sẽ mở một issue GitHub được điền sẵn để xem xét. Không có gì được gửi tự động.",
+      "typeLabel": "Loại linh kiện",
+      "cancel": "Hủy",
+      "close": "Đóng",
+      "submit": "Mở issue trên GitHub",
+      "preview": "Xem trước phần gửi (JSON)",
+      "languageNote": "Issue được viết bằng tiếng Anh để người bảo trì có thể xử lý.",
+      "sentTitle": "Phần gửi đã mở trong tab mới",
+      "sentBody": "Xem lại các chi tiết được điền sẵn trên GitHub, rồi gửi issue tại đó. Cảm ơn bạn đã đóng góp!",
+      "yes": "Có",
+      "specs": "Thông số bổ sung",
+      "specKey": "Thông số",
+      "specValue": "Giá trị",
+      "addSpec": "Thêm thông số",
+      "ports": "Cổng & chân",
+      "addPort": "Thêm cổng",
+      "addPin": "Thêm chân",
+      "remove": "Xóa",
+      "configSnippet": "Đoạn cấu hình Klipper",
+      "types": {
+        "motor": "Động cơ bước",
+        "driver": "Driver động cơ bước",
+        "hotend": "Hotend",
+        "host": "Host / SBC",
+        "manufacturer": "Nhà sản xuất",
+        "board": "Board mạch",
+        "catalog": "Mục danh mục khác"
+      },
+      "group": {
+        "autotune": "Autotune (điện)",
+        "caps": "Khả năng",
+        "maxFlow": "Lưu lượng tối đa",
+        "preset": "Cấu hình lưu lượng tối đa"
+      },
+      "f": {
+        "manufacturer": "Nhà sản xuất",
+        "name": "Tên",
+        "model": "Model",
+        "display_name": "Tên hiển thị",
+        "boardClass": "Loại board mạch",
+        "mcu": "MCU",
+        "clock": "Xung nhịp",
+        "voltage": "Điện áp",
+        "driver_slots": "Khe driver",
+        "usb": "USB",
+        "can": "CAN",
+        "ethernet": "Ethernet",
+        "nema": "NEMA",
+        "stepAngle": "Góc bước",
+        "ratedCurrent": "Dòng định mức",
+        "holdingTorque": "Mô-men giữ",
+        "recommendedRunCurrent": "Dòng vận hành khuyến nghị",
+        "resistance_ohm": "Điện trở",
+        "inductance_H": "Điện cảm",
+        "holding_torque_Nm": "Mô-men giữ",
+        "max_current_A": "Dòng tối đa",
+        "steps_per_rev": "Bước / vòng",
+        "chip": "Chip",
+        "interface": "Giao tiếp",
+        "klipperSection": "Mục Klipper",
+        "sensorless": "Không cảm biến",
+        "max_current_a": "Dòng tối đa",
+        "microsteps": "Vi bước",
+        "stealthchop": "StealthChop",
+        "spreadcycle": "SpreadCycle",
+        "coolstep": "CoolStep",
+        "stallguard": "StallGuard",
+        "stallguard_field": "Trường StallGuard",
+        "max_temp_c": "Nhiệt độ tối đa",
+        "suggested_temp_c": "Nhiệt độ đề xuất",
+        "expected_max_flow_mm3s": "Lưu lượng tối đa dự kiến",
+        "melt_zone_mm": "Vùng nóng chảy",
+        "START": "START",
+        "MAX": "MAX",
+        "COARSE_STEP": "COARSE_STEP",
+        "kind": "Kiểu",
+        "soc": "SoC",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "klipperOpen": "Chạy Klipper mở",
+        "country": "Quốc gia",
+        "website": "Trang web",
+        "specialty": "Chuyên môn",
+        "category": "Danh mục",
+        "subsection": "Phân mục",
+        "portLabel": "Nhãn cổng",
+        "portCategory": "Danh mục cổng",
+        "portFunction": "Chức năng",
+        "signal": "Tín hiệu",
+        "pin": "Chân"
+      },
+      "tooLong": "Phần gửi này quá lớn để điền sẵn tự động. Sao chép JSON và mở một issue mới thủ công.",
+      "copyJson": "Sao chép JSON",
+      "copied": "Đã sao chép"
+    }
+  }
+}

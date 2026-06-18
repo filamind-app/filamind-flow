@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "đây là gì?",
+      "topics": {
+        "glossary": {
+          "title": "Thuật ngữ input shaping"
+        },
+        "analyze": {
+          "title": "Phân tích file CSV cộng hưởng",
+          "body": "Thu dữ liệu trên máy in bằng TEST_RESONANCES (hoặc dùng 🔴 Công cụ trực tiếp), rồi tải file .csv lên đây. FilaMind chạy chính phép tính shaper của Klipper và đề xuất một shaper + tần số. Làm lần lượt file X rồi file Y - chúng kết hợp thành một khối cấu hình."
+        },
+        "grade": {
+          "title": "Điểm A-F nghĩa là gì",
+          "body": "Điểm chất lượng đo từ năm phần bằng nhau: độ rõ của đỉnh, rung dư, độ làm mượt, tần số (40-90 Hz là khỏe), và độ sạch của cộng hưởng. A/B → áp dụng; C → dùng được, xem nhanh các gợi ý; D/F → sửa cơ khí rồi đo lại."
+        },
+        "diagnostics": {
+          "title": "Đọc chẩn đoán",
+          "body": "Mỗi thẻ ánh xạ kết quả đo sang một nguyên nhân cơ khí khả dĩ và cách khắc phục. Xanh chanh = khỏe, vàng = nên cải thiện, đỏ = sửa trước khi tin kết quả. Áp dụng cách sửa, chạy lại, và xem thẻ chuyển xanh."
+        },
+        "chart": {
+          "title": "Đọc biểu đồ tần số",
+          "body": "Các đường liền là năng lượng rung đo được (tổng X+Y+Z cùng từng trục). Dấu ▲ đánh dấu cộng hưởng trội. Các đường mờ là rung dư của từng shaper theo tần số - cái được đề xuất (hồng) chạm sâu nhất tại đỉnh của bạn."
+        },
+        "shapers": {
+          "title": "Chọn một shaper",
+          "body": "Mỗi hàng đánh đổi giữa rung dư và độ làm mượt. ZV / MZV nhẹ nhất (cộng hưởng đơn sạch); EI mạnh mẽ hơn; 2-/3-hump xử lý cộng hưởng rộng hoặc nhiều đỉnh nhưng làm mượt nhiều hơn. FilaMind làm nổi bật cân bằng tốt nhất."
+        },
+        "config": {
+          "title": "Áp dụng cấu hình",
+          "body": "Khối [input_shaper] này chứa kết quả X và/hoặc Y của bạn. Sao chép vào printer.cfg và khởi động lại Klipper. Các huy hiệu cho thấy trục nào đã được thu - hãy thu cả X và Y cho một khối hoàn chỉnh."
+        },
+        "noise": {
+          "title": "Kiểm tra nhiễu",
+          "body": "Đọc rung khi đứng yên của cảm biến gia tốc mà không di chuyển - một bước kiểm tra lắp đặt nhanh trước khi đo. Quy tắc kinh nghiệm của Klipper: ~1-100 là bình thường, ~1000+ nghĩa là cảm biến lỏng hoặc lỗi dây. Sửa lắp đặt nhiễu trước, nếu không mọi phép đo đều không đáng tin."
+        },
+        "belts": {
+          "title": "So sánh dây đai (CoreXY)",
+          "body": "Kích thích từng đường chéo dây đai và chồng hai đáp ứng lên nhau. Tần số đỉnh khớp nhau = lực căng đều. Có khoảng cách nghĩa là dây đai tần số thấp hơn đang lỏng hơn - siết nó và chạy lại đến khi các đỉnh thẳng hàng."
+        },
+        "axesMap": {
+          "title": "Phát hiện axes-map",
+          "body": "Di chuyển đầu in một chút theo X, rồi Y, rồi Z để biết cảm biến gia tốc được lắp như thế nào, và đưa cho bạn dòng axes_map cho printer.cfg. Chạy một lần sau khi lắp hoặc di chuyển cảm biến để mọi phép đo về sau đọc đúng trục."
+        },
+        "sustain": {
+          "title": "Tần số duy trì",
+          "body": "Giữ đầu in rung tại một tần số để bạn có thể chạm tay vào dây đai, bàn xe và khung để tìm chỗ rung. Phổ đồ + dòng thời gian cho thấy tần số mục tiêu có đang trội không và khi nào một cú chạm làm nó dịu lại."
+        },
+        "vibrations": {
+          "title": "Hồ sơ rung",
+          "body": "Quét nhiều tốc độ dọc theo từng góc động cơ để lập bản đồ nơi máy chạy mượt nhất và những tốc độ nào gặp cộng hưởng. Ưu tiên các tốc độ mượt nhất cho di chuyển in / di chuyển nhanh và tránh những tốc độ được đánh dấu. % đối xứng cho thấy hai động cơ khớp nhau tốt đến đâu."
+        },
+        "guided": {
+          "title": "Có hướng dẫn vs. thủ công",
+          "body": "Chế độ có hướng dẫn đi qua toàn bộ quy trình - Nhiễu → Dây đai → Shaper X → Shaper Y → Rung → Áp suất - với cổng đạt / không đạt ở mỗi bước. Dùng nó để tinh chỉnh đầy đủ. Chuyển sang 📈 Phân tích hoặc 🔴 Công cụ trực tiếp khi bạn chỉ muốn một công cụ cụ thể."
+        },
+        "history": {
+          "title": "Lịch sử & xu hướng",
+          "body": "Mỗi lần hiệu chỉnh được lưu (trong trình duyệt này) kèm điểm số và xếp hạng. Mũi tên ▲/▼ so sánh một lần chạy với lần đo trước của cùng trục - lên nghĩa là thu sạch hơn hoặc trục cứng hơn, xuống nghĩa là nhiều nhiễu hơn hoặc trục mềm hơn."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input shaper",
+          "def": "Một bộ lọc Klipper áp lên chuyển động để triệt tiêu rung chính của máy in, giúp bạn in nhanh hơn mà không bị ringing / ghosting."
+        },
+        "resonance": {
+          "term": "Cộng hưởng",
+          "def": "Tần số (Hz) mà một trục rung tự nhiên khi bị tác động. Thấp hơn = trục mềm / nặng hơn; ~40-90 Hz là máy in khỏe."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Mật độ phổ công suất - lượng năng lượng rung ở mỗi tần số. Đỉnh cao là cộng hưởng mà shaper nhắm tới."
+        },
+        "smoothing": {
+          "term": "Làm mượt",
+          "def": "Một tác dụng phụ của shaping làm tròn nhẹ các góc nhọn. Thấp hơn thì tốt hơn; ≤0.1 là tối thiểu, >0.2 bắt đầu làm mất chi tiết."
+        },
+        "vibrationPct": {
+          "term": "% rung",
+          "def": "Lượng cộng hưởng còn lại sau shaper. Thấp hơn thì tốt hơn; ≤2% là tuyệt vời, ≤5% là ổn."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "Gia tốc mà shaper có thể duy trì mà không làm mượt quá nhiều - một giá trị SET_VELOCITY_LIMIT / printer.cfg được đề xuất."
+        }
+      },
+      "guide": "Hướng dẫn",
+      "guideTitle": "Hướng dẫn Input Shaping",
+      "close": "Đóng"
+    },
+    "grade": {
+      "clarity": {
+        "label": "Độ rõ của đỉnh",
+        "value": "{ratio}×",
+        "note": {
+          "none": "Không có phổ để đánh giá.",
+          "good": "Đỉnh sắc nét, cao hơn hẳn nhiễu.",
+          "ok": "Đỉnh thấy được trên nền nhiễu.",
+          "poor": "Đỉnh yếu - nhiễu hoặc rất cứng."
+        }
+      },
+      "vibration": {
+        "label": "Rung dư",
+        "value": "{pct}%",
+        "note": {
+          "good": "Gần như toàn bộ cộng hưởng đã được loại bỏ.",
+          "ok": "Phần lớn cộng hưởng đã được loại bỏ.",
+          "poor": "Còn rung đáng kể."
+        }
+      },
+      "smoothing": {
+        "label": "Làm mượt",
+        "note": {
+          "good": "Làm tròn góc tối thiểu.",
+          "ok": "Hơi tròn góc ở gia tốc cao.",
+          "poor": "Làm mượt mạnh - làm tròn góc."
+        }
+      },
+      "freq": {
+        "label": "Tần số",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "Không tìm thấy tần số.",
+          "good": "Trục khỏe, cứng.",
+          "ok": "Hơi mềm hoặc rất cứng.",
+          "soft": "Trục mềm / nặng.",
+          "high": "Cao bất thường."
+        }
+      },
+      "shaper": {
+        "label": "Dạng cộng hưởng",
+        "note": {
+          "clean": "Cộng hưởng đơn sạch.",
+          "robust": "Cộng hưởng đơn, shaper mạnh mẽ.",
+          "twin": "Cộng hưởng rộng hoặc kép.",
+          "multiple": "Nhiều cộng hưởng.",
+          "atypical": "Shaper không điển hình."
+        }
+      },
+      "verdict": {
+        "a": "Tuyệt vời - thu sạch, trục được tinh chỉnh tốt.",
+        "b": "Tốt - kết quả vững, còn ít chỗ cải thiện.",
+        "c": "Khá - dùng được; xem các gợi ý bên dưới.",
+        "d": "Kém - nên tinh chỉnh cơ khí + đo lại.",
+        "f": "Không đáng tin - chạy lại phép đo (kiểm tra lắp cảm biến).",
+        "none": "Không có kết quả dùng được - chạy lại TEST_RESONANCES."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "Không có cộng hưởng dùng được",
+        "advice": "Chạy lại TEST_RESONANCES. Kiểm tra cảm biến gia tốc đã được nối dây và lắp chắc vào đầu in.",
+        "detail": "không phát hiện đỉnh rõ ràng"
+      },
+      "noisy": {
+        "title": "Thu bị nhiễu",
+        "advice": "Cố định chỗ lắp cảm biến gia tốc và chạy lại. Tránh quạt hoặc chuyển động khác trong khi đo.",
+        "detail": "tỉ số tín hiệu trên nhiễu {snr}×"
+      },
+      "lowFreq": {
+        "title": "Tần số cộng hưởng thấp",
+        "advice": "Trục mềm hoặc nặng - siết dây đai và kiểm tra độ cứng khung. Trục cứng hơn cộng hưởng cao hơn và in nhanh hơn.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Trục hơi mềm",
+        "advice": "Tần số thiên về phía thấp. Làm cứng dây đai hoặc khung sẽ nâng nó lên và cho phép in nhanh hơn.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "Làm mượt cao",
+        "advice": "Sẽ làm tròn góc. Chọn shaper cứng hơn hoặc giảm max_accel.",
+        "detail": "làm mượt {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Nhiều cộng hưởng",
+        "advice": "Thường do đầu in, dây đai, hoặc bộ phận bị lỏng. Lắp lại đầu in và kiểm tra lại lực căng dây đai."
+      },
+      "vibrationRemains": {
+        "title": "Còn rung",
+        "advice": "Tinh chỉnh cơ khí (dây đai, khung, khối lượng đầu in) có thể đẩy con số này xuống thấp hơn.",
+        "detail": "còn {vibrations}% sau khi shaping"
+      },
+      "healthy": {
+        "title": "Trục khỏe",
+        "advice": "Thu sạch và trục cứng - sẵn sàng. Áp dụng cấu hình và khởi động lại Klipper.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X và Y lệch nhau nhiều",
+        "advice": "Độ cứng không đối xứng. Kiểm tra lực căng dây đai trên trục mềm hơn; với CoreXY hãy chắc rằng cả hai dây đai khớp và căng.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "được đề xuất",
+        "shaperFreq": "tần số shaper",
+        "peakFreq": "tần số đỉnh",
+        "remainingVibr": "rung còn lại",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Dây đai khớp",
+          "advice": "Hai đáp ứng dây đai thẳng hàng - lực căng có vẻ cân bằng."
+        },
+        "differ": {
+          "title": "Dây đai lệch",
+          "advice": "Cộng hưởng dây đai lệch nhau - căng lại dây đai lỏng hơn đến khi cả hai đỉnh thẳng hàng."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Cảm biến yên tĩnh",
+          "why": "Tốt, tiếp tục được."
+        },
+        "elevated": {
+          "title": "Giảm nhiễu cảm biến",
+          "why": "Tối đa {max} ≥ {threshold}. Tắt quạt đầu in và kiểm tra lại chỗ lắp, rồi chạy lại."
+        },
+        "bad": {
+          "title": "Sửa cảm biến gia tốc trước khi đo",
+          "why": "Nhiễu {max} quá cao - lắp lại cảm biến và kiểm tra dây."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Dây đai cân bằng",
+          "why": "Lực căng đều - hiệu chỉnh shaper tiếp theo."
+        },
+        "mismatch": {
+          "title": "Căng lại dây đai {looser}",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). Siết dây đai tần số thấp hơn đến khi cả hai đỉnh thẳng hàng, rồi chạy lại."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Chạy lại ở gia tốc thấp hơn",
+          "why": "Đã ghi quá nhiều chuyển động tần số thấp - giảm ACCEL (hoặc tăng SIZE) để chỉ đo các tốc độ ổn định, rồi chạy lại."
+        },
+        "favour": {
+          "title": "Ưu tiên ~{speed} mm/s",
+          "why": "Dải mượt nhất {start}-{end} mm/s - đặt tốc độ in / di chuyển của slicer ở đây khi có thể."
+        },
+        "avoid": {
+          "title": "Tránh {shown} mm/s",
+          "why": "Các tốc độ này gặp cộng hưởng - tránh chúng cho di chuyển in + di chuyển nhanh trong slicer."
+        },
+        "symmetry": {
+          "title": "Kiểm tra lực căng dây đai / khớp động cơ",
+          "why": "Đối xứng động cơ {pct}% là thấp - căng lại dây đai (so sánh dây đai) và xác minh dòng điện hai động cơ khớp nhau."
+        },
+        "fine": {
+          "title": "Rung trông ổn",
+          "why": "Không có tốc độ vấn đề nào nổi bật."
+        }
+      },
+      "pressure": {
+        "title": "Chạy tháp pressure-advance",
+        "why": "In tháp PA, đọc chiều cao mà các góc trông sắc nét nhất, rồi `SET_PRESSURE_ADVANCE ADVANCE=<value>` và `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "axes_map đã cấu hình của bạn đã đúng.",
+        "update": "Cập nhật cấu hình thành: {axes_map}",
+        "add": "Thêm dòng này để mọi biểu đồ Input Shaping đọc X/Y/Z thẳng hàng."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Nhiễu",
+          "title": "Nhiễu cảm biến gia tốc",
+          "why": "Xác nhận cảm biến được lắp chắc trước mọi phép đo (không chuyển động)."
+        },
+        "belts": {
+          "label": "Dây đai",
+          "title": "Cân bằng dây đai CoreXY",
+          "why": "Khớp lực căng hai dây đai. Chỉ CoreXY - bỏ qua với cartesian / bed-slinger."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper - X",
+          "why": "Tìm cộng hưởng X và shaper tốt nhất."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper - Y",
+          "why": "Tìm cộng hưởng Y và shaper tốt nhất."
+        },
+        "vibrations": {
+          "label": "Rung",
+          "title": "Hồ sơ rung",
+          "why": "Quét tốc độ × góc động cơ để tìm các tốc độ mượt nhất và cộng hưởng cần tránh."
+        },
+        "pressure": {
+          "label": "Áp suất",
+          "title": "Pressure advance",
+          "why": "Tinh chỉnh pressure advance cuối cùng để làm sắc góc và đường nối."
+        },
+        "done": {
+          "label": "Xong"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Cảm biến yên tĩnh",
+          "warn": "Nhiễu hơi cao",
+          "failed": "Quá nhiễu - sửa chỗ lắp"
+        },
+        "belts": {
+          "passed": "Dây đai khớp",
+          "differ": "Dây đai lệch (Δ{diffPct}%)",
+          "mismatched": "Dây đai không khớp (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "Hạng {letter} - trục khỏe",
+          "usable": "Hạng C - dùng được",
+          "tune": "Hạng {letter} - tinh chỉnh + đo lại"
+        },
+        "vibrations": {
+          "lowFreq": "Quá nhiều chuyển động tần số thấp - giảm gia tốc & chạy lại",
+          "mismatched": "Động cơ không khớp ({pct}%)",
+          "smoothest": "Mượt nhất ~{rec} mm/s",
+          "complete": "Hồ sơ hoàn tất"
+        }
+      },
+      "ui": {
+        "title": "🧭 Tinh chỉnh có hướng dẫn",
+        "exit": "✕ thoát",
+        "motionReady": "⚠ sẽ di chuyển đầu in - tôi đã sẵn sàng",
+        "running": "đang chạy…",
+        "run": "chạy",
+        "rerun": "↻ chạy lại",
+        "skipBelts": "bỏ qua (không phải CoreXY)",
+        "copyPa": "📋 Sao chép tháp PA",
+        "copied": "✅ Đã sao chép",
+        "finish": "Hoàn tất →",
+        "nextStep": "Bước tiếp theo →",
+        "skipAnyway": "vẫn bỏ qua",
+        "complete": "Hoàn tất tinh chỉnh",
+        "stepFailed": "Bước thất bại",
+        "copyFailed": "Sao chép thất bại - chọn văn bản và sao chép thủ công.",
+        "summaryNote": "Các bản thu X và Y của bạn nằm trong khối {code} kết hợp bên dưới - sao chép nó, rồi khởi động lại Klipper. Mở lại tinh chỉnh có hướng dẫn bất cứ lúc nào để kiểm tra lại.",
+        "beltsNotApplicable": "So sánh dây đai áp dụng cho máy in CoreXY - máy in này báo '{kin}', nên bước này được bỏ qua.",
+        "resultsSoFar": "Kết quả đến hiện tại",
+        "archived": "Đã lưu",
+        "autoSaved": "Đã tự động lưu vào kho lưu trữ trên máy in.",
+        "beltA": "Dây đai A (1,1)",
+        "beltB": "Dây đai B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "Được đề xuất",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Gia tốc tối đa",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Nhiễu khi đứng yên tối đa {max} (bình thường < {threshold}).",
+        "status": "Trạng thái",
+        "maxNoise": "Nhiễu tối đa",
+        "threshold": "Ngưỡng",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Khớp",
+        "beltA": "Đỉnh dây đai A",
+        "beltB": "Đỉnh dây đai B",
+        "difference": "Chênh lệch",
+        "matched": "khớp",
+        "mismatch": "không khớp",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Trạng thái",
+        "gravity": "Trọng lực",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Nhiễu"
+      },
+      "sustain": {
+        "target": "Mục tiêu",
+        "dominant": "Trội",
+        "inBand": "Trong dải",
+        "onTarget": "Đúng mục tiêu",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "có",
+        "no": "không"
+      },
+      "vibrations": {
+        "smoothest": "Mượt nhất",
+        "symmetry": "Đối xứng",
+        "motorResonance": "Cộng hưởng động cơ",
+        "avoid": "Tránh",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Có hướng dẫn",
+      "tabAnalyze": "📈 Phân tích",
+      "tabLive": "🔴 Công cụ trực tiếp",
+      "tabHistory": "🕘 Lịch sử",
+      "intro": "Tinh chỉnh input shaping từ một bản thu cộng hưởng Klipper - không cần dòng lệnh. Lần đầu? Bắt đầu với {guided}. Hoặc chọn {analyze} để tự xử lý một {csv}, {live} để thu trên máy in, hoặc {history} để xem lại các lần chạy trước.",
+      "cfgReady": "printer.cfg sẵn sàng",
+      "copy": "📋 Sao chép",
+      "copied": "✅ Đã sao chép",
+      "archive": "💾 Lưu trữ",
+      "saved": "✅ Đã lưu",
+      "advanced": "⚙ nâng cao",
+      "compareCsvs": "⇄ so sánh CSV",
+      "blankDefault": "để trống = mặc định Klipper",
+      "auditTitle": "Kiểm tra",
+      "refresh": "↻ làm mới",
+      "auditEmpty": "Chưa có kết quả - chạy một lần tinh chỉnh, hoặc lưu một lần vào kho lưu trữ.",
+      "trendTitle": "điểm {score} so với lần đo {axis} trước",
+      "sourceSaved": "💾 đã lưu",
+      "sourceLocal": "cục bộ",
+      "recommended": "Được đề xuất",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "trục {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "Không có shaper được đề xuất cho dữ liệu này.",
+      "measurementQuality": "Chất lượng đo",
+      "scoreOutOf": "{v}/100",
+      "hide": "ẩn",
+      "details": "chi tiết",
+      "chartAria": "Đáp ứng tần số và các shaper",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "được đề xuất",
+      "legendPeak": "▲ đỉnh",
+      "legendAxisHint": "tần số (Hz) → · liền = đo được · mờ = rung dư của shaper",
+      "colShaper": "shaper",
+      "colFreq": "tần số",
+      "colVibr": "rung",
+      "colSmooth": "mượt",
+      "colAccel": "gia tốc",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "xóa",
+      "pasteHint": "Dán vào {cfg} của bạn, rồi khởi động lại Klipper.",
+      "errAnalysisFailed": "Phân tích thất bại",
+      "errCopyFailed": "Sao chép thất bại - chọn văn bản và sao chép thủ công.",
+      "errSaveFailed": "Lưu vào kho lưu trữ thất bại"
+    },
+    "fromPrinter": {
+      "liveTools": "Công cụ trực tiếp",
+      "intro": "⏳ Các bước này di chuyển đầu in và có thể mất {duration} (một lần so sánh dây đai chạy hai lượt quét đầy đủ) - giữ trang này mở đến khi kết quả xuất hiện.",
+      "introDuration": "1-5 phút",
+      "confirmMoves": "⚠ sẽ di chuyển đầu in - tôi đã sẵn sàng",
+      "axisX": "trục X",
+      "axisY": "trục Y",
+      "noiseTitle": "🔊 Kiểm tra nhiễu",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "đang đo…",
+      "noiseHint": "không chuyển động · chạy trước khi đo",
+      "noiseVerdictQuiet": "✅ yên tĩnh",
+      "noiseVerdictElevated": "⚠ tăng cao",
+      "noiseVerdictTooNoisy": "⛔ quá nhiễu",
+      "noiseMaxNormal": "tối đa {max} · bình thường < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Đo trực tiếp",
+      "liveBtn": "chạy TEST_RESONANCES",
+      "liveBtnBusy": "đang chạy…",
+      "liveDesc": "Home máy in nếu cần, rồi chạy TEST_RESONANCES trên trục đã chọn (cần cảm biến gia tốc + một {section}). Bị từ chối khi đang in.",
+      "beltsTitle": "🟰 So sánh dây đai",
+      "beltsBtn": "so sánh dây đai",
+      "beltsBtnBusy": "đang so sánh…",
+      "beltsBtnTitle": "CoreXY: kích thích từng đường chéo dây đai và chồng các đáp ứng",
+      "beltsDesc": "Chỉ CoreXY: chạy hai lượt quét dọc các đường chéo dây đai và chồng chúng lên. Bị từ chối khi đang in.",
+      "axesTitle": "🧭 Axes map",
+      "axesBtn": "phát hiện axes_map",
+      "axesBtnBusy": "đang phát hiện…",
+      "axesBtnTitle": "Di chuyển +X/+Y/+Z để phát hiện hướng cảm biến gia tốc (axes_map)",
+      "axesDesc": "Di chuyển ~30 mm theo X, rồi Y, rồi Z để phát hiện hướng cảm biến gia tốc. Bị từ chối khi đang in.",
+      "beltResultTitle": "So sánh dây đai",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "Đáp ứng tần số dây đai A vs B",
+      "beltLegendA": "dây đai A (1,1)",
+      "beltLegendB": "dây đai B (1,-1)",
+      "axesResultTitle": "Axes map",
+      "copy": "📋 Sao chép",
+      "copied": "✅ Đã sao chép",
+      "mappingVirtual": " (ảo)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "Chuỗi vận tốc trục",
+      "zoneVirtual": "ảo",
+      "zonePct": "{pct}%",
+      "legendAccelX": "gia tốc x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "nghiêng {x}° / {y}° / {z}°",
+      "gravity": "trọng lực {v} m/s²",
+      "noiseValue": "nhiễu {v}",
+      "sustainTitle": "🎯 Tần số duy trì",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "giây",
+      "sustainBtn": "chạy",
+      "sustainBtnBusy": "đang giữ…",
+      "sustainDesc": "Rung đầu in tại chỗ gần tần số - chạm dây đai, đầu in và khung để tìm chỗ rung. Bị từ chối khi đang in.",
+      "sustainHolding": "✅ đang giữ",
+      "sustainOffTarget": "⚠ lệch mục tiêu",
+      "sustainPeak": "đỉnh {freq} Hz · {pct}% trong dải",
+      "specChartLabel": "Phổ đồ tần số-thời gian",
+      "energyChartLabel": "Năng lượng rung theo thời gian",
+      "specAxes": "tần số → · thời gian ↓",
+      "energyLegend": "năng lượng theo thời gian - chỗ trũng màu lục lam là nơi một cú chạm có ích",
+      "vibTitle": "📊 Hồ sơ rung",
+      "vibMax": "tối đa",
+      "vibStep": "bước",
+      "vibUnit": "mm/s",
+      "vibBtn": "chạy quét",
+      "vibBtnBusy": "đang quét…",
+      "vibDesc": "Quét tốc độ × góc động cơ quanh tâm bàn in - một lần chạy dài (vài phút). {step} nhỏ hơn thì mịn hơn nhưng chậm hơn. Báo cáo các tốc độ mượt nhất, các tốc độ cần tránh, đối xứng động cơ và cộng hưởng động cơ. Bị từ chối khi đang in.",
+      "vibDescStep": "bước",
+      "errNoiseCheck": "Kiểm tra nhiễu thất bại",
+      "errLiveTest": "Đo trực tiếp thất bại",
+      "errBeltComparison": "So sánh dây đai thất bại",
+      "errAxesMapDetection": "Phát hiện axes-map thất bại",
+      "errCopyFailed": "Sao chép thất bại - chọn văn bản và sao chép thủ công.",
+      "errSustainTest": "Đo tần số duy trì thất bại",
+      "errVibrationsProfile": "Hồ sơ rung thất bại",
+      "vibProgress": "Quét {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "Đang bắt đầu quét…",
+      "vibCancel": "Hủy quét",
+      "vibCancelling": "Đang hủy…",
+      "vibCancelled": "Đã hủy quét - giới hạn vận tốc đã được khôi phục.",
+      "vibReattached": "Đã kết nối lại: kết quả này hoàn tất khi trang đang vắng mặt.",
+      "beltsCorexyOnly": "Chỉ CoreXY - máy in này báo động học '{kin}', nên so sánh hai dây đai không áp dụng."
+    },
+    "vibrationsView": {
+      "title": "Hồ sơ rung",
+      "lowFreqNoise": "⚠ nhiễu tần số thấp",
+      "smoothest": "▼ mượt nhất ~{v} mm/s",
+      "symmetry": "đối xứng {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "Năng lượng rung theo tốc độ",
+      "axisLegend": "tốc độ (mm/s) → · năng lượng rung ↑",
+      "smooth": "mượt",
+      "avoid": "tránh",
+      "svgPolarLabel": "Năng lượng rung theo hướng di chuyển",
+      "svgHeatmapLabel": "Bản đồ nhiệt năng lượng rung theo góc và tốc độ",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "cộng hưởng động cơ {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "hướng mượt nhất ~{start}-{end}°",
+      "captures": "{n} bản thu"
+    },
+    "compareView": {
+      "title": "So sánh hai bản thu (A ⇄ B)",
+      "intro": "Trước/sau một lần sửa cơ khí, hoặc cùng một trục được đo lại. (So sánh các file cùng trục.)",
+      "selectA": "A: chọn",
+      "selectB": "B: chọn",
+      "busy": "…",
+      "compare": "so sánh",
+      "comparisonFailed": "So sánh thất bại",
+      "chartAriaLabel": "Mật độ phổ công suất A vs B",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "Nguồn CSV",
+      "tabUpload": "📤 Tải lên",
+      "tabHost": "🖥 Từ máy in",
+      "selectCsv": "📈 Chọn CSV",
+      "axisTitle": "Trục mà dữ liệu này thuộc về",
+      "axisAuto": "trục: tự động",
+      "axisX": "trục: X",
+      "axisY": "trục: Y",
+      "analyzing": "Đang phân tích…",
+      "analyze": "🚀 Phân tích",
+      "onHost": "trên máy chủ máy in",
+      "refresh": "↻ làm mới",
+      "noFiles": "Không tìm thấy file CSV cộng hưởng.",
+      "noFilesInDirs": "Không tìm thấy file CSV cộng hưởng trong {dirs}.",
+      "analyzeFile": "phân tích",
+      "saveTitle": "Sao chép bản thu này vào kho lưu trữ",
+      "save": "💾 lưu",
+      "archive": "Lưu trữ",
+      "archiveEmpty": "Chưa lưu gì - dùng 💾 lưu ở trên, hoặc \"lưu vào kho lưu trữ\" dưới một cấu hình.",
+      "downloadTitle": "tải xuống {fn}",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "Không thể liệt kê file máy in",
+      "errListArchive": "Không thể liệt kê kho lưu trữ",
+      "errSave": "Lưu vào kho lưu trữ thất bại",
+      "errDelete": "Xóa thất bại",
+      "errDownload": "Tải xuống thất bại",
+      "viewChart": "Biểu đồ",
+      "viewChartTitle": "Mở lại biểu đồ của lần chạy đã lưu này"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Đã ghi quá nhiều chuyển động tần số thấp - giảm ACCEL (hoặc tăng SIZE) và chạy lại để chỉ đo các tốc độ ổn định.",
+        "smoothest": "Mượt nhất quanh {v} mm/s",
+        "avoid": "tránh tốc độ gần {speeds} mm/s",
+        "matched": "động cơ khớp tốt ({pct}% đối xứng)",
+        "low_symmetry": "đối xứng động cơ thấp ({pct}%) - kiểm tra lực căng dây đai",
+        "motor_freq": "cộng hưởng động cơ ~{f} Hz",
+        "complete": "Hồ sơ rung hoàn tất."
+      },
+      "sustain": {
+        "not_dominant": "Đầu in không rung chủ yếu ở {freq} Hz (đỉnh là {peak} Hz) - nguồn rung có thể không tới được cảm biến đầu in.",
+        "drop": "Đang giữ {freq} Hz - rung giảm ~{drop}% tại một thời điểm; thứ bạn chạm khi đó là tác nhân mạnh.",
+        "touch": "Đang giữ {freq} Hz - chạm dây đai, đầu in, các khớp gantry và idler lần lượt; bộ phận làm tắt tiếng rung là nguồn cộng hưởng của bạn."
+      },
+      "axes": {
+        "same_axis": "Phát hiện cùng một trục cảm biến gia tốc cho nhiều trục máy",
+        "low_confidence": "Độ tin cậy phát hiện thấp ({pct}%)",
+        "high_angle_error": "Sai số góc lớn ({deg}°)",
+        "unusual_gravity": "Số đọc trọng lực bất thường ({g} m/s²)",
+        "high_noise": "Mức nhiễu cao ({n} mm/s²)",
+        "good": "Chất lượng phát hiện: tốt"
+      }
+    },
+    "proof": {
+      "title": "Bằng chứng tinh chỉnh",
+      "empty": "Cần hai kết quả đã ghi trên trục này - đo trước khi tinh chỉnh, áp dụng shaper, rồi đo lại và lưu cả hai.",
+      "before": "Trước",
+      "after": "Sau",
+      "samePick": "Chọn hai kết quả khác nhau để so sánh.",
+      "metricHead": "Chỉ số",
+      "delta": "Thay đổi",
+      "copy": "Sao chép báo cáo",
+      "copied": "Đã sao chép ✓",
+      "metric": {
+        "score": "Hạng đo",
+        "vibrations": "% rung còn lại",
+        "smoothing": "Làm mượt",
+        "maxAccel": "Gia tốc tối đa đề xuất (mm/s²)",
+        "freq": "Tần số shaper (Hz)",
+        "shaper": "Shaper"
+      }
+    }
+  }
+}

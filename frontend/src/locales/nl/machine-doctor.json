@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "Eén alleen-lezen scan over alles wat de app kan controleren - pinconflicten, driverwaarden, configafwijking, projectlint, firmwaresync, hardwarewijzigingen en installatiestatus - beoordeeld met A-F. Elke bevinding linkt naar de widget die het oplost.",
+    "scanning": "Scannen…",
+    "rescan": "Opnieuw scannen",
+    "scoreLine": "Score {score} / 100",
+    "counts": "{errors} fout(en) · {warnings} waarschuwing(en)",
+    "scoreHint": "Transparante scoring: 100 − 25 per fout − 8 per waarschuwing. Onbekende controles tellen nooit tegen je.",
+    "allClear": "Alles in orde.",
+    "notChecked": "Kon niet worden gecontroleerd (printer onbereikbaar of geen referentie).",
+    "assessment": {
+      "healthy": "Gezond - alles wat de app kan controleren ziet er goed uit.",
+      "attention": "Grotendeels gezond, maar {pillar} heeft aandacht nodig.",
+      "critical": "{pillar} heeft een probleem dat het oplossen waard is."
+    },
+    "pillars": {
+      "title": "Gezondheidsoverzicht",
+      "notMeasured": "niet gemeten"
+    },
+    "pillar": {
+      "config": "Configintegriteit",
+      "firmware": "Firmwaresync",
+      "services": "Services",
+      "tuning": "Input shaping",
+      "flow": "Max flow"
+    },
+    "services": {
+      "title": "Services",
+      "active": "actief",
+      "inactive": "gestopt",
+      "none": "Geen services gerapporteerd."
+    },
+    "stats": {
+      "title": "In één oogopslag",
+      "maxFlow": "Max flow",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} niet gesynchroniseerd",
+      "allSynced": "alles gesynchroniseerd",
+      "none": "Nog geen metingen."
+    },
+    "category": {
+      "pins": "Pinbedrading",
+      "drivers": "Driverwaarden",
+      "drift": "Configafwijking",
+      "project": "Configproject",
+      "firmware": "Firmwaresync",
+      "hardware": "Hardwarewijzigingen",
+      "install": "Installatiestatus"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Waarschuwingen",
+      "fail": "Problemen",
+      "unknown": "Niet gecontroleerd"
+    },
+    "link": {
+      "config_section": "Config-editor",
+      "config_file": "Config-editor",
+      "stepper": "Motordrivers",
+      "topology_node": "Machinekaart",
+      "widget": "Openen"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "Pin {pin} op {mcu} is in meer dan één sectie toegewezen.",
+        "caveat": "Pin {pin} op {mcu} heeft een elektronisch voorbehoud."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A overschrijdt het driverplafond van ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A zit binnen 10% van het plafond van ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A overschrijdt de nominale waarde van {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A zit binnen 10% van de nominale waarde van {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} is geen macht van twee."
+      },
+      "drift": {
+        "pending": "Klipper heeft niet-opgeslagen SAVE_CONFIG-wijzigingen in behandeling.",
+        "param": "[{section}] {key}: schijf {disk} ≠ live {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: include \"{message}\" verwijst naar geen bestand.",
+        "orphan_driver": "{file}: driversectie \"{message}\" heeft geen bijbehorende stepper."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: firmware {mcu_version} verschilt van host {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: hardware gewijzigd ({kind}).",
+        "no_baseline": "Nog geen hardwarereferentie opgeslagen - sla een momentopname op in de Machinekaart om wijzigingen te detecteren."
+      },
+      "install": {
+        "check_failed": "Installatiecontrole mislukt: {name} - {detail}."
+      }
+    },
+    "help": {
+      "guide": "Help",
+      "guideTitle": "Over Machine Doctor",
+      "close": "Sluiten",
+      "howToRead": "Hoe te lezen",
+      "steps": [
+        "Druk op Opnieuw scannen om één alleen-lezen controle over de hele printer uit te voeren.",
+        "Lees het A-F-cijfer en de pijlerbalken om te zien waar het het zwakst is.",
+        "Open de link van een bevinding om direct naar de widget te springen die het oplost."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Wat de scan dekt",
+          "body": "Eén alleen-lezen doorloop over alles wat de app kan controleren - pinconflicten, driverwaarden, configafwijking tussen de opgeslagen en live config, projectlint, firmwaresync, hardwarewijzigingen ten opzichte van je referentie en installatiestatus. Er wordt nooit iets op de printer uitgevoerd."
+        },
+        "grade": {
+          "title": "Het A-F-cijfer",
+          "body": "Elke gezondheidspijler (configintegriteit, firmwaresync, services, input shaping, max flow) krijgt een score, en de zwakste trekken het totaalcijfer omlaag. De scoreregel laat precies zien hoe het cijfer tot stand kwam - niets wordt verborgen."
+        },
+        "fixes": {
+          "title": "Spring-naar-oplossing-links",
+          "body": "Elke bevinding heeft een knop die rechtstreeks naar de widget linkt die het oplost (Config-editor, Motordrivers, de Machinekaart…), zodat je in één klik van probleem naar oplossing gaat."
+        },
+        "glossary": {
+          "title": "Hier gebruikte termen"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Cijfer (A-F)",
+          "def": "Eén letter die de gezondheid van de printer samenvat, afgeleid van de pijlerscores; A is gezond, F heeft aandacht nodig."
+        },
+        "pillar": {
+          "term": "Pijler",
+          "def": "Een gezondheidscategorie die onafhankelijk wordt gescoord - bijv. configintegriteit, firmwaresync, services, input shaping, max flow."
+        },
+        "finding": {
+          "term": "Bevinding",
+          "def": "Een specifiek probleem dat de scan detecteerde, met de ernst en een link naar de widget die het oplost."
+        }
+      }
+    }
+  }
+}

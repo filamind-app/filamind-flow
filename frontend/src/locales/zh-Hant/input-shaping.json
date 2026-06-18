@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "這是什麼？",
+      "topics": {
+        "glossary": {
+          "title": "輸入整形術語"
+        },
+        "analyze": {
+          "title": "分析共振 CSV",
+          "body": "先用 TEST_RESONANCES 在印表機上擷取資料（或使用 🔴 即時工具），再把 .csv 載入這裡。FilaMind 會以 Klipper 自身的整形演算法運算，並建議整形器與頻率。請依序處理 X 檔與 Y 檔——它們會合併成同一個設定區塊。"
+        },
+        "grade": {
+          "title": "A-F 評等的意義",
+          "body": "量測品質分數由五個等權部分組成：尖峰清晰度、殘餘振動、平滑度、頻率（40-90 Hz 為健康）以及共振的乾淨程度。A/B → 直接套用；C → 可用，瀏覽一下提示；D/F → 先修機械再重測。"
+        },
+        "diagnostics": {
+          "title": "判讀診斷結果",
+          "body": "每張卡片把量測對應到可能的機械原因與修法。萊姆綠＝健康，黃色＝值得改善，紅色＝信任結果前先修。套用修法、重跑，看卡片轉綠。"
+        },
+        "chart": {
+          "title": "判讀頻率圖",
+          "body": "實線是量測到的振動能量（X+Y+Z 總和加上各軸）。▲ 標出主共振。淡色曲線是各整形器在各頻率下的殘餘振動——建議的那條（粉紅）會在你的尖峰處下凹最深。"
+        },
+        "shapers": {
+          "title": "選擇整形器",
+          "body": "每一列都在殘餘振動與平滑度之間取捨。ZV / MZV 最輕（適合乾淨的單一共振）；EI 更耐受；2-/3-hump 能處理寬頻或多重共振，但平滑度較高。FilaMind 會標出最佳平衡。"
+        },
+        "config": {
+          "title": "套用設定",
+          "body": "這個 [input_shaper] 區塊帶有你的 X 與／或 Y 結果。把它複製到 printer.cfg 並重啟 Klipper。徽章顯示已擷取哪些軸——X 與 Y 都要擷取，區塊才完整。"
+        },
+        "noise": {
+          "title": "雜訊檢查",
+          "body": "在不移動的情況下讀取加速度計的靜止振動——測試前的快速安裝檢查。Klipper 的經驗法則：約 1-100 為正常，約 1000 以上代表感測器或接線鬆動。先修好吵雜的安裝，否則每次測試都不可靠。"
+        },
+        "belts": {
+          "title": "皮帶比較（CoreXY）",
+          "body": "激發每條皮帶的對角線並把兩條響應疊加。尖峰頻率相符＝張力平均。有落差代表頻率較低的皮帶較鬆——把它鎖緊並重跑，直到兩個尖峰對齊。"
+        },
+        "axesMap": {
+          "title": "軸向對應偵測",
+          "body": "讓工具頭在 X、然後 Y、再 Z 方向稍微點動，以了解加速度計的安裝方式，並給你可放進 printer.cfg 的 axes_map 設定行。裝好或移動感測器後跑一次，之後每次測試都能讀到正確的軸。"
+        },
+        "sustain": {
+          "title": "持續頻率",
+          "body": "讓工具頭以單一頻率持續嗡鳴，你就能用手觸碰皮帶、滑座與框架，找出哪裡在響。頻譜圖＋時間軸會顯示你的目標頻率是否佔主導，以及哪一次觸碰使它安靜下來。"
+        },
+        "vibrations": {
+          "title": "振動輪廓",
+          "body": "沿每個馬達角度掃過多種速度，畫出機器在哪裡跑得最平順、哪些速度會撞上共振。列印／移動移動時偏好最平順的速度，避開被標記的速度。對稱性 % 顯示兩顆馬達匹配得有多好。"
+        },
+        "guided": {
+          "title": "引導式 vs. 手動",
+          "body": "引導式會走完整個流程——雜訊 → 皮帶 → 整形器 X → 整形器 Y → 振動 → 壓力——每一步都有通過／失敗的閘門。完整調校用它。只想用某個特定工具時，改用 📈 分析或 🔴 即時工具。"
+        },
+        "history": {
+          "title": "歷史與趨勢",
+          "body": "每次校正都會（在這個瀏覽器中）連同評等與分數一起儲存。▲/▼ 箭頭會把一次跑與同軸的前一次測試比較——向上代表擷取更乾淨或軸更剛硬，向下代表雜訊更多或軸更軟。"
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "輸入整形器",
+          "def": "Klipper 套用在運動上的濾波器，可抵消印表機的主振動，讓你能更快列印而不出現振紋／鬼影。"
+        },
+        "resonance": {
+          "term": "共振",
+          "def": "軸受到推動時自然振動的頻率（Hz）。越低＝軸越軟／越重；約 40-90 Hz 是健康的印表機。"
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "功率譜密度——各頻率上有多少振動能量。高聳的尖峰就是整形器要對付的共振。"
+        },
+        "smoothing": {
+          "term": "平滑度",
+          "def": "整形的副作用，會讓銳角稍微圓化。越低越好；≤0.1 為極小，>0.2 起會開始軟化細節。"
+        },
+        "vibrationPct": {
+          "term": "振動 %",
+          "def": "整形後還剩多少共振。越低越好；≤2% 極佳，≤5% 尚可。"
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "整形器在不過度平滑下可維持的加速度——建議的 SET_VELOCITY_LIMIT / printer.cfg 數值。"
+        }
+      },
+      "guide": "指南",
+      "guideTitle": "輸入整形指南",
+      "close": "關閉"
+    },
+    "grade": {
+      "clarity": {
+        "label": "尖峰清晰度",
+        "value": "{ratio}×",
+        "note": {
+          "none": "沒有頻譜可評估。",
+          "good": "尖峰銳利，遠高於雜訊。",
+          "ok": "尖峰可見，高於雜訊。",
+          "poor": "尖峰微弱——雜訊大或軸非常剛硬。"
+        }
+      },
+      "vibration": {
+        "label": "殘餘振動",
+        "value": "{pct}%",
+        "note": {
+          "good": "幾乎所有共振都已消除。",
+          "ok": "大部分共振已消除。",
+          "poor": "仍殘留明顯振動。"
+        }
+      },
+      "smoothing": {
+        "label": "平滑度",
+        "note": {
+          "good": "角落圓化極小。",
+          "ok": "高加速時有些圓化。",
+          "poor": "平滑過重——會圓化角落。"
+        }
+      },
+      "freq": {
+        "label": "頻率",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "找不到頻率。",
+          "good": "健康、剛硬的軸。",
+          "ok": "略軟或非常剛硬。",
+          "soft": "軸偏軟／偏重。",
+          "high": "異常偏高。"
+        }
+      },
+      "shaper": {
+        "label": "共振形狀",
+        "note": {
+          "clean": "乾淨的單一共振。",
+          "robust": "單一共振，耐受型整形器。",
+          "twin": "寬頻或雙共振。",
+          "multiple": "多重共振。",
+          "atypical": "非典型整形器。"
+        }
+      },
+      "verdict": {
+        "a": "極佳——擷取乾淨，軸已妥善調校。",
+        "b": "良好——結果穩固，尚有些微改善空間。",
+        "c": "尚可——可用；參見下方建議。",
+        "d": "不佳——建議做機械調校＋重測。",
+        "f": "不可靠——重跑測試（檢查感測器安裝）。",
+        "none": "無可用結果——重跑 TEST_RESONANCES。"
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "無可用共振",
+        "advice": "重跑 TEST_RESONANCES。檢查加速度計是否接好並牢固安裝在工具頭上。",
+        "detail": "未偵測到清楚的尖峰"
+      },
+      "noisy": {
+        "title": "擷取雜訊大",
+        "advice": "固定加速度計安裝並重跑。測試期間避免風扇或其他運動。",
+        "detail": "訊雜比 {snr}×"
+      },
+      "lowFreq": {
+        "title": "共振頻率偏低",
+        "advice": "軸偏軟或偏重——鎖緊皮帶並檢查框架剛性。較剛硬的軸共振較高且列印更快。",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "軸略軟",
+        "advice": "頻率偏低。鎖緊皮帶或強化框架可提高頻率並讓你列印更快。",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "平滑度偏高",
+        "advice": "會圓化角落。選用更剛硬的整形器或降低 max_accel。",
+        "detail": "平滑度 {smoothing}"
+      },
+      "multiResonance": {
+        "title": "多重共振",
+        "advice": "通常是工具頭、皮帶或零件鬆動。重新就位工具頭並重新檢查皮帶張力。"
+      },
+      "vibrationRemains": {
+        "title": "仍殘留振動",
+        "advice": "機械調校（皮帶、框架、工具頭質量）或許能再壓低。",
+        "detail": "整形後仍剩 {vibrations}%"
+      },
+      "healthy": {
+        "title": "軸健康",
+        "advice": "擷取乾淨且軸剛硬——可以開始了。套用設定並重啟 Klipper。",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X 與 Y 差異很大",
+        "advice": "剛性不對稱。檢查較軟那軸的皮帶張力；CoreXY 請確保兩條皮帶匹配且緊繃。",
+        "detail": "X {fx} Hz 對 Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "建議",
+        "shaperFreq": "整形器頻率",
+        "peakFreq": "尖峰頻率",
+        "remainingVibr": "殘餘振動",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "皮帶相符",
+          "advice": "兩條皮帶響應對齊——張力看來平衡。"
+        },
+        "differ": {
+          "title": "皮帶有差異",
+          "advice": "皮帶共振不同——重新調整較鬆的皮帶，直到兩個尖峰對齊。"
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "感測器安靜",
+          "why": "可以繼續。"
+        },
+        "elevated": {
+          "title": "降低感測器雜訊",
+          "why": "最大值 {max} ≥ {threshold}。關掉工具頭風扇並重新檢查安裝，然後重跑。"
+        },
+        "bad": {
+          "title": "測試前先修加速度計",
+          "why": "雜訊 {max} 過高——重新就位感測器並檢查接線。"
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "皮帶平衡",
+          "why": "張力平均——接著校正整形器。"
+        },
+        "mismatch": {
+          "title": "重新調整皮帶 {looser}",
+          "why": "A {peakA} Hz 對 B {peakB} Hz（Δ{diffPct}%）。鎖緊頻率較低的皮帶直到兩個尖峰對齊，然後重跑。"
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "以較低加速度重跑",
+          "why": "記錄到太多低頻運動——降低 ACCEL（或提高 SIZE），讓只有等速被量測，然後重跑。"
+        },
+        "favour": {
+          "title": "偏好約 {speed} mm/s",
+          "why": "最平順區間 {start}-{end} mm/s——可行時在切片軟體把列印／移動速度設在這裡。"
+        },
+        "avoid": {
+          "title": "避開 {shown} mm/s",
+          "why": "這些速度會撞上共振——在切片軟體中讓列印＋移動移動遠離它們。"
+        },
+        "symmetry": {
+          "title": "檢查皮帶張力／馬達匹配",
+          "why": "馬達對稱性 {pct}% 偏低——重新調整皮帶（比較皮帶）並確認兩顆馬達電流相符。"
+        },
+        "fine": {
+          "title": "振動看來正常",
+          "why": "沒有突出的問題速度。"
+        }
+      },
+      "pressure": {
+        "title": "跑一座壓力提前塔",
+        "why": "列印 PA 塔，讀出角落最銳利的高度，然後 `SET_PRESSURE_ADVANCE ADVANCE=<value>` 並 `SAVE_CONFIG`。"
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "你設定的 axes_map 已經正確。",
+        "update": "把你的設定更新為：{axes_map}",
+        "add": "加上這行，讓每張輸入整形圖都依 X/Y/Z 對齊讀取。"
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "雜訊",
+          "title": "加速度計雜訊",
+          "why": "任何測試前先確認感測器牢固安裝（不移動）。"
+        },
+        "belts": {
+          "label": "皮帶",
+          "title": "CoreXY 皮帶平衡",
+          "why": "匹配兩條皮帶張力。僅限 CoreXY——直角座標／拋床機可略過。"
+        },
+        "shaperX": {
+          "label": "整形器 X",
+          "title": "輸入整形器 - X",
+          "why": "找出 X 共振與最佳整形器。"
+        },
+        "shaperY": {
+          "label": "整形器 Y",
+          "title": "輸入整形器 - Y",
+          "why": "找出 Y 共振與最佳整形器。"
+        },
+        "vibrations": {
+          "label": "振動",
+          "title": "振動輪廓",
+          "why": "掃過速度 × 馬達角度，找出最平順的速度與該避開的共振。"
+        },
+        "pressure": {
+          "label": "壓力",
+          "title": "壓力提前",
+          "why": "最後調壓力提前，讓角落與接縫更銳利。"
+        },
+        "done": {
+          "label": "完成"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "感測器安靜",
+          "warn": "雜訊有點高",
+          "failed": "太吵——修一下安裝"
+        },
+        "belts": {
+          "passed": "皮帶相符",
+          "differ": "皮帶有差異（Δ{diffPct}%）",
+          "mismatched": "皮帶不匹配（Δ{diffPct}%）"
+        },
+        "shaper": {
+          "healthy": "評等 {letter}——軸健康",
+          "usable": "評等 C——可用",
+          "tune": "評等 {letter}——調校＋重測"
+        },
+        "vibrations": {
+          "lowFreq": "低頻運動太多——降低加速度並重跑",
+          "mismatched": "馬達不匹配（{pct}%）",
+          "smoothest": "最平順約 {rec} mm/s",
+          "complete": "輪廓完成"
+        }
+      },
+      "ui": {
+        "title": "🧭 引導式調校",
+        "exit": "✕ 退出",
+        "motionReady": "⚠ 會移動工具頭——我準備好了",
+        "running": "執行中…",
+        "run": "執行",
+        "rerun": "↻ 重跑",
+        "skipBelts": "略過（非 CoreXY）",
+        "copyPa": "📋 複製 PA 塔",
+        "copied": "✅ 已複製",
+        "finish": "完成 →",
+        "nextStep": "下一步 →",
+        "skipAnyway": "仍然略過",
+        "complete": "調校完成",
+        "stepFailed": "步驟失敗",
+        "copyFailed": "複製失敗——請選取文字手動複製。",
+        "summaryNote": "你的 X 與 Y 擷取都在下方合併的 {code} 區塊中——複製它，然後重啟 Klipper。隨時可重新開啟引導式調校重新檢查。",
+        "beltsNotApplicable": "皮帶比較適用於 CoreXY 印表機——這台印表機回報為「{kin}」，因此略過此步驟。",
+        "resultsSoFar": "目前結果",
+        "archived": "已儲存",
+        "autoSaved": "已自動儲存到印表機上的封存。",
+        "beltA": "皮帶 A (1,1)",
+        "beltB": "皮帶 B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "建議",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "最大加速度",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "最大靜止雜訊 {max}（正常 < {threshold}）。",
+        "status": "狀態",
+        "maxNoise": "最大雜訊",
+        "threshold": "閾值",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "匹配",
+        "beltA": "皮帶 A 尖峰",
+        "beltB": "皮帶 B 尖峰",
+        "difference": "差異",
+        "matched": "相符",
+        "mismatch": "不匹配",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "狀態",
+        "gravity": "重力",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "雜訊"
+      },
+      "sustain": {
+        "target": "目標",
+        "dominant": "主導",
+        "inBand": "在頻帶內",
+        "onTarget": "命中目標",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "是",
+        "no": "否"
+      },
+      "vibrations": {
+        "smoothest": "最平順",
+        "symmetry": "對稱性",
+        "motorResonance": "馬達共振",
+        "avoid": "避開",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 引導式",
+      "tabAnalyze": "📈 分析",
+      "tabLive": "🔴 即時工具",
+      "tabHistory": "🕘 歷史",
+      "intro": "從 Klipper 共振擷取調校輸入整形——免命令列。第一次來？從 {guided} 開始。或選 {analyze} 自行處理 {csv}、{live} 在印表機上擷取，或 {history} 回顧過往執行。",
+      "cfgReady": "printer.cfg 已就緒",
+      "copy": "📋 複製",
+      "copied": "✅ 已複製",
+      "archive": "💾 封存",
+      "saved": "✅ 已儲存",
+      "advanced": "⚙ 進階",
+      "compareCsvs": "⇄ 比較 CSV",
+      "blankDefault": "留空 = Klipper 預設",
+      "auditTitle": "稽核",
+      "refresh": "↻ 重新整理",
+      "auditEmpty": "尚無結果——跑一次調校，或儲存一筆到封存。",
+      "trendTitle": "分數 {score} 對前一次 {axis} 測試",
+      "sourceSaved": "💾 已儲存",
+      "sourceLocal": "本機",
+      "recommended": "建議",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "軸 {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "此資料沒有可建議的整形器。",
+      "measurementQuality": "量測品質",
+      "scoreOutOf": "{v}/100",
+      "hide": "隱藏",
+      "details": "詳細",
+      "chartAria": "頻率響應與整形器",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "建議",
+      "legendPeak": "▲ 尖峰",
+      "legendAxisHint": "頻率 (Hz) → · 實線 = 量測 · 淡色 = 整形器殘餘",
+      "colShaper": "整形器",
+      "colFreq": "頻率",
+      "colVibr": "振動",
+      "colSmooth": "平滑",
+      "colAccel": "加速",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "清除",
+      "pasteHint": "貼進你的 {cfg}，然後重啟 Klipper。",
+      "errAnalysisFailed": "分析失敗",
+      "errCopyFailed": "複製失敗——請選取文字手動複製。",
+      "errSaveFailed": "儲存到封存失敗"
+    },
+    "fromPrinter": {
+      "liveTools": "即時工具",
+      "intro": "⏳ 這些會移動工具頭，可能花費 {duration}（皮帶比較會跑兩次完整掃描）——在結果出現前請保持此頁開啟。",
+      "introDuration": "1-5 分鐘",
+      "confirmMoves": "⚠ 會移動工具頭——我準備好了",
+      "axisX": "軸 X",
+      "axisY": "軸 Y",
+      "noiseTitle": "🔊 雜訊檢查",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "量測中…",
+      "noiseHint": "不移動 · 測試前先跑",
+      "noiseVerdictQuiet": "✅ 安靜",
+      "noiseVerdictElevated": "⚠ 偏高",
+      "noiseVerdictTooNoisy": "⛔ 太吵",
+      "noiseMaxNormal": "最大 {max} · 正常 < {threshold}",
+      "noiseChip": "{label}：x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 即時測試",
+      "liveBtn": "執行 TEST_RESONANCES",
+      "liveBtnBusy": "執行中…",
+      "liveDesc": "需要時先歸位印表機，然後在所選軸上執行 TEST_RESONANCES（需要加速度計＋一個 {section}）。列印中會被拒絕。",
+      "beltsTitle": "🟰 比較皮帶",
+      "beltsBtn": "比較皮帶",
+      "beltsBtnBusy": "比較中…",
+      "beltsBtnTitle": "CoreXY：激發每條皮帶對角線並疊加響應",
+      "beltsDesc": "僅限 CoreXY：沿皮帶對角線跑兩次掃描並疊加。列印中會被拒絕。",
+      "axesTitle": "🧭 軸向對應",
+      "axesBtn": "偵測 axes_map",
+      "axesBtnBusy": "偵測中…",
+      "axesBtnTitle": "點動 +X/+Y/+Z 以偵測加速度計方向（axes_map）",
+      "axesDesc": "在 X、然後 Y、再 Z 點動約 30 mm 以偵測加速度計方向。列印中會被拒絕。",
+      "beltResultTitle": "皮帶比較",
+      "beltPeaks": "A {a} Hz 對 B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "皮帶 A 對 B 頻率響應",
+      "beltLegendA": "皮帶 A (1,1)",
+      "beltLegendB": "皮帶 B (1,-1)",
+      "axesResultTitle": "軸向對應",
+      "copy": "📋 複製",
+      "copied": "✅ 已複製",
+      "mappingVirtual": " （虛擬）",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "軸速度序列",
+      "zoneVirtual": "虛擬",
+      "zonePct": "{pct}%",
+      "legendAccelX": "加速 x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "傾斜 {x}° / {y}° / {z}°",
+      "gravity": "重力 {v} m/s²",
+      "noiseValue": "雜訊 {v}",
+      "sustainTitle": "🎯 持續頻率",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "秒",
+      "sustainBtn": "執行",
+      "sustainBtnBusy": "保持中…",
+      "sustainDesc": "讓工具頭在原地以接近該頻率嗡鳴——觸碰皮帶、工具頭與框架找出哪裡在響。列印中會被拒絕。",
+      "sustainHolding": "✅ 保持中",
+      "sustainOffTarget": "⚠ 偏離目標",
+      "sustainPeak": "尖峰 {freq} Hz · {pct}% 在頻帶內",
+      "specChartLabel": "頻率-時間頻譜圖",
+      "energyChartLabel": "振動能量隨時間變化",
+      "specAxes": "頻率 → · 時間 ↓",
+      "energyLegend": "能量對時間——青色下凹處是某次觸碰見效的地方",
+      "vibTitle": "📊 振動輪廓",
+      "vibMax": "最大",
+      "vibStep": "步進",
+      "vibUnit": "mm/s",
+      "vibBtn": "執行掃描",
+      "vibBtnBusy": "掃描中…",
+      "vibDesc": "在床中心附近掃過速度 × 馬達角度——長時間執行（數分鐘）。較小的 {step} 更精細但更慢。回報最平順速度、該避開的速度、馬達對稱性與馬達共振。列印中會被拒絕。",
+      "vibDescStep": "步進",
+      "errNoiseCheck": "雜訊檢查失敗",
+      "errLiveTest": "即時測試失敗",
+      "errBeltComparison": "皮帶比較失敗",
+      "errAxesMapDetection": "軸向對應偵測失敗",
+      "errCopyFailed": "複製失敗——請選取文字手動複製。",
+      "errSustainTest": "持續頻率測試失敗",
+      "errVibrationsProfile": "振動輪廓失敗",
+      "vibProgress": "掃描 {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "正在開始掃描…",
+      "vibCancel": "取消掃描",
+      "vibCancelling": "取消中…",
+      "vibCancelled": "掃描已取消——速度限制已還原。",
+      "vibReattached": "已重新接上：此結果在頁面離開時已完成。",
+      "beltsCorexyOnly": "僅限 CoreXY——這台印表機回報為「{kin}」運動學，因此雙皮帶比較不適用。"
+    },
+    "vibrationsView": {
+      "title": "振動輪廓",
+      "lowFreqNoise": "⚠ 低頻雜訊",
+      "smoothest": "▼ 最平順約 {v} mm/s",
+      "symmetry": "對稱性 {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "振動能量對速度",
+      "axisLegend": "速度 (mm/s) → · 振動能量 ↑",
+      "smooth": "平順",
+      "avoid": "避開",
+      "svgPolarLabel": "依移動方向的振動能量",
+      "svgHeatmapLabel": "依角度與速度的振動能量熱圖",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "馬達共振 {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "最平順方向約 {start}-{end}°",
+      "captures": "{n} 次擷取"
+    },
+    "compareView": {
+      "title": "比較兩次擷取（A ⇄ B）",
+      "intro": "機械修正前／後，或同一軸重測。（請比較同軸的檔案。）",
+      "selectA": "A：選擇",
+      "selectB": "B：選擇",
+      "busy": "…",
+      "compare": "比較",
+      "comparisonFailed": "比較失敗",
+      "chartAriaLabel": "A 對 B 功率譜密度",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "CSV 來源",
+      "tabUpload": "📤 上傳",
+      "tabHost": "🖥 來自印表機",
+      "selectCsv": "📈 選擇 CSV",
+      "axisTitle": "此資料所屬的軸",
+      "axisAuto": "軸：自動",
+      "axisX": "軸：X",
+      "axisY": "軸：Y",
+      "analyzing": "分析中…",
+      "analyze": "🚀 分析",
+      "onHost": "在印表機主機上",
+      "refresh": "↻ 重新整理",
+      "noFiles": "找不到共振 CSV。",
+      "noFilesInDirs": "在 {dirs} 中找不到共振 CSV。",
+      "analyzeFile": "分析",
+      "saveTitle": "把此擷取複製到封存",
+      "save": "💾 儲存",
+      "archive": "封存",
+      "archiveEmpty": "尚未儲存任何內容——使用上方的 💾 儲存，或在設定下方的「儲存到封存」。",
+      "downloadTitle": "下載 {fn}",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "無法列出印表機檔案",
+      "errListArchive": "無法列出封存",
+      "errSave": "儲存到封存失敗",
+      "errDelete": "刪除失敗",
+      "errDownload": "下載失敗",
+      "viewChart": "圖表",
+      "viewChartTitle": "重新開啟此已存執行的圖表"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "記錄到太多低頻運動——降低 ACCEL（或提高 SIZE）並重跑，讓只有等速被量測。",
+        "smoothest": "最平順約在 {v} mm/s",
+        "avoid": "避開接近 {speeds} mm/s 的速度",
+        "matched": "馬達匹配良好（對稱性 {pct}%）",
+        "low_symmetry": "馬達對稱性偏低（{pct}%）——檢查皮帶張力",
+        "motor_freq": "馬達共振約 {f} Hz",
+        "complete": "振動輪廓完成。"
+      },
+      "sustain": {
+        "not_dominant": "工具頭並非主要在 {freq} Hz 振動（尖峰為 {peak} Hz）——振源可能未傳到工具頭感測器。",
+        "drop": "保持 {freq} Hz——某個時點振動下降約 {drop}%；你當時觸碰的部位是主要的貢獻來源。",
+        "touch": "保持 {freq} Hz——逐一觸碰皮帶、工具頭、龍門接點與惰輪；讓嗡鳴消失的那個部位就是你的共振源。"
+      },
+      "axes": {
+        "same_axis": "多個機器軸偵測到相同的加速度計軸",
+        "low_confidence": "偵測信心偏低（{pct}%）",
+        "high_angle_error": "角度誤差偏高（{deg}°）",
+        "unusual_gravity": "重力讀數異常（{g} m/s²）",
+        "high_noise": "雜訊水準偏高（{n} mm/s²）",
+        "good": "偵測品質：良好"
+      }
+    },
+    "proof": {
+      "title": "調校佐證",
+      "empty": "此軸需要兩筆已記錄的結果——調校前量測一次、套用整形器、再量測一次並兩筆都儲存。",
+      "before": "之前",
+      "after": "之後",
+      "samePick": "請選兩筆不同的結果來比較。",
+      "metricHead": "指標",
+      "delta": "變化",
+      "copy": "複製報告",
+      "copied": "已複製 ✓",
+      "metric": {
+        "score": "量測評等",
+        "vibrations": "殘餘振動 %",
+        "smoothing": "平滑度",
+        "maxAccel": "建議最大加速度 (mm/s²)",
+        "freq": "整形器頻率 (Hz)",
+        "shaper": "整形器"
+      }
+    }
+  }
+}

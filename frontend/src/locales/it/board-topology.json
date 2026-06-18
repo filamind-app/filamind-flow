@@ -1,0 +1,268 @@
+{
+  "boardTopology": {
+    "intro": "Scopri come sono collegate le schede di controllo della stampante: l'host (SBC) e ogni MCU con cui comunica, con il tipo di ogni connessione e una stima ottimale della scheda / del chip - letta in tempo reale dalla config.",
+    "help": {
+      "guide": "Aiuto",
+      "guideTitle": "Informazioni su Board Topology",
+      "close": "Chiudi",
+      "howToRead": "Come leggerla",
+      "steps": [
+        "L'host (la tua SBC, es. un Raspberry Pi o un CB1) si trova in alto.",
+        "Ogni scheda MCU mostra come si collega (USB / CAN bus / UART) e il suo chip.",
+        "Una stima della scheda compare quando l'identificatore di connessione corrisponde a una scheda nota."
+      ],
+      "topics": {
+        "views": {
+          "title": "Viste fisica e logica",
+          "body": "La mappa disegna le stesse schede in due modi. FISICA mostra com'è realmente costruita la macchina: una SBC integrata è disegnata dentro la mainboard su cui è montata, le testine CAN si agganciano a un bus condiviso e le schede USB/UART sono unità separate. LOGICA mostra come la vede Klipper: l'host in alto con ogni MCU come figlio raggiunto tramite il suo collegamento seriale. Cambia con l'interruttore Fisica/Logica."
+        },
+        "mcus": {
+          "title": "MCU",
+          "body": "Un MCU è una scheda a microcontrollore che pilota motori, riscaldatori e sensori. Una stampante ne ha almeno uno (la mainboard); molte aggiungono una scheda testina e talvolta una scheda sonda o LED. Questo pannello elenca ogni sezione `[mcu]` che Klipper ha."
+        },
+        "connections": {
+          "title": "Tipi di connessione",
+          "body": "USB - un collegamento seriale su USB (la connessione tipica della mainboard). CAN bus - un bus condiviso a due fili, comune per le schede testina. UART - un collegamento seriale diretto su GPIO. Il tipo è dedotto dall'impostazione `serial` / `canbus_uuid` di ogni MCU."
+        },
+        "detection": {
+          "title": "Come funziona il rilevamento",
+          "body": "Chip e scheda sono stimati confrontando l'identificatore di connessione (il percorso seriale o lo UUID CAN) con una tabella di pattern, più un'impronta della mappa pin usata dalla tua config. Una stima della scheda mostra una confidenza di corrispondenza; quando nulla corrisponde, chip/scheda riportano \"sconosciuto\" - la connessione stessa viene comunque mostrata."
+        },
+        "override": {
+          "title": "Conferma o cambia una scheda",
+          "body": "Un id seriale di solito rivela solo il chip, quindi la stima della scheda può mancare o essere errata. Usa \"Conferma questa scheda\" per fissare una stima corretta, oppure \"Cambia scheda…\" / \"Imposta scheda…\" per scegliere quella giusta dal catalogo. La tua scelta è salvata sull'host e riutilizzata a ogni lettura; \"Cancella\" ripristina la stima automatica."
+        },
+        "glossary": {
+          "title": "Glossario",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Unità a microcontrollore - una scheda di controllo che esegue il firmware di Klipper (mainboard, testina, ecc.)."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Un bus condiviso a due fili che collega le schede tramite uno UUID univoco - molto usato per il cablaggio della testina."
+        },
+        "host": {
+          "term": "Host / SBC",
+          "def": "Il single-board computer (Pi, CB1, …) che esegue Klipper e comunica con gli MCU."
+        }
+      }
+    },
+    "host": {
+      "label": "Host",
+      "role": "Single-board computer - esegue Klipper"
+    },
+    "mcu": {
+      "chip": "Chip",
+      "board": "Scheda",
+      "unknown": "sconosciuto",
+      "identifier": "Identificatore",
+      "confidence": "{pct}% corrispondenza",
+      "viewBoard": "Mostra dettagli scheda",
+      "hideBoard": "Nascondi dettagli"
+    },
+    "graph": {
+      "viewLabel": "Vista diagramma",
+      "view": {
+        "physical": "Fisica",
+        "logical": "Logica"
+      },
+      "integrated": "SBC integrata",
+      "integratedNote": "L'host SBC è integrato nella mainboard {board}.",
+      "selectPrompt": "Seleziona una scheda o un MCU nella mappa per ispezionarlo.",
+      "aria": "Mappa macchina: l'host e {n} MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} ritrasmissioni",
+        "load": "{pct}% carico"
+      },
+      "health": {
+        "title": "Stato collegamento",
+        "ok": "integro",
+        "warn": "degradato",
+        "out": "firmware non sincronizzato"
+      }
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "sconosciuto",
+      "via": "tramite {type}"
+    },
+    "count": "{n} MCU",
+    "states": {
+      "loading": "Lettura della topologia…",
+      "unreachable": "Impossibile raggiungere la stampante.",
+      "empty": "Nessun MCU trovato nella config.",
+      "retry": "Riprova",
+      "refresh": "Aggiorna"
+    },
+    "board": {
+      "suggested": "suggerita",
+      "ports": "{n} porte",
+      "specsTitle": "Specifiche",
+      "portsTitle": "Porte",
+      "none": "Ancora nessun dettaglio di catalogo per questa scheda.",
+      "noMatch": "Nessuna scheda corrispondente - conferma o impostane una qui sotto.",
+      "loading": "Caricamento scheda…",
+      "links": {
+        "title": "Link",
+        "product": "Prodotto",
+        "repo": "Repo",
+        "wiki": "Wiki",
+        "pinout": "Pinout",
+        "schematic": "Schema",
+        "datasheet": "Datasheet",
+        "image": "Foto"
+      },
+      "portCat": {
+        "motor": "motore",
+        "heater_hotend": "riscaldatore hotend",
+        "heater_bed": "riscaldatore piatto",
+        "accelerometer": "accelerometro",
+        "filament_sensor": "sensore filamento",
+        "fan": "ventola",
+        "probe": "sonda",
+        "other": "altro",
+        "power": "alimentazione",
+        "thermistor": "termistore",
+        "usb": "USB",
+        "can": "CAN",
+        "swd": "SWD",
+        "display": "display",
+        "rgb": "RGB",
+        "network": "rete",
+        "endstop": "finecorsa",
+        "wifi": "Wi-Fi",
+        "spi": "SPI",
+        "uart": "UART"
+      },
+      "spec": {
+        "mcu": "MCU",
+        "arch": "Arch",
+        "flash_method": "Metodo di flash",
+        "voltage": "Tensione",
+        "driver_slots": "Slot driver",
+        "usb": "USB",
+        "onboard_drivers": "Driver integrati",
+        "clock": "Clock",
+        "can": "CAN",
+        "drivers": "Driver",
+        "dimensions_mm": "Dimensioni (mm)",
+        "role_era": "Ruolo / epoca",
+        "kinematics": "Cinematica",
+        "build_volume_mm": "Volume di stampa (mm)",
+        "bed": "Piatto",
+        "hotend": "Hotend",
+        "stock_extruder": "Estrusore di serie",
+        "year": "Anno",
+        "control_board": "Scheda di controllo",
+        "stock_drivers": "Driver di serie",
+        "uart": "UART",
+        "connectivity": "Connettività",
+        "max_hotend_temp": "Temp. max hotend",
+        "max_bed_temp": "Temp. max piatto",
+        "spi": "SPI",
+        "notes": "Note",
+        "eth_wifi": "Eth/WiFi",
+        "class": "Classe",
+        "supported_drivers": "Driver supportati",
+        "form_factor": "Form factor",
+        "flash": "Flash",
+        "all_metal_accel": "All-metal / accel",
+        "ethernet_wifi": "Ethernet/WiFi",
+        "i2c": "I2C",
+        "driver": "Driver",
+        "i2cspi": "I2C/SPI",
+        "printer_board": "Stampante / scheda",
+        "accelerometer": "Accelerometro",
+        "printers": "Stampanti",
+        "bootloader": "Bootloader",
+        "flash_offset": "Offset di flash",
+        "soc": "SoC",
+        "ram": "RAM",
+        "role": "Ruolo",
+        "connection": "Connessione",
+        "storage": "Archiviazione",
+        "host": "Host"
+      },
+      "class": {
+        "mainboard": "mainboard",
+        "printer_preset": "preset stampante",
+        "toolhead": "testina",
+        "host": "host",
+        "expansion": "espansione"
+      }
+    },
+    "components": {
+      "title": "Componenti",
+      "motor": "Motori",
+      "driver": "Driver",
+      "heater": "Riscaldatori",
+      "fan": "Ventole",
+      "sensor": "Sensori"
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "Dettagli",
+        "atlas": "Atlante pin"
+      },
+      "summary": "{used}/{total} pin usati · {free} liberi",
+      "loading": "Lettura della mappa pin…",
+      "failed": "Impossibile leggere la mappa pin.",
+      "unavailable": "Ancora nessuna mappa pin per questa scheda.",
+      "search": "Cerca pin, segnali, sezioni…",
+      "freeOnly": "Solo liberi",
+      "noMatch": "Nessun pin corrispondente.",
+      "other": "Altro",
+      "conflict": "Conflitto di pin",
+      "caveat": "Avvertenza cablaggio"
+    },
+    "override": {
+      "confirmed": "Confermata da te",
+      "confirm": "Conferma questa scheda",
+      "change": "Cambia scheda…",
+      "set": "Imposta scheda…",
+      "clear": "Cancella",
+      "pickPlaceholder": "Cerca nel catalogo schede…",
+      "hint": "La tua scelta è salvata sull'host e usata per questo MCU d'ora in poi."
+    },
+    "sync": {
+      "synced": "Firmware sincronizzato",
+      "outOfSync": "Firmware NON SINCRONIZZATO"
+    },
+    "snapshot": {
+      "save": "Salva snapshot",
+      "copy": "Copia riepilogo",
+      "copied": "Copiato!",
+      "none": "Nessuna baseline salvata - salva uno snapshot per rilevare modifiche future.",
+      "unchanged": "Nessuna modifica hardware dallo snapshot",
+      "changed": "{n} modifica/e dallo snapshot",
+      "summaryTitle": "FilaMind - mappa macchina",
+      "change": {
+        "added": "MCU “{mcu}” aggiunto",
+        "removed": "MCU “{mcu}” rimosso",
+        "board_changed": "Scheda di “{mcu}” cambiata: {before} → {after}",
+        "connection_changed": "Connessione di “{mcu}” cambiata: {before} → {after}",
+        "chip_changed": "Chip di “{mcu}” cambiato: {before} → {after}",
+        "components_changed": "Numero di componenti di “{mcu}” cambiato: {before} → {after}"
+      },
+      "noCompare": "Confronto impossibile - la stampante è irraggiungibile.",
+      "summaryHost": "Host: {name}",
+      "summaryIntegrated": "SBC integrata su {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "scheda {board}",
+      "summaryComponents": "{n} componenti"
+    },
+    "jump": {
+      "section": "Apri questa sezione nel Config Editor",
+      "drivers": "Apri in Motor Drivers",
+      "firmware": "Apri Firmware Manager"
+    }
+  }
+}

@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "이게 뭔가요?",
+      "topics": {
+        "glossary": {
+          "title": "입력 셰이핑 용어"
+        },
+        "analyze": {
+          "title": "공진 CSV 분석하기",
+          "body": "TEST_RESONANCES로 프린터에서 데이터를 캡처하거나(🔴 라이브 도구 사용) .csv를 여기에 불러오세요. FilaMind가 Klipper 자체 셰이퍼 계산을 실행해 셰이퍼 + 주파수를 추천합니다. X 파일과 Y 파일을 차례로 진행하세요 - 둘이 하나의 설정 블록으로 합쳐집니다."
+        },
+        "grade": {
+          "title": "A-F 등급의 의미",
+          "body": "측정 품질 점수로, 다섯 가지 동일한 항목으로 구성됩니다: 피크 선명도, 잔여 진동, 스무딩, 주파수(40-90 Hz가 건강함), 공진의 깨끗함. A/B → 적용하세요; C → 사용 가능, 팁을 훑어보세요; D/F → 기계 부분을 고치고 다시 테스트하세요."
+        },
+        "diagnostics": {
+          "title": "진단 읽기",
+          "body": "각 카드는 측정값을 유력한 기계적 원인과 해결책으로 연결합니다. 라임색 = 건강함, 노란색 = 개선 권장, 빨간색 = 결과를 신뢰하기 전에 수정 필요. 해결책을 적용하고 다시 실행하면 카드가 초록색으로 바뀌는 걸 확인하세요."
+        },
+        "chart": {
+          "title": "주파수 차트 읽기",
+          "body": "실선 곡선은 측정된 진동 에너지입니다(X+Y+Z 합계 및 각 축). ▲ 표시는 주요 공진을 나타냅니다. 흐린 곡선은 주파수에 따른 각 셰이퍼의 잔여 진동으로 - 추천 셰이퍼(분홍색)가 피크 지점에서 가장 깊이 떨어집니다."
+        },
+        "shapers": {
+          "title": "셰이퍼 선택하기",
+          "body": "각 행은 잔여 진동과 스무딩을 절충합니다. ZV / MZV가 가장 가볍고(깨끗한 단일 공진); EI는 더 견고하며; 2-/3-hump는 넓거나 다중 공진을 처리하지만 스무딩이 더 큽니다. FilaMind가 최적의 균형을 강조합니다."
+        },
+        "config": {
+          "title": "설정 적용하기",
+          "body": "이 [input_shaper] 블록에는 X 및/또는 Y 결과가 담겨 있습니다. printer.cfg에 복사하고 Klipper를 재시작하세요. 배지는 어떤 축이 캡처되었는지 보여줍니다 - 완전한 블록을 위해 X와 Y를 모두 캡처하세요."
+        },
+        "noise": {
+          "title": "노이즈 점검",
+          "body": "움직이지 않고 가속도계의 유휴 진동을 읽습니다 - 테스트 전 빠른 장착 점검입니다. Klipper의 경험칙: ~1-100이 정상, ~1000+이면 센서나 배선이 헐거운 것입니다. 노이즈가 심한 장착부를 먼저 고치지 않으면 모든 테스트가 신뢰할 수 없습니다."
+        },
+        "belts": {
+          "title": "벨트 비교 (CoreXY)",
+          "body": "각 벨트 대각선을 가진시키고 두 응답을 겹쳐 표시합니다. 일치하는 피크 주파수 = 균등한 장력. 차이가 있다면 주파수가 낮은 벨트가 더 느슨한 것입니다 - 조이고 피크가 일치할 때까지 다시 실행하세요."
+        },
+        "axesMap": {
+          "title": "축 매핑 감지",
+          "body": "툴헤드를 X, 그다음 Y, 그다음 Z로 조금씩 이동시켜 가속도계가 어떻게 장착되었는지 파악하고, printer.cfg용 axes_map 줄을 제공합니다. 센서를 장착하거나 옮긴 후 한 번 실행하면 이후 모든 테스트가 올바른 축을 읽습니다."
+        },
+        "sustain": {
+          "title": "지속 주파수",
+          "body": "툴헤드를 한 주파수로 진동시켜 유지하므로 손으로 벨트, 캐리지, 프레임을 만져 무엇이 덜컹거리는지 찾을 수 있습니다. 스펙트로그램 + 타임라인은 목표 주파수가 지배적인지, 그리고 접촉이 언제 진동을 잠재웠는지 보여줍니다."
+        },
+        "vibrations": {
+          "title": "진동 프로파일",
+          "body": "각 모터 각도를 따라 여러 속도를 스윕해 기계가 가장 부드럽게 동작하는 지점과 어떤 속도가 공진에 닿는지 매핑합니다. 인쇄/이동 동작에는 가장 부드러운 속도를 선호하고 표시된 속도는 피하세요. 대칭 %는 두 모터가 얼마나 잘 맞는지 보여줍니다."
+        },
+        "guided": {
+          "title": "가이드 vs. 수동",
+          "body": "가이드는 전체 흐름을 안내합니다 - 노이즈 → 벨트 → 셰이퍼 X → 셰이퍼 Y → 진동 → 압력 - 각 단계마다 합격/불합격 관문이 있습니다. 전체 튜닝에 사용하세요. 특정 도구 하나만 원할 때는 📈 분석 또는 🔴 라이브 도구로 전환하세요."
+        },
+        "history": {
+          "title": "기록 & 추세",
+          "body": "각 캘리브레이션은 등급과 점수와 함께 (이 브라우저에) 저장됩니다. ▲/▼ 화살표는 같은 축의 이전 테스트와 한 실행을 비교합니다 - 위쪽은 더 깨끗한 캡처나 더 단단한 축, 아래쪽은 더 많은 노이즈나 더 무른 축을 의미합니다."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "입력 셰이퍼",
+          "def": "Klipper가 동작에 적용하는 필터로, 프린터의 주요 진동을 상쇄하여 링잉/고스팅 없이 더 빠르게 인쇄할 수 있게 합니다."
+        },
+        "resonance": {
+          "term": "공진",
+          "def": "축에 힘을 가했을 때 자연스럽게 진동하는 주파수(Hz)입니다. 낮을수록 = 더 무르거나 무거운 축; ~40-90 Hz가 건강한 프린터입니다."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "전력 스펙트럼 밀도 - 각 주파수에 얼마만큼의 진동 에너지가 있는지 나타냅니다. 높은 피크가 셰이퍼가 겨냥하는 공진입니다."
+        },
+        "smoothing": {
+          "term": "스무딩",
+          "def": "셰이핑의 부작용으로 날카로운 모서리를 약간 둥글게 만듭니다. 낮을수록 좋으며; ≤0.1은 미미하고, >0.2부터 디테일이 무뎌지기 시작합니다."
+        },
+        "vibrationPct": {
+          "term": "진동 %",
+          "def": "셰이퍼 적용 후 남은 공진의 양입니다. 낮을수록 좋으며; ≤2%는 우수하고, ≤5%는 괜찮습니다."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "셰이퍼가 과도한 스무딩 없이 유지할 수 있는 가속도 - 권장 SET_VELOCITY_LIMIT / printer.cfg 값입니다."
+        }
+      },
+      "guide": "가이드",
+      "guideTitle": "입력 셰이핑 가이드",
+      "close": "닫기"
+    },
+    "grade": {
+      "clarity": {
+        "label": "피크 선명도",
+        "value": "{ratio}×",
+        "note": {
+          "none": "평가할 스펙트럼이 없습니다.",
+          "good": "노이즈보다 훨씬 높은 날카로운 피크.",
+          "ok": "노이즈 위로 피크가 보임.",
+          "poor": "약한 피크 - 노이즈가 많거나 매우 단단함."
+        }
+      },
+      "vibration": {
+        "label": "잔여 진동",
+        "value": "{pct}%",
+        "note": {
+          "good": "거의 모든 공진이 제거됨.",
+          "ok": "대부분의 공진이 제거됨.",
+          "poor": "상당한 진동이 남아 있음."
+        }
+      },
+      "smoothing": {
+        "label": "스무딩",
+        "note": {
+          "good": "모서리 둥글어짐이 최소.",
+          "ok": "고가속에서 약간의 둥글어짐.",
+          "poor": "강한 스무딩 - 모서리가 둥글어짐."
+        }
+      },
+      "freq": {
+        "label": "주파수",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "주파수를 찾지 못함.",
+          "good": "건강하고 단단한 축.",
+          "ok": "약간 무르거나 매우 단단함.",
+          "soft": "무르거나 무거운 축.",
+          "high": "비정상적으로 높음."
+        }
+      },
+      "shaper": {
+        "label": "공진 형태",
+        "note": {
+          "clean": "깨끗한 단일 공진.",
+          "robust": "단일 공진, 견고한 셰이퍼.",
+          "twin": "넓거나 쌍둥이 공진.",
+          "multiple": "다중 공진.",
+          "atypical": "비정형 셰이퍼."
+        }
+      },
+      "verdict": {
+        "a": "우수함 - 깨끗한 캡처, 잘 튜닝된 축.",
+        "b": "좋음 - 견고한 결과, 약간의 개선 여지.",
+        "c": "보통 - 사용 가능; 아래 제안을 참고하세요.",
+        "d": "미흡 - 기계 튜닝 + 재테스트 권장.",
+        "f": "신뢰 불가 - 테스트를 다시 실행하세요(센서 장착부 확인).",
+        "none": "사용 가능한 결과 없음 - TEST_RESONANCES를 다시 실행하세요."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "사용 가능한 공진 없음",
+        "advice": "TEST_RESONANCES를 다시 실행하세요. 가속도계가 배선되어 있고 툴헤드에 단단히 장착되었는지 확인하세요.",
+        "detail": "명확한 피크가 감지되지 않음"
+      },
+      "noisy": {
+        "title": "노이즈가 많은 캡처",
+        "advice": "가속도계 장착부를 고정하고 다시 실행하세요. 테스트 중 팬이나 다른 동작을 피하세요.",
+        "detail": "신호 대 노이즈 {snr}×"
+      },
+      "lowFreq": {
+        "title": "낮은 공진 주파수",
+        "advice": "무르거나 무거운 축 - 벨트를 조이고 프레임 강성을 확인하세요. 더 단단한 축은 더 높이 공진하고 더 빠르게 인쇄됩니다.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "다소 무른 축",
+        "advice": "주파수가 낮은 편입니다. 벨트나 프레임을 단단히 하면 주파수가 올라가고 더 빠르게 인쇄할 수 있습니다.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "높은 스무딩",
+        "advice": "모서리가 둥글어집니다. 더 단단한 셰이퍼를 선택하거나 max_accel을 낮추세요.",
+        "detail": "스무딩 {smoothing}"
+      },
+      "multiResonance": {
+        "title": "다중 공진",
+        "advice": "흔히 헐거운 툴헤드, 벨트, 부품이 원인입니다. 툴헤드를 다시 장착하고 벨트 장력을 다시 확인하세요."
+      },
+      "vibrationRemains": {
+        "title": "진동이 남아 있음",
+        "advice": "기계 튜닝(벨트, 프레임, 툴헤드 질량)으로 이를 더 낮출 수 있습니다.",
+        "detail": "셰이핑 후 {vibrations}% 남음"
+      },
+      "healthy": {
+        "title": "건강한 축",
+        "advice": "깨끗한 캡처와 단단한 축 - 준비 완료. 설정을 적용하고 Klipper를 재시작하세요.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X와 Y가 크게 다름",
+        "advice": "비대칭 강성. 더 무른 축의 벨트 장력을 확인하세요; CoreXY에서는 두 벨트가 모두 맞고 팽팽한지 확인하세요.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "추천",
+        "shaperFreq": "셰이퍼 주파수",
+        "peakFreq": "피크 주파수",
+        "remainingVibr": "잔여 진동",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "벨트 일치",
+          "advice": "두 벨트 응답이 정렬됩니다 - 장력이 균형 잡혀 보입니다."
+        },
+        "differ": {
+          "title": "벨트 차이",
+          "advice": "벨트 공진이 다릅니다 - 두 피크가 정렬될 때까지 더 느슨한 벨트를 다시 조이세요."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "센서가 조용함",
+          "why": "계속 진행해도 좋습니다."
+        },
+        "elevated": {
+          "title": "센서 노이즈를 줄이세요",
+          "why": "최대 {max} ≥ {threshold}. 툴헤드 팬을 끄고 장착부를 다시 확인한 뒤 다시 실행하세요."
+        },
+        "bad": {
+          "title": "테스트 전에 가속도계를 고치세요",
+          "why": "노이즈 {max}가 너무 높습니다 - 센서를 다시 장착하고 배선을 확인하세요."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "벨트 균형",
+          "why": "장력이 균등합니다 - 다음으로 셰이퍼를 캘리브레이션하세요."
+        },
+        "mismatch": {
+          "title": "벨트 {looser}를 다시 조이세요",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). 두 피크가 정렬될 때까지 주파수가 낮은 벨트를 조인 뒤 다시 실행하세요."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "더 낮은 가속도로 다시 실행하세요",
+          "why": "저주파 동작이 너무 많이 기록되었습니다 - ACCEL을 낮추거나(SIZE를 높여) 일정한 속도만 측정되도록 한 뒤 다시 실행하세요."
+        },
+        "favour": {
+          "title": "~{speed} mm/s를 선호하세요",
+          "why": "가장 부드러운 대역 {start}-{end} mm/s - 가능하면 슬라이서 인쇄/이동 속도를 여기로 설정하세요."
+        },
+        "avoid": {
+          "title": "{shown} mm/s를 피하세요",
+          "why": "이 속도들은 공진에 닿습니다 - 슬라이서에서 인쇄 + 이동 동작을 이 속도에서 멀리 두세요."
+        },
+        "symmetry": {
+          "title": "벨트 장력 / 모터 매칭을 확인하세요",
+          "why": "모터 대칭 {pct}%가 낮습니다 - 벨트를 다시 조이고(벨트 비교) 두 모터 전류가 일치하는지 확인하세요."
+        },
+        "fine": {
+          "title": "진동이 양호해 보임",
+          "why": "문제가 되는 속도가 두드러지지 않았습니다."
+        }
+      },
+      "pressure": {
+        "title": "압력 어드밴스 타워를 실행하세요",
+        "why": "PA 타워를 인쇄하고, 모서리가 가장 날카로워 보이는 높이를 읽은 뒤 `SET_PRESSURE_ADVANCE ADVANCE=<value>` 와 `SAVE_CONFIG`를 실행하세요."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "설정된 axes_map이 이미 올바릅니다.",
+        "update": "설정을 다음으로 업데이트하세요: {axes_map}",
+        "add": "모든 입력 셰이핑 그래프가 X/Y/Z를 정렬해 읽도록 이것을 추가하세요."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "노이즈",
+          "title": "가속도계 노이즈",
+          "why": "어떤 테스트 전이든 센서가 단단히 장착되었는지 확인하세요(동작 없음)."
+        },
+        "belts": {
+          "label": "벨트",
+          "title": "CoreXY 벨트 균형",
+          "why": "두 벨트 장력을 맞추세요. CoreXY 전용 - 카테시안/베드 슬링어에서는 건너뛰세요."
+        },
+        "shaperX": {
+          "label": "셰이퍼 X",
+          "title": "입력 셰이퍼 - X",
+          "why": "X 공진과 최적의 셰이퍼를 찾으세요."
+        },
+        "shaperY": {
+          "label": "셰이퍼 Y",
+          "title": "입력 셰이퍼 - Y",
+          "why": "Y 공진과 최적의 셰이퍼를 찾으세요."
+        },
+        "vibrations": {
+          "label": "진동",
+          "title": "진동 프로파일",
+          "why": "속도 × 모터 각도를 스윕해 가장 부드러운 속도와 피해야 할 공진을 찾으세요."
+        },
+        "pressure": {
+          "label": "압력",
+          "title": "압력 어드밴스",
+          "why": "모서리와 솔기를 날카롭게 하기 위해 압력 어드밴스를 마지막에 튜닝하세요."
+        },
+        "done": {
+          "label": "완료"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "센서가 조용함",
+          "warn": "노이즈가 약간 높음",
+          "failed": "노이즈가 너무 많음 - 장착부를 고치세요"
+        },
+        "belts": {
+          "passed": "벨트 일치",
+          "differ": "벨트 차이 (Δ{diffPct}%)",
+          "mismatched": "벨트 불일치 (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "등급 {letter} - 건강한 축",
+          "usable": "등급 C - 사용 가능",
+          "tune": "등급 {letter} - 튜닝 + 재테스트"
+        },
+        "vibrations": {
+          "lowFreq": "저주파 동작이 너무 많음 - 가속도를 낮추고 다시 실행",
+          "mismatched": "모터 불일치 ({pct}%)",
+          "smoothest": "가장 부드러운 속도 ~{rec} mm/s",
+          "complete": "프로파일 완료"
+        }
+      },
+      "ui": {
+        "title": "🧭 가이드 튜닝",
+        "exit": "✕ 종료",
+        "motionReady": "⚠ 툴헤드가 움직입니다 - 준비됨",
+        "running": "실행 중…",
+        "run": "실행",
+        "rerun": "↻ 다시 실행",
+        "skipBelts": "건너뛰기 (CoreXY 아님)",
+        "copyPa": "📋 PA 타워 복사",
+        "copied": "✅ 복사됨",
+        "finish": "마치기 →",
+        "nextStep": "다음 단계 →",
+        "skipAnyway": "그래도 건너뛰기",
+        "complete": "튜닝 완료",
+        "stepFailed": "단계 실패",
+        "copyFailed": "복사 실패 - 텍스트를 선택해 수동으로 복사하세요.",
+        "summaryNote": "X와 Y 캡처가 아래 결합된 {code} 블록에 있습니다 - 복사한 뒤 Klipper를 재시작하세요. 다시 확인하려면 언제든 가이드 튜닝을 다시 여세요.",
+        "beltsNotApplicable": "벨트 비교는 CoreXY 프린터에 적용됩니다 - 이 프린터는 '{kin}'을 보고하므로 이 단계를 건너뜁니다.",
+        "resultsSoFar": "지금까지의 결과",
+        "archived": "저장됨",
+        "autoSaved": "프린터 내 아카이브에 자동으로 저장되었습니다.",
+        "beltA": "벨트 A (1,1)",
+        "beltB": "벨트 B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "추천",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "최대 가속도",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "최대 유휴 노이즈 {max} (정상 < {threshold}).",
+        "status": "상태",
+        "maxNoise": "최대 노이즈",
+        "threshold": "임계값",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "일치",
+        "beltA": "벨트 A 피크",
+        "beltB": "벨트 B 피크",
+        "difference": "차이",
+        "matched": "일치",
+        "mismatch": "불일치",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "상태",
+        "gravity": "중력",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "노이즈"
+      },
+      "sustain": {
+        "target": "목표",
+        "dominant": "지배적",
+        "inBand": "대역 내",
+        "onTarget": "목표 일치",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "예",
+        "no": "아니오"
+      },
+      "vibrations": {
+        "smoothest": "가장 부드러움",
+        "symmetry": "대칭",
+        "motorResonance": "모터 공진",
+        "avoid": "회피",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 가이드",
+      "tabAnalyze": "📈 분석",
+      "tabLive": "🔴 라이브 도구",
+      "tabHistory": "🕘 기록",
+      "intro": "Klipper 공진 캡처로 입력 셰이핑을 튜닝하세요 - 명령줄 불필요. 처음이신가요? {guided}로 시작하세요. 또는 {csv}를 직접 다루려면 {analyze}, 프린터에서 캡처하려면 {live}, 지난 실행을 검토하려면 {history}를 선택하세요.",
+      "cfgReady": "printer.cfg 준비됨",
+      "copy": "📋 복사",
+      "copied": "✅ 복사됨",
+      "archive": "💾 아카이브",
+      "saved": "✅ 저장됨",
+      "advanced": "⚙ 고급",
+      "compareCsvs": "⇄ CSV 비교",
+      "blankDefault": "비워두면 = Klipper 기본값",
+      "auditTitle": "감사",
+      "refresh": "↻ 새로고침",
+      "auditEmpty": "아직 결과가 없습니다 - 튜닝을 실행하거나 아카이브에 저장하세요.",
+      "trendTitle": "이전 {axis} 테스트 대비 점수 {score}",
+      "sourceSaved": "💾 저장됨",
+      "sourceLocal": "로컬",
+      "recommended": "추천",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "축 {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "이 데이터에 추천할 셰이퍼가 없습니다.",
+      "measurementQuality": "측정 품질",
+      "scoreOutOf": "{v}/100",
+      "hide": "숨기기",
+      "details": "상세",
+      "chartAria": "주파수 응답 및 셰이퍼",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "추천",
+      "legendPeak": "▲ 피크",
+      "legendAxisHint": "주파수 (Hz) → · 실선 = 측정값 · 흐림 = 셰이퍼 잔여",
+      "colShaper": "셰이퍼",
+      "colFreq": "주파수",
+      "colVibr": "진동",
+      "colSmooth": "스무딩",
+      "colAccel": "가속도",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "지우기",
+      "pasteHint": "{cfg}에 붙여넣은 뒤 Klipper를 재시작하세요.",
+      "errAnalysisFailed": "분석 실패",
+      "errCopyFailed": "복사 실패 - 텍스트를 선택해 수동으로 복사하세요.",
+      "errSaveFailed": "아카이브 저장 실패"
+    },
+    "fromPrinter": {
+      "liveTools": "라이브 도구",
+      "intro": "⏳ 이 작업들은 툴헤드를 움직이며 {duration}이 걸릴 수 있습니다(벨트 비교는 전체 스윕을 두 번 실행) - 결과가 나타날 때까지 이 페이지를 열어 두세요.",
+      "introDuration": "1-5분",
+      "confirmMoves": "⚠ 툴헤드가 움직입니다 - 준비됨",
+      "axisX": "축 X",
+      "axisY": "축 Y",
+      "noiseTitle": "🔊 노이즈 점검",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "측정 중…",
+      "noiseHint": "동작 없음 · 테스트 전 실행",
+      "noiseVerdictQuiet": "✅ 조용함",
+      "noiseVerdictElevated": "⚠ 높음",
+      "noiseVerdictTooNoisy": "⛔ 노이즈 과다",
+      "noiseMaxNormal": "최대 {max} · 정상 < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 라이브 테스트",
+      "liveBtn": "TEST_RESONANCES 실행",
+      "liveBtnBusy": "실행 중…",
+      "liveDesc": "필요하면 프린터를 홈 위치로 보낸 뒤 선택한 축에서 TEST_RESONANCES를 실행합니다(가속도계 + {section} 필요). 인쇄 중에는 거부됩니다.",
+      "beltsTitle": "🟰 벨트 비교",
+      "beltsBtn": "벨트 비교",
+      "beltsBtnBusy": "비교 중…",
+      "beltsBtnTitle": "CoreXY: 각 벨트 대각선을 가진시키고 응답을 겹쳐 표시",
+      "beltsDesc": "CoreXY 전용: 벨트 대각선을 따라 두 번의 스윕을 실행하고 겹쳐 표시합니다. 인쇄 중에는 거부됩니다.",
+      "axesTitle": "🧭 축 매핑",
+      "axesBtn": "axes_map 감지",
+      "axesBtnBusy": "감지 중…",
+      "axesBtnTitle": "+X/+Y/+Z로 조그해 가속도계 방향(axes_map) 감지",
+      "axesDesc": "X, 그다음 Y, 그다음 Z로 ~30 mm 조그해 가속도계 방향을 감지합니다. 인쇄 중에는 거부됩니다.",
+      "beltResultTitle": "벨트 비교",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "벨트 A 대 B 주파수 응답",
+      "beltLegendA": "벨트 A (1,1)",
+      "beltLegendB": "벨트 B (1,-1)",
+      "axesResultTitle": "축 매핑",
+      "copy": "📋 복사",
+      "copied": "✅ 복사됨",
+      "mappingVirtual": " (가상)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "축 속도 시퀀스",
+      "zoneVirtual": "가상",
+      "zonePct": "{pct}%",
+      "legendAccelX": "가속도 x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "기울기 {x}° / {y}° / {z}°",
+      "gravity": "중력 {v} m/s²",
+      "noiseValue": "노이즈 {v}",
+      "sustainTitle": "🎯 지속 주파수",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "초",
+      "sustainBtn": "실행",
+      "sustainBtnBusy": "유지 중…",
+      "sustainDesc": "툴헤드를 해당 주파수 근처에서 제자리 진동시킵니다 - 벨트, 툴헤드, 프레임을 만져 무엇이 덜컹거리는지 찾으세요. 인쇄 중에는 거부됩니다.",
+      "sustainHolding": "✅ 유지 중",
+      "sustainOffTarget": "⚠ 목표 벗어남",
+      "sustainPeak": "피크 {freq} Hz · 대역 내 {pct}%",
+      "specChartLabel": "주파수-시간 스펙트로그램",
+      "energyChartLabel": "시간에 따른 진동 에너지",
+      "specAxes": "주파수 → · 시간 ↓",
+      "energyLegend": "시간 대비 에너지 - 청록색 골짜기가 접촉이 도움 된 지점",
+      "vibTitle": "📊 진동 프로파일",
+      "vibMax": "최대",
+      "vibStep": "스텝",
+      "vibUnit": "mm/s",
+      "vibBtn": "스윕 실행",
+      "vibBtnBusy": "스윕 중…",
+      "vibDesc": "베드 중심 주위에서 속도 × 모터 각도를 스윕합니다 - 긴 실행(수 분). {step}이 작을수록 더 정밀하지만 느립니다. 가장 부드러운 속도, 피해야 할 속도, 모터 대칭, 모터 공진을 보고합니다. 인쇄 중에는 거부됩니다.",
+      "vibDescStep": "스텝",
+      "errNoiseCheck": "노이즈 점검 실패",
+      "errLiveTest": "라이브 테스트 실패",
+      "errBeltComparison": "벨트 비교 실패",
+      "errAxesMapDetection": "축 매핑 감지 실패",
+      "errCopyFailed": "복사 실패 - 텍스트를 선택해 수동으로 복사하세요.",
+      "errSustainTest": "지속 주파수 테스트 실패",
+      "errVibrationsProfile": "진동 프로파일 실패",
+      "vibProgress": "스윕 {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "스윕 시작 중…",
+      "vibCancel": "스윕 취소",
+      "vibCancelling": "취소 중…",
+      "vibCancelled": "스윕 취소됨 - 속도 제한이 복원되었습니다.",
+      "vibReattached": "다시 연결됨: 페이지를 벗어난 동안 이 결과가 완료되었습니다.",
+      "beltsCorexyOnly": "CoreXY 전용 - 이 프린터는 '{kin}' 키네매틱스를 보고하므로 두 벨트 비교가 적용되지 않습니다."
+    },
+    "vibrationsView": {
+      "title": "진동 프로파일",
+      "lowFreqNoise": "⚠ 저주파 노이즈",
+      "smoothest": "▼ 가장 부드러움 ~{v} mm/s",
+      "symmetry": "대칭 {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "속도 대비 진동 에너지",
+      "axisLegend": "속도 (mm/s) → · 진동 에너지 ↑",
+      "smooth": "부드러움",
+      "avoid": "회피",
+      "svgPolarLabel": "이동 방향별 진동 에너지",
+      "svgHeatmapLabel": "각도 및 속도별 진동 에너지 히트맵",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "모터 공진 {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "가장 부드러운 방향 ~{start}-{end}°",
+      "captures": "{n}개 캡처"
+    },
+    "compareView": {
+      "title": "두 캡처 비교 (A ⇄ B)",
+      "intro": "기계 수정 전/후, 또는 같은 축을 재테스트한 경우. (같은 축 파일을 비교하세요.)",
+      "selectA": "A: 선택",
+      "selectB": "B: 선택",
+      "busy": "…",
+      "compare": "비교",
+      "comparisonFailed": "비교 실패",
+      "chartAriaLabel": "A 대 B 전력 스펙트럼 밀도",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "CSV 소스",
+      "tabUpload": "📤 업로드",
+      "tabHost": "🖥 프린터에서",
+      "selectCsv": "📈 CSV 선택",
+      "axisTitle": "이 데이터가 속한 축",
+      "axisAuto": "축: 자동",
+      "axisX": "축: X",
+      "axisY": "축: Y",
+      "analyzing": "분석 중…",
+      "analyze": "🚀 분석",
+      "onHost": "프린터 호스트에서",
+      "refresh": "↻ 새로고침",
+      "noFiles": "공진 CSV를 찾지 못했습니다.",
+      "noFilesInDirs": "{dirs}에서 공진 CSV를 찾지 못했습니다.",
+      "analyzeFile": "분석",
+      "saveTitle": "이 캡처를 아카이브에 복사",
+      "save": "💾 저장",
+      "archive": "아카이브",
+      "archiveEmpty": "아직 저장된 것이 없습니다 - 위의 💾 저장을 사용하거나 설정 아래의 \"아카이브에 저장\"을 사용하세요.",
+      "downloadTitle": "{fn} 다운로드",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "프린터 파일을 나열할 수 없습니다",
+      "errListArchive": "아카이브를 나열할 수 없습니다",
+      "errSave": "아카이브 저장 실패",
+      "errDelete": "삭제 실패",
+      "errDownload": "다운로드 실패",
+      "viewChart": "차트",
+      "viewChartTitle": "이 저장된 실행의 차트를 다시 열기"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "저주파 동작이 너무 많이 기록되었습니다 - ACCEL을 낮추거나(SIZE를 높여) 일정한 속도만 측정되도록 다시 실행하세요.",
+        "smoothest": "~{v} mm/s 부근에서 가장 부드러움",
+        "avoid": "{speeds} mm/s 부근 속도를 피하세요",
+        "matched": "모터가 잘 맞습니다 (대칭 {pct}%)",
+        "low_symmetry": "모터 대칭이 낮습니다 ({pct}%) - 벨트 장력을 확인하세요",
+        "motor_freq": "모터 공진 ~{f} Hz",
+        "complete": "진동 프로파일 완료."
+      },
+      "sustain": {
+        "not_dominant": "툴헤드가 주로 {freq} Hz에서 진동하지 않습니다(피크는 {peak} Hz) - 진동원이 툴헤드 센서에 도달하지 못할 수 있습니다.",
+        "drop": "{freq} Hz 유지 중 - 어느 시점에 진동이 ~{drop}% 떨어졌습니다; 그때 만진 것이 강한 기여 요인입니다.",
+        "touch": "{freq} Hz 유지 중 - 벨트, 툴헤드, 갠트리 조인트, 아이들러를 하나씩 만져 보세요; 진동을 잠재우는 부분이 공진원입니다."
+      },
+      "axes": {
+        "same_axis": "여러 기계 축에 대해 동일한 가속도계 축이 감지됨",
+        "low_confidence": "낮은 감지 신뢰도 ({pct}%)",
+        "high_angle_error": "높은 각도 오차 ({deg}°)",
+        "unusual_gravity": "비정상적인 중력 측정값 ({g} m/s²)",
+        "high_noise": "높은 노이즈 수준 ({n} mm/s²)",
+        "good": "감지 품질: 양호"
+      }
+    },
+    "proof": {
+      "title": "튜닝 증명",
+      "empty": "이 축에 기록된 결과가 두 개 필요합니다 - 튜닝 전 측정하고, 셰이퍼를 적용한 뒤 다시 측정해 둘 다 저장하세요.",
+      "before": "이전",
+      "after": "이후",
+      "samePick": "비교할 서로 다른 결과 두 개를 선택하세요.",
+      "metricHead": "지표",
+      "delta": "변화",
+      "copy": "보고서 복사",
+      "copied": "복사됨 ✓",
+      "metric": {
+        "score": "측정 등급",
+        "vibrations": "잔여 진동 %",
+        "smoothing": "스무딩",
+        "maxAccel": "권장 최대 가속도 (mm/s²)",
+        "freq": "셰이퍼 주파수 (Hz)",
+        "shaper": "셰이퍼"
+      }
+    }
+  }
+}

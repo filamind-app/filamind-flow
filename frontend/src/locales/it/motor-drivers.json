@@ -1,0 +1,332 @@
+{
+  "motorDrivers": {
+    "help": {
+      "whatsThis": "cos'è?",
+      "topics": {
+        "glossary": {
+          "title": "Termini dei driver",
+          "body": "Un breve glossario per questa dashboard:"
+        },
+        "overview": {
+          "title": "Cosa mostra",
+          "body": "Ogni driver stepper TMC della tua stampante, letto direttamente dalla configurazione Klipper attiva - una scheda per motore (X, Y, ogni Z, l'estrusore…). Questa vista è di sola lettura: riporta cosa è configurato e cosa sta facendo il driver in questo momento. La messa a punto arriva in un passaggio successivo."
+        },
+        "current": {
+          "title": "Corrente di marcia / mantenimento",
+          "body": "La corrente di marcia è quanto viene spinto il motore durante il movimento; la corrente di mantenimento è il livello inferiore a riposo. Il valore live è quello che il chip applica realmente - può discostarsi di poco dal valore configurato perché le correnti vengono in passi discreti. Un driver che scalda molto di solito significa che la corrente di marcia è impostata troppo alta per il motore."
+        },
+        "chopper": {
+          "title": "StealthChop vs SpreadCycle",
+          "body": "La modalità chopper è il modo in cui il driver modella la corrente delle bobine. SpreadCycle è preciso e ad alta coppia (ottimo per X/Y veloci) ma rumoroso; StealthChop è quasi silenzioso (ottimo per Z e a riposo) ma leggermente più morbido alle alte velocità. “StealthChop < N mm/s” significa che resta silenzioso sotto quella velocità, poi passa a SpreadCycle sopra di essa."
+        },
+        "microsteps": {
+          "title": "Microstepping",
+          "body": "Ogni passo completo del motore viene suddiviso elettronicamente in microstep (16, 32, … 256). Più microstep = movimento più fluido e silenzioso. Con l'interpolazione attiva, il driver liscia fino a 256 internamente indipendentemente dal valore configurato."
+        },
+        "stallguard": {
+          "title": "StallGuard (homing senza sensore)",
+          "body": "StallGuard misura il carico del motore così l'asse può fare homing rilevando un lieve stallo invece di usare un finecorsa fisico. Il registro di soglia varia per modello (sgthrs sul 2209, sgt sul 2130/5160, sg4_thrs sul 2240). La messa a punto è un passaggio successivo; qui mostriamo solo il valore configurato."
+        },
+        "health": {
+          "title": "Stato live",
+          "body": "Quando un motore è abilitato (dopo l'homing o un jog), il driver riporta flag live: sovratemperatura, cortocircuito e carico aperto. Un “ok” verde significa nessun guasto; “warning” è un pre-allarme di sovratemperatura o carico aperto; “fault” è un corto o una sovratemperatura grave. Mentre il motore è disabilitato il driver non riporta nulla, quindi la scheda mostra “idle”."
+        },
+        "temperature": {
+          "title": "Temperatura",
+          "body": "Solo alcuni driver (es. il TMC2240) hanno un sensore di temperatura integrato. Sui modelli che non ce l'hanno - come il comune TMC2209 - la temperatura mostra “no sensor”, che è normale, non un errore."
+        },
+        "catalog": {
+          "title": "Da dove vengono i dati del modello",
+          "body": "L'interfaccia (UART / SPI), il limite di corrente e le funzioni supportate mostrate su ogni scheda provengono da una mappa di capacità integrata della famiglia TMC - verificata rispetto al codice del driver Klipper. Ti dice, ad esempio, che un TMC2208 non può fare homing senza sensore mentre un TMC2209 sì, o che solo il TMC2240 riporta la propria temperatura. I valori elettrici sono tipici da datasheet; scheda, resistore di sense e raffreddamento determinano i limiti reali."
+        },
+        "motor": {
+          "title": "Assegnare un motore",
+          "body": "Scegli il motore stepper cablato a ciascun asse da un catalogo integrato di oltre 200 motori. Klipper non sa quale motore hai montato - dirlo a FilaMind sblocca le specifiche di datasheet (coppia di mantenimento, corrente nominale, resistenza, induttanza), che un passaggio successivo usa per consigliare una corrente di marcia sicura e la messa a punto del driver. Viene salvato sulla stampante e di per sé non cambia nulla sul driver."
+        },
+        "motorsync": {
+          "title": "Sincronizzazione dei motori",
+          "body": "Quando un asse è azionato da due o più motori (Z doppio o quadruplo, X doppio), le loro fasi di microstep possono andare alla deriva e contrastarsi - aggiungendo rumore e perdendo coppia. L'add-on motors_sync misura ogni motore con un accelerometro e li riallinea in fase. È un add-on separato; se è installato FilaMind può eseguirlo o calibrarlo qui (muove la testa, quindi è protetto). Se non è installato, qui si spiega solo cosa fa."
+        },
+        "monitor": {
+          "title": "Monitor live",
+          "body": "Osserva un driver in tempo reale mentre funziona: temperatura, carico StallGuard (SG_RESULT - scende verso zero all'aumentare del carico meccanico), scala di corrente (CS_ACTUAL) e qualsiasi flag di guasto (sovratemperatura, corto, carico aperto). Il driver riporta questi dati solo mentre il motore è abilitato, quindi muovi o fai homing dell'asse per vedere i dati live. Sola lettura - si limita a osservare."
+        },
+        "homing": {
+          "title": "Come fa homing questo asse",
+          "body": "Klipper trova lo zero di ciascun asse in uno di pochi modi, e FilaMind legge quale dalla tua configurazione invece di indovinare: un interruttore finecorsa fisico (il classico microswitch - la maggior parte delle stampanti), homing senza sensore (il driver TMC rileva lo stallo del motore a fine corsa - nessun interruttore), o la sonda Z (lo stesso sensore usato per il bed mesh trova Z=0). Questo pannello si adatta a quello che usa il tuo asse - stato live dell'interruttore e un semplice test-home per un finecorsa fisico, un tuner StallGuard per il senza sensore, o un rimando agli strumenti della sonda per uno Z sondato. I motori extra che condividono una guida (un secondo Z, l'estrusore) non fanno homing da soli, quindi qui non mostrano nulla."
+        },
+        "sensorless": {
+          "title": "Homing senza sensore",
+          "body": "Alcuni assi fanno homing senza un interruttore finecorsa: il driver rileva il lieve “stallo” quando la testa raggiunge il fine corsa. La soglia StallGuard imposta quanto è sensibile - troppo bassa e scatta in anticipo (si ferma corto), troppo alta e non scatta mai (l'asse forza contro il telaio). Questo helper ti permette di impostare la soglia e fare test-home di un asse, entrambi dietro una conferma. Regola a sensazione: abbassa se si ferma in anticipo, alza se non si ferma - e tieni una mano vicino all'alimentazione le prime volte. Se il tuo asse usa un finecorsa fisico, non ti serve."
+        },
+        "coolstep": {
+          "title": "CoolStep (corrente adattiva al carico)",
+          "body": "CoolStep permette al driver di abbassare la corrente delle bobine quando il motore non lavora intensamente, poi rialzarla sotto carico - risparmiando calore e rumore. È un loop di feedback accoppiato con cinque registri interagenti (semin/semax/seup/sedn/seimin), quindi invece di cinque manopole grezze questo è un singolo on/off che applica un set verificato e affidabile (semin 2, semax 4, seup 3, sedn 2, seimin 1). Agisce solo sopra una soglia di velocità, ed essere troppo aggressivo con accelerazioni elevate può far perdere passi - lascialo spento a meno che tu non sappia di volerlo. Solo live: un riavvio o “reset to config” ripristina i valori salvati."
+        },
+        "registers": {
+          "title": "Modifica dei registri (avanzato)",
+          "body": "L'editor avanzato scrive singoli registri di messa a punto TMC sul driver in tempo reale - timing del chopper (toff/tbl/hstrt/hend), PWM StealthChop (pwm_grad/pwm_ofs/…), CoolStep, sensibilità StallGuard e la soglia di velocità StealthChop↔SpreadCycle (in mm/s). Quali campi compaiono, e il loro intervallo valido, provengono dalla policy di sicurezza lato stampante - non dal browser - perché il driver tronca silenziosamente un valore fuori intervallo invece di dare errore, quindi il server limita e rifiuta. I registri grezzi di scalatura della corrente e di protezione corto/sovratemperatura non sono volutamente modificabili qui (la corrente passa per il percorso recommender/corrente di marcia; i microstep richiedono una modifica di config + riavvio). Ogni modifica è solo live: INIT_TMC (il pulsante “reset to config”), un riavvio del firmware o un power-cycle ripristina i valori salvati. Le manopole più rischiose richiedono una conferma per campo, e tutte le scritture sono rifiutate mentre la stampante stampa o è in pausa."
+        },
+        "recommend": {
+          "title": "Messa a punto consigliata",
+          "body": "Una volta assegnato un motore, FilaMind può calcolare una corrente di marcia suggerita e i valori dei registri StealthChop / SpreadCycle (pwm_grad, pwm_ofs, hstrt, hend) dalle specifiche di datasheet del motore e dalla tua tensione di alimentazione - così funziona anche senza l'add-on autotune installato. La corrente di marcia predefinita è un conservativo 70% della corrente nominale del motore. Il risultato viene confrontato con la tua config live; puoi poi copiarlo in printer.cfg, o scriverlo in live dietro una conferma (reversibile con Revert, e rifiutato durante la stampa). Se l'add-on autotune è installato, puoi eseguirlo invece."
+        }
+      },
+      "glossary": {
+        "tmcDriver": {
+          "term": "Driver TMC",
+          "def": "Il chip che trasforma i segnali step/dir di Klipper nelle correnti delle bobine che fanno girare un motore stepper - es. TMC2209, TMC2240, TMC5160. Ogni motore ne ha uno."
+        },
+        "runCurrent": {
+          "term": "Corrente di marcia",
+          "def": "Quanto viene spinto il motore durante il movimento (ampere). Troppo bassa → passi persi; troppo alta → surriscaldamento. Il valore live può differire leggermente da quello configurato perché il chip lo quantizza."
+        },
+        "holdCurrent": {
+          "term": "Corrente di mantenimento",
+          "def": "La corrente ridotta applicata mentre il motore è a riposo, per risparmiare calore e rumore."
+        },
+        "microsteps": {
+          "term": "Microstep",
+          "def": "Quanto finemente viene suddiviso ogni passo completo del motore (16/32/…/256). Più alto = movimento più fluido e silenzioso, senza una reale perdita di coppia grazie all'interpolazione."
+        },
+        "stealthChop": {
+          "term": "StealthChop",
+          "def": "Una modalità di pilotaggio quasi silenziosa, ottima per Z e a riposo. Fluida ma leggermente meno precisa ad alta velocità."
+        },
+        "spreadCycle": {
+          "term": "SpreadCycle",
+          "def": "Una modalità di pilotaggio precisa e ad alta coppia, migliore per movimenti X/Y veloci. Rumorosa ma accurata."
+        },
+        "stallGuard": {
+          "term": "StallGuard",
+          "def": "Il sensore di carico del driver. Abilita l'homing senza sensore (rilevando uno stallo invece di usare un interruttore finecorsa). Il suo registro di soglia varia per modello (sgthrs / sgt / sg4_thrs)."
+        },
+        "senseResistor": {
+          "term": "Resistore di sense",
+          "def": "Un piccolo resistore che imposta la scala di corrente del driver. Deve corrispondere alla tua scheda; la dashboard mostra il valore configurato."
+        },
+        "interface": {
+          "term": "Interfaccia (UART / SPI)",
+          "def": "Come l'MCU comunica con il driver. UART è un singolo filo (famiglia TMC220x); SPI è un bus multifilo più veloce usato dai componenti performance (2130 / 5160). Il TMC2240 può fare entrambi."
+        }
+      },
+      "guide": "Guida",
+      "guideTitle": "Guida ai driver dei motori",
+      "close": "Chiudi",
+      "howToRead": "Come leggere questo pannello"
+    },
+    "format": {
+      "amps": "{a} A",
+      "ampsSet": "{base} (impostata {set})",
+      "stealthchop": "StealthChop",
+      "stealthchopThreshold": "StealthChop < {t} mm/s",
+      "spreadcycle": "SpreadCycle",
+      "health": {
+        "idle": "idle",
+        "ok": "ok",
+        "warning": "warning",
+        "fault": "fault"
+      },
+      "celsius": "{v} °C",
+      "noSensor": "no sensor",
+      "maxCurrent": "≤ {a} A",
+      "extruder": "Estrusore",
+      "extruderN": "Estrusore {n}",
+      "axis": "asse {axis}",
+      "homing": {
+        "sensorless": "Senza sensore (StallGuard)",
+        "physical": "Finecorsa fisico",
+        "probe": "Sonda Z",
+        "otherVirtual": "Finecorsa virtuale",
+        "inherited": "Guida condivisa"
+      },
+      "stallguard": {
+        "signed": "Con segno −64…63 - PIÙ BASSO è più sensibile (si ferma prima). Alzalo se l'asse si ferma corto; abbassalo se non si ferma mai.",
+        "unsigned": "Intervallo 0-255 - PIÙ ALTO è più sensibile (si ferma prima). Abbassalo se l'asse si ferma corto; alzalo se non si ferma mai."
+      },
+      "spec": {
+        "nm": "{v} Nm",
+        "amps": "{v} A",
+        "ohm": "{v} Ω",
+        "mh": "{v} mH"
+      },
+      "flag": {
+        "overtemp": "overtemp",
+        "tempWarn": "temp-warn",
+        "shortA": "short A",
+        "shortB": "short B",
+        "openLoadA": "open-load A",
+        "openLoadB": "open-load B",
+        "standstill": "standstill"
+      },
+      "runCurrent": "corrente di marcia (A)"
+    },
+    "widget": {
+      "intro": "Ogni driver stepper TMC della tua stampante, letto in live dalla configurazione Klipper - ispeziona, ottieni consigli di messa a punto e applicali (protetto). Nuovo qui? Prova 🧭 Guidato.",
+      "tabDashboard": "Dashboard",
+      "tabGuided": "🧭 Guidato",
+      "howToReadShow": "▸ come leggere",
+      "howToReadHide": "▾ come leggere",
+      "steps": [
+        "Ogni scheda è un driver stepper - l'intestazione è l'asse (X / Y / Z / Estrusore) e il badge è il modello del chip.",
+        "La corrente di marcia mostra quanto viene spinto il motore; il valore live può differire leggermente dal valore “impostato” - è normale.",
+        "La modalità indica SpreadCycle (preciso, più rumoroso) o StealthChop (silenzioso); i microstep mostrano quanto è fluido il movimento.",
+        "Fai homing di un asse o un jog del motore per svegliarlo - temperatura live e flag di guasto compaiono solo mentre un motore è abilitato (i driver a riposo mostrano “idle”).",
+        "Apri “registri avanzati” su una scheda per ispezionare i valori grezzi di messa a punto che il driver sta usando."
+      ],
+      "loading": "Caricamento driver dei motori…",
+      "retry": "↻ riprova",
+      "retrying": "nuovo tentativo…",
+      "unreachable": "Impossibile raggiungere Moonraker della stampante - i dati dei driver non sono disponibili al momento.",
+      "noDrivers": "Nessun driver TMC trovato nella configurazione Klipper. (Qui compaiono solo i driver stepper TMC.)",
+      "runCurrent": "Marcia {value}",
+      "nearCapTitle": "Vicino al limite nominale di questo modello ({max})",
+      "holdCurrent": "Mantenimento {value}",
+      "microsteps": "{n} µstep",
+      "sg": "SG {field} {threshold}",
+      "detailsShow": "▸ dettagli",
+      "detailsHide": "▾ meno",
+      "interp": "interp",
+      "sense": "sense {value} Ω",
+      "healthTitleIdle": "Abilita il motore (fai homing o un jog di un asse) per leggere temperatura live e flag di guasto",
+      "healthTitleLive": "Stato live del driver da drv_status",
+      "staleData": "L'ultimo aggiornamento è fallito - mostro i dati precedenti."
+    },
+    "liveMonitor": {
+      "toggle": "monitor live",
+      "temp": "temp {temp} °C",
+      "sg": "SG {sg}",
+      "cs": "CS {cs}",
+      "updates": "· aggiorna ~1.5s",
+      "noFaults": "nessun guasto",
+      "idle": "Idle - abilita il motore (fai homing o un jog dell'asse) per leggere SG / corrente / temperatura live."
+    },
+    "recommendPanel": {
+      "toggle": "consiglia messa a punto",
+      "supply": "alimentazione",
+      "recompute": "ricalcola",
+      "recommend": "consiglia",
+      "colCurrent": "attuale",
+      "colRecommended": "consigliato",
+      "basis": "corrente di marcia = {basis}; StealthChop tiene fino a ~{rps} giri/s a {voltage} V.",
+      "confirm": "Scrivi questi sul driver {stepper} ora. Reversibile (Revert / un riavvio ripristina la config); rifiutato durante la stampa.",
+      "applyToDriver": "applica al driver",
+      "revert": "↺ ripristina",
+      "copyConfig": "copia config",
+      "autotune": "autotune",
+      "autotuneTitle": "Esegue AUTOTUNE_TMC se l'add-on klipper_tmc_autotune è installato",
+      "noSpecs": "Nessuna specifica di datasheet per questo motore - consiglio di messa a punto non disponibile.",
+      "measured": "Misurato: i motori risuonano a ~{freq} Hz",
+      "measuredSym": "simmetria {pct}%",
+      "measuredHint": "Verità misurata dal profilo vibrazioni eseguito su questa stampante - apri l'audit di Input Shaping."
+    },
+    "motorSync": {
+      "toggle": "sincronizzazione motori",
+      "notInstalledTag": "(add-on non installato)",
+      "about": "Allinea la fase di microstep di più motori su un asse (Z doppio / quadruplo, X doppio) usando un accelerometro, così non si contrastano. Fornito dall'add-on separato {addon}.",
+      "checking": "verifica in corso…",
+      "notInstalled": "Non installato su questa stampante. Installa l'add-on motors_sync per abilitarlo qui.",
+      "warning": "⚠ Questo muove la testa per un po' (sonda ogni motore). Stai a distanza e pronto a togliere l'alimentazione.",
+      "confirm": "Sto osservando la stampante - esegui ora la sincronizzazione dei motori.",
+      "syncMotors": "sincronizza motori",
+      "calibrate": "calibra"
+    },
+    "sensorless": {
+      "noRegister": "⚠ Questo driver non espone alcun registro di soglia StallGuard, quindi l'homing senza sensore non può essere messo a punto qui - controlla la configurazione di homing della stampante.",
+      "intro": "StallGuard {field} imposta la sensibilità dell'homing senza sensore.",
+      "threshold": "soglia",
+      "nowRange": "ora: {now} · intervallo {min}…{max}",
+      "confirmSet": "Scrivi questa soglia sul driver ora (reversibile; rifiutato durante la stampa).",
+      "setThreshold": "imposta soglia",
+      "testHomeWarning": "⚠ Il test-home muove ora l'asse {axis}. Con una soglia errata potrebbe non fermarsi - tieni una mano sull'alimentazione. Solo assi senza sensore.",
+      "confirmHome": "Sto osservando la stampante e pronto a togliere l'alimentazione - fai homing di {axis}.",
+      "testHome": "test-home {axis}"
+    },
+    "homing": {
+      "homing": "homing",
+      "unreachable": "stampante irraggiungibile",
+      "physicalIntroLead": "Questo asse fa homing contro un interruttore finecorsa fisico",
+      "physicalIntroTail": ". Premi l'interruttore a mano e ricontrolla per confermare il cablaggio prima dell'homing.",
+      "switchLabel": "interruttore:",
+      "check": "↻ controlla",
+      "testHomeWarn": "⚠ Il test-home muove ora l'asse {axis} verso il suo finecorsa - assicurati che il percorso sia libero.",
+      "pathClear": "Il percorso è libero - fai homing di {axis}.",
+      "testHome": "test-home {axis}",
+      "probeNote": "Questo asse fa homing con la sonda Z (lo stesso sensore usato per il bed mesh), quindi non c'è una soglia StallGuard da mettere a punto qui. Imposta l'offset della sonda e il mesh negli strumenti di livellamento del piatto.",
+      "virtualNote": "Questo asse fa homing contro un finecorsa virtuale che non è un pin StallGuard TMC - è gestito da un proprio modulo host, quindi qui non c'è nulla da mettere a punto."
+    },
+    "guidedWizard": {
+      "title": "🧭 Messa a punto guidata",
+      "backToDashboard": "← dashboard",
+      "stepChoose": "Scegli",
+      "stepMotor": "Motore",
+      "stepTune": "Metti a punto",
+      "stepSensorless": "Senza sensore",
+      "stepDone": "Fatto",
+      "step1Intro": "Scegli l'asse da mettere a punto.",
+      "tuningHeader": "Messa a punto {axis} · {model}",
+      "step2Intro": "Quale motore è cablato a questo asse? Selezionalo così FilaMind conosce le sue specifiche di datasheet.",
+      "assignToContinue": "Assegna un motore per continuare.",
+      "step3Intro": "Ottieni un consiglio dalle specifiche del motore, poi copialo nella tua config o applicalo in live (protetto).",
+      "step4Intro": "Facoltativo: regola l'homing senza sensore. Salta se questo asse usa un interruttore finecorsa.",
+      "step5Intro": "Finito con {axis}. Osservalo in live mentre muovi l'asse, o metti a punto un altro.",
+      "tuneAnother": "metti a punto un altro asse",
+      "back": "← indietro",
+      "next": "avanti →",
+      "finish": "termina"
+    },
+    "motorPicker": {
+      "motorLabel": "motore:",
+      "notSet": "non impostato",
+      "searchPlaceholder": "cerca tra 200+ motori (modello o produttore)…"
+    },
+    "registerEditor": {
+      "toggle": "metti a punto i registri (avanzato)",
+      "resetTitle": "INIT_TMC - riapplica i registri configurati di questo driver + la corrente",
+      "resetLabel": "↺ reset to config",
+      "liveOnly": "Le modifiche sono {live} - non salvate. {initTmc} (reset), un riavvio del firmware o un power-cycle ripristina i valori configurati. I valori fuori intervallo sono rifiutati dalla policy di sicurezza lato stampante; i registri grezzi di corrente e protezione non sono modificabili qui.",
+      "liveOnlyEmphasis": "solo live",
+      "loading": "Caricamento registri modificabili…",
+      "coolstep": "CoolStep",
+      "on": "on",
+      "off": "off",
+      "coolstepEnableTitle": "Applica il set CoolStep verificato dall'autotune (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
+      "enable": "abilita",
+      "riskyTitle": "Manopola più rischiosa - conferma prima di scrivere",
+      "now": "ora:",
+      "confirm": "conferma",
+      "set": "imposta",
+      "readOnly": "registri di sola lettura",
+      "toffHint": "Se imposti toff a 1, tieni anche tbl ≥ 1 (il blank time di 16 cicli lo richiede).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Soglie e timing",
+        "other": "Altro"
+      }
+    },
+    "apply": {
+      "nothingToApply": "Niente da applicare.",
+      "busyApply": "Mi rifiuto di scrivere su un driver mentre la stampante è occupata (stampa o pausa).",
+      "applied": "Applicate {n} modifiche a {stepper}.",
+      "busyReinit": "Mi rifiuto di re-inizializzare mentre la stampante è occupata (stampa o pausa).",
+      "reinitialized": "Re-inizializzato {stepper} e ripristinata la sua corrente configurata.",
+      "autotuneNotInstalled": "klipper_tmc_autotune non è installato per questo stepper - usa invece il consiglio o copia-in-config.",
+      "busyAutotune": "Mi rifiuto di eseguire autotune mentre la stampante è occupata (stampa o pausa).",
+      "autotuneRan": "Eseguito AUTOTUNE_TMC su {stepper}.",
+      "busyWrite": "Mi rifiuto di scrivere mentre la stampante è occupata (stampa o pausa).",
+      "stallguardSet": "Impostato {field} = {num} su {stepper}.",
+      "fieldSet": "Impostato {field} = {num} su {stepper} (solo live - INIT_TMC o un riavvio ripristina il valore configurato).",
+      "coolstepEnabled": "CoolStep abilitato su {stepper} (solo live - INIT_TMC o un riavvio ripristina i valori configurati).",
+      "coolstepDisabled": "CoolStep disabilitato su {stepper} (solo live - INIT_TMC o un riavvio ripristina i valori configurati).",
+      "busyHome": "Mi rifiuto di fare homing mentre la stampante è occupata (stampa o pausa).",
+      "homed": "Eseguito homing di {ax}.",
+      "motorsyncNotInstalled": "L'add-on motors_sync non è installato - allinea la fase di microstep di più motori su un asse (Z doppio/quadruplo, X doppio) usando un accelerometro.",
+      "busySync": "Mi rifiuto di sincronizzare i motori mentre la stampante è occupata (stampa o pausa).",
+      "syncRan": "Eseguito {cmd}.",
+      "overCurrentCap": "Rifiutato: {requested} A su {stepper} supera il limite di {cap} A (limite di fondo scala del driver / corrente nominale del motore assegnato).",
+      "guardLocked": "Rifiutato: un'altra operazione è già in corso ({operation})."
+    }
+  }
+}

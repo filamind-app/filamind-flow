@@ -1,0 +1,215 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · klipper 패널"
+    },
+    "nav": {
+      "dashboard": "대시보드",
+      "toggle": "내비게이션 토글",
+      "label": "메인 내비게이션"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Mainsail로 돌아가기"
+    },
+    "footer": {
+      "stack": "FilaMind Flow - 이집트 메이커가 세계의 메이커를 위해 만들었습니다. 즐거운 출력 되세요",
+      "by": "DeltaFabs 팀 제작"
+    },
+    "home": {
+      "body": "패널은 사이드바에 있습니다 - 하나를 선택해 시작하세요. 이 홈 화면은 지금은 의도적으로 비워 두었습니다.",
+      "title": "미션 컨트롤",
+      "refresh": "새로고침",
+      "loading": "로딩 중…",
+      "unreachable": "백엔드에 연결할 수 없습니다.",
+      "printer": "프린터",
+      "statePrinting": "출력 중",
+      "statePaused": "일시정지",
+      "stateError": "오류",
+      "stateIdle": "대기",
+      "printerDown": "Moonraker에 연결할 수 없습니다.",
+      "doctor": "Machine Doctor",
+      "doctorBody": "핀, 드라이버 값, 설정 변동, 펌웨어 동기화 등을 한 번에 읽기 전용으로 스캔 - A-F 등급과 바로가기 수정 링크 제공.",
+      "doctorScan": "내 프린터 스캔",
+      "firmware": "펌웨어 동기화",
+      "host": "호스트: {version}",
+      "open": "열기",
+      "noData": "지금은 데이터가 없습니다.",
+      "tuning": "튜닝",
+      "noTuning": "아직 보관된 튜닝 실행이 없습니다 - Input Shaping 마법사를 실행하세요.",
+      "hardware": "하드웨어 vs 기준선",
+      "noBaseline": "아직 저장된 하드웨어 기준선이 없습니다 - 변경을 감지하려면 Machine Map에서 스냅샷을 저장하세요.",
+      "hwUnchanged": "저장된 기준선 이후 하드웨어 변경이 없습니다.",
+      "hwChanged": "저장된 기준선 이후 하드웨어 변경 {n}건.",
+      "setup": {
+        "title": "시작하기 ({done}/{total})",
+        "go": "이동",
+        "boards": "Machine Map에서 보드를 확인하세요",
+        "baseline": "하드웨어 기준선 저장 (향후 변경 감지)",
+        "firmware": "모든 MCU 펌웨어를 호스트와 동기화",
+        "motors": "Motor Drivers에서 모터를 지정하세요",
+        "tuning": "X와 Y의 input shaping 튜닝 (가이드 마법사)"
+      },
+      "journal": {
+        "title": "최근 활동",
+        "empty": "아직 기록된 내용이 없습니다 - 플래시, 설정 저장, 튜닝 실행이 여기에 표시됩니다.",
+        "flash": "{board} 플래시 완료 → {version}",
+        "configSave": "{file} 저장됨",
+        "tuning": "튜닝 실행: {kind} ({axis})"
+      },
+      "hostInfo": {
+        "title": "호스트",
+        "time": "시간",
+        "clock": "시계 동기화",
+        "synced": "동기화됨",
+        "notSynced": "미동기화",
+        "temp": "CPU 온도",
+        "uptime": "가동 시간",
+        "disk": "디스크"
+      },
+      "printerHost": "프린터 & 호스트",
+      "maxFlow": {
+        "title": "최대 유량",
+        "expected": "예상: {n} mm³/s",
+        "empty": "아직 최대 유량 테스트가 없습니다.",
+        "test": "최대 유량 테스트"
+      }
+    },
+    "connection": {
+      "connected": "연결됨",
+      "connecting": "연결 중",
+      "error": "오류",
+      "offline": "오프라인",
+      "idle": "대기"
+    },
+    "language": {
+      "label": "언어",
+      "select": "언어 선택",
+      "menu": "언어 선택"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "펌웨어 관리자",
+        "description": "MCU 펌웨어 버전, 호스트 동기화 상태, 툴체인 준비 상태."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "공진 CSV를 분석하고 최적의 input shaper를 찾습니다."
+      },
+      "motor-drivers": {
+        "title": "Motor Drivers",
+        "description": "실시간 TMC 스테퍼 드라이버 목록: 전류, 모드, 마이크로스텝, 상태."
+      },
+      "config-editor": {
+        "title": "Config Editor",
+        "description": "프린터 설정 파일을 섹션 단위로 파싱하고 검증하여 탐색합니다."
+      },
+      "max-flow": {
+        "title": "Max-Flow",
+        "description": "핫엔드가 지속할 수 있는 최대 체적 유량을 측정합니다 (StallGuard)."
+      },
+      "board-topology": {
+        "title": "Board Topology",
+        "description": "호스트와 MCU의 연결 방식(USB / CAN / UART)과 보드 추정을 확인합니다."
+      },
+      "macro-designer": {
+        "title": "Macro Designer",
+        "description": "오프라인으로 G-code 시뮬레이션 - 툴헤드 경로, 범위, 합계, 매크로 라이브러리."
+      },
+      "hardware-browser": {
+        "title": "Hardware Browser",
+        "description": "엄선된 3D 프린팅 하드웨어 자료를 이름, 제조사, 사양으로 검색합니다."
+      },
+      "config-templates": {
+        "title": "Config Templates",
+        "description": "카테고리별로 바로 붙여넣을 수 있는 Klipper 설정 블록과 매크로."
+      },
+      "machine-doctor": {
+        "title": "Machine Doctor",
+        "description": "원클릭 전체 프린터 스캔과 A-F 성적표, 바로가기 수정 링크."
+      },
+      "host-control": {
+        "title": "Host Control",
+        "description": "프린터 호스트의 Linux OS 관리: 상태, 서비스, 디스크 정리, 시스템 설정."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "프린터의 KlipperScreen 터치스크린 설정을 편집하고 재시작하여 적용합니다."
+      }
+    },
+    "guard": {
+      "printing": "출력 중 - 쓰기 잠김",
+      "running": "{op} 실행 중 - 쓰기 잠김",
+      "op": {
+        "resonance_test": "공진 테스트",
+        "noise_check": "노이즈 점검",
+        "belt_comparison": "벨트 비교",
+        "axes_map": "축 매핑 보정",
+        "sustain": "지속 가진",
+        "vibrations_profile": "진동 프로파일",
+        "max_flow": "최대 유량 테스트",
+        "driver_write": "드라이버 쓰기",
+        "homing": "호밍",
+        "motors_sync": "모터 동기화",
+        "firmware_flash": "펌웨어 플래시",
+        "firmware_batch": "펌웨어 일괄 실행",
+        "firmware_restart": "펌웨어 재시작"
+      }
+    },
+    "mission": {
+      "body": "FilaMind Flow는 첫 설정부터 숙련 단계까지 3D 프린팅을 위한 최고의 도구를 한데 모아, 모든 수준의 메이커가 더 잘 진단하고, 고치고, 출력할 수 있도록 돕습니다. 이 프로젝트는 활발히 개발과 연구가 진행 중이며, 실용적인 새 아이디어는 언제나 환영합니다. 기여는 누구에게나 열려 있습니다.",
+      "tagline": "이집트 메이커가 세계의 메이커를 위해 만들었습니다. 즐거운 출력 되세요.",
+      "dismiss": "닫기"
+    },
+    "feedback": {
+      "menu": "피드백",
+      "menuTitle": "피드백 공유",
+      "bug": "버그 신고",
+      "bugDesc": "무언가 작동하지 않습니다",
+      "feature": "기능 요청",
+      "featureDesc": "개선 사항 제안",
+      "reportError": "신고",
+      "reportErrorAria": "이 오류를 GitHub에 신고",
+      "dialog": {
+        "bugTitle": "버그 신고",
+        "featureTitle": "기능 요청",
+        "introBug": "무엇이 잘못되었는지 설명해 주세요. 검토하고 제출하실 수 있도록 GitHub에 미리 작성된 이슈를 열어 드립니다 - 자동으로 전송되는 것은 없습니다.",
+        "introFeature": "원하시는 기능을 설명해 주세요. 검토하고 제출하실 수 있도록 GitHub에 미리 작성된 이슈를 열어 드립니다.",
+        "descLabel": "설명",
+        "descPlaceholderBug": "무엇을 했고, 대신 무슨 일이 일어났나요?",
+        "descPlaceholderFeature": "어떤 작업을 할 수 있기를 원하시나요?",
+        "attach": "스크린샷 첨부",
+        "attachHint": "현재 화면의 사진은 문제를 이해하는 데 도움이 됩니다.",
+        "capturing": "스크린샷 캡처 중…",
+        "screenshotReady": "스크린샷 미리보기",
+        "noScreenshot": "스크린샷을 캡처하지 못했습니다 - 수동으로 첨부할 수 있습니다.",
+        "includes": "포함되는 내용",
+        "includesNote": "이 세부 정보는 진단에 도움이 되도록 이슈에 추가됩니다. 제출하기 전에 GitHub에서 검토하세요.",
+        "languageNote": "관리자가 처리할 수 있도록 이슈는 영어로 작성됩니다.",
+        "submit": "GitHub에 이슈 열기",
+        "cancel": "취소",
+        "close": "닫기"
+      },
+      "field": {
+        "version": "앱 버전",
+        "view": "활성 화면",
+        "locale": "언어",
+        "theme": "테마",
+        "screen": "화면",
+        "browser": "브라우저",
+        "time": "시간",
+        "error": "오류"
+      },
+      "sent": {
+        "title": "새 탭에서 이슈가 열렸습니다",
+        "body": "GitHub에서 미리 작성된 세부 정보를 검토한 후 그곳에서 이슈를 제출하세요.",
+        "copied": "스크린샷이 복사되었습니다 - Ctrl/⌘+V로 이슈에 붙여넣으세요.",
+        "saved": "스크린샷이 다운로드 폴더에 저장되었습니다 - 이슈로 끌어다 놓으세요.",
+        "failed": "스크린샷을 자동으로 첨부하지 못했습니다 - GitHub에서 직접 추가할 수 있습니다."
+      }
+    },
+    "support": {
+      "kofi": "FilaMind Flow 후원하기"
+    }
+  }
+}

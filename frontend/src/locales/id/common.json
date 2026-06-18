@@ -1,0 +1,48 @@
+{
+  "common": {
+    "appName": "FilaMind Flow",
+    "errors": {
+      "backendUnreachable": "Tidak dapat menjangkau backend FilaMind - pastikan layanan filamind-flow berjalan dan dapat dijangkau."
+    }
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Terang",
+    "dark": "Gelap",
+    "neon": "Neon",
+    "contrast": "Kontras Tinggi",
+    "menu": "Pilih tema",
+    "midnight": "Tengah Malam",
+    "ocean": "Samudra",
+    "sunset": "Senja",
+    "desc": {
+      "neon": "Malam ungu pekat dengan pendar elektrik - tampilan khasnya",
+      "midnight": "Gelap biru tua profesional",
+      "dark": "Gelap abu netral modern",
+      "ocean": "Hijau toska pekat dengan aksen akua",
+      "sunset": "Ungu plum hangat dengan aksen ambar",
+      "light": "Terang Neo-Brutalis yang bersih",
+      "contrast": "Keterbacaan maksimal (a11y)"
+    }
+  },
+  "configApply": {
+    "title": "Terapkan ke printer.cfg…",
+    "hint": "Menulis blok ini ke file yang dipilih melalui gerbang pengaman: section yang sudah ada digabung parameter demi parameter (baris lainnya tetap), yang belum ada akan ditambahkan. Cadangan dibuat lebih dulu; ditolak saat mencetak atau jika file berubah di disk.",
+    "target": "File tujuan",
+    "ack": "Saya sudah meninjau blok ini dan ingin menulisnya",
+    "apply": "Terapkan",
+    "applying": "Menerapkan…",
+    "busy": "Printer sedang sibuk (atau operasi lain sedang berjalan) - coba lagi saat idle.",
+    "stale": "File berubah di disk saat menerapkan - tidak ada yang ditulis. Coba lagi.",
+    "saved": "Tersimpan (cadangan: {backup}).",
+    "added": "ditambahkan [{section}]: {params}",
+    "updated": "diperbarui [{section}]: {params}",
+    "noop": "Semuanya sudah pada nilai ini - tidak ada yang berubah.",
+    "restartHint": "Klipper masih menjalankan nilai lama sampai firmware di-restart.",
+    "restart": "Restart firmware…",
+    "restartConfirm": "Konfirmasi restart",
+    "restarting": "Me-restart…",
+    "restarted": "Perintah restart firmware terkirim.",
+    "cancel": "Batal"
+  }
+}

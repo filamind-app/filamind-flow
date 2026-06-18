@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "Uygulamanın denetleyebildiği her şeyi tek bir salt-okunur taramayla kontrol eder - pin çakışmaları, sürücü değerleri, yapılandırma kayması, proje lint'i, yazılım senkronizasyonu, donanım değişiklikleri ve kurulum sağlığı - A-F olarak notlandırılır. Her bulgu, onu düzelten widget'a bağlanır.",
+    "scanning": "Taranıyor…",
+    "rescan": "Tekrar tara",
+    "scoreLine": "Puan {score} / 100",
+    "counts": "{errors} hata · {warnings} uyarı",
+    "scoreHint": "Şeffaf puanlama: 100 − her hata için 25 − her uyarı için 8. Kontrol edilemeyen öğeler aleyhinize sayılmaz.",
+    "allClear": "Her şey yolunda.",
+    "notChecked": "Kontrol edilemedi (yazıcıya erişilemiyor veya referans yok).",
+    "assessment": {
+      "healthy": "Sağlıklı - uygulamanın denetleyebildiği her şey iyi görünüyor.",
+      "attention": "Genel olarak sağlıklı, ancak {pillar} dikkat gerektiriyor.",
+      "critical": "{pillar} düzeltilmeye değer bir sorun içeriyor."
+    },
+    "pillars": {
+      "title": "Sağlık dökümü",
+      "notMeasured": "ölçülmedi"
+    },
+    "pillar": {
+      "config": "Yapılandırma bütünlüğü",
+      "firmware": "Firmware senkronizasyonu",
+      "services": "Servisler",
+      "tuning": "Input shaping",
+      "flow": "Maksimum akış"
+    },
+    "services": {
+      "title": "Servisler",
+      "active": "aktif",
+      "inactive": "durduruldu",
+      "none": "Bildirilen servis yok."
+    },
+    "stats": {
+      "title": "Genel bakış",
+      "maxFlow": "Maksimum akış",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} senkronize değil",
+      "allSynced": "tümü senkronize",
+      "none": "Henüz ölçüm yok."
+    },
+    "category": {
+      "pins": "Pin kablolaması",
+      "drivers": "Sürücü değerleri",
+      "drift": "Yapılandırma kayması",
+      "project": "Yapılandırma projesi",
+      "firmware": "Firmware senkronizasyonu",
+      "hardware": "Donanım değişiklikleri",
+      "install": "Kurulum sağlığı"
+    },
+    "status": {
+      "ok": "Tamam",
+      "warn": "Uyarılar",
+      "fail": "Sorunlar",
+      "unknown": "Kontrol edilmedi"
+    },
+    "link": {
+      "config_section": "Yapılandırma Düzenleyici",
+      "config_file": "Yapılandırma Düzenleyici",
+      "stepper": "Motor Sürücüleri",
+      "topology_node": "Makine Haritası",
+      "widget": "Aç"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "{mcu} üzerindeki {pin} pini birden fazla bölümde atanmış.",
+        "caveat": "{mcu} üzerindeki {pin} pini bir elektronik uyarısı taşıyor."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A, ~{cap} A sürücü tavanını aşıyor.",
+        "near_driver_cap": "{section}: run_current {run_current} A, ~{cap} A tavanın %10'u içinde.",
+        "over_motor_rating": "{section}: run_current {run_current} A, {motor} değerini ({max_current} A) aşıyor.",
+        "near_motor_rating": "{section}: run_current {run_current} A, {motor} değerinin ({max_current} A) %10'u içinde.",
+        "odd_microsteps": "{section}: microsteps {microsteps} ikinin kuvveti değil."
+      },
+      "drift": {
+        "pending": "Klipper'da kaydedilmemiş SAVE_CONFIG değişiklikleri bekliyor.",
+        "param": "[{section}] {key}: disk {disk} ≠ canlı {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: \"{message}\" include'u hiçbir dosyaya işaret etmiyor.",
+        "orphan_driver": "{file}: \"{message}\" sürücü bölümünün eşleşen bir stepper'ı yok."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: firmware {mcu_version}, host {host_version} ile farklı."
+      },
+      "hardware": {
+        "changed": "{mcu}: donanım değişti ({kind}).",
+        "no_baseline": "Henüz kaydedilmiş donanım referansı yok - değişiklikleri algılamak için Makine Haritası'nda bir anlık görüntü kaydedin."
+      },
+      "install": {
+        "check_failed": "Kurulum kontrolü başarısız: {name} - {detail}."
+      }
+    },
+    "help": {
+      "guide": "Yardım",
+      "guideTitle": "Machine Doctor hakkında",
+      "close": "Kapat",
+      "howToRead": "Nasıl okunur",
+      "steps": [
+        "Yazıcının tamamında tek bir salt-okunur kontrol çalıştırmak için Tekrar tara'ya basın.",
+        "En zayıf noktayı görmek için A-F notunu ve sütun çubuklarını okuyun.",
+        "Sorunu düzelten widget'a doğrudan geçmek için herhangi bir bulgunun bağlantısını açın."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Taramanın kapsamı",
+          "body": "Uygulamanın denetleyebildiği her şey üzerinde tek bir salt-okunur geçiş - pin çakışmaları, sürücü değerleri, kaydedilen ve canlı yapılandırma arasındaki kayma, proje lint'i, firmware senkronizasyonu, referansınıza göre donanım değişiklikleri ve kurulum sağlığı. Yazıcıda asla bir şey çalıştırmaz."
+        },
+        "grade": {
+          "title": "A-F notu",
+          "body": "Her sağlık sütunu (yapılandırma bütünlüğü, firmware senkronizasyonu, servisler, input shaping, maksimum akış) puanlanır ve en zayıf olanlar genel notu aşağı çeker. Puan satırı, notun tam olarak nasıl elde edildiğini gösterir - hiçbir şey gizlenmez."
+        },
+        "fixes": {
+          "title": "Düzeltmeye-atla bağlantıları",
+          "body": "Her bulgu, onu çözen widget'a (Yapılandırma Düzenleyici, Motor Sürücüleri, Makine Haritası…) doğrudan bağlanan bir düğme taşır; böylece sorundan düzeltmeye tek tıkla geçersiniz."
+        },
+        "glossary": {
+          "title": "Burada kullanılan terimler"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Not (A-F)",
+          "def": "Sütun puanlarından türetilen, yazıcının sağlığını özetleyen tek bir harf; A sağlıklı, F dikkat gerektiriyor demektir."
+        },
+        "pillar": {
+          "term": "Sütun",
+          "def": "Bağımsız olarak puanlanan bir sağlık kategorisi - örn. yapılandırma bütünlüğü, firmware senkronizasyonu, servisler, input shaping, maksimum akış."
+        },
+        "finding": {
+          "term": "Bulgu",
+          "def": "Taramanın algıladığı belirli bir sorun; önem derecesi ve onu düzelten widget'a bir bağlantı ile birlikte."
+        }
+      }
+    }
+  }
+}

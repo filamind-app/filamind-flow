@@ -1,0 +1,268 @@
+{
+  "boardTopology": {
+    "intro": "프린터의 컨트롤 보드가 어떻게 연결되는지 확인하세요. 호스트(SBC)와 통신하는 모든 MCU를 연결 유형과 함께 보여주며, 보드/칩을 최대한 추정합니다 - 설정에서 실시간으로 읽어옵니다.",
+    "help": {
+      "guide": "도움말",
+      "guideTitle": "보드 토폴로지 소개",
+      "close": "닫기",
+      "howToRead": "읽는 방법",
+      "steps": [
+        "호스트(SBC, 예: Raspberry Pi 또는 CB1)가 맨 위에 위치합니다.",
+        "각 MCU 카드는 연결 방식(USB / CAN bus / UART)과 칩을 보여줍니다.",
+        "연결 식별자가 알려진 보드와 일치하면 보드 추정값이 표시됩니다."
+      ],
+      "topics": {
+        "views": {
+          "title": "물리적 뷰 vs 논리적 뷰",
+          "body": "같은 보드를 두 가지 방식으로 그립니다. 물리적 뷰는 기기가 실제로 어떻게 구성되어 있는지 보여줍니다. 통합 SBC는 함께 출하되는 메인보드 안에 그려지고, CAN 툴헤드는 공유 백본 레일에 연결되며, USB/UART 보드는 별도 유닛으로 표시됩니다. 논리적 뷰는 Klipper가 보는 방식을 보여줍니다. 호스트가 맨 위에 있고 각 MCU는 시리얼 링크로 연결된 하위 노드로 표시됩니다. 물리적/논리적 스위치로 전환하세요."
+        },
+        "mcus": {
+          "title": "MCU",
+          "body": "MCU는 모터, 히터, 센서를 제어하는 마이크로컨트롤러 보드입니다. 프린터에는 최소 하나(메인보드)가 있으며, 많은 경우 툴헤드 보드를, 때로는 프로브나 LED 보드를 추가합니다. 이 패널은 Klipper가 인식한 모든 `[mcu]` 섹션을 나열합니다."
+        },
+        "connections": {
+          "title": "연결 유형",
+          "body": "USB - USB를 통한 시리얼 링크(일반적인 메인보드 연결). CAN bus - 공유 2선식 버스로, 툴헤드 보드에 흔히 사용됩니다. UART - GPIO를 통한 직접 시리얼 링크. 유형은 각 MCU의 `serial` / `canbus_uuid` 설정으로부터 추론됩니다."
+        },
+        "detection": {
+          "title": "감지 작동 방식",
+          "body": "칩과 보드는 연결 식별자(시리얼 경로 또는 CAN UUID)를 패턴 표와 대조하고, 설정에서 사용하는 핀의 핀맵 지문을 함께 사용하여 추정합니다. 보드 추정값에는 일치 신뢰도가 표시되며, 일치하는 것이 없으면 칩/보드가 \"unknown\"으로 표시됩니다 - 연결 자체는 그래도 표시됩니다."
+        },
+        "override": {
+          "title": "보드 확인 또는 변경",
+          "body": "시리얼 ID는 보통 칩만 알려주므로 보드 추정값이 누락되거나 틀릴 수 있습니다. \"이 보드 확인\"으로 올바른 추정값을 고정하거나, \"보드 변경…\" / \"보드 설정…\"으로 카탈로그에서 올바른 보드를 선택하세요. 선택한 값은 호스트에 저장되어 매번 읽을 때 재사용됩니다. \"지우기\"는 자동 추정으로 되돌립니다."
+        },
+        "glossary": {
+          "title": "용어집",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "마이크로컨트롤러 유닛 - Klipper 펌웨어를 실행하는 컨트롤 보드(메인보드, 툴헤드 등)."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "고유 UUID로 보드를 연결하는 2선식 공유 버스 - 툴헤드 배선에 많이 사용됩니다."
+        },
+        "host": {
+          "term": "호스트 / SBC",
+          "def": "Klipper를 실행하고 MCU와 통신하는 싱글 보드 컴퓨터(Pi, CB1, …)."
+        }
+      }
+    },
+    "host": {
+      "label": "호스트",
+      "role": "싱글 보드 컴퓨터 - Klipper 실행"
+    },
+    "mcu": {
+      "chip": "칩",
+      "board": "보드",
+      "unknown": "unknown",
+      "identifier": "식별자",
+      "confidence": "{pct}% 일치",
+      "viewBoard": "보드 상세 보기",
+      "hideBoard": "상세 숨기기"
+    },
+    "graph": {
+      "viewLabel": "다이어그램 뷰",
+      "view": {
+        "physical": "물리적",
+        "logical": "논리적"
+      },
+      "integrated": "온보드 SBC",
+      "integratedNote": "호스트 SBC가 {board} 메인보드에 내장되어 있습니다.",
+      "selectPrompt": "맵에서 보드나 MCU를 선택하면 자세히 볼 수 있습니다.",
+      "aria": "기기 맵: 호스트와 {n}개의 MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "재전송 {n}회",
+        "load": "부하 {pct}%"
+      },
+      "health": {
+        "title": "링크 상태",
+        "ok": "정상",
+        "warn": "성능 저하",
+        "out": "펌웨어 불일치"
+      }
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "unknown",
+      "via": "{type} 경유"
+    },
+    "count": "{n}개 MCU",
+    "states": {
+      "loading": "토폴로지를 읽는 중…",
+      "unreachable": "프린터에 연결할 수 없습니다.",
+      "empty": "설정에서 MCU를 찾을 수 없습니다.",
+      "retry": "다시 시도",
+      "refresh": "새로고침"
+    },
+    "board": {
+      "suggested": "추천",
+      "ports": "{n}개 포트",
+      "specsTitle": "사양",
+      "portsTitle": "포트",
+      "none": "이 보드의 카탈로그 상세 정보가 아직 없습니다.",
+      "noMatch": "아직 일치하는 보드가 없습니다 - 아래에서 확인하거나 설정하세요.",
+      "loading": "보드를 불러오는 중…",
+      "links": {
+        "title": "링크",
+        "product": "제품",
+        "repo": "저장소",
+        "wiki": "위키",
+        "pinout": "핀아웃",
+        "schematic": "회로도",
+        "datasheet": "데이터시트",
+        "image": "사진"
+      },
+      "portCat": {
+        "motor": "모터",
+        "heater_hotend": "핫엔드 히터",
+        "heater_bed": "베드 히터",
+        "accelerometer": "가속도계",
+        "filament_sensor": "필라멘트 센서",
+        "fan": "팬",
+        "probe": "프로브",
+        "other": "기타",
+        "power": "전원",
+        "thermistor": "서미스터",
+        "usb": "USB",
+        "can": "CAN",
+        "swd": "SWD",
+        "display": "디스플레이",
+        "rgb": "RGB",
+        "network": "네트워크",
+        "endstop": "엔드스톱",
+        "wifi": "Wi-Fi",
+        "spi": "SPI",
+        "uart": "UART"
+      },
+      "spec": {
+        "mcu": "MCU",
+        "arch": "아키텍처",
+        "flash_method": "플래시 방식",
+        "voltage": "전압",
+        "driver_slots": "드라이버 슬롯",
+        "usb": "USB",
+        "onboard_drivers": "온보드 드라이버",
+        "clock": "클럭",
+        "can": "CAN",
+        "drivers": "드라이버",
+        "dimensions_mm": "치수 (mm)",
+        "role_era": "역할 / 세대",
+        "kinematics": "키네마틱스",
+        "build_volume_mm": "출력 영역 (mm)",
+        "bed": "베드",
+        "hotend": "핫엔드",
+        "stock_extruder": "기본 익스트루더",
+        "year": "연도",
+        "control_board": "컨트롤 보드",
+        "stock_drivers": "기본 드라이버",
+        "uart": "UART",
+        "connectivity": "연결성",
+        "max_hotend_temp": "최대 핫엔드 온도",
+        "max_bed_temp": "최대 베드 온도",
+        "spi": "SPI",
+        "notes": "비고",
+        "eth_wifi": "Eth/WiFi",
+        "class": "분류",
+        "supported_drivers": "지원 드라이버",
+        "form_factor": "폼 팩터",
+        "flash": "플래시",
+        "all_metal_accel": "올메탈 / 가속도계",
+        "ethernet_wifi": "이더넷/WiFi",
+        "i2c": "I2C",
+        "driver": "드라이버",
+        "i2cspi": "I2C/SPI",
+        "printer_board": "프린터 / 보드",
+        "accelerometer": "가속도계",
+        "printers": "프린터",
+        "bootloader": "부트로더",
+        "flash_offset": "플래시 오프셋",
+        "soc": "SoC",
+        "ram": "RAM",
+        "role": "역할",
+        "connection": "연결",
+        "storage": "저장소",
+        "host": "호스트"
+      },
+      "class": {
+        "mainboard": "메인보드",
+        "printer_preset": "프린터 프리셋",
+        "toolhead": "툴헤드",
+        "host": "호스트",
+        "expansion": "확장 보드"
+      }
+    },
+    "components": {
+      "title": "구성 요소",
+      "motor": "모터",
+      "driver": "드라이버",
+      "heater": "히터",
+      "fan": "팬",
+      "sensor": "센서"
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "상세",
+        "atlas": "핀 아틀라스"
+      },
+      "summary": "{used}/{total} 핀 사용 · {free} 여유",
+      "loading": "핀 맵을 읽는 중…",
+      "failed": "핀 맵을 읽을 수 없습니다.",
+      "unavailable": "이 보드의 핀 맵이 아직 없습니다.",
+      "search": "핀, 신호, 섹션 검색…",
+      "freeOnly": "여유 핀만",
+      "noMatch": "일치하는 핀이 없습니다.",
+      "other": "기타",
+      "conflict": "핀 충돌",
+      "caveat": "배선 주의사항"
+    },
+    "override": {
+      "confirmed": "사용자 확인됨",
+      "confirm": "이 보드 확인",
+      "change": "보드 변경…",
+      "set": "보드 설정…",
+      "clear": "지우기",
+      "pickPlaceholder": "보드 카탈로그 검색…",
+      "hint": "선택한 값은 호스트에 저장되어 이제부터 이 MCU에 사용됩니다."
+    },
+    "sync": {
+      "synced": "펌웨어 동기화됨",
+      "outOfSync": "펌웨어 동기화 안 됨"
+    },
+    "snapshot": {
+      "save": "스냅샷 저장",
+      "copy": "요약 복사",
+      "copied": "복사됨!",
+      "none": "저장된 기준점이 없습니다 - 향후 변경을 감지하려면 스냅샷을 저장하세요.",
+      "unchanged": "스냅샷 이후 하드웨어 변경 없음",
+      "changed": "스냅샷 이후 변경 {n}건",
+      "summaryTitle": "FilaMind - 기기 맵",
+      "change": {
+        "added": "MCU “{mcu}” 추가됨",
+        "removed": "MCU “{mcu}” 제거됨",
+        "board_changed": "“{mcu}” 보드 변경: {before} → {after}",
+        "connection_changed": "“{mcu}” 연결 변경: {before} → {after}",
+        "chip_changed": "“{mcu}” 칩 변경: {before} → {after}",
+        "components_changed": "“{mcu}” 구성 요소 수 변경: {before} → {after}"
+      },
+      "noCompare": "비교할 수 없습니다 - 프린터에 연결할 수 없습니다.",
+      "summaryHost": "호스트: {name}",
+      "summaryIntegrated": "{board}에 SBC 통합됨",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "보드 {board}",
+      "summaryComponents": "구성 요소 {n}개"
+    },
+    "jump": {
+      "section": "설정 편집기에서 이 섹션 열기",
+      "drivers": "모터 드라이버에서 열기",
+      "firmware": "펌웨어 관리자 열기"
+    }
+  }
+}

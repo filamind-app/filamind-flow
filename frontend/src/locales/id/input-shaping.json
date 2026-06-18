@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "apa ini?",
+      "topics": {
+        "glossary": {
+          "title": "Istilah input shaping"
+        },
+        "analyze": {
+          "title": "Menganalisis CSV resonansi",
+          "body": "Ambil data di printer dengan TEST_RESONANCES (atau gunakan 🔴 Live tools), lalu muat file .csv di sini. FilaMind menjalankan perhitungan shaper milik Klipper sendiri dan merekomendasikan shaper + frekuensi. Kerjakan file X lalu file Y secara bergantian - keduanya digabung menjadi satu blok config."
+        },
+        "grade": {
+          "title": "Arti nilai A-F",
+          "body": "Skor kualitas pengukuran dari lima bagian setara: kejelasan puncak, sisa getaran, smoothing, frekuensi (40-90 Hz sehat), dan seberapa bersih resonansinya. A/B → terapkan; C → bisa dipakai, baca sekilas tipsnya; D/F → perbaiki mekanik lalu uji ulang."
+        },
+        "diagnostics": {
+          "title": "Membaca diagnostik",
+          "body": "Setiap kartu memetakan pengukuran ke kemungkinan penyebab mekanis beserta solusinya. Lime = sehat, kuning = perlu diperbaiki, merah = perbaiki sebelum mempercayai hasilnya. Terapkan solusi, jalankan ulang, dan amati kartu berubah hijau."
+        },
+        "chart": {
+          "title": "Membaca grafik frekuensi",
+          "body": "Kurva solid adalah energi getaran terukur (total X+Y+Z plus tiap sumbu). Tanda ▲ menandai resonansi dominan. Kurva samar adalah sisa getaran tiap shaper di seluruh frekuensi - yang direkomendasikan (merah muda) turun paling dalam di puncak Anda."
+        },
+        "shapers": {
+          "title": "Memilih shaper",
+          "body": "Setiap baris menyeimbangkan sisa getaran dengan smoothing. ZV / MZV paling ringan (resonansi tunggal yang bersih); EI lebih tangguh; 2-/3-hump menangani resonansi lebar atau ganda tapi lebih banyak smoothing. FilaMind menyorot keseimbangan terbaik."
+        },
+        "config": {
+          "title": "Menerapkan config",
+          "body": "Blok [input_shaper] ini membawa hasil X dan/atau Y Anda. Salin ke printer.cfg dan restart Klipper. Lencananya menunjukkan sumbu mana yang sudah ditangkap - tangkap X dan Y agar bloknya lengkap."
+        },
+        "noise": {
+          "title": "Cek derau",
+          "body": "Membaca getaran diam akselerometer tanpa bergerak - cek pemasangan cepat sebelum pengujian. Aturan praktis Klipper: ~1-100 normal, ~1000+ berarti sensor atau kabel longgar. Perbaiki dudukan yang berisik dulu atau setiap pengujian jadi tidak andal."
+        },
+        "belts": {
+          "title": "Perbandingan belt (CoreXY)",
+          "body": "Memicu tiap diagonal belt dan menumpuk kedua responsnya. Frekuensi puncak yang cocok = tegangan merata. Selisih berarti belt berfrekuensi lebih rendah lebih kendur - kencangkan dan jalankan ulang sampai puncaknya sejajar."
+        },
+        "axesMap": {
+          "title": "Deteksi axes-map",
+          "body": "Menggerakkan toolhead sedikit di X, lalu Y, lalu Z untuk mempelajari cara akselerometer terpasang, dan memberi Anda baris axes_map untuk printer.cfg. Jalankan sekali setelah memasang atau memindahkan sensor agar setiap pengujian berikutnya membaca sumbu yang benar."
+        },
+        "sustain": {
+          "title": "Frekuensi sustain",
+          "body": "Menahan toolhead bergetar pada satu frekuensi agar Anda bisa menyentuh belt, carriage, dan rangka dengan tangan untuk menemukan yang bergetar. Spektrogram + timeline menunjukkan apakah frekuensi target Anda dominan dan kapan sentuhan menenangkannya."
+        },
+        "vibrations": {
+          "title": "Profil getaran",
+          "body": "Menyapu banyak kecepatan di sepanjang tiap sudut motor untuk memetakan di mana mesin berjalan paling halus dan kecepatan mana yang mengenai resonansi. Utamakan kecepatan terhalus untuk gerak cetak / travel dan hindari yang ditandai. % Simetri menunjukkan seberapa cocok kedua motor."
+        },
+        "guided": {
+          "title": "Terpandu vs. manual",
+          "body": "Terpandu menuntun seluruh alur - Derau → Belt → Shaper X → Shaper Y → Getaran → Pressure - dengan gerbang lolos / gagal di tiap langkah. Gunakan untuk tuning lengkap. Beralih ke 📈 Analyze atau 🔴 Live tools saat Anda hanya ingin satu alat tertentu."
+        },
+        "history": {
+          "title": "Riwayat & tren",
+          "body": "Setiap kalibrasi disimpan (di browser ini) beserta nilai dan skornya. Panah ▲/▼ membandingkan satu run dengan pengujian sebelumnya pada sumbu yang sama - naik berarti tangkapan lebih bersih atau sumbu lebih kaku, turun berarti lebih banyak derau atau sumbu lebih lunak."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input shaper",
+          "def": "Filter yang diterapkan Klipper pada gerakan untuk meredam getaran utama printer, sehingga Anda bisa mencetak lebih cepat tanpa ringing / ghosting."
+        },
+        "resonance": {
+          "term": "Resonansi",
+          "def": "Frekuensi (Hz) saat sebuah sumbu bergetar secara alami ketika didorong. Lebih rendah = sumbu lebih lunak / berat; ~40-90 Hz adalah printer yang sehat."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Power spectral density - seberapa banyak energi getaran berada di tiap frekuensi. Puncak tertinggi adalah resonansi yang dituju shaper."
+        },
+        "smoothing": {
+          "term": "Smoothing",
+          "def": "Efek samping shaping yang sedikit membulatkan sudut tajam. Lebih rendah lebih baik; ≤0.1 minimal, >0.2 mulai melembutkan detail."
+        },
+        "vibrationPct": {
+          "term": "Getaran %",
+          "def": "Seberapa banyak resonansi tersisa setelah shaper. Lebih rendah lebih baik; ≤2% sangat baik, ≤5% masih oke."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "Akselerasi yang dapat ditahan shaper tanpa terlalu banyak smoothing - nilai SET_VELOCITY_LIMIT / printer.cfg yang disarankan."
+        }
+      },
+      "guide": "Panduan",
+      "guideTitle": "Panduan Input Shaping",
+      "close": "Tutup"
+    },
+    "grade": {
+      "clarity": {
+        "label": "Kejelasan puncak",
+        "value": "{ratio}×",
+        "note": {
+          "none": "Tidak ada spektrum untuk dinilai.",
+          "good": "Puncak tajam, jauh di atas derau.",
+          "ok": "Puncak terlihat di atas derau.",
+          "poor": "Puncak lemah - berisik atau sangat kaku."
+        }
+      },
+      "vibration": {
+        "label": "Sisa getaran",
+        "value": "{pct}%",
+        "note": {
+          "good": "Hampir semua resonansi hilang.",
+          "ok": "Sebagian besar resonansi hilang.",
+          "poor": "Masih ada getaran yang signifikan."
+        }
+      },
+      "smoothing": {
+        "label": "Smoothing",
+        "note": {
+          "good": "Pembulatan sudut minimal.",
+          "ok": "Ada pembulatan pada accel tinggi.",
+          "poor": "Smoothing berat - membulatkan sudut."
+        }
+      },
+      "freq": {
+        "label": "Frekuensi",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "Tidak ada frekuensi yang ditemukan.",
+          "good": "Sumbu sehat dan kaku.",
+          "ok": "Sedikit lunak atau sangat kaku.",
+          "soft": "Sumbu lunak / berat.",
+          "high": "Luar biasa tinggi."
+        }
+      },
+      "shaper": {
+        "label": "Bentuk resonansi",
+        "note": {
+          "clean": "Resonansi tunggal yang bersih.",
+          "robust": "Resonansi tunggal, shaper tangguh.",
+          "twin": "Resonansi lebar atau ganda.",
+          "multiple": "Resonansi ganda.",
+          "atypical": "Shaper tidak lazim."
+        }
+      },
+      "verdict": {
+        "a": "Sangat baik - tangkapan bersih, sumbu tertata baik.",
+        "b": "Baik - hasil solid, sedikit ruang untuk perbaikan.",
+        "c": "Cukup - bisa dipakai; lihat saran di bawah.",
+        "d": "Buruk - disarankan tuning mekanis + uji ulang.",
+        "f": "Tidak andal - jalankan ulang pengujian (cek dudukan sensor).",
+        "none": "Tidak ada hasil yang bisa dipakai - jalankan ulang TEST_RESONANCES."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "Tidak ada resonansi yang bisa dipakai",
+        "advice": "Jalankan ulang TEST_RESONANCES. Pastikan akselerometer terhubung dan terpasang kuat ke toolhead.",
+        "detail": "tidak ada puncak jelas yang terdeteksi"
+      },
+      "noisy": {
+        "title": "Tangkapan berisik",
+        "advice": "Kencangkan dudukan akselerometer dan jalankan ulang. Hindari kipas atau gerakan lain selama pengujian.",
+        "detail": "rasio sinyal-ke-derau {snr}×"
+      },
+      "lowFreq": {
+        "title": "Frekuensi resonansi rendah",
+        "advice": "Sumbu lunak atau berat - kencangkan belt dan cek kekakuan rangka. Sumbu yang lebih kaku beresonansi lebih tinggi dan mencetak lebih cepat.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Sumbu agak lunak",
+        "advice": "Frekuensi cenderung rendah. Memperkokoh belt atau rangka menaikkannya dan membuat Anda bisa mencetak lebih cepat.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "Smoothing tinggi",
+        "advice": "Akan membulatkan sudut. Pilih shaper yang lebih kaku atau turunkan max_accel.",
+        "detail": "smoothing {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Resonansi ganda",
+        "advice": "Sering kali toolhead, belt, atau bagian yang longgar. Pasang ulang toolhead dan cek ulang tegangan belt."
+      },
+      "vibrationRemains": {
+        "title": "Masih ada getaran",
+        "advice": "Tuning mekanis (belt, rangka, massa toolhead) bisa menurunkannya lagi.",
+        "detail": "{vibrations}% tersisa setelah shaping"
+      },
+      "healthy": {
+        "title": "Sumbu sehat",
+        "advice": "Tangkapan bersih dan sumbu kaku - siap dipakai. Terapkan config dan restart Klipper.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X dan Y berbeda jauh",
+        "advice": "Kekakuan tidak simetris. Cek tegangan belt pada sumbu yang lebih lunak; pada CoreXY pastikan kedua belt cocok dan kencang.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "direkomendasikan",
+        "shaperFreq": "freq shaper",
+        "peakFreq": "freq puncak",
+        "remainingVibr": "sisa getaran",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Belt cocok",
+          "advice": "Kedua respons belt sejajar - tegangan terlihat seimbang."
+        },
+        "differ": {
+          "title": "Belt berbeda",
+          "advice": "Resonansi belt berbeda - kencangkan ulang belt yang lebih kendur sampai kedua puncaknya sejajar."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Sensor tenang",
+          "why": "Bagus untuk dilanjutkan."
+        },
+        "elevated": {
+          "title": "Kurangi derau sensor",
+          "why": "Maks {max} ≥ {threshold}. Matikan kipas toolhead dan cek ulang dudukannya, lalu jalankan ulang."
+        },
+        "bad": {
+          "title": "Perbaiki akselerometer sebelum menguji",
+          "why": "Derau {max} terlalu tinggi - pasang ulang sensor dan cek kabelnya."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Belt seimbang",
+          "why": "Tegangan merata - kalibrasi shaper berikutnya."
+        },
+        "mismatch": {
+          "title": "Kencangkan ulang belt {looser}",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). Kencangkan belt berfrekuensi lebih rendah sampai kedua puncaknya sejajar, lalu jalankan ulang."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Jalankan ulang pada akselerasi lebih rendah",
+          "why": "Terlalu banyak gerak frekuensi rendah yang terekam - turunkan ACCEL (atau naikkan SIZE) agar hanya kecepatan konstan yang diukur, lalu jalankan ulang."
+        },
+        "favour": {
+          "title": "Utamakan ~{speed} mm/s",
+          "why": "Pita terhalus {start}-{end} mm/s - atur kecepatan cetak / travel slicer di sini bila bisa."
+        },
+        "avoid": {
+          "title": "Hindari {shown} mm/s",
+          "why": "Kecepatan ini mengenai resonansi - jauhkan gerak cetak + travel darinya di slicer."
+        },
+        "symmetry": {
+          "title": "Cek tegangan belt / kecocokan motor",
+          "why": "Simetri motor {pct}% rendah - kencangkan ulang belt (bandingkan belt) dan pastikan arus kedua motor cocok."
+        },
+        "fine": {
+          "title": "Getaran terlihat baik",
+          "why": "Tidak ada kecepatan bermasalah yang menonjol."
+        }
+      },
+      "pressure": {
+        "title": "Jalankan menara pressure-advance",
+        "why": "Cetak menara PA, baca ketinggian saat sudut terlihat paling tajam, lalu `SET_PRESSURE_ADVANCE ADVANCE=<value>` dan `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "axes_map yang Anda konfigurasi sudah benar.",
+        "update": "Perbarui config Anda menjadi: {axes_map}",
+        "add": "Tambahkan ini agar setiap grafik Input Shaping membaca X/Y/Z yang selaras."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Derau",
+          "title": "Derau akselerometer",
+          "why": "Pastikan sensor terpasang kokoh sebelum pengujian apa pun (tanpa gerak)."
+        },
+        "belts": {
+          "label": "Belt",
+          "title": "Keseimbangan belt CoreXY",
+          "why": "Cocokkan tegangan kedua belt. Khusus CoreXY - lewati pada cartesian / bed-slinger."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper - X",
+          "why": "Temukan resonansi X dan shaper terbaik."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper - Y",
+          "why": "Temukan resonansi Y dan shaper terbaik."
+        },
+        "vibrations": {
+          "label": "Getaran",
+          "title": "Profil getaran",
+          "why": "Sapu kecepatan × sudut motor untuk menemukan kecepatan terhalus dan resonansi yang harus dihindari."
+        },
+        "pressure": {
+          "label": "Pressure",
+          "title": "Pressure advance",
+          "why": "Atur pressure advance terakhir untuk mempertajam sudut dan seam."
+        },
+        "done": {
+          "label": "Selesai"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Sensor tenang",
+          "warn": "Derau agak tinggi",
+          "failed": "Terlalu berisik - perbaiki dudukan"
+        },
+        "belts": {
+          "passed": "Belt cocok",
+          "differ": "Belt berbeda (Δ{diffPct}%)",
+          "mismatched": "Belt tidak cocok (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "Nilai {letter} - sumbu sehat",
+          "usable": "Nilai C - bisa dipakai",
+          "tune": "Nilai {letter} - tuning + uji ulang"
+        },
+        "vibrations": {
+          "lowFreq": "Terlalu banyak gerak freq rendah - turunkan accel & jalankan ulang",
+          "mismatched": "Motor tidak cocok ({pct}%)",
+          "smoothest": "Terhalus ~{rec} mm/s",
+          "complete": "Profil selesai"
+        }
+      },
+      "ui": {
+        "title": "🧭 Tuning terpandu",
+        "exit": "✕ keluar",
+        "motionReady": "⚠ menggerakkan toolhead - saya siap",
+        "running": "berjalan…",
+        "run": "jalankan",
+        "rerun": "↻ jalankan ulang",
+        "skipBelts": "lewati (bukan CoreXY)",
+        "copyPa": "📋 Salin menara PA",
+        "copied": "✅ Tersalin",
+        "finish": "Selesai →",
+        "nextStep": "Langkah berikutnya →",
+        "skipAnyway": "lewati saja",
+        "complete": "Tuning selesai",
+        "stepFailed": "Langkah gagal",
+        "copyFailed": "Penyalinan gagal - pilih teksnya dan salin secara manual.",
+        "summaryNote": "Tangkapan X dan Y Anda ada di blok gabungan {code} di bawah - salin, lalu restart Klipper. Buka kembali tuning terpandu kapan saja untuk memeriksa ulang.",
+        "beltsNotApplicable": "Perbandingan belt berlaku untuk printer CoreXY - printer ini melaporkan '{kin}', jadi langkah ini dilewati.",
+        "resultsSoFar": "Hasil sejauh ini",
+        "archived": "Tersimpan",
+        "autoSaved": "Tersimpan otomatis ke arsip di printer.",
+        "beltA": "Belt A (1,1)",
+        "beltB": "Belt B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "Direkomendasikan",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Maks accel",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Derau diam maks {max} (normal < {threshold}).",
+        "status": "Status",
+        "maxNoise": "Derau maks",
+        "threshold": "Ambang",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Kecocokan",
+        "beltA": "Puncak Belt A",
+        "beltB": "Puncak Belt B",
+        "difference": "Selisih",
+        "matched": "cocok",
+        "mismatch": "tidak cocok",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Status",
+        "gravity": "Gravitasi",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Derau"
+      },
+      "sustain": {
+        "target": "Target",
+        "dominant": "Dominan",
+        "inBand": "Dalam pita",
+        "onTarget": "Tepat sasaran",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "ya",
+        "no": "tidak"
+      },
+      "vibrations": {
+        "smoothest": "Terhalus",
+        "symmetry": "Simetri",
+        "motorResonance": "Resonansi motor",
+        "avoid": "Hindari",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Terpandu",
+      "tabAnalyze": "📈 Analyze",
+      "tabLive": "🔴 Live tools",
+      "tabHistory": "🕘 Riwayat",
+      "intro": "Atur input shaping dari tangkapan resonansi Klipper - tanpa command line. Baru di sini? Mulai dengan {guided}. Atau pilih {analyze} untuk mengerjakan {csv} sendiri, {live} untuk menangkap di printer, atau {history} untuk meninjau run sebelumnya.",
+      "cfgReady": "printer.cfg siap",
+      "copy": "📋 Salin",
+      "copied": "✅ Tersalin",
+      "archive": "💾 Arsipkan",
+      "saved": "✅ Tersimpan",
+      "advanced": "⚙ lanjutan",
+      "compareCsvs": "⇄ bandingkan CSV",
+      "blankDefault": "kosong = default Klipper",
+      "auditTitle": "Audit",
+      "refresh": "↻ segarkan",
+      "auditEmpty": "Belum ada hasil - jalankan tuning, atau simpan satu ke arsip.",
+      "trendTitle": "skor {score} vs pengujian {axis} sebelumnya",
+      "sourceSaved": "💾 tersimpan",
+      "sourceLocal": "lokal",
+      "recommended": "Direkomendasikan",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "sumbu {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "Tidak ada shaper yang direkomendasikan untuk data ini.",
+      "measurementQuality": "Kualitas pengukuran",
+      "scoreOutOf": "{v}/100",
+      "hide": "sembunyikan",
+      "details": "detail",
+      "chartAria": "Respons frekuensi dan shaper",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "direkomendasikan",
+      "legendPeak": "▲ puncak",
+      "legendAxisHint": "frekuensi (Hz) → · solid = terukur · samar = sisa shaper",
+      "colShaper": "shaper",
+      "colFreq": "freq",
+      "colVibr": "getaran",
+      "colSmooth": "smooth",
+      "colAccel": "accel",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "bersihkan",
+      "pasteHint": "Tempel ke {cfg} Anda, lalu restart Klipper.",
+      "errAnalysisFailed": "Analisis gagal",
+      "errCopyFailed": "Penyalinan gagal - pilih teksnya dan salin secara manual.",
+      "errSaveFailed": "Penyimpanan ke arsip gagal"
+    },
+    "fromPrinter": {
+      "liveTools": "Live tools",
+      "intro": "⏳ Ini menggerakkan toolhead dan bisa memakan {duration} (perbandingan belt menjalankan dua sweep penuh) - biarkan halaman ini terbuka sampai hasilnya muncul.",
+      "introDuration": "1-5 menit",
+      "confirmMoves": "⚠ menggerakkan toolhead - saya siap",
+      "axisX": "sumbu X",
+      "axisY": "sumbu Y",
+      "noiseTitle": "🔊 Cek derau",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "mengukur…",
+      "noiseHint": "tanpa gerak · jalankan sebelum pengujian",
+      "noiseVerdictQuiet": "✅ tenang",
+      "noiseVerdictElevated": "⚠ tinggi",
+      "noiseVerdictTooNoisy": "⛔ terlalu berisik",
+      "noiseMaxNormal": "maks {max} · normal < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Uji langsung",
+      "liveBtn": "jalankan TEST_RESONANCES",
+      "liveBtnBusy": "berjalan…",
+      "liveDesc": "Melakukan homing printer bila perlu, lalu menjalankan TEST_RESONANCES pada sumbu yang dipilih (butuh akselerometer + {section}). Ditolak saat mencetak.",
+      "beltsTitle": "🟰 Bandingkan belt",
+      "beltsBtn": "bandingkan belt",
+      "beltsBtnBusy": "membandingkan…",
+      "beltsBtnTitle": "CoreXY: picu tiap diagonal belt dan tumpuk responsnya",
+      "beltsDesc": "Khusus CoreXY: menjalankan dua sweep di sepanjang diagonal belt dan menumpuknya. Ditolak saat mencetak.",
+      "axesTitle": "🧭 Axes map",
+      "axesBtn": "deteksi axes_map",
+      "axesBtnBusy": "mendeteksi…",
+      "axesBtnTitle": "Gerakkan +X/+Y/+Z untuk mendeteksi orientasi akselerometer (axes_map)",
+      "axesDesc": "Menggerakkan ~30 mm di X, lalu Y, lalu Z untuk mendeteksi orientasi akselerometer. Ditolak saat mencetak.",
+      "beltResultTitle": "Perbandingan belt",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "Respons frekuensi Belt A vs B",
+      "beltLegendA": "belt A (1,1)",
+      "beltLegendB": "belt B (1,-1)",
+      "axesResultTitle": "Axes map",
+      "copy": "📋 Salin",
+      "copied": "✅ Tersalin",
+      "mappingVirtual": " (virtual)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "Urutan kecepatan sumbu",
+      "zoneVirtual": "virtual",
+      "zonePct": "{pct}%",
+      "legendAccelX": "accel x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "kemiringan {x}° / {y}° / {z}°",
+      "gravity": "gravitasi {v} m/s²",
+      "noiseValue": "derau {v}",
+      "sustainTitle": "🎯 Frekuensi sustain",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "dtk",
+      "sustainBtn": "jalankan",
+      "sustainBtnBusy": "menahan…",
+      "sustainDesc": "Membuat toolhead bergetar di tempat dekat frekuensi tersebut - sentuh belt, toolhead dan rangka untuk menemukan yang bergetar. Ditolak saat mencetak.",
+      "sustainHolding": "✅ menahan",
+      "sustainOffTarget": "⚠ meleset",
+      "sustainPeak": "puncak {freq} Hz · {pct}% dalam pita",
+      "specChartLabel": "Spektrogram frekuensi-waktu",
+      "energyChartLabel": "Energi getaran seiring waktu",
+      "specAxes": "freq → · waktu ↓",
+      "energyLegend": "energi vs waktu - penurunan sian adalah tempat sentuhan membantu",
+      "vibTitle": "📊 Profil getaran",
+      "vibMax": "maks",
+      "vibStep": "langkah",
+      "vibUnit": "mm/s",
+      "vibBtn": "jalankan sweep",
+      "vibBtnBusy": "menyapu…",
+      "vibDesc": "Menyapu kecepatan × sudut motor di sekitar pusat bed - run yang lama (menit). {step} lebih kecil lebih halus tapi lebih lambat. Melaporkan kecepatan terhalus, kecepatan yang harus dihindari, simetri motor dan resonansi motor. Ditolak saat mencetak.",
+      "vibDescStep": "langkah",
+      "errNoiseCheck": "Cek derau gagal",
+      "errLiveTest": "Uji langsung gagal",
+      "errBeltComparison": "Perbandingan belt gagal",
+      "errAxesMapDetection": "Deteksi axes-map gagal",
+      "errCopyFailed": "Penyalinan gagal - pilih teksnya dan salin secara manual.",
+      "errSustainTest": "Uji frekuensi sustain gagal",
+      "errVibrationsProfile": "Profil getaran gagal",
+      "vibProgress": "Sweep {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "Memulai sweep…",
+      "vibCancel": "Batalkan sweep",
+      "vibCancelling": "Membatalkan…",
+      "vibCancelled": "Sweep dibatalkan - batas kecepatan dipulihkan.",
+      "vibReattached": "Tersambung kembali: hasil ini selesai saat halaman sedang ditinggalkan.",
+      "beltsCorexyOnly": "Khusus CoreXY - printer ini melaporkan kinematika '{kin}', jadi perbandingan dua belt tidak berlaku."
+    },
+    "vibrationsView": {
+      "title": "Profil getaran",
+      "lowFreqNoise": "⚠ derau freq rendah",
+      "smoothest": "▼ terhalus ~{v} mm/s",
+      "symmetry": "simetri {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "Energi getaran terhadap kecepatan",
+      "axisLegend": "kecepatan (mm/s) → · energi getaran ↑",
+      "smooth": "halus",
+      "avoid": "hindari",
+      "svgPolarLabel": "Energi getaran menurut arah travel",
+      "svgHeatmapLabel": "Heatmap energi getaran menurut sudut dan kecepatan",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "resonansi motor {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "arah terhalus ~{start}-{end}°",
+      "captures": "{n} tangkapan"
+    },
+    "compareView": {
+      "title": "Bandingkan dua tangkapan (A ⇄ B)",
+      "intro": "Sebelum/sesudah perbaikan mekanis, atau sumbu yang sama diuji ulang. (Bandingkan file sumbu yang sama.)",
+      "selectA": "A: pilih",
+      "selectB": "B: pilih",
+      "busy": "…",
+      "compare": "bandingkan",
+      "comparisonFailed": "Perbandingan gagal",
+      "chartAriaLabel": "Power spectral density A vs B",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "Sumber CSV",
+      "tabUpload": "📤 Unggah",
+      "tabHost": "🖥 Dari printer",
+      "selectCsv": "📈 Pilih CSV",
+      "axisTitle": "Sumbu tempat data ini berada",
+      "axisAuto": "sumbu: otomatis",
+      "axisX": "sumbu: X",
+      "axisY": "sumbu: Y",
+      "analyzing": "Menganalisis…",
+      "analyze": "🚀 Analyze",
+      "onHost": "di host printer",
+      "refresh": "↻ segarkan",
+      "noFiles": "Tidak ada CSV resonansi yang ditemukan.",
+      "noFilesInDirs": "Tidak ada CSV resonansi yang ditemukan di {dirs}.",
+      "analyzeFile": "analisis",
+      "saveTitle": "Salin tangkapan ini ke arsip",
+      "save": "💾 simpan",
+      "archive": "Arsip",
+      "archiveEmpty": "Belum ada yang tersimpan - gunakan 💾 simpan di atas, atau \"simpan ke arsip\" di bawah config.",
+      "downloadTitle": "unduh {fn}",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "Tidak dapat menampilkan file printer",
+      "errListArchive": "Tidak dapat menampilkan arsip",
+      "errSave": "Penyimpanan ke arsip gagal",
+      "errDelete": "Penghapusan gagal",
+      "errDownload": "Pengunduhan gagal",
+      "viewChart": "Grafik",
+      "viewChartTitle": "Buka kembali grafik run tersimpan ini"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Terlalu banyak gerak frekuensi rendah yang terekam - turunkan ACCEL (atau naikkan SIZE) dan jalankan ulang agar hanya kecepatan konstan yang diukur.",
+        "smoothest": "Terhalus sekitar {v} mm/s",
+        "avoid": "hindari kecepatan di sekitar {speeds} mm/s",
+        "matched": "motor cocok dengan baik ({pct}% simetri)",
+        "low_symmetry": "simetri motor rendah ({pct}%) - cek tegangan belt",
+        "motor_freq": "resonansi motor ~{f} Hz",
+        "complete": "Profil getaran selesai."
+      },
+      "sustain": {
+        "not_dominant": "Toolhead tidak bergetar terutama pada {freq} Hz (puncak di {peak} Hz) - sumbernya mungkin tidak mencapai sensor toolhead.",
+        "drop": "Menahan {freq} Hz - getaran turun ~{drop}% pada suatu titik; apa pun yang Anda sentuh saat itu adalah kontributor kuat.",
+        "touch": "Menahan {freq} Hz - sentuh belt, toolhead, sambungan gantry dan idler satu per satu; bagian yang menghentikan getaran adalah sumber resonansi Anda."
+      },
+      "axes": {
+        "same_axis": "Sumbu akselerometer yang sama terdeteksi untuk beberapa sumbu mesin",
+        "low_confidence": "Kepercayaan deteksi rendah ({pct}%)",
+        "high_angle_error": "Galat sudut tinggi ({deg}°)",
+        "unusual_gravity": "Pembacaan gravitasi tidak lazim ({g} m/s²)",
+        "high_noise": "Tingkat derau tinggi ({n} mm/s²)",
+        "good": "Kualitas deteksi: baik"
+      }
+    },
+    "proof": {
+      "title": "Bukti tuning",
+      "empty": "Butuh dua hasil terekam pada sumbu ini - ukur sebelum tuning, terapkan shaper, lalu ukur lagi dan simpan keduanya.",
+      "before": "Sebelum",
+      "after": "Sesudah",
+      "samePick": "Pilih dua hasil berbeda untuk dibandingkan.",
+      "metricHead": "Metrik",
+      "delta": "Perubahan",
+      "copy": "Salin laporan",
+      "copied": "Tersalin ✓",
+      "metric": {
+        "score": "Nilai pengukuran",
+        "vibrations": "Sisa getaran %",
+        "smoothing": "Smoothing",
+        "maxAccel": "Maks accel disarankan (mm/s²)",
+        "freq": "Frekuensi shaper (Hz)",
+        "shaper": "Shaper"
+      }
+    }
+  }
+}

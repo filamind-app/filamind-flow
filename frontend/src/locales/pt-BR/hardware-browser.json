@@ -1,0 +1,289 @@
+{
+  "hardwareBrowser": {
+    "intro": "Pesquise uma referência selecionada de hardware para impressão 3D - motores de passo, drivers, placas, sensores, hotends, ventoinhas, hosts, bicos, extrusoras, filamentos e mais - por nome, fabricante, categoria ou qualquer especificação.",
+    "help": {
+      "guide": "Ajuda",
+      "guideTitle": "Sobre o Navegador de Hardware",
+      "close": "Fechar",
+      "howToRead": "Como usar",
+      "steps": [
+        "Digite na caixa de busca para encontrar um nome, fabricante ou qualquer valor de especificação.",
+        "Refine por categoria ou fabricante com os filtros.",
+        "Cada cartão de resultado mostra as especificações do componente; navegue com Anterior / Próximo."
+      ],
+      "topics": {
+        "search": {
+          "title": "Pesquisando",
+          "body": "A busca encontra resultados em qualquer lugar - fabricante, nome do modelo, categoria, subseção ou qualquer valor de especificação. Combine-a com os filtros de categoria e fabricante para refinar. Os resultados são paginados; o total reflete tudo que corresponde, não apenas a página atual."
+        },
+        "categories": {
+          "title": "Categorias",
+          "body": "Os componentes são agrupados em categorias (motores de passo, drivers, placas, sensores, hotends, ventoinhas/energia, hosts, movimento, bicos, extrusoras, filamentos, eletrônicos, câmeras/displays). Escolha uma para navegar apenas por esse tipo."
+        },
+        "manufacturers": {
+          "title": "Fabricantes e especificações",
+          "body": "Esta é uma referência selecionada para comparação, não uma loja - os valores vêm de datasheets dos fabricantes e dados da comunidade e podem estar desatualizados em relação aos produtos mais recentes. Sempre confirme com o fabricante antes de comprar ou configurar."
+        },
+        "relationships": {
+          "title": "Hardware vinculado",
+          "body": "Toda placa, driver, motor e host é vinculado pelo seu fabricante, e cada placa também se vincula ao seu MCU e aos drivers que ela suporta. Abra qualquer item e use os chips de vínculo na parte inferior para saltar direto a uma peça relacionada. As abas Marcas e MCUs permitem começar por uma marca ou um chip e ver tudo que o utiliza."
+        },
+        "glossary": {
+          "title": "Glossário",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "category": {
+          "term": "Categoria",
+          "def": "O tipo de hardware ao qual um componente pertence (ex.: Hotends, Motores de Passo, Sensores)."
+        },
+        "manufacturer": {
+          "term": "Fabricante",
+          "def": "A empresa que fabrica a peça (ex.: E3D, BIGTREETECH, LDO Motors)."
+        },
+        "spec": {
+          "term": "Especificação",
+          "def": "Um atributo de datasheet de um componente - corrente, tensão, temperatura máxima, dimensões e assim por diante."
+        },
+        "links": {
+          "term": "Hardware vinculado",
+          "def": "Vínculos cruzados entre peças - o fabricante de uma placa, seu MCU e os drivers que ela suporta - exibidos como chips clicáveis que saltam para a entidade relacionada."
+        }
+      }
+    },
+    "search": {
+      "placeholder": "Buscar hardware…",
+      "button": "Buscar",
+      "category": "Categoria",
+      "allCategories": "Todas as categorias",
+      "manufacturer": "Fabricante",
+      "manufacturerPlaceholder": "Qualquer fabricante"
+    },
+    "results": {
+      "total": "{count} resultados",
+      "none": "Nenhum componente corresponde à sua busca.",
+      "showing": "Exibindo {from}-{to} de {total}",
+      "prev": "Anterior",
+      "next": "Próximo"
+    },
+    "states": {
+      "loading": "Buscando…",
+      "error": "Não foi possível carregar o banco de dados de hardware.",
+      "retry": "Tentar novamente"
+    },
+    "tabs": {
+      "catalog": "Catálogo",
+      "search": "Buscar tudo",
+      "boards": "Placas",
+      "drivers": "Drivers",
+      "motors": "Motores",
+      "hosts": "Hosts",
+      "manufacturers": "Marcas",
+      "mcus": "MCUs"
+    },
+    "catalog": {
+      "searchAll": "Buscar tudo",
+      "items": "{n} itens",
+      "back": "Catálogo"
+    },
+    "boards": {
+      "search": "Buscar placas",
+      "total": "{n} placas",
+      "none": "Nenhuma placa encontrada.",
+      "view": "Detalhes",
+      "hide": "Ocultar",
+      "connector": "Conector",
+      "function": "Função",
+      "pins": "Pinos",
+      "use": "Usar",
+      "electronics": "Eletrônicos (afeta a config)",
+      "notes": "Notas de configuração",
+      "config": "Trecho de config",
+      "copy": "Copiar",
+      "copied": "Copiado!"
+    },
+    "drivers": {
+      "search": "Buscar drivers",
+      "klipperOnly": "Apenas Klipper (TMC)",
+      "total": "{n} drivers",
+      "none": "Nenhum driver encontrado.",
+      "standalone": "standalone",
+      "sensorless": "sensorless",
+      "config": "Config do Klipper",
+      "reference": "Referência do Klipper →"
+    },
+    "motors": {
+      "search": "Buscar motores",
+      "total": "{n} motores",
+      "none": "Nenhum motor encontrado.",
+      "rated": "nominal",
+      "run": "operação",
+      "config": "Config do Klipper"
+    },
+    "hosts": {
+      "search": "Buscar hosts",
+      "total": "{n} hosts",
+      "none": "Nenhum host encontrado.",
+      "config": "Config do host",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "Imagem de SO",
+        "locked": "bloqueado"
+      }
+    },
+    "manufacturers": {
+      "search": "Buscar marcas",
+      "total": "{n} marcas",
+      "none": "Nenhuma marca encontrada.",
+      "members": "{n} peças",
+      "specialty": "Especialidade",
+      "aliases": "Também conhecido como",
+      "website": "Site →",
+      "derived": "comunidade"
+    },
+    "mcus": {
+      "search": "Buscar MCUs",
+      "total": "{n} MCUs",
+      "none": "Nenhum MCU encontrado.",
+      "boards": "{n} placas"
+    },
+    "related": {
+      "title": "Hardware vinculado",
+      "loading": "Carregando vínculos…",
+      "more": "+{n} mais",
+      "jump": "Abrir {name}",
+      "rel": {
+        "manufacturer": "Fabricante",
+        "mcus": "MCU",
+        "onboardDrivers": "Drivers integrados",
+        "supportedDrivers": "Drivers suportados",
+        "boards": "Placas",
+        "motors": "Motores",
+        "hosts": "Hosts",
+        "catalog": "Peças"
+      }
+    },
+    "picker": {
+      "placeholder": "Escolha uma peça…"
+    },
+    "facets": {
+      "manufacturer": "Fabricante",
+      "anyClass": "Qualquer classe",
+      "anyNema": "Qualquer tamanho",
+      "anyKind": "Qualquer tipo",
+      "anyType": "Todos os tipos",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Placa-mãe",
+        "toolhead": "Cabeçote",
+        "printer-preset": "Preset de impressora",
+        "expansion": "Expansão",
+        "host": "SBC host"
+      }
+    },
+    "onPrinter": {
+      "badge": "Nesta impressora",
+      "strip": "Nesta impressora:"
+    },
+    "suggest": {
+      "button": "Sugerir uma peça",
+      "title": "Sugerir uma peça",
+      "intro": "Preencha o que você souber - abriremos uma issue do GitHub pré-preenchida para revisão. Nada é enviado automaticamente.",
+      "typeLabel": "Tipo de peça",
+      "cancel": "Cancelar",
+      "close": "Fechar",
+      "submit": "Abrir issue no GitHub",
+      "preview": "Pré-visualizar envio (JSON)",
+      "languageNote": "A issue é escrita em inglês para que os mantenedores possam tratá-la.",
+      "sentTitle": "Envio aberto em uma nova aba",
+      "sentBody": "Revise os detalhes pré-preenchidos no GitHub e então envie a issue por lá. Obrigado por contribuir!",
+      "yes": "Sim",
+      "specs": "Especificações extras",
+      "specKey": "Especificação",
+      "specValue": "Valor",
+      "addSpec": "Adicionar especificação",
+      "ports": "Portas e pinos",
+      "addPort": "Adicionar porta",
+      "addPin": "Adicionar pino",
+      "remove": "Remover",
+      "configSnippet": "Trecho de config do Klipper",
+      "types": {
+        "motor": "Motor de passo",
+        "driver": "Driver de passo",
+        "hotend": "Hotend",
+        "host": "Host / SBC",
+        "manufacturer": "Fabricante",
+        "board": "Placa",
+        "catalog": "Outro item do catálogo"
+      },
+      "group": {
+        "autotune": "Autotune (elétrico)",
+        "caps": "Recursos",
+        "maxFlow": "Vazão máxima",
+        "preset": "Preset de vazão máxima"
+      },
+      "f": {
+        "manufacturer": "Fabricante",
+        "name": "Nome",
+        "model": "Modelo",
+        "display_name": "Nome de exibição",
+        "boardClass": "Classe da placa",
+        "mcu": "MCU",
+        "clock": "Clock",
+        "voltage": "Tensão",
+        "driver_slots": "Slots de driver",
+        "usb": "USB",
+        "can": "CAN",
+        "ethernet": "Ethernet",
+        "nema": "NEMA",
+        "stepAngle": "Ângulo de passo",
+        "ratedCurrent": "Corrente nominal",
+        "holdingTorque": "Torque de retenção",
+        "recommendedRunCurrent": "Corrente de operação recomendada",
+        "resistance_ohm": "Resistência",
+        "inductance_H": "Indutância",
+        "holding_torque_Nm": "Torque de retenção",
+        "max_current_A": "Corrente máxima",
+        "steps_per_rev": "Passos / rev",
+        "chip": "Chip",
+        "interface": "Interface",
+        "klipperSection": "Seção do Klipper",
+        "sensorless": "Sensorless",
+        "max_current_a": "Corrente máxima",
+        "microsteps": "Microsteps",
+        "stealthchop": "StealthChop",
+        "spreadcycle": "SpreadCycle",
+        "coolstep": "CoolStep",
+        "stallguard": "StallGuard",
+        "stallguard_field": "Campo StallGuard",
+        "max_temp_c": "Temperatura máxima",
+        "suggested_temp_c": "Temperatura sugerida",
+        "expected_max_flow_mm3s": "Vazão máxima esperada",
+        "melt_zone_mm": "Zona de fusão",
+        "START": "START",
+        "MAX": "MAX",
+        "COARSE_STEP": "COARSE_STEP",
+        "kind": "Tipo",
+        "soc": "SoC",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "klipperOpen": "Roda Klipper aberto",
+        "country": "País",
+        "website": "Site",
+        "specialty": "Especialidade",
+        "category": "Categoria",
+        "subsection": "Subseção",
+        "portLabel": "Rótulo da porta",
+        "portCategory": "Categoria da porta",
+        "portFunction": "Função",
+        "signal": "Sinal",
+        "pin": "Pino"
+      },
+      "tooLong": "Este envio é grande demais para pré-preencher automaticamente. Copie o JSON e abra uma nova issue manualmente.",
+      "copyJson": "Copiar JSON",
+      "copied": "Copiado"
+    }
+  }
+}

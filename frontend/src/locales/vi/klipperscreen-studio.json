@@ -1,0 +1,197 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Chỉnh sửa cấu hình màn hình cảm ứng KlipperScreen của máy in một cách an toàn, sau đó khởi động lại KlipperScreen để áp dụng. Mỗi lần lưu đều được sao lưu trước.",
+    "help": {
+      "guide": "Trợ giúp",
+      "guideTitle": "Về KlipperScreen Studio",
+      "close": "Đóng",
+      "howToRead": "Cách đọc",
+      "steps": [
+        "Chỉnh sửa nội dung cấu hình bên dưới (hoặc để nguyên).",
+        "Lưu - tệp hiện tại được sao lưu trước, và lệnh lưu bị từ chối khi máy in đang bận.",
+        "Khởi động lại KlipperScreen để áp dụng thay đổi trên màn hình vật lý.",
+        "Các dòng dùng ký tự xuống dòng UNIX (LF), tự động áp dụng khi lưu."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Thuật ngữ",
+          "body": "Định nghĩa nhanh các thuật ngữ KlipperScreen dùng ở đây."
+        },
+        "config": {
+          "title": "Tab Config là gì?",
+          "body": "Tệp KlipperScreen.conf thô. Chỉnh sửa bất kỳ thiết lập nào bằng tay; lệnh lưu sao lưu tệp trước, bị từ chối khi máy in đang bận, và cảnh báo nếu tệp đã thay đổi trên màn hình kể từ khi bạn tải nó. Hầu hết mọi người dùng tab Settings / Menus / Themes thay vì tab này."
+        },
+        "settings": {
+          "title": "Tab Settings là gì?",
+          "body": "Các tùy chọn [main] hay dùng nhất dưới dạng biểu mẫu - theme, ngôn ngữ, ngủ màn hình, cỡ chữ và các công tắc. Điền sẵn từ cấu hình đang chạy; chỉ những tùy chọn bạn thay đổi mới được ghi. Khởi động lại để áp dụng."
+        },
+        "menus": {
+          "title": "Tab Menus là gì?",
+          "body": "Thiết kế các lưới nút của màn hình cảm ứng. Mỗi cây (__main là lưới màn hình chính, __print là màn hình in) liệt kê các nút của nó; thêm, đổi tên, sắp xếp lại và lồng chúng, và đặt mỗi nút để mở một menu con, mở một màn hình tích hợp sẵn, hoặc chạy G-code."
+        },
+        "themes": {
+          "title": "Tab Themes là gì?",
+          "body": "Tạo một theme KlipperScreen: chọn màu cho từng token bảng màu và một độ bo góc, xem bản xem trước trực tiếp, rồi tạo và áp dụng nó lên màn hình. Bản xem trước chỉ mang tính tương đối - màn hình thật được dựng bằng GTK."
+        },
+        "kiosk": {
+          "title": "Tab Kiosk là gì?",
+          "body": "Đưa chính FilaMind Flow lên màn hình cảm ứng dưới dạng trình duyệt toàn màn hình - toàn quyền kiểm soát những gì màn hình hiển thị. Đây là một phép hoán đổi có thể đảo ngược với KlipperScreen (mặc định là tạm thời; khởi động lại sẽ khôi phục KlipperScreen). Cần trình cài đặt một lần trên máy chủ máy in."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "Giao diện màn hình cảm ứng chạy trên một màn hình nhỏ gắn vào máy in - tách biệt với bảng điều khiển web này."
+        },
+        "theme": {
+          "term": "Theme",
+          "def": "Một diện mạo KlipperScreen - màu sắc, biểu tượng và độ bo góc. Nằm trong thư mục styles/<name> trên máy chủ; chỉ mang tính thẩm mỹ (không thể thay đổi bố cục)."
+        },
+        "menu": {
+          "term": "Menu (__main / __print)",
+          "def": "Các lưới nút mà KlipperScreen hiển thị. __main là màn hình chính, __print là màn hình hiển thị khi đang in, __splashscreen là màn hình khởi động."
+        },
+        "panel": {
+          "term": "Panel",
+          "def": "Một màn hình KlipperScreen tích hợp sẵn mà một nút có thể mở (di chuyển, nhiệt độ, đùn, lưới bàn in, …). Nội dung bên trong chúng được KlipperScreen cố định."
+        },
+        "autoBlock": {
+          "term": "Khối tự động tạo (#~#)",
+          "def": "Phần mà KlipperScreen tự ghi ở cuối tệp conf, sau dấu #~#. FilaMind không bao giờ chỉnh sửa nó - chỉ chỉnh các thiết lập của bạn ở phía trên."
+        },
+        "kiosk": {
+          "term": "Kiosk",
+          "def": "Chạy một trình duyệt toàn màn hình trên màn hình cảm ứng thay cho KlipperScreen, để màn hình hiển thị FilaMind Flow. Hoàn toàn có thể đảo ngược."
+        }
+      }
+    },
+    "status": {
+      "checking": "Đang kiểm tra KlipperScreen…",
+      "absent": "Không phát hiện KlipperScreen trên máy in này (không có KlipperScreen.conf, và Moonraker không báo cáo). Hãy cài đặt KlipperScreen để dùng công cụ này.",
+      "present": "Đã phát hiện KlipperScreen",
+      "theme": "Theme",
+      "language": "Ngôn ngữ",
+      "notRestartable": "Moonraker không thể tự khởi động lại KlipperScreen - hãy khởi động lại thủ công sau khi lưu."
+    },
+    "editor": {
+      "loading": "Đang đọc KlipperScreen.conf…",
+      "reload": "Tải lại",
+      "save": "Lưu cấu hình",
+      "saving": "Đang lưu…",
+      "saved": "Đã lưu (đã sao lưu)",
+      "unsaved": "Thay đổi chưa lưu"
+    },
+    "save": {
+      "busy": "Bị từ chối khi máy in đang bận - thử lại khi máy rảnh.",
+      "stale": "KlipperScreen.conf đã thay đổi trên đĩa kể từ khi được tải (có thể đã chỉnh trên màn hình). Hãy tải lại trước khi lưu để không ghi đè thay đổi đó."
+    },
+    "view": {
+      "config": "Config",
+      "settings": "Settings",
+      "menus": "Menus",
+      "themes": "Themes",
+      "kiosk": "Kiosk"
+    },
+    "settings": {
+      "loading": "Đang tải thiết lập…",
+      "intro": "Các tùy chọn hiển thị KlipperScreen hay dùng nhất dưới dạng biểu mẫu. Chỉ những tùy chọn bạn thay đổi mới được ghi - mọi thứ khác giữ nguyên giá trị hiện tại. Khởi động lại để áp dụng.",
+      "onlyChanged": "Chỉ những thiết lập bạn thay đổi ở đây mới được ghi vào KlipperScreen.conf.",
+      "save": "Lưu thiết lập",
+      "savedRestart": "Đã lưu - khởi động lại KlipperScreen để áp dụng.",
+      "unset": "Để trống (mặc định)",
+      "never": "Không bao giờ (luôn bật)",
+      "fontSize": {
+        "small": "Nhỏ",
+        "medium": "Vừa",
+        "large": "Lớn",
+        "max": "Tối đa"
+      },
+      "label": {
+        "theme": "Theme",
+        "language": "Ngôn ngữ",
+        "screen_blanking": "Ngủ màn hình sau",
+        "font_size": "Cỡ chữ",
+        "24htime": "Đồng hồ 24 giờ",
+        "use_dpms": "Dùng DPMS để tắt màn hình",
+        "show_cursor": "Hiển thị con trỏ chuột",
+        "confirm_estop": "Xác nhận trước khi dừng khẩn cấp",
+        "show_heater_power": "Hiển thị công suất bộ gia nhiệt %",
+        "autoclose_popups": "Tự đóng cửa sổ bật lên"
+      }
+    },
+    "kiosk": {
+      "loading": "Đang kiểm tra màn hình…",
+      "intro": "Đưa chính FilaMind Flow lên màn hình cảm ứng dưới dạng trình duyệt toàn màn hình - toàn quyền kiểm soát những gì màn hình hiển thị. Nó hoán đổi với KlipperScreen: khởi động cái này sẽ dừng cái kia.",
+      "current": "Màn hình hiện tại",
+      "mode": {
+        "kiosk": "Kiosk FilaMind",
+        "klipperscreen": "KlipperScreen",
+        "none": "Không cái nào đang chạy"
+      },
+      "notInstalled": "Kiosk chưa được cài đặt",
+      "setupHint": "Chạy lệnh này một lần trên máy chủ máy in (cài trình duyệt toàn màn hình + dịch vụ kiosk):",
+      "persist": "Đặt làm mặc định khi khởi động (nếu không, phép hoán đổi chỉ là tạm thời - khởi động lại sẽ khôi phục cái kia).",
+      "safety": "Mặc định là tạm thời: khởi động lại sẽ đưa cái kia trở lại. Nếu màn hình bị tối, qua SSH chạy: sudo systemctl start KlipperScreen",
+      "switchBtn": "Chuyển sang FilaMind",
+      "restoreBtn": "Khôi phục KlipperScreen",
+      "refresh": "Làm mới",
+      "confirmSwitchTitle": "Đưa FilaMind lên màn hình?",
+      "confirmRestoreTitle": "Khôi phục KlipperScreen?",
+      "confirmBody": "Thao tác này dừng một dịch vụ màn hình và khởi động cái kia. Nó không ảnh hưởng đến bản in đang chạy, nhưng màn hình cảm ứng sẽ tối trong vài giây khi chuyển đổi.",
+      "confirm": "Thực hiện",
+      "cancel": "Hủy",
+      "switchedNote": "FilaMind đang tiếp quản màn hình - nó sẽ xuất hiện trong vài giây.",
+      "restoredNote": "KlipperScreen đang trở lại - màn hình sẽ phục hồi ngay."
+    },
+    "menus": {
+      "loading": "Đang tải menu…",
+      "intro": "Thiết kế những gì màn hình cảm ứng hiển thị: các nút của mỗi menu, thứ tự của chúng, và mỗi nút làm gì. Lưới màn hình chính là cây __main; màn hình in là __print.",
+      "addItem": "Thêm nút",
+      "empty": "Chưa có mục nào - hãy thêm một mục.",
+      "up": "Chuyển lên",
+      "down": "Chuyển xuống",
+      "addChild": "Thêm mục con",
+      "delete": "Xóa",
+      "name": "Tên",
+      "icon": "Biểu tượng",
+      "action": "Hành động",
+      "actSubmenu": "Mở một menu con",
+      "actPanel": "Mở một màn hình",
+      "actGcode": "Chạy G-code",
+      "panel": "Màn hình",
+      "gcode": "G-code",
+      "enable": "Hiển thị nếu",
+      "save": "Lưu menu",
+      "newItem": "Nút mới",
+      "savedRestart": "Đã lưu menu - khởi động lại KlipperScreen để xem chúng."
+    },
+    "themes": {
+      "loading": "Đang tải theme…",
+      "palette": "Bảng màu",
+      "radius": "Độ bo góc",
+      "preview": "Xem trước trực tiếp",
+      "btn": "Nút",
+      "previewWarn": "cảnh báo",
+      "previewApprox": "Bản xem trước tương đối - màn hình thật được dựng bằng GTK; có thể có khác biệt nhỏ.",
+      "namePlaceholder": "Tên theme mới",
+      "createApply": "Tạo & áp dụng",
+      "createOnly": "Chỉ tạo",
+      "installed": "Theme đã cài",
+      "apply": "Áp dụng",
+      "delete": "Xóa theme",
+      "generated": "Tạo tại đây",
+      "created": "Đã tạo theme. Áp dụng nó từ danh sách, rồi khởi động lại.",
+      "appliedRestart": "Đã đặt theme - khởi động lại KlipperScreen để xem nó.",
+      "previewTitle": "Máy in"
+    },
+    "restart": {
+      "button": "Khởi động lại KlipperScreen",
+      "restarting": "Đang khởi động lại…",
+      "done": "KlipperScreen đang khởi động lại - màn hình sẽ tải lại ngay.",
+      "confirmTitle": "Khởi động lại KlipperScreen?",
+      "confirmBody": "Thao tác này khởi động lại dịch vụ màn hình cảm ứng để áp dụng thay đổi của bạn. Nó không ảnh hưởng đến bản in đang chạy, nhưng màn hình sẽ tối trong vài giây.",
+      "confirm": "Khởi động lại",
+      "cancel": "Hủy"
+    }
+  }
+}

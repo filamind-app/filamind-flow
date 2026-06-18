@@ -1,0 +1,215 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · panel klipper"
+    },
+    "nav": {
+      "dashboard": "Dasbor",
+      "toggle": "Alihkan navigasi",
+      "label": "Navigasi utama"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Kembali ke Mainsail"
+    },
+    "footer": {
+      "stack": "FilaMind Flow - Dibuat oleh maker Mesir, untuk maker dunia. Selamat mencetak",
+      "by": "oleh tim DeltaFabs"
+    },
+    "home": {
+      "body": "Panel Anda ada di bilah samping - pilih satu untuk memulai. Halaman beranda ini sengaja dibiarkan kosong untuk saat ini.",
+      "title": "Mission Control",
+      "refresh": "Segarkan",
+      "loading": "Memuat…",
+      "unreachable": "Backend tidak dapat dijangkau.",
+      "printer": "Printer",
+      "statePrinting": "Mencetak",
+      "statePaused": "Dijeda",
+      "stateError": "Galat",
+      "stateIdle": "Diam",
+      "printerDown": "Moonraker tidak dapat dijangkau.",
+      "doctor": "Machine Doctor",
+      "doctorBody": "Satu pindaian baca-saja mencakup pin, nilai driver, pergeseran konfigurasi, sinkronisasi firmware, dan lainnya - dinilai A-F dengan tautan lompat-ke-perbaikan.",
+      "doctorScan": "Pindai printer saya",
+      "firmware": "Sinkronisasi firmware",
+      "host": "Host: {version}",
+      "open": "Buka",
+      "noData": "Tidak ada data saat ini.",
+      "tuning": "Penyetelan",
+      "noTuning": "Belum ada riwayat penyetelan yang diarsipkan - jalankan wizard Input Shaping.",
+      "hardware": "Perangkat keras vs baseline",
+      "noBaseline": "Belum ada baseline perangkat keras yang disimpan - simpan snapshot di Machine Map untuk mendeteksi perubahan.",
+      "hwUnchanged": "Tidak ada perubahan perangkat keras sejak baseline yang disimpan.",
+      "hwChanged": "{n} perubahan perangkat keras sejak baseline yang disimpan.",
+      "setup": {
+        "title": "Mulai ({done}/{total})",
+        "go": "Buka",
+        "boards": "Konfirmasi board Anda di Machine Map",
+        "baseline": "Simpan baseline perangkat keras (mendeteksi perubahan mendatang)",
+        "firmware": "Sinkronkan firmware setiap MCU dengan host",
+        "motors": "Tetapkan motor Anda di Motor Drivers",
+        "tuning": "Setel input shaping untuk X dan Y (wizard terpandu)"
+      },
+      "journal": {
+        "title": "Aktivitas terbaru",
+        "empty": "Belum ada yang tercatat - flash, penyimpanan konfigurasi, dan riwayat penyetelan akan muncul di sini.",
+        "flash": "Di-flash {board} → {version}",
+        "configSave": "Disimpan {file}",
+        "tuning": "Riwayat penyetelan: {kind} ({axis})"
+      },
+      "hostInfo": {
+        "title": "Host",
+        "time": "Waktu",
+        "clock": "Sinkronisasi jam",
+        "synced": "Tersinkron",
+        "notSynced": "Tidak tersinkron",
+        "temp": "Suhu CPU",
+        "uptime": "Waktu aktif",
+        "disk": "Disk"
+      },
+      "printerHost": "Printer & Host",
+      "maxFlow": {
+        "title": "Aliran maks",
+        "expected": "Diharapkan: {n} mm³/s",
+        "empty": "Belum ada uji max-flow.",
+        "test": "Uji aliran maks"
+      }
+    },
+    "connection": {
+      "connected": "Terhubung",
+      "connecting": "Menghubungkan",
+      "error": "Galat",
+      "offline": "Luring",
+      "idle": "Diam"
+    },
+    "language": {
+      "label": "Bahasa",
+      "select": "Pilih bahasa",
+      "menu": "Pilih bahasa"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Firmware Manager",
+        "description": "Versi firmware MCU, status sinkronisasi host, dan kesiapan toolchain."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Analisis CSV resonansi dan temukan input shaper terbaik."
+      },
+      "motor-drivers": {
+        "title": "Motor Drivers",
+        "description": "Inventaris driver stepper TMC langsung: arus, mode, microstep, dan status."
+      },
+      "config-editor": {
+        "title": "Config Editor",
+        "description": "Jelajahi file konfigurasi printer Anda, diurai menjadi bagian dengan validasi."
+      },
+      "max-flow": {
+        "title": "Max-Flow",
+        "description": "Ukur aliran volumetrik tertinggi yang dapat ditahan hotend Anda (StallGuard)."
+      },
+      "board-topology": {
+        "title": "Board Topology",
+        "description": "Lihat bagaimana host dan MCU terhubung (USB / CAN / UART) + tebakan board."
+      },
+      "macro-designer": {
+        "title": "Macro Designer",
+        "description": "Simulasikan G-code secara luring - jalur toolhead, batas, total, dan pustaka makro."
+      },
+      "hardware-browser": {
+        "title": "Hardware Browser",
+        "description": "Telusuri referensi perangkat keras pencetakan 3D pilihan berdasarkan nama, produsen, atau spesifikasi."
+      },
+      "config-templates": {
+        "title": "Config Templates",
+        "description": "Blok konfigurasi Klipper dan makro siap-tempel, per kategori."
+      },
+      "machine-doctor": {
+        "title": "Machine Doctor",
+        "description": "Pindaian printer penuh sekali klik dengan rapor A-F dan tautan lompat-ke-perbaikan."
+      },
+      "host-control": {
+        "title": "Host Control",
+        "description": "Kelola OS Linux host printer: kesehatan, layanan, pembersihan disk, dan pengaturan sistem."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "Edit konfigurasi layar sentuh KlipperScreen printer Anda dan mulai ulang untuk menerapkan."
+      }
+    },
+    "guard": {
+      "printing": "Mencetak - penulisan terkunci",
+      "running": "{op} berjalan - penulisan terkunci",
+      "op": {
+        "resonance_test": "Uji resonansi",
+        "noise_check": "Pemeriksaan derau",
+        "belt_comparison": "Perbandingan belt",
+        "axes_map": "Kalibrasi axes-map",
+        "sustain": "Eksitasi berkelanjutan",
+        "vibrations_profile": "Profil getaran",
+        "max_flow": "Uji max-flow",
+        "driver_write": "Penulisan driver",
+        "homing": "Homing",
+        "motors_sync": "Sinkronisasi motor",
+        "firmware_flash": "Flash firmware",
+        "firmware_batch": "Eksekusi batch firmware",
+        "firmware_restart": "Mulai ulang firmware"
+      }
+    },
+    "mission": {
+      "body": "FilaMind Flow menyatukan alat terbaik untuk pencetakan 3D - dari penyiapan pertama hingga penguasaan - agar maker di setiap level dapat mendiagnosis, memperbaiki, dan mencetak lebih baik. Proyek ini dalam pengembangan dan riset aktif, dan ide praktis baru selalu disambut. Kontribusi terbuka untuk semua orang.",
+      "tagline": "Dibuat oleh maker Mesir, untuk maker dunia. Selamat mencetak.",
+      "dismiss": "Tutup"
+    },
+    "feedback": {
+      "menu": "Masukan",
+      "menuTitle": "Bagikan masukan",
+      "bug": "Laporkan bug",
+      "bugDesc": "Ada yang tidak berfungsi",
+      "feature": "Minta fitur",
+      "featureDesc": "Sarankan peningkatan",
+      "reportError": "Laporkan",
+      "reportErrorAria": "Laporkan galat ini di GitHub",
+      "dialog": {
+        "bugTitle": "Laporkan bug",
+        "featureTitle": "Minta fitur",
+        "introBug": "Jelaskan apa yang salah. Kami akan membuka isu yang sudah terisi di GitHub untuk Anda tinjau dan kirim - tidak ada yang dikirim secara otomatis.",
+        "introFeature": "Jelaskan fitur yang Anda inginkan. Kami akan membuka isu yang sudah terisi di GitHub untuk Anda tinjau dan kirim.",
+        "descLabel": "Deskripsi",
+        "descPlaceholderBug": "Apa yang Anda lakukan, dan apa yang terjadi sebagai gantinya?",
+        "descPlaceholderFeature": "Apa yang ingin Anda lakukan?",
+        "attach": "Lampirkan tangkapan layar",
+        "attachHint": "Gambar layar saat ini membantu kami memahami masalahnya.",
+        "capturing": "Menangkap tangkapan layar…",
+        "screenshotReady": "Pratinjau tangkapan layar",
+        "noScreenshot": "Tidak dapat menangkap tangkapan layar - Anda dapat melampirkannya secara manual.",
+        "includes": "Apa yang akan kami sertakan",
+        "includesNote": "Detail ini ditambahkan ke isu untuk membantu diagnosis. Tinjau di GitHub sebelum mengirim.",
+        "languageNote": "Isu ditulis dalam bahasa Inggris agar pengelola dapat menindaklanjutinya.",
+        "submit": "Buka isu di GitHub",
+        "cancel": "Batal",
+        "close": "Tutup"
+      },
+      "field": {
+        "version": "Versi aplikasi",
+        "view": "Tampilan aktif",
+        "locale": "Bahasa",
+        "theme": "Tema",
+        "screen": "Layar",
+        "browser": "Peramban",
+        "time": "Waktu",
+        "error": "Galat"
+      },
+      "sent": {
+        "title": "Isu dibuka di tab baru",
+        "body": "Tinjau detail yang sudah terisi di GitHub, lalu kirim isu di sana.",
+        "copied": "Tangkapan layar disalin - tempel ke isu dengan Ctrl/⌘+V.",
+        "saved": "Tangkapan layar disimpan ke unduhan Anda - seret ke isu.",
+        "failed": "Tidak dapat melampirkan tangkapan layar secara otomatis - Anda dapat menambahkannya di GitHub."
+      }
+    },
+    "support": {
+      "kofi": "Dukung FilaMind Flow"
+    }
+  }
+}

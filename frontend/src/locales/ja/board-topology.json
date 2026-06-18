@@ -1,0 +1,268 @@
+{
+  "boardTopology": {
+    "intro": "プリンターの制御ボードがどう接続されているかを表示します。ホスト (SBC) とそれが通信する各 MCU、接続種別、ボード / チップの推定結果を、設定からライブで読み取ります。",
+    "help": {
+      "guide": "ヘルプ",
+      "guideTitle": "ボードトポロジーについて",
+      "close": "閉じる",
+      "howToRead": "見方",
+      "steps": [
+        "ホスト (SBC、例: Raspberry Pi や CB1) が一番上に配置されます。",
+        "各 MCU カードは接続方法 (USB / CAN bus / UART) とチップを表示します。",
+        "接続識別子が既知のボードと一致すると、ボードの推定が表示されます。"
+      ],
+      "topics": {
+        "views": {
+          "title": "物理ビューと論理ビュー",
+          "body": "マップは同じボードを2通りで描画します。物理ビューはマシンが実際にどう組み立てられているかを表示します。統合された SBC は搭載元のメインボード内に描かれ、CAN ツールヘッドは共有バックボーンレールから分岐し、USB/UART ボードは独立したユニットとして示されます。論理ビューは Klipper から見た構成を表示します。ホストを一番上に置き、各 MCU をシリアルリンク経由で接続される子として示します。物理/論理スイッチで切り替えます。"
+        },
+        "mcus": {
+          "title": "MCU",
+          "body": "MCU はモーター、ヒーター、センサーを駆動するマイクロコントローラーボードです。プリンターには最低1つ (メインボード) があり、多くはツールヘッドボードを追加し、プローブや LED ボードを備える場合もあります。このパネルは Klipper が持つすべての `[mcu]` セクションを一覧表示します。"
+        },
+        "connections": {
+          "title": "接続種別",
+          "body": "USB - USB 経由のシリアルリンク (一般的なメインボードの接続)。CAN bus - 共有の2線式バスで、ツールヘッドボードによく使われます。UART - GPIO 経由の直接シリアルリンク。種別は各 MCU の `serial` / `canbus_uuid` 設定から推定されます。"
+        },
+        "detection": {
+          "title": "検出の仕組み",
+          "body": "チップとボードは、接続識別子 (シリアルパスまたは CAN UUID) をパターンテーブルと照合し、さらに設定で使われているピンのピンマップフィンガープリントを組み合わせて推定します。ボードの推定には一致の信頼度が表示されます。何も一致しない場合、チップ/ボードは「不明」と表示されますが、接続自体は表示されます。"
+        },
+        "override": {
+          "title": "ボードの確定または変更",
+          "body": "シリアル ID は通常チップしか明らかにしないため、ボードの推定は欠落したり誤ったりすることがあります。「このボードを確定」で正しい推定を固定するか、「ボードを変更…」 / 「ボードを設定…」でカタログから正しいものを選びます。選択はホストに保存され、読み取りのたびに再利用されます。「クリア」で自動推定に戻ります。"
+        },
+        "glossary": {
+          "title": "用語集",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "マイクロコントローラーユニット - Klipper のファームウェアを実行する制御ボード (メインボード、ツールヘッドなど)。"
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "一意の UUID でボードを接続する2線式の共有バス - ツールヘッド配線で人気があります。"
+        },
+        "host": {
+          "term": "ホスト / SBC",
+          "def": "Klipper を実行し MCU と通信するシングルボードコンピューター (Pi、CB1 など)。"
+        }
+      }
+    },
+    "host": {
+      "label": "ホスト",
+      "role": "シングルボードコンピューター - Klipper を実行"
+    },
+    "mcu": {
+      "chip": "チップ",
+      "board": "ボード",
+      "unknown": "不明",
+      "identifier": "識別子",
+      "confidence": "{pct}% 一致",
+      "viewBoard": "ボードの詳細を表示",
+      "hideBoard": "詳細を隠す"
+    },
+    "graph": {
+      "viewLabel": "ダイアグラムビュー",
+      "view": {
+        "physical": "物理",
+        "logical": "論理"
+      },
+      "integrated": "SBC オンボード",
+      "integratedNote": "ホスト SBC は {board} メインボードに内蔵されています。",
+      "selectPrompt": "マップ内のボードまたは MCU を選択して詳細を確認します。",
+      "aria": "マシンマップ: ホストと {n} 個の MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} 回再送",
+        "load": "{pct}% 負荷"
+      },
+      "health": {
+        "title": "リンク状態",
+        "ok": "正常",
+        "warn": "低下",
+        "out": "ファームウェアが非同期"
+      }
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "不明",
+      "via": "{type} 経由"
+    },
+    "count": "{n} 個の MCU",
+    "states": {
+      "loading": "トポロジーを読み取り中…",
+      "unreachable": "プリンターに接続できませんでした。",
+      "empty": "設定に MCU が見つかりません。",
+      "retry": "再試行",
+      "refresh": "更新"
+    },
+    "board": {
+      "suggested": "推奨",
+      "ports": "{n} ポート",
+      "specsTitle": "仕様",
+      "portsTitle": "ポート",
+      "none": "このボードのカタログ詳細はまだありません。",
+      "noMatch": "まだボードが一致していません - 下で確定または設定してください。",
+      "loading": "ボードを読み込み中…",
+      "links": {
+        "title": "リンク",
+        "product": "製品",
+        "repo": "リポジトリ",
+        "wiki": "Wiki",
+        "pinout": "ピン配置",
+        "schematic": "回路図",
+        "datasheet": "データシート",
+        "image": "写真"
+      },
+      "portCat": {
+        "motor": "モーター",
+        "heater_hotend": "ホットエンドヒーター",
+        "heater_bed": "ベッドヒーター",
+        "accelerometer": "加速度センサー",
+        "filament_sensor": "フィラメントセンサー",
+        "fan": "ファン",
+        "probe": "プローブ",
+        "other": "その他",
+        "power": "電源",
+        "thermistor": "サーミスタ",
+        "usb": "USB",
+        "can": "CAN",
+        "swd": "SWD",
+        "display": "ディスプレイ",
+        "rgb": "RGB",
+        "network": "ネットワーク",
+        "endstop": "エンドストップ",
+        "wifi": "Wi-Fi",
+        "spi": "SPI",
+        "uart": "UART"
+      },
+      "spec": {
+        "mcu": "MCU",
+        "arch": "アーキテクチャ",
+        "flash_method": "書き込み方式",
+        "voltage": "電圧",
+        "driver_slots": "ドライバースロット",
+        "usb": "USB",
+        "onboard_drivers": "オンボードドライバー",
+        "clock": "クロック",
+        "can": "CAN",
+        "drivers": "ドライバー",
+        "dimensions_mm": "寸法 (mm)",
+        "role_era": "役割 / 世代",
+        "kinematics": "キネマティクス",
+        "build_volume_mm": "造形範囲 (mm)",
+        "bed": "ベッド",
+        "hotend": "ホットエンド",
+        "stock_extruder": "標準エクストルーダー",
+        "year": "年式",
+        "control_board": "制御ボード",
+        "stock_drivers": "標準ドライバー",
+        "uart": "UART",
+        "connectivity": "接続性",
+        "max_hotend_temp": "ホットエンド最高温度",
+        "max_bed_temp": "ベッド最高温度",
+        "spi": "SPI",
+        "notes": "備考",
+        "eth_wifi": "Eth/WiFi",
+        "class": "クラス",
+        "supported_drivers": "対応ドライバー",
+        "form_factor": "フォームファクター",
+        "flash": "フラッシュ",
+        "all_metal_accel": "オールメタル / 加速度センサー",
+        "ethernet_wifi": "Ethernet/WiFi",
+        "i2c": "I2C",
+        "driver": "ドライバー",
+        "i2cspi": "I2C/SPI",
+        "printer_board": "プリンター / ボード",
+        "accelerometer": "加速度センサー",
+        "printers": "プリンター",
+        "bootloader": "ブートローダー",
+        "flash_offset": "フラッシュオフセット",
+        "soc": "SoC",
+        "ram": "RAM",
+        "role": "役割",
+        "connection": "接続",
+        "storage": "ストレージ",
+        "host": "ホスト"
+      },
+      "class": {
+        "mainboard": "メインボード",
+        "printer_preset": "プリンタープリセット",
+        "toolhead": "ツールヘッド",
+        "host": "ホスト",
+        "expansion": "拡張"
+      }
+    },
+    "components": {
+      "title": "コンポーネント",
+      "motor": "モーター",
+      "driver": "ドライバー",
+      "heater": "ヒーター",
+      "fan": "ファン",
+      "sensor": "センサー"
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "詳細",
+        "atlas": "ピンアトラス"
+      },
+      "summary": "{used}/{total} ピン使用中 · {free} 空き",
+      "loading": "ピンマップを読み取り中…",
+      "failed": "ピンマップを読み取れませんでした。",
+      "unavailable": "このボードのピンマップはまだありません。",
+      "search": "ピン、信号、セクションを検索…",
+      "freeOnly": "空きのみ",
+      "noMatch": "一致するピンがありません。",
+      "other": "その他",
+      "conflict": "ピンの競合",
+      "caveat": "配線の注意点"
+    },
+    "override": {
+      "confirmed": "あなたが確定済み",
+      "confirm": "このボードを確定",
+      "change": "ボードを変更…",
+      "set": "ボードを設定…",
+      "clear": "クリア",
+      "pickPlaceholder": "ボードカタログを検索…",
+      "hint": "選択はホストに保存され、この MCU に対して今後使用されます。"
+    },
+    "sync": {
+      "synced": "ファームウェアは同期済み",
+      "outOfSync": "ファームウェアが非同期"
+    },
+    "snapshot": {
+      "save": "スナップショットを保存",
+      "copy": "概要をコピー",
+      "copied": "コピーしました！",
+      "none": "ベースラインが保存されていません - スナップショットを保存して今後の変更を検出します。",
+      "unchanged": "スナップショット以降、ハードウェアに変更はありません",
+      "changed": "スナップショット以降 {n} 件の変更",
+      "summaryTitle": "FilaMind - マシンマップ",
+      "change": {
+        "added": "MCU「{mcu}」が追加されました",
+        "removed": "MCU「{mcu}」が削除されました",
+        "board_changed": "「{mcu}」のボードが変更されました: {before} → {after}",
+        "connection_changed": "「{mcu}」の接続が変更されました: {before} → {after}",
+        "chip_changed": "「{mcu}」のチップが変更されました: {before} → {after}",
+        "components_changed": "「{mcu}」のコンポーネント数が変更されました: {before} → {after}"
+      },
+      "noCompare": "比較できませんでした - プリンターに接続できません。",
+      "summaryHost": "ホスト: {name}",
+      "summaryIntegrated": "{board} に SBC 統合",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "ボード {board}",
+      "summaryComponents": "{n} 個のコンポーネント"
+    },
+    "jump": {
+      "section": "このセクションを設定エディターで開く",
+      "drivers": "モータードライバーで開く",
+      "firmware": "ファームウェアマネージャーを開く"
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "configEditor": {
+    "intro": "프린터의 실시간 구성을 Moonraker에서 바로 읽어옵니다 - 모든 파일을 섹션과 매개변수로 파싱하고 구조적 문제를 표시합니다. 현재는 읽기 전용이며, 가이드 편집 기능이 곧 추가됩니다.",
+    "help": {
+      "guide": "도움말",
+      "guideTitle": "Config Editor 소개",
+      "close": "닫기",
+      "howToRead": "사용 방법",
+      "steps": [
+        "드롭다운에서 구성 파일을 선택하세요 - 기본값은 printer.cfg입니다.",
+        "섹션을 살펴보고, 클릭하면 매개변수가 펼쳐집니다.",
+        "중복 섹션 같은 구조적 문제는 Validation 배너에서 확인하세요.",
+        "Raw로 전환하면 파일의 원문 텍스트를 그대로 읽을 수 있습니다."
+      ],
+      "topics": {
+        "sections": {
+          "title": "섹션 및 매개변수",
+          "body": "Klipper 구성은 [section] 블록의 목록이며, 각 블록은 key: value 매개변수를 담습니다. 이 위젯은 [tmc2209 stepper_x] 같은 이름을 가진 섹션을 포함한 모든 섹션을 파싱하여, 값과 인라인 주석과 함께 매개변수를 나열합니다. 매크로의 gcode:처럼 여러 줄로 된 값도 그대로 유지됩니다."
+        },
+        "includes": {
+          "title": "포함된 파일",
+          "body": "printer.cfg는 흔히 [include other.cfg](또는 [include configs/*.cfg] 같은 glob)로 다른 파일을 불러옵니다. 각 include는 별도 항목으로 표시되며, 드롭다운에서 포함된 파일을 선택하면 그 파일이 정의하는 내용을 확인할 수 있습니다."
+        },
+        "validation": {
+          "title": "검증",
+          "body": "파싱 후, 섹션 종류와 관계없이 잘못된 구조적 문제 - 중복 섹션 헤더, 빈 섹션 이름, 어떤 섹션에도 속하지 않은 매개변수 - 가 있는지 확인합니다. 이러한 항목은 Validation 배너에 표시되며, 파일을 변경하지 않습니다."
+        },
+        "saveConfig": {
+          "title": "SAVE_CONFIG 블록",
+          "body": "SAVE_CONFIG를 실행하면 Klipper가 printer.cfg 끝(#*# 마커 뒤)에 자동 생성 블록을 추가합니다 - PID나 Z 오프셋 같은 보정 결과입니다. 이 블록은 표시되지만 자동 저장됨으로 표시되며, 직접 손으로 편집해서는 안 되므로 편집 가능한 섹션 수에서 제외됩니다."
+        },
+        "readonly": {
+          "title": "읽기 전용 (현재)",
+          "body": "이 첫 버전은 구성을 읽고 표시만 합니다 - 프린터에는 아무것도 기록하지 않습니다. 가이드 기반의 확인 게이트 편집(저장 전 자동 백업과 이후 재시작 포함)은 이후 업데이트에서 추가됩니다."
+        },
+        "glossary": {
+          "title": "용어집",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "section": {
+          "term": "섹션",
+          "def": "관련 설정을 묶는 [header] 블록입니다. 예: [stepper_x] 또는 [extruder]."
+        },
+        "parameter": {
+          "term": "매개변수",
+          "def": "섹션 내부의 key: value(또는 key = value) 줄이며, 뒤에 # 주석이 올 수도 있습니다."
+        },
+        "include": {
+          "term": "[include]",
+          "def": "다른 구성 파일을 printer.cfg로 불러오는 지시어로, 설정을 여러 파일로 나눌 수 있게 합니다."
+        },
+        "saveConfig": {
+          "term": "SAVE_CONFIG",
+          "def": "Klipper가 보정 결과를 저장하는 자동 생성 블록(#*# 뒤)입니다 - 직접 손으로 편집하지 마세요."
+        }
+      }
+    },
+    "file": {
+      "label": "구성 파일",
+      "placeholder": "파일을 선택하세요…",
+      "refresh": "새로고침",
+      "loadingList": "파일을 불러오는 중…",
+      "emptyList": "프린터에서 구성 파일을 찾을 수 없습니다."
+    },
+    "summary": {
+      "sections": "{count}개 섹션",
+      "params": "{count}개 매개변수",
+      "size": "{kb} KB"
+    },
+    "validation": {
+      "title": "검증",
+      "clean": "구조적 문제가 없습니다.",
+      "error": "오류",
+      "warning": "경고"
+    },
+    "view": {
+      "structured": "구조화",
+      "raw": "Raw",
+      "expandAll": "모두 펼치기",
+      "collapseAll": "모두 접기"
+    },
+    "section": {
+      "saveBadge": "자동 저장됨",
+      "noParams": "(매개변수 없음)",
+      "paramsCount": "{count}개 매개변수",
+      "paramHead": "매개변수",
+      "valueHead": "값"
+    },
+    "edit": {
+      "hint": "아래에서 원문 텍스트를 편집한 다음 저장하세요. 기록 전에 타임스탬프가 찍힌 백업이 생성됩니다."
+    },
+    "save": {
+      "button": "저장",
+      "saving": "저장 중…",
+      "unsaved": "저장되지 않은 변경 사항",
+      "revert": "되돌리기",
+      "confirmTitle": "프린터에 저장하시겠습니까?",
+      "confirmBody": "프린터의 {file}을(를) 덮어씁니다. 먼저 타임스탬프가 찍힌 백업이 저장되며, 변경 사항을 적용하려면 펌웨어 재시작이 필요합니다.",
+      "ack": "이 작업이 프린터에 기록된다는 점을 이해합니다",
+      "confirm": "저장",
+      "cancel": "취소",
+      "done": "저장됨. 백업: {backup}",
+      "busy": "거부됨: 프린터가 사용 중입니다(인쇄 중 또는 일시 정지). 유휴 상태일 때 다시 시도하세요.",
+      "error": "저장에 실패했습니다.",
+      "stale": "파일을 불러온 이후 디스크에서 변경되었습니다(SAVE_CONFIG가 적용되었거나 다른 앱이 편집했을 수 있음). 지금 저장하면 그 변경 사항을 덮어씁니다 - 다시 불러와서 확인하세요(백업 타임라인에서 차이를 확인할 수 있습니다).",
+      "staleReload": "파일 다시 불러오기"
+    },
+    "restart": {
+      "prompt": "변경 사항을 적용하기 위해 펌웨어를 재시작하시겠습니까?",
+      "button": "펌웨어 재시작",
+      "restarting": "재시작 중…",
+      "confirmTitle": "펌웨어를 재시작하시겠습니까?",
+      "confirmBody": "FIRMWARE_RESTART는 구성을 다시 불러오고 프린터를 잠시 중단합니다. 유휴 상태일 때만 실행하세요.",
+      "confirm": "지금 재시작",
+      "cancel": "취소",
+      "done": "펌웨어 재시작을 요청했습니다.",
+      "busy": "거부됨: 프린터가 사용 중입니다. 유휴 상태일 때 재시작하세요.",
+      "error": "재시작에 실패했습니다."
+    },
+    "states": {
+      "loading": "구성을 읽는 중…",
+      "error": "프린터에서 구성을 읽을 수 없습니다.",
+      "retry": "다시 시도"
+    },
+    "catalog": {
+      "title": "카탈로그에서 구성 블록 추가",
+      "hint": "부품을 선택하세요 - 하드웨어에 정확히 맞는 Klipper 블록(실제 run_current, sense_resistor, 핀 이름)이 파일에 추가되어 검토 후 저장할 수 있습니다.",
+      "drivers": "드라이버",
+      "motors": "모터",
+      "boards": "보드",
+      "pickPlaceholder": "카탈로그 검색…",
+      "inserted": "{name}의 블록을 삽입했습니다 - Raw에서 검토한 뒤 저장하세요.",
+      "noSnippet": "{name}에 사용할 수 있는 구성 블록이 없습니다."
+    },
+    "drift": {
+      "title": "Klipper가 실행 중인 내용",
+      "pending": "Klipper에 저장되지 않은 변경 사항이 있습니다(SAVE_CONFIG 대기 중) - 지금 이 파일을 저장하면 그 변경 사항을 덮어씁니다. 먼저 콘솔에서 SAVE_CONFIG를 실행하세요.",
+      "warningsTitle": "Klipper 구성 경고",
+      "count": "디스크의 {n}개 값이 실행 중인 값과 다릅니다(편집했지만 FIRMWARE_RESTART하지 않음):",
+      "adopt": "실시간 값 적용"
+    },
+    "pinDoctor": {
+      "title": "Pin Doctor - 배선 항목 {n}개",
+      "conflict": "충돌",
+      "caveat": "주의"
+    },
+    "tmc": {
+      "review": "Raw에서 검토 후 저장"
+    },
+    "pinEdit": {
+      "offBoard": "보드에 없음",
+      "offBoardHint": "이 핀은 보드의 알려진 핀 맵에 없습니다 - 오타나 EXP/가상 핀이 아닌지 확인하세요.",
+      "double": "중복 사용됨",
+      "doubleHint": "이 핀은 둘 이상의 섹션에 할당되어 있습니다.",
+      "caveat": "주의"
+    },
+    "project": {
+      "title": "프로젝트 (include 및 검색)",
+      "lintBadge": "{n}개 문제",
+      "searchPlaceholder": "모든 구성 파일 검색…",
+      "searchBtn": "검색",
+      "noResults": "일치하는 항목이 없습니다.",
+      "matchesCount": "{n}개 일치",
+      "truncated": "처음 결과를 표시 중",
+      "tree": "Include 트리",
+      "missing": "누락된 파일",
+      "lint": "파일 간 검사",
+      "rule": {
+        "broken_include": "깨진 include: ",
+        "orphan_driver": "고아 드라이버 - 일치하는 섹션 없음: ",
+        "section_override": "재정의 (여러 파일에 정의됨, 마지막이 우선): "
+      }
+    },
+    "knowledge": {
+      "viewDriver": "카탈로그에서 {model} 보기 →",
+      "stepper": "스테퍼 모터 축 - 드라이버 핀, 회전 거리, 마이크로스텝, 호밍/엔드스톱.",
+      "tmc": "Trinamic 스테퍼 드라이버 - 해당 스테퍼의 run/hold 전류, 마이크로스텝, StallGuard/chopper 튜닝.",
+      "extruder": "핫엔드와 익스트루더 - 노즐 크기, 필라멘트 경로, 히터, 서미스터, PID.",
+      "heater_bed": "히팅 베드 - 히터 핀, 서미스터, PID/온도 제한.",
+      "fan": "갓 인쇄된 필라멘트를 식히는 파트 쿨링 팬.",
+      "heater_fan": "히터에 연결된 팬(예: 핫엔드 냉각)으로, 과열을 막기 위해 작동합니다.",
+      "controller_fan": "모터가 작동하는 동안 스테퍼 드라이버/전자 부품을 식히는 팬.",
+      "mcu": "Klipper를 실행하는 마이크로컨트롤러 보드 - serial 또는 CAN 연결.",
+      "printer": "전역 머신 기구학과 모션 제한(유형, 최대 속도, 가속도).",
+      "bed_mesh": "자동 베드 레벨링 - 격자를 프로빙하여 인쇄 중 베드 평탄도를 보정합니다.",
+      "probe": "호밍과 베드 메시를 위해 베드 표면을 감지하는 Z 프로브.",
+      "gcode_macro": "사용자 정의 G-code 매크로 - 콘솔이나 다른 매크로에서 호출할 수 있는 명명된 명령.",
+      "output_pin": "제어 가능한 출력 핀(예: LED, 릴레이, 활성화 라인).",
+      "neopixel": "주소 지정 가능한 RGB LED(NeoPixel / WS2812)와 색상 제어.",
+      "board_pins": "보드의 물리적 핀에 대한 친숙한 별칭으로, 구성의 다른 곳에서 참조됩니다.",
+      "input_shaper": "고속에서 링잉과 고스팅을 줄이는 공진 보정.",
+      "safe_z_home": "노즐과 베드를 보호하기 위해 안전한 XY 위치(보통 베드 중앙)에서 Z를 호밍합니다.",
+      "z_tilt": "갠트리/베드 평면이 수평이 되도록 여러 Z 모터를 조정합니다.",
+      "quad_gantry_level": "4점 갠트리를 베드와 평행하도록 레벨링합니다.",
+      "filament_switch_sensor": "필라멘트가 떨어지면 인쇄를 일시 정지하는 필라멘트 소진 센서.",
+      "virtual_sdcard": "호스트에 업로드된 파일을 Klipper가 인쇄할 수 있게 합니다(Mainsail 및 Fluidd에 필요)."
+    },
+    "backups": {
+      "title": "백업 ({n})",
+      "diff": "차이",
+      "hideDiff": "차이 숨기기",
+      "restore": "복원",
+      "diffHint": "현재 파일과의 차이",
+      "unchanged": "⋯ 변경되지 않은 {n}개 줄 ⋯",
+      "note": "각 저장 전에 스냅샷이 자동으로 기록됩니다. 복원하면 최종 검토 + 저장을 위해 편집기에 불러옵니다."
+    },
+    "sanity": {
+      "title": "드라이버 값 점검 ({n})",
+      "note": "{n}개의 TMC 드라이버 섹션을 확인했습니다. 정리된 상한값이 없는 드라이버와 할당된 모터가 없는 스테퍼는 추측하지 않고 건너뜁니다.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} A가 드라이버의 풀스케일 상한 ~{cap} A를 초과합니다.",
+        "near_driver_cap": "{section}: run_current {run_current} A가 드라이버의 ~{cap} A 상한의 10% 이내입니다.",
+        "over_motor_rating": "{section}: run_current {run_current} A가 {motor} 정격({max_current} A)을 초과합니다.",
+        "near_motor_rating": "{section}: run_current {run_current} A가 {motor} 정격({max_current} A)의 10% 이내입니다.",
+        "odd_microsteps": "{section}: microsteps {microsteps}이(가) 2의 거듭제곱(1…256)이 아닙니다."
+      }
+    },
+    "panels": {
+      "failed": "일부 패널을 불러올 수 없어 숨겨졌습니다: {panels}. 이들이 무엇을 확인하는지는 지금 알 수 없습니다 - 반드시 괜찮다는 뜻은 아닙니다.",
+      "name": {
+        "drift": "디스크 대 실시간",
+        "pinDoctor": "Pin Doctor",
+        "sanity": "드라이버 점검",
+        "project": "프로젝트 보기",
+        "pinMap": "핀 제안",
+        "backups": "백업"
+      }
+    },
+    "addPart": {
+      "title": "부품 추가 (빈 핀 인식)",
+      "hint": "부품 유형과 아직 아무것도 사용하지 않는 보드 핀(구성 + 보드 맵에서 실시간으로 읽음) 하나를 선택하면, 안전 게이트를 거쳐 바로 사용할 수 있는 섹션이 작성됩니다 - 핀 추측 없음.",
+      "kind": "부품 유형",
+      "name": "이름",
+      "namePh": "예: chamber_fan",
+      "mcu": "보드 (MCU)",
+      "pin": "빈 핀",
+      "pinPh": "빈 핀을 선택하세요…",
+      "noFree": "이 보드 맵에 빈 명명 핀이 없습니다."
+    }
+  }
+}

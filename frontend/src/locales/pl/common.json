@@ -1,0 +1,48 @@
+{
+  "common": {
+    "appName": "FilaMind Flow",
+    "errors": {
+      "backendUnreachable": "Nie można połączyć się z backendem FilaMind - sprawdź, czy usługa filamind-flow działa i jest dostępna."
+    }
+  },
+  "theme": {
+    "label": "Motyw",
+    "light": "Jasny",
+    "dark": "Ciemny",
+    "neon": "Neon",
+    "contrast": "Wysoki kontrast",
+    "menu": "Wybierz motyw",
+    "midnight": "Północ",
+    "ocean": "Ocean",
+    "sunset": "Zachód słońca",
+    "desc": {
+      "neon": "Głęboki fiolet nocy z elektryzującą poświatą - charakterystyczny wygląd",
+      "midnight": "Profesjonalny ciemny granat",
+      "dark": "Nowoczesny neutralny ciemny grafit",
+      "ocean": "Głęboki morski z akwamarynowymi akcentami",
+      "sunset": "Ciepła śliwka z bursztynowymi akcentami",
+      "light": "Czysty jasny styl Neo-Brutalist",
+      "contrast": "Maksymalna czytelność (a11y)"
+    }
+  },
+  "configApply": {
+    "title": "Zastosuj do printer.cfg…",
+    "hint": "Zapisuje ten blok do wybranego pliku przez bramkę bezpieczeństwa: istniejąca sekcja jest scalana parametr po parametrze (pozostałe jej linie zostają zachowane), a brakująca jest dodawana. Najpierw tworzona jest kopia zapasowa; operacja jest odrzucana podczas drukowania lub gdy plik został zmieniony na dysku.",
+    "target": "Plik docelowy",
+    "ack": "Sprawdziłem blok i chcę go zapisać",
+    "apply": "Zastosuj",
+    "applying": "Stosowanie…",
+    "busy": "Drukarka jest zajęta (lub trwa inna operacja) - spróbuj ponownie, gdy będzie bezczynna.",
+    "stale": "Plik został zmieniony na dysku podczas stosowania - nic nie zapisano. Spróbuj ponownie.",
+    "saved": "Zapisano (kopia zapasowa: {backup}).",
+    "added": "dodano [{section}]: {params}",
+    "updated": "zaktualizowano [{section}]: {params}",
+    "noop": "Wszystko miało już te wartości - nic nie zmieniono.",
+    "restartHint": "Klipper nadal używa starych wartości aż do ponownego uruchomienia firmware.",
+    "restart": "Uruchom ponownie firmware…",
+    "restartConfirm": "Potwierdź ponowne uruchomienie",
+    "restarting": "Ponowne uruchamianie…",
+    "restarted": "Wysłano polecenie ponownego uruchomienia firmware.",
+    "cancel": "Anuluj"
+  }
+}
