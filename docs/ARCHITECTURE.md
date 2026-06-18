@@ -226,10 +226,12 @@ type-safe.
   `config-editor`, `macro-designer`, `board-topology`, `max-flow`, `config-templates`,
   `hardware-browser`). Each JSON file carries a single top-level namespace key (such as
   `shell`) that is merged into the locale's messages.
-- **Drop-in extensibility.** `availableLocales` is derived from which catalog folders
-  exist, so adding a language is just dropping in `src/locales/<code>/` - no component
-  or registry edits. The switcher (`LanguageSelect`, reusing `ComboSelect`) appears
-  once more than one locale ships.
+- **Drop-in extensibility.** Adding a language is dropping in `src/locales/<code>/` plus a
+  `LOCALE_META` entry (and a `PLURAL_RULES` entry when its plurals differ from English) - no
+  widget or component edits. `availableLocales` is the intersection of `LOCALE_META` and the
+  catalog folders present on disk, and the switcher (`LanguageSelect`, reusing `ComboSelect`)
+  appears once more than one locale ships. **19 locales ship today** - en plus 18 translations,
+  with Arabic in RTL.
 - **Type-safe keys.** `en` is the single source of truth. `src/types/i18n.d.ts`
   augments vue-i18n's `DefineLocaleMessage` from the `en` catalog, so `t('…')` is
   autocompleted and a wrong key fails `type-check`. Other locales are checked

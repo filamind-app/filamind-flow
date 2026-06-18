@@ -116,9 +116,10 @@ makes recommendations work even without a TMC autotune host extra installed.
 ## Internationalization (i18n)
 
 Make the UI multilingual on an **offline-first, extensible** `vue-i18n` foundation - adding a
-language is dropping a catalog folder, no component edits. Target locales: **en · ar · de ·
-zh-Hans · fr · es · ru** (Arabic is RTL with Western `latn` digits). Externalizing the existing
-English copy proceeds phase-by-phase; see
+language is dropping a catalog folder, no component edits. Shipped locales: **19** - en · ar · de ·
+es · fr · ru · zh-Hans · zh-Hant · pt-BR · it · nl · pl · tr · uk · ja · ko · vi · id · hi (Arabic
+is RTL with Western `latn` digits). Externalizing the existing English copy proceeded
+phase-by-phase; see
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#internationalization-i18n).
 
 | Phase | Scope | Status |
@@ -129,6 +130,7 @@ English copy proceeds phase-by-phase; see
 | **3 - RTL + Arabic** | Arabic catalog (845 keys) + 6-form plural rule + `latn` digits; `<html dir/lang>` flips to RTL; logical-property sweep (`ms-/me-/ps-/pe-/text-start/end`, sidebar/drawer flip); `:lang(ar)` Arabic font stack + brutalist tweaks (drop uppercase/tracking, mirror the button press, keep the offset shadow). _Minor follow-ups:_ bidi-isolated measurements, self-hosted Arabic webfonts. | ✅ v0.84.0–v0.85.0 |
 | **4 - Backend messages** | A `{ code, params, message }` contract for backend user-facing strings; the frontend owns the translated copy (English `message` kept as a fallback). Done for the Motor Drivers write path (`drivers_apply.py` → `motorDrivers.apply.*`, rendered via `applyResultText`); passthrough/upstream errors (Moonraker / `field_policy` / validation) intentionally stay English (no `code`). | ✅ v0.86.0 |
 | **5 - More locales** | de / zh-Hans / fr / es / ru shipped - all 845 keys each, lazy-loaded, with correct per-locale plural rules. Each was a drop-in `src/locales/<code>/` folder; no component changed. (CJK / Cyrillic font subsets ride the default system stack for now.) | ✅ v0.84.0 |
+| **6 - 12 more locales** | pt-BR / it / ja / ko / pl / tr / nl / zh-Hant / uk / hi / vi / id shipped - all 2,352 keys each, lazy-loaded, with correct per-locale plural rules (single-form for the CJK / Southeast-Asian languages, one/few/many for Ukrainian and Polish). `matchLocale` now routes zh-TW / zh-HK to Traditional and base `pt` to Brazilian. **19 locales total.** | ✅ v0.295.0 |
 
 ## Platform expansion - tuning & configuration widgets
 

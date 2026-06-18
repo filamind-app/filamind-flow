@@ -75,11 +75,11 @@ A bare data panel isn't enough. Every widget should make sense to someone seeing
 
 The Board Topology and Input Shaping widgets are the reference for the `HelpDrawer` wiring and the `help.ts` shape. Look at those when you wire up a new widget.
 
-> **Enforced in CI:** `src/core/__tests__/widgets.spec.ts` fails the build if a registered widget is missing a translated sidebar entry (`shell.widgets.<id>.{title,description}`) or doesn't render the shared `<HelpDrawer>`. On top of that, the 7-locale parity test requires the sidebar entry in every language. You can't skip these, so a new widget won't merge without them.
+> **Enforced in CI:** `src/core/__tests__/widgets.spec.ts` fails the build if a registered widget is missing a translated sidebar entry (`shell.widgets.<id>.{title,description}`) or doesn't render the shared `<HelpDrawer>`. On top of that, the locale parity test requires the sidebar entry in every shipped language. You can't skip these, so a new widget won't merge without them.
 
 ## Internationalization (strings & locales)
 
-All user-facing copy lives in `vue-i18n` catalogs under `src/locales/`. The setup is offline-first and extensible; see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the details. The UI ships fully localized in 7 languages: en, ar, de, zh-Hans, fr, es, and ru, with Arabic in RTL. Keep it that way. A few rules keep it from regressing.
+All user-facing copy lives in `vue-i18n` catalogs under `src/locales/`. The setup is offline-first and extensible; see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the details. The UI ships fully localized in 19 languages (en, ar, de, es, fr, ru, zh-Hans, zh-Hant, pt-BR, it, nl, pl, tr, uk, ja, ko, vi, id, hi), with Arabic in RTL. Keep it that way. A few rules keep it from regressing.
 
 New user-facing text always goes through `t()`, never a hardcoded literal. Add the key to the matching `en` namespace JSON (`common`, `shell`, or `<widget>`). `en` is the source of truth.
 
@@ -87,7 +87,7 @@ Keys are type-checked. `t('…')` autocompletes from the `en` catalog, and a wro
 
 Keep units and tokens Latin. SI unit symbols such as Hz, A, and °C are not translated, and neither are brand, protocol, register, or G-code names like Klipper, StallGuard, `run_current`, and `G28`. Only the surrounding prose gets translated. Prefer `Intl`-formatted numbers (vue-i18n `numberFormats`) over `.toFixed()`.
 
-Adding a language is mostly a matter of dropping in a folder. Create `src/locales/<code>/*.json` mirroring `en`, add the locale to `LOCALE_META` in `core/i18n.ts` (its label, `dir`, and optional `numberingSystem`), and make sure `npm run i18n:keydiff` passes. That check enforces an exact key-set match with `en`.
+Adding a language is mostly a matter of dropping in a folder. Create `src/locales/<code>/*.json` mirroring `en`, add the locale to `LOCALE_META` in `core/i18n.ts` (its label, `dir`, and optional `numberingSystem`), and make sure `npm run i18n:keydiff` passes. That check enforces an exact key-set match with `en`. If the language's plurals differ from English, add a `PLURAL_RULES` entry too (single-form for CJK / Vietnamese / Indonesian, one/few/many for the Slavic languages), keeping the right number of `|` branches on the pipe-plural keys. Finally, add the new code to the shipped-locale lists in `core/__tests__/i18n.spec.ts` and `core/__tests__/locales.spec.ts` (the latter loads each language and checks a plural branch resolves).
 
 Before you ship layout-sensitive copy, eyeball it for expansion and RTL issues with `npm run i18n:pseudo`.
 
