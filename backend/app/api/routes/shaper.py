@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import os
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import FileResponse
@@ -135,6 +136,25 @@ async def live_resonance_test(
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except shaper_service.ShaperAnalysisError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    # Auto-persist the capture into the on-host archive so its chart can be reopened after the app
+    # is closed (best-effort: archiving must never fail the test the user just waited through).
+    src = result.pop("_source_path", None)
+    if src:
+        with contextlib.suppress(Exception):
+            await asyncio.to_thread(
+                shaper_archive.save_run,
+                settings.data_dir,
+                kind="shaper",
+                axis=axis,
+                summary={
+                    "source_file": os.path.basename(src),
+                    "recommended_shaper": result.get("recommended_shaper"),
+                    "recommended_freq": result.get("recommended_freq"),
+                    "auto": True,
+                },
+                csv_sources=[src],
+                keep_n=settings.shaper_archive_keep_n,
+            )
     return ShaperAnalysis(**result)
 
 
@@ -461,3 +481,41 @@ async def save_archive_file(
     except shaper_archive.ArchiveError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return ArchiveRun(**run)
+
+
+def _read_and_analyze(path: str, **kwargs: Any) -> dict[str, Any]:
+    """Read an archived resonance CSV and re-run the shaper analysis on it."""
+    with open(path, "rb") as handle:
+        raw = handle.read(128_000_000)
+    return shaper_service.analyze(raw, **kwargs)
+
+
+@router.post("/archive/{run_id}/analyze", response_model=ShaperAnalysis)
+async def analyze_archive_run(
+    run_id: str,
+    axis: str | None = Query(None),
+    scv: float = Query(5.0),
+    max_freq: float = Query(200.0),
+    settings: Settings = Depends(get_settings),
+) -> ShaperAnalysis:
+    """Re-analyse the capture stored in an archived run, so its chart can be reopened later."""
+    try:
+        run = shaper_archive.get_run(settings.data_dir, run_id)
+    except shaper_archive.ArchiveError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if run is None:
+        raise HTTPException(status_code=404, detail="No such archived run")
+    csv = next((f for f in run.get("files", []) if str(f).endswith(".csv")), None)
+    if not csv:
+        raise HTTPException(status_code=400, detail="This run has no capture to chart")
+    path = shaper_archive.run_file_path(settings.data_dir, run_id, str(csv))
+    if not path or not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="The archived capture file is missing")
+    try:
+        result = await asyncio.to_thread(
+            _read_and_analyze, path, axis=axis or run.get("axis"), scv=scv, max_freq=max_freq
+        )
+    except shaper_service.ShaperAnalysisError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    result["source_file"] = str(csv)
+    return ShaperAnalysis(**result)

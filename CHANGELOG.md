@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.292.0] - 2026-06-18
+
+### Added
+
+- **Input Shaping captures are saved automatically, and a saved run's chart can be reopened.** Every
+  live `TEST_RESONANCES` run is now archived on the printer host the moment it finishes, so a result
+  is no longer lost when you close the app. Saved runs (Analyze -> From printer) gain a **Chart**
+  button that reopens the full frequency graph - previously they could only be downloaded or deleted.
+
 ### Fixed
 
 - **Installer no longer reports a missing nginx when it is installed.** The dependency check used

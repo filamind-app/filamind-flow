@@ -599,7 +599,9 @@
       "errListArchive": "Impossible de lister l'archive",
       "errSave": "Échec de l'enregistrement dans l'archive",
       "errDelete": "Échec de la suppression",
-      "errDownload": "Échec du téléchargement"
+      "errDownload": "Échec du téléchargement",
+      "viewChart": "Graphique",
+      "viewChartTitle": "Rouvrir le graphique de cette analyse enregistrée"
     },
     "verdicts": {
       "vibrations": {

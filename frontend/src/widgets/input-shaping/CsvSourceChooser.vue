@@ -21,8 +21,21 @@ const { t } = useI18n({ useScope: 'global' })
 
 const props = defineProps<{ busy: boolean }>()
 const emit = defineEmits<{
-  analyze: [{ kind: 'upload' | 'host'; file?: File; path?: string; axis: string | null }]
+  analyze: [
+    {
+      kind: 'upload' | 'host' | 'archive'
+      file?: File
+      path?: string
+      runId?: string
+      axis: string | null
+    },
+  ]
 }>()
+
+/** Reopen a saved run's chart - the parent re-analyses the archived capture. */
+function viewChart(run: ArchiveRun): void {
+  emit('analyze', { kind: 'archive', runId: run.id, axis: run.axis ?? null })
+}
 
 const source = ref<'upload' | 'host'>('upload')
 const file = ref<File | null>(null)
@@ -230,6 +243,15 @@ defineExpose({ refresh })
           <span class="shrink-0 opacity-60">{{ fmtDate(run.at) }}</span>
           <span class="min-w-0 flex-1 truncate opacity-70">{{ run.files.join(', ') }}</span>
           <span class="shrink-0 opacity-50">{{ kb(run.size) }}</span>
+          <button
+            v-if="run.files.some((f) => f.endsWith('.csv'))"
+            class="nb-btn shrink-0 bg-brand-lime px-1.5 py-0.5"
+            :disabled="busy"
+            :title="t('inputShaping.csvSource.viewChartTitle')"
+            @click="viewChart(run)"
+          >
+            📈 {{ t('inputShaping.csvSource.viewChart') }}
+          </button>
           <button
             v-for="fn in run.files"
             :key="fn"

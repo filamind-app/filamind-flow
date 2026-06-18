@@ -599,7 +599,9 @@
       "errListArchive": "无法列出归档",
       "errSave": "保存到归档失败",
       "errDelete": "删除失败",
-      "errDownload": "下载失败"
+      "errDownload": "下载失败",
+      "viewChart": "图表",
+      "viewChartTitle": "重新打开此保存运行的图表"
     },
     "verdicts": {
       "vibrations": {

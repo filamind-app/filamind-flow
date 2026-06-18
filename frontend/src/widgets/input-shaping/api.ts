@@ -96,6 +96,25 @@ export async function analyzeResonanceFile(
   return (await response.json()) as ShaperAnalysis
 }
 
+/** Re-analyse an archived run's capture so its frequency chart can be reopened. */
+export async function analyzeArchiveRun(
+  id: string,
+  opts: AnalyzeOptions = {},
+): Promise<ShaperAnalysis> {
+  const { backendUrl } = resolveEndpoints()
+  const params = new URLSearchParams()
+  if (opts.axis) params.set('axis', opts.axis)
+  if (opts.scv != null) params.set('scv', String(opts.scv))
+  if (opts.maxFreq != null) params.set('max_freq', String(opts.maxFreq))
+  const query = params.toString()
+  const response = await fetch(
+    `${backendUrl}/api/shaper/archive/${encodeURIComponent(id)}/analyze${query ? `?${query}` : ''}`,
+    { method: 'POST' },
+  )
+  if (!response.ok) throw new Error(await errorDetail(response, 'Analysis failed'))
+  return (await response.json()) as ShaperAnalysis
+}
+
 /** Runs a live TEST_RESONANCES on the printer (moves the toolhead) and analyses it. */
 export async function runLiveTest(axis: string): Promise<ShaperAnalysis> {
   const { backendUrl } = resolveEndpoints()
