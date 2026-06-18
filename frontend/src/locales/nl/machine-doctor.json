@@ -22,7 +22,7 @@
       "firmware": "Firmwaresync",
       "services": "Services",
       "tuning": "Input shaping",
-      "flow": "Max flow"
+      "flow": "Max. flow"
     },
     "services": {
       "title": "Services",
@@ -32,7 +32,7 @@
     },
     "stats": {
       "title": "In één oogopslag",
-      "maxFlow": "Max flow",
+      "maxFlow": "Max. flow",
       "tuningAxis": "Shaper {axis}",
       "firmware": "Firmware",
       "outOfSync": "{n} niet gesynchroniseerd",

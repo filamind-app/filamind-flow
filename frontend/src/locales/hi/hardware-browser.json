@@ -145,7 +145,7 @@
     },
     "mcus": {
       "search": "MCUs खोजें",
-      "total": "{n} MCUs",
+      "total": "{n} MCU",
       "none": "कोई MCU नहीं मिला।",
       "boards": "{n} बोर्ड"
     },

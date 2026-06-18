@@ -77,7 +77,7 @@
     },
     "widget": {
       "tabGuided": "🧭 Prowadzony",
-      "tabStatus": "🩺 Status",
+      "tabStatus": "🩺 Stan",
       "tabConfigure": "🔧 Konfiguruj",
       "tabDevices": "🖥 Urządzenia",
       "tabExternal": "📦 Zewnętrzny",
@@ -95,7 +95,7 @@
       ],
       "hostKlipper": "Host · Klipper",
       "hostFallback": "host",
-      "healthOk": "✓ setup",
+      "healthOk": "✓ gotowe",
       "healthOkTitle": "host jest przygotowany do wgrywania",
       "healthIssues": "{n} problem konfiguracji | {n} problemy konfiguracji | {n} problemów konfiguracji",
       "servicesHeading": "Usługi",
@@ -155,7 +155,7 @@
       "stepAssignAction": "Urządzenia →",
       "stepFlashLabel": "Zbuduj i wgraj, potem zweryfikuj",
       "stepFlashWhy": "Wgraj firmware (za potwierdzeniem), a potem sprawdź, czy raportowana wersja płyty pasuje do hosta.",
-      "stepFlashAction": "Status →"
+      "stepFlashAction": "Stan →"
     },
     "flashConfirm": {
       "title": "⚠ Potwierdź wgrywanie",
@@ -174,7 +174,7 @@
       "back": "← wstecz",
       "blankConfig": "- pusta konfiguracja -",
       "optional": "opcjonalne",
-      "optionDocs": "option docs",
+      "optionDocs": "dokumentacja opcji",
       "optionDocsTitle": "Pokaż tekst pomocy każdej opcji w treści",
       "raw": "surowe",
       "rawTitle": "Pokaż surowe nazwy symboli Kconfig",

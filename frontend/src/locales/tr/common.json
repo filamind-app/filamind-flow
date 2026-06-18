@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "FilaMind arka ucuna ulaşılamıyor - filamind-flow servisinin çalıştığından ve erişilebilir olduğundan emin olun."
+      "backendUnreachable": "FilaMind arka ucuna ulaşılamıyor - filamind-flow servisinin çalıştığından ve erişilebilir olduğundan emin olun.",
+      "requestFailed": "İstek başarısız ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "Yeniden başlatılıyor…",
     "restarted": "Ürün yazılımı yeniden başlatma komutu gönderildi.",
     "cancel": "İptal"
+  },
+  "comboSelect": {
+    "select": "Seçin…",
+    "clear": "temizle",
+    "options": "Seçenekler",
+    "noMatches": "eşleşme yok",
+    "shown": "{n} gösteriliyor"
+  },
+  "widgetTabs": {
+    "views": "Görünümler"
   }
 }

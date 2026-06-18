@@ -124,7 +124,7 @@
       "intro": "FilaMind Flow को ही टचस्क्रीन पर फ़ुलस्क्रीन ब्राउज़र के रूप में रखें - स्क्रीन क्या दिखाती है उस पर पूरा नियंत्रण। यह KlipperScreen के साथ स्वैप होता है: एक को शुरू करने से दूसरा रुक जाता है।",
       "current": "अभी स्क्रीन",
       "mode": {
-        "kiosk": "FilaMind kiosk",
+        "kiosk": "FilaMind कियोस्क",
         "klipperscreen": "KlipperScreen",
         "none": "कोई नहीं चल रहा"
       },

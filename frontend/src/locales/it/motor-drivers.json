@@ -128,7 +128,7 @@
         "fault": "fault"
       },
       "celsius": "{v} °C",
-      "noSensor": "no sensor",
+      "noSensor": "nessun sensore",
       "maxCurrent": "≤ {a} A",
       "extruder": "Estrusore",
       "extruderN": "Estrusore {n}",
@@ -153,10 +153,10 @@
       "flag": {
         "overtemp": "overtemp",
         "tempWarn": "temp-warn",
-        "shortA": "short A",
-        "shortB": "short B",
-        "openLoadA": "open-load A",
-        "openLoadB": "open-load B",
+        "shortA": "corto A",
+        "shortB": "corto B",
+        "openLoadA": "circuito aperto A",
+        "openLoadB": "circuito aperto B",
         "standstill": "standstill"
       },
       "runCurrent": "corrente di marcia (A)"
@@ -283,7 +283,7 @@
     "registerEditor": {
       "toggle": "metti a punto i registri (avanzato)",
       "resetTitle": "INIT_TMC - riapplica i registri configurati di questo driver + la corrente",
-      "resetLabel": "↺ reset to config",
+      "resetLabel": "↺ ripristina configurazione",
       "liveOnly": "Le modifiche sono {live} - non salvate. {initTmc} (reset), un riavvio del firmware o un power-cycle ripristina i valori configurati. I valori fuori intervallo sono rifiutati dalla policy di sicurezza lato stampante; i registri grezzi di corrente e protezione non sono modificabili qui.",
       "liveOnlyEmphasis": "solo live",
       "loading": "Caricamento registri modificabili…",

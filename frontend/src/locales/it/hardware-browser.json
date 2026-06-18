@@ -180,7 +180,7 @@
         "toolhead": "Testa di stampa",
         "printer-preset": "Preset stampante",
         "expansion": "Espansione",
-        "host": "Host SBC"
+        "host": "SBC host"
       }
     },
     "onPrinter": {

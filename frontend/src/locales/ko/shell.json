@@ -101,7 +101,7 @@
         "description": "실시간 TMC 스테퍼 드라이버 목록: 전류, 모드, 마이크로스텝, 상태."
       },
       "config-editor": {
-        "title": "Config Editor",
+        "title": "구성 편집기",
         "description": "프린터 설정 파일을 섹션 단위로 파싱하고 검증하여 탐색합니다."
       },
       "max-flow": {
@@ -109,19 +109,19 @@
         "description": "핫엔드가 지속할 수 있는 최대 체적 유량을 측정합니다 (StallGuard)."
       },
       "board-topology": {
-        "title": "Board Topology",
+        "title": "보드 토폴로지",
         "description": "호스트와 MCU의 연결 방식(USB / CAN / UART)과 보드 추정을 확인합니다."
       },
       "macro-designer": {
-        "title": "Macro Designer",
+        "title": "매크로 디자이너",
         "description": "오프라인으로 G-code 시뮬레이션 - 툴헤드 경로, 범위, 합계, 매크로 라이브러리."
       },
       "hardware-browser": {
-        "title": "Hardware Browser",
+        "title": "하드웨어 브라우저",
         "description": "엄선된 3D 프린팅 하드웨어 자료를 이름, 제조사, 사양으로 검색합니다."
       },
       "config-templates": {
-        "title": "Config Templates",
+        "title": "구성 템플릿",
         "description": "카테고리별로 바로 붙여넣을 수 있는 Klipper 설정 블록과 매크로."
       },
       "machine-doctor": {
@@ -129,7 +129,7 @@
         "description": "원클릭 전체 프린터 스캔과 A-F 성적표, 바로가기 수정 링크."
       },
       "host-control": {
-        "title": "Host Control",
+        "title": "호스트 제어",
         "description": "프린터 호스트의 Linux OS 관리: 상태, 서비스, 디스크 정리, 시스템 설정."
       },
       "klipperscreen-studio": {

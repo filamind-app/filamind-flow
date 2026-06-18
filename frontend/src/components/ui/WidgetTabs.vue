@@ -4,23 +4,27 @@
  *  Generic over the tab-id union so `v-model` stays type-safe. Pair with `v-show` in the
  *  parent so an in-progress view (e.g. a wizard) survives a tab switch.
  */
+import { useI18n } from 'vue-i18n'
+
 defineProps<{ modelValue: T; tabs: { id: T; label: string }[] }>()
 defineEmits<{ 'update:modelValue': [id: T] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-1" role="tablist" aria-label="Views">
+  <div class="flex flex-wrap gap-1" role="tablist" :aria-label="t('widgetTabs.views')">
     <button
-      v-for="t in tabs"
-      :key="t.id"
+      v-for="tab in tabs"
+      :key="tab.id"
       type="button"
       role="tab"
-      :aria-selected="modelValue === t.id"
+      :aria-selected="modelValue === tab.id"
       class="nb-btn px-3 py-1 text-xs"
-      :class="modelValue === t.id ? 'bg-brand-cyan ring-2 ring-ink' : 'bg-surface'"
-      @click="$emit('update:modelValue', t.id)"
+      :class="modelValue === tab.id ? 'bg-brand-cyan ring-2 ring-ink' : 'bg-surface'"
+      @click="$emit('update:modelValue', tab.id)"
     >
-      {{ t.label }}
+      {{ tab.label }}
     </button>
   </div>
 </template>

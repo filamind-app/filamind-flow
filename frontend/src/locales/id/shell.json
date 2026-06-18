@@ -89,7 +89,7 @@
     },
     "widgets": {
       "firmware-upgrade": {
-        "title": "Firmware Manager",
+        "title": "Pengelola Firmware",
         "description": "Versi firmware MCU, status sinkronisasi host, dan kesiapan toolchain."
       },
       "input-shaping": {
@@ -101,7 +101,7 @@
         "description": "Inventaris driver stepper TMC langsung: arus, mode, microstep, dan status."
       },
       "config-editor": {
-        "title": "Config Editor",
+        "title": "Editor Konfigurasi",
         "description": "Jelajahi file konfigurasi printer Anda, diurai menjadi bagian dengan validasi."
       },
       "max-flow": {
@@ -109,19 +109,19 @@
         "description": "Ukur aliran volumetrik tertinggi yang dapat ditahan hotend Anda (StallGuard)."
       },
       "board-topology": {
-        "title": "Board Topology",
+        "title": "Topologi Board",
         "description": "Lihat bagaimana host dan MCU terhubung (USB / CAN / UART) + tebakan board."
       },
       "macro-designer": {
-        "title": "Macro Designer",
+        "title": "Perancang Makro",
         "description": "Simulasikan G-code secara luring - jalur toolhead, batas, total, dan pustaka makro."
       },
       "hardware-browser": {
-        "title": "Hardware Browser",
+        "title": "Penjelajah Perangkat Keras",
         "description": "Telusuri referensi perangkat keras pencetakan 3D pilihan berdasarkan nama, produsen, atau spesifikasi."
       },
       "config-templates": {
-        "title": "Config Templates",
+        "title": "Templat Konfigurasi",
         "description": "Blok konfigurasi Klipper dan makro siap-tempel, per kategori."
       },
       "machine-doctor": {
@@ -129,7 +129,7 @@
         "description": "Pindaian printer penuh sekali klik dengan rapor A-F dan tautan lompat-ke-perbaikan."
       },
       "host-control": {
-        "title": "Host Control",
+        "title": "Kontrol Host",
         "description": "Kelola OS Linux host printer: kesehatan, layanan, pembersihan disk, dan pengaturan sistem."
       },
       "klipperscreen-studio": {

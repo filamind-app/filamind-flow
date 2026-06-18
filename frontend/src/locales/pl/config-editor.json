@@ -109,7 +109,7 @@
     },
     "restart": {
       "prompt": "Zrestartować firmware, aby zastosować zmianę?",
-      "button": "Restart firmware",
+      "button": "Uruchom ponownie firmware",
       "restarting": "Restartowanie…",
       "confirmTitle": "Zrestartować firmware?",
       "confirmBody": "FIRMWARE_RESTART ponownie wczytuje konfigurację i na chwilę przerywa pracę drukarki. Rób to tylko wtedy, gdy jest bezczynna.",

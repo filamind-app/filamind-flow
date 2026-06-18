@@ -257,7 +257,7 @@
         "spreadcycle": "SpreadCycle",
         "coolstep": "CoolStep",
         "stallguard": "StallGuard",
-        "stallguard_field": "StallGuard field",
+        "stallguard_field": "StallGuard-Feld",
         "max_temp_c": "Max. Temp",
         "suggested_temp_c": "Empf. Temp",
         "expected_max_flow_mm3s": "Erw. max. Fluss",

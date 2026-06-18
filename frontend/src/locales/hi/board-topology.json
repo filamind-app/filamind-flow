@@ -94,7 +94,7 @@
       "unknown": "unknown",
       "via": "{type} के ज़रिए"
     },
-    "count": "{n} MCUs",
+    "count": "{n} MCU",
     "states": {
       "loading": "टोपोलॉजी पढ़ी जा रही है…",
       "unreachable": "प्रिंटर तक नहीं पहुँच सके।",
@@ -210,7 +210,7 @@
     "pinAtlas": {
       "tab": {
         "details": "विवरण",
-        "atlas": "Pin Atlas"
+        "atlas": "पिन एटलस"
       },
       "summary": "{used}/{total} पिन उपयोग में · {free} मुक्त",
       "loading": "पिन मैप पढ़ा जा रहा है…",

@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "تعذّر الوصول إلى خادم FilaMind — تأكّد من أن خدمة filamind-flow قيد التشغيل ويمكن الوصول إليها."
+      "backendUnreachable": "تعذّر الوصول إلى خادم FilaMind — تأكّد من أن خدمة filamind-flow قيد التشغيل ويمكن الوصول إليها.",
+      "requestFailed": "فشل الطلب ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "جارٍ إعادة التشغيل…",
     "restarted": "أُرسلت إعادة تشغيل الفيرموير.",
     "cancel": "إلغاء"
+  },
+  "comboSelect": {
+    "select": "اختر…",
+    "clear": "مسح",
+    "options": "الخيارات",
+    "noMatches": "لا توجد نتائج",
+    "shown": "{n} معروض"
+  },
+  "widgetTabs": {
+    "views": "العروض"
   }
 }

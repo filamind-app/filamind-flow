@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "Không thể kết nối tới backend FilaMind - hãy kiểm tra xem dịch vụ filamind-flow có đang chạy và truy cập được không."
+      "backendUnreachable": "Không thể kết nối tới backend FilaMind - hãy kiểm tra xem dịch vụ filamind-flow có đang chạy và truy cập được không.",
+      "requestFailed": "Yêu cầu thất bại ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "Đang khởi động lại…",
     "restarted": "Đã gửi lệnh khởi động lại firmware.",
     "cancel": "Hủy"
+  },
+  "comboSelect": {
+    "select": "Chọn…",
+    "clear": "xóa",
+    "options": "Tùy chọn",
+    "noMatches": "không có kết quả",
+    "shown": "Hiển thị {n}"
+  },
+  "widgetTabs": {
+    "views": "Chế độ xem"
   }
 }

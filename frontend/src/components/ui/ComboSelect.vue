@@ -6,6 +6,7 @@
  *  shows the WHOLE list (scrollable) so a user who doesn't remember the name can browse (#130).
  */
 import { computed, nextTick, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface ComboOption {
   value: string
@@ -21,9 +22,13 @@ const props = withDefaults(
     disabled?: boolean
     clearable?: boolean
   }>(),
-  { placeholder: 'Select…', disabled: false, clearable: false },
+  { placeholder: undefined, disabled: false, clearable: false },
 )
 const emit = defineEmits<{ 'update:modelValue': [value: string | null] }>()
+
+const { t } = useI18n({ useScope: 'global' })
+// Fall back to a translated default when the parent passes no placeholder.
+const ph = computed(() => props.placeholder ?? t('comboSelect.select'))
 
 // Unique per-instance id prefix so multiple comboboxes on one page don't collide on option ids.
 let comboSeq = 0
@@ -103,7 +108,7 @@ watch(query, () => (activeIndex.value = 0))
       @click="open ? close() : openMenu()"
     >
       <span class="min-w-0 truncate" :class="{ 'opacity-50': !selected }">
-        {{ selected ? selected.label : placeholder }}
+        {{ selected ? selected.label : ph }}
       </span>
       <span class="shrink-0 opacity-60">{{ open ? '▴' : '▾' }}</span>
     </button>
@@ -116,8 +121,8 @@ watch(query, () => (activeIndex.value = 0))
         ref="input"
         v-model="query"
         type="text"
-        :placeholder="placeholder"
-        :aria-label="placeholder"
+        :placeholder="ph"
+        :aria-label="ph"
         class="w-full rounded-brutal border-2 border-ink bg-surface px-1.5 py-1"
         :aria-activedescendant="shown[activeIndex] ? `${uid}-opt-${activeIndex}` : undefined"
         @keydown="onKeydown"
@@ -128,9 +133,14 @@ watch(query, () => (activeIndex.value = 0))
         class="block w-full px-1 py-0.5 text-start text-brand-red hover:underline"
         @click="select(null)"
       >
-        ✕ clear
+        ✕ {{ t('comboSelect.clear') }}
       </button>
-      <ul ref="list" role="listbox" aria-label="Options" class="max-h-72 overflow-y-auto">
+      <ul
+        ref="list"
+        role="listbox"
+        :aria-label="t('comboSelect.options')"
+        class="max-h-72 overflow-y-auto"
+      >
         <li v-for="(o, i) in shown" :key="o.value">
           <button
             :id="`${uid}-opt-${i}`"
@@ -146,9 +156,11 @@ watch(query, () => (activeIndex.value = 0))
             <span v-if="o.sublabel" class="opacity-60"> {{ o.sublabel }}</span>
           </button>
         </li>
-        <li v-if="!shown.length" class="px-1 py-0.5 opacity-60">no matches</li>
+        <li v-if="!shown.length" class="px-1 py-0.5 opacity-60">
+          {{ t('comboSelect.noMatches') }}
+        </li>
       </ul>
-      <div class="px-1 opacity-50">{{ shown.length }} shown</div>
+      <div class="px-1 opacity-50">{{ t('comboSelect.shown', { n: shown.length }) }}</div>
     </div>
   </div>
 </template>

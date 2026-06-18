@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "FilaMind バックエンドに接続できません。filamind-flow サービスが起動していて到達可能か確認してください。"
+      "backendUnreachable": "FilaMind バックエンドに接続できません。filamind-flow サービスが起動していて到達可能か確認してください。",
+      "requestFailed": "リクエストに失敗しました（{status}）"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "再起動中…",
     "restarted": "ファームウェアの再起動を送信しました。",
     "cancel": "キャンセル"
+  },
+  "comboSelect": {
+    "select": "選択…",
+    "clear": "クリア",
+    "options": "オプション",
+    "noMatches": "一致なし",
+    "shown": "{n} 件表示"
+  },
+  "widgetTabs": {
+    "views": "ビュー"
   }
 }

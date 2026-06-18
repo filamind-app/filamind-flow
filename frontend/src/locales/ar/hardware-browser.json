@@ -257,7 +257,7 @@
         "spreadcycle": "SpreadCycle",
         "coolstep": "CoolStep",
         "stallguard": "StallGuard",
-        "stallguard_field": "StallGuard field",
+        "stallguard_field": "حقل StallGuard",
         "max_temp_c": "أقصى حرارة",
         "suggested_temp_c": "الحرارة المقترحة",
         "expected_max_flow_mm3s": "أقصى تدفّق متوقع",

@@ -194,7 +194,7 @@
     },
     "liveMonitor": {
       "toggle": "live monitor",
-      "temp": "temp {temp} °C",
+      "temp": "temp. {temp} °C",
       "sg": "SG {sg}",
       "cs": "CS {cs}",
       "updates": "· vernieuwt ~1.5s",

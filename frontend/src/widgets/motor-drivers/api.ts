@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
@@ -19,7 +20,7 @@ export async function fetchDriverStatus(): Promise<DriversStatus> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/drivers/status`)
   if (!response.ok) {
-    throw new Error(`Driver status request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as DriversStatus
 }
@@ -30,7 +31,7 @@ export async function fetchEndstops(): Promise<EndstopStates> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/drivers/endstops`)
   if (!response.ok) {
-    throw new Error(`Endstop status request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as EndstopStates
 }
@@ -40,7 +41,7 @@ export async function fetchDriverLive(stepper: string): Promise<DriverLive> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/drivers/live/${encodeURIComponent(stepper)}`)
   if (!response.ok) {
-    throw new Error(`Live telemetry request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as DriverLive
 }
@@ -50,7 +51,7 @@ export async function fetchMotorCatalog(): Promise<MotorCatalog> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/drivers/motors`)
   if (!response.ok) {
-    throw new Error(`Motor catalog request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as MotorCatalog
 }
@@ -67,7 +68,7 @@ export async function saveMotorAssignment(
     body: JSON.stringify({ stepper, motor_model: motorModel }),
   })
   if (!response.ok) {
-    throw new Error(`Motor assignment failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
 }
 
@@ -84,7 +85,7 @@ export async function fetchRecommendation(req: RecommendRequest): Promise<Driver
       .json()
       .then((b) => b?.detail)
       .catch(() => null)
-    throw new Error(detail || `Recommendation failed (${response.status})`)
+    throw new Error(detail || httpError(response.status))
   }
   return (await response.json()) as DriverRecommendation
 }
@@ -97,7 +98,7 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   })
   if (!response.ok) {
-    throw new Error(`Request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as T
 }
@@ -143,7 +144,7 @@ export async function fetchFieldPolicy(model: string): Promise<FieldPolicyRespon
     `${backendUrl}/api/drivers/field-policy/${encodeURIComponent(model)}`,
   )
   if (!response.ok) {
-    throw new Error(`Field policy request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as FieldPolicyResponse
 }
@@ -172,7 +173,7 @@ export async function fetchMotorsSyncStatus(): Promise<MotorsSyncStatus> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/drivers/motors-sync`)
   if (!response.ok) {
-    throw new Error(`Motor-sync status request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as MotorsSyncStatus
 }

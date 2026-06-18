@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
@@ -41,7 +42,7 @@ export async function fetchConfigFiles(): Promise<ConfigFileList> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/files`)
   if (!response.ok) {
-    throw new Error(`Config file list request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigFileList
 }
@@ -52,7 +53,7 @@ export async function fetchConfigFile(filename: string): Promise<ConfigFileView>
   const url = `${backendUrl}/api/config/file?filename=${encodeURIComponent(filename)}`
   const response = await fetch(url)
   if (!response.ok) {
-    throw new Error(`Config file request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigFileView
 }
@@ -63,7 +64,7 @@ export async function fetchConfigDrift(filename: string): Promise<ConfigDriftRes
   const url = `${backendUrl}/api/config/drift?filename=${encodeURIComponent(filename)}`
   const response = await fetch(url)
   if (!response.ok) {
-    throw new Error(`Drift request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigDriftResult
 }
@@ -75,7 +76,7 @@ export async function fetchFieldPolicy(model: string): Promise<FieldPolicyRespon
     `${backendUrl}/api/drivers/field-policy/${encodeURIComponent(model)}`,
   )
   if (!response.ok) {
-    throw new Error(`Field policy request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as FieldPolicyResponse
 }
@@ -85,7 +86,7 @@ export async function fetchPinDoctor(): Promise<PinDoctorResult> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/pin-doctor`)
   if (!response.ok) {
-    throw new Error(`Pin doctor request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as PinDoctorResult
 }
@@ -95,7 +96,7 @@ export async function fetchConfigSanity(): Promise<ConfigSanityResult> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/sanity`)
   if (!response.ok) {
-    throw new Error(`Sanity request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigSanityResult
 }
@@ -106,7 +107,7 @@ export async function fetchBackups(filename?: string): Promise<ConfigBackupList>
   const q = filename ? `?filename=${encodeURIComponent(filename)}` : ''
   const response = await fetch(`${backendUrl}/api/config/backups${q}`)
   if (!response.ok) {
-    throw new Error(`Backups request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigBackupList
 }
@@ -116,7 +117,7 @@ export async function fetchBackupContent(path: string): Promise<string> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/backup?path=${encodeURIComponent(path)}`)
   if (!response.ok) {
-    throw new Error(`Backup content request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return ((await response.json()) as { content: string }).content
 }
@@ -126,7 +127,7 @@ export async function fetchConfigGraph(): Promise<ConfigGraph> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/graph`)
   if (!response.ok) {
-    throw new Error(`Config graph request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigGraph
 }
@@ -136,7 +137,7 @@ export async function searchConfig(q: string): Promise<ConfigSearchResult> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/search?q=${encodeURIComponent(q)}`)
   if (!response.ok) {
-    throw new Error(`Config search request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigSearchResult
 }
@@ -146,7 +147,7 @@ export async function fetchPinMap(): Promise<PinMapResult> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/pin-map`)
   if (!response.ok) {
-    throw new Error(`Pin map request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as PinMapResult
 }
@@ -180,7 +181,7 @@ export async function applySection(
     body: JSON.stringify({ filename, block, expected_sha256: expectedSha256 ?? null }),
   })
   if (!response.ok) {
-    throw await errorFrom(response, `Apply failed (${response.status})`)
+    throw await errorFrom(response, httpError(response.status))
   }
   return (await response.json()) as ApplySectionResult
 }
@@ -199,7 +200,7 @@ export async function adoptParam(
     body: JSON.stringify({ content, section, key, value }),
   })
   if (!response.ok) {
-    throw new Error(`Adopt failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return ((await response.json()) as { content: string }).content
 }
@@ -217,7 +218,7 @@ export async function saveConfigFile(
     body: JSON.stringify({ filename, content, expected_sha256: expectedSha256 ?? null }),
   })
   if (!response.ok) {
-    throw await errorFrom(response, `Save failed (${response.status})`)
+    throw await errorFrom(response, httpError(response.status))
   }
   return (await response.json()) as ConfigSaveResult
 }
@@ -227,6 +228,6 @@ export async function restartFirmware(): Promise<void> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/config/restart`, { method: 'POST' })
   if (!response.ok) {
-    throw await errorFrom(response, `Restart failed (${response.status})`)
+    throw await errorFrom(response, httpError(response.status))
   }
 }

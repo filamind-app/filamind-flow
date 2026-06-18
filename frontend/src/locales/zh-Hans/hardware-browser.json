@@ -257,7 +257,7 @@
         "spreadcycle": "SpreadCycle",
         "coolstep": "CoolStep",
         "stallguard": "StallGuard",
-        "stallguard_field": "StallGuard field",
+        "stallguard_field": "StallGuard 字段",
         "max_temp_c": "最高温度",
         "suggested_temp_c": "建议温度",
         "expected_max_flow_mm3s": "预期最大流量",

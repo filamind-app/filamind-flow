@@ -185,10 +185,10 @@
       "previewTitle": "Printer"
     },
     "restart": {
-      "button": "Restart KlipperScreen",
+      "button": "Mulai ulang KlipperScreen",
       "restarting": "Me-restart…",
       "done": "KlipperScreen sedang restart - layar akan dimuat ulang sebentar lagi.",
-      "confirmTitle": "Restart KlipperScreen?",
+      "confirmTitle": "Mulai ulang KlipperScreen?",
       "confirmBody": "Ini me-restart layanan layar sentuh untuk menerapkan perubahan Anda. Tidak memengaruhi cetakan yang aktif, tetapi layar menjadi kosong selama beberapa detik.",
       "confirm": "Restart",
       "cancel": "Batal"

@@ -95,7 +95,7 @@
       ],
       "hostKlipper": "होस्ट · Klipper",
       "hostFallback": "होस्ट",
-      "healthOk": "✓ setup",
+      "healthOk": "✓ सेटअप",
       "healthOkTitle": "होस्ट फ्लैशिंग के लिए तैयार है",
       "healthIssues": "{n} setup समस्या | {n} setup समस्याएँ",
       "servicesHeading": "सेवाएँ",
@@ -152,10 +152,10 @@
       "stepConfigureAction": "कॉन्फ़िगर →",
       "stepAssignLabel": "डिवाइस जोड़ें व असाइन करें",
       "stepAssignWhy": "बोर्ड रजिस्टर करें और उसे प्रोफ़ाइल + वह कैसे फ्लैश होगा दें।",
-      "stepAssignAction": "Devices →",
+      "stepAssignAction": "डिवाइस →",
       "stepFlashLabel": "बिल्ड व फ्लैश करें, फिर जाँचें",
       "stepFlashWhy": "फर्मवेयर फ्लैश करें (एक कन्फ़र्म के पीछे), फिर जाँचें कि बोर्ड का रिपोर्ट किया गया वर्शन होस्ट से मेल खाता है।",
-      "stepFlashAction": "Status →"
+      "stepFlashAction": "स्थिति →"
     },
     "flashConfirm": {
       "title": "⚠ फ्लैश की पुष्टि करें",
@@ -174,7 +174,7 @@
       "back": "← वापस",
       "blankConfig": "- खाली कॉन्फ़िग -",
       "optional": "वैकल्पिक",
-      "optionDocs": "option docs",
+      "optionDocs": "विकल्प दस्तावेज़",
       "optionDocsTitle": "हर विकल्प का सहायता पाठ इनलाइन दिखाएँ",
       "raw": "raw",
       "rawTitle": "कच्चे Kconfig सिंबल नाम दिखाएँ",

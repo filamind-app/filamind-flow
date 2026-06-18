@@ -128,7 +128,7 @@
         "fault": "fault"
       },
       "celsius": "{v} °C",
-      "noSensor": "no sensor",
+      "noSensor": "tanpa sensor",
       "maxCurrent": "≤ {a} A",
       "extruder": "Ekstruder",
       "extruderN": "Ekstruder {n}",

@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "Cannot reach the FilaMind backend - check that the filamind-flow service is running and reachable."
+      "backendUnreachable": "Cannot reach the FilaMind backend - check that the filamind-flow service is running and reachable.",
+      "requestFailed": "Request failed ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "Restarting…",
     "restarted": "Firmware restart sent.",
     "cancel": "Cancel"
+  },
+  "comboSelect": {
+    "select": "Select…",
+    "clear": "clear",
+    "options": "Options",
+    "noMatches": "no matches",
+    "shown": "{n} shown"
+  },
+  "widgetTabs": {
+    "views": "Views"
   }
 }

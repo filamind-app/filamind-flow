@@ -183,7 +183,7 @@
         "accelerometer": "Cảm biến gia tốc",
         "printers": "Máy in",
         "bootloader": "Bootloader",
-        "flash_offset": "Flash offset",
+        "flash_offset": "Độ lệch flash",
         "soc": "SoC",
         "ram": "RAM",
         "role": "Vai trò",

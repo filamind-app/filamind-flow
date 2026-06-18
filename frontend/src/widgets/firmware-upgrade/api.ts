@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
@@ -24,7 +25,7 @@ export async function fetchFirmwareStatus(): Promise<FirmwareStatus> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/status`)
   if (!response.ok) {
-    throw new Error(`Firmware status request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as FirmwareStatus
 }
@@ -34,7 +35,7 @@ export async function fetchBoards(): Promise<BoardDiscovery> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/boards`)
   if (!response.ok) {
-    throw new Error(`Board discovery failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as BoardDiscovery
 }
@@ -54,7 +55,7 @@ export async function fetchConfigTree(body: ConfigTreeBody): Promise<ConfigNode[
     body: JSON.stringify(body),
   })
   if (!response.ok) {
-    throw new Error(`Config tree request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigNode[]
 }
@@ -64,7 +65,7 @@ export async function fetchProfiles(): Promise<ProfilesResponse> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/config/profiles`)
   if (!response.ok) {
-    throw new Error(`Profiles request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ProfilesResponse
 }
@@ -83,7 +84,7 @@ export async function saveProfile(body: {
   })
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Save failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
 }
 
@@ -100,7 +101,7 @@ export async function renameProfile(name: string, newName: string): Promise<void
   )
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Rename failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
 }
 
@@ -117,7 +118,7 @@ export async function duplicateProfile(name: string, newName: string): Promise<v
   )
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Duplicate failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
 }
 
@@ -129,7 +130,7 @@ export async function deleteProfile(name: string): Promise<void> {
     { method: 'DELETE' },
   )
   if (!response.ok) {
-    throw new Error(`Delete failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
 }
 
@@ -141,7 +142,7 @@ export async function buildFirmware(
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/build/${encodeURIComponent(profile)}`)
   if (!response.ok || !response.body) {
-    throw new Error(`Build request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
@@ -177,7 +178,7 @@ export async function downloadArtifact(profile: string): Promise<void> {
   )
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Download failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
   const disposition = response.headers.get('Content-Disposition') ?? ''
   const filename = filenameFromDisposition(disposition, `${profile}.bin`)
@@ -193,7 +194,7 @@ export async function downloadArtifact(profile: string): Promise<void> {
 export async function fetchExternal(): Promise<ExternalFirmwareResponse> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/external`)
-  if (!response.ok) throw new Error(`External firmware request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as ExternalFirmwareResponse
 }
 
@@ -212,7 +213,7 @@ export async function uploadExternal(
   })
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Upload failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
   return (await response.json()) as ExternalFirmware
 }
@@ -233,7 +234,7 @@ export async function updateExternalMeta(
   )
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Update failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
   return (await response.json()) as ExternalFirmware
 }
@@ -244,7 +245,7 @@ export async function deleteExternal(name: string): Promise<void> {
   const response = await fetch(`${backendUrl}/api/firmware/external/${encodeURIComponent(name)}`, {
     method: 'DELETE',
   })
-  if (!response.ok) throw new Error(`Delete failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
 }
 
 /** Downloads a stored external firmware file (triggers a browser download). */
@@ -253,7 +254,7 @@ export async function downloadExternal(name: string): Promise<void> {
   const response = await fetch(
     `${backendUrl}/api/firmware/external/${encodeURIComponent(name)}/download`,
   )
-  if (!response.ok) throw new Error(`Download failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   const filename = filenameFromDisposition(
     response.headers.get('Content-Disposition') ?? '',
     `${name}.bin`,
@@ -284,7 +285,7 @@ export async function flashExternal(
   )
   if (!response.ok || !response.body) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Flash failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
@@ -304,7 +305,7 @@ export async function fetchFlashPlan(request: FlashRequest): Promise<FlashPlan> 
     body: JSON.stringify(request),
   })
   if (!response.ok) {
-    throw new Error(`Flash plan failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as FlashPlan
 }
@@ -321,7 +322,7 @@ export async function flashBoard(
     body: JSON.stringify(request),
   })
   if (!response.ok || !response.body) {
-    throw new Error(`Flash request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
@@ -350,7 +351,7 @@ export async function fetchIdentify(): Promise<{
 }> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/identify`)
-  if (!response.ok) throw new Error(`Identify failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as { devices: IdentifiedDevice[]; kconfig_available: boolean }
 }
 
@@ -358,7 +359,7 @@ export async function fetchDevices(): Promise<DevicesResponse> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/devices`)
   if (!response.ok) {
-    throw new Error(`Devices request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as DevicesResponse
 }
@@ -373,7 +374,7 @@ export async function saveDevice(device: DeviceSave): Promise<Device> {
   })
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Save failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
   return (await response.json()) as Device
 }
@@ -386,7 +387,7 @@ export async function removeDevice(deviceId: string): Promise<void> {
     { method: 'DELETE' },
   )
   if (!response.ok) {
-    throw new Error(`Remove failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
 }
 
@@ -403,7 +404,7 @@ export async function attachIdentity(
     body: JSON.stringify({ device_id: deviceId, hardware_id: hardwareId, kind }),
   })
   if (!response.ok) {
-    throw new Error(`Attach failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as Device
 }
@@ -417,7 +418,7 @@ export async function startBatch(action: string): Promise<string> {
     body: JSON.stringify({ action }),
   })
   if (!response.ok) {
-    throw new Error(`Batch failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return ((await response.json()) as { task_id: string }).task_id
 }
@@ -427,7 +428,7 @@ export async function fetchTask(taskId: string): Promise<TaskStatus> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/task/${encodeURIComponent(taskId)}`)
   if (!response.ok) {
-    throw new Error(`Task status failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as TaskStatus
 }
@@ -445,7 +446,7 @@ export async function fetchHealth(): Promise<HealthReport> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/health`)
   if (!response.ok) {
-    throw new Error(`Health request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as HealthReport
 }
@@ -455,7 +456,7 @@ export async function fetchBeacon(): Promise<BeaconResponse> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/beacon`)
   if (!response.ok) {
-    throw new Error(`Beacon request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as BeaconResponse
 }
@@ -469,7 +470,7 @@ export async function flashBeacon(device: string, onChunk: (text: string) => voi
     body: JSON.stringify({ device }),
   })
   if (!response.ok || !response.body) {
-    throw new Error(`Beacon flash failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
@@ -486,7 +487,7 @@ export async function exportBackup(): Promise<void> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/backup/export`)
   if (!response.ok) {
-    throw new Error(`Backup export failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   const url = URL.createObjectURL(await response.blob())
   const link = document.createElement('a')
@@ -513,7 +514,7 @@ export async function importBackup(file: File): Promise<BackupImportSummary> {
   })
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(detail?.detail ?? `Import failed (${response.status})`)
+    throw new Error(detail?.detail ?? httpError(response.status))
   }
   return (await response.json()) as BackupImportSummary
 }
@@ -523,7 +524,7 @@ export async function fetchServices(): Promise<ServicesResponse> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/firmware/services`)
   if (!response.ok) {
-    throw new Error(`Services request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as ServicesResponse
 }
@@ -536,7 +537,7 @@ export async function manageServices(action: string): Promise<void> {
     { method: 'POST' },
   )
   if (!response.ok) {
-    throw new Error(`Service ${action} failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
 }
 
@@ -552,7 +553,7 @@ export async function rebootBoard(
     body: JSON.stringify(request),
   })
   if (!response.ok || !response.body) {
-    throw new Error(`Reboot failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   const reader = response.body.getReader()
   const decoder = new TextDecoder()

@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.296.0] - 2026-06-18
+
+### Fixed
+
+- **More of the interface is translatable.** A full audit across every widget found user-facing
+  text that bypassed the translator, and fixed it:
+  - HTTP error messages from the widget data layer (e.g. "Save failed (500)") were hardcoded
+    English. They now show a translated "Request failed ({status})" in the active language via a
+    shared helper (114 call sites across 12 widgets). Network-unreachable errors were already
+    translated.
+  - The Input Shaping intro line repeated its tab names in English; the shared dropdown control
+    (its placeholder, clear button, "no matches", and result count) and the tab strip's
+    accessibility label were hardcoded. All now go through i18n.
+  - Filled in roughly 285 short labels that were translated in most languages but left in English
+    in a few. (The values that remain identical to English are correct: terms that are the same
+    word in that language, or technical names like DHCP, CIDR, and G-code tokens.)
+  - Audit confirmed there are no raw i18n keys anywhere - every translator reference resolves.
+
 ## [0.295.1] - 2026-06-18
 
 ### Fixed

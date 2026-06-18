@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type { BoardDetail, PinAtlas, Topology, TopologyDiff } from './types'
@@ -7,7 +8,7 @@ export async function fetchTopology(): Promise<Topology> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/topology`)
   if (!response.ok) {
-    throw new Error(`Topology request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as Topology
 }
@@ -22,7 +23,7 @@ export async function setBoardOverride(mcuName: string, boardId: string): Promis
     body: JSON.stringify({ mcu_name: mcuName, board_id: boardId }),
   })
   if (!response.ok) {
-    throw new Error(`Board override failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as Topology
 }
@@ -32,7 +33,7 @@ export async function saveSnapshot(): Promise<TopologyDiff> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/topology/snapshot`, { method: 'POST' })
   if (!response.ok) {
-    throw new Error(`Snapshot failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as TopologyDiff
 }
@@ -42,7 +43,7 @@ export async function fetchDiff(): Promise<TopologyDiff> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/topology/snapshot/diff`)
   if (!response.ok) {
-    throw new Error(`Diff request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as TopologyDiff
 }
@@ -54,7 +55,7 @@ export async function fetchPinAtlas(mcuName: string): Promise<PinAtlas> {
     `${backendUrl}/api/topology/pin-atlas/${encodeURIComponent(mcuName)}`,
   )
   if (!response.ok) {
-    throw new Error(`Pin atlas request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as PinAtlas
 }
@@ -68,7 +69,7 @@ export async function clearBoardOverride(mcuName: string): Promise<Topology> {
     body: JSON.stringify({ mcu_name: mcuName }),
   })
   if (!response.ok) {
-    throw new Error(`Clear override failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as Topology
 }
@@ -81,7 +82,7 @@ export async function fetchBoardDetail(boardId: string): Promise<BoardDetail> {
     `${backendUrl}/api/hardware/boards/${encodeURIComponent(boardId)}?expand=related`,
   )
   if (!response.ok) {
-    throw new Error(`Board request failed (${response.status})`)
+    throw new Error(httpError(response.status))
   }
   return (await response.json()) as BoardDetail
 }

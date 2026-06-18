@@ -78,7 +78,7 @@
       "title": "Leg deze macro uit",
       "travel": "Snelle verplaatsing naar X{x} Y{y} met {f} mm/min",
       "print": "Printbeweging - extrudeer {e} mm over {d} mm naar X{x} Y{y} met {f} mm/min",
-      "retract": "Retract {e} mm",
+      "retract": "{e} mm terugtrekken",
       "prime": "Extrudeer {e} mm ter plaatse",
       "noMove": "Geen beweging",
       "absXYZ": "Schakel naar absolute positionering (G90)",

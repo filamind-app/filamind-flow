@@ -61,7 +61,7 @@
       "board": "Board",
       "unknown": "onbekend",
       "identifier": "Identifier",
-      "confidence": "{pct}% match",
+      "confidence": "{pct}% overeenkomst",
       "viewBoard": "Boarddetails bekijken",
       "hideBoard": "Details verbergen"
     },
@@ -71,13 +71,13 @@
         "physical": "Fysiek",
         "logical": "Logisch"
       },
-      "integrated": "SBC on-board",
+      "integrated": "SBC ingebouwd",
       "integratedNote": "De host-SBC is ingebouwd in het {board}-mainboard.",
       "selectPrompt": "Selecteer een board of MCU in de kaart om het te inspecteren.",
       "aria": "Machinekaart: de host en {n} MCU's",
       "vitals": {
         "freq": "{mhz} MHz",
-        "retx": "{n} retransmits",
+        "retx": "{n} hertransmissies",
         "load": "{pct}% belasting"
       },
       "health": {
@@ -149,7 +149,7 @@
         "voltage": "Voltage",
         "driver_slots": "Driverslots",
         "usb": "USB",
-        "onboard_drivers": "Onboard drivers",
+        "onboard_drivers": "Ingebouwde drivers",
         "clock": "Klok",
         "can": "CAN",
         "drivers": "Drivers",
@@ -262,7 +262,7 @@
     "jump": {
       "section": "Open deze sectie in de Config Editor",
       "drivers": "Openen in Motor Drivers",
-      "firmware": "Open Firmware Manager"
+      "firmware": "Firmware Manager openen"
     }
   }
 }

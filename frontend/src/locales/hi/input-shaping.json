@@ -156,7 +156,7 @@
       "noisy": {
         "title": "शोरगुल वाला कैप्चर",
         "advice": "accelerometer माउंट को सुरक्षित करें और दोबारा चलाएँ। परीक्षण के दौरान fans या अन्य गति से बचें।",
-        "detail": "signal-to-noise {snr}×"
+        "detail": "सिग्नल-टू-नॉइज़ {snr}×"
       },
       "lowFreq": {
         "title": "कम रेज़ोनेंस फ़्रीक्वेंसी",
@@ -171,7 +171,7 @@
       "highSmoothing": {
         "title": "उच्च smoothing",
         "advice": "कोनों को गोल करेगा। अधिक सख़्त shaper चुनें या max_accel कम करें।",
-        "detail": "smoothing {smoothing}"
+        "detail": "स्मूदिंग {smoothing}"
       },
       "multiResonance": {
         "title": "कई रेज़ोनेंस",
@@ -413,7 +413,7 @@
     "widget": {
       "tabGuided": "🧭 गाइडेड",
       "tabAnalyze": "📈 विश्लेषण",
-      "tabLive": "🔴 Live tools",
+      "tabLive": "🔴 लाइव टूल",
       "tabHistory": "🕘 इतिहास",
       "intro": "Klipper रेज़ोनेंस कैप्चर से input shaping ट्यून करें - कोई कमांड लाइन नहीं। यहाँ नए हैं? {guided} से शुरू करें। या स्वयं {csv} पर काम करने के लिए {analyze} चुनें, प्रिंटर पर कैप्चर करने के लिए {live}, या पिछले रन देखने के लिए {history}।",
       "cfgReady": "printer.cfg तैयार",
@@ -442,7 +442,7 @@
       "chartAria": "फ़्रीक्वेंसी प्रतिक्रिया और shapers",
       "peakLabel": "▲ {v}",
       "legendRecommended": "सिफारिश की गई",
-      "legendPeak": "▲ peak",
+      "legendPeak": "▲ पीक",
       "legendAxisHint": "फ़्रीक्वेंसी (Hz) → · ठोस = मापी गई · हल्की = shaper बची हुई",
       "colShaper": "shaper",
       "colFreq": "फ़्रीक्वेंसी",
@@ -460,7 +460,7 @@
       "errSaveFailed": "संग्रह में सहेजना विफल"
     },
     "fromPrinter": {
-      "liveTools": "Live tools",
+      "liveTools": "लाइव टूल",
       "intro": "⏳ ये toolhead हिलाते हैं और {duration} ले सकते हैं (बेल्ट तुलना दो पूर्ण स्वीप चलाती है) - परिणाम आने तक यह पेज खुला रखें।",
       "introDuration": "1-5 मिनट",
       "confirmMoves": "⚠ toolhead हिलाता है - मैं तैयार हूँ",
@@ -484,7 +484,7 @@
       "beltsBtnBusy": "तुलना कर रहा है…",
       "beltsBtnTitle": "CoreXY: हर बेल्ट विकर्ण को उत्तेजित करें और प्रतिक्रियाओं को ओवरले करें",
       "beltsDesc": "केवल CoreXY: बेल्ट विकर्णों के साथ दो स्वीप चलाता है और उन्हें ओवरले करता है। प्रिंट के दौरान अस्वीकृत।",
-      "axesTitle": "🧭 Axes map",
+      "axesTitle": "🧭 अक्ष मानचित्र",
       "axesBtn": "axes_map पहचानें",
       "axesBtnBusy": "पहचान रहा है…",
       "axesBtnTitle": "accelerometer अभिविन्यास (axes_map) पहचानने के लिए +X/+Y/+Z जॉग करें",
@@ -494,7 +494,7 @@
       "beltChartLabel": "बेल्ट A बनाम B फ़्रीक्वेंसी प्रतिक्रिया",
       "beltLegendA": "बेल्ट A (1,1)",
       "beltLegendB": "बेल्ट B (1,-1)",
-      "axesResultTitle": "Axes map",
+      "axesResultTitle": "अक्ष मानचित्र",
       "copy": "📋 कॉपी",
       "copied": "✅ कॉपी हो गया",
       "mappingVirtual": " (वर्चुअल)",
@@ -550,7 +550,7 @@
       "title": "कंपन प्रोफ़ाइल",
       "lowFreqNoise": "⚠ कम-फ़्रीक्वेंसी शोर",
       "smoothest": "▼ सबसे सहज ~{v} mm/s",
-      "symmetry": "symmetry {v}%",
+      "symmetry": "समरूपता {v}%",
       "kinematicsAccel": "{kin} · {accel} mm/s²",
       "svgSpeedLabel": "गति बनाम कंपन ऊर्जा",
       "axisLegend": "गति (mm/s) → · कंपन ऊर्जा ↑",

@@ -256,11 +256,19 @@ async function saveConfig(): Promise<void> {
         scope="global"
         class="min-w-0 flex-1 font-mono text-[11px] opacity-70"
       >
-        <template #guided><strong>🧭 Guided</strong></template>
-        <template #analyze><strong>📈 Analyze</strong></template>
+        <template #guided
+          ><strong>{{ t('inputShaping.widget.tabGuided') }}</strong></template
+        >
+        <template #analyze
+          ><strong>{{ t('inputShaping.widget.tabAnalyze') }}</strong></template
+        >
         <template #csv><code>.csv</code></template>
-        <template #live><strong>🔴 Live tools</strong></template>
-        <template #history><strong>🕘 History</strong></template>
+        <template #live
+          ><strong>{{ t('inputShaping.widget.tabLive') }}</strong></template
+        >
+        <template #history
+          ><strong>{{ t('inputShaping.widget.tabHistory') }}</strong></template
+        >
       </i18n-t>
       <HelpDrawer
         namespace="inputShaping"

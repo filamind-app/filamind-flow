@@ -71,7 +71,7 @@
         "physical": "Fisik",
         "logical": "Logis"
       },
-      "integrated": "SBC on-board",
+      "integrated": "Terpasang di SBC",
       "integratedNote": "SBC host tertanam di mainboard {board}.",
       "selectPrompt": "Pilih board atau MCU di peta untuk memeriksanya.",
       "aria": "Peta mesin: host dan {n} MCU",
@@ -210,7 +210,7 @@
     "pinAtlas": {
       "tab": {
         "details": "Detail",
-        "atlas": "Pin Atlas"
+        "atlas": "Atlas Pin"
       },
       "summary": "{used}/{total} pin terpakai · {free} bebas",
       "loading": "Membaca pin map…",

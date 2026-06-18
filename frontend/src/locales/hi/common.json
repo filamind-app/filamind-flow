@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "FilaMind बैकएंड तक नहीं पहुँचा जा सका - जाँचें कि filamind-flow सेवा चल रही है और पहुँच में है।"
+      "backendUnreachable": "FilaMind बैकएंड तक नहीं पहुँचा जा सका - जाँचें कि filamind-flow सेवा चल रही है और पहुँच में है।",
+      "requestFailed": "अनुरोध विफल ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "रीस्टार्ट हो रहा है…",
     "restarted": "फ़र्मवेयर रीस्टार्ट भेजा गया।",
     "cancel": "रद्द करें"
+  },
+  "comboSelect": {
+    "select": "चुनें…",
+    "clear": "साफ़ करें",
+    "options": "विकल्प",
+    "noMatches": "कोई मेल नहीं",
+    "shown": "{n} दिखाए गए"
+  },
+  "widgetTabs": {
+    "views": "व्यू"
   }
 }

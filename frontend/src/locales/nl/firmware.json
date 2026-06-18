@@ -95,7 +95,7 @@
       ],
       "hostKlipper": "Host · Klipper",
       "hostFallback": "host",
-      "healthOk": "✓ setup",
+      "healthOk": "✓ ingesteld",
       "healthOkTitle": "host is ingericht voor flashen",
       "healthIssues": "{n} setup-probleem | {n} setup-problemen",
       "servicesHeading": "Services",

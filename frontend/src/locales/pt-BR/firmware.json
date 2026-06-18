@@ -95,7 +95,7 @@
       ],
       "hostKlipper": "Host · Klipper",
       "hostFallback": "host",
-      "healthOk": "✓ setup",
+      "healthOk": "✓ configurado",
       "healthOkTitle": "o host está pronto para gravação",
       "healthIssues": "{n} problema de setup | {n} problemas de setup",
       "servicesHeading": "Serviços",
