@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "Impossibile raggiungere il backend FilaMind - verifica che il servizio filamind-flow sia in esecuzione e raggiungibile."
+      "backendUnreachable": "Impossibile raggiungere il backend FilaMind - verifica che il servizio filamind-flow sia in esecuzione e raggiungibile.",
+      "requestFailed": "Richiesta non riuscita ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "Riavvio in corso…",
     "restarted": "Riavvio del firmware inviato.",
     "cancel": "Annulla"
+  },
+  "comboSelect": {
+    "select": "Seleziona…",
+    "clear": "cancella",
+    "options": "Opzioni",
+    "noMatches": "nessun risultato",
+    "shown": "{n} mostrati"
+  },
+  "widgetTabs": {
+    "views": "Viste"
   }
 }

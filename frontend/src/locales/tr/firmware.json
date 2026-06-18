@@ -46,7 +46,7 @@
       },
       "glossary": {
         "klipperFirmware": {
-          "term": "Klipper firmware",
+          "term": "Klipper bellenimi",
           "def": "Her kontrol kartında çalışan ve host'un step/dir komutlarını harekete dönüştüren küçük program. Host ile aynı Klipper sürümünden derlenmelidir."
         },
         "mcu": {

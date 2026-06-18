@@ -473,7 +473,7 @@
       "noiseVerdictQuiet": "✅ ruhig",
       "noiseVerdictElevated": "⚠ erhöht",
       "noiseVerdictTooNoisy": "⛔ zu verrauscht",
-      "noiseMaxNormal": "max {max} · normal < {threshold}",
+      "noiseMaxNormal": "max. {max} · normal < {threshold}",
       "noiseChip": "{label}: x {x} · y {y} · z {z}",
       "liveTitle": "🔴 Live-Test",
       "liveBtn": "TEST_RESONANCES ausführen",

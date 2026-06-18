@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type { ScreenConf, ScreenStatus } from './types'
@@ -20,14 +21,14 @@ function base(): string {
 /** Is KlipperScreen present + restartable, and its current theme/language. */
 export async function fetchScreenStatus(): Promise<ScreenStatus> {
   const r = await fetch(`${base()}/api/screen/status`)
-  if (!r.ok) throw new Error(`Status check failed (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as ScreenStatus
 }
 
 /** Read KlipperScreen.conf (raw text + sha256 fingerprint). */
 export async function fetchScreenConf(): Promise<ScreenConf> {
   const r = await fetch(`${base()}/api/screen/conf`)
-  if (!r.ok) throw new Error(`Could not read KlipperScreen.conf (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as ScreenConf
 }
 
@@ -42,14 +43,14 @@ export async function saveScreenConf(
     body: JSON.stringify({ content, expected_sha256: expectedSha256 }),
   })
   const body = (await r.json().catch(() => ({}))) as { detail?: string } & Partial<ScreenConf>
-  if (!r.ok) throw new ScreenSaveError(body.detail || `Save failed (${r.status})`, r.status)
+  if (!r.ok) throw new ScreenSaveError(body.detail || httpError(r.status), r.status)
   return body as ScreenConf
 }
 
 /** Restart the KlipperScreen service so the saved config takes effect. */
 export async function restartScreen(): Promise<void> {
   const r = await fetch(`${base()}/api/screen/restart`, { method: 'POST' })
-  if (!r.ok) throw new Error(`Restart failed (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
 }
 
 // ── Graphical [main] options (Settings form) ──────────────────────────────────
@@ -62,7 +63,7 @@ export interface ScreenOptions {
 /** Current `[main]` options (key → value) + the conf fingerprint, for the form editor. */
 export async function fetchScreenOptions(): Promise<ScreenOptions> {
   const r = await fetch(`${base()}/api/screen/options`)
-  if (!r.ok) throw new Error(`Could not read settings (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as ScreenOptions
 }
 
@@ -77,7 +78,7 @@ export async function saveScreenOptions(
     body: JSON.stringify({ options, expected_sha256: expectedSha256 }),
   })
   const body = (await r.json().catch(() => ({}))) as { detail?: string } & Partial<ScreenConf>
-  if (!r.ok) throw new ScreenSaveError(body.detail || `Save failed (${r.status})`, r.status)
+  if (!r.ok) throw new ScreenSaveError(body.detail || httpError(r.status), r.status)
   return body as ScreenConf
 }
 
@@ -96,13 +97,13 @@ export interface ThemeCatalog {
 
 async function detailOf(r: Response): Promise<string> {
   const b = (await r.json().catch(() => ({}))) as { detail?: string }
-  return b.detail || `Request failed (${r.status})`
+  return b.detail || httpError(r.status)
 }
 
 /** Installed themes + the palette token schema + default colors. */
 export async function fetchThemes(): Promise<ThemeCatalog> {
   const r = await fetch(`${base()}/api/screen/themes`)
-  if (!r.ok) throw new Error(`Could not list themes (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as ThemeCatalog
 }
 
@@ -156,7 +157,7 @@ export interface MenuCatalog {
 /** The menu tree (flat items) + the panels a button can open. */
 export async function fetchMenus(): Promise<MenuCatalog> {
   const r = await fetch(`${base()}/api/screen/menus`)
-  if (!r.ok) throw new Error(`Could not read menus (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as MenuCatalog
 }
 
@@ -171,7 +172,7 @@ export async function saveMenus(
     body: JSON.stringify({ items, expected_sha256: expectedSha256 }),
   })
   const body = (await r.json().catch(() => ({}))) as { detail?: string } & Partial<ScreenConf>
-  if (!r.ok) throw new ScreenSaveError(body.detail || `Save failed (${r.status})`, r.status)
+  if (!r.ok) throw new ScreenSaveError(body.detail || httpError(r.status), r.status)
   return body as ScreenConf
 }
 
@@ -192,7 +193,7 @@ export interface KioskStatus {
 /** Current screen mode + whether the kiosk is installed / active / boot-enabled. */
 export async function fetchKioskStatus(): Promise<KioskStatus> {
   const r = await fetch(`${base()}/api/screen/kiosk`)
-  if (!r.ok) throw new Error(`Could not read kiosk status (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as KioskStatus
 }
 

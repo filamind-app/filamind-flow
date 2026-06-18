@@ -364,7 +364,7 @@
     "audit": {
       "recommended": "Aanbevolen",
       "recommendedValue": "{shaper} {'@'} {freq} Hz",
-      "maxAccel": "Max accel",
+      "maxAccel": "Max. accel",
       "maxAccelValue": "≤{accel} mm/s²",
       "noise": {
         "verdict": "Max stationaire ruis {max} (normaal < {threshold}).",
@@ -573,7 +573,7 @@
       "busy": "…",
       "compare": "vergelijken",
       "comparisonFailed": "Vergelijking mislukt",
-      "chartAriaLabel": "A vs B power spectral density",
+      "chartAriaLabel": "A vs B vermogensspectrale dichtheid",
       "colA": "A",
       "colB": "B"
     },
@@ -597,7 +597,7 @@
       "save": "💾 opslaan",
       "archive": "Archief",
       "archiveEmpty": "Nog niets opgeslagen - gebruik 💾 opslaan hierboven, of \"opslaan naar archief\" onder een config.",
-      "downloadTitle": "download {fn}",
+      "downloadTitle": "{fn} downloaden",
       "cfg": "cfg",
       "csv": "csv",
       "errListFiles": "Kon printerbestanden niet weergeven",

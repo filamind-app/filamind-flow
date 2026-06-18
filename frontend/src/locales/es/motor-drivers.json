@@ -240,7 +240,7 @@
       "setThreshold": "fijar umbral",
       "testHomeWarning": "⚠ El test-home mueve el eje {axis} ahora. Con un umbral incorrecto puede que no se detenga — mantén una mano en la alimentación. Solo ejes sin sensor.",
       "confirmHome": "Estoy vigilando la impresora y listo para cortar la alimentación — haz homing de {axis}.",
-      "testHome": "test-home {axis}"
+      "testHome": "homing de prueba {axis}"
     },
     "homing": {
       "homing": "homing",
@@ -251,7 +251,7 @@
       "check": "↻ comprobar",
       "testHomeWarn": "⚠ El test-home mueve el eje {axis} a su endstop ahora — asegúrate de que el camino esté despejado.",
       "pathClear": "El camino está despejado — haz homing de {axis}.",
-      "testHome": "test-home {axis}",
+      "testHome": "homing de prueba {axis}",
       "probeNote": "Este eje hace homing con la sonda Z (el mismo sensor usado para el bed mesh), así que aquí no hay umbral de StallGuard que ajustar. Fija el offset de la sonda y el mesh en las herramientas de nivelación de cama.",
       "virtualNote": "Este eje hace homing contra un endstop virtual que no es un pin de StallGuard de TMC — lo gestiona su propio módulo de host, así que aquí no hay nada que ajustar."
     },

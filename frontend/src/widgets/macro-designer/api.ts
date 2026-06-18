@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
@@ -22,7 +23,7 @@ export async function simulateGcode(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ gcode, params, limits }),
   })
-  if (!response.ok) throw new Error(`Simulate failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as SimResult
 }
 
@@ -30,7 +31,7 @@ export async function simulateGcode(
 export async function fetchLimits(): Promise<MachineLimitsResult> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/macro/limits`)
-  if (!response.ok) throw new Error(`Limits request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as MachineLimitsResult
 }
 
@@ -38,7 +39,7 @@ export async function fetchLimits(): Promise<MachineLimitsResult> {
 export async function fetchLiveMacros(): Promise<LiveMacrosResult> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/macro/live`)
-  if (!response.ok) throw new Error(`Live macros request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as LiveMacrosResult
 }
 
@@ -46,7 +47,7 @@ export async function fetchLiveMacros(): Promise<LiveMacrosResult> {
 export async function fetchScaffold(): Promise<ScaffoldResult> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/macro/scaffold`)
-  if (!response.ok) throw new Error(`Scaffold request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as ScaffoldResult
 }
 
@@ -63,7 +64,7 @@ export async function appendScaffold(
     body: JSON.stringify({ filename, block }),
   })
   if (!response.ok) {
-    let detail = `Append failed (${response.status})`
+    let detail = httpError(response.status)
     try {
       const body = (await response.json()) as { detail?: string }
       if (body?.detail) detail = body.detail
@@ -79,6 +80,6 @@ export async function appendScaffold(
 export async function fetchMacros(): Promise<MacroDef[]> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/reference/macros`)
-  if (!response.ok) throw new Error(`Macro library request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as MacroDef[]
 }

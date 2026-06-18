@@ -131,7 +131,7 @@
       "noSensor": "không có cảm biến",
       "maxCurrent": "≤ {a} A",
       "extruder": "Extruder",
-      "extruderN": "Extruder {n}",
+      "extruderN": "Đầu đùn {n}",
       "axis": "trục {axis}",
       "homing": {
         "sensorless": "Không cảm biến (StallGuard)",
@@ -240,7 +240,7 @@
       "setThreshold": "đặt ngưỡng",
       "testHomeWarning": "⚠ Test-home di chuyển trục {axis} ngay bây giờ. Với ngưỡng sai, nó có thể không dừng - giữ tay trên nguồn điện. Chỉ dành cho trục không cảm biến.",
       "confirmHome": "Tôi đang theo dõi máy in và sẵn sàng cắt nguồn - homing {axis}.",
-      "testHome": "test-home {axis}"
+      "testHome": "kiểm tra về gốc {axis}"
     },
     "homing": {
       "homing": "homing",
@@ -251,7 +251,7 @@
       "check": "↻ kiểm tra",
       "testHomeWarn": "⚠ Test-home di chuyển trục {axis} đến hành trình của nó ngay bây giờ - đảm bảo đường đi thông thoáng.",
       "pathClear": "Đường đi thông thoáng - homing {axis}.",
-      "testHome": "test-home {axis}",
+      "testHome": "kiểm tra về gốc {axis}",
       "probeNote": "Trục này homing bằng đầu dò Z (cùng cảm biến dùng cho bed mesh), nên không có ngưỡng StallGuard để tinh chỉnh ở đây. Đặt offset đầu dò và mesh trong công cụ cân chỉnh bàn.",
       "virtualNote": "Trục này homing bằng công tắc hành trình ảo không phải chân StallGuard của TMC - nó được quản lý bởi mô-đun host riêng của nó, nên không có gì để tinh chỉnh ở đây."
     },
@@ -276,7 +276,7 @@
       "finish": "hoàn tất"
     },
     "motorPicker": {
-      "motorLabel": "motor:",
+      "motorLabel": "động cơ:",
       "notSet": "chưa đặt",
       "searchPlaceholder": "tìm hơn 200 motor (model hoặc hãng)…"
     },

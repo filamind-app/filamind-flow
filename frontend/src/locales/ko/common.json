@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "FilaMind 백엔드에 연결할 수 없습니다 - filamind-flow 서비스가 실행 중이고 접근 가능한지 확인하세요."
+      "backendUnreachable": "FilaMind 백엔드에 연결할 수 없습니다 - filamind-flow 서비스가 실행 중이고 접근 가능한지 확인하세요.",
+      "requestFailed": "요청 실패 ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "재시작 중…",
     "restarted": "펌웨어 재시작 명령을 보냈습니다.",
     "cancel": "취소"
+  },
+  "comboSelect": {
+    "select": "선택…",
+    "clear": "지우기",
+    "options": "옵션",
+    "noMatches": "일치 항목 없음",
+    "shown": "{n}개 표시"
+  },
+  "widgetTabs": {
+    "views": "보기"
   }
 }

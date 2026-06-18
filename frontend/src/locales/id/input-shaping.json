@@ -171,7 +171,7 @@
       "highSmoothing": {
         "title": "Smoothing tinggi",
         "advice": "Akan membulatkan sudut. Pilih shaper yang lebih kaku atau turunkan max_accel.",
-        "detail": "smoothing {smoothing}"
+        "detail": "penghalusan {smoothing}"
       },
       "multiResonance": {
         "title": "Resonansi ganda",
@@ -412,8 +412,8 @@
     },
     "widget": {
       "tabGuided": "🧭 Terpandu",
-      "tabAnalyze": "📈 Analyze",
-      "tabLive": "🔴 Live tools",
+      "tabAnalyze": "📈 Analisis",
+      "tabLive": "🔴 Alat langsung",
       "tabHistory": "🕘 Riwayat",
       "intro": "Atur input shaping dari tangkapan resonansi Klipper - tanpa command line. Baru di sini? Mulai dengan {guided}. Atau pilih {analyze} untuk mengerjakan {csv} sendiri, {live} untuk menangkap di printer, atau {history} untuk meninjau run sebelumnya.",
       "cfgReady": "printer.cfg siap",
@@ -460,7 +460,7 @@
       "errSaveFailed": "Penyimpanan ke arsip gagal"
     },
     "fromPrinter": {
-      "liveTools": "Live tools",
+      "liveTools": "Alat langsung",
       "intro": "⏳ Ini menggerakkan toolhead dan bisa memakan {duration} (perbandingan belt menjalankan dua sweep penuh) - biarkan halaman ini terbuka sampai hasilnya muncul.",
       "introDuration": "1-5 menit",
       "confirmMoves": "⚠ menggerakkan toolhead - saya siap",
@@ -484,7 +484,7 @@
       "beltsBtnBusy": "membandingkan…",
       "beltsBtnTitle": "CoreXY: picu tiap diagonal belt dan tumpuk responsnya",
       "beltsDesc": "Khusus CoreXY: menjalankan dua sweep di sepanjang diagonal belt dan menumpuknya. Ditolak saat mencetak.",
-      "axesTitle": "🧭 Axes map",
+      "axesTitle": "🧭 Peta sumbu",
       "axesBtn": "deteksi axes_map",
       "axesBtnBusy": "mendeteksi…",
       "axesBtnTitle": "Gerakkan +X/+Y/+Z untuk mendeteksi orientasi akselerometer (axes_map)",
@@ -494,7 +494,7 @@
       "beltChartLabel": "Respons frekuensi Belt A vs B",
       "beltLegendA": "belt A (1,1)",
       "beltLegendB": "belt B (1,-1)",
-      "axesResultTitle": "Axes map",
+      "axesResultTitle": "Peta sumbu",
       "copy": "📋 Salin",
       "copied": "✅ Tersalin",
       "mappingVirtual": " (virtual)",
@@ -538,7 +538,7 @@
       "errCopyFailed": "Penyalinan gagal - pilih teksnya dan salin secara manual.",
       "errSustainTest": "Uji frekuensi sustain gagal",
       "errVibrationsProfile": "Profil getaran gagal",
-      "vibProgress": "Sweep {step}/{total} - {speed} mm/s · {angle}°",
+      "vibProgress": "Sapuan {step}/{total} - {speed} mm/s · {angle}°",
       "vibStarting": "Memulai sweep…",
       "vibCancel": "Batalkan sweep",
       "vibCancelling": "Membatalkan…",
@@ -587,7 +587,7 @@
       "axisX": "sumbu: X",
       "axisY": "sumbu: Y",
       "analyzing": "Menganalisis…",
-      "analyze": "🚀 Analyze",
+      "analyze": "🚀 Analisis",
       "onHost": "di host printer",
       "refresh": "↻ segarkan",
       "noFiles": "Tidak ada CSV resonansi yang ditemukan.",

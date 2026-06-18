@@ -200,7 +200,7 @@
       "sentTitle": "Inzending geopend in een nieuw tabblad",
       "sentBody": "Bekijk de vooraf ingevulde gegevens op GitHub en dien de issue daar in. Bedankt voor je bijdrage!",
       "yes": "Ja",
-      "specs": "Extra specs",
+      "specs": "Extra specificaties",
       "specKey": "Spec",
       "specValue": "Waarde",
       "addSpec": "Spec toevoegen",
@@ -221,7 +221,7 @@
       "group": {
         "autotune": "Autotune (elektrisch)",
         "caps": "Mogelijkheden",
-        "maxFlow": "Max flow",
+        "maxFlow": "Max. flow",
         "preset": "Max-flow-preset"
       },
       "f": {
@@ -258,7 +258,7 @@
         "coolstep": "CoolStep",
         "stallguard": "StallGuard",
         "stallguard_field": "StallGuard-veld",
-        "max_temp_c": "Max temp",
+        "max_temp_c": "Max. temp.",
         "suggested_temp_c": "Aanbevolen temp",
         "expected_max_flow_mm3s": "Verwachte max flow",
         "melt_zone_mm": "Smeltzone",

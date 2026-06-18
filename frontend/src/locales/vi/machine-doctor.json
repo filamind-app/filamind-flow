@@ -57,7 +57,7 @@
     "link": {
       "config_section": "Trình sửa cấu hình",
       "config_file": "Trình sửa cấu hình",
-      "stepper": "Motor Drivers",
+      "stepper": "Trình điều khiển động cơ",
       "topology_node": "Sơ đồ máy",
       "widget": "Mở"
     },

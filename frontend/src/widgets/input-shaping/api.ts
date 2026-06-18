@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
@@ -57,7 +58,7 @@ export async function analyzeResonance(
     body: file,
   })
   if (!response.ok) {
-    let detail = `Analysis failed (${response.status})`
+    let detail = httpError(response.status)
     try {
       const body = (await response.json()) as { detail?: string }
       if (body.detail) detail = body.detail

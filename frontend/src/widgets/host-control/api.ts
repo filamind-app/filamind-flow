@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
@@ -32,7 +33,7 @@ export class HostActionError extends Error {
 /** Read-only snapshot of host health + OS state (CPU / memory / disk / network / time / locale). */
 export async function fetchMonitor(): Promise<HostMonitor> {
   const r = await fetch(`${base()}/api/host/monitor`)
-  if (!r.ok) throw new Error(`Host monitor failed (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as HostMonitor
 }
 
@@ -41,14 +42,14 @@ export async function fetchMonitor(): Promise<HostMonitor> {
 /** All systemd .service units with their state (read-only). */
 export async function fetchServices(): Promise<ServiceUnit[]> {
   const r = await fetch(`${base()}/api/host/services`)
-  if (!r.ok) throw new Error(`Could not list services (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return ((await r.json()) as { services: ServiceUnit[] }).services
 }
 
 /** Per-unit detail + whether its unit file is safe to delete. */
 export async function fetchServiceDetail(name: string): Promise<ServiceDetail> {
   const r = await fetch(`${base()}/api/host/services/detail?name=${encodeURIComponent(name)}`)
-  if (!r.ok) throw new Error(`Could not read service detail (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as ServiceDetail
 }
 
@@ -57,7 +58,7 @@ export async function fetchServiceLogs(name: string, lines = 200): Promise<strin
   const r = await fetch(
     `${base()}/api/host/services/logs?name=${encodeURIComponent(name)}&lines=${lines}`,
   )
-  if (!r.ok) throw new Error(`Could not read logs (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return ((await r.json()) as { logs: string }).logs
 }
 
@@ -70,7 +71,7 @@ async function postAction(path: string, body: unknown): Promise<ServiceActionRes
   const data = (await r.json().catch(() => ({}))) as {
     detail?: string
   } & Partial<ServiceActionResult>
-  if (!r.ok) throw new HostActionError(data.detail || `Action failed (${r.status})`, r.status)
+  if (!r.ok) throw new HostActionError(data.detail || httpError(r.status), r.status)
   return data as ServiceActionResult
 }
 
@@ -92,7 +93,7 @@ export async function deleteService(name: string, confirm: string): Promise<Serv
 /** Dry-run: how much each cleanup target would free (no deletion). */
 export async function fetchCleanup(): Promise<CleanupTarget[]> {
   const r = await fetch(`${base()}/api/host/cleanup`)
-  if (!r.ok) throw new Error(`Could not scan disk (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return ((await r.json()) as { targets: CleanupTarget[] }).targets
 }
 
@@ -104,7 +105,7 @@ export async function runCleanup(ids: string[]): Promise<CleanupRunResult> {
     body: JSON.stringify({ ids }),
   })
   const data = (await r.json().catch(() => ({}))) as { detail?: string } & Partial<CleanupRunResult>
-  if (!r.ok) throw new HostActionError(data.detail || `Cleanup failed (${r.status})`, r.status)
+  if (!r.ok) throw new HostActionError(data.detail || httpError(r.status), r.status)
   return data as CleanupRunResult
 }
 
@@ -113,7 +114,7 @@ export async function runCleanup(ids: string[]): Promise<CleanupRunResult> {
 /** Current time/locale/hostname/network settings + the option lists for the System form. */
 export async function fetchSystemInfo(): Promise<SystemInfo> {
   const r = await fetch(`${base()}/api/host/system`)
-  if (!r.ok) throw new Error(`Could not read system settings (${r.status})`)
+  if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as SystemInfo
 }
 
@@ -126,7 +127,7 @@ async function postSystem(path: string, body: unknown): Promise<SystemActionResu
   const data = (await r.json().catch(() => ({}))) as {
     detail?: string
   } & Partial<SystemActionResult>
-  if (!r.ok) throw new HostActionError(data.detail || `Failed (${r.status})`, r.status)
+  if (!r.ok) throw new HostActionError(data.detail || httpError(r.status), r.status)
   return data as SystemActionResult
 }
 

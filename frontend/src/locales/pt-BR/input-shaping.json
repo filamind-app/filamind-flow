@@ -502,7 +502,7 @@
       "axesChartLabel": "Sequência de velocidade dos eixos",
       "zoneVirtual": "virtual",
       "zonePct": "{pct}%",
-      "legendAccelX": "accel x",
+      "legendAccelX": "acel x",
       "legendY": "y",
       "legendZ": "z",
       "tilt": "inclinação {x}° / {y}° / {z}°",

@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type { HotendRow, MaxFlowParams, MaxFlowPlan, MaxFlowResult } from './types'
@@ -28,7 +29,7 @@ async function errorFrom(response: Response, fallback: string): Promise<ApiError
 export async function fetchHotends(): Promise<HotendRow[]> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/reference/hotends`)
-  if (!response.ok) throw new Error(`Hotend table request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as HotendRow[]
 }
 
@@ -40,7 +41,7 @@ export async function planMaxFlow(params: MaxFlowParams): Promise<MaxFlowPlan> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
   })
-  if (!response.ok) throw await errorFrom(response, `Plan failed (${response.status})`)
+  if (!response.ok) throw await errorFrom(response, httpError(response.status))
   return (await response.json()) as MaxFlowPlan
 }
 
@@ -68,6 +69,6 @@ export async function startMaxFlowTask(params: MaxFlowParams): Promise<string> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
   })
-  if (!response.ok) throw await errorFrom(response, `Run failed to start (${response.status})`)
+  if (!response.ok) throw await errorFrom(response, httpError(response.status))
   return ((await response.json()) as { task_id: string }).task_id
 }

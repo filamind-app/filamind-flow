@@ -101,7 +101,7 @@
         "description": "TMC ステッパードライバーのリアルタイム一覧: 電流、モード、マイクロステップ、ステータス。"
       },
       "config-editor": {
-        "title": "Config Editor",
+        "title": "設定エディター",
         "description": "プリンターの設定ファイルをセクションごとに解析し、検証して閲覧します。"
       },
       "max-flow": {
@@ -109,19 +109,19 @@
         "description": "ホットエンドが維持できる最大の体積流量を測定します（StallGuard）。"
       },
       "board-topology": {
-        "title": "Board Topology",
+        "title": "ボードトポロジー",
         "description": "ホストと MCU の接続方法（USB / CAN / UART）とボードの推定を表示します。"
       },
       "macro-designer": {
-        "title": "Macro Designer",
+        "title": "マクロデザイナー",
         "description": "G-code をオフラインでシミュレート - ツールヘッドの経路、範囲、合計値、マクロライブラリ。"
       },
       "hardware-browser": {
-        "title": "Hardware Browser",
+        "title": "ハードウェアブラウザー",
         "description": "厳選した 3D プリント用ハードウェアリファレンスを名称、メーカー、仕様で検索します。"
       },
       "config-templates": {
-        "title": "Config Templates",
+        "title": "設定テンプレート",
         "description": "カテゴリ別の、すぐ貼り付けられる Klipper 設定ブロックとマクロ。"
       },
       "machine-doctor": {
@@ -129,7 +129,7 @@
         "description": "ワンクリックでプリンター全体をスキャンし、A-F の成績表と修正へのジャンプリンクを表示します。"
       },
       "host-control": {
-        "title": "Host Control",
+        "title": "ホストコントロール",
         "description": "プリンターホストの Linux OS を管理: 状態、サービス、ディスククリーンアップ、システム設定。"
       },
       "klipperscreen-studio": {

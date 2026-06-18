@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
@@ -38,7 +39,7 @@ export async function searchHardware(params: SearchParams): Promise<HardwareSear
   qs.set('limit', String(params.limit ?? 25))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware?${qs.toString()}`)
-  if (!response.ok) throw new Error(`Hardware search failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as HardwareSearchResult
 }
 
@@ -46,7 +47,7 @@ export async function searchHardware(params: SearchParams): Promise<HardwareSear
 export async function fetchCategories(): Promise<HardwareCategories> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/hardware/categories`)
-  if (!response.ok) throw new Error(`Categories request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as HardwareCategories
 }
 
@@ -54,7 +55,7 @@ export async function fetchCategories(): Promise<HardwareCategories> {
 export async function fetchFacets(): Promise<HardwareFacets> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/hardware/facets`)
-  if (!response.ok) throw new Error(`Facets request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as HardwareFacets
 }
 
@@ -74,7 +75,7 @@ export async function fetchBoards(params: {
   qs.set('limit', String(params.limit ?? 24))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware/boards?${qs.toString()}`)
-  if (!response.ok) throw new Error(`Boards request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as BoardsResult
 }
 
@@ -82,7 +83,7 @@ export async function fetchBoards(params: {
 export async function fetchBoardDetail(boardId: string): Promise<BoardDetail> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/hardware/boards/${encodeURIComponent(boardId)}`)
-  if (!response.ok) throw new Error(`Board request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as BoardDetail
 }
 
@@ -102,7 +103,7 @@ export async function fetchDrivers(params: {
   qs.set('limit', String(params.limit ?? 24))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware/drivers?${qs.toString()}`)
-  if (!response.ok) throw new Error(`Drivers request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as DriversResult
 }
 
@@ -110,7 +111,7 @@ export async function fetchDrivers(params: {
 export async function fetchDriverDetail(driverId: string): Promise<DriverDetail> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/hardware/drivers/${encodeURIComponent(driverId)}`)
-  if (!response.ok) throw new Error(`Driver request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as DriverDetail
 }
 
@@ -130,7 +131,7 @@ export async function fetchMotors(params: {
   qs.set('limit', String(params.limit ?? 24))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware/motors?${qs.toString()}`)
-  if (!response.ok) throw new Error(`Motors request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as MotorsResult
 }
 
@@ -138,7 +139,7 @@ export async function fetchMotors(params: {
 export async function fetchMotorDetail(motorId: string): Promise<MotorDetail> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/hardware/motors/${encodeURIComponent(motorId)}`)
-  if (!response.ok) throw new Error(`Motor request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as MotorDetail
 }
 
@@ -158,7 +159,7 @@ export async function fetchHosts(params: {
   qs.set('limit', String(params.limit ?? 24))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware/hosts?${qs.toString()}`)
-  if (!response.ok) throw new Error(`Hosts request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as HostsResult
 }
 
@@ -166,7 +167,7 @@ export async function fetchHosts(params: {
 export async function fetchHostDetail(hostId: string): Promise<HostDetail> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/hardware/hosts/${encodeURIComponent(hostId)}`)
-  if (!response.ok) throw new Error(`Host request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as HostDetail
 }
 
@@ -188,7 +189,7 @@ export async function fetchCatalog(params: {
   qs.set('limit', String(params.limit ?? 24))
   qs.set('offset', String(params.offset ?? 0))
   const response = await fetch(`${backendUrl}/api/hardware/catalog?${qs.toString()}`)
-  if (!response.ok) throw new Error(`Catalog request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as CatalogResult
 }
 
@@ -198,7 +199,7 @@ export async function fetchCatalogEntity(catalogId: string): Promise<CatalogEnti
   const response = await fetch(
     `${backendUrl}/api/hardware/catalog/${encodeURIComponent(catalogId)}`,
   )
-  if (!response.ok) throw new Error(`Catalog entity request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as CatalogEntityDetail
 }
 
@@ -207,7 +208,7 @@ export async function fetchManufacturers(q?: string): Promise<ManufacturerEntity
   const { backendUrl } = resolveEndpoints()
   const qs = q ? `?q=${encodeURIComponent(q)}` : ''
   const response = await fetch(`${backendUrl}/api/hardware/manufacturers${qs}`)
-  if (!response.ok) throw new Error(`Manufacturers request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as ManufacturerEntity[]
 }
 
@@ -215,7 +216,7 @@ export async function fetchManufacturers(q?: string): Promise<ManufacturerEntity
 export async function fetchManufacturerDetail(id: string): Promise<ManufacturerEntity> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/hardware/manufacturers/${encodeURIComponent(id)}`)
-  if (!response.ok) throw new Error(`Manufacturer request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as ManufacturerEntity
 }
 
@@ -227,7 +228,7 @@ export async function fetchMcus(params?: { q?: string; family?: string }): Promi
   if (params?.family) qs.set('family', params.family)
   const suffix = qs.toString() ? `?${qs.toString()}` : ''
   const response = await fetch(`${backendUrl}/api/hardware/mcus${suffix}`)
-  if (!response.ok) throw new Error(`MCUs request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as McusResult
 }
 
@@ -235,7 +236,7 @@ export async function fetchMcus(params?: { q?: string; family?: string }): Promi
 export async function fetchMcuDetail(id: string): Promise<McuEntity> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/hardware/mcus/${encodeURIComponent(id)}`)
-  if (!response.ok) throw new Error(`MCU request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as McuEntity
 }
 
@@ -247,6 +248,6 @@ export async function fetchRelated(pluralType: string, id: string): Promise<Rela
   const response = await fetch(
     `${backendUrl}/api/hardware/${encodeURIComponent(pluralType)}/${encodeURIComponent(id)}/related`,
   )
-  if (!response.ok) throw new Error(`Related request failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as RelatedResult
 }

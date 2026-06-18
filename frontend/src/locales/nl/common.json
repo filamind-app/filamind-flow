@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "Kan de FilaMind-backend niet bereiken - controleer of de filamind-flow-service draait en bereikbaar is."
+      "backendUnreachable": "Kan de FilaMind-backend niet bereiken - controleer of de filamind-flow-service draait en bereikbaar is.",
+      "requestFailed": "Verzoek mislukt ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "Bezig met herstarten…",
     "restarted": "Firmwareherstart verzonden.",
     "cancel": "Annuleren"
+  },
+  "comboSelect": {
+    "select": "Selecteren…",
+    "clear": "wissen",
+    "options": "Opties",
+    "noMatches": "geen resultaten",
+    "shown": "{n} getoond"
+  },
+  "widgetTabs": {
+    "views": "Weergaven"
   }
 }

@@ -180,7 +180,7 @@
         "toolhead": "Tool head",
         "printer-preset": "Yazıcı ön ayarı",
         "expansion": "Genişletme",
-        "host": "Host SBC"
+        "host": "Ana Bilgisayar SBC"
       }
     },
     "onPrinter": {

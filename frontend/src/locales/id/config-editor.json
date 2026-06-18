@@ -109,9 +109,9 @@
     },
     "restart": {
       "prompt": "Restart firmware untuk menerapkan perubahan Anda?",
-      "button": "Restart firmware",
+      "button": "Mulai ulang firmware",
       "restarting": "Me-restart…",
-      "confirmTitle": "Restart firmware?",
+      "confirmTitle": "Mulai ulang firmware?",
       "confirmBody": "FIRMWARE_RESTART memuat ulang konfigurasi dan sebentar mengganggu printer. Lakukan ini hanya saat menganggur.",
       "confirm": "Restart sekarang",
       "cancel": "Batal",

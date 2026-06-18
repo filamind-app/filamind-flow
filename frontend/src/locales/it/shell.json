@@ -37,7 +37,7 @@
       "noData": "Nessun dato al momento.",
       "tuning": "Taratura",
       "noTuning": "Nessuna sessione di taratura archiviata - esegui la procedura guidata di Input Shaping.",
-      "hardware": "Hardware vs baseline",
+      "hardware": "Hardware vs riferimento",
       "noBaseline": "Nessuna baseline hardware salvata - salva uno snapshot nella Machine Map per rilevare le modifiche.",
       "hwUnchanged": "Nessuna modifica hardware dalla baseline salvata.",
       "hwChanged": "{n} modifica/e hardware dalla baseline salvata.",

@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "FilaMind-Backend nicht erreichbar — prüfe, ob der filamind-flow-Dienst läuft und erreichbar ist."
+      "backendUnreachable": "FilaMind-Backend nicht erreichbar — prüfe, ob der filamind-flow-Dienst läuft und erreichbar ist.",
+      "requestFailed": "Anfrage fehlgeschlagen ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "Starte neu…",
     "restarted": "Firmware-Neustart gesendet.",
     "cancel": "Abbrechen"
+  },
+  "comboSelect": {
+    "select": "Auswählen…",
+    "clear": "leeren",
+    "options": "Optionen",
+    "noMatches": "keine Treffer",
+    "shown": "{n} angezeigt"
+  },
+  "widgetTabs": {
+    "views": "Ansichten"
   }
 }

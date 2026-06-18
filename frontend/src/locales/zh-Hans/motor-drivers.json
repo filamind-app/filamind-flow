@@ -182,7 +182,7 @@
       "runCurrent": "运行 {value}",
       "nearCapTitle": "接近此型号的额定上限 ({max})",
       "holdCurrent": "保持 {value}",
-      "microsteps": "{n} µsteps",
+      "microsteps": "{n} 微步",
       "sg": "SG {field} {threshold}",
       "detailsShow": "▸ 详情",
       "detailsHide": "▾ 收起",

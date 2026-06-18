@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "無法連線到 FilaMind 後端 — 請確認 filamind-flow 服務正在執行且可連線。"
+      "backendUnreachable": "無法連線到 FilaMind 後端 — 請確認 filamind-flow 服務正在執行且可連線。",
+      "requestFailed": "請求失敗（{status}）"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "重新啟動中…",
     "restarted": "已送出韌體重新啟動指令。",
     "cancel": "取消"
+  },
+  "comboSelect": {
+    "select": "選擇…",
+    "clear": "清除",
+    "options": "選項",
+    "noMatches": "無相符項目",
+    "shown": "顯示 {n} 項"
+  },
+  "widgetTabs": {
+    "views": "檢視"
   }
 }

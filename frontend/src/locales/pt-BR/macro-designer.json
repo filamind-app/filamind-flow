@@ -36,7 +36,7 @@
           "def": "A linguagem de movimento linha a linha que a impressora executa (movimentos, temperaturas, ventoinha, …)."
         },
         "feedrate": {
-          "term": "Feedrate (F)",
+          "term": "Avanço (F)",
           "def": "Velocidade do movimento em mm/min - F1200 é 20 mm/s. Define a velocidade de cada movimento."
         },
         "macro": {

@@ -1,3 +1,4 @@
+import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type { DoctorReport } from './types'
@@ -6,6 +7,6 @@ import type { DoctorReport } from './types'
 export async function fetchDoctorScan(): Promise<DoctorReport> {
   const { backendUrl } = resolveEndpoints()
   const response = await fetch(`${backendUrl}/api/doctor/scan`)
-  if (!response.ok) throw new Error(`Doctor scan failed (${response.status})`)
+  if (!response.ok) throw new Error(httpError(response.status))
   return (await response.json()) as DoctorReport
 }

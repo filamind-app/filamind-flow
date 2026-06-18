@@ -232,7 +232,7 @@
         "auto": "DHCP (tự động)",
         "manual": "Tĩnh (thủ công)",
         "address": "Địa chỉ IP",
-        "cidr": "Subnet (CIDR)",
+        "cidr": "Mạng con (CIDR)",
         "gateway": "Gateway",
         "dns": "Máy chủ DNS",
         "dnsHint": "Phân tách bằng dấu phẩy, ví dụ 1.1.1.1, 8.8.8.8 (tùy chọn)",

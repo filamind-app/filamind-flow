@@ -106,7 +106,7 @@
     "drivers": {
       "search": "Buscar drivers",
       "klipperOnly": "Solo Klipper (TMC)",
-      "total": "{n} drivers",
+      "total": "{n} controladores",
       "none": "No se encontraron drivers.",
       "standalone": "autónomo",
       "sensorless": "sin sensor",
@@ -257,7 +257,7 @@
         "spreadcycle": "SpreadCycle",
         "coolstep": "CoolStep",
         "stallguard": "StallGuard",
-        "stallguard_field": "StallGuard field",
+        "stallguard_field": "Campo StallGuard",
         "max_temp_c": "Temp. máx.",
         "suggested_temp_c": "Temp. sugerida",
         "expected_max_flow_mm3s": "Flujo máx. esperado",

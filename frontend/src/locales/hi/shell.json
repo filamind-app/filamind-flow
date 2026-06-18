@@ -89,7 +89,7 @@
     },
     "widgets": {
       "firmware-upgrade": {
-        "title": "Firmware Manager",
+        "title": "फ़र्मवेयर प्रबंधक",
         "description": "MCU फ़र्मवेयर संस्करण, होस्ट सिंक स्थिति, और टूलचेन तत्परता।"
       },
       "input-shaping": {
@@ -101,7 +101,7 @@
         "description": "लाइव TMC स्टेपर-ड्राइवर इन्वेंट्री: करंट, मोड, माइक्रोस्टेप्स, और स्थिति।"
       },
       "config-editor": {
-        "title": "Config Editor",
+        "title": "कॉन्फ़िग एडिटर",
         "description": "अपने प्रिंटर की कॉन्फ़िग फ़ाइलें ब्राउज़ करें, सत्यापन के साथ सेक्शन में पार्स की गईं।"
       },
       "max-flow": {
@@ -109,19 +109,19 @@
         "description": "अपने hotend द्वारा बनाए रखे जा सकने वाले उच्चतम वॉल्यूमेट्रिक फ़्लो को मापें (StallGuard)।"
       },
       "board-topology": {
-        "title": "Board Topology",
+        "title": "बोर्ड टोपोलॉजी",
         "description": "देखें कि होस्ट और MCU कैसे जुड़ते हैं (USB / CAN / UART) + एक बोर्ड अनुमान।"
       },
       "macro-designer": {
-        "title": "Macro Designer",
+        "title": "मैक्रो डिज़ाइनर",
         "description": "G-code को ऑफ़लाइन सिम्युलेट करें - toolhead पथ, सीमाएँ, कुल, और एक मैक्रो लाइब्रेरी।"
       },
       "hardware-browser": {
-        "title": "Hardware Browser",
+        "title": "हार्डवेयर ब्राउज़र",
         "description": "नाम, निर्माता, या स्पेक के अनुसार एक क्यूरेटेड 3D-प्रिंटिंग हार्डवेयर संदर्भ खोजें।"
       },
       "config-templates": {
-        "title": "Config Templates",
+        "title": "कॉन्फ़िग टेम्पलेट",
         "description": "श्रेणी के अनुसार, पेस्ट करने के लिए तैयार Klipper कॉन्फ़िग ब्लॉक और मैक्रो।"
       },
       "machine-doctor": {
@@ -129,7 +129,7 @@
         "description": "A-F रिपोर्ट कार्ड और jump-to-fix लिंक के साथ एक-क्लिक पूर्ण-प्रिंटर स्कैन।"
       },
       "host-control": {
-        "title": "Host Control",
+        "title": "होस्ट नियंत्रण",
         "description": "प्रिंटर होस्ट के Linux OS को प्रबंधित करें: स्वास्थ्य, सेवाएँ, डिस्क सफ़ाई, और सिस्टम सेटिंग्स।"
       },
       "klipperscreen-studio": {

@@ -10,3 +10,10 @@ export function describeError(e: unknown): string {
   }
   return m
 }
+
+/** A translated message for a non-OK HTTP response, used by the widget `api.ts` modules so a
+ *  server error (4xx/5xx) surfaces in the user's language instead of a hardcoded English string.
+ *  Throw it: `throw new Error(httpError(response.status))`. */
+export function httpError(status: number): string {
+  return i18n.global.t('common.errors.requestFailed', { status })
+}

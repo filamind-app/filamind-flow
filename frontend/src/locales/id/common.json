@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "Tidak dapat menjangkau backend FilaMind - pastikan layanan filamind-flow berjalan dan dapat dijangkau."
+      "backendUnreachable": "Tidak dapat menjangkau backend FilaMind - pastikan layanan filamind-flow berjalan dan dapat dijangkau.",
+      "requestFailed": "Permintaan gagal ({status})"
     }
   },
   "theme": {
@@ -39,10 +40,20 @@
     "updated": "diperbarui [{section}]: {params}",
     "noop": "Semuanya sudah pada nilai ini - tidak ada yang berubah.",
     "restartHint": "Klipper masih menjalankan nilai lama sampai firmware di-restart.",
-    "restart": "Restart firmware…",
+    "restart": "Mulai ulang firmware…",
     "restartConfirm": "Konfirmasi restart",
     "restarting": "Me-restart…",
     "restarted": "Perintah restart firmware terkirim.",
     "cancel": "Batal"
+  },
+  "comboSelect": {
+    "select": "Pilih…",
+    "clear": "hapus",
+    "options": "Opsi",
+    "noMatches": "tidak ada yang cocok",
+    "shown": "{n} ditampilkan"
+  },
+  "widgetTabs": {
+    "views": "Tampilan"
   }
 }

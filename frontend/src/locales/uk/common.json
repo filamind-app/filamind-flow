@@ -2,7 +2,8 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "Не вдається підключитися до бекенду FilaMind — переконайтеся, що служба filamind-flow запущена та доступна."
+      "backendUnreachable": "Не вдається підключитися до бекенду FilaMind — переконайтеся, що служба filamind-flow запущена та доступна.",
+      "requestFailed": "Помилка запиту ({status})"
     }
   },
   "theme": {
@@ -44,5 +45,15 @@
     "restarting": "Перезапуск…",
     "restarted": "Команду перезапуску прошивки надіслано.",
     "cancel": "Скасувати"
+  },
+  "comboSelect": {
+    "select": "Вибрати…",
+    "clear": "очистити",
+    "options": "Параметри",
+    "noMatches": "немає збігів",
+    "shown": "показано {n}"
+  },
+  "widgetTabs": {
+    "views": "Подання"
   }
 }

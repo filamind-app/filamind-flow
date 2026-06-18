@@ -109,7 +109,7 @@
         "description": "Meet de hoogste volumetrische flow die je hotend kan volhouden (StallGuard)."
       },
       "board-topology": {
-        "title": "Board Topology",
+        "title": "Board-topologie",
         "description": "Zie hoe de host en MCU's verbinden (USB / CAN / UART) + een board-gok."
       },
       "macro-designer": {
@@ -121,7 +121,7 @@
         "description": "Doorzoek een samengestelde 3D-print-hardwarereferentie op naam, fabrikant of specificatie."
       },
       "config-templates": {
-        "title": "Config Templates",
+        "title": "Config-sjablonen",
         "description": "Klaar-om-te-plakken Klipper-configblokken en macro's, per categorie."
       },
       "machine-doctor": {

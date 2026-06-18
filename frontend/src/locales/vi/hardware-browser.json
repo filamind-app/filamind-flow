@@ -180,7 +180,7 @@
         "toolhead": "Toolhead",
         "printer-preset": "Cấu hình máy in",
         "expansion": "Mở rộng",
-        "host": "Host SBC"
+        "host": "SBC máy chủ"
       }
     },
     "onPrinter": {

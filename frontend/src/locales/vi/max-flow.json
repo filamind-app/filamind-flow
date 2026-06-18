@@ -81,7 +81,7 @@
       "button": "Xem trước kế hoạch",
       "title": "Quá trình tăng đã lập",
       "stepCount": "{count} bước",
-      "totalExtrude": "{mm} mm filament",
+      "totalExtrude": "{mm} mm sợi nhựa",
       "sgField": "Trường StallGuard: {field}",
       "sgFieldUnknown": "Không có trường StallGuard nào được biết cho driver này",
       "flowHead": "Lưu lượng (mm³/s)",
