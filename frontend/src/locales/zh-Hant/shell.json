@@ -133,7 +133,7 @@
         "description": "管理印表機主機的 Linux 作業系統：健康狀態、服務、磁碟清理與系統設定。"
       },
       "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
+        "title": "KlipperScreen 工作室",
         "description": "編輯印表機的 KlipperScreen 觸控螢幕設定並重新啟動以套用。"
       }
     },

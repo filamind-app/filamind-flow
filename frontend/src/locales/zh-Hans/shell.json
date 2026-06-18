@@ -133,7 +133,7 @@
         "description": "管理打印机主机的 Linux 系统：健康状况、服务、磁盘清理和系统设置。"
       },
       "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
+        "title": "KlipperScreen 工作室",
         "description": "编辑打印机的 KlipperScreen 触摸屏配置并重启以应用。"
       }
     },

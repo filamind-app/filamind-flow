@@ -133,7 +133,7 @@
         "description": "Управляйте ОС Linux хоста принтера: состояние, службы, очистка диска и системные настройки."
       },
       "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
+        "title": "Студия KlipperScreen",
         "description": "Редактируйте конфигурацию сенсорного экрана KlipperScreen вашего принтера и перезапускайте его для применения."
       }
     },
