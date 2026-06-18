@@ -353,7 +353,12 @@
         "stepFailed": "Step failed",
         "copyFailed": "Copy failed - select the text and copy it manually.",
         "summaryNote": "Your X and Y captures are in the combined {code} block below - copy it, then restart Klipper. Re-open guided tune any time to re-check.",
-        "beltsNotApplicable": "Belt comparison applies to CoreXY printers - this printer reports '{kin}', so this step is skipped."
+        "beltsNotApplicable": "Belt comparison applies to CoreXY printers - this printer reports '{kin}', so this step is skipped.",
+        "resultsSoFar": "Results so far",
+        "archived": "Saved",
+        "autoSaved": "Saved to the on-printer archive automatically.",
+        "beltA": "Belt A (1,1)",
+        "beltB": "Belt B (1,-1)"
       }
     },
     "audit": {

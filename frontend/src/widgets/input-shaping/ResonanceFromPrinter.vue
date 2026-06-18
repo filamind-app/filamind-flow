@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { copyText } from '@/core/clipboard'
+
 import {
   compareBelts,
   fetchKinematics,
@@ -200,11 +202,10 @@ async function runAxes(): Promise<void> {
 
 async function copyAxesMap(): Promise<void> {
   if (!axesMapResult.value) return
-  try {
-    await navigator.clipboard.writeText(axesMapConfig(axesMapResult.value))
+  if (await copyText(axesMapConfig(axesMapResult.value))) {
     axesCopied.value = true
     window.setTimeout(() => (axesCopied.value = false), 1500)
-  } catch {
+  } else {
     error.value = t('inputShaping.fromPrinter.errCopyFailed')
   }
 }

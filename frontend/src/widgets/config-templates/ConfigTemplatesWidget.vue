@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 
 import ComboSelect from '@/components/ui/ComboSelect.vue'
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
+import { copyText } from '@/core/clipboard'
 import { describeError } from '@/core/describeError'
 
 import { fetchTemplates } from './api'
@@ -44,31 +45,6 @@ async function load(): Promise<void> {
     error.value = describeError(e)
   } finally {
     loading.value = false
-  }
-}
-
-/** Copy that works on a plain-http LAN host (where navigator.clipboard is unavailable). */
-async function copyText(text: string): Promise<boolean> {
-  try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text)
-      return true
-    }
-  } catch {
-    // fall through to the legacy path
-  }
-  try {
-    const ta = document.createElement('textarea')
-    ta.value = text
-    ta.style.position = 'fixed'
-    ta.style.opacity = '0'
-    document.body.appendChild(ta)
-    ta.select()
-    const ok = document.execCommand('copy')
-    document.body.removeChild(ta)
-    return ok
-  } catch {
-    return false
   }
 }
 
