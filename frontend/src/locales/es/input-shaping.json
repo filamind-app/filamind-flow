@@ -599,7 +599,9 @@
       "errListArchive": "No se pudo listar el archivo",
       "errSave": "El guardado en el archivo falló",
       "errDelete": "La eliminación falló",
-      "errDownload": "La descarga falló"
+      "errDownload": "La descarga falló",
+      "viewChart": "Gráfico",
+      "viewChartTitle": "Reabrir el gráfico de esta ejecución guardada"
     },
     "verdicts": {
       "vibrations": {

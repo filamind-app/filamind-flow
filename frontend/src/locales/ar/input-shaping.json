@@ -599,7 +599,9 @@
       "errListArchive": "تعذّر سرد الأرشيف",
       "errSave": "فشل الحفظ في الأرشيف",
       "errDelete": "فشل الحذف",
-      "errDownload": "فشل التنزيل"
+      "errDownload": "فشل التنزيل",
+      "viewChart": "الرسم",
+      "viewChartTitle": "إعادة فتح رسم هذا التشغيل المحفوظ"
     },
     "verdicts": {
       "vibrations": {

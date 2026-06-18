@@ -17,7 +17,13 @@ import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import ResonanceCompare from './ResonanceCompare.vue'
 import ResonanceFromPrinter from './ResonanceFromPrinter.vue'
-import { analyzeResonance, analyzeResonanceFile, listArchive, saveConfigToArchive } from './api'
+import {
+  analyzeArchiveRun,
+  analyzeResonance,
+  analyzeResonanceFile,
+  listArchive,
+  saveConfigToArchive,
+} from './api'
 import {
   buildShaperRecord,
   loadLocalAudit,
@@ -171,9 +177,10 @@ function applyResult(result: ShaperAnalysis): void {
 /** Analyses whichever source the chooser picked - an upload or a host/archive file -
  *  applying the shared advanced params either way, then files the result. */
 async function onSourceAnalyze(req: {
-  kind: 'upload' | 'host'
+  kind: 'upload' | 'host' | 'archive'
   file?: File
   path?: string
+  runId?: string
   axis: string | null
 }): Promise<void> {
   if (busy.value) return
@@ -187,10 +194,12 @@ async function onSourceAnalyze(req: {
       maxSmoothing: params.maxSmoothing.trim() ? Number(params.maxSmoothing) : undefined,
       dampingRatio: params.dampingRatio.trim() ? Number(params.dampingRatio) : undefined,
     }
-    const result =
-      req.kind === 'upload' && req.file
-        ? await analyzeResonance(req.file, opts)
-        : await analyzeResonanceFile(req.path ?? '', opts)
+    let result: ShaperAnalysis
+    if (req.kind === 'upload' && req.file) result = await analyzeResonance(req.file, opts)
+    else if (req.kind === 'archive' && req.runId) result = await analyzeArchiveRun(req.runId, opts)
+    else result = await analyzeResonanceFile(req.path ?? '', opts)
+    // Reopening a saved run jumps to Analyze so its chart is visible right away.
+    if (req.kind === 'archive') mode.value = 'analyze'
     applyResult(result)
   } catch (e) {
     error.value = e instanceof Error ? e.message : t('inputShaping.widget.errAnalysisFailed')

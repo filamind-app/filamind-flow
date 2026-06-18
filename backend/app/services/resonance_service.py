@@ -286,9 +286,13 @@ async def _capture(
 ) -> dict[str, Any]:
     """Runs one ``TEST_RESONANCES`` and analyses the CSV it writes."""
     target = await _run_resonances(client, resonance_dirs, axis_arg=axis_arg, name=name)
-    return await asyncio.to_thread(
+    result = await asyncio.to_thread(
         analyze_file, resonance_dirs, target, axis=analyze_axis, **kwargs
     )
+    # Expose the full host path of the capture so the caller can archive it (the schema ignores
+    # this private key). Lets a live run be auto-saved and its chart reopened later.
+    result["_source_path"] = target
+    return result
 
 
 async def run_live_test(

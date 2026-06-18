@@ -599,7 +599,9 @@
       "errListArchive": "Das Archiv konnte nicht aufgelistet werden",
       "errSave": "Speichern im Archiv fehlgeschlagen",
       "errDelete": "Löschen fehlgeschlagen",
-      "errDownload": "Download fehlgeschlagen"
+      "errDownload": "Download fehlgeschlagen",
+      "viewChart": "Diagramm",
+      "viewChartTitle": "Diagramm dieses gespeicherten Laufs erneut öffnen"
     },
     "verdicts": {
       "vibrations": {

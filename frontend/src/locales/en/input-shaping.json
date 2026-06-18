@@ -599,7 +599,9 @@
       "errListArchive": "Could not list the archive",
       "errSave": "Save to archive failed",
       "errDelete": "Delete failed",
-      "errDownload": "Download failed"
+      "errDownload": "Download failed",
+      "viewChart": "Chart",
+      "viewChartTitle": "Reopen this saved run's chart"
     },
     "verdicts": {
       "vibrations": {

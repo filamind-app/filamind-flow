@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
+from app.config import Settings, get_settings
 from app.main import create_app
-from app.services import shaper_service
+from app.services import shaper_archive, shaper_service
 
 _SHAPER_NAMES = {"zv", "mzv", "ei", "2hump_ei", "3hump_ei"}
 
@@ -102,3 +105,31 @@ def test_analyze_surfaces_a_failed_init_as_a_clean_error(monkeypatch: pytest.Mon
     monkeypatch.setattr(shaper_service._sc, "ShaperCalibrate", boom)
     with pytest.raises(shaper_service.ShaperAnalysisError, match="Could not analyse"):
         shaper_service.analyze(_psd_csv())
+
+
+def test_analyze_archive_run_route(tmp_path: Path) -> None:
+    """A saved run's chart can be reopened: the archive-analyze route re-runs the analysis
+    on the stored capture and returns a recommendation."""
+    app = create_app()
+    settings = Settings(data_dir=str(tmp_path), resonance_dirs=str(tmp_path))
+    app.dependency_overrides[get_settings] = lambda: settings
+    try:
+        client = TestClient(app)
+        csv = tmp_path / "raw_data_x_filamind_x.csv"
+        csv.write_bytes(_psd_csv(55.0))
+        run = shaper_archive.save_run(
+            str(tmp_path), kind="shaper", axis="x", csv_sources=[str(csv)]
+        )
+        ok = client.post(f"/api/shaper/archive/{run['id']}/analyze")
+        assert ok.status_code == 200, ok.text
+        assert ok.json()["recommended_shaper"] in _SHAPER_NAMES
+        # an unknown (but valid-format) run id is a clean 404, not a 500
+        missing = client.post("/api/shaper/archive/2099-01-01_00-00-00_shaper/analyze")
+        assert missing.status_code == 404
+        # a config-only run (no capture) has nothing to chart -> 400
+        cfg = shaper_archive.save_run(
+            str(tmp_path), kind="config", config_text="[input_shaper]\n"
+        )
+        assert client.post(f"/api/shaper/archive/{cfg['id']}/analyze").status_code == 400
+    finally:
+        app.dependency_overrides.clear()
