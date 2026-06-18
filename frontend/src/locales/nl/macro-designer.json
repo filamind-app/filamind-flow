@@ -1,0 +1,200 @@
+{
+  "macroDesigner": {
+    "intro": "Simuleer G-code offline - plak of schrijf een programma en zie het pad van de toolhead, de bounding box, de totalen voor verplaatsing en extrusie, en een tijdschatting, zonder de printer aan te raken. Blader door de ingebouwde macrobibliotheek als referentie.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "Over de Macro Designer",
+      "close": "Sluiten",
+      "howToRead": "Hoe te gebruiken",
+      "steps": [
+        "Typ of plak G-code in de editor (een voorbeeldvierkant is geladen om te beginnen).",
+        "Druk op Simuleren - het 2D-pad en de statistieken worden bijgewerkt.",
+        "Doorlopende lijnen zijn extrusiebewegingen; vage stippellijnen zijn verplaatsingen.",
+        "Blader door de macrobibliotheek en voeg er een toe om vanaf de bijbehorende commando's te starten."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "De simulator",
+          "body": "Het draait het programma op een virtuele toolhead: G0/G1-bewegingen, G90/G91 (absoluut/relatief), M82/M83 (extrudermodus), G92 (positie instellen) en G28 (homen → oorsprong). Het rapporteert het pad, de bounding box, de totale verplaatsing en extrusie, een ruwe tijdschatting op basis van de feedrates, en een tijdlijn per commando. Er wordt niets naar de printer gestuurd."
+        },
+        "motion": {
+          "title": "Pad & tijd",
+          "body": "De 2D-weergave is het XY-pad (Z zit in de begrenzing). De tijdschatting deelt de lengte van elke beweging door de feedrate - acceleratie wordt genegeerd, dus het is een ruwe ondergrens, niet de exacte printtijd. Commando's die de simulator niet modelleert (bijv. M-codes, macro's op hoog niveau) worden als waarschuwingen vermeld en overgeslagen."
+        },
+        "macros": {
+          "title": "Macrobibliotheek",
+          "body": "Een referentieset van veelvoorkomende Klipper-macro's met hun naam, wat ze doen en de configuratiesecties die ze nodig hebben. \"Invoegen\" plaatst de commando's op hoog niveau van een macro in de editor als startpunt - houd er rekening mee dat die zich verder uitvouwen op de printer (volledige Jinja/macro-expansie komt eraan)."
+        },
+        "glossary": {
+          "title": "Woordenlijst",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "De regel-voor-regel bewegingstaal die de printer uitvoert (bewegingen, temperaturen, ventilator, …)."
+        },
+        "feedrate": {
+          "term": "Feedrate (F)",
+          "def": "Bewegingssnelheid in mm/min - F1200 is 20 mm/s. Bepaalt hoe snel elke beweging verloopt."
+        },
+        "macro": {
+          "term": "Macro",
+          "def": "Een benoemd, herbruikbaar commando (bijv. QUAD_GANTRY_LEVEL) dat zich uitvouwt tot een reeks G-code."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Simuleren",
+      "simulating": "Simuleren…",
+      "sample": "Voorbeeld laden",
+      "clear": "Wissen"
+    },
+    "library": {
+      "label": "Ingebouwde macro's",
+      "placeholder": "Macro's doorbladeren…",
+      "insert": "In editor invoegen",
+      "requires": "Vereist: {sections}",
+      "none": "-"
+    },
+    "result": {
+      "title": "Simulatie",
+      "moves": "{count} bewegingen",
+      "distance": "{mm} mm verplaatsing",
+      "extrude": "{mm} mm geëxtrudeerd",
+      "time": "~{s} s",
+      "bounds": "Begrenzing",
+      "empty": "Geen bewegingen om te simuleren.",
+      "timeAccel": "(acceleratiebewust)",
+      "timeConstant": "(geen limieten)"
+    },
+    "path": {
+      "title": "Toolhead-pad (XY)",
+      "noPath": "Voer een simulatie uit om het pad te zien."
+    },
+    "explain": {
+      "title": "Leg deze macro uit",
+      "travel": "Snelle verplaatsing naar X{x} Y{y} met {f} mm/min",
+      "print": "Printbeweging - extrudeer {e} mm over {d} mm naar X{x} Y{y} met {f} mm/min",
+      "retract": "Retract {e} mm",
+      "prime": "Extrudeer {e} mm ter plaatse",
+      "noMove": "Geen beweging",
+      "absXYZ": "Schakel naar absolute positionering (G90)",
+      "relXYZ": "Schakel naar relatieve positionering (G91)",
+      "absE": "Schakel naar absolute extrusie (M82)",
+      "relE": "Schakel naar relatieve extrusie (M83)",
+      "setPos": "Stel de huidige positie in (G92)",
+      "home": "Home de assen (G28) → oorsprong",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "tot nu toe: {d} mm · {e} mm · ~{s} s",
+      "note": "Lussen en voorwaarden worden uitgevouwen zoals de printer dat zou doen; een macro die live printerstatus nodig heeft valt terug op een letterlijke voorvertoning."
+    },
+    "timeline": {
+      "title": "Tijdlijn",
+      "line": "Regel",
+      "cmd": "Commando",
+      "action": "Actie"
+    },
+    "warnings": {
+      "title": "Waarschuwingen"
+    },
+    "live": {
+      "label": "Van de printer",
+      "placeholder": "Kies een van je geïnstalleerde macro's…",
+      "hint": "{n} macro's gevonden op de printer - kies er een om de G-code te laden en te simuleren.",
+      "unreachable": "Printer onbereikbaar - maak verbinding om je geïnstalleerde macro's te laden.",
+      "params": "Macroparameters"
+    },
+    "limits": {
+      "title": "Buiten bereik / te hoge snelheid",
+      "oob": "Regel {line}: {axis}={value} ligt buiten het printgebied ({min}…{max} mm).",
+      "overSpeed": "Regel {line}: {value} mm/s overschrijdt de limiet van {limit} mm/s van de printer (Klipper begrenst dit).",
+      "buildArea": "printgebied {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Macro-linter - {n} bevinding(en)",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE zonder een bijbehorende RESTORE_GCODE_STATE - de opgeslagen positionering/extrudermodus wordt nooit hersteld.",
+          "fix": "Voeg een RESTORE_GCODE_STATE toe (of verwijder de SAVE)."
+        },
+        "ends_relative": {
+          "msg": "De macro eindigt in relatieve modus (G91/M83) - het volgende commando beweegt relatief.",
+          "fix": "Voeg een afsluitende G90 / M82 toe, of omwikkel de bewegingen met SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
+        },
+        "extrude_before_home": {
+          "msg": "Een extruderende beweging vindt plaats vóór G28 - risico op een koude of niet-gehomede extrusie.",
+          "fix": "Home (G28) en verwarm de hotend voordat je extrudeert."
+        }
+      }
+    },
+    "heat": {
+      "colorBy": "Kleuren op",
+      "none": "Vlak",
+      "speed": "Snelheid",
+      "extrude": "Extrusie",
+      "legendSpeed": "Snelheid (mm/s)",
+      "legendExtrude": "Extrusie (mm/s)"
+    },
+    "compare": {
+      "title": "Vergelijken (A / B)",
+      "hint": "Simuleer een tweede programma (B) en vergelijk het met het huidige resultaat (A).",
+      "copyA": "Kopieer A → B",
+      "run": "Vergelijken",
+      "running": "Vergelijken…",
+      "placeholder": "Plak of schrijf het B-programma…",
+      "editorB": "Programma B",
+      "overlay": "Padoverlay A vs B",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "Linterverschillen",
+      "lintSame": "Dezelfde linterbevindingen in beide.",
+      "onlyA": "alleen in A",
+      "onlyB": "alleen in B",
+      "row": {
+        "moves": "Bewegingen",
+        "distance": "Afstand (mm)",
+        "extrude": "Extrusie (mm)",
+        "time": "Tijd (s)"
+      }
+    },
+    "scaffold": {
+      "title": "Genereer START / END_PRINT",
+      "hint": "Bouw een START_PRINT en END_PRINT op maat van deze printer - de homing, de leveling die hij daadwerkelijk heeft, een mesh-stap en prime/park-posities binnen het echte printgebied.",
+      "generate": "Genereren",
+      "generating": "Genereren…",
+      "loadEditor": "In editor laden",
+      "writeTitle": "Naar config schrijven",
+      "target": "Doelbestand",
+      "append": "Aan config toevoegen…",
+      "confirm": "Toevoegen bevestigen",
+      "cancel": "Annuleren",
+      "appending": "Schrijven…",
+      "writeNote": "Voegt beide macro's toe aan het gekozen bestand achter de bevestigingspoort - eerst wordt een back-up gemaakt en schrijfacties worden geweigerd tijdens het printen. Geweigerd als er al een macro met dezelfde naam bestaat.",
+      "saved": "Opgeslagen in {file}.",
+      "savedBackup": "Opgeslagen in {file} (back-up: {backup}). Herstart de firmware om toe te passen.",
+      "note": {
+        "kinematics": "Kinematica: {k}.",
+        "bounds": "Printgebied X {x0}-{x1}, Y {y0}-{y1} (prime/park passen erbinnen).",
+        "leveling_qgl": "quad_gantry_level gedetecteerd -> QUAD_GANTRY_LEVEL toegevoegd.",
+        "leveling_ztilt": "z_tilt gedetecteerd -> Z_TILT_ADJUST toegevoegd.",
+        "leveling_none": "Geen quad_gantry_level / z_tilt geconfigureerd - een tijdelijke aanduiding achtergelaten.",
+        "mesh": "bed_mesh gedetecteerd -> BED_MESH_CALIBRATE toegevoegd.",
+        "no_bed": "Geen verwarmd bed - bedverwarmingsstappen weggelaten."
+      }
+    },
+    "flow": {
+      "title": "Flowcontrole (hotend-plafond)",
+      "hint": "Kies je hotend uit de catalogus en elke printbeweging wordt gecontroleerd tegen zijn echte smeltzone-plafond - een overstromende macro valt op voordat hij print.",
+      "hotend": "Hotend",
+      "pick": "Kies een hotend…",
+      "diameter": "Ø mm",
+      "ok": "Alle printbewegingen vallen binnen het plafond van {ceiling} mm³/s.",
+      "overTitle": "{n} beweging(en) overschrijden het plafond van {ceiling} mm³/s:",
+      "overLine": "Regel {line}: {flow} mm³/s"
+    }
+  }
+}

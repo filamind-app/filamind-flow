@@ -1,0 +1,200 @@
+{
+  "macroDesigner": {
+    "intro": "Simulasikan G-code secara offline - tempel atau tulis program lalu lihat jalur toolhead, kotak pembatas, total perjalanan dan ekstrusi, serta perkiraan waktu, tanpa menyentuh printer. Jelajahi pustaka makro bawaan sebagai referensi.",
+    "help": {
+      "guide": "Bantuan",
+      "guideTitle": "Tentang Macro Designer",
+      "close": "Tutup",
+      "howToRead": "Cara penggunaan",
+      "steps": [
+        "Ketik atau tempel G-code di editor (contoh persegi dimuat sebagai awalan).",
+        "Tekan Simulasikan - jalur 2D dan statistik diperbarui.",
+        "Garis penuh adalah gerakan ekstrusi; garis putus-putus samar adalah perjalanan.",
+        "Jelajahi pustaka makro dan Sisipkan salah satunya untuk memulai dari perintahnya."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "Simulator",
+          "body": "Ia menjalankan program pada toolhead virtual: gerakan G0/G1, G90/G91 (absolut/relatif), M82/M83 (mode extruder), G92 (atur posisi) dan G28 (home → titik asal). Ia melaporkan jalur, kotak pembatas, total perjalanan dan ekstrusi, perkiraan waktu kasar dari feedrate, serta lini masa per perintah. Tidak ada yang dikirim ke printer."
+        },
+        "motion": {
+          "title": "Jalur & waktu",
+          "body": "Tampilan 2D adalah jalur XY (Z ada dalam batas). Perkiraan waktu membagi panjang setiap gerakan dengan feedrate-nya - ia mengabaikan akselerasi, jadi ini batas bawah kasar, bukan waktu cetak persis. Perintah yang tidak dimodelkan simulator (mis. M-code, makro tingkat tinggi) dicantumkan sebagai peringatan dan dilewati."
+        },
+        "macros": {
+          "title": "Pustaka makro",
+          "body": "Kumpulan referensi makro Klipper umum dengan nama, fungsinya, dan bagian config yang dibutuhkan. \"Sisipkan\" menaruh perintah tingkat tinggi sebuah makro ke editor sebagai titik awal - perhatikan bahwa itu masih dijabarkan lebih lanjut di printer (penjabaran Jinja/makro penuh akan datang)."
+        },
+        "glossary": {
+          "title": "Glosarium",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "Bahasa gerakan baris demi baris yang dijalankan printer (gerakan, suhu, kipas, …)."
+        },
+        "feedrate": {
+          "term": "Feedrate (F)",
+          "def": "Kecepatan gerakan dalam mm/min - F1200 adalah 20 mm/s. Mengatur seberapa cepat setiap gerakan berjalan."
+        },
+        "macro": {
+          "term": "Makro",
+          "def": "Perintah bernama yang dapat dipakai ulang (mis. QUAD_GANTRY_LEVEL) yang dijabarkan menjadi urutan G-code."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Simulasikan",
+      "simulating": "Menyimulasikan…",
+      "sample": "Muat contoh",
+      "clear": "Bersihkan"
+    },
+    "library": {
+      "label": "Makro bawaan",
+      "placeholder": "Jelajahi makro…",
+      "insert": "Sisipkan ke editor",
+      "requires": "Butuh: {sections}",
+      "none": "-"
+    },
+    "result": {
+      "title": "Simulasi",
+      "moves": "{count} gerakan",
+      "distance": "perjalanan {mm} mm",
+      "extrude": "{mm} mm diekstrusi",
+      "time": "~{s} s",
+      "bounds": "Batas",
+      "empty": "Tidak ada gerakan untuk disimulasikan.",
+      "timeAccel": "(memperhitungkan akselerasi)",
+      "timeConstant": "(tanpa batas)"
+    },
+    "path": {
+      "title": "Jalur toolhead (XY)",
+      "noPath": "Jalankan simulasi untuk melihat jalurnya."
+    },
+    "explain": {
+      "title": "Jelaskan makro ini",
+      "travel": "Perjalanan cepat ke X{x} Y{y} pada {f} mm/min",
+      "print": "Gerakan cetak - ekstrusi {e} mm sepanjang {d} mm ke X{x} Y{y} pada {f} mm/min",
+      "retract": "Tarik balik {e} mm",
+      "prime": "Ekstrusi {e} mm di tempat",
+      "noMove": "Tidak ada gerakan",
+      "absXYZ": "Beralih ke posisi absolut (G90)",
+      "relXYZ": "Beralih ke posisi relatif (G91)",
+      "absE": "Beralih ke ekstrusi absolut (M82)",
+      "relE": "Beralih ke ekstrusi relatif (M83)",
+      "setPos": "Atur posisi saat ini (G92)",
+      "home": "Home sumbu (G28) → titik asal",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "sejauh ini: {d} mm · {e} mm · ~{s} s",
+      "note": "Perulangan dan kondisional dijabarkan seperti yang dilakukan printer; makro yang butuh keadaan printer langsung beralih ke pratinjau literal."
+    },
+    "timeline": {
+      "title": "Lini masa",
+      "line": "Baris",
+      "cmd": "Perintah",
+      "action": "Aksi"
+    },
+    "warnings": {
+      "title": "Peringatan"
+    },
+    "live": {
+      "label": "Dari printer",
+      "placeholder": "Pilih salah satu makro terpasang Anda…",
+      "hint": "{n} makro ditemukan di printer - pilih salah satu untuk memuat G-code-nya dan menyimulasikannya.",
+      "unreachable": "Printer tidak terjangkau - sambungkan untuk memuat makro terpasang Anda.",
+      "params": "Parameter makro"
+    },
+    "limits": {
+      "title": "Di luar batas / melebihi kecepatan",
+      "oob": "Baris {line}: {axis}={value} di luar area cetak ({min}…{max} mm).",
+      "overSpeed": "Baris {line}: {value} mm/s melampaui batas {limit} mm/s printer (Klipper akan membatasinya).",
+      "buildArea": "area cetak {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Linter makro - {n} temuan",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE tanpa RESTORE_GCODE_STATE yang sepadan - mode posisi/extruder yang disimpan tidak pernah dipulihkan.",
+          "fix": "Tambahkan RESTORE_GCODE_STATE (atau hapus SAVE)."
+        },
+        "ends_relative": {
+          "msg": "Makro berakhir dalam mode relatif (G91/M83) - perintah berikutnya akan bergerak secara relatif.",
+          "fix": "Tambahkan G90 / M82 di akhir, atau bungkus gerakan dengan SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
+        },
+        "extrude_before_home": {
+          "msg": "Gerakan ekstrusi terjadi sebelum G28 - berisiko ekstrusi dingin atau tanpa home.",
+          "fix": "Lakukan home (G28) dan panaskan hotend sebelum ekstrusi."
+        }
+      }
+    },
+    "heat": {
+      "colorBy": "Warnai berdasarkan",
+      "none": "Datar",
+      "speed": "Kecepatan",
+      "extrude": "Ekstrusi",
+      "legendSpeed": "Kecepatan (mm/s)",
+      "legendExtrude": "Ekstrusi (mm/s)"
+    },
+    "compare": {
+      "title": "Bandingkan (A / B)",
+      "hint": "Simulasikan program kedua (B) dan bandingkan dengan hasil saat ini (A).",
+      "copyA": "Salin A → B",
+      "run": "Bandingkan",
+      "running": "Membandingkan…",
+      "placeholder": "Tempel atau tulis program B…",
+      "editorB": "Program B",
+      "overlay": "Hamparan jalur A vs B",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "Perbedaan linter",
+      "lintSame": "Temuan linter sama pada keduanya.",
+      "onlyA": "hanya di A",
+      "onlyB": "hanya di B",
+      "row": {
+        "moves": "Gerakan",
+        "distance": "Jarak (mm)",
+        "extrude": "Ekstrusi (mm)",
+        "time": "Waktu (s)"
+      }
+    },
+    "scaffold": {
+      "title": "Buat START / END_PRINT",
+      "hint": "Bangun START_PRINT dan END_PRINT yang disesuaikan dengan printer ini - homing-nya, leveling yang benar-benar dimilikinya, langkah mesh, serta posisi prime/park di dalam area cetak nyata.",
+      "generate": "Buat",
+      "generating": "Membuat…",
+      "loadEditor": "Muat ke editor",
+      "writeTitle": "Tulis ke config",
+      "target": "File target",
+      "append": "Tambahkan ke config…",
+      "confirm": "Konfirmasi penambahan",
+      "cancel": "Batal",
+      "appending": "Menulis…",
+      "writeNote": "Menambahkan kedua makro ke file yang dipilih di balik gerbang konfirmasi - backup diambil lebih dulu dan penulisan ditolak saat mencetak. Ditolak jika makro dengan nama sama sudah ada.",
+      "saved": "Disimpan ke {file}.",
+      "savedBackup": "Disimpan ke {file} (backup: {backup}). Mulai ulang firmware untuk menerapkan.",
+      "note": {
+        "kinematics": "Kinematika: {k}.",
+        "bounds": "Area cetak X {x0}-{x1}, Y {y0}-{y1} (prime/park muat di dalamnya).",
+        "leveling_qgl": "Terdeteksi quad_gantry_level -> ditambahkan QUAD_GANTRY_LEVEL.",
+        "leveling_ztilt": "Terdeteksi z_tilt -> ditambahkan Z_TILT_ADJUST.",
+        "leveling_none": "Tidak ada quad_gantry_level / z_tilt yang dikonfigurasi - tinggalkan placeholder.",
+        "mesh": "Terdeteksi bed_mesh -> ditambahkan BED_MESH_CALIBRATE.",
+        "no_bed": "Tidak ada bed berpemanas - langkah pemanasan bed dihilangkan."
+      }
+    },
+    "flow": {
+      "title": "Cek aliran (batas atas hotend)",
+      "hint": "Pilih hotend Anda dari katalog dan setiap gerakan cetak diperiksa terhadap batas atas melt-zone nyatanya - makro yang melebihi aliran muncul sebelum ia mencetak.",
+      "hotend": "Hotend",
+      "pick": "Pilih hotend…",
+      "diameter": "Ø mm",
+      "ok": "Semua gerakan cetak berada dalam batas atas {ceiling} mm³/s.",
+      "overTitle": "{n} gerakan melebihi batas atas {ceiling} mm³/s:",
+      "overLine": "Baris {line}: {flow} mm³/s"
+    }
+  }
+}

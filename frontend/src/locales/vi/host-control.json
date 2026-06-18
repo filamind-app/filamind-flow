@@ -1,0 +1,247 @@
+{
+  "hostControl": {
+    "intro": "Quản lý máy chủ Linux của máy in - kiểm tra tình trạng, điều khiển các dịch vụ nền, giải phóng dung lượng ổ đĩa và thay đổi cài đặt hệ thống (thời gian, ngôn ngữ, tên máy, mạng, nguồn điện).",
+    "view": {
+      "monitor": "Giám sát",
+      "services": "Dịch vụ",
+      "cleanup": "Dọn dẹp",
+      "system": "Hệ thống"
+    },
+    "help": {
+      "guide": "Trợ giúp",
+      "guideTitle": "Giới thiệu về Điều khiển máy chủ",
+      "close": "Đóng",
+      "howToRead": "Cách đọc",
+      "steps": [
+        "Xem nhanh các thẻ về nhiệt độ CPU, bộ nhớ, ổ đĩa và mạng.",
+        "Theo dõi bảng tiến trình hàng đầu để biết tiến trình nào đang dùng CPU ngay lúc này.",
+        "Bật tự động làm mới để xem trực tiếp, hoặc tắt và làm mới thủ công."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Thuật ngữ dùng ở đây"
+        },
+        "monitor": {
+          "title": "Đọc bảng giám sát",
+          "body": "Mọi thứ ở đây chỉ để xem. Thanh chuyển sang vàng khi vượt 75% và đỏ khi vượt 90%. Nhiệt độ CPU chuyển vàng ở 70 °C và đỏ ở 80 °C. Cảnh báo điều tiết chỉ hiện trên các bo mạch có báo cáo (chủ yếu là Raspberry Pi)."
+        },
+        "services": {
+          "title": "Quản lý dịch vụ",
+          "body": "Mỗi hàng là một dịch vụ systemd. Nhấp vào để khởi động/dừng/khởi động lại, bật/tắt khi khởi động, che (mask), đọc nhật ký, hoặc - với các dịch vụ bạn tự cài - xóa tệp đơn vị của nó. Việc dừng hoặc tắt một dịch vụ cần xác nhận bằng cách gõ hoặc chạm một lần. Các dịch vụ quan trọng và được bảo vệ đều được đánh dấu; dịch vụ được bảo vệ (như SSH và bảng điều khiển này) không thể dừng, để tránh khóa bạn ra ngoài."
+        },
+        "cleanup": {
+          "title": "Giải phóng dung lượng ổ đĩa",
+          "body": "Mỗi hàng được quét trước để cho biết sẽ giải phóng được bao nhiêu. Tích chọn mục cần xóa và xác nhận. Chỉ những dữ liệu có thể tạo lại mới được đề xuất - bộ nhớ đệm tải về của apt, nhật ký systemd cũ, ~/.cache, các tệp /tmp cũ của bạn và nhật ký đã xoay vòng (không đang dùng). G-code, timelapse và cấu hình của bạn không bao giờ bị động đến."
+        },
+        "system": {
+          "title": "Cài đặt hệ thống",
+          "body": "Thay đổi múi giờ và đồng hồ của máy chủ, ngôn ngữ và bàn phím, tên máy hoặc mạng (DHCP / IP tĩnh), hoặc khởi động lại/tắt máy. Mỗi thay đổi áp dụng ngay lập tức. Khởi động lại và tắt máy bị từ chối khi đang in. Thay đổi IP có thể làm rớt kết nối tới bảng điều khiển này trong chốc lát."
+        },
+        "network": {
+          "title": "DHCP so với IP tĩnh",
+          "body": "DHCP (tự động) để bộ định tuyến tự gán địa chỉ. IP tĩnh (thủ công) cố định một địa chỉ - đặt IP, subnet (CIDR, ví dụ /24), gateway (thường là bộ định tuyến của bạn) và DNS. Chỉ IPv4. Thay đổi địa chỉ của kết nối phục vụ bảng điều khiển này sẽ làm rớt phiên của bạn; hãy kết nối lại tại IP mới. Một địa chỉ tĩnh hoặc gateway sai có thể khiến máy in không truy cập được cho đến khi bạn sửa trên chính thiết bị, nên các cài đặt được kiểm tra và cần xác nhận bằng cách gõ."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Máy chủ",
+          "def": "Máy tính Linux nhỏ (ví dụ Raspberry Pi hoặc BTT CB1) chạy Klipper, Moonraker và FilaMind - tách biệt với các vi điều khiển của máy in."
+        },
+        "load": {
+          "term": "Tải trung bình",
+          "def": "Số tiến trình đang chờ chạy, tính trung bình trong 1 / 5 / 15 phút. Đại khái: giá trị gần với số nhân nghĩa là CPU đang bận; cao hơn nhiều nghĩa là quá tải."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Dung lượng ổ đĩa dùng làm vùng tràn khi RAM đầy. Dùng swap nhiều làm chậm máy chủ - dấu hiệu thiếu bộ nhớ."
+        },
+        "throttle": {
+          "term": "Điều tiết (throttling)",
+          "def": "Khi bo mạch giảm tốc độ để tự bảo vệ - thường do nguồn cấp yếu (sụt áp) hoặc quá nhiệt. Chủ yếu được báo cáo trên Raspberry Pi."
+        },
+        "ntp": {
+          "term": "NTP / đồng bộ đồng hồ",
+          "def": "Network Time Protocol giữ cho đồng hồ máy chủ chính xác. Đồng hồ không đồng bộ có thể làm hỏng timelapse, nhật ký và chứng chỉ TLS."
+        },
+        "locale": {
+          "term": "Locale",
+          "def": "Cài đặt ngôn ngữ và bố cục bàn phím của máy chủ, được hệ điều hành dùng cho văn bản, ngày tháng và bố cục bàn phím dòng lệnh."
+        },
+        "service": {
+          "term": "Dịch vụ (đơn vị)",
+          "def": "Một chương trình nền do systemd quản lý - Klipper, Moonraker, bộ phát webcam và ngăn xếp mạng đều chạy dưới dạng dịch vụ."
+        },
+        "enabled": {
+          "term": "Bật / tắt",
+          "def": "Dịch vụ có tự khởi động khi máy khởi động hay không. 'enabled' khởi động khi boot; 'disabled' thì không; 'static' chỉ được dịch vụ khác khởi động."
+        },
+        "mask": {
+          "term": "Che (mask)",
+          "def": "Một dạng tắt mạnh hơn - dịch vụ hoàn toàn không thể khởi động (kể cả bởi dịch vụ khác) cho đến khi bỏ che. Hãy dùng cẩn thận."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Làm mới",
+      "autoRefresh": "Tự động làm mới",
+      "loading": "Đang đọc trạng thái máy chủ…",
+      "host": "Máy chủ",
+      "hostname": "Tên máy",
+      "distro": "Hệ điều hành",
+      "kernel": "Nhân (kernel)",
+      "uptime": "Thời gian hoạt động",
+      "cpu": "CPU",
+      "temp": "Nhiệt độ",
+      "load": "Tải (1·5·15p)",
+      "cores": "Nhân",
+      "throttled": "Bị điều tiết",
+      "memory": "Bộ nhớ",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Ổ đĩa",
+      "network": "Mạng",
+      "iface": "Giao diện",
+      "ip": "Địa chỉ IP",
+      "ssid": "Wi-Fi",
+      "signal": "Tín hiệu",
+      "timeLocale": "Thời gian & Locale",
+      "timezone": "Múi giờ",
+      "ntp": "Đồng bộ đồng hồ",
+      "synced": "Đã đồng bộ",
+      "syncing": "Đang đồng bộ…",
+      "ntpOff": "Tắt",
+      "language": "Ngôn ngữ",
+      "keymap": "Bố cục bàn phím",
+      "topProcesses": "Tiến trình hàng đầu",
+      "command": "Lệnh",
+      "cpuPct": "CPU%",
+      "memPct": "MEM%",
+      "pid": "PID"
+    },
+    "services": {
+      "warning": "Dừng hoặc tắt nhầm dịch vụ có thể làm máy in ngoại tuyến. Các dịch vụ quan trọng đều được đánh dấu; dịch vụ được bảo vệ không thể dừng.",
+      "search": "Tìm dịch vụ…",
+      "refresh": "Làm mới",
+      "loading": "Đang liệt kê dịch vụ…",
+      "loadingDetail": "Đang đọc dịch vụ…",
+      "loadingLogs": "Đang đọc nhật ký…",
+      "summary": "{total} dịch vụ · {active} đang hoạt động · {failed} lỗi",
+      "filter": {
+        "all": "Tất cả",
+        "active": "Đang hoạt động",
+        "inactive": "Không hoạt động",
+        "failed": "Lỗi",
+        "enabled": "Đã bật"
+      },
+      "stateActive": "Đang hoạt động",
+      "stateInactive": "Không hoạt động",
+      "stateFailed": "Lỗi",
+      "critical": "Quan trọng",
+      "protected": "Được bảo vệ",
+      "state": "Trạng thái",
+      "startup": "Khởi động",
+      "unitFile": "Tệp đơn vị",
+      "action": {
+        "start": "Khởi động",
+        "stop": "Dừng",
+        "restart": "Khởi động lại",
+        "enable": "Bật",
+        "disable": "Tắt",
+        "mask": "Che",
+        "unmask": "Bỏ che"
+      },
+      "actionOk": "Đã {action} xong.",
+      "actionFailed": "{action} thất bại.",
+      "deleteFailed": "Không thể xóa tệp đơn vị.",
+      "confirmAction": "{action} \"{name}\"?",
+      "confirmYes": "Có, thực hiện",
+      "cancel": "Hủy",
+      "deleteUnit": "Xóa tệp đơn vị…",
+      "deletePrompt": "Thao tác này xóa vĩnh viễn tệp đơn vị. Gõ \"{name}\" để xác nhận.",
+      "deleteConfirm": "Xóa vĩnh viễn",
+      "deleted": "Đã xóa tệp đơn vị.",
+      "logs": "Nhật ký gần đây",
+      "noLogs": "Không có nhật ký xuất ra."
+    },
+    "cleanup": {
+      "subtitle": "Tích chọn mục cần xóa rồi dọn dẹp. Chỉ bộ nhớ đệm và nhật ký cũ - bản in và cấu hình vẫn an toàn.",
+      "rescan": "Quét lại",
+      "scanning": "Đang quét ổ đĩa…",
+      "na": "n/a",
+      "items": "{n} tệp",
+      "freed": "Đã giải phóng {size}.",
+      "selectedTotal": "Đã chọn: {size}",
+      "clean": "Dọn các mục đã chọn",
+      "confirmBody": "Xóa các mục đã chọn?",
+      "confirmYes": "Có, dọn dẹp",
+      "cancel": "Hủy",
+      "running": "Đang dọn dẹp…",
+      "someFailed": "Một số mục không thể dọn dẹp.",
+      "targets": {
+        "apt": {
+          "label": "Bộ nhớ đệm gói",
+          "desc": "Các tệp cài đặt .deb đã tải về mà apt không còn cần."
+        },
+        "journal": {
+          "label": "Nhật ký hệ thống",
+          "desc": "Nhật ký systemd cũ - thu gọn xuống còn 50 MB gần nhất."
+        },
+        "cache": {
+          "label": "Bộ nhớ đệm người dùng",
+          "desc": "Các tệp có thể tạo lại trong ~/.cache (hình thu nhỏ, pip, v.v.)."
+        },
+        "tmp": {
+          "label": "Tệp tạm",
+          "desc": "Các tệp của riêng bạn trong /tmp cũ hơn một ngày."
+        },
+        "logs": {
+          "label": "Nhật ký đã xoay vòng",
+          "desc": "Nhật ký Klipper/Moonraker cũ, đã xoay vòng (nhật ký đang dùng được giữ lại)."
+        }
+      }
+    },
+    "system": {
+      "loading": "Đang đọc cài đặt hệ thống…",
+      "done": "Xong.",
+      "apply": "Áp dụng",
+      "timeTitle": "Thời gian & Ngày",
+      "timezone": "Múi giờ",
+      "ntp": "Đặt thời gian tự động (NTP)",
+      "manualTime": "Đặt đồng hồ thủ công",
+      "manualTimeHint": "Tắt thời gian tự động để đặt đồng hồ bằng tay.",
+      "localeTitle": "Ngôn ngữ & Bàn phím",
+      "language": "Ngôn ngữ",
+      "keymap": "Bố cục bàn phím dòng lệnh",
+      "hostnameTitle": "Tên máy",
+      "hostnameHint": "Chỉ chữ cái, chữ số và dấu gạch nối. Có hiệu lực đầy đủ sau khi khởi động lại.",
+      "powerTitle": "Nguồn điện",
+      "powerWarning": "Khởi động lại và tắt máy bị từ chối khi đang in.",
+      "reboot": "Khởi động lại",
+      "shutdown": "Tắt máy",
+      "confirmReboot": "Khởi động lại máy chủ ngay?",
+      "confirmShutdown": "Tắt máy chủ ngay?",
+      "confirmYes": "Có",
+      "cancel": "Hủy",
+      "needsSetup": "Thao tác này cần sudo không mật khẩu. Trên máy in, chạy: sudo bash scripts/install.sh sudoers - rồi thử lại.",
+      "failed": "Thay đổi đó không áp dụng được.",
+      "network": {
+        "title": "Mạng (IPv4)",
+        "unavailable": "Không thể chỉnh sửa mạng trên máy chủ này (chưa cài NetworkManager).",
+        "device": "Thiết bị",
+        "method": "Phương thức IP",
+        "auto": "DHCP (tự động)",
+        "manual": "Tĩnh (thủ công)",
+        "address": "Địa chỉ IP",
+        "cidr": "Subnet (CIDR)",
+        "gateway": "Gateway",
+        "dns": "Máy chủ DNS",
+        "dnsHint": "Phân tách bằng dấu phẩy, ví dụ 1.1.1.1, 8.8.8.8 (tùy chọn)",
+        "warning": "Thay đổi IP có thể làm rớt bảng điều khiển này - bạn có thể cần kết nối lại tại địa chỉ mới.",
+        "apply": "Áp dụng cài đặt mạng",
+        "confirmPrompt": "Thao tác này có thể khiến bảng điều khiển không truy cập được. Gõ tên thiết bị \"{device}\" để xác nhận.",
+        "confirmYes": "Áp dụng & chuyển",
+        "applyingReconnect": "Đang áp dụng… nếu bảng điều khiển ngừng phản hồi, hãy kết nối lại tại IP mới của máy in."
+      }
+    }
+  }
+}

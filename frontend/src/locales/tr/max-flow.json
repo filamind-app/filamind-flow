@@ -1,0 +1,168 @@
+{
+  "maxFlow": {
+    "intro": "Hotend'inizin sürdürebileceği en yüksek hacimsel akışı (mm³/s) bulun - akışı kademeli artırırken dişlinin kaydığı anı yakalamak için ekstruder'in StallGuard yükünü izleyerek. Önce planı önizleyin; canlı test ısıtır ve ekstrüzyon yapar, bu yüzden çalıştırmadan önce yazıcıyı hazırlayın.",
+    "help": {
+      "guide": "Yardım",
+      "guideTitle": "Max-Flow hakkında",
+      "close": "Kapat",
+      "howToRead": "Nasıl kullanılır",
+      "steps": [
+        "Test sıcaklığını ve filament çapınızı ayarlayın (önceden doldurmak için bir hotend seçin).",
+        "Planı önizleyin - her akış adımını ve ne kadar filament ittiğini gösterir.",
+        "Güvenlik kontrol listesini işaretleyin, ardından canlı testi çalıştırın (ısıtır + ekstrüzyon yapar).",
+        "Maksimum sürdürülen akışı okuyun ve önerilen dilimleyici değerini kopyalayın."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Test nasıl çalışır",
+          "body": "Ekstruder filamenti istikrarlı şekilde artan bir hacimsel akışta iter. Dişli temiz şekilde tutunduğu sürece StallGuard yük okuması sıkı kalır; kaymaya başladığında okumalar sıçramaya başlar. Bu sıçramadan önce ulaşılan en yüksek akış, sürdürülebilir maksimum akışınızdır. Kayma algılanır algılanmaz rampa durur, böylece ilk kaymadan sonra hiçbir filament öğütülmez."
+        },
+        "stallguard": {
+          "title": "StallGuard kayma algılama",
+          "body": "StallGuard, motor yükünü raporlayan bir TMC sürücü özelliğidir. Bu test, her akış adımında bunu birçok kez örnekler ve yayılımda (IQR) veya değişimde (CV) ani bir yükseliş arar - dişlinin tutunmasını yitirmesinin imzası. Eşikler sürücü başına bir profilden gelir. Not: TMC2209 ekstruder'de bu, deneysel SG4 yolunu kullanır, bu yüzden ilk çalıştırmayı bir kalibrasyon olarak değerlendirin."
+        },
+        "safety": {
+          "title": "Güvenlik",
+          "body": "Bu, ekstruder'i kasıtlı olarak kaydıran sıcak ve hareketli bir testtir. Filamenti yükleyin, nozülün açık olduğundan emin olun (tabla veya bir atık alanı üzerinde) ve yakında kalın. Yazıcı baskı yaparken çalıştırma reddedilir ve test bittiğinde ısıtıcı her zaman kapatılır."
+        },
+        "slicer": {
+          "title": "Sonucu kullanma",
+          "body": "Önerilen değeri dilimleyicinizin \"maks hacimsel hız\" alanına girin (filament başına). Tutucu değer (ölçülen maksimumun %80'i) güvenli bir günlük sınırdır; dengeli değer (%90) biraz daha zorlar. Daha yüksek hotend sıcaklıkları genellikle ulaşılabilir akışı artırır."
+        },
+        "glossary": {
+          "title": "Sözlük",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Hacimsel akış",
+          "def": "Hotend'in saniyede ne kadar plastik erittiği (mm³/s) - hızlı baskı için gerçek hız sınırı."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Motorun mekanik yükünü raporlayan, burada ekstruder kaymasını algılamak için kullanılan bir TMC sürücü sinyali."
+        },
+        "slip": {
+          "term": "Kayma",
+          "def": "Ekstruder dişlisinin filamenti artık yeterince hızlı tutamayıp atladığı an - akış tavanı."
+        },
+        "meltzone": {
+          "term": "Erime bölgesi",
+          "def": "Hotend'in ısıtılan uzunluğu; daha uzun bir erime bölgesi (ör. Volcano) daha yüksek akışı sürdürür."
+        }
+      }
+    },
+    "params": {
+      "title": "Test parametreleri",
+      "temperature": "Sıcaklık (°C)",
+      "filamentDiameter": "Filament Ø (mm)",
+      "hotend": "Hotend (isteğe bağlı)",
+      "hotendNone": "- yok -",
+      "hotendHint": "Beklenen ~{flow} mm³/s",
+      "startFlow": "Başlangıç akışı (mm³/s)",
+      "endFlow": "Bitiş akışı (mm³/s)",
+      "stepFlow": "Adım (mm³/s)",
+      "samples": "Örnek / adım",
+      "extrudePerStep": "Ekstrüzyon / adım (mm)",
+      "driver": "Ekstruder sürücüsü",
+      "driverDetected": "yazıcıdan algılandı",
+      "autoStealthchop": "Test için StealthChop'u otomatik etkinleştir",
+      "autoStealthchopHint": "Yalnızca TMC2209/2240: StallGuard okuyabilsin diye ekstruder'e geçici olarak bir stealthchop_threshold yazar, ardından testten sonra yorum satırına alır. printer.cfg'yi geri yükler; her iki yönde de firmware yeniden başlatılır.",
+      "method": "Algılama yöntemi",
+      "methodHint": "Auto, StallGuard'ı kullanır; StallGuard okuyamadığında toolhead ivmeölçerine (titreşim) geri döner. İvmeölçer yöntemi deneyseldir."
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "İvmeölçer"
+    },
+    "plan": {
+      "button": "Planı önizle",
+      "title": "Planlanan rampa",
+      "stepCount": "{count} adım",
+      "totalExtrude": "{mm} mm filament",
+      "sgField": "StallGuard alanı: {field}",
+      "sgFieldUnknown": "Bu sürücü için bilinen StallGuard alanı yok",
+      "flowHead": "Akış (mm³/s)",
+      "feedrateHead": "İlerleme hızı (mm/min)",
+      "warning": "Canlı test hotend'i ısıtır ve filamenti kasıtlı olarak kayma noktasına kadar ekstrüzyon yapar. Yalnızca önizleme - henüz hiçbir şey çalışmıyor."
+    },
+    "safety": {
+      "title": "Çalıştırmadan önce - güvenlik kontrol listesi",
+      "items": [
+        "Filament yüklü ve serbestçe besleniyor.",
+        "Nozül açık - tabla veya atık kutusu üzerinde, parçaların üstüne havada değil.",
+        "Bunun kasıtlı olarak biraz filamenti öğüteceğini/kaydıracağını kabul ediyorum.",
+        "Tüm test boyunca yazıcının yanında kalacağım."
+      ],
+      "ack": "Yukarıdakilerin tümünü yaptım ve yazıcı hazır",
+      "note": "Baskı sırasında çalıştırma reddedilir; ısıtıcı sonunda otomatik olarak kapatılır."
+    },
+    "run": {
+      "button": "Canlı testi çalıştır",
+      "running": "Çalışıyor… (ısıtma + ekstrüzyon)",
+      "confirmTitle": "Canlı max-flow testi başlatılsın mı?",
+      "confirmBody": "Bu, hotend'i {temp} °C'ye ısıtır ve ekstruder kayana kadar artırarak {mm} mm'ye kadar filament ekstrüzyon yapar.",
+      "confirm": "Şimdi çalıştır",
+      "cancel": "İptal",
+      "busy": "Reddedildi: yazıcı meşgul (baskı yapıyor veya duraklatılmış). Boşta olduğunda tekrar deneyin.",
+      "error": "Test başarısız oldu.",
+      "noSg": "Hiç StallGuard örneği okunmadı - kayma sonucu güvenilir olmayabilir. Sürücünün canlı SG alanının bu model için ayarlanması gerekiyor olabilir.",
+      "progress": "Adım {step}/{total} - {flow} mm³/s",
+      "starting": "Isıtılıyor / başlatılıyor…",
+      "abort": "Çalıştırmayı durdur",
+      "cancelling": "Durduruluyor…",
+      "cancelled": "Çalıştırma durduruldu - ısıtıcı kapatıldı.",
+      "reattached": "Yeniden bağlanıldı: bu sonuç sayfa uzaktayken tamamlandı.",
+      "failed": "Max-flow çalıştırması başarısız oldu.",
+      "abortNote": "Durdurma her zaman ısıtıcıyı kapatır.",
+      "parkNote": "Isıtmadan önce yazıcı (gerekirse) eve döner ve net bir görünüm için nozülü ortalar.",
+      "phase": {
+        "enabling": "StealthChop etkinleştiriliyor…",
+        "homing": "Yazıcı eve döndürülüyor…",
+        "centering": "Nozül ortalanıyor…",
+        "heating": "Hotend ısıtılıyor…",
+        "checking": "StallGuard sinyali kontrol ediliyor…",
+        "ramp": "Akış artırılıyor…",
+        "reverting": "Yapılandırma geri yükleniyor…"
+      },
+      "step": {
+        "home": "Eve dön",
+        "center": "Ortala",
+        "heat": "Isıt",
+        "check": "Kontrol et",
+        "ramp": "Rampa"
+      }
+    },
+    "camera": {
+      "title": "Canlı kamera",
+      "live": "CANLI",
+      "error": "Kamera kullanılamıyor.",
+      "willShow": "Test sırasında canlı bir kamera görünümü nozülü gösterecek.",
+      "minimize": "Küçült",
+      "maximize": "Büyüt",
+      "enlarge": "Genişlet",
+      "shrink": "Daralt"
+    },
+    "result": {
+      "title": "Sonuç",
+      "maxFlow": "Maksimum sürdürülen akış",
+      "slipAt": "Kayma {flow} mm³/s'de algılandı",
+      "noSlip": "Test edilen en yüksek akışa kadar kayma yok",
+      "reason": "Ayrıntı",
+      "recommendTitle": "Önerilen dilimleyici değerleri (maks hacimsel hız)",
+      "conservative": "Tutucu (%80)",
+      "balanced": "Dengeli (%90)",
+      "units": "mm³/s",
+      "fromBefore": "Daha önce ölçüldü ({at}) - güncel sayılar için tekrar çalıştırın.",
+      "unreliableTitle": "Güvenilmez - StallGuard sinyali yok",
+      "unmeasured": "ulaşıldı, doğrulanmadı",
+      "via": "{method} ile ölçüldü",
+      "accelExperimental": "Titreşimle (ivmeölçer) ölçüldü - deneysel; sayıyı kesin bir tavan değil, bir kılavuz olarak değerlendirin."
+    },
+    "states": {
+      "loadingHotends": "Hotend'ler yükleniyor…"
+    }
+  }
+}

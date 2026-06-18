@@ -1,0 +1,289 @@
+{
+  "hardwareBrowser": {
+    "intro": "ステッピングモーター、ドライバー、ボード、センサー、ホットエンド、ファン、ホスト、ノズル、エクストルーダー、フィラメントなど、厳選した3Dプリント用ハードウェアのリファレンスを名前・メーカー・カテゴリー・各種スペックから検索できます。",
+    "help": {
+      "guide": "ヘルプ",
+      "guideTitle": "ハードウェアブラウザーについて",
+      "close": "閉じる",
+      "howToRead": "使い方",
+      "steps": [
+        "検索ボックスに入力すると、名前・メーカー・各種スペック値に一致します。",
+        "フィルターでカテゴリーやメーカーを絞り込みます。",
+        "各結果カードにはその部品のスペックが表示されます。前へ／次へでページを移動できます。"
+      ],
+      "topics": {
+        "search": {
+          "title": "検索",
+          "body": "検索はメーカー・型名・カテゴリー・サブセクション・各種スペック値など、どこにでも一致します。カテゴリーとメーカーのフィルターと組み合わせて絞り込めます。結果はページ分割され、合計件数は現在のページだけでなく一致するすべての件数を反映します。"
+        },
+        "categories": {
+          "title": "カテゴリー",
+          "body": "部品はカテゴリー（ステッピングモーター、ドライバー、ボード、センサー、ホットエンド、ファン／電源、ホスト、モーション、ノズル、エクストルーダー、フィラメント、電子部品、カメラ／ディスプレイ）に分類されています。1つ選ぶとその種類だけを閲覧できます。"
+        },
+        "manufacturers": {
+          "title": "メーカーとスペック",
+          "body": "これは購入用ではなく比較のための厳選リファレンスです。値はメーカーのデータシートやコミュニティのデータに基づいており、最新製品より遅れている場合があります。購入や設定の前に必ずメーカーで確認してください。"
+        },
+        "relationships": {
+          "title": "関連ハードウェア",
+          "body": "すべてのボード、ドライバー、モーター、ホストはメーカーでリンクされ、各ボードはそのMCUと対応するドライバーにもリンクされています。任意の項目を開き、下部のクロスリンクチップを使うと関連部品に直接ジャンプできます。メーカータブとMCUタブでは、ブランドやチップを起点に、それを使用するすべてを確認できます。"
+        },
+        "glossary": {
+          "title": "用語集",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "category": {
+          "term": "カテゴリー",
+          "def": "部品が属するハードウェアの種類（例: ホットエンド、ステッピングモーター、センサー）。"
+        },
+        "manufacturer": {
+          "term": "メーカー",
+          "def": "その部品を製造する企業（例: E3D、BIGTREETECH、LDO Motors）。"
+        },
+        "spec": {
+          "term": "スペック",
+          "def": "部品のデータシート上の属性 - 電流、電圧、最高温度、寸法など。"
+        },
+        "links": {
+          "term": "関連ハードウェア",
+          "def": "部品間のクロスリンク - ボードのメーカー、そのMCU、対応するドライバー - 関連エンティティにジャンプできるクリック可能なチップとして表示されます。"
+        }
+      }
+    },
+    "search": {
+      "placeholder": "ハードウェアを検索…",
+      "button": "検索",
+      "category": "カテゴリー",
+      "allCategories": "すべてのカテゴリー",
+      "manufacturer": "メーカー",
+      "manufacturerPlaceholder": "すべてのメーカー"
+    },
+    "results": {
+      "total": "{count} 件一致",
+      "none": "検索条件に一致する部品はありません。",
+      "showing": "{total} 件中 {from}-{to} を表示",
+      "prev": "前へ",
+      "next": "次へ"
+    },
+    "states": {
+      "loading": "検索中…",
+      "error": "ハードウェアデータベースを読み込めませんでした。",
+      "retry": "再試行"
+    },
+    "tabs": {
+      "catalog": "カタログ",
+      "search": "すべて検索",
+      "boards": "ボード",
+      "drivers": "ドライバー",
+      "motors": "モーター",
+      "hosts": "ホスト",
+      "manufacturers": "ブランド",
+      "mcus": "MCU"
+    },
+    "catalog": {
+      "searchAll": "すべて検索",
+      "items": "{n} 件",
+      "back": "カタログ"
+    },
+    "boards": {
+      "search": "ボードを検索",
+      "total": "{n} 枚のボード",
+      "none": "ボードが見つかりません。",
+      "view": "詳細",
+      "hide": "非表示",
+      "connector": "コネクタ",
+      "function": "機能",
+      "pins": "ピン",
+      "use": "使用する",
+      "electronics": "電子部品（設定に影響）",
+      "notes": "設定メモ",
+      "config": "設定スニペット",
+      "copy": "コピー",
+      "copied": "コピーしました！"
+    },
+    "drivers": {
+      "search": "ドライバーを検索",
+      "klipperOnly": "Klipper（TMC）のみ",
+      "total": "{n} 個のドライバー",
+      "none": "ドライバーが見つかりません。",
+      "standalone": "スタンドアロン",
+      "sensorless": "センサーレス",
+      "config": "Klipper 設定",
+      "reference": "Klipper リファレンス →"
+    },
+    "motors": {
+      "search": "モーターを検索",
+      "total": "{n} 個のモーター",
+      "none": "モーターが見つかりません。",
+      "rated": "定格",
+      "run": "走行",
+      "config": "Klipper 設定"
+    },
+    "hosts": {
+      "search": "ホストを検索",
+      "total": "{n} 台のホスト",
+      "none": "ホストが見つかりません。",
+      "config": "ホスト設定",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "OS イメージ",
+        "locked": "ロック済み"
+      }
+    },
+    "manufacturers": {
+      "search": "ブランドを検索",
+      "total": "{n} 個のブランド",
+      "none": "ブランドが見つかりません。",
+      "members": "{n} 個の部品",
+      "specialty": "得意分野",
+      "aliases": "別名",
+      "website": "Webサイト →",
+      "derived": "コミュニティ"
+    },
+    "mcus": {
+      "search": "MCU を検索",
+      "total": "{n} 個の MCU",
+      "none": "MCU が見つかりません。",
+      "boards": "{n} 枚のボード"
+    },
+    "related": {
+      "title": "関連ハードウェア",
+      "loading": "リンクを読み込み中…",
+      "more": "+{n} 件",
+      "jump": "{name} を開く",
+      "rel": {
+        "manufacturer": "メーカー",
+        "mcus": "MCU",
+        "onboardDrivers": "オンボードドライバー",
+        "supportedDrivers": "対応ドライバー",
+        "boards": "ボード",
+        "motors": "モーター",
+        "hosts": "ホスト",
+        "catalog": "部品"
+      }
+    },
+    "picker": {
+      "placeholder": "部品を選択…"
+    },
+    "facets": {
+      "manufacturer": "メーカー",
+      "anyClass": "すべてのクラス",
+      "anyNema": "すべてのサイズ",
+      "anyKind": "すべての種類",
+      "anyType": "すべてのタイプ",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "メインボード",
+        "toolhead": "ツールヘッド",
+        "printer-preset": "プリンタープリセット",
+        "expansion": "拡張ボード",
+        "host": "ホスト SBC"
+      }
+    },
+    "onPrinter": {
+      "badge": "このプリンター上",
+      "strip": "このプリンター上:"
+    },
+    "suggest": {
+      "button": "部品を提案",
+      "title": "部品を提案",
+      "intro": "分かる範囲で入力してください - レビュー用に事前入力済みの GitHub Issue を開きます。自動的に送信されるものはありません。",
+      "typeLabel": "部品タイプ",
+      "cancel": "キャンセル",
+      "close": "閉じる",
+      "submit": "GitHub で Issue を開く",
+      "preview": "送信内容をプレビュー（JSON）",
+      "languageNote": "メンテナーが対応できるよう、Issue は英語で記述されます。",
+      "sentTitle": "送信内容を新しいタブで開きました",
+      "sentBody": "GitHub で事前入力済みの内容を確認し、そこで Issue を送信してください。ご協力ありがとうございます！",
+      "yes": "はい",
+      "specs": "追加スペック",
+      "specKey": "スペック",
+      "specValue": "値",
+      "addSpec": "スペックを追加",
+      "ports": "ポートとピン",
+      "addPort": "ポートを追加",
+      "addPin": "ピンを追加",
+      "remove": "削除",
+      "configSnippet": "Klipper 設定スニペット",
+      "types": {
+        "motor": "ステッピングモーター",
+        "driver": "ステッピングドライバー",
+        "hotend": "ホットエンド",
+        "host": "ホスト／SBC",
+        "manufacturer": "メーカー",
+        "board": "ボード",
+        "catalog": "その他のカタログ項目"
+      },
+      "group": {
+        "autotune": "オートチューン（電気的）",
+        "caps": "機能",
+        "maxFlow": "最大フロー",
+        "preset": "最大フロープリセット"
+      },
+      "f": {
+        "manufacturer": "メーカー",
+        "name": "名前",
+        "model": "型式",
+        "display_name": "表示名",
+        "boardClass": "ボードクラス",
+        "mcu": "MCU",
+        "clock": "クロック",
+        "voltage": "電圧",
+        "driver_slots": "ドライバースロット",
+        "usb": "USB",
+        "can": "CAN",
+        "ethernet": "Ethernet",
+        "nema": "NEMA",
+        "stepAngle": "ステップ角",
+        "ratedCurrent": "定格電流",
+        "holdingTorque": "保持トルク",
+        "recommendedRunCurrent": "推奨走行電流",
+        "resistance_ohm": "抵抗",
+        "inductance_H": "インダクタンス",
+        "holding_torque_Nm": "保持トルク",
+        "max_current_A": "最大電流",
+        "steps_per_rev": "ステップ／回転",
+        "chip": "チップ",
+        "interface": "インターフェース",
+        "klipperSection": "Klipper セクション",
+        "sensorless": "センサーレス",
+        "max_current_a": "最大電流",
+        "microsteps": "マイクロステップ",
+        "stealthchop": "StealthChop",
+        "spreadcycle": "SpreadCycle",
+        "coolstep": "CoolStep",
+        "stallguard": "StallGuard",
+        "stallguard_field": "StallGuard フィールド",
+        "max_temp_c": "最高温度",
+        "suggested_temp_c": "推奨温度",
+        "expected_max_flow_mm3s": "想定最大フロー",
+        "melt_zone_mm": "溶融ゾーン",
+        "START": "START",
+        "MAX": "MAX",
+        "COARSE_STEP": "COARSE_STEP",
+        "kind": "種類",
+        "soc": "SoC",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "klipperOpen": "オープンな Klipper で動作",
+        "country": "国",
+        "website": "Webサイト",
+        "specialty": "得意分野",
+        "category": "カテゴリー",
+        "subsection": "サブセクション",
+        "portLabel": "ポートラベル",
+        "portCategory": "ポートカテゴリー",
+        "portFunction": "機能",
+        "signal": "信号",
+        "pin": "ピン"
+      },
+      "tooLong": "この送信内容は自動で事前入力するには大きすぎます。JSON をコピーして手動で新しい Issue を開いてください。",
+      "copyJson": "JSON をコピー",
+      "copied": "コピーしました"
+    }
+  }
+}

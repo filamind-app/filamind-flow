@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.295.0] - 2026-06-18
+
+### Added
+
+- **12 new interface languages.** The language switcher now offers Portuguese (Brazil), Italian,
+  Japanese, Korean, Polish, Turkish, Dutch, Traditional Chinese, Ukrainian, Hindi, Vietnamese, and
+  Indonesian, bringing the total to 19. Each is a complete translation of the interface (all 2352
+  strings across every widget), with the correct plural rules wired up for each language (single
+  form for the East-Asian and Southeast-Asian languages, the East-Slavic one/few/many for Ukrainian,
+  and Polish's own one/few/many). Browser language detection now also routes Traditional-Chinese
+  regions (zh-TW / zh-HK) to the Traditional catalog.
+
 ## [0.294.0] - 2026-06-18
 
 ### Changed

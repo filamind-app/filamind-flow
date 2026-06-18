@@ -1,0 +1,200 @@
+{
+  "macroDesigner": {
+    "intro": "Symuluj G-code offline - wklej lub napisz program i zobacz tor głowicy, prostopadłościan otaczający, sumy ruchów jałowych i ekstruzji oraz szacowany czas, bez dotykania drukarki. Przeglądaj wbudowaną bibliotekę makr jako odniesienie.",
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "O Kreatorze makr",
+      "close": "Zamknij",
+      "howToRead": "Jak używać",
+      "steps": [
+        "Wpisz lub wklej G-code w edytorze (na start załadowany jest przykładowy kwadrat).",
+        "Naciśnij Symuluj - tor 2D i statystyki zostaną zaktualizowane.",
+        "Linie ciągłe to ruchy ekstruzji; słabe linie przerywane to ruchy jałowe.",
+        "Przeglądaj bibliotekę makr i wstaw jedno, aby zacząć od jego poleceń."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "Symulator",
+          "body": "Uruchamia program na wirtualnej głowicy: ruchy G0/G1, G90/G91 (pozycjonowanie bezwzględne/względne), M82/M83 (tryb ekstrudera), G92 (ustaw pozycję) i G28 (bazowanie → początek układu). Raportuje tor, prostopadłościan otaczający, łączny ruch jałowy i ekstruzję, zgrubny szacunek czasu na podstawie prędkości posuwu oraz oś czasu dla każdego polecenia. Nic nie jest wysyłane do drukarki."
+        },
+        "motion": {
+          "title": "Tor i czas",
+          "body": "Widok 2D to tor XY (Z jest w granicach). Szacunek czasu dzieli długość każdego ruchu przez jego prędkość posuwu - pomija przyspieszenie, więc jest to zgrubna dolna granica, a nie dokładny czas druku. Polecenia, których symulator nie modeluje (np. M-kody, makra wysokopoziomowe), są wymieniane jako ostrzeżenia i pomijane."
+        },
+        "macros": {
+          "title": "Biblioteka makr",
+          "body": "Zestaw odniesienia z popularnymi makrami Klipper wraz z ich nazwą, działaniem i sekcjami konfiguracji, których wymagają. \"Wstaw\" umieszcza wysokopoziomowe polecenia makra w edytorze jako punkt wyjścia - pamiętaj, że na drukarce rozwijają się one dalej (pełne rozwijanie Jinja/makr jest w drodze)."
+        },
+        "glossary": {
+          "title": "Słowniczek",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "Język ruchu wykonywany przez drukarkę linia po linii (ruchy, temperatury, wentylator, …)."
+        },
+        "feedrate": {
+          "term": "Prędkość posuwu (F)",
+          "def": "Prędkość ruchu w mm/min - F1200 to 20 mm/s. Określa, jak szybko wykonywany jest każdy ruch."
+        },
+        "macro": {
+          "term": "Makro",
+          "def": "Nazwane, wielokrotnego użytku polecenie (np. QUAD_GANTRY_LEVEL), które rozwija się w sekwencję G-code."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Symuluj",
+      "simulating": "Symulowanie…",
+      "sample": "Załaduj przykład",
+      "clear": "Wyczyść"
+    },
+    "library": {
+      "label": "Wbudowane makra",
+      "placeholder": "Przeglądaj makra…",
+      "insert": "Wstaw do edytora",
+      "requires": "Wymaga: {sections}",
+      "none": "-"
+    },
+    "result": {
+      "title": "Symulacja",
+      "moves": "{count} ruchów",
+      "distance": "{mm} mm ruchu jałowego",
+      "extrude": "{mm} mm ekstruzji",
+      "time": "~{s} s",
+      "bounds": "Granice",
+      "empty": "Brak ruchów do symulacji.",
+      "timeAccel": "(z przyspieszeniem)",
+      "timeConstant": "(bez limitów)"
+    },
+    "path": {
+      "title": "Tor głowicy (XY)",
+      "noPath": "Uruchom symulację, aby zobaczyć tor."
+    },
+    "explain": {
+      "title": "Wyjaśnij to makro",
+      "travel": "Szybki ruch jałowy do X{x} Y{y} przy {f} mm/min",
+      "print": "Ruch druku - wytłocz {e} mm na dystansie {d} mm do X{x} Y{y} przy {f} mm/min",
+      "retract": "Wycofaj {e} mm",
+      "prime": "Wytłocz {e} mm w miejscu",
+      "noMove": "Brak ruchu",
+      "absXYZ": "Przełącz na pozycjonowanie bezwzględne (G90)",
+      "relXYZ": "Przełącz na pozycjonowanie względne (G91)",
+      "absE": "Przełącz na ekstruzję bezwzględną (M82)",
+      "relE": "Przełącz na ekstruzję względną (M83)",
+      "setPos": "Ustaw bieżącą pozycję (G92)",
+      "home": "Bazuj osie (G28) → początek układu",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "dotychczas: {d} mm · {e} mm · ~{s} s",
+      "note": "Pętle i instrukcje warunkowe są rozwijane tak, jak zrobiłaby to drukarka; makro wymagające bieżącego stanu drukarki cofa się do dosłownego podglądu."
+    },
+    "timeline": {
+      "title": "Oś czasu",
+      "line": "Linia",
+      "cmd": "Polecenie",
+      "action": "Akcja"
+    },
+    "warnings": {
+      "title": "Ostrzeżenia"
+    },
+    "live": {
+      "label": "Z drukarki",
+      "placeholder": "Wybierz jedno z zainstalowanych makr…",
+      "hint": "{n} makr znaleziono na drukarce - wybierz jedno, aby załadować jego G-code i je zasymulować.",
+      "unreachable": "Drukarka nieosiągalna - połącz się, aby załadować zainstalowane makra.",
+      "params": "Parametry makra"
+    },
+    "limits": {
+      "title": "Poza granicami / przekroczona prędkość",
+      "oob": "Linia {line}: {axis}={value} jest poza obszarem roboczym ({min}…{max} mm).",
+      "overSpeed": "Linia {line}: {value} mm/s przekracza limit drukarki {limit} mm/s (Klipper go ograniczy).",
+      "buildArea": "obszar roboczy {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Linter makr - {n} wynik(ów)",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE bez pasującego RESTORE_GCODE_STATE - zapisany tryb pozycjonowania/ekstrudera nigdy nie jest przywracany.",
+          "fix": "Dodaj RESTORE_GCODE_STATE (lub usuń SAVE)."
+        },
+        "ends_relative": {
+          "msg": "Makro kończy się w trybie względnym (G91/M83) - następne polecenie wykona ruch względny.",
+          "fix": "Dodaj końcowe G90 / M82 lub otocz ruchy w SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
+        },
+        "extrude_before_home": {
+          "msg": "Ruch z ekstruzją następuje przed G28 - ryzyko ekstruzji na zimno lub bez bazowania.",
+          "fix": "Wykonaj bazowanie (G28) i rozgrzej hotend przed ekstruzją."
+        }
+      }
+    },
+    "heat": {
+      "colorBy": "Koloruj wg",
+      "none": "Płaski",
+      "speed": "Prędkość",
+      "extrude": "Ekstruzja",
+      "legendSpeed": "Prędkość (mm/s)",
+      "legendExtrude": "Ekstruzja (mm/s)"
+    },
+    "compare": {
+      "title": "Porównaj (A / B)",
+      "hint": "Zasymuluj drugi program (B) i porównaj go z bieżącym wynikiem (A).",
+      "copyA": "Kopiuj A → B",
+      "run": "Porównaj",
+      "running": "Porównywanie…",
+      "placeholder": "Wklej lub napisz program B…",
+      "editorB": "Program B",
+      "overlay": "Nakładka torów A vs B",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "Różnice lintera",
+      "lintSame": "Te same wyniki lintera w obu.",
+      "onlyA": "tylko w A",
+      "onlyB": "tylko w B",
+      "row": {
+        "moves": "Ruchy",
+        "distance": "Dystans (mm)",
+        "extrude": "Ekstruzja (mm)",
+        "time": "Czas (s)"
+      }
+    },
+    "scaffold": {
+      "title": "Generuj START / END_PRINT",
+      "hint": "Zbuduj START_PRINT i END_PRINT dopasowane do tej drukarki - jej bazowanie, faktycznie dostępne poziomowanie, krok siatki oraz pozycje primingu/parkowania wewnątrz rzeczywistego obszaru roboczego.",
+      "generate": "Generuj",
+      "generating": "Generowanie…",
+      "loadEditor": "Załaduj do edytora",
+      "writeTitle": "Zapisz do konfiguracji",
+      "target": "Plik docelowy",
+      "append": "Dopisz do konfiguracji…",
+      "confirm": "Potwierdź dopisanie",
+      "cancel": "Anuluj",
+      "appending": "Zapisywanie…",
+      "writeNote": "Dopisuje oba makra do wybranego pliku za bramką potwierdzenia - najpierw tworzona jest kopia zapasowa, a zapis jest odrzucany podczas druku. Odrzucony, jeśli makro o tej samej nazwie już istnieje.",
+      "saved": "Zapisano do {file}.",
+      "savedBackup": "Zapisano do {file} (kopia: {backup}). Uruchom ponownie firmware, aby zastosować.",
+      "note": {
+        "kinematics": "Kinematyka: {k}.",
+        "bounds": "Obszar roboczy X {x0}-{x1}, Y {y0}-{y1} (priming/parkowanie mieszczą się w środku).",
+        "leveling_qgl": "Wykryto quad_gantry_level -> dodano QUAD_GANTRY_LEVEL.",
+        "leveling_ztilt": "Wykryto z_tilt -> dodano Z_TILT_ADJUST.",
+        "leveling_none": "Brak skonfigurowanego quad_gantry_level / z_tilt - pozostawiono placeholder.",
+        "mesh": "Wykryto bed_mesh -> dodano BED_MESH_CALIBRATE.",
+        "no_bed": "Brak podgrzewanego stołu - pominięto kroki grzania stołu."
+      }
+    },
+    "flow": {
+      "title": "Kontrola przepływu (limit hotendu)",
+      "hint": "Wybierz swój hotend z katalogu, a każdy ruch druku zostanie sprawdzony względem rzeczywistego limitu strefy topnienia - przepełniające makro ujawni się, zanim zacznie drukować.",
+      "hotend": "Hotend",
+      "pick": "Wybierz hotend…",
+      "diameter": "Ø mm",
+      "ok": "Wszystkie ruchy druku mieszczą się w limicie {ceiling} mm³/s.",
+      "overTitle": "{n} ruch(ów) przekracza limit {ceiling} mm³/s:",
+      "overLine": "Linia {line}: {flow} mm³/s"
+    }
+  }
+}

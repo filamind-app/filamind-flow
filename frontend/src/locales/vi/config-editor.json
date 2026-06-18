@@ -1,0 +1,243 @@
+{
+  "configEditor": {
+    "intro": "Đọc cấu hình trực tiếp của máy in từ Moonraker - từng file, được phân tích thành các phần và tham số, kèm cảnh báo các vấn đề về cấu trúc. Hiện chỉ đọc; chức năng chỉnh sửa có hướng dẫn sẽ có ở bản tiếp theo.",
+    "help": {
+      "guide": "Trợ giúp",
+      "guideTitle": "Giới thiệu Trình chỉnh sửa cấu hình",
+      "close": "Đóng",
+      "howToRead": "Cách dùng",
+      "steps": [
+        "Chọn một file cấu hình từ menu thả xuống - printer.cfg được chọn mặc định.",
+        "Duyệt qua các phần; nhấp vào một phần để mở rộng các tham số của nó.",
+        "Kiểm tra biểu ngữ Kiểm tra để phát hiện các vấn đề cấu trúc như một phần bị trùng lặp.",
+        "Chuyển sang Raw để đọc đúng nội dung văn bản của file."
+      ],
+      "topics": {
+        "sections": {
+          "title": "Phần & tham số",
+          "body": "Một cấu hình Klipper là danh sách các khối [section], mỗi khối chứa các tham số key: value. Widget này phân tích mọi phần - kể cả phần có tên như [tmc2209 stepper_x] - và liệt kê các tham số cùng giá trị và mọi chú thích cùng dòng. Các giá trị nhiều dòng (như gcode: của một macro) được giữ nguyên vẹn."
+        },
+        "includes": {
+          "title": "File được include",
+          "body": "printer.cfg thường kéo theo các file khác bằng [include other.cfg] (hoặc một glob như [include configs/*.cfg]). Mỗi include được hiển thị như một mục riêng; chọn file được include từ menu thả xuống để xem nó định nghĩa những gì."
+        },
+        "validation": {
+          "title": "Kiểm tra",
+          "body": "Sau khi phân tích, cấu hình được kiểm tra các vấn đề cấu trúc sai bất kể loại phần - một tiêu đề phần trùng lặp, một tên phần rỗng, hoặc một tham số nằm ngoài mọi phần. Những vấn đề này xuất hiện trong biểu ngữ Kiểm tra; chúng không làm thay đổi file của bạn."
+        },
+        "saveConfig": {
+          "title": "Khối SAVE_CONFIG",
+          "body": "Klipper thêm một khối tự động tạo vào cuối printer.cfg (sau dấu #*#) khi bạn chạy SAVE_CONFIG - các kết quả hiệu chỉnh như PID và độ lệch Z. Khối này được hiển thị nhưng được đánh dấu là tự động lưu, và bị loại khỏi số đếm phần có thể chỉnh sửa vì bạn không nên chỉnh tay nó."
+        },
+        "readonly": {
+          "title": "Chỉ đọc (hiện tại)",
+          "body": "Phiên bản đầu tiên này chỉ đọc và hiển thị cấu hình - không có gì được ghi xuống máy in. Chức năng chỉnh sửa có hướng dẫn, cần xác nhận (kèm sao lưu tự động trước mỗi lần lưu và khởi động lại sau đó) sẽ có ở bản cập nhật sau."
+        },
+        "glossary": {
+          "title": "Thuật ngữ",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "section": {
+          "term": "Phần",
+          "def": "Một khối [header] gom nhóm các thiết lập liên quan, ví dụ [stepper_x] hoặc [extruder]."
+        },
+        "parameter": {
+          "term": "Tham số",
+          "def": "Một dòng key: value (hoặc key = value) bên trong một phần, có thể kèm một chú thích # ở cuối."
+        },
+        "include": {
+          "term": "[include]",
+          "def": "Một chỉ thị kéo một file cấu hình khác vào printer.cfg, để các thiết lập có thể tách ra nhiều file."
+        },
+        "saveConfig": {
+          "term": "SAVE_CONFIG",
+          "def": "Khối tự động tạo (sau #*#) nơi Klipper lưu các kết quả hiệu chỉnh - đừng chỉnh tay nó."
+        }
+      }
+    },
+    "file": {
+      "label": "File cấu hình",
+      "placeholder": "Chọn một file…",
+      "refresh": "Làm mới",
+      "loadingList": "Đang tải các file…",
+      "emptyList": "Không tìm thấy file cấu hình nào trên máy in."
+    },
+    "summary": {
+      "sections": "{count} phần",
+      "params": "{count} tham số",
+      "size": "{kb} KB"
+    },
+    "validation": {
+      "title": "Kiểm tra",
+      "clean": "Không phát hiện vấn đề cấu trúc nào.",
+      "error": "Lỗi",
+      "warning": "Cảnh báo"
+    },
+    "view": {
+      "structured": "Có cấu trúc",
+      "raw": "Raw",
+      "expandAll": "Mở rộng tất cả",
+      "collapseAll": "Thu gọn tất cả"
+    },
+    "section": {
+      "saveBadge": "tự động lưu",
+      "noParams": "(không có tham số)",
+      "paramsCount": "{count} tham số",
+      "paramHead": "Tham số",
+      "valueHead": "Giá trị"
+    },
+    "edit": {
+      "hint": "Chỉnh sửa văn bản raw bên dưới, rồi Lưu. Một bản sao lưu có dấu thời gian được tạo trước mỗi lần ghi."
+    },
+    "save": {
+      "button": "Lưu",
+      "saving": "Đang lưu…",
+      "unsaved": "Thay đổi chưa lưu",
+      "revert": "Hoàn tác",
+      "confirmTitle": "Lưu xuống máy in?",
+      "confirmBody": "Việc này ghi đè {file} trên máy in. Một bản sao lưu có dấu thời gian được lưu trước, và cần khởi động lại firmware để áp dụng thay đổi.",
+      "ack": "Tôi hiểu rằng việc này ghi xuống máy in",
+      "confirm": "Lưu",
+      "cancel": "Hủy",
+      "done": "Đã lưu. Bản sao lưu: {backup}",
+      "busy": "Bị từ chối: máy in đang bận (đang in hoặc tạm dừng). Hãy thử lại khi máy rảnh.",
+      "error": "Lưu thất bại.",
+      "stale": "File đã thay đổi trên đĩa kể từ khi được tải (có thể một SAVE_CONFIG vừa diễn ra, hoặc một ứng dụng khác đã chỉnh nó). Lưu bây giờ sẽ ghi đè thay đổi đó - hãy tải lại để xem xét (dòng thời gian sao lưu cho thấy điểm khác biệt).",
+      "staleReload": "Tải lại file"
+    },
+    "restart": {
+      "prompt": "Khởi động lại firmware để áp dụng thay đổi?",
+      "button": "Khởi động lại firmware",
+      "restarting": "Đang khởi động lại…",
+      "confirmTitle": "Khởi động lại firmware?",
+      "confirmBody": "FIRMWARE_RESTART nạp lại cấu hình và làm gián đoạn máy in trong giây lát. Chỉ thực hiện khi máy rảnh.",
+      "confirm": "Khởi động lại ngay",
+      "cancel": "Hủy",
+      "done": "Đã yêu cầu khởi động lại firmware.",
+      "busy": "Bị từ chối: máy in đang bận. Khởi động lại khi máy rảnh.",
+      "error": "Khởi động lại thất bại."
+    },
+    "states": {
+      "loading": "Đang đọc cấu hình…",
+      "error": "Không thể đọc cấu hình từ máy in.",
+      "retry": "Thử lại"
+    },
+    "catalog": {
+      "title": "Thêm một khối cấu hình từ danh mục",
+      "hint": "Chọn một bộ phận - khối Klipper chính xác về phần cứng của nó (run_current, sense_resistor, tên pin thực) sẽ được thêm vào file để bạn xem lại và lưu.",
+      "drivers": "Driver",
+      "motors": "Động cơ",
+      "boards": "Bo mạch",
+      "pickPlaceholder": "Tìm trong danh mục…",
+      "inserted": "Đã chèn khối cho {name} - xem lại trong Raw và lưu.",
+      "noSnippet": "Không có khối cấu hình nào cho {name}."
+    },
+    "drift": {
+      "title": "Klipper đang chạy gì",
+      "pending": "Klipper có thay đổi chưa lưu (một SAVE_CONFIG đang chờ) - lưu file này bây giờ sẽ ghi đè chúng. Hãy chạy SAVE_CONFIG trong console trước.",
+      "warningsTitle": "Cảnh báo cấu hình Klipper",
+      "count": "{n} giá trị trên đĩa khác với giá trị đang chạy (đã chỉnh nhưng chưa FIRMWARE_RESTART):",
+      "adopt": "lấy giá trị đang chạy"
+    },
+    "pinDoctor": {
+      "title": "Pin Doctor - {n} phát hiện về đấu nối",
+      "conflict": "XUNG ĐỘT",
+      "caveat": "LƯU Ý"
+    },
+    "tmc": {
+      "review": "xem lại trong Raw & lưu"
+    },
+    "pinEdit": {
+      "offBoard": "không có trên bo mạch",
+      "offBoardHint": "Pin này không có trong bản đồ pin đã biết của bo mạch - kiểm tra lỗi gõ hoặc pin EXP/ảo.",
+      "double": "bị dùng lại",
+      "doubleHint": "Pin này được gán trong nhiều phần.",
+      "caveat": "lưu ý"
+    },
+    "project": {
+      "title": "Dự án (include & tìm kiếm)",
+      "lintBadge": "{n} vấn đề",
+      "searchPlaceholder": "Tìm trong mọi file cấu hình…",
+      "searchBtn": "Tìm",
+      "noResults": "Không có kết quả khớp.",
+      "matchesCount": "{n} kết quả khớp",
+      "truncated": "đang hiển thị các kết quả đầu tiên",
+      "tree": "Cây include",
+      "missing": "thiếu file",
+      "lint": "Kiểm tra liên file",
+      "rule": {
+        "broken_include": "Include bị hỏng: ",
+        "orphan_driver": "Driver mồ côi - không có phần khớp: ",
+        "section_override": "Ghi đè (được định nghĩa trong nhiều file, file cuối thắng): "
+      }
+    },
+    "knowledge": {
+      "viewDriver": "Xem {model} trong danh mục →",
+      "stepper": "Một trục động cơ bước - các pin driver, khoảng cách xoay, microstep, và homing/endstop của nó.",
+      "tmc": "Một driver bước Trinamic - dòng chạy/giữ, microstep, và tinh chỉnh StallGuard/chopper cho động cơ bước của nó.",
+      "extruder": "Hotend và bộ đùn - cỡ vòi phun, đường đi sợi nhựa, bộ gia nhiệt, thermistor, và PID.",
+      "heater_bed": "Bàn nhiệt - pin gia nhiệt, thermistor, và giới hạn PID/nhiệt độ của nó.",
+      "fan": "Quạt làm mát chi tiết, làm nguội sợi nhựa vừa in.",
+      "heater_fan": "Một quạt gắn với bộ gia nhiệt (ví dụ làm mát hotend) chạy để bảo vệ nó khỏi quá nhiệt.",
+      "controller_fan": "Một quạt làm mát các driver bước / điện tử khi động cơ đang hoạt động.",
+      "mcu": "Một bo mạch vi điều khiển chạy Klipper - kết nối serial hoặc CAN của nó.",
+      "printer": "Động học máy toàn cục và giới hạn chuyển động (loại, vận tốc tối đa, gia tốc).",
+      "bed_mesh": "Cân bàn tự động - dò một lưới và bù cho độ phẳng của bàn khi in.",
+      "probe": "Đầu dò Z dùng để phát hiện bề mặt bàn cho homing và bed mesh.",
+      "gcode_macro": "Một macro G-code tùy chỉnh - một lệnh có tên gọi được từ console hoặc các macro khác.",
+      "output_pin": "Một pin đầu ra có thể điều khiển (ví dụ LED, relay, hoặc đường enable).",
+      "neopixel": "Đèn LED RGB địa chỉ hóa (NeoPixel / WS2812) và điều khiển màu của chúng.",
+      "board_pins": "Các bí danh thân thiện cho các pin vật lý của bo mạch, được tham chiếu ở nơi khác trong cấu hình.",
+      "input_shaper": "Bù cộng hưởng giúp giảm rung và bóng mờ ở tốc độ cao hơn.",
+      "safe_z_home": "Homing Z ở một vị trí XY an toàn (thường là tâm bàn) để bảo vệ vòi phun và bàn.",
+      "z_tilt": "Điều chỉnh nhiều động cơ Z để mặt phẳng gantry/bàn được cân bằng.",
+      "quad_gantry_level": "Cân bằng gantry bốn điểm sao cho nó song song với bàn.",
+      "filament_switch_sensor": "Một cảm biến hết sợi nhựa, tạm dừng bản in khi hết sợi nhựa.",
+      "virtual_sdcard": "Cho phép Klipper in các file được tải lên host (bắt buộc với Mainsail và Fluidd)."
+    },
+    "backups": {
+      "title": "Bản sao lưu ({n})",
+      "diff": "Khác biệt",
+      "hideDiff": "Ẩn khác biệt",
+      "restore": "Khôi phục",
+      "diffHint": "khác biệt so với file hiện tại",
+      "unchanged": "⋯ {n} dòng không đổi ⋯",
+      "note": "Các ảnh chụp được ghi tự động trước mỗi lần lưu. Khôi phục sẽ nạp một bản vào trình chỉnh sửa để xem lại lần cuối + lưu."
+    },
+    "sanity": {
+      "title": "Kiểm tra giá trị driver ({n})",
+      "note": "Đã kiểm tra {n} phần driver TMC. Một driver không có trần được biên soạn và một động cơ bước không có động cơ được gán sẽ bị bỏ qua, không suy đoán.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} A vượt trần toàn thang ~{cap} A của driver.",
+        "near_driver_cap": "{section}: run_current {run_current} A nằm trong khoảng 10% của trần ~{cap} A của driver.",
+        "over_motor_rating": "{section}: run_current {run_current} A vượt định mức {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A nằm trong khoảng 10% của định mức {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} không phải lũy thừa của hai (1…256)."
+      }
+    },
+    "panels": {
+      "failed": "Một số bảng không thể tải và bị ẩn: {panels}. Hiện chưa rõ chúng sẽ kiểm tra gì - không hẳn là ổn.",
+      "name": {
+        "drift": "Đĩa-so với-đang chạy",
+        "pinDoctor": "Pin Doctor",
+        "sanity": "Kiểm tra driver",
+        "project": "Xem dự án",
+        "pinMap": "Gợi ý pin",
+        "backups": "Bản sao lưu"
+      }
+    },
+    "addPart": {
+      "title": "Thêm một bộ phận (nhận biết pin trống)",
+      "hint": "Chọn một loại bộ phận và một trong các pin bo mạch CHƯA có gì dùng (đọc trực tiếp từ cấu hình + bản đồ bo mạch của bạn), và nhận một phần sẵn sàng được ghi qua cổng an toàn - không đoán pin.",
+      "kind": "Loại bộ phận",
+      "name": "Tên",
+      "namePh": "ví dụ chamber_fan",
+      "mcu": "Bo mạch (MCU)",
+      "pin": "Pin trống",
+      "pinPh": "Chọn một pin trống…",
+      "noFree": "Không có pin có tên trống nào trên bản đồ bo mạch này."
+    }
+  }
+}

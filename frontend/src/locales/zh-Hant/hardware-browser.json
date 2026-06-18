@@ -1,0 +1,289 @@
+{
+  "hardwareBrowser": {
+    "intro": "搜尋精選的 3D 列印硬體參考資料——步進馬達、驅動器、主板、感測器、熱端、風扇、主機、噴嘴、擠出機、線材等——可依名稱、製造商、類別或任何規格搜尋。",
+    "help": {
+      "guide": "說明",
+      "guideTitle": "關於硬體瀏覽器",
+      "close": "關閉",
+      "howToRead": "使用方式",
+      "steps": [
+        "在搜尋框輸入即可比對名稱、製造商或任何規格值。",
+        "使用篩選器依類別或製造商縮小範圍。",
+        "每張結果卡片會顯示元件的規格；以上一頁／下一頁翻頁瀏覽。"
+      ],
+      "topics": {
+        "search": {
+          "title": "搜尋",
+          "body": "搜尋會比對任何欄位——製造商、型號名稱、類別、子區段或任何規格值。可搭配類別與製造商篩選器一同縮小範圍。結果會分頁顯示；總數反映所有相符項目，而非僅目前頁面。"
+        },
+        "categories": {
+          "title": "類別",
+          "body": "元件依類別分組（步進馬達、驅動器、主板、感測器、熱端、風扇／電源、主機、運動、噴嘴、擠出機、線材、電子元件、相機／顯示器）。選擇其一即可只瀏覽該類型。"
+        },
+        "manufacturers": {
+          "title": "製造商與規格",
+          "body": "這是供比較用的精選參考，而非商店——數值取自製造商規格表與社群資料，可能落後最新產品。購買或設定前請務必向製造商確認。"
+        },
+        "relationships": {
+          "title": "關聯硬體",
+          "body": "每個主板、驅動器、馬達與主機都會依製造商關聯，每個主板也會關聯到其 MCU 及所支援的驅動器。開啟任一項目，使用底部的交叉連結標籤即可直接跳至相關零件。製造商與 MCU 分頁讓你能從某個品牌或晶片著手，查看所有使用它的項目。"
+        },
+        "glossary": {
+          "title": "詞彙表",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "category": {
+          "term": "類別",
+          "def": "元件所屬的硬體類型（例如熱端、步進馬達、感測器）。"
+        },
+        "manufacturer": {
+          "term": "製造商",
+          "def": "製造該零件的公司（例如 E3D、BIGTREETECH、LDO Motors）。"
+        },
+        "spec": {
+          "term": "規格",
+          "def": "元件的規格表屬性——電流、電壓、最高溫度、尺寸等。"
+        },
+        "links": {
+          "term": "關聯硬體",
+          "def": "零件之間的交叉連結——主板的製造商、其 MCU 及所支援的驅動器——以可點擊的標籤呈現，點擊即可跳至相關項目。"
+        }
+      }
+    },
+    "search": {
+      "placeholder": "搜尋硬體…",
+      "button": "搜尋",
+      "category": "類別",
+      "allCategories": "所有類別",
+      "manufacturer": "製造商",
+      "manufacturerPlaceholder": "任何製造商"
+    },
+    "results": {
+      "total": "{count} 筆相符",
+      "none": "沒有元件符合你的搜尋。",
+      "showing": "顯示第 {from}-{to} 筆，共 {total} 筆",
+      "prev": "上一頁",
+      "next": "下一頁"
+    },
+    "states": {
+      "loading": "搜尋中…",
+      "error": "無法載入硬體資料庫。",
+      "retry": "重試"
+    },
+    "tabs": {
+      "catalog": "型錄",
+      "search": "搜尋全部",
+      "boards": "主板",
+      "drivers": "驅動器",
+      "motors": "馬達",
+      "hosts": "主機",
+      "manufacturers": "品牌",
+      "mcus": "MCU"
+    },
+    "catalog": {
+      "searchAll": "搜尋全部",
+      "items": "{n} 個項目",
+      "back": "型錄"
+    },
+    "boards": {
+      "search": "搜尋主板",
+      "total": "{n} 個主板",
+      "none": "找不到主板。",
+      "view": "詳細資料",
+      "hide": "隱藏",
+      "connector": "連接器",
+      "function": "功能",
+      "pins": "腳位",
+      "use": "使用它",
+      "electronics": "電子元件（影響設定）",
+      "notes": "設定備註",
+      "config": "設定片段",
+      "copy": "複製",
+      "copied": "已複製！"
+    },
+    "drivers": {
+      "search": "搜尋驅動器",
+      "klipperOnly": "僅 Klipper（TMC）",
+      "total": "{n} 個驅動器",
+      "none": "找不到驅動器。",
+      "standalone": "獨立模式",
+      "sensorless": "無感測歸位",
+      "config": "Klipper 設定",
+      "reference": "Klipper 參考 →"
+    },
+    "motors": {
+      "search": "搜尋馬達",
+      "total": "{n} 個馬達",
+      "none": "找不到馬達。",
+      "rated": "額定",
+      "run": "運行",
+      "config": "Klipper 設定"
+    },
+    "hosts": {
+      "search": "搜尋主機",
+      "total": "{n} 台主機",
+      "none": "找不到主機。",
+      "config": "主機設定",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "OS 映像",
+        "locked": "已鎖定"
+      }
+    },
+    "manufacturers": {
+      "search": "搜尋品牌",
+      "total": "{n} 個品牌",
+      "none": "找不到品牌。",
+      "members": "{n} 個零件",
+      "specialty": "專長",
+      "aliases": "亦稱為",
+      "website": "網站 →",
+      "derived": "社群"
+    },
+    "mcus": {
+      "search": "搜尋 MCU",
+      "total": "{n} 個 MCU",
+      "none": "找不到 MCU。",
+      "boards": "{n} 個主板"
+    },
+    "related": {
+      "title": "關聯硬體",
+      "loading": "載入連結中…",
+      "more": "+{n} 個",
+      "jump": "開啟 {name}",
+      "rel": {
+        "manufacturer": "製造商",
+        "mcus": "MCU",
+        "onboardDrivers": "板載驅動器",
+        "supportedDrivers": "支援的驅動器",
+        "boards": "主板",
+        "motors": "馬達",
+        "hosts": "主機",
+        "catalog": "零件"
+      }
+    },
+    "picker": {
+      "placeholder": "選擇一個零件…"
+    },
+    "facets": {
+      "manufacturer": "製造商",
+      "anyClass": "任何類別",
+      "anyNema": "任何尺寸",
+      "anyKind": "任何類型",
+      "anyType": "所有類型",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "主板",
+        "toolhead": "工具頭",
+        "printer-preset": "印表機預設",
+        "expansion": "擴充板",
+        "host": "主機 SBC"
+      }
+    },
+    "onPrinter": {
+      "badge": "在此印表機上",
+      "strip": "在此印表機上："
+    },
+    "suggest": {
+      "button": "建議零件",
+      "title": "建議零件",
+      "intro": "填入你已知的資訊——我們會開啟一個預填的 GitHub issue 供審核。不會自動送出任何內容。",
+      "typeLabel": "零件類型",
+      "cancel": "取消",
+      "close": "關閉",
+      "submit": "在 GitHub 上開啟 issue",
+      "preview": "預覽提交內容（JSON）",
+      "languageNote": "此 issue 以英文撰寫，方便維護者處理。",
+      "sentTitle": "提交內容已在新分頁開啟",
+      "sentBody": "在 GitHub 上審核預填的詳細資料，然後在該處送出 issue。感謝你的貢獻！",
+      "yes": "是",
+      "specs": "額外規格",
+      "specKey": "規格",
+      "specValue": "值",
+      "addSpec": "新增規格",
+      "ports": "連接埠與腳位",
+      "addPort": "新增連接埠",
+      "addPin": "新增腳位",
+      "remove": "移除",
+      "configSnippet": "Klipper 設定片段",
+      "types": {
+        "motor": "步進馬達",
+        "driver": "步進驅動器",
+        "hotend": "熱端",
+        "host": "主機／SBC",
+        "manufacturer": "製造商",
+        "board": "主板",
+        "catalog": "其他型錄項目"
+      },
+      "group": {
+        "autotune": "自動調諧（電氣）",
+        "caps": "功能",
+        "maxFlow": "最大流量",
+        "preset": "最大流量預設"
+      },
+      "f": {
+        "manufacturer": "製造商",
+        "name": "名稱",
+        "model": "型號",
+        "display_name": "顯示名稱",
+        "boardClass": "主板類別",
+        "mcu": "MCU",
+        "clock": "時脈",
+        "voltage": "電壓",
+        "driver_slots": "驅動器插槽",
+        "usb": "USB",
+        "can": "CAN",
+        "ethernet": "乙太網路",
+        "nema": "NEMA",
+        "stepAngle": "步進角",
+        "ratedCurrent": "額定電流",
+        "holdingTorque": "保持扭矩",
+        "recommendedRunCurrent": "建議運行電流",
+        "resistance_ohm": "電阻",
+        "inductance_H": "電感",
+        "holding_torque_Nm": "保持扭矩",
+        "max_current_A": "最大電流",
+        "steps_per_rev": "每轉步數",
+        "chip": "晶片",
+        "interface": "介面",
+        "klipperSection": "Klipper 區段",
+        "sensorless": "無感測歸位",
+        "max_current_a": "最大電流",
+        "microsteps": "微步",
+        "stealthchop": "StealthChop",
+        "spreadcycle": "SpreadCycle",
+        "coolstep": "CoolStep",
+        "stallguard": "StallGuard",
+        "stallguard_field": "StallGuard 欄位",
+        "max_temp_c": "最高溫度",
+        "suggested_temp_c": "建議溫度",
+        "expected_max_flow_mm3s": "預期最大流量",
+        "melt_zone_mm": "熔融區",
+        "START": "START",
+        "MAX": "MAX",
+        "COARSE_STEP": "COARSE_STEP",
+        "kind": "種類",
+        "soc": "SoC",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "klipperOpen": "執行開放的 Klipper",
+        "country": "國家",
+        "website": "網站",
+        "specialty": "專長",
+        "category": "類別",
+        "subsection": "子區段",
+        "portLabel": "連接埠標籤",
+        "portCategory": "連接埠類別",
+        "portFunction": "功能",
+        "signal": "訊號",
+        "pin": "腳位"
+      },
+      "tooLong": "此提交內容過大，無法自動預填。請複製 JSON 並手動開啟新 issue。",
+      "copyJson": "複製 JSON",
+      "copied": "已複製"
+    }
+  }
+}

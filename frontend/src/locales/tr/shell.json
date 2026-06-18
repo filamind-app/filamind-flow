@@ -1,0 +1,215 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · klipper paneli"
+    },
+    "nav": {
+      "dashboard": "Panel",
+      "toggle": "Gezinmeyi aç/kapat",
+      "label": "Ana gezinme"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Mainsail'e dön"
+    },
+    "footer": {
+      "stack": "FilaMind Flow - Mısırlı yapımcılar tarafından, dünyanın yapımcıları için. İyi baskılar",
+      "by": "DeltaFabs ekibi tarafından"
+    },
+    "home": {
+      "body": "Panelleriniz kenar çubuğunda - başlamak için birini seçin. Bu ana ekran şimdilik bilerek boş bırakıldı.",
+      "title": "Görev Kontrol",
+      "refresh": "Yenile",
+      "loading": "Yükleniyor…",
+      "unreachable": "Arka uca erişilemiyor.",
+      "printer": "Yazıcı",
+      "statePrinting": "Yazdırılıyor",
+      "statePaused": "Duraklatıldı",
+      "stateError": "Hata",
+      "stateIdle": "Boşta",
+      "printerDown": "Moonraker'a erişilemiyor.",
+      "doctor": "Makine Doktoru",
+      "doctorBody": "Pinler, sürücü değerleri, yapılandırma sapması, donanım yazılımı senkronizasyonu ve daha fazlası için tek bir salt-okunur tarama - A-F notuyla ve düzeltmeye atla bağlantılarıyla.",
+      "doctorScan": "Yazıcımı tara",
+      "firmware": "Donanım yazılımı senkronizasyonu",
+      "host": "Ana sistem: {version}",
+      "open": "Aç",
+      "noData": "Şu anda veri yok.",
+      "tuning": "İnce ayar",
+      "noTuning": "Henüz arşivlenmiş ince ayar çalışması yok - Titreşim Şekillendirme sihirbazını çalıştırın.",
+      "hardware": "Donanım vs temel referans",
+      "noBaseline": "Henüz kaydedilmiş donanım temel referansı yok - değişiklikleri algılamak için Makine Haritası'nda bir anlık görüntü kaydedin.",
+      "hwUnchanged": "Kaydedilen temel referanstan bu yana donanım değişikliği yok.",
+      "hwChanged": "Kaydedilen temel referanstan bu yana {n} donanım değişikliği.",
+      "setup": {
+        "title": "Başlayın ({done}/{total})",
+        "go": "Git",
+        "boards": "Makine Haritası'nda kartlarınızı onaylayın",
+        "baseline": "Bir donanım temel referansı kaydedin (gelecekteki değişiklikleri algılar)",
+        "firmware": "Her MCU donanım yazılımını ana sistemle senkronize edin",
+        "motors": "Motor Sürücüleri'nde motorlarınızı atayın",
+        "tuning": "X ve Y için titreşim şekillendirmeyi ayarlayın (rehberli sihirbaz)"
+      },
+      "journal": {
+        "title": "Son etkinlikler",
+        "empty": "Henüz hiçbir şey kaydedilmedi - flash işlemleri, yapılandırma kayıtları ve ince ayar çalışmaları burada görünür.",
+        "flash": "Flash'landı {board} → {version}",
+        "configSave": "Kaydedildi {file}",
+        "tuning": "İnce ayar çalışması: {kind} ({axis})"
+      },
+      "hostInfo": {
+        "title": "Ana sistem",
+        "time": "Saat",
+        "clock": "Saat senkronizasyonu",
+        "synced": "Senkronize",
+        "notSynced": "Senkronize değil",
+        "temp": "CPU sıcaklığı",
+        "uptime": "Çalışma süresi",
+        "disk": "Disk"
+      },
+      "printerHost": "Yazıcı ve Ana Sistem",
+      "maxFlow": {
+        "title": "Maksimum akış",
+        "expected": "Beklenen: {n} mm³/s",
+        "empty": "Henüz maksimum akış testi yok.",
+        "test": "Maksimum akışı test et"
+      }
+    },
+    "connection": {
+      "connected": "Bağlandı",
+      "connecting": "Bağlanıyor",
+      "error": "Hata",
+      "offline": "Çevrimdışı",
+      "idle": "Boşta"
+    },
+    "language": {
+      "label": "Dil",
+      "select": "Dil seç",
+      "menu": "Dil seçin"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Donanım Yazılımı Yöneticisi",
+        "description": "MCU donanım yazılımı sürümleri, ana sistem senkronizasyon durumu ve araç zinciri hazırlığı."
+      },
+      "input-shaping": {
+        "title": "Titreşim Şekillendirme",
+        "description": "Bir rezonans CSV'sini analiz edin ve en iyi titreşim şekillendiriciyi bulun."
+      },
+      "motor-drivers": {
+        "title": "Motor Sürücüleri",
+        "description": "Canlı TMC step motor sürücü envanteri: akım, mod, mikro adımlar ve durum."
+      },
+      "config-editor": {
+        "title": "Yapılandırma Düzenleyici",
+        "description": "Yazıcınızın yapılandırma dosyalarına göz atın, doğrulamayla bölümlere ayrıştırılır."
+      },
+      "max-flow": {
+        "title": "Maks-Akış",
+        "description": "Hotend'inizin sürdürebileceği en yüksek hacimsel akışı ölçün (StallGuard)."
+      },
+      "board-topology": {
+        "title": "Kart Topolojisi",
+        "description": "Ana sistemin ve MCU'ların nasıl bağlandığını görün (USB / CAN / UART) + kart tahmini."
+      },
+      "macro-designer": {
+        "title": "Makro Tasarımcısı",
+        "description": "G-code'u çevrimdışı simüle edin - araç kafası yolu, sınırlar, toplamlar ve bir makro kütüphanesi."
+      },
+      "hardware-browser": {
+        "title": "Donanım Tarayıcısı",
+        "description": "Özenle seçilmiş bir 3D baskı donanımı referansını ada, üreticiye veya özelliğe göre arayın."
+      },
+      "config-templates": {
+        "title": "Yapılandırma Şablonları",
+        "description": "Yapıştırmaya hazır Klipper yapılandırma blokları ve makrolar, kategoriye göre."
+      },
+      "machine-doctor": {
+        "title": "Makine Doktoru",
+        "description": "A-F karne ve düzeltmeye atla bağlantılarıyla tek tıkla tam yazıcı taraması."
+      },
+      "host-control": {
+        "title": "Ana Sistem Kontrolü",
+        "description": "Yazıcı ana sisteminin Linux işletim sistemini yönetin: sağlık, hizmetler, disk temizleme ve sistem ayarları."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "Yazıcınızın KlipperScreen dokunmatik ekran yapılandırmasını düzenleyin ve uygulamak için yeniden başlatın."
+      }
+    },
+    "guard": {
+      "printing": "Yazdırılıyor - yazma işlemleri kilitli",
+      "running": "{op} çalışıyor - yazma işlemleri kilitli",
+      "op": {
+        "resonance_test": "Rezonans testi",
+        "noise_check": "Gürültü kontrolü",
+        "belt_comparison": "Kayış karşılaştırması",
+        "axes_map": "Eksen haritası kalibrasyonu",
+        "sustain": "Sürekli uyarım",
+        "vibrations_profile": "Titreşim profili",
+        "max_flow": "Maksimum akış testi",
+        "driver_write": "Sürücü yazma",
+        "homing": "Eve dönüş",
+        "motors_sync": "Motor senkronizasyonu",
+        "firmware_flash": "Donanım yazılımı flash'lama",
+        "firmware_batch": "Donanım yazılımı toplu çalışması",
+        "firmware_restart": "Donanım yazılımı yeniden başlatma"
+      }
+    },
+    "mission": {
+      "body": "FilaMind Flow, 3D baskı için en iyi araçları bir araya getirir - ilk kurulumdan ustalığa kadar - böylece her seviyedeki yapımcı daha iyi teşhis edebilir, düzeltebilir ve baskı alabilir. Proje aktif geliştirme ve araştırma aşamasındadır ve yeni pratik fikirler her zaman memnuniyetle karşılanır. Katkılar herkese açıktır.",
+      "tagline": "Mısırlı yapımcılar tarafından, dünyanın yapımcıları için. İyi baskılar.",
+      "dismiss": "Kapat"
+    },
+    "feedback": {
+      "menu": "Geri bildirim",
+      "menuTitle": "Geri bildirim paylaş",
+      "bug": "Bir hata bildir",
+      "bugDesc": "Bir şey çalışmıyor",
+      "feature": "Bir özellik iste",
+      "featureDesc": "Bir iyileştirme öner",
+      "reportError": "Bildir",
+      "reportErrorAria": "Bu hatayı GitHub'da bildir",
+      "dialog": {
+        "bugTitle": "Bir hata bildir",
+        "featureTitle": "Bir özellik iste",
+        "introBug": "Neyin yanlış gittiğini açıklayın. Gözden geçirmeniz ve göndermeniz için GitHub'da önceden doldurulmuş bir issue açacağız - hiçbir şey otomatik gönderilmez.",
+        "introFeature": "İstediğiniz özelliği açıklayın. Gözden geçirmeniz ve göndermeniz için GitHub'da önceden doldurulmuş bir issue açacağız.",
+        "descLabel": "Açıklama",
+        "descPlaceholderBug": "Ne yaptınız ve bunun yerine ne oldu?",
+        "descPlaceholderFeature": "Neyi yapabilmek isterdiniz?",
+        "attach": "Bir ekran görüntüsü ekle",
+        "attachHint": "Mevcut ekranın bir resmi, sorunu anlamamıza yardımcı olur.",
+        "capturing": "Ekran görüntüsü alınıyor…",
+        "screenshotReady": "Ekran görüntüsü önizlemesi",
+        "noScreenshot": "Ekran görüntüsü alınamadı - manuel olarak ekleyebilirsiniz.",
+        "includes": "Neleri ekleyeceğiz",
+        "includesNote": "Bu ayrıntılar, teşhise yardımcı olmak için issue'ya eklenir. Göndermeden önce bunları GitHub'da gözden geçirin.",
+        "languageNote": "Issue, geliştiricilerin üzerinde işlem yapabilmesi için İngilizce yazılır.",
+        "submit": "GitHub'da issue aç",
+        "cancel": "İptal",
+        "close": "Kapat"
+      },
+      "field": {
+        "version": "Uygulama sürümü",
+        "view": "Etkin görünüm",
+        "locale": "Dil",
+        "theme": "Tema",
+        "screen": "Ekran",
+        "browser": "Tarayıcı",
+        "time": "Saat",
+        "error": "Hata"
+      },
+      "sent": {
+        "title": "Issue yeni bir sekmede açıldı",
+        "body": "Önceden doldurulmuş ayrıntıları GitHub'da gözden geçirin, ardından issue'yu orada gönderin.",
+        "copied": "Ekran görüntüsü kopyalandı - Ctrl/⌘+V ile issue'ya yapıştırın.",
+        "saved": "Ekran görüntüsü indirilenlere kaydedildi - issue'ya sürükleyin.",
+        "failed": "Ekran görüntüsü otomatik eklenemedi - GitHub'da bir tane ekleyebilirsiniz."
+      }
+    },
+    "support": {
+      "kofi": "FilaMind Flow'u destekle"
+    }
+  }
+}

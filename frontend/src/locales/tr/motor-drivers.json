@@ -1,0 +1,332 @@
+{
+  "motorDrivers": {
+    "help": {
+      "whatsThis": "bu nedir?",
+      "topics": {
+        "glossary": {
+          "title": "Sürücü terimleri",
+          "body": "Bu kontrol paneli için hızlı bir sözlük:"
+        },
+        "overview": {
+          "title": "Burada ne gösteriliyor",
+          "body": "Yazıcınızda bulunan her TMC step motor sürücüsü, doğrudan canlı Klipper yapılandırmasından okunur - her motor için bir kart (X, Y, her Z, ekstrüder…). Bu görünüm salt okunurdur: neyin yapılandırıldığını ve sürücünün şu anda ne yaptığını bildirir. İnce ayar daha sonraki bir adımda gelir."
+        },
+        "current": {
+          "title": "Çalışma / tutma akımı",
+          "body": "Çalışma akımı, motorun hareket ederken ne kadar zorlandığıdır; tutma akımı ise daha düşük rölanti seviyesidir. Canlı değer, çipin gerçekte uyguladığı değerdir - akımlar ayrık adımlarla geldiği için yapılandırılmış değerden bir tık farklı olabilir. Sürücünün ısınması genellikle çalışma akımının motor için fazla yüksek ayarlandığı anlamına gelir."
+        },
+        "chopper": {
+          "title": "StealthChop ve SpreadCycle",
+          "body": "Chopper modu, sürücünün bobin akımını nasıl şekillendirdiğidir. SpreadCycle hassas ve yüksek torkludur (hızlı X/Y için iyi) ancak duyulur; StealthChop neredeyse sessizdir (Z ve rölanti için iyi) ancak hızda biraz daha yumuşaktır. “StealthChop < N mm/s”, bu hızın altında sessiz kaldığı, üstünde ise SpreadCycle'a geçtiği anlamına gelir."
+        },
+        "microsteps": {
+          "title": "Mikro adımlama",
+          "body": "Her tam motor adımı, elektronik olarak mikro adımlara bölünür (16, 32, … 256). Daha fazla mikro adım = daha pürüzsüz, daha sessiz hareket. İnterpolasyon açıkken, sürücü yapılandırılmış değerden bağımsız olarak dahili olarak 256'ya kadar yumuşatma yapar."
+        },
+        "stallguard": {
+          "title": "StallGuard (sensörsüz homing)",
+          "body": "StallGuard, motor yükünü ölçer; böylece eksen fiziksel bir endstop kullanmak yerine hafif bir takılmayı algılayarak homing yapabilir. Eşik kaydı modele göre değişir (2209'da sgthrs, 2130/5160'ta sgt, 2240'ta sg4_thrs). İnce ayarı daha sonraki bir adımdır; burada yalnızca yapılandırılmış değeri gösteriyoruz."
+        },
+        "health": {
+          "title": "Canlı durum",
+          "body": "Bir motor etkinleştirildiğinde (homing veya jog sonrası), sürücü canlı bayraklar bildirir: aşırı sıcaklık, kısa devre ve açık yük. Yeşil “ok” hata olmadığı anlamına gelir; “warning” bir aşırı sıcaklık ön uyarısı veya açık yüktür; “fault” bir kısa devre ya da ciddi aşırı sıcaklıktır. Motor devre dışıyken sürücü hiçbir şey bildirmez, bu yüzden kart “idle” gösterir."
+        },
+        "temperature": {
+          "title": "Sıcaklık",
+          "body": "Yalnızca bazı sürücülerde (ör. TMC2240) yerleşik sıcaklık sensörü vardır. Sensörü olmayan modellerde - yaygın TMC2209 gibi - sıcaklık “no sensor” olarak okunur, bu normaldir, hata değil."
+        },
+        "catalog": {
+          "title": "Model bilgileri nereden geliyor",
+          "body": "Her kartta gösterilen arayüz (UART / SPI), akım üst sınırı ve desteklenen özellikler, TMC ailesinin yerleşik bir yetenek haritasından gelir - Klipper / Kalico sürücü koduna göre doğrulanmıştır. Örneğin bir TMC2208'in sensörsüz homing yapamadığını ama bir TMC2209'un yapabildiğini ya da yalnızca TMC2240'ın kendi sıcaklığını bildirdiğini size söyler. Elektriksel değerler veri sayfası tipiktir; gerçek limitleri kartınız, ölçüm direnciniz ve soğutmanız belirler."
+        },
+        "motor": {
+          "title": "Bir motor atama",
+          "body": "200'den fazla motorluk yerleşik bir katalogdan her eksene bağlı step motoru seçin. Klipper hangi motoru taktığınızı bilmez - bunu FilaMind'a söylemek, veri sayfası özelliklerini (tutma torku, anma akımı, direnç, indüktans) açar; bunları daha sonraki bir adım güvenli bir çalışma akımı ve sürücü ince ayarı önermek için kullanır. Yazıcıya kaydedilir ve tek başına sürücüde hiçbir şeyi değiştirmez."
+        },
+        "motorsync": {
+          "title": "Motor senkronizasyonu",
+          "body": "Bir eksen iki veya daha fazla motorla sürüldüğünde (çift veya dörtlü Z, çift X), mikro adım fazları birbirinden uzaklaşıp birbirleriyle çekişebilir - gürültü ekler ve tork kaybeder. motors_sync eklentisi her motoru bir ivmeölçerle ölçer ve onları faza geri getirir. Bu ayrı bir eklentidir; kuruluysa FilaMind onu burada çalıştırabilir veya kalibre edebilir (kafayı hareket ettirir, bu yüzden korumalıdır). Kurulu değilse, bu yalnızca ne yaptığını açıklar."
+        },
+        "monitor": {
+          "title": "Canlı izleyici",
+          "body": "Bir sürücüyü çalışırken gerçek zamanlı izleyin: sıcaklık, StallGuard yükü (SG_RESULT - mekanik yük arttıkça sıfıra doğru düşer), akım ölçeği (CS_ACTUAL) ve tüm hata bayrakları (aşırı sıcaklık, kısa devre, açık yük). Sürücü bunları yalnızca motor etkinken bildirir, bu yüzden canlı veri görmek için ekseni hareket ettirin veya homing yapın. Salt okunur - yalnızca gözlemler."
+        },
+        "homing": {
+          "title": "Bu eksen nasıl homing yapar",
+          "body": "Klipper her eksenin sıfırını birkaç yoldan biriyle bulur ve FilaMind, tahmin etmek yerine bunu yapılandırmanızdan okur: fiziksel bir endstop anahtarı (klasik mikro anahtar - çoğu yazıcı), sensörsüz homing (TMC sürücü, hareketin sonunda motorun takılmasını algılar - anahtar yok) veya Z probu (yatak meşi için kullanılan aynı sensör Z=0'ı bulur). Bu panel, ekseninizin kullandığına uyum sağlar - fiziksel bir endstop için canlı anahtar durumu ve basit bir test-home, sensörsüz için bir StallGuard ayarlayıcısı veya problu bir Z için prob araçlarına bir işaretçi. Bir rayı paylaşan ekstra motorlar (ikinci bir Z, ekstrüder) kendi başlarına homing yapmaz, bu yüzden burada hiçbir şey göstermezler."
+        },
+        "sensorless": {
+          "title": "Sensörsüz homing",
+          "body": "Bazı eksenler endstop anahtarı olmadan homing yapar: sürücü, kafa hareketin sonuna ulaştığında oluşan hafif “takılmayı” algılar. StallGuard eşiği bunun ne kadar hassas olduğunu belirler - çok düşükse erken tetiklenir (eksik durur), çok yüksekse hiç tetiklenmez (eksen çerçeveye sürtünür). Bu yardımcı, eşiği ayarlamanıza ve bir eksende test-home yapmanıza olanak tanır, her ikisi de bir onayın arkasındadır. Hisse göre ayarlayın: erken duruyorsa düşürün, durmuyorsa yükseltin - ilk birkaç seferde elinizi gücün yakınında tutun. Eksiniz fiziksel bir endstop kullanıyorsa buna ihtiyacınız yoktur."
+        },
+        "coolstep": {
+          "title": "CoolStep (yüke uyarlamalı akım)",
+          "body": "CoolStep, motor fazla çalışmadığında sürücünün bobin akımını düşürmesine, ardından yük altında geri yükseltmesine olanak tanır - ısı ve gürültüden tasarruf sağlar. Beş etkileşimli kayıt içeren bağlı bir geri besleme döngüsüdür (semin/semax/seup/sedn/seimin), bu yüzden beş ham ayar yerine bu tek bir açma/kapama olup denetlenmiş, bilinen iyi bir set uygular (semin 2, semax 4, seup 3, sedn 2, seimin 1). Yalnızca bir hız eşiğinin üzerinde etki eder ve yüksek ivmede aşırı agresif olmak adım atlamasına yol açabilir - ne yaptığınızı bilmiyorsanız kapalı bırakın. Yalnızca canlı: yeniden başlatma veya “yapılandırmaya sıfırla” kayıtlı değerlerinizi geri yükler."
+        },
+        "registers": {
+          "title": "Kayıtları düzenleme (gelişmiş)",
+          "body": "Gelişmiş düzenleyici, tek tek TMC ince ayar kayıtlarını sürücüye canlı olarak yazar - chopper zamanlaması (toff/tbl/hstrt/hend), StealthChop PWM (pwm_grad/pwm_ofs/…), CoolStep, StallGuard hassasiyeti ve StealthChop↔SpreadCycle hız eşiği (mm/s cinsinden). Hangi alanların görüneceği ve geçerli aralıkları, tarayıcıdan değil yazıcı tarafındaki güvenlik politikasından gelir - çünkü sürücü, aralık dışı bir değeri hata vermek yerine sessizce kırpar, bu yüzden sunucu sınırlar ve reddeder. Ham akım ölçekleme ve kısa devre/aşırı sıcaklık koruma kayıtları burada bilerek düzenlenemez (akım, öneri/çalışma akımı yolundan geçer; mikro adımlar bir yapılandırma değişikliği + yeniden başlatma gerektirir). Her düzenleme yalnızca canlıdır: INIT_TMC (“yapılandırmaya sıfırla” düğmesi), bir firmware yeniden başlatması veya bir güç döngüsü kayıtlı değerlerinizi geri yükler. Daha riskli ayarlar alan başına bir onay gerektirir ve yazıcı baskı yaparken veya duraklatılmışken tüm yazmalar reddedilir."
+        },
+        "recommend": {
+          "title": "Önerilen ince ayar",
+          "body": "Bir motor atandıktan sonra FilaMind, motorun veri sayfası özelliklerinden ve besleme geriliminizden önerilen bir çalışma akımı ile StealthChop / SpreadCycle kayıt değerlerini (pwm_grad, pwm_ofs, hstrt, hend) hesaplayabilir - böylece autotune eklentisi kurulu olmasa bile çalışır. Çalışma akımı varsayılan olarak motorun anma değerinin temkinli %70'idir. Sonuç, canlı yapılandırmanızla karşılaştırılır; ardından bunu printer.cfg'ye kopyalayabilir ya da bir onayın arkasında canlı olarak yazabilirsiniz (Geri Al ile geri alınabilir ve baskı sırasında reddedilir). autotune eklentisi kuruluysa, bunun yerine onu çalıştırabilirsiniz."
+        }
+      },
+      "glossary": {
+        "tmcDriver": {
+          "term": "TMC sürücüsü",
+          "def": "Klipper'ın step/dir sinyallerini, bir step motoru döndüren bobin akımlarına çeviren çip - ör. TMC2209, TMC2240, TMC5160. Her motorda bir tane vardır."
+        },
+        "runCurrent": {
+          "term": "Çalışma akımı",
+          "def": "Motorun hareket ederken ne kadar zorlandığı (amper). Çok düşük → atlanan adımlar; çok yüksek → aşırı ısınma. Çip değeri kuantize ettiği için canlı değer yapılandırılmış değerden biraz farklı olabilir."
+        },
+        "holdCurrent": {
+          "term": "Tutma akımı",
+          "def": "Motor boştayken ısı ve gürültüden tasarruf etmek için uygulanan azaltılmış akım."
+        },
+        "microsteps": {
+          "term": "Mikro adımlar",
+          "def": "Her tam motor adımının ne kadar ince bölündüğü (16/32/…/256). Daha yüksek = daha pürüzsüz ve daha sessiz hareket, interpolasyon sayesinde gerçek bir tork kaybı olmadan."
+        },
+        "stealthChop": {
+          "term": "StealthChop",
+          "def": "Z ve rölanti için harika, neredeyse sessiz bir sürüş modu. Pürüzsüz ama yüksek hızda biraz daha az hassas."
+        },
+        "spreadCycle": {
+          "term": "SpreadCycle",
+          "def": "Hızlı X/Y hareketleri için daha iyi, hassas ve yüksek torklu bir sürüş modu. Duyulur ama isabetli."
+        },
+        "stallGuard": {
+          "term": "StallGuard",
+          "def": "Sürücünün yük sensörü. Sensörsüz homing'i (endstop anahtarı yerine bir takılmayı algılama) etkinleştirir. Eşik kaydı modele göre değişir (sgthrs / sgt / sg4_thrs)."
+        },
+        "senseResistor": {
+          "term": "Ölçüm direnci",
+          "def": "Sürücünün akım ölçeğini belirleyen küçük bir direnç. Kartınızla eşleşmelidir; kontrol paneli yapılandırılmış değeri gösterir."
+        },
+        "interface": {
+          "term": "Arayüz (UART / SPI)",
+          "def": "MCU'nun sürücüyle nasıl konuştuğu. UART tek bir teldir (TMC220x ailesi); SPI ise yüksek performanslı parçaların (2130 / 5160) kullandığı daha hızlı çok telli bir veri yoludur. TMC2240 her ikisini de yapabilir."
+        }
+      },
+      "guide": "Kılavuz",
+      "guideTitle": "Motor Sürücüleri kılavuzu",
+      "close": "Kapat",
+      "howToRead": "Bu panel nasıl okunur"
+    },
+    "format": {
+      "amps": "{a} A",
+      "ampsSet": "{base} (ayarlı {set})",
+      "stealthchop": "StealthChop",
+      "stealthchopThreshold": "StealthChop < {t} mm/s",
+      "spreadcycle": "SpreadCycle",
+      "health": {
+        "idle": "boşta",
+        "ok": "ok",
+        "warning": "uyarı",
+        "fault": "hata"
+      },
+      "celsius": "{v} °C",
+      "noSensor": "sensör yok",
+      "maxCurrent": "≤ {a} A",
+      "extruder": "Ekstrüder",
+      "extruderN": "Ekstrüder {n}",
+      "axis": "{axis} ekseni",
+      "homing": {
+        "sensorless": "Sensörsüz (StallGuard)",
+        "physical": "Fiziksel endstop",
+        "probe": "Z probu",
+        "otherVirtual": "Sanal endstop",
+        "inherited": "Paylaşılan ray"
+      },
+      "stallguard": {
+        "signed": "İşaretli −64…63 - DAHA DÜŞÜK daha hassastır (daha erken durur). Eksen eksik duruyorsa yükseltin; hiç durmuyorsa düşürün.",
+        "unsigned": "Aralık 0-255 - DAHA YÜKSEK daha hassastır (daha erken durur). Eksen eksik duruyorsa düşürün; hiç durmuyorsa yükseltin."
+      },
+      "spec": {
+        "nm": "{v} Nm",
+        "amps": "{v} A",
+        "ohm": "{v} Ω",
+        "mh": "{v} mH"
+      },
+      "flag": {
+        "overtemp": "aşırı sıcaklık",
+        "tempWarn": "sıcaklık uyarısı",
+        "shortA": "kısa devre A",
+        "shortB": "kısa devre B",
+        "openLoadA": "açık yük A",
+        "openLoadB": "açık yük B",
+        "standstill": "duruş"
+      },
+      "runCurrent": "çalışma akımı (A)"
+    },
+    "widget": {
+      "intro": "Yazıcınızdaki her TMC step motor sürücüsü, Klipper yapılandırmasından canlı okunur - inceleyin, ince ayar önerileri alın ve bunları uygulayın (korumalı). Burada yeni misiniz? 🧭 Rehberli'yi deneyin.",
+      "tabDashboard": "Kontrol Paneli",
+      "tabGuided": "🧭 Rehberli",
+      "howToReadShow": "▸ bu nasıl okunur",
+      "howToReadHide": "▾ bu nasıl okunur",
+      "steps": [
+        "Her kart bir step motor sürücüsüdür - başlığı eksendir (X / Y / Z / Ekstrüder) ve rozet çip modelidir.",
+        "Çalışma akımı motorun ne kadar zorlandığını gösterir; canlı değer yapılandırılmış “ayarlı” değerden biraz farklı olabilir - bu normaldir.",
+        "Mod size SpreadCycle (hassas, daha gürültülü) veya StealthChop (sessiz) olduğunu söyler; mikro adımlar hareketin ne kadar pürüzsüz olduğunu gösterir.",
+        "Motoru uyandırmak için bir eksende homing yapın ya da motoru jog'layın - canlı sıcaklık ve hata bayrakları yalnızca bir motor etkinken görünür (boştaki sürücüler “idle” gösterir).",
+        "Sürücünün kullandığı ham ince ayar değerlerini incelemek için bir kartta “gelişmiş kayıtlar”ı açın."
+      ],
+      "loading": "Motor sürücüleri yükleniyor…",
+      "retry": "↻ yeniden dene",
+      "retrying": "yeniden deneniyor…",
+      "unreachable": "Yazıcının Moonraker'ına ulaşılamıyor - sürücü verileri şu anda kullanılamıyor.",
+      "noDrivers": "Klipper yapılandırmasında TMC sürücüsü bulunamadı. (Yalnızca TMC step motor sürücüleri burada görünür.)",
+      "runCurrent": "Çalışma {value}",
+      "nearCapTitle": "Bu modelin anma üst sınırına yakın ({max})",
+      "holdCurrent": "Tutma {value}",
+      "microsteps": "{n} µadım",
+      "sg": "SG {field} {threshold}",
+      "detailsShow": "▸ ayrıntılar",
+      "detailsHide": "▾ daha az",
+      "interp": "interp",
+      "sense": "ölçüm {value} Ω",
+      "healthTitleIdle": "Canlı sıcaklık ve hata bayraklarını okumak için motoru etkinleştirin (bir eksende homing yapın veya jog'layın)",
+      "healthTitleLive": "drv_status'tan canlı sürücü durumu",
+      "staleData": "Son yenileme başarısız oldu - önceki veriler gösteriliyor."
+    },
+    "liveMonitor": {
+      "toggle": "canlı izleyici",
+      "temp": "sıcaklık {temp} °C",
+      "sg": "SG {sg}",
+      "cs": "CS {cs}",
+      "updates": "· güncellenir ~1.5sn",
+      "noFaults": "hata yok",
+      "idle": "Boşta - canlı SG / akım / sıcaklık okumak için motoru etkinleştirin (eksende homing yapın veya jog'layın)."
+    },
+    "recommendPanel": {
+      "toggle": "ince ayar öner",
+      "supply": "besleme",
+      "recompute": "yeniden hesapla",
+      "recommend": "öner",
+      "colCurrent": "mevcut",
+      "colRecommended": "önerilen",
+      "basis": "çalışma akımı = {basis}; StealthChop, {voltage} V'de ~{rps} dev/sn'ye kadar tutar.",
+      "confirm": "Bunları şimdi {stepper} sürücüsüne yaz. Geri alınabilir (Geri Al / bir yeniden başlatma yapılandırmanızı geri yükler); baskı sırasında reddedilir.",
+      "applyToDriver": "sürücüye uygula",
+      "revert": "↺ geri al",
+      "copyConfig": "yapılandırmayı kopyala",
+      "autotune": "autotune",
+      "autotuneTitle": "klipper_tmc_autotune eklentisi kuruluysa AUTOTUNE_TMC çalıştırır",
+      "noSpecs": "Bu motor için veri sayfası özelliği yok - ince ayar önerisi kullanılamıyor.",
+      "measured": "Ölçülen: motorlar ~{freq} Hz'de rezonansa giriyor",
+      "measuredSym": "simetri %{pct}",
+      "measuredHint": "Bu yazıcıda çalıştırılan titreşim profilinden gerçek veri - Input Shaping denetimini açın."
+    },
+    "motorSync": {
+      "toggle": "motor senkronizasyonu",
+      "notInstalledTag": "(eklenti kurulu değil)",
+      "about": "Bir eksendeki birden çok motorun mikro adım fazını (çift / dörtlü Z, çift X) bir ivmeölçer kullanarak hizalar, böylece birbirleriyle çekişmezler. Ayrı {addon} eklentisi tarafından sağlanır.",
+      "checking": "kontrol ediliyor…",
+      "notInstalled": "Bu yazıcıda kurulu değil. Burada etkinleştirmek için motors_sync eklentisini kurun.",
+      "warning": "⚠ Bu, bir süre kafayı hareket ettirir (her motoru probe eder). Açık tutun ve gücü kesmeye hazır olun.",
+      "confirm": "Yazıcıyı izliyorum - motor senkronizasyonunu şimdi çalıştır.",
+      "syncMotors": "motorları senkronize et",
+      "calibrate": "kalibre et"
+    },
+    "sensorless": {
+      "noRegister": "⚠ Bu sürücü hiçbir StallGuard eşik kaydı sunmaz, bu yüzden sensörsüz homing burada ince ayarlanamaz - yazıcının homing yapılandırmasını kontrol edin.",
+      "intro": "StallGuard {field}, sensörsüz homing hassasiyetini belirler.",
+      "threshold": "eşik",
+      "nowRange": "şimdi: {now} · aralık {min}…{max}",
+      "confirmSet": "Bu eşiği şimdi sürücüye yaz (geri alınabilir; baskı sırasında reddedilir).",
+      "setThreshold": "eşiği ayarla",
+      "testHomeWarning": "⚠ Test-home {axis} eksenini şimdi hareket ettirir. Yanlış bir eşikle durmayabilir - elinizi gücün üzerinde tutun. Yalnızca sensörsüz eksenler.",
+      "confirmHome": "Yazıcıyı izliyorum ve gücü kesmeye hazırım - {axis} homing yap.",
+      "testHome": "{axis} test-home"
+    },
+    "homing": {
+      "homing": "homing yapılıyor",
+      "unreachable": "yazıcıya ulaşılamıyor",
+      "physicalIntroLead": "Bu eksen fiziksel bir endstop anahtarına karşı homing yapar",
+      "physicalIntroTail": ". Homing'den önce kablolamayı doğrulamak için anahtara elinizle basıp yeniden kontrol edin.",
+      "switchLabel": "anahtar:",
+      "check": "↻ kontrol et",
+      "testHomeWarn": "⚠ Test-home {axis} eksenini şimdi endstop'una hareket ettirir - yolun açık olduğundan emin olun.",
+      "pathClear": "Yol açık - {axis} homing yap.",
+      "testHome": "{axis} test-home",
+      "probeNote": "Bu eksen Z probu (yatak meşi için kullanılan aynı sensör) ile homing yapar, bu yüzden burada ince ayarlanacak bir StallGuard eşiği yoktur. Prob ofsetini ve meşi yatak tesviye araçlarında ayarlayın.",
+      "virtualNote": "Bu eksen, TMC StallGuard pini olmayan sanal bir endstop'a karşı homing yapar - kendi host modülü tarafından yönetilir, bu yüzden burada ince ayarlanacak bir şey yoktur."
+    },
+    "guidedWizard": {
+      "title": "🧭 Rehberli ince ayar",
+      "backToDashboard": "← kontrol paneli",
+      "stepChoose": "Seç",
+      "stepMotor": "Motor",
+      "stepTune": "Ayarla",
+      "stepSensorless": "Sensörsüz",
+      "stepDone": "Bitti",
+      "step1Intro": "İnce ayar yapılacak ekseni seçin.",
+      "tuningHeader": "{axis} ince ayarlanıyor · {model}",
+      "step2Intro": "Bu eksene hangi motor bağlı? FilaMind'ın veri sayfası özelliklerini bilmesi için seçin.",
+      "assignToContinue": "Devam etmek için bir motor atayın.",
+      "step3Intro": "Motorun özelliklerinden bir öneri alın, ardından yapılandırmanıza kopyalayın veya canlı olarak uygulayın (korumalı).",
+      "step4Intro": "İsteğe bağlı: sensörsüz homing'i ince ayarlayın. Bu eksen bir endstop anahtarı kullanıyorsa atlayın.",
+      "step5Intro": "{axis} tamamlandı. Ekseni hareket ettirirken canlı izleyin veya başka birini ayarlayın.",
+      "tuneAnother": "başka bir ekseni ayarla",
+      "back": "← geri",
+      "next": "ileri →",
+      "finish": "bitir"
+    },
+    "motorPicker": {
+      "motorLabel": "motor:",
+      "notSet": "ayarlı değil",
+      "searchPlaceholder": "200+ motorda ara (model veya üretici)…"
+    },
+    "registerEditor": {
+      "toggle": "kayıtları ayarla (gelişmiş)",
+      "resetTitle": "INIT_TMC - bu sürücünün yapılandırılmış kayıtlarını + akımını yeniden uygular",
+      "resetLabel": "↺ yapılandırmaya sıfırla",
+      "liveOnly": "Düzenlemeler {live} - kaydedilmez. {initTmc} (sıfırla), bir firmware yeniden başlatması veya bir güç döngüsü yapılandırılmış değerleri geri yükler. Aralık dışı değerler yazıcı tarafındaki güvenlik politikası tarafından reddedilir; ham akım ve koruma kayıtları burada düzenlenemez.",
+      "liveOnlyEmphasis": "yalnızca canlı",
+      "loading": "Düzenlenebilir kayıtlar yükleniyor…",
+      "coolstep": "CoolStep",
+      "on": "açık",
+      "off": "kapalı",
+      "coolstepEnableTitle": "Autotune ile denetlenmiş CoolStep setini uygula (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
+      "enable": "etkinleştir",
+      "riskyTitle": "Daha riskli ayar - yazmadan önce onaylayın",
+      "now": "şimdi:",
+      "confirm": "onayla",
+      "set": "ayarla",
+      "readOnly": "salt okunur kayıtlar",
+      "toffHint": "toff'u 1'e ayarlarsanız, tbl ≥ 1 olarak da tutun (16 döngülük boşluk süresi buna ihtiyaç duyar).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Eşikler ve zamanlama",
+        "other": "Diğer"
+      }
+    },
+    "apply": {
+      "nothingToApply": "Uygulanacak bir şey yok.",
+      "busyApply": "Yazıcı meşgulken (baskı yapıyor veya duraklatılmış) bir sürücüye yazmayı reddediyor.",
+      "applied": "{stepper} sürücüsüne {n} değişiklik uygulandı.",
+      "busyReinit": "Yazıcı meşgulken (baskı yapıyor veya duraklatılmış) yeniden başlatmayı reddediyor.",
+      "reinitialized": "{stepper} yeniden başlatıldı ve yapılandırılmış akımı geri yüklendi.",
+      "autotuneNotInstalled": "Bu step motor için klipper_tmc_autotune kurulu değil - bunun yerine öneriyi veya yapılandırmaya kopyalama seçeneğini kullanın.",
+      "busyAutotune": "Yazıcı meşgulken (baskı yapıyor veya duraklatılmış) autotune çalıştırmayı reddediyor.",
+      "autotuneRan": "{stepper} üzerinde AUTOTUNE_TMC çalıştırıldı.",
+      "busyWrite": "Yazıcı meşgulken (baskı yapıyor veya duraklatılmış) yazmayı reddediyor.",
+      "stallguardSet": "{stepper} üzerinde {field} = {num} ayarlandı.",
+      "fieldSet": "{stepper} üzerinde {field} = {num} ayarlandı (yalnızca canlı - INIT_TMC veya bir yeniden başlatma yapılandırılmış değeri geri yükler).",
+      "coolstepEnabled": "{stepper} üzerinde CoolStep etkinleştirildi (yalnızca canlı - INIT_TMC veya bir yeniden başlatma yapılandırılmış değerleri geri yükler).",
+      "coolstepDisabled": "{stepper} üzerinde CoolStep devre dışı bırakıldı (yalnızca canlı - INIT_TMC veya bir yeniden başlatma yapılandırılmış değerleri geri yükler).",
+      "busyHome": "Yazıcı meşgulken (baskı yapıyor veya duraklatılmış) homing yapmayı reddediyor.",
+      "homed": "{ax} homing yapıldı.",
+      "motorsyncNotInstalled": "motors_sync eklentisi kurulu değil - bir eksendeki birden çok motorun mikro adım fazını (çift/dörtlü Z, çift X) bir ivmeölçer kullanarak hizalar.",
+      "busySync": "Yazıcı meşgulken (baskı yapıyor veya duraklatılmış) motorları senkronize etmeyi reddediyor.",
+      "syncRan": "{cmd} çalıştırıldı.",
+      "overCurrentCap": "Reddedildi: {stepper} üzerindeki {requested} A, {cap} A tavanını aşıyor (sürücü tam ölçek limiti / atanan motorun anma akımı).",
+      "guardLocked": "Reddedildi: zaten başka bir işlem çalışıyor ({operation})."
+    }
+  }
+}

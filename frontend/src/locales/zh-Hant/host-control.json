@@ -1,0 +1,247 @@
+{
+  "hostControl": {
+    "intro": "管理印表機的 Linux 主機 - 檢查健康狀態、控制背景服務、釋放磁碟空間，並變更系統設定（時間、地區、主機名稱、網路、電源）。",
+    "view": {
+      "monitor": "監控",
+      "services": "服務",
+      "cleanup": "清理",
+      "system": "系統"
+    },
+    "help": {
+      "guide": "說明",
+      "guideTitle": "關於主機控制",
+      "close": "關閉",
+      "howToRead": "如何閱讀",
+      "steps": [
+        "一眼查看 CPU 溫度、記憶體、磁碟與網路等卡片。",
+        "觀察程序排行表，了解目前哪些程式正在佔用 CPU。",
+        "保持自動重新整理以取得即時畫面，或將其關閉並手動重新整理。"
+      ],
+      "topics": {
+        "glossary": {
+          "title": "此處使用的名詞"
+        },
+        "monitor": {
+          "title": "閱讀監控資訊",
+          "body": "此處所有內容皆為唯讀。橫條超過 75% 時轉為琥珀色，超過 90% 時轉為紅色。CPU 溫度在 70 °C 時轉為琥珀色，80 °C 時轉為紅色。降頻警告僅出現在會回報此資訊的主機板（主要為 Raspberry Pi）。"
+        },
+        "services": {
+          "title": "管理服務",
+          "body": "每一列都是一個 systemd 服務。點選即可啟動／停止／重新啟動、設定開機時啟用／停用、遮罩、讀取其記錄，或 - 對於你自行安裝的服務 - 刪除其單元檔。停止或停用服務需要輸入文字或單次點選確認。重要與受保護的服務會加上標記；受保護的服務（例如 SSH 與本面板）無法被停止，以避免把你自己鎖在外面。"
+        },
+        "cleanup": {
+          "title": "釋放磁碟空間",
+          "body": "每一列都會先掃描，以顯示可釋放多少空間。勾選要清除的項目並確認。只提供可重新產生的資料 - apt 下載快取、舊的 systemd 日誌、~/.cache、你的舊 /tmp 檔案，以及輪替（非即時）的記錄。你的 G-code、縮時影片與設定檔絕不會被動到。"
+        },
+        "system": {
+          "title": "系統設定",
+          "body": "變更主機的時區與時鐘、語言與鍵盤、主機名稱或網路（DHCP／靜態 IP），或將其重新開機／關機。每項變更會立即套用。列印進行中時，重新開機與關機會被拒絕。變更 IP 可能會短暫中斷你與本面板的連線。"
+        },
+        "network": {
+          "title": "DHCP 與靜態 IP",
+          "body": "DHCP（自動）讓你的路由器自動指派位址。靜態（手動）會固定一個位址 - 設定 IP、子網路（CIDR，例如 /24）、閘道（通常是你的路由器）與 DNS。僅支援 IPv4。變更服務本面板的連線位址會中斷你的工作階段；請於新 IP 重新連線。錯誤的靜態位址或閘道可能讓印表機無法連線，直到你在裝置本機上修正為止，因此這些設定會經過驗證並需要輸入文字確認。"
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "主機",
+          "def": "執行 Klipper、Moonraker 與 FilaMind 的小型 Linux 電腦（例如 Raspberry Pi 或 BTT CB1）- 與印表機的微控制器是分開的。"
+        },
+        "load": {
+          "term": "平均負載",
+          "def": "等待執行的程序數量，分別以 1／5／15 分鐘平均計算。大致來說：數值接近核心數表示 CPU 忙碌；遠高於核心數則表示負載過重。"
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "RAM 用滿時作為溢位使用的磁碟空間。大量使用 swap 會拖慢主機速度 - 這是記憶體不足的徵兆。"
+        },
+        "throttle": {
+          "term": "降頻",
+          "def": "當主機板為了保護自己而降低速度時 - 通常源於供電不足（電壓過低）或過熱。主要在 Raspberry Pi 上回報。"
+        },
+        "ntp": {
+          "term": "NTP／時鐘同步",
+          "def": "網路時間協定（NTP）讓主機時鐘保持準確。未同步的時鐘可能破壞縮時影片、記錄與 TLS 憑證。"
+        },
+        "locale": {
+          "term": "地區設定",
+          "def": "主機的語言與鍵盤配置設定，供作業系統用於文字、日期與主控台鍵盤對應。"
+        },
+        "service": {
+          "term": "服務（單元）",
+          "def": "由 systemd 管理的背景程式 - Klipper、Moonraker、攝影機串流程式與網路堆疊全都以服務形式執行。"
+        },
+        "enabled": {
+          "term": "已啟用／已停用",
+          "def": "服務是否在開機時自動啟動。「enabled」會在開機時啟動；「disabled」則不會；「static」只會由其他服務啟動。"
+        },
+        "mask": {
+          "term": "遮罩",
+          "def": "比停用更強的形式 - 在解除遮罩之前，該服務完全無法被啟動（連其他服務也無法啟動它）。請謹慎使用。"
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "重新整理",
+      "autoRefresh": "自動重新整理",
+      "loading": "正在讀取主機狀態…",
+      "host": "主機",
+      "hostname": "主機名稱",
+      "distro": "作業系統",
+      "kernel": "核心",
+      "uptime": "運行時間",
+      "cpu": "CPU",
+      "temp": "溫度",
+      "load": "負載（1·5·15 分）",
+      "cores": "核心數",
+      "throttled": "已降頻",
+      "memory": "記憶體",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "磁碟",
+      "network": "網路",
+      "iface": "介面",
+      "ip": "IP 位址",
+      "ssid": "Wi-Fi",
+      "signal": "訊號",
+      "timeLocale": "時間與地區",
+      "timezone": "時區",
+      "ntp": "時鐘同步",
+      "synced": "已同步",
+      "syncing": "同步中…",
+      "ntpOff": "關閉",
+      "language": "語言",
+      "keymap": "鍵盤對應",
+      "topProcesses": "程序排行",
+      "command": "指令",
+      "cpuPct": "CPU%",
+      "memPct": "MEM%",
+      "pid": "PID"
+    },
+    "services": {
+      "warning": "停止或停用錯誤的服務可能使印表機離線。重要服務會加上標記；受保護的服務無法被停止。",
+      "search": "搜尋服務…",
+      "refresh": "重新整理",
+      "loading": "正在列出服務…",
+      "loadingDetail": "正在讀取服務…",
+      "loadingLogs": "正在讀取記錄…",
+      "summary": "{total} 個服務 · {active} 個執行中 · {failed} 個失敗",
+      "filter": {
+        "all": "全部",
+        "active": "執行中",
+        "inactive": "未執行",
+        "failed": "失敗",
+        "enabled": "已啟用"
+      },
+      "stateActive": "執行中",
+      "stateInactive": "未執行",
+      "stateFailed": "失敗",
+      "critical": "重要",
+      "protected": "受保護",
+      "state": "狀態",
+      "startup": "開機啟動",
+      "unitFile": "單元檔",
+      "action": {
+        "start": "啟動",
+        "stop": "停止",
+        "restart": "重新啟動",
+        "enable": "啟用",
+        "disable": "停用",
+        "mask": "遮罩",
+        "unmask": "解除遮罩"
+      },
+      "actionOk": "{action} 完成。",
+      "actionFailed": "{action} 失敗。",
+      "deleteFailed": "無法移除單元檔。",
+      "confirmAction": "{action}「{name}」？",
+      "confirmYes": "是，執行",
+      "cancel": "取消",
+      "deleteUnit": "刪除單元檔…",
+      "deletePrompt": "這會永久移除單元檔。請輸入「{name}」以確認。",
+      "deleteConfirm": "永久刪除",
+      "deleted": "已移除單元檔。",
+      "logs": "近期記錄",
+      "noLogs": "沒有記錄輸出。"
+    },
+    "cleanup": {
+      "subtitle": "勾選要移除的項目，然後清理。僅清快取與舊記錄 - 列印檔與設定檔均安全無虞。",
+      "rescan": "重新掃描",
+      "scanning": "正在掃描磁碟…",
+      "na": "不適用",
+      "items": "{n} 個檔案",
+      "freed": "已釋放 {size}。",
+      "selectedTotal": "已選取：{size}",
+      "clean": "清理已選取項目",
+      "confirmBody": "刪除已選取的項目？",
+      "confirmYes": "是，清理",
+      "cancel": "取消",
+      "running": "清理中…",
+      "someFailed": "部分項目無法清理。",
+      "targets": {
+        "apt": {
+          "label": "套件快取",
+          "desc": "apt 不再需要的已下載 .deb 安裝檔。"
+        },
+        "journal": {
+          "label": "系統日誌",
+          "desc": "舊的 systemd 記錄 - 已清理至最近的 50 MB。"
+        },
+        "cache": {
+          "label": "使用者快取",
+          "desc": "~/.cache 中可重新產生的檔案（縮圖、pip 等）。"
+        },
+        "tmp": {
+          "label": "暫存檔",
+          "desc": "/tmp 中你自己超過一天的檔案。"
+        },
+        "logs": {
+          "label": "輪替記錄",
+          "desc": "舊的、已輪替的 Klipper／Moonraker 記錄（即時記錄會保留）。"
+        }
+      }
+    },
+    "system": {
+      "loading": "正在讀取系統設定…",
+      "done": "完成。",
+      "apply": "套用",
+      "timeTitle": "時間與日期",
+      "timezone": "時區",
+      "ntp": "自動設定時間（NTP）",
+      "manualTime": "手動設定時鐘",
+      "manualTimeHint": "關閉自動時間以手動設定時鐘。",
+      "localeTitle": "語言與鍵盤",
+      "language": "語言",
+      "keymap": "主控台鍵盤對應",
+      "hostnameTitle": "主機名稱",
+      "hostnameHint": "僅限字母、數字與連字號。重新開機後才完全生效。",
+      "powerTitle": "電源",
+      "powerWarning": "列印進行中時，重新開機與關機會被拒絕。",
+      "reboot": "重新開機",
+      "shutdown": "關機",
+      "confirmReboot": "立即將主機重新開機？",
+      "confirmShutdown": "立即將主機關機？",
+      "confirmYes": "是",
+      "cancel": "取消",
+      "needsSetup": "此動作需要免密碼的 sudo。請在印表機上執行：sudo bash scripts/install.sh sudoers - 然後重試。",
+      "failed": "該變更未能套用。",
+      "network": {
+        "title": "網路（IPv4）",
+        "unavailable": "此主機無法編輯網路（未安裝 NetworkManager）。",
+        "device": "裝置",
+        "method": "IP 方式",
+        "auto": "DHCP（自動）",
+        "manual": "靜態（手動）",
+        "address": "IP 位址",
+        "cidr": "子網路（CIDR）",
+        "gateway": "閘道",
+        "dns": "DNS 伺服器",
+        "dnsHint": "以逗號分隔，例如 1.1.1.1, 8.8.8.8（選填）",
+        "warning": "變更 IP 可能會中斷本面板 - 你可能需要於新位址重新連線。",
+        "apply": "套用網路設定",
+        "confirmPrompt": "這可能使本面板無法連線。請輸入裝置名稱「{device}」以確認。",
+        "confirmYes": "套用並切換",
+        "applyingReconnect": "套用中… 若本面板停止回應，請於印表機的新 IP 重新連線。"
+      }
+    }
+  }
+}

@@ -1,0 +1,247 @@
+{
+  "hostControl": {
+    "intro": "Yazıcının Linux ana makinesini yönetin - durumunu kontrol edin, arka plan servislerini denetleyin, disk alanı açın ve sistem ayarlarını değiştirin (saat, yerel ayar, ana makine adı, ağ, güç).",
+    "view": {
+      "monitor": "İzleme",
+      "services": "Servisler",
+      "cleanup": "Temizlik",
+      "system": "Sistem"
+    },
+    "help": {
+      "guide": "Yardım",
+      "guideTitle": "Ana Makine Denetimi Hakkında",
+      "close": "Kapat",
+      "howToRead": "Nasıl okunur",
+      "steps": [
+        "CPU sıcaklığı, bellek, disk ve ağ kartlarını bir bakışta okuyun.",
+        "Şu anda CPU'yu neyin kullandığını görmek için en yoğun süreçler tablosunu izleyin.",
+        "Canlı görünüm için otomatik yenilemeyi açık bırakın ya da kapatıp elle yenileyin."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Burada kullanılan terimler"
+        },
+        "monitor": {
+          "title": "İzleme ekranını okuma",
+          "body": "Buradaki her şey salt okunurdur. Çubuklar %75'in üzerinde sarıya, %90'ın üzerinde kırmızıya döner. CPU sıcaklığı 70 °C'de sarıya, 80 °C'de kırmızıya döner. Kısıtlama uyarısı yalnızca bunu bildiren kartlarda görünür (çoğunlukla Raspberry Pi)."
+        },
+        "services": {
+          "title": "Servisleri yönetme",
+          "body": "Her satır bir systemd servisidir. Başlatmak/durdurmak/yeniden başlatmak, açılışta etkinleştirmek/devre dışı bırakmak, maskelemek, günlüğünü okumak ya da - kendi kurduğunuz servisler için - birim dosyasını silmek için birine tıklayın. Bir servisi durdurmak veya devre dışı bırakmak için yazarak ya da tek dokunuşla onay gerekir. Kritik ve korumalı servisler işaretlidir; korumalı olanlar (SSH ve bu panel gibi) sizi dışarıda bırakmamak için durdurulamaz."
+        },
+        "cleanup": {
+          "title": "Disk alanı açma",
+          "body": "Her satır, ne kadar yer açacağını göstermek için önce taranır. Temizlenecekleri işaretleyip onaylayın. Yalnızca yeniden oluşturulabilir veriler sunulur - apt indirme önbelleği, eski systemd günlüğü, ~/.cache, eski /tmp dosyalarınız ve döndürülmüş (canlı olmayan) günlükler. G-code'larınıza, timelapse'lerinize ve yapılandırmalarınıza asla dokunulmaz."
+        },
+        "system": {
+          "title": "Sistem ayarları",
+          "body": "Ana makinenin saat dilimini ve saatini, dilini ve klavyesini, ana makine adını ya da ağını (DHCP / statik IP) değiştirin ya da yeniden başlatın/kapatın. Her değişiklik anında uygulanır. Bir baskı sürerken yeniden başlatma ve kapatma reddedilir. IP'yi değiştirmek bu panele olan bağlantınızı kısa süreliğine kesebilir."
+        },
+        "network": {
+          "title": "DHCP ve Statik IP",
+          "body": "DHCP (otomatik), yönlendiricinizin adresi otomatik atamasını sağlar. Statik (manuel), sabit bir adres belirler - IP, alt ağ (CIDR, örn. /24), ağ geçidi (genellikle yönlendiriciniz) ve DNS'i ayarlayın. Yalnızca IPv4. Bu paneli sunan bağlantının adresini değiştirmek oturumunuzu keser; yeni IP'de yeniden bağlanın. Yanlış bir statik adres ya da ağ geçidi, cihazın kendisinde düzeltene kadar yazıcıyı erişilemez yapabilir, bu yüzden ayarlar doğrulanır ve yazarak onay gerektirir."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Ana makine",
+          "def": "Klipper, Moonraker ve FilaMind'ı çalıştıran küçük Linux bilgisayar (örn. bir Raspberry Pi ya da BTT CB1) - yazıcının mikrodenetleyicilerinden ayrıdır."
+        },
+        "load": {
+          "term": "Yük ortalaması",
+          "def": "1 / 5 / 15 dakika üzerinden ortalaması alınmış, çalışmayı bekleyen süreç sayısı. Kabaca: çekirdek sayısına yakın bir değer CPU'nun meşgul olduğunu, çok üzerindeki bir değer aşırı yüklü olduğunu gösterir."
+        },
+        "swap": {
+          "term": "Takas (swap)",
+          "def": "RAM dolduğunda taşma için kullanılan disk alanı. Yoğun takas kullanımı ana makineyi yavaşlatır - belleğin yetersiz olduğuna işarettir."
+        },
+        "throttle": {
+          "term": "Kısıtlama",
+          "def": "Kartın kendini korumak için hızı düşürmesi - genellikle yetersiz güç kaynağından (düşük voltaj) ya da aşırı ısınmadan. Çoğunlukla Raspberry Pi'de bildirilir."
+        },
+        "ntp": {
+          "term": "NTP / saat eşitleme",
+          "def": "Network Time Protocol, ana makine saatini doğru tutar. Eşitlenmemiş bir saat timelapse'leri, günlükleri ve TLS sertifikalarını bozabilir."
+        },
+        "locale": {
+          "term": "Yerel ayar (locale)",
+          "def": "Ana makinenin dil ve klavye düzeni ayarları; işletim sistemi tarafından metin, tarih ve konsol klavye eşlemesi için kullanılır."
+        },
+        "service": {
+          "term": "Servis (birim)",
+          "def": "systemd tarafından yönetilen bir arka plan programı - Klipper, Moonraker, web kamerası akış aracı ve ağ yığını hepsi birer servis olarak çalışır."
+        },
+        "enabled": {
+          "term": "Etkin / devre dışı",
+          "def": "Bir servisin açılışta otomatik başlayıp başlamadığı. 'etkin' açılışta başlar; 'devre dışı' başlamaz; 'static' yalnızca başka bir servis tarafından başlatılır."
+        },
+        "mask": {
+          "term": "Maskeleme",
+          "def": "Devre dışı bırakmanın daha güçlü bir biçimi - servis maskesi kaldırılana kadar hiç başlatılamaz (başka bir servis tarafından bile). Dikkatli kullanın."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Yenile",
+      "autoRefresh": "Otomatik yenile",
+      "loading": "Ana makine durumu okunuyor…",
+      "host": "Ana makine",
+      "hostname": "Ana makine adı",
+      "distro": "İşletim sistemi",
+      "kernel": "Çekirdek",
+      "uptime": "Çalışma süresi",
+      "cpu": "CPU",
+      "temp": "Sıcaklık",
+      "load": "Yük (1·5·15dk)",
+      "cores": "Çekirdek",
+      "throttled": "Kısıtlandı",
+      "memory": "Bellek",
+      "ram": "RAM",
+      "swap": "Takas",
+      "disk": "Disk",
+      "network": "Ağ",
+      "iface": "Arabirim",
+      "ip": "IP adresi",
+      "ssid": "Wi-Fi",
+      "signal": "Sinyal",
+      "timeLocale": "Saat ve Yerel Ayar",
+      "timezone": "Saat dilimi",
+      "ntp": "Saat eşitleme",
+      "synced": "Eşitlendi",
+      "syncing": "Eşitleniyor…",
+      "ntpOff": "Kapalı",
+      "language": "Dil",
+      "keymap": "Klavye eşlemesi",
+      "topProcesses": "En yoğun süreçler",
+      "command": "Komut",
+      "cpuPct": "CPU%",
+      "memPct": "BELLEK%",
+      "pid": "PID"
+    },
+    "services": {
+      "warning": "Yanlış servisi durdurmak ya da devre dışı bırakmak yazıcıyı çevrimdışı yapabilir. Kritik servisler işaretlidir; korumalı olanlar durdurulamaz.",
+      "search": "Servislerde ara…",
+      "refresh": "Yenile",
+      "loading": "Servisler listeleniyor…",
+      "loadingDetail": "Servis okunuyor…",
+      "loadingLogs": "Günlük okunuyor…",
+      "summary": "{total} servis · {active} etkin · {failed} başarısız",
+      "filter": {
+        "all": "Tümü",
+        "active": "Etkin",
+        "inactive": "Etkin değil",
+        "failed": "Başarısız",
+        "enabled": "Etkin"
+      },
+      "stateActive": "Etkin",
+      "stateInactive": "Etkin değil",
+      "stateFailed": "Başarısız",
+      "critical": "Kritik",
+      "protected": "Korumalı",
+      "state": "Durum",
+      "startup": "Açılış",
+      "unitFile": "Birim dosyası",
+      "action": {
+        "start": "Başlat",
+        "stop": "Durdur",
+        "restart": "Yeniden başlat",
+        "enable": "Etkinleştir",
+        "disable": "Devre dışı bırak",
+        "mask": "Maskele",
+        "unmask": "Maskeyi kaldır"
+      },
+      "actionOk": "{action} tamamlandı.",
+      "actionFailed": "{action} başarısız oldu.",
+      "deleteFailed": "Birim dosyası kaldırılamadı.",
+      "confirmAction": "\"{name}\" için {action}?",
+      "confirmYes": "Evet, yap",
+      "cancel": "İptal",
+      "deleteUnit": "Birim dosyasını sil…",
+      "deletePrompt": "Bu, birim dosyasını kalıcı olarak kaldırır. Onaylamak için \"{name}\" yazın.",
+      "deleteConfirm": "Kalıcı olarak sil",
+      "deleted": "Birim dosyası kaldırıldı.",
+      "logs": "Son günlük",
+      "noLogs": "Günlük çıktısı yok."
+    },
+    "cleanup": {
+      "subtitle": "Kaldırılacakları işaretleyip temizleyin. Yalnızca önbellekler ve eski günlükler - baskılar ve yapılandırmalar güvende kalır.",
+      "rescan": "Yeniden tara",
+      "scanning": "Disk taranıyor…",
+      "na": "yok",
+      "items": "{n} dosya",
+      "freed": "{size} yer açıldı.",
+      "selectedTotal": "Seçili: {size}",
+      "clean": "Seçilenleri temizle",
+      "confirmBody": "Seçili öğeler silinsin mi?",
+      "confirmYes": "Evet, temizle",
+      "cancel": "İptal",
+      "running": "Temizleniyor…",
+      "someFailed": "Bazı öğeler temizlenemedi.",
+      "targets": {
+        "apt": {
+          "label": "Paket önbelleği",
+          "desc": "İndirilmiş ve apt'ın artık ihtiyaç duymadığı .deb yükleyici dosyaları."
+        },
+        "journal": {
+          "label": "Sistem günlüğü",
+          "desc": "Eski systemd günlükleri - en güncel 50 MB'a indirilir."
+        },
+        "cache": {
+          "label": "Kullanıcı önbelleği",
+          "desc": "~/.cache içindeki yeniden oluşturulabilir dosyalar (küçük resimler, pip vb.)."
+        },
+        "tmp": {
+          "label": "Geçici dosyalar",
+          "desc": "/tmp içindeki bir günden eski kendi dosyalarınız."
+        },
+        "logs": {
+          "label": "Döndürülmüş günlükler",
+          "desc": "Eski, döndürülmüş Klipper/Moonraker günlükleri (canlı günlük tutulur)."
+        }
+      }
+    },
+    "system": {
+      "loading": "Sistem ayarları okunuyor…",
+      "done": "Tamamlandı.",
+      "apply": "Uygula",
+      "timeTitle": "Saat ve Tarih",
+      "timezone": "Saat dilimi",
+      "ntp": "Saati otomatik ayarla (NTP)",
+      "manualTime": "Saati elle ayarla",
+      "manualTimeHint": "Saati elle ayarlamak için otomatik saati kapatın.",
+      "localeTitle": "Dil ve Klavye",
+      "language": "Dil",
+      "keymap": "Konsol klavye eşlemesi",
+      "hostnameTitle": "Ana makine adı",
+      "hostnameHint": "Yalnızca harf, rakam ve tire. Tam etkisini bir yeniden başlatmadan sonra gösterir.",
+      "powerTitle": "Güç",
+      "powerWarning": "Bir baskı sürerken yeniden başlatma ve kapatma reddedilir.",
+      "reboot": "Yeniden başlat",
+      "shutdown": "Kapat",
+      "confirmReboot": "Ana makine şimdi yeniden başlatılsın mı?",
+      "confirmShutdown": "Ana makine şimdi kapatılsın mı?",
+      "confirmYes": "Evet",
+      "cancel": "İptal",
+      "needsSetup": "Bu eylem parolasız sudo gerektirir. Yazıcıda şunu çalıştırın: sudo bash scripts/install.sh sudoers - ardından tekrar deneyin.",
+      "failed": "Bu değişiklik uygulanmadı.",
+      "network": {
+        "title": "Ağ (IPv4)",
+        "unavailable": "Bu ana makinede ağ düzenleme kullanılamıyor (NetworkManager kurulu değil).",
+        "device": "Cihaz",
+        "method": "IP yöntemi",
+        "auto": "DHCP (otomatik)",
+        "manual": "Statik (manuel)",
+        "address": "IP adresi",
+        "cidr": "Alt ağ (CIDR)",
+        "gateway": "Ağ geçidi",
+        "dns": "DNS sunucuları",
+        "dnsHint": "Virgülle ayrılmış, örn. 1.1.1.1, 8.8.8.8 (isteğe bağlı)",
+        "warning": "IP'yi değiştirmek bu paneli kesebilir - yeni adreste yeniden bağlanmanız gerekebilir.",
+        "apply": "Ağ ayarlarını uygula",
+        "confirmPrompt": "Bu, paneli erişilemez yapabilir. Onaylamak için cihaz adını \"{device}\" yazın.",
+        "confirmYes": "Uygula ve geçiş yap",
+        "applyingReconnect": "Uygulanıyor… panel yanıt vermezse, yazıcının yeni IP'sinde yeniden bağlanın."
+      }
+    }
+  }
+}

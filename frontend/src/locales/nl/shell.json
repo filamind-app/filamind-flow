@@ -1,0 +1,215 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · klipper-paneel"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "toggle": "Navigatie schakelen",
+      "label": "Hoofdnavigatie"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Terug naar Mainsail"
+    },
+    "footer": {
+      "stack": "FilaMind Flow - Gebouwd door Egyptische makers, voor makers wereldwijd. Veel printplezier",
+      "by": "door het DeltaFabs-team"
+    },
+    "home": {
+      "body": "Je panelen staan in de zijbalk - kies er een om te beginnen. Deze startpagina is voorlopig bewust leeg.",
+      "title": "Mission Control",
+      "refresh": "Vernieuwen",
+      "loading": "Laden…",
+      "unreachable": "De backend is onbereikbaar.",
+      "printer": "Printer",
+      "statePrinting": "Aan het printen",
+      "statePaused": "Gepauzeerd",
+      "stateError": "Fout",
+      "stateIdle": "Inactief",
+      "printerDown": "Moonraker is onbereikbaar.",
+      "doctor": "Machine Doctor",
+      "doctorBody": "Eén alleen-lezen scan over pinnen, driverwaarden, configafwijking, firmwaresynchronisatie en meer - beoordeeld met A-F en met spring-naar-oplossing-links.",
+      "doctorScan": "Scan mijn printer",
+      "firmware": "Firmwaresynchronisatie",
+      "host": "Host: {version}",
+      "open": "Openen",
+      "noData": "Op dit moment geen gegevens.",
+      "tuning": "Afstemming",
+      "noTuning": "Nog geen afstemmingsruns gearchiveerd - voer de Input Shaping-wizard uit.",
+      "hardware": "Hardware vs. basislijn",
+      "noBaseline": "Nog geen hardwarebasislijn opgeslagen - sla een momentopname op in de Machine Map om wijzigingen te detecteren.",
+      "hwUnchanged": "Geen hardwarewijzigingen sinds de opgeslagen basislijn.",
+      "hwChanged": "{n} hardwarewijziging(en) sinds de opgeslagen basislijn.",
+      "setup": {
+        "title": "Aan de slag ({done}/{total})",
+        "go": "Start",
+        "boards": "Bevestig je boards in de Machine Map",
+        "baseline": "Sla een hardwarebasislijn op (detecteert toekomstige wijzigingen)",
+        "firmware": "Breng alle MCU-firmware in sync met de host",
+        "motors": "Wijs je motoren toe in Motor Drivers",
+        "tuning": "Stem input shaping af voor X en Y (begeleide wizard)"
+      },
+      "journal": {
+        "title": "Recente activiteit",
+        "empty": "Nog niets vastgelegd - flashes, configopslagacties en afstemmingsruns verschijnen hier.",
+        "flash": "{board} geflasht → {version}",
+        "configSave": "{file} opgeslagen",
+        "tuning": "Afstemmingsrun: {kind} ({axis})"
+      },
+      "hostInfo": {
+        "title": "Host",
+        "time": "Tijd",
+        "clock": "Kloksynchronisatie",
+        "synced": "Gesynchroniseerd",
+        "notSynced": "Niet gesynchroniseerd",
+        "temp": "CPU-temp",
+        "uptime": "Uptime",
+        "disk": "Schijf"
+      },
+      "printerHost": "Printer & host",
+      "maxFlow": {
+        "title": "Max. flow",
+        "expected": "Verwacht: {n} mm³/s",
+        "empty": "Nog geen max-flow-test.",
+        "test": "Test max. flow"
+      }
+    },
+    "connection": {
+      "connected": "Verbonden",
+      "connecting": "Verbinden",
+      "error": "Fout",
+      "offline": "Offline",
+      "idle": "Inactief"
+    },
+    "language": {
+      "label": "Taal",
+      "select": "Selecteer taal",
+      "menu": "Kies taal"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Firmware Manager",
+        "description": "MCU-firmwareversies, host-syncstatus en gereedheid van de toolchain."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Analyseer een resonantie-CSV en vind de beste input shaper."
+      },
+      "motor-drivers": {
+        "title": "Motor Drivers",
+        "description": "Live TMC-stappenmotordriver-inventaris: stroom, modus, microstappen en status."
+      },
+      "config-editor": {
+        "title": "Config Editor",
+        "description": "Blader door de configbestanden van je printer, geparseerd in secties met validatie."
+      },
+      "max-flow": {
+        "title": "Max-Flow",
+        "description": "Meet de hoogste volumetrische flow die je hotend kan volhouden (StallGuard)."
+      },
+      "board-topology": {
+        "title": "Board Topology",
+        "description": "Zie hoe de host en MCU's verbinden (USB / CAN / UART) + een board-gok."
+      },
+      "macro-designer": {
+        "title": "Macro Designer",
+        "description": "Simuleer G-code offline - toolhead-pad, grenzen, totalen en een macrobibliotheek."
+      },
+      "hardware-browser": {
+        "title": "Hardware Browser",
+        "description": "Doorzoek een samengestelde 3D-print-hardwarereferentie op naam, fabrikant of specificatie."
+      },
+      "config-templates": {
+        "title": "Config Templates",
+        "description": "Klaar-om-te-plakken Klipper-configblokken en macro's, per categorie."
+      },
+      "machine-doctor": {
+        "title": "Machine Doctor",
+        "description": "Volledige printerscan met één klik, met een A-F-rapportkaart en spring-naar-oplossing-links."
+      },
+      "host-control": {
+        "title": "Host Control",
+        "description": "Beheer het Linux-besturingssysteem van de printerhost: gezondheid, services, schijfopruiming en systeeminstellingen."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "Bewerk de KlipperScreen-touchscreenconfig van je printer en herstart om toe te passen."
+      }
+    },
+    "guard": {
+      "printing": "Aan het printen - schrijfacties vergrendeld",
+      "running": "{op} actief - schrijfacties vergrendeld",
+      "op": {
+        "resonance_test": "Resonantietest",
+        "noise_check": "Ruiscontrole",
+        "belt_comparison": "Riemvergelijking",
+        "axes_map": "Assenkaartkalibratie",
+        "sustain": "Aanhoudende excitatie",
+        "vibrations_profile": "Trillingsprofiel",
+        "max_flow": "Max-flow-test",
+        "driver_write": "Driverschrijfactie",
+        "homing": "Homing",
+        "motors_sync": "Motorsynchronisatie",
+        "firmware_flash": "Firmware flashen",
+        "firmware_batch": "Firmware-batchrun",
+        "firmware_restart": "Firmware herstarten"
+      }
+    },
+    "mission": {
+      "body": "FilaMind Flow brengt de beste tools voor 3D-printen samen - van eerste installatie tot beheersing - zodat makers op elk niveau beter kunnen diagnosticeren, repareren en printen. Het project is volop in ontwikkeling en onderzoek, en nieuwe praktische ideeën zijn altijd welkom. Iedereen kan bijdragen.",
+      "tagline": "Gebouwd door Egyptische makers, voor makers wereldwijd. Veel printplezier.",
+      "dismiss": "Sluiten"
+    },
+    "feedback": {
+      "menu": "Feedback",
+      "menuTitle": "Deel feedback",
+      "bug": "Bug melden",
+      "bugDesc": "Iets werkt niet",
+      "feature": "Functie aanvragen",
+      "featureDesc": "Stel een verbetering voor",
+      "reportError": "Melden",
+      "reportErrorAria": "Meld deze fout op GitHub",
+      "dialog": {
+        "bugTitle": "Bug melden",
+        "featureTitle": "Functie aanvragen",
+        "introBug": "Beschrijf wat er misging. We openen een vooraf ingevulde issue op GitHub die je kunt nakijken en indienen - er wordt niets automatisch verzonden.",
+        "introFeature": "Beschrijf de functie die je graag wilt. We openen een vooraf ingevulde issue op GitHub die je kunt nakijken en indienen.",
+        "descLabel": "Omschrijving",
+        "descPlaceholderBug": "Wat deed je, en wat gebeurde er in plaats daarvan?",
+        "descPlaceholderFeature": "Wat zou je graag willen kunnen doen?",
+        "attach": "Voeg een schermafbeelding toe",
+        "attachHint": "Een afbeelding van het huidige scherm helpt ons het probleem te begrijpen.",
+        "capturing": "Schermafbeelding maken…",
+        "screenshotReady": "Voorbeeld van schermafbeelding",
+        "noScreenshot": "Kon geen schermafbeelding maken - je kunt er handmatig een toevoegen.",
+        "includes": "Wat we toevoegen",
+        "includesNote": "Deze details worden aan de issue toegevoegd om bij de diagnose te helpen. Bekijk ze op GitHub voordat je indient.",
+        "languageNote": "De issue wordt in het Engels geschreven zodat de beheerders ermee aan de slag kunnen.",
+        "submit": "Issue openen op GitHub",
+        "cancel": "Annuleren",
+        "close": "Sluiten"
+      },
+      "field": {
+        "version": "App-versie",
+        "view": "Actieve weergave",
+        "locale": "Taal",
+        "theme": "Thema",
+        "screen": "Scherm",
+        "browser": "Browser",
+        "time": "Tijd",
+        "error": "Fout"
+      },
+      "sent": {
+        "title": "Issue geopend in een nieuw tabblad",
+        "body": "Bekijk de vooraf ingevulde details op GitHub en dien de issue daar in.",
+        "copied": "Schermafbeelding gekopieerd - plak deze in de issue met Ctrl/⌘+V.",
+        "saved": "Schermafbeelding opgeslagen in je downloads - sleep deze in de issue.",
+        "failed": "Kon de schermafbeelding niet automatisch toevoegen - je kunt er een op GitHub toevoegen."
+      }
+    },
+    "support": {
+      "kofi": "Steun FilaMind Flow"
+    }
+  }
+}

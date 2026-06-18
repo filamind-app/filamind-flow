@@ -1,0 +1,197 @@
+{
+  "klipperscreenStudio": {
+    "intro": "プリンターの KlipperScreen タッチスクリーン設定を安全に編集し、KlipperScreen を再起動して適用します。保存のたびに、まずバックアップが作成されます。",
+    "help": {
+      "guide": "ヘルプ",
+      "guideTitle": "KlipperScreen Studio について",
+      "close": "閉じる",
+      "howToRead": "読み方",
+      "steps": [
+        "下の設定テキストを編集します（そのままでも構いません）。",
+        "保存 - 現在のファイルがまずバックアップされ、プリンターが動作中の場合は保存が拒否されます。",
+        "KlipperScreen を再起動して、物理画面に変更を適用します。",
+        "行末は UNIX (LF) で、保存時に自動で適用されます。"
+      ],
+      "topics": {
+        "glossary": {
+          "title": "用語集",
+          "body": "ここで使われている KlipperScreen 用語の簡単な定義です。"
+        },
+        "config": {
+          "title": "Config タブとは？",
+          "body": "生の KlipperScreen.conf です。任意の設定を手で編集できます。保存時にまずファイルをバックアップし、プリンターが動作中なら拒否され、読み込んでから画面側でファイルが変更されていれば警告します。多くの人は代わりに 設定 / メニュー / テーマ タブを使います。"
+        },
+        "settings": {
+          "title": "設定タブとは？",
+          "body": "最もよく使う [main] オプションをフォームにしたものです - テーマ、言語、画面スリープ、フォントサイズ、各種トグル。ライブ設定から事前入力され、変更したオプションだけが書き込まれます。再起動して適用します。"
+        },
+        "menus": {
+          "title": "メニュータブとは？",
+          "body": "タッチスクリーンのボタングリッドを設計します。各ツリー（__main がホームグリッド、__print が印刷画面）にボタンが並びます。追加・名称変更・並べ替え・入れ子ができ、それぞれをサブメニューを開く、組み込み画面を開く、G-code を実行するに設定できます。"
+        },
+        "themes": {
+          "title": "テーマタブとは？",
+          "body": "KlipperScreen テーマを作成します。パレットトークンごとに色と角丸を選び、ライブプレビューを見ながら作成して画面に適用します。プレビューはあくまで目安です - 実際の画面は GTK で描画されます。"
+        },
+        "kiosk": {
+          "title": "キオスクタブとは？",
+          "body": "FilaMind Flow 自体を全画面ブラウザとしてタッチスクリーンに表示します - 画面に表示する内容を完全に制御できます。KlipperScreen との切り替えは元に戻せます（既定では一時的で、再起動すると KlipperScreen に戻ります）。プリンターホストで一度だけインストーラーの実行が必要です。"
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "プリンターに取り付けた小型ディスプレイで動作するタッチスクリーン UI です - この Web パネルとは別物です。"
+        },
+        "theme": {
+          "term": "テーマ",
+          "def": "KlipperScreen の外観 - 色、アイコン、角丸です。ホスト上の styles/<name> フォルダーに置かれ、見た目だけです（レイアウトは変更できません）。"
+        },
+        "menu": {
+          "term": "メニュー (__main / __print)",
+          "def": "KlipperScreen が表示するボタンのグリッドです。__main がホーム画面、__print が印刷中に表示される画面、__splashscreen が起動画面です。"
+        },
+        "panel": {
+          "term": "パネル",
+          "def": "ボタンから開ける組み込みの KlipperScreen 画面です（移動、温度、押し出し、ベッドメッシュなど）。その内部の内容は KlipperScreen により固定されています。"
+        },
+        "autoBlock": {
+          "term": "自動生成ブロック (#~#)",
+          "def": "KlipperScreen が conf 末尾の #~# マーカー以降に自身のために書き込むセクションです。FilaMind はこれを編集せず - その上にあるあなたの設定だけを扱います。"
+        },
+        "kiosk": {
+          "term": "キオスク",
+          "def": "KlipperScreen の代わりにタッチスクリーンで全画面ブラウザを実行し、画面に FilaMind Flow を表示します。完全に元に戻せます。"
+        }
+      }
+    },
+    "status": {
+      "checking": "KlipperScreen を確認中…",
+      "absent": "このプリンターで KlipperScreen が検出されませんでした（KlipperScreen.conf がなく、Moonraker からも報告されません）。このツールを使うには KlipperScreen をインストールしてください。",
+      "present": "KlipperScreen を検出しました",
+      "theme": "テーマ",
+      "language": "言語",
+      "notRestartable": "Moonraker は KlipperScreen を自動で再起動できません - 保存後に手動で再起動してください。"
+    },
+    "editor": {
+      "loading": "KlipperScreen.conf を読み込み中…",
+      "reload": "再読み込み",
+      "save": "設定を保存",
+      "saving": "保存中…",
+      "saved": "保存しました（バックアップ済み）",
+      "unsaved": "未保存の変更"
+    },
+    "save": {
+      "busy": "プリンターが動作中のため拒否されました - アイドル状態になってから再試行してください。",
+      "stale": "読み込んでから KlipperScreen.conf がディスク上で変更されました（おそらく画面側で編集されました）。その変更を上書きしないよう、保存前に再読み込みしてください。"
+    },
+    "view": {
+      "config": "Config",
+      "settings": "設定",
+      "menus": "メニュー",
+      "themes": "テーマ",
+      "kiosk": "キオスク"
+    },
+    "settings": {
+      "loading": "設定を読み込み中…",
+      "intro": "最もよく使う KlipperScreen の表示オプションをフォームにしたものです。変更したオプションだけが書き込まれ - それ以外は現在の値が維持されます。再起動して適用します。",
+      "onlyChanged": "ここで変更した設定だけが KlipperScreen.conf に書き込まれます。",
+      "save": "設定を保存",
+      "savedRestart": "保存しました - KlipperScreen を再起動して適用してください。",
+      "unset": "未設定のまま（既定）",
+      "never": "なし（常にオン）",
+      "fontSize": {
+        "small": "小",
+        "medium": "中",
+        "large": "大",
+        "max": "最大"
+      },
+      "label": {
+        "theme": "テーマ",
+        "language": "言語",
+        "screen_blanking": "画面スリープまでの時間",
+        "font_size": "フォントサイズ",
+        "24htime": "24時間表示",
+        "use_dpms": "DPMS で画面をブランクする",
+        "show_cursor": "マウスカーソルを表示",
+        "confirm_estop": "緊急停止の前に確認",
+        "show_heater_power": "ヒーター出力 % を表示",
+        "autoclose_popups": "ポップアップを自動で閉じる"
+      }
+    },
+    "kiosk": {
+      "loading": "画面を確認中…",
+      "intro": "FilaMind Flow 自体を全画面ブラウザとしてタッチスクリーンに表示します - 画面に表示する内容を完全に制御できます。KlipperScreen と切り替わり、一方を起動するともう一方が停止します。",
+      "current": "現在の画面",
+      "mode": {
+        "kiosk": "FilaMind キオスク",
+        "klipperscreen": "KlipperScreen",
+        "none": "どちらも未起動"
+      },
+      "notInstalled": "キオスクはまだ未インストールです",
+      "setupHint": "プリンターホストで一度だけ実行してください（全画面ブラウザ + キオスクサービスをインストールします）：",
+      "persist": "起動時の既定にする（そうしないと切り替えは一時的で、再起動すると元に戻ります）。",
+      "safety": "既定では一時的です。再起動するともう一方が戻ります。万一画面が暗くなったら、SSH で次を実行してください： sudo systemctl start KlipperScreen",
+      "switchBtn": "FilaMind に切り替え",
+      "restoreBtn": "KlipperScreen を復元",
+      "refresh": "更新",
+      "confirmSwitchTitle": "FilaMind を画面に表示しますか？",
+      "confirmRestoreTitle": "KlipperScreen を復元しますか？",
+      "confirmBody": "一方の画面サービスを停止し、もう一方を起動します。実行中の印刷には影響しませんが、切り替え中はタッチスクリーンが数秒間真っ暗になります。",
+      "confirm": "実行する",
+      "cancel": "キャンセル",
+      "switchedNote": "FilaMind が画面を引き継いでいます - 数秒で表示されるはずです。",
+      "restoredNote": "KlipperScreen が戻ってきています - まもなく画面が復帰するはずです。"
+    },
+    "menus": {
+      "loading": "メニューを読み込み中…",
+      "intro": "タッチスクリーンに表示する内容を設計します。各メニューのボタン、その順序、それぞれの動作を設定できます。ホーム画面のグリッドが __main ツリー、印刷画面が __print です。",
+      "addItem": "ボタンを追加",
+      "empty": "まだ項目がありません - 追加してください。",
+      "up": "上へ移動",
+      "down": "下へ移動",
+      "addChild": "サブ項目を追加",
+      "delete": "削除",
+      "name": "名前",
+      "icon": "アイコン",
+      "action": "アクション",
+      "actSubmenu": "サブメニューを開く",
+      "actPanel": "画面を開く",
+      "actGcode": "G-code を実行",
+      "panel": "画面",
+      "gcode": "G-code",
+      "enable": "表示条件",
+      "save": "メニューを保存",
+      "newItem": "新規ボタン",
+      "savedRestart": "メニューを保存しました - KlipperScreen を再起動すると表示されます。"
+    },
+    "themes": {
+      "loading": "テーマを読み込み中…",
+      "palette": "パレット",
+      "radius": "角丸",
+      "preview": "ライブプレビュー",
+      "btn": "ボタン",
+      "previewWarn": "警告",
+      "previewApprox": "おおよそのプレビューです - 実際の画面は GTK で描画されるため、わずかな違いが生じます。",
+      "namePlaceholder": "新しいテーマ名",
+      "createApply": "作成して適用",
+      "createOnly": "作成のみ",
+      "installed": "インストール済みのテーマ",
+      "apply": "適用",
+      "delete": "テーマを削除",
+      "generated": "ここで作成",
+      "created": "テーマを作成しました。リストから適用し、再起動してください。",
+      "appliedRestart": "テーマを設定しました - KlipperScreen を再起動すると表示されます。",
+      "previewTitle": "プリンター"
+    },
+    "restart": {
+      "button": "KlipperScreen を再起動",
+      "restarting": "再起動中…",
+      "done": "KlipperScreen を再起動しています - まもなく画面が再読み込みされます。",
+      "confirmTitle": "KlipperScreen を再起動しますか？",
+      "confirmBody": "変更を適用するためにタッチスクリーンサービスを再起動します。実行中の印刷には影響しませんが、画面が数秒間真っ暗になります。",
+      "confirm": "再起動",
+      "cancel": "キャンセル"
+    }
+  }
+}

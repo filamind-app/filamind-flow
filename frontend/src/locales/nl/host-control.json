@@ -1,0 +1,247 @@
+{
+  "hostControl": {
+    "intro": "Beheer de Linux-host van de printer - controleer de toestand, bestuur de achtergronddiensten, maak schijfruimte vrij en wijzig systeeminstellingen (tijd, locale, hostnaam, netwerk, voeding).",
+    "view": {
+      "monitor": "Monitor",
+      "services": "Diensten",
+      "cleanup": "Opschonen",
+      "system": "Systeem"
+    },
+    "help": {
+      "guide": "Help",
+      "guideTitle": "Over Host Control",
+      "close": "Sluiten",
+      "howToRead": "Zo lees je dit",
+      "steps": [
+        "Lees de kaarten voor CPU-temperatuur, geheugen, schijf en netwerk in één oogopslag.",
+        "Bekijk de tabel met topprocessen om te zien wat de CPU op dit moment gebruikt.",
+        "Laat automatisch verversen aan voor een live weergave, of zet het uit en ververs handmatig."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Hier gebruikte termen"
+        },
+        "monitor": {
+          "title": "De monitor lezen",
+          "body": "Alles hier is alleen-lezen. Balken worden oranje boven 75% en rood boven 90%. De CPU-temperatuur wordt oranje bij 70 °C en rood bij 80 °C. De throttling-waarschuwing verschijnt alleen op boards die het melden (vooral Raspberry Pi)."
+        },
+        "services": {
+          "title": "Diensten beheren",
+          "body": "Elke rij is een systemd-dienst. Klik er een aan om hem te starten/stoppen/herstarten, in/uit te schakelen bij het opstarten, te maskeren, het logboek te lezen of - voor diensten die je zelf hebt geïnstalleerd - het unit-bestand te verwijderen. Een dienst stoppen of uitschakelen vereist een getypte of one-tap bevestiging. Kritieke en beschermde diensten zijn gemarkeerd; beschermde diensten (zoals SSH en dit paneel) kunnen niet worden gestopt, om te voorkomen dat je jezelf buitensluit."
+        },
+        "cleanup": {
+          "title": "Schijfruimte vrijmaken",
+          "body": "Elke rij wordt eerst gescand om te tonen hoeveel hij zou vrijmaken. Vink aan wat je wilt opruimen en bevestig. Alleen opnieuw te genereren gegevens worden aangeboden - de apt-downloadcache, oud systemd-journaal, ~/.cache, je oude /tmp-bestanden en geroteerde (niet-live) logboeken. Je G-code, timelapses en configs worden nooit aangeraakt."
+        },
+        "system": {
+          "title": "Systeeminstellingen",
+          "body": "Wijzig de tijdzone en klok, taal en toetsenbord, hostnaam of netwerk (DHCP / statisch IP) van de host, of herstart/schakel hem uit. Elke wijziging wordt meteen toegepast. Herstarten en uitschakelen worden geweigerd terwijl er een print loopt. Het wijzigen van het IP kan je verbinding met dit paneel kort verbreken."
+        },
+        "network": {
+          "title": "DHCP versus statisch IP",
+          "body": "DHCP (automatisch) laat je router het adres automatisch toewijzen. Statisch (handmatig) vergrendelt een vast adres - stel het IP, subnet (CIDR, bijv. /24), gateway (meestal je router) en DNS in. Alleen IPv4. Het adres wijzigen van de verbinding die dit paneel bedient verbreekt je sessie; verbind opnieuw op het nieuwe IP. Een verkeerd statisch adres of gateway kan de printer onbereikbaar maken totdat je het op het apparaat zelf herstelt, daarom worden de instellingen gevalideerd en is een getypte bevestiging nodig."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Host",
+          "def": "De kleine Linux-computer (bijv. een Raspberry Pi of BTT CB1) die Klipper, Moonraker en FilaMind draait - los van de microcontrollers van de printer."
+        },
+        "load": {
+          "term": "Belastingsgemiddelde",
+          "def": "Hoeveel processen stonden te wachten om te draaien, gemiddeld over 1 / 5 / 15 minuten. Globaal: een waarde rond het aantal cores betekent dat de CPU druk is; ruim daarboven betekent dat hij overbelast is."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Schijfruimte die wordt gebruikt als overloop wanneer het RAM vol raakt. Zwaar swap-gebruik vertraagt de host - een teken dat hij geheugen tekortkomt."
+        },
+        "throttle": {
+          "term": "Throttling",
+          "def": "Wanneer het board zijn snelheid verlaagt om zichzelf te beschermen - meestal door een te zwakke voeding (onderspanning) of oververhitting. Wordt vooral gemeld op Raspberry Pi."
+        },
+        "ntp": {
+          "term": "NTP / kloksynchronisatie",
+          "def": "Het Network Time Protocol houdt de klok van de host nauwkeurig. Een niet-gesynchroniseerde klok kan timelapses, logboeken en TLS-certificaten verstoren."
+        },
+        "locale": {
+          "term": "Locale",
+          "def": "De taal- en toetsenbordindelingsinstellingen van de host, gebruikt door het OS voor tekst, datums en de console-keymap."
+        },
+        "service": {
+          "term": "Dienst (unit)",
+          "def": "Een achtergrondprogramma beheerd door systemd - Klipper, Moonraker, de webcamstreamer en de netwerkstack draaien allemaal als diensten."
+        },
+        "enabled": {
+          "term": "Ingeschakeld / uitgeschakeld",
+          "def": "Of een dienst automatisch start bij het opstarten. 'enabled' start bij het opstarten; 'disabled' niet; 'static' wordt alleen door een andere dienst gestart."
+        },
+        "mask": {
+          "term": "Maskeren",
+          "def": "Een sterkere vorm van uitschakelen - de dienst kan helemaal niet worden gestart (ook niet door een andere dienst) totdat hij wordt gedemaskeerd. Gebruik met zorg."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Verversen",
+      "autoRefresh": "Automatisch verversen",
+      "loading": "Hoststatus lezen…",
+      "host": "Host",
+      "hostname": "Hostnaam",
+      "distro": "OS",
+      "kernel": "Kernel",
+      "uptime": "Uptime",
+      "cpu": "CPU",
+      "temp": "Temperatuur",
+      "load": "Belasting (1·5·15m)",
+      "cores": "Cores",
+      "throttled": "Gethrottled",
+      "memory": "Geheugen",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Schijf",
+      "network": "Netwerk",
+      "iface": "Interface",
+      "ip": "IP-adres",
+      "ssid": "Wi-Fi",
+      "signal": "Signaal",
+      "timeLocale": "Tijd & Locale",
+      "timezone": "Tijdzone",
+      "ntp": "Kloksynchronisatie",
+      "synced": "Gesynchroniseerd",
+      "syncing": "Synchroniseren…",
+      "ntpOff": "Uit",
+      "language": "Taal",
+      "keymap": "Keymap",
+      "topProcesses": "Topprocessen",
+      "command": "Opdracht",
+      "cpuPct": "CPU%",
+      "memPct": "GEH%",
+      "pid": "PID"
+    },
+    "services": {
+      "warning": "De verkeerde dienst stoppen of uitschakelen kan de printer offline halen. Kritieke diensten zijn gemarkeerd; beschermde diensten kunnen niet worden gestopt.",
+      "search": "Diensten zoeken…",
+      "refresh": "Verversen",
+      "loading": "Diensten opsommen…",
+      "loadingDetail": "Dienst lezen…",
+      "loadingLogs": "Logboek lezen…",
+      "summary": "{total} diensten · {active} actief · {failed} mislukt",
+      "filter": {
+        "all": "Alle",
+        "active": "Actief",
+        "inactive": "Inactief",
+        "failed": "Mislukt",
+        "enabled": "Ingeschakeld"
+      },
+      "stateActive": "Actief",
+      "stateInactive": "Inactief",
+      "stateFailed": "Mislukt",
+      "critical": "Kritiek",
+      "protected": "Beschermd",
+      "state": "Status",
+      "startup": "Opstart",
+      "unitFile": "Unit-bestand",
+      "action": {
+        "start": "Starten",
+        "stop": "Stoppen",
+        "restart": "Herstarten",
+        "enable": "Inschakelen",
+        "disable": "Uitschakelen",
+        "mask": "Maskeren",
+        "unmask": "Demaskeren"
+      },
+      "actionOk": "{action} voltooid.",
+      "actionFailed": "{action} mislukt.",
+      "deleteFailed": "Kon het unit-bestand niet verwijderen.",
+      "confirmAction": "{action} \"{name}\"?",
+      "confirmYes": "Ja, doe maar",
+      "cancel": "Annuleren",
+      "deleteUnit": "Unit-bestand verwijderen…",
+      "deletePrompt": "Dit verwijdert het unit-bestand permanent. Typ \"{name}\" om te bevestigen.",
+      "deleteConfirm": "Permanent verwijderen",
+      "deleted": "Unit-bestand verwijderd.",
+      "logs": "Recent logboek",
+      "noLogs": "Geen loguitvoer."
+    },
+    "cleanup": {
+      "subtitle": "Vink aan wat je wilt verwijderen en schoon op. Alleen caches en oude logboeken - prints en configs blijven veilig.",
+      "rescan": "Opnieuw scannen",
+      "scanning": "Schijf scannen…",
+      "na": "n.v.t.",
+      "items": "{n} bestanden",
+      "freed": "{size} vrijgemaakt.",
+      "selectedTotal": "Geselecteerd: {size}",
+      "clean": "Geselecteerde opschonen",
+      "confirmBody": "De geselecteerde items verwijderen?",
+      "confirmYes": "Ja, opschonen",
+      "cancel": "Annuleren",
+      "running": "Opschonen…",
+      "someFailed": "Sommige items konden niet worden opgeschoond.",
+      "targets": {
+        "apt": {
+          "label": "Pakketcache",
+          "desc": "Gedownloade .deb-installatiebestanden die apt niet meer nodig heeft."
+        },
+        "journal": {
+          "label": "Systeemjournaal",
+          "desc": "Oude systemd-logboeken - teruggebracht tot de meest recente 50 MB."
+        },
+        "cache": {
+          "label": "Gebruikerscache",
+          "desc": "Opnieuw te genereren bestanden in ~/.cache (thumbnails, pip, enz.)."
+        },
+        "tmp": {
+          "label": "Tijdelijke bestanden",
+          "desc": "Je eigen bestanden in /tmp ouder dan een dag."
+        },
+        "logs": {
+          "label": "Geroteerde logboeken",
+          "desc": "Oude, geroteerde Klipper/Moonraker-logboeken (het live logboek blijft behouden)."
+        }
+      }
+    },
+    "system": {
+      "loading": "Systeeminstellingen lezen…",
+      "done": "Klaar.",
+      "apply": "Toepassen",
+      "timeTitle": "Tijd & Datum",
+      "timezone": "Tijdzone",
+      "ntp": "Tijd automatisch instellen (NTP)",
+      "manualTime": "De klok handmatig instellen",
+      "manualTimeHint": "Zet automatische tijd uit om de klok met de hand in te stellen.",
+      "localeTitle": "Taal & Toetsenbord",
+      "language": "Taal",
+      "keymap": "Console-keymap",
+      "hostnameTitle": "Hostnaam",
+      "hostnameHint": "Alleen letters, cijfers en koppeltekens. Volledig effect na een herstart.",
+      "powerTitle": "Voeding",
+      "powerWarning": "Herstarten en uitschakelen worden geweigerd terwijl er een print loopt.",
+      "reboot": "Herstarten",
+      "shutdown": "Uitschakelen",
+      "confirmReboot": "De host nu herstarten?",
+      "confirmShutdown": "De host nu uitschakelen?",
+      "confirmYes": "Ja",
+      "cancel": "Annuleren",
+      "needsSetup": "Deze actie vereist wachtwoordloze sudo. Voer op de printer uit: sudo bash scripts/install.sh sudoers - probeer het dan opnieuw.",
+      "failed": "Die wijziging is niet toegepast.",
+      "network": {
+        "title": "Netwerk (IPv4)",
+        "unavailable": "Netwerkbewerking is niet beschikbaar op deze host (NetworkManager niet geïnstalleerd).",
+        "device": "Apparaat",
+        "method": "IP-methode",
+        "auto": "DHCP (automatisch)",
+        "manual": "Statisch (handmatig)",
+        "address": "IP-adres",
+        "cidr": "Subnet (CIDR)",
+        "gateway": "Gateway",
+        "dns": "DNS-servers",
+        "dnsHint": "Door komma's gescheiden, bijv. 1.1.1.1, 8.8.8.8 (optioneel)",
+        "warning": "Het wijzigen van het IP kan dit paneel verbreken - je moet mogelijk opnieuw verbinden op het nieuwe adres.",
+        "apply": "Netwerkinstellingen toepassen",
+        "confirmPrompt": "Dit kan het paneel onbereikbaar maken. Typ de apparaatnaam \"{device}\" om te bevestigen.",
+        "confirmYes": "Toepassen & overschakelen",
+        "applyingReconnect": "Toepassen… als het paneel niet meer reageert, verbind opnieuw op het nieuwe IP van de printer."
+      }
+    }
+  }
+}

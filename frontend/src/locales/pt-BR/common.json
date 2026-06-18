@@ -1,0 +1,48 @@
+{
+  "common": {
+    "appName": "FilaMind Flow",
+    "errors": {
+      "backendUnreachable": "Não foi possível acessar o backend do FilaMind - verifique se o serviço filamind-flow está em execução e acessível."
+    }
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "neon": "Neon",
+    "contrast": "Alto contraste",
+    "menu": "Escolher tema",
+    "midnight": "Meia-noite",
+    "ocean": "Oceano",
+    "sunset": "Pôr do sol",
+    "desc": {
+      "neon": "Noite violeta profunda com um brilho elétrico - o visual característico",
+      "midnight": "Azul-escuro profundo e profissional",
+      "dark": "Cinza-ardósia neutro e moderno",
+      "ocean": "Verde-azulado profundo com toques de água",
+      "sunset": "Ameixa quente com toques de âmbar",
+      "light": "Claro Neo-Brutalista e limpo",
+      "contrast": "Legibilidade máxima (a11y)"
+    }
+  },
+  "configApply": {
+    "title": "Aplicar ao printer.cfg…",
+    "hint": "Grava este bloco no arquivo escolhido através do portão de segurança: uma seção existente é mesclada parâmetro a parâmetro (as demais linhas permanecem), uma ausente é adicionada. Um backup é feito primeiro; recusado durante a impressão ou se o arquivo mudar no disco.",
+    "target": "Arquivo de destino",
+    "ack": "Revisei o bloco e quero gravá-lo",
+    "apply": "Aplicar",
+    "applying": "Aplicando…",
+    "busy": "A impressora está ocupada (ou outra operação está em andamento) - tente novamente quando estiver ociosa.",
+    "stale": "O arquivo mudou no disco durante a aplicação - nada foi gravado. Tente novamente.",
+    "saved": "Salvo (backup: {backup}).",
+    "added": "adicionado [{section}]: {params}",
+    "updated": "atualizado [{section}]: {params}",
+    "noop": "Tudo já estava nesses valores - nada mudou.",
+    "restartHint": "O Klipper continua usando os valores antigos até reiniciar o firmware.",
+    "restart": "Reiniciar firmware…",
+    "restartConfirm": "Confirmar reinício",
+    "restarting": "Reiniciando…",
+    "restarted": "Reinício de firmware enviado.",
+    "cancel": "Cancelar"
+  }
+}

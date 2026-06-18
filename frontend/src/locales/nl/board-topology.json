@@ -1,0 +1,268 @@
+{
+  "boardTopology": {
+    "intro": "Zie hoe de besturingsboards van je printer met elkaar verbonden zijn: de host (SBC) en elke MCU waarmee deze communiceert, met per verbinding het type en een zo goed mogelijke board-/chipinschatting - live uit de config gelezen.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "Over Board Topology",
+      "close": "Sluiten",
+      "howToRead": "Zo lees je het",
+      "steps": [
+        "De host (je SBC, bijv. een Raspberry Pi of CB1) staat bovenaan.",
+        "Elke MCU-kaart toont hoe deze verbindt (USB / CAN bus / UART) en welke chip erop zit.",
+        "Een boardinschatting verschijnt wanneer de verbindingsidentifier overeenkomt met een bekend board."
+      ],
+      "topics": {
+        "views": {
+          "title": "Fysieke vs. logische weergave",
+          "body": "De kaart tekent dezelfde boards op twee manieren. FYSIEK toont hoe de machine echt is gebouwd: een geïntegreerde SBC wordt in het mainboard getekend waarop deze geleverd wordt, CAN-toolheads hangen aan een gedeelde backbone-rail, en USB/UART-boards zijn losse eenheden. LOGISCH toont hoe Klipper het ziet: de host bovenaan met elke MCU als kind, bereikt via zijn seriële verbinding. Wissel met de Fysiek/Logisch-schakelaar."
+        },
+        "mcus": {
+          "title": "MCU's",
+          "body": "Een MCU is een microcontrollerboard dat motoren, verwarmers en sensoren aanstuurt. Een printer heeft er minstens één (het mainboard); veel printers hebben ook een toolheadboard en soms een probe- of LED-board. Dit paneel toont elke `[mcu]`-sectie die Klipper kent."
+        },
+        "connections": {
+          "title": "Verbindingstypen",
+          "body": "USB - een serieel-over-USB-verbinding (de gebruikelijke mainboardverbinding). CAN bus - een gedeelde tweedraadsbus, gangbaar voor toolheadboards. UART - een directe seriële verbinding via GPIO. Het type wordt afgeleid uit de `serial`-/`canbus_uuid`-instelling van elke MCU."
+        },
+        "detection": {
+          "title": "Hoe detectie werkt",
+          "body": "De chip en het board worden ingeschat door de verbindingsidentifier (het seriële pad of CAN-UUID) te matchen tegen een patroontabel, plus een pinmap-fingerprint van de pinnen die je config gebruikt. Een boardinschatting toont een match-betrouwbaarheid; wanneer niets matcht, staat er bij chip/board \"onbekend\" - de verbinding zelf wordt nog steeds getoond."
+        },
+        "override": {
+          "title": "Een board bevestigen of wijzigen",
+          "body": "Een serieel-id onthult meestal alleen de chip, dus de boardinschatting kan ontbreken of fout zijn. Gebruik \"Dit board bevestigen\" om een juiste inschatting vast te leggen, of \"Board wijzigen…\" / \"Board instellen…\" om het juiste uit de catalogus te kiezen. Je keuze wordt op de host opgeslagen en bij elke lezing hergebruikt; \"Wissen\" zet het terug naar de automatische inschatting."
+        },
+        "glossary": {
+          "title": "Woordenlijst",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "Microcontroller unit - een besturingsboard dat de firmware van Klipper draait (mainboard, toolhead, enz.)."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Een gedeelde tweedraadsbus die boards koppelt via een uniek UUID - populair voor toolheadbedrading."
+        },
+        "host": {
+          "term": "Host / SBC",
+          "def": "De single-board computer (Pi, CB1, …) die Klipper draait en met de MCU's communiceert."
+        }
+      }
+    },
+    "host": {
+      "label": "Host",
+      "role": "Single-board computer - draait Klipper"
+    },
+    "mcu": {
+      "chip": "Chip",
+      "board": "Board",
+      "unknown": "onbekend",
+      "identifier": "Identifier",
+      "confidence": "{pct}% match",
+      "viewBoard": "Boarddetails bekijken",
+      "hideBoard": "Details verbergen"
+    },
+    "graph": {
+      "viewLabel": "Diagramweergave",
+      "view": {
+        "physical": "Fysiek",
+        "logical": "Logisch"
+      },
+      "integrated": "SBC on-board",
+      "integratedNote": "De host-SBC is ingebouwd in het {board}-mainboard.",
+      "selectPrompt": "Selecteer een board of MCU in de kaart om het te inspecteren.",
+      "aria": "Machinekaart: de host en {n} MCU's",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} retransmits",
+        "load": "{pct}% belasting"
+      },
+      "health": {
+        "title": "Verbindingsstatus",
+        "ok": "gezond",
+        "warn": "verslechterd",
+        "out": "firmware niet gesynchroniseerd"
+      }
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "onbekend",
+      "via": "via {type}"
+    },
+    "count": "{n} MCU's",
+    "states": {
+      "loading": "Topologie lezen…",
+      "unreachable": "Kon de printer niet bereiken.",
+      "empty": "Geen MCU's gevonden in de config.",
+      "retry": "Opnieuw",
+      "refresh": "Vernieuwen"
+    },
+    "board": {
+      "suggested": "voorgesteld",
+      "ports": "{n} poorten",
+      "specsTitle": "Specs",
+      "portsTitle": "Poorten",
+      "none": "Nog geen catalogusdetails voor dit board.",
+      "noMatch": "Nog geen board gematcht - bevestig of stel er hieronder een in.",
+      "loading": "Board laden…",
+      "links": {
+        "title": "Links",
+        "product": "Product",
+        "repo": "Repo",
+        "wiki": "Wiki",
+        "pinout": "Pinout",
+        "schematic": "Schema",
+        "datasheet": "Datasheet",
+        "image": "Foto"
+      },
+      "portCat": {
+        "motor": "motor",
+        "heater_hotend": "hotend-verwarmer",
+        "heater_bed": "bed-verwarmer",
+        "accelerometer": "accelerometer",
+        "filament_sensor": "filamentsensor",
+        "fan": "ventilator",
+        "probe": "probe",
+        "other": "overig",
+        "power": "voeding",
+        "thermistor": "thermistor",
+        "usb": "USB",
+        "can": "CAN",
+        "swd": "SWD",
+        "display": "display",
+        "rgb": "RGB",
+        "network": "netwerk",
+        "endstop": "endstop",
+        "wifi": "Wi-Fi",
+        "spi": "SPI",
+        "uart": "UART"
+      },
+      "spec": {
+        "mcu": "MCU",
+        "arch": "Arch",
+        "flash_method": "Flashmethode",
+        "voltage": "Voltage",
+        "driver_slots": "Driverslots",
+        "usb": "USB",
+        "onboard_drivers": "Onboard drivers",
+        "clock": "Klok",
+        "can": "CAN",
+        "drivers": "Drivers",
+        "dimensions_mm": "Afmetingen (mm)",
+        "role_era": "Rol / tijdperk",
+        "kinematics": "Kinematica",
+        "build_volume_mm": "Bouwvolume (mm)",
+        "bed": "Bed",
+        "hotend": "Hotend",
+        "stock_extruder": "Standaard extruder",
+        "year": "Jaar",
+        "control_board": "Besturingsboard",
+        "stock_drivers": "Standaard drivers",
+        "uart": "UART",
+        "connectivity": "Connectiviteit",
+        "max_hotend_temp": "Max. hotendtemp.",
+        "max_bed_temp": "Max. bedtemp.",
+        "spi": "SPI",
+        "notes": "Notities",
+        "eth_wifi": "Eth/WiFi",
+        "class": "Klasse",
+        "supported_drivers": "Ondersteunde drivers",
+        "form_factor": "Vormfactor",
+        "flash": "Flash",
+        "all_metal_accel": "All-metal / accel",
+        "ethernet_wifi": "Ethernet/WiFi",
+        "i2c": "I2C",
+        "driver": "Driver",
+        "i2cspi": "I2C/SPI",
+        "printer_board": "Printer / board",
+        "accelerometer": "Accelerometer",
+        "printers": "Printers",
+        "bootloader": "Bootloader",
+        "flash_offset": "Flash-offset",
+        "soc": "SoC",
+        "ram": "RAM",
+        "role": "Rol",
+        "connection": "Verbinding",
+        "storage": "Opslag",
+        "host": "Host"
+      },
+      "class": {
+        "mainboard": "mainboard",
+        "printer_preset": "printer-preset",
+        "toolhead": "toolhead",
+        "host": "host",
+        "expansion": "uitbreiding"
+      }
+    },
+    "components": {
+      "title": "Componenten",
+      "motor": "Motoren",
+      "driver": "Drivers",
+      "heater": "Verwarmers",
+      "fan": "Ventilatoren",
+      "sensor": "Sensoren"
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "Details",
+        "atlas": "Pin Atlas"
+      },
+      "summary": "{used}/{total} pinnen gebruikt · {free} vrij",
+      "loading": "Pinmap lezen…",
+      "failed": "Kon de pinmap niet lezen.",
+      "unavailable": "Nog geen pinmap voor dit board.",
+      "search": "Zoek pinnen, signalen, secties…",
+      "freeOnly": "Alleen vrije",
+      "noMatch": "Geen pinnen komen overeen.",
+      "other": "Overig",
+      "conflict": "Pinconflict",
+      "caveat": "Bedradingskanttekening"
+    },
+    "override": {
+      "confirmed": "Door jou bevestigd",
+      "confirm": "Dit board bevestigen",
+      "change": "Board wijzigen…",
+      "set": "Board instellen…",
+      "clear": "Wissen",
+      "pickPlaceholder": "Zoek in de boardcatalogus…",
+      "hint": "Je keuze wordt op de host opgeslagen en vanaf nu voor deze MCU gebruikt."
+    },
+    "sync": {
+      "synced": "Firmware gesynchroniseerd",
+      "outOfSync": "Firmware NIET GESYNCHRONISEERD"
+    },
+    "snapshot": {
+      "save": "Snapshot opslaan",
+      "copy": "Samenvatting kopiëren",
+      "copied": "Gekopieerd!",
+      "none": "Geen basislijn opgeslagen - sla een snapshot op om toekomstige wijzigingen te detecteren.",
+      "unchanged": "Geen hardwarewijzigingen sinds de snapshot",
+      "changed": "{n} wijziging(en) sinds de snapshot",
+      "summaryTitle": "FilaMind - machinekaart",
+      "change": {
+        "added": "MCU “{mcu}” is toegevoegd",
+        "removed": "MCU “{mcu}” is verwijderd",
+        "board_changed": "board van “{mcu}” gewijzigd: {before} → {after}",
+        "connection_changed": "verbinding van “{mcu}” gewijzigd: {before} → {after}",
+        "chip_changed": "chip van “{mcu}” gewijzigd: {before} → {after}",
+        "components_changed": "aantal componenten van “{mcu}” gewijzigd: {before} → {after}"
+      },
+      "noCompare": "Kon niet vergelijken - de printer is onbereikbaar.",
+      "summaryHost": "Host: {name}",
+      "summaryIntegrated": "SBC geïntegreerd op {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "board {board}",
+      "summaryComponents": "{n} componenten"
+    },
+    "jump": {
+      "section": "Open deze sectie in de Config Editor",
+      "drivers": "Openen in Motor Drivers",
+      "firmware": "Open Firmware Manager"
+    }
+  }
+}

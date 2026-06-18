@@ -1,0 +1,69 @@
+{
+  "configTemplates": {
+    "intro": "Gotowe do wklejenia bloki konfiguracji Klipper i makra - sekwencje startowe, obsługa filamentu, kształtowanie sygnału, siatka stołu i więcej. Skopiuj jeden i wklej go do swojego printer.cfg (Edytor konfiguracji to dobre miejsce do wklejenia).",
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "O szablonach konfiguracji",
+      "close": "Zamknij",
+      "howToRead": "Jak używać",
+      "steps": [
+        "Filtruj według kategorii, aby znaleźć makro lub blok konfiguracji.",
+        "Przeczytaj opis i sprawdź, jakich sekcji wymaga.",
+        "Skopiuj szablon, wklej go do swojej konfiguracji i dostosuj wartości."
+      ],
+      "topics": {
+        "what": {
+          "title": "Czym one są",
+          "body": "Starannie dobrany zestaw typowych elementów budulcowych Klipper: gcode_macros (PRINT_START, PAUSE/RESUME, ładowanie/rozładowanie filamentu, M600) oraz sekcje konfiguracji ([input_shaper], [bed_mesh], [firmware_retraction], …). To punkty wyjścia - przeczytaj każdy z nich i dostrój go do swojej maszyny."
+        },
+        "insert": {
+          "title": "Wstawianie szablonu",
+          "body": "Skopiuj szablon, a następnie wklej go do swojego printer.cfg - widok Raw w Edytorze konfiguracji to wygodne miejsce. Po zapisaniu restart oprogramowania go zastosuje. Zawsze najpierw sprawdź wartości; ustawienia domyślne są rozsądne, ale nie są dostrojone do Twojej drukarki."
+        },
+        "sections": {
+          "title": "Wymagane sekcje",
+          "body": "Każdy szablon wymienia sekcje konfiguracji, które definiuje lub od których zależy. Jeśli sekcja już istnieje w Twojej konfiguracji, scal klucze zamiast wklejać duplikat (zduplikowana sekcja jest odrzucana przy starcie)."
+        },
+        "glossary": {
+          "title": "Słowniczek",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "template": {
+          "term": "Szablon",
+          "def": "Gotowy do wklejenia fragment konfiguracji Klipper lub G-code makra, który kopiujesz do printer.cfg."
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "Nazwane polecenie, które definiujesz w konfiguracji (np. PRINT_START) i które uruchamia sekwencję G-code."
+        },
+        "section": {
+          "term": "Sekcja",
+          "def": "Blok konfiguracji w [nawiasach], np. [bed_mesh] - jednostka, w którą grupowana jest konfiguracja Klipper."
+        }
+      }
+    },
+    "category": {
+      "label": "Kategoria",
+      "all": "Wszystkie kategorie"
+    },
+    "template": {
+      "copy": "Kopiuj",
+      "copied": "Skopiowano!",
+      "requires": "Sekcje: {sections}",
+      "requiresNone": "-"
+    },
+    "count": "{n} szablonów",
+    "states": {
+      "loading": "Wczytywanie szablonów…",
+      "error": "Nie udało się wczytać szablonów.",
+      "empty": "Brak szablonów w tej kategorii.",
+      "retry": "Ponów"
+    },
+    "categories": {
+      "config_blocks": "Bloki konfiguracji",
+      "macros": "Makra"
+    }
+  }
+}

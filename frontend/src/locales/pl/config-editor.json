@@ -1,0 +1,243 @@
+{
+  "configEditor": {
+    "intro": "Odczytuj konfigurację drukarki na żywo prosto z Moonraker - każdy plik, rozłożony na sekcje i parametry, z oznaczonymi problemami strukturalnymi. Na razie tylko do odczytu; edycja z asystą pojawi się wkrótce.",
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "O edytorze konfiguracji",
+      "close": "Zamknij",
+      "howToRead": "Jak używać",
+      "steps": [
+        "Wybierz plik konfiguracji z listy rozwijanej - printer.cfg jest zaznaczony domyślnie.",
+        "Przeglądaj jego sekcje; kliknij jedną, aby rozwinąć jej parametry.",
+        "Sprawdź baner walidacji pod kątem problemów strukturalnych, takich jak zduplikowana sekcja.",
+        "Przełącz na widok surowy, aby odczytać dokładny tekst pliku."
+      ],
+      "topics": {
+        "sections": {
+          "title": "Sekcje i parametry",
+          "body": "Konfiguracja Klipper to lista bloków [section], z których każdy zawiera parametry klucz: wartość. Ten widżet analizuje każdą sekcję - w tym te o nazwie typu [tmc2209 stepper_x] - i wypisuje jej parametry wraz z wartością i ewentualnym komentarzem wbudowanym. Wartości wieloliniowe (jak gcode: makra) są zachowane w całości."
+        },
+        "includes": {
+          "title": "Pliki dołączane",
+          "body": "printer.cfg często dołącza inne pliki przez [include other.cfg] (lub wzorzec typu [include configs/*.cfg]). Każde dołączenie jest pokazane jako osobny wpis; wybierz dołączony plik z listy rozwijanej, aby sprawdzić, co definiuje."
+        },
+        "validation": {
+          "title": "Walidacja",
+          "body": "Po analizie konfiguracja jest sprawdzana pod kątem problemów strukturalnych, które są błędne niezależnie od typu sekcji - zduplikowany nagłówek sekcji, pusta nazwa sekcji lub parametr znajdujący się poza jakąkolwiek sekcją. Pojawiają się one w banerze walidacji; nie zmieniają Twojego pliku."
+        },
+        "saveConfig": {
+          "title": "Blok SAVE_CONFIG",
+          "body": "Klipper dopisuje automatycznie generowany blok na końcu printer.cfg (po znaczniku #*#) po uruchomieniu SAVE_CONFIG - wyniki kalibracji, takie jak PID i przesunięcia Z. Jest pokazywany, ale oznaczony jako zapisany automatycznie i wykluczony z liczby edytowalnych sekcji, ponieważ nie należy go edytować ręcznie."
+        },
+        "readonly": {
+          "title": "Tylko do odczytu (na razie)",
+          "body": "Ta pierwsza wersja jedynie odczytuje i wyświetla konfigurację - nic nie jest zapisywane do drukarki. Edycja z asystą, z potwierdzeniem (z automatyczną kopią zapasową przed każdym zapisem i restartem po nim) pojawi się w późniejszej aktualizacji."
+        },
+        "glossary": {
+          "title": "Słowniczek",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "section": {
+          "term": "Sekcja",
+          "def": "Blok [nagłówek] grupujący powiązane ustawienia, np. [stepper_x] lub [extruder]."
+        },
+        "parameter": {
+          "term": "Parametr",
+          "def": "Linia klucz: wartość (lub klucz = wartość) wewnątrz sekcji, opcjonalnie z końcowym komentarzem #."
+        },
+        "include": {
+          "term": "[include]",
+          "def": "Dyrektywa, która dołącza inny plik konfiguracji do printer.cfg, dzięki czemu ustawienia można rozdzielić na kilka plików."
+        },
+        "saveConfig": {
+          "term": "SAVE_CONFIG",
+          "def": "Automatycznie generowany blok (po #*#), w którym Klipper przechowuje wyniki kalibracji - nie edytuj go ręcznie."
+        }
+      }
+    },
+    "file": {
+      "label": "Plik konfiguracji",
+      "placeholder": "Wybierz plik…",
+      "refresh": "Odśwież",
+      "loadingList": "Wczytywanie plików…",
+      "emptyList": "Nie znaleziono plików konfiguracji na drukarce."
+    },
+    "summary": {
+      "sections": "{count} sekcji",
+      "params": "{count} parametrów",
+      "size": "{kb} KB"
+    },
+    "validation": {
+      "title": "Walidacja",
+      "clean": "Nie znaleziono problemów strukturalnych.",
+      "error": "Błąd",
+      "warning": "Ostrzeżenie"
+    },
+    "view": {
+      "structured": "Strukturalny",
+      "raw": "Surowy",
+      "expandAll": "Rozwiń wszystko",
+      "collapseAll": "Zwiń wszystko"
+    },
+    "section": {
+      "saveBadge": "zapisane automatycznie",
+      "noParams": "(brak parametrów)",
+      "paramsCount": "{count} param.",
+      "paramHead": "Parametr",
+      "valueHead": "Wartość"
+    },
+    "edit": {
+      "hint": "Edytuj surowy tekst poniżej, a następnie zapisz. Przed każdym zapisem tworzona jest kopia zapasowa z sygnaturą czasową."
+    },
+    "save": {
+      "button": "Zapisz",
+      "saving": "Zapisywanie…",
+      "unsaved": "Niezapisane zmiany",
+      "revert": "Cofnij",
+      "confirmTitle": "Zapisać do drukarki?",
+      "confirmBody": "Spowoduje to nadpisanie {file} na drukarce. Najpierw zapisywana jest kopia zapasowa z sygnaturą czasową, a do zastosowania zmiany potrzebny jest restart firmware.",
+      "ack": "Rozumiem, że spowoduje to zapis do drukarki",
+      "confirm": "Zapisz",
+      "cancel": "Anuluj",
+      "done": "Zapisano. Kopia zapasowa: {backup}",
+      "busy": "Odrzucono: drukarka jest zajęta (drukuje lub jest wstrzymana). Spróbuj ponownie, gdy będzie bezczynna.",
+      "error": "Zapis nie powiódł się.",
+      "stale": "Plik zmienił się na dysku od czasu wczytania (mógł zostać zapisany SAVE_CONFIG lub inna aplikacja go edytowała). Zapis teraz nadpisałby tę zmianę - wczytaj ponownie, aby ją przejrzeć (oś czasu kopii zapasowych pokazuje różnice).",
+      "staleReload": "Wczytaj plik ponownie"
+    },
+    "restart": {
+      "prompt": "Zrestartować firmware, aby zastosować zmianę?",
+      "button": "Restart firmware",
+      "restarting": "Restartowanie…",
+      "confirmTitle": "Zrestartować firmware?",
+      "confirmBody": "FIRMWARE_RESTART ponownie wczytuje konfigurację i na chwilę przerywa pracę drukarki. Rób to tylko wtedy, gdy jest bezczynna.",
+      "confirm": "Restart teraz",
+      "cancel": "Anuluj",
+      "done": "Zażądano restartu firmware.",
+      "busy": "Odrzucono: drukarka jest zajęta. Zrestartuj, gdy będzie bezczynna.",
+      "error": "Restart nie powiódł się."
+    },
+    "states": {
+      "loading": "Odczytywanie konfiguracji…",
+      "error": "Nie udało się odczytać konfiguracji z drukarki.",
+      "retry": "Ponów"
+    },
+    "catalog": {
+      "title": "Dodaj blok konfiguracji z katalogu",
+      "hint": "Wybierz część - jej dokładny sprzętowo blok Klipper (rzeczywiste run_current, sense_resistor, nazwy pinów) zostanie dołączony do pliku do przejrzenia i zapisania.",
+      "drivers": "Sterowniki",
+      "motors": "Silniki",
+      "boards": "Płyty",
+      "pickPlaceholder": "Przeszukaj katalog…",
+      "inserted": "Wstawiono blok dla {name} - przejrzyj go w widoku surowym i zapisz.",
+      "noSnippet": "Brak dostępnego bloku konfiguracji dla {name}."
+    },
+    "drift": {
+      "title": "Co działa w Klipper",
+      "pending": "Klipper ma niezapisane zmiany (oczekuje SAVE_CONFIG) - zapisanie tego pliku teraz nadpisałoby je. Najpierw uruchom SAVE_CONFIG w konsoli.",
+      "warningsTitle": "Ostrzeżenia konfiguracji Klipper",
+      "count": "{n} wartości na dysku różni się od tych działających (edytowane, ale bez FIRMWARE_RESTART):",
+      "adopt": "przyjmij z działającej"
+    },
+    "pinDoctor": {
+      "title": "Doktor pinów - {n} ustaleń dot. okablowania",
+      "conflict": "KONFLIKT",
+      "caveat": "ZASTRZEŻENIE"
+    },
+    "tmc": {
+      "review": "przejrzyj w widoku surowym i zapisz"
+    },
+    "pinEdit": {
+      "offBoard": "nie na płycie",
+      "offBoardHint": "Tego pinu nie ma w znanej mapie pinów płyty - sprawdź literówkę lub pin EXP/wirtualny.",
+      "double": "użyty ponownie",
+      "doubleHint": "Ten pin jest przypisany w więcej niż jednej sekcji.",
+      "caveat": "zastrzeżenie"
+    },
+    "project": {
+      "title": "Projekt (dołączenia i wyszukiwanie)",
+      "lintBadge": "{n} problemów",
+      "searchPlaceholder": "Przeszukaj każdy plik konfiguracji…",
+      "searchBtn": "Szukaj",
+      "noResults": "Brak dopasowań.",
+      "matchesCount": "{n} dopasowań",
+      "truncated": "wyświetlanie pierwszych wyników",
+      "tree": "Drzewo dołączeń",
+      "missing": "brakujący plik",
+      "lint": "Sprawdzenia międzyplikowe",
+      "rule": {
+        "broken_include": "Uszkodzone dołączenie: ",
+        "orphan_driver": "Osierocony sterownik - brak pasującej sekcji: ",
+        "section_override": "Nadpisanie (zdefiniowane w wielu plikach, ostatnie wygrywa): "
+      }
+    },
+    "knowledge": {
+      "viewDriver": "Zobacz {model} w katalogu →",
+      "stepper": "Oś silnika krokowego - jej piny sterownika, dystans obrotu, mikrokroki oraz bazowanie/krańcówkę.",
+      "tmc": "Sterownik krokowy Trinamic - prąd pracy/spoczynkowy, mikrokroki oraz strojenie StallGuard/chopper dla jego silnika.",
+      "extruder": "Hotend i ekstruder - rozmiar dyszy, ścieżkę filamentu, grzałkę, termistor i PID.",
+      "heater_bed": "Podgrzewany stół - jego pin grzałki, termistor oraz limity PID/temperatury.",
+      "fan": "Wentylator chłodzenia wydruku, który chłodzi świeżo wydrukowany filament.",
+      "heater_fan": "Wentylator powiązany z grzałką (np. chłodzenie hotendu), który działa, aby chronić ją przed przegrzaniem.",
+      "controller_fan": "Wentylator chłodzący sterowniki krokowe / elektronikę, gdy silniki są aktywne.",
+      "mcu": "Płyta mikrokontrolera z firmware Klipper - jej połączenie szeregowe lub CAN.",
+      "printer": "Globalna kinematyka maszyny i limity ruchu (typ, maks. prędkość, przyspieszenie).",
+      "bed_mesh": "Automatyczne poziomowanie stołu - sonduje siatkę i kompensuje płaskość stołu podczas drukowania.",
+      "probe": "Sonda Z używana do wykrywania powierzchni stołu przy bazowaniu i siatce stołu.",
+      "gcode_macro": "Niestandardowe makro G-code - nazwane polecenie wywoływalne z konsoli lub innych makr.",
+      "output_pin": "Sterowalny pin wyjściowy (np. dioda LED, przekaźnik lub linia aktywacji).",
+      "neopixel": "Adresowalne diody RGB (NeoPixel / WS2812) i sterowanie ich kolorem.",
+      "board_pins": "Przyjazne aliasy fizycznych pinów płyty, do których odwołuje się reszta konfiguracji.",
+      "input_shaper": "Kompensacja rezonansu, która redukuje dzwonienie i zjawy przy wyższych prędkościach.",
+      "safe_z_home": "Bazuje Z w bezpiecznej pozycji XY (często na środku stołu), aby chronić dyszę i stół.",
+      "z_tilt": "Reguluje wiele silników Z, aby płaszczyzna ramy/stołu była wypoziomowana.",
+      "quad_gantry_level": "Poziomuje czteropunktową ramę, aby była równoległa do stołu.",
+      "filament_switch_sensor": "Czujnik końca filamentu, który wstrzymuje wydruk, gdy filament się skończy.",
+      "virtual_sdcard": "Pozwala Klipper drukować pliki wgrane na hosta (wymagane przez Mainsail i Fluidd)."
+    },
+    "backups": {
+      "title": "Kopie zapasowe ({n})",
+      "diff": "Różnice",
+      "hideDiff": "Ukryj różnice",
+      "restore": "Przywróć",
+      "diffHint": "różnica względem bieżącego pliku",
+      "unchanged": "⋯ {n} niezmienionych linii ⋯",
+      "note": "Migawki są zapisywane automatycznie przed każdym zapisem. Przywrócenie wczytuje jedną do edytora w celu ostatecznego przeglądu i zapisu."
+    },
+    "sanity": {
+      "title": "Kontrola wartości sterownika ({n})",
+      "note": "Sprawdzono {n} sekcji sterownika TMC. Sterownik bez wyznaczonego limitu i silnik krokowy bez przypisanego silnika są pomijane, a nie zgadywane.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} A przekracza limit pełnej skali sterownika ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A mieści się w 10% limitu sterownika ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A przekracza wartość znamionową {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A mieści się w 10% wartości znamionowej {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} nie jest potęgą dwójki (1…256)."
+      }
+    },
+    "panels": {
+      "failed": "Niektóre panele nie mogły się wczytać i są ukryte: {panels}. To, co by sprawdzały, jest teraz nieznane - niekoniecznie w porządku.",
+      "name": {
+        "drift": "Dysk vs działające",
+        "pinDoctor": "Doktor pinów",
+        "sanity": "Kontrola sterownika",
+        "project": "Widok projektu",
+        "pinMap": "Sugestie pinów",
+        "backups": "Kopie zapasowe"
+      }
+    },
+    "addPart": {
+      "title": "Dodaj część (świadoma wolnych pinów)",
+      "hint": "Wybierz typ części i jeden z pinów płyty, którego NIC jeszcze nie używa (odczytane na żywo z Twojej konfiguracji + mapy płyty), a otrzymasz gotową sekcję zapisaną przez bramkę bezpieczeństwa - bez zgadywania pinów.",
+      "kind": "Typ części",
+      "name": "Nazwa",
+      "namePh": "np. chamber_fan",
+      "mcu": "Płyta (MCU)",
+      "pin": "Wolny pin",
+      "pinPh": "Wybierz wolny pin…",
+      "noFree": "Brak wolnych nazwanych pinów na tej mapie płyty."
+    }
+  }
+}

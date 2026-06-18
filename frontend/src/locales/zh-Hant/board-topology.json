@@ -1,0 +1,268 @@
+{
+  "boardTopology": {
+    "intro": "查看印表機控制板的連線方式：主機 (SBC) 與它所通訊的每個 MCU，包含各自的連線類型，以及盡力推測的板子／晶片型號 — 全部即時讀取自設定檔。",
+    "help": {
+      "guide": "說明",
+      "guideTitle": "關於控制板拓撲",
+      "close": "關閉",
+      "howToRead": "如何解讀",
+      "steps": [
+        "主機 (你的 SBC，例如 Raspberry Pi 或 CB1) 位於最上方。",
+        "每張 MCU 卡片顯示它的連線方式 (USB／CAN bus／UART) 及其晶片。",
+        "當連線識別碼比對到已知板子時，會顯示板子推測結果。"
+      ],
+      "topics": {
+        "views": {
+          "title": "實體檢視 vs 邏輯檢視",
+          "body": "拓撲圖會以兩種方式繪製同一組板子。實體檢視顯示機器實際的構成方式：整合式 SBC 會繪製在它隨附的主機板內部，CAN 工具頭掛接在共用的匯流排上，USB／UART 板則是獨立的單元。邏輯檢視顯示 Klipper 眼中的樣貌：主機位於最上方，每個 MCU 都是透過其序列連線連到主機的子節點。使用「實體／邏輯」切換鈕來切換。"
+        },
+        "mcus": {
+          "title": "MCU",
+          "body": "MCU 是驅動馬達、加熱器與感測器的微控制器板。一台印表機至少有一個 (主機板)；許多會再加上工具頭板，有時還有探針或 LED 板。本面板會列出 Klipper 擁有的每一個 `[mcu]` 區段。"
+        },
+        "connections": {
+          "title": "連線類型",
+          "body": "USB — 透過 USB 的序列連線 (一般主機板的連線方式)。CAN bus — 共用的雙線匯流排，常見於工具頭板。UART — 透過 GPIO 的直接序列連線。連線類型是從每個 MCU 的 `serial`／`canbus_uuid` 設定推斷而來。"
+        },
+        "detection": {
+          "title": "偵測原理",
+          "body": "晶片與板子是透過將連線識別碼 (序列路徑或 CAN UUID) 與樣式表比對，再加上你設定檔所用接腳的腳位對應指紋來推測。板子推測結果會顯示比對信心度；當沒有任何項目相符時，晶片／板子會顯示「未知」 — 連線本身仍會顯示出來。"
+        },
+        "override": {
+          "title": "確認或變更板子",
+          "body": "序列 id 通常只透露晶片，因此板子推測可能缺漏或錯誤。使用「確認此板子」以鎖定正確的推測，或使用「變更板子…」／「設定板子…」從型錄中挑選正確的板子。你的選擇會儲存在主機上，並在每次讀取時重複使用；「清除」會還原為自動推測。"
+        },
+        "glossary": {
+          "title": "詞彙表",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "mcu": {
+          "term": "MCU",
+          "def": "微控制器單元 — 執行 Klipper 韌體的控制板 (主機板、工具頭等)。"
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "以唯一 UUID 連接各板子的雙線共用匯流排 — 工具頭佈線常用。"
+        },
+        "host": {
+          "term": "主機／SBC",
+          "def": "執行 Klipper 並與 MCU 通訊的單板電腦 (Pi、CB1…)。"
+        }
+      }
+    },
+    "host": {
+      "label": "主機",
+      "role": "單板電腦 — 執行 Klipper"
+    },
+    "mcu": {
+      "chip": "晶片",
+      "board": "板子",
+      "unknown": "未知",
+      "identifier": "識別碼",
+      "confidence": "{pct}% 符合",
+      "viewBoard": "檢視板子詳情",
+      "hideBoard": "隱藏詳情"
+    },
+    "graph": {
+      "viewLabel": "拓撲圖檢視",
+      "view": {
+        "physical": "實體",
+        "logical": "邏輯"
+      },
+      "integrated": "板載 SBC",
+      "integratedNote": "主機 SBC 內建於 {board} 主機板上。",
+      "selectPrompt": "在拓撲圖中選取板子或 MCU 以檢視其資訊。",
+      "aria": "機器拓撲圖：主機與 {n} 個 MCU",
+      "vitals": {
+        "freq": "{mhz} MHz",
+        "retx": "{n} 次重傳",
+        "load": "{pct}% 負載"
+      },
+      "health": {
+        "title": "連線健康度",
+        "ok": "良好",
+        "warn": "降級",
+        "out": "韌體不同步"
+      }
+    },
+    "conn": {
+      "canbus": "CAN bus",
+      "usb": "USB",
+      "uart": "UART",
+      "unknown": "未知",
+      "via": "透過 {type}"
+    },
+    "count": "{n} 個 MCU",
+    "states": {
+      "loading": "正在讀取拓撲…",
+      "unreachable": "無法連上印表機。",
+      "empty": "設定檔中找不到 MCU。",
+      "retry": "重試",
+      "refresh": "重新整理"
+    },
+    "board": {
+      "suggested": "建議",
+      "ports": "{n} 個連接埠",
+      "specsTitle": "規格",
+      "portsTitle": "連接埠",
+      "none": "此板子尚無型錄詳情。",
+      "noMatch": "尚無相符的板子 — 請在下方確認或設定一個。",
+      "loading": "正在載入板子…",
+      "links": {
+        "title": "連結",
+        "product": "產品",
+        "repo": "原始碼庫",
+        "wiki": "Wiki",
+        "pinout": "腳位圖",
+        "schematic": "電路圖",
+        "datasheet": "資料表",
+        "image": "照片"
+      },
+      "portCat": {
+        "motor": "馬達",
+        "heater_hotend": "熱端加熱器",
+        "heater_bed": "熱床加熱器",
+        "accelerometer": "加速度計",
+        "filament_sensor": "斷料偵測器",
+        "fan": "風扇",
+        "probe": "探針",
+        "other": "其他",
+        "power": "電源",
+        "thermistor": "熱敏電阻",
+        "usb": "USB",
+        "can": "CAN",
+        "swd": "SWD",
+        "display": "顯示器",
+        "rgb": "RGB",
+        "network": "網路",
+        "endstop": "限位開關",
+        "wifi": "Wi-Fi",
+        "spi": "SPI",
+        "uart": "UART"
+      },
+      "spec": {
+        "mcu": "MCU",
+        "arch": "架構",
+        "flash_method": "燒錄方式",
+        "voltage": "電壓",
+        "driver_slots": "驅動器插槽",
+        "usb": "USB",
+        "onboard_drivers": "板載驅動器",
+        "clock": "時脈",
+        "can": "CAN",
+        "drivers": "驅動器",
+        "dimensions_mm": "尺寸 (mm)",
+        "role_era": "角色／世代",
+        "kinematics": "運動學",
+        "build_volume_mm": "列印空間 (mm)",
+        "bed": "熱床",
+        "hotend": "熱端",
+        "stock_extruder": "原廠擠出機",
+        "year": "年份",
+        "control_board": "控制板",
+        "stock_drivers": "原廠驅動器",
+        "uart": "UART",
+        "connectivity": "連線能力",
+        "max_hotend_temp": "熱端最高溫度",
+        "max_bed_temp": "熱床最高溫度",
+        "spi": "SPI",
+        "notes": "備註",
+        "eth_wifi": "Eth／WiFi",
+        "class": "類別",
+        "supported_drivers": "支援的驅動器",
+        "form_factor": "外型規格",
+        "flash": "Flash",
+        "all_metal_accel": "全金屬／加速度計",
+        "ethernet_wifi": "乙太網路／WiFi",
+        "i2c": "I2C",
+        "driver": "驅動器",
+        "i2cspi": "I2C／SPI",
+        "printer_board": "印表機／板子",
+        "accelerometer": "加速度計",
+        "printers": "印表機",
+        "bootloader": "Bootloader",
+        "flash_offset": "Flash 偏移",
+        "soc": "SoC",
+        "ram": "RAM",
+        "role": "角色",
+        "connection": "連線",
+        "storage": "儲存空間",
+        "host": "主機"
+      },
+      "class": {
+        "mainboard": "主機板",
+        "printer_preset": "印表機預設",
+        "toolhead": "工具頭",
+        "host": "主機",
+        "expansion": "擴充板"
+      }
+    },
+    "components": {
+      "title": "元件",
+      "motor": "馬達",
+      "driver": "驅動器",
+      "heater": "加熱器",
+      "fan": "風扇",
+      "sensor": "感測器"
+    },
+    "pinAtlas": {
+      "tab": {
+        "details": "詳情",
+        "atlas": "腳位圖譜"
+      },
+      "summary": "已使用 {used}/{total} 個接腳 · {free} 個閒置",
+      "loading": "正在讀取腳位對應…",
+      "failed": "無法讀取腳位對應。",
+      "unavailable": "此板子尚無腳位對應。",
+      "search": "搜尋接腳、訊號、區段…",
+      "freeOnly": "僅顯示閒置",
+      "noMatch": "沒有相符的接腳。",
+      "other": "其他",
+      "conflict": "接腳衝突",
+      "caveat": "佈線注意事項"
+    },
+    "override": {
+      "confirmed": "已由你確認",
+      "confirm": "確認此板子",
+      "change": "變更板子…",
+      "set": "設定板子…",
+      "clear": "清除",
+      "pickPlaceholder": "搜尋板子型錄…",
+      "hint": "你的選擇會儲存在主機上，並從此用於此 MCU。"
+    },
+    "sync": {
+      "synced": "韌體已同步",
+      "outOfSync": "韌體不同步"
+    },
+    "snapshot": {
+      "save": "儲存快照",
+      "copy": "複製摘要",
+      "copied": "已複製！",
+      "none": "尚未儲存基準 — 儲存一份快照以偵測未來的變更。",
+      "unchanged": "自快照以來無硬體變更",
+      "changed": "自快照以來有 {n} 項變更",
+      "summaryTitle": "FilaMind — 機器拓撲圖",
+      "change": {
+        "added": "已新增 MCU「{mcu}」",
+        "removed": "已移除 MCU「{mcu}」",
+        "board_changed": "「{mcu}」板子已變更：{before} → {after}",
+        "connection_changed": "「{mcu}」連線已變更：{before} → {after}",
+        "chip_changed": "「{mcu}」晶片已變更：{before} → {after}",
+        "components_changed": "「{mcu}」元件數量已變更：{before} → {after}"
+      },
+      "noCompare": "無法比對 — 印表機無法連線。",
+      "summaryHost": "主機：{name}",
+      "summaryIntegrated": "SBC 整合於 {board}",
+      "summaryMcu": "MCU {name}",
+      "summaryBoard": "板子 {board}",
+      "summaryComponents": "{n} 個元件"
+    },
+    "jump": {
+      "section": "在設定編輯器中開啟此區段",
+      "drivers": "在馬達驅動器中開啟",
+      "firmware": "開啟韌體管理員"
+    }
+  }
+}

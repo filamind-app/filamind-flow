@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "che cos'è?",
+      "topics": {
+        "glossary": {
+          "title": "Termini dell'input shaping"
+        },
+        "analyze": {
+          "title": "Analizzare un CSV di risonanza",
+          "body": "Acquisisci i dati sulla stampante con TEST_RESONANCES (o usa gli 🔴 Strumenti live), poi carica il file .csv qui. FilaMind esegue i calcoli di shaping propri di Klipper e consiglia uno shaper + una frequenza. Fai il file X e il file Y a turno - si combinano in un unico blocco di configurazione."
+        },
+        "grade": {
+          "title": "Cosa significa il voto A-F",
+          "body": "Un punteggio di qualità della misura su cinque parti uguali: nitidezza del picco, vibrazione residua, smoothing, frequenza (40-90 Hz è sano) e quanto è pulita la risonanza. A/B → applicalo; C → utilizzabile, scorri i consigli; D/F → sistema la meccanica e ripeti il test."
+        },
+        "diagnostics": {
+          "title": "Leggere la diagnostica",
+          "body": "Ogni scheda mappa la misura su una probabile causa meccanica e una soluzione. Verde lime = sano, giallo = da migliorare, rosso = da risolvere prima di fidarsi del risultato. Applica una soluzione, ripeti e guarda la scheda diventare verde."
+        },
+        "chart": {
+          "title": "Leggere il grafico di frequenza",
+          "body": "Le curve continue sono l'energia di vibrazione misurata (totale X+Y+Z più ogni asse). Il ▲ segna la risonanza dominante. Le curve tenui sono la vibrazione residua di ogni shaper sulle varie frequenze - quella consigliata (rosa) scende più in basso in corrispondenza del tuo picco."
+        },
+        "shapers": {
+          "title": "Scegliere uno shaper",
+          "body": "Ogni riga bilancia la vibrazione residua con lo smoothing. ZV / MZV sono i più leggeri (risonanza singola e pulita); EI è più robusto; 2-/3-hump gestiscono risonanze ampie o multiple ma smussano di più. FilaMind evidenzia il miglior compromesso."
+        },
+        "config": {
+          "title": "Applicare la configurazione",
+          "body": "Questo blocco [input_shaper] contiene il tuo risultato X e/o Y. Copialo in printer.cfg e riavvia Klipper. I badge mostrano quali assi sono acquisiti - acquisisci sia X che Y per un blocco completo."
+        },
+        "noise": {
+          "title": "Controllo del rumore",
+          "body": "Legge la vibrazione a riposo dell'accelerometro senza muoversi - una rapida verifica del montaggio prima del test. Regola empirica di Klipper: ~1-100 è normale, ~1000+ indica un sensore o un cablaggio allentato. Sistema prima un montaggio rumoroso, altrimenti ogni test è inaffidabile."
+        },
+        "belts": {
+          "title": "Confronto cinghie (CoreXY)",
+          "body": "Eccita ogni diagonale di cinghia e sovrappone le due risposte. Frequenze di picco coincidenti = tensione uniforme. Uno scarto significa che la cinghia a frequenza più bassa è più lenta - tendila e ripeti finché i picchi non si allineano."
+        },
+        "axesMap": {
+          "title": "Rilevamento axes-map",
+          "body": "Sposta un po' la testa di stampa in X, poi Y, poi Z per capire come è montato l'accelerometro e ti fornisce la riga axes_map per printer.cfg. Eseguilo una volta dopo aver montato o spostato il sensore, così ogni test successivo legge gli assi corretti."
+        },
+        "sustain": {
+          "title": "Frequenza sostenuta",
+          "body": "Tiene la testa di stampa vibrante a una sola frequenza così puoi toccare cinghie, carrello e telaio con la mano per trovare cosa vibra. Lo spettrogramma + la timeline mostrano se la tua frequenza target sta dominando e quando un tocco l'ha attenuata."
+        },
+        "vibrations": {
+          "title": "Profilo delle vibrazioni",
+          "body": "Spazza molte velocità lungo ciascun angolo motore per mappare dove la macchina è più fluida e quali velocità incontrano una risonanza. Privilegia le velocità più fluide per i movimenti di stampa / spostamento ed evita quelle segnalate. La % di simmetria mostra quanto bene i due motori sono accoppiati."
+        },
+        "guided": {
+          "title": "Guidato vs. manuale",
+          "body": "Il guidato percorre l'intero flusso - Rumore → Cinghie → Shaper X → Shaper Y → Vibrazioni → Pressione - con un controllo passa / fallisci a ogni passo. Usalo per una taratura completa. Passa a 📈 Analizza o 🔴 Strumenti live quando vuoi solo uno strumento specifico."
+        },
+        "history": {
+          "title": "Cronologia & tendenze",
+          "body": "Ogni calibrazione viene salvata (in questo browser) con il suo voto e punteggio. La freccia ▲/▼ confronta un'esecuzione con il test precedente dello stesso asse - su significa un'acquisizione più pulita o un asse più rigido, giù significa più rumore o un asse più cedevole."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input shaper",
+          "def": "Un filtro che Klipper applica al movimento per annullare la vibrazione principale della stampante, così puoi stampare più velocemente senza ringing / ghosting."
+        },
+        "resonance": {
+          "term": "Risonanza",
+          "def": "La frequenza (Hz) alla quale un asse vibra naturalmente quando sollecitato. Più bassa = asse più cedevole / pesante; ~40-90 Hz è una stampante sana."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Densità spettrale di potenza - quanta energia di vibrazione si trova a ogni frequenza. Il picco alto è la risonanza che lo shaper prende di mira."
+        },
+        "smoothing": {
+          "term": "Smoothing",
+          "def": "Un effetto collaterale dello shaping che arrotonda leggermente gli angoli netti. Più basso è meglio; ≤0,1 è minimo, >0,2 inizia a smussare i dettagli."
+        },
+        "vibrationPct": {
+          "term": "Vibrazione %",
+          "def": "Quanta risonanza resta dopo lo shaper. Più bassa è meglio; ≤2% è eccellente, ≤5% va bene."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "L'accelerazione che lo shaper può sostenere senza troppo smoothing - un valore consigliato per SET_VELOCITY_LIMIT / printer.cfg."
+        }
+      },
+      "guide": "Guida",
+      "guideTitle": "Guida all'Input Shaping",
+      "close": "Chiudi"
+    },
+    "grade": {
+      "clarity": {
+        "label": "Nitidezza del picco",
+        "value": "{ratio}×",
+        "note": {
+          "none": "Nessuno spettro da valutare.",
+          "good": "Picco netto, ben sopra il rumore.",
+          "ok": "Picco visibile sopra il rumore.",
+          "poor": "Picco debole - rumoroso o molto rigido."
+        }
+      },
+      "vibration": {
+        "label": "Vibrazione residua",
+        "value": "{pct}%",
+        "note": {
+          "good": "Quasi tutta la risonanza rimossa.",
+          "ok": "Gran parte della risonanza rimossa.",
+          "poor": "Resta una vibrazione significativa."
+        }
+      },
+      "smoothing": {
+        "label": "Smoothing",
+        "note": {
+          "good": "Arrotondamento minimo degli angoli.",
+          "ok": "Qualche arrotondamento ad alta accelerazione.",
+          "poor": "Smoothing elevato - arrotonda gli angoli."
+        }
+      },
+      "freq": {
+        "label": "Frequenza",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "Nessuna frequenza trovata.",
+          "good": "Asse sano e rigido.",
+          "ok": "Un po' cedevole o molto rigido.",
+          "soft": "Asse cedevole / pesante.",
+          "high": "Insolitamente alta."
+        }
+      },
+      "shaper": {
+        "label": "Forma della risonanza",
+        "note": {
+          "clean": "Risonanza singola pulita.",
+          "robust": "Risonanza singola, shaper robusto.",
+          "twin": "Risonanza ampia o doppia.",
+          "multiple": "Risonanze multiple.",
+          "atypical": "Shaper atipico."
+        }
+      },
+      "verdict": {
+        "a": "Eccellente - acquisizione pulita, asse ben tarato.",
+        "b": "Buono - risultato solido, piccolo margine di miglioramento.",
+        "c": "Discreto - utilizzabile; vedi i suggerimenti sotto.",
+        "d": "Scarso - consigliata taratura meccanica + un nuovo test.",
+        "f": "Inaffidabile - ripeti il test (controlla il montaggio del sensore).",
+        "none": "Nessun risultato utilizzabile - ripeti TEST_RESONANCES."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "Nessuna risonanza utilizzabile",
+        "advice": "Ripeti TEST_RESONANCES. Verifica che l'accelerometro sia cablato e montato saldamente sulla testa di stampa.",
+        "detail": "nessun picco chiaro rilevato"
+      },
+      "noisy": {
+        "title": "Acquisizione rumorosa",
+        "advice": "Fissa il montaggio dell'accelerometro e ripeti. Evita ventole o altri movimenti durante il test.",
+        "detail": "rapporto segnale-rumore {snr}×"
+      },
+      "lowFreq": {
+        "title": "Frequenza di risonanza bassa",
+        "advice": "Asse cedevole o pesante - tendi le cinghie e controlla la rigidità del telaio. Un asse più rigido risuona più in alto e stampa più veloce.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Asse un po' cedevole",
+        "advice": "La frequenza è sul lato basso. Irrigidire le cinghie o il telaio la alza e ti permette di stampare più veloce.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "Smoothing elevato",
+        "advice": "Arrotonderà gli angoli. Scegli uno shaper più rigido o riduci max_accel.",
+        "detail": "smoothing {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Risonanze multiple",
+        "advice": "Spesso una testa di stampa, una cinghia o una parte allentata. Riposiziona la testa di stampa e ricontrolla la tensione delle cinghie."
+      },
+      "vibrationRemains": {
+        "title": "Resta della vibrazione",
+        "advice": "Una taratura meccanica (cinghie, telaio, massa della testa di stampa) potrebbe abbassarla ulteriormente.",
+        "detail": "{vibrations}% residuo dopo lo shaping"
+      },
+      "healthy": {
+        "title": "Asse sano",
+        "advice": "Acquisizione pulita e asse rigido - tutto a posto. Applica la configurazione e riavvia Klipper.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X e Y differiscono molto",
+        "advice": "Rigidità asimmetrica. Controlla la tensione delle cinghie sull'asse più cedevole; su CoreXY assicurati che entrambe le cinghie siano abbinate e tese.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "consigliato",
+        "shaperFreq": "freq shaper",
+        "peakFreq": "freq picco",
+        "remainingVibr": "vibr residua",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Cinghie abbinate",
+          "advice": "Le due risposte delle cinghie si allineano - la tensione sembra bilanciata."
+        },
+        "differ": {
+          "title": "Cinghie diverse",
+          "advice": "Le risonanze delle cinghie differiscono - ritendi la cinghia più lenta finché entrambi i picchi non si allineano."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Il sensore è silenzioso",
+          "why": "Puoi continuare."
+        },
+        "elevated": {
+          "title": "Riduci il rumore del sensore",
+          "why": "Max {max} ≥ {threshold}. Spegni la ventola della testa di stampa, ricontrolla il montaggio, poi ripeti."
+        },
+        "bad": {
+          "title": "Sistema l'accelerometro prima del test",
+          "why": "Il rumore {max} è troppo alto - riposiziona il sensore e controlla il cablaggio."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Cinghie bilanciate",
+          "why": "La tensione è uniforme - calibra ora lo shaper."
+        },
+        "mismatch": {
+          "title": "Ritendi la cinghia {looser}",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). Tendi la cinghia a frequenza più bassa finché entrambi i picchi non si allineano, poi ripeti."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Ripeti a un'accelerazione più bassa",
+          "why": "È stato registrato troppo movimento a bassa frequenza - abbassa ACCEL (o aumenta SIZE) così si misurano solo velocità costanti, poi ripeti."
+        },
+        "favour": {
+          "title": "Privilegia ~{speed} mm/s",
+          "why": "Banda più fluida {start}-{end} mm/s - imposta qui le velocità di stampa / spostamento dello slicer quando puoi."
+        },
+        "avoid": {
+          "title": "Evita {shown} mm/s",
+          "why": "Queste velocità incontrano una risonanza - tieni i movimenti di stampa + spostamento lontani da esse nello slicer."
+        },
+        "symmetry": {
+          "title": "Controlla tensione cinghie / accoppiamento motori",
+          "why": "La simmetria dei motori {pct}% è bassa - ritendi le cinghie (confronta le cinghie) e verifica che le correnti dei due motori coincidano."
+        },
+        "fine": {
+          "title": "Le vibrazioni sembrano a posto",
+          "why": "Nessuna velocità problematica si è distinta."
+        }
+      },
+      "pressure": {
+        "title": "Esegui una torre di pressure advance",
+        "why": "Stampa la torre PA, leggi l'altezza in cui gli angoli appaiono più netti, poi `SET_PRESSURE_ADVANCE ADVANCE=<valore>` e `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "Il tuo axes_map configurato è già corretto.",
+        "update": "Aggiorna la tua configurazione a: {axes_map}",
+        "add": "Aggiungi questo così ogni grafico di Input Shaping legge X/Y/Z allineati."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Rumore",
+          "title": "Rumore dell'accelerometro",
+          "why": "Conferma che il sensore sia montato saldamente prima di qualsiasi test (senza movimento)."
+        },
+        "belts": {
+          "label": "Cinghie",
+          "title": "Bilanciamento cinghie CoreXY",
+          "why": "Abbina le tensioni delle due cinghie. Solo CoreXY - salta su una cartesiana / bed-slinger."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper - X",
+          "why": "Trova la risonanza X e il miglior shaper."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper - Y",
+          "why": "Trova la risonanza Y e il miglior shaper."
+        },
+        "vibrations": {
+          "label": "Vibrazioni",
+          "title": "Profilo delle vibrazioni",
+          "why": "Spazza velocità × angolo motore per trovare le velocità più fluide e le risonanze da evitare."
+        },
+        "pressure": {
+          "label": "Pressione",
+          "title": "Pressure advance",
+          "why": "Tara il pressure advance per ultimo per affinare angoli e giunzioni."
+        },
+        "done": {
+          "label": "Fatto"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Il sensore è silenzioso",
+          "warn": "Il rumore è un po' alto",
+          "failed": "Troppo rumoroso - sistema il montaggio"
+        },
+        "belts": {
+          "passed": "Cinghie abbinate",
+          "differ": "Cinghie diverse (Δ{diffPct}%)",
+          "mismatched": "Cinghie non abbinate (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "Voto {letter} - asse sano",
+          "usable": "Voto C - utilizzabile",
+          "tune": "Voto {letter} - tara + ripeti il test"
+        },
+        "vibrations": {
+          "lowFreq": "Troppo movimento a bassa freq - abbassa l'accel e ripeti",
+          "mismatched": "Motori non abbinati ({pct}%)",
+          "smoothest": "Più fluido ~{rec} mm/s",
+          "complete": "Profilo completo"
+        }
+      },
+      "ui": {
+        "title": "🧭 Taratura guidata",
+        "exit": "✕ esci",
+        "motionReady": "⚠ muove la testa di stampa - sono pronto",
+        "running": "in corso…",
+        "run": "avvia",
+        "rerun": "↻ ripeti",
+        "skipBelts": "salta (non CoreXY)",
+        "copyPa": "📋 Copia torre PA",
+        "copied": "✅ Copiato",
+        "finish": "Termina →",
+        "nextStep": "Passo successivo →",
+        "skipAnyway": "salta comunque",
+        "complete": "Taratura completa",
+        "stepFailed": "Passo fallito",
+        "copyFailed": "Copia fallita - seleziona il testo e copialo manualmente.",
+        "summaryNote": "Le tue acquisizioni X e Y sono nel blocco combinato {code} qui sotto - copialo, poi riavvia Klipper. Riapri la taratura guidata in qualsiasi momento per ricontrollare.",
+        "beltsNotApplicable": "Il confronto delle cinghie si applica alle stampanti CoreXY - questa stampante riporta '{kin}', quindi questo passo viene saltato.",
+        "resultsSoFar": "Risultati finora",
+        "archived": "Salvato",
+        "autoSaved": "Salvato automaticamente nell'archivio sulla stampante.",
+        "beltA": "Cinghia A (1,1)",
+        "beltB": "Cinghia B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "Consigliato",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Accel max",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Rumore max a riposo {max} (normale < {threshold}).",
+        "status": "Stato",
+        "maxNoise": "Rumore max",
+        "threshold": "Soglia",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Corrispondenza",
+        "beltA": "Picco cinghia A",
+        "beltB": "Picco cinghia B",
+        "difference": "Differenza",
+        "matched": "abbinate",
+        "mismatch": "non abbinate",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Stato",
+        "gravity": "Gravità",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Rumore"
+      },
+      "sustain": {
+        "target": "Target",
+        "dominant": "Dominante",
+        "inBand": "In banda",
+        "onTarget": "A target",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "sì",
+        "no": "no"
+      },
+      "vibrations": {
+        "smoothest": "Più fluido",
+        "symmetry": "Simmetria",
+        "motorResonance": "Risonanza motore",
+        "avoid": "Evita",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Guidato",
+      "tabAnalyze": "📈 Analizza",
+      "tabLive": "🔴 Strumenti live",
+      "tabHistory": "🕘 Cronologia",
+      "intro": "Tara l'input shaping da un'acquisizione di risonanza di Klipper - niente riga di comando. Sei nuovo qui? Inizia con {guided}. Oppure scegli {analyze} per lavorare un {csv} da solo, {live} per acquisire sulla stampante, o {history} per rivedere le esecuzioni passate.",
+      "cfgReady": "printer.cfg pronto",
+      "copy": "📋 Copia",
+      "copied": "✅ Copiato",
+      "archive": "💾 Archivia",
+      "saved": "✅ Salvato",
+      "advanced": "⚙ avanzate",
+      "compareCsvs": "⇄ confronta CSV",
+      "blankDefault": "vuoto = default Klipper",
+      "auditTitle": "Audit",
+      "refresh": "↻ aggiorna",
+      "auditEmpty": "Ancora nessun risultato - esegui una taratura, o salvane una nell'archivio.",
+      "trendTitle": "punteggio {score} vs il test {axis} precedente",
+      "sourceSaved": "💾 salvato",
+      "sourceLocal": "locale",
+      "recommended": "Consigliato",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "asse {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "Nessuno shaper consigliato per questi dati.",
+      "measurementQuality": "Qualità della misura",
+      "scoreOutOf": "{v}/100",
+      "hide": "nascondi",
+      "details": "dettagli",
+      "chartAria": "Risposta in frequenza e shaper",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "consigliato",
+      "legendPeak": "▲ picco",
+      "legendAxisHint": "frequenza (Hz) → · continuo = misurato · tenue = residuo shaper",
+      "colShaper": "shaper",
+      "colFreq": "freq",
+      "colVibr": "vibr",
+      "colSmooth": "smooth",
+      "colAccel": "accel",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "cancella",
+      "pasteHint": "Incolla nel tuo {cfg}, poi riavvia Klipper.",
+      "errAnalysisFailed": "Analisi fallita",
+      "errCopyFailed": "Copia fallita - seleziona il testo e copialo manualmente.",
+      "errSaveFailed": "Salvataggio nell'archivio fallito"
+    },
+    "fromPrinter": {
+      "liveTools": "Strumenti live",
+      "intro": "⏳ Questi muovono la testa di stampa e possono richiedere {duration} (un confronto delle cinghie esegue due spazzate complete) - tieni questa pagina aperta finché non appare il risultato.",
+      "introDuration": "1-5 minuti",
+      "confirmMoves": "⚠ muove la testa di stampa - sono pronto",
+      "axisX": "asse X",
+      "axisY": "asse Y",
+      "noiseTitle": "🔊 Controllo del rumore",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "misurazione…",
+      "noiseHint": "senza movimento · esegui prima del test",
+      "noiseVerdictQuiet": "✅ silenzioso",
+      "noiseVerdictElevated": "⚠ elevato",
+      "noiseVerdictTooNoisy": "⛔ troppo rumoroso",
+      "noiseMaxNormal": "max {max} · normale < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Test live",
+      "liveBtn": "esegui TEST_RESONANCES",
+      "liveBtnBusy": "in corso…",
+      "liveDesc": "Esegue l'homing della stampante se necessario, poi avvia TEST_RESONANCES sull'asse scelto (servono un accelerometro + un {section}). Rifiutato durante la stampa.",
+      "beltsTitle": "🟰 Confronta cinghie",
+      "beltsBtn": "confronta cinghie",
+      "beltsBtnBusy": "confronto…",
+      "beltsBtnTitle": "CoreXY: eccita ogni diagonale di cinghia e sovrappone le risposte",
+      "beltsDesc": "Solo CoreXY: esegue due spazzate lungo le diagonali delle cinghie e le sovrappone. Rifiutato durante la stampa.",
+      "axesTitle": "🧭 Mappa assi",
+      "axesBtn": "rileva axes_map",
+      "axesBtnBusy": "rilevamento…",
+      "axesBtnTitle": "Sposta +X/+Y/+Z per rilevare l'orientamento dell'accelerometro (axes_map)",
+      "axesDesc": "Sposta di ~30 mm in X, poi Y, poi Z per rilevare l'orientamento dell'accelerometro. Rifiutato durante la stampa.",
+      "beltResultTitle": "Confronto cinghie",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "Risposta in frequenza cinghia A vs B",
+      "beltLegendA": "cinghia A (1,1)",
+      "beltLegendB": "cinghia B (1,-1)",
+      "axesResultTitle": "Mappa assi",
+      "copy": "📋 Copia",
+      "copied": "✅ Copiato",
+      "mappingVirtual": " (virtuale)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "Sequenza di velocità degli assi",
+      "zoneVirtual": "virtuale",
+      "zonePct": "{pct}%",
+      "legendAccelX": "accel x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "inclinazione {x}° / {y}° / {z}°",
+      "gravity": "gravità {v} m/s²",
+      "noiseValue": "rumore {v}",
+      "sustainTitle": "🎯 Frequenza sostenuta",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "sec",
+      "sustainBtn": "avvia",
+      "sustainBtnBusy": "in mantenimento…",
+      "sustainDesc": "Fa vibrare la testa di stampa sul posto vicino alla frequenza - tocca cinghie, testa di stampa e telaio per trovare cosa vibra. Rifiutato durante la stampa.",
+      "sustainHolding": "✅ in mantenimento",
+      "sustainOffTarget": "⚠ fuori target",
+      "sustainPeak": "picco {freq} Hz · {pct}% in banda",
+      "specChartLabel": "Spettrogramma frequenza-tempo",
+      "energyChartLabel": "Energia di vibrazione nel tempo",
+      "specAxes": "freq → · tempo ↓",
+      "energyLegend": "energia vs tempo - il calo ciano è dove un tocco ha aiutato",
+      "vibTitle": "📊 Profilo delle vibrazioni",
+      "vibMax": "max",
+      "vibStep": "passo",
+      "vibUnit": "mm/s",
+      "vibBtn": "esegui spazzata",
+      "vibBtnBusy": "spazzata…",
+      "vibDesc": "Spazza velocità × angolo motore attorno al centro del piano - un'esecuzione lunga (minuti). Un {step} più piccolo è più fine ma più lento. Riporta le velocità più fluide, le velocità da evitare, la simmetria dei motori e la risonanza del motore. Rifiutato durante la stampa.",
+      "vibDescStep": "passo",
+      "errNoiseCheck": "Controllo del rumore fallito",
+      "errLiveTest": "Test live fallito",
+      "errBeltComparison": "Confronto cinghie fallito",
+      "errAxesMapDetection": "Rilevamento axes-map fallito",
+      "errCopyFailed": "Copia fallita - seleziona il testo e copialo manualmente.",
+      "errSustainTest": "Test di frequenza sostenuta fallito",
+      "errVibrationsProfile": "Profilo delle vibrazioni fallito",
+      "vibProgress": "Spazzata {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "Avvio della spazzata…",
+      "vibCancel": "Annulla spazzata",
+      "vibCancelling": "Annullamento…",
+      "vibCancelled": "Spazzata annullata - limiti di velocità ripristinati.",
+      "vibReattached": "Ricollegato: questo risultato è terminato mentre la pagina era assente.",
+      "beltsCorexyOnly": "Solo CoreXY - questa stampante riporta la cinematica '{kin}', quindi il confronto a due cinghie non si applica."
+    },
+    "vibrationsView": {
+      "title": "Profilo delle vibrazioni",
+      "lowFreqNoise": "⚠ rumore a bassa freq",
+      "smoothest": "▼ più fluido ~{v} mm/s",
+      "symmetry": "simmetria {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "Energia di vibrazione rispetto alla velocità",
+      "axisLegend": "velocità (mm/s) → · energia di vibrazione ↑",
+      "smooth": "fluido",
+      "avoid": "evita",
+      "svgPolarLabel": "Energia di vibrazione per direzione di spostamento",
+      "svgHeatmapLabel": "Heatmap dell'energia di vibrazione per angolo e velocità",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "risonanza motore {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "direzione più fluida ~{start}-{end}°",
+      "captures": "{n} acquisizioni"
+    },
+    "compareView": {
+      "title": "Confronta due acquisizioni (A ⇄ B)",
+      "intro": "Prima/dopo una correzione meccanica, o lo stesso asse ritestato. (Confronta file dello stesso asse.)",
+      "selectA": "A: seleziona",
+      "selectB": "B: seleziona",
+      "busy": "…",
+      "compare": "confronta",
+      "comparisonFailed": "Confronto fallito",
+      "chartAriaLabel": "Densità spettrale di potenza A vs B",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "Sorgente CSV",
+      "tabUpload": "📤 Carica",
+      "tabHost": "🖥 Dalla stampante",
+      "selectCsv": "📈 Seleziona CSV",
+      "axisTitle": "Asse a cui appartengono questi dati",
+      "axisAuto": "asse: auto",
+      "axisX": "asse: X",
+      "axisY": "asse: Y",
+      "analyzing": "Analisi…",
+      "analyze": "🚀 Analizza",
+      "onHost": "sull'host della stampante",
+      "refresh": "↻ aggiorna",
+      "noFiles": "Nessun CSV di risonanza trovato.",
+      "noFilesInDirs": "Nessun CSV di risonanza trovato in {dirs}.",
+      "analyzeFile": "analizza",
+      "saveTitle": "Copia questa acquisizione nell'archivio",
+      "save": "💾 salva",
+      "archive": "Archivio",
+      "archiveEmpty": "Ancora nulla salvato - usa 💾 salva qui sopra, o \"salva nell'archivio\" sotto una configurazione.",
+      "downloadTitle": "scarica {fn}",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "Impossibile elencare i file della stampante",
+      "errListArchive": "Impossibile elencare l'archivio",
+      "errSave": "Salvataggio nell'archivio fallito",
+      "errDelete": "Eliminazione fallita",
+      "errDownload": "Download fallito",
+      "viewChart": "Grafico",
+      "viewChartTitle": "Riapri il grafico di questa esecuzione salvata"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "È stato registrato troppo movimento a bassa frequenza - abbassa ACCEL (o aumenta SIZE) e ripeti così si misurano solo velocità costanti.",
+        "smoothest": "Più fluido attorno a {v} mm/s",
+        "avoid": "evita velocità vicino a {speeds} mm/s",
+        "matched": "i motori sono ben abbinati ({pct}% di simmetria)",
+        "low_symmetry": "la simmetria dei motori è bassa ({pct}%) - controlla la tensione delle cinghie",
+        "motor_freq": "risonanza motore ~{f} Hz",
+        "complete": "Profilo delle vibrazioni completo."
+      },
+      "sustain": {
+        "not_dominant": "La testa di stampa non vibra principalmente a {freq} Hz (il picco è {peak} Hz) - la sorgente potrebbe non raggiungere il sensore sulla testa di stampa.",
+        "drop": "Mantenendo {freq} Hz - la vibrazione è scesa ~{drop}% a un certo punto; ciò che hai toccato allora è un forte contributore.",
+        "touch": "Mantenendo {freq} Hz - tocca cinghie, testa di stampa, giunti del gantry e pulegge di rinvio uno alla volta; la parte che zittisce il ronzio è la tua sorgente di risonanza."
+      },
+      "axes": {
+        "same_axis": "Rilevato lo stesso asse dell'accelerometro per più assi macchina",
+        "low_confidence": "Bassa affidabilità di rilevamento ({pct}%)",
+        "high_angle_error": "Errore d'angolo elevato ({deg}°)",
+        "unusual_gravity": "Lettura di gravità insolita ({g} m/s²)",
+        "high_noise": "Livello di rumore elevato ({n} mm/s²)",
+        "good": "Qualità del rilevamento: buona"
+      }
+    },
+    "proof": {
+      "title": "Prova della taratura",
+      "empty": "Servono due risultati registrati su questo asse - misura prima di tarare, applica lo shaper, poi misura di nuovo e salva entrambi.",
+      "before": "Prima",
+      "after": "Dopo",
+      "samePick": "Scegli due risultati diversi da confrontare.",
+      "metricHead": "Metrica",
+      "delta": "Variazione",
+      "copy": "Copia report",
+      "copied": "Copiato ✓",
+      "metric": {
+        "score": "Voto della misura",
+        "vibrations": "Vibrazione residua %",
+        "smoothing": "Smoothing",
+        "maxAccel": "Accel max suggerita (mm/s²)",
+        "freq": "Frequenza shaper (Hz)",
+        "shaper": "Shaper"
+      }
+    }
+  }
+}

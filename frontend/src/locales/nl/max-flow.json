@@ -1,0 +1,168 @@
+{
+  "maxFlow": {
+    "intro": "Vind de hoogste volumetrische flow (mm³/s) die je hotend kan volhouden - door de flow op te voeren terwijl je de StallGuard-belasting van de extruder in de gaten houdt voor het moment dat het tandwiel slipt. Bekijk eerst het plan; de live test verwarmt en extrudeert, dus maak de printer klaar voordat je hem draait.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "Over Max-Flow",
+      "close": "Sluiten",
+      "howToRead": "Hoe te gebruiken",
+      "steps": [
+        "Stel de testtemperatuur en je filamentdiameter in (kies een hotend om voor te vullen).",
+        "Bekijk het plan - het toont elke flowstap en hoeveel filament er wordt doorgevoerd.",
+        "Vink de veiligheidschecklist aan en draai dan de live test (verwarmt + extrudeert).",
+        "Lees de maximaal volgehouden flow af en kopieer de voorgestelde slicerwaarde."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Hoe de test werkt",
+          "body": "De extruder voert filament door bij een gestaag oplopende volumetrische flow. Zolang het getande wiel netjes grijpt blijft de StallGuard-belastingswaarde strak; zodra het begint te slippen springen de waarden alle kanten op. De hoogste flow die wordt bereikt vóór die sprong is je houdbare maximale flow. De ramp stopt zodra slip wordt gedetecteerd, dus er wordt geen filament voorbij de eerste slip vermalen."
+        },
+        "stallguard": {
+          "title": "StallGuard-slipdetectie",
+          "body": "StallGuard is een functie van de TMC-driver die de motorbelasting rapporteert. Deze test bemonstert die vele keren per flowstap en zoekt naar een plotselinge toename in spreiding (IQR) of variatie (CV) - het kenmerk van het tandwiel dat zijn grip verliest. De drempels komen uit een profiel per driver. Let op: op een TMC2209-extruder gebruikt dit het experimentele SG4-pad, dus behandel de eerste run als een kalibratie."
+        },
+        "safety": {
+          "title": "Veiligheid",
+          "body": "Dit is een hete, bewegende test die de extruder bewust laat slippen. Laad filament, zorg dat de nozzle vrij is (boven het bed of een afvalplek) en blijf in de buurt. De run wordt geweigerd terwijl de printer print, en de verwarming wordt altijd uitgeschakeld als hij klaar is."
+        },
+        "slicer": {
+          "title": "Het resultaat gebruiken",
+          "body": "Zet de voorgestelde waarde in de \"max volumetric speed\" van je slicer (per filament). Het conservatieve cijfer (80% van het gemeten maximum) is een veilige limiet voor dagelijks gebruik; het gebalanceerde cijfer (90%) duwt iets harder. Hogere hotendtemperaturen verhogen doorgaans de haalbare flow."
+        },
+        "glossary": {
+          "title": "Woordenlijst",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Volumetrische flow",
+          "def": "Hoeveel plastic de hotend per seconde smelt (mm³/s) - de echte snelheidslimiet voor snel printen."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Een signaal van de TMC-driver dat de mechanische motorbelasting rapporteert, hier gebruikt om slip van de extruder te detecteren."
+        },
+        "slip": {
+          "term": "Slip",
+          "def": "Wanneer het extrudertandwiel het filament niet snel genoeg meer kan grijpen en overslaat - het flowplafond."
+        },
+        "meltzone": {
+          "term": "Smeltzone",
+          "def": "De verwarmde lengte van de hotend; een langere smeltzone (bijv. Volcano) houdt een hogere flow vol."
+        }
+      }
+    },
+    "params": {
+      "title": "Testparameters",
+      "temperature": "Temperatuur (°C)",
+      "filamentDiameter": "Filament Ø (mm)",
+      "hotend": "Hotend (optioneel)",
+      "hotendNone": "- geen -",
+      "hotendHint": "Verwacht ~{flow} mm³/s",
+      "startFlow": "Startflow (mm³/s)",
+      "endFlow": "Eindflow (mm³/s)",
+      "stepFlow": "Stap (mm³/s)",
+      "samples": "Samples / stap",
+      "extrudePerStep": "Extruderen / stap (mm)",
+      "driver": "Extruderdriver",
+      "driverDetected": "gedetecteerd vanaf de printer",
+      "autoStealthchop": "StealthChop automatisch inschakelen voor de test",
+      "autoStealthchopHint": "Alleen TMC2209/2240: schrijft tijdelijk een stealthchop_threshold naar de extruder zodat StallGuard kan lezen, en zet het na de test weer als commentaar. Herstelt printer.cfg; firmware-herstart in beide richtingen.",
+      "method": "Detectiemethode",
+      "methodHint": "Auto gebruikt StallGuard en valt terug op de accelerometer in de toolhead (trilling) wanneer StallGuard niet kan lezen. De accelerometermethode is experimenteel."
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Accelerometer"
+    },
+    "plan": {
+      "button": "Plan bekijken",
+      "title": "Geplande ramp",
+      "stepCount": "{count} stappen",
+      "totalExtrude": "{mm} mm filament",
+      "sgField": "StallGuard-veld: {field}",
+      "sgFieldUnknown": "Geen StallGuard-veld bekend voor deze driver",
+      "flowHead": "Flow (mm³/s)",
+      "feedrateHead": "Voedingssnelheid (mm/min)",
+      "warning": "De live test verwarmt de hotend en extrudeert filament, bewust tot het punt van slip. Alleen voorbeeld - er draait nog niets."
+    },
+    "safety": {
+      "title": "Voordat je draait - veiligheidschecklist",
+      "items": [
+        "Filament is geladen en voert vrij door.",
+        "De nozzle is vrij - boven het bed of een afvalbak, niet in de lucht op onderdelen.",
+        "Ik accepteer dat dit bewust wat filament zal vermalen/laten slippen.",
+        "Ik blijf de hele test bij de printer."
+      ],
+      "ack": "Ik heb al het bovenstaande gedaan en de printer is klaar",
+      "note": "De run wordt geweigerd tijdens het printen; de verwarming wordt aan het einde automatisch uitgeschakeld."
+    },
+    "run": {
+      "button": "Live test draaien",
+      "running": "Bezig… (verwarmen + extruderen)",
+      "confirmTitle": "De live max-flow test starten?",
+      "confirmBody": "Dit verwarmt de hotend tot {temp} °C en extrudeert tot {mm} mm filament, met een ramp totdat de extruder slipt.",
+      "confirm": "Nu draaien",
+      "cancel": "Annuleren",
+      "busy": "Geweigerd: de printer is bezig (printen of gepauzeerd). Probeer het opnieuw wanneer hij inactief is.",
+      "error": "De test is mislukt.",
+      "noSg": "Er zijn geen StallGuard-samples gelezen - het slipresultaat is mogelijk onbetrouwbaar. Het live SG-veld van de driver moet waarschijnlijk worden aangepast voor dit model.",
+      "progress": "Stap {step}/{total} - {flow} mm³/s",
+      "starting": "Verwarmen / starten…",
+      "abort": "Run afbreken",
+      "cancelling": "Afbreken…",
+      "cancelled": "Run afgebroken - de verwarming is uitgeschakeld.",
+      "reattached": "Opnieuw gekoppeld: dit resultaat is voltooid terwijl de pagina weg was.",
+      "failed": "Max-flow run mislukt.",
+      "abortNote": "Bij afbreken wordt de verwarming altijd uitgeschakeld.",
+      "parkNote": "Voor het verwarmen homed de printer (indien nodig) en centreert de nozzle voor een vrij zicht.",
+      "phase": {
+        "enabling": "StealthChop inschakelen…",
+        "homing": "De printer homen…",
+        "centering": "De nozzle centreren…",
+        "heating": "De hotend verwarmen…",
+        "checking": "Het StallGuard-signaal controleren…",
+        "ramp": "De flow opvoeren…",
+        "reverting": "De config herstellen…"
+      },
+      "step": {
+        "home": "Home",
+        "center": "Centreren",
+        "heat": "Verwarmen",
+        "check": "Controleren",
+        "ramp": "Ramp"
+      }
+    },
+    "camera": {
+      "title": "Live camera",
+      "live": "LIVE",
+      "error": "Camera niet beschikbaar.",
+      "willShow": "Een live camerabeeld toont de nozzle tijdens de test.",
+      "minimize": "Minimaliseren",
+      "maximize": "Maximaliseren",
+      "enlarge": "Vergroten",
+      "shrink": "Verkleinen"
+    },
+    "result": {
+      "title": "Resultaat",
+      "maxFlow": "Max volgehouden flow",
+      "slipAt": "Slip gedetecteerd bij {flow} mm³/s",
+      "noSlip": "Geen slip tot de hoogst geteste flow",
+      "reason": "Detail",
+      "recommendTitle": "Voorgestelde slicerwaarden (max volumetric speed)",
+      "conservative": "Conservatief (80%)",
+      "balanced": "Gebalanceerd (90%)",
+      "units": "mm³/s",
+      "fromBefore": "Eerder gemeten ({at}) - draai opnieuw voor verse cijfers.",
+      "unreliableTitle": "Onbetrouwbaar - geen StallGuard-signaal",
+      "unmeasured": "bereikt, niet bevestigd",
+      "via": "Gemeten via {method}",
+      "accelExperimental": "Gemeten via trilling (accelerometer) - experimenteel; behandel het getal als richtlijn, niet als exact plafond."
+    },
+    "states": {
+      "loadingHotends": "Hotends laden…"
+    }
+  }
+}

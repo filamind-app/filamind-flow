@@ -1,0 +1,332 @@
+{
+  "motorDrivers": {
+    "help": {
+      "whatsThis": "co to jest?",
+      "topics": {
+        "glossary": {
+          "title": "Pojęcia sterowników",
+          "body": "Krótki słowniczek do tego pulpitu:"
+        },
+        "overview": {
+          "title": "Co tu widać",
+          "body": "Każdy sterownik silnika krokowego TMC w Twojej drukarce, odczytany wprost z aktywnej konfiguracji Klipper - jedna karta na silnik (X, Y, każde Z, ekstruder…). Ten widok jest tylko do odczytu: pokazuje, co jest skonfigurowane i co sterownik robi w tej chwili. Strojenie pojawia się w późniejszym kroku."
+        },
+        "current": {
+          "title": "Prąd pracy / spoczynku",
+          "body": "Prąd pracy to siła, z jaką silnik jest napędzany podczas ruchu; prąd spoczynku to niższy poziom bezczynności. Wartość na żywo to to, co układ faktycznie stosuje - może odrobinę odbiegać od skonfigurowanej, bo prądy występują w dyskretnych stopniach. Gorący sterownik zwykle oznacza, że prąd pracy ustawiono zbyt wysoko dla danego silnika."
+        },
+        "chopper": {
+          "title": "StealthChop kontra SpreadCycle",
+          "body": "Tryb choppera określa, jak sterownik kształtuje prąd cewki. SpreadCycle jest precyzyjny i daje wysoki moment (dobry do szybkich X/Y), ale jest słyszalny; StealthChop jest niemal bezgłośny (dobry do Z i bezczynności), ale nieco słabszy przy prędkości. „StealthChop < N mm/s” oznacza, że pozostaje cichy poniżej tej prędkości, a powyżej przełącza się na SpreadCycle."
+        },
+        "microsteps": {
+          "title": "Mikrokroki",
+          "body": "Każdy pełny krok silnika jest elektronicznie dzielony na mikrokroki (16, 32, … 256). Więcej mikrokroków = płynniejszy, cichszy ruch. Przy włączonej interpolacji sterownik wygładza wewnętrznie do 256 niezależnie od skonfigurowanej wartości."
+        },
+        "stallguard": {
+          "title": "StallGuard (bazowanie bezczujnikowe)",
+          "body": "StallGuard mierzy obciążenie silnika, dzięki czemu oś może bazować, wykrywając łagodne zatrzymanie zamiast używania fizycznego krańcówki. Rejestr progu różni się zależnie od modelu (sgthrs na 2209, sgt na 2130/5160, sg4_thrs na 2240). Jego strojenie to późniejszy krok; tutaj pokazujemy jedynie skonfigurowaną wartość."
+        },
+        "health": {
+          "title": "Status na żywo",
+          "body": "Gdy silnik jest włączony (po bazowaniu lub przesunięciu), sterownik zgłasza flagi na żywo: przegrzanie, zwarcie i otwarte obciążenie. Zielone „ok” oznacza brak usterek; „warning” to wstępne ostrzeżenie o przegrzaniu lub otwarte obciążenie; „fault” to zwarcie lub poważne przegrzanie. Gdy silnik jest wyłączony, sterownik nic nie zgłasza, więc karta pokazuje „idle”."
+        },
+        "temperature": {
+          "title": "Temperatura",
+          "body": "Tylko niektóre sterowniki (np. TMC2240) mają wbudowany czujnik temperatury. W modelach bez niego - jak popularny TMC2209 - temperatura pokazuje „no sensor”, co jest normalne, a nie błędem."
+        },
+        "catalog": {
+          "title": "Skąd pochodzą dane o modelu",
+          "body": "Interfejs (UART / SPI), limit prądu i obsługiwane funkcje pokazane na każdej karcie pochodzą z wbudowanej mapy możliwości rodziny TMC - zweryfikowanej z kodem sterowników Klipper. Mówi ona np., że TMC2208 nie obsługuje bazowania bezczujnikowego, a TMC2209 tak, albo że tylko TMC2240 zgłasza własną temperaturę. Wartości elektryczne są typowe dla kart katalogowych; Twoja płyta, rezystor pomiarowy i chłodzenie wyznaczają rzeczywiste granice."
+        },
+        "motor": {
+          "title": "Przypisywanie silnika",
+          "body": "Wybierz silnik krokowy podłączony do każdej osi z wbudowanego katalogu ponad 200 silników. Klipper nie wie, jaki silnik zamontowałeś - podanie tego w FilaMind odblokowuje jego dane katalogowe (moment trzymający, prąd znamionowy, rezystancja, indukcyjność), których późniejszy krok używa do zarekomendowania bezpiecznego prądu pracy i strojenia sterownika. Zapisuje się to w drukarce i samo w sobie niczego w sterowniku nie zmienia."
+        },
+        "motorsync": {
+          "title": "Synchronizacja silników",
+          "body": "Gdy jedna oś jest napędzana przez dwa lub więcej silników (podwójne lub poczwórne Z, podwójne X), ich fazy mikrokroków mogą się rozejść i wzajemnie się zwalczać - dodając hałas i tracąc moment. Dodatek motors_sync mierzy każdy silnik akcelerometrem i sprowadza je z powrotem do fazy. To osobny dodatek; jeśli jest zainstalowany, FilaMind może go tu uruchomić lub skalibrować (porusza głowicą, więc jest zabezpieczony). Jeśli nie jest zainstalowany, to po prostu wyjaśnia, co robi."
+        },
+        "monitor": {
+          "title": "Monitor na żywo",
+          "body": "Obserwuj sterownik w czasie rzeczywistym podczas pracy: temperaturę, obciążenie StallGuard (SG_RESULT - spada ku zeru wraz ze wzrostem obciążenia mechanicznego), skalę prądu (CS_ACTUAL) oraz wszelkie flagi usterek (przegrzanie, zwarcie, otwarte obciążenie). Sterownik zgłasza je tylko, gdy silnik jest włączony, więc porusz osią lub ją zbazuj, aby zobaczyć dane na żywo. Tylko do odczytu - jedynie obserwuje."
+        },
+        "homing": {
+          "title": "Jak bazuje ta oś",
+          "body": "Klipper znajduje zero każdej osi na jeden z kilku sposobów, a FilaMind odczytuje który z Twojej konfiguracji zamiast zgadywać: fizyczny przełącznik krańcowy (klasyczny mikroprzełącznik - większość drukarek), bazowanie bezczujnikowe (sterownik TMC wykrywa zatrzymanie silnika na końcu drogi - bez przełącznika) lub sonda Z (ten sam czujnik używany do mapy stołu znajduje Z=0). Ten panel dostosowuje się do tego, czego używa Twoja oś - stan przełącznika na żywo i proste bazowanie testowe dla fizycznej krańcówki, tuner StallGuard dla bezczujnikowego lub odnośnik do narzędzi sondy dla sondowanego Z. Dodatkowe silniki współdzielące szynę (drugie Z, ekstruder) nie bazują samodzielnie, więc nic tu nie pokazują."
+        },
+        "sensorless": {
+          "title": "Bazowanie bezczujnikowe",
+          "body": "Niektóre osie bazują bez przełącznika krańcowego: sterownik wykrywa łagodne „zatrzymanie”, gdy głowica dociera do końca drogi. Próg StallGuard ustawia, jak czułe to jest - za nisko i wyzwala za wcześnie (zatrzymuje się za krótko), za wysoko i nigdy nie wyzwala (oś wciska się w ramę). Ten pomocnik pozwala ustawić próg i przeprowadzić bazowanie testowe jednej osi, oba za potwierdzeniem. Reguluj na wyczucie: obniż, jeśli zatrzymuje się za wcześnie, podnieś, jeśli się nie zatrzymuje - i pierwsze kilka razy trzymaj rękę przy zasilaniu. Jeśli Twoja oś używa fizycznej krańcówki, nie potrzebujesz tego."
+        },
+        "coolstep": {
+          "title": "CoolStep (prąd adaptacyjny do obciążenia)",
+          "body": "CoolStep pozwala sterownikowi obniżyć prąd cewki, gdy silnik nie pracuje ciężko, a następnie ponownie go podnieść pod obciążeniem - oszczędzając ciepło i hałas. To sprzężona pętla zwrotna z pięcioma wzajemnie oddziałującymi rejestrami (semin/semax/seup/sedn/seimin), więc zamiast pięciu surowych pokręteł jest to jeden włącznik/wyłącznik stosujący sprawdzony, znany jako dobry zestaw (semin 2, semax 4, seup 3, sedn 2, seimin 1). Działa tylko powyżej progu prędkości, a zbyt agresywne ustawienie przy dużym przyspieszeniu może gubić kroki - zostaw wyłączone, chyba że wiesz, że tego chcesz. Tylko na żywo: restart lub „reset do konfiguracji” przywraca zapisane wartości."
+        },
+        "registers": {
+          "title": "Edycja rejestrów (zaawansowane)",
+          "body": "Edytor zaawansowany zapisuje pojedyncze rejestry strojenia TMC do sterownika na żywo - timing choppera (toff/tbl/hstrt/hend), PWM StealthChop (pwm_grad/pwm_ofs/…), CoolStep, czułość StallGuard oraz próg prędkości StealthChop↔SpreadCycle (w mm/s). To, które pola się pojawiają i jaki mają poprawny zakres, pochodzi z polityki bezpieczeństwa po stronie drukarki - nie przeglądarki - bo sterownik po cichu obcina wartość spoza zakresu zamiast zgłaszać błąd, więc serwer ją ogranicza i odrzuca. Surowe rejestry skalowania prądu oraz ochrony przed zwarciem/przegrzaniem celowo nie są tu edytowalne (prąd idzie przez ścieżkę rekomendacji/prądu pracy; mikrokroki wymagają zmiany konfiguracji + restartu). Każda edycja działa tylko na żywo: INIT_TMC (przycisk „reset do konfiguracji”), restart firmware lub przełączenie zasilania przywraca zapisane wartości. Bardziej ryzykowne pokrętła wymagają potwierdzenia per pole, a wszystkie zapisy są odrzucane, gdy drukarka drukuje lub jest wstrzymana."
+        },
+        "recommend": {
+          "title": "Zalecane strojenie",
+          "body": "Po przypisaniu silnika FilaMind może obliczyć sugerowany prąd pracy oraz wartości rejestrów StealthChop / SpreadCycle (pwm_grad, pwm_ofs, hstrt, hend) z danych katalogowych silnika i Twojego napięcia zasilania - więc działa nawet bez zainstalowanego dodatku autotune. Prąd pracy domyślnie wynosi zachowawcze 70% wartości znamionowej silnika. Wynik jest porównywany z Twoją aktywną konfiguracją; możesz go następnie skopiować do printer.cfg lub zapisać na żywo za potwierdzeniem (odwracalne przyciskiem Cofnij i odrzucane podczas drukowania). Jeśli dodatek autotune jest zainstalowany, możesz uruchomić go zamiast tego."
+        }
+      },
+      "glossary": {
+        "tmcDriver": {
+          "term": "Sterownik TMC",
+          "def": "Układ, który zamienia sygnały step/dir z Klipper na prądy cewek obracające silnik krokowy - np. TMC2209, TMC2240, TMC5160. Każdy silnik ma jeden."
+        },
+        "runCurrent": {
+          "term": "Prąd pracy",
+          "def": "Siła, z jaką silnik jest napędzany podczas ruchu (ampery). Za nisko → gubione kroki; za wysoko → przegrzewanie. Wartość na żywo może nieco różnić się od skonfigurowanej, bo układ ją kwantuje."
+        },
+        "holdCurrent": {
+          "term": "Prąd spoczynku",
+          "def": "Obniżony prąd stosowany, gdy silnik jest bezczynny, aby oszczędzać ciepło i hałas."
+        },
+        "microsteps": {
+          "term": "Mikrokroki",
+          "def": "Jak drobno dzielony jest każdy pełny krok silnika (16/32/…/256). Więcej = płynniejszy i cichszy ruch, bez realnej utraty momentu dzięki interpolacji."
+        },
+        "stealthChop": {
+          "term": "StealthChop",
+          "def": "Niemal bezgłośny tryb napędu, świetny do Z i bezczynności. Płynny, ale nieco mniej precyzyjny przy dużej prędkości."
+        },
+        "spreadCycle": {
+          "term": "SpreadCycle",
+          "def": "Precyzyjny tryb napędu o wysokim momencie, lepszy do szybkich ruchów X/Y. Słyszalny, ale dokładny."
+        },
+        "stallGuard": {
+          "term": "StallGuard",
+          "def": "Czujnik obciążenia sterownika. Umożliwia bazowanie bezczujnikowe (wykrywanie zatrzymania zamiast użycia przełącznika krańcowego). Jego rejestr progu różni się zależnie od modelu (sgthrs / sgt / sg4_thrs)."
+        },
+        "senseResistor": {
+          "term": "Rezystor pomiarowy",
+          "def": "Maleńki rezystor, który ustawia skalę prądu sterownika. Musi pasować do Twojej płyty; pulpit pokazuje skonfigurowaną wartość."
+        },
+        "interface": {
+          "term": "Interfejs (UART / SPI)",
+          "def": "Jak MCU komunikuje się ze sterownikiem. UART to pojedynczy przewód (rodzina TMC220x); SPI to szybsza wieloprzewodowa magistrala używana przez układy wydajnościowe (2130 / 5160). TMC2240 obsługuje oba."
+        }
+      },
+      "guide": "Przewodnik",
+      "guideTitle": "Przewodnik po sterownikach silników",
+      "close": "Zamknij",
+      "howToRead": "Jak czytać ten panel"
+    },
+    "format": {
+      "amps": "{a} A",
+      "ampsSet": "{base} (ust. {set})",
+      "stealthchop": "StealthChop",
+      "stealthchopThreshold": "StealthChop < {t} mm/s",
+      "spreadcycle": "SpreadCycle",
+      "health": {
+        "idle": "bezczynny",
+        "ok": "ok",
+        "warning": "ostrzeżenie",
+        "fault": "usterka"
+      },
+      "celsius": "{v} °C",
+      "noSensor": "brak czujnika",
+      "maxCurrent": "≤ {a} A",
+      "extruder": "Ekstruder",
+      "extruderN": "Ekstruder {n}",
+      "axis": "oś {axis}",
+      "homing": {
+        "sensorless": "Bezczujnikowe (StallGuard)",
+        "physical": "Fizyczna krańcówka",
+        "probe": "Sonda Z",
+        "otherVirtual": "Wirtualna krańcówka",
+        "inherited": "Współdzielona szyna"
+      },
+      "stallguard": {
+        "signed": "Ze znakiem −64…63 - NIŻEJ to bardziej czułe (zatrzymuje wcześniej). Podnieś, jeśli oś zatrzymuje się za krótko; obniż, jeśli nigdy się nie zatrzymuje.",
+        "unsigned": "Zakres 0-255 - WYŻEJ to bardziej czułe (zatrzymuje wcześniej). Obniż, jeśli oś zatrzymuje się za krótko; podnieś, jeśli nigdy się nie zatrzymuje."
+      },
+      "spec": {
+        "nm": "{v} Nm",
+        "amps": "{v} A",
+        "ohm": "{v} Ω",
+        "mh": "{v} mH"
+      },
+      "flag": {
+        "overtemp": "przegrzanie",
+        "tempWarn": "ostrz. temp.",
+        "shortA": "zwarcie A",
+        "shortB": "zwarcie B",
+        "openLoadA": "otw. obciąż. A",
+        "openLoadB": "otw. obciąż. B",
+        "standstill": "postój"
+      },
+      "runCurrent": "prąd pracy (A)"
+    },
+    "widget": {
+      "intro": "Każdy sterownik silnika krokowego TMC w Twojej drukarce, odczytany na żywo z konfiguracji Klipper - sprawdź, otrzymaj zalecenia strojenia i zastosuj je (z zabezpieczeniem). Pierwszy raz tutaj? Wypróbuj 🧭 Z przewodnikiem.",
+      "tabDashboard": "Pulpit",
+      "tabGuided": "🧭 Z przewodnikiem",
+      "howToReadShow": "▸ jak to czytać",
+      "howToReadHide": "▾ jak to czytać",
+      "steps": [
+        "Każda karta to jeden sterownik silnika - jej nagłówek to oś (X / Y / Z / Ekstruder), a etykieta to model układu.",
+        "Prąd pracy pokazuje, jak mocno napędzany jest silnik; wartość na żywo może nieco różnić się od skonfigurowanej wartości „ust.” - to normalne.",
+        "Tryb mówi Ci SpreadCycle (precyzyjny, głośniejszy) lub StealthChop (cichy); mikrokroki pokazują, jak płynny jest ruch.",
+        "Zbazuj oś lub przesuń silnik, aby go obudzić - temperatura na żywo i flagi usterek pojawiają się tylko, gdy silnik jest włączony (bezczynne sterowniki pokazują „idle”).",
+        "Otwórz „rejestry zaawansowane” na karcie, aby sprawdzić surowe wartości strojenia, których używa sterownik."
+      ],
+      "loading": "Wczytywanie sterowników silników…",
+      "retry": "↻ ponów",
+      "retrying": "ponawianie…",
+      "unreachable": "Nie można połączyć się z Moonraker drukarki - dane sterowników są teraz niedostępne.",
+      "noDrivers": "Nie znaleziono sterowników TMC w konfiguracji Klipper. (Tutaj pojawiają się tylko sterowniki silników krokowych TMC.)",
+      "runCurrent": "Praca {value}",
+      "nearCapTitle": "Blisko limitu znamionowego tego modelu ({max})",
+      "holdCurrent": "Spoczynek {value}",
+      "microsteps": "{n} mikrokroków",
+      "sg": "SG {field} {threshold}",
+      "detailsShow": "▸ szczegóły",
+      "detailsHide": "▾ mniej",
+      "interp": "interp.",
+      "sense": "rezystor {value} Ω",
+      "healthTitleIdle": "Włącz silnik (zbazuj lub przesuń oś), aby odczytać temperaturę na żywo i flagi usterek",
+      "healthTitleLive": "Status sterownika na żywo z drv_status",
+      "staleData": "Ostatnie odświeżenie nie powiodło się - pokazuję poprzednie dane."
+    },
+    "liveMonitor": {
+      "toggle": "monitor na żywo",
+      "temp": "temp. {temp} °C",
+      "sg": "SG {sg}",
+      "cs": "CS {cs}",
+      "updates": "· aktualizacja ~1,5 s",
+      "noFaults": "brak usterek",
+      "idle": "Bezczynny - włącz silnik (zbazuj lub przesuń oś), aby odczytać SG / prąd / temperaturę na żywo."
+    },
+    "recommendPanel": {
+      "toggle": "zalecane strojenie",
+      "supply": "zasilanie",
+      "recompute": "przelicz ponownie",
+      "recommend": "zaleć",
+      "colCurrent": "obecnie",
+      "colRecommended": "zalecane",
+      "basis": "prąd pracy = {basis}; StealthChop utrzymuje się do ~{rps} obr/s przy {voltage} V.",
+      "confirm": "Zapisz to teraz do sterownika {stepper}. Odwracalne (Cofnij / restart przywraca konfigurację); odrzucane podczas drukowania.",
+      "applyToDriver": "zastosuj do sterownika",
+      "revert": "↺ cofnij",
+      "copyConfig": "kopiuj konfigurację",
+      "autotune": "autotune",
+      "autotuneTitle": "Uruchamia AUTOTUNE_TMC, jeśli dodatek klipper_tmc_autotune jest zainstalowany",
+      "noSpecs": "Brak danych katalogowych dla tego silnika - zalecenie strojenia niedostępne.",
+      "measured": "Zmierzono: silniki rezonują przy ~{freq} Hz",
+      "measuredSym": "symetria {pct}%",
+      "measuredHint": "Dane rzeczywiste z profilu wibracji uruchomionego na tej drukarce - otwórz audyt Kształtowania Wejścia."
+    },
+    "motorSync": {
+      "toggle": "synchronizacja silników",
+      "notInstalledTag": "(dodatek niezainstalowany)",
+      "about": "Wyrównuje fazę mikrokroków wielu silników na jednej osi (podwójne / poczwórne Z, podwójne X) za pomocą akcelerometru, aby się wzajemnie nie zwalczały. Dostarczane przez osobny dodatek {addon}.",
+      "checking": "sprawdzanie…",
+      "notInstalled": "Niezainstalowane na tej drukarce. Zainstaluj dodatek motors_sync, aby go tu włączyć.",
+      "warning": "⚠ To porusza głowicą przez chwilę (sonduje każdy silnik). Zachowaj odstęp i bądź gotów odciąć zasilanie.",
+      "confirm": "Obserwuję drukarkę - uruchom teraz synchronizację silników.",
+      "syncMotors": "synchronizuj silniki",
+      "calibrate": "kalibruj"
+    },
+    "sensorless": {
+      "noRegister": "⚠ Ten sterownik nie udostępnia rejestru progu StallGuard, więc bazowania bezczujnikowego nie da się tu nastroić - sprawdź konfigurację bazowania drukarki.",
+      "intro": "StallGuard {field} ustawia czułość bazowania bezczujnikowego.",
+      "threshold": "próg",
+      "nowRange": "teraz: {now} · zakres {min}…{max}",
+      "confirmSet": "Zapisz ten próg do sterownika teraz (odwracalne; odrzucane podczas drukowania).",
+      "setThreshold": "ustaw próg",
+      "testHomeWarning": "⚠ Bazowanie testowe porusza teraz osią {axis}. Przy złym progu może się nie zatrzymać - trzymaj rękę przy zasilaniu. Tylko osie bezczujnikowe.",
+      "confirmHome": "Obserwuję drukarkę i jestem gotów odciąć zasilanie - zbazuj {axis}.",
+      "testHome": "bazowanie testowe {axis}"
+    },
+    "homing": {
+      "homing": "bazowanie",
+      "unreachable": "drukarka nieosiągalna",
+      "physicalIntroLead": "Ta oś bazuje na fizyczny przełącznik krańcowy",
+      "physicalIntroTail": ". Naciśnij przełącznik ręką i sprawdź ponownie, aby potwierdzić okablowanie przed bazowaniem.",
+      "switchLabel": "przełącznik:",
+      "check": "↻ sprawdź",
+      "testHomeWarn": "⚠ Bazowanie testowe porusza teraz osią {axis} do jej krańcówki - upewnij się, że droga jest wolna.",
+      "pathClear": "Droga jest wolna - zbazuj {axis}.",
+      "testHome": "bazowanie testowe {axis}",
+      "probeNote": "Ta oś bazuje sondą Z (tym samym czujnikiem używanym do mapy stołu), więc nie ma tu progu StallGuard do nastrojenia. Ustaw offset sondy i mapę w narzędziach poziomowania stołu.",
+      "virtualNote": "Ta oś bazuje na wirtualną krańcówkę, która nie jest pinem StallGuard TMC - jest zarządzana przez własny moduł hosta, więc nie ma tu nic do strojenia."
+    },
+    "guidedWizard": {
+      "title": "🧭 Strojenie z przewodnikiem",
+      "backToDashboard": "← pulpit",
+      "stepChoose": "Wybór",
+      "stepMotor": "Silnik",
+      "stepTune": "Strojenie",
+      "stepSensorless": "Bezczujnikowe",
+      "stepDone": "Gotowe",
+      "step1Intro": "Wybierz oś do nastrojenia.",
+      "tuningHeader": "Strojenie {axis} · {model}",
+      "step2Intro": "Który silnik jest podłączony do tej osi? Wybierz go, aby FilaMind znał jego dane katalogowe.",
+      "assignToContinue": "Przypisz silnik, aby kontynuować.",
+      "step3Intro": "Uzyskaj zalecenie z danych silnika, a następnie skopiuj je do konfiguracji lub zastosuj na żywo (z zabezpieczeniem).",
+      "step4Intro": "Opcjonalnie: dostrój bazowanie bezczujnikowe. Pomiń, jeśli ta oś używa przełącznika krańcowego.",
+      "step5Intro": "Gotowe z {axis}. Obserwuj na żywo podczas poruszania osią lub nastrój kolejną.",
+      "tuneAnother": "nastrój inną oś",
+      "back": "← wstecz",
+      "next": "dalej →",
+      "finish": "zakończ"
+    },
+    "motorPicker": {
+      "motorLabel": "silnik:",
+      "notSet": "nieustawiony",
+      "searchPlaceholder": "szukaj wśród ponad 200 silników (model lub producent)…"
+    },
+    "registerEditor": {
+      "toggle": "nastrój rejestry (zaawansowane)",
+      "resetTitle": "INIT_TMC - ponownie zastosuj skonfigurowane rejestry + prąd tego sterownika",
+      "resetLabel": "↺ reset do konfiguracji",
+      "liveOnly": "Edycje działają {live} - niezapisywane. {initTmc} (reset), restart firmware lub przełączenie zasilania przywraca skonfigurowane wartości. Wartości spoza zakresu są odrzucane przez politykę bezpieczeństwa po stronie drukarki; surowy prąd i rejestry ochrony nie są tu edytowalne.",
+      "liveOnlyEmphasis": "tylko na żywo",
+      "loading": "Wczytywanie edytowalnych rejestrów…",
+      "coolstep": "CoolStep",
+      "on": "wł.",
+      "off": "wył.",
+      "coolstepEnableTitle": "Zastosuj sprawdzony zestaw CoolStep autotune (semin 2 / semax 4 / seup 3 / sedn 2 / seimin 1)",
+      "enable": "włącz",
+      "riskyTitle": "Bardziej ryzykowne pokrętło - potwierdź przed zapisem",
+      "now": "teraz:",
+      "confirm": "potwierdź",
+      "set": "ustaw",
+      "readOnly": "rejestry tylko do odczytu",
+      "toffHint": "Jeśli ustawisz toff na 1, utrzymaj też tbl ≥ 1 (16-cyklowy czas wygaszania tego wymaga).",
+      "groups": {
+        "chopper": "Chopper",
+        "stealthchop": "StealthChop (PWM)",
+        "stallguard": "StallGuard",
+        "thresholds": "Progi i timing",
+        "other": "Inne"
+      }
+    },
+    "apply": {
+      "nothingToApply": "Nic do zastosowania.",
+      "busyApply": "Odmowa zapisu do sterownika, gdy drukarka jest zajęta (drukuje lub wstrzymana).",
+      "applied": "Zastosowano {n} zmian(y) do {stepper}.",
+      "busyReinit": "Odmowa ponownej inicjalizacji, gdy drukarka jest zajęta (drukuje lub wstrzymana).",
+      "reinitialized": "Ponownie zainicjalizowano {stepper} i przywrócono jego skonfigurowany prąd.",
+      "autotuneNotInstalled": "klipper_tmc_autotune nie jest zainstalowany dla tego silnika - użyj zalecenia lub kopiowania do konfiguracji.",
+      "busyAutotune": "Odmowa autotune, gdy drukarka jest zajęta (drukuje lub wstrzymana).",
+      "autotuneRan": "Uruchomiono AUTOTUNE_TMC na {stepper}.",
+      "busyWrite": "Odmowa zapisu, gdy drukarka jest zajęta (drukuje lub wstrzymana).",
+      "stallguardSet": "Ustawiono {field} = {num} na {stepper}.",
+      "fieldSet": "Ustawiono {field} = {num} na {stepper} (tylko na żywo - INIT_TMC lub restart przywraca skonfigurowaną wartość).",
+      "coolstepEnabled": "Włączono CoolStep na {stepper} (tylko na żywo - INIT_TMC lub restart przywraca skonfigurowane wartości).",
+      "coolstepDisabled": "Wyłączono CoolStep na {stepper} (tylko na żywo - INIT_TMC lub restart przywraca skonfigurowane wartości).",
+      "busyHome": "Odmowa bazowania, gdy drukarka jest zajęta (drukuje lub wstrzymana).",
+      "homed": "Zbazowano {ax}.",
+      "motorsyncNotInstalled": "Dodatek motors_sync nie jest zainstalowany - wyrównuje on fazę mikrokroków wielu silników na jednej osi (podwójne/poczwórne Z, podwójne X) za pomocą akcelerometru.",
+      "busySync": "Odmowa synchronizacji silników, gdy drukarka jest zajęta (drukuje lub wstrzymana).",
+      "syncRan": "Uruchomiono {cmd}.",
+      "overCurrentCap": "Odmowa: {requested} A na {stepper} przekracza pułap {cap} A (limit pełnej skali sterownika / prąd znamionowy przypisanego silnika).",
+      "guardLocked": "Odmowa: inna operacja już trwa ({operation})."
+    }
+  }
+}

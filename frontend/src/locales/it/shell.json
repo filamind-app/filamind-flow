@@ -1,0 +1,215 @@
+{
+  "shell": {
+    "brand": {
+      "tagline": "FLOW · pannello klipper"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "toggle": "Attiva/disattiva navigazione",
+      "label": "Navigazione principale"
+    },
+    "mainsail": {
+      "label": "Mainsail",
+      "title": "Torna a Mainsail"
+    },
+    "footer": {
+      "stack": "FilaMind Flow - Creato da maker egiziani, per i maker di tutto il mondo. Buona stampa",
+      "by": "dal team DeltaFabs"
+    },
+    "home": {
+      "body": "I tuoi pannelli si trovano nella barra laterale - scegline uno per iniziare. Questa home è volutamente vuota per ora.",
+      "title": "Centro di controllo",
+      "refresh": "Aggiorna",
+      "loading": "Caricamento…",
+      "unreachable": "Il backend non è raggiungibile.",
+      "printer": "Stampante",
+      "statePrinting": "In stampa",
+      "statePaused": "In pausa",
+      "stateError": "Errore",
+      "stateIdle": "Inattiva",
+      "printerDown": "Moonraker non è raggiungibile.",
+      "doctor": "Machine Doctor",
+      "doctorBody": "Una scansione in sola lettura su pin, valori dei driver, deriva della configurazione, sincronizzazione del firmware e altro - valutata da A a F con link per saltare alla correzione.",
+      "doctorScan": "Scansiona la mia stampante",
+      "firmware": "Sincronizzazione firmware",
+      "host": "Host: {version}",
+      "open": "Apri",
+      "noData": "Nessun dato al momento.",
+      "tuning": "Taratura",
+      "noTuning": "Nessuna sessione di taratura archiviata - esegui la procedura guidata di Input Shaping.",
+      "hardware": "Hardware vs baseline",
+      "noBaseline": "Nessuna baseline hardware salvata - salva uno snapshot nella Machine Map per rilevare le modifiche.",
+      "hwUnchanged": "Nessuna modifica hardware dalla baseline salvata.",
+      "hwChanged": "{n} modifica/e hardware dalla baseline salvata.",
+      "setup": {
+        "title": "Per iniziare ({done}/{total})",
+        "go": "Vai",
+        "boards": "Conferma le tue schede nella Machine Map",
+        "baseline": "Salva una baseline hardware (rileva le modifiche future)",
+        "firmware": "Allinea il firmware di ogni MCU con l'host",
+        "motors": "Assegna i tuoi motori in Motor Drivers",
+        "tuning": "Tara l'input shaping per X e Y (procedura guidata)"
+      },
+      "journal": {
+        "title": "Attività recente",
+        "empty": "Niente di registrato ancora - flash, salvataggi della configurazione e sessioni di taratura appaiono qui.",
+        "flash": "Eseguito flash di {board} → {version}",
+        "configSave": "Salvato {file}",
+        "tuning": "Sessione di taratura: {kind} ({axis})"
+      },
+      "hostInfo": {
+        "title": "Host",
+        "time": "Ora",
+        "clock": "Sincronizzazione orologio",
+        "synced": "Sincronizzato",
+        "notSynced": "Non sincronizzato",
+        "temp": "Temp. CPU",
+        "uptime": "Tempo di attività",
+        "disk": "Disco"
+      },
+      "printerHost": "Stampante e host",
+      "maxFlow": {
+        "title": "Flusso massimo",
+        "expected": "Previsto: {n} mm³/s",
+        "empty": "Nessun test di flusso massimo ancora.",
+        "test": "Testa il flusso massimo"
+      }
+    },
+    "connection": {
+      "connected": "Connesso",
+      "connecting": "Connessione in corso",
+      "error": "Errore",
+      "offline": "Offline",
+      "idle": "Inattivo"
+    },
+    "language": {
+      "label": "Lingua",
+      "select": "Seleziona lingua",
+      "menu": "Scegli lingua"
+    },
+    "widgets": {
+      "firmware-upgrade": {
+        "title": "Gestore firmware",
+        "description": "Versioni del firmware degli MCU, stato di sincronizzazione dell'host e prontezza della toolchain."
+      },
+      "input-shaping": {
+        "title": "Input Shaping",
+        "description": "Analizza un CSV di risonanza e trova il miglior input shaper."
+      },
+      "motor-drivers": {
+        "title": "Motor Drivers",
+        "description": "Inventario in tempo reale dei driver stepper TMC: corrente, modalità, microstep e stato."
+      },
+      "config-editor": {
+        "title": "Editor configurazione",
+        "description": "Sfoglia i file di configurazione della tua stampante, suddivisi in sezioni con validazione."
+      },
+      "max-flow": {
+        "title": "Max-Flow",
+        "description": "Misura il massimo flusso volumetrico che il tuo hotend può sostenere (StallGuard)."
+      },
+      "board-topology": {
+        "title": "Topologia schede",
+        "description": "Vedi come host e MCU si collegano (USB / CAN / UART) + un'ipotesi sulla scheda."
+      },
+      "macro-designer": {
+        "title": "Macro Designer",
+        "description": "Simula il G-code offline - percorso della testa, limiti, totali e una libreria di macro."
+      },
+      "hardware-browser": {
+        "title": "Hardware Browser",
+        "description": "Cerca in una raccolta curata di hardware per la stampa 3D per nome, produttore o specifica."
+      },
+      "config-templates": {
+        "title": "Template configurazione",
+        "description": "Blocchi di configurazione Klipper e macro pronti da incollare, per categoria."
+      },
+      "machine-doctor": {
+        "title": "Machine Doctor",
+        "description": "Scansione completa della stampante con un clic, con pagella da A a F e link per saltare alla correzione."
+      },
+      "host-control": {
+        "title": "Controllo host",
+        "description": "Gestisci il sistema operativo Linux dell'host della stampante: stato, servizi, pulizia del disco e impostazioni di sistema."
+      },
+      "klipperscreen-studio": {
+        "title": "KlipperScreen Studio",
+        "description": "Modifica la configurazione del touchscreen KlipperScreen della tua stampante e riavvialo per applicarla."
+      }
+    },
+    "guard": {
+      "printing": "In stampa - scritture bloccate",
+      "running": "{op} in esecuzione - scritture bloccate",
+      "op": {
+        "resonance_test": "Test di risonanza",
+        "noise_check": "Controllo rumore",
+        "belt_comparison": "Confronto cinghie",
+        "axes_map": "Calibrazione mappa assi",
+        "sustain": "Eccitazione sostenuta",
+        "vibrations_profile": "Profilo vibrazioni",
+        "max_flow": "Test di flusso massimo",
+        "driver_write": "Scrittura driver",
+        "homing": "Homing",
+        "motors_sync": "Sincronizzazione motori",
+        "firmware_flash": "Flash firmware",
+        "firmware_batch": "Esecuzione batch firmware",
+        "firmware_restart": "Riavvio firmware"
+      }
+    },
+    "mission": {
+      "body": "FilaMind Flow riunisce i migliori strumenti per la stampa 3D - dalla prima configurazione alla padronanza - affinché i maker di ogni livello possano diagnosticare, correggere e stampare meglio. Il progetto è in fase di sviluppo e ricerca attivi, e nuove idee pratiche sono sempre benvenute. I contributi sono aperti a tutti.",
+      "tagline": "Creato da maker egiziani, per i maker di tutto il mondo. Buona stampa.",
+      "dismiss": "Chiudi"
+    },
+    "feedback": {
+      "menu": "Feedback",
+      "menuTitle": "Condividi un feedback",
+      "bug": "Segnala un bug",
+      "bugDesc": "Qualcosa non funziona",
+      "feature": "Richiedi una funzionalità",
+      "featureDesc": "Suggerisci un miglioramento",
+      "reportError": "Segnala",
+      "reportErrorAria": "Segnala questo errore su GitHub",
+      "dialog": {
+        "bugTitle": "Segnala un bug",
+        "featureTitle": "Richiedi una funzionalità",
+        "introBug": "Descrivi cosa è andato storto. Apriremo per te una issue precompilata su GitHub da rivedere e inviare - niente viene inviato automaticamente.",
+        "introFeature": "Descrivi la funzionalità che desideri. Apriremo per te una issue precompilata su GitHub da rivedere e inviare.",
+        "descLabel": "Descrizione",
+        "descPlaceholderBug": "Cosa hai fatto e cosa è successo invece?",
+        "descPlaceholderFeature": "Cosa vorresti poter fare?",
+        "attach": "Allega uno screenshot",
+        "attachHint": "Un'immagine della schermata attuale ci aiuta a capire il problema.",
+        "capturing": "Acquisizione screenshot…",
+        "screenshotReady": "Anteprima screenshot",
+        "noScreenshot": "Impossibile acquisire uno screenshot - puoi allegarne uno manualmente.",
+        "includes": "Cosa includeremo",
+        "includesNote": "Questi dettagli vengono aggiunti alla issue per facilitare la diagnosi. Rivedili su GitHub prima di inviare.",
+        "languageNote": "La issue è scritta in inglese così i manutentori possono intervenire.",
+        "submit": "Apri la issue su GitHub",
+        "cancel": "Annulla",
+        "close": "Chiudi"
+      },
+      "field": {
+        "version": "Versione app",
+        "view": "Vista attiva",
+        "locale": "Lingua",
+        "theme": "Tema",
+        "screen": "Schermo",
+        "browser": "Browser",
+        "time": "Ora",
+        "error": "Errore"
+      },
+      "sent": {
+        "title": "Issue aperta in una nuova scheda",
+        "body": "Rivedi i dettagli precompilati su GitHub, poi invia la issue da lì.",
+        "copied": "Screenshot copiato - incollalo nella issue con Ctrl/⌘+V.",
+        "saved": "Screenshot salvato nei tuoi download - trascinalo nella issue.",
+        "failed": "Impossibile allegare lo screenshot automaticamente - puoi aggiungerne uno su GitHub."
+      }
+    },
+    "support": {
+      "kofi": "Sostieni FilaMind Flow"
+    }
+  }
+}

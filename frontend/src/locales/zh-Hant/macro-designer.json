@@ -1,0 +1,200 @@
+{
+  "macroDesigner": {
+    "intro": "離線模擬 G-code，貼上或撰寫程式後即可檢視工具頭路徑、邊界框、移動與擠出總量以及時間估算，完全不需碰到印表機。也可瀏覽內建巨集庫作為參考。",
+    "help": {
+      "guide": "說明",
+      "guideTitle": "關於巨集設計器",
+      "close": "關閉",
+      "howToRead": "使用方式",
+      "steps": [
+        "在編輯器中輸入或貼上 G-code（起始時已載入一個範例方形）。",
+        "按下「模擬」，2D 路徑與統計資料便會更新。",
+        "實線代表擠出移動；淺色虛線代表空跑移動。",
+        "瀏覽巨集庫並插入其中一個，即可以其指令作為起點。"
+      ],
+      "topics": {
+        "simulator": {
+          "title": "模擬器",
+          "body": "它會在虛擬工具頭上執行程式：G0/G1 移動、G90/G91（絕對／相對）、M82/M83（擠出機模式）、G92（設定位置）以及 G28（歸位 → 原點）。它會回報路徑、邊界框、移動與擠出總量、依進給率推算的大略時間，以及逐指令的時間軸。任何內容都不會送往印表機。"
+        },
+        "motion": {
+          "title": "路徑與時間",
+          "body": "2D 檢視顯示的是 XY 路徑（Z 包含在邊界中）。時間估算是將每段移動的長度除以其進給率，並未計入加速度，因此只是大略的下限，並非精確的列印時間。模擬器無法建模的指令（例如 M-code、高階巨集）會列為警告並略過。"
+        },
+        "macros": {
+          "title": "巨集庫",
+          "body": "一組常見 Klipper 巨集的參考集，含其名稱、用途以及所需的組態區段。「插入」會將巨集的高階指令放入編輯器作為起點，請注意這些指令在印表機上會進一步展開（完整的 Jinja／巨集展開即將推出）。"
+        },
+        "glossary": {
+          "title": "詞彙表",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "印表機逐行執行的運動語言（移動、溫度、風扇等）。"
+        },
+        "feedrate": {
+          "term": "進給率 (F)",
+          "def": "以 mm/min 表示的移動速度，F1200 即 20 mm/s。決定每段移動的執行速度。"
+        },
+        "macro": {
+          "term": "巨集",
+          "def": "具名且可重複使用的指令（例如 QUAD_GANTRY_LEVEL），會展開為一連串 G-code。"
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "模擬",
+      "simulating": "模擬中…",
+      "sample": "載入範例",
+      "clear": "清除"
+    },
+    "library": {
+      "label": "內建巨集",
+      "placeholder": "瀏覽巨集…",
+      "insert": "插入編輯器",
+      "requires": "需要：{sections}",
+      "none": "-"
+    },
+    "result": {
+      "title": "模擬",
+      "moves": "{count} 段移動",
+      "distance": "{mm} mm 移動",
+      "extrude": "{mm} mm 擠出",
+      "time": "~{s} s",
+      "bounds": "邊界",
+      "empty": "沒有可模擬的移動。",
+      "timeAccel": "（已計入加速度）",
+      "timeConstant": "（無限制）"
+    },
+    "path": {
+      "title": "工具頭路徑 (XY)",
+      "noPath": "執行模擬以檢視路徑。"
+    },
+    "explain": {
+      "title": "解說這個巨集",
+      "travel": "以 {f} mm/min 快速移動至 X{x} Y{y}",
+      "print": "列印移動 - 以 {f} mm/min 在 {d} mm 內擠出 {e} mm 至 X{x} Y{y}",
+      "retract": "回抽 {e} mm",
+      "prime": "原地擠出 {e} mm",
+      "noMove": "無移動",
+      "absXYZ": "切換為絕對定位 (G90)",
+      "relXYZ": "切換為相對定位 (G91)",
+      "absE": "切換為絕對擠出 (M82)",
+      "relE": "切換為相對擠出 (M83)",
+      "setPos": "設定目前位置 (G92)",
+      "home": "歸位各軸 (G28) → 原點",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "累計：{d} mm · {e} mm · ~{s} s",
+      "note": "迴圈與條件式會以印表機的方式展開；需要即時印表機狀態的巨集會退回顯示字面預覽。"
+    },
+    "timeline": {
+      "title": "時間軸",
+      "line": "行號",
+      "cmd": "指令",
+      "action": "動作"
+    },
+    "warnings": {
+      "title": "警告"
+    },
+    "live": {
+      "label": "來自印表機",
+      "placeholder": "選擇一個已安裝的巨集…",
+      "hint": "在印表機上找到 {n} 個巨集，選擇其一以載入其 G-code 並進行模擬。",
+      "unreachable": "無法連線印表機，請連線以載入已安裝的巨集。",
+      "params": "巨集參數"
+    },
+    "limits": {
+      "title": "超出邊界／超速",
+      "oob": "第 {line} 行：{axis}={value} 超出列印區域（{min}…{max} mm）。",
+      "overSpeed": "第 {line} 行：{value} mm/s 超過印表機的 {limit} mm/s 上限（Klipper 會將其鉗制）。",
+      "buildArea": "列印區域 {x}×{y} mm"
+    },
+    "lint": {
+      "title": "巨集檢查器 - {n} 項發現",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE 缺少對應的 RESTORE_GCODE_STATE，已儲存的定位／擠出機模式永遠不會還原。",
+          "fix": "加入 RESTORE_GCODE_STATE（或移除 SAVE）。"
+        },
+        "ends_relative": {
+          "msg": "此巨集以相對模式（G91/M83）結束，下一個指令將以相對方式移動。",
+          "fix": "在最後加入 G90 / M82，或以 SAVE_GCODE_STATE … RESTORE_GCODE_STATE 包覆這些移動。"
+        },
+        "extrude_before_home": {
+          "msg": "擠出移動發生在 G28 之前，有冷擠出或未歸位擠出的風險。",
+          "fix": "在擠出前先歸位 (G28) 並加熱熱端。"
+        }
+      }
+    },
+    "heat": {
+      "colorBy": "上色依據",
+      "none": "平面",
+      "speed": "速度",
+      "extrude": "擠出",
+      "legendSpeed": "速度 (mm/s)",
+      "legendExtrude": "擠出 (mm/s)"
+    },
+    "compare": {
+      "title": "比較 (A / B)",
+      "hint": "模擬第二個程式 (B) 並與目前結果 (A) 進行差異比對。",
+      "copyA": "複製 A → B",
+      "run": "比較",
+      "running": "比較中…",
+      "placeholder": "貼上或撰寫 B 程式…",
+      "editorB": "程式 B",
+      "overlay": "A 與 B 路徑疊圖",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "檢查器差異",
+      "lintSame": "兩者的檢查器發現相同。",
+      "onlyA": "僅在 A 中",
+      "onlyB": "僅在 B 中",
+      "row": {
+        "moves": "移動段數",
+        "distance": "距離 (mm)",
+        "extrude": "擠出 (mm)",
+        "time": "時間 (s)"
+      }
+    },
+    "scaffold": {
+      "title": "產生 START / END_PRINT",
+      "hint": "為這台印表機量身打造 START_PRINT 與 END_PRINT，含其歸位方式、實際具備的調平、網格步驟，以及位於真實列印區域內的清料／停駐位置。",
+      "generate": "產生",
+      "generating": "產生中…",
+      "loadEditor": "載入編輯器",
+      "writeTitle": "寫入組態",
+      "target": "目標檔案",
+      "append": "附加至組態…",
+      "confirm": "確認附加",
+      "cancel": "取消",
+      "appending": "寫入中…",
+      "writeNote": "在確認關卡之後將兩個巨集附加至所選檔案，會先建立備份，且列印期間拒絕寫入。若已存在同名巨集則拒絕執行。",
+      "saved": "已儲存至 {file}。",
+      "savedBackup": "已儲存至 {file}（備份：{backup}）。重新啟動韌體以套用。",
+      "note": {
+        "kinematics": "運動學：{k}。",
+        "bounds": "列印區域 X {x0}-{x1}，Y {y0}-{y1}（清料／停駐位於其中）。",
+        "leveling_qgl": "偵測到 quad_gantry_level -> 已加入 QUAD_GANTRY_LEVEL。",
+        "leveling_ztilt": "偵測到 z_tilt -> 已加入 Z_TILT_ADJUST。",
+        "leveling_none": "未設定 quad_gantry_level / z_tilt，已保留佔位內容。",
+        "mesh": "偵測到 bed_mesh -> 已加入 BED_MESH_CALIBRATE。",
+        "no_bed": "無加熱床，已省略熱床加熱步驟。"
+      }
+    },
+    "flow": {
+      "title": "流量檢查（熱端上限）",
+      "hint": "從目錄選擇你的熱端，每段列印移動都會對照其真實熔融區上限進行檢查，過量流動的巨集在列印前就會被揪出。",
+      "hotend": "熱端",
+      "pick": "選擇一個熱端…",
+      "diameter": "Ø mm",
+      "ok": "所有列印移動都在 {ceiling} mm³/s 上限之內。",
+      "overTitle": "{n} 段移動超過 {ceiling} mm³/s 上限：",
+      "overLine": "第 {line} 行：{flow} mm³/s"
+    }
+  }
+}

@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "bu nedir?",
+      "topics": {
+        "glossary": {
+          "title": "Input shaping terimleri"
+        },
+        "analyze": {
+          "title": "Bir rezonans CSV'sini analiz etme",
+          "body": "Yazıcıda TEST_RESONANCES ile veri yakalayın (ya da 🔴 Canlı araçları kullanın), sonra .csv dosyasını buraya yükleyin. FilaMind, Klipper'ın kendi shaper matematiğini çalıştırır ve bir shaper + frekans önerir. X dosyasını ve Y dosyasını sırayla yapın - tek bir config bloğunda birleşirler."
+        },
+        "grade": {
+          "title": "A-F notu ne anlama gelir",
+          "body": "Beş eşit bölümden oluşan bir ölçüm kalitesi puanı: tepe netliği, kalan titreşim, yumuşatma, frekans (40-90 Hz sağlıklıdır) ve rezonansın ne kadar temiz olduğu. A/B → uygulayın; C → kullanılabilir, ipuçlarına göz atın; D/F → mekaniği düzeltin ve yeniden test edin."
+        },
+        "diagnostics": {
+          "title": "Tanıları okuma",
+          "body": "Her kart, ölçümü olası bir mekanik nedene ve bir çözüme eşler. Yeşil = sağlıklı, sarı = iyileştirmeye değer, kırmızı = sonuca güvenmeden önce düzeltin. Bir düzeltme uygulayın, yeniden çalıştırın ve kartın yeşile dönmesini izleyin."
+        },
+        "chart": {
+          "title": "Frekans grafiğini okuma",
+          "body": "Düz eğriler ölçülen titreşim enerjisidir (X+Y+Z toplamı artı her eksen). ▲ baskın rezonansı işaretler. Soluk eğriler her shaper'ın frekans boyunca kalan titreşimidir - önerilen olan (pembe) tepenizde en derine iner."
+        },
+        "shapers": {
+          "title": "Bir shaper seçme",
+          "body": "Her satır, kalan titreşimi yumuşatmaya karşı dengeler. ZV / MZV en hafifidir (temiz tek rezonans); EI daha sağlamdır; 2-/3-hump geniş ya da çoklu rezonansları idare eder ama daha çok yumuşatır. FilaMind en iyi dengeyi vurgular."
+        },
+        "config": {
+          "title": "Config'i uygulama",
+          "body": "Bu [input_shaper] bloğu X ve/veya Y sonucunuzu taşır. printer.cfg dosyanıza kopyalayın ve Klipper'ı yeniden başlatın. Rozetler hangi eksenlerin yakalandığını gösterir - tam bir blok için hem X hem de Y'yi yakalayın."
+        },
+        "noise": {
+          "title": "Gürültü kontrolü",
+          "body": "İvmeölçerin boştaki titreşimini hareketsiz okur - test öncesi hızlı bir montaj kontrolü. Klipper'ın genel kuralı: ~1-100 normaldir, ~1000+ gevşek bir sensör ya da kablolama anlamına gelir. Önce gürültülü bir montajı düzeltin yoksa her test güvenilmez olur."
+        },
+        "belts": {
+          "title": "Kayış karşılaştırması (CoreXY)",
+          "body": "Her kayış köşegenini uyarır ve iki yanıtı üst üste bindirir. Eşleşen tepe frekansları = eşit gerginlik. Bir boşluk, düşük frekanslı kayışın daha gevşek olduğu anlamına gelir - sıkın ve tepeler hizalanana kadar yeniden çalıştırın."
+        },
+        "axesMap": {
+          "title": "Axes-map algılama",
+          "body": "Baskı kafasını biraz X'te, sonra Y'de, sonra Z'de hareket ettirerek ivmeölçerin nasıl monte edildiğini öğrenir ve size printer.cfg için axes_map satırını verir. Sensörü taktıktan ya da taşıdıktan sonra bir kez çalıştırın ki sonraki her test doğru eksenleri okusun."
+        },
+        "sustain": {
+          "title": "Sürdürülen frekans",
+          "body": "Baskı kafasını tek bir frekansta titretmeyi sürdürür, böylece neyin tıkırdadığını bulmak için kayışlara, kızağa ve şasiye elle dokunabilirsiniz. Spektrogram + zaman çizelgesi, hedef frekansınızın baskın olup olmadığını ve bir dokunuşun onu ne zaman sustur duğunu gösterir."
+        },
+        "vibrations": {
+          "title": "Titreşim profili",
+          "body": "Makinenin en pürüzsüz çalıştığı yeri ve hangi hızların bir rezonansa çarptığını haritalamak için her motor açısı boyunca birçok hızı tarar. Baskı / hareket hareketleri için en pürüzsüz hızları tercih edin ve işaretli olanlardan kaçının. Simetri %, iki motorun ne kadar iyi eşleştiğini gösterir."
+        },
+        "guided": {
+          "title": "Rehberli vs. manuel",
+          "body": "Rehberli, tüm akışta size eşlik eder - Gürültü → Kayışlar → Shaper X → Shaper Y → Titreşimler → Basınç - her adımda bir geç / kal kapısıyla. Tam bir ayar için kullanın. Yalnızca belirli bir araç istediğinizde 📈 Analiz ya da 🔴 Canlı araçlara geçin."
+        },
+        "history": {
+          "title": "Geçmiş & eğilimler",
+          "body": "Her kalibrasyon (bu tarayıcıda) notu ve puanıyla kaydedilir. ▲/▼ oku, bir çalıştırmayı aynı eksenin önceki testiyle karşılaştırır - yukarı daha temiz bir yakalama ya da daha sert bir eksen, aşağı daha fazla gürültü ya da daha yumuşak bir eksen anlamına gelir."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input shaper",
+          "def": "Klipper'ın harekete uyguladığı, yazıcının ana titreşimini iptal eden bir filtre; böylece çınlama / hayalet olmadan daha hızlı baskı yapabilirsiniz."
+        },
+        "resonance": {
+          "term": "Rezonans",
+          "def": "Bir eksenin itildiğinde doğal olarak titreştiği frekans (Hz). Daha düşük = daha yumuşak / daha ağır eksen; ~40-90 Hz sağlıklı bir yazıcıdır."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Güç spektral yoğunluğu - her frekansta ne kadar titreşim enerjisi bulunduğu. Yüksek tepe, shaper'ın hedeflediği rezonanstır."
+        },
+        "smoothing": {
+          "term": "Yumuşatma",
+          "def": "Keskin köşeleri hafifçe yuvarlayan, shaping'in bir yan etkisi. Daha düşük daha iyidir; ≤0,1 minimaldir, >0,2 detayı yumuşatmaya başlar."
+        },
+        "vibrationPct": {
+          "term": "Titreşim %",
+          "def": "Shaper'dan sonra ne kadar rezonans kaldığı. Daha düşük daha iyidir; ≤%2 mükemmel, ≤%5 iyidir."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "Shaper'ın çok fazla yumuşatma olmadan sürdürebileceği ivme - önerilen bir SET_VELOCITY_LIMIT / printer.cfg değeri."
+        }
+      },
+      "guide": "Kılavuz",
+      "guideTitle": "Input Shaping kılavuzu",
+      "close": "Kapat"
+    },
+    "grade": {
+      "clarity": {
+        "label": "Tepe netliği",
+        "value": "{ratio}×",
+        "note": {
+          "none": "Değerlendirilecek spektrum yok.",
+          "good": "Keskin tepe, gürültünün çok üzerinde.",
+          "ok": "Tepe gürültünün üzerinde görünür.",
+          "poor": "Zayıf tepe - gürültülü ya da çok sert."
+        }
+      },
+      "vibration": {
+        "label": "Kalan titreşim",
+        "value": "%{pct}",
+        "note": {
+          "good": "Neredeyse tüm rezonans giderildi.",
+          "ok": "Rezonansın çoğu giderildi.",
+          "poor": "Önemli ölçüde titreşim kalıyor."
+        }
+      },
+      "smoothing": {
+        "label": "Yumuşatma",
+        "note": {
+          "good": "Minimal köşe yuvarlama.",
+          "ok": "Yüksek ivmede biraz yuvarlama.",
+          "poor": "Yoğun yumuşatma - köşeleri yuvarlar."
+        }
+      },
+      "freq": {
+        "label": "Frekans",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "Frekans bulunamadı.",
+          "good": "Sağlıklı, sert eksen.",
+          "ok": "Biraz yumuşak ya da çok sert.",
+          "soft": "Yumuşak / ağır eksen.",
+          "high": "Alışılmadık ölçüde yüksek."
+        }
+      },
+      "shaper": {
+        "label": "Rezonans şekli",
+        "note": {
+          "clean": "Temiz tek rezonans.",
+          "robust": "Tek rezonans, sağlam shaper.",
+          "twin": "Geniş ya da ikiz rezonans.",
+          "multiple": "Çoklu rezonanslar.",
+          "atypical": "Atipik shaper."
+        }
+      },
+      "verdict": {
+        "a": "Mükemmel - temiz yakalama, iyi ayarlanmış eksen.",
+        "b": "İyi - sağlam sonuç, iyileştirmeye az yer var.",
+        "c": "Orta - kullanılabilir; aşağıdaki önerilere bakın.",
+        "d": "Zayıf - mekanik ayar + yeniden test önerilir.",
+        "f": "Güvenilmez - testi yeniden çalıştırın (sensör montajını kontrol edin).",
+        "none": "Kullanılabilir sonuç yok - TEST_RESONANCES'i yeniden çalıştırın."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "Kullanılabilir rezonans yok",
+        "advice": "TEST_RESONANCES'i yeniden çalıştırın. İvmeölçerin baskı kafasına bağlı ve sağlam monte edildiğini kontrol edin.",
+        "detail": "net tepe algılanmadı"
+      },
+      "noisy": {
+        "title": "Gürültülü yakalama",
+        "advice": "İvmeölçer montajını sabitleyin ve yeniden çalıştırın. Test sırasında fanlardan ya da diğer hareketlerden kaçının.",
+        "detail": "sinyal-gürültü {snr}×"
+      },
+      "lowFreq": {
+        "title": "Düşük rezonans frekansı",
+        "advice": "Yumuşak ya da ağır eksen - kayışları sıkın ve şasi sertliğini kontrol edin. Daha sert bir eksen daha yüksek rezonans yapar ve daha hızlı baskı alır.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Biraz yumuşak eksen",
+        "advice": "Frekans düşük tarafta. Kayışları ya da şasiyi sıkılaştırmak onu yükseltir ve daha hızlı baskı almanı sağlar.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "Yüksek yumuşatma",
+        "advice": "Köşeleri yuvarlar. Daha sert bir shaper seçin ya da max_accel'i düşürün.",
+        "detail": "yumuşatma {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Çoklu rezonanslar",
+        "advice": "Genellikle gevşek bir baskı kafası, kayış ya da parça. Baskı kafasını yeniden oturtun ve kayış gerginliğini yeniden kontrol edin."
+      },
+      "vibrationRemains": {
+        "title": "Titreşim kalıyor",
+        "advice": "Mekanik ayar (kayışlar, şasi, baskı kafası kütlesi) bunu daha aşağı çekebilir.",
+        "detail": "shaping sonrası %{vibrations} kaldı"
+      },
+      "healthy": {
+        "title": "Sağlıklı eksen",
+        "advice": "Temiz yakalama ve sert bir eksen - hazır. Config'i uygulayın ve Klipper'ı yeniden başlatın.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X ve Y çok farklı",
+        "advice": "Asimetrik sertlik. Daha yumuşak eksende kayış gerginliğini kontrol edin; CoreXY'de her iki kayışın eşleştiğinden ve gergin olduğundan emin olun.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "%{value}"
+      },
+      "row": {
+        "recommended": "önerilen",
+        "shaperFreq": "shaper frekansı",
+        "peakFreq": "tepe frekansı",
+        "remainingVibr": "kalan titreşim",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Kayışlar eşleşti",
+          "advice": "İki kayış yanıtı hizalanıyor - gerginlik dengeli görünüyor."
+        },
+        "differ": {
+          "title": "Kayışlar farklı",
+          "advice": "Kayış rezonansları farklı - her iki tepe hizalanana kadar gevşek kayışı yeniden gerin."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Sensör sessiz",
+          "why": "Devam etmek için iyi."
+        },
+        "elevated": {
+          "title": "Sensör gürültüsünü azaltın",
+          "why": "Maks {max} ≥ {threshold}. Baskı kafası fanını kapatın ve montajı yeniden kontrol edin, sonra yeniden çalıştırın."
+        },
+        "bad": {
+          "title": "Test öncesi ivmeölçeri düzeltin",
+          "why": "Gürültü {max} çok yüksek - sensörü yeniden oturtun ve kablolamasını kontrol edin."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Kayışlar dengeli",
+          "why": "Gerginlik eşit - sonra shaper'ı kalibre edin."
+        },
+        "mismatch": {
+          "title": "{looser} kayışını yeniden gerin",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ%{diffPct}). Her iki tepe hizalanana kadar düşük frekanslı kayışı sıkın, sonra yeniden çalıştırın."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Daha düşük bir ivmede yeniden çalıştırın",
+          "why": "Çok fazla düşük frekanslı hareket kaydedildi - yalnızca sabit hızlar ölçülsün diye ACCEL'i düşürün (ya da SIZE'ı artırın), sonra yeniden çalıştırın."
+        },
+        "favour": {
+          "title": "~{speed} mm/s tercih edin",
+          "why": "En pürüzsüz bant {start}-{end} mm/s - mümkün olduğunda dilimleyici baskı / hareket hızlarını buraya ayarlayın."
+        },
+        "avoid": {
+          "title": "{shown} mm/s'den kaçının",
+          "why": "Bu hızlar bir rezonansa çarpıyor - dilimleyicide baskı + hareket hareketlerini bunlardan uzak tutun."
+        },
+        "symmetry": {
+          "title": "Kayış gerginliğini / motor eşleşmesini kontrol edin",
+          "why": "Motor simetrisi %{pct} düşük - kayışları yeniden gerin (kayışları karşılaştır) ve her iki motor akımının eşleştiğini doğrulayın."
+        },
+        "fine": {
+          "title": "Titreşimler iyi görünüyor",
+          "why": "Sorunlu hız öne çıkmadı."
+        }
+      },
+      "pressure": {
+        "title": "Bir pressure-advance kulesi çalıştırın",
+        "why": "PA kulesini bastırın, köşelerin en keskin göründüğü yüksekliği okuyun, sonra `SET_PRESSURE_ADVANCE ADVANCE=<değer>` ve `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "Yapılandırılmış axes_map değeriniz zaten doğru.",
+        "update": "Config'inizi şuna güncelleyin: {axes_map}",
+        "add": "Her Input Shaping grafiğinin X/Y/Z hizalı okuması için bunu ekleyin."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Gürültü",
+          "title": "İvmeölçer gürültüsü",
+          "why": "Herhangi bir testten önce sensörün sağlam monte edildiğini onaylayın (hareketsiz)."
+        },
+        "belts": {
+          "label": "Kayışlar",
+          "title": "CoreXY kayış dengesi",
+          "why": "İki kayış gerginliğini eşleştirin. Yalnızca CoreXY - kartezyen / bed-slinger'da atlayın."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper - X",
+          "why": "X rezonansını ve en iyi shaper'ı bulun."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper - Y",
+          "why": "Y rezonansını ve en iyi shaper'ı bulun."
+        },
+        "vibrations": {
+          "label": "Titreşimler",
+          "title": "Titreşim profili",
+          "why": "En pürüzsüz hızları ve kaçınılacak rezonansları bulmak için hız × motor açısını tarayın."
+        },
+        "pressure": {
+          "label": "Basınç",
+          "title": "Pressure advance",
+          "why": "Köşeleri ve dikişleri keskinleştirmek için pressure advance'i en son ayarlayın."
+        },
+        "done": {
+          "label": "Bitti"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Sensör sessiz",
+          "warn": "Gürültü biraz yüksek",
+          "failed": "Çok gürültülü - montajı düzeltin"
+        },
+        "belts": {
+          "passed": "Kayışlar eşleşti",
+          "differ": "Kayışlar farklı (Δ%{diffPct})",
+          "mismatched": "Kayışlar uyumsuz (Δ%{diffPct})"
+        },
+        "shaper": {
+          "healthy": "Not {letter} - sağlıklı eksen",
+          "usable": "Not C - kullanılabilir",
+          "tune": "Not {letter} - ayarla + yeniden test et"
+        },
+        "vibrations": {
+          "lowFreq": "Çok fazla düşük frekanslı hareket - ivmeyi düşür & yeniden çalıştır",
+          "mismatched": "Motorlar uyumsuz (%{pct})",
+          "smoothest": "En pürüzsüz ~{rec} mm/s",
+          "complete": "Profil tamamlandı"
+        }
+      },
+      "ui": {
+        "title": "🧭 Rehberli ayar",
+        "exit": "✕ çık",
+        "motionReady": "⚠ baskı kafasını hareket ettirir - hazırım",
+        "running": "çalışıyor…",
+        "run": "çalıştır",
+        "rerun": "↻ yeniden çalıştır",
+        "skipBelts": "atla (CoreXY değil)",
+        "copyPa": "📋 PA kulesini kopyala",
+        "copied": "✅ Kopyalandı",
+        "finish": "Bitir →",
+        "nextStep": "Sonraki adım →",
+        "skipAnyway": "yine de atla",
+        "complete": "Ayar tamamlandı",
+        "stepFailed": "Adım başarısız",
+        "copyFailed": "Kopyalama başarısız - metni seçip elle kopyalayın.",
+        "summaryNote": "X ve Y yakalamalarınız aşağıdaki birleşik {code} bloğunda - kopyalayın, sonra Klipper'ı yeniden başlatın. Yeniden kontrol etmek için rehberli ayarı istediğiniz zaman yeniden açın.",
+        "beltsNotApplicable": "Kayış karşılaştırması CoreXY yazıcılara uygulanır - bu yazıcı '{kin}' bildiriyor, bu yüzden bu adım atlanıyor.",
+        "resultsSoFar": "Şimdiye kadarki sonuçlar",
+        "archived": "Kaydedildi",
+        "autoSaved": "Yazıcı üzerindeki arşive otomatik olarak kaydedildi.",
+        "beltA": "Kayış A (1,1)",
+        "beltB": "Kayış B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "Önerilen",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Maks ivme",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Maks boşta gürültü {max} (normal < {threshold}).",
+        "status": "Durum",
+        "maxNoise": "Maks gürültü",
+        "threshold": "Eşik",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Eşleşme",
+        "beltA": "Kayış A tepesi",
+        "beltB": "Kayış B tepesi",
+        "difference": "Fark",
+        "matched": "eşleşti",
+        "mismatch": "uyumsuz",
+        "hz": "{value} Hz",
+        "pct": "%{value}"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Durum",
+        "gravity": "Yerçekimi",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Gürültü"
+      },
+      "sustain": {
+        "target": "Hedef",
+        "dominant": "Baskın",
+        "inBand": "Bantta",
+        "onTarget": "Hedefte",
+        "hz": "{value} Hz",
+        "pct": "%{value}",
+        "yes": "evet",
+        "no": "hayır"
+      },
+      "vibrations": {
+        "smoothest": "En pürüzsüz",
+        "symmetry": "Simetri",
+        "motorResonance": "Motor rezonansı",
+        "avoid": "Kaçın",
+        "mmps": "{speed} mm/s",
+        "pct": "%{pct}",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Rehberli",
+      "tabAnalyze": "📈 Analiz",
+      "tabLive": "🔴 Canlı araçlar",
+      "tabHistory": "🕘 Geçmiş",
+      "intro": "Bir Klipper rezonans yakalamasından input shaping ayarlayın - komut satırı yok. Buraya yeni mi geldiniz? {guided} ile başlayın. Ya da bir {csv} üzerinde kendiniz çalışmak için {analyze}, yazıcıda yakalamak için {live}, ya da geçmiş çalıştırmaları gözden geçirmek için {history} seçin.",
+      "cfgReady": "printer.cfg hazır",
+      "copy": "📋 Kopyala",
+      "copied": "✅ Kopyalandı",
+      "archive": "💾 Arşivle",
+      "saved": "✅ Kaydedildi",
+      "advanced": "⚙ gelişmiş",
+      "compareCsvs": "⇄ CSV'leri karşılaştır",
+      "blankDefault": "boş = Klipper varsayılanı",
+      "auditTitle": "Denetim",
+      "refresh": "↻ yenile",
+      "auditEmpty": "Henüz sonuç yok - bir ayar çalıştırın ya da birini arşive kaydedin.",
+      "trendTitle": "puan {score} vs önceki {axis} testi",
+      "sourceSaved": "💾 kaydedildi",
+      "sourceLocal": "yerel",
+      "recommended": "Önerilen",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "eksen {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "Bu veri için önerilen shaper yok.",
+      "measurementQuality": "Ölçüm kalitesi",
+      "scoreOutOf": "{v}/100",
+      "hide": "gizle",
+      "details": "ayrıntılar",
+      "chartAria": "Frekans yanıtı ve shaper'lar",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "önerilen",
+      "legendPeak": "▲ tepe",
+      "legendAxisHint": "frekans (Hz) → · düz = ölçülen · soluk = shaper kalanı",
+      "colShaper": "shaper",
+      "colFreq": "frekans",
+      "colVibr": "titreşim",
+      "colSmooth": "yumuşatma",
+      "colAccel": "ivme",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "%{v}",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "temizle",
+      "pasteHint": "{cfg} dosyanıza yapıştırın, sonra Klipper'ı yeniden başlatın.",
+      "errAnalysisFailed": "Analiz başarısız",
+      "errCopyFailed": "Kopyalama başarısız - metni seçip elle kopyalayın.",
+      "errSaveFailed": "Arşive kaydetme başarısız"
+    },
+    "fromPrinter": {
+      "liveTools": "Canlı araçlar",
+      "intro": "⏳ Bunlar baskı kafasını hareket ettirir ve {duration} sürebilir (bir kayış karşılaştırması iki tam tarama çalıştırır) - sonuç görünene kadar bu sayfayı açık tutun.",
+      "introDuration": "1-5 dakika",
+      "confirmMoves": "⚠ baskı kafasını hareket ettirir - hazırım",
+      "axisX": "eksen X",
+      "axisY": "eksen Y",
+      "noiseTitle": "🔊 Gürültü kontrolü",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "ölçülüyor…",
+      "noiseHint": "hareketsiz · test öncesi çalıştırın",
+      "noiseVerdictQuiet": "✅ sessiz",
+      "noiseVerdictElevated": "⚠ yükselmiş",
+      "noiseVerdictTooNoisy": "⛔ çok gürültülü",
+      "noiseMaxNormal": "maks {max} · normal < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Canlı test",
+      "liveBtn": "TEST_RESONANCES çalıştır",
+      "liveBtnBusy": "çalışıyor…",
+      "liveDesc": "Gerekirse yazıcıyı home yapar, sonra seçilen eksende TEST_RESONANCES çalıştırır (bir ivmeölçer + bir {section} gerekir). Baskı sırasında reddedilir.",
+      "beltsTitle": "🟰 Kayışları karşılaştır",
+      "beltsBtn": "kayışları karşılaştır",
+      "beltsBtnBusy": "karşılaştırılıyor…",
+      "beltsBtnTitle": "CoreXY: her kayış köşegenini uyar ve yanıtları üst üste bindir",
+      "beltsDesc": "Yalnızca CoreXY: kayış köşegenleri boyunca iki tarama çalıştırır ve üst üste bindirir. Baskı sırasında reddedilir.",
+      "axesTitle": "🧭 Eksen haritası",
+      "axesBtn": "axes_map algıla",
+      "axesBtnBusy": "algılanıyor…",
+      "axesBtnTitle": "İvmeölçer yönünü (axes_map) algılamak için +X/+Y/+Z hareket ettir",
+      "axesDesc": "İvmeölçer yönünü algılamak için ~30 mm X'te, sonra Y'de, sonra Z'de hareket ettirir. Baskı sırasında reddedilir.",
+      "beltResultTitle": "Kayış karşılaştırması",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ%{diff}",
+      "beltChartLabel": "Kayış A vs B frekans yanıtı",
+      "beltLegendA": "kayış A (1,1)",
+      "beltLegendB": "kayış B (1,-1)",
+      "axesResultTitle": "Eksen haritası",
+      "copy": "📋 Kopyala",
+      "copied": "✅ Kopyalandı",
+      "mappingVirtual": " (sanal)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "Eksen hız dizisi",
+      "zoneVirtual": "sanal",
+      "zonePct": "%{pct}",
+      "legendAccelX": "ivme x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "eğim {x}° / {y}° / {z}°",
+      "gravity": "yerçekimi {v} m/s²",
+      "noiseValue": "gürültü {v}",
+      "sustainTitle": "🎯 Sürdürülen frekans",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "sn",
+      "sustainBtn": "çalıştır",
+      "sustainBtnBusy": "tutuluyor…",
+      "sustainDesc": "Baskı kafasını frekansa yakın yerinde titretir - neyin tıkırdadığını bulmak için kayışlara, baskı kafasına ve şasiye dokunun. Baskı sırasında reddedilir.",
+      "sustainHolding": "✅ tutuluyor",
+      "sustainOffTarget": "⚠ hedef dışı",
+      "sustainPeak": "tepe {freq} Hz · %{pct} bantta",
+      "specChartLabel": "Frekans-zaman spektrogramı",
+      "energyChartLabel": "Zaman içinde titreşim enerjisi",
+      "specAxes": "frekans → · zaman ↓",
+      "energyLegend": "enerji vs zaman - camgöbeği çukuru bir dokunuşun yardımcı olduğu yerdir",
+      "vibTitle": "📊 Titreşim profili",
+      "vibMax": "maks",
+      "vibStep": "adım",
+      "vibUnit": "mm/s",
+      "vibBtn": "tarama çalıştır",
+      "vibBtnBusy": "taranıyor…",
+      "vibDesc": "Tabla merkezi etrafında hız × motor açısını tarar - uzun bir çalıştırma (dakikalar). Daha küçük bir {step} daha incedir ama daha yavaştır. En pürüzsüz hızları, kaçınılacak hızları, motor simetrisini ve motor rezonansını raporlar. Baskı sırasında reddedilir.",
+      "vibDescStep": "adım",
+      "errNoiseCheck": "Gürültü kontrolü başarısız",
+      "errLiveTest": "Canlı test başarısız",
+      "errBeltComparison": "Kayış karşılaştırması başarısız",
+      "errAxesMapDetection": "Axes-map algılama başarısız",
+      "errCopyFailed": "Kopyalama başarısız - metni seçip elle kopyalayın.",
+      "errSustainTest": "Sürdürülen frekans testi başarısız",
+      "errVibrationsProfile": "Titreşim profili başarısız",
+      "vibProgress": "Tarama {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "Tarama başlatılıyor…",
+      "vibCancel": "Taramayı iptal et",
+      "vibCancelling": "İptal ediliyor…",
+      "vibCancelled": "Tarama iptal edildi - hız limitleri geri yüklendi.",
+      "vibReattached": "Yeniden bağlandı: bu sonuç sayfa uzaktayken tamamlandı.",
+      "beltsCorexyOnly": "Yalnızca CoreXY - bu yazıcı '{kin}' kinematiği bildiriyor, bu yüzden iki kayış karşılaştırması geçerli değil."
+    },
+    "vibrationsView": {
+      "title": "Titreşim profili",
+      "lowFreqNoise": "⚠ düşük frekanslı gürültü",
+      "smoothest": "▼ en pürüzsüz ~{v} mm/s",
+      "symmetry": "simetri %{v}",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "Hıza karşı titreşim enerjisi",
+      "axisLegend": "hız (mm/s) → · titreşim enerjisi ↑",
+      "smooth": "pürüzsüz",
+      "avoid": "kaçın",
+      "svgPolarLabel": "Hareket yönüne göre titreşim enerjisi",
+      "svgHeatmapLabel": "Açıya ve hıza göre titreşim enerjisi ısı haritası",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "motor rezonansı {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "en pürüzsüz yön ~{start}-{end}°",
+      "captures": "{n} yakalama"
+    },
+    "compareView": {
+      "title": "İki yakalamayı karşılaştır (A ⇄ B)",
+      "intro": "Bir mekanik düzeltmeden önce/sonra ya da aynı eksen yeniden test edilmiş. (Aynı eksen dosyalarını karşılaştırın.)",
+      "selectA": "A: seç",
+      "selectB": "B: seç",
+      "busy": "…",
+      "compare": "karşılaştır",
+      "comparisonFailed": "Karşılaştırma başarısız",
+      "chartAriaLabel": "A vs B güç spektral yoğunluğu",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "CSV kaynağı",
+      "tabUpload": "📤 Yükle",
+      "tabHost": "🖥 Yazıcıdan",
+      "selectCsv": "📈 CSV seç",
+      "axisTitle": "Bu verinin ait olduğu eksen",
+      "axisAuto": "eksen: oto",
+      "axisX": "eksen: X",
+      "axisY": "eksen: Y",
+      "analyzing": "Analiz ediliyor…",
+      "analyze": "🚀 Analiz et",
+      "onHost": "yazıcı host'unda",
+      "refresh": "↻ yenile",
+      "noFiles": "Rezonans CSV'si bulunamadı.",
+      "noFilesInDirs": "{dirs} içinde rezonans CSV'si bulunamadı.",
+      "analyzeFile": "analiz et",
+      "saveTitle": "Bu yakalamayı arşive kopyala",
+      "save": "💾 kaydet",
+      "archive": "Arşiv",
+      "archiveEmpty": "Henüz hiçbir şey kaydedilmedi - yukarıdaki 💾 kaydet'i ya da bir config altındaki \"arşive kaydet\"i kullanın.",
+      "downloadTitle": "{fn} indir",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "Yazıcı dosyaları listelenemedi",
+      "errListArchive": "Arşiv listelenemedi",
+      "errSave": "Arşive kaydetme başarısız",
+      "errDelete": "Silme başarısız",
+      "errDownload": "İndirme başarısız",
+      "viewChart": "Grafik",
+      "viewChartTitle": "Bu kaydedilmiş çalıştırmanın grafiğini yeniden aç"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Çok fazla düşük frekanslı hareket kaydedildi - yalnızca sabit hızlar ölçülsün diye ACCEL'i düşürün (ya da SIZE'ı artırın) ve yeniden çalıştırın.",
+        "smoothest": "~{v} mm/s civarı en pürüzsüz",
+        "avoid": "{speeds} mm/s yakınındaki hızlardan kaçının",
+        "matched": "motorlar iyi eşleşmiş (%{pct} simetri)",
+        "low_symmetry": "motor simetrisi düşük (%{pct}) - kayış gerginliğini kontrol edin",
+        "motor_freq": "motor rezonansı ~{f} Hz",
+        "complete": "Titreşim profili tamamlandı."
+      },
+      "sustain": {
+        "not_dominant": "Baskı kafası esas olarak {freq} Hz'de titreşmiyor (tepe {peak} Hz) - kaynak baskı kafası sensörüne ulaşmıyor olabilir.",
+        "drop": "{freq} Hz tutuluyor - titreşim bir noktada ~%{drop} düştü; o sırada neye dokunduysanız güçlü bir katkıda bulunuyordur.",
+        "touch": "{freq} Hz tutuluyor - kayışlara, baskı kafasına, gantry eklemlerine ve idler'lara teker teker dokunun; titreşimi susturan parça rezonans kaynağınızdır."
+      },
+      "axes": {
+        "same_axis": "Birden çok makine ekseni için aynı ivmeölçer ekseni algılandı",
+        "low_confidence": "Düşük algılama güveni (%{pct})",
+        "high_angle_error": "Yüksek açı hatası ({deg}°)",
+        "unusual_gravity": "Alışılmadık yerçekimi okuması ({g} m/s²)",
+        "high_noise": "Yüksek gürültü seviyesi ({n} mm/s²)",
+        "good": "Algılama kalitesi: iyi"
+      }
+    },
+    "proof": {
+      "title": "Ayar kanıtı",
+      "empty": "Bu eksende iki kayıtlı sonuç gerekir - ayardan önce ölçün, shaper'ı uygulayın, sonra yeniden ölçün ve ikisini de kaydedin.",
+      "before": "Önce",
+      "after": "Sonra",
+      "samePick": "Karşılaştırmak için iki farklı sonuç seçin.",
+      "metricHead": "Metrik",
+      "delta": "Değişim",
+      "copy": "Raporu kopyala",
+      "copied": "Kopyalandı ✓",
+      "metric": {
+        "score": "Ölçüm notu",
+        "vibrations": "Kalan titreşim %",
+        "smoothing": "Yumuşatma",
+        "maxAccel": "Önerilen maks ivme (mm/s²)",
+        "freq": "Shaper frekansı (Hz)",
+        "shaper": "Shaper"
+      }
+    }
+  }
+}

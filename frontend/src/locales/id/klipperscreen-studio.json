@@ -1,0 +1,197 @@
+{
+  "klipperscreenStudio": {
+    "intro": "Edit konfigurasi layar sentuh KlipperScreen printer Anda dengan aman, lalu restart KlipperScreen untuk menerapkannya. Setiap penyimpanan dicadangkan terlebih dahulu.",
+    "help": {
+      "guide": "Bantuan",
+      "guideTitle": "Tentang KlipperScreen Studio",
+      "close": "Tutup",
+      "howToRead": "Cara membaca",
+      "steps": [
+        "Edit teks konfigurasi di bawah (atau biarkan apa adanya).",
+        "Simpan - file saat ini dicadangkan terlebih dahulu, dan penyimpanan ditolak saat printer sedang sibuk.",
+        "Restart KlipperScreen untuk menerapkan perubahan pada layar fisik.",
+        "Baris menggunakan akhiran UNIX (LF), diberlakukan otomatis saat menyimpan."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Glosarium",
+          "body": "Definisi singkat istilah KlipperScreen yang digunakan di sini."
+        },
+        "config": {
+          "title": "Apa itu tab Config?",
+          "body": "File KlipperScreen.conf mentah. Edit pengaturan apa pun secara manual; penyimpanan mencadangkan file terlebih dahulu, ditolak saat printer sibuk, dan memperingatkan jika file berubah di layar sejak Anda memuatnya. Kebanyakan orang menggunakan tab Settings / Menus / Themes sebagai gantinya."
+        },
+        "settings": {
+          "title": "Apa itu tab Settings?",
+          "body": "Opsi [main] yang paling sering dipakai dalam bentuk formulir - tema, bahasa, sleep layar, ukuran font, dan saklar. Terisi otomatis dari konfigurasi aktif; hanya opsi yang Anda ubah yang ditulis. Restart untuk menerapkan."
+        },
+        "menus": {
+          "title": "Apa itu tab Menus?",
+          "body": "Rancang grid tombol layar sentuh. Setiap pohon (__main adalah grid beranda, __print layar cetak) mencantumkan tombolnya; tambah, ganti nama, urutkan ulang, dan susun bertingkat, lalu atur masing-masing untuk membuka sub-menu, membuka layar bawaan, atau menjalankan G-code."
+        },
+        "themes": {
+          "title": "Apa itu tab Themes?",
+          "body": "Buat tema KlipperScreen: pilih warna per token palet dan radius sudut, amati pratinjau langsung, lalu buat dan terapkan ke layar. Pratinjau bersifat perkiraan - layar sebenarnya dirender dengan GTK."
+        },
+        "kiosk": {
+          "title": "Apa itu tab Kiosk?",
+          "body": "Tampilkan FilaMind Flow sendiri di layar sentuh sebagai peramban layar penuh - kendali total atas apa yang ditampilkan layar. Ini pertukaran yang dapat dibalik dengan KlipperScreen (sementara secara default; reboot memulihkan KlipperScreen). Membutuhkan pemasang sekali jalan di host printer."
+        }
+      },
+      "glossary": {
+        "klipperScreen": {
+          "term": "KlipperScreen",
+          "def": "Antarmuka layar sentuh yang berjalan di layar kecil terpasang pada printer - terpisah dari panel web ini."
+        },
+        "theme": {
+          "term": "Tema",
+          "def": "Tampilan KlipperScreen - warna, ikon, dan radius sudut. Tersimpan di folder styles/<name> pada host; hanya kosmetik (tidak bisa mengubah tata letak)."
+        },
+        "menu": {
+          "term": "Menu (__main / __print)",
+          "def": "Grid tombol yang ditampilkan KlipperScreen. __main adalah layar beranda, __print layar yang ditampilkan saat mencetak, __splashscreen layar awal."
+        },
+        "panel": {
+          "term": "Panel",
+          "def": "Layar bawaan KlipperScreen yang dapat dibuka oleh sebuah tombol (gerak, suhu, ekstrusi, bed mesh, …). Isi internalnya ditetapkan oleh KlipperScreen."
+        },
+        "autoBlock": {
+          "term": "Blok yang dibuat otomatis (#~#)",
+          "def": "Bagian yang ditulis KlipperScreen untuk dirinya sendiri di bawah conf, setelah penanda #~#. FilaMind tidak pernah mengeditnya - hanya pengaturan Anda di atasnya."
+        },
+        "kiosk": {
+          "term": "Kiosk",
+          "def": "Menjalankan peramban layar penuh di layar sentuh alih-alih KlipperScreen, sehingga layar menampilkan FilaMind Flow. Sepenuhnya dapat dibalik."
+        }
+      }
+    },
+    "status": {
+      "checking": "Memeriksa KlipperScreen…",
+      "absent": "KlipperScreen tidak terdeteksi pada printer ini (tidak ada KlipperScreen.conf, dan tidak dilaporkan oleh Moonraker). Pasang KlipperScreen untuk menggunakan alat ini.",
+      "present": "KlipperScreen terdeteksi",
+      "theme": "Tema",
+      "language": "Bahasa",
+      "notRestartable": "Moonraker tidak dapat me-restart KlipperScreen secara otomatis - restart secara manual setelah menyimpan."
+    },
+    "editor": {
+      "loading": "Membaca KlipperScreen.conf…",
+      "reload": "Muat ulang",
+      "save": "Simpan konfigurasi",
+      "saving": "Menyimpan…",
+      "saved": "Tersimpan (dicadangkan)",
+      "unsaved": "Perubahan belum disimpan"
+    },
+    "save": {
+      "busy": "Ditolak saat printer sibuk - coba lagi saat menganggur.",
+      "stale": "KlipperScreen.conf berubah di disk sejak dimuat (kemungkinan diedit di layar). Muat ulang sebelum menyimpan agar Anda tidak menimpa perubahan itu."
+    },
+    "view": {
+      "config": "Config",
+      "settings": "Settings",
+      "menus": "Menus",
+      "themes": "Themes",
+      "kiosk": "Kiosk"
+    },
+    "settings": {
+      "loading": "Memuat pengaturan…",
+      "intro": "Opsi tampilan KlipperScreen yang paling sering dipakai dalam bentuk formulir. Hanya opsi yang Anda ubah yang ditulis - sisanya mempertahankan nilai saat ini. Restart untuk menerapkan.",
+      "onlyChanged": "Hanya pengaturan yang Anda ubah di sini yang ditulis ke KlipperScreen.conf.",
+      "save": "Simpan pengaturan",
+      "savedRestart": "Tersimpan - restart KlipperScreen untuk menerapkan.",
+      "unset": "Biarkan tidak diatur (default)",
+      "never": "Tidak pernah (selalu menyala)",
+      "fontSize": {
+        "small": "Kecil",
+        "medium": "Sedang",
+        "large": "Besar",
+        "max": "Maks"
+      },
+      "label": {
+        "theme": "Tema",
+        "language": "Bahasa",
+        "screen_blanking": "Sleep layar setelah",
+        "font_size": "Ukuran font",
+        "24htime": "Format 24 jam",
+        "use_dpms": "Gunakan DPMS untuk mematikan layar",
+        "show_cursor": "Tampilkan kursor mouse",
+        "confirm_estop": "Konfirmasi sebelum emergency stop",
+        "show_heater_power": "Tampilkan % daya pemanas",
+        "autoclose_popups": "Tutup pop-up otomatis"
+      }
+    },
+    "kiosk": {
+      "loading": "Memeriksa layar…",
+      "intro": "Tampilkan FilaMind Flow sendiri di layar sentuh sebagai peramban layar penuh - kendali total atas apa yang ditampilkan layar. Ia bertukar dengan KlipperScreen: menjalankan satu menghentikan yang lain.",
+      "current": "Layar sekarang",
+      "mode": {
+        "kiosk": "Kiosk FilaMind",
+        "klipperscreen": "KlipperScreen",
+        "none": "Tidak ada yang berjalan"
+      },
+      "notInstalled": "Kiosk belum dipasang",
+      "setupHint": "Jalankan ini sekali pada host printer (memasang peramban layar penuh + layanan kiosk):",
+      "persist": "Jadikan default saat boot (jika tidak, pertukaran bersifat sementara - reboot memulihkan yang lain).",
+      "safety": "Sementara secara default: reboot mengembalikan yang lain. Jika layar pernah menjadi gelap, lewat SSH jalankan: sudo systemctl start KlipperScreen",
+      "switchBtn": "Beralih ke FilaMind",
+      "restoreBtn": "Pulihkan KlipperScreen",
+      "refresh": "Segarkan",
+      "confirmSwitchTitle": "Tampilkan FilaMind di layar?",
+      "confirmRestoreTitle": "Pulihkan KlipperScreen?",
+      "confirmBody": "Ini menghentikan satu layanan layar dan menjalankan yang lain. Tidak memengaruhi cetakan yang aktif, tetapi layar sentuh akan menjadi hitam selama beberapa detik saat beralih.",
+      "confirm": "Lakukan",
+      "cancel": "Batal",
+      "switchedNote": "FilaMind sedang mengambil alih layar - seharusnya muncul dalam beberapa detik.",
+      "restoredNote": "KlipperScreen sedang kembali - layar seharusnya pulih sebentar lagi."
+    },
+    "menus": {
+      "loading": "Memuat menu…",
+      "intro": "Rancang apa yang ditampilkan layar sentuh: tombol setiap menu, urutannya, dan fungsi masing-masing. Grid layar beranda adalah pohon __main; layar cetak adalah __print.",
+      "addItem": "Tambah tombol",
+      "empty": "Belum ada item - tambahkan satu.",
+      "up": "Naik",
+      "down": "Turun",
+      "addChild": "Tambah sub-item",
+      "delete": "Hapus",
+      "name": "Nama",
+      "icon": "Ikon",
+      "action": "Aksi",
+      "actSubmenu": "Buka sub-menu",
+      "actPanel": "Buka layar",
+      "actGcode": "Jalankan G-code",
+      "panel": "Layar",
+      "gcode": "G-code",
+      "enable": "Tampilkan jika",
+      "save": "Simpan menu",
+      "newItem": "Tombol baru",
+      "savedRestart": "Menu tersimpan - restart KlipperScreen untuk melihatnya."
+    },
+    "themes": {
+      "loading": "Memuat tema…",
+      "palette": "Palet",
+      "radius": "Radius sudut",
+      "preview": "Pratinjau langsung",
+      "btn": "Tombol",
+      "previewWarn": "peringatan",
+      "previewApprox": "Pratinjau perkiraan - layar sebenarnya dirender dengan GTK; perbedaan kecil dapat terjadi.",
+      "namePlaceholder": "Nama tema baru",
+      "createApply": "Buat & terapkan",
+      "createOnly": "Buat saja",
+      "installed": "Tema terpasang",
+      "apply": "Terapkan",
+      "delete": "Hapus tema",
+      "generated": "Dibuat di sini",
+      "created": "Tema dibuat. Terapkan dari daftar, lalu restart.",
+      "appliedRestart": "Tema diatur - restart KlipperScreen untuk melihatnya.",
+      "previewTitle": "Printer"
+    },
+    "restart": {
+      "button": "Restart KlipperScreen",
+      "restarting": "Me-restart…",
+      "done": "KlipperScreen sedang restart - layar akan dimuat ulang sebentar lagi.",
+      "confirmTitle": "Restart KlipperScreen?",
+      "confirmBody": "Ini me-restart layanan layar sentuh untuk menerapkan perubahan Anda. Tidak memengaruhi cetakan yang aktif, tetapi layar menjadi kosong selama beberapa detik.",
+      "confirm": "Restart",
+      "cancel": "Batal"
+    }
+  }
+}

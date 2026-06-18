@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "アプリがチェックできるすべての項目を、読み取り専用で一度にスキャンします - ピンの競合、ドライバー値、設定のずれ、プロジェクトのlint、ファームウェア同期、ハードウェア変更、インストールの健全性 - をA-Fで評価。各指摘は、それを修正するウィジェットへのリンク付きです。",
+    "scanning": "スキャン中…",
+    "rescan": "再スキャン",
+    "scoreLine": "スコア {score} / 100",
+    "counts": "エラー {errors} 件 · 警告 {warnings} 件",
+    "scoreHint": "透明なスコア計算: 100 − エラー1件につき25 − 警告1件につき8。チェック不能な項目は減点されません。",
+    "allClear": "問題なし。",
+    "notChecked": "チェックできませんでした (プリンターに接続できないか、基準がありません)。",
+    "assessment": {
+      "healthy": "良好 - アプリがチェックできる範囲はすべて問題ありません。",
+      "attention": "おおむね良好ですが、{pillar} に注意が必要です。",
+      "critical": "{pillar} に修正すべき問題があります。"
+    },
+    "pillars": {
+      "title": "健全性の内訳",
+      "notMeasured": "未測定"
+    },
+    "pillar": {
+      "config": "設定の整合性",
+      "firmware": "ファームウェア同期",
+      "services": "サービス",
+      "tuning": "入力シェイピング",
+      "flow": "最大フロー"
+    },
+    "services": {
+      "title": "サービス",
+      "active": "稼働中",
+      "inactive": "停止",
+      "none": "報告されたサービスはありません。"
+    },
+    "stats": {
+      "title": "概要",
+      "maxFlow": "最大フロー",
+      "tuningAxis": "シェイパー {axis}",
+      "firmware": "ファームウェア",
+      "outOfSync": "{n} 件が未同期",
+      "allSynced": "すべて同期済み",
+      "none": "まだ測定値がありません。"
+    },
+    "category": {
+      "pins": "ピン配線",
+      "drivers": "ドライバー値",
+      "drift": "設定のずれ",
+      "project": "設定プロジェクト",
+      "firmware": "ファームウェア同期",
+      "hardware": "ハードウェア変更",
+      "install": "インストールの健全性"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "警告",
+      "fail": "問題",
+      "unknown": "未チェック"
+    },
+    "link": {
+      "config_section": "設定エディター",
+      "config_file": "設定エディター",
+      "stepper": "モータードライバー",
+      "topology_node": "マシンマップ",
+      "widget": "開く"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "{mcu} のピン {pin} が複数のセクションで割り当てられています。",
+        "caveat": "{mcu} のピン {pin} に電子回路上の注意事項があります。"
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A が約 {cap} A のドライバー上限を超えています。",
+        "near_driver_cap": "{section}: run_current {run_current} A が約 {cap} A の上限まで10%以内です。",
+        "over_motor_rating": "{section}: run_current {run_current} A が {motor} の定格 ({max_current} A) を超えています。",
+        "near_motor_rating": "{section}: run_current {run_current} A が {motor} の定格 ({max_current} A) まで10%以内です。",
+        "odd_microsteps": "{section}: microsteps {microsteps} が2のべき乗ではありません。"
+      },
+      "drift": {
+        "pending": "Klipper に未保存の SAVE_CONFIG 変更が保留されています。",
+        "param": "[{section}] {key}: ディスク {disk} ≠ ライブ {live}。",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: include \"{message}\" が存在しないファイルを指しています。",
+        "orphan_driver": "{file}: ドライバーセクション \"{message}\" に対応する stepper がありません。"
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: ファームウェア {mcu_version} がホスト {host_version} と異なります。"
+      },
+      "hardware": {
+        "changed": "{mcu}: ハードウェアが変更されました ({kind})。",
+        "no_baseline": "ハードウェアの基準がまだ保存されていません - 変更を検出するには、マシンマップでスナップショットを保存してください。"
+      },
+      "install": {
+        "check_failed": "インストールチェックに失敗しました: {name} - {detail}。"
+      }
+    },
+    "help": {
+      "guide": "ヘルプ",
+      "guideTitle": "Machine Doctor について",
+      "close": "閉じる",
+      "howToRead": "読み方",
+      "steps": [
+        "再スキャンを押すと、プリンター全体に対して読み取り専用のチェックを一度実行します。",
+        "A-F評価と各柱のバーを見て、どこが最も弱いかを確認します。",
+        "指摘のリンクを開くと、それを修正するウィジェットへ直接ジャンプします。"
+      ],
+      "topics": {
+        "scan": {
+          "title": "スキャンの対象範囲",
+          "body": "アプリがチェックできるすべての項目を読み取り専用で一度に確認します - ピンの競合、ドライバー値、保存済みとライブの設定のずれ、プロジェクトのlint、ファームウェア同期、基準と比べたハードウェア変更、インストールの健全性。プリンター上で何かを実行することは一切ありません。"
+        },
+        "grade": {
+          "title": "A-F 評価",
+          "body": "各健全性の柱 (設定の整合性、ファームウェア同期、サービス、入力シェイピング、最大フロー) が採点され、最も弱いものが総合評価を引き下げます。スコア行には評価がどのように算出されたかが正確に表示され、隠されるものはありません。"
+        },
+        "fixes": {
+          "title": "修正へのジャンプリンク",
+          "body": "各指摘には、それを解決するウィジェット (設定エディター、モータードライバー、マシンマップなど) へ直接リンクするボタンが付いており、問題から修正までワンクリックで移動できます。"
+        },
+        "glossary": {
+          "title": "ここで使われる用語"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "評価 (A-F)",
+          "def": "各柱のスコアから導かれた、プリンターの健全性を1文字で表すもの。Aは良好、Fは要注意です。"
+        },
+        "pillar": {
+          "term": "柱",
+          "def": "独立して採点される健全性のカテゴリ - 例: 設定の整合性、ファームウェア同期、サービス、入力シェイピング、最大フロー。"
+        },
+        "finding": {
+          "term": "指摘",
+          "def": "スキャンが検出した具体的な問題。重大度と、それを修正するウィジェットへのリンクが付いています。"
+        }
+      }
+    }
+  }
+}

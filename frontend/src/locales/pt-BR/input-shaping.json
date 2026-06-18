@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "o que é isto?",
+      "topics": {
+        "glossary": {
+          "title": "Termos de input shaping"
+        },
+        "analyze": {
+          "title": "Analisando um CSV de ressonância",
+          "body": "Capture os dados na impressora com TEST_RESONANCES (ou use 🔴 Ferramentas ao vivo), depois carregue o .csv aqui. O FilaMind executa a própria matemática de shaper do Klipper e recomenda um shaper + frequência. Faça o arquivo X e o arquivo Y em sequência — eles se combinam em um único bloco de config."
+        },
+        "grade": {
+          "title": "O que significa a nota A-F",
+          "body": "Uma pontuação de qualidade da medição com cinco partes iguais: clareza do pico, vibração restante, suavização, frequência (40-90 Hz é saudável) e quão limpa é a ressonância. A/B → aplique; C → utilizável, leia as dicas; D/F → corrija a mecânica e teste novamente."
+        },
+        "diagnostics": {
+          "title": "Lendo os diagnósticos",
+          "body": "Cada cartão mapeia a medição para uma provável causa mecânica e uma correção. Verde-limão = saudável, amarelo = vale melhorar, vermelho = corrija antes de confiar no resultado. Aplique uma correção, execute novamente e veja o cartão ficar verde."
+        },
+        "chart": {
+          "title": "Lendo o gráfico de frequência",
+          "body": "As curvas sólidas são a energia de vibração medida (X+Y+Z total mais cada eixo). O ▲ marca a ressonância dominante. As curvas fracas são a vibração restante de cada shaper ao longo da frequência — o recomendado (rosa) afunda mais no seu pico."
+        },
+        "shapers": {
+          "title": "Escolhendo um shaper",
+          "body": "Cada linha equilibra vibração restante contra suavização. ZV / MZV são os mais leves (ressonância única limpa); EI é mais robusto; 2-/3-hump lidam com ressonâncias amplas ou múltiplas, mas suavizam mais. O FilaMind destaca o melhor equilíbrio."
+        },
+        "config": {
+          "title": "Aplicando a config",
+          "body": "Este bloco [input_shaper] carrega seu resultado de X e/ou Y. Copie-o para o printer.cfg e reinicie o Klipper. As etiquetas mostram quais eixos foram capturados — capture X e Y para um bloco completo."
+        },
+        "noise": {
+          "title": "Verificação de ruído",
+          "body": "Lê a vibração do acelerômetro em repouso sem mover — uma verificação rápida da fixação antes de testar. Regra prática do Klipper: ~1-100 é normal, ~1000+ indica um sensor solto ou problema na fiação. Corrija uma fixação ruidosa primeiro ou todo teste será não confiável."
+        },
+        "belts": {
+          "title": "Comparação de correias (CoreXY)",
+          "body": "Excita cada diagonal de correia e sobrepõe as duas respostas. Frequências de pico iguais = tensão equilibrada. Uma diferença significa que a correia de menor frequência está mais frouxa — aperte-a e execute novamente até os picos se alinharem."
+        },
+        "axesMap": {
+          "title": "Detecção do axes-map",
+          "body": "Move o toolhead um pouco em X, depois Y, depois Z para aprender como o acelerômetro está montado, e fornece a linha axes_map para o printer.cfg. Execute uma vez após instalar ou mover o sensor para que todo teste posterior leia os eixos corretos."
+        },
+        "sustain": {
+          "title": "Frequência sustentada",
+          "body": "Mantém o toolhead vibrando em uma frequência para que você toque correias, o carro e o quadro com a mão e descubra o que chacoalha. O espectrograma + linha do tempo mostram se sua frequência alvo está dominando e quando um toque a silenciou."
+        },
+        "vibrations": {
+          "title": "Perfil de vibrações",
+          "body": "Varre muitas velocidades ao longo de cada ângulo de motor para mapear onde a máquina roda mais suave e quais velocidades atingem uma ressonância. Prefira as velocidades mais suaves para movimentos de impressão / deslocamento e evite as sinalizadas. A % de simetria mostra quão bem os dois motores combinam."
+        },
+        "guided": {
+          "title": "Guiado vs. manual",
+          "body": "O guiado percorre todo o fluxo — Ruído → Correias → Shaper X → Shaper Y → Vibrações → Pressão — com um portão de aprovação / reprovação em cada etapa. Use-o para um ajuste completo. Mude para 📈 Analisar ou 🔴 Ferramentas ao vivo quando quiser apenas uma ferramenta específica."
+        },
+        "history": {
+          "title": "Histórico & tendências",
+          "body": "Cada calibração é salva (neste navegador) com sua nota e pontuação. A seta ▲/▼ compara uma execução com o teste anterior do mesmo eixo — para cima significa captura mais limpa ou eixo mais rígido, para baixo significa mais ruído ou eixo mais frouxo."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input shaper",
+          "def": "Um filtro que o Klipper aplica ao movimento para cancelar a vibração principal da impressora, permitindo imprimir mais rápido sem ringing / ghosting."
+        },
+        "resonance": {
+          "term": "Ressonância",
+          "def": "A frequência (Hz) na qual um eixo vibra naturalmente quando excitado. Menor = eixo mais frouxo / pesado; ~40-90 Hz é uma impressora saudável."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Densidade espectral de potência — quanta energia de vibração há em cada frequência. O pico alto é a ressonância que o shaper mira."
+        },
+        "smoothing": {
+          "term": "Suavização",
+          "def": "Um efeito colateral do shaping que arredonda levemente cantos agudos. Menor é melhor; ≤0,1 é mínimo, >0,2 começa a suavizar detalhes."
+        },
+        "vibrationPct": {
+          "term": "Vibração %",
+          "def": "Quanta ressonância sobra após o shaper. Menor é melhor; ≤2% é excelente, ≤5% é aceitável."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "A aceleração que o shaper consegue sustentar sem suavização excessiva — um valor sugerido de SET_VELOCITY_LIMIT / printer.cfg."
+        }
+      },
+      "guide": "Guia",
+      "guideTitle": "Guia de Input Shaping",
+      "close": "Fechar"
+    },
+    "grade": {
+      "clarity": {
+        "label": "Clareza do pico",
+        "value": "{ratio}×",
+        "note": {
+          "none": "Sem espectro para avaliar.",
+          "good": "Pico nítido, bem acima do ruído.",
+          "ok": "Pico visível acima do ruído.",
+          "poor": "Pico fraco — ruidoso ou muito rígido."
+        }
+      },
+      "vibration": {
+        "label": "Vibração residual",
+        "value": "{pct}%",
+        "note": {
+          "good": "Quase toda a ressonância removida.",
+          "ok": "Maior parte da ressonância removida.",
+          "poor": "Vibração significativa permanece."
+        }
+      },
+      "smoothing": {
+        "label": "Suavização",
+        "note": {
+          "good": "Arredondamento mínimo de cantos.",
+          "ok": "Algum arredondamento em accel alta.",
+          "poor": "Suavização intensa — arredonda cantos."
+        }
+      },
+      "freq": {
+        "label": "Frequência",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "Nenhuma frequência encontrada.",
+          "good": "Eixo saudável e rígido.",
+          "ok": "Um pouco frouxo ou muito rígido.",
+          "soft": "Eixo frouxo / pesado.",
+          "high": "Anormalmente alta."
+        }
+      },
+      "shaper": {
+        "label": "Forma da ressonância",
+        "note": {
+          "clean": "Ressonância única limpa.",
+          "robust": "Ressonância única, shaper robusto.",
+          "twin": "Ressonância ampla ou dupla.",
+          "multiple": "Múltiplas ressonâncias.",
+          "atypical": "Shaper atípico."
+        }
+      },
+      "verdict": {
+        "a": "Excelente — captura limpa, eixo bem ajustado.",
+        "b": "Bom — resultado sólido, pequena margem para melhorar.",
+        "c": "Razoável — utilizável; veja as sugestões abaixo.",
+        "d": "Ruim — recomenda-se ajuste mecânico + novo teste.",
+        "f": "Não confiável — refaça o teste (verifique a fixação do sensor).",
+        "none": "Sem resultado utilizável — refaça o TEST_RESONANCES."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "Nenhuma ressonância utilizável",
+        "advice": "Refaça o TEST_RESONANCES. Verifique se o acelerômetro está conectado e firmemente fixado ao toolhead.",
+        "detail": "nenhum pico claro detectado"
+      },
+      "noisy": {
+        "title": "Captura ruidosa",
+        "advice": "Fixe bem a montagem do acelerômetro e execute novamente. Evite ventoinhas ou outro movimento durante o teste.",
+        "detail": "relação sinal-ruído {snr}×"
+      },
+      "lowFreq": {
+        "title": "Frequência de ressonância baixa",
+        "advice": "Eixo frouxo ou pesado — aperte as correias e verifique a rigidez do quadro. Um eixo mais rígido ressoa mais alto e imprime mais rápido.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Eixo um tanto frouxo",
+        "advice": "A frequência está no lado baixo. Reforçar as correias ou o quadro a eleva e permite imprimir mais rápido.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "Suavização alta",
+        "advice": "Vai arredondar cantos. Escolha um shaper mais rígido ou reduza o max_accel.",
+        "detail": "suavização {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Múltiplas ressonâncias",
+        "advice": "Frequentemente um toolhead, correia ou peça soltos. Reposicione o toolhead e reverifique a tensão das correias."
+      },
+      "vibrationRemains": {
+        "title": "Vibração permanece",
+        "advice": "Ajuste mecânico (correias, quadro, massa do toolhead) poderia reduzir ainda mais.",
+        "detail": "{vibrations}% restante após o shaping"
+      },
+      "healthy": {
+        "title": "Eixo saudável",
+        "advice": "Captura limpa e eixo rígido — pronto para uso. Aplique a config e reinicie o Klipper.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X e Y diferem bastante",
+        "advice": "Rigidez assimétrica. Verifique a tensão da correia no eixo mais frouxo; em CoreXY garanta que ambas as correias estejam combinadas e apertadas.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "recomendado",
+        "shaperFreq": "freq do shaper",
+        "peakFreq": "freq do pico",
+        "remainingVibr": "vibr restante",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Correias combinadas",
+          "advice": "As duas respostas de correia se alinham — a tensão parece equilibrada."
+        },
+        "differ": {
+          "title": "Correias diferem",
+          "advice": "As ressonâncias das correias diferem — retensione a correia mais frouxa até os dois picos se alinharem."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Sensor está silencioso",
+          "why": "Pronto para continuar."
+        },
+        "elevated": {
+          "title": "Reduza o ruído do sensor",
+          "why": "Máx {max} ≥ {threshold}. Desligue a ventoinha do toolhead e reverifique a fixação, depois execute novamente."
+        },
+        "bad": {
+          "title": "Corrija o acelerômetro antes de testar",
+          "why": "O ruído {max} está alto demais — reposicione o sensor e verifique sua fiação."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Correias equilibradas",
+          "why": "A tensão está uniforme — calibre o shaper em seguida."
+        },
+        "mismatch": {
+          "title": "Retensione a correia {looser}",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). Aperte a correia de menor frequência até os dois picos se alinharem, depois execute novamente."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Execute novamente com aceleração menor",
+          "why": "Foi registrado movimento de baixa frequência em excesso — reduza ACCEL (ou aumente SIZE) para que só velocidades constantes sejam medidas, depois execute novamente."
+        },
+        "favour": {
+          "title": "Prefira ~{speed} mm/s",
+          "why": "Faixa mais suave {start}-{end} mm/s — ajuste as velocidades de impressão / deslocamento do slicer aqui quando puder."
+        },
+        "avoid": {
+          "title": "Evite {shown} mm/s",
+          "why": "Essas velocidades atingem uma ressonância — mantenha os movimentos de impressão + deslocamento longe delas no slicer."
+        },
+        "symmetry": {
+          "title": "Verifique tensão das correias / combinação dos motores",
+          "why": "A simetria dos motores {pct}% está baixa — retensione as correias (compare as correias) e confirme que as correntes dos dois motores combinam."
+        },
+        "fine": {
+          "title": "Vibrações parecem boas",
+          "why": "Nenhuma velocidade problemática se destacou."
+        }
+      },
+      "pressure": {
+        "title": "Execute uma torre de pressure-advance",
+        "why": "Imprima a torre de PA, leia a altura onde os cantos ficam mais nítidos, depois `SET_PRESSURE_ADVANCE ADVANCE=<value>` e `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "Seu axes_map configurado já está correto.",
+        "update": "Atualize sua config para: {axes_map}",
+        "add": "Adicione isto para que todo gráfico de Input Shaping leia X/Y/Z alinhados."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Ruído",
+          "title": "Ruído do acelerômetro",
+          "why": "Confirme que o sensor está firmemente fixado antes de qualquer teste (sem movimento)."
+        },
+        "belts": {
+          "label": "Correias",
+          "title": "Equilíbrio de correias CoreXY",
+          "why": "Combine as tensões das duas correias. Só CoreXY — pule em uma cartesiana / bed-slinger."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper - X",
+          "why": "Encontre a ressonância de X e o melhor shaper."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper - Y",
+          "why": "Encontre a ressonância de Y e o melhor shaper."
+        },
+        "vibrations": {
+          "label": "Vibrações",
+          "title": "Perfil de vibrações",
+          "why": "Varra velocidade × ângulo de motor para encontrar as velocidades mais suaves e as ressonâncias a evitar."
+        },
+        "pressure": {
+          "label": "Pressão",
+          "title": "Pressure advance",
+          "why": "Ajuste o pressure advance por último para deixar cantos e costuras mais nítidos."
+        },
+        "done": {
+          "label": "Concluído"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Sensor está silencioso",
+          "warn": "Ruído está um pouco alto",
+          "failed": "Ruidoso demais — corrija a fixação"
+        },
+        "belts": {
+          "passed": "Correias combinadas",
+          "differ": "Correias diferem (Δ{diffPct}%)",
+          "mismatched": "Correias descombinadas (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "Nota {letter} — eixo saudável",
+          "usable": "Nota C — utilizável",
+          "tune": "Nota {letter} — ajuste + teste novamente"
+        },
+        "vibrations": {
+          "lowFreq": "Movimento de baixa freq em excesso — reduza accel & execute novamente",
+          "mismatched": "Motores descombinados ({pct}%)",
+          "smoothest": "Mais suave ~{rec} mm/s",
+          "complete": "Perfil concluído"
+        }
+      },
+      "ui": {
+        "title": "🧭 Ajuste guiado",
+        "exit": "✕ sair",
+        "motionReady": "⚠ move o toolhead - estou pronto",
+        "running": "executando…",
+        "run": "executar",
+        "rerun": "↻ executar novamente",
+        "skipBelts": "pular (não é CoreXY)",
+        "copyPa": "📋 Copiar torre de PA",
+        "copied": "✅ Copiado",
+        "finish": "Concluir →",
+        "nextStep": "Próxima etapa →",
+        "skipAnyway": "pular mesmo assim",
+        "complete": "Ajuste concluído",
+        "stepFailed": "Etapa falhou",
+        "copyFailed": "Falha ao copiar — selecione o texto e copie manualmente.",
+        "summaryNote": "Suas capturas de X e Y estão no bloco combinado {code} abaixo — copie-o, depois reinicie o Klipper. Reabra o ajuste guiado a qualquer momento para reverificar.",
+        "beltsNotApplicable": "A comparação de correias se aplica a impressoras CoreXY — esta impressora reporta '{kin}', então esta etapa é pulada.",
+        "resultsSoFar": "Resultados até agora",
+        "archived": "Salvo",
+        "autoSaved": "Salvo automaticamente no arquivo da impressora.",
+        "beltA": "Correia A (1,1)",
+        "beltB": "Correia B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "Recomendado",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Accel máx",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Ruído máx em repouso {max} (normal < {threshold}).",
+        "status": "Status",
+        "maxNoise": "Ruído máx",
+        "threshold": "Limiar",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Combinação",
+        "beltA": "Pico da correia A",
+        "beltB": "Pico da correia B",
+        "difference": "Diferença",
+        "matched": "combinadas",
+        "mismatch": "descombinadas",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Status",
+        "gravity": "Gravidade",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Ruído"
+      },
+      "sustain": {
+        "target": "Alvo",
+        "dominant": "Dominante",
+        "inBand": "Na banda",
+        "onTarget": "No alvo",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "sim",
+        "no": "não"
+      },
+      "vibrations": {
+        "smoothest": "Mais suave",
+        "symmetry": "Simetria",
+        "motorResonance": "Ressonância do motor",
+        "avoid": "Evitar",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Guiado",
+      "tabAnalyze": "📈 Analisar",
+      "tabLive": "🔴 Ferramentas ao vivo",
+      "tabHistory": "🕘 Histórico",
+      "intro": "Ajuste o input shaping a partir de uma captura de ressonância do Klipper — sem linha de comando. Novo aqui? Comece com {guided}. Ou escolha {analyze} para trabalhar um {csv} você mesmo, {live} para capturar na impressora, ou {history} para revisar execuções anteriores.",
+      "cfgReady": "printer.cfg pronto",
+      "copy": "📋 Copiar",
+      "copied": "✅ Copiado",
+      "archive": "💾 Arquivar",
+      "saved": "✅ Salvo",
+      "advanced": "⚙ avançado",
+      "compareCsvs": "⇄ comparar CSVs",
+      "blankDefault": "em branco = padrão do Klipper",
+      "auditTitle": "Auditoria",
+      "refresh": "↻ atualizar",
+      "auditEmpty": "Nenhum resultado ainda — execute um ajuste ou salve um no arquivo.",
+      "trendTitle": "pontuação {score} vs o teste {axis} anterior",
+      "sourceSaved": "💾 salvo",
+      "sourceLocal": "local",
+      "recommended": "Recomendado",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "eixo {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "Nenhum shaper recomendado para estes dados.",
+      "measurementQuality": "Qualidade da medição",
+      "scoreOutOf": "{v}/100",
+      "hide": "ocultar",
+      "details": "detalhes",
+      "chartAria": "Resposta em frequência e shapers",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "recomendado",
+      "legendPeak": "▲ pico",
+      "legendAxisHint": "frequência (Hz) → · sólido = medido · fraco = resto do shaper",
+      "colShaper": "shaper",
+      "colFreq": "freq",
+      "colVibr": "vibr",
+      "colSmooth": "suav",
+      "colAccel": "accel",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "limpar",
+      "pasteHint": "Cole no seu {cfg}, depois reinicie o Klipper.",
+      "errAnalysisFailed": "Falha na análise",
+      "errCopyFailed": "Falha ao copiar — selecione o texto e copie manualmente.",
+      "errSaveFailed": "Falha ao salvar no arquivo"
+    },
+    "fromPrinter": {
+      "liveTools": "Ferramentas ao vivo",
+      "intro": "⏳ Estas movem o toolhead e podem levar {duration} (uma comparação de correias roda duas varreduras completas) — mantenha esta página aberta até o resultado aparecer.",
+      "introDuration": "1-5 minutos",
+      "confirmMoves": "⚠ move o toolhead - estou pronto",
+      "axisX": "eixo X",
+      "axisY": "eixo Y",
+      "noiseTitle": "🔊 Verificação de ruído",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "medindo…",
+      "noiseHint": "sem movimento · execute antes de testar",
+      "noiseVerdictQuiet": "✅ silencioso",
+      "noiseVerdictElevated": "⚠ elevado",
+      "noiseVerdictTooNoisy": "⛔ ruidoso demais",
+      "noiseMaxNormal": "máx {max} · normal < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Teste ao vivo",
+      "liveBtn": "executar TEST_RESONANCES",
+      "liveBtnBusy": "executando…",
+      "liveDesc": "Faz o homing da impressora se necessário, depois executa TEST_RESONANCES no eixo escolhido (precisa de um acelerômetro + uma {section}). Recusado durante a impressão.",
+      "beltsTitle": "🟰 Comparar correias",
+      "beltsBtn": "comparar correias",
+      "beltsBtnBusy": "comparando…",
+      "beltsBtnTitle": "CoreXY: excita cada diagonal de correia e sobrepõe as respostas",
+      "beltsDesc": "Só CoreXY: roda duas varreduras ao longo das diagonais das correias e as sobrepõe. Recusado durante a impressão.",
+      "axesTitle": "🧭 Mapa de eixos",
+      "axesBtn": "detectar axes_map",
+      "axesBtnBusy": "detectando…",
+      "axesBtnTitle": "Move +X/+Y/+Z para detectar a orientação do acelerômetro (axes_map)",
+      "axesDesc": "Move ~30 mm em X, depois Y, depois Z para detectar a orientação do acelerômetro. Recusado durante a impressão.",
+      "beltResultTitle": "Comparação de correias",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "Resposta em frequência da correia A vs B",
+      "beltLegendA": "correia A (1,1)",
+      "beltLegendB": "correia B (1,-1)",
+      "axesResultTitle": "Mapa de eixos",
+      "copy": "📋 Copiar",
+      "copied": "✅ Copiado",
+      "mappingVirtual": " (virtual)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "Sequência de velocidade dos eixos",
+      "zoneVirtual": "virtual",
+      "zonePct": "{pct}%",
+      "legendAccelX": "accel x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "inclinação {x}° / {y}° / {z}°",
+      "gravity": "gravidade {v} m/s²",
+      "noiseValue": "ruído {v}",
+      "sustainTitle": "🎯 Frequência sustentada",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "seg",
+      "sustainBtn": "executar",
+      "sustainBtnBusy": "mantendo…",
+      "sustainDesc": "Faz o toolhead vibrar no lugar perto da frequência — toque correias, o toolhead e o quadro para descobrir o que chacoalha. Recusado durante a impressão.",
+      "sustainHolding": "✅ mantendo",
+      "sustainOffTarget": "⚠ fora do alvo",
+      "sustainPeak": "pico {freq} Hz · {pct}% na banda",
+      "specChartLabel": "Espectrograma frequência-tempo",
+      "energyChartLabel": "Energia de vibração ao longo do tempo",
+      "specAxes": "freq → · tempo ↓",
+      "energyLegend": "energia vs tempo — a queda em ciano é onde um toque ajudou",
+      "vibTitle": "📊 Perfil de vibrações",
+      "vibMax": "máx",
+      "vibStep": "passo",
+      "vibUnit": "mm/s",
+      "vibBtn": "executar varredura",
+      "vibBtnBusy": "varrendo…",
+      "vibDesc": "Varre velocidade × ângulo de motor ao redor do centro da mesa — uma execução longa (minutos). Um {step} menor é mais fino, porém mais lento. Reporta as velocidades mais suaves, as velocidades a evitar, a simetria dos motores e a ressonância do motor. Recusado durante a impressão.",
+      "vibDescStep": "passo",
+      "errNoiseCheck": "Falha na verificação de ruído",
+      "errLiveTest": "Falha no teste ao vivo",
+      "errBeltComparison": "Falha na comparação de correias",
+      "errAxesMapDetection": "Falha na detecção do axes-map",
+      "errCopyFailed": "Falha ao copiar — selecione o texto e copie manualmente.",
+      "errSustainTest": "Falha no teste de frequência sustentada",
+      "errVibrationsProfile": "Falha no perfil de vibrações",
+      "vibProgress": "Varredura {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "Iniciando a varredura…",
+      "vibCancel": "Cancelar varredura",
+      "vibCancelling": "Cancelando…",
+      "vibCancelled": "Varredura cancelada — limites de velocidade restaurados.",
+      "vibReattached": "Reconectado: este resultado terminou enquanto a página estava ausente.",
+      "beltsCorexyOnly": "Só CoreXY — esta impressora reporta cinemática '{kin}', então a comparação de duas correias não se aplica."
+    },
+    "vibrationsView": {
+      "title": "Perfil de vibrações",
+      "lowFreqNoise": "⚠ ruído de baixa freq",
+      "smoothest": "▼ mais suave ~{v} mm/s",
+      "symmetry": "simetria {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "Energia de vibração versus velocidade",
+      "axisLegend": "velocidade (mm/s) → · energia de vibração ↑",
+      "smooth": "suave",
+      "avoid": "evitar",
+      "svgPolarLabel": "Energia de vibração por direção de deslocamento",
+      "svgHeatmapLabel": "Mapa de calor da energia de vibração por ângulo e velocidade",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "ressonância do motor {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "direção mais suave ~{start}-{end}°",
+      "captures": "{n} capturas"
+    },
+    "compareView": {
+      "title": "Comparar duas capturas (A ⇄ B)",
+      "intro": "Antes/depois de uma correção mecânica, ou o mesmo eixo testado novamente. (Compare arquivos do mesmo eixo.)",
+      "selectA": "A: selecionar",
+      "selectB": "B: selecionar",
+      "busy": "…",
+      "compare": "comparar",
+      "comparisonFailed": "Falha na comparação",
+      "chartAriaLabel": "Densidade espectral de potência A vs B",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "Fonte do CSV",
+      "tabUpload": "📤 Enviar",
+      "tabHost": "🖥 Da impressora",
+      "selectCsv": "📈 Selecionar CSV",
+      "axisTitle": "Eixo ao qual estes dados pertencem",
+      "axisAuto": "eixo: auto",
+      "axisX": "eixo: X",
+      "axisY": "eixo: Y",
+      "analyzing": "Analisando…",
+      "analyze": "🚀 Analisar",
+      "onHost": "no host da impressora",
+      "refresh": "↻ atualizar",
+      "noFiles": "Nenhum CSV de ressonância encontrado.",
+      "noFilesInDirs": "Nenhum CSV de ressonância encontrado em {dirs}.",
+      "analyzeFile": "analisar",
+      "saveTitle": "Copie esta captura para o arquivo",
+      "save": "💾 salvar",
+      "archive": "Arquivo",
+      "archiveEmpty": "Nada salvo ainda — use 💾 salvar acima, ou \"salvar no arquivo\" sob uma config.",
+      "downloadTitle": "baixar {fn}",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "Não foi possível listar os arquivos da impressora",
+      "errListArchive": "Não foi possível listar o arquivo",
+      "errSave": "Falha ao salvar no arquivo",
+      "errDelete": "Falha ao excluir",
+      "errDownload": "Falha ao baixar",
+      "viewChart": "Gráfico",
+      "viewChartTitle": "Reabrir o gráfico desta execução salva"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Foi registrado movimento de baixa frequência em excesso — reduza a ACCEL (ou aumente SIZE) e execute novamente para que só velocidades constantes sejam medidas.",
+        "smoothest": "Mais suave em torno de {v} mm/s",
+        "avoid": "evite velocidades perto de {speeds} mm/s",
+        "matched": "os motores estão bem combinados ({pct}% de simetria)",
+        "low_symmetry": "a simetria dos motores está baixa ({pct}%) — verifique a tensão das correias",
+        "motor_freq": "ressonância do motor ~{f} Hz",
+        "complete": "Perfil de vibrações concluído."
+      },
+      "sustain": {
+        "not_dominant": "O toolhead não está vibrando principalmente em {freq} Hz (o pico é {peak} Hz) — a fonte pode não chegar ao sensor do toolhead.",
+        "drop": "Mantendo {freq} Hz — a vibração caiu ~{drop}% em algum momento; o que você tocou então é um forte contribuinte.",
+        "touch": "Mantendo {freq} Hz — toque correias, o toolhead, juntas do pórtico e polias loucas uma por vez; a parte que silencia a vibração é sua fonte de ressonância."
+      },
+      "axes": {
+        "same_axis": "Mesmo eixo do acelerômetro detectado para múltiplos eixos da máquina",
+        "low_confidence": "Baixa confiança de detecção ({pct}%)",
+        "high_angle_error": "Erro de ângulo alto ({deg}°)",
+        "unusual_gravity": "Leitura de gravidade incomum ({g} m/s²)",
+        "high_noise": "Nível de ruído alto ({n} mm/s²)",
+        "good": "Qualidade da detecção: boa"
+      }
+    },
+    "proof": {
+      "title": "Prova do ajuste",
+      "empty": "Precisa de dois resultados registrados neste eixo — meça antes de ajustar, aplique o shaper, depois meça novamente e salve ambos.",
+      "before": "Antes",
+      "after": "Depois",
+      "samePick": "Escolha dois resultados diferentes para comparar.",
+      "metricHead": "Métrica",
+      "delta": "Mudança",
+      "copy": "Copiar relatório",
+      "copied": "Copiado ✓",
+      "metric": {
+        "score": "Nota da medição",
+        "vibrations": "Vibração restante %",
+        "smoothing": "Suavização",
+        "maxAccel": "Accel máx sugerida (mm/s²)",
+        "freq": "Frequência do shaper (Hz)",
+        "shaper": "Shaper"
+      }
+    }
+  }
+}

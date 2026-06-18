@@ -1,0 +1,168 @@
+{
+  "maxFlow": {
+    "intro": "找出你的熱端能持續輸出的最高體積流量（mm³/s）——做法是逐步拉高流量，同時觀察擠出機的 StallGuard 負載，捕捉齒輪打滑的瞬間。請先預覽測試計畫；實機測試會加熱並擠出料，執行前請先準備好印表機。",
+    "help": {
+      "guide": "說明",
+      "guideTitle": "關於 Max-Flow",
+      "close": "關閉",
+      "howToRead": "使用方式",
+      "steps": [
+        "設定測試溫度與耗材直徑（選一個熱端可自動帶入）。",
+        "預覽計畫——它會列出每個流量步階以及各步推送多少料。",
+        "勾選安全檢查清單，接著執行實機測試（會加熱＋擠出料）。",
+        "讀取最高持續流量，並複製建議的切片軟體數值。"
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "測試原理",
+          "body": "擠出機以穩定遞增的體積流量推送耗材。當滾花齒輪夾得牢時，StallGuard 負載讀值保持平穩；一旦開始打滑，讀值就會劇烈跳動。打滑前所達到的最高流量，就是你能持續輸出的最大流量。一偵測到打滑就會停止拉升，因此不會在第一次打滑後繼續磨耗耗材。"
+        },
+        "stallguard": {
+          "title": "StallGuard 打滑偵測",
+          "body": "StallGuard 是 TMC 驅動的一項功能，會回報馬達負載。本測試在每個流量步階多次取樣，並尋找離散度（IQR）或變異（CV）的突然升高——這正是齒輪失去抓力的特徵。閾值來自每個驅動的設定檔。注意：在 TMC2209 擠出機上會使用實驗性的 SG4 路徑，因此請把第一次執行視為校正。"
+        },
+        "safety": {
+          "title": "安全",
+          "body": "這是一項會發熱且有動作的測試，並刻意讓擠出機打滑。請裝好耗材、確保噴嘴下方淨空（在熱床或廢料區上方），並全程在旁看顧。印表機列印中時會拒絕執行，測試結束時加熱器一律會關閉。"
+        },
+        "slicer": {
+          "title": "套用結果",
+          "body": "把建議值填入切片軟體的「最大體積速度」（依耗材設定）。保守值（測得上限的 80%）是日常安全上限；平衡值（90%）可再多推一點。提高熱端溫度通常能拉高可達成的流量。"
+        },
+        "glossary": {
+          "title": "詞彙表",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "flow": {
+          "term": "體積流量",
+          "def": "熱端每秒能熔化多少塑料（mm³/s）——高速列印真正的速度上限。"
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "TMC 驅動的一個訊號，回報馬達機械負載，此處用來感測擠出機打滑。"
+        },
+        "slip": {
+          "term": "打滑",
+          "def": "擠出機齒輪再也跟不上、無法及時夾住耗材而空轉——即流量天花板。"
+        },
+        "meltzone": {
+          "term": "熔融區",
+          "def": "熱端的加熱長度；熔融區較長（例如 Volcano）能維持更高流量。"
+        }
+      }
+    },
+    "params": {
+      "title": "測試參數",
+      "temperature": "溫度（°C）",
+      "filamentDiameter": "耗材直徑 Ø（mm）",
+      "hotend": "熱端（選填）",
+      "hotendNone": "- 無 -",
+      "hotendHint": "預期約 {flow} mm³/s",
+      "startFlow": "起始流量（mm³/s）",
+      "endFlow": "結束流量（mm³/s）",
+      "stepFlow": "步階（mm³/s）",
+      "samples": "每步取樣數",
+      "extrudePerStep": "每步擠出量（mm）",
+      "driver": "擠出機驅動",
+      "driverDetected": "自印表機偵測",
+      "autoStealthchop": "測試時自動啟用 StealthChop",
+      "autoStealthchopHint": "僅限 TMC2209/2240：暫時對擠出機寫入 stealthchop_threshold，讓 StallGuard 能讀取，測試後再將其註解掉。會還原 printer.cfg；前後各需一次韌體重啟。",
+      "method": "偵測方式",
+      "methodHint": "Auto 使用 StallGuard，當 StallGuard 無法讀取時改用工具頭加速度計（振動）。加速度計方式為實驗性。"
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "加速度計"
+    },
+    "plan": {
+      "button": "預覽計畫",
+      "title": "計畫的流量爬升",
+      "stepCount": "{count} 個步階",
+      "totalExtrude": "{mm} mm 耗材",
+      "sgField": "StallGuard 欄位：{field}",
+      "sgFieldUnknown": "此驅動沒有已知的 StallGuard 欄位",
+      "flowHead": "流量（mm³/s）",
+      "feedrateHead": "進給速度（mm/min）",
+      "warning": "實機測試會加熱熱端並擠出耗材，並刻意推到打滑為止。此處僅為預覽——尚未執行任何動作。"
+    },
+    "safety": {
+      "title": "執行前——安全檢查清單",
+      "items": [
+        "耗材已裝好且進料順暢。",
+        "噴嘴下方淨空——在熱床或廢料桶上方，而非懸空對著工件。",
+        "我接受這會刻意磨耗／打滑部分耗材。",
+        "我會在整個測試期間留在印表機旁。"
+      ],
+      "ack": "上述事項我都已完成，印表機已就緒",
+      "note": "列印中時會拒絕執行；結束時加熱器會自動關閉。"
+    },
+    "run": {
+      "button": "執行實機測試",
+      "running": "執行中…（加熱＋擠出）",
+      "confirmTitle": "開始實機 max-flow 測試？",
+      "confirmBody": "這會把熱端加熱到 {temp} °C，並擠出最多 {mm} mm 的耗材，持續拉升直到擠出機打滑。",
+      "confirm": "立即執行",
+      "cancel": "取消",
+      "busy": "已拒絕：印表機忙碌中（列印或暫停）。閒置後請再試。",
+      "error": "測試失敗。",
+      "noSg": "未讀取到任何 StallGuard 取樣——打滑結果可能不可靠。此型號的驅動即時 SG 欄位可能需要調整。",
+      "progress": "步階 {step}/{total} - {flow} mm³/s",
+      "starting": "加熱／啟動中…",
+      "abort": "中止執行",
+      "cancelling": "中止中…",
+      "cancelled": "執行已中止——加熱器已關閉。",
+      "reattached": "已重新接上：此結果在頁面離開期間已完成。",
+      "failed": "Max-flow 執行失敗。",
+      "abortNote": "中止一律會關閉加熱器。",
+      "parkNote": "加熱前，印表機會（必要時）歸位並把噴嘴置中，以利清楚觀察。",
+      "phase": {
+        "enabling": "正在啟用 StealthChop…",
+        "homing": "正在歸位印表機…",
+        "centering": "正在置中噴嘴…",
+        "heating": "正在加熱熱端…",
+        "checking": "正在檢查 StallGuard 訊號…",
+        "ramp": "正在拉升流量…",
+        "reverting": "正在還原設定…"
+      },
+      "step": {
+        "home": "歸位",
+        "center": "置中",
+        "heat": "加熱",
+        "check": "檢查",
+        "ramp": "拉升"
+      }
+    },
+    "camera": {
+      "title": "即時攝影機",
+      "live": "LIVE",
+      "error": "攝影機無法使用。",
+      "willShow": "測試期間會以即時攝影機畫面顯示噴嘴。",
+      "minimize": "縮到最小",
+      "maximize": "放到最大",
+      "enlarge": "放大",
+      "shrink": "縮小"
+    },
+    "result": {
+      "title": "結果",
+      "maxFlow": "最高持續流量",
+      "slipAt": "於 {flow} mm³/s 偵測到打滑",
+      "noSlip": "在測試的最高流量內均未打滑",
+      "reason": "詳情",
+      "recommendTitle": "建議的切片軟體數值（最大體積速度）",
+      "conservative": "保守（80%）",
+      "balanced": "平衡（90%）",
+      "units": "mm³/s",
+      "fromBefore": "稍早測得（{at}）——再次執行以取得最新數值。",
+      "unreliableTitle": "不可靠——無 StallGuard 訊號",
+      "unmeasured": "已達到，但未確認",
+      "via": "透過 {method} 測得",
+      "accelExperimental": "以振動（加速度計）測得——實驗性；請把此數值當作參考，而非精確上限。"
+    },
+    "states": {
+      "loadingHotends": "正在載入熱端…"
+    }
+  }
+}

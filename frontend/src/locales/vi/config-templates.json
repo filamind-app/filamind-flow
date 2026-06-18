@@ -1,0 +1,69 @@
+{
+  "configTemplates": {
+    "intro": "Các khối cấu hình Klipper và macro sẵn sàng để dán - chuỗi khởi động, xử lý sợi nhựa, input shaping, bed mesh và nhiều hơn nữa. Sao chép một mẫu và thả vào printer.cfg của bạn (Config Editor là nơi thích hợp để dán).",
+    "help": {
+      "guide": "Trợ giúp",
+      "guideTitle": "Giới thiệu về Mẫu cấu hình",
+      "close": "Đóng",
+      "howToRead": "Cách sử dụng",
+      "steps": [
+        "Lọc theo danh mục để tìm một macro hoặc khối cấu hình.",
+        "Đọc mô tả và những phần nó cần.",
+        "Sao chép mẫu, dán vào cấu hình của bạn và điều chỉnh các giá trị."
+      ],
+      "topics": {
+        "what": {
+          "title": "Đây là những gì",
+          "body": "Một bộ chọn lọc các khối Klipper thông dụng: gcode_macros (PRINT_START, PAUSE/RESUME, nạp/rút sợi nhựa, M600) và các phần cấu hình ([input_shaper], [bed_mesh], [firmware_retraction], …). Chúng là điểm khởi đầu - hãy đọc từng cái và tinh chỉnh cho máy của bạn."
+        },
+        "insert": {
+          "title": "Chèn một mẫu",
+          "body": "Sao chép một mẫu, rồi dán vào printer.cfg của bạn - chế độ xem Raw của Config Editor là nơi tiện lợi. Sau khi lưu, khởi động lại firmware để áp dụng. Luôn xem lại các giá trị trước; các mặc định ở đây hợp lý nhưng chưa được tinh chỉnh cho máy in của bạn."
+        },
+        "sections": {
+          "title": "Các phần cần thiết",
+          "body": "Mỗi mẫu liệt kê các phần cấu hình mà nó định nghĩa hoặc phụ thuộc vào. Nếu một phần đã tồn tại trong cấu hình của bạn, hãy gộp các khóa thay vì dán một bản trùng lặp (một phần trùng lặp sẽ bị từ chối khi khởi động)."
+        },
+        "glossary": {
+          "title": "Thuật ngữ",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "template": {
+          "term": "Mẫu",
+          "def": "Một đoạn cấu hình Klipper hoặc macro G-code sẵn sàng để dán mà bạn sao chép vào printer.cfg."
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "Một lệnh có tên mà bạn định nghĩa trong cấu hình (ví dụ PRINT_START) để chạy một chuỗi G-code."
+        },
+        "section": {
+          "term": "Phần",
+          "def": "Một khối cấu hình [trong ngoặc], ví dụ [bed_mesh] - đơn vị mà cấu hình Klipper được nhóm vào."
+        }
+      }
+    },
+    "category": {
+      "label": "Danh mục",
+      "all": "Tất cả danh mục"
+    },
+    "template": {
+      "copy": "Sao chép",
+      "copied": "Đã sao chép!",
+      "requires": "Các phần: {sections}",
+      "requiresNone": "-"
+    },
+    "count": "{n} mẫu",
+    "states": {
+      "loading": "Đang tải mẫu…",
+      "error": "Không thể tải các mẫu.",
+      "empty": "Không có mẫu nào trong danh mục này.",
+      "retry": "Thử lại"
+    },
+    "categories": {
+      "config_blocks": "Khối cấu hình",
+      "macros": "Macro"
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "configEditor": {
+    "intro": "Baca konfigurasi langsung printer Anda dari Moonraker - setiap file, diuraikan menjadi bagian dan parameter, dengan masalah struktural ditandai. Hanya-baca untuk saat ini; pengeditan terpandu hadir berikutnya.",
+    "help": {
+      "guide": "Bantuan",
+      "guideTitle": "Tentang Config Editor",
+      "close": "Tutup",
+      "howToRead": "Cara menggunakan",
+      "steps": [
+        "Pilih file konfigurasi dari dropdown - printer.cfg dipilih secara default.",
+        "Telusuri bagian-bagiannya; klik salah satu untuk membuka parameternya.",
+        "Periksa banner Validasi untuk masalah struktural seperti bagian ganda.",
+        "Beralih ke Raw untuk membaca teks file persis apa adanya."
+      ],
+      "topics": {
+        "sections": {
+          "title": "Bagian & parameter",
+          "body": "Konfigurasi Klipper adalah daftar blok [section], masing-masing menyimpan parameter key: value. Widget ini menguraikan setiap bagian - termasuk yang bernama seperti [tmc2209 stepper_x] - dan mencantumkan parameternya beserta nilai dan komentar inline mana pun. Nilai multi-baris (seperti gcode: sebuah makro) tetap utuh."
+        },
+        "includes": {
+          "title": "File yang disertakan",
+          "body": "printer.cfg sering menarik file lain dengan [include other.cfg] (atau glob seperti [include configs/*.cfg]). Setiap include ditampilkan sebagai entri tersendiri; pilih file yang disertakan dari dropdown untuk memeriksa apa yang didefinisikannya."
+        },
+        "validation": {
+          "title": "Validasi",
+          "body": "Setelah diuraikan, konfigurasi diperiksa untuk masalah struktural yang salah terlepas dari tipe bagiannya - header bagian ganda, nama bagian kosong, atau parameter yang berada di luar bagian mana pun. Ini muncul di banner Validasi; mereka tidak mengubah file Anda."
+        },
+        "saveConfig": {
+          "title": "Blok SAVE_CONFIG",
+          "body": "Klipper menambahkan blok yang dihasilkan otomatis di akhir printer.cfg (setelah penanda #*#) saat Anda menjalankan SAVE_CONFIG - hasil kalibrasi seperti PID dan offset Z. Blok ini ditampilkan tetapi ditandai sebagai tersimpan-otomatis, dan dikecualikan dari hitungan bagian yang dapat diedit karena Anda tidak boleh mengeditnya secara manual."
+        },
+        "readonly": {
+          "title": "Hanya-baca (untuk saat ini)",
+          "body": "Versi pertama ini hanya membaca dan menampilkan konfigurasi - tidak ada yang ditulis ke printer. Pengeditan terpandu yang dikonfirmasi (dengan cadangan otomatis sebelum penyimpanan apa pun dan restart sesudahnya) hadir pada pembaruan berikutnya."
+        },
+        "glossary": {
+          "title": "Glosarium",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "section": {
+          "term": "Bagian",
+          "def": "Blok [header] yang mengelompokkan pengaturan terkait, mis. [stepper_x] atau [extruder]."
+        },
+        "parameter": {
+          "term": "Parameter",
+          "def": "Baris key: value (atau key = value) di dalam sebuah bagian, opsional dengan komentar # di akhir."
+        },
+        "include": {
+          "term": "[include]",
+          "def": "Direktif yang menarik file konfigurasi lain ke dalam printer.cfg, sehingga pengaturan dapat dipisah ke beberapa file."
+        },
+        "saveConfig": {
+          "term": "SAVE_CONFIG",
+          "def": "Blok yang dihasilkan otomatis (setelah #*#) tempat Klipper menyimpan hasil kalibrasi - jangan edit secara manual."
+        }
+      }
+    },
+    "file": {
+      "label": "File konfigurasi",
+      "placeholder": "Pilih file…",
+      "refresh": "Segarkan",
+      "loadingList": "Memuat file…",
+      "emptyList": "Tidak ada file konfigurasi yang ditemukan di printer."
+    },
+    "summary": {
+      "sections": "{count} bagian",
+      "params": "{count} parameter",
+      "size": "{kb} KB"
+    },
+    "validation": {
+      "title": "Validasi",
+      "clean": "Tidak ada masalah struktural ditemukan.",
+      "error": "Kesalahan",
+      "warning": "Peringatan"
+    },
+    "view": {
+      "structured": "Terstruktur",
+      "raw": "Raw",
+      "expandAll": "Buka semua",
+      "collapseAll": "Tutup semua"
+    },
+    "section": {
+      "saveBadge": "tersimpan-otomatis",
+      "noParams": "(tanpa parameter)",
+      "paramsCount": "{count} parameter",
+      "paramHead": "Parameter",
+      "valueHead": "Nilai"
+    },
+    "edit": {
+      "hint": "Edit teks mentah di bawah, lalu Simpan. Cadangan bertanda waktu dibuat sebelum setiap penulisan."
+    },
+    "save": {
+      "button": "Simpan",
+      "saving": "Menyimpan…",
+      "unsaved": "Perubahan belum disimpan",
+      "revert": "Kembalikan",
+      "confirmTitle": "Simpan ke printer?",
+      "confirmBody": "Ini menimpa {file} di printer. Cadangan bertanda waktu disimpan terlebih dahulu, dan restart firmware diperlukan untuk menerapkan perubahan.",
+      "ack": "Saya mengerti ini menulis ke printer",
+      "confirm": "Simpan",
+      "cancel": "Batal",
+      "done": "Tersimpan. Cadangan: {backup}",
+      "busy": "Ditolak: printer sedang sibuk (mencetak atau dijeda). Coba lagi saat menganggur.",
+      "error": "Penyimpanan gagal.",
+      "stale": "File berubah di disk sejak dimuat (mungkin ada SAVE_CONFIG yang masuk, atau aplikasi lain mengeditnya). Menyimpan sekarang akan menimpa perubahan itu - muat ulang untuk meninjau (linimasa cadangan menunjukkan perbedaannya).",
+      "staleReload": "Muat ulang file"
+    },
+    "restart": {
+      "prompt": "Restart firmware untuk menerapkan perubahan Anda?",
+      "button": "Restart firmware",
+      "restarting": "Me-restart…",
+      "confirmTitle": "Restart firmware?",
+      "confirmBody": "FIRMWARE_RESTART memuat ulang konfigurasi dan sebentar mengganggu printer. Lakukan ini hanya saat menganggur.",
+      "confirm": "Restart sekarang",
+      "cancel": "Batal",
+      "done": "Restart firmware diminta.",
+      "busy": "Ditolak: printer sedang sibuk. Restart saat menganggur.",
+      "error": "Restart gagal."
+    },
+    "states": {
+      "loading": "Membaca konfigurasi…",
+      "error": "Tidak dapat membaca konfigurasi dari printer.",
+      "retry": "Coba lagi"
+    },
+    "catalog": {
+      "title": "Tambah blok konfigurasi dari katalog",
+      "hint": "Pilih komponen - blok Klipper yang akurat secara perangkat keras (run_current, sense_resistor, nama pin yang sebenarnya) ditambahkan ke file untuk Anda tinjau dan simpan.",
+      "drivers": "Driver",
+      "motors": "Motor",
+      "boards": "Board",
+      "pickPlaceholder": "Cari di katalog…",
+      "inserted": "Blok untuk {name} disisipkan - tinjau di Raw lalu simpan.",
+      "noSnippet": "Tidak ada blok konfigurasi tersedia untuk {name}."
+    },
+    "drift": {
+      "title": "Apa yang sedang dijalankan Klipper",
+      "pending": "Klipper memiliki perubahan yang belum disimpan (SAVE_CONFIG tertunda) - menyimpan file ini sekarang akan menimpanya. Jalankan SAVE_CONFIG di konsol terlebih dahulu.",
+      "warningsTitle": "Peringatan konfigurasi Klipper",
+      "count": "{n} nilai di disk berbeda dari yang sedang dijalankan (diedit tetapi belum FIRMWARE_RESTART):",
+      "adopt": "adopsi nilai langsung"
+    },
+    "pinDoctor": {
+      "title": "Pin Doctor - {n} temuan pengkabelan",
+      "conflict": "KONFLIK",
+      "caveat": "PERINGATAN"
+    },
+    "tmc": {
+      "review": "tinjau di Raw lalu simpan"
+    },
+    "pinEdit": {
+      "offBoard": "tidak ada di board",
+      "offBoardHint": "Pin ini tidak ada di peta pin board yang diketahui - periksa salah ketik atau pin EXP/virtual.",
+      "double": "dipakai ulang",
+      "doubleHint": "Pin ini ditugaskan di lebih dari satu bagian.",
+      "caveat": "peringatan"
+    },
+    "project": {
+      "title": "Proyek (include & pencarian)",
+      "lintBadge": "{n} masalah",
+      "searchPlaceholder": "Cari di setiap file konfigurasi…",
+      "searchBtn": "Cari",
+      "noResults": "Tidak ada kecocokan.",
+      "matchesCount": "{n} kecocokan",
+      "truncated": "menampilkan hasil pertama",
+      "tree": "Pohon include",
+      "missing": "file hilang",
+      "lint": "Pemeriksaan lintas-file",
+      "rule": {
+        "broken_include": "Include rusak: ",
+        "orphan_driver": "Driver yatim - tidak ada bagian yang cocok: ",
+        "section_override": "Penggantian (didefinisikan di beberapa file, yang terakhir menang): "
+      }
+    },
+    "knowledge": {
+      "viewDriver": "Lihat {model} di katalog →",
+      "stepper": "Sumbu motor stepper - pin driver, jarak rotasi, microstep, dan homing/endstop-nya.",
+      "tmc": "Driver stepper Trinamic - arus run/hold, microstep, dan penyetelan StallGuard/chopper untuk stepper-nya.",
+      "extruder": "Hotend dan extruder - ukuran nozzle, jalur filamen, pemanas, termistor, dan PID.",
+      "heater_bed": "Bed yang dipanaskan - pin pemanas, termistor, dan batas PID/suhunya.",
+      "fan": "Kipas pendingin part yang mendinginkan filamen yang baru dicetak.",
+      "heater_fan": "Kipas yang terikat ke pemanas (mis. pendingin hotend) yang berjalan untuk melindunginya dari panas berlebih.",
+      "controller_fan": "Kipas yang mendinginkan driver stepper / elektronik saat motor aktif.",
+      "mcu": "Board mikrokontroler yang menjalankan Klipper - koneksi serial atau CAN-nya.",
+      "printer": "Kinematika mesin global dan batas gerak (tipe, kecepatan maks, akselerasi).",
+      "bed_mesh": "Leveling bed otomatis - menyelidiki grid dan mengompensasi kerataan bed saat mencetak.",
+      "probe": "Probe Z yang digunakan untuk mendeteksi permukaan bed untuk homing dan bed mesh.",
+      "gcode_macro": "Makro G-code khusus - perintah bernama yang dapat dipanggil dari konsol atau makro lain.",
+      "output_pin": "Pin keluaran yang dapat dikendalikan (mis. LED, relai, atau jalur enable).",
+      "neopixel": "LED RGB beralamat (NeoPixel / WS2812) dan kontrol warnanya.",
+      "board_pins": "Alias ramah untuk pin fisik board, yang dirujuk di tempat lain dalam konfigurasi.",
+      "input_shaper": "Kompensasi resonansi yang mengurangi ringing dan ghosting pada kecepatan lebih tinggi.",
+      "safe_z_home": "Melakukan homing Z pada posisi XY yang aman (sering kali tengah bed) untuk melindungi nozzle dan bed.",
+      "z_tilt": "Menyesuaikan beberapa motor Z agar bidang gantry/bed rata.",
+      "quad_gantry_level": "Meratakan gantry empat titik agar sejajar dengan bed.",
+      "filament_switch_sensor": "Sensor habisnya filamen yang menjeda cetakan saat filamen habis.",
+      "virtual_sdcard": "Memungkinkan Klipper mencetak file yang diunggah ke host (diperlukan oleh Mainsail dan Fluidd)."
+    },
+    "backups": {
+      "title": "Cadangan ({n})",
+      "diff": "Diff",
+      "hideDiff": "Sembunyikan diff",
+      "restore": "Pulihkan",
+      "diffHint": "perbedaan dari file saat ini",
+      "unchanged": "⋯ {n} baris tidak berubah ⋯",
+      "note": "Snapshot ditulis otomatis sebelum setiap penyimpanan. Pulihkan memuat salah satunya ke editor untuk tinjauan + penyimpanan akhir."
+    },
+    "sanity": {
+      "title": "Pemeriksaan kewajaran nilai driver ({n})",
+      "note": "Memeriksa {n} bagian driver TMC. Driver tanpa batas atas terkurasi dan stepper tanpa motor yang ditugaskan dilewati, bukan ditebak.",
+      "rule": {
+        "over_driver_cap": "{section}: run_current {run_current} A melebihi batas atas skala-penuh driver ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A berada dalam 10% dari batas atas driver ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A melebihi rating {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A berada dalam 10% dari rating {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} bukan pangkat dua (1…256)."
+      }
+    },
+    "panels": {
+      "failed": "Beberapa panel tidak dapat dimuat dan disembunyikan: {panels}. Apa yang akan diperiksanya tidak diketahui saat ini - belum tentu baik-baik saja.",
+      "name": {
+        "drift": "Disk-vs-langsung",
+        "pinDoctor": "Pin Doctor",
+        "sanity": "Kewajaran driver",
+        "project": "Tampilan proyek",
+        "pinMap": "Saran pin",
+        "backups": "Cadangan"
+      }
+    },
+    "addPart": {
+      "title": "Tambah komponen (sadar pin bebas)",
+      "hint": "Pilih tipe komponen dan salah satu pin board yang BELUM dipakai apa pun (dibaca langsung dari konfigurasi + peta board Anda), dan dapatkan bagian siap yang ditulis melalui gerbang keselamatan - tanpa menebak pin.",
+      "kind": "Tipe komponen",
+      "name": "Nama",
+      "namePh": "mis. chamber_fan",
+      "mcu": "Board (MCU)",
+      "pin": "Pin bebas",
+      "pinPh": "Pilih pin bebas…",
+      "noFree": "Tidak ada pin bernama yang bebas di peta board ini."
+    }
+  }
+}

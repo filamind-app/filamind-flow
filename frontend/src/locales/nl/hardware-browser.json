@@ -1,0 +1,289 @@
+{
+  "hardwareBrowser": {
+    "intro": "Doorzoek een samengestelde naslag van 3D-printhardware - steppers, drivers, boards, sensoren, hotends, fans, hosts, nozzles, extruders, filamenten en meer - op naam, fabrikant, categorie of een spec.",
+    "help": {
+      "guide": "Help",
+      "guideTitle": "Over de Hardware Browser",
+      "close": "Sluiten",
+      "howToRead": "Gebruik",
+      "steps": [
+        "Typ in het zoekvak om te matchen op naam, fabrikant of een specwaarde.",
+        "Verfijn op categorie of fabrikant met de filters.",
+        "Elke resultaatkaart toont de specs van het component; blader met Vorige / Volgende."
+      ],
+      "topics": {
+        "search": {
+          "title": "Zoeken",
+          "body": "Het zoeken matcht overal - fabrikant, modelnaam, categorie, subsectie of een specwaarde. Combineer het met de categorie- en fabrikantfilters om te verfijnen. Resultaten zijn gepagineerd; het totaal weerspiegelt alles wat matcht, niet alleen de huidige pagina."
+        },
+        "categories": {
+          "title": "Categorieën",
+          "body": "Componenten zijn ingedeeld in categorieën (stappenmotoren, drivers, boards, sensoren, hotends, fans/voeding, hosts, beweging, nozzles, extruders, filamenten, elektronica, camera's/displays). Kies er een om alleen dat type te bekijken."
+        },
+        "manufacturers": {
+          "title": "Fabrikanten & specs",
+          "body": "Dit is een samengestelde naslag voor vergelijking, geen winkel - waarden komen uit datasheets van fabrikanten en community-data en kunnen achterlopen op de nieuwste producten. Controleer altijd bij de fabrikant voordat je koopt of configureert."
+        },
+        "relationships": {
+          "title": "Gekoppelde hardware",
+          "body": "Elk board, elke driver, motor en host is gekoppeld via de fabrikant, en elk board linkt ook naar zijn MCU en de drivers die het ondersteunt. Open een item en gebruik de kruislink-chips onderaan om direct naar een gerelateerd onderdeel te springen. Met de tabbladen Merken en MCU's kun je vertrekken vanaf een merk of een chip en alles zien dat het gebruikt."
+        },
+        "glossary": {
+          "title": "Begrippenlijst",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "category": {
+          "term": "Categorie",
+          "def": "Het hardwaretype waartoe een component behoort (bijv. Hotends, Stappenmotoren, Sensoren)."
+        },
+        "manufacturer": {
+          "term": "Fabrikant",
+          "def": "Het bedrijf dat het onderdeel maakt (bijv. E3D, BIGTREETECH, LDO Motors)."
+        },
+        "spec": {
+          "term": "Spec",
+          "def": "Een datasheet-eigenschap van een component - stroom, spanning, max temp, afmetingen, enzovoort."
+        },
+        "links": {
+          "term": "Gekoppelde hardware",
+          "def": "Kruislinks tussen onderdelen - de fabrikant van een board, zijn MCU en de drivers die het ondersteunt - getoond als klikbare chips die naar de gerelateerde entiteit springen."
+        }
+      }
+    },
+    "search": {
+      "placeholder": "Hardware zoeken…",
+      "button": "Zoeken",
+      "category": "Categorie",
+      "allCategories": "Alle categorieën",
+      "manufacturer": "Fabrikant",
+      "manufacturerPlaceholder": "Elke fabrikant"
+    },
+    "results": {
+      "total": "{count} resultaten",
+      "none": "Geen componenten komen overeen met je zoekopdracht.",
+      "showing": "{from}-{to} van {total} getoond",
+      "prev": "Vorige",
+      "next": "Volgende"
+    },
+    "states": {
+      "loading": "Zoeken…",
+      "error": "Kon de hardwaredatabase niet laden.",
+      "retry": "Opnieuw"
+    },
+    "tabs": {
+      "catalog": "Catalogus",
+      "search": "Alles zoeken",
+      "boards": "Boards",
+      "drivers": "Drivers",
+      "motors": "Motoren",
+      "hosts": "Hosts",
+      "manufacturers": "Merken",
+      "mcus": "MCU's"
+    },
+    "catalog": {
+      "searchAll": "Alles zoeken",
+      "items": "{n} items",
+      "back": "Catalogus"
+    },
+    "boards": {
+      "search": "Boards zoeken",
+      "total": "{n} boards",
+      "none": "Geen boards gevonden.",
+      "view": "Details",
+      "hide": "Verbergen",
+      "connector": "Connector",
+      "function": "Functie",
+      "pins": "Pinnen",
+      "use": "Gebruiken",
+      "electronics": "Elektronica (beïnvloedt config)",
+      "notes": "Config-notities",
+      "config": "Config-snippet",
+      "copy": "Kopiëren",
+      "copied": "Gekopieerd!"
+    },
+    "drivers": {
+      "search": "Drivers zoeken",
+      "klipperOnly": "Alleen Klipper (TMC)",
+      "total": "{n} drivers",
+      "none": "Geen drivers gevonden.",
+      "standalone": "standalone",
+      "sensorless": "sensorloos",
+      "config": "Klipper-config",
+      "reference": "Klipper-referentie →"
+    },
+    "motors": {
+      "search": "Motoren zoeken",
+      "total": "{n} motoren",
+      "none": "Geen motoren gevonden.",
+      "rated": "nominaal",
+      "run": "run",
+      "config": "Klipper-config"
+    },
+    "hosts": {
+      "search": "Hosts zoeken",
+      "total": "{n} hosts",
+      "none": "Geen hosts gevonden.",
+      "config": "Host-config",
+      "kind": {
+        "sbc": "SBC",
+        "x86": "x86",
+        "os": "OS-image",
+        "locked": "vergrendeld"
+      }
+    },
+    "manufacturers": {
+      "search": "Merken zoeken",
+      "total": "{n} merken",
+      "none": "Geen merken gevonden.",
+      "members": "{n} onderdelen",
+      "specialty": "Specialiteit",
+      "aliases": "Ook bekend als",
+      "website": "Website →",
+      "derived": "community"
+    },
+    "mcus": {
+      "search": "MCU's zoeken",
+      "total": "{n} MCU's",
+      "none": "Geen MCU's gevonden.",
+      "boards": "{n} boards"
+    },
+    "related": {
+      "title": "Gekoppelde hardware",
+      "loading": "Links laden…",
+      "more": "+{n} meer",
+      "jump": "{name} openen",
+      "rel": {
+        "manufacturer": "Fabrikant",
+        "mcus": "MCU",
+        "onboardDrivers": "Onboard drivers",
+        "supportedDrivers": "Ondersteunde drivers",
+        "boards": "Boards",
+        "motors": "Motoren",
+        "hosts": "Hosts",
+        "catalog": "Onderdelen"
+      }
+    },
+    "picker": {
+      "placeholder": "Kies een onderdeel…"
+    },
+    "facets": {
+      "manufacturer": "Fabrikant",
+      "anyClass": "Elke klasse",
+      "anyNema": "Elk formaat",
+      "anyKind": "Elk type",
+      "anyType": "Alle types",
+      "nemaOption": "NEMA {n}",
+      "boardClass": {
+        "mainboard": "Mainboard",
+        "toolhead": "Toolhead",
+        "printer-preset": "Printer-preset",
+        "expansion": "Uitbreiding",
+        "host": "Host-SBC"
+      }
+    },
+    "onPrinter": {
+      "badge": "Op deze printer",
+      "strip": "Op deze printer:"
+    },
+    "suggest": {
+      "button": "Onderdeel voorstellen",
+      "title": "Onderdeel voorstellen",
+      "intro": "Vul in wat je weet - we openen een vooraf ingevulde GitHub-issue ter beoordeling. Er wordt niets automatisch verzonden.",
+      "typeLabel": "Onderdeeltype",
+      "cancel": "Annuleren",
+      "close": "Sluiten",
+      "submit": "Issue openen op GitHub",
+      "preview": "Inzending bekijken (JSON)",
+      "languageNote": "De issue is in het Engels geschreven zodat de maintainers ermee aan de slag kunnen.",
+      "sentTitle": "Inzending geopend in een nieuw tabblad",
+      "sentBody": "Bekijk de vooraf ingevulde gegevens op GitHub en dien de issue daar in. Bedankt voor je bijdrage!",
+      "yes": "Ja",
+      "specs": "Extra specs",
+      "specKey": "Spec",
+      "specValue": "Waarde",
+      "addSpec": "Spec toevoegen",
+      "ports": "Poorten & pinnen",
+      "addPort": "Poort toevoegen",
+      "addPin": "Pin toevoegen",
+      "remove": "Verwijderen",
+      "configSnippet": "Klipper-config-snippet",
+      "types": {
+        "motor": "Stappenmotor",
+        "driver": "Stepperdriver",
+        "hotend": "Hotend",
+        "host": "Host / SBC",
+        "manufacturer": "Fabrikant",
+        "board": "Board",
+        "catalog": "Ander catalogusitem"
+      },
+      "group": {
+        "autotune": "Autotune (elektrisch)",
+        "caps": "Mogelijkheden",
+        "maxFlow": "Max flow",
+        "preset": "Max-flow-preset"
+      },
+      "f": {
+        "manufacturer": "Fabrikant",
+        "name": "Naam",
+        "model": "Model",
+        "display_name": "Weergavenaam",
+        "boardClass": "Board-klasse",
+        "mcu": "MCU",
+        "clock": "Klok",
+        "voltage": "Spanning",
+        "driver_slots": "Driver-slots",
+        "usb": "USB",
+        "can": "CAN",
+        "ethernet": "Ethernet",
+        "nema": "NEMA",
+        "stepAngle": "Staphoek",
+        "ratedCurrent": "Nominale stroom",
+        "holdingTorque": "Houdkoppel",
+        "recommendedRunCurrent": "Aanbevolen run-stroom",
+        "resistance_ohm": "Weerstand",
+        "inductance_H": "Inductantie",
+        "holding_torque_Nm": "Houdkoppel",
+        "max_current_A": "Max stroom",
+        "steps_per_rev": "Stappen / omw",
+        "chip": "Chip",
+        "interface": "Interface",
+        "klipperSection": "Klipper-sectie",
+        "sensorless": "Sensorloos",
+        "max_current_a": "Max stroom",
+        "microsteps": "Microsteps",
+        "stealthchop": "StealthChop",
+        "spreadcycle": "SpreadCycle",
+        "coolstep": "CoolStep",
+        "stallguard": "StallGuard",
+        "stallguard_field": "StallGuard-veld",
+        "max_temp_c": "Max temp",
+        "suggested_temp_c": "Aanbevolen temp",
+        "expected_max_flow_mm3s": "Verwachte max flow",
+        "melt_zone_mm": "Smeltzone",
+        "START": "START",
+        "MAX": "MAX",
+        "COARSE_STEP": "COARSE_STEP",
+        "kind": "Soort",
+        "soc": "SoC",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "klipperOpen": "Draait open Klipper",
+        "country": "Land",
+        "website": "Website",
+        "specialty": "Specialiteit",
+        "category": "Categorie",
+        "subsection": "Subsectie",
+        "portLabel": "Poortlabel",
+        "portCategory": "Poortcategorie",
+        "portFunction": "Functie",
+        "signal": "Signaal",
+        "pin": "Pin"
+      },
+      "tooLong": "Deze inzending is te groot om automatisch vooraf in te vullen. Kopieer de JSON en open handmatig een nieuwe issue.",
+      "copyJson": "JSON kopiëren",
+      "copied": "Gekopieerd"
+    }
+  }
+}

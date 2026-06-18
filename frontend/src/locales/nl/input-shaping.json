@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "wat is dit?",
+      "topics": {
+        "glossary": {
+          "title": "Termen voor input shaping"
+        },
+        "analyze": {
+          "title": "Een resonantie-CSV analyseren",
+          "body": "Leg data vast op de printer met TEST_RESONANCES (of gebruik 🔴 Live tools), laad daarna de .csv hier. FilaMind draait Klippers eigen shaper-berekeningen en beveelt een shaper + frequentie aan. Doe het X-bestand en het Y-bestand om de beurt - ze combineren tot één configblok."
+        },
+        "grade": {
+          "title": "Wat het cijfer A-F betekent",
+          "body": "Een score voor meetkwaliteit uit vijf gelijke delen: piekhelderheid, resterende trilling, smoothing, frequentie (40-90 Hz is gezond) en hoe schoon de resonantie is. A/B → toepassen; C → bruikbaar, lees de tips door; D/F → herstel de mechaniek en test opnieuw."
+        },
+        "diagnostics": {
+          "title": "De diagnostiek lezen",
+          "body": "Elke kaart koppelt de meting aan een waarschijnlijke mechanische oorzaak en een oplossing. Lime = gezond, geel = verbetering waard, rood = herstel voor je het resultaat vertrouwt. Pas een oplossing toe, draai opnieuw en kijk de kaart groen worden."
+        },
+        "chart": {
+          "title": "De frequentiegrafiek lezen",
+          "body": "Volle lijnen zijn de gemeten trillingsenergie (X+Y+Z totaal plus elke as). De ▲ markeert de dominante resonantie. De flauwe lijnen zijn de resterende trilling van elke shaper over de frequentie - de aanbevolen (roze) duikt het diepst bij je piek."
+        },
+        "shapers": {
+          "title": "Een shaper kiezen",
+          "body": "Elke rij weegt resterende trilling af tegen smoothing. ZV / MZV zijn het lichtst (schone enkele resonantie); EI is robuuster; 2-/3-hump verwerken brede of meervoudige resonanties maar smoothen meer. FilaMind markeert de beste balans."
+        },
+        "config": {
+          "title": "De config toepassen",
+          "body": "Dit [input_shaper]-blok bevat je X- en/of Y-resultaat. Kopieer het naar printer.cfg en herstart Klipper. De badges tonen welke assen zijn vastgelegd - leg zowel X als Y vast voor een compleet blok."
+        },
+        "noise": {
+          "title": "Ruischeck",
+          "body": "Leest de stationaire trilling van de accelerometer zonder beweging - een snelle montagecheck vóór het testen. Klippers vuistregel: ~1-100 is normaal, ~1000+ betekent een losse sensor of bedrading. Herstel eerst een rammelende montage, anders is elke test onbetrouwbaar."
+        },
+        "belts": {
+          "title": "Riemvergelijking (CoreXY)",
+          "body": "Wekt elke riemdiagonaal op en legt de twee responsies over elkaar. Overeenkomende piekfrequenties = gelijkmatige spanning. Een gat betekent dat de laagfrequente riem losser is - span hem aan en draai opnieuw tot de pieken samenvallen."
+        },
+        "axesMap": {
+          "title": "Detectie van assen-map",
+          "body": "Beweegt de toolhead een stukje in X, dan Y, dan Z om te leren hoe de accelerometer is gemonteerd, en geeft je de axes_map-regel voor printer.cfg. Draai dit eenmaal na het monteren of verplaatsen van de sensor zodat elke latere test de juiste assen leest."
+        },
+        "sustain": {
+          "title": "Sustain-frequentie",
+          "body": "Houdt de toolhead zoemend op één frequentie zodat je riemen, de slede en het frame met de hand kunt aanraken om te vinden wat rammelt. Het spectrogram + tijdlijn tonen of je doelfrequentie domineert en wanneer een aanraking het stiller maakte."
+        },
+        "vibrations": {
+          "title": "Trillingsprofiel",
+          "body": "Veegt veel snelheden af langs elke motorhoek om in kaart te brengen waar de machine het soepelst draait en welke snelheden een resonantie raken. Geef de voorkeur aan de soepelste snelheden voor print-/verplaatsbewegingen en vermijd de gemarkeerde. Symmetrie % toont hoe goed de twee motoren overeenkomen."
+        },
+        "guided": {
+          "title": "Begeleid vs. handmatig",
+          "body": "Begeleid loopt de hele flow door - Ruis → Riemen → Shaper X → Shaper Y → Trillingen → Druk - met een geslaagd/mislukt-poort bij elke stap. Gebruik dit voor een volledige afstelling. Schakel naar 📈 Analyseer of 🔴 Live tools wanneer je gewoon één specifiek hulpmiddel wilt."
+        },
+        "history": {
+          "title": "Geschiedenis & trends",
+          "body": "Elke kalibratie wordt opgeslagen (in deze browser) met cijfer en score. De ▲/▼-pijl vergelijkt een run met de vorige test van dezelfde as - omhoog betekent een schonere meting of een stijvere as, omlaag betekent meer ruis of een slappere as."
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "Input shaper",
+          "def": "Een filter dat Klipper op de beweging toepast om de hoofdtrilling van de printer te onderdrukken, zodat je sneller kunt printen zonder ringing / ghosting."
+        },
+        "resonance": {
+          "term": "Resonantie",
+          "def": "De frequentie (Hz) waarop een as natuurlijk trilt wanneer hij wordt aangedreven. Lager = slappere / zwaardere as; ~40-90 Hz is een gezonde printer."
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "Power spectral density - hoeveel trillingsenergie er op elke frequentie zit. De hoge piek is de resonantie die de shaper aanpakt."
+        },
+        "smoothing": {
+          "term": "Smoothing",
+          "def": "Een bijeffect van shaping dat scherpe hoeken licht afrondt. Lager is beter; ≤0,1 is minimaal, >0,2 begint detail af te zwakken."
+        },
+        "vibrationPct": {
+          "term": "Trilling %",
+          "def": "Hoeveel resonantie er overblijft na de shaper. Lager is beter; ≤2% is uitstekend, ≤5% is prima."
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "De versnelling die de shaper kan volhouden zonder te veel smoothing - een voorgestelde SET_VELOCITY_LIMIT / printer.cfg-waarde."
+        }
+      },
+      "guide": "Gids",
+      "guideTitle": "Input Shaping-gids",
+      "close": "Sluiten"
+    },
+    "grade": {
+      "clarity": {
+        "label": "Piekhelderheid",
+        "value": "{ratio}×",
+        "note": {
+          "none": "Geen spectrum om te beoordelen.",
+          "good": "Scherpe piek, ruim boven de ruis.",
+          "ok": "Piek zichtbaar boven de ruis.",
+          "poor": "Zwakke piek - ruisig of zeer stijf."
+        }
+      },
+      "vibration": {
+        "label": "Resterende trilling",
+        "value": "{pct}%",
+        "note": {
+          "good": "Vrijwel alle resonantie verwijderd.",
+          "ok": "Meeste resonantie verwijderd.",
+          "poor": "Aanzienlijke trilling blijft over."
+        }
+      },
+      "smoothing": {
+        "label": "Smoothing",
+        "note": {
+          "good": "Minimale hoekafronding.",
+          "ok": "Enige afronding bij hoge accel.",
+          "poor": "Sterke smoothing - rondt hoeken af."
+        }
+      },
+      "freq": {
+        "label": "Frequentie",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "Geen frequentie gevonden.",
+          "good": "Gezonde, stijve as.",
+          "ok": "Iets slap of zeer stijf.",
+          "soft": "Slappe / zware as.",
+          "high": "Ongewoon hoog."
+        }
+      },
+      "shaper": {
+        "label": "Resonantievorm",
+        "note": {
+          "clean": "Schone enkele resonantie.",
+          "robust": "Enkele resonantie, robuuste shaper.",
+          "twin": "Brede of dubbele resonantie.",
+          "multiple": "Meervoudige resonanties.",
+          "atypical": "Atypische shaper."
+        }
+      },
+      "verdict": {
+        "a": "Uitstekend - schone meting, goed afgestelde as.",
+        "b": "Goed - solide resultaat, kleine ruimte voor verbetering.",
+        "c": "Redelijk - bruikbaar; zie de suggesties hieronder.",
+        "d": "Matig - mechanische afstelling + opnieuw testen aanbevolen.",
+        "f": "Onbetrouwbaar - draai de test opnieuw (controleer de sensormontage).",
+        "none": "Geen bruikbaar resultaat - draai TEST_RESONANCES opnieuw."
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "Geen bruikbare resonantie",
+        "advice": "Draai TEST_RESONANCES opnieuw. Controleer of de accelerometer is aangesloten en stevig op de toolhead is gemonteerd.",
+        "detail": "geen duidelijke piek gedetecteerd"
+      },
+      "noisy": {
+        "title": "Ruisige meting",
+        "advice": "Zet de accelerometermontage vast en draai opnieuw. Vermijd ventilatoren of andere beweging tijdens de test.",
+        "detail": "signaal-ruisverhouding {snr}×"
+      },
+      "lowFreq": {
+        "title": "Lage resonantiefrequentie",
+        "advice": "Slappe of zware as - span de riemen aan en controleer de framestijfheid. Een stijvere as resoneert hoger en print sneller.",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "Enigszins slappe as",
+        "advice": "Frequentie is aan de lage kant. Riemen of frame steviger maken verhoogt hem en laat je sneller printen.",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "Hoge smoothing",
+        "advice": "Rondt hoeken af. Kies een stijvere shaper of verlaag max_accel.",
+        "detail": "smoothing {smoothing}"
+      },
+      "multiResonance": {
+        "title": "Meervoudige resonanties",
+        "advice": "Vaak een losse toolhead, riem of onderdeel. Plaats de toolhead opnieuw en controleer de riemspanning."
+      },
+      "vibrationRemains": {
+        "title": "Trilling blijft over",
+        "advice": "Mechanische afstelling (riemen, frame, toolhead-massa) zou dit lager kunnen brengen.",
+        "detail": "{vibrations}% over na shaping"
+      },
+      "healthy": {
+        "title": "Gezonde as",
+        "advice": "Schone meting en een stijve as - klaar voor gebruik. Pas de config toe en herstart Klipper.",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "X en Y verschillen sterk",
+        "advice": "Asymmetrische stijfheid. Controleer de riemspanning op de slappere as; zorg op CoreXY dat beide riemen overeenkomen en strak staan.",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "aanbevolen",
+        "shaperFreq": "shaper-freq",
+        "peakFreq": "piekfreq",
+        "remainingVibr": "resterende tril",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "Riemen overeenkomend",
+          "advice": "De twee riemresponsies vallen samen - de spanning lijkt in balans."
+        },
+        "differ": {
+          "title": "Riemen verschillen",
+          "advice": "De riemresonanties verschillen - span de slappere riem opnieuw tot beide pieken samenvallen."
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "Sensor is stil",
+          "why": "Goed om door te gaan."
+        },
+        "elevated": {
+          "title": "Verminder sensorruis",
+          "why": "Max {max} ≥ {threshold}. Zet de toolhead-ventilator uit en controleer de montage, draai daarna opnieuw."
+        },
+        "bad": {
+          "title": "Herstel de accelerometer voor het testen",
+          "why": "Ruis {max} is te hoog - plaats de sensor opnieuw en controleer de bedrading."
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "Riemen in balans",
+          "why": "De spanning is gelijkmatig - kalibreer vervolgens de shaper."
+        },
+        "mismatch": {
+          "title": "Span riem {looser} opnieuw",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%). Span de laagfrequente riem aan tot beide pieken samenvallen, draai daarna opnieuw."
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "Draai opnieuw bij een lagere versnelling",
+          "why": "Er is te veel laagfrequente beweging vastgelegd - verlaag ACCEL (of verhoog SIZE) zodat alleen constante snelheden worden gemeten, draai daarna opnieuw."
+        },
+        "favour": {
+          "title": "Geef de voorkeur aan ~{speed} mm/s",
+          "why": "Soepelste band {start}-{end} mm/s - stel hier je slicer-print-/verplaatssnelheden in waar het kan."
+        },
+        "avoid": {
+          "title": "Vermijd {shown} mm/s",
+          "why": "Deze snelheden raken een resonantie - houd print- + verplaatsbewegingen er in de slicer vandaan."
+        },
+        "symmetry": {
+          "title": "Controleer riemspanning / motor-match",
+          "why": "Motorsymmetrie {pct}% is laag - span de riemen opnieuw (vergelijk riemen) en controleer of beide motorstromen overeenkomen."
+        },
+        "fine": {
+          "title": "Trillingen zien er prima uit",
+          "why": "Geen probleemsnelheden sprongen eruit."
+        }
+      },
+      "pressure": {
+        "title": "Draai een pressure-advance-toren",
+        "why": "Print de PA-toren, lees de hoogte af waar hoeken het scherpst zijn, daarna `SET_PRESSURE_ADVANCE ADVANCE=<value>` en `SAVE_CONFIG`."
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "Je geconfigureerde axes_map is al correct.",
+        "update": "Werk je config bij naar: {axes_map}",
+        "add": "Voeg dit toe zodat elke Input Shaping-grafiek X/Y/Z uitgelijnd leest."
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "Ruis",
+          "title": "Accelerometerruis",
+          "why": "Bevestig dat de sensor stevig is gemonteerd vóór elke test (bewegingsvrij)."
+        },
+        "belts": {
+          "label": "Riemen",
+          "title": "CoreXY-riembalans",
+          "why": "Match de twee riemspanningen. Alleen CoreXY - sla over op een cartesisch / bed-slinger."
+        },
+        "shaperX": {
+          "label": "Shaper X",
+          "title": "Input shaper - X",
+          "why": "Vind de X-resonantie en de beste shaper."
+        },
+        "shaperY": {
+          "label": "Shaper Y",
+          "title": "Input shaper - Y",
+          "why": "Vind de Y-resonantie en de beste shaper."
+        },
+        "vibrations": {
+          "label": "Trillingen",
+          "title": "Trillingsprofiel",
+          "why": "Veeg snelheid × motorhoek af om de soepelste snelheden en de te vermijden resonanties te vinden."
+        },
+        "pressure": {
+          "label": "Druk",
+          "title": "Pressure advance",
+          "why": "Stel pressure advance als laatste af om hoeken en naden te verscherpen."
+        },
+        "done": {
+          "label": "Klaar"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "Sensor is stil",
+          "warn": "Ruis is wat hoog",
+          "failed": "Te ruisig - herstel de montage"
+        },
+        "belts": {
+          "passed": "Riemen overeenkomend",
+          "differ": "Riemen verschillen (Δ{diffPct}%)",
+          "mismatched": "Riemen komen niet overeen (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "Cijfer {letter} - gezonde as",
+          "usable": "Cijfer C - bruikbaar",
+          "tune": "Cijfer {letter} - afstellen + opnieuw testen"
+        },
+        "vibrations": {
+          "lowFreq": "Te veel laagfrequente beweging - verlaag accel & draai opnieuw",
+          "mismatched": "Motoren komen niet overeen ({pct}%)",
+          "smoothest": "Soepelste ~{rec} mm/s",
+          "complete": "Profiel voltooid"
+        }
+      },
+      "ui": {
+        "title": "🧭 Begeleide afstelling",
+        "exit": "✕ afsluiten",
+        "motionReady": "⚠ beweegt de toolhead - ik ben klaar",
+        "running": "bezig…",
+        "run": "draaien",
+        "rerun": "↻ opnieuw draaien",
+        "skipBelts": "overslaan (geen CoreXY)",
+        "copyPa": "📋 Kopieer PA-toren",
+        "copied": "✅ Gekopieerd",
+        "finish": "Voltooien →",
+        "nextStep": "Volgende stap →",
+        "skipAnyway": "toch overslaan",
+        "complete": "Afstelling voltooid",
+        "stepFailed": "Stap mislukt",
+        "copyFailed": "Kopiëren mislukt - selecteer de tekst en kopieer handmatig.",
+        "summaryNote": "Je X- en Y-metingen staan in het gecombineerde {code}-blok hieronder - kopieer het, herstart daarna Klipper. Heropen de begeleide afstelling op elk moment om opnieuw te controleren.",
+        "beltsNotApplicable": "Riemvergelijking geldt voor CoreXY-printers - deze printer rapporteert '{kin}', dus deze stap wordt overgeslagen.",
+        "resultsSoFar": "Resultaten tot nu toe",
+        "archived": "Opgeslagen",
+        "autoSaved": "Automatisch opgeslagen in het archief op de printer.",
+        "beltA": "Riem A (1,1)",
+        "beltB": "Riem B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "Aanbevolen",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "Max accel",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "Max stationaire ruis {max} (normaal < {threshold}).",
+        "status": "Status",
+        "maxNoise": "Max ruis",
+        "threshold": "Drempel",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "Overeenkomst",
+        "beltA": "Riem A piek",
+        "beltB": "Riem B piek",
+        "difference": "Verschil",
+        "matched": "overeenkomend",
+        "mismatch": "niet overeenkomend",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "Status",
+        "gravity": "Zwaartekracht",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "Ruis"
+      },
+      "sustain": {
+        "target": "Doel",
+        "dominant": "Dominant",
+        "inBand": "In band",
+        "onTarget": "Op doel",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "ja",
+        "no": "nee"
+      },
+      "vibrations": {
+        "smoothest": "Soepelste",
+        "symmetry": "Symmetrie",
+        "motorResonance": "Motorresonantie",
+        "avoid": "Vermijd",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 Begeleid",
+      "tabAnalyze": "📈 Analyseer",
+      "tabLive": "🔴 Live tools",
+      "tabHistory": "🕘 Geschiedenis",
+      "intro": "Stel input shaping af vanuit een Klipper-resonantiemeting - geen commandoregel. Nieuw hier? Begin met {guided}. Of kies {analyze} om zelf een {csv} te bewerken, {live} om op de printer vast te leggen, of {history} om eerdere runs te bekijken.",
+      "cfgReady": "printer.cfg klaar",
+      "copy": "📋 Kopieer",
+      "copied": "✅ Gekopieerd",
+      "archive": "💾 Archiveer",
+      "saved": "✅ Opgeslagen",
+      "advanced": "⚙ geavanceerd",
+      "compareCsvs": "⇄ CSV's vergelijken",
+      "blankDefault": "leeg = Klipper-standaard",
+      "auditTitle": "Audit",
+      "refresh": "↻ vernieuwen",
+      "auditEmpty": "Nog geen resultaten - draai een afstelling, of sla er een op in het archief.",
+      "trendTitle": "score {score} t.o.v. de vorige {axis}-test",
+      "sourceSaved": "💾 opgeslagen",
+      "sourceLocal": "lokaal",
+      "recommended": "Aanbevolen",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "as {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "Geen shaper aanbevolen voor deze data.",
+      "measurementQuality": "Meetkwaliteit",
+      "scoreOutOf": "{v}/100",
+      "hide": "verbergen",
+      "details": "details",
+      "chartAria": "Frequentieresponsie en shapers",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "aanbevolen",
+      "legendPeak": "▲ piek",
+      "legendAxisHint": "frequentie (Hz) → · vol = gemeten · flauw = shaper-restant",
+      "colShaper": "shaper",
+      "colFreq": "freq",
+      "colVibr": "tril",
+      "colSmooth": "smooth",
+      "colAccel": "accel",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "wissen",
+      "pasteHint": "Plak in je {cfg}, herstart daarna Klipper.",
+      "errAnalysisFailed": "Analyse mislukt",
+      "errCopyFailed": "Kopiëren mislukt - selecteer de tekst en kopieer handmatig.",
+      "errSaveFailed": "Opslaan naar archief mislukt"
+    },
+    "fromPrinter": {
+      "liveTools": "Live tools",
+      "intro": "⏳ Deze bewegen de toolhead en kunnen {duration} duren (een riemvergelijking draait twee volledige sweeps) - houd deze pagina open tot het resultaat verschijnt.",
+      "introDuration": "1-5 minuten",
+      "confirmMoves": "⚠ beweegt de toolhead - ik ben klaar",
+      "axisX": "as X",
+      "axisY": "as Y",
+      "noiseTitle": "🔊 Ruischeck",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "meten…",
+      "noiseHint": "bewegingsvrij · draai voor het testen",
+      "noiseVerdictQuiet": "✅ stil",
+      "noiseVerdictElevated": "⚠ verhoogd",
+      "noiseVerdictTooNoisy": "⛔ te ruisig",
+      "noiseMaxNormal": "max {max} · normaal < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 Live test",
+      "liveBtn": "draai TEST_RESONANCES",
+      "liveBtnBusy": "bezig…",
+      "liveDesc": "Homed de printer indien nodig, draait daarna TEST_RESONANCES op de gekozen as (vereist een accelerometer + een {section}). Geweigerd tijdens het printen.",
+      "beltsTitle": "🟰 Vergelijk riemen",
+      "beltsBtn": "vergelijk riemen",
+      "beltsBtnBusy": "vergelijken…",
+      "beltsBtnTitle": "CoreXY: wek elke riemdiagonaal op en leg de responsies over elkaar",
+      "beltsDesc": "Alleen CoreXY: draait twee sweeps langs de riemdiagonalen en legt ze over elkaar. Geweigerd tijdens het printen.",
+      "axesTitle": "🧭 Assen-map",
+      "axesBtn": "detecteer axes_map",
+      "axesBtnBusy": "detecteren…",
+      "axesBtnTitle": "Beweeg +X/+Y/+Z om de accelerometeroriëntatie te detecteren (axes_map)",
+      "axesDesc": "Beweegt ~30 mm in X, dan Y, dan Z om de accelerometeroriëntatie te detecteren. Geweigerd tijdens het printen.",
+      "beltResultTitle": "Riemvergelijking",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "Riem A vs B frequentieresponsie",
+      "beltLegendA": "riem A (1,1)",
+      "beltLegendB": "riem B (1,-1)",
+      "axesResultTitle": "Assen-map",
+      "copy": "📋 Kopieer",
+      "copied": "✅ Gekopieerd",
+      "mappingVirtual": " (virtueel)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "Assnelheidssequentie",
+      "zoneVirtual": "virtueel",
+      "zonePct": "{pct}%",
+      "legendAccelX": "accel x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "kanteling {x}° / {y}° / {z}°",
+      "gravity": "zwaartekracht {v} m/s²",
+      "noiseValue": "ruis {v}",
+      "sustainTitle": "🎯 Sustain-frequentie",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "sec",
+      "sustainBtn": "draaien",
+      "sustainBtnBusy": "vasthouden…",
+      "sustainDesc": "Laat de toolhead ter plaatse zoemen nabij de frequentie - raak riemen, de toolhead en het frame aan om te vinden wat rammelt. Geweigerd tijdens het printen.",
+      "sustainHolding": "✅ vasthouden",
+      "sustainOffTarget": "⚠ buiten doel",
+      "sustainPeak": "piek {freq} Hz · {pct}% in band",
+      "specChartLabel": "Frequentie-tijd-spectrogram",
+      "energyChartLabel": "Trillingsenergie over tijd",
+      "specAxes": "freq → · tijd ↓",
+      "energyLegend": "energie vs tijd - de cyaan dip is waar een aanraking hielp",
+      "vibTitle": "📊 Trillingsprofiel",
+      "vibMax": "max",
+      "vibStep": "stap",
+      "vibUnit": "mm/s",
+      "vibBtn": "draai sweep",
+      "vibBtnBusy": "sweepen…",
+      "vibDesc": "Veegt snelheid × motorhoek af rond het midden van het bed - een lange run (minuten). Een kleinere {step} is fijner maar trager. Rapporteert de soepelste snelheden, de te vermijden snelheden, motorsymmetrie en de motorresonantie. Geweigerd tijdens het printen.",
+      "vibDescStep": "stap",
+      "errNoiseCheck": "Ruischeck mislukt",
+      "errLiveTest": "Live test mislukt",
+      "errBeltComparison": "Riemvergelijking mislukt",
+      "errAxesMapDetection": "Detectie van assen-map mislukt",
+      "errCopyFailed": "Kopiëren mislukt - selecteer de tekst en kopieer handmatig.",
+      "errSustainTest": "Sustain-frequentietest mislukt",
+      "errVibrationsProfile": "Trillingsprofiel mislukt",
+      "vibProgress": "Sweep {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "De sweep starten…",
+      "vibCancel": "Sweep annuleren",
+      "vibCancelling": "Annuleren…",
+      "vibCancelled": "Sweep geannuleerd - snelheidslimieten hersteld.",
+      "vibReattached": "Opnieuw verbonden: dit resultaat is voltooid terwijl de pagina weg was.",
+      "beltsCorexyOnly": "Alleen CoreXY - deze printer rapporteert '{kin}'-kinematica, dus de tweeriemenvergelijking is niet van toepassing."
+    },
+    "vibrationsView": {
+      "title": "Trillingsprofiel",
+      "lowFreqNoise": "⚠ laagfrequente ruis",
+      "smoothest": "▼ soepelste ~{v} mm/s",
+      "symmetry": "symmetrie {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "Trillingsenergie versus snelheid",
+      "axisLegend": "snelheid (mm/s) → · trillingsenergie ↑",
+      "smooth": "soepel",
+      "avoid": "vermijden",
+      "svgPolarLabel": "Trillingsenergie per bewegingsrichting",
+      "svgHeatmapLabel": "Heatmap van trillingsenergie per hoek en snelheid",
+      "goodSpeedRange": "✓ {start}-{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "motorresonantie {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "soepelste richting ~{start}-{end}°",
+      "captures": "{n} metingen"
+    },
+    "compareView": {
+      "title": "Vergelijk twee metingen (A ⇄ B)",
+      "intro": "Voor/na een mechanische ingreep, of dezelfde as opnieuw getest. (Vergelijk bestanden van dezelfde as.)",
+      "selectA": "A: selecteer",
+      "selectB": "B: selecteer",
+      "busy": "…",
+      "compare": "vergelijken",
+      "comparisonFailed": "Vergelijking mislukt",
+      "chartAriaLabel": "A vs B power spectral density",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "CSV-bron",
+      "tabUpload": "📤 Uploaden",
+      "tabHost": "🖥 Van printer",
+      "selectCsv": "📈 Selecteer CSV",
+      "axisTitle": "As waartoe deze data behoort",
+      "axisAuto": "as: auto",
+      "axisX": "as: X",
+      "axisY": "as: Y",
+      "analyzing": "Analyseren…",
+      "analyze": "🚀 Analyseer",
+      "onHost": "op de printerhost",
+      "refresh": "↻ vernieuwen",
+      "noFiles": "Geen resonantie-CSV's gevonden.",
+      "noFilesInDirs": "Geen resonantie-CSV's gevonden in {dirs}.",
+      "analyzeFile": "analyseer",
+      "saveTitle": "Kopieer deze meting naar het archief",
+      "save": "💾 opslaan",
+      "archive": "Archief",
+      "archiveEmpty": "Nog niets opgeslagen - gebruik 💾 opslaan hierboven, of \"opslaan naar archief\" onder een config.",
+      "downloadTitle": "download {fn}",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "Kon printerbestanden niet weergeven",
+      "errListArchive": "Kon het archief niet weergeven",
+      "errSave": "Opslaan naar archief mislukt",
+      "errDelete": "Verwijderen mislukt",
+      "errDownload": "Download mislukt",
+      "viewChart": "Grafiek",
+      "viewChartTitle": "Heropen de grafiek van deze opgeslagen run"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "Er is te veel laagfrequente beweging vastgelegd - verlaag de ACCEL (of verhoog SIZE) en draai opnieuw zodat alleen constante snelheden worden gemeten.",
+        "smoothest": "Soepelst rond {v} mm/s",
+        "avoid": "vermijd snelheden nabij {speeds} mm/s",
+        "matched": "motoren komen goed overeen ({pct}% symmetrie)",
+        "low_symmetry": "motorsymmetrie is laag ({pct}%) - controleer de riemspanning",
+        "motor_freq": "motorresonantie ~{f} Hz",
+        "complete": "Trillingsprofiel voltooid."
+      },
+      "sustain": {
+        "not_dominant": "De toolhead trilt niet voornamelijk op {freq} Hz (piek is {peak} Hz) - de bron bereikt mogelijk de toolhead-sensor niet.",
+        "drop": "Houdt {freq} Hz vast - trilling daalde op een gegeven moment ~{drop}%; wat je toen aanraakte is een sterke bijdrager.",
+        "touch": "Houdt {freq} Hz vast - raak riemen, de toolhead, gantry-verbindingen en idlers één voor één aan; het onderdeel dat het gezoem stillegt is je resonantiebron."
+      },
+      "axes": {
+        "same_axis": "Dezelfde accelerometeras gedetecteerd voor meerdere machine-assen",
+        "low_confidence": "Lage detectiebetrouwbaarheid ({pct}%)",
+        "high_angle_error": "Hoge hoekfout ({deg}°)",
+        "unusual_gravity": "Ongewone zwaartekrachtmeting ({g} m/s²)",
+        "high_noise": "Hoog ruisniveau ({n} mm/s²)",
+        "good": "Detectiekwaliteit: goed"
+      }
+    },
+    "proof": {
+      "title": "Bewijs van afstelling",
+      "empty": "Vereist twee geregistreerde resultaten op deze as - meet voor het afstellen, pas de shaper toe, meet daarna opnieuw en sla beide op.",
+      "before": "Voor",
+      "after": "Na",
+      "samePick": "Kies twee verschillende resultaten om te vergelijken.",
+      "metricHead": "Metriek",
+      "delta": "Verandering",
+      "copy": "Kopieer rapport",
+      "copied": "Gekopieerd ✓",
+      "metric": {
+        "score": "Meetcijfer",
+        "vibrations": "Resterende trilling %",
+        "smoothing": "Smoothing",
+        "maxAccel": "Voorgestelde max accel (mm/s²)",
+        "freq": "Shaper-frequentie (Hz)",
+        "shaper": "Shaper"
+      }
+    }
+  }
+}

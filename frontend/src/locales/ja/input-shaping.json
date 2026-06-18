@@ -1,0 +1,655 @@
+{
+  "inputShaping": {
+    "help": {
+      "whatsThis": "これは何?",
+      "topics": {
+        "glossary": {
+          "title": "入力シェーピングの用語"
+        },
+        "analyze": {
+          "title": "共振CSVの解析",
+          "body": "プリンター側で TEST_RESONANCES を使ってデータを取得する(または🔴ライブツールを使う)と、その.csvをここに読み込めます。FilaMindがKlipper本体のシェーパー計算を実行し、シェーパーと周波数を推奨します。XのファイルとYのファイルを順番に処理してください。両者がひとつのコンフィグブロックにまとまります。"
+        },
+        "grade": {
+          "title": "A〜F評価の意味",
+          "body": "測定品質スコアは5つの等分要素から算出されます: ピークの明瞭さ、残留振動、スムージング、周波数(40〜90 Hzが健全)、共振のクリーンさ。A/B → 適用してよい。C → 使えるが、ヒントに目を通す。D/F → 機械側を直して再測定する。"
+        },
+        "diagnostics": {
+          "title": "診断の読み方",
+          "body": "各カードは測定結果を、考えられる機械的な原因と対処に対応づけます。ライム=健全、黄=改善の余地あり、赤=信頼する前に要修正。対処を行って再実行し、カードが緑に変わるのを確認しましょう。"
+        },
+        "chart": {
+          "title": "周波数チャートの読み方",
+          "body": "実線は測定された振動エネルギー(X+Y+Zの合計と各軸)です。▲が支配的な共振を示します。淡い曲線は各シェーパーの周波数ごとの残留振動で、推奨されるもの(ピンク)はピークで最も深く落ち込みます。"
+        },
+        "shapers": {
+          "title": "シェーパーの選び方",
+          "body": "各行は残留振動とスムージングのトレードオフを表します。ZV / MZV が最も軽量(きれいな単一共振向け)、EI はより堅牢、2-/3-hump は広帯域や複数共振に対応しますがスムージングが増えます。FilaMindが最良のバランスを強調表示します。"
+        },
+        "config": {
+          "title": "コンフィグの適用",
+          "body": "この [input_shaper] ブロックにX/Yの結果が含まれます。printer.cfg にコピーしてKlipperを再起動してください。バッジはどの軸が取得済みかを示します。完全なブロックにするにはXとYの両方を取得してください。"
+        },
+        "noise": {
+          "title": "ノイズチェック",
+          "body": "動かさずに加速度センサーのアイドル振動を読み取ります。測定前のマウント確認に便利です。Klipperの目安: 〜1〜100は正常、〜1000以上はセンサーの緩みや配線の問題を意味します。ノイズの多いマウントは先に直さないと、どの測定も信頼できません。"
+        },
+        "belts": {
+          "title": "ベルト比較(CoreXY)",
+          "body": "各ベルトの対角方向を励起し、2つの応答を重ね合わせます。ピーク周波数が一致=テンションが均等。差がある場合は低い周波数のベルトが緩いので、ピークが揃うまで締めて再実行してください。"
+        },
+        "axesMap": {
+          "title": "軸マップ検出",
+          "body": "ツールヘッドをX、次にY、次にZへ少しずつジョグして、加速度センサーがどう取り付けられているかを学習し、printer.cfg 用の axes_map 行を提示します。センサーを取り付けたり移動したりした後に一度実行すれば、以降のすべての測定が正しい軸を読み取ります。"
+        },
+        "sustain": {
+          "title": "持続周波数",
+          "body": "ツールヘッドをひとつの周波数で振動させ続けることで、ベルト・キャリッジ・フレームを手で触れて何がガタつくかを探せます。スペクトログラムとタイムラインが、目標周波数が支配的かどうか、触れたことで静かになったタイミングを示します。"
+        },
+        "vibrations": {
+          "title": "振動プロファイル",
+          "body": "各モーター角度に沿って多数の速度をスイープし、機械が最も滑らかに動く速度と、共振に当たる速度をマッピングします。プリント/移動の動作には最も滑らかな速度を選び、フラグ付きの速度は避けましょう。対称性%は2つのモーターがどれだけ一致しているかを示します。"
+        },
+        "guided": {
+          "title": "ガイド付き vs. 手動",
+          "body": "ガイド付きは全体の流れ(ノイズ → ベルト → シェーパーX → シェーパーY → 振動 → プレッシャー)を、各ステップに合否ゲートを設けて案内します。フルチューン向けです。特定のツールだけ使いたいときは📈解析または🔴ライブツールに切り替えてください。"
+        },
+        "history": {
+          "title": "履歴とトレンド",
+          "body": "各キャリブレーションは評価とスコアとともに(このブラウザに)保存されます。▲/▼の矢印は同じ軸の前回測定との比較で、上向きはよりクリーンな取得または剛性の高い軸、下向きはノイズの増加または軸の柔らかさを意味します。"
+        }
+      },
+      "glossary": {
+        "inputShaper": {
+          "term": "入力シェーパー",
+          "def": "Klipperが動作に適用するフィルターで、プリンターの主な振動を打ち消します。リンギング/ゴーストを起こさずに高速でプリントできます。"
+        },
+        "resonance": {
+          "term": "共振",
+          "def": "軸が押されたときに自然に振動する周波数(Hz)。低い=柔らかい/重い軸、〜40〜90 Hzが健全なプリンターです。"
+        },
+        "psd": {
+          "term": "PSD",
+          "def": "パワースペクトル密度。各周波数にどれだけの振動エネルギーがあるかを表します。高いピークがシェーパーの対象となる共振です。"
+        },
+        "smoothing": {
+          "term": "スムージング",
+          "def": "シェーピングの副作用で、鋭い角をわずかに丸めます。低いほど良く、≤0.1は最小限、>0.2でディテールが甘くなり始めます。"
+        },
+        "vibrationPct": {
+          "term": "振動 %",
+          "def": "シェーパー適用後に残る共振の量。低いほど良く、≤2%は優秀、≤5%は問題なしです。"
+        },
+        "maxAccel": {
+          "term": "max_accel",
+          "def": "スムージングを過度にせずにシェーパーが維持できる加速度。推奨される SET_VELOCITY_LIMIT / printer.cfg の値です。"
+        }
+      },
+      "guide": "ガイド",
+      "guideTitle": "入力シェーピングガイド",
+      "close": "閉じる"
+    },
+    "grade": {
+      "clarity": {
+        "label": "ピークの明瞭さ",
+        "value": "{ratio}×",
+        "note": {
+          "none": "評価できるスペクトルがありません。",
+          "good": "ノイズより十分高い鋭いピーク。",
+          "ok": "ノイズの上にピークが見えます。",
+          "poor": "弱いピーク。ノイズが多いか非常に剛性が高い。"
+        }
+      },
+      "vibration": {
+        "label": "残留振動",
+        "value": "{pct}%",
+        "note": {
+          "good": "ほぼすべての共振を除去。",
+          "ok": "ほとんどの共振を除去。",
+          "poor": "かなりの振動が残っています。"
+        }
+      },
+      "smoothing": {
+        "label": "スムージング",
+        "note": {
+          "good": "角の丸まりは最小限。",
+          "ok": "高加速時に多少の丸まり。",
+          "poor": "強いスムージング。角を丸めます。"
+        }
+      },
+      "freq": {
+        "label": "周波数",
+        "value": "{freq} Hz",
+        "note": {
+          "none": "周波数が見つかりません。",
+          "good": "健全で剛性の高い軸。",
+          "ok": "やや柔らかいか非常に剛性が高い。",
+          "soft": "柔らかい/重い軸。",
+          "high": "異常に高い。"
+        }
+      },
+      "shaper": {
+        "label": "共振の形",
+        "note": {
+          "clean": "きれいな単一共振。",
+          "robust": "単一共振、堅牢なシェーパー。",
+          "twin": "広帯域または双子共振。",
+          "multiple": "複数の共振。",
+          "atypical": "非典型的なシェーパー。"
+        }
+      },
+      "verdict": {
+        "a": "優秀。クリーンな取得、よく調整された軸。",
+        "b": "良好。堅実な結果、改善の余地はわずか。",
+        "c": "可。使用可能。下の提案を参照。",
+        "d": "不良。機械調整と再測定を推奨。",
+        "f": "信頼できません。テストを再実行(センサーマウントを確認)。",
+        "none": "使える結果がありません。TEST_RESONANCES を再実行してください。"
+      }
+    },
+    "diagnose": {
+      "noUsable": {
+        "title": "使える共振がありません",
+        "advice": "TEST_RESONANCES を再実行してください。加速度センサーが配線され、ツールヘッドにしっかり取り付けられているか確認します。",
+        "detail": "明確なピークを検出できません"
+      },
+      "noisy": {
+        "title": "ノイズの多い取得",
+        "advice": "加速度センサーのマウントを固定して再実行してください。テスト中はファンやその他の動作を避けます。",
+        "detail": "信号対雑音比 {snr}×"
+      },
+      "lowFreq": {
+        "title": "共振周波数が低い",
+        "advice": "柔らかいまたは重い軸です。ベルトを締め、フレームの剛性を確認してください。剛性の高い軸はより高い周波数で共振し、より速くプリントできます。",
+        "detail": "{freq} Hz"
+      },
+      "softAxis": {
+        "title": "やや柔らかい軸",
+        "advice": "周波数がやや低めです。ベルトやフレームを締めると周波数が上がり、より速くプリントできます。",
+        "detail": "{freq} Hz"
+      },
+      "highSmoothing": {
+        "title": "スムージングが高い",
+        "advice": "角が丸まります。より剛性の高いシェーパーを選ぶか max_accel を下げてください。",
+        "detail": "スムージング {smoothing}"
+      },
+      "multiResonance": {
+        "title": "複数の共振",
+        "advice": "ツールヘッド、ベルト、または部品の緩みが原因のことが多いです。ツールヘッドを取り付け直し、ベルトテンションを再確認してください。"
+      },
+      "vibrationRemains": {
+        "title": "振動が残っています",
+        "advice": "機械調整(ベルト、フレーム、ツールヘッド重量)でこれをさらに下げられる可能性があります。",
+        "detail": "シェーピング後に {vibrations}% 残存"
+      },
+      "healthy": {
+        "title": "健全な軸",
+        "advice": "クリーンな取得と剛性の高い軸です。準備完了。コンフィグを適用してKlipperを再起動してください。",
+        "detail": "{shaper} {'@'} {freq} Hz"
+      },
+      "axesDiffer": {
+        "title": "XとYの差が大きい",
+        "advice": "非対称な剛性です。柔らかい側の軸のベルトテンションを確認してください。CoreXYでは両方のベルトが一致して締まっているか確認します。",
+        "detail": "X {fx} Hz vs Y {fy} Hz"
+      }
+    },
+    "compare": {
+      "hz": {
+        "value": "{value} Hz"
+      },
+      "pct": {
+        "value": "{value}%"
+      },
+      "row": {
+        "recommended": "推奨",
+        "shaperFreq": "シェーパー周波数",
+        "peakFreq": "ピーク周波数",
+        "remainingVibr": "残留振動",
+        "maxAccel": "max_accel"
+      },
+      "belt": {
+        "matched": {
+          "title": "ベルト一致",
+          "advice": "2つのベルト応答が揃っています。テンションのバランスが取れているようです。"
+        },
+        "differ": {
+          "title": "ベルトに差あり",
+          "advice": "ベルトの共振が異なります。両方のピークが揃うまで緩い方のベルトを締め直してください。"
+        }
+      }
+    },
+    "recommend": {
+      "noise": {
+        "quiet": {
+          "title": "センサーは静かです",
+          "why": "続行して問題ありません。"
+        },
+        "elevated": {
+          "title": "センサーノイズを減らす",
+          "why": "最大 {max} ≥ {threshold}。ツールヘッドファンを切り、マウントを再確認してから再実行してください。"
+        },
+        "bad": {
+          "title": "テスト前に加速度センサーを修正",
+          "why": "ノイズ {max} が高すぎます。センサーを取り付け直し、配線を確認してください。"
+        }
+      },
+      "belts": {
+        "matched": {
+          "title": "ベルトのバランス良好",
+          "why": "テンションが均等です。次にシェーパーをキャリブレーションしてください。"
+        },
+        "mismatch": {
+          "title": "ベルト {looser} を締め直す",
+          "why": "A {peakA} Hz vs B {peakB} Hz (Δ{diffPct}%)。両方のピークが揃うまで低い周波数のベルトを締めてから再実行してください。"
+        }
+      },
+      "vibrations": {
+        "lowFreq": {
+          "title": "より低い加速度で再実行",
+          "why": "低周波の動きが多く記録されました。一定速度のみが測定されるよう ACCEL を下げる(または SIZE を上げる)して再実行してください。"
+        },
+        "favour": {
+          "title": "〜{speed} mm/s を優先",
+          "why": "最も滑らかな帯域は {start}〜{end} mm/s。可能なときはスライサーのプリント/移動速度をここに設定してください。"
+        },
+        "avoid": {
+          "title": "{shown} mm/s を回避",
+          "why": "これらの速度は共振に当たります。スライサーでプリントと移動の動作をこれらから遠ざけてください。"
+        },
+        "symmetry": {
+          "title": "ベルトテンション/モーターの一致を確認",
+          "why": "モーター対称性 {pct}% が低いです。ベルトを締め直し(ベルト比較)、両モーターの電流が一致しているか確認してください。"
+        },
+        "fine": {
+          "title": "振動は良好に見えます",
+          "why": "問題のある速度は見当たりませんでした。"
+        }
+      },
+      "pressure": {
+        "title": "プレッシャーアドバンスタワーを実行",
+        "why": "PAタワーをプリントし、角が最も鋭く見える高さを読み取って、`SET_PRESSURE_ADVANCE ADVANCE=<value>` と `SAVE_CONFIG` を実行してください。"
+      }
+    },
+    "axesMap": {
+      "verdict": {
+        "alreadyCorrect": "設定済みの axes_map はすでに正しいです。",
+        "update": "コンフィグを次に更新してください: {axes_map}",
+        "add": "すべての入力シェーピンググラフがX/Y/Zを揃えて読み取るよう、これを追加してください。"
+      }
+    },
+    "guided": {
+      "steps": {
+        "noise": {
+          "label": "ノイズ",
+          "title": "加速度センサーのノイズ",
+          "why": "どのテストの前にもセンサーがしっかり取り付けられていることを確認します(動作なし)。"
+        },
+        "belts": {
+          "label": "ベルト",
+          "title": "CoreXY ベルトバランス",
+          "why": "2つのベルトテンションを一致させます。CoreXY専用。カルテシアン/ベッドスリンガーではスキップします。"
+        },
+        "shaperX": {
+          "label": "シェーパー X",
+          "title": "入力シェーパー - X",
+          "why": "Xの共振と最良のシェーパーを見つけます。"
+        },
+        "shaperY": {
+          "label": "シェーパー Y",
+          "title": "入力シェーパー - Y",
+          "why": "Yの共振と最良のシェーパーを見つけます。"
+        },
+        "vibrations": {
+          "label": "振動",
+          "title": "振動プロファイル",
+          "why": "速度×モーター角度をスイープして、最も滑らかな速度と避けるべき共振を見つけます。"
+        },
+        "pressure": {
+          "label": "プレッシャー",
+          "title": "プレッシャーアドバンス",
+          "why": "角とシームを鋭くするため、最後にプレッシャーアドバンスを調整します。"
+        },
+        "done": {
+          "label": "完了"
+        }
+      },
+      "gate": {
+        "noise": {
+          "passed": "センサーは静かです",
+          "warn": "ノイズがやや高い",
+          "failed": "ノイズが多すぎます。マウントを修正してください"
+        },
+        "belts": {
+          "passed": "ベルト一致",
+          "differ": "ベルトに差あり (Δ{diffPct}%)",
+          "mismatched": "ベルト不一致 (Δ{diffPct}%)"
+        },
+        "shaper": {
+          "healthy": "評価 {letter} - 健全な軸",
+          "usable": "評価 C - 使用可能",
+          "tune": "評価 {letter} - 調整して再測定"
+        },
+        "vibrations": {
+          "lowFreq": "低周波の動きが多すぎます。加速度を下げて再実行してください",
+          "mismatched": "モーター不一致 ({pct}%)",
+          "smoothest": "最も滑らか 〜{rec} mm/s",
+          "complete": "プロファイル完了"
+        }
+      },
+      "ui": {
+        "title": "🧭 ガイド付きチューン",
+        "exit": "✕ 終了",
+        "motionReady": "⚠ ツールヘッドが動きます - 準備完了",
+        "running": "実行中…",
+        "run": "実行",
+        "rerun": "↻ 再実行",
+        "skipBelts": "スキップ(CoreXYではない)",
+        "copyPa": "📋 PAタワーをコピー",
+        "copied": "✅ コピーしました",
+        "finish": "完了 →",
+        "nextStep": "次のステップ →",
+        "skipAnyway": "それでもスキップ",
+        "complete": "チューニング完了",
+        "stepFailed": "ステップ失敗",
+        "copyFailed": "コピーに失敗しました。テキストを選択して手動でコピーしてください。",
+        "summaryNote": "XとYの取得結果は下の結合済み {code} ブロックにあります。コピーしてからKlipperを再起動してください。いつでもガイド付きチューンを再度開いて再確認できます。",
+        "beltsNotApplicable": "ベルト比較はCoreXYプリンターに適用されます。このプリンターは '{kin}' を報告しているため、このステップはスキップされます。",
+        "resultsSoFar": "ここまでの結果",
+        "archived": "保存しました",
+        "autoSaved": "プリンター上のアーカイブに自動保存しました。",
+        "beltA": "ベルト A (1,1)",
+        "beltB": "ベルト B (1,-1)"
+      }
+    },
+    "audit": {
+      "recommended": "推奨",
+      "recommendedValue": "{shaper} {'@'} {freq} Hz",
+      "maxAccel": "最大加速度",
+      "maxAccelValue": "≤{accel} mm/s²",
+      "noise": {
+        "verdict": "最大アイドルノイズ {max}(正常 < {threshold})。",
+        "status": "ステータス",
+        "maxNoise": "最大ノイズ",
+        "threshold": "しきい値",
+        "chipValue": "x {x} · y {y} · z {z}"
+      },
+      "belts": {
+        "match": "一致",
+        "beltA": "ベルト A ピーク",
+        "beltB": "ベルト B ピーク",
+        "difference": "差",
+        "matched": "一致",
+        "mismatch": "不一致",
+        "hz": "{value} Hz",
+        "pct": "{value}%"
+      },
+      "axesMap": {
+        "axesMap": "axes_map",
+        "status": "ステータス",
+        "gravity": "重力",
+        "gravityValue": "{gravity} m/s²",
+        "noise": "ノイズ"
+      },
+      "sustain": {
+        "target": "目標",
+        "dominant": "支配的",
+        "inBand": "帯域内",
+        "onTarget": "目標通り",
+        "hz": "{value} Hz",
+        "pct": "{value}%",
+        "yes": "はい",
+        "no": "いいえ"
+      },
+      "vibrations": {
+        "smoothest": "最も滑らか",
+        "symmetry": "対称性",
+        "motorResonance": "モーター共振",
+        "avoid": "回避",
+        "mmps": "{speed} mm/s",
+        "pct": "{pct}%",
+        "hz": "{freq} Hz"
+      }
+    },
+    "widget": {
+      "tabGuided": "🧭 ガイド付き",
+      "tabAnalyze": "📈 解析",
+      "tabLive": "🔴 ライブツール",
+      "tabHistory": "🕘 履歴",
+      "intro": "Klipperの共振取得から入力シェーピングを調整。コマンドライン不要。初めてですか? {guided} から始めましょう。または自分で {csv} を扱うなら {analyze}、プリンターで取得するなら {live}、過去の実行を確認するなら {history} を選んでください。",
+      "cfgReady": "printer.cfg 準備完了",
+      "copy": "📋 コピー",
+      "copied": "✅ コピーしました",
+      "archive": "💾 アーカイブ",
+      "saved": "✅ 保存しました",
+      "advanced": "⚙ 詳細設定",
+      "compareCsvs": "⇄ CSVを比較",
+      "blankDefault": "空欄 = Klipperのデフォルト",
+      "auditTitle": "監査",
+      "refresh": "↻ 更新",
+      "auditEmpty": "まだ結果がありません。チューンを実行するか、アーカイブに保存してください。",
+      "trendTitle": "スコア {score} と前回の {axis} テストの比較",
+      "sourceSaved": "💾 保存済み",
+      "sourceLocal": "ローカル",
+      "recommended": "推奨",
+      "recFreq": "{'@'} {v} Hz",
+      "recAxis": "軸 {v}",
+      "recAccel": "≤{v} mm/s²",
+      "noShaper": "このデータに推奨できるシェーパーはありません。",
+      "measurementQuality": "測定品質",
+      "scoreOutOf": "{v}/100",
+      "hide": "非表示",
+      "details": "詳細",
+      "chartAria": "周波数応答とシェーパー",
+      "peakLabel": "▲ {v}",
+      "legendRecommended": "推奨",
+      "legendPeak": "▲ ピーク",
+      "legendAxisHint": "周波数 (Hz) → · 実線 = 測定値 · 淡色 = シェーパー残留",
+      "colShaper": "シェーパー",
+      "colFreq": "周波数",
+      "colVibr": "振動",
+      "colSmooth": "スムーズ",
+      "colAccel": "加速",
+      "rowFreq": "{v} Hz",
+      "rowVibr": "{v}%",
+      "rowAccel": "≤{v}",
+      "printerCfg": "printer.cfg",
+      "clear": "クリア",
+      "pasteHint": "{cfg} に貼り付けてからKlipperを再起動してください。",
+      "errAnalysisFailed": "解析に失敗しました",
+      "errCopyFailed": "コピーに失敗しました。テキストを選択して手動でコピーしてください。",
+      "errSaveFailed": "アーカイブへの保存に失敗しました"
+    },
+    "fromPrinter": {
+      "liveTools": "ライブツール",
+      "intro": "⏳ これらはツールヘッドを動かし、{duration} かかることがあります(ベルト比較は2回のフルスイープを実行します)。結果が表示されるまでこのページを開いたままにしてください。",
+      "introDuration": "1〜5分",
+      "confirmMoves": "⚠ ツールヘッドが動きます - 準備完了",
+      "axisX": "軸 X",
+      "axisY": "軸 Y",
+      "noiseTitle": "🔊 ノイズチェック",
+      "noiseBtn": "MEASURE_AXES_NOISE",
+      "noiseBtnBusy": "測定中…",
+      "noiseHint": "動作なし · テスト前に実行",
+      "noiseVerdictQuiet": "✅ 静か",
+      "noiseVerdictElevated": "⚠ 高め",
+      "noiseVerdictTooNoisy": "⛔ ノイズ過多",
+      "noiseMaxNormal": "最大 {max} · 正常 < {threshold}",
+      "noiseChip": "{label}: x {x} · y {y} · z {z}",
+      "liveTitle": "🔴 ライブテスト",
+      "liveBtn": "TEST_RESONANCES を実行",
+      "liveBtnBusy": "実行中…",
+      "liveDesc": "必要に応じてプリンターをホームし、選択した軸で TEST_RESONANCES を実行します(加速度センサーと {section} が必要)。プリント中は拒否されます。",
+      "beltsTitle": "🟰 ベルトを比較",
+      "beltsBtn": "ベルトを比較",
+      "beltsBtnBusy": "比較中…",
+      "beltsBtnTitle": "CoreXY: 各ベルトの対角方向を励起し応答を重ね合わせる",
+      "beltsDesc": "CoreXY専用: ベルトの対角方向に沿って2回スイープし重ね合わせます。プリント中は拒否されます。",
+      "axesTitle": "🧭 軸マップ",
+      "axesBtn": "axes_map を検出",
+      "axesBtnBusy": "検出中…",
+      "axesBtnTitle": "+X/+Y/+Z にジョグして加速度センサーの向き(axes_map)を検出する",
+      "axesDesc": "X、次にY、次にZへ約30mmジョグして加速度センサーの向きを検出します。プリント中は拒否されます。",
+      "beltResultTitle": "ベルト比較",
+      "beltPeaks": "A {a} Hz vs B {b} Hz · Δ{diff}%",
+      "beltChartLabel": "ベルト A vs B 周波数応答",
+      "beltLegendA": "ベルト A (1,1)",
+      "beltLegendB": "ベルト B (1,-1)",
+      "axesResultTitle": "軸マップ",
+      "copy": "📋 コピー",
+      "copied": "✅ コピーしました",
+      "mappingVirtual": " (仮想)",
+      "mappingAngle": " {angle}°",
+      "axesChartLabel": "軸速度シーケンス",
+      "zoneVirtual": "仮想",
+      "zonePct": "{pct}%",
+      "legendAccelX": "加速 x",
+      "legendY": "y",
+      "legendZ": "z",
+      "tilt": "傾き {x}° / {y}° / {z}°",
+      "gravity": "重力 {v} m/s²",
+      "noiseValue": "ノイズ {v}",
+      "sustainTitle": "🎯 持続周波数",
+      "sustainAxisX": "X",
+      "sustainAxisY": "Y",
+      "sustainHz": "Hz",
+      "sustainSec": "秒",
+      "sustainBtn": "実行",
+      "sustainBtnBusy": "保持中…",
+      "sustainDesc": "ツールヘッドをその場で目標周波数付近で振動させます。ベルト、ツールヘッド、フレームに触れて何がガタつくかを探してください。プリント中は拒否されます。",
+      "sustainHolding": "✅ 保持中",
+      "sustainOffTarget": "⚠ 目標外",
+      "sustainPeak": "ピーク {freq} Hz · 帯域内 {pct}%",
+      "specChartLabel": "周波数-時間スペクトログラム",
+      "energyChartLabel": "時間経過に伴う振動エネルギー",
+      "specAxes": "周波数 → · 時間 ↓",
+      "energyLegend": "エネルギー vs 時間 - シアンの落ち込みは触れて効果があった箇所です",
+      "vibTitle": "📊 振動プロファイル",
+      "vibMax": "最大",
+      "vibStep": "ステップ",
+      "vibUnit": "mm/s",
+      "vibBtn": "スイープを実行",
+      "vibBtnBusy": "スイープ中…",
+      "vibDesc": "ベッド中央付近で速度×モーター角度をスイープします。長時間の実行(数分)です。{step} が小さいほど細かいが遅くなります。最も滑らかな速度、避けるべき速度、モーター対称性、モーター共振を報告します。プリント中は拒否されます。",
+      "vibDescStep": "ステップ",
+      "errNoiseCheck": "ノイズチェックに失敗しました",
+      "errLiveTest": "ライブテストに失敗しました",
+      "errBeltComparison": "ベルト比較に失敗しました",
+      "errAxesMapDetection": "軸マップ検出に失敗しました",
+      "errCopyFailed": "コピーに失敗しました。テキストを選択して手動でコピーしてください。",
+      "errSustainTest": "持続周波数テストに失敗しました",
+      "errVibrationsProfile": "振動プロファイルに失敗しました",
+      "vibProgress": "スイープ {step}/{total} - {speed} mm/s · {angle}°",
+      "vibStarting": "スイープを開始中…",
+      "vibCancel": "スイープをキャンセル",
+      "vibCancelling": "キャンセル中…",
+      "vibCancelled": "スイープをキャンセルしました。速度制限を復元しました。",
+      "vibReattached": "再接続: この結果はページを離れている間に完了しました。",
+      "beltsCorexyOnly": "CoreXY専用 - このプリンターは '{kin}' キネマティクスを報告しているため、2ベルト比較は適用されません。"
+    },
+    "vibrationsView": {
+      "title": "振動プロファイル",
+      "lowFreqNoise": "⚠ 低周波ノイズ",
+      "smoothest": "▼ 最も滑らか 〜{v} mm/s",
+      "symmetry": "対称性 {v}%",
+      "kinematicsAccel": "{kin} · {accel} mm/s²",
+      "svgSpeedLabel": "速度に対する振動エネルギー",
+      "axisLegend": "速度 (mm/s) → · 振動エネルギー ↑",
+      "smooth": "滑らか",
+      "avoid": "回避",
+      "svgPolarLabel": "移動方向別の振動エネルギー",
+      "svgHeatmapLabel": "角度と速度別の振動エネルギーヒートマップ",
+      "goodSpeedRange": "✓ {start}〜{end} mm/s",
+      "peakSpeed": "✕ {v}",
+      "motorResonance": "モーター共振 {v} Hz",
+      "motorDamping": "· ζ {v}",
+      "smoothestDirection": "最も滑らかな方向 〜{start}〜{end}°",
+      "captures": "{n} 件の取得"
+    },
+    "compareView": {
+      "title": "2つの取得を比較 (A ⇄ B)",
+      "intro": "機械的修正の前後、または同じ軸を再測定したもの。(同じ軸のファイルを比較してください。)",
+      "selectA": "A: 選択",
+      "selectB": "B: 選択",
+      "busy": "…",
+      "compare": "比較",
+      "comparisonFailed": "比較に失敗しました",
+      "chartAriaLabel": "A vs B パワースペクトル密度",
+      "colA": "A",
+      "colB": "B"
+    },
+    "csvSource": {
+      "title": "CSVソース",
+      "tabUpload": "📤 アップロード",
+      "tabHost": "🖥 プリンターから",
+      "selectCsv": "📈 CSVを選択",
+      "axisTitle": "このデータが属する軸",
+      "axisAuto": "軸: 自動",
+      "axisX": "軸: X",
+      "axisY": "軸: Y",
+      "analyzing": "解析中…",
+      "analyze": "🚀 解析",
+      "onHost": "プリンターホスト上",
+      "refresh": "↻ 更新",
+      "noFiles": "共振CSVが見つかりません。",
+      "noFilesInDirs": "{dirs} に共振CSVが見つかりません。",
+      "analyzeFile": "解析",
+      "saveTitle": "この取得をアーカイブにコピー",
+      "save": "💾 保存",
+      "archive": "アーカイブ",
+      "archiveEmpty": "まだ何も保存されていません。上の💾保存、またはコンフィグ下の「アーカイブに保存」を使ってください。",
+      "downloadTitle": "{fn} をダウンロード",
+      "cfg": "cfg",
+      "csv": "csv",
+      "errListFiles": "プリンターファイルを一覧できませんでした",
+      "errListArchive": "アーカイブを一覧できませんでした",
+      "errSave": "アーカイブへの保存に失敗しました",
+      "errDelete": "削除に失敗しました",
+      "errDownload": "ダウンロードに失敗しました",
+      "viewChart": "チャート",
+      "viewChartTitle": "この保存済み実行のチャートを再表示"
+    },
+    "verdicts": {
+      "vibrations": {
+        "low_freq": "低周波の動きが多く記録されました。一定速度のみが測定されるよう ACCEL を下げる(または SIZE を上げる)して再実行してください。",
+        "smoothest": "{v} mm/s 付近が最も滑らか",
+        "avoid": "{speeds} mm/s 付近の速度を回避",
+        "matched": "モーターはよく一致しています ({pct}% 対称性)",
+        "low_symmetry": "モーター対称性が低い ({pct}%)。ベルトテンションを確認してください",
+        "motor_freq": "モーター共振 〜{f} Hz",
+        "complete": "振動プロファイル完了。"
+      },
+      "sustain": {
+        "not_dominant": "ツールヘッドは主に {freq} Hz で振動していません(ピークは {peak} Hz)。発生源がツールヘッドセンサーに届いていない可能性があります。",
+        "drop": "{freq} Hz を保持中 - ある時点で振動が約 {drop}% 低下しました。そのとき触れたものが大きな寄与源です。",
+        "touch": "{freq} Hz を保持中 - ベルト、ツールヘッド、ガントリーの接合部、アイドラーを一つずつ触れてください。ブザー音を静めた部分が共振源です。"
+      },
+      "axes": {
+        "same_axis": "複数の機械軸に対して同じ加速度センサー軸が検出されました",
+        "low_confidence": "検出の信頼度が低い ({pct}%)",
+        "high_angle_error": "角度誤差が大きい ({deg}°)",
+        "unusual_gravity": "異常な重力読み取り ({g} m/s²)",
+        "high_noise": "ノイズレベルが高い ({n} mm/s²)",
+        "good": "検出品質: 良好"
+      }
+    },
+    "proof": {
+      "title": "チューンの証明",
+      "empty": "この軸で記録された2つの結果が必要です。調整前に測定し、シェーパーを適用してから再度測定し、両方を保存してください。",
+      "before": "前",
+      "after": "後",
+      "samePick": "比較する2つの異なる結果を選んでください。",
+      "metricHead": "指標",
+      "delta": "変化",
+      "copy": "レポートをコピー",
+      "copied": "コピーしました ✓",
+      "metric": {
+        "score": "測定評価",
+        "vibrations": "残留振動 %",
+        "smoothing": "スムージング",
+        "maxAccel": "推奨最大加速度 (mm/s²)",
+        "freq": "シェーパー周波数 (Hz)",
+        "shaper": "シェーパー"
+      }
+    }
+  }
+}

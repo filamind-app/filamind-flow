@@ -1,0 +1,69 @@
+{
+  "configTemplates": {
+    "intro": "Blok config dan makro Klipper siap tempel - urutan start, penanganan filamen, input shaping, bed mesh, dan lainnya. Salin salah satu lalu masukkan ke printer.cfg Anda (Config Editor adalah tempat yang baik untuk menempelkannya).",
+    "help": {
+      "guide": "Bantuan",
+      "guideTitle": "Tentang Config Templates",
+      "close": "Tutup",
+      "howToRead": "Cara memakai",
+      "steps": [
+        "Filter berdasarkan kategori untuk menemukan makro atau blok config.",
+        "Baca deskripsinya dan bagian apa saja yang diperlukan.",
+        "Salin template, tempelkan ke config Anda, lalu sesuaikan nilainya."
+      ],
+      "topics": {
+        "what": {
+          "title": "Apa ini",
+          "body": "Kumpulan blok bangunan Klipper umum yang terkurasi: gcode_macros (PRINT_START, PAUSE/RESUME, load/unload filamen, M600) dan bagian config ([input_shaper], [bed_mesh], [firmware_retraction], …). Ini hanya titik awal - baca masing-masing dan setel untuk mesin Anda."
+        },
+        "insert": {
+          "title": "Menyisipkan template",
+          "body": "Salin sebuah template, lalu tempelkan ke printer.cfg Anda - tampilan Raw di Config Editor adalah tempat yang praktis. Setelah menyimpan, restart firmware akan menerapkannya. Selalu tinjau nilainya terlebih dahulu; default di sini masuk akal tetapi belum disetel untuk printer Anda."
+        },
+        "sections": {
+          "title": "Bagian yang diperlukan",
+          "body": "Setiap template mencantumkan bagian config yang didefinisikan atau dibutuhkannya. Jika sebuah bagian sudah ada di config Anda, gabungkan kuncinya alih-alih menempel duplikat (bagian duplikat akan ditolak saat startup)."
+        },
+        "glossary": {
+          "title": "Glosarium",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "template": {
+          "term": "Template",
+          "def": "Cuplikan config Klipper atau makro G-code siap tempel yang Anda salin ke printer.cfg."
+        },
+        "macro": {
+          "term": "gcode_macro",
+          "def": "Perintah bernama yang Anda definisikan di config (mis. PRINT_START) yang menjalankan urutan G-code."
+        },
+        "section": {
+          "term": "Bagian",
+          "def": "Blok config [dalam kurung], mis. [bed_mesh] - unit pengelompokan konfigurasi Klipper."
+        }
+      }
+    },
+    "category": {
+      "label": "Kategori",
+      "all": "Semua kategori"
+    },
+    "template": {
+      "copy": "Salin",
+      "copied": "Tersalin!",
+      "requires": "Bagian: {sections}",
+      "requiresNone": "-"
+    },
+    "count": "{n} template",
+    "states": {
+      "loading": "Memuat template…",
+      "error": "Tidak dapat memuat template.",
+      "empty": "Tidak ada template di kategori ini.",
+      "retry": "Coba lagi"
+    },
+    "categories": {
+      "config_blocks": "Blok config",
+      "macros": "Makro"
+    }
+  }
+}

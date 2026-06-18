@@ -1,0 +1,168 @@
+{
+  "maxFlow": {
+    "intro": "Tìm lưu lượng thể tích cao nhất (mm³/s) mà hotend của bạn có thể duy trì - bằng cách tăng dần lưu lượng trong khi theo dõi tải StallGuard của bộ đùn để bắt thời điểm bánh răng trượt. Hãy xem trước kế hoạch; bài kiểm tra trực tiếp sẽ gia nhiệt và đùn nhựa, vì vậy hãy chuẩn bị máy in trước khi chạy.",
+    "help": {
+      "guide": "Trợ giúp",
+      "guideTitle": "Về Max-Flow",
+      "close": "Đóng",
+      "howToRead": "Cách dùng",
+      "steps": [
+        "Đặt nhiệt độ kiểm tra và đường kính filament (chọn một hotend để điền sẵn).",
+        "Xem trước kế hoạch - nó hiển thị từng bước lưu lượng và lượng filament được đẩy ra.",
+        "Tích vào danh sách kiểm tra an toàn, rồi chạy bài kiểm tra trực tiếp (gia nhiệt + đùn).",
+        "Đọc lưu lượng duy trì tối đa và sao chép giá trị slicer được đề xuất."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Cách bài kiểm tra hoạt động",
+          "body": "Bộ đùn đẩy filament với lưu lượng thể tích tăng đều. Khi bánh răng kẹp filament tốt thì chỉ số tải StallGuard giữ ổn định; khi bắt đầu trượt thì các chỉ số nhảy lung tung. Lưu lượng cao nhất đạt được trước khi nhảy chính là lưu lượng tối đa duy trì được. Quá trình tăng dừng ngay khi phát hiện trượt, nên không có filament nào bị mài qua điểm trượt đầu tiên."
+        },
+        "stallguard": {
+          "title": "Phát hiện trượt bằng StallGuard",
+          "body": "StallGuard là một tính năng của driver TMC báo cáo tải của động cơ. Bài kiểm tra này lấy mẫu nó nhiều lần mỗi bước lưu lượng và tìm sự tăng đột ngột về độ phân tán (IQR) hoặc biến thiên (CV) - dấu hiệu bánh răng mất độ bám. Ngưỡng đến từ một hồ sơ riêng cho từng driver. Lưu ý: trên bộ đùn TMC2209, cái này dùng đường SG4 thử nghiệm, nên hãy coi lần chạy đầu tiên là một lần hiệu chỉnh."
+        },
+        "safety": {
+          "title": "An toàn",
+          "body": "Đây là bài kiểm tra nóng, có chuyển động, cố tình làm bộ đùn trượt. Hãy nạp filament, đảm bảo đầu phun thông thoáng (trên bàn in hoặc khu vực bỏ phế liệu), và ở gần đó. Lần chạy bị từ chối khi máy in đang in, và bộ gia nhiệt luôn được tắt khi kết thúc."
+        },
+        "slicer": {
+          "title": "Sử dụng kết quả",
+          "body": "Đưa giá trị được đề xuất vào mục \"max volumetric speed\" trong slicer của bạn (cho mỗi filament). Con số thận trọng (80% mức tối đa đo được) là giới hạn an toàn cho dùng hằng ngày; con số cân bằng (90%) đẩy mạnh hơn một chút. Nhiệt độ hotend cao hơn thường nâng lưu lượng đạt được."
+        },
+        "glossary": {
+          "title": "Thuật ngữ",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Lưu lượng thể tích",
+          "def": "Lượng nhựa hotend làm chảy mỗi giây (mm³/s) - giới hạn tốc độ thực sự cho in nhanh."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Một tín hiệu của driver TMC báo cáo tải cơ học của động cơ, dùng ở đây để cảm nhận trượt bộ đùn."
+        },
+        "slip": {
+          "term": "Trượt",
+          "def": "Khi bánh răng bộ đùn không còn kẹp filament đủ nhanh và bị trượt - trần lưu lượng."
+        },
+        "meltzone": {
+          "term": "Vùng nóng chảy",
+          "def": "Phần được gia nhiệt của hotend; vùng nóng chảy dài hơn (ví dụ Volcano) duy trì lưu lượng cao hơn."
+        }
+      }
+    },
+    "params": {
+      "title": "Tham số kiểm tra",
+      "temperature": "Nhiệt độ (°C)",
+      "filamentDiameter": "Ø filament (mm)",
+      "hotend": "Hotend (tùy chọn)",
+      "hotendNone": "- không -",
+      "hotendHint": "Dự kiến ~{flow} mm³/s",
+      "startFlow": "Lưu lượng đầu (mm³/s)",
+      "endFlow": "Lưu lượng cuối (mm³/s)",
+      "stepFlow": "Bước (mm³/s)",
+      "samples": "Mẫu / bước",
+      "extrudePerStep": "Đùn / bước (mm)",
+      "driver": "Driver bộ đùn",
+      "driverDetected": "phát hiện từ máy in",
+      "autoStealthchop": "Tự động bật StealthChop cho bài kiểm tra",
+      "autoStealthchopHint": "Chỉ TMC2209/2240: tạm thời ghi một stealthchop_threshold vào bộ đùn để StallGuard đọc được, rồi chú thích nó lại sau bài kiểm tra. Khôi phục printer.cfg; khởi động lại firmware cả hai chiều.",
+      "method": "Phương pháp phát hiện",
+      "methodHint": "Auto dùng StallGuard, chuyển sang gia tốc kế trên toolhead (rung động) khi StallGuard không đọc được. Phương pháp gia tốc kế là thử nghiệm."
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Gia tốc kế"
+    },
+    "plan": {
+      "button": "Xem trước kế hoạch",
+      "title": "Quá trình tăng đã lập",
+      "stepCount": "{count} bước",
+      "totalExtrude": "{mm} mm filament",
+      "sgField": "Trường StallGuard: {field}",
+      "sgFieldUnknown": "Không có trường StallGuard nào được biết cho driver này",
+      "flowHead": "Lưu lượng (mm³/s)",
+      "feedrateHead": "Tốc độ cấp (mm/min)",
+      "warning": "Bài kiểm tra trực tiếp gia nhiệt hotend và đùn filament, cố tình đến mức trượt. Chỉ xem trước - chưa có gì chạy."
+    },
+    "safety": {
+      "title": "Trước khi chạy - danh sách kiểm tra an toàn",
+      "items": [
+        "Filament đã được nạp và cấp tự do.",
+        "Đầu phun thông thoáng - trên bàn in hoặc thùng phế liệu, không lơ lửng trên các chi tiết.",
+        "Tôi chấp nhận điều này sẽ cố tình mài/trượt một ít filament.",
+        "Tôi sẽ ở cạnh máy in trong suốt bài kiểm tra."
+      ],
+      "ack": "Tôi đã làm tất cả những điều trên và máy in đã sẵn sàng",
+      "note": "Lần chạy bị từ chối khi đang in; bộ gia nhiệt được tắt tự động khi kết thúc."
+    },
+    "run": {
+      "button": "Chạy kiểm tra trực tiếp",
+      "running": "Đang chạy… (gia nhiệt + đùn)",
+      "confirmTitle": "Bắt đầu bài kiểm tra max-flow trực tiếp?",
+      "confirmBody": "Điều này gia nhiệt hotend đến {temp} °C và đùn tới {mm} mm filament, tăng dần cho đến khi bộ đùn trượt.",
+      "confirm": "Chạy ngay",
+      "cancel": "Hủy",
+      "busy": "Bị từ chối: máy in đang bận (đang in hoặc tạm dừng). Thử lại khi máy rảnh.",
+      "error": "Bài kiểm tra thất bại.",
+      "noSg": "Không đọc được mẫu StallGuard nào - kết quả trượt có thể không đáng tin. Trường SG trực tiếp của driver có lẽ cần điều chỉnh cho model này.",
+      "progress": "Bước {step}/{total} - {flow} mm³/s",
+      "starting": "Đang gia nhiệt / khởi động…",
+      "abort": "Dừng lần chạy",
+      "cancelling": "Đang dừng…",
+      "cancelled": "Lần chạy đã dừng - bộ gia nhiệt đã được tắt.",
+      "reattached": "Đã kết nối lại: kết quả này hoàn tất khi trang đang vắng mặt.",
+      "failed": "Lần chạy max-flow thất bại.",
+      "abortNote": "Dừng luôn tắt bộ gia nhiệt.",
+      "parkNote": "Trước khi gia nhiệt, máy in home (nếu cần) và đưa đầu phun về giữa để có tầm nhìn rõ.",
+      "phase": {
+        "enabling": "Đang bật StealthChop…",
+        "homing": "Đang home máy in…",
+        "centering": "Đang đưa đầu phun về giữa…",
+        "heating": "Đang gia nhiệt hotend…",
+        "checking": "Đang kiểm tra tín hiệu StallGuard…",
+        "ramp": "Đang tăng lưu lượng…",
+        "reverting": "Đang khôi phục cấu hình…"
+      },
+      "step": {
+        "home": "Home",
+        "center": "Giữa",
+        "heat": "Gia nhiệt",
+        "check": "Kiểm tra",
+        "ramp": "Tăng"
+      }
+    },
+    "camera": {
+      "title": "Camera trực tiếp",
+      "live": "TRỰC TIẾP",
+      "error": "Camera không khả dụng.",
+      "willShow": "Một khung camera trực tiếp sẽ hiển thị đầu phun trong bài kiểm tra.",
+      "minimize": "Thu nhỏ",
+      "maximize": "Phóng to",
+      "enlarge": "Mở rộng",
+      "shrink": "Thu gọn"
+    },
+    "result": {
+      "title": "Kết quả",
+      "maxFlow": "Lưu lượng duy trì tối đa",
+      "slipAt": "Phát hiện trượt tại {flow} mm³/s",
+      "noSlip": "Không trượt cho tới mức lưu lượng được kiểm tra cao nhất",
+      "reason": "Chi tiết",
+      "recommendTitle": "Giá trị slicer được đề xuất (max volumetric speed)",
+      "conservative": "Thận trọng (80%)",
+      "balanced": "Cân bằng (90%)",
+      "units": "mm³/s",
+      "fromBefore": "Đo trước đó ({at}) - chạy lại để có số liệu mới.",
+      "unreliableTitle": "Không đáng tin - không có tín hiệu StallGuard",
+      "unmeasured": "đã đạt, chưa xác nhận",
+      "via": "Đo qua {method}",
+      "accelExperimental": "Đo bằng rung động (gia tốc kế) - thử nghiệm; coi con số như một hướng dẫn, không phải trần chính xác."
+    },
+    "states": {
+      "loadingHotends": "Đang tải hotend…"
+    }
+  }
+}

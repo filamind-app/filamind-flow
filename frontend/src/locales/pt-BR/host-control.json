@@ -1,0 +1,247 @@
+{
+  "hostControl": {
+    "intro": "Gerencie o host Linux da impressora - verifique sua saúde, controle os serviços em segundo plano, libere espaço em disco e altere as configurações do sistema (hora, localidade, hostname, rede, energia).",
+    "view": {
+      "monitor": "Monitor",
+      "services": "Serviços",
+      "cleanup": "Limpeza",
+      "system": "Sistema"
+    },
+    "help": {
+      "guide": "Ajuda",
+      "guideTitle": "Sobre o Controle do Host",
+      "close": "Fechar",
+      "howToRead": "Como interpretar",
+      "steps": [
+        "Veja os cartões de temperatura da CPU, memória, disco e rede de relance.",
+        "Acompanhe a tabela de processos principais para ver o que está usando a CPU agora.",
+        "Deixe a atualização automática ligada para uma visão ao vivo, ou desligue-a e atualize manualmente."
+      ],
+      "topics": {
+        "glossary": {
+          "title": "Termos usados aqui"
+        },
+        "monitor": {
+          "title": "Lendo o monitor",
+          "body": "Tudo aqui é somente leitura. As barras ficam âmbar acima de 75% e vermelhas acima de 90%. A temperatura da CPU fica âmbar a 70 °C e vermelha a 80 °C. O aviso de throttling só aparece em placas que o reportam (principalmente Raspberry Pi)."
+        },
+        "services": {
+          "title": "Gerenciando serviços",
+          "body": "Cada linha é um serviço do systemd. Clique em um para iniciá-lo/pará-lo/reiniciá-lo, ativá-lo/desativá-lo na inicialização, mascará-lo, ler seu log ou - para serviços que você mesmo instalou - excluir seu arquivo de unidade. Parar ou desativar um serviço exige uma confirmação digitada ou em um toque. Serviços críticos e protegidos são marcados; os protegidos (como o SSH e este painel) não podem ser parados, para evitar que você se tranque do lado de fora."
+        },
+        "cleanup": {
+          "title": "Liberando espaço em disco",
+          "body": "Cada linha é verificada primeiro para mostrar quanto seria liberado. Marque as que deseja limpar e confirme. Somente dados regeneráveis são oferecidos - o cache de download do apt, o journal antigo do systemd, ~/.cache, seus arquivos antigos de /tmp e logs rotacionados (não ativos). Seus G-codes, timelapses e configurações nunca são tocados."
+        },
+        "system": {
+          "title": "Configurações do sistema",
+          "body": "Altere o fuso horário e o relógio do host, idioma e teclado, hostname ou rede (DHCP / IP estático), ou reinicie/desligue-o. Cada alteração é aplicada imediatamente. Reinicialização e desligamento são recusados enquanto uma impressão está em andamento. Alterar o IP pode interromper brevemente sua conexão com este painel."
+        },
+        "network": {
+          "title": "DHCP vs IP estático",
+          "body": "O DHCP (automático) deixa o roteador atribuir o endereço automaticamente. O estático (manual) fixa um endereço - defina o IP, a sub-rede (CIDR, ex. /24), o gateway (geralmente seu roteador) e o DNS. Apenas IPv4. Alterar o endereço da conexão que serve este painel encerrará sua sessão; reconecte-se no novo IP. Um endereço estático ou gateway errado pode tornar a impressora inacessível até que você corrija no próprio dispositivo, por isso as configurações são validadas e exigem uma confirmação digitada."
+        }
+      },
+      "glossary": {
+        "host": {
+          "term": "Host",
+          "def": "O pequeno computador Linux (ex. um Raspberry Pi ou BTT CB1) que roda o Klipper, o Moonraker e o FilaMind - separado dos microcontroladores da impressora."
+        },
+        "load": {
+          "term": "Carga média",
+          "def": "Quantos processos estavam aguardando para rodar, em média ao longo de 1 / 5 / 15 minutos. Aproximadamente: um valor próximo do número de núcleos significa que a CPU está ocupada; bem acima disso significa que está sobrecarregada."
+        },
+        "swap": {
+          "term": "Swap",
+          "def": "Espaço em disco usado como transbordo quando a RAM se enche. Uso intenso de swap deixa o host lento - um sinal de que está com pouca memória."
+        },
+        "throttle": {
+          "term": "Throttling",
+          "def": "Quando a placa reduz a velocidade para se proteger - geralmente por uma fonte de alimentação fraca (subtensão) ou superaquecimento. Reportado principalmente no Raspberry Pi."
+        },
+        "ntp": {
+          "term": "NTP / sincronização do relógio",
+          "def": "O Network Time Protocol mantém o relógio do host preciso. Um relógio dessincronizado pode quebrar timelapses, logs e certificados TLS."
+        },
+        "locale": {
+          "term": "Localidade",
+          "def": "As configurações de idioma e layout de teclado do host, usadas pelo SO para texto, datas e o mapa de teclado do console."
+        },
+        "service": {
+          "term": "Serviço (unidade)",
+          "def": "Um programa em segundo plano gerenciado pelo systemd - o Klipper, o Moonraker, o transmissor da webcam e a pilha de rede rodam todos como serviços."
+        },
+        "enabled": {
+          "term": "Ativado / desativado",
+          "def": "Se um serviço inicia automaticamente na inicialização. 'ativado' inicia no boot; 'desativado' não; 'static' só é iniciado por outro serviço."
+        },
+        "mask": {
+          "term": "Mascarar",
+          "def": "Uma forma mais forte de desativar - o serviço não pode ser iniciado de jeito nenhum (nem mesmo por outro serviço) até que seja desmascarado. Use com cuidado."
+        }
+      }
+    },
+    "monitor": {
+      "refresh": "Atualizar",
+      "autoRefresh": "Atualização automática",
+      "loading": "Lendo o estado do host…",
+      "host": "Host",
+      "hostname": "Hostname",
+      "distro": "SO",
+      "kernel": "Kernel",
+      "uptime": "Tempo ativo",
+      "cpu": "CPU",
+      "temp": "Temperatura",
+      "load": "Carga (1·5·15m)",
+      "cores": "Núcleos",
+      "throttled": "Em throttling",
+      "memory": "Memória",
+      "ram": "RAM",
+      "swap": "Swap",
+      "disk": "Disco",
+      "network": "Rede",
+      "iface": "Interface",
+      "ip": "Endereço IP",
+      "ssid": "Wi-Fi",
+      "signal": "Sinal",
+      "timeLocale": "Hora e Localidade",
+      "timezone": "Fuso horário",
+      "ntp": "Sincronização do relógio",
+      "synced": "Sincronizado",
+      "syncing": "Sincronizando…",
+      "ntpOff": "Desligado",
+      "language": "Idioma",
+      "keymap": "Mapa de teclado",
+      "topProcesses": "Processos principais",
+      "command": "Comando",
+      "cpuPct": "CPU%",
+      "memPct": "MEM%",
+      "pid": "PID"
+    },
+    "services": {
+      "warning": "Parar ou desativar o serviço errado pode deixar a impressora offline. Serviços críticos são marcados; os protegidos não podem ser parados.",
+      "search": "Buscar serviços…",
+      "refresh": "Atualizar",
+      "loading": "Listando serviços…",
+      "loadingDetail": "Lendo serviço…",
+      "loadingLogs": "Lendo log…",
+      "summary": "{total} serviços · {active} ativos · {failed} com falha",
+      "filter": {
+        "all": "Todos",
+        "active": "Ativos",
+        "inactive": "Inativos",
+        "failed": "Com falha",
+        "enabled": "Ativados"
+      },
+      "stateActive": "Ativo",
+      "stateInactive": "Inativo",
+      "stateFailed": "Com falha",
+      "critical": "Crítico",
+      "protected": "Protegido",
+      "state": "Estado",
+      "startup": "Inicialização",
+      "unitFile": "Arquivo de unidade",
+      "action": {
+        "start": "Iniciar",
+        "stop": "Parar",
+        "restart": "Reiniciar",
+        "enable": "Ativar",
+        "disable": "Desativar",
+        "mask": "Mascarar",
+        "unmask": "Desmascarar"
+      },
+      "actionOk": "{action} concluído.",
+      "actionFailed": "{action} falhou.",
+      "deleteFailed": "Não foi possível remover o arquivo de unidade.",
+      "confirmAction": "{action} \"{name}\"?",
+      "confirmYes": "Sim, executar",
+      "cancel": "Cancelar",
+      "deleteUnit": "Excluir arquivo de unidade…",
+      "deletePrompt": "Isso remove permanentemente o arquivo de unidade. Digite \"{name}\" para confirmar.",
+      "deleteConfirm": "Excluir permanentemente",
+      "deleted": "Arquivo de unidade removido.",
+      "logs": "Log recente",
+      "noLogs": "Sem saída de log."
+    },
+    "cleanup": {
+      "subtitle": "Marque o que remover, depois limpe. Apenas caches e logs antigos - impressões e configurações ficam seguras.",
+      "rescan": "Verificar novamente",
+      "scanning": "Verificando disco…",
+      "na": "n/d",
+      "items": "{n} arquivos",
+      "freed": "Liberado {size}.",
+      "selectedTotal": "Selecionado: {size}",
+      "clean": "Limpar selecionados",
+      "confirmBody": "Excluir os itens selecionados?",
+      "confirmYes": "Sim, limpar",
+      "cancel": "Cancelar",
+      "running": "Limpando…",
+      "someFailed": "Alguns itens não puderam ser limpos.",
+      "targets": {
+        "apt": {
+          "label": "Cache de pacotes",
+          "desc": "Arquivos instaladores .deb baixados que o apt não precisa mais."
+        },
+        "journal": {
+          "label": "Journal do sistema",
+          "desc": "Logs antigos do systemd - reduzidos para os 50 MB mais recentes."
+        },
+        "cache": {
+          "label": "Cache do usuário",
+          "desc": "Arquivos regeneráveis em ~/.cache (miniaturas, pip, etc.)."
+        },
+        "tmp": {
+          "label": "Arquivos temporários",
+          "desc": "Seus próprios arquivos em /tmp com mais de um dia."
+        },
+        "logs": {
+          "label": "Logs rotacionados",
+          "desc": "Logs antigos e rotacionados do Klipper/Moonraker (o log ativo é mantido)."
+        }
+      }
+    },
+    "system": {
+      "loading": "Lendo configurações do sistema…",
+      "done": "Concluído.",
+      "apply": "Aplicar",
+      "timeTitle": "Hora e Data",
+      "timezone": "Fuso horário",
+      "ntp": "Definir a hora automaticamente (NTP)",
+      "manualTime": "Definir o relógio manualmente",
+      "manualTimeHint": "Desligue a hora automática para acertar o relógio manualmente.",
+      "localeTitle": "Idioma e Teclado",
+      "language": "Idioma",
+      "keymap": "Mapa de teclado do console",
+      "hostnameTitle": "Hostname",
+      "hostnameHint": "Apenas letras, dígitos e hifens. Tem efeito completo após uma reinicialização.",
+      "powerTitle": "Energia",
+      "powerWarning": "Reinicialização e desligamento são recusados enquanto uma impressão está em andamento.",
+      "reboot": "Reiniciar",
+      "shutdown": "Desligar",
+      "confirmReboot": "Reiniciar o host agora?",
+      "confirmShutdown": "Desligar o host agora?",
+      "confirmYes": "Sim",
+      "cancel": "Cancelar",
+      "needsSetup": "Esta ação precisa de sudo sem senha. Na impressora, execute: sudo bash scripts/install.sh sudoers - depois tente novamente.",
+      "failed": "Essa alteração não foi aplicada.",
+      "network": {
+        "title": "Rede (IPv4)",
+        "unavailable": "A edição de rede não está disponível neste host (NetworkManager não instalado).",
+        "device": "Dispositivo",
+        "method": "Método de IP",
+        "auto": "DHCP (automático)",
+        "manual": "Estático (manual)",
+        "address": "Endereço IP",
+        "cidr": "Sub-rede (CIDR)",
+        "gateway": "Gateway",
+        "dns": "Servidores DNS",
+        "dnsHint": "Separados por vírgula, ex. 1.1.1.1, 8.8.8.8 (opcional)",
+        "warning": "Alterar o IP pode interromper este painel - talvez você precise reconectar no novo endereço.",
+        "apply": "Aplicar configurações de rede",
+        "confirmPrompt": "Isso pode tornar o painel inacessível. Digite o nome do dispositivo \"{device}\" para confirmar.",
+        "confirmYes": "Aplicar e alternar",
+        "applyingReconnect": "Aplicando… se o painel parar de responder, reconecte-se no novo IP da impressora."
+      }
+    }
+  }
+}

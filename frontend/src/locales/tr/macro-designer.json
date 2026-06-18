@@ -1,0 +1,200 @@
+{
+  "macroDesigner": {
+    "intro": "G-code'u çevrimdışı simüle edin - bir program yapıştırın veya yazın; yazıcıya dokunmadan tool kafa yolunu, sınırlayıcı kutuyu, gezinme ve ekstrüzyon toplamlarını ve bir süre tahminini görün. Referans için yerleşik makro kütüphanesine göz atın.",
+    "help": {
+      "guide": "Yardım",
+      "guideTitle": "Macro Designer hakkında",
+      "close": "Kapat",
+      "howToRead": "Nasıl kullanılır",
+      "steps": [
+        "Düzenleyiciye G-code yazın veya yapıştırın (başlangıç için örnek bir kare yüklenir).",
+        "Simüle Et'e basın - 2D yol ve istatistikler güncellenir.",
+        "Düz çizgiler ekstrüzyon hareketleridir; soluk kesik çizgiler gezinmedir.",
+        "Makro kütüphanesine göz atın ve birini ekleyerek komutlarından başlayın."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "Simülatör",
+          "body": "Programı sanal bir tool kafasında çalıştırır: G0/G1 hareketleri, G90/G91 (mutlak/göreceli), M82/M83 (ekstrüder modu), G92 (konum ayarla) ve G28 (referans → orijin). Yolu, sınırlayıcı kutuyu, toplam gezinme ve ekstrüzyonu, ilerleme hızlarından kabaca bir süre tahminini ve komut başına bir zaman çizelgesini raporlar. Yazıcıya hiçbir şey gönderilmez."
+        },
+        "motion": {
+          "title": "Yol ve süre",
+          "body": "2D görünüm XY yoludur (Z sınırların içindedir). Süre tahmini her hareketin uzunluğunu ilerleme hızına böler - ivmelenmeyi göz ardı eder, bu yüzden kesin baskı süresi değil kaba bir alt sınırdır. Simülatörün modellemediği komutlar (örn. M-kodları, üst düzey makrolar) uyarı olarak listelenir ve atlanır."
+        },
+        "macros": {
+          "title": "Makro kütüphanesi",
+          "body": "Yaygın Klipper makrolarının adı, ne yaptıkları ve ihtiyaç duydukları config bölümleriyle birlikte bir referans kümesi. \"Ekle\", bir makronun üst düzey komutlarını başlangıç noktası olarak düzenleyiciye bırakır - bunların yazıcıda daha da genişlediğini unutmayın (tam Jinja/makro genişletmesi yolda)."
+        },
+        "glossary": {
+          "title": "Sözlük",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "Yazıcının çalıştırdığı satır satır hareket dili (hareketler, sıcaklıklar, fan, …)."
+        },
+        "feedrate": {
+          "term": "İlerleme hızı (F)",
+          "def": "mm/min cinsinden hareket hızı - F1200, 20 mm/s'dir. Her hareketin ne kadar hızlı çalışacağını belirler."
+        },
+        "macro": {
+          "term": "Makro",
+          "def": "Bir G-code dizisine genişleyen, adlandırılmış, yeniden kullanılabilir bir komut (örn. QUAD_GANTRY_LEVEL)."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Simüle Et",
+      "simulating": "Simüle ediliyor…",
+      "sample": "Örnek yükle",
+      "clear": "Temizle"
+    },
+    "library": {
+      "label": "Yerleşik makrolar",
+      "placeholder": "Makrolara göz at…",
+      "insert": "Düzenleyiciye ekle",
+      "requires": "Gerekli: {sections}",
+      "none": "-"
+    },
+    "result": {
+      "title": "Simülasyon",
+      "moves": "{count} hareket",
+      "distance": "{mm} mm gezinme",
+      "extrude": "{mm} mm ekstrüde edildi",
+      "time": "~{s} s",
+      "bounds": "Sınırlar",
+      "empty": "Simüle edilecek hareket yok.",
+      "timeAccel": "(ivme duyarlı)",
+      "timeConstant": "(sınırsız)"
+    },
+    "path": {
+      "title": "Tool kafa yolu (XY)",
+      "noPath": "Yolu görmek için bir simülasyon çalıştırın."
+    },
+    "explain": {
+      "title": "Bu makroyu açıkla",
+      "travel": "{f} mm/min hızında X{x} Y{y} konumuna hızlı gezinme",
+      "print": "Baskı hareketi - {f} mm/min hızında X{x} Y{y} konumuna {d} mm boyunca {e} mm ekstrüde et",
+      "retract": "{e} mm geri çek",
+      "prime": "Yerinde {e} mm ekstrüde et",
+      "noMove": "Hareket yok",
+      "absXYZ": "Mutlak konumlandırmaya geç (G90)",
+      "relXYZ": "Göreceli konumlandırmaya geç (G91)",
+      "absE": "Mutlak ekstrüzyona geç (M82)",
+      "relE": "Göreceli ekstrüzyona geç (M83)",
+      "setPos": "Geçerli konumu ayarla (G92)",
+      "home": "Eksenleri referansla (G28) → orijin",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "şu ana kadar: {d} mm · {e} mm · ~{s} s",
+      "note": "Döngüler ve koşullar yazıcının yapacağı şekilde genişletilir; canlı yazıcı durumu gerektiren bir makro, gerçek bir önizlemeye geri döner."
+    },
+    "timeline": {
+      "title": "Zaman çizelgesi",
+      "line": "Satır",
+      "cmd": "Komut",
+      "action": "Eylem"
+    },
+    "warnings": {
+      "title": "Uyarılar"
+    },
+    "live": {
+      "label": "Yazıcıdan",
+      "placeholder": "Kurulu makrolarınızdan birini seçin…",
+      "hint": "Yazıcıda {n} makro bulundu - G-code'unu yüklemek ve simüle etmek için birini seçin.",
+      "unreachable": "Yazıcıya ulaşılamıyor - kurulu makrolarınızı yüklemek için bağlanın.",
+      "params": "Makro parametreleri"
+    },
+    "limits": {
+      "title": "Sınır dışı / aşırı hız",
+      "oob": "Satır {line}: {axis}={value} baskı alanının dışında ({min}…{max} mm).",
+      "overSpeed": "Satır {line}: {value} mm/s, yazıcının {limit} mm/s sınırını aşıyor (Klipper bunu kısıtlayacak).",
+      "buildArea": "baskı alanı {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Makro denetleyici - {n} bulgu",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "Eşleşen bir RESTORE_GCODE_STATE olmadan SAVE_GCODE_STATE - kaydedilen konumlandırma/ekstrüder modu hiç geri yüklenmez.",
+          "fix": "Bir RESTORE_GCODE_STATE ekleyin (veya SAVE'i kaldırın)."
+        },
+        "ends_relative": {
+          "msg": "Makro göreceli modda (G91/M83) bitiyor - sonraki komut göreceli olarak hareket edecek.",
+          "fix": "Sona bir G90 / M82 ekleyin veya hareketleri SAVE_GCODE_STATE … RESTORE_GCODE_STATE içine sarın."
+        },
+        "extrude_before_home": {
+          "msg": "G28'den önce bir ekstrüzyon hareketi gerçekleşiyor - soğuk veya referanslanmamış ekstrüzyon riski.",
+          "fix": "Ekstrüde etmeden önce referanslayın (G28) ve hotend'i ısıtın."
+        }
+      }
+    },
+    "heat": {
+      "colorBy": "Renklendirme ölçütü",
+      "none": "Düz",
+      "speed": "Hız",
+      "extrude": "Ekstrüzyon",
+      "legendSpeed": "Hız (mm/s)",
+      "legendExtrude": "Ekstrüzyon (mm/s)"
+    },
+    "compare": {
+      "title": "Karşılaştır (A / B)",
+      "hint": "İkinci bir programı (B) simüle edin ve geçerli sonuçla (A) farkını alın.",
+      "copyA": "A'yı kopyala → B",
+      "run": "Karşılaştır",
+      "running": "Karşılaştırılıyor…",
+      "placeholder": "B programını yapıştırın veya yazın…",
+      "editorB": "Program B",
+      "overlay": "A ile B yol bindirmesi",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "Denetleyici farkları",
+      "lintSame": "Her ikisinde de aynı denetleyici bulguları.",
+      "onlyA": "yalnızca A'da",
+      "onlyB": "yalnızca B'de",
+      "row": {
+        "moves": "Hareketler",
+        "distance": "Mesafe (mm)",
+        "extrude": "Ekstrüzyon (mm)",
+        "time": "Süre (s)"
+      }
+    },
+    "scaffold": {
+      "title": "START / END_PRINT oluştur",
+      "hint": "Bu yazıcıya özel bir START_PRINT ve END_PRINT oluşturun - referanslaması, gerçekte sahip olduğu seviyeleme, bir mesh adımı ve gerçek baskı alanı içinde priming/park konumları.",
+      "generate": "Oluştur",
+      "generating": "Oluşturuluyor…",
+      "loadEditor": "Düzenleyiciye yükle",
+      "writeTitle": "Config'e yaz",
+      "target": "Hedef dosya",
+      "append": "Config'e ekle…",
+      "confirm": "Eklemeyi onayla",
+      "cancel": "İptal",
+      "appending": "Yazılıyor…",
+      "writeNote": "Her iki makroyu da onay kapısının arkasında seçilen dosyaya ekler - önce bir yedek alınır ve baskı sırasında yazma reddedilir. Aynı ada sahip bir makro zaten varsa reddedilir.",
+      "saved": "{file} dosyasına kaydedildi.",
+      "savedBackup": "{file} dosyasına kaydedildi (yedek: {backup}). Uygulamak için firmware'i yeniden başlatın.",
+      "note": {
+        "kinematics": "Kinematik: {k}.",
+        "bounds": "Baskı alanı X {x0}-{x1}, Y {y0}-{y1} (priming/park içine sığar).",
+        "leveling_qgl": "quad_gantry_level algılandı -> QUAD_GANTRY_LEVEL eklendi.",
+        "leveling_ztilt": "z_tilt algılandı -> Z_TILT_ADJUST eklendi.",
+        "leveling_none": "quad_gantry_level / z_tilt yapılandırılmamış - bir yer tutucu bırakıldı.",
+        "mesh": "bed_mesh algılandı -> BED_MESH_CALIBRATE eklendi.",
+        "no_bed": "Isıtmalı tabla yok - tabla ısıtma adımları atlandı."
+      }
+    },
+    "flow": {
+      "title": "Akış kontrolü (hotend tavanı)",
+      "hint": "Hotend'inizi katalogdan seçin; her baskı hareketi gerçek erime bölgesi tavanına karşı kontrol edilir - aşırı akış yapan bir makro baskıdan önce ortaya çıkar.",
+      "hotend": "Hotend",
+      "pick": "Bir hotend seçin…",
+      "diameter": "Ø mm",
+      "ok": "Tüm baskı hareketleri {ceiling} mm³/s tavanı içinde.",
+      "overTitle": "{n} hareket {ceiling} mm³/s tavanını aşıyor:",
+      "overLine": "Satır {line}: {flow} mm³/s"
+    }
+  }
+}

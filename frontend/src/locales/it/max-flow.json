@@ -1,0 +1,168 @@
+{
+  "maxFlow": {
+    "intro": "Trova il flusso volumetrico massimo (mm³/s) che il tuo hotend riesce a sostenere - aumentando il flusso mentre osservi il carico StallGuard dell'estrusore per cogliere l'istante in cui l'ingranaggio slitta. Visualizza prima il piano; il test live riscalda ed estrude, quindi prepara la stampante prima di avviarlo.",
+    "help": {
+      "guide": "Aiuto",
+      "guideTitle": "Informazioni su Max-Flow",
+      "close": "Chiudi",
+      "howToRead": "Come si usa",
+      "steps": [
+        "Imposta la temperatura di test e il diametro del filamento (scegli un hotend per precompilare).",
+        "Visualizza il piano - mostra ogni step di flusso e quanto filamento spinge.",
+        "Spunta la checklist di sicurezza, poi avvia il test live (riscalda + estrude).",
+        "Leggi il flusso massimo sostenuto e copia il valore suggerito per lo slicer."
+      ],
+      "topics": {
+        "howItWorks": {
+          "title": "Come funziona il test",
+          "body": "L'estrusore spinge il filamento a un flusso volumetrico in costante aumento. Finché l'ingranaggio dentato fa presa in modo pulito, la lettura del carico StallGuard resta stabile; quando inizia a slittare le letture iniziano a oscillare. Il flusso più alto raggiunto prima di quel salto è il tuo flusso massimo sostenibile. La rampa si ferma non appena viene rilevato lo slittamento, così nessun filamento viene macinato oltre il primo slittamento."
+        },
+        "stallguard": {
+          "title": "Rilevamento slittamento StallGuard",
+          "body": "StallGuard è una funzione dei driver TMC che riporta il carico del motore. Questo test lo campiona molte volte per ogni step di flusso e cerca un improvviso aumento della dispersione (IQR) o della variazione (CV) - la firma dell'ingranaggio che perde presa. Le soglie provengono da un profilo specifico per driver. Nota: su un estrusore TMC2209 viene usato il percorso sperimentale SG4, quindi considera la prima esecuzione come una calibrazione."
+        },
+        "safety": {
+          "title": "Sicurezza",
+          "body": "Questo è un test caldo e in movimento che fa slittare deliberatamente l'estrusore. Carica il filamento, assicurati che l'ugello sia libero (sopra il piano o un'area di scarto) e resta nelle vicinanze. L'esecuzione viene rifiutata mentre la stampante sta stampando, e il riscaldatore viene sempre spento al termine."
+        },
+        "slicer": {
+          "title": "Usare il risultato",
+          "body": "Inserisci il valore suggerito nella \"velocità volumetrica massima\" del tuo slicer (per filamento). Il valore conservativo (80% del massimo misurato) è un limite sicuro per l'uso quotidiano; il valore bilanciato (90%) spinge un po' di più. Temperature più alte dell'hotend di solito aumentano il flusso raggiungibile."
+        },
+        "glossary": {
+          "title": "Glossario",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "flow": {
+          "term": "Flusso volumetrico",
+          "def": "Quanta plastica l'hotend fonde al secondo (mm³/s) - il vero limite di velocità per la stampa veloce."
+        },
+        "stallguard": {
+          "term": "StallGuard",
+          "def": "Un segnale dei driver TMC che riporta il carico meccanico del motore, qui usato per rilevare lo slittamento dell'estrusore."
+        },
+        "slip": {
+          "term": "Slittamento",
+          "def": "Quando l'ingranaggio dell'estrusore non riesce più a fare presa sul filamento abbastanza rapidamente e salta - il limite massimo del flusso."
+        },
+        "meltzone": {
+          "term": "Zona di fusione",
+          "def": "La lunghezza riscaldata dell'hotend; una zona di fusione più lunga (es. Volcano) sostiene un flusso più alto."
+        }
+      }
+    },
+    "params": {
+      "title": "Parametri del test",
+      "temperature": "Temperatura (°C)",
+      "filamentDiameter": "Ø filamento (mm)",
+      "hotend": "Hotend (opzionale)",
+      "hotendNone": "- nessuno -",
+      "hotendHint": "Previsto ~{flow} mm³/s",
+      "startFlow": "Flusso iniziale (mm³/s)",
+      "endFlow": "Flusso finale (mm³/s)",
+      "stepFlow": "Step (mm³/s)",
+      "samples": "Campioni / step",
+      "extrudePerStep": "Estrusione / step (mm)",
+      "driver": "Driver estrusore",
+      "driverDetected": "rilevato dalla stampante",
+      "autoStealthchop": "Abilita automaticamente StealthChop per il test",
+      "autoStealthchopHint": "Solo TMC2209/2240: scrive temporaneamente uno stealthchop_threshold sull'estrusore così che StallGuard possa leggere, poi lo commenta dopo il test. Ripristina printer.cfg; riavvio firmware in entrambi i casi.",
+      "method": "Metodo di rilevamento",
+      "methodHint": "Auto usa StallGuard, ripiegando sull'accelerometro della testina (vibrazione) quando StallGuard non riesce a leggere. Il metodo con accelerometro è sperimentale."
+    },
+    "method": {
+      "auto": "Auto",
+      "stallguard": "StallGuard",
+      "accel": "Accelerometro"
+    },
+    "plan": {
+      "button": "Visualizza piano",
+      "title": "Rampa pianificata",
+      "stepCount": "{count} step",
+      "totalExtrude": "{mm} mm di filamento",
+      "sgField": "Campo StallGuard: {field}",
+      "sgFieldUnknown": "Nessun campo StallGuard noto per questo driver",
+      "flowHead": "Flusso (mm³/s)",
+      "feedrateHead": "Avanzamento (mm/min)",
+      "warning": "Il test live riscalda l'hotend ed estrude filamento, deliberatamente fino al punto di slittamento. Solo anteprima - non viene ancora eseguito nulla."
+    },
+    "safety": {
+      "title": "Prima di avviare - checklist di sicurezza",
+      "items": [
+        "Il filamento è caricato e avanza liberamente.",
+        "L'ugello è libero - sopra il piano o un cestino di scarto, non a mezz'aria sopra i pezzi.",
+        "Accetto che questo macinerà/farà slittare deliberatamente del filamento.",
+        "Resterò accanto alla stampante per tutta la durata del test."
+      ],
+      "ack": "Ho fatto tutto quanto sopra e la stampante è pronta",
+      "note": "L'esecuzione viene rifiutata durante la stampa; il riscaldatore viene spento automaticamente alla fine."
+    },
+    "run": {
+      "button": "Avvia test live",
+      "running": "In esecuzione… (riscaldamento + estrusione)",
+      "confirmTitle": "Avviare il test live max-flow?",
+      "confirmBody": "Questo riscalda l'hotend a {temp} °C ed estrude fino a {mm} mm di filamento, aumentando finché l'estrusore non slitta.",
+      "confirm": "Avvia ora",
+      "cancel": "Annulla",
+      "busy": "Rifiutato: la stampante è occupata (in stampa o in pausa). Riprova quando è inattiva.",
+      "error": "Il test non è riuscito.",
+      "noSg": "Nessun campione StallGuard è stato letto - il risultato dello slittamento potrebbe essere inaffidabile. Il campo SG live del driver probabilmente va regolato per questo modello.",
+      "progress": "Step {step}/{total} - {flow} mm³/s",
+      "starting": "Riscaldamento / avvio…",
+      "abort": "Interrompi esecuzione",
+      "cancelling": "Interruzione in corso…",
+      "cancelled": "Esecuzione interrotta - il riscaldatore è stato spento.",
+      "reattached": "Riconnesso: questo risultato è stato completato mentre la pagina era assente.",
+      "failed": "Esecuzione max-flow non riuscita.",
+      "abortNote": "L'interruzione spegne sempre il riscaldatore.",
+      "parkNote": "Prima del riscaldamento, la stampante esegue l'homing (se necessario) e centra l'ugello per una visuale libera.",
+      "phase": {
+        "enabling": "Abilitazione di StealthChop…",
+        "homing": "Homing della stampante…",
+        "centering": "Centratura dell'ugello…",
+        "heating": "Riscaldamento dell'hotend…",
+        "checking": "Verifica del segnale StallGuard…",
+        "ramp": "Aumento del flusso…",
+        "reverting": "Ripristino della configurazione…"
+      },
+      "step": {
+        "home": "Home",
+        "center": "Centra",
+        "heat": "Riscalda",
+        "check": "Verifica",
+        "ramp": "Rampa"
+      }
+    },
+    "camera": {
+      "title": "Camera live",
+      "live": "LIVE",
+      "error": "Camera non disponibile.",
+      "willShow": "Una visuale live della camera mostrerà l'ugello durante il test.",
+      "minimize": "Riduci a icona",
+      "maximize": "Massimizza",
+      "enlarge": "Ingrandisci",
+      "shrink": "Rimpicciolisci"
+    },
+    "result": {
+      "title": "Risultato",
+      "maxFlow": "Flusso massimo sostenuto",
+      "slipAt": "Slittamento rilevato a {flow} mm³/s",
+      "noSlip": "Nessuno slittamento fino al flusso massimo testato",
+      "reason": "Dettaglio",
+      "recommendTitle": "Valori suggeriti per lo slicer (velocità volumetrica massima)",
+      "conservative": "Conservativo (80%)",
+      "balanced": "Bilanciato (90%)",
+      "units": "mm³/s",
+      "fromBefore": "Misurato in precedenza ({at}) - esegui di nuovo per numeri aggiornati.",
+      "unreliableTitle": "Inaffidabile - nessun segnale StallGuard",
+      "unmeasured": "raggiunto, non confermato",
+      "via": "Misurato tramite {method}",
+      "accelExperimental": "Misurato per vibrazione (accelerometro) - sperimentale; considera il numero come una guida, non un limite esatto."
+    },
+    "states": {
+      "loadingHotends": "Caricamento hotend…"
+    }
+  }
+}

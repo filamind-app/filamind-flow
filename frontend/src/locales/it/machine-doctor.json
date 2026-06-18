@@ -1,0 +1,139 @@
+{
+  "machineDoctor": {
+    "intro": "Una scansione di sola lettura su tutto ciò che l'app può controllare - conflitti di pin, valori dei driver, deriva della configurazione, lint del progetto, sincronizzazione del firmware, modifiche hardware e stato dell'installazione - con voto da A a F. Ogni risultato rimanda al widget che lo risolve.",
+    "scanning": "Scansione…",
+    "rescan": "Scansiona di nuovo",
+    "scoreLine": "Punteggio {score} / 100",
+    "counts": "{errors} errore/i · {warnings} avviso/i",
+    "scoreHint": "Punteggio trasparente: 100 − 25 per ogni errore − 8 per ogni avviso. I controlli sconosciuti non vengono mai conteggiati a tuo sfavore.",
+    "allClear": "Tutto a posto.",
+    "notChecked": "Impossibile controllare (stampante irraggiungibile o nessun riferimento).",
+    "assessment": {
+      "healthy": "In salute - tutto ciò che l'app può controllare sembra a posto.",
+      "attention": "Per lo più in salute, ma {pillar} richiede attenzione.",
+      "critical": "{pillar} ha un problema da risolvere."
+    },
+    "pillars": {
+      "title": "Dettaglio dello stato",
+      "notMeasured": "non misurato"
+    },
+    "pillar": {
+      "config": "Integrità configurazione",
+      "firmware": "Sincronizzazione firmware",
+      "services": "Servizi",
+      "tuning": "Input shaping",
+      "flow": "Flusso massimo"
+    },
+    "services": {
+      "title": "Servizi",
+      "active": "attivo",
+      "inactive": "fermo",
+      "none": "Nessun servizio segnalato."
+    },
+    "stats": {
+      "title": "In sintesi",
+      "maxFlow": "Flusso massimo",
+      "tuningAxis": "Shaper {axis}",
+      "firmware": "Firmware",
+      "outOfSync": "{n} non sincronizzati",
+      "allSynced": "tutto sincronizzato",
+      "none": "Ancora nessuna misurazione."
+    },
+    "category": {
+      "pins": "Cablaggio pin",
+      "drivers": "Valori driver",
+      "drift": "Deriva configurazione",
+      "project": "Progetto configurazione",
+      "firmware": "Sincronizzazione firmware",
+      "hardware": "Modifiche hardware",
+      "install": "Stato installazione"
+    },
+    "status": {
+      "ok": "OK",
+      "warn": "Avvisi",
+      "fail": "Problemi",
+      "unknown": "Non controllato"
+    },
+    "link": {
+      "config_section": "Editor configurazione",
+      "config_file": "Editor configurazione",
+      "stepper": "Motor Drivers",
+      "topology_node": "Machine Map",
+      "widget": "Apri"
+    },
+    "finding": {
+      "pins": {
+        "double_assign": "Il pin {pin} su {mcu} è assegnato in più di una sezione.",
+        "caveat": "Il pin {pin} su {mcu} comporta un'avvertenza elettronica."
+      },
+      "drivers": {
+        "over_driver_cap": "{section}: run_current {run_current} A supera il limite del driver di ~{cap} A.",
+        "near_driver_cap": "{section}: run_current {run_current} A è entro il 10% del limite di ~{cap} A.",
+        "over_motor_rating": "{section}: run_current {run_current} A supera il valore nominale di {motor} ({max_current} A).",
+        "near_motor_rating": "{section}: run_current {run_current} A è entro il 10% del valore nominale di {motor} ({max_current} A).",
+        "odd_microsteps": "{section}: microsteps {microsteps} non è una potenza di due."
+      },
+      "drift": {
+        "pending": "Klipper ha modifiche SAVE_CONFIG non salvate in sospeso.",
+        "param": "[{section}] {key}: disco {disk} ≠ live {live}.",
+        "klipper_warning": "{text}"
+      },
+      "project": {
+        "broken_include": "{file}: l'include \"{message}\" non punta ad alcun file.",
+        "orphan_driver": "{file}: la sezione driver \"{message}\" non ha uno stepper corrispondente."
+      },
+      "firmware": {
+        "out_of_sync": "{mcu}: il firmware {mcu_version} differisce dall'host {host_version}."
+      },
+      "hardware": {
+        "changed": "{mcu}: hardware modificato ({kind}).",
+        "no_baseline": "Nessun riferimento hardware salvato finora - salva uno snapshot nella Machine Map per rilevare le modifiche."
+      },
+      "install": {
+        "check_failed": "Controllo installazione non riuscito: {name} - {detail}."
+      }
+    },
+    "help": {
+      "guide": "Aiuto",
+      "guideTitle": "Informazioni su Machine Doctor",
+      "close": "Chiudi",
+      "howToRead": "Come leggere",
+      "steps": [
+        "Premi Scansiona di nuovo per eseguire un controllo di sola lettura su tutta la stampante.",
+        "Leggi il voto da A a F e le barre dei pilastri per vedere dove è più debole.",
+        "Apri il link di un risultato per passare direttamente al widget che lo risolve."
+      ],
+      "topics": {
+        "scan": {
+          "title": "Cosa copre la scansione",
+          "body": "Un'unica passata di sola lettura su tutto ciò che l'app può controllare - conflitti di pin, valori dei driver, deriva della configurazione tra quella salvata e quella live, lint del progetto, sincronizzazione del firmware, modifiche hardware rispetto al tuo riferimento e stato dell'installazione. Non esegue mai nulla sulla stampante."
+        },
+        "grade": {
+          "title": "Il voto da A a F",
+          "body": "Ogni pilastro dello stato (integrità configurazione, sincronizzazione firmware, servizi, input shaping, flusso massimo) viene valutato e i più deboli abbassano il voto complessivo. La riga del punteggio mostra esattamente come si è arrivati al voto - nulla è nascosto."
+        },
+        "fixes": {
+          "title": "Link per risolvere",
+          "body": "Ogni risultato include un pulsante che rimanda direttamente al widget che lo risolve (Editor configurazione, Motor Drivers, la Machine Map…), così passi dal problema alla soluzione con un solo clic."
+        },
+        "glossary": {
+          "title": "Termini usati qui"
+        }
+      },
+      "glossary": {
+        "grade": {
+          "term": "Voto (A-F)",
+          "def": "Una singola lettera che riassume lo stato della stampante, derivata dai punteggi dei pilastri; A è in salute, F richiede attenzione."
+        },
+        "pillar": {
+          "term": "Pilastro",
+          "def": "Una categoria di stato valutata in modo indipendente - es. integrità configurazione, sincronizzazione firmware, servizi, input shaping, flusso massimo."
+        },
+        "finding": {
+          "term": "Risultato",
+          "def": "Un problema specifico rilevato dalla scansione, con la sua gravità e un link al widget che lo risolve."
+        }
+      }
+    }
+  }
+}

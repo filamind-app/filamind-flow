@@ -59,6 +59,18 @@ export const LOCALE_META: Record<string, LocaleMeta> = {
   fr: { code: 'fr', label: 'Français', dir: 'ltr' },
   es: { code: 'es', label: 'Español', dir: 'ltr' },
   ru: { code: 'ru', label: 'Русский', dir: 'ltr' },
+  'pt-BR': { code: 'pt-BR', label: 'Português (Brasil)', dir: 'ltr' },
+  it: { code: 'it', label: 'Italiano', dir: 'ltr' },
+  nl: { code: 'nl', label: 'Nederlands', dir: 'ltr' },
+  pl: { code: 'pl', label: 'Polski', dir: 'ltr' },
+  tr: { code: 'tr', label: 'Türkçe', dir: 'ltr' },
+  uk: { code: 'uk', label: 'Українська', dir: 'ltr' },
+  'zh-Hant': { code: 'zh-Hant', label: '繁體中文', dir: 'ltr' },
+  ja: { code: 'ja', label: '日本語', dir: 'ltr' },
+  ko: { code: 'ko', label: '한국어', dir: 'ltr' },
+  vi: { code: 'vi', label: 'Tiếng Việt', dir: 'ltr' },
+  id: { code: 'id', label: 'Bahasa Indonesia', dir: 'ltr' },
+  hi: { code: 'hi', label: 'हिन्दी', dir: 'ltr' },
 }
 
 export const DEFAULT_LOCALE = 'en'
@@ -165,7 +177,7 @@ const PLURAL_RULES: Record<string, PluralRule> = {
     if (m >= 11 && m <= 99) return 4
     return 5
   },
-  // one | few | many
+  // one | few | many (Russian + Ukrainian share this East-Slavic shape)
   ru: (n) => {
     const m10 = n % 10
     const m100 = n % 100
@@ -173,8 +185,28 @@ const PLURAL_RULES: Record<string, PluralRule> = {
     if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 1
     return 2
   },
-  // Chinese has no plural inflection - a single form.
+  uk: (n) => {
+    const m10 = n % 10
+    const m100 = n % 100
+    if (m10 === 1 && m100 !== 11) return 0
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 1
+    return 2
+  },
+  // Polish: one | few | many
+  pl: (n) => {
+    if (n === 1) return 0
+    const m10 = n % 10
+    const m100 = n % 100
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 1
+    return 2
+  },
+  // Languages with no plural inflection - a single shared form.
   'zh-Hans': () => 0,
+  'zh-Hant': () => 0,
+  ja: () => 0,
+  ko: () => 0,
+  vi: () => 0,
+  id: () => 0,
 }
 
 // --- instance -------------------------------------------------------------
@@ -199,7 +231,13 @@ export function matchLocale(pref: string): string | null {
   if (isAvailable(pref)) return pref
   const base = pref.split('-')[0].toLowerCase()
   if (isAvailable(base)) return base
-  if (base === 'zh' && isAvailable('zh-Hans')) return 'zh-Hans'
+  // Chinese: route Traditional regions (TW/HK/MO) or an explicit Hant script to zh-Hant;
+  // everything else (incl. bare ``zh``) defaults to Simplified.
+  if (base === 'zh') {
+    const tag = pref.toLowerCase()
+    if (/hant|tw|hk|mo/.test(tag) && isAvailable('zh-Hant')) return 'zh-Hant'
+    if (isAvailable('zh-Hans')) return 'zh-Hans'
+  }
   const byBase = availableLocales.find((m) => m.code.split('-')[0].toLowerCase() === base)
   return byBase ? byBase.code : null
 }

@@ -1,0 +1,200 @@
+{
+  "macroDesigner": {
+    "intro": "Simule G-code offline - cole ou escreva um programa e veja o caminho da cabeça de impressão, a caixa delimitadora, os totais de deslocamento e extrusão e uma estimativa de tempo, sem tocar na impressora. Navegue pela biblioteca de macros integrada para referência.",
+    "help": {
+      "guide": "Ajuda",
+      "guideTitle": "Sobre o Macro Designer",
+      "close": "Fechar",
+      "howToRead": "Como usar",
+      "steps": [
+        "Digite ou cole G-code no editor (um quadrado de exemplo é carregado para começar).",
+        "Pressione Simular - o caminho 2D e as estatísticas são atualizados.",
+        "Linhas sólidas são movimentos de extrusão; linhas tracejadas tênues são deslocamentos.",
+        "Navegue pela biblioteca de macros e Insira uma para começar a partir dos comandos dela."
+      ],
+      "topics": {
+        "simulator": {
+          "title": "O simulador",
+          "body": "Ele executa o programa em uma cabeça de impressão virtual: movimentos G0/G1, G90/G91 (absoluto/relativo), M82/M83 (modo do extrusor), G92 (definir posição) e G28 (home → origem). Ele informa o caminho, a caixa delimitadora, o deslocamento e a extrusão totais, uma estimativa aproximada de tempo a partir dos feedrates e uma linha do tempo por comando. Nada é enviado para a impressora."
+        },
+        "motion": {
+          "title": "Caminho e tempo",
+          "body": "A visão 2D é o caminho XY (Z fica nos limites). A estimativa de tempo divide o comprimento de cada movimento pelo seu feedrate - ela ignora a aceleração, então é um limite inferior aproximado, não o tempo exato de impressão. Comandos que o simulador não modela (ex.: códigos M, macros de alto nível) são listados como avisos e ignorados."
+        },
+        "macros": {
+          "title": "Biblioteca de macros",
+          "body": "Um conjunto de referência de macros comuns do Klipper com o nome, o que fazem e as seções de configuração que precisam. \"Inserir\" coloca os comandos de alto nível de uma macro no editor como ponto de partida - observe que eles se expandem ainda mais na impressora (a expansão completa de Jinja/macros está chegando)."
+        },
+        "glossary": {
+          "title": "Glossário",
+          "body": ""
+        }
+      },
+      "glossary": {
+        "gcode": {
+          "term": "G-code",
+          "def": "A linguagem de movimento linha a linha que a impressora executa (movimentos, temperaturas, ventoinha, …)."
+        },
+        "feedrate": {
+          "term": "Feedrate (F)",
+          "def": "Velocidade do movimento em mm/min - F1200 é 20 mm/s. Define a velocidade de cada movimento."
+        },
+        "macro": {
+          "term": "Macro",
+          "def": "Um comando nomeado e reutilizável (ex.: QUAD_GANTRY_LEVEL) que se expande em uma sequência de G-code."
+        }
+      }
+    },
+    "editor": {
+      "label": "G-code",
+      "simulate": "Simular",
+      "simulating": "Simulando…",
+      "sample": "Carregar exemplo",
+      "clear": "Limpar"
+    },
+    "library": {
+      "label": "Macros integradas",
+      "placeholder": "Navegar macros…",
+      "insert": "Inserir no editor",
+      "requires": "Precisa de: {sections}",
+      "none": "-"
+    },
+    "result": {
+      "title": "Simulação",
+      "moves": "{count} movimentos",
+      "distance": "{mm} mm de deslocamento",
+      "extrude": "{mm} mm extrudados",
+      "time": "~{s} s",
+      "bounds": "Limites",
+      "empty": "Nenhum movimento para simular.",
+      "timeAccel": "(com aceleração)",
+      "timeConstant": "(sem limites)"
+    },
+    "path": {
+      "title": "Caminho da cabeça de impressão (XY)",
+      "noPath": "Execute uma simulação para ver o caminho."
+    },
+    "explain": {
+      "title": "Explicar esta macro",
+      "travel": "Deslocamento rápido até X{x} Y{y} a {f} mm/min",
+      "print": "Movimento de impressão - extrudar {e} mm ao longo de {d} mm até X{x} Y{y} a {f} mm/min",
+      "retract": "Retrair {e} mm",
+      "prime": "Extrudar {e} mm no lugar",
+      "noMove": "Sem movimento",
+      "absXYZ": "Mudar para posicionamento absoluto (G90)",
+      "relXYZ": "Mudar para posicionamento relativo (G91)",
+      "absE": "Mudar para extrusão absoluta (M82)",
+      "relE": "Mudar para extrusão relativa (M83)",
+      "setPos": "Definir a posição atual (G92)",
+      "home": "Fazer home dos eixos (G28) → origem",
+      "abs": "ABS",
+      "rel": "REL",
+      "cum": "até agora: {d} mm · {e} mm · ~{s} s",
+      "note": "Laços e condicionais são expandidos da forma como a impressora faria; uma macro que precisa do estado ao vivo da impressora recorre a uma prévia literal."
+    },
+    "timeline": {
+      "title": "Linha do tempo",
+      "line": "Linha",
+      "cmd": "Comando",
+      "action": "Ação"
+    },
+    "warnings": {
+      "title": "Avisos"
+    },
+    "live": {
+      "label": "Da impressora",
+      "placeholder": "Escolha uma das suas macros instaladas…",
+      "hint": "{n} macros encontradas na impressora - escolha uma para carregar o G-code dela e simulá-la.",
+      "unreachable": "Impressora inacessível - conecte-se para carregar suas macros instaladas.",
+      "params": "Parâmetros da macro"
+    },
+    "limits": {
+      "title": "Fora dos limites / acima da velocidade",
+      "oob": "Linha {line}: {axis}={value} está fora da área de impressão ({min}…{max} mm).",
+      "overSpeed": "Linha {line}: {value} mm/s excede o limite de {limit} mm/s da impressora (o Klipper vai limitar).",
+      "buildArea": "área de impressão {x}×{y} mm"
+    },
+    "lint": {
+      "title": "Linter de macros - {n} achado(s)",
+      "rule": {
+        "gcode_state_unbalanced": {
+          "msg": "SAVE_GCODE_STATE sem um RESTORE_GCODE_STATE correspondente - o modo de posicionamento/extrusor salvo nunca é restaurado.",
+          "fix": "Adicione um RESTORE_GCODE_STATE (ou remova o SAVE)."
+        },
+        "ends_relative": {
+          "msg": "A macro termina em modo relativo (G91/M83) - o próximo comando vai se mover de forma relativa.",
+          "fix": "Adicione um G90 / M82 final, ou envolva os movimentos em SAVE_GCODE_STATE … RESTORE_GCODE_STATE."
+        },
+        "extrude_before_home": {
+          "msg": "Um movimento de extrusão acontece antes do G28 - risco de extrusão a frio ou sem home.",
+          "fix": "Faça home (G28) e aqueça o hotend antes de extrudar."
+        }
+      }
+    },
+    "heat": {
+      "colorBy": "Colorir por",
+      "none": "Plano",
+      "speed": "Velocidade",
+      "extrude": "Extrusão",
+      "legendSpeed": "Velocidade (mm/s)",
+      "legendExtrude": "Extrusão (mm/s)"
+    },
+    "compare": {
+      "title": "Comparar (A / B)",
+      "hint": "Simule um segundo programa (B) e compare-o com o resultado atual (A).",
+      "copyA": "Copiar A → B",
+      "run": "Comparar",
+      "running": "Comparando…",
+      "placeholder": "Cole ou escreva o programa B…",
+      "editorB": "Programa B",
+      "overlay": "Sobreposição de caminhos A vs B",
+      "legendA": "A",
+      "legendB": "B",
+      "lintDelta": "Diferenças do linter",
+      "lintSame": "Mesmos achados do linter em ambos.",
+      "onlyA": "só em A",
+      "onlyB": "só em B",
+      "row": {
+        "moves": "Movimentos",
+        "distance": "Distância (mm)",
+        "extrude": "Extrusão (mm)",
+        "time": "Tempo (s)"
+      }
+    },
+    "scaffold": {
+      "title": "Gerar START / END_PRINT",
+      "hint": "Monte um START_PRINT e um END_PRINT sob medida para esta impressora - o home dela, o nivelamento que ela realmente tem, uma etapa de mesh e posições de prime/park dentro da área de impressão real.",
+      "generate": "Gerar",
+      "generating": "Gerando…",
+      "loadEditor": "Carregar no editor",
+      "writeTitle": "Gravar na configuração",
+      "target": "Arquivo de destino",
+      "append": "Anexar à configuração…",
+      "confirm": "Confirmar anexo",
+      "cancel": "Cancelar",
+      "appending": "Gravando…",
+      "writeNote": "Anexa ambas as macros ao arquivo escolhido por trás do portão de confirmação - um backup é feito primeiro e as gravações são recusadas durante a impressão. Recusado se já existir uma macro com o mesmo nome.",
+      "saved": "Salvo em {file}.",
+      "savedBackup": "Salvo em {file} (backup: {backup}). Reinicie o firmware para aplicar.",
+      "note": {
+        "kinematics": "Cinemática: {k}.",
+        "bounds": "Área de impressão X {x0}-{x1}, Y {y0}-{y1} (prime/park cabem dentro).",
+        "leveling_qgl": "quad_gantry_level detectado -> adicionado QUAD_GANTRY_LEVEL.",
+        "leveling_ztilt": "z_tilt detectado -> adicionado Z_TILT_ADJUST.",
+        "leveling_none": "Nenhum quad_gantry_level / z_tilt configurado - deixado um placeholder.",
+        "mesh": "bed_mesh detectado -> adicionado BED_MESH_CALIBRATE.",
+        "no_bed": "Sem mesa aquecida - etapas de aquecimento da mesa omitidas."
+      }
+    },
+    "flow": {
+      "title": "Verificação de fluxo (teto do hotend)",
+      "hint": "Escolha seu hotend no catálogo e cada movimento de impressão é verificado contra o teto real da zona de fusão dele - uma macro com fluxo excessivo aparece antes de imprimir.",
+      "hotend": "Hotend",
+      "pick": "Escolha um hotend…",
+      "diameter": "Ø mm",
+      "ok": "Todos os movimentos de impressão estão dentro do teto de {ceiling} mm³/s.",
+      "overTitle": "{n} movimento(s) excede(m) o teto de {ceiling} mm³/s:",
+      "overLine": "Linha {line}: {flow} mm³/s"
+    }
+  }
+}
