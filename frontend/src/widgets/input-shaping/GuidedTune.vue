@@ -170,6 +170,8 @@ function advance(): void {
   gate.value = null
   suggestions.value = []
   error.value = null
+  // Reaching the final step completes the run - mark it so its rail badge goes green.
+  if (step.value.id === 'done') statuses.done = 'passed'
 }
 async function copyPa(): Promise<void> {
   try {
@@ -226,69 +228,24 @@ function review(i: number): void {
         {{ tt('inputShaping.guided.steps.' + step.id + '.why') }}
       </p>
 
-      <!-- Manual: pressure-advance tower. -->
-      <div v-if="step.id === 'pressure'" class="space-y-1">
-        <pre
-          class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
-          >{{ paGcode }}</pre
-        >
-        <div class="flex items-center gap-2">
-          <button class="nb-btn px-2 py-0.5 text-[11px]" @click="copyPa">
-            {{ paCopied ? t('inputShaping.guided.ui.copied') : t('inputShaping.guided.ui.copyPa') }}
-          </button>
-          <button class="nb-btn bg-brand-lime px-3 py-0.5 text-[11px]" @click="finishPressure">
-            {{ t('inputShaping.guided.ui.finish') }}
-          </button>
-        </div>
-        <div
-          v-for="(sug, i) in paSuggestions"
-          :key="i"
-          class="rounded-brutal border-2 border-ink px-2 py-1"
-          :class="sugBg(sug.level)"
-        >
-          <div class="text-[11px] font-bold">{{ sug.title }}</div>
-          <p class="text-[10px] leading-snug">{{ sug.why }}</p>
-        </div>
-      </div>
+      <p v-if="step.id === 'belts' && !beltsSupported" class="text-[11px] text-brand-red">
+        {{ t('inputShaping.guided.ui.beltsNotApplicable', { kin: kinematics }) }}
+      </p>
 
-      <!-- Endpoint step (noise / belts / shaper). -->
-      <div v-else class="flex flex-wrap items-center gap-2 text-[11px]">
-        <p v-if="step.id === 'belts' && !beltsSupported" class="w-full text-[11px] text-brand-red">
-          {{ t('inputShaping.guided.ui.beltsNotApplicable', { kin: kinematics }) }}
-        </p>
-        <label v-if="step.motion" class="flex items-center gap-1">
-          <input v-model="ready" type="checkbox" /> {{ t('inputShaping.guided.ui.motionReady') }}
-        </label>
-        <button
-          class="nb-btn px-2 py-0.5"
-          :class="step.motion ? 'bg-brand-red text-surface' : ''"
-          :disabled="busy || (step.motion && !ready)"
-          @click="run"
-        >
-          {{
-            busy
-              ? t('inputShaping.guided.ui.running')
-              : statuses[step.id] === 'pending'
-                ? t('inputShaping.guided.ui.run')
-                : t('inputShaping.guided.ui.rerun')
-          }}
-        </button>
-        <button v-if="step.id === 'belts'" class="nb-btn px-2 py-0.5 text-[11px]" @click="skip">
-          {{ t('inputShaping.guided.ui.skipBelts') }}
-        </button>
-      </div>
+      <!-- Manual pressure-advance tower: the g-code to run by hand. -->
+      <pre
+        v-if="step.id === 'pressure'"
+        class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
+        >{{ paGcode }}</pre
+      >
 
-      <div v-if="error" role="alert" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
-
+      <!-- Results appear here, ABOVE the fixed action bar, so the buttons never move. -->
       <VibrationsProfileView
         v-if="step.id === 'vibrations' && results.vibrations"
         :result="results.vibrations"
       />
-
       <template v-if="gate && step.id !== 'pressure'">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="nb-badge text-[11px]" :class="gateBg(gate.status)">{{ gate.headline }}</span>
-        </div>
+        <span class="nb-badge text-[11px]" :class="gateBg(gate.status)">{{ gate.headline }}</span>
         <div
           v-for="(sug, i) in suggestions"
           :key="i"
@@ -298,19 +255,72 @@ function review(i: number): void {
           <div class="text-[11px] font-bold">{{ sug.title }}</div>
           <p class="text-[10px] leading-snug">{{ sug.why }}</p>
         </div>
-        <div class="flex items-center gap-2">
+      </template>
+      <template v-if="step.id === 'pressure'">
+        <div
+          v-for="(sug, i) in paSuggestions"
+          :key="i"
+          class="rounded-brutal border-2 border-ink px-2 py-1"
+          :class="sugBg(sug.level)"
+        >
+          <div class="text-[11px] font-bold">{{ sug.title }}</div>
+          <p class="text-[10px] leading-snug">{{ sug.why }}</p>
+        </div>
+      </template>
+      <div v-if="error" role="alert" class="nb-badge bg-brand-red text-surface">{{ error }}</div>
+
+      <!-- Fixed action bar: always the LAST row, so Run / Rerun / Next stay in one place. -->
+      <div class="flex flex-wrap items-center gap-2 border-t-2 border-ink pt-1.5 text-[11px]">
+        <template v-if="step.id === 'pressure'">
+          <button class="nb-btn px-2 py-0.5 text-[11px]" @click="copyPa">
+            {{ paCopied ? t('inputShaping.guided.ui.copied') : t('inputShaping.guided.ui.copyPa') }}
+          </button>
+          <button class="nb-btn bg-brand-lime px-3 py-0.5 text-[11px]" @click="finishPressure">
+            {{ t('inputShaping.guided.ui.finish') }}
+          </button>
+        </template>
+        <template v-else>
+          <label v-if="step.motion" class="flex items-center gap-1">
+            <input v-model="ready" type="checkbox" /> {{ t('inputShaping.guided.ui.motionReady') }}
+          </label>
           <button
+            class="nb-btn px-2 py-0.5"
+            :class="step.motion ? 'bg-brand-red text-surface' : ''"
+            :disabled="busy || (step.motion && !ready)"
+            @click="run"
+          >
+            {{
+              busy
+                ? t('inputShaping.guided.ui.running')
+                : statuses[step.id] === 'pending'
+                  ? t('inputShaping.guided.ui.run')
+                  : t('inputShaping.guided.ui.rerun')
+            }}
+          </button>
+          <button
+            v-if="gate"
             class="nb-btn bg-brand-lime px-3 py-0.5 text-[11px]"
             :disabled="!canProceed"
             @click="advance"
           >
             {{ t('inputShaping.guided.ui.nextStep') }}
           </button>
-          <button v-if="!canProceed" class="nb-btn px-2 py-0.5 text-[11px]" @click="skip">
+          <button
+            v-if="step.id === 'belts' && !gate"
+            class="nb-btn px-2 py-0.5 text-[11px]"
+            @click="skip"
+          >
+            {{ t('inputShaping.guided.ui.skipBelts') }}
+          </button>
+          <button
+            v-if="gate && !canProceed"
+            class="nb-btn px-2 py-0.5 text-[11px]"
+            @click="skip"
+          >
             {{ t('inputShaping.guided.ui.skipAnyway') }}
           </button>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
 
     <!-- Summary -->
