@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.298.1] - 2026-06-19
+
+### Fixed
+
+- **The config pin-conflict scan no longer flags a shared TMC UART line.** Boards that put every
+  TMC2209 driver on one UART addressed by `uart_address` - e.g. the BTT SKR mini E3 V3.0, which
+  shares `uart_pin: PC11` and `tx_pin: PC10` across stepper_x/y/z/e - were wrongly reported as a pin
+  double-assignment on `tx_pin`. `tx_pin` and `rx_pin` are now recognized as shared-bus pins, like
+  `uart_pin` and the software SPI/I2C lines. Audited across 30 board families to confirm the
+  allow-list is complete (hardware-SPI boards select a named `spi_bus`, which the scanner already
+  ignores; per-driver dedicated UART boards are unaffected).
+
 ## [0.298.0] - 2026-06-19
 
 ### Changed

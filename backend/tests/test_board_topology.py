@@ -475,6 +475,22 @@ def test_pin_atlas_allows_shared_software_spi_bus() -> None:
     assert [f for f in atlas["findings"] if f["kind"] == "double_assign"] == []
 
 
+def test_pin_atlas_allows_shared_tmc_uart_bus() -> None:
+    """Several TMC2209s on one UART (addressed via uart_address) is valid wiring. The BTT SKR
+    mini E3 V3.0 shares uart_pin: PC11 AND tx_pin: PC10 across every driver - tx_pin/rx_pin must
+    be treated as a shared bus, not a double-assignment (regression for the SKR-mini-E3 report)."""
+    board = {"board_id": "b", "ports": [{"pinMap": [{"pin": "PC10"}, {"pin": "PC11"}]}]}
+    shared = {"uart_pin": "PC11", "tx_pin": "PC10"}
+    sections = {
+        "tmc2209 stepper_x": {**shared, "uart_address": "0"},
+        "tmc2209 stepper_y": {**shared, "uart_address": "2"},
+        "tmc2209 stepper_z": {**shared, "uart_address": "1"},
+        "tmc2209 extruder": {**shared, "uart_address": "3"},
+    }
+    atlas = board_topology.build_pin_atlas(sections, "mcu", board)
+    assert [f for f in atlas["findings"] if f["kind"] == "double_assign"] == []
+
+
 def test_pin_atlas_flags_exclusive_pin_colliding_with_shared_bus() -> None:
     """If a bus pin is ALSO grabbed as an exclusive pin (e.g. a step_pin), that IS a conflict."""
     board = {"board_id": "b", "ports": [{"pinMap": [{"pin": "PC6"}]}]}
