@@ -21,7 +21,7 @@
       "config": "Цілісність конфігурації",
       "firmware": "Синхронізація прошивки",
       "services": "Служби",
-      "tuning": "Input shaping",
+      "tuning": "Інпут-шейпінг",
       "flow": "Максимальний потік"
     },
     "services": {
@@ -33,7 +33,7 @@
     "stats": {
       "title": "Огляд",
       "maxFlow": "Максимальний потік",
-      "tuningAxis": "Shaper {axis}",
+      "tuningAxis": "Шейпер {axis}",
       "firmware": "Прошивка",
       "outOfSync": "{n} не синхронізовано",
       "allSynced": "усе синхронізовано",

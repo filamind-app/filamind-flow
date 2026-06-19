@@ -151,8 +151,8 @@
         "class": "Класс",
         "supported_drivers": "Поддерживаемые драйверы",
         "form_factor": "Форм-фактор",
-        "flash": "Flash",
-        "all_metal_accel": "All-metal / акселерометр",
+        "flash": "Flash-память",
+        "all_metal_accel": "Цельнометаллический / акселерометр",
         "ethernet_wifi": "Ethernet/WiFi",
         "i2c": "I2C",
         "driver": "Драйвер",
@@ -261,7 +261,7 @@
     },
     "jump": {
       "section": "Открыть эту секцию в редакторе конфига",
-      "drivers": "Открыть в Motor Drivers",
+      "drivers": "Открыть в «Драйверах моторов»",
       "firmware": "Открыть менеджер прошивки"
     }
   }

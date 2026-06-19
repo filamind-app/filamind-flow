@@ -13,7 +13,7 @@
       "title": "Назад в Mainsail"
     },
     "footer": {
-      "stack": "FilaMind Flow — Built by Egyptian makers, for world makers. Happy printing",
+      "stack": "FilaMind Flow — Создано египетскими мейкерами для мейкеров всего мира. Удачной печати",
       "by": "от команды DeltaFabs"
     },
     "home": {
@@ -47,7 +47,7 @@
         "boards": "Подтвердите платы в Карте машины",
         "baseline": "Сохраните базу железа (обнаружит будущие изменения)",
         "firmware": "Синхронизируйте прошивку каждого MCU с хостом",
-        "motors": "Назначьте моторы в Motor Drivers",
+        "motors": "Назначьте моторы в «Драйверах моторов»",
         "tuning": "Настройте input shaping для X и Y (мастер)"
       },
       "journal": {

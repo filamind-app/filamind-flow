@@ -18,7 +18,7 @@
     },
     "home": {
       "body": "Je panelen staan in de zijbalk - kies er een om te beginnen. Deze startpagina is voorlopig bewust leeg.",
-      "title": "Mission Control",
+      "title": "Commandocentrum",
       "refresh": "Vernieuwen",
       "loading": "Laden…",
       "unreachable": "De backend is onbereikbaar.",
@@ -28,7 +28,7 @@
       "stateError": "Fout",
       "stateIdle": "Inactief",
       "printerDown": "Moonraker is onbereikbaar.",
-      "doctor": "Machine Doctor",
+      "doctor": "Machinediagnose",
       "doctorBody": "Eén alleen-lezen scan over pinnen, driverwaarden, configafwijking, firmwaresynchronisatie en meer - beoordeeld met A-F en met spring-naar-oplossing-links.",
       "doctorScan": "Scan mijn printer",
       "firmware": "Firmwaresynchronisatie",

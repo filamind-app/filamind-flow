@@ -73,7 +73,7 @@
       "methodHint": "Auto StallGuard का उपयोग करता है, और जब StallGuard नहीं पढ़ पाता तो toolhead एक्सेलेरोमीटर (कंपन) पर वापस आ जाता है। एक्सेलेरोमीटर विधि प्रायोगिक है।"
     },
     "method": {
-      "auto": "Auto",
+      "auto": "ऑटो",
       "stallguard": "StallGuard",
       "accel": "एक्सेलेरोमीटर"
     },

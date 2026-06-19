@@ -59,7 +59,7 @@
     "mcu": {
       "chip": "칩",
       "board": "보드",
-      "unknown": "unknown",
+      "unknown": "알 수 없음",
       "identifier": "식별자",
       "confidence": "{pct}% 일치",
       "viewBoard": "보드 상세 보기",
@@ -91,7 +91,7 @@
       "canbus": "CAN bus",
       "usb": "USB",
       "uart": "UART",
-      "unknown": "unknown",
+      "unknown": "알 수 없음",
       "via": "{type} 경유"
     },
     "count": "{n}개 MCU",

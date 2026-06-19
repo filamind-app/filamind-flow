@@ -28,7 +28,7 @@
       "stateError": "エラー",
       "stateIdle": "待機中",
       "printerDown": "Moonraker に接続できません。",
-      "doctor": "Machine Doctor",
+      "doctor": "マシン診断",
       "doctorBody": "ピン、ドライバー値、設定のずれ、ファームウェア同期などを一度に読み取り専用でスキャンし、A-F で評価して修正へのジャンプリンクを表示します。",
       "doctorScan": "プリンターをスキャン",
       "firmware": "ファームウェア同期",
@@ -36,19 +36,19 @@
       "open": "開く",
       "noData": "現在データはありません。",
       "tuning": "チューニング",
-      "noTuning": "アーカイブされたチューニング実行はまだありません。Input Shaping ウィザードを実行してください。",
+      "noTuning": "アーカイブされたチューニング実行はまだありません。入力シェーピングウィザードを実行してください。",
       "hardware": "ハードウェアとベースラインの比較",
-      "noBaseline": "ハードウェアのベースラインがまだ保存されていません。Machine Map でスナップショットを保存すると変更を検出できます。",
+      "noBaseline": "ハードウェアのベースラインがまだ保存されていません。マシンマップでスナップショットを保存すると変更を検出できます。",
       "hwUnchanged": "保存済みベースライン以降、ハードウェアの変更はありません。",
       "hwChanged": "保存済みベースライン以降、{n} 件のハードウェア変更があります。",
       "setup": {
         "title": "始めましょう ({done}/{total})",
         "go": "実行",
-        "boards": "Machine Map でボードを確認する",
+        "boards": "マシンマップでボードを確認する",
         "baseline": "ハードウェアのベースラインを保存する（今後の変更を検出）",
         "firmware": "すべての MCU ファームウェアをホストと同期する",
-        "motors": "Motor Drivers でモーターを割り当てる",
-        "tuning": "X と Y の input shaping をチューニングする（ガイド付きウィザード）"
+        "motors": "モータードライバーでモーターを割り当てる",
+        "tuning": "X と Y の入力シェーピングをチューニングする（ガイド付きウィザード）"
       },
       "journal": {
         "title": "最近のアクティビティ",
@@ -94,7 +94,7 @@
       },
       "input-shaping": {
         "title": "インプットシェーピング",
-        "description": "共振 CSV を解析し、最適な input shaper を見つけます。"
+        "description": "共振 CSV を解析し、最適な入力シェーパーを見つけます。"
       },
       "motor-drivers": {
         "title": "モータードライバー",

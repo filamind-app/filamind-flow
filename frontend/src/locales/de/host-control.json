@@ -2,7 +2,7 @@
   "hostControl": {
     "intro": "Verwalte den Linux-Host des Druckers — prüfe seinen Zustand, steuere seine Hintergrunddienste, gib Speicherplatz frei und ändere Systemeinstellungen (Zeit, Sprache, Hostname, Netzwerk, Energie).",
     "view": {
-      "monitor": "Monitor",
+      "monitor": "Überwachung",
       "services": "Dienste",
       "cleanup": "Bereinigung",
       "system": "System"

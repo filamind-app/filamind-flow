@@ -28,7 +28,7 @@
       "stateError": "오류",
       "stateIdle": "대기",
       "printerDown": "Moonraker에 연결할 수 없습니다.",
-      "doctor": "Machine Doctor",
+      "doctor": "머신 닥터",
       "doctorBody": "핀, 드라이버 값, 설정 변동, 펌웨어 동기화 등을 한 번에 읽기 전용으로 스캔 - A-F 등급과 바로가기 수정 링크 제공.",
       "doctorScan": "내 프린터 스캔",
       "firmware": "펌웨어 동기화",

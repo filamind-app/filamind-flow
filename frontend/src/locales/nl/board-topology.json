@@ -58,9 +58,9 @@
     },
     "mcu": {
       "chip": "Chip",
-      "board": "Board",
+      "board": "Kaart",
       "unknown": "onbekend",
-      "identifier": "Identifier",
+      "identifier": "Identificatie",
       "confidence": "{pct}% overeenkomst",
       "viewBoard": "Boarddetails bekijken",
       "hideBoard": "Details verbergen"
@@ -111,7 +111,7 @@
       "noMatch": "Nog geen board gematcht - bevestig of stel er hieronder een in.",
       "loading": "Board laden…",
       "links": {
-        "title": "Links",
+        "title": "Koppelingen",
         "product": "Product",
         "repo": "Repo",
         "wiki": "Wiki",
@@ -124,7 +124,7 @@
         "motor": "motor",
         "heater_hotend": "hotend-verwarmer",
         "heater_bed": "bed-verwarmer",
-        "accelerometer": "accelerometer",
+        "accelerometer": "versnellingsmeter",
         "filament_sensor": "filamentsensor",
         "fan": "ventilator",
         "probe": "probe",
@@ -146,7 +146,7 @@
         "mcu": "MCU",
         "arch": "Arch",
         "flash_method": "Flashmethode",
-        "voltage": "Voltage",
+        "voltage": "Spanning",
         "driver_slots": "Driverslots",
         "usb": "USB",
         "onboard_drivers": "Ingebouwde drivers",
@@ -179,8 +179,8 @@
         "i2c": "I2C",
         "driver": "Driver",
         "i2cspi": "I2C/SPI",
-        "printer_board": "Printer / board",
-        "accelerometer": "Accelerometer",
+        "printer_board": "Printer / kaart",
+        "accelerometer": "Versnellingsmeter",
         "printers": "Printers",
         "bootloader": "Bootloader",
         "flash_offset": "Flash-offset",
@@ -192,7 +192,7 @@
         "host": "Host"
       },
       "class": {
-        "mainboard": "mainboard",
+        "mainboard": "moederbord",
         "printer_preset": "printer-preset",
         "toolhead": "toolhead",
         "host": "host",
@@ -256,7 +256,7 @@
       "summaryHost": "Host: {name}",
       "summaryIntegrated": "SBC geïntegreerd op {board}",
       "summaryMcu": "MCU {name}",
-      "summaryBoard": "board {board}",
+      "summaryBoard": "kaart {board}",
       "summaryComponents": "{n} componenten"
     },
     "jump": {

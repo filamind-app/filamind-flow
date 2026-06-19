@@ -3,7 +3,7 @@
     "intro": "找出你的熱端能持續輸出的最高體積流量（mm³/s）——做法是逐步拉高流量，同時觀察擠出機的 StallGuard 負載，捕捉齒輪打滑的瞬間。請先預覽測試計畫；實機測試會加熱並擠出料，執行前請先準備好印表機。",
     "help": {
       "guide": "說明",
-      "guideTitle": "關於 Max-Flow",
+      "guideTitle": "關於最大流量",
       "close": "關閉",
       "howToRead": "使用方式",
       "steps": [
@@ -70,10 +70,10 @@
       "autoStealthchop": "測試時自動啟用 StealthChop",
       "autoStealthchopHint": "僅限 TMC2209/2240：暫時對擠出機寫入 stealthchop_threshold，讓 StallGuard 能讀取，測試後再將其註解掉。會還原 printer.cfg；前後各需一次韌體重啟。",
       "method": "偵測方式",
-      "methodHint": "Auto 使用 StallGuard，當 StallGuard 無法讀取時改用工具頭加速度計（振動）。加速度計方式為實驗性。"
+      "methodHint": "自動使用 StallGuard，當 StallGuard 無法讀取時改用工具頭加速度計（振動）。加速度計方式為實驗性。"
     },
     "method": {
-      "auto": "Auto",
+      "auto": "自動",
       "stallguard": "StallGuard",
       "accel": "加速度計"
     },
@@ -102,7 +102,7 @@
     "run": {
       "button": "執行實機測試",
       "running": "執行中…（加熱＋擠出）",
-      "confirmTitle": "開始實機 max-flow 測試？",
+      "confirmTitle": "開始實機最大流量測試？",
       "confirmBody": "這會把熱端加熱到 {temp} °C，並擠出最多 {mm} mm 的耗材，持續拉升直到擠出機打滑。",
       "confirm": "立即執行",
       "cancel": "取消",
@@ -115,7 +115,7 @@
       "cancelling": "中止中…",
       "cancelled": "執行已中止——加熱器已關閉。",
       "reattached": "已重新接上：此結果在頁面離開期間已完成。",
-      "failed": "Max-flow 執行失敗。",
+      "failed": "最大流量執行失敗。",
       "abortNote": "中止一律會關閉加熱器。",
       "parkNote": "加熱前，印表機會（必要時）歸位並把噴嘴置中，以利清楚觀察。",
       "phase": {

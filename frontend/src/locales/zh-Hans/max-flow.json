@@ -3,7 +3,7 @@
     "intro": "找出热端能够持续达到的最高体积流量（mm³/s）——通过逐步提高流量，同时监测挤出机的 StallGuard 负载，捕捉齿轮打滑的那一刻。请先预览测试方案；实时测试会加热并挤出料丝，因此运行前请先准备好打印机。",
     "help": {
       "guide": "帮助",
-      "guideTitle": "关于 Max-Flow",
+      "guideTitle": "关于最大流量",
       "close": "关闭",
       "howToRead": "使用方法",
       "steps": [

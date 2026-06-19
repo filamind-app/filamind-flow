@@ -1,36 +1,36 @@
 {
   "boardTopology": {
-    "intro": "Yazıcınızın kontrol kartlarının nasıl bağlandığını görün: ana bilgisayar (SBC) ve konuştuğu her MCU, her bağlantı türü ve elden gelen en iyi kart / çip tahmini ile - yapılandırmadan canlı okunur.",
+    "intro": "Yazıcınızın kontrol kartlarının nasıl bağlandığını görün: ana bilgisayar (SBC) ve konuştuğu her MCU, bağlantı türleriyle birlikte ve elden gelen en iyi kart / çip tahmini - yapılandırmadan canlı okunur.",
     "help": {
       "guide": "Yardım",
-      "guideTitle": "Kart Topolojisi hakkında",
+      "guideTitle": "Kart Topolojisi Hakkında",
       "close": "Kapat",
       "howToRead": "Nasıl okunur",
       "steps": [
-        "Ana bilgisayar (SBC'niz, örneğin bir Raspberry Pi veya CB1) en üstte yer alır.",
+        "Ana bilgisayar (SBC'niz, ör. bir Raspberry Pi veya CB1) en üstte yer alır.",
         "Her MCU kartı nasıl bağlandığını (USB / CAN bus / UART) ve çipini gösterir.",
         "Bağlantı tanımlayıcısı bilinen bir kartla eşleştiğinde bir kart tahmini görünür."
       ],
       "topics": {
         "views": {
           "title": "Fiziksel ve Mantıksal görünümler",
-          "body": "Harita aynı kartları iki şekilde çizer. FİZİKSEL, makinenin gerçekte nasıl kurulduğunu gösterir: tümleşik bir SBC, birlikte geldiği ana kartın içine çizilir, CAN baş ünitleri paylaşılan bir omurga rayına asılır ve USB/UART kartları ayrı birimlerdir. MANTIKSAL, Klipper'ın bunu nasıl gördüğünü gösterir: en üstte ana bilgisayar ve her MCU, seri bağlantısı üzerinden ulaşılan bir alt öğe olarak. Fiziksel/Mantıksal anahtarıyla değiştirin."
+          "body": "Harita aynı kartları iki şekilde çizer. FİZİKSEL, makinenin gerçekte nasıl kurulduğunu gösterir: tümleşik bir SBC, geldiği ana kartın içine çizilir, CAN tabanlı toolhead'ler ortak bir omurga rayına asılır ve USB/UART kartlar ayrı birimlerdir. MANTIKSAL, Klipper'ın nasıl gördüğünü gösterir: en üstte ana bilgisayar ve her MCU, seri bağlantısı üzerinden erişilen bir alt öğe olarak. Fiziksel/Mantıksal anahtarıyla geçiş yapın."
         },
         "mcus": {
           "title": "MCU'lar",
-          "body": "MCU, motorları, ısıtıcıları ve sensörleri süren bir mikrodenetleyici kartıdır. Bir yazıcıda en az bir tane bulunur (ana kart); birçoğu bir baş ünitesi kartı ve bazen bir prob veya LED kartı ekler. Bu panel, Klipper'ın sahip olduğu her `[mcu]` bölümünü listeler."
+          "body": "MCU, motorları, ısıtıcıları ve sensörleri süren bir mikrodenetleyici kartıdır. Bir yazıcının en az bir tane vardır (ana kart); çoğu bir toolhead kartı ve bazen bir prob veya LED kartı ekler. Bu panel, Klipper'ın sahip olduğu her `[mcu]` bölümünü listeler."
         },
         "connections": {
           "title": "Bağlantı türleri",
-          "body": "USB - USB üzerinden seri bağlantı (her zamanki ana kart bağlantısı). CAN bus - paylaşılan iki kablolu bir veri yolu, baş ünitesi kartları için yaygındır. UART - GPIO üzerinden doğrudan seri bağlantı. Tür, her MCU'nun `serial` / `canbus_uuid` ayarından çıkarılır."
+          "body": "USB - USB üzerinden seri bağlantı (olağan ana kart bağlantısı). CAN bus - paylaşılan iki telli bir bus, toolhead kartları için yaygındır. UART - GPIO üzerinden doğrudan seri bağlantı. Tür, her MCU'nun `serial` / `canbus_uuid` ayarından çıkarılır."
         },
         "detection": {
           "title": "Algılama nasıl çalışır",
-          "body": "Çip ve kart, bağlantı tanımlayıcısının (seri yol veya CAN UUID) bir desen tablosuyla eşleştirilmesinin yanı sıra yapılandırmanızın kullandığı pinlerin pin haritası parmak iziyle tahmin edilir. Bir kart tahmini eşleşme güveni gösterir; hiçbir şey eşleşmediğinde çip/kart \"bilinmiyor\" olarak okunur - bağlantının kendisi yine de gösterilir."
+          "body": "Çip ve kart, bağlantı tanımlayıcısı (seri yol veya CAN UUID) bir desen tablosuyla, ayrıca yapılandırmanızın kullandığı pinlerin pin-haritası parmak iziyle eşleştirilerek tahmin edilir. Bir kart tahmini, bir eşleşme güveni gösterir; hiçbir şey eşleşmezse çip/kart \"bilinmiyor\" olarak okunur - bağlantının kendisi yine de gösterilir."
         },
         "override": {
           "title": "Bir kartı onayla veya değiştir",
-          "body": "Bir seri kimliği genellikle yalnızca çipi ortaya çıkarır, bu nedenle kart tahmini eksik veya yanlış olabilir. Doğru bir tahmini sabitlemek için \"Bu kartı onayla\"yı kullanın veya katalogdan doğru olanı seçmek için \"Kart değiştir…\" / \"Kart ayarla…\"yı kullanın. Seçiminiz ana bilgisayarda kaydedilir ve her okumada yeniden kullanılır; \"Temizle\" otomatik tahmine geri döner."
+          "body": "Bir seri kimliği genellikle yalnızca çipi ortaya koyar, bu yüzden kart tahmini eksik veya yanlış olabilir. Doğru bir tahmini sabitlemek için \"Bu kartı onayla\"yı, ya da kataloğdan doğru olanı seçmek için \"Kartı değiştir…\" / \"Kartı ayarla…\"yı kullanın. Seçiminiz ana bilgisayara kaydedilir ve her okumada yeniden kullanılır; \"Temizle\" otomatik tahmine geri döner."
         },
         "glossary": {
           "title": "Sözlük",
@@ -40,11 +40,11 @@
       "glossary": {
         "mcu": {
           "term": "MCU",
-          "def": "Mikrodenetleyici birimi - Klipper'ın aygıt yazılımını çalıştıran bir kontrol kartı (ana kart, baş ünitesi, vb.)."
+          "def": "Mikrodenetleyici birimi - Klipper firmware'ini çalıştıran bir kontrol kartı (ana kart, toolhead vb.)."
         },
         "canbus": {
           "term": "CAN bus",
-          "def": "Kartları benzersiz bir UUID ile bağlayan iki kablolu paylaşılan bir veri yolu - baş ünitesi kablolaması için popülerdir."
+          "def": "Kartları benzersiz bir UUID ile bağlayan iki telli paylaşılan bir bus - toolhead kablolaması için popülerdir."
         },
         "host": {
           "term": "Ana bilgisayar / SBC",
@@ -72,8 +72,8 @@
         "logical": "Mantıksal"
       },
       "integrated": "Kart üzerinde SBC",
-      "integratedNote": "Ana bilgisayar SBC'si {board} ana kartına gömülüdür.",
-      "selectPrompt": "İncelemek için haritada bir kart veya MCU seçin.",
+      "integratedNote": "Ana bilgisayar SBC'si, {board} ana kartına yerleşiktir.",
+      "selectPrompt": "İncelemek için haritadan bir kart veya MCU seçin.",
       "aria": "Makine haritası: ana bilgisayar ve {n} MCU",
       "vitals": {
         "freq": "{mhz} MHz",
@@ -83,8 +83,8 @@
       "health": {
         "title": "Bağlantı sağlığı",
         "ok": "sağlıklı",
-        "warn": "bozulmuş",
-        "out": "aygıt yazılımı eşitlenmemiş"
+        "warn": "düşük",
+        "out": "firmware senkronize değil"
       }
     },
     "conn": {
@@ -92,7 +92,7 @@
       "usb": "USB",
       "uart": "UART",
       "unknown": "bilinmiyor",
-      "via": "{type} ile"
+      "via": "{type} üzerinden"
     },
     "count": "{n} MCU",
     "states": {
@@ -108,22 +108,22 @@
       "specsTitle": "Özellikler",
       "portsTitle": "Bağlantı noktaları",
       "none": "Bu kart için henüz katalog ayrıntısı yok.",
-      "noMatch": "Henüz eşleşen kart yok - aşağıdan onaylayın veya bir tane ayarlayın.",
+      "noMatch": "Henüz eşleşen kart yok - aşağıdan birini onaylayın veya ayarlayın.",
       "loading": "Kart yükleniyor…",
       "links": {
         "title": "Bağlantılar",
         "product": "Ürün",
         "repo": "Depo",
         "wiki": "Wiki",
-        "pinout": "Pin dizilimi",
+        "pinout": "Pin çıkışı",
         "schematic": "Şema",
         "datasheet": "Veri sayfası",
         "image": "Fotoğraf"
       },
       "portCat": {
         "motor": "motor",
-        "heater_hotend": "hotend ısıtıcı",
-        "heater_bed": "tabla ısıtıcı",
+        "heater_hotend": "hotend ısıtıcısı",
+        "heater_bed": "tabla ısıtıcısı",
         "accelerometer": "ivmeölçer",
         "filament_sensor": "filament sensörü",
         "fan": "fan",
@@ -149,7 +149,7 @@
         "voltage": "Voltaj",
         "driver_slots": "Sürücü yuvaları",
         "usb": "USB",
-        "onboard_drivers": "Yerleşik sürücüler",
+        "onboard_drivers": "Kart üzerindeki sürücüler",
         "clock": "Saat",
         "can": "CAN",
         "drivers": "Sürücüler",
@@ -159,14 +159,14 @@
         "build_volume_mm": "Baskı hacmi (mm)",
         "bed": "Tabla",
         "hotend": "Hotend",
-        "stock_extruder": "Standart ekstrüder",
+        "stock_extruder": "Standart ekstruder",
         "year": "Yıl",
         "control_board": "Kontrol kartı",
         "stock_drivers": "Standart sürücüler",
         "uart": "UART",
-        "connectivity": "Bağlanabilirlik",
-        "max_hotend_temp": "Maks. hotend sıcaklığı",
-        "max_bed_temp": "Maks. tabla sıcaklığı",
+        "connectivity": "Bağlantı",
+        "max_hotend_temp": "Maks hotend sıcaklığı",
+        "max_bed_temp": "Maks tabla sıcaklığı",
         "spi": "SPI",
         "notes": "Notlar",
         "eth_wifi": "Eth/WiFi",
@@ -174,7 +174,7 @@
         "supported_drivers": "Desteklenen sürücüler",
         "form_factor": "Form faktörü",
         "flash": "Flash",
-        "all_metal_accel": "Tam metal / ivmeölçer",
+        "all_metal_accel": "Tamamı metal / ivmeölçer",
         "ethernet_wifi": "Ethernet/WiFi",
         "i2c": "I2C",
         "driver": "Sürücü",
@@ -183,7 +183,7 @@
         "accelerometer": "İvmeölçer",
         "printers": "Yazıcılar",
         "bootloader": "Önyükleyici",
-        "flash_offset": "Flash uzaklığı",
+        "flash_offset": "Flash ofseti",
         "soc": "SoC",
         "ram": "RAM",
         "role": "Rol",
@@ -212,11 +212,11 @@
         "details": "Ayrıntılar",
         "atlas": "Pin Atlası"
       },
-      "summary": "{used}/{total} pin kullanıldı · {free} boş",
+      "summary": "{used}/{total} pin kullanımda · {free} boş",
       "loading": "Pin haritası okunuyor…",
       "failed": "Pin haritası okunamadı.",
       "unavailable": "Bu kart için henüz pin haritası yok.",
-      "search": "Pinleri, sinyalleri, bölümleri ara…",
+      "search": "Pin, sinyal, bölüm ara…",
       "freeOnly": "Yalnızca boş",
       "noMatch": "Eşleşen pin yok.",
       "other": "Diğer",
@@ -226,21 +226,21 @@
     "override": {
       "confirmed": "Sizin tarafınızdan onaylandı",
       "confirm": "Bu kartı onayla",
-      "change": "Kart değiştir…",
-      "set": "Kart ayarla…",
+      "change": "Kartı değiştir…",
+      "set": "Kartı ayarla…",
       "clear": "Temizle",
       "pickPlaceholder": "Kart kataloğunda ara…",
-      "hint": "Seçiminiz ana bilgisayarda kaydedilir ve bu MCU için bundan sonra kullanılır."
+      "hint": "Seçiminiz ana bilgisayara kaydedilir ve bundan sonra bu MCU için kullanılır."
     },
     "sync": {
-      "synced": "Aygıt yazılımı eşitlendi",
-      "outOfSync": "Aygıt yazılımı EŞİTLENMEDİ"
+      "synced": "Firmware senkronize",
+      "outOfSync": "Firmware SENKRONİZE DEĞİL"
     },
     "snapshot": {
-      "save": "Anlık görüntü kaydet",
+      "save": "Anlık görüntüyü kaydet",
       "copy": "Özeti kopyala",
       "copied": "Kopyalandı!",
-      "none": "Kaydedilmiş başlangıç noktası yok - gelecekteki değişiklikleri algılamak için bir anlık görüntü kaydedin.",
+      "none": "Kaydedilmiş referans yok - gelecekteki değişiklikleri algılamak için bir anlık görüntü kaydedin.",
       "unchanged": "Anlık görüntüden bu yana donanım değişikliği yok",
       "changed": "Anlık görüntüden bu yana {n} değişiklik",
       "summaryTitle": "FilaMind - makine haritası",
@@ -254,7 +254,7 @@
       },
       "noCompare": "Karşılaştırılamadı - yazıcıya ulaşılamıyor.",
       "summaryHost": "Ana bilgisayar: {name}",
-      "summaryIntegrated": "SBC, {board} üzerine tümleşik",
+      "summaryIntegrated": "{board} üzerinde tümleşik SBC",
       "summaryMcu": "MCU {name}",
       "summaryBoard": "kart {board}",
       "summaryComponents": "{n} bileşen"
@@ -262,7 +262,7 @@
     "jump": {
       "section": "Bu bölümü Yapılandırma Düzenleyici'de aç",
       "drivers": "Motor Sürücüleri'nde aç",
-      "firmware": "Aygıt Yazılımı Yöneticisi'ni aç"
+      "firmware": "Firmware Yöneticisi'ni aç"
     }
   }
 }

@@ -218,7 +218,7 @@
       "noSpecs": "لا تتوفر بيانات داتاشيت لهذا الموتور — توصية الضبط غير متاحة.",
       "measured": "مقاس: المحركات ترن عند ~{freq} هرتز",
       "measuredSym": "تماثل {pct}%",
-      "measuredHint": "حقيقة مقاسة من ملف الاهتزازات على هذه الطابعة — افتح سجل Input Shaping."
+      "measuredHint": "حقيقة مقاسة من ملف الاهتزازات على هذه الطابعة — افتح سجل تشكيل الإدخال."
     },
     "motorSync": {
       "toggle": "مزامنة المحرّكات",
@@ -299,7 +299,7 @@
       "readOnly": "سجلّات للقراءة فقط",
       "toffHint": "إذا ضبطت toff على 1، فأبقِ أيضًا tbl ≥ 1 (وقت التفريغ ذو 16 دورة يحتاجه).",
       "groups": {
-        "chopper": "Chopper",
+        "chopper": "القاطع",
         "stealthchop": "StealthChop (PWM)",
         "stallguard": "StallGuard",
         "thresholds": "العتبات والتوقيت",

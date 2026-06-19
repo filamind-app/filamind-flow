@@ -86,10 +86,10 @@
       "stale": "KlipperScreen.conf가 불러온 이후 디스크에서 변경되었습니다(화면에서 편집된 것으로 보임). 그 변경을 덮어쓰지 않도록 저장 전에 다시 불러오세요."
     },
     "view": {
-      "config": "Config",
-      "settings": "Settings",
-      "menus": "Menus",
-      "themes": "Themes",
+      "config": "구성",
+      "settings": "설정",
+      "menus": "메뉴",
+      "themes": "테마",
       "kiosk": "Kiosk"
     },
     "settings": {

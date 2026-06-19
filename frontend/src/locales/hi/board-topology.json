@@ -59,7 +59,7 @@
     "mcu": {
       "chip": "चिप",
       "board": "बोर्ड",
-      "unknown": "unknown",
+      "unknown": "अज्ञात",
       "identifier": "पहचानकर्ता",
       "confidence": "{pct}% मैच",
       "viewBoard": "बोर्ड विवरण देखें",
@@ -91,7 +91,7 @@
       "canbus": "CAN bus",
       "usb": "USB",
       "uart": "UART",
-      "unknown": "unknown",
+      "unknown": "अज्ञात",
       "via": "{type} के ज़रिए"
     },
     "count": "{n} MCU",

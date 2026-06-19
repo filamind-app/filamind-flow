@@ -2,7 +2,7 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "Không thể kết nối tới backend FilaMind - hãy kiểm tra xem dịch vụ filamind-flow có đang chạy và truy cập được không.",
+      "backendUnreachable": "Không thể kết nối với backend FilaMind - kiểm tra dịch vụ filamind-flow đang chạy và có thể truy cập được.",
       "requestFailed": "Yêu cầu thất bại ({status})"
     }
   },
@@ -17,28 +17,28 @@
     "ocean": "Đại dương",
     "sunset": "Hoàng hôn",
     "desc": {
-      "neon": "Đêm tím thẫm với ánh sáng điện rực rỡ - vẻ ngoài đặc trưng",
-      "midnight": "Tông tối xanh dương đậm chuyên nghiệp",
-      "dark": "Tông tối xám trung tính hiện đại",
-      "ocean": "Xanh mòng két đậm với điểm nhấn xanh nước biển",
+      "neon": "Đêm tím đậm với ánh sáng điện - phong cách đặc trưng",
+      "midnight": "Tối xanh dương đậm chuyên nghiệp",
+      "dark": "Tối xám trung tính hiện đại",
+      "ocean": "Xanh mòng két đậm với điểm nhấn xanh nước",
       "sunset": "Tím mận ấm với điểm nhấn hổ phách",
-      "light": "Tông sáng Neo-Brutalist gọn gàng",
+      "light": "Sáng Neo-Brutalist sạch sẽ",
       "contrast": "Khả năng đọc tối đa (a11y)"
     }
   },
   "configApply": {
     "title": "Áp dụng vào printer.cfg…",
-    "hint": "Ghi khối này vào tệp đã chọn thông qua cổng an toàn: một mục đã tồn tại sẽ được hợp nhất theo từng tham số (các dòng khác của nó được giữ lại), mục còn thiếu sẽ được thêm vào. Một bản sao lưu được tạo trước; bị từ chối khi đang in hoặc nếu tệp đã thay đổi trên đĩa.",
+    "hint": "Ghi khối này vào tệp đã chọn qua cổng an toàn: một mục đã tồn tại được hợp nhất theo từng tham số (các dòng khác của nó được giữ lại), một mục thiếu sẽ được thêm vào. Một bản sao lưu được tạo trước; bị từ chối khi đang in hoặc nếu tệp đã thay đổi trên đĩa.",
     "target": "Tệp đích",
-    "ack": "Tôi đã xem lại khối này và muốn ghi",
+    "ack": "Tôi đã xem lại khối này và muốn ghi nó",
     "apply": "Áp dụng",
     "applying": "Đang áp dụng…",
-    "busy": "Máy in đang bận (hoặc có thao tác khác đang chạy) - hãy thử lại khi máy rảnh.",
-    "stale": "Tệp đã thay đổi trên đĩa trong khi áp dụng - không có gì được ghi. Hãy thử lại.",
+    "busy": "Máy in đang bận (hoặc một thao tác khác đang chạy) - thử lại khi máy rảnh.",
+    "stale": "Tệp đã thay đổi trên đĩa khi đang áp dụng - không ghi gì cả. Thử lại.",
     "saved": "Đã lưu (bản sao lưu: {backup}).",
     "added": "đã thêm [{section}]: {params}",
     "updated": "đã cập nhật [{section}]: {params}",
-    "noop": "Mọi thứ đã ở các giá trị này - không có gì thay đổi.",
+    "noop": "Mọi thứ đã ở các giá trị này rồi - không có gì thay đổi.",
     "restartHint": "Klipper vẫn chạy các giá trị cũ cho đến khi khởi động lại firmware.",
     "restart": "Khởi động lại firmware…",
     "restartConfirm": "Xác nhận khởi động lại",

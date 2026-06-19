@@ -75,7 +75,7 @@
     "method": {
       "auto": "Auto",
       "stallguard": "StallGuard",
-      "accel": "Accelerometer"
+      "accel": "Versnellingsmeter"
     },
     "plan": {
       "button": "Plan bekijken",

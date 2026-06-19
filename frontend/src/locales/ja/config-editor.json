@@ -3,7 +3,7 @@
     "intro": "プリンターのライブ設定を Moonraker から直接読み込みます。すべてのファイルをセクションとパラメーターに解析し、構造上の問題を検出します。現時点では読み取り専用で、ガイド付き編集は今後追加されます。",
     "help": {
       "guide": "ヘルプ",
-      "guideTitle": "Config Editor について",
+      "guideTitle": "設定エディターについて",
       "close": "閉じる",
       "howToRead": "使い方",
       "steps": [
@@ -77,7 +77,7 @@
     },
     "view": {
       "structured": "構造化表示",
-      "raw": "Raw",
+      "raw": "生データ",
       "expandAll": "すべて展開",
       "collapseAll": "すべて折りたたむ"
     },
@@ -221,7 +221,7 @@
       "failed": "一部のパネルを読み込めず、非表示になっています: {panels}。それらが何をチェックするかは現時点で不明で、問題がないとは限りません。",
       "name": {
         "drift": "ディスクとライブの比較",
-        "pinDoctor": "Pin Doctor",
+        "pinDoctor": "ピンドクター",
         "sanity": "ドライバー妥当性チェック",
         "project": "プロジェクトビュー",
         "pinMap": "ピンの提案",

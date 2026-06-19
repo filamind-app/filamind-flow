@@ -127,7 +127,7 @@
     "catalog": {
       "title": "Añadir un bloque de config del catálogo",
       "hint": "Elige una pieza — su bloque Klipper exacto (run_current, sense_resistor y nombres de pin reales) se añade al archivo para revisarlo y guardarlo.",
-      "drivers": "Drivers",
+      "drivers": "Controladores",
       "motors": "Motores",
       "boards": "Placas",
       "pickPlaceholder": "Buscar en el catálogo…",

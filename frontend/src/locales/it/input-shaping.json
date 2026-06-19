@@ -73,7 +73,7 @@
           "def": "Densità spettrale di potenza - quanta energia di vibrazione si trova a ogni frequenza. Il picco alto è la risonanza che lo shaper prende di mira."
         },
         "smoothing": {
-          "term": "Smoothing",
+          "term": "Arrotondamento",
           "def": "Un effetto collaterale dello shaping che arrotonda leggermente gli angoli netti. Più basso è meglio; ≤0,1 è minimo, >0,2 inizia a smussare i dettagli."
         },
         "vibrationPct": {
@@ -110,7 +110,7 @@
         }
       },
       "smoothing": {
-        "label": "Smoothing",
+        "label": "Arrotondamento",
         "note": {
           "good": "Arrotondamento minimo degli angoli.",
           "ok": "Qualche arrotondamento ad alta accelerazione.",
@@ -391,7 +391,7 @@
         "noise": "Rumore"
       },
       "sustain": {
-        "target": "Target",
+        "target": "Obiettivo",
         "dominant": "Dominante",
         "inBand": "In banda",
         "onTarget": "A target",
@@ -645,7 +645,7 @@
       "metric": {
         "score": "Voto della misura",
         "vibrations": "Vibrazione residua %",
-        "smoothing": "Smoothing",
+        "smoothing": "Arrotondamento",
         "maxAccel": "Accel max suggerita (mm/s²)",
         "freq": "Frequenza shaper (Hz)",
         "shaper": "Shaper"

@@ -75,7 +75,7 @@
     "tabs": {
       "catalog": "Catalogus",
       "search": "Alles zoeken",
-      "boards": "Boards",
+      "boards": "Kaarten",
       "drivers": "Drivers",
       "motors": "Motoren",
       "hosts": "Hosts",
@@ -89,7 +89,7 @@
     },
     "boards": {
       "search": "Boards zoeken",
-      "total": "{n} boards",
+      "total": "{n} kaarten",
       "none": "Geen boards gevonden.",
       "view": "Details",
       "hide": "Verbergen",
@@ -147,7 +147,7 @@
       "search": "MCU's zoeken",
       "total": "{n} MCU's",
       "none": "Geen MCU's gevonden.",
-      "boards": "{n} boards"
+      "boards": "{n} kaarten"
     },
     "related": {
       "title": "Gekoppelde hardware",
@@ -159,7 +159,7 @@
         "mcus": "MCU",
         "onboardDrivers": "Onboard drivers",
         "supportedDrivers": "Ondersteunde drivers",
-        "boards": "Boards",
+        "boards": "Kaarten",
         "motors": "Motoren",
         "hosts": "Hosts",
         "catalog": "Onderdelen"
@@ -176,7 +176,7 @@
       "anyType": "Alle types",
       "nemaOption": "NEMA {n}",
       "boardClass": {
-        "mainboard": "Mainboard",
+        "mainboard": "Moederbord",
         "toolhead": "Toolhead",
         "printer-preset": "Printer-preset",
         "expansion": "Uitbreiding",
@@ -215,7 +215,7 @@
         "hotend": "Hotend",
         "host": "Host / SBC",
         "manufacturer": "Fabrikant",
-        "board": "Board",
+        "board": "Kaart",
         "catalog": "Ander catalogusitem"
       },
       "group": {

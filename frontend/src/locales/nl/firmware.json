@@ -24,7 +24,7 @@
           "body": "Deze tonen welke bouw-/flash-tools op de host aanwezig zijn: Klipper (de bron + bouwsysteem), Katapult, flashtool, dfu-util, avrdude, can-utils. Een ✗ betekent dat die tool niet geïnstalleerd is - je hebt alleen die nodig die jouw borden gebruiken. De “setup”-badge markeert hostproblemen (sudoers, udev-regels) met aanwijzingen om het op te lossen."
         },
         "services": {
-          "title": "Services",
+          "title": "Diensten",
           "body": "Start / stop / herstart de hostservices (Klipper, Moonraker, …). Flashen stopt meestal Klipper zodat de seriële poort vrijkomt en herstart het daarna - met deze knoppen kun je dat zo nodig handmatig doen."
         },
         "devices": {
@@ -98,7 +98,7 @@
       "healthOk": "✓ ingesteld",
       "healthOkTitle": "host is ingericht voor flashen",
       "healthIssues": "{n} setup-probleem | {n} setup-problemen",
-      "servicesHeading": "Services",
+      "servicesHeading": "Diensten",
       "svcStart": "starten",
       "svcStop": "stoppen",
       "svcRestart": "herstarten",

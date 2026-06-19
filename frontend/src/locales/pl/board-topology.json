@@ -1,6 +1,6 @@
 {
   "boardTopology": {
-    "intro": "Zobacz, jak łączą się płyty sterujące Twojej drukarki: host (SBC) i każdy MCU, z którym się komunikuje, wraz z typem każdego połączenia oraz najlepszym przybliżeniem płyty / układu - odczytane na żywo z konfiguracji.",
+    "intro": "Zobacz, jak łączą się płyty sterujące Twojej drukarki: host (SBC) i każdy MCU, z którym się komunikuje, wraz z typem każdego połączenia oraz orientacyjnym rozpoznaniem płyty / układu - odczytane na żywo z konfiguracji.",
     "help": {
       "guide": "Pomoc",
       "guideTitle": "O topologii płyt",
@@ -8,61 +8,61 @@
       "howToRead": "Jak czytać",
       "steps": [
         "Host (Twój SBC, np. Raspberry Pi lub CB1) znajduje się na górze.",
-        "Każda karta MCU pokazuje sposób połączenia (USB / magistrala CAN / UART) oraz jego układ.",
-        "Przybliżenie płyty pojawia się, gdy identyfikator połączenia pasuje do znanej płyty."
+        "Każda karta MCU pokazuje sposób połączenia (USB / CAN bus / UART) i jego układ.",
+        "Domniemana płyta pojawia się, gdy identyfikator połączenia pasuje do znanej płyty."
       ],
       "topics": {
         "views": {
-          "title": "Widok fizyczny vs logiczny",
-          "body": "Mapa rysuje te same płyty na dwa sposoby. FIZYCZNY pokazuje, jak maszyna jest faktycznie zbudowana: zintegrowany SBC rysowany jest wewnątrz płyty głównej, na której jest dostarczany, głowice CAN wiszą na wspólnej szynie magistrali, a płyty USB/UART to oddzielne moduły. LOGICZNY pokazuje, jak widzi to Klipper: host na górze, a każdy MCU jako element podrzędny osiągalny przez swoje łącze szeregowe. Przełączaj przełącznikiem Fizyczny/Logiczny."
+          "title": "Widok fizyczny a logiczny",
+          "body": "Mapa rysuje te same płyty na dwa sposoby. FIZYCZNY pokazuje, jak maszyna jest faktycznie zbudowana: zintegrowany SBC jest rysowany wewnątrz płyty głównej, na której jest dostarczany, głowice CAN zwisają ze wspólnej szyny, a płyty USB/UART są osobnymi jednostkami. LOGICZNY pokazuje, jak widzi to Klipper: host na górze, a każdy MCU jako element podrzędny osiągany przez jego łącze szeregowe. Przełączaj przełącznikiem Fizyczny/Logiczny."
         },
         "mcus": {
           "title": "MCU",
-          "body": "MCU to płyta z mikrokontrolerem, która steruje silnikami, grzałkami i czujnikami. Drukarka ma co najmniej jeden (płytę główną); wiele dodaje płytę głowicy, a czasem płytę sondy lub LED. Ten panel wymienia każdą sekcję `[mcu]`, którą zna Klipper."
+          "body": "MCU to mikrokontroler napędzający silniki, grzałki i czujniki. Drukarka ma ich co najmniej jeden (płyta główna); wiele dodaje płytę głowicy, a czasem płytę sondy lub LED. Ten panel wymienia każdą sekcję `[mcu]`, jaką ma Klipper."
         },
         "connections": {
           "title": "Typy połączeń",
-          "body": "USB - łącze szeregowe przez USB (typowe połączenie płyty głównej). Magistrala CAN - wspólna dwuprzewodowa magistrala, częsta dla płyt głowic. UART - bezpośrednie łącze szeregowe przez GPIO. Typ jest wnioskowany z ustawienia `serial` / `canbus_uuid` każdego MCU."
+          "body": "USB - łącze szeregowe przez USB (typowe połączenie płyty głównej). CAN bus - wspólna dwuprzewodowa magistrala, częsta dla płyt głowic. UART - bezpośrednie łącze szeregowe przez GPIO. Typ jest wnioskowany z ustawienia `serial` / `canbus_uuid` każdego MCU."
         },
         "detection": {
           "title": "Jak działa wykrywanie",
-          "body": "Układ i płyta są przybliżane poprzez dopasowanie identyfikatora połączenia (ścieżki szeregowej lub CAN UUID) do tabeli wzorców oraz odcisku mapy pinów, których używa Twoja konfiguracja. Przybliżenie płyty pokazuje pewność dopasowania; gdy nic nie pasuje, układ/płyta są oznaczone jako \"nieznane\" - samo połączenie jest nadal pokazywane."
+          "body": "Układ i płyta są odgadywane przez dopasowanie identyfikatora połączenia (ścieżki szeregowej lub UUID CAN) do tabeli wzorców, wraz z odciskiem mapy pinów używanych w konfiguracji. Domniemana płyta pokazuje pewność dopasowania; gdy nic nie pasuje, układ/płyta to „unknown” - samo połączenie nadal jest wyświetlane."
         },
         "override": {
           "title": "Potwierdź lub zmień płytę",
-          "body": "Identyfikator szeregowy zwykle ujawnia tylko układ, więc przybliżenie płyty może być brakujące lub błędne. Użyj \"Potwierdź tę płytę\", aby zatwierdzić poprawne przybliżenie, lub \"Zmień płytę…\" / \"Ustaw płytę…\", aby wybrać właściwą z katalogu. Twój wybór jest zapisywany na hoście i używany przy każdym odczycie; \"Wyczyść\" przywraca automatyczne przybliżenie."
+          "body": "Identyfikator szeregowy zwykle ujawnia tylko układ, więc domniemana płyta może być nieobecna lub błędna. Użyj „Potwierdź tę płytę”, aby zatwierdzić poprawne dopasowanie, albo „Zmień płytę…” / „Ustaw płytę…”, aby wybrać właściwą z katalogu. Twój wybór jest zapisywany na hoście i używany przy każdym odczycie; „Wyczyść” przywraca automatyczne odgadnięcie."
         },
         "glossary": {
-          "title": "Słowniczek",
+          "title": "Słownik",
           "body": ""
         }
       },
       "glossary": {
         "mcu": {
           "term": "MCU",
-          "def": "Jednostka mikrokontrolera - płyta sterująca z firmware Klipper (płyta główna, głowica itp.)."
+          "def": "Mikrokontroler - płyta sterująca z firmware Klippera (płyta główna, głowica itp.)."
         },
         "canbus": {
           "term": "Magistrala CAN",
-          "def": "Dwuprzewodowa wspólna magistrala łącząca płyty przez unikalny UUID - popularna w okablowaniu głowic."
+          "def": "Wspólna dwuprzewodowa magistrala łącząca płyty po unikalnym UUID - popularna w okablowaniu głowic."
         },
         "host": {
           "term": "Host / SBC",
-          "def": "Komputer jednopłytkowy (Pi, CB1, …), który uruchamia Klipper i komunikuje się z MCU."
+          "def": "Komputer jednopłytkowy (Pi, CB1, …), który uruchamia Klippera i komunikuje się z MCU."
         }
       }
     },
     "host": {
       "label": "Host",
-      "role": "Komputer jednopłytkowy - uruchamia Klipper"
+      "role": "Komputer jednopłytkowy - uruchamia Klippera"
     },
     "mcu": {
       "chip": "Układ",
       "board": "Płyta",
-      "unknown": "nieznany",
+      "unknown": "nieznana",
       "identifier": "Identyfikator",
       "confidence": "{pct}% dopasowania",
-      "viewBoard": "Pokaż szczegóły płyty",
+      "viewBoard": "Zobacz szczegóły płyty",
       "hideBoard": "Ukryj szczegóły"
     },
     "graph": {
@@ -73,7 +73,7 @@
       },
       "integrated": "SBC na płycie",
       "integratedNote": "Host SBC jest wbudowany w płytę główną {board}.",
-      "selectPrompt": "Wybierz płytę lub MCU na mapie, aby ją sprawdzić.",
+      "selectPrompt": "Wybierz płytę lub MCU na mapie, aby ją zbadać.",
       "aria": "Mapa maszyny: host i {n} MCU",
       "vitals": {
         "freq": "{mhz} MHz",
@@ -82,9 +82,9 @@
       },
       "health": {
         "title": "Stan łącza",
-        "ok": "sprawne",
-        "warn": "osłabione",
-        "out": "firmware niezsynchronizowany"
+        "ok": "prawidłowy",
+        "warn": "pogorszony",
+        "out": "firmware niezsynchronizowane"
       }
     },
     "conn": {
@@ -97,25 +97,25 @@
     "count": "{n} MCU",
     "states": {
       "loading": "Odczytywanie topologii…",
-      "unreachable": "Nie można połączyć się z drukarką.",
+      "unreachable": "Nie udało się połączyć z drukarką.",
       "empty": "Nie znaleziono MCU w konfiguracji.",
       "retry": "Ponów",
       "refresh": "Odśwież"
     },
     "board": {
-      "suggested": "sugerowane",
+      "suggested": "sugerowana",
       "ports": "{n} portów",
       "specsTitle": "Specyfikacja",
       "portsTitle": "Porty",
-      "none": "Brak szczegółów katalogowych dla tej płyty.",
-      "noMatch": "Nie dopasowano jeszcze płyty - potwierdź lub ustaw ją poniżej.",
+      "none": "Brak na razie szczegółów katalogowych dla tej płyty.",
+      "noMatch": "Brak dopasowanej płyty - potwierdź lub ustaw jedną poniżej.",
       "loading": "Ładowanie płyty…",
       "links": {
-        "title": "Linki",
+        "title": "Łącza",
         "product": "Produkt",
         "repo": "Repozytorium",
         "wiki": "Wiki",
-        "pinout": "Rozkład pinów",
+        "pinout": "Wyprowadzenia",
         "schematic": "Schemat",
         "datasheet": "Karta katalogowa",
         "image": "Zdjęcie"
@@ -147,16 +147,16 @@
         "arch": "Architektura",
         "flash_method": "Metoda wgrywania",
         "voltage": "Napięcie",
-        "driver_slots": "Sloty sterowników",
+        "driver_slots": "Gniazda sterowników",
         "usb": "USB",
         "onboard_drivers": "Sterowniki wbudowane",
         "clock": "Zegar",
         "can": "CAN",
         "drivers": "Sterowniki",
         "dimensions_mm": "Wymiary (mm)",
-        "role_era": "Rola / epoka",
+        "role_era": "Rola / era",
         "kinematics": "Kinematyka",
-        "build_volume_mm": "Przestrzeń robocza (mm)",
+        "build_volume_mm": "Obszar roboczy (mm)",
         "bed": "Stół",
         "hotend": "Hotend",
         "stock_extruder": "Ekstruder fabryczny",
@@ -174,7 +174,7 @@
         "supported_drivers": "Obsługiwane sterowniki",
         "form_factor": "Format",
         "flash": "Flash",
-        "all_metal_accel": "Pełnometalowy / akcel.",
+        "all_metal_accel": "Całometalowy / akcel.",
         "ethernet_wifi": "Ethernet/WiFi",
         "i2c": "I2C",
         "driver": "Sterownik",
@@ -193,7 +193,7 @@
       },
       "class": {
         "mainboard": "płyta główna",
-        "printer_preset": "preset drukarki",
+        "printer_preset": "profil drukarki",
         "toolhead": "głowica",
         "host": "host",
         "expansion": "rozszerzenie"
@@ -212,16 +212,16 @@
         "details": "Szczegóły",
         "atlas": "Atlas pinów"
       },
-      "summary": "{used}/{total} pinów użytych · {free} wolnych",
+      "summary": "użyto {used}/{total} pinów · {free} wolnych",
       "loading": "Odczytywanie mapy pinów…",
-      "failed": "Nie można odczytać mapy pinów.",
-      "unavailable": "Brak mapy pinów dla tej płyty.",
+      "failed": "Nie udało się odczytać mapy pinów.",
+      "unavailable": "Brak na razie mapy pinów dla tej płyty.",
       "search": "Szukaj pinów, sygnałów, sekcji…",
       "freeOnly": "Tylko wolne",
       "noMatch": "Brak pasujących pinów.",
       "other": "Inne",
       "conflict": "Konflikt pinów",
-      "caveat": "Uwaga dot. okablowania"
+      "caveat": "Zastrzeżenie okablowania"
     },
     "override": {
       "confirmed": "Potwierdzone przez Ciebie",
@@ -229,32 +229,32 @@
       "change": "Zmień płytę…",
       "set": "Ustaw płytę…",
       "clear": "Wyczyść",
-      "pickPlaceholder": "Przeszukaj katalog płyt…",
+      "pickPlaceholder": "Szukaj w katalogu płyt…",
       "hint": "Twój wybór jest zapisywany na hoście i od teraz używany dla tego MCU."
     },
     "sync": {
-      "synced": "Firmware zsynchronizowany",
-      "outOfSync": "Firmware NIEZSYNCHRONIZOWANY"
+      "synced": "Firmware zsynchronizowane",
+      "outOfSync": "Firmware NIEZSYNCHRONIZOWANE"
     },
     "snapshot": {
       "save": "Zapisz migawkę",
       "copy": "Kopiuj podsumowanie",
       "copied": "Skopiowano!",
-      "none": "Brak zapisanej linii bazowej - zapisz migawkę, aby wykrywać przyszłe zmiany.",
+      "none": "Brak zapisanej bazy - zapisz migawkę, aby wykrywać przyszłe zmiany.",
       "unchanged": "Brak zmian sprzętowych od czasu migawki",
-      "changed": "{n} zmian(y) od czasu migawki",
+      "changed": "{n} zmian(a) od czasu migawki",
       "summaryTitle": "FilaMind - mapa maszyny",
       "change": {
         "added": "Dodano MCU „{mcu}”",
         "removed": "Usunięto MCU „{mcu}”",
-        "board_changed": "Płyta „{mcu}” zmieniona: {before} → {after}",
-        "connection_changed": "Połączenie „{mcu}” zmienione: {before} → {after}",
-        "chip_changed": "Układ „{mcu}” zmieniony: {before} → {after}",
-        "components_changed": "Liczba komponentów „{mcu}” zmieniona: {before} → {after}"
+        "board_changed": "„{mcu}” zmiana płyty: {before} → {after}",
+        "connection_changed": "„{mcu}” zmiana połączenia: {before} → {after}",
+        "chip_changed": "„{mcu}” zmiana układu: {before} → {after}",
+        "components_changed": "„{mcu}” zmiana liczby komponentów: {before} → {after}"
       },
       "noCompare": "Nie można porównać - drukarka jest nieosiągalna.",
       "summaryHost": "Host: {name}",
-      "summaryIntegrated": "SBC zintegrowany z {board}",
+      "summaryIntegrated": "SBC zintegrowany na {board}",
       "summaryMcu": "MCU {name}",
       "summaryBoard": "płyta {board}",
       "summaryComponents": "{n} komponentów"

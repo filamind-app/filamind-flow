@@ -129,7 +129,7 @@
       "hint": "Kies een onderdeel - het hardware-accurate Klipper-blok (echte run_current, sense_resistor, pinnamen) wordt aan het bestand toegevoegd zodat jij het kunt beoordelen en opslaan.",
       "drivers": "Drivers",
       "motors": "Motoren",
-      "boards": "Boards",
+      "boards": "Kaarten",
       "pickPlaceholder": "Doorzoek de catalogus…",
       "inserted": "Het blok voor {name} is ingevoegd - bekijk het in Ruw en sla op.",
       "noSnippet": "Geen configblok beschikbaar voor {name}."
@@ -234,7 +234,7 @@
       "kind": "Onderdeeltype",
       "name": "Naam",
       "namePh": "bijv. chamber_fan",
-      "mcu": "Board (MCU)",
+      "mcu": "Kaart (MCU)",
       "pin": "Vrije pin",
       "pinPh": "Kies een vrije pin…",
       "noFree": "Geen vrije benoemde pinnen op deze boardmap."

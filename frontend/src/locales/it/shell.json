@@ -28,7 +28,7 @@
       "stateError": "Errore",
       "stateIdle": "Inattiva",
       "printerDown": "Moonraker non è raggiungibile.",
-      "doctor": "Machine Doctor",
+      "doctor": "Dottore della macchina",
       "doctorBody": "Una scansione in sola lettura su pin, valori dei driver, deriva della configurazione, sincronizzazione del firmware e altro - valutata da A a F con link per saltare alla correzione.",
       "doctorScan": "Scansiona la mia stampante",
       "firmware": "Sincronizzazione firmware",

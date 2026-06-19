@@ -1,6 +1,6 @@
 {
   "configTemplates": {
-    "intro": "Yapıştırmaya hazır Klipper yapılandırma blokları ve makrolar - başlangıç dizileri, filament işleme, giriş şekillendirme, tabla ağı ve daha fazlası. Birini kopyalayıp printer.cfg dosyanıza ekleyin (Yapılandırma Düzenleyici yapıştırmak için iyi bir yerdir).",
+    "intro": "Yapıştırmaya hazır Klipper yapılandırma blokları ve makroları - başlangıç dizileri, filament işleme, input shaping, tabla ağı ve daha fazlası. Birini kopyalayın ve printer.cfg'nize bırakın (Yapılandırma Düzenleyici onu yapıştırmak için iyi bir yerdir).",
     "help": {
       "guide": "Yardım",
       "guideTitle": "Yapılandırma Şablonları Hakkında",
@@ -14,15 +14,15 @@
       "topics": {
         "what": {
           "title": "Bunlar nedir",
-          "body": "Yaygın Klipper yapı taşlarından özenle seçilmiş bir set: gcode_macros (PRINT_START, PAUSE/RESUME, filament yükleme/boşaltma, M600) ve yapılandırma bölümleri ([input_shaper], [bed_mesh], [firmware_retraction], …). Bunlar başlangıç noktalarıdır - her birini okuyun ve makineniz için ince ayarını yapın."
+          "body": "Yaygın Klipper yapı taşlarından oluşan derli toplu bir set: gcode_macro'lar (PRINT_START, PAUSE/RESUME, filament yükle/boşalt, M600) ve yapılandırma bölümleri ([input_shaper], [bed_mesh], [firmware_retraction], …). Bunlar başlangıç noktalarıdır - her birini okuyun ve makineniz için ayarlayın."
         },
         "insert": {
           "title": "Bir şablon ekleme",
-          "body": "Bir şablonu kopyalayın, ardından printer.cfg dosyanıza yapıştırın - Yapılandırma Düzenleyici'nin Ham görünümü uygun bir noktadır. Kaydettikten sonra bir donanım yazılımı yeniden başlatması bunu uygular. Değerleri her zaman önce gözden geçirin; buradaki varsayılanlar makuldür ama yazıcınıza göre ince ayarlanmamıştır."
+          "body": "Bir şablonu kopyalayın, ardından printer.cfg'nize yapıştırın - Yapılandırma Düzenleyici'nin Ham görünümü uygun bir yerdir. Kaydettikten sonra bir firmware yeniden başlatması onu uygular. Değerleri her zaman önce inceleyin; buradaki varsayılanlar makul ama yazıcınıza göre ayarlanmamıştır."
         },
         "sections": {
           "title": "Gerekli bölümler",
-          "body": "Her şablon, tanımladığı veya bağımlı olduğu yapılandırma bölümlerini listeler. Bir bölüm yapılandırmanızda zaten varsa, yinelenen bir kopya yapıştırmak yerine anahtarları birleştirin (yinelenen bir bölüm başlangıçta reddedilir)."
+          "body": "Her şablon, tanımladığı veya bağlı olduğu yapılandırma bölümlerini listeler. Bir bölüm yapılandırmanızda zaten varsa, bir kopyasını yapıştırmak yerine anahtarları birleştirin (yinelenen bir bölüm başlangıçta reddedilir)."
         },
         "glossary": {
           "title": "Sözlük",
@@ -32,15 +32,15 @@
       "glossary": {
         "template": {
           "term": "Şablon",
-          "def": "printer.cfg dosyasına kopyaladığınız, yapıştırmaya hazır bir Klipper yapılandırma veya makro G-code parçacığı."
+          "def": "printer.cfg'ye kopyaladığınız, yapıştırmaya hazır bir Klipper yapılandırma veya makro G-code parçası."
         },
         "macro": {
           "term": "gcode_macro",
-          "def": "Bir G-code dizisi çalıştıran, yapılandırmada tanımladığınız adlandırılmış bir komut (örn. PRINT_START)."
+          "def": "Yapılandırmada tanımladığınız (ör. PRINT_START) ve bir G-code dizisini çalıştıran adlandırılmış bir komut."
         },
         "section": {
           "term": "Bölüm",
-          "def": "[köşeli parantezli] bir yapılandırma bloğu, örn. [bed_mesh] - Klipper yapılandırmasının gruplandığı birim."
+          "def": "[köşeli parantezli] bir yapılandırma bloğu, ör. [bed_mesh] - Klipper yapılandırmasının gruplandığı birim."
         }
       }
     },

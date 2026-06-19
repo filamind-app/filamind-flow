@@ -73,7 +73,7 @@
       "methodHint": "Auto는 StallGuard를 사용하며, StallGuard가 값을 읽지 못하면 툴헤드 가속도계(진동)로 대체합니다. 가속도계 방식은 실험적입니다."
     },
     "method": {
-      "auto": "Auto",
+      "auto": "자동",
       "stallguard": "StallGuard",
       "accel": "가속도계"
     },

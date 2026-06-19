@@ -36,19 +36,19 @@
       "open": "開啟",
       "noData": "目前沒有資料。",
       "tuning": "調校",
-      "noTuning": "尚未封存任何調校紀錄 - 執行 Input Shaping 精靈。",
+      "noTuning": "尚未封存任何調校紀錄 - 執行輸入整形精靈。",
       "hardware": "硬體與基準比較",
-      "noBaseline": "尚未儲存硬體基準 - 在 Machine Map 中儲存快照以偵測變更。",
+      "noBaseline": "尚未儲存硬體基準 - 在主機板拓樸中儲存快照以偵測變更。",
       "hwUnchanged": "自儲存基準以來硬體未變更。",
       "hwChanged": "自儲存基準以來有 {n} 項硬體變更。",
       "setup": {
         "title": "開始使用 ({done}/{total})",
         "go": "前往",
-        "boards": "在 Machine Map 中確認你的主機板",
+        "boards": "在主機板拓樸中確認你的主機板",
         "baseline": "儲存硬體基準（偵測未來的變更）",
         "firmware": "讓每個 MCU 韌體與主機同步",
-        "motors": "在 Motor Drivers 中指派你的馬達",
-        "tuning": "為 X 與 Y 調校 input shaping（導引精靈）"
+        "motors": "在馬達驅動器中指派你的馬達",
+        "tuning": "為 X 與 Y 調校輸入整形（導引精靈）"
       },
       "journal": {
         "title": "近期活動",
@@ -94,7 +94,7 @@
       },
       "input-shaping": {
         "title": "輸入整形",
-        "description": "分析共振 CSV 並找出最佳的 input shaper。"
+        "description": "分析共振 CSV 並找出最佳的輸入整形器。"
       },
       "motor-drivers": {
         "title": "馬達驅動器",

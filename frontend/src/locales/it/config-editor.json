@@ -221,7 +221,7 @@
       "failed": "Alcuni pannelli non sono stati caricati e sono nascosti: {panels}. Ciò che verificherebbero è sconosciuto al momento - non necessariamente a posto.",
       "name": {
         "drift": "Disco-vs-live",
-        "pinDoctor": "Pin Doctor",
+        "pinDoctor": "Dottore dei pin",
         "sanity": "Plausibilità driver",
         "project": "Vista progetto",
         "pinMap": "Suggerimenti pin",

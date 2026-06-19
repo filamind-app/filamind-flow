@@ -77,7 +77,7 @@
     },
     "view": {
       "structured": "구조화",
-      "raw": "Raw",
+      "raw": "원본",
       "expandAll": "모두 펼치기",
       "collapseAll": "모두 접기"
     },
@@ -221,7 +221,7 @@
       "failed": "일부 패널을 불러올 수 없어 숨겨졌습니다: {panels}. 이들이 무엇을 확인하는지는 지금 알 수 없습니다 - 반드시 괜찮다는 뜻은 아닙니다.",
       "name": {
         "drift": "디스크 대 실시간",
-        "pinDoctor": "Pin Doctor",
+        "pinDoctor": "핀 닥터",
         "sanity": "드라이버 점검",
         "project": "프로젝트 보기",
         "pinMap": "핀 제안",

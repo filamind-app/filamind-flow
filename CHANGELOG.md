@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.297.0] - 2026-06-19
+
+### Fixed
+
+- **Large translation-completeness pass across every language.** A deeper audit - checking each
+  non-Latin locale for native-script presence rather than just string matches - found many
+  interface strings still showing in English: whole help sections, the guided step labels (Noise,
+  Belts, Shaper, Vibrations, Pressure), KlipperScreen tab names, and various metric labels. About
+  870 strings across the 18 translated languages are now localized. Genuine technical terms
+  (G-code, MCU, CAN bus, `printer.cfg`, `max_accel`, StealthChop, unit symbols, and product names)
+  are kept in their standard form by design.
+
 ## [0.296.1] - 2026-06-19
 
 ### Fixed

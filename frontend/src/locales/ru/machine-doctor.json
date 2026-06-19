@@ -21,7 +21,7 @@
       "config": "Целостность конфигурации",
       "firmware": "Синхр. прошивки",
       "services": "Службы",
-      "tuning": "Input shaping",
+      "tuning": "Подавление вибраций",
       "flow": "Макс. поток"
     },
     "services": {
@@ -95,7 +95,7 @@
     },
     "help": {
       "guide": "Справка",
-      "guideTitle": "О Machine Doctor",
+      "guideTitle": "О Докторе машины",
       "close": "Закрыть",
       "howToRead": "Как читать",
       "steps": [

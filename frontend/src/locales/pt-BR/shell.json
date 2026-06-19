@@ -28,7 +28,7 @@
       "stateError": "Erro",
       "stateIdle": "Ociosa",
       "printerDown": "O Moonraker está inacessível.",
-      "doctor": "Machine Doctor",
+      "doctor": "Diagnóstico da Máquina",
       "doctorBody": "Uma varredura somente leitura por pinos, valores de driver, desvio de configuração, sincronização de firmware e mais - avaliada de A a F com links para correção direta.",
       "doctorScan": "Examinar minha impressora",
       "firmware": "Sincronização de firmware",

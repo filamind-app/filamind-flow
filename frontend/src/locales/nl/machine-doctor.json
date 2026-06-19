@@ -20,12 +20,12 @@
     "pillar": {
       "config": "Configintegriteit",
       "firmware": "Firmwaresync",
-      "services": "Services",
+      "services": "Diensten",
       "tuning": "Input shaping",
       "flow": "Max. flow"
     },
     "services": {
-      "title": "Services",
+      "title": "Diensten",
       "active": "actief",
       "inactive": "gestopt",
       "none": "Geen services gerapporteerd."

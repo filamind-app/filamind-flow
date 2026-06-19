@@ -21,7 +21,7 @@
       "config": "설정 무결성",
       "firmware": "펌웨어 동기화",
       "services": "서비스",
-      "tuning": "Input shaping",
+      "tuning": "입력 셰이핑",
       "flow": "최대 유량"
     },
     "services": {
@@ -33,7 +33,7 @@
     "stats": {
       "title": "한눈에 보기",
       "maxFlow": "최대 유량",
-      "tuningAxis": "Shaper {axis}",
+      "tuningAxis": "셰이퍼 {axis}",
       "firmware": "펌웨어",
       "outOfSync": "{n}개 동기화 안 됨",
       "allSynced": "모두 동기화됨",

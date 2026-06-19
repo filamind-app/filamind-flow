@@ -122,10 +122,10 @@
       "stealthchopThreshold": "StealthChop < {t} mm/s",
       "spreadcycle": "SpreadCycle",
       "health": {
-        "idle": "idle",
+        "idle": "inattivo",
         "ok": "ok",
-        "warning": "warning",
-        "fault": "fault"
+        "warning": "avviso",
+        "fault": "guasto"
       },
       "celsius": "{v} °C",
       "noSensor": "nessun sensore",
@@ -151,13 +151,13 @@
         "mh": "{v} mH"
       },
       "flag": {
-        "overtemp": "overtemp",
-        "tempWarn": "temp-warn",
+        "overtemp": "sovratemp",
+        "tempWarn": "avviso-temp",
         "shortA": "corto A",
         "shortB": "corto B",
         "openLoadA": "circuito aperto A",
         "openLoadB": "circuito aperto B",
-        "standstill": "standstill"
+        "standstill": "fermo"
       },
       "runCurrent": "corrente di marcia (A)"
     },
