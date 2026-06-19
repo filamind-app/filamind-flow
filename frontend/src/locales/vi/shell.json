@@ -97,7 +97,7 @@
         "description": "Phân tích CSV cộng hưởng và tìm input shaper tốt nhất."
       },
       "motor-drivers": {
-        "title": "Motor Drivers",
+        "title": "Driver Động Cơ",
         "description": "Kiểm kê driver bước TMC trực tiếp: dòng điện, chế độ, microsteps và trạng thái."
       },
       "config-editor": {
@@ -105,7 +105,7 @@
         "description": "Duyệt các tệp cấu hình máy in, được phân tích thành các mục kèm kiểm tra hợp lệ."
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "Lưu Lượng Tối Đa",
         "description": "Đo lưu lượng thể tích cao nhất mà hotend có thể duy trì (StallGuard)."
       },
       "board-topology": {

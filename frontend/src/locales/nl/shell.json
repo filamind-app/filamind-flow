@@ -89,7 +89,7 @@
     },
     "widgets": {
       "firmware-upgrade": {
-        "title": "Firmware Manager",
+        "title": "Firmwarebeheer",
         "description": "MCU-firmwareversies, host-syncstatus en gereedheid van de toolchain."
       },
       "input-shaping": {
@@ -97,15 +97,15 @@
         "description": "Analyseer een resonantie-CSV en vind de beste input shaper."
       },
       "motor-drivers": {
-        "title": "Motor Drivers",
+        "title": "Motordrivers",
         "description": "Live TMC-stappenmotordriver-inventaris: stroom, modus, microstappen en status."
       },
       "config-editor": {
-        "title": "Config Editor",
+        "title": "Configuratiebewerker",
         "description": "Blader door de configbestanden van je printer, geparseerd in secties met validatie."
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "Max. flow",
         "description": "Meet de hoogste volumetrische flow die je hotend kan volhouden (StallGuard)."
       },
       "board-topology": {
@@ -113,11 +113,11 @@
         "description": "Zie hoe de host en MCU's verbinden (USB / CAN / UART) + een board-gok."
       },
       "macro-designer": {
-        "title": "Macro Designer",
+        "title": "Macro-ontwerper",
         "description": "Simuleer G-code offline - toolhead-pad, grenzen, totalen en een macrobibliotheek."
       },
       "hardware-browser": {
-        "title": "Hardware Browser",
+        "title": "Hardwarebrowser",
         "description": "Doorzoek een samengestelde 3D-print-hardwarereferentie op naam, fabrikant of specificatie."
       },
       "config-templates": {
@@ -125,11 +125,11 @@
         "description": "Klaar-om-te-plakken Klipper-configblokken en macro's, per categorie."
       },
       "machine-doctor": {
-        "title": "Machine Doctor",
+        "title": "Machinediagnose",
         "description": "Volledige printerscan met één klik, met een A-F-rapportkaart en spring-naar-oplossing-links."
       },
       "host-control": {
-        "title": "Host Control",
+        "title": "Hostbeheer",
         "description": "Beheer het Linux-besturingssysteem van de printerhost: gezondheid, services, schijfopruiming en systeeminstellingen."
       },
       "klipperscreen-studio": {

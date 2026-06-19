@@ -97,7 +97,7 @@
         "description": "Analizza un CSV di risonanza e trova il miglior input shaper."
       },
       "motor-drivers": {
-        "title": "Motor Drivers",
+        "title": "Driver dei motori",
         "description": "Inventario in tempo reale dei driver stepper TMC: corrente, modalità, microstep e stato."
       },
       "config-editor": {
@@ -105,7 +105,7 @@
         "description": "Sfoglia i file di configurazione della tua stampante, suddivisi in sezioni con validazione."
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "Flusso massimo",
         "description": "Misura il massimo flusso volumetrico che il tuo hotend può sostenere (StallGuard)."
       },
       "board-topology": {
@@ -113,11 +113,11 @@
         "description": "Vedi come host e MCU si collegano (USB / CAN / UART) + un'ipotesi sulla scheda."
       },
       "macro-designer": {
-        "title": "Macro Designer",
+        "title": "Editor di macro",
         "description": "Simula il G-code offline - percorso della testa, limiti, totali e una libreria di macro."
       },
       "hardware-browser": {
-        "title": "Hardware Browser",
+        "title": "Catalogo hardware",
         "description": "Cerca in una raccolta curata di hardware per la stampa 3D per nome, produttore o specifica."
       },
       "config-templates": {
@@ -125,7 +125,7 @@
         "description": "Blocchi di configurazione Klipper e macro pronti da incollare, per categoria."
       },
       "machine-doctor": {
-        "title": "Machine Doctor",
+        "title": "Diagnostica macchina",
         "description": "Scansione completa della stampante con un clic, con pagella da A a F e link per saltare alla correzione."
       },
       "host-control": {

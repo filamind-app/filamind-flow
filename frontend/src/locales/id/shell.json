@@ -97,7 +97,7 @@
         "description": "Analisis CSV resonansi dan temukan input shaper terbaik."
       },
       "motor-drivers": {
-        "title": "Motor Drivers",
+        "title": "Driver Motor",
         "description": "Inventaris driver stepper TMC langsung: arus, mode, microstep, dan status."
       },
       "config-editor": {
@@ -105,7 +105,7 @@
         "description": "Jelajahi file konfigurasi printer Anda, diurai menjadi bagian dengan validasi."
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "Aliran Maks",
         "description": "Ukur aliran volumetrik tertinggi yang dapat ditahan hotend Anda (StallGuard)."
       },
       "board-topology": {
@@ -125,7 +125,7 @@
         "description": "Blok konfigurasi Klipper dan makro siap-tempel, per kategori."
       },
       "machine-doctor": {
-        "title": "Machine Doctor",
+        "title": "Dokter Mesin",
         "description": "Pindaian printer penuh sekali klik dengan rapor A-F dan tautan lompat-ke-perbaikan."
       },
       "host-control": {
