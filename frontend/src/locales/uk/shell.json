@@ -93,7 +93,7 @@
         "description": "Версії прошивки MCU, стан синхронізації з хостом і готовність інструментарію."
       },
       "input-shaping": {
-        "title": "Input Shaping",
+        "title": "Подавлення вібрацій",
         "description": "Проаналізуйте CSV резонансу та знайдіть найкращий input shaper."
       },
       "motor-drivers": {

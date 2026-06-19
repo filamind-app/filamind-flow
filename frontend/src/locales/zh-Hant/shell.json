@@ -93,11 +93,11 @@
         "description": "MCU 韌體版本、主機同步狀態與工具鏈就緒情形。"
       },
       "input-shaping": {
-        "title": "Input Shaping",
+        "title": "輸入整形",
         "description": "分析共振 CSV 並找出最佳的 input shaper。"
       },
       "motor-drivers": {
-        "title": "Motor Drivers",
+        "title": "馬達驅動器",
         "description": "即時 TMC 步進驅動器清單：電流、模式、微步與狀態。"
       },
       "config-editor": {
@@ -105,7 +105,7 @@
         "description": "瀏覽印表機的設定檔，解析成各區段並附帶驗證。"
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "最大流量",
         "description": "測量熱端可持續維持的最高體積流量（StallGuard）。"
       },
       "board-topology": {

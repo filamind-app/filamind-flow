@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.296.1] - 2026-06-19
+
+### Fixed
+
+- **Widget sidebar names are now translated in every language.** Several widget titles (Max-Flow,
+  Machine Doctor, Motor Drivers, and a few others) were still shown in English in some locales while
+  translated in others. They are now localized consistently across all languages. "Input Shaping" is
+  kept in English for Latin-script languages (the term most printer communities use untranslated, as
+  German / French / Spanish already did) and translated for the non-Latin scripts.
+- **Long sidebar names show in full on hover.** A translated name that is wider than the sidebar is
+  trimmed with an ellipsis; the full name now appears as a tooltip on hover.
+
 ## [0.296.0] - 2026-06-18
 
 ### Fixed

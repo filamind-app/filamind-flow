@@ -93,11 +93,11 @@
         "description": "MCU ファームウェアのバージョン、ホスト同期状況、ツールチェーンの準備状況。"
       },
       "input-shaping": {
-        "title": "Input Shaping",
+        "title": "インプットシェーピング",
         "description": "共振 CSV を解析し、最適な input shaper を見つけます。"
       },
       "motor-drivers": {
-        "title": "Motor Drivers",
+        "title": "モータードライバー",
         "description": "TMC ステッパードライバーのリアルタイム一覧: 電流、モード、マイクロステップ、ステータス。"
       },
       "config-editor": {
@@ -105,7 +105,7 @@
         "description": "プリンターの設定ファイルをセクションごとに解析し、検証して閲覧します。"
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "最大流量",
         "description": "ホットエンドが維持できる最大の体積流量を測定します（StallGuard）。"
       },
       "board-topology": {
@@ -125,7 +125,7 @@
         "description": "カテゴリ別の、すぐ貼り付けられる Klipper 設定ブロックとマクロ。"
       },
       "machine-doctor": {
-        "title": "Machine Doctor",
+        "title": "マシン診断",
         "description": "ワンクリックでプリンター全体をスキャンし、A-F の成績表と修正へのジャンプリンクを表示します。"
       },
       "host-control": {

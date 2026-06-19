@@ -44,6 +44,7 @@ const items = computed(() => [
         class="nb-btn w-full justify-start text-start"
         :class="current === item.id ? 'bg-brand-cyan' : 'bg-surface'"
         :aria-current="current === item.id ? 'page' : undefined"
+        :title="item.label"
         @click="go(item.id)"
       >
         <span class="w-5 shrink-0 text-center" aria-hidden="true">{{ item.icon }}</span>

@@ -93,11 +93,11 @@
         "description": "MCU फ़र्मवेयर संस्करण, होस्ट सिंक स्थिति, और टूलचेन तत्परता।"
       },
       "input-shaping": {
-        "title": "Input Shaping",
+        "title": "इनपुट शेपिंग",
         "description": "एक resonance CSV का विश्लेषण करें और सबसे अच्छा input shaper खोजें।"
       },
       "motor-drivers": {
-        "title": "Motor Drivers",
+        "title": "मोटर ड्राइवर",
         "description": "लाइव TMC स्टेपर-ड्राइवर इन्वेंट्री: करंट, मोड, माइक्रोस्टेप्स, और स्थिति।"
       },
       "config-editor": {
@@ -105,7 +105,7 @@
         "description": "अपने प्रिंटर की कॉन्फ़िग फ़ाइलें ब्राउज़ करें, सत्यापन के साथ सेक्शन में पार्स की गईं।"
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "अधिकतम फ्लो",
         "description": "अपने hotend द्वारा बनाए रखे जा सकने वाले उच्चतम वॉल्यूमेट्रिक फ़्लो को मापें (StallGuard)।"
       },
       "board-topology": {
@@ -125,7 +125,7 @@
         "description": "श्रेणी के अनुसार, पेस्ट करने के लिए तैयार Klipper कॉन्फ़िग ब्लॉक और मैक्रो।"
       },
       "machine-doctor": {
-        "title": "Machine Doctor",
+        "title": "मशीन डॉक्टर",
         "description": "A-F रिपोर्ट कार्ड और jump-to-fix लिंक के साथ एक-क्लिक पूर्ण-प्रिंटर स्कैन।"
       },
       "host-control": {

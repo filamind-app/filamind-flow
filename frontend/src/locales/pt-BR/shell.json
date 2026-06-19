@@ -97,7 +97,7 @@
         "description": "Analise um CSV de ressonância e encontre o melhor input shaper."
       },
       "motor-drivers": {
-        "title": "Motor Drivers",
+        "title": "Drivers de Motor",
         "description": "Inventário ao vivo dos drivers de passo TMC: corrente, modo, microsteps e status."
       },
       "config-editor": {
@@ -105,7 +105,7 @@
         "description": "Navegue pelos arquivos de configuração da sua impressora, divididos em seções com validação."
       },
       "max-flow": {
-        "title": "Max-Flow",
+        "title": "Fluxo Máximo",
         "description": "Meça o maior fluxo volumétrico que seu hotend consegue sustentar (StallGuard)."
       },
       "board-topology": {
@@ -125,7 +125,7 @@
         "description": "Blocos de configuração e macros do Klipper prontos para colar, por categoria."
       },
       "machine-doctor": {
-        "title": "Machine Doctor",
+        "title": "Diagnóstico da Máquina",
         "description": "Varredura completa da impressora com um clique, com boletim de A a F e links para correção direta."
       },
       "host-control": {
