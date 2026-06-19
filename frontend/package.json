@@ -45,7 +45,7 @@
     "vue-i18n": "^11.4.4"
   },
   "devDependencies": {
-    "@intlify/unplugin-vue-i18n": "^11.2.3",
+    "@intlify/unplugin-vue-i18n": "^11.2.4",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^25.9.3",
     "@vitejs/plugin-vue": "^5.2.1",
@@ -53,7 +53,7 @@
     "@vue/eslint-config-typescript": "^14.1.4",
     "@vue/test-utils": "^2.4.11",
     "@vue/tsconfig": "^0.9.1",
-    "eslint": "^9.16.0",
+    "eslint": "^10.5.0",
     "eslint-plugin-vue": "^10.9.2",
     "jsdom": "^29.1.1",
     "postcss": "^8.4.49",
@@ -61,7 +61,7 @@
     "tailwindcss": "^4.3.1",
     "typescript": "~6.0.3",
     "vite": "^6.0.3",
-    "vitest": "^2.1.8",
-    "vue-tsc": "^2.1.10"
+    "vitest": "^4.1.9",
+    "vue-tsc": "^3.3.5"
   }
 }
