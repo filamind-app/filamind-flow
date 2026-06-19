@@ -129,10 +129,16 @@ _COMPONENT_KINDS: list[tuple[re.Pattern[str], str]] = [
 ]
 
 #: Config keys whose pins name a SHARED bus, not an exclusive assignment. Klipper lets the
-#: same software-SPI / software-I2C / single-wire-UART pins recur across many sections - a
-#: stack of TMC51xx drivers sharing one software-SPI bus, several drivers on one UART line
-#: addressed separately, an accelerometer sharing the toolhead's SPI. Repetition of these is
-#: valid wiring, NOT a double-assignment (which only an exclusive pin - step/heater/cs/… - is).
+#: same software-SPI / software-I2C / UART pins recur across many sections - a stack of TMC51xx
+#: drivers sharing one software-SPI bus, several TMC2209s on one UART line addressed by
+#: ``uart_address``, an accelerometer sharing the toolhead's SPI. Repetition of these is valid
+#: wiring, NOT a double-assignment (which only an exclusive pin - step/heater/cs/… - is).
+#:
+#: TMC UART comes in two wirings, both legitimately shared across every driver section:
+#:   * one-wire: ``uart_pin`` only (RX/TX on one line);
+#:   * two-wire: ``uart_pin`` (RX) + ``tx_pin`` (TX) - e.g. the BTT SKR mini E3 V3.0 shares
+#:     ``uart_pin: PC11`` and ``tx_pin: PC10`` across stepper_x/y/z/e, distinguished only by
+#:     ``uart_address``. ``rx_pin`` is the same line for boards that name it explicitly.
 _SHARED_BUS_PIN_KEYS: frozenset[str] = frozenset(
     {
         "spi_software_miso_pin",
@@ -141,6 +147,8 @@ _SHARED_BUS_PIN_KEYS: frozenset[str] = frozenset(
         "i2c_software_scl_pin",
         "i2c_software_sda_pin",
         "uart_pin",
+        "tx_pin",
+        "rx_pin",
     }
 )
 
