@@ -130,7 +130,7 @@
         "onboard_drivers": "Drivers integrados",
         "clock": "Reloj",
         "can": "CAN",
-        "drivers": "Drivers",
+        "drivers": "Controladores",
         "dimensions_mm": "Dimensiones (mm)",
         "role_era": "Rol / época",
         "kinematics": "Cinemática",
@@ -155,7 +155,7 @@
         "all_metal_accel": "All-metal / acel.",
         "ethernet_wifi": "Ethernet/WiFi",
         "i2c": "I2C",
-        "driver": "Driver",
+        "driver": "Controlador",
         "i2cspi": "I2C/SPI",
         "printer_board": "Impresora / placa",
         "accelerometer": "Acelerómetro",
@@ -180,7 +180,7 @@
     "components": {
       "title": "Componentes",
       "motor": "Motores",
-      "driver": "Drivers",
+      "driver": "Controladores",
       "heater": "Calentadores",
       "fan": "Ventiladores",
       "sensor": "Sensores"

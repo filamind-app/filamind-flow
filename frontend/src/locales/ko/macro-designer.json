@@ -47,7 +47,7 @@
     },
     "editor": {
       "label": "G-code",
-      "simulate": "Simulate",
+      "simulate": "시뮬레이션",
       "simulating": "시뮬레이션 중…",
       "sample": "샘플 불러오기",
       "clear": "지우기"

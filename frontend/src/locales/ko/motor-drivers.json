@@ -299,7 +299,7 @@
       "readOnly": "읽기 전용 레지스터",
       "toffHint": "toff를 1로 설정하면 tbl도 ≥ 1로 유지하세요(16-사이클 블랭크 시간에 필요합니다).",
       "groups": {
-        "chopper": "Chopper",
+        "chopper": "초퍼",
         "stealthchop": "StealthChop (PWM)",
         "stallguard": "StallGuard",
         "thresholds": "임계값 & 타이밍",

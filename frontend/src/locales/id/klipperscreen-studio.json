@@ -190,7 +190,7 @@
       "done": "KlipperScreen sedang restart - layar akan dimuat ulang sebentar lagi.",
       "confirmTitle": "Mulai ulang KlipperScreen?",
       "confirmBody": "Ini me-restart layanan layar sentuh untuk menerapkan perubahan Anda. Tidak memengaruhi cetakan yang aktif, tetapi layar menjadi kosong selama beberapa detik.",
-      "confirm": "Restart",
+      "confirm": "Mulai ulang",
       "cancel": "Batal"
     }
   }

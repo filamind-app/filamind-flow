@@ -2,7 +2,7 @@
   "hostControl": {
     "intro": "Gestisci l'host Linux della stampante - controlla il suo stato, gestisci i servizi in background, libera spazio su disco e modifica le impostazioni di sistema (ora, lingua, hostname, rete, alimentazione).",
     "view": {
-      "monitor": "Monitor",
+      "monitor": "Monitoraggio",
       "services": "Servizi",
       "cleanup": "Pulizia",
       "system": "Sistema"
@@ -56,7 +56,7 @@
           "def": "Spazio su disco usato come overflow quando la RAM si riempie. Un uso intenso dello swap rallenta l'host - segno che è a corto di memoria."
         },
         "throttle": {
-          "term": "Throttling",
+          "term": "Limitazione (throttling)",
           "def": "Quando la scheda riduce la velocità per proteggersi - di solito a causa di un'alimentazione insufficiente (sottotensione) o surriscaldamento. Segnalato principalmente su Raspberry Pi."
         },
         "ntp": {
@@ -64,7 +64,7 @@
           "def": "Il Network Time Protocol mantiene preciso l'orologio dell'host. Un orologio non sincronizzato può compromettere timelapse, log e certificati TLS."
         },
         "locale": {
-          "term": "Locale",
+          "term": "Impostazioni locali (locale)",
           "def": "Le impostazioni di lingua e layout di tastiera dell'host, usate dal sistema operativo per testo, date e mappatura tasti della console."
         },
         "service": {
@@ -76,7 +76,7 @@
           "def": "Se un servizio si avvia automaticamente all'avvio. 'abilitato' parte all'avvio; 'disabilitato' no; 'static' viene avviato solo da un altro servizio."
         },
         "mask": {
-          "term": "Mask",
+          "term": "Mascherare (mask)",
           "def": "Una forma più forte di disabilitazione - il servizio non può essere avviato affatto (nemmeno da un altro servizio) finché non viene smascherato. Usare con cautela."
         }
       }
@@ -89,7 +89,7 @@
       "hostname": "Hostname",
       "distro": "OS",
       "kernel": "Kernel",
-      "uptime": "Uptime",
+      "uptime": "Tempo di attività",
       "cpu": "CPU",
       "temp": "Temperatura",
       "load": "Carico (1·5·15m)",

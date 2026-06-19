@@ -61,7 +61,7 @@
       },
       "glossary": {
         "inputShaper": {
-          "term": "Input shaper",
+          "term": "इनपुट शेपर",
           "def": "एक फ़िल्टर जो Klipper गति पर लागू करता है जो प्रिंटर की मुख्य कंपन को रद्द करता है, ताकि आप ringing / ghosting के बिना तेज़ प्रिंट कर सकें।"
         },
         "resonance": {
@@ -73,7 +73,7 @@
           "def": "Power spectral density - हर फ़्रीक्वेंसी पर कितनी कंपन ऊर्जा है। ऊँचा peak वही रेज़ोनेंस है जिसे shaper लक्षित करता है।"
         },
         "smoothing": {
-          "term": "Smoothing",
+          "term": "स्मूदिंग",
           "def": "shaping का एक दुष्प्रभाव जो तीखे कोनों को थोड़ा गोल कर देता है। कम बेहतर है; ≤0.1 न्यूनतम है, >0.2 विवरण को नरम करने लगता है।"
         },
         "vibrationPct": {
@@ -110,7 +110,7 @@
         }
       },
       "smoothing": {
-        "label": "Smoothing",
+        "label": "स्मूदिंग",
         "note": {
           "good": "न्यूनतम कोना गोलाई।",
           "ok": "अधिक त्वरण पर कुछ गोलाई।",
@@ -280,33 +280,33 @@
     "guided": {
       "steps": {
         "noise": {
-          "label": "Noise",
+          "label": "शोर",
           "title": "Accelerometer शोर",
           "why": "किसी भी परीक्षण से पहले पुष्टि करें कि सेंसर ठोस रूप से लगा है (गति-रहित)।"
         },
         "belts": {
-          "label": "Belts",
+          "label": "बेल्ट",
           "title": "CoreXY बेल्ट संतुलन",
           "why": "दोनों बेल्ट तनावों का मेल करें। केवल CoreXY - cartesian / bed-slinger पर छोड़ें।"
         },
         "shaperX": {
-          "label": "Shaper X",
-          "title": "Input shaper - X",
+          "label": "शेपर X",
+          "title": "इनपुट शेपर - X",
           "why": "X रेज़ोनेंस और सर्वोत्तम shaper खोजें।"
         },
         "shaperY": {
-          "label": "Shaper Y",
-          "title": "Input shaper - Y",
+          "label": "शेपर Y",
+          "title": "इनपुट शेपर - Y",
           "why": "Y रेज़ोनेंस और सर्वोत्तम shaper खोजें।"
         },
         "vibrations": {
-          "label": "Vibrations",
+          "label": "कंपन",
           "title": "कंपन प्रोफ़ाइल",
           "why": "सबसे सहज गतियाँ और बचने योग्य रेज़ोनेंस खोजने के लिए गति × मोटर कोण स्वीप करें।"
         },
         "pressure": {
-          "label": "Pressure",
-          "title": "Pressure advance",
+          "label": "प्रेशर",
+          "title": "प्रेशर एडवांस",
           "why": "कोनों और seams को तीखा करने के लिए सबसे अंत में pressure advance ट्यून करें।"
         },
         "done": {
@@ -402,7 +402,7 @@
       },
       "vibrations": {
         "smoothest": "सबसे सहज",
-        "symmetry": "Symmetry",
+        "symmetry": "समरूपता",
         "motorResonance": "मोटर रेज़ोनेंस",
         "avoid": "बचें",
         "mmps": "{speed} mm/s",
@@ -444,10 +444,10 @@
       "legendRecommended": "सिफारिश की गई",
       "legendPeak": "▲ पीक",
       "legendAxisHint": "फ़्रीक्वेंसी (Hz) → · ठोस = मापी गई · हल्की = shaper बची हुई",
-      "colShaper": "shaper",
+      "colShaper": "शेपर",
       "colFreq": "फ़्रीक्वेंसी",
       "colVibr": "कंपन",
-      "colSmooth": "smooth",
+      "colSmooth": "स्मूद",
       "colAccel": "त्वरण",
       "rowFreq": "{v} Hz",
       "rowVibr": "{v}%",
@@ -525,12 +525,12 @@
       "energyLegend": "ऊर्जा बनाम समय - cyan गिरावट वहाँ है जहाँ एक स्पर्श ने मदद की",
       "vibTitle": "📊 कंपन प्रोफ़ाइल",
       "vibMax": "अधिकतम",
-      "vibStep": "step",
+      "vibStep": "स्टेप",
       "vibUnit": "mm/s",
       "vibBtn": "स्वीप चलाएँ",
       "vibBtnBusy": "स्वीप कर रहा है…",
       "vibDesc": "bed केंद्र के चारों ओर गति × मोटर कोण स्वीप करता है - एक लंबा रन (मिनट)। छोटा {step} अधिक बारीक पर धीमा होता है। सबसे सहज गतियाँ, बचने योग्य गतियाँ, मोटर symmetry और मोटर रेज़ोनेंस बताता है। प्रिंट के दौरान अस्वीकृत।",
-      "vibDescStep": "step",
+      "vibDescStep": "स्टेप",
       "errNoiseCheck": "noise जाँच विफल",
       "errLiveTest": "Live परीक्षण विफल",
       "errBeltComparison": "बेल्ट तुलना विफल",
@@ -645,10 +645,10 @@
       "metric": {
         "score": "मापन ग्रेड",
         "vibrations": "बची हुई कंपन %",
-        "smoothing": "Smoothing",
+        "smoothing": "स्मूदिंग",
         "maxAccel": "सुझाया अधिकतम त्वरण (mm/s²)",
         "freq": "shaper फ़्रीक्वेंसी (Hz)",
-        "shaper": "Shaper"
+        "shaper": "शेपर"
       }
     }
   }

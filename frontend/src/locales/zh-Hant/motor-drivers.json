@@ -29,11 +29,11 @@
         },
         "health": {
           "title": "即時狀態",
-          "body": "當馬達啟用時（歸位或微動之後），驅動器會回報即時旗標：過溫、短路與開路。綠色「ok」表示無故障；「warning」是過溫預警或開路；「fault」是短路或嚴重過溫。馬達停用時驅動器不回報任何資訊，因此卡片顯示「idle」。"
+          "body": "當馬達啟用時（歸位或微動之後），驅動器會回報即時旗標：過溫、短路與開路。綠色「正常」表示無故障；「警告」是過溫預警或開路；「故障」是短路或嚴重過溫。馬達停用時驅動器不回報任何資訊，因此卡片顯示「閒置」。"
         },
         "temperature": {
           "title": "溫度",
-          "body": "只有部分驅動器（例如 TMC2240）內建溫度感測器。在沒有的型號上——例如常見的 TMC2209——溫度會顯示「no sensor」，這是正常的，並非錯誤。"
+          "body": "只有部分驅動器（例如 TMC2240）內建溫度感測器。在沒有的型號上——例如常見的 TMC2209——溫度會顯示「無感測器」，這是正常的，並非錯誤。"
         },
         "catalog": {
           "title": "型號資料的來源",
@@ -69,7 +69,7 @@
         },
         "recommend": {
           "title": "建議調校",
-          "body": "指定馬達後，FilaMind 可從馬達的資料表規格與你的供電電壓，算出建議的運轉電流及 StealthChop / SpreadCycle 暫存器值（pwm_grad、pwm_ofs、hstrt、hend）——因此即使未安裝 autotune 附加元件也能運作。運轉電流預設為馬達額定值的保守 70%。結果會與你的即時設定做差異比對；你接著可把它複製到 printer.cfg，或在確認後即時寫入（可用 Revert 還原，列印中會被拒絕）。若已安裝 autotune 附加元件，你也可以改用它。"
+          "body": "指定馬達後，FilaMind 可從馬達的資料表規格與你的供電電壓，算出建議的運轉電流及 StealthChop / SpreadCycle 暫存器值（pwm_grad、pwm_ofs、hstrt、hend）——因此即使未安裝 autotune 附加元件也能運作。運轉電流預設為馬達額定值的保守 70%。結果會與你的即時設定做差異比對；你接著可把它複製到 printer.cfg，或在確認後即時寫入（可用「還原」復原，列印中會被拒絕）。若已安裝 autotune 附加元件，你也可以改用它。"
         }
       },
       "glossary": {
@@ -209,7 +209,7 @@
       "colCurrent": "目前",
       "colRecommended": "建議值",
       "basis": "運轉電流 = {basis}；StealthChop 在 {voltage} V 下維持至約 {rps} rev/s。",
-      "confirm": "現在將這些寫入 {stepper} 驅動器。可還原（Revert／重啟會還原你的設定）；列印中會被拒絕。",
+      "confirm": "現在將這些寫入 {stepper} 驅動器。可還原（「還原」／重啟會還原你的設定）；列印中會被拒絕。",
       "applyToDriver": "套用至驅動器",
       "revert": "↺ 還原",
       "copyConfig": "複製設定",
@@ -218,7 +218,7 @@
       "noSpecs": "此馬達沒有資料表規格——無法提供調校建議。",
       "measured": "已量測：馬達在約 {freq} Hz 共振",
       "measuredSym": "對稱性 {pct}%",
-      "measuredHint": "來自此印表機振動分析執行的實測真值——開啟 Input Shaping 稽核。"
+      "measuredHint": "來自此印表機振動分析執行的實測真值——開啟輸入整形稽核。"
     },
     "motorSync": {
       "toggle": "馬達同步",

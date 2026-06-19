@@ -1,15 +1,15 @@
 {
   "boardTopology": {
-    "intro": "Xem cách các bo mạch điều khiển của máy in kết nối với nhau: host (SBC) và mọi MCU mà nó giao tiếp, kèm từng loại kết nối và phỏng đoán bo mạch / chip tốt nhất có thể - đọc trực tiếp từ cấu hình.",
+    "intro": "Xem cách các bo mạch điều khiển của máy in kết nối với nhau: máy chủ (SBC) và mọi MCU mà nó giao tiếp, kèm theo từng loại kết nối và phỏng đoán bo mạch / chip tốt nhất có thể - đọc trực tiếp từ cấu hình.",
     "help": {
       "guide": "Trợ giúp",
-      "guideTitle": "Về Board Topology",
+      "guideTitle": "Giới thiệu về Sơ đồ Bo mạch",
       "close": "Đóng",
       "howToRead": "Cách đọc",
       "steps": [
-        "Host (SBC của bạn, ví dụ Raspberry Pi hoặc CB1) nằm ở trên cùng.",
-        "Mỗi thẻ MCU cho biết cách nó kết nối (USB / CAN bus / UART) và chip của nó.",
-        "Phỏng đoán bo mạch xuất hiện khi mã định danh kết nối khớp với một bo mạch đã biết."
+        "Máy chủ (SBC của bạn, ví dụ Raspberry Pi hoặc CB1) nằm ở trên cùng.",
+        "Mỗi thẻ MCU hiển thị cách nó kết nối (USB / CAN bus / UART) và chip của nó.",
+        "Một phỏng đoán bo mạch xuất hiện khi định danh kết nối khớp với một bo mạch đã biết."
       ],
       "topics": {
         "views": {
@@ -18,7 +18,7 @@
         },
         "mcus": {
           "title": "MCU",
-          "body": "MCU là một bo vi điều khiển điều khiển động cơ, bộ gia nhiệt và cảm biến. Một máy in có ít nhất một (mainboard); nhiều máy thêm bo đầu in và đôi khi bo probe hoặc bo LED. Bảng này liệt kê mọi mục `[mcu]` mà Klipper có."
+          "body": "MCU là một bo vi điều khiển điều khiển động cơ, bộ gia nhiệt và cảm biến. Một máy in có ít nhất một (bo mạch chính); nhiều máy thêm một bo đầu in và đôi khi một bo dò hoặc bo LED. Bảng này liệt kê mọi mục `[mcu]` mà Klipper có."
         },
         "connections": {
           "title": "Các loại kết nối",
@@ -40,27 +40,27 @@
       "glossary": {
         "mcu": {
           "term": "MCU",
-          "def": "Microcontroller unit - một bo điều khiển chạy firmware của Klipper (mainboard, đầu in, v.v.)."
+          "def": "Đơn vị vi điều khiển - một bo mạch điều khiển chạy firmware của Klipper (bo mạch chính, đầu in, v.v.)."
         },
         "canbus": {
           "term": "CAN bus",
-          "def": "Một bus dùng chung hai dây liên kết các bo mạch qua một UUID duy nhất - phổ biến cho đi dây đầu in."
+          "def": "Một bus hai dây dùng chung liên kết các bo mạch bằng một UUID duy nhất - phổ biến cho việc đi dây đầu in."
         },
         "host": {
-          "term": "Host / SBC",
+          "term": "Máy chủ / SBC",
           "def": "Máy tính bo mạch đơn (Pi, CB1, …) chạy Klipper và giao tiếp với các MCU."
         }
       }
     },
     "host": {
-      "label": "Host",
+      "label": "Máy chủ",
       "role": "Máy tính bo mạch đơn - chạy Klipper"
     },
     "mcu": {
       "chip": "Chip",
       "board": "Bo mạch",
       "unknown": "không rõ",
-      "identifier": "Mã định danh",
+      "identifier": "Định danh",
       "confidence": "khớp {pct}%",
       "viewBoard": "Xem chi tiết bo mạch",
       "hideBoard": "Ẩn chi tiết"
@@ -72,13 +72,13 @@
         "logical": "Logic"
       },
       "integrated": "SBC tích hợp trên bo",
-      "integratedNote": "Host SBC được tích hợp trong mainboard {board}.",
-      "selectPrompt": "Chọn một bo mạch hoặc MCU trong bản đồ để kiểm tra.",
-      "aria": "Bản đồ máy: host và {n} MCU",
+      "integratedNote": "SBC của máy chủ được tích hợp vào bo mạch chính {board}.",
+      "selectPrompt": "Chọn một bo mạch hoặc MCU trong sơ đồ để kiểm tra.",
+      "aria": "Sơ đồ máy: máy chủ và {n} MCU",
       "vitals": {
         "freq": "{mhz} MHz",
         "retx": "{n} lần truyền lại",
-        "load": "{pct}% tải"
+        "load": "tải {pct}%"
       },
       "health": {
         "title": "Tình trạng liên kết",
@@ -96,7 +96,7 @@
     },
     "count": "{n} MCU",
     "states": {
-      "loading": "Đang đọc topology…",
+      "loading": "Đang đọc sơ đồ…",
       "unreachable": "Không thể kết nối tới máy in.",
       "empty": "Không tìm thấy MCU nào trong cấu hình.",
       "retry": "Thử lại",
@@ -113,24 +113,24 @@
       "links": {
         "title": "Liên kết",
         "product": "Sản phẩm",
-        "repo": "Repo",
+        "repo": "Kho mã",
         "wiki": "Wiki",
         "pinout": "Sơ đồ chân",
         "schematic": "Sơ đồ mạch",
-        "datasheet": "Datasheet",
+        "datasheet": "Bảng dữ liệu",
         "image": "Ảnh"
       },
       "portCat": {
         "motor": "động cơ",
-        "heater_hotend": "gia nhiệt hotend",
-        "heater_bed": "gia nhiệt bàn in",
-        "accelerometer": "cảm biến gia tốc",
+        "heater_hotend": "bộ gia nhiệt đầu in",
+        "heater_bed": "bộ gia nhiệt bàn in",
+        "accelerometer": "gia tốc kế",
         "filament_sensor": "cảm biến sợi in",
         "fan": "quạt",
         "probe": "đầu dò",
         "other": "khác",
         "power": "nguồn",
-        "thermistor": "thermistor",
+        "thermistor": "nhiệt điện trở",
         "usb": "USB",
         "can": "CAN",
         "swd": "SWD",
@@ -145,9 +145,9 @@
       "spec": {
         "mcu": "MCU",
         "arch": "Kiến trúc",
-        "flash_method": "Phương thức flash",
+        "flash_method": "Phương thức nạp",
         "voltage": "Điện áp",
-        "driver_slots": "Khe driver",
+        "driver_slots": "Khe cắm driver",
         "usb": "USB",
         "onboard_drivers": "Driver tích hợp",
         "clock": "Xung nhịp",
@@ -156,31 +156,31 @@
         "dimensions_mm": "Kích thước (mm)",
         "role_era": "Vai trò / thời kỳ",
         "kinematics": "Động học",
-        "build_volume_mm": "Không gian in (mm)",
+        "build_volume_mm": "Thể tích in (mm)",
         "bed": "Bàn in",
-        "hotend": "Hotend",
-        "stock_extruder": "Đùn tiêu chuẩn",
+        "hotend": "Đầu in",
+        "stock_extruder": "Bộ đùn tiêu chuẩn",
         "year": "Năm",
-        "control_board": "Bo điều khiển",
+        "control_board": "Bo mạch điều khiển",
         "stock_drivers": "Driver tiêu chuẩn",
         "uart": "UART",
         "connectivity": "Kết nối",
-        "max_hotend_temp": "Nhiệt độ hotend tối đa",
+        "max_hotend_temp": "Nhiệt độ đầu in tối đa",
         "max_bed_temp": "Nhiệt độ bàn in tối đa",
         "spi": "SPI",
         "notes": "Ghi chú",
         "eth_wifi": "Eth/WiFi",
         "class": "Loại",
         "supported_drivers": "Driver được hỗ trợ",
-        "form_factor": "Kích thước form",
-        "flash": "Flash",
-        "all_metal_accel": "Toàn kim loại / gia tốc",
+        "form_factor": "Kích thước cơ học",
+        "flash": "Bộ nhớ flash",
+        "all_metal_accel": "Toàn kim loại / gia tốc kế",
         "ethernet_wifi": "Ethernet/WiFi",
         "i2c": "I2C",
         "driver": "Driver",
         "i2cspi": "I2C/SPI",
         "printer_board": "Máy in / bo mạch",
-        "accelerometer": "Cảm biến gia tốc",
+        "accelerometer": "Gia tốc kế",
         "printers": "Máy in",
         "bootloader": "Bootloader",
         "flash_offset": "Độ lệch flash",
@@ -189,13 +189,13 @@
         "role": "Vai trò",
         "connection": "Kết nối",
         "storage": "Bộ nhớ lưu trữ",
-        "host": "Host"
+        "host": "Máy chủ"
       },
       "class": {
-        "mainboard": "mainboard",
-        "printer_preset": "preset máy in",
+        "mainboard": "bo mạch chính",
+        "printer_preset": "cấu hình sẵn của máy in",
         "toolhead": "đầu in",
-        "host": "host",
+        "host": "máy chủ",
         "expansion": "mở rộng"
       }
     },
@@ -230,19 +230,19 @@
       "set": "Đặt bo mạch…",
       "clear": "Xóa",
       "pickPlaceholder": "Tìm trong danh mục bo mạch…",
-      "hint": "Lựa chọn của bạn được lưu trên host và dùng cho MCU này từ giờ trở đi."
+      "hint": "Lựa chọn của bạn được lưu trên máy chủ và dùng cho MCU này từ giờ trở đi."
     },
     "sync": {
-      "synced": "Firmware đồng bộ",
+      "synced": "Firmware đã đồng bộ",
       "outOfSync": "Firmware KHÔNG ĐỒNG BỘ"
     },
     "snapshot": {
-      "save": "Lưu snapshot",
+      "save": "Lưu ảnh chụp",
       "copy": "Sao chép tóm tắt",
       "copied": "Đã sao chép!",
-      "none": "Chưa lưu mốc nền - lưu một snapshot để phát hiện thay đổi sau này.",
-      "unchanged": "Không có thay đổi phần cứng kể từ snapshot",
-      "changed": "{n} thay đổi kể từ snapshot",
+      "none": "Chưa lưu mốc nào - lưu một ảnh chụp để phát hiện thay đổi trong tương lai.",
+      "unchanged": "Không có thay đổi phần cứng kể từ ảnh chụp",
+      "changed": "{n} thay đổi kể từ ảnh chụp",
       "summaryTitle": "FilaMind - bản đồ máy",
       "change": {
         "added": "Đã thêm MCU “{mcu}”",
@@ -250,19 +250,19 @@
         "board_changed": "Bo mạch của “{mcu}” đã đổi: {before} → {after}",
         "connection_changed": "Kết nối của “{mcu}” đã đổi: {before} → {after}",
         "chip_changed": "Chip của “{mcu}” đã đổi: {before} → {after}",
-        "components_changed": "Số thành phần của “{mcu}” đã đổi: {before} → {after}"
+        "components_changed": "Số lượng linh kiện của “{mcu}” đã đổi: {before} → {after}"
       },
       "noCompare": "Không thể so sánh - không kết nối được tới máy in.",
-      "summaryHost": "Host: {name}",
+      "summaryHost": "Máy chủ: {name}",
       "summaryIntegrated": "SBC tích hợp trên {board}",
       "summaryMcu": "MCU {name}",
       "summaryBoard": "bo mạch {board}",
       "summaryComponents": "{n} thành phần"
     },
     "jump": {
-      "section": "Mở mục này trong Config Editor",
-      "drivers": "Mở trong Motor Drivers",
-      "firmware": "Mở Firmware Manager"
+      "section": "Mở mục này trong Trình sửa Cấu hình",
+      "drivers": "Mở trong Driver Động cơ",
+      "firmware": "Mở Trình quản lý Firmware"
     }
   }
 }

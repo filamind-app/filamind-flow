@@ -213,7 +213,7 @@
       "applyToDriver": "применить к драйверу",
       "revert": "↺ откатить",
       "copyConfig": "копировать конфигурацию",
-      "autotune": "autotune",
+      "autotune": "автонастройка",
       "autotuneTitle": "Запускает AUTOTUNE_TMC, если установлено дополнение klipper_tmc_autotune",
       "noSpecs": "Нет данных из даташита для этого мотора — рекомендация настройки недоступна.",
       "measured": "Измерено: моторы резонируют на ~{freq} Гц",
@@ -299,7 +299,7 @@
       "readOnly": "регистры только для чтения",
       "toffHint": "Если вы задаёте toff на 1, также держите tbl ≥ 1 (16-тактовое время гашения требует этого).",
       "groups": {
-        "chopper": "Chopper",
+        "chopper": "Чоппер",
         "stealthchop": "StealthChop (PWM)",
         "stallguard": "StallGuard",
         "thresholds": "Пороги и тайминги",

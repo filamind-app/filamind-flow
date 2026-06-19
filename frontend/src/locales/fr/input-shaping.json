@@ -306,7 +306,7 @@
         },
         "pressure": {
           "label": "Pression",
-          "title": "Pressure advance",
+          "title": "Avance de pression",
           "why": "Réglez le pressure advance en dernier pour affiner les angles et les coutures."
         },
         "done": {

@@ -13,7 +13,7 @@
       "title": "返回 Mainsail"
     },
     "footer": {
-      "stack": "FilaMind Flow — Built by Egyptian makers, for world makers. Happy printing",
+      "stack": "FilaMind Flow — 由埃及创客打造，献给全世界的创客。打印愉快",
       "by": "由 DeltaFabs 团队打造"
     },
     "home": {
@@ -36,7 +36,7 @@
       "open": "打开",
       "noData": "暂无数据。",
       "tuning": "调校",
-      "noTuning": "尚无归档的调校 — 运行 Input Shaping 向导。",
+      "noTuning": "尚无归档的调校 — 运行输入整形向导。",
       "hardware": "硬件与基线",
       "noBaseline": "尚未保存硬件基线 — 请在机器图谱中保存快照。",
       "hwUnchanged": "自保存基线以来硬件无变化。",
@@ -48,7 +48,7 @@
         "baseline": "保存硬件基线（用于检测未来变化）",
         "firmware": "让每个 MCU 固件与主机同步",
         "motors": "在电机驱动中分配电机",
-        "tuning": "为 X 和 Y 调校 input shaping（引导向导）"
+        "tuning": "为 X 和 Y 调校输入整形（引导向导）"
       },
       "journal": {
         "title": "近期活动",

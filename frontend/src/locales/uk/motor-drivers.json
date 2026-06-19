@@ -299,7 +299,7 @@
       "readOnly": "реєстри лише для читання",
       "toffHint": "Якщо ви задаєте toff на 1, також тримайте tbl ≥ 1 (16-циклова пауза потребує цього).",
       "groups": {
-        "chopper": "Chopper",
+        "chopper": "Чоппер",
         "stealthchop": "StealthChop (PWM)",
         "stallguard": "StallGuard",
         "thresholds": "Пороги й тайминг",

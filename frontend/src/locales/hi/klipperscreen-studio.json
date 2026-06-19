@@ -86,10 +86,10 @@
       "stale": "लोड किए जाने के बाद से KlipperScreen.conf डिस्क पर बदल गई है (संभवतः स्क्रीन पर संपादित)। सेव करने से पहले फिर से लोड करें ताकि आप उस बदलाव को अधिलेखित न करें।"
     },
     "view": {
-      "config": "Config",
-      "settings": "Settings",
-      "menus": "Menus",
-      "themes": "Themes",
+      "config": "कॉन्फ़िग",
+      "settings": "सेटिंग्स",
+      "menus": "मेन्यू",
+      "themes": "थीम",
       "kiosk": "Kiosk"
     },
     "settings": {

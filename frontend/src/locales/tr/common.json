@@ -2,7 +2,7 @@
   "common": {
     "appName": "FilaMind Flow",
     "errors": {
-      "backendUnreachable": "FilaMind arka ucuna ulaşılamıyor - filamind-flow servisinin çalıştığından ve erişilebilir olduğundan emin olun.",
+      "backendUnreachable": "FilaMind arka ucuna ulaşılamıyor - filamind-flow hizmetinin çalıştığından ve erişilebilir olduğundan emin olun.",
       "requestFailed": "İstek başarısız ({status})"
     }
   },
@@ -17,33 +17,33 @@
     "ocean": "Okyanus",
     "sunset": "Gün Batımı",
     "desc": {
-      "neon": "Elektrik parıltılı derin mor gece - imza görünüm",
-      "midnight": "Profesyonel koyu mavi karanlık",
-      "dark": "Modern nötr arduvaz koyu",
-      "ocean": "Su yeşili vurgulu derin deniz mavisi",
-      "sunset": "Kehribar vurgulu sıcak erik moru",
+      "neon": "Elektrik parıltılı derin menekşe gecesi - imza görünüm",
+      "midnight": "Profesyonel derin mavi koyu",
+      "dark": "Modern nötr arduvaz koyusu",
+      "ocean": "Su yeşili vurgularla derin deniz mavisi",
+      "sunset": "Kehribar vurgularla sıcak erik",
       "light": "Temiz Neo-Brutalist açık",
-      "contrast": "Maksimum okunabilirlik (a11y)"
+      "contrast": "Maksimum okunabilirlik (erişilebilirlik)"
     }
   },
   "configApply": {
-    "title": "printer.cfg dosyasına uygula…",
-    "hint": "Bu bloğu güvenlik geçidi üzerinden seçilen dosyaya yazar: mevcut bir bölüm parametre parametre birleştirilir (diğer satırları korunur), eksik olan eklenir. Önce yedek alınır; yazdırma sırasında veya dosya diskte değiştiyse reddedilir.",
+    "title": "printer.cfg'ye uygula…",
+    "hint": "Bu bloğu güvenlik kapısı üzerinden seçilen dosyaya yazar: var olan bir bölüm parametre parametre birleştirilir (diğer satırları kalır), eksik olan eklenir. Önce bir yedek alınır; baskı sırasında veya dosya diskte değiştiyse reddedilir.",
     "target": "Hedef dosya",
     "ack": "Bloğu inceledim ve yazmak istiyorum",
     "apply": "Uygula",
     "applying": "Uygulanıyor…",
-    "busy": "Yazıcı meşgul (veya başka bir işlem çalışıyor) - boştayken tekrar deneyin.",
-    "stale": "Uygulama sırasında dosya diskte değişti - hiçbir şey yazılmadı. Tekrar deneyin.",
+    "busy": "Yazıcı meşgul (veya başka bir işlem çalışıyor) - boştayken yeniden deneyin.",
+    "stale": "Uygulanırken dosya diskte değişti - hiçbir şey yazılmadı. Yeniden deneyin.",
     "saved": "Kaydedildi (yedek: {backup}).",
     "added": "eklendi [{section}]: {params}",
     "updated": "güncellendi [{section}]: {params}",
     "noop": "Her şey zaten bu değerlerdeydi - hiçbir şey değişmedi.",
-    "restartHint": "Klipper, ürün yazılımı yeniden başlatılana kadar eski değerleri çalıştırmaya devam eder.",
-    "restart": "Ürün yazılımını yeniden başlat…",
+    "restartHint": "Bir firmware yeniden başlatmasına kadar Klipper hâlâ eski değerleri çalıştırır.",
+    "restart": "Firmware'i yeniden başlat…",
     "restartConfirm": "Yeniden başlatmayı onayla",
     "restarting": "Yeniden başlatılıyor…",
-    "restarted": "Ürün yazılımı yeniden başlatma komutu gönderildi.",
+    "restarted": "Firmware yeniden başlatma gönderildi.",
     "cancel": "İptal"
   },
   "comboSelect": {

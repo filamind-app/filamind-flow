@@ -86,7 +86,7 @@
       "stale": "読み込んでから KlipperScreen.conf がディスク上で変更されました（おそらく画面側で編集されました）。その変更を上書きしないよう、保存前に再読み込みしてください。"
     },
     "view": {
-      "config": "Config",
+      "config": "設定",
       "settings": "設定",
       "menus": "メニュー",
       "themes": "テーマ",

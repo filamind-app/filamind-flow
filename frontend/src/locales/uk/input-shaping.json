@@ -61,7 +61,7 @@
       },
       "glossary": {
         "inputShaper": {
-          "term": "Input shaper",
+          "term": "Інпут-шейпер",
           "def": "Фільтр, який Klipper застосовує до руху й гасить основну вібрацію принтера, тож можна друкувати швидше без ringing / ghosting."
         },
         "resonance": {
@@ -290,13 +290,13 @@
           "why": "Узгодьте натягнення двох ременів. Лише CoreXY — пропустіть на cartesian / bed-slinger."
         },
         "shaperX": {
-          "label": "Shaper X",
-          "title": "Input shaper — X",
+          "label": "Шейпер X",
+          "title": "Інпут-шейпер — X",
           "why": "Знайдіть резонанс X і найкращий shaper."
         },
         "shaperY": {
-          "label": "Shaper Y",
-          "title": "Input shaper — Y",
+          "label": "Шейпер Y",
+          "title": "Інпут-шейпер — Y",
           "why": "Знайдіть резонанс Y і найкращий shaper."
         },
         "vibrations": {
@@ -306,7 +306,7 @@
         },
         "pressure": {
           "label": "Тиск",
-          "title": "Pressure advance",
+          "title": "Компенсація тиску",
           "why": "Налаштуйте pressure advance останнім, щоб загострити кути та шви."
         },
         "done": {
@@ -444,7 +444,7 @@
       "legendRecommended": "рекомендовано",
       "legendPeak": "▲ пік",
       "legendAxisHint": "частота (Hz) → · суцільна = виміряно · бліда = залишок shaper",
-      "colShaper": "shaper",
+      "colShaper": "шейпер",
       "colFreq": "частота",
       "colVibr": "вібр.",
       "colSmooth": "згладж.",
@@ -648,7 +648,7 @@
         "smoothing": "Згладжування",
         "maxAccel": "Рекомендоване макс. прискорення (mm/s²)",
         "freq": "Частота shaper (Hz)",
-        "shaper": "Shaper"
+        "shaper": "Шейпер"
       }
     }
   }

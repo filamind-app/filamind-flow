@@ -73,7 +73,7 @@
           "def": "Power spectral density - hoeveel trillingsenergie er op elke frequentie zit. De hoge piek is de resonantie die de shaper aanpakt."
         },
         "smoothing": {
-          "term": "Smoothing",
+          "term": "Afvlakking",
           "def": "Een bijeffect van shaping dat scherpe hoeken licht afrondt. Lager is beter; ≤0,1 is minimaal, >0,2 begint detail af te zwakken."
         },
         "vibrationPct": {
@@ -110,7 +110,7 @@
         }
       },
       "smoothing": {
-        "label": "Smoothing",
+        "label": "Afvlakking",
         "note": {
           "good": "Minimale hoekafronding.",
           "ok": "Enige afronding bij hoge accel.",
@@ -171,7 +171,7 @@
       "highSmoothing": {
         "title": "Hoge smoothing",
         "advice": "Rondt hoeken af. Kies een stijvere shaper of verlaag max_accel.",
-        "detail": "smoothing {smoothing}"
+        "detail": "afvlakking {smoothing}"
       },
       "multiResonance": {
         "title": "Meervoudige resonanties",
@@ -393,7 +393,7 @@
       "sustain": {
         "target": "Doel",
         "dominant": "Dominant",
-        "inBand": "In band",
+        "inBand": "Binnen band",
         "onTarget": "Op doel",
         "hz": "{value} Hz",
         "pct": "{value}%",
@@ -645,7 +645,7 @@
       "metric": {
         "score": "Meetcijfer",
         "vibrations": "Resterende trilling %",
-        "smoothing": "Smoothing",
+        "smoothing": "Afvlakking",
         "maxAccel": "Voorgestelde max accel (mm/s²)",
         "freq": "Shaper-frequentie (Hz)",
         "shaper": "Shaper"

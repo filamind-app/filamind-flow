@@ -47,7 +47,7 @@
     },
     "editor": {
       "label": "G-code",
-      "simulate": "Simulate",
+      "simulate": "सिमुलेट करें",
       "simulating": "सिमुलेट हो रहा है…",
       "sample": "नमूना लोड करें",
       "clear": "साफ़ करें"

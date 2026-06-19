@@ -93,7 +93,7 @@
       "note": "I cicli e i condizionali vengono espansi come farebbe la stampante; una macro che richiede lo stato live della stampante ricade su un'anteprima letterale."
     },
     "timeline": {
-      "title": "Timeline",
+      "title": "Linea temporale",
       "line": "Riga",
       "cmd": "Comando",
       "action": "Azione"

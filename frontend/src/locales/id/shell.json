@@ -18,7 +18,7 @@
     },
     "home": {
       "body": "Panel Anda ada di bilah samping - pilih satu untuk memulai. Halaman beranda ini sengaja dibiarkan kosong untuk saat ini.",
-      "title": "Mission Control",
+      "title": "Pusat Kendali",
       "refresh": "Segarkan",
       "loading": "Memuat…",
       "unreachable": "Backend tidak dapat dijangkau.",
@@ -28,7 +28,7 @@
       "stateError": "Galat",
       "stateIdle": "Diam",
       "printerDown": "Moonraker tidak dapat dijangkau.",
-      "doctor": "Machine Doctor",
+      "doctor": "Dokter Mesin",
       "doctorBody": "Satu pindaian baca-saja mencakup pin, nilai driver, pergeseran konfigurasi, sinkronisasi firmware, dan lainnya - dinilai A-F dengan tautan lompat-ke-perbaikan.",
       "doctorScan": "Pindai printer saya",
       "firmware": "Sinkronisasi firmware",

@@ -82,7 +82,7 @@
       }
     },
     "monitor": {
-      "refresh": "Refresh",
+      "refresh": "Segarkan",
       "autoRefresh": "Refresh otomatis",
       "loading": "Membaca status host…",
       "host": "Host",
@@ -121,7 +121,7 @@
     "services": {
       "warning": "Menghentikan atau menonaktifkan layanan yang salah bisa membuat printer offline. Layanan kritis ditandai; yang terlindungi tidak bisa dihentikan.",
       "search": "Cari layanan…",
-      "refresh": "Refresh",
+      "refresh": "Segarkan",
       "loading": "Mendaftar layanan…",
       "loadingDetail": "Membaca layanan…",
       "loadingLogs": "Membaca log…",

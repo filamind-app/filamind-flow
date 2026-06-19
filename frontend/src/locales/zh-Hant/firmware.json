@@ -21,7 +21,7 @@
         },
         "toolchain": {
           "title": "工具鏈標章",
-          "body": "這些顯示主機上有哪些建置／燒錄工具：Klipper（原始碼與建置系統）、Katapult、flashtool、dfu-util、avrdude、can-utils。出現 ✗ 表示該工具尚未安裝——你只需要板子會用到的那些。「setup」標章會標示主機問題（sudoers、udev 規則）並提供修正提示。"
+          "body": "這些顯示主機上有哪些建置／燒錄工具：Klipper（原始碼與建置系統）、Katapult、flashtool、dfu-util、avrdude、can-utils。出現 ✗ 表示該工具尚未安裝——你只需要板子會用到的那些。「設定」標章會標示主機問題（sudoers、udev 規則）並提供修正提示。"
         },
         "services": {
           "title": "服務",
@@ -29,11 +29,11 @@
         },
         "devices": {
           "title": "裝置",
-          "body": "每塊已註冊的板子，附帶其建置／燒錄操作。「build」會為板子的設定檔編譯韌體；「Flash」會寫入；「build & flash」兩者都做。批次按鈕（Build all／Flash all／Flash ready）會一次對所有裝置操作。請在裝置管理員中新增或連結板子。"
+          "body": "每塊已註冊的板子，附帶其建置／燒錄操作。「建置」會為板子的設定檔編譯韌體；「燒錄」會寫入；「建置並燒錄」兩者都做。批次按鈕（全部建置／全部燒錄／燒錄就緒項目）會一次對所有裝置操作。請在裝置管理員中新增或連結板子。"
         },
         "configure": {
           "title": "設定並建置韌體",
-          "body": "挑選一個板子設定檔並編輯其 Klipper 建置選項（Kconfig 選單）——切換「option docs」即可就地閱讀每項設定的作用。接著「build profile」會編譯韌體並儲存設定檔，以便日後重現完全相同的建置。這會建置共用設定檔；你可在 Status 分頁將其燒錄到特定板子。"
+          "body": "挑選一個板子設定檔並編輯其 Klipper 建置選項（Kconfig 選單）——切換「選項說明」即可就地閱讀每項設定的作用。接著「建置設定檔」會編譯韌體並儲存設定檔，以便日後重現完全相同的建置。這會建置共用設定檔；你可在「狀態」分頁將其燒錄到特定板子。"
         },
         "external": {
           "title": "外部韌體",
@@ -146,7 +146,7 @@
       "intro": "四個步驟讓新控制板跑起相符的韌體。每個步驟會開啟對應分頁，完成後即轉為綠色。",
       "stepDetectLabel": "偵測你的板子",
       "stepDetectWhy": "連接板子（USB / CAN / DFU）並掃描，讓 FilaMind 能看到它。",
-      "stepDetectAction": "在 Devices 中掃描 →",
+      "stepDetectAction": "在裝置中掃描 →",
       "stepConfigureLabel": "設定並建置設定檔",
       "stepConfigureWhy": "挑選板子的 Klipper 選項（Kconfig），並建置一次韌體作為可重複使用的設定檔。",
       "stepConfigureAction": "設定 →",
@@ -195,7 +195,7 @@
       "duplicateTitle": "以新名稱儲存此設定檔的副本",
       "builtVersion": "已建置 · {version}",
       "notBuilt": "未建置",
-      "canBridge": "CAN bridge",
+      "canBridge": "CAN 橋接",
       "loading": "正在載入設定…",
       "lockedTitle": "已鎖定——由 Klipper 控制（某項前置條件或另一個選項已設定它）；無法在此直接編輯",
       "on": "開",
@@ -219,7 +219,7 @@
     "devices": {
       "title": "裝置管理員",
       "back": "← 返回",
-      "intro": "新增板子、指派設定檔，並設定各自的燒錄方式。你可從 Status 畫面為每個裝置建置並燒錄（Configure 建置的是共用設定檔）。",
+      "intro": "新增板子、指派設定檔，並設定各自的燒錄方式。你可從「狀態」畫面為每個裝置建置並燒錄（「設定」建置的是共用設定檔）。",
       "loading": "正在載入裝置…",
       "remove": "移除",
       "profilePlaceholder": "- 設定檔 -",
@@ -253,7 +253,7 @@
       "restoredFull": "已還原 {n} 個設定檔、{data} 個資料檔、{runs} 筆調校紀錄{extra}。",
       "identifyMap": "在板子地圖上顯示",
       "identifySeed": "從板子產生設定檔",
-      "identifySeeded": "已建立設定檔「{name}」並預選 {symbol}——開啟 Configure 以完成建置選項。",
+      "identifySeeded": "已建立設定檔「{name}」並預選 {symbol}——開啟「設定」以完成建置選項。",
       "identifySeedFailed": "無法產生設定檔"
     },
     "external": {
@@ -277,7 +277,7 @@
       "mcuLabel": "· mcu {mcu}",
       "hide": "隱藏",
       "config": "設定",
-      "compiledNote": "已編譯進韌體——唯讀。若要變更這些項目，請在 Configure 中建置一個設定檔並改燒錄該設定檔。",
+      "compiledNote": "已編譯進韌體——唯讀。若要變更這些項目，請在「設定」中建置一個設定檔並改燒錄該設定檔。",
       "offsetPlaceholder": "偏移量（DFU，例如 0x08002000）",
       "notesPlaceholder": "備註（來源、板子、版本…）",
       "flashTo": "燒錄至：",

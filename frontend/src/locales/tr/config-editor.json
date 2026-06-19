@@ -1,37 +1,37 @@
 {
   "configEditor": {
-    "intro": "Yazıcınızın canlı yapılandırmasını doğrudan Moonraker'dan okuyun - her dosya bölümlere ve parametrelere ayrıştırılır, yapısal sorunlar işaretlenir. Şimdilik salt okunur; rehberli düzenleme bir sonraki adımda geliyor.",
+    "intro": "Yazıcınızın canlı yapılandırmasını doğrudan Moonraker'dan okuyun - her dosya, bölümlere ve parametrelere ayrıştırılmış, yapısal sorunlar işaretlenmiş halde. Şimdilik salt okunur; rehberli düzenleme bir sonraki adımda geliyor.",
     "help": {
       "guide": "Yardım",
-      "guideTitle": "Yapılandırma Düzenleyicisi hakkında",
+      "guideTitle": "Yapılandırma Düzenleyici Hakkında",
       "close": "Kapat",
       "howToRead": "Nasıl kullanılır",
       "steps": [
-        "Açılır menüden bir yapılandırma dosyası seçin - varsayılan olarak printer.cfg seçilidir.",
-        "Bölümlerine göz atın; parametrelerini açmak için birine tıklayın.",
-        "Yinelenen bölüm gibi yapısal sorunlar için Doğrulama bandını kontrol edin.",
-        "Dosyanın tam metnini okumak için Ham görünüme geçin."
+        "Açılır listeden bir yapılandırma dosyası seçin - varsayılan olarak printer.cfg seçilidir.",
+        "Bölümlerine göz atın; parametrelerini genişletmek için birine tıklayın.",
+        "Yinelenen bir bölüm gibi yapısal sorunlar için Doğrulama banner'ını kontrol edin.",
+        "Tam dosya metnini okumak için Ham'a geçin."
       ],
       "topics": {
         "sections": {
           "title": "Bölümler ve parametreler",
-          "body": "Bir Klipper yapılandırması, her biri key: value parametreleri tutan [section] bloklarının bir listesidir. Bu widget her bölümü ayrıştırır - [tmc2209 stepper_x] gibi adı olanlar dahil - ve parametrelerini değerleri ile birlikte ve varsa satır içi yorumlarıyla listeler. Çok satırlı değerler (bir makronun gcode: değeri gibi) olduğu gibi korunur."
+          "body": "Bir Klipper yapılandırması, her biri anahtar: değer parametreleri tutan [bölüm] bloklarının listesidir. Bu widget her bölümü ayrıştırır - [tmc2209 stepper_x] gibi bir ada sahip olanlar dahil - ve parametrelerini değerleri ve varsa satır içi yorumlarıyla listeler. Çok satırlı değerler (bir makronun gcode: gibi) olduğu gibi korunur."
         },
         "includes": {
           "title": "Dahil edilen dosyalar",
-          "body": "printer.cfg sıklıkla [include other.cfg] (veya [include configs/*.cfg] gibi bir glob) ile başka dosyaları içeri alır. Her include kendi girdisi olarak gösterilir; neyi tanımladığını incelemek için dahil edilen dosyayı açılır menüden seçin."
+          "body": "printer.cfg genellikle [include other.cfg] (veya [include configs/*.cfg] gibi bir glob) ile başka dosyalar çeker. Her include kendi girdisi olarak gösterilir; neyi tanımladığını incelemek için dahil edilen dosyayı açılır listeden seçin."
         },
         "validation": {
           "title": "Doğrulama",
-          "body": "Ayrıştırmadan sonra yapılandırma, bölüm türünden bağımsız olarak yanlış olan yapısal sorunlar için kontrol edilir - yinelenen bir bölüm başlığı, boş bir bölüm adı veya herhangi bir bölümün dışında duran bir parametre. Bunlar Doğrulama bandında görünür; dosyanızı değiştirmezler."
+          "body": "Ayrıştırmadan sonra yapılandırma, bölüm türünden bağımsız olarak yanlış olan yapısal sorunlar için kontrol edilir - yinelenen bir bölüm başlığı, boş bir bölüm adı veya herhangi bir bölümün dışında duran bir parametre. Bunlar Doğrulama banner'ında görünür; dosyanızı değiştirmezler."
         },
         "saveConfig": {
           "title": "SAVE_CONFIG bloğu",
-          "body": "SAVE_CONFIG çalıştırdığınızda Klipper, printer.cfg dosyasının sonuna (#*# işaretinden sonra) otomatik oluşturulan bir blok ekler - PID ve Z ofsetleri gibi kalibrasyon sonuçları. Gösterilir ancak otomatik kaydedilmiş olarak işaretlenir ve elle düzenlememeniz gerektiği için düzenlenebilir bölüm sayısının dışında tutulur."
+          "body": "Klipper, SAVE_CONFIG çalıştırdığınızda printer.cfg'nin sonuna (#*# işaretinden sonra) otomatik oluşturulan bir blok ekler - PID ve Z ofsetleri gibi kalibrasyon sonuçları. Gösterilir ama otomatik kaydedilmiş olarak işaretlenir ve düzenlenebilir bölüm sayısından hariç tutulur çünkü onu elle düzenlememelisiniz."
         },
         "readonly": {
           "title": "Salt okunur (şimdilik)",
-          "body": "Bu ilk sürüm yapılandırmayı yalnızca okur ve görüntüler - yazıcıya hiçbir şey yazılmaz. Rehberli, onay denetimli düzenleme (her kaydetmeden önce otomatik yedek ve sonrasında yeniden başlatma ile) daha sonraki bir güncellemede geliyor."
+          "body": "Bu ilk sürüm yapılandırmayı yalnızca okur ve gösterir - yazıcıya hiçbir şey yazılmaz. Rehberli, onay kapılı düzenleme (herhangi bir kayıttan önce otomatik yedek ve sonrasında yeniden başlatma ile) sonraki bir güncellemede geliyor."
         },
         "glossary": {
           "title": "Sözlük",
@@ -41,19 +41,19 @@
       "glossary": {
         "section": {
           "term": "Bölüm",
-          "def": "İlgili ayarları gruplayan bir [header] bloğu, örn. [stepper_x] veya [extruder]."
+          "def": "İlgili ayarları gruplayan bir [başlık] bloğu, ör. [stepper_x] veya [extruder]."
         },
         "parameter": {
           "term": "Parametre",
-          "def": "Bir bölümün içindeki bir key: value (veya key = value) satırı, isteğe bağlı olarak sonunda bir # yorumuyla."
+          "def": "Bir bölümün içindeki bir anahtar: değer (veya anahtar = değer) satırı, isteğe bağlı olarak sonunda bir # yorumuyla."
         },
         "include": {
           "term": "[include]",
-          "def": "Başka bir yapılandırma dosyasını printer.cfg içine çeken bir yönerge; böylece ayarlar dosyalara bölünebilir."
+          "def": "Başka bir yapılandırma dosyasını printer.cfg'ye çeken, böylece ayarların dosyalara bölünebildiği bir yönerge."
         },
         "saveConfig": {
           "term": "SAVE_CONFIG",
-          "def": "Klipper'ın kalibrasyon sonuçlarını sakladığı otomatik oluşturulan blok (#*# sonrası) - elle düzenlemeyin."
+          "def": "Klipper'ın kalibrasyon sonuçlarını sakladığı (#*# işaretinden sonra) otomatik oluşturulan blok - onu elle düzenlemeyin."
         }
       }
     },
@@ -89,7 +89,7 @@
       "valueHead": "Değer"
     },
     "edit": {
-      "hint": "Aşağıdaki ham metni düzenleyin, ardından Kaydet'e basın. Her yazma işleminden önce zaman damgalı bir yedek alınır."
+      "hint": "Aşağıdaki ham metni düzenleyin, sonra Kaydet. Herhangi bir yazmadan önce zaman damgalı bir yedek alınır."
     },
     "save": {
       "button": "Kaydet",
@@ -97,14 +97,14 @@
       "unsaved": "Kaydedilmemiş değişiklikler",
       "revert": "Geri al",
       "confirmTitle": "Yazıcıya kaydedilsin mi?",
-      "confirmBody": "Bu işlem yazıcıdaki {file} dosyasının üzerine yazar. Önce zaman damgalı bir yedek kaydedilir ve değişikliği uygulamak için bir firmware yeniden başlatması gerekir.",
+      "confirmBody": "Bu, yazıcıdaki {file} dosyasının üzerine yazar. Önce zaman damgalı bir yedek kaydedilir ve değişikliği uygulamak için bir firmware yeniden başlatması gerekir.",
       "ack": "Bunun yazıcıya yazdığını anlıyorum",
       "confirm": "Kaydet",
       "cancel": "İptal",
       "done": "Kaydedildi. Yedek: {backup}",
-      "busy": "Reddedildi: yazıcı meşgul (yazdırıyor veya duraklatılmış). Boşta olduğunda tekrar deneyin.",
-      "error": "Kaydetme başarısız oldu.",
-      "stale": "Dosya yüklendiğinden bu yana diskte değişti (bir SAVE_CONFIG gelmiş veya başka bir uygulama düzenlemiş olabilir). Şimdi kaydetmek bu değişikliğin üzerine yazar - incelemek için yeniden yükleyin (yedek zaman çizelgesi neyin farklı olduğunu gösterir).",
+      "busy": "Reddedildi: yazıcı meşgul (baskıda veya duraklatılmış). Boştayken yeniden deneyin.",
+      "error": "Kaydetme başarısız.",
+      "stale": "Dosya yüklendiğinden bu yana diskte değişti (bir SAVE_CONFIG gelmiş veya başka bir uygulama düzenlemiş olabilir). Şimdi kaydetmek o değişikliğin üzerine yazar - incelemek için yeniden yükleyin (yedek zaman çizelgesi neyin farklı olduğunu gösterir).",
       "staleReload": "Dosyayı yeniden yükle"
     },
     "restart": {
@@ -112,34 +112,34 @@
       "button": "Firmware'i yeniden başlat",
       "restarting": "Yeniden başlatılıyor…",
       "confirmTitle": "Firmware yeniden başlatılsın mı?",
-      "confirmBody": "FIRMWARE_RESTART yapılandırmayı yeniden yükler ve yazıcıyı kısaca kesintiye uğratır. Bunu yalnızca boşta olduğunda yapın.",
+      "confirmBody": "FIRMWARE_RESTART yapılandırmayı yeniden yükler ve yazıcıyı kısa süre kesintiye uğratır. Bunu yalnızca boştayken yapın.",
       "confirm": "Şimdi yeniden başlat",
       "cancel": "İptal",
-      "done": "Firmware yeniden başlatması istendi.",
-      "busy": "Reddedildi: yazıcı meşgul. Boşta olduğunda yeniden başlatın.",
-      "error": "Yeniden başlatma başarısız oldu."
+      "done": "Firmware yeniden başlatma istendi.",
+      "busy": "Reddedildi: yazıcı meşgul. Boştayken yeniden başlatın.",
+      "error": "Yeniden başlatma başarısız."
     },
     "states": {
       "loading": "Yapılandırma okunuyor…",
       "error": "Yapılandırma yazıcıdan okunamadı.",
-      "retry": "Tekrar dene"
+      "retry": "Yeniden dene"
     },
     "catalog": {
-      "title": "Katalogdan bir yapılandırma bloğu ekle",
+      "title": "Kataloğdan bir yapılandırma bloğu ekle",
       "hint": "Bir parça seçin - donanıma uygun Klipper bloğu (gerçek run_current, sense_resistor, pin adları) incelemeniz ve kaydetmeniz için dosyaya eklenir.",
       "drivers": "Sürücüler",
       "motors": "Motorlar",
       "boards": "Kartlar",
-      "pickPlaceholder": "Katalogda ara…",
+      "pickPlaceholder": "Kataloğda ara…",
       "inserted": "{name} için blok eklendi - Ham görünümde inceleyip kaydedin.",
       "noSnippet": "{name} için kullanılabilir yapılandırma bloğu yok."
     },
     "drift": {
       "title": "Klipper'ın çalıştırdığı",
-      "pending": "Klipper'da kaydedilmemiş değişiklikler var (bir SAVE_CONFIG bekliyor) - bu dosyayı şimdi kaydetmek onları ezer. Önce konsolda SAVE_CONFIG çalıştırın.",
+      "pending": "Klipper'ın kaydedilmemiş değişiklikleri var (bir SAVE_CONFIG bekliyor) - bu dosyayı şimdi kaydetmek onları ezer. Önce konsolda SAVE_CONFIG çalıştırın.",
       "warningsTitle": "Klipper yapılandırma uyarıları",
-      "count": "Diskteki {n} değer çalışmakta olandan farklı (düzenlenmiş ama FIRMWARE_RESTART yapılmamış):",
-      "adopt": "canlıyı uygula"
+      "count": "Diskteki {n} değer çalışandan farklı (düzenlenmiş ama FIRMWARE_RESTART yapılmamış):",
+      "adopt": "canlıyı benimse"
     },
     "pinDoctor": {
       "title": "Pin Doktoru - {n} kablolama bulgusu",
@@ -147,19 +147,19 @@
       "caveat": "UYARI"
     },
     "tmc": {
-      "review": "Ham görünümde incele ve kaydet"
+      "review": "Ham'da incele ve kaydet"
     },
     "pinEdit": {
       "offBoard": "kartta değil",
-      "offBoardHint": "Bu pin kartın bilinen pin haritasında yok - bir yazım hatası ya da bir EXP/sanal pin olup olmadığını kontrol edin.",
-      "double": "tekrar kullanılmış",
+      "offBoardHint": "Bu pin kartın bilinen pin haritasında yok - bir yazım hatası veya bir EXP/sanal pin olup olmadığını kontrol edin.",
+      "double": "yeniden kullanılmış",
       "doubleHint": "Bu pin birden fazla bölümde atanmış.",
       "caveat": "uyarı"
     },
     "project": {
       "title": "Proje (include'lar ve arama)",
       "lintBadge": "{n} sorun",
-      "searchPlaceholder": "Tüm yapılandırma dosyalarında ara…",
+      "searchPlaceholder": "Her yapılandırma dosyasında ara…",
       "searchBtn": "Ara",
       "noResults": "Eşleşme yok.",
       "matchesCount": "{n} eşleşme",
@@ -174,27 +174,27 @@
       }
     },
     "knowledge": {
-      "viewDriver": "{model} modelini katalogda görüntüle →",
-      "stepper": "Bir step motor ekseni - sürücü pinleri, dönüş mesafesi, microstep'ler ve referans alma/endstop.",
-      "tmc": "Bir Trinamic step sürücüsü - run/hold akımı, microstep'ler ve step motoru için StallGuard/chopper ayarı.",
-      "extruder": "Hotend ve extruder - nozzle boyutu, filament yolu, ısıtıcı, termistör ve PID.",
-      "heater_bed": "Isıtmalı tabla - ısıtıcı pini, termistörü ve PID/sıcaklık sınırları.",
-      "fan": "Yeni basılmış filamenti soğutan parça soğutma fanı.",
-      "heater_fan": "Aşırı ısınmaya karşı korumak için çalışan, bir ısıtıcıya bağlı fan (örn. hotend soğutması).",
-      "controller_fan": "Motorlar etkinken step sürücülerini / elektroniği soğutan fan.",
-      "mcu": "Klipper çalıştıran bir mikrodenetleyici kartı - seri veya CAN bağlantısı.",
-      "printer": "Genel makine kinematiği ve hareket sınırları (tür, maksimum hız, ivme).",
-      "bed_mesh": "Otomatik tabla tesviyesi - bir ızgarayı probe'lar ve yazdırırken tabla düzlüğünü telafi eder.",
-      "probe": "Referans alma ve tabla ağı için tabla yüzeyini algılamak üzere kullanılan Z probe.",
+      "viewDriver": "{model} kataloğunda görüntüle →",
+      "stepper": "Bir step motor ekseni - sürücü pinleri, dönüş mesafesi, microstep'ler ve homing/endstop.",
+      "tmc": "Bir Trinamic step motor sürücüsü - çalışma/tutma akımı, microstep'ler ve step motoru için StallGuard/chopper ayarı.",
+      "extruder": "Hotend ve ekstruder - nozül boyutu, filament yolu, ısıtıcı, termistör ve PID.",
+      "heater_bed": "Isıtılan tabla - ısıtıcı pini, termistör ve PID/sıcaklık sınırları.",
+      "fan": "Yeni basılan filamenti soğutan parça soğutma fanı.",
+      "heater_fan": "Bir ısıtıcıya bağlı (ör. hotend soğutma) ve onu aşırı ısınmadan korumak için çalışan bir fan.",
+      "controller_fan": "Motorlar etkinken step motor sürücülerini / elektroniği soğutan bir fan.",
+      "mcu": "Klipper'ı çalıştıran bir mikrodenetleyici kartı - seri veya CAN bağlantısı.",
+      "printer": "Genel makine kinematiği ve hareket sınırları (tür, maks hız, ivme).",
+      "bed_mesh": "Otomatik tabla tesviyesi - bir ızgarayı problar ve baskı sırasında tabla düzlüğünü telafi eder.",
+      "probe": "Homing ve tabla ağı için tabla yüzeyini algılamak üzere kullanılan Z probu.",
       "gcode_macro": "Özel bir G-code makrosu - konsoldan veya diğer makrolardan çağrılabilen adlandırılmış bir komut.",
-      "output_pin": "Kontrol edilebilir bir çıkış pini (örneğin bir LED, röle veya enable hattı).",
+      "output_pin": "Kontrol edilebilir bir çıkış pini (ör. bir LED, röle veya enable hattı).",
       "neopixel": "Adreslenebilir RGB LED'ler (NeoPixel / WS2812) ve renk kontrolü.",
-      "board_pins": "Bir kartın fiziksel pinleri için yapılandırmanın başka yerlerinde başvurulan kolay takma adlar.",
-      "input_shaper": "Daha yüksek hızlarda titreşimi ve hayalet izleri azaltan rezonans telafisi.",
-      "safe_z_home": "Nozzle ve tablayı korumak için güvenli bir XY konumunda (genellikle tabla merkezi) Z'yi referans alır.",
-      "z_tilt": "Gantry/tabla düzlemi düz olacak şekilde birden fazla Z motorunu ayarlar.",
-      "quad_gantry_level": "Dört noktalı bir gantry'yi tablaya paralel olacak şekilde tesviye eder.",
-      "filament_switch_sensor": "Filament bittiğinde yazdırmayı duraklatan bir filament tükenme sensörü.",
+      "board_pins": "Bir kartın fiziksel pinleri için yapılandırmanın başka yerlerinde başvurulan kullanıcı dostu takma adlar.",
+      "input_shaper": "Daha yüksek hızlarda titreşim ve gölgelenmeyi azaltan rezonans telafisi.",
+      "safe_z_home": "Nozülü ve tablayı korumak için Z'yi güvenli bir XY konumunda (genellikle tabla merkezi) homing yapar.",
+      "z_tilt": "Köprü/tabla düzlemi düz olacak şekilde birden fazla Z motorunu ayarlar.",
+      "quad_gantry_level": "Dört noktalı bir köprüyü tablaya paralel olacak şekilde tesviye eder.",
+      "filament_switch_sensor": "Filament bittiğinde baskıyı duraklatan bir filament bitiş sensörü.",
       "virtual_sdcard": "Klipper'ın ana bilgisayara yüklenen dosyaları yazdırmasını sağlar (Mainsail ve Fluidd için gereklidir)."
     },
     "backups": {
@@ -204,36 +204,36 @@
       "restore": "Geri yükle",
       "diffHint": "geçerli dosyadan fark",
       "unchanged": "⋯ {n} değişmemiş satır ⋯",
-      "note": "Her kaydetmeden önce anlık görüntüler otomatik olarak yazılır. Geri yükle, son bir inceleme + kaydetme için birini düzenleyiciye yükler."
+      "note": "Her kaydetmeden önce otomatik olarak anlık görüntüler yazılır. Geri yükleme, son bir inceleme + kaydetme için birini düzenleyiciye yükler."
     },
     "sanity": {
-      "title": "Sürücü değeri tutarlılığı ({n})",
-      "note": "{n} TMC sürücü bölümü kontrol edildi. Belirlenmiş bir tavanı olmayan bir sürücü ve atanmış motoru olmayan bir step motoru atlanır, tahmin edilmez.",
+      "title": "Sürücü değeri makullük ({n})",
+      "note": "{n} TMC sürücü bölümü kontrol edildi. Düzenli bir tavanı olmayan bir sürücü ve atanmış motoru olmayan bir step motoru atlanır, tahmin edilmez.",
       "rule": {
         "over_driver_cap": "{section}: run_current {run_current} A, sürücünün ~{cap} A tam ölçek tavanını aşıyor.",
-        "near_driver_cap": "{section}: run_current {run_current} A, sürücünün ~{cap} A tavanının %10 içinde.",
+        "near_driver_cap": "{section}: run_current {run_current} A, sürücünün ~{cap} A tavanının %10'u içinde.",
         "over_motor_rating": "{section}: run_current {run_current} A, {motor} değerini ({max_current} A) aşıyor.",
-        "near_motor_rating": "{section}: run_current {run_current} A, {motor} değerinin ({max_current} A) %10 içinde.",
+        "near_motor_rating": "{section}: run_current {run_current} A, {motor} değerinin ({max_current} A) %10'u içinde.",
         "odd_microsteps": "{section}: microsteps {microsteps} ikinin kuvveti değil (1…256)."
       }
     },
     "panels": {
-      "failed": "Bazı paneller yüklenemedi ve gizlendi: {panels}. Neyi kontrol edecekleri şu anda bilinmiyor - mutlaka sorunsuz oldukları anlamına gelmez.",
+      "failed": "Bazı paneller yüklenemedi ve gizlendi: {panels}. Neyi kontrol edecekleri şu an bilinmiyor - mutlaka iyi olduğu anlamına gelmez.",
       "name": {
-        "drift": "Disk-vs-canlı",
+        "drift": "Disk-canlı",
         "pinDoctor": "Pin Doktoru",
-        "sanity": "Sürücü tutarlılığı",
+        "sanity": "Sürücü makullüğü",
         "project": "Proje görünümü",
         "pinMap": "Pin önerileri",
         "backups": "Yedekler"
       }
     },
     "addPart": {
-      "title": "Bir parça ekle (boş pin farkındalıklı)",
-      "hint": "Bir parça türü ve HİÇBİR şeyin henüz kullanmadığı kart pinlerinden birini seçin (yapılandırmanızdan + kart haritasından canlı okunur) ve güvenlik kapısından geçirilmiş hazır bir bölüm alın - pin tahmini yok.",
+      "title": "Bir parça ekle (boş pin farkında)",
+      "hint": "Bir parça türü ve henüz HİÇBİR ŞEYİN kullanmadığı kart pinlerinden birini seçin (yapılandırmanızdan + kart haritasından canlı okunur) ve güvenlik kapısı üzerinden yazılmış hazır bir bölüm alın - pin tahmini yok.",
       "kind": "Parça türü",
       "name": "Ad",
-      "namePh": "örn. chamber_fan",
+      "namePh": "ör. chamber_fan",
       "mcu": "Kart (MCU)",
       "pin": "Boş pin",
       "pinPh": "Bir boş pin seçin…",

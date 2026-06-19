@@ -43,7 +43,7 @@
           "def": "微控制器單元 — 執行 Klipper 韌體的控制板 (主機板、工具頭等)。"
         },
         "canbus": {
-          "term": "CAN bus",
+          "term": "CAN 匯流排",
           "def": "以唯一 UUID 連接各板子的雙線共用匯流排 — 工具頭佈線常用。"
         },
         "host": {
@@ -88,7 +88,7 @@
       }
     },
     "conn": {
-      "canbus": "CAN bus",
+      "canbus": "CAN 匯流排",
       "usb": "USB",
       "uart": "UART",
       "unknown": "未知",
@@ -114,7 +114,7 @@
         "title": "連結",
         "product": "產品",
         "repo": "原始碼庫",
-        "wiki": "Wiki",
+        "wiki": "維基",
         "pinout": "腳位圖",
         "schematic": "電路圖",
         "datasheet": "資料表",
@@ -169,11 +169,11 @@
         "max_bed_temp": "熱床最高溫度",
         "spi": "SPI",
         "notes": "備註",
-        "eth_wifi": "Eth／WiFi",
+        "eth_wifi": "乙太網路/WiFi",
         "class": "類別",
         "supported_drivers": "支援的驅動器",
         "form_factor": "外型規格",
-        "flash": "Flash",
+        "flash": "快閃記憶體",
         "all_metal_accel": "全金屬／加速度計",
         "ethernet_wifi": "乙太網路／WiFi",
         "i2c": "I2C",
@@ -182,7 +182,7 @@
         "printer_board": "印表機／板子",
         "accelerometer": "加速度計",
         "printers": "印表機",
-        "bootloader": "Bootloader",
+        "bootloader": "引導程式",
         "flash_offset": "Flash 偏移",
         "soc": "SoC",
         "ram": "RAM",
