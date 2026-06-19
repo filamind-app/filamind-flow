@@ -77,7 +77,7 @@ function onLoad(): void {
   <div
     class="nb-card overflow-hidden bg-paper p-0"
     :class="
-      pip ? ['fixed bottom-3 end-3 z-40 shadow-[4px_4px_0_0_var(--color-ink)]', widthClass] : ''
+      pip ? ['fixed bottom-3 inset-e-3 z-40 shadow-[4px_4px_0_0_var(--color-ink)]', widthClass] : ''
     "
     :role="pip ? 'complementary' : undefined"
     :aria-label="pip ? t('maxFlow.camera.title') : undefined"
@@ -95,7 +95,7 @@ function onLoad(): void {
         <template v-if="pip">
           <button
             type="button"
-            class="rounded border border-ink px-1 text-[10px] leading-none hover:bg-paper"
+            class="rounded-sm border border-ink px-1 text-[10px] leading-none hover:bg-paper"
             :title="large ? t('maxFlow.camera.shrink') : t('maxFlow.camera.enlarge')"
             :aria-label="large ? t('maxFlow.camera.shrink') : t('maxFlow.camera.enlarge')"
             @click="large = !large"
@@ -104,7 +104,7 @@ function onLoad(): void {
           </button>
           <button
             type="button"
-            class="rounded border border-ink px-1 text-[10px] leading-none hover:bg-paper"
+            class="rounded-sm border border-ink px-1 text-[10px] leading-none hover:bg-paper"
             :title="collapsed ? t('maxFlow.camera.maximize') : t('maxFlow.camera.minimize')"
             :aria-label="collapsed ? t('maxFlow.camera.maximize') : t('maxFlow.camera.minimize')"
             @click="collapsed = !collapsed"

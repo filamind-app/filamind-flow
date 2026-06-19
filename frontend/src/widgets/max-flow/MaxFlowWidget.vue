@@ -423,7 +423,9 @@ onMounted(async () => {
           </tr>
         </tbody>
       </table>
-      <p class="rounded bg-brand-yellow/20 p-1.5 text-[11px]">⚠ {{ t('maxFlow.plan.warning') }}</p>
+      <p class="rounded-sm bg-brand-yellow/20 p-1.5 text-[11px]">
+        ⚠ {{ t('maxFlow.plan.warning') }}
+      </p>
     </div>
 
     <!-- Safety checklist + run gate -->
@@ -559,7 +561,7 @@ onMounted(async () => {
         {{ t('maxFlow.result.via', { method: t(`maxFlow.method.${result.method}`) }) }}
       </p>
       <!-- The accel method is experimental - say so whenever it produced the result. -->
-      <p v-if="result.method === 'accel'" class="rounded bg-brand-yellow/20 p-1.5 text-[11px]">
+      <p v-if="result.method === 'accel'" class="rounded-sm bg-brand-yellow/20 p-1.5 text-[11px]">
         ⚗ {{ t('maxFlow.result.accelExperimental') }}
       </p>
 
@@ -567,7 +569,7 @@ onMounted(async () => {
            an empty accel capture is conveyed by the experimental note + "(not confirmed)". -->
       <div
         v-if="noSignal && result.method !== 'accel'"
-        class="space-y-1 rounded border-2 border-brand-red bg-brand-red/15 p-2"
+        class="space-y-1 rounded-sm border-2 border-brand-red bg-brand-red/15 p-2"
       >
         <p class="text-[11px] font-bold text-brand-red">
           ⚠ {{ t('maxFlow.result.unreliableTitle') }}

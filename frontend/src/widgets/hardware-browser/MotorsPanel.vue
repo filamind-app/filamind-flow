@@ -57,7 +57,7 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'motors'
     none-key="hardwareBrowser.motors.none"
   >
     <template #facets>
-      <div class="min-w-[8rem]">
+      <div class="min-w-32">
         <ComboSelect
           v-model="nema"
           :options="nemaOptions"
@@ -70,7 +70,7 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'motors'
         v-model="manufacturer"
         type="text"
         :placeholder="t('hardwareBrowser.facets.manufacturer')"
-        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        class="min-w-32 rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
         @keyup.enter="onFacetChange"
       />
     </template>
@@ -91,16 +91,16 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'motors'
         </button>
       </div>
       <div class="mt-1 flex flex-wrap gap-1">
-        <span v-if="item.ratedCurrent" class="rounded bg-paper px-1 font-mono text-[9px]">
+        <span v-if="item.ratedCurrent" class="rounded-sm bg-paper px-1 font-mono text-[9px]">
           {{ t('hardwareBrowser.motors.rated') }} {{ item.ratedCurrent }}
         </span>
         <span
           v-if="item.recommendedRunCurrent"
-          class="rounded bg-brand-lime px-1 font-mono text-[9px]"
+          class="rounded-sm bg-brand-lime px-1 font-mono text-[9px]"
         >
           {{ t('hardwareBrowser.motors.run') }} {{ item.recommendedRunCurrent }} A
         </span>
-        <span v-if="item.holdingTorque" class="rounded bg-paper px-1 font-mono text-[9px]">
+        <span v-if="item.holdingTorque" class="rounded-sm bg-paper px-1 font-mono text-[9px]">
           {{ item.holdingTorque }}
         </span>
       </div>

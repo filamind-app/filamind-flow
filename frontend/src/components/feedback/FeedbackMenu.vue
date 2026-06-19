@@ -49,7 +49,7 @@ onUnmounted(() => {
 
     <div
       v-if="open"
-      class="nb-card absolute end-0 top-full z-50 mt-2 w-60 p-1.5"
+      class="nb-card absolute inset-e-0 top-full z-50 mt-2 w-60 p-1.5"
       role="menu"
       :aria-label="t('shell.feedback.menuTitle')"
     >

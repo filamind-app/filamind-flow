@@ -375,7 +375,7 @@ onMounted(async () => {
         </div>
         <div v-else :style="{ paddingLeft: item.depth * 12 + 'px' }">
           <div
-            class="flex items-center justify-between gap-2 rounded px-1 py-0.5"
+            class="flex items-center justify-between gap-2 rounded-sm px-1 py-0.5"
             :class="
               isToggle(item.node)
                 ? item.node.readonly
@@ -452,7 +452,7 @@ onMounted(async () => {
       <input
         v-model="profileName"
         :placeholder="t('firmware.configEditor.profileNamePlaceholder')"
-        :class="['min-w-[8rem] flex-1', inputClass, 'max-w-none']"
+        :class="['min-w-32 flex-1', inputClass, 'max-w-none']"
       />
       <button
         class="nb-btn bg-brand-lime px-3 py-0.5 text-xs"

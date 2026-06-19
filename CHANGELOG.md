@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.298.0] - 2026-06-19
+
+### Changed
+
+- **Upgraded to Tailwind CSS v4.** The styling engine now uses Tailwind v4 (`@tailwindcss/postcss`
+  with a CSS-first `@theme` config). All Neo-Brutalist design tokens (colors, fonts, thick borders,
+  offset shadows, radii) and every theme are preserved, so there is no visual change. This unblocks
+  the dependency update and modernizes the CSS build.
+
 ## [0.297.0] - 2026-06-19
 
 ### Fixed

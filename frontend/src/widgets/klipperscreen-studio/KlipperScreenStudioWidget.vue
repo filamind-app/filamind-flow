@@ -678,7 +678,7 @@ onMounted(() => void loadStatus())
                 }}</span>
               </label>
               <template v-else>
-                <label :for="'set-' + f.key" class="min-w-[8rem] text-xs font-medium">
+                <label :for="'set-' + f.key" class="min-w-32 text-xs font-medium">
                   {{ t('klipperscreenStudio.settings.label.' + f.key) }}
                 </label>
                 <select
@@ -769,7 +769,7 @@ onMounted(() => void loadStatus())
             </p>
             <template v-for="row in grp.rows" :key="row.item.id">
               <div
-                class="flex items-center gap-1 rounded px-1 py-0.5 text-[11px]"
+                class="flex items-center gap-1 rounded-sm px-1 py-0.5 text-[11px]"
                 :class="selectedMenuId === row.item.id ? 'bg-brand-cyan/30' : 'hover:bg-ink/5'"
                 :style="{ marginInlineStart: row.depth * 14 + 'px' }"
               >
@@ -829,7 +829,7 @@ onMounted(() => void loadStatus())
                   }}</span>
                   <input
                     v-model="row.item.props.name"
-                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5"
+                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5"
                     @input="menusDirty = true"
                   />
                 </label>
@@ -840,7 +840,7 @@ onMounted(() => void loadStatus())
                   <input
                     v-model="row.item.props.icon"
                     placeholder="home"
-                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
                     @input="menusDirty = true"
                   />
                 </label>
@@ -850,7 +850,7 @@ onMounted(() => void loadStatus())
                   }}</span>
                   <select
                     :value="menuActionType(row.item)"
-                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5"
+                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5"
                     @change="
                       setMenuActionType(row.item, ($event.target as HTMLSelectElement).value)
                     "
@@ -866,7 +866,7 @@ onMounted(() => void loadStatus())
                   }}</span>
                   <select
                     v-model="row.item.props.panel"
-                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
                     @change="menusDirty = true"
                   >
                     <option v-for="p in panels" :key="p" :value="p">{{ p }}</option>
@@ -882,7 +882,7 @@ onMounted(() => void loadStatus())
                   <input
                     :value="menuGcode(row.item)"
                     placeholder="G28"
-                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
                     @input="setMenuGcode(row.item, ($event.target as HTMLInputElement).value)"
                   />
                 </label>
@@ -893,7 +893,7 @@ onMounted(() => void loadStatus())
                   <input
                     v-model="row.item.props.enable"
                     :placeholder="'{{ printer.extruders.count > 0 }}'"
-                    class="min-w-0 flex-1 rounded border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
                     @input="menusDirty = true"
                   />
                 </label>
@@ -961,7 +961,7 @@ onMounted(() => void loadStatus())
                 <input
                   v-model="palette[tok]"
                   type="color"
-                  class="h-7 w-9 shrink-0 rounded border-2 border-ink"
+                  class="h-7 w-9 shrink-0 rounded-sm border-2 border-ink"
                   :aria-label="tok"
                 />
                 <span class="min-w-0 flex-1 truncate font-mono">{{ tok }}</span>
@@ -988,7 +988,7 @@ onMounted(() => void loadStatus())
                 :style="{ backgroundColor: palette.bg, color: palette.text }"
               >
                 <div
-                  class="mb-2 flex items-center justify-between rounded px-2 py-1 text-[11px]"
+                  class="mb-2 flex items-center justify-between rounded-sm px-2 py-1 text-[11px]"
                   :style="{ backgroundColor: palette.active }"
                 >
                   <span>{{ t('klipperscreenStudio.themes.previewTitle') }}</span
@@ -1024,7 +1024,7 @@ onMounted(() => void loadStatus())
             <input
               v-model="themeName"
               :placeholder="t('klipperscreenStudio.themes.namePlaceholder')"
-              class="min-w-[8rem] flex-1 rounded-brutal border-3 border-ink bg-paper px-2 py-1 text-xs"
+              class="min-w-32 flex-1 rounded-brutal border-3 border-ink bg-paper px-2 py-1 text-xs"
             />
             <button
               class="nb-btn bg-brand-lime px-3 py-1 text-xs"
@@ -1144,7 +1144,7 @@ onMounted(() => void loadStatus())
           >
             <p class="font-bold">{{ t('klipperscreenStudio.kiosk.notInstalled') }}</p>
             <p class="opacity-80">{{ t('klipperscreenStudio.kiosk.setupHint') }}</p>
-            <code class="block rounded bg-ink/5 p-1.5 font-mono"
+            <code class="block rounded-sm bg-ink/5 p-1.5 font-mono"
               >cd ~/filamind-flow && sudo bash scripts/install.sh kiosk</code
             >
           </div>

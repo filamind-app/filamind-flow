@@ -122,7 +122,7 @@ function pinTitle(p: PinAtlasPin): string {
         <li
           v-for="(f, i) in atlas.findings"
           :key="i"
-          class="rounded border-s-4 p-1"
+          class="rounded-sm border-s-4 p-1"
           :class="
             f.kind === 'double_assign'
               ? 'border-brand-red bg-brand-red/10'
@@ -139,7 +139,7 @@ function pinTitle(p: PinAtlasPin): string {
             <button
               v-for="sec in f.sections"
               :key="sec"
-              class="rounded border border-ink/40 bg-surface px-1 font-mono text-[11px] hover:bg-ink/10"
+              class="rounded-sm border border-ink/40 bg-surface px-1 font-mono text-[11px] hover:bg-ink/10"
               :title="t('boardTopology.jump.section')"
               @click="openSection(sec)"
             >
@@ -154,7 +154,7 @@ function pinTitle(p: PinAtlasPin): string {
         <input
           v-model="query"
           type="search"
-          class="min-w-[8rem] flex-1 rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-[11px]"
+          class="min-w-32 flex-1 rounded-brutal border-2 border-ink bg-surface px-2 py-0.5 text-[11px]"
           :placeholder="t('boardTopology.pinAtlas.search')"
           :aria-label="t('boardTopology.pinAtlas.search')"
         />
@@ -172,7 +172,7 @@ function pinTitle(p: PinAtlasPin): string {
           <span
             v-for="p in pins"
             :key="p.pin"
-            class="inline-flex items-center gap-0.5 rounded border px-1 py-0.5 font-mono text-[11px]"
+            class="inline-flex items-center gap-0.5 rounded-sm border px-1 py-0.5 font-mono text-[11px]"
             :class="
               p.used
                 ? p.caveat
@@ -184,7 +184,7 @@ function pinTitle(p: PinAtlasPin): string {
           >
             <span class="font-bold">{{ p.pin }}</span>
             <span v-if="p.caveat" aria-hidden="true">⚠</span>
-            <span v-if="p.used && p.signal" class="max-w-[10rem] truncate opacity-70">{{
+            <span v-if="p.used && p.signal" class="max-w-40 truncate opacity-70">{{
               p.signal
             }}</span>
           </span>

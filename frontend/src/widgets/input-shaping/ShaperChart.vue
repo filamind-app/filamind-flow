@@ -112,7 +112,7 @@ function peakLabelX(x: number, width: number): number {
     </svg>
     <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[10px]">
       <span v-for="s in chart.psd" :key="'lg' + s.name" class="flex items-center gap-1">
-        <span class="inline-block h-2 w-3 rounded-sm" :style="{ background: s.color }" />
+        <span class="inline-block h-2 w-3 rounded-xs" :style="{ background: s.color }" />
         {{ s.name }}
       </span>
       <span class="flex items-center gap-1 opacity-70">

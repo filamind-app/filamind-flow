@@ -128,7 +128,7 @@ function symmetryClass(pct: number): string {
     <div class="flex flex-wrap gap-x-3 font-mono text-[10px] opacity-60">
       <span>{{ t('inputShaping.vibrationsView.axisLegend') }}</span>
       <span class="flex items-center gap-1"
-        ><span class="inline-block h-2 w-3 rounded-sm bg-brand-lime" />{{
+        ><span class="inline-block h-2 w-3 rounded-xs bg-brand-lime" />{{
           t('inputShaping.vibrationsView.smooth')
         }}</span
       >

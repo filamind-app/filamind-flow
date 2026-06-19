@@ -57,7 +57,7 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'hosts'
     none-key="hardwareBrowser.hosts.none"
   >
     <template #facets>
-      <div class="min-w-[8rem]">
+      <div class="min-w-32">
         <ComboSelect
           v-model="kind"
           :options="kindOptions"
@@ -70,7 +70,7 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'hosts'
         v-model="manufacturer"
         type="text"
         :placeholder="t('hardwareBrowser.facets.manufacturer')"
-        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        class="min-w-32 rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
         @keyup.enter="onFacetChange"
       />
     </template>
@@ -92,12 +92,12 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'hosts'
       </div>
       <div class="mt-1 flex flex-wrap gap-1">
         <span
-          class="rounded px-1 font-mono text-[9px]"
+          class="rounded-sm px-1 font-mono text-[9px]"
           :class="item.klipperOpen ? 'bg-brand-lime' : 'bg-paper opacity-70'"
         >
           {{ t(`hardwareBrowser.hosts.kind.${item.kind}`) }}
         </span>
-        <span v-if="item.klipperOs" class="rounded bg-paper px-1 font-mono text-[9px]">
+        <span v-if="item.klipperOs" class="rounded-sm bg-paper px-1 font-mono text-[9px]">
           {{ item.klipperOs }}
         </span>
       </div>

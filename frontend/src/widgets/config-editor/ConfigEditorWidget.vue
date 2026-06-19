@@ -823,7 +823,7 @@ onMounted(() => {
 
     <!-- File picker -->
     <div class="flex flex-wrap items-end gap-2">
-      <label class="min-w-[12rem] flex-1">
+      <label class="min-w-48 flex-1">
         <span class="mb-1 block text-xs font-bold">{{ t('configEditor.file.label') }}</span>
         <ComboSelect
           v-model="selected"
@@ -854,7 +854,7 @@ onMounted(() => {
     <details v-if="graph && graph.reachable" class="nb-card bg-surface p-2 text-[11px]">
       <summary class="cursor-pointer font-bold">
         {{ t('configEditor.project.title') }}
-        <span v-if="lintActionable" class="ms-1 rounded bg-brand-yellow px-1 text-ink">
+        <span v-if="lintActionable" class="ms-1 rounded-sm bg-brand-yellow px-1 text-ink">
           {{ t('configEditor.project.lintBadge', { n: lintActionable }) }}
         </span>
       </summary>
@@ -866,7 +866,7 @@ onMounted(() => {
             v-model="searchQuery"
             type="search"
             :placeholder="t('configEditor.project.searchPlaceholder')"
-            class="min-w-[10rem] flex-1 rounded-brutal border border-ink bg-surface px-2 py-1"
+            class="min-w-40 flex-1 rounded-brutal border border-ink bg-surface px-2 py-1"
           />
           <button type="submit" class="nb-btn bg-surface px-2 py-1" :disabled="searching">
             <span aria-hidden="true">🔎</span> {{ t('configEditor.project.searchBtn') }}
@@ -921,7 +921,7 @@ onMounted(() => {
             <li
               v-for="(lt, li) in graph.lint"
               :key="li"
-              class="rounded p-1"
+              class="rounded-sm p-1"
               :class="lintClass(lt.level)"
             >
               <button class="w-full text-start hover:underline" @click="openFile(lt.file)">
@@ -994,7 +994,7 @@ onMounted(() => {
             class="flex items-start gap-1.5 font-mono text-[11px]"
           >
             <span
-              class="shrink-0 rounded px-1 font-bold"
+              class="shrink-0 rounded-sm px-1 font-bold"
               :class="
                 issue.level === 'error' ? 'bg-brand-red text-paper' : 'bg-brand-yellow text-ink'
               "
@@ -1021,7 +1021,7 @@ onMounted(() => {
         <ul class="space-y-1 text-[11px]">
           <li v-for="(f, i) in sanity.findings" :key="i" class="flex flex-wrap items-start gap-1">
             <span
-              class="shrink-0 rounded px-1 font-bold"
+              class="shrink-0 rounded-sm px-1 font-bold"
               :class="f.level === 'error' ? 'bg-brand-red text-paper' : 'bg-brand-yellow text-ink'"
             >
               {{ f.level === 'error' ? '✕' : '⚠' }}
@@ -1053,7 +1053,7 @@ onMounted(() => {
               class="flex flex-wrap items-start gap-1 font-mono text-[10px]"
             >
               <span
-                class="shrink-0 rounded px-1 font-bold"
+                class="shrink-0 rounded-sm px-1 font-bold"
                 :class="
                   f.kind === 'double_assign'
                     ? 'bg-brand-red text-paper'
@@ -1097,9 +1097,9 @@ onMounted(() => {
             >
               <span class="opacity-60">[{{ d.section }}]</span>
               <b>{{ d.key }}</b>
-              <span class="rounded bg-brand-red/20 px-1">{{ d.disk }}</span>
+              <span class="rounded-sm bg-brand-red/20 px-1">{{ d.disk }}</span>
               <span aria-hidden="true">→</span>
-              <span class="rounded bg-brand-lime/30 px-1">{{ d.live }}</span>
+              <span class="rounded-sm bg-brand-lime/30 px-1">{{ d.live }}</span>
               <button
                 class="nb-btn bg-surface px-1 py-0 disabled:opacity-50"
                 :disabled="adopting === d.section + '|' + d.key"
@@ -1209,7 +1209,7 @@ onMounted(() => {
                 · {{ t('configEditor.backups.diffHint') }}
               </p>
               <pre
-                class="max-h-60 overflow-auto rounded bg-ink/5 p-1 font-mono text-[10px] leading-snug"
+                class="max-h-60 overflow-auto rounded-sm bg-ink/5 p-1 font-mono text-[10px] leading-snug"
               ><template v-for="(r, ri) in diffRows" :key="ri"><div v-if="r.hidden" class="opacity-40">{{ t('configEditor.backups.unchanged', { n: r.hidden }) }}</div><div v-else :class="r.kind === 'del' ? 'text-brand-red' : r.kind === 'add' ? 'text-brand-lime' : 'opacity-60'">{{ r.kind === 'del' ? '− ' : r.kind === 'add' ? '+ ' : '  ' }}{{ r.text }}</div></template></pre>
             </div>
           </li>
@@ -1283,7 +1283,7 @@ onMounted(() => {
                 <b>[{{ section.header }}]</b>
                 <span
                   v-if="section.is_save_config"
-                  class="ms-1 rounded bg-ink px-1 text-[10px] text-paper"
+                  class="ms-1 rounded-sm bg-ink px-1 text-[10px] text-paper"
                 >
                   {{ t('configEditor.section.saveBadge') }}
                 </span>
@@ -1331,7 +1331,7 @@ onMounted(() => {
                 <tbody>
                   <tr v-for="(p, pi) in section.params" :key="pi" class="align-top">
                     <td class="py-0.5 pe-2 font-bold">{{ p.key }}</td>
-                    <td class="whitespace-pre-wrap break-words py-0.5">
+                    <td class="whitespace-pre-wrap wrap-break-word py-0.5">
                       <!-- Typed control for a TMC register field the policy knows -->
                       <template v-if="policyFor(section.type, p.key) as FieldPolicyEntry | null">
                         <span class="inline-flex flex-wrap items-center gap-1">
@@ -1399,21 +1399,21 @@ onMounted(() => {
                           </datalist>
                           <span
                             v-if="pinFlags(p.value).offBoard"
-                            class="rounded bg-ink/10 px-1 text-[10px] opacity-70"
+                            class="rounded-sm bg-ink/10 px-1 text-[10px] opacity-70"
                             :title="t('configEditor.pinEdit.offBoardHint')"
                           >
                             {{ t('configEditor.pinEdit.offBoard') }}
                           </span>
                           <span
                             v-if="pinFlags(p.value).doubleAssign"
-                            class="rounded bg-brand-yellow px-1 text-[10px] font-bold text-ink"
+                            class="rounded-sm bg-brand-yellow px-1 text-[10px] font-bold text-ink"
                             :title="t('configEditor.pinEdit.doubleHint')"
                           >
                             {{ t('configEditor.pinEdit.double') }}
                           </span>
                           <span
                             v-if="pinFlags(p.value).caveat"
-                            class="rounded bg-brand-yellow px-1 text-[10px] font-bold text-ink"
+                            class="rounded-sm bg-brand-yellow px-1 text-[10px] font-bold text-ink"
                             :title="pinFlags(p.value).caveat || ''"
                           >
                             {{ t('configEditor.pinEdit.caveat') }}
@@ -1440,7 +1440,7 @@ onMounted(() => {
         <textarea
           v-model="draft"
           spellcheck="false"
-          class="nb-card h-[28rem] w-full resize-y overflow-auto bg-surface p-2 font-mono text-[11px] leading-snug"
+          class="nb-card h-112 w-full resize-y overflow-auto bg-surface p-2 font-mono text-[11px] leading-snug"
           :aria-label="t('configEditor.view.raw')"
         ></textarea>
 

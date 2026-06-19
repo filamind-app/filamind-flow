@@ -64,7 +64,7 @@ onMounted(() => {
 
 <template>
   <div class="space-y-2 text-sm">
-    <label class="block min-w-[12rem]">
+    <label class="block min-w-48">
       <span class="mb-0.5 block text-[11px] opacity-70">{{
         t('hardwareBrowser.mcus.search')
       }}</span>
@@ -100,9 +100,9 @@ onMounted(() => {
             <div class="min-w-0">
               <div class="truncate font-bold">{{ m.name }}</div>
               <div class="flex flex-wrap items-center gap-1 font-mono text-[10px] opacity-60">
-                <span class="rounded bg-paper px-1">{{ m.family }}</span>
+                <span class="rounded-sm bg-paper px-1">{{ m.family }}</span>
                 <span v-if="m.arch">· {{ m.arch }}</span>
-                <span class="rounded bg-brand-cyan px-1 text-ink">{{
+                <span class="rounded-sm bg-brand-cyan px-1 text-ink">{{
                   t('hardwareBrowser.mcus.boards', { n: m.boardCount })
                 }}</span>
               </div>

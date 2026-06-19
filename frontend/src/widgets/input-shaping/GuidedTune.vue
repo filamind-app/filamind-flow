@@ -529,7 +529,7 @@ function review(i: number): void {
           <div class="flex flex-wrap gap-x-3 font-mono text-[10px]">
             <span class="flex items-center gap-1">
               <span
-                class="inline-block h-2 w-3 rounded-sm"
+                class="inline-block h-2 w-3 rounded-xs"
                 :style="{ background: beltPlot?.a.color }"
               />
               {{ t('inputShaping.guided.ui.beltA') }}

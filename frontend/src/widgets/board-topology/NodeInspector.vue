@@ -147,7 +147,7 @@ function onPick(id: string | null): void {
       >
         {{ t('hardwareBrowser.related.jump', { name: host.name }) }}
       </button>
-      <p v-if="host.integrated_into_board_id" class="rounded bg-brand-blue/20 p-1">
+      <p v-if="host.integrated_into_board_id" class="rounded-sm bg-brand-blue/20 p-1">
         <span aria-hidden="true">🔗 </span
         >{{ t('boardTopology.graph.integratedNote', { board: host.integrated_into_board_id }) }}
       </p>
@@ -159,7 +159,7 @@ function onPick(id: string | null): void {
         <span class="min-w-0 truncate font-display text-sm font-bold">{{ mcu.name }}</span>
         <span
           v-if="fw?.in_sync === true || fw?.in_sync === false"
-          class="shrink-0 rounded px-1 text-[11px] font-bold"
+          class="shrink-0 rounded-sm px-1 text-[11px] font-bold"
           :class="fw.in_sync ? 'bg-brand-lime text-ink' : 'bg-brand-red text-surface'"
         >
           {{
@@ -198,7 +198,7 @@ function onPick(id: string | null): void {
         <button
           v-if="mcu.mcu_id"
           type="button"
-          class="nb-btn rounded bg-paper px-1 hover:bg-brand-cyan"
+          class="nb-btn rounded-sm bg-paper px-1 hover:bg-brand-cyan"
           @click="
             emit('openInBrowser', { type: 'mcu', id: mcu.mcu_id, name: mcu.mcu || mcu.mcu_id })
           "
@@ -227,7 +227,7 @@ function onPick(id: string | null): void {
           :is="c.kind === 'motor' || c.kind === 'driver' ? 'button' : 'span'"
           v-for="c in componentCounts(mcu)"
           :key="c.kind"
-          class="rounded bg-paper px-1"
+          class="rounded-sm bg-paper px-1"
           :class="
             c.kind === 'motor' || c.kind === 'driver' ? 'hover:bg-brand-cyan hover:text-ink' : ''
           "
@@ -277,7 +277,7 @@ function onPick(id: string | null): void {
             class="flex flex-wrap items-center gap-1 font-mono opacity-70"
           >
             <span v-if="detail.manufacturer">{{ detail.manufacturer }}</span>
-            <span v-if="detail.boardClass" class="rounded bg-paper px-1">{{
+            <span v-if="detail.boardClass" class="rounded-sm bg-paper px-1">{{
               catalogLabel('class', detail.boardClass)
             }}</span>
           </div>
@@ -287,7 +287,7 @@ function onPick(id: string | null): void {
             <span
               v-for="(n, cat) in detail.portsSummary"
               :key="cat"
-              class="ms-1 inline-block rounded bg-paper px-1"
+              class="ms-1 inline-block rounded-sm bg-paper px-1"
             >
               {{ catalogLabel('portCat', cat) }}×{{ n }}
             </span>
@@ -331,7 +331,7 @@ function onPick(id: string | null): void {
                 v-for="r in g.refs"
                 :key="r.type + r.id"
                 type="button"
-                class="nb-btn rounded bg-paper px-1 font-mono hover:bg-brand-cyan"
+                class="nb-btn rounded-sm bg-paper px-1 font-mono hover:bg-brand-cyan"
                 @click="emit('openInBrowser', r)"
               >
                 {{ r.name || r.id }}
@@ -380,7 +380,7 @@ function onPick(id: string | null): void {
       <div class="flex flex-wrap items-center gap-1 border-t border-ink/15 pt-1 text-[11px]">
         <span
           v-if="mcu.board_match === 'confirmed'"
-          class="rounded bg-brand-lime px-1 font-bold text-ink"
+          class="rounded-sm bg-brand-lime px-1 font-bold text-ink"
         >
           ✓ {{ t('boardTopology.override.confirmed') }}
         </span>

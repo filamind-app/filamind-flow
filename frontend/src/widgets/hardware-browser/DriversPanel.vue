@@ -67,7 +67,7 @@ function resetFacets(): void {
         v-model="manufacturer"
         type="text"
         :placeholder="t('hardwareBrowser.facets.manufacturer')"
-        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        class="min-w-32 rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
         @keyup.enter="onFacetChange"
       />
     </template>
@@ -88,7 +88,7 @@ function resetFacets(): void {
       </div>
       <div class="mt-1 flex flex-wrap gap-1">
         <span
-          class="rounded px-1 font-mono text-[9px]"
+          class="rounded-sm px-1 font-mono text-[9px]"
           :class="item.klipperSupported ? 'bg-brand-lime' : 'bg-paper opacity-70'"
         >
           {{
@@ -97,7 +97,7 @@ function resetFacets(): void {
               : t('hardwareBrowser.drivers.standalone')
           }}
         </span>
-        <span v-if="item.sensorless" class="rounded bg-paper px-1 font-mono text-[9px]">
+        <span v-if="item.sensorless" class="rounded-sm bg-paper px-1 font-mono text-[9px]">
           {{ t('hardwareBrowser.drivers.sensorless') }}
         </span>
       </div>

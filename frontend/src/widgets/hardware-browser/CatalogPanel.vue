@@ -60,7 +60,7 @@ const focusMatch = (f: FocusTarget): boolean =>
     none-key="hardwareBrowser.results.none"
   >
     <template #facets>
-      <div v-if="subsectionOptions.length" class="min-w-[9rem]">
+      <div v-if="subsectionOptions.length" class="min-w-36">
         <ComboSelect
           v-model="subsection"
           :options="subsectionOptions"
@@ -73,7 +73,7 @@ const focusMatch = (f: FocusTarget): boolean =>
         v-model="manufacturer"
         type="text"
         :placeholder="t('hardwareBrowser.facets.manufacturer')"
-        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        class="min-w-32 rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
         @keyup.enter="onFacetChange"
       />
     </template>

@@ -147,7 +147,7 @@ watch(query, () => (activeIndex.value = 0))
             type="button"
             role="option"
             :aria-selected="o.value === modelValue"
-            class="w-full rounded px-1 py-0.5 text-start hover:bg-surface"
+            class="w-full rounded-sm px-1 py-0.5 text-start hover:bg-surface"
             :class="{ 'bg-surface': i === activeIndex }"
             @click="select(o.value)"
             @mousemove="activeIndex = i"

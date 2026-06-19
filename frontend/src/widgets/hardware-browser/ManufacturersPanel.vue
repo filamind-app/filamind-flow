@@ -87,7 +87,7 @@ onMounted(() => {
 <template>
   <div class="space-y-2 text-sm">
     <div class="flex flex-wrap items-end gap-2">
-      <label class="min-w-[12rem] flex-1">
+      <label class="min-w-48 flex-1">
         <span class="mb-0.5 block text-[11px] opacity-70">{{
           t('hardwareBrowser.manufacturers.search')
         }}</span>
@@ -124,11 +124,11 @@ onMounted(() => {
             <div class="min-w-0">
               <div class="truncate font-bold">{{ m.name }}</div>
               <div class="flex flex-wrap items-center gap-1 font-mono text-[10px] opacity-60">
-                <span class="rounded bg-brand-cyan px-1 text-ink">{{
+                <span class="rounded-sm bg-brand-cyan px-1 text-ink">{{
                   t('hardwareBrowser.manufacturers.members', { n: m.memberCount })
                 }}</span>
                 <span v-if="m.country">· {{ m.country }}</span>
-                <span v-if="m.origin === 'derived'" class="rounded bg-paper px-1">{{
+                <span v-if="m.origin === 'derived'" class="rounded-sm bg-paper px-1">{{
                   t('hardwareBrowser.manufacturers.derived')
                 }}</span>
               </div>

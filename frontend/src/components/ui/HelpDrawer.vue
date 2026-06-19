@@ -74,7 +74,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
       <!-- Panel: anchored to the inline-end, flips with dir -->
       <aside
-        class="fixed inset-y-0 end-0 z-50 flex w-full max-w-md flex-col border-s-3 border-ink bg-paper shadow-brutal-lg"
+        class="fixed inset-y-0 inset-e-0 z-50 flex w-full max-w-md flex-col border-s-3 border-ink bg-paper shadow-brutal-lg"
         role="dialog"
         aria-modal="true"
         :aria-label="title"

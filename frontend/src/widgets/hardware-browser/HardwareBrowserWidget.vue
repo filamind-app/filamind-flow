@@ -298,7 +298,7 @@ onMounted(() => {
 
     <!-- Search controls -->
     <div v-show="mode === 'search'" class="flex flex-wrap items-end gap-2">
-      <label class="min-w-[10rem] flex-1">
+      <label class="min-w-40 flex-1">
         <span class="mb-0.5 block text-[11px] opacity-70">{{
           t('hardwareBrowser.search.placeholder')
         }}</span>
@@ -310,7 +310,7 @@ onMounted(() => {
           @keyup.enter="doSearch(true)"
         />
       </label>
-      <label class="min-w-[9rem] flex-1">
+      <label class="min-w-36 flex-1">
         <span class="mb-0.5 block text-[11px] opacity-70">{{
           t('hardwareBrowser.search.manufacturer')
         }}</span>
@@ -322,7 +322,7 @@ onMounted(() => {
           @keyup.enter="doSearch(true)"
         />
       </label>
-      <label class="min-w-[10rem] flex-1">
+      <label class="min-w-40 flex-1">
         <span class="mb-0.5 block text-[11px] opacity-70">{{
           t('hardwareBrowser.search.category')
         }}</span>
@@ -384,7 +384,7 @@ onMounted(() => {
                 <span v-if="item.name"> · {{ item.name }}</span>
               </span>
               <span
-                class="shrink-0 rounded bg-brand-cyan px-1.5 py-0.5 text-[10px] font-bold text-ink"
+                class="shrink-0 rounded-sm bg-brand-cyan px-1.5 py-0.5 text-[10px] font-bold text-ink"
               >
                 {{ item.category }}
               </span>

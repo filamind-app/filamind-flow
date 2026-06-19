@@ -66,9 +66,9 @@ function fwLabel(name: string | null): string {
 function rowClass(status: DiffStatus): string {
   return {
     same: 'opacity-50',
-    changed: 'rounded bg-brand-yellow/40 px-1',
-    a_only: 'rounded bg-brand-red/20 px-1',
-    b_only: 'rounded bg-brand-lime/50 px-1',
+    changed: 'rounded-sm bg-brand-yellow/40 px-1',
+    a_only: 'rounded-sm bg-brand-red/20 px-1',
+    b_only: 'rounded-sm bg-brand-lime/50 px-1',
   }[status]
 }
 
