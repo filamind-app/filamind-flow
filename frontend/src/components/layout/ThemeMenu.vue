@@ -57,7 +57,7 @@ onUnmounted(() => {
 
     <div
       v-if="open"
-      class="nb-card absolute end-0 top-full z-50 mt-2 w-[19rem] p-2 sm:w-[22rem]"
+      class="nb-card absolute inset-e-0 top-full z-50 mt-2 w-76 p-2 sm:w-88"
       role="menu"
       :aria-label="t('theme.menu')"
     >
@@ -74,12 +74,12 @@ onUnmounted(() => {
         >
           <!-- Miniature of the theme: its own paper, a surface bar with 'Aa', accent dots -->
           <span
-            class="block rounded p-1.5"
+            class="block rounded-sm p-1.5"
             :style="{ background: meta.swatch.paper }"
             aria-hidden="true"
           >
             <span
-              class="flex items-center justify-between rounded px-1.5 py-1"
+              class="flex items-center justify-between rounded-sm px-1.5 py-1"
               :style="{ background: meta.swatch.surface }"
             >
               <span class="text-[11px] font-bold" :style="{ color: meta.swatch.ink }">Aa</span>

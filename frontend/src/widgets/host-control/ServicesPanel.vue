@@ -317,7 +317,7 @@ function stateLabel(s: ServiceUnit): string {
               {{ s.name }}
               <span
                 v-if="s.critical"
-                class="rounded border border-ink bg-brand-yellow/40 px-1 text-[9px] uppercase tracking-wide"
+                class="rounded-sm border border-ink bg-brand-yellow/40 px-1 text-[9px] uppercase tracking-wide"
                 >{{
                   s.protected
                     ? t('hostControl.services.protected')

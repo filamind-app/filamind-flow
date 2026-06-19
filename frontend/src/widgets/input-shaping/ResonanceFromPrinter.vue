@@ -592,17 +592,17 @@ onMounted(async () => {
       </svg>
       <div class="flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[10px] opacity-70">
         <span class="flex items-center gap-1"
-          ><span class="inline-block h-2 w-3 rounded-sm bg-brand-red" />{{
+          ><span class="inline-block h-2 w-3 rounded-xs bg-brand-red" />{{
             t('inputShaping.fromPrinter.legendAccelX')
           }}</span
         >
         <span class="flex items-center gap-1"
-          ><span class="inline-block h-2 w-3 rounded-sm bg-brand-blue" />{{
+          ><span class="inline-block h-2 w-3 rounded-xs bg-brand-blue" />{{
             t('inputShaping.fromPrinter.legendY')
           }}</span
         >
         <span class="flex items-center gap-1"
-          ><span class="inline-block h-2 w-3 rounded-sm bg-brand-cyan" />{{
+          ><span class="inline-block h-2 w-3 rounded-xs bg-brand-cyan" />{{
             t('inputShaping.fromPrinter.legendZ')
           }}</span
         >

@@ -74,7 +74,7 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
     none-key="hardwareBrowser.boards.none"
   >
     <template #facets>
-      <div class="min-w-[8rem]">
+      <div class="min-w-32">
         <ComboSelect
           v-model="boardClass"
           :options="classOptions"
@@ -87,7 +87,7 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
         v-model="manufacturer"
         type="text"
         :placeholder="t('hardwareBrowser.facets.manufacturer')"
-        class="min-w-[8rem] rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
+        class="min-w-32 rounded-brutal border-2 border-ink bg-paper px-1.5 py-1 font-mono text-[11px]"
         @keyup.enter="onFacetChange"
       />
     </template>
@@ -111,7 +111,7 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
         <span
           v-for="(n, cat) in item.portsSummary"
           :key="cat"
-          class="rounded bg-paper px-1 font-mono text-[9px]"
+          class="rounded-sm bg-paper px-1 font-mono text-[9px]"
         >
           {{ cat }}×{{ n }}
         </span>
@@ -171,7 +171,7 @@ function mediaLinks(media?: BoardMedia): { url: string; label: string }[] {
               <td class="pe-2">{{ p.connectorStyle || p.label }}</td>
               <td class="pe-2">{{ p.portFunction }}</td>
               <td class="whitespace-nowrap pe-2">{{ p.pins }}</td>
-              <td class="min-w-[12rem] pe-2 opacity-80">
+              <td class="min-w-48 pe-2 opacity-80">
                 {{ p.hint }}
                 <span v-if="p.configKey" class="opacity-60">[{{ p.configKey }}]</span>
               </td>

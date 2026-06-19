@@ -157,7 +157,7 @@ defineExpose({ reload, focusItem })
     <slot name="header" />
 
     <div class="flex flex-wrap items-end gap-2">
-      <label class="min-w-[12rem] flex-1">
+      <label class="min-w-48 flex-1">
         <span class="mb-0.5 block text-[11px] opacity-70">{{ t(searchKey) }}</span>
         <input
           v-model="q"
@@ -203,7 +203,7 @@ defineExpose({ reload, focusItem })
           />
           <p
             v-if="props.onPrinterIds?.has(idOf(item))"
-            class="mt-1 inline-block rounded bg-brand-lime px-1.5 py-0.5 text-[10px] font-bold text-ink"
+            class="mt-1 inline-block rounded-sm bg-brand-lime px-1.5 py-0.5 text-[10px] font-bold text-ink"
           >
             📍 {{ t('hardwareBrowser.onPrinter.badge') }}
           </p>

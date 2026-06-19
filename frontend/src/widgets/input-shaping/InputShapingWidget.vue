@@ -531,7 +531,7 @@ async function saveConfig(): Promise<void> {
         <div
           v-for="s in analysis.shapers"
           :key="s.name"
-          class="grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-3 rounded px-1 font-mono text-[11px]"
+          class="grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-3 rounded-sm px-1 font-mono text-[11px]"
           :class="s.recommended ? 'bg-brand-lime/50 font-bold' : ''"
         >
           <span>{{ s.name.toUpperCase() }}</span>

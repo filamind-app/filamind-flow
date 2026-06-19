@@ -84,7 +84,7 @@ onMounted(() => void load())
 
     <!-- Filter -->
     <div class="flex flex-wrap items-end gap-2">
-      <label class="min-w-[12rem] flex-1">
+      <label class="min-w-48 flex-1">
         <span class="mb-0.5 block text-[11px] opacity-70">{{
           t('configTemplates.category.label')
         }}</span>
@@ -120,7 +120,9 @@ onMounted(() => void load())
       <li v-for="tpl in filtered" :key="tpl.id" class="nb-card space-y-1.5 bg-surface p-2">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <span class="font-bold">{{ tpl.name }}</span>
-          <span class="shrink-0 rounded bg-brand-cyan px-1.5 py-0.5 text-[10px] font-bold text-ink">
+          <span
+            class="shrink-0 rounded-sm bg-brand-cyan px-1.5 py-0.5 text-[10px] font-bold text-ink"
+          >
             {{ categoryLabel(tpl.category) }}
           </span>
         </div>

@@ -181,7 +181,7 @@ function signalLabel(sig: number | null): string {
         role="alert"
         class="nb-card flex items-start justify-between gap-2 bg-brand-red/10 p-2 font-mono text-xs"
       >
-        <span class="min-w-0 break-words">{{ error }}</span>
+        <span class="min-w-0 wrap-break-word">{{ error }}</span>
         <ReportErrorButton :error="error" />
       </div>
 

@@ -289,7 +289,7 @@ function openMcu(name: string): void {
       role="note"
     >
       <button
-        class="absolute end-2 top-2 rounded-brutal border-2 border-ink bg-surface px-1.5 py-0.5 text-xs leading-none opacity-60 transition-opacity hover:opacity-100"
+        class="absolute inset-e-2 top-2 rounded-brutal border-2 border-ink bg-surface px-1.5 py-0.5 text-xs leading-none opacity-60 transition-opacity hover:opacity-100"
         :aria-label="t('shell.mission.dismiss')"
         @click="dismissBanner"
       >
@@ -518,7 +518,7 @@ function openMcu(name: string): void {
           <ul class="space-y-1">
             <li v-for="m in data.firmware.mcus" :key="m.name">
               <button
-                class="flex w-full items-center gap-2 rounded px-1 py-0.5 text-start font-mono text-[11px] hover:bg-ink/10"
+                class="flex w-full items-center gap-2 rounded-sm px-1 py-0.5 text-start font-mono text-[11px] hover:bg-ink/10"
                 @click="openMcu(m.name)"
               >
                 <span

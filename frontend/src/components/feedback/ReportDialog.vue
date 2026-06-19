@@ -81,7 +81,7 @@ const diagRows = computed(() => {
     <div
       v-if="feedback.open"
       data-feedback-noshot
-      class="fixed inset-0 z-[60] flex items-center justify-center p-4"
+      class="fixed inset-0 z-60 flex items-center justify-center p-4"
     >
       <div class="absolute inset-0 bg-ink/50" @click="closeReport" />
 
@@ -165,7 +165,7 @@ const diagRows = computed(() => {
               <img
                 :src="feedback.screenshotUrl"
                 :alt="t('shell.feedback.dialog.screenshotReady')"
-                class="max-h-32 w-full rounded border-2 border-ink object-contain object-top"
+                class="max-h-32 w-full rounded-sm border-2 border-ink object-contain object-top"
               />
             </div>
             <p

@@ -23,7 +23,7 @@ function analysis(over: Partial<ShaperAnalysis>): ShaperAnalysis {
 }
 
 describe('inputShaperConfig', () => {
-  it('emits axis-specific keys for known axes, rounded to 0.1 Hz', () => {
+  it('emits axis-specific keys for known axes, rounded-sm to 0.1 Hz', () => {
     const cfg = inputShaperConfig([
       analysis({ axis: 'x', recommended_shaper: 'mzv', recommended_freq: 52.34 }),
       analysis({ axis: 'y', recommended_shaper: 'ei', recommended_freq: 41.6 }),

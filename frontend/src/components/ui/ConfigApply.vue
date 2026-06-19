@@ -105,7 +105,7 @@ function changeLine(c: ApplySectionChange): string {
     </label>
 
     <pre
-      class="max-h-40 overflow-auto rounded border border-ink/30 bg-ink/5 p-1.5 font-mono text-[10px] leading-snug"
+      class="max-h-40 overflow-auto rounded-sm border border-ink/30 bg-ink/5 p-1.5 font-mono text-[10px] leading-snug"
       >{{ props.block }}</pre
     >
 

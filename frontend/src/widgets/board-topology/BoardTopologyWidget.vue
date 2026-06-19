@@ -268,7 +268,7 @@ onMounted(() => void load())
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" dir="auto">
         <span v-for="l in LEGEND" :key="l.tk" class="inline-flex items-center gap-1">
           <span
-            class="inline-block h-2.5 w-3 rounded-sm border border-ink"
+            class="inline-block h-2.5 w-3 rounded-xs border border-ink"
             :class="l.cls"
             aria-hidden="true"
           ></span>
@@ -276,7 +276,7 @@ onMounted(() => void load())
         </span>
         <span class="inline-flex items-center gap-1">
           <span
-            class="inline-block h-2.5 w-3 rounded-sm border border-ink bg-brand-blue/55"
+            class="inline-block h-2.5 w-3 rounded-xs border border-ink bg-brand-blue/55"
             aria-hidden="true"
           ></span>
           {{ t('boardTopology.graph.integrated') }}
@@ -361,7 +361,7 @@ onMounted(() => void load())
           <li
             v-for="(c, i) in diff.changes"
             :key="i"
-            class="rounded border-s-4 border-brand-red bg-brand-red/10 px-1 py-0.5"
+            class="rounded-sm border-s-4 border-brand-red bg-brand-red/10 px-1 py-0.5"
           >
             {{ changeMsg(c) }}
           </li>

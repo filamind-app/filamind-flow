@@ -643,7 +643,7 @@ onMounted(() => {
                 </button>
               </div>
               <pre
-                class="max-h-48 overflow-auto rounded bg-ink/5 p-1 font-mono text-[10px] leading-snug"
+                class="max-h-48 overflow-auto rounded-sm bg-ink/5 p-1 font-mono text-[10px] leading-snug"
                 >{{ scaffold[which] }}</pre
               >
             </div>
@@ -653,7 +653,7 @@ onMounted(() => {
           <div class="nb-card bg-brand-yellow/15 p-2">
             <p class="mb-1 text-[11px] font-bold">{{ t('macroDesigner.scaffold.writeTitle') }}</p>
             <div class="flex flex-wrap items-end gap-2">
-              <label class="min-w-[10rem] flex-1">
+              <label class="min-w-40 flex-1">
                 <span class="mb-1 block text-[10px] opacity-70">{{
                   t('macroDesigner.scaffold.target')
                 }}</span>
@@ -752,7 +752,7 @@ onMounted(() => {
           <ul class="space-y-1 text-[10px]">
             <li v-for="(f, i) in result.lint" :key="i" class="flex flex-wrap items-start gap-1">
               <span
-                class="shrink-0 rounded px-1 font-bold"
+                class="shrink-0 rounded-sm px-1 font-bold"
                 :class="
                   f.level === 'error' ? 'bg-brand-red text-paper' : 'bg-brand-yellow text-ink'
                 "
@@ -777,7 +777,7 @@ onMounted(() => {
           <div class="mt-2 space-y-2">
             <p class="text-[10px] opacity-70">{{ t('macroDesigner.flow.hint') }}</p>
             <div class="flex flex-wrap items-end gap-2">
-              <label class="min-w-[12rem] flex-1">
+              <label class="min-w-48 flex-1">
                 <span class="mb-0.5 block text-[10px] opacity-70">{{
                   t('macroDesigner.flow.hotend')
                 }}</span>
@@ -915,7 +915,7 @@ onMounted(() => {
             }}</span>
             <span class="font-mono">{{ pathView.legend.min }}</span>
             <span
-              class="h-2 w-20 rounded"
+              class="h-2 w-20 rounded-sm"
               :style="{
                 background:
                   'linear-gradient(to right, hsl(220,80%,48%), hsl(140,80%,48%), hsl(0,80%,48%))',
@@ -940,7 +940,7 @@ onMounted(() => {
             <li
               v-for="(st, i) in explainSteps"
               :key="i"
-              class="flex items-start gap-2 rounded px-1 py-0.5"
+              class="flex items-start gap-2 rounded-sm px-1 py-0.5"
               :class="[
                 st.kind === 'mode' || st.kind === 'home' || st.kind === 'set'
                   ? 'bg-brand-cyan/15'
@@ -1117,7 +1117,7 @@ onMounted(() => {
                   <span
                     v-for="r in lintDelta.aOnly"
                     :key="'ao' + r"
-                    class="rounded bg-ink/10 px-1"
+                    class="rounded-sm bg-ink/10 px-1"
                     :title="t('macroDesigner.compare.onlyA')"
                   >
                     A: {{ t('macroDesigner.lint.rule.' + r + '.msg') }}
@@ -1125,7 +1125,7 @@ onMounted(() => {
                   <span
                     v-for="r in lintDelta.bOnly"
                     :key="'bo' + r"
-                    class="rounded bg-brand-pink/30 px-1"
+                    class="rounded-sm bg-brand-pink/30 px-1"
                     :title="t('macroDesigner.compare.onlyB')"
                   >
                     B: {{ t('macroDesigner.lint.rule.' + r + '.msg') }}

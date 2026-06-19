@@ -1,6 +1,71 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: rgb(var(--c-ink));
+  --color-paper: rgb(var(--c-paper));
+  --color-surface: rgb(var(--c-surface));
+  --color-sidebar: rgb(var(--c-sidebar));
+  --color-on-accent: rgb(var(--c-on-accent));
+
+  --color-brand-yellow: rgb(var(--c-brand-yellow));
+  --color-brand-pink: rgb(var(--c-brand-pink));
+  --color-brand-cyan: rgb(var(--c-brand-cyan));
+  --color-brand-lime: rgb(var(--c-brand-lime));
+  --color-brand-blue: rgb(var(--c-brand-blue));
+  --color-brand-red: rgb(var(--c-brand-red));
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-arabic: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', system-ui, sans-serif;
+
+  --border-width-3: 3px;
+
+  --radius-brutal: var(--nb-radius);
+
+  --shadow-brutal-sm: var(--nb-shadow-sm);
+  --shadow-brutal: var(--nb-shadow);
+  --shadow-brutal-lg: var(--nb-shadow-lg);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility nb-card {
+  /* Neo-Brutalist building blocks. Compose these instead of repeating utilities. */
+  @apply rounded-brutal border-3 border-ink bg-surface shadow-brutal;
+}
+
+@utility nb-btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-brutal border-3 border-ink
+      px-4 py-2 font-bold shadow-brutal-sm transition-transform
+      hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal
+      active:translate-x-0.5 active:translate-y-0.5 active:shadow-none;
+}
+
+@utility nb-badge {
+  @apply inline-flex items-center gap-1.5 rounded-brutal border-2 border-ink px-2 py-0.5
+      text-xs font-bold uppercase tracking-wide;
+}
+
+@utility nb-seg {
+  /* Segmented-control button (view toggles / tabs). Matches .nb-btn's touch height below. */
+  @apply px-3 py-1.5 text-xs font-bold;
+}
 
 @layer base {
   body {
@@ -11,12 +76,13 @@
      Uses outline, not box-shadow, so it never fights the brutal shadow. Mouse clicks don't
      trigger :focus-visible, so the dense UI stays clean for pointer users. (a11y) */
   :where(a, button, [role='button'], summary, input, select, textarea):focus-visible {
-    outline: 3px solid theme('colors.brand.cyan');
+    outline: 3px solid var(--color-brand-cyan);
     outline-offset: 2px;
   }
 }
 
-/* ───────────────────────────────────────────────────────────────────────────
+@layer utilities {
+  /* ───────────────────────────────────────────────────────────────────────────
    Theme tokens.
 
    Every visual token (colors + shadows + radius) is a CSS custom property, so
@@ -30,32 +96,32 @@
    :root holds the LIGHT defaults; [data-theme] blocks override. The default
    theme applied by the app shell is "light".
    ─────────────────────────────────────────────────────────────────────────── */
-:root {
-  /* Light — daylight brutalism: warm cream sheet, a deep mocha-brown brand accent that
+  :root {
+    /* Light — daylight brutalism: warm cream sheet, a deep mocha-brown brand accent that
      doubles as the sidebar rail, signal-saturated mid accents, hard ink-block shadows.
      The mocha accent is darker than the other themes' badge tier, so text ON it is light
      (--c-on-accent) rather than ink — see the [class~='bg-brand-yellow'] rule below. */
-  --c-ink: 26 20 8;
-  --c-paper: 243 232 205;
-  --c-surface: 255 252 240;
-  --c-brand-yellow: 140 106 74;
-  --c-brand-pink: 214 31 111;
-  --c-brand-cyan: 7 147 171;
-  --c-brand-lime: 97 160 6;
-  --c-brand-blue: 43 79 216;
-  --c-brand-red: 222 31 38;
-  --c-sidebar: var(--c-brand-yellow);
-  /* Text drawn on a solid accent fill. White everywhere by default (inherited by all themes):
+    --c-ink: 26 20 8;
+    --c-paper: 243 232 205;
+    --c-surface: 255 252 240;
+    --c-brand-yellow: 140 106 74;
+    --c-brand-pink: 214 31 111;
+    --c-brand-cyan: 7 147 171;
+    --c-brand-lime: 97 160 6;
+    --c-brand-blue: 43 79 216;
+    --c-brand-red: 222 31 38;
+    --c-sidebar: var(--c-brand-yellow);
+    /* Text drawn on a solid accent fill. White everywhere by default (inherited by all themes):
      it clears AA on the light theme's deep mocha accent AND on every dark theme's dark rail. */
-  --c-on-accent: 255 255 255;
-  --nb-glow: rgba(26, 20, 8, 0.18);
-  --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
-  --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
-  --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
-  --nb-radius: 5px;
-}
+    --c-on-accent: 255 255 255;
+    --nb-glow: rgba(26, 20, 8, 0.18);
+    --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
+    --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
+    --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
+    --nb-radius: 5px;
+  }
 
-/* ──────────────────────────────────────────────────────────────────────────
+  /* ──────────────────────────────────────────────────────────────────────────
    Accent ramp physics shared by every theme below: the BADGE tier (lime /
    yellow / cyan — they carry ink-colored text in status chips) sits at
    mid-depth so it holds >= 4.0:1 against ink in every theme, while the
@@ -66,147 +132,124 @@
    today; available as a token for focus/glow effects).
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Dark — steel-slate professional: calm amber/olive/petrol badge tier, restrained
+  /* Dark — steel-slate professional: calm amber/olive/petrol badge tier, restrained
    sky-blue signal, dusty-rose secondary, soft neutral elevation. */
-[data-theme='dark'] {
-  --c-ink: 237 241 247;
-  --c-paper: 21 25 31;
-  --c-surface: 33 39 47;
-  --c-brand-yellow: 161 98 7;
-  --c-brand-pink: 194 96 142;
-  --c-brand-cyan: 14 116 144;
-  --c-brand-lime: 77 124 15;
-  --c-brand-blue: 91 155 245;
-  --c-brand-red: 229 72 77;
-  --c-sidebar: 15 19 24;
-  --nb-glow: rgba(91, 155, 245, 0.3);
-  --nb-shadow-sm: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
-  --nb-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.55);
-  --nb-shadow-lg: 0 8px 28px 0 rgba(0, 0, 0, 0.6);
-  --nb-radius: 8px;
-}
+  [data-theme='dark'] {
+    --c-ink: 237 241 247;
+    --c-paper: 21 25 31;
+    --c-surface: 33 39 47;
+    --c-brand-yellow: 161 98 7;
+    --c-brand-pink: 194 96 142;
+    --c-brand-cyan: 14 116 144;
+    --c-brand-lime: 77 124 15;
+    --c-brand-blue: 91 155 245;
+    --c-brand-red: 229 72 77;
+    --c-sidebar: 15 19 24;
+    --nb-glow: rgba(91, 155, 245, 0.3);
+    --nb-shadow-sm: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
+    --nb-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.55);
+    --nb-shadow-lg: 0 8px 28px 0 rgba(0, 0, 0, 0.6);
+    --nb-radius: 8px;
+  }
 
-/* Neon (default) — the signature: deep violet night, acid/amber/azure badge tier,
+  /* Neon (default) — the signature: deep violet night, acid/amber/azure badge tier,
    periwinkle + hot-magenta + laser-red signal tier, the only glow-shadow theme. */
-[data-theme='neon'] {
-  --c-ink: 244 239 255;
-  --c-paper: 22 15 46;
-  --c-surface: 37 26 78;
-  --c-brand-yellow: 154 103 0;
-  --c-brand-pink: 255 79 216;
-  --c-brand-cyan: 0 121 173;
-  --c-brand-lime: 66 126 0;
-  --c-brand-blue: 110 124 255;
-  --c-brand-red: 255 51 85;
-  --c-sidebar: 16 10 34;
-  --nb-glow: rgba(139, 92, 246, 0.5);
-  --nb-shadow-sm: 0 3px 12px 0 rgba(139, 92, 246, 0.3);
-  --nb-shadow: 0 6px 22px 0 rgba(139, 92, 246, 0.4);
-  --nb-shadow-lg: 0 10px 32px 0 rgba(139, 92, 246, 0.5);
-  --nb-radius: 10px;
-}
+  [data-theme='neon'] {
+    --c-ink: 244 239 255;
+    --c-paper: 22 15 46;
+    --c-surface: 37 26 78;
+    --c-brand-yellow: 154 103 0;
+    --c-brand-pink: 255 79 216;
+    --c-brand-cyan: 0 121 173;
+    --c-brand-lime: 66 126 0;
+    --c-brand-blue: 110 124 255;
+    --c-brand-red: 255 51 85;
+    --c-sidebar: 16 10 34;
+    --nb-glow: rgba(139, 92, 246, 0.5);
+    --nb-shadow-sm: 0 3px 12px 0 rgba(139, 92, 246, 0.3);
+    --nb-shadow: 0 6px 22px 0 rgba(139, 92, 246, 0.4);
+    --nb-shadow-lg: 0 10px 32px 0 rgba(139, 92, 246, 0.5);
+    --nb-radius: 10px;
+  }
 
-/* High Contrast — a11y absolute: true black/white, accents held at the exact depth
+  /* High Contrast — a11y absolute: true black/white, accents held at the exact depth
    where white ink still clears 4.3:1 on them, knife-cut corners, hard shadows. */
-[data-theme='contrast'] {
-  --c-ink: 255 255 255;
-  --c-paper: 0 0 0;
-  --c-surface: 24 24 24;
-  --c-brand-yellow: 162 109 0;
-  --c-brand-pink: 255 61 166;
-  --c-brand-cyan: 0 135 145;
-  --c-brand-lime: 58 136 0;
-  --c-brand-blue: 61 123 255;
-  --c-brand-red: 255 36 36;
-  --c-sidebar: 10 10 10;
-  --nb-glow: rgba(255, 255, 255, 0.25);
-  --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
-  --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
-  --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
-  --nb-radius: 4px;
-}
+  [data-theme='contrast'] {
+    --c-ink: 255 255 255;
+    --c-paper: 0 0 0;
+    --c-surface: 24 24 24;
+    --c-brand-yellow: 162 109 0;
+    --c-brand-pink: 255 61 166;
+    --c-brand-cyan: 0 135 145;
+    --c-brand-lime: 58 136 0;
+    --c-brand-blue: 61 123 255;
+    --c-brand-red: 255 36 36;
+    --c-sidebar: 10 10 10;
+    --nb-glow: rgba(255, 255, 255, 0.25);
+    --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
+    --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
+    --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
+    --nb-radius: 4px;
+  }
 
-/* Midnight — navy ops deck: sea-emerald pass, brass warning, signal-teal info,
+  /* Midnight — navy ops deck: sea-emerald pass, brass warning, signal-teal info,
    radar-blue lead stroke — hard shadows keep the brutalism alive after dark. */
-[data-theme='midnight'] {
-  --c-ink: 232 241 253;
-  --c-paper: 10 19 34;
-  --c-surface: 19 34 60;
-  --c-brand-yellow: 148 104 5;
-  --c-brand-pink: 208 95 162;
-  --c-brand-cyan: 8 120 144;
-  --c-brand-lime: 17 130 74;
-  --c-brand-blue: 76 141 255;
-  --c-brand-red: 238 61 72;
-  --c-sidebar: 6 13 24;
-  --nb-glow: rgba(76, 141, 255, 0.35);
-  --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
-  --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
-  --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
-  --nb-radius: 6px;
-}
+  [data-theme='midnight'] {
+    --c-ink: 232 241 253;
+    --c-paper: 10 19 34;
+    --c-surface: 19 34 60;
+    --c-brand-yellow: 148 104 5;
+    --c-brand-pink: 208 95 162;
+    --c-brand-cyan: 8 120 144;
+    --c-brand-lime: 17 130 74;
+    --c-brand-blue: 76 141 255;
+    --c-brand-red: 238 61 72;
+    --c-sidebar: 6 13 24;
+    --nb-glow: rgba(76, 141, 255, 0.35);
+    --nb-shadow-sm: 2px 2px 0 0 rgb(var(--c-ink));
+    --nb-shadow: 4px 4px 0 0 rgb(var(--c-ink));
+    --nb-shadow-lg: 7px 7px 0 0 rgb(var(--c-ink));
+    --nb-radius: 6px;
+  }
 
-/* Ocean — abyssal teal: kelp green, wet-sand amber, literal-teal selection,
+  /* Ocean — abyssal teal: kelp green, wet-sand amber, literal-teal selection,
    bioluminescent coral red/pink, water-worn soft elevation. */
-[data-theme='ocean'] {
-  --c-ink: 231 250 243;
-  --c-paper: 6 36 32;
-  --c-surface: 11 51 45;
-  --c-brand-yellow: 154 106 4;
-  --c-brand-pink: 251 111 132;
-  --c-brand-cyan: 0 128 128;
-  --c-brand-lime: 19 133 74;
-  --c-brand-blue: 58 166 221;
-  --c-brand-red: 242 90 60;
-  --c-sidebar: 4 26 23;
-  --nb-glow: rgba(45, 212, 191, 0.35);
-  --nb-shadow-sm: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
-  --nb-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.55);
-  --nb-shadow-lg: 0 8px 28px 0 rgba(0, 0, 0, 0.6);
-  --nb-radius: 12px;
-}
+  [data-theme='ocean'] {
+    --c-ink: 231 250 243;
+    --c-paper: 6 36 32;
+    --c-surface: 11 51 45;
+    --c-brand-yellow: 154 106 4;
+    --c-brand-pink: 251 111 132;
+    --c-brand-cyan: 0 128 128;
+    --c-brand-lime: 19 133 74;
+    --c-brand-blue: 58 166 221;
+    --c-brand-red: 242 90 60;
+    --c-sidebar: 4 26 23;
+    --nb-glow: rgba(45, 212, 191, 0.35);
+    --nb-shadow-sm: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
+    --nb-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.55);
+    --nb-shadow-lg: 0 8px 28px 0 rgba(0, 0, 0, 0.6);
+    --nb-radius: 12px;
+  }
 
-/* Sunset — dusk-plum lounge: burnt amber, olive grove, last-light teal badges;
+  /* Sunset — dusk-plum lounge: burnt amber, olive grove, last-light teal badges;
    ember red, warm rose, twilight periwinkle; cozy soft shadows. */
-[data-theme='sunset'] {
-  --c-ink: 253 241 227;
-  --c-paper: 42 18 38;
-  --c-surface: 61 29 54;
-  --c-brand-yellow: 180 83 9;
-  --c-brand-pink: 255 122 168;
-  --c-brand-cyan: 29 120 128;
-  --c-brand-lime: 92 125 10;
-  --c-brand-blue: 138 124 240;
-  --c-brand-red: 240 69 46;
-  --c-sidebar: 29 12 28;
-  --nb-glow: rgba(251, 146, 60, 0.32);
-  --nb-shadow-sm: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
-  --nb-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.55);
-  --nb-shadow-lg: 0 8px 28px 0 rgba(0, 0, 0, 0.6);
-  --nb-radius: 10px;
-}
-
-@layer components {
-  /* Neo-Brutalist building blocks. Compose these instead of repeating utilities. */
-  .nb-card {
-    @apply rounded-brutal border-3 border-ink bg-surface shadow-brutal;
-  }
-
-  .nb-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-brutal border-3 border-ink
-      px-4 py-2 font-bold shadow-brutal-sm transition-transform
-      hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal
-      active:translate-x-0.5 active:translate-y-0.5 active:shadow-none;
-  }
-
-  .nb-badge {
-    @apply inline-flex items-center gap-1.5 rounded-brutal border-2 border-ink px-2 py-0.5
-      text-xs font-bold uppercase tracking-wide;
-  }
-
-  /* Segmented-control button (view toggles / tabs). Matches .nb-btn's touch height below. */
-  .nb-seg {
-    @apply px-3 py-1.5 text-xs font-bold;
+  [data-theme='sunset'] {
+    --c-ink: 253 241 227;
+    --c-paper: 42 18 38;
+    --c-surface: 61 29 54;
+    --c-brand-yellow: 180 83 9;
+    --c-brand-pink: 255 122 168;
+    --c-brand-cyan: 29 120 128;
+    --c-brand-lime: 92 125 10;
+    --c-brand-blue: 138 124 240;
+    --c-brand-red: 240 69 46;
+    --c-sidebar: 29 12 28;
+    --nb-glow: rgba(251, 146, 60, 0.32);
+    --nb-shadow-sm: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
+    --nb-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.55);
+    --nb-shadow-lg: 0 8px 28px 0 rgba(0, 0, 0, 0.6);
+    --nb-radius: 10px;
   }
 }
 
@@ -241,7 +284,7 @@
       fixed light source, not a reading-direction cue). */
 :lang(ar),
 :lang(ar) .font-display {
-  font-family: theme('fontFamily.arabic');
+  font-family: var(--font-arabic);
 }
 :lang(ar) .nb-badge,
 :lang(ar) .uppercase,

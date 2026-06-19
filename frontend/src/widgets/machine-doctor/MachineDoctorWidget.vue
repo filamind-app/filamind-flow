@@ -147,7 +147,7 @@ const hasStats = computed(() => {
       role="alert"
       class="nb-card flex items-start justify-between gap-2 bg-brand-red/10 p-2 font-mono text-xs"
     >
-      <span class="min-w-0 break-words">{{ error }}</span>
+      <span class="min-w-0 wrap-break-word">{{ error }}</span>
       <ReportErrorButton :error="error" />
     </div>
     <p v-else-if="scanning && !report" class="font-mono text-xs opacity-70">
@@ -288,7 +288,7 @@ const hasStats = computed(() => {
           <ul v-if="cat.findings.length" class="mt-1.5 space-y-1 text-[11px]">
             <li v-for="(f, i) in cat.findings" :key="i" class="flex flex-wrap items-start gap-1.5">
               <span
-                class="shrink-0 rounded px-1 text-[10px] font-bold"
+                class="shrink-0 rounded-sm px-1 text-[10px] font-bold"
                 :class="
                   f.level === 'error'
                     ? 'bg-brand-red text-paper'

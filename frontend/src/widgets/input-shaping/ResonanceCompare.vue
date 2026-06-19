@@ -65,13 +65,13 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
         {{ t('inputShaping.compareView.selectA') }}
         <input type="file" accept=".csv" class="hidden" @change="(e) => pick('a', e)" />
       </label>
-      <span v-if="fileA" class="max-w-[7rem] truncate font-mono opacity-60">{{ fileA.name }}</span>
+      <span v-if="fileA" class="max-w-28 truncate font-mono opacity-60">{{ fileA.name }}</span>
       <span class="font-bold">⇄</span>
       <label class="nb-btn cursor-pointer px-2 py-0.5">
         {{ t('inputShaping.compareView.selectB') }}
         <input type="file" accept=".csv" class="hidden" @change="(e) => pick('b', e)" />
       </label>
-      <span v-if="fileB" class="max-w-[7rem] truncate font-mono opacity-60">{{ fileB.name }}</span>
+      <span v-if="fileB" class="max-w-28 truncate font-mono opacity-60">{{ fileB.name }}</span>
       <button
         class="nb-btn bg-brand-lime px-2 py-0.5"
         :disabled="!fileA || !fileB || busy"
@@ -138,7 +138,7 @@ const TREND_CLASS: Record<CompareRow['trend'], string> = {
         >
           <span class="opacity-70">{{ row.label }}</span>
           <span class="text-end">{{ row.a }}</span>
-          <span class="rounded px-1 text-end" :class="TREND_CLASS[row.trend]">{{ row.b }}</span>
+          <span class="rounded-sm px-1 text-end" :class="TREND_CLASS[row.trend]">{{ row.b }}</span>
         </div>
       </div>
     </template>
