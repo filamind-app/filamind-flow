@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Kirim perintah ke layar FilaMind di printer.",
+    "status": {
+      "ready": "Jalur perintah tersambung",
+      "down": "Menyambung ke jalur perintah…"
+    },
+    "show": {
+      "title": "Tampilkan di layar",
+      "status": "Status",
+      "control": "Kontrol",
+      "settings": "Pengaturan"
+    },
+    "locate": {
+      "title": "Temukan layar",
+      "hint": "Kedipkan layar agar Anda tahu printer mana pemiliknya.",
+      "button": "Temukan layar"
+    },
+    "message": {
+      "title": "Kirim pesan",
+      "placeholder": "Ketik pesan singkat untuk ditampilkan di layar…",
+      "level": "Tingkat",
+      "info": "Info",
+      "warn": "Peringatan",
+      "send": "Kirim"
+    },
+    "sent": "Terkirim",
+    "help": {
+      "button": "Bantuan",
+      "title": "Kontrol Jarak Jauh — panduan",
+      "close": "Tutup",
+      "topics": {
+        "overview": {
+          "title": "Apa fungsinya",
+          "body": "Panel ini mengendalikan layar sentuh FilaMind di printer dari sini: ganti tabnya, tampilkan pesan singkat, atau kedipkan agar Anda tahu printer mana itu. Ini hanya isyarat tampilan — tidak pernah menggerakkan printer atau mengubah pengaturan."
+        },
+        "commands": {
+          "title": "Perintahnya",
+          "body": "Tampilkan memindahkan layar ke tab Status, Kontrol, atau Pengaturan. Temukan mengedipkan layar selama beberapa detik. Pesan menampilkan catatan singkat (info atau peringatan). Perintah menjangkau setiap layar FilaMind di printer ini; tidak ada yang dikirim selama jalur perintah masih menyambung."
+        }
+      }
+    }
+  }
+}

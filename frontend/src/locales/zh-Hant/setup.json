@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "為這台印表機安裝及管理 Klipper 生態系元件。",
+    "refresh": "重新整理",
+    "installed": "已安裝",
+    "available": "可安裝",
+    "install": "安裝",
+    "update": "更新",
+    "remove": "移除",
+    "removeConfirm": "確認移除？",
+    "firstParty": "FilaMind",
+    "writesDisabled": "此主機已停用安裝、更新與移除功能。請使用 filamind-setup CLI，或在主機上啟用這些功能。",
+    "working": "處理中…",
+    "help": {
+      "button": "說明",
+      "title": "設定 — 指南",
+      "close": "關閉",
+      "topics": {
+        "overview": {
+          "title": "管理元件",
+          "body": "依群組瀏覽目錄；每個元件都會顯示是否已安裝。安裝、更新與移除會在印表機主機上執行，在此處啟用之前會維持停用 — filamind-setup CLI 隨時都能完成這些操作。"
+        }
+      }
+    }
+  }
+}

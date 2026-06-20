@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Stuur opdrachten naar het FilaMind-scherm op de printer.",
+    "status": {
+      "ready": "Opdrachtbus verbonden",
+      "down": "Verbinden met de opdrachtbus…"
+    },
+    "show": {
+      "title": "Toon op het scherm",
+      "status": "Status",
+      "control": "Bediening",
+      "settings": "Instellingen"
+    },
+    "locate": {
+      "title": "Scherm lokaliseren",
+      "hint": "Laat het scherm knipperen zodat je weet bij welke printer het hoort.",
+      "button": "Scherm lokaliseren"
+    },
+    "message": {
+      "title": "Bericht sturen",
+      "placeholder": "Typ een kort bericht om op het scherm te tonen…",
+      "level": "Niveau",
+      "info": "Info",
+      "warn": "Waarschuwing",
+      "send": "Versturen"
+    },
+    "sent": "Verstuurd",
+    "help": {
+      "button": "Help",
+      "title": "Afstandsbediening — handleiding",
+      "close": "Sluiten",
+      "topics": {
+        "overview": {
+          "title": "Wat dit doet",
+          "body": "Met dit paneel bedien je het FilaMind-aanraakscherm op de printer van hieruit: wissel van tabblad, toon een kort bericht, of laat het knipperen zodat je weet welke printer het is. Dit zijn alleen aanwijzingen voor het scherm — ze verplaatsen de printer nooit en wijzigen geen instelling."
+        },
+        "commands": {
+          "title": "De opdrachten",
+          "body": "Toon springt naar het tabblad Status, Bediening of Instellingen van het scherm. Lokaliseren laat het scherm een paar seconden knipperen. Bericht toont een korte melding (info of waarschuwing). Opdrachten bereiken elk FilaMind-scherm op deze printer; er wordt niets verstuurd zolang de opdrachtbus nog verbinding maakt."
+        }
+      }
+    }
+  }
+}

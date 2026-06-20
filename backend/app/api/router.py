@@ -19,6 +19,7 @@ from app.api.routes import (
     overview,
     reference,
     screen,
+    setup,
     shaper,
     tasks,
     topology,
@@ -43,4 +44,5 @@ api_router.include_router(macro.router)
 api_router.include_router(hardware.router)
 api_router.include_router(camera.router)
 api_router.include_router(screen.router)
+api_router.include_router(setup.router)
 api_router.include_router(host.router)

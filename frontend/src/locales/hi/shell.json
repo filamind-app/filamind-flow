@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen स्टूडियो",
         "description": "अपने प्रिंटर की KlipperScreen टचस्क्रीन कॉन्फ़िग संपादित करें और लागू करने के लिए इसे रीस्टार्ट करें।"
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "इस प्रिंटर के लिए Klipper-इकोसिस्टम कॉम्पोनेंट इंस्टॉल करें और प्रबंधित करें।"
+      },
+      "remote-control": {
+        "title": "रिमोट नियंत्रण",
+        "description": "प्रिंटर पर लगी FilaMind स्क्रीन को नियंत्रित करें — इसका टैब बदलें, संदेश दिखाएं, या इसे ढूंढें।"
       }
     },
     "guard": {

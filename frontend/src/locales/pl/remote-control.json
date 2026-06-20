@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Wysyłaj polecenia do ekranu FilaMind na drukarce.",
+    "status": {
+      "ready": "Połączono z magistralą poleceń",
+      "down": "Łączenie z magistralą poleceń…"
+    },
+    "show": {
+      "title": "Pokaż na ekranie",
+      "status": "Stan",
+      "control": "Sterowanie",
+      "settings": "Ustawienia"
+    },
+    "locate": {
+      "title": "Zlokalizuj ekran",
+      "hint": "Mignij ekranem, aby rozpoznać, do której drukarki należy.",
+      "button": "Zlokalizuj ekran"
+    },
+    "message": {
+      "title": "Wyślij wiadomość",
+      "placeholder": "Wpisz krótką wiadomość do wyświetlenia na ekranie…",
+      "level": "Poziom",
+      "info": "Informacja",
+      "warn": "Ostrzeżenie",
+      "send": "Wyślij"
+    },
+    "sent": "Wysłano",
+    "help": {
+      "button": "Pomoc",
+      "title": "Zdalne sterowanie — przewodnik",
+      "close": "Zamknij",
+      "topics": {
+        "overview": {
+          "title": "Do czego to służy",
+          "body": "Ten panel steruje dotykowym ekranem FilaMind na drukarce: przełącza jego kartę, wyświetla krótką wiadomość lub miga nim, abyś mógł rozpoznać, która to drukarka. To wyłącznie sygnały wyświetlane — nigdy nie poruszają drukarką ani nie zmieniają ustawień."
+        },
+        "commands": {
+          "title": "Polecenia",
+          "body": "Pokaż przełącza ekran na kartę Stan, Sterowanie lub Ustawienia. Zlokalizuj miga ekranem przez kilka sekund. Wiadomość wyświetla krótką notatkę (informacja lub ostrzeżenie). Polecenia docierają do każdego ekranu FilaMind na tej drukarce; nic nie jest wysyłane, dopóki magistrala poleceń wciąż się łączy."
+        }
+      }
+    }
+  }
+}

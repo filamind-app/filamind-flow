@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "このプリンターに Klipper エコシステムのコンポーネントをインストール、管理します。",
+    "refresh": "更新",
+    "installed": "インストール済み",
+    "available": "利用可能",
+    "install": "インストール",
+    "update": "アップデート",
+    "remove": "削除",
+    "removeConfirm": "削除しますか？",
+    "firstParty": "FilaMind",
+    "writesDisabled": "このホストではインストール、アップデート、削除が無効になっています。filamind-setup CLI を使用するか、ホスト上で有効にしてください。",
+    "working": "処理中…",
+    "help": {
+      "button": "ヘルプ",
+      "title": "セットアップ — ガイド",
+      "close": "閉じる",
+      "topics": {
+        "overview": {
+          "title": "コンポーネントの管理",
+          "body": "グループごとにカタログを閲覧でき、各コンポーネントにはインストール済みかどうかが表示されます。インストール、更新、削除はプリンターのホスト上で実行され、有効にするまではここでは無効のままです — filamind-setup CLI ならいつでも実行できます。"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Yazıcı üzerindeki FilaMind ekranına komut gönderin.",
+    "status": {
+      "ready": "Komut kanalı bağlı",
+      "down": "Komut kanalına bağlanılıyor…"
+    },
+    "show": {
+      "title": "Ekranda göster",
+      "status": "Durum",
+      "control": "Kontrol",
+      "settings": "Ayarlar"
+    },
+    "locate": {
+      "title": "Ekranı bul",
+      "hint": "Hangi yazıcıya ait olduğunu anlayabilmek için ekranı yanıp söndürün.",
+      "button": "Ekranı bul"
+    },
+    "message": {
+      "title": "Mesaj gönder",
+      "placeholder": "Ekranda gösterilecek kısa bir mesaj yazın…",
+      "level": "Düzey",
+      "info": "Bilgi",
+      "warn": "Uyarı",
+      "send": "Gönder"
+    },
+    "sent": "Gönderildi",
+    "help": {
+      "button": "Yardım",
+      "title": "Uzaktan Kontrol — kılavuz",
+      "close": "Kapat",
+      "topics": {
+        "overview": {
+          "title": "Bu ne işe yarar",
+          "body": "Bu panel, yazıcı üzerindeki FilaMind dokunmatik ekranını buradan yönetir: sekmesini değiştirir, ekranda kısa bir mesaj gösterir veya hangi yazıcı olduğunu anlamanız için ekranı yanıp söndürür. Bunlar yalnızca görüntüye yönelik uyarılardır; yazıcıyı asla hareket ettirmez veya bir ayarı değiştirmez."
+        },
+        "commands": {
+          "title": "Komutlar",
+          "body": "Göster, ekranı Durum, Kontrol veya Ayarlar sekmesine geçirir. Bul, ekranı birkaç saniye yanıp söndürür. Mesaj, kısa bir not (bilgi veya uyarı) gösterir. Komutlar bu yazıcıdaki herhangi bir FilaMind ekranına ulaşır; komut kanalı hâlâ bağlanıyorken hiçbir şey gönderilmez."
+        }
+      }
+    }
+  }
+}

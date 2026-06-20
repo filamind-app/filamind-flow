@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Envía comandos a la pantalla FilaMind de la impresora.",
+    "status": {
+      "ready": "Bus de comandos conectado",
+      "down": "Conectando con el bus de comandos…"
+    },
+    "show": {
+      "title": "Mostrar en la pantalla",
+      "status": "Estado",
+      "control": "Control",
+      "settings": "Ajustes"
+    },
+    "locate": {
+      "title": "Localizar la pantalla",
+      "hint": "Haz parpadear la pantalla para identificar a qué impresora pertenece.",
+      "button": "Localizar pantalla"
+    },
+    "message": {
+      "title": "Enviar un mensaje",
+      "placeholder": "Escribe un mensaje breve para mostrar en la pantalla…",
+      "level": "Nivel",
+      "info": "Información",
+      "warn": "Advertencia",
+      "send": "Enviar"
+    },
+    "sent": "Enviado",
+    "help": {
+      "button": "Ayuda",
+      "title": "Control remoto: guía",
+      "close": "Cerrar",
+      "topics": {
+        "overview": {
+          "title": "Qué hace esto",
+          "body": "Este panel controla la pantalla táctil FilaMind de la impresora desde aquí: cambia su pestaña, le muestra un mensaje breve o la hace parpadear para que sepas de qué impresora se trata. Son acciones que solo afectan a la pantalla: nunca mueven la impresora ni cambian ningún ajuste."
+        },
+        "commands": {
+          "title": "Los comandos",
+          "body": "Mostrar cambia la pantalla a su pestaña Estado, Control o Ajustes. Localizar hace parpadear la pantalla durante unos segundos. Mensaje muestra una nota breve (información o advertencia). Los comandos llegan a cualquier pantalla FilaMind de esta impresora; no se envía nada mientras el bus de comandos sigue conectándose."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Envoyez des commandes à l'écran FilaMind de l'imprimante.",
+    "status": {
+      "ready": "Bus de commandes connecté",
+      "down": "Connexion au bus de commandes…"
+    },
+    "show": {
+      "title": "Afficher sur l'écran",
+      "status": "État",
+      "control": "Contrôle",
+      "settings": "Réglages"
+    },
+    "locate": {
+      "title": "Localiser l'écran",
+      "hint": "Faites clignoter l'écran pour repérer à quelle imprimante il appartient.",
+      "button": "Localiser l'écran"
+    },
+    "message": {
+      "title": "Envoyer un message",
+      "placeholder": "Saisissez un court message à afficher sur l'écran…",
+      "level": "Niveau",
+      "info": "Info",
+      "warn": "Avertissement",
+      "send": "Envoyer"
+    },
+    "sent": "Envoyé",
+    "help": {
+      "button": "Aide",
+      "title": "Contrôle à distance — guide",
+      "close": "Fermer",
+      "topics": {
+        "overview": {
+          "title": "À quoi ça sert",
+          "body": "Ce panneau pilote l'écran tactile FilaMind de l'imprimante depuis ici : changez son onglet, affichez-y un court message ou faites-le clignoter pour repérer de quelle imprimante il s'agit. Ce sont de simples actions d'affichage — elles ne déplacent jamais l'imprimante et ne modifient aucun réglage."
+        },
+        "commands": {
+          "title": "Les commandes",
+          "body": "Afficher bascule l'écran sur son onglet État, Contrôle ou Réglages. Localiser fait clignoter l'écran pendant quelques secondes. Message affiche une courte note (info ou avertissement). Les commandes atteignent tout écran FilaMind de cette imprimante ; rien n'est envoyé tant que le bus de commandes est encore en cours de connexion."
+        }
+      }
+    }
+  }
+}

@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen Studio",
         "description": "Modifica la configurazione del touchscreen KlipperScreen della tua stampante e riavvialo per applicarla."
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "Installa e gestisci i componenti dell'ecosistema Klipper per questa stampante."
+      },
+      "remote-control": {
+        "title": "Controllo remoto",
+        "description": "Comanda lo schermo FilaMind sulla stampante: cambia la scheda, mostra un messaggio o individualo."
       }
     },
     "guard": {

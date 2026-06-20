@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Invia comandi allo schermo FilaMind sulla stampante.",
+    "status": {
+      "ready": "Bus comandi connesso",
+      "down": "Connessione al bus comandi…"
+    },
+    "show": {
+      "title": "Mostra sullo schermo",
+      "status": "Stato",
+      "control": "Controllo",
+      "settings": "Impostazioni"
+    },
+    "locate": {
+      "title": "Individua lo schermo",
+      "hint": "Fai lampeggiare lo schermo per capire a quale stampante appartiene.",
+      "button": "Individua schermo"
+    },
+    "message": {
+      "title": "Invia un messaggio",
+      "placeholder": "Scrivi un breve messaggio da mostrare sullo schermo…",
+      "level": "Livello",
+      "info": "Info",
+      "warn": "Avviso",
+      "send": "Invia"
+    },
+    "sent": "Inviato",
+    "help": {
+      "button": "Aiuto",
+      "title": "Controllo remoto — guida",
+      "close": "Chiudi",
+      "topics": {
+        "overview": {
+          "title": "A cosa serve",
+          "body": "Questo pannello comanda da qui il touchscreen FilaMind sulla stampante: cambia la sua scheda, mostra un breve messaggio o fallo lampeggiare per capire di quale stampante si tratta. Sono solo indicazioni a schermo: non muovono mai la stampante né modificano alcuna impostazione."
+        },
+        "commands": {
+          "title": "I comandi",
+          "body": "Mostra porta lo schermo alla scheda Stato, Controllo o Impostazioni. Individua fa lampeggiare lo schermo per qualche secondo. Messaggio mostra una breve nota (info o avviso). I comandi raggiungono qualsiasi schermo FilaMind su questa stampante; non viene inviato nulla mentre il bus comandi è ancora in connessione."
+        }
+      }
+    }
+  }
+}

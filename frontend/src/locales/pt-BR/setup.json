@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "Instale e gerencie componentes do ecossistema Klipper para esta impressora.",
+    "refresh": "Atualizar",
+    "installed": "Instalados",
+    "available": "Disponíveis",
+    "install": "Instalar",
+    "update": "Atualizar",
+    "remove": "Remover",
+    "removeConfirm": "Confirmar remoção?",
+    "firstParty": "FilaMind",
+    "writesDisabled": "Instalar, atualizar e remover estão desativados neste host. Use a CLI filamind-setup ou ative-os no host.",
+    "working": "Processando…",
+    "help": {
+      "button": "Ajuda",
+      "title": "Configuração — guia",
+      "close": "Fechar",
+      "topics": {
+        "overview": {
+          "title": "Gerenciar componentes",
+          "body": "Navegue pelo catálogo por grupo; cada componente mostra se está instalado. Instalar, atualizar e remover são executados no host da impressora e ficam desativados aqui até que você os habilite — a CLI do filamind-setup sempre pode fazer isso."
+        }
+      }
+    }
+  }
+}

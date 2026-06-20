@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "استوديو KlipperScreen",
         "description": "حرّر إعدادات شاشة KlipperScreen اللمسية لطابعتك وأعد تشغيلها للتطبيق."
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "ثبّت وأدِر مكوّنات نظام كليبر البيئي لهذه الطابعة."
+      },
+      "remote-control": {
+        "title": "التحكّم عن بُعد",
+        "description": "وجّه شاشة FilaMind على الطابعة — بدّل تبويبها، أو اعرض رسالة، أو حدّد موقعها."
       }
     },
     "guard": {

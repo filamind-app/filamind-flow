@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen 스튜디오",
         "description": "프린터의 KlipperScreen 터치스크린 설정을 편집하고 재시작하여 적용합니다."
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "이 프린터에 Klipper 생태계 구성 요소를 설치하고 관리합니다."
+      },
+      "remote-control": {
+        "title": "원격 제어",
+        "description": "프린터에 장착된 FilaMind 화면을 제어합니다 — 탭 전환, 메시지 표시, 화면 찾기."
       }
     },
     "guard": {

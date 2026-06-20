@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Sende Befehle an den FilaMind-Bildschirm am Drucker.",
+    "status": {
+      "ready": "Befehlskanal verbunden",
+      "down": "Verbindung zum Befehlskanal wird hergestellt…"
+    },
+    "show": {
+      "title": "Auf dem Bildschirm anzeigen",
+      "status": "Status",
+      "control": "Steuerung",
+      "settings": "Einstellungen"
+    },
+    "locate": {
+      "title": "Bildschirm finden",
+      "hint": "Lass den Bildschirm aufleuchten, damit du erkennst, zu welchem Drucker er gehört.",
+      "button": "Bildschirm finden"
+    },
+    "message": {
+      "title": "Nachricht senden",
+      "placeholder": "Gib eine kurze Nachricht für den Bildschirm ein…",
+      "level": "Stufe",
+      "info": "Info",
+      "warn": "Warnung",
+      "send": "Senden"
+    },
+    "sent": "Gesendet",
+    "help": {
+      "button": "Hilfe",
+      "title": "Fernsteuerung – Anleitung",
+      "close": "Schließen",
+      "topics": {
+        "overview": {
+          "title": "Was das bewirkt",
+          "body": "Dieses Panel steuert den FilaMind-Touchscreen am Drucker von hier aus: Wechsle seinen Tab, zeige eine kurze Nachricht an oder lass ihn aufleuchten, um zu erkennen, welcher Drucker es ist. Das sind reine Anzeige-Hinweise – sie bewegen den Drucker nie und ändern keine Einstellung."
+        },
+        "commands": {
+          "title": "Die Befehle",
+          "body": "„Anzeigen“ wechselt den Bildschirm zum Tab Status, Steuerung oder Einstellungen. „Finden“ lässt den Bildschirm einige Sekunden aufleuchten. „Nachricht“ zeigt einen kurzen Hinweis (Info oder Warnung). Befehle erreichen jeden FilaMind-Bildschirm an diesem Drucker; während der Befehlskanal noch verbindet, wird nichts gesendet."
+        }
+      }
+    }
+  }
+}

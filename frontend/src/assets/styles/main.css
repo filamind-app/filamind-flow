@@ -67,6 +67,11 @@
   @apply px-3 py-1.5 text-xs font-bold;
 }
 
+@utility nb-input {
+  /* Text inputs / selects / textareas, matching the brutalist border of nb-card. */
+  @apply rounded-brutal border-3 border-ink bg-surface;
+}
+
 @layer base {
   body {
     @apply bg-paper text-ink font-display antialiased;

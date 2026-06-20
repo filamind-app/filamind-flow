@@ -7,6 +7,7 @@ import LanguageMenu from '@/components/layout/LanguageMenu.vue'
 import ThemeMenu from '@/components/layout/ThemeMenu.vue'
 import ConnectionStatus from '@/components/system/ConnectionStatus.vue'
 import { useNav } from '@/core/nav'
+import { showMainsailLink } from '@/core/host/adapter'
 import { refreshGuard, usePrinterGuard } from '@/core/printerGuard'
 import { usePolling } from '@/core/usePolling'
 
@@ -15,6 +16,8 @@ const { sidebarOpen } = useNav()
 
 const title = import.meta.env.VITE_APP_TITLE || 'FilaMind Flow'
 
+// The "back to Mainsail" link only applies to the Mainsail-hosted build (hidden under the suite host).
+const mainsailVisible = showMainsailLink()
 // Mainsail is served on the same host (default port 80); override with VITE_MAINSAIL_URL.
 const mainsailUrl =
   import.meta.env.VITE_MAINSAIL_URL || `${window.location.protocol}//${window.location.hostname}/`
@@ -52,6 +55,7 @@ const guardBadge = computed<{ text: string; printing: boolean } | null>(() => {
         <span aria-hidden="true">☰</span>
       </button>
       <a
+        v-if="mainsailVisible"
         class="nb-btn shrink-0 bg-brand-cyan px-3 py-1.5"
         :href="mainsailUrl"
         :title="t('shell.mainsail.title')"

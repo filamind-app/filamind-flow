@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "Bu yazıcı için Klipper ekosistemi bileşenlerini kurun ve yönetin.",
+    "refresh": "Yenile",
+    "installed": "Kurulu",
+    "available": "Mevcut",
+    "install": "Kur",
+    "update": "Güncelle",
+    "remove": "Kaldır",
+    "removeConfirm": "Kaldırmayı onaylıyor musunuz?",
+    "firstParty": "FilaMind",
+    "writesDisabled": "Bu ana makinede kurma, güncelleme ve kaldırma devre dışı. filamind-setup CLI'sini kullanın veya bunları ana makinede etkinleştirin.",
+    "working": "Çalışıyor…",
+    "help": {
+      "button": "Yardım",
+      "title": "Kurulum — kılavuz",
+      "close": "Kapat",
+      "topics": {
+        "overview": {
+          "title": "Bileşenleri yönetme",
+          "body": "Kataloğu gruba göre göz atın; her bileşen kurulu olup olmadığını gösterir. Kurma, güncelleme ve kaldırma işlemleri yazıcı ana makinesinde çalışır ve siz etkinleştirene kadar burada devre dışı kalır — filamind-setup CLI bunu her zaman yapabilir."
+        }
+      }
+    }
+  }
+}

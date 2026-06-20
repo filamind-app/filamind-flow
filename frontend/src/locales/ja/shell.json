@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen スタジオ",
         "description": "プリンターの KlipperScreen タッチスクリーン設定を編集し、再起動して反映します。"
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "このプリンターに Klipper エコシステムのコンポーネントをインストール、管理します。"
+      },
+      "remote-control": {
+        "title": "リモコン",
+        "description": "プリンター本体のFilaMind画面を操作 — タブの切り替え、メッセージ表示、画面の特定ができます。"
       }
     },
     "guard": {

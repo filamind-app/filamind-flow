@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen 工作室",
         "description": "编辑打印机的 KlipperScreen 触摸屏配置并重启以应用。"
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "为此打印机安装和管理 Klipper 生态系统组件。"
+      },
+      "remote-control": {
+        "title": "远程控制",
+        "description": "操控打印机上的 FilaMind 屏幕——切换标签页、显示消息或定位屏幕。"
       }
     },
     "guard": {

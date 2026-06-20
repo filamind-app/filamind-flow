@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "Installieren und verwalten Sie Klipper-Komponenten für diesen Drucker.",
+    "refresh": "Aktualisieren",
+    "installed": "Installiert",
+    "available": "Verfügbar",
+    "install": "Installieren",
+    "update": "Aktualisieren",
+    "remove": "Entfernen",
+    "removeConfirm": "Entfernen bestätigen?",
+    "firstParty": "FilaMind",
+    "writesDisabled": "Installieren, Aktualisieren und Entfernen sind auf diesem Host deaktiviert. Verwenden Sie die filamind-setup CLI oder aktivieren Sie sie auf dem Host.",
+    "working": "Wird ausgeführt…",
+    "help": {
+      "button": "Hilfe",
+      "title": "Einrichtung — Anleitung",
+      "close": "Schließen",
+      "topics": {
+        "overview": {
+          "title": "Komponenten verwalten",
+          "body": "Durchsuchen Sie den Katalog nach Gruppe; jede Komponente zeigt an, ob sie installiert ist. Installieren, Aktualisieren und Entfernen laufen auf dem Drucker-Host und bleiben hier deaktiviert, bis Sie sie aktivieren — die filamind-setup CLI kann es jederzeit erledigen."
+        }
+      }
+    }
+  }
+}

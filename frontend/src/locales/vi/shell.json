@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen Studio",
         "description": "Chỉnh sửa cấu hình màn hình cảm ứng KlipperScreen của máy in và khởi động lại để áp dụng."
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "Cài đặt và quản lý các thành phần thuộc hệ sinh thái Klipper cho máy in này."
+      },
+      "remote-control": {
+        "title": "Điều khiển từ xa",
+        "description": "Điều khiển màn hình FilaMind trên máy in — chuyển tab, hiển thị tin nhắn, hoặc định vị nó."
       }
     },
     "guard": {
