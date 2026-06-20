@@ -1,6 +1,13 @@
 import { defineAsyncComponent } from 'vue'
 
 import { registerWidget } from '@/core/registry'
+import type { WidgetDefinition } from '@/core/registry/types'
+import { isWidgetEnabled } from '@/core/host/adapter'
+
+/** Register a widget only if the current host enables it (dual-host gate). */
+function reg(def: WidgetDefinition): void {
+  if (isWidgetEnabled(def.id)) registerWidget(def)
+}
 
 /**
  * Feature widget registration hub. Each feature registers a `WidgetDefinition`
@@ -8,7 +15,7 @@ import { registerWidget } from '@/core/registry'
  * chunk, loaded only when shown.
  */
 export function registerWidgets(): void {
-  registerWidget({
+  reg({
     id: 'machine-doctor',
     title: 'Machine Doctor',
     icon: '🩺',
@@ -16,7 +23,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./machine-doctor/MachineDoctorWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'firmware-upgrade',
     title: 'Firmware Manager',
     icon: '🔧',
@@ -25,7 +32,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./firmware-upgrade/FirmwareUpgradeWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'input-shaping',
     title: 'Input Shaping',
     icon: '📈',
@@ -33,7 +40,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./input-shaping/InputShapingWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'motor-drivers',
     title: 'Motor Drivers',
     icon: '⚙',
@@ -42,7 +49,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./motor-drivers/MotorDriversWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'config-editor',
     title: 'Config Editor',
     icon: '📝',
@@ -51,7 +58,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./config-editor/ConfigEditorWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'max-flow',
     title: 'Max-Flow',
     icon: '🌡',
@@ -60,7 +67,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./max-flow/MaxFlowWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'board-topology',
     title: 'Board Topology',
     icon: '🔌',
@@ -69,7 +76,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./board-topology/BoardTopologyWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'macro-designer',
     title: 'Macro Designer',
     icon: '🧩',
@@ -78,7 +85,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./macro-designer/MacroDesignerWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'hardware-browser',
     title: 'Hardware Browser',
     icon: '🔎',
@@ -87,7 +94,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./hardware-browser/HardwareBrowserWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'klipperscreen-studio',
     title: 'KlipperScreen Studio',
     icon: '🖥',
@@ -98,7 +105,7 @@ export function registerWidgets(): void {
     ),
   })
 
-  registerWidget({
+  reg({
     id: 'config-templates',
     title: 'Config Templates',
     icon: '📋',
@@ -107,7 +114,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./config-templates/ConfigTemplatesWidget.vue')),
   })
 
-  registerWidget({
+  reg({
     id: 'host-control',
     title: 'Host Control',
     icon: '🖧',
@@ -115,5 +122,26 @@ export function registerWidgets(): void {
       "Manage the printer host's Linux OS: health, services, disk cleanup, and system settings.",
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./host-control/HostControlWidget.vue')),
+  })
+
+  // Ships in BOTH hosts (the one infrastructure exception) — it's how components get installed.
+  reg({
+    id: 'setup',
+    title: 'Setup',
+    icon: '📦',
+    description: 'Browse and manage Klipper-ecosystem components for this printer.',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./setup/SetupWidget.vue')),
+  })
+
+  // Suite-only (gated in adapter.ts): steer the on-printer FilaMind screen from here.
+  reg({
+    id: 'remote-control',
+    title: 'Remote Control',
+    icon: '📡',
+    description:
+      'Steer the on-printer FilaMind screen — switch its tab, show a message, or locate it.',
+    defaultSize: { w: 2, h: 1 },
+    component: defineAsyncComponent(() => import('./remote-control/RemoteControlWidget.vue')),
   })
 }

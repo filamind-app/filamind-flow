@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen Studio",
         "description": "Yazıcınızın KlipperScreen dokunmatik ekran yapılandırmasını düzenleyin ve uygulamak için yeniden başlatın."
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "Bu yazıcı için Klipper ekosistemi bileşenlerini kurun ve yönetin."
+      },
+      "remote-control": {
+        "title": "Uzaktan Kontrol",
+        "description": "Yazıcı üzerindeki FilaMind ekranını yönetin — sekmesini değiştirin, mesaj gösterin veya bulun."
       }
     },
     "guard": {

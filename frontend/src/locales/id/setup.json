@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "Pasang dan kelola komponen ekosistem Klipper untuk printer ini.",
+    "refresh": "Segarkan",
+    "installed": "Terpasang",
+    "available": "Tersedia",
+    "install": "Pasang",
+    "update": "Perbarui",
+    "remove": "Hapus",
+    "removeConfirm": "Konfirmasi penghapusan?",
+    "firstParty": "FilaMind",
+    "writesDisabled": "Pemasangan, pembaruan, dan penghapusan dinonaktifkan di host ini. Gunakan CLI filamind-setup, atau aktifkan di host.",
+    "working": "Memproses…",
+    "help": {
+      "button": "Bantuan",
+      "title": "Penyiapan — panduan",
+      "close": "Tutup",
+      "topics": {
+        "overview": {
+          "title": "Mengelola komponen",
+          "body": "Jelajahi katalog menurut grup; setiap komponen menunjukkan apakah sudah terpasang. Pemasangan, pembaruan, dan penghapusan dijalankan pada host printer dan tetap nonaktif di sini sampai Anda mengaktifkannya — CLI filamind-setup selalu dapat melakukannya."
+        }
+      }
+    }
+  }
+}

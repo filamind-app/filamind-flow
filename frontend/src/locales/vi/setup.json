@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "Cài đặt và quản lý các thành phần thuộc hệ sinh thái Klipper cho máy in này.",
+    "refresh": "Làm mới",
+    "installed": "Đã cài đặt",
+    "available": "Có sẵn",
+    "install": "Cài đặt",
+    "update": "Cập nhật",
+    "remove": "Gỡ bỏ",
+    "removeConfirm": "Xác nhận gỡ bỏ?",
+    "firstParty": "FilaMind",
+    "writesDisabled": "Cài đặt, cập nhật và gỡ bỏ đã bị tắt trên máy chủ này. Hãy dùng CLI filamind-setup, hoặc bật chúng trên máy chủ.",
+    "working": "Đang xử lý…",
+    "help": {
+      "button": "Trợ giúp",
+      "title": "Thiết lập — hướng dẫn",
+      "close": "Đóng",
+      "topics": {
+        "overview": {
+          "title": "Quản lý linh kiện",
+          "body": "Duyệt danh mục theo nhóm; mỗi linh kiện cho biết nó đã được cài đặt hay chưa. Cài đặt, cập nhật và gỡ bỏ chạy trên máy chủ máy in và vẫn bị vô hiệu hóa ở đây cho đến khi bạn bật chúng — CLI filamind-setup luôn có thể thực hiện điều đó."
+        }
+      }
+    }
+  }
+}

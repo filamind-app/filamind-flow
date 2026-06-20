@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Envie comandos para a tela FilaMind na impressora.",
+    "status": {
+      "ready": "Canal de comandos conectado",
+      "down": "Conectando ao canal de comandos…"
+    },
+    "show": {
+      "title": "Mostrar na tela",
+      "status": "Status",
+      "control": "Controle",
+      "settings": "Ajustes"
+    },
+    "locate": {
+      "title": "Localizar a tela",
+      "hint": "Faça a tela piscar para identificar a qual impressora ela pertence.",
+      "button": "Localizar tela"
+    },
+    "message": {
+      "title": "Enviar uma mensagem",
+      "placeholder": "Digite uma mensagem curta para mostrar na tela…",
+      "level": "Nível",
+      "info": "Informação",
+      "warn": "Aviso",
+      "send": "Enviar"
+    },
+    "sent": "Enviado",
+    "help": {
+      "button": "Ajuda",
+      "title": "Controle Remoto — guia",
+      "close": "Fechar",
+      "topics": {
+        "overview": {
+          "title": "O que isto faz",
+          "body": "Este painel comanda daqui a tela sensível ao toque FilaMind na impressora: alterne a aba dela, mostre uma mensagem curta ou faça-a piscar para identificar de qual impressora se trata. São apenas indicações na tela — nunca movem a impressora nem alteram um ajuste."
+        },
+        "commands": {
+          "title": "Os comandos",
+          "body": "Mostrar leva a tela à aba Status, Controle ou Ajustes. Localizar faz a tela piscar por alguns segundos. Mensagem mostra uma nota curta (informação ou aviso). Os comandos chegam a qualquer tela FilaMind desta impressora; nada é enviado enquanto o canal de comandos ainda está conectando."
+        }
+      }
+    }
+  }
+}

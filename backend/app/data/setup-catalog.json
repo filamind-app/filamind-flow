@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "comment": "FilaMind Setup component catalog. Adding a component = one entry here, no engine change. 'type' = how it self-updates via Moonraker update_manager. Repo URLs for FilaMind apps are placeholders until the repos exist.",
+  "groups": [
+    {
+      "group": "core",
+      "components": [
+        { "id": "klipper",      "name": "Klipper",      "kind": "firmware-host", "repo": "Klipper3d/klipper",     "type": "git_repo", "deps": [] },
+        { "id": "moonraker",    "name": "Moonraker",    "kind": "api-server",    "repo": "Arksine/moonraker",     "type": "git_repo", "deps": ["klipper"] }
+      ]
+    },
+    {
+      "group": "web-uis",
+      "components": [
+        { "id": "filamind-3d",  "name": "FilaMind 3d",  "kind": "web-ui", "repo": "filamind-app/filamind-3d", "type": "web",   "deps": ["moonraker"], "first_party": true, "serve": "port-or-path", "default_port": 80, "primary": true },
+        { "id": "mainsail",     "name": "Mainsail",     "kind": "web-ui", "repo": "mainsail-crew/mainsail", "type": "web",      "deps": ["moonraker"], "serve": "port-or-path", "default_port": 81 },
+        { "id": "fluidd",       "name": "Fluidd",       "kind": "web-ui", "repo": "fluidd-core/fluidd",     "type": "web",      "deps": ["moonraker"], "serve": "port-or-path", "default_port": 82 }
+      ]
+    },
+    {
+      "group": "touchscreens",
+      "components": [
+        { "id": "klipperscreen",   "name": "KlipperScreen",  "kind": "touch", "repo": "KlipperScreen/KlipperScreen", "type": "git_repo", "deps": ["moonraker"] },
+        { "id": "guppyscreen",     "name": "Guppyscreen",    "kind": "touch", "repo": "ballaswag/guppyscreen",       "type": "git_repo", "deps": ["moonraker"] },
+        { "id": "filamind-screen", "name": "FilaMind screen","kind": "touch", "repo": "filamind-app/filamind-screen","type": "tauri",   "deps": ["moonraker"], "first_party": true }
+      ]
+    },
+    {
+      "group": "host-widgets",
+      "components": [
+        { "id": "filamind-flow", "name": "FilaMind flow", "kind": "widget-app", "repo": "filamind-app/filamind-flow", "type": "git_repo", "deps": ["moonraker"], "first_party": true }
+      ]
+    },
+    {
+      "group": "webcam",
+      "components": [
+        { "id": "crowsnest",       "name": "Crowsnest",        "kind": "webcam", "repo": "mainsail-crew/crowsnest",  "type": "git_repo", "deps": ["moonraker"] }
+      ]
+    },
+    {
+      "group": "filament",
+      "components": [
+        { "id": "spoolman",        "name": "Spoolman",         "kind": "service", "repo": "Donkie/Spoolman",        "type": "service", "deps": ["moonraker"] }
+      ]
+    },
+    {
+      "group": "companions",
+      "components": [
+        { "id": "mobileraker-companion", "name": "Mobileraker Companion", "kind": "companion", "repo": "Clon1998/mobileraker_companion", "type": "git_repo", "deps": ["moonraker"] },
+        { "id": "octoapp",               "name": "OctoApp Companion",     "kind": "companion", "repo": "crysxd/OctoApp-Plugin",          "type": "git_repo", "deps": ["moonraker"] }
+      ]
+    },
+    {
+      "group": "monitoring-remote",
+      "components": [
+        { "id": "obico",          "name": "Obico for Klipper",  "kind": "remote", "repo": "TheSpaghettiDetective/moonraker-obico", "type": "git_repo", "deps": ["moonraker"] },
+        { "id": "octoeverywhere", "name": "OctoEverywhere",     "kind": "remote", "repo": "QuinnDamerell/OctoPrint-OctoEverywhere", "type": "git_repo", "deps": ["moonraker"] },
+        { "id": "simplyprint",    "name": "SimplyPrint",        "kind": "remote", "repo": "SimplyPrint/SimplyPrint-Klipper",        "type": "git_repo", "deps": ["moonraker"] }
+      ]
+    },
+    {
+      "group": "klipper-addons",
+      "components": [
+        { "id": "kamp",            "name": "Adaptive Meshing & Purging (KAMP)", "kind": "config-addon", "repo": "kyleisah/Klipper-Adaptive-Meshing-Purging", "type": "git_repo", "deps": ["klipper"] },
+        { "id": "klipper-backup",  "name": "Klipper Backup",      "kind": "utility",  "repo": "Staubgeborener/klipper-backup", "type": "git_repo", "deps": [] },
+        { "id": "tmc-autotune",    "name": "TMC Autotune",        "kind": "config-addon", "repo": "andrewmcgr/klipper_tmc_autotune", "type": "git_repo", "deps": ["klipper"] },
+        { "id": "shaketune",       "name": "Shake&Tune",          "kind": "config-addon", "repo": "Frix-x/klippain-shaketune", "type": "git_repo", "deps": ["klipper"] },
+        { "id": "led-effect",      "name": "LED Effect",          "kind": "config-addon", "repo": "julianschill/klipper-led_effect", "type": "git_repo", "deps": ["klipper"] },
+        { "id": "gcode-shell-cmd", "name": "G-Code Shell Command","kind": "config-addon", "repo": "filamind-app/klipper-extras", "type": "manual", "deps": ["klipper"] },
+        { "id": "pretty-gcode",    "name": "PrettyGCode",         "kind": "viewer",   "repo": "Kragrathea/pgcode", "type": "git_repo", "deps": ["moonraker"] },
+        { "id": "timelapse",       "name": "Moonraker Timelapse", "kind": "utility",  "repo": "mainsail-crew/moonraker-timelapse", "type": "git_repo", "deps": ["moonraker", "crowsnest"] },
+        { "id": "telegram-bot",    "name": "Moonraker Telegram Bot","kind": "notifier","repo": "nlef/moonraker-telegram-bot", "type": "git_repo", "deps": ["moonraker"] }
+      ]
+    },
+    {
+      "group": "firmware-tools",
+      "components": [
+        { "id": "katapult",  "name": "Katapult (bootloader)", "kind": "flash-tool", "repo": "Arksine/katapult", "type": "git_repo", "deps": [] },
+        { "id": "can-tools", "name": "CAN-bus tools",          "kind": "flash-tool", "repo": "Klipper3d/klipper", "type": "manual",   "deps": ["klipper"] }
+      ]
+    }
+  ]
+}

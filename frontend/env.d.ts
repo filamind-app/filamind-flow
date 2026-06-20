@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_APP_TITLE?: string
   /** URL of the Mainsail UI for the "back" button. Falls back to the host root. */
   readonly VITE_MAINSAIL_URL?: string
+  /** Which host this build targets: 'mainsail' (default) or 'suite' (the FilaMind suite). */
+  readonly VITE_HOST_MODE?: 'mainsail' | 'suite'
 }
 
 interface ImportMeta {

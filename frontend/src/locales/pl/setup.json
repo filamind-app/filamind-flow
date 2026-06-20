@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "Instaluj komponenty ekosystemu Klipper dla tej drukarki i zarządzaj nimi.",
+    "refresh": "Odśwież",
+    "installed": "Zainstalowane",
+    "available": "Dostępne",
+    "install": "Zainstaluj",
+    "update": "Aktualizuj",
+    "remove": "Usuń",
+    "removeConfirm": "Potwierdzić usunięcie?",
+    "firstParty": "FilaMind",
+    "writesDisabled": "Instalowanie, aktualizowanie i usuwanie są wyłączone na tym hoście. Użyj narzędzia filamind-setup CLI lub włącz je na hoście.",
+    "working": "Pracuję…",
+    "help": {
+      "button": "Pomoc",
+      "title": "Konfiguracja — przewodnik",
+      "close": "Zamknij",
+      "topics": {
+        "overview": {
+          "title": "Zarządzanie komponentami",
+          "body": "Przeglądaj katalog według grup; każdy komponent pokazuje, czy jest zainstalowany. Instalowanie, aktualizowanie i usuwanie działają na hoście drukarki i pozostają tu wyłączone, dopóki ich nie włączysz — interfejs wiersza poleceń filamind-setup zawsze może to zrobić."
+        }
+      }
+    }
+  }
+}

@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen Studio",
         "description": "Bearbeite die KlipperScreen-Touchscreen-Konfiguration deines Druckers und starte sie neu, um sie anzuwenden."
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "Installieren und verwalten Sie Klipper-Komponenten für diesen Drucker."
+      },
+      "remote-control": {
+        "title": "Fernsteuerung",
+        "description": "Steuere den FilaMind-Bildschirm am Drucker – wechsle seinen Tab, zeige eine Nachricht oder finde ihn."
       }
     },
     "guard": {

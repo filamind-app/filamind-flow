@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "intro": "Install and manage Klipper-ecosystem components for this printer.",
+    "refresh": "Refresh",
+    "installed": "Installed",
+    "available": "Available",
+    "install": "Install",
+    "update": "Update",
+    "remove": "Remove",
+    "removeConfirm": "Confirm remove?",
+    "firstParty": "FilaMind",
+    "writesDisabled": "Install, update and remove are disabled on this host. Use the filamind-setup CLI, or enable them on the host.",
+    "working": "Working…",
+    "help": {
+      "button": "Help",
+      "title": "Setup — guide",
+      "close": "Close",
+      "topics": {
+        "overview": {
+          "title": "Managing components",
+          "body": "Browse the catalog by group; each component shows whether it's installed. Install, update and remove run on the printer host and stay disabled here until you enable them — the filamind-setup CLI can always do it."
+        }
+      }
+    }
+  }
+}

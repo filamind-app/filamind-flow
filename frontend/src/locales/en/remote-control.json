@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Send commands to the on-printer FilaMind screen.",
+    "status": {
+      "ready": "Command bus connected",
+      "down": "Connecting to the command bus…"
+    },
+    "show": {
+      "title": "Show on the screen",
+      "status": "Status",
+      "control": "Control",
+      "settings": "Settings"
+    },
+    "locate": {
+      "title": "Locate the screen",
+      "hint": "Flash the screen so you can tell which printer it belongs to.",
+      "button": "Locate screen"
+    },
+    "message": {
+      "title": "Send a message",
+      "placeholder": "Type a short message to show on the screen…",
+      "level": "Level",
+      "info": "Info",
+      "warn": "Warning",
+      "send": "Send"
+    },
+    "sent": "Sent",
+    "help": {
+      "button": "Help",
+      "title": "Remote Control — guide",
+      "close": "Close",
+      "topics": {
+        "overview": {
+          "title": "What this does",
+          "body": "This panel steers the on-printer FilaMind touchscreen from here: switch its tab, show it a short message, or flash it so you can tell which printer it is. These are display-only nudges — they never move the printer or change a setting."
+        },
+        "commands": {
+          "title": "The commands",
+          "body": "Show jumps the screen to its Status, Control, or Settings tab. Locate flashes the screen for a few seconds. Message shows a short note (info or warning). Commands reach any FilaMind screen on this printer; nothing is sent while the command bus is still connecting."
+        }
+      }
+    }
+  }
+}

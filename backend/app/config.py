@@ -17,6 +17,15 @@ class Settings(BaseSettings):
     # Base URL of the Moonraker instance this panel sits in front of.
     moonraker_url: str = "http://localhost:7125"
 
+    # Which host this deployment serves: "mainsail" (default sidebar) or "suite" (FilaMind suite).
+    # Mirrors the frontend VITE_HOST_MODE; lets the API adjust host-specific policy if needed.
+    host_mode: str = "mainsail"
+
+    # FilaMind Setup: GUI-driven install/update/remove run privileged host operations, so they are
+    # OFF by default — the catalog + installed-status stay read-only until an operator opts in
+    # (FILAMIND_SETUP_WRITES=true) on the host. The filamind-setup CLI is the alternative.
+    setup_writes_enabled: bool = False
+
     # Firmware toolchain locations (Firmware Upgrade widget).
     klipper_dir: str = "~/klipper"
     katapult_dir: str = "~/katapult"

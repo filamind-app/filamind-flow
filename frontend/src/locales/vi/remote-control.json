@@ -1,0 +1,44 @@
+{
+  "remoteControl": {
+    "intro": "Gửi lệnh đến màn hình FilaMind trên máy in.",
+    "status": {
+      "ready": "Đã kết nối kênh lệnh",
+      "down": "Đang kết nối kênh lệnh…"
+    },
+    "show": {
+      "title": "Hiển thị trên màn hình",
+      "status": "Trạng thái",
+      "control": "Điều khiển",
+      "settings": "Cài đặt"
+    },
+    "locate": {
+      "title": "Định vị màn hình",
+      "hint": "Nhấp nháy màn hình để biết nó thuộc về máy in nào.",
+      "button": "Định vị màn hình"
+    },
+    "message": {
+      "title": "Gửi tin nhắn",
+      "placeholder": "Nhập tin nhắn ngắn để hiển thị trên màn hình…",
+      "level": "Mức độ",
+      "info": "Thông tin",
+      "warn": "Cảnh báo",
+      "send": "Gửi"
+    },
+    "sent": "Đã gửi",
+    "help": {
+      "button": "Trợ giúp",
+      "title": "Điều khiển từ xa — hướng dẫn",
+      "close": "Đóng",
+      "topics": {
+        "overview": {
+          "title": "Chức năng",
+          "body": "Bảng điều khiển này điều khiển màn hình cảm ứng FilaMind trên máy in từ đây: chuyển tab của nó, hiển thị một tin nhắn ngắn, hoặc nhấp nháy để biết đó là máy in nào. Đây chỉ là các tác động lên hiển thị — chúng không bao giờ di chuyển máy in hay thay đổi cài đặt."
+        },
+        "commands": {
+          "title": "Các lệnh",
+          "body": "Hiển thị chuyển màn hình sang tab Trạng thái, Điều khiển, hoặc Cài đặt. Định vị nhấp nháy màn hình trong vài giây. Tin nhắn hiển thị một ghi chú ngắn (thông tin hoặc cảnh báo). Các lệnh đến mọi màn hình FilaMind trên máy in này; không có gì được gửi đi khi kênh lệnh vẫn đang kết nối."
+        }
+      }
+    }
+  }
+}

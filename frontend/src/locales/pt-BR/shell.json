@@ -135,6 +135,14 @@
       "klipperscreen-studio": {
         "title": "KlipperScreen Studio",
         "description": "Edite a configuração da tela sensível ao toque do KlipperScreen da sua impressora e reinicie-o para aplicar."
+      },
+      "setup": {
+        "title": "Setup",
+        "description": "Instale e gerencie componentes do ecossistema Klipper para esta impressora."
+      },
+      "remote-control": {
+        "title": "Controle Remoto",
+        "description": "Comande a tela FilaMind na impressora — alterne a aba, mostre uma mensagem ou localize-a."
       }
     },
     "guard": {

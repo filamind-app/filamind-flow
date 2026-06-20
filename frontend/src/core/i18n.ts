@@ -13,6 +13,7 @@ import enMacroDesigner from '../locales/en/macro-designer.json'
 import enMachineDoctor from '../locales/en/machine-doctor.json'
 import enMaxFlow from '../locales/en/max-flow.json'
 import enMotorDrivers from '../locales/en/motor-drivers.json'
+import enRemoteControl from '../locales/en/remote-control.json'
 import enShell from '../locales/en/shell.json'
 
 /**
@@ -89,6 +90,7 @@ const en = {
   ...enFirmware,
   ...enInputShaping,
   ...enMotorDrivers,
+  ...enRemoteControl,
   ...enConfigEditor,
   ...enMaxFlow,
   ...enMachineDoctor,
