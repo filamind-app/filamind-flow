@@ -7,7 +7,7 @@ and grows one widget at a time.
 
 **Built by Egyptian makers, for world makers. Happy printing.** 🇪🇬
 
-_A two-person hobby project, built and tested on real printers. The code is all here to read, thers AI assistance._
+_A small-team hobby project, built and tested on real printers. The code is all here to read, with AI assistance._
 
 [![Support on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I119XEIV)
 
@@ -118,6 +118,7 @@ Built and maintained by the DeltaFabs team:
 
 - abdelmonem awad - <eg2@live.com>
 - Ahmed bebars - <Ahmedbebars1@gmail.com>
+- Kareem Salama - <Golden.kiko@gmail.com>
 
 ## License
 
