@@ -230,6 +230,10 @@
     "backUi": {
       "label": "Zurück zur UI",
       "title": "Die Web-Oberfläche des Druckers öffnen"
+    },
+    "gate": {
+      "title": "Erfordert die FilaMind-Oberfläche",
+      "body": "{name} läuft in der FilaMind-3D-App. Installiere FilaMind 3D auf diesem Drucker, um es zu nutzen."
     }
   }
 }

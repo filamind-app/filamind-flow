@@ -1,12 +1,24 @@
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, defineComponent, h } from 'vue'
 
 import { registerWidget } from '@/core/registry'
 import type { WidgetDefinition } from '@/core/registry/types'
-import { isWidgetEnabled } from '@/core/host/adapter'
+import { isWidgetEnabled, isWidgetGated } from '@/core/host/adapter'
 
-/** Register a widget only if the current host enables it (dual-host gate). */
+/** A stand-in component (bound to the widget id) shown when a widget needs the FilaMind 3D host. */
+function gateComponent(id: string) {
+  return defineAsyncComponent(async () => {
+    const SuiteGate = (await import('@/components/SuiteGate.vue')).default
+    return defineComponent({
+      name: `suite-gate-${id}`,
+      setup: () => () => h(SuiteGate, { widgetId: id }),
+    })
+  })
+}
+
+/** Register a widget for the current host; gated widgets register with the install-required panel. */
 function reg(def: WidgetDefinition): void {
-  if (isWidgetEnabled(def.id)) registerWidget(def)
+  if (!isWidgetEnabled(def.id)) return
+  registerWidget(isWidgetGated(def.id) ? { ...def, component: gateComponent(def.id) } : def)
 }
 
 /**

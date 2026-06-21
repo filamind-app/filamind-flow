@@ -230,6 +230,10 @@
     "backUi": {
       "label": "Terug naar UI",
       "title": "Open de webinterface van de printer"
+    },
+    "gate": {
+      "title": "Vereist de FilaMind-interface",
+      "body": "{name} draait in de FilaMind 3D-app. Installeer FilaMind 3D op deze printer om het te gebruiken."
     }
   }
 }

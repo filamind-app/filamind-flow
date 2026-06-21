@@ -230,6 +230,10 @@
     "backUi": {
       "label": "Quay lại giao diện",
       "title": "Mở giao diện web của máy in"
+    },
+    "gate": {
+      "title": "Cần giao diện FilaMind",
+      "body": "{name} chạy trong ứng dụng FilaMind 3D. Hãy cài FilaMind 3D trên máy in này để sử dụng."
     }
   }
 }

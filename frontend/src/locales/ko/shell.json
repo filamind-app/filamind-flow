@@ -230,6 +230,10 @@
     "backUi": {
       "label": "UI로 돌아가기",
       "title": "프린터의 웹 UI 열기"
+    },
+    "gate": {
+      "title": "FilaMind 인터페이스가 필요합니다",
+      "body": "{name}은(는) FilaMind 3D 앱에서 실행됩니다. 사용하려면 이 프린터에 FilaMind 3D를 설치하세요."
     }
   }
 }

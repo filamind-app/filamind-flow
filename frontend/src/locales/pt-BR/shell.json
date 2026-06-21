@@ -230,6 +230,10 @@
     "backUi": {
       "label": "Voltar à interface",
       "title": "Abrir a interface web da impressora"
+    },
+    "gate": {
+      "title": "Requer a interface FilaMind",
+      "body": "{name} funciona no app FilaMind 3D. Instale o FilaMind 3D nesta impressora para usá-lo."
     }
   }
 }

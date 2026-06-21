@@ -230,6 +230,10 @@
     "backUi": {
       "label": "Arayüze dön",
       "title": "Yazıcının web arayüzünü aç"
+    },
+    "gate": {
+      "title": "FilaMind arayüzü gerekir",
+      "body": "{name}, FilaMind 3D uygulamasında çalışır. Kullanmak için bu yazıcıya FilaMind 3D'yi kurun."
     }
   }
 }

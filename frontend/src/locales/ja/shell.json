@@ -230,6 +230,10 @@
     "backUi": {
       "label": "UIに戻る",
       "title": "プリンターのWeb UIを開く"
+    },
+    "gate": {
+      "title": "FilaMind インターフェースが必要です",
+      "body": "{name} は FilaMind 3D アプリで動作します。使用するにはこのプリンターに FilaMind 3D をインストールしてください。"
     }
   }
 }
