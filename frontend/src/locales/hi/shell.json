@@ -139,6 +139,10 @@
       "remote-control": {
         "title": "रिमोट नियंत्रण",
         "description": "प्रिंटर पर लगी FilaMind स्क्रीन को नियंत्रित करें — इसका टैब बदलें, संदेश दिखाएं, या इसे ढूंढें।"
+      },
+      "material-brain": {
+        "title": "Material Brain",
+        "description": "सहेजे गए फ़िलामेंट प्रोफ़ाइल, फ़्लो-बनाम-hotend-सीमा जाँच के साथ।"
       }
     },
     "guard": {

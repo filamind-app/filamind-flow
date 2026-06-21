@@ -41,6 +41,14 @@ export function registerWidgets(): void {
   })
 
   reg({
+    id: 'material-brain',
+    title: 'Material Brain',
+    icon: '🧠',
+    description: 'Saved filament profiles with a flow-vs-hotend-ceiling check.',
+    component: defineAsyncComponent(() => import('./material-brain/MaterialBrainWidget.vue')),
+  })
+
+  reg({
     id: 'motor-drivers',
     title: 'Motor Drivers',
     icon: '⚙',

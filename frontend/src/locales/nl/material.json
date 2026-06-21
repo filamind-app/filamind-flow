@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Opgeslagen filamentprofielen - temperaturen, dichtheid en de maximale volumetrische flow die elk kan volhouden.",
+    "add": "Materiaal toevoegen",
+    "loading": "Laden…",
+    "empty": "Nog geen materialen. Voeg er een toe om je filamentbibliotheek op te bouwen.",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Naam",
+      "material": "Type",
+      "brand": "Merk",
+      "color": "Kleur",
+      "diameter": "Diameter (mm)",
+      "density": "Dichtheid (g/cm³)",
+      "maxFlow": "Max. volumetrische flow (mm³/s)",
+      "nozzleTemp": "Nozzle (°C)",
+      "bedTemp": "Bed (°C)",
+      "notes": "Notities"
+    },
+    "flowCheck": {
+      "exceeds": "Boven het plafond van de {hotend} ({flow} > {ceiling} mm³/s)",
+      "within": "{headroom}% onder het plafond van de {hotend}"
+    },
+    "help": {
+      "guide": "Gids",
+      "guideTitle": "Material Brain-gids",
+      "close": "Sluiten",
+      "topics": {
+        "overview": {
+          "title": "Wat is Material Brain?",
+          "body": "Een bibliotheek van je filamenten. Elk profiel bewaart temperaturen, dichtheid en de maximale volumetrische flow die het filament kan volhouden - de waarden waarop afstemming en slicen voortbouwen."
+        },
+        "flow": {
+          "title": "Flow vs. hotend-plafond",
+          "body": "De maximale volumetrische flow van elk profiel wordt gecontroleerd tegen het catalogusplafond van je hotend, zodat een profiel dat meer vraagt dan de hotend kan smelten wordt gemarkeerd voordat het zich als onderextrusie laat zien."
+        },
+        "glossary": {
+          "title": "Verklarende woordenlijst"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Volumetrische flow",
+          "def": "Hoeveel kunststof (mm³) de hotend per seconde smelt - de echte snelheidslimiet voor snel printen."
+        },
+        "density": {
+          "term": "Dichtheid",
+          "def": "Filamentmassa per volume (g/cm³); gebruikt om volumetrische flow om te rekenen naar een massastroom."
+        },
+        "ceiling": {
+          "term": "Hotend-plafond",
+          "def": "De maximale volumetrische flow die een hotend kan volhouden, uit de hardwarecatalogus."
+        }
+      }
+    }
+  }
+}

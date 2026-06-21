@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Kaydedilmiş filament profilleri - sıcaklıklar, yoğunluk ve her birinin sürdürebileceği maksimum hacimsel akış.",
+    "add": "Malzeme ekle",
+    "loading": "Yükleniyor…",
+    "empty": "Henüz malzeme yok. Filament kütüphanenizi oluşturmaya başlamak için bir tane ekleyin.",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Ad",
+      "material": "Tür",
+      "brand": "Marka",
+      "color": "Renk",
+      "diameter": "Çap (mm)",
+      "density": "Yoğunluk (g/cm³)",
+      "maxFlow": "Maksimum hacimsel akış (mm³/s)",
+      "nozzleTemp": "Nozül (°C)",
+      "bedTemp": "Tabla (°C)",
+      "notes": "Notlar"
+    },
+    "flowCheck": {
+      "exceeds": "{hotend} tavanının üzerinde ({flow} > {ceiling} mm³/s)",
+      "within": "{hotend} tavanının %{headroom} altında"
+    },
+    "help": {
+      "guide": "Kılavuz",
+      "guideTitle": "Material Brain kılavuzu",
+      "close": "Kapat",
+      "topics": {
+        "overview": {
+          "title": "Material Brain nedir?",
+          "body": "Filamentlerinizin bir kütüphanesi. Her profil sıcaklıkları, yoğunluğu ve filamentin sürdürebileceği maksimum hacimsel akışı saklar - ince ayar ve dilimlemenin üzerine kurulduğu değerler."
+        },
+        "flow": {
+          "title": "Akış ve hotend tavanı",
+          "body": "Her profilin maksimum hacimsel akışı, hotend'inizin katalog tavanıyla çapraz denetlenir; böylece hotend'in eritebileceğinden fazlasını isteyen bir profil, az ekstrüzyon olarak ortaya çıkmadan önce işaretlenir."
+        },
+        "glossary": {
+          "title": "Sözlük"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Hacimsel akış",
+          "def": "Hotend'in saniyede erittiği plastik miktarı (mm³) - hızlı baskı için gerçek hız sınırı."
+        },
+        "density": {
+          "term": "Yoğunluk",
+          "def": "Birim hacim başına filament kütlesi (g/cm³); hacimsel akışı kütle hızına çevirmek için kullanılır."
+        },
+        "ceiling": {
+          "term": "Hotend tavanı",
+          "def": "Bir hotend'in sürdürebileceği maksimum hacimsel akış; donanım kataloğundan alınır."
+        }
+      }
+    }
+  }
+}

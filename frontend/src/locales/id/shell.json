@@ -139,6 +139,10 @@
       "remote-control": {
         "title": "Kontrol Jarak Jauh",
         "description": "Kendalikan layar FilaMind di printer — ganti tabnya, tampilkan pesan, atau temukan layarnya."
+      },
+      "material-brain": {
+        "title": "Material Brain",
+        "description": "Profil filamen tersimpan dengan pemeriksaan aliran-vs-batas-hotend."
       }
     },
     "guard": {

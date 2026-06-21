@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Saved filament profiles - temps, density, and the max volumetric flow each can sustain.",
+    "add": "Add material",
+    "loading": "Loading…",
+    "empty": "No materials yet. Add one to start building your filament library.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Name",
+      "material": "Type",
+      "brand": "Brand",
+      "color": "Color",
+      "diameter": "Diameter (mm)",
+      "density": "Density (g/cm³)",
+      "maxFlow": "Max volumetric flow (mm³/s)",
+      "nozzleTemp": "Nozzle (°C)",
+      "bedTemp": "Bed (°C)",
+      "notes": "Notes"
+    },
+    "flowCheck": {
+      "exceeds": "Over the {hotend} ceiling ({flow} > {ceiling} mm³/s)",
+      "within": "{headroom}% under the {hotend} ceiling"
+    },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Material Brain guide",
+      "close": "Close",
+      "topics": {
+        "overview": {
+          "title": "What is Material Brain?",
+          "body": "A library of your filaments. Each profile stores temps, density, and the maximum volumetric flow the filament can sustain - the numbers tuning and slicing build on."
+        },
+        "flow": {
+          "title": "Flow vs hotend ceiling",
+          "body": "Each profile's max volumetric flow is cross-checked against your hotend's catalog ceiling, so a profile asking for more than the hotend can melt is flagged before it shows up as under-extrusion."
+        },
+        "glossary": {
+          "title": "Glossary"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Volumetric flow",
+          "def": "How much plastic (mm³) the hotend melts per second - the real speed limit for fast printing."
+        },
+        "density": {
+          "term": "Density",
+          "def": "Filament mass per volume (g/cm³); used to convert volumetric flow to a mass rate."
+        },
+        "ceiling": {
+          "term": "Hotend ceiling",
+          "def": "The maximum volumetric flow a hotend can sustain, from the hardware catalog."
+        }
+      }
+    }
+  }
+}

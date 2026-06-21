@@ -139,6 +139,10 @@
       "remote-control": {
         "title": "Điều khiển từ xa",
         "description": "Điều khiển màn hình FilaMind trên máy in — chuyển tab, hiển thị tin nhắn, hoặc định vị nó."
+      },
+      "material-brain": {
+        "title": "Material Brain",
+        "description": "Hồ sơ filament đã lưu kèm kiểm tra lưu lượng so với trần đầu in."
       }
     },
     "guard": {
