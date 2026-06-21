@@ -256,6 +256,22 @@ class MaterialApplyResult(BaseModel):
     params: dict[str, Any] = {}
 
 
+class PreflightCheck(BaseModel):
+    """One pre-print readiness check (frontend renders ``preflight.checks.<code>``)."""
+
+    code: str
+    ok: bool
+    level: str
+    params: dict[str, Any] = {}
+
+
+class PreflightResult(BaseModel):
+    """Pre-print readiness: ``ready`` is False if any error-level check fails."""
+
+    ready: bool
+    checks: list[PreflightCheck] = []
+
+
 class FlashWarning(BaseModel):
     """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
 
