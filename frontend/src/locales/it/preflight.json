@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Un rapido controllo in sola lettura per verificare che la stampante sia pronta a iniziare una stampa.",
+    "refresh": "Ricontrolla",
+    "checking": "Controllo in corso...",
+    "ready": "Pronta a stampare",
+    "notReady": "Non pronta a stampare",
+    "checks": {
+      "unreachable": { "fail": "La stampante non è raggiungibile" },
+      "klippy": { "pass": "Klipper è pronto", "fail": "Klipper non è pronto (stato: {state})" },
+      "idle": { "pass": "Nessuna stampa in corso", "fail": "Una stampa è già in esecuzione ({state})" },
+      "homed": { "pass": "Tutti gli assi sono azzerati", "fail": "Assi non azzerati ({axes}); l'avvio di una stampa di solito esegue prima l'azzeramento" }
+    },
+    "help": {
+      "guide": "Guida",
+      "guideTitle": "Guida al controllo pre-stampa",
+      "close": "Chiudi",
+      "topics": {
+        "overview": {
+          "title": "Cos'è il controllo pre-stampa?",
+          "body": "Una verifica in sola lettura per capire se la stampante è pronta a iniziare: non muove né modifica nulla, si limita a riportare lo stato. I blocchi critici rendono l'esito rosso; gli avvisi informano ma non bloccano."
+        },
+        "checks": {
+          "title": "Cosa controlla",
+          "body": "Che Klipper sia pronto (non spento o in errore), che non ci sia già una stampa in esecuzione, e se gli assi sono azzerati (a titolo informativo, poiché l'avvio di una stampa di solito esegue prima l'azzeramento)."
+        },
+        "glossary": { "title": "Glossario" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Stato di Klipper",
+          "def": "Lo stato proprio di Klipper - 'ready' (pronto) significa che è connesso e inattivo; 'shutdown' (spento) o 'error' (errore) significa che non può stampare finché non viene risolto."
+        },
+        "homing": {
+          "term": "Azzeramento",
+          "def": "Spostare ogni asse fino al suo endstop affinché la stampante sappia dove si trova la toolhead. La maggior parte delle routine di avvio stampa esegue l'azzeramento automaticamente."
+        }
+      }
+    }
+  }
+}

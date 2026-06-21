@@ -1,0 +1,54 @@
+{
+  "preflight": {
+    "intro": "A quick read-only check that the printer is ready to start a print.",
+    "refresh": "Re-check",
+    "checking": "Checking...",
+    "ready": "Ready to print",
+    "notReady": "Not ready to print",
+    "checks": {
+      "unreachable": {
+        "fail": "Printer is unreachable"
+      },
+      "klippy": {
+        "pass": "Klipper is ready",
+        "fail": "Klipper is not ready (state: {state})"
+      },
+      "idle": {
+        "pass": "No print in progress",
+        "fail": "A print is already running ({state})"
+      },
+      "homed": {
+        "pass": "All axes are homed",
+        "fail": "Axes not homed ({axes}); a print start usually homes first"
+      }
+    },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Pre-print check guide",
+      "close": "Close",
+      "topics": {
+        "overview": {
+          "title": "What is the pre-print check?",
+          "body": "A read-only glance at whether the printer is ready to start: it never moves or changes anything, it just reports. Hard blockers turn the verdict red; warnings inform but don't block."
+        },
+        "checks": {
+          "title": "What it checks",
+          "body": "Klipper is ready (not shut down or in error), no print is already running, and whether the axes are homed (informational, since a print start usually homes first)."
+        },
+        "glossary": {
+          "title": "Glossary"
+        }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Klipper state",
+          "def": "Klipper's own status - 'ready' means it is connected and idle; 'shutdown' or 'error' means it can't print until cleared."
+        },
+        "homing": {
+          "term": "Homing",
+          "def": "Moving each axis to its endstop so the printer knows where the toolhead is. Most print-start routines home automatically."
+        }
+      }
+    }
+  }
+}

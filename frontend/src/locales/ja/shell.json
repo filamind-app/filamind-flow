@@ -147,6 +147,10 @@
       "tuning": {
         "title": "チューニングウィザード",
         "description": "ガイド付きキャリブレーションウィザード（まずは Pressure Advance）。"
+      },
+      "preflight": {
+        "title": "プリント前チェック",
+        "description": "プリント開始前に準備状況を読み取り専用で確認します。"
       }
     },
     "guard": {

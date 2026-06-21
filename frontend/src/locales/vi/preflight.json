@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Một lần kiểm tra nhanh chỉ-đọc xem máy in đã sẵn sàng để bắt đầu in chưa.",
+    "refresh": "Kiểm tra lại",
+    "checking": "Đang kiểm tra...",
+    "ready": "Sẵn sàng để in",
+    "notReady": "Chưa sẵn sàng để in",
+    "checks": {
+      "unreachable": { "fail": "Không thể kết nối tới máy in" },
+      "klippy": { "pass": "Klipper đã sẵn sàng", "fail": "Klipper chưa sẵn sàng (trạng thái: {state})" },
+      "idle": { "pass": "Không có lần in nào đang chạy", "fail": "Một lần in đã đang chạy ({state})" },
+      "homed": { "pass": "Tất cả các trục đã về gốc", "fail": "Các trục chưa về gốc ({axes}); việc bắt đầu in thường về gốc trước" }
+    },
+    "help": {
+      "guide": "Hướng dẫn",
+      "guideTitle": "Hướng dẫn kiểm tra trước khi in",
+      "close": "Đóng",
+      "topics": {
+        "overview": {
+          "title": "Kiểm tra trước khi in là gì?",
+          "body": "Một cái nhìn chỉ-đọc xem máy in đã sẵn sàng để bắt đầu chưa: nó không bao giờ di chuyển hay thay đổi bất cứ thứ gì, chỉ báo cáo. Các yếu tố chặn cứng làm kết luận chuyển sang đỏ; cảnh báo chỉ để thông tin nhưng không chặn."
+        },
+        "checks": {
+          "title": "Những gì được kiểm tra",
+          "body": "Klipper đã sẵn sàng (không bị tắt hoặc lỗi), không có lần in nào đang chạy, và liệu các trục đã về gốc chưa (chỉ để tham khảo, vì việc bắt đầu in thường về gốc trước)."
+        },
+        "glossary": { "title": "Thuật ngữ" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Trạng thái Klipper",
+          "def": "Trạng thái riêng của Klipper - 'ready' (sẵn sàng) nghĩa là đã kết nối và rảnh; 'shutdown' (đã tắt) hoặc 'error' (lỗi) nghĩa là không thể in cho đến khi được xử lý."
+        },
+        "homing": {
+          "term": "Về gốc (Homing)",
+          "def": "Di chuyển từng trục đến công tắc giới hạn (endstop) để máy in biết đầu in đang ở đâu. Hầu hết các quy trình bắt đầu in đều tự động về gốc."
+        }
+      }
+    }
+  }
+}

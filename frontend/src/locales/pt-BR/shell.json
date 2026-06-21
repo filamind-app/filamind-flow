@@ -147,6 +147,10 @@
       "tuning": {
         "title": "Assistentes de Ajuste",
         "description": "Assistentes guiados de calibração (Pressure Advance primeiro)."
+      },
+      "preflight": {
+        "title": "Verificação Pré-Impressão",
+        "description": "Uma verificação de prontidão somente leitura antes de iniciar uma impressão."
       }
     },
     "guard": {

@@ -147,6 +147,10 @@
       "tuning": {
         "title": "Procedure guidate di taratura",
         "description": "Procedure guidate di calibrazione (prima il Pressure Advance)."
+      },
+      "preflight": {
+        "title": "Controllo pre-stampa",
+        "description": "Un controllo di prontezza in sola lettura prima di avviare una stampa."
       }
     },
     "guard": {

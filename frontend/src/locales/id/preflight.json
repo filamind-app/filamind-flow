@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Pemeriksaan baca-saja singkat untuk memastikan printer siap memulai pencetakan.",
+    "refresh": "Periksa ulang",
+    "checking": "Memeriksa...",
+    "ready": "Siap mencetak",
+    "notReady": "Belum siap mencetak",
+    "checks": {
+      "unreachable": { "fail": "Printer tidak dapat dijangkau" },
+      "klippy": { "pass": "Klipper siap", "fail": "Klipper belum siap (status: {state})" },
+      "idle": { "pass": "Tidak ada pencetakan yang berlangsung", "fail": "Pencetakan sudah berjalan ({state})" },
+      "homed": { "pass": "Semua sumbu sudah di-homing", "fail": "Sumbu belum di-homing ({axes}); memulai pencetakan biasanya melakukan homing terlebih dahulu" }
+    },
+    "help": {
+      "guide": "Panduan",
+      "guideTitle": "Panduan pemeriksaan pra-cetak",
+      "close": "Tutup",
+      "topics": {
+        "overview": {
+          "title": "Apa itu pemeriksaan pra-cetak?",
+          "body": "Tinjauan baca-saja apakah printer siap memulai: tidak pernah menggerakkan atau mengubah apa pun, hanya melaporkan. Penghambat keras membuat hasilnya merah; peringatan memberi tahu tetapi tidak menghambat."
+        },
+        "checks": {
+          "title": "Apa yang diperiksa",
+          "body": "Klipper siap (tidak mati atau dalam galat), tidak ada pencetakan yang sedang berjalan, dan apakah sumbu sudah di-homing (informatif, karena memulai pencetakan biasanya melakukan homing terlebih dahulu)."
+        },
+        "glossary": { "title": "Glosarium" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Status Klipper",
+          "def": "Status Klipper sendiri - 'ready' (siap) berarti terhubung dan diam; 'shutdown' (mati) atau 'error' (galat) berarti tidak dapat mencetak hingga dibersihkan."
+        },
+        "homing": {
+          "term": "Homing",
+          "def": "Menggerakkan setiap sumbu ke endstop-nya agar printer tahu di mana toolhead berada. Sebagian besar rutinitas mulai-cetak melakukan homing secara otomatis."
+        }
+      }
+    }
+  }
+}

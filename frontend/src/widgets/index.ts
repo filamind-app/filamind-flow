@@ -57,6 +57,14 @@ export function registerWidgets(): void {
   })
 
   reg({
+    id: 'preflight',
+    title: 'Pre-Print Check',
+    icon: '🚦',
+    description: 'A read-only readiness check before starting a print.',
+    component: defineAsyncComponent(() => import('./preflight/PreflightWidget.vue')),
+  })
+
+  reg({
     id: 'motor-drivers',
     title: 'Motor Drivers',
     icon: '⚙',

@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Een snelle alleen-lezen controle of de printer klaar is om een print te starten.",
+    "refresh": "Opnieuw controleren",
+    "checking": "Bezig met controleren...",
+    "ready": "Klaar om te printen",
+    "notReady": "Niet klaar om te printen",
+    "checks": {
+      "unreachable": { "fail": "Printer is onbereikbaar" },
+      "klippy": { "pass": "Klipper is gereed", "fail": "Klipper is niet gereed (status: {state})" },
+      "idle": { "pass": "Geen print bezig", "fail": "Er loopt al een print ({state})" },
+      "homed": { "pass": "Alle assen zijn gehomed", "fail": "Assen niet gehomed ({axes}); een printstart homed meestal eerst" }
+    },
+    "help": {
+      "guide": "Gids",
+      "guideTitle": "Gids voor pre-printcontrole",
+      "close": "Sluiten",
+      "topics": {
+        "overview": {
+          "title": "Wat is de pre-printcontrole?",
+          "body": "Een alleen-lezen blik op of de printer klaar is om te starten: er wordt nooit iets bewogen of gewijzigd, er wordt alleen gerapporteerd. Harde blokkades maken het oordeel rood; waarschuwingen informeren maar blokkeren niet."
+        },
+        "checks": {
+          "title": "Wat er wordt gecontroleerd",
+          "body": "Klipper is gereed (niet uitgeschakeld of in fout), er loopt nog geen print, en of de assen gehomed zijn (informatief, aangezien een printstart meestal eerst homed)."
+        },
+        "glossary": { "title": "Woordenlijst" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Klipper-status",
+          "def": "Klippers eigen status - 'ready' betekent dat het verbonden en inactief is; 'shutdown' of 'error' betekent dat er niet geprint kan worden tot dit is opgelost."
+        },
+        "homing": {
+          "term": "Homing",
+          "def": "Elke as naar zijn eindstop bewegen zodat de printer weet waar de toolhead zich bevindt. De meeste printstartroutines homen automatisch."
+        }
+      }
+    }
+  }
+}

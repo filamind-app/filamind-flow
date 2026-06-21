@@ -147,6 +147,10 @@
       "tuning": {
         "title": "Trình hướng dẫn Tinh chỉnh",
         "description": "Trình hướng dẫn hiệu chuẩn có dẫn dắt (Pressure Advance trước tiên)."
+      },
+      "preflight": {
+        "title": "Kiểm tra trước khi in",
+        "description": "Một lần kiểm tra độ sẵn sàng chỉ-đọc trước khi bắt đầu in."
       }
     },
     "guard": {

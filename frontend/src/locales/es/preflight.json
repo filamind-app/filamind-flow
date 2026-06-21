@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Una comprobación rápida de solo lectura de que la impresora está lista para empezar a imprimir.",
+    "refresh": "Volver a comprobar",
+    "checking": "Comprobando...",
+    "ready": "Lista para imprimir",
+    "notReady": "No está lista para imprimir",
+    "checks": {
+      "unreachable": { "fail": "No se puede contactar con la impresora" },
+      "klippy": { "pass": "Klipper está listo", "fail": "Klipper no está listo (estado: {state})" },
+      "idle": { "pass": "No hay ninguna impresión en curso", "fail": "Ya hay una impresión en ejecución ({state})" },
+      "homed": { "pass": "Todos los ejes están en home", "fail": "Ejes sin home ({axes}); al iniciar una impresión normalmente se hace home primero" }
+    },
+    "help": {
+      "guide": "Guía",
+      "guideTitle": "Guía de comprobación previa a la impresión",
+      "close": "Cerrar",
+      "topics": {
+        "overview": {
+          "title": "¿Qué es la comprobación previa a la impresión?",
+          "body": "Un vistazo de solo lectura de si la impresora está lista para empezar: nunca mueve ni cambia nada, solo informa. Los bloqueos graves ponen el veredicto en rojo; las advertencias informan pero no bloquean."
+        },
+        "checks": {
+          "title": "Qué comprueba",
+          "body": "Que Klipper esté listo (no apagado ni en error), que no haya ya una impresión en ejecución y si los ejes están en home (informativo, ya que al iniciar una impresión normalmente se hace home primero)."
+        },
+        "glossary": { "title": "Glosario" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Estado de Klipper",
+          "def": "El estado propio de Klipper - 'ready' (listo) significa que está conectado e inactivo; 'shutdown' (apagado) o 'error' significa que no puede imprimir hasta que se resuelva."
+        },
+        "homing": {
+          "term": "Homing",
+          "def": "Mover cada eje hasta su endstop para que la impresora sepa dónde está el cabezal. La mayoría de las rutinas de inicio de impresión hacen home automáticamente."
+        }
+      }
+    }
+  }
+}

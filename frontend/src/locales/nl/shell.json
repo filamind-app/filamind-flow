@@ -147,6 +147,10 @@
       "tuning": {
         "title": "Afstemwizards",
         "description": "Begeleide kalibratiewizards (eerst Pressure Advance)."
+      },
+      "preflight": {
+        "title": "Pre-Print Check",
+        "description": "Een alleen-lezen gereedheidscontrole voordat je een print start."
       }
     },
     "guard": {
