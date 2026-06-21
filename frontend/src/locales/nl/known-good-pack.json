@@ -1,0 +1,55 @@
+{
+  "knownGoodPack": {
+    "intro": "Maak een momentopname van je werkende printerconfig als pakket dat je kunt herstellen na een mislukte bewerking.",
+    "cancel": "Annuleren",
+    "empty": "Nog geen pakketten. Maak er een terwijl je printer is ingesteld zoals jij het wilt.",
+    "files": "{n} configbestanden",
+    "create": {
+      "label": "Nieuw pakket",
+      "placeholder": "bijv. Werkende SV08 - voor afstemming",
+      "button": "Pakket maken"
+    },
+    "restore": {
+      "button": "Herstellen",
+      "confirm": "Huidige config overschrijven met dit pakket?",
+      "note": "Herstellen overschrijft je configbestanden; herstart Klipper daarna om toe te passen.",
+      "restored": "{count} configbestanden hersteld - herstart Klipper om toe te passen",
+      "busy": "Printer is bezig - kan nu niet herstellen",
+      "not_found": "Pakketbestanden ontbreken",
+      "empty": "Dit pakket heeft geen bestanden",
+      "moonraker_error": "Kon niet herstellen: {error}"
+    },
+    "delete": {
+      "button": "Verwijderen",
+      "confirm": "Pakket verwijderen"
+    },
+    "help": {
+      "guide": "Gids",
+      "guideTitle": "Gids voor Known-Good Packs",
+      "close": "Sluiten",
+      "topics": {
+        "overview": {
+          "title": "Wat is een Known-Good Pack?",
+          "body": "Een momentopname van elk printerconfigbestand (printer.cfg en zijn includes) opgeslagen als een benoemd pakket. Wanneer je printer goed print, leg dan een pakket vast zodat je kunt terugrollen als een latere bewerking iets stukmaakt."
+        },
+        "restore": {
+          "title": "Een pakket herstellen",
+          "body": "Bij herstellen worden de bestanden van het pakket teruggeschreven over je huidige config. Het wordt geweigerd terwijl de printer bezig is, en je moet Klipper daarna herstarten om de herstelde config van kracht te laten worden."
+        },
+        "glossary": {
+          "title": "Woordenlijst"
+        }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Configpakket",
+          "def": "Een opgeslagen bundel van al je printerconfigbestanden op één moment in de tijd."
+        },
+        "restorePoint": {
+          "term": "Herstelpunt",
+          "def": "Een bekend-goede staat waarnaar je kunt terugkeren - hier een pakket dat is vastgelegd terwijl de printer werkte."
+        }
+      }
+    }
+  }
+}

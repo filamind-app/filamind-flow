@@ -9,6 +9,7 @@ import enHostControl from '../locales/en/host-control.json'
 import enFirmware from '../locales/en/firmware.json'
 import enInputShaping from '../locales/en/input-shaping.json'
 import enKlipperScreen from '../locales/en/klipperscreen-studio.json'
+import enKnownGoodPack from '../locales/en/known-good-pack.json'
 import enMacroDesigner from '../locales/en/macro-designer.json'
 import enMachineDoctor from '../locales/en/machine-doctor.json'
 import enMaterial from '../locales/en/material.json'
@@ -101,6 +102,7 @@ const en = {
   ...enPreflight,
   ...enTuning,
   ...enKlipperScreen,
+  ...enKnownGoodPack,
   ...enBoardTopology,
   ...enMacroDesigner,
   ...enHardwareBrowser,

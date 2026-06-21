@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "為運作正常的印表機設定建立快照，封裝後可在錯誤編輯後還原。",
+    "cancel": "取消",
+    "empty": "尚無任何封裝。趁印表機目前設定符合你的需求時建立一個吧。",
+    "files": "{n} 個設定檔",
+    "create": {
+      "label": "新封裝",
+      "placeholder": "例如：可運作的 SV08 - 調校前",
+      "button": "建立封裝"
+    },
+    "restore": {
+      "button": "還原",
+      "confirm": "要用此封裝覆寫目前的設定嗎？",
+      "note": "還原會覆寫你的設定檔；完成後請重新啟動 Klipper 以套用。",
+      "restored": "已還原 {count} 個設定檔 - 請重新啟動 Klipper 以套用",
+      "busy": "印表機忙碌中 - 目前無法還原",
+      "not_found": "找不到封裝檔案",
+      "empty": "此封裝沒有任何檔案",
+      "moonraker_error": "無法還原：{error}"
+    },
+    "delete": { "button": "刪除", "confirm": "刪除封裝" },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "已知良好封裝指南",
+      "close": "關閉",
+      "topics": {
+        "overview": {
+          "title": "什麼是已知良好封裝？",
+          "body": "這是將每個印表機設定檔（printer.cfg 及其引入的檔案）儲存為具名封裝的快照。當印表機列印效果良好時，建立一個封裝，這樣若之後的編輯導致問題，你就能回退。"
+        },
+        "restore": {
+          "title": "還原封裝",
+          "body": "還原會將封裝中的檔案寫回並覆寫目前的設定。印表機忙碌時會拒絕還原，且完成後你必須重新啟動 Klipper，還原的設定才會生效。"
+        },
+        "glossary": { "title": "詞彙表" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "設定封裝",
+          "def": "在某個時間點儲存的所有印表機設定檔組合。"
+        },
+        "restorePoint": {
+          "term": "還原點",
+          "def": "你可以回到的已知良好狀態 - 此處指印表機運作正常時建立的封裝。"
+        }
+      }
+    }
+  }
+}

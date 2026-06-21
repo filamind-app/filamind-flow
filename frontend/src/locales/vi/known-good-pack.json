@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "Chụp ảnh cấu hình máy in đang hoạt động thành một gói để bạn có thể khôi phục sau khi chỉnh sửa sai.",
+    "cancel": "Hủy",
+    "empty": "Chưa có gói nào. Hãy tạo một gói khi máy in đang được cấu hình đúng như bạn muốn.",
+    "files": "{n} tệp cấu hình",
+    "create": {
+      "label": "Gói mới",
+      "placeholder": "vd: SV08 hoạt động tốt - trước khi tinh chỉnh",
+      "button": "Tạo gói"
+    },
+    "restore": {
+      "button": "Khôi phục",
+      "confirm": "Ghi đè cấu hình hiện tại bằng gói này?",
+      "note": "Khôi phục sẽ ghi đè các tệp cấu hình của bạn; hãy khởi động lại Klipper sau đó để áp dụng.",
+      "restored": "Đã khôi phục {count} tệp cấu hình - khởi động lại Klipper để áp dụng",
+      "busy": "Máy in đang bận - không thể khôi phục lúc này",
+      "not_found": "Thiếu các tệp của gói",
+      "empty": "Gói này không có tệp nào",
+      "moonraker_error": "Không thể khôi phục: {error}"
+    },
+    "delete": { "button": "Xóa", "confirm": "Xóa gói" },
+    "help": {
+      "guide": "Hướng dẫn",
+      "guideTitle": "Hướng dẫn Gói Cấu hình Tốt",
+      "close": "Đóng",
+      "topics": {
+        "overview": {
+          "title": "Gói Cấu hình Tốt là gì?",
+          "body": "Một ảnh chụp toàn bộ tệp cấu hình máy in (printer.cfg và các tệp được include) được lưu thành một gói có tên. Khi máy in của bạn in tốt, hãy chụp một gói để có thể quay lại nếu một chỉnh sửa sau này làm hỏng thứ gì đó."
+        },
+        "restore": {
+          "title": "Khôi phục một gói",
+          "body": "Khôi phục sẽ ghi các tệp của gói đè lên cấu hình hiện tại. Thao tác này bị từ chối khi máy in đang bận, và bạn phải khởi động lại Klipper sau đó để cấu hình đã khôi phục có hiệu lực."
+        },
+        "glossary": { "title": "Thuật ngữ" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Gói cấu hình",
+          "def": "Một bộ đã lưu gồm tất cả tệp cấu hình máy in của bạn tại một thời điểm."
+        },
+        "restorePoint": {
+          "term": "Điểm khôi phục",
+          "def": "Một trạng thái tốt đã biết mà bạn có thể quay lại - ở đây là một gói được chụp khi máy in đang hoạt động."
+        }
+      }
+    }
+  }
+}

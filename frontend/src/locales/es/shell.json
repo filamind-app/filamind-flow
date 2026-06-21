@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Gestor de pantalla",
         "description": "Gestiona la pantalla táctil de tu impresora: ajustes, menús, temas y qué pantalla se ejecuta."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Captura tu configuración funcional y restáurala tras una edición incorrecta."
       }
     },
     "guard": {

@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "Erstelle einen Snapshot der funktionierenden Konfiguration deines Druckers als Pack, das du nach einer fehlerhaften Änderung wiederherstellen kannst.",
+    "cancel": "Abbrechen",
+    "empty": "Noch keine Packs. Erstelle eines, solange dein Drucker so konfiguriert ist, wie es dir gefällt.",
+    "files": "{n} Konfigurationsdateien",
+    "create": {
+      "label": "Neues Pack",
+      "placeholder": "z. B. Funktionierender SV08 - vor dem Tuning",
+      "button": "Pack erstellen"
+    },
+    "restore": {
+      "button": "Wiederherstellen",
+      "confirm": "Aktuelle Konfiguration mit diesem Pack überschreiben?",
+      "note": "Beim Wiederherstellen werden deine Konfigurationsdateien überschrieben; starte Klipper danach neu, um die Änderungen zu übernehmen.",
+      "restored": "{count} Konfigurationsdateien wiederhergestellt - Klipper neu starten, um sie zu übernehmen",
+      "busy": "Drucker ist beschäftigt - Wiederherstellen jetzt nicht möglich",
+      "not_found": "Pack-Dateien fehlen",
+      "empty": "Dieses Pack enthält keine Dateien",
+      "moonraker_error": "Wiederherstellen fehlgeschlagen: {error}"
+    },
+    "delete": { "button": "Löschen", "confirm": "Pack löschen" },
+    "help": {
+      "guide": "Anleitung",
+      "guideTitle": "Anleitung zu Known-Good-Packs",
+      "close": "Schließen",
+      "topics": {
+        "overview": {
+          "title": "Was ist ein Known-Good-Pack?",
+          "body": "Ein Snapshot aller Konfigurationsdateien des Druckers (printer.cfg und die eingebundenen Dateien), gespeichert als benanntes Pack. Wenn dein Drucker gut druckt, erstelle ein Pack, damit du zurückwechseln kannst, falls eine spätere Änderung etwas beschädigt."
+        },
+        "restore": {
+          "title": "Ein Pack wiederherstellen",
+          "body": "Beim Wiederherstellen werden die Dateien des Packs über deine aktuelle Konfiguration geschrieben. Es wird abgelehnt, solange der Drucker beschäftigt ist, und du musst Klipper danach neu starten, damit die wiederhergestellte Konfiguration wirksam wird."
+        },
+        "glossary": { "title": "Glossar" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Konfigurations-Pack",
+          "def": "Ein gespeichertes Bündel aller Konfigurationsdateien deines Druckers zu einem bestimmten Zeitpunkt."
+        },
+        "restorePoint": {
+          "term": "Wiederherstellungspunkt",
+          "def": "Ein bekannt guter Zustand, zu dem du zurückkehren kannst - hier ein Pack, das erstellt wurde, während der Drucker funktionierte."
+        }
+      }
+    }
+  }
+}

@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Screen Manager",
         "description": "Manage your printer's touchscreen UI: settings, menus, themes, and which screen runs."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Snapshot your working config and restore it after a bad edit."
       }
     },
     "guard": {

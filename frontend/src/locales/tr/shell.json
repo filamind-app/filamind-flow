@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Ekran Yöneticisi",
         "description": "Yazıcının dokunmatik ekranını yönetin: ayarlar, menüler, temalar ve hangi ekranın çalışacağı."
+      },
+      "known-good-pack": {
+        "title": "Bilinen-İyi Paketler",
+        "description": "Çalışan yapılandırmanızın anlık görüntüsünü alın ve kötü bir düzenlemeden sonra geri yükleyin."
       }
     },
     "guard": {

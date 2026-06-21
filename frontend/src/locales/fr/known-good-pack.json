@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "Capturez la configuration fonctionnelle de votre imprimante dans un pack que vous pourrez restaurer après une mauvaise modification.",
+    "cancel": "Annuler",
+    "empty": "Aucun pack pour le moment. Créez-en un pendant que votre imprimante est configurée comme vous le souhaitez.",
+    "files": "{n} fichiers de configuration",
+    "create": {
+      "label": "Nouveau pack",
+      "placeholder": "ex. SV08 fonctionnel - avant réglage",
+      "button": "Créer le pack"
+    },
+    "restore": {
+      "button": "Restaurer",
+      "confirm": "Écraser la configuration actuelle avec ce pack ?",
+      "note": "La restauration écrase vos fichiers de configuration ; redémarrez Klipper ensuite pour appliquer.",
+      "restored": "{count} fichiers de configuration restaurés - redémarrez Klipper pour appliquer",
+      "busy": "L'imprimante est occupée - impossible de restaurer maintenant",
+      "not_found": "Les fichiers du pack sont introuvables",
+      "empty": "Ce pack ne contient aucun fichier",
+      "moonraker_error": "Restauration impossible : {error}"
+    },
+    "delete": { "button": "Supprimer", "confirm": "Supprimer le pack" },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Guide des packs de référence",
+      "close": "Fermer",
+      "topics": {
+        "overview": {
+          "title": "Qu'est-ce qu'un pack de référence ?",
+          "body": "Un instantané de chaque fichier de configuration de l'imprimante (printer.cfg et ses includes) enregistré sous forme de pack nommé. Lorsque votre imprimante imprime bien, capturez un pack pour pouvoir revenir en arrière si une modification ultérieure casse quelque chose."
+        },
+        "restore": {
+          "title": "Restaurer un pack",
+          "body": "La restauration réécrit les fichiers du pack par-dessus votre configuration actuelle. Elle est refusée pendant que l'imprimante est occupée, et vous devez redémarrer Klipper ensuite pour que la configuration restaurée prenne effet."
+        },
+        "glossary": { "title": "Glossaire" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Pack de configuration",
+          "def": "Un ensemble enregistré de tous vos fichiers de configuration d'imprimante à un instant donné."
+        },
+        "restorePoint": {
+          "term": "Point de restauration",
+          "def": "Un état de référence vers lequel vous pouvez revenir - ici, un pack capturé pendant que l'imprimante fonctionnait."
+        }
+      }
+    }
+  }
+}

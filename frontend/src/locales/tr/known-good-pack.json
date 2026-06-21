@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "Çalışan yazıcı yapılandırmanızın anlık görüntüsünü, kötü bir düzenlemeden sonra geri yükleyebileceğiniz bir paket olarak alın.",
+    "cancel": "İptal",
+    "empty": "Henüz paket yok. Yazıcınız istediğiniz şekilde yapılandırılmışken bir tane oluşturun.",
+    "files": "{n} yapılandırma dosyası",
+    "create": {
+      "label": "Yeni paket",
+      "placeholder": "örn. Çalışan SV08 - ince ayardan önce",
+      "button": "Paket oluştur"
+    },
+    "restore": {
+      "button": "Geri yükle",
+      "confirm": "Mevcut yapılandırma bu paketle üzerine yazılsın mı?",
+      "note": "Geri yükleme, yapılandırma dosyalarınızın üzerine yazar; uygulamak için sonrasında Klipper'ı yeniden başlatın.",
+      "restored": "{count} yapılandırma dosyası geri yüklendi - uygulamak için Klipper'ı yeniden başlatın",
+      "busy": "Yazıcı meşgul - şu anda geri yükleme yapılamıyor",
+      "not_found": "Paket dosyaları eksik",
+      "empty": "Bu pakette dosya yok",
+      "moonraker_error": "Geri yüklenemedi: {error}"
+    },
+    "delete": { "button": "Sil", "confirm": "Paketi sil" },
+    "help": {
+      "guide": "Kılavuz",
+      "guideTitle": "Bilinen-İyi Paketler kılavuzu",
+      "close": "Kapat",
+      "topics": {
+        "overview": {
+          "title": "Bilinen-İyi Paket nedir?",
+          "body": "Her yazıcı yapılandırma dosyasının (printer.cfg ve dahil ettikleri) adlandırılmış bir paket olarak kaydedilmiş anlık görüntüsü. Yazıcınız iyi baskı yaptığında bir paket alın; böylece sonraki bir düzenleme bir şeyi bozarsa geri dönebilirsiniz."
+        },
+        "restore": {
+          "title": "Bir paketi geri yükleme",
+          "body": "Geri yükleme, paketin dosyalarını mevcut yapılandırmanızın üzerine yazar. Yazıcı meşgulken reddedilir ve geri yüklenen yapılandırmanın etkili olması için sonrasında Klipper'ı yeniden başlatmanız gerekir."
+        },
+        "glossary": { "title": "Sözlük" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Yapılandırma paketi",
+          "def": "Tüm yazıcı yapılandırma dosyalarınızın bir zaman noktasındaki kaydedilmiş paketi."
+        },
+        "restorePoint": {
+          "term": "Geri yükleme noktası",
+          "def": "Geri dönebileceğiniz bilinen-iyi bir durum - burada, yazıcı çalışırken alınan bir paket."
+        }
+      }
+    }
+  }
+}

@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Bildschirm-Manager",
         "description": "Verwalte den Touchscreen des Druckers: Einstellungen, Menüs, Themes und welcher Bildschirm läuft."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Erstelle einen Snapshot deiner funktionierenden Konfiguration und stelle sie nach einer fehlerhaften Änderung wieder her."
       }
     },
     "guard": {

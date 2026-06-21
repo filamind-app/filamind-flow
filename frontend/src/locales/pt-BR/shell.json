@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Gerenciador de tela",
         "description": "Gerencie a tela sensível ao toque da impressora: ajustes, menus, temas e qual tela é executada."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Tire um snapshot da configuração que está funcionando e restaure-a depois de uma edição ruim."
       }
     },
     "guard": {

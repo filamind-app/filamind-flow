@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Gestione schermo",
         "description": "Gestisci il touchscreen della stampante: impostazioni, menu, temi e quale schermo è in esecuzione."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Crea uno snapshot della tua configurazione funzionante e ripristinala dopo una modifica errata."
       }
     },
     "guard": {

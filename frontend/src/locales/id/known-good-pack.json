@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "Buat snapshot konfigurasi printer yang berfungsi sebagai paket yang dapat Anda pulihkan setelah suntingan yang buruk.",
+    "cancel": "Batal",
+    "empty": "Belum ada paket. Buat satu saat printer Anda dikonfigurasi seperti yang Anda inginkan.",
+    "files": "{n} file konfigurasi",
+    "create": {
+      "label": "Paket baru",
+      "placeholder": "mis. SV08 berfungsi - sebelum penyetelan",
+      "button": "Buat paket"
+    },
+    "restore": {
+      "button": "Pulihkan",
+      "confirm": "Timpa konfigurasi saat ini dengan paket ini?",
+      "note": "Pemulihan menimpa file konfigurasi Anda; mulai ulang Klipper setelahnya untuk menerapkannya.",
+      "restored": "Memulihkan {count} file konfigurasi - mulai ulang Klipper untuk menerapkan",
+      "busy": "Printer sedang sibuk - tidak dapat memulihkan sekarang",
+      "not_found": "File paket tidak ditemukan",
+      "empty": "Paket ini tidak memiliki file",
+      "moonraker_error": "Tidak dapat memulihkan: {error}"
+    },
+    "delete": { "button": "Hapus", "confirm": "Hapus paket" },
+    "help": {
+      "guide": "Panduan",
+      "guideTitle": "Panduan Known-Good Pack",
+      "close": "Tutup",
+      "topics": {
+        "overview": {
+          "title": "Apa itu Known-Good Pack?",
+          "body": "Snapshot setiap file konfigurasi printer (printer.cfg dan file yang disertakannya) disimpan sebagai paket bernama. Saat printer Anda mencetak dengan baik, buat paket agar Anda dapat kembali jika suntingan berikutnya merusak sesuatu."
+        },
+        "restore": {
+          "title": "Memulihkan paket",
+          "body": "Pemulihan menuliskan kembali file paket di atas konfigurasi Anda saat ini. Pemulihan ditolak saat printer sedang sibuk, dan Anda harus memulai ulang Klipper setelahnya agar konfigurasi yang dipulihkan berlaku."
+        },
+        "glossary": { "title": "Glosarium" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Paket konfigurasi",
+          "def": "Kumpulan tersimpan dari semua file konfigurasi printer Anda pada satu titik waktu."
+        },
+        "restorePoint": {
+          "term": "Titik pemulihan",
+          "def": "Kondisi known-good yang dapat Anda kembalikan - di sini, paket yang dibuat saat printer berfungsi."
+        }
+      }
+    }
+  }
+}
