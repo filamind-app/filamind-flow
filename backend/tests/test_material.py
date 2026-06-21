@@ -6,7 +6,19 @@ from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings
 from app.main import create_app
-from app.services import material_store
+from app.services import material_service, material_store, reference_data
+
+
+def _catalog_hotend() -> tuple[str, float]:
+    """A real catalog hotend that publishes a max-flow ceiling (the catalog ships these)."""
+    row = next(
+        h
+        for h in reference_data.hotends()
+        if isinstance(h.get("expected_max_flow_mm3s"), (int, float))
+        and not isinstance(h.get("expected_max_flow_mm3s"), bool)
+        and h["expected_max_flow_mm3s"] > 0
+    )
+    return str(row["name"]), float(row["expected_max_flow_mm3s"])
 
 
 def test_material_store_roundtrip(tmp_path: Path) -> None:
@@ -74,3 +86,28 @@ def test_material_routes(tmp_path: Path) -> None:
     assert client.delete("/api/material/petg-hf").json() == {"ok": True}
     assert client.delete("/api/material/petg-hf").status_code == 404
     assert client.get("/api/material").json() == []
+
+
+def test_check_flow_against_catalog_ceiling() -> None:
+    name, ceiling = _catalog_hotend()
+    assert material_service.check_flow(0, name)["code"] == "unset"
+    assert material_service.check_flow(5, None)["code"] == "no_ceiling"
+    over = material_service.check_flow(ceiling + 5, name)
+    assert over["code"] == "exceeds"
+    assert over["level"] == "warn"
+    under = material_service.check_flow(ceiling * 0.5, name)
+    assert under["code"] == "within"
+    assert under["level"] == "ok"
+    assert 0 <= under["params"]["headroom"] <= 100
+
+
+def test_material_flow_check_route(tmp_path: Path) -> None:
+    name, ceiling = _catalog_hotend()
+    client = _client(tmp_path)
+    client.post("/api/material", json={"name": "Speedy", "max_volumetric_flow": ceiling + 10})
+
+    over = client.get("/api/material/speedy/flow-check", params={"hotend": name})
+    assert over.status_code == 200
+    assert over.json()["code"] == "exceeds"
+
+    assert client.get("/api/material/does-not-exist/flow-check").status_code == 404
