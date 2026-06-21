@@ -90,7 +90,8 @@
       "settings": "Settings",
       "menus": "Menus",
       "themes": "Themes",
-      "kiosk": "Kiosk"
+      "kiosk": "Kiosk",
+      "fmscreen": "FilaMind Screen"
     },
     "settings": {
       "loading": "Loading settings…",

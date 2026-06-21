@@ -90,7 +90,8 @@
       "settings": "Ustawienia",
       "menus": "Menu",
       "themes": "Motywy",
-      "kiosk": "Kiosk"
+      "kiosk": "Kiosk",
+      "fmscreen": "Ekran FilaMind"
     },
     "settings": {
       "loading": "Wczytywanie ustawień…",

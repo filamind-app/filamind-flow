@@ -7,9 +7,18 @@
     "notReady": "Chưa sẵn sàng để in",
     "checks": {
       "unreachable": { "fail": "Không thể kết nối tới máy in" },
-      "klippy": { "pass": "Klipper đã sẵn sàng", "fail": "Klipper chưa sẵn sàng (trạng thái: {state})" },
-      "idle": { "pass": "Không có lần in nào đang chạy", "fail": "Một lần in đã đang chạy ({state})" },
-      "homed": { "pass": "Tất cả các trục đã về gốc", "fail": "Các trục chưa về gốc ({axes}); việc bắt đầu in thường về gốc trước" }
+      "klippy": {
+        "pass": "Klipper đã sẵn sàng",
+        "fail": "Klipper chưa sẵn sàng (trạng thái: {state})"
+      },
+      "idle": {
+        "pass": "Không có lần in nào đang chạy",
+        "fail": "Một lần in đã đang chạy ({state})"
+      },
+      "homed": {
+        "pass": "Tất cả các trục đã về gốc",
+        "fail": "Các trục chưa về gốc ({axes}); việc bắt đầu in thường về gốc trước"
+      }
     },
     "help": {
       "guide": "Hướng dẫn",

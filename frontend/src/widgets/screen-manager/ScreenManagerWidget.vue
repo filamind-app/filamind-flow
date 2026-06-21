@@ -9,9 +9,11 @@ import { useI18n } from 'vue-i18n'
 
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
+import { isSuiteHost } from '@/core/host/adapter'
 
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import HelpIllo from './HelpIllo.vue'
+import FilaMindScreenTab from './FilaMindScreenTab.vue'
 import {
   activateTheme,
   createTheme,
@@ -36,6 +38,7 @@ import {
 import type { ScreenStatus } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
+const suiteHost = isSuiteHost()
 
 const status = ref<ScreenStatus | null>(null)
 const statusError = ref<string | null>(null)
@@ -57,7 +60,7 @@ const restarted = ref(false)
 const restartError = ref<string | null>(null)
 
 // Theme builder
-type View = 'config' | 'settings' | 'menus' | 'themes' | 'kiosk'
+type View = 'config' | 'settings' | 'menus' | 'themes' | 'kiosk' | 'fmscreen'
 const view = ref<View>('config')
 const themes = ref<ScreenTheme[]>([])
 const tokens = ref<string[]>([])
@@ -534,11 +537,11 @@ onMounted(() => void loadStatus())
         >
       </div>
 
-      <!-- Config / Settings / Menus / Themes / Kiosk view toggle -->
+      <!-- Config / Settings / Menus / Themes / Kiosk / FilaMind screen view toggle -->
       <div class="-mx-1 overflow-x-auto px-1">
         <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
           <button
-            v-for="v in ['config', 'settings', 'menus', 'themes', 'kiosk'] as const"
+            v-for="v in ['config', 'settings', 'menus', 'themes', 'kiosk', 'fmscreen'] as const"
             :key="v"
             type="button"
             class="nb-seg whitespace-nowrap"
@@ -1222,6 +1225,17 @@ onMounted(() => void loadStatus())
             {{ kioskError }}
           </p>
         </template>
+      </template>
+
+      <template v-else-if="view === 'fmscreen'">
+        <FilaMindScreenTab v-if="suiteHost" />
+        <div v-else class="nb-card flex items-start gap-3 bg-surface p-3 text-sm">
+          <span class="shrink-0 text-2xl" aria-hidden="true">🧩</span>
+          <div class="min-w-0 space-y-1">
+            <p class="font-display text-base font-bold">{{ t('shell.gate.title') }}</p>
+            <p class="text-xs opacity-80">{{ t('remoteControl.requiresScreen') }}</p>
+          </div>
+        </div>
       </template>
     </template>
   </div>

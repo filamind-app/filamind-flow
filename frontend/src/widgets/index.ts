@@ -168,15 +168,4 @@ export function registerWidgets(): void {
     defaultSize: { w: 2, h: 1 },
     component: defineAsyncComponent(() => import('./setup/SetupWidget.vue')),
   })
-
-  // Suite-only (gated in adapter.ts): steer the on-printer FilaMind screen from here.
-  reg({
-    id: 'remote-control',
-    title: 'Remote Control',
-    icon: '📡',
-    description:
-      'Steer the on-printer FilaMind screen — switch its tab, show a message, or locate it.',
-    defaultSize: { w: 2, h: 1 },
-    component: defineAsyncComponent(() => import('./remote-control/RemoteControlWidget.vue')),
-  })
 }

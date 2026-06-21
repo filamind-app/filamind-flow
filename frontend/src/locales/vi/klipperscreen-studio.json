@@ -90,7 +90,8 @@
       "settings": "Settings",
       "menus": "Menus",
       "themes": "Themes",
-      "kiosk": "Kiosk"
+      "kiosk": "Kiosk",
+      "fmscreen": "Màn hình FilaMind"
     },
     "settings": {
       "loading": "Đang tải thiết lập…",

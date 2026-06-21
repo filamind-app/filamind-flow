@@ -7,9 +7,15 @@
     "notReady": "Niegotowa do druku",
     "checks": {
       "unreachable": { "fail": "Drukarka jest nieosiągalna" },
-      "klippy": { "pass": "Klipper jest gotowy", "fail": "Klipper nie jest gotowy (stan: {state})" },
+      "klippy": {
+        "pass": "Klipper jest gotowy",
+        "fail": "Klipper nie jest gotowy (stan: {state})"
+      },
       "idle": { "pass": "Brak druku w toku", "fail": "Druk jest już uruchomiony ({state})" },
-      "homed": { "pass": "Wszystkie osie są wybazowane", "fail": "Osie niewybazowane ({axes}); rozpoczęcie druku zwykle najpierw bazuje" }
+      "homed": {
+        "pass": "Wszystkie osie są wybazowane",
+        "fail": "Osie niewybazowane ({axes}); rozpoczęcie druku zwykle najpierw bazuje"
+      }
     },
     "help": {
       "guide": "Przewodnik",

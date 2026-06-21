@@ -39,6 +39,7 @@
           "body": "Show jumps the screen to its Status, Control, or Settings tab. Locate flashes the screen for a few seconds. Message shows a short note (info or warning). Commands reach any FilaMind screen on this printer; nothing is sent while the command bus is still connecting."
         }
       }
-    }
+    },
+    "requiresScreen": "These controls steer the on-printer FilaMind screen. Install FilaMind 3D on this printer to use them."
   }
 }

@@ -39,6 +39,7 @@
           "body": "Toon springt naar het tabblad Status, Bediening of Instellingen van het scherm. Lokaliseren laat het scherm een paar seconden knipperen. Bericht toont een korte melding (info of waarschuwing). Opdrachten bereiken elk FilaMind-scherm op deze printer; er wordt niets verstuurd zolang de opdrachtbus nog verbinding maakt."
         }
       }
-    }
+    },
+    "requiresScreen": "Deze bediening stuurt het FilaMind-scherm op de printer aan. Installeer FilaMind 3D op deze printer om ze te gebruiken."
   }
 }

@@ -8,8 +8,14 @@
     "checks": {
       "unreachable": { "fail": "Printer tidak dapat dijangkau" },
       "klippy": { "pass": "Klipper siap", "fail": "Klipper belum siap (status: {state})" },
-      "idle": { "pass": "Tidak ada pencetakan yang berlangsung", "fail": "Pencetakan sudah berjalan ({state})" },
-      "homed": { "pass": "Semua sumbu sudah di-homing", "fail": "Sumbu belum di-homing ({axes}); memulai pencetakan biasanya melakukan homing terlebih dahulu" }
+      "idle": {
+        "pass": "Tidak ada pencetakan yang berlangsung",
+        "fail": "Pencetakan sudah berjalan ({state})"
+      },
+      "homed": {
+        "pass": "Semua sumbu sudah di-homing",
+        "fail": "Sumbu belum di-homing ({axes}); memulai pencetakan biasanya melakukan homing terlebih dahulu"
+      }
     },
     "help": {
       "guide": "Panduan",

@@ -132,10 +132,6 @@
         "title": "Setup",
         "description": "Installeer en beheer Klipper-ecosysteemcomponenten voor deze printer."
       },
-      "remote-control": {
-        "title": "Afstandsbediening",
-        "description": "Bedien het FilaMind-scherm op de printer — wissel van tabblad, toon een bericht of lokaliseer het."
-      },
       "material-brain": {
         "title": "Material Brain",
         "description": "Opgeslagen filamentprofielen met een flow-vs-hotend-plafond-controle."

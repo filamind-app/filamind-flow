@@ -7,9 +7,18 @@
     "notReady": "Não está pronta para imprimir",
     "checks": {
       "unreachable": { "fail": "A impressora está inacessível" },
-      "klippy": { "pass": "O Klipper está pronto", "fail": "O Klipper não está pronto (estado: {state})" },
-      "idle": { "pass": "Nenhuma impressão em andamento", "fail": "Já há uma impressão em execução ({state})" },
-      "homed": { "pass": "Todos os eixos estão referenciados", "fail": "Eixos não referenciados ({axes}); o início de uma impressão normalmente faz o referenciamento primeiro" }
+      "klippy": {
+        "pass": "O Klipper está pronto",
+        "fail": "O Klipper não está pronto (estado: {state})"
+      },
+      "idle": {
+        "pass": "Nenhuma impressão em andamento",
+        "fail": "Já há uma impressão em execução ({state})"
+      },
+      "homed": {
+        "pass": "Todos os eixos estão referenciados",
+        "fail": "Eixos não referenciados ({axes}); o início de uma impressão normalmente faz o referenciamento primeiro"
+      }
     },
     "help": {
       "guide": "Guia",

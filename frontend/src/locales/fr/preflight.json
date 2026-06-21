@@ -8,8 +8,14 @@
     "checks": {
       "unreachable": { "fail": "L'imprimante est injoignable" },
       "klippy": { "pass": "Klipper est prêt", "fail": "Klipper n'est pas prêt (état : {state})" },
-      "idle": { "pass": "Aucune impression en cours", "fail": "Une impression est déjà en cours ({state})" },
-      "homed": { "pass": "Tous les axes sont à l'origine", "fail": "Axes non pris en origine ({axes}) ; un lancement d'impression effectue généralement la prise d'origine en premier" }
+      "idle": {
+        "pass": "Aucune impression en cours",
+        "fail": "Une impression est déjà en cours ({state})"
+      },
+      "homed": {
+        "pass": "Tous les axes sont à l'origine",
+        "fail": "Axes non pris en origine ({axes}) ; un lancement d'impression effectue généralement la prise d'origine en premier"
+      }
     },
     "help": {
       "guide": "Guide",

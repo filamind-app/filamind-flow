@@ -39,6 +39,7 @@
           "body": "Pokaż przełącza ekran na kartę Stan, Sterowanie lub Ustawienia. Zlokalizuj miga ekranem przez kilka sekund. Wiadomość wyświetla krótką notatkę (informacja lub ostrzeżenie). Polecenia docierają do każdego ekranu FilaMind na tej drukarce; nic nie jest wysyłane, dopóki magistrala poleceń wciąż się łączy."
         }
       }
-    }
+    },
+    "requiresScreen": "Te elementy sterują ekranem FilaMind w drukarce. Zainstaluj FilaMind 3D na tej drukarce, aby z nich korzystać."
   }
 }

@@ -39,6 +39,7 @@
           "body": "Afficher bascule l'écran sur son onglet État, Contrôle ou Réglages. Localiser fait clignoter l'écran pendant quelques secondes. Message affiche une courte note (info ou avertissement). Les commandes atteignent tout écran FilaMind de cette imprimante ; rien n'est envoyé tant que le bus de commandes est encore en cours de connexion."
         }
       }
-    }
+    },
+    "requiresScreen": "Ces commandes pilotent l'écran FilaMind de l'imprimante. Installez FilaMind 3D sur cette imprimante pour les utiliser."
   }
 }

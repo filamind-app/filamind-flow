@@ -39,6 +39,7 @@
           "body": "Tampilkan memindahkan layar ke tab Status, Kontrol, atau Pengaturan. Temukan mengedipkan layar selama beberapa detik. Pesan menampilkan catatan singkat (info atau peringatan). Perintah menjangkau setiap layar FilaMind di printer ini; tidak ada yang dikirim selama jalur perintah masih menyambung."
         }
       }
-    }
+    },
+    "requiresScreen": "Kontrol ini mengoperasikan layar FilaMind pada printer. Pasang FilaMind 3D di printer ini untuk menggunakannya."
   }
 }

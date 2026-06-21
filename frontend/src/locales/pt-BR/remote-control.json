@@ -39,6 +39,7 @@
           "body": "Mostrar leva a tela à aba Status, Controle ou Ajustes. Localizar faz a tela piscar por alguns segundos. Mensagem mostra uma nota curta (informação ou aviso). Os comandos chegam a qualquer tela FilaMind desta impressora; nada é enviado enquanto o canal de comandos ainda está conectando."
         }
       }
-    }
+    },
+    "requiresScreen": "Estes controles operam a tela FilaMind na impressora. Instale o FilaMind 3D nesta impressora para usá-los."
   }
 }

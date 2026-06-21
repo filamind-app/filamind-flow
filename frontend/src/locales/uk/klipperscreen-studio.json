@@ -90,7 +90,8 @@
       "settings": "Налаштування",
       "menus": "Меню",
       "themes": "Теми",
-      "kiosk": "Кіоск"
+      "kiosk": "Кіоск",
+      "fmscreen": "Екран FilaMind"
     },
     "settings": {
       "loading": "Завантаження налаштувань…",

@@ -90,7 +90,8 @@
       "settings": "خيارات",
       "menus": "القوائم",
       "themes": "الثيمات",
-      "kiosk": "الكشك"
+      "kiosk": "الكشك",
+      "fmscreen": "شاشة FilaMind"
     },
     "settings": {
       "loading": "جارٍ تحميل الخيارات…",

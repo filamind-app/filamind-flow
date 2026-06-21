@@ -39,6 +39,7 @@
           "body": "Hiển thị chuyển màn hình sang tab Trạng thái, Điều khiển, hoặc Cài đặt. Định vị nhấp nháy màn hình trong vài giây. Tin nhắn hiển thị một ghi chú ngắn (thông tin hoặc cảnh báo). Các lệnh đến mọi màn hình FilaMind trên máy in này; không có gì được gửi đi khi kênh lệnh vẫn đang kết nối."
         }
       }
-    }
+    },
+    "requiresScreen": "Các điều khiển này điều khiển màn hình FilaMind trên máy in. Hãy cài FilaMind 3D trên máy in này để sử dụng."
   }
 }

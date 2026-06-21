@@ -73,10 +73,10 @@ export async function detectBackUi(opts: DetectOpts = {}): Promise<BackUi> {
 
 // Per-host widget visibility. Some widgets need the FilaMind 3D host. In the Mainsail build the
 // GATED ones still appear but render an install-required panel (see widgets/index.ts) instead of
-// their UI; in the suite build they run normally. `remote-control` needs the on-printer FilaMind
-// screen to receive its commands, so it is HIDDEN in the Mainsail build (nothing would receive it).
+// their UI; in the suite build they run normally. (Screen-only tools like the FilaMind-screen
+// command tab live inside Screen Manager and gate themselves at the tab level.)
 const SUITE_GATED = new Set<string>(['material-brain', 'tuning', 'preflight'])
-const SUITE_HIDDEN = new Set<string>(['remote-control'])
+const SUITE_HIDDEN = new Set<string>([])
 
 /** Whether a widget should register under the current host (hidden ones drop out in Mainsail). */
 export function isWidgetEnabled(id: string): boolean {

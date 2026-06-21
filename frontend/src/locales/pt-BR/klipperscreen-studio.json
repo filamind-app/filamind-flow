@@ -90,7 +90,8 @@
       "settings": "Ajustes",
       "menus": "Menus",
       "themes": "Temas",
-      "kiosk": "Quiosque"
+      "kiosk": "Quiosque",
+      "fmscreen": "Tela FilaMind"
     },
     "settings": {
       "loading": "Carregando ajustes…",

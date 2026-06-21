@@ -7,9 +7,18 @@
     "notReady": "출력 준비 안 됨",
     "checks": {
       "unreachable": { "fail": "프린터에 연결할 수 없습니다" },
-      "klippy": { "pass": "Klipper가 준비되었습니다", "fail": "Klipper가 준비되지 않았습니다 (상태: {state})" },
-      "idle": { "pass": "진행 중인 출력이 없습니다", "fail": "이미 출력이 진행 중입니다 ({state})" },
-      "homed": { "pass": "모든 축이 호밍되었습니다", "fail": "호밍되지 않은 축이 있습니다 ({axes}); 출력 시작 시 보통 먼저 호밍합니다" }
+      "klippy": {
+        "pass": "Klipper가 준비되었습니다",
+        "fail": "Klipper가 준비되지 않았습니다 (상태: {state})"
+      },
+      "idle": {
+        "pass": "진행 중인 출력이 없습니다",
+        "fail": "이미 출력이 진행 중입니다 ({state})"
+      },
+      "homed": {
+        "pass": "모든 축이 호밍되었습니다",
+        "fail": "호밍되지 않은 축이 있습니다 ({axes}); 출력 시작 시 보통 먼저 호밍합니다"
+      }
     },
     "help": {
       "guide": "가이드",

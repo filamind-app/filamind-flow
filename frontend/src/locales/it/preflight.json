@@ -8,8 +8,14 @@
     "checks": {
       "unreachable": { "fail": "La stampante non è raggiungibile" },
       "klippy": { "pass": "Klipper è pronto", "fail": "Klipper non è pronto (stato: {state})" },
-      "idle": { "pass": "Nessuna stampa in corso", "fail": "Una stampa è già in esecuzione ({state})" },
-      "homed": { "pass": "Tutti gli assi sono azzerati", "fail": "Assi non azzerati ({axes}); l'avvio di una stampa di solito esegue prima l'azzeramento" }
+      "idle": {
+        "pass": "Nessuna stampa in corso",
+        "fail": "Una stampa è già in esecuzione ({state})"
+      },
+      "homed": {
+        "pass": "Tutti gli assi sono azzerati",
+        "fail": "Assi non azzerati ({axes}); l'avvio di una stampa di solito esegue prima l'azzeramento"
+      }
     },
     "help": {
       "guide": "Guida",

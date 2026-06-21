@@ -39,6 +39,7 @@
           "body": "„Anzeigen“ wechselt den Bildschirm zum Tab Status, Steuerung oder Einstellungen. „Finden“ lässt den Bildschirm einige Sekunden aufleuchten. „Nachricht“ zeigt einen kurzen Hinweis (Info oder Warnung). Befehle erreichen jeden FilaMind-Bildschirm an diesem Drucker; während der Befehlskanal noch verbindet, wird nichts gesendet."
         }
       }
-    }
+    },
+    "requiresScreen": "Diese Steuerung bedient den FilaMind-Bildschirm am Drucker. Installiere FilaMind 3D auf diesem Drucker, um sie zu nutzen."
   }
 }
