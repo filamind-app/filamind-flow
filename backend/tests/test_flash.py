@@ -73,7 +73,7 @@ def test_flash_plan_needs_a_build(tmp_path: Path) -> None:
     body = plan.json()
     assert body["artifact_exists"] is False
     assert body["ready"] is False
-    assert any("built" in w for w in body["warnings"])
+    assert any(w["code"] == "no_artifact" for w in body["warnings"])
 
 
 def test_flash_plan_with_artifact(tmp_path: Path) -> None:

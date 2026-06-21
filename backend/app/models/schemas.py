@@ -221,6 +221,13 @@ class FlashRequest(BaseModel):
         return v
 
 
+class FlashWarning(BaseModel):
+    """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
+
+    code: str
+    params: dict[str, Any] = {}
+
+
 class FlashPlan(BaseModel):
     """Read-only preview of what a flash would do, plus its safety gates."""
 
@@ -233,7 +240,7 @@ class FlashPlan(BaseModel):
     artifact_exists: bool
     sudo_ready: bool
     ready: bool
-    warnings: list[str] = []
+    warnings: list[FlashWarning] = []
 
 
 class ExternalFirmware(BaseModel):

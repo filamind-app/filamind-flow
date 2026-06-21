@@ -167,7 +167,12 @@
       "previewFailed": "Tidak bisa mempratinjau flash",
       "acknowledge": "Saya paham ini menulis firmware ke perangkat keras dan bisa merusak papan jika disela.",
       "blockedSeeWarnings": "terblokir - lihat peringatan",
-      "flashNow": "⚠ Flash sekarang"
+      "flashNow": "⚠ Flash sekarang",
+      "warn": {
+        "printing": "Ada pencetakan berlangsung - flashing diblokir.",
+        "no_artifact": "Belum ada firmware yang dibangun untuk profil ini.",
+        "no_sudo": "sudo tanpa kata sandi belum dikonfigurasi - jalankan 'scripts/install.sh sudoers' di host."
+      }
     },
     "configEditor": {
       "title": "Konfigurasi firmware",

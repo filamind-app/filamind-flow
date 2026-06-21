@@ -167,7 +167,12 @@
       "previewFailed": "Impossible de prévisualiser le flash",
       "acknowledge": "Je comprends que cela écrit le firmware sur le matériel et peut briquer une carte si interrompu.",
       "blockedSeeWarnings": "bloqué — voir les avertissements",
-      "flashNow": "⚠ Flasher maintenant"
+      "flashNow": "⚠ Flasher maintenant",
+      "warn": {
+        "printing": "Une impression est en cours - le flashage est bloqué.",
+        "no_artifact": "Aucun firmware n'a encore été compilé pour ce profil.",
+        "no_sudo": "sudo sans mot de passe non configuré - exécutez 'scripts/install.sh sudoers' sur l'hôte."
+      }
     },
     "configEditor": {
       "title": "Configurer le firmware",

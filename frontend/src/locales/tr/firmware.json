@@ -167,7 +167,12 @@
       "previewFailed": "Flaşlama önizlenemedi",
       "acknowledge": "Bunun donanıma firmware yazdığını ve kesilirse bir kartı kullanılmaz hale getirebileceğini anlıyorum.",
       "blockedSeeWarnings": "engellendi - uyarılara bakın",
-      "flashNow": "⚠ Şimdi flaşla"
+      "flashNow": "⚠ Şimdi flaşla",
+      "warn": {
+        "printing": "Bir baskı sürüyor - flaşlama engellendi.",
+        "no_artifact": "Bu profil için henüz firmware derlenmedi.",
+        "no_sudo": "Parolasız sudo yapılandırılmamış - ana makinede 'scripts/install.sh sudoers' çalıştırın."
+      }
     },
     "configEditor": {
       "title": "Firmware yapılandır",

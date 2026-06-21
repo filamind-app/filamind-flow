@@ -167,7 +167,12 @@
       "previewFailed": "Không thể xem trước việc nạp",
       "acknowledge": "Tôi hiểu việc này ghi firmware vào phần cứng và có thể làm hỏng bo nếu bị gián đoạn.",
       "blockedSeeWarnings": "bị chặn - xem các cảnh báo",
-      "flashNow": "⚠ Nạp ngay"
+      "flashNow": "⚠ Nạp ngay",
+      "warn": {
+        "printing": "Đang có bản in - việc nạp firmware bị chặn.",
+        "no_artifact": "Chưa có firmware nào được build cho hồ sơ này.",
+        "no_sudo": "Chưa cấu hình sudo không mật khẩu - chạy 'scripts/install.sh sudoers' trên máy chủ."
+      }
     },
     "configEditor": {
       "title": "Cấu hình firmware",

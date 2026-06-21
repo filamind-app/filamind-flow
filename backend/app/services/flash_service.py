@@ -302,15 +302,14 @@ async def flash_plan(
     sudo = await _sudo_ready()
     needs_sudo = method in _NEEDS_SUDO
 
-    warnings: list[str] = []
+    # Coded warnings: frontend renders firmware.flashConfirm.warn.<code> from {code, params}.
+    warnings: list[dict[str, object]] = []
     if printing:
-        warnings.append("A print is in progress - flashing is blocked.")
+        warnings.append({"code": "printing", "params": {}})
     if not artifact:
-        warnings.append("No firmware has been built for this profile yet.")
+        warnings.append({"code": "no_artifact", "params": {}})
     if needs_sudo and not sudo:
-        warnings.append(
-            "Passwordless sudo not configured - run 'scripts/install.sh sudoers' on the host."
-        )
+        warnings.append({"code": "no_sudo", "params": {}})
     ready = bool(artifact) and not printing and (sudo or not needs_sudo)
     return {
         "method": method,

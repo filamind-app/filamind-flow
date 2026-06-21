@@ -167,7 +167,12 @@
       "previewFailed": "Impossibile generare l'anteprima del flash",
       "acknowledge": "Capisco che questo scrive firmware sull'hardware e può brickare una scheda se interrotto.",
       "blockedSeeWarnings": "bloccato: vedi gli avvisi",
-      "flashNow": "⚠ Flasha ora"
+      "flashNow": "⚠ Flasha ora",
+      "warn": {
+        "printing": "Una stampa è in corso - il flashing è bloccato.",
+        "no_artifact": "Nessun firmware è stato ancora compilato per questo profilo.",
+        "no_sudo": "sudo senza password non configurato - esegui 'scripts/install.sh sudoers' sull'host."
+      }
     },
     "configEditor": {
       "title": "Configura il firmware",
