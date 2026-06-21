@@ -9,8 +9,8 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
-from app.models.schemas import MaterialProfile
-from app.services import material_store
+from app.models.schemas import MaterialFlowCheck, MaterialProfile
+from app.services import material_service, material_store, max_flow_store
 
 router = APIRouter(prefix="/material", tags=["material"])
 
@@ -30,6 +30,28 @@ async def save_material(
     """Insert or update a profile. A blank id is derived from the name; ``old_id`` renames."""
     record = material_store.save_material(settings.data_dir, profile.model_dump(), old_id)
     return MaterialProfile(**record)
+
+
+@router.get("/{material_id}/flow-check", response_model=MaterialFlowCheck)
+async def material_flow_check(
+    material_id: str,
+    hotend: str | None = None,
+    settings: Settings = Depends(get_settings),
+) -> MaterialFlowCheck:
+    """Cross-check the profile's max volumetric flow vs the hotend's catalog ceiling.
+
+    The hotend comes from the ``hotend`` query param, else the last saved Max-Flow run's hotend.
+    """
+    material = material_store.get_material(settings.data_dir, material_id)
+    if material is None:
+        raise HTTPException(status_code=404, detail="material not found")
+    use_hotend = hotend
+    if not use_hotend:
+        last = max_flow_store.read_last(settings.data_dir)
+        if last:
+            use_hotend = last.get("hotend")
+    verdict = material_service.check_flow(float(material["max_volumetric_flow"]), use_hotend)
+    return MaterialFlowCheck(**verdict)
 
 
 @router.delete("/{material_id}")

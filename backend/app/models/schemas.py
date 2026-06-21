@@ -237,6 +237,17 @@ class MaterialProfile(BaseModel):
     notes: str = ""
 
 
+class MaterialFlowCheck(BaseModel):
+    """Verdict of a material's max volumetric flow vs the hotend's catalog ceiling.
+
+    The frontend renders ``material.flowCheck.<code>``; ``level`` is ``ok`` or ``warn``.
+    """
+
+    code: str
+    level: str = "ok"
+    params: dict[str, Any] = {}
+
+
 class FlashWarning(BaseModel):
     """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
 
