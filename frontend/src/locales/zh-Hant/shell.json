@@ -147,6 +147,10 @@
       "tuning": {
         "title": "調校精靈",
         "description": "導引式校準精靈（首先是 Pressure Advance）。"
+      },
+      "preflight": {
+        "title": "列印前檢查",
+        "description": "在開始列印前進行唯讀的就緒狀態檢查。"
       }
     },
     "guard": {

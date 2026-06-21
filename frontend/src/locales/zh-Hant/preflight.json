@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "快速進行唯讀檢查，確認印表機已就緒可開始列印。",
+    "refresh": "重新檢查",
+    "checking": "檢查中…",
+    "ready": "可開始列印",
+    "notReady": "尚未就緒，無法列印",
+    "checks": {
+      "unreachable": { "fail": "無法連線到印表機" },
+      "klippy": { "pass": "Klipper 已就緒", "fail": "Klipper 尚未就緒（狀態：{state}）" },
+      "idle": { "pass": "目前沒有列印進行中", "fail": "已有列印正在執行（{state}）" },
+      "homed": { "pass": "所有軸都已歸位", "fail": "軸尚未歸位（{axes}）；開始列印時通常會先歸位" }
+    },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "列印前檢查指南",
+      "close": "關閉",
+      "topics": {
+        "overview": {
+          "title": "什麼是列印前檢查？",
+          "body": "以唯讀方式查看印表機是否已就緒可開始列印：它不會移動或變更任何東西，只會回報狀態。硬性阻擋項目會讓結論變紅；警告僅供參考，不會造成阻擋。"
+        },
+        "checks": {
+          "title": "它會檢查什麼",
+          "body": "Klipper 已就緒（未關機或進入錯誤）、目前沒有列印正在執行，以及各軸是否已歸位（僅供參考，因為開始列印時通常會先歸位）。"
+        },
+        "glossary": { "title": "詞彙表" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Klipper 狀態",
+          "def": "Klipper 自身的狀態 - 'ready'（就緒）表示已連線且閒置；'shutdown'（關機）或 'error'（錯誤）表示在排除前無法列印。"
+        },
+        "homing": {
+          "term": "歸位",
+          "def": "讓各軸移動到其限位開關，使印表機知道工具頭的位置。大多數列印開始程序都會自動歸位。"
+        }
+      }
+    }
+  }
+}

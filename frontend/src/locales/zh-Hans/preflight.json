@@ -1,0 +1,54 @@
+{
+  "preflight": {
+    "intro": "快速只读检查打印机是否已准备好开始打印。",
+    "refresh": "重新检查",
+    "checking": "检查中…",
+    "ready": "可以开始打印",
+    "notReady": "尚不能开始打印",
+    "checks": {
+      "unreachable": {
+        "fail": "打印机不可达"
+      },
+      "klippy": {
+        "pass": "Klipper 已就绪",
+        "fail": "Klipper 尚未就绪（状态：{state}）"
+      },
+      "idle": {
+        "pass": "当前没有正在进行的打印",
+        "fail": "已有打印任务正在运行（{state}）"
+      },
+      "homed": {
+        "pass": "所有轴均已归位",
+        "fail": "轴未归位（{axes}）；开始打印时通常会先归位"
+      }
+    },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "打印前检查指南",
+      "close": "关闭",
+      "topics": {
+        "overview": {
+          "title": "什么是打印前检查？",
+          "body": "对打印机是否已准备就绪的只读查看：它从不移动或更改任何内容，只进行报告。硬性阻碍会使结论变红；警告仅作提示，不会阻止打印。"
+        },
+        "checks": {
+          "title": "检查的内容",
+          "body": "Klipper 已就绪（未关闭或处于错误状态）、当前没有正在运行的打印，以及各轴是否已归位（仅供参考，因为开始打印时通常会先归位）。"
+        },
+        "glossary": {
+          "title": "术语表"
+        }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Klipper 状态",
+          "def": "Klipper 自身的状态——'ready'（就绪）表示它已连接且处于空闲；'shutdown'（已关闭）或 'error'（错误）表示在排除之前无法打印。"
+        },
+        "homing": {
+          "term": "归位",
+          "def": "将每个轴移动到其限位开关（endstop），让打印机知道工具头的位置。大多数打印开始流程会自动归位。"
+        }
+      }
+    }
+  }
+}

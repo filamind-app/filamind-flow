@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Szybka kontrola tylko do odczytu, czy drukarka jest gotowa do rozpoczęcia druku.",
+    "refresh": "Sprawdź ponownie",
+    "checking": "Sprawdzanie...",
+    "ready": "Gotowa do druku",
+    "notReady": "Niegotowa do druku",
+    "checks": {
+      "unreachable": { "fail": "Drukarka jest nieosiągalna" },
+      "klippy": { "pass": "Klipper jest gotowy", "fail": "Klipper nie jest gotowy (stan: {state})" },
+      "idle": { "pass": "Brak druku w toku", "fail": "Druk jest już uruchomiony ({state})" },
+      "homed": { "pass": "Wszystkie osie są wybazowane", "fail": "Osie niewybazowane ({axes}); rozpoczęcie druku zwykle najpierw bazuje" }
+    },
+    "help": {
+      "guide": "Przewodnik",
+      "guideTitle": "Przewodnik po kontroli przed drukiem",
+      "close": "Zamknij",
+      "topics": {
+        "overview": {
+          "title": "Czym jest kontrola przed drukiem?",
+          "body": "Spojrzenie tylko do odczytu na to, czy drukarka jest gotowa do startu: nigdy niczego nie porusza ani nie zmienia, jedynie raportuje. Twarde blokady zmieniają werdykt na czerwony; ostrzeżenia informują, ale nie blokują."
+        },
+        "checks": {
+          "title": "Co sprawdza",
+          "body": "Czy Klipper jest gotowy (nie wyłączony ani w błędzie), czy żaden druk już nie trwa oraz czy osie są wybazowane (informacyjnie, ponieważ rozpoczęcie druku zwykle najpierw bazuje)."
+        },
+        "glossary": { "title": "Słowniczek" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Stan Klippera",
+          "def": "Własny status Klippera - 'ready' oznacza, że jest połączony i bezczynny; 'shutdown' lub 'error' oznacza, że nie może drukować, dopóki nie zostanie wyczyszczony."
+        },
+        "homing": {
+          "term": "Bazowanie",
+          "def": "Przesuwanie każdej osi do jej krańcówki, aby drukarka wiedziała, gdzie znajduje się głowica. Większość procedur rozpoczęcia druku bazuje automatycznie."
+        }
+      }
+    }
+  }
+}

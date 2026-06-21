@@ -147,6 +147,10 @@
       "tuning": {
         "title": "İnce Ayar Sihirbazları",
         "description": "Rehberli kalibrasyon sihirbazları (önce Pressure Advance)."
+      },
+      "preflight": {
+        "title": "Baskı Öncesi Kontrol",
+        "description": "Baskıya başlamadan önce salt-okunur bir hazırlık kontrolü."
       }
     },
     "guard": {

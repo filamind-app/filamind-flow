@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Yazıcının baskıya başlamaya hazır olup olmadığını kontrol eden hızlı, salt-okunur bir denetim.",
+    "refresh": "Yeniden kontrol et",
+    "checking": "Kontrol ediliyor...",
+    "ready": "Baskıya hazır",
+    "notReady": "Baskıya hazır değil",
+    "checks": {
+      "unreachable": { "fail": "Yazıcıya erişilemiyor" },
+      "klippy": { "pass": "Klipper hazır", "fail": "Klipper hazır değil (durum: {state})" },
+      "idle": { "pass": "Devam eden baskı yok", "fail": "Zaten bir baskı çalışıyor ({state})" },
+      "homed": { "pass": "Tüm eksenler eve döndü", "fail": "Eksenler eve dönmedi ({axes}); baskı başlatma genellikle önce eve döner" }
+    },
+    "help": {
+      "guide": "Rehber",
+      "guideTitle": "Baskı öncesi kontrol rehberi",
+      "close": "Kapat",
+      "topics": {
+        "overview": {
+          "title": "Baskı öncesi kontrol nedir?",
+          "body": "Yazıcının başlamaya hazır olup olmadığına salt-okunur bir bakış: asla bir şeyi hareket ettirmez veya değiştirmez, yalnızca rapor verir. Kesin engeller sonucu kırmızıya çevirir; uyarılar bilgi verir ama engellemez."
+        },
+        "checks": {
+          "title": "Neleri kontrol eder",
+          "body": "Klipper hazır mı (kapatılmamış veya hatasız), zaten bir baskı çalışıyor mu ve eksenler eve döndü mü (bilgilendiricidir, çünkü baskı başlatma genellikle önce eve döner)."
+        },
+        "glossary": { "title": "Sözlük" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Klipper durumu",
+          "def": "Klipper'ın kendi durumu - 'ready' bağlı ve boşta olduğu anlamına gelir; 'shutdown' veya 'error' temizlenene kadar baskı yapamayacağı anlamına gelir."
+        },
+        "homing": {
+          "term": "Eve dönüş",
+          "def": "Yazıcının araç kafasının nerede olduğunu bilmesi için her ekseni endstop'una hareket ettirme. Çoğu baskı başlatma rutini otomatik olarak eve döner."
+        }
+      }
+    }
+  }
+}

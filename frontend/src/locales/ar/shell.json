@@ -147,6 +147,10 @@
       "tuning": {
         "title": "معالجات المعايرة",
         "description": "معالجات معايرة موجّهة (Pressure Advance أولًا)."
+      },
+      "preflight": {
+        "title": "فحص ما قبل الطباعة",
+        "description": "فحص جاهزية للقراءة فقط قبل بدء الطباعة."
       }
     },
     "guard": {

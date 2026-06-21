@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Une vérification rapide en lecture seule pour s'assurer que l'imprimante est prête à lancer une impression.",
+    "refresh": "Revérifier",
+    "checking": "Vérification…",
+    "ready": "Prête à imprimer",
+    "notReady": "Pas prête à imprimer",
+    "checks": {
+      "unreachable": { "fail": "L'imprimante est injoignable" },
+      "klippy": { "pass": "Klipper est prêt", "fail": "Klipper n'est pas prêt (état : {state})" },
+      "idle": { "pass": "Aucune impression en cours", "fail": "Une impression est déjà en cours ({state})" },
+      "homed": { "pass": "Tous les axes sont à l'origine", "fail": "Axes non pris en origine ({axes}) ; un lancement d'impression effectue généralement la prise d'origine en premier" }
+    },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Guide de la vérification avant impression",
+      "close": "Fermer",
+      "topics": {
+        "overview": {
+          "title": "Qu'est-ce que la vérification avant impression ?",
+          "body": "Un coup d'œil en lecture seule pour savoir si l'imprimante est prête à démarrer : elle ne déplace ni ne modifie jamais rien, elle se contente de signaler. Les blocages stricts font passer le verdict au rouge ; les avertissements informent mais ne bloquent pas."
+        },
+        "checks": {
+          "title": "Ce qu'elle vérifie",
+          "body": "Klipper est prêt (ni arrêté ni en erreur), aucune impression n'est déjà en cours, et si les axes sont à l'origine (information, car un lancement d'impression effectue généralement la prise d'origine en premier)."
+        },
+        "glossary": { "title": "Glossaire" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "État de Klipper",
+          "def": "Le statut propre à Klipper - 'ready' signifie qu'il est connecté et au repos ; 'shutdown' (arrêté) ou 'error' (erreur) signifie qu'il ne peut pas imprimer tant que ce n'est pas résolu."
+        },
+        "homing": {
+          "term": "Prise d'origine",
+          "def": "Déplacer chaque axe jusqu'à son endstop (butée) afin que l'imprimante sache où se trouve la tête d'impression. La plupart des routines de lancement d'impression effectuent la prise d'origine automatiquement."
+        }
+      }
+    }
+  }
+}

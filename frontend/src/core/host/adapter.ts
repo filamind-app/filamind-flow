@@ -74,7 +74,7 @@ export async function detectBackUi(opts: DetectOpts = {}): Promise<BackUi> {
 // Per-host widget visibility. New flow innovations are SUITE-exclusive (the differentiation moat):
 // the Mainsail build stays feature-frozen. `remote-control` (steer the on-printer FilaMind screen)
 // only makes sense in the suite, where that screen exists, so it ships suite-only.
-const SUITE_ONLY = new Set<string>(['remote-control', 'material-brain', 'tuning'])
+const SUITE_ONLY = new Set<string>(['remote-control', 'material-brain', 'tuning', 'preflight'])
 const MAINSAIL_ONLY = new Set<string>([])
 
 /** Whether a widget should register under the current host. */

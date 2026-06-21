@@ -147,6 +147,10 @@
       "tuning": {
         "title": "Kreatory strojenia",
         "description": "Kreatory kalibracji z asystą (najpierw Pressure Advance)."
+      },
+      "preflight": {
+        "title": "Kontrola przed drukiem",
+        "description": "Kontrola gotowości tylko do odczytu przed rozpoczęciem druku."
       }
     },
     "guard": {

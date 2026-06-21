@@ -147,6 +147,10 @@
       "tuning": {
         "title": "Wizard Penyetelan",
         "description": "Wizard kalibrasi terpandu (Pressure Advance lebih dulu)."
+      },
+      "preflight": {
+        "title": "Pemeriksaan Pra-Cetak",
+        "description": "Pemeriksaan kesiapan baca-saja sebelum memulai pencetakan."
       }
     },
     "guard": {

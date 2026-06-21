@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Uma verificação rápida e somente leitura de que a impressora está pronta para iniciar uma impressão.",
+    "refresh": "Verificar novamente",
+    "checking": "Verificando...",
+    "ready": "Pronta para imprimir",
+    "notReady": "Não está pronta para imprimir",
+    "checks": {
+      "unreachable": { "fail": "A impressora está inacessível" },
+      "klippy": { "pass": "O Klipper está pronto", "fail": "O Klipper não está pronto (estado: {state})" },
+      "idle": { "pass": "Nenhuma impressão em andamento", "fail": "Já há uma impressão em execução ({state})" },
+      "homed": { "pass": "Todos os eixos estão referenciados", "fail": "Eixos não referenciados ({axes}); o início de uma impressão normalmente faz o referenciamento primeiro" }
+    },
+    "help": {
+      "guide": "Guia",
+      "guideTitle": "Guia da verificação pré-impressão",
+      "close": "Fechar",
+      "topics": {
+        "overview": {
+          "title": "O que é a verificação pré-impressão?",
+          "body": "Uma olhada somente leitura para saber se a impressora está pronta para começar: ela nunca move nem altera nada, apenas informa. Bloqueios críticos deixam o veredito vermelho; avisos informam, mas não bloqueiam."
+        },
+        "checks": {
+          "title": "O que ela verifica",
+          "body": "Se o Klipper está pronto (sem desligamento ou erro), se nenhuma impressão já está em execução e se os eixos estão referenciados (informativo, já que o início de uma impressão normalmente faz o referenciamento primeiro)."
+        },
+        "glossary": { "title": "Glossário" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Estado do Klipper",
+          "def": "O status do próprio Klipper - 'ready' (pronto) significa que está conectado e ocioso; 'shutdown' (desligado) ou 'error' (erro) significa que ele não pode imprimir até que a condição seja resolvida."
+        },
+        "homing": {
+          "term": "Referenciamento (homing)",
+          "def": "Mover cada eixo até seu endstop para que a impressora saiba onde está a toolhead. A maioria das rotinas de início de impressão faz o referenciamento automaticamente."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "preflight": {
+    "intro": "Eine schnelle Nur-Lese-Prüfung, ob der Drucker bereit ist, einen Druck zu starten.",
+    "refresh": "Erneut prüfen",
+    "checking": "Wird geprüft …",
+    "ready": "Druckbereit",
+    "notReady": "Nicht druckbereit",
+    "checks": {
+      "unreachable": { "fail": "Drucker ist nicht erreichbar" },
+      "klippy": { "pass": "Klipper ist bereit", "fail": "Klipper ist nicht bereit (Status: {state})" },
+      "idle": { "pass": "Kein Druck läuft", "fail": "Es läuft bereits ein Druck ({state})" },
+      "homed": { "pass": "Alle Achsen sind referenziert", "fail": "Achsen nicht referenziert ({axes}); ein Druckstart führt üblicherweise zuerst eine Referenzfahrt aus" }
+    },
+    "help": {
+      "guide": "Anleitung",
+      "guideTitle": "Anleitung zur Vor-Druck-Prüfung",
+      "close": "Schließen",
+      "topics": {
+        "overview": {
+          "title": "Was ist die Vor-Druck-Prüfung?",
+          "body": "Ein Nur-Lese-Blick darauf, ob der Drucker startbereit ist: Es wird nichts bewegt oder verändert, es wird nur berichtet. Harte Blocker färben das Urteil rot; Warnungen informieren, blockieren aber nicht."
+        },
+        "checks": {
+          "title": "Was geprüft wird",
+          "body": "Ob Klipper bereit ist (nicht heruntergefahren oder im Fehlerzustand), ob nicht bereits ein Druck läuft und ob die Achsen referenziert sind (informativ, da ein Druckstart üblicherweise zuerst eine Referenzfahrt ausführt)."
+        },
+        "glossary": { "title": "Glossar" }
+      },
+      "glossary": {
+        "klippyState": {
+          "term": "Klipper-Status",
+          "def": "Klippers eigener Status - 'ready' bedeutet, es ist verbunden und im Leerlauf; 'shutdown' oder 'error' bedeutet, es kann erst drucken, wenn der Zustand behoben ist."
+        },
+        "homing": {
+          "term": "Referenzfahrt (Homing)",
+          "def": "Jede Achse wird zu ihrem Endschalter (Endstop) gefahren, damit der Drucker weiß, wo sich der Werkzeugkopf befindet. Die meisten Druckstart-Routinen führen die Referenzfahrt automatisch aus."
+        }
+      }
+    }
+  }
+}
