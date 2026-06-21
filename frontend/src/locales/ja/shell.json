@@ -132,10 +132,6 @@
         "title": "Setup",
         "description": "このプリンターに Klipper エコシステムのコンポーネントをインストール、管理します。"
       },
-      "remote-control": {
-        "title": "リモコン",
-        "description": "プリンター本体のFilaMind画面を操作 — タブの切り替え、メッセージ表示、画面の特定ができます。"
-      },
       "material-brain": {
         "title": "Material Brain",
         "description": "フィラメントプロファイルを保存し、流量とホットエンド上限を照合します。"

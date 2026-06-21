@@ -132,10 +132,6 @@
         "title": "Setup",
         "description": "Instala y gestiona componentes del ecosistema Klipper para esta impresora."
       },
-      "remote-control": {
-        "title": "Control remoto",
-        "description": "Controla la pantalla FilaMind de la impresora: cambia su pestaña, muestra un mensaje o localízala."
-      },
       "material-brain": {
         "title": "Material Brain",
         "description": "Perfiles de filamento guardados con una comprobación de flujo frente al límite del hotend."

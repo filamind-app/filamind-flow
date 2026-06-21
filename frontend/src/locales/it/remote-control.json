@@ -39,6 +39,7 @@
           "body": "Mostra porta lo schermo alla scheda Stato, Controllo o Impostazioni. Individua fa lampeggiare lo schermo per qualche secondo. Messaggio mostra una breve nota (info o avviso). I comandi raggiungono qualsiasi schermo FilaMind su questa stampante; non viene inviato nulla mentre il bus comandi è ancora in connessione."
         }
       }
-    }
+    },
+    "requiresScreen": "Questi controlli gestiscono lo schermo FilaMind sulla stampante. Installa FilaMind 3D su questa stampante per usarli."
   }
 }

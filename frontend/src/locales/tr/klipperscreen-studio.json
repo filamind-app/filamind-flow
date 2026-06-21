@@ -90,7 +90,8 @@
       "settings": "Ayarlar",
       "menus": "Menüler",
       "themes": "Temalar",
-      "kiosk": "Kiosk"
+      "kiosk": "Kiosk",
+      "fmscreen": "FilaMind Ekranı"
     },
     "settings": {
       "loading": "Ayarlar yükleniyor…",

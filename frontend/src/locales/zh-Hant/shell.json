@@ -132,10 +132,6 @@
         "title": "Setup",
         "description": "為這台印表機安裝及管理 Klipper 生態系元件。"
       },
-      "remote-control": {
-        "title": "遠端控制",
-        "description": "操控印表機上的 FilaMind 螢幕 — 切換分頁、顯示訊息或尋找螢幕。"
-      },
       "material-brain": {
         "title": "Material Brain",
         "description": "已儲存的線材設定檔，附帶流量與熱端上限的檢查。"

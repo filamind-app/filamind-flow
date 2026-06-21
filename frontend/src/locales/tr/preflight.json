@@ -9,7 +9,10 @@
       "unreachable": { "fail": "Yazıcıya erişilemiyor" },
       "klippy": { "pass": "Klipper hazır", "fail": "Klipper hazır değil (durum: {state})" },
       "idle": { "pass": "Devam eden baskı yok", "fail": "Zaten bir baskı çalışıyor ({state})" },
-      "homed": { "pass": "Tüm eksenler eve döndü", "fail": "Eksenler eve dönmedi ({axes}); baskı başlatma genellikle önce eve döner" }
+      "homed": {
+        "pass": "Tüm eksenler eve döndü",
+        "fail": "Eksenler eve dönmedi ({axes}); baskı başlatma genellikle önce eve döner"
+      }
     },
     "help": {
       "guide": "Rehber",

@@ -39,6 +39,7 @@
           "body": "Mostrar cambia la pantalla a su pestaña Estado, Control o Ajustes. Localizar hace parpadear la pantalla durante unos segundos. Mensaje muestra una nota breve (información o advertencia). Los comandos llegan a cualquier pantalla FilaMind de esta impresora; no se envía nada mientras el bus de comandos sigue conectándose."
         }
       }
-    }
+    },
+    "requiresScreen": "Estos controles manejan la pantalla FilaMind de la impresora. Instala FilaMind 3D en esta impresora para usarlos."
   }
 }

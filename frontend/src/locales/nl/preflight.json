@@ -9,7 +9,10 @@
       "unreachable": { "fail": "Printer is onbereikbaar" },
       "klippy": { "pass": "Klipper is gereed", "fail": "Klipper is niet gereed (status: {state})" },
       "idle": { "pass": "Geen print bezig", "fail": "Er loopt al een print ({state})" },
-      "homed": { "pass": "Alle assen zijn gehomed", "fail": "Assen niet gehomed ({axes}); een printstart homed meestal eerst" }
+      "homed": {
+        "pass": "Alle assen zijn gehomed",
+        "fail": "Assen niet gehomed ({axes}); een printstart homed meestal eerst"
+      }
     },
     "help": {
       "guide": "Gids",

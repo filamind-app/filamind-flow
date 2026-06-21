@@ -39,6 +39,7 @@
           "body": "Göster, ekranı Durum, Kontrol veya Ayarlar sekmesine geçirir. Bul, ekranı birkaç saniye yanıp söndürür. Mesaj, kısa bir not (bilgi veya uyarı) gösterir. Komutlar bu yazıcıdaki herhangi bir FilaMind ekranına ulaşır; komut kanalı hâlâ bağlanıyorken hiçbir şey gönderilmez."
         }
       }
-    }
+    },
+    "requiresScreen": "Bu kontroller yazıcıdaki FilaMind ekranını yönetir. Kullanmak için bu yazıcıya FilaMind 3D'yi kurun."
   }
 }

@@ -7,9 +7,15 @@
     "notReady": "Nicht druckbereit",
     "checks": {
       "unreachable": { "fail": "Drucker ist nicht erreichbar" },
-      "klippy": { "pass": "Klipper ist bereit", "fail": "Klipper ist nicht bereit (Status: {state})" },
+      "klippy": {
+        "pass": "Klipper ist bereit",
+        "fail": "Klipper ist nicht bereit (Status: {state})"
+      },
       "idle": { "pass": "Kein Druck läuft", "fail": "Es läuft bereits ein Druck ({state})" },
-      "homed": { "pass": "Alle Achsen sind referenziert", "fail": "Achsen nicht referenziert ({axes}); ein Druckstart führt üblicherweise zuerst eine Referenzfahrt aus" }
+      "homed": {
+        "pass": "Alle Achsen sind referenziert",
+        "fail": "Achsen nicht referenziert ({axes}); ein Druckstart führt üblicherweise zuerst eine Referenzfahrt aus"
+      }
     },
     "help": {
       "guide": "Anleitung",

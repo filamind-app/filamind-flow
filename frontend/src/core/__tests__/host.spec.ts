@@ -6,6 +6,7 @@ import {
   isMainsailHost,
   showMainsailLink,
   isWidgetEnabled,
+  isWidgetGated,
   detectBackUi,
 } from '@/core/host/adapter'
 
@@ -27,18 +28,21 @@ describe('host adapter (dual-host)', () => {
     expect(showMainsailLink()).toBe(true)
   })
 
-  it('hides suite-only widgets on the default (Mainsail) host but keeps shared ones', () => {
+  it('gates FilaMind-3D widgets on the default (Mainsail) host but keeps shared ones', () => {
     expect(isWidgetEnabled('machine-doctor')).toBe(true)
     expect(isWidgetEnabled('host-control')).toBe(true)
     expect(isWidgetEnabled('setup')).toBe(true) // ships in both hosts
-    expect(isWidgetEnabled('remote-control')).toBe(false) // suite-exclusive
+    // Gated widgets still register (to show an install-required panel) but report as gated.
+    expect(isWidgetEnabled('tuning')).toBe(true)
+    expect(isWidgetGated('tuning')).toBe(true)
+    expect(isWidgetGated('machine-doctor')).toBe(false) // shared widget, never gated
   })
 
-  it('enables the suite-only remote-control widget when VITE_HOST_MODE=suite', () => {
+  it('un-gates FilaMind-3D widgets when VITE_HOST_MODE=suite', () => {
     vi.stubEnv('VITE_HOST_MODE', 'suite')
     expect(isSuiteHost()).toBe(true)
-    expect(isWidgetEnabled('remote-control')).toBe(true)
-    expect(isWidgetEnabled('machine-doctor')).toBe(true) // shared widgets still enabled
+    expect(isWidgetGated('tuning')).toBe(false)
+    expect(isWidgetEnabled('tuning')).toBe(true)
   })
 
   it('detectBackUi recognises Mainsail and Fluidd from the host manifest', async () => {

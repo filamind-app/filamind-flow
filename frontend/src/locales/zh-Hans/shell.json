@@ -132,10 +132,6 @@
         "title": "Setup",
         "description": "为此打印机安装和管理 Klipper 生态系统组件。"
       },
-      "remote-control": {
-        "title": "远程控制",
-        "description": "操控打印机上的 FilaMind 屏幕——切换标签页、显示消息或定位屏幕。"
-      },
       "material-brain": {
         "title": "Material Brain",
         "description": "已保存的耗材配置，并附带流量与热端上限的检查。"

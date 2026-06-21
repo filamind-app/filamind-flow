@@ -90,7 +90,8 @@
       "settings": "設定",
       "menus": "選單",
       "themes": "主題",
-      "kiosk": "自助服務模式"
+      "kiosk": "自助服務模式",
+      "fmscreen": "FilaMind 螢幕"
     },
     "settings": {
       "loading": "正在載入設定…",

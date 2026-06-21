@@ -90,7 +90,8 @@
       "settings": "設定",
       "menus": "メニュー",
       "themes": "テーマ",
-      "kiosk": "キオスク"
+      "kiosk": "キオスク",
+      "fmscreen": "FilaMind 画面"
     },
     "settings": {
       "loading": "設定を読み込み中…",

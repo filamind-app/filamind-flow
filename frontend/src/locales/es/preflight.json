@@ -8,8 +8,14 @@
     "checks": {
       "unreachable": { "fail": "No se puede contactar con la impresora" },
       "klippy": { "pass": "Klipper está listo", "fail": "Klipper no está listo (estado: {state})" },
-      "idle": { "pass": "No hay ninguna impresión en curso", "fail": "Ya hay una impresión en ejecución ({state})" },
-      "homed": { "pass": "Todos los ejes están en home", "fail": "Ejes sin home ({axes}); al iniciar una impresión normalmente se hace home primero" }
+      "idle": {
+        "pass": "No hay ninguna impresión en curso",
+        "fail": "Ya hay una impresión en ejecución ({state})"
+      },
+      "homed": {
+        "pass": "Todos los ejes están en home",
+        "fail": "Ejes sin home ({axes}); al iniciar una impresión normalmente se hace home primero"
+      }
     },
     "help": {
       "guide": "Guía",

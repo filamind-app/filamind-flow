@@ -90,7 +90,8 @@
       "settings": "Settings",
       "menus": "Menus",
       "themes": "Themes",
-      "kiosk": "Kiosk"
+      "kiosk": "Kiosk",
+      "fmscreen": "Layar FilaMind"
     },
     "settings": {
       "loading": "Memuat pengaturan…",
