@@ -309,6 +309,37 @@ class PaApplyResult(BaseModel):
     params: dict[str, Any] = {}
 
 
+class KgpPack(BaseModel):
+    """A known-good config pack summary."""
+
+    id: str
+    label: str
+    created: float
+    file_count: int = 0
+
+
+class KgpList(BaseModel):
+    packs: list[KgpPack] = []
+
+
+class KgpCreateRequest(BaseModel):
+    label: str = ""
+
+
+class KgpDetail(KgpPack):
+    """A pack plus the relative paths of the config files it holds."""
+
+    files: list[str] = []
+
+
+class KgpRestoreResult(BaseModel):
+    """Result of restoring a pack (frontend renders ``knownGoodPack.restore.<code>``)."""
+
+    ok: bool
+    code: str
+    params: dict[str, Any] = {}
+
+
 class RetractionSample(BaseModel):
     """One (Z height -> retraction length) point on the tuning tower."""
 

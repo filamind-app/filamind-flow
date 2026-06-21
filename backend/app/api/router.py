@@ -13,6 +13,7 @@ from app.api.routes import (
     health,
     host,
     journal,
+    kgp,
     macro,
     material,
     maxflow,
@@ -52,3 +53,4 @@ api_router.include_router(camera.router)
 api_router.include_router(screen.router)
 api_router.include_router(setup.router)
 api_router.include_router(host.router)
+api_router.include_router(kgp.router)
