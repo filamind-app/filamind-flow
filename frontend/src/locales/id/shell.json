@@ -8,10 +8,6 @@
       "toggle": "Alihkan navigasi",
       "label": "Navigasi utama"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "Kembali ke Mainsail"
-    },
     "footer": {
       "stack": "FilaMind Flow - Dibuat oleh maker Mesir, untuk maker dunia. Selamat mencetak",
       "by": "oleh tim DeltaFabs"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "Dukung FilaMind Flow"
+    },
+    "backUi": {
+      "label": "Kembali ke antarmuka",
+      "title": "Buka antarmuka web printer"
     }
   }
 }

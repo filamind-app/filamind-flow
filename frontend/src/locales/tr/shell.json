@@ -8,10 +8,6 @@
       "toggle": "Gezinmeyi aç/kapat",
       "label": "Ana gezinme"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "Mainsail'e dön"
-    },
     "footer": {
       "stack": "FilaMind Flow - Mısırlı yapımcılar tarafından, dünyanın yapımcıları için. İyi baskılar",
       "by": "DeltaFabs ekibi tarafından"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "FilaMind Flow'u destekle"
+    },
+    "backUi": {
+      "label": "Arayüze dön",
+      "title": "Yazıcının web arayüzünü aç"
     }
   }
 }

@@ -8,10 +8,6 @@
       "toggle": "ナビゲーションの切り替え",
       "label": "メインナビゲーション"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "Mainsail に戻る"
-    },
     "footer": {
       "stack": "FilaMind Flow - エジプトのメイカーが、世界中のメイカーのために作りました。よいプリントを",
       "by": "DeltaFabs チーム作"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "FilaMind Flow を支援する"
+    },
+    "backUi": {
+      "label": "UIに戻る",
+      "title": "プリンターのWeb UIを開く"
     }
   }
 }

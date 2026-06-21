@@ -8,10 +8,6 @@
       "toggle": "내비게이션 토글",
       "label": "메인 내비게이션"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "Mainsail로 돌아가기"
-    },
     "footer": {
       "stack": "FilaMind Flow - 이집트 메이커가 세계의 메이커를 위해 만들었습니다. 즐거운 출력 되세요",
       "by": "DeltaFabs 팀 제작"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "FilaMind Flow 후원하기"
+    },
+    "backUi": {
+      "label": "UI로 돌아가기",
+      "title": "프린터의 웹 UI 열기"
     }
   }
 }

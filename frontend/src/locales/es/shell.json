@@ -8,10 +8,6 @@
       "toggle": "Alternar navegación",
       "label": "Navegación principal"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "Volver a Mainsail"
-    },
     "footer": {
       "stack": "FilaMind Flow — Built by Egyptian makers, for world makers. Happy printing",
       "by": "por el equipo DeltaFabs"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "Apoyar FilaMind Flow"
+    },
+    "backUi": {
+      "label": "Volver a la interfaz",
+      "title": "Abrir la interfaz web de la impresora"
     }
   }
 }

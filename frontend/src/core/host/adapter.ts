@@ -23,9 +23,52 @@ export function isMainsailHost(): boolean {
   return hostMode() === 'mainsail'
 }
 
-/** The "back to Mainsail" link only makes sense in the Mainsail-hosted build. */
+/** The "back to the host UI" link only makes sense in the Mainsail-hosted build. */
 export function showMainsailLink(): boolean {
   return isMainsailHost()
+}
+
+export interface BackUi {
+  /** Detected UI name ('Mainsail' | 'Fluidd') or '' when unknown (caller shows a generic label). */
+  name: string
+  /** Host-preserving URL to return to (origin root, or VITE_MAINSAIL_URL). */
+  url: string
+}
+
+interface DetectOpts {
+  url?: string
+  fetchImpl?: typeof fetch
+  timeoutMs?: number
+  location?: { protocol?: string; hostname?: string }
+}
+
+/**
+ * Best-effort detection of the printer's primary web UI for a host-preserving "back" link.
+ * Probes the candidate origin's `manifest.json` for a Mainsail/Fluidd name; ANY failure (no
+ * fetch, CORS, timeout, non-200, unknown name) resolves to a generic `{ name: '' }` — never throws.
+ */
+export async function detectBackUi(opts: DetectOpts = {}): Promise<BackUi> {
+  const loc =
+    opts.location ??
+    (typeof window !== 'undefined' ? window.location : { protocol: 'http:', hostname: 'localhost' })
+  const url = opts.url ?? `${loc.protocol ?? 'http:'}//${loc.hostname ?? 'localhost'}/`
+  const f = opts.fetchImpl ?? (typeof fetch !== 'undefined' ? fetch : undefined)
+  if (!f) return { name: '', url }
+
+  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : undefined
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), opts.timeoutMs ?? 2000) : undefined
+  try {
+    const res = await f(`${url}manifest.json`, ctrl ? { signal: ctrl.signal } : {})
+    if (!res.ok) return { name: '', url }
+    const data = (await res.json()) as { name?: unknown }
+    const raw = typeof data.name === 'string' ? data.name : ''
+    const name = /mainsail/i.test(raw) ? 'Mainsail' : /fluidd/i.test(raw) ? 'Fluidd' : ''
+    return { name, url }
+  } catch {
+    return { name: '', url }
+  } finally {
+    if (timer) clearTimeout(timer)
+  }
 }
 
 // Per-host widget visibility. New flow innovations are SUITE-exclusive (the differentiation moat):

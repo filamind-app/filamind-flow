@@ -8,10 +8,6 @@
       "toggle": "切换导航",
       "label": "主导航"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "返回 Mainsail"
-    },
     "footer": {
       "stack": "FilaMind Flow — 由埃及创客打造，献给全世界的创客。打印愉快",
       "by": "由 DeltaFabs 团队打造"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "支持 FilaMind Flow"
+    },
+    "backUi": {
+      "label": "返回界面",
+      "title": "打开打印机的网页界面"
     }
   }
 }

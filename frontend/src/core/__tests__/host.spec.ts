@@ -6,7 +6,13 @@ import {
   isMainsailHost,
   showMainsailLink,
   isWidgetEnabled,
+  detectBackUi,
 } from '@/core/host/adapter'
+
+const loc = { protocol: 'http:', hostname: 'printer.local' }
+const okFetch = (name: string) =>
+  (() =>
+    Promise.resolve({ ok: true, json: () => Promise.resolve({ name }) })) as unknown as typeof fetch
 
 describe('host adapter (dual-host)', () => {
   afterEach(() => vi.unstubAllEnvs())
@@ -33,5 +39,22 @@ describe('host adapter (dual-host)', () => {
     expect(isSuiteHost()).toBe(true)
     expect(isWidgetEnabled('remote-control')).toBe(true)
     expect(isWidgetEnabled('machine-doctor')).toBe(true) // shared widgets still enabled
+  })
+
+  it('detectBackUi recognises Mainsail and Fluidd from the host manifest', async () => {
+    expect(await detectBackUi({ location: loc, fetchImpl: okFetch('Mainsail') })).toEqual({
+      name: 'Mainsail',
+      url: 'http://printer.local/',
+    })
+    expect((await detectBackUi({ location: loc, fetchImpl: okFetch('Fluidd') })).name).toBe(
+      'Fluidd',
+    )
+  })
+
+  it('detectBackUi falls back to a generic (empty) name on any probe failure', async () => {
+    const boom = (() => Promise.reject(new Error('CORS'))) as unknown as typeof fetch
+    expect((await detectBackUi({ location: loc, fetchImpl: boom })).name).toBe('')
+    const unknown = okFetch('SomethingElse')
+    expect((await detectBackUi({ location: loc, fetchImpl: unknown })).name).toBe('')
   })
 })

@@ -8,10 +8,6 @@
       "toggle": "Attiva/disattiva navigazione",
       "label": "Navigazione principale"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "Torna a Mainsail"
-    },
     "footer": {
       "stack": "FilaMind Flow - Creato da maker egiziani, per i maker di tutto il mondo. Buona stampa",
       "by": "dal team DeltaFabs"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "Sostieni FilaMind Flow"
+    },
+    "backUi": {
+      "label": "Torna all'interfaccia",
+      "title": "Apri l'interfaccia web della stampante"
     }
   }
 }

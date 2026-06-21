@@ -8,10 +8,6 @@
       "toggle": "Navigatie schakelen",
       "label": "Hoofdnavigatie"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "Terug naar Mainsail"
-    },
     "footer": {
       "stack": "FilaMind Flow - Gebouwd door Egyptische makers, voor makers wereldwijd. Veel printplezier",
       "by": "door het DeltaFabs-team"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "Steun FilaMind Flow"
+    },
+    "backUi": {
+      "label": "Terug naar UI",
+      "title": "Open de webinterface van de printer"
     }
   }
 }

@@ -8,10 +8,6 @@
       "toggle": "Bật/tắt điều hướng",
       "label": "Điều hướng chính"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "Quay lại Mainsail"
-    },
     "footer": {
       "stack": "FilaMind Flow - Được tạo bởi các maker Ai Cập, cho các maker toàn thế giới. Chúc in vui vẻ",
       "by": "bởi nhóm DeltaFabs"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "Hỗ trợ FilaMind Flow"
+    },
+    "backUi": {
+      "label": "Quay lại giao diện",
+      "title": "Mở giao diện web của máy in"
     }
   }
 }
