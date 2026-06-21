@@ -125,7 +125,7 @@ describe('shell catalog', () => {
   it('resolves shell chrome strings', () => {
     expect(i18n.global.t('shell.nav.dashboard')).toBe('Dashboard')
     expect(i18n.global.t('shell.connection.connected')).toBe('Connected')
-    expect(i18n.global.t('shell.mainsail.label')).toBe('Mainsail')
+    expect(i18n.global.t('shell.backUi.label')).toBe('Back to UI')
   })
 })
 

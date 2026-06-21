@@ -8,10 +8,6 @@
       "toggle": "تبديل التنقّل",
       "label": "التنقل الرئيسي"
     },
-    "mainsail": {
-      "label": "Mainsail",
-      "title": "العودة إلى Mainsail"
-    },
     "footer": {
       "stack": "FilaMind Flow — صُنع بأيدي صنّاع مصريين، لصنّاع العالم. طباعة سعيدة",
       "by": "بواسطة فريق DeltaFabs"
@@ -218,6 +214,10 @@
     },
     "support": {
       "kofi": "ادعم FilaMind Flow"
+    },
+    "backUi": {
+      "label": "العودة إلى الواجهة",
+      "title": "افتح واجهة الطابعة"
     }
   }
 }

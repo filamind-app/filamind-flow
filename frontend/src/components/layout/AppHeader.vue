@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import FeedbackMenu from '@/components/feedback/FeedbackMenu.vue'
@@ -7,7 +7,7 @@ import LanguageMenu from '@/components/layout/LanguageMenu.vue'
 import ThemeMenu from '@/components/layout/ThemeMenu.vue'
 import ConnectionStatus from '@/components/system/ConnectionStatus.vue'
 import { useNav } from '@/core/nav'
-import { showMainsailLink } from '@/core/host/adapter'
+import { showMainsailLink, detectBackUi, type BackUi } from '@/core/host/adapter'
 import { refreshGuard, usePrinterGuard } from '@/core/printerGuard'
 import { usePolling } from '@/core/usePolling'
 
@@ -16,11 +16,21 @@ const { sidebarOpen } = useNav()
 
 const title = import.meta.env.VITE_APP_TITLE || 'FilaMind Flow'
 
-// The "back to Mainsail" link only applies to the Mainsail-hosted build (hidden under the suite host).
-const mainsailVisible = showMainsailLink()
-// Mainsail is served on the same host (default port 80); override with VITE_MAINSAIL_URL.
-const mainsailUrl =
-  import.meta.env.VITE_MAINSAIL_URL || `${window.location.protocol}//${window.location.hostname}/`
+// The "back to the host UI" link only applies to the Mainsail-hosted build (hidden under the suite host).
+// The host UI is served on the same origin (override with VITE_MAINSAIL_URL); detectBackUi() then
+// probes whether it's Mainsail or Fluidd so the label is right for either (best-effort, never throws).
+const backVisible = showMainsailLink()
+const backUi = ref<BackUi>({
+  name: '',
+  url:
+    import.meta.env.VITE_MAINSAIL_URL ||
+    `${window.location.protocol}//${window.location.hostname}/`,
+})
+const backLabel = computed(() => backUi.value.name || t('shell.backUi.label'))
+onMounted(async () => {
+  if (backVisible)
+    backUi.value = await detectBackUi({ url: import.meta.env.VITE_MAINSAIL_URL || undefined })
+})
 
 // Global write-lock awareness: one shell-level poll feeds the whole app (and this badge), so the
 // user learns the printer is busy BEFORE a gated action refuses them.
@@ -55,13 +65,13 @@ const guardBadge = computed<{ text: string; printing: boolean } | null>(() => {
         <span aria-hidden="true">☰</span>
       </button>
       <a
-        v-if="mainsailVisible"
+        v-if="backVisible"
         class="nb-btn shrink-0 bg-brand-cyan px-3 py-1.5"
-        :href="mainsailUrl"
-        :title="t('shell.mainsail.title')"
+        :href="backUi.url"
+        :title="t('shell.backUi.title')"
       >
         <span aria-hidden="true">←</span>
-        <span class="hidden sm:inline">{{ t('shell.mainsail.label') }}</span>
+        <span class="hidden sm:inline">{{ backLabel }}</span>
       </a>
       <h1 class="truncate font-display text-xl font-bold sm:text-2xl">{{ title }}</h1>
       <span
