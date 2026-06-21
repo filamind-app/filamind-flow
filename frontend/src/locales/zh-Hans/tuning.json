@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "引导式校准向导。首个项目：Pressure Advance（压力提前）。",
+    "intro": "引导式校准向导。请在下方选择一个。",
+    "pick": {
+      "label": "向导"
+    },
     "params": {
       "start": "起始 PA",
       "factor": "系数（PA/mm）",
@@ -27,9 +30,36 @@
         "moonraker_error": "应用失败：{error}"
       }
     },
+    "retraction": {
+      "title": "回抽",
+      "params": {
+        "start": "起始长度（mm）",
+        "factor": "系数（mm/mm）",
+        "height": "高度（mm）"
+      },
+      "step1": "1. 规划调校塔",
+      "plan": "规划塔",
+      "command": "运行此命令",
+      "commandHint": "在打印开始前发送（或将其加入测试模型的起始 G-code）；回抽长度会随塔体打印逐层递增。需要已配置 [firmware_retraction]。",
+      "table": {
+        "height": "高度（mm）",
+        "value": "长度（mm）"
+      },
+      "step2": "2. 输入观感最佳的高度",
+      "bestHeight": "最佳 Z 高度（mm）",
+      "computed": "计算得出的回抽长度：{value} mm",
+      "applyButton": "应用回抽",
+      "apply": {
+        "applied": "已应用回抽长度 {value} mm",
+        "busy": "打印机忙碌中 - 现在无法应用",
+        "out_of_range": "数值超出范围（最大 {max}）",
+        "no_firmware_retraction": "此打印机未配置 [firmware_retraction] 段",
+        "moonraker_error": "应用失败：{error}"
+      }
+    },
     "help": {
       "guide": "指南",
-      "guideTitle": "Pressure Advance 指南",
+      "guideTitle": "调校向导指南",
       "close": "关闭",
       "topics": {
         "overview": {
@@ -38,7 +68,11 @@
         },
         "workflow": {
           "title": "向导的工作原理",
-          "body": "规划一座调校塔，打印它（PA 随高度递增），读出最干净的高度，然后应用对应的数值。将其保存到 printer.cfg 以长期生效。"
+          "body": "规划一座调校塔，打印它（数值随高度递增），读出最干净的高度，然后应用对应的数值。将其保存到 printer.cfg 以长期生效。"
+        },
+        "retraction": {
+          "title": "什么是回抽？",
+          "body": "回抽会在空驶移动时把耗材回拉，以阻止漏料和拉丝。回抽太少会留下拉丝；太多则可能造成堵头或缺料。此向导用于调校固件回抽长度。"
         },
         "glossary": {
           "title": "术语表"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "调校塔",
           "def": "一种高大的打印件，TUNING_TOWER 会随高度稳步改变某个参数，方便你挑选最佳层。"
+        },
+        "firmwareRetraction": {
+          "term": "固件回抽",
+          "def": "Klipper 的 [firmware_retraction] 功能：G10/G11 回抽与回抽恢复由打印机处理，可用 SET_RETRACTION 实时调校。"
         }
       }
     }

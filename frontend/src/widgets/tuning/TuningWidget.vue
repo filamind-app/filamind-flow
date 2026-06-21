@@ -1,63 +1,28 @@
 <script setup lang="ts">
-/** Tuning wizards (suite-only / flow-A). First wizard: Pressure Advance - plan a TUNING_TOWER,
- *  print it, read the best Z height off the result, and the wizard computes + applies the matching
- *  PA (gated). More wizards (flow / temp / retraction) slot in here later.
+/** Tuning wizards (suite-only / flow-A). A picker over guided TUNING_TOWER wizards - each plans a
+ *  tower, you read the cleanest Z height off the print, and the wizard computes + applies the
+ *  matching value (gated). Pressure Advance and retraction ship today; more slot in via TowerWizard.
  */
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
-import { describeError } from '@/core/describeError'
 
 import HelpIllo from './HelpIllo.vue'
+import TowerWizard from './TowerWizard.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import { applyPa, planPa } from './api'
-import { defaultParams, type PaTowerPlan } from './types'
+import { applyPa, applyRetraction, planPa, planRetraction } from './api'
+import { defaultParams, defaultRetractionParams } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
-const params = ref(defaultParams())
-const plan = ref<PaTowerPlan | null>(null)
-const bestHeight = ref<number | null>(null)
-const error = ref<string | null>(null)
-const notice = ref<{ text: string; ok: boolean } | null>(null)
-const planning = ref(false)
-const applying = ref(false)
+type WizardId = 'pa' | 'retraction'
+const active = ref<WizardId>('pa')
 
-const computedPa = computed(() => {
-  const p = plan.value
-  if (!p || bestHeight.value == null) return null
-  return Math.round((p.start + p.factor * bestHeight.value) * 10000) / 10000
-})
-
-async function doPlan(): Promise<void> {
-  planning.value = true
-  error.value = null
-  notice.value = null
-  try {
-    plan.value = await planPa(params.value)
-    bestHeight.value = null
-  } catch (e) {
-    error.value = describeError(e)
-  } finally {
-    planning.value = false
-  }
-}
-
-async function doApply(): Promise<void> {
-  if (computedPa.value == null) return
-  applying.value = true
-  error.value = null
-  try {
-    const res = await applyPa(computedPa.value)
-    const tt = t as unknown as (key: string, named: Record<string, unknown>) => string
-    notice.value = { text: tt(`tuning.pa.apply.${res.code}`, res.params ?? {}), ok: res.ok }
-  } catch (e) {
-    error.value = describeError(e)
-  } finally {
-    applying.value = false
-  }
-}
+const TABS: { id: WizardId; titleKey: string }[] = [
+  { id: 'pa', titleKey: 'tuning.pa.title' },
+  { id: 'retraction', titleKey: 'tuning.retraction.title' },
+]
 </script>
 
 <template>
@@ -77,84 +42,40 @@ async function doApply(): Promise<void> {
       />
     </div>
 
-    <h3 class="font-display text-base font-bold">{{ t('tuning.pa.title') }}</h3>
-
-    <p v-if="error" class="nb-card bg-brand-red px-2 py-1 text-xs text-paper" role="alert">
-      {{ error }}
-    </p>
-
-    <!-- Step 1: configure + plan the tower -->
-    <div class="nb-card space-y-2 bg-surface p-2">
-      <p class="text-xs font-bold">{{ t('tuning.pa.step1') }}</p>
-      <div class="grid grid-cols-3 gap-2">
-        <label class="flex flex-col gap-0.5 text-xs">
-          {{ t('tuning.params.start') }}
-          <input v-model.number="params.start" type="number" step="0.005" class="nb-input" />
-        </label>
-        <label class="flex flex-col gap-0.5 text-xs">
-          {{ t('tuning.params.factor') }}
-          <input v-model.number="params.factor" type="number" step="0.001" class="nb-input" />
-        </label>
-        <label class="flex flex-col gap-0.5 text-xs">
-          {{ t('tuning.params.height') }}
-          <input v-model.number="params.height" type="number" step="1" class="nb-input" />
-        </label>
-      </div>
-      <button class="nb-btn bg-brand-lime px-3 py-1" :disabled="planning" @click="doPlan">
-        {{ t('tuning.pa.plan') }}
-      </button>
-    </div>
-
-    <!-- The TUNING_TOWER command + the height->PA table -->
-    <div v-if="plan" class="nb-card space-y-2 bg-surface p-2">
-      <p class="text-xs font-bold">{{ t('tuning.pa.command') }}</p>
-      <p class="text-[11px] opacity-70">{{ t('tuning.pa.commandHint') }}</p>
-      <pre
-        class="overflow-x-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
-        >{{ plan.command }}</pre
-      >
-      <table class="w-full text-[11px]">
-        <thead>
-          <tr class="text-start opacity-70">
-            <th class="text-start font-bold">{{ t('tuning.pa.table.height') }}</th>
-            <th class="text-start font-bold">{{ t('tuning.pa.table.pa') }}</th>
-          </tr>
-        </thead>
-        <tbody class="font-mono">
-          <tr v-for="s in plan.samples" :key="s.height">
-            <td>{{ s.height }}</td>
-            <td>{{ s.pa }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Step 2: enter the best height -> computed PA -> apply -->
-    <div v-if="plan" class="nb-card space-y-2 bg-surface p-2">
-      <p class="text-xs font-bold">{{ t('tuning.pa.step2') }}</p>
-      <label class="flex flex-col gap-0.5 text-xs">
-        {{ t('tuning.pa.bestHeight') }}
-        <input v-model.number="bestHeight" type="number" step="0.2" class="nb-input" />
-      </label>
-      <p v-if="computedPa != null" class="text-xs">
-        {{ t('tuning.pa.computed', { pa: computedPa }) }}
-      </p>
+    <!-- Wizard picker -->
+    <div class="flex flex-wrap gap-2" role="tablist" :aria-label="t('tuning.pick.label')">
       <button
-        class="nb-btn bg-brand-cyan px-3 py-1"
-        :disabled="computedPa == null || applying"
-        @click="doApply"
+        v-for="tab in TABS"
+        :key="tab.id"
+        type="button"
+        role="tab"
+        :aria-selected="active === tab.id"
+        class="nb-btn px-3 py-1 text-xs"
+        :class="active === tab.id ? 'bg-brand-purple text-paper' : 'bg-surface'"
+        @click="active = tab.id"
       >
-        {{ t('tuning.pa.applyButton') }}
+        {{ t(tab.titleKey) }}
       </button>
     </div>
 
-    <p
-      v-if="notice"
-      class="nb-card px-2 py-1 text-xs"
-      :class="notice.ok ? 'bg-brand-lime' : 'bg-brand-yellow text-ink'"
-      role="status"
-    >
-      {{ notice.text }}
-    </p>
+    <!-- Wizards kept mounted (v-show) so switching tabs preserves each one's progress. -->
+    <TowerWizard
+      v-show="active === 'pa'"
+      base="tuning.pa"
+      params-base="tuning.params"
+      value-key="pa"
+      :defaults="defaultParams()"
+      :plan="planPa"
+      :apply="applyPa"
+    />
+    <TowerWizard
+      v-show="active === 'retraction'"
+      base="tuning.retraction"
+      params-base="tuning.retraction.params"
+      value-key="value"
+      :defaults="defaultRetractionParams()"
+      :plan="planRetraction"
+      :apply="applyRetraction"
+    />
   </div>
 </template>

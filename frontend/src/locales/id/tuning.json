@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "Wizard kalibrasi terpandu. Pertama: Pressure Advance.",
+    "intro": "Wizard kalibrasi terpandu. Pilih salah satu di bawah.",
+    "pick": {
+      "label": "Wizard"
+    },
     "params": {
       "start": "PA awal",
       "factor": "Faktor (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "Gagal menerapkan: {error}"
       }
     },
+    "retraction": {
+      "title": "Retraction",
+      "params": {
+        "start": "Panjang awal (mm)",
+        "factor": "Faktor (mm/mm)",
+        "height": "Tinggi (mm)"
+      },
+      "step1": "1. Rencanakan menara penyetelan",
+      "plan": "Rencanakan menara",
+      "command": "Jalankan perintah ini",
+      "commandHint": "Kirim tepat sebelum mencetak (atau tambahkan ke g-code awal model uji Anda); panjang retraction akan naik bertahap pada menara saat mencetak. Memerlukan [firmware_retraction] yang sudah dikonfigurasi.",
+      "table": {
+        "height": "Tinggi (mm)",
+        "value": "Panjang (mm)"
+      },
+      "step2": "2. Masukkan tinggi yang tampak paling baik",
+      "bestHeight": "Tinggi Z terbaik (mm)",
+      "computed": "Panjang retraction terhitung: {value} mm",
+      "applyButton": "Terapkan retraction",
+      "apply": {
+        "applied": "Panjang retraction {value} mm diterapkan",
+        "busy": "Printer sedang sibuk - tidak bisa menerapkan sekarang",
+        "out_of_range": "Nilai di luar rentang (maks {max})",
+        "no_firmware_retraction": "Tidak ada bagian [firmware_retraction] yang dikonfigurasi pada printer ini",
+        "moonraker_error": "Gagal menerapkan: {error}"
+      }
+    },
     "help": {
       "guide": "Panduan",
-      "guideTitle": "Panduan Pressure Advance",
+      "guideTitle": "Panduan wizard penyetelan",
       "close": "Tutup",
       "topics": {
         "overview": {
@@ -38,7 +68,11 @@
         },
         "workflow": {
           "title": "Cara kerja wizard",
-          "body": "Rencanakan menara penyetelan, cetak (PA naik bertahap seiring tinggi), baca tinggi yang paling bersih, lalu terapkan nilai yang sesuai. Simpan ke printer.cfg agar tetap tersimpan."
+          "body": "Rencanakan menara penyetelan, cetak (nilai naik bertahap seiring tinggi), baca tinggi yang paling bersih, lalu terapkan nilai yang sesuai. Simpan ke printer.cfg agar tetap tersimpan."
+        },
+        "retraction": {
+          "title": "Apa itu retraction?",
+          "body": "Retraction menarik filamen kembali saat gerakan perpindahan untuk mencegah tetesan dan benang halus. Terlalu sedikit menyisakan benang; terlalu banyak bisa menyebabkan penyumbatan atau celah. Wizard ini menyetel panjang firmware retraction."
         },
         "glossary": {
           "title": "Glosarium"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "Menara penyetelan",
           "def": "Cetakan tinggi tempat TUNING_TOWER mengubah parameter secara bertahap seiring tinggi sehingga Anda dapat memilih lapisan terbaik."
+        },
+        "firmwareRetraction": {
+          "term": "Firmware retraction",
+          "def": "Fitur [firmware_retraction] milik Klipper: G10/G11 retract dan unretract ditangani oleh printer, dapat disetel langsung dengan SET_RETRACTION."
         }
       }
     }

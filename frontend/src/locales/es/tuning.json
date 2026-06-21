@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "Asistentes de calibración guiada. Primero: Pressure Advance.",
+    "intro": "Asistentes de calibración guiada. Elige uno abajo.",
+    "pick": {
+      "label": "Asistente"
+    },
     "params": {
       "start": "PA inicial",
       "factor": "Factor (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "No se pudo aplicar: {error}"
       }
     },
+    "retraction": {
+      "title": "Retracción",
+      "params": {
+        "start": "Longitud inicial (mm)",
+        "factor": "Factor (mm/mm)",
+        "height": "Altura (mm)"
+      },
+      "step1": "1. Planifica la torre de calibración",
+      "plan": "Planificar torre",
+      "command": "Ejecuta este comando",
+      "commandHint": "Envíalo justo antes de la impresión (o añádelo al g-code de inicio de tu modelo de prueba); la longitud de retracción aumenta a lo largo de la torre a medida que se imprime. Necesita [firmware_retraction] configurado.",
+      "table": {
+        "height": "Altura (mm)",
+        "value": "Longitud (mm)"
+      },
+      "step2": "2. Introduce la altura con mejor aspecto",
+      "bestHeight": "Mejor altura Z (mm)",
+      "computed": "Longitud de retracción calculada: {value} mm",
+      "applyButton": "Aplicar retracción",
+      "apply": {
+        "applied": "Longitud de retracción {value} mm aplicada",
+        "busy": "La impresora está ocupada - no se puede aplicar ahora",
+        "out_of_range": "Valor fuera de rango (máx {max})",
+        "no_firmware_retraction": "No hay ninguna sección [firmware_retraction] configurada en esta impresora",
+        "moonraker_error": "No se pudo aplicar: {error}"
+      }
+    },
     "help": {
       "guide": "Guía",
-      "guideTitle": "Guía de Pressure Advance",
+      "guideTitle": "Guía de los asistentes de calibración",
       "close": "Cerrar",
       "topics": {
         "overview": {
@@ -37,8 +67,12 @@
           "body": "El PA compensa el retardo de presión en la boquilla, definiendo mejor las esquinas y reduciendo el rezumado y los abultamientos. Cada filamento tiene su propio valor óptimo."
         },
         "workflow": {
-          "title": "Cómo funciona el asistente",
-          "body": "Planifica una torre de calibración, imprímela (el PA aumenta a medida que sube), localiza la altura más limpia y aplica el valor correspondiente. Guárdalo en printer.cfg para conservarlo."
+          "title": "Cómo funcionan los asistentes",
+          "body": "Planifica una torre de calibración, imprímela (el valor aumenta a medida que sube), localiza la altura más limpia y aplica el valor correspondiente. Guárdalo en printer.cfg para conservarlo."
+        },
+        "retraction": {
+          "title": "¿Qué es la retracción?",
+          "body": "La retracción tira del filamento hacia atrás en los desplazamientos para evitar el rezumado y los hilos. Demasiado poca deja hilos; demasiada puede causar obstrucciones o huecos. Este asistente calibra la longitud de retracción del firmware."
         },
         "glossary": {
           "title": "Glosario"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "Torre de calibración",
           "def": "Una impresión alta en la que TUNING_TOWER cambia gradualmente un parámetro con la altura para que puedas elegir la mejor capa."
+        },
+        "firmwareRetraction": {
+          "term": "Retracción por firmware",
+          "def": "La función [firmware_retraction] de Klipper: G10/G11 retraen y des-retraen gestionados por la impresora, ajustables en vivo con SET_RETRACTION."
         }
       }
     }

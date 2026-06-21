@@ -32,5 +32,12 @@ defineProps<{ illo: HelpIlloKey }>()
       <circle cx="14" cy="9" r="2.2" fill="currentColor" stroke="none" />
       <path d="M5 16 l3 3 l6 -7" />
     </g>
+
+    <!-- Retraction: a nozzle pulling filament back (up arrow into the hotend) -->
+    <g v-else-if="illo === 'retraction'">
+      <path d="M9 4 h6 l-1.5 9 h-3 Z" />
+      <path d="M10.5 13 l1.5 4 l1.5 -4" />
+      <path d="M12 11 V5 M10.5 6.5 L12 5 L13.5 6.5" stroke-opacity="0.7" />
+    </g>
   </svg>
 </template>
