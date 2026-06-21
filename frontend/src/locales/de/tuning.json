@@ -93,6 +93,21 @@
         "moonraker_error": "Anwenden fehlgeschlagen: {error}"
       }
     },
+    "flow": {
+      "title": "Durchfluss",
+      "step1": "1. Eine bekannte Länge extrudieren, dann messen, was tatsächlich herausgekommen ist",
+      "requested": "Angeforderte Länge (mm)",
+      "measured": "Gemessene Länge (mm)",
+      "current": "Aktuelle rotation_distance",
+      "fetch": "Vom Drucker auslesen",
+      "calc": "Berechnen",
+      "step2": "2. Korrektur",
+      "result": "Neue rotation_distance: {value}",
+      "flowPercent": "Entsprechender Slicer-Durchfluss: {percent}%",
+      "snippetTitle": "In deinen [extruder]-Abschnitt einfügen, dann SAVE_CONFIG ausführen und neu starten",
+      "notLive": "Der Durchfluss kann nicht live gesetzt werden - wende ihn mit einem Speichern der Konfiguration und einem Neustart an, nicht sofort.",
+      "noCurrent": "Konnte nicht vom Drucker ausgelesen werden - gib deine [extruder] rotation_distance manuell ein."
+    },
     "help": {
       "guide": "Anleitung",
       "guideTitle": "Anleitung zu den Tuning-Assistenten",
@@ -114,6 +129,10 @@
           "title": "Was ist ein Temperaturturm?",
           "body": "Ein Temperaturturm druckt dieselbe Form bei gestuften Düsentemperaturen, sodass du diejenige mit der besten Schichthaftung, Oberflächenqualität und dem geringsten Fädenziehen für dein Filament auswählen kannst."
         },
+        "flow": {
+          "title": "Was ist eine Durchflusskalibrierung?",
+          "body": "Die Durchflusskalibrierung korrigiert, wie viel Filament der Extruder tatsächlich fördert. Fordere eine bekannte Länge an, miss, was herausgekommen ist, und der Assistent passt die rotation_distance an. Klipper hat keine Live-Durchflusseinstellung, daher kommt der neue Wert in die printer.cfg."
+        },
         "glossary": {
           "title": "Glossar"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Temperaturturm",
           "def": "Ein Testdruck, der in Bänder unterteilt ist und bei jeweils unterschiedlicher Düsentemperatur gehalten wird, um die beste Drucktemperatur eines Filaments zu finden."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Wie viele mm Filament der Extruder pro Motorumdrehung fördert. Eine Verringerung fördert mehr Filament; die Durchflusskalibrierung stimmt diesen Wert ab."
         }
       }
     }

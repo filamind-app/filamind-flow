@@ -93,6 +93,21 @@
         "moonraker_error": "Toepassen mislukt: {error}"
       }
     },
+    "flow": {
+      "title": "Flow",
+      "step1": "1. Extrudeer een bekende lengte en meet daarna wat er werkelijk uit kwam",
+      "requested": "Opgegeven lengte (mm)",
+      "measured": "Gemeten lengte (mm)",
+      "current": "Huidige rotation_distance",
+      "fetch": "Uitlezen van printer",
+      "calc": "Berekenen",
+      "step2": "2. Correctie",
+      "result": "Nieuwe rotation_distance: {value}",
+      "flowPercent": "Equivalente slicer-flow: {percent}%",
+      "snippetTitle": "Plak dit in je [extruder]-sectie, voer daarna SAVE_CONFIG uit en herstart",
+      "notLive": "Flow kan niet live worden ingesteld - pas dit toe met een configuratie-opslag en herstart, niet direct.",
+      "noCurrent": "Kon dit niet uitlezen van de printer - voer je [extruder] rotation_distance handmatig in."
+    },
     "help": {
       "guide": "Gids",
       "guideTitle": "Gids voor afstemwizards",
@@ -114,6 +129,10 @@
           "title": "Wat is een temperatuurtoren?",
           "body": "Een temperatuurtoren print dezelfde vorm bij oplopende nozzletemperaturen, zodat je die met de beste laaghechting, oppervlakteafwerking en minste draadvorming voor jouw filament kunt kiezen."
         },
+        "flow": {
+          "title": "Wat is flow-kalibratie?",
+          "body": "Flow-kalibratie corrigeert hoeveel filament de extruder daadwerkelijk doorvoert. Geef een bekende lengte op, meet wat eruit kwam, en de wizard past rotation_distance aan. Klipper heeft geen live flow-instelling, dus de nieuwe waarde komt in printer.cfg."
+        },
         "glossary": {
           "title": "Begrippenlijst"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Temperatuurtoren",
           "def": "Een testprint verdeeld in banden, elk op een andere nozzletemperatuur, om de beste printtemperatuur van een filament te vinden."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Hoeveel mm filament de extruder per motorrotatie doorvoert. Verlagen voert meer filament door; flow-kalibratie stemt deze waarde af."
         }
       }
     }

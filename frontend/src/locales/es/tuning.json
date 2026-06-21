@@ -93,6 +93,21 @@
         "moonraker_error": "No se pudo aplicar: {error}"
       }
     },
+    "flow": {
+      "title": "Flujo",
+      "step1": "1. Extruye una longitud conocida y luego mide lo que salió realmente",
+      "requested": "Longitud ordenada (mm)",
+      "measured": "Longitud medida (mm)",
+      "current": "rotation_distance actual",
+      "fetch": "Leer de la impresora",
+      "calc": "Calcular",
+      "step2": "2. Corrección",
+      "result": "Nuevo rotation_distance: {value}",
+      "flowPercent": "Flujo equivalente del laminador: {percent}%",
+      "snippetTitle": "Pégalo en tu sección [extruder], luego ejecuta SAVE_CONFIG y reinicia",
+      "notLive": "El flujo no se puede ajustar en vivo - aplícalo guardando la configuración y reiniciando, no de forma instantánea.",
+      "noCurrent": "No se pudo leer de la impresora - introduce manualmente el rotation_distance de tu [extruder]."
+    },
     "help": {
       "guide": "Guía",
       "guideTitle": "Guía de los asistentes de calibración",
@@ -114,6 +129,10 @@
           "title": "¿Qué es una torre de temperatura?",
           "body": "Una torre de temperatura imprime la misma forma a temperaturas de boquilla escalonadas para que puedas elegir la que ofrezca la mejor adhesión entre capas, el mejor acabado superficial y la menor formación de hilos para tu filamento."
         },
+        "flow": {
+          "title": "¿Qué es la calibración de flujo?",
+          "body": "La calibración de flujo corrige cuánto filamento empuja realmente el extrusor. Ordena una longitud conocida, mide lo que salió y el asistente ajusta el rotation_distance. Klipper no tiene un ajuste de flujo en vivo, así que el nuevo valor va en printer.cfg."
+        },
         "glossary": {
           "title": "Glosario"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Torre de temperatura",
           "def": "Una impresión de prueba dividida en bandas, cada una mantenida a una temperatura de boquilla distinta, para encontrar la mejor temperatura de impresión de un filamento."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Cuántos mm de filamento alimenta el extrusor por cada rotación del motor. Reducirlo empuja más filamento; la calibración de flujo ajusta este valor."
         }
       }
     }

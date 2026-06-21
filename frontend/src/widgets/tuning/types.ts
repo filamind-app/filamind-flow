@@ -92,3 +92,13 @@ export function defaultTempParams(): TempTowerParams {
 
 /** Heaters a temperature tower may target (mirrors the backend allowlist). */
 export const HEATERS = ['extruder', 'extruder1', 'extruder2', 'heater_bed'] as const
+
+/** Flow (extrusion) calibration - no live apply; corrects rotation_distance. */
+export interface FlowExtruder {
+  rotation_distance: number | null
+}
+
+export interface FlowComputeResult {
+  new_rotation_distance: number
+  flow_percent: number
+}

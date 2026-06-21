@@ -6,6 +6,9 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
 from app.models.schemas import (
+    FlowComputeRequest,
+    FlowComputeResult,
+    FlowExtruder,
     PaApplyRequest,
     PaApplyResult,
     PaTowerPlan,
@@ -19,7 +22,7 @@ from app.models.schemas import (
     TempTowerPlan,
     TempTowerRequest,
 )
-from app.services import pa_tuning, retraction_tuning, temp_tuning
+from app.services import flow_tuning, pa_tuning, retraction_tuning, temp_tuning
 
 router = APIRouter(prefix="/tuning", tags=["tuning"])
 
@@ -93,3 +96,20 @@ async def temp_apply(
     """Set the chosen temperature live (gated; allowlisted heater + bounded target)."""
     result = await temp_tuning.apply_temp(settings.moonraker_url, req.heater, req.value)
     return TempApplyResult(**result)
+
+
+@router.get("/flow/extruder", response_model=FlowExtruder)
+async def flow_extruder(settings: Settings = Depends(get_settings)) -> FlowExtruder:
+    """The live extruder rotation_distance, to seed the flow calculator (read-only)."""
+    result = await flow_tuning.extruder_rotation_distance(settings.moonraker_url)
+    return FlowExtruder(**result)
+
+
+@router.post("/flow/compute", response_model=FlowComputeResult)
+async def flow_compute(req: FlowComputeRequest) -> FlowComputeResult:
+    """Corrected rotation_distance from a commanded-vs-measured extrusion (pure calc)."""
+    try:
+        result = flow_tuning.compute(req.requested, req.measured, req.current_rotation_distance)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return FlowComputeResult(**result)

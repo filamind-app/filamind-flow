@@ -46,5 +46,12 @@ defineProps<{ illo: HelpIlloKey }>()
       <circle cx="12" cy="17.5" r="1.6" fill="currentColor" stroke="none" />
       <path d="M14 7 h2 M14 10 h2 M14 13 h2" stroke-opacity="0.7" />
     </g>
+
+    <!-- Flow: filament feeding through a nozzle with a measuring ruler -->
+    <g v-else-if="illo === 'flow'">
+      <path d="M9 3 h6 v6 l-3 4 l-3 -4 Z" />
+      <path d="M12 13 V20" />
+      <path d="M9.5 17 h1.5 M9.5 19 h1.5 M9.5 15 h1.5" stroke-opacity="0.7" />
+    </g>
   </svg>
 </template>

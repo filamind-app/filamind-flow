@@ -93,6 +93,21 @@
         "moonraker_error": "Nie udało się zastosować: {error}"
       }
     },
+    "flow": {
+      "title": "Przepływ",
+      "step1": "1. Wytłocz znaną długość, a następnie zmierz, ile faktycznie wyszło",
+      "requested": "Zadana długość (mm)",
+      "measured": "Zmierzona długość (mm)",
+      "current": "Aktualne rotation_distance",
+      "fetch": "Odczytaj z drukarki",
+      "calc": "Oblicz",
+      "step2": "2. Korekta",
+      "result": "Nowe rotation_distance: {value}",
+      "flowPercent": "Odpowiadający przepływ w slicerze: {percent}%",
+      "snippetTitle": "Wklej do swojej sekcji [extruder], a następnie uruchom SAVE_CONFIG i zrestartuj",
+      "notLive": "Przepływu nie można ustawić na żywo - zastosuj to poprzez zapis konfiguracji i restart, nie natychmiast.",
+      "noCurrent": "Nie udało się odczytać tego z drukarki - wpisz ręcznie wartość rotation_distance ze swojej sekcji [extruder]."
+    },
     "help": {
       "guide": "Przewodnik",
       "guideTitle": "Przewodnik po kreatorach strojenia",
@@ -114,6 +129,10 @@
           "title": "Czym jest wieża temperaturowa?",
           "body": "Wieża temperaturowa drukuje ten sam kształt w stopniowanych temperaturach dyszy, abyś mógł wybrać tę o najlepszej przyczepności warstw, jakości powierzchni i najmniejszym nitkowaniu dla danego filamentu."
         },
+        "flow": {
+          "title": "Czym jest kalibracja przepływu?",
+          "body": "Kalibracja przepływu koryguje, ile filamentu ekstruder faktycznie wypycha. Zadaj znaną długość, zmierz, ile wyszło, a kreator dostosuje rotation_distance. Klipper nie ma ustawienia przepływu na żywo, więc nowa wartość trafia do printer.cfg."
+        },
         "glossary": {
           "title": "Słowniczek"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Wieża temperaturowa",
           "def": "Wydruk testowy podzielony na pasma, z których każde utrzymywane jest w innej temperaturze dyszy, aby znaleźć najlepszą temperaturę druku filamentu."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Ile mm filamentu ekstruder podaje na jeden obrót silnika. Zmniejszenie tej wartości powoduje podawanie większej ilości filamentu; kalibracja przepływu stroi tę wartość."
         }
       }
     }

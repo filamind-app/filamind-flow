@@ -93,6 +93,21 @@
         "moonraker_error": "Không thể áp dụng: {error}"
       }
     },
+    "flow": {
+      "title": "Lưu lượng",
+      "step1": "1. Đùn một độ dài đã biết, rồi đo lượng thực sự ra",
+      "requested": "Độ dài ra lệnh (mm)",
+      "measured": "Độ dài đo được (mm)",
+      "current": "rotation_distance hiện tại",
+      "fetch": "Đọc từ máy in",
+      "calc": "Tính toán",
+      "step2": "2. Hiệu chỉnh",
+      "result": "rotation_distance mới: {value}",
+      "flowPercent": "Lưu lượng slicer tương đương: {percent}%",
+      "snippetTitle": "Dán vào mục [extruder] của bạn, rồi chạy SAVE_CONFIG và khởi động lại",
+      "notLive": "Không thể đặt lưu lượng trực tiếp - hãy áp dụng bằng cách lưu cấu hình và khởi động lại, không phải tức thời.",
+      "noCurrent": "Không đọc được từ máy in - hãy nhập rotation_distance trong [extruder] của bạn theo cách thủ công."
+    },
     "help": {
       "guide": "Hướng dẫn",
       "guideTitle": "Hướng dẫn các trình tinh chỉnh",
@@ -114,6 +129,10 @@
           "title": "Tháp nhiệt độ là gì?",
           "body": "Tháp nhiệt độ in cùng một hình dạng ở các mức nhiệt độ vòi phun bậc thang để bạn chọn được mức cho độ bám dính lớp, độ hoàn thiện bề mặt tốt nhất và ít kéo chỉ nhất cho filament của bạn."
         },
+        "flow": {
+          "title": "Hiệu chuẩn lưu lượng là gì?",
+          "body": "Hiệu chuẩn lưu lượng điều chỉnh lượng filament mà đầu đùn thực sự đẩy ra. Ra lệnh một độ dài đã biết, đo lượng đã ra, và trình hướng dẫn sẽ điều chỉnh rotation_distance. Klipper không có thiết lập lưu lượng trực tiếp, nên giá trị mới được ghi vào printer.cfg."
+        },
         "glossary": {
           "title": "Thuật ngữ"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Tháp nhiệt độ",
           "def": "Một mẫu in chia thành các dải, mỗi dải giữ ở một mức nhiệt độ vòi phun khác nhau, để tìm nhiệt độ in tốt nhất cho filament."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Số mm filament mà đầu đùn nạp vào trên mỗi vòng quay của động cơ. Giảm giá trị này sẽ đẩy nhiều filament hơn; hiệu chuẩn lưu lượng sẽ tinh chỉnh giá trị này."
         }
       }
     }
