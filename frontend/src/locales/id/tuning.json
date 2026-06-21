@@ -57,6 +57,42 @@
         "moonraker_error": "Gagal menerapkan: {error}"
       }
     },
+    "temp": {
+      "title": "Temperature",
+      "params": {
+        "start": "Suhu awal (°C)",
+        "factor": "Faktor (°C/mm)",
+        "band": "Tinggi pita (mm)",
+        "height": "Tinggi (mm)",
+        "heater": "Pemanas"
+      },
+      "heaters": {
+        "extruder": "Ekstruder",
+        "extruder1": "Ekstruder 1",
+        "extruder2": "Ekstruder 2",
+        "heater_bed": "Bed"
+      },
+      "step1": "1. Rencanakan menara suhu",
+      "plan": "Rencanakan menara",
+      "command": "Jalankan perintah ini",
+      "commandHint": "Kirim tepat sebelum mencetak (atau tambahkan ke g-code awal model uji Anda); target suhu naik satu langkah per pita saat menara meninggi, memberi waktu bagi hotend untuk stabil.",
+      "table": {
+        "range": "Rentang Z (mm)",
+        "temp": "Suhu (°C)"
+      },
+      "step2": "2. Masukkan tinggi yang tampak paling baik",
+      "bestHeight": "Tinggi Z terbaik (mm)",
+      "computed": "Suhu terbaik: {temp} °C",
+      "noBand": "Masukkan tinggi yang berada dalam menara",
+      "applyButton": "Terapkan suhu",
+      "apply": {
+        "applied": "{heater} disetel ke {value} °C",
+        "busy": "Printer sedang sibuk - tidak bisa menerapkan sekarang",
+        "unknown_heater": "Pemanas tidak dikenal",
+        "out_of_range": "Nilai di luar rentang (maks {max})",
+        "moonraker_error": "Gagal menerapkan: {error}"
+      }
+    },
     "help": {
       "guide": "Panduan",
       "guideTitle": "Panduan wizard penyetelan",
@@ -74,6 +110,10 @@
           "title": "Apa itu retraction?",
           "body": "Retraction menarik filamen kembali saat gerakan perpindahan untuk mencegah tetesan dan benang halus. Terlalu sedikit menyisakan benang; terlalu banyak bisa menyebabkan penyumbatan atau celah. Wizard ini menyetel panjang firmware retraction."
         },
+        "temperature": {
+          "title": "Apa itu menara suhu?",
+          "body": "Menara suhu mencetak bentuk yang sama pada suhu nozel yang naik bertahap sehingga Anda dapat memilih suhu dengan adhesi antarlapis, hasil permukaan, dan benang halus paling minimal untuk filamen Anda."
+        },
         "glossary": {
           "title": "Glosarium"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Firmware retraction",
           "def": "Fitur [firmware_retraction] milik Klipper: G10/G11 retract dan unretract ditangani oleh printer, dapat disetel langsung dengan SET_RETRACTION."
+        },
+        "temperatureTower": {
+          "term": "Menara suhu",
+          "def": "Cetakan uji yang dibagi menjadi pita-pita, masing-masing ditahan pada suhu nozel yang berbeda, untuk menemukan suhu cetak terbaik sebuah filamen."
         }
       }
     }

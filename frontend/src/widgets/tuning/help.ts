@@ -3,18 +3,30 @@
  *  `HelpDrawer`.
  */
 
-export type HelpIlloKey = 'tower' | 'apply' | 'retraction'
+export type HelpIlloKey = 'tower' | 'apply' | 'retraction' | 'temperature'
 
-export type HelpTopic = 'overview' | 'workflow' | 'retraction' | 'glossary'
+export type HelpTopic = 'overview' | 'workflow' | 'retraction' | 'temperature' | 'glossary'
 
-export const HELP_TOPICS: HelpTopic[] = ['overview', 'workflow', 'retraction', 'glossary']
+export const HELP_TOPICS: HelpTopic[] = [
+  'overview',
+  'workflow',
+  'retraction',
+  'temperature',
+  'glossary',
+]
 
 export const HELP_ILLO: Partial<Record<HelpTopic, HelpIlloKey>> = {
   overview: 'tower',
   workflow: 'apply',
   retraction: 'retraction',
+  temperature: 'temperature',
   glossary: 'tower',
 }
 
-export const GLOSSARY_KEYS = ['pressureAdvance', 'tuningTower', 'firmwareRetraction'] as const
+export const GLOSSARY_KEYS = [
+  'pressureAdvance',
+  'tuningTower',
+  'firmwareRetraction',
+  'temperatureTower',
+] as const
 export type GlossaryKey = (typeof GLOSSARY_KEYS)[number]

@@ -60,3 +60,35 @@ export function defaultParams(): TowerParams {
 export function defaultRetractionParams(): TowerParams {
   return { start: 0, factor: 0.05, height: 50 }
 }
+
+/** Temperature tower (BAND mode) - one constant-temperature band (Z range -> temperature). */
+export interface TempBand {
+  z_low: number
+  z_high: number
+  temp: number
+}
+
+export interface TempTowerParams {
+  start: number
+  factor: number
+  band: number
+  height: number
+  heater: string
+}
+
+export interface TempTowerPlan {
+  command: string
+  start: number
+  factor: number
+  band: number
+  height: number
+  heater: string
+  bands: TempBand[]
+}
+
+export function defaultTempParams(): TempTowerParams {
+  return { start: 240, factor: -0.5, band: 10, height: 100, heater: 'extruder' }
+}
+
+/** Heaters a temperature tower may target (mirrors the backend allowlist). */
+export const HEATERS = ['extruder', 'extruder1', 'extruder2', 'heater_bed'] as const

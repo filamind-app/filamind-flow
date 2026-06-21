@@ -57,6 +57,42 @@
         "moonraker_error": "Couldn't apply: {error}"
       }
     },
+    "temp": {
+      "title": "Temperature",
+      "params": {
+        "start": "Start temp (°C)",
+        "factor": "Factor (°C/mm)",
+        "band": "Band height (mm)",
+        "height": "Height (mm)",
+        "heater": "Heater"
+      },
+      "heaters": {
+        "extruder": "Extruder",
+        "extruder1": "Extruder 1",
+        "extruder2": "Extruder 2",
+        "heater_bed": "Bed"
+      },
+      "step1": "1. Plan the temperature tower",
+      "plan": "Plan tower",
+      "command": "Run this command",
+      "commandHint": "Send it just before the print (or add it to your test model's start g-code); the target steps once per band as the tower rises, giving the hotend time to settle.",
+      "table": {
+        "range": "Z range (mm)",
+        "temp": "Temp (°C)"
+      },
+      "step2": "2. Enter the best-looking height",
+      "bestHeight": "Best Z height (mm)",
+      "computed": "Best temperature: {temp} °C",
+      "noBand": "Enter a height within the tower",
+      "applyButton": "Set temperature",
+      "apply": {
+        "applied": "Set {heater} to {value} °C",
+        "busy": "Printer is busy - can't apply now",
+        "unknown_heater": "Unknown heater",
+        "out_of_range": "Value out of range (max {max})",
+        "moonraker_error": "Couldn't apply: {error}"
+      }
+    },
     "help": {
       "guide": "Guide",
       "guideTitle": "Tuning wizards guide",
@@ -74,6 +110,10 @@
           "title": "What is retraction?",
           "body": "Retraction pulls filament back on travel moves to stop oozing and stringing. Too little leaves strings; too much can cause clogs or gaps. This wizard tunes the firmware retraction length."
         },
+        "temperature": {
+          "title": "What is a temperature tower?",
+          "body": "A temperature tower prints the same shape at stepped nozzle temperatures so you can pick the one with the best layer adhesion, surface finish, and least stringing for your filament."
+        },
         "glossary": {
           "title": "Glossary"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Firmware retraction",
           "def": "Klipper's [firmware_retraction] feature: G10/G11 retract and unretract handled by the printer, tunable live with SET_RETRACTION."
+        },
+        "temperatureTower": {
+          "term": "Temperature tower",
+          "def": "A test print divided into bands, each held at a different nozzle temperature, to find a filament's best printing temperature."
         }
       }
     }

@@ -57,6 +57,42 @@
         "moonraker_error": "적용하지 못했습니다: {error}"
       }
     },
+    "temp": {
+      "title": "온도",
+      "params": {
+        "start": "시작 온도 (°C)",
+        "factor": "계수 (°C/mm)",
+        "band": "구간 높이 (mm)",
+        "height": "높이 (mm)",
+        "heater": "히터"
+      },
+      "heaters": {
+        "extruder": "익스트루더",
+        "extruder1": "익스트루더 1",
+        "extruder2": "익스트루더 2",
+        "heater_bed": "베드"
+      },
+      "step1": "1. 온도 타워 계획",
+      "plan": "타워 계획",
+      "command": "이 명령을 실행하세요",
+      "commandHint": "출력 직전에 전송하세요 (또는 테스트 모델의 시작 G-code에 추가하세요). 타워가 올라가면서 구간마다 목표 온도가 한 단계씩 변경되어, 핫엔드가 안정될 시간을 줍니다.",
+      "table": {
+        "range": "Z 범위 (mm)",
+        "temp": "온도 (°C)"
+      },
+      "step2": "2. 가장 깔끔해 보이는 높이를 입력하세요",
+      "bestHeight": "최적 Z 높이 (mm)",
+      "computed": "최적 온도: {temp} °C",
+      "noBand": "타워 범위 내의 높이를 입력하세요",
+      "applyButton": "온도 설정",
+      "apply": {
+        "applied": "{heater}을(를) {value} °C로 설정했습니다",
+        "busy": "프린터가 사용 중입니다 - 지금은 적용할 수 없습니다",
+        "unknown_heater": "알 수 없는 히터",
+        "out_of_range": "값이 범위를 벗어났습니다 (최대 {max})",
+        "moonraker_error": "적용하지 못했습니다: {error}"
+      }
+    },
     "help": {
       "guide": "가이드",
       "guideTitle": "튜닝 마법사 가이드",
@@ -74,6 +110,10 @@
           "title": "리트랙션이란?",
           "body": "리트랙션은 이동 동작 시 필라멘트를 뒤로 당겨 흘러내림과 거미줄을 막아줍니다. 너무 적으면 거미줄이 남고, 너무 많으면 막힘이나 빈틈이 생길 수 있습니다. 이 마법사는 펌웨어 리트랙션 길이를 튜닝합니다."
         },
+        "temperature": {
+          "title": "온도 타워란?",
+          "body": "온도 타워는 같은 형상을 단계별로 변하는 노즐 온도에서 출력하여, 사용 중인 필라멘트에 가장 좋은 레이어 접착력과 표면 마감, 그리고 가장 적은 거미줄을 보이는 온도를 고를 수 있게 해줍니다."
+        },
         "glossary": {
           "title": "용어집"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "펌웨어 리트랙션",
           "def": "Klipper의 [firmware_retraction] 기능입니다. G10/G11 리트랙션과 언리트랙션을 프린터가 직접 처리하며, SET_RETRACTION으로 실시간 튜닝이 가능합니다."
+        },
+        "temperatureTower": {
+          "term": "온도 타워",
+          "def": "여러 구간으로 나뉘어 각 구간마다 다른 노즐 온도로 유지하면서 출력하는 테스트물로, 필라멘트의 최적 출력 온도를 찾기 위해 사용합니다."
         }
       }
     }

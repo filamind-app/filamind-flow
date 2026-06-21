@@ -57,6 +57,42 @@
         "moonraker_error": "Échec de l'application : {error}"
       }
     },
+    "temp": {
+      "title": "Température",
+      "params": {
+        "start": "Température de départ (°C)",
+        "factor": "Facteur (°C/mm)",
+        "band": "Hauteur de bande (mm)",
+        "height": "Hauteur (mm)",
+        "heater": "Chauffe"
+      },
+      "heaters": {
+        "extruder": "Extrudeur",
+        "extruder1": "Extrudeur 1",
+        "extruder2": "Extrudeur 2",
+        "heater_bed": "Plateau"
+      },
+      "step1": "1. Planifier la tour de température",
+      "plan": "Planifier la tour",
+      "command": "Exécutez cette commande",
+      "commandHint": "Envoyez-la juste avant l'impression (ou ajoutez-la au g-code de démarrage de votre modèle de test) ; la cible change d'un cran à chaque bande au fur et à mesure que la tour monte, laissant à la buse le temps de se stabiliser.",
+      "table": {
+        "range": "Plage Z (mm)",
+        "temp": "Temp. (°C)"
+      },
+      "step2": "2. Saisir la hauteur au plus beau rendu",
+      "bestHeight": "Meilleure hauteur Z (mm)",
+      "computed": "Meilleure température : {temp} °C",
+      "noBand": "Saisissez une hauteur comprise dans la tour",
+      "applyButton": "Appliquer la température",
+      "apply": {
+        "applied": "{heater} réglé à {value} °C",
+        "busy": "L'imprimante est occupée - impossible d'appliquer maintenant",
+        "unknown_heater": "Chauffe inconnue",
+        "out_of_range": "Valeur hors plage (max {max})",
+        "moonraker_error": "Échec de l'application : {error}"
+      }
+    },
     "help": {
       "guide": "Guide",
       "guideTitle": "Guide des assistants de réglage",
@@ -74,6 +110,10 @@
           "title": "Qu'est-ce que la rétraction ?",
           "body": "La rétraction tire le filament en arrière lors des déplacements pour éviter le suintement et les filaments parasites. Trop peu laisse des fils ; trop peut provoquer des bouchons ou des manques. Cet assistant règle la longueur de rétraction du firmware."
         },
+        "temperature": {
+          "title": "Qu'est-ce qu'une tour de température ?",
+          "body": "Une tour de température imprime la même forme à des températures de buse échelonnées, afin de choisir celle qui offre la meilleure adhérence entre couches, le meilleur état de surface et le moins de filaments parasites pour votre filament."
+        },
         "glossary": {
           "title": "Glossaire"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Rétraction du firmware",
           "def": "La fonction [firmware_retraction] de Klipper : la rétraction et la dé-rétraction G10/G11 sont gérées par l'imprimante et réglables en direct avec SET_RETRACTION."
+        },
+        "temperatureTower": {
+          "term": "Tour de température",
+          "def": "Une impression de test divisée en bandes, chacune maintenue à une température de buse différente, pour trouver la meilleure température d'impression d'un filament."
         }
       }
     }

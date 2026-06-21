@@ -57,6 +57,42 @@
         "moonraker_error": "Anwenden fehlgeschlagen: {error}"
       }
     },
+    "temp": {
+      "title": "Temperatur",
+      "params": {
+        "start": "Starttemperatur (°C)",
+        "factor": "Faktor (°C/mm)",
+        "band": "Bandhöhe (mm)",
+        "height": "Höhe (mm)",
+        "heater": "Heizelement"
+      },
+      "heaters": {
+        "extruder": "Extruder",
+        "extruder1": "Extruder 1",
+        "extruder2": "Extruder 2",
+        "heater_bed": "Druckbett"
+      },
+      "step1": "1. Temperaturturm planen",
+      "plan": "Turm planen",
+      "command": "Diesen Befehl ausführen",
+      "commandHint": "Sende ihn direkt vor dem Druck (oder füge ihn in den Start-G-code deines Testmodells ein); die Zieltemperatur wechselt einmal pro Band, während der Turm wächst, sodass die Düse Zeit hat, sich einzupendeln.",
+      "table": {
+        "range": "Z-Bereich (mm)",
+        "temp": "Temp. (°C)"
+      },
+      "step2": "2. Die am besten aussehende Höhe eingeben",
+      "bestHeight": "Beste Z-Höhe (mm)",
+      "computed": "Beste Temperatur: {temp} °C",
+      "noBand": "Gib eine Höhe innerhalb des Turms ein",
+      "applyButton": "Temperatur setzen",
+      "apply": {
+        "applied": "{heater} auf {value} °C gesetzt",
+        "busy": "Drucker ist beschäftigt - kann jetzt nicht angewendet werden",
+        "unknown_heater": "Unbekanntes Heizelement",
+        "out_of_range": "Wert außerhalb des Bereichs (max. {max})",
+        "moonraker_error": "Anwenden fehlgeschlagen: {error}"
+      }
+    },
     "help": {
       "guide": "Anleitung",
       "guideTitle": "Anleitung zu den Tuning-Assistenten",
@@ -74,6 +110,10 @@
           "title": "Was ist Rückzug?",
           "body": "Der Rückzug zieht das Filament bei Verfahrbewegungen zurück, um Nachsickern und Fädenziehen zu verhindern. Zu wenig hinterlässt Fäden; zu viel kann Verstopfungen oder Lücken verursachen. Dieser Assistent stimmt die Firmware-Rückzugslänge ab."
         },
+        "temperature": {
+          "title": "Was ist ein Temperaturturm?",
+          "body": "Ein Temperaturturm druckt dieselbe Form bei gestuften Düsentemperaturen, sodass du diejenige mit der besten Schichthaftung, Oberflächenqualität und dem geringsten Fädenziehen für dein Filament auswählen kannst."
+        },
         "glossary": {
           "title": "Glossar"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Firmware-Rückzug",
           "def": "Klippers Funktion [firmware_retraction]: G10/G11 für Rückzug und Rücknahme werden vom Drucker gesteuert und lassen sich live mit SET_RETRACTION abstimmen."
+        },
+        "temperatureTower": {
+          "term": "Temperaturturm",
+          "def": "Ein Testdruck, der in Bänder unterteilt ist und bei jeweils unterschiedlicher Düsentemperatur gehalten wird, um die beste Drucktemperatur eines Filaments zu finden."
         }
       }
     }

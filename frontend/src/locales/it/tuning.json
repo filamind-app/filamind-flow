@@ -57,6 +57,42 @@
         "moonraker_error": "Impossibile applicare: {error}"
       }
     },
+    "temp": {
+      "title": "Temperatura",
+      "params": {
+        "start": "Temperatura iniziale (°C)",
+        "factor": "Fattore (°C/mm)",
+        "band": "Altezza della fascia (mm)",
+        "height": "Altezza (mm)",
+        "heater": "Riscaldatore"
+      },
+      "heaters": {
+        "extruder": "Estrusore",
+        "extruder1": "Estrusore 1",
+        "extruder2": "Estrusore 2",
+        "heater_bed": "Piano"
+      },
+      "step1": "1. Pianifica la torre di temperatura",
+      "plan": "Pianifica torre",
+      "command": "Esegui questo comando",
+      "commandHint": "Invialo subito prima della stampa (oppure aggiungilo allo start g-code del tuo modello di prova); il target cambia una volta per fascia man mano che la torre sale, dando all'ugello il tempo di stabilizzarsi.",
+      "table": {
+        "range": "Intervallo Z (mm)",
+        "temp": "Temperatura (°C)"
+      },
+      "step2": "2. Inserisci l'altezza dal risultato migliore",
+      "bestHeight": "Altezza Z migliore (mm)",
+      "computed": "Temperatura migliore: {temp} °C",
+      "noBand": "Inserisci un'altezza all'interno della torre",
+      "applyButton": "Imposta temperatura",
+      "apply": {
+        "applied": "{heater} impostato a {value} °C",
+        "busy": "La stampante è occupata - impossibile applicare ora",
+        "unknown_heater": "Riscaldatore sconosciuto",
+        "out_of_range": "Valore fuori intervallo (max {max})",
+        "moonraker_error": "Impossibile applicare: {error}"
+      }
+    },
     "help": {
       "guide": "Guida",
       "guideTitle": "Guida alle procedure di taratura",
@@ -74,6 +110,10 @@
           "title": "Cos'è la retrazione?",
           "body": "La retrazione richiama il filamento durante gli spostamenti per evitare colature e filamenti sottili. Troppo poca lascia filamenti; troppa può causare intasamenti o vuoti. Questa procedura guidata regola la lunghezza di retrazione del firmware."
         },
+        "temperature": {
+          "title": "Cos'è una torre di temperatura?",
+          "body": "Una torre di temperatura stampa la stessa forma a temperature dell'ugello crescenti, così puoi scegliere quella con la migliore adesione tra i layer, la finitura superficiale migliore e meno filamenti per il tuo filamento."
+        },
         "glossary": {
           "title": "Glossario"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Retrazione del firmware",
           "def": "La funzione [firmware_retraction] di Klipper: G10/G11 per retrarre e ritrarre gestiti dalla stampante, regolabili dal vivo con SET_RETRACTION."
+        },
+        "temperatureTower": {
+          "term": "Torre di temperatura",
+          "def": "Una stampa di prova suddivisa in fasce, ciascuna mantenuta a una diversa temperatura dell'ugello, per trovare la temperatura di stampa migliore di un filamento."
         }
       }
     }
