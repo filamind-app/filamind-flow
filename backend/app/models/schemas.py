@@ -346,6 +346,49 @@ class RetractionApplyResult(BaseModel):
     params: dict[str, Any] = {}
 
 
+class TempBand(BaseModel):
+    """One constant-temperature band of the tower (Z range -> temperature)."""
+
+    z_low: float
+    z_high: float
+    temp: float
+
+
+class TempTowerRequest(BaseModel):
+    """Temperature tuning-tower parameters (BAND mode)."""
+
+    start: float = 240.0
+    factor: float = -0.5
+    band: float = 10.0
+    height: float = 100.0
+    heater: str = "extruder"
+
+
+class TempTowerPlan(BaseModel):
+    """The TUNING_TOWER (BAND) command + a per-band Z-range/temperature table."""
+
+    command: str
+    start: float
+    factor: float
+    band: float
+    height: float
+    heater: str
+    bands: list[TempBand] = []
+
+
+class TempApplyRequest(BaseModel):
+    heater: str = "extruder"
+    value: float
+
+
+class TempApplyResult(BaseModel):
+    """Result of setting a temperature (frontend renders ``tuning.temp.apply.<code>``)."""
+
+    ok: bool
+    code: str
+    params: dict[str, Any] = {}
+
+
 class FlashWarning(BaseModel):
     """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
 

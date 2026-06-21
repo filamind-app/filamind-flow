@@ -14,8 +14,12 @@ from app.models.schemas import (
     RetractionApplyResult,
     RetractionTowerPlan,
     RetractionTowerRequest,
+    TempApplyRequest,
+    TempApplyResult,
+    TempTowerPlan,
+    TempTowerRequest,
 )
-from app.services import pa_tuning, retraction_tuning
+from app.services import pa_tuning, retraction_tuning, temp_tuning
 
 router = APIRouter(prefix="/tuning", tags=["tuning"])
 
@@ -62,3 +66,30 @@ async def retraction_apply(
     """Apply the chosen retraction length live (gated; needs ``[firmware_retraction]``)."""
     result = await retraction_tuning.apply_retraction(settings.moonraker_url, req.value)
     return RetractionApplyResult(**result)
+
+
+@router.post("/temp/plan", response_model=TempTowerPlan)
+async def temp_plan(req: TempTowerRequest) -> TempTowerPlan:
+    """The TUNING_TOWER (BAND) command + per-band temperature table for a tower (read-only)."""
+    try:
+        plan = temp_tuning.plan_tower(
+            temp_tuning.TempTowerParams(
+                start=req.start,
+                factor=req.factor,
+                band=req.band,
+                height=req.height,
+                heater=req.heater,
+            )
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return TempTowerPlan(**plan)
+
+
+@router.post("/temp/apply", response_model=TempApplyResult)
+async def temp_apply(
+    req: TempApplyRequest, settings: Settings = Depends(get_settings)
+) -> TempApplyResult:
+    """Set the chosen temperature live (gated; allowlisted heater + bounded target)."""
+    result = await temp_tuning.apply_temp(settings.moonraker_url, req.heater, req.value)
+    return TempApplyResult(**result)
