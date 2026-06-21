@@ -7,7 +7,7 @@ and grows one widget at a time.
 
 **Built by Egyptian makers, for world makers. Happy printing.** 🇪🇬
 
-_A small-team hobby project, built and tested on real printers. The code is all here to read.
+A small-team hobby project, built and tested on real printers. The code is all here to read.
 
 [![Support on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I119XEIV)
 
@@ -116,8 +116,8 @@ FilaMind Flow is free and open source, built and maintained in spare time. If it
 
 Built and maintained by the DeltaFabs team:
 
-- abdelmonem awad - <eg2@live.com>
-- Ahmed bebars - <Ahmedbebars1@gmail.com>
+- Abdelmonem Awad - <eg2@live.com>
+- Ahmed Bebars - <Ahmedbebars1@gmail.com>
 - Kareem Salama - <Golden.kiko@gmail.com>
 
 ## License
