@@ -1,7 +1,7 @@
 import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { ApplyResult, TowerParams, TowerPlan } from './types'
+import type { ApplyResult, TempTowerParams, TempTowerPlan, TowerParams, TowerPlan } from './types'
 
 function base(): string {
   return resolveEndpoints().backendUrl
@@ -31,4 +31,12 @@ export function planRetraction(params: TowerParams): Promise<TowerPlan> {
 
 export function applyRetraction(value: number): Promise<ApplyResult> {
   return postJson('/api/tuning/retraction/apply', { value })
+}
+
+export function planTemp(params: TempTowerParams): Promise<TempTowerPlan> {
+  return postJson('/api/tuning/temp/plan', params)
+}
+
+export function applyTemp(heater: string, value: number): Promise<ApplyResult> {
+  return postJson('/api/tuning/temp/apply', { heater, value })
 }

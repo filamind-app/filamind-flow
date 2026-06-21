@@ -57,6 +57,42 @@
         "moonraker_error": "No se pudo aplicar: {error}"
       }
     },
+    "temp": {
+      "title": "Temperatura",
+      "params": {
+        "start": "Temperatura inicial (°C)",
+        "factor": "Factor (°C/mm)",
+        "band": "Altura de banda (mm)",
+        "height": "Altura (mm)",
+        "heater": "Calentador"
+      },
+      "heaters": {
+        "extruder": "Extrusor",
+        "extruder1": "Extrusor 1",
+        "extruder2": "Extrusor 2",
+        "heater_bed": "Cama"
+      },
+      "step1": "1. Planifica la torre de temperatura",
+      "plan": "Planificar torre",
+      "command": "Ejecuta este comando",
+      "commandHint": "Envíalo justo antes de la impresión (o añádelo al g-code de inicio de tu modelo de prueba); el objetivo cambia una vez por banda a medida que sube la torre, dando tiempo al hotend para estabilizarse.",
+      "table": {
+        "range": "Rango Z (mm)",
+        "temp": "Temp (°C)"
+      },
+      "step2": "2. Introduce la altura con mejor aspecto",
+      "bestHeight": "Mejor altura Z (mm)",
+      "computed": "Mejor temperatura: {temp} °C",
+      "noBand": "Introduce una altura dentro de la torre",
+      "applyButton": "Ajustar temperatura",
+      "apply": {
+        "applied": "{heater} ajustado a {value} °C",
+        "busy": "La impresora está ocupada - no se puede aplicar ahora",
+        "unknown_heater": "Calentador desconocido",
+        "out_of_range": "Valor fuera de rango (máx {max})",
+        "moonraker_error": "No se pudo aplicar: {error}"
+      }
+    },
     "help": {
       "guide": "Guía",
       "guideTitle": "Guía de los asistentes de calibración",
@@ -74,6 +110,10 @@
           "title": "¿Qué es la retracción?",
           "body": "La retracción tira del filamento hacia atrás en los desplazamientos para evitar el rezumado y los hilos. Demasiado poca deja hilos; demasiada puede causar obstrucciones o huecos. Este asistente calibra la longitud de retracción del firmware."
         },
+        "temperature": {
+          "title": "¿Qué es una torre de temperatura?",
+          "body": "Una torre de temperatura imprime la misma forma a temperaturas de boquilla escalonadas para que puedas elegir la que ofrezca la mejor adhesión entre capas, el mejor acabado superficial y la menor formación de hilos para tu filamento."
+        },
         "glossary": {
           "title": "Glosario"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Retracción por firmware",
           "def": "La función [firmware_retraction] de Klipper: G10/G11 retraen y des-retraen gestionados por la impresora, ajustables en vivo con SET_RETRACTION."
+        },
+        "temperatureTower": {
+          "term": "Torre de temperatura",
+          "def": "Una impresión de prueba dividida en bandas, cada una mantenida a una temperatura de boquilla distinta, para encontrar la mejor temperatura de impresión de un filamento."
         }
       }
     }

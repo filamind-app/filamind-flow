@@ -57,6 +57,42 @@
         "moonraker_error": "Uygulanamadı: {error}"
       }
     },
+    "temp": {
+      "title": "Sıcaklık",
+      "params": {
+        "start": "Başlangıç sıcaklığı (°C)",
+        "factor": "Katsayı (°C/mm)",
+        "band": "Bant yüksekliği (mm)",
+        "height": "Yükseklik (mm)",
+        "heater": "Isıtıcı"
+      },
+      "heaters": {
+        "extruder": "Ekstrüder",
+        "extruder1": "Ekstrüder 1",
+        "extruder2": "Ekstrüder 2",
+        "heater_bed": "Tabla"
+      },
+      "step1": "1. Sıcaklık kulesini planla",
+      "plan": "Kuleyi planla",
+      "command": "Bu komutu çalıştır",
+      "commandHint": "Baskıdan hemen önce gönderin (veya test modelinizin başlangıç G-code'una ekleyin); kule yükseldikçe hedef her bantta bir kez değişir, böylece nozulun dengelenmesine zaman tanınır.",
+      "table": {
+        "range": "Z aralığı (mm)",
+        "temp": "Sıcaklık (°C)"
+      },
+      "step2": "2. En iyi görünen yüksekliği girin",
+      "bestHeight": "En iyi Z yüksekliği (mm)",
+      "computed": "En iyi sıcaklık: {temp} °C",
+      "noBand": "Kule içinde bir yükseklik girin",
+      "applyButton": "Sıcaklığı ayarla",
+      "apply": {
+        "applied": "{heater} {value} °C olarak ayarlandı",
+        "busy": "Yazıcı meşgul - şu anda uygulanamıyor",
+        "unknown_heater": "Bilinmeyen ısıtıcı",
+        "out_of_range": "Değer aralık dışında (en fazla {max})",
+        "moonraker_error": "Uygulanamadı: {error}"
+      }
+    },
     "help": {
       "guide": "Kılavuz",
       "guideTitle": "İnce ayar sihirbazları kılavuzu",
@@ -74,6 +110,10 @@
           "title": "Geri çekme nedir?",
           "body": "Geri çekme, sızıntıyı ve iplikçik oluşumunu durdurmak için ilerleme hareketlerinde filamenti geri çeker. Çok az olursa iplikçikler kalır; çok fazla olursa tıkanmalara veya boşluklara yol açabilir. Bu sihirbaz, firmware geri çekme uzunluğunu ayarlar."
         },
+        "temperature": {
+          "title": "Sıcaklık kulesi nedir?",
+          "body": "Sıcaklık kulesi, aynı şekli kademeli nozul sıcaklıklarında basar; böylece filamentiniz için en iyi katman yapışması, yüzey kalitesi ve en az iplikçik oluşumunu sağlayanı seçebilirsiniz."
+        },
         "glossary": {
           "title": "Sözlük"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Firmware geri çekme",
           "def": "Klipper'ın [firmware_retraction] özelliği: G10/G11 geri çekme ve geri çekmeyi geri alma yazıcı tarafından işlenir, SET_RETRACTION ile anlık olarak ayarlanabilir."
+        },
+        "temperatureTower": {
+          "term": "Sıcaklık kulesi",
+          "def": "Bir filamentin en iyi baskı sıcaklığını bulmak için her biri farklı bir nozul sıcaklığında tutulan bantlara bölünmüş bir test baskısı."
         }
       }
     }

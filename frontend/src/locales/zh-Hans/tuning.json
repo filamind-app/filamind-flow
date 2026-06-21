@@ -57,6 +57,42 @@
         "moonraker_error": "应用失败：{error}"
       }
     },
+    "temp": {
+      "title": "温度",
+      "params": {
+        "start": "起始温度（°C）",
+        "factor": "系数（°C/mm）",
+        "band": "色带高度（mm）",
+        "height": "高度（mm）",
+        "heater": "加热器"
+      },
+      "heaters": {
+        "extruder": "挤出机",
+        "extruder1": "挤出机 1",
+        "extruder2": "挤出机 2",
+        "heater_bed": "热床"
+      },
+      "step1": "1. 规划温度塔",
+      "plan": "规划塔",
+      "command": "运行此命令",
+      "commandHint": "在打印开始前发送（或将其加入测试模型的起始 G-code）；目标温度会随塔体上升每段递增一次，让热端有时间稳定。",
+      "table": {
+        "range": "Z 范围（mm）",
+        "temp": "温度（°C）"
+      },
+      "step2": "2. 输入观感最佳的高度",
+      "bestHeight": "最佳 Z 高度（mm）",
+      "computed": "最佳温度：{temp} °C",
+      "noBand": "请输入塔体范围内的高度",
+      "applyButton": "设置温度",
+      "apply": {
+        "applied": "已将 {heater} 设置为 {value} °C",
+        "busy": "打印机忙碌中 - 现在无法应用",
+        "unknown_heater": "未知的加热器",
+        "out_of_range": "数值超出范围（最大 {max}）",
+        "moonraker_error": "应用失败：{error}"
+      }
+    },
     "help": {
       "guide": "指南",
       "guideTitle": "调校向导指南",
@@ -74,6 +110,10 @@
           "title": "什么是回抽？",
           "body": "回抽会在空驶移动时把耗材回拉，以阻止漏料和拉丝。回抽太少会留下拉丝；太多则可能造成堵头或缺料。此向导用于调校固件回抽长度。"
         },
+        "temperature": {
+          "title": "什么是温度塔？",
+          "body": "温度塔会在逐级递增的喷嘴温度下打印相同的形状，让你为耗材挑选层间附着最佳、表面最光洁且拉丝最少的那一档温度。"
+        },
         "glossary": {
           "title": "术语表"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "固件回抽",
           "def": "Klipper 的 [firmware_retraction] 功能：G10/G11 回抽与回抽恢复由打印机处理，可用 SET_RETRACTION 实时调校。"
+        },
+        "temperatureTower": {
+          "term": "温度塔",
+          "def": "一种分段打印的测试件，每一段保持不同的喷嘴温度，用于找出耗材的最佳打印温度。"
         }
       }
     }

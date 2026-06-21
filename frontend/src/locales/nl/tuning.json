@@ -57,6 +57,42 @@
         "moonraker_error": "Toepassen mislukt: {error}"
       }
     },
+    "temp": {
+      "title": "Temperatuur",
+      "params": {
+        "start": "Starttemperatuur (°C)",
+        "factor": "Factor (°C/mm)",
+        "band": "Bandhoogte (mm)",
+        "height": "Hoogte (mm)",
+        "heater": "Verwarmer"
+      },
+      "heaters": {
+        "extruder": "Extruder",
+        "extruder1": "Extruder 1",
+        "extruder2": "Extruder 2",
+        "heater_bed": "Bed"
+      },
+      "step1": "1. Plan de temperatuurtoren",
+      "plan": "Toren plannen",
+      "command": "Voer dit commando uit",
+      "commandHint": "Stuur het vlak vóór de print (of voeg het toe aan de start-g-code van je testmodel); de doeltemperatuur verspringt één keer per band naarmate de toren hoger wordt, zodat de nozzle de tijd krijgt om te stabiliseren.",
+      "table": {
+        "range": "Z-bereik (mm)",
+        "temp": "Temp. (°C)"
+      },
+      "step2": "2. Voer de hoogte met het beste resultaat in",
+      "bestHeight": "Beste Z-hoogte (mm)",
+      "computed": "Beste temperatuur: {temp} °C",
+      "noBand": "Voer een hoogte binnen de toren in",
+      "applyButton": "Temperatuur instellen",
+      "apply": {
+        "applied": "{heater} ingesteld op {value} °C",
+        "busy": "Printer is bezig - nu niet toe te passen",
+        "unknown_heater": "Onbekende verwarmer",
+        "out_of_range": "Waarde buiten bereik (max. {max})",
+        "moonraker_error": "Toepassen mislukt: {error}"
+      }
+    },
     "help": {
       "guide": "Gids",
       "guideTitle": "Gids voor afstemwizards",
@@ -74,6 +110,10 @@
           "title": "Wat is retractie?",
           "body": "Retractie trekt filament terug tijdens verplaatsingen om uitlekken en draadvorming te voorkomen. Te weinig laat draadjes achter; te veel kan verstoppingen of gaten veroorzaken. Deze wizard stemt de firmware-retractielengte af."
         },
+        "temperature": {
+          "title": "Wat is een temperatuurtoren?",
+          "body": "Een temperatuurtoren print dezelfde vorm bij oplopende nozzletemperaturen, zodat je die met de beste laaghechting, oppervlakteafwerking en minste draadvorming voor jouw filament kunt kiezen."
+        },
         "glossary": {
           "title": "Begrippenlijst"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Firmware-retractie",
           "def": "De [firmware_retraction]-functie van Klipper: G10/G11 retracten en terugzetten afgehandeld door de printer, live af te stemmen met SET_RETRACTION."
+        },
+        "temperatureTower": {
+          "term": "Temperatuurtoren",
+          "def": "Een testprint verdeeld in banden, elk op een andere nozzletemperatuur, om de beste printtemperatuur van een filament te vinden."
         }
       }
     }

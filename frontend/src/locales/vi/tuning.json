@@ -57,6 +57,42 @@
         "moonraker_error": "Không thể áp dụng: {error}"
       }
     },
+    "temp": {
+      "title": "Nhiệt độ",
+      "params": {
+        "start": "Nhiệt độ bắt đầu (°C)",
+        "factor": "Hệ số (°C/mm)",
+        "band": "Chiều cao mỗi dải (mm)",
+        "height": "Chiều cao (mm)",
+        "heater": "Bộ gia nhiệt"
+      },
+      "heaters": {
+        "extruder": "Đầu đùn",
+        "extruder1": "Đầu đùn 1",
+        "extruder2": "Đầu đùn 2",
+        "heater_bed": "Bàn nhiệt"
+      },
+      "step1": "1. Lên kế hoạch tháp nhiệt độ",
+      "plan": "Lập tháp",
+      "command": "Chạy lệnh này",
+      "commandHint": "Gửi nó ngay trước khi in (hoặc thêm vào g-code khởi đầu của mẫu thử); mục tiêu nhiệt tăng một lần mỗi dải khi tháp cao lên, cho vòi phun thời gian ổn định.",
+      "table": {
+        "range": "Phạm vi Z (mm)",
+        "temp": "Nhiệt độ (°C)"
+      },
+      "step2": "2. Nhập chiều cao trông đẹp nhất",
+      "bestHeight": "Chiều cao Z tốt nhất (mm)",
+      "computed": "Nhiệt độ tốt nhất: {temp} °C",
+      "noBand": "Nhập chiều cao nằm trong tháp",
+      "applyButton": "Đặt nhiệt độ",
+      "apply": {
+        "applied": "Đã đặt {heater} thành {value} °C",
+        "busy": "Máy in đang bận - không thể áp dụng lúc này",
+        "unknown_heater": "Bộ gia nhiệt không xác định",
+        "out_of_range": "Giá trị ngoài phạm vi (tối đa {max})",
+        "moonraker_error": "Không thể áp dụng: {error}"
+      }
+    },
     "help": {
       "guide": "Hướng dẫn",
       "guideTitle": "Hướng dẫn các trình tinh chỉnh",
@@ -74,6 +110,10 @@
           "title": "Rút sợi là gì?",
           "body": "Rút sợi kéo filament ngược lại trong các chuyển động di chuyển để ngăn rỉ nhựa và kéo chỉ. Quá ít sẽ để lại sợi chỉ; quá nhiều có thể gây tắc nghẽn hoặc khoảng hở. Trình hướng dẫn này tinh chỉnh độ dài rút sợi của firmware."
         },
+        "temperature": {
+          "title": "Tháp nhiệt độ là gì?",
+          "body": "Tháp nhiệt độ in cùng một hình dạng ở các mức nhiệt độ vòi phun bậc thang để bạn chọn được mức cho độ bám dính lớp, độ hoàn thiện bề mặt tốt nhất và ít kéo chỉ nhất cho filament của bạn."
+        },
         "glossary": {
           "title": "Thuật ngữ"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Rút sợi bằng firmware",
           "def": "Tính năng [firmware_retraction] của Klipper: G10/G11 rút và nhả sợi do máy in xử lý, có thể tinh chỉnh trực tiếp bằng SET_RETRACTION."
+        },
+        "temperatureTower": {
+          "term": "Tháp nhiệt độ",
+          "def": "Một mẫu in chia thành các dải, mỗi dải giữ ở một mức nhiệt độ vòi phun khác nhau, để tìm nhiệt độ in tốt nhất cho filament."
         }
       }
     }

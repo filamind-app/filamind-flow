@@ -39,5 +39,12 @@ defineProps<{ illo: HelpIlloKey }>()
       <path d="M10.5 13 l1.5 4 l1.5 -4" />
       <path d="M12 11 V5 M10.5 6.5 L12 5 L13.5 6.5" stroke-opacity="0.7" />
     </g>
+
+    <!-- Temperature: a thermometer with stepped bands -->
+    <g v-else-if="illo === 'temperature'">
+      <path d="M10 4 a2 2 0 0 1 4 0 v9 a3.5 3.5 0 1 1 -4 0 Z" />
+      <circle cx="12" cy="17.5" r="1.6" fill="currentColor" stroke="none" />
+      <path d="M14 7 h2 M14 10 h2 M14 13 h2" stroke-opacity="0.7" />
+    </g>
   </svg>
 </template>

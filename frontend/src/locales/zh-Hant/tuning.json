@@ -57,6 +57,42 @@
         "moonraker_error": "無法套用：{error}"
       }
     },
+    "temp": {
+      "title": "溫度",
+      "params": {
+        "start": "起始溫度（°C）",
+        "factor": "係數（°C/mm）",
+        "band": "區段高度（mm）",
+        "height": "高度（mm）",
+        "heater": "加熱器"
+      },
+      "heaters": {
+        "extruder": "擠出機",
+        "extruder1": "擠出機 1",
+        "extruder2": "擠出機 2",
+        "heater_bed": "熱床"
+      },
+      "step1": "1. 規劃溫度塔",
+      "plan": "規劃溫度塔",
+      "command": "執行此指令",
+      "commandHint": "在列印前送出（或加入測試模型的起始 G-code）；列印過程中目標溫度會隨溫度塔上升，每個區段變更一次，讓噴頭有時間穩定下來。",
+      "table": {
+        "range": "Z 範圍（mm）",
+        "temp": "溫度（°C）"
+      },
+      "step2": "2. 輸入外觀最佳的高度",
+      "bestHeight": "最佳 Z 高度（mm）",
+      "computed": "最佳溫度：{temp} °C",
+      "noBand": "請輸入溫度塔範圍內的高度",
+      "applyButton": "設定溫度",
+      "apply": {
+        "applied": "已將 {heater} 設定為 {value} °C",
+        "busy": "印表機忙碌中 - 目前無法套用",
+        "unknown_heater": "未知的加熱器",
+        "out_of_range": "數值超出範圍（上限 {max}）",
+        "moonraker_error": "無法套用：{error}"
+      }
+    },
     "help": {
       "guide": "指南",
       "guideTitle": "調校精靈指南",
@@ -74,6 +110,10 @@
           "title": "什麼是回抽？",
           "body": "回抽會在移動行程時將線材往回拉，以防止滲漏與牽絲。回抽過少會留下牽絲；過多則可能造成阻塞或縫隙。此精靈用來調校 firmware retraction 的回抽長度。"
         },
+        "temperature": {
+          "title": "什麼是溫度塔？",
+          "body": "溫度塔會以階梯式的噴嘴溫度列印相同的形狀，讓你挑選出對該線材而言層間附著力最佳、表面最平整且牽絲最少的溫度。"
+        },
         "glossary": {
           "title": "術語表"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Firmware retraction（韌體回抽）",
           "def": "Klipper 的 [firmware_retraction] 功能：由印表機處理 G10/G11 回抽與回抽復位，可使用 SET_RETRACTION 即時調整。"
+        },
+        "temperatureTower": {
+          "term": "溫度塔",
+          "def": "一種分成多個區段的測試列印件，每個區段維持不同的噴嘴溫度，用以找出某種線材的最佳列印溫度。"
         }
       }
     }

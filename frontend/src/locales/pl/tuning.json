@@ -57,6 +57,42 @@
         "moonraker_error": "Nie udało się zastosować: {error}"
       }
     },
+    "temp": {
+      "title": "Temperatura",
+      "params": {
+        "start": "Temperatura początkowa (°C)",
+        "factor": "Współczynnik (°C/mm)",
+        "band": "Wysokość pasma (mm)",
+        "height": "Wysokość (mm)",
+        "heater": "Grzałka"
+      },
+      "heaters": {
+        "extruder": "Ekstruder",
+        "extruder1": "Ekstruder 1",
+        "extruder2": "Ekstruder 2",
+        "heater_bed": "Stół"
+      },
+      "step1": "1. Zaplanuj wieżę temperaturową",
+      "plan": "Zaplanuj wieżę",
+      "command": "Uruchom to polecenie",
+      "commandHint": "Wyślij je tuż przed drukiem (lub dodaj do startowego G-code modelu testowego); temperatura docelowa zmienia się o jeden krok na każde pasmo w miarę narastania wieży, dając dyszy czas na ustabilizowanie.",
+      "table": {
+        "range": "Zakres Z (mm)",
+        "temp": "Temperatura (°C)"
+      },
+      "step2": "2. Wpisz najlepiej wyglądającą wysokość",
+      "bestHeight": "Najlepsza wysokość Z (mm)",
+      "computed": "Najlepsza temperatura: {temp} °C",
+      "noBand": "Wpisz wysokość mieszczącą się w wieży",
+      "applyButton": "Ustaw temperaturę",
+      "apply": {
+        "applied": "Ustawiono {heater} na {value} °C",
+        "busy": "Drukarka jest zajęta - nie można teraz zastosować",
+        "unknown_heater": "Nieznana grzałka",
+        "out_of_range": "Wartość poza zakresem (maks. {max})",
+        "moonraker_error": "Nie udało się zastosować: {error}"
+      }
+    },
     "help": {
       "guide": "Przewodnik",
       "guideTitle": "Przewodnik po kreatorach strojenia",
@@ -74,6 +110,10 @@
           "title": "Czym jest retrakcja?",
           "body": "Retrakcja cofa filament podczas ruchów jałowych, aby zapobiec wyciekaniu i nitkowaniu. Zbyt mała pozostawia nitki; zbyt duża może powodować zatory lub ubytki. Ten kreator stroi długość retrakcji firmware."
         },
+        "temperature": {
+          "title": "Czym jest wieża temperaturowa?",
+          "body": "Wieża temperaturowa drukuje ten sam kształt w stopniowanych temperaturach dyszy, abyś mógł wybrać tę o najlepszej przyczepności warstw, jakości powierzchni i najmniejszym nitkowaniu dla danego filamentu."
+        },
         "glossary": {
           "title": "Słowniczek"
         }
@@ -90,6 +130,10 @@
         "firmwareRetraction": {
           "term": "Retrakcja firmware",
           "def": "Funkcja [firmware_retraction] w Klipper: cofanie i wycofywanie G10/G11 obsługiwane przez drukarkę, regulowane na żywo za pomocą SET_RETRACTION."
+        },
+        "temperatureTower": {
+          "term": "Wieża temperaturowa",
+          "def": "Wydruk testowy podzielony na pasma, z których każde utrzymywane jest w innej temperaturze dyszy, aby znaleźć najlepszą temperaturę druku filamentu."
         }
       }
     }
