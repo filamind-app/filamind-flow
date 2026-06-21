@@ -128,10 +128,6 @@
         "title": "Sterowanie hostem",
         "description": "Zarządzaj systemem Linux na hoście drukarki: kondycja, usługi, czyszczenie dysku i ustawienia systemowe."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Edytuj konfigurację ekranu dotykowego KlipperScreen drukarki i zrestartuj go, aby zastosować zmiany."
-      },
       "setup": {
         "title": "Setup",
         "description": "Instaluj komponenty ekosystemu Klipper dla tej drukarki i zarządzaj nimi."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Kontrola przed drukiem",
         "description": "Kontrola gotowości tylko do odczytu przed rozpoczęciem druku."
+      },
+      "screen-manager": {
+        "title": "Menedżer ekranu",
+        "description": "Zarządzaj ekranem dotykowym drukarki: ustawienia, menu, motywy i który ekran działa."
       }
     },
     "guard": {

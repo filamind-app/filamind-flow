@@ -128,10 +128,6 @@
         "title": "Controle do Host",
         "description": "Gerencie o sistema Linux do host da impressora: saúde, serviços, limpeza de disco e configurações do sistema."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Edite a configuração da tela sensível ao toque do KlipperScreen da sua impressora e reinicie-o para aplicar."
-      },
       "setup": {
         "title": "Setup",
         "description": "Instale e gerencie componentes do ecossistema Klipper para esta impressora."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Verificação Pré-Impressão",
         "description": "Uma verificação de prontidão somente leitura antes de iniciar uma impressão."
+      },
+      "screen-manager": {
+        "title": "Gerenciador de tela",
+        "description": "Gerencie a tela sensível ao toque da impressora: ajustes, menus, temas e qual tela é executada."
       }
     },
     "guard": {

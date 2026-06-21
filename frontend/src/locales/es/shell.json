@@ -128,10 +128,6 @@
         "title": "Control del host",
         "description": "Administra el sistema Linux del host de la impresora: estado, servicios, limpieza de disco y ajustes del sistema."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Edita la configuración de la pantalla táctil KlipperScreen de tu impresora y reiníciala para aplicarla."
-      },
       "setup": {
         "title": "Setup",
         "description": "Instala y gestiona componentes del ecosistema Klipper para esta impresora."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Comprobación previa a la impresión",
         "description": "Una comprobación de solo lectura del estado antes de empezar a imprimir."
+      },
+      "screen-manager": {
+        "title": "Gestor de pantalla",
+        "description": "Gestiona la pantalla táctil de tu impresora: ajustes, menús, temas y qué pantalla se ejecuta."
       }
     },
     "guard": {

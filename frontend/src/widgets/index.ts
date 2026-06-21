@@ -131,14 +131,13 @@ export function registerWidgets(): void {
   })
 
   reg({
-    id: 'klipperscreen-studio',
-    title: 'KlipperScreen Studio',
+    id: 'screen-manager',
+    title: 'Screen Manager',
     icon: '🖥',
-    description: "Edit your printer's KlipperScreen touchscreen config and restart it to apply.",
+    description:
+      "Manage your printer's touchscreen UI: settings, menus, themes, and which screen runs.",
     defaultSize: { w: 2, h: 1 },
-    component: defineAsyncComponent(
-      () => import('./klipperscreen-studio/KlipperScreenStudioWidget.vue'),
-    ),
+    component: defineAsyncComponent(() => import('./screen-manager/ScreenManagerWidget.vue')),
   })
 
   reg({

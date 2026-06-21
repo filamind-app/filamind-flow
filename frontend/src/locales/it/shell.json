@@ -128,10 +128,6 @@
         "title": "Controllo host",
         "description": "Gestisci il sistema operativo Linux dell'host della stampante: stato, servizi, pulizia del disco e impostazioni di sistema."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Modifica la configurazione del touchscreen KlipperScreen della tua stampante e riavvialo per applicarla."
-      },
       "setup": {
         "title": "Setup",
         "description": "Installa e gestisci i componenti dell'ecosistema Klipper per questa stampante."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Controllo pre-stampa",
         "description": "Un controllo di prontezza in sola lettura prima di avviare una stampa."
+      },
+      "screen-manager": {
+        "title": "Gestione schermo",
+        "description": "Gestisci il touchscreen della stampante: impostazioni, menu, temi e quale schermo è in esecuzione."
       }
     },
     "guard": {

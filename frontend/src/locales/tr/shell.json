@@ -128,10 +128,6 @@
         "title": "Ana Sistem Kontrolü",
         "description": "Yazıcı ana sisteminin Linux işletim sistemini yönetin: sağlık, hizmetler, disk temizleme ve sistem ayarları."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Yazıcınızın KlipperScreen dokunmatik ekran yapılandırmasını düzenleyin ve uygulamak için yeniden başlatın."
-      },
       "setup": {
         "title": "Setup",
         "description": "Bu yazıcı için Klipper ekosistemi bileşenlerini kurun ve yönetin."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Baskı Öncesi Kontrol",
         "description": "Baskıya başlamadan önce salt-okunur bir hazırlık kontrolü."
+      },
+      "screen-manager": {
+        "title": "Ekran Yöneticisi",
+        "description": "Yazıcının dokunmatik ekranını yönetin: ayarlar, menüler, temalar ve hangi ekranın çalışacağı."
       }
     },
     "guard": {

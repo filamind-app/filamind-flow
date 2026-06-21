@@ -128,10 +128,6 @@
         "title": "Host-Steuerung",
         "description": "Verwalte das Linux-Betriebssystem des Druckerhosts: Zustand, Dienste, Datenträger-Bereinigung und Systemeinstellungen."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Bearbeite die KlipperScreen-Touchscreen-Konfiguration deines Druckers und starte sie neu, um sie anzuwenden."
-      },
       "setup": {
         "title": "Setup",
         "description": "Installieren und verwalten Sie Klipper-Komponenten für diesen Drucker."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Pre-Print Check",
         "description": "Eine Nur-Lese-Bereitschaftsprüfung vor dem Start eines Drucks."
+      },
+      "screen-manager": {
+        "title": "Bildschirm-Manager",
+        "description": "Verwalte den Touchscreen des Druckers: Einstellungen, Menüs, Themes und welcher Bildschirm läuft."
       }
     },
     "guard": {

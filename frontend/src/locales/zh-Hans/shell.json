@@ -128,10 +128,6 @@
         "title": "主机控制",
         "description": "管理打印机主机的 Linux 系统：健康状况、服务、磁盘清理和系统设置。"
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen 工作室",
-        "description": "编辑打印机的 KlipperScreen 触摸屏配置并重启以应用。"
-      },
       "setup": {
         "title": "Setup",
         "description": "为此打印机安装和管理 Klipper 生态系统组件。"
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "打印前检查",
         "description": "开始打印前的只读就绪性检查。"
+      },
+      "screen-manager": {
+        "title": "屏幕管理器",
+        "description": "管理打印机的触摸屏：设置、菜单、主题，以及运行哪个屏幕。"
       }
     },
     "guard": {
