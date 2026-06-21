@@ -79,7 +79,12 @@ export default defineConfig(({ mode }) => {
       // re-download of Vue / Pinia / vue-i18n on this auto-updating panel.
       rollupOptions: {
         output: {
-          manualChunks: { vendor: ['vue', 'vue-i18n', 'pinia'] },
+          // Vite 8's Rollup types dropped the object form; the function form keeps the vendor
+          // chunk equivalent by matching the framework + its scoped internals (@vue/*, @intlify/*).
+          manualChunks(id) {
+            if (/[\\/]node_modules[\\/](vue|vue-i18n|pinia|@vue|@intlify)[\\/]/.test(id))
+              return 'vendor'
+          },
         },
       },
     },

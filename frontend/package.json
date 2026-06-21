@@ -18,7 +18,7 @@
     "directory": "frontend"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "dev": "vite",
@@ -40,17 +40,17 @@
     "@fontsource/noto-sans-arabic": "^5.2.10",
     "@fontsource/space-grotesk": "^5.2.10",
     "html-to-image": "1.11.13",
-    "pinia": "^2.2.6",
-    "vue": "^3.5.13",
-    "vue-i18n": "^11.4.4"
+    "pinia": "^3.0.4",
+    "vue": "^3.5.38",
+    "vue-i18n": "^11.4.6"
   },
   "devDependencies": {
     "@intlify/unplugin-vue-i18n": "^11.2.4",
     "@tailwindcss/postcss": "^4.3.1",
-    "@types/node": "^25.9.3",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@types/node": "^26.0.0",
+    "@vitejs/plugin-vue": "^6.0.7",
     "@vue/eslint-config-prettier": "^10.1.0",
-    "@vue/eslint-config-typescript": "^14.1.4",
+    "@vue/eslint-config-typescript": "^14.8.0",
     "@vue/test-utils": "^2.4.11",
     "@vue/tsconfig": "^0.9.1",
     "eslint": "^10.5.0",
@@ -60,7 +60,7 @@
     "prettier": "^3.8.4",
     "tailwindcss": "^4.3.1",
     "typescript": "~6.0.3",
-    "vite": "^6.0.3",
+    "vite": "^7.3.5",
     "vitest": "^4.1.9",
     "vue-tsc": "^3.3.5"
   }
