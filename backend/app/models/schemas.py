@@ -389,6 +389,27 @@ class TempApplyResult(BaseModel):
     params: dict[str, Any] = {}
 
 
+class FlowExtruder(BaseModel):
+    """The live extruder ``rotation_distance`` (``None`` if it can't be read)."""
+
+    rotation_distance: float | None = None
+
+
+class FlowComputeRequest(BaseModel):
+    """Inputs for the flow (extrusion) correction calculator."""
+
+    requested: float
+    measured: float
+    current_rotation_distance: float
+
+
+class FlowComputeResult(BaseModel):
+    """Corrected extruder ``rotation_distance`` + the equivalent slicer flow percent."""
+
+    new_rotation_distance: float
+    flow_percent: float
+
+
 class FlashWarning(BaseModel):
     """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
 

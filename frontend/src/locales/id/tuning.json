@@ -93,6 +93,21 @@
         "moonraker_error": "Gagal menerapkan: {error}"
       }
     },
+    "flow": {
+      "title": "Flow",
+      "step1": "1. Ekstrusi panjang yang diketahui, lalu ukur berapa yang sebenarnya keluar",
+      "requested": "Panjang yang diperintahkan (mm)",
+      "measured": "Panjang terukur (mm)",
+      "current": "rotation_distance saat ini",
+      "fetch": "Baca dari printer",
+      "calc": "Hitung",
+      "step2": "2. Koreksi",
+      "result": "rotation_distance baru: {value}",
+      "flowPercent": "Setara flow slicer: {percent}%",
+      "snippetTitle": "Tempel ke bagian [extruder] Anda, lalu jalankan SAVE_CONFIG dan mulai ulang",
+      "notLive": "Flow tidak bisa disetel langsung - terapkan ini dengan menyimpan konfigurasi dan memulai ulang, bukan secara instan.",
+      "noCurrent": "Tidak bisa membacanya dari printer - masukkan rotation_distance [extruder] Anda secara manual."
+    },
     "help": {
       "guide": "Panduan",
       "guideTitle": "Panduan wizard penyetelan",
@@ -114,6 +129,10 @@
           "title": "Apa itu menara suhu?",
           "body": "Menara suhu mencetak bentuk yang sama pada suhu nozel yang naik bertahap sehingga Anda dapat memilih suhu dengan adhesi antarlapis, hasil permukaan, dan benang halus paling minimal untuk filamen Anda."
         },
+        "flow": {
+          "title": "Apa itu kalibrasi flow?",
+          "body": "Kalibrasi flow mengoreksi seberapa banyak filamen yang sebenarnya didorong oleh ekstruder. Perintahkan panjang yang diketahui, ukur berapa yang keluar, lalu wizard menyesuaikan rotation_distance. Klipper tidak memiliki pengaturan flow langsung, jadi nilai baru masuk ke printer.cfg."
+        },
         "glossary": {
           "title": "Glosarium"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Menara suhu",
           "def": "Cetakan uji yang dibagi menjadi pita-pita, masing-masing ditahan pada suhu nozel yang berbeda, untuk menemukan suhu cetak terbaik sebuah filamen."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Berapa mm filamen yang diumpankan ekstruder per putaran motor. Menurunkannya mendorong lebih banyak filamen; kalibrasi flow menyetel nilai ini."
         }
       }
     }

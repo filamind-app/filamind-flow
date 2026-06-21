@@ -93,6 +93,21 @@
         "moonraker_error": "Couldn't apply: {error}"
       }
     },
+    "flow": {
+      "title": "Flow",
+      "step1": "1. Extrude a known length, then measure what actually came out",
+      "requested": "Commanded length (mm)",
+      "measured": "Measured length (mm)",
+      "current": "Current rotation_distance",
+      "fetch": "Read from printer",
+      "calc": "Calculate",
+      "step2": "2. Correction",
+      "result": "New rotation_distance: {value}",
+      "flowPercent": "Equivalent slicer flow: {percent}%",
+      "snippetTitle": "Paste into your [extruder] section, then run SAVE_CONFIG and restart",
+      "notLive": "Flow can't be set live - apply this with a config save and restart, not instantly.",
+      "noCurrent": "Couldn't read it from the printer - enter your [extruder] rotation_distance manually."
+    },
     "help": {
       "guide": "Guide",
       "guideTitle": "Tuning wizards guide",
@@ -114,6 +129,10 @@
           "title": "What is a temperature tower?",
           "body": "A temperature tower prints the same shape at stepped nozzle temperatures so you can pick the one with the best layer adhesion, surface finish, and least stringing for your filament."
         },
+        "flow": {
+          "title": "What is flow calibration?",
+          "body": "Flow calibration corrects how much filament the extruder actually pushes. Command a known length, measure what came out, and the wizard adjusts rotation_distance. Klipper has no live flow setting, so the new value goes in printer.cfg."
+        },
         "glossary": {
           "title": "Glossary"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Temperature tower",
           "def": "A test print divided into bands, each held at a different nozzle temperature, to find a filament's best printing temperature."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "How many mm of filament the extruder feeds per motor rotation. Lowering it pushes more filament; flow calibration tunes this value."
         }
       }
     }

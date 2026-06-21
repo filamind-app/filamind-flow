@@ -93,6 +93,21 @@
         "moonraker_error": "無法套用：{error}"
       }
     },
+    "flow": {
+      "title": "流量",
+      "step1": "1. 擠出一段已知長度，再量測實際擠出的長度",
+      "requested": "指定長度（mm）",
+      "measured": "量測長度（mm）",
+      "current": "目前的 rotation_distance",
+      "fetch": "從印表機讀取",
+      "calc": "計算",
+      "step2": "2. 修正",
+      "result": "新的 rotation_distance：{value}",
+      "flowPercent": "等效切片軟體流量：{percent}%",
+      "snippetTitle": "貼到你的 [extruder] 區段，然後執行 SAVE_CONFIG 並重新啟動",
+      "notLive": "流量無法即時設定 - 請透過儲存設定並重新啟動來套用，而非立即生效。",
+      "noCurrent": "無法從印表機讀取 - 請手動輸入你的 [extruder] rotation_distance。"
+    },
     "help": {
       "guide": "指南",
       "guideTitle": "調校精靈指南",
@@ -114,6 +129,10 @@
           "title": "什麼是溫度塔？",
           "body": "溫度塔會以階梯式的噴嘴溫度列印相同的形狀，讓你挑選出對該線材而言層間附著力最佳、表面最平整且牽絲最少的溫度。"
         },
+        "flow": {
+          "title": "什麼是流量校準？",
+          "body": "流量校準會修正擠出機實際推送的線材量。指定一段已知長度，量測實際擠出的長度，精靈就會調整 rotation_distance。Klipper 沒有即時流量設定，因此新數值會寫入 printer.cfg。"
+        },
         "glossary": {
           "title": "術語表"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "溫度塔",
           "def": "一種分成多個區段的測試列印件，每個區段維持不同的噴嘴溫度，用以找出某種線材的最佳列印溫度。"
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "擠出機每轉一圈所進給的線材長度（mm）。調低此值會推送更多線材；流量校準就是在調整這個數值。"
         }
       }
     }

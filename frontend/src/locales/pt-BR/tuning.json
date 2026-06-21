@@ -93,6 +93,21 @@
         "moonraker_error": "Não foi possível aplicar: {error}"
       }
     },
+    "flow": {
+      "title": "Fluxo",
+      "step1": "1. Extruda um comprimento conhecido e meça o que realmente saiu",
+      "requested": "Comprimento solicitado (mm)",
+      "measured": "Comprimento medido (mm)",
+      "current": "rotation_distance atual",
+      "fetch": "Ler da impressora",
+      "calc": "Calcular",
+      "step2": "2. Correção",
+      "result": "Novo rotation_distance: {value}",
+      "flowPercent": "Fluxo equivalente no fatiador: {percent}%",
+      "snippetTitle": "Cole na sua seção [extruder], depois execute SAVE_CONFIG e reinicie",
+      "notLive": "O fluxo não pode ser definido ao vivo - aplique isto salvando a configuração e reiniciando, não instantaneamente.",
+      "noCurrent": "Não foi possível ler da impressora - informe manualmente o rotation_distance da sua seção [extruder]."
+    },
     "help": {
       "guide": "Guia",
       "guideTitle": "Guia dos assistentes de ajuste",
@@ -114,6 +129,10 @@
           "title": "O que é uma torre de temperatura?",
           "body": "Uma torre de temperatura imprime a mesma forma em temperaturas escalonadas do bico, para que você possa escolher aquela com a melhor adesão entre camadas, melhor acabamento de superfície e menos fios para o seu filamento."
         },
+        "flow": {
+          "title": "O que é calibração de fluxo?",
+          "body": "A calibração de fluxo corrige quanto filamento o extrusor realmente empurra. Comande um comprimento conhecido, meça o que saiu, e o assistente ajusta o rotation_distance. O Klipper não tem uma configuração de fluxo ao vivo, então o novo valor vai para o printer.cfg."
+        },
         "glossary": {
           "title": "Glossário"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Torre de temperatura",
           "def": "Uma impressão de teste dividida em faixas, cada uma mantida em uma temperatura diferente do bico, para encontrar a melhor temperatura de impressão de um filamento."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Quantos mm de filamento o extrusor alimenta por rotação do motor. Diminuí-lo empurra mais filamento; a calibração de fluxo ajusta esse valor."
         }
       }
     }

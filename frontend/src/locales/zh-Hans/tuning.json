@@ -93,6 +93,21 @@
         "moonraker_error": "应用失败：{error}"
       }
     },
+    "flow": {
+      "title": "流量",
+      "step1": "1. 挤出一段已知长度，然后测量实际挤出的量",
+      "requested": "指令长度（mm）",
+      "measured": "实测长度（mm）",
+      "current": "当前 rotation_distance",
+      "fetch": "从打印机读取",
+      "calc": "计算",
+      "step2": "2. 校正",
+      "result": "新的 rotation_distance：{value}",
+      "flowPercent": "等效切片软件流量：{percent}%",
+      "snippetTitle": "粘贴到你的 [extruder] 段，然后运行 SAVE_CONFIG 并重启",
+      "notLive": "流量无法实时设置 - 请通过保存配置并重启来应用，而非即时生效。",
+      "noCurrent": "无法从打印机读取 - 请手动输入你的 [extruder] rotation_distance。"
+    },
     "help": {
       "guide": "指南",
       "guideTitle": "调校向导指南",
@@ -114,6 +129,10 @@
           "title": "什么是温度塔？",
           "body": "温度塔会在逐级递增的喷嘴温度下打印相同的形状，让你为耗材挑选层间附着最佳、表面最光洁且拉丝最少的那一档温度。"
         },
+        "flow": {
+          "title": "什么是流量校准？",
+          "body": "流量校准用于校正挤出机实际推送的耗材量。挤出一段已知长度，测量实际挤出的量，向导便会调整 rotation_distance。Klipper 没有实时流量设置，因此新数值会写入 printer.cfg。"
+        },
         "glossary": {
           "title": "术语表"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "温度塔",
           "def": "一种分段打印的测试件，每一段保持不同的喷嘴温度，用于找出耗材的最佳打印温度。"
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "挤出机每转一圈所送进的耗材毫米数。调低它会推送更多耗材；流量校准就是在调校这个数值。"
         }
       }
     }

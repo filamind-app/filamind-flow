@@ -93,6 +93,21 @@
         "moonraker_error": "Échec de l'application : {error}"
       }
     },
+    "flow": {
+      "title": "Débit",
+      "step1": "1. Extrudez une longueur connue, puis mesurez ce qui est réellement sorti",
+      "requested": "Longueur commandée (mm)",
+      "measured": "Longueur mesurée (mm)",
+      "current": "rotation_distance actuelle",
+      "fetch": "Lire depuis l'imprimante",
+      "calc": "Calculer",
+      "step2": "2. Correction",
+      "result": "Nouvelle rotation_distance : {value}",
+      "flowPercent": "Débit équivalent dans le trancheur : {percent} %",
+      "snippetTitle": "Collez ceci dans votre section [extruder], puis exécutez SAVE_CONFIG et redémarrez",
+      "notLive": "Le débit ne peut pas être réglé en direct - appliquez-le par un enregistrement de la configuration suivi d'un redémarrage, pas instantanément.",
+      "noCurrent": "Impossible de la lire depuis l'imprimante - saisissez manuellement la rotation_distance de votre section [extruder]."
+    },
     "help": {
       "guide": "Guide",
       "guideTitle": "Guide des assistants de réglage",
@@ -114,6 +129,10 @@
           "title": "Qu'est-ce qu'une tour de température ?",
           "body": "Une tour de température imprime la même forme à des températures de buse échelonnées, afin de choisir celle qui offre la meilleure adhérence entre couches, le meilleur état de surface et le moins de filaments parasites pour votre filament."
         },
+        "flow": {
+          "title": "Qu'est-ce que la calibration du débit ?",
+          "body": "La calibration du débit corrige la quantité de filament que l'extrudeur pousse réellement. Commandez une longueur connue, mesurez ce qui est sorti, et l'assistant ajuste la rotation_distance. Klipper n'a pas de réglage de débit en direct, la nouvelle valeur va donc dans printer.cfg."
+        },
         "glossary": {
           "title": "Glossaire"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Tour de température",
           "def": "Une impression de test divisée en bandes, chacune maintenue à une température de buse différente, pour trouver la meilleure température d'impression d'un filament."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Le nombre de mm de filament que l'extrudeur entraîne par rotation du moteur. La diminuer pousse plus de filament ; la calibration du débit règle cette valeur."
         }
       }
     }

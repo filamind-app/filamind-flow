@@ -11,19 +11,21 @@ import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import HelpIllo from './HelpIllo.vue'
 import TowerWizard from './TowerWizard.vue'
 import TempWizard from './TempWizard.vue'
+import FlowWizard from './FlowWizard.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import { applyPa, applyRetraction, planPa, planRetraction } from './api'
 import { defaultParams, defaultRetractionParams } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
-type WizardId = 'pa' | 'retraction' | 'temp'
+type WizardId = 'pa' | 'retraction' | 'temp' | 'flow'
 const active = ref<WizardId>('pa')
 
 const TABS: { id: WizardId; titleKey: string }[] = [
   { id: 'pa', titleKey: 'tuning.pa.title' },
   { id: 'retraction', titleKey: 'tuning.retraction.title' },
   { id: 'temp', titleKey: 'tuning.temp.title' },
+  { id: 'flow', titleKey: 'tuning.flow.title' },
 ]
 </script>
 
@@ -80,5 +82,6 @@ const TABS: { id: WizardId; titleKey: string }[] = [
       :apply="applyRetraction"
     />
     <TempWizard v-show="active === 'temp'" />
+    <FlowWizard v-show="active === 'flow'" />
   </div>
 </template>

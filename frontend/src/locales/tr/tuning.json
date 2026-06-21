@@ -93,6 +93,21 @@
         "moonraker_error": "Uygulanamadı: {error}"
       }
     },
+    "flow": {
+      "title": "Akış",
+      "step1": "1. Bilinen bir uzunluk ekstrüde edin, ardından gerçekte ne kadar çıktığını ölçün",
+      "requested": "Komut verilen uzunluk (mm)",
+      "measured": "Ölçülen uzunluk (mm)",
+      "current": "Mevcut rotation_distance",
+      "fetch": "Yazıcıdan oku",
+      "calc": "Hesapla",
+      "step2": "2. Düzeltme",
+      "result": "Yeni rotation_distance: {value}",
+      "flowPercent": "Eşdeğer dilimleyici akışı: {percent}%",
+      "snippetTitle": "[extruder] bölümünüze yapıştırın, ardından SAVE_CONFIG çalıştırıp yeniden başlatın",
+      "notLive": "Akış anlık olarak ayarlanamaz - bunu anında değil, bir yapılandırma kaydı ve yeniden başlatma ile uygulayın.",
+      "noCurrent": "Yazıcıdan okunamadı - [extruder] rotation_distance değerinizi elle girin."
+    },
     "help": {
       "guide": "Kılavuz",
       "guideTitle": "İnce ayar sihirbazları kılavuzu",
@@ -114,6 +129,10 @@
           "title": "Sıcaklık kulesi nedir?",
           "body": "Sıcaklık kulesi, aynı şekli kademeli nozul sıcaklıklarında basar; böylece filamentiniz için en iyi katman yapışması, yüzey kalitesi ve en az iplikçik oluşumunu sağlayanı seçebilirsiniz."
         },
+        "flow": {
+          "title": "Akış kalibrasyonu nedir?",
+          "body": "Akış kalibrasyonu, ekstrüderin gerçekte ne kadar filament ittiğini düzeltir. Bilinen bir uzunluk için komut verin, ne kadar çıktığını ölçün, sihirbaz rotation_distance değerini ayarlar. Klipper'da anlık akış ayarı yoktur, bu nedenle yeni değer printer.cfg dosyasına gider."
+        },
         "glossary": {
           "title": "Sözlük"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Sıcaklık kulesi",
           "def": "Bir filamentin en iyi baskı sıcaklığını bulmak için her biri farklı bir nozul sıcaklığında tutulan bantlara bölünmüş bir test baskısı."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Ekstrüderin her motor turunda kaç mm filament beslediği. Değeri düşürmek daha fazla filament iter; akış kalibrasyonu bu değeri ayarlar."
         }
       }
     }

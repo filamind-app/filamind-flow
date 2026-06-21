@@ -93,6 +93,21 @@
         "moonraker_error": "Impossibile applicare: {error}"
       }
     },
+    "flow": {
+      "title": "Flusso",
+      "step1": "1. Estrudi una lunghezza nota, poi misura quanto è effettivamente uscito",
+      "requested": "Lunghezza comandata (mm)",
+      "measured": "Lunghezza misurata (mm)",
+      "current": "rotation_distance attuale",
+      "fetch": "Leggi dalla stampante",
+      "calc": "Calcola",
+      "step2": "2. Correzione",
+      "result": "Nuovo rotation_distance: {value}",
+      "flowPercent": "Flusso equivalente nello slicer: {percent}%",
+      "snippetTitle": "Incolla nella tua sezione [extruder], poi esegui SAVE_CONFIG e riavvia",
+      "notLive": "Il flusso non può essere impostato dal vivo - applicalo con un salvataggio della configurazione e un riavvio, non istantaneamente.",
+      "noCurrent": "Impossibile leggerlo dalla stampante - inserisci manualmente il rotation_distance della tua sezione [extruder]."
+    },
     "help": {
       "guide": "Guida",
       "guideTitle": "Guida alle procedure di taratura",
@@ -114,6 +129,10 @@
           "title": "Cos'è una torre di temperatura?",
           "body": "Una torre di temperatura stampa la stessa forma a temperature dell'ugello crescenti, così puoi scegliere quella con la migliore adesione tra i layer, la finitura superficiale migliore e meno filamenti per il tuo filamento."
         },
+        "flow": {
+          "title": "Cos'è la calibrazione del flusso?",
+          "body": "La calibrazione del flusso corregge la quantità di filamento che l'estrusore spinge effettivamente. Comanda una lunghezza nota, misura quanto è uscito e la procedura guidata regola il rotation_distance. Klipper non ha un'impostazione del flusso dal vivo, quindi il nuovo valore va in printer.cfg."
+        },
         "glossary": {
           "title": "Glossario"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "Torre di temperatura",
           "def": "Una stampa di prova suddivisa in fasce, ciascuna mantenuta a una diversa temperatura dell'ugello, per trovare la temperatura di stampa migliore di un filamento."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "Quanti mm di filamento l'estrusore alimenta per ogni rotazione del motore. Abbassarlo spinge più filamento; la calibrazione del flusso regola questo valore."
         }
       }
     }

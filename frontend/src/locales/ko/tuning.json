@@ -93,6 +93,21 @@
         "moonraker_error": "적용하지 못했습니다: {error}"
       }
     },
+    "flow": {
+      "title": "유량",
+      "step1": "1. 정해진 길이만큼 압출한 뒤 실제로 나온 양을 측정하세요",
+      "requested": "지령 길이 (mm)",
+      "measured": "측정 길이 (mm)",
+      "current": "현재 rotation_distance",
+      "fetch": "프린터에서 읽기",
+      "calc": "계산",
+      "step2": "2. 보정",
+      "result": "새 rotation_distance: {value}",
+      "flowPercent": "동등한 슬라이서 유량: {percent}%",
+      "snippetTitle": "[extruder] 섹션에 붙여 넣은 뒤 SAVE_CONFIG를 실행하고 재시작하세요",
+      "notLive": "유량은 실시간으로 설정할 수 없습니다 - 즉시가 아니라 설정 저장 후 재시작으로 적용하세요.",
+      "noCurrent": "프린터에서 읽어오지 못했습니다 - [extruder]의 rotation_distance를 직접 입력하세요."
+    },
     "help": {
       "guide": "가이드",
       "guideTitle": "튜닝 마법사 가이드",
@@ -114,6 +129,10 @@
           "title": "온도 타워란?",
           "body": "온도 타워는 같은 형상을 단계별로 변하는 노즐 온도에서 출력하여, 사용 중인 필라멘트에 가장 좋은 레이어 접착력과 표면 마감, 그리고 가장 적은 거미줄을 보이는 온도를 고를 수 있게 해줍니다."
         },
+        "flow": {
+          "title": "유량 보정이란?",
+          "body": "유량 보정은 익스트루더가 실제로 밀어내는 필라멘트 양을 바로잡습니다. 정해진 길이를 압출하도록 지령하고 실제로 나온 양을 측정하면, 마법사가 rotation_distance를 조정합니다. Klipper에는 실시간 유량 설정이 없으므로 새 값은 printer.cfg에 들어갑니다."
+        },
         "glossary": {
           "title": "용어집"
         }
@@ -134,6 +153,10 @@
         "temperatureTower": {
           "term": "온도 타워",
           "def": "여러 구간으로 나뉘어 각 구간마다 다른 노즐 온도로 유지하면서 출력하는 테스트물로, 필라멘트의 최적 출력 온도를 찾기 위해 사용합니다."
+        },
+        "rotationDistance": {
+          "term": "rotation_distance",
+          "def": "익스트루더가 모터 1회전당 공급하는 필라멘트 길이(mm)입니다. 값을 낮추면 더 많은 필라멘트를 밀어냅니다. 유량 보정이 이 값을 튜닝합니다."
         }
       }
     }

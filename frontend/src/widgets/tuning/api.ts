@@ -1,7 +1,15 @@
 import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { ApplyResult, TempTowerParams, TempTowerPlan, TowerParams, TowerPlan } from './types'
+import type {
+  ApplyResult,
+  FlowComputeResult,
+  FlowExtruder,
+  TempTowerParams,
+  TempTowerPlan,
+  TowerParams,
+  TowerPlan,
+} from './types'
 
 function base(): string {
   return resolveEndpoints().backendUrl
@@ -39,4 +47,18 @@ export function planTemp(params: TempTowerParams): Promise<TempTowerPlan> {
 
 export function applyTemp(heater: string, value: number): Promise<ApplyResult> {
   return postJson('/api/tuning/temp/apply', { heater, value })
+}
+
+export async function getExtruderRotationDistance(): Promise<FlowExtruder> {
+  const r = await fetch(`${base()}/api/tuning/flow/extruder`)
+  if (!r.ok) throw new Error(httpError(r.status))
+  return r.json()
+}
+
+export function computeFlow(
+  requested: number,
+  measured: number,
+  current_rotation_distance: number,
+): Promise<FlowComputeResult> {
+  return postJson('/api/tuning/flow/compute', { requested, measured, current_rotation_distance })
 }
