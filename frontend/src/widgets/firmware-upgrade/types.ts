@@ -143,6 +143,12 @@ export interface FlashIntent {
   request?: FlashRequest
 }
 
+/** A translatable flash-plan warning (rendered as firmware.flashConfirm.warn.<code>). */
+export interface FlashWarning {
+  code: string
+  params?: Record<string, unknown>
+}
+
 /** Read-only preview of what a flash would do, plus its safety gates. */
 export interface FlashPlan {
   method: string
@@ -154,7 +160,7 @@ export interface FlashPlan {
   artifact_exists: boolean
   sudo_ready: boolean
   ready: boolean
-  warnings: string[]
+  warnings: FlashWarning[]
 }
 
 /** A board saved in your devices: which profile it runs and how to flash it. */

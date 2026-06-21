@@ -167,7 +167,12 @@
       "previewFailed": "플래시를 미리 볼 수 없습니다",
       "acknowledge": "이 작업이 하드웨어에 펌웨어를 기록하며 중단되면 보드가 벽돌이 될 수 있음을 이해합니다.",
       "blockedSeeWarnings": "차단됨 - 경고를 확인하세요",
-      "flashNow": "⚠ 지금 플래시"
+      "flashNow": "⚠ 지금 플래시",
+      "warn": {
+        "printing": "인쇄가 진행 중입니다 - 플래싱이 차단되었습니다.",
+        "no_artifact": "이 프로필용 펌웨어가 아직 빌드되지 않았습니다.",
+        "no_sudo": "비밀번호 없는 sudo가 구성되지 않았습니다 - 호스트에서 'scripts/install.sh sudoers'를 실행하세요."
+      }
     },
     "configEditor": {
       "title": "펌웨어 구성",

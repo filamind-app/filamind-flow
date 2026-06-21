@@ -167,7 +167,12 @@
       "previewFailed": "Kon de flash niet voorvertonen",
       "acknowledge": "Ik begrijp dat dit firmware naar de hardware schrijft en een bord onbruikbaar kan maken bij onderbreking.",
       "blockedSeeWarnings": "geblokkeerd - zie waarschuwingen",
-      "flashNow": "⚠ Nu flashen"
+      "flashNow": "⚠ Nu flashen",
+      "warn": {
+        "printing": "Er is een print bezig - flashen is geblokkeerd.",
+        "no_artifact": "Er is nog geen firmware gebouwd voor dit profiel.",
+        "no_sudo": "Wachtwoordloze sudo is niet geconfigureerd - voer 'scripts/install.sh sudoers' uit op de host."
+      }
     },
     "configEditor": {
       "title": "Firmware configureren",

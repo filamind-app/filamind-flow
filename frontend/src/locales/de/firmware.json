@@ -167,7 +167,12 @@
       "previewFailed": "Vorschau des Flashes nicht möglich",
       "acknowledge": "Mir ist klar, dass dies Firmware auf die Hardware schreibt und eine Platine bei Unterbrechung unbrauchbar machen kann.",
       "blockedSeeWarnings": "blockiert — siehe Warnungen",
-      "flashNow": "⚠ Jetzt flashen"
+      "flashNow": "⚠ Jetzt flashen",
+      "warn": {
+        "printing": "Ein Druck läuft - Flashen ist blockiert.",
+        "no_artifact": "Für dieses Profil wurde noch keine Firmware gebaut.",
+        "no_sudo": "Passwortloses sudo nicht konfiguriert - 'scripts/install.sh sudoers' auf dem Host ausführen."
+      }
     },
     "configEditor": {
       "title": "Firmware konfigurieren",

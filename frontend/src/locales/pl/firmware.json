@@ -167,7 +167,12 @@
       "previewFailed": "Nie udało się wyświetlić podglądu wgrywania",
       "acknowledge": "Rozumiem, że to zapisuje firmware na sprzęcie i może uszkodzić płytę, jeśli zostanie przerwane.",
       "blockedSeeWarnings": "zablokowane - zobacz ostrzeżenia",
-      "flashNow": "⚠ Wgraj teraz"
+      "flashNow": "⚠ Wgraj teraz",
+      "warn": {
+        "printing": "Trwa drukowanie - flashowanie jest zablokowane.",
+        "no_artifact": "Nie zbudowano jeszcze firmware dla tego profilu.",
+        "no_sudo": "Bezhasłowe sudo nie jest skonfigurowane - uruchom 'scripts/install.sh sudoers' na hoście."
+      }
     },
     "configEditor": {
       "title": "Konfiguruj firmware",

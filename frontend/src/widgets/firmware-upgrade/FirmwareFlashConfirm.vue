@@ -84,8 +84,8 @@ const blocked = computed(() => plan.value !== null && plan.value.ready === false
           class="overflow-x-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
           >{{ plan.command }}</pre
         >
-        <p v-for="w in plan.warnings" :key="w" class="font-mono text-[11px] text-brand-red">
-          ⚠ {{ w }}
+        <p v-for="(w, i) in plan.warnings" :key="i" class="font-mono text-[11px] text-brand-red">
+          ⚠ {{ t(`firmware.flashConfirm.warn.${w.code}`, w.params ?? {}) }}
         </p>
       </div>
       <p v-else-if="planError" class="font-mono text-[11px] text-brand-red">

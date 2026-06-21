@@ -167,7 +167,12 @@
       "previewFailed": "Não foi possível pré-visualizar a gravação",
       "acknowledge": "Entendo que isto escreve firmware no hardware e pode inutilizar uma placa se interrompido.",
       "blockedSeeWarnings": "bloqueado - veja os avisos",
-      "flashNow": "⚠ Gravar agora"
+      "flashNow": "⚠ Gravar agora",
+      "warn": {
+        "printing": "Há uma impressão em andamento - o flash está bloqueado.",
+        "no_artifact": "Nenhum firmware foi compilado para este perfil ainda.",
+        "no_sudo": "sudo sem senha não configurado - execute 'scripts/install.sh sudoers' no host."
+      }
     },
     "configEditor": {
       "title": "Configurar firmware",

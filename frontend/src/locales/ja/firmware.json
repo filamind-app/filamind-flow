@@ -167,7 +167,12 @@
       "previewFailed": "書き込みをプレビューできませんでした",
       "acknowledge": "これがハードウェアにファームウェアを書き込み、中断するとボードが故障し得ることを理解しています。",
       "blockedSeeWarnings": "ブロック中 - 警告を確認してください",
-      "flashNow": "⚠ 今すぐ書き込み"
+      "flashNow": "⚠ 今すぐ書き込み",
+      "warn": {
+        "printing": "印刷中です - 書き込みはブロックされています。",
+        "no_artifact": "このプロファイル用のファームウェアはまだビルドされていません。",
+        "no_sudo": "パスワードなし sudo が未設定です - ホストで 'scripts/install.sh sudoers' を実行してください。"
+      }
     },
     "configEditor": {
       "title": "ファームウェアを構成",

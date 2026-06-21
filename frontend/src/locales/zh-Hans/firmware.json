@@ -167,7 +167,12 @@
       "previewFailed": "无法预览此次刷写",
       "acknowledge": "我明白这会将固件写入硬件，若中途中断可能使板卡变砖。",
       "blockedSeeWarnings": "已阻止 — 请查看警告",
-      "flashNow": "⚠ 立即刷写"
+      "flashNow": "⚠ 立即刷写",
+      "warn": {
+        "printing": "正在打印 - 已禁止刷写。",
+        "no_artifact": "尚未为此配置构建固件。",
+        "no_sudo": "未配置免密码 sudo - 在主机上运行 'scripts/install.sh sudoers'。"
+      }
     },
     "configEditor": {
       "title": "配置固件",

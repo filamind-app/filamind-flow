@@ -167,7 +167,12 @@
       "previewFailed": "Could not preview the flash",
       "acknowledge": "I understand this writes firmware to the hardware and can brick a board if interrupted.",
       "blockedSeeWarnings": "blocked - see warnings",
-      "flashNow": "⚠ Flash now"
+      "flashNow": "⚠ Flash now",
+      "warn": {
+        "printing": "A print is in progress - flashing is blocked.",
+        "no_artifact": "No firmware has been built for this profile yet.",
+        "no_sudo": "Passwordless sudo not configured - run 'scripts/install.sh sudoers' on the host."
+      }
     },
     "configEditor": {
       "title": "Configure firmware",
