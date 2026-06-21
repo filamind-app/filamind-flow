@@ -230,6 +230,10 @@
     "backUi": {
       "label": "Back to UI",
       "title": "Open the printer's web interface"
+    },
+    "gate": {
+      "title": "Requires the FilaMind interface",
+      "body": "{name} runs in the FilaMind 3D app. Install FilaMind 3D on this printer to use it."
     }
   }
 }

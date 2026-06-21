@@ -230,6 +230,10 @@
     "backUi": {
       "label": "返回界面",
       "title": "打开打印机的网页界面"
+    },
+    "gate": {
+      "title": "需要 FilaMind 界面",
+      "body": "{name} 在 FilaMind 3D 应用中运行。请在此打印机上安装 FilaMind 3D 以使用它。"
     }
   }
 }

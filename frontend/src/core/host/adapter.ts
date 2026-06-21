@@ -71,15 +71,20 @@ export async function detectBackUi(opts: DetectOpts = {}): Promise<BackUi> {
   }
 }
 
-// Per-host widget visibility. New flow innovations are SUITE-exclusive (the differentiation moat):
-// the Mainsail build stays feature-frozen. `remote-control` (steer the on-printer FilaMind screen)
-// only makes sense in the suite, where that screen exists, so it ships suite-only.
-const SUITE_ONLY = new Set<string>(['remote-control', 'material-brain', 'tuning', 'preflight'])
-const MAINSAIL_ONLY = new Set<string>([])
+// Per-host widget visibility. Some widgets need the FilaMind 3D host. In the Mainsail build the
+// GATED ones still appear but render an install-required panel (see widgets/index.ts) instead of
+// their UI; in the suite build they run normally. `remote-control` needs the on-printer FilaMind
+// screen to receive its commands, so it is HIDDEN in the Mainsail build (nothing would receive it).
+const SUITE_GATED = new Set<string>(['material-brain', 'tuning', 'preflight'])
+const SUITE_HIDDEN = new Set<string>(['remote-control'])
 
-/** Whether a widget should register under the current host. */
+/** Whether a widget should register under the current host (hidden ones drop out in Mainsail). */
 export function isWidgetEnabled(id: string): boolean {
-  if (SUITE_ONLY.has(id)) return isSuiteHost()
-  if (MAINSAIL_ONLY.has(id)) return isMainsailHost()
+  if (SUITE_HIDDEN.has(id)) return isSuiteHost()
   return true
+}
+
+/** Whether a registered widget should show the install-required panel instead of its real UI. */
+export function isWidgetGated(id: string): boolean {
+  return SUITE_GATED.has(id) && !isSuiteHost()
 }

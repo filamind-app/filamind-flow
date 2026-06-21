@@ -230,6 +230,10 @@
     "backUi": {
       "label": "Torna all'interfaccia",
       "title": "Apri l'interfaccia web della stampante"
+    },
+    "gate": {
+      "title": "Richiede l'interfaccia FilaMind",
+      "body": "{name} funziona nell'app FilaMind 3D. Installa FilaMind 3D su questa stampante per usarlo."
     }
   }
 }

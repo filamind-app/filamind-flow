@@ -230,6 +230,10 @@
     "backUi": {
       "label": "返回介面",
       "title": "開啟印表機的網頁介面"
+    },
+    "gate": {
+      "title": "需要 FilaMind 介面",
+      "body": "{name} 在 FilaMind 3D 應用程式中執行。請在此印表機上安裝 FilaMind 3D 以使用它。"
     }
   }
 }
