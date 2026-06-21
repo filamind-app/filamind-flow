@@ -5,8 +5,17 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
-from app.models.schemas import PaApplyRequest, PaApplyResult, PaTowerPlan, PaTowerRequest
-from app.services import pa_tuning
+from app.models.schemas import (
+    PaApplyRequest,
+    PaApplyResult,
+    PaTowerPlan,
+    PaTowerRequest,
+    RetractionApplyRequest,
+    RetractionApplyResult,
+    RetractionTowerPlan,
+    RetractionTowerRequest,
+)
+from app.services import pa_tuning, retraction_tuning
 
 router = APIRouter(prefix="/tuning", tags=["tuning"])
 
@@ -30,3 +39,26 @@ async def pa_apply(
     """Apply the chosen PA value live (gated; refuses while the printer is busy)."""
     result = await pa_tuning.apply_pa(settings.moonraker_url, req.value)
     return PaApplyResult(**result)
+
+
+@router.post("/retraction/plan", response_model=RetractionTowerPlan)
+async def retraction_plan(req: RetractionTowerRequest) -> RetractionTowerPlan:
+    """The TUNING_TOWER command + height->retraction-length table for a tower (read-only)."""
+    try:
+        plan = retraction_tuning.plan_tower(
+            retraction_tuning.RetractionTowerParams(
+                start=req.start, factor=req.factor, height=req.height
+            )
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return RetractionTowerPlan(**plan)
+
+
+@router.post("/retraction/apply", response_model=RetractionApplyResult)
+async def retraction_apply(
+    req: RetractionApplyRequest, settings: Settings = Depends(get_settings)
+) -> RetractionApplyResult:
+    """Apply the chosen retraction length live (gated; needs ``[firmware_retraction]``)."""
+    result = await retraction_tuning.apply_retraction(settings.moonraker_url, req.value)
+    return RetractionApplyResult(**result)

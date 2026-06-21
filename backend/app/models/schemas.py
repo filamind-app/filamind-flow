@@ -309,6 +309,43 @@ class PaApplyResult(BaseModel):
     params: dict[str, Any] = {}
 
 
+class RetractionSample(BaseModel):
+    """One (Z height -> retraction length) point on the tuning tower."""
+
+    height: float
+    value: float
+
+
+class RetractionTowerRequest(BaseModel):
+    """Firmware-retraction tuning-tower parameters."""
+
+    start: float = 0.0
+    factor: float = 0.05
+    height: float = 50.0
+
+
+class RetractionTowerPlan(BaseModel):
+    """The TUNING_TOWER command + a height->retraction-length sample table."""
+
+    command: str
+    start: float
+    factor: float
+    height: float
+    samples: list[RetractionSample] = []
+
+
+class RetractionApplyRequest(BaseModel):
+    value: float
+
+
+class RetractionApplyResult(BaseModel):
+    """Result of applying retraction (frontend renders ``tuning.retraction.apply.<code>``)."""
+
+    ok: bool
+    code: str
+    params: dict[str, Any] = {}
+
+
 class FlashWarning(BaseModel):
     """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
 
