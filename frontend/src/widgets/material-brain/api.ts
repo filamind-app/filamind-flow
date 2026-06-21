@@ -1,7 +1,7 @@
 import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { MaterialFlowCheck, MaterialProfile } from './types'
+import type { MaterialApplyResult, MaterialFlowCheck, MaterialProfile } from './types'
 
 function base(): string {
   return resolveEndpoints().backendUrl
@@ -30,6 +30,14 @@ export async function saveMaterial(
 export async function deleteMaterial(id: string): Promise<void> {
   const r = await fetch(`${base()}/api/material/${encodeURIComponent(id)}`, { method: 'DELETE' })
   if (!r.ok) throw new Error(httpError(r.status))
+}
+
+export async function applyMaterial(id: string): Promise<MaterialApplyResult> {
+  const r = await fetch(`${base()}/api/material/${encodeURIComponent(id)}/apply`, {
+    method: 'POST',
+  })
+  if (!r.ok) throw new Error(httpError(r.status))
+  return r.json()
 }
 
 export async function flowCheck(id: string, hotend?: string): Promise<MaterialFlowCheck> {

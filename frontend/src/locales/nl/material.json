@@ -58,6 +58,13 @@
           "def": "De maximale volumetrische flow die een hotend kan volhouden, uit de hardwarecatalogus."
         }
       }
+    },
+    "apply": {
+      "button": "Voorverwarmen",
+      "applied": "{name} verwarmen naar {nozzle}°C nozzle / {bed}°C bed",
+      "busy": "Printer is bezig - kan nu niet voorverwarmen",
+      "no_temps": "Geen temperaturen ingesteld voor dit profiel",
+      "error": "Voorverwarmen mislukt: {error}"
     }
   }
 }

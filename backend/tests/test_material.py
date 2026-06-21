@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings
@@ -111,3 +113,60 @@ def test_material_flow_check_route(tmp_path: Path) -> None:
     assert over.json()["code"] == "exceeds"
 
     assert client.get("/api/material/does-not-exist/flow-check").status_code == 404
+
+
+class _FakeClient:
+    """Records g-code and reports the printer state (drives printer_guard.is_busy)."""
+
+    def __init__(self, *, state: str = "ready") -> None:
+        self.state = state
+        self.scripts: list[str] = []
+
+    async def query_objects(self, objects: list[str]) -> dict[str, Any]:
+        return {"print_stats": {"state": self.state}} if "print_stats" in objects else {}
+
+    async def run_gcode(self, script: str) -> None:
+        self.scripts.append(script)
+
+
+async def test_apply_material_preheats_when_ready(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    monkeypatch.setattr(material_service, "MoonrakerClient", lambda *a, **k: fake)
+    res = await material_service.apply_material(
+        "http://x", {"name": "PLA", "nozzle_temp": 210, "bed_temp": 60}
+    )
+    assert res["ok"] is True
+    assert res["code"] == "applied"
+    assert fake.scripts == ["M104 S210", "M140 S60"]
+
+
+async def test_apply_material_refuses_while_busy(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient(state="printing")
+    monkeypatch.setattr(material_service, "MoonrakerClient", lambda *a, **k: fake)
+    res = await material_service.apply_material(
+        "http://x", {"name": "PLA", "nozzle_temp": 210, "bed_temp": 60}
+    )
+    assert res["ok"] is False
+    assert res["code"] == "busy"
+    assert fake.scripts == []  # nothing written while busy
+
+
+async def test_apply_material_no_temps(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    monkeypatch.setattr(material_service, "MoonrakerClient", lambda *a, **k: fake)
+    res = await material_service.apply_material(
+        "http://x", {"name": "X", "nozzle_temp": 0, "bed_temp": 0}
+    )
+    assert res["code"] == "no_temps"
+    assert fake.scripts == []
+
+
+def test_apply_route(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient()
+    monkeypatch.setattr(material_service, "MoonrakerClient", lambda *a, **k: fake)
+    client = _client(tmp_path)
+    client.post("/api/material", json={"name": "PLA", "nozzle_temp": 200, "bed_temp": 55})
+    r = client.post("/api/material/pla/apply")
+    assert r.status_code == 200
+    assert r.json()["code"] == "applied"
+    assert client.post("/api/material/nope/apply").status_code == 404

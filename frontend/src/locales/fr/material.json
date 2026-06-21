@@ -58,6 +58,13 @@
           "def": "Le débit volumétrique maximal qu'un hotend peut soutenir, issu du catalogue matériel."
         }
       }
+    },
+    "apply": {
+      "button": "Préchauffer",
+      "applied": "Chauffe de {name} à {nozzle}°C buse / {bed}°C plateau",
+      "busy": "Imprimante occupée - préchauffage impossible maintenant",
+      "no_temps": "Aucune température définie pour ce profil",
+      "error": "Échec du préchauffage : {error}"
     }
   }
 }

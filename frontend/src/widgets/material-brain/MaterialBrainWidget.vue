@@ -12,7 +12,7 @@ import { describeError } from '@/core/describeError'
 
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
-import { deleteMaterial, flowCheck, listMaterials, saveMaterial } from './api'
+import { applyMaterial, deleteMaterial, flowCheck, listMaterials, saveMaterial } from './api'
 import { emptyProfile, type MaterialFlowCheck, type MaterialProfile } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -21,6 +21,7 @@ const materials = ref<MaterialProfile[]>([])
 const checks = reactive<Record<string, MaterialFlowCheck>>({})
 const loading = ref(false)
 const error = ref<string | null>(null)
+const notice = ref<{ text: string; ok: boolean } | null>(null)
 const form = ref<MaterialProfile | null>(null)
 const editingId = ref<string | null>(null)
 const saving = ref(false)
@@ -95,6 +96,18 @@ function verdictText(check: MaterialFlowCheck): string {
   return tt(`material.flowCheck.${check.code}`, check.params ?? {})
 }
 
+async function doApply(m: MaterialProfile): Promise<void> {
+  notice.value = null
+  error.value = null
+  try {
+    const res = await applyMaterial(m.id)
+    const tt = t as unknown as (key: string, named: Record<string, unknown>) => string
+    notice.value = { text: tt(`material.apply.${res.code}`, res.params ?? {}), ok: res.ok }
+  } catch (e) {
+    error.value = describeError(e)
+  }
+}
+
 onMounted(load)
 </script>
 
@@ -124,6 +137,14 @@ onMounted(load)
 
     <p v-if="error" class="nb-card bg-brand-red px-2 py-1 text-xs text-paper" role="alert">
       {{ error }}
+    </p>
+    <p
+      v-if="notice"
+      class="nb-card px-2 py-1 text-xs"
+      :class="notice.ok ? 'bg-brand-lime' : 'bg-brand-yellow text-ink'"
+      role="status"
+    >
+      {{ notice.text }}
     </p>
 
     <!-- Add / edit form -->
@@ -206,6 +227,9 @@ onMounted(load)
           {{ verdictText(checks[m.id]) }}
         </span>
         <span class="ms-auto flex gap-1">
+          <button class="nb-btn bg-brand-cyan px-2 py-0.5 text-[11px]" @click="doApply(m)">
+            {{ t('material.apply.button') }}
+          </button>
           <button class="nb-btn bg-surface px-2 py-0.5 text-[11px]" @click="startEdit(m)">
             {{ t('material.edit') }}
           </button>

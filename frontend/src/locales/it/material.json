@@ -58,6 +58,13 @@
           "def": "Il massimo flusso volumetrico che un hotend può sostenere, dal catalogo hardware."
         }
       }
+    },
+    "apply": {
+      "button": "Preriscalda",
+      "applied": "Riscaldo {name} a {nozzle}°C ugello / {bed}°C piatto",
+      "busy": "Stampante occupata - impossibile preriscaldare ora",
+      "no_temps": "Nessuna temperatura impostata per questo profilo",
+      "error": "Preriscaldo non riuscito: {error}"
     }
   }
 }

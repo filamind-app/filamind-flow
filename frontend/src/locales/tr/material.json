@@ -58,6 +58,13 @@
           "def": "Bir hotend'in sürdürebileceği maksimum hacimsel akış; donanım kataloğundan alınır."
         }
       }
+    },
+    "apply": {
+      "button": "Ön ısıt",
+      "applied": "{name} nozül {nozzle}°C / tabla {bed}°C ısıtılıyor",
+      "busy": "Yazıcı meşgul - şu anda ön ısıtma yapılamaz",
+      "no_temps": "Bu profil için sıcaklık ayarlanmamış",
+      "error": "Ön ısıtma başarısız: {error}"
     }
   }
 }

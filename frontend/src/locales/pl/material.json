@@ -58,6 +58,13 @@
           "def": "Maksymalny przepływ objętościowy, jaki hotend utrzyma, według katalogu sprzętu."
         }
       }
+    },
+    "apply": {
+      "button": "Rozgrzej",
+      "applied": "Grzanie {name} do {nozzle}°C dysza / {bed}°C stół",
+      "busy": "Drukarka zajęta - nie można teraz rozgrzać",
+      "no_temps": "Brak ustawionych temperatur dla tego profilu",
+      "error": "Nie udało się rozgrzać: {error}"
     }
   }
 }
