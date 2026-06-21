@@ -128,10 +128,6 @@
         "title": "Host Control",
         "description": "Manage the printer host's Linux OS: health, services, disk cleanup, and system settings."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Edit your printer's KlipperScreen touchscreen config and restart it to apply."
-      },
       "setup": {
         "title": "Setup",
         "description": "Install and manage Klipper-ecosystem components for this printer."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Pre-Print Check",
         "description": "A read-only readiness check before starting a print."
+      },
+      "screen-manager": {
+        "title": "Screen Manager",
+        "description": "Manage your printer's touchscreen UI: settings, menus, themes, and which screen runs."
       }
     },
     "guard": {

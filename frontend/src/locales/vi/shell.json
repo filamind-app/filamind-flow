@@ -128,10 +128,6 @@
         "title": "Điều khiển Máy chủ",
         "description": "Quản lý hệ điều hành Linux của máy chủ máy in: tình trạng, dịch vụ, dọn đĩa, và thiết lập hệ thống."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Chỉnh sửa cấu hình màn hình cảm ứng KlipperScreen của máy in và khởi động lại để áp dụng."
-      },
       "setup": {
         "title": "Setup",
         "description": "Cài đặt và quản lý các thành phần thuộc hệ sinh thái Klipper cho máy in này."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Kiểm tra trước khi in",
         "description": "Một lần kiểm tra độ sẵn sàng chỉ-đọc trước khi bắt đầu in."
+      },
+      "screen-manager": {
+        "title": "Trình quản lý màn hình",
+        "description": "Quản lý màn hình cảm ứng của máy in: cài đặt, menu, giao diện và màn hình nào đang chạy."
       }
     },
     "guard": {

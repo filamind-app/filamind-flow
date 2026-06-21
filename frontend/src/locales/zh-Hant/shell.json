@@ -128,10 +128,6 @@
         "title": "主機控制",
         "description": "管理印表機主機的 Linux 作業系統：健康狀態、服務、磁碟清理與系統設定。"
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen 工作室",
-        "description": "編輯印表機的 KlipperScreen 觸控螢幕設定並重新啟動以套用。"
-      },
       "setup": {
         "title": "Setup",
         "description": "為這台印表機安裝及管理 Klipper 生態系元件。"
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "列印前檢查",
         "description": "在開始列印前進行唯讀的就緒狀態檢查。"
+      },
+      "screen-manager": {
+        "title": "螢幕管理器",
+        "description": "管理印表機的觸控螢幕：設定、選單、佈景主題，以及執行哪個螢幕。"
       }
     },
     "guard": {

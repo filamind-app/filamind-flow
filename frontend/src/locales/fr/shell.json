@@ -128,10 +128,6 @@
         "title": "Contrôle de l'hôte",
         "description": "Gérez le système Linux de l'hôte de l'imprimante : état, services, nettoyage du disque et réglages système."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Modifiez la configuration de l'écran tactile KlipperScreen de votre imprimante et redémarrez-le pour l'appliquer."
-      },
       "setup": {
         "title": "Setup",
         "description": "Installez et gérez les composants de l'écosystème Klipper pour cette imprimante."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Vérification avant impression",
         "description": "Une vérification de l'état de préparation en lecture seule avant de lancer une impression."
+      },
+      "screen-manager": {
+        "title": "Gestionnaire d'écran",
+        "description": "Gérez l'écran tactile de votre imprimante : réglages, menus, thèmes et quel écran s'exécute."
       }
     },
     "guard": {

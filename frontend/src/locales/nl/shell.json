@@ -128,10 +128,6 @@
         "title": "Hostbeheer",
         "description": "Beheer het Linux-besturingssysteem van de printerhost: gezondheid, services, schijfopruiming en systeeminstellingen."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Bewerk de KlipperScreen-touchscreenconfig van je printer en herstart om toe te passen."
-      },
       "setup": {
         "title": "Setup",
         "description": "Installeer en beheer Klipper-ecosysteemcomponenten voor deze printer."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Pre-Print Check",
         "description": "Een alleen-lezen gereedheidscontrole voordat je een print start."
+      },
+      "screen-manager": {
+        "title": "Schermbeheer",
+        "description": "Beheer het touchscreen van je printer: instellingen, menu's, thema's en welk scherm draait."
       }
     },
     "guard": {

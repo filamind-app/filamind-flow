@@ -128,10 +128,6 @@
         "title": "ホストコントロール",
         "description": "プリンターホストの Linux OS を管理: 状態、サービス、ディスククリーンアップ、システム設定。"
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen スタジオ",
-        "description": "プリンターの KlipperScreen タッチスクリーン設定を編集し、再起動して反映します。"
-      },
       "setup": {
         "title": "Setup",
         "description": "このプリンターに Klipper エコシステムのコンポーネントをインストール、管理します。"
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "プリント前チェック",
         "description": "プリント開始前に準備状況を読み取り専用で確認します。"
+      },
+      "screen-manager": {
+        "title": "スクリーンマネージャー",
+        "description": "プリンターのタッチスクリーンを管理：設定、メニュー、テーマ、どの画面を実行するか。"
       }
     },
     "guard": {

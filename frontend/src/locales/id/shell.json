@@ -128,10 +128,6 @@
         "title": "Kontrol Host",
         "description": "Kelola OS Linux host printer: kesehatan, layanan, pembersihan disk, dan pengaturan sistem."
       },
-      "klipperscreen-studio": {
-        "title": "KlipperScreen Studio",
-        "description": "Edit konfigurasi layar sentuh KlipperScreen printer Anda dan mulai ulang untuk menerapkan."
-      },
       "setup": {
         "title": "Setup",
         "description": "Pasang dan kelola komponen ekosistem Klipper untuk printer ini."
@@ -151,6 +147,10 @@
       "preflight": {
         "title": "Pemeriksaan Pra-Cetak",
         "description": "Pemeriksaan kesiapan baca-saja sebelum memulai pencetakan."
+      },
+      "screen-manager": {
+        "title": "Pengelola Layar",
+        "description": "Kelola layar sentuh printer: pengaturan, menu, tema, dan layar mana yang berjalan."
       }
     },
     "guard": {
