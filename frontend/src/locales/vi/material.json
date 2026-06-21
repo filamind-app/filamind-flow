@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Hồ sơ filament đã lưu - nhiệt độ, mật độ, và lưu lượng thể tích tối đa mà mỗi loại có thể duy trì.",
+    "add": "Thêm vật liệu",
+    "loading": "Đang tải…",
+    "empty": "Chưa có vật liệu nào. Thêm một loại để bắt đầu xây dựng thư viện filament của bạn.",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Tên",
+      "material": "Loại",
+      "brand": "Hãng",
+      "color": "Màu",
+      "diameter": "Đường kính (mm)",
+      "density": "Mật độ (g/cm³)",
+      "maxFlow": "Lưu lượng thể tích tối đa (mm³/s)",
+      "nozzleTemp": "Đầu phun (°C)",
+      "bedTemp": "Bàn in (°C)",
+      "notes": "Ghi chú"
+    },
+    "flowCheck": {
+      "exceeds": "Vượt trần {hotend} ({flow} > {ceiling} mm³/s)",
+      "within": "Thấp hơn trần {hotend} {headroom}%"
+    },
+    "help": {
+      "guide": "Hướng dẫn",
+      "guideTitle": "Hướng dẫn Material Brain",
+      "close": "Đóng",
+      "topics": {
+        "overview": {
+          "title": "Material Brain là gì?",
+          "body": "Một thư viện các filament của bạn. Mỗi hồ sơ lưu nhiệt độ, mật độ, và lưu lượng thể tích tối đa mà filament có thể duy trì - những con số mà việc tinh chỉnh và cắt lát dựa vào."
+        },
+        "flow": {
+          "title": "Lưu lượng so với trần đầu in",
+          "body": "Lưu lượng thể tích tối đa của mỗi hồ sơ được đối chiếu với trần trong danh mục đầu in của bạn, nên một hồ sơ đòi hỏi nhiều hơn mức đầu in có thể nung chảy sẽ được cảnh báo trước khi nó biểu hiện thành thiếu đùn."
+        },
+        "glossary": {
+          "title": "Thuật ngữ"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Lưu lượng thể tích",
+          "def": "Lượng nhựa (mm³) mà đầu in nung chảy mỗi giây - giới hạn tốc độ thực sự cho việc in nhanh."
+        },
+        "density": {
+          "term": "Mật độ",
+          "def": "Khối lượng filament trên thể tích (g/cm³); dùng để chuyển lưu lượng thể tích sang tốc độ theo khối lượng."
+        },
+        "ceiling": {
+          "term": "Trần đầu in",
+          "def": "Lưu lượng thể tích tối đa mà một đầu in có thể duy trì, lấy từ danh mục phần cứng."
+        }
+      }
+    }
+  }
+}

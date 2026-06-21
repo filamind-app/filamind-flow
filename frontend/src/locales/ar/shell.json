@@ -139,6 +139,10 @@
       "remote-control": {
         "title": "التحكّم عن بُعد",
         "description": "وجّه شاشة FilaMind على الطابعة — بدّل تبويبها، أو اعرض رسالة، أو حدّد موقعها."
+      },
+      "material-brain": {
+        "title": "Material Brain",
+        "description": "ملفات فيلامنت محفوظة مع فحص للتدفّق مقابل سقف رأس التسخين."
       }
     },
     "guard": {

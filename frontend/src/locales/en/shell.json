@@ -139,6 +139,10 @@
       "remote-control": {
         "title": "Remote Control",
         "description": "Steer the on-printer FilaMind screen — switch its tab, show a message, or locate it."
+      },
+      "material-brain": {
+        "title": "Material Brain",
+        "description": "Saved filament profiles with a flow-vs-hotend-ceiling check."
       }
     },
     "guard": {

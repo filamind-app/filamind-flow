@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Zapisane profile filamentu - temperatury, gęstość i maksymalny przepływ objętościowy, jaki każdy z nich utrzyma.",
+    "add": "Dodaj materiał",
+    "loading": "Ładowanie…",
+    "empty": "Brak materiałów. Dodaj jeden, aby zacząć budować swoją bibliotekę filamentów.",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Nazwa",
+      "material": "Typ",
+      "brand": "Marka",
+      "color": "Kolor",
+      "diameter": "Średnica (mm)",
+      "density": "Gęstość (g/cm³)",
+      "maxFlow": "Maks. przepływ objętościowy (mm³/s)",
+      "nozzleTemp": "Dysza (°C)",
+      "bedTemp": "Stół (°C)",
+      "notes": "Notatki"
+    },
+    "flowCheck": {
+      "exceeds": "Powyżej limitu {hotend} ({flow} > {ceiling} mm³/s)",
+      "within": "{headroom}% poniżej limitu {hotend}"
+    },
+    "help": {
+      "guide": "Przewodnik",
+      "guideTitle": "Przewodnik Material Brain",
+      "close": "Zamknij",
+      "topics": {
+        "overview": {
+          "title": "Czym jest Material Brain?",
+          "body": "Biblioteka Twoich filamentów. Każdy profil przechowuje temperatury, gęstość i maksymalny przepływ objętościowy, jaki filament utrzyma - liczby, na których opiera się strojenie i cięcie."
+        },
+        "flow": {
+          "title": "Przepływ a limit hotendu",
+          "body": "Maksymalny przepływ objętościowy każdego profilu jest porównywany z limitem hotendu z katalogu, więc profil żądający więcej, niż hotend zdoła stopić, zostaje oznaczony, zanim ujawni się jako niedomiar materiału."
+        },
+        "glossary": {
+          "title": "Słowniczek"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Przepływ objętościowy",
+          "def": "Ile plastiku (mm³) hotend topi na sekundę - rzeczywisty limit prędkości szybkiego drukowania."
+        },
+        "density": {
+          "term": "Gęstość",
+          "def": "Masa filamentu na jednostkę objętości (g/cm³); używana do przeliczenia przepływu objętościowego na przepływ masowy."
+        },
+        "ceiling": {
+          "term": "Limit hotendu",
+          "def": "Maksymalny przepływ objętościowy, jaki hotend utrzyma, według katalogu sprzętu."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Profil filamen tersimpan - suhu, densitas, dan aliran volumetrik maksimum yang dapat ditahan masing-masing.",
+    "add": "Tambah material",
+    "loading": "Memuat…",
+    "empty": "Belum ada material. Tambahkan satu untuk mulai membangun pustaka filamen Anda.",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Nama",
+      "material": "Tipe",
+      "brand": "Merek",
+      "color": "Warna",
+      "diameter": "Diameter (mm)",
+      "density": "Densitas (g/cm³)",
+      "maxFlow": "Aliran volumetrik maks (mm³/s)",
+      "nozzleTemp": "Nozzle (°C)",
+      "bedTemp": "Bed (°C)",
+      "notes": "Catatan"
+    },
+    "flowCheck": {
+      "exceeds": "Melebihi batas {hotend} ({flow} > {ceiling} mm³/s)",
+      "within": "{headroom}% di bawah batas {hotend}"
+    },
+    "help": {
+      "guide": "Panduan",
+      "guideTitle": "Panduan Material Brain",
+      "close": "Tutup",
+      "topics": {
+        "overview": {
+          "title": "Apa itu Material Brain?",
+          "body": "Pustaka filamen Anda. Setiap profil menyimpan suhu, densitas, dan aliran volumetrik maksimum yang dapat ditahan filamen - angka yang menjadi dasar penyetelan dan slicing."
+        },
+        "flow": {
+          "title": "Aliran vs batas hotend",
+          "body": "Aliran volumetrik maks setiap profil dicek silang terhadap batas katalog hotend Anda, sehingga profil yang meminta lebih dari yang dapat dilelehkan hotend ditandai sebelum muncul sebagai under-extrusion."
+        },
+        "glossary": {
+          "title": "Glosarium"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Aliran volumetrik",
+          "def": "Seberapa banyak plastik (mm³) yang dilelehkan hotend per detik - batas kecepatan sebenarnya untuk pencetakan cepat."
+        },
+        "density": {
+          "term": "Densitas",
+          "def": "Massa filamen per volume (g/cm³); digunakan untuk mengonversi aliran volumetrik menjadi laju massa."
+        },
+        "ceiling": {
+          "term": "Batas hotend",
+          "def": "Aliran volumetrik maksimum yang dapat ditahan hotend, dari katalog perangkat keras."
+        }
+      }
+    }
+  }
+}

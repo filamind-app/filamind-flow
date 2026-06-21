@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "已保存的耗材配置——温度、密度，以及每种耗材可持续达到的最大体积流量。",
+    "add": "添加耗材",
+    "loading": "加载中…",
+    "empty": "暂无耗材。添加一种以开始构建你的耗材库。",
+    "edit": "编辑",
+    "delete": "删除",
+    "save": "保存",
+    "cancel": "取消",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "名称",
+      "material": "类型",
+      "brand": "品牌",
+      "color": "颜色",
+      "diameter": "直径（mm）",
+      "density": "密度（g/cm³）",
+      "maxFlow": "最大体积流量（mm³/s）",
+      "nozzleTemp": "喷嘴（°C）",
+      "bedTemp": "热床（°C）",
+      "notes": "备注"
+    },
+    "flowCheck": {
+      "exceeds": "超出 {hotend} 上限（{flow} > {ceiling} mm³/s）",
+      "within": "比 {hotend} 上限低 {headroom}%"
+    },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "Material Brain 指南",
+      "close": "关闭",
+      "topics": {
+        "overview": {
+          "title": "什么是 Material Brain？",
+          "body": "你的耗材库。每个配置存储温度、密度，以及耗材可持续达到的最大体积流量——这些数值是调校和切片的基础。"
+        },
+        "flow": {
+          "title": "流量与热端上限",
+          "body": "每个配置的最大体积流量都会与热端目录中的上限交叉核对，因此当某个配置要求的流量超过热端能熔化的上限时，会在出现欠挤出之前先被标记出来。"
+        },
+        "glossary": {
+          "title": "术语表"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "体积流量",
+          "def": "热端每秒熔化多少塑料（mm³）——这是快速打印的真正速度上限。"
+        },
+        "density": {
+          "term": "密度",
+          "def": "单位体积的耗材质量（g/cm³）；用于将体积流量换算为质量流率。"
+        },
+        "ceiling": {
+          "term": "热端上限",
+          "def": "热端可持续达到的最大体积流量，取自硬件目录。"
+        }
+      }
+    }
+  }
+}

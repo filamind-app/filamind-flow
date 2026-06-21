@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Profili filamento salvati - temperature, densità e il massimo flusso volumetrico che ciascuno può sostenere.",
+    "add": "Aggiungi materiale",
+    "loading": "Caricamento…",
+    "empty": "Nessun materiale ancora. Aggiungine uno per iniziare a creare la tua libreria di filamenti.",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Nome",
+      "material": "Tipo",
+      "brand": "Marca",
+      "color": "Colore",
+      "diameter": "Diametro (mm)",
+      "density": "Densità (g/cm³)",
+      "maxFlow": "Flusso volumetrico massimo (mm³/s)",
+      "nozzleTemp": "Ugello (°C)",
+      "bedTemp": "Piano (°C)",
+      "notes": "Note"
+    },
+    "flowCheck": {
+      "exceeds": "Oltre il limite di {hotend} ({flow} > {ceiling} mm³/s)",
+      "within": "{headroom}% sotto il limite di {hotend}"
+    },
+    "help": {
+      "guide": "Guida",
+      "guideTitle": "Guida a Material Brain",
+      "close": "Chiudi",
+      "topics": {
+        "overview": {
+          "title": "Cos'è Material Brain?",
+          "body": "Una libreria dei tuoi filamenti. Ogni profilo memorizza temperature, densità e il massimo flusso volumetrico che il filamento può sostenere - i valori su cui si basano taratura e slicing."
+        },
+        "flow": {
+          "title": "Flusso vs limite dell'hotend",
+          "body": "Il flusso volumetrico massimo di ogni profilo viene confrontato con il limite dell'hotend nel catalogo, così un profilo che richiede più di quanto l'hotend possa fondere viene segnalato prima che si manifesti come sotto-estrusione."
+        },
+        "glossary": {
+          "title": "Glossario"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Flusso volumetrico",
+          "def": "Quanta plastica (mm³) l'hotend fonde al secondo - il vero limite di velocità per stampare veloce."
+        },
+        "density": {
+          "term": "Densità",
+          "def": "Massa del filamento per volume (g/cm³); usata per convertire il flusso volumetrico in una portata di massa."
+        },
+        "ceiling": {
+          "term": "Limite dell'hotend",
+          "def": "Il massimo flusso volumetrico che un hotend può sostenere, dal catalogo hardware."
+        }
+      }
+    }
+  }
+}

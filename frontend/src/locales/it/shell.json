@@ -139,6 +139,10 @@
       "remote-control": {
         "title": "Controllo remoto",
         "description": "Comanda lo schermo FilaMind sulla stampante: cambia la scheda, mostra un messaggio o individualo."
+      },
+      "material-brain": {
+        "title": "Material Brain",
+        "description": "Profili filamento salvati con un controllo flusso-vs-limite-dell'hotend."
       }
     },
     "guard": {

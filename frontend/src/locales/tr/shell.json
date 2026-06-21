@@ -139,6 +139,10 @@
       "remote-control": {
         "title": "Uzaktan Kontrol",
         "description": "Yazıcı üzerindeki FilaMind ekranını yönetin — sekmesini değiştirin, mesaj gösterin veya bulun."
+      },
+      "material-brain": {
+        "title": "Material Brain",
+        "description": "Akış-hotend tavanı denetimi içeren kaydedilmiş filament profilleri."
       }
     },
     "guard": {

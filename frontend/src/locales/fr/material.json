@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Profils de filament enregistrés — températures, densité et débit volumétrique maximal que chacun peut soutenir.",
+    "add": "Ajouter un matériau",
+    "loading": "Chargement…",
+    "empty": "Aucun matériau pour l'instant. Ajoutez-en un pour commencer votre bibliothèque de filaments.",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Nom",
+      "material": "Type",
+      "brand": "Marque",
+      "color": "Couleur",
+      "diameter": "Diamètre (mm)",
+      "density": "Densité (g/cm³)",
+      "maxFlow": "Débit volumétrique max (mm³/s)",
+      "nozzleTemp": "Buse (°C)",
+      "bedTemp": "Plateau (°C)",
+      "notes": "Notes"
+    },
+    "flowCheck": {
+      "exceeds": "Au-dessus du plafond {hotend} ({flow} > {ceiling} mm³/s)",
+      "within": "{headroom}% sous le plafond {hotend}"
+    },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Guide Material Brain",
+      "close": "Fermer",
+      "topics": {
+        "overview": {
+          "title": "Qu'est-ce que Material Brain ?",
+          "body": "Une bibliothèque de vos filaments. Chaque profil enregistre les températures, la densité et le débit volumétrique maximal que le filament peut soutenir — les valeurs sur lesquelles s'appuient le réglage et le tranchage."
+        },
+        "flow": {
+          "title": "Débit vs plafond du hotend",
+          "body": "Le débit volumétrique max de chaque profil est confronté au plafond du hotend issu du catalogue, afin qu'un profil exigeant plus que ce que le hotend peut fondre soit signalé avant de se manifester par une sous-extrusion."
+        },
+        "glossary": {
+          "title": "Glossaire"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Débit volumétrique",
+          "def": "Quantité de plastique (mm³) que le hotend fond par seconde — la véritable limite de vitesse pour une impression rapide."
+        },
+        "density": {
+          "term": "Densité",
+          "def": "Masse de filament par volume (g/cm³) ; sert à convertir le débit volumétrique en débit massique."
+        },
+        "ceiling": {
+          "term": "Plafond du hotend",
+          "def": "Le débit volumétrique maximal qu'un hotend peut soutenir, issu du catalogue matériel."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "저장된 필라멘트 프로파일 - 온도, 밀도, 각 필라멘트가 지속할 수 있는 최대 체적 유량.",
+    "add": "재료 추가",
+    "loading": "로딩 중…",
+    "empty": "아직 재료가 없습니다. 하나 추가해 필라멘트 라이브러리를 만들어 보세요.",
+    "edit": "편집",
+    "delete": "삭제",
+    "save": "저장",
+    "cancel": "취소",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "이름",
+      "material": "종류",
+      "brand": "브랜드",
+      "color": "색상",
+      "diameter": "지름 (mm)",
+      "density": "밀도 (g/cm³)",
+      "maxFlow": "최대 체적 유량 (mm³/s)",
+      "nozzleTemp": "노즐 (°C)",
+      "bedTemp": "베드 (°C)",
+      "notes": "메모"
+    },
+    "flowCheck": {
+      "exceeds": "{hotend} 한계 초과 ({flow} > {ceiling} mm³/s)",
+      "within": "{hotend} 한계 대비 {headroom}% 여유"
+    },
+    "help": {
+      "guide": "가이드",
+      "guideTitle": "Material Brain 가이드",
+      "close": "닫기",
+      "topics": {
+        "overview": {
+          "title": "Material Brain이란?",
+          "body": "필라멘트 라이브러리입니다. 각 프로파일은 온도, 밀도, 필라멘트가 지속할 수 있는 최대 체적 유량을 저장합니다 - 튜닝과 슬라이싱이 이 수치를 기반으로 합니다."
+        },
+        "flow": {
+          "title": "유량 대 핫엔드 한계",
+          "body": "각 프로파일의 최대 체적 유량은 핫엔드의 카탈로그 한계와 대조 확인됩니다. 그래서 핫엔드가 녹일 수 있는 양보다 더 많이 요구하는 프로파일은 토출 부족으로 나타나기 전에 미리 표시됩니다."
+        },
+        "glossary": {
+          "title": "용어집"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "체적 유량",
+          "def": "핫엔드가 초당 녹이는 플라스틱의 양(mm³) - 빠른 출력의 실제 속도 한계입니다."
+        },
+        "density": {
+          "term": "밀도",
+          "def": "부피당 필라멘트 질량(g/cm³); 체적 유량을 질량 유량으로 변환하는 데 사용됩니다."
+        },
+        "ceiling": {
+          "term": "핫엔드 한계",
+          "def": "하드웨어 카탈로그 기준, 핫엔드가 지속할 수 있는 최대 체적 유량."
+        }
+      }
+    }
+  }
+}

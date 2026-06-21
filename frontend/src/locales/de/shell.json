@@ -139,6 +139,10 @@
       "remote-control": {
         "title": "Fernsteuerung",
         "description": "Steuere den FilaMind-Bildschirm am Drucker – wechsle seinen Tab, zeige eine Nachricht oder finde ihn."
+      },
+      "material-brain": {
+        "title": "Material Brain",
+        "description": "Gespeicherte Filament-Profile mit einer Fluss-vs.-Hotend-Obergrenze-Prüfung."
       }
     },
     "guard": {

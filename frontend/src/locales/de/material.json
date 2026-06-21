@@ -1,0 +1,63 @@
+{
+  "material": {
+    "intro": "Gespeicherte Filament-Profile — Temperaturen, Dichte und der maximale volumetrische Fluss, den jedes dauerhaft halten kann.",
+    "add": "Material hinzufügen",
+    "loading": "Lade…",
+    "empty": "Noch keine Materialien. Füge eines hinzu, um deine Filament-Bibliothek aufzubauen.",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "list": {
+      "flow": "{v} mm³/s"
+    },
+    "fields": {
+      "name": "Name",
+      "material": "Typ",
+      "brand": "Marke",
+      "color": "Farbe",
+      "diameter": "Durchmesser (mm)",
+      "density": "Dichte (g/cm³)",
+      "maxFlow": "Max. volumetrischer Fluss (mm³/s)",
+      "nozzleTemp": "Düse (°C)",
+      "bedTemp": "Bett (°C)",
+      "notes": "Notizen"
+    },
+    "flowCheck": {
+      "exceeds": "Über der Obergrenze von {hotend} ({flow} > {ceiling} mm³/s)",
+      "within": "{headroom}% unter der Obergrenze von {hotend}"
+    },
+    "help": {
+      "guide": "Anleitung",
+      "guideTitle": "Material-Brain-Anleitung",
+      "close": "Schließen",
+      "topics": {
+        "overview": {
+          "title": "Was ist Material Brain?",
+          "body": "Eine Bibliothek deiner Filamente. Jedes Profil speichert Temperaturen, Dichte und den maximalen volumetrischen Fluss, den das Filament dauerhaft halten kann — die Werte, auf denen Tuning und Slicing aufbauen."
+        },
+        "flow": {
+          "title": "Fluss vs. Hotend-Obergrenze",
+          "body": "Der maximale volumetrische Fluss jedes Profils wird mit der Katalog-Obergrenze deines Hotends abgeglichen, sodass ein Profil, das mehr verlangt, als das Hotend schmelzen kann, markiert wird, bevor es als Unterextrusion auftritt."
+        },
+        "glossary": {
+          "title": "Glossar"
+        }
+      },
+      "glossary": {
+        "volumetricFlow": {
+          "term": "Volumetrischer Fluss",
+          "def": "Wie viel Kunststoff (mm³) das Hotend pro Sekunde schmilzt — das reale Geschwindigkeitslimit für schnelles Drucken."
+        },
+        "density": {
+          "term": "Dichte",
+          "def": "Filament-Masse pro Volumen (g/cm³); dient zur Umrechnung des volumetrischen Flusses in eine Massenrate."
+        },
+        "ceiling": {
+          "term": "Hotend-Obergrenze",
+          "def": "Der maximale volumetrische Fluss, den ein Hotend dauerhaft halten kann, aus dem Hardware-Katalog."
+        }
+      }
+    }
+  }
+}
