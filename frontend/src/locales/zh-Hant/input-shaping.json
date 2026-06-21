@@ -268,6 +268,20 @@
       "pressure": {
         "title": "跑一座壓力提前塔",
         "why": "列印 PA 塔，讀出角落最銳利的高度，然後 `SET_PRESSURE_ADVANCE ADVANCE=<value>` 並 `SAVE_CONFIG`。"
+      },
+      "retest": {
+        "solid": {
+          "title": "測量可靠",
+          "why": "評級 A/B — 本次擷取可靠，無需重測。"
+        },
+        "borderline": {
+          "title": "考慮重新測量",
+          "why": "品質臨界 — 改善 {factor} 並重新測量可提高可信度。"
+        },
+        "poor": {
+          "title": "建議重新測量",
+          "why": "測量品質較低 — 修正 {factor}，然後重新測量以取得可靠結果。"
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "貼進你的 {cfg}，然後重啟 Klipper。",
       "errAnalysisFailed": "分析失敗",
       "errCopyFailed": "複製失敗——請選取文字手動複製。",
-      "errSaveFailed": "儲存到封存失敗"
+      "errSaveFailed": "儲存到封存失敗",
+      "remeasure": "重新測量"
     },
     "fromPrinter": {
       "liveTools": "即時工具",

@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Chạy tháp pressure-advance",
         "why": "In tháp PA, đọc chiều cao mà các góc trông sắc nét nhất, rồi `SET_PRESSURE_ADVANCE ADVANCE=<value>` và `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "Phép đo đáng tin cậy",
+          "why": "Hạng A/B — lần đo này đáng tin; không cần đo lại."
+        },
+        "borderline": {
+          "title": "Cân nhắc đo lại",
+          "why": "Chất lượng ở mức ranh giới — cải thiện {factor} và đo lại sẽ tăng độ tin cậy."
+        },
+        "poor": {
+          "title": "Khuyến nghị đo lại",
+          "why": "Chất lượng đo thấp — khắc phục {factor}, rồi đo lại để có kết quả đáng tin."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "Dán vào {cfg} của bạn, rồi khởi động lại Klipper.",
       "errAnalysisFailed": "Phân tích thất bại",
       "errCopyFailed": "Sao chép thất bại - chọn văn bản và sao chép thủ công.",
-      "errSaveFailed": "Lưu vào kho lưu trữ thất bại"
+      "errSaveFailed": "Lưu vào kho lưu trữ thất bại",
+      "remeasure": "Đo lại"
     },
     "fromPrinter": {
       "liveTools": "Công cụ trực tiếp",

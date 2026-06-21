@@ -7,6 +7,7 @@ import { i18n } from '@/core/i18n'
 
 import type { BeltVerdict } from './compare'
 import { diagnose } from './diagnose'
+import type { QualityGrade } from './grade'
 import type { NoiseResult, ShaperAnalysis, VibrationsProfile } from './types'
 
 export type SuggestionLevel = 'do-now' | 'consider' | 'ok'
@@ -136,6 +137,32 @@ export function recommendPressure(): Suggestion[] {
       why: i18n.global.t('inputShaping.recommend.pressure.why'),
     },
   ]
+}
+
+/** Whether the MEASUREMENT itself is trustworthy, keyed off its quality grade — and which weakest
+ *  factor to fix before re-running. A/B (score ≥ 70) → ok; C → consider; D/F → do-now. */
+export function recommendRetest(grade: QualityGrade): Suggestion {
+  const weakest = grade.factors.slice().sort((a, b) => a.points / a.max - b.points / b.max)[0]
+  const factor = weakest?.label ?? ''
+  if (grade.score >= 70) {
+    return {
+      level: 'ok',
+      title: i18n.global.t('inputShaping.recommend.retest.solid.title'),
+      why: i18n.global.t('inputShaping.recommend.retest.solid.why'),
+    }
+  }
+  if (grade.score >= 55) {
+    return {
+      level: 'consider',
+      title: i18n.global.t('inputShaping.recommend.retest.borderline.title'),
+      why: i18n.global.t('inputShaping.recommend.retest.borderline.why', { factor }),
+    }
+  }
+  return {
+    level: 'do-now',
+    title: i18n.global.t('inputShaping.recommend.retest.poor.title'),
+    why: i18n.global.t('inputShaping.recommend.retest.poor.why', { factor }),
+  }
 }
 
 /** Reuses the shaper diagnostics, ranked do-now (bad) → consider (warn) → ok. */

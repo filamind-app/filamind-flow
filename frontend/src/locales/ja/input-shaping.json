@@ -268,6 +268,20 @@
       "pressure": {
         "title": "プレッシャーアドバンスタワーを実行",
         "why": "PAタワーをプリントし、角が最も鋭く見える高さを読み取って、`SET_PRESSURE_ADVANCE ADVANCE=<value>` と `SAVE_CONFIG` を実行してください。"
+      },
+      "retest": {
+        "solid": {
+          "title": "測定は信頼できます",
+          "why": "評価 A/B — この測定は信頼でき、再測定は不要です。"
+        },
+        "borderline": {
+          "title": "再測定を検討",
+          "why": "境界的な品質 — {factor} を改善して再測定すると信頼性が上がります。"
+        },
+        "poor": {
+          "title": "再測定を推奨",
+          "why": "測定品質が低めです — {factor} を改善してから再測定して信頼できる結果を得ましょう。"
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "{cfg} に貼り付けてからKlipperを再起動してください。",
       "errAnalysisFailed": "解析に失敗しました",
       "errCopyFailed": "コピーに失敗しました。テキストを選択して手動でコピーしてください。",
-      "errSaveFailed": "アーカイブへの保存に失敗しました"
+      "errSaveFailed": "アーカイブへの保存に失敗しました",
+      "remeasure": "再測定"
     },
     "fromPrinter": {
       "liveTools": "ライブツール",

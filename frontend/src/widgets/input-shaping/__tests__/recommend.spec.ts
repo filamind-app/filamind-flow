@@ -5,9 +5,11 @@ import {
   recommendBelts,
   recommendNoise,
   recommendPressure,
+  recommendRetest,
   recommendShaper,
   recommendVibrations,
 } from '../recommend'
+import type { QualityGrade } from '../grade'
 import type { NoiseResult, ShaperAnalysis, ShaperResult, VibrationsProfile } from '../types'
 
 function noise(over: Partial<NoiseResult>): NoiseResult {
@@ -104,6 +106,23 @@ describe('recommend', () => {
 
   it('pressure → a do-now PA-tower step', () => {
     expect(recommendPressure()[0].level).toBe('do-now')
+  })
+
+  it('retest → ok / consider / do-now by score, naming the weakest factor', () => {
+    const qg = (score: number): QualityGrade => ({
+      letter: 'C',
+      score,
+      verdict: '',
+      factors: [
+        { label: 'Clarity', value: '3×', rating: 'poor', points: 4, max: 20, note: '' },
+        { label: 'Vibration', value: '1%', rating: 'good', points: 20, max: 20, note: '' },
+      ],
+    })
+    expect(recommendRetest(qg(90)).level).toBe('ok')
+    expect(recommendRetest(qg(60)).level).toBe('consider')
+    const poor = recommendRetest(qg(30))
+    expect(poor.level).toBe('do-now')
+    expect(poor.why).toContain('Clarity') // weakest factor (4/20) named
   })
 
   it('shaper → maps diagnostics, worst (do-now) first', () => {

@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Ejecuta una torre de pressure-advance",
         "why": "Imprime la torre de PA, lee la altura donde las esquinas se ven más nítidas, luego `SET_PRESSURE_ADVANCE ADVANCE=<value>` y `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "La medición es sólida",
+          "why": "Calificación A/B — esta captura es fiable; no hace falta repetir."
+        },
+        "borderline": {
+          "title": "Considera volver a medir",
+          "why": "Calidad límite — mejorar {factor} y volver a medir aumentaría la confianza."
+        },
+        "poor": {
+          "title": "Se recomienda volver a medir",
+          "why": "Baja calidad de medición — corrige {factor} y vuelve a medir para un resultado fiable."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "Pégalo en tu {cfg}, luego reinicia Klipper.",
       "errAnalysisFailed": "El análisis falló",
       "errCopyFailed": "La copia falló — selecciona el texto y cópialo manualmente.",
-      "errSaveFailed": "El guardado en el archivo falló"
+      "errSaveFailed": "El guardado en el archivo falló",
+      "remeasure": "Volver a medir"
     },
     "fromPrinter": {
       "liveTools": "Herramientas en vivo",
