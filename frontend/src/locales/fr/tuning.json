@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "Assistants de calibration guidés. En premier : Pressure Advance.",
+    "intro": "Assistants de calibration guidés. Choisissez-en un ci-dessous.",
+    "pick": {
+      "label": "Assistant"
+    },
     "params": {
       "start": "PA de départ",
       "factor": "Facteur (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "Échec de l'application : {error}"
       }
     },
+    "retraction": {
+      "title": "Rétraction",
+      "params": {
+        "start": "Longueur de départ (mm)",
+        "factor": "Facteur (mm/mm)",
+        "height": "Hauteur (mm)"
+      },
+      "step1": "1. Planifier la tour de réglage",
+      "plan": "Planifier la tour",
+      "command": "Exécutez cette commande",
+      "commandHint": "Envoyez-la juste avant l'impression (ou ajoutez-la au g-code de démarrage de votre modèle de test) ; la longueur de rétraction augmente progressivement le long de la tour pendant l'impression. Nécessite la configuration de [firmware_retraction].",
+      "table": {
+        "height": "Hauteur (mm)",
+        "value": "Longueur (mm)"
+      },
+      "step2": "2. Saisir la hauteur au plus beau rendu",
+      "bestHeight": "Meilleure hauteur Z (mm)",
+      "computed": "Longueur de rétraction calculée : {value} mm",
+      "applyButton": "Appliquer la rétraction",
+      "apply": {
+        "applied": "Longueur de rétraction {value} mm appliquée",
+        "busy": "L'imprimante est occupée - impossible d'appliquer maintenant",
+        "out_of_range": "Valeur hors plage (max {max})",
+        "no_firmware_retraction": "Aucune section [firmware_retraction] n'est configurée sur cette imprimante",
+        "moonraker_error": "Échec de l'application : {error}"
+      }
+    },
     "help": {
       "guide": "Guide",
-      "guideTitle": "Guide Pressure Advance",
+      "guideTitle": "Guide des assistants de réglage",
       "close": "Fermer",
       "topics": {
         "overview": {
@@ -37,8 +67,12 @@
           "body": "Le PA compense le retard de pression dans la buse, ce qui affine les angles et réduit le suintement et les renflements. Chaque filament a sa propre valeur optimale."
         },
         "workflow": {
-          "title": "Fonctionnement de l'assistant",
-          "body": "Planifiez une tour de réglage, imprimez-la (le PA augmente au fur et à mesure de la montée), repérez la hauteur la plus propre, puis appliquez la valeur correspondante. Enregistrez-la dans printer.cfg pour la conserver."
+          "title": "Fonctionnement des assistants",
+          "body": "Planifiez une tour de réglage, imprimez-la (la valeur augmente au fur et à mesure de la montée), repérez la hauteur la plus propre, puis appliquez la valeur correspondante. Enregistrez-la dans printer.cfg pour la conserver."
+        },
+        "retraction": {
+          "title": "Qu'est-ce que la rétraction ?",
+          "body": "La rétraction tire le filament en arrière lors des déplacements pour éviter le suintement et les filaments parasites. Trop peu laisse des fils ; trop peut provoquer des bouchons ou des manques. Cet assistant règle la longueur de rétraction du firmware."
         },
         "glossary": {
           "title": "Glossaire"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "Tour de réglage",
           "def": "Une impression haute où TUNING_TOWER fait varier progressivement un paramètre avec la hauteur, pour vous permettre de choisir la meilleure couche."
+        },
+        "firmwareRetraction": {
+          "term": "Rétraction du firmware",
+          "def": "La fonction [firmware_retraction] de Klipper : la rétraction et la dé-rétraction G10/G11 sont gérées par l'imprimante et réglables en direct avec SET_RETRACTION."
         }
       }
     }

@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "ガイド付きキャリブレーションウィザード。最初は Pressure Advance です。",
+    "intro": "ガイド付きキャリブレーションウィザード。以下から1つ選んでください。",
+    "pick": {
+      "label": "ウィザード"
+    },
     "params": {
       "start": "開始 PA",
       "factor": "係数 (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "適用できませんでした: {error}"
       }
     },
+    "retraction": {
+      "title": "リトラクション",
+      "params": {
+        "start": "開始長さ (mm)",
+        "factor": "係数 (mm/mm)",
+        "height": "高さ (mm)"
+      },
+      "step1": "1. チューニングタワーを計画する",
+      "plan": "タワーを計画",
+      "command": "このコマンドを実行",
+      "commandHint": "プリント直前に送信してください（またはテストモデルのスタート G-code に追加します）。プリントが進むにつれてタワー上でリトラクション長さが上昇します。[firmware_retraction] の設定が必要です。",
+      "table": {
+        "height": "高さ (mm)",
+        "value": "長さ (mm)"
+      },
+      "step2": "2. 最も見栄えの良い高さを入力する",
+      "bestHeight": "最適な Z 高さ (mm)",
+      "computed": "算出されたリトラクション長さ: {value} mm",
+      "applyButton": "リトラクションを適用",
+      "apply": {
+        "applied": "リトラクション長さ {value} mm を適用しました",
+        "busy": "プリンターがビジー状態です - 今は適用できません",
+        "out_of_range": "値が範囲外です（最大 {max}）",
+        "no_firmware_retraction": "このプリンターには [firmware_retraction] セクションが設定されていません",
+        "moonraker_error": "適用できませんでした: {error}"
+      }
+    },
     "help": {
       "guide": "ガイド",
-      "guideTitle": "Pressure Advance ガイド",
+      "guideTitle": "チューニングウィザードガイド",
       "close": "閉じる",
       "topics": {
         "overview": {
@@ -38,7 +68,11 @@
         },
         "workflow": {
           "title": "ウィザードの仕組み",
-          "body": "チューニングタワーを計画し、それをプリントし（高さに応じて PA が上昇します）、最もきれいな高さを読み取り、対応する値を適用します。保持するには printer.cfg に保存してください。"
+          "body": "チューニングタワーを計画し、それをプリントし（高さに応じて値が上昇します）、最もきれいな高さを読み取り、対応する値を適用します。保持するには printer.cfg に保存してください。"
+        },
+        "retraction": {
+          "title": "リトラクションとは？",
+          "body": "リトラクションは移動動作の際にフィラメントを引き戻し、にじみや糸引きを防ぎます。少なすぎると糸引きが残り、多すぎると詰まりや隙間の原因になります。このウィザードはファームウェアのリトラクション長さを調整します。"
         },
         "glossary": {
           "title": "用語集"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "チューニングタワー",
           "def": "TUNING_TOWER が高さとともにパラメーターを徐々に変化させる縦長のプリントで、最適なレイヤーを選べます。"
+        },
+        "firmwareRetraction": {
+          "term": "ファームウェアリトラクション",
+          "def": "Klipper の [firmware_retraction] 機能です。G10/G11 によるリトラクションとアンリトラクションをプリンター側で処理し、SET_RETRACTION でライブ調整できます。"
         }
       }
     }

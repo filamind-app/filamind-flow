@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "Assistentes guiados de calibração. Primeiro: Pressure Advance.",
+    "intro": "Assistentes guiados de calibração. Escolha um abaixo.",
+    "pick": {
+      "label": "Assistente"
+    },
     "params": {
       "start": "PA inicial",
       "factor": "Fator (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "Não foi possível aplicar: {error}"
       }
     },
+    "retraction": {
+      "title": "Retração",
+      "params": {
+        "start": "Comprimento inicial (mm)",
+        "factor": "Fator (mm/mm)",
+        "height": "Altura (mm)"
+      },
+      "step1": "1. Planeje a torre de ajuste",
+      "plan": "Planejar torre",
+      "command": "Execute este comando",
+      "commandHint": "Envie-o logo antes da impressão (ou adicione-o ao g-code inicial do seu modelo de teste); o comprimento de retração aumenta gradualmente ao longo da torre conforme ela é impressa. Requer [firmware_retraction] configurado.",
+      "table": {
+        "height": "Altura (mm)",
+        "value": "Comprimento (mm)"
+      },
+      "step2": "2. Informe a altura com melhor aparência",
+      "bestHeight": "Melhor altura Z (mm)",
+      "computed": "Comprimento de retração calculado: {value} mm",
+      "applyButton": "Aplicar retração",
+      "apply": {
+        "applied": "Comprimento de retração {value} mm aplicado",
+        "busy": "A impressora está ocupada - não é possível aplicar agora",
+        "out_of_range": "Valor fora do intervalo (máx {max})",
+        "no_firmware_retraction": "Nenhuma seção [firmware_retraction] está configurada nesta impressora",
+        "moonraker_error": "Não foi possível aplicar: {error}"
+      }
+    },
     "help": {
       "guide": "Guia",
-      "guideTitle": "Guia do Pressure Advance",
+      "guideTitle": "Guia dos assistentes de ajuste",
       "close": "Fechar",
       "topics": {
         "overview": {
@@ -37,8 +67,12 @@
           "body": "O PA (Pressure Advance) compensa o atraso de pressão no bico, deixando os cantos mais nítidos e reduzindo o vazamento e o inchaço. Cada filamento tem seu próprio valor ideal."
         },
         "workflow": {
-          "title": "Como o assistente funciona",
-          "body": "Planeje uma torre de ajuste, imprima-a (o PA aumenta gradualmente conforme ela cresce), identifique a altura mais limpa e aplique o valor correspondente. Salve em printer.cfg para mantê-lo."
+          "title": "Como os assistentes funcionam",
+          "body": "Planeje uma torre de ajuste, imprima-a (o valor aumenta gradualmente conforme ela cresce), identifique a altura mais limpa e aplique o valor correspondente. Salve em printer.cfg para mantê-lo."
+        },
+        "retraction": {
+          "title": "O que é retração?",
+          "body": "A retração puxa o filamento de volta nos movimentos de deslocamento para evitar vazamento e fios. Pouca demais deixa fios; muita demais pode causar entupimentos ou falhas. Este assistente ajusta o comprimento de retração do firmware."
         },
         "glossary": {
           "title": "Glossário"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "Torre de ajuste",
           "def": "Uma impressão alta em que o TUNING_TOWER altera continuamente um parâmetro com a altura, permitindo que você escolha a melhor camada."
+        },
+        "firmwareRetraction": {
+          "term": "Retração por firmware",
+          "def": "O recurso [firmware_retraction] do Klipper: retração e desretração com G10/G11 controladas pela impressora, ajustáveis ao vivo com SET_RETRACTION."
         }
       }
     }

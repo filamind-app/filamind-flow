@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "Procedure guidate di calibrazione. Si parte da: Pressure Advance.",
+    "intro": "Procedure guidate di calibrazione. Scegline una qui sotto.",
+    "pick": {
+      "label": "Procedura guidata"
+    },
     "params": {
       "start": "PA iniziale",
       "factor": "Fattore (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "Impossibile applicare: {error}"
       }
     },
+    "retraction": {
+      "title": "Retrazione",
+      "params": {
+        "start": "Lunghezza iniziale (mm)",
+        "factor": "Fattore (mm/mm)",
+        "height": "Altezza (mm)"
+      },
+      "step1": "1. Pianifica la torre di taratura",
+      "plan": "Pianifica torre",
+      "command": "Esegui questo comando",
+      "commandHint": "Invialo subito prima della stampa (oppure aggiungilo allo start g-code del tuo modello di prova); la lunghezza di retrazione aumenta gradualmente lungo la torre man mano che stampa. Richiede [firmware_retraction] configurato.",
+      "table": {
+        "height": "Altezza (mm)",
+        "value": "Lunghezza (mm)"
+      },
+      "step2": "2. Inserisci l'altezza dal risultato migliore",
+      "bestHeight": "Altezza Z migliore (mm)",
+      "computed": "Lunghezza di retrazione calcolata: {value} mm",
+      "applyButton": "Applica retrazione",
+      "apply": {
+        "applied": "Lunghezza di retrazione {value} mm applicata",
+        "busy": "La stampante è occupata - impossibile applicare ora",
+        "out_of_range": "Valore fuori intervallo (max {max})",
+        "no_firmware_retraction": "Nessuna sezione [firmware_retraction] è configurata su questa stampante",
+        "moonraker_error": "Impossibile applicare: {error}"
+      }
+    },
     "help": {
       "guide": "Guida",
-      "guideTitle": "Guida al Pressure Advance",
+      "guideTitle": "Guida alle procedure di taratura",
       "close": "Chiudi",
       "topics": {
         "overview": {
@@ -37,8 +67,12 @@
           "body": "Il PA compensa il ritardo di pressione nell'ugello, rendendo gli angoli più netti e riducendo colature e rigonfiamenti. Ogni filamento ha il proprio valore ottimale."
         },
         "workflow": {
-          "title": "Come funziona la procedura guidata",
-          "body": "Pianifica una torre di taratura, stampala (il PA aumenta man mano che sale), individua l'altezza più pulita, poi applica il valore corrispondente. Salvalo in printer.cfg per mantenerlo."
+          "title": "Come funzionano le procedure guidate",
+          "body": "Pianifica una torre di taratura, stampala (il valore aumenta man mano che sale), individua l'altezza più pulita, poi applica il valore corrispondente. Salvalo in printer.cfg per mantenerlo."
+        },
+        "retraction": {
+          "title": "Cos'è la retrazione?",
+          "body": "La retrazione richiama il filamento durante gli spostamenti per evitare colature e filamenti sottili. Troppo poca lascia filamenti; troppa può causare intasamenti o vuoti. Questa procedura guidata regola la lunghezza di retrazione del firmware."
         },
         "glossary": {
           "title": "Glossario"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "Torre di taratura",
           "def": "Una stampa alta in cui TUNING_TOWER modifica progressivamente un parametro con l'altezza, così puoi scegliere il layer migliore."
+        },
+        "firmwareRetraction": {
+          "term": "Retrazione del firmware",
+          "def": "La funzione [firmware_retraction] di Klipper: G10/G11 per retrarre e ritrarre gestiti dalla stampante, regolabili dal vivo con SET_RETRACTION."
         }
       }
     }

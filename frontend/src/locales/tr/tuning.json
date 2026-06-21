@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "Rehberli kalibrasyon sihirbazları. İlk sırada: Pressure Advance.",
+    "intro": "Rehberli kalibrasyon sihirbazları. Aşağıdan birini seçin.",
+    "pick": {
+      "label": "Sihirbaz"
+    },
     "params": {
       "start": "Başlangıç PA",
       "factor": "Katsayı (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "Uygulanamadı: {error}"
       }
     },
+    "retraction": {
+      "title": "Geri çekme",
+      "params": {
+        "start": "Başlangıç uzunluğu (mm)",
+        "factor": "Katsayı (mm/mm)",
+        "height": "Yükseklik (mm)"
+      },
+      "step1": "1. İnce ayar kulesini planla",
+      "plan": "Kuleyi planla",
+      "command": "Bu komutu çalıştır",
+      "commandHint": "Baskıdan hemen önce gönderin (veya test modelinizin başlangıç G-code'una ekleyin); geri çekme uzunluğu, kule basıldıkça kademeli olarak artar. [firmware_retraction] yapılandırması gerektirir.",
+      "table": {
+        "height": "Yükseklik (mm)",
+        "value": "Uzunluk (mm)"
+      },
+      "step2": "2. En iyi görünen yüksekliği girin",
+      "bestHeight": "En iyi Z yüksekliği (mm)",
+      "computed": "Hesaplanan geri çekme uzunluğu: {value} mm",
+      "applyButton": "Geri çekmeyi uygula",
+      "apply": {
+        "applied": "Geri çekme uzunluğu {value} mm uygulandı",
+        "busy": "Yazıcı meşgul - şu anda uygulanamıyor",
+        "out_of_range": "Değer aralık dışında (en fazla {max})",
+        "no_firmware_retraction": "Bu yazıcıda yapılandırılmış bir [firmware_retraction] bölümü yok",
+        "moonraker_error": "Uygulanamadı: {error}"
+      }
+    },
     "help": {
       "guide": "Kılavuz",
-      "guideTitle": "Pressure Advance kılavuzu",
+      "guideTitle": "İnce ayar sihirbazları kılavuzu",
       "close": "Kapat",
       "topics": {
         "overview": {
@@ -37,8 +67,12 @@
           "body": "PA, nozuldaki basınç gecikmesini telafi eder; köşeleri keskinleştirir, sızıntıyı ve şişkinliği azaltır. Her filamentin kendi en iyi değeri vardır."
         },
         "workflow": {
-          "title": "Sihirbaz nasıl çalışır",
-          "body": "Bir ince ayar kulesi planlayın, basın (PA yükseldikçe artar), en temiz yüksekliği okuyun ve eşleşen değeri uygulayın. Kalıcı olması için printer.cfg dosyasına kaydedin."
+          "title": "Sihirbazlar nasıl çalışır",
+          "body": "Bir ince ayar kulesi planlayın, basın (değer yükseldikçe artar), en temiz yüksekliği okuyun ve eşleşen değeri uygulayın. Kalıcı olması için printer.cfg dosyasına kaydedin."
+        },
+        "retraction": {
+          "title": "Geri çekme nedir?",
+          "body": "Geri çekme, sızıntıyı ve iplikçik oluşumunu durdurmak için ilerleme hareketlerinde filamenti geri çeker. Çok az olursa iplikçikler kalır; çok fazla olursa tıkanmalara veya boşluklara yol açabilir. Bu sihirbaz, firmware geri çekme uzunluğunu ayarlar."
         },
         "glossary": {
           "title": "Sözlük"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "İnce ayar kulesi",
           "def": "TUNING_TOWER'ın bir parametreyi yükseklikle birlikte sürekli değiştirdiği yüksek bir baskı; böylece en iyi katmanı seçebilirsiniz."
+        },
+        "firmwareRetraction": {
+          "term": "Firmware geri çekme",
+          "def": "Klipper'ın [firmware_retraction] özelliği: G10/G11 geri çekme ve geri çekmeyi geri alma yazıcı tarafından işlenir, SET_RETRACTION ile anlık olarak ayarlanabilir."
         }
       }
     }

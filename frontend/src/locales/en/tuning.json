@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "Guided calibration wizards. First up: Pressure Advance.",
+    "intro": "Guided calibration wizards. Pick one below.",
+    "pick": {
+      "label": "Wizard"
+    },
     "params": {
       "start": "Start PA",
       "factor": "Factor (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "Couldn't apply: {error}"
       }
     },
+    "retraction": {
+      "title": "Retraction",
+      "params": {
+        "start": "Start length (mm)",
+        "factor": "Factor (mm/mm)",
+        "height": "Height (mm)"
+      },
+      "step1": "1. Plan the tuning tower",
+      "plan": "Plan tower",
+      "command": "Run this command",
+      "commandHint": "Send it just before the print (or add it to your test model's start g-code); retraction length ramps up the tower as it prints. Needs [firmware_retraction] configured.",
+      "table": {
+        "height": "Height (mm)",
+        "value": "Length (mm)"
+      },
+      "step2": "2. Enter the best-looking height",
+      "bestHeight": "Best Z height (mm)",
+      "computed": "Computed retraction length: {value} mm",
+      "applyButton": "Apply retraction",
+      "apply": {
+        "applied": "Applied retraction length {value} mm",
+        "busy": "Printer is busy - can't apply now",
+        "out_of_range": "Value out of range (max {max})",
+        "no_firmware_retraction": "No [firmware_retraction] section is configured on this printer",
+        "moonraker_error": "Couldn't apply: {error}"
+      }
+    },
     "help": {
       "guide": "Guide",
-      "guideTitle": "Pressure Advance guide",
+      "guideTitle": "Tuning wizards guide",
       "close": "Close",
       "topics": {
         "overview": {
@@ -37,8 +67,12 @@
           "body": "PA compensates for pressure lag in the nozzle, sharpening corners and reducing ooze and bulging. Each filament has its own best value."
         },
         "workflow": {
-          "title": "How the wizard works",
-          "body": "Plan a tuning tower, print it (PA ramps as it rises), read off the cleanest height, then apply the matching value. Save it to printer.cfg to keep it."
+          "title": "How the wizards work",
+          "body": "Plan a tuning tower, print it (the value ramps as it rises), read off the cleanest height, then apply the matching value. Save it to printer.cfg to keep it."
+        },
+        "retraction": {
+          "title": "What is retraction?",
+          "body": "Retraction pulls filament back on travel moves to stop oozing and stringing. Too little leaves strings; too much can cause clogs or gaps. This wizard tunes the firmware retraction length."
         },
         "glossary": {
           "title": "Glossary"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "Tuning tower",
           "def": "A tall print where TUNING_TOWER steadily changes a parameter with height so you can pick the best layer."
+        },
+        "firmwareRetraction": {
+          "term": "Firmware retraction",
+          "def": "Klipper's [firmware_retraction] feature: G10/G11 retract and unretract handled by the printer, tunable live with SET_RETRACTION."
         }
       }
     }

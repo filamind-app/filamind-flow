@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "가이드 보정 마법사. 먼저 Pressure Advance부터 시작합니다.",
+    "intro": "가이드 보정 마법사. 아래에서 하나를 선택하세요.",
+    "pick": {
+      "label": "마법사"
+    },
     "params": {
       "start": "시작 PA",
       "factor": "계수 (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "적용하지 못했습니다: {error}"
       }
     },
+    "retraction": {
+      "title": "리트랙션",
+      "params": {
+        "start": "시작 길이 (mm)",
+        "factor": "계수 (mm/mm)",
+        "height": "높이 (mm)"
+      },
+      "step1": "1. 튜닝 타워 계획",
+      "plan": "타워 계획",
+      "command": "이 명령을 실행하세요",
+      "commandHint": "출력 직전에 전송하세요 (또는 테스트 모델의 시작 G-code에 추가하세요). 출력이 진행되면서 타워를 따라 리트랙션 길이가 점점 올라갑니다. [firmware_retraction] 설정이 필요합니다.",
+      "table": {
+        "height": "높이 (mm)",
+        "value": "길이 (mm)"
+      },
+      "step2": "2. 가장 깔끔해 보이는 높이를 입력하세요",
+      "bestHeight": "최적 Z 높이 (mm)",
+      "computed": "계산된 리트랙션 길이: {value} mm",
+      "applyButton": "리트랙션 적용",
+      "apply": {
+        "applied": "리트랙션 길이 {value} mm 적용됨",
+        "busy": "프린터가 사용 중입니다 - 지금은 적용할 수 없습니다",
+        "out_of_range": "값이 범위를 벗어났습니다 (최대 {max})",
+        "no_firmware_retraction": "이 프린터에는 [firmware_retraction] 섹션이 설정되어 있지 않습니다",
+        "moonraker_error": "적용하지 못했습니다: {error}"
+      }
+    },
     "help": {
       "guide": "가이드",
-      "guideTitle": "Pressure Advance 가이드",
+      "guideTitle": "튜닝 마법사 가이드",
       "close": "닫기",
       "topics": {
         "overview": {
@@ -38,7 +68,11 @@
         },
         "workflow": {
           "title": "마법사 작동 방식",
-          "body": "튜닝 타워를 계획하고 출력한 뒤(높이가 올라가면서 PA가 점점 증가), 가장 깔끔한 높이를 읽어 해당 값을 적용합니다. 값을 유지하려면 printer.cfg에 저장하세요."
+          "body": "튜닝 타워를 계획하고 출력한 뒤(높이가 올라가면서 값이 점점 증가), 가장 깔끔한 높이를 읽어 해당 값을 적용합니다. 값을 유지하려면 printer.cfg에 저장하세요."
+        },
+        "retraction": {
+          "title": "리트랙션이란?",
+          "body": "리트랙션은 이동 동작 시 필라멘트를 뒤로 당겨 흘러내림과 거미줄을 막아줍니다. 너무 적으면 거미줄이 남고, 너무 많으면 막힘이나 빈틈이 생길 수 있습니다. 이 마법사는 펌웨어 리트랙션 길이를 튜닝합니다."
         },
         "glossary": {
           "title": "용어집"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "튜닝 타워",
           "def": "TUNING_TOWER가 높이에 따라 매개변수를 일정하게 변화시키는 길쭉한 출력물로, 가장 좋은 레이어를 고를 수 있습니다."
+        },
+        "firmwareRetraction": {
+          "term": "펌웨어 리트랙션",
+          "def": "Klipper의 [firmware_retraction] 기능입니다. G10/G11 리트랙션과 언리트랙션을 프린터가 직접 처리하며, SET_RETRACTION으로 실시간 튜닝이 가능합니다."
         }
       }
     }

@@ -1,6 +1,9 @@
 {
   "tuning": {
-    "intro": "Trình hướng dẫn hiệu chuẩn có dẫn dắt. Đầu tiên: Pressure Advance.",
+    "intro": "Trình hướng dẫn hiệu chuẩn có dẫn dắt. Chọn một bên dưới.",
+    "pick": {
+      "label": "Trình hướng dẫn"
+    },
     "params": {
       "start": "PA bắt đầu",
       "factor": "Hệ số (PA/mm)",
@@ -27,9 +30,36 @@
         "moonraker_error": "Không thể áp dụng: {error}"
       }
     },
+    "retraction": {
+      "title": "Rút sợi",
+      "params": {
+        "start": "Độ dài bắt đầu (mm)",
+        "factor": "Hệ số (mm/mm)",
+        "height": "Chiều cao (mm)"
+      },
+      "step1": "1. Lên kế hoạch tháp tinh chỉnh",
+      "plan": "Lập tháp",
+      "command": "Chạy lệnh này",
+      "commandHint": "Gửi nó ngay trước khi in (hoặc thêm vào g-code khởi đầu của mẫu thử); độ dài rút sợi tăng dần theo tháp khi in. Cần cấu hình [firmware_retraction].",
+      "table": {
+        "height": "Chiều cao (mm)",
+        "value": "Độ dài (mm)"
+      },
+      "step2": "2. Nhập chiều cao trông đẹp nhất",
+      "bestHeight": "Chiều cao Z tốt nhất (mm)",
+      "computed": "Độ dài rút sợi đã tính: {value} mm",
+      "applyButton": "Áp dụng rút sợi",
+      "apply": {
+        "applied": "Đã áp dụng độ dài rút sợi {value} mm",
+        "busy": "Máy in đang bận - không thể áp dụng lúc này",
+        "out_of_range": "Giá trị ngoài phạm vi (tối đa {max})",
+        "no_firmware_retraction": "Không có mục [firmware_retraction] nào được cấu hình trên máy in này",
+        "moonraker_error": "Không thể áp dụng: {error}"
+      }
+    },
     "help": {
       "guide": "Hướng dẫn",
-      "guideTitle": "Hướng dẫn Pressure Advance",
+      "guideTitle": "Hướng dẫn các trình tinh chỉnh",
       "close": "Đóng",
       "topics": {
         "overview": {
@@ -37,8 +67,12 @@
           "body": "PA bù cho độ trễ áp suất ở vòi phun, làm sắc nét các góc và giảm rỉ nhựa cùng phình thừa. Mỗi loại filament có giá trị tốt nhất riêng."
         },
         "workflow": {
-          "title": "Trình hướng dẫn hoạt động thế nào",
-          "body": "Lập một tháp tinh chỉnh, in nó (PA tăng dần khi tháp cao lên), đọc chiều cao sạch nhất, rồi áp dụng giá trị tương ứng. Lưu vào printer.cfg để giữ lại."
+          "title": "Các trình hướng dẫn hoạt động thế nào",
+          "body": "Lập một tháp tinh chỉnh, in nó (giá trị tăng dần khi tháp cao lên), đọc chiều cao sạch nhất, rồi áp dụng giá trị tương ứng. Lưu vào printer.cfg để giữ lại."
+        },
+        "retraction": {
+          "title": "Rút sợi là gì?",
+          "body": "Rút sợi kéo filament ngược lại trong các chuyển động di chuyển để ngăn rỉ nhựa và kéo chỉ. Quá ít sẽ để lại sợi chỉ; quá nhiều có thể gây tắc nghẽn hoặc khoảng hở. Trình hướng dẫn này tinh chỉnh độ dài rút sợi của firmware."
         },
         "glossary": {
           "title": "Thuật ngữ"
@@ -52,6 +86,10 @@
         "tuningTower": {
           "term": "Tháp tinh chỉnh",
           "def": "Một mẫu in cao mà TUNING_TOWER thay đổi đều một tham số theo chiều cao để bạn chọn lớp tốt nhất."
+        },
+        "firmwareRetraction": {
+          "term": "Rút sợi bằng firmware",
+          "def": "Tính năng [firmware_retraction] của Klipper: G10/G11 rút và nhả sợi do máy in xử lý, có thể tinh chỉnh trực tiếp bằng SET_RETRACTION."
         }
       }
     }
