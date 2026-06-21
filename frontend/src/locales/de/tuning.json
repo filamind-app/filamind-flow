@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Geführte Kalibrierungsassistenten. Den Anfang macht: Pressure Advance.",
+    "params": {
+      "start": "Start-PA",
+      "factor": "Faktor (PA/mm)",
+      "height": "Höhe (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. Tuning-Turm planen",
+      "plan": "Turm planen",
+      "command": "Diesen Befehl ausführen",
+      "commandHint": "Sende ihn direkt vor dem Druck (oder füge ihn in den Start-G-code deines Testmodells ein); PA steigt mit dem Turm an, während er gedruckt wird.",
+      "table": {
+        "height": "Höhe (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. Die am besten aussehende Höhe eingeben",
+      "bestHeight": "Beste Z-Höhe (mm)",
+      "computed": "Berechneter Pressure Advance: {pa}",
+      "applyButton": "PA anwenden",
+      "apply": {
+        "applied": "Pressure Advance {value} angewendet",
+        "busy": "Drucker ist beschäftigt - kann jetzt nicht angewendet werden",
+        "out_of_range": "Wert außerhalb des Bereichs (max. {max})",
+        "moonraker_error": "Anwenden fehlgeschlagen: {error}"
+      }
+    },
+    "help": {
+      "guide": "Anleitung",
+      "guideTitle": "Pressure-Advance-Anleitung",
+      "close": "Schließen",
+      "topics": {
+        "overview": {
+          "title": "Was ist Pressure Advance?",
+          "body": "PA (Druckvorhalt) gleicht die Druckverzögerung in der Düse aus, schärft Ecken und reduziert Nachsickern und Aufwölbungen. Jedes Filament hat seinen eigenen besten Wert."
+        },
+        "workflow": {
+          "title": "So funktioniert der Assistent",
+          "body": "Plane einen Tuning-Turm, drucke ihn (PA steigt mit zunehmender Höhe an), lies die sauberste Höhe ab und wende dann den passenden Wert an. Speichere ihn in der printer.cfg, um ihn dauerhaft zu behalten."
+        },
+        "glossary": {
+          "title": "Glossar"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Eine Klipper-Einstellung, die die Extrusion vor Geschwindigkeitsänderungen anpasst, um schärfere Ecken zu erzielen."
+        },
+        "tuningTower": {
+          "term": "Tuning-Turm",
+          "def": "Ein hoher Druck, bei dem TUNING_TOWER einen Parameter stetig mit der Höhe ändert, damit du die beste Schicht auswählen kannst."
+        }
+      }
+    }
+  }
+}

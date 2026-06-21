@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Zapisane profile filamentu z kontrolą przepływu względem limitu hotendu."
+      },
+      "tuning": {
+        "title": "Kreatory strojenia",
+        "description": "Kreatory kalibracji z asystą (najpierw Pressure Advance)."
       }
     },
     "guard": {

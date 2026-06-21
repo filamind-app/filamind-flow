@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Сохранённые профили филамента с проверкой потока относительно предела хотенда."
+      },
+      "tuning": {
+        "title": "Мастера настройки",
+        "description": "Мастера пошаговой калибровки (Pressure Advance первым)."
       }
     },
     "guard": {

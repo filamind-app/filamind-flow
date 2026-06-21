@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Procedure guidate di calibrazione. Si parte da: Pressure Advance.",
+    "params": {
+      "start": "PA iniziale",
+      "factor": "Fattore (PA/mm)",
+      "height": "Altezza (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. Pianifica la torre di taratura",
+      "plan": "Pianifica torre",
+      "command": "Esegui questo comando",
+      "commandHint": "Invialo subito prima della stampa (oppure aggiungilo allo start g-code del tuo modello di prova); il PA aumenta gradualmente lungo la torre man mano che stampa.",
+      "table": {
+        "height": "Altezza (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. Inserisci l'altezza dal risultato migliore",
+      "bestHeight": "Altezza Z migliore (mm)",
+      "computed": "Pressure Advance calcolato: {pa}",
+      "applyButton": "Applica PA",
+      "apply": {
+        "applied": "Pressure Advance {value} applicato",
+        "busy": "La stampante è occupata - impossibile applicare ora",
+        "out_of_range": "Valore fuori intervallo (max {max})",
+        "moonraker_error": "Impossibile applicare: {error}"
+      }
+    },
+    "help": {
+      "guide": "Guida",
+      "guideTitle": "Guida al Pressure Advance",
+      "close": "Chiudi",
+      "topics": {
+        "overview": {
+          "title": "Cos'è il Pressure Advance?",
+          "body": "Il PA compensa il ritardo di pressione nell'ugello, rendendo gli angoli più netti e riducendo colature e rigonfiamenti. Ogni filamento ha il proprio valore ottimale."
+        },
+        "workflow": {
+          "title": "Come funziona la procedura guidata",
+          "body": "Pianifica una torre di taratura, stampala (il PA aumenta man mano che sale), individua l'altezza più pulita, poi applica il valore corrispondente. Salvalo in printer.cfg per mantenerlo."
+        },
+        "glossary": {
+          "title": "Glossario"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Un'impostazione di Klipper che regola l'estrusione in anticipo rispetto ai cambi di velocità per ottenere angoli più netti."
+        },
+        "tuningTower": {
+          "term": "Torre di taratura",
+          "def": "Una stampa alta in cui TUNING_TOWER modifica progressivamente un parametro con l'altezza, così puoi scegliere il layer migliore."
+        }
+      }
+    }
+  }
+}

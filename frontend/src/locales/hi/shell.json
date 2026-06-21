@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "सहेजे गए फ़िलामेंट प्रोफ़ाइल, फ़्लो-बनाम-hotend-सीमा जाँच के साथ।"
+      },
+      "tuning": {
+        "title": "ट्यूनिंग विज़ार्ड",
+        "description": "गाइडेड कैलिब्रेशन विज़ार्ड (पहले Pressure Advance)।"
       }
     },
     "guard": {

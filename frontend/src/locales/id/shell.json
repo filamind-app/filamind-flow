@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Profil filamen tersimpan dengan pemeriksaan aliran-vs-batas-hotend."
+      },
+      "tuning": {
+        "title": "Wizard Penyetelan",
+        "description": "Wizard kalibrasi terpandu (Pressure Advance lebih dulu)."
       }
     },
     "guard": {

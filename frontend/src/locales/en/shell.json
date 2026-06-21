@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Saved filament profiles with a flow-vs-hotend-ceiling check."
+      },
+      "tuning": {
+        "title": "Tuning Wizards",
+        "description": "Guided calibration wizards (Pressure Advance first)."
       }
     },
     "guard": {

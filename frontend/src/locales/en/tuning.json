@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Guided calibration wizards. First up: Pressure Advance.",
+    "params": {
+      "start": "Start PA",
+      "factor": "Factor (PA/mm)",
+      "height": "Height (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. Plan the tuning tower",
+      "plan": "Plan tower",
+      "command": "Run this command",
+      "commandHint": "Send it just before the print (or add it to your test model's start g-code); PA ramps up the tower as it prints.",
+      "table": {
+        "height": "Height (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. Enter the best-looking height",
+      "bestHeight": "Best Z height (mm)",
+      "computed": "Computed Pressure Advance: {pa}",
+      "applyButton": "Apply PA",
+      "apply": {
+        "applied": "Applied Pressure Advance {value}",
+        "busy": "Printer is busy - can't apply now",
+        "out_of_range": "Value out of range (max {max})",
+        "moonraker_error": "Couldn't apply: {error}"
+      }
+    },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Pressure Advance guide",
+      "close": "Close",
+      "topics": {
+        "overview": {
+          "title": "What is Pressure Advance?",
+          "body": "PA compensates for pressure lag in the nozzle, sharpening corners and reducing ooze and bulging. Each filament has its own best value."
+        },
+        "workflow": {
+          "title": "How the wizard works",
+          "body": "Plan a tuning tower, print it (PA ramps as it rises), read off the cleanest height, then apply the matching value. Save it to printer.cfg to keep it."
+        },
+        "glossary": {
+          "title": "Glossary"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "A Klipper setting that adjusts extrusion ahead of speed changes for crisper corners."
+        },
+        "tuningTower": {
+          "term": "Tuning tower",
+          "def": "A tall print where TUNING_TOWER steadily changes a parameter with height so you can pick the best layer."
+        }
+      }
+    }
+  }
+}

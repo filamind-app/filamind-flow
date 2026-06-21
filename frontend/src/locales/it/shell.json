@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Profili filamento salvati con un controllo flusso-vs-limite-dell'hotend."
+      },
+      "tuning": {
+        "title": "Procedure guidate di taratura",
+        "description": "Procedure guidate di calibrazione (prima il Pressure Advance)."
       }
     },
     "guard": {

@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "引导式校准向导。首个项目：Pressure Advance（压力提前）。",
+    "params": {
+      "start": "起始 PA",
+      "factor": "系数（PA/mm）",
+      "height": "高度（mm）"
+    },
+    "pa": {
+      "title": "Pressure Advance（压力提前）",
+      "step1": "1. 规划调校塔",
+      "plan": "规划塔",
+      "command": "运行此命令",
+      "commandHint": "在打印开始前发送（或将其加入测试模型的起始 G-code）；PA 会随塔体打印逐层递增。",
+      "table": {
+        "height": "高度（mm）",
+        "pa": "PA"
+      },
+      "step2": "2. 输入观感最佳的高度",
+      "bestHeight": "最佳 Z 高度（mm）",
+      "computed": "计算得出的 Pressure Advance：{pa}",
+      "applyButton": "应用 PA",
+      "apply": {
+        "applied": "已应用 Pressure Advance {value}",
+        "busy": "打印机忙碌中 - 现在无法应用",
+        "out_of_range": "数值超出范围（最大 {max}）",
+        "moonraker_error": "应用失败：{error}"
+      }
+    },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "Pressure Advance 指南",
+      "close": "关闭",
+      "topics": {
+        "overview": {
+          "title": "什么是 Pressure Advance？",
+          "body": "PA 用于补偿喷嘴内的压力滞后，使拐角更锐利，并减少漏料和鼓胀。每种耗材都有各自的最佳值。"
+        },
+        "workflow": {
+          "title": "向导的工作原理",
+          "body": "规划一座调校塔，打印它（PA 随高度递增），读出最干净的高度，然后应用对应的数值。将其保存到 printer.cfg 以长期生效。"
+        },
+        "glossary": {
+          "title": "术语表"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance（压力提前）",
+          "def": "Klipper 的一项设置，在速度变化前调整挤出量，使拐角更锐利。"
+        },
+        "tuningTower": {
+          "term": "调校塔",
+          "def": "一种高大的打印件，TUNING_TOWER 会随高度稳步改变某个参数，方便你挑选最佳层。"
+        }
+      }
+    }
+  }
+}

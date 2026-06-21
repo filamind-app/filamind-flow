@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "已保存的耗材配置，并附带流量与热端上限的检查。"
+      },
+      "tuning": {
+        "title": "调校向导",
+        "description": "引导式校准向导（首个为 Pressure Advance 压力提前）。"
       }
     },
     "guard": {

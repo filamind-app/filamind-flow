@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Rehberli kalibrasyon sihirbazları. İlk sırada: Pressure Advance.",
+    "params": {
+      "start": "Başlangıç PA",
+      "factor": "Katsayı (PA/mm)",
+      "height": "Yükseklik (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. İnce ayar kulesini planla",
+      "plan": "Kuleyi planla",
+      "command": "Bu komutu çalıştır",
+      "commandHint": "Baskıdan hemen önce gönderin (veya test modelinizin başlangıç G-code'una ekleyin); PA, kule basıldıkça kademeli olarak artar.",
+      "table": {
+        "height": "Yükseklik (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. En iyi görünen yüksekliği girin",
+      "bestHeight": "En iyi Z yüksekliği (mm)",
+      "computed": "Hesaplanan Pressure Advance: {pa}",
+      "applyButton": "PA uygula",
+      "apply": {
+        "applied": "Pressure Advance {value} uygulandı",
+        "busy": "Yazıcı meşgul - şu anda uygulanamıyor",
+        "out_of_range": "Değer aralık dışında (en fazla {max})",
+        "moonraker_error": "Uygulanamadı: {error}"
+      }
+    },
+    "help": {
+      "guide": "Kılavuz",
+      "guideTitle": "Pressure Advance kılavuzu",
+      "close": "Kapat",
+      "topics": {
+        "overview": {
+          "title": "Pressure Advance nedir?",
+          "body": "PA, nozuldaki basınç gecikmesini telafi eder; köşeleri keskinleştirir, sızıntıyı ve şişkinliği azaltır. Her filamentin kendi en iyi değeri vardır."
+        },
+        "workflow": {
+          "title": "Sihirbaz nasıl çalışır",
+          "body": "Bir ince ayar kulesi planlayın, basın (PA yükseldikçe artar), en temiz yüksekliği okuyun ve eşleşen değeri uygulayın. Kalıcı olması için printer.cfg dosyasına kaydedin."
+        },
+        "glossary": {
+          "title": "Sözlük"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Daha keskin köşeler için ekstrüzyonu hız değişimlerinden önce ayarlayan bir Klipper ayarı."
+        },
+        "tuningTower": {
+          "term": "İnce ayar kulesi",
+          "def": "TUNING_TOWER'ın bir parametreyi yükseklikle birlikte sürekli değiştirdiği yüksek bir baskı; böylece en iyi katmanı seçebilirsiniz."
+        }
+      }
+    }
+  }
+}

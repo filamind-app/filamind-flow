@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "ملفات فيلامنت محفوظة مع فحص للتدفّق مقابل سقف رأس التسخين."
+      },
+      "tuning": {
+        "title": "معالجات المعايرة",
+        "description": "معالجات معايرة موجّهة (Pressure Advance أولًا)."
       }
     },
     "guard": {

@@ -13,6 +13,7 @@ import enMacroDesigner from '../locales/en/macro-designer.json'
 import enMachineDoctor from '../locales/en/machine-doctor.json'
 import enMaterial from '../locales/en/material.json'
 import enMaxFlow from '../locales/en/max-flow.json'
+import enTuning from '../locales/en/tuning.json'
 import enMotorDrivers from '../locales/en/motor-drivers.json'
 import enRemoteControl from '../locales/en/remote-control.json'
 import enShell from '../locales/en/shell.json'
@@ -96,6 +97,7 @@ const en = {
   ...enMaxFlow,
   ...enMachineDoctor,
   ...enMaterial,
+  ...enTuning,
   ...enKlipperScreen,
   ...enBoardTopology,
   ...enMacroDesigner,
