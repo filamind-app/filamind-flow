@@ -221,6 +221,22 @@ class FlashRequest(BaseModel):
         return v
 
 
+class MaterialProfile(BaseModel):
+    """A saved filament profile - the first-class 'material' entity (see material_store)."""
+
+    id: str = ""
+    name: str
+    material: str = "PLA"
+    brand: str = ""
+    color: str = ""
+    diameter: float = 1.75
+    density: float = 1.24
+    nozzle_temp: int = 210
+    bed_temp: int = 60
+    max_volumetric_flow: float = 0.0
+    notes: str = ""
+
+
 class FlashWarning(BaseModel):
     """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
 
