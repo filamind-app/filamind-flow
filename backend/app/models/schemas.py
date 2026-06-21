@@ -272,6 +272,43 @@ class PreflightResult(BaseModel):
     checks: list[PreflightCheck] = []
 
 
+class PaSample(BaseModel):
+    """One (Z height -> PA) point on the tuning tower."""
+
+    height: float
+    pa: float
+
+
+class PaTowerRequest(BaseModel):
+    """Pressure Advance tuning-tower parameters."""
+
+    start: float = 0.0
+    factor: float = 0.005
+    height: float = 50.0
+
+
+class PaTowerPlan(BaseModel):
+    """The TUNING_TOWER command + a height->PA sample table."""
+
+    command: str
+    start: float
+    factor: float
+    height: float
+    samples: list[PaSample] = []
+
+
+class PaApplyRequest(BaseModel):
+    value: float
+
+
+class PaApplyResult(BaseModel):
+    """Result of applying a PA value (frontend renders ``tuning.pa.apply.<code>``)."""
+
+    ok: bool
+    code: str
+    params: dict[str, Any] = {}
+
+
 class FlashWarning(BaseModel):
     """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
 
