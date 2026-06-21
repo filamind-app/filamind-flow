@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "Captura la configuración funcional de tu impresora como un paquete que puedes restaurar tras una edición incorrecta.",
+    "cancel": "Cancelar",
+    "empty": "Aún no hay paquetes. Crea uno mientras tu impresora esté configurada como te gusta.",
+    "files": "{n} archivos de configuración",
+    "create": {
+      "label": "Nuevo paquete",
+      "placeholder": "p. ej. SV08 funcional - antes de calibrar",
+      "button": "Crear paquete"
+    },
+    "restore": {
+      "button": "Restaurar",
+      "confirm": "¿Sobrescribir la configuración actual con este paquete?",
+      "note": "Restaurar sobrescribe tus archivos de configuración; reinicia Klipper después para aplicar.",
+      "restored": "Se restauraron {count} archivos de configuración - reinicia Klipper para aplicar",
+      "busy": "La impresora está ocupada - no se puede restaurar ahora",
+      "not_found": "Faltan los archivos del paquete",
+      "empty": "Este paquete no tiene archivos",
+      "moonraker_error": "No se pudo restaurar: {error}"
+    },
+    "delete": { "button": "Eliminar", "confirm": "Eliminar paquete" },
+    "help": {
+      "guide": "Guía",
+      "guideTitle": "Guía de paquetes de configuración funcional",
+      "close": "Cerrar",
+      "topics": {
+        "overview": {
+          "title": "¿Qué es un paquete de configuración funcional?",
+          "body": "Una captura de cada archivo de configuración de la impresora (printer.cfg y sus inclusiones) guardada como un paquete con nombre. Cuando tu impresora imprime bien, captura un paquete para poder revertir si una edición posterior estropea algo."
+        },
+        "restore": {
+          "title": "Restaurar un paquete",
+          "body": "Restaurar reescribe los archivos del paquete sobre tu configuración actual. Se rechaza mientras la impresora está ocupada, y debes reiniciar Klipper después para que la configuración restaurada surta efecto."
+        },
+        "glossary": { "title": "Glosario" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Paquete de configuración",
+          "def": "Un conjunto guardado de todos los archivos de configuración de tu impresora en un momento dado."
+        },
+        "restorePoint": {
+          "term": "Punto de restauración",
+          "def": "Un estado funcional al que puedes volver - aquí, un paquete capturado mientras la impresora funcionaba."
+        }
+      }
+    }
+  }
+}

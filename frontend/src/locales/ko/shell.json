@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "화면 관리자",
         "description": "프린터 터치스크린 관리: 설정, 메뉴, 테마, 실행할 화면."
+      },
+      "known-good-pack": {
+        "title": "정상 작동 팩",
+        "description": "잘 작동하는 설정을 스냅샷하고 잘못 편집한 뒤 복원하세요."
       }
     },
     "guard": {

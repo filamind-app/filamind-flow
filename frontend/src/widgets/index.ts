@@ -77,6 +77,14 @@ export function registerWidgets(): void {
   })
 
   reg({
+    id: 'known-good-pack',
+    title: 'Known-Good Packs',
+    icon: '🗄',
+    description: 'Snapshot your working config and restore it after a bad edit.',
+    component: defineAsyncComponent(() => import('./known-good-pack/KnownGoodPackWidget.vue')),
+  })
+
+  reg({
     id: 'motor-drivers',
     title: 'Motor Drivers',
     icon: '⚙',

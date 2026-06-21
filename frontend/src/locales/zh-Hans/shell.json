@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "屏幕管理器",
         "description": "管理打印机的触摸屏：设置、菜单、主题，以及运行哪个屏幕。"
+      },
+      "known-good-pack": {
+        "title": "可用配置包",
+        "description": "为正常工作的配置创建快照，并在错误修改后恢复。"
       }
     },
     "guard": {

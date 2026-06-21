@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Pengelola Layar",
         "description": "Kelola layar sentuh printer: pengaturan, menu, tema, dan layar mana yang berjalan."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Buat snapshot konfigurasi yang berfungsi dan pulihkan setelah suntingan yang buruk."
       }
     },
     "guard": {

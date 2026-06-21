@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "Zrób migawkę działającej konfiguracji drukarki jako pakiet, który możesz przywrócić po nieudanej edycji.",
+    "cancel": "Anuluj",
+    "empty": "Brak pakietów. Utwórz pakiet, gdy drukarka jest skonfigurowana tak, jak lubisz.",
+    "files": "{n} plików konfiguracji",
+    "create": {
+      "label": "Nowy pakiet",
+      "placeholder": "np. Działający SV08 - przed strojeniem",
+      "button": "Utwórz pakiet"
+    },
+    "restore": {
+      "button": "Przywróć",
+      "confirm": "Nadpisać bieżącą konfigurację tym pakietem?",
+      "note": "Przywracanie nadpisuje pliki konfiguracji; potem zrestartuj Klipper, aby zastosować zmiany.",
+      "restored": "Przywrócono {count} plików konfiguracji - zrestartuj Klipper, aby zastosować",
+      "busy": "Drukarka jest zajęta - nie można teraz przywrócić",
+      "not_found": "Brak plików pakietu",
+      "empty": "Ten pakiet nie zawiera plików",
+      "moonraker_error": "Nie udało się przywrócić: {error}"
+    },
+    "delete": { "button": "Usuń", "confirm": "Usuń pakiet" },
+    "help": {
+      "guide": "Przewodnik",
+      "guideTitle": "Przewodnik po pakietach sprawdzonej konfiguracji",
+      "close": "Zamknij",
+      "topics": {
+        "overview": {
+          "title": "Czym jest pakiet sprawdzonej konfiguracji?",
+          "body": "Migawka każdego pliku konfiguracji drukarki (printer.cfg i dołączanych plików) zapisana jako nazwany pakiet. Gdy drukarka drukuje dobrze, zrób pakiet, aby móc się cofnąć, jeśli późniejsza edycja coś zepsuje."
+        },
+        "restore": {
+          "title": "Przywracanie pakietu",
+          "body": "Przywracanie zapisuje pliki z pakietu na bieżącą konfigurację. Jest odrzucane, gdy drukarka jest zajęta, a potem musisz zrestartować Klipper, aby przywrócona konfiguracja zadziałała."
+        },
+        "glossary": { "title": "Słowniczek" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Pakiet konfiguracji",
+          "def": "Zapisany zestaw wszystkich plików konfiguracji drukarki w danym momencie."
+        },
+        "restorePoint": {
+          "term": "Punkt przywracania",
+          "def": "Sprawdzony stan, do którego możesz wrócić - tutaj pakiet zrobiony, gdy drukarka działała."
+        }
+      }
+    }
+  }
+}

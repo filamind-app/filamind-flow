@@ -1,0 +1,55 @@
+{
+  "knownGoodPack": {
+    "intro": "Crea uno snapshot della configurazione funzionante della stampante come pacchetto, da ripristinare dopo una modifica errata.",
+    "cancel": "Annulla",
+    "empty": "Nessun pacchetto ancora. Creane uno mentre la stampante è configurata come preferisci.",
+    "files": "{n} file di configurazione",
+    "create": {
+      "label": "Nuovo pacchetto",
+      "placeholder": "es. SV08 funzionante - prima della taratura",
+      "button": "Crea pacchetto"
+    },
+    "restore": {
+      "button": "Ripristina",
+      "confirm": "Sovrascrivere la configurazione attuale con questo pacchetto?",
+      "note": "Il ripristino sovrascrive i tuoi file di configurazione; riavvia Klipper in seguito per applicarli.",
+      "restored": "Ripristinati {count} file di configurazione - riavvia Klipper per applicare",
+      "busy": "La stampante è occupata - impossibile ripristinare ora",
+      "not_found": "I file del pacchetto sono mancanti",
+      "empty": "Questo pacchetto non contiene file",
+      "moonraker_error": "Impossibile ripristinare: {error}"
+    },
+    "delete": {
+      "button": "Elimina",
+      "confirm": "Elimina pacchetto"
+    },
+    "help": {
+      "guide": "Guida",
+      "guideTitle": "Guida ai pacchetti Known-Good",
+      "close": "Chiudi",
+      "topics": {
+        "overview": {
+          "title": "Cos'è un pacchetto Known-Good?",
+          "body": "Uno snapshot di ogni file di configurazione della stampante (printer.cfg e i suoi include) salvato come pacchetto con un nome. Quando la stampante stampa bene, crea un pacchetto così puoi tornare indietro se una modifica successiva rompe qualcosa."
+        },
+        "restore": {
+          "title": "Ripristinare un pacchetto",
+          "body": "Il ripristino riscrive i file del pacchetto sulla configurazione attuale. Viene rifiutato mentre la stampante è occupata, e in seguito devi riavviare Klipper affinché la configurazione ripristinata abbia effetto."
+        },
+        "glossary": {
+          "title": "Glossario"
+        }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Pacchetto di configurazione",
+          "def": "Un insieme salvato di tutti i file di configurazione della stampante in un dato momento."
+        },
+        "restorePoint": {
+          "term": "Punto di ripristino",
+          "def": "Uno stato funzionante a cui puoi tornare - qui, un pacchetto creato mentre la stampante funzionava."
+        }
+      }
+    }
+  }
+}

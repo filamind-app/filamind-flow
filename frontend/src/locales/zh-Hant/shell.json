@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "螢幕管理器",
         "description": "管理印表機的觸控螢幕：設定、選單、佈景主題，以及執行哪個螢幕。"
+      },
+      "known-good-pack": {
+        "title": "已知良好封裝",
+        "description": "為運作正常的設定建立快照，並在錯誤編輯後還原。"
       }
     },
     "guard": {

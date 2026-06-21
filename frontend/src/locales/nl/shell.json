@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Schermbeheer",
         "description": "Beheer het touchscreen van je printer: instellingen, menu's, thema's en welk scherm draait."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Maak een momentopname van je werkende config en herstel die na een mislukte bewerking."
       }
     },
     "guard": {

@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Trình quản lý màn hình",
         "description": "Quản lý màn hình cảm ứng của máy in: cài đặt, menu, giao diện và màn hình nào đang chạy."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Chụp ảnh cấu hình đang hoạt động và khôi phục sau khi chỉnh sửa sai."
       }
     },
     "guard": {

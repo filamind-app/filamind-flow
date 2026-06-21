@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Gestionnaire d'écran",
         "description": "Gérez l'écran tactile de votre imprimante : réglages, menus, thèmes et quel écran s'exécute."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Capturez votre configuration fonctionnelle et restaurez-la après une mauvaise modification."
       }
     },
     "guard": {

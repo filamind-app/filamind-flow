@@ -1,0 +1,50 @@
+{
+  "knownGoodPack": {
+    "intro": "为正常工作的打印机配置创建快照，打包保存，以便在错误修改后恢复。",
+    "cancel": "取消",
+    "empty": "暂无配置包。趁打印机配置正合心意时创建一个吧。",
+    "files": "{n} 个配置文件",
+    "create": {
+      "label": "新建配置包",
+      "placeholder": "例如：可用的 SV08 - 调校前",
+      "button": "创建配置包"
+    },
+    "restore": {
+      "button": "恢复",
+      "confirm": "用此配置包覆盖当前配置？",
+      "note": "恢复会覆盖你的配置文件；之后请重启 Klipper 以生效。",
+      "restored": "已恢复 {count} 个配置文件 - 请重启 Klipper 以生效",
+      "busy": "打印机正忙 - 现在无法恢复",
+      "not_found": "配置包文件缺失",
+      "empty": "此配置包没有任何文件",
+      "moonraker_error": "无法恢复：{error}"
+    },
+    "delete": { "button": "删除", "confirm": "删除配置包" },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "可用配置包指南",
+      "close": "关闭",
+      "topics": {
+        "overview": {
+          "title": "什么是可用配置包？",
+          "body": "它是所有打印机配置文件（printer.cfg 及其包含的文件）的快照，以命名配置包的形式保存。当打印机打印效果良好时，创建一个配置包，这样在日后的修改破坏某些功能时就能回退。"
+        },
+        "restore": {
+          "title": "恢复配置包",
+          "body": "恢复会把配置包中的文件写回，覆盖当前配置。打印机忙碌时会拒绝恢复，且之后必须重启 Klipper 才能让恢复的配置生效。"
+        },
+        "glossary": { "title": "术语表" }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "配置包",
+          "def": "在某一时刻保存的、包含所有打印机配置文件的合集。"
+        },
+        "restorePoint": {
+          "term": "恢复点",
+          "def": "一个可以回退到的可用状态 - 在这里指打印机正常工作时创建的配置包。"
+        }
+      }
+    }
+  }
+}

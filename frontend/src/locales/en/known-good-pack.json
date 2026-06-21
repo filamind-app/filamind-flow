@@ -1,0 +1,55 @@
+{
+  "knownGoodPack": {
+    "intro": "Snapshot your working printer config as a pack you can restore after a bad edit.",
+    "cancel": "Cancel",
+    "empty": "No packs yet. Create one while your printer is configured the way you like it.",
+    "files": "{n} config files",
+    "create": {
+      "label": "New pack",
+      "placeholder": "e.g. Working SV08 - before tuning",
+      "button": "Create pack"
+    },
+    "restore": {
+      "button": "Restore",
+      "confirm": "Overwrite current config with this pack?",
+      "note": "Restoring overwrites your config files; restart Klipper afterwards to apply.",
+      "restored": "Restored {count} config files - restart Klipper to apply",
+      "busy": "Printer is busy - can't restore now",
+      "not_found": "Pack files are missing",
+      "empty": "This pack has no files",
+      "moonraker_error": "Couldn't restore: {error}"
+    },
+    "delete": {
+      "button": "Delete",
+      "confirm": "Delete pack"
+    },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Known-Good Packs guide",
+      "close": "Close",
+      "topics": {
+        "overview": {
+          "title": "What is a Known-Good Pack?",
+          "body": "A snapshot of every printer config file (printer.cfg and its includes) saved as a named pack. When your printer prints well, capture a pack so you can roll back if a later edit breaks something."
+        },
+        "restore": {
+          "title": "Restoring a pack",
+          "body": "Restoring writes the pack's files back over your current config. It is refused while the printer is busy, and you must restart Klipper afterwards for the restored config to take effect."
+        },
+        "glossary": {
+          "title": "Glossary"
+        }
+      },
+      "glossary": {
+        "configPack": {
+          "term": "Config pack",
+          "def": "A saved bundle of all your printer config files at one point in time."
+        },
+        "restorePoint": {
+          "term": "Restore point",
+          "def": "A known-good state you can return to - here, a pack captured while the printer was working."
+        }
+      }
+    }
+  }
+}

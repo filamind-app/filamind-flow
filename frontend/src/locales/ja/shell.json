@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "スクリーンマネージャー",
         "description": "プリンターのタッチスクリーンを管理：設定、メニュー、テーマ、どの画面を実行するか。"
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "正常に動作している設定をスナップショットし、誤った編集の後に復元します。"
       }
     },
     "guard": {

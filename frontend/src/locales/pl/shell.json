@@ -147,6 +147,10 @@
       "screen-manager": {
         "title": "Menedżer ekranu",
         "description": "Zarządzaj ekranem dotykowym drukarki: ustawienia, menu, motywy i który ekran działa."
+      },
+      "known-good-pack": {
+        "title": "Known-Good Packs",
+        "description": "Zrób migawkę działającej konfiguracji i przywróć ją po nieudanej edycji."
       }
     },
     "guard": {
