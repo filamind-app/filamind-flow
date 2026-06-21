@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "ガイド付きキャリブレーションウィザード。最初は Pressure Advance です。",
+    "params": {
+      "start": "開始 PA",
+      "factor": "係数 (PA/mm)",
+      "height": "高さ (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. チューニングタワーを計画する",
+      "plan": "タワーを計画",
+      "command": "このコマンドを実行",
+      "commandHint": "プリント直前に送信してください（またはテストモデルのスタート G-code に追加します）。プリントが進むにつれてタワー上で PA が上昇します。",
+      "table": {
+        "height": "高さ (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. 最も見栄えの良い高さを入力する",
+      "bestHeight": "最適な Z 高さ (mm)",
+      "computed": "算出された Pressure Advance: {pa}",
+      "applyButton": "PA を適用",
+      "apply": {
+        "applied": "Pressure Advance {value} を適用しました",
+        "busy": "プリンターがビジー状態です - 今は適用できません",
+        "out_of_range": "値が範囲外です（最大 {max}）",
+        "moonraker_error": "適用できませんでした: {error}"
+      }
+    },
+    "help": {
+      "guide": "ガイド",
+      "guideTitle": "Pressure Advance ガイド",
+      "close": "閉じる",
+      "topics": {
+        "overview": {
+          "title": "Pressure Advance とは？",
+          "body": "PA はノズル内の圧力遅れを補正し、コーナーをシャープにして、にじみや膨らみを抑えます。最適な値はフィラメントごとに異なります。"
+        },
+        "workflow": {
+          "title": "ウィザードの仕組み",
+          "body": "チューニングタワーを計画し、それをプリントし（高さに応じて PA が上昇します）、最もきれいな高さを読み取り、対応する値を適用します。保持するには printer.cfg に保存してください。"
+        },
+        "glossary": {
+          "title": "用語集"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "速度変化に先立って押し出しを調整し、コーナーをくっきりさせる Klipper の設定です。"
+        },
+        "tuningTower": {
+          "term": "チューニングタワー",
+          "def": "TUNING_TOWER が高さとともにパラメーターを徐々に変化させる縦長のプリントで、最適なレイヤーを選べます。"
+        }
+      }
+    }
+  }
+}

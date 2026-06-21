@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Perfis de filamento salvos com verificação de fluxo vs limite do hotend."
+      },
+      "tuning": {
+        "title": "Assistentes de Ajuste",
+        "description": "Assistentes guiados de calibração (Pressure Advance primeiro)."
       }
     },
     "guard": {

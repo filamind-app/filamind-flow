@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "フィラメントプロファイルを保存し、流量とホットエンド上限を照合します。"
+      },
+      "tuning": {
+        "title": "チューニングウィザード",
+        "description": "ガイド付きキャリブレーションウィザード（まずは Pressure Advance）。"
       }
     },
     "guard": {

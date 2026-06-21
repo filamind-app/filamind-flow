@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Profils de filament enregistrés avec un contrôle débit vs plafond du hotend."
+      },
+      "tuning": {
+        "title": "Assistants de réglage",
+        "description": "Assistants de calibration guidés (Pressure Advance en premier)."
       }
     },
     "guard": {

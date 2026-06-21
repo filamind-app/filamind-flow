@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Wizard kalibrasi terpandu. Pertama: Pressure Advance.",
+    "params": {
+      "start": "PA awal",
+      "factor": "Faktor (PA/mm)",
+      "height": "Tinggi (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. Rencanakan menara penyetelan",
+      "plan": "Rencanakan menara",
+      "command": "Jalankan perintah ini",
+      "commandHint": "Kirim tepat sebelum mencetak (atau tambahkan ke g-code awal model uji Anda); PA akan naik bertahap pada menara saat mencetak.",
+      "table": {
+        "height": "Tinggi (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. Masukkan tinggi yang tampak paling baik",
+      "bestHeight": "Tinggi Z terbaik (mm)",
+      "computed": "Pressure Advance terhitung: {pa}",
+      "applyButton": "Terapkan PA",
+      "apply": {
+        "applied": "Pressure Advance {value} diterapkan",
+        "busy": "Printer sedang sibuk - tidak bisa menerapkan sekarang",
+        "out_of_range": "Nilai di luar rentang (maks {max})",
+        "moonraker_error": "Gagal menerapkan: {error}"
+      }
+    },
+    "help": {
+      "guide": "Panduan",
+      "guideTitle": "Panduan Pressure Advance",
+      "close": "Tutup",
+      "topics": {
+        "overview": {
+          "title": "Apa itu Pressure Advance?",
+          "body": "PA mengompensasi jeda tekanan di nozel, mempertajam sudut serta mengurangi tetesan dan tonjolan. Setiap filamen punya nilai terbaiknya sendiri."
+        },
+        "workflow": {
+          "title": "Cara kerja wizard",
+          "body": "Rencanakan menara penyetelan, cetak (PA naik bertahap seiring tinggi), baca tinggi yang paling bersih, lalu terapkan nilai yang sesuai. Simpan ke printer.cfg agar tetap tersimpan."
+        },
+        "glossary": {
+          "title": "Glosarium"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Pengaturan Klipper yang menyesuaikan ekstrusi mendahului perubahan kecepatan untuk sudut yang lebih tajam."
+        },
+        "tuningTower": {
+          "term": "Menara penyetelan",
+          "def": "Cetakan tinggi tempat TUNING_TOWER mengubah parameter secara bertahap seiring tinggi sehingga Anda dapat memilih lapisan terbaik."
+        }
+      }
+    }
+  }
+}

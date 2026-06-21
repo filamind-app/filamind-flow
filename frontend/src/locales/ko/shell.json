@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "유량 대 핫엔드 한계 점검이 포함된 저장된 필라멘트 프로파일."
+      },
+      "tuning": {
+        "title": "튜닝 마법사",
+        "description": "가이드 보정 마법사 (Pressure Advance 우선)."
       }
     },
     "guard": {

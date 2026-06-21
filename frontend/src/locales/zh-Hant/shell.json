@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "已儲存的線材設定檔，附帶流量與熱端上限的檢查。"
+      },
+      "tuning": {
+        "title": "調校精靈",
+        "description": "導引式校準精靈（首先是 Pressure Advance）。"
       }
     },
     "guard": {

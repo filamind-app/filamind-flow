@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "導引式校準精靈。首先登場：Pressure Advance。",
+    "params": {
+      "start": "起始 PA",
+      "factor": "係數（PA/mm）",
+      "height": "高度（mm）"
+    },
+    "pa": {
+      "title": "Pressure Advance（壓力提前）",
+      "step1": "1. 規劃調校塔",
+      "plan": "規劃調校塔",
+      "command": "執行此指令",
+      "commandHint": "在列印前送出（或加入測試模型的起始 G-code）；列印過程中 PA 會隨調校塔逐漸增加。",
+      "table": {
+        "height": "高度（mm）",
+        "pa": "PA"
+      },
+      "step2": "2. 輸入外觀最佳的高度",
+      "bestHeight": "最佳 Z 高度（mm）",
+      "computed": "計算出的 Pressure Advance：{pa}",
+      "applyButton": "套用 PA",
+      "apply": {
+        "applied": "已套用 Pressure Advance {value}",
+        "busy": "印表機忙碌中 - 目前無法套用",
+        "out_of_range": "數值超出範圍（上限 {max}）",
+        "moonraker_error": "無法套用：{error}"
+      }
+    },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "Pressure Advance 指南",
+      "close": "關閉",
+      "topics": {
+        "overview": {
+          "title": "什麼是 Pressure Advance？",
+          "body": "PA 用來補償噴嘴內的壓力延遲，使轉角更銳利並減少滲漏與鼓脹。每種線材都有各自的最佳值。"
+        },
+        "workflow": {
+          "title": "精靈的運作方式",
+          "body": "規劃一座調校塔，將它列印出來（PA 會隨高度逐漸增加），讀取最乾淨的高度，再套用對應的數值。將它儲存到 printer.cfg 以永久保留。"
+        },
+        "glossary": {
+          "title": "術語表"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Klipper 的一項設定，會在速度變化前調整擠出量，使轉角更俐落。"
+        },
+        "tuningTower": {
+          "term": "調校塔",
+          "def": "一座高聳的列印件，TUNING_TOWER 會隨高度穩定改變某項參數，讓你挑選最佳的層。"
+        }
+      }
+    }
+  }
+}

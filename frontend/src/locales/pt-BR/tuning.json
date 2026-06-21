@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Assistentes guiados de calibração. Primeiro: Pressure Advance.",
+    "params": {
+      "start": "PA inicial",
+      "factor": "Fator (PA/mm)",
+      "height": "Altura (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. Planeje a torre de ajuste",
+      "plan": "Planejar torre",
+      "command": "Execute este comando",
+      "commandHint": "Envie-o logo antes da impressão (ou adicione-o ao g-code inicial do seu modelo de teste); o PA aumenta gradualmente ao longo da torre conforme ela é impressa.",
+      "table": {
+        "height": "Altura (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. Informe a altura com melhor aparência",
+      "bestHeight": "Melhor altura Z (mm)",
+      "computed": "Pressure Advance calculado: {pa}",
+      "applyButton": "Aplicar PA",
+      "apply": {
+        "applied": "Pressure Advance {value} aplicado",
+        "busy": "A impressora está ocupada - não é possível aplicar agora",
+        "out_of_range": "Valor fora do intervalo (máx {max})",
+        "moonraker_error": "Não foi possível aplicar: {error}"
+      }
+    },
+    "help": {
+      "guide": "Guia",
+      "guideTitle": "Guia do Pressure Advance",
+      "close": "Fechar",
+      "topics": {
+        "overview": {
+          "title": "O que é Pressure Advance?",
+          "body": "O PA (Pressure Advance) compensa o atraso de pressão no bico, deixando os cantos mais nítidos e reduzindo o vazamento e o inchaço. Cada filamento tem seu próprio valor ideal."
+        },
+        "workflow": {
+          "title": "Como o assistente funciona",
+          "body": "Planeje uma torre de ajuste, imprima-a (o PA aumenta gradualmente conforme ela cresce), identifique a altura mais limpa e aplique o valor correspondente. Salve em printer.cfg para mantê-lo."
+        },
+        "glossary": {
+          "title": "Glossário"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Uma configuração do Klipper que ajusta a extrusão antes das mudanças de velocidade para cantos mais nítidos."
+        },
+        "tuningTower": {
+          "term": "Torre de ajuste",
+          "def": "Uma impressão alta em que o TUNING_TOWER altera continuamente um parâmetro com a altura, permitindo que você escolha a melhor camada."
+        }
+      }
+    }
+  }
+}

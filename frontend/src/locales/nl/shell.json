@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Opgeslagen filamentprofielen met een flow-vs-hotend-plafond-controle."
+      },
+      "tuning": {
+        "title": "Afstemwizards",
+        "description": "Begeleide kalibratiewizards (eerst Pressure Advance)."
       }
     },
     "guard": {

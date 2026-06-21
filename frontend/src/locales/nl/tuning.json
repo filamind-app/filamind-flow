@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Begeleide kalibratiewizards. Eerst aan de beurt: Pressure Advance.",
+    "params": {
+      "start": "Start-PA",
+      "factor": "Factor (PA/mm)",
+      "height": "Hoogte (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. Plan de afstemtoren",
+      "plan": "Toren plannen",
+      "command": "Voer dit commando uit",
+      "commandHint": "Stuur het vlak vóór de print (of voeg het toe aan de start-g-code van je testmodel); PA loopt op naarmate de toren wordt geprint.",
+      "table": {
+        "height": "Hoogte (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. Voer de hoogte met het beste resultaat in",
+      "bestHeight": "Beste Z-hoogte (mm)",
+      "computed": "Berekende Pressure Advance: {pa}",
+      "applyButton": "PA toepassen",
+      "apply": {
+        "applied": "Pressure Advance {value} toegepast",
+        "busy": "Printer is bezig - nu niet toe te passen",
+        "out_of_range": "Waarde buiten bereik (max. {max})",
+        "moonraker_error": "Toepassen mislukt: {error}"
+      }
+    },
+    "help": {
+      "guide": "Gids",
+      "guideTitle": "Pressure Advance-gids",
+      "close": "Sluiten",
+      "topics": {
+        "overview": {
+          "title": "Wat is Pressure Advance?",
+          "body": "PA compenseert de drukvertraging in de nozzle, waardoor hoeken scherper worden en uitlekken en uitbollen afnemen. Elk filament heeft zijn eigen optimale waarde."
+        },
+        "workflow": {
+          "title": "Hoe de wizard werkt",
+          "body": "Plan een afstemtoren, print die (PA loopt op naarmate hij hoger wordt), lees de schoonste hoogte af en pas vervolgens de bijbehorende waarde toe. Sla die op in printer.cfg om hem te behouden."
+        },
+        "glossary": {
+          "title": "Begrippenlijst"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Een Klipper-instelling die de extrusie vooruitlopend op snelheidswijzigingen aanpast voor strakkere hoeken."
+        },
+        "tuningTower": {
+          "term": "Afstemtoren",
+          "def": "Een hoge print waarbij TUNING_TOWER een parameter geleidelijk met de hoogte wijzigt, zodat je de beste laag kunt kiezen."
+        }
+      }
+    }
+  }
+}

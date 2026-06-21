@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Kreatory kalibracji z asystą. Na początek: Pressure Advance.",
+    "params": {
+      "start": "Początkowe PA",
+      "factor": "Współczynnik (PA/mm)",
+      "height": "Wysokość (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. Zaplanuj wieżę strojenia",
+      "plan": "Zaplanuj wieżę",
+      "command": "Uruchom to polecenie",
+      "commandHint": "Wyślij je tuż przed drukiem (lub dodaj do startowego G-code modelu testowego); PA narasta wzdłuż wieży w trakcie druku.",
+      "table": {
+        "height": "Wysokość (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. Wpisz najlepiej wyglądającą wysokość",
+      "bestHeight": "Najlepsza wysokość Z (mm)",
+      "computed": "Obliczone Pressure Advance: {pa}",
+      "applyButton": "Zastosuj PA",
+      "apply": {
+        "applied": "Zastosowano Pressure Advance {value}",
+        "busy": "Drukarka jest zajęta - nie można teraz zastosować",
+        "out_of_range": "Wartość poza zakresem (maks. {max})",
+        "moonraker_error": "Nie udało się zastosować: {error}"
+      }
+    },
+    "help": {
+      "guide": "Przewodnik",
+      "guideTitle": "Przewodnik po Pressure Advance",
+      "close": "Zamknij",
+      "topics": {
+        "overview": {
+          "title": "Czym jest Pressure Advance?",
+          "body": "PA kompensuje opóźnienie ciśnienia w dyszy, wyostrzając narożniki oraz ograniczając wyciekanie i wybrzuszenia. Każdy filament ma własną optymalną wartość."
+        },
+        "workflow": {
+          "title": "Jak działa kreator",
+          "body": "Zaplanuj wieżę strojenia, wydrukuj ją (PA narasta wraz z wysokością), odczytaj najczystszą wysokość, a następnie zastosuj odpowiadającą jej wartość. Zapisz ją w printer.cfg, aby ją zachować."
+        },
+        "glossary": {
+          "title": "Słowniczek"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Ustawienie Klipper, które koryguje ekstruzję z wyprzedzeniem przy zmianach prędkości, dla wyraźniejszych narożników."
+        },
+        "tuningTower": {
+          "term": "Wieża strojenia",
+          "def": "Wysoki wydruk, w którym TUNING_TOWER stopniowo zmienia parametr wraz z wysokością, abyś mógł wybrać najlepszą warstwę."
+        }
+      }
+    }
+  }
+}

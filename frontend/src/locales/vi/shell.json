@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Hồ sơ filament đã lưu kèm kiểm tra lưu lượng so với trần đầu in."
+      },
+      "tuning": {
+        "title": "Trình hướng dẫn Tinh chỉnh",
+        "description": "Trình hướng dẫn hiệu chuẩn có dẫn dắt (Pressure Advance trước tiên)."
       }
     },
     "guard": {

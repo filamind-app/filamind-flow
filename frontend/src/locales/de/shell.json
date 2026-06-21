@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Gespeicherte Filament-Profile mit einer Fluss-vs.-Hotend-Obergrenze-Prüfung."
+      },
+      "tuning": {
+        "title": "Tuning-Assistenten",
+        "description": "Geführte Kalibrierungsassistenten (zuerst Pressure Advance)."
       }
     },
     "guard": {

@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "Trình hướng dẫn hiệu chuẩn có dẫn dắt. Đầu tiên: Pressure Advance.",
+    "params": {
+      "start": "PA bắt đầu",
+      "factor": "Hệ số (PA/mm)",
+      "height": "Chiều cao (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. Lên kế hoạch tháp tinh chỉnh",
+      "plan": "Lập tháp",
+      "command": "Chạy lệnh này",
+      "commandHint": "Gửi nó ngay trước khi in (hoặc thêm vào g-code khởi đầu của mẫu thử); PA tăng dần theo tháp khi in.",
+      "table": {
+        "height": "Chiều cao (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. Nhập chiều cao trông đẹp nhất",
+      "bestHeight": "Chiều cao Z tốt nhất (mm)",
+      "computed": "Pressure Advance đã tính: {pa}",
+      "applyButton": "Áp dụng PA",
+      "apply": {
+        "applied": "Đã áp dụng Pressure Advance {value}",
+        "busy": "Máy in đang bận - không thể áp dụng lúc này",
+        "out_of_range": "Giá trị ngoài phạm vi (tối đa {max})",
+        "moonraker_error": "Không thể áp dụng: {error}"
+      }
+    },
+    "help": {
+      "guide": "Hướng dẫn",
+      "guideTitle": "Hướng dẫn Pressure Advance",
+      "close": "Đóng",
+      "topics": {
+        "overview": {
+          "title": "Pressure Advance là gì?",
+          "body": "PA bù cho độ trễ áp suất ở vòi phun, làm sắc nét các góc và giảm rỉ nhựa cùng phình thừa. Mỗi loại filament có giá trị tốt nhất riêng."
+        },
+        "workflow": {
+          "title": "Trình hướng dẫn hoạt động thế nào",
+          "body": "Lập một tháp tinh chỉnh, in nó (PA tăng dần khi tháp cao lên), đọc chiều cao sạch nhất, rồi áp dụng giá trị tương ứng. Lưu vào printer.cfg để giữ lại."
+        },
+        "glossary": {
+          "title": "Thuật ngữ"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "Một thiết lập Klipper điều chỉnh việc đùn nhựa trước các thay đổi tốc độ để cho góc sắc nét hơn."
+        },
+        "tuningTower": {
+          "term": "Tháp tinh chỉnh",
+          "def": "Một mẫu in cao mà TUNING_TOWER thay đổi đều một tham số theo chiều cao để bạn chọn lớp tốt nhất."
+        }
+      }
+    }
+  }
+}

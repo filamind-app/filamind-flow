@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Akış-hotend tavanı denetimi içeren kaydedilmiş filament profilleri."
+      },
+      "tuning": {
+        "title": "İnce Ayar Sihirbazları",
+        "description": "Rehberli kalibrasyon sihirbazları (önce Pressure Advance)."
       }
     },
     "guard": {

@@ -1,0 +1,59 @@
+{
+  "tuning": {
+    "intro": "معالجات معايرة موجّهة. الأول: Pressure Advance.",
+    "params": {
+      "start": "بداية PA",
+      "factor": "المعامل (PA/mm)",
+      "height": "الارتفاع (mm)"
+    },
+    "pa": {
+      "title": "Pressure Advance",
+      "step1": "1. خطّط برج المعايرة",
+      "plan": "خطّط البرج",
+      "command": "شغّل هذا الأمر",
+      "commandHint": "أرسله قبل الطباعة مباشرةً (أو أضِفه إلى g-code البداية لنموذج الاختبار)؛ ترتفع قيمة PA مع ارتفاع البرج أثناء الطباعة.",
+      "table": {
+        "height": "الارتفاع (mm)",
+        "pa": "PA"
+      },
+      "step2": "2. أدخل أفضل ارتفاع يبدو أنظف",
+      "bestHeight": "أفضل ارتفاع Z (mm)",
+      "computed": "قيمة Pressure Advance المحسوبة: {pa}",
+      "applyButton": "طبّق PA",
+      "apply": {
+        "applied": "طُبّقت قيمة Pressure Advance {value}",
+        "busy": "الطابعة مشغولة - لا يمكن التطبيق الآن",
+        "out_of_range": "القيمة خارج النطاق (الحد الأقصى {max})",
+        "moonraker_error": "تعذّر التطبيق: {error}"
+      }
+    },
+    "help": {
+      "guide": "دليل",
+      "guideTitle": "دليل Pressure Advance",
+      "close": "إغلاق",
+      "topics": {
+        "overview": {
+          "title": "ما هي Pressure Advance؟",
+          "body": "تُعوّض PA تأخّر الضغط في الفوهة، فتُحدّ الزوايا وتقلّل التسرّب والانتفاخ. لكل فيلامنت قيمته المثلى الخاصة به."
+        },
+        "workflow": {
+          "title": "كيف يعمل المعالج",
+          "body": "خطّط برج معايرة، واطبعه (ترتفع PA كلما ارتفع البرج)، ثم اقرأ الارتفاع الأنظف، وطبّق القيمة المقابلة له. احفظها في printer.cfg للاحتفاظ بها."
+        },
+        "glossary": {
+          "title": "مسرد المصطلحات"
+        }
+      },
+      "glossary": {
+        "pressureAdvance": {
+          "term": "Pressure Advance",
+          "def": "إعداد في Klipper يضبط البثق قبيل تغيّرات السرعة للحصول على زوايا أكثر حدّة."
+        },
+        "tuningTower": {
+          "term": "برج المعايرة",
+          "def": "طبعة عالية يغيّر فيها TUNING_TOWER معاملًا تدريجيًا مع الارتفاع لتتمكّن من اختيار أفضل طبقة."
+        }
+      }
+    }
+  }
+}

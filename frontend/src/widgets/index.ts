@@ -49,6 +49,14 @@ export function registerWidgets(): void {
   })
 
   reg({
+    id: 'tuning',
+    title: 'Tuning Wizards',
+    icon: '🎚',
+    description: 'Guided calibration wizards (Pressure Advance first).',
+    component: defineAsyncComponent(() => import('./tuning/TuningWidget.vue')),
+  })
+
+  reg({
     id: 'motor-drivers',
     title: 'Motor Drivers',
     icon: '⚙',

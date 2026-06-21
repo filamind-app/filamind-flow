@@ -143,6 +143,10 @@
       "material-brain": {
         "title": "Material Brain",
         "description": "Збережені профілі філаменту з перевіркою потоку проти межі хотенда."
+      },
+      "tuning": {
+        "title": "Майстри налаштування",
+        "description": "Майстри керованого калібрування (спочатку Pressure Advance)."
       }
     },
     "guard": {
