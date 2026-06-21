@@ -151,7 +151,9 @@ def test_catalog_subsection_facet() -> None:
     subs = facets["catalogSubsections"]
     assert set(subs["Fans, Power & Bed"]) >= {"Fans", "Power supplies", "Heated beds"}
     # single-subsection categories don't get a facet
-    assert "Extruders" not in subs and "Filament Materials" not in subs
+    assert "Extruders" not in subs
+    # Filament Materials spans generic material types + per-brand profiles
+    assert set(subs["Filament Materials"]) >= {"Filament materials", "Brand profiles"}
     # filtering by a sub-type narrows the category
     whole = client.get("/api/hardware/catalog", params={"category": "Fans, Power & Bed"}).json()[
         "total"
