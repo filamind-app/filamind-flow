@@ -20,6 +20,13 @@ export interface MaterialFlowCheck {
   params: Record<string, unknown>
 }
 
+/** Result of preheating to a profile's temps (gated write). */
+export interface MaterialApplyResult {
+  ok: boolean
+  code: 'applied' | 'busy' | 'no_temps' | 'moonraker_error' | string
+  params: Record<string, unknown>
+}
+
 /** A blank profile for the "add" form. */
 export function emptyProfile(): MaterialProfile {
   return {

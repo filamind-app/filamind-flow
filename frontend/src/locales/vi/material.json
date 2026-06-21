@@ -58,6 +58,13 @@
           "def": "Lưu lượng thể tích tối đa mà một đầu in có thể duy trì, lấy từ danh mục phần cứng."
         }
       }
+    },
+    "apply": {
+      "button": "Làm nóng trước",
+      "applied": "Đang làm nóng {name} đến vòi {nozzle}°C / bàn {bed}°C",
+      "busy": "Máy in đang bận - không thể làm nóng trước lúc này",
+      "no_temps": "Hồ sơ này chưa đặt nhiệt độ",
+      "error": "Không thể làm nóng trước: {error}"
     }
   }
 }

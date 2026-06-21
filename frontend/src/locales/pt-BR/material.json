@@ -58,6 +58,13 @@
           "def": "O fluxo volumétrico máximo que um hotend consegue sustentar, conforme o catálogo de hardware."
         }
       }
+    },
+    "apply": {
+      "button": "Pré-aquecer",
+      "applied": "Aquecendo {name} a {nozzle}°C bico / {bed}°C mesa",
+      "busy": "A impressora está ocupada - não dá para pré-aquecer agora",
+      "no_temps": "Nenhuma temperatura definida para este perfil",
+      "error": "Não foi possível pré-aquecer: {error}"
     }
   }
 }

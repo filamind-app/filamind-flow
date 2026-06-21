@@ -9,7 +9,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import Settings, get_settings
-from app.models.schemas import MaterialFlowCheck, MaterialProfile
+from app.models.schemas import MaterialApplyResult, MaterialFlowCheck, MaterialProfile
 from app.services import material_service, material_store, max_flow_store
 
 router = APIRouter(prefix="/material", tags=["material"])
@@ -52,6 +52,18 @@ async def material_flow_check(
             use_hotend = last.get("hotend")
     verdict = material_service.check_flow(float(material["max_volumetric_flow"]), use_hotend)
     return MaterialFlowCheck(**verdict)
+
+
+@router.post("/{material_id}/apply", response_model=MaterialApplyResult)
+async def apply_material(
+    material_id: str, settings: Settings = Depends(get_settings)
+) -> MaterialApplyResult:
+    """Preheat the printer to the profile's nozzle/bed temps (gated; refuses while busy)."""
+    material = material_store.get_material(settings.data_dir, material_id)
+    if material is None:
+        raise HTTPException(status_code=404, detail="material not found")
+    result = await material_service.apply_material(settings.moonraker_url, material)
+    return MaterialApplyResult(**result)
 
 
 @router.delete("/{material_id}")

@@ -248,6 +248,14 @@ class MaterialFlowCheck(BaseModel):
     params: dict[str, Any] = {}
 
 
+class MaterialApplyResult(BaseModel):
+    """Result of preheating to a material's temps. Frontend renders ``material.apply.<code>``."""
+
+    ok: bool
+    code: str
+    params: dict[str, Any] = {}
+
+
 class FlashWarning(BaseModel):
     """A translatable flash-plan warning: the frontend renders firmware.flashConfirm.warn.<code>."""
 

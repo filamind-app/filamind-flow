@@ -58,6 +58,13 @@
           "def": "Aliran volumetrik maksimum yang dapat ditahan hotend, dari katalog perangkat keras."
         }
       }
+    },
+    "apply": {
+      "button": "Pra-panaskan",
+      "applied": "Memanaskan {name} ke nozzle {nozzle}°C / bed {bed}°C",
+      "busy": "Printer sedang sibuk - tidak bisa pra-panaskan sekarang",
+      "no_temps": "Tidak ada suhu yang diatur untuk profil ini",
+      "error": "Gagal pra-panaskan: {error}"
     }
   }
 }

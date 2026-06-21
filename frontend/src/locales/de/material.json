@@ -58,6 +58,13 @@
           "def": "Der maximale volumetrische Fluss, den ein Hotend dauerhaft halten kann, aus dem Hardware-Katalog."
         }
       }
+    },
+    "apply": {
+      "button": "Vorheizen",
+      "applied": "Heize {name} auf {nozzle}°C Düse / {bed}°C Bett",
+      "busy": "Drucker ist beschäftigt - Vorheizen jetzt nicht möglich",
+      "no_temps": "Für dieses Profil sind keine Temperaturen festgelegt",
+      "error": "Vorheizen fehlgeschlagen: {error}"
     }
   }
 }

@@ -27,6 +27,13 @@
       "exceeds": "Over the {hotend} ceiling ({flow} > {ceiling} mm³/s)",
       "within": "{headroom}% under the {hotend} ceiling"
     },
+    "apply": {
+      "button": "Preheat",
+      "applied": "Heating {name} to {nozzle}°C nozzle / {bed}°C bed",
+      "busy": "Printer is busy - can't preheat now",
+      "no_temps": "No temperatures set for this profile",
+      "error": "Couldn't preheat: {error}"
+    },
     "help": {
       "guide": "Guide",
       "guideTitle": "Material Brain guide",
