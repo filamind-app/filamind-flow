@@ -18,6 +18,7 @@ from app.api.routes import (
     maxflow,
     moonraker,
     overview,
+    preflight,
     reference,
     screen,
     setup,
@@ -43,6 +44,7 @@ api_router.include_router(maxflow.router)
 api_router.include_router(topology.router)
 api_router.include_router(macro.router)
 api_router.include_router(material.router)
+api_router.include_router(preflight.router)
 api_router.include_router(hardware.router)
 api_router.include_router(camera.router)
 api_router.include_router(screen.router)
