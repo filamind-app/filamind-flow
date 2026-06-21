@@ -268,6 +268,20 @@
       "pressure": {
         "title": "압력 어드밴스 타워를 실행하세요",
         "why": "PA 타워를 인쇄하고, 모서리가 가장 날카로워 보이는 높이를 읽은 뒤 `SET_PRESSURE_ADVANCE ADVANCE=<value>` 와 `SAVE_CONFIG`를 실행하세요."
+      },
+      "retest": {
+        "solid": {
+          "title": "측정이 견고합니다",
+          "why": "등급 A/B — 이 측정은 신뢰할 수 있으며 재측정이 필요 없습니다."
+        },
+        "borderline": {
+          "title": "재측정 고려",
+          "why": "경계 품질 — {factor}을(를) 개선하고 재측정하면 신뢰도가 높아집니다."
+        },
+        "poor": {
+          "title": "재측정 권장",
+          "why": "측정 품질이 낮습니다 — {factor}을(를) 수정한 뒤 신뢰할 수 있는 결과를 위해 재측정하세요."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "{cfg}에 붙여넣은 뒤 Klipper를 재시작하세요.",
       "errAnalysisFailed": "분석 실패",
       "errCopyFailed": "복사 실패 - 텍스트를 선택해 수동으로 복사하세요.",
-      "errSaveFailed": "아카이브 저장 실패"
+      "errSaveFailed": "아카이브 저장 실패",
+      "remeasure": "재측정"
     },
     "fromPrinter": {
       "liveTools": "라이브 도구",

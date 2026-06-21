@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Draai een pressure-advance-toren",
         "why": "Print de PA-toren, lees de hoogte af waar hoeken het scherpst zijn, daarna `SET_PRESSURE_ADVANCE ADVANCE=<value>` en `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "Meting is betrouwbaar",
+          "why": "Cijfer A/B — deze meting is betrouwbaar; opnieuw meten is niet nodig."
+        },
+        "borderline": {
+          "title": "Overweeg opnieuw te meten",
+          "why": "Grenswaardige kwaliteit — {factor} verbeteren en opnieuw meten verhoogt de betrouwbaarheid."
+        },
+        "poor": {
+          "title": "Opnieuw meten aanbevolen",
+          "why": "Lage meetkwaliteit — los {factor} op en meet opnieuw voor een betrouwbaar resultaat."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "Plak in je {cfg}, herstart daarna Klipper.",
       "errAnalysisFailed": "Analyse mislukt",
       "errCopyFailed": "Kopiëren mislukt - selecteer de tekst en kopieer handmatig.",
-      "errSaveFailed": "Opslaan naar archief mislukt"
+      "errSaveFailed": "Opslaan naar archief mislukt",
+      "remeasure": "Opnieuw meten"
     },
     "fromPrinter": {
       "liveTools": "Live tools",

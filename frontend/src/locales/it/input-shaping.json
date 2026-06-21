@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Esegui una torre di pressure advance",
         "why": "Stampa la torre PA, leggi l'altezza in cui gli angoli appaiono più netti, poi `SET_PRESSURE_ADVANCE ADVANCE=<valore>` e `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "Misura affidabile",
+          "why": "Voto A/B — questa acquisizione è affidabile; non serve ripetere."
+        },
+        "borderline": {
+          "title": "Valuta una nuova misura",
+          "why": "Qualità al limite — migliorare {factor} e rimisurare aumenterebbe l'affidabilità."
+        },
+        "poor": {
+          "title": "Si consiglia di rimisurare",
+          "why": "Bassa qualità di misura — correggi {factor}, poi rimisura per un risultato affidabile."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "Incolla nel tuo {cfg}, poi riavvia Klipper.",
       "errAnalysisFailed": "Analisi fallita",
       "errCopyFailed": "Copia fallita - seleziona il testo e copialo manualmente.",
-      "errSaveFailed": "Salvataggio nell'archivio fallito"
+      "errSaveFailed": "Salvataggio nell'archivio fallito",
+      "remeasure": "Rimisura"
     },
     "fromPrinter": {
       "liveTools": "Strumenti live",

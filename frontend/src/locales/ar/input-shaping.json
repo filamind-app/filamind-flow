@@ -268,6 +268,20 @@
       "pressure": {
         "title": "شغّل برج pressure-advance",
         "why": "اطبع برج PA، واقرأ الارتفاع الذي تبدو عنده الزوايا أحدّ، ثم `SET_PRESSURE_ADVANCE ADVANCE=<value>` و`SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "القياس موثوق",
+          "why": "تقدير A/B — هذا الالتقاط موثوق؛ لا حاجة لإعادة الفحص."
+        },
+        "borderline": {
+          "title": "فكّر في إعادة القياس",
+          "why": "جودة حدّية — تحسين {factor} وإعادة القياس يرفع الثقة."
+        },
+        "poor": {
+          "title": "يُنصح بإعادة القياس",
+          "why": "جودة قياس منخفضة — أصلِح {factor} ثم أعد القياس للحصول على نتيجة موثوقة."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "الصق في {cfg}، ثم أعد تشغيل Klipper.",
       "errAnalysisFailed": "فشل التحليل",
       "errCopyFailed": "فشل النسخ — حدّد النص وانسخه يدويًا.",
-      "errSaveFailed": "فشل الحفظ في الأرشيف"
+      "errSaveFailed": "فشل الحفظ في الأرشيف",
+      "remeasure": "إعادة القياس"
     },
     "fromPrinter": {
       "liveTools": "أدوات مباشرة",

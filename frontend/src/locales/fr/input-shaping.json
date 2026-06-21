@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Lancez une tour de pressure-advance",
         "why": "Imprimez la tour PA, lisez la hauteur où les angles paraissent les plus nets, puis `SET_PRESSURE_ADVANCE ADVANCE=<value>` et `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "Mesure fiable",
+          "why": "Note A/B — cette capture est fiable ; pas besoin de refaire."
+        },
+        "borderline": {
+          "title": "Envisager une nouvelle mesure",
+          "why": "Qualité limite — améliorer {factor} et remesurer renforcerait la confiance."
+        },
+        "poor": {
+          "title": "Nouvelle mesure recommandée",
+          "why": "Faible qualité de mesure — corrigez {factor}, puis remesurez pour un résultat fiable."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "Collez dans votre {cfg}, puis redémarrez Klipper.",
       "errAnalysisFailed": "Échec de l'analyse",
       "errCopyFailed": "Échec de la copie — sélectionnez le texte et copiez-le manuellement.",
-      "errSaveFailed": "Échec de l'enregistrement dans l'archive"
+      "errSaveFailed": "Échec de l'enregistrement dans l'archive",
+      "remeasure": "Remesurer"
     },
     "fromPrinter": {
       "liveTools": "Outils en direct",

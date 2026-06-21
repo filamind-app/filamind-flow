@@ -38,6 +38,7 @@ import {
 import { inputShaperConfig } from './config'
 import { diagnose, diagnoseAxes, type DiagnosticLevel } from './diagnose'
 import { gradeAnalysis, type Rating } from './grade'
+import { recommendRetest } from './recommend'
 import { addHistory } from './history'
 import type { ArchiveRun, ShaperAnalysis } from './types'
 
@@ -86,6 +87,8 @@ const configText = computed(() => {
 })
 const rec = computed(() => analysis.value?.shapers.find((s) => s.recommended) ?? null)
 const grade = computed(() => (analysis.value ? gradeAnalysis(analysis.value) : null))
+// Re-test advice driven by the measurement-quality grade (poor capture → re-measure).
+const retest = computed(() => (grade.value ? recommendRetest(grade.value) : null))
 const diagnostics = computed(() => {
   if (!analysis.value) return []
   const list = diagnose(analysis.value)
@@ -474,6 +477,21 @@ async function saveConfig(): Promise<void> {
           @click="showFactors = !showFactors"
         >
           {{ showFactors ? t('inputShaping.widget.hide') : t('inputShaping.widget.details') }}
+        </button>
+      </div>
+
+      <!-- Re-test advice driven by the measurement-quality grade; one-click jump to a live re-measure. -->
+      <div
+        v-if="retest && retest.level !== 'ok'"
+        class="flex items-start gap-2 rounded-brutal border-2 border-ink bg-paper px-3 py-2"
+      >
+        <span aria-hidden="true">{{ retest.level === 'do-now' ? '🔁' : '🤔' }}</span>
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-bold">{{ retest.title }}</p>
+          <p class="text-[11px] leading-tight opacity-80">{{ retest.why }}</p>
+        </div>
+        <button class="nb-btn shrink-0 px-2 py-0.5 text-[11px]" @click="mode = 'live'">
+          {{ t('inputShaping.widget.remeasure') }}
         </button>
       </div>
 

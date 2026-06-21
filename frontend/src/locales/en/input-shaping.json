@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Run a pressure-advance tower",
         "why": "Print the PA tower, read the height where corners look sharpest, then `SET_PRESSURE_ADVANCE ADVANCE=<value>` and `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "Measurement is solid",
+          "why": "Grade A/B — this capture is reliable; no re-test needed."
+        },
+        "borderline": {
+          "title": "Consider re-measuring",
+          "why": "Borderline quality — improving {factor} and re-measuring would raise confidence."
+        },
+        "poor": {
+          "title": "Re-measure recommended",
+          "why": "Low measurement quality — fix {factor}, then re-measure for a trustworthy result."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "Paste into your {cfg}, then restart Klipper.",
       "errAnalysisFailed": "Analysis failed",
       "errCopyFailed": "Copy failed - select the text and copy it manually.",
-      "errSaveFailed": "Save to archive failed"
+      "errSaveFailed": "Save to archive failed",
+      "remeasure": "Re-measure"
     },
     "fromPrinter": {
       "liveTools": "Live tools",

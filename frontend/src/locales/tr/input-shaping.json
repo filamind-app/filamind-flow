@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Bir pressure-advance kulesi çalıştırın",
         "why": "PA kulesini bastırın, köşelerin en keskin göründüğü yüksekliği okuyun, sonra `SET_PRESSURE_ADVANCE ADVANCE=<değer>` ve `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "Ölçüm sağlam",
+          "why": "Not A/B — bu ölçüm güvenilir; tekrara gerek yok."
+        },
+        "borderline": {
+          "title": "Yeniden ölçmeyi düşünün",
+          "why": "Sınırda kalite — {factor} iyileştirilip yeniden ölçülürse güven artar."
+        },
+        "poor": {
+          "title": "Yeniden ölçüm önerilir",
+          "why": "Düşük ölçüm kalitesi — {factor} sorununu giderip güvenilir sonuç için yeniden ölçün."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "{cfg} dosyanıza yapıştırın, sonra Klipper'ı yeniden başlatın.",
       "errAnalysisFailed": "Analiz başarısız",
       "errCopyFailed": "Kopyalama başarısız - metni seçip elle kopyalayın.",
-      "errSaveFailed": "Arşive kaydetme başarısız"
+      "errSaveFailed": "Arşive kaydetme başarısız",
+      "remeasure": "Yeniden ölç"
     },
     "fromPrinter": {
       "liveTools": "Canlı araçlar",

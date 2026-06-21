@@ -268,6 +268,20 @@
       "pressure": {
         "title": "运行一个压力提前塔",
         "why": "打印 PA 塔，读出尖角看起来最锐利处的高度，然后 `SET_PRESSURE_ADVANCE ADVANCE=<value>` 并 `SAVE_CONFIG`。"
+      },
+      "retest": {
+        "solid": {
+          "title": "测量可靠",
+          "why": "评级 A/B — 本次采集可靠，无需重测。"
+        },
+        "borderline": {
+          "title": "考虑重新测量",
+          "why": "质量临界 — 改善 {factor} 并重新测量可提高可信度。"
+        },
+        "poor": {
+          "title": "建议重新测量",
+          "why": "测量质量较低 — 修正 {factor}，然后重新测量以获得可靠结果。"
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "粘贴到你的 {cfg}，然后重启 Klipper。",
       "errAnalysisFailed": "分析失败",
       "errCopyFailed": "复制失败 — 请选中文本并手动复制。",
-      "errSaveFailed": "保存到归档失败"
+      "errSaveFailed": "保存到归档失败",
+      "remeasure": "重新测量"
     },
     "fromPrinter": {
       "liveTools": "实时工具",

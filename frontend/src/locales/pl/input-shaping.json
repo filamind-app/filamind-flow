@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Uruchom wieżę pressure-advance",
         "why": "Wydrukuj wieżę PA, odczytaj wysokość, na której narożniki wyglądają najostrzej, a następnie `SET_PRESSURE_ADVANCE ADVANCE=<wartość>` i `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "Pomiar jest solidny",
+          "why": "Ocena A/B — ten pomiar jest wiarygodny; nie trzeba powtarzać."
+        },
+        "borderline": {
+          "title": "Rozważ ponowny pomiar",
+          "why": "Jakość graniczna — poprawa {factor} i ponowny pomiar zwiększą pewność."
+        },
+        "poor": {
+          "title": "Zalecany ponowny pomiar",
+          "why": "Niska jakość pomiaru — popraw {factor}, a następnie zmierz ponownie dla wiarygodnego wyniku."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "Wklej do swojego {cfg}, a następnie uruchom Klippera ponownie.",
       "errAnalysisFailed": "Analiza nie powiodła się",
       "errCopyFailed": "Kopiowanie nie powiodło się - zaznacz tekst i skopiuj ręcznie.",
-      "errSaveFailed": "Zapis do archiwum nie powiódł się"
+      "errSaveFailed": "Zapis do archiwum nie powiódł się",
+      "remeasure": "Zmierz ponownie"
     },
     "fromPrinter": {
       "liveTools": "Narzędzia na żywo",

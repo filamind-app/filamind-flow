@@ -268,6 +268,20 @@
       "pressure": {
         "title": "Einen Pressure-Advance-Turm drucken",
         "why": "Drucke den PA-Turm, lies die Höhe ab, in der die Ecken am schärfsten aussehen, dann `SET_PRESSURE_ADVANCE ADVANCE=<value>` und `SAVE_CONFIG`."
+      },
+      "retest": {
+        "solid": {
+          "title": "Messung ist solide",
+          "why": "Note A/B — diese Messung ist verlässlich; keine Wiederholung nötig."
+        },
+        "borderline": {
+          "title": "Erneute Messung erwägen",
+          "why": "Grenzwertige Qualität — {factor} verbessern und neu messen erhöht die Sicherheit."
+        },
+        "poor": {
+          "title": "Erneute Messung empfohlen",
+          "why": "Geringe Messqualität — {factor} beheben, dann für ein verlässliches Ergebnis neu messen."
+        }
       }
     },
     "axesMap": {
@@ -457,7 +471,8 @@
       "pasteHint": "Füge dies in deine {cfg} ein, dann starte Klipper neu.",
       "errAnalysisFailed": "Analyse fehlgeschlagen",
       "errCopyFailed": "Kopieren fehlgeschlagen — markiere den Text und kopiere ihn manuell.",
-      "errSaveFailed": "Speichern im Archiv fehlgeschlagen"
+      "errSaveFailed": "Speichern im Archiv fehlgeschlagen",
+      "remeasure": "Neu messen"
     },
     "fromPrinter": {
       "liveTools": "Live-Werkzeuge",
