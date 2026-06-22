@@ -46,7 +46,9 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add dist
-            git commit -m "chore(ci): rebuild frontend/dist [skip ci]"
+            # No [skip ci]: a GITHUB_TOKEN push never re-triggers workflows anyway, and the marker
+            # would also skip a later release when this commit becomes main's tip and gets tagged.
+            git commit -m "chore(ci): rebuild frontend/dist"
             git push origin HEAD:${{ github.head_ref }}
           fi
       - name: Verify committed frontend/dist is fresh
