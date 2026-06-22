@@ -55,6 +55,24 @@ async def test_status_uses_moonraker_signals_then_dir_heuristic() -> None:
     assert status["crowsnest"] == "installed"
 
 
+async def test_first_party_nginx_app_needs_its_site_not_just_a_clone(monkeypatch, tmp_path) -> None:
+    # A first-party web / touch app (FilaMind 3d / screen) is "installed" only once its nginx site
+    # exists. A bare clone (the repo cloned, but the web-server step never ran, e.g. its sudo step
+    # failed) must NOT read as installed, or the Setup widget shows a phantom install the user can
+    # never switch to. Make every clone dir "present" so only the nginx-site rule can gate these.
+    monkeypatch.setattr(setup_manager, "_install_dir", lambda c: tmp_path)  # tmp_path exists
+    monkeypatch.setattr(setup_manager, "_nginx_site_present", lambda site: False)
+    status = await setup_manager.probe_status(managed=set(), services=set())
+    assert status["filamind-screen"] == "not-installed"
+    assert status["filamind-3d"] == "not-installed"
+    # Once the nginx site is configured, the same app reads installed.
+    sites = {"filamind-screen", "filamind-3d"}
+    monkeypatch.setattr(setup_manager, "_nginx_site_present", lambda site: site in sites)
+    status = await setup_manager.probe_status(managed=set(), services=set())
+    assert status["filamind-screen"] == "installed"
+    assert status["filamind-3d"] == "installed"
+
+
 async def test_install_refuses_when_a_dependency_is_missing(monkeypatch, tmp_path) -> None:
     # With writes enabled but nothing installed, installing a git_repo component whose dependency
     # is absent is refused with a clear "install X first" message (never a silent core clone).
