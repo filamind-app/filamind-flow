@@ -24,7 +24,7 @@ def _patch_units(monkeypatch: Any, installed: dict[str, bool], active: dict[str,
     monkeypatch.setattr(k, "_is_enabled", fake_enabled)
 
 
-async def test_touch_status_reports_all_three(monkeypatch: Any) -> None:
+async def test_touch_status_reports_all_screens(monkeypatch: Any) -> None:
     _patch_units(
         monkeypatch,
         installed={"KlipperScreen.service": True, "guppyscreen.service": True},
@@ -33,7 +33,9 @@ async def test_touch_status_reports_all_three(monkeypatch: Any) -> None:
     st = await k.touch_status()
     assert st["active"] == "klipperscreen"
     assert st["screens"]["guppyscreen"]["installed"] is True
-    assert st["screens"]["filamind"]["installed"] is False
+    # The two FilaMind touch UIs are distinct: the screen app and the flow web UI.
+    assert st["screens"]["filamind-screen"]["installed"] is False
+    assert st["screens"]["filamind-flow"]["installed"] is False
 
 
 async def test_switch_touch_stops_others_and_starts_target(monkeypatch: Any) -> None:
@@ -58,7 +60,7 @@ async def test_switch_touch_stops_others_and_starts_target(monkeypatch: Any) -> 
 async def test_switch_to_uninstalled_screen_errors(monkeypatch: Any) -> None:
     _patch_units(monkeypatch, installed={"KlipperScreen.service": True}, active={})
     with pytest.raises(k.KioskNotInstalledError):
-        await k.switch_touch("filamind")
+        await k.switch_touch("filamind-screen")
 
 
 async def test_switch_to_unknown_screen_is_value_error(monkeypatch: Any) -> None:

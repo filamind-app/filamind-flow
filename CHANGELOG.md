@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-06-22
+
+### Fixed
+
+- **Screen Manager: "FilaMind screen" and "FilaMind flow" are now distinct touch options.** The
+  selector previously labelled the flow web-UI kiosk as "FilaMind screen", so switching to it showed
+  the flow web panel instead of the FilaMind screen touch app. The touchscreen selector now offers
+  four targets - KlipperScreen, Guppyscreen, **FilaMind screen** (the touch print-control app) and
+  **FilaMind flow** (the web widget suite) - and switches between them. `scripts/install.sh kiosk`
+  takes an optional unit name so the FilaMind screen app gets its own kiosk service, and each kiosk
+  conflicts with the others so only one owns the display.
+
 ## [1.2.0] - 2026-06-22
 
 ### Added
