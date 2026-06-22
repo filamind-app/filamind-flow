@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-06-22
+
+### Fixed
+
+- **Setup: a web/touch app is reported installed only when its site is actually configured.**
+  Detection previously treated any cloned repo as installed, so a half-finished install (the repo
+  cloned, but its web-server setup step never ran) showed up as installed with Update/Remove even
+  though nothing was being served. A first-party web or touch app (FilaMind 3d, FilaMind screen)
+  now reads as installed only once its nginx site exists, so the Setup page reflects reality and
+  offers Install when the app still needs setting up.
+
 ## [1.3.0] - 2026-06-22
 
 ### Fixed

@@ -123,19 +123,40 @@ def _augment_root_failure(result: dict[str, Any], component: Component) -> dict[
     return result
 
 
+def _is_nginx_app(c: Component) -> bool:
+    """A first-party web / touch app that is served by an nginx site named after its id (FilaMind
+    3d, FilaMind screen). For these the clone dir alone is a false positive: the repo can be cloned
+    yet the nginx step never ran (e.g. its sudo step failed), so the app is not actually served."""
+    return c.first_party and c.kind in {"web-ui", "touch"}
+
+
+def _nginx_site_present(site: str) -> bool:
+    """True if an nginx site by this name is configured (enabled symlink or available file). Only
+    needs directory-traversal on /etc/nginx (world-traversable), so the service user can read it."""
+    for base in ("/etc/nginx/sites-enabled", "/etc/nginx/sites-available"):
+        p = Path(base) / site
+        if p.is_symlink() or p.exists():
+            return True
+    return False
+
+
 def _is_installed(c: Component, managed: set[str], services: set[str]) -> bool:
-    """Combine three signals, most-authoritative first:
+    """Combine the install signals, most-authoritative first:
 
     1. Moonraker's update-manager registry (``manager_key`` or ``id``) — the components Moonraker
        actually tracks; survives non-``$HOME`` layouts and is the source of truth when present.
     2. A managed systemd unit (``service``) — catches service-style installs (crowsnest, spoolman).
-    3. The clone-to-``$HOME`` directory heuristic — the offline fallback.
+    3. For a first-party nginx app, the nginx site itself — a bare clone (downloaded but never set
+       up) is NOT installed; the site only exists once its installer's web-server step succeeded.
+    4. The clone-to-``$HOME`` directory heuristic — the offline fallback for everything else.
     """
     key = (c.manager_key or c.id).lower()
     if key in managed:
         return True
     if c.service and c.service.lower() in services:
         return True
+    if _is_nginx_app(c):
+        return _nginx_site_present(c.id)
     return _install_dir(c).is_dir()
 
 
