@@ -25,6 +25,8 @@
     "removeConfirm": "Confirmer la suppression ?",
     "firstParty": "FilaMind",
     "writesDisabled": "L'installation, la mise à jour et la suppression sont désactivées sur cet hôte. Utilisez l'outil en ligne de commande filamind-setup, ou activez-les sur l'hôte.",
+    "writesOff": "L'installation depuis cet écran est désactivée. Activez-la pour installer, mettre à jour et supprimer des composants directement.",
+    "enableWrites": "Activer l'installation",
     "working": "En cours…",
     "help": {
       "button": "Aide",

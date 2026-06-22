@@ -25,6 +25,8 @@
     "removeConfirm": "Confermi la rimozione?",
     "firstParty": "FilaMind",
     "writesDisabled": "Installazione, aggiornamento e rimozione sono disattivati su questo host. Usa la CLI filamind-setup oppure attivali sull'host.",
+    "writesOff": "L'installazione da qui è disattivata. Attivala per installare, aggiornare e rimuovere i componenti direttamente.",
+    "enableWrites": "Attiva l'installazione",
     "working": "In corso…",
     "help": {
       "button": "Aiuto",

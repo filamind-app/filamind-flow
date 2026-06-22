@@ -25,6 +25,8 @@
     "removeConfirm": "Xác nhận gỡ bỏ?",
     "firstParty": "FilaMind",
     "writesDisabled": "Cài đặt, cập nhật và gỡ bỏ đã bị tắt trên máy chủ này. Hãy dùng CLI filamind-setup, hoặc bật chúng trên máy chủ.",
+    "writesOff": "Việc cài đặt từ đây đang tắt. Hãy bật để cài đặt, cập nhật và gỡ bỏ các thành phần trực tiếp.",
+    "enableWrites": "Bật cài đặt",
     "working": "Đang xử lý…",
     "help": {
       "button": "Trợ giúp",

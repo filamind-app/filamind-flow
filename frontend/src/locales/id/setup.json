@@ -25,6 +25,8 @@
     "removeConfirm": "Konfirmasi penghapusan?",
     "firstParty": "FilaMind",
     "writesDisabled": "Pemasangan, pembaruan, dan penghapusan dinonaktifkan di host ini. Gunakan CLI filamind-setup, atau aktifkan di host.",
+    "writesOff": "Pemasangan dari sini dinonaktifkan. Aktifkan untuk memasang, memperbarui, dan menghapus komponen secara langsung.",
+    "enableWrites": "Aktifkan pemasangan",
     "working": "Memproses…",
     "help": {
       "button": "Bantuan",

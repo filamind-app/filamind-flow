@@ -25,6 +25,8 @@
     "removeConfirm": "제거하시겠습니까?",
     "firstParty": "FilaMind",
     "writesDisabled": "이 호스트에서는 설치, 업데이트, 제거가 비활성화되어 있습니다. filamind-setup CLI를 사용하거나 호스트에서 활성화하세요.",
+    "writesOff": "여기에서의 설치 기능이 꺼져 있습니다. 구성 요소를 직접 설치, 업데이트, 제거하려면 활성화하세요.",
+    "enableWrites": "설치 활성화",
     "working": "처리 중…",
     "help": {
       "button": "도움말",

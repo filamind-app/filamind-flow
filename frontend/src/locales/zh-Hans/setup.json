@@ -25,6 +25,8 @@
     "removeConfirm": "确认卸载？",
     "firstParty": "FilaMind",
     "writesDisabled": "此主机已禁用安装、更新和卸载。请使用 filamind-setup 命令行工具，或在主机上启用这些功能。",
+    "writesOff": "从这里安装的功能已关闭。启用后即可直接安装、更新和移除组件。",
+    "enableWrites": "启用安装",
     "working": "处理中…",
     "help": {
       "button": "帮助",

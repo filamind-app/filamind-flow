@@ -10,6 +10,7 @@ import {
   installComponent,
   removeComponent,
   setPort,
+  setWrites,
   updateComponent,
 } from './api'
 import SetupHelpIllo from './SetupHelpIllo.vue'
@@ -135,6 +136,19 @@ async function run(id: string, op: () => Promise<SetupActionResult>): Promise<vo
   }
 }
 
+const enablingWrites = ref(false)
+async function enableWrites(): Promise<void> {
+  enablingWrites.value = true
+  error.value = null
+  try {
+    writesEnabled.value = await setWrites(true)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    enablingWrites.value = false
+  }
+}
+
 const isWeb = (c: SetupComponent): boolean => c.type === 'web'
 function applyPort(c: SetupComponent): void {
   const port = ports.value[c.id]
@@ -198,9 +212,16 @@ onMounted(load)
       </div>
     </section>
 
-    <p v-if="!loading && !writesEnabled" class="nb-card bg-brand-yellow/30 p-3 text-sm" role="note">
-      {{ t('setup.writesDisabled') }}
-    </p>
+    <div
+      v-if="!loading && !writesEnabled"
+      class="nb-card flex flex-wrap items-center gap-3 bg-brand-yellow/30 p-3 text-sm"
+      role="note"
+    >
+      <span class="flex-1">{{ t('setup.writesOff') }}</span>
+      <button class="nb-btn px-3 py-1" :disabled="enablingWrites" @click="enableWrites">
+        {{ enablingWrites ? t('setup.working') : t('setup.enableWrites') }}
+      </button>
+    </div>
 
     <p v-if="loading" class="text-sm text-ink/70">{{ t('setup.working') }}</p>
     <p v-else-if="error" class="nb-card bg-brand-red/20 p-3 text-sm" role="alert">{{ error }}</p>

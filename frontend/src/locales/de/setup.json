@@ -25,6 +25,8 @@
     "removeConfirm": "Entfernen bestätigen?",
     "firstParty": "FilaMind",
     "writesDisabled": "Installieren, Aktualisieren und Entfernen sind auf diesem Host deaktiviert. Verwenden Sie die filamind-setup CLI oder aktivieren Sie sie auf dem Host.",
+    "writesOff": "Das Installieren von hier aus ist deaktiviert. Aktivieren Sie es, um Komponenten direkt zu installieren, zu aktualisieren und zu entfernen.",
+    "enableWrites": "Installieren aktivieren",
     "working": "Wird ausgeführt…",
     "help": {
       "button": "Hilfe",
