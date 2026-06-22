@@ -6,17 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Fixed
-
-- **Installer no longer accumulates backup files.** `scripts/install.sh` kept every
-  `<file>.bak.filamind.*` backup it made of `moonraker.conf` and the nginx site; it now prunes to
-  the three most recent, so repeated installs/updates don't litter the config directory.
+## [1.2.0] - 2026-06-22
 
 ### Added
 
 - **Setup: enable installing from the widget itself.** A one-click "Enable installing" toggle turns
   on the install/update/remove write path directly in the Setup widget (persisted) - no CLI and no
   environment variable needed.
+
+### Fixed
+
+- **Setup: a clearer result when a first-party install needs root.** Installing FilaMind 3d / screen
+  configures the web server, which needs root; the backend service has no terminal to enter a sudo
+  password, so the result now tells you the exact command to run on the printer host instead of a
+  cryptic "a terminal is required" error.
+- **Installer no longer accumulates backup files.** `scripts/install.sh` kept every
+  `<file>.bak.filamind.*` backup it made of `moonraker.conf` and the nginx site; it now prunes to
+  the three most recent, so repeated installs/updates don't litter the config directory.
 
 ## [1.1.0] - 2026-06-22
 

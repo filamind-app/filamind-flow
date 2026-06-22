@@ -98,6 +98,21 @@ async def test_first_party_app_installs_via_its_one_liner(monkeypatch) -> None:
     assert "curl" in cmd and "filamind-3d/main/scripts/install.sh" in cmd
 
 
+async def test_first_party_install_sudo_failure_surfaces_the_command(monkeypatch) -> None:
+    # The backend service has no terminal for a sudo password; if the install fails for that reason,
+    # the result tells the user the exact command to run on the printer host.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+
+    async def fake_run(cmd: list[str]) -> dict:
+        return {"ok": False, "output": "sudo: a terminal is required to read the password"}
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    r = await setup_manager.install("filamind-3d", managed={"klipper", "moonraker"}, services=set())
+    assert r.get("ok") is False
+    assert "Run this on the printer host" in r["output"]
+    assert "filamind-3d/main/scripts/install.sh" in r["output"]
+
+
 def test_status_exposes_the_suite_install_command() -> None:
     r = client.get("/api/setup/status")
     assert r.status_code == 200
