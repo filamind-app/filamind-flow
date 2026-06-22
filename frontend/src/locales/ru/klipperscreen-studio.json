@@ -12,6 +12,10 @@
       "switching": "Переключение…",
       "persist": "Также сделать значением по умолчанию при загрузке"
     },
+    "touchPanel": {
+      "title": "Элементы управления FilaMind",
+      "intro": "Запускайте проверки и тесты FilaMind прямо с экрана."
+    },
     "help": {
       "guide": "Справка",
       "guideTitle": "О KlipperScreen Studio",

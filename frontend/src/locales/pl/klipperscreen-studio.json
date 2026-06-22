@@ -12,6 +12,10 @@
       "switching": "Przełączanie…",
       "persist": "Ustaw też jako domyślny przy starcie"
     },
+    "touchPanel": {
+      "title": "Sterowanie FilaMind",
+      "intro": "Uruchamiaj kontrole i testy FilaMind bezpośrednio z ekranu."
+    },
     "help": {
       "guide": "Pomoc",
       "guideTitle": "O KlipperScreen Studio",

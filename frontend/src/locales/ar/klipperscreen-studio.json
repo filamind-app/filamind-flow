@@ -12,6 +12,10 @@
       "switching": "جارٍ التبديل…",
       "persist": "اجعلها أيضاً الافتراضية عند الإقلاع"
     },
+    "touchPanel": {
+      "title": "أدوات تحكم FilaMind",
+      "intro": "شغّل فحوص FilaMind واختباراتها مباشرة من الشاشة."
+    },
     "help": {
       "guide": "مساعدة",
       "guideTitle": "حول KlipperScreen Studio",

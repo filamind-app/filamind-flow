@@ -12,6 +12,10 @@
       "switching": "Wird gewechselt …",
       "persist": "Außerdem als Standard beim Start festlegen"
     },
+    "touchPanel": {
+      "title": "FilaMind-Steuerung",
+      "intro": "Führe die Prüfungen und Tests von FilaMind direkt auf dem Bildschirm aus."
+    },
     "help": {
       "guide": "Hilfe",
       "guideTitle": "Über KlipperScreen Studio",

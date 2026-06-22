@@ -17,6 +17,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Screen Manager: pick which touchscreen runs.** A selector detects the installed touch UIs
   (KlipperScreen / Guppyscreen / FilaMind screen) and switches the display between them, optionally
   as the boot default; if the chosen one fails to start, the previous screen is restored.
+- **Screen Manager: a touch control panel for FilaMind's checks & tests.** Big touch targets that
+  open Pre-Print Check, Machine Doctor, Input Shaping, Tuning and Max-Flow from the screen - shown
+  in the FilaMind screen options, and under the selector when another screen owns the display.
 
 ## [1.0.0] - 2026-06-22
 

@@ -12,6 +12,10 @@
       "switching": "Đang chuyển…",
       "persist": "Đồng thời đặt làm mặc định khi khởi động"
     },
+    "touchPanel": {
+      "title": "Bảng điều khiển FilaMind",
+      "intro": "Chạy các bài kiểm tra và thử nghiệm của FilaMind ngay trên màn hình."
+    },
     "help": {
       "guide": "Trợ giúp",
       "guideTitle": "Về KlipperScreen Studio",

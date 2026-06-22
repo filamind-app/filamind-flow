@@ -12,6 +12,10 @@
       "switching": "Alternando…",
       "persist": "Também tornar o padrão na inicialização"
     },
+    "touchPanel": {
+      "title": "Controles do FilaMind",
+      "intro": "Execute as verificações e os testes do FilaMind direto pela tela."
+    },
     "help": {
       "guide": "Ajuda",
       "guideTitle": "Sobre o KlipperScreen Studio",

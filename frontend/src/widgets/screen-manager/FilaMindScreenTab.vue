@@ -9,6 +9,8 @@ import { useI18n } from 'vue-i18n'
 import { useRemoteControlStore } from '@/core/store/remoteControl'
 import type { RemoteMessageLevel } from '@/core/remote/commands'
 
+import TouchControlPanel from './TouchControlPanel.vue'
+
 const { t } = useI18n({ useScope: 'global' })
 const store = useRemoteControlStore()
 
@@ -71,6 +73,8 @@ onUnmounted(() => {
     <p v-if="flash" class="nb-card bg-brand-green/30 p-2 text-sm" role="status">
       {{ t('remoteControl.sent') }}
     </p>
+
+    <TouchControlPanel />
 
     <section class="nb-card flex flex-col gap-2 p-3">
       <h3 class="font-display text-sm font-bold uppercase tracking-wide text-ink/60">

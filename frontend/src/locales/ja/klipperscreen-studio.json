@@ -12,6 +12,10 @@
       "switching": "切り替え中…",
       "persist": "起動時の既定としても設定する"
     },
+    "touchPanel": {
+      "title": "FilaMind コントロール",
+      "intro": "FilaMind のチェックとテストを画面から直接実行できます。"
+    },
     "help": {
       "guide": "ヘルプ",
       "guideTitle": "KlipperScreen Studio について",

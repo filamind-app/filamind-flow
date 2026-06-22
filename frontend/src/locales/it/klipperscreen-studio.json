@@ -12,6 +12,10 @@
       "switching": "Cambio in corso…",
       "persist": "Imposta anche come predefinita all'avvio"
     },
+    "touchPanel": {
+      "title": "Controlli FilaMind",
+      "intro": "Esegui i controlli e i test di FilaMind direttamente dallo schermo."
+    },
     "help": {
       "guide": "Aiuto",
       "guideTitle": "Informazioni su KlipperScreen Studio",

@@ -12,6 +12,10 @@
       "switching": "बदला जा रहा है…",
       "persist": "इसे बूट पर डिफ़ॉल्ट भी बनाएं"
     },
+    "touchPanel": {
+      "title": "FilaMind नियंत्रण",
+      "intro": "FilaMind की जाँचें और परीक्षण सीधे स्क्रीन से चलाएँ।"
+    },
     "help": {
       "guide": "मदद",
       "guideTitle": "KlipperScreen Studio के बारे में",
