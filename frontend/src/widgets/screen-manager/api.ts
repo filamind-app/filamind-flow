@@ -223,7 +223,7 @@ export async function restoreScreen(persist: boolean): Promise<KioskStatus> {
 
 // ── Touchscreen selector (KlipperScreen / Guppyscreen / FilaMind) ───────────────
 
-export type TouchKey = 'klipperscreen' | 'guppyscreen' | 'filamind'
+export type TouchKey = 'klipperscreen' | 'guppyscreen' | 'filamind-screen' | 'filamind-flow'
 
 export interface TouchScreen {
   unit: string

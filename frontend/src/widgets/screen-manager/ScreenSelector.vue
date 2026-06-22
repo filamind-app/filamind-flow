@@ -12,11 +12,12 @@ const persist = ref(true)
 const busy = ref<TouchKey | null>(null)
 const error = ref<string | null>(null)
 
-const KEYS: TouchKey[] = ['klipperscreen', 'guppyscreen', 'filamind']
+const KEYS: TouchKey[] = ['klipperscreen', 'guppyscreen', 'filamind-screen', 'filamind-flow']
 const LABELS: Record<TouchKey, string> = {
   klipperscreen: 'KlipperScreen',
   guppyscreen: 'Guppyscreen',
-  filamind: 'FilaMind screen',
+  'filamind-screen': 'FilaMind screen',
+  'filamind-flow': 'FilaMind flow',
 }
 
 async function load(): Promise<void> {
@@ -97,7 +98,8 @@ onMounted(load)
 
     <p v-if="error" class="nb-card bg-brand-red/20 p-2 text-sm" role="alert">{{ error }}</p>
 
-    <!-- When another screen owns the display, keep FilaMind's checks & tests reachable here too. -->
-    <TouchControlPanel v-if="status && status.active !== 'filamind'" />
+    <!-- When something other than the flow web UI owns the display, keep FilaMind's checks & tests
+         reachable here too (the flow web UI already contains this panel). -->
+    <TouchControlPanel v-if="status && status.active !== 'filamind-flow'" />
   </section>
 </template>

@@ -139,7 +139,10 @@ async def restore_screen(persist: bool = False) -> dict[str, Any]:
 _TOUCH_UNITS: dict[str, str] = {
     "klipperscreen": SCREEN_UNIT,
     "guppyscreen": "guppyscreen.service",
-    "filamind": KIOSK_UNIT,
+    # The FilaMind screen touch app (print control), served on its own port.
+    "filamind-screen": "filamind-screen-kiosk.service",
+    # The FilaMind Flow web UI in a fullscreen browser (the widget suite + touch control panel).
+    "filamind-flow": KIOSK_UNIT,
 }
 
 

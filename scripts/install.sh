@@ -10,8 +10,10 @@
 #
 # Subcommands (run from inside the cloned repo, e.g. ~/filamind-flow):
 #   sudo bash scripts/install.sh sudoers [user]        (re)grant the passwordless-sudo rights only
-#   sudo bash scripts/install.sh kiosk [user] [url]     put FilaMind on the printer's touchscreen
-#   sudo bash scripts/install.sh kiosk --uninstall      remove the kiosk, restore KlipperScreen
+#   sudo bash scripts/install.sh kiosk [user] [url] [unit]   put a FilaMind UI on the touchscreen
+#       (default unit 'filamind-kiosk' -> the flow web UI; for the FilaMind screen touch app use:
+#        sudo bash scripts/install.sh kiosk biqu http://localhost:8088 filamind-screen-kiosk)
+#   sudo bash scripts/install.sh kiosk --uninstall [unit]    remove a kiosk, restore KlipperScreen
 #        bash scripts/install.sh update                 refresh the backend venv (Moonraker's hook)
 #        bash scripts/install.sh uninstall              remove FilaMind from the host (keeps app files)
 set -euo pipefail
@@ -107,27 +109,33 @@ EOF
 # one stops the other). Not enabled at boot — FilaMind toggles the swap. Best-effort (no errexit).
 do_kiosk() {
   set +e
-  local UNIT="/etc/systemd/system/filamind-kiosk.service"
   local SCREEN_UNIT="KlipperScreen.service"
   log() { echo "[kiosk] $*"; }
   die() { echo "[kiosk] ERROR: $*" >&2; exit 1; }
 
   [ "$(id -u)" -eq 0 ] || die "must run as root — try: sudo bash $0 kiosk $*"
 
+  # Two FilaMind kiosks can coexist (the selector switches between them):
+  #   filamind-kiosk         -> the FilaMind Flow web UI (default URL :8090)
+  #   filamind-screen-kiosk  -> the FilaMind screen touch app (URL :8088)
+  local NAME UNIT
   if [ "${1:-}" = "--uninstall" ]; then
-    systemctl stop filamind-kiosk.service 2>/dev/null
-    systemctl disable filamind-kiosk.service 2>/dev/null
-    rm -f "$UNIT"
+    NAME="${2:-filamind-kiosk}"
+    systemctl stop "$NAME.service" 2>/dev/null
+    systemctl disable "$NAME.service" 2>/dev/null
+    rm -f "/etc/systemd/system/$NAME.service"
     systemctl daemon-reload
     systemctl enable "$SCREEN_UNIT" 2>/dev/null
     systemctl start "$SCREEN_UNIT" 2>/dev/null
-    log "Removed the FilaMind kiosk service and restored KlipperScreen."
+    log "Removed $NAME and restored KlipperScreen."
     exit 0
   fi
 
   local USER_NAME URL USER_UID DISTRO
   USER_NAME="${1:-${SUDO_USER:-$(id -un)}}"
   URL="${2:-http://localhost:8090}"
+  NAME="${3:-filamind-kiosk}"
+  UNIT="/etc/systemd/system/$NAME.service"
   id "$USER_NAME" >/dev/null 2>&1 || die "user '$USER_NAME' not found — pass it: sudo bash $0 kiosk <user> [url]"
   USER_UID="$(id -u "$USER_NAME")"
   DISTRO="unknown"
@@ -211,13 +219,19 @@ do_kiosk() {
   local g
   for g in video render input tty seat; do usermod -aG "$g" "$USER_NAME" 2>/dev/null || true; done
 
+  # Conflict with every OTHER touch UI so starting this kiosk stops the rest (one screen, one UI).
+  local u CONFLICTS=""
+  for u in KlipperScreen.service guppyscreen.service filamind-kiosk.service filamind-screen-kiosk.service; do
+    [ "$u" != "$NAME.service" ] && CONFLICTS="$CONFLICTS $u"
+  done
+
   cat >"$UNIT" <<EOF
 # Managed by FilaMind Flow (scripts/install.sh kiosk).
-# Fullscreen FilaMind Flow on the touchscreen ($MODE). Conflicts with KlipperScreen so that
-# starting one stops the other — FilaMind toggles the swap. Not enabled at boot by default.
+# Fullscreen touch UI ($MODE) at $URL. Conflicts with the other touch UIs so starting one stops
+# the others — FilaMind toggles the swap. Not enabled at boot by default.
 [Unit]
-Description=FilaMind Flow kiosk (fullscreen touchscreen browser)
-Conflicts=$SCREEN_UNIT
+Description=FilaMind kiosk: $NAME ($URL)
+Conflicts=$CONFLICTS
 After=multi-user.target systemd-user-sessions.target network-online.target
 Wants=network-online.target
 
