@@ -6,6 +6,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Setup: enable installing from the widget itself.** A one-click "Enable installing" toggle turns
+  on the install/update/remove write path directly in the Setup widget (persisted) - no CLI and no
+  environment variable needed.
+
 ## [1.1.0] - 2026-06-22
 
 ### Added

@@ -25,6 +25,8 @@
     "removeConfirm": "確認移除？",
     "firstParty": "FilaMind",
     "writesDisabled": "此主機已停用安裝、更新與移除功能。請使用 filamind-setup CLI，或在主機上啟用這些功能。",
+    "writesOff": "已關閉從這裡安裝的功能。啟用後即可直接安裝、更新與移除元件。",
+    "enableWrites": "啟用安裝",
     "working": "處理中…",
     "help": {
       "button": "說明",

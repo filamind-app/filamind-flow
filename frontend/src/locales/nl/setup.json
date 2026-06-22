@@ -25,6 +25,8 @@
     "removeConfirm": "Verwijderen bevestigen?",
     "firstParty": "FilaMind",
     "writesDisabled": "Installeren, bijwerken en verwijderen zijn uitgeschakeld op deze host. Gebruik de filamind-setup CLI of schakel ze in op de host.",
+    "writesOff": "Installeren vanaf hier is uitgeschakeld. Schakel het in om componenten rechtstreeks te installeren, bij te werken en te verwijderen.",
+    "enableWrites": "Installeren inschakelen",
     "working": "Bezig…",
     "help": {
       "button": "Help",

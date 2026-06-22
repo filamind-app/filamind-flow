@@ -25,6 +25,8 @@
     "removeConfirm": "Kaldırmayı onaylıyor musunuz?",
     "firstParty": "FilaMind",
     "writesDisabled": "Bu ana makinede kurma, güncelleme ve kaldırma devre dışı. filamind-setup CLI'sini kullanın veya bunları ana makinede etkinleştirin.",
+    "writesOff": "Buradan kurulum kapalı. Bileşenleri doğrudan kurmak, güncellemek ve kaldırmak için etkinleştirin.",
+    "enableWrites": "Kurulumu etkinleştir",
     "working": "Çalışıyor…",
     "help": {
       "button": "Yardım",

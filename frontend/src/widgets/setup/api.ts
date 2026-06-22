@@ -49,3 +49,14 @@ export const removeComponent = (id: string, confirm: string): Promise<SetupActio
   post('remove', { id, confirm })
 export const setPort = (id: string, port: number): Promise<SetupActionResult> =>
   post('port', { id, port })
+
+/** Enable/disable installing from the widget itself (persisted; no CLI/env needed). */
+export async function setWrites(enabled: boolean): Promise<boolean> {
+  const r = await fetch(`${base()}/api/setup/writes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled }),
+  })
+  if (!r.ok) throw new Error(httpError(r.status))
+  return ((await r.json()) as { writesEnabled: boolean }).writesEnabled
+}

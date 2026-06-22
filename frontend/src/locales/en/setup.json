@@ -25,6 +25,8 @@
     "removeConfirm": "Confirm remove?",
     "firstParty": "FilaMind",
     "writesDisabled": "Install, update and remove are disabled on this host. Use the filamind-setup CLI, or enable them on the host.",
+    "writesOff": "Installing from here is turned off. Enable it to install, update and remove components directly.",
+    "enableWrites": "Enable installing",
     "working": "Working…",
     "help": {
       "button": "Help",

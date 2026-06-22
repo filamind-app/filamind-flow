@@ -33,6 +33,10 @@ class PortRef(BaseModel):
     port: int
 
 
+class WritesRef(BaseModel):
+    enabled: bool
+
+
 async def _moonraker_signals(settings: Settings) -> tuple[set[str], set[str]]:
     """Best-effort (update-manager keys, managed services) from Moonraker; empty when unreachable.
 
@@ -97,6 +101,12 @@ async def setup_remove(req: RemoveRef) -> dict[str, Any]:
         return _apply(await setup_manager.remove(req.id, req.confirm))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/writes")
+async def setup_writes(req: WritesRef) -> dict[str, Any]:
+    """Enable/disable installing from the widget itself (no CLI / no env var needed)."""
+    return {"writesEnabled": setup_manager.set_writes_enabled(req.enabled)}
 
 
 @router.post("/port")

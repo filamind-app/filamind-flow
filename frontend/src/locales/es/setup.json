@@ -25,6 +25,8 @@
     "removeConfirm": "¿Confirmar eliminación?",
     "firstParty": "FilaMind",
     "writesDisabled": "Instalar, actualizar y eliminar están deshabilitados en este host. Usa la CLI filamind-setup o habilítalos en el host.",
+    "writesOff": "La instalación desde aquí está desactivada. Actívala para instalar, actualizar y eliminar componentes directamente.",
+    "enableWrites": "Activar la instalación",
     "working": "Procesando…",
     "help": {
       "button": "Ayuda",

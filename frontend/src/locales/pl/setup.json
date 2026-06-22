@@ -25,6 +25,8 @@
     "removeConfirm": "Potwierdzić usunięcie?",
     "firstParty": "FilaMind",
     "writesDisabled": "Instalowanie, aktualizowanie i usuwanie są wyłączone na tym hoście. Użyj narzędzia filamind-setup CLI lub włącz je na hoście.",
+    "writesOff": "Instalowanie z tego miejsca jest wyłączone. Włącz je, aby instalować, aktualizować i usuwać komponenty bezpośrednio.",
+    "enableWrites": "Włącz instalowanie",
     "working": "Pracuję…",
     "help": {
       "button": "Pomoc",

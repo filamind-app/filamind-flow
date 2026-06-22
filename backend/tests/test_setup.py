@@ -104,6 +104,18 @@ def test_status_exposes_the_suite_install_command() -> None:
     assert "filamind-setup" in r.json()["suiteCommand"]
 
 
+def test_writes_can_be_enabled_from_the_gui(monkeypatch, tmp_path) -> None:
+    # The widget can turn writes on itself (persisted) - no CLI and no env var needed.
+    flag = tmp_path / "setup-writes.json"
+    monkeypatch.setattr(setup_manager, "_writes_flag_path", lambda: flag)
+    assert setup_manager.writes_enabled() is False
+    setup_manager.set_writes_enabled(True)
+    assert setup_manager.writes_enabled() is True
+    assert flag.exists()
+    setup_manager.set_writes_enabled(False)
+    assert setup_manager.writes_enabled() is False
+
+
 async def test_set_port_rejects_out_of_range_and_reserved(monkeypatch) -> None:
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
     bad = await setup_manager.set_port("filamind-3d", 70000, managed={"filamind-3d"})

@@ -140,8 +140,31 @@ async def probe_status(
     }
 
 
+def _writes_flag_path() -> Path:
+    return Path(get_settings().data_dir).expanduser() / "setup-writes.json"
+
+
+def _persisted_writes() -> bool:
+    """The GUI-toggled writes flag (persisted), so installing can be enabled from the widget."""
+    try:
+        return bool(json.loads(_writes_flag_path().read_text(encoding="utf-8")).get("enabled"))
+    except (OSError, json.JSONDecodeError):
+        return False
+
+
 def writes_enabled() -> bool:
-    return bool(get_settings().setup_writes_enabled)
+    """Writes are on if the host env opts in OR the operator enabled them from the GUI."""
+    return bool(get_settings().setup_writes_enabled) or _persisted_writes()
+
+
+def set_writes_enabled(enabled: bool) -> bool:
+    """Persist the GUI writes toggle so install/update/remove work from the widget (no CLI/env)."""
+    path = _writes_flag_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps({"enabled": bool(enabled)}), encoding="utf-8")
+    tmp.replace(path)
+    return bool(enabled)
 
 
 def _refused() -> dict[str, Any]:

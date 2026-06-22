@@ -25,6 +25,8 @@
     "removeConfirm": "削除しますか？",
     "firstParty": "FilaMind",
     "writesDisabled": "このホストではインストール、アップデート、削除が無効になっています。filamind-setup CLI を使用するか、ホスト上で有効にしてください。",
+    "writesOff": "ここからのインストールは無効になっています。有効にすると、コンポーネントを直接インストール、アップデート、削除できます。",
+    "enableWrites": "インストールを有効にする",
     "working": "処理中…",
     "help": {
       "button": "ヘルプ",
