@@ -340,6 +340,45 @@ class KgpRestoreResult(BaseModel):
     params: dict[str, Any] = {}
 
 
+class RuleTrigger(BaseModel):
+    """A rule's IF condition."""
+
+    type: str
+    heater: str | None = None
+    value: float | None = None
+
+
+class RuleAction(BaseModel):
+    """A rule's THEN action."""
+
+    type: str
+    message: str | None = None
+    gcode: str | None = None
+
+
+class Rule(BaseModel):
+    id: str = ""
+    name: str = "Rule"
+    enabled: bool = False
+    trigger: RuleTrigger
+    action: RuleAction
+
+
+class EngineToggle(BaseModel):
+    enabled: bool
+
+
+class RulesState(BaseModel):
+    enabled: bool = False
+    rules: list[Rule] = []
+
+
+class RulesView(RulesState):
+    """Engine state plus the recent fire log."""
+
+    log: list[dict[str, Any]] = []
+
+
 class RetractionSample(BaseModel):
     """One (Z height -> retraction length) point on the tuning tower."""
 

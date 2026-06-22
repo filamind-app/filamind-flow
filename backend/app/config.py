@@ -49,6 +49,11 @@ class Settings(BaseSettings):
     # in the config root (older ones are pruned on each save). Keeps the SD card light.
     config_backup_keep_n: int = 20
 
+    # Rules engine: seconds between background evaluation ticks. The engine is OFF by default
+    # (see rules.json), so the loop is a cheap no-op until the operator opts in. Set <=0 to disable
+    # the background loop entirely.
+    rules_tick_seconds: float = 10.0
+
     # Comma-separated dirs to scan for the resonance CSVs Klipper writes.
     # TEST_RESONANCES/SHAPER_CALIBRATE default to /tmp, but many setups also keep
     # captures under printer_data/config. Override with FILAMIND_RESONANCE_DIRS

@@ -31,11 +31,30 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:  # pragma: no cover - plumbing
-        yield
-        # Shutdown: close the pooled keep-alive connection to Moonraker.
-        from app.services.moonraker_client import close_shared_client
+        import asyncio
 
-        await close_shared_client()
+        from app.services import rules_engine
+
+        async def _rules_loop() -> None:
+            """Background rules tick - a cheap no-op until the operator enables the engine."""
+            prev: dict[str, bool] = {}
+            while True:
+                try:
+                    prev = await rules_engine.tick(settings.data_dir, settings.moonraker_url, prev)
+                except Exception:  # never let the loop die on a transient error
+                    logger.exception("rules engine tick failed")
+                await asyncio.sleep(settings.rules_tick_seconds)
+
+        task = asyncio.create_task(_rules_loop()) if settings.rules_tick_seconds > 0 else None
+        try:
+            yield
+        finally:
+            # Shutdown: stop the rules loop + close the pooled connection to Moonraker.
+            if task is not None:
+                task.cancel()
+            from app.services.moonraker_client import close_shared_client
+
+            await close_shared_client()
 
     app = FastAPI(
         title="FilaMind Flow",
