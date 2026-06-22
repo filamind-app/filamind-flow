@@ -19,6 +19,7 @@ import enPreflight from '../locales/en/preflight.json'
 import enTuning from '../locales/en/tuning.json'
 import enMotorDrivers from '../locales/en/motor-drivers.json'
 import enRemoteControl from '../locales/en/remote-control.json'
+import enSetup from '../locales/en/setup.json'
 import enShell from '../locales/en/shell.json'
 
 /**
@@ -110,6 +111,7 @@ const en = {
   ...enHardwareBrowser,
   ...enConfigTemplates,
   ...enHostControl,
+  ...enSetup,
 }
 
 // en is excluded - it's bundled eagerly above, so the dynamic glob must not also claim it

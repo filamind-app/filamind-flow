@@ -14,6 +14,7 @@ import type inputShaping from '@/locales/en/input-shaping.json'
 import type macroDesigner from '@/locales/en/macro-designer.json'
 import type maxFlow from '@/locales/en/max-flow.json'
 import type motorDrivers from '@/locales/en/motor-drivers.json'
+import type setup from '@/locales/en/setup.json'
 import type shell from '@/locales/en/shell.json'
 
 type MessageSchema = typeof common &
@@ -26,7 +27,8 @@ type MessageSchema = typeof common &
   typeof boardTopology &
   typeof macroDesigner &
   typeof hardwareBrowser &
-  typeof configTemplates
+  typeof configTemplates &
+  typeof setup
 
 declare module 'vue-i18n' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type

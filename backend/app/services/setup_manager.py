@@ -36,6 +36,13 @@ class Component:
     group: str
     deps: list[str] = field(default_factory=list)
     first_party: bool = False
+    desc: str = ""
+    #: Moonraker update-manager key when it differs from ``id`` (e.g. ``KlipperScreen``).
+    manager_key: str = ""
+    #: systemd unit name when this component runs as a service (e.g. ``crowsnest``).
+    service: str = ""
+    #: install directory name under ``$HOME`` when it differs from ``id`` (e.g. ``KlipperScreen``).
+    dir: str = ""
 
 
 def load_catalog() -> dict[str, Component]:
@@ -52,6 +59,10 @@ def load_catalog() -> dict[str, Component]:
                 group=grp["group"],
                 deps=list(c.get("deps", [])),
                 first_party=bool(c.get("first_party", False)),
+                desc=str(c.get("desc", "")),
+                manager_key=str(c.get("manager_key", "")),
+                service=str(c.get("service", "")),
+                dir=str(c.get("dir", "")),
             )
     return out
 
@@ -80,18 +91,40 @@ def resolve_order(ids: list[str], catalog: dict[str, Component]) -> list[str]:
 
 
 def _install_dir(component: Component) -> Path:
-    """Best-effort install location (most ecosystem repos clone to ~/<id>)."""
-    return Path.home() / component.id
+    """Best-effort install location (most ecosystem repos clone to ~/<id>, some to a custom dir)."""
+    return Path.home() / (component.dir or component.id)
 
 
-async def probe_status() -> dict[str, str]:
-    """Read-only: 'installed' if the component's directory is present, else 'not-installed'.
+def _is_installed(c: Component, managed: set[str], services: set[str]) -> bool:
+    """Combine three signals, most-authoritative first:
 
-    Heuristic (clone-to-$HOME convention); web UIs served elsewhere may read as not-installed.
+    1. Moonraker's update-manager registry (``manager_key`` or ``id``) — the components Moonraker
+       actually tracks; survives non-``$HOME`` layouts and is the source of truth when present.
+    2. A managed systemd unit (``service``) — catches service-style installs (crowsnest, spoolman).
+    3. The clone-to-``$HOME`` directory heuristic — the offline fallback.
+    """
+    key = (c.manager_key or c.id).lower()
+    if key in managed:
+        return True
+    if c.service and c.service.lower() in services:
+        return True
+    return _install_dir(c).is_dir()
+
+
+async def probe_status(
+    managed: set[str] | None = None, services: set[str] | None = None
+) -> dict[str, str]:
+    """Read-only install status per component, combining Moonraker signals with the dir heuristic.
+
+    ``managed`` (update-manager keys) and ``services`` (systemd units) come from Moonraker when
+    reachable; when omitted/empty the detection falls back to the clone-to-``$HOME`` heuristic, so
+    this stays correct offline.
     """
     catalog = load_catalog()
+    m = managed or set()
+    s = services or set()
     return {
-        cid: ("installed" if _install_dir(c).is_dir() else "not-installed")
+        cid: ("installed" if _is_installed(c, m, s) else "not-installed")
         for cid, c in catalog.items()
     }
 
@@ -129,7 +162,18 @@ def _require(cid: str, catalog: dict[str, Component]) -> Component:
     return component
 
 
-async def install(cid: str) -> dict[str, Any]:
+def _missing_deps(
+    c: Component, catalog: dict[str, Component], installed: dict[str, str]
+) -> list[str]:
+    """Names of this component's direct dependencies that aren't installed yet."""
+    return [
+        catalog[dep].name for dep in c.deps if dep in catalog and installed.get(dep) != "installed"
+    ]
+
+
+async def install(
+    cid: str, managed: set[str] | None = None, services: set[str] | None = None
+) -> dict[str, Any]:
     catalog = load_catalog()
     component = _require(cid, catalog)
     if not writes_enabled():
@@ -139,6 +183,15 @@ async def install(cid: str) -> dict[str, Any]:
             "refused": True,
             "output": f"GUI install of '{component.type}' components isn't supported yet; "
             "use the filamind-setup CLI.",
+        }
+    # Dependency guard: refuse rather than silently clone a core dep (e.g. Klipper/Moonraker need
+    # their own setup, not a bare git clone). Tell the operator what to install first.
+    status = await probe_status(managed, services)
+    missing = _missing_deps(component, catalog, status)
+    if missing:
+        return {
+            "refused": True,
+            "output": f"Install {', '.join(missing)} first - {component.name} depends on it.",
         }
     dest = _install_dir(component)
     if dest.exists():
@@ -150,7 +203,7 @@ async def install(cid: str) -> dict[str, Any]:
     installer = dest / "install.sh"
     if installer.is_file():
         return await _run(["bash", str(installer)])
-    return {"ok": True, "output": f"Cloned {component.name}; no install.sh — finish per its docs."}
+    return {"ok": True, "output": f"Cloned {component.name}; no install.sh - finish per its docs."}
 
 
 async def update(cid: str) -> dict[str, Any]:
