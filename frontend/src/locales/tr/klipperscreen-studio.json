@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Yazıcınızın KlipperScreen dokunmatik ekran yapılandırmasını güvenle düzenleyin, ardından uygulamak için KlipperScreen'i yeniden başlatın. Her kayıt önce yedeklenir.",
+    "selector": {
+      "title": "Dokunmatik ekran",
+      "intro": "Yazıcının ekranında hangi arayüzün çalışacağını seçin.",
+      "refresh": "Yenile",
+      "active": "Çalışıyor",
+      "boot": "Açılışta",
+      "notInstalled": "Yüklü değil",
+      "use": "Kullan",
+      "switching": "Geçiş yapılıyor…",
+      "persist": "Açılışta da varsayılan yap"
+    },
     "help": {
       "guide": "Yardım",
       "guideTitle": "KlipperScreen Studio hakkında",

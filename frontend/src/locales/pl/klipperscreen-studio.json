@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Bezpiecznie edytuj konfigurację ekranu dotykowego KlipperScreen, a następnie uruchom ponownie KlipperScreen, aby zastosować zmiany. Każdy zapis jest najpierw archiwizowany.",
+    "selector": {
+      "title": "Ekran dotykowy",
+      "intro": "Wybierz, który interfejs ma działać na wyświetlaczu drukarki.",
+      "refresh": "Odśwież",
+      "active": "Działa",
+      "boot": "Przy starcie",
+      "notInstalled": "Nie zainstalowano",
+      "use": "Użyj",
+      "switching": "Przełączanie…",
+      "persist": "Ustaw też jako domyślny przy starcie"
+    },
     "help": {
       "guide": "Pomoc",
       "guideTitle": "O KlipperScreen Studio",

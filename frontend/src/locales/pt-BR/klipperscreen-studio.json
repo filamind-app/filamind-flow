@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Edite a configuração da tela de toque KlipperScreen da sua impressora com segurança e reinicie o KlipperScreen para aplicar. Todo salvamento é feito com backup primeiro.",
+    "selector": {
+      "title": "Tela de toque",
+      "intro": "Escolha qual interface é executada no visor da impressora.",
+      "refresh": "Atualizar",
+      "active": "Em execução",
+      "boot": "Na inicialização",
+      "notInstalled": "Não instalado",
+      "use": "Usar",
+      "switching": "Alternando…",
+      "persist": "Também tornar o padrão na inicialização"
+    },
     "help": {
       "guide": "Ajuda",
       "guideTitle": "Sobre o KlipperScreen Studio",

@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Bewerk de KlipperScreen-touchscreenconfiguratie van je printer veilig en herstart KlipperScreen om toe te passen. Bij elke opslag wordt er eerst een back-up gemaakt.",
+    "selector": {
+      "title": "Touchscreen",
+      "intro": "Kies welke interface op het scherm van de printer draait.",
+      "refresh": "Vernieuwen",
+      "active": "Actief",
+      "boot": "Bij opstarten",
+      "notInstalled": "Niet geïnstalleerd",
+      "use": "Gebruiken",
+      "switching": "Wisselen…",
+      "persist": "Maak dit ook de standaard bij het opstarten"
+    },
     "help": {
       "guide": "Help",
       "guideTitle": "Over KlipperScreen Studio",

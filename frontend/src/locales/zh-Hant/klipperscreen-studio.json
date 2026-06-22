@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "安全地編輯印表機的 KlipperScreen 觸控螢幕設定，然後重新啟動 KlipperScreen 套用。每次儲存前都會先備份。",
+    "selector": {
+      "title": "觸控螢幕",
+      "intro": "選擇要在印表機顯示器上執行的介面。",
+      "refresh": "重新整理",
+      "active": "執行中",
+      "boot": "開機時",
+      "notInstalled": "未安裝",
+      "use": "使用",
+      "switching": "切換中…",
+      "persist": "同時設為開機時的預設介面"
+    },
     "help": {
       "guide": "說明",
       "guideTitle": "關於 KlipperScreen Studio",

@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "프린터의 KlipperScreen 터치스크린 설정을 안전하게 편집한 다음, KlipperScreen을 재시작해 적용하세요. 저장 시 항상 먼저 백업됩니다.",
+    "selector": {
+      "title": "터치스크린",
+      "intro": "프린터 디스플레이에서 실행할 인터페이스를 선택하세요.",
+      "refresh": "새로고침",
+      "active": "실행 중",
+      "boot": "부팅 시",
+      "notInstalled": "설치되지 않음",
+      "use": "사용",
+      "switching": "전환 중…",
+      "persist": "부팅 시 기본값으로도 설정"
+    },
     "help": {
       "guide": "도움말",
       "guideTitle": "KlipperScreen Studio 소개",

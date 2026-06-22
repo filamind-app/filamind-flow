@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "安全地编辑打印机的 KlipperScreen 触摸屏配置，然后重启 KlipperScreen 以应用。每次保存前都会先备份。",
+    "selector": {
+      "title": "触摸屏",
+      "intro": "选择在打印机显示屏上运行的界面。",
+      "refresh": "刷新",
+      "active": "运行中",
+      "boot": "开机时",
+      "notInstalled": "未安装",
+      "use": "使用",
+      "switching": "切换中…",
+      "persist": "同时设为开机默认"
+    },
     "help": {
       "guide": "帮助",
       "guideTitle": "关于 KlipperScreen Studio",

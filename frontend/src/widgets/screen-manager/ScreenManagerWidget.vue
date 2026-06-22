@@ -14,6 +14,7 @@ import { isSuiteHost } from '@/core/host/adapter'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import HelpIllo from './HelpIllo.vue'
 import FilaMindScreenTab from './FilaMindScreenTab.vue'
+import ScreenSelector from './ScreenSelector.vue'
 import {
   activateTheme,
   createTheme,
@@ -509,6 +510,8 @@ onMounted(() => void loadStatus())
         :steps-title="t('klipperscreenStudio.help.howToRead')"
       />
     </div>
+
+    <ScreenSelector />
 
     <p v-if="checking" class="font-mono text-xs opacity-70">
       {{ t('klipperscreenStudio.status.checking') }}

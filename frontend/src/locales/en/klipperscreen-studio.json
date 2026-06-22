@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Edit your printer's KlipperScreen touchscreen configuration safely, then restart KlipperScreen to apply. Every save is backed up first.",
+    "selector": {
+      "title": "Touchscreen",
+      "intro": "Choose which interface runs on the printer's display.",
+      "refresh": "Refresh",
+      "active": "Running",
+      "boot": "On boot",
+      "notInstalled": "Not installed",
+      "use": "Use",
+      "switching": "Switching…",
+      "persist": "Also make it the default on boot"
+    },
     "help": {
       "guide": "Help",
       "guideTitle": "About KlipperScreen Studio",

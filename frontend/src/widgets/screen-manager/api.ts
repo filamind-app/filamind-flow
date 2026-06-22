@@ -220,3 +220,39 @@ export async function restoreScreen(persist: boolean): Promise<KioskStatus> {
   const body = (await r.json()) as { status: KioskStatus }
   return body.status
 }
+
+// ── Touchscreen selector (KlipperScreen / Guppyscreen / FilaMind) ───────────────
+
+export type TouchKey = 'klipperscreen' | 'guppyscreen' | 'filamind'
+
+export interface TouchScreen {
+  unit: string
+  installed: boolean
+  active: boolean
+  enabled: boolean
+}
+
+export interface TouchStatus {
+  /** Which touch UI currently owns the display ('none' if none active). */
+  active: TouchKey | 'none'
+  screens: Record<TouchKey, TouchScreen>
+  url: string
+}
+
+/** All touch UIs: installed / active / boot-enabled + which one owns the display. */
+export async function fetchTouchStatus(): Promise<TouchStatus> {
+  const r = await fetch(`${base()}/api/screen/touch`)
+  if (!r.ok) throw new Error(httpError(r.status))
+  return (await r.json()) as TouchStatus
+}
+
+/** Switch which touch UI runs (optionally as the boot default). */
+export async function switchTouch(target: TouchKey, persist: boolean): Promise<TouchStatus> {
+  const r = await fetch(`${base()}/api/screen/touch/switch`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ target, persist }),
+  })
+  if (!r.ok) throw new Error(await detailOf(r))
+  return (await r.json()).status as TouchStatus
+}

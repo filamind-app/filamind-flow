@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "عدّل إعدادات شاشة KlipperScreen اللمسية لطابعتك بأمان، ثم أعد تشغيل KlipperScreen للتطبيق. كل حفظ تسبقه نسخة احتياطية.",
+    "selector": {
+      "title": "الشاشة اللمسية",
+      "intro": "اختر الواجهة التي تعمل على شاشة الطابعة.",
+      "refresh": "تحديث",
+      "active": "قيد التشغيل",
+      "boot": "عند الإقلاع",
+      "notInstalled": "غير مثبّتة",
+      "use": "استخدام",
+      "switching": "جارٍ التبديل…",
+      "persist": "اجعلها أيضاً الافتراضية عند الإقلاع"
+    },
     "help": {
       "guide": "مساعدة",
       "guideTitle": "حول KlipperScreen Studio",
