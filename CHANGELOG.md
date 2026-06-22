@@ -6,6 +6,40 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-22
+
+First stable release. Since 0.298.1 the panel gained a full suite of guided, safe-by-default
+tooling and a dual-host architecture, and the build pipeline moved to Vite 8.
+
+### Added
+
+- **Material Brain** - first-class filament profiles with storage, a flow-vs-hotend-ceiling
+  cross-check, and a gated preheat (`SET_MATERIAL`) apply.
+- **Pre-Print Check** - a read-only readiness gate plus a widget surface to run it before a print.
+- **Tuning Wizards** - guided closed-loop calibration: Pressure Advance, retraction, temperature,
+  and flow, with a multi-wizard picker (the flagship guided-tuning flow).
+- **Known-Good Packs** - snapshot the working printer config and restore it after a bad edit.
+- **Rules Engine** - safe-by-default IF-THEN automation (engine off by default, per-rule arming,
+  gated g-code actions, rising-edge firing).
+- **Screen Manager** - the touchscreen widget (renamed from KlipperScreen Studio) with a FilaMind
+  screen tab folding in the cross-surface command UI.
+- **Setup** - a component manager for the Klipper ecosystem: combined install detection (update
+  manager + services + filesystem), dependency-guarded install, per-component descriptions,
+  dependencies, source links, search, and command output.
+- **Catalog: filament brand profiles** - 329 real per-brand x material profiles across 93 brands.
+- **Dual-host adapter** - one build runs in the Mainsail-integrated sidebar or inside the FilaMind
+  suite; suite-exclusive widgets show an install-required panel in the Mainsail build.
+- **Firmware** - translatable flash-plan warnings via the `{code, params}` contract.
+- **Input Shaping** - measurement-quality-grade-driven re-test advice.
+- **Shell** - a host-preserving "Back to UI" link that detects Mainsail vs Fluidd.
+
+### Changed
+
+- **Build tooling upgraded to Vite 8** (rolldown bundler) + Pinia 3 + plugin-vue 6. CI is now the
+  canonical builder of the committed `frontend/dist`, so the prebuilt bundle is reproducible
+  regardless of the author's machine; the printer still serves it straight from git.
+- `@vue/eslint-config-typescript` to 14.9.
+
 ## [0.298.1] - 2026-06-19
 
 ### Fixed

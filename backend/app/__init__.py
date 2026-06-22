@@ -1,3 +1,3 @@
 """FilaMind Flow backend - an extensible FastAPI service for Klipper / Moonraker."""
 
-__version__ = "0.298.1"
+__version__ = "1.0.0"
