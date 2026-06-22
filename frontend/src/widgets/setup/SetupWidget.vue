@@ -19,6 +19,8 @@ const { t } = useI18n()
 const groups = ref<SetupGroup[]>([])
 const status = ref<Record<string, string>>({})
 const writesEnabled = ref(false)
+const suiteCommand = ref('')
+const copied = ref(false)
 const loading = ref(true)
 const error = ref<string | null>(null)
 
@@ -28,9 +30,10 @@ const confirmRemoveId = ref<string | null>(null)
 /** The result of the most recent action, shown on the card that triggered it (ok or refused). */
 const lastResult = ref<{ id: string; text: string; ok: boolean } | null>(null)
 
-/** Types the GUI can install (clone + install.sh). web / tauri / manual are CLI-only for now. */
+/** Installable from the GUI: git_repo / service (clone + install.sh), or any FilaMind app (which
+ *  ships its own one-line installer). Third-party web / manual stay CLI-only. */
 const INSTALLABLE_TYPES = new Set(['git_repo', 'service'])
-const canInstall = (c: SetupComponent): boolean => INSTALLABLE_TYPES.has(c.type)
+const canInstall = (c: SetupComponent): boolean => INSTALLABLE_TYPES.has(c.type) || !!c.first_party
 
 async function load(): Promise<void> {
   loading.value = true
@@ -40,10 +43,21 @@ async function load(): Promise<void> {
     groups.value = catalog.groups
     status.value = st.status
     writesEnabled.value = st.writesEnabled
+    suiteCommand.value = st.suiteCommand
   } catch (e) {
     error.value = e instanceof Error ? e.message : String(e)
   } finally {
     loading.value = false
+  }
+}
+
+async function copySuiteCommand(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(suiteCommand.value)
+    copied.value = true
+    setTimeout(() => (copied.value = false), 1500)
+  } catch {
+    /* clipboard unavailable; the command is shown for manual copy */
   }
 }
 
@@ -157,6 +171,19 @@ onMounted(load)
         {{ t('setup.summary', { installed: totals.installed, total: totals.total }) }}
       </span>
     </div>
+
+    <section v-if="!loading && !error && suiteCommand" class="nb-card bg-brand-cyan/15 p-3">
+      <h3 class="font-display text-sm font-bold">{{ t('setup.suite.title') }}</h3>
+      <p class="mt-1 text-sm text-ink/70">{{ t('setup.suite.intro') }}</p>
+      <div class="mt-2 flex flex-wrap items-center gap-2">
+        <code class="nb-card flex-1 overflow-x-auto bg-surface px-2 py-1 font-mono text-xs">{{
+          suiteCommand
+        }}</code>
+        <button class="nb-btn px-3 py-1 text-sm" @click="copySuiteCommand">
+          {{ copied ? t('setup.suite.copied') : t('setup.suite.copy') }}
+        </button>
+      </div>
+    </section>
 
     <p v-if="!loading && !writesEnabled" class="nb-card bg-brand-yellow/30 p-3 text-sm" role="note">
       {{ t('setup.writesDisabled') }}

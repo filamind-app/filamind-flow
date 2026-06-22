@@ -57,6 +57,7 @@ async def setup_status(settings: Settings = Depends(get_settings)) -> dict[str, 
     return {
         "status": await setup_manager.probe_status(managed, services),
         "writesEnabled": setup_manager.writes_enabled(),
+        "suiteCommand": setup_manager.suite_install_command(),
     }
 
 

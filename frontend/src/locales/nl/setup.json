@@ -7,6 +7,12 @@
     "needs": "Vereist",
     "repo": "Bron",
     "noMatch": "Geen componenten komen overeen met uw zoekopdracht.",
+    "suite": {
+      "title": "Installeer de volledige FilaMind-suite",
+      "intro": "Voer dit eenmalig uit op de printer om de FilaMind-suite in te stellen of om een bestaande installatie over te nemen.",
+      "copy": "Kopiëren",
+      "copied": "Gekopieerd"
+    },
     "installed": "Geïnstalleerd",
     "available": "Beschikbaar",
     "install": "Installeren",

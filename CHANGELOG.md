@@ -6,6 +6,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Setup: install the FilaMind apps from the GUI.** FilaMind 3d / screen / flow now install (and
+  uninstall) straight from the Setup widget by running each app's own one-line installer, instead of
+  showing a "CLI only" hint. A new panel surfaces the single command that installs the whole suite.
+
 ## [1.0.0] - 2026-06-22
 
 First stable release. Since 0.298.1 the panel gained a full suite of guided, safe-by-default

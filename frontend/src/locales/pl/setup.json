@@ -7,6 +7,12 @@
     "needs": "Wymaga",
     "repo": "Źródło",
     "noMatch": "Żaden komponent nie pasuje do wyszukiwania.",
+    "suite": {
+      "title": "Zainstaluj cały pakiet FilaMind",
+      "intro": "Uruchom to raz na drukarce, aby skonfigurować pakiet FilaMind lub przejąć istniejącą konfigurację.",
+      "copy": "Kopiuj",
+      "copied": "Skopiowano"
+    },
     "installed": "Zainstalowane",
     "available": "Dostępne",
     "install": "Zainstaluj",

@@ -7,6 +7,12 @@
     "needs": "필요 항목",
     "repo": "소스",
     "noMatch": "검색과 일치하는 구성 요소가 없습니다.",
+    "suite": {
+      "title": "FilaMind 제품군 전체 설치",
+      "intro": "FilaMind 제품군을 설정하거나 기존 설정을 연동하려면 프린터에서 이 명령을 한 번 실행하세요.",
+      "copy": "복사",
+      "copied": "복사됨"
+    },
     "installed": "설치됨",
     "available": "사용 가능",
     "install": "설치",

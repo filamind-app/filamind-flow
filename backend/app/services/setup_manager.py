@@ -95,6 +95,17 @@ def _install_dir(component: Component) -> Path:
     return Path.home() / (component.dir or component.id)
 
 
+def _raw_installer(component: Component) -> str:
+    """The component's one-line installer (FilaMind apps ship scripts/install.sh)."""
+    return f"https://raw.githubusercontent.com/{component.repo}/main/scripts/install.sh"
+
+
+def suite_install_command() -> str:
+    """The single command that installs the whole FilaMind suite (shown in the Setup widget)."""
+    url = "https://raw.githubusercontent.com/filamind-app/filamind-setup/main/install.sh"
+    return f"curl -fsSL {url} | bash"
+
+
 def _is_installed(c: Component, managed: set[str], services: set[str]) -> bool:
     """Combine three signals, most-authoritative first:
 
@@ -178,12 +189,6 @@ async def install(
     component = _require(cid, catalog)
     if not writes_enabled():
         return _refused()
-    if component.type not in _GIT_TYPES:
-        return {
-            "refused": True,
-            "output": f"GUI install of '{component.type}' components isn't supported yet; "
-            "use the filamind-setup CLI.",
-        }
     # Dependency guard: refuse rather than silently clone a core dep (e.g. Klipper/Moonraker need
     # their own setup, not a bare git clone). Tell the operator what to install first.
     status = await probe_status(managed, services)
@@ -192,6 +197,16 @@ async def install(
         return {
             "refused": True,
             "output": f"Install {', '.join(missing)} first - {component.name} depends on it.",
+        }
+    # FilaMind apps (3d / screen / flow) ship a one-line installer in their repo - run it so the
+    # GUI can install them even though they aren't a plain git_repo (web / tauri).
+    if component.first_party:
+        return await _run(["bash", "-c", f"curl -fsSL {_raw_installer(component)} | bash"])
+    if component.type not in _GIT_TYPES:
+        return {
+            "refused": True,
+            "output": f"GUI install of '{component.type}' components isn't supported yet; "
+            "use the filamind-setup CLI.",
         }
     dest = _install_dir(component)
     if dest.exists():
@@ -224,6 +239,11 @@ async def remove(cid: str, confirm: str) -> dict[str, Any]:
         return _refused()
     if confirm != component.id:
         raise ValueError("Confirmation does not match the component id")
+    # FilaMind apps clean up via their own installer's uninstall path (removes the nginx site etc.).
+    if component.first_party:
+        return await _run(
+            ["bash", "-c", f"curl -fsSL {_raw_installer(component)} | bash -s -- uninstall"]
+        )
     dest = _install_dir(component)
     # Path guard: only ever remove a direct child of $HOME.
     if dest.parent != Path.home() or not dest.is_dir():
