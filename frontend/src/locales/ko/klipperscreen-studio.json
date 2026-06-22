@@ -12,6 +12,10 @@
       "switching": "전환 중…",
       "persist": "부팅 시 기본값으로도 설정"
     },
+    "touchPanel": {
+      "title": "FilaMind 제어",
+      "intro": "FilaMind의 점검과 테스트를 화면에서 바로 실행하세요."
+    },
     "help": {
       "guide": "도움말",
       "guideTitle": "KlipperScreen Studio 소개",

@@ -12,6 +12,10 @@
       "switching": "切换中…",
       "persist": "同时设为开机默认"
     },
+    "touchPanel": {
+      "title": "FilaMind 控制台",
+      "intro": "直接在屏幕上运行 FilaMind 的检查与测试。"
+    },
     "help": {
       "guide": "帮助",
       "guideTitle": "关于 KlipperScreen Studio",

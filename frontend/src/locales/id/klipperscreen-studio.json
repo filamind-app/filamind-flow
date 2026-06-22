@@ -12,6 +12,10 @@
       "switching": "Mengganti…",
       "persist": "Jadikan juga default saat boot"
     },
+    "touchPanel": {
+      "title": "Kendali FilaMind",
+      "intro": "Jalankan pemeriksaan dan pengujian FilaMind langsung dari layar."
+    },
     "help": {
       "guide": "Bantuan",
       "guideTitle": "Tentang KlipperScreen Studio",

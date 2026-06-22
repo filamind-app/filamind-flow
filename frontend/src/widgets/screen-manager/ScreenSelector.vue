@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { fetchTouchStatus, switchTouch, type TouchKey, type TouchStatus } from './api'
+import TouchControlPanel from './TouchControlPanel.vue'
 
 const { t } = useI18n()
 
@@ -95,5 +96,8 @@ onMounted(load)
     </label>
 
     <p v-if="error" class="nb-card bg-brand-red/20 p-2 text-sm" role="alert">{{ error }}</p>
+
+    <!-- When another screen owns the display, keep FilaMind's checks & tests reachable here too. -->
+    <TouchControlPanel v-if="status && status.active !== 'filamind'" />
   </section>
 </template>

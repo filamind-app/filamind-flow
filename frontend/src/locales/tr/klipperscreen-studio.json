@@ -12,6 +12,10 @@
       "switching": "Geçiş yapılıyor…",
       "persist": "Açılışta da varsayılan yap"
     },
+    "touchPanel": {
+      "title": "FilaMind denetimleri",
+      "intro": "FilaMind'ın denetim ve testlerini doğrudan ekrandan çalıştırın."
+    },
     "help": {
       "guide": "Yardım",
       "guideTitle": "KlipperScreen Studio hakkında",

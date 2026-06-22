@@ -12,6 +12,10 @@
       "switching": "Switching…",
       "persist": "Also make it the default on boot"
     },
+    "touchPanel": {
+      "title": "FilaMind controls",
+      "intro": "Run FilaMind's checks and tests right from the screen."
+    },
     "help": {
       "guide": "Help",
       "guideTitle": "About KlipperScreen Studio",

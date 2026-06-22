@@ -12,6 +12,10 @@
       "switching": "Wisselen…",
       "persist": "Maak dit ook de standaard bij het opstarten"
     },
+    "touchPanel": {
+      "title": "FilaMind-bediening",
+      "intro": "Voer FilaMinds controles en tests rechtstreeks vanaf het scherm uit."
+    },
     "help": {
       "guide": "Help",
       "guideTitle": "Over KlipperScreen Studio",
