@@ -7,6 +7,12 @@
     "needs": "Cần",
     "repo": "Nguồn",
     "noMatch": "Không có thành phần nào khớp với tìm kiếm của bạn.",
+    "suite": {
+      "title": "Cài đặt toàn bộ bộ công cụ FilaMind",
+      "intro": "Chạy lệnh này một lần trên máy in để thiết lập bộ công cụ FilaMind, hoặc để tiếp quản một thiết lập sẵn có.",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép"
+    },
     "installed": "Đã cài đặt",
     "available": "Có sẵn",
     "install": "Cài đặt",

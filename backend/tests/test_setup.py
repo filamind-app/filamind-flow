@@ -67,15 +67,41 @@ async def test_install_refuses_when_a_dependency_is_missing(monkeypatch, tmp_pat
     assert "Klipper" in result["output"]  # Moonraker depends on Klipper
 
 
-async def test_install_of_non_git_type_is_refused(monkeypatch) -> None:
-    # web / tauri / manual components are catalog-only for now; the GUI refuses them up front
-    # (the widget shows a "CLI only" hint, so this never reaches a click on a writes host).
+async def test_install_of_non_first_party_non_git_type_is_refused(monkeypatch) -> None:
+    # Third-party web / manual components are catalog-only for now; the GUI refuses them up front
+    # (the widget shows a "CLI only" hint). mainsail is type "web" and not first-party.
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
     result = await setup_manager.install(
-        "filamind-3d", managed={"klipper", "moonraker"}, services=set()
+        "mainsail", managed={"klipper", "moonraker"}, services=set()
     )
     assert result.get("refused") is True
     assert "isn't supported yet" in result["output"]
+
+
+async def test_first_party_app_installs_via_its_one_liner(monkeypatch) -> None:
+    # FilaMind apps (3d / screen / flow) are web/tauri but DO install from the GUI by running their
+    # own one-line installer, even though they aren't a plain git_repo.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    captured: list[list[str]] = []
+
+    async def fake_run(cmd: list[str]) -> dict:
+        captured.append(cmd)
+        return {"ok": True, "output": "installed"}
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    result = await setup_manager.install(
+        "filamind-3d", managed={"klipper", "moonraker"}, services=set()
+    )
+    assert result.get("ok") is True
+    assert captured, "installer command was not run"
+    cmd = " ".join(captured[0])
+    assert "curl" in cmd and "filamind-3d/main/scripts/install.sh" in cmd
+
+
+def test_status_exposes_the_suite_install_command() -> None:
+    r = client.get("/api/setup/status")
+    assert r.status_code == 200
+    assert "filamind-setup" in r.json()["suiteCommand"]
 
 
 def test_dependency_guard_passes_through_route_when_writes_off() -> None:

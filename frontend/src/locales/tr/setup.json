@@ -7,6 +7,12 @@
     "needs": "Gerekli",
     "repo": "Kaynak",
     "noMatch": "Aramanızla eşleşen bileşen yok.",
+    "suite": {
+      "title": "FilaMind paketinin tamamını kurun",
+      "intro": "FilaMind paketini kurmak veya mevcut bir kurulumu devralmak için bunu yazıcıda bir kez çalıştırın.",
+      "copy": "Kopyala",
+      "copied": "Kopyalandı"
+    },
     "installed": "Kurulu",
     "available": "Mevcut",
     "install": "Kur",

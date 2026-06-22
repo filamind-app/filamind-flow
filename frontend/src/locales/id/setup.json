@@ -7,6 +7,12 @@
     "needs": "Membutuhkan",
     "repo": "Sumber",
     "noMatch": "Tidak ada komponen yang cocok dengan pencarian Anda.",
+    "suite": {
+      "title": "Pasang seluruh suite FilaMind",
+      "intro": "Jalankan ini sekali di printer untuk menyiapkan suite FilaMind, atau untuk mengadopsi penyiapan yang sudah ada.",
+      "copy": "Salin",
+      "copied": "Tersalin"
+    },
     "installed": "Terpasang",
     "available": "Tersedia",
     "install": "Pasang",

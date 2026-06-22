@@ -7,6 +7,12 @@
     "needs": "Needs",
     "repo": "Source",
     "noMatch": "No components match your search.",
+    "suite": {
+      "title": "Install the whole FilaMind suite",
+      "intro": "Run this once on the printer to set up the FilaMind suite, or to adopt an existing setup.",
+      "copy": "Copy",
+      "copied": "Copied"
+    },
     "installed": "Installed",
     "available": "Available",
     "install": "Install",

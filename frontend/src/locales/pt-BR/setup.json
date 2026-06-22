@@ -7,6 +7,12 @@
     "needs": "Requer",
     "repo": "Origem",
     "noMatch": "Nenhum componente corresponde à sua pesquisa.",
+    "suite": {
+      "title": "Instale todo o conjunto FilaMind",
+      "intro": "Execute isto uma vez na impressora para configurar o conjunto FilaMind ou para adotar uma instalação existente.",
+      "copy": "Copiar",
+      "copied": "Copiado"
+    },
     "installed": "Instalados",
     "available": "Disponíveis",
     "install": "Instalar",

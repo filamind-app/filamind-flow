@@ -25,6 +25,8 @@ export interface SetupStatus {
   status: Record<string, string>
   /** Whether GUI install/update/remove is enabled on this host. */
   writesEnabled: boolean
+  /** The one-line command that installs the whole FilaMind suite. */
+  suiteCommand: string
 }
 
 export interface SetupActionResult {
