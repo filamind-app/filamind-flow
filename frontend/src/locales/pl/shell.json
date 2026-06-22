@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Zrób migawkę działającej konfiguracji i przywróć ją po nieudanej edycji."
+      },
+      "rules": {
+        "title": "Silnik reguł",
+        "description": "Bezpieczna automatyzacja JEŻELI-TO: gdy coś się wydarzy, wykonaj akcję."
       }
     },
     "guard": {

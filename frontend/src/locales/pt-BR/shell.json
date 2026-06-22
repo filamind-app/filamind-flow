@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Tire um snapshot da configuração que está funcionando e restaure-a depois de uma edição ruim."
+      },
+      "rules": {
+        "title": "Motor de Regras",
+        "description": "Automação SE-ENTÃO segura: quando algo acontece, execute uma ação."
       }
     },
     "guard": {

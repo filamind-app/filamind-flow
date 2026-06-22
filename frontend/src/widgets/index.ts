@@ -85,6 +85,14 @@ export function registerWidgets(): void {
   })
 
   reg({
+    id: 'rules',
+    title: 'Rules Engine',
+    icon: '⚡',
+    description: 'Safe IF-THEN automation: when something happens, run an action.',
+    component: defineAsyncComponent(() => import('./rules/RulesWidget.vue')),
+  })
+
+  reg({
     id: 'motor-drivers',
     title: 'Motor Drivers',
     icon: '⚙',

@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "intro": "Automatiza tu impresora con reglas seguras de tipo SI-ENTONCES. Desactivadas por defecto; activa cada regla tú mismo.",
+    "empty": "Aún no hay reglas. Añade una abajo y actívala cuando estés listo.",
+    "engine": {
+      "on": "El motor de reglas está ACTIVO",
+      "off": "El motor de reglas está INACTIVO",
+      "turnOn": "Activar",
+      "turnOff": "Desactivar",
+      "masterNote": "Nada se ejecuta hasta que el motor y la regla individual estén activos."
+    },
+    "triggers": {
+      "print_complete": "Cuando termina una impresión",
+      "print_error": "Cuando la impresora da un error",
+      "temp_above": "Cuando un calentador supera",
+      "temp_below": "Cuando un calentador baja de"
+    },
+    "actions": { "notify": "Registrar una notificación", "gcode": "Ejecutar un comando g-code" },
+    "rule": {
+      "armed": "Activada",
+      "arm": "Desactivada",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "confirmDelete": "Eliminar regla"
+    },
+    "form": {
+      "name": "Nombre de la regla",
+      "namePlaceholder": "p. ej. Apagar calentadores tras imprimir",
+      "trigger": "Si (activador)",
+      "action": "Entonces (acción)",
+      "heater": "Calentador",
+      "value": "Temperatura (°C)",
+      "message": "Mensaje",
+      "messagePlaceholder": "Mostrado en el registro de reglas",
+      "gcode": "G-code",
+      "gcodePlaceholder": "p. ej. TURN_OFF_HEATERS",
+      "save": "Guardar regla",
+      "cancel": "Cancelar",
+      "add": "Añadir una regla"
+    },
+    "log": {
+      "title": "Actividad reciente",
+      "outcome": {
+        "notify": "notificado",
+        "ran": "ejecutó g-code",
+        "skipped_busy": "omitido (impresora ocupada)",
+        "error": "error"
+      }
+    },
+    "help": {
+      "guide": "Guía",
+      "guideTitle": "Guía del motor de reglas",
+      "close": "Cerrar",
+      "topics": {
+        "overview": {
+          "title": "¿Qué es el motor de reglas?",
+          "body": "Vigila la impresora y ejecuta una acción cuando se cumple una condición que defines; por ejemplo, registrar una nota cuando termina una impresión o apagar los calentadores. Cada regla es SI (un activador) ENTONCES (una acción)."
+        },
+        "safety": {
+          "title": "Cómo se mantiene seguro",
+          "body": "El motor está desactivado por defecto y cada regla debe activarse individualmente, así nada se ejecuta por sorpresa. Una regla se dispara una vez cuando su condición se cumple por primera vez. Las acciones de g-code solo se ejecutan cuando la impresora está inactiva (se rechazan durante una impresión) y cada resultado se registra."
+        },
+        "glossary": { "title": "Glosario" }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Activador",
+          "def": "La condición que inicia una regla, p. ej. que termine una impresión o que un calentador cruce una temperatura."
+        },
+        "action": {
+          "term": "Acción",
+          "def": "Lo que hace la regla cuando se dispara: registrar una notificación o ejecutar un comando g-code (solo cuando está inactiva)."
+        },
+        "armed": {
+          "term": "Activada",
+          "def": "Una regla que está encendida. Las reglas desactivadas se conservan pero nunca se disparan."
+        }
+      }
+    }
+  }
+}

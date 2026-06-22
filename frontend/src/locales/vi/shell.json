@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Chụp ảnh cấu hình đang hoạt động và khôi phục sau khi chỉnh sửa sai."
+      },
+      "rules": {
+        "title": "Bộ máy Quy tắc",
+        "description": "Tự động hóa NẾU-THÌ an toàn: khi có việc gì đó xảy ra, chạy một hành động."
       }
     },
     "guard": {

@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "intro": "Automatize sua impressora com regras SE-ENTÃO seguras. Desativadas por padrão; você mesmo ativa cada regra.",
+    "empty": "Nenhuma regra ainda. Adicione uma abaixo e ative-a quando estiver pronto.",
+    "engine": {
+      "on": "O motor de regras está LIGADO",
+      "off": "O motor de regras está DESLIGADO",
+      "turnOn": "Ligar",
+      "turnOff": "Desligar",
+      "masterNote": "Nada é executado enquanto o motor e a regra individual não estiverem ativados."
+    },
+    "triggers": {
+      "print_complete": "Quando uma impressão termina",
+      "print_error": "Quando a impressora apresenta erro",
+      "temp_above": "Quando um aquecedor sobe acima de",
+      "temp_below": "Quando um aquecedor cai abaixo de"
+    },
+    "actions": { "notify": "Registrar uma notificação", "gcode": "Executar um comando g-code" },
+    "rule": {
+      "armed": "Ativada",
+      "arm": "Desativada",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "confirmDelete": "Excluir regra"
+    },
+    "form": {
+      "name": "Nome da regra",
+      "namePlaceholder": "ex. Desligar aquecedores após a impressão",
+      "trigger": "Se (gatilho)",
+      "action": "Então (ação)",
+      "heater": "Aquecedor",
+      "value": "Temperatura (°C)",
+      "message": "Mensagem",
+      "messagePlaceholder": "Exibida no registro da regra",
+      "gcode": "G-code",
+      "gcodePlaceholder": "ex. TURN_OFF_HEATERS",
+      "save": "Salvar regra",
+      "cancel": "Cancelar",
+      "add": "Adicionar uma regra"
+    },
+    "log": {
+      "title": "Atividade recente",
+      "outcome": {
+        "notify": "notificado",
+        "ran": "executou g-code",
+        "skipped_busy": "ignorado (impressora ocupada)",
+        "error": "erro"
+      }
+    },
+    "help": {
+      "guide": "Guia",
+      "guideTitle": "Guia do motor de regras",
+      "close": "Fechar",
+      "topics": {
+        "overview": {
+          "title": "O que é o motor de regras?",
+          "body": "Ele observa a impressora e executa uma ação quando uma condição definida por você é atendida - por exemplo, registrar uma nota quando uma impressão termina ou desligar os aquecedores. Cada regra é SE (um gatilho) ENTÃO (uma ação)."
+        },
+        "safety": {
+          "title": "Como ele se mantém seguro",
+          "body": "O motor vem desligado por padrão e cada regra precisa ser ativada individualmente, então nada é executado de surpresa. Uma regra dispara uma vez quando sua condição se torna verdadeira pela primeira vez. As ações de g-code só são executadas com a impressora ociosa - são recusadas durante uma impressão - e todo resultado é registrado."
+        },
+        "glossary": { "title": "Glossário" }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Gatilho",
+          "def": "A condição que inicia uma regra, ex. uma impressão terminando ou um aquecedor cruzando uma temperatura."
+        },
+        "action": {
+          "term": "Ação",
+          "def": "O que a regra faz quando dispara: registrar uma notificação ou executar um comando g-code (somente com a impressora ociosa)."
+        },
+        "armed": {
+          "term": "Ativada",
+          "def": "Uma regra que está ligada. Regras desativadas são mantidas, mas nunca disparam."
+        }
+      }
+    }
+  }
+}

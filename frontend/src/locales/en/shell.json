@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Snapshot your working config and restore it after a bad edit."
+      },
+      "rules": {
+        "title": "Rules Engine",
+        "description": "Safe IF-THEN automation: when something happens, run an action."
       }
     },
     "guard": {

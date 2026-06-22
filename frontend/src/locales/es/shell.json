@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Captura tu configuración funcional y restáurala tras una edición incorrecta."
+      },
+      "rules": {
+        "title": "Motor de reglas",
+        "description": "Automatización segura de tipo SI-ENTONCES: cuando algo ocurre, ejecuta una acción."
       }
     },
     "guard": {

@@ -1,0 +1,86 @@
+{
+  "rules": {
+    "intro": "Zautomatyzuj swoją drukarkę bezpiecznymi regułami JEŻELI-TO. Domyślnie wyłączone; uzbrój każdą regułę samodzielnie.",
+    "empty": "Nie ma jeszcze żadnych reguł. Dodaj jedną poniżej, a następnie uzbrój ją, gdy będziesz gotowy.",
+    "engine": {
+      "on": "Silnik reguł jest WŁĄCZONY",
+      "off": "Silnik reguł jest WYŁĄCZONY",
+      "turnOn": "Włącz",
+      "turnOff": "Wyłącz",
+      "masterNote": "Nic nie zadziała, dopóki nie będą włączone jednocześnie silnik i dana reguła."
+    },
+    "triggers": {
+      "print_complete": "Gdy druk się zakończy",
+      "print_error": "Gdy w drukarce wystąpi błąd",
+      "temp_above": "Gdy grzałka przekroczy",
+      "temp_below": "Gdy grzałka spadnie poniżej"
+    },
+    "actions": {
+      "notify": "Zarejestruj powiadomienie",
+      "gcode": "Wykonaj polecenie g-code"
+    },
+    "rule": {
+      "armed": "Uzbrojona",
+      "arm": "Rozbrojona",
+      "edit": "Edytuj",
+      "delete": "Usuń",
+      "confirmDelete": "Usuń regułę"
+    },
+    "form": {
+      "name": "Nazwa reguły",
+      "namePlaceholder": "np. Wyłącz grzałki po druku",
+      "trigger": "Jeżeli (wyzwalacz)",
+      "action": "To (akcja)",
+      "heater": "Grzałka",
+      "value": "Temperatura (°C)",
+      "message": "Komunikat",
+      "messagePlaceholder": "Wyświetlany w dzienniku reguł",
+      "gcode": "G-code",
+      "gcodePlaceholder": "np. TURN_OFF_HEATERS",
+      "save": "Zapisz regułę",
+      "cancel": "Anuluj",
+      "add": "Dodaj regułę"
+    },
+    "log": {
+      "title": "Ostatnia aktywność",
+      "outcome": {
+        "notify": "powiadomiono",
+        "ran": "wykonano g-code",
+        "skipped_busy": "pominięto (drukarka zajęta)",
+        "error": "błąd"
+      }
+    },
+    "help": {
+      "guide": "Przewodnik",
+      "guideTitle": "Przewodnik po silniku reguł",
+      "close": "Zamknij",
+      "topics": {
+        "overview": {
+          "title": "Czym jest silnik reguł?",
+          "body": "Obserwuje drukarkę i wykonuje akcję, gdy spełniony zostanie ustawiony przez Ciebie warunek - na przykład zarejestruj notatkę po zakończeniu druku albo wyłącz grzałki. Każda reguła to JEŻELI (wyzwalacz) TO (akcja)."
+        },
+        "safety": {
+          "title": "Jak zachowuje bezpieczeństwo",
+          "body": "Silnik jest domyślnie wyłączony, a każdą regułę trzeba uzbroić osobno, więc nic nie zadziała niespodziewanie. Reguła wyzwala się raz, gdy jej warunek po raz pierwszy stanie się prawdziwy. Akcje g-code działają tylko wtedy, gdy drukarka jest bezczynna - podczas druku są odrzucane - a każdy wynik jest rejestrowany."
+        },
+        "glossary": {
+          "title": "Słowniczek"
+        }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Wyzwalacz",
+          "def": "Warunek, który uruchamia regułę, np. zakończenie druku lub przekroczenie temperatury przez grzałkę."
+        },
+        "action": {
+          "term": "Akcja",
+          "def": "To, co reguła robi po wyzwoleniu: rejestruje powiadomienie albo wykonuje polecenie g-code (tylko gdy drukarka jest bezczynna)."
+        },
+        "armed": {
+          "term": "Uzbrojona",
+          "def": "Reguła, która jest włączona. Rozbrojone reguły są zachowywane, ale nigdy się nie wyzwalają."
+        }
+      }
+    }
+  }
+}

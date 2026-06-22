@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "intro": "Yazıcınızı güvenli EĞER-İSE kurallarıyla otomatikleştirin. Varsayılan olarak kapalı; her kuralı kendiniz etkinleştirin.",
+    "empty": "Henüz kural yok. Aşağıdan bir tane ekleyin, ardından hazır olduğunuzda etkinleştirin.",
+    "engine": {
+      "on": "Kural motoru AÇIK",
+      "off": "Kural motoru KAPALI",
+      "turnOn": "Aç",
+      "turnOff": "Kapat",
+      "masterNote": "Hem motor hem de ilgili kural açık olmadıkça hiçbir şey çalışmaz."
+    },
+    "triggers": {
+      "print_complete": "Bir baskı tamamlandığında",
+      "print_error": "Yazıcı hata verdiğinde",
+      "temp_above": "Bir ısıtıcı şu değerin üzerine çıktığında",
+      "temp_below": "Bir ısıtıcı şu değerin altına düştüğünde"
+    },
+    "actions": { "notify": "Bir bildirim kaydet", "gcode": "Bir g-code komutu çalıştır" },
+    "rule": {
+      "armed": "Etkin",
+      "arm": "Devre dışı",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "confirmDelete": "Kuralı sil"
+    },
+    "form": {
+      "name": "Kural adı",
+      "namePlaceholder": "ör. Baskıdan sonra ısıtıcıları kapat",
+      "trigger": "Eğer (tetikleyici)",
+      "action": "İse (eylem)",
+      "heater": "Isıtıcı",
+      "value": "Sıcaklık (°C)",
+      "message": "Mesaj",
+      "messagePlaceholder": "Kural günlüğünde gösterilir",
+      "gcode": "G-code",
+      "gcodePlaceholder": "ör. TURN_OFF_HEATERS",
+      "save": "Kuralı kaydet",
+      "cancel": "İptal",
+      "add": "Bir kural ekle"
+    },
+    "log": {
+      "title": "Son etkinlikler",
+      "outcome": {
+        "notify": "bildirildi",
+        "ran": "g-code çalıştırıldı",
+        "skipped_busy": "atlandı (yazıcı meşgul)",
+        "error": "hata"
+      }
+    },
+    "help": {
+      "guide": "Rehber",
+      "guideTitle": "Kural motoru rehberi",
+      "close": "Kapat",
+      "topics": {
+        "overview": {
+          "title": "Kural motoru nedir?",
+          "body": "Yazıcıyı izler ve belirlediğiniz bir koşul karşılandığında bir eylem çalıştırır - örneğin, bir baskı tamamlandığında bir not kaydetmek veya ısıtıcıları kapatmak. Her kural EĞER (bir tetikleyici) İSE (bir eylem) biçimindedir."
+        },
+        "safety": {
+          "title": "Nasıl güvenli kalır",
+          "body": "Motor varsayılan olarak kapalıdır ve her kuralın ayrı ayrı etkinleştirilmesi gerekir, böylece hiçbir şey beklenmedik şekilde çalışmaz. Bir kural, koşulu ilk kez doğru olduğunda bir kez tetiklenir. G-code eylemleri yalnızca yazıcı boştayken çalışır - bir baskı sırasında reddedilirler - ve her sonuç günlüğe kaydedilir."
+        },
+        "glossary": { "title": "Sözlük" }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Tetikleyici",
+          "def": "Bir kuralı başlatan koşul, ör. bir baskının tamamlanması veya bir ısıtıcının bir sıcaklığı aşması."
+        },
+        "action": {
+          "term": "Eylem",
+          "def": "Kural tetiklendiğinde yaptığı şey: bir bildirim kaydetmek veya bir g-code komutu çalıştırmak (yalnızca boştayken)."
+        },
+        "armed": {
+          "term": "Etkin",
+          "def": "Açık olan bir kural. Devre dışı kurallar saklanır ancak asla tetiklenmez."
+        }
+      }
+    }
+  }
+}

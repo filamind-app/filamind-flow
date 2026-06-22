@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "intro": "用安全的“如果-则”规则自动化你的打印机。默认关闭；每条规则需自行启用。",
+    "empty": "暂无规则。在下方添加一条，准备好后再启用它。",
+    "engine": {
+      "on": "规则引擎已开启",
+      "off": "规则引擎已关闭",
+      "turnOn": "开启",
+      "turnOff": "关闭",
+      "masterNote": "只有引擎和单条规则都开启后才会运行。"
+    },
+    "triggers": {
+      "print_complete": "当打印完成时",
+      "print_error": "当打印机出错时",
+      "temp_above": "当加热器温度升高超过",
+      "temp_below": "当加热器温度降低低于"
+    },
+    "actions": { "notify": "记录一条通知", "gcode": "运行一条 g-code 命令" },
+    "rule": {
+      "armed": "已启用",
+      "arm": "已停用",
+      "edit": "编辑",
+      "delete": "删除",
+      "confirmDelete": "删除规则"
+    },
+    "form": {
+      "name": "规则名称",
+      "namePlaceholder": "例如：打印后关闭加热器",
+      "trigger": "如果（触发条件）",
+      "action": "则（动作）",
+      "heater": "加热器",
+      "value": "温度（°C）",
+      "message": "消息",
+      "messagePlaceholder": "显示在规则日志中",
+      "gcode": "G-code",
+      "gcodePlaceholder": "例如：TURN_OFF_HEATERS",
+      "save": "保存规则",
+      "cancel": "取消",
+      "add": "添加规则"
+    },
+    "log": {
+      "title": "近期活动",
+      "outcome": {
+        "notify": "已通知",
+        "ran": "已运行 g-code",
+        "skipped_busy": "已跳过（打印机忙）",
+        "error": "错误"
+      }
+    },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "规则引擎指南",
+      "close": "关闭",
+      "topics": {
+        "overview": {
+          "title": "什么是规则引擎？",
+          "body": "它会监视打印机，并在满足你设定的条件时执行动作 —— 例如，打印完成时记录一条备注，或关闭加热器。每条规则的形式是：如果（触发条件），则（执行动作）。"
+        },
+        "safety": {
+          "title": "它如何保持安全",
+          "body": "引擎默认关闭，且每条规则都必须单独启用，因此不会有任何意外运行。规则在其条件首次成立时触发一次。G-code 动作仅在打印机空闲时运行 —— 打印过程中会被拒绝 —— 且每次结果都会记录。"
+        },
+        "glossary": { "title": "术语表" }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "触发条件",
+          "def": "启动规则的条件，例如一次打印完成，或加热器越过某一温度。"
+        },
+        "action": {
+          "term": "动作",
+          "def": "规则触发时所做的事：记录一条通知，或运行一条 g-code 命令（仅在空闲时）。"
+        },
+        "armed": {
+          "term": "已启用",
+          "def": "处于开启状态的规则。已停用的规则会被保留，但永远不会触发。"
+        }
+      }
+    }
+  }
+}

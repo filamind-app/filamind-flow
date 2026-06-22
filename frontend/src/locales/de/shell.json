@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Erstelle einen Snapshot deiner funktionierenden Konfiguration und stelle sie nach einer fehlerhaften Änderung wieder her."
+      },
+      "rules": {
+        "title": "Regel-Engine",
+        "description": "Sichere WENN-DANN-Automatisierung: Wenn etwas passiert, führe eine Aktion aus."
       }
     },
     "guard": {

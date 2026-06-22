@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "正常に動作している設定をスナップショットし、誤った編集の後に復元します。"
+      },
+      "rules": {
+        "title": "ルールエンジン",
+        "description": "安全な「もし～なら」自動化: 何かが起きたら、アクションを実行します。"
       }
     },
     "guard": {
