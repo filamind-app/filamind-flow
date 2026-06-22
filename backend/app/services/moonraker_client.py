@@ -73,6 +73,28 @@ class MoonrakerClient:
         info = result.get("system_info")
         return info if isinstance(info, dict) else {}
 
+    async def update_status(self) -> dict[str, Any]:
+        """Moonraker ``/machine/update/status`` → its ``version_info`` map.
+
+        This is the authoritative registry of components Moonraker's update manager tracks
+        (``klipper``, ``moonraker``, ``mainsail``, ``fluidd``, ``KlipperScreen``, ``crowsnest``
+        and any ``[update_manager X]`` entries). Keys are the managed names. Returns ``{}`` if the
+        endpoint is absent (older Moonraker) or the shape is unexpected; callers guard.
+        """
+        result = await self._get("/machine/update/status")
+        info = result.get("version_info")
+        return info if isinstance(info, dict) else {}
+
+    async def available_services(self) -> list[str]:
+        """Systemd units Moonraker manages, from ``/machine/system_info`` → ``available_services``.
+
+        Used as a secondary install signal (e.g. ``klipperscreen``, ``crowsnest``, ``spoolman``,
+        ``moonraker-obico``). Returns an empty list when absent or malformed.
+        """
+        info = await self.machine_system_info()
+        services = info.get("available_services", [])
+        return [str(s) for s in services] if isinstance(services, list) else []
+
     async def list_objects(self) -> list[str]:
         """Names of all available printer objects."""
         result = await self._get("/printer/objects/list")

@@ -6,6 +6,8 @@ export interface SetupComponent {
   type: string
   deps?: string[]
   first_party?: boolean
+  /** One-line description of what the component does. */
+  desc?: string
 }
 
 export interface SetupGroup {

@@ -1,82 +1,82 @@
 {
   "schema": 1,
-  "comment": "FilaMind Setup component catalog. Adding a component = one entry here, no engine change. 'type' = how it self-updates via Moonraker update_manager. Repo URLs for FilaMind apps are placeholders until the repos exist.",
+  "comment": "FilaMind Setup component catalog. Adding a component = one entry here, no engine change. 'type' selects how it installs/updates (git_repo / service install via git clone + install.sh; web / tauri / manual are catalog-only for now). 'manager_key' / 'service' / 'dir' refine install detection when a component's runtime name differs from its id.",
   "groups": [
     {
       "group": "core",
       "components": [
-        { "id": "klipper",      "name": "Klipper",      "kind": "firmware-host", "repo": "Klipper3d/klipper",     "type": "git_repo", "deps": [] },
-        { "id": "moonraker",    "name": "Moonraker",    "kind": "api-server",    "repo": "Arksine/moonraker",     "type": "git_repo", "deps": ["klipper"] }
+        { "id": "klipper", "name": "Klipper", "kind": "firmware-host", "repo": "Klipper3d/klipper", "type": "git_repo", "deps": [], "desc": "3D-printer firmware: the motion planner runs on the host and streams precisely-timed steps to the MCU." },
+        { "id": "moonraker", "name": "Moonraker", "kind": "api-server", "repo": "Arksine/moonraker", "type": "git_repo", "deps": ["klipper"], "desc": "API server that exposes Klipper over HTTP/WebSocket so web UIs, apps and tools can talk to the printer." }
       ]
     },
     {
       "group": "web-uis",
       "components": [
-        { "id": "filamind-3d",  "name": "FilaMind 3d",  "kind": "web-ui", "repo": "filamind-app/filamind-3d", "type": "web",   "deps": ["moonraker"], "first_party": true, "serve": "port-or-path", "default_port": 80, "primary": true },
-        { "id": "mainsail",     "name": "Mainsail",     "kind": "web-ui", "repo": "mainsail-crew/mainsail", "type": "web",      "deps": ["moonraker"], "serve": "port-or-path", "default_port": 81 },
-        { "id": "fluidd",       "name": "Fluidd",       "kind": "web-ui", "repo": "fluidd-core/fluidd",     "type": "web",      "deps": ["moonraker"], "serve": "port-or-path", "default_port": 82 }
+        { "id": "filamind-3d", "name": "FilaMind 3d", "kind": "web-ui", "repo": "filamind-app/filamind-3d", "type": "web", "deps": ["moonraker"], "first_party": true, "serve": "port-or-path", "default_port": 80, "primary": true, "desc": "FilaMind's web control interface for Klipper - the suite's primary printer UI." },
+        { "id": "mainsail", "name": "Mainsail", "kind": "web-ui", "repo": "mainsail-crew/mainsail", "type": "web", "deps": ["moonraker"], "serve": "port-or-path", "default_port": 81, "manager_key": "mainsail", "dir": "mainsail", "desc": "A web interface for Klipper, served as static files in the browser." },
+        { "id": "fluidd", "name": "Fluidd", "kind": "web-ui", "repo": "fluidd-core/fluidd", "type": "web", "deps": ["moonraker"], "serve": "port-or-path", "default_port": 82, "manager_key": "fluidd", "dir": "fluidd", "desc": "A web interface for Klipper, served as static files in the browser." }
       ]
     },
     {
       "group": "touchscreens",
       "components": [
-        { "id": "klipperscreen",   "name": "KlipperScreen",  "kind": "touch", "repo": "KlipperScreen/KlipperScreen", "type": "git_repo", "deps": ["moonraker"] },
-        { "id": "guppyscreen",     "name": "Guppyscreen",    "kind": "touch", "repo": "ballaswag/guppyscreen",       "type": "git_repo", "deps": ["moonraker"] },
-        { "id": "filamind-screen", "name": "FilaMind screen","kind": "touch", "repo": "filamind-app/filamind-screen","type": "tauri",   "deps": ["moonraker"], "first_party": true }
+        { "id": "klipperscreen", "name": "KlipperScreen", "kind": "touch", "repo": "KlipperScreen/KlipperScreen", "type": "git_repo", "deps": ["moonraker"], "manager_key": "KlipperScreen", "service": "KlipperScreen", "dir": "KlipperScreen", "desc": "A touchscreen interface for Klipper that runs on the printer's own attached display." },
+        { "id": "guppyscreen", "name": "Guppyscreen", "kind": "touch", "repo": "ballaswag/guppyscreen", "type": "git_repo", "deps": ["moonraker"], "dir": "guppyscreen", "desc": "A lightweight native touchscreen UI for Klipper aimed at embedded displays." },
+        { "id": "filamind-screen", "name": "FilaMind screen", "kind": "touch", "repo": "filamind-app/filamind-screen", "type": "tauri", "deps": ["moonraker"], "first_party": true, "dir": "filamind-screen", "desc": "FilaMind's native touchscreen app for the printer's attached display." }
       ]
     },
     {
       "group": "host-widgets",
       "components": [
-        { "id": "filamind-flow", "name": "FilaMind flow", "kind": "widget-app", "repo": "filamind-app/filamind-flow", "type": "git_repo", "deps": ["moonraker"], "first_party": true }
+        { "id": "filamind-flow", "name": "FilaMind flow", "kind": "widget-app", "repo": "filamind-app/filamind-flow", "type": "git_repo", "deps": ["moonraker"], "first_party": true, "manager_key": "filamind-flow", "dir": "filamind-flow", "desc": "FilaMind's host-side widget app that adds tools and panels to your printer UI." }
       ]
     },
     {
       "group": "webcam",
       "components": [
-        { "id": "crowsnest",       "name": "Crowsnest",        "kind": "webcam", "repo": "mainsail-crew/crowsnest",  "type": "git_repo", "deps": ["moonraker"] }
+        { "id": "crowsnest", "name": "Crowsnest", "kind": "webcam", "repo": "mainsail-crew/crowsnest", "type": "git_repo", "deps": ["moonraker"], "manager_key": "crowsnest", "service": "crowsnest", "dir": "crowsnest", "desc": "A webcam streaming manager that publishes MJPEG/HLS streams from the printer's cameras." }
       ]
     },
     {
       "group": "filament",
       "components": [
-        { "id": "spoolman",        "name": "Spoolman",         "kind": "service", "repo": "Donkie/Spoolman",        "type": "service", "deps": ["moonraker"] }
+        { "id": "spoolman", "name": "Spoolman", "kind": "service", "repo": "Donkie/Spoolman", "type": "service", "deps": ["moonraker"], "manager_key": "spoolman", "service": "spoolman", "dir": "spoolman", "desc": "A filament spool inventory that tracks remaining material and usage across your prints." }
       ]
     },
     {
       "group": "companions",
       "components": [
-        { "id": "mobileraker-companion", "name": "Mobileraker Companion", "kind": "companion", "repo": "Clon1998/mobileraker_companion", "type": "git_repo", "deps": ["moonraker"] },
-        { "id": "octoapp",               "name": "OctoApp Companion",     "kind": "companion", "repo": "crysxd/OctoApp-Plugin",          "type": "git_repo", "deps": ["moonraker"] }
+        { "id": "mobileraker-companion", "name": "Mobileraker Companion", "kind": "companion", "repo": "Clon1998/mobileraker_companion", "type": "git_repo", "deps": ["moonraker"], "dir": "mobileraker_companion", "desc": "Companion service for the Mobileraker mobile app that delivers print push-notifications." },
+        { "id": "octoapp", "name": "OctoApp Companion", "kind": "companion", "repo": "crysxd/OctoApp-Plugin", "type": "git_repo", "deps": ["moonraker"], "desc": "Companion plugin that connects the printer to the OctoApp mobile app." }
       ]
     },
     {
       "group": "monitoring-remote",
       "components": [
-        { "id": "obico",          "name": "Obico for Klipper",  "kind": "remote", "repo": "TheSpaghettiDetective/moonraker-obico", "type": "git_repo", "deps": ["moonraker"] },
-        { "id": "octoeverywhere", "name": "OctoEverywhere",     "kind": "remote", "repo": "QuinnDamerell/OctoPrint-OctoEverywhere", "type": "git_repo", "deps": ["moonraker"] },
-        { "id": "simplyprint",    "name": "SimplyPrint",        "kind": "remote", "repo": "SimplyPrint/SimplyPrint-Klipper",        "type": "git_repo", "deps": ["moonraker"] }
+        { "id": "obico", "name": "Obico for Klipper", "kind": "remote", "repo": "TheSpaghettiDetective/moonraker-obico", "type": "git_repo", "deps": ["moonraker"], "manager_key": "moonraker-obico", "service": "moonraker-obico", "dir": "moonraker-obico", "desc": "Connects the printer to Obico for AI-based failure detection and remote monitoring." },
+        { "id": "octoeverywhere", "name": "OctoEverywhere", "kind": "remote", "repo": "QuinnDamerell/OctoPrint-OctoEverywhere", "type": "git_repo", "deps": ["moonraker"], "manager_key": "octoeverywhere", "dir": "octoeverywhere", "desc": "Free secure remote access, monitoring and notifications for the printer from anywhere." },
+        { "id": "simplyprint", "name": "SimplyPrint", "kind": "remote", "repo": "SimplyPrint/SimplyPrint-Klipper", "type": "git_repo", "deps": ["moonraker"], "desc": "Connects the printer to the SimplyPrint cloud platform for remote management." }
       ]
     },
     {
       "group": "klipper-addons",
       "components": [
-        { "id": "kamp",            "name": "Adaptive Meshing & Purging (KAMP)", "kind": "config-addon", "repo": "kyleisah/Klipper-Adaptive-Meshing-Purging", "type": "git_repo", "deps": ["klipper"] },
-        { "id": "klipper-backup",  "name": "Klipper Backup",      "kind": "utility",  "repo": "Staubgeborener/klipper-backup", "type": "git_repo", "deps": [] },
-        { "id": "tmc-autotune",    "name": "TMC Autotune",        "kind": "config-addon", "repo": "andrewmcgr/klipper_tmc_autotune", "type": "git_repo", "deps": ["klipper"] },
-        { "id": "shaketune",       "name": "Shake&Tune",          "kind": "config-addon", "repo": "Frix-x/klippain-shaketune", "type": "git_repo", "deps": ["klipper"] },
-        { "id": "led-effect",      "name": "LED Effect",          "kind": "config-addon", "repo": "julianschill/klipper-led_effect", "type": "git_repo", "deps": ["klipper"] },
-        { "id": "gcode-shell-cmd", "name": "G-Code Shell Command","kind": "config-addon", "repo": "filamind-app/klipper-extras", "type": "manual", "deps": ["klipper"] },
-        { "id": "pretty-gcode",    "name": "PrettyGCode",         "kind": "viewer",   "repo": "Kragrathea/pgcode", "type": "git_repo", "deps": ["moonraker"] },
-        { "id": "timelapse",       "name": "Moonraker Timelapse", "kind": "utility",  "repo": "mainsail-crew/moonraker-timelapse", "type": "git_repo", "deps": ["moonraker", "crowsnest"] },
-        { "id": "telegram-bot",    "name": "Moonraker Telegram Bot","kind": "notifier","repo": "nlef/moonraker-telegram-bot", "type": "git_repo", "deps": ["moonraker"] }
+        { "id": "kamp", "name": "Adaptive Meshing & Purging (KAMP)", "kind": "config-addon", "repo": "kyleisah/Klipper-Adaptive-Meshing-Purging", "type": "git_repo", "deps": ["klipper"], "dir": "Klipper-Adaptive-Meshing-Purging", "desc": "Meshes only the area your print uses and lays a smart purge line - less wasted time and filament." },
+        { "id": "klipper-backup", "name": "Klipper Backup", "kind": "utility", "repo": "Staubgeborener/klipper-backup", "type": "git_repo", "deps": [], "manager_key": "klipper-backup", "dir": "klipper-backup", "desc": "Backs up your printer configuration to a Git repository on a schedule or on demand." },
+        { "id": "tmc-autotune", "name": "TMC Autotune", "kind": "config-addon", "repo": "andrewmcgr/klipper_tmc_autotune", "type": "git_repo", "deps": ["klipper"], "manager_key": "klipper_tmc_autotune", "dir": "klipper_tmc_autotune", "desc": "Tunes TMC stepper-driver registers automatically from each motor's specifications." },
+        { "id": "shaketune", "name": "Shake&Tune", "kind": "config-addon", "repo": "Frix-x/klippain-shaketune", "type": "git_repo", "deps": ["klipper"], "dir": "klippain_shaketune", "desc": "Resonance-measurement and input-shaping analysis tooling with detailed diagnostic graphs." },
+        { "id": "led-effect", "name": "LED Effect", "kind": "config-addon", "repo": "julianschill/klipper-led_effect", "type": "git_repo", "deps": ["klipper"], "dir": "klipper-led_effect", "desc": "Drives addressable LED strips with animated effects tied to printer state." },
+        { "id": "gcode-shell-cmd", "name": "G-Code Shell Command", "kind": "config-addon", "repo": "filamind-app/klipper-extras", "type": "manual", "deps": ["klipper"], "desc": "Lets G-code macros run host shell commands - the building block for many add-ons." },
+        { "id": "pretty-gcode", "name": "PrettyGCode", "kind": "viewer", "repo": "Kragrathea/pgcode", "type": "git_repo", "deps": ["moonraker"], "manager_key": "pgcode", "dir": "pgcode", "desc": "An interactive 3D G-code viewer for previewing toolpaths in the browser." },
+        { "id": "timelapse", "name": "Moonraker Timelapse", "kind": "utility", "repo": "mainsail-crew/moonraker-timelapse", "type": "git_repo", "deps": ["moonraker", "crowsnest"], "manager_key": "timelapse", "dir": "moonraker-timelapse", "desc": "Records timelapse videos of prints by capturing a webcam frame each layer." },
+        { "id": "telegram-bot", "name": "Moonraker Telegram Bot", "kind": "notifier", "repo": "nlef/moonraker-telegram-bot", "type": "git_repo", "deps": ["moonraker"], "manager_key": "moonraker-telegram-bot", "service": "moonraker-telegram-bot", "dir": "moonraker-telegram-bot", "desc": "Reports print status and lets you control the printer through a Telegram chat bot." }
       ]
     },
     {
       "group": "firmware-tools",
       "components": [
-        { "id": "katapult",  "name": "Katapult (bootloader)", "kind": "flash-tool", "repo": "Arksine/katapult", "type": "git_repo", "deps": [] },
-        { "id": "can-tools", "name": "CAN-bus tools",          "kind": "flash-tool", "repo": "Klipper3d/klipper", "type": "manual",   "deps": ["klipper"] }
+        { "id": "katapult", "name": "Katapult (bootloader)", "kind": "flash-tool", "repo": "Arksine/katapult", "type": "git_repo", "deps": [], "manager_key": "katapult", "dir": "katapult", "desc": "A bootloader for Klipper MCUs that enables firmware flashing over USB, CAN or serial." },
+        { "id": "can-tools", "name": "CAN-bus tools", "kind": "flash-tool", "repo": "Klipper3d/klipper", "type": "manual", "deps": ["klipper"], "desc": "Command-line utilities for bringing up and flashing CAN-bus toolhead boards." }
       ]
     }
   ]
