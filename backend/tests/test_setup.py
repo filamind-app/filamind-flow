@@ -104,6 +104,36 @@ def test_status_exposes_the_suite_install_command() -> None:
     assert "filamind-setup" in r.json()["suiteCommand"]
 
 
+async def test_set_port_rejects_out_of_range_and_reserved(monkeypatch) -> None:
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    bad = await setup_manager.set_port("filamind-3d", 70000, managed={"filamind-3d"})
+    assert bad.get("refused") is True
+    reserved = await setup_manager.set_port("filamind-3d", 7125, managed={"filamind-3d"})
+    assert reserved.get("refused") is True
+
+
+async def test_set_port_refuses_non_web_component(monkeypatch) -> None:
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    r = await setup_manager.set_port("klipper", 8080, managed={"klipper"})
+    assert r.get("refused") is True
+    assert "no web port" in r["output"]
+
+
+async def test_set_port_first_party_reruns_installer_with_port(monkeypatch) -> None:
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    captured: list[list[str]] = []
+
+    async def fake_run(cmd: list[str]) -> dict:
+        captured.append(cmd)
+        return {"ok": True, "output": "ok"}
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    # filamind-3d is a first-party web app and "installed" via the managed signal.
+    r = await setup_manager.set_port("filamind-3d", 8090, managed={"filamind-3d"}, services=set())
+    assert r.get("ok") is True
+    assert "install --port 8090" in " ".join(captured[0])
+
+
 def test_dependency_guard_passes_through_route_when_writes_off() -> None:
     # The route still refuses with 403 at the writes gate before any dependency work.
     r = client.post("/api/setup/install", json={"id": "mainsail"})

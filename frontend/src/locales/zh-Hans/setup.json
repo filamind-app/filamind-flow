@@ -6,6 +6,8 @@
     "summary": "已安装 {installed}/{total}",
     "needs": "依赖",
     "repo": "源代码",
+    "port": "端口",
+    "portApply": "应用",
     "noMatch": "没有与搜索匹配的组件。",
     "suite": {
       "title": "安装整个 FilaMind 套件",

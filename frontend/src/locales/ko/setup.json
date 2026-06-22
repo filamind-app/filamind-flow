@@ -6,6 +6,8 @@
     "summary": "{total}개 중 {installed}개 설치됨",
     "needs": "필요 항목",
     "repo": "소스",
+    "port": "포트",
+    "portApply": "적용",
     "noMatch": "검색과 일치하는 구성 요소가 없습니다.",
     "suite": {
       "title": "FilaMind 제품군 전체 설치",

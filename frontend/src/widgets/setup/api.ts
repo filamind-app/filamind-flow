@@ -47,3 +47,5 @@ export const installComponent = (id: string): Promise<SetupActionResult> => post
 export const updateComponent = (id: string): Promise<SetupActionResult> => post('update', { id })
 export const removeComponent = (id: string, confirm: string): Promise<SetupActionResult> =>
   post('remove', { id, confirm })
+export const setPort = (id: string, port: number): Promise<SetupActionResult> =>
+  post('port', { id, port })

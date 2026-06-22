@@ -6,6 +6,8 @@
     "summary": "{installed} von {total} installiert",
     "needs": "Benötigt",
     "repo": "Quelle",
+    "port": "Port",
+    "portApply": "Übernehmen",
     "noMatch": "Keine Komponenten entsprechen Ihrer Suche.",
     "suite": {
       "title": "Die gesamte FilaMind-Suite installieren",

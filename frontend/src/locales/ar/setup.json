@@ -6,6 +6,8 @@
     "summary": "{installed} من {total} مُثبَّت",
     "needs": "يتطلّب",
     "repo": "المصدر",
+    "port": "المنفذ",
+    "portApply": "تطبيق",
     "noMatch": "لا توجد مكوّنات تطابق بحثك.",
     "suite": {
       "title": "ثبّت حزمة FilaMind كاملةً",

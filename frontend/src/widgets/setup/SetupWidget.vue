@@ -9,6 +9,7 @@ import {
   fetchStatus,
   installComponent,
   removeComponent,
+  setPort,
   updateComponent,
 } from './api'
 import SetupHelpIllo from './SetupHelpIllo.vue'
@@ -25,6 +26,8 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 
 const query = ref('')
+/** Per-web-UI port the user is editing (seeded from each component's default_port). */
+const ports = ref<Record<string, number>>({})
 const busyId = ref<string | null>(null)
 const confirmRemoveId = ref<string | null>(null)
 /** The result of the most recent action, shown on the card that triggered it (ok or refused). */
@@ -41,6 +44,10 @@ async function load(): Promise<void> {
   try {
     const [catalog, st] = await Promise.all([fetchCatalog(), fetchStatus()])
     groups.value = catalog.groups
+    for (const g of catalog.groups)
+      for (const c of g.components)
+        if (c.type === 'web' && c.default_port && !(c.id in ports.value))
+          ports.value[c.id] = c.default_port
     status.value = st.status
     writesEnabled.value = st.writesEnabled
     suiteCommand.value = st.suiteCommand
@@ -126,6 +133,12 @@ async function run(id: string, op: () => Promise<SetupActionResult>): Promise<vo
     busyId.value = null
     confirmRemoveId.value = null
   }
+}
+
+const isWeb = (c: SetupComponent): boolean => c.type === 'web'
+function applyPort(c: SetupComponent): void {
+  const port = ports.value[c.id]
+  if (port) void run(c.id, () => setPort(c.id, port))
 }
 
 const doInstall = (c: SetupComponent): Promise<void> => run(c.id, () => installComponent(c.id))
@@ -264,6 +277,28 @@ onMounted(load)
             >
               {{ t('setup.repo') }}
             </a>
+          </div>
+
+          <div
+            v-if="isInstalled(c) && isWeb(c) && c.id in ports"
+            class="flex flex-wrap items-center gap-2 text-xs"
+          >
+            <label :for="`port-${c.id}`" class="text-ink/60">{{ t('setup.port') }}</label>
+            <input
+              :id="`port-${c.id}`"
+              v-model.number="ports[c.id]"
+              type="number"
+              min="1"
+              max="65535"
+              class="nb-input w-24 px-2 py-1"
+            />
+            <button
+              class="nb-btn px-3 py-1"
+              :disabled="!writesEnabled || busyId !== null"
+              @click="applyPort(c)"
+            >
+              {{ t('setup.portApply') }}
+            </button>
           </div>
 
           <pre

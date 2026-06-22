@@ -6,6 +6,8 @@
     "summary": "{total} में से {installed} इंस्टॉल",
     "needs": "आवश्यक",
     "repo": "स्रोत",
+    "port": "पोर्ट",
+    "portApply": "लागू करें",
     "noMatch": "आपकी खोज से कोई कॉम्पोनेंट मेल नहीं खाता।",
     "suite": {
       "title": "पूरा FilaMind सूट इंस्टॉल करें",
