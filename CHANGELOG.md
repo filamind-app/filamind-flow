@@ -6,6 +6,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Installer no longer accumulates backup files.** `scripts/install.sh` kept every
+  `<file>.bak.filamind.*` backup it made of `moonraker.conf` and the nginx site; it now prunes to
+  the three most recent, so repeated installs/updates don't litter the config directory.
+
 ### Added
 
 - **Setup: enable installing from the widget itself.** A one-click "Enable installing" toggle turns

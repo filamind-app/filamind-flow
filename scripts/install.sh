@@ -25,6 +25,14 @@ SERVICE="filamind-flow"
 
 info() { printf '\n\033[1;33m==>\033[0m %s\n' "$*"; }
 
+# Keep only the most recent FilaMind backups of a file so repeated installs/updates don't
+# accumulate "<file>.bak.filamind.*" litter. $1 = the backed-up file's path; $2 = an optional
+# command prefix (e.g. "sudo") for removing root-owned backups.
+prune_backups() {
+  local f
+  ls -t "$1".bak.filamind.* 2>/dev/null | tail -n +4 | while IFS= read -r f; do ${2:-} rm -f "$f"; done
+}
+
 # Repo root, resolved from this script's own location when it exists on disk (every subcommand is
 # run from a clone). The curl|bash full install has no file on disk and clones into $APP itself.
 SELF="${BASH_SOURCE[0]:-}"
@@ -407,6 +415,7 @@ PY
         [ -n "$latest_bak" ] && sudo cp "$latest_bak" "$PRIMARY_SITE" \
           && info "  subpath skipped (nginx config check failed) — reverted $PRIMARY_SITE"
       fi
+      [ -n "$PRIMARY_SITE" ] && prune_backups "$PRIMARY_SITE" sudo
     fi
   fi
 
@@ -452,6 +461,7 @@ PY
   [ -f "$ASVC" ] && { grep -qx "$SERVICE" "$ASVC" || echo "$SERVICE" >> "$ASVC"; }
   if [ -f "$MCONF" ] && ! grep -q "update_manager $SERVICE" "$MCONF"; then
     cp "$MCONF" "$MCONF.bak.filamind.$(date +%s)"
+    prune_backups "$MCONF"
     cat >> "$MCONF" <<'EOF'
 
 [update_manager filamind-flow]
@@ -520,6 +530,7 @@ PY
   fi
   if [ -f "$mconf" ] && grep -q "update_manager ${SERVICE}" "$mconf"; then
     cp "$mconf" "$mconf.bak.filamind.$(date +%s)" || true
+    prune_backups "$mconf"
     python3 - "$mconf" <<'PY' || true
 import re, sys
 p = sys.argv[1]
