@@ -28,6 +28,11 @@ class RemoveRef(BaseModel):
     confirm: str
 
 
+class PortRef(BaseModel):
+    id: str
+    port: int
+
+
 async def _moonraker_signals(settings: Settings) -> tuple[set[str], set[str]]:
     """Best-effort (update-manager keys, managed services) from Moonraker; empty when unreachable.
 
@@ -92,3 +97,12 @@ async def setup_remove(req: RemoveRef) -> dict[str, Any]:
         return _apply(await setup_manager.remove(req.id, req.confirm))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/port")
+async def setup_port(req: PortRef, settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    managed, services = await _moonraker_signals(settings)
+    try:
+        return _apply(await setup_manager.set_port(req.id, req.port, managed, services))
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc

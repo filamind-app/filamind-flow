@@ -8,6 +8,8 @@ export interface SetupComponent {
   first_party?: boolean
   /** One-line description of what the component does. */
   desc?: string
+  /** For web UIs: the port the component is served on by default. */
+  default_port?: number
 }
 
 export interface SetupGroup {

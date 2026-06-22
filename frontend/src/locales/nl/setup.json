@@ -6,6 +6,8 @@
     "summary": "{installed} van {total} geïnstalleerd",
     "needs": "Vereist",
     "repo": "Bron",
+    "port": "Poort",
+    "portApply": "Toepassen",
     "noMatch": "Geen componenten komen overeen met uw zoekopdracht.",
     "suite": {
       "title": "Installeer de volledige FilaMind-suite",

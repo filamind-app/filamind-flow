@@ -250,3 +250,40 @@ async def remove(cid: str, confirm: str) -> dict[str, Any]:
         return {"refused": True, "output": f"Refusing to remove {dest} (not a direct $HOME child)."}
     await asyncio.to_thread(shutil.rmtree, dest)
     return {"ok": True, "output": f"Removed {dest}"}
+
+
+# Ports we never let a web UI take over (Moonraker + Klipper's common API/host ports).
+_RESERVED_PORTS = {7125, 7126, 8883}
+
+
+async def set_port(
+    cid: str, port: int, managed: set[str] | None = None, services: set[str] | None = None
+) -> dict[str, Any]:
+    """Change the port an installed web UI is served on. First-party apps re-run their own installer
+    with --port; third-party UIs get a best-effort nginx ``listen`` rewrite + reload."""
+    catalog = load_catalog()
+    component = _require(cid, catalog)
+    if not writes_enabled():
+        return _refused()
+    if not (1 <= port <= 65535):
+        return {"refused": True, "output": f"Port {port} is out of range (1-65535)."}
+    if port in _RESERVED_PORTS:
+        return {"refused": True, "output": f"Port {port} is reserved; pick another."}
+    if component.type != "web":
+        return {"refused": True, "output": f"{component.name} has no web port to change."}
+    status = await probe_status(managed, services)
+    if status.get(cid) != "installed":
+        return {"refused": True, "output": f"{component.name} is not installed."}
+    # First-party web app: re-run its installer with the new port (it owns its nginx site).
+    if component.first_party:
+        cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- install --port {port}"
+        return await _run(["bash", "-c", cmd])
+    # Third-party web UI: rewrite the `listen` directive of its nginx site, then reload.
+    site = f"/etc/nginx/sites-available/{cid}"
+    script = (
+        f"set -e; "
+        f'test -f "{site}" || {{ echo "no nginx site at {site}"; exit 1; }}; '
+        f"sudo sed -i -E 's/^([[:space:]]*listen[[:space:]]+)[0-9]+;/\\1{port};/' \"{site}\"; "
+        f"sudo nginx -t && sudo systemctl reload nginx"
+    )
+    return await _run(["bash", "-c", script])

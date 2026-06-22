@@ -6,6 +6,8 @@
     "summary": "{total} bileşenden {installed} tanesi kurulu",
     "needs": "Gerekli",
     "repo": "Kaynak",
+    "port": "Bağlantı noktası",
+    "portApply": "Uygula",
     "noMatch": "Aramanızla eşleşen bileşen yok.",
     "suite": {
       "title": "FilaMind paketinin tamamını kurun",

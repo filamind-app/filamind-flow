@@ -6,6 +6,8 @@
     "summary": "{installed} dari {total} terpasang",
     "needs": "Membutuhkan",
     "repo": "Sumber",
+    "port": "Port",
+    "portApply": "Terapkan",
     "noMatch": "Tidak ada komponen yang cocok dengan pencarian Anda.",
     "suite": {
       "title": "Pasang seluruh suite FilaMind",

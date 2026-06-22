@@ -6,6 +6,8 @@
     "summary": "{total} 個中 {installed} 個インストール済み",
     "needs": "必要",
     "repo": "ソース",
+    "port": "ポート",
+    "portApply": "適用",
     "noMatch": "検索条件に一致するコンポーネントがありません。",
     "suite": {
       "title": "FilaMind スイート全体をインストール",

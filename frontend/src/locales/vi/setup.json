@@ -6,6 +6,8 @@
     "summary": "Đã cài đặt {installed} trên {total}",
     "needs": "Cần",
     "repo": "Nguồn",
+    "port": "Cổng",
+    "portApply": "Áp dụng",
     "noMatch": "Không có thành phần nào khớp với tìm kiếm của bạn.",
     "suite": {
       "title": "Cài đặt toàn bộ bộ công cụ FilaMind",
