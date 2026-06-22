@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "intro": "Automatisiere deinen Drucker mit sicheren WENN-DANN-Regeln. Standardmäßig aus; aktiviere jede Regel selbst.",
+    "empty": "Noch keine Regeln. Füge unten eine hinzu und aktiviere sie, wenn du bereit bist.",
+    "engine": {
+      "on": "Regel-Engine ist AN",
+      "off": "Regel-Engine ist AUS",
+      "turnOn": "Einschalten",
+      "turnOff": "Ausschalten",
+      "masterNote": "Es läuft nichts, solange nicht sowohl die Engine als auch die einzelne Regel aktiviert sind."
+    },
+    "triggers": {
+      "print_complete": "Wenn ein Druck abgeschlossen ist",
+      "print_error": "Wenn der Drucker einen Fehler meldet",
+      "temp_above": "Wenn ein Heizer steigt über",
+      "temp_below": "Wenn ein Heizer fällt unter"
+    },
+    "actions": { "notify": "Eine Benachrichtigung protokollieren", "gcode": "Einen G-code-Befehl ausführen" },
+    "rule": {
+      "armed": "Aktiviert",
+      "arm": "Deaktiviert",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "confirmDelete": "Regel löschen"
+    },
+    "form": {
+      "name": "Regelname",
+      "namePlaceholder": "z. B. Heizer nach dem Druck aus",
+      "trigger": "Wenn (Auslöser)",
+      "action": "Dann (Aktion)",
+      "heater": "Heizer",
+      "value": "Temperatur (°C)",
+      "message": "Nachricht",
+      "messagePlaceholder": "Wird im Regelprotokoll angezeigt",
+      "gcode": "G-code",
+      "gcodePlaceholder": "z. B. TURN_OFF_HEATERS",
+      "save": "Regel speichern",
+      "cancel": "Abbrechen",
+      "add": "Eine Regel hinzufügen"
+    },
+    "log": {
+      "title": "Letzte Aktivität",
+      "outcome": {
+        "notify": "benachrichtigt",
+        "ran": "G-code ausgeführt",
+        "skipped_busy": "übersprungen (Drucker beschäftigt)",
+        "error": "Fehler"
+      }
+    },
+    "help": {
+      "guide": "Anleitung",
+      "guideTitle": "Anleitung zur Regel-Engine",
+      "close": "Schließen",
+      "topics": {
+        "overview": {
+          "title": "Was ist die Regel-Engine?",
+          "body": "Sie überwacht den Drucker und führt eine Aktion aus, wenn eine von dir gesetzte Bedingung erfüllt ist - zum Beispiel eine Notiz protokollieren, wenn ein Druck abgeschlossen ist, oder die Heizer ausschalten. Jede Regel lautet WENN (ein Auslöser) DANN (eine Aktion)."
+        },
+        "safety": {
+          "title": "Wie sie sicher bleibt",
+          "body": "Die Engine ist standardmäßig aus und jede Regel muss einzeln aktiviert werden, sodass nichts überraschend abläuft. Eine Regel wird einmal ausgelöst, sobald ihre Bedingung zum ersten Mal erfüllt ist. G-code-Aktionen laufen nur, während der Drucker im Leerlauf ist - während eines Drucks werden sie abgelehnt - und jedes Ergebnis wird protokolliert."
+        },
+        "glossary": { "title": "Glossar" }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Auslöser",
+          "def": "Die Bedingung, die eine Regel startet, z. B. ein abgeschlossener Druck oder ein Heizer, der eine Temperatur überschreitet."
+        },
+        "action": {
+          "term": "Aktion",
+          "def": "Was die Regel tut, wenn sie ausgelöst wird: eine Benachrichtigung protokollieren oder einen G-code-Befehl ausführen (nur im Leerlauf)."
+        },
+        "armed": {
+          "term": "Aktiviert",
+          "def": "Eine Regel, die eingeschaltet ist. Deaktivierte Regeln bleiben erhalten, werden aber nie ausgelöst."
+        }
+      }
+    }
+  }
+}

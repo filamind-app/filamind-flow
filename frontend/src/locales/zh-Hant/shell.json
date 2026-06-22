@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "已知良好封裝",
         "description": "為運作正常的設定建立快照，並在錯誤編輯後還原。"
+      },
+      "rules": {
+        "title": "規則引擎",
+        "description": "安全的「如果-就」自動化：當某事發生時，執行一個動作。"
       }
     },
     "guard": {

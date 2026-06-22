@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Bilinen-İyi Paketler",
         "description": "Çalışan yapılandırmanızın anlık görüntüsünü alın ve kötü bir düzenlemeden sonra geri yükleyin."
+      },
+      "rules": {
+        "title": "Kural Motoru",
+        "description": "Güvenli EĞER-İSE otomasyonu: bir şey gerçekleştiğinde bir eylem çalıştırın."
       }
     },
     "guard": {

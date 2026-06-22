@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Buat snapshot konfigurasi yang berfungsi dan pulihkan setelah suntingan yang buruk."
+      },
+      "rules": {
+        "title": "Mesin Aturan",
+        "description": "Otomatisasi JIKA-MAKA yang aman: saat sesuatu terjadi, jalankan tindakan."
       }
     },
     "guard": {

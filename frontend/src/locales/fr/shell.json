@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Capturez votre configuration fonctionnelle et restaurez-la après une mauvaise modification."
+      },
+      "rules": {
+        "title": "Moteur de règles",
+        "description": "Automatisation SI-ALORS sûre : quand un événement se produit, exécutez une action."
       }
     },
     "guard": {

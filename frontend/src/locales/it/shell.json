@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Crea uno snapshot della tua configurazione funzionante e ripristinala dopo una modifica errata."
+      },
+      "rules": {
+        "title": "Motore delle regole",
+        "description": "Automazione sicura SE-ALLORA: quando accade qualcosa, esegui un'azione."
       }
     },
     "guard": {

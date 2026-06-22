@@ -75,7 +75,13 @@ export async function detectBackUi(opts: DetectOpts = {}): Promise<BackUi> {
 // GATED ones still appear but render an install-required panel (see widgets/index.ts) instead of
 // their UI; in the suite build they run normally. (Screen-only tools like the FilaMind-screen
 // command tab live inside Screen Manager and gate themselves at the tab level.)
-const SUITE_GATED = new Set<string>(['material-brain', 'tuning', 'preflight', 'known-good-pack'])
+const SUITE_GATED = new Set<string>([
+  'material-brain',
+  'tuning',
+  'preflight',
+  'known-good-pack',
+  'rules',
+])
 const SUITE_HIDDEN = new Set<string>([])
 
 /** Whether a widget should register under the current host (hidden ones drop out in Mainsail). */

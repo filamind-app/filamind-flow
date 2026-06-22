@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "intro": "用安全的「如果-就」規則自動化你的印表機。預設關閉；每條規則需自行啟用。",
+    "empty": "目前還沒有規則。在下方新增一條，準備好後再啟用。",
+    "engine": {
+      "on": "規則引擎已開啟",
+      "off": "規則引擎已關閉",
+      "turnOn": "開啟",
+      "turnOff": "關閉",
+      "masterNote": "必須同時開啟引擎與該條規則，規則才會執行。"
+    },
+    "triggers": {
+      "print_complete": "當列印完成時",
+      "print_error": "當印表機發生錯誤時",
+      "temp_above": "當加熱器溫度高於",
+      "temp_below": "當加熱器溫度低於"
+    },
+    "actions": { "notify": "記錄一則通知", "gcode": "執行一條 G-code 指令" },
+    "rule": {
+      "armed": "已啟用",
+      "arm": "已停用",
+      "edit": "編輯",
+      "delete": "刪除",
+      "confirmDelete": "刪除規則"
+    },
+    "form": {
+      "name": "規則名稱",
+      "namePlaceholder": "例如：列印後關閉加熱器",
+      "trigger": "如果（觸發條件）",
+      "action": "就（動作）",
+      "heater": "加熱器",
+      "value": "溫度（°C）",
+      "message": "訊息",
+      "messagePlaceholder": "顯示於規則紀錄中",
+      "gcode": "G-code",
+      "gcodePlaceholder": "例如：TURN_OFF_HEATERS",
+      "save": "儲存規則",
+      "cancel": "取消",
+      "add": "新增規則"
+    },
+    "log": {
+      "title": "近期活動",
+      "outcome": {
+        "notify": "已通知",
+        "ran": "已執行 G-code",
+        "skipped_busy": "已略過（印表機忙碌中）",
+        "error": "錯誤"
+      }
+    },
+    "help": {
+      "guide": "指南",
+      "guideTitle": "規則引擎指南",
+      "close": "關閉",
+      "topics": {
+        "overview": {
+          "title": "什麼是規則引擎？",
+          "body": "它會監看印表機，並在符合你設定的條件時執行一個動作 - 例如在列印完成時記錄一則備註，或關閉加熱器。每條規則都是「如果（觸發條件），就（動作）」。"
+        },
+        "safety": {
+          "title": "它如何保持安全",
+          "body": "引擎預設關閉，而且每條規則都必須個別啟用，因此不會有任何意外執行。當條件首次成立時，規則只會觸發一次。G-code 動作只會在印表機閒置時執行 - 列印期間會被拒絕 - 而且每個結果都會被記錄。"
+        },
+        "glossary": { "title": "詞彙表" }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "觸發條件",
+          "def": "啟動規則的條件，例如列印完成或加熱器跨越某個溫度。"
+        },
+        "action": {
+          "term": "動作",
+          "def": "規則觸發時所執行的事：記錄一則通知，或執行一條 G-code 指令（僅在閒置時）。"
+        },
+        "armed": {
+          "term": "已啟用",
+          "def": "已開啟的規則。已停用的規則會被保留，但永遠不會觸發。"
+        }
+      }
+    }
+  }
+}

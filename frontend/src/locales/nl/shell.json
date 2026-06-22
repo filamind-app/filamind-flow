@@ -151,6 +151,10 @@
       "known-good-pack": {
         "title": "Known-Good Packs",
         "description": "Maak een momentopname van je werkende config en herstel die na een mislukte bewerking."
+      },
+      "rules": {
+        "title": "Regel-engine",
+        "description": "Veilige ALS-DAN-automatisering: wanneer er iets gebeurt, voer een actie uit."
       }
     },
     "guard": {

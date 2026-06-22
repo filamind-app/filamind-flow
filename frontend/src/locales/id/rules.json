@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "intro": "Otomatiskan printer Anda dengan aturan JIKA-MAKA yang aman. Nonaktif secara bawaan; aktifkan setiap aturan sendiri.",
+    "empty": "Belum ada aturan. Tambahkan satu di bawah, lalu aktifkan saat Anda siap.",
+    "engine": {
+      "on": "Mesin aturan AKTIF",
+      "off": "Mesin aturan NONAKTIF",
+      "turnOn": "Aktifkan",
+      "turnOff": "Nonaktifkan",
+      "masterNote": "Tidak ada yang berjalan sampai mesin dan aturan masing-masing sama-sama aktif."
+    },
+    "triggers": {
+      "print_complete": "Saat pencetakan selesai",
+      "print_error": "Saat printer mengalami galat",
+      "temp_above": "Saat heater naik di atas",
+      "temp_below": "Saat heater turun di bawah"
+    },
+    "actions": { "notify": "Catat notifikasi", "gcode": "Jalankan perintah g-code" },
+    "rule": {
+      "armed": "Aktif",
+      "arm": "Nonaktif",
+      "edit": "Sunting",
+      "delete": "Hapus",
+      "confirmDelete": "Hapus aturan"
+    },
+    "form": {
+      "name": "Nama aturan",
+      "namePlaceholder": "mis. Matikan heater setelah cetak",
+      "trigger": "Jika (pemicu)",
+      "action": "Maka (tindakan)",
+      "heater": "Heater",
+      "value": "Suhu (°C)",
+      "message": "Pesan",
+      "messagePlaceholder": "Ditampilkan di log aturan",
+      "gcode": "G-code",
+      "gcodePlaceholder": "mis. TURN_OFF_HEATERS",
+      "save": "Simpan aturan",
+      "cancel": "Batal",
+      "add": "Tambah aturan"
+    },
+    "log": {
+      "title": "Aktivitas terbaru",
+      "outcome": {
+        "notify": "diberi tahu",
+        "ran": "menjalankan g-code",
+        "skipped_busy": "dilewati (printer sibuk)",
+        "error": "galat"
+      }
+    },
+    "help": {
+      "guide": "Panduan",
+      "guideTitle": "Panduan mesin aturan",
+      "close": "Tutup",
+      "topics": {
+        "overview": {
+          "title": "Apa itu mesin aturan?",
+          "body": "Mesin ini memantau printer dan menjalankan tindakan saat kondisi yang Anda atur terpenuhi - misalnya, mencatat catatan saat pencetakan selesai, atau mematikan heater. Setiap aturan berbentuk JIKA (sebuah pemicu) MAKA (sebuah tindakan)."
+        },
+        "safety": {
+          "title": "Cara menjaganya tetap aman",
+          "body": "Mesin nonaktif secara bawaan dan setiap aturan harus diaktifkan satu per satu, sehingga tidak ada yang berjalan secara mendadak. Sebuah aturan dipicu sekali saat kondisinya pertama kali terpenuhi. Tindakan g-code hanya berjalan saat printer diam - tindakan tersebut ditolak selama pencetakan - dan setiap hasilnya dicatat."
+        },
+        "glossary": { "title": "Glosarium" }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Pemicu",
+          "def": "Kondisi yang memulai sebuah aturan, mis. pencetakan yang selesai atau heater yang melewati suatu suhu."
+        },
+        "action": {
+          "term": "Tindakan",
+          "def": "Apa yang dilakukan aturan saat dipicu: mencatat notifikasi, atau menjalankan perintah g-code (hanya saat diam)."
+        },
+        "armed": {
+          "term": "Aktif",
+          "def": "Aturan yang dinyalakan. Aturan yang nonaktif tetap disimpan tetapi tidak pernah dipicu."
+        }
+      }
+    }
+  }
+}

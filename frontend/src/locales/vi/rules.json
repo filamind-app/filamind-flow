@@ -1,0 +1,86 @@
+{
+  "rules": {
+    "intro": "Tự động hóa máy in của bạn bằng các quy tắc NẾU-THÌ an toàn. Mặc định tắt; tự bạn kích hoạt từng quy tắc.",
+    "empty": "Chưa có quy tắc nào. Thêm một quy tắc bên dưới, rồi kích hoạt khi bạn sẵn sàng.",
+    "engine": {
+      "on": "Bộ máy quy tắc đang BẬT",
+      "off": "Bộ máy quy tắc đang TẮT",
+      "turnOn": "Bật",
+      "turnOff": "Tắt",
+      "masterNote": "Không có gì chạy cho đến khi cả bộ máy lẫn quy tắc riêng lẻ đều được bật."
+    },
+    "triggers": {
+      "print_complete": "Khi một bản in hoàn tất",
+      "print_error": "Khi máy in gặp lỗi",
+      "temp_above": "Khi một bộ gia nhiệt vượt quá",
+      "temp_below": "Khi một bộ gia nhiệt giảm dưới"
+    },
+    "actions": {
+      "notify": "Ghi một thông báo",
+      "gcode": "Chạy một lệnh g-code"
+    },
+    "rule": {
+      "armed": "Đã kích hoạt",
+      "arm": "Chưa kích hoạt",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "confirmDelete": "Xóa quy tắc"
+    },
+    "form": {
+      "name": "Tên quy tắc",
+      "namePlaceholder": "vd. Tắt bộ gia nhiệt sau khi in",
+      "trigger": "Nếu (kích hoạt)",
+      "action": "Thì (hành động)",
+      "heater": "Bộ gia nhiệt",
+      "value": "Nhiệt độ (°C)",
+      "message": "Thông điệp",
+      "messagePlaceholder": "Hiển thị trong nhật ký quy tắc",
+      "gcode": "G-code",
+      "gcodePlaceholder": "vd. TURN_OFF_HEATERS",
+      "save": "Lưu quy tắc",
+      "cancel": "Hủy",
+      "add": "Thêm một quy tắc"
+    },
+    "log": {
+      "title": "Hoạt động gần đây",
+      "outcome": {
+        "notify": "đã thông báo",
+        "ran": "đã chạy g-code",
+        "skipped_busy": "đã bỏ qua (máy in đang bận)",
+        "error": "lỗi"
+      }
+    },
+    "help": {
+      "guide": "Hướng dẫn",
+      "guideTitle": "Hướng dẫn bộ máy quy tắc",
+      "close": "Đóng",
+      "topics": {
+        "overview": {
+          "title": "Bộ máy quy tắc là gì?",
+          "body": "Nó theo dõi máy in và chạy một hành động khi điều kiện bạn đặt được thỏa mãn - ví dụ, ghi một ghi chú khi một bản in hoàn tất, hoặc tắt các bộ gia nhiệt. Mỗi quy tắc là NẾU (một kích hoạt) THÌ (một hành động)."
+        },
+        "safety": {
+          "title": "Cách nó giữ an toàn",
+          "body": "Bộ máy mặc định tắt và mỗi quy tắc phải được kích hoạt riêng lẻ, nên không có gì chạy bất ngờ. Một quy tắc kích hoạt một lần khi điều kiện của nó lần đầu trở thành đúng. Các hành động g-code chỉ chạy khi máy in rảnh - chúng bị từ chối trong lúc đang in - và mọi kết quả đều được ghi lại."
+        },
+        "glossary": {
+          "title": "Thuật ngữ"
+        }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Kích hoạt",
+          "def": "Điều kiện khởi động một quy tắc, vd. một bản in hoàn tất hoặc một bộ gia nhiệt vượt qua một mức nhiệt độ."
+        },
+        "action": {
+          "term": "Hành động",
+          "def": "Việc quy tắc thực hiện khi nó kích hoạt: ghi một thông báo, hoặc chạy một lệnh g-code (chỉ khi rảnh)."
+        },
+        "armed": {
+          "term": "Đã kích hoạt",
+          "def": "Một quy tắc đang được bật. Các quy tắc chưa kích hoạt vẫn được giữ nhưng không bao giờ chạy."
+        }
+      }
+    }
+  }
+}

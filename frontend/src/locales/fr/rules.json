@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "intro": "Automatisez votre imprimante avec des règles SI-ALORS sûres. Désactivées par défaut ; armez chaque règle vous-même.",
+    "empty": "Aucune règle pour le moment. Ajoutez-en une ci-dessous, puis armez-la quand vous êtes prêt.",
+    "engine": {
+      "on": "Le moteur de règles est ACTIVÉ",
+      "off": "Le moteur de règles est DÉSACTIVÉ",
+      "turnOn": "Activer",
+      "turnOff": "Désactiver",
+      "masterNote": "Rien ne s'exécute tant que le moteur et la règle individuelle ne sont pas tous deux activés."
+    },
+    "triggers": {
+      "print_complete": "Quand une impression se termine",
+      "print_error": "Quand l'imprimante rencontre une erreur",
+      "temp_above": "Quand un chauffage dépasse",
+      "temp_below": "Quand un chauffage descend sous"
+    },
+    "actions": { "notify": "Enregistrer une notification", "gcode": "Exécuter une commande g-code" },
+    "rule": {
+      "armed": "Armée",
+      "arm": "Désarmée",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "confirmDelete": "Supprimer la règle"
+    },
+    "form": {
+      "name": "Nom de la règle",
+      "namePlaceholder": "ex. Chauffages éteints après impression",
+      "trigger": "Si (déclencheur)",
+      "action": "Alors (action)",
+      "heater": "Chauffage",
+      "value": "Température (°C)",
+      "message": "Message",
+      "messagePlaceholder": "Affiché dans le journal de la règle",
+      "gcode": "G-code",
+      "gcodePlaceholder": "ex. TURN_OFF_HEATERS",
+      "save": "Enregistrer la règle",
+      "cancel": "Annuler",
+      "add": "Ajouter une règle"
+    },
+    "log": {
+      "title": "Activité récente",
+      "outcome": {
+        "notify": "notifié",
+        "ran": "g-code exécuté",
+        "skipped_busy": "ignoré (imprimante occupée)",
+        "error": "erreur"
+      }
+    },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Guide du moteur de règles",
+      "close": "Fermer",
+      "topics": {
+        "overview": {
+          "title": "Qu'est-ce que le moteur de règles ?",
+          "body": "Il surveille l'imprimante et exécute une action lorsqu'une condition que vous avez définie est remplie - par exemple, enregistrer une note à la fin d'une impression, ou éteindre les chauffages. Chaque règle est SI (un déclencheur) ALORS (une action)."
+        },
+        "safety": {
+          "title": "Comment ça reste sûr",
+          "body": "Le moteur est désactivé par défaut et chaque règle doit être armée individuellement, donc rien ne s'exécute par surprise. Une règle se déclenche une fois lorsque sa condition devient vraie pour la première fois. Les actions g-code ne s'exécutent que lorsque l'imprimante est au repos - elles sont refusées pendant une impression - et chaque résultat est enregistré."
+        },
+        "glossary": { "title": "Glossaire" }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Déclencheur",
+          "def": "La condition qui démarre une règle, ex. la fin d'une impression ou un chauffage franchissant une température."
+        },
+        "action": {
+          "term": "Action",
+          "def": "Ce que fait la règle quand elle se déclenche : enregistrer une notification, ou exécuter une commande g-code (uniquement au repos)."
+        },
+        "armed": {
+          "term": "Armée",
+          "def": "Une règle qui est activée. Les règles désarmées sont conservées mais ne se déclenchent jamais."
+        }
+      }
+    }
+  }
+}

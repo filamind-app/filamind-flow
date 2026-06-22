@@ -1,0 +1,86 @@
+{
+  "rules": {
+    "intro": "Automate your printer with safe IF-THEN rules. Off by default; arm each rule yourself.",
+    "empty": "No rules yet. Add one below, then arm it when you're ready.",
+    "engine": {
+      "on": "Rules engine is ON",
+      "off": "Rules engine is OFF",
+      "turnOn": "Turn on",
+      "turnOff": "Turn off",
+      "masterNote": "Nothing runs until both the engine and the individual rule are on."
+    },
+    "triggers": {
+      "print_complete": "When a print finishes",
+      "print_error": "When the printer errors",
+      "temp_above": "When a heater rises above",
+      "temp_below": "When a heater drops below"
+    },
+    "actions": {
+      "notify": "Log a notification",
+      "gcode": "Run a g-code command"
+    },
+    "rule": {
+      "armed": "Armed",
+      "arm": "Disarmed",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Delete rule"
+    },
+    "form": {
+      "name": "Rule name",
+      "namePlaceholder": "e.g. Heaters off after print",
+      "trigger": "If (trigger)",
+      "action": "Then (action)",
+      "heater": "Heater",
+      "value": "Temperature (°C)",
+      "message": "Message",
+      "messagePlaceholder": "Shown in the rule log",
+      "gcode": "G-code",
+      "gcodePlaceholder": "e.g. TURN_OFF_HEATERS",
+      "save": "Save rule",
+      "cancel": "Cancel",
+      "add": "Add a rule"
+    },
+    "log": {
+      "title": "Recent activity",
+      "outcome": {
+        "notify": "notified",
+        "ran": "ran g-code",
+        "skipped_busy": "skipped (printer busy)",
+        "error": "error"
+      }
+    },
+    "help": {
+      "guide": "Guide",
+      "guideTitle": "Rules engine guide",
+      "close": "Close",
+      "topics": {
+        "overview": {
+          "title": "What is the rules engine?",
+          "body": "It watches the printer and runs an action when a condition you set is met - for example, log a note when a print finishes, or turn the heaters off. Each rule is IF (a trigger) THEN (an action)."
+        },
+        "safety": {
+          "title": "How it stays safe",
+          "body": "The engine is off by default and every rule must be armed individually, so nothing runs by surprise. A rule fires once when its condition first becomes true. G-code actions only run while the printer is idle - they are refused during a print - and every outcome is logged."
+        },
+        "glossary": {
+          "title": "Glossary"
+        }
+      },
+      "glossary": {
+        "trigger": {
+          "term": "Trigger",
+          "def": "The condition that starts a rule, e.g. a print finishing or a heater crossing a temperature."
+        },
+        "action": {
+          "term": "Action",
+          "def": "What the rule does when it fires: log a notification, or run a g-code command (only while idle)."
+        },
+        "armed": {
+          "term": "Armed",
+          "def": "A rule that is switched on. Disarmed rules are kept but never fire."
+        }
+      }
+    }
+  }
+}
