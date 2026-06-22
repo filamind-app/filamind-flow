@@ -6,6 +6,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-22
+
 ### Added
 
 - **Setup: install the FilaMind apps from the GUI.** FilaMind 3d / screen / flow now install (and
