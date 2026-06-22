@@ -9,11 +9,17 @@ jobs:
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # push the CI-built dist back to the PR branch
     defaults:
       run:
         working-directory: frontend
     steps:
+      # On a PR, check out the branch tip (not the merge commit) so we can push the rebuilt dist
+      # back to it; on push to main, head_ref is empty and the default checkout is used.
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-node@v6
         with:
           node-version: 20
@@ -28,13 +34,26 @@ jobs:
       # while only en exists; becomes a real gate as translations land.
       - run: npm run i18n:keydiff
       - run: npm run build
-      # The printer host serves the pre-built bundle straight from git (no Node on the
-      # Pi), so a stale committed dist silently ships an old UI. Fail if a fresh build
-      # changes anything under frontend/dist that wasn't committed.
-      - name: Verify committed frontend/dist is fresh
+      # The printer host serves the pre-built bundle straight from git (no Node on the Pi), so the
+      # committed dist must match a fresh build. CI (Ubuntu) is the canonical builder: some bundlers
+      # aren't byte-identical across OS/toolchains, so on a PR we rebuild and commit the CI-built dist
+      # back to the branch (reproducible regardless of the author's machine). On push to main the
+      # bundle is already canonical (committed by the PR), so we only verify it is fresh.
+      - name: Commit rebuilt dist back to the PR branch
+        if: github.event_name == 'pull_request'
         run: |
           if [ -n "$(git status --porcelain -- dist)" ]; then
-            echo "::error::frontend/dist is stale — run 'npm run build' and commit the result."
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add dist
+            git commit -m "chore(ci): rebuild frontend/dist [skip ci]"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
+      - name: Verify committed frontend/dist is fresh
+        if: github.event_name == 'push'
+        run: |
+          if [ -n "$(git status --porcelain -- dist)" ]; then
+            echo "::error::frontend/dist is stale"
             git status --porcelain -- dist
             exit 1
           fi
