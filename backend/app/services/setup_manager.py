@@ -106,6 +106,23 @@ def suite_install_command() -> str:
     return f"curl -fsSL {url} | bash"
 
 
+def _augment_root_failure(result: dict[str, Any], component: Component) -> dict[str, Any]:
+    """A first-party install configures the web server, which needs root. The backend service has
+    no terminal to type a sudo password, so if that's why it failed, append the command to run on
+    the printer host (where sudo can prompt) instead of a cryptic 'a terminal is required' error.
+    """
+    if result.get("ok"):
+        return result
+    out = result.get("output") or ""
+    if any(s in out for s in ("terminal is required", "password is required", "sudo:")):
+        cmd = f"curl -fsSL {_raw_installer(component)} | bash"
+        result["output"] = (
+            out.rstrip() + f"\n\nInstalling {component.name} needs root to set up the web server, "
+            f"which can't be done from here. Run this on the printer host:\n  {cmd}"
+        )
+    return result
+
+
 def _is_installed(c: Component, managed: set[str], services: set[str]) -> bool:
     """Combine three signals, most-authoritative first:
 
@@ -224,7 +241,8 @@ async def install(
     # FilaMind apps (3d / screen / flow) ship a one-line installer in their repo - run it so the
     # GUI can install them even though they aren't a plain git_repo (web / tauri).
     if component.first_party:
-        return await _run(["bash", "-c", f"curl -fsSL {_raw_installer(component)} | bash"])
+        result = await _run(["bash", "-c", f"curl -fsSL {_raw_installer(component)} | bash"])
+        return _augment_root_failure(result, component)
     if component.type not in _GIT_TYPES:
         return {
             "refused": True,
