@@ -131,3 +131,61 @@ async def restore_screen(persist: bool = False) -> dict[str, Any]:
         steps.append(await _do("enable", SCREEN_UNIT))
     steps.append(await _do("start", SCREEN_UNIT))
     return {"action": "klipperscreen", "persist": persist, "steps": steps, "status": await status()}
+
+
+# --- generalized touchscreen selector (KlipperScreen / Guppyscreen / FilaMind) ---------------
+# The systemd unit behind each touch UI. Only one owns the physical display at a time; switching
+# stops the others and starts the chosen one (optionally flipping the boot default).
+_TOUCH_UNITS: dict[str, str] = {
+    "klipperscreen": SCREEN_UNIT,
+    "guppyscreen": "guppyscreen.service",
+    "filamind": KIOSK_UNIT,
+}
+
+
+async def touch_status() -> dict[str, Any]:
+    """Per-touch-UI installed / active / enabled state + which one currently owns the screen."""
+    screens: dict[str, Any] = {}
+    active = "none"
+    for key, unit in _TOUCH_UNITS.items():
+        installed = await _unit_installed(unit)
+        is_active = await _is_active(unit) if installed else False
+        screens[key] = {
+            "unit": unit,
+            "installed": installed,
+            "active": is_active,
+            "enabled": (await _is_enabled(unit)) if installed else False,
+        }
+        if is_active:
+            active = key
+    return {"active": active, "screens": screens, "url": get_settings().kiosk_url}
+
+
+async def switch_touch(target: str, persist: bool = False) -> dict[str, Any]:
+    """Make ``target`` (klipperscreen / guppyscreen / filamind) own the touchscreen.
+
+    Stops the other touch UIs and starts the chosen one; ``persist`` also flips the boot default.
+    Never leaves a dark screen: if the target fails to start, the previously-active UI is restored.
+    """
+    if target not in _TOUCH_UNITS:
+        raise ValueError(f"Unknown screen: {target}")
+    unit = _TOUCH_UNITS[target]
+    if not await _unit_installed(unit):
+        raise KioskNotInstalledError(f"{target} is not installed on this host.")
+    before = await touch_status()
+    prev = before["active"]
+    steps: list[dict[str, Any]] = []
+    for key, other in _TOUCH_UNITS.items():
+        if key == target or not before["screens"][key]["installed"]:
+            continue
+        if before["screens"][key]["active"]:
+            steps.append(await _do("stop", other))
+        if persist:
+            steps.append(await _do("disable", other))
+    if persist:
+        steps.append(await _do("enable", unit))
+    start_step = await _do("start", unit)
+    steps.append(start_step)
+    if not start_step["ok"] and prev not in ("none", target):
+        steps.append(await _do("start", _TOUCH_UNITS[prev]))  # recover the previous screen
+    return {"action": target, "persist": persist, "steps": steps, "status": await touch_status()}

@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Edit konfigurasi layar sentuh KlipperScreen printer Anda dengan aman, lalu restart KlipperScreen untuk menerapkannya. Setiap penyimpanan dicadangkan terlebih dahulu.",
+    "selector": {
+      "title": "Layar Sentuh",
+      "intro": "Pilih antarmuka mana yang berjalan pada layar printer.",
+      "refresh": "Segarkan",
+      "active": "Sedang berjalan",
+      "boot": "Saat boot",
+      "notInstalled": "Belum terpasang",
+      "use": "Gunakan",
+      "switching": "Mengganti…",
+      "persist": "Jadikan juga default saat boot"
+    },
     "help": {
       "guide": "Bantuan",
       "guideTitle": "Tentang KlipperScreen Studio",

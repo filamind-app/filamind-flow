@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Edita de forma segura la configuración de la pantalla táctil KlipperScreen de tu impresora y reinicia KlipperScreen para aplicarla. Cada guardado se respalda primero.",
+    "selector": {
+      "title": "Pantalla táctil",
+      "intro": "Elige qué interfaz se ejecuta en la pantalla de la impresora.",
+      "refresh": "Actualizar",
+      "active": "En ejecución",
+      "boot": "Al arrancar",
+      "notInstalled": "No instalada",
+      "use": "Usar",
+      "switching": "Cambiando…",
+      "persist": "Establecerla también como predeterminada al arrancar"
+    },
     "help": {
       "guide": "Ayuda",
       "guideTitle": "Acerca de KlipperScreen Studio",

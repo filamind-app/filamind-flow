@@ -273,6 +273,13 @@ class KioskSwitchBody(BaseModel):
     )
 
 
+class TouchSwitchBody(BaseModel):
+    """Body for the generalized touchscreen switch: which UI to run + whether to persist."""
+
+    target: str = Field(description="klipperscreen | guppyscreen | filamind")
+    persist: bool = Field(False, description="Also flip the boot default")
+
+
 @router.get("/kiosk")
 async def screen_kiosk_status() -> dict[str, Any]:
     """Current screen mode + whether the kiosk is installed / active / boot-enabled."""
@@ -292,3 +299,20 @@ async def screen_kiosk_switch(body: KioskSwitchBody) -> dict[str, Any]:
 async def screen_kiosk_restore(body: KioskSwitchBody) -> dict[str, Any]:
     """Hand the touchscreen back to KlipperScreen."""
     return await kiosk_service.restore_screen(body.persist)
+
+
+@router.get("/touch")
+async def screen_touch_status() -> dict[str, Any]:
+    """All touch UIs (KlipperScreen / Guppyscreen / FilaMind): installed / active / boot-enabled."""
+    return await kiosk_service.touch_status()
+
+
+@router.post("/touch/switch")
+async def screen_touch_switch(body: TouchSwitchBody) -> dict[str, Any]:
+    """Switch which touch UI owns the printer's display (optionally as the boot default)."""
+    try:
+        return await kiosk_service.switch_touch(body.target, body.persist)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except kiosk_service.KioskNotInstalledError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc

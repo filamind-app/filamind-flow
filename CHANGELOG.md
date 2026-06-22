@@ -14,6 +14,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Setup: change the port of an installed web UI.** Each installed web UI shows an editable port;
   applying it re-runs a first-party app's installer with the new port, or rewrites a third-party UI's
   nginx `listen` and reloads. Reserved ports are refused.
+- **Screen Manager: pick which touchscreen runs.** A selector detects the installed touch UIs
+  (KlipperScreen / Guppyscreen / FilaMind screen) and switches the display between them, optionally
+  as the boot default; if the chosen one fails to start, the previous screen is restored.
 
 ## [1.0.0] - 2026-06-22
 

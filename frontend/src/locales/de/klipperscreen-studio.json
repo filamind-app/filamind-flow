@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Bearbeite die KlipperScreen-Touchscreen-Konfiguration deines Druckers sicher und starte KlipperScreen neu, um sie anzuwenden. Jeder Speichervorgang wird zuvor gesichert.",
+    "selector": {
+      "title": "Touchscreen",
+      "intro": "Wähle aus, welche Oberfläche auf dem Display des Druckers läuft.",
+      "refresh": "Aktualisieren",
+      "active": "Aktiv",
+      "boot": "Beim Start",
+      "notInstalled": "Nicht installiert",
+      "use": "Verwenden",
+      "switching": "Wird gewechselt …",
+      "persist": "Außerdem als Standard beim Start festlegen"
+    },
     "help": {
       "guide": "Hilfe",
       "guideTitle": "Über KlipperScreen Studio",

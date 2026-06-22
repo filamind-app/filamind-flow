@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Chỉnh sửa cấu hình màn hình cảm ứng KlipperScreen của máy in một cách an toàn, sau đó khởi động lại KlipperScreen để áp dụng. Mỗi lần lưu đều được sao lưu trước.",
+    "selector": {
+      "title": "Màn hình cảm ứng",
+      "intro": "Chọn giao diện nào chạy trên màn hình của máy in.",
+      "refresh": "Làm mới",
+      "active": "Đang chạy",
+      "boot": "Khi khởi động",
+      "notInstalled": "Chưa cài đặt",
+      "use": "Dùng",
+      "switching": "Đang chuyển…",
+      "persist": "Đồng thời đặt làm mặc định khi khởi động"
+    },
     "help": {
       "guide": "Trợ giúp",
       "guideTitle": "Về KlipperScreen Studio",

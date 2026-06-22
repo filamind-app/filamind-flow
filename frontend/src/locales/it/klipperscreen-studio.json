@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Modifica in sicurezza la configurazione del touchscreen KlipperScreen della stampante, poi riavvia KlipperScreen per applicarla. Ogni salvataggio viene prima sottoposto a backup.",
+    "selector": {
+      "title": "Touchscreen",
+      "intro": "Scegli quale interfaccia viene eseguita sul display della stampante.",
+      "refresh": "Aggiorna",
+      "active": "In esecuzione",
+      "boot": "All'avvio",
+      "notInstalled": "Non installata",
+      "use": "Usa",
+      "switching": "Cambio in corso…",
+      "persist": "Imposta anche come predefinita all'avvio"
+    },
     "help": {
       "guide": "Aiuto",
       "guideTitle": "Informazioni su KlipperScreen Studio",

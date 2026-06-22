@@ -1,6 +1,17 @@
 {
   "klipperscreenStudio": {
     "intro": "Modifiez en toute sécurité la configuration de l'écran tactile KlipperScreen de votre imprimante, puis redémarrez KlipperScreen pour l'appliquer. Chaque enregistrement est sauvegardé au préalable.",
+    "selector": {
+      "title": "Écran tactile",
+      "intro": "Choisissez l'interface qui s'exécute sur l'écran de l'imprimante.",
+      "refresh": "Actualiser",
+      "active": "En cours d'exécution",
+      "boot": "Au démarrage",
+      "notInstalled": "Non installé",
+      "use": "Utiliser",
+      "switching": "Changement en cours…",
+      "persist": "En faire aussi l'interface par défaut au démarrage"
+    },
     "help": {
       "guide": "Aide",
       "guideTitle": "À propos de KlipperScreen Studio",
