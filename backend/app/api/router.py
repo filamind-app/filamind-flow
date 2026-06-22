@@ -21,6 +21,7 @@ from app.api.routes import (
     overview,
     preflight,
     reference,
+    rules,
     screen,
     setup,
     shaper,
@@ -54,3 +55,4 @@ api_router.include_router(screen.router)
 api_router.include_router(setup.router)
 api_router.include_router(host.router)
 api_router.include_router(kgp.router)
+api_router.include_router(rules.router)
