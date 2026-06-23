@@ -155,6 +155,10 @@
       "rules": {
         "title": "Motor de reglas",
         "description": "Automatización segura de tipo SI-ENTONCES: cuando algo ocurre, ejecuta una acción."
+      },
+      "control": {
+        "title": "Control",
+        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

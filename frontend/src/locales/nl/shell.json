@@ -155,6 +155,10 @@
       "rules": {
         "title": "Regel-engine",
         "description": "Veilige ALS-DAN-automatisering: wanneer er iets gebeurt, voer een actie uit."
+      },
+      "control": {
+        "title": "Bediening",
+        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

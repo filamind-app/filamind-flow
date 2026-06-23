@@ -15,6 +15,29 @@
     "pause": "Pauza",
     "resume": "Wznów",
     "cancel": "Anuluj",
-    "home": "Bazowanie"
+    "home": "Bazowanie",
+    "help": {
+      "guide": "Pomoc",
+      "guideTitle": "Sterowanie",
+      "close": "Zamknij",
+      "topics": {
+        "job": {
+          "title": "Zadanie",
+          "body": "Live job: progress, current layer, time remaining, and pause/resume/cancel."
+        },
+        "temps": {
+          "title": "Temperatury",
+          "body": "Hotend and bed temperatures with one-tap PLA/PETG/ABS presets."
+        },
+        "motion": {
+          "title": "Ruch",
+          "body": "Jog X/Y/Z, home all axes, and fine-tune Z with babystep."
+        },
+        "webcam": {
+          "title": "Kamera",
+          "body": "The printer's camera stream, when one is configured."
+        }
+      }
+    }
   }
 }

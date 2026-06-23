@@ -155,6 +155,10 @@
       "rules": {
         "title": "Mesin Aturan",
         "description": "Otomatisasi JIKA-MAKA yang aman: saat sesuatu terjadi, jalankan tindakan."
+      },
+      "control": {
+        "title": "Kontrol",
+        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

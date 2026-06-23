@@ -155,6 +155,10 @@
       "rules": {
         "title": "规则引擎",
         "description": "安全的“如果-则”自动化：当某事发生时，执行一个动作。"
+      },
+      "control": {
+        "title": "控制",
+        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {
