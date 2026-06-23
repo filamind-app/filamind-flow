@@ -10,7 +10,9 @@
       "notInstalled": "Nie zainstalowano",
       "use": "Użyj",
       "switching": "Przełączanie…",
-      "persist": "Ustaw też jako domyślny przy starcie"
+      "persist": "Ustaw też jako domyślny przy starcie",
+      "installedNotManageable": "Zainstalowano",
+      "notManageableHint": "Zainstalowano, ale nie można przełączyć stąd (brak usługi systemd)."
     },
     "touchPanel": {
       "title": "Sterowanie FilaMind",

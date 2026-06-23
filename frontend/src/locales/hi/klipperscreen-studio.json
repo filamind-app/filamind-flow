@@ -10,7 +10,9 @@
       "notInstalled": "इंस्टॉल नहीं है",
       "use": "उपयोग करें",
       "switching": "बदला जा रहा है…",
-      "persist": "इसे बूट पर डिफ़ॉल्ट भी बनाएं"
+      "persist": "इसे बूट पर डिफ़ॉल्ट भी बनाएं",
+      "installedNotManageable": "इंस्टॉल किया गया",
+      "notManageableHint": "इंस्टॉल है, पर यहाँ से स्विच नहीं किया जा सकता (कोई systemd सेवा नहीं)।"
     },
     "touchPanel": {
       "title": "FilaMind नियंत्रण",

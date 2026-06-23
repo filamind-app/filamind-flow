@@ -10,7 +10,9 @@
       "notInstalled": "Nicht installiert",
       "use": "Verwenden",
       "switching": "Wird gewechselt …",
-      "persist": "Außerdem als Standard beim Start festlegen"
+      "persist": "Außerdem als Standard beim Start festlegen",
+      "installedNotManageable": "Installiert",
+      "notManageableHint": "Installiert, kann aber hier nicht umgeschaltet werden (kein systemd-Dienst)."
     },
     "touchPanel": {
       "title": "FilaMind-Steuerung",

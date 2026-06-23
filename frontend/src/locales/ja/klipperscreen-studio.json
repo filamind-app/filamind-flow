@@ -10,7 +10,9 @@
       "notInstalled": "未インストール",
       "use": "使用する",
       "switching": "切り替え中…",
-      "persist": "起動時の既定としても設定する"
+      "persist": "起動時の既定としても設定する",
+      "installedNotManageable": "インストール済み",
+      "notManageableHint": "インストール済みですが、ここからは切り替えできません (systemd サービスなし)。"
     },
     "touchPanel": {
       "title": "FilaMind コントロール",

@@ -10,7 +10,9 @@
       "notInstalled": "Chưa cài đặt",
       "use": "Dùng",
       "switching": "Đang chuyển…",
-      "persist": "Đồng thời đặt làm mặc định khi khởi động"
+      "persist": "Đồng thời đặt làm mặc định khi khởi động",
+      "installedNotManageable": "Đã cài đặt",
+      "notManageableHint": "Đã cài đặt, nhưng không thể chuyển từ đây (không có dịch vụ systemd)."
     },
     "touchPanel": {
       "title": "Bảng điều khiển FilaMind",

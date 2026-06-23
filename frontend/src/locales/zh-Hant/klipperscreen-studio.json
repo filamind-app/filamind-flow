@@ -10,7 +10,9 @@
       "notInstalled": "未安裝",
       "use": "使用",
       "switching": "切換中…",
-      "persist": "同時設為開機時的預設介面"
+      "persist": "同時設為開機時的預設介面",
+      "installedNotManageable": "已安裝",
+      "notManageableHint": "已安裝，但無法在此切換（無 systemd 服務）。"
     },
     "touchPanel": {
       "title": "FilaMind 控制項",

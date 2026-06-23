@@ -10,7 +10,9 @@
       "notInstalled": "Not installed",
       "use": "Use",
       "switching": "Switching…",
-      "persist": "Also make it the default on boot"
+      "persist": "Also make it the default on boot",
+      "installedNotManageable": "Installed",
+      "notManageableHint": "Installed, but can't be switched from here (no systemd service)."
     },
     "touchPanel": {
       "title": "FilaMind controls",

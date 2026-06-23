@@ -10,7 +10,9 @@
       "notInstalled": "Belum terpasang",
       "use": "Gunakan",
       "switching": "Mengganti…",
-      "persist": "Jadikan juga default saat boot"
+      "persist": "Jadikan juga default saat boot",
+      "installedNotManageable": "Terpasang",
+      "notManageableHint": "Terpasang, tetapi tidak bisa dialihkan dari sini (tanpa layanan systemd)."
     },
     "touchPanel": {
       "title": "Kendali FilaMind",
