@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "控制",
+    "job": "列印工作",
+    "noJob": "無列印",
+    "eta": "剩餘",
+    "layer": "層",
+    "temps": "溫度",
+    "motion": "運動",
+    "babystep": "Z 微調",
+    "webcam": "攝影機",
+    "live": "即時",
+    "printing": "列印中",
+    "paused": "已暫停",
+    "pause": "暫停",
+    "resume": "繼續",
+    "cancel": "取消",
+    "home": "歸位"
+  }
+}

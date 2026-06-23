@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "Controllo",
+    "job": "Lavoro",
+    "noJob": "Nessuna stampa",
+    "eta": "ETA",
+    "layer": "Strato",
+    "temps": "Temperature",
+    "motion": "Movimento",
+    "babystep": "Babystep Z",
+    "webcam": "Webcam",
+    "live": "live",
+    "printing": "In stampa",
+    "paused": "In pausa",
+    "pause": "Pausa",
+    "resume": "Riprendi",
+    "cancel": "Annulla",
+    "home": "Home"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "控制",
+    "job": "打印任务",
+    "noJob": "无打印",
+    "eta": "剩余",
+    "layer": "层",
+    "temps": "温度",
+    "motion": "运动",
+    "babystep": "Z 微调",
+    "webcam": "摄像头",
+    "live": "实时",
+    "printing": "打印中",
+    "paused": "已暂停",
+    "pause": "暂停",
+    "resume": "继续",
+    "cancel": "取消",
+    "home": "归位"
+  }
+}
