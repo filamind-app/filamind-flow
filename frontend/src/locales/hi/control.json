@@ -15,6 +15,29 @@
     "pause": "रोकें",
     "resume": "फिर शुरू",
     "cancel": "रद्द करें",
-    "home": "होम"
+    "home": "होम",
+    "help": {
+      "guide": "मदद",
+      "guideTitle": "नियंत्रण",
+      "close": "बंद करें",
+      "topics": {
+        "job": {
+          "title": "प्रिंट जॉब",
+          "body": "Live job: progress, current layer, time remaining, and pause/resume/cancel."
+        },
+        "temps": {
+          "title": "तापमान",
+          "body": "Hotend and bed temperatures with one-tap PLA/PETG/ABS presets."
+        },
+        "motion": {
+          "title": "मोशन",
+          "body": "Jog X/Y/Z, home all axes, and fine-tune Z with babystep."
+        },
+        "webcam": {
+          "title": "वेबकैम",
+          "body": "The printer's camera stream, when one is configured."
+        }
+      }
+    }
   }
 }

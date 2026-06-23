@@ -6,9 +6,13 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { moonraker } from '@/core/moonraker'
 import { usePrinterGuard } from '@/core/printerGuard'
 import { usePrinterStore } from '@/core/store/printer'
+
+import HelpIllo from './HelpIllo.vue'
+import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 
 const { t } = useI18n({ useScope: 'global' })
 const printer = usePrinterStore()
@@ -114,7 +118,19 @@ const camUrl = '/webcam/?action=stream'
 
 <template>
   <div class="mx-auto max-w-4xl">
-    <h2 class="mb-3 font-display text-2xl font-bold">{{ t('control.title') }}</h2>
+    <div class="mb-3 flex items-center justify-between gap-2">
+      <h2 class="font-display text-2xl font-bold">{{ t('control.title') }}</h2>
+      <HelpDrawer
+        namespace="control"
+        :topics="HELP_TOPICS"
+        :illo-map="HELP_ILLO"
+        :illo="HelpIllo"
+        :glossary-keys="GLOSSARY_KEYS"
+        :button-label="t('control.help.guide')"
+        :title="t('control.help.guideTitle')"
+        :close-label="t('control.help.close')"
+      />
+    </div>
     <div class="grid gap-3 sm:grid-cols-2">
       <!-- Print job -->
       <section class="nb-card space-y-2 bg-surface p-3">

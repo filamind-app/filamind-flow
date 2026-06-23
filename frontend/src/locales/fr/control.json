@@ -15,6 +15,29 @@
     "pause": "Pause",
     "resume": "Reprendre",
     "cancel": "Annuler",
-    "home": "Origine"
+    "home": "Origine",
+    "help": {
+      "guide": "Aide",
+      "guideTitle": "Contrôle",
+      "close": "Fermer",
+      "topics": {
+        "job": {
+          "title": "Impression",
+          "body": "Live job: progress, current layer, time remaining, and pause/resume/cancel."
+        },
+        "temps": {
+          "title": "Températures",
+          "body": "Hotend and bed temperatures with one-tap PLA/PETG/ABS presets."
+        },
+        "motion": {
+          "title": "Mouvement",
+          "body": "Jog X/Y/Z, home all axes, and fine-tune Z with babystep."
+        },
+        "webcam": {
+          "title": "Webcam",
+          "body": "The printer's camera stream, when one is configured."
+        }
+      }
+    }
   }
 }
