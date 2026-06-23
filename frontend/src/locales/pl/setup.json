@@ -38,6 +38,9 @@
           "body": "Przeglądaj katalog według grup; każdy komponent pokazuje, czy jest zainstalowany. Instalowanie, aktualizowanie i usuwanie działają na hoście drukarki i pozostają tu wyłączone, dopóki ich nie włączysz — interfejs wiersza poleceń filamind-setup zawsze może to zrobić."
         }
       }
-    }
+    },
+    "upToDate": "Aktualne",
+    "versionInstalled": "Zainstalowana wersja",
+    "versionLatest": "Najnowsza wersja"
   }
 }

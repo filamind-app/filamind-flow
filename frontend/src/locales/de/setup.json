@@ -38,6 +38,9 @@
           "body": "Durchsuchen Sie den Katalog nach Gruppe; jede Komponente zeigt an, ob sie installiert ist. Installieren, Aktualisieren und Entfernen laufen auf dem Drucker-Host und bleiben hier deaktiviert, bis Sie sie aktivieren — die filamind-setup CLI kann es jederzeit erledigen."
         }
       }
-    }
+    },
+    "upToDate": "Aktuell",
+    "versionInstalled": "Installierte Version",
+    "versionLatest": "Neueste Version"
   }
 }

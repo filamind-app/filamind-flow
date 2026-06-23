@@ -37,20 +37,31 @@ class WritesRef(BaseModel):
     enabled: bool
 
 
-async def _moonraker_signals(settings: Settings) -> tuple[set[str], set[str]]:
-    """Best-effort (update-manager keys, managed services) from Moonraker; empty when unreachable.
-
-    These refine install detection; on ANY failure the manager falls back to the dir heuristic, so
-    the widget's status read never 500s. ``ValueError`` covers a non-JSON 200 body (json decode);
-    ``httpx.HTTPError`` covers unreachable/refused/bad-status (matches beacon_service's pattern).
+async def _moonraker_full(
+    settings: Settings,
+) -> tuple[dict[str, Any], set[str], int | None]:
+    """Best-effort (update-manager ``version_info``, managed services, remaining GitHub quota) from
+    Moonraker; empty when unreachable. ``version_info`` carries each managed component's version /
+    remote_version / commits_behind; the remaining-quota number gates best-effort GitHub lookups.
+    On ANY failure callers fall back to the dir heuristic, so the status read never 500s.
     """
     client = MoonrakerClient(settings.moonraker_url)
     try:
-        managed = {k.lower() for k in await client.update_status()}
+        raw = await client.update_status_full()
+        vi = raw.get("version_info")
+        version_info = vi if isinstance(vi, dict) else {}
+        remaining = raw.get("github_requests_remaining")
         services = {s.lower() for s in await client.available_services()}
-        return managed, services
+        return version_info, services, (remaining if isinstance(remaining, int) else None)
     except (httpx.HTTPError, ValueError):
-        return set(), set()
+        return {}, set(), None
+
+
+async def _moonraker_signals(settings: Settings) -> tuple[set[str], set[str]]:
+    """(update-manager keys, managed services) for install detection — install/port paths only need
+    the boolean signals, not versions, so this thin wrapper keeps their call sites unchanged."""
+    version_info, services, _ = await _moonraker_full(settings)
+    return {k.lower() for k in version_info}, services
 
 
 @router.get("/catalog")
@@ -61,10 +72,11 @@ async def setup_catalog() -> dict[str, Any]:
 
 @router.get("/status")
 async def setup_status(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
-    """Installed status per component + whether GUI writes are enabled on this host."""
-    managed, services = await _moonraker_signals(settings)
+    """Per-component install state + version numbers + an update-available flag, plus whether GUI
+    writes are enabled on this host."""
+    version_info, services, github_remaining = await _moonraker_full(settings)
     return {
-        "status": await setup_manager.probe_status(managed, services),
+        "status": await setup_manager.probe_detailed(version_info, services, github_remaining),
         "writesEnabled": setup_manager.writes_enabled(),
         "suiteCommand": setup_manager.suite_install_command(),
     }

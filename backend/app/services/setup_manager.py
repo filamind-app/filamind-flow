@@ -14,9 +14,12 @@ from __future__ import annotations
 import asyncio
 import json
 import shutil
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
+import httpx
 
 from app.config import get_settings
 
@@ -24,6 +27,11 @@ CATALOG_PATH = Path(__file__).resolve().parents[1] / "data" / "setup-catalog.jso
 
 # Component `type`s we can install/update via a plain git clone + the component's own install.sh.
 _GIT_TYPES = {"git_repo", "service"}
+
+# Best-effort "latest version" lookups (for not-installed components) are cached so we hit GitHub at
+# most once per repo per window, and are gated on Moonraker's reported remaining quota (see below).
+_LATEST_TTL = 12 * 3600.0
+_latest_cache: dict[str, tuple[float, str]] = {}
 
 
 @dataclass
@@ -176,6 +184,148 @@ async def probe_status(
         cid: ("installed" if _is_installed(c, m, s) else "not-installed")
         for cid, c in catalog.items()
     }
+
+
+def _update_available(entry: dict[str, Any]) -> bool:
+    """An update is available when Moonraker reports commits behind, or the installed version
+    differs from the remote one (web UIs have no commit list, only a version string)."""
+    behind = entry.get("commits_behind")
+    if isinstance(behind, list) and behind:
+        return True
+    version, remote = entry.get("version"), entry.get("remote_version")
+    return bool(version and remote and version != remote)
+
+
+async def _git_version(dest: Path) -> str:
+    """Installed version of an unmanaged git checkout, best-effort. ``describe --tags --always``
+    yields the nearest tag (or a short hash when untagged); empty when it's not a git work tree."""
+    if not (dest / ".git").is_dir():
+        return ""
+    try:
+        res = await asyncio.wait_for(
+            _run(["git", "-C", str(dest), "describe", "--tags", "--always"]), timeout=5.0
+        )
+    except TimeoutError:
+        return ""  # a stalled git must never hang the status read
+    return res["output"].strip() if res["ok"] else ""
+
+
+async def _github_latest(repo: str) -> str:
+    """Latest published version of ``owner/name`` from GitHub (release tag, else newest tag). Cached
+    on success for ``_LATEST_TTL``. Returns ``""`` on rate-limit / unreachable / no tags (and does
+    NOT cache the empty, so it can be retried once quota is back). Never raises."""
+    now = time.time()
+    hit = _latest_cache.get(repo)
+    if hit and now - hit[0] < _LATEST_TTL:
+        return hit[1]
+    version = ""
+    try:
+        async with httpx.AsyncClient(timeout=4.0) as client:
+            r = await client.get(f"https://api.github.com/repos/{repo}/releases/latest")
+            if r.status_code == 200:
+                version = str((r.json() or {}).get("tag_name") or "")
+            if not version:
+                r = await client.get(
+                    f"https://api.github.com/repos/{repo}/tags", params={"per_page": 1}
+                )
+                if r.status_code == 200:
+                    data = r.json()
+                    if isinstance(data, list) and data:
+                        version = str(data[0].get("name") or "")
+    except (httpx.HTTPError, ValueError):
+        version = ""
+    if version:
+        _latest_cache[repo] = (now, version)
+    return version
+
+
+async def _latest_versions(
+    repos_by_cid: dict[str, str], github_remaining: int | None
+) -> dict[str, str]:
+    """Best-effort latest version per component id, for not-installed components. Repos already
+    cached are free; uncached ones are fetched only when there is comfortable quota headroom (each
+    may cost up to 2 requests), so a status read never exhausts the host's GitHub limit."""
+    now = time.time()
+    repos = set(repos_by_cid.values())
+    cached = {
+        r: _latest_cache[r][1]
+        for r in repos
+        if r in _latest_cache and now - _latest_cache[r][0] < _LATEST_TTL
+    }
+    to_fetch = [r for r in repos if r not in cached]
+    # Budget the lookups: each repo costs up to 2 requests, and we reserve headroom for Moonraker's
+    # own update checks. Fetch only as many as fit (partial is fine; the rest fill in over later
+    # reads as the cache warms). When Moonraker does NOT report remaining quota, assume a
+    # conservative floor rather than "unlimited" - treating None as no-gate would let one cold
+    # read fan out across the whole catalog and exhaust GitHub's 60/hr limit.
+    budget = github_remaining if github_remaining is not None else 30
+    max_fetch = max(0, (budget - 10) // 2)
+    if len(to_fetch) > max_fetch:
+        to_fetch = to_fetch[:max_fetch]
+    fetched: dict[str, str] = {}
+    if to_fetch:
+        sem = asyncio.Semaphore(6)
+
+        async def one(repo: str) -> None:
+            async with sem:
+                fetched[repo] = await _github_latest(repo)
+
+        await asyncio.gather(*[one(r) for r in to_fetch])
+    versions = {**cached, **fetched}
+    return {cid: versions.get(repo, "") for cid, repo in repos_by_cid.items()}
+
+
+async def probe_detailed(
+    version_info: dict[str, Any] | None = None,
+    services: set[str] | None = None,
+    github_remaining: int | None = None,
+) -> dict[str, dict[str, Any]]:
+    """Rich per-component status for the widget: install state + version numbers + an update flag.
+
+    - Installed + Moonraker-managed → ``version`` / ``latest`` / ``updateAvailable`` from the
+      update-manager ``version_info`` entry (the authoritative, already-fetched source).
+    - Installed + unmanaged git checkout → ``version`` via ``git describe`` (local, best-effort).
+    - Not-installed → ``latest`` via a quota-gated, cached GitHub lookup (so the operator can see
+      what an install would bring); empty when quota is short or the repo has no published tag.
+    """
+    catalog = load_catalog()
+    vi_map = {k.lower(): v for k, v in (version_info or {}).items() if isinstance(v, dict)}
+    managed = set(vi_map.keys())
+    s = services or set()
+
+    out: dict[str, dict[str, Any]] = {}
+    git_dirs: dict[str, Path] = {}
+    not_installed: dict[str, str] = {}
+
+    for cid, c in catalog.items():
+        installed = _is_installed(c, managed, s)
+        entry = vi_map.get((c.manager_key or c.id).lower())
+        rec: dict[str, Any] = {
+            "status": "installed" if installed else "not-installed",
+            "version": "",
+            "latest": "",
+            "updateAvailable": False,
+        }
+        if entry is not None:
+            rec["version"] = str(entry.get("version") or "")
+            rec["latest"] = str(entry.get("remote_version") or "")
+            rec["updateAvailable"] = bool(installed and _update_available(entry))
+        elif installed:
+            git_dirs[cid] = _install_dir(c)
+        else:
+            not_installed[cid] = c.repo
+        out[cid] = rec
+
+    if git_dirs:
+        versions = await asyncio.gather(*[_git_version(p) for p in git_dirs.values()])
+        for cid, version in zip(git_dirs.keys(), versions, strict=True):
+            out[cid]["version"] = version
+
+    if not_installed:
+        for cid, version in (await _latest_versions(not_installed, github_remaining)).items():
+            out[cid]["latest"] = version
+
+    return out
 
 
 def _writes_flag_path() -> Path:

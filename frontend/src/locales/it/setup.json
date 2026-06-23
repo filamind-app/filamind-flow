@@ -38,6 +38,9 @@
           "body": "Sfoglia il catalogo per gruppo; ogni componente indica se è installato. L'installazione, l'aggiornamento e la rimozione vengono eseguiti sull'host della stampante e restano disabilitati qui finché non li abiliti — la CLI filamind-setup può sempre farlo."
         }
       }
-    }
+    },
+    "upToDate": "Aggiornato",
+    "versionInstalled": "Versione installata",
+    "versionLatest": "Ultima versione"
   }
 }
