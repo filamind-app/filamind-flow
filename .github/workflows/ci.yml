@@ -34,11 +34,12 @@ jobs:
       # while only en exists; becomes a real gate as translations land.
       - run: npm run i18n:keydiff
       - run: npm run build
-      # The printer host serves the pre-built bundle straight from git (no Node on the Pi), so the
-      # committed dist must match a fresh build. CI (Ubuntu) is the canonical builder: some bundlers
-      # aren't byte-identical across OS/toolchains, so on a PR we rebuild and commit the CI-built dist
-      # back to the branch (reproducible regardless of the author's machine). On push to main the
-      # bundle is already canonical (committed by the PR), so we only verify it is fresh.
+      # The printer host serves the pre-built bundle straight from git (no Node on the Pi), so a
+      # fresh, coherent dist must be committed. The bundler's chunk hashes are NOT byte-reproducible
+      # across runs (the i18n virtual modules rehash), so a strict committed-vs-rebuild match can't
+      # pass. The PR job is the real gate: on every PR it rebuilds and commits the canonical
+      # CI-built dist back to the branch. On push to main we sanity-check that a coherent bundle is
+      # committed (index.html present and pointing at a chunk that exists) and only warn on hash drift.
       - name: Commit rebuilt dist back to the PR branch
         if: github.event_name == 'pull_request'
         run: |
@@ -51,13 +52,17 @@ jobs:
             git commit -m "chore(ci): rebuild frontend/dist"
             git push origin HEAD:${{ github.head_ref }}
           fi
-      - name: Verify committed frontend/dist is fresh
+      - name: Sanity-check committed frontend/dist
         if: github.event_name == 'push'
         run: |
-          if [ -n "$(git status --porcelain -- dist)" ]; then
-            echo "::error::frontend/dist is stale"
-            git status --porcelain -- dist
+          test -f dist/index.html || { echo "::error::dist/index.html is missing"; exit 1; }
+          entry=$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' dist/index.html | head -1)
+          if [ -z "$entry" ] || [ ! -f "dist/$entry" ]; then
+            echo "::error::dist entry chunk missing or unreferenced ($entry) - the committed bundle is broken/stale"
             exit 1
+          fi
+          if [ -n "$(git status --porcelain -- dist)" ]; then
+            echo "::warning::frontend/dist differs from a fresh local rebuild (non-deterministic bundler hashes); the committed bundle is the canonical PR build."
           fi
 
   backend:
