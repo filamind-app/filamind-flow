@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import time
+
 from fastapi.testclient import TestClient
 
 from app.main import create_app
@@ -87,6 +89,8 @@ async def test_probe_detailed_reports_versions_and_update_flag() -> None:
 async def test_latest_version_lookups_are_quota_capped(monkeypatch) -> None:
     # Best-effort GitHub lookups for not-installed components must never exhaust the host's quota.
     setup_manager._latest_cache.clear()
+    setup_manager._latest_cache_loaded = True  # skip disk load
+    monkeypatch.setattr(setup_manager, "_save_latest_cache", lambda: None)  # don't touch disk
     calls: list[str] = []
 
     async def fake_latest(repo: str) -> str:
@@ -111,6 +115,32 @@ async def test_latest_version_lookups_are_quota_capped(monkeypatch) -> None:
     calls.clear()
     await setup_manager._latest_versions(repos, github_remaining=200)
     assert len(calls) == 27
+
+
+async def test_latest_versions_served_from_disk_cache_without_github(monkeypatch, tmp_path) -> None:
+    # Once a version is cached on disk, a not-installed component shows it even on a fresh process
+    # with GitHub quota exhausted - no network hit. This keeps versions from going blank.
+    monkeypatch.setattr(
+        setup_manager, "_latest_cache_path", lambda: tmp_path / "setup-latest-cache.json"
+    )
+    setup_manager._latest_cache.clear()
+    setup_manager._latest_cache_loaded = False
+    setup_manager._latest_cache["owner/repo"] = (time.time(), "v9.9.9")
+    setup_manager._save_latest_cache()
+
+    # Simulate a fresh process: drop the in-memory cache so it must reload from disk.
+    setup_manager._latest_cache.clear()
+    setup_manager._latest_cache_loaded = False
+    called: list[str] = []
+
+    async def boom(repo: str) -> str:
+        called.append(repo)
+        return ""
+
+    monkeypatch.setattr(setup_manager, "_github_latest", boom)
+    out = await setup_manager._latest_versions({"c": "owner/repo"}, github_remaining=0)
+    assert out["c"] == "v9.9.9"  # served from disk
+    assert called == []  # no GitHub request needed
 
 
 async def test_first_party_nginx_app_needs_its_site_not_just_a_clone(monkeypatch, tmp_path) -> None:

@@ -30,8 +30,45 @@ _GIT_TYPES = {"git_repo", "service"}
 
 # Best-effort "latest version" lookups (for not-installed components) are cached so we hit GitHub at
 # most once per repo per window, and are gated on Moonraker's reported remaining quota (see below).
-_LATEST_TTL = 12 * 3600.0
+# The cache is persisted to disk so versions stay visible across restarts and when the host's GitHub
+# quota is momentarily exhausted (Moonraker shares the 60/hr unauthenticated limit) - otherwise a
+# cold process with low quota would show blank versions for every not-installed component.
+_LATEST_TTL = 7 * 24 * 3600.0  # versions change rarely; keep them shown for a week, refresh lazily
 _latest_cache: dict[str, tuple[float, str]] = {}
+_latest_cache_loaded = False
+
+
+def _latest_cache_path() -> Path:
+    return Path(get_settings().data_dir).expanduser() / "setup-latest-cache.json"
+
+
+def _load_latest_cache() -> None:
+    """Populate the in-memory cache from disk once per process, so a fresh start still shows the
+    last-known versions even before (or without) a new GitHub fetch."""
+    global _latest_cache_loaded
+    if _latest_cache_loaded:
+        return
+    _latest_cache_loaded = True
+    try:
+        raw = json.loads(_latest_cache_path().read_text(encoding="utf-8"))
+        for repo, val in raw.items():
+            if isinstance(val, list) and len(val) == 2:
+                _latest_cache[repo] = (float(val[0]), str(val[1]))
+    except (OSError, json.JSONDecodeError, ValueError, TypeError):
+        pass
+
+
+def _save_latest_cache() -> None:
+    try:
+        path = _latest_cache_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(
+            json.dumps({k: [v[0], v[1]] for k, v in _latest_cache.items()}), encoding="utf-8"
+        )
+        tmp.replace(path)
+    except OSError:
+        pass
 
 
 @dataclass
@@ -219,8 +256,10 @@ async def _github_latest(repo: str) -> str:
     if hit and now - hit[0] < _LATEST_TTL:
         return hit[1]
     version = ""
+    token = get_settings().github_token.strip()
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
     try:
-        async with httpx.AsyncClient(timeout=4.0) as client:
+        async with httpx.AsyncClient(timeout=4.0, headers=headers) as client:
             r = await client.get(f"https://api.github.com/repos/{repo}/releases/latest")
             if r.status_code == 200:
                 version = str((r.json() or {}).get("tag_name") or "")
@@ -245,6 +284,7 @@ async def _latest_versions(
     """Best-effort latest version per component id, for not-installed components. Repos already
     cached are free; uncached ones are fetched only when there is comfortable quota headroom (each
     may cost up to 2 requests), so a status read never exhausts the host's GitHub limit."""
+    _load_latest_cache()
     now = time.time()
     repos = set(repos_by_cid.values())
     cached = {
@@ -258,7 +298,12 @@ async def _latest_versions(
     # reads as the cache warms). When Moonraker does NOT report remaining quota, assume a
     # conservative floor rather than "unlimited" - treating None as no-gate would let one cold
     # read fan out across the whole catalog and exhaust GitHub's 60/hr limit.
-    budget = github_remaining if github_remaining is not None else 30
+    # A configured token uses a separate ~5000/hr pool, so Moonraker's unauthenticated remaining
+    # (which it shares and often exhausts) no longer gates us - fetch freely.
+    if get_settings().github_token.strip():
+        budget = 1000
+    else:
+        budget = github_remaining if github_remaining is not None else 30
     max_fetch = max(0, (budget - 10) // 2)
     if len(to_fetch) > max_fetch:
         to_fetch = to_fetch[:max_fetch]
@@ -271,6 +316,8 @@ async def _latest_versions(
                 fetched[repo] = await _github_latest(repo)
 
         await asyncio.gather(*[one(r) for r in to_fetch])
+        if any(fetched.values()):
+            _save_latest_cache()  # persist new versions so they survive restarts / quota droughts
     versions = {**cached, **fetched}
     return {cid: versions.get(repo, "") for cid, repo in repos_by_cid.items()}
 
