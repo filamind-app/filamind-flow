@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>FilaMind Flow</title>
+    <!--
+      No-flash theme: apply the stored (or default 'light') theme to <html> BEFORE any CSS/JS loads,
+      so the page never flashes a non-default theme before the runtime (src/core/theme.ts) hydrates.
+      Keep the key/default in sync with theme.ts (STORAGE_KEY 'filamind-theme', DEFAULT 'light').
+    -->
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('filamind-theme') || 'light'
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light'
+      }
+    </script>
+    <!--
+      Fonts (Space Grotesk, JetBrains Mono, IBM Plex Sans Arabic, Noto Sans Arabic) are self-hosted
+      and bundled by the build via @fontsource (imported in src/main.ts), so the panel renders fully
+      offline and contacts no third party. No external font CDN.
+    -->
+    <script type="module" crossorigin src="./assets/index-DJkBGSOC.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-DK3Fl9T5.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-C2RkUAAs.js">
+    <link rel="modulepreload" crossorigin href="./assets/i18n-DczN_wtZ.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-Cs3U3jlx.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
