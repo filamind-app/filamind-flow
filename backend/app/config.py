@@ -60,6 +60,12 @@ class Settings(BaseSettings):
     # (e.g. when FilaMind runs off the printer host). - Input Shaping widget.
     resonance_dirs: str = "/tmp,~/printer_data/config,~/printer_data/config/input_shaper"
 
+    # Optional GitHub token for the Setup widget's "latest version" lookups. Unauthenticated GitHub
+    # is 60/hr shared with Moonraker (often exhausted on a busy printer, so not-installed versions
+    # go blank); a token gives a separate ~5000/hr pool so versions stay reliable. A read-only /
+    # public fine-grained token is enough. Set FILAMIND_GITHUB_TOKEN; empty = unauthenticated.
+    github_token: str = ""
+
     # Comma-separated browser origins allowed to call this API.
     cors_origins: str = "http://localhost:5173"
 
