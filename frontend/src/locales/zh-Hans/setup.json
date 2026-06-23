@@ -38,6 +38,9 @@
           "body": "按组浏览目录；每个组件都会显示是否已安装。安装、更新和移除操作在打印机主机上运行，在你启用之前会在此处保持禁用状态 — filamind-setup CLI 始终可以执行这些操作。"
         }
       }
-    }
+    },
+    "upToDate": "已是最新",
+    "versionInstalled": "已安装版本",
+    "versionLatest": "最新版本"
   }
 }

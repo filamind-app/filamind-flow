@@ -38,6 +38,9 @@
           "body": "Navegue pelo catálogo por grupo; cada componente mostra se está instalado. Instalar, atualizar e remover são executados no host da impressora e ficam desativados aqui até que você os habilite — a CLI do filamind-setup sempre pode fazer isso."
         }
       }
-    }
+    },
+    "upToDate": "Atualizado",
+    "versionInstalled": "Versão instalada",
+    "versionLatest": "Versão mais recente"
   }
 }

@@ -38,6 +38,9 @@
           "body": "依群組瀏覽目錄；每個元件都會顯示是否已安裝。安裝、更新與移除會在印表機主機上執行，在此處啟用之前會維持停用 — filamind-setup CLI 隨時都能完成這些操作。"
         }
       }
-    }
+    },
+    "upToDate": "已是最新",
+    "versionInstalled": "已安裝版本",
+    "versionLatest": "最新版本"
   }
 }

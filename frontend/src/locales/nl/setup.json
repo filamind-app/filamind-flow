@@ -38,6 +38,9 @@
           "body": "Blader door de catalogus per groep; bij elk component wordt aangegeven of het is geïnstalleerd. Installeren, bijwerken en verwijderen draaien op de host van de printer en blijven hier uitgeschakeld totdat u ze inschakelt — de filamind-setup CLI kan het altijd doen."
         }
       }
-    }
+    },
+    "upToDate": "Up-to-date",
+    "versionInstalled": "Geïnstalleerde versie",
+    "versionLatest": "Nieuwste versie"
   }
 }

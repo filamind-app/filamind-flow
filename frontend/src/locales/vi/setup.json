@@ -38,6 +38,9 @@
           "body": "Duyệt danh mục theo nhóm; mỗi linh kiện cho biết nó đã được cài đặt hay chưa. Cài đặt, cập nhật và gỡ bỏ chạy trên máy chủ máy in và vẫn bị vô hiệu hóa ở đây cho đến khi bạn bật chúng — CLI filamind-setup luôn có thể thực hiện điều đó."
         }
       }
-    }
+    },
+    "upToDate": "Mới nhất",
+    "versionInstalled": "Phiên bản đã cài",
+    "versionLatest": "Phiên bản mới nhất"
   }
 }

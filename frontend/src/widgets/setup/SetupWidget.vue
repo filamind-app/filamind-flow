@@ -14,12 +14,12 @@ import {
   updateComponent,
 } from './api'
 import SetupHelpIllo from './SetupHelpIllo.vue'
-import type { SetupActionResult, SetupComponent, SetupGroup } from './types'
+import type { SetupActionResult, SetupComponent, SetupComponentStatus, SetupGroup } from './types'
 
 const { t } = useI18n()
 
 const groups = ref<SetupGroup[]>([])
-const status = ref<Record<string, string>>({})
+const status = ref<Record<string, SetupComponentStatus>>({})
 const writesEnabled = ref(false)
 const suiteCommand = ref('')
 const copied = ref(false)
@@ -77,7 +77,12 @@ async function refreshStatus(): Promise<void> {
   }
 }
 
-const isInstalled = (c: SetupComponent): boolean => status.value[c.id] === 'installed'
+const isInstalled = (c: SetupComponent): boolean => status.value[c.id]?.status === 'installed'
+/** An installed component that Moonraker reports is behind its remote (drives the Update button). */
+const updateAvailable = (c: SetupComponent): boolean => status.value[c.id]?.updateAvailable === true
+const installedVersion = (c: SetupComponent): string => status.value[c.id]?.version ?? ''
+/** Latest available version: remote for installed components, latest release/tag for not-installed. */
+const latestVersion = (c: SetupComponent): string => status.value[c.id]?.latest ?? ''
 
 /** Every component flattened by id, for resolving dependency ids to display names. */
 const byId = computed<Record<string, SetupComponent>>(() => {
@@ -245,16 +250,37 @@ onMounted(load)
             >
               {{ isInstalled(c) ? t('setup.installed') : t('setup.available') }}
             </span>
+            <span
+              v-if="isInstalled(c) && installedVersion(c)"
+              class="nb-badge bg-surface font-mono text-xs"
+              :title="t('setup.versionInstalled')"
+            >
+              {{ installedVersion(c)
+              }}<template v-if="updateAvailable(c) && latestVersion(c)">
+                → {{ latestVersion(c) }}</template
+              >
+            </span>
+            <span
+              v-else-if="!isInstalled(c) && latestVersion(c)"
+              class="nb-badge bg-surface font-mono text-xs text-ink/60"
+              :title="t('setup.versionLatest')"
+            >
+              {{ latestVersion(c) }}
+            </span>
 
             <span class="ms-auto flex items-center gap-2">
               <template v-if="isInstalled(c)">
                 <button
+                  v-if="updateAvailable(c)"
                   class="nb-btn px-3 py-1"
                   :disabled="!writesEnabled || busyId !== null"
                   @click="doUpdate(c)"
                 >
                   {{ busyId === c.id ? t('setup.working') : t('setup.update') }}
                 </button>
+                <span v-else class="nb-badge bg-brand-green/15 text-xs text-ink/60">
+                  {{ t('setup.upToDate') }}
+                </span>
                 <button
                   class="nb-btn px-3 py-1"
                   :class="{ 'bg-brand-red text-paper': confirmRemoveId === c.id }"

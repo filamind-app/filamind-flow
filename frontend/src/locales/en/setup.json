@@ -38,6 +38,9 @@
           "body": "Browse the catalog by group; each component shows whether it's installed. Install, update and remove run on the printer host and stay disabled here until you enable them — the filamind-setup CLI can always do it."
         }
       }
-    }
+    },
+    "upToDate": "Up to date",
+    "versionInstalled": "Installed version",
+    "versionLatest": "Latest version"
   }
 }

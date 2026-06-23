@@ -38,6 +38,9 @@
           "body": "Parcourez le catalogue par groupe ; chaque composant indique s'il est installé. L'installation, la mise à jour et la suppression s'exécutent sur l'hôte de l'imprimante et restent désactivées ici tant que vous ne les activez pas — l'outil en ligne de commande filamind-setup peut toujours le faire."
         }
       }
-    }
+    },
+    "upToDate": "À jour",
+    "versionInstalled": "Version installée",
+    "versionLatest": "Dernière version"
   }
 }

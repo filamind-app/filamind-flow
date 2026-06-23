@@ -55,6 +55,64 @@ async def test_status_uses_moonraker_signals_then_dir_heuristic() -> None:
     assert status["crowsnest"] == "installed"
 
 
+async def test_probe_detailed_reports_versions_and_update_flag() -> None:
+    # Versions + an update flag come from Moonraker's update-manager version_info: a git component
+    # with commits behind, a web component whose version differs from remote, and an up-to-date one.
+    # github_remaining=0 keeps it hermetic - not-installed components never hit the network.
+    version_info = {
+        "klipper": {
+            "version": "v0.13.0-689",
+            "remote_version": "v0.13.0-699",
+            "commits_behind": [{}] * 10,
+        },
+        "moonraker": {
+            "version": "v0.10.0-29",
+            "remote_version": "v0.10.0-29",
+            "commits_behind": [],
+        },
+        "mainsail": {"version": "v2.17.0", "remote_version": "v2.18.0"},  # web UI: no commit list
+    }
+    detailed = await setup_manager.probe_detailed(version_info, services=set(), github_remaining=0)
+    assert detailed["klipper"]["status"] == "installed"
+    assert detailed["klipper"]["version"] == "v0.13.0-689"
+    assert detailed["klipper"]["latest"] == "v0.13.0-699"
+    assert detailed["klipper"]["updateAvailable"] is True
+    assert detailed["moonraker"]["updateAvailable"] is False  # current == remote
+    assert detailed["mainsail"]["updateAvailable"] is True  # version != remote_version
+    # A component Moonraker doesn't track and isn't on disk: not-installed, no update offered.
+    assert detailed["guppyscreen"]["status"] == "not-installed"
+    assert detailed["guppyscreen"]["updateAvailable"] is False
+
+
+async def test_latest_version_lookups_are_quota_capped(monkeypatch) -> None:
+    # Best-effort GitHub lookups for not-installed components must never exhaust the host's quota.
+    setup_manager._latest_cache.clear()
+    calls: list[str] = []
+
+    async def fake_latest(repo: str) -> str:
+        calls.append(repo)
+        return "v1.0.0"
+
+    monkeypatch.setattr(setup_manager, "_github_latest", fake_latest)
+    repos = {f"c{i}": f"owner/repo{i}" for i in range(27)}  # a large not-installed set
+
+    # Moonraker did not report remaining quota (None) → a conservative finite budget, never
+    # "unlimited": only a capped subset is fetched (the rest fill in over later reads).
+    await setup_manager._latest_versions(repos, github_remaining=None)
+    assert 0 < len(calls) <= 10
+
+    # No quota → fetch nothing at all (keeps the status read hermetic).
+    calls.clear()
+    out = await setup_manager._latest_versions(repos, github_remaining=0)
+    assert calls == []
+    assert all(v == "" for v in out.values())
+
+    # Plenty of quota → fetch them all.
+    calls.clear()
+    await setup_manager._latest_versions(repos, github_remaining=200)
+    assert len(calls) == 27
+
+
 async def test_first_party_nginx_app_needs_its_site_not_just_a_clone(monkeypatch, tmp_path) -> None:
     # A first-party web / touch app (FilaMind 3d / screen) is "installed" only once its nginx site
     # exists. A bare clone (the repo cloned, but the web-server step never ran, e.g. its sudo step

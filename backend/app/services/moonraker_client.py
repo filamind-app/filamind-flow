@@ -85,6 +85,13 @@ class MoonrakerClient:
         info = result.get("version_info")
         return info if isinstance(info, dict) else {}
 
+    async def update_status_full(self) -> dict[str, Any]:
+        """Full ``/machine/update/status`` payload (``version_info`` + ``github_requests_remaining``
+        + ``busy``). Setup uses ``version_info`` for per-component versions/update flags and the
+        remaining-quota number to gate GitHub lookups. ``{}`` on any unexpected shape."""
+        result = await self._get("/machine/update/status")
+        return result if isinstance(result, dict) else {}
+
     async def available_services(self) -> list[str]:
         """Systemd units Moonraker manages, from ``/machine/system_info`` → ``available_services``.
 

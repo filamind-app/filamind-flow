@@ -38,6 +38,9 @@
           "body": "Kataloğu gruba göre göz atın; her bileşen kurulu olup olmadığını gösterir. Kurma, güncelleme ve kaldırma işlemleri yazıcı ana makinesinde çalışır ve siz etkinleştirene kadar burada devre dışı kalır — filamind-setup CLI bunu her zaman yapabilir."
         }
       }
-    }
+    },
+    "upToDate": "Güncel",
+    "versionInstalled": "Yüklü sürüm",
+    "versionLatest": "En son sürüm"
   }
 }

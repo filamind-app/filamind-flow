@@ -38,6 +38,9 @@
           "body": "Jelajahi katalog menurut grup; setiap komponen menunjukkan apakah sudah terpasang. Pemasangan, pembaruan, dan penghapusan dijalankan pada host printer dan tetap nonaktif di sini sampai Anda mengaktifkannya — CLI filamind-setup selalu dapat melakukannya."
         }
       }
-    }
+    },
+    "upToDate": "Terbaru",
+    "versionInstalled": "Versi terpasang",
+    "versionLatest": "Versi terbaru"
   }
 }
