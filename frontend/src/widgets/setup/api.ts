@@ -44,6 +44,20 @@ async function post(path: string, body: unknown): Promise<SetupActionResult> {
 }
 
 export const installComponent = (id: string): Promise<SetupActionResult> => post('install', { id })
+
+/** Start an install as a background task; returns its id to poll via fetchTask(). Refusals (403)
+ *  still arrive synchronously as a SetupActionError, same as the blocking install. */
+export async function installComponentStream(id: string): Promise<string> {
+  const r = await fetch(`${base()}/api/setup/install/stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  })
+  const data = (await r.json().catch(() => ({}))) as { detail?: string; task_id?: string }
+  if (!r.ok) throw new SetupActionError(data.detail || httpError(r.status), r.status)
+  return data.task_id ?? ''
+}
+
 export const updateComponent = (id: string): Promise<SetupActionResult> => post('update', { id })
 export const removeComponent = (id: string, confirm: string): Promise<SetupActionResult> =>
   post('remove', { id, confirm })

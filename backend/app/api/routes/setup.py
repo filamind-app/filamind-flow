@@ -6,6 +6,7 @@ Mutations funnel through setup_manager, which is gated + path-guarded; a disable
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import httpx
@@ -13,10 +14,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from app.config import Settings, get_settings
-from app.services import setup_manager
+from app.services import setup_manager, task_store
 from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/setup", tags=["setup"])
+
+#: Hold background install tasks so they aren't garbage-collected mid-run.
+_bg: set[asyncio.Task[None]] = set()
 
 
 class ComponentRef(BaseModel):
@@ -97,6 +101,27 @@ async def setup_install(
         return _apply(await setup_manager.install(req.id, managed, services))
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/install/stream")
+async def setup_install_stream(
+    req: ComponentRef, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Start an install as a background task and return its id; the widget polls /api/tasks/{id} for
+    live progress. The refusal gates (writes-off / missing-deps) still raise a SYNCHRONOUS 403 here,
+    before any task is created, so a refused install never looks like a started one."""
+    managed, services = await _moonraker_signals(settings)
+    try:
+        refusal = await setup_manager.precheck_install(req.id, managed, services)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    if refusal:
+        _apply(refusal)  # raises 403
+    task = task_store.create_task()
+    bg = asyncio.create_task(setup_manager.install_task(req.id, task, managed, services))
+    _bg.add(bg)
+    bg.add_done_callback(_bg.discard)
+    return {"task_id": task.id}
 
 
 @router.post("/update")
