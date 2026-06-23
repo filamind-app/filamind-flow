@@ -165,7 +165,7 @@ async def touch_status() -> dict[str, Any]:
     for key, unit in _TOUCH_UNITS.items():
         unit_installed = await _unit_installed(unit)
         dir_name = _TOUCH_DIRS.get(key)
-        dir_installed = bool(dir_name) and (Path.home() / dir_name).is_dir()
+        dir_installed = dir_name is not None and (Path.home() / dir_name).is_dir()
         installed = unit_installed or dir_installed
         is_active = await _is_active(unit) if unit_installed else False
         screens[key] = {
