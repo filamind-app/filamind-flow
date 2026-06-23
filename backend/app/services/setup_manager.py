@@ -417,6 +417,24 @@ async def _run(cmd: list[str]) -> dict[str, Any]:
     }
 
 
+async def _run_streaming(cmd: list[str], task: Any) -> dict[str, Any]:
+    """Like ``_run`` but appends each output line to ``task`` as it arrives, so the widget can show
+    live install progress instead of one opaque blocking call. Returns the same result dict."""
+    proc = await asyncio.create_subprocess_exec(
+        *cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.STDOUT,
+    )
+    lines: list[str] = []
+    assert proc.stdout is not None
+    async for raw in proc.stdout:
+        line = raw.decode(errors="replace")
+        lines.append(line)
+        task.append(line)
+    code = await proc.wait()
+    return {"ok": code == 0, "code": code, "output": "".join(lines)}
+
+
 def _require(cid: str, catalog: dict[str, Component]) -> Component:
     component = catalog.get(cid)
     if component is None:
@@ -433,9 +451,12 @@ def _missing_deps(
     ]
 
 
-async def install(
+async def precheck_install(
     cid: str, managed: set[str] | None = None, services: set[str] | None = None
-) -> dict[str, Any]:
+) -> dict[str, Any] | None:
+    """The SYNCHRONOUS gates that must fail fast (as an HTTP 403) before any subprocess runs:
+    writes disabled, or a missing dependency. Returns the refusal dict, or None if install may
+    proceed. Raises ValueError for an unknown component id."""
     catalog = load_catalog()
     component = _require(cid, catalog)
     if not writes_enabled():
@@ -449,10 +470,26 @@ async def install(
             "refused": True,
             "output": f"Install {', '.join(missing)} first - {component.name} depends on it.",
         }
+    return None
+
+
+async def install(
+    cid: str,
+    managed: set[str] | None = None,
+    services: set[str] | None = None,
+    task: Any | None = None,
+) -> dict[str, Any]:
+    refusal = await precheck_install(cid, managed, services)
+    if refusal:
+        return refusal
+    catalog = load_catalog()
+    component = _require(cid, catalog)
+    # When a task is supplied, stream the installer's output into it for live progress.
+    run = (lambda cmd: _run_streaming(cmd, task)) if task is not None else _run
     # FilaMind apps (3d / screen / flow) ship a one-line installer in their repo - run it so the
     # GUI can install them even though they aren't a plain git_repo (web / tauri).
     if component.first_party:
-        result = await _run(["bash", "-c", f"curl -fsSL {_raw_installer(component)} | bash"])
+        result = await run(["bash", "-c", f"curl -fsSL {_raw_installer(component)} | bash"])
         return _augment_root_failure(result, component)
     if component.type not in _GIT_TYPES:
         return {
@@ -464,13 +501,33 @@ async def install(
     if dest.exists():
         return {"ok": True, "output": f"{component.name} already present at {dest}"}
     url = f"https://github.com/{component.repo}"
-    clone = await _run(["git", "clone", "--depth", "1", url, str(dest)])
+    clone = await run(["git", "clone", "--depth", "1", url, str(dest)])
     if not clone["ok"]:
         return clone
     installer = dest / "install.sh"
     if installer.is_file():
-        return await _run(["bash", str(installer)])
+        return await run(["bash", str(installer)])
     return {"ok": True, "output": f"Cloned {component.name}; no install.sh - finish per its docs."}
+
+
+async def install_task(
+    cid: str, task: Any, managed: set[str] | None = None, services: set[str] | None = None
+) -> None:
+    """Background install: stream into ``task`` and store the final result + status on it. The
+    synchronous refusals (writes-off / missing-deps) are already raised by the route's precheck, so
+    here we only run the work and record the outcome."""
+    try:
+        result = await install(cid, managed, services, task=task)
+    except Exception as exc:  # never leave the task hung
+        task.append(f"!! {exc}\n")
+        task.result = {"ok": False, "output": str(exc)}
+        task.status = "failed"
+        return
+    task.result = result
+    output = str(result.get("output") or "")
+    if output and output not in task.log:  # short/non-streamed outputs (already-present, refused)
+        task.append(output)
+    task.status = "done" if result.get("ok") and not result.get("refused") else "failed"
 
 
 async def update(cid: str) -> dict[str, Any]:

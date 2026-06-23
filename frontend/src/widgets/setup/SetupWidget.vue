@@ -4,10 +4,12 @@ import { useI18n } from 'vue-i18n'
 
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 
+import { fetchTask } from '@/core/tasks'
+
 import {
   fetchCatalog,
   fetchStatus,
-  installComponent,
+  installComponentStream,
   removeComponent,
   setPort,
   setWrites,
@@ -33,6 +35,8 @@ const busyId = ref<string | null>(null)
 const confirmRemoveId = ref<string | null>(null)
 /** The result of the most recent action, shown on the card that triggered it (ok or refused). */
 const lastResult = ref<{ id: string; text: string; ok: boolean } | null>(null)
+/** Live install output for the card currently installing (streamed from the background task). */
+const installLog = ref('')
 
 /** Installable from the GUI: git_repo / service (clone + install.sh), or any FilaMind app (which
  *  ships its own one-line installer). Third-party web / manual stay CLI-only. */
@@ -160,7 +164,35 @@ function applyPort(c: SetupComponent): void {
   if (port) void run(c.id, () => setPort(c.id, port))
 }
 
-const doInstall = (c: SetupComponent): Promise<void> => run(c.id, () => installComponent(c.id))
+/** Install with live progress: start the background task, then poll it and stream its log into the
+ *  card until it finishes. A refusal (writes-off / missing-deps) still arrives as a synchronous 403. */
+async function doInstall(c: SetupComponent): Promise<void> {
+  if (busyId.value) return
+  busyId.value = c.id
+  lastResult.value = null
+  installLog.value = ''
+  try {
+    const taskId = await installComponentStream(c.id)
+    for (;;) {
+      await new Promise((r) => setTimeout(r, 1000))
+      const task = await fetchTask(taskId)
+      installLog.value = task.log
+      if (task.status !== 'running') {
+        const out = (task.result?.output as string) || task.log || ''
+        lastResult.value = out ? { id: c.id, text: out, ok: task.status === 'done' } : null
+        break
+      }
+    }
+    await refreshStatus()
+  } catch (e) {
+    // A refusal (403) or fault: show it on the triggering card, like the other actions.
+    lastResult.value = { id: c.id, text: e instanceof Error ? e.message : String(e), ok: false }
+  } finally {
+    busyId.value = null
+    installLog.value = ''
+    confirmRemoveId.value = null
+  }
+}
 const doUpdate = (c: SetupComponent): Promise<void> => run(c.id, () => updateComponent(c.id))
 function onRemove(c: SetupComponent): void {
   if (confirmRemoveId.value === c.id) void run(c.id, () => removeComponent(c.id, c.id))
@@ -348,8 +380,15 @@ onMounted(load)
             </button>
           </div>
 
+          <!-- Live install progress: the streaming log while this card is installing. -->
           <pre
-            v-if="lastResult && lastResult.id === c.id"
+            v-if="busyId === c.id && installLog"
+            class="nb-card max-h-48 overflow-auto bg-surface p-2 text-xs whitespace-pre-wrap"
+            aria-live="polite"
+            >{{ installLog }}</pre
+          >
+          <pre
+            v-else-if="lastResult && lastResult.id === c.id"
             class="nb-card max-h-48 overflow-auto p-2 text-xs whitespace-pre-wrap"
             :class="lastResult.ok ? 'bg-surface' : 'bg-brand-red/20'"
             :role="lastResult.ok ? undefined : 'alert'"

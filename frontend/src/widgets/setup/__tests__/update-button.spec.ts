@@ -66,6 +66,7 @@ vi.mock('../api', () => ({
       suiteCommand: 'curl -fsSL example | bash',
     }),
   installComponent: vi.fn(),
+  installComponentStream: vi.fn(),
   updateComponent: vi.fn(),
   removeComponent: vi.fn(),
   setPort: vi.fn(),
