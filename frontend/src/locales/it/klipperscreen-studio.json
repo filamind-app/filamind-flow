@@ -10,7 +10,9 @@
       "notInstalled": "Non installata",
       "use": "Usa",
       "switching": "Cambio in corso…",
-      "persist": "Imposta anche come predefinita all'avvio"
+      "persist": "Imposta anche come predefinita all'avvio",
+      "installedNotManageable": "Installato",
+      "notManageableHint": "Installato, ma non commutabile da qui (nessun servizio systemd)."
     },
     "touchPanel": {
       "title": "Controlli FilaMind",

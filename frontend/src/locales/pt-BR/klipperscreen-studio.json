@@ -10,7 +10,9 @@
       "notInstalled": "Não instalado",
       "use": "Usar",
       "switching": "Alternando…",
-      "persist": "Também tornar o padrão na inicialização"
+      "persist": "Também tornar o padrão na inicialização",
+      "installedNotManageable": "Instalado",
+      "notManageableHint": "Instalado, mas não dá para alternar aqui (sem serviço systemd)."
     },
     "touchPanel": {
       "title": "Controles do FilaMind",

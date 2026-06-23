@@ -17,6 +17,7 @@ so the screen never stays dark.
 from __future__ import annotations
 
 import asyncio
+from pathlib import Path
 from typing import Any
 
 from app.config import get_settings
@@ -145,19 +146,36 @@ _TOUCH_UNITS: dict[str, str] = {
     "filamind-flow": KIOSK_UNIT,
 }
 
+#: Clone dir under $HOME per touch UI (mirrors setup-catalog.json `dir`). Some touch UIs ship NO
+#: systemd unit - Guppyscreen runs from its ~/guppyscreen clone via an init script - so a unit check
+#: alone would always read "not installed". An on-disk clone counts as installed; only unit-managed
+#: ones are "manageable" (switchable from here).
+_TOUCH_DIRS: dict[str, str] = {
+    "klipperscreen": "KlipperScreen",
+    "guppyscreen": "guppyscreen",
+    "filamind-screen": "filamind-screen",
+    "filamind-flow": "filamind-flow",
+}
+
 
 async def touch_status() -> dict[str, Any]:
-    """Per-touch-UI installed / active / enabled state + which one currently owns the screen."""
+    """Per-touch-UI installed / manageable / active / enabled state + which one owns the screen."""
     screens: dict[str, Any] = {}
     active = "none"
     for key, unit in _TOUCH_UNITS.items():
-        installed = await _unit_installed(unit)
-        is_active = await _is_active(unit) if installed else False
+        unit_installed = await _unit_installed(unit)
+        dir_name = _TOUCH_DIRS.get(key)
+        dir_installed = bool(dir_name) and (Path.home() / dir_name).is_dir()
+        installed = unit_installed or dir_installed
+        is_active = await _is_active(unit) if unit_installed else False
         screens[key] = {
             "unit": unit,
             "installed": installed,
+            # Only systemd-unit-backed UIs can be switched from here; a clone-only UI (Guppyscreen)
+            # shows as installed but the switch is hidden (switch_touch would refuse it anyway).
+            "manageable": unit_installed,
             "active": is_active,
-            "enabled": (await _is_enabled(unit)) if installed else False,
+            "enabled": (await _is_enabled(unit)) if unit_installed else False,
         }
         if is_active:
             active = key

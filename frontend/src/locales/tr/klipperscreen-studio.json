@@ -10,7 +10,9 @@
       "notInstalled": "Yüklü değil",
       "use": "Kullan",
       "switching": "Geçiş yapılıyor…",
-      "persist": "Açılışta da varsayılan yap"
+      "persist": "Açılışta da varsayılan yap",
+      "installedNotManageable": "Kurulu",
+      "notManageableHint": "Kurulu, ancak buradan değiştirilemez (systemd hizmeti yok)."
     },
     "touchPanel": {
       "title": "FilaMind denetimleri",

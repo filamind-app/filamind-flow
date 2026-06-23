@@ -75,6 +75,13 @@ onMounted(load)
           >
             {{ t('klipperscreenStudio.selector.notInstalled') }}
           </span>
+          <span
+            v-else-if="status?.screens[k]?.manageable === false"
+            class="nb-badge bg-surface text-xs text-ink/60"
+            :title="t('klipperscreenStudio.selector.notManageableHint')"
+          >
+            {{ t('klipperscreenStudio.selector.installedNotManageable') }}
+          </span>
           <button
             v-else-if="!status?.screens[k]?.active"
             class="nb-btn px-3 py-1 text-sm"

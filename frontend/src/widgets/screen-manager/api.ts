@@ -228,6 +228,9 @@ export type TouchKey = 'klipperscreen' | 'guppyscreen' | 'filamind-screen' | 'fi
 export interface TouchScreen {
   unit: string
   installed: boolean
+  /** True only for systemd-unit-backed UIs that can be switched from here (a clone-only UI like
+   *  Guppyscreen reads installed:true but manageable:false). */
+  manageable: boolean
   active: boolean
   enabled: boolean
 }

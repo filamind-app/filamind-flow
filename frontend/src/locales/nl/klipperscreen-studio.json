@@ -10,7 +10,9 @@
       "notInstalled": "Niet geïnstalleerd",
       "use": "Gebruiken",
       "switching": "Wisselen…",
-      "persist": "Maak dit ook de standaard bij het opstarten"
+      "persist": "Maak dit ook de standaard bij het opstarten",
+      "installedNotManageable": "Geïnstalleerd",
+      "notManageableHint": "Geïnstalleerd, maar kan hier niet worden gewisseld (geen systemd-service)."
     },
     "touchPanel": {
       "title": "FilaMind-bediening",

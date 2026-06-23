@@ -10,7 +10,9 @@
       "notInstalled": "설치되지 않음",
       "use": "사용",
       "switching": "전환 중…",
-      "persist": "부팅 시 기본값으로도 설정"
+      "persist": "부팅 시 기본값으로도 설정",
+      "installedNotManageable": "설치됨",
+      "notManageableHint": "설치되었지만 여기서 전환할 수 없습니다 (systemd 서비스 없음)."
     },
     "touchPanel": {
       "title": "FilaMind 제어",

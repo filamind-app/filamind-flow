@@ -10,7 +10,9 @@
       "notInstalled": "Non installé",
       "use": "Utiliser",
       "switching": "Changement en cours…",
-      "persist": "En faire aussi l'interface par défaut au démarrage"
+      "persist": "En faire aussi l'interface par défaut au démarrage",
+      "installedNotManageable": "Installé",
+      "notManageableHint": "Installé, mais non commutable ici (pas de service systemd)."
     },
     "touchPanel": {
       "title": "Contrôles FilaMind",

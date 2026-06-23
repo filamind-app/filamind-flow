@@ -10,7 +10,9 @@
       "notInstalled": "未安装",
       "use": "使用",
       "switching": "切换中…",
-      "persist": "同时设为开机默认"
+      "persist": "同时设为开机默认",
+      "installedNotManageable": "已安装",
+      "notManageableHint": "已安装，但无法在此切换（无 systemd 服务）。"
     },
     "touchPanel": {
       "title": "FilaMind 控制台",

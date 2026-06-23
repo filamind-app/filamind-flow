@@ -10,7 +10,9 @@
       "notInstalled": "غير مثبّتة",
       "use": "استخدام",
       "switching": "جارٍ التبديل…",
-      "persist": "اجعلها أيضاً الافتراضية عند الإقلاع"
+      "persist": "اجعلها أيضاً الافتراضية عند الإقلاع",
+      "installedNotManageable": "مثبَّت",
+      "notManageableHint": "مثبَّت، لكن لا يمكن تبديله من هنا (بلا خدمة systemd)."
     },
     "touchPanel": {
       "title": "أدوات تحكم FilaMind",
