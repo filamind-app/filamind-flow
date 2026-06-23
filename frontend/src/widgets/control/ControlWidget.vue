@@ -40,7 +40,11 @@ const isPaused = computed(() => state.value === 'paused')
 const active = computed(() => isPrinting.value || isPaused.value)
 // Literal keys only (the schema-typed t rejects a runtime-built key).
 const stateLabel = computed(() =>
-  isPaused.value ? t('control.paused') : isPrinting.value ? t('control.printing') : t('control.job'),
+  isPaused.value
+    ? t('control.paused')
+    : isPrinting.value
+      ? t('control.printing')
+      : t('control.job'),
 )
 
 const eta = computed(() => {
@@ -84,7 +88,10 @@ const spark = computed(() => {
   const xs = history.value.length ? history.value : [extTemp.value]
   const max = Math.max(60, ...xs)
   return xs
-    .map((v, i) => `${xs.length > 1 ? (i / (xs.length - 1)) * 200 : 0},${(30 - (v / max) * 28).toFixed(1)}`)
+    .map(
+      (v, i) =>
+        `${xs.length > 1 ? (i / (xs.length - 1)) * 200 : 0},${(30 - (v / max) * 28).toFixed(1)}`,
+    )
     .join(' ')
 })
 const presets = [
@@ -122,12 +129,17 @@ const camUrl = '/webcam/?action=stream'
           </div>
           <div class="flex justify-between font-mono text-[11px]">
             <span v-if="layer.total_layer" class="opacity-70"
-              >{{ t('control.layer') }} {{ layer.current_layer ?? 0 }} / {{ layer.total_layer }}</span
+              >{{ t('control.layer') }} {{ layer.current_layer ?? 0 }} /
+              {{ layer.total_layer }}</span
             >
             <span class="font-bold">{{ progress }}%</span>
           </div>
           <div class="flex gap-2 pt-1">
-            <button v-if="isPrinting" class="nb-btn bg-brand-yellow px-3 py-1 text-xs" @click="pause">
+            <button
+              v-if="isPrinting"
+              class="nb-btn bg-brand-yellow px-3 py-1 text-xs"
+              @click="pause"
+            >
               ⏸ {{ t('control.pause') }}
             </button>
             <button v-if="isPaused" class="nb-btn bg-brand-lime px-3 py-1 text-xs" @click="resume">
@@ -145,11 +157,23 @@ const camUrl = '/webcam/?action=stream'
       <section class="nb-card space-y-2 bg-surface p-3">
         <p class="text-xs font-bold uppercase tracking-wide opacity-60">{{ t('control.temps') }}</p>
         <div class="flex gap-4 font-mono text-sm">
-          <span>🔥 {{ fmt(ext?.temperature) }}<span class="opacity-60">/{{ fmt(ext?.target) }}</span></span>
-          <span>🛏 {{ fmt(bed?.temperature) }}<span class="opacity-60">/{{ fmt(bed?.target) }}</span></span>
+          <span
+            >🔥 {{ fmt(ext?.temperature)
+            }}<span class="opacity-60">/{{ fmt(ext?.target) }}</span></span
+          >
+          <span
+            >🛏 {{ fmt(bed?.temperature)
+            }}<span class="opacity-60">/{{ fmt(bed?.target) }}</span></span
+          >
         </div>
         <svg viewBox="0 0 200 32" preserveAspectRatio="none" class="h-8 w-full">
-          <polyline :points="spark" fill="none" stroke="currentColor" stroke-width="1.5" class="text-brand-cyan" />
+          <polyline
+            :points="spark"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            class="text-brand-cyan"
+          />
         </svg>
         <div class="flex gap-2">
           <button
@@ -168,25 +192,87 @@ const camUrl = '/webcam/?action=stream'
 
       <!-- Motion -->
       <section class="nb-card space-y-2 bg-surface p-3">
-        <p class="text-xs font-bold uppercase tracking-wide opacity-60">{{ t('control.motion') }}</p>
+        <p class="text-xs font-bold uppercase tracking-wide opacity-60">
+          {{ t('control.motion') }}
+        </p>
         <div class="flex items-center gap-4">
           <div class="motion-pad">
-            <button class="nb-btn jog" style="grid-area: up" :disabled="motionBlocked" @click="jog('Y', 10)">▲</button>
-            <button class="nb-btn jog" style="grid-area: left" :disabled="motionBlocked" @click="jog('X', -10)">◀</button>
-            <button class="nb-btn jog bg-brand-lime" style="grid-area: home" :disabled="motionBlocked" :title="t('control.home')" @click="home">⌂</button>
-            <button class="nb-btn jog" style="grid-area: right" :disabled="motionBlocked" @click="jog('X', 10)">▶</button>
-            <button class="nb-btn jog" style="grid-area: down" :disabled="motionBlocked" @click="jog('Y', -10)">▼</button>
+            <button
+              class="nb-btn jog"
+              style="grid-area: up"
+              :disabled="motionBlocked"
+              @click="jog('Y', 10)"
+            >
+              ▲
+            </button>
+            <button
+              class="nb-btn jog"
+              style="grid-area: left"
+              :disabled="motionBlocked"
+              @click="jog('X', -10)"
+            >
+              ◀
+            </button>
+            <button
+              class="nb-btn jog bg-brand-lime"
+              style="grid-area: home"
+              :disabled="motionBlocked"
+              :title="t('control.home')"
+              @click="home"
+            >
+              ⌂
+            </button>
+            <button
+              class="nb-btn jog"
+              style="grid-area: right"
+              :disabled="motionBlocked"
+              @click="jog('X', 10)"
+            >
+              ▶
+            </button>
+            <button
+              class="nb-btn jog"
+              style="grid-area: down"
+              :disabled="motionBlocked"
+              @click="jog('Y', -10)"
+            >
+              ▼
+            </button>
           </div>
           <div class="space-y-2">
             <div class="flex gap-1.5">
-              <button class="nb-btn px-2 py-1 text-xs" :disabled="motionBlocked" @click="jog('Z', 1)">Z▲</button>
-              <button class="nb-btn px-2 py-1 text-xs" :disabled="motionBlocked" @click="jog('Z', -1)">Z▼</button>
+              <button
+                class="nb-btn px-2 py-1 text-xs"
+                :disabled="motionBlocked"
+                @click="jog('Z', 1)"
+              >
+                Z▲
+              </button>
+              <button
+                class="nb-btn px-2 py-1 text-xs"
+                :disabled="motionBlocked"
+                @click="jog('Z', -1)"
+              >
+                Z▼
+              </button>
             </div>
             <div class="text-[11px] opacity-70">{{ t('control.babystep') }}</div>
             <div class="flex items-center gap-1.5">
-              <button class="nb-btn px-2 py-0.5 text-[11px]" :disabled="motionBlocked" @click="babystep(-0.02)">−0.02</button>
+              <button
+                class="nb-btn px-2 py-0.5 text-[11px]"
+                :disabled="motionBlocked"
+                @click="babystep(-0.02)"
+              >
+                −0.02
+              </button>
               <b class="w-12 text-center font-mono text-xs">{{ zOffset.toFixed(2) }}</b>
-              <button class="nb-btn px-2 py-0.5 text-[11px]" :disabled="motionBlocked" @click="babystep(0.02)">+0.02</button>
+              <button
+                class="nb-btn px-2 py-0.5 text-[11px]"
+                :disabled="motionBlocked"
+                @click="babystep(0.02)"
+              >
+                +0.02
+              </button>
             </div>
           </div>
         </div>
@@ -195,11 +281,21 @@ const camUrl = '/webcam/?action=stream'
       <!-- Webcam -->
       <section class="nb-card space-y-2 bg-surface p-3">
         <div class="flex items-center justify-between text-xs">
-          <span class="font-bold uppercase tracking-wide opacity-60">{{ t('control.webcam') }}</span>
+          <span class="font-bold uppercase tracking-wide opacity-60">{{
+            t('control.webcam')
+          }}</span>
           <span v-if="camOk" class="text-brand-red">● {{ t('control.live') }}</span>
         </div>
-        <div class="flex aspect-video items-center justify-center overflow-hidden rounded-brutal border border-ink bg-paper">
-          <img v-if="camOk" :src="camUrl" alt="" class="h-full w-full object-cover" @error="camOk = false" />
+        <div
+          class="flex aspect-video items-center justify-center overflow-hidden rounded-brutal border border-ink bg-paper"
+        >
+          <img
+            v-if="camOk"
+            :src="camUrl"
+            alt=""
+            class="h-full w-full object-cover"
+            @error="camOk = false"
+          />
           <span v-else class="text-3xl opacity-30">🎥</span>
         </div>
       </section>
