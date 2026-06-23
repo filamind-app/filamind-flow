@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "Bediening",
+    "job": "Taak",
+    "noJob": "Geen print",
+    "eta": "ETA",
+    "layer": "Laag",
+    "temps": "Temperaturen",
+    "motion": "Beweging",
+    "babystep": "Z-babystep",
+    "webcam": "Webcam",
+    "live": "live",
+    "printing": "Bezig",
+    "paused": "Gepauzeerd",
+    "pause": "Pauze",
+    "resume": "Hervatten",
+    "cancel": "Annuleren",
+    "home": "Home"
+  }
+}

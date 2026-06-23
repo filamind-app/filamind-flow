@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "コントロール",
+    "job": "ジョブ",
+    "noJob": "印刷なし",
+    "eta": "残り",
+    "layer": "レイヤー",
+    "temps": "温度",
+    "motion": "モーション",
+    "babystep": "Zベビーステップ",
+    "webcam": "カメラ",
+    "live": "ライブ",
+    "printing": "印刷中",
+    "paused": "一時停止",
+    "pause": "一時停止",
+    "resume": "再開",
+    "cancel": "キャンセル",
+    "home": "ホーム"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "Steuerung",
+    "job": "Druckauftrag",
+    "noJob": "Kein Druck aktiv",
+    "eta": "Restzeit",
+    "layer": "Schicht",
+    "temps": "Temperaturen",
+    "motion": "Bewegung",
+    "babystep": "Z-Babystep",
+    "webcam": "Webcam",
+    "live": "live",
+    "printing": "Druckt",
+    "paused": "Pausiert",
+    "pause": "Pause",
+    "resume": "Fortsetzen",
+    "cancel": "Abbrechen",
+    "home": "Referenzfahrt"
+  }
+}

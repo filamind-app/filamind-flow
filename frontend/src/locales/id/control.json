@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "Kontrol",
+    "job": "Tugas Cetak",
+    "noJob": "Tidak ada cetak",
+    "eta": "ETA",
+    "layer": "Lapisan",
+    "temps": "Suhu",
+    "motion": "Gerakan",
+    "babystep": "Z babystep",
+    "webcam": "Webcam",
+    "live": "langsung",
+    "printing": "Mencetak",
+    "paused": "Dijeda",
+    "pause": "Jeda",
+    "resume": "Lanjutkan",
+    "cancel": "Batal",
+    "home": "Home"
+  }
+}

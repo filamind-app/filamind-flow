@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "Kontrol",
+    "job": "İş",
+    "noJob": "Baskı yok",
+    "eta": "ETA",
+    "layer": "Katman",
+    "temps": "Sıcaklıklar",
+    "motion": "Hareket",
+    "babystep": "Z babystep",
+    "webcam": "Kamera",
+    "live": "canlı",
+    "printing": "Yazdırılıyor",
+    "paused": "Duraklatıldı",
+    "pause": "Duraklat",
+    "resume": "Sürdür",
+    "cancel": "İptal",
+    "home": "Sıfırla"
+  }
+}

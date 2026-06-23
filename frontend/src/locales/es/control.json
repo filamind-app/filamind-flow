@@ -1,0 +1,20 @@
+{
+  "control": {
+    "title": "Control",
+    "job": "Trabajo",
+    "noJob": "Sin impresión",
+    "eta": "ETA",
+    "layer": "Capa",
+    "temps": "Temperaturas",
+    "motion": "Movimiento",
+    "babystep": "Z babystep",
+    "webcam": "Cámara",
+    "live": "en vivo",
+    "printing": "Imprimiendo",
+    "paused": "Pausado",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "cancel": "Cancelar",
+    "home": "Origen"
+  }
+}
