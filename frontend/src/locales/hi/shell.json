@@ -155,10 +155,6 @@
       "rules": {
         "title": "नियम इंजन",
         "description": "सुरक्षित IF-THEN स्वचालन: जब कुछ घटित हो, तो एक कार्रवाई चलाएँ।"
-      },
-      "control": {
-        "title": "नियंत्रण",
-        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

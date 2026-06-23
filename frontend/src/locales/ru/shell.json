@@ -155,10 +155,6 @@
       "rules": {
         "title": "Движок правил",
         "description": "Безопасная автоматизация «ЕСЛИ — ТО»: когда что-то происходит, выполняется действие."
-      },
-      "control": {
-        "title": "Управление",
-        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {
