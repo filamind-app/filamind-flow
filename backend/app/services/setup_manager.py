@@ -256,10 +256,8 @@ async def _github_latest(repo: str) -> str:
     if hit and now - hit[0] < _LATEST_TTL:
         return hit[1]
     version = ""
-    token = get_settings().github_token.strip()
-    headers = {"Authorization": f"Bearer {token}"} if token else {}
     try:
-        async with httpx.AsyncClient(timeout=4.0, headers=headers) as client:
+        async with httpx.AsyncClient(timeout=4.0) as client:
             r = await client.get(f"https://api.github.com/repos/{repo}/releases/latest")
             if r.status_code == 200:
                 version = str((r.json() or {}).get("tag_name") or "")
@@ -298,12 +296,7 @@ async def _latest_versions(
     # reads as the cache warms). When Moonraker does NOT report remaining quota, assume a
     # conservative floor rather than "unlimited" - treating None as no-gate would let one cold
     # read fan out across the whole catalog and exhaust GitHub's 60/hr limit.
-    # A configured token uses a separate ~5000/hr pool, so Moonraker's unauthenticated remaining
-    # (which it shares and often exhausts) no longer gates us - fetch freely.
-    if get_settings().github_token.strip():
-        budget = 1000
-    else:
-        budget = github_remaining if github_remaining is not None else 30
+    budget = github_remaining if github_remaining is not None else 30
     max_fetch = max(0, (budget - 10) // 2)
     if len(to_fetch) > max_fetch:
         to_fetch = to_fetch[:max_fetch]
