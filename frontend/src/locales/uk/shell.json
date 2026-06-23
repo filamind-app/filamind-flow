@@ -155,10 +155,6 @@
       "rules": {
         "title": "Рушій правил",
         "description": "Безпечна автоматизація «якщо - то»: коли щось трапляється, виконати дію."
-      },
-      "control": {
-        "title": "Керування",
-        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

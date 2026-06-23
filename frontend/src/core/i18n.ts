@@ -4,7 +4,6 @@ import enBoardTopology from '../locales/en/board-topology.json'
 import enCommon from '../locales/en/common.json'
 import enConfigEditor from '../locales/en/config-editor.json'
 import enConfigTemplates from '../locales/en/config-templates.json'
-import enControl from '../locales/en/control.json'
 import enHardwareBrowser from '../locales/en/hardware-browser.json'
 import enHostControl from '../locales/en/host-control.json'
 import enFirmware from '../locales/en/firmware.json'
@@ -99,7 +98,6 @@ const en = {
   ...enMotorDrivers,
   ...enRemoteControl,
   ...enConfigEditor,
-  ...enControl,
   ...enMaxFlow,
   ...enMachineDoctor,
   ...enMaterial,

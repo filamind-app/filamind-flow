@@ -155,10 +155,6 @@
       "rules": {
         "title": "Kural Motoru",
         "description": "Güvenli EĞER-İSE otomasyonu: bir şey gerçekleştiğinde bir eylem çalıştırın."
-      },
-      "control": {
-        "title": "Kontrol",
-        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

@@ -155,10 +155,6 @@
       "rules": {
         "title": "Motore delle regole",
         "description": "Automazione sicura SE-ALLORA: quando accade qualcosa, esegui un'azione."
-      },
-      "control": {
-        "title": "Controllo",
-        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

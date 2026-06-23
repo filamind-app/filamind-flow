@@ -155,10 +155,6 @@
       "rules": {
         "title": "Regel-Engine",
         "description": "Sichere WENN-DANN-Automatisierung: Wenn etwas passiert, führe eine Aktion aus."
-      },
-      "control": {
-        "title": "Steuerung",
-        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

@@ -155,10 +155,6 @@
       "rules": {
         "title": "ルールエンジン",
         "description": "安全な「もし～なら」自動化: 何かが起きたら、アクションを実行します。"
-      },
-      "control": {
-        "title": "コントロール",
-        "description": "Live print control: job, temperatures, motion, and webcam."
       }
     },
     "guard": {

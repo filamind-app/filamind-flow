@@ -28,25 +28,6 @@ function reg(def: WidgetDefinition): void {
  */
 export function registerWidgets(): void {
   reg({
-    id: 'control',
-    title: 'Control',
-    icon: '🎛',
-    description:
-      'Live print control: job, temperatures with presets, motion (jog/home/babystep), and webcam.',
-    // The control screen reads live machine state, so it subscribes to the core printer objects.
-    subscriptions: {
-      extruder: null,
-      heater_bed: null,
-      print_stats: null,
-      virtual_sdcard: null,
-      display_status: null,
-      gcode_move: null,
-      fan: null,
-    },
-    component: defineAsyncComponent(() => import('./control/ControlWidget.vue')),
-  })
-
-  reg({
     id: 'machine-doctor',
     title: 'Machine Doctor',
     icon: '🩺',
