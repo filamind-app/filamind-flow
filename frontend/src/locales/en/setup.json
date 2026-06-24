@@ -41,6 +41,10 @@
     },
     "upToDate": "Up to date",
     "versionInstalled": "Installed version",
-    "versionLatest": "Latest version"
+    "versionLatest": "Latest version",
+    "open": "Open",
+    "restart": "Restart",
+    "serving": "Running",
+    "notServing": "Stopped"
   }
 }

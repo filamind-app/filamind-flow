@@ -155,6 +155,17 @@ async def setup_remove(req: RemoveRef) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@router.post("/restart")
+async def setup_restart(req: ComponentRef) -> dict[str, Any]:
+    """Restart a component's runtime — reload nginx for a first-party app (3d/screen), or restart a
+    component's own systemd service. Shows whether 3d/screen are working and lets the user recover
+    them without leaving the panel."""
+    try:
+        return _apply(await setup_manager.restart(req.id))
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
 @router.post("/writes")
 async def setup_writes(req: WritesRef) -> dict[str, Any]:
     """Enable/disable installing from the widget itself (no CLI / no env var needed)."""

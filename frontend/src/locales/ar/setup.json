@@ -41,6 +41,10 @@
     },
     "upToDate": "محدّث",
     "versionInstalled": "الإصدار المثبَّت",
-    "versionLatest": "أحدث إصدار"
+    "versionLatest": "أحدث إصدار",
+    "open": "فتح",
+    "restart": "إعادة تشغيل",
+    "serving": "يعمل",
+    "notServing": "متوقف"
   }
 }

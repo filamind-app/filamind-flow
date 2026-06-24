@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import shutil
 import time
 from collections.abc import Awaitable, Callable
@@ -186,6 +187,32 @@ def _nginx_site_present(site: str) -> bool:
     return False
 
 
+def _nginx_site_port(site: str) -> int | None:
+    """The port a first-party nginx app is served on, read from its ``listen N;`` directive. Lets
+    the widget show where the app lives + build an "open" link, without hard-coding the default."""
+    for base in ("/etc/nginx/sites-enabled", "/etc/nginx/sites-available"):
+        try:
+            text = (Path(base) / site).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        m = re.search(r"^\s*listen\s+(\d+)", text, re.MULTILINE)
+        if m:
+            return int(m.group(1))
+    return None
+
+
+async def _app_reachable(port: int) -> bool:
+    """Best-effort 'is the app actually being served' check: a quick local GET to its nginx port.
+    A site can be installed (file present) yet not served (nginx down / config error), so this is
+    the truthful 'working' signal. Never raises; a non-5xx response counts as up."""
+    try:
+        async with httpx.AsyncClient(timeout=1.5) as client:
+            r = await client.get(f"http://127.0.0.1:{port}/")
+            return r.status_code < 500
+    except httpx.HTTPError:
+        return False
+
+
 def _is_installed(c: Component, managed: set[str], services: set[str]) -> bool:
     """Combine the install signals, most-authoritative first:
 
@@ -337,6 +364,7 @@ async def probe_detailed(
     out: dict[str, dict[str, Any]] = {}
     git_dirs: dict[str, Path] = {}
     not_installed: dict[str, str] = {}
+    nginx_apps: dict[str, int] = {}  # first-party nginx app cid -> served port
 
     for cid, c in catalog.items():
         installed = _is_installed(c, managed, s)
@@ -355,12 +383,24 @@ async def probe_detailed(
             git_dirs[cid] = _install_dir(c)
         else:
             not_installed[cid] = c.repo
+        # First-party nginx apps (FilaMind 3d / screen): surface the served port + a runtime
+        # 'running' flag so the widget can show whether they actually work and offer a restart.
+        if installed and _is_nginx_app(c):
+            port = _nginx_site_port(c.id)
+            if port is not None:
+                rec["port"] = port
+                nginx_apps[cid] = port
         out[cid] = rec
 
     if git_dirs:
         versions = await asyncio.gather(*[_git_version(p) for p in git_dirs.values()])
         for cid, version in zip(git_dirs.keys(), versions, strict=True):
             out[cid]["version"] = version
+
+    if nginx_apps:
+        reach = await asyncio.gather(*[_app_reachable(p) for p in nginx_apps.values()])
+        for cid, ok in zip(nginx_apps.keys(), reach, strict=True):
+            out[cid]["running"] = ok
 
     if not_installed:
         for cid, version in (await _latest_versions(not_installed, github_remaining)).items():
@@ -600,6 +640,28 @@ async def remove(cid: str, confirm: str) -> dict[str, Any]:
         return {"refused": True, "output": f"Refusing to remove {dest} (not a direct $HOME child)."}
     await asyncio.to_thread(shutil.rmtree, dest)
     return {"ok": True, "output": f"Removed {dest}"}
+
+
+async def restart(cid: str) -> dict[str, Any]:
+    """Restart an installed component's runtime.
+
+    First-party apps (FilaMind 3d / screen) are nginx sites with no service of their own, so a
+    restart re-reads their site config with ``systemctl reload nginx``. A component that runs as its
+    own systemd unit (``service``) is restarted directly. Both use the passwordless-sudo systemctl
+    rule the Setup service is granted; anything else has nothing to restart from here.
+    """
+    catalog = load_catalog()
+    component = _require(cid, catalog)
+    if not writes_enabled():
+        return _refused()
+    if _is_nginx_app(component):
+        return await _run(["sudo", "-n", "systemctl", "reload", "nginx"])
+    if component.service:
+        return await _run(["sudo", "-n", "systemctl", "restart", component.service])
+    return {
+        "refused": True,
+        "output": f"{component.name} has no restartable service here; manage it from Host Control.",
+    }
 
 
 # Ports we never let a web UI take over (Moonraker + Klipper's common API/host ports).

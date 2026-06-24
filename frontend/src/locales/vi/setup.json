@@ -41,6 +41,10 @@
     },
     "upToDate": "Mới nhất",
     "versionInstalled": "Phiên bản đã cài",
-    "versionLatest": "Phiên bản mới nhất"
+    "versionLatest": "Phiên bản mới nhất",
+    "open": "Mở",
+    "restart": "Khởi động lại",
+    "serving": "Đang chạy",
+    "notServing": "Đã dừng"
   }
 }

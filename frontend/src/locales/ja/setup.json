@@ -41,6 +41,10 @@
     },
     "upToDate": "最新",
     "versionInstalled": "インストール済みバージョン",
-    "versionLatest": "最新バージョン"
+    "versionLatest": "最新バージョン",
+    "open": "開く",
+    "restart": "再起動",
+    "serving": "稼働中",
+    "notServing": "停止"
   }
 }

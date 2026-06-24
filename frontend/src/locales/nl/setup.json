@@ -41,6 +41,10 @@
     },
     "upToDate": "Up-to-date",
     "versionInstalled": "Geïnstalleerde versie",
-    "versionLatest": "Nieuwste versie"
+    "versionLatest": "Nieuwste versie",
+    "open": "Openen",
+    "restart": "Opnieuw starten",
+    "serving": "Actief",
+    "notServing": "Gestopt"
   }
 }
