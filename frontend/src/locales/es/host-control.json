@@ -255,7 +255,21 @@
       "none": "ninguno",
       "splash": "Pantalla de arranque",
       "noSplash": "No se encontró pantalla de arranque en este host.",
-      "changeHint": "Cambiar el splash + un estudio de diseño llegan en una actualización posterior."
+      "changeHint": "Cambiar el splash + un estudio de diseño llegan en una actualización posterior.",
+      "studio": {
+        "open": "Cambiar splash",
+        "close": "Cerrar estudio",
+        "title": "Diseñar la pantalla de arranque",
+        "bg": "Fondo",
+        "text": "Texto",
+        "textColor": "Color del texto",
+        "upload": "Imagen",
+        "apply": "Aplicar splash",
+        "applying": "Aplicando…",
+        "applied": "Pantalla de arranque aplicada.",
+        "failed": "No se pudo aplicar la pantalla de arranque.",
+        "caveat": "Escribe un PNG en la ruta del splash; que aparezca al arrancar depende de la configuración del host."
+      }
     }
   }
 }

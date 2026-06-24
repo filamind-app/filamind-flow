@@ -255,7 +255,21 @@
       "none": "brak",
       "splash": "Splash rozruchu",
       "noSplash": "Nie znaleziono splasha rozruchu na tym hoście.",
-      "changeHint": "Zmiana splasha + studio projektowe w kolejnej aktualizacji."
+      "changeHint": "Zmiana splasha + studio projektowe w kolejnej aktualizacji.",
+      "studio": {
+        "open": "Zmień splash",
+        "close": "Zamknij studio",
+        "title": "Zaprojektuj splash rozruchu",
+        "bg": "Tło",
+        "text": "Tekst",
+        "textColor": "Kolor tekstu",
+        "upload": "Obraz",
+        "apply": "Zastosuj splash",
+        "applying": "Stosowanie…",
+        "applied": "Splash rozruchu zastosowany.",
+        "failed": "Nie można zastosować splasha rozruchu.",
+        "caveat": "Zapisuje PNG do ścieżki splasha; czy pojawi się przy rozruchu zależy od konfiguracji hosta."
+      }
     }
   }
 }

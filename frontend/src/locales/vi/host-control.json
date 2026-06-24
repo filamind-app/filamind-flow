@@ -255,7 +255,21 @@
       "none": "không có",
       "splash": "Màn hình khởi động",
       "noSplash": "Không tìm thấy màn hình khởi động trên máy chủ này.",
-      "changeHint": "Đổi màn hình khởi động + studio thiết kế sẽ có trong bản cập nhật sau."
+      "changeHint": "Đổi màn hình khởi động + studio thiết kế sẽ có trong bản cập nhật sau.",
+      "studio": {
+        "open": "Đổi splash",
+        "close": "Đóng studio",
+        "title": "Thiết kế splash khởi động",
+        "bg": "Nền",
+        "text": "Văn bản",
+        "textColor": "Màu chữ",
+        "upload": "Hình ảnh",
+        "apply": "Áp dụng splash",
+        "applying": "Đang áp dụng…",
+        "applied": "Đã áp dụng splash khởi động.",
+        "failed": "Không thể áp dụng splash khởi động.",
+        "caveat": "Ghi PNG vào đường dẫn splash; việc hiển thị khi khởi động tùy thuộc cấu hình máy chủ."
+      }
     }
   }
 }

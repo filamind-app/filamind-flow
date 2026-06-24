@@ -255,7 +255,21 @@
       "none": "keins",
       "splash": "Boot-Splash",
       "noSplash": "Auf diesem Host wurde kein Boot-Splash gefunden.",
-      "changeHint": "Splash ändern + ein Design-Studio kommen in einem späteren Update."
+      "changeHint": "Splash ändern + ein Design-Studio kommen in einem späteren Update.",
+      "studio": {
+        "open": "Splash ändern",
+        "close": "Studio schließen",
+        "title": "Boot-Splash gestalten",
+        "bg": "Hintergrund",
+        "text": "Text",
+        "textColor": "Textfarbe",
+        "upload": "Bild",
+        "apply": "Splash anwenden",
+        "applying": "Wird angewendet…",
+        "applied": "Boot-Splash angewendet.",
+        "failed": "Boot-Splash konnte nicht angewendet werden.",
+        "caveat": "Schreibt ein PNG an den Splash-Pfad; ob es beim Booten erscheint, hängt von der Splash-Einrichtung ab."
+      }
     }
   }
 }

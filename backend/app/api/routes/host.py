@@ -8,6 +8,8 @@ confirmations and the host's passwordless-sudo rule.
 
 from __future__ import annotations
 
+import base64
+import binascii
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -39,6 +41,23 @@ async def host_boot_splash() -> FileResponse:
     if not path:
         raise HTTPException(status_code=404, detail="No boot splash found on this host.")
     return FileResponse(path)
+
+
+class SplashSet(BaseModel):
+    image: str  # base64 PNG, optionally a "data:image/png;base64,…" data URL
+    target: str | None = None
+
+
+@router.post("/boot/splash")
+async def host_set_boot_splash(req: SplashSet) -> dict[str, Any]:
+    """Write a new boot-splash PNG to a known splash location (gated: validated + path-guarded +
+    narrow privileged copy). Refuses (403) a non-PNG / oversize / out-of-bounds path."""
+    raw = req.image.split(",", 1)[-1]
+    try:
+        data = base64.b64decode(raw, validate=True)
+    except (binascii.Error, ValueError) as exc:
+        raise HTTPException(status_code=400, detail="Invalid image data.") from exc
+    return await _apply(host_control_service.set_splash(data, req.target))
 
 
 # -- Services (Phase 2) ---------------------------------------------------------

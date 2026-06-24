@@ -52,6 +52,20 @@ export function bootSplashUrl(): string {
   return `${base()}/api/host/boot/splash?t=${Date.now()}`
 }
 
+/** Write a new boot-splash PNG (base64 / data URL). Throws HostActionError(403) if refused. */
+export async function setBootSplash(image: string, target?: string): Promise<SystemActionResult> {
+  const r = await fetch(`${base()}/api/host/boot/splash`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image, ...(target ? { target } : {}) }),
+  })
+  const data = (await r.json().catch(() => ({}))) as {
+    detail?: string
+  } & Partial<SystemActionResult>
+  if (!r.ok) throw new HostActionError(data.detail || httpError(r.status), r.status)
+  return data as SystemActionResult
+}
+
 // ── Services (Phase 2) ─────────────────────────────────────────────────────────
 
 /** All systemd .service units with their state (read-only). */

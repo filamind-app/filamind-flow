@@ -255,7 +255,21 @@
       "none": "nenhum",
       "splash": "Tela de inicialização",
       "noSplash": "Nenhuma tela de inicialização encontrada neste host.",
-      "changeHint": "Alterar o splash + um estúdio de design chegam em uma atualização futura."
+      "changeHint": "Alterar o splash + um estúdio de design chegam em uma atualização futura.",
+      "studio": {
+        "open": "Alterar splash",
+        "close": "Fechar estúdio",
+        "title": "Projetar a tela de inicialização",
+        "bg": "Fundo",
+        "text": "Texto",
+        "textColor": "Cor do texto",
+        "upload": "Imagem",
+        "apply": "Aplicar splash",
+        "applying": "Aplicando…",
+        "applied": "Tela de inicialização aplicada.",
+        "failed": "Não foi possível aplicar a tela de inicialização.",
+        "caveat": "Grava um PNG no caminho do splash; se aparece na inicialização depende da configuração do host."
+      }
     }
   }
 }
