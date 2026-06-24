@@ -5,7 +5,8 @@
       "monitor": "Monitor",
       "services": "Layanan",
       "cleanup": "Pembersihan",
-      "system": "Sistem"
+      "system": "Sistem",
+      "boot": "Boot"
     },
     "help": {
       "guide": "Bantuan",
@@ -242,6 +243,19 @@
         "confirmYes": "Terapkan & alihkan",
         "applyingReconnect": "Menerapkan… jika panel berhenti merespons, hubungkan kembali di IP baru printer."
       }
+    },
+    "boot": {
+      "intro": "Cara host melakukan boot: target default dan splash boot. Hanya-baca di sini; mengubah splash menyusul.",
+      "refresh": "Segarkan",
+      "loading": "Membaca konfigurasi boot…",
+      "defaultTarget": "Target default",
+      "graphical": "Grafis",
+      "console": "Konsol",
+      "plymouth": "Tema Plymouth",
+      "none": "tidak ada",
+      "splash": "Splash boot",
+      "noSplash": "Tidak ada splash boot di host ini.",
+      "changeHint": "Mengubah splash boot + studio desain hadir di pembaruan mendatang."
     }
   }
 }

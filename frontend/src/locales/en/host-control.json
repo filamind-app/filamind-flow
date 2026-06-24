@@ -5,7 +5,8 @@
       "monitor": "Monitor",
       "services": "Services",
       "cleanup": "Cleanup",
-      "system": "System"
+      "system": "System",
+      "boot": "Boot"
     },
     "help": {
       "guide": "Help",
@@ -242,6 +243,19 @@
         "confirmYes": "Apply & switch",
         "applyingReconnect": "Applying… if the panel stops responding, reconnect at the printer's new IP."
       }
+    },
+    "boot": {
+      "intro": "How the host boots: the default target and the boot splash. Read-only here; changing the splash comes later.",
+      "refresh": "Refresh",
+      "loading": "Reading boot config…",
+      "defaultTarget": "Default target",
+      "graphical": "Graphical",
+      "console": "Console",
+      "plymouth": "Plymouth theme",
+      "none": "none",
+      "splash": "Boot splash",
+      "noSplash": "No boot splash found on this host.",
+      "changeHint": "Changing the boot splash + a design studio are coming in a later update."
     }
   }
 }

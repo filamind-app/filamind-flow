@@ -5,7 +5,8 @@
       "monitor": "Überwachung",
       "services": "Dienste",
       "cleanup": "Bereinigung",
-      "system": "System"
+      "system": "System",
+      "boot": "Boot"
     },
     "help": {
       "guide": "Hilfe",
@@ -242,6 +243,19 @@
         "confirmYes": "Übernehmen & umschalten",
         "applyingReconnect": "Wird übernommen… reagiert das Panel nicht mehr, verbinde dich an der neuen IP des Druckers."
       }
+    },
+    "boot": {
+      "intro": "Wie der Host startet: das Standardziel und der Boot-Splash. Hier nur lesend; das Ändern des Splashs folgt.",
+      "refresh": "Aktualisieren",
+      "loading": "Boot-Konfiguration wird gelesen…",
+      "defaultTarget": "Standardziel",
+      "graphical": "Grafisch",
+      "console": "Konsole",
+      "plymouth": "Plymouth-Theme",
+      "none": "keins",
+      "splash": "Boot-Splash",
+      "noSplash": "Auf diesem Host wurde kein Boot-Splash gefunden.",
+      "changeHint": "Splash ändern + ein Design-Studio kommen in einem späteren Update."
     }
   }
 }

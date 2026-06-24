@@ -48,6 +48,49 @@ def _read(path: str) -> str:
         return ""
 
 
+# --- Boot / splash (read-only here; changing the splash + the studio land in a later phase) ------
+
+#: Known boot-splash image locations across the common printer-host images (Raspberry Pi OS,
+#: Armbian / BTT CB1, generic). The first that exists is treated as the active boot splash.
+_SPLASH_PATHS: tuple[str, ...] = (
+    "/boot/firmware/splash.png",
+    "/boot/splash.png",
+    "/boot/boot.bmp",
+    "/usr/share/plymouth/themes/spinner/watermark.png",
+)
+
+
+def _find_splash() -> dict[str, Any] | None:
+    """The active boot-splash image (path + byte size), best-effort, or None if none is found."""
+    for p in _SPLASH_PATHS:
+        try:
+            st = os.stat(p)
+        except OSError:
+            continue
+        if stat.S_ISREG(st.st_mode):
+            return {"path": p, "size": st.st_size}
+    return None
+
+
+def splash_path() -> str | None:
+    """The active boot-splash file path (restricted to the known locations), for serving it."""
+    found = _find_splash()
+    return found["path"] if found else None
+
+
+async def boot_info() -> dict[str, Any]:
+    """Read-only boot configuration: the systemd default target, the active boot splash, and the
+    plymouth theme when present. Nothing here changes the system (that lands in a later phase)."""
+    default_target = (await _run(["systemctl", "get-default"])).strip()
+    plymouth = (await _run(["plymouth-set-default-theme"])).strip()
+    return {
+        "default_target": default_target or None,
+        "graphical": default_target.startswith("graphical"),
+        "splash": _find_splash(),
+        "plymouth_theme": plymouth or None,
+    }
+
+
 def _host_block() -> dict[str, Any]:
     osr = _read("/etc/os-release")
     distro = ""

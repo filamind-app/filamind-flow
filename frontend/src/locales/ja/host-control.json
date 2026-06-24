@@ -5,7 +5,8 @@
       "monitor": "モニター",
       "services": "サービス",
       "cleanup": "クリーンアップ",
-      "system": "システム"
+      "system": "システム",
+      "boot": "起動"
     },
     "help": {
       "guide": "ヘルプ",
@@ -242,6 +243,19 @@
         "confirmYes": "適用して切り替え",
         "applyingReconnect": "適用中… パネルが応答しなくなった場合は、プリンターの新しい IP で再接続してください。"
       }
+    },
+    "boot": {
+      "intro": "ホストの起動方法：既定ターゲットと起動スプラッシュ。ここでは読み取り専用。スプラッシュ変更は後日。",
+      "refresh": "更新",
+      "loading": "起動設定を読み込み中…",
+      "defaultTarget": "既定ターゲット",
+      "graphical": "グラフィカル",
+      "console": "コンソール",
+      "plymouth": "Plymouth テーマ",
+      "none": "なし",
+      "splash": "起動スプラッシュ",
+      "noSplash": "このホストに起動スプラッシュが見つかりません。",
+      "changeHint": "スプラッシュ変更＋デザインスタジオは今後の更新で対応します。"
     }
   }
 }

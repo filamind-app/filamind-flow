@@ -5,7 +5,8 @@
       "monitor": "Giám sát",
       "services": "Dịch vụ",
       "cleanup": "Dọn dẹp",
-      "system": "Hệ thống"
+      "system": "Hệ thống",
+      "boot": "Khởi động"
     },
     "help": {
       "guide": "Trợ giúp",
@@ -242,6 +243,19 @@
         "confirmYes": "Áp dụng & chuyển",
         "applyingReconnect": "Đang áp dụng… nếu bảng điều khiển ngừng phản hồi, hãy kết nối lại tại IP mới của máy in."
       }
+    },
+    "boot": {
+      "intro": "Cách máy chủ khởi động: mục tiêu mặc định và màn hình khởi động. Chỉ đọc ở đây; đổi splash sẽ có sau.",
+      "refresh": "Làm mới",
+      "loading": "Đang đọc cấu hình khởi động…",
+      "defaultTarget": "Mục tiêu mặc định",
+      "graphical": "Đồ họa",
+      "console": "Bảng điều khiển",
+      "plymouth": "Chủ đề Plymouth",
+      "none": "không có",
+      "splash": "Màn hình khởi động",
+      "noSplash": "Không tìm thấy màn hình khởi động trên máy chủ này.",
+      "changeHint": "Đổi màn hình khởi động + studio thiết kế sẽ có trong bản cập nhật sau."
     }
   }
 }
