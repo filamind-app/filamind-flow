@@ -271,3 +271,52 @@ def test_dependency_guard_passes_through_route_when_writes_off() -> None:
     # The route still refuses with 403 at the writes gate before any dependency work.
     r = client.post("/api/setup/install", json={"id": "mainsail"})
     assert r.status_code == 403
+
+
+async def test_update_delegates_managed_component_to_moonraker(monkeypatch) -> None:
+    # Mainsail is a web UI (a downloaded artifact, NOT a git checkout) but IS Moonraker-managed, so
+    # update must go through Moonraker's update manager — never a raw `git pull` against ~/mainsail
+    # (that's the "Mainsail is not a git checkout" failure we're fixing).
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    called: list[str] = []
+
+    async def mr_update(name: str) -> None:
+        called.append(name)
+
+    r = await setup_manager.update("mainsail", managed={"mainsail"}, moonraker_update=mr_update)
+    assert r.get("ok") is True
+    assert called == ["mainsail"]  # delegated by manager_key/id, not git-pulled
+
+
+async def test_update_unmanaged_non_git_is_refused(monkeypatch, tmp_path) -> None:
+    # A component Moonraker doesn't track and that isn't a git checkout can't be updated from here:
+    # refuse clearly instead of a git pull that errors.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    monkeypatch.setattr(setup_manager, "_install_dir", lambda c: tmp_path / "nope")
+    r = await setup_manager.update("guppyscreen", managed=set())
+    assert r.get("refused") is True
+
+
+async def test_first_party_install_with_port_passes_it(monkeypatch) -> None:
+    # A chosen port installs FilaMind 3d straight onto it (e.g. 88 when Mainsail owns 80).
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    captured: list[list[str]] = []
+
+    async def fake_run(cmd: list[str]) -> dict:
+        captured.append(cmd)
+        return {"ok": True, "output": "ok"}
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    r = await setup_manager.install(
+        "filamind-3d", managed={"klipper", "moonraker"}, services=set(), port=88
+    )
+    assert r.get("ok") is True
+    assert "install --port 88" in " ".join(captured[0])
+
+
+async def test_install_rejects_out_of_range_port(monkeypatch) -> None:
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    r = await setup_manager.install(
+        "filamind-3d", managed={"klipper", "moonraker"}, services=set(), port=70000
+    )
+    assert r.get("refused") is True

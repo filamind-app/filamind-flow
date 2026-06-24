@@ -158,7 +158,9 @@ async function enableWrites(): Promise<void> {
   }
 }
 
-const isWeb = (c: SetupComponent): boolean => c.type === 'web'
+/** A first-party web app (FilaMind 3d): we serve its own nginx site, so we can both install it on a
+ *  chosen port and change that port later. Third-party web UIs (Mainsail/Fluidd) are host-managed. */
+const isFirstPartyWeb = (c: SetupComponent): boolean => c.type === 'web' && !!c.first_party
 function applyPort(c: SetupComponent): void {
   const port = ports.value[c.id]
   if (port) void run(c.id, () => setPort(c.id, port))
@@ -172,7 +174,9 @@ async function doInstall(c: SetupComponent): Promise<void> {
   lastResult.value = null
   installLog.value = ''
   try {
-    const taskId = await installComponentStream(c.id)
+    // First-party web app: install straight onto the chosen port (e.g. 88 when Mainsail owns 80).
+    const port = isFirstPartyWeb(c) ? ports.value[c.id] : undefined
+    const taskId = await installComponentStream(c.id, port)
     for (;;) {
       await new Promise((r) => setTimeout(r, 1000))
       const task = await fetchTask(taskId)
@@ -323,6 +327,22 @@ onMounted(load)
                 </button>
               </template>
               <template v-else>
+                <span
+                  v-if="isFirstPartyWeb(c) && c.id in ports"
+                  class="flex items-center gap-1 text-xs"
+                >
+                  <label :for="`install-port-${c.id}`" class="text-ink/60">{{
+                    t('setup.port')
+                  }}</label>
+                  <input
+                    :id="`install-port-${c.id}`"
+                    v-model.number="ports[c.id]"
+                    type="number"
+                    min="1"
+                    max="65535"
+                    class="nb-input w-20 px-2 py-1"
+                  />
+                </span>
                 <button
                   v-if="canInstall(c)"
                   class="nb-btn px-3 py-1"
@@ -359,7 +379,7 @@ onMounted(load)
           </div>
 
           <div
-            v-if="isInstalled(c) && isWeb(c) && c.id in ports"
+            v-if="isInstalled(c) && isFirstPartyWeb(c) && c.id in ports"
             class="flex flex-wrap items-center gap-2 text-xs"
           >
             <label :for="`port-${c.id}`" class="text-ink/60">{{ t('setup.port') }}</label>
