@@ -320,3 +320,24 @@ async def test_install_rejects_out_of_range_port(monkeypatch) -> None:
         "filamind-3d", managed={"klipper", "moonraker"}, services=set(), port=70000
     )
     assert r.get("refused") is True
+
+
+async def test_restart_first_party_app_reloads_nginx(monkeypatch) -> None:
+    # FilaMind 3d is an nginx site (no service of its own), so "restart" reloads nginx.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    captured: list[list[str]] = []
+
+    async def fake_run(cmd: list[str]) -> dict:
+        captured.append(cmd)
+        return {"ok": True, "output": "reloaded"}
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    r = await setup_manager.restart("filamind-3d")
+    assert r.get("ok") is True
+    assert captured and "reload" in captured[0] and "nginx" in captured[0]
+
+
+async def test_restart_refused_when_writes_disabled(monkeypatch) -> None:
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: False)
+    r = await setup_manager.restart("filamind-3d")
+    assert r.get("refused") is True

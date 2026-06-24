@@ -32,6 +32,10 @@ export interface SetupComponentStatus {
   latest: string
   /** True only when an installed component is behind its remote (drives the Update button). */
   updateAvailable: boolean
+  /** For an installed first-party nginx app (FilaMind 3d / screen): the port it's served on. */
+  port?: number
+  /** For an installed first-party nginx app: whether it actually responds on its port right now. */
+  running?: boolean
 }
 
 export interface SetupStatus {

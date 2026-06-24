@@ -41,6 +41,10 @@
     },
     "upToDate": "Güncel",
     "versionInstalled": "Yüklü sürüm",
-    "versionLatest": "En son sürüm"
+    "versionLatest": "En son sürüm",
+    "open": "Aç",
+    "restart": "Yeniden başlat",
+    "serving": "Çalışıyor",
+    "notServing": "Durdu"
   }
 }

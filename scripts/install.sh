@@ -453,7 +453,9 @@ PY
   else
     NAVI_HOST="${FILAMIND_PUBLIC_HOST:-$(hostname -I 2>/dev/null | awk '{print $1}')}"
     [ -n "$NAVI_HOST" ] || NAVI_HOST="$(hostname).local"
-    NAVI_HREF="http://$NAVI_HOST:$UI_PORT"; NAVI_TARGET="_blank"
+    # Open in the SAME tab (not a new one): the sidebar link should navigate Mainsail to FilaMind
+    # Flow in place, like every other sidebar entry, rather than spawning a second tab.
+    NAVI_HREF="http://$NAVI_HOST:$UI_PORT"; NAVI_TARGET="_self"
   fi
   FILAMIND_NAVI_HREF="$NAVI_HREF" FILAMIND_NAVI_TARGET="$NAVI_TARGET" python3 - "$PRINTER_DATA/config/.theme/navi.json" <<'PY'
 import json, os, sys

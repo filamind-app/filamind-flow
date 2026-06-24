@@ -41,6 +41,10 @@
     },
     "upToDate": "Actualizado",
     "versionInstalled": "Versión instalada",
-    "versionLatest": "Última versión"
+    "versionLatest": "Última versión",
+    "open": "Abrir",
+    "restart": "Reiniciar",
+    "serving": "Activo",
+    "notServing": "Detenido"
   }
 }

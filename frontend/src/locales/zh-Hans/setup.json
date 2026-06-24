@@ -41,6 +41,10 @@
     },
     "upToDate": "已是最新",
     "versionInstalled": "已安装版本",
-    "versionLatest": "最新版本"
+    "versionLatest": "最新版本",
+    "open": "打开",
+    "restart": "重启",
+    "serving": "运行中",
+    "notServing": "已停止"
   }
 }

@@ -41,6 +41,10 @@
     },
     "upToDate": "최신",
     "versionInstalled": "설치된 버전",
-    "versionLatest": "최신 버전"
+    "versionLatest": "최신 버전",
+    "open": "열기",
+    "restart": "다시 시작",
+    "serving": "실행 중",
+    "notServing": "중지됨"
   }
 }

@@ -41,6 +41,10 @@
     },
     "upToDate": "Terbaru",
     "versionInstalled": "Versi terpasang",
-    "versionLatest": "Versi terbaru"
+    "versionLatest": "Versi terbaru",
+    "open": "Buka",
+    "restart": "Mulai ulang",
+    "serving": "Aktif",
+    "notServing": "Berhenti"
   }
 }

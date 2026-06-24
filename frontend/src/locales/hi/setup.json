@@ -41,6 +41,10 @@
     },
     "upToDate": "अद्यतित",
     "versionInstalled": "स्थापित संस्करण",
-    "versionLatest": "नवीनतम संस्करण"
+    "versionLatest": "नवीनतम संस्करण",
+    "open": "खोलें",
+    "restart": "पुनः आरंभ करें",
+    "serving": "चालू",
+    "notServing": "बंद"
   }
 }

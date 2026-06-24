@@ -11,6 +11,7 @@ import {
   fetchStatus,
   installComponentStream,
   removeComponent,
+  restartComponent,
   setPort,
   setWrites,
   updateComponent,
@@ -165,6 +166,19 @@ function applyPort(c: SetupComponent): void {
   const port = ports.value[c.id]
   if (port) void run(c.id, () => setPort(c.id, port))
 }
+
+/** Runtime status for an installed first-party app served by nginx (FilaMind 3d / screen): the
+ *  backend reports the served port + whether it actually responds. These drive the running/stopped
+ *  badge, the open link, and the restart button. */
+const appPort = (c: SetupComponent): number | undefined => status.value[c.id]?.port
+const hasRuntime = (c: SetupComponent): boolean => isInstalled(c) && appPort(c) !== undefined
+const isRunning = (c: SetupComponent): boolean => status.value[c.id]?.running === true
+/** Same-origin host + the app's port, so "Open" navigates the current tab to the app. */
+const appUrl = (c: SetupComponent): string => {
+  const port = appPort(c)
+  return port ? `${window.location.protocol}//${window.location.hostname}:${port}/` : '#'
+}
+const doRestart = (c: SetupComponent): Promise<void> => run(c.id, () => restartComponent(c.id))
 
 /** Install with live progress: start the background task, then poll it and stream its log into the
  *  card until it finishes. A refusal (writes-off / missing-deps) still arrives as a synchronous 403. */
@@ -376,6 +390,27 @@ onMounted(load)
             >
               {{ t('setup.repo') }}
             </a>
+          </div>
+
+          <!-- Runtime status for an installed first-party app (3d / screen): is it actually serving,
+               where, with an open-in-this-tab link and a restart (reload nginx). -->
+          <div v-if="hasRuntime(c)" class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="inline-flex items-center gap-1">
+              <span
+                class="h-2.5 w-2.5 rounded-full border border-ink"
+                :class="isRunning(c) ? 'bg-brand-green' : 'bg-brand-red'"
+              />
+              {{ isRunning(c) ? t('setup.serving') : t('setup.notServing') }}
+            </span>
+            <span class="text-ink/60">{{ t('setup.port') }} {{ appPort(c) }}</span>
+            <a class="nb-btn px-3 py-1" :href="appUrl(c)">{{ t('setup.open') }}</a>
+            <button
+              class="nb-btn px-3 py-1"
+              :disabled="!writesEnabled || busyId !== null"
+              @click="doRestart(c)"
+            >
+              {{ busyId === c.id ? t('setup.working') : t('setup.restart') }}
+            </button>
           </div>
 
           <div

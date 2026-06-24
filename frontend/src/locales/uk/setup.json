@@ -41,6 +41,10 @@
     },
     "upToDate": "Актуально",
     "versionInstalled": "Встановлена версія",
-    "versionLatest": "Найновіша версія"
+    "versionLatest": "Найновіша версія",
+    "open": "Відкрити",
+    "restart": "Перезапустити",
+    "serving": "Працює",
+    "notServing": "Зупинено"
   }
 }

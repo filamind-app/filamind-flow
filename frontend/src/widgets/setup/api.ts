@@ -61,6 +61,8 @@ export async function installComponentStream(id: string, port?: number): Promise
 }
 
 export const updateComponent = (id: string): Promise<SetupActionResult> => post('update', { id })
+/** Restart a first-party app's runtime (reload nginx for 3d/screen, or restart its service). */
+export const restartComponent = (id: string): Promise<SetupActionResult> => post('restart', { id })
 export const removeComponent = (id: string, confirm: string): Promise<SetupActionResult> =>
   post('remove', { id, confirm })
 export const setPort = (id: string, port: number): Promise<SetupActionResult> =>
