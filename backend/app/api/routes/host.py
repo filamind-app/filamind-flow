@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app.config import Settings, get_settings
@@ -23,6 +24,21 @@ router = APIRouter(prefix="/host", tags=["host"])
 async def host_monitor(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """Read-only snapshot of host health + OS state for the Host Control widget."""
     return await host_control_service.monitor(settings.data_dir)
+
+
+@router.get("/boot")
+async def host_boot() -> dict[str, Any]:
+    """Read-only boot configuration: default systemd target, active boot splash, plymouth theme."""
+    return await host_control_service.boot_info()
+
+
+@router.get("/boot/splash")
+async def host_boot_splash() -> FileResponse:
+    """Serve the active boot-splash image (restricted to the known splash locations) for preview."""
+    path = host_control_service.splash_path()
+    if not path:
+        raise HTTPException(status_code=404, detail="No boot splash found on this host.")
+    return FileResponse(path)
 
 
 # -- Services (Phase 2) ---------------------------------------------------------

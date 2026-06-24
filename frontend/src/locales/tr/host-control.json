@@ -5,7 +5,8 @@
       "monitor": "İzleme",
       "services": "Servisler",
       "cleanup": "Temizlik",
-      "system": "Sistem"
+      "system": "Sistem",
+      "boot": "Önyükleme"
     },
     "help": {
       "guide": "Yardım",
@@ -242,6 +243,19 @@
         "confirmYes": "Uygula ve geçiş yap",
         "applyingReconnect": "Uygulanıyor… panel yanıt vermezse, yazıcının yeni IP'sinde yeniden bağlanın."
       }
+    },
+    "boot": {
+      "intro": "Ana makine nasıl açılır: varsayılan hedef ve önyükleme açılış ekranı. Burada salt okunur; açılış ekranını değiştirme sonra.",
+      "refresh": "Yenile",
+      "loading": "Önyükleme yapılandırması okunuyor…",
+      "defaultTarget": "Varsayılan hedef",
+      "graphical": "Grafik",
+      "console": "Konsol",
+      "plymouth": "Plymouth teması",
+      "none": "yok",
+      "splash": "Önyükleme ekranı",
+      "noSplash": "Bu ana makinede önyükleme ekranı bulunamadı.",
+      "changeHint": "Açılış ekranını değiştirme + tasarım stüdyosu ileriki bir güncellemede."
     }
   }
 }

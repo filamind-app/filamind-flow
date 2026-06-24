@@ -5,7 +5,8 @@
       "monitor": "監控",
       "services": "服務",
       "cleanup": "清理",
-      "system": "系統"
+      "system": "系統",
+      "boot": "啟動"
     },
     "help": {
       "guide": "說明",
@@ -242,6 +243,19 @@
         "confirmYes": "套用並切換",
         "applyingReconnect": "套用中… 若本面板停止回應，請於印表機的新 IP 重新連線。"
       }
+    },
+    "boot": {
+      "intro": "主機如何啟動：預設目標與啟動畫面。此處唯讀；變更啟動畫面將於日後提供。",
+      "refresh": "重新整理",
+      "loading": "正在讀取啟動設定…",
+      "defaultTarget": "預設目標",
+      "graphical": "圖形",
+      "console": "主控台",
+      "plymouth": "Plymouth 佈景",
+      "none": "無",
+      "splash": "啟動畫面",
+      "noSplash": "此主機上找不到啟動畫面。",
+      "changeHint": "變更啟動畫面 + 設計工作室將於後續更新推出。"
     }
   }
 }

@@ -5,7 +5,8 @@
       "monitor": "Monitor",
       "services": "Servicios",
       "cleanup": "Limpieza",
-      "system": "Sistema"
+      "system": "Sistema",
+      "boot": "Arranque"
     },
     "help": {
       "guide": "Ayuda",
@@ -242,6 +243,19 @@
         "confirmYes": "Aplicar y cambiar",
         "applyingReconnect": "Aplicando… si el panel deja de responder, reconéctate en la nueva IP de la impresora."
       }
+    },
+    "boot": {
+      "intro": "Cómo arranca el host: el objetivo por defecto y la pantalla de arranque. Solo lectura aquí; cambiar el splash llega después.",
+      "refresh": "Actualizar",
+      "loading": "Leyendo configuración de arranque…",
+      "defaultTarget": "Objetivo por defecto",
+      "graphical": "Gráfico",
+      "console": "Consola",
+      "plymouth": "Tema Plymouth",
+      "none": "ninguno",
+      "splash": "Pantalla de arranque",
+      "noSplash": "No se encontró pantalla de arranque en este host.",
+      "changeHint": "Cambiar el splash + un estudio de diseño llegan en una actualización posterior."
     }
   }
 }

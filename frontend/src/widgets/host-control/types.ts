@@ -10,6 +10,18 @@ export interface HostBlock {
   uptime_s: number | null
 }
 
+/** Read-only boot configuration (the Boot panel). */
+export interface BootInfo {
+  /** systemd default target, e.g. "graphical.target" / "multi-user.target". */
+  default_target: string | null
+  /** Whether the host boots into a graphical session. */
+  graphical: boolean
+  /** The active boot-splash image (path + byte size), or null when none is found. */
+  splash: { path: string; size: number } | null
+  /** The active plymouth theme, when plymouth is present. */
+  plymouth_theme: string | null
+}
+
 export interface CpuBlock {
   temp_c: number | null
   load: number[] | null

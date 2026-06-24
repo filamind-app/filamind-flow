@@ -5,7 +5,8 @@
       "monitor": "Monitoraggio",
       "services": "Servizi",
       "cleanup": "Pulizia",
-      "system": "Sistema"
+      "system": "Sistema",
+      "boot": "Avvio"
     },
     "help": {
       "guide": "Aiuto",
@@ -242,6 +243,19 @@
         "confirmYes": "Applica e cambia",
         "applyingReconnect": "Applicazione… se il pannello smette di rispondere, riconnettiti al nuovo IP della stampante."
       }
+    },
+    "boot": {
+      "intro": "Come si avvia l'host: il target predefinito e lo splash di avvio. Sola lettura qui; la modifica dello splash arriva dopo.",
+      "refresh": "Aggiorna",
+      "loading": "Lettura configurazione di avvio…",
+      "defaultTarget": "Target predefinito",
+      "graphical": "Grafico",
+      "console": "Console",
+      "plymouth": "Tema Plymouth",
+      "none": "nessuno",
+      "splash": "Splash di avvio",
+      "noSplash": "Nessuno splash di avvio trovato su questo host.",
+      "changeHint": "Modifica dello splash + uno studio di design in un aggiornamento futuro."
     }
   }
 }

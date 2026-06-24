@@ -5,7 +5,8 @@
       "monitor": "모니터",
       "services": "서비스",
       "cleanup": "정리",
-      "system": "시스템"
+      "system": "시스템",
+      "boot": "부팅"
     },
     "help": {
       "guide": "도움말",
@@ -242,6 +243,19 @@
         "confirmYes": "적용 및 전환",
         "applyingReconnect": "적용 중… 패널이 응답하지 않으면 프린터의 새 IP로 다시 연결하세요."
       }
+    },
+    "boot": {
+      "intro": "호스트 부팅 방식: 기본 타깃과 부팅 스플래시. 여기서는 읽기 전용이며, 스플래시 변경은 추후 제공됩니다.",
+      "refresh": "새로고침",
+      "loading": "부팅 구성 읽는 중…",
+      "defaultTarget": "기본 타깃",
+      "graphical": "그래픽",
+      "console": "콘솔",
+      "plymouth": "Plymouth 테마",
+      "none": "없음",
+      "splash": "부팅 스플래시",
+      "noSplash": "이 호스트에 부팅 스플래시가 없습니다.",
+      "changeHint": "부팅 스플래시 변경 + 디자인 스튜디오는 다음 업데이트에서 제공됩니다."
     }
   }
 }

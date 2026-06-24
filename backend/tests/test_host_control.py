@@ -481,3 +481,25 @@ async def test_network_info_unavailable_without_nmcli(monkeypatch: pytest.Monkey
     monkeypatch.setattr(hc, "_has_cmd", lambda name: False)
     info = await hc.network_info()
     assert info["available"] is False and info["configurable"] is False
+
+
+async def test_boot_info_reads_target_and_splash(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake_run(cmd: list[str], timeout: float = 5.0) -> str:
+        if cmd[:2] == ["systemctl", "get-default"]:
+            return "graphical.target\n"
+        if cmd and cmd[0] == "plymouth-set-default-theme":
+            return "spinner\n"
+        return ""
+
+    monkeypatch.setattr(hc, "_run", fake_run)
+    monkeypatch.setattr(hc, "_find_splash", lambda: {"path": "/boot/splash.png", "size": 1234})
+    info = await hc.boot_info()
+    assert info["default_target"] == "graphical.target"
+    assert info["graphical"] is True
+    assert info["plymouth_theme"] == "spinner"
+    assert info["splash"] == {"path": "/boot/splash.png", "size": 1234}
+
+
+def test_splash_path_is_none_when_absent(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(hc, "_find_splash", lambda: None)
+    assert hc.splash_path() is None

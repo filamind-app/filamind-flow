@@ -5,7 +5,8 @@
       "monitor": "监视",
       "services": "服务",
       "cleanup": "清理",
-      "system": "系统"
+      "system": "系统",
+      "boot": "启动"
     },
     "help": {
       "guide": "帮助",
@@ -242,6 +243,19 @@
         "confirmYes": "应用并切换",
         "applyingReconnect": "正在应用……如果面板停止响应，请在打印机的新 IP 上重新连接。"
       }
+    },
+    "boot": {
+      "intro": "主机如何启动：默认目标与启动画面。此处只读；更改启动画面将在以后提供。",
+      "refresh": "刷新",
+      "loading": "正在读取启动配置…",
+      "defaultTarget": "默认目标",
+      "graphical": "图形",
+      "console": "控制台",
+      "plymouth": "Plymouth 主题",
+      "none": "无",
+      "splash": "启动画面",
+      "noSplash": "此主机上未找到启动画面。",
+      "changeHint": "更改启动画面 + 设计工作室将在后续更新中推出。"
     }
   }
 }

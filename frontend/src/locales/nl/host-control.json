@@ -5,7 +5,8 @@
       "monitor": "Monitor",
       "services": "Diensten",
       "cleanup": "Opschonen",
-      "system": "Systeem"
+      "system": "Systeem",
+      "boot": "Opstarten"
     },
     "help": {
       "guide": "Help",
@@ -242,6 +243,19 @@
         "confirmYes": "Toepassen & overschakelen",
         "applyingReconnect": "Toepassen… als het paneel niet meer reageert, verbind opnieuw op het nieuwe IP van de printer."
       }
+    },
+    "boot": {
+      "intro": "Hoe de host opstart: het standaarddoel en de opstart-splash. Hier alleen-lezen; de splash wijzigen komt later.",
+      "refresh": "Vernieuwen",
+      "loading": "Opstartconfiguratie lezen…",
+      "defaultTarget": "Standaarddoel",
+      "graphical": "Grafisch",
+      "console": "Console",
+      "plymouth": "Plymouth-thema",
+      "none": "geen",
+      "splash": "Opstart-splash",
+      "noSplash": "Geen opstart-splash gevonden op deze host.",
+      "changeHint": "De splash wijzigen + een ontwerpstudio komen in een latere update."
     }
   }
 }

@@ -5,7 +5,8 @@
       "monitor": "Moniteur",
       "services": "Services",
       "cleanup": "Nettoyage",
-      "system": "Système"
+      "system": "Système",
+      "boot": "Démarrage"
     },
     "help": {
       "guide": "Aide",
@@ -242,6 +243,19 @@
         "confirmYes": "Appliquer et basculer",
         "applyingReconnect": "Application… si le panneau ne répond plus, reconnectez-vous à la nouvelle IP de l'imprimante."
       }
+    },
+    "boot": {
+      "intro": "Comment l'hôte démarre : la cible par défaut et l'écran de démarrage. Lecture seule ici ; modifier le splash viendra plus tard.",
+      "refresh": "Actualiser",
+      "loading": "Lecture de la config de démarrage…",
+      "defaultTarget": "Cible par défaut",
+      "graphical": "Graphique",
+      "console": "Console",
+      "plymouth": "Thème Plymouth",
+      "none": "aucun",
+      "splash": "Écran de démarrage",
+      "noSplash": "Aucun écran de démarrage trouvé sur cet hôte.",
+      "changeHint": "Changer le splash + un studio de conception arrivent dans une mise à jour ultérieure."
     }
   }
 }

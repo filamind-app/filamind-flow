@@ -2,6 +2,7 @@ import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
+  BootInfo,
   CleanupRunResult,
   CleanupTarget,
   HostMonitor,
@@ -35,6 +36,20 @@ export async function fetchMonitor(): Promise<HostMonitor> {
   const r = await fetch(`${base()}/api/host/monitor`)
   if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as HostMonitor
+}
+
+// ── Boot ───────────────────────────────────────────────────────────────────────
+
+/** Read-only boot config: default systemd target, active boot splash, plymouth theme. */
+export async function fetchBootInfo(): Promise<BootInfo> {
+  const r = await fetch(`${base()}/api/host/boot`)
+  if (!r.ok) throw new Error(httpError(r.status))
+  return (await r.json()) as BootInfo
+}
+
+/** URL of the active boot-splash image, for an <img> preview (cache-busted per load). */
+export function bootSplashUrl(): string {
+  return `${base()}/api/host/boot/splash?t=${Date.now()}`
 }
 
 // ── Services (Phase 2) ─────────────────────────────────────────────────────────

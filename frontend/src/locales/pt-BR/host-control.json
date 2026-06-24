@@ -5,7 +5,8 @@
       "monitor": "Monitor",
       "services": "Serviços",
       "cleanup": "Limpeza",
-      "system": "Sistema"
+      "system": "Sistema",
+      "boot": "Inicialização"
     },
     "help": {
       "guide": "Ajuda",
@@ -242,6 +243,19 @@
         "confirmYes": "Aplicar e alternar",
         "applyingReconnect": "Aplicando… se o painel parar de responder, reconecte-se no novo IP da impressora."
       }
+    },
+    "boot": {
+      "intro": "Como o host inicializa: o alvo padrão e a tela de inicialização. Somente leitura aqui; alterar o splash vem depois.",
+      "refresh": "Atualizar",
+      "loading": "Lendo configuração de inicialização…",
+      "defaultTarget": "Alvo padrão",
+      "graphical": "Gráfico",
+      "console": "Console",
+      "plymouth": "Tema Plymouth",
+      "none": "nenhum",
+      "splash": "Tela de inicialização",
+      "noSplash": "Nenhuma tela de inicialização encontrada neste host.",
+      "changeHint": "Alterar o splash + um estúdio de design chegam em uma atualização futura."
     }
   }
 }
