@@ -258,3 +258,22 @@ class MoonrakerClient:
             timeout=max(self._timeout, 30.0),
         )
         response.raise_for_status()
+
+    async def update_client(self, name: str) -> None:
+        """Trigger Moonraker's update manager for a managed client / repo via
+        ``POST /machine/update/client?name=<name>``.
+
+        This is the correct way to update Moonraker-tracked components — web UIs (Mainsail, Fluidd)
+        are downloaded artifacts, NOT git checkouts, so a raw ``git pull`` against their directory
+        fails ("not a git checkout"); only Moonraker knows how to refresh them. The update runs in
+        the background on Moonraker's side (this returns once the request is accepted).
+
+        Raises:
+            httpx.HTTPError: if Moonraker is unreachable, or ``name`` isn't a known update target.
+        """
+        response = await _pool().post(
+            f"{self._base_url}/machine/update/client",
+            params={"name": name},
+            timeout=max(self._timeout, 600.0),  # a client update can pull + reinstall for minutes
+        )
+        response.raise_for_status()

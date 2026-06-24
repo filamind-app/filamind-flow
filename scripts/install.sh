@@ -47,7 +47,19 @@ fi
 do_update() {
   local dir="${REPO_ROOT:-$APP}"
   cd "$dir/backend"
-  [ -d .venv ] || python3 -m venv .venv
+  # Rebuild the venv when it's missing OR broken (no pip), not just when the directory is absent.
+  # Moonraker's `update_manager recover` runs `git clean`, which DELETES the git-ignored .venv that
+  # the systemd unit's ExecStart points at; an interrupted earlier run can also leave a pip-less
+  # stub. Testing for the pip binary (not merely the dir) self-heals both, so a plain `update`
+  # always restores a runnable backend instead of leaving the service crash-looping.
+  if [ ! -x .venv/bin/pip ]; then
+    rm -rf .venv
+    python3 -m venv .venv || {
+      echo "Could not create the Python venv. Install your python3's venv module" \
+        "(e.g. sudo apt install python3-venv) and re-run." >&2
+      exit 1
+    }
+  fi
   ./.venv/bin/pip install -q -U pip
   ./.venv/bin/pip install -q -r requirements.txt
   echo "FilaMind Flow: backend dependencies up to date."

@@ -25,6 +25,8 @@ _bg: set[asyncio.Task[None]] = set()
 
 class ComponentRef(BaseModel):
     id: str
+    #: Optional port for installing a first-party web app (e.g. FilaMind 3d) onto a chosen port.
+    port: int | None = None
 
 
 class RemoveRef(BaseModel):
@@ -98,7 +100,7 @@ async def setup_install(
 ) -> dict[str, Any]:
     managed, services = await _moonraker_signals(settings)
     try:
-        return _apply(await setup_manager.install(req.id, managed, services))
+        return _apply(await setup_manager.install(req.id, managed, services, port=req.port))
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -118,16 +120,29 @@ async def setup_install_stream(
     if refusal:
         _apply(refusal)  # raises 403
     task = task_store.create_task()
-    bg = asyncio.create_task(setup_manager.install_task(req.id, task, managed, services))
+    bg = asyncio.create_task(
+        setup_manager.install_task(req.id, task, managed, services, port=req.port)
+    )
     _bg.add(bg)
     bg.add_done_callback(_bg.discard)
     return {"task_id": task.id}
 
 
 @router.post("/update")
-async def setup_update(req: ComponentRef) -> dict[str, Any]:
+async def setup_update(
+    req: ComponentRef, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Update a component. Moonraker-managed ones (Mainsail, Fluidd, Klipper, Moonraker,
+    KlipperScreen) go through Moonraker's update manager; an unmanaged git checkout gets a git pull.
+    """
+    managed, _ = await _moonraker_signals(settings)
+    client = MoonrakerClient(settings.moonraker_url)
+
+    async def mr_update(name: str) -> None:
+        await client.update_client(name)
+
     try:
-        return _apply(await setup_manager.update(req.id))
+        return _apply(await setup_manager.update(req.id, managed, mr_update))
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 

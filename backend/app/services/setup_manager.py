@@ -15,6 +15,7 @@ import asyncio
 import json
 import shutil
 import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -478,10 +479,13 @@ async def install(
     managed: set[str] | None = None,
     services: set[str] | None = None,
     task: Any | None = None,
+    port: int | None = None,
 ) -> dict[str, Any]:
     refusal = await precheck_install(cid, managed, services)
     if refusal:
         return refusal
+    if port is not None and (bad := _validate_port(port)) is not None:
+        return bad
     catalog = load_catalog()
     component = _require(cid, catalog)
     # When a task is supplied, stream the installer's output into it for live progress.
@@ -489,7 +493,14 @@ async def install(
     # FilaMind apps (3d / screen / flow) ship a one-line installer in their repo - run it so the
     # GUI can install them even though they aren't a plain git_repo (web / tauri).
     if component.first_party:
-        result = await run(["bash", "-c", f"curl -fsSL {_raw_installer(component)} | bash"])
+        # A chosen port (for a first-party web app like FilaMind 3d) lets the operator install it
+        # straight onto a free port — e.g. 88 when Mainsail already owns 80 — instead of installing
+        # on the default and conflicting, then having to move it afterwards.
+        if port is not None and component.type == "web":
+            cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- install --port {port}"
+        else:
+            cmd = f"curl -fsSL {_raw_installer(component)} | bash"
+        result = await run(["bash", "-c", cmd])
         return _augment_root_failure(result, component)
     if component.type not in _GIT_TYPES:
         return {
@@ -511,13 +522,17 @@ async def install(
 
 
 async def install_task(
-    cid: str, task: Any, managed: set[str] | None = None, services: set[str] | None = None
+    cid: str,
+    task: Any,
+    managed: set[str] | None = None,
+    services: set[str] | None = None,
+    port: int | None = None,
 ) -> None:
     """Background install: stream into ``task`` and store the final result + status on it. The
     synchronous refusals (writes-off / missing-deps) are already raised by the route's precheck, so
     here we only run the work and record the outcome."""
     try:
-        result = await install(cid, managed, services, task=task)
+        result = await install(cid, managed, services, task=task, port=port)
     except Exception as exc:  # never leave the task hung
         task.append(f"!! {exc}\n")
         task.result = {"ok": False, "output": str(exc)}
@@ -530,14 +545,40 @@ async def install_task(
     task.status = "done" if result.get("ok") and not result.get("refused") else "failed"
 
 
-async def update(cid: str) -> dict[str, Any]:
+async def update(
+    cid: str,
+    managed: set[str] | None = None,
+    moonraker_update: Callable[[str], Awaitable[None]] | None = None,
+) -> dict[str, Any]:
+    """Update an installed component.
+
+    Moonraker-managed components (web UIs like Mainsail/Fluidd, and tracked git repos like Klipper,
+    Moonraker, KlipperScreen) are updated through Moonraker's own update manager — a web UI is a
+    downloaded artifact, NOT a git checkout, so a raw ``git pull`` wrongly fails ("not a git
+    checkout"). Only an unmanaged git checkout falls back to ``git pull --ff-only`` here.
+    """
     catalog = load_catalog()
     component = _require(cid, catalog)
     if not writes_enabled():
         return _refused()
+    key = (component.manager_key or component.id).lower()
+    if managed and key in managed and moonraker_update is not None:
+        try:
+            await moonraker_update(component.manager_key or component.id)
+        except Exception as exc:  # surface a clear message instead of a 500
+            return {"ok": False, "output": f"Moonraker could not update {component.name}: {exc}"}
+        return {
+            "ok": True,
+            "output": f"Update of {component.name} requested via Moonraker; it runs in the "
+            "background — refresh in a moment to see the new version.",
+        }
     dest = _install_dir(component)
     if not (dest / ".git").is_dir():
-        return {"refused": True, "output": f"{component.name} is not a git checkout under {dest}."}
+        return {
+            "refused": True,
+            "output": f"{component.name} is not a git checkout under {dest}, and Moonraker doesn't "
+            "track it — update it from the host instead.",
+        }
     return await _run(["git", "-C", str(dest), "pull", "--ff-only"])
 
 
@@ -565,34 +606,43 @@ async def remove(cid: str, confirm: str) -> dict[str, Any]:
 _RESERVED_PORTS = {7125, 7126, 8883}
 
 
-async def set_port(
-    cid: str, port: int, managed: set[str] | None = None, services: set[str] | None = None
-) -> dict[str, Any]:
-    """Change the port an installed web UI is served on. First-party apps re-run their own installer
-    with --port; third-party UIs get a best-effort nginx ``listen`` rewrite + reload."""
-    catalog = load_catalog()
-    component = _require(cid, catalog)
-    if not writes_enabled():
-        return _refused()
+def _validate_port(port: int) -> dict[str, Any] | None:
+    """A refusal dict if ``port`` is out of range or reserved, else None."""
     if not (1 <= port <= 65535):
         return {"refused": True, "output": f"Port {port} is out of range (1-65535)."}
     if port in _RESERVED_PORTS:
         return {"refused": True, "output": f"Port {port} is reserved; pick another."}
+    return None
+
+
+async def set_port(
+    cid: str, port: int, managed: set[str] | None = None, services: set[str] | None = None
+) -> dict[str, Any]:
+    """Change the port an installed first-party web app (e.g. FilaMind 3d) is served on, by
+    re-running its own installer with ``--port`` (it owns its nginx site and elevates only the
+    narrow cp/chmod/systemctl steps the Setup service has passwordless sudo for).
+
+    Third-party web UIs (Mainsail, Fluidd) are NOT changed here: their nginx site would need a
+    privileged in-place edit the service is deliberately not granted, so we refuse with guidance
+    rather than run a sudo command that would silently fail.
+    """
+    catalog = load_catalog()
+    component = _require(cid, catalog)
+    if not writes_enabled():
+        return _refused()
+    if (bad := _validate_port(port)) is not None:
+        return bad
     if component.type != "web":
         return {"refused": True, "output": f"{component.name} has no web port to change."}
     status = await probe_status(managed, services)
     if status.get(cid) != "installed":
         return {"refused": True, "output": f"{component.name} is not installed."}
+    if not component.first_party:
+        return {
+            "refused": True,
+            "output": f"{component.name}'s port is managed by its own web-server config on the "
+            "host, not from here. Edit its nginx site (or its config) on the printer to change it.",
+        }
     # First-party web app: re-run its installer with the new port (it owns its nginx site).
-    if component.first_party:
-        cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- install --port {port}"
-        return await _run(["bash", "-c", cmd])
-    # Third-party web UI: rewrite the `listen` directive of its nginx site, then reload.
-    site = f"/etc/nginx/sites-available/{cid}"
-    script = (
-        f"set -e; "
-        f'test -f "{site}" || {{ echo "no nginx site at {site}"; exit 1; }}; '
-        f"sudo sed -i -E 's/^([[:space:]]*listen[[:space:]]+)[0-9]+;/\\1{port};/' \"{site}\"; "
-        f"sudo nginx -t && sudo systemctl reload nginx"
-    )
-    return await _run(["bash", "-c", script])
+    cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- install --port {port}"
+    return await _run(["bash", "-c", cmd])

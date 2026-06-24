@@ -43,15 +43,17 @@ async function post(path: string, body: unknown): Promise<SetupActionResult> {
   return data
 }
 
-export const installComponent = (id: string): Promise<SetupActionResult> => post('install', { id })
+export const installComponent = (id: string, port?: number): Promise<SetupActionResult> =>
+  post('install', { id, ...(port ? { port } : {}) })
 
-/** Start an install as a background task; returns its id to poll via fetchTask(). Refusals (403)
- *  still arrive synchronously as a SetupActionError, same as the blocking install. */
-export async function installComponentStream(id: string): Promise<string> {
+/** Start an install as a background task; returns its id to poll via fetchTask(). An optional port
+ *  installs a first-party web app (e.g. FilaMind 3d) straight onto that port. Refusals (403) still
+ *  arrive synchronously as a SetupActionError, same as the blocking install. */
+export async function installComponentStream(id: string, port?: number): Promise<string> {
   const r = await fetch(`${base()}/api/setup/install/stream`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id }),
+    body: JSON.stringify({ id, ...(port ? { port } : {}) }),
   })
   const data = (await r.json().catch(() => ({}))) as { detail?: string; task_id?: string }
   if (!r.ok) throw new SetupActionError(data.detail || httpError(r.status), r.status)
