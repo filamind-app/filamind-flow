@@ -1,13 +1,14 @@
 <script setup lang="ts">
-/** Host Control · Boot — read-only view of the host's boot configuration: the systemd default
- *  target, whether it boots graphical, the plymouth theme, and a preview of the active boot splash.
- *  Changing the splash + the design studio land in a later phase (gated writes). */
+/** Host Control · Boot — the host's boot configuration: the systemd default target, whether it
+ *  boots graphical, the plymouth theme, a preview of the active boot splash, and a splash design
+ *  studio to change it (gated write). */
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
 
 import { bootSplashUrl, fetchBootInfo } from './api'
+import SplashStudio from './SplashStudio.vue'
 import type { BootInfo } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -16,6 +17,12 @@ const info = ref<BootInfo | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const splashFailed = ref(false)
+const showStudio = ref(false)
+
+function onApplied(): void {
+  showStudio.value = false
+  void load()
+}
 
 async function load(): Promise<void> {
   loading.value = true
@@ -85,7 +92,13 @@ const kb = (n: number): string => `${Math.round(n / 1024)} KB`
         <p v-else class="font-mono text-[11px] opacity-60">{{ t('hostControl.boot.noSplash') }}</p>
       </div>
 
-      <p class="text-[11px] opacity-60">{{ t('hostControl.boot.changeHint') }}</p>
+      <div class="flex flex-wrap items-center gap-2">
+        <button class="nb-btn text-xs" @click="showStudio = !showStudio">
+          🎨
+          {{ showStudio ? t('hostControl.boot.studio.close') : t('hostControl.boot.studio.open') }}
+        </button>
+      </div>
+      <SplashStudio v-if="showStudio" @applied="onApplied" />
     </template>
   </div>
 </template>

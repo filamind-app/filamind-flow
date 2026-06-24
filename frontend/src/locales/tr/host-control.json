@@ -255,7 +255,21 @@
       "none": "yok",
       "splash": "Önyükleme ekranı",
       "noSplash": "Bu ana makinede önyükleme ekranı bulunamadı.",
-      "changeHint": "Açılış ekranını değiştirme + tasarım stüdyosu ileriki bir güncellemede."
+      "changeHint": "Açılış ekranını değiştirme + tasarım stüdyosu ileriki bir güncellemede.",
+      "studio": {
+        "open": "Açılış ekranını değiştir",
+        "close": "Stüdyoyu kapat",
+        "title": "Önyükleme ekranını tasarla",
+        "bg": "Arka plan",
+        "text": "Metin",
+        "textColor": "Metin rengi",
+        "upload": "Görsel",
+        "apply": "Ekranı uygula",
+        "applying": "Uygulanıyor…",
+        "applied": "Önyükleme ekranı uygulandı.",
+        "failed": "Önyükleme ekranı uygulanamadı.",
+        "caveat": "Açılış yoluna bir PNG yazar; önyüklemede görünüp görünmemesi ana makine ayarına bağlıdır."
+      }
     }
   }
 }

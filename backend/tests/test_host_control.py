@@ -503,3 +503,41 @@ async def test_boot_info_reads_target_and_splash(monkeypatch: pytest.MonkeyPatch
 def test_splash_path_is_none_when_absent(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(hc, "_find_splash", lambda: None)
     assert hc.splash_path() is None
+
+
+_PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 32
+
+
+async def test_set_splash_rejects_non_png() -> None:
+    res = await hc.set_splash(b"not a png at all", target="/boot/splash.png")
+    assert res["refused"] is True and "PNG" in res["output"]
+
+
+async def test_set_splash_path_guarded_to_known_locations() -> None:
+    res = await hc.set_splash(_PNG, target="/etc/passwd")
+    assert res["refused"] is True
+
+
+async def test_set_splash_writes_via_sudo_cp(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: list[list[str]] = []
+
+    async def fake_rc(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+        captured.append(cmd)
+        return 0, "ok"
+
+    monkeypatch.setattr(hc, "_run_rc", fake_rc)
+    res = await hc.set_splash(_PNG, target="/boot/firmware/splash.png")
+    assert res["ok"] is True
+    assert captured and captured[0][:3] == ["sudo", "-n", "cp"]
+    assert captured[0][-1] == "/boot/firmware/splash.png"
+
+
+async def test_set_splash_reports_needs_setup_on_sudo_failure(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_rc(cmd: list[str], timeout: float = 10.0) -> tuple[int, str]:
+        return 1, "sudo: a password is required"
+
+    monkeypatch.setattr(hc, "_run_rc", fake_rc)
+    res = await hc.set_splash(_PNG, target="/boot/splash.png")
+    assert res["ok"] is False and res["needs_setup"] is True

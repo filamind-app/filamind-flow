@@ -255,7 +255,21 @@
       "none": "geen",
       "splash": "Opstart-splash",
       "noSplash": "Geen opstart-splash gevonden op deze host.",
-      "changeHint": "De splash wijzigen + een ontwerpstudio komen in een latere update."
+      "changeHint": "De splash wijzigen + een ontwerpstudio komen in een latere update.",
+      "studio": {
+        "open": "Splash wijzigen",
+        "close": "Studio sluiten",
+        "title": "Boot-splash ontwerpen",
+        "bg": "Achtergrond",
+        "text": "Tekst",
+        "textColor": "Tekstkleur",
+        "upload": "Afbeelding",
+        "apply": "Splash toepassen",
+        "applying": "Toepassen…",
+        "applied": "Boot-splash toegepast.",
+        "failed": "Kon de boot-splash niet toepassen.",
+        "caveat": "Schrijft een PNG naar het splash-pad; of het bij het opstarten verschijnt hangt af van je host-setup."
+      }
     }
   }
 }

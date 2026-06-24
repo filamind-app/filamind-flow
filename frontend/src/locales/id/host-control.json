@@ -255,7 +255,21 @@
       "none": "tidak ada",
       "splash": "Splash boot",
       "noSplash": "Tidak ada splash boot di host ini.",
-      "changeHint": "Mengubah splash boot + studio desain hadir di pembaruan mendatang."
+      "changeHint": "Mengubah splash boot + studio desain hadir di pembaruan mendatang.",
+      "studio": {
+        "open": "Ubah splash",
+        "close": "Tutup studio",
+        "title": "Desain splash boot",
+        "bg": "Latar",
+        "text": "Teks",
+        "textColor": "Warna teks",
+        "upload": "Gambar",
+        "apply": "Terapkan splash",
+        "applying": "Menerapkan…",
+        "applied": "Splash boot diterapkan.",
+        "failed": "Tidak dapat menerapkan splash boot.",
+        "caveat": "Menulis PNG ke jalur splash; apakah tampil saat boot tergantung pengaturan host Anda."
+      }
     }
   }
 }

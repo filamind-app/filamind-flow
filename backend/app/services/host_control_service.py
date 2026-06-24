@@ -19,6 +19,7 @@ import re
 import shutil
 import socket
 import stat
+import tempfile
 import time
 from typing import Any
 
@@ -88,6 +89,56 @@ async def boot_info() -> dict[str, Any]:
         "graphical": default_target.startswith("graphical"),
         "splash": _find_splash(),
         "plymouth_theme": plymouth or None,
+    }
+
+
+#: A boot splash should be tiny; cap it so we never copy a huge file into /boot.
+_PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
+_MAX_SPLASH_BYTES = 1_000_000  # 1 MB
+
+
+async def set_splash(data: bytes, target: str | None = None) -> dict[str, Any]:
+    """Place a new boot-splash PNG at a KNOWN splash location (gated write).
+
+    Validated (must be a PNG, ≤ 1 MB) + path-guarded (the destination must be one of the known
+    splash locations, never an arbitrary path) + copied with the narrow passwordless ``sudo cp``.
+    Best-effort: whether the new image actually shows at boot depends on the host's splash mechanism
+    (plymouth / firmware splash), which this does not reconfigure — it just places a valid PNG.
+    """
+    if data[:8] != _PNG_MAGIC:
+        return {"ok": False, "refused": True, "output": "The boot splash must be a PNG image."}
+    if len(data) > _MAX_SPLASH_BYTES:
+        kb = _MAX_SPLASH_BYTES // 1000
+        return {"ok": False, "refused": True, "output": f"The image is too large (max {kb} KB)."}
+    dest = target or splash_path() or _SPLASH_PATHS[0]
+    if dest not in _SPLASH_PATHS:
+        return {
+            "ok": False,
+            "refused": True,
+            "output": "Refusing to write outside the known boot-splash locations.",
+        }
+    tmp = ""
+    try:
+        fd, tmp = tempfile.mkstemp(suffix=".png")
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+        rc, out = await _run_rc(["sudo", "-n", "cp", tmp, dest])
+    finally:
+        if tmp:
+            with contextlib.suppress(OSError):
+                os.unlink(tmp)
+    if rc == 0:
+        return {
+            "ok": True,
+            "refused": False,
+            "output": f"Boot splash written to {dest}.",
+            "dest": dest,
+        }
+    return {
+        "ok": False,
+        "refused": False,
+        "output": out.strip() or "Could not write the boot splash.",
+        "needs_setup": _needs_setup(out),
     }
 
 

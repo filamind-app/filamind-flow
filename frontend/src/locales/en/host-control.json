@@ -255,7 +255,21 @@
       "none": "none",
       "splash": "Boot splash",
       "noSplash": "No boot splash found on this host.",
-      "changeHint": "Changing the boot splash + a design studio are coming in a later update."
+      "changeHint": "Changing the boot splash + a design studio are coming in a later update.",
+      "studio": {
+        "open": "Change splash",
+        "close": "Close studio",
+        "title": "Design the boot splash",
+        "bg": "Background",
+        "text": "Text",
+        "textColor": "Text color",
+        "upload": "Image",
+        "apply": "Apply splash",
+        "applying": "Applying…",
+        "applied": "Boot splash applied.",
+        "failed": "Could not apply the boot splash.",
+        "caveat": "Writes a PNG to the boot-splash path; whether it shows at boot depends on your host's splash setup."
+      }
     }
   }
 }

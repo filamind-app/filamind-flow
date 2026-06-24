@@ -255,7 +255,21 @@
       "none": "nessuno",
       "splash": "Splash di avvio",
       "noSplash": "Nessuno splash di avvio trovato su questo host.",
-      "changeHint": "Modifica dello splash + uno studio di design in un aggiornamento futuro."
+      "changeHint": "Modifica dello splash + uno studio di design in un aggiornamento futuro.",
+      "studio": {
+        "open": "Cambia splash",
+        "close": "Chiudi studio",
+        "title": "Progetta lo splash di avvio",
+        "bg": "Sfondo",
+        "text": "Testo",
+        "textColor": "Colore testo",
+        "upload": "Immagine",
+        "apply": "Applica splash",
+        "applying": "Applicazione…",
+        "applied": "Splash di avvio applicato.",
+        "failed": "Impossibile applicare lo splash di avvio.",
+        "caveat": "Scrive un PNG nel percorso dello splash; se appare all'avvio dipende dalla configurazione dell'host."
+      }
     }
   }
 }

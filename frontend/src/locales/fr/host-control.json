@@ -255,7 +255,21 @@
       "none": "aucun",
       "splash": "Écran de démarrage",
       "noSplash": "Aucun écran de démarrage trouvé sur cet hôte.",
-      "changeHint": "Changer le splash + un studio de conception arrivent dans une mise à jour ultérieure."
+      "changeHint": "Changer le splash + un studio de conception arrivent dans une mise à jour ultérieure.",
+      "studio": {
+        "open": "Changer le splash",
+        "close": "Fermer le studio",
+        "title": "Concevoir l'écran de démarrage",
+        "bg": "Arrière-plan",
+        "text": "Texte",
+        "textColor": "Couleur du texte",
+        "upload": "Image",
+        "apply": "Appliquer le splash",
+        "applying": "Application…",
+        "applied": "Écran de démarrage appliqué.",
+        "failed": "Impossible d'appliquer l'écran de démarrage.",
+        "caveat": "Écrit un PNG dans le chemin du splash ; son affichage au démarrage dépend de la config de l'hôte."
+      }
     }
   }
 }
