@@ -210,6 +210,11 @@
       "confirmBody": "Esto reinicia el servicio de la pantalla táctil para aplicar tus cambios. No afecta una impresión activa, pero la pantalla se apagará unos segundos.",
       "confirm": "Reiniciar",
       "cancel": "Cancelar"
+    },
+    "section": {
+      "touch": "Interfaz táctil",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Herramientas y pruebas"
     }
   }
 }

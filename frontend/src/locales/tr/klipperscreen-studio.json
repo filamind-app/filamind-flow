@@ -210,6 +210,11 @@
       "confirmBody": "Bu, değişikliklerinizi uygulamak için dokunmatik ekran hizmetini yeniden başlatır. Etkin bir yazdırmayı etkilemez, ancak ekran birkaç saniye kararır.",
       "confirm": "Yeniden başlat",
       "cancel": "İptal"
+    },
+    "section": {
+      "touch": "Dokunmatik arayüz",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Araçlar ve testler"
     }
   }
 }

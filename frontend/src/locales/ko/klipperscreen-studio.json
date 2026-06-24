@@ -210,6 +210,11 @@
       "confirmBody": "변경 사항을 적용하기 위해 터치스크린 서비스를 재시작합니다. 진행 중인 인쇄에는 영향을 주지 않지만, 화면이 몇 초간 검게 표시됩니다.",
       "confirm": "재시작",
       "cancel": "취소"
+    },
+    "section": {
+      "touch": "터치 UI",
+      "klipperscreen": "KlipperScreen",
+      "tools": "도구 및 테스트"
     }
   }
 }

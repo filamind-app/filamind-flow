@@ -210,6 +210,11 @@
       "confirmBody": "To uruchamia ponownie usługę ekranu dotykowego, aby zastosować zmiany. Nie wpłynie na aktywny druk, ale ekran zgaśnie na kilka sekund.",
       "confirm": "Uruchom ponownie",
       "cancel": "Anuluj"
+    },
+    "section": {
+      "touch": "Interfejs dotykowy",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Narzędzia i testy"
     }
   }
 }

@@ -210,6 +210,11 @@
       "confirmBody": "Dit herstart de touchscreenservice om je wijzigingen toe te passen. Het beïnvloedt geen actieve print, maar het scherm wordt enkele seconden zwart.",
       "confirm": "Herstarten",
       "cancel": "Annuleren"
+    },
+    "section": {
+      "touch": "Touch-UI",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Tools & tests"
     }
   }
 }

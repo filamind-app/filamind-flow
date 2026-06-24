@@ -210,6 +210,11 @@
       "confirmBody": "这会重启触摸屏服务以应用更改。不会影响正在进行的打印，但屏幕会黑屏几秒。",
       "confirm": "重启",
       "cancel": "取消"
+    },
+    "section": {
+      "touch": "触摸界面",
+      "klipperscreen": "KlipperScreen",
+      "tools": "工具和测试"
     }
   }
 }

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-/** KlipperScreen Studio - edit the touchscreen's config and restart it to apply.
- *
- *  Phase 1: a safe raw editor for `KlipperScreen.conf` (gated save = timestamped backup +
- *  stale-write guard + refused while printing, reusing the Config Editor's machinery) plus a
- *  one-tap service restart. The graphical option editor + theme builder build on this. */
+/** Screen Manager — manage the printer's touchscreen, organized into THREE clear concerns
+ *  (a behaviour-preserving split of the former single-view "KlipperScreen Studio" god-object):
+ *    (1) Touch UI     — which touch UI owns the display (switch) + the FilaMind kiosk swap.
+ *    (2) KlipperScreen — configure KlipperScreen: raw conf / settings / menus / themes.
+ *    (3) Tools        — FilaMind's on-screen checks & tests.
+ *  All backend endpoints are unchanged; this is purely a UI re-organization. */
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -15,6 +16,7 @@ import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import HelpIllo from './HelpIllo.vue'
 import FilaMindScreenTab from './FilaMindScreenTab.vue'
 import ScreenSelector from './ScreenSelector.vue'
+import TouchControlPanel from './TouchControlPanel.vue'
 import {
   activateTheme,
   createTheme,
@@ -60,9 +62,11 @@ const restarting = ref(false)
 const restarted = ref(false)
 const restartError = ref<string | null>(null)
 
-// Theme builder
-type View = 'config' | 'settings' | 'menus' | 'themes' | 'kiosk' | 'fmscreen'
-const view = ref<View>('config')
+// Three top-level concerns; KlipperScreen config keeps its own inner sub-view.
+type Section = 'touch' | 'klipperscreen' | 'tools'
+type KsView = 'config' | 'settings' | 'menus' | 'themes'
+const section = ref<Section>('touch')
+const ksView = ref<KsView>('config')
 const themes = ref<ScreenTheme[]>([])
 const tokens = ref<string[]>([])
 const palette = reactive<Record<string, string>>({})
@@ -204,11 +208,17 @@ async function loadThemes(): Promise<void> {
   }
 }
 
-function switchView(v: View): void {
-  view.value = v
+/** Switch the top-level concern; lazy-load the kiosk state when entering Touch UI. */
+function switchSection(s: Section): void {
+  section.value = s
+  if (s === 'touch' && !kiosk.value) void loadKiosk()
+}
+
+/** Switch the KlipperScreen sub-view; lazy-load that editor's data on first open. */
+function switchKsView(v: KsView): void {
+  ksView.value = v
   if (v === 'themes' && !tokens.value.length) void loadThemes()
   if (v === 'menus' && !menuItems.value.length && !menuSha.value) void loadMenus()
-  if (v === 'kiosk' && !kiosk.value) void loadKiosk()
   if (v === 'settings' && !Object.keys(settingsValues).length) void loadSettings()
 }
 
@@ -489,7 +499,10 @@ async function saveMenusHandler(): Promise<void> {
   }
 }
 
-onMounted(() => void loadStatus())
+onMounted(() => {
+  void loadStatus()
+  void loadKiosk() // Touch UI is the default section
+})
 </script>
 
 <template>
@@ -511,735 +524,773 @@ onMounted(() => void loadStatus())
       />
     </div>
 
-    <ScreenSelector />
-
-    <p v-if="checking" class="font-mono text-xs opacity-70">
-      {{ t('klipperscreenStudio.status.checking') }}
-    </p>
-    <p v-else-if="statusError" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">
-      {{ statusError }}
-    </p>
-    <p v-else-if="!status?.present" class="nb-card bg-surface p-3 text-xs opacity-70">
-      {{ t('klipperscreenStudio.status.absent') }}
-    </p>
-
-    <template v-else>
-      <!-- Status line -->
-      <div class="nb-card flex flex-wrap items-center gap-x-4 gap-y-1 bg-surface p-3 text-[11px]">
-        <span class="font-bold uppercase tracking-wide opacity-60">{{
-          t('klipperscreenStudio.status.present')
-        }}</span>
-        <span v-if="status.theme" class="font-mono"
-          >{{ t('klipperscreenStudio.status.theme') }}: <b>{{ status.theme }}</b></span
+    <!-- Three clear concerns: switch the touch UI / configure KlipperScreen / FilaMind tools -->
+    <div class="-mx-1 overflow-x-auto px-1">
+      <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
+        <button
+          v-for="s in ['touch', 'klipperscreen', 'tools'] as const"
+          :key="s"
+          type="button"
+          class="nb-seg whitespace-nowrap"
+          :class="section === s ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
+          :aria-pressed="section === s"
+          @click="switchSection(s)"
         >
-        <span v-if="status.language" class="font-mono"
-          >{{ t('klipperscreenStudio.status.language') }}: <b>{{ status.language }}</b></span
-        >
-        <span v-if="!status.restartable" class="text-brand-red"
-          >⚠ {{ t('klipperscreenStudio.status.notRestartable') }}</span
-        >
+          {{ t('klipperscreenStudio.section.' + s) }}
+        </button>
       </div>
+    </div>
 
-      <!-- Config / Settings / Menus / Themes / Kiosk / FilaMind screen view toggle -->
-      <div class="-mx-1 overflow-x-auto px-1">
-        <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
-          <button
-            v-for="v in ['config', 'settings', 'menus', 'themes', 'kiosk', 'fmscreen'] as const"
-            :key="v"
-            type="button"
-            class="nb-seg whitespace-nowrap"
-            :class="view === v ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'"
-            :aria-pressed="view === v"
-            @click="switchView(v)"
+    <!-- (1) TOUCH UI — which touch UI owns the display + the reversible FilaMind kiosk swap -->
+    <template v-if="section === 'touch'">
+      <ScreenSelector />
+
+      <p v-if="kioskBusy && !kiosk" class="font-mono text-xs opacity-70">
+        {{ t('klipperscreenStudio.kiosk.loading') }}
+      </p>
+      <template v-else-if="kiosk">
+        <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.kiosk.intro') }}</p>
+
+        <!-- current screen mode -->
+        <div class="nb-card flex flex-wrap items-center gap-x-3 gap-y-1 bg-surface p-3 text-[11px]">
+          <span class="font-bold uppercase tracking-wide opacity-60">{{
+            t('klipperscreenStudio.kiosk.current')
+          }}</span>
+          <span
+            class="nb-badge"
+            :class="kiosk?.mode === 'kiosk' ? 'bg-brand-lime' : 'bg-brand-cyan'"
           >
-            {{ t('klipperscreenStudio.view.' + v) }}
-          </button>
+            {{ t('klipperscreenStudio.kiosk.mode.' + (kiosk?.mode ?? 'none')) }}
+          </span>
+          <span v-if="kiosk?.url" class="font-mono opacity-70">{{ kiosk.url }}</span>
         </div>
-      </div>
 
-      <template v-if="view === 'config'">
-        <!-- Raw editor -->
-        <p v-if="loadingConf" class="font-mono text-xs opacity-70">
-          {{ t('klipperscreenStudio.editor.loading') }}
-        </p>
-        <p v-else-if="confError" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">
-          {{ confError }}
-        </p>
-        <template v-else>
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-mono text-[11px] opacity-60">KlipperScreen.conf</span>
-            <button
-              class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
-              :disabled="loadingConf"
-              @click="loadConf"
-            >
-              ↻ {{ t('klipperscreenStudio.editor.reload') }}
-            </button>
-          </div>
-          <textarea
-            v-model="content"
-            spellcheck="false"
-            dir="ltr"
-            class="h-72 w-full rounded-brutal border-3 border-ink bg-paper p-2 font-mono text-[11px] leading-snug"
-            @input="onEdit"
-          ></textarea>
+        <!-- not installed yet: how to provision -->
+        <div
+          v-if="kiosk && !kiosk.kiosk_installed"
+          class="nb-card space-y-1 bg-brand-yellow/15 p-3 text-[11px]"
+        >
+          <p class="font-bold">{{ t('klipperscreenStudio.kiosk.notInstalled') }}</p>
+          <p class="opacity-80">{{ t('klipperscreenStudio.kiosk.setupHint') }}</p>
+          <code class="block rounded-sm bg-ink/5 p-1.5 font-mono"
+            >cd ~/filamind-flow && sudo bash scripts/install.sh kiosk</code
+          >
+        </div>
+
+        <!-- installed: the reversible toggle -->
+        <template v-else-if="kiosk">
+          <label class="flex items-center gap-2 text-[11px]">
+            <input v-model="kioskPersist" type="checkbox" class="h-4 w-4" />
+            <span>{{ t('klipperscreenStudio.kiosk.persist') }}</span>
+          </label>
+          <p class="text-[11px] opacity-60">{{ t('klipperscreenStudio.kiosk.safety') }}</p>
 
           <div class="flex flex-wrap items-center gap-2">
             <button
+              v-if="kiosk.mode !== 'kiosk'"
               class="nb-btn bg-brand-lime px-3 py-1 text-xs"
-              :disabled="saving || !dirty"
-              @click="save"
+              :disabled="kioskBusy"
+              @click="confirmKiosk = 'switch'"
             >
-              {{
-                saving
-                  ? t('klipperscreenStudio.editor.saving')
-                  : t('klipperscreenStudio.editor.save')
-              }}
+              {{ t('klipperscreenStudio.kiosk.switchBtn') }}
             </button>
-            <span v-if="saved" class="text-[11px] font-bold text-brand-lime"
-              >✓ {{ t('klipperscreenStudio.editor.saved') }}</span
+            <button
+              v-if="kiosk.mode === 'kiosk' || !kiosk.screen_active"
+              class="nb-btn bg-surface px-3 py-1 text-xs"
+              :disabled="kioskBusy"
+              @click="confirmKiosk = 'restore'"
             >
-            <span v-else-if="dirty" class="text-[11px] opacity-60">{{
-              t('klipperscreenStudio.editor.unsaved')
-            }}</span>
+              {{ t('klipperscreenStudio.kiosk.restoreBtn') }}
+            </button>
             <span class="flex-1"></span>
             <button
-              class="nb-btn bg-brand-yellow px-3 py-1 text-xs"
-              :disabled="restarting"
-              @click="confirmRestart = true"
+              class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
+              :disabled="kioskBusy"
+              @click="loadKiosk"
             >
-              {{
-                restarting
-                  ? t('klipperscreenStudio.restart.restarting')
-                  : t('klipperscreenStudio.restart.button')
-              }}
+              ↻ {{ t('klipperscreenStudio.kiosk.refresh') }}
             </button>
           </div>
 
-          <p
-            v-if="saveError"
-            role="alert"
-            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
-          >
-            {{ saveError }}
-          </p>
-          <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
-            ✓ {{ t('klipperscreenStudio.restart.done') }}
-          </p>
-          <p
-            v-if="restartError"
-            role="alert"
-            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
-          >
-            {{ restartError }}
-          </p>
-
-          <!-- Restart confirm -->
+          <!-- confirm -->
           <div
-            v-if="confirmRestart"
+            v-if="confirmKiosk"
             class="nb-card space-y-2 border-brand-red bg-brand-yellow/20 p-2"
           >
-            <p class="text-xs font-bold">{{ t('klipperscreenStudio.restart.confirmTitle') }}</p>
-            <p class="text-[11px] opacity-80">{{ t('klipperscreenStudio.restart.confirmBody') }}</p>
-            <div class="flex gap-2">
-              <button class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper" @click="doRestart">
-                {{ t('klipperscreenStudio.restart.confirm') }}
-              </button>
-              <button class="nb-btn bg-surface px-3 py-1 text-xs" @click="confirmRestart = false">
-                {{ t('klipperscreenStudio.restart.cancel') }}
-              </button>
-            </div>
-          </div>
-        </template>
-      </template>
-
-      <!-- Settings view: a friendly form over the common [main] options -->
-      <template v-else-if="view === 'settings'">
-        <p
-          v-if="settingsBusy && !Object.keys(settingsValues).length"
-          class="font-mono text-xs opacity-70"
-        >
-          {{ t('klipperscreenStudio.settings.loading') }}
-        </p>
-        <template v-else>
-          <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.settings.intro') }}</p>
-
-          <div class="nb-card space-y-2 bg-surface p-3">
-            <div
-              v-for="f in SETTINGS_FIELDS"
-              :key="f.key"
-              class="flex flex-wrap items-center gap-x-3 gap-y-1"
-            >
-              <label v-if="f.type === 'bool'" class="flex items-center gap-2 text-xs">
-                <input
-                  type="checkbox"
-                  class="h-4 w-4"
-                  :checked="settingsValues[f.key] === 'True'"
-                  @change="
-                    onSetting(f.key, ($event.target as HTMLInputElement).checked ? 'True' : 'False')
-                  "
-                />
-                <span class="font-medium">{{
-                  t('klipperscreenStudio.settings.label.' + f.key)
-                }}</span>
-              </label>
-              <template v-else>
-                <label :for="'set-' + f.key" class="min-w-32 text-xs font-medium">
-                  {{ t('klipperscreenStudio.settings.label.' + f.key) }}
-                </label>
-                <select
-                  :id="'set-' + f.key"
-                  class="min-w-0 flex-1 rounded-brutal border-2 border-ink bg-paper px-2 py-1 text-xs"
-                  :value="settingsValues[f.key]"
-                  @change="onSetting(f.key, ($event.target as HTMLSelectElement).value)"
-                >
-                  <option v-for="opt in settingOptions(f)" :key="opt" :value="opt">
-                    {{ settingOptionLabel(f.key, opt) }}
-                  </option>
-                </select>
-              </template>
-            </div>
-          </div>
-
-          <p class="text-[11px] opacity-60">{{ t('klipperscreenStudio.settings.onlyChanged') }}</p>
-
-          <button
-            class="nb-btn bg-brand-lime px-3 py-1 text-xs"
-            :disabled="settingsBusy || !settingsTouched.size"
-            @click="saveSettings"
-          >
-            {{
-              settingsBusy
-                ? t('klipperscreenStudio.editor.saving')
-                : t('klipperscreenStudio.settings.save')
-            }}
-          </button>
-
-          <p
-            v-if="settingsSaved"
-            class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
-          >
-            <span class="min-w-0 flex-1">{{ t('klipperscreenStudio.settings.savedRestart') }}</span>
-            <button
-              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
-              :disabled="restarting"
-              @click="doRestart"
-            >
+            <p class="text-xs font-bold">
               {{
-                restarting
-                  ? t('klipperscreenStudio.restart.restarting')
-                  : t('klipperscreenStudio.restart.button')
+                t(
+                  confirmKiosk === 'switch'
+                    ? 'klipperscreenStudio.kiosk.confirmSwitchTitle'
+                    : 'klipperscreenStudio.kiosk.confirmRestoreTitle',
+                )
               }}
-            </button>
-          </p>
-          <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
-            ✓ {{ t('klipperscreenStudio.restart.done') }}
-          </p>
-          <p
-            v-if="settingsError"
-            role="alert"
-            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
-          >
-            {{ settingsError }}
-          </p>
-          <p
-            v-if="restartError"
-            role="alert"
-            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
-          >
-            {{ restartError }}
-          </p>
+            </p>
+            <p class="text-[11px] opacity-80">{{ t('klipperscreenStudio.kiosk.confirmBody') }}</p>
+            <div class="flex gap-2">
+              <button
+                class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper"
+                @click="confirmKiosk && doKiosk(confirmKiosk)"
+              >
+                {{ t('klipperscreenStudio.kiosk.confirm') }}
+              </button>
+              <button class="nb-btn bg-surface px-3 py-1 text-xs" @click="confirmKiosk = null">
+                {{ t('klipperscreenStudio.kiosk.cancel') }}
+              </button>
+            </div>
+          </div>
         </template>
-      </template>
 
-      <!-- Menus view: design the on-screen menu tree (what's on each screen + what it does) -->
-      <template v-else-if="view === 'menus'">
-        <p v-if="menusBusy && !menuItems.length && !menuSha" class="font-mono text-xs opacity-70">
-          {{ t('klipperscreenStudio.menus.loading') }}
+        <p v-if="kioskNote" class="text-[11px] font-bold text-brand-lime">✓ {{ kioskNote }}</p>
+        <p v-if="kioskError" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]">
+          {{ kioskError }}
         </p>
-        <template v-else>
-          <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.menus.intro') }}</p>
+      </template>
+    </template>
 
-          <div v-for="grp in menuTrees" :key="grp.tree" class="nb-card space-y-1 bg-surface p-2">
+    <!-- (2) KLIPPERSCREEN — configure the KlipperScreen touch UI -->
+    <template v-else-if="section === 'klipperscreen'">
+      <p v-if="checking" class="font-mono text-xs opacity-70">
+        {{ t('klipperscreenStudio.status.checking') }}
+      </p>
+      <p v-else-if="statusError" role="alert" class="nb-card bg-brand-red/10 p-2 font-mono text-xs">
+        {{ statusError }}
+      </p>
+      <p v-else-if="!status?.present" class="nb-card bg-surface p-3 text-xs opacity-70">
+        {{ t('klipperscreenStudio.status.absent') }}
+      </p>
+
+      <template v-else>
+        <!-- Status line -->
+        <div class="nb-card flex flex-wrap items-center gap-x-4 gap-y-1 bg-surface p-3 text-[11px]">
+          <span class="font-bold uppercase tracking-wide opacity-60">{{
+            t('klipperscreenStudio.status.present')
+          }}</span>
+          <span v-if="status.theme" class="font-mono"
+            >{{ t('klipperscreenStudio.status.theme') }}: <b>{{ status.theme }}</b></span
+          >
+          <span v-if="status.language" class="font-mono"
+            >{{ t('klipperscreenStudio.status.language') }}: <b>{{ status.language }}</b></span
+          >
+          <span v-if="!status.restartable" class="text-brand-red"
+            >⚠ {{ t('klipperscreenStudio.status.notRestartable') }}</span
+          >
+        </div>
+
+        <!-- KlipperScreen config sub-tabs -->
+        <div class="-mx-1 overflow-x-auto px-1">
+          <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
+            <button
+              v-for="v in ['config', 'settings', 'menus', 'themes'] as const"
+              :key="v"
+              type="button"
+              class="nb-seg whitespace-nowrap"
+              :class="
+                ksView === v ? 'bg-ink text-surface' : 'bg-surface text-ink hover:bg-brand-cyan'
+              "
+              :aria-pressed="ksView === v"
+              @click="switchKsView(v)"
+            >
+              {{ t('klipperscreenStudio.view.' + v) }}
+            </button>
+          </div>
+        </div>
+
+        <template v-if="ksView === 'config'">
+          <!-- Raw editor -->
+          <p v-if="loadingConf" class="font-mono text-xs opacity-70">
+            {{ t('klipperscreenStudio.editor.loading') }}
+          </p>
+          <p
+            v-else-if="confError"
+            role="alert"
+            class="nb-card bg-brand-red/10 p-2 font-mono text-xs"
+          >
+            {{ confError }}
+          </p>
+          <template v-else>
             <div class="flex items-center justify-between gap-2">
-              <span class="font-mono text-[11px] font-bold">{{ grp.tree }}</span>
+              <span class="font-mono text-[11px] opacity-60">KlipperScreen.conf</span>
               <button
                 class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
-                @click="addMenuItem(grp.tree, grp.tree)"
+                :disabled="loadingConf"
+                @click="loadConf"
               >
-                + {{ t('klipperscreenStudio.menus.addItem') }}
+                ↻ {{ t('klipperscreenStudio.editor.reload') }}
               </button>
             </div>
-            <p v-if="!grp.rows.length" class="text-[11px] opacity-50">
-              {{ t('klipperscreenStudio.menus.empty') }}
-            </p>
-            <template v-for="row in grp.rows" :key="row.item.id">
-              <div
-                class="flex items-center gap-1 rounded-sm px-1 py-0.5 text-[11px]"
-                :class="selectedMenuId === row.item.id ? 'bg-brand-cyan/30' : 'hover:bg-ink/5'"
-                :style="{ marginInlineStart: row.depth * 14 + 'px' }"
-              >
-                <button
-                  class="min-w-0 flex-1 truncate text-start"
-                  @click="selectedMenuId = selectedMenuId === row.item.id ? null : row.item.id"
-                >
-                  <span class="font-bold">{{
-                    row.item.props.name || row.item.id.split(' ').pop()
-                  }}</span>
-                  <span class="ms-1 opacity-50">{{
-                    menuActionType(row.item) === 'panel'
-                      ? '▸ ' + row.item.props.panel
-                      : menuActionType(row.item) === 'gcode'
-                        ? '⌨'
-                        : '📁'
-                  }}</span>
-                </button>
-                <button
-                  class="shrink-0 px-1 opacity-60 hover:opacity-100"
-                  :aria-label="t('klipperscreenStudio.menus.up')"
-                  @click="moveMenuItem(row.item, -1)"
-                >
-                  ▲
-                </button>
-                <button
-                  class="shrink-0 px-1 opacity-60 hover:opacity-100"
-                  :aria-label="t('klipperscreenStudio.menus.down')"
-                  @click="moveMenuItem(row.item, 1)"
-                >
-                  ▼
-                </button>
-                <button
-                  class="shrink-0 px-1 opacity-60 hover:opacity-100"
-                  :aria-label="t('klipperscreenStudio.menus.addChild')"
-                  @click="addMenuItem(row.item.id, grp.tree)"
-                >
-                  ＋
-                </button>
-                <button
-                  class="shrink-0 px-1 text-brand-red opacity-70 hover:opacity-100"
-                  :aria-label="t('klipperscreenStudio.menus.delete')"
-                  @click="removeMenuItem(row.item)"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div
-                v-if="selectedMenuId === row.item.id"
-                class="space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2 text-[11px]"
-                :style="{ marginInlineStart: row.depth * 14 + 12 + 'px' }"
-              >
-                <label class="flex items-center gap-2">
-                  <span class="w-16 shrink-0 opacity-60">{{
-                    t('klipperscreenStudio.menus.name')
-                  }}</span>
-                  <input
-                    v-model="row.item.props.name"
-                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5"
-                    @input="menusDirty = true"
-                  />
-                </label>
-                <label class="flex items-center gap-2">
-                  <span class="w-16 shrink-0 opacity-60">{{
-                    t('klipperscreenStudio.menus.icon')
-                  }}</span>
-                  <input
-                    v-model="row.item.props.icon"
-                    placeholder="home"
-                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
-                    @input="menusDirty = true"
-                  />
-                </label>
-                <label class="flex items-center gap-2">
-                  <span class="w-16 shrink-0 opacity-60">{{
-                    t('klipperscreenStudio.menus.action')
-                  }}</span>
-                  <select
-                    :value="menuActionType(row.item)"
-                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5"
-                    @change="
-                      setMenuActionType(row.item, ($event.target as HTMLSelectElement).value)
-                    "
-                  >
-                    <option value="submenu">{{ t('klipperscreenStudio.menus.actSubmenu') }}</option>
-                    <option value="panel">{{ t('klipperscreenStudio.menus.actPanel') }}</option>
-                    <option value="gcode">{{ t('klipperscreenStudio.menus.actGcode') }}</option>
-                  </select>
-                </label>
-                <label v-if="menuActionType(row.item) === 'panel'" class="flex items-center gap-2">
-                  <span class="w-16 shrink-0 opacity-60">{{
-                    t('klipperscreenStudio.menus.panel')
-                  }}</span>
-                  <select
-                    v-model="row.item.props.panel"
-                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
-                    @change="menusDirty = true"
-                  >
-                    <option v-for="p in panels" :key="p" :value="p">{{ p }}</option>
-                  </select>
-                </label>
-                <label
-                  v-else-if="menuActionType(row.item) === 'gcode'"
-                  class="flex items-center gap-2"
-                >
-                  <span class="w-16 shrink-0 opacity-60">{{
-                    t('klipperscreenStudio.menus.gcode')
-                  }}</span>
-                  <input
-                    :value="menuGcode(row.item)"
-                    placeholder="G28"
-                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
-                    @input="setMenuGcode(row.item, ($event.target as HTMLInputElement).value)"
-                  />
-                </label>
-                <label class="flex items-center gap-2">
-                  <span class="w-16 shrink-0 opacity-60">{{
-                    t('klipperscreenStudio.menus.enable')
-                  }}</span>
-                  <input
-                    v-model="row.item.props.enable"
-                    :placeholder="'{{ printer.extruders.count > 0 }}'"
-                    class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
-                    @input="menusDirty = true"
-                  />
-                </label>
-              </div>
-            </template>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2">
-            <button
-              class="nb-btn bg-brand-lime px-3 py-1 text-xs"
-              :disabled="menusBusy || !menusDirty"
-              @click="saveMenusHandler"
-            >
-              {{
-                menusBusy
-                  ? t('klipperscreenStudio.editor.saving')
-                  : t('klipperscreenStudio.menus.save')
-              }}
-            </button>
-            <span v-if="menusDirty" class="text-[11px] opacity-60">{{
-              t('klipperscreenStudio.editor.unsaved')
-            }}</span>
-          </div>
-          <p
-            v-if="menusNote"
-            class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
-          >
-            <span class="min-w-0 flex-1">{{ menusNote }}</span>
-            <button
-              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
-              :disabled="restarting"
-              @click="doRestart"
-            >
-              {{
-                restarting
-                  ? t('klipperscreenStudio.restart.restarting')
-                  : t('klipperscreenStudio.restart.button')
-              }}
-            </button>
-          </p>
-          <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
-            ✓ {{ t('klipperscreenStudio.restart.done') }}
-          </p>
-          <p
-            v-if="menusError"
-            role="alert"
-            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
-          >
-            {{ menusError }}
-          </p>
-        </template>
-      </template>
-
-      <!-- Themes view: palette pickers + live preview + theme management -->
-      <template v-else-if="view === 'themes'">
-        <p v-if="themesBusy && !tokens.length" class="font-mono text-xs opacity-70">
-          {{ t('klipperscreenStudio.themes.loading') }}
-        </p>
-        <template v-else>
-          <div class="grid gap-3 md:grid-cols-2">
-            <!-- palette editor -->
-            <div class="min-w-0 space-y-1.5">
-              <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.palette') }}</p>
-              <div v-for="tok in tokens" :key="tok" class="flex items-center gap-2 text-[11px]">
-                <input
-                  v-model="palette[tok]"
-                  type="color"
-                  class="h-7 w-9 shrink-0 rounded-sm border-2 border-ink"
-                  :aria-label="tok"
-                />
-                <span class="min-w-0 flex-1 truncate font-mono">{{ tok }}</span>
-                <span class="shrink-0 font-mono opacity-60">{{ palette[tok] }}</span>
-              </div>
-              <label class="flex items-center gap-2 pt-1 text-[11px]">
-                <span class="shrink-0 font-mono">{{ t('klipperscreenStudio.themes.radius') }}</span>
-                <input
-                  v-model.number="radius"
-                  type="range"
-                  min="0"
-                  max="30"
-                  class="min-w-0 flex-1"
-                />
-                <span class="shrink-0 font-mono">{{ radius }}px</span>
-              </label>
-            </div>
-
-            <!-- live preview (an approximate mock, not the real GTK screen) -->
-            <div class="min-w-0 space-y-1">
-              <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.preview') }}</p>
-              <div
-                class="rounded-brutal border-3 border-ink p-2"
-                :style="{ backgroundColor: palette.bg, color: palette.text }"
-              >
-                <div
-                  class="mb-2 flex items-center justify-between rounded-sm px-2 py-1 text-[11px]"
-                  :style="{ backgroundColor: palette.active }"
-                >
-                  <span>{{ t('klipperscreenStudio.themes.previewTitle') }}</span
-                  ><span :style="{ color: palette.color3 }">●</span>
-                </div>
-                <div class="grid grid-cols-2 gap-1.5">
-                  <div
-                    v-for="(c, i) in ['color1', 'color2', 'color3', 'color4']"
-                    :key="c"
-                    class="border-2 px-2 py-2 text-center text-[11px] font-bold"
-                    :style="{
-                      backgroundColor: palette.active,
-                      color: palette['text-inv'],
-                      borderColor: palette[c],
-                      borderRadius: radius + 'px',
-                    }"
-                  >
-                    {{ t('klipperscreenStudio.themes.btn') }} {{ i + 1 }}
-                  </div>
-                </div>
-                <p class="mt-2 text-[11px]" :style="{ color: palette.warning }">
-                  ⚠ {{ t('klipperscreenStudio.themes.previewWarn') }}
-                </p>
-              </div>
-              <p class="text-[11px] opacity-60">
-                {{ t('klipperscreenStudio.themes.previewApprox') }}
-              </p>
-            </div>
-          </div>
-
-          <!-- create -->
-          <div class="flex flex-wrap items-center gap-2">
-            <input
-              v-model="themeName"
-              :placeholder="t('klipperscreenStudio.themes.namePlaceholder')"
-              class="min-w-32 flex-1 rounded-brutal border-3 border-ink bg-paper px-2 py-1 text-xs"
-            />
-            <button
-              class="nb-btn bg-brand-lime px-3 py-1 text-xs"
-              :disabled="themesBusy || !themeName.trim()"
-              @click="createAndApply(true)"
-            >
-              {{ t('klipperscreenStudio.themes.createApply') }}
-            </button>
-            <button
-              class="nb-btn bg-surface px-3 py-1 text-xs"
-              :disabled="themesBusy || !themeName.trim()"
-              @click="createAndApply(false)"
-            >
-              {{ t('klipperscreenStudio.themes.createOnly') }}
-            </button>
-          </div>
-
-          <!-- installed themes -->
-          <div v-if="themes.length" class="space-y-1">
-            <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.installed') }}</p>
-            <ul class="space-y-1">
-              <li v-for="th in themes" :key="th.name" class="flex items-center gap-2 text-[11px]">
-                <span class="min-w-0 flex-1 truncate font-mono"
-                  >{{ th.name
-                  }}<span
-                    v-if="th.generated"
-                    class="ms-1 opacity-50"
-                    :title="t('klipperscreenStudio.themes.generated')"
-                    >★</span
-                  ></span
-                >
-                <button
-                  class="nb-btn shrink-0 bg-surface px-2 py-0.5"
-                  :disabled="themesBusy"
-                  @click="applyExisting(th.name)"
-                >
-                  {{ t('klipperscreenStudio.themes.apply') }}
-                </button>
-                <button
-                  v-if="th.generated"
-                  class="nb-btn shrink-0 bg-surface px-2 py-0.5"
-                  :disabled="themesBusy"
-                  :aria-label="t('klipperscreenStudio.themes.delete')"
-                  @click="removeTheme(th.name)"
-                >
-                  ✕
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          <p
-            v-if="themesNote"
-            class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
-          >
-            <span class="min-w-0 flex-1">{{ themesNote }}</span>
-            <button
-              class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
-              :disabled="restarting"
-              @click="doRestart"
-            >
-              {{
-                restarting
-                  ? t('klipperscreenStudio.restart.restarting')
-                  : t('klipperscreenStudio.restart.button')
-              }}
-            </button>
-          </p>
-          <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
-            ✓ {{ t('klipperscreenStudio.restart.done') }}
-          </p>
-          <p
-            v-if="themesError"
-            role="alert"
-            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
-          >
-            {{ themesError }}
-          </p>
-          <p
-            v-if="restartError"
-            role="alert"
-            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
-          >
-            {{ restartError }}
-          </p>
-        </template>
-      </template>
-
-      <!-- Kiosk view: turn the touchscreen into FilaMind itself (reversible swap) -->
-      <template v-else-if="view === 'kiosk'">
-        <p v-if="kioskBusy && !kiosk" class="font-mono text-xs opacity-70">
-          {{ t('klipperscreenStudio.kiosk.loading') }}
-        </p>
-        <template v-else>
-          <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.kiosk.intro') }}</p>
-
-          <!-- current screen mode -->
-          <div
-            class="nb-card flex flex-wrap items-center gap-x-3 gap-y-1 bg-surface p-3 text-[11px]"
-          >
-            <span class="font-bold uppercase tracking-wide opacity-60">{{
-              t('klipperscreenStudio.kiosk.current')
-            }}</span>
-            <span
-              class="nb-badge"
-              :class="kiosk?.mode === 'kiosk' ? 'bg-brand-lime' : 'bg-brand-cyan'"
-            >
-              {{ t('klipperscreenStudio.kiosk.mode.' + (kiosk?.mode ?? 'none')) }}
-            </span>
-            <span v-if="kiosk?.url" class="font-mono opacity-70">{{ kiosk.url }}</span>
-          </div>
-
-          <!-- not installed yet: how to provision -->
-          <div
-            v-if="kiosk && !kiosk.kiosk_installed"
-            class="nb-card space-y-1 bg-brand-yellow/15 p-3 text-[11px]"
-          >
-            <p class="font-bold">{{ t('klipperscreenStudio.kiosk.notInstalled') }}</p>
-            <p class="opacity-80">{{ t('klipperscreenStudio.kiosk.setupHint') }}</p>
-            <code class="block rounded-sm bg-ink/5 p-1.5 font-mono"
-              >cd ~/filamind-flow && sudo bash scripts/install.sh kiosk</code
-            >
-          </div>
-
-          <!-- installed: the reversible toggle -->
-          <template v-else-if="kiosk">
-            <label class="flex items-center gap-2 text-[11px]">
-              <input v-model="kioskPersist" type="checkbox" class="h-4 w-4" />
-              <span>{{ t('klipperscreenStudio.kiosk.persist') }}</span>
-            </label>
-            <p class="text-[11px] opacity-60">{{ t('klipperscreenStudio.kiosk.safety') }}</p>
+            <textarea
+              v-model="content"
+              spellcheck="false"
+              dir="ltr"
+              class="h-72 w-full rounded-brutal border-3 border-ink bg-paper p-2 font-mono text-[11px] leading-snug"
+              @input="onEdit"
+            ></textarea>
 
             <div class="flex flex-wrap items-center gap-2">
               <button
-                v-if="kiosk.mode !== 'kiosk'"
                 class="nb-btn bg-brand-lime px-3 py-1 text-xs"
-                :disabled="kioskBusy"
-                @click="confirmKiosk = 'switch'"
+                :disabled="saving || !dirty"
+                @click="save"
               >
-                {{ t('klipperscreenStudio.kiosk.switchBtn') }}
+                {{
+                  saving
+                    ? t('klipperscreenStudio.editor.saving')
+                    : t('klipperscreenStudio.editor.save')
+                }}
               </button>
-              <button
-                v-if="kiosk.mode === 'kiosk' || !kiosk.screen_active"
-                class="nb-btn bg-surface px-3 py-1 text-xs"
-                :disabled="kioskBusy"
-                @click="confirmKiosk = 'restore'"
+              <span v-if="saved" class="text-[11px] font-bold text-brand-lime"
+                >✓ {{ t('klipperscreenStudio.editor.saved') }}</span
               >
-                {{ t('klipperscreenStudio.kiosk.restoreBtn') }}
-              </button>
+              <span v-else-if="dirty" class="text-[11px] opacity-60">{{
+                t('klipperscreenStudio.editor.unsaved')
+              }}</span>
               <span class="flex-1"></span>
               <button
-                class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
-                :disabled="kioskBusy"
-                @click="loadKiosk"
+                class="nb-btn bg-brand-yellow px-3 py-1 text-xs"
+                :disabled="restarting"
+                @click="confirmRestart = true"
               >
-                ↻ {{ t('klipperscreenStudio.kiosk.refresh') }}
+                {{
+                  restarting
+                    ? t('klipperscreenStudio.restart.restarting')
+                    : t('klipperscreenStudio.restart.button')
+                }}
               </button>
             </div>
 
-            <!-- confirm -->
+            <p
+              v-if="saveError"
+              role="alert"
+              class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+            >
+              {{ saveError }}
+            </p>
+            <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
+              ✓ {{ t('klipperscreenStudio.restart.done') }}
+            </p>
+            <p
+              v-if="restartError"
+              role="alert"
+              class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+            >
+              {{ restartError }}
+            </p>
+
+            <!-- Restart confirm -->
             <div
-              v-if="confirmKiosk"
+              v-if="confirmRestart"
               class="nb-card space-y-2 border-brand-red bg-brand-yellow/20 p-2"
             >
-              <p class="text-xs font-bold">
-                {{
-                  t(
-                    confirmKiosk === 'switch'
-                      ? 'klipperscreenStudio.kiosk.confirmSwitchTitle'
-                      : 'klipperscreenStudio.kiosk.confirmRestoreTitle',
-                  )
-                }}
+              <p class="text-xs font-bold">{{ t('klipperscreenStudio.restart.confirmTitle') }}</p>
+              <p class="text-[11px] opacity-80">
+                {{ t('klipperscreenStudio.restart.confirmBody') }}
               </p>
-              <p class="text-[11px] opacity-80">{{ t('klipperscreenStudio.kiosk.confirmBody') }}</p>
               <div class="flex gap-2">
-                <button
-                  class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper"
-                  @click="confirmKiosk && doKiosk(confirmKiosk)"
-                >
-                  {{ t('klipperscreenStudio.kiosk.confirm') }}
+                <button class="nb-btn bg-brand-red px-3 py-1 text-xs text-paper" @click="doRestart">
+                  {{ t('klipperscreenStudio.restart.confirm') }}
                 </button>
-                <button class="nb-btn bg-surface px-3 py-1 text-xs" @click="confirmKiosk = null">
-                  {{ t('klipperscreenStudio.kiosk.cancel') }}
+                <button class="nb-btn bg-surface px-3 py-1 text-xs" @click="confirmRestart = false">
+                  {{ t('klipperscreenStudio.restart.cancel') }}
                 </button>
               </div>
             </div>
           </template>
+        </template>
 
-          <p v-if="kioskNote" class="text-[11px] font-bold text-brand-lime">✓ {{ kioskNote }}</p>
+        <!-- Settings view: a friendly form over the common [main] options -->
+        <template v-else-if="ksView === 'settings'">
           <p
-            v-if="kioskError"
-            role="alert"
-            class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+            v-if="settingsBusy && !Object.keys(settingsValues).length"
+            class="font-mono text-xs opacity-70"
           >
-            {{ kioskError }}
+            {{ t('klipperscreenStudio.settings.loading') }}
           </p>
+          <template v-else>
+            <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.settings.intro') }}</p>
+
+            <div class="nb-card space-y-2 bg-surface p-3">
+              <div
+                v-for="f in SETTINGS_FIELDS"
+                :key="f.key"
+                class="flex flex-wrap items-center gap-x-3 gap-y-1"
+              >
+                <label v-if="f.type === 'bool'" class="flex items-center gap-2 text-xs">
+                  <input
+                    type="checkbox"
+                    class="h-4 w-4"
+                    :checked="settingsValues[f.key] === 'True'"
+                    @change="
+                      onSetting(
+                        f.key,
+                        ($event.target as HTMLInputElement).checked ? 'True' : 'False',
+                      )
+                    "
+                  />
+                  <span class="font-medium">{{
+                    t('klipperscreenStudio.settings.label.' + f.key)
+                  }}</span>
+                </label>
+                <template v-else>
+                  <label :for="'set-' + f.key" class="min-w-32 text-xs font-medium">
+                    {{ t('klipperscreenStudio.settings.label.' + f.key) }}
+                  </label>
+                  <select
+                    :id="'set-' + f.key"
+                    class="min-w-0 flex-1 rounded-brutal border-2 border-ink bg-paper px-2 py-1 text-xs"
+                    :value="settingsValues[f.key]"
+                    @change="onSetting(f.key, ($event.target as HTMLSelectElement).value)"
+                  >
+                    <option v-for="opt in settingOptions(f)" :key="opt" :value="opt">
+                      {{ settingOptionLabel(f.key, opt) }}
+                    </option>
+                  </select>
+                </template>
+              </div>
+            </div>
+
+            <p class="text-[11px] opacity-60">
+              {{ t('klipperscreenStudio.settings.onlyChanged') }}
+            </p>
+
+            <button
+              class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+              :disabled="settingsBusy || !settingsTouched.size"
+              @click="saveSettings"
+            >
+              {{
+                settingsBusy
+                  ? t('klipperscreenStudio.editor.saving')
+                  : t('klipperscreenStudio.settings.save')
+              }}
+            </button>
+
+            <p
+              v-if="settingsSaved"
+              class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
+            >
+              <span class="min-w-0 flex-1">{{
+                t('klipperscreenStudio.settings.savedRestart')
+              }}</span>
+              <button
+                class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
+                :disabled="restarting"
+                @click="doRestart"
+              >
+                {{
+                  restarting
+                    ? t('klipperscreenStudio.restart.restarting')
+                    : t('klipperscreenStudio.restart.button')
+                }}
+              </button>
+            </p>
+            <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
+              ✓ {{ t('klipperscreenStudio.restart.done') }}
+            </p>
+            <p
+              v-if="settingsError"
+              role="alert"
+              class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+            >
+              {{ settingsError }}
+            </p>
+            <p
+              v-if="restartError"
+              role="alert"
+              class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+            >
+              {{ restartError }}
+            </p>
+          </template>
+        </template>
+
+        <!-- Menus view: design the on-screen menu tree (what's on each screen + what it does) -->
+        <template v-else-if="ksView === 'menus'">
+          <p v-if="menusBusy && !menuItems.length && !menuSha" class="font-mono text-xs opacity-70">
+            {{ t('klipperscreenStudio.menus.loading') }}
+          </p>
+          <template v-else>
+            <p class="text-[11px] opacity-70">{{ t('klipperscreenStudio.menus.intro') }}</p>
+
+            <div v-for="grp in menuTrees" :key="grp.tree" class="nb-card space-y-1 bg-surface p-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-mono text-[11px] font-bold">{{ grp.tree }}</span>
+                <button
+                  class="nb-btn bg-surface px-2 py-0.5 text-[11px]"
+                  @click="addMenuItem(grp.tree, grp.tree)"
+                >
+                  + {{ t('klipperscreenStudio.menus.addItem') }}
+                </button>
+              </div>
+              <p v-if="!grp.rows.length" class="text-[11px] opacity-50">
+                {{ t('klipperscreenStudio.menus.empty') }}
+              </p>
+              <template v-for="row in grp.rows" :key="row.item.id">
+                <div
+                  class="flex items-center gap-1 rounded-sm px-1 py-0.5 text-[11px]"
+                  :class="selectedMenuId === row.item.id ? 'bg-brand-cyan/30' : 'hover:bg-ink/5'"
+                  :style="{ marginInlineStart: row.depth * 14 + 'px' }"
+                >
+                  <button
+                    class="min-w-0 flex-1 truncate text-start"
+                    @click="selectedMenuId = selectedMenuId === row.item.id ? null : row.item.id"
+                  >
+                    <span class="font-bold">{{
+                      row.item.props.name || row.item.id.split(' ').pop()
+                    }}</span>
+                    <span class="ms-1 opacity-50">{{
+                      menuActionType(row.item) === 'panel'
+                        ? '▸ ' + row.item.props.panel
+                        : menuActionType(row.item) === 'gcode'
+                          ? '⌨'
+                          : '📁'
+                    }}</span>
+                  </button>
+                  <button
+                    class="shrink-0 px-1 opacity-60 hover:opacity-100"
+                    :aria-label="t('klipperscreenStudio.menus.up')"
+                    @click="moveMenuItem(row.item, -1)"
+                  >
+                    ▲
+                  </button>
+                  <button
+                    class="shrink-0 px-1 opacity-60 hover:opacity-100"
+                    :aria-label="t('klipperscreenStudio.menus.down')"
+                    @click="moveMenuItem(row.item, 1)"
+                  >
+                    ▼
+                  </button>
+                  <button
+                    class="shrink-0 px-1 opacity-60 hover:opacity-100"
+                    :aria-label="t('klipperscreenStudio.menus.addChild')"
+                    @click="addMenuItem(row.item.id, grp.tree)"
+                  >
+                    ＋
+                  </button>
+                  <button
+                    class="shrink-0 px-1 text-brand-red opacity-70 hover:opacity-100"
+                    :aria-label="t('klipperscreenStudio.menus.delete')"
+                    @click="removeMenuItem(row.item)"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div
+                  v-if="selectedMenuId === row.item.id"
+                  class="space-y-1.5 rounded-brutal border-2 border-ink bg-paper p-2 text-[11px]"
+                  :style="{ marginInlineStart: row.depth * 14 + 12 + 'px' }"
+                >
+                  <label class="flex items-center gap-2">
+                    <span class="w-16 shrink-0 opacity-60">{{
+                      t('klipperscreenStudio.menus.name')
+                    }}</span>
+                    <input
+                      v-model="row.item.props.name"
+                      class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5"
+                      @input="menusDirty = true"
+                    />
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <span class="w-16 shrink-0 opacity-60">{{
+                      t('klipperscreenStudio.menus.icon')
+                    }}</span>
+                    <input
+                      v-model="row.item.props.icon"
+                      placeholder="home"
+                      class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                      @input="menusDirty = true"
+                    />
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <span class="w-16 shrink-0 opacity-60">{{
+                      t('klipperscreenStudio.menus.action')
+                    }}</span>
+                    <select
+                      :value="menuActionType(row.item)"
+                      class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5"
+                      @change="
+                        setMenuActionType(row.item, ($event.target as HTMLSelectElement).value)
+                      "
+                    >
+                      <option value="submenu">
+                        {{ t('klipperscreenStudio.menus.actSubmenu') }}
+                      </option>
+                      <option value="panel">{{ t('klipperscreenStudio.menus.actPanel') }}</option>
+                      <option value="gcode">{{ t('klipperscreenStudio.menus.actGcode') }}</option>
+                    </select>
+                  </label>
+                  <label
+                    v-if="menuActionType(row.item) === 'panel'"
+                    class="flex items-center gap-2"
+                  >
+                    <span class="w-16 shrink-0 opacity-60">{{
+                      t('klipperscreenStudio.menus.panel')
+                    }}</span>
+                    <select
+                      v-model="row.item.props.panel"
+                      class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                      @change="menusDirty = true"
+                    >
+                      <option v-for="p in panels" :key="p" :value="p">{{ p }}</option>
+                    </select>
+                  </label>
+                  <label
+                    v-else-if="menuActionType(row.item) === 'gcode'"
+                    class="flex items-center gap-2"
+                  >
+                    <span class="w-16 shrink-0 opacity-60">{{
+                      t('klipperscreenStudio.menus.gcode')
+                    }}</span>
+                    <input
+                      :value="menuGcode(row.item)"
+                      placeholder="G28"
+                      class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                      @input="setMenuGcode(row.item, ($event.target as HTMLInputElement).value)"
+                    />
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <span class="w-16 shrink-0 opacity-60">{{
+                      t('klipperscreenStudio.menus.enable')
+                    }}</span>
+                    <input
+                      v-model="row.item.props.enable"
+                      :placeholder="'{{ printer.extruders.count > 0 }}'"
+                      class="min-w-0 flex-1 rounded-sm border-2 border-ink bg-surface px-1.5 py-0.5 font-mono"
+                      @input="menusDirty = true"
+                    />
+                  </label>
+                </div>
+              </template>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+                :disabled="menusBusy || !menusDirty"
+                @click="saveMenusHandler"
+              >
+                {{
+                  menusBusy
+                    ? t('klipperscreenStudio.editor.saving')
+                    : t('klipperscreenStudio.menus.save')
+                }}
+              </button>
+              <span v-if="menusDirty" class="text-[11px] opacity-60">{{
+                t('klipperscreenStudio.editor.unsaved')
+              }}</span>
+            </div>
+            <p
+              v-if="menusNote"
+              class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
+            >
+              <span class="min-w-0 flex-1">{{ menusNote }}</span>
+              <button
+                class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
+                :disabled="restarting"
+                @click="doRestart"
+              >
+                {{
+                  restarting
+                    ? t('klipperscreenStudio.restart.restarting')
+                    : t('klipperscreenStudio.restart.button')
+                }}
+              </button>
+            </p>
+            <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
+              ✓ {{ t('klipperscreenStudio.restart.done') }}
+            </p>
+            <p
+              v-if="menusError"
+              role="alert"
+              class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+            >
+              {{ menusError }}
+            </p>
+          </template>
+        </template>
+
+        <!-- Themes view: palette pickers + live preview + theme management -->
+        <template v-else-if="ksView === 'themes'">
+          <p v-if="themesBusy && !tokens.length" class="font-mono text-xs opacity-70">
+            {{ t('klipperscreenStudio.themes.loading') }}
+          </p>
+          <template v-else>
+            <div class="grid gap-3 md:grid-cols-2">
+              <!-- palette editor -->
+              <div class="min-w-0 space-y-1.5">
+                <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.palette') }}</p>
+                <div v-for="tok in tokens" :key="tok" class="flex items-center gap-2 text-[11px]">
+                  <input
+                    v-model="palette[tok]"
+                    type="color"
+                    class="h-7 w-9 shrink-0 rounded-sm border-2 border-ink"
+                    :aria-label="tok"
+                  />
+                  <span class="min-w-0 flex-1 truncate font-mono">{{ tok }}</span>
+                  <span class="shrink-0 font-mono opacity-60">{{ palette[tok] }}</span>
+                </div>
+                <label class="flex items-center gap-2 pt-1 text-[11px]">
+                  <span class="shrink-0 font-mono">{{
+                    t('klipperscreenStudio.themes.radius')
+                  }}</span>
+                  <input
+                    v-model.number="radius"
+                    type="range"
+                    min="0"
+                    max="30"
+                    class="min-w-0 flex-1"
+                  />
+                  <span class="shrink-0 font-mono">{{ radius }}px</span>
+                </label>
+              </div>
+
+              <!-- live preview (an approximate mock, not the real GTK screen) -->
+              <div class="min-w-0 space-y-1">
+                <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.preview') }}</p>
+                <div
+                  class="rounded-brutal border-3 border-ink p-2"
+                  :style="{ backgroundColor: palette.bg, color: palette.text }"
+                >
+                  <div
+                    class="mb-2 flex items-center justify-between rounded-sm px-2 py-1 text-[11px]"
+                    :style="{ backgroundColor: palette.active }"
+                  >
+                    <span>{{ t('klipperscreenStudio.themes.previewTitle') }}</span
+                    ><span :style="{ color: palette.color3 }">●</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-1.5">
+                    <div
+                      v-for="(c, i) in ['color1', 'color2', 'color3', 'color4']"
+                      :key="c"
+                      class="border-2 px-2 py-2 text-center text-[11px] font-bold"
+                      :style="{
+                        backgroundColor: palette.active,
+                        color: palette['text-inv'],
+                        borderColor: palette[c],
+                        borderRadius: radius + 'px',
+                      }"
+                    >
+                      {{ t('klipperscreenStudio.themes.btn') }} {{ i + 1 }}
+                    </div>
+                  </div>
+                  <p class="mt-2 text-[11px]" :style="{ color: palette.warning }">
+                    ⚠ {{ t('klipperscreenStudio.themes.previewWarn') }}
+                  </p>
+                </div>
+                <p class="text-[11px] opacity-60">
+                  {{ t('klipperscreenStudio.themes.previewApprox') }}
+                </p>
+              </div>
+            </div>
+
+            <!-- create -->
+            <div class="flex flex-wrap items-center gap-2">
+              <input
+                v-model="themeName"
+                :placeholder="t('klipperscreenStudio.themes.namePlaceholder')"
+                class="min-w-32 flex-1 rounded-brutal border-3 border-ink bg-paper px-2 py-1 text-xs"
+              />
+              <button
+                class="nb-btn bg-brand-lime px-3 py-1 text-xs"
+                :disabled="themesBusy || !themeName.trim()"
+                @click="createAndApply(true)"
+              >
+                {{ t('klipperscreenStudio.themes.createApply') }}
+              </button>
+              <button
+                class="nb-btn bg-surface px-3 py-1 text-xs"
+                :disabled="themesBusy || !themeName.trim()"
+                @click="createAndApply(false)"
+              >
+                {{ t('klipperscreenStudio.themes.createOnly') }}
+              </button>
+            </div>
+
+            <!-- installed themes -->
+            <div v-if="themes.length" class="space-y-1">
+              <p class="text-xs font-bold">{{ t('klipperscreenStudio.themes.installed') }}</p>
+              <ul class="space-y-1">
+                <li v-for="th in themes" :key="th.name" class="flex items-center gap-2 text-[11px]">
+                  <span class="min-w-0 flex-1 truncate font-mono"
+                    >{{ th.name
+                    }}<span
+                      v-if="th.generated"
+                      class="ms-1 opacity-50"
+                      :title="t('klipperscreenStudio.themes.generated')"
+                      >★</span
+                    ></span
+                  >
+                  <button
+                    class="nb-btn shrink-0 bg-surface px-2 py-0.5"
+                    :disabled="themesBusy"
+                    @click="applyExisting(th.name)"
+                  >
+                    {{ t('klipperscreenStudio.themes.apply') }}
+                  </button>
+                  <button
+                    v-if="th.generated"
+                    class="nb-btn shrink-0 bg-surface px-2 py-0.5"
+                    :disabled="themesBusy"
+                    :aria-label="t('klipperscreenStudio.themes.delete')"
+                    @click="removeTheme(th.name)"
+                  >
+                    ✕
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <p
+              v-if="themesNote"
+              class="nb-card flex flex-wrap items-center gap-2 bg-brand-lime/20 p-2 text-[11px]"
+            >
+              <span class="min-w-0 flex-1">{{ themesNote }}</span>
+              <button
+                class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5"
+                :disabled="restarting"
+                @click="doRestart"
+              >
+                {{
+                  restarting
+                    ? t('klipperscreenStudio.restart.restarting')
+                    : t('klipperscreenStudio.restart.button')
+                }}
+              </button>
+            </p>
+            <p v-if="restarted" class="text-[11px] font-bold text-brand-lime">
+              ✓ {{ t('klipperscreenStudio.restart.done') }}
+            </p>
+            <p
+              v-if="themesError"
+              role="alert"
+              class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+            >
+              {{ themesError }}
+            </p>
+            <p
+              v-if="restartError"
+              role="alert"
+              class="nb-card bg-brand-red/10 p-2 font-mono text-[11px]"
+            >
+              {{ restartError }}
+            </p>
+          </template>
         </template>
       </template>
+    </template>
 
-      <template v-else-if="view === 'fmscreen'">
-        <FilaMindScreenTab v-if="suiteHost" />
-        <div v-else class="nb-card flex items-start gap-3 bg-surface p-3 text-sm">
-          <span class="shrink-0 text-2xl" aria-hidden="true">🧩</span>
-          <div class="min-w-0 space-y-1">
-            <p class="font-display text-base font-bold">{{ t('shell.gate.title') }}</p>
-            <p class="text-xs opacity-80">{{ t('remoteControl.requiresScreen') }}</p>
-          </div>
+    <!-- (3) TOOLS — FilaMind's on-screen checks & tests + the suite remote-control tab -->
+    <template v-else>
+      <FilaMindScreenTab v-if="suiteHost" />
+      <div v-else class="nb-card flex items-start gap-3 bg-surface p-3 text-sm">
+        <span class="shrink-0 text-2xl" aria-hidden="true">🧩</span>
+        <div class="min-w-0 space-y-1">
+          <p class="font-display text-base font-bold">{{ t('shell.gate.title') }}</p>
+          <p class="text-xs opacity-80">{{ t('remoteControl.requiresScreen') }}</p>
         </div>
-      </template>
+      </div>
+      <TouchControlPanel />
     </template>
   </div>
 </template>

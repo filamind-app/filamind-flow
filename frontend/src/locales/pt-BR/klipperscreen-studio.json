@@ -210,6 +210,11 @@
       "confirmBody": "Isto reinicia o serviço da tela de toque para aplicar suas alterações. Não afeta uma impressão ativa, mas a tela fica em branco por alguns segundos.",
       "confirm": "Reiniciar",
       "cancel": "Cancelar"
+    },
+    "section": {
+      "touch": "Interface de toque",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Ferramentas e testes"
     }
   }
 }

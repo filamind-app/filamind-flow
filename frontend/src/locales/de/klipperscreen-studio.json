@@ -210,6 +210,11 @@
       "confirmBody": "Dies startet den Touchscreen-Dienst neu, um deine Änderungen anzuwenden. Ein laufender Druck ist nicht betroffen, aber der Bildschirm wird einige Sekunden schwarz.",
       "confirm": "Neu starten",
       "cancel": "Abbrechen"
+    },
+    "section": {
+      "touch": "Touch-UI",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Tools & Tests"
     }
   }
 }
