@@ -210,6 +210,11 @@
       "confirmBody": "変更を適用するためにタッチスクリーンサービスを再起動します。実行中の印刷には影響しませんが、画面が数秒間真っ暗になります。",
       "confirm": "再起動",
       "cancel": "キャンセル"
+    },
+    "section": {
+      "touch": "タッチUI",
+      "klipperscreen": "KlipperScreen",
+      "tools": "ツールとテスト"
     }
   }
 }

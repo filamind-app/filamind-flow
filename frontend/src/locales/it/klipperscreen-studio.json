@@ -210,6 +210,11 @@
       "confirmBody": "Questo riavvia il servizio del touchscreen per applicare le modifiche. Non influisce su una stampa attiva, ma lo schermo diventa nero per alcuni secondi.",
       "confirm": "Riavvia",
       "cancel": "Annulla"
+    },
+    "section": {
+      "touch": "Interfaccia touch",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Strumenti e test"
     }
   }
 }

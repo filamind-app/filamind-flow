@@ -210,6 +210,11 @@
       "confirmBody": "這會重新啟動觸控螢幕服務以套用你的變更。不會影響進行中的列印，但螢幕會變黑幾秒。",
       "confirm": "重新啟動",
       "cancel": "取消"
+    },
+    "section": {
+      "touch": "觸控介面",
+      "klipperscreen": "KlipperScreen",
+      "tools": "工具與測試"
     }
   }
 }

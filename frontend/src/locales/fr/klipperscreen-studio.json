@@ -210,6 +210,11 @@
       "confirmBody": "Cela redémarre le service de l'écran tactile pour appliquer vos changements. Cela n'affecte pas une impression en cours, mais l'écran s'éteindra quelques secondes.",
       "confirm": "Redémarrer",
       "cancel": "Annuler"
+    },
+    "section": {
+      "touch": "Interface tactile",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Outils et tests"
     }
   }
 }

@@ -210,6 +210,11 @@
       "confirmBody": "Thao tác này khởi động lại dịch vụ màn hình cảm ứng để áp dụng thay đổi của bạn. Nó không ảnh hưởng đến bản in đang chạy, nhưng màn hình sẽ tối trong vài giây.",
       "confirm": "Khởi động lại",
       "cancel": "Hủy"
+    },
+    "section": {
+      "touch": "Giao diện cảm ứng",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Công cụ & kiểm tra"
     }
   }
 }

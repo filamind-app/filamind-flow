@@ -210,6 +210,11 @@
       "confirmBody": "Ini me-restart layanan layar sentuh untuk menerapkan perubahan Anda. Tidak memengaruhi cetakan yang aktif, tetapi layar menjadi kosong selama beberapa detik.",
       "confirm": "Mulai ulang",
       "cancel": "Batal"
+    },
+    "section": {
+      "touch": "Antarmuka Sentuh",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Alat & pengujian"
     }
   }
 }

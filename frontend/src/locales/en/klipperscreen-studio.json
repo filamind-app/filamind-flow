@@ -210,6 +210,11 @@
       "confirmBody": "This restarts the touchscreen service to apply your changes. It won't affect an active print, but the screen goes blank for a few seconds.",
       "confirm": "Restart",
       "cancel": "Cancel"
+    },
+    "section": {
+      "touch": "Touch UI",
+      "klipperscreen": "KlipperScreen",
+      "tools": "Tools & tests"
     }
   }
 }
