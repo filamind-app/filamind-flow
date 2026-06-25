@@ -644,12 +644,13 @@ CMD="${1:-install}"
 case "$CMD" in
   sudoers) shift; do_sudoers "$@" ;;
   kiosk) shift; do_kiosk "$@" ;;
+  native) shift; exec bash "$(cd "$(dirname "$0")/.." && pwd)/deploy/install-native.sh" "$@" ;;
   update) do_update ;;
   install) do_install ;;
   uninstall) do_uninstall ;;
   *)
     echo "Unknown command: $CMD" >&2
-    echo "Usage: install.sh [install|uninstall|sudoers [user]|kiosk [user] [url]|kiosk --uninstall|update]" >&2
+    echo "Usage: install.sh [install|uninstall|sudoers [user]|kiosk [user] [url]|kiosk --uninstall|native [--uninstall]|update]" >&2
     exit 2
     ;;
 esac
