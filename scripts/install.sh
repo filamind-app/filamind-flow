@@ -115,25 +115,22 @@ EOF
   fi
 }
 
-# ── kiosk: turn the printer's touchscreen into a fullscreen FilaMind UI ───
-# Auto-detects X11 (Xorg/xinit) vs Wayland (cage on KMS) by reading KlipperScreen.service and writes
-# a `filamind-kiosk` unit that Conflicts= KlipperScreen (starting one stops the other). Not enabled at
-# boot — FilaMind toggles the swap. Best-effort (no errexit).
-#   default mode        : installs a browser + compositor pointed at $URL (the Flow web UI).
-#   --native --bin PATH : launches an installed native app binary (the .deb touch apps) instead of a
-#                         browser, with OOM guards + an explicit vtN; install-native.sh passes PATH.
+# ── kiosk: turn the printer's touchscreen into the fullscreen native FilaMind app ───
+# Auto-detects X11 (Xorg/xinit) vs Wayland (cage on KMS) by reading KlipperScreen.service and writes a
+# `filamind-kiosk` unit that launches an installed NATIVE app binary (the Tauri .deb touch app) and
+# Conflicts= KlipperScreen (starting one stops the other). Not enabled at boot — FilaMind toggles the
+# swap. Best-effort (no errexit). install-native.sh discovers the binary path (dpkg -L) and passes it.
+#   kiosk --bin PATH [user] [url] [unit-name]   |   kiosk --uninstall [unit-name]
 do_kiosk() {
   set +e
   local SCREEN_UNIT="KlipperScreen.service"
   log() { echo "[kiosk] $*"; }
   die() { echo "[kiosk] ERROR: $*" >&2; exit 1; }
 
-  # Optional leading flags: --native launches an installed native app binary instead of a browser;
-  # --bin <path> is that binary's path (install-native.sh discovers it via dpkg -L — we never guess).
-  local NATIVE=0 NATIVE_BIN=""
+  # --bin <path> is the installed native binary to launch (install-native.sh discovers it via dpkg -L).
+  local NATIVE_BIN=""
   while :; do
     case "${1:-}" in
-      --native) NATIVE=1; shift ;;
       --bin) NATIVE_BIN="${2:-}"; shift 2 ;;
       *) break ;;
     esac
@@ -142,8 +139,8 @@ do_kiosk() {
   [ "$(id -u)" -eq 0 ] || die "must run as root — try: sudo bash $0 kiosk $*"
 
   # Two FilaMind kiosks can coexist (the selector switches between them):
-  #   filamind-kiosk         -> the FilaMind Flow web UI (default URL :8090)
-  #   filamind-screen-kiosk  -> the FilaMind screen touch app (URL :8088)
+  #   filamind-kiosk         -> the FilaMind Flow native touch app (widget control)
+  #   filamind-screen-kiosk  -> the FilaMind screen native touch app (print control)
   local NAME UNIT
   if [ "${1:-}" = "--uninstall" ]; then
     NAME="${2:-filamind-kiosk}"
@@ -159,21 +156,21 @@ do_kiosk() {
 
   local USER_NAME URL USER_UID DISTRO
   USER_NAME="${1:-${SUDO_USER:-$(id -un)}}"
-  if [ "$NATIVE" = 1 ]; then
-    # Native: an empty URL means "no HTTP origin to wait on" (the screen app talks Moonraker directly);
-    # a set URL (flow-touch needs nginx :8090) keeps the reachability wait below.
-    URL="${2:-}"
-  else
-    URL="${2:-http://localhost:8090}"
-  fi
+  # An empty URL = no HTTP origin to wait on (the screen app talks Moonraker directly); a set URL
+  # (flow-touch needs nginx :8090) keeps the reachability wait below.
+  URL="${2:-}"
   NAME="${3:-filamind-kiosk}"
   UNIT="/etc/systemd/system/$NAME.service"
-  id "$USER_NAME" >/dev/null 2>&1 || die "user '$USER_NAME' not found — pass it: sudo bash $0 kiosk <user> [url]"
+  id "$USER_NAME" >/dev/null 2>&1 || die "user '$USER_NAME' not found — pass it: sudo bash $0 kiosk --bin <path> <user>"
   USER_UID="$(id -u "$USER_NAME")"
   DISTRO="unknown"
   [ -r /etc/os-release ] && DISTRO="$(. /etc/os-release && echo "${PRETTY_NAME:-$ID}")"
-  log "user=$USER_NAME uid=$USER_UID url=$URL"
+  log "user=$USER_NAME uid=$USER_UID url=${URL:-<none>}"
   log "distro=$DISTRO"
+
+  [ -n "$NATIVE_BIN" ] || die "kiosk needs --bin <path-to-installed-native-binary> (install the .deb first)"
+  [ -x "$NATIVE_BIN" ] || log "warning: $NATIVE_BIN is not executable yet — install the .deb first."
+  log "native binary=$NATIVE_BIN"
 
   local KS_UNIT_TEXT KS_USER KS_TTY TTY
   KS_UNIT_TEXT="$(systemctl cat "$SCREEN_UNIT" 2>/dev/null || true)"
@@ -199,28 +196,8 @@ do_kiosk() {
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@" 2>/dev/null \
       && log "installed: $*" || log "could not install: $* (may be unavailable in this image's repos)"
   }
-  find_browser() {
-    local b
-    for b in chromium chromium-browser chromium-bin firefox-esr firefox; do
-      command -v "$b" 2>/dev/null && return 0
-    done
-    return 1
-  }
 
   [ -n "$APT" ] && DEBIAN_FRONTEND=noninteractive apt-get update -qq 2>/dev/null || true
-  local BROWSER=""
-  if [ "$NATIVE" = 1 ]; then
-    [ -n "$NATIVE_BIN" ] || die "native mode needs --bin <path-to-installed-binary>"
-    [ -x "$NATIVE_BIN" ] || log "warning: $NATIVE_BIN is not executable yet — install the .deb first."
-    log "native binary=$NATIVE_BIN"
-  else
-    command -v "$(find_browser 2>/dev/null)" >/dev/null 2>&1 || apt_install chromium
-    BROWSER="$(find_browser || true)"
-    [ -n "$BROWSER" ] || apt_install chromium-browser
-    BROWSER="$(find_browser || true)"
-    [ -n "$BROWSER" ] || die "no browser found (tried chromium / chromium-browser). Install one (e.g. 'sudo apt-get install chromium'), then re-run."
-    log "browser=$BROWSER"
-  fi
 
   local HAS_DRI=0 MODE="" EXEC ENV_LINES XINIT CAGE
   { [ -e /dev/dri/card0 ] || [ -e /dev/dri/card1 ]; } && HAS_DRI=1
@@ -237,35 +214,27 @@ do_kiosk() {
     command -v cage >/dev/null 2>&1 && MODE="wayland"
   fi
 
+  # Launch the native app fullscreen. X11: bare X server, no window manager — the fullscreen Tauri
+  # window owns the screen, with an explicit vtN matching TTYPath so Xorg never grabs the wrong VT
+  # (the likeliest black-screen). Wayland: cage kiosk compositor. WEBKIT_DISABLE_COMPOSITING_MODE=1
+  # by default for the Mali/panfrost GPU (fall back to LIBGL_ALWAYS_SOFTWARE=1 if it renders black).
   local XDG_ENV
   XDG_ENV=$'Environment=XDG_RUNTIME_DIR=/run/user/'"$USER_UID"
   if [ "$MODE" = "x11" ]; then
     command -v xinit >/dev/null 2>&1 || apt_install xserver-xorg xinit
     command -v xinit >/dev/null 2>&1 || die "X11 detected but 'xinit' is missing and could not be installed."
     XINIT="$(command -v xinit)"
-    if [ "$NATIVE" = 1 ]; then
-      # Bare X server, no window manager — the fullscreen Tauri window owns the screen. Pass an
-      # explicit vtN matching TTYPath so Xorg never grabs the wrong VT (the likeliest black-screen).
-      local VTNUM VT
-      VTNUM="$(printf '%s' "$TTY" | grep -oE '[0-9]+$' || true)"
-      VT="vt${VTNUM:-1}"
-      EXEC="$XINIT $NATIVE_BIN -- :0 $VT -nocursor"
-      ENV_LINES="$XDG_ENV"$'\nEnvironment=WEBKIT_DISABLE_COMPOSITING_MODE=1'
-    else
-      EXEC="$XINIT $BROWSER --kiosk --app=$URL --ozone-platform=x11 --noerrdialogs --disable-infobars --no-first-run --disable-translate --check-for-update-interval=31536000 --overscroll-history-navigation=0 -- :0 -nocursor"
-      ENV_LINES="$XDG_ENV"
-    fi
+    local VTNUM VT
+    VTNUM="$(printf '%s' "$TTY" | grep -oE '[0-9]+$' || true)"
+    VT="vt${VTNUM:-1}"
+    EXEC="$XINIT $NATIVE_BIN -- :0 $VT -nocursor"
+    ENV_LINES="$XDG_ENV"$'\nEnvironment=WEBKIT_DISABLE_COMPOSITING_MODE=1'
   elif [ "$MODE" = "wayland" ]; then
     command -v cage >/dev/null 2>&1 || apt_install cage
     command -v cage >/dev/null 2>&1 || die "Wayland path needs 'cage' but it isn't installed and couldn't be added."
     CAGE="$(command -v cage)"
-    if [ "$NATIVE" = 1 ]; then
-      EXEC="$CAGE -- $NATIVE_BIN"
-      ENV_LINES="$XDG_ENV"$'\nEnvironment=XDG_SESSION_TYPE=wayland\nEnvironment=WEBKIT_DISABLE_COMPOSITING_MODE=1'
-    else
-      EXEC="$CAGE -- $BROWSER --kiosk --app=$URL --ozone-platform=wayland --noerrdialogs --disable-infobars --no-first-run --disable-translate --check-for-update-interval=31536000 --overscroll-history-navigation=0"
-      ENV_LINES="$XDG_ENV"$'\nEnvironment=XDG_SESSION_TYPE=wayland'
-    fi
+    EXEC="$CAGE -- $NATIVE_BIN"
+    ENV_LINES="$XDG_ENV"$'\nEnvironment=XDG_SESSION_TYPE=wayland\nEnvironment=WEBKIT_DISABLE_COMPOSITING_MODE=1'
   else
     die "Could not detect a usable display stack (no Xorg/xinit, and no cage + /dev/dri). Tell us your setup — 'systemctl cat KlipperScreen.service' shows how your screen is driven."
   fi
@@ -280,27 +249,25 @@ do_kiosk() {
     [ "$u" != "$NAME.service" ] && CONFLICTS="$CONFLICTS $u"
   done
 
-  # Native units get OOM guards: more-killable than Moonraker (OOMScoreAdjust>0 so the kernel reaps
-  # the replaceable kiosk first under pressure), kill the whole cgroup on OOM, and cap any crash-loop.
-  # MemoryMax is deliberately NOT set — it needs an on-device RSS measurement (a too-low cap would
-  # crash-loop the webview); see ROADMAP-NATIVE-UIS P7. The webview reachability wait only applies
-  # when there's an HTTP origin ($URL): flow-touch needs nginx; the screen app talks Moonraker direct.
-  local UNIT_EXTRA="" SVC_OOM="" EXECPRE=""
-  if [ "$NATIVE" = 1 ]; then
-    UNIT_EXTRA=$'StartLimitIntervalSec=120\nStartLimitBurst=5'
-    [ -n "$URL" ] && UNIT_EXTRA="After=filamind-flow.service nginx.service"$'\n'"$UNIT_EXTRA"
-    SVC_OOM=$'OOMScoreAdjust=200\nOOMPolicy=kill'
-  fi
+  # OOM guards: more-killable than Moonraker (OOMScoreAdjust>0 so the kernel reaps the replaceable
+  # kiosk first under pressure), kill the whole cgroup on OOM, and cap any crash-loop. MemoryMax is
+  # deliberately NOT set — it needs an on-device RSS measurement (a too-low cap would crash-loop the
+  # webview); see ROADMAP-NATIVE-UIS P7. The reachability wait only applies when there's an HTTP origin
+  # ($URL): flow-touch needs nginx; the screen app talks Moonraker directly.
+  local UNIT_EXTRA SVC_OOM EXECPRE=""
+  UNIT_EXTRA=$'StartLimitIntervalSec=120\nStartLimitBurst=5'
+  [ -n "$URL" ] && UNIT_EXTRA="After=filamind-flow.service nginx.service"$'\n'"$UNIT_EXTRA"
+  SVC_OOM=$'OOMScoreAdjust=200\nOOMPolicy=kill'
   if [ -n "$URL" ]; then
     EXECPRE="# Give the web bundle a moment to be reachable before we open it."$'\n'"ExecStartPre=/bin/sh -c 'command -v curl >/dev/null 2>&1 && { for i in \$(seq 1 30); do curl -sf \"$URL\" >/dev/null 2>&1 && exit 0; sleep 1; done; }; sleep 3'"
   fi
 
   cat >"$UNIT" <<EOF
 # Managed by FilaMind Flow (scripts/install.sh kiosk).
-# Fullscreen touch UI ($MODE) at $URL. Conflicts with the other touch UIs so starting one stops
-# the others — FilaMind toggles the swap. Not enabled at boot by default.
+# Fullscreen native touch app ($MODE)${URL:+, backend $URL}. Conflicts with the other touch UIs so
+# starting one stops the others — FilaMind toggles the swap. Not enabled at boot by default.
 [Unit]
-Description=FilaMind kiosk: $NAME ($URL)
+Description=FilaMind kiosk: $NAME (native)
 Conflicts=$CONFLICTS
 After=multi-user.target systemd-user-sessions.target network-online.target
 Wants=network-online.target
@@ -326,11 +293,9 @@ WantedBy=graphical.target
 EOF
 
   systemctl daemon-reload
-  local WHAT
-  if [ "$NATIVE" = 1 ]; then WHAT="native: $NATIVE_BIN"; else WHAT="browser: $BROWSER"; fi
   cat <<EOF
 
-[kiosk] Installed $UNIT  (mode: $MODE, $WHAT, user: $USER_NAME, tty: $TTY)
+[kiosk] Installed $UNIT  (mode: $MODE, native: $NATIVE_BIN, user: $USER_NAME, tty: $TTY)
 
 KlipperScreen is still your boot default. To put FilaMind on the screen:
   - from FilaMind Flow:  Screen Manager > Touch UI > "Use"
