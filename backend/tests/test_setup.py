@@ -233,6 +233,27 @@ async def test_first_party_app_installs_via_its_one_liner(monkeypatch) -> None:
     assert "curl" in cmd and "filamind-3d/main/scripts/install.sh" in cmd
 
 
+async def test_first_party_screen_installs_its_native_kiosk(monkeypatch) -> None:
+    # Installing FilaMind screen from the GUI runs its `native` subcommand, which installs the .deb
+    # kiosk and writes filamind-screen-kiosk.service - so the screen becomes switchable in the
+    # Screen Manager (previously the GUI only cloned + served the nginx preview, never the kiosk).
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    captured: list[list[str]] = []
+
+    async def fake_run(cmd: list[str]) -> dict:
+        captured.append(cmd)
+        return {"ok": True, "output": "installed"}
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    result = await setup_manager.install(
+        "filamind-screen", managed={"klipper", "moonraker"}, services=set()
+    )
+    assert result.get("ok") is True
+    cmd = " ".join(captured[0])
+    assert "filamind-screen/main/scripts/install.sh" in cmd
+    assert "bash -s -- native" in cmd
+
+
 async def test_first_party_install_sudo_failure_surfaces_the_command(monkeypatch) -> None:
     # The backend service has no terminal for a sudo password; if the install fails for that reason,
     # the result tells the user the exact command to run on the printer host.

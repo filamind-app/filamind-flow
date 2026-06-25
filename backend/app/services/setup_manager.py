@@ -90,6 +90,9 @@ class Component:
     service: str = ""
     #: install directory name under ``$HOME`` when it differs from ``id`` (e.g. ``KlipperScreen``).
     dir: str = ""
+    #: Subcommand handed to a first-party app's ``scripts/install.sh`` so the GUI install stands up
+    #: the right deployment (FilaMind screen → ``native`` for the kiosk, not the browser preview).
+    install_args: str = ""
 
 
 def load_catalog() -> dict[str, Component]:
@@ -110,6 +113,7 @@ def load_catalog() -> dict[str, Component]:
                 manager_key=str(c.get("manager_key", "")),
                 service=str(c.get("service", "")),
                 dir=str(c.get("dir", "")),
+                install_args=str(c.get("install_args", "")),
             )
     return out
 
@@ -593,7 +597,11 @@ async def install(
         # A chosen port (for a first-party web app like FilaMind 3d) lets the operator install it
         # straight onto a free port — e.g. 88 when Mainsail already owns 80 — instead of installing
         # on the default and conflicting, then having to move it afterwards.
-        if port is not None and component.type == "web":
+        if component.install_args:
+            # The app stands up its real deployment via a subcommand rather than the default install
+            # (screen's `native` installs the .deb kiosk + its service, not the browser preview).
+            cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- {component.install_args}"
+        elif port is not None and component.type == "web":
             cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- install --port {port}"
         else:
             cmd = f"curl -fsSL {_raw_installer(component)} | bash"
