@@ -106,9 +106,7 @@
       "config": "Конфіг",
       "settings": "Налаштування",
       "menus": "Меню",
-      "themes": "Теми",
-      "kiosk": "Кіоск",
-      "fmscreen": "Екран FilaMind"
+      "themes": "Теми"
     },
     "settings": {
       "loading": "Завантаження налаштувань…",

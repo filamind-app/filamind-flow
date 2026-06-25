@@ -106,9 +106,7 @@
       "config": "設定",
       "settings": "設定",
       "menus": "メニュー",
-      "themes": "テーマ",
-      "kiosk": "キオスク",
-      "fmscreen": "FilaMind 画面"
+      "themes": "テーマ"
     },
     "settings": {
       "loading": "設定を読み込み中…",

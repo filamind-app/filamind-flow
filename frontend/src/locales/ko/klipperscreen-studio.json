@@ -106,9 +106,7 @@
       "config": "구성",
       "settings": "설정",
       "menus": "메뉴",
-      "themes": "테마",
-      "kiosk": "Kiosk",
-      "fmscreen": "FilaMind 화면"
+      "themes": "테마"
     },
     "settings": {
       "loading": "설정 불러오는 중…",
