@@ -1,0 +1,19 @@
+[package]
+name = "filamind-flow"
+version = "0.1.0"
+description = "FilaMind Flow — on-printer touch control of the widget suite"
+authors = ["DeltaFabs"]
+edition = "2021"
+license = "GPL-3.0-or-later"
+
+[lib]
+name = "filamind_flow_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
