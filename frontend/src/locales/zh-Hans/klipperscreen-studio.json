@@ -106,9 +106,7 @@
       "config": "配置",
       "settings": "设置",
       "menus": "菜单",
-      "themes": "主题",
-      "kiosk": "自助屏",
-      "fmscreen": "FilaMind 屏幕"
+      "themes": "主题"
     },
     "settings": {
       "loading": "正在加载设置…",

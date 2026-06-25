@@ -106,9 +106,7 @@
       "config": "Config",
       "settings": "Ajustes",
       "menus": "Menus",
-      "themes": "Temas",
-      "kiosk": "Quiosque",
-      "fmscreen": "Tela FilaMind"
+      "themes": "Temas"
     },
     "settings": {
       "loading": "Carregando ajustes…",

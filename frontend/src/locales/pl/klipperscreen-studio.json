@@ -106,9 +106,7 @@
       "config": "Konfiguracja",
       "settings": "Ustawienia",
       "menus": "Menu",
-      "themes": "Motywy",
-      "kiosk": "Kiosk",
-      "fmscreen": "Ekran FilaMind"
+      "themes": "Motywy"
     },
     "settings": {
       "loading": "Wczytywanie ustawień…",

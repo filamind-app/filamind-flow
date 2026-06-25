@@ -106,9 +106,7 @@
       "config": "Yapılandırma",
       "settings": "Ayarlar",
       "menus": "Menüler",
-      "themes": "Temalar",
-      "kiosk": "Kiosk",
-      "fmscreen": "FilaMind Ekranı"
+      "themes": "Temalar"
     },
     "settings": {
       "loading": "Ayarlar yükleniyor…",

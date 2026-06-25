@@ -106,9 +106,7 @@
       "config": "Config",
       "settings": "Settings",
       "menus": "Menus",
-      "themes": "Themes",
-      "kiosk": "Kiosk",
-      "fmscreen": "Layar FilaMind"
+      "themes": "Themes"
     },
     "settings": {
       "loading": "Memuat pengaturan…",

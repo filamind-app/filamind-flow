@@ -106,9 +106,7 @@
       "config": "الإعدادات",
       "settings": "خيارات",
       "menus": "القوائم",
-      "themes": "الثيمات",
-      "kiosk": "الكشك",
-      "fmscreen": "شاشة FilaMind"
+      "themes": "الثيمات"
     },
     "settings": {
       "loading": "جارٍ تحميل الخيارات…",
