@@ -186,7 +186,7 @@ export interface KioskStatus {
   kiosk_enabled: boolean
   screen_installed: boolean
   screen_active: boolean
-  /** The on-host URL the kiosk browser opens. */
+  /** The on-host URL the kiosk app opens. */
   url: string
 }
 

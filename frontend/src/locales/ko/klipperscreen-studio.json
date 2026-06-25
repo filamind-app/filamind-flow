@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Kiosk 탭이란?",
-          "body": "FilaMind Flow 자체를 전체 화면 브라우저로 터치스크린에 띄웁니다 - 화면에 표시되는 내용을 완전히 제어합니다. KlipperScreen과 되돌릴 수 있는 전환이며(기본은 일시적, 재부팅하면 KlipperScreen 복원), 프린터 호스트에서 일회성 설치 프로그램이 필요합니다."
+          "body": "FilaMind Flow 자체를 전체 화면 네이티브 앱으로 터치스크린에 띄웁니다 - 화면에 표시되는 내용을 완전히 제어합니다. KlipperScreen과 되돌릴 수 있는 전환이며(기본은 일시적, 재부팅하면 KlipperScreen 복원), 프린터 호스트에서 일회성 설치 프로그램이 필요합니다."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "키오스크",
-          "def": "터치스크린에 KlipperScreen 대신 전체 화면 브라우저를 실행해 화면에 FilaMind Flow를 표시하는 것입니다. 완전히 되돌릴 수 있습니다."
+          "def": "터치스크린에 KlipperScreen 대신 전체 화면 네이티브 앱을 실행해 화면에 FilaMind Flow를 표시하는 것입니다. 완전히 되돌릴 수 있습니다."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "화면 확인 중…",
-      "intro": "FilaMind Flow 자체를 전체 화면 브라우저로 터치스크린에 띄웁니다 - 화면에 표시되는 내용을 완전히 제어합니다. KlipperScreen과 전환되며, 하나를 시작하면 다른 하나가 멈춥니다.",
+      "intro": "FilaMind Flow 자체를 전체 화면 네이티브 앱으로 터치스크린에 띄웁니다 - 화면에 표시되는 내용을 완전히 제어합니다. KlipperScreen과 전환되며, 하나를 시작하면 다른 하나가 멈춥니다.",
       "current": "현재 화면",
       "mode": {
         "kiosk": "FilaMind 키오스크",
@@ -145,7 +145,7 @@
         "none": "둘 다 실행 안 됨"
       },
       "notInstalled": "키오스크가 아직 설치되지 않음",
-      "setupHint": "프린터 호스트에서 한 번 실행하세요(전체 화면 브라우저 + 키오스크 서비스 설치):",
+      "setupHint": "프린터 호스트에서 한 번 실행하세요(네이티브 키오스크 앱 + 서비스 설치):",
       "persist": "부팅 시 기본값으로 설정합니다(그러지 않으면 전환은 일시적이며, 재부팅하면 다른 쪽이 복원됩니다).",
       "safety": "기본은 일시적입니다: 재부팅하면 다른 쪽이 돌아옵니다. 화면이 꺼지면 SSH로 다음을 실행하세요: sudo systemctl start KlipperScreen",
       "switchBtn": "FilaMind로 전환",

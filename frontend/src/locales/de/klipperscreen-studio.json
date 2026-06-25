@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Was ist der Kiosk-Tab?",
-          "body": "Zeige FilaMind Flow selbst als Vollbild-Browser auf dem Touchscreen — volle Kontrolle über das, was der Bildschirm zeigt. Es ist ein umkehrbarer Tausch mit KlipperScreen (standardmäßig temporär; ein Neustart stellt KlipperScreen wieder her). Benötigt den einmaligen Installer auf dem Drucker-Host."
+          "body": "Zeige FilaMind Flow selbst als native Vollbild-App auf dem Touchscreen — volle Kontrolle über das, was der Bildschirm zeigt. Es ist ein umkehrbarer Tausch mit KlipperScreen (standardmäßig temporär; ein Neustart stellt KlipperScreen wieder her). Benötigt den einmaligen Installer auf dem Drucker-Host."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosk",
-          "def": "Einen Vollbild-Browser auf dem Touchscreen statt KlipperScreen laufen lassen, damit der Bildschirm FilaMind Flow zeigt. Vollständig umkehrbar."
+          "def": "Eine native Vollbild-App auf dem Touchscreen statt KlipperScreen laufen lassen, damit der Bildschirm FilaMind Flow zeigt. Vollständig umkehrbar."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Prüfe den Bildschirm…",
-      "intro": "Zeige FilaMind Flow selbst als Vollbild-Browser auf dem Touchscreen — volle Kontrolle über das, was der Bildschirm zeigt. Es tauscht mit KlipperScreen: das Starten des einen stoppt das andere.",
+      "intro": "Zeige FilaMind Flow selbst als native Vollbild-App auf dem Touchscreen — volle Kontrolle über das, was der Bildschirm zeigt. Es tauscht mit KlipperScreen: das Starten des einen stoppt das andere.",
       "current": "Bildschirm jetzt",
       "mode": {
         "kiosk": "FilaMind-Kiosk",
@@ -145,7 +145,7 @@
         "none": "Keines läuft"
       },
       "notInstalled": "Kiosk noch nicht installiert",
-      "setupHint": "Einmalig auf dem Drucker-Host ausführen (installiert einen Vollbild-Browser + den Kiosk-Dienst):",
+      "setupHint": "Einmalig auf dem Drucker-Host ausführen (installiert die native Kiosk-App + den Dienst):",
       "persist": "Beim Booten zum Standard machen (sonst ist der Wechsel temporär — ein Neustart stellt das andere wieder her).",
       "safety": "Standardmäßig temporär: ein Neustart bringt das andere zurück. Wird der Bildschirm dunkel, per SSH: sudo systemctl start KlipperScreen",
       "switchBtn": "Zu FilaMind wechseln",

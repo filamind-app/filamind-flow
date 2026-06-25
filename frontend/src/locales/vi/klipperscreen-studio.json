@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Tab Kiosk là gì?",
-          "body": "Đưa chính FilaMind Flow lên màn hình cảm ứng dưới dạng trình duyệt toàn màn hình - toàn quyền kiểm soát những gì màn hình hiển thị. Đây là một phép hoán đổi có thể đảo ngược với KlipperScreen (mặc định là tạm thời; khởi động lại sẽ khôi phục KlipperScreen). Cần trình cài đặt một lần trên máy chủ máy in."
+          "body": "Đưa chính FilaMind Flow lên màn hình cảm ứng dưới dạng ứng dụng gốc toàn màn hình - toàn quyền kiểm soát những gì màn hình hiển thị. Đây là một phép hoán đổi có thể đảo ngược với KlipperScreen (mặc định là tạm thời; khởi động lại sẽ khôi phục KlipperScreen). Cần trình cài đặt một lần trên máy chủ máy in."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosk",
-          "def": "Chạy một trình duyệt toàn màn hình trên màn hình cảm ứng thay cho KlipperScreen, để màn hình hiển thị FilaMind Flow. Hoàn toàn có thể đảo ngược."
+          "def": "Chạy một ứng dụng gốc toàn màn hình trên màn hình cảm ứng thay cho KlipperScreen, để màn hình hiển thị FilaMind Flow. Hoàn toàn có thể đảo ngược."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Đang kiểm tra màn hình…",
-      "intro": "Đưa chính FilaMind Flow lên màn hình cảm ứng dưới dạng trình duyệt toàn màn hình - toàn quyền kiểm soát những gì màn hình hiển thị. Nó hoán đổi với KlipperScreen: khởi động cái này sẽ dừng cái kia.",
+      "intro": "Đưa chính FilaMind Flow lên màn hình cảm ứng dưới dạng ứng dụng gốc toàn màn hình - toàn quyền kiểm soát những gì màn hình hiển thị. Nó hoán đổi với KlipperScreen: khởi động cái này sẽ dừng cái kia.",
       "current": "Màn hình hiện tại",
       "mode": {
         "kiosk": "Kiosk FilaMind",
@@ -145,7 +145,7 @@
         "none": "Không cái nào đang chạy"
       },
       "notInstalled": "Kiosk chưa được cài đặt",
-      "setupHint": "Chạy lệnh này một lần trên máy chủ máy in (cài trình duyệt toàn màn hình + dịch vụ kiosk):",
+      "setupHint": "Chạy lệnh này một lần trên máy chủ máy in (cài ứng dụng kiosk gốc + dịch vụ):",
       "persist": "Đặt làm mặc định khi khởi động (nếu không, phép hoán đổi chỉ là tạm thời - khởi động lại sẽ khôi phục cái kia).",
       "safety": "Mặc định là tạm thời: khởi động lại sẽ đưa cái kia trở lại. Nếu màn hình bị tối, qua SSH chạy: sudo systemctl start KlipperScreen",
       "switchBtn": "Chuyển sang FilaMind",

@@ -1,7 +1,7 @@
 """FilaMind Kiosk - run FilaMind Flow itself on the printer's touchscreen.
 
 KlipperScreen has no plugin API and its panels are hardcoded, so the only way to put *arbitrary*
-content on the physical screen is to turn it into a fullscreen browser pointed at FilaMind Flow.
+content on the physical screen is to run a fullscreen native app (the Tauri touch app) showing it.
 This module owns the **reversible swap** between the two: a ``filamind-kiosk`` systemd service
 (installed once by ``scripts/install.sh kiosk``) declares ``Conflicts=KlipperScreen.service``, so
 starting one stops the other.
@@ -142,7 +142,7 @@ _TOUCH_UNITS: dict[str, str] = {
     "guppyscreen": "guppyscreen.service",
     # The FilaMind screen touch app (print control), served on its own port.
     "filamind-screen": "filamind-screen-kiosk.service",
-    # The FilaMind Flow web UI in a fullscreen browser (the widget suite + touch control panel).
+    # The FilaMind Flow native touch app (the widget suite + touch control panel).
     "filamind-flow": KIOSK_UNIT,
 }
 

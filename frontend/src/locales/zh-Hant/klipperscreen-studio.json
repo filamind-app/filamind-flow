@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "「自助服務模式」分頁是什麼？",
-          "body": "將 FilaMind Flow 本身以全螢幕瀏覽器形式放上觸控螢幕——完全掌控螢幕顯示的內容。這是與 KlipperScreen 的可逆切換（預設為暫時性；重新開機會還原 KlipperScreen）。需要在印表機主機上執行一次性安裝程式。"
+          "body": "將 FilaMind Flow 本身以全螢幕原生應用程式形式放上觸控螢幕——完全掌控螢幕顯示的內容。這是與 KlipperScreen 的可逆切換（預設為暫時性；重新開機會還原 KlipperScreen）。需要在印表機主機上執行一次性安裝程式。"
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "自助服務模式",
-          "def": "在觸控螢幕上執行全螢幕瀏覽器以取代 KlipperScreen，讓螢幕顯示 FilaMind Flow。完全可逆。"
+          "def": "在觸控螢幕上執行全螢幕原生應用程式以取代 KlipperScreen，讓螢幕顯示 FilaMind Flow。完全可逆。"
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "正在檢查螢幕…",
-      "intro": "將 FilaMind Flow 本身以全螢幕瀏覽器形式放上觸控螢幕——完全掌控螢幕顯示的內容。它會與 KlipperScreen 切換：啟動其中一個會停止另一個。",
+      "intro": "將 FilaMind Flow 本身以全螢幕原生應用程式形式放上觸控螢幕——完全掌控螢幕顯示的內容。它會與 KlipperScreen 切換：啟動其中一個會停止另一個。",
       "current": "目前螢幕",
       "mode": {
         "kiosk": "FilaMind 自助服務模式",
@@ -145,7 +145,7 @@
         "none": "兩者皆未執行"
       },
       "notInstalled": "尚未安裝自助服務模式",
-      "setupHint": "在印表機主機上執行此命令一次（安裝全螢幕瀏覽器 + 自助服務模式服務）：",
+      "setupHint": "在印表機主機上執行此命令一次（安裝原生自助服務模式應用程式 + 服務）：",
       "persist": "設為開機時的預設（否則切換為暫時性——重新開機會還原另一個）。",
       "safety": "預設為暫時性：重新開機會讓另一個回來。若螢幕變黑，請透過 SSH 執行：sudo systemctl start KlipperScreen",
       "switchBtn": "切換到 FilaMind",

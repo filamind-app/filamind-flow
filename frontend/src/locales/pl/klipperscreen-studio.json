@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Czym jest karta Kiosk?",
-          "body": "Umieść samą aplikację FilaMind Flow na ekranie dotykowym jako przeglądarkę pełnoekranową — pełna kontrola nad tym, co pokazuje ekran. To odwracalna zamiana z KlipperScreen (domyślnie tymczasowa; ponowny rozruch przywraca KlipperScreen). Wymaga jednorazowego instalatora na hoście drukarki."
+          "body": "Umieść samą aplikację FilaMind Flow na ekranie dotykowym jako natywną aplikację pełnoekranową — pełna kontrola nad tym, co pokazuje ekran. To odwracalna zamiana z KlipperScreen (domyślnie tymczasowa; ponowny rozruch przywraca KlipperScreen). Wymaga jednorazowego instalatora na hoście drukarki."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosk",
-          "def": "Uruchamianie przeglądarki pełnoekranowej na ekranie dotykowym zamiast KlipperScreen, aby ekran pokazywał FilaMind Flow. W pełni odwracalne."
+          "def": "Uruchamianie natywnej aplikacji pełnoekranowej na ekranie dotykowym zamiast KlipperScreen, aby ekran pokazywał FilaMind Flow. W pełni odwracalne."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Sprawdzanie ekranu…",
-      "intro": "Umieść samą aplikację FilaMind Flow na ekranie dotykowym jako przeglądarkę pełnoekranową — pełna kontrola nad tym, co pokazuje ekran. Zamienia się z KlipperScreen: uruchomienie jednego zatrzymuje drugi.",
+      "intro": "Umieść samą aplikację FilaMind Flow na ekranie dotykowym jako natywną aplikację pełnoekranową — pełna kontrola nad tym, co pokazuje ekran. Zamienia się z KlipperScreen: uruchomienie jednego zatrzymuje drugi.",
       "current": "Ekran teraz",
       "mode": {
         "kiosk": "Kiosk FilaMind",
@@ -145,7 +145,7 @@
         "none": "Żaden nie działa"
       },
       "notInstalled": "Kiosk jeszcze nie zainstalowany",
-      "setupHint": "Uruchom to raz na hoście drukarki (instaluje przeglądarkę pełnoekranową + usługę kiosku):",
+      "setupHint": "Uruchom to raz na hoście drukarki (instaluje natywną aplikację kiosku + usługę):",
       "persist": "Ustaw jako domyślne przy rozruchu (w przeciwnym razie zamiana jest tymczasowa — ponowny rozruch przywraca drugi).",
       "safety": "Domyślnie tymczasowe: ponowny rozruch przywraca drugi. Jeśli ekran kiedykolwiek zgaśnie, przez SSH uruchom: sudo systemctl start KlipperScreen",
       "switchBtn": "Przełącz na FilaMind",
