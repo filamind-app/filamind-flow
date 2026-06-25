@@ -6,6 +6,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-25
+
+### Added
+
+- **Native touch app (flow-touch).** The Flow UI can now run as a native fullscreen app on the
+  printer's touchscreen instead of a kiosk browser. A Tauri shell wraps the existing web UI; CI
+  builds an installable arm64 `.deb` and attaches it to each Release (`filamind-flow-arm64.deb`).
+- **On-printer installer** `deploy/install-native.sh` (and `install.sh native`): downloads the
+  prebuilt `.deb` (never builds on the low-RAM host), installs it, writes a `filamind-kiosk` systemd
+  unit, and registers it with Moonraker. First-class `--uninstall` restores KlipperScreen before
+  removing the binary (never a dark screen). The native unit is not boot-enabled; switch to it from
+  the Screen Manager (Touch UI), so any switch is reboot-recoverable.
+- **OOM safety for the touchscreen on ~1 GB hosts.** The native kiosk unit is made more-killable
+  than Moonraker (`OOMScoreAdjust` + `OOMPolicy=kill`) with a crash-loop cap, and opt-in
+  `deploy/oom/{klipper,moonraker}.conf` drop-ins (`--protect-oom`) shield Klipper/Moonraker.
+
+### Changed
+
+- The kiosk unit-writer (`install.sh kiosk`) gained a `--native` mode that launches an installed
+  app binary (bare `xinit … vtN` / `cage`, no window manager) instead of a browser, with an explicit
+  VT to avoid a wrong-VT black screen. The browser path is unchanged.
+- Host Control marks the native touch units (`filamind-kiosk`, `filamind-screen-kiosk`) as critical
+  so the Services tab can't stop the live display owner without a typed confirmation.
+
 ## [1.3.1] - 2026-06-22
 
 ### Fixed
