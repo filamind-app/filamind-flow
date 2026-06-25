@@ -275,6 +275,55 @@ async def _git_version(dest: Path) -> str:
     return res["output"].strip() if res["ok"] else ""
 
 
+# Update detection for installed-but-UNMANAGED git checkouts (the FilaMind apps + guppyscreen, which
+# Moonraker's update_manager doesn't track): compare the local clone to its own ``origin`` with an
+# anonymous fetch — no GitHub API, no token. Cached briefly so a status read doesn't re-fetch on
+# every call; the asyncio.wait_for guards keep a slow/offline fetch from ever hanging the read.
+_GIT_LATEST_TTL = 300.0  # 5 min
+_git_latest_cache: dict[str, tuple[float, tuple[str, bool]]] = {}
+
+
+async def _git_latest(dest: Path) -> tuple[str, bool]:
+    """``(remote_label, update_available)`` for an unmanaged checkout by comparing ``HEAD`` to its
+    ``origin`` upstream. Returns ``("", False)`` on any failure, so it degrades exactly like a
+    missing lookup (offline / shallow clone / no origin → no update offered, never an error)."""
+    if not (dest / ".git").is_dir():
+        return ("", False)
+    key = str(dest)
+    now = time.time()
+    hit = _git_latest_cache.get(key)
+    if hit and now - hit[0] < _GIT_LATEST_TTL:
+        return hit[1]
+
+    async def git(*args: str) -> str:
+        try:
+            res = await asyncio.wait_for(_run(["git", "-C", str(dest), *args]), timeout=8.0)
+        except TimeoutError:
+            return ""
+        return res["output"].strip() if res["ok"] else ""
+
+    result: tuple[str, bool] = ("", False)
+    if await git("remote", "get-url", "origin"):
+        # Resolve the upstream ref: the tracked branch, else origin/HEAD, else origin/main|master.
+        upstream = await git("rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}")
+        if not upstream:
+            for cand in ("origin/HEAD", "origin/main", "origin/master"):
+                if await git("rev-parse", "--verify", "--quiet", cand):
+                    upstream = cand
+                    break
+        if upstream:
+            await git("fetch", "--quiet", "origin")  # best-effort; offline just yields no update
+            label = await git("describe", "--tags", "--always", upstream)
+            try:
+                behind = int(await git("rev-list", "--count", f"HEAD..{upstream}"))
+            except ValueError:
+                behind = 0
+            if label:
+                result = (label, behind > 0)
+    _git_latest_cache[key] = (now, result)
+    return result
+
+
 async def _github_latest(repo: str) -> str:
     """Latest published version of ``owner/name`` from GitHub (release tag, else newest tag). Cached
     on success for ``_LATEST_TTL``. Returns ``""`` on rate-limit / unreachable / no tags (and does
@@ -393,9 +442,17 @@ async def probe_detailed(
         out[cid] = rec
 
     if git_dirs:
-        versions = await asyncio.gather(*[_git_version(p) for p in git_dirs.values()])
-        for cid, version in zip(git_dirs.keys(), versions, strict=True):
+        # For an unmanaged checkout, the local clone is the only source of truth: `version` from
+        # `git describe`, and `latest`/`updateAvailable` from a HEAD-vs-origin compare (no GitHub).
+        paths = list(git_dirs.values())
+        versions, latests = await asyncio.gather(
+            asyncio.gather(*[_git_version(p) for p in paths]),
+            asyncio.gather(*[_git_latest(p) for p in paths]),
+        )
+        for cid, version, (latest, behind) in zip(git_dirs.keys(), versions, latests, strict=True):
             out[cid]["version"] = version
+            out[cid]["latest"] = latest
+            out[cid]["updateAvailable"] = behind
 
     if nginx_apps:
         reach = await asyncio.gather(*[_app_reachable(p) for p in nginx_apps.values()])
