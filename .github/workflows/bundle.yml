@@ -1,0 +1,53 @@
+name: Bundle (arm64)
+
+# Produce the installable native touch app for the printer: an arm64 .deb built in a
+# Debian Bookworm container (glibc 2.36) so it runs on the CB1's newer Armbian/Debian
+# trixie (glibc 2.41 — older glibc is forward-compatible). The .deb Depends on
+# libwebkit2gtk-4.1-0, which the CB1 has. Only runs when the native shell or its build
+# changes (path filter) or on demand — it does a full uncached arm64 Rust build.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/src-tauri/**'
+      - 'frontend/package.json'
+      - '.github/workflows/bundle.yml'
+  pull_request:
+    paths:
+      - 'frontend/src-tauri/**'
+      - 'frontend/package.json'
+      - '.github/workflows/bundle.yml'
+  workflow_dispatch:
+
+jobs:
+  deb:
+    name: arm64 .deb
+    runs-on: ubuntu-24.04-arm
+    container: node:20-bookworm
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - name: Tauri 2 runtime + build prerequisites (Debian arm64)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+            build-essential curl wget file libxdo-dev libssl-dev \
+            libayatana-appindicator3-dev librsvg2-dev
+      - name: Install Rust toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - run: npm ci
+      - run: npm run build # the webview bundle Tauri embeds (frontendDist = ../dist)
+      # generate_context! + the .deb need app icons; generate them from the tracked source.
+      - run: npm run tauri -- icon src-tauri/icons/icon-source.png
+      - name: Bundle the arm64 .deb
+        run: npm run tauri -- build --bundles deb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: filamind-flow-arm64-deb
+          path: frontend/src-tauri/target/release/bundle/deb/*.deb
+          if-no-files-found: error
