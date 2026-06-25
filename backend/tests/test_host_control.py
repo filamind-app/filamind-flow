@@ -107,6 +107,10 @@ def test_protected_and_critical_flags() -> None:
     assert hc._is_critical("moonraker")
     assert hc._is_critical("systemd-tmpfiles-clean")  # systemd-* prefix
     assert not hc._is_critical("myrandomapp")
+    # The native touch units that can own the display are critical (can't be stopped from the
+    # Services tab without a typed confirmation) — guards against blanking the screen mid-session.
+    assert hc._is_critical("filamind-kiosk.service")
+    assert hc._is_critical("filamind-screen-kiosk.service")
 
 
 def _svc_runner(units: str, files: str):
