@@ -12,7 +12,7 @@
     {
       "group": "web-uis",
       "components": [
-        { "id": "filamind-3d", "name": "FilaMind 3d", "kind": "web-ui", "repo": "filamind-app/filamind-3d", "type": "web", "deps": ["moonraker"], "first_party": true, "serve": "port-or-path", "default_port": 8089, "primary": true, "desc": "FilaMind's web control interface for Klipper - the suite's primary printer UI." },
+        { "id": "filamind-3d", "name": "FilaMind 3d", "kind": "web-ui", "repo": "filamind-app/filamind-3d", "type": "web", "deps": ["moonraker"], "first_party": true, "serve": "port-or-path", "default_port": 8089, "primary": true, "service": "filamind-3d", "desc": "FilaMind's web control interface for Klipper - the suite's primary printer UI." },
         { "id": "mainsail", "name": "Mainsail", "kind": "web-ui", "repo": "mainsail-crew/mainsail", "type": "web", "deps": ["moonraker"], "serve": "port-or-path", "default_port": 81, "manager_key": "mainsail", "dir": "mainsail", "desc": "A web interface for Klipper, served as static files in the browser." },
         { "id": "fluidd", "name": "Fluidd", "kind": "web-ui", "repo": "fluidd-core/fluidd", "type": "web", "deps": ["moonraker"], "serve": "port-or-path", "default_port": 82, "manager_key": "fluidd", "dir": "fluidd", "desc": "A web interface for Klipper, served as static files in the browser." }
       ]
@@ -22,7 +22,7 @@
       "components": [
         { "id": "klipperscreen", "name": "KlipperScreen", "kind": "touch", "repo": "KlipperScreen/KlipperScreen", "type": "git_repo", "deps": ["moonraker"], "manager_key": "KlipperScreen", "service": "KlipperScreen", "dir": "KlipperScreen", "desc": "A touchscreen interface for Klipper that runs on the printer's own attached display." },
         { "id": "guppyscreen", "name": "Guppyscreen", "kind": "touch", "repo": "ballaswag/guppyscreen", "type": "git_repo", "deps": ["moonraker"], "dir": "guppyscreen", "desc": "A lightweight native touchscreen UI for Klipper aimed at embedded displays." },
-        { "id": "filamind-screen", "name": "FilaMind screen", "kind": "touch", "repo": "filamind-app/filamind-screen", "type": "tauri", "deps": ["moonraker"], "first_party": true, "dir": "filamind-screen", "desc": "FilaMind's native touchscreen app for the printer's attached display." }
+        { "id": "filamind-screen", "name": "FilaMind screen", "kind": "touch", "repo": "filamind-app/filamind-screen", "type": "tauri", "deps": ["moonraker"], "first_party": true, "dir": "filamind-screen", "install_args": "native", "service": "filamind-screen-kiosk", "desc": "FilaMind's native touchscreen app for the printer's attached display." }
       ]
     },
     {
