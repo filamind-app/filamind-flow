@@ -50,3 +50,42 @@ jobs:
           else
             gh release create "$TAG" --verify-tag --title "$TITLE" --notes-file NOTES.md
           fi
+
+  # Build the arm64 .deb (the native touch app) and attach it to the Release under a stable asset
+  # name, so deploy/install-native.sh can fetch it from /releases/latest/download/. Mirrors the
+  # bundle.yml build env (node:20-bookworm arm64 → runs on the CB1's trixie glibc 2.41).
+  deb:
+    needs: release
+    runs-on: ubuntu-24.04-arm
+    container: node:20-bookworm
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - name: Tauri 2 build prerequisites (Debian arm64)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+            build-essential curl wget file libxdo-dev libssl-dev \
+            libayatana-appindicator3-dev librsvg2-dev git
+      - name: Install Rust toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - run: npm ci
+      - run: npm run build
+      - run: npm run tauri -- icon src-tauri/icons/icon-source.png
+      - run: npm run tauri -- build --bundles deb
+      - name: Attach the .deb to the Release (stable asset name)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          deb="$(find src-tauri/target -name '*.deb' | head -1)"
+          [ -n "$deb" ] || { echo "::error::no .deb produced"; exit 1; }
+          cp "$deb" "filamind-flow-arm64.deb"
+          gh release upload "${GITHUB_REF_NAME}" filamind-flow-arm64.deb --clobber
