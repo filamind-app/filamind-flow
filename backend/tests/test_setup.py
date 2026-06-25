@@ -86,6 +86,35 @@ async def test_probe_detailed_reports_versions_and_update_flag() -> None:
     assert detailed["guppyscreen"]["updateAvailable"] is False
 
 
+async def test_unmanaged_git_checkout_surfaces_updates(monkeypatch) -> None:
+    # A component Moonraker doesn't track but that IS installed as a local git clone (the FilaMind
+    # apps, guppyscreen) must still get `latest` + updateAvailable - from the local clone vs its own
+    # origin, NOT from GitHub. Hermetic: monkeypatch the install signal + the two git helpers so no
+    # real git/network runs.
+    monkeypatch.setattr(setup_manager, "_is_installed", lambda c, m, s: c.id == "guppyscreen")
+
+    async def _ver(_dest: object) -> str:
+        return "07409cb"
+
+    async def _behind(_dest: object) -> tuple[str, bool]:
+        return ("ab12cd3", True)
+
+    monkeypatch.setattr(setup_manager, "_git_version", _ver)
+    monkeypatch.setattr(setup_manager, "_git_latest", _behind)
+    d = await setup_manager.probe_detailed({}, services=set(), github_remaining=0)
+    assert d["guppyscreen"]["status"] == "installed"
+    assert d["guppyscreen"]["version"] == "07409cb"
+    assert d["guppyscreen"]["latest"] == "ab12cd3"
+    assert d["guppyscreen"]["updateAvailable"] is True
+
+    async def _level(_dest: object) -> tuple[str, bool]:
+        return ("07409cb", False)
+
+    monkeypatch.setattr(setup_manager, "_git_latest", _level)
+    d = await setup_manager.probe_detailed({}, services=set(), github_remaining=0)
+    assert d["guppyscreen"]["updateAvailable"] is False  # level with origin -> no update offered
+
+
 async def test_latest_version_lookups_are_quota_capped(monkeypatch) -> None:
     # Best-effort GitHub lookups for not-installed components must never exhaust the host's quota.
     setup_manager._latest_cache.clear()
