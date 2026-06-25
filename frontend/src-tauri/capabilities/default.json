@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Default capability for the main window (core only — the UI talks to the FilaMind backend + Moonraker over the network).",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
