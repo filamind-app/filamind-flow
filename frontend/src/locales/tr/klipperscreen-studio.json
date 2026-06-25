@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Kiosk sekmesi nedir?",
-          "body": "FilaMind Flow'un kendisini tam ekran tarayıcı olarak dokunmatik ekrana koyun - ekranda gösterilenler üzerinde tam denetim. KlipperScreen ile geri alınabilir bir değiştirmedir (varsayılan olarak geçici; yeniden başlatma KlipperScreen'i geri yükler). Yazıcı ana makinesinde tek seferlik yükleyiciye ihtiyaç duyar."
+          "body": "FilaMind Flow'un kendisini tam ekran yerel uygulama olarak dokunmatik ekrana koyun - ekranda gösterilenler üzerinde tam denetim. KlipperScreen ile geri alınabilir bir değiştirmedir (varsayılan olarak geçici; yeniden başlatma KlipperScreen'i geri yükler). Yazıcı ana makinesinde tek seferlik yükleyiciye ihtiyaç duyar."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosk",
-          "def": "Dokunmatik ekranda KlipperScreen yerine tam ekran tarayıcı çalıştırmak, böylece ekran FilaMind Flow'u gösterir. Tamamen geri alınabilir."
+          "def": "Dokunmatik ekranda KlipperScreen yerine tam ekran yerel uygulama çalıştırmak, böylece ekran FilaMind Flow'u gösterir. Tamamen geri alınabilir."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Ekran kontrol ediliyor…",
-      "intro": "FilaMind Flow'un kendisini tam ekran tarayıcı olarak dokunmatik ekrana koyun - ekranda gösterilenler üzerinde tam denetim. KlipperScreen ile yer değiştirir: biri başlayınca diğeri durur.",
+      "intro": "FilaMind Flow'un kendisini tam ekran yerel uygulama olarak dokunmatik ekrana koyun - ekranda gösterilenler üzerinde tam denetim. KlipperScreen ile yer değiştirir: biri başlayınca diğeri durur.",
       "current": "Şu anki ekran",
       "mode": {
         "kiosk": "FilaMind kiosk",
@@ -145,7 +145,7 @@
         "none": "Hiçbiri çalışmıyor"
       },
       "notInstalled": "Kiosk henüz yüklü değil",
-      "setupHint": "Bunu yazıcı ana makinesinde bir kez çalıştırın (tam ekran tarayıcı + kiosk hizmeti yükler):",
+      "setupHint": "Bunu yazıcı ana makinesinde bir kez çalıştırın (yerel kiosk uygulaması + kiosk hizmeti yükler):",
       "persist": "Açılışta varsayılan yap (aksi halde değiştirme geçicidir - yeniden başlatma diğerini geri yükler).",
       "safety": "Varsayılan olarak geçici: yeniden başlatma diğerini geri getirir. Ekran kararırsa, SSH üzerinden şunu çalıştırın: sudo systemctl start KlipperScreen",
       "switchBtn": "FilaMind'a geç",

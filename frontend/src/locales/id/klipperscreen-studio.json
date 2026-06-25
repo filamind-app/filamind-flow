@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Apa itu tab Kiosk?",
-          "body": "Tampilkan FilaMind Flow sendiri di layar sentuh sebagai peramban layar penuh - kendali total atas apa yang ditampilkan layar. Ini pertukaran yang dapat dibalik dengan KlipperScreen (sementara secara default; reboot memulihkan KlipperScreen). Membutuhkan pemasang sekali jalan di host printer."
+          "body": "Tampilkan FilaMind Flow sendiri di layar sentuh sebagai aplikasi native layar penuh - kendali total atas apa yang ditampilkan layar. Ini pertukaran yang dapat dibalik dengan KlipperScreen (sementara secara default; reboot memulihkan KlipperScreen). Membutuhkan pemasang sekali jalan di host printer."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosk",
-          "def": "Menjalankan peramban layar penuh di layar sentuh alih-alih KlipperScreen, sehingga layar menampilkan FilaMind Flow. Sepenuhnya dapat dibalik."
+          "def": "Menjalankan aplikasi native layar penuh di layar sentuh alih-alih KlipperScreen, sehingga layar menampilkan FilaMind Flow. Sepenuhnya dapat dibalik."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Memeriksa layar…",
-      "intro": "Tampilkan FilaMind Flow sendiri di layar sentuh sebagai peramban layar penuh - kendali total atas apa yang ditampilkan layar. Ia bertukar dengan KlipperScreen: menjalankan satu menghentikan yang lain.",
+      "intro": "Tampilkan FilaMind Flow sendiri di layar sentuh sebagai aplikasi native layar penuh - kendali total atas apa yang ditampilkan layar. Ia bertukar dengan KlipperScreen: menjalankan satu menghentikan yang lain.",
       "current": "Layar sekarang",
       "mode": {
         "kiosk": "Kiosk FilaMind",
@@ -145,7 +145,7 @@
         "none": "Tidak ada yang berjalan"
       },
       "notInstalled": "Kiosk belum dipasang",
-      "setupHint": "Jalankan ini sekali pada host printer (memasang peramban layar penuh + layanan kiosk):",
+      "setupHint": "Jalankan ini sekali pada host printer (memasang aplikasi kiosk native + layanan):",
       "persist": "Jadikan default saat boot (jika tidak, pertukaran bersifat sementara - reboot memulihkan yang lain).",
       "safety": "Sementara secara default: reboot mengembalikan yang lain. Jika layar pernah menjadi gelap, lewat SSH jalankan: sudo systemctl start KlipperScreen",
       "switchBtn": "Beralih ke FilaMind",

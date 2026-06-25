@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Qu'est-ce que l'onglet Kiosque ?",
-          "body": "Affichez FilaMind Flow lui-même sur l'écran tactile en navigateur plein écran — contrôle total de ce que montre l'écran. C'est un échange réversible avec KlipperScreen (temporaire par défaut ; un redémarrage restaure KlipperScreen). Nécessite l'installation unique sur l'hôte de l'imprimante."
+          "body": "Affichez FilaMind Flow lui-même sur l'écran tactile en application native plein écran — contrôle total de ce que montre l'écran. C'est un échange réversible avec KlipperScreen (temporaire par défaut ; un redémarrage restaure KlipperScreen). Nécessite l'installation unique sur l'hôte de l'imprimante."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosque",
-          "def": "Exécuter un navigateur plein écran sur l'écran tactile à la place de KlipperScreen, pour que l'écran affiche FilaMind Flow. Entièrement réversible."
+          "def": "Exécuter une application native plein écran sur l'écran tactile à la place de KlipperScreen, pour que l'écran affiche FilaMind Flow. Entièrement réversible."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Vérification de l'écran…",
-      "intro": "Affichez FilaMind Flow lui-même sur l'écran tactile en plein écran — contrôle total de ce que montre l'écran. Il s'échange avec KlipperScreen : démarrer l'un arrête l'autre.",
+      "intro": "Affichez FilaMind Flow lui-même sur l'écran tactile en application native plein écran — contrôle total de ce que montre l'écran. Il s'échange avec KlipperScreen : démarrer l'un arrête l'autre.",
       "current": "Écran actuel",
       "mode": {
         "kiosk": "Kiosque FilaMind",
@@ -145,7 +145,7 @@
         "none": "Aucun actif"
       },
       "notInstalled": "Kiosque pas encore installé",
-      "setupHint": "Exécutez ceci une fois sur l'hôte de l'imprimante (installe un navigateur plein écran + le service kiosque) :",
+      "setupHint": "Exécutez ceci une fois sur l'hôte de l'imprimante (installe l'application kiosque native + le service) :",
       "persist": "En faire le défaut au démarrage (sinon le changement est temporaire — un redémarrage restaure l'autre).",
       "safety": "Temporaire par défaut : un redémarrage ramène l'autre. Si l'écran reste noir, via SSH : sudo systemctl start KlipperScreen",
       "switchBtn": "Passer à FilaMind",

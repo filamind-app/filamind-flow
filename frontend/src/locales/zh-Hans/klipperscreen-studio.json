@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "“自助屏”标签是什么？",
-          "body": "把 FilaMind Flow 本身以全屏浏览器形式显示在触摸屏上——完全掌控屏幕显示内容。它与 KlipperScreen 是可逆互换的（默认临时；重启会恢复 KlipperScreen）。需要在打印机主机上执行一次安装程序。"
+          "body": "把 FilaMind Flow 本身以全屏原生应用形式显示在触摸屏上——完全掌控屏幕显示内容。它与 KlipperScreen 是可逆互换的（默认临时；重启会恢复 KlipperScreen）。需要在打印机主机上执行一次安装程序。"
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "自助屏",
-          "def": "在触摸屏上运行全屏浏览器而非 KlipperScreen，使屏幕显示 FilaMind Flow。完全可逆。"
+          "def": "在触摸屏上运行全屏原生应用而非 KlipperScreen，使屏幕显示 FilaMind Flow。完全可逆。"
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "正在检查屏幕…",
-      "intro": "把 FilaMind Flow 本身以全屏浏览器形式显示在触摸屏上——完全掌控屏幕显示内容。它与 KlipperScreen 互换：启动一个会停止另一个。",
+      "intro": "把 FilaMind Flow 本身以全屏原生应用形式显示在触摸屏上——完全掌控屏幕显示内容。它与 KlipperScreen 互换：启动一个会停止另一个。",
       "current": "当前屏幕",
       "mode": {
         "kiosk": "FilaMind 自助屏",
@@ -145,7 +145,7 @@
         "none": "均未运行"
       },
       "notInstalled": "自助屏尚未安装",
-      "setupHint": "在打印机主机上执行一次（安装全屏浏览器 + 自助屏服务）：",
+      "setupHint": "在打印机主机上执行一次（安装原生自助屏应用 + 服务）：",
       "persist": "设为开机默认（否则切换是临时的——重启会恢复另一个）。",
       "safety": "默认临时：重启会恢复另一个。若屏幕变黑，通过 SSH 运行：sudo systemctl start KlipperScreen",
       "switchBtn": "切换到 FilaMind",

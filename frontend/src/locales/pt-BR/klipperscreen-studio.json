@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "O que é a aba Quiosque?",
-          "body": "Coloque o próprio FilaMind Flow na tela de toque como um navegador em tela cheia - controle total do que a tela mostra. É uma troca reversível com o KlipperScreen (temporária por padrão; uma reinicialização restaura o KlipperScreen). Precisa do instalador único no host da impressora."
+          "body": "Coloque o próprio FilaMind Flow na tela de toque como um aplicativo nativo em tela cheia - controle total do que a tela mostra. É uma troca reversível com o KlipperScreen (temporária por padrão; uma reinicialização restaura o KlipperScreen). Precisa do instalador único no host da impressora."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Quiosque",
-          "def": "Rodar um navegador em tela cheia na tela de toque em vez do KlipperScreen, para que a tela mostre o FilaMind Flow. Totalmente reversível."
+          "def": "Rodar um aplicativo nativo em tela cheia na tela de toque em vez do KlipperScreen, para que a tela mostre o FilaMind Flow. Totalmente reversível."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Verificando a tela…",
-      "intro": "Coloque o próprio FilaMind Flow na tela de toque como um navegador em tela cheia - controle total do que a tela mostra. Ele troca com o KlipperScreen: iniciar um para o outro.",
+      "intro": "Coloque o próprio FilaMind Flow na tela de toque como um aplicativo nativo em tela cheia - controle total do que a tela mostra. Ele troca com o KlipperScreen: iniciar um para o outro.",
       "current": "Tela agora",
       "mode": {
         "kiosk": "Quiosque FilaMind",
@@ -145,7 +145,7 @@
         "none": "Nenhum em execução"
       },
       "notInstalled": "Quiosque ainda não instalado",
-      "setupHint": "Execute isto uma vez no host da impressora (instala um navegador em tela cheia + o serviço de quiosque):",
+      "setupHint": "Execute isto uma vez no host da impressora (instala o aplicativo nativo de quiosque + o serviço):",
       "persist": "Tornar o padrão na inicialização (caso contrário a troca é temporária - uma reinicialização restaura o outro).",
       "safety": "Temporário por padrão: uma reinicialização traz o outro de volta. Se a tela ficar escura, via SSH execute: sudo systemctl start KlipperScreen",
       "switchBtn": "Mudar para o FilaMind",

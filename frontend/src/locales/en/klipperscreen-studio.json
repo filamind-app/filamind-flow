@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "What's the Kiosk tab?",
-          "body": "Put FilaMind Flow itself on the touchscreen as a fullscreen browser - total control of what the screen shows. It's a reversible swap with KlipperScreen (temporary by default; a reboot restores KlipperScreen). Needs the one-time installer on the printer host."
+          "body": "Put FilaMind Flow itself on the touchscreen as a fullscreen native app - total control of what the screen shows. It's a reversible swap with KlipperScreen (temporary by default; a reboot restores KlipperScreen). Needs the one-time installer on the printer host."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosk",
-          "def": "Running a fullscreen browser on the touchscreen instead of KlipperScreen, so the screen shows FilaMind Flow. Fully reversible."
+          "def": "Running a fullscreen native app on the touchscreen instead of KlipperScreen, so the screen shows FilaMind Flow. Fully reversible."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Checking the screen…",
-      "intro": "Put FilaMind Flow itself on the touchscreen as a fullscreen browser - total control of what the screen shows. It swaps with KlipperScreen: starting one stops the other.",
+      "intro": "Put FilaMind Flow itself on the touchscreen as a fullscreen native app - total control of what the screen shows. It swaps with KlipperScreen: starting one stops the other.",
       "current": "Screen now",
       "mode": {
         "kiosk": "FilaMind kiosk",
@@ -145,7 +145,7 @@
         "none": "Neither running"
       },
       "notInstalled": "Kiosk not installed yet",
-      "setupHint": "Run this once on the printer host (installs a fullscreen browser + the kiosk service):",
+      "setupHint": "Run this once on the printer host (installs the native kiosk app + service):",
       "persist": "Make it the default at boot (otherwise the swap is temporary - a reboot restores the other).",
       "safety": "Temporary by default: a reboot brings the other one back. If the screen ever goes dark, over SSH run: sudo systemctl start KlipperScreen",
       "switchBtn": "Switch to FilaMind",

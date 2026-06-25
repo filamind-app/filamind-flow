@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Cos'è la scheda Kiosk?",
-          "body": "Metti FilaMind Flow stesso sul touchscreen come browser a schermo intero: controllo totale di ciò che lo schermo mostra. È uno scambio reversibile con KlipperScreen (temporaneo per impostazione predefinita; un riavvio ripristina KlipperScreen). Richiede l'installer una tantum sull'host della stampante."
+          "body": "Metti FilaMind Flow stesso sul touchscreen come app nativa a schermo intero: controllo totale di ciò che lo schermo mostra. È uno scambio reversibile con KlipperScreen (temporaneo per impostazione predefinita; un riavvio ripristina KlipperScreen). Richiede l'installer una tantum sull'host della stampante."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosk",
-          "def": "Eseguire un browser a schermo intero sul touchscreen al posto di KlipperScreen, così lo schermo mostra FilaMind Flow. Completamente reversibile."
+          "def": "Eseguire un'app nativa a schermo intero sul touchscreen al posto di KlipperScreen, così lo schermo mostra FilaMind Flow. Completamente reversibile."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Verifica dello schermo…",
-      "intro": "Metti FilaMind Flow stesso sul touchscreen come browser a schermo intero: controllo totale di ciò che lo schermo mostra. Si scambia con KlipperScreen: avviarne uno ferma l'altro.",
+      "intro": "Metti FilaMind Flow stesso sul touchscreen come app nativa a schermo intero: controllo totale di ciò che lo schermo mostra. Si scambia con KlipperScreen: avviarne uno ferma l'altro.",
       "current": "Schermo ora",
       "mode": {
         "kiosk": "Kiosk FilaMind",
@@ -145,7 +145,7 @@
         "none": "Nessuno in esecuzione"
       },
       "notInstalled": "Kiosk non ancora installato",
-      "setupHint": "Esegui questo una volta sull'host della stampante (installa un browser a schermo intero + il servizio kiosk):",
+      "setupHint": "Esegui questo una volta sull'host della stampante (installa l'app kiosk nativa + il servizio):",
       "persist": "Rendilo predefinito all'avvio (altrimenti lo scambio è temporaneo: un riavvio ripristina l'altro).",
       "safety": "Temporaneo per impostazione predefinita: un riavvio riporta l'altro. Se lo schermo diventa nero, via SSH esegui: sudo systemctl start KlipperScreen",
       "switchBtn": "Passa a FilaMind",

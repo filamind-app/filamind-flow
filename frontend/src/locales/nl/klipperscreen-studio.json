@@ -52,7 +52,7 @@
         },
         "kiosk": {
           "title": "Wat is het tabblad Kiosk?",
-          "body": "Zet FilaMind Flow zelf op het touchscreen als fullscreen browser - volledige controle over wat het scherm toont. Het is een omkeerbare wissel met KlipperScreen (standaard tijdelijk; een herstart herstelt KlipperScreen). Vereist het eenmalige installatieprogramma op de printerhost."
+          "body": "Zet FilaMind Flow zelf op het touchscreen als fullscreen native app - volledige controle over wat het scherm toont. Het is een omkeerbare wissel met KlipperScreen (standaard tijdelijk; een herstart herstelt KlipperScreen). Vereist het eenmalige installatieprogramma op de printerhost."
         }
       },
       "glossary": {
@@ -78,7 +78,7 @@
         },
         "kiosk": {
           "term": "Kiosk",
-          "def": "Een fullscreen browser op het touchscreen draaien in plaats van KlipperScreen, zodat het scherm FilaMind Flow toont. Volledig omkeerbaar."
+          "def": "Een fullscreen native app op het touchscreen draaien in plaats van KlipperScreen, zodat het scherm FilaMind Flow toont. Volledig omkeerbaar."
         }
       }
     },
@@ -137,7 +137,7 @@
     },
     "kiosk": {
       "loading": "Het scherm controleren…",
-      "intro": "Zet FilaMind Flow zelf op het touchscreen als fullscreen browser - volledige controle over wat het scherm toont. Het wisselt met KlipperScreen: de een starten stopt de ander.",
+      "intro": "Zet FilaMind Flow zelf op het touchscreen als fullscreen native app - volledige controle over wat het scherm toont. Het wisselt met KlipperScreen: de een starten stopt de ander.",
       "current": "Scherm nu",
       "mode": {
         "kiosk": "FilaMind-kiosk",
@@ -145,7 +145,7 @@
         "none": "Geen van beide actief"
       },
       "notInstalled": "Kiosk nog niet geïnstalleerd",
-      "setupHint": "Voer dit eenmalig uit op de printerhost (installeert een fullscreen browser + de kioskservice):",
+      "setupHint": "Voer dit eenmalig uit op de printerhost (installeert de native kiosk-app + de service):",
       "persist": "Maak het de standaard bij opstarten (anders is de wissel tijdelijk - een herstart herstelt de ander).",
       "safety": "Standaard tijdelijk: een herstart brengt de ander terug. Als het scherm ooit zwart wordt, voer via SSH uit: sudo systemctl start KlipperScreen",
       "switchBtn": "Overschakelen naar FilaMind",

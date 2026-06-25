@@ -2,7 +2,7 @@
 # FilaMind Flow — install the NATIVE touch app on the printer's touchscreen.
 #
 # Downloads the prebuilt arm64 .deb (the Tauri touch app that CI built) from the GitHub Release,
-# installs it, and writes a `filamind-kiosk` systemd unit (via scripts/install.sh kiosk --native)
+# installs it, and writes a `filamind-kiosk` systemd unit (via scripts/install.sh kiosk --bin)
 # that can take over the touchscreen from KlipperScreen — reversibly. The unit is NOT enabled at
 # boot; you switch to it from the Screen Manager (Touch UI > "Use"). KlipperScreen stays the boot
 # default until you persist the switch, so any experiment is reboot-recoverable.

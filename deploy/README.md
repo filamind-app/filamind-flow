@@ -109,10 +109,10 @@ sudo bash scripts/install.sh kiosk --uninstall
 (Or give the full path from anywhere: `sudo bash ~/filamind-flow/scripts/install.sh kiosk`.)
 
 It **auto-detects** how your screen is driven - **X11** (Xorg/`xinit`, how most KlipperScreen
-images run) or **Wayland** (`cage` on KMS) - by reading `KlipperScreen.service`, installs Chromium +
-the right compositor, and writes a `filamind-kiosk` systemd service that **conflicts with
-KlipperScreen** (starting one stops the other). It is **not** enabled at boot - KlipperScreen stays
-the default. The installer prints the detected mode/browser and stops with a clear message if it
+images run) or **Wayland** (`cage` on KMS) - by reading `KlipperScreen.service`, installs the right
+compositor, and writes a `filamind-kiosk` systemd service that launches the native touch app and
+**conflicts with KlipperScreen** (starting one stops the other). It is **not** enabled at boot -
+KlipperScreen stays the default. The installer prints the detected mode and stops with a clear message if it
 can't find a browser or a usable display stack. Switch from the app
 (**KlipperScreen Studio → Kiosk**) or over SSH:
 
