@@ -6,6 +6,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-06-25
+
+### Added
+
+- **The native flow-touch app now shows the live UI.** It loads `http://localhost:8090` (the local
+  nginx that serves the UI and proxies Moonraker + the backend) in its Tauri window, so the
+  on-printer touch app is fully functional — the same experience as the old browser kiosk, in a
+  lightweight WebKitGTK window instead of Chromium.
+
+### Changed
+
+- The touchscreen kiosk is **native-only** end to end now: stale "fullscreen browser" wording across
+  the KlipperScreen Studio help/glossary i18n (all 19 locales), code comments, the help icon, and
+  `deploy/README.md` were updated to "native app" (no behaviour change).
+
+### Fixed
+
+- `deploy/install-native.sh` referenced the removed `kiosk --native` flag; corrected to `--bin`.
+- Release/bundle CI is hardened against the flaky crates.io HTTP/2 download error (`CARGO_NET_RETRY`
+  + HTTP/1.1 fallback) so the `.deb` build retries instead of failing.
+
+### Removed
+
+- Two unreachable i18n keys (`klipperscreenStudio.view.kiosk`, `view.fmscreen`) — dead leftovers from
+  the pre-split view structure, confirmed by an adversarial dead-code audit.
+
 ## [1.4.0] - 2026-06-25
 
 ### Added
