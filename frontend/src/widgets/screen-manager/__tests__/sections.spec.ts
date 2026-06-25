@@ -4,12 +4,11 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { i18n } from '@/core/i18n'
 
-// Deterministic backend: KlipperScreen absent, kiosk not installed — enough to render all 3 sections
-// without any network. The child widgets are stubbed; this test only locks the 3-concern split.
+// Deterministic backend: KlipperScreen absent — enough to render all 3 sections without any
+// network. The child widgets (incl. ScreenSelector) are stubbed; this test only locks the
+// 3-concern split.
 vi.mock('../api', () => ({
   fetchScreenStatus: () => Promise.resolve({ present: false }),
-  fetchKioskStatus: () =>
-    Promise.resolve({ mode: 'none', kiosk_installed: false, screen_active: true }),
   fetchScreenConf: vi.fn(),
   fetchScreenOptions: vi.fn(),
   fetchMenus: vi.fn(),
@@ -21,8 +20,6 @@ vi.mock('../api', () => ({
   activateTheme: vi.fn(),
   deleteTheme: vi.fn(),
   restartScreen: vi.fn(),
-  restoreScreen: vi.fn(),
-  switchToKiosk: vi.fn(),
   ScreenSaveError: class ScreenSaveError extends Error {
     constructor(
       msg: string,
