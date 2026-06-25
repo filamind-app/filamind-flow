@@ -57,6 +57,11 @@ jobs:
   deb:
     needs: release
     runs-on: ubuntu-24.04-arm # glibc 2.39 → forward-compatible with the CB1's trixie (glibc 2.41)
+    # Harden cargo against the flaky crates.io HTTP/2 download error ("Error in the HTTP2 framing
+    # layer") that failed v1.4.0's build once — retry, and fall back to HTTP/1.1.
+    env:
+      CARGO_NET_RETRY: '10'
+      CARGO_HTTP_MULTIPLEXING: 'false'
     permissions:
       contents: write
     steps:

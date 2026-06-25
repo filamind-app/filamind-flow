@@ -24,6 +24,11 @@ jobs:
     name: arm64 .deb
     runs-on: ubuntu-24.04-arm
     container: node:20-bookworm
+    # Harden cargo against the flaky crates.io HTTP/2 download error ("Error in the HTTP2 framing
+    # layer") that intermittently fails the build — retry, and fall back to HTTP/1.1.
+    env:
+      CARGO_NET_RETRY: '10'
+      CARGO_HTTP_MULTIPLEXING: 'false'
     defaults:
       run:
         working-directory: frontend
