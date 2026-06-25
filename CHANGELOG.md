@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-06-25
+
+### Fixed
+
+- **Setup widget now reads updates for installed-but-unmanaged checkouts.** Apps cloned on the host
+  but not tracked by Moonraker's update manager (FilaMind apps, KlipperScreen, …) showed no version
+  or update state. Setup now compares each clone against its own `origin` (anonymous fetch +
+  `rev-list HEAD..@{u}`) and surfaces the version and whether an update is available.
+- **Screen Manager reads every screen and drops the duplicate legacy panel.** The Touch UI section is
+  now the single screen selector across KlipperScreen / Guppyscreen / FilaMind screen / FilaMind
+  flow; the old standalone kiosk panel was removed, and a screen that is installed but not switchable
+  now says why inline instead of hiding the reason in a tooltip.
+- **Installing FilaMind screen from Setup stands up its native kiosk.** The first-party installer ran
+  each app's default install, which for FilaMind screen produced only the browser-preview nginx site
+  — never the native `.deb` kiosk + `filamind-screen-kiosk.service`. It now installs via the app's
+  `native` subcommand, so the screen becomes switchable in Screen Manager. First-party apps are also
+  mapped to their systemd service name for detection.
+
 ## [1.5.0] - 2026-06-25
 
 ### Added
