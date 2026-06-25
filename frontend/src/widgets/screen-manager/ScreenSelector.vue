@@ -76,10 +76,14 @@ onMounted(load)
           </span>
           <span
             v-else-if="status?.screens[k]?.manageable === false"
-            class="nb-badge bg-surface text-xs text-ink/60"
-            :title="t('klipperscreenStudio.selector.notManageableHint')"
+            class="flex flex-col items-end gap-0.5"
           >
-            {{ t('klipperscreenStudio.selector.installedNotManageable') }}
+            <span class="nb-badge bg-surface text-xs text-ink/60">
+              {{ t('klipperscreenStudio.selector.installedNotManageable') }}
+            </span>
+            <span class="text-[10px] text-ink/60">
+              {{ t('klipperscreenStudio.selector.notManageableHint') }}
+            </span>
           </span>
           <button
             v-else-if="!status?.screens[k]?.active"
