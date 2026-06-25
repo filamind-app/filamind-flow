@@ -397,6 +397,11 @@ _CRITICAL_EXTRA = {
     "klipper-mcu",
     "moonraker",
     "KlipperScreen",
+    # The native FilaMind touch units (the .deb apps that can own the touchscreen). Guard them like
+    # KlipperScreen so the Services tab can't stop whichever one currently drives the display, which
+    # would blank the screen mid-session. Bare names (no .service) — _is_critical strips the suffix.
+    "filamind-kiosk",
+    "filamind-screen-kiosk",
     "NetworkManager",
     "wpa_supplicant",
     "networking",
