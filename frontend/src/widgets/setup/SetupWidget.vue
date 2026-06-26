@@ -74,6 +74,22 @@ async function copySuiteCommand(): Promise<void> {
   }
 }
 
+// Printer-side one-liner that installs a first-party app's managed service (3d → agent, screen →
+// native). The GUI can't run it (interactive root), so it's surfaced for the operator to copy/run.
+const copiedId = ref('')
+function serviceCmd(c: SetupComponent): string {
+  return `curl -fsSL https://raw.githubusercontent.com/${c.repo}/main/scripts/install.sh | bash -s -- ${c.service_install}`
+}
+async function copyCmd(c: SetupComponent): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(serviceCmd(c))
+    copiedId.value = c.id
+    setTimeout(() => (copiedId.value = ''), 1500)
+  } catch {
+    /* clipboard unavailable; the command is shown for manual copy */
+  }
+}
+
 async function refreshStatus(): Promise<void> {
   try {
     status.value = (await fetchStatus()).status
@@ -433,6 +449,20 @@ onMounted(load)
             >
               {{ t('setup.portApply') }}
             </button>
+          </div>
+
+          <!-- Managed-service install (3d agent / screen native kiosk): a printer-side, root-gated
+               step the GUI can't run, surfaced as a copyable one-liner. -->
+          <div v-if="c.service_install" class="nb-card flex flex-col gap-1 bg-surface p-2 text-xs">
+            <p class="text-ink/70">{{ c.service_install_hint }}</p>
+            <div class="flex items-center gap-2">
+              <code class="min-w-0 flex-1 overflow-x-auto font-mono text-[11px] text-ink/80">{{
+                serviceCmd(c)
+              }}</code>
+              <button class="nb-btn shrink-0 px-3 py-1" @click="copyCmd(c)">
+                {{ copiedId === c.id ? t('setup.suite.copied') : t('setup.suite.copy') }}
+              </button>
+            </div>
           </div>
 
           <!-- Live install progress: the streaming log while this card is installing. -->
