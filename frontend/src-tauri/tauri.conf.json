@@ -14,7 +14,7 @@
       {
         "title": "FilaMind Flow",
         "label": "main",
-        "url": "http://localhost:8090",
+        "url": "http://localhost:8090/touch.html",
         "fullscreen": true,
         "width": 1024,
         "height": 600,

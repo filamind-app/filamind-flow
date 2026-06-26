@@ -1,0 +1,61 @@
+/* Base styles for the native flow touch entry. The full Pharaonic --fm-* palette is set at runtime
+   by @filamind-app/core (applySettings); these are the no-flash defaults + touch-panel base. This
+   entry deliberately does NOT remap Tailwind's @theme (the web entry owns that) - touch components
+   read --fm-* directly. */
+
+:root[data-fm-theme='tutankhamun'] {
+  --fm-bg: #0e0f12;
+  --fm-text: #f3ecd8;
+}
+:root[data-fm-theme='horus'] {
+  --fm-bg: #0b1016;
+  --fm-text: #eaf2f5;
+}
+:root[data-fm-theme='anubis'] {
+  --fm-bg: #1a1714;
+  --fm-text: #f4e7ce;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#app {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--fm-bg, #0e0f12);
+  color: var(--fm-text, #f3ecd8);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  overscroll-behavior: none;
+}
+:focus-visible {
+  outline: 3px solid var(--fm-accent, #2ba199);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+:root[data-fm-reduced='true'] *,
+:root[data-fm-reduced='true'] *::before,
+:root[data-fm-reduced='true'] *::after {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}

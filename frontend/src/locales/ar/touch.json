@@ -1,0 +1,23 @@
+{
+  "touch": {
+    "subtitle": "تحكّم لمسي",
+    "connected": "متصل",
+    "offline": "غير متصل",
+    "comingSoon": "قريبًا",
+    "state": {
+      "standby": "خامل",
+      "ready": "جاهز",
+      "printing": "يطبع",
+      "paused": "موقوف مؤقتًا",
+      "complete": "اكتمل",
+      "cancelled": "أُلغيت",
+      "error": "خطأ"
+    },
+    "nav": {
+      "move": "تحريك",
+      "files": "الملفات",
+      "console": "الطرفية",
+      "print": "طباعة"
+    }
+  }
+}

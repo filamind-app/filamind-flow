@@ -36,6 +36,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@filamind-app/core": "^0.1.4",
     "@fontsource/ibm-plex-sans-arabic": "^5.2.9",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@fontsource/noto-sans-arabic": "^5.2.10",
