@@ -1,1 +1,0 @@
-import{V as e}from"./vendor-C2RkUAAs.js";var t=e(null);function n(e){t.value=e}export{t as n,n as t};
