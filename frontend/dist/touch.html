@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" data-fm-theme="tutankhamun">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="color-scheme" content="dark light" />
+    <title>FilaMind Flow touch</title>
+    <!-- No-flash: apply the stored suite theme + direction before CSS/JS load. -->
+    <script>
+      try {
+        var s = JSON.parse(localStorage.getItem('filamind.settings') || '{}')
+        document.documentElement.dataset.fmTheme = s && s.theme ? s.theme : 'tutankhamun'
+        var loc = localStorage.getItem('filamind.locale')
+        if (loc) {
+          document.documentElement.lang = loc
+          document.documentElement.dir = loc === 'ar' ? 'rtl' : 'ltr'
+        }
+      } catch (e) {
+        /* default theme stays */
+      }
+    </script>
+    <script type="module" crossorigin src="./assets/touch-C27EYMUp.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/vendor-CkaBVYcp.js">
+    <link rel="modulepreload" crossorigin href="./assets/i18n-BQdG40ix.js">
+    <link rel="modulepreload" crossorigin href="./assets/_plugin-vue_export-helper-BDNMzG2s.js">
+    <link rel="stylesheet" crossorigin href="./assets/touch-CjYTkoBy.css">
+  </head>
+  <body>
+    <!-- Boot splash on the kiosk display; removed by main.ts once the app mounts. -->
+    <div
+      id="fm-splash"
+      style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: #0e0f12; transition: opacity 0.3s ease"
+    >
+      <div
+        style="width: 84px; height: 84px; border-radius: 20px; background: #d4af37; color: #0e0f12; display: flex; align-items: center; justify-content: center; font: 700 30px/1 ui-sans-serif, system-ui, sans-serif"
+      >
+        FM
+      </div>
+    </div>
+    <div id="app"></div>
+  </body>
+</html>
