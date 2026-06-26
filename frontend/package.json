@@ -43,7 +43,7 @@
     "@tauri-apps/api": "^2.11.1",
     "html-to-image": "1.11.13",
     "pinia": "^3.0.4",
-    "vue": "^3.5.38",
+    "vue": "^3.5.39",
     "vue-i18n": "^11.4.6"
   },
   "devDependencies": {
