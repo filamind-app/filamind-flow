@@ -17,10 +17,6 @@ const icons = {
   logo: '\u{1F525}',
   hotend: '\u{1F321}',
   bed: '\u{1F6CF}',
-  move: '\u{1F9ED}',
-  files: '\u{1F4C1}',
-  console: '⌨',
-  print: '▶',
 }
 
 const { t, te } = useI18n()
@@ -46,6 +42,7 @@ function fmt(n?: number): string {
   return n == null ? '—' : `${Math.round(n)}°`
 }
 
+// Tiles tap through to a per-tool touch view; until each lands, surface a brief notice.
 const toast = ref('')
 let toastTimer: ReturnType<typeof setTimeout> | undefined
 function comingSoon(): void {
@@ -80,27 +77,6 @@ function comingSoon(): void {
       <DashboardView @open="comingSoon" />
     </main>
 
-    <nav class="bar bottom">
-      <div class="quick">
-        <button class="qbtn" type="button" @click="comingSoon">
-          <span aria-hidden="true">{{ icons.move }}</span
-          >{{ t('touch.nav.move') }}
-        </button>
-        <button class="qbtn" type="button" @click="comingSoon">
-          <span aria-hidden="true">{{ icons.files }}</span
-          >{{ t('touch.nav.files') }}
-        </button>
-        <button class="qbtn" type="button" @click="comingSoon">
-          <span aria-hidden="true">{{ icons.console }}</span
-          >{{ t('touch.nav.console') }}
-        </button>
-      </div>
-      <button class="print" type="button" @click="comingSoon">
-        <span aria-hidden="true">{{ icons.print }}</span
-        >{{ t('touch.nav.print') }}
-      </button>
-    </nav>
-
     <transition name="fade">
       <div v-if="toast" class="toast">{{ toast }}</div>
     </transition>
@@ -121,10 +97,6 @@ function comingSoon(): void {
 }
 .top {
   border-bottom: 1px solid var(--fm-border, #3a3320);
-}
-.bottom {
-  border-top: 1px solid var(--fm-border, #3a3320);
-  gap: 12px;
 }
 .brand {
   display: flex;
@@ -179,43 +151,9 @@ function comingSoon(): void {
   overflow: auto;
   padding: 16px;
 }
-.quick {
-  display: flex;
-  gap: 10px;
-}
-.qbtn {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  min-width: 64px;
-  padding: 8px 10px;
-  font-size: 12px;
-  color: var(--fm-text, #f3ecd8);
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-}
-.qbtn span[aria-hidden] {
-  font-size: 20px;
-}
-.print {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--fm-primary-contrast, #0e0f12);
-  background: var(--fm-primary, #d4af37);
-  border: none;
-  padding: 12px 24px;
-  border-radius: 14px;
-  cursor: pointer;
-}
 .toast {
   position: fixed;
-  bottom: 92px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--fm-surface-2, #20202a);

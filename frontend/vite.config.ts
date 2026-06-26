@@ -75,22 +75,19 @@ export default defineConfig(({ mode }) => {
     build: {
       target: 'es2020',
       sourcemap: false,
-      // Split the framework into a long-lived vendor chunk so an app update doesn't force a
-      // re-download of Vue / Pinia / vue-i18n on this auto-updating panel.
       rollupOptions: {
         // Two entries: the Neo-Brutalist web UI (index.html) + the native touch app (touch.html,
         // served at :8090/touch.html and loaded by the Tauri kiosk). Each is its own bundle.
+        //
+        // NOTE: no hand-rolled `manualChunks`. Force-merging vue/pinia/vue-i18n into a single
+        // 'vendor' chunk ACROSS two entries orphaned a Rollup ESM-interop helper, crashing BOTH
+        // entries on load with "e is not a function" (the web panel went blank after the touch
+        // entry landed). Letting Rollup split per-entry keeps each chunk's injected helpers intact.
+        // A shared long-lived vendor chunk is a cache-locality nicety, not worth a correctness risk
+        // on this infrequently-updated panel.
         input: {
           main: fileURLToPath(new URL('./index.html', import.meta.url)),
           touch: fileURLToPath(new URL('./touch.html', import.meta.url)),
-        },
-        output: {
-          // Vite 8's Rollup types dropped the object form; the function form keeps the vendor
-          // chunk equivalent by matching the framework + its scoped internals (@vue/*, @intlify/*).
-          manualChunks(id) {
-            if (/[\\/]node_modules[\\/](vue|vue-i18n|pinia|@vue|@intlify)[\\/]/.test(id))
-              return 'vendor'
-          },
         },
       },
     },
