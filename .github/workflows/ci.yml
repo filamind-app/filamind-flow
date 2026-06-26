@@ -60,7 +60,9 @@ jobs:
         if: github.event_name == 'push'
         run: |
           test -f dist/index.html || { echo "::error::dist/index.html is missing"; exit 1; }
-          entry=$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' dist/index.html | head -1)
+          # The index.html entry chunk is named after the Vite input key: 'main-*.js' since the
+          # multi-entry build (index.html + touch.html) was added, 'index-*.js' for a single entry.
+          entry=$(grep -oE 'assets/(main|index)-[A-Za-z0-9_-]+\.js' dist/index.html | head -1)
           if [ -z "$entry" ] || [ ! -f "dist/$entry" ]; then
             echo "::error::dist entry chunk missing or unreferenced ($entry) - the committed bundle is broken/stale"
             exit 1
