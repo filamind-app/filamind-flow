@@ -1,0 +1,1 @@
+import{Y as e}from"./i18n-C6Yv7AcG.js";var t=e(null);function n(e,n){t.value={section:e,file:n}}export{t as n,n as t};
