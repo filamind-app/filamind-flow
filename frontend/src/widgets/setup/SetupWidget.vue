@@ -430,7 +430,7 @@ onMounted(load)
           </div>
 
           <div
-            v-if="isInstalled(c) && isFirstPartyWeb(c) && c.id in ports"
+            v-if="isInstalled(c) && c.type === 'web' && c.id in ports"
             class="flex flex-wrap items-center gap-2 text-xs"
           >
             <label :for="`port-${c.id}`" class="text-ink/60">{{ t('setup.port') }}</label>

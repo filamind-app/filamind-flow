@@ -14,6 +14,7 @@ from __future__ import annotations
 import asyncio
 import json
 import re
+import shlex
 import shutil
 import time
 from collections.abc import Awaitable, Callable
@@ -742,6 +743,32 @@ def _validate_port(port: int) -> dict[str, Any] | None:
     return None
 
 
+def _nginx_port_cmd(component: Component, port: int) -> str:
+    """A self-reverting nginx port change for a third-party web UI (Mainsail / Fluidd): back up its
+    nginx site, rewrite the ``listen`` ports, validate with ``nginx -t``, reload, and restore the
+    backup on ANY failure so a bad edit can never take the UI offline. Needs root (surfaced as a
+    printer command if the grant doesn't cover it). A missing site is a safe no-op."""
+    key = shlex.quote(component.dir or component.manager_key or component.id)
+    tmpl = (
+        r"key=__KEY__; "
+        r'site=$(ls "/etc/nginx/sites-available/$key" '
+        r'"/etc/nginx/conf.d/$key.conf" 2>/dev/null | head -1); '
+        r'[ -n "$site" ] || { echo "No nginx site found for __NAME__ (looked for $key); '
+        r'edit its config manually."; exit 2; }; '
+        r'sudo cp "$site" "$site.fmbak" || { echo "could not back up the nginx site"; exit 4; }; '
+        r'sudo sed -ri "s/(listen[[:space:]]+(\[::\]:)?)[0-9]+/\1__PORT__/g" "$site"; '
+        r"if sudo nginx -t; then sudo systemctl reload nginx && "
+        r'echo "__NAME__ is now served on port __PORT__."; '
+        r'else sudo cp "$site.fmbak" "$site"; '
+        r'echo "nginx rejected the change; reverted, __NAME__ port unchanged."; exit 3; fi'
+    )
+    return (
+        tmpl.replace("__KEY__", key)
+        .replace("__NAME__", component.name)
+        .replace("__PORT__", str(port))
+    )
+
+
 async def set_port(
     cid: str, port: int, managed: set[str] | None = None, services: set[str] | None = None
 ) -> dict[str, Any]:
@@ -765,11 +792,20 @@ async def set_port(
     if status.get(cid) != "installed":
         return {"refused": True, "output": f"{component.name} is not installed."}
     if not component.first_party:
-        return {
-            "refused": True,
-            "output": f"{component.name}'s port is managed by its own web-server config on the "
-            "host, not from here. Edit its nginx site (or its config) on the printer to change it.",
-        }
+        # Third-party web UIs (Mainsail/Fluidd) have their own nginx site; edit it in place
+        # (backup, nginx -t, reload, reverting on ANY failure). Needs root; surfaced as a printer
+        # command if the narrow sudo grant doesn't cover it.
+        cmd = _nginx_port_cmd(component, port)
+        result = await _run(["bash", "-c", cmd])
+        out = result.get("output") or ""
+        if not result.get("ok") and any(
+            s in out for s in ("terminal is required", "password is required", "sudo:")
+        ):
+            result["output"] = (
+                out.rstrip() + f"\n\nChanging {component.name}'s port edits its nginx site, which "
+                f"needs root. Run this on the printer host:\n  {cmd}"
+            )
+        return result
     # First-party web app: re-run its installer with the new port (it owns its nginx site).
     cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- install --port {port}"
     return await _run(["bash", "-c", cmd])
