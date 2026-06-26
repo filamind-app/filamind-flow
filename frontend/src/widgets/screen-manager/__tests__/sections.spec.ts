@@ -30,6 +30,10 @@ vi.mock('../api', () => ({
   },
 }))
 
+// The suite is unlocked (FilaMind 3D detected at runtime) → the Tools tab renders the FilaMind
+// controls (the suite remote-control tab) rather than the install-required gate.
+vi.mock('@/core/host/suite', async () => ({ suiteUnlocked: (await import('vue')).ref(true) }))
+
 import ScreenManagerWidget from '../ScreenManagerWidget.vue'
 
 const stubs = {
@@ -79,5 +83,16 @@ describe('Screen Manager: three clean concern sections', () => {
     // Left the KlipperScreen section (its absent note is gone) and the inspection-tools panel mounts.
     expect(w.text()).not.toContain(i18n.global.t('klipperscreenStudio.status.absent'))
     expect(w.findComponent({ name: 'TouchControlPanel' }).exists()).toBe(true)
+  })
+
+  it('shows the FilaMind controls in Tools when the suite is unlocked (not the install gate)', async () => {
+    const w = mountWidget()
+    await flushPromises()
+    const toolsTab = w.findAll('button[aria-pressed]').find((b) => b.text() === label('tools'))!
+    await toolsTab.trigger('click')
+    await flushPromises()
+    // suiteUnlocked is mocked true → the suite remote-control tab renders, gate is gone.
+    expect(w.findComponent({ name: 'FilaMindScreenTab' }).exists()).toBe(true)
+    expect(w.text()).not.toContain(i18n.global.t('shell.gate.title'))
   })
 })

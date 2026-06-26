@@ -10,7 +10,7 @@ import { useI18n } from 'vue-i18n'
 
 import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
-import { isSuiteHost } from '@/core/host/adapter'
+import { suiteUnlocked } from '@/core/host/suite'
 
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import HelpIllo from './HelpIllo.vue'
@@ -37,7 +37,6 @@ import {
 import type { ScreenStatus } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
-const suiteHost = isSuiteHost()
 
 const status = ref<ScreenStatus | null>(null)
 const statusError = ref<string | null>(null)
@@ -1132,7 +1131,7 @@ onMounted(() => {
 
     <!-- (3) TOOLS — FilaMind's on-screen checks & tests + the suite remote-control tab -->
     <template v-else>
-      <FilaMindScreenTab v-if="suiteHost" />
+      <FilaMindScreenTab v-if="suiteUnlocked" />
       <div v-else class="nb-card flex items-start gap-3 bg-surface p-3 text-sm">
         <span class="shrink-0 text-2xl" aria-hidden="true">🧩</span>
         <div class="min-w-0 space-y-1">
