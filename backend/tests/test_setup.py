@@ -254,6 +254,30 @@ async def test_first_party_screen_installs_its_native_kiosk(monkeypatch) -> None
     assert "bash -s -- native" in cmd
 
 
+async def test_third_party_port_change_edits_nginx_with_a_safe_revert(monkeypatch) -> None:
+    # Mainsail/Fluidd (third-party web UIs) are no longer refused: changing the port edits their
+    # nginx site in place, validated by `nginx -t` and reverted on any failure. Assert the run
+    # carries that safety harness and the chosen port.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+
+    async def fake_probe(managed: set[str] | None, services: set[str] | None) -> dict[str, str]:
+        return {"mainsail": "installed"}
+
+    monkeypatch.setattr(setup_manager, "probe_status", fake_probe)
+    captured: list[list[str]] = []
+
+    async def fake_run(cmd: list[str]) -> dict:
+        captured.append(cmd)
+        return {"ok": True, "output": "Mainsail is now served on port 8088."}
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    result = await setup_manager.set_port("mainsail", 8088, managed=set(), services=set())
+    assert result.get("refused") is not True
+    cmd = " ".join(captured[0])
+    assert "key=mainsail" in cmd and "8088" in cmd
+    assert "nginx -t" in cmd and "fmbak" in cmd and "exit 3" in cmd  # validate + revert
+
+
 async def test_first_party_install_sudo_failure_surfaces_the_command(monkeypatch) -> None:
     # The backend service has no terminal for a sudo password; if the install fails for that reason,
     # the result tells the user the exact command to run on the printer host.
