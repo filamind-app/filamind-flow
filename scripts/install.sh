@@ -91,6 +91,18 @@ do_sudoers() {
   hostnamectl="$(command -v hostnamectl || echo /usr/bin/hostnamectl)"
   nmcli="$(command -v nmcli || echo /usr/bin/nmcli)"
 
+  # Broader grant for one-click NATIVE touch-app install (FilaMind screen's .deb kiosk): apt-get
+  # (installs the package + its WebKit runtime dependency), dpkg, and the Flow kiosk unit-writer
+  # (scoped to its `kiosk` subcommand). This is intentionally wider than the base grant — it lets the
+  # headless Setup widget install the .deb without a password. apt as root is effectively full root,
+  # so this is the security trade-off for a one-click native install.
+  local apt_get dpkg_bin bash_bin flow_home flow_install
+  apt_get="$(command -v apt-get || echo /usr/bin/apt-get)"
+  dpkg_bin="$(command -v dpkg || echo /usr/bin/dpkg)"
+  bash_bin="$(command -v bash || echo /bin/bash)"
+  flow_home="$(getent passwd "$user_name" 2>/dev/null | cut -d: -f6)"
+  flow_install="${flow_home:-/home/$user_name}/filamind-flow/scripts/install.sh"
+
   # NOT `local`: the EXIT trap below fires at *script* exit — after this function has returned —
   # so $tmp must still be in scope, and ${tmp:-} keeps the trap safe under `set -u`.
   tmp="$(mktemp)"
@@ -98,6 +110,9 @@ do_sudoers() {
   cat > "$tmp" <<EOF
 # Managed by FilaMind Flow (scripts/install.sh sudoers) — firmware flashing + Host Control.
 $user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli
+# Native touch-app install (FilaMind screen .deb kiosk): package + WebKit runtime via apt/dpkg, and
+# the Flow kiosk unit-writer. Wider than the base grant — enables one-click native install.
+$user_name ALL=(root) NOPASSWD: $apt_get, $dpkg_bin, $bash_bin $flow_install kiosk *
 EOF
   # Validate syntax BEFORE installing so a mistake can never lock you out of sudo.
   if visudo -cf "$tmp"; then
