@@ -78,6 +78,12 @@ export default defineConfig(({ mode }) => {
       // Split the framework into a long-lived vendor chunk so an app update doesn't force a
       // re-download of Vue / Pinia / vue-i18n on this auto-updating panel.
       rollupOptions: {
+        // Two entries: the Neo-Brutalist web UI (index.html) + the native touch app (touch.html,
+        // served at :8090/touch.html and loaded by the Tauri kiosk). Each is its own bundle.
+        input: {
+          main: fileURLToPath(new URL('./index.html', import.meta.url)),
+          touch: fileURLToPath(new URL('./touch.html', import.meta.url)),
+        },
         output: {
           // Vite 8's Rollup types dropped the object form; the function form keeps the vendor
           // chunk equivalent by matching the framework + its scoped internals (@vue/*, @intlify/*).

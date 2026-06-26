@@ -21,6 +21,7 @@ import enMotorDrivers from '../locales/en/motor-drivers.json'
 import enRemoteControl from '../locales/en/remote-control.json'
 import enSetup from '../locales/en/setup.json'
 import enShell from '../locales/en/shell.json'
+import enTouch from '../locales/en/touch.json'
 
 /**
  * App-wide internationalization (i18n Phase 0 - scaffolding).
@@ -112,6 +113,7 @@ const en = {
   ...enConfigTemplates,
   ...enHostControl,
   ...enSetup,
+  ...enTouch,
 }
 
 // en is excluded - it's bundled eagerly above, so the dynamic glob must not also claim it

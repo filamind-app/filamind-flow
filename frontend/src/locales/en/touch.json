@@ -1,0 +1,23 @@
+{
+  "touch": {
+    "subtitle": "touch control",
+    "connected": "Connected",
+    "offline": "Offline",
+    "comingSoon": "Coming soon",
+    "state": {
+      "standby": "Idle",
+      "ready": "Ready",
+      "printing": "Printing",
+      "paused": "Paused",
+      "complete": "Complete",
+      "cancelled": "Cancelled",
+      "error": "Error"
+    },
+    "nav": {
+      "move": "Move",
+      "files": "Files",
+      "console": "Console",
+      "print": "Print"
+    }
+  }
+}
