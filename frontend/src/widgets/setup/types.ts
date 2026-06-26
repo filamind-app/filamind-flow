@@ -10,6 +10,12 @@ export interface SetupComponent {
   desc?: string
   /** For web UIs: the port the component is served on by default. */
   default_port?: number
+  /** A `scripts/install.sh` subcommand that installs this app's managed systemd service (FilaMind 3d
+   *  → `agent`, FilaMind screen → `native`). Surfaced as a copyable, printer-side one-liner because
+   *  it needs interactive root the GUI can't run. */
+  service_install?: string
+  /** Human note explaining what `service_install` adds (shown above the command). */
+  service_install_hint?: string
 }
 
 export interface SetupGroup {
