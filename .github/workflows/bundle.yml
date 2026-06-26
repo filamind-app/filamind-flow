@@ -51,7 +51,7 @@ jobs:
       - run: npm run tauri -- icon src-tauri/icons/icon-source.png
       - name: Bundle the arm64 .deb
         run: npm run tauri -- build --bundles deb
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: filamind-flow-arm64-deb
           path: frontend/src-tauri/target/release/bundle/deb/*.deb
