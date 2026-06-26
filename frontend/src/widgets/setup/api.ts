@@ -1,7 +1,7 @@
 import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { SetupActionResult, SetupCatalog, SetupStatus } from './types'
+import type { SetupActionResult, SetupAutoUpdate, SetupCatalog, SetupStatus } from './types'
 
 function base(): string {
   return resolveEndpoints().backendUrl
@@ -47,13 +47,18 @@ export const installComponent = (id: string, port?: number): Promise<SetupAction
   post('install', { id, ...(port ? { port } : {}) })
 
 /** Start an install as a background task; returns its id to poll via fetchTask(). An optional port
- *  installs a first-party web app (e.g. FilaMind 3d) straight onto that port. Refusals (403) still
- *  arrive synchronously as a SetupActionError, same as the blocking install. */
-export async function installComponentStream(id: string, port?: number): Promise<string> {
+ *  installs a first-party web app (e.g. FilaMind 3d) straight onto that port; `action: 'service'`
+ *  installs that app's additional managed deployment (FilaMind 3d → the agent). Refusals (403)
+ *  still arrive synchronously as a SetupActionError, same as the blocking install. */
+export async function installComponentStream(
+  id: string,
+  port?: number,
+  action?: string,
+): Promise<string> {
   const r = await fetch(`${base()}/api/setup/install/stream`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, ...(port ? { port } : {}) }),
+    body: JSON.stringify({ id, ...(port ? { port } : {}), ...(action ? { action } : {}) }),
   })
   const data = (await r.json().catch(() => ({}))) as { detail?: string; task_id?: string }
   if (!r.ok) throw new SetupActionError(data.detail || httpError(r.status), r.status)
@@ -77,4 +82,25 @@ export async function setWrites(enabled: boolean): Promise<boolean> {
   })
   if (!r.ok) throw new Error(httpError(r.status))
   return ((await r.json()) as { writesEnabled: boolean }).writesEnabled
+}
+
+/** Current periodic auto-update preferences. */
+export async function getAutoUpdate(): Promise<SetupAutoUpdate> {
+  const r = await fetch(`${base()}/api/setup/autoupdate`)
+  if (!r.ok) throw new Error(httpError(r.status))
+  return (await r.json()) as SetupAutoUpdate
+}
+
+/** Persist the auto-update toggle + interval; returns the saved prefs. */
+export async function setAutoUpdate(
+  enabled: boolean,
+  intervalHours: number,
+): Promise<SetupAutoUpdate> {
+  const r = await fetch(`${base()}/api/setup/autoupdate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled, intervalHours }),
+  })
+  if (!r.ok) throw new Error(httpError(r.status))
+  return (await r.json()) as SetupAutoUpdate
 }

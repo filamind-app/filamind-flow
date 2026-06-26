@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "Install and manage Klipper-ecosystem components for this printer.",
-    "refresh": "Refresh",
+    "checkUpdates": "Check for updates",
+    "updateAll": "Update all ({n})",
     "search": "Search components",
     "summary": "{installed} of {total} installed",
     "needs": "Needs",
@@ -9,25 +10,36 @@
     "port": "Port",
     "portApply": "Apply",
     "noMatch": "No components match your search.",
-    "suite": {
-      "title": "Install the whole FilaMind suite",
-      "intro": "Run this once on the printer to set up the FilaMind suite, or to adopt an existing setup.",
-      "copy": "Copy",
-      "copied": "Copied"
-    },
     "installed": "Installed",
     "available": "Available",
     "install": "Install",
-    "cliOnly": "CLI only",
-    "cliOnlyHint": "Install this component with the filamind-setup CLI.",
+    "installNamed": "Install {x}",
+    "onHost": "On host",
+    "onHostHint": "This component installs on the printer host; open its Source for the steps.",
     "update": "Update",
     "remove": "Remove",
     "removeConfirm": "Confirm remove?",
     "firstParty": "FilaMind",
-    "writesDisabled": "Install, update and remove are disabled on this host. Use the filamind-setup CLI, or enable them on the host.",
     "writesOff": "Installing from here is turned off. Enable it to install, update and remove components directly.",
     "enableWrites": "Enable installing",
     "working": "Working…",
+    "upToDate": "Up to date",
+    "versionInstalled": "Installed version",
+    "versionLatest": "Latest version",
+    "open": "Open",
+    "restart": "Restart",
+    "serving": "Running",
+    "notServing": "Stopped",
+    "autoUpdate": {
+      "title": "Automatic updates",
+      "every": "Check every",
+      "opt6": "6 hours",
+      "opt12": "12 hours",
+      "opt24": "24 hours",
+      "opt48": "2 days",
+      "opt168": "7 days",
+      "hint": "Updates are applied only while the printer is idle, never mid-print."
+    },
     "help": {
       "button": "Help",
       "title": "Setup — guide",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "Managing components",
-          "body": "Browse the catalog by group; each component shows whether it's installed. Install, update and remove run on the printer host and stay disabled here until you enable them — the filamind-setup CLI can always do it."
+          "body": "Browse the catalog by section; each card shows whether it's installed and its version. Install, update and remove run on the printer host and stay off here until you enable them. Turn on Automatic updates to keep everything current while the printer is idle."
         }
       }
-    },
-    "upToDate": "Up to date",
-    "versionInstalled": "Installed version",
-    "versionLatest": "Latest version",
-    "open": "Open",
-    "restart": "Restart",
-    "serving": "Running",
-    "notServing": "Stopped"
+    }
   }
 }

@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "Installeer en beheer Klipper-ecosysteemcomponenten voor deze printer.",
-    "refresh": "Vernieuwen",
+    "checkUpdates": "Controleren op updates",
+    "updateAll": "Alles bijwerken ({n})",
     "search": "Componenten zoeken",
     "summary": "{installed} van {total} geïnstalleerd",
     "needs": "Vereist",
@@ -9,25 +10,36 @@
     "port": "Poort",
     "portApply": "Toepassen",
     "noMatch": "Geen componenten komen overeen met uw zoekopdracht.",
-    "suite": {
-      "title": "Installeer de volledige FilaMind-suite",
-      "intro": "Voer dit eenmalig uit op de printer om de FilaMind-suite in te stellen of om een bestaande installatie over te nemen.",
-      "copy": "Kopiëren",
-      "copied": "Gekopieerd"
-    },
     "installed": "Geïnstalleerd",
     "available": "Beschikbaar",
     "install": "Installeren",
-    "cliOnly": "Alleen CLI",
-    "cliOnlyHint": "Installeer dit component met de filamind-setup CLI.",
+    "installNamed": "{x} installeren",
+    "onHost": "Op host",
+    "onHostHint": "Dit component installeert op de host van de printer; open de Bron voor de stappen.",
     "update": "Bijwerken",
     "remove": "Verwijderen",
     "removeConfirm": "Verwijderen bevestigen?",
     "firstParty": "FilaMind",
-    "writesDisabled": "Installeren, bijwerken en verwijderen zijn uitgeschakeld op deze host. Gebruik de filamind-setup CLI of schakel ze in op de host.",
     "writesOff": "Installeren vanaf hier is uitgeschakeld. Schakel het in om componenten rechtstreeks te installeren, bij te werken en te verwijderen.",
     "enableWrites": "Installeren inschakelen",
     "working": "Bezig…",
+    "upToDate": "Up-to-date",
+    "versionInstalled": "Geïnstalleerde versie",
+    "versionLatest": "Nieuwste versie",
+    "open": "Openen",
+    "restart": "Opnieuw starten",
+    "serving": "Actief",
+    "notServing": "Gestopt",
+    "autoUpdate": {
+      "title": "Automatische updates",
+      "every": "Controleer elke",
+      "opt6": "6 uur",
+      "opt12": "12 uur",
+      "opt24": "24 uur",
+      "opt48": "2 dagen",
+      "opt168": "7 dagen",
+      "hint": "Updates worden alleen toegepast terwijl de printer inactief is, nooit tijdens het printen."
+    },
     "help": {
       "button": "Help",
       "title": "Installatie — handleiding",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "Componenten beheren",
-          "body": "Blader door de catalogus per groep; bij elk component wordt aangegeven of het is geïnstalleerd. Installeren, bijwerken en verwijderen draaien op de host van de printer en blijven hier uitgeschakeld totdat u ze inschakelt — de filamind-setup CLI kan het altijd doen."
+          "body": "Blader door de catalogus per groep; elke kaart toont of het component is geïnstalleerd en welke versie. Installeren, bijwerken en verwijderen draaien op de host van de printer en blijven hier uitgeschakeld totdat u ze inschakelt. Schakel Automatische updates in om alles up-to-date te houden terwijl de printer inactief is."
         }
       }
-    },
-    "upToDate": "Up-to-date",
-    "versionInstalled": "Geïnstalleerde versie",
-    "versionLatest": "Nieuwste versie",
-    "open": "Openen",
-    "restart": "Opnieuw starten",
-    "serving": "Actief",
-    "notServing": "Gestopt"
+    }
   }
 }

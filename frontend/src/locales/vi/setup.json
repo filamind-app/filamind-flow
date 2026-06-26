@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "Cài đặt và quản lý các thành phần thuộc hệ sinh thái Klipper cho máy in này.",
-    "refresh": "Làm mới",
+    "checkUpdates": "Kiểm tra cập nhật",
+    "updateAll": "Cập nhật tất cả ({n})",
     "search": "Tìm kiếm thành phần",
     "summary": "Đã cài đặt {installed} trên {total}",
     "needs": "Cần",
@@ -9,25 +10,36 @@
     "port": "Cổng",
     "portApply": "Áp dụng",
     "noMatch": "Không có thành phần nào khớp với tìm kiếm của bạn.",
-    "suite": {
-      "title": "Cài đặt toàn bộ bộ công cụ FilaMind",
-      "intro": "Chạy lệnh này một lần trên máy in để thiết lập bộ công cụ FilaMind, hoặc để tiếp quản một thiết lập sẵn có.",
-      "copy": "Sao chép",
-      "copied": "Đã sao chép"
-    },
     "installed": "Đã cài đặt",
     "available": "Có sẵn",
     "install": "Cài đặt",
-    "cliOnly": "Chỉ qua CLI",
-    "cliOnlyHint": "Cài đặt thành phần này bằng CLI filamind-setup.",
+    "installNamed": "Cài đặt {x}",
+    "onHost": "Trên máy chủ",
+    "onHostHint": "Thành phần này cài đặt trên máy chủ máy in; hãy mở Nguồn của nó để xem các bước.",
     "update": "Cập nhật",
     "remove": "Gỡ bỏ",
     "removeConfirm": "Xác nhận gỡ bỏ?",
     "firstParty": "FilaMind",
-    "writesDisabled": "Cài đặt, cập nhật và gỡ bỏ đã bị tắt trên máy chủ này. Hãy dùng CLI filamind-setup, hoặc bật chúng trên máy chủ.",
     "writesOff": "Việc cài đặt từ đây đang tắt. Hãy bật để cài đặt, cập nhật và gỡ bỏ các thành phần trực tiếp.",
     "enableWrites": "Bật cài đặt",
     "working": "Đang xử lý…",
+    "upToDate": "Mới nhất",
+    "versionInstalled": "Phiên bản đã cài",
+    "versionLatest": "Phiên bản mới nhất",
+    "open": "Mở",
+    "restart": "Khởi động lại",
+    "serving": "Đang chạy",
+    "notServing": "Đã dừng",
+    "autoUpdate": {
+      "title": "Cập nhật tự động",
+      "every": "Kiểm tra mỗi",
+      "opt6": "6 giờ",
+      "opt12": "12 giờ",
+      "opt24": "24 giờ",
+      "opt48": "2 ngày",
+      "opt168": "7 ngày",
+      "hint": "Các bản cập nhật chỉ được áp dụng khi máy in đang rảnh, không bao giờ giữa chừng khi đang in."
+    },
     "help": {
       "button": "Trợ giúp",
       "title": "Thiết lập — hướng dẫn",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "Quản lý linh kiện",
-          "body": "Duyệt danh mục theo nhóm; mỗi linh kiện cho biết nó đã được cài đặt hay chưa. Cài đặt, cập nhật và gỡ bỏ chạy trên máy chủ máy in và vẫn bị vô hiệu hóa ở đây cho đến khi bạn bật chúng — CLI filamind-setup luôn có thể thực hiện điều đó."
+          "body": "Duyệt danh mục theo nhóm; mỗi thẻ cho biết nó đã được cài đặt hay chưa cùng với phiên bản. Cài đặt, cập nhật và gỡ bỏ chạy trên máy chủ máy in và vẫn tắt ở đây cho đến khi bạn bật chúng. Hãy bật Cập nhật tự động để giữ mọi thứ luôn mới nhất khi máy in đang rảnh."
         }
       }
-    },
-    "upToDate": "Mới nhất",
-    "versionInstalled": "Phiên bản đã cài",
-    "versionLatest": "Phiên bản mới nhất",
-    "open": "Mở",
-    "restart": "Khởi động lại",
-    "serving": "Đang chạy",
-    "notServing": "Đã dừng"
+    }
   }
 }

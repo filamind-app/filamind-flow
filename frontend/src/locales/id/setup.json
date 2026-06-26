@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "Pasang dan kelola komponen ekosistem Klipper untuk printer ini.",
-    "refresh": "Segarkan",
+    "checkUpdates": "Periksa pembaruan",
+    "updateAll": "Perbarui semua ({n})",
     "search": "Cari komponen",
     "summary": "{installed} dari {total} terpasang",
     "needs": "Membutuhkan",
@@ -9,25 +10,36 @@
     "port": "Port",
     "portApply": "Terapkan",
     "noMatch": "Tidak ada komponen yang cocok dengan pencarian Anda.",
-    "suite": {
-      "title": "Pasang seluruh suite FilaMind",
-      "intro": "Jalankan ini sekali di printer untuk menyiapkan suite FilaMind, atau untuk mengadopsi penyiapan yang sudah ada.",
-      "copy": "Salin",
-      "copied": "Tersalin"
-    },
     "installed": "Terpasang",
     "available": "Tersedia",
     "install": "Pasang",
-    "cliOnly": "Hanya CLI",
-    "cliOnlyHint": "Pasang komponen ini dengan CLI filamind-setup.",
+    "installNamed": "Pasang {x}",
+    "onHost": "Di host",
+    "onHostHint": "Komponen ini dipasang di host printer; buka Sumbernya untuk langkah-langkahnya.",
     "update": "Perbarui",
     "remove": "Hapus",
     "removeConfirm": "Konfirmasi penghapusan?",
     "firstParty": "FilaMind",
-    "writesDisabled": "Pemasangan, pembaruan, dan penghapusan dinonaktifkan di host ini. Gunakan CLI filamind-setup, atau aktifkan di host.",
     "writesOff": "Pemasangan dari sini dinonaktifkan. Aktifkan untuk memasang, memperbarui, dan menghapus komponen secara langsung.",
     "enableWrites": "Aktifkan pemasangan",
     "working": "Memproses…",
+    "upToDate": "Terbaru",
+    "versionInstalled": "Versi terpasang",
+    "versionLatest": "Versi terbaru",
+    "open": "Buka",
+    "restart": "Mulai ulang",
+    "serving": "Aktif",
+    "notServing": "Berhenti",
+    "autoUpdate": {
+      "title": "Pembaruan otomatis",
+      "every": "Periksa setiap",
+      "opt6": "6 jam",
+      "opt12": "12 jam",
+      "opt24": "24 jam",
+      "opt48": "2 hari",
+      "opt168": "7 hari",
+      "hint": "Pembaruan hanya diterapkan saat printer sedang menganggur, tidak pernah di tengah pencetakan."
+    },
     "help": {
       "button": "Bantuan",
       "title": "Penyiapan — panduan",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "Mengelola komponen",
-          "body": "Jelajahi katalog menurut grup; setiap komponen menunjukkan apakah sudah terpasang. Pemasangan, pembaruan, dan penghapusan dijalankan pada host printer dan tetap nonaktif di sini sampai Anda mengaktifkannya — CLI filamind-setup selalu dapat melakukannya."
+          "body": "Jelajahi katalog menurut bagian; setiap kartu menunjukkan apakah komponen sudah terpasang beserta versinya. Pemasangan, pembaruan, dan penghapusan dijalankan pada host printer dan tetap nonaktif di sini sampai Anda mengaktifkannya. Aktifkan Pembaruan otomatis agar semuanya tetap terkini saat printer sedang menganggur."
         }
       }
-    },
-    "upToDate": "Terbaru",
-    "versionInstalled": "Versi terpasang",
-    "versionLatest": "Versi terbaru",
-    "open": "Buka",
-    "restart": "Mulai ulang",
-    "serving": "Aktif",
-    "notServing": "Berhenti"
+    }
   }
 }

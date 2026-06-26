@@ -12,20 +12,26 @@ import {
   installComponentStream,
   removeComponent,
   restartComponent,
+  setAutoUpdate,
   setPort,
   setWrites,
   updateComponent,
 } from './api'
 import SetupHelpIllo from './SetupHelpIllo.vue'
-import type { SetupActionResult, SetupComponent, SetupComponentStatus, SetupGroup } from './types'
+import type {
+  SetupActionResult,
+  SetupAutoUpdate,
+  SetupComponent,
+  SetupComponentStatus,
+  SetupGroup,
+} from './types'
 
 const { t } = useI18n()
 
 const groups = ref<SetupGroup[]>([])
 const status = ref<Record<string, SetupComponentStatus>>({})
 const writesEnabled = ref(false)
-const suiteCommand = ref('')
-const copied = ref(false)
+const autoUpdate = ref<SetupAutoUpdate>({ enabled: false, intervalHours: 24 })
 const loading = ref(true)
 const error = ref<string | null>(null)
 
@@ -39,10 +45,19 @@ const lastResult = ref<{ id: string; text: string; ok: boolean } | null>(null)
 /** Live install output for the card currently installing (streamed from the background task). */
 const installLog = ref('')
 
-/** Installable from the GUI: git_repo / service (clone + install.sh), or any FilaMind app (which
- *  ships its own one-line installer). Third-party web / manual stay CLI-only. */
+/** Auto-update interval choices (hours): 6h, 12h, daily, 2 days, weekly. */
+const INTERVALS = [6, 12, 24, 48, 168] as const
+
+/** One-click installable from the GUI: git_repo / service (clone + install.sh), or any FilaMind app
+ *  (which ships its own one-line installer). Third-party web UIs / manual add-ons install on host. */
 const INSTALLABLE_TYPES = new Set(['git_repo', 'service'])
 const canInstall = (c: SetupComponent): boolean => INSTALLABLE_TYPES.has(c.type) || !!c.first_party
+
+/** A first-party app with an ADDITIONAL managed deployment installable by its own button (FilaMind
+ *  3d → agent). When service_install equals install_args it IS the main install (FilaMind screen),
+ *  so no extra button is shown. */
+const hasService = (c: SetupComponent): boolean =>
+  !!c.first_party && !!c.service_install && c.service_install !== (c.install_args ?? '')
 
 async function load(): Promise<void> {
   loading.value = true
@@ -56,37 +71,11 @@ async function load(): Promise<void> {
           ports.value[c.id] = c.default_port
     status.value = st.status
     writesEnabled.value = st.writesEnabled
-    suiteCommand.value = st.suiteCommand
+    autoUpdate.value = st.autoUpdate ?? { enabled: false, intervalHours: 24 }
   } catch (e) {
     error.value = e instanceof Error ? e.message : String(e)
   } finally {
     loading.value = false
-  }
-}
-
-async function copySuiteCommand(): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(suiteCommand.value)
-    copied.value = true
-    setTimeout(() => (copied.value = false), 1500)
-  } catch {
-    /* clipboard unavailable; the command is shown for manual copy */
-  }
-}
-
-// Printer-side one-liner that installs a first-party app's managed service (3d → agent, screen →
-// native). The GUI can't run it (interactive root), so it's surfaced for the operator to copy/run.
-const copiedId = ref('')
-function serviceCmd(c: SetupComponent): string {
-  return `curl -fsSL https://raw.githubusercontent.com/${c.repo}/main/scripts/install.sh | bash -s -- ${c.service_install}`
-}
-async function copyCmd(c: SetupComponent): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(serviceCmd(c))
-    copiedId.value = c.id
-    setTimeout(() => (copiedId.value = ''), 1500)
-  } catch {
-    /* clipboard unavailable; the command is shown for manual copy */
   }
 }
 
@@ -116,6 +105,9 @@ const totals = computed(() => {
   const all = Object.values(byId.value)
   return { total: all.length, installed: all.filter(isInstalled).length }
 })
+
+/** How many installed components have an update waiting (drives "Update all"). */
+const updateCount = computed(() => Object.values(byId.value).filter(updateAvailable).length)
 
 /** Groups filtered by the search box (matches name, description, kind or id). */
 const filteredGroups = computed<SetupGroup[]>(() => {
@@ -197,16 +189,17 @@ const appUrl = (c: SetupComponent): string => {
 const doRestart = (c: SetupComponent): Promise<void> => run(c.id, () => restartComponent(c.id))
 
 /** Install with live progress: start the background task, then poll it and stream its log into the
- *  card until it finishes. A refusal (writes-off / missing-deps) still arrives as a synchronous 403. */
-async function doInstall(c: SetupComponent): Promise<void> {
+ *  card until it finishes. `action: 'service'` installs a first-party app's extra deployment (3d →
+ *  agent). A refusal (writes-off / missing-deps) still arrives as a synchronous 403. */
+async function doInstall(c: SetupComponent, action?: string): Promise<void> {
   if (busyId.value) return
   busyId.value = c.id
   lastResult.value = null
   installLog.value = ''
   try {
     // First-party web app: install straight onto the chosen port (e.g. 88 when Mainsail owns 80).
-    const port = isFirstPartyWeb(c) ? ports.value[c.id] : undefined
-    const taskId = await installComponentStream(c.id, port)
+    const port = !action && isFirstPartyWeb(c) ? ports.value[c.id] : undefined
+    const taskId = await installComponentStream(c.id, port, action)
     for (;;) {
       await new Promise((r) => setTimeout(r, 1000))
       const task = await fetchTask(taskId)
@@ -233,6 +226,23 @@ function onRemove(c: SetupComponent): void {
   else confirmRemoveId.value = c.id
 }
 
+/** Update every component that has an update waiting, one after another. */
+async function updateAll(): Promise<void> {
+  if (busyId.value) return
+  for (const c of Object.values(byId.value).filter(updateAvailable))
+    await run(c.id, () => updateComponent(c.id))
+}
+
+/** Persist the auto-update toggle / interval the moment it changes. */
+async function saveAutoUpdate(): Promise<void> {
+  error.value = null
+  try {
+    autoUpdate.value = await setAutoUpdate(autoUpdate.value.enabled, autoUpdate.value.intervalHours)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : String(e)
+  }
+}
+
 onMounted(load)
 </script>
 
@@ -251,8 +261,16 @@ onMounted(load)
           :title="t('setup.help.title')"
           :close-label="t('setup.help.close')"
         />
-        <button class="nb-btn px-3 py-1.5" :disabled="loading" @click="load">
-          {{ t('setup.refresh') }}
+        <button
+          v-if="updateCount > 0"
+          class="nb-btn bg-brand-green px-3 py-1.5"
+          :disabled="!writesEnabled || busyId !== null"
+          @click="updateAll"
+        >
+          {{ t('setup.updateAll', { n: updateCount }) }}
+        </button>
+        <button class="nb-btn px-3 py-1.5" :disabled="loading || busyId !== null" @click="load">
+          {{ t('setup.checkUpdates') }}
         </button>
       </div>
     </header>
@@ -270,18 +288,41 @@ onMounted(load)
       </span>
     </div>
 
-    <section v-if="!loading && !error && suiteCommand" class="nb-card bg-brand-cyan/15 p-3">
-      <h3 class="font-display text-sm font-bold">{{ t('setup.suite.title') }}</h3>
-      <p class="mt-1 text-sm text-ink/70">{{ t('setup.suite.intro') }}</p>
-      <div class="mt-2 flex flex-wrap items-center gap-2">
-        <code class="nb-card flex-1 overflow-x-auto bg-surface px-2 py-1 font-mono text-xs">{{
-          suiteCommand
-        }}</code>
-        <button class="nb-btn px-3 py-1 text-sm" @click="copySuiteCommand">
-          {{ copied ? t('setup.suite.copied') : t('setup.suite.copy') }}
-        </button>
-      </div>
-    </section>
+    <!-- Periodic auto-update (opt-in): keeps everything current, but only while the printer is idle. -->
+    <div
+      v-if="!loading && !error && writesEnabled"
+      class="nb-card flex flex-wrap items-center gap-x-4 gap-y-2 p-3 text-sm"
+    >
+      <label class="flex items-center gap-2 font-bold">
+        <input
+          v-model="autoUpdate.enabled"
+          type="checkbox"
+          class="h-4 w-4 accent-brand-cyan"
+          @change="saveAutoUpdate"
+        />
+        {{ t('setup.autoUpdate.title') }}
+      </label>
+      <span
+        class="flex items-center gap-2 text-xs"
+        :class="{ 'pointer-events-none opacity-50': !autoUpdate.enabled }"
+      >
+        <label for="autoupdate-interval" class="text-ink/60">{{
+          t('setup.autoUpdate.every')
+        }}</label>
+        <select
+          id="autoupdate-interval"
+          v-model.number="autoUpdate.intervalHours"
+          class="nb-input px-2 py-1"
+          :disabled="!autoUpdate.enabled"
+          @change="saveAutoUpdate"
+        >
+          <option v-for="h in INTERVALS" :key="h" :value="h">
+            {{ t(`setup.autoUpdate.opt${h}`) }}
+          </option>
+        </select>
+      </span>
+      <span class="text-[11px] text-ink/55">{{ t('setup.autoUpdate.hint') }}</span>
+    </div>
 
     <div
       v-if="!loading && !writesEnabled"
@@ -299,102 +340,54 @@ onMounted(load)
     <p v-else-if="!hasResults" class="text-sm text-ink/70">{{ t('setup.noMatch') }}</p>
 
     <section v-for="g in filteredGroups" v-else :key="g.group" class="flex flex-col gap-2">
-      <h3 class="font-display text-sm font-bold uppercase tracking-wide text-ink/60">
+      <h3 class="font-display text-xs font-bold uppercase tracking-wide text-ink/60">
         {{ humanizeGroup(g.group) }}
       </h3>
-      <ul class="flex flex-col gap-2">
+      <ul class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="c in g.components" :key="c.id" class="nb-card flex flex-col gap-2 p-3">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="font-bold">{{ c.name }}</span>
-            <span class="nb-badge bg-surface text-xs">{{ c.kind }}</span>
-            <span v-if="c.first_party" class="nb-badge bg-brand-cyan text-xs">{{
-              t('setup.firstParty')
-            }}</span>
+          <!-- header: name + first-party tag + install/version, status badge on the right -->
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="truncate font-bold">{{ c.name }}</span>
+                <span v-if="c.first_party" class="nb-badge bg-brand-cyan text-[10px]">{{
+                  t('setup.firstParty')
+                }}</span>
+              </div>
+              <div
+                class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-ink/60"
+              >
+                <span>{{ c.kind }}</span>
+                <span
+                  v-if="isInstalled(c) && installedVersion(c)"
+                  class="font-mono"
+                  :title="t('setup.versionInstalled')"
+                >
+                  {{ installedVersion(c)
+                  }}<template v-if="updateAvailable(c) && latestVersion(c)">
+                    → {{ latestVersion(c) }}</template
+                  >
+                </span>
+                <span
+                  v-else-if="!isInstalled(c) && latestVersion(c)"
+                  class="font-mono"
+                  :title="t('setup.versionLatest')"
+                >
+                  {{ latestVersion(c) }}
+                </span>
+              </div>
+            </div>
             <span
-              class="nb-badge text-xs"
+              class="nb-badge shrink-0 text-[10px]"
               :class="isInstalled(c) ? 'bg-brand-green' : 'bg-surface text-ink/70'"
             >
               {{ isInstalled(c) ? t('setup.installed') : t('setup.available') }}
             </span>
-            <span
-              v-if="isInstalled(c) && installedVersion(c)"
-              class="nb-badge bg-surface font-mono text-xs"
-              :title="t('setup.versionInstalled')"
-            >
-              {{ installedVersion(c)
-              }}<template v-if="updateAvailable(c) && latestVersion(c)">
-                → {{ latestVersion(c) }}</template
-              >
-            </span>
-            <span
-              v-else-if="!isInstalled(c) && latestVersion(c)"
-              class="nb-badge bg-surface font-mono text-xs text-ink/60"
-              :title="t('setup.versionLatest')"
-            >
-              {{ latestVersion(c) }}
-            </span>
-
-            <span class="ms-auto flex items-center gap-2">
-              <template v-if="isInstalled(c)">
-                <button
-                  v-if="updateAvailable(c)"
-                  class="nb-btn px-3 py-1"
-                  :disabled="!writesEnabled || busyId !== null"
-                  @click="doUpdate(c)"
-                >
-                  {{ busyId === c.id ? t('setup.working') : t('setup.update') }}
-                </button>
-                <span v-else class="nb-badge bg-brand-green/15 text-xs text-ink/60">
-                  {{ t('setup.upToDate') }}
-                </span>
-                <button
-                  class="nb-btn px-3 py-1"
-                  :class="{ 'bg-brand-red text-paper': confirmRemoveId === c.id }"
-                  :disabled="!writesEnabled || busyId !== null"
-                  @click="onRemove(c)"
-                >
-                  {{ confirmRemoveId === c.id ? t('setup.removeConfirm') : t('setup.remove') }}
-                </button>
-              </template>
-              <template v-else>
-                <span
-                  v-if="isFirstPartyWeb(c) && c.id in ports"
-                  class="flex items-center gap-1 text-xs"
-                >
-                  <label :for="`install-port-${c.id}`" class="text-ink/60">{{
-                    t('setup.port')
-                  }}</label>
-                  <input
-                    :id="`install-port-${c.id}`"
-                    v-model.number="ports[c.id]"
-                    type="number"
-                    min="1"
-                    max="65535"
-                    class="nb-input w-20 px-2 py-1"
-                  />
-                </span>
-                <button
-                  v-if="canInstall(c)"
-                  class="nb-btn px-3 py-1"
-                  :disabled="!writesEnabled || busyId !== null"
-                  @click="doInstall(c)"
-                >
-                  {{ busyId === c.id ? t('setup.working') : t('setup.install') }}
-                </button>
-                <span
-                  v-else
-                  class="nb-badge bg-surface text-xs text-ink/70"
-                  :title="t('setup.cliOnlyHint')"
-                >
-                  {{ t('setup.cliOnly') }}
-                </span>
-              </template>
-            </span>
           </div>
 
-          <p v-if="c.desc" class="text-sm text-ink/70">{{ c.desc }}</p>
+          <p v-if="c.desc" class="line-clamp-2 text-xs text-ink/70">{{ c.desc }}</p>
 
-          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink/60">
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-ink/55">
             <span v-if="depNames(c).length">
               {{ t('setup.needs') }}: {{ depNames(c).join(', ') }}
             </span>
@@ -410,7 +403,7 @@ onMounted(load)
 
           <!-- Runtime status for an installed first-party app (3d / screen): is it actually serving,
                where, with an open-in-this-tab link and a restart (reload nginx). -->
-          <div v-if="hasRuntime(c)" class="flex flex-wrap items-center gap-2 text-xs">
+          <div v-if="hasRuntime(c)" class="flex flex-wrap items-center gap-2 text-[11px]">
             <span class="inline-flex items-center gap-1">
               <span
                 class="h-2.5 w-2.5 rounded-full border border-ink"
@@ -419,14 +412,93 @@ onMounted(load)
               {{ isRunning(c) ? t('setup.serving') : t('setup.notServing') }}
             </span>
             <span class="text-ink/60">{{ t('setup.port') }} {{ appPort(c) }}</span>
-            <a class="nb-btn px-3 py-1" :href="appUrl(c)">{{ t('setup.open') }}</a>
+            <a class="nb-btn px-2.5 py-0.5" :href="appUrl(c)">{{ t('setup.open') }}</a>
             <button
-              class="nb-btn px-3 py-1"
+              class="nb-btn px-2.5 py-0.5"
               :disabled="!writesEnabled || busyId !== null"
               @click="doRestart(c)"
             >
               {{ busyId === c.id ? t('setup.working') : t('setup.restart') }}
             </button>
+          </div>
+
+          <!-- actions footer, pinned to the bottom so cards in a row line up -->
+          <div class="mt-auto flex flex-wrap items-center gap-1.5 pt-1">
+            <template v-if="isInstalled(c)">
+              <button
+                v-if="updateAvailable(c)"
+                class="nb-btn px-3 py-1"
+                :disabled="!writesEnabled || busyId !== null"
+                @click="doUpdate(c)"
+              >
+                {{ busyId === c.id ? t('setup.working') : t('setup.update') }}
+              </button>
+              <span v-else class="nb-badge bg-brand-green/15 text-[10px] text-ink/60">
+                {{ t('setup.upToDate') }}
+              </span>
+              <button
+                v-if="hasService(c)"
+                class="nb-btn px-3 py-1"
+                :disabled="!writesEnabled || busyId !== null"
+                :title="c.service_install_hint"
+                @click="doInstall(c, 'service')"
+              >
+                {{ t('setup.installNamed', { x: c.service_install }) }}
+              </button>
+              <button
+                class="nb-btn px-3 py-1"
+                :class="{ 'bg-brand-red text-paper': confirmRemoveId === c.id }"
+                :disabled="!writesEnabled || busyId !== null"
+                @click="onRemove(c)"
+              >
+                {{ confirmRemoveId === c.id ? t('setup.removeConfirm') : t('setup.remove') }}
+              </button>
+            </template>
+            <template v-else>
+              <span
+                v-if="isFirstPartyWeb(c) && c.id in ports"
+                class="flex items-center gap-1 text-xs"
+              >
+                <label :for="`install-port-${c.id}`" class="text-ink/60">{{
+                  t('setup.port')
+                }}</label>
+                <input
+                  :id="`install-port-${c.id}`"
+                  v-model.number="ports[c.id]"
+                  type="number"
+                  min="1"
+                  max="65535"
+                  class="nb-input w-20 px-2 py-1"
+                />
+              </span>
+              <button
+                v-if="canInstall(c)"
+                class="nb-btn px-3 py-1"
+                :disabled="!writesEnabled || busyId !== null"
+                @click="doInstall(c)"
+              >
+                {{ busyId === c.id ? t('setup.working') : t('setup.install') }}
+              </button>
+              <a
+                v-else
+                class="nb-btn px-3 py-1"
+                :href="repoUrl(c)"
+                target="_blank"
+                rel="noopener noreferrer"
+                :title="t('setup.onHostHint')"
+              >
+                {{ t('setup.onHost') }}
+              </a>
+              <button
+                v-if="hasService(c)"
+                class="nb-btn px-3 py-1"
+                :disabled="!writesEnabled || busyId !== null"
+                :title="c.service_install_hint"
+                @click="doInstall(c, 'service')"
+              >
+                {{ t('setup.installNamed', { x: c.service_install }) }}
+              </button>
+            </template>
           </div>
 
           <div
@@ -451,30 +523,16 @@ onMounted(load)
             </button>
           </div>
 
-          <!-- Managed-service install (3d agent / screen native kiosk): a printer-side, root-gated
-               step the GUI can't run, surfaced as a copyable one-liner. -->
-          <div v-if="c.service_install" class="nb-card flex flex-col gap-1 bg-surface p-2 text-xs">
-            <p class="text-ink/70">{{ c.service_install_hint }}</p>
-            <div class="flex items-center gap-2">
-              <code class="min-w-0 flex-1 overflow-x-auto font-mono text-[11px] text-ink/80">{{
-                serviceCmd(c)
-              }}</code>
-              <button class="nb-btn shrink-0 px-3 py-1" @click="copyCmd(c)">
-                {{ copiedId === c.id ? t('setup.suite.copied') : t('setup.suite.copy') }}
-              </button>
-            </div>
-          </div>
-
           <!-- Live install progress: the streaming log while this card is installing. -->
           <pre
             v-if="busyId === c.id && installLog"
-            class="nb-card max-h-48 overflow-auto bg-surface p-2 text-xs whitespace-pre-wrap"
+            class="nb-card max-h-40 overflow-auto bg-surface p-2 text-[11px] whitespace-pre-wrap"
             aria-live="polite"
             >{{ installLog }}</pre
           >
           <pre
             v-else-if="lastResult && lastResult.id === c.id"
-            class="nb-card max-h-48 overflow-auto p-2 text-xs whitespace-pre-wrap"
+            class="nb-card max-h-40 overflow-auto p-2 text-[11px] whitespace-pre-wrap"
             :class="lastResult.ok ? 'bg-surface' : 'bg-brand-red/20'"
             :role="lastResult.ok ? undefined : 'alert'"
             >{{ lastResult.text }}</pre

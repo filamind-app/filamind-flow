@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "Installez et gérez les composants de l'écosystème Klipper pour cette imprimante.",
-    "refresh": "Actualiser",
+    "checkUpdates": "Rechercher des mises à jour",
+    "updateAll": "Tout mettre à jour ({n})",
     "search": "Rechercher des composants",
     "summary": "{installed} sur {total} installés",
     "needs": "Nécessite",
@@ -9,25 +10,36 @@
     "port": "Port",
     "portApply": "Appliquer",
     "noMatch": "Aucun composant ne correspond à votre recherche.",
-    "suite": {
-      "title": "Installer toute la suite FilaMind",
-      "intro": "Exécutez ceci une seule fois sur l'imprimante pour configurer la suite FilaMind, ou pour adopter une installation existante.",
-      "copy": "Copier",
-      "copied": "Copié"
-    },
     "installed": "Installés",
     "available": "Disponibles",
     "install": "Installer",
-    "cliOnly": "CLI uniquement",
-    "cliOnlyHint": "Installez ce composant avec l'outil en ligne de commande filamind-setup.",
+    "installNamed": "Installer {x}",
+    "onHost": "Sur l'hôte",
+    "onHostHint": "Ce composant s'installe sur l'hôte de l'imprimante ; ouvrez sa Source pour connaître les étapes.",
     "update": "Mettre à jour",
     "remove": "Supprimer",
     "removeConfirm": "Confirmer la suppression ?",
     "firstParty": "FilaMind",
-    "writesDisabled": "L'installation, la mise à jour et la suppression sont désactivées sur cet hôte. Utilisez l'outil en ligne de commande filamind-setup, ou activez-les sur l'hôte.",
     "writesOff": "L'installation depuis cet écran est désactivée. Activez-la pour installer, mettre à jour et supprimer des composants directement.",
     "enableWrites": "Activer l'installation",
     "working": "En cours…",
+    "upToDate": "À jour",
+    "versionInstalled": "Version installée",
+    "versionLatest": "Dernière version",
+    "open": "Ouvrir",
+    "restart": "Redémarrer",
+    "serving": "Actif",
+    "notServing": "Arrêté",
+    "autoUpdate": {
+      "title": "Mises à jour automatiques",
+      "every": "Vérifier toutes les",
+      "opt6": "6 heures",
+      "opt12": "12 heures",
+      "opt24": "24 heures",
+      "opt48": "2 jours",
+      "opt168": "7 jours",
+      "hint": "Les mises à jour ne sont appliquées que lorsque l'imprimante est inactive, jamais en cours d'impression."
+    },
     "help": {
       "button": "Aide",
       "title": "Configuration — guide",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "Gérer les composants",
-          "body": "Parcourez le catalogue par groupe ; chaque composant indique s'il est installé. L'installation, la mise à jour et la suppression s'exécutent sur l'hôte de l'imprimante et restent désactivées ici tant que vous ne les activez pas — l'outil en ligne de commande filamind-setup peut toujours le faire."
+          "body": "Parcourez le catalogue par section ; chaque composant indique s'il est installé et sa version. L'installation, la mise à jour et la suppression s'exécutent sur l'hôte de l'imprimante et restent désactivées ici tant que vous ne les activez pas. Activez les mises à jour automatiques pour tout garder à jour lorsque l'imprimante est inactive."
         }
       }
-    },
-    "upToDate": "À jour",
-    "versionInstalled": "Version installée",
-    "versionLatest": "Dernière version",
-    "open": "Ouvrir",
-    "restart": "Redémarrer",
-    "serving": "Actif",
-    "notServing": "Arrêté"
+    }
   }
 }

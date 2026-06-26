@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "Instala y gestiona componentes del ecosistema Klipper para esta impresora.",
-    "refresh": "Actualizar",
+    "checkUpdates": "Buscar actualizaciones",
+    "updateAll": "Actualizar todo ({n})",
     "search": "Buscar componentes",
     "summary": "{installed} de {total} instalados",
     "needs": "Necesita",
@@ -9,25 +10,36 @@
     "port": "Puerto",
     "portApply": "Aplicar",
     "noMatch": "Ningún componente coincide con tu búsqueda.",
-    "suite": {
-      "title": "Instalar todo el conjunto de FilaMind",
-      "intro": "Ejecuta esto una vez en la impresora para configurar el conjunto de FilaMind o para adoptar una instalación existente.",
-      "copy": "Copiar",
-      "copied": "Copiado"
-    },
     "installed": "Instalados",
     "available": "Disponibles",
     "install": "Instalar",
-    "cliOnly": "Solo CLI",
-    "cliOnlyHint": "Instala este componente con la CLI filamind-setup.",
+    "installNamed": "Instalar {x}",
+    "onHost": "En el host",
+    "onHostHint": "Este componente se instala en el host de la impresora; abre su Origen para ver los pasos.",
     "update": "Actualizar",
     "remove": "Eliminar",
     "removeConfirm": "¿Confirmar eliminación?",
     "firstParty": "FilaMind",
-    "writesDisabled": "Instalar, actualizar y eliminar están deshabilitados en este host. Usa la CLI filamind-setup o habilítalos en el host.",
     "writesOff": "La instalación desde aquí está desactivada. Actívala para instalar, actualizar y eliminar componentes directamente.",
     "enableWrites": "Activar la instalación",
     "working": "Procesando…",
+    "upToDate": "Actualizado",
+    "versionInstalled": "Versión instalada",
+    "versionLatest": "Última versión",
+    "open": "Abrir",
+    "restart": "Reiniciar",
+    "serving": "Activo",
+    "notServing": "Detenido",
+    "autoUpdate": {
+      "title": "Actualizaciones automáticas",
+      "every": "Comprobar cada",
+      "opt6": "6 horas",
+      "opt12": "12 horas",
+      "opt24": "24 horas",
+      "opt48": "2 días",
+      "opt168": "7 días",
+      "hint": "Las actualizaciones se aplican solo mientras la impresora está inactiva, nunca durante una impresión."
+    },
     "help": {
       "button": "Ayuda",
       "title": "Configuración — guía",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "Gestión de componentes",
-          "body": "Explora el catálogo por grupo; cada componente muestra si está instalado. Instalar, actualizar y eliminar se ejecutan en el host de la impresora y permanecen desactivados aquí hasta que los habilites — la CLI de filamind-setup siempre puede hacerlo."
+          "body": "Explora el catálogo por sección; cada tarjeta muestra si está instalado y su versión. Instalar, actualizar y eliminar se ejecutan en el host de la impresora y permanecen desactivados aquí hasta que los habilites. Activa las Actualizaciones automáticas para mantener todo al día mientras la impresora está inactiva."
         }
       }
-    },
-    "upToDate": "Actualizado",
-    "versionInstalled": "Versión instalada",
-    "versionLatest": "Última versión",
-    "open": "Abrir",
-    "restart": "Reiniciar",
-    "serving": "Activo",
-    "notServing": "Detenido"
+    }
   }
 }

@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "為這台印表機安裝及管理 Klipper 生態系元件。",
-    "refresh": "重新整理",
+    "checkUpdates": "檢查更新",
+    "updateAll": "全部更新（{n}）",
     "search": "搜尋元件",
     "summary": "已安裝 {installed} / {total}",
     "needs": "需要",
@@ -9,25 +10,36 @@
     "port": "連接埠",
     "portApply": "套用",
     "noMatch": "沒有符合搜尋條件的元件。",
-    "suite": {
-      "title": "安裝完整的 FilaMind 套件",
-      "intro": "在印表機上執行一次即可設定 FilaMind 套件，或沿用既有的設定。",
-      "copy": "複製",
-      "copied": "已複製"
-    },
     "installed": "已安裝",
     "available": "可安裝",
     "install": "安裝",
-    "cliOnly": "僅限命令列",
-    "cliOnlyHint": "請使用 filamind-setup CLI 安裝此元件。",
+    "installNamed": "安裝 {x}",
+    "onHost": "於主機",
+    "onHostHint": "此元件安裝於印表機主機；請開啟其原始碼查看安裝步驟。",
     "update": "更新",
     "remove": "移除",
     "removeConfirm": "確認移除？",
     "firstParty": "FilaMind",
-    "writesDisabled": "此主機已停用安裝、更新與移除功能。請使用 filamind-setup CLI，或在主機上啟用這些功能。",
     "writesOff": "已關閉從這裡安裝的功能。啟用後即可直接安裝、更新與移除元件。",
     "enableWrites": "啟用安裝",
     "working": "處理中…",
+    "upToDate": "已是最新",
+    "versionInstalled": "已安裝版本",
+    "versionLatest": "最新版本",
+    "open": "開啟",
+    "restart": "重新啟動",
+    "serving": "執行中",
+    "notServing": "已停止",
+    "autoUpdate": {
+      "title": "自動更新",
+      "every": "檢查間隔",
+      "opt6": "6 小時",
+      "opt12": "12 小時",
+      "opt24": "24 小時",
+      "opt48": "2 天",
+      "opt168": "7 天",
+      "hint": "更新只會在印表機閒置時套用，絕不會在列印過程中進行。"
+    },
     "help": {
       "button": "說明",
       "title": "設定 — 指南",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "管理元件",
-          "body": "依群組瀏覽目錄；每個元件都會顯示是否已安裝。安裝、更新與移除會在印表機主機上執行，在此處啟用之前會維持停用 — filamind-setup CLI 隨時都能完成這些操作。"
+          "body": "依群組瀏覽目錄；每個元件都會顯示是否已安裝及其版本。安裝、更新與移除會在印表機主機上執行，在你啟用之前會維持停用。開啟自動更新，即可在印表機閒置時讓所有元件保持最新。"
         }
       }
-    },
-    "upToDate": "已是最新",
-    "versionInstalled": "已安裝版本",
-    "versionLatest": "最新版本",
-    "open": "開啟",
-    "restart": "重新啟動",
-    "serving": "執行中",
-    "notServing": "已停止"
+    }
   }
 }

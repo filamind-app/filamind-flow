@@ -45,13 +45,33 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     logger.exception("rules engine tick failed")
                 await asyncio.sleep(settings.rules_tick_seconds)
 
-        task = asyncio.create_task(_rules_loop()) if settings.rules_tick_seconds > 0 else None
+        async def _autoupdate_loop() -> None:
+            """Periodic opt-in auto-update; a no-op until the operator enables it in the Setup
+            widget. The tick itself enforces the chosen interval and only updates while idle."""
+            import time as _time
+
+            from app.services import setup_manager
+
+            while True:
+                await asyncio.sleep(900)  # check often; the tick gates on interval + printer-idle
+                try:
+                    summary = await setup_manager.auto_update_tick(
+                        settings.moonraker_url, _time.time()
+                    )
+                    if summary.get("ran") and summary.get("ok"):
+                        logger.info("auto-update applied: %s", summary["ok"])
+                except Exception:  # never let the loop die on a transient error
+                    logger.exception("auto-update tick failed")
+
+        tasks = [asyncio.create_task(_autoupdate_loop())]
+        if settings.rules_tick_seconds > 0:
+            tasks.append(asyncio.create_task(_rules_loop()))
         try:
             yield
         finally:
-            # Shutdown: stop the rules loop + close the pooled connection to Moonraker.
-            if task is not None:
-                task.cancel()
+            # Shutdown: stop the background loops + close the pooled connection to Moonraker.
+            for t in tasks:
+                t.cancel()
             from app.services.moonraker_client import close_shared_client
 
             await close_shared_client()
