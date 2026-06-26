@@ -26,7 +26,7 @@ const items = computed(() => [
   />
 
   <aside
-    class="w-60 shrink-0 flex-col gap-6 border-e-3 border-ink bg-sidebar p-4 md:sticky md:top-0 md:h-screen md:self-start md:z-auto md:flex"
+    class="w-60 shrink-0 flex-col gap-6 border-e-3 border-ink bg-sidebar p-4 md:static md:z-auto md:flex"
     :class="sidebarOpen ? 'fixed inset-y-0 inset-s-0 z-40 flex' : 'hidden'"
     :role="sidebarOpen ? 'dialog' : undefined"
     :aria-modal="sidebarOpen ? 'true' : undefined"
@@ -37,10 +37,7 @@ const items = computed(() => [
       <p class="font-mono text-xs tracking-tight">{{ t('shell.brand.tagline') }}</p>
     </div>
 
-    <nav
-      class="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto"
-      :aria-label="t('shell.nav.label')"
-    >
+    <nav class="flex flex-col gap-2" :aria-label="t('shell.nav.label')">
       <button
         v-for="item in items"
         :key="item.id"
