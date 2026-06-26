@@ -12,12 +12,6 @@
       "complete": "Complete",
       "cancelled": "Cancelled",
       "error": "Error"
-    },
-    "nav": {
-      "move": "Move",
-      "files": "Files",
-      "console": "Console",
-      "print": "Print"
     }
   }
 }
