@@ -15,7 +15,11 @@
 #        sudo bash scripts/install.sh kiosk biqu http://localhost:8088 filamind-screen-kiosk)
 #   sudo bash scripts/install.sh kiosk --uninstall [unit]    remove a kiosk, restore KlipperScreen
 #        bash scripts/install.sh update                 refresh the backend venv (Moonraker's hook)
+#        bash scripts/install.sh suite                  also install the 3D agent + screen native app
 #        bash scripts/install.sh uninstall              remove FilaMind from the host (keeps app files)
+#
+# Install everything in one go (flow + the 3D agent + the screen native app):
+#   FILAMIND_WITH_SUITE=1 curl -fsSL https://raw.githubusercontent.com/filamind-app/filamind-flow/main/scripts/install.sh | bash
 set -euo pipefail
 
 REPO="${FILAMIND_REPO:-https://github.com/filamind-app/filamind-flow.git}"
@@ -535,6 +539,13 @@ EOF
   sudo bash "$APP/scripts/install.sh" sudoers "$USER" || \
     info "Could not grant sudo automatically — run it yourself: sudo bash $APP/scripts/install.sh sudoers"
 
+  # Opt-in: also install the rest of the FilaMind suite (the 3D agent + the screen native app) so
+  # the suite-gated widgets unlock and the touchscreen can run the native app. OFF by default — it
+  # clones two more repos and the screen app can take over the display, so it's an explicit choice.
+  # Turn it on for a fresh install:  FILAMIND_WITH_SUITE=1 curl -fsSL .../install.sh | bash
+  # Or add it to an existing install any time:  bash scripts/install.sh suite
+  [ "${FILAMIND_WITH_SUITE:-0}" = "1" ] && do_suite || true
+
   info "Done."
   if [ "$SUBPATH_OK" = 1 ]; then
     echo "  Open:    <your printer URL>/filamind/   (same host as Mainsail; also in the sidebar)"
@@ -542,6 +553,44 @@ EOF
     echo "  Open:    http://${NAVI_HOST:-$(hostname -I 2>/dev/null | awk '{print $1}')}:$UI_PORT   (also in the Mainsail sidebar)"
   fi
   echo "  Service: sudo systemctl status $SERVICE"
+}
+
+# ── suite: also install the other FilaMind suite services next to flow (best effort) ────────────
+# Clones filamind-3d + filamind-screen beside this repo and runs each one's OWN installer:
+#   filamind-3d     -> deploy/install-agent.sh   (the web-control backend as a managed service)
+#   filamind-screen -> deploy/install-native.sh  (the native touch app .deb + the kiosk unit)
+# Each step is isolated and NON-FATAL: a failure is reported and skipped, never aborting the rest,
+# so this can extend a flow install with the suite but can never break it.
+do_suite() {
+  [ "$(id -u)" -eq 0 ] && { echo "Run as your printer user, not root." >&2; exit 1; }
+  local org base d
+  org="${FILAMIND_ORG:-https://github.com/filamind-app}"
+  base="$(dirname "$APP")"
+  info "Installing FilaMind suite services beside flow (best effort)"
+
+  if (
+    set -e
+    d="$base/filamind-3d"
+    if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only; else git clone --depth 1 "$org/filamind-3d.git" "$d"; fi
+    bash "$d/deploy/install-agent.sh"
+  ); then
+    info "  filamind-3d agent: installed"
+  else
+    info "  filamind-3d agent: SKIPPED (it failed above) — retry with: bash $APP/scripts/install.sh suite"
+  fi
+
+  if (
+    set -e
+    d="$base/filamind-screen"
+    if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only; else git clone --depth 1 "$org/filamind-screen.git" "$d"; fi
+    bash "$d/deploy/install-native.sh"
+  ); then
+    info "  filamind-screen native: installed"
+  else
+    info "  filamind-screen native: SKIPPED (it failed above)"
+  fi
+
+  info "Suite step done — the flow Setup widget + Moonraker managed_services show what's installed."
 }
 
 # ── uninstall: reverse the full install (run as your printer user; uses sudo for /etc) ──────────
@@ -612,10 +661,11 @@ case "$CMD" in
   native) shift; exec bash "$(cd "$(dirname "$0")/.." && pwd)/deploy/install-native.sh" "$@" ;;
   update) do_update ;;
   install) do_install ;;
+  suite) shift; do_suite ;;
   uninstall) do_uninstall ;;
   *)
     echo "Unknown command: $CMD" >&2
-    echo "Usage: install.sh [install|uninstall|sudoers [user]|kiosk [user] [url]|kiosk --uninstall|native [--uninstall]|update]" >&2
+    echo "Usage: install.sh [install|suite|uninstall|sudoers [user]|kiosk [user] [url]|kiosk --uninstall|native [--uninstall]|update]" >&2
     exit 2
     ;;
 esac
