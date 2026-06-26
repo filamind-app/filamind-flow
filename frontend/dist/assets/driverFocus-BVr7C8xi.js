@@ -1,0 +1,1 @@
+import{V as e}from"./vendor-DGdFXW8F.js";var t=e(null);function n(e){t.value=e}export{t as n,n as t};
