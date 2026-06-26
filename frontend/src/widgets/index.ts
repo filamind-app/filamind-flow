@@ -1,24 +1,30 @@
-import { defineAsyncComponent, defineComponent, h } from 'vue'
+import { defineAsyncComponent, defineComponent, h, type Component } from 'vue'
 
 import { registerWidget } from '@/core/registry'
 import type { WidgetDefinition } from '@/core/registry/types'
 import { isWidgetEnabled, isWidgetGated } from '@/core/host/adapter'
+import { suiteUnlocked } from '@/core/host/suite'
 
-/** A stand-in component (bound to the widget id) shown when a widget needs the FilaMind 3D host. */
-function gateComponent(id: string) {
-  return defineAsyncComponent(async () => {
-    const SuiteGate = (await import('@/components/SuiteGate.vue')).default
-    return defineComponent({
-      name: `suite-gate-${id}`,
-      setup: () => () => h(SuiteGate, { widgetId: id }),
-    })
+/**
+ * Wrap a suite-gated widget so it renders its REAL UI once the suite is unlocked (FilaMind 3D
+ * detected installed, or the suite build) and the install-required gate otherwise. The choice is
+ * reactive (`suiteUnlocked`), so installing FilaMind 3D flips the widget on with no rebuild — the
+ * widget's data is served by the flow backend, so it works the moment it's unlocked.
+ */
+function gatedComponent(id: string, real: Component): Component {
+  const SuiteGate = defineAsyncComponent(() => import('@/components/SuiteGate.vue'))
+  return defineComponent({
+    name: `suite-gated-${id}`,
+    setup: () => () => (suiteUnlocked.value ? h(real) : h(SuiteGate, { widgetId: id })),
   })
 }
 
-/** Register a widget for the current host; gated widgets register with the install-required panel. */
+/** Register a widget for the current host; gated widgets register with the reactive gate wrapper. */
 function reg(def: WidgetDefinition): void {
   if (!isWidgetEnabled(def.id)) return
-  registerWidget(isWidgetGated(def.id) ? { ...def, component: gateComponent(def.id) } : def)
+  registerWidget(
+    isWidgetGated(def.id) ? { ...def, component: gatedComponent(def.id, def.component) } : def,
+  )
 }
 
 /**

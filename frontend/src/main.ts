@@ -16,6 +16,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './assets/styles/main.css'
 import { i18n, initLocale } from './core/i18n'
+import { detectSuiteHost } from './core/host/suite'
 import { initTheme } from './core/theme'
 import { registerWidgets } from './widgets'
 
@@ -29,6 +30,10 @@ initTheme()
 
 // Feature widgets self-register here. The scaffold ships with none.
 registerWidgets()
+
+// Probe whether FilaMind 3D is installed so the suite-gated widgets unlock at runtime (no rebuild).
+// Fire-and-forget: the gate is reactive and defaults to locked until this resolves.
+void detectSuiteHost()
 
 // Resolve the user's locale (stored → browser → en) and set <html lang/dir> before first paint,
 // so an RTL user never flashes LTR English. en needs no fetch (it's bundled), so this is instant
