@@ -15,10 +15,10 @@ describe('Setup widget renders through i18n (no leaked keys)', () => {
     const w = mount(SetupWidget, plugins())
     const text = w.text()
     // The regression this guards: en/setup.json must be merged into the eager `en` bundle, or
-    // every label would render as its raw key path (setup.intro, setup.refresh, …).
+    // every label would render as its raw key path (setup.intro, setup.checkUpdates, …).
     const leaked = text.match(/setup\.[a-zA-Z]/)
     expect(leaked, leaked ? `leaked key: ${leaked[0]}` : '').toBeNull()
     expect(text).toContain('Install and manage') // setup.intro
-    expect(text).toContain('Refresh') // setup.refresh
+    expect(text).toContain('Check for updates') // setup.checkUpdates
   })
 })

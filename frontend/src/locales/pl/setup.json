@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "Instaluj komponenty ekosystemu Klipper dla tej drukarki i zarządzaj nimi.",
-    "refresh": "Odśwież",
+    "checkUpdates": "Sprawdź aktualizacje",
+    "updateAll": "Aktualizuj wszystkie ({n})",
     "search": "Szukaj komponentów",
     "summary": "Zainstalowano {installed} z {total}",
     "needs": "Wymaga",
@@ -9,25 +10,36 @@
     "port": "Port",
     "portApply": "Zastosuj",
     "noMatch": "Żaden komponent nie pasuje do wyszukiwania.",
-    "suite": {
-      "title": "Zainstaluj cały pakiet FilaMind",
-      "intro": "Uruchom to raz na drukarce, aby skonfigurować pakiet FilaMind lub przejąć istniejącą konfigurację.",
-      "copy": "Kopiuj",
-      "copied": "Skopiowano"
-    },
     "installed": "Zainstalowane",
     "available": "Dostępne",
     "install": "Zainstaluj",
-    "cliOnly": "Tylko CLI",
-    "cliOnlyHint": "Zainstaluj ten komponent za pomocą narzędzia wiersza poleceń filamind-setup.",
+    "installNamed": "Zainstaluj {x}",
+    "onHost": "Na hoście",
+    "onHostHint": "Ten komponent instaluje się na hoście drukarki; otwórz jego Źródło, aby poznać kroki.",
     "update": "Aktualizuj",
     "remove": "Usuń",
     "removeConfirm": "Potwierdzić usunięcie?",
     "firstParty": "FilaMind",
-    "writesDisabled": "Instalowanie, aktualizowanie i usuwanie są wyłączone na tym hoście. Użyj narzędzia filamind-setup CLI lub włącz je na hoście.",
     "writesOff": "Instalowanie z tego miejsca jest wyłączone. Włącz je, aby instalować, aktualizować i usuwać komponenty bezpośrednio.",
     "enableWrites": "Włącz instalowanie",
     "working": "Pracuję…",
+    "upToDate": "Aktualne",
+    "versionInstalled": "Zainstalowana wersja",
+    "versionLatest": "Najnowsza wersja",
+    "open": "Otwórz",
+    "restart": "Uruchom ponownie",
+    "serving": "Działa",
+    "notServing": "Zatrzymany",
+    "autoUpdate": {
+      "title": "Aktualizacje automatyczne",
+      "every": "Sprawdzaj co",
+      "opt6": "6 godzin",
+      "opt12": "12 godzin",
+      "opt24": "24 godziny",
+      "opt48": "2 dni",
+      "opt168": "7 dni",
+      "hint": "Aktualizacje są stosowane tylko wtedy, gdy drukarka jest bezczynna, nigdy w trakcie druku."
+    },
     "help": {
       "button": "Pomoc",
       "title": "Konfiguracja — przewodnik",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "Zarządzanie komponentami",
-          "body": "Przeglądaj katalog według grup; każdy komponent pokazuje, czy jest zainstalowany. Instalowanie, aktualizowanie i usuwanie działają na hoście drukarki i pozostają tu wyłączone, dopóki ich nie włączysz — interfejs wiersza poleceń filamind-setup zawsze może to zrobić."
+          "body": "Przeglądaj katalog według grup; każdy komponent pokazuje, czy jest zainstalowany, oraz jego wersję. Instalowanie, aktualizowanie i usuwanie działają na hoście drukarki i pozostają tu wyłączone, dopóki ich nie włączysz. Włącz aktualizacje automatyczne, aby wszystko było na bieżąco, gdy drukarka jest bezczynna."
         }
       }
-    },
-    "upToDate": "Aktualne",
-    "versionInstalled": "Zainstalowana wersja",
-    "versionLatest": "Najnowsza wersja",
-    "open": "Otwórz",
-    "restart": "Uruchom ponownie",
-    "serving": "Działa",
-    "notServing": "Zatrzymany"
+    }
   }
 }

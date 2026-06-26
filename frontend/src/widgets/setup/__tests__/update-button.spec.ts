@@ -63,14 +63,16 @@ vi.mock('../api', () => ({
         },
       },
       writesEnabled: true,
-      suiteCommand: 'curl -fsSL example | bash',
+      autoUpdate: { enabled: false, intervalHours: 24 },
     }),
   installComponent: vi.fn(),
   installComponentStream: vi.fn(),
   updateComponent: vi.fn(),
   removeComponent: vi.fn(),
+  restartComponent: vi.fn(),
   setPort: vi.fn(),
   setWrites: vi.fn(),
+  setAutoUpdate: vi.fn(),
 }))
 
 import SetupWidget from '../SetupWidget.vue'

@@ -94,6 +94,10 @@ class Component:
     #: Subcommand handed to a first-party app's ``scripts/install.sh`` so the GUI install stands up
     #: the right deployment (FilaMind screen → ``native`` for the kiosk, not the browser preview).
     install_args: str = ""
+    #: An ADDITIONAL first-party deployment a button can install on top of the default one (the
+    #: FilaMind 3d ``agent``: the :8030 service that unlocks the suite widgets). Distinct from
+    #: ``install_args``: when they're equal the "service" IS the main install (FilaMind screen).
+    service_install: str = ""
 
 
 def load_catalog() -> dict[str, Component]:
@@ -115,6 +119,7 @@ def load_catalog() -> dict[str, Component]:
                 service=str(c.get("service", "")),
                 dir=str(c.get("dir", "")),
                 install_args=str(c.get("install_args", "")),
+                service_install=str(c.get("service_install", "")),
             )
     return out
 
@@ -152,10 +157,11 @@ def _raw_installer(component: Component) -> str:
     return f"https://raw.githubusercontent.com/{component.repo}/main/scripts/install.sh"
 
 
-def suite_install_command() -> str:
-    """The single command that installs the whole FilaMind suite (shown in the Setup widget)."""
-    url = "https://raw.githubusercontent.com/filamind-app/filamind-setup/main/install.sh"
-    return f"curl -fsSL {url} | bash"
+def _bash_installer(component: Component, args: str = "") -> str:
+    """``curl … scripts/install.sh | bash`` for a first-party app, optionally with ``-s -- <args>``
+    to pick a deployment (3d → ``agent``, screen → ``native``, a web app → ``install --port N``)."""
+    cmd = f"curl -fsSL {_raw_installer(component)} | bash"
+    return f"{cmd} -s -- {args}" if args else cmd
 
 
 def _augment_root_failure(result: dict[str, Any], component: Component) -> dict[str, Any]:
@@ -498,11 +504,119 @@ def set_writes_enabled(enabled: bool) -> bool:
     return bool(enabled)
 
 
+# ---- automatic updates (opt-in, periodic) ----------------------------------------------------
+# A background loop (app.main) calls auto_update_tick on a cadence. Updates are applied ONLY when
+# the operator opted in AND the printer is idle, so a long print is never interrupted. Default off.
+_AUTOUPDATE_DEFAULT_INTERVAL_H = 24
+
+
+def _autoupdate_path() -> Path:
+    return Path(get_settings().data_dir).expanduser() / "setup-autoupdate.json"
+
+
+def _autoupdate_state() -> dict[str, Any]:
+    try:
+        raw = json.loads(_autoupdate_path().read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        raw = {}
+    return {
+        "enabled": bool(raw.get("enabled", False)),
+        "intervalHours": max(1, int(raw.get("intervalHours") or _AUTOUPDATE_DEFAULT_INTERVAL_H)),
+        "lastRun": float(raw.get("lastRun") or 0.0),
+    }
+
+
+def _write_autoupdate_state(state: dict[str, Any]) -> None:
+    path = _autoupdate_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(state), encoding="utf-8")
+    tmp.replace(path)
+
+
+def autoupdate_prefs() -> dict[str, Any]:
+    """Operator-facing auto-update preferences (enabled + interval); ``lastRun`` stays internal."""
+    s = _autoupdate_state()
+    return {"enabled": s["enabled"], "intervalHours": s["intervalHours"]}
+
+
+def set_autoupdate_prefs(enabled: bool, interval_hours: int) -> dict[str, Any]:
+    """Persist the auto-update toggle + interval from the widget."""
+    s = _autoupdate_state()
+    s["enabled"] = bool(enabled)
+    s["intervalHours"] = max(1, int(interval_hours or _AUTOUPDATE_DEFAULT_INTERVAL_H))
+    _write_autoupdate_state(s)
+    return {"enabled": s["enabled"], "intervalHours": s["intervalHours"]}
+
+
+async def _printer_busy(moonraker_url: str) -> bool:
+    """True if a print is running/paused (so auto-update holds off). Unknown → True (play safe)."""
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            r = await client.get(
+                f"{moonraker_url}/printer/objects/query", params={"print_stats": "state"}
+            )
+            stats = (r.json().get("result", {}).get("status", {}).get("print_stats", {})) or {}
+            return str(stats.get("state", "")).lower() in {"printing", "paused"}
+    except (httpx.HTTPError, ValueError, KeyError, TypeError):
+        return True  # can't tell → never risk updating during a possible print
+
+
+async def auto_update_tick(moonraker_url: str, now: float) -> dict[str, Any]:
+    """One auto-update cycle, called periodically by the app's background loop. A no-op unless the
+    operator opted in, writes are enabled, the interval has elapsed, and the printer is idle. Then
+    it applies every available update (FilaMind apps + Moonraker-managed components) and records the
+    run time. Returns a small summary for logging; never raises."""
+    state = _autoupdate_state()
+    if not state["enabled"] or not writes_enabled():
+        return {"ran": False, "reason": "disabled"}
+    if now - state["lastRun"] < state["intervalHours"] * 3600:
+        return {"ran": False, "reason": "not-due"}
+    if await _printer_busy(moonraker_url):
+        return {"ran": False, "reason": "printer-busy"}
+
+    from app.services.moonraker_client import MoonrakerClient
+
+    client = MoonrakerClient(moonraker_url)
+    try:
+        raw = await client.update_status_full()
+        vi = raw.get("version_info")
+        version_info = vi if isinstance(vi, dict) else {}
+        remaining = raw.get("github_requests_remaining")
+        services = {s.lower() for s in await client.available_services()}
+        github_remaining = remaining if isinstance(remaining, int) else None
+    except (httpx.HTTPError, ValueError):
+        version_info, services, github_remaining = {}, set(), None
+
+    detailed = await probe_detailed(version_info, services, github_remaining)
+    targets = [cid for cid, rec in detailed.items() if rec.get("updateAvailable")]
+    # Record the run up front so a mid-list failure doesn't make us retry on every tick.
+    state["lastRun"] = now
+    _write_autoupdate_state(state)
+    if not targets:
+        return {"ran": True, "updated": [], "ok": []}
+
+    managed = {k.lower() for k in version_info}
+
+    async def mr_update(name: str) -> None:
+        await client.update_client(name)
+
+    ok: list[str] = []
+    for cid in targets:
+        try:
+            res = await update(cid, managed, mr_update)
+            if res.get("ok"):
+                ok.append(cid)
+        except Exception:  # one component's failure must not stop the rest
+            continue
+    return {"ran": True, "updated": targets, "ok": ok}
+
+
 def _refused() -> dict[str, Any]:
     return {
         "refused": True,
-        "output": "GUI setup writes are disabled. Enable FILAMIND_SETUP_WRITES on the host "
-        "(or use the filamind-setup CLI) to install/update/remove from here.",
+        "output": "Installing from here is turned off. Use the “Enable installing” button "
+        "above to install, update and remove components directly from this widget.",
     }
 
 
@@ -582,6 +696,7 @@ async def install(
     services: set[str] | None = None,
     task: Any | None = None,
     port: int | None = None,
+    action: str | None = None,
 ) -> dict[str, Any]:
     refusal = await precheck_install(cid, managed, services)
     if refusal:
@@ -598,21 +713,27 @@ async def install(
         # A chosen port (for a first-party web app like FilaMind 3d) lets the operator install it
         # straight onto a free port — e.g. 88 when Mainsail already owns 80 — instead of installing
         # on the default and conflicting, then having to move it afterwards.
-        if component.install_args:
+        if action == "service" and component.service_install:
+            # An additional managed deployment installed by its own button (FilaMind 3d's `agent`,
+            # the :8030 service that unlocks the suite widgets) - a real install, not a copy-paste.
+            cmd = _bash_installer(component, component.service_install)
+        elif component.install_args:
             # The app stands up its real deployment via a subcommand rather than the default install
             # (screen's `native` installs the .deb kiosk + its service, not the browser preview).
-            cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- {component.install_args}"
+            cmd = _bash_installer(component, component.install_args)
         elif port is not None and component.type == "web":
-            cmd = f"curl -fsSL {_raw_installer(component)} | bash -s -- install --port {port}"
+            cmd = _bash_installer(component, f"install --port {port}")
         else:
-            cmd = f"curl -fsSL {_raw_installer(component)} | bash"
+            cmd = _bash_installer(component)
         result = await run(["bash", "-c", cmd])
         return _augment_root_failure(result, component)
     if component.type not in _GIT_TYPES:
+        # Third-party web UIs (Mainsail/Fluidd) and manual add-ons set themselves up on the host;
+        # the widget links to their Source for the steps rather than pretending to one-click them.
         return {
             "refused": True,
-            "output": f"GUI install of '{component.type}' components isn't supported yet; "
-            "use the filamind-setup CLI.",
+            "output": f"{component.name} installs on the printer host; "
+            "open its Source for the steps.",
         }
     dest = _install_dir(component)
     if dest.exists():
@@ -633,12 +754,13 @@ async def install_task(
     managed: set[str] | None = None,
     services: set[str] | None = None,
     port: int | None = None,
+    action: str | None = None,
 ) -> None:
     """Background install: stream into ``task`` and store the final result + status on it. The
     synchronous refusals (writes-off / missing-deps) are already raised by the route's precheck, so
     here we only run the work and record the outcome."""
     try:
-        result = await install(cid, managed, services, task=task, port=port)
+        result = await install(cid, managed, services, task=task, port=port, action=action)
     except Exception as exc:  # never leave the task hung
         task.append(f"!! {exc}\n")
         task.result = {"ok": False, "output": str(exc)}

@@ -203,14 +203,14 @@ async def test_install_refuses_when_a_dependency_is_missing(monkeypatch, tmp_pat
 
 
 async def test_install_of_non_first_party_non_git_type_is_refused(monkeypatch) -> None:
-    # Third-party web / manual components are catalog-only for now; the GUI refuses them up front
-    # (the widget shows a "CLI only" hint). mainsail is type "web" and not first-party.
+    # Third-party web UIs / manual add-ons set themselves up on the host; the GUI refuses to
+    # one-click them and points at their Source instead. mainsail is type "web" and not first-party.
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
     result = await setup_manager.install(
         "mainsail", managed={"klipper", "moonraker"}, services=set()
     )
     assert result.get("refused") is True
-    assert "isn't supported yet" in result["output"]
+    assert "installs on the printer host" in result["output"]
 
 
 async def test_first_party_app_installs_via_its_one_liner(monkeypatch) -> None:
@@ -254,6 +254,45 @@ async def test_first_party_screen_installs_its_native_kiosk(monkeypatch) -> None
     assert "bash -s -- native" in cmd
 
 
+async def test_first_party_3d_installs_its_agent_via_the_service_action(monkeypatch) -> None:
+    # The 3d "agent" (managed :8030 service that unlocks the suite widgets) is now a real GUI
+    # install via action="service" - replacing the old copy-paste one-liner. It runs
+    # `scripts/install.sh agent`.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    captured: list[list[str]] = []
+
+    async def fake_run(cmd: list[str]) -> dict:
+        captured.append(cmd)
+        return {"ok": True, "output": "agent installed"}
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    result = await setup_manager.install(
+        "filamind-3d", managed={"klipper", "moonraker"}, services=set(), action="service"
+    )
+    assert result.get("ok") is True
+    cmd = " ".join(captured[0])
+    assert "filamind-3d/main/scripts/install.sh" in cmd
+    assert "bash -s -- agent" in cmd
+
+
+def test_autoupdate_prefs_default_off_and_persist(monkeypatch, tmp_path) -> None:
+    # Auto-update is opt-in: off by default, and the toggle + interval persist across reads.
+    path = tmp_path / "setup-autoupdate.json"
+    monkeypatch.setattr(setup_manager, "_autoupdate_path", lambda: path)
+    assert setup_manager.autoupdate_prefs() == {"enabled": False, "intervalHours": 24}
+    assert setup_manager.set_autoupdate_prefs(True, 6) == {"enabled": True, "intervalHours": 6}
+    assert setup_manager.autoupdate_prefs() == {"enabled": True, "intervalHours": 6}
+
+
+async def test_autoupdate_tick_is_a_noop_when_disabled(monkeypatch, tmp_path) -> None:
+    # When disabled it returns immediately, before ever touching Moonraker or running an update.
+    path = tmp_path / "setup-autoupdate.json"
+    monkeypatch.setattr(setup_manager, "_autoupdate_path", lambda: path)
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    out = await setup_manager.auto_update_tick("http://127.0.0.1:7125", now=1_000_000.0)
+    assert out == {"ran": False, "reason": "disabled"}
+
+
 async def test_third_party_port_change_edits_nginx_with_a_safe_revert(monkeypatch) -> None:
     # Mainsail/Fluidd (third-party web UIs) are no longer refused: changing the port edits their
     # nginx site in place, validated by `nginx -t` and reverted on any failure. Assert the run
@@ -293,10 +332,15 @@ async def test_first_party_install_sudo_failure_surfaces_the_command(monkeypatch
     assert "filamind-3d/main/scripts/install.sh" in r["output"]
 
 
-def test_status_exposes_the_suite_install_command() -> None:
+def test_status_exposes_autoupdate_prefs_and_is_decoupled_from_the_cli() -> None:
+    # The widget is self-contained: status carries the auto-update prefs and no longer advertises
+    # the external filamind-setup CLI one-liner.
     r = client.get("/api/setup/status")
     assert r.status_code == 200
-    assert "filamind-setup" in r.json()["suiteCommand"]
+    body = r.json()
+    assert "suiteCommand" not in body
+    assert set(body["autoUpdate"]) == {"enabled", "intervalHours"}
+    assert body["autoUpdate"]["enabled"] is False  # opt-in: off by default
 
 
 def test_writes_can_be_enabled_from_the_gui(monkeypatch, tmp_path) -> None:

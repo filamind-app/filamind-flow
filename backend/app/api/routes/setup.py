@@ -27,6 +27,14 @@ class ComponentRef(BaseModel):
     id: str
     #: Optional port for installing a first-party web app (e.g. FilaMind 3d) onto a chosen port.
     port: int | None = None
+    #: Optional install action — ``"service"`` installs a first-party app's additional managed
+    #: deployment (FilaMind 3d → the agent service), instead of its default install.
+    action: str | None = None
+
+
+class AutoUpdateRef(BaseModel):
+    enabled: bool
+    intervalHours: int = 24
 
 
 class RemoveRef(BaseModel):
@@ -84,7 +92,7 @@ async def setup_status(settings: Settings = Depends(get_settings)) -> dict[str, 
     return {
         "status": await setup_manager.probe_detailed(version_info, services, github_remaining),
         "writesEnabled": setup_manager.writes_enabled(),
-        "suiteCommand": setup_manager.suite_install_command(),
+        "autoUpdate": setup_manager.autoupdate_prefs(),
     }
 
 
@@ -100,7 +108,9 @@ async def setup_install(
 ) -> dict[str, Any]:
     managed, services = await _moonraker_signals(settings)
     try:
-        return _apply(await setup_manager.install(req.id, managed, services, port=req.port))
+        return _apply(
+            await setup_manager.install(req.id, managed, services, port=req.port, action=req.action)
+        )
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -121,7 +131,9 @@ async def setup_install_stream(
         _apply(refusal)  # raises 403
     task = task_store.create_task()
     bg = asyncio.create_task(
-        setup_manager.install_task(req.id, task, managed, services, port=req.port)
+        setup_manager.install_task(
+            req.id, task, managed, services, port=req.port, action=req.action
+        )
     )
     _bg.add(bg)
     bg.add_done_callback(_bg.discard)
@@ -170,6 +182,19 @@ async def setup_restart(req: ComponentRef) -> dict[str, Any]:
 async def setup_writes(req: WritesRef) -> dict[str, Any]:
     """Enable/disable installing from the widget itself (no CLI / no env var needed)."""
     return {"writesEnabled": setup_manager.set_writes_enabled(req.enabled)}
+
+
+@router.get("/autoupdate")
+async def setup_autoupdate_get() -> dict[str, Any]:
+    """Current auto-update preferences (enabled + interval in hours)."""
+    return setup_manager.autoupdate_prefs()
+
+
+@router.post("/autoupdate")
+async def setup_autoupdate_set(req: AutoUpdateRef) -> dict[str, Any]:
+    """Persist auto-update preferences. When enabled, a background loop applies available updates on
+    the chosen interval — but only while the printer is idle, never mid-print."""
+    return setup_manager.set_autoupdate_prefs(req.enabled, req.intervalHours)
 
 
 @router.post("/port")

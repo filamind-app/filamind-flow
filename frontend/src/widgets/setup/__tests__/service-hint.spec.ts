@@ -4,8 +4,8 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { i18n } from '@/core/i18n'
 
-// A first-party app that carries a managed-service install subcommand (3d → agent). The widget
-// should surface a copyable printer-side one-liner built from the repo + subcommand.
+// A first-party app with an ADDITIONAL managed deployment (3d → agent). The widget should offer a
+// real "Install agent" button (carrying the hint as its title), NOT a copyable one-liner.
 vi.mock('../api', () => ({
   fetchCatalog: () =>
     Promise.resolve({
@@ -40,27 +40,31 @@ vi.mock('../api', () => ({
         },
       },
       writesEnabled: true,
-      suiteCommand: 'curl -fsSL example | bash',
+      autoUpdate: { enabled: false, intervalHours: 24 },
     }),
   installComponent: vi.fn(),
   installComponentStream: vi.fn(),
   updateComponent: vi.fn(),
   removeComponent: vi.fn(),
+  restartComponent: vi.fn(),
   setPort: vi.fn(),
   setWrites: vi.fn(),
+  setAutoUpdate: vi.fn(),
 }))
 
 import SetupWidget from '../SetupWidget.vue'
 
-describe('Setup widget: managed-service install hint', () => {
-  it('surfaces the agent one-liner + copy button for a first-party app with service_install', async () => {
+describe('Setup widget: managed-service install button', () => {
+  it('offers an "Install agent" button (not a copy one-liner) for a first-party service_install', async () => {
     const w = mount(SetupWidget, { global: { plugins: [i18n, createPinia()] } })
     await flushPromises()
-    const text = w.text()
-    expect(text).toContain('Adds the FilaMind 3d agent (managed service).') // the hint
-    expect(text).toContain('raw.githubusercontent.com/filamind-app/filamind-3d') // built from repo
-    expect(text).toContain('bash -s -- agent') // the subcommand
-    const copy = i18n.global.t('setup.suite.copy') as string
-    expect(w.findAll('button').some((b) => b.text() === copy)).toBe(true)
+
+    const label = i18n.global.t('setup.installNamed', { x: 'agent' }) as string // "Install agent"
+    const btn = w.findAll('button').find((b) => b.text() === label)
+    expect(btn).toBeTruthy()
+    // The hint rides along as the button's title (replaces the old explanatory paragraph).
+    expect(btn!.attributes('title')).toContain('Adds the FilaMind 3d agent')
+    // The old copyable one-liner is gone — it's a real GUI-run install now.
+    expect(w.text()).not.toContain('bash -s -- agent')
   })
 })

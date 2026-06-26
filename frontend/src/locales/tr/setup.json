@@ -1,7 +1,8 @@
 {
   "setup": {
     "intro": "Bu yazıcı için Klipper ekosistemi bileşenlerini kurun ve yönetin.",
-    "refresh": "Yenile",
+    "checkUpdates": "Güncellemeleri denetle",
+    "updateAll": "Tümünü güncelle ({n})",
     "search": "Bileşenlerde ara",
     "summary": "{total} bileşenden {installed} tanesi kurulu",
     "needs": "Gerekli",
@@ -9,25 +10,36 @@
     "port": "Bağlantı noktası",
     "portApply": "Uygula",
     "noMatch": "Aramanızla eşleşen bileşen yok.",
-    "suite": {
-      "title": "FilaMind paketinin tamamını kurun",
-      "intro": "FilaMind paketini kurmak veya mevcut bir kurulumu devralmak için bunu yazıcıda bir kez çalıştırın.",
-      "copy": "Kopyala",
-      "copied": "Kopyalandı"
-    },
     "installed": "Kurulu",
     "available": "Mevcut",
     "install": "Kur",
-    "cliOnly": "Yalnızca CLI",
-    "cliOnlyHint": "Bu bileşeni filamind-setup CLI ile kurun.",
+    "installNamed": "{x} kur",
+    "onHost": "Ana makinede",
+    "onHostHint": "Bu bileşen yazıcı ana makinesine kurulur; adımlar için Kaynak bağlantısını açın.",
     "update": "Güncelle",
     "remove": "Kaldır",
     "removeConfirm": "Kaldırmayı onaylıyor musunuz?",
     "firstParty": "FilaMind",
-    "writesDisabled": "Bu ana makinede kurma, güncelleme ve kaldırma devre dışı. filamind-setup CLI'sini kullanın veya bunları ana makinede etkinleştirin.",
     "writesOff": "Buradan kurulum kapalı. Bileşenleri doğrudan kurmak, güncellemek ve kaldırmak için etkinleştirin.",
     "enableWrites": "Kurulumu etkinleştir",
     "working": "Çalışıyor…",
+    "upToDate": "Güncel",
+    "versionInstalled": "Yüklü sürüm",
+    "versionLatest": "En son sürüm",
+    "open": "Aç",
+    "restart": "Yeniden başlat",
+    "serving": "Çalışıyor",
+    "notServing": "Durdu",
+    "autoUpdate": {
+      "title": "Otomatik güncellemeler",
+      "every": "Denetleme aralığı",
+      "opt6": "6 saat",
+      "opt12": "12 saat",
+      "opt24": "24 saat",
+      "opt48": "2 gün",
+      "opt168": "7 gün",
+      "hint": "Güncellemeler yalnızca yazıcı boştayken uygulanır, asla baskı sırasında uygulanmaz."
+    },
     "help": {
       "button": "Yardım",
       "title": "Kurulum — kılavuz",
@@ -35,16 +47,9 @@
       "topics": {
         "overview": {
           "title": "Bileşenleri yönetme",
-          "body": "Kataloğu gruba göre göz atın; her bileşen kurulu olup olmadığını gösterir. Kurma, güncelleme ve kaldırma işlemleri yazıcı ana makinesinde çalışır ve siz etkinleştirene kadar burada devre dışı kalır — filamind-setup CLI bunu her zaman yapabilir."
+          "body": "Kataloğa gruba göre göz atın; her kart bileşenin kurulu olup olmadığını ve sürümünü gösterir. Kurma, güncelleme ve kaldırma işlemleri yazıcı ana makinesinde çalışır ve siz etkinleştirene kadar burada kapalı kalır. Yazıcı boştayken her şeyi güncel tutmak için Otomatik güncellemeleri açın."
         }
       }
-    },
-    "upToDate": "Güncel",
-    "versionInstalled": "Yüklü sürüm",
-    "versionLatest": "En son sürüm",
-    "open": "Aç",
-    "restart": "Yeniden başlat",
-    "serving": "Çalışıyor",
-    "notServing": "Durdu"
+    }
   }
 }

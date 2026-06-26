@@ -10,11 +10,13 @@ export interface SetupComponent {
   desc?: string
   /** For web UIs: the port the component is served on by default. */
   default_port?: number
-  /** A `scripts/install.sh` subcommand that installs this app's managed systemd service (FilaMind 3d
-   *  → `agent`, FilaMind screen → `native`). Surfaced as a copyable, printer-side one-liner because
-   *  it needs interactive root the GUI can't run. */
+  /** Subcommand for this app's DEFAULT install (FilaMind screen → `native`, the kiosk). */
+  install_args?: string
+  /** An ADDITIONAL managed deployment installable by its own button (FilaMind 3d → `agent`, the
+   *  :8030 service that unlocks the suite widgets). Distinct from `install_args`: when they're
+   *  equal the "service" is just the main install, so no extra button is shown (FilaMind screen). */
   service_install?: string
-  /** Human note explaining what `service_install` adds (shown above the command). */
+  /** Human note explaining what `service_install` adds (shown on the agent button's row). */
   service_install_hint?: string
 }
 
@@ -44,13 +46,19 @@ export interface SetupComponentStatus {
   running?: boolean
 }
 
+/** Periodic auto-update preferences (opt-in; applied only while the printer is idle). */
+export interface SetupAutoUpdate {
+  enabled: boolean
+  intervalHours: number
+}
+
 export interface SetupStatus {
   /** component id → its install state, versions and update flag. */
   status: Record<string, SetupComponentStatus>
   /** Whether GUI install/update/remove is enabled on this host. */
   writesEnabled: boolean
-  /** The one-line command that installs the whole FilaMind suite. */
-  suiteCommand: string
+  /** Auto-update preferences for this host. */
+  autoUpdate: SetupAutoUpdate
 }
 
 export interface SetupActionResult {
