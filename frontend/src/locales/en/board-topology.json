@@ -271,20 +271,7 @@
       "adapter": "USB-CAN adapter (unconfirmed)",
       "node": "USB-CAN",
       "hint": "Brand unconfirmed (gs_usb)",
-      "flash": {
-        "title": "Flash / update adapter",
-        "desc": "The adapter is updated outside Klipper, over USB-DFU.",
-        "revision": "Adapter model",
-        "boot": "Unplug the adapter, then HOLD its BOOT button while plugging the USB cable back into the printer, then release.",
-        "check": "Check for DFU",
-        "ready": "DFU detected - ready to flash",
-        "notReady": "Not in DFU yet - do step 1, then check again",
-        "noSudo": "Passwordless sudo isn't set up. Run once: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
-        "risk": "I understand a wrong firmware can disable the adapter; don't unplug it while flashing.",
-        "flash": "Flash",
-        "flashing": "Flashing...",
-        "warn": "Updating is rarely needed - the adapter ships pre-flashed. Reasons: a bad batch, or a packet-ordering bug in old firmware."
-      }
+      "flashLink": "Update adapter in Firmware Manager"
     },
     "display": {
       "title": "Displays",

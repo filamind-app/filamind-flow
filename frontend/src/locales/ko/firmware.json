@@ -325,6 +325,22 @@
       "dfu_util": "dfu-util - DFU(STM32 ROM 부트로더) 플래시 전용입니다.",
       "avrdude": "avrdude - 8비트 AVR 보드 전용입니다.",
       "can_utils": "선택 - 수동 CAN 진단(candump/cansend) 전용입니다. CAN 플래시에는 필요 없습니다. 설치: sudo apt install can-utils"
+    },
+    "canbus": {
+      "flash": {
+        "title": "어댑터 플래시 / 업데이트",
+        "desc": "어댑터는 Klipper 외부에서 USB-DFU로 업데이트됩니다.",
+        "revision": "어댑터 모델",
+        "boot": "어댑터를 뽑은 뒤, USB 케이블을 프린터에 다시 꽂는 동안 BOOT 버튼을 누른 채로 유지하고 놓습니다.",
+        "check": "DFU 확인",
+        "ready": "DFU 감지됨 - 플래시 준비됨",
+        "notReady": "아직 DFU 아님 - 1단계를 한 뒤 다시 확인하세요",
+        "noSudo": "비밀번호 없는 sudo가 설정되지 않았습니다. 한 번 실행: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "잘못된 펌웨어가 어댑터를 사용 불가로 만들 수 있음을 이해합니다; 플래시 중 분리하지 마세요.",
+        "flash": "플래시",
+        "flashing": "플래시 중...",
+        "warn": "업데이트는 거의 필요 없습니다 - 어댑터는 사전 플래시되어 출고됩니다. 이유: 불량 배치 또는 구형 펌웨어의 패킷 순서 버그."
+      }
     }
   }
 }

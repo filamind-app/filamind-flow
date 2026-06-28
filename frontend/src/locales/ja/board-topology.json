@@ -271,20 +271,7 @@
       "adapter": "USB-CANアダプター（未確認）",
       "node": "USB-CAN",
       "hint": "ブランド未確認 (gs_usb)",
-      "flash": {
-        "title": "アダプターをフラッシュ / 更新",
-        "desc": "アダプターは Klipper の外、USB-DFU で更新します。",
-        "revision": "アダプターのモデル",
-        "boot": "アダプターを抜き、BOOT ボタンを押したまま USB ケーブルをプリンターに挿し直し、離します。",
-        "check": "DFU を確認",
-        "ready": "DFU を検出 - フラッシュ可能",
-        "notReady": "まだ DFU ではありません - 手順1を行い、再確認してください",
-        "noSudo": "パスワードなし sudo が未設定です。一度実行: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
-        "risk": "誤ったファームウェアはアダプターを使用不能にする可能性があります。フラッシュ中は抜かないでください。",
-        "flash": "フラッシュ",
-        "flashing": "フラッシュ中...",
-        "warn": "更新が必要なことはまれです - アダプターは出荷時にフラッシュ済みです。理由: 不良ロットや旧ファームのパケット順序バグ。"
-      }
+      "flashLink": "ファームウェアマネージャーでアダプターを更新"
     },
     "display": {
       "title": "ディスプレイ",

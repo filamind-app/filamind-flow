@@ -325,6 +325,22 @@
       "dfu_util": "dfu-util——僅用於 DFU（STM32 ROM 開機載入程式）燒錄。",
       "avrdude": "avrdude——僅用於 8 位元 AVR 板子。",
       "can_utils": "選用——僅用於手動 CAN 診斷（candump/cansend）。CAN 燒錄並不需要它。安裝：sudo apt install can-utils"
+    },
+    "canbus": {
+      "flash": {
+        "title": "刷寫 / 更新轉接器",
+        "desc": "轉接器在 Klipper 之外，透過 USB-DFU 更新。",
+        "revision": "轉接器型號",
+        "boot": "拔下轉接器，然後按住其 BOOT 按鈕同時將 USB 線插回印表機，再放開。",
+        "check": "檢查 DFU",
+        "ready": "已偵測到 DFU - 可以刷寫",
+        "notReady": "尚未進入 DFU - 先執行步驟 1 再檢查",
+        "noSudo": "未設定免密碼 sudo。執行一次: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "我了解錯誤的韌體可能使轉接器無法使用；刷寫時請勿拔除。",
+        "flash": "刷寫",
+        "flashing": "刷寫中...",
+        "warn": "很少需要更新 - 轉接器出廠已刷寫。原因：批次不良或舊韌體的封包順序錯誤。"
+      }
     }
   }
 }

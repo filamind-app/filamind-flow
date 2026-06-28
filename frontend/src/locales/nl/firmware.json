@@ -325,6 +325,22 @@
       "dfu_util": "dfu-util - alleen voor DFU (STM32 ROM-bootloader) flashing.",
       "avrdude": "avrdude - alleen voor 8-bit AVR-borden.",
       "can_utils": "Optioneel - alleen voor handmatige CAN-diagnostiek (candump/cansend). CAN-flashing heeft het NIET nodig. Installeren: sudo apt install can-utils"
+    },
+    "canbus": {
+      "flash": {
+        "title": "Adapter flashen / bijwerken",
+        "desc": "De adapter wordt buiten Klipper bijgewerkt, via USB-DFU.",
+        "revision": "Adaptermodel",
+        "boot": "Koppel de adapter los, HOUD dan de BOOT-knop ingedrukt terwijl je de USB-kabel weer in de printer steekt, en laat los.",
+        "check": "Controleer op DFU",
+        "ready": "DFU gedetecteerd - klaar om te flashen",
+        "notReady": "Nog niet in DFU - doe stap 1 en controleer opnieuw",
+        "noSudo": "Wachtwoordloze sudo is niet ingesteld. Voer eenmalig uit: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Ik begrijp dat verkeerde firmware de adapter onbruikbaar kan maken; koppel hem niet los tijdens het flashen.",
+        "flash": "Flashen",
+        "flashing": "Bezig met flashen...",
+        "warn": "Bijwerken is zelden nodig - de adapter wordt voorgeflasht geleverd. Redenen: een slechte batch of een pakketvolgorde-bug in oude firmware."
+      }
     }
   }
 }

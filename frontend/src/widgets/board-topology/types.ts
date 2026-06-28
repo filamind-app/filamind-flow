@@ -108,25 +108,6 @@ export interface TopologyCanBus {
   board_match_confidence?: number
 }
 
-/** A selectable USB-CAN adapter revision for the flash picker. */
-export interface CanFlashRevision {
-  id: string
-  label: string
-}
-
-/** Whether the adapter is currently in its STM32 ROM-DFU bootloader (the guided flash polls this). */
-export interface CanDfuStatus {
-  present: boolean
-  detail?: string | null
-  sudo: boolean
-}
-
-/** Outcome of a USB-CAN adapter flash (the dfu-util log is in `output`). */
-export interface CanFlashResult {
-  ok: boolean
-  output: string
-}
-
 export interface Topology {
   reachable?: boolean
   host: TopologyHost | null

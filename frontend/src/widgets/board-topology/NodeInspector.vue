@@ -13,7 +13,6 @@ import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
 import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 
 import { fetchBoardDetail } from './api'
-import CanFlashPanel from './CanFlashPanel.vue'
 import PinAtlas from './PinAtlas.vue'
 import type {
   BoardDetail,
@@ -261,8 +260,14 @@ function onPickCan(id: string | null): void {
         <p class="pt-0.5 text-[10px] opacity-60">{{ t('boardTopology.override.hint') }}</p>
       </div>
 
-      <!-- guided flash / update of the adapter firmware (separate from the type-confirm above) -->
-      <CanFlashPanel :can-bus="canBus" :busy="busy" />
+      <!-- Flashing the adapter lives in the Firmware Manager (it's not a Klipper MCU). -->
+      <button
+        type="button"
+        class="nb-btn bg-paper px-1.5 py-0.5 text-[11px] hover:bg-brand-cyan"
+        @click="go('firmware-upgrade', 'devices')"
+      >
+        {{ t('boardTopology.canbus.flashLink') }} ↗
+      </button>
     </template>
 
     <!-- MCU inspector -->

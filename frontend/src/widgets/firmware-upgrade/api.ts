@@ -3,6 +3,9 @@ import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
   BoardDiscovery,
+  CanDfuStatus,
+  CanFlashResult,
+  CanFlashRevision,
   ConfigEdit,
   ConfigNode,
   FirmwareStatus,
@@ -19,6 +22,43 @@ import type {
   ServicesResponse,
   TaskStatus,
 } from './types'
+
+// -- USB-CAN adapter (U2C) flash, BETA. The adapter isn't a Klipper MCU; these hit the topology
+// service that owns the live CAN bus, but the UI lives here in the Firmware Manager.
+/** The selectable USB-CAN adapter revisions (U2C v1 / v2) for the flash picker. */
+export async function fetchCanRevisions(): Promise<CanFlashRevision[]> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/canbus/firmware`)
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  const data = (await response.json()) as { revisions?: CanFlashRevision[] }
+  return data.revisions ?? []
+}
+
+/** Whether the adapter is currently in its STM32 ROM-DFU bootloader (polled during the guided flash). */
+export async function fetchDfuStatus(): Promise<CanDfuStatus> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/canbus/dfu-status`)
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  return (await response.json()) as CanDfuStatus
+}
+
+/** Flash the chosen revision's official firmware to the adapter sitting in DFU (gated server-side). */
+export async function flashCanAdapter(revision: string): Promise<CanFlashResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/canbus/flash`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ revision }),
+  })
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  return (await response.json()) as CanFlashResult
+}
 
 /** Fetches read-only firmware status from the FilaMind backend. */
 export async function fetchFirmwareStatus(): Promise<FirmwareStatus> {

@@ -325,6 +325,22 @@
       "dfu_util": "dfu-util: solo per il flashing DFU (bootloader ROM STM32).",
       "avrdude": "avrdude: solo per schede AVR a 8 bit.",
       "can_utils": "Facoltativo: solo per la diagnostica CAN manuale (candump/cansend). Il flashing CAN NON lo richiede. Installa: sudo apt install can-utils"
+    },
+    "canbus": {
+      "flash": {
+        "title": "Flash / aggiorna adattatore",
+        "desc": "L'adattatore si aggiorna fuori da Klipper, via USB-DFU.",
+        "revision": "Modello adattatore",
+        "boot": "Scollega l'adattatore, poi TIENI premuto il pulsante BOOT mentre ricolleghi il cavo USB alla stampante, quindi rilascia.",
+        "check": "Verifica DFU",
+        "ready": "DFU rilevato - pronto al flash",
+        "notReady": "Non ancora in DFU - esegui il passo 1, poi riverifica",
+        "noSudo": "sudo senza password non configurato. Esegui una volta: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Capisco che un firmware errato può rendere inutilizzabile l'adattatore; non scollegarlo durante il flash.",
+        "flash": "Flash",
+        "flashing": "Flashing...",
+        "warn": "L'aggiornamento serve raramente - l'adattatore è preflashato. Motivi: un lotto difettoso o un bug di ordinamento pacchetti nel vecchio firmware."
+      }
     }
   }
 }
