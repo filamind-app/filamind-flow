@@ -200,7 +200,7 @@ async def config_sanity(settings: Settings = Depends(get_settings)) -> dict[str,
 @router.get("/lint")
 async def config_lint_route(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """Structural lint of the live config: pin conflicts, Klipper's own config warnings (deprecated
-    options etc.), unsaved SAVE_CONFIG, and a few structural checks. ``reachable=false`` when down."""
+    options etc.), unsaved SAVE_CONFIG + a few structural checks. ``reachable=false`` when down."""
     return await config_lint.lint_config(_client(settings), settings.data_dir)
 
 
