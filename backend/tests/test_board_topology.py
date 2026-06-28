@@ -441,6 +441,38 @@ def test_can_buses_override_pins_the_adapter() -> None:
     assert bus["board_match"] == "confirmed" and bus["board_match_confidence"] == 1.0
 
 
+async def test_canbus_flash_status_and_guards(monkeypatch: Any) -> None:
+    """DFU detection parses dfu-util output; flash refuses (without downloading) when the adapter is
+    not in DFU, when the revision is unknown, and reports a missing sudo grant."""
+    from app.services import canbus_flash
+
+    assert {r["id"] for r in canbus_flash.revisions()} == {"u2c-v1", "u2c-v2"}
+
+    async def present(_cmd: Any, timeout: float = 120) -> tuple[int, str]:
+        return 0, "Found DFU: [0483:df11] ver=0200, devnum=5, cfg=1, intf=0"
+
+    monkeypatch.setattr(canbus_flash, "_run", present)
+    st = await canbus_flash.dfu_status()
+    assert st["present"] is True and st["sudo"] is True
+
+    async def empty(_cmd: Any, timeout: float = 120) -> tuple[int, str]:
+        return 0, "No DFU capable USB device available"
+
+    monkeypatch.setattr(canbus_flash, "_run", empty)
+    assert (await canbus_flash.dfu_status())["present"] is False
+    # not in DFU -> refuses before any download/flash
+    res = await canbus_flash.flash("u2c-v2")
+    assert res["ok"] is False and "BOOT button" in res["output"]
+    # unknown revision -> refused
+    assert (await canbus_flash.flash("nope"))["ok"] is False
+
+    async def nosudo(_cmd: Any, timeout: float = 120) -> tuple[int, str]:
+        return 1, "sudo: a password is required to read the password"
+
+    monkeypatch.setattr(canbus_flash, "_run", nosudo)
+    assert (await canbus_flash.dfu_status())["sudo"] is False
+
+
 def test_display_component_and_host_displays() -> None:
     """The EXP-header LCD attaches to its MCU as a `display` component; KlipperScreen (a service)
     and a KNOMI macro (no hardware section) surface as host-side displays."""

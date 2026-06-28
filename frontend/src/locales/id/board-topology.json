@@ -270,7 +270,21 @@
       "label": "Bus CAN",
       "adapter": "Adapter USB-CAN (belum dikonfirmasi)",
       "node": "USB-CAN",
-      "hint": "Merek belum dipastikan (gs_usb)"
+      "hint": "Merek belum dipastikan (gs_usb)",
+      "flash": {
+        "title": "Flash / perbarui adapter",
+        "desc": "Adapter diperbarui di luar Klipper, lewat USB-DFU.",
+        "revision": "Model adapter",
+        "boot": "Cabut adapter, lalu TAHAN tombol BOOT sambil mencolokkan kabel USB ke printer, kemudian lepaskan.",
+        "check": "Periksa DFU",
+        "ready": "DFU terdeteksi - siap diflash",
+        "notReady": "Belum di DFU - lakukan langkah 1, lalu periksa lagi",
+        "noSudo": "sudo tanpa kata sandi belum disetel. Jalankan sekali: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Saya paham firmware yang salah bisa membuat adapter tak berfungsi; jangan cabut saat flashing.",
+        "flash": "Flash",
+        "flashing": "Memflash...",
+        "warn": "Pembaruan jarang diperlukan - adapter sudah terflash dari pabrik. Alasan: batch cacat atau bug urutan paket pada firmware lama."
+      }
     },
     "display": {
       "title": "Layar",

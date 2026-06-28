@@ -270,7 +270,21 @@
       "label": "Bus CAN",
       "adapter": "Adaptador USB-CAN (sin confirmar)",
       "node": "USB-CAN",
-      "hint": "Marca sin confirmar (gs_usb)"
+      "hint": "Marca sin confirmar (gs_usb)",
+      "flash": {
+        "title": "Flashear / actualizar adaptador",
+        "desc": "El adaptador se actualiza fuera de Klipper, por USB-DFU.",
+        "revision": "Modelo de adaptador",
+        "boot": "Desconecta el adaptador, luego MANTÉN pulsado su botón BOOT mientras enchufas el cable USB a la impresora, y suéltalo.",
+        "check": "Comprobar DFU",
+        "ready": "DFU detectado - listo para flashear",
+        "notReady": "Aún no está en DFU - haz el paso 1 y vuelve a comprobar",
+        "noSudo": "sudo sin contraseña no está configurado. Ejecuta una vez: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Entiendo que un firmware incorrecto puede inutilizar el adaptador; no lo desconectes durante el flasheo.",
+        "flash": "Flashear",
+        "flashing": "Flasheando...",
+        "warn": "Rara vez es necesario actualizar - el adaptador viene preflasheado. Motivos: un lote defectuoso o un fallo de orden de paquetes en firmware antiguo."
+      }
     },
     "display": {
       "title": "Pantallas",

@@ -15,6 +15,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.config import Settings, get_settings
 from app.models.schemas import (
     BoardOverrideRequest,
+    CanDfuStatus,
+    CanFlashRequest,
+    CanFlashResult,
     McuKeyRequest,
     PinAtlas,
     Topology,
@@ -22,11 +25,26 @@ from app.models.schemas import (
 )
 from app.services import (
     board_topology,
+    canbus_flash,
     reference_data,
     topology_overrides,
     topology_snapshot,
 )
 from app.services.moonraker_client import MoonrakerClient
+
+
+async def _printer_busy(settings: Settings) -> bool:
+    """True while a print is running/paused - flashing the CAN adapter pulls it offline (and kills
+    the bus), so the flash route refuses then. Unknown (Moonraker down) is treated as not busy: the
+    physical DFU step already requires unplugging the adapter, so nothing live is at risk."""
+    client = MoonrakerClient(settings.moonraker_url)
+    try:
+        status = await client.query_objects(["print_stats"])
+    except httpx.HTTPError:
+        return False
+    state = str((status.get("print_stats") or {}).get("state") or "").lower()
+    return state in {"printing", "paused"}
+
 
 router = APIRouter(prefix="/topology", tags=["topology"])
 
@@ -111,3 +129,36 @@ async def pin_atlas(mcu_name: str, settings: Settings = Depends(get_settings)) -
         return PinAtlas.model_validate(data)
     except httpx.HTTPError:
         return PinAtlas(mcu_name=mcu_name, available=False)
+
+
+# -- USB-CAN adapter (U2C) firmware flash --------------------------------------------------
+# The adapter is not a Klipper MCU, so it's flashed outside the firmware flow: enter DFU with the
+# physical BOOT button, then dfu-util the official candleLight binary (host-side, gated).
+
+
+@router.get("/canbus/firmware")
+async def canbus_firmware() -> dict[str, list[dict[str, str]]]:
+    """The selectable adapter revisions (U2C v1 / v2) for the flash picker - each maps to the
+    official BTT firmware for its chip."""
+    return {"revisions": canbus_flash.revisions()}
+
+
+@router.get("/canbus/dfu-status", response_model=CanDfuStatus)
+async def canbus_dfu_status() -> CanDfuStatus:
+    """Whether the adapter is currently in its STM32 ROM-DFU bootloader (i.e. the BOOT-button entry
+    worked) - the UI polls this in the guided flow before enabling Flash."""
+    return CanDfuStatus.model_validate(await canbus_flash.dfu_status())
+
+
+@router.post("/canbus/flash", response_model=CanFlashResult)
+async def canbus_flash_route(
+    request: CanFlashRequest, settings: Settings = Depends(get_settings)
+) -> CanFlashResult:
+    """Flash the chosen revision's official firmware to the adapter sitting in DFU. Refused while a
+    print is running (the adapter goes offline mid-flash) and when it isn't actually in DFU."""
+    if await _printer_busy(settings):
+        return CanFlashResult(
+            ok=False,
+            output="Refused: a print is running. Stop the print before flashing the CAN adapter.",
+        )
+    return CanFlashResult.model_validate(await canbus_flash.flash(request.revision))

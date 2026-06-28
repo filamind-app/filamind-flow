@@ -270,7 +270,21 @@
       "label": "Bus CAN",
       "adapter": "Bộ chuyển USB-CAN (chưa xác nhận)",
       "node": "USB-CAN",
-      "hint": "Chưa xác nhận hãng (gs_usb)"
+      "hint": "Chưa xác nhận hãng (gs_usb)",
+      "flash": {
+        "title": "Nạp / cập nhật bộ chuyển",
+        "desc": "Bộ chuyển được cập nhật ngoài Klipper, qua USB-DFU.",
+        "revision": "Model bộ chuyển",
+        "boot": "Rút bộ chuyển, rồi GIỮ nút BOOT trong khi cắm cáp USB lại vào máy in, sau đó thả ra.",
+        "check": "Kiểm tra DFU",
+        "ready": "Đã phát hiện DFU - sẵn sàng nạp",
+        "notReady": "Chưa ở DFU - làm bước 1 rồi kiểm tra lại",
+        "noSudo": "sudo không mật khẩu chưa được thiết lập. Chạy một lần: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Tôi hiểu firmware sai có thể làm hỏng bộ chuyển; không rút trong khi nạp.",
+        "flash": "Nạp",
+        "flashing": "Đang nạp...",
+        "warn": "Hiếm khi cần cập nhật - bộ chuyển đã được nạp sẵn. Lý do: lô lỗi hoặc lỗi thứ tự gói trong firmware cũ."
+      }
     },
     "display": {
       "title": "Màn hình",
