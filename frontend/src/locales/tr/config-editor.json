@@ -225,7 +225,8 @@
         "sanity": "Sürücü makullüğü",
         "project": "Proje görünümü",
         "pinMap": "Pin önerileri",
-        "backups": "Yedekler"
+        "backups": "Yedekler",
+        "lint": "Konfig denetimi"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "Boş pin",
       "pinPh": "Bir boş pin seçin…",
       "noFree": "Bu kart haritasında boş adlandırılmış pin yok."
+    },
+    "lint": {
+      "title": "Konfig denetimi — {n} bulgu",
+      "note": "{n} bölüm kontrol edildi. Yalnızca yapısal kontroller; Klipper'ın kendi konfig uyarılarını kullanır.",
+      "rule": {
+        "double_assigned_pin": "{pin} pini birden fazla bölümde atanmış ({sections}). Firmware restart başarısız olur.",
+        "pin_caveat": "{section}: pin {pin} — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "Kaydedilmemiş bir SAVE_CONFIG kalibrasyonu bekliyor. Uygulamak için yeniden başlatın.",
+        "missing_printer": "[printer] bölümü bulunamadı — Klipper bu bölüm olmadan başlamaz.",
+        "no_stepper": "stepper veya extruder bölümü bulunamadı.",
+        "heater_temp_range": "{section}: min_temp ({min_temp}) değeri max_temp ({max_temp}) değerinin altında değil."
+      }
     }
   }
 }

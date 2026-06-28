@@ -4,6 +4,7 @@ import { resolveEndpoints } from '@/core/moonraker'
 import type {
   ConfigBackupList,
   ConfigDriftResult,
+  ConfigLintResult,
   ConfigFileList,
   ConfigFileView,
   ConfigGraph,
@@ -99,6 +100,16 @@ export async function fetchConfigSanity(): Promise<ConfigSanityResult> {
     throw new Error(httpError(response.status))
   }
   return (await response.json()) as ConfigSanityResult
+}
+
+/** Structural config lint: pin conflicts, Klipper's own config warnings, unsaved SAVE_CONFIG. */
+export async function fetchConfigLint(): Promise<ConfigLintResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/config/lint`)
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  return (await response.json()) as ConfigLintResult
 }
 
 /** List timestamped backup snapshots (newest first), optionally limited to one file. */

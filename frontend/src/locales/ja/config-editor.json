@@ -225,7 +225,8 @@
         "sanity": "ドライバー妥当性チェック",
         "project": "プロジェクトビュー",
         "pinMap": "ピンの提案",
-        "backups": "バックアップ"
+        "backups": "バックアップ",
+        "lint": "設定チェック"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "空きピン",
       "pinPh": "空きピンを選択…",
       "noFree": "このボードマップに空きの名前付きピンがありません。"
+    },
+    "lint": {
+      "title": "設定チェック — {n} 件の問題",
+      "note": "{n} 個のセクションを確認しました。構造チェックのみで、Klipper 自身の設定警告を使用します。",
+      "rule": {
+        "double_assigned_pin": "pin {pin} が複数のセクション（{sections}）で割り当てられています。firmware restart は失敗します。",
+        "pin_caveat": "{section}: pin {pin} — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "未保存の SAVE_CONFIG キャリブレーションが保留中です。適用するには再起動してください。",
+        "missing_printer": "[printer] セクションが見つかりません。これがないと Klipper は起動しません。",
+        "no_stepper": "stepper または extruder セクションが見つかりません。",
+        "heater_temp_range": "{section}: min_temp（{min_temp}）が max_temp（{max_temp}）を下回っていません。"
+      }
     }
   }
 }

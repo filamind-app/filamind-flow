@@ -225,7 +225,8 @@
         "sanity": "Driver-plausibiliteit",
         "project": "Projectweergave",
         "pinMap": "Pin-suggesties",
-        "backups": "Back-ups"
+        "backups": "Back-ups",
+        "lint": "Configcontrole"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "Vrije pin",
       "pinPh": "Kies een vrije pin…",
       "noFree": "Geen vrije benoemde pinnen op deze boardmap."
+    },
+    "lint": {
+      "title": "Configcontrole — {n} bevinding(en)",
+      "note": "{n} secties gecontroleerd. Alleen structurele controles; gebruikt Klippers eigen configuratiewaarschuwingen.",
+      "rule": {
+        "double_assigned_pin": "Pin {pin} is toegewezen in meerdere secties ({sections}). Een firmware restart zal mislukken.",
+        "pin_caveat": "{section}: pin {pin} — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "Er staat een niet-opgeslagen SAVE_CONFIG-kalibratie open. Herstart om die toe te passen.",
+        "missing_printer": "Geen [printer]-sectie gevonden — zonder deze sectie start Klipper niet.",
+        "no_stepper": "Geen stepper- of extruder-sectie gevonden.",
+        "heater_temp_range": "{section}: min_temp ({min_temp}) ligt niet onder max_temp ({max_temp})."
+      }
     }
   }
 }

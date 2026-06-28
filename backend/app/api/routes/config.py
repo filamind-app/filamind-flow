@@ -17,7 +17,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from app.config import Settings, get_settings
-from app.services import board_topology, config_service
+from app.services import board_topology, config_lint, config_service
 from app.services.moonraker_client import MoonrakerClient
 
 router = APIRouter(prefix="/config", tags=["config"])
@@ -195,6 +195,13 @@ async def config_sanity(settings: Settings = Depends(get_settings)) -> dict[str,
     ceiling and the mapped motor's rating (honest when no reference exists). Down → reachable=false.
     """
     return await config_service.gather_sanity(_client(settings), settings.data_dir)
+
+
+@router.get("/lint")
+async def config_lint_route(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Structural lint of the live config: pin conflicts, Klipper's own config warnings (deprecated
+    options etc.), unsaved SAVE_CONFIG, and a few structural checks. ``reachable=false`` when down."""
+    return await config_lint.lint_config(_client(settings), settings.data_dir)
 
 
 @router.get("/pin-doctor")
