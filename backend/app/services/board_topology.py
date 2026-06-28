@@ -424,6 +424,31 @@ def _fingerprint_board(used: set[str], boards: list[dict[str, Any]]) -> tuple[st
     return best_id, round(best_containment, 2)
 
 
+def _board_role(board: dict[str, Any]) -> str | None:
+    """A board's coarse role from its catalog ``boardClass`` - ``toolhead`` (a CAN/USB toolhead
+    board) or ``mainboard`` - used only to narrow same-chip fingerprint candidates by how the MCU
+    connects. ``None`` when the class doesn't say (then no narrowing happens)."""
+    cls = str(board.get("boardClass") or "").lower()
+    if "toolhead" in cls or "can" in cls:
+        return "toolhead"
+    if "main" in cls or "control" in cls:
+        return "mainboard"
+    return None
+
+
+def _narrow_by_connection(
+    candidates: list[dict[str, Any]], connection: str
+) -> list[dict[str, Any]]:
+    """Soft-narrow chip-matched fingerprint candidates by how the MCU connects. A CAN MCU is almost
+    always a toolhead / CAN board, so prefer those - this lets an EBB SB2209's few generic RP2040
+    pins resolve to the toolhead instead of tying with a same-chip mainboard. Falls back to the full
+    set when the catalog classes none of them that way, so it can never over-narrow to nothing."""
+    if connection != "canbus":
+        return candidates
+    toolheads = [b for b in candidates if _board_role(b) == "toolhead"]
+    return toolheads if toolheads else candidates
+
+
 def _resolve_host_id(model: str, hosts: list[dict[str, Any]]) -> tuple[str | None, float]:
     """Best-effort link of the host's CPU/SoC string to a catalog ``host_id`` (a normalized
     substring match against each host's name / soc / cpu). Low-confidence *suggested* link -
@@ -701,6 +726,9 @@ async def _enrich_live_mcus(
         ]
         if not candidates:
             continue
+        # Narrow same-chip candidates by how this MCU connects (a CAN MCU is almost always a
+        # toolhead board), so an EBB SB2209's few generic pins don't tie with a same-chip mainboard.
+        candidates = _narrow_by_connection(candidates, str(m.get("connection") or ""))
         fp_id, fp_conf = _fingerprint_board(
             _used_pins(sections, str(m.get("name") or "")), candidates
         )
