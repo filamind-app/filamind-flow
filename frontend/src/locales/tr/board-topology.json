@@ -271,20 +271,7 @@
       "adapter": "USB-CAN adaptörü (doğrulanmadı)",
       "node": "USB-CAN",
       "hint": "Marka doğrulanmadı (gs_usb)",
-      "flash": {
-        "title": "Adaptörü flashla / güncelle",
-        "desc": "Adaptör Klipper dışında, USB-DFU ile güncellenir.",
-        "revision": "Adaptör modeli",
-        "boot": "Adaptörü çıkar, sonra USB kablosunu yazıcıya takarken BOOT düğmesini BASILI TUT, ardından bırak.",
-        "check": "DFU'yu denetle",
-        "ready": "DFU algılandı - flashlamaya hazır",
-        "notReady": "Henüz DFU'da değil - 1. adımı yap, sonra tekrar denetle",
-        "noSudo": "Parolasız sudo ayarlı değil. Bir kez çalıştır: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
-        "risk": "Yanlış firmware'in adaptörü kullanılamaz hale getirebileceğini anlıyorum; flashlama sırasında çıkarma.",
-        "flash": "Flashla",
-        "flashing": "Flashlanıyor...",
-        "warn": "Güncelleme nadiren gerekir - adaptör önceden yüklenmiş gelir. Nedenler: hatalı parti veya eski firmware'de paket sırası hatası."
-      }
+      "flashLink": "Donanım yazılımı yöneticisinde adaptörü güncelle"
     },
     "display": {
       "title": "Ekranlar",

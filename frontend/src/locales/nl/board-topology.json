@@ -271,20 +271,7 @@
       "adapter": "USB-CAN-adapter (onbevestigd)",
       "node": "USB-CAN",
       "hint": "Merk onbevestigd (gs_usb)",
-      "flash": {
-        "title": "Adapter flashen / bijwerken",
-        "desc": "De adapter wordt buiten Klipper bijgewerkt, via USB-DFU.",
-        "revision": "Adaptermodel",
-        "boot": "Koppel de adapter los, HOUD dan de BOOT-knop ingedrukt terwijl je de USB-kabel weer in de printer steekt, en laat los.",
-        "check": "Controleer op DFU",
-        "ready": "DFU gedetecteerd - klaar om te flashen",
-        "notReady": "Nog niet in DFU - doe stap 1 en controleer opnieuw",
-        "noSudo": "Wachtwoordloze sudo is niet ingesteld. Voer eenmalig uit: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
-        "risk": "Ik begrijp dat verkeerde firmware de adapter onbruikbaar kan maken; koppel hem niet los tijdens het flashen.",
-        "flash": "Flashen",
-        "flashing": "Bezig met flashen...",
-        "warn": "Bijwerken is zelden nodig - de adapter wordt voorgeflasht geleverd. Redenen: een slechte batch of een pakketvolgorde-bug in oude firmware."
-      }
+      "flashLink": "Adapter bijwerken in Firmwarebeheer"
     },
     "display": {
       "title": "Displays",

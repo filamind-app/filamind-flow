@@ -325,6 +325,22 @@
       "dfu_util": "dfu-util - yalnızca DFU (STM32 ROM önyükleyici) flaşlaması için.",
       "avrdude": "avrdude - yalnızca 8 bit AVR kartları için.",
       "can_utils": "İsteğe bağlı - yalnızca manuel CAN tanılaması için (candump/cansend). CAN flaşlaması buna ihtiyaç DUYMAZ. Kurulum: sudo apt install can-utils"
+    },
+    "canbus": {
+      "flash": {
+        "title": "Adaptörü flashla / güncelle",
+        "desc": "Adaptör Klipper dışında, USB-DFU ile güncellenir.",
+        "revision": "Adaptör modeli",
+        "boot": "Adaptörü çıkar, sonra USB kablosunu yazıcıya takarken BOOT düğmesini BASILI TUT, ardından bırak.",
+        "check": "DFU'yu denetle",
+        "ready": "DFU algılandı - flashlamaya hazır",
+        "notReady": "Henüz DFU'da değil - 1. adımı yap, sonra tekrar denetle",
+        "noSudo": "Parolasız sudo ayarlı değil. Bir kez çalıştır: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Yanlış firmware'in adaptörü kullanılamaz hale getirebileceğini anlıyorum; flashlama sırasında çıkarma.",
+        "flash": "Flashla",
+        "flashing": "Flashlanıyor...",
+        "warn": "Güncelleme nadiren gerekir - adaptör önceden yüklenmiş gelir. Nedenler: hatalı parti veya eski firmware'de paket sırası hatası."
+      }
     }
   }
 }

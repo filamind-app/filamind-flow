@@ -271,20 +271,7 @@
       "adapter": "Adapter USB-CAN (niepotwierdzony)",
       "node": "USB-CAN",
       "hint": "Marka niepotwierdzona (gs_usb)",
-      "flash": {
-        "title": "Flashuj / aktualizuj adapter",
-        "desc": "Adapter aktualizuje się poza Klipperem, przez USB-DFU.",
-        "revision": "Model adaptera",
-        "boot": "Odłącz adapter, następnie PRZYTRZYMAJ przycisk BOOT podczas podłączania kabla USB do drukarki, po czym zwolnij.",
-        "check": "Sprawdź DFU",
-        "ready": "Wykryto DFU - gotowy do flashowania",
-        "notReady": "Jeszcze nie w DFU - wykonaj krok 1 i sprawdź ponownie",
-        "noSudo": "Bezhasłowe sudo nie jest skonfigurowane. Uruchom raz: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
-        "risk": "Rozumiem, że zły firmware może uszkodzić adapter; nie odłączaj go podczas flashowania.",
-        "flash": "Flashuj",
-        "flashing": "Flashowanie...",
-        "warn": "Aktualizacja rzadko jest potrzebna - adapter jest fabrycznie wgrany. Powody: wadliwa partia lub błąd kolejności pakietów w starym firmware."
-      }
+      "flashLink": "Zaktualizuj adapter w Menedżerze oprogramowania układowego"
     },
     "display": {
       "title": "Wyświetlacze",

@@ -325,6 +325,22 @@
       "dfu_util": "dfu-util - chỉ dùng cho việc nạp DFU (bootloader ROM của STM32).",
       "avrdude": "avrdude - chỉ dùng cho các bo AVR 8-bit.",
       "can_utils": "Tùy chọn - chỉ dùng cho chẩn đoán CAN thủ công (candump/cansend). Việc nạp CAN KHÔNG cần nó. Cài đặt: sudo apt install can-utils"
+    },
+    "canbus": {
+      "flash": {
+        "title": "Nạp / cập nhật bộ chuyển",
+        "desc": "Bộ chuyển được cập nhật ngoài Klipper, qua USB-DFU.",
+        "revision": "Model bộ chuyển",
+        "boot": "Rút bộ chuyển, rồi GIỮ nút BOOT trong khi cắm cáp USB lại vào máy in, sau đó thả ra.",
+        "check": "Kiểm tra DFU",
+        "ready": "Đã phát hiện DFU - sẵn sàng nạp",
+        "notReady": "Chưa ở DFU - làm bước 1 rồi kiểm tra lại",
+        "noSudo": "sudo không mật khẩu chưa được thiết lập. Chạy một lần: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Tôi hiểu firmware sai có thể làm hỏng bộ chuyển; không rút trong khi nạp.",
+        "flash": "Nạp",
+        "flashing": "Đang nạp...",
+        "warn": "Hiếm khi cần cập nhật - bộ chuyển đã được nạp sẵn. Lý do: lô lỗi hoặc lỗi thứ tự gói trong firmware cũ."
+      }
     }
   }
 }
