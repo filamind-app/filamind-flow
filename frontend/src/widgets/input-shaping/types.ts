@@ -76,7 +76,7 @@ export interface NoiseChip {
 export interface NoiseResult {
   chips: NoiseChip[]
   max_noise: number
-  /** good (<100) · elevated (100–1000) · high (≥1000), per Klipper's guidance. */
+  /** good (<100) · elevated (100-1000) · high (≥1000), per Klipper's guidance. */
   grade: 'good' | 'elevated' | 'high'
   ok: boolean
   threshold: number

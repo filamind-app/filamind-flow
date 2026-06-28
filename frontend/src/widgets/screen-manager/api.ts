@@ -53,7 +53,7 @@ export async function restartScreen(): Promise<void> {
   if (!r.ok) throw new Error(httpError(r.status))
 }
 
-// ── Graphical [main] options (Settings form) ──────────────────────────────────
+// -- Graphical [main] options (Settings form) ----------------------------------
 
 export interface ScreenOptions {
   options: Record<string, string>
@@ -82,7 +82,7 @@ export async function saveScreenOptions(
   return body as ScreenConf
 }
 
-// ── Theme builder ────────────────────────────────────────────────────────────
+// -- Theme builder ------------------------------------------------------------
 
 export interface ScreenTheme {
   name: string
@@ -139,7 +139,7 @@ export async function deleteTheme(name: string): Promise<void> {
   if (!r.ok) throw new Error(await detailOf(r))
 }
 
-// ── Menu tree editor ─────────────────────────────────────────────────────────
+// -- Menu tree editor ---------------------------------------------------------
 
 export interface MenuItem {
   id: string
@@ -176,7 +176,7 @@ export async function saveMenus(
   return body as ScreenConf
 }
 
-// ── FilaMind Kiosk ─────────────────────────────────────────────────────────────
+// -- FilaMind Kiosk -------------------------------------------------------------
 
 export interface KioskStatus {
   /** Which service currently owns the touchscreen. */
@@ -221,7 +221,7 @@ export async function restoreScreen(persist: boolean): Promise<KioskStatus> {
   return body.status
 }
 
-// ── Touchscreen selector (KlipperScreen / Guppyscreen / FilaMind) ───────────────
+// -- Touchscreen selector (KlipperScreen / Guppyscreen / FilaMind) ---------------
 
 export type TouchKey = 'klipperscreen' | 'guppyscreen' | 'filamind-screen' | 'filamind-flow'
 

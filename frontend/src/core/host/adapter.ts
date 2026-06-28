@@ -1,11 +1,11 @@
 // Single-source DUAL-HOST adapter. One build runs either:
 //   - 'mainsail' (default): the current Mainsail-integrated sidebar deployment, or
 //   - 'suite':   hosted inside the FilaMind suite,
-// selected by the VITE_HOST_MODE build flag. There are no long-lived branches — host-specific
+// selected by the VITE_HOST_MODE build flag. There are no long-lived branches - host-specific
 // behaviour funnels through this module so the rest of the app stays host-agnostic.
 //
 // Policy: new flow innovations are SUITE-exclusive (the Mainsail build stays feature-frozen);
-// the few cross-host essentials (e.g. Setup) ship in BOTH. Connection URLs are NOT decided here —
+// the few cross-host essentials (e.g. Setup) ship in BOTH. Connection URLs are NOT decided here -
 // moonraker/config.ts already resolves them from the origin + VITE_MOONRAKER_* overrides, which
 // works for both hosts.
 
@@ -45,7 +45,7 @@ interface DetectOpts {
 /**
  * Best-effort detection of the printer's primary web UI for a host-preserving "back" link.
  * Probes the candidate origin's `manifest.json` for a Mainsail/Fluidd name; ANY failure (no
- * fetch, CORS, timeout, non-200, unknown name) resolves to a generic `{ name: '' }` — never throws.
+ * fetch, CORS, timeout, non-200, unknown name) resolves to a generic `{ name: '' }` - never throws.
  */
 export async function detectBackUi(opts: DetectOpts = {}): Promise<BackUi> {
   const loc =

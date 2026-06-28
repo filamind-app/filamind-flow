@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FilaMind Flow — the single installer for a Klipper / Moonraker host.
+# FilaMind Flow - the single installer for a Klipper / Moonraker host.
 #
 # Full install (run as your normal printer user, NOT root):
 #   curl -fsSL https://raw.githubusercontent.com/filamind-app/filamind-flow/main/scripts/install.sh | bash
@@ -47,7 +47,7 @@ if [ -n "$SELF" ] && [ -f "$SELF" ]; then
   REPO_ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
 fi
 
-# ── update: refresh the backend virtualenv (Moonraker update_manager hook) ─────
+# -- update: refresh the backend virtualenv (Moonraker update_manager hook) -----
 do_update() {
   local dir="${REPO_ROOT:-$APP}"
   cd "$dir/backend"
@@ -69,7 +69,7 @@ do_update() {
   echo "FilaMind Flow: backend dependencies up to date."
 }
 
-# ── sudoers: grant the narrow passwordless-sudo rights the panel needs ─────────
+# -- sudoers: grant the narrow passwordless-sudo rights the panel needs ---------
 # Firmware flashing (systemctl, dfu-util, cp, chmod, fuser) + Host Control (journalctl, rm,
 # timedatectl, localectl, hostnamectl, nmcli). rm is path-guarded in the backend to
 # /etc/systemd/system; nmcli covers the network (IP DHCP/static) controls.
@@ -93,7 +93,7 @@ do_sudoers() {
 
   # Broader grant for one-click NATIVE touch-app install (FilaMind screen's .deb kiosk): apt-get
   # (installs the package + its WebKit runtime dependency), dpkg, and the Flow kiosk unit-writer
-  # (scoped to its `kiosk` subcommand). This is intentionally wider than the base grant — it lets the
+  # (scoped to its `kiosk` subcommand). This is intentionally wider than the base grant - it lets the
   # headless Setup widget install the .deb without a password. apt as root is effectively full root,
   # so this is the security trade-off for a one-click native install.
   local apt_get dpkg_bin bash_bin flow_home flow_install
@@ -103,23 +103,23 @@ do_sudoers() {
   flow_home="$(getent passwd "$user_name" 2>/dev/null | cut -d: -f6)"
   flow_install="${flow_home:-/home/$user_name}/filamind-flow/scripts/install.sh"
 
-  # NOT `local`: the EXIT trap below fires at *script* exit — after this function has returned —
+  # NOT `local`: the EXIT trap below fires at *script* exit - after this function has returned -
   # so $tmp must still be in scope, and ${tmp:-} keeps the trap safe under `set -u`.
   tmp="$(mktemp)"
   trap 'rm -f "${tmp:-}"' EXIT  # always clean up, even if `install` fails under set -e
   cat > "$tmp" <<EOF
-# Managed by FilaMind Flow (scripts/install.sh sudoers) — firmware flashing + Host Control.
+# Managed by FilaMind Flow (scripts/install.sh sudoers) - firmware flashing + Host Control.
 $user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli
 # Native touch-app install (FilaMind screen .deb kiosk): package + WebKit runtime via apt/dpkg, and
-# the Flow kiosk unit-writer. Wider than the base grant — enables one-click native install.
+# the Flow kiosk unit-writer. Wider than the base grant - enables one-click native install.
 $user_name ALL=(root) NOPASSWD: $apt_get, $dpkg_bin, $bash_bin $flow_install kiosk *
 EOF
   # Validate syntax BEFORE installing so a mistake can never lock you out of sudo.
   if visudo -cf "$tmp"; then
     install -m 0440 -o root -g root "$tmp" "$sudoers_file"
-    echo "Installed $sudoers_file — '$user_name' can flash firmware and manage the host without a password."
+    echo "Installed $sudoers_file - '$user_name' can flash firmware and manage the host without a password."
   else
-    echo "sudoers validation failed — not installed." >&2
+    echo "sudoers validation failed - not installed." >&2
     exit 1
   fi
 
@@ -130,14 +130,14 @@ EOF
     install -m 0644 -o root -g root "$rule" "$udev_rule"
     udevadm control --reload-rules 2>/dev/null || true
     udevadm trigger 2>/dev/null || true
-    echo "Installed $udev_rule — STM32 DFU boards are reachable without sudo."
+    echo "Installed $udev_rule - STM32 DFU boards are reachable without sudo."
   fi
 }
 
-# ── kiosk: turn the printer's touchscreen into the fullscreen native FilaMind app ───
+# -- kiosk: turn the printer's touchscreen into the fullscreen native FilaMind app ---
 # Auto-detects X11 (Xorg/xinit) vs Wayland (cage on KMS) by reading KlipperScreen.service and writes a
 # `filamind-kiosk` unit that launches an installed NATIVE app binary (the Tauri .deb touch app) and
-# Conflicts= KlipperScreen (starting one stops the other). Not enabled at boot — FilaMind toggles the
+# Conflicts= KlipperScreen (starting one stops the other). Not enabled at boot - FilaMind toggles the
 # swap. Best-effort (no errexit). install-native.sh discovers the binary path (dpkg -L) and passes it.
 #   kiosk --bin PATH [user] [url] [unit-name]   |   kiosk --uninstall [unit-name]
 do_kiosk() {
@@ -155,7 +155,7 @@ do_kiosk() {
     esac
   done
 
-  [ "$(id -u)" -eq 0 ] || die "must run as root — try: sudo bash $0 kiosk $*"
+  [ "$(id -u)" -eq 0 ] || die "must run as root - try: sudo bash $0 kiosk $*"
 
   # Two FilaMind kiosks can coexist (the selector switches between them):
   #   filamind-kiosk         -> the FilaMind Flow native touch app (widget control)
@@ -180,7 +180,7 @@ do_kiosk() {
   URL="${2:-}"
   NAME="${3:-filamind-kiosk}"
   UNIT="/etc/systemd/system/$NAME.service"
-  id "$USER_NAME" >/dev/null 2>&1 || die "user '$USER_NAME' not found — pass it: sudo bash $0 kiosk --bin <path> <user>"
+  id "$USER_NAME" >/dev/null 2>&1 || die "user '$USER_NAME' not found - pass it: sudo bash $0 kiosk --bin <path> <user>"
   USER_UID="$(id -u "$USER_NAME")"
   DISTRO="unknown"
   [ -r /etc/os-release ] && DISTRO="$(. /etc/os-release && echo "${PRETTY_NAME:-$ID}")"
@@ -188,7 +188,7 @@ do_kiosk() {
   log "distro=$DISTRO"
 
   [ -n "$NATIVE_BIN" ] || die "kiosk needs --bin <path-to-installed-native-binary> (install the .deb first)"
-  [ -x "$NATIVE_BIN" ] || log "warning: $NATIVE_BIN is not executable yet — install the .deb first."
+  [ -x "$NATIVE_BIN" ] || log "warning: $NATIVE_BIN is not executable yet - install the .deb first."
   log "native binary=$NATIVE_BIN"
 
   local KS_UNIT_TEXT KS_USER KS_TTY TTY
@@ -200,7 +200,7 @@ do_kiosk() {
   if [ -n "$KS_UNIT_TEXT" ]; then
     log "found KlipperScreen.service (User=${KS_USER:-?}, TTYPath=${TTY})"
   else
-    log "KlipperScreen.service not found via systemctl — continuing with defaults"
+    log "KlipperScreen.service not found via systemctl - continuing with defaults"
   fi
 
   local uses_x11=0 uses_wayland=0
@@ -211,7 +211,7 @@ do_kiosk() {
   local APT
   APT="$(command -v apt-get || true)"
   apt_install() {
-    [ -n "$APT" ] || { log "no apt-get — install '$*' manually, then re-run"; return 0; }
+    [ -n "$APT" ] || { log "no apt-get - install '$*' manually, then re-run"; return 0; }
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@" 2>/dev/null \
       && log "installed: $*" || log "could not install: $* (may be unavailable in this image's repos)"
   }
@@ -233,7 +233,7 @@ do_kiosk() {
     command -v cage >/dev/null 2>&1 && MODE="wayland"
   fi
 
-  # Launch the native app fullscreen. X11: bare X server, no window manager — the fullscreen Tauri
+  # Launch the native app fullscreen. X11: bare X server, no window manager - the fullscreen Tauri
   # window owns the screen, with an explicit vtN matching TTYPath so Xorg never grabs the wrong VT
   # (the likeliest black-screen). Wayland: cage kiosk compositor. WEBKIT_DISABLE_COMPOSITING_MODE=1
   # by default for the Mali/panfrost GPU (fall back to LIBGL_ALWAYS_SOFTWARE=1 if it renders black).
@@ -255,7 +255,7 @@ do_kiosk() {
     EXEC="$CAGE -- $NATIVE_BIN"
     ENV_LINES="$XDG_ENV"$'\nEnvironment=XDG_SESSION_TYPE=wayland\nEnvironment=WEBKIT_DISABLE_COMPOSITING_MODE=1'
   else
-    die "Could not detect a usable display stack (no Xorg/xinit, and no cage + /dev/dri). Tell us your setup — 'systemctl cat KlipperScreen.service' shows how your screen is driven."
+    die "Could not detect a usable display stack (no Xorg/xinit, and no cage + /dev/dri). Tell us your setup - 'systemctl cat KlipperScreen.service' shows how your screen is driven."
   fi
   log "display mode=$MODE"
 
@@ -270,7 +270,7 @@ do_kiosk() {
 
   # OOM guards: more-killable than Moonraker (OOMScoreAdjust>0 so the kernel reaps the replaceable
   # kiosk first under pressure), kill the whole cgroup on OOM, and cap any crash-loop. MemoryMax is
-  # deliberately NOT set — it needs an on-device RSS measurement (a too-low cap would crash-loop the
+  # deliberately NOT set - it needs an on-device RSS measurement (a too-low cap would crash-loop the
   # webview); see ROADMAP-NATIVE-UIS P7. The reachability wait only applies when there's an HTTP origin
   # ($URL): flow-touch needs nginx; the screen app talks Moonraker directly.
   local UNIT_EXTRA SVC_OOM EXECPRE=""
@@ -284,7 +284,7 @@ do_kiosk() {
   cat >"$UNIT" <<EOF
 # Managed by FilaMind Flow (scripts/install.sh kiosk).
 # Fullscreen native touch app ($MODE)${URL:+, backend $URL}. Conflicts with the other touch UIs so
-# starting one stops the others — FilaMind toggles the swap. Not enabled at boot by default.
+# starting one stops the others - FilaMind toggles the swap. Not enabled at boot by default.
 [Unit]
 Description=FilaMind kiosk: $NAME (native)
 Conflicts=$CONFLICTS
@@ -325,7 +325,7 @@ EOF
   exit 0
 }
 
-# ── install: the full one-line install (clone + venv + service + nginx + sidebar + update + sudo) ──
+# -- install: the full one-line install (clone + venv + service + nginx + sidebar + update + sudo) --
 do_install() {
   [ "$(id -u)" -eq 0 ] && { echo "Please run as your printer user, not root."; exit 1; }
   local c
@@ -422,19 +422,19 @@ EOF
   sudo nginx -t && sudo systemctl reload nginx
 
   # nginx workers (www-data) must be able to TRAVERSE into the home dir to read the bundle. Newer
-  # distros default the home dir to 0750, which blocks them — the API keeps working but the UI 403s.
+  # distros default the home dir to 0750, which blocks them - the API keeps working but the UI 403s.
   # Grant traverse-only (o+x, NOT o+r) along the path to dist; harmless where it's already 0755.
   chmod o+x "$HOME" "$APP" "$APP/frontend" "$APP/frontend/dist" 2>/dev/null || true
   if command -v curl >/dev/null 2>&1 \
      && [ "$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$UI_PORT/" 2>/dev/null)" = "403" ]; then
-    info "WARNING: the UI returned 403 — nginx can't read $APP/frontend/dist. Check permissions on $HOME."
+    info "WARNING: the UI returned 403 - nginx can't read $APP/frontend/dist. Check permissions on $HOME."
   fi
 
   info "Subpath integration on the host's primary web server"
   # Expose FilaMind under /filamind/ on whatever server already answers on :80 (Mainsail /
   # Fluidd). That server is the one a remote reverse proxy or a Cloudflare tunnel already
   # forwards, so the panel becomes reachable on LAN, by IP, AND through the tunnel with ONE
-  # host-relative link — no extra port to expose, no mDNS. The marker-guarded block proxies
+  # host-relative link - no extra port to expose, no mDNS. The marker-guarded block proxies
   # the whole subtree to the panel's own :$UI_PORT nginx (which routes assets / API /
   # websocket), so nothing about the panel's serving changes. Falls back gracefully: if no
   # primary :80 site is found, the sidebar link stays an absolute host:port URL.
@@ -481,10 +481,10 @@ PY
         sudo systemctl reload nginx && SUBPATH_OK=1
       else
         # The injected block isn't valid on this host (e.g. the primary site lacks the
-        # $connection_upgrade map) — revert from the backup so nginx is never left broken.
+        # $connection_upgrade map) - revert from the backup so nginx is never left broken.
         latest_bak="$(ls -t "$PRIMARY_SITE".bak.filamind.* 2>/dev/null | head -1)"
         [ -n "$latest_bak" ] && sudo cp "$latest_bak" "$PRIMARY_SITE" \
-          && info "  subpath skipped (nginx config check failed) — reverted $PRIMARY_SITE"
+          && info "  subpath skipped (nginx config check failed) - reverted $PRIMARY_SITE"
       fi
       [ -n "$PRIMARY_SITE" ] && prune_backups "$PRIMARY_SITE" sudo
     fi
@@ -550,12 +550,12 @@ EOF
 
   info "Granting the panel its passwordless-sudo rights (firmware + Host Control)"
   # Do it as part of the install so timezone/locale/hostname/network/cleanup/firmware all work
-  # out of the box — no separate manual step. (Re-grant later with: sudo bash scripts/install.sh sudoers)
+  # out of the box - no separate manual step. (Re-grant later with: sudo bash scripts/install.sh sudoers)
   sudo bash "$APP/scripts/install.sh" sudoers "$USER" || \
-    info "Could not grant sudo automatically — run it yourself: sudo bash $APP/scripts/install.sh sudoers"
+    info "Could not grant sudo automatically - run it yourself: sudo bash $APP/scripts/install.sh sudoers"
 
   # Opt-in: also install the rest of the FilaMind suite (the 3D agent + the screen native app) so
-  # the suite-gated widgets unlock and the touchscreen can run the native app. OFF by default — it
+  # the suite-gated widgets unlock and the touchscreen can run the native app. OFF by default - it
   # clones two more repos and the screen app can take over the display, so it's an explicit choice.
   # Turn it on for a fresh install:  FILAMIND_WITH_SUITE=1 curl -fsSL .../install.sh | bash
   # Or add it to an existing install any time:  bash scripts/install.sh suite
@@ -570,7 +570,7 @@ EOF
   echo "  Service: sudo systemctl status $SERVICE"
 }
 
-# ── suite: also install the other FilaMind suite services next to flow (best effort) ────────────
+# -- suite: also install the other FilaMind suite services next to flow (best effort) ------------
 # Clones filamind-3d + filamind-screen beside this repo and runs each one's OWN installer:
 #   filamind-3d     -> deploy/install-agent.sh   (the web-control backend as a managed service)
 #   filamind-screen -> deploy/install-native.sh  (the native touch app .deb + the kiosk unit)
@@ -586,19 +586,19 @@ do_suite() {
   if (
     set -e
     d="$base/filamind-3d"
-    # Full clone (not --depth 1) so tags come too — Moonraker's update_manager needs them for a real version.
+    # Full clone (not --depth 1) so tags come too - Moonraker's update_manager needs them for a real version.
     if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only; else git clone "$org/filamind-3d.git" "$d"; fi
     bash "$d/deploy/install-agent.sh"
   ); then
     info "  filamind-3d agent: installed"
   else
-    info "  filamind-3d agent: SKIPPED (it failed above) — retry with: bash $APP/scripts/install.sh suite"
+    info "  filamind-3d agent: SKIPPED (it failed above) - retry with: bash $APP/scripts/install.sh suite"
   fi
 
   if (
     set -e
     d="$base/filamind-screen"
-    # Full clone (not --depth 1) so tags come too — Moonraker's update_manager needs them for a real version.
+    # Full clone (not --depth 1) so tags come too - Moonraker's update_manager needs them for a real version.
     if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only; else git clone "$org/filamind-screen.git" "$d"; fi
     bash "$d/deploy/install-native.sh"
   ); then
@@ -607,10 +607,10 @@ do_suite() {
     info "  filamind-screen native: SKIPPED (it failed above)"
   fi
 
-  info "Suite step done — the flow Setup widget + Moonraker managed_services show what's installed."
+  info "Suite step done - the flow Setup widget + Moonraker managed_services show what's installed."
 }
 
-# ── uninstall: reverse the full install (run as your printer user; uses sudo for /etc) ──────────
+# -- uninstall: reverse the full install (run as your printer user; uses sudo for /etc) ----------
 do_uninstall() {
   [ "$(id -u)" -eq 0 ] && { echo "Please run as your printer user, not root."; exit 1; }
 
@@ -666,11 +666,11 @@ PY
   sudo rm -f /etc/sudoers.d/filamind /etc/udev/rules.d/99-stm32-dfu.rules
   sudo udevadm control --reload-rules 2>/dev/null || true
 
-  info "Done — system integration removed. The app files are still at $APP."
+  info "Done - system integration removed. The app files are still at $APP."
   echo "  Delete them too with:  rm -rf \"$APP\""
 }
 
-# ── dispatch ───────────────────────────────────────────────────────────────────
+# -- dispatch -------------------------------------------------------------------
 CMD="${1:-install}"
 case "$CMD" in
   sudoers) shift; do_sudoers "$@" ;;

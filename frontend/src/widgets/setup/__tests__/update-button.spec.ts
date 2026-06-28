@@ -89,7 +89,7 @@ describe('Setup widget: versions + smart Update button', () => {
     const update = i18n.global.t('setup.update') as string
     const upToDate = i18n.global.t('setup.upToDate') as string
 
-    // Exactly one Update button — for klipper (behind), not moonraker (current) nor the
+    // Exactly one Update button - for klipper (behind), not moonraker (current) nor the
     // not-installed component (which offers Install, not Update).
     const updateButtons = w.findAll('button').filter((b) => b.text() === update)
     expect(updateButtons).toHaveLength(1)

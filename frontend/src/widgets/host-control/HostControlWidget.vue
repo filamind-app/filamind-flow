@@ -66,7 +66,7 @@ onMounted(() => {
 })
 onUnmounted(stopAuto)
 
-// ── formatters ───────────────────────────────────────────────────────────────
+// -- formatters ---------------------------------------------------------------
 function fmtUptime(s: number | null): string {
   if (s == null) return '-'
   const d = Math.floor(s / 86400)

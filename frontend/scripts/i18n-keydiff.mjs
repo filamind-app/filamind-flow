@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CI gate: every non-reference locale must carry EXACTLY the `en` key set — no missing, no extra.
+// CI gate: every non-reference locale must carry EXACTLY the `en` key set - no missing, no extra.
 // This replaces eslint's `no-unused-keys`, which is unreliable here because keys are built
 // dynamically (e.g. `t('inputShaping.grade.verdict.' + letter)`). With only `en` present (Phase 0)
 // it is a trivial pass; it starts doing real work the moment a second locale lands.
@@ -49,7 +49,7 @@ for (const code of others) {
 }
 
 if (!others.length) {
-  console.log(`i18n-keydiff: only '${REFERENCE}' present (${refKeys.length} keys) — nothing to diff yet.`)
+  console.log(`i18n-keydiff: only '${REFERENCE}' present (${refKeys.length} keys) - nothing to diff yet.`)
 }
 
 process.exit(failed ? 1 : 0)

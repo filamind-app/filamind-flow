@@ -139,7 +139,7 @@ export function recommendPressure(): Suggestion[] {
   ]
 }
 
-/** Whether the MEASUREMENT itself is trustworthy, keyed off its quality grade — and which weakest
+/** Whether the MEASUREMENT itself is trustworthy, keyed off its quality grade - and which weakest
  *  factor to fix before re-running. A/B (score ≥ 70) → ok; C → consider; D/F → do-now. */
 export function recommendRetest(grade: QualityGrade): Suggestion {
   const weakest = grade.factors.slice().sort((a, b) => a.points / a.max - b.points / b.max)[0]

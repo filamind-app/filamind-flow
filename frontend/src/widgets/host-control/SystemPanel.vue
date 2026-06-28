@@ -121,7 +121,7 @@ async function runPower(): Promise<void> {
   await apply('power', () => power(action))
 }
 
-// ── Network (IPv4) ─────────────────────────────────────────────────────────────
+// -- Network (IPv4) -------------------------------------------------------------
 const netDevice = computed(() => info.value?.network.device ?? '')
 
 /** Enough filled in to attempt an apply (server re-validates authoritatively). */

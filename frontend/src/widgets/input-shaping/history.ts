@@ -9,9 +9,9 @@ export interface HistoryEntry {
   axis: string | null
   shaper: string
   freq: number
-  /** Measurement quality grade (A–F) - optional for entries saved before v0.38. */
+  /** Measurement quality grade (A-F) - optional for entries saved before v0.38. */
   grade?: string
-  /** 0–100 quality score - optional for older entries. */
+  /** 0-100 quality score - optional for older entries. */
   score?: number
 }
 

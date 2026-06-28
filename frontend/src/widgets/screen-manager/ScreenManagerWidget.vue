@@ -1,9 +1,9 @@
 <script setup lang="ts">
-/** Screen Manager — manage the printer's touchscreen, organized into THREE clear concerns
+/** Screen Manager - manage the printer's touchscreen, organized into THREE clear concerns
  *  (a behaviour-preserving split of the former single-view "KlipperScreen Studio" god-object):
- *    (1) Touch UI     — which touch UI owns the display (switch between KlipperScreen / FilaMind).
- *    (2) KlipperScreen — configure KlipperScreen: raw conf / settings / menus / themes.
- *    (3) Tools        — FilaMind's on-screen checks & tests.
+ *    (1) Touch UI     - which touch UI owns the display (switch between KlipperScreen / FilaMind).
+ *    (2) KlipperScreen - configure KlipperScreen: raw conf / settings / menus / themes.
+ *    (3) Tools        - FilaMind's on-screen checks & tests.
  *  All backend endpoints are unchanged; this is purely a UI re-organization. */
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -492,12 +492,12 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- (1) TOUCH UI — which touch UI owns the display (KlipperScreen / Guppyscreen / FilaMind) -->
+    <!-- (1) TOUCH UI - which touch UI owns the display (KlipperScreen / Guppyscreen / FilaMind) -->
     <template v-if="section === 'touch'">
       <ScreenSelector />
     </template>
 
-    <!-- (2) KLIPPERSCREEN — configure the KlipperScreen touch UI -->
+    <!-- (2) KLIPPERSCREEN - configure the KlipperScreen touch UI -->
     <template v-else-if="section === 'klipperscreen'">
       <p v-if="checking" class="font-mono text-xs opacity-70">
         {{ t('klipperscreenStudio.status.checking') }}
@@ -1129,7 +1129,7 @@ onMounted(() => {
       </template>
     </template>
 
-    <!-- (3) TOOLS — FilaMind's on-screen checks & tests + the suite remote-control tab -->
+    <!-- (3) TOOLS - FilaMind's on-screen checks & tests + the suite remote-control tab -->
     <template v-else>
       <FilaMindScreenTab v-if="suiteUnlocked" />
       <div v-else class="nb-card flex items-start gap-3 bg-surface p-3 text-sm">

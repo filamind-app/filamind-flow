@@ -107,7 +107,7 @@ async function onAssign(stepper: string, model: string | null): Promise<void> {
       </div>
     </div>
 
-    <!-- Steps 2–5 operate on the selected driver -->
+    <!-- Steps 2-5 operate on the selected driver -->
     <template v-else-if="selected">
       <i18n-t
         keypath="motorDrivers.guidedWizard.tuningHeader"

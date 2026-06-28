@@ -90,7 +90,7 @@ jobs:
       - run: mypy app
       - run: pytest -m "not e2e"
 
-  # The real app against an in-process HTTP Moonraker stub — fails when the app can no
+  # The real app against an in-process HTTP Moonraker stub - fails when the app can no
   # longer come up against a Moonraker-shaped boundary or its gated write path breaks.
   e2e:
     name: E2E smoke
@@ -109,7 +109,7 @@ jobs:
       - run: pytest -m e2e -q
 
   # Compile the native Tauri shell so the touch app can't silently break. This is a COMPILE check
-  # (no OS bundling) — bundling needs generated app icons (`npm run tauri icon`) and a per-arch
+  # (no OS bundling) - bundling needs generated app icons (`npm run tauri icon`) and a per-arch
   # packaging step, which land with the native build. Verifies the Rust shell + the webview
   # frontend (frontendDist = ../dist) integrate and build.
   tauri:

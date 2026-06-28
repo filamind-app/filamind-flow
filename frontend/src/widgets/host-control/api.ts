@@ -38,7 +38,7 @@ export async function fetchMonitor(): Promise<HostMonitor> {
   return (await r.json()) as HostMonitor
 }
 
-// ── Boot ───────────────────────────────────────────────────────────────────────
+// -- Boot -----------------------------------------------------------------------
 
 /** Read-only boot config: default systemd target, active boot splash, plymouth theme. */
 export async function fetchBootInfo(): Promise<BootInfo> {
@@ -66,7 +66,7 @@ export async function setBootSplash(image: string, target?: string): Promise<Sys
   return data as SystemActionResult
 }
 
-// ── Services (Phase 2) ─────────────────────────────────────────────────────────
+// -- Services (Phase 2) ---------------------------------------------------------
 
 /** All systemd .service units with their state (read-only). */
 export async function fetchServices(): Promise<ServiceUnit[]> {
@@ -117,7 +117,7 @@ export async function deleteService(name: string, confirm: string): Promise<Serv
   return postAction('delete', { name, confirm })
 }
 
-// ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+// -- Disk cleanup (Phase 3) -----------------------------------------------------
 
 /** Dry-run: how much each cleanup target would free (no deletion). */
 export async function fetchCleanup(): Promise<CleanupTarget[]> {
@@ -138,7 +138,7 @@ export async function runCleanup(ids: string[]): Promise<CleanupRunResult> {
   return data as CleanupRunResult
 }
 
-// ── System settings (Phase 4) ──────────────────────────────────────────────────
+// -- System settings (Phase 4) --------------------------------------------------
 
 /** Current time/locale/hostname/network settings + the option lists for the System form. */
 export async function fetchSystemInfo(): Promise<SystemInfo> {

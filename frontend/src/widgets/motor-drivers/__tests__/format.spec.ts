@@ -261,7 +261,7 @@ describe('endstopStateFor', () => {
 })
 
 describe('stallguardRange', () => {
-  it('uses unsigned 0–255 for sgthrs (2209) and sg4_thrs (2240)', () => {
+  it('uses unsigned 0-255 for sgthrs (2209) and sg4_thrs (2240)', () => {
     expect(stallguardRange('sgthrs')).toMatchObject({ min: 0, max: 255 })
     expect(stallguardRange('sg4_thrs')).toMatchObject({ min: 0, max: 255 })
     expect(stallguardRange('sgthrs').hint).toContain('HIGHER')

@@ -1,7 +1,7 @@
 [package]
 name = "filamind-flow"
 version = "0.1.0"
-description = "FilaMind Flow — on-printer touch control of the widget suite"
+description = "FilaMind Flow - on-printer touch control of the widget suite"
 authors = ["DeltaFabs"]
 edition = "2021"
 license = "GPL-3.0-or-later"

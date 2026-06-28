@@ -424,7 +424,7 @@ async function saveConfig(): Promise<void> {
       <ReportErrorButton :error="error" />
     </div>
 
-    <!-- Shared result view - the recommended shaper, A–F grade, frequency chart and shaper table.
+    <!-- Shared result view - the recommended shaper, A-F grade, frequency chart and shaper table.
          Shown in the Analyze and Live views. Guided renders its own accumulated per-stage
          results + charts (so an X chart is not replaced by the later Y chart). -->
     <template v-if="analysis && mode !== 'audit' && mode !== 'guided'">
@@ -450,7 +450,7 @@ async function saveConfig(): Promise<void> {
       </div>
       <div v-else class="nb-badge bg-brand-yellow">{{ t('inputShaping.widget.noShaper') }}</div>
 
-      <!-- Measurement quality grade (A–F) with a factor breakdown. -->
+      <!-- Measurement quality grade (A-F) with a factor breakdown. -->
       <div
         v-if="grade"
         class="flex items-center gap-3 rounded-brutal border-2 border-ink bg-paper px-3 py-2"

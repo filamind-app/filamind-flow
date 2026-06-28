@@ -31,7 +31,7 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           VERSION="${TAG#v}"
 
-          # Title: the annotated tag's subject (e.g. "v0.51.0 — Motor Drivers …"),
+          # Title: the annotated tag's subject (e.g. "v0.51.0 - Motor Drivers …"),
           # falling back to the bare tag name.
           TITLE="$(git tag -l --format='%(contents:subject)' "$TAG")"
           [ -n "$TITLE" ] || TITLE="$TAG"
@@ -58,7 +58,7 @@ jobs:
     needs: release
     runs-on: ubuntu-24.04-arm # glibc 2.39 → forward-compatible with the CB1's trixie (glibc 2.41)
     # Harden cargo against the flaky crates.io HTTP/2 download error ("Error in the HTTP2 framing
-    # layer") that failed v1.4.0's build once — retry, and fall back to HTTP/1.1.
+    # layer") that failed v1.4.0's build once - retry, and fall back to HTTP/1.1.
     env:
       CARGO_NET_RETRY: '10'
       CARGO_HTTP_MULTIPLEXING: 'false'
@@ -88,7 +88,7 @@ jobs:
           deb="$(find src-tauri/target -name '*.deb' | head -1)"
           [ -n "$deb" ] || { echo "::error::no .deb produced"; exit 1; }
           cp "$deb" "filamind-flow-arm64.deb"
-      # Append the asset to the Release the `release` job created (a JS action — needs no gh CLI,
+      # Append the asset to the Release the `release` job created (a JS action - needs no gh CLI,
       # which the arm64 runner may lack; omitting body leaves the CHANGELOG notes untouched).
       - uses: softprops/action-gh-release@v3
         with:

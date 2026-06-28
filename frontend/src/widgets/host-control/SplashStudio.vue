@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Host Control · Boot · Splash studio — design a boot-splash PNG on a canvas (background colour,
+/** Host Control · Boot · Splash studio - design a boot-splash PNG on a canvas (background colour,
  *  a text line, an optional uploaded image) and apply it. The apply is a gated backend write to a
  *  known splash path; whether it shows at boot depends on the host's splash setup (see the caveat). */
 import { onMounted, ref, watch } from 'vue'

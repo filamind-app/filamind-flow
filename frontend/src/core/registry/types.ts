@@ -2,7 +2,7 @@ import type { Component } from 'vue'
 
 /** Preferred grid footprint for a widget, in dashboard columns. */
 export interface WidgetSize {
-  /** Column span (1–4). */
+  /** Column span (1-4). */
   w: number
   /** Row span hint (reserved for future grid layouts). */
   h: number

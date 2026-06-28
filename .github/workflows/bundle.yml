@@ -2,9 +2,9 @@ name: Bundle (arm64)
 
 # Produce the installable native touch app for the printer: an arm64 .deb built in a
 # Debian Bookworm container (glibc 2.36) so it runs on the CB1's newer Armbian/Debian
-# trixie (glibc 2.41 — older glibc is forward-compatible). The .deb Depends on
+# trixie (glibc 2.41 - older glibc is forward-compatible). The .deb Depends on
 # libwebkit2gtk-4.1-0, which the CB1 has. Only runs when the native shell or its build
-# changes (path filter) or on demand — it does a full uncached arm64 Rust build.
+# changes (path filter) or on demand - it does a full uncached arm64 Rust build.
 on:
   push:
     branches: [main]
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     container: node:20-bookworm
     # Harden cargo against the flaky crates.io HTTP/2 download error ("Error in the HTTP2 framing
-    # layer") that intermittently fails the build — retry, and fall back to HTTP/1.1.
+    # layer") that intermittently fails the build - retry, and fall back to HTTP/1.1.
     env:
       CARGO_NET_RETRY: '10'
       CARGO_HTTP_MULTIPLEXING: 'false'

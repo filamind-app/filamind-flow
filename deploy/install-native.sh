@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# FilaMind Flow — install the NATIVE touch app on the printer's touchscreen.
+# FilaMind Flow - install the NATIVE touch app on the printer's touchscreen.
 #
 # Downloads the prebuilt arm64 .deb (the Tauri touch app that CI built) from the GitHub Release,
 # installs it, and writes a `filamind-kiosk` systemd unit (via scripts/install.sh kiosk --bin)
-# that can take over the touchscreen from KlipperScreen — reversibly. The unit is NOT enabled at
+# that can take over the touchscreen from KlipperScreen - reversibly. The unit is NOT enabled at
 # boot; you switch to it from the Screen Manager (Touch UI > "Use"). KlipperScreen stays the boot
 # default until you persist the switch, so any experiment is reboot-recoverable.
 #
-# We never BUILD on the printer — a Tauri/Rust build would exhaust a ~1 GB host's RAM and take other
+# We never BUILD on the printer - a Tauri/Rust build would exhaust a ~1 GB host's RAM and take other
 # services down with it. We fetch the aarch64 .deb CI already produced.
 #
 #   bash deploy/install-native.sh                # download + install the .deb + write the unit
@@ -41,7 +41,7 @@ restore_klipperscreen() {
     sudo systemctl enable "$SCREEN_UNIT" || true
     sudo systemctl start "$SCREEN_UNIT" || true
   else
-    log "WARNING: $SCREEN_UNIT is not installed — no display owner to restore to; leaving as-is."
+    log "WARNING: $SCREEN_UNIT is not installed - no display owner to restore to; leaving as-is."
   fi
 }
 
@@ -76,7 +76,7 @@ case "${1:-}" in
   *) echo "usage: $0 [--uninstall | --protect-oom]" >&2; exit 2 ;;
 esac
 
-# ── 1. arch guard + fetch the prebuilt .deb ─────────────────────────────────────────────────────
+# -- 1. arch guard + fetch the prebuilt .deb -----------------------------------------------------
 ARCH="$(dpkg --print-architecture 2>/dev/null || uname -m)"
 case "$ARCH" in
   arm64 | aarch64) ;;
@@ -87,29 +87,29 @@ TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 DEB_URL="https://github.com/$REPO/releases/latest/download/$ASSET"
 log "Downloading $ASSET from the latest Release…"
 curl -fL "$DEB_URL" -o "$TMP/$ASSET" \
-  || { echo "[native] Could not download $DEB_URL — is there a published Release with the .deb asset?" >&2; exit 1; }
+  || { echo "[native] Could not download $DEB_URL - is there a published Release with the .deb asset?" >&2; exit 1; }
 
-# ── 2. install it (apt resolves the libwebkit2gtk-4.1 runtime dep) ──────────────────────────────
+# -- 2. install it (apt resolves the libwebkit2gtk-4.1 runtime dep) ------------------------------
 log "Installing the .deb (needs sudo for apt)…"
 sudo apt-get install -y "$TMP/$ASSET" \
   || { sudo dpkg -i "$TMP/$ASSET" || true; sudo apt-get -y -f install; }
 
-# Discover the installed binary path — don't assume the Cargo package name maps 1:1 to /usr/bin/<x>.
+# Discover the installed binary path - don't assume the Cargo package name maps 1:1 to /usr/bin/<x>.
 PKG="$(dpkg-deb -f "$TMP/$ASSET" Package 2>/dev/null || echo filamind-flow)"
 BIN="$(dpkg -L "$PKG" 2>/dev/null | grep -E '^/usr/bin/' | head -1 || true)"
 [ -n "$BIN" ] || BIN="/usr/bin/filamind-flow"
 log "Installed binary: $BIN"
 
-# ── 3. write the kiosk unit via flow's single-source unit-writer ────────────────────────────────
+# -- 3. write the kiosk unit via flow's single-source unit-writer --------------------------------
 sudo bash "$APP_DIR/scripts/install.sh" kiosk --bin "$BIN" "$USER_NAME" "$URL_DEFAULT" "$SERVICE"
 
-# ── 4. register with Moonraker so the panel can start/stop/restart it ───────────────────────────
+# -- 4. register with Moonraker so the panel can start/stop/restart it ---------------------------
 if [ -f "$ASVC" ]; then
   grep -qx "$SERVICE" "$ASVC" || echo "$SERVICE" >> "$ASVC"
   sudo systemctl restart moonraker 2>/dev/null || true
 fi
 
-# ── 5. optional: protect klipper/moonraker from the OOM killer (opt-in) ─────────────────────────
+# -- 5. optional: protect klipper/moonraker from the OOM killer (opt-in) -------------------------
 if [ "$PROTECT_OOM" = 1 ]; then
   for svc in klipper moonraker; do
     src="$APP_DIR/deploy/oom/$svc.conf"

@@ -1,7 +1,7 @@
 // The SENDER side of the cross-surface command bus, flow-native. Moonraker only lets connections
 // that identified as type:"agent" call connection.send_event, so this owns a SECOND, lightweight
 // MoonrakerClient (separate from flow's main data connection) dedicated to the command bus. It
-// carries no subscriptions — it identifies as an agent and emits UI-only commands; the on-printer
+// carries no subscriptions - it identifies as an agent and emits UI-only commands; the on-printer
 // FilaMind screen receives them via notify_agent_event and acts.
 
 import { MoonrakerClient } from '../moonraker/client'
@@ -14,12 +14,12 @@ import {
 } from './commands'
 
 export interface CommandSenderOptions {
-  /** Stable agent name (pinned — a drifting name registers phantom duplicates on reconnect). */
+  /** Stable agent name (pinned - a drifting name registers phantom duplicates on reconnect). */
   client_name: string
   version: string
   /** Moonraker documents `url` as mandatory for identify. */
   url: string
-  /** Fires whenever readiness flips (connected + identified) — lets a UI gate its send affordances. */
+  /** Fires whenever readiness flips (connected + identified) - lets a UI gate its send affordances. */
   onReadyChange?: (ready: boolean) => void
 }
 
@@ -46,18 +46,18 @@ export class CommandSender {
     })
   }
 
-  /** true only when the bus is connected AND identified — gate remote-control affordances on this. */
+  /** true only when the bus is connected AND identified - gate remote-control affordances on this. */
   get ready(): boolean {
     return this.ready_
   }
 
-  /** Open the agent connection (lazy — call when the remote-control surface is first used). The
+  /** Open the agent connection (lazy - call when the remote-control surface is first used). The
    *  store keeps it warm for the app's lifetime; the browser reaps the socket on page unload. */
   start(): void {
     this.client.connect()
   }
 
-  /** Broadcast a UI-only command. Best-effort: dropped (not queued/replayed) when the bus is down —
+  /** Broadcast a UI-only command. Best-effort: dropped (not queued/replayed) when the bus is down -
    *  a stale "navigate" replayed later would yank a screen unexpectedly. */
   async send(cmd: RemoteCommand): Promise<void> {
     if (this.client.state !== 'connected') return

@@ -1,6 +1,6 @@
 // Runtime detection of whether the FilaMind suite (the FilaMind 3D interface) is present on this
 // printer. The suite-exclusive widgets (SUITE_GATED in adapter.ts) render their install-required gate
-// in the standalone Mainsail build UNTIL FilaMind 3D is detected installed — then they unlock and run
+// in the standalone Mainsail build UNTIL FilaMind 3D is detected installed - then they unlock and run
 // normally. Their data is served by the flow backend (e.g. /api/material), so unlocking needs no
 // round-trip to the 3D backend; detecting that FilaMind 3D is installed is enough.
 import { computed, ref, type ComputedRef } from 'vue'
@@ -23,7 +23,7 @@ interface SetupStatusShape {
 
 /**
  * Probe the flow backend's setup status and unlock the suite widgets if FilaMind 3D is installed.
- * Best-effort: any failure (offline, non-200, malformed) leaves the widgets gated — the safe default.
+ * Best-effort: any failure (offline, non-200, malformed) leaves the widgets gated - the safe default.
  */
 export async function detectSuiteHost(
   fetchImpl: typeof fetch = typeof fetch !== 'undefined' ? fetch : (undefined as never),

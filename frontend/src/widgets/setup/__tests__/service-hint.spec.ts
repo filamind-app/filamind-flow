@@ -64,7 +64,7 @@ describe('Setup widget: managed-service install button', () => {
     expect(btn).toBeTruthy()
     // The hint rides along as the button's title (replaces the old explanatory paragraph).
     expect(btn!.attributes('title')).toContain('Adds the FilaMind 3d agent')
-    // The old copyable one-liner is gone — it's a real GUI-run install now.
+    // The old copyable one-liner is gone - it's a real GUI-run install now.
     expect(w.text()).not.toContain('bash -s -- agent')
   })
 })

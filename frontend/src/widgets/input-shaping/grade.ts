@@ -218,7 +218,7 @@ function letterFor(score: number): { letter: Letter; verdict: string } {
   return { letter: 'F', verdict: i18n.global.t('inputShaping.grade.verdict.f') }
 }
 
-/** Grades a resonance analysis A–F from five equally-weighted factors. */
+/** Grades a resonance analysis A-F from five equally-weighted factors. */
 export function gradeAnalysis(analysis: ShaperAnalysis): QualityGrade {
   const rec = analysis.shapers.find((s) => s.recommended)
   if (!analysis.recommended_shaper || !rec) {

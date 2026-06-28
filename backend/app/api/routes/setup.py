@@ -1,4 +1,4 @@
-"""FilaMind Setup endpoints — browse the component catalog, see what's installed, and (only when
+"""FilaMind Setup endpoints - browse the component catalog, see what's installed, and (only when
 the host opts in via FILAMIND_SETUP_WRITES) install / update / remove components.
 
 Mutations funnel through setup_manager, which is gated + path-guarded; a disabled write returns 403.
@@ -27,7 +27,7 @@ class ComponentRef(BaseModel):
     id: str
     #: Optional port for installing a first-party web app (e.g. FilaMind 3d) onto a chosen port.
     port: int | None = None
-    #: Optional install action — ``"service"`` installs a first-party app's additional managed
+    #: Optional install action - ``"service"`` installs a first-party app's additional managed
     #: deployment (FilaMind 3d → the agent service), instead of its default install.
     action: str | None = None
 
@@ -72,7 +72,7 @@ async def _moonraker_full(
 
 
 async def _moonraker_signals(settings: Settings) -> tuple[set[str], set[str]]:
-    """(update-manager keys, managed services) for install detection — install/port paths only need
+    """(update-manager keys, managed services) for install detection - install/port paths only need
     the boolean signals, not versions, so this thin wrapper keeps their call sites unchanged."""
     version_info, services, _ = await _moonraker_full(settings)
     return {k.lower() for k in version_info}, services
@@ -169,7 +169,7 @@ async def setup_remove(req: RemoveRef) -> dict[str, Any]:
 
 @router.post("/restart")
 async def setup_restart(req: ComponentRef) -> dict[str, Any]:
-    """Restart a component's runtime — reload nginx for a first-party app (3d/screen), or restart a
+    """Restart a component's runtime - reload nginx for a first-party app (3d/screen), or restart a
     component's own systemd service. Shows whether 3d/screen are working and lets the user recover
     them without leaving the panel."""
     try:
@@ -193,7 +193,7 @@ async def setup_autoupdate_get() -> dict[str, Any]:
 @router.post("/autoupdate")
 async def setup_autoupdate_set(req: AutoUpdateRef) -> dict[str, Any]:
     """Persist auto-update preferences. When enabled, a background loop applies available updates on
-    the chosen interval — but only while the printer is idle, never mid-print."""
+    the chosen interval - but only while the printer is idle, never mid-print."""
     return setup_manager.set_autoupdate_prefs(req.enabled, req.intervalHours)
 
 

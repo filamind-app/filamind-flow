@@ -1,5 +1,5 @@
 // Cross-surface remote control: lets flow steer the on-printer FilaMind screen. The agent
-// connection is opened lazily on first use (init), then kept warm — so flow never holds a second
+// connection is opened lazily on first use (init), then kept warm - so flow never holds a second
 // websocket unless the operator actually opens the Remote Control page.
 
 import { defineStore } from 'pinia'
