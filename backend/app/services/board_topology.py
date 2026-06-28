@@ -647,13 +647,20 @@ _USB_CAN_DRIVERS = {"gs_usb"}
 _USB_CAN_BOARD_ID = "u2c-all"
 
 
-def _can_buses(system_info: dict[str, Any]) -> list[dict[str, Any]]:
+def _can_buses(
+    system_info: dict[str, Any], overrides: dict[str, dict[str, Any]] | None = None
+) -> list[dict[str, Any]]:
     """The host's CAN buses from ``/machine/system_info`` ``canbus``, each with a best-effort
     link to its bridging adapter. An external USB-CAN dongle (``gs_usb``) is not a Klipper MCU, so
-    it has no node - this is the only place it surfaces. An onboard transceiver gets no adapter."""
+    it has no node - this is the only place it surfaces. An onboard transceiver gets no adapter.
+
+    A user can pin the exact adapter (a U2C variant / Canable) the same way an MCU's board is
+    confirmed - the saved choice is keyed ``canbus:<iface>`` in the shared override store and wins
+    over the gs_usb suggestion."""
     canbus = system_info.get("canbus") if isinstance(system_info, dict) else None
     if not isinstance(canbus, dict):
         return []
+    overrides = overrides or {}
     out: list[dict[str, Any]] = []
     for iface, info in canbus.items():
         if not isinstance(info, dict):
@@ -668,7 +675,12 @@ def _can_buses(system_info: dict[str, Any]) -> list[dict[str, Any]]:
             "board_match": None,
             "board_match_confidence": 0.0,
         }
-        if driver in _USB_CAN_DRIVERS and reference_data.board_by_id(_USB_CAN_BOARD_ID):
+        override = overrides.get(f"canbus:{iface}")
+        if override and override.get("board_id"):
+            bus["board_id"] = override["board_id"]
+            bus["board_match"] = "confirmed"
+            bus["board_match_confidence"] = 1.0
+        elif driver in _USB_CAN_DRIVERS and reference_data.board_by_id(_USB_CAN_BOARD_ID):
             bus["board_id"] = _USB_CAN_BOARD_ID
             bus["board_match"] = "suggested"
             bus["board_match_confidence"] = 0.4
@@ -700,7 +712,8 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     configfile = await client.query_objects(["configfile"])
     sections = _sections(configfile.get("configfile"))
     result = analyze(sections)
-    apply_overrides(result, topology_overrides.read_overrides(data_dir))
+    overrides = topology_overrides.read_overrides(data_dir)
+    apply_overrides(result, overrides)
     # Enrich each MCU with its live chip + firmware (and a chip-narrowed board fingerprint) - the
     # only way to identify a CAN MCU's chip + every MCU's running firmware. Best-effort.
     with contextlib.suppress(httpx.HTTPError):
@@ -711,7 +724,7 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
         system_info = await client.machine_system_info()
         result["host"] = host_node(system_info)
         result["host"]["displays"] = _host_displays(system_info, sections)
-        result["can_buses"] = _can_buses(system_info)
+        result["can_buses"] = _can_buses(system_info, overrides)
     except httpx.HTTPError:
         pass
     _mark_integrated_host(result)

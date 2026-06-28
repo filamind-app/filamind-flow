@@ -59,7 +59,7 @@ const copied = ref(false)
 const tab = ref<'details' | 'atlas'>('details')
 
 watch(
-  () => [props.isHost, props.mcu?.name, props.mcu?.board_id] as const,
+  () => [props.isHost, props.mcu?.name, props.mcu?.board_id, props.canBus?.interface] as const,
   async ([isHost, , boardId]) => {
     detail.value = null
     pickerOpen.value = false
@@ -134,6 +134,12 @@ function onPick(id: string | null): void {
   if (id && props.mcu) emit('setOverride', props.mcu.name, id)
   pickerOpen.value = false
 }
+
+/** Pin the chosen catalog adapter to the selected CAN bus (keyed `canbus:<iface>`). */
+function onPickCan(id: string | null): void {
+  if (id && props.canBus) emit('setOverride', 'canbus:' + props.canBus.interface, id)
+  pickerOpen.value = false
+}
 </script>
 
 <template>
@@ -202,7 +208,57 @@ function onPick(id: string | null): void {
       >
         {{ t('hardwareBrowser.related.jump', { name: 'U2C' }) }} ↗
       </button>
-      <p class="text-[11px] opacity-60">{{ t('boardTopology.canbus.hint') }}</p>
+      <p v-if="canBus.board_match !== 'confirmed'" class="text-[11px] opacity-60">
+        {{ t('boardTopology.canbus.hint') }}
+      </p>
+
+      <!-- confirm / set the adapter type (the write path, keyed canbus:<iface>) -->
+      <div class="flex flex-wrap items-center gap-1 border-t border-ink/15 pt-1 text-[11px]">
+        <span
+          v-if="canBus.board_match === 'confirmed'"
+          class="rounded-sm bg-brand-lime px-1 font-bold text-ink"
+        >
+          ✓ {{ t('boardTopology.override.confirmed') }}
+        </span>
+        <button
+          v-if="canBus.board_id && canBus.board_match !== 'confirmed'"
+          type="button"
+          class="nb-btn bg-paper px-1 py-0 disabled:opacity-50"
+          :disabled="busy"
+          @click="emit('setOverride', 'canbus:' + canBus.interface, canBus.board_id)"
+        >
+          {{ t('boardTopology.override.confirm') }}
+        </button>
+        <button
+          type="button"
+          class="nb-btn bg-paper px-1 py-0 disabled:opacity-50"
+          :disabled="busy"
+          @click="pickerOpen = !pickerOpen"
+        >
+          {{
+            canBus.board_id ? t('boardTopology.override.change') : t('boardTopology.override.set')
+          }}
+        </button>
+        <button
+          v-if="canBus.board_match === 'confirmed'"
+          type="button"
+          class="nb-btn bg-paper px-1 py-0 disabled:opacity-50"
+          :disabled="busy"
+          @click="emit('clearOverride', 'canbus:' + canBus.interface)"
+        >
+          {{ t('boardTopology.override.clear') }}
+        </button>
+      </div>
+      <div v-if="pickerOpen">
+        <HardwarePicker
+          type="boards"
+          :model-value="canBus.board_id ?? null"
+          :placeholder="t('boardTopology.override.pickPlaceholder')"
+          :disabled="busy"
+          @update:model-value="onPickCan"
+        />
+        <p class="pt-0.5 text-[10px] opacity-60">{{ t('boardTopology.override.hint') }}</p>
+      </div>
     </template>
 
     <!-- MCU inspector -->

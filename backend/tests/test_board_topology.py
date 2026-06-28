@@ -431,6 +431,16 @@ def test_can_buses_links_gs_usb_adapter() -> None:
     assert board_topology._can_buses({}) == []
 
 
+def test_can_buses_override_pins_the_adapter() -> None:
+    """A user can pin the exact adapter (a U2C variant) via a `canbus:<iface>` override - it wins
+    over the gs_usb suggestion and reads as confirmed."""
+    si = {"canbus": {"can0": {"driver": "gs_usb", "bitrate": 1000000}}}
+    assert board_topology._can_buses(si)[0]["board_match"] == "suggested"  # default
+    bus = board_topology._can_buses(si, {"canbus:can0": {"board_id": "u2c-v2-0-v2-1"}})[0]
+    assert bus["board_id"] == "u2c-v2-0-v2-1"
+    assert bus["board_match"] == "confirmed" and bus["board_match_confidence"] == 1.0
+
+
 def test_display_component_and_host_displays() -> None:
     """The EXP-header LCD attaches to its MCU as a `display` component; KlipperScreen (a service)
     and a KNOMI macro (no hardware section) surface as host-side displays."""
