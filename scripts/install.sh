@@ -586,7 +586,8 @@ do_suite() {
   if (
     set -e
     d="$base/filamind-3d"
-    if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only; else git clone --depth 1 "$org/filamind-3d.git" "$d"; fi
+    # Full clone (not --depth 1) so tags come too — Moonraker's update_manager needs them for a real version.
+    if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only; else git clone "$org/filamind-3d.git" "$d"; fi
     bash "$d/deploy/install-agent.sh"
   ); then
     info "  filamind-3d agent: installed"
@@ -597,7 +598,8 @@ do_suite() {
   if (
     set -e
     d="$base/filamind-screen"
-    if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only; else git clone --depth 1 "$org/filamind-screen.git" "$d"; fi
+    # Full clone (not --depth 1) so tags come too — Moonraker's update_manager needs them for a real version.
+    if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only; else git clone "$org/filamind-screen.git" "$d"; fi
     bash "$d/deploy/install-native.sh"
   ); then
     info "  filamind-screen native: installed"
