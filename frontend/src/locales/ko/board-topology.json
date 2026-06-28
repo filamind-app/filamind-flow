@@ -276,7 +276,35 @@
     "display": {
       "title": "디스플레이",
       "touch": "터치 스크린",
-      "knomi": "WiFi 디스플레이"
+      "knomi": "WiFi 디스플레이",
+      "other": "디스플레이"
+    },
+    "manual": {
+      "add": "부품 추가",
+      "titleAdd": "부품 추가",
+      "titleEdit": "부품 편집",
+      "type": "유형",
+      "kindMcu": "보드 / MCU",
+      "kindCanbus": "USB-CAN 어댑터",
+      "kindDisplay": "호스트 디스플레이",
+      "mcuName": "MCU 섹션 이름",
+      "mcuNamePlaceholder": "예: toolhead, eddy",
+      "connection": "연결",
+      "board": "보드 (선택)",
+      "interface": "CAN 인터페이스",
+      "interfacePlaceholder": "예: can0",
+      "displayKind": "디스플레이 종류",
+      "displayName": "디스플레이 이름",
+      "displayNamePlaceholder": "예: KNOMI",
+      "detail": "메모 (선택)",
+      "d_touch": "터치 스크린",
+      "d_knomi": "WiFi 디스플레이 (KNOMI)",
+      "d_other": "기타",
+      "save": "저장",
+      "cancel": "취소",
+      "edit": "편집",
+      "delete": "삭제",
+      "badge": "수동"
     }
   }
 }

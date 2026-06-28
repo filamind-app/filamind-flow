@@ -1287,6 +1287,9 @@ class TopologyMcu(BaseModel):
     # Running firmware version of this MCU (from the live mcu object); null on an offline read.
     firmware: str | None = None
     components: list[TopologyComponent] = []
+    # Set when this node was added by the user (not auto-detected); the manual entry's id, so the
+    # UI can edit/remove it. None for a detected MCU.
+    manual_id: str | None = None
 
 
 class TopologyDisplay(BaseModel):
@@ -1297,6 +1300,8 @@ class TopologyDisplay(BaseModel):
     kind: str  # "touch" | "knomi"
     name: str
     detail: str | None = None
+    # Set when the user added this display manually; the manual entry's id (for edit/remove).
+    manual_id: str | None = None
 
 
 class TopologyHost(BaseModel):
@@ -1328,6 +1333,8 @@ class TopologyCanBus(BaseModel):
     board_id: str | None = None
     board_match: str | None = None  # "suggested" | "confirmed"
     board_match_confidence: float = 0.0
+    # Set when the user added this adapter manually; the manual entry's id (for edit/remove).
+    manual_id: str | None = None
 
 
 class Topology(BaseModel):
@@ -1411,6 +1418,21 @@ class McuKeyRequest(BaseModel):
     """Identify one MCU by its config section name (to clear its board override)."""
 
     mcu_name: str
+
+
+class ManualAdditionRequest(BaseModel):
+    """Add (or update, when ``id`` is given) a user-supplied topology node the auto-detection
+    missed: an MCU/board, a USB-CAN adapter, or a host display. Only the fields for the chosen
+    ``kind`` are used."""
+
+    id: str | None = None
+    kind: str  # "mcu" | "canbus" | "display"
+    name: str | None = None  # MCU section name / display name
+    board_id: str | None = None  # catalog board for an MCU or adapter (optional)
+    connection: str | None = None  # MCU connection: usb | canbus | uart | unknown
+    interface: str | None = None  # CAN interface, e.g. "can0"
+    display_kind: str | None = None  # touch | knomi | other
+    detail: str | None = None  # optional free-text note for a display
 
 
 class CanDfuStatus(BaseModel):

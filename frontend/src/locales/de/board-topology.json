@@ -276,7 +276,35 @@
     "display": {
       "title": "Displays",
       "touch": "Touchscreen",
-      "knomi": "WLAN-Display"
+      "knomi": "WLAN-Display",
+      "other": "Display"
+    },
+    "manual": {
+      "add": "Teil hinzufügen",
+      "titleAdd": "Teil hinzufügen",
+      "titleEdit": "Teil bearbeiten",
+      "type": "Typ",
+      "kindMcu": "Board / MCU",
+      "kindCanbus": "USB-CAN-Adapter",
+      "kindDisplay": "Host-Display",
+      "mcuName": "MCU-Sektionsname",
+      "mcuNamePlaceholder": "z. B. toolhead, eddy",
+      "connection": "Verbindung",
+      "board": "Board (optional)",
+      "interface": "CAN-Schnittstelle",
+      "interfacePlaceholder": "z. B. can0",
+      "displayKind": "Display-Art",
+      "displayName": "Display-Name",
+      "displayNamePlaceholder": "z. B. KNOMI",
+      "detail": "Notiz (optional)",
+      "d_touch": "Touchscreen",
+      "d_knomi": "WLAN-Display (KNOMI)",
+      "d_other": "Sonstiges",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "badge": "Manuell"
     }
   }
 }

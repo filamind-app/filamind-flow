@@ -276,7 +276,35 @@
     "display": {
       "title": "Display",
       "touch": "touch screen",
-      "knomi": "display WiFi"
+      "knomi": "display WiFi",
+      "other": "Display"
+    },
+    "manual": {
+      "add": "Aggiungi componente",
+      "titleAdd": "Aggiungi un componente",
+      "titleEdit": "Modifica componente",
+      "type": "Tipo",
+      "kindMcu": "Scheda / MCU",
+      "kindCanbus": "Adattatore USB-CAN",
+      "kindDisplay": "Display host",
+      "mcuName": "Nome sezione MCU",
+      "mcuNamePlaceholder": "es. toolhead, eddy",
+      "connection": "Connessione",
+      "board": "Scheda (opzionale)",
+      "interface": "Interfaccia CAN",
+      "interfacePlaceholder": "es. can0",
+      "displayKind": "Tipo di display",
+      "displayName": "Nome del display",
+      "displayNamePlaceholder": "es. KNOMI",
+      "detail": "Nota (opzionale)",
+      "d_touch": "Touch screen",
+      "d_knomi": "Display WiFi (KNOMI)",
+      "d_other": "Altro",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "badge": "Manuale"
     }
   }
 }

@@ -276,7 +276,35 @@
     "display": {
       "title": "Pantallas",
       "touch": "pantalla táctil",
-      "knomi": "pantalla WiFi"
+      "knomi": "pantalla WiFi",
+      "other": "Pantalla"
+    },
+    "manual": {
+      "add": "Añadir pieza",
+      "titleAdd": "Añadir una pieza",
+      "titleEdit": "Editar pieza",
+      "type": "Tipo",
+      "kindMcu": "Placa / MCU",
+      "kindCanbus": "Adaptador USB-CAN",
+      "kindDisplay": "Pantalla del host",
+      "mcuName": "Nombre de la sección MCU",
+      "mcuNamePlaceholder": "p. ej. toolhead, eddy",
+      "connection": "Conexión",
+      "board": "Placa (opcional)",
+      "interface": "Interfaz CAN",
+      "interfacePlaceholder": "p. ej. can0",
+      "displayKind": "Tipo de pantalla",
+      "displayName": "Nombre de la pantalla",
+      "displayNamePlaceholder": "p. ej. KNOMI",
+      "detail": "Nota (opcional)",
+      "d_touch": "Pantalla táctil",
+      "d_knomi": "Pantalla WiFi (KNOMI)",
+      "d_other": "Otra",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "badge": "Manual"
     }
   }
 }

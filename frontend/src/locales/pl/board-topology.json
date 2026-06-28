@@ -276,7 +276,35 @@
     "display": {
       "title": "Wyświetlacze",
       "touch": "ekran dotykowy",
-      "knomi": "wyświetlacz WiFi"
+      "knomi": "wyświetlacz WiFi",
+      "other": "Wyświetlacz"
+    },
+    "manual": {
+      "add": "Dodaj element",
+      "titleAdd": "Dodaj element",
+      "titleEdit": "Edytuj element",
+      "type": "Typ",
+      "kindMcu": "Płytka / MCU",
+      "kindCanbus": "Adapter USB-CAN",
+      "kindDisplay": "Wyświetlacz hosta",
+      "mcuName": "Nazwa sekcji MCU",
+      "mcuNamePlaceholder": "np. toolhead, eddy",
+      "connection": "Połączenie",
+      "board": "Płytka (opcjonalnie)",
+      "interface": "Interfejs CAN",
+      "interfacePlaceholder": "np. can0",
+      "displayKind": "Rodzaj wyświetlacza",
+      "displayName": "Nazwa wyświetlacza",
+      "displayNamePlaceholder": "np. KNOMI",
+      "detail": "Notatka (opcjonalnie)",
+      "d_touch": "Ekran dotykowy",
+      "d_knomi": "Wyświetlacz WiFi (KNOMI)",
+      "d_other": "Inny",
+      "save": "Zapisz",
+      "cancel": "Anuluj",
+      "edit": "Edytuj",
+      "delete": "Usuń",
+      "badge": "Ręcznie"
     }
   }
 }

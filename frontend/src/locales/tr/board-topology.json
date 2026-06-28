@@ -276,7 +276,35 @@
     "display": {
       "title": "Ekranlar",
       "touch": "dokunmatik ekran",
-      "knomi": "WiFi ekran"
+      "knomi": "WiFi ekran",
+      "other": "Ekran"
+    },
+    "manual": {
+      "add": "Parça ekle",
+      "titleAdd": "Parça ekle",
+      "titleEdit": "Parçayı düzenle",
+      "type": "Tür",
+      "kindMcu": "Kart / MCU",
+      "kindCanbus": "USB-CAN adaptörü",
+      "kindDisplay": "Ana bilgisayar ekranı",
+      "mcuName": "MCU bölüm adı",
+      "mcuNamePlaceholder": "örn. toolhead, eddy",
+      "connection": "Bağlantı",
+      "board": "Kart (isteğe bağlı)",
+      "interface": "CAN arayüzü",
+      "interfacePlaceholder": "örn. can0",
+      "displayKind": "Ekran türü",
+      "displayName": "Ekran adı",
+      "displayNamePlaceholder": "örn. KNOMI",
+      "detail": "Not (isteğe bağlı)",
+      "d_touch": "Dokunmatik ekran",
+      "d_knomi": "WiFi ekran (KNOMI)",
+      "d_other": "Diğer",
+      "save": "Kaydet",
+      "cancel": "İptal",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "badge": "Manuel"
     }
   }
 }

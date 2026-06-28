@@ -18,6 +18,7 @@ from app.models.schemas import (
     CanDfuStatus,
     CanFlashRequest,
     CanFlashResult,
+    ManualAdditionRequest,
     McuKeyRequest,
     PinAtlas,
     Topology,
@@ -26,6 +27,7 @@ from app.models.schemas import (
 from app.services import (
     board_topology,
     canbus_flash,
+    manual_additions,
     reference_data,
     topology_overrides,
     topology_snapshot,
@@ -83,6 +85,31 @@ async def clear_board_override(
 ) -> Topology:
     """Remove an MCU's board override (revert to the auto suggestion)."""
     topology_overrides.clear_override(settings.data_dir, request.mcu_name)
+    return await _build(settings)
+
+
+# -- Manual additions: user-supplied nodes the auto-detection missed -----------------------
+
+
+@router.post("/manual", response_model=Topology)
+async def add_manual(
+    request: ManualAdditionRequest, settings: Settings = Depends(get_settings)
+) -> Topology:
+    """Add (or update, when ``id`` is given) a manual node - an MCU/board, a USB-CAN adapter, or a
+    host display. 400 on invalid input; 404 if a given ``board_id`` isn't a known catalog board."""
+    if request.board_id and reference_data.board_by_id(request.board_id) is None:
+        raise HTTPException(status_code=404, detail=f"Unknown board '{request.board_id}'")
+    try:
+        manual_additions.add_or_update(settings.data_dir, request.model_dump())
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return await _build(settings)
+
+
+@router.delete("/manual/{entry_id}", response_model=Topology)
+async def remove_manual(entry_id: str, settings: Settings = Depends(get_settings)) -> Topology:
+    """Remove a manual node by its id (a no-op if it's already gone)."""
+    manual_additions.remove(settings.data_dir, entry_id)
     return await _build(settings)
 
 

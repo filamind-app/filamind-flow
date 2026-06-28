@@ -276,7 +276,35 @@
     "display": {
       "title": "الشاشات",
       "touch": "شاشة لمس",
-      "knomi": "شاشة واي فاي"
+      "knomi": "شاشة واي فاي",
+      "other": "شاشة"
+    },
+    "manual": {
+      "add": "إضافة قطعة",
+      "titleAdd": "إضافة قطعة",
+      "titleEdit": "تعديل القطعة",
+      "type": "النوع",
+      "kindMcu": "لوحة / MCU",
+      "kindCanbus": "محوّل USB-CAN",
+      "kindDisplay": "شاشة المضيف",
+      "mcuName": "اسم قسم MCU",
+      "mcuNamePlaceholder": "مثال: toolhead، eddy",
+      "connection": "الاتصال",
+      "board": "اللوحة (اختياري)",
+      "interface": "واجهة CAN",
+      "interfacePlaceholder": "مثال: can0",
+      "displayKind": "نوع الشاشة",
+      "displayName": "اسم الشاشة",
+      "displayNamePlaceholder": "مثال: KNOMI",
+      "detail": "ملاحظة (اختياري)",
+      "d_touch": "شاشة لمس",
+      "d_knomi": "شاشة WiFi ‏(KNOMI)",
+      "d_other": "أخرى",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "badge": "يدوي"
     }
   }
 }
