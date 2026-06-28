@@ -218,6 +218,28 @@ export interface CanBusActionResult {
   needs_setup?: boolean
 }
 
+// -- Health advisor (Phase 6) ---------------------------------------------------
+
+/** One graded host-health card (CPU / memory / disk / clock / services). */
+export interface HealthCard {
+  id: string
+  status: 'ok' | 'warn' | 'fail' | 'unknown'
+  /** 0-100. */
+  score: number
+  /** Letter grade derived from the score (A-F). */
+  grade: string
+  /** Badge codes (rendered via hostControl.advisor.badge.<code>). */
+  badges: string[]
+  /** Backend-built detail line (numbers + units). */
+  detail: string
+  /** i18n suffix for an actionable fix hint, or null. */
+  fix_code: string | null
+}
+
+export interface HealthAdvisory {
+  cards: HealthCard[]
+}
+
 export interface NetworkSetReq {
   method: 'auto' | 'manual'
   address?: string

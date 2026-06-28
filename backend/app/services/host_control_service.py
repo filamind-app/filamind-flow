@@ -1200,3 +1200,171 @@ async def set_network(
     # genuine reactivation failure, so we report ok:false (the modify did persist to the profile).
     rc2, out2 = await _run_rc(["sudo", "-n", "nmcli", "connection", "up", conn], timeout=30.0)
     return _result(rc2, out2)
+
+
+# -- Host health advisor (Phase 6) ---------------------------------------------
+# Graded, actionable health cards over the SAME read-only signals the monitor uses (CPU temp /
+# throttle, memory + swap, disk, clock/NTP, the print-stack services). No new privilege - every
+# source is already read for the monitor. Thresholds mirror the monitor's bar colours so the grade
+# agrees with what the user sees there.
+
+_ADV_TEMP_WARN, _ADV_TEMP_FAIL = 70.0, 80.0
+_ADV_MEM_WARN, _ADV_MEM_FAIL = 75, 90
+_ADV_DISK_WARN, _ADV_DISK_FAIL = 85, 95
+#: The print-stack services whose health the Advisor surfaces (not the whole critical set).
+_ADV_SERVICES = ("klipper", "moonraker")
+_GRADE_BANDS = ((90, "A"), (78, "B"), (62, "C"), (45, "D"))
+
+
+def _grade(score: int) -> str:
+    """Map a 0-100 score to a letter, matching the Machine Doctor bands."""
+    for floor, letter in _GRADE_BANDS:
+        if score >= floor:
+            return letter
+    return "F"
+
+
+def _gb(kb: int) -> str:
+    return f"{kb / 1048576:.1f} GB"
+
+
+def _card(
+    card_id: str,
+    status: str,
+    score: float,
+    *,
+    badges: list[str] | None = None,
+    detail: str = "",
+    fix: str | None = None,
+) -> dict[str, Any]:
+    s = int(max(0, min(100, round(score))))
+    return {
+        "id": card_id,
+        "status": status,
+        "score": s,
+        "grade": _grade(s),
+        "badges": list(dict.fromkeys(badges or [])),  # de-duplicated, order-preserving
+        "detail": detail,
+        "fix_code": fix,
+    }
+
+
+def _cpu_card(cpu: dict[str, Any], throttle: dict[str, Any]) -> dict[str, Any]:
+    temp = cpu.get("temp_c")
+    badges: list[str] = []
+    fix: str | None = None
+    if isinstance(temp, int | float):
+        if temp >= _ADV_TEMP_FAIL:
+            status, score, fix = "fail", 30, "cpu_temp"
+            badges.append("temp_high")
+        elif temp >= _ADV_TEMP_WARN:
+            status, score, fix = "warn", 68, "cpu_temp"
+            badges.append("temp_high")
+        else:
+            status, score = "ok", max(70, round(100 - max(0.0, temp - 40) * 1.5))
+    else:
+        status, score = "ok", 90
+    flags = throttle.get("flags") or []
+    if throttle.get("undervoltage"):
+        badges.append("undervolt")
+    if any(str(f).endswith("_now") for f in flags):
+        status, score, fix = "fail", min(score, 30), "cpu_throttled"
+        badges.append("throttled")
+    elif any(str(f).endswith("_occurred") for f in flags):
+        if status == "ok":
+            status, score = "warn", min(score, 68)
+        badges.append("throttled")
+    detail = f"{temp} °C" if isinstance(temp, int | float) else "—"
+    load = cpu.get("load")
+    if load:
+        detail += " · " + " ".join(str(x) for x in load)
+    return _card("cpu", status, score, badges=badges, detail=detail, fix=fix)
+
+
+def _mem_card(mem: dict[str, Any]) -> dict[str, Any]:
+    total = mem.get("total_kb") or 0
+    used = mem.get("used_kb") or 0
+    pct = round(used / total * 100) if total else 0
+    badges: list[str] = []
+    if pct >= _ADV_MEM_FAIL:
+        status, fix = "fail", "memory_pressure"
+    elif pct >= _ADV_MEM_WARN:
+        status, fix = "warn", "memory_pressure"
+    else:
+        status, fix = "ok", None
+    score = max(0, 100 - pct)
+    swap_total = mem.get("swap_total_kb") or 0
+    swap_used = mem.get("swap_used_kb") or 0
+    spct = round(swap_used / swap_total * 100) if swap_total else 0
+    if swap_total and spct >= 50:
+        badges.append("swap_heavy")
+        if status == "ok":
+            status, score = "warn", min(score, 68)
+        fix = fix or "memory_pressure"
+    detail = f"{pct}% · {_gb(used)}/{_gb(total)}"
+    if swap_total:
+        detail += f" · swap {spct}%"
+    return _card("memory", status, score, badges=badges, detail=detail, fix=fix)
+
+
+def _disk_card(disks: list[dict[str, Any]]) -> dict[str, Any]:
+    if not disks:
+        return _card("disk", "unknown", 50, detail="—")
+    maxpct = max(int(d.get("pct", 0)) for d in disks)
+    if maxpct >= _ADV_DISK_FAIL:
+        status, fix = "fail", "disk_full"
+    elif maxpct >= _ADV_DISK_WARN:
+        status, fix = "warn", "disk_full"
+    else:
+        status, fix = "ok", None
+    detail = " · ".join(f"{d['label']} {d['pct']}%" for d in disks)
+    return _card("disk", status, max(0, 100 - maxpct), detail=detail, fix=fix)
+
+
+def _clock_card(time_b: dict[str, Any]) -> dict[str, Any]:
+    tz = time_b.get("timezone") or "—"
+    if time_b.get("ntp_synced"):
+        return _card("clock", "ok", 95, detail=f"{tz} · NTP ✓")
+    mark = "⟳" if time_b.get("ntp_enabled") else "✗"
+    score = 60 if time_b.get("ntp_enabled") else 55
+    return _card(
+        "clock", "warn", score, badges=["ntp_unsync"], detail=f"{tz} · NTP {mark}", fix="ntp_unsync"
+    )
+
+
+async def _services_card() -> dict[str, Any]:
+    units = await list_units()
+    by_name: dict[str, dict[str, Any]] = {}
+    for u in units:
+        by_name.setdefault(str(u.get("name")), u)
+        by_name.setdefault(_base(str(u.get("name"))), u)
+    parts: list[str] = []
+    down = False
+    for svc in _ADV_SERVICES:
+        unit = by_name.get(svc)
+        if not unit:
+            continue
+        active = bool(unit.get("active"))
+        parts.append(f"{svc} {'✓' if active else '✕'}")
+        down = down or not active
+    if not parts:
+        return _card("services", "unknown", 50, detail="—")
+    if down:
+        return _card("services", "fail", 25, detail=" · ".join(parts), fix="service_down")
+    return _card("services", "ok", 100, detail=" · ".join(parts))
+
+
+async def advisory(data_dir: str) -> dict[str, Any]:
+    """Graded host-health cards (CPU / memory / disk / clock / services). Read-only - same signals
+    as the monitor, scored independently per card with an actionable fix hint."""
+    throttle, time_b, services = await asyncio.gather(
+        _throttle_block(), _time_block(), _services_card()
+    )
+    cards = [
+        _cpu_card(_cpu_block(), throttle),
+        _mem_card(_memory_block()),
+        _disk_card(_disk_block(data_dir)),
+        _clock_card(time_b),
+        services,
+    ]
+    return {"cards": cards}

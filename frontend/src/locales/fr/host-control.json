@@ -7,7 +7,8 @@
       "cleanup": "Nettoyage",
       "system": "Système",
       "boot": "Démarrage",
-      "canbus": "Bus CAN"
+      "canbus": "Bus CAN",
+      "advisor": "Conseiller"
     },
     "help": {
       "guide": "Aide",
@@ -293,6 +294,37 @@
       "downFirst": "Désactivez l'interface pour modifier son bitrate.",
       "actionOk": "Interface mise à jour.",
       "actionFailed": "L'action a échoué."
+    },
+    "advisor": {
+      "intro": "État de santé de l'hôte en un coup d'œil : CPU, mémoire, disque, horloge et services, chacun noté avec une solution.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Mémoire",
+        "disk": "Disque",
+        "clock": "Horloge",
+        "services": "Services"
+      },
+      "status": {
+        "ok": "Sain",
+        "warn": "Attention",
+        "fail": "Critique",
+        "unknown": "Inconnu"
+      },
+      "badge": {
+        "temp_high": "Température élevée",
+        "throttled": "Bridé",
+        "undervolt": "Sous-tension",
+        "swap_heavy": "Swap intensif",
+        "ntp_unsync": "Horloge non synchro"
+      },
+      "hint": {
+        "cpu_temp": "Le CPU chauffe. Vérifiez le refroidissement et la circulation d'air autour de la carte.",
+        "cpu_throttled": "La carte est bridée (sous-tension ou chaleur). Utilisez une alimentation/un câble fiables et améliorez le refroidissement.",
+        "memory_pressure": "La mémoire est presque pleine et utilise le swap. Redémarrez les services gourmands ou ajoutez de la RAM.",
+        "disk_full": "L'espace disque est faible. Utilisez Nettoyage pour libérer les caches et anciens journaux.",
+        "service_down": "Un service de la pile d'impression est arrêté. Ouvrez Services pour le démarrer.",
+        "ntp_unsync": "L'horloge n'est pas synchronisée. Activez NTP dans Système ou réglez l'heure."
+      }
     }
   }
 }

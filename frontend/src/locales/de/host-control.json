@@ -7,7 +7,8 @@
       "cleanup": "Bereinigung",
       "system": "System",
       "boot": "Boot",
-      "canbus": "CAN-Bus"
+      "canbus": "CAN-Bus",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Hilfe",
@@ -293,6 +294,37 @@
       "downFirst": "Deaktiviere die Schnittstelle, um ihre Bitrate zu ändern.",
       "actionOk": "Schnittstelle aktualisiert.",
       "actionFailed": "Die Aktion ist fehlgeschlagen."
+    },
+    "advisor": {
+      "intro": "Host-Zustand auf einen Blick: CPU, Speicher, Datenträger, Uhr und Dienste, jeweils bewertet samt Lösung.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Speicher",
+        "disk": "Datenträger",
+        "clock": "Uhr",
+        "services": "Dienste"
+      },
+      "status": {
+        "ok": "Gesund",
+        "warn": "Achtung",
+        "fail": "Kritisch",
+        "unknown": "Unbekannt"
+      },
+      "badge": {
+        "temp_high": "Hohe Temp.",
+        "throttled": "Gedrosselt",
+        "undervolt": "Unterspannung",
+        "swap_heavy": "Starkes Swappen",
+        "ntp_unsync": "Uhr nicht synchron"
+      },
+      "hint": {
+        "cpu_temp": "Die CPU läuft heiß. Prüfe Kühlung und Luftstrom rund um das Board.",
+        "cpu_throttled": "Das Board drosselt (Unterspannung oder Hitze). Nutze ein bekannt gutes Netzteil/Kabel und verbessere die Kühlung.",
+        "memory_pressure": "Der Speicher ist fast voll und swappt. Starte ressourcenhungrige Dienste neu oder erweitere den RAM.",
+        "disk_full": "Der Speicherplatz wird knapp. Nutze die Bereinigung, um Caches und alte Protokolle freizugeben.",
+        "service_down": "Ein Dienst des Druck-Stacks läuft nicht. Öffne Dienste, um ihn zu starten.",
+        "ntp_unsync": "Die Uhr ist nicht synchronisiert. Aktiviere NTP unter System oder stelle die Zeit."
+      }
     }
   }
 }

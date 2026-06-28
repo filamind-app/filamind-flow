@@ -7,7 +7,8 @@
       "cleanup": "Temizlik",
       "system": "Sistem",
       "boot": "Önyükleme",
-      "canbus": "CAN Bus"
+      "canbus": "CAN Bus",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Yardım",
@@ -293,6 +294,37 @@
       "downFirst": "Bitrate'i değiştirmek için önce arayüzü devre dışı bırakın.",
       "actionOk": "Arayüz güncellendi.",
       "actionFailed": "İşlem başarısız oldu."
+    },
+    "advisor": {
+      "intro": "Ana makine sağlığına bir bakış - CPU, bellek, disk, saat ve servisler; her biri çözümüyle birlikte derecelendirilir.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Bellek",
+        "disk": "Disk",
+        "clock": "Saat",
+        "services": "Servisler"
+      },
+      "status": {
+        "ok": "Sağlıklı",
+        "warn": "Dikkat",
+        "fail": "Kritik",
+        "unknown": "Bilinmiyor"
+      },
+      "badge": {
+        "temp_high": "Yüksek sıcaklık",
+        "throttled": "Kısıtlandı",
+        "undervolt": "Düşük voltaj",
+        "swap_heavy": "Yoğun takas",
+        "ntp_unsync": "Saat eşitlenmemiş"
+      },
+      "hint": {
+        "cpu_temp": "CPU yüksek sıcaklıkta çalışıyor. Kart çevresindeki soğutmayı ve hava akışını kontrol edin.",
+        "cpu_throttled": "Kart kısıtlama yapıyor (düşük voltaj ya da ısı). Bilinen sağlam bir PSU/kablo kullanın ve soğutmayı iyileştirin.",
+        "memory_pressure": "Bellek neredeyse dolu ve takas kullanılıyor. Yoğun servisleri yeniden başlatın ya da RAM ekleyin.",
+        "disk_full": "Disk alanı az. Önbellekleri ve eski günlükleri temizlemek için Temizlik'i kullanın.",
+        "service_down": "Bir baskı yığını servisi çalışmıyor. Başlatmak için Servisler'i açın.",
+        "ntp_unsync": "Saat eşitlenmemiş. Sistem'de NTP'yi etkinleştirin ya da saati ayarlayın."
+      }
     }
   }
 }

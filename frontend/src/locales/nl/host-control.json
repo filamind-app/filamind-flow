@@ -7,7 +7,8 @@
       "cleanup": "Opschonen",
       "system": "Systeem",
       "boot": "Opstarten",
-      "canbus": "CAN-bus"
+      "canbus": "CAN-bus",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Help",
@@ -293,6 +294,37 @@
       "downFirst": "Schakel de interface uit om de bitrate te wijzigen.",
       "actionOk": "Interface bijgewerkt.",
       "actionFailed": "De actie is mislukt."
+    },
+    "advisor": {
+      "intro": "Hostconditie in één oogopslag - CPU, geheugen, schijf, klok en diensten, elk met een beoordeling en een oplossing.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Geheugen",
+        "disk": "Schijf",
+        "clock": "Klok",
+        "services": "Diensten"
+      },
+      "status": {
+        "ok": "Gezond",
+        "warn": "Let op",
+        "fail": "Kritiek",
+        "unknown": "Onbekend"
+      },
+      "badge": {
+        "temp_high": "Hoge temp",
+        "throttled": "Gethrottled",
+        "undervolt": "Onderspanning",
+        "swap_heavy": "Veel swap",
+        "ntp_unsync": "Klok niet gesynct"
+      },
+      "hint": {
+        "cpu_temp": "De CPU wordt heet. Controleer de koeling en luchtstroom rond het board.",
+        "cpu_throttled": "Het board throttelt (onderspanning of warmte). Gebruik een bekend goede PSU/kabel en verbeter de koeling.",
+        "memory_pressure": "Het geheugen is bijna vol en swapt. Herstart zware diensten of voeg RAM toe.",
+        "disk_full": "Weinig schijfruimte. Gebruik Opschonen om caches en oude logboeken vrij te maken.",
+        "service_down": "Een dienst van de printstack draait niet. Open Diensten om hem te starten.",
+        "ntp_unsync": "De klok is niet gesynchroniseerd. Schakel NTP in bij Systeem of stel de tijd in."
+      }
     }
   }
 }

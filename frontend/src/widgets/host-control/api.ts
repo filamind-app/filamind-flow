@@ -7,6 +7,7 @@ import type {
   CanBusStatus,
   CleanupRunResult,
   CleanupTarget,
+  HealthAdvisory,
   HostMonitor,
   NetworkSetReq,
   PowerAction,
@@ -38,6 +39,13 @@ export async function fetchMonitor(): Promise<HostMonitor> {
   const r = await fetch(`${base()}/api/host/monitor`)
   if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as HostMonitor
+}
+
+/** Graded host-health cards (CPU / memory / disk / clock / services), read-only. */
+export async function fetchAdvisor(): Promise<HealthAdvisory> {
+  const r = await fetch(`${base()}/api/host/advisor`)
+  if (!r.ok) throw new Error(httpError(r.status))
+  return (await r.json()) as HealthAdvisory
 }
 
 // -- Boot -----------------------------------------------------------------------
