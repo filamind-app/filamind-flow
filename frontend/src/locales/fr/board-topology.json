@@ -58,6 +58,7 @@
     },
     "mcu": {
       "chip": "Puce",
+      "firmware": "Firmware",
       "board": "Carte",
       "unknown": "inconnu",
       "identifier": "Identifiant",

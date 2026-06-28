@@ -58,6 +58,7 @@
     },
     "mcu": {
       "chip": "Układ",
+      "firmware": "Firmware",
       "board": "Płyta",
       "unknown": "nieznana",
       "identifier": "Identyfikator",

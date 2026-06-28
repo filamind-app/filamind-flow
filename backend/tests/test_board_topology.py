@@ -355,6 +355,64 @@ async def test_gather_pin_map_returns_per_mcu_pins(monkeypatch: Any) -> None:
         assert "pin" in p and "owners" in p and "caveat" in p
 
 
+async def test_gather_topology_enriches_live_chip_and_firmware(monkeypatch: Any) -> None:
+    """gather_topology fills each MCU's live chip + firmware from the running mcu object - including
+    a CAN MCU whose config signature (a uuid) reveals no chip at all in the offline analyze.
+
+    Reproduces the case mismatch that bit a real printer: Moonraker LOWERCASES section names in
+    ``settings`` (so the toolhead is ``mcu ebbcan``) while the live mcu OBJECT keeps the declared
+    case (``mcu EBBCan``) - the enrichment must map them case-insensitively via list_objects."""
+    sections = {
+        "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32h723xx_X-if00"},
+        "mcu ebbcan": {"canbus_uuid": "72e5b6ba7195"},  # lowercased, as Moonraker settings reports
+    }
+
+    async def fake_query(_self: Any, objects: Any) -> dict[str, Any]:
+        if list(objects) == ["configfile"]:
+            return {"configfile": {"settings": sections}}
+        return {  # live objects keep the declared (mixed) case
+            "mcu": {"mcu_version": "v0.13.0-628-gabc", "mcu_constants": {"MCU": "stm32h723xx"}},
+            "mcu EBBCan": {"mcu_version": "v0.13.0-628-gabc", "mcu_constants": {"MCU": "rp2040"}},
+        }
+
+    async def fake_list(_self: Any) -> list[str]:
+        return ["configfile", "mcu", "mcu EBBCan", "gcode_move"]
+
+    async def fake_sysinfo(_self: Any) -> dict[str, Any]:
+        return {}
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", fake_query)
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.list_objects", fake_list)
+    monkeypatch.setattr(
+        "app.services.moonraker_client.MoonrakerClient.machine_system_info", fake_sysinfo
+    )
+    from app.services.moonraker_client import MoonrakerClient
+
+    out = await board_topology.gather_topology(MoonrakerClient("http://x"))
+    by_name = {m["name"]: m for m in out["mcus"]}
+    # The CAN MCU (lowercased "ebbcan" in settings) now has a real chip + firmware.
+    assert by_name["ebbcan"]["mcu"] == "rp2040"
+    assert by_name["ebbcan"]["firmware"] == "v0.13.0-628-gabc"
+    assert by_name["mcu"]["mcu"] == "stm32h723xx"
+    assert by_name["mcu"]["firmware"] == "v0.13.0-628-gabc"
+
+
+def test_attach_components_case_insensitive_mcu_prefix() -> None:
+    """Moonraker lowercases the ``[mcu EBBCan]`` section to ``mcu ebbcan``, but pin VALUES keep the
+    declared case (``EBBCan:gpio7``). A mixed-case CAN toolhead's components (extruder / driver /
+    fan / accel) must still attach to its node - they were silently dropped before the case fix."""
+    sections = {
+        "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103xe_X-if00"},
+        "mcu ebbcan": {"canbus_uuid": "72e5b6ba7195"},
+        "extruder": {"step_pin": "EBBCan:gpio18", "heater_pin": "EBBCan:gpio7"},
+        "tmc2209 extruder": {"uart_pin": "EBBCan:gpio20"},
+        "fan": {"pin": "EBBCan:gpio15"},
+    }
+    by_name = {m["name"]: m for m in board_topology.analyze(sections, PATTERNS)["mcus"]}
+    kinds = {c["kind"] for c in by_name["ebbcan"]["components"]}
+    assert {"motor", "driver", "fan"} <= kinds  # attached despite EBBCan (value) vs ebbcan (node)
+
+
 # -- hardware snapshot + diff -------------------------------------------------
 def test_snapshot_diff_detects_changes(tmp_path: Any) -> None:
     from app.services import topology_snapshot

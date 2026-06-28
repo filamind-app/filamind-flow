@@ -1284,6 +1284,8 @@ class TopologyMcu(BaseModel):
     board_id: str | None = None
     board_match: str | None = None
     board_match_confidence: float = 0.0
+    # Running firmware version of this MCU (from the live mcu object); null on an offline read.
+    firmware: str | None = None
     components: list[TopologyComponent] = []
 
 

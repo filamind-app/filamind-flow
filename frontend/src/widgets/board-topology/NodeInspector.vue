@@ -209,6 +209,11 @@ function onPick(id: string | null): void {
         <span v-if="mcu.mcu_family" class="opacity-50">· {{ mcu.mcu_family }}</span>
       </div>
 
+      <div v-if="mcu.firmware" class="font-mono">
+        <span class="opacity-60">{{ t('boardTopology.mcu.firmware') }}:</span>
+        <span dir="ltr">{{ mcu.firmware }}</span>
+      </div>
+
       <div
         v-if="mcu.identifier"
         class="truncate font-mono text-[11px] opacity-50"

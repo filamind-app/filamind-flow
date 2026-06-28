@@ -25,6 +25,8 @@ export interface TopologyMcu {
   /** `suggested` = auto-detected guess; `confirmed` = the user confirmed / overrode it. */
   board_match?: 'suggested' | 'confirmed' | null
   board_match_confidence?: number
+  /** Running firmware version of this MCU (from the live mcu object); null on an offline read. */
+  firmware?: string | null
   /** The components (steppers / drivers / heaters / fans / sensors) that live on this MCU. */
   components?: TopologyComponent[]
 }

@@ -58,6 +58,7 @@
     },
     "mcu": {
       "chip": "晶片",
+      "firmware": "韌體",
       "board": "板子",
       "unknown": "未知",
       "identifier": "識別碼",

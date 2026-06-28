@@ -58,6 +58,7 @@
     },
     "mcu": {
       "chip": "チップ",
+      "firmware": "ファームウェア",
       "board": "ボード",
       "unknown": "不明",
       "identifier": "識別子",
