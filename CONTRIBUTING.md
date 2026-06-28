@@ -51,7 +51,7 @@ Then register it in `frontend/src/widgets/index.ts`:
 registerWidget({
   id: '<feature>',                       // unique, stable
   title: '<Feature>',
-  defaultSize: { w: 2, h: 1 },           // grid columns (1–4)
+  defaultSize: { w: 2, h: 1 },           // grid columns (1-4)
   subscriptions: { extruder: null },     // Moonraker objects to watch
   component: defineAsyncComponent(() => import('./<feature>/<Feature>Widget.vue')),
 })

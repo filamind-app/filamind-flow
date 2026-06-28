@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Host Control · Boot — the host's boot configuration: the systemd default target, whether it
+/** Host Control · Boot - the host's boot configuration: the systemd default target, whether it
  *  boots graphical, the plymouth theme, a preview of the active boot splash, and a splash design
  *  studio to change it (gated write). */
 import { computed, onMounted, ref } from 'vue'
@@ -63,7 +63,7 @@ const kb = (n: number): string => `${Math.round(n / 1024)} KB`
       >
         <dt class="opacity-60">{{ t('hostControl.boot.defaultTarget') }}</dt>
         <dd>
-          {{ info.default_target || '—' }}
+          {{ info.default_target || '-' }}
           <span
             v-if="info.default_target"
             class="nb-badge ms-1 text-[10px]"

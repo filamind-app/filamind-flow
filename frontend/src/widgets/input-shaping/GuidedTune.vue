@@ -163,7 +163,7 @@ function glyph(s: StepState): string {
   if (s === 'passed') return '✓'
   if (s === 'warn') return '!'
   if (s === 'failed') return '✕'
-  if (s === 'skipped') return '–'
+  if (s === 'skipped') return '-'
   return ''
 }
 function shaperGrade(a: ShaperAnalysis): string {

@@ -1,4 +1,4 @@
-// Pure helpers for i18n tooling — used by the CI key-diff (`i18n-keydiff.mjs`), the
+// Pure helpers for i18n tooling - used by the CI key-diff (`i18n-keydiff.mjs`), the
 // pseudo-localization dev aid (`i18n-pseudo.mjs`), and the vitest suite. Plain ESM (no TypeScript)
 // so the CLI scripts run under bare `node` with zero build step.
 
@@ -18,7 +18,7 @@ export function flattenKeys(obj, prefix = '') {
 
 /**
  * Structural diff of a locale's keys against the reference (`en`). Returns the keys the locale is
- * missing and the extra keys it carries — both must be empty for the catalogs to be in lock-step.
+ * missing and the extra keys it carries - both must be empty for the catalogs to be in lock-step.
  */
 export function diffKeys(referenceKeys, localeKeys) {
   const ref = new Set(referenceKeys)

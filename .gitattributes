@@ -3,7 +3,7 @@
 * text=auto eol=lf
 *.svg text eol=lf
 
-# Binary assets — never normalize line endings.
+# Binary assets - never normalize line endings.
 *.png binary
 *.ico binary
 *.icns binary

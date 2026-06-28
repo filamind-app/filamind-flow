@@ -1,8 +1,8 @@
-"""FilaMind Setup — component manager service.
+"""FilaMind Setup - component manager service.
 
 Reads a curated catalog of installable Klipper-ecosystem components, reports what is installed
-(read-only), and — only when the operator explicitly enables writes (FILAMIND_SETUP_WRITES) on
-the host — installs / updates / removes them. Every mutation is gated, path-guarded under $HOME,
+(read-only), and - only when the operator explicitly enables writes (FILAMIND_SETUP_WRITES) on
+the host - installs / updates / removes them. Every mutation is gated, path-guarded under $HOME,
 and shells out to git through the host's normal tooling.
 
 Write operations are DISABLED by default: the safe, read-only state is what ships, and an operator
@@ -227,12 +227,12 @@ async def _app_reachable(port: int) -> bool:
 def _is_installed(c: Component, managed: set[str], services: set[str]) -> bool:
     """Combine the install signals, most-authoritative first:
 
-    1. Moonraker's update-manager registry (``manager_key`` or ``id``) — the components Moonraker
+    1. Moonraker's update-manager registry (``manager_key`` or ``id``) - the components Moonraker
        actually tracks; survives non-``$HOME`` layouts and is the source of truth when present.
-    2. A managed systemd unit (``service``) — catches service-style installs (crowsnest, spoolman).
-    3. For a first-party nginx app, the nginx site itself — a bare clone (downloaded but never set
+    2. A managed systemd unit (``service``) - catches service-style installs (crowsnest, spoolman).
+    3. For a first-party nginx app, the nginx site itself - a bare clone (downloaded but never set
        up) is NOT installed; the site only exists once its installer's web-server step succeeded.
-    4. The clone-to-``$HOME`` directory heuristic — the offline fallback for everything else.
+    4. The clone-to-``$HOME`` directory heuristic - the offline fallback for everything else.
     """
     key = (c.manager_key or c.id).lower()
     if key in managed:
@@ -288,7 +288,7 @@ async def _git_version(dest: Path) -> str:
 
 # Update detection for installed-but-UNMANAGED git checkouts (the FilaMind apps + guppyscreen, which
 # Moonraker's update_manager doesn't track): compare the local clone to its own ``origin`` with an
-# anonymous fetch — no GitHub API, no token. Cached briefly so a status read doesn't re-fetch on
+# anonymous fetch - no GitHub API, no token. Cached briefly so a status read doesn't re-fetch on
 # every call; the asyncio.wait_for guards keep a slow/offline fetch from ever hanging the read.
 _GIT_LATEST_TTL = 300.0  # 5 min
 _git_latest_cache: dict[str, tuple[float, tuple[str, bool]]] = {}
@@ -711,7 +711,7 @@ async def install(
     # GUI can install them even though they aren't a plain git_repo (web / tauri).
     if component.first_party:
         # A chosen port (for a first-party web app like FilaMind 3d) lets the operator install it
-        # straight onto a free port — e.g. 88 when Mainsail already owns 80 — instead of installing
+        # straight onto a free port - e.g. 88 when Mainsail already owns 80 - instead of installing
         # on the default and conflicting, then having to move it afterwards.
         if action == "service" and component.service_install:
             # An additional managed deployment installed by its own button (FilaMind 3d's `agent`,
@@ -781,7 +781,7 @@ async def update(
     """Update an installed component.
 
     Moonraker-managed components (web UIs like Mainsail/Fluidd, and tracked git repos like Klipper,
-    Moonraker, KlipperScreen) are updated through Moonraker's own update manager — a web UI is a
+    Moonraker, KlipperScreen) are updated through Moonraker's own update manager - a web UI is a
     downloaded artifact, NOT a git checkout, so a raw ``git pull`` wrongly fails ("not a git
     checkout"). Only an unmanaged git checkout falls back to ``git pull --ff-only`` here.
     """
@@ -798,14 +798,14 @@ async def update(
         return {
             "ok": True,
             "output": f"Update of {component.name} requested via Moonraker; it runs in the "
-            "background — refresh in a moment to see the new version.",
+            "background - refresh in a moment to see the new version.",
         }
     dest = _install_dir(component)
     if not (dest / ".git").is_dir():
         return {
             "refused": True,
             "output": f"{component.name} is not a git checkout under {dest}, and Moonraker doesn't "
-            "track it — update it from the host instead.",
+            "track it - update it from the host instead.",
         }
     return await _run(["git", "-C", str(dest), "pull", "--ff-only"])
 

@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Thanks for helping grow the hardware catalog! The easiest way is
-        **Hardware Browser → ➕ Suggest a part** in the app — it builds the JSON below for you and
+        **Hardware Browser → ➕ Suggest a part** in the app - it builds the JSON below for you and
         pre-fills this issue. You can also fill it in by hand.
 
         A maintainer will review the data and merge it into the catalog

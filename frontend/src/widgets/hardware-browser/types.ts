@@ -31,7 +31,7 @@ export interface HardwareFacets {
   catalogSubsections?: Record<string, string[]>
 }
 
-// ── Board catalog entity (GET /api/hardware/boards[/{id}]) ─────────────────────
+// -- Board catalog entity (GET /api/hardware/boards[/{id}]) ---------------------
 export interface BoardSummary {
   board_id: string
   manufacturer?: string
@@ -94,7 +94,7 @@ export interface BoardDetail extends BoardSummary {
   configSnippet?: string
 }
 
-// ── Driver catalog entity (GET /api/hardware/drivers[/{id}]) ───────────────────
+// -- Driver catalog entity (GET /api/hardware/drivers[/{id}]) -------------------
 export interface DriverSummary {
   driver_id: string
   name?: string
@@ -122,7 +122,7 @@ export interface DriverDetail extends DriverSummary {
   configSource?: string
 }
 
-// ── Motor catalog entity (GET /api/hardware/motors[/{id}]) ─────────────────────
+// -- Motor catalog entity (GET /api/hardware/motors[/{id}]) ---------------------
 export interface MotorSummary {
   motor_id: string
   name?: string
@@ -158,7 +158,7 @@ export interface MotorDetail extends MotorSummary {
   configSource?: string
 }
 
-// ── Host catalog entity (GET /api/hardware/hosts[/{id}]) ───────────────────────
+// -- Host catalog entity (GET /api/hardware/hosts[/{id}]) -----------------------
 export interface HostSummary {
   host_id: string
   name?: string
@@ -186,7 +186,7 @@ export interface HostDetail extends HostSummary {
   configSource?: string
 }
 
-// ── Generic catalog entity (GET /api/hardware/catalog?category=…[ /{id}]) ──────
+// -- Generic catalog entity (GET /api/hardware/catalog?category=…[ /{id}]) ------
 export interface CatalogSummary {
   catalog_id: string
   name?: string
@@ -210,7 +210,7 @@ export interface CatalogEntityDetail extends CatalogSummary {
   configSource?: string
 }
 
-// ── Canonical manufacturer entity (GET /api/hardware/manufacturers[/{id}]) ─────
+// -- Canonical manufacturer entity (GET /api/hardware/manufacturers[/{id}]) -----
 export interface ManufacturerEntity {
   manufacturer_id: string
   name: string
@@ -223,7 +223,7 @@ export interface ManufacturerEntity {
   memberCount: number
 }
 
-// ── Canonical MCU entity (GET /api/hardware/mcus[/{id}]) ───────────────────────
+// -- Canonical MCU entity (GET /api/hardware/mcus[/{id}]) -----------------------
 export interface McuEntity {
   mcu_id: string
   name: string
@@ -238,7 +238,7 @@ export interface McusResult {
   items: McuEntity[]
 }
 
-// ── Cross-entity relations (GET /api/hardware/{type}/{id}/related) ─────────────
+// -- Cross-entity relations (GET /api/hardware/{type}/{id}/related) -------------
 /** A lightweight entity reference returned inside a related group. */
 export interface RelatedRef {
   type: string

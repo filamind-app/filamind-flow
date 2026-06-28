@@ -272,15 +272,15 @@
       "retest": {
         "solid": {
           "title": "Measurement is solid",
-          "why": "Grade A/B — this capture is reliable; no re-test needed."
+          "why": "Grade A/B - this capture is reliable; no re-test needed."
         },
         "borderline": {
           "title": "Consider re-measuring",
-          "why": "Borderline quality — improving {factor} and re-measuring would raise confidence."
+          "why": "Borderline quality - improving {factor} and re-measuring would raise confidence."
         },
         "poor": {
           "title": "Re-measure recommended",
-          "why": "Low measurement quality — fix {factor}, then re-measure for a trustworthy result."
+          "why": "Low measurement quality - fix {factor}, then re-measure for a trustworthy result."
         }
       }
     },

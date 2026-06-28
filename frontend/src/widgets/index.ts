@@ -8,7 +8,7 @@ import { suiteUnlocked } from '@/core/host/suite'
 /**
  * Wrap a suite-gated widget so it renders its REAL UI once the suite is unlocked (FilaMind 3D
  * detected installed, or the suite build) and the install-required gate otherwise. The choice is
- * reactive (`suiteUnlocked`), so installing FilaMind 3D flips the widget on with no rebuild — the
+ * reactive (`suiteUnlocked`), so installing FilaMind 3D flips the widget on with no rebuild - the
  * widget's data is served by the flow backend, so it works the moment it's unlocked.
  */
 function gatedComponent(id: string, real: Component): Component {
@@ -181,7 +181,7 @@ export function registerWidgets(): void {
     component: defineAsyncComponent(() => import('./host-control/HostControlWidget.vue')),
   })
 
-  // Ships in BOTH hosts (the one infrastructure exception) — it's how components get installed.
+  // Ships in BOTH hosts (the one infrastructure exception) - it's how components get installed.
   reg({
     id: 'setup',
     title: 'Setup',

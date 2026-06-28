@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     host_mode: str = "mainsail"
 
     # FilaMind Setup: GUI-driven install/update/remove run privileged host operations, so they are
-    # OFF by default — the catalog + installed-status stay read-only until an operator opts in
+    # OFF by default - the catalog + installed-status stay read-only until an operator opts in
     # (FILAMIND_SETUP_WRITES=true) on the host. The filamind-setup CLI is the alternative.
     setup_writes_enabled: bool = False
 

@@ -91,7 +91,7 @@ export interface HostMonitor {
   locale: LocaleBlock
 }
 
-// ── Services (Phase 2) ─────────────────────────────────────────────────────────
+// -- Services (Phase 2) ---------------------------------------------------------
 
 export interface ServiceUnit {
   name: string
@@ -129,7 +129,7 @@ export interface ServiceActionResult {
 
 export type ServiceAction = 'start' | 'stop' | 'restart' | 'enable' | 'disable' | 'mask' | 'unmask'
 
-// ── Disk cleanup (Phase 3) ─────────────────────────────────────────────────────
+// -- Disk cleanup (Phase 3) -----------------------------------------------------
 
 export interface CleanupTarget {
   id: string
@@ -151,7 +151,7 @@ export interface CleanupRunResult {
   freed_bytes: number
 }
 
-// ── System settings (Phase 4) ──────────────────────────────────────────────────
+// -- System settings (Phase 4) --------------------------------------------------
 
 export interface NetworkConfig {
   available: boolean

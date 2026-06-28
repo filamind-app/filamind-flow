@@ -3,7 +3,7 @@
  *
  *  Aggregates every read-only analyzer the app already ships (pin conflicts, driver values,
  *  disk-vs-live drift, config-project lint, firmware sync, hardware changes vs the saved
- *  baseline, install health) into an A–F grade with transparent scoring, and every finding
+ *  baseline, install health) into an A-F grade with transparent scoring, and every finding
  *  carries a deep-link button into the widget that fixes it. Read-only: scanning never runs
  *  anything on the printer. */
 import { computed, onMounted, ref } from 'vue'

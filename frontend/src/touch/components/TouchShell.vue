@@ -39,7 +39,7 @@ const stateKind = computed(() => {
 })
 
 function fmt(n?: number): string {
-  return n == null ? '—' : `${Math.round(n)}°`
+  return n == null ? '-' : `${Math.round(n)}°`
 }
 
 // Tiles tap through to a per-tool touch view; until each lands, surface a brief notice.

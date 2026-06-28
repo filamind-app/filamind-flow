@@ -87,12 +87,12 @@
 }
 
 @layer utilities {
-  /* ───────────────────────────────────────────────────────────────────────────
+  /* ---------------------------------------------------------------------------
    Theme tokens.
 
    Every visual token (colors + shadows + radius) is a CSS custom property, so
    switching [data-theme] on <html> recolors/restyles the entire UI without a
-   single component edit — Tailwind's color/boxShadow/borderRadius tokens all
+   single component edit - Tailwind's color/boxShadow/borderRadius tokens all
    resolve to these vars (see tailwind.config.ts).
 
    Color vars are space-separated RGB triplets so Tailwind's alpha slot works
@@ -100,12 +100,12 @@
 
    :root holds the LIGHT defaults; [data-theme] blocks override. The default
    theme applied by the app shell is "light".
-   ─────────────────────────────────────────────────────────────────────────── */
+   --------------------------------------------------------------------------- */
   :root {
-    /* Light — daylight brutalism: warm cream sheet, a deep mocha-brown brand accent that
+    /* Light - daylight brutalism: warm cream sheet, a deep mocha-brown brand accent that
      doubles as the sidebar rail, signal-saturated mid accents, hard ink-block shadows.
      The mocha accent is darker than the other themes' badge tier, so text ON it is light
-     (--c-on-accent) rather than ink — see the [class~='bg-brand-yellow'] rule below. */
+     (--c-on-accent) rather than ink - see the [class~='bg-brand-yellow'] rule below. */
     --c-ink: 26 20 8;
     --c-paper: 243 232 205;
     --c-surface: 255 252 240;
@@ -126,18 +126,18 @@
     --nb-radius: 5px;
   }
 
-  /* ──────────────────────────────────────────────────────────────────────────
+  /* --------------------------------------------------------------------------
    Accent ramp physics shared by every theme below: the BADGE tier (lime /
-   yellow / cyan — they carry ink-colored text in status chips) sits at
+   yellow / cyan - they carry ink-colored text in status chips) sits at
    mid-depth so it holds >= 4.0:1 against ink in every theme, while the
-   SIGNAL tier (blue / pink / red — chart strokes + the danger button) runs
+   SIGNAL tier (blue / pink / red - chart strokes + the danger button) runs
    brighter. (Exception: the LIGHT theme's yellow is a deep mocha brand brown
-   that carries light --c-on-accent text, not ink — see the rule near the end.)
+   that carries light --c-on-accent text, not ink - see the rule near the end.)
    --nb-glow is each theme's halo color (used by the neon shadows
    today; available as a token for focus/glow effects).
-   ────────────────────────────────────────────────────────────────────────── */
+   -------------------------------------------------------------------------- */
 
-  /* Dark — steel-slate professional: calm amber/olive/petrol badge tier, restrained
+  /* Dark - steel-slate professional: calm amber/olive/petrol badge tier, restrained
    sky-blue signal, dusty-rose secondary, soft neutral elevation. */
   [data-theme='dark'] {
     --c-ink: 237 241 247;
@@ -157,7 +157,7 @@
     --nb-radius: 8px;
   }
 
-  /* Neon (default) — the signature: deep violet night, acid/amber/azure badge tier,
+  /* Neon (default) - the signature: deep violet night, acid/amber/azure badge tier,
    periwinkle + hot-magenta + laser-red signal tier, the only glow-shadow theme. */
   [data-theme='neon'] {
     --c-ink: 244 239 255;
@@ -177,7 +177,7 @@
     --nb-radius: 10px;
   }
 
-  /* High Contrast — a11y absolute: true black/white, accents held at the exact depth
+  /* High Contrast - a11y absolute: true black/white, accents held at the exact depth
    where white ink still clears 4.3:1 on them, knife-cut corners, hard shadows. */
   [data-theme='contrast'] {
     --c-ink: 255 255 255;
@@ -197,8 +197,8 @@
     --nb-radius: 4px;
   }
 
-  /* Midnight — navy ops deck: sea-emerald pass, brass warning, signal-teal info,
-   radar-blue lead stroke — hard shadows keep the brutalism alive after dark. */
+  /* Midnight - navy ops deck: sea-emerald pass, brass warning, signal-teal info,
+   radar-blue lead stroke - hard shadows keep the brutalism alive after dark. */
   [data-theme='midnight'] {
     --c-ink: 232 241 253;
     --c-paper: 10 19 34;
@@ -217,7 +217,7 @@
     --nb-radius: 6px;
   }
 
-  /* Ocean — abyssal teal: kelp green, wet-sand amber, literal-teal selection,
+  /* Ocean - abyssal teal: kelp green, wet-sand amber, literal-teal selection,
    bioluminescent coral red/pink, water-worn soft elevation. */
   [data-theme='ocean'] {
     --c-ink: 231 250 243;
@@ -237,7 +237,7 @@
     --nb-radius: 12px;
   }
 
-  /* Sunset — dusk-plum lounge: burnt amber, olive grove, last-light teal badges;
+  /* Sunset - dusk-plum lounge: burnt amber, olive grove, last-light teal badges;
    ember red, warm rose, twilight periwinkle; cozy soft shadows. */
   [data-theme='sunset'] {
     --c-ink: 253 241 227;
@@ -271,7 +271,7 @@
 
 /* Light theme only: its accent is a deep mocha brown, so text on a SOLID brand-yellow fill
    must be light (--c-on-accent), not the ink the other themes use. `[class~='bg-brand-yellow']`
-   matches only the solid fill — the translucent `bg-brand-yellow/NN` tint washes (text sits on
+   matches only the solid fill - the translucent `bg-brand-yellow/NN` tint washes (text sits on
    paper, not the fill) are a different class token and are left ink. Other themes are unaffected
    (rule is scoped to [data-theme='light']); their bright badge tier keeps ink text. */
 [data-theme='light'] [class~='bg-brand-yellow'] {
@@ -281,11 +281,11 @@
 /* Arabic / RTL. The document direction flips via <html dir> (set per-locale in core/i18n.ts), and
    Tailwind logical utilities (ms-/me-/ps-/pe-/text-start/end) handle directional spacing. These
    rules cover what utilities can't:
-   1) the Arabic font stack (Space Grotesk / JetBrains Mono have no Arabic glyphs) — applied to the
+   1) the Arabic font stack (Space Grotesk / JetBrains Mono have no Arabic glyphs) - applied to the
       prose/display faces, but NOT .font-mono (data is Latin digits + tokens, which read best in mono);
-   2) brutalist type tweaks that don't translate — Arabic has no letter-case, and letter-spacing
+   2) brutalist type tweaks that don't translate - Arabic has no letter-case, and letter-spacing
       breaks its cursive joining, so drop uppercase + tracking (the bold weight keeps the "shout");
-   3) mirror the button press translate (the hard offset shadow itself stays put — it reads as a
+   3) mirror the button press translate (the hard offset shadow itself stays put - it reads as a
       fixed light source, not a reading-direction cue). */
 :lang(ar),
 :lang(ar) .font-display {

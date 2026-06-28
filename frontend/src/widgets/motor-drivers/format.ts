@@ -179,7 +179,7 @@ export function endstopStateFor(
 
 /** Input range + polarity hint for a StallGuard threshold register - which differs by model,
  *  and getting it wrong makes the control feel backwards. `sgthrs` (2209) and `sg4_thrs` (2240)
- *  are unsigned 0–255 where HIGHER is more sensitive; `sgt` (2130 / 5160 / 2660) is a signed
+ *  are unsigned 0-255 where HIGHER is more sensitive; `sgt` (2130 / 5160 / 2660) is a signed
  *  −64…63 where LOWER is more sensitive. */
 export function stallguardRange(field: string | null): { min: number; max: number; hint: string } {
   if (field === 'sgt') {

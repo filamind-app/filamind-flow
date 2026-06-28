@@ -393,7 +393,7 @@ def test_dependency_guard_passes_through_route_when_writes_off() -> None:
 
 async def test_update_delegates_managed_component_to_moonraker(monkeypatch) -> None:
     # Mainsail is a web UI (a downloaded artifact, NOT a git checkout) but IS Moonraker-managed, so
-    # update must go through Moonraker's update manager — never a raw `git pull` against ~/mainsail
+    # update must go through Moonraker's update manager - never a raw `git pull` against ~/mainsail
     # (that's the "Mainsail is not a git checkout" failure we're fixing).
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
     called: list[str] = []

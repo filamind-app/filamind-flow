@@ -263,7 +263,7 @@ class MoonrakerClient:
         """Trigger Moonraker's update manager for a managed client / repo via
         ``POST /machine/update/client?name=<name>``.
 
-        This is the correct way to update Moonraker-tracked components — web UIs (Mainsail, Fluidd)
+        This is the correct way to update Moonraker-tracked components - web UIs (Mainsail, Fluidd)
         are downloaded artifacts, NOT git checkouts, so a raw ``git pull`` against their directory
         fails ("not a git checkout"); only Moonraker knows how to refresh them. The update runs in
         the background on Moonraker's side (this returns once the request is accepted).

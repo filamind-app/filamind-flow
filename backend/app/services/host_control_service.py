@@ -103,7 +103,7 @@ async def set_splash(data: bytes, target: str | None = None) -> dict[str, Any]:
     Validated (must be a PNG, ≤ 1 MB) + path-guarded (the destination must be one of the known
     splash locations, never an arbitrary path) + copied with the narrow passwordless ``sudo cp``.
     Best-effort: whether the new image actually shows at boot depends on the host's splash mechanism
-    (plymouth / firmware splash), which this does not reconfigure — it just places a valid PNG.
+    (plymouth / firmware splash), which this does not reconfigure - it just places a valid PNG.
     """
     if data[:8] != _PNG_MAGIC:
         return {"ok": False, "refused": True, "output": "The boot splash must be a PNG image."}
@@ -399,7 +399,7 @@ _CRITICAL_EXTRA = {
     "KlipperScreen",
     # The native FilaMind touch units (the .deb apps that can own the touchscreen). Guard them like
     # KlipperScreen so the Services tab can't stop whichever one currently drives the display, which
-    # would blank the screen mid-session. Bare names (no .service) — _is_critical strips the suffix.
+    # would blank the screen mid-session. Bare names (no .service) - _is_critical strips the suffix.
     "filamind-kiosk",
     "filamind-screen-kiosk",
     "NetworkManager",

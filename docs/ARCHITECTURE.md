@@ -20,9 +20,9 @@ that shares the same Moonraker instance is the clean, durable approach.
 
 ```
 Browser (phone / desktop)
-  └─ FilaMind Flow SPA ──REST──► Moonraker :7125 ──► Klipper (MCU)
-                       └──WS───► Moonraker :7125
-  └─ FilaMind Flow SPA ──REST──► FilaMind backend :8000 ──► Moonraker (server-side)
+  +- FilaMind Flow SPA --REST--► Moonraker :7125 --► Klipper (MCU)
+                       +--WS---► Moonraker :7125
+  +- FilaMind Flow SPA --REST--► FilaMind backend :8000 --► Moonraker (server-side)
 ```
 
 ## Resource footprint
@@ -44,15 +44,15 @@ active widgets actually need. That keeps notification traffic minimal.
 
 ```
 src/
-├─ core/
-│  ├─ moonraker/   # transport: reconnecting JSON-RPC WS client + types + config
-│  ├─ registry/    # extensibility: the widget registry
-│  ├─ store/       # state: Pinia mirror of Moonraker status
-│  └─ i18n.ts      # i18n: catalog loading, locale detection, switching
-├─ components/     # presentation: app shell + dashboard (design-system driven)
-├─ widgets/        # features: 10 self-registering widgets (Machine Doctor · Firmware Manager · Input Shaping · Motor Drivers · Config Editor · Macro Designer · Board Topology · Max-Flow · Config Templates · Hardware Browser)
-├─ locales/        # i18n message catalogs, one folder per language (en bundled; others lazy)
-└─ assets/styles/  # Neo-Brutalist design tokens + component classes
+|- core/
+|  |- moonraker/   # transport: reconnecting JSON-RPC WS client + types + config
+|  |- registry/    # extensibility: the widget registry
+|  |- store/       # state: Pinia mirror of Moonraker status
+|  +- i18n.ts      # i18n: catalog loading, locale detection, switching
+|- components/     # presentation: app shell + dashboard (design-system driven)
+|- widgets/        # features: 10 self-registering widgets (Machine Doctor · Firmware Manager · Input Shaping · Motor Drivers · Config Editor · Macro Designer · Board Topology · Max-Flow · Config Templates · Hardware Browser)
+|- locales/        # i18n message catalogs, one folder per language (en bundled; others lazy)
++- assets/styles/  # Neo-Brutalist design tokens + component classes
 ```
 
 Dependencies point inward. `widgets` and `components` depend on `core`, and `core`

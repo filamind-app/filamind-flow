@@ -27,12 +27,12 @@
     "sent": "Sent",
     "help": {
       "button": "Help",
-      "title": "Remote Control — guide",
+      "title": "Remote Control - guide",
       "close": "Close",
       "topics": {
         "overview": {
           "title": "What this does",
-          "body": "This panel steers the on-printer FilaMind touchscreen from here: switch its tab, show it a short message, or flash it so you can tell which printer it is. These are display-only nudges — they never move the printer or change a setting."
+          "body": "This panel steers the on-printer FilaMind touchscreen from here: switch its tab, show it a short message, or flash it so you can tell which printer it is. These are display-only nudges - they never move the printer or change a setting."
         },
         "commands": {
           "title": "The commands",

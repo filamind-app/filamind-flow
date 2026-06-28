@@ -90,7 +90,7 @@ describe('guided', () => {
     expect(gateNoise(noise({ grade: 'high' })).status).toBe('failed')
   })
 
-  it('gates the shaper by its A–F grade', () => {
+  it('gates the shaper by its A-F grade', () => {
     expect(gateShaper(analysis({})).status).toBe('passed') // clean MZV → A
     const poor = analysis({
       recommended_shaper: '3hump_ei',

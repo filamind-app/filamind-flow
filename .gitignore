@@ -35,6 +35,6 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# Curated hardware DB: the editable source is kept LOCAL only — the repo ships the compiled,
+# Curated hardware DB: the editable source is kept LOCAL only - the repo ships the compiled,
 # read-only hardware.sqlite (built by scripts/build_hardware_db.py). Keep the source out of git.
 backend/app/data/reference/hardware.json

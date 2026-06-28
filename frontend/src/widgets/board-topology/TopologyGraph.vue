@@ -278,7 +278,7 @@ function ariaFor(n: NodeBox): string {
   return n.title + (n.sub ? ', ' + n.sub : '') + (n.conn ? ', ' + connLabel(n.conn) : '')
 }
 
-// ── live link health (from /api/firmware/status, joined by MCU name) ────────────────────────────
+// -- live link health (from /api/firmware/status, joined by MCU name) ----------------------------
 type Health = 'ok' | 'warn' | 'out' | 'unknown'
 function mcuNameOf(id: string): string {
   return id.startsWith('mcu:') ? id.slice(4) : ''
