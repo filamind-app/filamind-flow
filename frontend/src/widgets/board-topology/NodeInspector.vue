@@ -13,6 +13,7 @@ import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
 import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 
 import { fetchBoardDetail } from './api'
+import CanFlashPanel from './CanFlashPanel.vue'
 import PinAtlas from './PinAtlas.vue'
 import type {
   BoardDetail,
@@ -259,6 +260,9 @@ function onPickCan(id: string | null): void {
         />
         <p class="pt-0.5 text-[10px] opacity-60">{{ t('boardTopology.override.hint') }}</p>
       </div>
+
+      <!-- guided flash / update of the adapter firmware (separate from the type-confirm above) -->
+      <CanFlashPanel :can-bus="canBus" :busy="busy" />
     </template>
 
     <!-- MCU inspector -->

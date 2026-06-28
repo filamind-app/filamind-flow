@@ -270,7 +270,21 @@
       "label": "CAN-Bus",
       "adapter": "USB-CAN-Adapter (unbestätigt)",
       "node": "USB-CAN",
-      "hint": "Marke unbestätigt (gs_usb)"
+      "hint": "Marke unbestätigt (gs_usb)",
+      "flash": {
+        "title": "Adapter flashen / aktualisieren",
+        "desc": "Der Adapter wird außerhalb von Klipper per USB-DFU aktualisiert.",
+        "revision": "Adaptermodell",
+        "boot": "Adapter abziehen, dann die BOOT-Taste GEDRÜCKT HALTEN, während das USB-Kabel wieder an den Drucker gesteckt wird, dann loslassen.",
+        "check": "Auf DFU prüfen",
+        "ready": "DFU erkannt - bereit zum Flashen",
+        "notReady": "Noch nicht im DFU - Schritt 1 ausführen, dann erneut prüfen",
+        "noSudo": "Passwortloses sudo ist nicht eingerichtet. Einmal ausführen: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Mir ist klar: falsche Firmware kann den Adapter unbrauchbar machen; während des Flashens nicht abziehen.",
+        "flash": "Flashen",
+        "flashing": "Wird geflasht...",
+        "warn": "Ein Update ist selten nötig - der Adapter wird vorgeflasht geliefert. Gründe: eine fehlerhafte Charge oder ein Paket-Reihenfolge-Bug in alter Firmware."
+      }
     },
     "display": {
       "title": "Displays",

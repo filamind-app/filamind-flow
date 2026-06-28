@@ -1411,3 +1411,31 @@ class McuKeyRequest(BaseModel):
     """Identify one MCU by its config section name (to clear its board override)."""
 
     mcu_name: str
+
+
+class CanDfuStatus(BaseModel):
+    """Whether a USB-CAN adapter is currently in its STM32 ROM-DFU bootloader."""
+
+    present: bool = False
+    detail: str | None = None
+    sudo: bool = True  # false when passwordless sudo for dfu-util isn't granted
+
+
+class CanFlashRevision(BaseModel):
+    """A selectable adapter revision for the flash picker (id + human label)."""
+
+    id: str
+    label: str
+
+
+class CanFlashRequest(BaseModel):
+    """Flash a USB-CAN adapter with the official firmware for the chosen revision."""
+
+    revision: str
+
+
+class CanFlashResult(BaseModel):
+    """Outcome of a USB-CAN adapter flash (the dfu-util log is in ``output``)."""
+
+    ok: bool
+    output: str

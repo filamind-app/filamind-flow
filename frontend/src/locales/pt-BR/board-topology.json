@@ -270,7 +270,21 @@
       "label": "Barramento CAN",
       "adapter": "Adaptador USB-CAN (não confirmado)",
       "node": "USB-CAN",
-      "hint": "Marca não confirmada (gs_usb)"
+      "hint": "Marca não confirmada (gs_usb)",
+      "flash": {
+        "title": "Atualizar / regravar adaptador",
+        "desc": "O adaptador é atualizado fora do Klipper, via USB-DFU.",
+        "revision": "Modelo do adaptador",
+        "boot": "Desconecte o adaptador, então SEGURE o botão BOOT enquanto reconecta o cabo USB à impressora, e solte.",
+        "check": "Verificar DFU",
+        "ready": "DFU detectado - pronto para regravar",
+        "notReady": "Ainda não está em DFU - faça o passo 1 e verifique de novo",
+        "noSudo": "sudo sem senha não está configurado. Execute uma vez: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
+        "risk": "Entendo que um firmware errado pode inutilizar o adaptador; não o desconecte durante a regravação.",
+        "flash": "Regravar",
+        "flashing": "Regravando...",
+        "warn": "Atualizar raramente é necessário - o adaptador vem pré-gravado. Motivos: um lote defeituoso ou um bug de ordem de pacotes em firmware antigo."
+      }
     },
     "display": {
       "title": "Displays",

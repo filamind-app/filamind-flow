@@ -1,7 +1,15 @@
 import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { BoardDetail, PinAtlas, Topology, TopologyDiff } from './types'
+import type {
+  BoardDetail,
+  CanDfuStatus,
+  CanFlashResult,
+  CanFlashRevision,
+  PinAtlas,
+  Topology,
+  TopologyDiff,
+} from './types'
 
 /** Host → MCU topology from the live config (read-only). */
 export async function fetchTopology(): Promise<Topology> {
@@ -72,6 +80,41 @@ export async function clearBoardOverride(mcuName: string): Promise<Topology> {
     throw new Error(httpError(response.status))
   }
   return (await response.json()) as Topology
+}
+
+/** The selectable USB-CAN adapter revisions (U2C v1 / v2) for the flash picker. */
+export async function fetchCanRevisions(): Promise<CanFlashRevision[]> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/canbus/firmware`)
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  const data = (await response.json()) as { revisions?: CanFlashRevision[] }
+  return data.revisions ?? []
+}
+
+/** Whether the adapter is currently in its STM32 ROM-DFU bootloader (polled during the guided flash). */
+export async function fetchDfuStatus(): Promise<CanDfuStatus> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/canbus/dfu-status`)
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  return (await response.json()) as CanDfuStatus
+}
+
+/** Flash the chosen revision's official firmware to the adapter sitting in DFU (gated server-side). */
+export async function flashCanAdapter(revision: string): Promise<CanFlashResult> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/canbus/flash`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ revision }),
+  })
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  return (await response.json()) as CanFlashResult
 }
 
 /** The full catalog record for a detected board (aggregated ports + specs) plus its cross-entity
