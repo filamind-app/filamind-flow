@@ -58,6 +58,7 @@
     },
     "mcu": {
       "chip": "चिप",
+      "firmware": "फर्मवेयर",
       "board": "बोर्ड",
       "unknown": "अज्ञात",
       "identifier": "पहचानकर्ता",

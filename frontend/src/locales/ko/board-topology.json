@@ -58,6 +58,7 @@
     },
     "mcu": {
       "chip": "칩",
+      "firmware": "펌웨어",
       "board": "보드",
       "unknown": "알 수 없음",
       "identifier": "식별자",

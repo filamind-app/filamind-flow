@@ -8,6 +8,7 @@ and assemble a host → MCU topology. No hardware access - the route feeds it th
 
 from __future__ import annotations
 
+import contextlib
 import re
 from typing import Any
 
@@ -192,7 +193,10 @@ def _owning_mcu(kind: str, cfg: dict[str, Any]) -> str | None:
 def _attach_components(sections: dict[str, Any], mcus: list[dict[str, Any]]) -> None:
     """Attach each component section (stepper / driver / heater / fan / sensor) to the MCU node it
     lives on, by the chip prefix of its primary pin. Mutates each MCU's ``components`` list."""
-    by_name = {m["name"]: m for m in mcus}
+    # MCU node names come from Moonraker's lowercased settings, but a pin's chip-prefix keeps its
+    # declared case (e.g. "EBBCan:gpio7") - match case-insensitively or a mixed-case CAN MCU's
+    # components (extruder / driver / fan / accel on the toolhead) never attach.
+    by_name = {str(m["name"]).lower(): m for m in mcus}
     for name, cfg in sections.items():
         if not isinstance(cfg, dict):
             continue
@@ -202,7 +206,7 @@ def _attach_components(sections: dict[str, Any], mcus: list[dict[str, Any]]) -> 
         owner = _owning_mcu(kind, cfg)
         if owner is None:
             continue
-        target = by_name.get(owner) or (by_name.get("mcu") if owner == "mcu" else None)
+        target = by_name.get(owner.lower())
         if target is None:
             continue  # pin references an MCU with no [mcu] section - skip (never invent a node)
         target["components"].append({"section": str(name), "kind": kind})
@@ -230,7 +234,7 @@ def _used_pins(sections: dict[str, Any], mcu_name: str) -> set[str]:
             if not isinstance(value, str) or not (key.endswith("_pin") or key == "pin"):
                 continue
             chip, pin = _split_pin(value)
-            if chip == mcu_name and pin:
+            if chip.lower() == mcu_name.lower() and pin:
                 used.add(pin)
     return used
 
@@ -246,7 +250,7 @@ def _pin_owners(sections: dict[str, Any], mcu_name: str) -> dict[str, list[dict[
             if not isinstance(value, str) or not (key.endswith("_pin") or key == "pin"):
                 continue
             chip, pin = _split_pin(value)
-            if chip == mcu_name and pin:
+            if chip.lower() == mcu_name.lower() and pin:
                 owners.setdefault(pin, []).append({"section": str(section), "key": str(key)})
     return owners
 
@@ -535,6 +539,9 @@ def analyze(
                     "board_id": board_id,
                     "board_match": "suggested" if board_id else None,
                     "board_match_confidence": board_id_conf,
+                    # Running firmware version (e.g. "v0.13.0-628-g…"); filled from the live MCU
+                    # object by gather_topology - null on a config-only (offline) analyze.
+                    "firmware": None,
                     # Components (steppers / drivers / heaters / fans / sensors) on this MCU,
                     # attached below by the chip prefix of each component's primary pin.
                     "components": [],
@@ -562,6 +569,75 @@ def apply_overrides(result: dict[str, Any], overrides: dict[str, dict[str, Any]]
             mcu["board_match_confidence"] = 1.0
 
 
+async def _enrich_live_mcus(
+    client: MoonrakerClient, result: dict[str, Any], sections: dict[str, Any]
+) -> None:
+    """Enrich each MCU node with its LIVE chip + firmware from the running MCU object.
+
+    The config/serial reveals a chip only for USB MCUs; a CAN MCU's signature is just a uuid, so
+    ``analyze`` leaves CAN chips unknown. Querying the live ``mcu`` / ``mcu <name>`` objects yields
+    the authoritative ``mcu_constants.MCU`` (chip) + ``mcu_version`` (firmware) for EVERY MCU,
+    including CAN ones. With the real chip known we also re-fingerprint the board against ONLY the
+    catalog boards that carry that chip - far less ambiguous than the whole catalog - but never
+    override a user-confirmed board. Mutates ``result`` in place; best-effort (the caller guards the
+    HTTP error so an older / offline Moonraker just keeps the config-only guess)."""
+    mcus = result.get("mcus", [])
+    if not mcus:
+        return
+    # The live mcu OBJECT names keep the config's declared case (e.g. "mcu EBBCan"), but the
+    # topology names come from Moonraker's lowercased `settings` ("ebbcan") - so map the object
+    # names case-insensitively, or a mixed-case CAN toolhead would never enrich.
+    obj_names = await client.list_objects()
+    live = {o.lower(): o for o in obj_names if o == "mcu" or o.lower().startswith("mcu ")}
+    want: dict[str, dict[str, Any]] = {}
+    for m in mcus:
+        n = str(m.get("name") or "")
+        obj = live.get(("mcu" if n == "mcu" else f"mcu {n}").lower())
+        if obj:
+            want[obj] = m
+    if not want:
+        return
+    status = await client.query_objects(list(want.keys()))
+    if not status:
+        return
+    boards = reference_data.boards()
+    for key, m in want.items():
+        info = status.get(key)
+        if not isinstance(info, dict):
+            continue
+        version = info.get("mcu_version")
+        if isinstance(version, str) and version:
+            m["firmware"] = version
+        consts = info.get("mcu_constants")
+        chip = consts.get("MCU") if isinstance(consts, dict) else None
+        if not (isinstance(chip, str) and chip):
+            continue
+        m["mcu"] = chip
+        norm = hardware_links.normalize_mcu(chip)
+        if norm and reference_data.mcu_by_id(norm[0]):
+            m["mcu_id"], _, m["mcu_family"] = norm
+        # Chip-narrowed pin-fingerprint - a confident, board-specific guess the config alone can't
+        # give. Skip a user-confirmed board and an unrecognised chip.
+        if m.get("board_match") == "confirmed" or not norm:
+            continue
+        candidates = [
+            b for b in boards if norm[0] in {mid for mid, _, _ in hardware_links.board_mcu_ids(b)}
+        ]
+        if not candidates:
+            continue
+        fp_id, fp_conf = _fingerprint_board(
+            _used_pins(sections, str(m.get("name") or "")), candidates
+        )
+        if fp_id and (
+            m.get("board_id") is None or fp_conf > float(m.get("board_match_confidence") or 0.0)
+        ):
+            m["board_id"], m["board_match"], m["board_match_confidence"] = (
+                fp_id,
+                "suggested",
+                fp_conf,
+            )
+
+
 async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
     """Fetch the live ``configfile`` sections and build the topology, applying any saved per-MCU
     board overrides from ``data_dir``.
@@ -573,6 +649,10 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     sections = _sections(configfile.get("configfile"))
     result = analyze(sections)
     apply_overrides(result, topology_overrides.read_overrides(data_dir))
+    # Enrich each MCU with its live chip + firmware (and a chip-narrowed board fingerprint) - the
+    # only way to identify a CAN MCU's chip + every MCU's running firmware. Best-effort.
+    with contextlib.suppress(httpx.HTTPError):
+        await _enrich_live_mcus(client, result, sections)
     # Identify the host SBC (optional - older Moonraker may lack /machine/system_info; degrade
     # gracefully so the topology still returns).
     try:
