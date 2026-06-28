@@ -264,6 +264,10 @@
       "section": "Mở mục này trong Trình sửa Cấu hình",
       "drivers": "Mở trong Driver Động cơ",
       "firmware": "Mở Trình quản lý Firmware"
+    },
+    "canbus": {
+      "label": "Bus CAN",
+      "adapter": "Bộ chuyển USB-CAN (chưa xác nhận)"
     }
   }
 }

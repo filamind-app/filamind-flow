@@ -264,6 +264,10 @@
       "section": "Open deze sectie in de Config Editor",
       "drivers": "Openen in Motor Drivers",
       "firmware": "Firmware Manager openen"
+    },
+    "canbus": {
+      "label": "CAN-bus",
+      "adapter": "USB-CAN-adapter (onbevestigd)"
     }
   }
 }

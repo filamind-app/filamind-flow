@@ -264,6 +264,10 @@
       "section": "在配置编辑器中打开此配置段",
       "drivers": "在电机驱动中打开",
       "firmware": "打开固件管理器"
+    },
+    "canbus": {
+      "label": "CAN 总线",
+      "adapter": "USB-CAN 适配器（未确认）"
     }
   }
 }

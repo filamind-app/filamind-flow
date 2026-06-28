@@ -88,11 +88,24 @@ export interface TopologyHost {
   integrated_into_board_id?: string | null
 }
 
+/** A CAN bus the host carries + its bridging USB-CAN adapter (U2C-class), if external. */
+export interface TopologyCanBus {
+  interface: string
+  driver?: string | null
+  bitrate?: number | null
+  /** Suggested (unconfirmed) catalog board for an external adapter; null for an onboard transceiver. */
+  board_id?: string | null
+  board_match?: 'suggested' | 'confirmed' | null
+  board_match_confidence?: number
+}
+
 export interface Topology {
   reachable?: boolean
   host: TopologyHost | null
   mcus: TopologyMcu[]
   mcu_count: number
+  /** CAN buses the host carries + their bridging adapter (U2C-class), if any. */
+  can_buses?: TopologyCanBus[]
   detail?: string
 }
 

@@ -264,6 +264,10 @@
       "section": "在設定編輯器中開啟此區段",
       "drivers": "在馬達驅動器中開啟",
       "firmware": "開啟韌體管理員"
+    },
+    "canbus": {
+      "label": "CAN 匯流排",
+      "adapter": "USB-CAN 轉接器（未確認）"
     }
   }
 }

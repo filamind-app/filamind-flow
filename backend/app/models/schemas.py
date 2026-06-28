@@ -1302,6 +1302,22 @@ class TopologyHost(BaseModel):
     integrated_into_board_id: str | None = None
 
 
+class TopologyCanBus(BaseModel):
+    """A CAN bus the host carries (from ``/machine/system_info`` ``canbus``). The USB-CAN adapter
+    that bridges it (a BTT U2C / Canable / candleLight-class ``gs_usb`` dongle) is NOT a Klipper
+    MCU, so it never appears as a node - this surfaces it, with a best-effort, unconfirmed catalog
+    link the user can confirm."""
+
+    interface: str  # e.g. "can0"
+    driver: str | None = None  # e.g. "gs_usb" (external USB-CAN) / "mcp251xfd" (onboard)
+    bitrate: int | None = None
+    # Suggested catalog board for an external adapter; unconfirmed (gs_usb is shared by U2C /
+    # Canable / clones), so the UI offers a confirm. null for an onboard CAN transceiver.
+    board_id: str | None = None
+    board_match: str | None = None  # "suggested" | "confirmed"
+    board_match_confidence: float = 0.0
+
+
 class Topology(BaseModel):
     """Host → MCU topology built from the live config (GET /api/topology)."""
 
@@ -1309,6 +1325,8 @@ class Topology(BaseModel):
     host: TopologyHost | None = None
     mcus: list[TopologyMcu] = []
     mcu_count: int = 0
+    # CAN buses the host carries + their bridging adapter (U2C-class), if any.
+    can_buses: list[TopologyCanBus] = []
     detail: str | None = None
 
 
