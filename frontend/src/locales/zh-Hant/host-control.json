@@ -6,7 +6,8 @@
       "services": "服務",
       "cleanup": "清理",
       "system": "系統",
-      "boot": "啟動"
+      "boot": "啟動",
+      "canbus": "CAN 匯流排"
     },
     "help": {
       "guide": "說明",
@@ -270,6 +271,28 @@
         "failed": "無法套用啟動畫面。",
         "caveat": "將 PNG 寫入啟動畫面路徑；能否在啟動時顯示取決於主機的啟動畫面設定。"
       }
+    },
+    "canbus": {
+      "intro": "檢視與管理主機的 CAN 匯流排介面：連線狀態、傳輸速率與錯誤計數。讀取是安全的；變更需要免密碼 sudo，且列印期間會被拒絕。",
+      "warn": "變更 CAN 設定會影響匯流排上的每一個 MCU。切勿在列印期間進行。",
+      "none": "此主機上找不到任何 CAN 介面。",
+      "controllerState": "控制器",
+      "driver": "驅動程式",
+      "bitrate": "傳輸速率",
+      "errors": "匯流排錯誤 (rx/tx)",
+      "txqueue": "TX 佇列",
+      "up": "已啟用",
+      "down": "已停用",
+      "unknown": "未知",
+      "bringUp": "啟用",
+      "bringDown": "停用",
+      "confirmDown": "停用匯流排會中斷每一個 CAN MCU 的連線，直到重新啟用為止。是否繼續？",
+      "confirm": "確認",
+      "cancel": "取消",
+      "setBitrate": "設定傳輸速率",
+      "downFirst": "請先停用此介面才能變更其傳輸速率。",
+      "actionOk": "介面已更新。",
+      "actionFailed": "操作失敗。"
     }
   }
 }

@@ -71,14 +71,15 @@ do_update() {
 
 # -- sudoers: grant the narrow passwordless-sudo rights the panel needs ---------
 # Firmware flashing (systemctl, dfu-util, cp, chmod, fuser) + Host Control (journalctl, rm,
-# timedatectl, localectl, hostnamectl, nmcli). rm is path-guarded in the backend to
-# /etc/systemd/system; nmcli covers the network (IP DHCP/static) controls.
+# timedatectl, localectl, hostnamectl, nmcli, ip). rm is path-guarded in the backend to
+# /etc/systemd/system; nmcli covers the network (IP DHCP/static) controls; ip covers CAN-bus
+# control (link up/down + bitrate), restricted in the backend to discovered CAN interfaces.
 do_sudoers() {
   local user_name="${1:-${SUDO_USER:-$(id -un)}}"
   local sudoers_file="/etc/sudoers.d/filamind"
   [ "$(id -u)" -eq 0 ] || { echo "This must run as root. Try: sudo bash $0 sudoers $user_name" >&2; exit 1; }
 
-  local systemctl dfu cp chmod fuser journalctl rm_bin timedatectl localectl hostnamectl nmcli
+  local systemctl dfu cp chmod fuser journalctl rm_bin timedatectl localectl hostnamectl nmcli ip_bin
   systemctl="$(command -v systemctl || echo /usr/bin/systemctl)"
   dfu="$(command -v dfu-util || echo /usr/bin/dfu-util)"
   cp="$(command -v cp || echo /bin/cp)"
@@ -90,6 +91,7 @@ do_sudoers() {
   localectl="$(command -v localectl || echo /usr/bin/localectl)"
   hostnamectl="$(command -v hostnamectl || echo /usr/bin/hostnamectl)"
   nmcli="$(command -v nmcli || echo /usr/bin/nmcli)"
+  ip_bin="$(command -v ip || echo /usr/sbin/ip)"  # CAN bus control: ip link set up/down/bitrate
 
   # Broader grant for one-click NATIVE touch-app install (FilaMind screen's .deb kiosk): apt-get
   # (installs the package + its WebKit runtime dependency), dpkg, and the Flow kiosk unit-writer
@@ -109,7 +111,7 @@ do_sudoers() {
   trap 'rm -f "${tmp:-}"' EXIT  # always clean up, even if `install` fails under set -e
   cat > "$tmp" <<EOF
 # Managed by FilaMind Flow (scripts/install.sh sudoers) - firmware flashing + Host Control.
-$user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli
+$user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli, $ip_bin
 # Native touch-app install (FilaMind screen .deb kiosk): package + WebKit runtime via apt/dpkg, and
 # the Flow kiosk unit-writer. Wider than the base grant - enables one-click native install.
 $user_name ALL=(root) NOPASSWD: $apt_get, $dpkg_bin, $bash_bin $flow_install kiosk *

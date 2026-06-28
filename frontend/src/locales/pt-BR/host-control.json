@@ -6,7 +6,8 @@
       "services": "Serviços",
       "cleanup": "Limpeza",
       "system": "Sistema",
-      "boot": "Inicialização"
+      "boot": "Inicialização",
+      "canbus": "Barramento CAN"
     },
     "help": {
       "guide": "Ajuda",
@@ -270,6 +271,28 @@
         "failed": "Não foi possível aplicar a tela de inicialização.",
         "caveat": "Grava um PNG no caminho do splash; se aparece na inicialização depende da configuração do host."
       }
+    },
+    "canbus": {
+      "intro": "Veja e gerencie as interfaces de barramento CAN do host: estado do link, bitrate e contadores de erro. As leituras são seguras; alterações exigem sudo sem senha e são recusadas durante a impressão.",
+      "warn": "Alterar as configurações de CAN afeta todos os MCUs do barramento. Nunca faça isso durante uma impressão.",
+      "none": "Nenhuma interface CAN encontrada neste host.",
+      "controllerState": "Controlador",
+      "driver": "Driver",
+      "bitrate": "Bitrate",
+      "errors": "Erros do barramento (rx/tx)",
+      "txqueue": "Fila TX",
+      "up": "Ativa",
+      "down": "Inativa",
+      "unknown": "Desconhecido",
+      "bringUp": "Ativar",
+      "bringDown": "Desativar",
+      "confirmDown": "Desativar o barramento desconecta todos os MCUs CAN até que ele seja reativado. Continuar?",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "setBitrate": "Definir bitrate",
+      "downFirst": "Desative a interface para alterar o bitrate.",
+      "actionOk": "Interface atualizada.",
+      "actionFailed": "A ação falhou."
     }
   }
 }

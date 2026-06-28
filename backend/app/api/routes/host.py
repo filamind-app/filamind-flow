@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app.config import Settings, get_settings
-from app.services import host_control_service
+from app.services import canbus_control, host_control_service
 
 router = APIRouter(prefix="/host", tags=["host"])
 
@@ -140,6 +140,44 @@ async def host_cleanup_run(
 ) -> dict[str, Any]:
     """Clean the requested targets and report the space reclaimed."""
     return await host_control_service.cleanup_run(req.ids, settings.data_dir)
+
+
+# -- CAN bus control (Phase 5) --------------------------------------------------
+# View + manage the host's SocketCAN interfaces (link up/down, bitrate). Reads are unprivileged;
+# changes go through the host's passwordless-sudo grant and are refused while a print is running.
+
+
+class CanLinkReq(BaseModel):
+    iface: str
+    up: bool
+
+
+class CanBitrateReq(BaseModel):
+    iface: str
+    bitrate: int
+
+
+@router.get("/canbus")
+async def host_canbus(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Every host CAN interface with live status (link state, controller state, bitrate, error
+    counters, tx queue length) + its best-effort bridging-adapter link. Read-only."""
+    return {"buses": await canbus_control.list_can_buses(settings.moonraker_url, settings.data_dir)}
+
+
+@router.post("/canbus/link")
+async def host_canbus_link(
+    req: CanLinkReq, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Bring a CAN interface up or down (sudo ip link). Refused (403) while a print is running."""
+    return await _apply(canbus_control.set_link(req.iface, req.up, settings.moonraker_url))
+
+
+@router.post("/canbus/bitrate")
+async def host_canbus_bitrate(
+    req: CanBitrateReq, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Set a CAN interface's bitrate (the interface must be down first). Refused while printing."""
+    return await _apply(canbus_control.set_bitrate(req.iface, req.bitrate, settings.moonraker_url))
 
 
 # -- System settings (Phase 4) --------------------------------------------------

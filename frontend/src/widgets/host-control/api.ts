@@ -3,6 +3,8 @@ import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
   BootInfo,
+  CanBusActionResult,
+  CanBusStatus,
   CleanupRunResult,
   CleanupTarget,
   HostMonitor,
@@ -159,6 +161,34 @@ async function postSystem(path: string, body: unknown): Promise<SystemActionResu
   if (!r.ok) throw new HostActionError(data.detail || httpError(r.status), r.status)
   return data as SystemActionResult
 }
+
+// -- CAN bus control (Phase 5) --------------------------------------------------
+
+/** Every host CAN interface with live status + bridging-adapter link (read-only). */
+export async function fetchCanBuses(): Promise<CanBusStatus[]> {
+  const r = await fetch(`${base()}/api/host/canbus`)
+  if (!r.ok) throw new Error(httpError(r.status))
+  return ((await r.json()) as { buses: CanBusStatus[] }).buses
+}
+
+async function postCanbus(path: string, body: unknown): Promise<CanBusActionResult> {
+  const r = await fetch(`${base()}/api/host/canbus/${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const data = (await r.json().catch(() => ({}))) as {
+    detail?: string
+  } & Partial<CanBusActionResult>
+  if (!r.ok) throw new HostActionError(data.detail || httpError(r.status), r.status)
+  return data as CanBusActionResult
+}
+
+/** Bring a CAN interface up or down. Throws HostActionError(403) if refused (e.g. printing). */
+export const setCanLink = (iface: string, up: boolean) => postCanbus('link', { iface, up })
+/** Set a CAN interface's bitrate (interface must be down first). Throws HostActionError if refused. */
+export const setCanBitrate = (iface: string, bitrate: number) =>
+  postCanbus('bitrate', { iface, bitrate })
 
 export const setTimezone = (timezone: string) => postSystem('timezone', { timezone })
 export const setNtp = (enabled: boolean) => postSystem('ntp', { enabled })

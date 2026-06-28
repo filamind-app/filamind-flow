@@ -6,7 +6,8 @@
       "services": "Dienste",
       "cleanup": "Bereinigung",
       "system": "System",
-      "boot": "Boot"
+      "boot": "Boot",
+      "canbus": "CAN-Bus"
     },
     "help": {
       "guide": "Hilfe",
@@ -270,6 +271,28 @@
         "failed": "Boot-Splash konnte nicht angewendet werden.",
         "caveat": "Schreibt ein PNG an den Splash-Pfad; ob es beim Booten erscheint, hängt von der Splash-Einrichtung ab."
       }
+    },
+    "canbus": {
+      "intro": "CAN-Bus-Schnittstellen des Hosts anzeigen und verwalten: Link-Status, Bitrate und Fehlerzähler. Lesen ist gefahrlos; Änderungen erfordern passwortloses sudo und werden während des Druckens verweigert.",
+      "warn": "Das Ändern der CAN-Einstellungen betrifft jeden MCU am Bus. Niemals während eines Drucks durchführen.",
+      "none": "Keine CAN-Schnittstellen auf diesem Host gefunden.",
+      "controllerState": "Controller",
+      "driver": "Treiber",
+      "bitrate": "Bitrate",
+      "errors": "Bus-Fehler (rx/tx)",
+      "txqueue": "TX-Warteschlange",
+      "up": "Aktiv",
+      "down": "Inaktiv",
+      "unknown": "Unbekannt",
+      "bringUp": "Aktivieren",
+      "bringDown": "Deaktivieren",
+      "confirmDown": "Das Deaktivieren des Busses trennt jeden CAN-MCU, bis er wieder aktiv ist. Fortfahren?",
+      "confirm": "Bestätigen",
+      "cancel": "Abbrechen",
+      "setBitrate": "Bitrate festlegen",
+      "downFirst": "Deaktiviere die Schnittstelle, um ihre Bitrate zu ändern.",
+      "actionOk": "Schnittstelle aktualisiert.",
+      "actionFailed": "Die Aktion ist fehlgeschlagen."
     }
   }
 }

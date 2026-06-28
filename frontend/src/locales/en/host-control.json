@@ -6,7 +6,8 @@
       "services": "Services",
       "cleanup": "Cleanup",
       "system": "System",
-      "boot": "Boot"
+      "boot": "Boot",
+      "canbus": "CAN Bus"
     },
     "help": {
       "guide": "Help",
@@ -270,6 +271,28 @@
         "failed": "Could not apply the boot splash.",
         "caveat": "Writes a PNG to the boot-splash path; whether it shows at boot depends on your host's splash setup."
       }
+    },
+    "canbus": {
+      "intro": "View and manage the host's CAN bus interfaces: link state, bitrate and error counters. Reads are safe; changes need passwordless sudo and are refused while printing.",
+      "warn": "Changing CAN settings affects every MCU on the bus. Never do it during a print.",
+      "none": "No CAN interfaces found on this host.",
+      "controllerState": "Controller",
+      "driver": "Driver",
+      "bitrate": "Bitrate",
+      "errors": "Bus errors (rx/tx)",
+      "txqueue": "TX queue",
+      "up": "Up",
+      "down": "Down",
+      "unknown": "Unknown",
+      "bringUp": "Bring up",
+      "bringDown": "Bring down",
+      "confirmDown": "Bringing the bus down disconnects every CAN MCU until it is back up. Continue?",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "setBitrate": "Set bitrate",
+      "downFirst": "Bring the interface down to change its bitrate.",
+      "actionOk": "Interface updated.",
+      "actionFailed": "The action failed."
     }
   }
 }
