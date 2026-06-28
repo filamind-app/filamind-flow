@@ -14,12 +14,20 @@ import HardwarePicker from '@/widgets/hardware-browser/HardwarePicker.vue'
 
 import { fetchBoardDetail } from './api'
 import PinAtlas from './PinAtlas.vue'
-import type { BoardDetail, BoardMedia, RelatedRef, TopologyHost, TopologyMcu } from './types'
+import type {
+  BoardDetail,
+  BoardMedia,
+  RelatedRef,
+  TopologyCanBus,
+  TopologyHost,
+  TopologyMcu,
+} from './types'
 
 const props = defineProps<{
   mcu: TopologyMcu | null
   host: TopologyHost | null
   isHost: boolean
+  canBus: TopologyCanBus | null
   busy: boolean
   fw: McuFirmware | undefined
 }>()
@@ -166,6 +174,35 @@ function onPick(id: string | null): void {
           >
         </div>
       </div>
+    </template>
+
+    <!-- CAN adapter inspector (the USB-CAN dongle bridging the bus - not a Klipper MCU) -->
+    <template v-else-if="canBus">
+      <div class="flex min-w-0 items-center gap-1 font-display text-sm font-bold">
+        <span aria-hidden="true">🔌</span>
+        <span class="min-w-0 truncate">{{ t('boardTopology.canbus.adapter') }}</span>
+      </div>
+      <dl class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 font-mono text-xs" dir="ltr">
+        <dt class="opacity-60">{{ t('boardTopology.canbus.label') }}</dt>
+        <dd class="font-bold">{{ canBus.interface }}</dd>
+        <template v-if="canBus.bitrate">
+          <dt class="opacity-60">bitrate</dt>
+          <dd>{{ canBus.bitrate }}</dd>
+        </template>
+        <template v-if="canBus.driver">
+          <dt class="opacity-60">driver</dt>
+          <dd>{{ canBus.driver }}</dd>
+        </template>
+      </dl>
+      <button
+        v-if="canBus.board_id"
+        type="button"
+        class="nb-btn bg-paper px-1.5 py-0.5 hover:bg-brand-cyan"
+        @click="emit('openInBrowser', { type: 'board', id: canBus.board_id, name: 'U2C' })"
+      >
+        {{ t('hardwareBrowser.related.jump', { name: 'U2C' }) }} ↗
+      </button>
+      <p class="text-[11px] opacity-60">{{ t('boardTopology.canbus.hint') }}</p>
     </template>
 
     <!-- MCU inspector -->

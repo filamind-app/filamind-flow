@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "Magistrala CAN",
-      "adapter": "Adapter USB-CAN (niepotwierdzony)"
+      "adapter": "Adapter USB-CAN (niepotwierdzony)",
+      "node": "USB-CAN",
+      "hint": "Marka niepotwierdzona (gs_usb)"
     },
     "display": {
       "title": "Wyświetlacze",

@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "Bus CAN",
-      "adapter": "Adaptateur USB-CAN (non confirmé)"
+      "adapter": "Adaptateur USB-CAN (non confirmé)",
+      "node": "USB-CAN",
+      "hint": "Marque non confirmée (gs_usb)"
     },
     "display": {
       "title": "Écrans",

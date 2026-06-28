@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "Bus CAN",
-      "adapter": "Adaptador USB-CAN (sin confirmar)"
+      "adapter": "Adaptador USB-CAN (sin confirmar)",
+      "node": "USB-CAN",
+      "hint": "Marca sin confirmar (gs_usb)"
     },
     "display": {
       "title": "Pantallas",

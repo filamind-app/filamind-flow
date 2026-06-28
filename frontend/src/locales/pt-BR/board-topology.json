@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "Barramento CAN",
-      "adapter": "Adaptador USB-CAN (não confirmado)"
+      "adapter": "Adaptador USB-CAN (não confirmado)",
+      "node": "USB-CAN",
+      "hint": "Marca não confirmada (gs_usb)"
     },
     "display": {
       "title": "Displays",

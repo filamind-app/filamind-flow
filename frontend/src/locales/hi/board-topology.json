@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "CAN बस",
-      "adapter": "USB-CAN अडैप्टर (अपुष्ट)"
+      "adapter": "USB-CAN अडैप्टर (अपुष्ट)",
+      "node": "USB-CAN",
+      "hint": "ब्रांड अपुष्ट (gs_usb)"
     },
     "display": {
       "title": "डिस्प्ले",
