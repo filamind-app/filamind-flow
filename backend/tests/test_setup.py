@@ -319,8 +319,8 @@ async def test_third_party_port_change_edits_nginx_with_a_safe_revert(monkeypatc
 
 async def test_first_party_install_sudo_failure_surfaces_the_command(monkeypatch) -> None:
     # The backend service has no terminal for a sudo password; if the install fails for that reason,
-    # the result points at the one-time passwordless-sudo grant that lets the headless widget install
-    # apps without a prompt (re-running the app's own installer would hit the same wall).
+    # the result points at the one-time passwordless-sudo grant that lets the headless widget
+    # install apps without a prompt (re-running the app's own installer would hit the same wall).
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
 
     async def fake_run(cmd: list[str]) -> dict:
