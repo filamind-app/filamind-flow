@@ -225,7 +225,8 @@
         "sanity": "ड्राइवर विवेक",
         "project": "प्रोजेक्ट दृश्य",
         "pinMap": "पिन सुझाव",
-        "backups": "बैकअप"
+        "backups": "बैकअप",
+        "lint": "कॉन्फ़िग लिंट"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "मुक्त पिन",
       "pinPh": "एक मुक्त पिन चुनें…",
       "noFree": "इस बोर्ड मैप पर कोई मुक्त नामित पिन नहीं।"
+    },
+    "lint": {
+      "title": "कॉन्फ़िग लिंट — {n} समस्या",
+      "note": "{n} सेक्शन जाँचे गए। केवल संरचनात्मक जाँच; Klipper की अपनी कॉन्फ़िग चेतावनियों का उपयोग करती है।",
+      "rule": {
+        "double_assigned_pin": "pin {pin} एक से अधिक सेक्शन ({sections}) में असाइन है। firmware restart विफल हो जाएगा।",
+        "pin_caveat": "{section}: pin {pin} — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "बिना सहेजा गया SAVE_CONFIG कैलिब्रेशन लंबित है। इसे लागू करने के लिए रीस्टार्ट करें।",
+        "missing_printer": "कोई [printer] सेक्शन नहीं मिला — इसके बिना Klipper शुरू नहीं होगा।",
+        "no_stepper": "कोई stepper या extruder सेक्शन नहीं मिला।",
+        "heater_temp_range": "{section}: min_temp ({min_temp}), max_temp ({max_temp}) से कम नहीं है।"
+      }
     }
   }
 }

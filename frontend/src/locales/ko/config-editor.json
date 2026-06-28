@@ -225,7 +225,8 @@
         "sanity": "드라이버 점검",
         "project": "프로젝트 보기",
         "pinMap": "핀 제안",
-        "backups": "백업"
+        "backups": "백업",
+        "lint": "설정 검사"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "빈 핀",
       "pinPh": "빈 핀을 선택하세요…",
       "noFree": "이 보드 맵에 빈 명명 핀이 없습니다."
+    },
+    "lint": {
+      "title": "설정 검사 — 발견된 문제 {n}건",
+      "note": "{n}개 섹션을 검사했습니다. 구조 검사만 수행하며, Klipper 자체의 설정 경고를 사용합니다.",
+      "rule": {
+        "double_assigned_pin": "{pin} 핀이 여러 섹션({sections})에 할당되어 있습니다. firmware restart가 실패합니다.",
+        "pin_caveat": "{section}: {pin} 핀 — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "저장되지 않은 SAVE_CONFIG 보정이 대기 중입니다. 적용하려면 재시작하세요.",
+        "missing_printer": "[printer] 섹션이 없습니다 — 이 섹션 없이는 Klipper가 시작되지 않습니다.",
+        "no_stepper": "stepper 또는 extruder 섹션이 없습니다.",
+        "heater_temp_range": "{section}: min_temp({min_temp})가 max_temp({max_temp})보다 낮지 않습니다."
+      }
     }
   }
 }

@@ -225,7 +225,8 @@
         "sanity": "Kontrola sterownika",
         "project": "Widok projektu",
         "pinMap": "Sugestie pinów",
-        "backups": "Kopie zapasowe"
+        "backups": "Kopie zapasowe",
+        "lint": "Kontrola konfiguracji"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "Wolny pin",
       "pinPh": "Wybierz wolny pin…",
       "noFree": "Brak wolnych nazwanych pinów na tej mapie płyty."
+    },
+    "lint": {
+      "title": "Kontrola konfiguracji — liczba ustaleń: {n}",
+      "note": "Sprawdzono sekcje: {n}. Tylko kontrole strukturalne; korzysta z własnych ostrzeżeń konfiguracji Klipper.",
+      "rule": {
+        "double_assigned_pin": "Pin {pin} jest przypisany w wielu sekcjach ({sections}). Restart firmware zakończy się błędem.",
+        "pin_caveat": "{section}: pin {pin} — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "Oczekuje niezapisana kalibracja SAVE_CONFIG. Uruchom ponownie, aby ją zastosować.",
+        "missing_printer": "Nie znaleziono sekcji [printer] — bez niej Klipper się nie uruchomi.",
+        "no_stepper": "Nie znaleziono sekcji stepper ani extruder.",
+        "heater_temp_range": "{section}: min_temp ({min_temp}) nie jest niższe niż max_temp ({max_temp})."
+      }
     }
   }
 }

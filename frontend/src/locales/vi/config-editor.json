@@ -225,7 +225,8 @@
         "sanity": "Kiểm tra driver",
         "project": "Xem dự án",
         "pinMap": "Gợi ý pin",
-        "backups": "Bản sao lưu"
+        "backups": "Bản sao lưu",
+        "lint": "Kiểm tra cấu hình"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "Pin trống",
       "pinPh": "Chọn một pin trống…",
       "noFree": "Không có pin có tên trống nào trên bản đồ bo mạch này."
+    },
+    "lint": {
+      "title": "Kiểm tra cấu hình — {n} vấn đề",
+      "note": "Đã kiểm tra {n} mục. Chỉ kiểm tra cấu trúc; dùng chính cảnh báo cấu hình của Klipper.",
+      "rule": {
+        "double_assigned_pin": "Pin {pin} được gán ở nhiều mục ({sections}). Việc firmware restart sẽ thất bại.",
+        "pin_caveat": "{section}: pin {pin} — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "Có hiệu chỉnh SAVE_CONFIG chưa được lưu đang chờ. Hãy khởi động lại để áp dụng.",
+        "missing_printer": "Không tìm thấy mục [printer] — Klipper sẽ không khởi động nếu thiếu mục này.",
+        "no_stepper": "Không tìm thấy mục stepper hay extruder nào.",
+        "heater_temp_range": "{section}: min_temp ({min_temp}) không thấp hơn max_temp ({max_temp})."
+      }
     }
   }
 }

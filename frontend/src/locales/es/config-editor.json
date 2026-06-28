@@ -225,7 +225,8 @@
         "sanity": "Sanidad de drivers",
         "project": "Vista de proyecto",
         "pinMap": "Sugerencias de pines",
-        "backups": "Copias"
+        "backups": "Copias",
+        "lint": "Análisis de configuración"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "Pin libre",
       "pinPh": "Elige un pin libre…",
       "noFree": "No hay pines con nombre libres en este mapa."
+    },
+    "lint": {
+      "title": "Análisis de configuración — {n} hallazgo(s)",
+      "note": "Se revisaron {n} secciones. Solo comprobaciones estructurales; usa las propias advertencias de configuración de Klipper.",
+      "rule": {
+        "double_assigned_pin": "El pin {pin} está asignado en varias secciones ({sections}). Un firmware restart fallará.",
+        "pin_caveat": "{section}: pin {pin} — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "Hay una calibración SAVE_CONFIG sin guardar pendiente. Reinicia para aplicarla.",
+        "missing_printer": "No se encontró ninguna sección [printer]; Klipper no arrancará sin ella.",
+        "no_stepper": "No se encontró ninguna sección stepper ni extruder.",
+        "heater_temp_range": "{section}: min_temp ({min_temp}) no es inferior a max_temp ({max_temp})."
+      }
     }
   }
 }

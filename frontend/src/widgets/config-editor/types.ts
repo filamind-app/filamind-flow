@@ -196,3 +196,18 @@ export interface ConfigSanityResult {
   findings: ConfigSanityFinding[]
   checked: number
 }
+
+/** A structural-lint finding (GET /api/config/lint): pin conflicts, Klipper's own config warnings,
+ *  unsaved SAVE_CONFIG, and structural checks. Same shape as a sanity finding. */
+export interface ConfigLintFinding {
+  level: 'error' | 'warning' | 'info' | string
+  rule: string
+  section: string
+  detail: Record<string, string | number>
+}
+
+export interface ConfigLintResult {
+  reachable: boolean
+  findings: ConfigLintFinding[]
+  checked: number
+}

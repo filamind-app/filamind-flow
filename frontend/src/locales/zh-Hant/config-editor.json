@@ -225,7 +225,8 @@
         "sanity": "驅動器合理性",
         "project": "專案檢視",
         "pinMap": "針腳建議",
-        "backups": "備份"
+        "backups": "備份",
+        "lint": "設定檢查"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "閒置針腳",
       "pinPh": "挑選一個閒置針腳…",
       "noFree": "此主機板對應表上沒有閒置的具名針腳。"
+    },
+    "lint": {
+      "title": "設定檢查 — {n} 項問題",
+      "note": "已檢查 {n} 個區段。僅進行結構檢查；採用 Klipper 本身的設定警告。",
+      "rule": {
+        "double_assigned_pin": "接腳 {pin} 同時指派於多個區段（{sections}），firmware restart 將會失敗。",
+        "pin_caveat": "{section}：接腳 {pin} — {message}",
+        "klipper_warning": "Klipper：{message}",
+        "save_config_pending": "有尚未儲存的 SAVE_CONFIG 校正待處理，請重新啟動以套用。",
+        "missing_printer": "找不到 [printer] 區段 — 缺少此區段 Klipper 將無法啟動。",
+        "no_stepper": "找不到任何 stepper 或 extruder 區段。",
+        "heater_temp_range": "{section}：min_temp（{min_temp}）並未低於 max_temp（{max_temp}）。"
+      }
     }
   }
 }

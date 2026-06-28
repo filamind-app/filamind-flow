@@ -25,6 +25,7 @@ import {
   fetchConfigFile,
   fetchConfigFiles,
   fetchConfigGraph,
+  fetchConfigLint,
   fetchConfigSanity,
   fetchFieldPolicy,
   fetchPinDoctor,
@@ -43,6 +44,8 @@ import type {
   ConfigDrift,
   ConfigDriftResult,
   ConfigFileInfo,
+  ConfigLintFinding,
+  ConfigLintResult,
   ConfigFileView,
   ConfigGraph,
   ConfigParamView,
@@ -145,6 +148,27 @@ async function loadSanity(): Promise<void> {
 function sanityMsg(f: ConfigSanityFinding): string {
   return t('configEditor.sanity.rule.' + f.rule, { section: f.section, ...f.detail })
 }
+
+// Structural lint: pin conflicts, Klipper's own config warnings, unsaved SAVE_CONFIG, structure.
+const configLint = ref<ConfigLintResult | null>(null)
+async function loadConfigLint(): Promise<void> {
+  try {
+    configLint.value = await fetchConfigLint()
+    markPanel('lint', true)
+  } catch {
+    configLint.value = null
+    markPanel('lint', false)
+  }
+}
+function lintMsg(f: ConfigLintFinding): string {
+  return t('configEditor.lint.rule.' + f.rule, { section: f.section, ...f.detail })
+}
+const LINT_BADGE: Record<string, string> = {
+  error: 'bg-brand-red text-paper',
+  warning: 'bg-brand-yellow text-ink',
+  info: 'bg-brand-cyan text-ink',
+}
+const LINT_GLYPH: Record<string, string> = { error: '✕', warning: '⚠', info: 'ℹ' }
 
 // Typed editing for TMC register fields: per-model field policy (control + mask-derived range).
 const policies = ref<Record<string, Record<string, FieldPolicyEntry>>>({})
@@ -796,6 +820,7 @@ onMounted(() => {
   void loadPinMap()
   void loadGraph()
   void loadSanity()
+  void loadConfigLint()
 })
 </script>
 
@@ -1008,6 +1033,34 @@ onMounted(() => {
             <span class="min-w-0">{{ issue.message }}</span>
           </li>
         </ul>
+      </div>
+
+      <!-- Structural lint: pin conflicts, Klipper's own config warnings, unsaved SAVE_CONFIG -->
+      <div
+        v-if="configLint && configLint.reachable && configLint.findings.length"
+        class="nb-card space-y-1 bg-brand-red/10 p-2"
+      >
+        <p class="text-xs font-bold">
+          {{ t('configEditor.lint.title', { n: configLint.findings.length }) }}
+        </p>
+        <ul class="space-y-1 text-[11px]">
+          <li
+            v-for="(f, i) in configLint.findings"
+            :key="i"
+            class="flex flex-wrap items-start gap-1"
+          >
+            <span
+              class="shrink-0 rounded-sm px-1 font-bold"
+              :class="LINT_BADGE[f.level] ?? 'bg-brand-yellow text-ink'"
+            >
+              {{ LINT_GLYPH[f.level] ?? '⚠' }}
+            </span>
+            <span class="min-w-0 font-mono">{{ lintMsg(f) }}</span>
+          </li>
+        </ul>
+        <p class="text-[10px] opacity-50">
+          {{ t('configEditor.lint.note', { n: configLint.checked }) }}
+        </p>
       </div>
 
       <!-- Driver value sanity: run_current vs the driver ceiling / mapped-motor rating + microsteps -->

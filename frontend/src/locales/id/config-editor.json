@@ -225,7 +225,8 @@
         "sanity": "Kewajaran driver",
         "project": "Tampilan proyek",
         "pinMap": "Saran pin",
-        "backups": "Cadangan"
+        "backups": "Cadangan",
+        "lint": "Periksa konfigurasi"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "Pin bebas",
       "pinPh": "Pilih pin bebas…",
       "noFree": "Tidak ada pin bernama yang bebas di peta board ini."
+    },
+    "lint": {
+      "title": "Periksa konfigurasi — {n} temuan",
+      "note": "Memeriksa {n} bagian. Hanya pemeriksaan struktural; menggunakan peringatan konfigurasi bawaan Klipper.",
+      "rule": {
+        "double_assigned_pin": "Pin {pin} ditetapkan di beberapa bagian ({sections}). Firmware restart akan gagal.",
+        "pin_caveat": "{section}: pin {pin} — {message}",
+        "klipper_warning": "Klipper: {message}",
+        "save_config_pending": "Ada kalibrasi SAVE_CONFIG yang belum disimpan. Restart untuk menerapkannya.",
+        "missing_printer": "Bagian [printer] tidak ditemukan — Klipper tidak akan berjalan tanpanya.",
+        "no_stepper": "Bagian stepper atau extruder tidak ditemukan.",
+        "heater_temp_range": "{section}: min_temp ({min_temp}) tidak lebih rendah dari max_temp ({max_temp})."
+      }
     }
   }
 }

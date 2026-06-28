@@ -225,7 +225,8 @@
         "sanity": "驱动校验",
         "project": "项目视图",
         "pinMap": "引脚建议",
-        "backups": "备份"
+        "backups": "备份",
+        "lint": "配置检查"
       }
     },
     "addPart": {
@@ -238,6 +239,19 @@
       "pin": "空闲引脚",
       "pinPh": "选择空闲引脚…",
       "noFree": "该主板映射中没有空闲的命名引脚。"
+    },
+    "lint": {
+      "title": "配置检查 — 发现 {n} 个问题",
+      "note": "已检查 {n} 个配置段。仅做结构性检查；采用 Klipper 自带的配置警告。",
+      "rule": {
+        "double_assigned_pin": "引脚 {pin} 在多个配置段中被分配（{sections}），固件重启将失败。",
+        "pin_caveat": "{section}：引脚 {pin} — {message}",
+        "klipper_warning": "Klipper：{message}",
+        "save_config_pending": "有未保存的 SAVE_CONFIG 校准结果待处理，请重启以应用。",
+        "missing_printer": "未找到 [printer] 配置段 — 缺少它 Klipper 将无法启动。",
+        "no_stepper": "未找到 stepper 或 extruder 配置段。",
+        "heater_temp_range": "{section}：min_temp（{min_temp}）未低于 max_temp（{max_temp}）。"
+      }
     }
   }
 }
