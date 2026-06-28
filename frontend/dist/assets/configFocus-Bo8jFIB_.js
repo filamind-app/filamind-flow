@@ -1,1 +1,0 @@
-import{Y as e}from"./i18n-BTo_XREP.js";var t=e(null);function n(e,n){t.value={section:e,file:n}}export{t as n,n as t};
