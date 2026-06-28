@@ -165,18 +165,21 @@ def _bash_installer(component: Component, args: str = "") -> str:
 
 
 def _augment_root_failure(result: dict[str, Any], component: Component) -> dict[str, Any]:
-    """A first-party install configures the web server, which needs root. The backend service has
-    no terminal to type a sudo password, so if that's why it failed, append the command to run on
-    the printer host (where sudo can prompt) instead of a cryptic 'a terminal is required' error.
-    """
+    """A first-party install makes host changes that need root (apt for a .deb, systemd units,
+    nginx). The Setup service runs with no terminal to type a sudo password, so it relies on the
+    one-time passwordless-sudo grant FilaMind Flow's installer writes. When that grant is missing
+    the install fails with 'a password is required'; point the operator at the single command that
+    establishes it - after which every install runs from the widget with no prompt - instead of a
+    cryptic error or a re-run that hits the same wall."""
     if result.get("ok"):
         return result
     out = result.get("output") or ""
     if any(s in out for s in ("terminal is required", "password is required", "sudo:")):
-        cmd = f"curl -fsSL {_raw_installer(component)} | bash"
         result["output"] = (
-            out.rstrip() + f"\n\nInstalling {component.name} needs root to set up the web server, "
-            f"which can't be done from here. Run this on the printer host:\n  {cmd}"
+            out.rstrip()
+            + f"\n\nInstalling {component.name} needs root on the printer host, and the Setup "
+            "widget runs without a password. Grant it once over SSH (then every install works "
+            "from here, no prompt):\n  sudo bash ~/filamind-flow/scripts/install.sh sudoers"
         )
     return result
 
