@@ -548,11 +548,19 @@ EOF
   fi
   sudo systemctl restart moonraker || true
 
-  info "Granting the panel its passwordless-sudo rights (firmware + Host Control)"
+  info "Granting the panel its passwordless-sudo rights (firmware + Host Control + native installs)"
   # Do it as part of the install so timezone/locale/hostname/network/cleanup/firmware all work
   # out of the box - no separate manual step. (Re-grant later with: sudo bash scripts/install.sh sudoers)
-  sudo bash "$APP/scripts/install.sh" sudoers "$USER" || \
-    info "Could not grant sudo automatically - run it yourself: sudo bash $APP/scripts/install.sh sudoers"
+  sudo bash "$APP/scripts/install.sh" sudoers "$USER" || true
+  # VERIFY the grant actually landed. The Setup widget installs the 3D agent + the screen .deb
+  # HEADLESSLY (no terminal to type a password), so a silently-missing grant would break one-click
+  # installs later with a confusing "a password is required". Probe a granted command (systemctl);
+  # if it still needs a password, this install ran without a terminal - surface the one-time fix.
+  if ! sudo -n systemctl --version >/dev/null 2>&1; then
+    info "NOTE: passwordless sudo did not activate (did this install run non-interactively?)."
+    info "      Run once over SSH so the Setup widget can install apps without a prompt:"
+    info "      sudo bash $APP/scripts/install.sh sudoers $USER"
+  fi
 
   # Opt-in: also install the rest of the FilaMind suite (the 3D agent + the screen native app) so
   # the suite-gated widgets unlock and the touchscreen can run the native app. OFF by default - it
