@@ -15,6 +15,21 @@ export interface TopologyDisplay {
   kind: 'touch' | 'knomi' | string
   name: string
   detail?: string | null
+  /** Set when the user added this display manually; the manual entry's id (for edit/remove). */
+  manual_id?: string | null
+}
+
+/** A user-supplied node the auto-detection missed (POST/PUT body for /api/topology/manual). */
+export interface ManualAddition {
+  /** Set when editing an existing entry; omit to add a new one. */
+  id?: string | null
+  kind: 'mcu' | 'canbus' | 'display'
+  name?: string | null
+  board_id?: string | null
+  connection?: string | null
+  interface?: string | null
+  display_kind?: string | null
+  detail?: string | null
 }
 
 export interface TopologyMcu {
@@ -36,6 +51,8 @@ export interface TopologyMcu {
   firmware?: string | null
   /** The components (steppers / drivers / heaters / fans / sensors) that live on this MCU. */
   components?: TopologyComponent[]
+  /** Set when the user added this node manually; the manual entry's id (for edit/remove). */
+  manual_id?: string | null
 }
 
 /** A port on a catalog board (subset used by the topology board card). */
@@ -106,6 +123,8 @@ export interface TopologyCanBus {
   board_id?: string | null
   board_match?: 'suggested' | 'confirmed' | null
   board_match_confidence?: number
+  /** Set when the user added this adapter manually; the manual entry's id (for edit/remove). */
+  manual_id?: string | null
 }
 
 export interface Topology {

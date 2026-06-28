@@ -276,7 +276,35 @@
     "display": {
       "title": "Displays",
       "touch": "tela sensível ao toque",
-      "knomi": "display WiFi"
+      "knomi": "display WiFi",
+      "other": "Tela"
+    },
+    "manual": {
+      "add": "Adicionar peça",
+      "titleAdd": "Adicionar uma peça",
+      "titleEdit": "Editar peça",
+      "type": "Tipo",
+      "kindMcu": "Placa / MCU",
+      "kindCanbus": "Adaptador USB-CAN",
+      "kindDisplay": "Tela do host",
+      "mcuName": "Nome da seção do MCU",
+      "mcuNamePlaceholder": "ex.: toolhead, eddy",
+      "connection": "Conexão",
+      "board": "Placa (opcional)",
+      "interface": "Interface CAN",
+      "interfacePlaceholder": "ex.: can0",
+      "displayKind": "Tipo de tela",
+      "displayName": "Nome da tela",
+      "displayNamePlaceholder": "ex.: KNOMI",
+      "detail": "Nota (opcional)",
+      "d_touch": "Tela de toque",
+      "d_knomi": "Tela WiFi (KNOMI)",
+      "d_other": "Outra",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "badge": "Manual"
     }
   }
 }

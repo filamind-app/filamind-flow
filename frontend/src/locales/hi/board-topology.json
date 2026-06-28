@@ -276,7 +276,35 @@
     "display": {
       "title": "डिस्प्ले",
       "touch": "टच स्क्रीन",
-      "knomi": "वाईफाई डिस्प्ले"
+      "knomi": "वाईफाई डिस्प्ले",
+      "other": "डिस्प्ले"
+    },
+    "manual": {
+      "add": "पुर्जा जोड़ें",
+      "titleAdd": "पुर्जा जोड़ें",
+      "titleEdit": "पुर्जा संपादित करें",
+      "type": "प्रकार",
+      "kindMcu": "बोर्ड / MCU",
+      "kindCanbus": "USB-CAN अडैप्टर",
+      "kindDisplay": "होस्ट डिस्प्ले",
+      "mcuName": "MCU सेक्शन का नाम",
+      "mcuNamePlaceholder": "जैसे toolhead, eddy",
+      "connection": "कनेक्शन",
+      "board": "बोर्ड (वैकल्पिक)",
+      "interface": "CAN इंटरफ़ेस",
+      "interfacePlaceholder": "जैसे can0",
+      "displayKind": "डिस्प्ले का प्रकार",
+      "displayName": "डिस्प्ले का नाम",
+      "displayNamePlaceholder": "जैसे KNOMI",
+      "detail": "नोट (वैकल्पिक)",
+      "d_touch": "टच स्क्रीन",
+      "d_knomi": "WiFi डिस्प्ले (KNOMI)",
+      "d_other": "अन्य",
+      "save": "सहेजें",
+      "cancel": "रद्द करें",
+      "edit": "संपादित करें",
+      "delete": "हटाएँ",
+      "badge": "मैनुअल"
     }
   }
 }

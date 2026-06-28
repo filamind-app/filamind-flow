@@ -10,13 +10,22 @@ import { fetchFirmwareStatus } from '@/widgets/firmware-upgrade/api'
 import type { McuFirmware } from '@/widgets/firmware-upgrade/types'
 import { targetFor, useEntityFocus } from '@/widgets/hardware-browser/useEntityFocus'
 
-import { clearBoardOverride, fetchDiff, fetchTopology, saveSnapshot, setBoardOverride } from './api'
+import {
+  addManualAddition,
+  clearBoardOverride,
+  fetchDiff,
+  fetchTopology,
+  removeManualAddition,
+  saveSnapshot,
+  setBoardOverride,
+} from './api'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
+import ManualAdditionModal from './ManualAdditionModal.vue'
 import NodeInspector from './NodeInspector.vue'
 import { pendingNode } from './topologyFocus'
 import TopologyGraph from './TopologyGraph.vue'
-import type { RelatedRef, Topology, TopologyChange, TopologyDiff } from './types'
+import type { ManualAddition, RelatedRef, Topology, TopologyChange, TopologyDiff } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 const { go } = useNav()
@@ -139,6 +148,40 @@ async function clearOverride(mcuName: string): Promise<void> {
   }
 }
 
+// -- Manual additions (user-added nodes the detection missed) ---------------------------
+const manualOpen = ref(false)
+const editingEntry = ref<ManualAddition | null>(null)
+
+function openAddManual(): void {
+  editingEntry.value = null
+  manualOpen.value = true
+}
+function onEditManual(entry: ManualAddition): void {
+  editingEntry.value = entry
+  manualOpen.value = true
+}
+async function onManualSubmit(entry: ManualAddition): Promise<void> {
+  overrideBusy.value = true
+  try {
+    topology.value = await addManualAddition(entry)
+    manualOpen.value = false
+  } catch (e) {
+    actionError.value = describeError(e)
+  } finally {
+    overrideBusy.value = false
+  }
+}
+async function onDeleteManual(id: string): Promise<void> {
+  overrideBusy.value = true
+  try {
+    topology.value = await removeManualAddition(id)
+  } catch (e) {
+    actionError.value = describeError(e)
+  } finally {
+    overrideBusy.value = false
+  }
+}
+
 async function takeSnapshot(): Promise<void> {
   snapshotBusy.value = true
   try {
@@ -247,9 +290,14 @@ onMounted(() => void load())
           {{ t('boardTopology.graph.view.' + v) }}
         </button>
       </div>
-      <button class="nb-btn bg-surface px-2 py-1 text-xs" :disabled="loading" @click="load">
-        <span aria-hidden="true">↻</span> {{ t('boardTopology.states.refresh') }}
-      </button>
+      <div class="flex items-center gap-2">
+        <button class="nb-btn bg-surface px-2 py-1 text-xs" @click="openAddManual">
+          <span aria-hidden="true">＋</span> {{ t('boardTopology.manual.add') }}
+        </button>
+        <button class="nb-btn bg-surface px-2 py-1 text-xs" :disabled="loading" @click="load">
+          <span aria-hidden="true">↻</span> {{ t('boardTopology.states.refresh') }}
+        </button>
+      </div>
     </div>
 
     <!-- States -->
@@ -344,6 +392,8 @@ onMounted(() => void load())
           @open-in-browser="openInBrowser"
           @set-override="setOverride"
           @clear-override="clearOverride"
+          @edit-manual="onEditManual"
+          @delete-manual="onDeleteManual"
         />
       </div>
 
@@ -403,5 +453,13 @@ onMounted(() => void load())
         </ul>
       </div>
     </template>
+
+    <ManualAdditionModal
+      :open="manualOpen"
+      :entry="editingEntry"
+      :busy="overrideBusy"
+      @close="manualOpen = false"
+      @submit="onManualSubmit"
+    />
   </div>
 </template>

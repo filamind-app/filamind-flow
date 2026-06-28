@@ -276,7 +276,35 @@
     "display": {
       "title": "Màn hình",
       "touch": "màn hình cảm ứng",
-      "knomi": "màn hình WiFi"
+      "knomi": "màn hình WiFi",
+      "other": "Màn hình"
+    },
+    "manual": {
+      "add": "Thêm linh kiện",
+      "titleAdd": "Thêm một linh kiện",
+      "titleEdit": "Sửa linh kiện",
+      "type": "Loại",
+      "kindMcu": "Bo mạch / MCU",
+      "kindCanbus": "Bộ chuyển USB-CAN",
+      "kindDisplay": "Màn hình của host",
+      "mcuName": "Tên mục MCU",
+      "mcuNamePlaceholder": "ví dụ: toolhead, eddy",
+      "connection": "Kết nối",
+      "board": "Bo mạch (tùy chọn)",
+      "interface": "Giao diện CAN",
+      "interfacePlaceholder": "ví dụ: can0",
+      "displayKind": "Kiểu màn hình",
+      "displayName": "Tên màn hình",
+      "displayNamePlaceholder": "ví dụ: KNOMI",
+      "detail": "Ghi chú (tùy chọn)",
+      "d_touch": "Màn hình cảm ứng",
+      "d_knomi": "Màn hình WiFi (KNOMI)",
+      "d_other": "Khác",
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "badge": "Thủ công"
     }
   }
 }

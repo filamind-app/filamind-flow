@@ -1,7 +1,7 @@
 import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
-import type { BoardDetail, PinAtlas, Topology, TopologyDiff } from './types'
+import type { BoardDetail, ManualAddition, PinAtlas, Topology, TopologyDiff } from './types'
 
 /** Host → MCU topology from the live config (read-only). */
 export async function fetchTopology(): Promise<Topology> {
@@ -67,6 +67,33 @@ export async function clearBoardOverride(mcuName: string): Promise<Topology> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ mcu_name: mcuName }),
+  })
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  return (await response.json()) as Topology
+}
+
+/** Add (or update, when `entry.id` is set) a manual topology node the auto-detection missed.
+ *  Returns the refreshed topology with the entry merged in. */
+export async function addManualAddition(entry: ManualAddition): Promise<Topology> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/manual`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(entry),
+  })
+  if (!response.ok) {
+    throw new Error(httpError(response.status))
+  }
+  return (await response.json()) as Topology
+}
+
+/** Remove a manual topology node by its id; returns the refreshed topology. */
+export async function removeManualAddition(id: string): Promise<Topology> {
+  const { backendUrl } = resolveEndpoints()
+  const response = await fetch(`${backendUrl}/api/topology/manual/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
   })
   if (!response.ok) {
     throw new Error(httpError(response.status))

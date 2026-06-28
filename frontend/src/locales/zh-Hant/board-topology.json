@@ -276,7 +276,35 @@
     "display": {
       "title": "顯示器",
       "touch": "觸控螢幕",
-      "knomi": "WiFi 顯示器"
+      "knomi": "WiFi 顯示器",
+      "other": "顯示器"
+    },
+    "manual": {
+      "add": "新增零件",
+      "titleAdd": "新增零件",
+      "titleEdit": "編輯零件",
+      "type": "類型",
+      "kindMcu": "控制板／MCU",
+      "kindCanbus": "USB-CAN 轉接器",
+      "kindDisplay": "主機顯示器",
+      "mcuName": "MCU 區段名稱",
+      "mcuNamePlaceholder": "例如 toolhead、eddy",
+      "connection": "連線",
+      "board": "控制板（選填）",
+      "interface": "CAN 介面",
+      "interfacePlaceholder": "例如 can0",
+      "displayKind": "顯示器類型",
+      "displayName": "顯示器名稱",
+      "displayNamePlaceholder": "例如 KNOMI",
+      "detail": "備註（選填）",
+      "d_touch": "觸控螢幕",
+      "d_knomi": "WiFi 顯示器（KNOMI）",
+      "d_other": "其他",
+      "save": "儲存",
+      "cancel": "取消",
+      "edit": "編輯",
+      "delete": "刪除",
+      "badge": "手動"
     }
   }
 }

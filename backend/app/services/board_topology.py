@@ -14,7 +14,7 @@ from typing import Any
 
 import httpx
 
-from app.services import hardware_links, reference_data, topology_overrides
+from app.services import hardware_links, manual_additions, reference_data, topology_overrides
 from app.services.moonraker_client import MoonrakerClient
 
 #: A ``[mcu]`` or ``[mcu <name>]`` section header.
@@ -571,6 +571,80 @@ def apply_overrides(result: dict[str, Any], overrides: dict[str, dict[str, Any]]
             mcu["board_match_confidence"] = 1.0
 
 
+def apply_manual_additions(result: dict[str, Any], additions: dict[str, dict[str, Any]]) -> None:
+    """Merge the user's manually-added nodes (an MCU, a USB-CAN adapter, or a host display the
+    auto-detection missed) onto a built topology. Each carries its ``manual_id`` so the UI can
+    edit/remove it. A manual entry whose key already exists (same MCU name / CAN interface /
+    display) is skipped, so a manual node never duplicates a detected one. Mutates ``result``."""
+    if not additions:
+        return
+    have_mcu = {str(m.get("name")) for m in result.get("mcus", [])}
+    have_iface = {str(b.get("interface")) for b in result.get("can_buses", [])}
+    host = result.get("host") if isinstance(result.get("host"), dict) else None
+    have_disp = {(str(d.get("kind")), str(d.get("name"))) for d in (host or {}).get("displays", [])}
+
+    for entry_id, e in additions.items():
+        kind = e.get("kind")
+        if kind == "mcu":
+            name = str(e.get("name") or "")
+            if not name or name in have_mcu:
+                continue
+            have_mcu.add(name)
+            board_id = e.get("board_id") or None
+            result.setdefault("mcus", []).append(
+                {
+                    "name": name,
+                    "connection": e.get("connection") or "unknown",
+                    "identifier": None,
+                    "mcu": None,
+                    "board": None,
+                    "confidence": 0.0,
+                    "mcu_id": None,
+                    "mcu_family": None,
+                    "board_id": board_id,
+                    "board_match": "confirmed" if board_id else None,
+                    "board_match_confidence": 1.0 if board_id else 0.0,
+                    "firmware": None,
+                    "components": [],
+                    "manual_id": entry_id,
+                }
+            )
+        elif kind == "canbus":
+            iface = str(e.get("interface") or "")
+            if not iface or iface in have_iface:
+                continue
+            have_iface.add(iface)
+            board_id = e.get("board_id") or None
+            result.setdefault("can_buses", []).append(
+                {
+                    "interface": iface,
+                    "driver": None,
+                    "bitrate": None,
+                    "board_id": board_id,
+                    "board_match": "confirmed" if board_id else None,
+                    "board_match_confidence": 1.0 if board_id else 0.0,
+                    "manual_id": entry_id,
+                }
+            )
+        elif kind == "display" and host is not None:
+            dkind = e.get("display_kind") or "other"
+            name = str(e.get("name") or "")
+            if not name or (str(dkind), name) in have_disp:
+                continue
+            have_disp.add((str(dkind), name))
+            host.setdefault("displays", []).append(
+                {
+                    "kind": dkind,
+                    "name": name,
+                    "detail": e.get("detail") or None,
+                    "manual_id": entry_id,
+                }
+            )
+
+    # Keep the primary [mcu] first, then the rest alphabetically (manual MCUs slot in by name).
+    result.get("mcus", []).sort(key=lambda m: (m["name"] != "mcu", str(m["name"])))
+
+
 async def _enrich_live_mcus(
     client: MoonrakerClient, result: dict[str, Any], sections: dict[str, Any]
 ) -> None:
@@ -728,6 +802,8 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     except httpx.HTTPError:
         pass
     _mark_integrated_host(result)
+    # Merge any user-added nodes (board/MCU, USB-CAN adapter, host display) the detection missed.
+    apply_manual_additions(result, manual_additions.read_additions(data_dir))
     result["reachable"] = True
     return result
 

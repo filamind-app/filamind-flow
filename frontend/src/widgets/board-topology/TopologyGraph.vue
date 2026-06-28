@@ -54,6 +54,8 @@ interface NodeBox {
   chassis?: boolean
   nested?: boolean
   integratedBadge?: boolean
+  /** User-added node (not auto-detected) - drawn with a dashed border + ✎ marker. */
+  manual?: boolean
 }
 interface EdgeLine {
   id: string
@@ -115,6 +117,7 @@ const canAdapter = computed(() => {
     sub: [ext.interface, bits, ext.driver].filter(Boolean).join(' · '),
     board: ext.board_id,
     match: ext.board_match,
+    manual: !!ext.manual_id,
   }
 })
 
@@ -153,6 +156,7 @@ function mcuBox(m: TopologyMcu, x: number, y: number, w = NW, h = NH, chassis = 
     match: m.board_match,
     board: m.board_id,
     chassis,
+    manual: !!m.manual_id,
   }
 }
 
@@ -171,6 +175,7 @@ function adapterBox(a: NonNullable<typeof canAdapter.value>, x: number, y: numbe
     conn: 'canbus',
     match: a.match as TopologyMcu['board_match'],
     board: a.board,
+    manual: a.manual,
   }
 }
 
@@ -410,6 +415,7 @@ function vitals(id: string): string {
                 'is-selected': selected === n.id,
                 nested: n.nested,
                 'is-alert': healthOf(n.id) === 'out',
+                'is-manual': n.manual,
               }"
               role="button"
               tabindex="0"
@@ -461,6 +467,8 @@ function vitals(id: string): string {
                   {{ HEALTH_GLYPH[healthOf(n.id)] }}
                 </text>
               </template>
+              <!-- manual (user-added) marker -->
+              <text v-if="n.manual" :x="n.w - 7" y="14" text-anchor="end" class="t-manual">✎</text>
               <!-- Clip the labels to the box so a long name/chip can never spill past the frame. -->
               <clipPath :id="`nclip-${cid(n.id)}`">
                 <rect x="0" y="0" :width="n.w - 6" :height="n.h" />
@@ -586,6 +594,16 @@ function vitals(id: string): string {
   stroke: rgb(var(--c-brand-pink));
   stroke-width: 3.5;
   filter: drop-shadow(3px 3px 0 rgb(var(--c-ink)));
+}
+/* User-added (manual) node: dashed border + a ✎ marker, so it reads as hand-entered. */
+.node.is-manual .node-rect {
+  stroke-dasharray: 5 3;
+}
+.t-manual {
+  font:
+    700 11px/1 ui-monospace,
+    monospace;
+  fill: rgb(var(--c-brand-pink));
 }
 /* Live link-health - left-edge bar + status glyph (green ✓ / amber ⚠ / red ✕). */
 .health-bar {

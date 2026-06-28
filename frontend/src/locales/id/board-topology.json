@@ -276,7 +276,35 @@
     "display": {
       "title": "Layar",
       "touch": "layar sentuh",
-      "knomi": "layar WiFi"
+      "knomi": "layar WiFi",
+      "other": "Layar"
+    },
+    "manual": {
+      "add": "Tambah komponen",
+      "titleAdd": "Tambah komponen",
+      "titleEdit": "Edit komponen",
+      "type": "Jenis",
+      "kindMcu": "Board / MCU",
+      "kindCanbus": "Adapter USB-CAN",
+      "kindDisplay": "Layar host",
+      "mcuName": "Nama section MCU",
+      "mcuNamePlaceholder": "mis. toolhead, eddy",
+      "connection": "Koneksi",
+      "board": "Board (opsional)",
+      "interface": "Antarmuka CAN",
+      "interfacePlaceholder": "mis. can0",
+      "displayKind": "Jenis layar",
+      "displayName": "Nama layar",
+      "displayNamePlaceholder": "mis. KNOMI",
+      "detail": "Catatan (opsional)",
+      "d_touch": "Layar sentuh",
+      "d_knomi": "Layar WiFi (KNOMI)",
+      "d_other": "Lainnya",
+      "save": "Simpan",
+      "cancel": "Batal",
+      "edit": "Edit",
+      "delete": "Hapus",
+      "badge": "Manual"
     }
   }
 }

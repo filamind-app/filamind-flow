@@ -276,7 +276,35 @@
     "display": {
       "title": "Displays",
       "touch": "aanraakscherm",
-      "knomi": "wifi-display"
+      "knomi": "wifi-display",
+      "other": "Display"
+    },
+    "manual": {
+      "add": "Onderdeel toevoegen",
+      "titleAdd": "Onderdeel toevoegen",
+      "titleEdit": "Onderdeel bewerken",
+      "type": "Type",
+      "kindMcu": "Board / MCU",
+      "kindCanbus": "USB-CAN-adapter",
+      "kindDisplay": "Hostdisplay",
+      "mcuName": "Naam MCU-sectie",
+      "mcuNamePlaceholder": "bijv. toolhead, eddy",
+      "connection": "Verbinding",
+      "board": "Board (optioneel)",
+      "interface": "CAN-interface",
+      "interfacePlaceholder": "bijv. can0",
+      "displayKind": "Type display",
+      "displayName": "Displaynaam",
+      "displayNamePlaceholder": "bijv. KNOMI",
+      "detail": "Notitie (optioneel)",
+      "d_touch": "Touchscreen",
+      "d_knomi": "WiFi-display (KNOMI)",
+      "d_other": "Overig",
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "edit": "Bewerken",
+      "delete": "Verwijderen",
+      "badge": "Handmatig"
     }
   }
 }

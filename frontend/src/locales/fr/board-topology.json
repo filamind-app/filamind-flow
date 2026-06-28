@@ -276,7 +276,35 @@
     "display": {
       "title": "Écrans",
       "touch": "écran tactile",
-      "knomi": "écran WiFi"
+      "knomi": "écran WiFi",
+      "other": "Écran"
+    },
+    "manual": {
+      "add": "Ajouter une pièce",
+      "titleAdd": "Ajouter une pièce",
+      "titleEdit": "Modifier la pièce",
+      "type": "Type",
+      "kindMcu": "Carte / MCU",
+      "kindCanbus": "Adaptateur USB-CAN",
+      "kindDisplay": "Écran hôte",
+      "mcuName": "Nom de section MCU",
+      "mcuNamePlaceholder": "ex. toolhead, eddy",
+      "connection": "Connexion",
+      "board": "Carte (facultatif)",
+      "interface": "Interface CAN",
+      "interfacePlaceholder": "ex. can0",
+      "displayKind": "Type d'écran",
+      "displayName": "Nom de l'écran",
+      "displayNamePlaceholder": "ex. KNOMI",
+      "detail": "Note (facultatif)",
+      "d_touch": "Écran tactile",
+      "d_knomi": "Écran WiFi (KNOMI)",
+      "d_other": "Autre",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "badge": "Manuel"
     }
   }
 }

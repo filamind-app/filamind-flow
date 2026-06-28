@@ -276,7 +276,35 @@
     "display": {
       "title": "Дисплеї",
       "touch": "сенсорний екран",
-      "knomi": "Wi-Fi дисплей"
+      "knomi": "Wi-Fi дисплей",
+      "other": "Дисплей"
+    },
+    "manual": {
+      "add": "Додати компонент",
+      "titleAdd": "Додавання компонента",
+      "titleEdit": "Редагування компонента",
+      "type": "Тип",
+      "kindMcu": "Плата / MCU",
+      "kindCanbus": "Адаптер USB-CAN",
+      "kindDisplay": "Дисплей хоста",
+      "mcuName": "Назва секції MCU",
+      "mcuNamePlaceholder": "напр. toolhead, eddy",
+      "connection": "Підключення",
+      "board": "Плата (необов'язково)",
+      "interface": "Інтерфейс CAN",
+      "interfacePlaceholder": "напр. can0",
+      "displayKind": "Тип дисплея",
+      "displayName": "Назва дисплея",
+      "displayNamePlaceholder": "напр. KNOMI",
+      "detail": "Примітка (необов'язково)",
+      "d_touch": "Сенсорний екран",
+      "d_knomi": "WiFi-дисплей (KNOMI)",
+      "d_other": "Інше",
+      "save": "Зберегти",
+      "cancel": "Скасувати",
+      "edit": "Редагувати",
+      "delete": "Видалити",
+      "badge": "Вручну"
     }
   }
 }

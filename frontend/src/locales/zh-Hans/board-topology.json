@@ -276,7 +276,35 @@
     "display": {
       "title": "显示屏",
       "touch": "触摸屏",
-      "knomi": "WiFi 显示屏"
+      "knomi": "WiFi 显示屏",
+      "other": "显示屏"
+    },
+    "manual": {
+      "add": "添加部件",
+      "titleAdd": "添加部件",
+      "titleEdit": "编辑部件",
+      "type": "类型",
+      "kindMcu": "板卡 / MCU",
+      "kindCanbus": "USB-CAN 适配器",
+      "kindDisplay": "主机显示屏",
+      "mcuName": "MCU 配置段名称",
+      "mcuNamePlaceholder": "例如 toolhead、eddy",
+      "connection": "连接",
+      "board": "板卡（可选）",
+      "interface": "CAN 接口",
+      "interfacePlaceholder": "例如 can0",
+      "displayKind": "显示屏类型",
+      "displayName": "显示屏名称",
+      "displayNamePlaceholder": "例如 KNOMI",
+      "detail": "备注（可选）",
+      "d_touch": "触摸屏",
+      "d_knomi": "WiFi 显示屏（KNOMI）",
+      "d_other": "其他",
+      "save": "保存",
+      "cancel": "取消",
+      "edit": "编辑",
+      "delete": "删除",
+      "badge": "手动"
     }
   }
 }
