@@ -7,7 +7,8 @@
       "cleanup": "Pembersihan",
       "system": "Sistem",
       "boot": "Boot",
-      "canbus": "CAN Bus"
+      "canbus": "CAN Bus",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Bantuan",
@@ -293,6 +294,37 @@
       "downFirst": "Matikan antarmuka untuk mengubah bitrate-nya.",
       "actionOk": "Antarmuka diperbarui.",
       "actionFailed": "Tindakan gagal."
+    },
+    "advisor": {
+      "intro": "Kesehatan host secara sekilas - CPU, memori, disk, jam, dan layanan, masing-masing dinilai beserta cara perbaikannya.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Memori",
+        "disk": "Disk",
+        "clock": "Jam",
+        "services": "Layanan"
+      },
+      "status": {
+        "ok": "Sehat",
+        "warn": "Perhatian",
+        "fail": "Kritis",
+        "unknown": "Tidak diketahui"
+      },
+      "badge": {
+        "temp_high": "Suhu tinggi",
+        "throttled": "Di-throttle",
+        "undervolt": "Tegangan rendah",
+        "swap_heavy": "Swap berat",
+        "ntp_unsync": "Jam tidak sinkron"
+      },
+      "hint": {
+        "cpu_temp": "CPU berjalan panas. Periksa pendinginan dan aliran udara di sekitar papan.",
+        "cpu_throttled": "Papan sedang melakukan throttle (tegangan rendah atau panas). Gunakan PSU/kabel yang teruji baik dan tingkatkan pendinginan.",
+        "memory_pressure": "Memori hampir penuh dan menggunakan swap. Mulai ulang layanan berat atau tambah RAM.",
+        "disk_full": "Ruang disk menipis. Gunakan Pembersihan untuk mengosongkan cache dan log lama.",
+        "service_down": "Sebuah layanan tumpukan cetak tidak berjalan. Buka Layanan untuk menjalankannya.",
+        "ntp_unsync": "Jam tidak tersinkron. Aktifkan NTP di Sistem atau atur waktunya."
+      }
     }
   }
 }

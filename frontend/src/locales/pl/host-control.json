@@ -7,7 +7,8 @@
       "cleanup": "Czyszczenie",
       "system": "System",
       "boot": "Rozruch",
-      "canbus": "Magistrala CAN"
+      "canbus": "Magistrala CAN",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Pomoc",
@@ -293,6 +294,37 @@
       "downFirst": "Wyłącz interfejs, aby zmienić jego bitrate.",
       "actionOk": "Interfejs zaktualizowany.",
       "actionFailed": "Akcja nie powiodła się."
+    },
+    "advisor": {
+      "intro": "Kondycja hosta w skrócie - CPU, pamięć, dysk, zegar i usługi, każde z oceną i wskazówką naprawy.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Pamięć",
+        "disk": "Dysk",
+        "clock": "Zegar",
+        "services": "Usługi"
+      },
+      "status": {
+        "ok": "W normie",
+        "warn": "Uwaga",
+        "fail": "Krytyczny",
+        "unknown": "Nieznany"
+      },
+      "badge": {
+        "temp_high": "Wysoka temp.",
+        "throttled": "Ograniczone",
+        "undervolt": "Za niskie napięcie",
+        "swap_heavy": "Intensywny swap",
+        "ntp_unsync": "Zegar niezsynchronizowany"
+      },
+      "hint": {
+        "cpu_temp": "CPU mocno się grzeje. Sprawdź chłodzenie i przepływ powietrza wokół płytki.",
+        "cpu_throttled": "Płytka ogranicza wydajność (zbyt niskie napięcie lub przegrzanie). Użyj sprawdzonego zasilacza/kabla i popraw chłodzenie.",
+        "memory_pressure": "Pamięć jest niemal pełna i korzysta ze swapu. Zrestartuj obciążające usługi lub dodaj RAM.",
+        "disk_full": "Mało miejsca na dysku. Użyj Czyszczenia, aby zwolnić pamięci podręczne i stare dzienniki.",
+        "service_down": "Usługa stosu druku nie działa. Otwórz Usługi, aby ją uruchomić.",
+        "ntp_unsync": "Zegar nie jest zsynchronizowany. Włącz NTP w Systemie lub ustaw czas."
+      }
     }
   }
 }

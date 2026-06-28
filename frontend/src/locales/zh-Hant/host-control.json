@@ -7,7 +7,8 @@
       "cleanup": "清理",
       "system": "系統",
       "boot": "啟動",
-      "canbus": "CAN 匯流排"
+      "canbus": "CAN 匯流排",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "說明",
@@ -293,6 +294,37 @@
       "downFirst": "請先停用此介面才能變更其傳輸速率。",
       "actionOk": "介面已更新。",
       "actionFailed": "操作失敗。"
+    },
+    "advisor": {
+      "intro": "一眼掌握主機健康狀態 - CPU、記憶體、磁碟、時鐘與服務，每項皆評分並附上修正建議。",
+      "card": {
+        "cpu": "CPU",
+        "memory": "記憶體",
+        "disk": "磁碟",
+        "clock": "時鐘",
+        "services": "服務"
+      },
+      "status": {
+        "ok": "健康",
+        "warn": "注意",
+        "fail": "嚴重",
+        "unknown": "未知"
+      },
+      "badge": {
+        "temp_high": "溫度過高",
+        "throttled": "已降頻",
+        "undervolt": "電壓過低",
+        "swap_heavy": "大量交換",
+        "ntp_unsync": "時鐘未同步"
+      },
+      "hint": {
+        "cpu_temp": "CPU 溫度偏高。請檢查主機板周圍的散熱與氣流。",
+        "cpu_throttled": "主機板正在降頻（電壓過低或過熱）。請改用品質良好的 PSU／線材並加強散熱。",
+        "memory_pressure": "記憶體幾乎用滿並開始使用交換空間。請重新啟動佔用大量資源的服務或加裝 RAM。",
+        "disk_full": "磁碟空間不足。請使用「清理」釋放快取與舊記錄。",
+        "service_down": "某個列印堆疊服務未在執行。請開啟「服務」以啟動它。",
+        "ntp_unsync": "時鐘尚未同步。請在「系統」中啟用 NTP，或手動設定時間。"
+      }
     }
   }
 }

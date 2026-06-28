@@ -28,6 +28,12 @@ async def host_monitor(settings: Settings = Depends(get_settings)) -> dict[str, 
     return await host_control_service.monitor(settings.data_dir)
 
 
+@router.get("/advisor")
+async def host_advisor(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+    """Graded host-health cards (CPU / memory / disk / clock / services) + fix hints. Read-only."""
+    return await host_control_service.advisory(settings.data_dir)
+
+
 @router.get("/boot")
 async def host_boot() -> dict[str, Any]:
     """Read-only boot configuration: default systemd target, active boot splash, plymouth theme."""

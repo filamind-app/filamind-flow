@@ -7,7 +7,8 @@
       "cleanup": "Dọn dẹp",
       "system": "Hệ thống",
       "boot": "Khởi động",
-      "canbus": "CAN Bus"
+      "canbus": "CAN Bus",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Trợ giúp",
@@ -293,6 +294,37 @@
       "downFirst": "Hãy tắt giao diện để thay đổi bitrate của nó.",
       "actionOk": "Đã cập nhật giao diện.",
       "actionFailed": "Thao tác thất bại."
+    },
+    "advisor": {
+      "intro": "Tổng quan nhanh tình trạng máy chủ - CPU, bộ nhớ, ổ đĩa, đồng hồ và dịch vụ, mỗi mục đều được chấm điểm kèm cách khắc phục.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Bộ nhớ",
+        "disk": "Ổ đĩa",
+        "clock": "Đồng hồ",
+        "services": "Dịch vụ"
+      },
+      "status": {
+        "ok": "Tốt",
+        "warn": "Cần lưu ý",
+        "fail": "Nghiêm trọng",
+        "unknown": "Không rõ"
+      },
+      "badge": {
+        "temp_high": "Nhiệt độ cao",
+        "throttled": "Bị điều tiết",
+        "undervolt": "Sụt áp",
+        "swap_heavy": "Dùng swap nhiều",
+        "ntp_unsync": "Đồng hồ chưa đồng bộ"
+      },
+      "hint": {
+        "cpu_temp": "CPU đang nóng. Kiểm tra tản nhiệt và luồng gió quanh bo mạch.",
+        "cpu_throttled": "Bo mạch đang bị điều tiết (sụt áp hoặc quá nhiệt). Dùng PSU/cáp đã biết chắc tốt và cải thiện tản nhiệt.",
+        "memory_pressure": "Bộ nhớ gần đầy và đang dùng swap. Khởi động lại các dịch vụ nặng hoặc thêm RAM.",
+        "disk_full": "Dung lượng ổ đĩa thấp. Dùng Dọn dẹp để giải phóng bộ nhớ đệm và nhật ký cũ.",
+        "service_down": "Một dịch vụ của ngăn xếp in không chạy. Mở Dịch vụ để khởi động lại.",
+        "ntp_unsync": "Đồng hồ chưa được đồng bộ. Bật NTP trong Hệ thống hoặc đặt thời gian."
+      }
     }
   }
 }

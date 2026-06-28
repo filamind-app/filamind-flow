@@ -7,7 +7,8 @@
       "cleanup": "Pulizia",
       "system": "Sistema",
       "boot": "Avvio",
-      "canbus": "CAN Bus"
+      "canbus": "CAN Bus",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Aiuto",
@@ -293,6 +294,37 @@
       "downFirst": "Disattiva l'interfaccia per modificarne il bitrate.",
       "actionOk": "Interfaccia aggiornata.",
       "actionFailed": "Azione non riuscita."
+    },
+    "advisor": {
+      "intro": "Stato dell'host a colpo d'occhio: CPU, memoria, disco, orologio e servizi, ciascuno valutato con un suggerimento.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Memoria",
+        "disk": "Disco",
+        "clock": "Orologio",
+        "services": "Servizi"
+      },
+      "status": {
+        "ok": "In salute",
+        "warn": "Attenzione",
+        "fail": "Critico",
+        "unknown": "Sconosciuto"
+      },
+      "badge": {
+        "temp_high": "Temp alta",
+        "throttled": "In throttling",
+        "undervolt": "Sottotensione",
+        "swap_heavy": "Swap intenso",
+        "ntp_unsync": "Orologio non sincronizzato"
+      },
+      "hint": {
+        "cpu_temp": "La CPU è troppo calda. Controlla il raffreddamento e il flusso d'aria attorno alla scheda.",
+        "cpu_throttled": "La scheda è in throttling (sottotensione o calore). Usa un PSU/cavo affidabile e migliora il raffreddamento.",
+        "memory_pressure": "La memoria è quasi piena e ricorre allo swap. Riavvia i servizi pesanti o aggiungi RAM.",
+        "disk_full": "Spazio su disco scarso. Usa Pulizia per liberare cache e vecchi log.",
+        "service_down": "Un servizio dello stack di stampa non è in esecuzione. Apri Servizi per avviarlo.",
+        "ntp_unsync": "L'orologio non è sincronizzato. Abilita NTP in Sistema oppure imposta l'ora."
+      }
     }
   }
 }

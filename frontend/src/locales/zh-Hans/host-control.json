@@ -7,7 +7,8 @@
       "cleanup": "清理",
       "system": "系统",
       "boot": "启动",
-      "canbus": "CAN 总线"
+      "canbus": "CAN 总线",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "帮助",
@@ -293,6 +294,37 @@
       "downFirst": "请先禁用该接口才能更改其比特率。",
       "actionOk": "接口已更新。",
       "actionFailed": "操作失败。"
+    },
+    "advisor": {
+      "intro": "一览主机健康状况——CPU、内存、磁盘、时钟和服务，每项均评级并附带修复建议。",
+      "card": {
+        "cpu": "CPU",
+        "memory": "内存",
+        "disk": "磁盘",
+        "clock": "时钟",
+        "services": "服务"
+      },
+      "status": {
+        "ok": "健康",
+        "warn": "注意",
+        "fail": "严重",
+        "unknown": "未知"
+      },
+      "badge": {
+        "temp_high": "温度过高",
+        "throttled": "已降频",
+        "undervolt": "欠压",
+        "swap_heavy": "频繁交换",
+        "ntp_unsync": "时钟未同步"
+      },
+      "hint": {
+        "cpu_temp": "CPU 温度偏高。请检查主板周围的散热和气流。",
+        "cpu_throttled": "主板正在降频（欠压或过热）。请改用确认良好的 PSU/线缆并改善散热。",
+        "memory_pressure": "内存接近占满并正在使用交换。请重启占用较高的服务或增加 RAM。",
+        "disk_full": "磁盘空间不足。请使用「清理」释放缓存和旧日志。",
+        "service_down": "某个打印栈服务未在运行。请打开「服务」启动它。",
+        "ntp_unsync": "时钟未同步。请在「系统」中启用 NTP 或手动设置时间。"
+      }
     }
   }
 }

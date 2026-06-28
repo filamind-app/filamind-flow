@@ -12,6 +12,7 @@ import HelpDrawer from '@/components/ui/HelpDrawer.vue'
 import { describeError } from '@/core/describeError'
 
 import { fetchMonitor } from './api'
+import AdvisorPanel from './AdvisorPanel.vue'
 import BootPanel from './BootPanel.vue'
 import CanBusPanel from './CanBusPanel.vue'
 import CleanupPanel from './CleanupPanel.vue'
@@ -23,7 +24,7 @@ import type { HostMonitor } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
-type View = 'monitor' | 'services' | 'cleanup' | 'system' | 'boot' | 'canbus'
+type View = 'monitor' | 'advisor' | 'services' | 'cleanup' | 'system' | 'boot' | 'canbus'
 const view = ref<View>('monitor')
 
 const monitor = ref<HostMonitor | null>(null)
@@ -150,7 +151,15 @@ function signalLabel(sig: number | null): string {
     <div class="-mx-1 overflow-x-auto px-1">
       <div class="inline-flex overflow-hidden rounded-brutal border-2 border-ink" role="group">
         <button
-          v-for="v in ['monitor', 'services', 'cleanup', 'system', 'boot', 'canbus'] as View[]"
+          v-for="v in [
+            'monitor',
+            'advisor',
+            'services',
+            'cleanup',
+            'system',
+            'boot',
+            'canbus',
+          ] as View[]"
           :key="v"
           type="button"
           class="nb-seg whitespace-nowrap"
@@ -350,6 +359,8 @@ function signalLabel(sig: number | null): string {
         </section>
       </template>
     </template>
+
+    <AdvisorPanel v-else-if="view === 'advisor'" />
 
     <ServicesPanel v-else-if="view === 'services'" />
 

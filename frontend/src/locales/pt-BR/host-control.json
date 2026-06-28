@@ -7,7 +7,8 @@
       "cleanup": "Limpeza",
       "system": "Sistema",
       "boot": "Inicialização",
-      "canbus": "Barramento CAN"
+      "canbus": "Barramento CAN",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Ajuda",
@@ -293,6 +294,37 @@
       "downFirst": "Desative a interface para alterar o bitrate.",
       "actionOk": "Interface atualizada.",
       "actionFailed": "A ação falhou."
+    },
+    "advisor": {
+      "intro": "Saúde do host num relance - CPU, memória, disco, relógio e serviços, cada um avaliado com uma correção.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Memória",
+        "disk": "Disco",
+        "clock": "Relógio",
+        "services": "Serviços"
+      },
+      "status": {
+        "ok": "Saudável",
+        "warn": "Atenção",
+        "fail": "Crítico",
+        "unknown": "Desconhecido"
+      },
+      "badge": {
+        "temp_high": "Temp. alta",
+        "throttled": "Em throttling",
+        "undervolt": "Subtensão",
+        "swap_heavy": "Swap intenso",
+        "ntp_unsync": "Relógio dessincronizado"
+      },
+      "hint": {
+        "cpu_temp": "A CPU está esquentando. Verifique a refrigeração e o fluxo de ar ao redor da placa.",
+        "cpu_throttled": "A placa está em throttling (subtensão ou calor). Use uma fonte/cabo comprovadamente bons e melhore a refrigeração.",
+        "memory_pressure": "A memória está quase cheia e usando swap. Reinicie serviços pesados ou adicione RAM.",
+        "disk_full": "Pouco espaço em disco. Use a Limpeza para liberar caches e logs antigos.",
+        "service_down": "Um serviço da pilha de impressão não está em execução. Abra Serviços para iniciá-lo.",
+        "ntp_unsync": "O relógio não está sincronizado. Ative o NTP em Sistema ou acerte a hora."
+      }
     }
   }
 }

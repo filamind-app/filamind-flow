@@ -7,7 +7,8 @@
       "cleanup": "Cleanup",
       "system": "System",
       "boot": "Boot",
-      "canbus": "CAN Bus"
+      "canbus": "CAN Bus",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Help",
@@ -293,6 +294,37 @@
       "downFirst": "Bring the interface down to change its bitrate.",
       "actionOk": "Interface updated.",
       "actionFailed": "The action failed."
+    },
+    "advisor": {
+      "intro": "Host health at a glance — CPU, memory, disk, clock and services, each graded with a fix.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Memory",
+        "disk": "Disk",
+        "clock": "Clock",
+        "services": "Services"
+      },
+      "status": {
+        "ok": "Healthy",
+        "warn": "Caution",
+        "fail": "Critical",
+        "unknown": "Unknown"
+      },
+      "badge": {
+        "temp_high": "High temp",
+        "throttled": "Throttled",
+        "undervolt": "Undervoltage",
+        "swap_heavy": "Heavy swap",
+        "ntp_unsync": "Clock unsynced"
+      },
+      "hint": {
+        "cpu_temp": "CPU is running hot. Check cooling and airflow around the board.",
+        "cpu_throttled": "The board is throttling (under-voltage or heat). Use a known-good PSU/cable and improve cooling.",
+        "memory_pressure": "Memory is nearly full and swapping. Restart heavy services or add RAM.",
+        "disk_full": "Disk space is low. Use Cleanup to free caches and old logs.",
+        "service_down": "A print-stack service is not running. Open Services to start it.",
+        "ntp_unsync": "The clock isn't synced. Enable NTP in System or set the time."
+      }
     }
   }
 }

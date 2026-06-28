@@ -7,7 +7,8 @@
       "cleanup": "Limpieza",
       "system": "Sistema",
       "boot": "Arranque",
-      "canbus": "CAN Bus"
+      "canbus": "CAN Bus",
+      "advisor": "Advisor"
     },
     "help": {
       "guide": "Ayuda",
@@ -293,6 +294,37 @@
       "downFirst": "Desactiva la interfaz para cambiar su bitrate.",
       "actionOk": "Interfaz actualizada.",
       "actionFailed": "La acción falló."
+    },
+    "advisor": {
+      "intro": "Estado del host de un vistazo — CPU, memoria, disco, reloj y servicios, cada uno con una calificación y una solución.",
+      "card": {
+        "cpu": "CPU",
+        "memory": "Memoria",
+        "disk": "Disco",
+        "clock": "Reloj",
+        "services": "Servicios"
+      },
+      "status": {
+        "ok": "Correcto",
+        "warn": "Atención",
+        "fail": "Crítico",
+        "unknown": "Desconocido"
+      },
+      "badge": {
+        "temp_high": "Temperatura alta",
+        "throttled": "Limitado",
+        "undervolt": "Subtensión",
+        "swap_heavy": "Swap intenso",
+        "ntp_unsync": "Reloj sin sincronizar"
+      },
+      "hint": {
+        "cpu_temp": "La CPU está caliente. Revisa la refrigeración y el flujo de aire alrededor de la placa.",
+        "cpu_throttled": "La placa está limitando su velocidad (subtensión o calor). Usa una PSU y un cable en buen estado y mejora la refrigeración.",
+        "memory_pressure": "La memoria está casi llena y usando swap. Reinicia los servicios que más consumen o añade RAM.",
+        "disk_full": "Queda poco espacio en disco. Usa Limpieza para liberar cachés y registros antiguos.",
+        "service_down": "Un servicio de la pila de impresión no se está ejecutando. Abre Servicios para iniciarlo.",
+        "ntp_unsync": "El reloj no está sincronizado. Activa NTP en Sistema o ajusta la hora."
+      }
     }
   }
 }
