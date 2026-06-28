@@ -206,7 +206,8 @@
       "driver": "Sürücüler",
       "heater": "Isıtıcılar",
       "fan": "Fanlar",
-      "sensor": "Sensörler"
+      "sensor": "Sensörler",
+      "display": "Ekran"
     },
     "pinAtlas": {
       "tab": {
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "CAN veri yolu",
       "adapter": "USB-CAN adaptörü (doğrulanmadı)"
+    },
+    "display": {
+      "title": "Ekranlar",
+      "touch": "dokunmatik ekran",
+      "knomi": "WiFi ekran"
     }
   }
 }

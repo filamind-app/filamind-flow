@@ -1289,6 +1289,16 @@ class TopologyMcu(BaseModel):
     components: list[TopologyComponent] = []
 
 
+class TopologyDisplay(BaseModel):
+    """A display attached to the HOST rather than an MCU: the touch panel KlipperScreen drives, or
+    an external WiFi display (KNOMI). The EXP-header LCD (Mini12864) is an MCU ``display`` component
+    instead, not one of these."""
+
+    kind: str  # "touch" | "knomi"
+    name: str
+    detail: str | None = None
+
+
 class TopologyHost(BaseModel):
     """The host node of the topology (the SBC / PC running Klipper)."""
 
@@ -1300,6 +1310,8 @@ class TopologyHost(BaseModel):
     # Set to a mainboard id when the host SBC is physically integrated on that board (e.g. an
     # SV08 / Manta carrying a CB1) - lets the UI draw the host *inside* the board.
     integrated_into_board_id: str | None = None
+    # Host-side displays (touch panel / external WiFi display) - the EXP LCD is an MCU component.
+    displays: list[TopologyDisplay] = []
 
 
 class TopologyCanBus(BaseModel):

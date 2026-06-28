@@ -184,7 +184,8 @@
       "driver": "Drivers",
       "heater": "Chauffages",
       "fan": "Ventilateurs",
-      "sensor": "Capteurs"
+      "sensor": "Capteurs",
+      "display": "Écran"
     },
     "sync": {
       "synced": "Firmware synchronisé",
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "Bus CAN",
       "adapter": "Adaptateur USB-CAN (non confirmé)"
+    },
+    "display": {
+      "title": "Écrans",
+      "touch": "écran tactile",
+      "knomi": "écran WiFi"
     }
   }
 }

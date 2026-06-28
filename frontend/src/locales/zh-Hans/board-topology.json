@@ -184,7 +184,8 @@
       "driver": "驱动",
       "heater": "加热器",
       "fan": "风扇",
-      "sensor": "传感器"
+      "sensor": "传感器",
+      "display": "显示屏"
     },
     "sync": {
       "synced": "固件已同步",
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "CAN 总线",
       "adapter": "USB-CAN 适配器（未确认）"
+    },
+    "display": {
+      "title": "显示屏",
+      "touch": "触摸屏",
+      "knomi": "WiFi 显示屏"
     }
   }
 }

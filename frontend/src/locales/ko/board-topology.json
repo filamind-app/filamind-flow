@@ -206,7 +206,8 @@
       "driver": "드라이버",
       "heater": "히터",
       "fan": "팬",
-      "sensor": "센서"
+      "sensor": "센서",
+      "display": "디스플레이"
     },
     "pinAtlas": {
       "tab": {
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "CAN 버스",
       "adapter": "USB-CAN 어댑터 (미확인)"
+    },
+    "display": {
+      "title": "디스플레이",
+      "touch": "터치 스크린",
+      "knomi": "WiFi 디스플레이"
     }
   }
 }

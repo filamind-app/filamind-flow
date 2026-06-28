@@ -206,7 +206,8 @@
       "driver": "Driver",
       "heater": "Bộ gia nhiệt",
       "fan": "Quạt",
-      "sensor": "Cảm biến"
+      "sensor": "Cảm biến",
+      "display": "Màn hình"
     },
     "pinAtlas": {
       "tab": {
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "Bus CAN",
       "adapter": "Bộ chuyển USB-CAN (chưa xác nhận)"
+    },
+    "display": {
+      "title": "Màn hình",
+      "touch": "màn hình cảm ứng",
+      "knomi": "màn hình WiFi"
     }
   }
 }

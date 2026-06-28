@@ -151,6 +151,21 @@ function onPick(id: string | null): void {
         <span aria-hidden="true">🔗 </span
         >{{ t('boardTopology.graph.integratedNote', { board: host.integrated_into_board_id }) }}
       </p>
+      <!-- Host-side displays: the touch panel + an external WiFi display (the EXP LCD is an MCU
+           component, not here). -->
+      <div v-if="host.displays && host.displays.length" class="space-y-0.5">
+        <div class="opacity-60">{{ t('boardTopology.display.title') }}:</div>
+        <div
+          v-for="d in host.displays"
+          :key="d.kind + d.name"
+          class="flex min-w-0 items-center gap-1"
+        >
+          <span aria-hidden="true">{{ d.kind === 'knomi' ? '📶' : '🖳' }}</span>
+          <span class="min-w-0 truncate"
+            >{{ d.name }} · {{ t('boardTopology.display.' + d.kind) }}</span
+          >
+        </div>
+      </div>
     </template>
 
     <!-- MCU inspector -->

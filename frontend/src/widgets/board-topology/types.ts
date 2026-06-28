@@ -4,10 +4,17 @@ import type { RelatedRef } from '@/widgets/hardware-browser/types'
 
 export type { RelatedRef }
 
-/** A component (stepper / driver / heater / fan / sensor) attached to an MCU. */
+/** A component (stepper / driver / heater / fan / sensor / display) attached to an MCU. */
 export interface TopologyComponent {
   section: string
-  kind: 'motor' | 'driver' | 'heater' | 'fan' | 'sensor'
+  kind: 'motor' | 'driver' | 'heater' | 'fan' | 'sensor' | 'display'
+}
+
+/** A display on the HOST (touch panel / external WiFi display), not on an MCU. */
+export interface TopologyDisplay {
+  kind: 'touch' | 'knomi' | string
+  name: string
+  detail?: string | null
 }
 
 export interface TopologyMcu {
@@ -86,6 +93,8 @@ export interface TopologyHost {
   /** Set to a mainboard id when the host SBC is physically integrated on that board (SV08 / Manta
    *  + CB1) - lets the map draw the host inside the board. */
   integrated_into_board_id?: string | null
+  /** Host-side displays (touch panel / external WiFi display); the EXP LCD is an MCU component. */
+  displays?: TopologyDisplay[]
 }
 
 /** A CAN bus the host carries + its bridging USB-CAN adapter (U2C-class), if external. */

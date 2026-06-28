@@ -127,6 +127,7 @@ _COMPONENT_KINDS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"^(?:adxl345|lis2dw|mpu9250|icm20948)(?:\s+\S+)?$"), "sensor"),
     (re.compile(r"^(?:probe|bltouch|smart_effector)$"), "sensor"),
     (re.compile(r"^probe_eddy_current\s+\S"), "sensor"),
+    (re.compile(r"^display(?:\s+\S+)?$"), "display"),  # the EXP-header LCD (e.g. a Mini12864)
 ]
 
 #: Config keys whose pins name a SHARED bus, not an exclusive assignment. Klipper lets the
@@ -160,6 +161,7 @@ _PRIMARY_PIN: dict[str, tuple[str, ...]] = {
     "heater": ("heater_pin", "pin"),
     "fan": ("pin",),
     "sensor": ("cs_pin", "sensor_pin", "data_pin", "pin"),
+    "display": ("cs_pin", "rst_pin", "pin", "click_pin"),
 }
 
 
@@ -674,6 +676,20 @@ def _can_buses(system_info: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
+def _host_displays(system_info: dict[str, Any], sections: dict[str, Any]) -> list[dict[str, Any]]:
+    """Displays that live on the HOST, not on an MCU: the touch panel KlipperScreen drives (a
+    service, not a Klipper section), and an external WiFi display (KNOMI) configured only via its
+    companion macros (so it has no Klipper hardware section). The EXP-header LCD (a Mini12864) is
+    NOT here - it attaches to its MCU as a ``display`` component."""
+    out: list[dict[str, Any]] = []
+    services = system_info.get("available_services") if isinstance(system_info, dict) else None
+    if isinstance(services, list) and any("klipperscreen" in str(s).lower() for s in services):
+        out.append({"kind": "touch", "name": "KlipperScreen"})
+    if isinstance(sections, dict) and any("knomi" in str(n).lower() for n in sections):
+        out.append({"kind": "knomi", "name": "KNOMI"})
+    return out
+
+
 async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
     """Fetch the live ``configfile`` sections and build the topology, applying any saved per-MCU
     board overrides from ``data_dir``.
@@ -694,6 +710,7 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     try:
         system_info = await client.machine_system_info()
         result["host"] = host_node(system_info)
+        result["host"]["displays"] = _host_displays(system_info, sections)
         result["can_buses"] = _can_buses(system_info)
     except httpx.HTTPError:
         pass

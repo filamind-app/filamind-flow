@@ -431,6 +431,23 @@ def test_can_buses_links_gs_usb_adapter() -> None:
     assert board_topology._can_buses({}) == []
 
 
+def test_display_component_and_host_displays() -> None:
+    """The EXP-header LCD attaches to its MCU as a `display` component; KlipperScreen (a service)
+    and a KNOMI macro (no hardware section) surface as host-side displays."""
+    sections = {
+        "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32f103xe_X-if00"},
+        "display": {"lcd_type": "uc1701", "cs_pin": "EXP1_3", "click_pin": "^!EXP1_2"},
+        "gcode_macro _knomi_status": {"gcode": "..."},
+    }
+    mcu = board_topology.analyze(sections, PATTERNS)["mcus"][0]
+    assert any(c["kind"] == "display" for c in mcu["components"])  # Mini12864 on the MCU
+    hd = board_topology._host_displays(
+        {"available_services": ["KlipperScreen", "moonraker"]}, sections
+    )
+    assert {d["kind"] for d in hd} == {"touch", "knomi"}
+    assert board_topology._host_displays({}, {}) == []
+
+
 # -- hardware snapshot + diff -------------------------------------------------
 def test_snapshot_diff_detects_changes(tmp_path: Any) -> None:
     from app.services import topology_snapshot
