@@ -206,7 +206,8 @@
       "driver": "ड्राइवर",
       "heater": "हीटर",
       "fan": "फ़ैन",
-      "sensor": "सेंसर"
+      "sensor": "सेंसर",
+      "display": "डिस्प्ले"
     },
     "pinAtlas": {
       "tab": {
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "CAN बस",
       "adapter": "USB-CAN अडैप्टर (अपुष्ट)"
+    },
+    "display": {
+      "title": "डिस्प्ले",
+      "touch": "टच स्क्रीन",
+      "knomi": "वाईफाई डिस्प्ले"
     }
   }
 }

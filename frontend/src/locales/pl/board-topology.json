@@ -206,7 +206,8 @@
       "driver": "Sterowniki",
       "heater": "Grzałki",
       "fan": "Wentylatory",
-      "sensor": "Czujniki"
+      "sensor": "Czujniki",
+      "display": "Wyświetlacz"
     },
     "pinAtlas": {
       "tab": {
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "Magistrala CAN",
       "adapter": "Adapter USB-CAN (niepotwierdzony)"
+    },
+    "display": {
+      "title": "Wyświetlacze",
+      "touch": "ekran dotykowy",
+      "knomi": "wyświetlacz WiFi"
     }
   }
 }

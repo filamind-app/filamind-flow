@@ -184,7 +184,8 @@
       "driver": "Controladores",
       "heater": "Calentadores",
       "fan": "Ventiladores",
-      "sensor": "Sensores"
+      "sensor": "Sensores",
+      "display": "Pantalla"
     },
     "sync": {
       "synced": "Firmware sincronizado",
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "Bus CAN",
       "adapter": "Adaptador USB-CAN (sin confirmar)"
+    },
+    "display": {
+      "title": "Pantallas",
+      "touch": "pantalla táctil",
+      "knomi": "pantalla WiFi"
     }
   }
 }

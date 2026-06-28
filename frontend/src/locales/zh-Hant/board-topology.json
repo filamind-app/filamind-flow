@@ -206,7 +206,8 @@
       "driver": "驅動器",
       "heater": "加熱器",
       "fan": "風扇",
-      "sensor": "感測器"
+      "sensor": "感測器",
+      "display": "顯示器"
     },
     "pinAtlas": {
       "tab": {
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "CAN 匯流排",
       "adapter": "USB-CAN 轉接器（未確認）"
+    },
+    "display": {
+      "title": "顯示器",
+      "touch": "觸控螢幕",
+      "knomi": "WiFi 顯示器"
     }
   }
 }

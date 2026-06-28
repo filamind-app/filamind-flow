@@ -184,7 +184,8 @@
       "driver": "Treiber",
       "heater": "Heizer",
       "fan": "Lüfter",
-      "sensor": "Sensoren"
+      "sensor": "Sensoren",
+      "display": "Display"
     },
     "sync": {
       "synced": "Firmware synchron",
@@ -268,6 +269,11 @@
     "canbus": {
       "label": "CAN-Bus",
       "adapter": "USB-CAN-Adapter (unbestätigt)"
+    },
+    "display": {
+      "title": "Displays",
+      "touch": "Touchscreen",
+      "knomi": "WLAN-Display"
     }
   }
 }
