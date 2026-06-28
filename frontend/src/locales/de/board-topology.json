@@ -264,6 +264,10 @@
       "section": "Diesen Abschnitt im Konfig-Editor öffnen",
       "drivers": "Im Motortreiber-Panel öffnen",
       "firmware": "Firmware-Manager öffnen"
+    },
+    "canbus": {
+      "label": "CAN-Bus",
+      "adapter": "USB-CAN-Adapter (unbestätigt)"
     }
   }
 }

@@ -638,6 +638,42 @@ async def _enrich_live_mcus(
             )
 
 
+#: External USB-CAN dongles all present as the candleLight ``gs_usb`` driver - a BTT U2C, a Canable
+#: or a clone are indistinguishable in software, so the catalog link is the generic "u2c-all",
+#: surfaced as a low-confidence *suggested* match the user can confirm.
+_USB_CAN_DRIVERS = {"gs_usb"}
+_USB_CAN_BOARD_ID = "u2c-all"
+
+
+def _can_buses(system_info: dict[str, Any]) -> list[dict[str, Any]]:
+    """The host's CAN buses from ``/machine/system_info`` ``canbus``, each with a best-effort
+    link to its bridging adapter. An external USB-CAN dongle (``gs_usb``) is not a Klipper MCU, so
+    it has no node - this is the only place it surfaces. An onboard transceiver gets no adapter."""
+    canbus = system_info.get("canbus") if isinstance(system_info, dict) else None
+    if not isinstance(canbus, dict):
+        return []
+    out: list[dict[str, Any]] = []
+    for iface, info in canbus.items():
+        if not isinstance(info, dict):
+            continue
+        driver = str(info.get("driver") or "") or None
+        raw_bitrate = info.get("bitrate")
+        bus: dict[str, Any] = {
+            "interface": str(iface),
+            "driver": driver,
+            "bitrate": raw_bitrate if isinstance(raw_bitrate, int) else None,
+            "board_id": None,
+            "board_match": None,
+            "board_match_confidence": 0.0,
+        }
+        if driver in _USB_CAN_DRIVERS and reference_data.board_by_id(_USB_CAN_BOARD_ID):
+            bus["board_id"] = _USB_CAN_BOARD_ID
+            bus["board_match"] = "suggested"
+            bus["board_match_confidence"] = 0.4
+        out.append(bus)
+    return out
+
+
 async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[str, Any]:
     """Fetch the live ``configfile`` sections and build the topology, applying any saved per-MCU
     board overrides from ``data_dir``.
@@ -658,6 +694,7 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     try:
         system_info = await client.machine_system_info()
         result["host"] = host_node(system_info)
+        result["can_buses"] = _can_buses(system_info)
     except httpx.HTTPError:
         pass
     _mark_integrated_host(result)

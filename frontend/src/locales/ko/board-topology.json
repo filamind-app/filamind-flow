@@ -264,6 +264,10 @@
       "section": "설정 편집기에서 이 섹션 열기",
       "drivers": "모터 드라이버에서 열기",
       "firmware": "펌웨어 관리자 열기"
+    },
+    "canbus": {
+      "label": "CAN 버스",
+      "adapter": "USB-CAN 어댑터 (미확인)"
     }
   }
 }

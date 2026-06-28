@@ -191,6 +191,12 @@ const LEGEND = [
   { tk: 'uart', cls: 'bg-brand-yellow' },
 ]
 
+/** A CAN bitrate as a short label: exact-MHz as "N Mbit", otherwise kbit. */
+function fmtBitrate(n?: number | null): string {
+  if (!n) return ''
+  return n % 1_000_000 === 0 ? `${n / 1_000_000} Mbit` : `${Math.round(n / 1000)} kbit`
+}
+
 onMounted(() => void load())
 </script>
 
@@ -263,6 +269,28 @@ onMounted(() => void load())
       <p class="text-xs opacity-60">
         {{ t('boardTopology.count', { n: topology.mcu_count }) }}
       </p>
+
+      <!-- CAN bus(es) + bridging adapter: a USB-CAN dongle (U2C-class) isn't a Klipper MCU, so it
+           has no node - this is the only place it shows. -->
+      <div
+        v-if="topology.can_buses && topology.can_buses.length"
+        class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs"
+      >
+        <span
+          v-for="b in topology.can_buses"
+          :key="b.interface"
+          class="inline-flex items-center gap-1"
+          dir="ltr"
+        >
+          <span class="opacity-60">{{ t('boardTopology.canbus.label') }}:</span>
+          <span class="rounded-sm bg-paper px-1">{{ b.interface }}</span>
+          <span v-if="b.bitrate" class="opacity-70">{{ fmtBitrate(b.bitrate) }}</span>
+          <span v-if="b.driver" class="opacity-50">· {{ b.driver }}</span>
+          <span v-if="b.board_id" class="opacity-70"
+            >· {{ t('boardTopology.canbus.adapter') }}</span
+          >
+        </span>
+      </div>
 
       <!-- Legend -->
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" dir="auto">

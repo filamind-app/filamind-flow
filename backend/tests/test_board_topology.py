@@ -413,6 +413,24 @@ def test_attach_components_case_insensitive_mcu_prefix() -> None:
     assert {"motor", "driver", "fan"} <= kinds  # attached despite EBBCan (value) vs ebbcan (node)
 
 
+def test_can_buses_links_gs_usb_adapter() -> None:
+    """A gs_usb (candleLight) USB-CAN dongle is surfaced as a CAN bus with a suggested - and
+    unconfirmed - U2C catalog link; an onboard transceiver gets no adapter board."""
+    out = board_topology._can_buses(
+        {
+            "canbus": {
+                "can0": {"driver": "gs_usb", "bitrate": 1000000},
+                "can1": {"driver": "mcp251xfd", "bitrate": 500000},
+            }
+        }
+    )
+    by_if = {b["interface"]: b for b in out}
+    assert by_if["can0"]["driver"] == "gs_usb" and by_if["can0"]["bitrate"] == 1000000
+    assert by_if["can0"]["board_id"] == "u2c-all" and by_if["can0"]["board_match"] == "suggested"
+    assert by_if["can1"]["board_id"] is None  # onboard transceiver - no external adapter
+    assert board_topology._can_buses({}) == []
+
+
 # -- hardware snapshot + diff -------------------------------------------------
 def test_snapshot_diff_detects_changes(tmp_path: Any) -> None:
     from app.services import topology_snapshot

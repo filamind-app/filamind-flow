@@ -264,6 +264,10 @@
       "section": "Bu bölümü Yapılandırma Düzenleyici'de aç",
       "drivers": "Motor Sürücüleri'nde aç",
       "firmware": "Firmware Yöneticisi'ni aç"
+    },
+    "canbus": {
+      "label": "CAN veri yolu",
+      "adapter": "USB-CAN adaptörü (doğrulanmadı)"
     }
   }
 }

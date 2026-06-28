@@ -264,6 +264,10 @@
       "section": "Apri questa sezione nel Config Editor",
       "drivers": "Apri in Motor Drivers",
       "firmware": "Apri Firmware Manager"
+    },
+    "canbus": {
+      "label": "Bus CAN",
+      "adapter": "Adattatore USB-CAN (non confermato)"
     }
   }
 }

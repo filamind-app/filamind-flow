@@ -264,6 +264,10 @@
       "section": "Otwórz tę sekcję w Edytorze konfiguracji",
       "drivers": "Otwórz w Sterownikach silników",
       "firmware": "Otwórz Menedżera firmware"
+    },
+    "canbus": {
+      "label": "Magistrala CAN",
+      "adapter": "Adapter USB-CAN (niepotwierdzony)"
     }
   }
 }

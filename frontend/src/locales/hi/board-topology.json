@@ -264,6 +264,10 @@
       "section": "इस सेक्शन को Config Editor में खोलें",
       "drivers": "Motor Drivers में खोलें",
       "firmware": "Firmware Manager खोलें"
+    },
+    "canbus": {
+      "label": "CAN बस",
+      "adapter": "USB-CAN अडैप्टर (अपुष्ट)"
     }
   }
 }

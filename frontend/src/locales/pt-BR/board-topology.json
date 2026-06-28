@@ -264,6 +264,10 @@
       "section": "Abrir esta seção no Editor de Config",
       "drivers": "Abrir em Drivers de Motor",
       "firmware": "Abrir Gerenciador de Firmware"
+    },
+    "canbus": {
+      "label": "Barramento CAN",
+      "adapter": "Adaptador USB-CAN (não confirmado)"
     }
   }
 }

@@ -264,6 +264,10 @@
       "section": "Buka bagian ini di Config Editor",
       "drivers": "Buka di Motor Drivers",
       "firmware": "Buka Firmware Manager"
+    },
+    "canbus": {
+      "label": "Bus CAN",
+      "adapter": "Adapter USB-CAN (belum dikonfirmasi)"
     }
   }
 }
