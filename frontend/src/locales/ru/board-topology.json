@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "Шина CAN",
-      "adapter": "USB-CAN адаптер (не подтверждён)"
+      "adapter": "USB-CAN адаптер (не подтверждён)",
+      "node": "USB-CAN",
+      "hint": "Бренд не подтверждён (gs_usb)"
     },
     "display": {
       "title": "Дисплеи",

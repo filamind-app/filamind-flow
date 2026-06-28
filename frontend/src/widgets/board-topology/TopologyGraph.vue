@@ -39,7 +39,7 @@ const PAD = 10
 
 interface NodeBox {
   id: string
-  kind: 'host' | 'mcu'
+  kind: 'host' | 'mcu' | 'canbus'
   x: number
   y: number
   w: number
@@ -98,6 +98,26 @@ function hEdge(x1: number, y1: number, x2: number, y2: number): string {
 const mcus = computed(() => props.topology.mcus ?? [])
 const host = computed(() => props.topology.host)
 
+/** The external USB-CAN adapter (U2C-class gs_usb dongle) bridging a CAN bus, or null. It is not a
+ *  Klipper MCU, so it only exists in `can_buses` - drawn as a node so it's discoverable on the map. */
+const canAdapter = computed(() => {
+  const ext = (props.topology.can_buses ?? []).find((b) => b.board_id)
+  if (!ext) return null
+  const bits = ext.bitrate
+    ? ext.bitrate % 1_000_000 === 0
+      ? `${ext.bitrate / 1_000_000} Mbit`
+      : `${Math.round(ext.bitrate / 1000)} kbit`
+    : ''
+  return {
+    id: 'canbus:' + ext.interface,
+    title: t('boardTopology.canbus.node'),
+    full: t('boardTopology.canbus.adapter'),
+    sub: [ext.interface, bits, ext.driver].filter(Boolean).join(' · '),
+    board: ext.board_id,
+    match: ext.board_match,
+  }
+})
+
 function hostBox(x: number, y: number, w: number, h: number, nested = false): NodeBox {
   const hh = host.value
   return {
@@ -136,12 +156,32 @@ function mcuBox(m: TopologyMcu, x: number, y: number, w = NW, h = NH, chassis = 
   }
 }
 
+/** A node for the external USB-CAN adapter (its `id` is `canbus:<iface>`). */
+function adapterBox(a: NonNullable<typeof canAdapter.value>, x: number, y: number): NodeBox {
+  return {
+    id: a.id,
+    kind: 'canbus',
+    x,
+    y,
+    w: NW,
+    h: NH,
+    title: a.title,
+    full: a.full,
+    sub: a.sub,
+    conn: 'canbus',
+    match: a.match as TopologyMcu['board_match'],
+    board: a.board,
+  }
+}
+
 function logical(): Layout {
   const list = mcus.value
   const gap = 26
   const topY = PAD
   const rowY = topY + NH + 74
-  const rowW = Math.max(list.length * NW + (list.length - 1) * gap, NW)
+  const adapter = canAdapter.value
+  const count = list.length + (adapter ? 1 : 0)
+  const rowW = Math.max(count * NW + (count - 1) * gap, NW)
   const w = Math.max(rowW + PAD * 2, NW + 80, 360)
   const hostX = (w - NW) / 2
   const startX = (w - rowW) / 2
@@ -157,6 +197,15 @@ function logical(): Layout {
       target: m.name,
     })
   })
+  if (adapter) {
+    const x = startX + list.length * (NW + gap)
+    nodes.push(adapterBox(adapter, x, rowY))
+    edges.push({
+      id: 'e-can',
+      d: vEdge(hostX + NW / 2, topY + NH, x + NW / 2, rowY),
+      bus: 'canbus',
+    })
+  }
   return { nodes, edges, w, h: rowY + NH + PAD }
 }
 
@@ -222,13 +271,24 @@ function physical(): Layout {
     })
   })
 
-  // CAN boards: a shared backbone rail below the anchor, toolheads hanging off it.
+  // CAN boards: a shared backbone rail below the anchor, toolheads hanging off it. An external
+  // USB-CAN adapter (U2C-class) bridges the anchor to the bus - drawn as a node on the drop.
   let canBottom = 0
   if (can.length) {
-    const bbY = aBottom + 46
+    let dropX = aBottomX
+    let dropY = aBottom
+    if (canAdapter.value) {
+      const ax = aBottomX - NW / 2
+      const ay = aBottom + 26
+      nodes.push(adapterBox(canAdapter.value, ax, ay))
+      edges.push({ id: 'ad', d: vEdge(aBottomX, aBottom, ax + NW / 2, ay), bus: 'canbus' })
+      dropX = ax + NW / 2
+      dropY = ay + NH
+    }
+    const bbY = dropY + 40
     const x1 = PAD + 18
     const x2 = Math.max(x1 + 120, PAD + 18 + can.length * (NW + 22))
-    edges.push({ id: 'bb-drop', d: vEdge(aBottomX, aBottom, aBottomX, bbY), bus: 'canbus' })
+    edges.push({ id: 'bb-drop', d: vEdge(dropX, dropY, dropX, bbY), bus: 'canbus' })
     edges.push({ id: 'bb', d: `M${x1},${bbY} L${x2},${bbY}`, bus: 'canbus', backbone: true })
     can.forEach((m, i) => {
       const x = PAD + 18 + i * (NW + 22)
@@ -375,9 +435,11 @@ function vitals(id: string): string {
                     ? n.nested
                       ? 'fill-sbc'
                       : 'fill-host'
-                    : n.chassis
-                      ? 'fill-board'
-                      : 'fill-mcu'
+                    : n.kind === 'canbus'
+                      ? 'fill-canbus'
+                      : n.chassis
+                        ? 'fill-board'
+                        : 'fill-mcu'
                 "
               />
               <!-- live link-health: left-edge bar + status glyph (colour + glyph, never colour-only) -->
@@ -436,9 +498,9 @@ function vitals(id: string): string {
                 </text>
               </g>
 
-              <!-- connection badge + board match on a regular MCU node -->
+              <!-- connection badge + board match on a regular MCU node (or the CAN adapter node) -->
               <g
-                v-if="n.kind === 'mcu' && !n.chassis && n.conn"
+                v-if="(n.kind === 'mcu' || n.kind === 'canbus') && !n.chassis && n.conn"
                 :transform="`translate(10,${n.h - 18})`"
               >
                 <rect
@@ -453,7 +515,7 @@ function vitals(id: string): string {
                 </text>
               </g>
               <g
-                v-if="n.kind === 'mcu' && n.board && !n.chassis"
+                v-if="(n.kind === 'mcu' || n.kind === 'canbus') && n.board && !n.chassis"
                 :transform="`translate(${n.w - 22},${n.h - 18})`"
               >
                 <text
@@ -570,6 +632,9 @@ function vitals(id: string): string {
 }
 .fill-mcu {
   fill: rgb(var(--c-surface));
+}
+.fill-canbus {
+  fill: rgb(var(--c-brand-cyan) / 0.4);
 }
 .badge-rect {
   stroke-width: 1.5;

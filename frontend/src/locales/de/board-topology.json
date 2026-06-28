@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "CAN-Bus",
-      "adapter": "USB-CAN-Adapter (unbestätigt)"
+      "adapter": "USB-CAN-Adapter (unbestätigt)",
+      "node": "USB-CAN",
+      "hint": "Marke unbestätigt (gs_usb)"
     },
     "display": {
       "title": "Displays",

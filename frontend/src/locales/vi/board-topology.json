@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "Bus CAN",
-      "adapter": "Bộ chuyển USB-CAN (chưa xác nhận)"
+      "adapter": "Bộ chuyển USB-CAN (chưa xác nhận)",
+      "node": "USB-CAN",
+      "hint": "Chưa xác nhận hãng (gs_usb)"
     },
     "display": {
       "title": "Màn hình",

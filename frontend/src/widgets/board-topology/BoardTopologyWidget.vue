@@ -67,6 +67,12 @@ const isHost = computed(() => selected.value === 'host')
 const selectedFw = computed(() =>
   selectedMcu.value ? fwMcus.value[selectedMcu.value.name] : undefined,
 )
+/** The CAN adapter node (id `canbus:<iface>`) when its node is selected, else null. */
+const selectedCanBus = computed(() => {
+  const sel = selected.value
+  if (!topology.value || !sel || !sel.startsWith('canbus:')) return null
+  return (topology.value.can_buses ?? []).find((b) => 'canbus:' + b.interface === sel) ?? null
+})
 
 /** Deep-link a related entity into the Hardware Browser (topology unmounts, the browser mounts and
  *  opens the target - its focus watch is `immediate`, so a focus set before mount still applies). */
@@ -332,6 +338,7 @@ onMounted(() => void load())
           :mcu="selectedMcu"
           :host="topology.host"
           :is-host="isHost"
+          :can-bus="selectedCanBus"
           :busy="overrideBusy"
           :fw="selectedFw"
           @open-in-browser="openInBrowser"

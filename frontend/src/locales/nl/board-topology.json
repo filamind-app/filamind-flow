@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "CAN-bus",
-      "adapter": "USB-CAN-adapter (onbevestigd)"
+      "adapter": "USB-CAN-adapter (onbevestigd)",
+      "node": "USB-CAN",
+      "hint": "Merk onbevestigd (gs_usb)"
     },
     "display": {
       "title": "Displays",

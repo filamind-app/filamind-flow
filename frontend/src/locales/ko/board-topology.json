@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "CAN 버스",
-      "adapter": "USB-CAN 어댑터 (미확인)"
+      "adapter": "USB-CAN 어댑터 (미확인)",
+      "node": "USB-CAN",
+      "hint": "브랜드 미확인 (gs_usb)"
     },
     "display": {
       "title": "디스플레이",

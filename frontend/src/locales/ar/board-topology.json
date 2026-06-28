@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "ناقل CAN",
-      "adapter": "محوّل USB-CAN (غير مؤكَّد)"
+      "adapter": "محوّل USB-CAN (غير مؤكَّد)",
+      "node": "USB-CAN",
+      "hint": "الماركة غير مؤكَّدة (gs_usb)"
     },
     "display": {
       "title": "الشاشات",

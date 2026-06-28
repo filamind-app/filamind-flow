@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "CAN 总线",
-      "adapter": "USB-CAN 适配器（未确认）"
+      "adapter": "USB-CAN 适配器（未确认）",
+      "node": "USB-CAN",
+      "hint": "品牌未确认 (gs_usb)"
     },
     "display": {
       "title": "显示屏",

@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "CAN veri yolu",
-      "adapter": "USB-CAN adaptörü (doğrulanmadı)"
+      "adapter": "USB-CAN adaptörü (doğrulanmadı)",
+      "node": "USB-CAN",
+      "hint": "Marka doğrulanmadı (gs_usb)"
     },
     "display": {
       "title": "Ekranlar",

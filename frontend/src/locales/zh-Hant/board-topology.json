@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "CAN 匯流排",
-      "adapter": "USB-CAN 轉接器（未確認）"
+      "adapter": "USB-CAN 轉接器（未確認）",
+      "node": "USB-CAN",
+      "hint": "品牌未確認 (gs_usb)"
     },
     "display": {
       "title": "顯示器",

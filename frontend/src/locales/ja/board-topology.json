@@ -268,7 +268,9 @@
     },
     "canbus": {
       "label": "CANバス",
-      "adapter": "USB-CANアダプター（未確認）"
+      "adapter": "USB-CANアダプター（未確認）",
+      "node": "USB-CAN",
+      "hint": "ブランド未確認 (gs_usb)"
     },
     "display": {
       "title": "ディスプレイ",
