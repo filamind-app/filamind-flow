@@ -319,7 +319,8 @@ async def test_third_party_port_change_edits_nginx_with_a_safe_revert(monkeypatc
 
 async def test_first_party_install_sudo_failure_surfaces_the_command(monkeypatch) -> None:
     # The backend service has no terminal for a sudo password; if the install fails for that reason,
-    # the result tells the user the exact command to run on the printer host.
+    # the result points at the one-time passwordless-sudo grant that lets the headless widget install
+    # apps without a prompt (re-running the app's own installer would hit the same wall).
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
 
     async def fake_run(cmd: list[str]) -> dict:
@@ -328,8 +329,7 @@ async def test_first_party_install_sudo_failure_surfaces_the_command(monkeypatch
     monkeypatch.setattr(setup_manager, "_run", fake_run)
     r = await setup_manager.install("filamind-3d", managed={"klipper", "moonraker"}, services=set())
     assert r.get("ok") is False
-    assert "Run this on the printer host" in r["output"]
-    assert "filamind-3d/main/scripts/install.sh" in r["output"]
+    assert "sudo bash ~/filamind-flow/scripts/install.sh sudoers" in r["output"]
 
 
 def test_status_exposes_autoupdate_prefs_and_is_decoupled_from_the_cli() -> None:
