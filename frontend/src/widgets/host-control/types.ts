@@ -188,6 +188,36 @@ export interface SystemActionResult {
 
 export type PowerAction = 'reboot' | 'shutdown'
 
+// -- CAN bus control (Phase 5) --------------------------------------------------
+
+/** One host SocketCAN interface with its live status + best-effort bridging-adapter link. */
+export interface CanBusStatus {
+  interface: string
+  driver: string | null
+  bitrate: number | null
+  /** IFF_UP flag: true=up, false=down, null=couldn't read (no `ip`). */
+  link_up: boolean | null
+  /** CAN controller state: ERROR-ACTIVE (healthy) / ERROR-PASSIVE / BUS-OFF / STOPPED. */
+  state: string | null
+  /** CAN bus error counters (berr-counter), null when unavailable. */
+  errors_rx: number | null
+  errors_tx: number | null
+  txqueuelen: number | null
+  /** Catalog link to the bridging USB-CAN adapter, if external (shared with Board Topology). */
+  board_id?: string | null
+  board_match?: 'suggested' | 'confirmed' | null
+  board_match_confidence?: number
+}
+
+/** Outcome of a CAN link/bitrate change (mirrors the host service-action result shape). */
+export interface CanBusActionResult {
+  interface: string
+  ok: boolean
+  refused: boolean
+  output: string
+  needs_setup?: boolean
+}
+
 export interface NetworkSetReq {
   method: 'auto' | 'manual'
   address?: string

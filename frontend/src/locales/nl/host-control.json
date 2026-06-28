@@ -6,7 +6,8 @@
       "services": "Diensten",
       "cleanup": "Opschonen",
       "system": "Systeem",
-      "boot": "Opstarten"
+      "boot": "Opstarten",
+      "canbus": "CAN-bus"
     },
     "help": {
       "guide": "Help",
@@ -270,6 +271,28 @@
         "failed": "Kon de boot-splash niet toepassen.",
         "caveat": "Schrijft een PNG naar het splash-pad; of het bij het opstarten verschijnt hangt af van je host-setup."
       }
+    },
+    "canbus": {
+      "intro": "Bekijk en beheer de CAN-businterfaces van de host: linkstatus, bitrate en foutentellers. Lezen is veilig; wijzigingen vereisen wachtwoordloze sudo en worden geweigerd tijdens het printen.",
+      "warn": "Het wijzigen van CAN-instellingen heeft invloed op elke MCU op de bus. Doe dit nooit tijdens een print.",
+      "none": "Geen CAN-interfaces gevonden op deze host.",
+      "controllerState": "Controller",
+      "driver": "Driver",
+      "bitrate": "Bitrate",
+      "errors": "Busfouten (rx/tx)",
+      "txqueue": "TX-wachtrij",
+      "up": "Actief",
+      "down": "Inactief",
+      "unknown": "Onbekend",
+      "bringUp": "Inschakelen",
+      "bringDown": "Uitschakelen",
+      "confirmDown": "Het uitschakelen van de bus verbreekt de verbinding met elke CAN-MCU totdat de bus weer actief is. Doorgaan?",
+      "confirm": "Bevestigen",
+      "cancel": "Annuleren",
+      "setBitrate": "Bitrate instellen",
+      "downFirst": "Schakel de interface uit om de bitrate te wijzigen.",
+      "actionOk": "Interface bijgewerkt.",
+      "actionFailed": "De actie is mislukt."
     }
   }
 }

@@ -6,7 +6,8 @@
       "services": "Servicios",
       "cleanup": "Limpieza",
       "system": "Sistema",
-      "boot": "Arranque"
+      "boot": "Arranque",
+      "canbus": "CAN Bus"
     },
     "help": {
       "guide": "Ayuda",
@@ -270,6 +271,28 @@
         "failed": "No se pudo aplicar la pantalla de arranque.",
         "caveat": "Escribe un PNG en la ruta del splash; que aparezca al arrancar depende de la configuración del host."
       }
+    },
+    "canbus": {
+      "intro": "Consulta y administra las interfaces de CAN bus del host: estado del enlace, bitrate y contadores de errores. La lectura es segura; los cambios requieren sudo sin contraseña y se rechazan durante una impresión.",
+      "warn": "Cambiar la configuración de CAN afecta a todos los MCU del bus. Nunca lo hagas durante una impresión.",
+      "none": "No se encontraron interfaces CAN en este host.",
+      "controllerState": "Controlador",
+      "driver": "Controlador (driver)",
+      "bitrate": "Bitrate",
+      "errors": "Errores del bus (rx/tx)",
+      "txqueue": "Cola de TX",
+      "up": "Activa",
+      "down": "Inactiva",
+      "unknown": "Desconocido",
+      "bringUp": "Activar",
+      "bringDown": "Desactivar",
+      "confirmDown": "Desactivar el bus desconecta todos los MCU CAN hasta que se vuelva a activar. ¿Continuar?",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "setBitrate": "Establecer bitrate",
+      "downFirst": "Desactiva la interfaz para cambiar su bitrate.",
+      "actionOk": "Interfaz actualizada.",
+      "actionFailed": "La acción falló."
     }
   }
 }

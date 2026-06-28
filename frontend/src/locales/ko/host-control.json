@@ -6,7 +6,8 @@
       "services": "서비스",
       "cleanup": "정리",
       "system": "시스템",
-      "boot": "부팅"
+      "boot": "부팅",
+      "canbus": "CAN 버스"
     },
     "help": {
       "guide": "도움말",
@@ -270,6 +271,28 @@
         "failed": "부팅 스플래시를 적용할 수 없습니다.",
         "caveat": "PNG를 스플래시 경로에 씁니다. 부팅 시 표시 여부는 호스트 설정에 따라 다릅니다."
       }
+    },
+    "canbus": {
+      "intro": "호스트의 CAN 버스 인터페이스를 확인하고 관리합니다. 링크 상태, bitrate, 오류 카운터를 볼 수 있습니다. 읽기는 안전하지만, 변경에는 비밀번호 없는 sudo가 필요하며 출력 중에는 거부됩니다.",
+      "warn": "CAN 설정을 변경하면 버스의 모든 MCU에 영향을 줍니다. 출력 중에는 절대 변경하지 마세요.",
+      "none": "이 호스트에서 CAN 인터페이스를 찾을 수 없습니다.",
+      "controllerState": "컨트롤러",
+      "driver": "드라이버",
+      "bitrate": "Bitrate",
+      "errors": "버스 오류 (rx/tx)",
+      "txqueue": "TX 큐",
+      "up": "활성",
+      "down": "비활성",
+      "unknown": "알 수 없음",
+      "bringUp": "활성화",
+      "bringDown": "비활성화",
+      "confirmDown": "버스를 비활성화하면 다시 활성화할 때까지 모든 CAN MCU의 연결이 끊깁니다. 계속하시겠습니까?",
+      "confirm": "확인",
+      "cancel": "취소",
+      "setBitrate": "Bitrate 설정",
+      "downFirst": "bitrate를 변경하려면 먼저 인터페이스를 비활성화하세요.",
+      "actionOk": "인터페이스가 업데이트되었습니다.",
+      "actionFailed": "작업에 실패했습니다."
     }
   }
 }

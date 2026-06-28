@@ -6,7 +6,8 @@
       "services": "服务",
       "cleanup": "清理",
       "system": "系统",
-      "boot": "启动"
+      "boot": "启动",
+      "canbus": "CAN 总线"
     },
     "help": {
       "guide": "帮助",
@@ -270,6 +271,28 @@
         "failed": "无法应用启动画面。",
         "caveat": "将 PNG 写入启动画面路径；能否在启动时显示取决于主机的启动画面设置。"
       }
+    },
+    "canbus": {
+      "intro": "查看和管理主机的 CAN 总线接口：链路状态、比特率和错误计数。读取操作是安全的；更改需要免密码 sudo 权限，且打印过程中会被拒绝。",
+      "warn": "更改 CAN 设置会影响总线上的每一个 MCU。切勿在打印过程中操作。",
+      "none": "此主机上未找到 CAN 接口。",
+      "controllerState": "控制器状态",
+      "driver": "驱动",
+      "bitrate": "比特率",
+      "errors": "总线错误 (rx/tx)",
+      "txqueue": "TX 队列",
+      "up": "已启用",
+      "down": "已禁用",
+      "unknown": "未知",
+      "bringUp": "启用",
+      "bringDown": "禁用",
+      "confirmDown": "禁用总线会断开所有 CAN MCU 的连接，直到重新启用。是否继续？",
+      "confirm": "确认",
+      "cancel": "取消",
+      "setBitrate": "设置比特率",
+      "downFirst": "请先禁用该接口才能更改其比特率。",
+      "actionOk": "接口已更新。",
+      "actionFailed": "操作失败。"
     }
   }
 }

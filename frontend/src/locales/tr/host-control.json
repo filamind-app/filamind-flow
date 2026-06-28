@@ -6,7 +6,8 @@
       "services": "Servisler",
       "cleanup": "Temizlik",
       "system": "Sistem",
-      "boot": "Önyükleme"
+      "boot": "Önyükleme",
+      "canbus": "CAN Bus"
     },
     "help": {
       "guide": "Yardım",
@@ -270,6 +271,28 @@
         "failed": "Önyükleme ekranı uygulanamadı.",
         "caveat": "Açılış yoluna bir PNG yazar; önyüklemede görünüp görünmemesi ana makine ayarına bağlıdır."
       }
+    },
+    "canbus": {
+      "intro": "Ana makinenin CAN bus arayüzlerini görüntüleyin ve yönetin: bağlantı durumu, bitrate ve hata sayaçları. Okuma işlemleri güvenlidir; değişiklikler için parolasız sudo gerekir ve baskı sırasında reddedilir.",
+      "warn": "CAN ayarlarını değiştirmek, bus üzerindeki her MCU'yu etkiler. Bunu asla bir baskı sırasında yapmayın.",
+      "none": "Bu ana makinede CAN arayüzü bulunamadı.",
+      "controllerState": "Denetleyici",
+      "driver": "Sürücü",
+      "bitrate": "Bitrate",
+      "errors": "Bus hataları (rx/tx)",
+      "txqueue": "TX kuyruğu",
+      "up": "Açık",
+      "down": "Kapalı",
+      "unknown": "Bilinmiyor",
+      "bringUp": "Etkinleştir",
+      "bringDown": "Devre dışı bırak",
+      "confirmDown": "Bus'ı devre dışı bırakmak, tekrar açılana kadar her CAN MCU'sunun bağlantısını keser. Devam edilsin mi?",
+      "confirm": "Onayla",
+      "cancel": "İptal",
+      "setBitrate": "Bitrate ayarla",
+      "downFirst": "Bitrate'i değiştirmek için önce arayüzü devre dışı bırakın.",
+      "actionOk": "Arayüz güncellendi.",
+      "actionFailed": "İşlem başarısız oldu."
     }
   }
 }

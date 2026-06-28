@@ -6,7 +6,8 @@
       "services": "Servizi",
       "cleanup": "Pulizia",
       "system": "Sistema",
-      "boot": "Avvio"
+      "boot": "Avvio",
+      "canbus": "CAN Bus"
     },
     "help": {
       "guide": "Aiuto",
@@ -270,6 +271,28 @@
         "failed": "Impossibile applicare lo splash di avvio.",
         "caveat": "Scrive un PNG nel percorso dello splash; se appare all'avvio dipende dalla configurazione dell'host."
       }
+    },
+    "canbus": {
+      "intro": "Visualizza e gestisci le interfacce CAN bus dell'host: stato del collegamento, bitrate e contatori di errore. Le letture sono sicure; le modifiche richiedono sudo senza password e vengono rifiutate durante la stampa.",
+      "warn": "La modifica delle impostazioni CAN influisce su ogni MCU del bus. Non farlo mai durante una stampa.",
+      "none": "Nessuna interfaccia CAN trovata su questo host.",
+      "controllerState": "Controller",
+      "driver": "Driver",
+      "bitrate": "Bitrate",
+      "errors": "Errori del bus (rx/tx)",
+      "txqueue": "Coda TX",
+      "up": "Attivo",
+      "down": "Inattivo",
+      "unknown": "Sconosciuto",
+      "bringUp": "Attiva",
+      "bringDown": "Disattiva",
+      "confirmDown": "Disattivando il bus si scollega ogni MCU CAN finché non viene riattivato. Continuare?",
+      "confirm": "Conferma",
+      "cancel": "Annulla",
+      "setBitrate": "Imposta bitrate",
+      "downFirst": "Disattiva l'interfaccia per modificarne il bitrate.",
+      "actionOk": "Interfaccia aggiornata.",
+      "actionFailed": "Azione non riuscita."
     }
   }
 }

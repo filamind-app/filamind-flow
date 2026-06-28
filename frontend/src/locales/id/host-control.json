@@ -6,7 +6,8 @@
       "services": "Layanan",
       "cleanup": "Pembersihan",
       "system": "Sistem",
-      "boot": "Boot"
+      "boot": "Boot",
+      "canbus": "CAN Bus"
     },
     "help": {
       "guide": "Bantuan",
@@ -270,6 +271,28 @@
         "failed": "Tidak dapat menerapkan splash boot.",
         "caveat": "Menulis PNG ke jalur splash; apakah tampil saat boot tergantung pengaturan host Anda."
       }
+    },
+    "canbus": {
+      "intro": "Lihat dan kelola antarmuka CAN bus host: status link, bitrate, dan penghitung error. Membaca aman; perubahan butuh sudo tanpa kata sandi dan ditolak saat sedang mencetak.",
+      "warn": "Mengubah pengaturan CAN memengaruhi setiap MCU di bus. Jangan pernah lakukan saat mencetak.",
+      "none": "Tidak ada antarmuka CAN yang ditemukan di host ini.",
+      "controllerState": "Controller",
+      "driver": "Driver",
+      "bitrate": "Bitrate",
+      "errors": "Error bus (rx/tx)",
+      "txqueue": "Antrean TX",
+      "up": "Aktif",
+      "down": "Mati",
+      "unknown": "Tidak diketahui",
+      "bringUp": "Aktifkan",
+      "bringDown": "Matikan",
+      "confirmDown": "Mematikan bus akan memutus setiap MCU CAN sampai diaktifkan kembali. Lanjutkan?",
+      "confirm": "Konfirmasi",
+      "cancel": "Batal",
+      "setBitrate": "Atur bitrate",
+      "downFirst": "Matikan antarmuka untuk mengubah bitrate-nya.",
+      "actionOk": "Antarmuka diperbarui.",
+      "actionFailed": "Tindakan gagal."
     }
   }
 }

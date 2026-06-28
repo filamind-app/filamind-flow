@@ -6,7 +6,8 @@
       "services": "Services",
       "cleanup": "Nettoyage",
       "system": "Système",
-      "boot": "Démarrage"
+      "boot": "Démarrage",
+      "canbus": "Bus CAN"
     },
     "help": {
       "guide": "Aide",
@@ -270,6 +271,28 @@
         "failed": "Impossible d'appliquer l'écran de démarrage.",
         "caveat": "Écrit un PNG dans le chemin du splash ; son affichage au démarrage dépend de la config de l'hôte."
       }
+    },
+    "canbus": {
+      "intro": "Consultez et gérez les interfaces du bus CAN de l'hôte : état du lien, bitrate et compteurs d'erreurs. La lecture est sans risque ; les modifications requièrent un sudo sans mot de passe et sont refusées pendant l'impression.",
+      "warn": "Modifier les paramètres CAN affecte tous les MCU du bus. Ne le faites jamais pendant une impression.",
+      "none": "Aucune interface CAN trouvée sur cet hôte.",
+      "controllerState": "Contrôleur",
+      "driver": "Pilote",
+      "bitrate": "Bitrate",
+      "errors": "Erreurs de bus (rx/tx)",
+      "txqueue": "File TX",
+      "up": "Actif",
+      "down": "Inactif",
+      "unknown": "Inconnu",
+      "bringUp": "Activer",
+      "bringDown": "Désactiver",
+      "confirmDown": "Désactiver le bus déconnecte tous les MCU CAN jusqu'à sa réactivation. Continuer ?",
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "setBitrate": "Définir le bitrate",
+      "downFirst": "Désactivez l'interface pour modifier son bitrate.",
+      "actionOk": "Interface mise à jour.",
+      "actionFailed": "L'action a échoué."
     }
   }
 }

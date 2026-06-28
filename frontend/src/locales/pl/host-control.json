@@ -6,7 +6,8 @@
       "services": "Usługi",
       "cleanup": "Czyszczenie",
       "system": "System",
-      "boot": "Rozruch"
+      "boot": "Rozruch",
+      "canbus": "Magistrala CAN"
     },
     "help": {
       "guide": "Pomoc",
@@ -270,6 +271,28 @@
         "failed": "Nie można zastosować splasha rozruchu.",
         "caveat": "Zapisuje PNG do ścieżki splasha; czy pojawi się przy rozruchu zależy od konfiguracji hosta."
       }
+    },
+    "canbus": {
+      "intro": "Podgląd i zarządzanie interfejsami magistrali CAN hosta: stan łącza, bitrate i liczniki błędów. Odczyt jest bezpieczny; zmiany wymagają sudo bez hasła i są blokowane podczas druku.",
+      "warn": "Zmiana ustawień CAN wpływa na każdy MCU na magistrali. Nigdy nie rób tego podczas druku.",
+      "none": "Nie znaleziono interfejsów CAN na tym hoście.",
+      "controllerState": "Kontroler",
+      "driver": "Sterownik",
+      "bitrate": "Bitrate",
+      "errors": "Błędy magistrali (rx/tx)",
+      "txqueue": "Kolejka TX",
+      "up": "Aktywny",
+      "down": "Wyłączony",
+      "unknown": "Nieznany",
+      "bringUp": "Włącz",
+      "bringDown": "Wyłącz",
+      "confirmDown": "Wyłączenie magistrali odłączy każdy MCU CAN, dopóki nie zostanie ponownie włączona. Kontynuować?",
+      "confirm": "Potwierdź",
+      "cancel": "Anuluj",
+      "setBitrate": "Ustaw bitrate",
+      "downFirst": "Wyłącz interfejs, aby zmienić jego bitrate.",
+      "actionOk": "Interfejs zaktualizowany.",
+      "actionFailed": "Akcja nie powiodła się."
     }
   }
 }

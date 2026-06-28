@@ -6,7 +6,8 @@
       "services": "Dịch vụ",
       "cleanup": "Dọn dẹp",
       "system": "Hệ thống",
-      "boot": "Khởi động"
+      "boot": "Khởi động",
+      "canbus": "CAN Bus"
     },
     "help": {
       "guide": "Trợ giúp",
@@ -270,6 +271,28 @@
         "failed": "Không thể áp dụng splash khởi động.",
         "caveat": "Ghi PNG vào đường dẫn splash; việc hiển thị khi khởi động tùy thuộc cấu hình máy chủ."
       }
+    },
+    "canbus": {
+      "intro": "Xem và quản lý các giao diện CAN bus của máy chủ: trạng thái liên kết, bitrate và bộ đếm lỗi. Việc đọc thì an toàn; thay đổi cần sudo không mật khẩu và sẽ bị từ chối khi đang in.",
+      "warn": "Thay đổi cài đặt CAN ảnh hưởng đến mọi MCU trên bus. Đừng bao giờ làm điều này khi đang in.",
+      "none": "Không tìm thấy giao diện CAN nào trên máy chủ này.",
+      "controllerState": "Bộ điều khiển",
+      "driver": "Driver",
+      "bitrate": "Bitrate",
+      "errors": "Lỗi bus (rx/tx)",
+      "txqueue": "Hàng đợi TX",
+      "up": "Bật",
+      "down": "Tắt",
+      "unknown": "Không rõ",
+      "bringUp": "Bật lên",
+      "bringDown": "Tắt xuống",
+      "confirmDown": "Tắt bus sẽ ngắt kết nối mọi MCU CAN cho đến khi bật lại. Tiếp tục?",
+      "confirm": "Xác nhận",
+      "cancel": "Hủy",
+      "setBitrate": "Đặt bitrate",
+      "downFirst": "Hãy tắt giao diện để thay đổi bitrate của nó.",
+      "actionOk": "Đã cập nhật giao diện.",
+      "actionFailed": "Thao tác thất bại."
     }
   }
 }
