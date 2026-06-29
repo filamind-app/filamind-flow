@@ -64,11 +64,30 @@ defineProps<{ illo: HelpIlloKey }>()
     </g>
 
     <!-- Network: nodes linked to a hub (LAN) -->
-    <g v-else>
+    <g v-else-if="illo === 'network'">
       <rect x="9" y="3" width="6" height="4" rx="1" />
       <rect x="3" y="17" width="6" height="4" rx="1" />
       <rect x="15" y="17" width="6" height="4" rx="1" />
       <path d="M12 7 v4 M12 11 H6 v6 M12 11 h6 v6" />
+    </g>
+
+    <!-- CAN bus: a linear trunk with two end terminators and a node tapping the middle -->
+    <g v-else-if="illo === 'canbus'">
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="9" x2="3" y2="15" />
+      <line x1="21" y1="9" x2="21" y2="15" />
+      <rect x="10" y="15" width="4" height="4" rx="0.5" />
+      <line x1="12" y1="12" x2="12" y2="15" />
+    </g>
+
+    <!-- Termination: a 120Ω resistor (zig-zag) across the two bus wires -->
+    <g v-else>
+      <line x1="3" y1="8" x2="7" y2="8" />
+      <line x1="3" y1="16" x2="7" y2="16" />
+      <path
+        d="M7 8 l2 -2 l2 4 l2 -4 l2 4 l2 -2 v8 l-2 2 l-2 -4 l-2 4 l-2 -4 l-2 2 z"
+        stroke-width="1.5"
+      />
     </g>
   </svg>
 </template>

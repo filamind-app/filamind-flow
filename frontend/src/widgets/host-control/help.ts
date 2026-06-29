@@ -4,9 +4,26 @@
  *  shared `HelpDrawer` - the adopted guide pattern across the app.
  */
 
-export type HelpIlloKey = 'host' | 'monitor' | 'services' | 'cleanup' | 'system' | 'network'
+export type HelpIlloKey =
+  | 'host'
+  | 'monitor'
+  | 'services'
+  | 'cleanup'
+  | 'system'
+  | 'network'
+  | 'canbus'
+  | 'termination'
 
-export type HelpTopic = 'glossary' | 'monitor' | 'services' | 'cleanup' | 'system' | 'network'
+export type HelpTopic =
+  | 'glossary'
+  | 'monitor'
+  | 'services'
+  | 'cleanup'
+  | 'system'
+  | 'network'
+  | 'canbus'
+  | 'canParams'
+  | 'canTermination'
 
 /** Help topics in display order. Text: `hostControl.help.topics.<topic>.{title,body}`. */
 export const HELP_TOPICS: HelpTopic[] = [
@@ -15,6 +32,9 @@ export const HELP_TOPICS: HelpTopic[] = [
   'cleanup',
   'system',
   'network',
+  'canbus',
+  'canParams',
+  'canTermination',
   'glossary',
 ]
 
@@ -26,6 +46,9 @@ export const HELP_ILLO: Partial<Record<HelpTopic, HelpIlloKey>> = {
   cleanup: 'cleanup',
   system: 'system',
   network: 'network',
+  canbus: 'canbus',
+  canParams: 'canbus',
+  canTermination: 'termination',
 }
 
 /** Glossary term keys, in display order. Text: `hostControl.help.glossary.<key>.{term,def}`. */
@@ -39,6 +62,14 @@ export const GLOSSARY_KEYS = [
   'service',
   'enabled',
   'mask',
+  'canbus',
+  'uuid',
+  'bitrate',
+  'samplePoint',
+  'sjw',
+  'termination',
+  'busoff',
+  'txqueuelen',
 ] as const
 
 export type GlossaryKey = (typeof GLOSSARY_KEYS)[number]

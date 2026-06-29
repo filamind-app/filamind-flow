@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP vs Static IP",
           "body": "DHCP (auto) lets your router assign the address automatically. Static (manual) pins a fixed address - set the IP, subnet (CIDR, e.g. /24), gateway (usually your router) and DNS. IPv4 only. Changing the address of the connection that serves this panel will drop your session; reconnect at the new IP. A wrong static address or gateway can make the printer unreachable until you fix it on the device itself, so the settings are validated and need a typed confirmation."
+        },
+        "canbus": {
+          "title": "CAN bus setup",
+          "body": "A CAN bus links the host to your toolhead/MCU boards over two wires (CANH and CANL). Three rules make it work: every board has a unique UUID that goes in your printer config; every node must run the SAME bitrate; and the bus needs exactly two 120Ω terminators, one at each physical end. 1 Mbit/s (1000000) is the standard rate. After wiring, bring the interface up and confirm the controller reads ERROR-ACTIVE and your MCUs connect. A board that does not show up is most often already claimed in your config (normal) or running a different bitrate."
+        },
+        "canParams": {
+          "title": "Bitrate & advanced parameters",
+          "body": "The bitrate is fixed in each board's firmware (and its bootloader) - changing it here on the host alone takes every CAN MCU offline. Only change it after reflashing every board to the same new speed. Lower rates (500k/250k) add margin on a long or noisy bus, but only once wiring and termination are correct, and they reduce bandwidth - so they make a saturation problem worse, not better. Leave Sample point and SJW blank: the kernel then picks the recommended ~87.5% sample point for you; set them only as an expert override. TX queue length should be 128 (raise it only with 5+ MCUs on one bus; much larger values add latency and can cause errors). Auto-restart of 0 keeps it off; ~100 ms self-recovers from a bus-off, but if the bus keeps dropping, fix the wiring instead of relying on it. Keep every control-mode flag OFF for normal printing - Listen-only and One-shot in particular stop the host acknowledging or retrying frames and make the MCUs unreachable."
+        },
+        "canTermination": {
+          "title": "120Ω termination & troubleshooting",
+          "body": "Terminate exactly two nodes - the two physical ends of the bus; any node in the middle must have its 120Ω terminator OFF. To check it, power the printer OFF and measure across CANH/CANL: about 60Ω is correct (two terminators in parallel), ~120Ω means only one is fitted, ~40Ω means three, and an open reading means none. Twist CANH and CANL together, keep the run short and away from stepper, heater and mains wiring, and make sure the toolhead connectors cannot shake loose (motion is the top cause of intermittent errors). Reading the bus: ERROR-ACTIVE is healthy; ERROR-PASSIVE, BUS-OFF, or climbing error counters point to termination, wiring, or a bitrate mismatch - check those in that order."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Mask",
           "def": "A stronger form of disable - the service can't be started at all (even by another service) until it's unmasked. Use with care."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "A two-wire (CANH/CANL) network linking the host to toolhead and MCU boards, so a toolhead needs only a few wires instead of a full loom."
+        },
+        "uuid": {
+          "term": "CAN UUID",
+          "def": "A unique factory identifier for each CAN board. You put it in your printer config so the host knows which board is which."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "The CAN signalling speed in bits per second (1000000 = 1 Mbit/s is standard). It is set in each board's firmware; the host and every node must use the same value."
+        },
+        "samplePoint": {
+          "term": "Sample point",
+          "def": "Where in each bit the signal level is read (~87.5% is standard). Leave it blank and the kernel sets it correctly for the chosen bitrate."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width - how far the controller may shift its timing per bit to stay in sync. Leave blank unless you have a clock-tolerance issue; it cannot exceed the controller's limit."
+        },
+        "termination": {
+          "term": "120Ω termination",
+          "def": "A resistor at each of the two bus ends (about 60Ω measured across CANH/CANL with power off). Exactly two are needed; middle nodes must have theirs off."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "The controller removed itself from the bus after too many errors - usually wrong termination, wiring, or a bitrate mismatch. It needs a restart, and the underlying fault fixed."
+        },
+        "txqueuelen": {
+          "term": "TX queue length",
+          "def": "How many CAN packets Linux buffers for sending. 128 is recommended; much larger values add latency and can cause unrecoverable errors."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "Recover a controller that has gone BUS-OFF.",
       "noiseHint": "Triple sampling and a higher SJW improve tolerance to electrical noise; auto-restart (ms) brings the bus back after a BUS-OFF.",
       "restartKlipper": "Restart Klipper & MCUs",
-      "confirmBitrate": "Change the bitrate? This briefly takes the CAN bus down (every CAN MCU drops), retimes it, brings it back up, then restarts Klipper. Never do this during a print.",
+      "confirmBitrate": "Change the bitrate? The bitrate is fixed in each MCU's firmware - changing it on the host alone will take every CAN MCU offline. Only do this after reflashing every board (and its bootloader) to the same speed. It briefly drops the bus and restarts Klipper. Never during a print.",
       "confirmParams": "Apply these CAN settings? This briefly takes the bus down (every CAN MCU drops), applies the change, brings it back up, then restarts Klipper. Never do this during a print.",
       "confirmKlipper": "Restart Klipper and every MCU now? The CAN MCUs will reconnect. Never do this during a print.",
       "appliedRestarting": "Applied. The bus is back up and Klipper is restarting so the MCUs reconnect.",
       "restartingKlipper": "Klipper is restarting; the MCUs will reconnect.",
       "restartFailed": "The change was applied, but the Klipper restart request failed - restart it manually.",
-      "applyHint": "Applying briefly takes the bus down and restarts Klipper so the MCUs reconnect with the new settings."
+      "applyHint": "Applying briefly takes the bus down and restarts Klipper so the MCUs reconnect with the new settings.",
+      "advancedTip": "Leave Sample point and SJW blank - the kernel picks the recommended ~87.5% sample point automatically. TX queue length should be 128. Auto-restart 0 = off, 100 ms self-recovers from a bus-off.",
+      "flagsWarn": "Keep these off for normal printing. Listen-only and One-shot stop the host acknowledging or retrying frames, which makes the MCUs unreachable."
     },
     "advisor": {
       "intro": "Host health at a glance — CPU, memory, disk, clock and services, each graded with a fix.",

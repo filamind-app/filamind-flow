@@ -474,6 +474,7 @@ function fmtBitrate(b: number | null): string {
         </button>
         <div v-if="advancedOpen[b.interface] && edit[b.interface]" class="space-y-2 pt-2">
           <p class="text-[11px] opacity-60">{{ t('hostControl.canbus.noiseHint') }}</p>
+          <p class="text-[11px] opacity-70">{{ t('hostControl.canbus.advancedTip') }}</p>
           <p class="block text-[11px] text-brand-yellow">{{ t('hostControl.canbus.applyHint') }}</p>
           <div class="grid grid-cols-2 gap-2 text-[11px]">
             <label class="flex flex-col gap-0.5">
@@ -525,6 +526,7 @@ function fmtBitrate(b: number | null): string {
           </div>
 
           <!-- control-mode flags -->
+          <p class="text-[11px] text-brand-yellow">{{ t('hostControl.canbus.flagsWarn') }}</p>
           <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
             <label v-for="fk in FLAG_KEYS" :key="fk" class="flex items-center gap-1">
               <input
