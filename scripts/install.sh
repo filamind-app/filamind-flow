@@ -47,6 +47,65 @@ if [ -n "$SELF" ] && [ -f "$SELF" ]; then
   REPO_ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
 fi
 
+# -- sudoers grant content (shared by the `sudoers` install + the `update` self-heal) ----------
+# Emit the passwordless-sudo rule to stdout, resolving each binary's absolute path so the rule
+# survives a non-standard $PATH. Single source of truth so a NEW capability the panel needs is
+# added in exactly one place and reaches both the fresh-install and update code paths.
+render_sudoers() {
+  local user_name="$1"
+  local systemctl dfu cp chmod fuser journalctl rm_bin timedatectl localectl hostnamectl nmcli ip_bin
+  systemctl="$(command -v systemctl || echo /usr/bin/systemctl)"
+  dfu="$(command -v dfu-util || echo /usr/bin/dfu-util)"
+  cp="$(command -v cp || echo /bin/cp)"
+  chmod="$(command -v chmod || echo /bin/chmod)"
+  fuser="$(command -v fuser || echo /usr/bin/fuser)"
+  journalctl="$(command -v journalctl || echo /usr/bin/journalctl)"
+  rm_bin="$(command -v rm || echo /bin/rm)"
+  timedatectl="$(command -v timedatectl || echo /usr/bin/timedatectl)"
+  localectl="$(command -v localectl || echo /usr/bin/localectl)"
+  hostnamectl="$(command -v hostnamectl || echo /usr/bin/hostnamectl)"
+  nmcli="$(command -v nmcli || echo /usr/bin/nmcli)"
+  ip_bin="$(command -v ip || echo /usr/sbin/ip)"  # CAN bus control: ip link set up/down/bitrate/params
+  local apt_get dpkg_bin bash_bin flow_home flow_install
+  apt_get="$(command -v apt-get || echo /usr/bin/apt-get)"
+  dpkg_bin="$(command -v dpkg || echo /usr/bin/dpkg)"
+  bash_bin="$(command -v bash || echo /bin/bash)"
+  flow_home="$(getent passwd "$user_name" 2>/dev/null | cut -d: -f6)" || flow_home=""
+  flow_install="${flow_home:-/home/$user_name}/filamind-flow/scripts/install.sh"
+  cat <<EOF
+# Managed by FilaMind Flow (scripts/install.sh) - firmware flashing + Host Control. Auto-refreshed
+# on each update, so a new capability the panel needs reaches every install without a manual step.
+$user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli, $ip_bin
+# Native touch-app install (FilaMind screen .deb kiosk): package + WebKit runtime via apt/dpkg, and
+# the Flow kiosk unit-writer. Wider than the base grant - enables one-click native install.
+$user_name ALL=(root) NOPASSWD: $apt_get, $dpkg_bin, $bash_bin $flow_install kiosk *
+EOF
+}
+
+# Keep the passwordless-sudo grant current on EVERY update without a manual re-run: regenerate the
+# rule and install it via the panel's already-granted `sudo -n cp`/`chmod`, so a new capability
+# (e.g. CAN-bus `ip` control) reaches the whole fleet automatically on the next Moonraker update.
+# Best-effort + silent: if the grant was never set up (no passwordless cp), or sudo/visudo is
+# missing, the existing grant is left untouched. `visudo -cf` validates BEFORE installing, so a bad
+# rule can never lock the user out of sudo, and the file is written at 0440 root-owned in one shot.
+refresh_sudoers_on_update() {
+  local dest="/etc/sudoers.d/filamind"
+  local user_name="${SUDO_USER:-$(id -un)}"
+  command -v visudo >/dev/null 2>&1 || return 0
+  command -v sudo >/dev/null 2>&1 || return 0
+  local cp_bin chmod_bin tmp
+  cp_bin="$(command -v cp || echo /bin/cp)"
+  chmod_bin="$(command -v chmod || echo /bin/chmod)"
+  tmp="$(mktemp)" || return 0
+  render_sudoers "$user_name" >"$tmp"
+  chmod 0440 "$tmp" 2>/dev/null || true
+  if visudo -cf "$tmp" >/dev/null 2>&1 && sudo -n "$cp_bin" "$tmp" "$dest" 2>/dev/null; then
+    sudo -n "$chmod_bin" 0440 "$dest" 2>/dev/null || true
+    echo "FilaMind Flow: refreshed the passwordless-sudo grant (CAN control + any new capabilities)."
+  fi
+  rm -f "$tmp"
+}
+
 # -- update: refresh the backend virtualenv (Moonraker update_manager hook) -----
 do_update() {
   local dir="${REPO_ROOT:-$APP}"
@@ -67,6 +126,8 @@ do_update() {
   ./.venv/bin/pip install -q -U pip
   ./.venv/bin/pip install -q -r requirements.txt
   echo "FilaMind Flow: backend dependencies up to date."
+  # Self-heal the passwordless-sudo grant so new privileged capabilities apply on update alone.
+  refresh_sudoers_on_update
 }
 
 # -- sudoers: grant the narrow passwordless-sudo rights the panel needs ---------
@@ -79,43 +140,11 @@ do_sudoers() {
   local sudoers_file="/etc/sudoers.d/filamind"
   [ "$(id -u)" -eq 0 ] || { echo "This must run as root. Try: sudo bash $0 sudoers $user_name" >&2; exit 1; }
 
-  local systemctl dfu cp chmod fuser journalctl rm_bin timedatectl localectl hostnamectl nmcli ip_bin
-  systemctl="$(command -v systemctl || echo /usr/bin/systemctl)"
-  dfu="$(command -v dfu-util || echo /usr/bin/dfu-util)"
-  cp="$(command -v cp || echo /bin/cp)"
-  chmod="$(command -v chmod || echo /bin/chmod)"
-  fuser="$(command -v fuser || echo /usr/bin/fuser)"
-  journalctl="$(command -v journalctl || echo /usr/bin/journalctl)"
-  rm_bin="$(command -v rm || echo /bin/rm)"
-  timedatectl="$(command -v timedatectl || echo /usr/bin/timedatectl)"
-  localectl="$(command -v localectl || echo /usr/bin/localectl)"
-  hostnamectl="$(command -v hostnamectl || echo /usr/bin/hostnamectl)"
-  nmcli="$(command -v nmcli || echo /usr/bin/nmcli)"
-  ip_bin="$(command -v ip || echo /usr/sbin/ip)"  # CAN bus control: ip link set up/down/bitrate
-
-  # Broader grant for one-click NATIVE touch-app install (FilaMind screen's .deb kiosk): apt-get
-  # (installs the package + its WebKit runtime dependency), dpkg, and the Flow kiosk unit-writer
-  # (scoped to its `kiosk` subcommand). This is intentionally wider than the base grant - it lets the
-  # headless Setup widget install the .deb without a password. apt as root is effectively full root,
-  # so this is the security trade-off for a one-click native install.
-  local apt_get dpkg_bin bash_bin flow_home flow_install
-  apt_get="$(command -v apt-get || echo /usr/bin/apt-get)"
-  dpkg_bin="$(command -v dpkg || echo /usr/bin/dpkg)"
-  bash_bin="$(command -v bash || echo /bin/bash)"
-  flow_home="$(getent passwd "$user_name" 2>/dev/null | cut -d: -f6)"
-  flow_install="${flow_home:-/home/$user_name}/filamind-flow/scripts/install.sh"
-
   # NOT `local`: the EXIT trap below fires at *script* exit - after this function has returned -
   # so $tmp must still be in scope, and ${tmp:-} keeps the trap safe under `set -u`.
   tmp="$(mktemp)"
   trap 'rm -f "${tmp:-}"' EXIT  # always clean up, even if `install` fails under set -e
-  cat > "$tmp" <<EOF
-# Managed by FilaMind Flow (scripts/install.sh sudoers) - firmware flashing + Host Control.
-$user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli, $ip_bin
-# Native touch-app install (FilaMind screen .deb kiosk): package + WebKit runtime via apt/dpkg, and
-# the Flow kiosk unit-writer. Wider than the base grant - enables one-click native install.
-$user_name ALL=(root) NOPASSWD: $apt_get, $dpkg_bin, $bash_bin $flow_install kiosk *
-EOF
+  render_sudoers "$user_name" > "$tmp"  # single source of truth (see render_sudoers above)
   # Validate syntax BEFORE installing so a mistake can never lock you out of sudo.
   if visudo -cf "$tmp"; then
     install -m 0440 -o root -g root "$tmp" "$sudoers_file"
