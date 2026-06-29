@@ -331,7 +331,8 @@
         "both_ends": "Due nodi: entrambe le estremità devono essere terminate (≈60Ω sul bus).",
         "middle_off": "{count} nodi sul bus: termina solo le due estremità; il/i nodo/i intermedio/i deve/devono avere il terminatore da 120Ω DISATTIVATO.",
         "single_node": "Rilevato un solo nodo CAN.",
-        "bus_error": "{interface} segnala errori CAN ({state}). Di solito indica una terminazione da 120Ω errata (assente, in eccesso o non alle due estremità) o un problema di cablaggio/rumore. Verifica che ci siano esattamente due terminatori da 120Ω, uno a ciascuna estremità del bus."
+        "bus_error": "{interface} segnala errori CAN ({state}). Di solito indica una terminazione da 120Ω errata (assente, in eccesso o non alle due estremità) o un problema di cablaggio/rumore. Verifica che ci siano esattamente due terminatori da 120Ω, uno a ciascuna estremità del bus.",
+        "bus_ok": "Il bus CAN ({interface}) comunica senza errori ({state}); la terminazione da 120Ω sembra corretta in base alle letture in tempo reale."
       }
     }
   }

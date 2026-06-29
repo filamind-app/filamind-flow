@@ -150,8 +150,23 @@ def _rows(key: str) -> list[dict[str, Any]]:
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
 
 
+def _as_str_list(value: Any) -> list[str]:
+    """Coerce a notes-style field to a clean list of strings. The catalog stores ``configNotes`` as
+    a list for most boards but as a single string for a few - left as a string the UI's per-item
+    ``v-for`` renders it one character per line."""
+    if isinstance(value, str):
+        return [value.strip()] if value.strip() else []
+    if isinstance(value, list):
+        return [str(v).strip() for v in value if isinstance(v, str) and str(v).strip()]
+    return []
+
+
 _HW_ITEMS = _rows("items")
 _HW_BOARDS = _rows("boards")
+# Normalise a board field the catalog sometimes stores as a bare string (see _as_str_list).
+for _b in _HW_BOARDS:
+    if "configNotes" in _b:
+        _b["configNotes"] = _as_str_list(_b.get("configNotes"))
 _HW_DRIVERS = _rows("drivers")
 _HW_MOTORS = _rows("motors")
 _HW_HOSTS = _rows("hosts")

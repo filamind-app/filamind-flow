@@ -331,7 +331,8 @@
         "both_ends": "Two nodes: both ends should be terminated (≈60Ω across the bus).",
         "middle_off": "{count} nodes on the bus: terminate only the two ends; the middle node(s) must have their 120Ω terminator OFF.",
         "single_node": "Only one CAN node detected.",
-        "bus_error": "{interface} is reporting CAN errors ({state}). This usually means the 120Ω termination is wrong (missing, too many, or not at the two ends) or a wiring/noise fault. Confirm exactly two 120Ω terminators, one at each physical end of the bus."
+        "bus_error": "{interface} is reporting CAN errors ({state}). This usually means the 120Ω termination is wrong (missing, too many, or not at the two ends) or a wiring/noise fault. Confirm exactly two 120Ω terminators, one at each physical end of the bus.",
+        "bus_ok": "The CAN bus ({interface}) is communicating cleanly ({state}); the 120Ω termination looks correct based on the live readings."
       }
     }
   }

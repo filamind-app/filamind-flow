@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-06-29
+
+### Fixed
+
+- Board Topology: a board whose catalog **config notes** are stored as a single string (e.g. the
+  BigTreeTech Eddy) rendered one character per line. Config notes are now normalised to a list, so
+  they show as proper bullet points.
+
+### Added
+
+- The CAN **120Ω termination** advisory now gives a positive reading-based verdict: when the live
+  CAN controller is healthy (`ERROR-ACTIVE`), it confirms the termination looks correct from the
+  live readings (a green note), complementing the existing error it raises when the controller is
+  bus-off / error-passive. Together they let you verify the 120Ω jumpers from the live bus state.
+
 ## [1.11.0] - 2026-06-29
 
 ### Changed

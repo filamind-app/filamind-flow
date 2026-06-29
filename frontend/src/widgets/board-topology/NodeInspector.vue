@@ -151,6 +151,13 @@ function componentCounts(m: TopologyMcu): { kind: string; n: number }[] {
   )
 }
 
+/** Config notes as an array, even if a board's catalog record stores them as a single string -
+ *  iterating a raw string in v-for would render one character per line. */
+function configNotesList(v: BoardDetail['configNotes']): string[] {
+  if (Array.isArray(v)) return v.filter((n): n is string => typeof n === 'string' && n.length > 0)
+  return typeof v === 'string' && v ? [v] : []
+}
+
 async function copySnippet(text: string): Promise<void> {
   if (!text) return
   try {
@@ -558,10 +565,10 @@ function onPickCan(id: string | null): void {
               </template>
             </dl>
           </div>
-          <div v-if="detail.configNotes?.length" class="space-y-0.5">
+          <div v-if="configNotesList(detail.configNotes).length" class="space-y-0.5">
             <span class="opacity-60">{{ t('hardwareBrowser.boards.notes') }}:</span>
             <ul class="list-disc ps-4">
-              <li v-for="(n, ni) in detail.configNotes" :key="ni">{{ n }}</li>
+              <li v-for="(n, ni) in configNotesList(detail.configNotes)" :key="ni">{{ n }}</li>
             </ul>
           </div>
           <div v-if="detail.configSnippet" class="space-y-0.5">

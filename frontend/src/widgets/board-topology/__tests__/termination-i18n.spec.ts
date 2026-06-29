@@ -25,8 +25,19 @@ describe('Board Topology: CAN termination i18n', () => {
     expect(msg).not.toContain('{state}')
   })
 
+  it('interpolates the healthy reading-based verdict (bus_ok)', () => {
+    const msg = t('boardTopology.termination.finding.bus_ok', {
+      interface: 'can0',
+      state: 'ERROR-ACTIVE',
+    })
+    expect(msg).toContain('can0')
+    expect(msg).toContain('ERROR-ACTIVE')
+    expect(msg).not.toContain('{interface}')
+    expect(msg).not.toContain('{state}')
+  })
+
   it('has every finding code, type label and default label', () => {
-    for (const c of ['rule', 'both_ends', 'middle_off', 'single_node', 'bus_error'])
+    for (const c of ['rule', 'both_ends', 'middle_off', 'single_node', 'bus_error', 'bus_ok'])
       expect(te('boardTopology.termination.finding.' + c)).toBe(true)
     for (const tp of ['jumper', 'solder_bridge', 'switch', 'fixed', 'none'])
       expect(te('boardTopology.termination.type.' + tp)).toBe(true)

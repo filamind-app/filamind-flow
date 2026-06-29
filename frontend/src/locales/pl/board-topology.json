@@ -331,7 +331,8 @@
         "both_ends": "Dwa węzły: oba końce powinny być zterminowane (≈60Ω na magistrali).",
         "middle_off": "Węzłów na magistrali: {count}. Zterminuj tylko dwa końce; węzły pośrednie muszą mieć terminator 120Ω WYŁĄCZONY.",
         "single_node": "Wykryto tylko jeden węzeł CAN.",
-        "bus_error": "{interface} zgłasza błędy CAN ({state}). Zwykle oznacza to nieprawidłową terminację 120Ω (brak, za dużo lub nie na obu końcach) albo usterkę okablowania/zakłócenia. Upewnij się, że są dokładnie dwa terminatory 120Ω, po jednym na każdym końcu magistrali."
+        "bus_error": "{interface} zgłasza błędy CAN ({state}). Zwykle oznacza to nieprawidłową terminację 120Ω (brak, za dużo lub nie na obu końcach) albo usterkę okablowania/zakłócenia. Upewnij się, że są dokładnie dwa terminatory 120Ω, po jednym na każdym końcu magistrali.",
+        "bus_ok": "Magistrala CAN ({interface}) komunikuje się bez zakłóceń ({state}); terminacja 120Ω wygląda na prawidłową na podstawie odczytów na żywo."
       }
     }
   }
