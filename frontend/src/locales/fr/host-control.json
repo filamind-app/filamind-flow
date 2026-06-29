@@ -293,7 +293,26 @@
       "setBitrate": "Définir le bitrate",
       "downFirst": "Désactivez l'interface pour modifier son bitrate.",
       "actionOk": "Interface mise à jour.",
-      "actionFailed": "L'action a échoué."
+      "actionFailed": "L'action a échoué.",
+      "advanced": "Paramètres avancés",
+      "samplePoint": "Point d'échantillonnage",
+      "sjw": "SJW",
+      "restartMs": "Redémarrage automatique (ms)",
+      "txQueueLen": "Longueur de la file TX",
+      "flag": {
+        "listen_only": "Écoute seule",
+        "loopback": "Bouclage",
+        "triple_sampling": "Triple échantillonnage",
+        "one_shot": "Tir unique",
+        "berr_reporting": "Signalement des erreurs de bus"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Débit binaire des données (bit/s)",
+      "dsamplePoint": "Point d'échantillonnage des données",
+      "applyParams": "Appliquer les paramètres",
+      "restart": "Redémarrer le bus",
+      "restartHint": "Récupère un contrôleur passé à l'état BUS-OFF.",
+      "noiseHint": "Le triple échantillonnage et un SJW plus élevé améliorent la tolérance au bruit électrique ; le redémarrage automatique (ms) remet le bus en service après un BUS-OFF."
     },
     "advisor": {
       "intro": "État de santé de l'hôte en un coup d'œil : CPU, mémoire, disque, horloge et services, chacun noté avec une solution.",

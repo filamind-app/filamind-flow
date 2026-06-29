@@ -163,6 +163,15 @@ class CanBitrateReq(BaseModel):
     bitrate: int
 
 
+class CanParamsReq(BaseModel):
+    iface: str
+    params: dict[str, Any]  # any of bitrate/sample_point/sjw/restart_ms/dbitrate/flags/txqueuelen/…
+
+
+class CanRestartReq(BaseModel):
+    iface: str
+
+
 @router.get("/canbus")
 async def host_canbus(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """Every host CAN interface with live status (link state, controller state, bitrate, error
@@ -184,6 +193,24 @@ async def host_canbus_bitrate(
 ) -> dict[str, Any]:
     """Set a CAN interface's bitrate (the interface must be down first). Refused while printing."""
     return await _apply(canbus_control.set_bitrate(req.iface, req.bitrate, settings.moonraker_url))
+
+
+@router.post("/canbus/params")
+async def host_canbus_params(
+    req: CanParamsReq, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Set any combination of CAN parameters (bit timing, control modes, recovery, CAN-FD,
+    txqueuelen). All but txqueuelen need the interface down. 400 on a bad value; refused (403) while
+    printing."""
+    return await _apply(canbus_control.set_params(req.iface, req.params, settings.moonraker_url))
+
+
+@router.post("/canbus/restart")
+async def host_canbus_restart(
+    req: CanRestartReq, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Restart a BUS-OFF CAN controller to recover the bus. Refused while printing."""
+    return await _apply(canbus_control.set_restart(req.iface, settings.moonraker_url))
 
 
 # -- System settings (Phase 4) --------------------------------------------------

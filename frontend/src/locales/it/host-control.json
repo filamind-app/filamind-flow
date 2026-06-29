@@ -293,7 +293,26 @@
       "setBitrate": "Imposta bitrate",
       "downFirst": "Disattiva l'interfaccia per modificarne il bitrate.",
       "actionOk": "Interfaccia aggiornata.",
-      "actionFailed": "Azione non riuscita."
+      "actionFailed": "Azione non riuscita.",
+      "advanced": "Parametri avanzati",
+      "samplePoint": "Sample point",
+      "sjw": "SJW",
+      "restartMs": "Riavvio automatico (ms)",
+      "txQueueLen": "Lunghezza coda TX",
+      "flag": {
+        "listen_only": "Solo ascolto",
+        "loopback": "Loopback",
+        "triple_sampling": "Campionamento triplo",
+        "one_shot": "One-shot",
+        "berr_reporting": "Segnalazione errori bus"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Bitrate dati (bit/s)",
+      "dsamplePoint": "Sample point dati",
+      "applyParams": "Applica parametri",
+      "restart": "Riavvia bus",
+      "restartHint": "Ripristina un controller andato in BUS-OFF.",
+      "noiseHint": "Il campionamento triplo e un valore di SJW piu alto migliorano la tolleranza ai disturbi elettrici; il riavvio automatico (ms) ripristina il bus dopo un BUS-OFF."
     },
     "advisor": {
       "intro": "Stato dell'host a colpo d'occhio: CPU, memoria, disco, orologio e servizi, ciascuno valutato con un suggerimento.",

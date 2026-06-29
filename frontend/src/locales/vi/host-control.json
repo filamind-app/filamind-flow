@@ -293,7 +293,26 @@
       "setBitrate": "Đặt bitrate",
       "downFirst": "Hãy tắt giao diện để thay đổi bitrate của nó.",
       "actionOk": "Đã cập nhật giao diện.",
-      "actionFailed": "Thao tác thất bại."
+      "actionFailed": "Thao tác thất bại.",
+      "advanced": "Tham số nâng cao",
+      "samplePoint": "Điểm lấy mẫu",
+      "sjw": "SJW",
+      "restartMs": "Tự khởi động lại (ms)",
+      "txQueueLen": "Độ dài hàng đợi TX",
+      "flag": {
+        "listen_only": "Chỉ lắng nghe",
+        "loopback": "Loopback",
+        "triple_sampling": "Lấy mẫu ba lần",
+        "one_shot": "Gửi một lần",
+        "berr_reporting": "Báo lỗi bus"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Tốc độ bit dữ liệu (bit/s)",
+      "dsamplePoint": "Điểm lấy mẫu dữ liệu",
+      "applyParams": "Áp dụng tham số",
+      "restart": "Khởi động lại bus",
+      "restartHint": "Khôi phục bộ điều khiển đã rơi vào trạng thái BUS-OFF.",
+      "noiseHint": "Lấy mẫu ba lần và tăng SJW giúp cải thiện khả năng chống nhiễu điện; tự khởi động lại (ms) đưa bus hoạt động trở lại sau khi gặp BUS-OFF."
     },
     "advisor": {
       "intro": "Tổng quan nhanh tình trạng máy chủ - CPU, bộ nhớ, ổ đĩa, đồng hồ và dịch vụ, mỗi mục đều được chấm điểm kèm cách khắc phục.",

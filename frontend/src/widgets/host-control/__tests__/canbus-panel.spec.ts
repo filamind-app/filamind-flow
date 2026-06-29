@@ -30,6 +30,12 @@ vi.mock('../api', () => ({
     ]),
   setCanLink,
   setCanBitrate,
+  setCanParams: vi.fn(() =>
+    Promise.resolve({ interface: 'can0', ok: true, refused: false, output: '' }),
+  ),
+  restartCanBus: vi.fn(() =>
+    Promise.resolve({ interface: 'can0', ok: true, refused: false, output: '' }),
+  ),
   HostActionError: class HostActionError extends Error {
     constructor(
       message: string,

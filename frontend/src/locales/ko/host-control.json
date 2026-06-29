@@ -293,7 +293,26 @@
       "setBitrate": "Bitrate 설정",
       "downFirst": "bitrate를 변경하려면 먼저 인터페이스를 비활성화하세요.",
       "actionOk": "인터페이스가 업데이트되었습니다.",
-      "actionFailed": "작업에 실패했습니다."
+      "actionFailed": "작업에 실패했습니다.",
+      "advanced": "고급 매개변수",
+      "samplePoint": "샘플 포인트",
+      "sjw": "SJW",
+      "restartMs": "자동 재시작 (ms)",
+      "txQueueLen": "TX 큐 길이",
+      "flag": {
+        "listen_only": "수신 전용",
+        "loopback": "루프백",
+        "triple_sampling": "3중 샘플링",
+        "one_shot": "원샷",
+        "berr_reporting": "버스 오류 보고"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "데이터 비트레이트 (bit/s)",
+      "dsamplePoint": "데이터 샘플 포인트",
+      "applyParams": "매개변수 적용",
+      "restart": "버스 재시작",
+      "restartHint": "BUS-OFF 상태가 된 컨트롤러를 복구합니다.",
+      "noiseHint": "3중 샘플링과 높은 SJW 값은 전기적 노이즈에 대한 내성을 높여 줍니다. 자동 재시작 (ms)은 BUS-OFF 이후 버스를 다시 복구합니다."
     },
     "advisor": {
       "intro": "호스트 상태를 한눈에 — CPU, 메모리, 디스크, 시계, 서비스를 각각 등급으로 평가하고 해결 방법을 제시합니다.",

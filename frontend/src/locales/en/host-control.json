@@ -293,7 +293,26 @@
       "setBitrate": "Set bitrate",
       "downFirst": "Bring the interface down to change its bitrate.",
       "actionOk": "Interface updated.",
-      "actionFailed": "The action failed."
+      "actionFailed": "The action failed.",
+      "advanced": "Advanced parameters",
+      "samplePoint": "Sample point",
+      "sjw": "SJW",
+      "restartMs": "Auto-restart (ms)",
+      "txQueueLen": "TX queue length",
+      "flag": {
+        "listen_only": "Listen-only",
+        "loopback": "Loopback",
+        "triple_sampling": "Triple sampling",
+        "one_shot": "One-shot",
+        "berr_reporting": "Bus-error reporting"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Data bitrate (bit/s)",
+      "dsamplePoint": "Data sample point",
+      "applyParams": "Apply parameters",
+      "restart": "Restart bus",
+      "restartHint": "Recover a controller that has gone BUS-OFF.",
+      "noiseHint": "Triple sampling and a higher SJW improve tolerance to electrical noise; auto-restart (ms) brings the bus back after a BUS-OFF."
     },
     "advisor": {
       "intro": "Host health at a glance — CPU, memory, disk, clock and services, each graded with a fix.",

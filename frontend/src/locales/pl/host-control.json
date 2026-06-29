@@ -293,7 +293,26 @@
       "setBitrate": "Ustaw bitrate",
       "downFirst": "Wyłącz interfejs, aby zmienić jego bitrate.",
       "actionOk": "Interfejs zaktualizowany.",
-      "actionFailed": "Akcja nie powiodła się."
+      "actionFailed": "Akcja nie powiodła się.",
+      "advanced": "Parametry zaawansowane",
+      "samplePoint": "Punkt próbkowania",
+      "sjw": "SJW",
+      "restartMs": "Auto-restart (ms)",
+      "txQueueLen": "Długość kolejki TX",
+      "flag": {
+        "listen_only": "Tylko nasłuch",
+        "loopback": "Pętla zwrotna",
+        "triple_sampling": "Potrójne próbkowanie",
+        "one_shot": "Pojedyncza próba",
+        "berr_reporting": "Raportowanie błędów magistrali"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Bitrate danych (bit/s)",
+      "dsamplePoint": "Punkt próbkowania danych",
+      "applyParams": "Zastosuj parametry",
+      "restart": "Zrestartuj magistralę",
+      "restartHint": "Przywróć kontroler, który przeszedł w stan BUS-OFF.",
+      "noiseHint": "Potrójne próbkowanie i wyższy SJW zwiększają odporność na zakłócenia elektryczne; auto-restart (ms) przywraca magistralę po stanie BUS-OFF."
     },
     "advisor": {
       "intro": "Kondycja hosta w skrócie - CPU, pamięć, dysk, zegar i usługi, każde z oceną i wskazówką naprawy.",

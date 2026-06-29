@@ -12,7 +12,14 @@ import { useI18n } from 'vue-i18n'
 import ReportErrorButton from '@/components/feedback/ReportErrorButton.vue'
 import { describeError } from '@/core/describeError'
 
-import { fetchCanBuses, HostActionError, setCanBitrate, setCanLink } from './api'
+import {
+  fetchCanBuses,
+  HostActionError,
+  restartCanBus,
+  setCanBitrate,
+  setCanLink,
+  setCanParams,
+} from './api'
 import type { CanBusStatus } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -29,6 +36,112 @@ const bitrateSel = ref<Record<string, number>>({})
 
 const COMMON_BITRATES = [1000000, 500000, 250000, 125000]
 let timer: ReturnType<typeof setInterval> | null = null
+
+// -- Advanced per-interface parameter editor -----------------------------------
+/** Control-mode flags shown as checkboxes (api key → i18n label key). */
+const FLAG_KEYS = [
+  'listen_only',
+  'loopback',
+  'triple_sampling',
+  'one_shot',
+  'berr_reporting',
+] as const
+type FlagKey = (typeof FLAG_KEYS)[number]
+
+interface EditState {
+  sample_point: string
+  sjw: string
+  restart_ms: string
+  txqueuelen: string
+  fd: boolean
+  dbitrate: string
+  dsample_point: string
+  flags: Record<FlagKey, boolean>
+}
+
+const advancedOpen = ref<Record<string, boolean>>({})
+const edit = ref<Record<string, EditState>>({})
+
+/** Seed the editor for an interface from its live params (called when the panel is opened). */
+function seedEdit(b: CanBusStatus): void {
+  const p = b.params ?? {}
+  const f = p.flags ?? {}
+  edit.value[b.interface] = {
+    sample_point: p.sample_point != null ? String(p.sample_point) : '',
+    sjw: p.sjw != null ? String(p.sjw) : '',
+    restart_ms: p.restart_ms != null ? String(p.restart_ms) : '',
+    txqueuelen: b.txqueuelen != null ? String(b.txqueuelen) : '',
+    fd: !!f.fd,
+    dbitrate: p.dbitrate != null ? String(p.dbitrate) : '',
+    dsample_point: p.dsample_point != null ? String(p.dsample_point) : '',
+    flags: Object.fromEntries(FLAG_KEYS.map((k) => [k, !!f[k]])) as Record<FlagKey, boolean>,
+  }
+}
+
+function toggleAdvanced(b: CanBusStatus): void {
+  const open = !advancedOpen.value[b.interface]
+  advancedOpen.value[b.interface] = open
+  if (open) seedEdit(b)
+}
+
+function isBusOff(b: CanBusStatus): boolean {
+  return (b.state ?? '').toUpperCase().includes('BUS-OFF')
+}
+
+const numOrNull = (s: string): number | null => {
+  const n = Number(s)
+  return s.trim() !== '' && !Number.isNaN(n) ? n : null
+}
+
+async function applyParams(b: CanBusStatus): Promise<void> {
+  const e = edit.value[b.interface]
+  if (!e) return
+  const params: Record<string, number | boolean> = {}
+  for (const [key, raw] of [
+    ['sample_point', e.sample_point],
+    ['sjw', e.sjw],
+    ['restart_ms', e.restart_ms],
+    ['txqueuelen', e.txqueuelen],
+  ] as const) {
+    const n = numOrNull(raw)
+    if (n != null) params[key] = n
+  }
+  for (const k of FLAG_KEYS) params[k] = e.flags[k]
+  if (b.limits?.fd_supported) {
+    params.fd = e.fd
+    if (e.fd) {
+      const db = numOrNull(e.dbitrate)
+      const dsp = numOrNull(e.dsample_point)
+      if (db != null) params.dbitrate = db
+      if (dsp != null) params.dsample_point = dsp
+    }
+  }
+  busy.value = b.interface
+  note.value = null
+  actionError.value = null
+  try {
+    applyResult(await setCanParams(b.interface, params))
+    await load()
+  } catch (err) {
+    actionError.value = err instanceof HostActionError ? err.message : describeError(err)
+  } finally {
+    busy.value = null
+  }
+}
+
+async function doRestart(iface: string): Promise<void> {
+  busy.value = iface
+  note.value = null
+  actionError.value = null
+  try {
+    applyResult(await restartCanBus(iface))
+    await load()
+  } catch (err) {
+    actionError.value = err instanceof HostActionError ? err.message : describeError(err)
+  } finally {
+    busy.value = null
+  }
+}
 
 async function load(): Promise<void> {
   if (!buses.value.length) loading.value = true
@@ -248,6 +361,134 @@ function fmtBitrate(b: number | null): string {
         <span v-if="b.link_up === true" class="text-[11px] opacity-60">
           {{ t('hostControl.canbus.downFirst') }}
         </span>
+      </div>
+
+      <!-- restart a BUS-OFF controller -->
+      <div v-if="isBusOff(b)" class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          class="nb-btn bg-brand-yellow px-2 py-0.5 text-xs font-bold disabled:opacity-50"
+          :disabled="busy === b.interface"
+          @click="doRestart(b.interface)"
+        >
+          {{ t('hostControl.canbus.restart') }}
+        </button>
+        <span class="text-[11px] opacity-60">{{ t('hostControl.canbus.restartHint') }}</span>
+      </div>
+
+      <!-- advanced parameters (bit timing / robustness / control modes / CAN-FD / tx queue) -->
+      <div class="border-t border-ink/10 pt-2">
+        <button type="button" class="text-[11px] font-bold opacity-80" @click="toggleAdvanced(b)">
+          {{ advancedOpen[b.interface] ? '▾' : '▸' }} {{ t('hostControl.canbus.advanced') }}
+        </button>
+        <div v-if="advancedOpen[b.interface] && edit[b.interface]" class="space-y-2 pt-2">
+          <p class="text-[11px] opacity-60">{{ t('hostControl.canbus.noiseHint') }}</p>
+          <span v-if="b.link_up === true" class="block text-[11px] text-brand-yellow">
+            {{ t('hostControl.canbus.downFirst') }}
+          </span>
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <label class="flex flex-col gap-0.5">
+              <span class="opacity-60">{{ t('hostControl.canbus.samplePoint') }}</span>
+              <input
+                v-model="edit[b.interface].sample_point"
+                type="number"
+                step="0.001"
+                min="0"
+                max="0.999"
+                class="nb-input bg-paper px-1 py-0.5"
+                :disabled="b.link_up === true || busy === b.interface"
+              />
+            </label>
+            <label class="flex flex-col gap-0.5">
+              <span class="opacity-60"
+                >{{ t('hostControl.canbus.sjw')
+                }}<template v-if="b.limits?.sjw_max"> (≤{{ b.limits.sjw_max }})</template></span
+              >
+              <input
+                v-model="edit[b.interface].sjw"
+                type="number"
+                min="1"
+                :max="b.limits?.sjw_max ?? 128"
+                class="nb-input bg-paper px-1 py-0.5"
+                :disabled="b.link_up === true || busy === b.interface"
+              />
+            </label>
+            <label class="flex flex-col gap-0.5">
+              <span class="opacity-60">{{ t('hostControl.canbus.restartMs') }}</span>
+              <input
+                v-model="edit[b.interface].restart_ms"
+                type="number"
+                min="0"
+                class="nb-input bg-paper px-1 py-0.5"
+                :disabled="b.link_up === true || busy === b.interface"
+              />
+            </label>
+            <label class="flex flex-col gap-0.5">
+              <span class="opacity-60">{{ t('hostControl.canbus.txQueueLen') }}</span>
+              <input
+                v-model="edit[b.interface].txqueuelen"
+                type="number"
+                min="0"
+                class="nb-input bg-paper px-1 py-0.5"
+                :disabled="b.link_up === true || busy === b.interface"
+              />
+            </label>
+          </div>
+
+          <!-- control-mode flags -->
+          <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+            <label v-for="fk in FLAG_KEYS" :key="fk" class="flex items-center gap-1">
+              <input
+                v-model="edit[b.interface].flags[fk]"
+                type="checkbox"
+                :disabled="b.link_up === true || busy === b.interface"
+              />
+              {{ t('hostControl.canbus.flag.' + fk) }}
+            </label>
+          </div>
+
+          <!-- CAN-FD (only when the controller supports it) -->
+          <div v-if="b.limits?.fd_supported" class="space-y-1 border-t border-ink/10 pt-1">
+            <label class="flex items-center gap-1 text-[11px] font-bold">
+              <input
+                v-model="edit[b.interface].fd"
+                type="checkbox"
+                :disabled="b.link_up === true || busy === b.interface"
+              />
+              {{ t('hostControl.canbus.fd') }}
+            </label>
+            <div v-if="edit[b.interface].fd" class="grid grid-cols-2 gap-2 text-[11px]">
+              <label class="flex flex-col gap-0.5">
+                <span class="opacity-60">{{ t('hostControl.canbus.dbitrate') }}</span>
+                <input
+                  v-model="edit[b.interface].dbitrate"
+                  type="number"
+                  class="nb-input bg-paper px-1 py-0.5"
+                  :disabled="b.link_up === true || busy === b.interface"
+                />
+              </label>
+              <label class="flex flex-col gap-0.5">
+                <span class="opacity-60">{{ t('hostControl.canbus.dsamplePoint') }}</span>
+                <input
+                  v-model="edit[b.interface].dsample_point"
+                  type="number"
+                  step="0.001"
+                  class="nb-input bg-paper px-1 py-0.5"
+                  :disabled="b.link_up === true || busy === b.interface"
+                />
+              </label>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="nb-btn bg-paper px-2 py-0.5 text-xs disabled:opacity-50"
+            :disabled="b.link_up === true || busy === b.interface"
+            @click="applyParams(b)"
+          >
+            {{ t('hostControl.canbus.applyParams') }}
+          </button>
+        </div>
       </div>
     </section>
   </div>

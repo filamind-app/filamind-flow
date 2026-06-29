@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-06-29
+
+### Added
+
+- **Full CAN bus parameter control** in Host Control's CAN Bus tab: beyond up/down + bitrate, an
+  advanced editor exposes every SocketCAN tunable the controller reports — sample point, SJW,
+  auto-restart (ms), tx queue length, the control-mode flags (listen-only, loopback, triple
+  sampling, one-shot, bus-error reporting) and the CAN-FD data phase (data bitrate / sample point)
+  when supported — each bounded by the controller's reported limits. Triple sampling + a higher SJW
+  improve electrical-noise tolerance; auto-restart recovers the bus after a BUS-OFF.
+- A **Restart bus** button recovers a controller that has gone BUS-OFF.
+
+### Changed
+
+- The CAN status read now surfaces the controller's full parameter set and allowed ranges (single
+  `ip -details -json` call); changes are still gated (interface down for timing/modes, refused while
+  printing, restricted to discovered CAN interfaces).
+
 ## [1.7.0] - 2026-06-29
 
 ### Added

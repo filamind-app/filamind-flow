@@ -293,7 +293,26 @@
       "setBitrate": "Bitrate instellen",
       "downFirst": "Schakel de interface uit om de bitrate te wijzigen.",
       "actionOk": "Interface bijgewerkt.",
-      "actionFailed": "De actie is mislukt."
+      "actionFailed": "De actie is mislukt.",
+      "advanced": "Geavanceerde parameters",
+      "samplePoint": "Sample point",
+      "sjw": "SJW",
+      "restartMs": "Automatisch herstarten (ms)",
+      "txQueueLen": "TX-wachtrijlengte",
+      "flag": {
+        "listen_only": "Alleen luisteren",
+        "loopback": "Loopback",
+        "triple_sampling": "Drievoudige sampling",
+        "one_shot": "One-shot",
+        "berr_reporting": "Busfoutrapportage"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Data-bitrate (bit/s)",
+      "dsamplePoint": "Data sample point",
+      "applyParams": "Parameters toepassen",
+      "restart": "Bus herstarten",
+      "restartHint": "Herstel een controller die in BUS-OFF is gegaan.",
+      "noiseHint": "Drievoudige sampling en een hogere SJW verbeteren de tolerantie voor elektrische ruis. Automatisch herstarten (ms) brengt de bus terug na een BUS-OFF."
     },
     "advisor": {
       "intro": "Hostconditie in één oogopslag - CPU, geheugen, schijf, klok en diensten, elk met een beoordeling en een oplossing.",
