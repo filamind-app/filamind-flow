@@ -293,7 +293,26 @@
       "setBitrate": "設定傳輸速率",
       "downFirst": "請先停用此介面才能變更其傳輸速率。",
       "actionOk": "介面已更新。",
-      "actionFailed": "操作失敗。"
+      "actionFailed": "操作失敗。",
+      "advanced": "進階參數",
+      "samplePoint": "採樣點",
+      "sjw": "SJW",
+      "restartMs": "自動重啟 (ms)",
+      "txQueueLen": "TX 佇列長度",
+      "flag": {
+        "listen_only": "僅監聽",
+        "loopback": "迴路測試",
+        "triple_sampling": "三重採樣",
+        "one_shot": "單次傳送",
+        "berr_reporting": "匯流排錯誤回報"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "資料傳輸速率 (bit/s)",
+      "dsamplePoint": "資料採樣點",
+      "applyParams": "套用參數",
+      "restart": "重啟匯流排",
+      "restartHint": "讓進入 BUS-OFF 狀態的控制器恢復運作。",
+      "noiseHint": "三重採樣搭配較高的 SJW 可提升對電氣噪訊的容忍度；自動重啟 (ms) 會在 BUS-OFF 後讓匯流排重新恢復。"
     },
     "advisor": {
       "intro": "一眼掌握主機健康狀態 - CPU、記憶體、磁碟、時鐘與服務，每項皆評分並附上修正建議。",

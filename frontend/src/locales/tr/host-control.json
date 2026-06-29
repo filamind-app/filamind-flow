@@ -293,7 +293,26 @@
       "setBitrate": "Bitrate ayarla",
       "downFirst": "Bitrate'i değiştirmek için önce arayüzü devre dışı bırakın.",
       "actionOk": "Arayüz güncellendi.",
-      "actionFailed": "İşlem başarısız oldu."
+      "actionFailed": "İşlem başarısız oldu.",
+      "advanced": "Gelişmiş parametreler",
+      "samplePoint": "Örnekleme noktası",
+      "sjw": "SJW",
+      "restartMs": "Otomatik yeniden başlatma (ms)",
+      "txQueueLen": "TX kuyruk uzunluğu",
+      "flag": {
+        "listen_only": "Yalnızca dinleme",
+        "loopback": "Geri döngü",
+        "triple_sampling": "Üçlü örnekleme",
+        "one_shot": "Tek atış",
+        "berr_reporting": "Bus hatası raporlama"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Veri bitrate'i (bit/s)",
+      "dsamplePoint": "Veri örnekleme noktası",
+      "applyParams": "Parametreleri uygula",
+      "restart": "Bus'ı yeniden başlat",
+      "restartHint": "BUS-OFF durumuna geçmiş bir denetleyiciyi kurtarın.",
+      "noiseHint": "Üçlü örnekleme ve daha yüksek bir SJW, elektriksel gürültüye karşı toleransı artırır. Otomatik yeniden başlatma (ms), bir BUS-OFF sonrasında bus'ı geri getirir."
     },
     "advisor": {
       "intro": "Ana makine sağlığına bir bakış - CPU, bellek, disk, saat ve servisler; her biri çözümüyle birlikte derecelendirilir.",

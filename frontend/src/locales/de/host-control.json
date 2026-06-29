@@ -293,7 +293,26 @@
       "setBitrate": "Bitrate festlegen",
       "downFirst": "Deaktiviere die Schnittstelle, um ihre Bitrate zu ändern.",
       "actionOk": "Schnittstelle aktualisiert.",
-      "actionFailed": "Die Aktion ist fehlgeschlagen."
+      "actionFailed": "Die Aktion ist fehlgeschlagen.",
+      "advanced": "Erweiterte Parameter",
+      "samplePoint": "Abtastpunkt",
+      "sjw": "SJW",
+      "restartMs": "Auto-Neustart (ms)",
+      "txQueueLen": "TX-Warteschlangenlänge",
+      "flag": {
+        "listen_only": "Nur mithören",
+        "loopback": "Loopback",
+        "triple_sampling": "Dreifachabtastung",
+        "one_shot": "One-Shot",
+        "berr_reporting": "Bus-Fehler-Meldung"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Daten-Bitrate (Bit/s)",
+      "dsamplePoint": "Daten-Abtastpunkt",
+      "applyParams": "Parameter übernehmen",
+      "restart": "Bus neu starten",
+      "restartHint": "Stellt einen Controller wieder her, der in den Zustand BUS-OFF gegangen ist.",
+      "noiseHint": "Dreifachabtastung und ein höherer SJW verbessern die Toleranz gegenüber elektrischen Störungen. Der Auto-Neustart (ms) holt den Bus nach einem BUS-OFF zurück."
     },
     "advisor": {
       "intro": "Host-Zustand auf einen Blick: CPU, Speicher, Datenträger, Uhr und Dienste, jeweils bewertet samt Lösung.",

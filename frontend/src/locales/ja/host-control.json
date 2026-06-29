@@ -293,7 +293,26 @@
       "setBitrate": "ビットレートを設定",
       "downFirst": "ビットレートを変更するには、先にインターフェースを無効化してください。",
       "actionOk": "インターフェースを更新しました。",
-      "actionFailed": "操作に失敗しました。"
+      "actionFailed": "操作に失敗しました。",
+      "advanced": "詳細パラメータ",
+      "samplePoint": "サンプルポイント",
+      "sjw": "SJW",
+      "restartMs": "自動再起動 (ms)",
+      "txQueueLen": "TX キュー長",
+      "flag": {
+        "listen_only": "リッスンのみ",
+        "loopback": "ループバック",
+        "triple_sampling": "トリプルサンプリング",
+        "one_shot": "ワンショット",
+        "berr_reporting": "バスエラー報告"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "データビットレート (bit/s)",
+      "dsamplePoint": "データサンプルポイント",
+      "applyParams": "パラメータを適用",
+      "restart": "バスを再起動",
+      "restartHint": "BUS-OFF になったコントローラを復旧します。",
+      "noiseHint": "トリプルサンプリングと高めの SJW は電気的ノイズへの耐性を高めます。自動再起動 (ms) は BUS-OFF 後にバスを復帰させます。"
     },
     "advisor": {
       "intro": "ホストの健全性をひと目で把握。CPU・メモリ・ディスク・時刻・サービスを、それぞれ評価と対処法つきで表示します。",

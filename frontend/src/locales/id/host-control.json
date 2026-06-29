@@ -293,7 +293,26 @@
       "setBitrate": "Atur bitrate",
       "downFirst": "Matikan antarmuka untuk mengubah bitrate-nya.",
       "actionOk": "Antarmuka diperbarui.",
-      "actionFailed": "Tindakan gagal."
+      "actionFailed": "Tindakan gagal.",
+      "advanced": "Parameter lanjutan",
+      "samplePoint": "Titik sampel",
+      "sjw": "SJW",
+      "restartMs": "Mulai ulang otomatis (ms)",
+      "txQueueLen": "Panjang antrean TX",
+      "flag": {
+        "listen_only": "Hanya dengar",
+        "loopback": "Loopback",
+        "triple_sampling": "Sampling rangkap tiga",
+        "one_shot": "Sekali kirim",
+        "berr_reporting": "Pelaporan galat bus"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Bitrate data (bit/d)",
+      "dsamplePoint": "Titik sampel data",
+      "applyParams": "Terapkan parameter",
+      "restart": "Mulai ulang bus",
+      "restartHint": "Pulihkan kontroler yang masuk kondisi BUS-OFF.",
+      "noiseHint": "Sampling rangkap tiga dan SJW yang lebih tinggi meningkatkan ketahanan terhadap derau listrik; mulai ulang otomatis (ms) memulihkan bus setelah BUS-OFF."
     },
     "advisor": {
       "intro": "Kesehatan host secara sekilas - CPU, memori, disk, jam, dan layanan, masing-masing dinilai beserta cara perbaikannya.",

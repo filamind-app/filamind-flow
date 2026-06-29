@@ -207,6 +207,38 @@ export interface CanBusStatus {
   board_id?: string | null
   board_match?: 'suggested' | 'confirmed' | null
   board_match_confidence?: number
+  /** Current tunable values (bit timing, recovery, CAN-FD, control-mode flags). */
+  params?: CanParams
+  /** The controller's reported ranges + which extras it supports (drive the form bounds). */
+  limits?: CanLimits
+}
+
+/** Live CAN tunables (only the ones the controller reports are present). */
+export interface CanParams {
+  sample_point?: number
+  sjw?: number
+  brp?: number
+  tq?: number
+  prop_seg?: number
+  phase_seg1?: number
+  phase_seg2?: number
+  restart_ms?: number
+  dbitrate?: number
+  dsample_point?: number
+  /** Active control modes, keyed by api name (listen_only, loopback, triple_sampling, …). */
+  flags?: Record<string, boolean>
+}
+
+export interface CanLimits {
+  tseg1_min?: number
+  tseg1_max?: number
+  tseg2_min?: number
+  tseg2_max?: number
+  sjw_max?: number
+  brp_min?: number
+  brp_max?: number
+  clock_freq?: number
+  fd_supported?: boolean
 }
 
 /** Outcome of a CAN link/bitrate change (mirrors the host service-action result shape). */

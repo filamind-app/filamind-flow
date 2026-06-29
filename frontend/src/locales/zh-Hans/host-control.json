@@ -293,7 +293,26 @@
       "setBitrate": "设置比特率",
       "downFirst": "请先禁用该接口才能更改其比特率。",
       "actionOk": "接口已更新。",
-      "actionFailed": "操作失败。"
+      "actionFailed": "操作失败。",
+      "advanced": "高级参数",
+      "samplePoint": "采样点",
+      "sjw": "SJW",
+      "restartMs": "自动重启 (ms)",
+      "txQueueLen": "TX 队列长度",
+      "flag": {
+        "listen_only": "仅监听",
+        "loopback": "回环",
+        "triple_sampling": "三次采样",
+        "one_shot": "单次发送",
+        "berr_reporting": "总线错误上报"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "数据比特率 (bit/s)",
+      "dsamplePoint": "数据采样点",
+      "applyParams": "应用参数",
+      "restart": "重启总线",
+      "restartHint": "恢复已进入 BUS-OFF 状态的控制器。",
+      "noiseHint": "三次采样和更高的 SJW 可提升抗电气噪声能力；自动重启 (ms) 会在 BUS-OFF 后让总线重新恢复。"
     },
     "advisor": {
       "intro": "一览主机健康状况——CPU、内存、磁盘、时钟和服务，每项均评级并附带修复建议。",

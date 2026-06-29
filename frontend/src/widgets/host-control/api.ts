@@ -197,6 +197,12 @@ export const setCanLink = (iface: string, up: boolean) => postCanbus('link', { i
 /** Set a CAN interface's bitrate (interface must be down first). Throws HostActionError if refused. */
 export const setCanBitrate = (iface: string, bitrate: number) =>
   postCanbus('bitrate', { iface, bitrate })
+/** Set any combination of CAN parameters (timing/modes/recovery/CAN-FD/txqueuelen). All but
+ *  txqueuelen need the interface down. Throws HostActionError(400) on a bad value, (403) if refused. */
+export const setCanParams = (iface: string, params: Record<string, number | boolean>) =>
+  postCanbus('params', { iface, params })
+/** Restart a BUS-OFF CAN controller to recover the bus. Throws HostActionError if refused. */
+export const restartCanBus = (iface: string) => postCanbus('restart', { iface })
 
 export const setTimezone = (timezone: string) => postSystem('timezone', { timezone })
 export const setNtp = (enabled: boolean) => postSystem('ntp', { enabled })

@@ -293,7 +293,26 @@
       "setBitrate": "Definir bitrate",
       "downFirst": "Desative a interface para alterar o bitrate.",
       "actionOk": "Interface atualizada.",
-      "actionFailed": "A ação falhou."
+      "actionFailed": "A ação falhou.",
+      "advanced": "Parâmetros avançados",
+      "samplePoint": "Ponto de amostragem",
+      "sjw": "SJW",
+      "restartMs": "Reinício automático (ms)",
+      "txQueueLen": "Tamanho da fila TX",
+      "flag": {
+        "listen_only": "Somente escuta",
+        "loopback": "Loopback",
+        "triple_sampling": "Amostragem tripla",
+        "one_shot": "Disparo único",
+        "berr_reporting": "Relato de erros do barramento"
+      },
+      "fd": "CAN-FD",
+      "dbitrate": "Bitrate de dados (bit/s)",
+      "dsamplePoint": "Ponto de amostragem de dados",
+      "applyParams": "Aplicar parâmetros",
+      "restart": "Reiniciar barramento",
+      "restartHint": "Recupera um controlador que entrou em estado BUS-OFF.",
+      "noiseHint": "A amostragem tripla e um SJW mais alto melhoram a tolerância a ruído elétrico; o reinício automático (ms) restabelece o barramento após um BUS-OFF."
     },
     "advisor": {
       "intro": "Saúde do host num relance - CPU, memória, disco, relógio e serviços, cada um avaliado com uma correção.",

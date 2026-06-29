@@ -21,7 +21,29 @@ _IP_JSON = json.dumps(
                 "info_data": {
                     "state": "ERROR-ACTIVE",
                     "berr_counter": {"tx": 2, "rx": 1},
-                    "bittiming": {"bitrate": 1_000_000},
+                    "restart_ms": 1000,
+                    "bittiming": {
+                        "bitrate": 1_000_000,
+                        "sample_point": 0.875,
+                        "sjw": 1,
+                        "brp": 5,
+                        "tq": 50,
+                        "prop_seg": 7,
+                        "phase_seg1": 7,
+                        "phase_seg2": 2,
+                    },
+                    "bittiming_const": {
+                        "name": "gs_usb",
+                        "tseg1_min": 1,
+                        "tseg1_max": 16,
+                        "tseg2_min": 1,
+                        "tseg2_max": 8,
+                        "sjw_max": 4,
+                        "brp_min": 1,
+                        "brp_max": 1024,
+                    },
+                    "clock": {"freq": 48_000_000},
+                    "ctrlmode": ["LISTEN-ONLY"],
                 },
             },
         }
@@ -34,16 +56,17 @@ def _is_show(cmd: list[str]) -> bool:
 
 
 def test_parse_live_extracts_fields() -> None:
-    entry = json.loads(_IP_JSON)[0]
-    live = canbus_control._parse_live(entry)
-    assert live == {
-        "link_up": True,
-        "state": "ERROR-ACTIVE",
-        "errors_rx": 1,
-        "errors_tx": 2,
-        "txqueuelen": 128,
-        "bitrate": 1_000_000,
-    }
+    live = canbus_control._parse_live(json.loads(_IP_JSON)[0])
+    assert live["link_up"] is True
+    assert live["state"] == "ERROR-ACTIVE"
+    assert (live["errors_rx"], live["errors_tx"]) == (1, 2)
+    assert live["txqueuelen"] == 128
+    assert live["bitrate"] == 1_000_000
+    p = live["params"]
+    assert p["sample_point"] == 0.875 and p["sjw"] == 1 and p["restart_ms"] == 1000
+    assert p["flags"]["listen_only"] is True and p["flags"]["loopback"] is False
+    lim = live["limits"]
+    assert lim["sjw_max"] == 4 and lim["clock_freq"] == 48_000_000 and lim["fd_supported"] is False
 
 
 async def test_all_live_status_handles_missing_ip(monkeypatch: Any) -> None:
@@ -172,3 +195,89 @@ async def test_set_action_reports_missing_sudo(monkeypatch: Any) -> None:
     monkeypatch.setattr(canbus_control, "_run", nosudo)
     res = await canbus_control.set_link("can0", False, "http://x")
     assert res["ok"] is False and res["needs_setup"] is True
+
+
+_DOWN_JSON = _IP_JSON.replace('"UP", ', "")
+
+
+def _idle_run_setup(monkeypatch: Any, show_json: str, calls: list[list[str]]) -> None:
+    async def idle(_self: Any, _objs: Any) -> dict[str, Any]:
+        return {"print_stats": {"state": "standby"}}
+
+    async def fake_run(cmd: Any, timeout: float = 10.0) -> tuple[int, str]:
+        calls.append(list(cmd))
+        return (0, show_json) if _is_show(cmd) else (0, "")
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", idle)
+    monkeypatch.setattr(canbus_control, "_run", fake_run)
+
+
+async def test_set_params_validates(monkeypatch: Any) -> None:
+    _idle_run_setup(monkeypatch, _IP_JSON, [])
+    # unknown key
+    with pytest.raises(ValueError):
+        await canbus_control.set_params("can0", {"bogus": 1}, "http://x")
+    # sjw above the controller's reported sjw_max (4)
+    with pytest.raises(ValueError):
+        await canbus_control.set_params("can0", {"sjw": 8}, "http://x")
+    # a flag must be boolean, not a number
+    with pytest.raises(ValueError):
+        await canbus_control.set_params("can0", {"listen_only": 1}, "http://x")
+    # empty payload
+    with pytest.raises(ValueError):
+        await canbus_control.set_params("can0", {}, "http://x")
+
+
+async def test_set_params_requires_down(monkeypatch: Any) -> None:
+    _idle_run_setup(monkeypatch, _IP_JSON, [])  # _IP_JSON is link_up=True
+    res = await canbus_control.set_params("can0", {"bitrate": 500_000}, "http://x")
+    assert res["refused"] is True
+
+
+async def test_set_params_builds_command_when_down(monkeypatch: Any) -> None:
+    calls: list[list[str]] = []
+    _idle_run_setup(monkeypatch, _DOWN_JSON, calls)
+    res = await canbus_control.set_params(
+        "can0",
+        {"bitrate": 500_000, "sample_point": 0.85, "listen_only": True, "triple_sampling": False},
+        "http://x",
+    )
+    assert res["ok"] is True
+    set_cmd = next(c for c in calls if "set" in c and "type" in c)
+    assert set_cmd[:7] == ["sudo", "-n", "ip", "link", "set", "can0", "type"]
+    for tok in (
+        "bitrate",
+        "500000",
+        "sample-point",
+        "0.85",
+        "listen-only",
+        "on",
+        "triple-sampling",
+        "off",
+    ):
+        assert tok in set_cmd
+
+
+async def test_set_params_txqueuelen_runs_separately(monkeypatch: Any) -> None:
+    calls: list[list[str]] = []
+    _idle_run_setup(monkeypatch, _IP_JSON, calls)  # up is fine: txqueuelen doesn't need down
+    res = await canbus_control.set_params("can0", {"txqueuelen": 256}, "http://x")
+    assert res["ok"] is True
+    assert ["sudo", "-n", "ip", "link", "set", "can0", "txqueuelen", "256"] in calls
+    # bad txqueuelen rejected
+    with pytest.raises(ValueError):
+        await canbus_control.set_params("can0", {"txqueuelen": -1}, "http://x")
+
+
+async def test_set_restart(monkeypatch: Any) -> None:
+    calls: list[list[str]] = []
+    _idle_run_setup(monkeypatch, _IP_JSON, calls)
+    res = await canbus_control.set_restart("can0", "http://x")
+    assert res["ok"] is True
+    assert ["sudo", "-n", "ip", "link", "set", "can0", "type", "can", "restart"] in calls
+
+    async def printing(_self: Any, _objs: Any) -> dict[str, Any]:
+        return {"print_stats": {"state": "printing"}}
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", printing)
+    assert (await canbus_control.set_restart("can0", "http://x"))["refused"] is True
