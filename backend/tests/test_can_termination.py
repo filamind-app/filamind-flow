@@ -111,7 +111,9 @@ def test_live_high_error_counters_warn(monkeypatch: Any) -> None:
     assert err["level"] == "warning" and err["interface"] == "can0"
 
 
-def test_live_healthy_bus_has_no_error_finding(monkeypatch: Any) -> None:
+def test_live_healthy_bus_gives_ok_verdict(monkeypatch: Any) -> None:
+    """A healthy ERROR-ACTIVE bus yields a reading-based OK verdict (termination looks correct),
+    not an error - this is what the user sees when the 120Ω termination is right."""
     monkeypatch.setattr(reference_data, "board_by_id", lambda i: None)
     result = {
         "mcus": [{"name": "toolhead", "connection": "canbus", "board_id": "ebb"}],
@@ -120,7 +122,20 @@ def test_live_healthy_bus_has_no_error_finding(monkeypatch: Any) -> None:
     live = {"can0": {"link_up": True, "state": "ERROR-ACTIVE", "errors_rx": 0, "errors_tx": 0}}
     term = board_topology._can_termination(result, live)
     assert not any(f["code"] == "bus_error" for f in term["findings"])
-    # a down interface is not flagged (it isn't carrying the bus)
+    ok = next(f for f in term["findings"] if f["code"] == "bus_ok")
+    assert ok["level"] == "ok" and ok["interface"] == "can0" and ok["state"] == "ERROR-ACTIVE"
+
+
+def test_live_down_or_no_reading_gives_no_verdict(monkeypatch: Any) -> None:
+    """A down interface isn't carrying the bus, so there's no reading-based verdict."""
+    monkeypatch.setattr(reference_data, "board_by_id", lambda i: None)
+    result = {
+        "mcus": [{"name": "toolhead", "connection": "canbus", "board_id": "ebb"}],
+        "can_buses": [{"interface": "can0", "board_id": "u2c"}],
+    }
     down = {"can0": {"link_up": False, "state": "BUS-OFF"}}
-    term2 = board_topology._can_termination(result, down)
-    assert not any(f["code"] == "bus_error" for f in term2["findings"])
+    term = board_topology._can_termination(result, down)
+    assert not any(f["code"] in ("bus_error", "bus_ok") for f in term["findings"])
+    # no live status at all -> no verdict either
+    term2 = board_topology._can_termination(result, {})
+    assert not any(f["code"] in ("bus_error", "bus_ok") for f in term2["findings"])

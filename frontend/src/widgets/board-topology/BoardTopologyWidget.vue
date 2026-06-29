@@ -273,10 +273,12 @@ function termFinding(f: {
     state: f.state ?? '',
   })
 }
-/** Tailwind classes for a finding by severity: error = red, warning = yellow, info = muted. */
+/** Tailwind classes for a finding by severity: error = red, warning = yellow, ok = green (the
+ *  reading-based "termination looks correct" verdict), info = muted. */
 function termFindingClass(level: string): string {
   if (level === 'error') return 'bg-brand-red/20 font-bold'
   if (level === 'warning') return 'bg-brand-yellow/20 font-bold'
+  if (level === 'ok') return 'bg-brand-lime/20 font-bold'
   return 'opacity-70'
 }
 

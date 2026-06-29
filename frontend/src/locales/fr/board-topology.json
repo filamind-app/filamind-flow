@@ -331,7 +331,8 @@
         "both_ends": "Deux nœuds : les deux extrémités doivent être terminées (≈60Ω sur l'ensemble du bus).",
         "middle_off": "{count} nœuds sur le bus : ne terminez que les deux extrémités ; la ou les terminaisons 120Ω des nœuds intermédiaires doivent être DÉSACTIVÉES.",
         "single_node": "Un seul nœud CAN détecté.",
-        "bus_error": "{interface} signale des erreurs CAN ({state}). Cela indique généralement une terminaison 120Ω incorrecte (absente, en trop ou pas aux deux extrémités) ou un défaut de câblage/bruit. Vérifiez qu'il y a exactement deux terminaisons 120Ω, une à chaque extrémité du bus."
+        "bus_error": "{interface} signale des erreurs CAN ({state}). Cela indique généralement une terminaison 120Ω incorrecte (absente, en trop ou pas aux deux extrémités) ou un défaut de câblage/bruit. Vérifiez qu'il y a exactement deux terminaisons 120Ω, une à chaque extrémité du bus.",
+        "bus_ok": "Le bus CAN ({interface}) communique correctement ({state}) ; la terminaison 120Ω semble correcte d'après les relevés en direct."
       }
     }
   }

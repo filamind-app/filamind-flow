@@ -815,11 +815,14 @@ _CAN_ERR_WARN_COUNT = 96  # the kernel's CAN error-warning threshold (tx/rx erro
 def _can_health_finding(
     can_buses: list[dict[str, Any]], live_status: dict[str, Any]
 ) -> dict[str, Any] | None:
-    """A live bus-health finding when a CAN controller is reporting errors - the only
-    software-visible sign that the 120Ω termination is wrong (missing, too many, or not at the two
-    ends). Returns the single worst interface's finding, or ``None`` when every controller is OK."""
+    """A reading-based verdict on the 120Ω termination, from the live CAN controller state - the one
+    software-visible signal for what the user can't read off a jumper. A controller in BUS-OFF /
+    ERROR-PASSIVE (or piling up errors) means the termination is almost certainly wrong
+    (``bus_error``); a healthy ERROR-ACTIVE controller means it looks correct (``bus_ok``). Returns
+    the worst error, else an OK verdict for a healthy live bus, else ``None`` (no reading)."""
     severity = {"error": 2, "warning": 1}
     worst: dict[str, Any] | None = None
+    ok: dict[str, Any] | None = None
     for bus in can_buses:
         iface = bus.get("interface")
         st = live_status.get(iface) if iface else None
@@ -833,11 +836,19 @@ def _can_health_finding(
             if counts and max(counts) >= _CAN_ERR_WARN_COUNT:
                 level, state = "warning", state or "ERROR-WARNING"
         if level is None:
+            # Healthy, link-up controller (ERROR-ACTIVE / no elevated errors): termination looks OK.
+            if ok is None:
+                ok = {
+                    "code": "bus_ok",
+                    "level": "ok",
+                    "interface": str(iface),
+                    "state": state or "ERROR-ACTIVE",
+                }
             continue
         cand = {"code": "bus_error", "level": level, "interface": str(iface), "state": state}
         if worst is None or severity[level] > severity[str(worst["level"])]:
             worst = cand
-    return worst
+    return worst or ok
 
 
 def _can_termination(

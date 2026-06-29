@@ -216,6 +216,24 @@ def test_usb_can_adapters_are_class_adapter() -> None:
     assert "probe" in facets["boardClass"]
 
 
+def test_config_notes_are_always_a_list() -> None:
+    """The catalog stores configNotes as a list for most boards but as a bare string for a few
+    (e.g. btt-eddy). They must be normalised to a list of strings, else the UI's per-item v-for
+    renders the string one character per line."""
+    for b in reference_data.boards():
+        notes = b.get("configNotes")
+        if notes is None:
+            continue
+        assert isinstance(notes, list), (
+            f"{b['board_id']} configNotes must be a list, got {type(notes)}"
+        )
+        assert all(isinstance(n, str) for n in notes), f"{b['board_id']} configNotes non-str entry"
+    # the specific board the user hit: a single string -> a 1-element list, not 100+ chars
+    eddy = reference_data.board_by_id("btt-eddy")
+    if eddy is not None:
+        assert isinstance(eddy.get("configNotes"), list) and len(eddy["configNotes"]) <= 3
+
+
 def test_boards_enriched_media_links_are_safe() -> None:
     """Phase 5+6: some boards carry enriched specs + link-only media. Any media URL
     must be a real http(s) link (never a fabricated/relative path)."""
