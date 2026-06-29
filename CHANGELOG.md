@@ -6,6 +6,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-06-29
+
+### Added
+
+- **Full CAN bus control** in Host Control: a CAN Bus tab showing each interface's link state, CAN
+  controller state, bitrate, bus-error counters and tx queue length, with bring up/down and set
+  bitrate (gated — refused while printing; restricted to discovered CAN interfaces).
+- **Manually add parts** the auto-detection misses in Board Topology — a board/MCU, a USB-CAN
+  adapter, or a host display — persisted and merged onto the map as editable nodes.
+- **Host health Advisor** in Host Control: graded cards (CPU/memory/disk/clock/services) with status
+  badges and actionable fix hints.
+- **Structural config lint** in the Config Editor: pin conflicts, Klipper's own config warnings,
+  unsaved SAVE_CONFIG, and a few structural checks.
+
+### Changed
+
+- The **passwordless-sudo grant now refreshes automatically on update**: a new privileged capability
+  the panel needs (e.g. CAN-bus `ip` control) reaches every install on the next Moonraker update
+  with no manual re-run of the installer. Validated with `visudo` before install; best-effort.
+- The **USB-CAN adapter (U2C) flash moved into the Firmware Manager** (BETA), with the Board Topology
+  CAN node linking across to it.
+- **Board auto-resolution** narrows same-chip fingerprint candidates by connection (a CAN MCU is
+  almost always a toolhead board), so tricky CAN toolheads like the EBB SB2209 resolve correctly
+  without loosening the ambiguity guard.
+
 ## [1.5.1] - 2026-06-25
 
 ### Fixed
