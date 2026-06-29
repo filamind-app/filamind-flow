@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.models.schemas import Topology
 from app.services import board_topology, reference_data
 
 
@@ -75,6 +76,26 @@ def test_live_bus_off_raises_error_finding(monkeypatch: Any) -> None:
     # the adapter node carries the live state for the UI to show
     adapter = next(n for n in term["nodes"] if n["role"] == "adapter")
     assert adapter["live_state"] == "BUS-OFF" and adapter["errors_tx"] == 255
+
+
+def test_live_fields_survive_topology_schema_roundtrip(monkeypatch: Any) -> None:
+    """The Topology response_model must NOT strip the live-state fields: the GET /api/topology route
+    re-validates + re-serializes through Topology, so the schema has to declare live_state /
+    errors_rx / errors_tx on nodes and interface / state on findings, or the live-CAN-health feature
+    silently disappears from the API payload."""
+    monkeypatch.setattr(reference_data, "board_by_id", lambda i: None)
+    result = {
+        "mcus": [{"name": "toolhead", "connection": "canbus", "board_id": "ebb"}],
+        "can_buses": [{"interface": "can0", "board_id": "u2c"}],
+    }
+    live = {"can0": {"link_up": True, "state": "BUS-OFF", "errors_rx": 3, "errors_tx": 255}}
+    term = board_topology._can_termination(result, live)
+    dumped = Topology.model_validate({"can_termination": term}).model_dump()["can_termination"]
+    adapter = next(n for n in dumped["nodes"] if n["role"] == "adapter")
+    assert adapter["live_state"] == "BUS-OFF"
+    assert adapter["errors_rx"] == 3 and adapter["errors_tx"] == 255
+    err = next(f for f in dumped["findings"] if f["code"] == "bus_error")
+    assert err["interface"] == "can0" and err["state"] == "BUS-OFF" and err["level"] == "error"
 
 
 def test_live_high_error_counters_warn(monkeypatch: Any) -> None:

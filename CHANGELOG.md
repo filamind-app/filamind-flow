@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.10.1] - 2026-06-29
+
+### Fixed
+
+- The live CAN termination check from 1.10.0 didn't reach the API: the `Topology` response model
+  stripped the new per-node controller state (`live_state` / error counters) and the `bus_error`
+  finding's interface + state, so the red node indicator never showed and the advisory rendered
+  with blank values. The schema now declares these fields and a round-trip test guards them.
+
 ## [1.10.0] - 2026-06-29
 
 ### Added

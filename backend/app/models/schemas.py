@@ -1354,14 +1354,21 @@ class CanTerminationNode(BaseModel):
     board_id: str | None = None
     board_name: str | None = None
     termination: CanTerminationInfo | None = None
+    # Live CAN controller state for this node's interface (adapters only): ERROR-ACTIVE/BUS-OFF/...
+    live_state: str | None = None
+    errors_rx: int | None = None
+    errors_tx: int | None = None
 
 
 class CanTerminationFinding(BaseModel):
     """A termination advisory (rendered via boardTopology.termination.finding.<code>)."""
 
-    code: str  # rule | both_ends | middle_off | single_node
-    level: str = "info"  # info | warning
+    code: str  # rule | both_ends | middle_off | single_node | bus_error
+    level: str = "info"  # info | warning | error
     count: int | None = None
+    # Set on a `bus_error` finding: the unhealthy CAN interface + its live controller state.
+    interface: str | None = None
+    state: str | None = None
 
 
 class CanTermination(BaseModel):
