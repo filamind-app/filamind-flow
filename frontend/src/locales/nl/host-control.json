@@ -107,7 +107,7 @@
           "def": "De CAN-signaleringssnelheid in bits per seconde (1000000 = 1 Mbit/s is standaard). Hij wordt ingesteld in de firmware van elk board; de host en elke node moeten dezelfde waarde gebruiken."
         },
         "samplePoint": {
-          "term": "Sample point",
+          "term": "Bemonsteringspunt",
           "def": "Waar in elke bit het signaalniveau wordt uitgelezen (~87,5% is standaard). Laat het leeg en de kernel stelt het correct in voor de gekozen bitrate."
         },
         "sjw": {
@@ -339,7 +339,7 @@
       "actionOk": "Interface bijgewerkt.",
       "actionFailed": "De actie is mislukt.",
       "advanced": "Geavanceerde parameters",
-      "samplePoint": "Sample point",
+      "samplePoint": "Bemonsteringspunt",
       "sjw": "SJW",
       "restartMs": "Automatisch herstarten (ms)",
       "txQueueLen": "TX-wachtrijlengte",
