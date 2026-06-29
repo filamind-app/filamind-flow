@@ -150,7 +150,7 @@ async def test_set_link_rejects_unknown_iface(monkeypatch: Any) -> None:
         await canbus_control.set_link("can7", True, "http://x")
 
 
-async def test_set_bitrate_validates_and_requires_down(monkeypatch: Any) -> None:
+async def test_set_bitrate_validates_and_cycles_bus(monkeypatch: Any) -> None:
     async def idle(_self: Any, _objs: Any) -> dict[str, Any]:
         return {"print_stats": {"state": "standby"}}
 
@@ -164,22 +164,40 @@ async def test_set_bitrate_validates_and_requires_down(monkeypatch: Any) -> None
     with pytest.raises(ValueError):
         await canbus_control.set_bitrate("can0", 9_999_999, "http://x")
 
-    # interface is up -> refused (must be down first)
-    res = await canbus_control.set_bitrate("can0", 500_000, "http://x")
-    assert res["refused"] is True
-
-    # interface down -> runs the ip type-can bitrate command
-    down_json = _IP_JSON.replace('"UP", ', "")
+    # interface up -> brought DOWN, retimed, brought back UP (no refusal); ends up usable again
     calls: list[list[str]] = []
 
-    async def show_down(cmd: Any, timeout: float = 10.0) -> tuple[int, str]:
+    async def run_up(cmd: Any, timeout: float = 10.0) -> tuple[int, str]:
         calls.append(list(cmd))
-        return (0, down_json) if _is_show(cmd) else (0, "")
+        return (0, _IP_JSON) if _is_show(cmd) else (0, "")
 
-    monkeypatch.setattr(canbus_control, "_run", show_down)
+    monkeypatch.setattr(canbus_control, "_run", run_up)
     res = await canbus_control.set_bitrate("can0", 500_000, "http://x")
-    assert res["ok"] is True
+    assert res["ok"] is True and res["refused"] is False
+    assert ["sudo", "-n", "ip", "link", "set", "can0", "down"] in calls
     assert ["sudo", "-n", "ip", "link", "set", "can0", "type", "can", "bitrate", "500000"] in calls
+    assert ["sudo", "-n", "ip", "link", "set", "can0", "up"] in calls
+
+
+async def test_set_bitrate_restart_firmware_restarts(monkeypatch: Any) -> None:
+    """restart=True triggers a Klipper FIRMWARE_RESTART after re-upping the bus."""
+    fw_called = {"n": 0}
+
+    async def idle(_self: Any, _objs: Any) -> dict[str, Any]:
+        return {"print_stats": {"state": "standby"}}
+
+    async def fw(_self: Any) -> None:
+        fw_called["n"] += 1
+
+    async def run_up(cmd: Any, timeout: float = 10.0) -> tuple[int, str]:
+        return (0, _IP_JSON) if _is_show(cmd) else (0, "")
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", idle)
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.firmware_restart", fw)
+    monkeypatch.setattr(canbus_control, "_run", run_up)
+    res = await canbus_control.set_bitrate("can0", 500_000, "http://x", restart=True)
+    assert res["ok"] is True and res["restarted"] is True
+    assert fw_called["n"] == 1
 
 
 async def test_set_action_reports_missing_sudo(monkeypatch: Any) -> None:
@@ -228,10 +246,55 @@ async def test_set_params_validates(monkeypatch: Any) -> None:
         await canbus_control.set_params("can0", {}, "http://x")
 
 
-async def test_set_params_requires_down(monkeypatch: Any) -> None:
-    _idle_run_setup(monkeypatch, _IP_JSON, [])  # _IP_JSON is link_up=True
+async def test_set_params_cycles_bus_when_up(monkeypatch: Any) -> None:
+    """A timing/mode change on an UP bus is no longer refused: the bus is brought down, the change
+    applied, and the bus brought back up so it resumes (the user no longer has to do it by hand)."""
+    calls: list[list[str]] = []
+    _idle_run_setup(monkeypatch, _IP_JSON, calls)  # _IP_JSON is link_up=True
     res = await canbus_control.set_params("can0", {"bitrate": 500_000}, "http://x")
-    assert res["refused"] is True
+    assert res["ok"] is True and res["refused"] is False
+    assert ["sudo", "-n", "ip", "link", "set", "can0", "down"] in calls
+    assert ["sudo", "-n", "ip", "link", "set", "can0", "up"] in calls
+    # down precedes the up (down → change → up)
+    down_i = calls.index(["sudo", "-n", "ip", "link", "set", "can0", "down"])
+    up_i = calls.index(["sudo", "-n", "ip", "link", "set", "can0", "up"])
+    assert down_i < up_i
+
+
+async def test_set_params_restart_firmware_restarts(monkeypatch: Any) -> None:
+    fw_called = {"n": 0}
+
+    async def fw(_self: Any) -> None:
+        fw_called["n"] += 1
+
+    _idle_run_setup(monkeypatch, _IP_JSON, [])
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.firmware_restart", fw)
+    res = await canbus_control.set_params("can0", {"sjw": 2}, "http://x", restart=True)
+    assert res["ok"] is True and res["restarted"] is True
+    assert fw_called["n"] == 1
+
+
+async def test_restart_klipper_guards_and_calls(monkeypatch: Any) -> None:
+    fw_called = {"n": 0}
+
+    async def fw(_self: Any) -> None:
+        fw_called["n"] += 1
+
+    async def printing(_self: Any, _objs: Any) -> dict[str, Any]:
+        return {"print_stats": {"state": "printing"}}
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.firmware_restart", fw)
+    # refused while printing (a firmware restart would abort the print)
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", printing)
+    assert (await canbus_control.restart_klipper("http://x"))["refused"] is True
+    assert fw_called["n"] == 0
+
+    async def idle(_self: Any, _objs: Any) -> dict[str, Any]:
+        return {"print_stats": {"state": "standby"}}
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", idle)
+    res = await canbus_control.restart_klipper("http://x")
+    assert res["ok"] is True and fw_called["n"] == 1
 
 
 async def test_set_params_builds_command_when_down(monkeypatch: Any) -> None:

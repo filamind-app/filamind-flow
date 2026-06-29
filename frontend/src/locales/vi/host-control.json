@@ -312,7 +312,15 @@
       "applyParams": "Áp dụng tham số",
       "restart": "Khởi động lại bus",
       "restartHint": "Khôi phục bộ điều khiển đã rơi vào trạng thái BUS-OFF.",
-      "noiseHint": "Lấy mẫu ba lần và tăng SJW giúp cải thiện khả năng chống nhiễu điện; tự khởi động lại (ms) đưa bus hoạt động trở lại sau khi gặp BUS-OFF."
+      "noiseHint": "Lấy mẫu ba lần và tăng SJW giúp cải thiện khả năng chống nhiễu điện; tự khởi động lại (ms) đưa bus hoạt động trở lại sau khi gặp BUS-OFF.",
+      "restartKlipper": "Khởi động lại Klipper & MCU",
+      "confirmBitrate": "Thay đổi bitrate? Thao tác này tạm thời tắt bus CAN (mọi MCU CAN bị ngắt kết nối), định lại thời gian, bật lại, rồi khởi động lại Klipper. Đừng bao giờ làm điều này khi đang in.",
+      "confirmParams": "Áp dụng các cài đặt CAN này? Thao tác này tạm thời tắt bus (mọi MCU CAN bị ngắt kết nối), áp dụng thay đổi, bật lại, rồi khởi động lại Klipper. Đừng bao giờ làm điều này khi đang in.",
+      "confirmKlipper": "Khởi động lại Klipper và mọi MCU ngay bây giờ? Các MCU CAN sẽ kết nối lại. Đừng bao giờ làm điều này khi đang in.",
+      "appliedRestarting": "Đã áp dụng. Bus đã bật lại và Klipper đang khởi động lại để các MCU kết nối lại.",
+      "restartingKlipper": "Klipper đang khởi động lại; các MCU sẽ kết nối lại.",
+      "restartFailed": "Thay đổi đã được áp dụng, nhưng yêu cầu khởi động lại Klipper thất bại - hãy khởi động lại thủ công.",
+      "applyHint": "Việc áp dụng sẽ tạm thời tắt bus và khởi động lại Klipper để các MCU kết nối lại với cài đặt mới."
     },
     "advisor": {
       "intro": "Tổng quan nhanh tình trạng máy chủ - CPU, bộ nhớ, ổ đĩa, đồng hồ và dịch vụ, mỗi mục đều được chấm điểm kèm cách khắc phục.",

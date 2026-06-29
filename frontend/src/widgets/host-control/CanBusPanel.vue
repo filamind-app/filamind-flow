@@ -2,11 +2,12 @@
 /** Host Control · CAN Bus - view + manage the host's SocketCAN interfaces.
  *
  *  Shows each CAN interface's live link state, controller state, bitrate, bus-error counters and tx
- *  queue length, and lets the user bring it up/down and set its bitrate. Reads are unprivileged;
- *  changes go through the host's passwordless-sudo grant and the backend refuses them while a print
- *  is running (taking the bus down drops every CAN MCU). Bringing a bus down asks for confirmation;
- *  the bitrate can only change while the interface is down (a SocketCAN constraint). */
-import { onMounted, onUnmounted, ref } from 'vue'
+ *  queue length, and lets the user bring it up/down, set its bitrate and edit advanced parameters.
+ *  Reads are unprivileged; changes go through the host's passwordless-sudo grant and the backend
+ *  refuses them while a print is running (taking the bus down drops every CAN MCU). Applying a
+ *  bitrate/parameter change runs the whole cycle for the user - down (if up) → apply → up → Klipper
+ *  FIRMWARE_RESTART so the CAN MCUs reconnect - behind a confirmation (it briefly drops the bus). */
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import ReportErrorButton from '@/components/feedback/ReportErrorButton.vue'
@@ -16,11 +17,12 @@ import {
   fetchCanBuses,
   HostActionError,
   restartCanBus,
+  restartKlipper,
   setCanBitrate,
   setCanLink,
   setCanParams,
 } from './api'
-import type { CanBusStatus } from './types'
+import type { CanBusActionResult, CanBusStatus } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -33,6 +35,35 @@ const pendingDown = ref<string | null>(null) // iface awaiting "bring down" conf
 const note = ref<string | null>(null)
 const actionError = ref<string | null>(null)
 const bitrateSel = ref<Record<string, number>>({})
+
+// A change that needs the bus down (bitrate / advanced params) or a Klipper restart is confirmed
+// first - it briefly drops every CAN MCU and restarts Klipper, so never do it mid-print.
+type ConfirmKind = 'bitrate' | 'params' | 'klipper'
+const confirmAction = ref<{ iface: string; kind: ConfirmKind } | null>(null)
+const confirmMsgKey: Record<ConfirmKind, string> = {
+  bitrate: 'hostControl.canbus.confirmBitrate',
+  params: 'hostControl.canbus.confirmParams',
+  klipper: 'hostControl.canbus.confirmKlipper',
+}
+const confirmMsg = computed(() =>
+  confirmAction.value ? t(confirmMsgKey[confirmAction.value.kind]) : '',
+)
+function askConfirm(iface: string, kind: ConfirmKind): void {
+  note.value = null
+  actionError.value = null
+  pendingDown.value = null
+  confirmAction.value = { iface, kind }
+}
+async function runConfirmed(): Promise<void> {
+  const a = confirmAction.value
+  if (!a) return
+  confirmAction.value = null
+  if (a.kind === 'klipper') return doRestartKlipper(a.iface)
+  const b = buses.value.find((x) => x.interface === a.iface)
+  if (!b) return
+  if (a.kind === 'bitrate') return doBitrate(a.iface)
+  return applyParams(b)
+}
 
 const COMMON_BITRATES = [1000000, 500000, 250000, 125000]
 let timer: ReturnType<typeof setInterval> | null = null
@@ -120,7 +151,12 @@ async function applyParams(b: CanBusStatus): Promise<void> {
   note.value = null
   actionError.value = null
   try {
-    applyResult(await setCanParams(b.interface, params))
+    // restart=true: the backend cycles the bus down→apply→up, then FIRMWARE_RESTARTs Klipper so the
+    // CAN MCUs reconnect with the new settings (otherwise the change never reaches the printer).
+    applyResult(
+      await setCanParams(b.interface, params, true),
+      t('hostControl.canbus.appliedRestarting'),
+    )
     await load()
   } catch (err) {
     actionError.value = err instanceof HostActionError ? err.message : describeError(err)
@@ -168,13 +204,32 @@ onUnmounted(() => {
   if (timer) clearInterval(timer)
 })
 
-function applyResult(res: { ok: boolean; output: string; needs_setup?: boolean }): void {
-  if (res.ok) {
-    note.value = t('hostControl.canbus.actionOk')
-  } else {
+function applyResult(res: CanBusActionResult, successMsg?: string): void {
+  if (!res.ok) {
     actionError.value = res.needs_setup
       ? t('hostControl.system.needsSetup')
       : res.output || t('hostControl.canbus.actionFailed')
+    return
+  }
+  // The ip change succeeded; surface a follow-up Klipper-restart failure rather than a false "OK".
+  if (res.restarted === false) {
+    actionError.value = res.output || t('hostControl.canbus.restartFailed')
+    return
+  }
+  note.value = successMsg ?? t('hostControl.canbus.actionOk')
+}
+
+async function doRestartKlipper(iface: string): Promise<void> {
+  busy.value = iface
+  note.value = null
+  actionError.value = null
+  try {
+    applyResult(await restartKlipper(), t('hostControl.canbus.restartingKlipper'))
+    await load()
+  } catch (err) {
+    actionError.value = err instanceof HostActionError ? err.message : describeError(err)
+  } finally {
+    busy.value = null
   }
 }
 
@@ -200,7 +255,10 @@ async function doBitrate(iface: string): Promise<void> {
   note.value = null
   actionError.value = null
   try {
-    applyResult(await setCanBitrate(iface, bitrate))
+    applyResult(
+      await setCanBitrate(iface, bitrate, true),
+      t('hostControl.canbus.appliedRestarting'),
+    )
     await load()
   } catch (e) {
     actionError.value = e instanceof HostActionError ? e.message : describeError(e)
@@ -336,6 +394,36 @@ function fmtBitrate(b: number | null): string {
             </button>
           </span>
         </template>
+        <!-- Restart Klipper + every MCU so the CAN MCUs reconnect after a manual bus change. -->
+        <button
+          type="button"
+          class="nb-btn bg-paper px-2 py-0.5 text-xs disabled:opacity-50"
+          :disabled="busy === b.interface"
+          @click="askConfirm(b.interface, 'klipper')"
+        >
+          {{ t('hostControl.canbus.restartKlipper') }}
+        </button>
+      </div>
+
+      <!-- shared confirmation: bitrate / advanced params / Klipper restart all drop the bus briefly -->
+      <div
+        v-if="confirmAction && confirmAction.iface === b.interface"
+        class="nb-card space-y-2 bg-brand-yellow/20 p-2 text-[11px]"
+      >
+        <p class="font-bold">⚠ {{ confirmMsg }}</p>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            class="nb-btn bg-brand-red/80 px-2 py-0.5 font-bold text-surface disabled:opacity-50"
+            :disabled="busy === b.interface"
+            @click="runConfirmed"
+          >
+            {{ t('hostControl.canbus.confirm') }}
+          </button>
+          <button type="button" class="nb-btn bg-paper px-2 py-0.5" @click="confirmAction = null">
+            {{ t('hostControl.canbus.cancel') }}
+          </button>
+        </div>
       </div>
 
       <!-- bitrate -->
@@ -345,7 +433,7 @@ function fmtBitrate(b: number | null): string {
           <select
             v-model.number="bitrateSel[b.interface]"
             class="nb-input bg-paper px-1 py-0.5"
-            :disabled="b.link_up === true || busy === b.interface"
+            :disabled="busy === b.interface"
           >
             <option v-for="r in COMMON_BITRATES" :key="r" :value="r">{{ r / 1000 }}k</option>
           </select>
@@ -353,14 +441,11 @@ function fmtBitrate(b: number | null): string {
         <button
           type="button"
           class="nb-btn bg-paper px-2 py-0.5 text-xs disabled:opacity-50"
-          :disabled="b.link_up === true || busy === b.interface"
-          @click="doBitrate(b.interface)"
+          :disabled="busy === b.interface"
+          @click="askConfirm(b.interface, 'bitrate')"
         >
           {{ t('hostControl.canbus.setBitrate') }}
         </button>
-        <span v-if="b.link_up === true" class="text-[11px] opacity-60">
-          {{ t('hostControl.canbus.downFirst') }}
-        </span>
       </div>
 
       <!-- restart a BUS-OFF controller -->
@@ -383,9 +468,7 @@ function fmtBitrate(b: number | null): string {
         </button>
         <div v-if="advancedOpen[b.interface] && edit[b.interface]" class="space-y-2 pt-2">
           <p class="text-[11px] opacity-60">{{ t('hostControl.canbus.noiseHint') }}</p>
-          <span v-if="b.link_up === true" class="block text-[11px] text-brand-yellow">
-            {{ t('hostControl.canbus.downFirst') }}
-          </span>
+          <p class="block text-[11px] text-brand-yellow">{{ t('hostControl.canbus.applyHint') }}</p>
           <div class="grid grid-cols-2 gap-2 text-[11px]">
             <label class="flex flex-col gap-0.5">
               <span class="opacity-60">{{ t('hostControl.canbus.samplePoint') }}</span>
@@ -396,7 +479,7 @@ function fmtBitrate(b: number | null): string {
                 min="0"
                 max="0.999"
                 class="nb-input bg-paper px-1 py-0.5"
-                :disabled="b.link_up === true || busy === b.interface"
+                :disabled="busy === b.interface"
               />
             </label>
             <label class="flex flex-col gap-0.5">
@@ -410,7 +493,7 @@ function fmtBitrate(b: number | null): string {
                 min="1"
                 :max="b.limits?.sjw_max ?? 128"
                 class="nb-input bg-paper px-1 py-0.5"
-                :disabled="b.link_up === true || busy === b.interface"
+                :disabled="busy === b.interface"
               />
             </label>
             <label class="flex flex-col gap-0.5">
@@ -420,7 +503,7 @@ function fmtBitrate(b: number | null): string {
                 type="number"
                 min="0"
                 class="nb-input bg-paper px-1 py-0.5"
-                :disabled="b.link_up === true || busy === b.interface"
+                :disabled="busy === b.interface"
               />
             </label>
             <label class="flex flex-col gap-0.5">
@@ -430,7 +513,7 @@ function fmtBitrate(b: number | null): string {
                 type="number"
                 min="0"
                 class="nb-input bg-paper px-1 py-0.5"
-                :disabled="b.link_up === true || busy === b.interface"
+                :disabled="busy === b.interface"
               />
             </label>
           </div>
@@ -441,7 +524,7 @@ function fmtBitrate(b: number | null): string {
               <input
                 v-model="edit[b.interface].flags[fk]"
                 type="checkbox"
-                :disabled="b.link_up === true || busy === b.interface"
+                :disabled="busy === b.interface"
               />
               {{ t('hostControl.canbus.flag.' + fk) }}
             </label>
@@ -453,7 +536,7 @@ function fmtBitrate(b: number | null): string {
               <input
                 v-model="edit[b.interface].fd"
                 type="checkbox"
-                :disabled="b.link_up === true || busy === b.interface"
+                :disabled="busy === b.interface"
               />
               {{ t('hostControl.canbus.fd') }}
             </label>
@@ -464,7 +547,7 @@ function fmtBitrate(b: number | null): string {
                   v-model="edit[b.interface].dbitrate"
                   type="number"
                   class="nb-input bg-paper px-1 py-0.5"
-                  :disabled="b.link_up === true || busy === b.interface"
+                  :disabled="busy === b.interface"
                 />
               </label>
               <label class="flex flex-col gap-0.5">
@@ -474,7 +557,7 @@ function fmtBitrate(b: number | null): string {
                   type="number"
                   step="0.001"
                   class="nb-input bg-paper px-1 py-0.5"
-                  :disabled="b.link_up === true || busy === b.interface"
+                  :disabled="busy === b.interface"
                 />
               </label>
             </div>
@@ -483,8 +566,8 @@ function fmtBitrate(b: number | null): string {
           <button
             type="button"
             class="nb-btn bg-paper px-2 py-0.5 text-xs disabled:opacity-50"
-            :disabled="b.link_up === true || busy === b.interface"
-            @click="applyParams(b)"
+            :disabled="busy === b.interface"
+            @click="askConfirm(b.interface, 'params')"
           >
             {{ t('hostControl.canbus.applyParams') }}
           </button>

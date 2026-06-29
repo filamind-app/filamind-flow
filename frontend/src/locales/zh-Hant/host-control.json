@@ -312,7 +312,15 @@
       "applyParams": "套用參數",
       "restart": "重啟匯流排",
       "restartHint": "讓進入 BUS-OFF 狀態的控制器恢復運作。",
-      "noiseHint": "三重採樣搭配較高的 SJW 可提升對電氣噪訊的容忍度；自動重啟 (ms) 會在 BUS-OFF 後讓匯流排重新恢復。"
+      "noiseHint": "三重採樣搭配較高的 SJW 可提升對電氣噪訊的容忍度；自動重啟 (ms) 會在 BUS-OFF 後讓匯流排重新恢復。",
+      "restartKlipper": "重新啟動 Klipper 與 MCU",
+      "confirmBitrate": "要變更傳輸速率嗎？這會短暫停用 CAN 匯流排（每一個 CAN MCU 都會斷線），重新計時後再重新啟用，接著重新啟動 Klipper。切勿在列印期間進行。",
+      "confirmParams": "要套用這些 CAN 設定嗎？這會短暫停用匯流排（每一個 CAN MCU 都會斷線），套用變更後再重新啟用，接著重新啟動 Klipper。切勿在列印期間進行。",
+      "confirmKlipper": "現在重新啟動 Klipper 與每一個 MCU 嗎？CAN MCU 會重新連線。切勿在列印期間進行。",
+      "appliedRestarting": "已套用。匯流排已重新啟用，Klipper 正在重新啟動，以便 MCU 重新連線。",
+      "restartingKlipper": "Klipper 正在重新啟動；MCU 會重新連線。",
+      "restartFailed": "變更已套用，但 Klipper 的重新啟動要求失敗 - 請手動重新啟動。",
+      "applyHint": "套用時會短暫停用匯流排並重新啟動 Klipper，讓 MCU 以新設定重新連線。"
     },
     "advisor": {
       "intro": "一眼掌握主機健康狀態 - CPU、記憶體、磁碟、時鐘與服務，每項皆評分並附上修正建議。",

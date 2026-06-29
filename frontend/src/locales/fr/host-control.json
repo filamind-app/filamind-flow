@@ -312,7 +312,15 @@
       "applyParams": "Appliquer les paramètres",
       "restart": "Redémarrer le bus",
       "restartHint": "Récupère un contrôleur passé à l'état BUS-OFF.",
-      "noiseHint": "Le triple échantillonnage et un SJW plus élevé améliorent la tolérance au bruit électrique ; le redémarrage automatique (ms) remet le bus en service après un BUS-OFF."
+      "noiseHint": "Le triple échantillonnage et un SJW plus élevé améliorent la tolérance au bruit électrique ; le redémarrage automatique (ms) remet le bus en service après un BUS-OFF.",
+      "restartKlipper": "Redémarrer Klipper et les MCU",
+      "confirmBitrate": "Modifier le bitrate ? Cela coupe brièvement le bus CAN (tous les MCU CAN sont déconnectés), le resynchronise, le réactive, puis redémarre Klipper. Ne le faites jamais pendant une impression.",
+      "confirmParams": "Appliquer ces paramètres CAN ? Cela coupe brièvement le bus (tous les MCU CAN sont déconnectés), applique la modification, le réactive, puis redémarre Klipper. Ne le faites jamais pendant une impression.",
+      "confirmKlipper": "Redémarrer Klipper et tous les MCU maintenant ? Les MCU CAN se reconnecteront. Ne le faites jamais pendant une impression.",
+      "appliedRestarting": "Appliqué. Le bus est de nouveau actif et Klipper redémarre pour que les MCU se reconnectent.",
+      "restartingKlipper": "Klipper redémarre ; les MCU se reconnecteront.",
+      "restartFailed": "La modification a été appliquée, mais la demande de redémarrage de Klipper a échoué — redémarrez-le manuellement.",
+      "applyHint": "L'application coupe brièvement le bus et redémarre Klipper afin que les MCU se reconnectent avec les nouveaux paramètres."
     },
     "advisor": {
       "intro": "État de santé de l'hôte en un coup d'œil : CPU, mémoire, disque, horloge et services, chacun noté avec une solution.",

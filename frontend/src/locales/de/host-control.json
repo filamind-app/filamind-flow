@@ -312,7 +312,15 @@
       "applyParams": "Parameter übernehmen",
       "restart": "Bus neu starten",
       "restartHint": "Stellt einen Controller wieder her, der in den Zustand BUS-OFF gegangen ist.",
-      "noiseHint": "Dreifachabtastung und ein höherer SJW verbessern die Toleranz gegenüber elektrischen Störungen. Der Auto-Neustart (ms) holt den Bus nach einem BUS-OFF zurück."
+      "noiseHint": "Dreifachabtastung und ein höherer SJW verbessern die Toleranz gegenüber elektrischen Störungen. Der Auto-Neustart (ms) holt den Bus nach einem BUS-OFF zurück.",
+      "restartKlipper": "Klipper & MCUs neu starten",
+      "confirmBitrate": "Die Bitrate ändern? Dabei wird der CAN-Bus kurz deaktiviert (jeder CAN-MCU fällt ab), neu getaktet, wieder aktiviert und anschließend Klipper neu gestartet. Niemals während eines Drucks durchführen.",
+      "confirmParams": "Diese CAN-Einstellungen übernehmen? Dabei wird der Bus kurz deaktiviert (jeder CAN-MCU fällt ab), die Änderung angewendet, der Bus wieder aktiviert und anschließend Klipper neu gestartet. Niemals während eines Drucks durchführen.",
+      "confirmKlipper": "Klipper und jeden MCU jetzt neu starten? Die CAN-MCUs verbinden sich neu. Niemals während eines Drucks durchführen.",
+      "appliedRestarting": "Übernommen. Der Bus ist wieder aktiv und Klipper wird neu gestartet, damit sich die MCUs neu verbinden.",
+      "restartingKlipper": "Klipper wird neu gestartet; die MCUs verbinden sich neu.",
+      "restartFailed": "Die Änderung wurde übernommen, aber die Anfrage zum Neustart von Klipper ist fehlgeschlagen – starte ihn manuell neu.",
+      "applyHint": "Beim Übernehmen wird der Bus kurz deaktiviert und Klipper neu gestartet, damit sich die MCUs mit den neuen Einstellungen neu verbinden."
     },
     "advisor": {
       "intro": "Host-Zustand auf einen Blick: CPU, Speicher, Datenträger, Uhr und Dienste, jeweils bewertet samt Lösung.",

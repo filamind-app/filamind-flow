@@ -253,31 +253,88 @@ async def _require_can_iface(iface: str) -> None:
         raise ValueError(f"'{iface}' is not a CAN interface on this host.")
 
 
+async def _set_link_raw(iface: str, up: bool) -> tuple[int, str]:
+    """``ip link set <iface> up|down`` with no guards (callers gate on printing/iface first)."""
+    return await _run(["sudo", "-n", "ip", "link", "set", iface, "up" if up else "down"])
+
+
+async def _firmware_restart(moonraker_url: str) -> tuple[bool, str]:
+    """Ask Klipper for a ``FIRMWARE_RESTART`` (restarts the host + resets every MCU, so the CAN
+    MCUs reconnect on the freshly-retimed bus). Best-effort: a Moonraker error is reported, not
+    raised."""
+    try:
+        await MoonrakerClient(moonraker_url).firmware_restart()
+    except httpx.HTTPError as exc:
+        return False, f"Klipper restart request failed: {exc}"
+    return True, "Klipper FIRMWARE_RESTART requested (host + MCUs reconnecting)."
+
+
 async def set_link(iface: str, up: bool, moonraker_url: str) -> dict[str, Any]:
     """Bring a CAN interface up or down. Refused while printing. Bringing it up needs a bitrate to
     already be configured (the kernel rejects ``up`` otherwise - surfaced in the output)."""
     await _require_can_iface(iface)
     if await _printer_busy(moonraker_url):
         return _refused(_BUSY_MSG, iface)
-    rc, out = await _run(["sudo", "-n", "ip", "link", "set", iface, "up" if up else "down"])
+    rc, out = await _set_link_raw(iface, up)
     return _result(iface, rc, out)
 
 
-async def set_bitrate(iface: str, bitrate: int, moonraker_url: str) -> dict[str, Any]:
-    """Set a CAN interface's bitrate. The interface must be DOWN first (SocketCAN can't retime a
-    running controller). Refused while printing."""
+async def set_bitrate(
+    iface: str, bitrate: int, moonraker_url: str, restart: bool = False
+) -> dict[str, Any]:
+    """Set a CAN interface's bitrate. SocketCAN can't retime a running controller, so this brings
+    the interface DOWN (if up), sets the bitrate, then brings it back UP so the bus resumes. With
+    ``restart`` it then triggers a Klipper FIRMWARE_RESTART so every CAN MCU reconnects on the new
+    timing (a host bitrate change otherwise leaves Klipper talking to a now-mismatched/disconnected
+    bus). Refused while printing."""
     await _require_can_iface(iface)
     if not _MIN_BITRATE <= bitrate <= _MAX_BITRATE:
         raise ValueError(f"Bitrate must be between {_MIN_BITRATE} and {_MAX_BITRATE} bit/s.")
     if await _printer_busy(moonraker_url):
         return _refused(_BUSY_MSG, iface)
-    status = (await _all_live_status()).get(iface) or {}
-    if status.get("link_up"):
-        return _refused("Bring the interface down before changing its bitrate.", iface)
-    rc, out = await _run(
-        ["sudo", "-n", "ip", "link", "set", iface, "type", "can", "bitrate", str(bitrate)]
+    set_cmd = ["sudo", "-n", "ip", "link", "set", iface, "type", "can", "bitrate", str(bitrate)]
+    return await _apply_cycle(
+        iface, [set_cmd], needs_down=True, restart=restart, moonraker=moonraker_url
     )
-    return _result(iface, rc, out)
+
+
+async def _apply_cycle(
+    iface: str,
+    commands: list[list[str]],
+    *,
+    needs_down: bool,
+    restart: bool,
+    moonraker: str,
+) -> dict[str, Any]:
+    """Run the change commands inside a down→change→up cycle (when ``needs_down``), then optionally
+    a Klipper FIRMWARE_RESTART. The interface always ends UP so the bus resumes; if bringing it
+    down fails we abort before touching anything (the bus stays as it was)."""
+    outputs: list[str] = []
+    rc_total = 0
+    was_up = bool(((await _all_live_status()).get(iface) or {}).get("link_up"))
+    if needs_down and was_up:
+        rc, out = await _set_link_raw(iface, False)
+        outputs.append(out)
+        if rc != 0:  # couldn't take it down - don't run the change; the bus is untouched
+            return _result(iface, rc, "\n".join(o.strip() for o in outputs if o.strip()))
+    for cmd in commands:
+        rc, out = await _run(cmd)
+        rc_total = rc_total or rc
+        outputs.append(out)
+    if (
+        needs_down
+    ):  # bring the bus back up so it resumes (a configured bitrate is required for `up`)
+        rc, out = await _set_link_raw(iface, True)
+        rc_total = rc_total or rc
+        outputs.append(out)
+    restarted: bool | None = None
+    if restart and rc_total == 0:
+        restarted, msg = await _firmware_restart(moonraker)
+        outputs.append(msg)
+    res = _result(iface, rc_total, "\n".join(o.strip() for o in outputs if o.strip()))
+    if restarted is not None:
+        res["restarted"] = restarted
+    return res
 
 
 #: Settable numeric CAN parameters: api key -> (ip token, kind, (min, max)). Bit timing + recovery +
@@ -333,12 +390,15 @@ def _build_can_args(params: dict[str, Any], limits: dict[str, Any]) -> list[str]
     return args
 
 
-async def set_params(iface: str, params: dict[str, Any], moonraker_url: str) -> dict[str, Any]:
+async def set_params(
+    iface: str, params: dict[str, Any], moonraker_url: str, restart: bool = False
+) -> dict[str, Any]:
     """Set any combination of CAN parameters - bit timing (bitrate/sample-point/sjw), control modes
     (listen-only/loopback/triple-sampling/one-shot/berr-reporting/fd/presume-ack), recovery
     (restart-ms), CAN-FD data phase (dbitrate/dsample-point/dsjw) and txqueuelen. All but txqueuelen
-    need the interface DOWN. Refused while printing; values validated against the controller's
-    reported limits."""
+    need the interface DOWN, so this brings it down (if up), applies the change, and brings it back
+    UP. With ``restart`` it then triggers a Klipper FIRMWARE_RESTART so every CAN MCU reconnects on
+    the new settings. Refused while printing; values validated against the controller's limits."""
     await _require_can_iface(iface)
     if not isinstance(params, dict) or not params:
         raise ValueError("No parameters given.")
@@ -346,8 +406,6 @@ async def set_params(iface: str, params: dict[str, Any], moonraker_url: str) -> 
         return _refused(_BUSY_MSG, iface)
     status = (await _all_live_status()).get(iface) or {}
     can_args = _build_can_args(params, status.get("limits") or {})
-    if can_args and status.get("link_up"):
-        return _refused("Bring the interface down before changing its parameters.", iface)
 
     txq = params.get("txqueuelen")
     if txq is not None and (
@@ -357,17 +415,26 @@ async def set_params(iface: str, params: dict[str, Any], moonraker_url: str) -> 
     if not can_args and txq is None:
         raise ValueError("No recognised CAN parameters given.")
 
-    rc_total = 0
-    outputs: list[str] = []
+    commands: list[list[str]] = []
     if can_args:
-        rc, out = await _run(["sudo", "-n", "ip", "link", "set", iface, "type", "can", *can_args])
-        rc_total = rc_total or rc
-        outputs.append(out)
+        commands.append(["sudo", "-n", "ip", "link", "set", iface, "type", "can", *can_args])
     if txq is not None:
-        rc, out = await _run(["sudo", "-n", "ip", "link", "set", iface, "txqueuelen", str(txq)])
-        rc_total = rc_total or rc
-        outputs.append(out)
-    return _result(iface, rc_total, "\n".join(o.strip() for o in outputs if o.strip()))
+        commands.append(["sudo", "-n", "ip", "link", "set", iface, "txqueuelen", str(txq)])
+    # Only the bit-timing/control-mode change (can_args) requires the link down; a txqueuelen-only
+    # change does not, so don't disturb a running bus for it.
+    return await _apply_cycle(
+        iface, commands, needs_down=bool(can_args), restart=restart, moonraker=moonraker_url
+    )
+
+
+async def restart_klipper(moonraker_url: str) -> dict[str, Any]:
+    """Trigger a Klipper FIRMWARE_RESTART (host + every MCU) so CAN MCUs reconnect after a bus
+    change. Exposed as its own action so the user can restart without re-applying. Refused while
+    printing (a firmware restart aborts a print)."""
+    if await _printer_busy(moonraker_url):
+        return _refused(_BUSY_MSG)
+    ok, msg = await _firmware_restart(moonraker_url)
+    return {"interface": "", "ok": ok, "refused": False, "output": msg, "needs_setup": False}
 
 
 async def set_restart(iface: str, moonraker_url: str) -> dict[str, Any]:

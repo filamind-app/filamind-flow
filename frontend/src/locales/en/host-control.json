@@ -312,7 +312,15 @@
       "applyParams": "Apply parameters",
       "restart": "Restart bus",
       "restartHint": "Recover a controller that has gone BUS-OFF.",
-      "noiseHint": "Triple sampling and a higher SJW improve tolerance to electrical noise; auto-restart (ms) brings the bus back after a BUS-OFF."
+      "noiseHint": "Triple sampling and a higher SJW improve tolerance to electrical noise; auto-restart (ms) brings the bus back after a BUS-OFF.",
+      "restartKlipper": "Restart Klipper & MCUs",
+      "confirmBitrate": "Change the bitrate? This briefly takes the CAN bus down (every CAN MCU drops), retimes it, brings it back up, then restarts Klipper. Never do this during a print.",
+      "confirmParams": "Apply these CAN settings? This briefly takes the bus down (every CAN MCU drops), applies the change, brings it back up, then restarts Klipper. Never do this during a print.",
+      "confirmKlipper": "Restart Klipper and every MCU now? The CAN MCUs will reconnect. Never do this during a print.",
+      "appliedRestarting": "Applied. The bus is back up and Klipper is restarting so the MCUs reconnect.",
+      "restartingKlipper": "Klipper is restarting; the MCUs will reconnect.",
+      "restartFailed": "The change was applied, but the Klipper restart request failed - restart it manually.",
+      "applyHint": "Applying briefly takes the bus down and restarts Klipper so the MCUs reconnect with the new settings."
     },
     "advisor": {
       "intro": "Host health at a glance — CPU, memory, disk, clock and services, each graded with a fix.",

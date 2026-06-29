@@ -312,7 +312,15 @@
       "applyParams": "Terapkan parameter",
       "restart": "Mulai ulang bus",
       "restartHint": "Pulihkan kontroler yang masuk kondisi BUS-OFF.",
-      "noiseHint": "Sampling rangkap tiga dan SJW yang lebih tinggi meningkatkan ketahanan terhadap derau listrik; mulai ulang otomatis (ms) memulihkan bus setelah BUS-OFF."
+      "noiseHint": "Sampling rangkap tiga dan SJW yang lebih tinggi meningkatkan ketahanan terhadap derau listrik; mulai ulang otomatis (ms) memulihkan bus setelah BUS-OFF.",
+      "restartKlipper": "Mulai ulang Klipper & MCU",
+      "confirmBitrate": "Ubah bitrate? Ini sesaat mematikan CAN bus (setiap MCU CAN terputus), mengatur ulang waktunya, mengaktifkannya kembali, lalu memulai ulang Klipper. Jangan pernah lakukan saat mencetak.",
+      "confirmParams": "Terapkan pengaturan CAN ini? Ini sesaat mematikan bus (setiap MCU CAN terputus), menerapkan perubahan, mengaktifkannya kembali, lalu memulai ulang Klipper. Jangan pernah lakukan saat mencetak.",
+      "confirmKlipper": "Mulai ulang Klipper dan setiap MCU sekarang? MCU CAN akan terhubung kembali. Jangan pernah lakukan saat mencetak.",
+      "appliedRestarting": "Diterapkan. Bus sudah aktif kembali dan Klipper sedang dimulai ulang agar MCU terhubung kembali.",
+      "restartingKlipper": "Klipper sedang dimulai ulang; MCU akan terhubung kembali.",
+      "restartFailed": "Perubahan diterapkan, tetapi permintaan memulai ulang Klipper gagal - mulai ulang secara manual.",
+      "applyHint": "Menerapkan akan sesaat mematikan bus dan memulai ulang Klipper agar MCU terhubung kembali dengan pengaturan baru."
     },
     "advisor": {
       "intro": "Kesehatan host secara sekilas - CPU, memori, disk, jam, dan layanan, masing-masing dinilai beserta cara perbaikannya.",

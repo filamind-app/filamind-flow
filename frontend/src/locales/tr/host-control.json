@@ -312,7 +312,15 @@
       "applyParams": "Parametreleri uygula",
       "restart": "Bus'ı yeniden başlat",
       "restartHint": "BUS-OFF durumuna geçmiş bir denetleyiciyi kurtarın.",
-      "noiseHint": "Üçlü örnekleme ve daha yüksek bir SJW, elektriksel gürültüye karşı toleransı artırır. Otomatik yeniden başlatma (ms), bir BUS-OFF sonrasında bus'ı geri getirir."
+      "noiseHint": "Üçlü örnekleme ve daha yüksek bir SJW, elektriksel gürültüye karşı toleransı artırır. Otomatik yeniden başlatma (ms), bir BUS-OFF sonrasında bus'ı geri getirir.",
+      "restartKlipper": "Klipper ve MCU'ları yeniden başlat",
+      "confirmBitrate": "Bitrate değiştirilsin mi? Bu işlem CAN bus'ı kısa süreliğine devre dışı bırakır (her CAN MCU'sunun bağlantısı kesilir), yeniden zamanlar, tekrar açar ve ardından Klipper'ı yeniden başlatır. Bunu asla bir baskı sırasında yapmayın.",
+      "confirmParams": "Bu CAN ayarları uygulansın mı? Bu işlem bus'ı kısa süreliğine devre dışı bırakır (her CAN MCU'sunun bağlantısı kesilir), değişikliği uygular, tekrar açar ve ardından Klipper'ı yeniden başlatır. Bunu asla bir baskı sırasında yapmayın.",
+      "confirmKlipper": "Klipper ve her MCU şimdi yeniden başlatılsın mı? CAN MCU'ları yeniden bağlanacaktır. Bunu asla bir baskı sırasında yapmayın.",
+      "appliedRestarting": "Uygulandı. Bus tekrar açık ve MCU'ların yeniden bağlanması için Klipper yeniden başlatılıyor.",
+      "restartingKlipper": "Klipper yeniden başlatılıyor; MCU'lar yeniden bağlanacaktır.",
+      "restartFailed": "Değişiklik uygulandı, ancak Klipper'ı yeniden başlatma isteği başarısız oldu - elle yeniden başlatın.",
+      "applyHint": "Uygulama, bus'ı kısa süreliğine devre dışı bırakır ve MCU'ların yeni ayarlarla yeniden bağlanması için Klipper'ı yeniden başlatır."
     },
     "advisor": {
       "intro": "Ana makine sağlığına bir bakış - CPU, bellek, disk, saat ve servisler; her biri çözümüyle birlikte derecelendirilir.",

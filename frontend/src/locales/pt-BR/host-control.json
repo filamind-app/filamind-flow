@@ -312,7 +312,15 @@
       "applyParams": "Aplicar parâmetros",
       "restart": "Reiniciar barramento",
       "restartHint": "Recupera um controlador que entrou em estado BUS-OFF.",
-      "noiseHint": "A amostragem tripla e um SJW mais alto melhoram a tolerância a ruído elétrico; o reinício automático (ms) restabelece o barramento após um BUS-OFF."
+      "noiseHint": "A amostragem tripla e um SJW mais alto melhoram a tolerância a ruído elétrico; o reinício automático (ms) restabelece o barramento após um BUS-OFF.",
+      "restartKlipper": "Reiniciar Klipper e MCUs",
+      "confirmBitrate": "Alterar o bitrate? Isso derruba brevemente o barramento CAN (todos os MCUs CAN desconectam), reajusta os tempos, reativa-o e então reinicia o Klipper. Nunca faça isso durante uma impressão.",
+      "confirmParams": "Aplicar estas configurações de CAN? Isso derruba brevemente o barramento (todos os MCUs CAN desconectam), aplica a alteração, reativa-o e então reinicia o Klipper. Nunca faça isso durante uma impressão.",
+      "confirmKlipper": "Reiniciar o Klipper e todos os MCUs agora? Os MCUs CAN vão reconectar. Nunca faça isso durante uma impressão.",
+      "appliedRestarting": "Aplicado. O barramento voltou a ficar ativo e o Klipper está reiniciando para que os MCUs reconectem.",
+      "restartingKlipper": "O Klipper está reiniciando; os MCUs vão reconectar.",
+      "restartFailed": "A alteração foi aplicada, mas a solicitação de reinício do Klipper falhou - reinicie-o manualmente.",
+      "applyHint": "Aplicar derruba brevemente o barramento e reinicia o Klipper para que os MCUs reconectem com as novas configurações."
     },
     "advisor": {
       "intro": "Saúde do host num relance - CPU, memória, disco, relógio e serviços, cada um avaliado com uma correção.",

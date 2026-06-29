@@ -312,7 +312,15 @@
       "applyParams": "Aplicar parámetros",
       "restart": "Reiniciar el bus",
       "restartHint": "Recupera un controlador que ha pasado a BUS-OFF.",
-      "noiseHint": "El triple muestreo y un SJW más alto mejoran la tolerancia al ruido eléctrico; el reinicio automático (ms) restablece el bus tras un BUS-OFF."
+      "noiseHint": "El triple muestreo y un SJW más alto mejoran la tolerancia al ruido eléctrico; el reinicio automático (ms) restablece el bus tras un BUS-OFF.",
+      "restartKlipper": "Reiniciar Klipper y los MCU",
+      "confirmBitrate": "¿Cambiar el bitrate? Esto desactiva brevemente el CAN bus (todos los MCU CAN se desconectan), reajusta sus tiempos, lo vuelve a activar y luego reinicia Klipper. Nunca lo hagas durante una impresión.",
+      "confirmParams": "¿Aplicar estos ajustes de CAN? Esto desactiva brevemente el bus (todos los MCU CAN se desconectan), aplica el cambio, lo vuelve a activar y luego reinicia Klipper. Nunca lo hagas durante una impresión.",
+      "confirmKlipper": "¿Reiniciar Klipper y todos los MCU ahora? Los MCU CAN se volverán a conectar. Nunca lo hagas durante una impresión.",
+      "appliedRestarting": "Aplicado. El bus está activo de nuevo y Klipper se está reiniciando para que los MCU se vuelvan a conectar.",
+      "restartingKlipper": "Klipper se está reiniciando; los MCU se volverán a conectar.",
+      "restartFailed": "El cambio se aplicó, pero la solicitud de reinicio de Klipper falló: reinícialo manualmente.",
+      "applyHint": "Al aplicar se desactiva brevemente el bus y se reinicia Klipper para que los MCU se vuelvan a conectar con los nuevos ajustes."
     },
     "advisor": {
       "intro": "Estado del host de un vistazo — CPU, memoria, disco, reloj y servicios, cada uno con una calificación y una solución.",

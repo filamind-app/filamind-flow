@@ -194,15 +194,22 @@ async function postCanbus(path: string, body: unknown): Promise<CanBusActionResu
 
 /** Bring a CAN interface up or down. Throws HostActionError(403) if refused (e.g. printing). */
 export const setCanLink = (iface: string, up: boolean) => postCanbus('link', { iface, up })
-/** Set a CAN interface's bitrate (interface must be down first). Throws HostActionError if refused. */
-export const setCanBitrate = (iface: string, bitrate: number) =>
-  postCanbus('bitrate', { iface, bitrate })
-/** Set any combination of CAN parameters (timing/modes/recovery/CAN-FD/txqueuelen). All but
- *  txqueuelen need the interface down. Throws HostActionError(400) on a bad value, (403) if refused. */
-export const setCanParams = (iface: string, params: Record<string, number | boolean>) =>
-  postCanbus('params', { iface, params })
+/** Set a CAN interface's bitrate. The backend brings the bus down, retimes it and brings it back
+ *  up; with restart=true it then FIRMWARE_RESTARTs Klipper so the MCUs reconnect. Throws if refused. */
+export const setCanBitrate = (iface: string, bitrate: number, restart = false) =>
+  postCanbus('bitrate', { iface, bitrate, restart })
+/** Set any combination of CAN parameters (timing/modes/recovery/CAN-FD/txqueuelen). The backend
+ *  cycles the bus down→apply→up; with restart=true it then FIRMWARE_RESTARTs Klipper so the MCUs
+ *  reconnect. Throws HostActionError(400) on a bad value, (403) if refused. */
+export const setCanParams = (
+  iface: string,
+  params: Record<string, number | boolean>,
+  restart = false,
+) => postCanbus('params', { iface, params, restart })
 /** Restart a BUS-OFF CAN controller to recover the bus. Throws HostActionError if refused. */
 export const restartCanBus = (iface: string) => postCanbus('restart', { iface })
+/** FIRMWARE_RESTART Klipper (host + every MCU) so CAN MCUs reconnect. Throws if refused (printing). */
+export const restartKlipper = () => postCanbus('firmware-restart', {})
 
 export const setTimezone = (timezone: string) => postSystem('timezone', { timezone })
 export const setNtp = (enabled: boolean) => postSystem('ntp', { enabled })

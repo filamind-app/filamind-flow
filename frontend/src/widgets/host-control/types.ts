@@ -248,6 +248,8 @@ export interface CanBusActionResult {
   refused: boolean
   output: string
   needs_setup?: boolean
+  /** Set when the action also requested a Klipper FIRMWARE_RESTART: did the restart succeed? */
+  restarted?: boolean
 }
 
 // -- Health advisor (Phase 6) ---------------------------------------------------
