@@ -1,1 +1,0 @@
-import{Y as e}from"./i18n-C11KINhU.js";var t=e(null);function n(e){t.value=e}export{t as n,n as t};
