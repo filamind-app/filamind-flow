@@ -33,6 +33,7 @@ vi.mock('../api', () => ({
   setCanBitrate: vi.fn(),
   setCanParams,
   restartCanBus,
+  restartKlipper: vi.fn(() => Promise.resolve({ ok: true, refused: false, output: '' })),
   HostActionError: class HostActionError extends Error {
     constructor(
       message: string,
@@ -58,18 +59,24 @@ describe('Host Control: CAN advanced parameters', () => {
     // the advanced editor renders the parameter labels + flags
     expect(w.text()).toContain(t('hostControl.canbus.samplePoint'))
     expect(w.text()).toContain(t('hostControl.canbus.flag.triple_sampling'))
+    // Apply asks to confirm first (it cycles the bus + restarts Klipper), then fires.
     await byText(w, t('hostControl.canbus.applyParams'))!.trigger('click')
+    expect(setCanParams).not.toHaveBeenCalled()
+    await byText(w, t('hostControl.canbus.confirm'))!.trigger('click')
     await flushPromises()
     expect(setCanParams).toHaveBeenCalledTimes(1)
-    const [iface, params] = setCanParams.mock.calls[0] as unknown as [
+    const [iface, params, restart] = setCanParams.mock.calls[0] as unknown as [
       string,
       Record<string, unknown>,
+      boolean,
     ]
     expect(iface).toBe('can0')
     // every control-mode flag is sent as a boolean; seeded sjw/sample-point carried through
     expect(params.listen_only).toBe(false)
     expect(params.triple_sampling).toBe(false)
     expect(params.sjw).toBe(1)
+    // restart=true so the backend FIRMWARE_RESTARTs Klipper after re-upping the bus
+    expect(restart).toBe(true)
   })
 
   it('shows a Restart bus button for a BUS-OFF controller and calls the API', async () => {

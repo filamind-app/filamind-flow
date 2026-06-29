@@ -161,11 +161,15 @@ class CanLinkReq(BaseModel):
 class CanBitrateReq(BaseModel):
     iface: str
     bitrate: int
+    # After re-timing the bus, FIRMWARE_RESTART Klipper so the CAN MCUs reconnect at the new rate.
+    restart: bool = False
 
 
 class CanParamsReq(BaseModel):
     iface: str
     params: dict[str, Any]  # any of bitrate/sample_point/sjw/restart_ms/dbitrate/flags/txqueuelen/…
+    # After applying, FIRMWARE_RESTART Klipper so the CAN MCUs reconnect with the new settings.
+    restart: bool = False
 
 
 class CanRestartReq(BaseModel):
@@ -191,8 +195,11 @@ async def host_canbus_link(
 async def host_canbus_bitrate(
     req: CanBitrateReq, settings: Settings = Depends(get_settings)
 ) -> dict[str, Any]:
-    """Set a CAN interface's bitrate (the interface must be down first). Refused while printing."""
-    return await _apply(canbus_control.set_bitrate(req.iface, req.bitrate, settings.moonraker_url))
+    """Set a CAN interface's bitrate. The bus is brought down, retimed and brought back up; with
+    ``restart`` Klipper is FIRMWARE_RESTARTed so the MCUs reconnect. Refused while printing."""
+    return await _apply(
+        canbus_control.set_bitrate(req.iface, req.bitrate, settings.moonraker_url, req.restart)
+    )
 
 
 @router.post("/canbus/params")
@@ -200,9 +207,12 @@ async def host_canbus_params(
     req: CanParamsReq, settings: Settings = Depends(get_settings)
 ) -> dict[str, Any]:
     """Set any combination of CAN parameters (bit timing, control modes, recovery, CAN-FD,
-    txqueuelen). All but txqueuelen need the interface down. 400 on a bad value; refused (403) while
-    printing."""
-    return await _apply(canbus_control.set_params(req.iface, req.params, settings.moonraker_url))
+    txqueuelen). The bus is brought down (for the timing/mode change), applied and brought back up;
+    with ``restart`` Klipper is FIRMWARE_RESTARTed so the MCUs reconnect. 400 on a bad value;
+    refused (403) while printing."""
+    return await _apply(
+        canbus_control.set_params(req.iface, req.params, settings.moonraker_url, req.restart)
+    )
 
 
 @router.post("/canbus/restart")
@@ -211,6 +221,15 @@ async def host_canbus_restart(
 ) -> dict[str, Any]:
     """Restart a BUS-OFF CAN controller to recover the bus. Refused while printing."""
     return await _apply(canbus_control.set_restart(req.iface, settings.moonraker_url))
+
+
+@router.post("/canbus/firmware-restart")
+async def host_canbus_firmware_restart(
+    settings: Settings = Depends(get_settings),
+) -> dict[str, Any]:
+    """FIRMWARE_RESTART Klipper (host + every MCU) so the CAN MCUs reconnect after a bus change.
+    Refused (403) while printing."""
+    return await _apply(canbus_control.restart_klipper(settings.moonraker_url))
 
 
 # -- System settings (Phase 4) --------------------------------------------------

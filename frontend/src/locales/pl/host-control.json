@@ -312,7 +312,15 @@
       "applyParams": "Zastosuj parametry",
       "restart": "Zrestartuj magistralę",
       "restartHint": "Przywróć kontroler, który przeszedł w stan BUS-OFF.",
-      "noiseHint": "Potrójne próbkowanie i wyższy SJW zwiększają odporność na zakłócenia elektryczne; auto-restart (ms) przywraca magistralę po stanie BUS-OFF."
+      "noiseHint": "Potrójne próbkowanie i wyższy SJW zwiększają odporność na zakłócenia elektryczne; auto-restart (ms) przywraca magistralę po stanie BUS-OFF.",
+      "restartKlipper": "Zrestartuj Klippera i MCU",
+      "confirmBitrate": "Zmienić bitrate? To na chwilę wyłącza magistralę CAN (każdy MCU CAN się rozłącza), zmienia jej taktowanie, włącza ją ponownie, a następnie restartuje Klippera. Nigdy nie rób tego podczas druku.",
+      "confirmParams": "Zastosować te ustawienia CAN? To na chwilę wyłącza magistralę (każdy MCU CAN się rozłącza), wprowadza zmianę, włącza ją ponownie, a następnie restartuje Klippera. Nigdy nie rób tego podczas druku.",
+      "confirmKlipper": "Zrestartować teraz Klippera i każdy MCU? MCU CAN połączą się ponownie. Nigdy nie rób tego podczas druku.",
+      "appliedRestarting": "Zastosowano. Magistrala jest znów aktywna, a Klipper się restartuje, aby MCU połączyły się ponownie.",
+      "restartingKlipper": "Klipper się restartuje; MCU połączą się ponownie.",
+      "restartFailed": "Zmiana została zastosowana, ale żądanie restartu Klippera nie powiodło się - zrestartuj go ręcznie.",
+      "applyHint": "Zastosowanie na chwilę wyłącza magistralę i restartuje Klippera, aby MCU połączyły się ponownie z nowymi ustawieniami."
     },
     "advisor": {
       "intro": "Kondycja hosta w skrócie - CPU, pamięć, dysk, zegar i usługi, każde z oceną i wskazówką naprawy.",

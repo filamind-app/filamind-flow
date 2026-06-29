@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-06-29
+
+### Changed
+
+- **CAN Bus settings now apply in one step and take effect.** Previously changing a bitrate or an
+  advanced parameter required manually bringing the interface down first, and after the change the
+  bus was left down with Klipper still disconnected from the CAN MCUs — so the new value never
+  reached the printer. Applying now performs the whole safe cycle for you: it brings the bus down
+  (if up), applies the change, brings it back up, then runs a Klipper `FIRMWARE_RESTART` so every
+  CAN MCU reconnects on the new settings. The controls are editable while the bus is up, and the
+  action asks for confirmation first (it briefly drops every CAN MCU — never do it mid-print).
+
+### Added
+
+- A **Restart Klipper & MCUs** button on the CAN Bus panel to trigger a `FIRMWARE_RESTART` on its
+  own (e.g. after a manual change), refused while a print is running.
+
 ## [1.10.1] - 2026-06-29
 
 ### Fixed

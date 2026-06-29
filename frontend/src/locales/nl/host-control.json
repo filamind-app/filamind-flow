@@ -312,7 +312,15 @@
       "applyParams": "Parameters toepassen",
       "restart": "Bus herstarten",
       "restartHint": "Herstel een controller die in BUS-OFF is gegaan.",
-      "noiseHint": "Drievoudige sampling en een hogere SJW verbeteren de tolerantie voor elektrische ruis. Automatisch herstarten (ms) brengt de bus terug na een BUS-OFF."
+      "noiseHint": "Drievoudige sampling en een hogere SJW verbeteren de tolerantie voor elektrische ruis. Automatisch herstarten (ms) brengt de bus terug na een BUS-OFF.",
+      "restartKlipper": "Klipper en MCU's herstarten",
+      "confirmBitrate": "De bitrate wijzigen? Hierdoor gaat de CAN-bus kort omlaag (elke CAN-MCU valt weg), wordt opnieuw getimed en weer omhoog gebracht, waarna Klipper herstart. Doe dit nooit tijdens een print.",
+      "confirmParams": "Deze CAN-instellingen toepassen? Hierdoor gaat de bus kort omlaag (elke CAN-MCU valt weg), wordt de wijziging toegepast en wordt de bus weer omhoog gebracht, waarna Klipper herstart. Doe dit nooit tijdens een print.",
+      "confirmKlipper": "Klipper en elke MCU nu herstarten? De CAN-MCU's maken opnieuw verbinding. Doe dit nooit tijdens een print.",
+      "appliedRestarting": "Toegepast. De bus is weer actief en Klipper herstart zodat de MCU's opnieuw verbinding maken.",
+      "restartingKlipper": "Klipper herstart; de MCU's maken opnieuw verbinding.",
+      "restartFailed": "De wijziging is toegepast, maar het herstartverzoek voor Klipper is mislukt - herstart het handmatig.",
+      "applyHint": "Bij het toepassen gaat de bus kort omlaag en herstart Klipper, zodat de MCU's opnieuw verbinding maken met de nieuwe instellingen."
     },
     "advisor": {
       "intro": "Hostconditie in één oogopslag - CPU, geheugen, schijf, klok en diensten, elk met een beoordeling en een oplossing.",

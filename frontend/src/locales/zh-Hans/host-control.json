@@ -312,7 +312,15 @@
       "applyParams": "应用参数",
       "restart": "重启总线",
       "restartHint": "恢复已进入 BUS-OFF 状态的控制器。",
-      "noiseHint": "三次采样和更高的 SJW 可提升抗电气噪声能力；自动重启 (ms) 会在 BUS-OFF 后让总线重新恢复。"
+      "noiseHint": "三次采样和更高的 SJW 可提升抗电气噪声能力；自动重启 (ms) 会在 BUS-OFF 后让总线重新恢复。",
+      "restartKlipper": "重启 Klipper 和 MCU",
+      "confirmBitrate": "更改比特率？此操作会短暂禁用 CAN 总线（每个 CAN MCU 都会断开连接），重新设定其时序，再重新启用，然后重启 Klipper。切勿在打印过程中操作。",
+      "confirmParams": "应用这些 CAN 设置？此操作会短暂禁用总线（每个 CAN MCU 都会断开连接），应用更改，再重新启用，然后重启 Klipper。切勿在打印过程中操作。",
+      "confirmKlipper": "现在重启 Klipper 和每一个 MCU？CAN MCU 将会重新连接。切勿在打印过程中操作。",
+      "appliedRestarting": "已应用。总线已重新启用，Klipper 正在重启，以便 MCU 重新连接。",
+      "restartingKlipper": "Klipper 正在重启；MCU 将会重新连接。",
+      "restartFailed": "更改已应用，但 Klipper 重启请求失败——请手动重启它。",
+      "applyHint": "应用时会短暂禁用总线并重启 Klipper，以便 MCU 使用新设置重新连接。"
     },
     "advisor": {
       "intro": "一览主机健康状况——CPU、内存、磁盘、时钟和服务，每项均评级并附带修复建议。",

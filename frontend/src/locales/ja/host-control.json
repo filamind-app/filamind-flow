@@ -312,7 +312,15 @@
       "applyParams": "パラメータを適用",
       "restart": "バスを再起動",
       "restartHint": "BUS-OFF になったコントローラを復旧します。",
-      "noiseHint": "トリプルサンプリングと高めの SJW は電気的ノイズへの耐性を高めます。自動再起動 (ms) は BUS-OFF 後にバスを復帰させます。"
+      "noiseHint": "トリプルサンプリングと高めの SJW は電気的ノイズへの耐性を高めます。自動再起動 (ms) は BUS-OFF 後にバスを復帰させます。",
+      "restartKlipper": "KlipperとMCUを再起動",
+      "confirmBitrate": "ビットレートを変更しますか？これによりCANバスが一時的に無効化され（すべてのCAN MCUが切断されます）、タイミングを再設定したうえで再び有効化し、その後Klipperを再起動します。印刷中は絶対に行わないでください。",
+      "confirmParams": "これらのCAN設定を適用しますか？これによりバスが一時的に無効化され（すべてのCAN MCUが切断されます）、変更を適用したうえで再び有効化し、その後Klipperを再起動します。印刷中は絶対に行わないでください。",
+      "confirmKlipper": "今すぐKlipperとすべてのMCUを再起動しますか？CAN MCUは再接続されます。印刷中は絶対に行わないでください。",
+      "appliedRestarting": "適用しました。バスは再び有効になり、MCUが再接続できるようKlipperを再起動しています。",
+      "restartingKlipper": "Klipperを再起動しています。MCUは再接続されます。",
+      "restartFailed": "変更は適用されましたが、Klipperの再起動要求に失敗しました。手動で再起動してください。",
+      "applyHint": "適用するとバスが一時的に無効化され、新しい設定でMCUが再接続できるようKlipperを再起動します。"
     },
     "advisor": {
       "intro": "ホストの健全性をひと目で把握。CPU・メモリ・ディスク・時刻・サービスを、それぞれ評価と対処法つきで表示します。",
