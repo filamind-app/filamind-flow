@@ -86,16 +86,24 @@ def _active_ctrlmodes(info: dict[str, Any]) -> set[str]:
     return set()
 
 
+def _d(value: Any) -> dict[str, Any]:
+    """A dict, or {} - so an unexpected ``ip -json`` shape can never throw an AttributeError."""
+    return value if isinstance(value, dict) else {}
+
+
 def _parse_live(entry: dict[str, Any]) -> dict[str, Any]:
     """Pull the fields we surface from one ``ip -details -statistics -json link show`` record:
     link/controller state + error counters, plus the FULL tunable parameter set (bit timing,
-    control modes, recovery, CAN-FD) and the controller's allowed ranges so the UI can bound it."""
+    control modes, recovery, CAN-FD) and the controller's allowed ranges so the UI can bound it.
+
+    Every nested lookup goes through :func:`_d` so a controller whose JSON shape differs from the
+    common case (a field that is null / a list / a string) degrades to empty rather than 500-ing."""
     flags = entry.get("flags")
     link_up = "UP" in flags if isinstance(flags, list) else None
     txqlen = entry.get("txqlen")
-    info = (entry.get("linkinfo") or {}).get("info_data") or {}
-    berr = info.get("berr_counter") or {}
-    bt = info.get("bittiming") or {}
+    info = _d(_d(entry.get("linkinfo")).get("info_data"))
+    berr = _d(info.get("berr_counter"))
+    bt = _d(info.get("bittiming"))
     state = info.get("state")
     bitrate = bt.get("bitrate")
 
@@ -106,7 +114,7 @@ def _parse_live(entry: dict[str, Any]) -> dict[str, Any]:
             params[key] = bt[key]
     if isinstance(info.get("restart_ms"), int):
         params["restart_ms"] = info["restart_ms"]
-    dbt = info.get("data_bittiming") or {}
+    dbt = _d(info.get("data_bittiming"))
     if isinstance(dbt.get("bitrate"), int):
         params["dbitrate"] = dbt["bitrate"]
     if isinstance(dbt.get("sample_point"), int | float):
@@ -115,7 +123,7 @@ def _parse_live(entry: dict[str, Any]) -> dict[str, Any]:
     params["flags"] = {api: kebab in active for api, kebab in _CTRL_FLAGS.items()}
 
     # Controller-reported limits (drive the UI's input bounds + which params are supported).
-    const = info.get("bittiming_const") or {}
+    const = _d(info.get("bittiming_const"))
     limits: dict[str, Any] = {}
     for key in (
         "tseg1_min",
@@ -128,7 +136,7 @@ def _parse_live(entry: dict[str, Any]) -> dict[str, Any]:
     ):
         if isinstance(const.get(key), int):
             limits[key] = const[key]
-    clock = (info.get("clock") or {}).get("freq")
+    clock = _d(info.get("clock")).get("freq")
     if isinstance(clock, int):
         limits["clock_freq"] = clock
     limits["fd_supported"] = bool(info.get("data_bittiming_const"))
@@ -159,7 +167,9 @@ async def _all_live_status() -> dict[str, dict[str, Any]]:
     result: dict[str, dict[str, Any]] = {}
     for entry in data if isinstance(data, list) else []:
         if isinstance(entry, dict) and entry.get("ifname"):
-            result[str(entry["ifname"])] = _parse_live(entry)
+            # One malformed record must never sink the whole read (the panel would 500).
+            with contextlib.suppress(Exception):
+                result[str(entry["ifname"])] = _parse_live(entry)
     return result
 
 
@@ -183,7 +193,9 @@ async def list_can_buses(moonraker_url: str, data_dir: str) -> list[dict[str, An
     buses: list[dict[str, Any]] = []
     overrides = topology_overrides.read_overrides(data_dir)
     client = MoonrakerClient(moonraker_url)
-    with contextlib.suppress(httpx.HTTPError):
+    # Best-effort: Moonraker down, a malformed system_info, or a catalog hiccup must degrade to the
+    # live `ip` data (or empty) - this read must NEVER 500 the panel.
+    with contextlib.suppress(Exception):
         system_info = await client.machine_system_info()
         buses = board_topology._can_buses(system_info, overrides)
 

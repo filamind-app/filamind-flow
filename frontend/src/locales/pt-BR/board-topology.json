@@ -330,7 +330,8 @@
         "rule": "Termine exatamente dois nós — as duas extremidades físicas do barramento.",
         "both_ends": "Dois nós: ambas as extremidades devem ser terminadas (≈60Ω ao longo do barramento).",
         "middle_off": "{count} nós no barramento: termine apenas as duas extremidades; o(s) nó(s) do meio devem ter o terminador de 120Ω DESLIGADO.",
-        "single_node": "Apenas um nó CAN detectado."
+        "single_node": "Apenas um nó CAN detectado.",
+        "bus_error": "{interface} está relatando erros de CAN ({state}). Isso geralmente indica terminação de 120Ω incorreta (ausente, em excesso ou não nas duas extremidades) ou falha de fiação/ruído. Confirme exatamente dois terminadores de 120Ω, um em cada extremidade do barramento."
       }
     }
   }

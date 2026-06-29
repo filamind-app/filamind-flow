@@ -804,19 +804,67 @@ def _term_node(name: str, board_id: str | None, role: str) -> dict[str, Any]:
     }
 
 
-def _can_termination(result: dict[str, Any]) -> dict[str, Any] | None:
+#: CAN controller states that mean the bus is unhealthy. A correctly wired + terminated bus keeps
+#: the controller ERROR-ACTIVE; BUS-OFF / ERROR-PASSIVE almost always trace to wrong or missing
+#: 120Ω termination (signal reflections), so the live controller state is the one software-visible
+#: signal that VERIFIES the physical termination - exactly what the user can't read off a jumper.
+_CAN_ERROR_STATES = {"BUS-OFF": "error", "ERROR-PASSIVE": "error", "ERROR-WARNING": "warning"}
+_CAN_ERR_WARN_COUNT = 96  # the kernel's CAN error-warning threshold (tx/rx error counter)
+
+
+def _can_health_finding(
+    can_buses: list[dict[str, Any]], live_status: dict[str, Any]
+) -> dict[str, Any] | None:
+    """A live bus-health finding when a CAN controller is reporting errors - the only
+    software-visible sign that the 120Ω termination is wrong (missing, too many, or not at the two
+    ends). Returns the single worst interface's finding, or ``None`` when every controller is OK."""
+    severity = {"error": 2, "warning": 1}
+    worst: dict[str, Any] | None = None
+    for bus in can_buses:
+        iface = bus.get("interface")
+        st = live_status.get(iface) if iface else None
+        if not isinstance(st, dict) or not st.get("link_up"):
+            continue
+        state = str(st.get("state") or "")
+        level = _CAN_ERROR_STATES.get(state)
+        if level is None:
+            rx, tx = st.get("errors_rx"), st.get("errors_tx")
+            counts = [c for c in (rx, tx) if isinstance(c, int)]
+            if counts and max(counts) >= _CAN_ERR_WARN_COUNT:
+                level, state = "warning", state or "ERROR-WARNING"
+        if level is None:
+            continue
+        cand = {"code": "bus_error", "level": level, "interface": str(iface), "state": state}
+        if worst is None or severity[level] > severity[str(worst["level"])]:
+            worst = cand
+    return worst
+
+
+def _can_termination(
+    result: dict[str, Any], live_status: dict[str, Any] | None = None
+) -> dict[str, Any] | None:
     """CAN-bus termination guidance: the nodes on the segment (the external USB-CAN adapter + every
     CAN MCU) with each board's 120Ω terminator location, plus advisories. A CAN bus needs EXACTLY
     two terminators, at its two physical ends - software can't read a jumper, so this surfaces where
-    each board's terminator is + the rule, and flags the common >2-node mistake. ``None`` when the
+    each board's terminator is + the rule, and flags the common >2-node mistake. ``live_status``
+    (per-interface controller state from ``ip``) lets it also raise an error when the live bus is
+    unhealthy - the runtime check on whether the termination is actually right. ``None`` when the
     printer has no CAN at all."""
+    live_status = live_status or {}
+    can_buses = result.get("can_buses") or []
     can_mcus = [m for m in (result.get("mcus") or []) if m.get("connection") == "canbus"]
-    adapters = [b for b in (result.get("can_buses") or []) if b.get("board_id")]
+    adapters = [b for b in can_buses if b.get("board_id")]
     if not can_mcus and not adapters:
         return None
-    nodes = [
-        _term_node(a.get("interface") or "adapter", a.get("board_id"), "adapter") for a in adapters
-    ]
+    nodes: list[dict[str, Any]] = []
+    for a in adapters:
+        node = _term_node(a.get("interface") or "adapter", a.get("board_id"), "adapter")
+        st = live_status.get(a.get("interface"))
+        if isinstance(st, dict):
+            node["live_state"] = st.get("state")
+            node["errors_rx"] = st.get("errors_rx")
+            node["errors_tx"] = st.get("errors_tx")
+        nodes.append(node)
     nodes += [_term_node(m.get("name") or "mcu", m.get("board_id"), "mcu") for m in can_mcus]
 
     findings: list[dict[str, Any]] = [{"code": "rule", "level": "info"}]
@@ -827,6 +875,9 @@ def _can_termination(result: dict[str, Any]) -> dict[str, Any] | None:
         findings.append({"code": "both_ends", "level": "info"})
     elif count == 1:
         findings.append({"code": "single_node", "level": "info"})
+    health = _can_health_finding(can_buses, live_status)
+    if health:
+        findings.append(health)
     return {"nodes": nodes, "findings": findings}
 
 
@@ -872,7 +923,15 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     _mark_integrated_host(result)
     # Merge any user-added nodes (board/MCU, USB-CAN adapter, host display) the detection missed.
     apply_manual_additions(result, manual_additions.read_additions(data_dir))
-    result["can_termination"] = _can_termination(result)
+    # Live CAN controller state (best-effort) lets the termination advisory verify the physical
+    # wiring: a bus-off / error-passive controller is the runtime fingerprint of wrong 120Ω
+    # termination. Lazy import - canbus_control imports this module. Never fatal to the topology.
+    live_can: dict[str, Any] = {}
+    with contextlib.suppress(Exception):
+        from app.services import canbus_control
+
+        live_can = await canbus_control._all_live_status()
+    result["can_termination"] = _can_termination(result, live_can)
     result["reachable"] = True
     return result
 

@@ -6,6 +6,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-06-29
+
+### Added
+
+- **Live CAN termination check** in Board Topology. The 120Ω termination advisory now reads the live
+  CAN controller state from the host: a controller that has gone **bus-off** or **error-passive**, or
+  that is accumulating bus errors, is the runtime fingerprint of wrong or missing termination
+  (signal reflections) — so the advisory raises an error/warning naming the affected interface and
+  its state, and each adapter node shows its live controller state inline. This is the one
+  software-visible signal that verifies what can't be read off a jumper.
+- A dedicated **USB-CAN adapter** board class. U2C / UTC bridge dongles are now classified as
+  `adapter` (previously mis-filed as `mainboard`), and the catalog browser's class filter gained the
+  `adapter` and `probe` labels in all locales (the `probe` label was previously missing, leaking its
+  raw key into the UI).
+
+### Fixed
+
+- The Host Control **CAN Bus** panel no longer errors out when the host reports an unusual `ip`
+  link record or Moonraker is briefly unreachable: the read path degrades to whatever live data is
+  available instead of failing the whole request.
+
 ## [1.9.0] - 2026-06-29
 
 ### Added

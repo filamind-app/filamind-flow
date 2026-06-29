@@ -193,6 +193,29 @@ def test_expansion_and_host_board_classes() -> None:
     assert counts["expansion"] == 7 and counts["host"] == 10
 
 
+def test_usb_can_adapters_are_class_adapter() -> None:
+    """USB-CAN dongles (U2C / UTC) are bridges, not mainboards - they belong to their own
+    `adapter` class so the catalog facet groups them correctly (was mis-filed as 'mainboard')."""
+    by_id = {b["board_id"]: b for b in reference_data.boards()}
+    adapters = (
+        "u2c-all",
+        "utc-v1-0",
+        "u2c-v1-0-v1-1",
+        "u2c-v2-0-v2-1",
+        "u2c-v2-1",
+        "utc-usb-to-can",
+    )
+    for bid in adapters:
+        assert by_id[bid]["boardClass"] == "adapter", bid
+    counts = Counter(b.get("boardClass") for b in reference_data.boards())
+    assert counts["adapter"] == 6
+    # The facet dropdown must offer both the new `adapter` class and the existing `probe` class
+    # (the latter had no i18n label before, so its raw key leaked into the UI).
+    facets = reference_data.hardware_facets()
+    assert "adapter" in facets["boardClass"]
+    assert "probe" in facets["boardClass"]
+
+
 def test_boards_enriched_media_links_are_safe() -> None:
     """Phase 5+6: some boards carry enriched specs + link-only media. Any media URL
     must be a real http(s) link (never a fabricated/relative path)."""

@@ -330,7 +330,8 @@
         "rule": "Terminasi tepat dua node — kedua ujung fisik bus.",
         "both_ends": "Dua node: kedua ujung harus diterminasi (≈60Ω di seluruh bus).",
         "middle_off": "{count} node pada bus: terminasi hanya kedua ujungnya; node di tengah harus mematikan terminator 120Ω-nya.",
-        "single_node": "Hanya satu node CAN yang terdeteksi."
+        "single_node": "Hanya satu node CAN yang terdeteksi.",
+        "bus_error": "{interface} melaporkan galat CAN ({state}). Ini biasanya berarti terminasi 120Ω salah (tidak ada, terlalu banyak, atau tidak di kedua ujung) atau masalah pengkabelan/derau. Pastikan tepat dua terminator 120Ω, satu di setiap ujung bus."
       }
     }
   }

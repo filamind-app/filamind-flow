@@ -180,6 +180,8 @@
         "toolhead": "ツールヘッド",
         "printer-preset": "プリンタープリセット",
         "expansion": "拡張ボード",
+        "probe": "プローブ",
+        "adapter": "USB-CANアダプター",
         "host": "ホスト SBC"
       }
     },

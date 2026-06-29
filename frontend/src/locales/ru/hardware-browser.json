@@ -176,6 +176,8 @@
         "toolhead": "Печатающая голова",
         "printer-preset": "Пресет принтера",
         "expansion": "Расширение",
+        "probe": "Щуп",
+        "adapter": "USB-CAN адаптер",
         "host": "Хост-SBC"
       },
       "anyType": "Все типы"

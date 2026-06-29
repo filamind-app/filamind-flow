@@ -176,6 +176,8 @@
         "toolhead": "工具头",
         "printer-preset": "打印机预设",
         "expansion": "扩展板",
+        "probe": "探针",
+        "adapter": "USB-CAN 适配器",
         "host": "主机 SBC"
       },
       "anyType": "全部类型"

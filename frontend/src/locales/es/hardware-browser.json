@@ -176,6 +176,8 @@
         "toolhead": "Cabezal",
         "printer-preset": "Preajuste de impresora",
         "expansion": "Expansión",
+        "probe": "Sonda",
+        "adapter": "Adaptador USB-CAN",
         "host": "Host (SBC)"
       },
       "anyType": "Todos los tipos"

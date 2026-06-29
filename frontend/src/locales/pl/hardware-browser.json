@@ -180,6 +180,8 @@
         "toolhead": "Głowica",
         "printer-preset": "Preset drukarki",
         "expansion": "Rozszerzenie",
+        "probe": "Sonda",
+        "adapter": "Adapter USB-CAN",
         "host": "Host SBC"
       }
     },

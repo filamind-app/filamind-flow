@@ -269,6 +269,62 @@ async def test_set_params_txqueuelen_runs_separately(monkeypatch: Any) -> None:
         await canbus_control.set_params("can0", {"txqueuelen": -1}, "http://x")
 
 
+# `ip -json` records that violate the expected shape (older kernels / odd drivers / VPN-style
+# pseudo-CAN ifaces). The read path must degrade, never raise -> no 500 on the panel.
+_MALFORMED_RECORDS = [
+    {"ifname": "can0"},  # no linkinfo at all
+    {"ifname": "can0", "linkinfo": None},  # null linkinfo
+    {"ifname": "can0", "linkinfo": {"info_data": None}},  # null info_data
+    {"ifname": "can0", "linkinfo": {"info_data": []}},  # info_data is a list, not a dict
+    {"ifname": "can0", "linkinfo": {"info_data": {"bittiming": []}}},  # bittiming a list
+    {"ifname": "can0", "linkinfo": {"info_data": {"berr_counter": "nope"}}},  # berr a string
+    {"ifname": "can0", "linkinfo": {"info_data": {"clock": 7}}},  # clock not a dict
+]
+
+
+@pytest.mark.parametrize("record", _MALFORMED_RECORDS)
+def test_parse_live_degrades_on_malformed_record(record: dict[str, Any]) -> None:
+    live = canbus_control._parse_live(record)
+    # No raise; missing fields surface as None rather than crashing the read.
+    assert live["state"] is None
+    assert live["errors_rx"] is None and live["errors_tx"] is None
+    assert live["bitrate"] is None
+    assert isinstance(live["params"], dict) and isinstance(live["limits"], dict)
+
+
+async def test_all_live_status_skips_malformed_records(monkeypatch: Any) -> None:
+    """A garbage entry in the `ip -json` array is skipped, not allowed to 500 the whole read."""
+    payload = json.dumps(
+        [{"ifname": "can0", "linkinfo": {"info_data": []}}, json.loads(_IP_JSON)[0]]
+    )
+
+    async def fake_run(cmd: Any, timeout: float = 10.0) -> tuple[int, str]:
+        return (0, payload) if _is_show(cmd) else (0, "")
+
+    monkeypatch.setattr(canbus_control, "_run", fake_run)
+    live = await canbus_control._all_live_status()
+    assert "can0" in live  # the well-formed second record still parsed
+
+
+async def test_list_can_buses_survives_moonraker_failure(monkeypatch: Any, tmp_path: Any) -> None:
+    """A non-HTTP Moonraker/catalog error must degrade to live `ip` data, not raise a 500."""
+
+    async def boom(_self: Any) -> dict[str, Any]:
+        raise RuntimeError("malformed system_info")
+
+    async def fake_run(cmd: Any, timeout: float = 10.0) -> tuple[int, str]:
+        return (0, _IP_JSON) if _is_show(cmd) else (0, "")
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.machine_system_info", boom)
+    monkeypatch.setattr(canbus_control, "_run", fake_run)
+
+    buses = await canbus_control.list_can_buses("http://x", str(tmp_path))
+    # Moonraker enrichment was lost, but the live interface is still listed.
+    assert [b["interface"] for b in buses] == ["can0"]
+    assert buses[0]["driver"] is None  # no Moonraker enrichment
+    assert buses[0]["link_up"] is True  # live data still present
+
+
 async def test_set_restart(monkeypatch: Any) -> None:
     calls: list[list[str]] = []
     _idle_run_setup(monkeypatch, _IP_JSON, calls)

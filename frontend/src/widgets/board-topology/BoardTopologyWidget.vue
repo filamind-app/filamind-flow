@@ -247,6 +247,8 @@ function fmtBitrate(n?: number | null): string {
 }
 
 // -- CAN 120Ω termination advisory --------------------------------------------
+/** Live CAN controller states that signal an unhealthy bus (highlighted red on the node). */
+const CAN_ERROR_STATES = new Set(['BUS-OFF', 'ERROR-PASSIVE', 'ERROR-WARNING'])
 /** Translate a termination type/default code, falling back to the raw value. */
 function termLabel(key: string, raw: string): string {
   return te(key) ? t(key) : raw
@@ -259,8 +261,23 @@ function termDefault(d?: string | null): string {
   if (!d) return ''
   return termLabel('boardTopology.termination.default.' + d, d)
 }
-function termFinding(f: { code: string; count?: number | null }): string {
-  return t('boardTopology.termination.finding.' + f.code, { count: f.count ?? 0 })
+function termFinding(f: {
+  code: string
+  count?: number | null
+  interface?: string | null
+  state?: string | null
+}): string {
+  return t('boardTopology.termination.finding.' + f.code, {
+    count: f.count ?? 0,
+    interface: f.interface ?? '',
+    state: f.state ?? '',
+  })
+}
+/** Tailwind classes for a finding by severity: error = red, warning = yellow, info = muted. */
+function termFindingClass(level: string): string {
+  if (level === 'error') return 'bg-brand-red/20 font-bold'
+  if (level === 'warning') return 'bg-brand-yellow/20 font-bold'
+  return 'opacity-70'
 }
 
 onMounted(() => void load())
@@ -390,6 +407,14 @@ onMounted(() => void load())
               >
             </template>
             <span v-else class="opacity-50">· {{ t('boardTopology.termination.unknownLoc') }}</span>
+            <span
+              v-if="n.live_state"
+              class="font-mono text-[10px]"
+              :class="
+                CAN_ERROR_STATES.has(n.live_state) ? 'font-bold text-brand-red' : 'opacity-50'
+              "
+              >· {{ n.live_state }}</span
+            >
           </li>
         </ul>
         <ul class="space-y-0.5">
@@ -397,7 +422,7 @@ onMounted(() => void load())
             v-for="(f, i) in topology.can_termination.findings"
             :key="i"
             class="rounded-sm px-1 py-0.5"
-            :class="f.level === 'warning' ? 'bg-brand-yellow/20 font-bold' : 'opacity-70'"
+            :class="termFindingClass(f.level)"
           >
             {{ termFinding(f) }}
           </li>
