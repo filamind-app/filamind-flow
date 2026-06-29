@@ -332,7 +332,7 @@
         "middle_off": "{count} node pada bus: terminasi hanya kedua ujungnya; node di tengah harus mematikan terminator 120Ω-nya.",
         "single_node": "Hanya satu node CAN yang terdeteksi.",
         "bus_error": "{interface} melaporkan galat CAN ({state}). Ini biasanya berarti terminasi 120Ω salah (tidak ada, terlalu banyak, atau tidak di kedua ujung) atau masalah pengkabelan/derau. Pastikan tepat dua terminator 120Ω, satu di setiap ujung bus.",
-        "bus_ok": "{interface} berkomunikasi dengan bersih ({state}); terminasi 120Ω tampak benar berdasarkan pembacaan langsung."
+        "bus_ok": "Bus CAN ({interface}) berkomunikasi dengan bersih ({state}); terminasi 120Ω tampak benar berdasarkan pembacaan langsung."
       }
     }
   }
