@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-06-29
+
+### Added
+
+- **CAN 120Ω termination guidance** in Board Topology. A CAN bus needs exactly two 120Ω terminators,
+  at its two physical ends — the new advisory lists every node on the segment (the USB-CAN adapter +
+  each CAN MCU) with **where that board's terminator is and how it's set** (jumper / solder bridge /
+  DIP switch / fixed / none), and flags the common mistakes: a >2-node bus must terminate only its
+  two ends (middle nodes OFF). Software can't read a physical jumper, so this is verify-and-correct
+  guidance, not a hardware measurement.
+- The hardware catalog gains a curated **`canTermination`** field on 77 CAN-capable boards
+  (BigTreeTech, Mellow, Duet3D, FYSETC, MKS/Makerbase, LDO, …), each web-researched from the
+  manufacturer's own documentation; boards without an authoritative source are left blank.
+
 ## [1.8.0] - 2026-06-29
 
 ### Added

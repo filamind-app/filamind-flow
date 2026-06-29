@@ -305,6 +305,33 @@
       "edit": "Edit",
       "delete": "Hapus",
       "badge": "Manual"
+    },
+    "termination": {
+      "title": "Terminasi CAN (120Ω)",
+      "intro": "Bus CAN membutuhkan tepat dua terminator 120Ω, di kedua ujung fisiknya. Software tidak bisa membaca jumper, jadi periksa terminator setiap board di bawah ini.",
+      "unknownLoc": "lokasi terminator tidak terdokumentasi untuk board ini",
+      "role": {
+        "adapter": "adapter",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "jumper",
+        "solder_bridge": "solder bridge",
+        "switch": "sakelar DIP",
+        "fixed": "permanen (selalu aktif)",
+        "none": "tanpa terminator onboard"
+      },
+      "default": {
+        "on": "aktif secara default",
+        "off": "nonaktif secara default",
+        "unknown": "default tidak diketahui"
+      },
+      "finding": {
+        "rule": "Terminasi tepat dua node — kedua ujung fisik bus.",
+        "both_ends": "Dua node: kedua ujung harus diterminasi (≈60Ω di seluruh bus).",
+        "middle_off": "{count} node pada bus: terminasi hanya kedua ujungnya; node di tengah harus mematikan terminator 120Ω-nya.",
+        "single_node": "Hanya satu node CAN yang terdeteksi."
+      }
     }
   }
 }

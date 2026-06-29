@@ -305,6 +305,33 @@
       "edit": "Sửa",
       "delete": "Xóa",
       "badge": "Thủ công"
+    },
+    "termination": {
+      "title": "Đầu cuối CAN (120Ω)",
+      "intro": "Một bus CAN cần đúng hai điện trở đầu cuối 120Ω, đặt ở hai đầu vật lý của bus. Phần mềm không thể đọc được jumper, vì vậy hãy kiểm tra điện trở đầu cuối của từng bo mạch bên dưới.",
+      "unknownLoc": "vị trí điện trở đầu cuối không được ghi tài liệu cho bo mạch này",
+      "role": {
+        "adapter": "bộ chuyển đổi",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "jumper",
+        "solder_bridge": "cầu hàn",
+        "switch": "công tắc DIP",
+        "fixed": "cố định (luôn bật)",
+        "none": "không có điện trở đầu cuối tích hợp"
+      },
+      "default": {
+        "on": "mặc định bật",
+        "off": "mặc định tắt",
+        "unknown": "không rõ mặc định"
+      },
+      "finding": {
+        "rule": "Chỉ đặt đầu cuối ở đúng hai nút — hai đầu vật lý của bus.",
+        "both_ends": "Hai nút: cả hai đầu đều nên có điện trở đầu cuối (≈60Ω trên toàn bus).",
+        "middle_off": "{count} nút trên bus: chỉ đặt đầu cuối ở hai đầu; (các) nút ở giữa phải TẮT điện trở đầu cuối 120Ω của chúng.",
+        "single_node": "Chỉ phát hiện một nút CAN."
+      }
     }
   }
 }

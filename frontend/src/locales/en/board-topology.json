@@ -305,6 +305,33 @@
       "edit": "Edit",
       "delete": "Delete",
       "badge": "Manual"
+    },
+    "termination": {
+      "title": "CAN termination (120Ω)",
+      "intro": "A CAN bus needs exactly two 120Ω terminators, at its two physical ends. Software can't read a jumper, so check each board's terminator below.",
+      "unknownLoc": "terminator location not documented for this board",
+      "role": {
+        "adapter": "adapter",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "jumper",
+        "solder_bridge": "solder bridge",
+        "switch": "DIP switch",
+        "fixed": "fixed (always on)",
+        "none": "no onboard terminator"
+      },
+      "default": {
+        "on": "on by default",
+        "off": "off by default",
+        "unknown": "default unknown"
+      },
+      "finding": {
+        "rule": "Terminate exactly two nodes — the two physical ends of the bus.",
+        "both_ends": "Two nodes: both ends should be terminated (≈60Ω across the bus).",
+        "middle_off": "{count} nodes on the bus: terminate only the two ends; the middle node(s) must have their 120Ω terminator OFF.",
+        "single_node": "Only one CAN node detected."
+      }
     }
   }
 }

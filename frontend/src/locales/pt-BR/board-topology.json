@@ -305,6 +305,33 @@
       "edit": "Editar",
       "delete": "Excluir",
       "badge": "Manual"
+    },
+    "termination": {
+      "title": "Terminação CAN (120Ω)",
+      "intro": "Um barramento CAN precisa de exatamente dois terminadores de 120Ω, nas suas duas extremidades físicas. O software não consegue ler um jumper, então verifique o terminador de cada placa abaixo.",
+      "unknownLoc": "localização do terminador não documentada para esta placa",
+      "role": {
+        "adapter": "adaptador",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "jumper",
+        "solder_bridge": "ponte de solda",
+        "switch": "chave DIP",
+        "fixed": "fixo (sempre ativo)",
+        "none": "sem terminador integrado"
+      },
+      "default": {
+        "on": "ativo por padrão",
+        "off": "inativo por padrão",
+        "unknown": "padrão desconhecido"
+      },
+      "finding": {
+        "rule": "Termine exatamente dois nós — as duas extremidades físicas do barramento.",
+        "both_ends": "Dois nós: ambas as extremidades devem ser terminadas (≈60Ω ao longo do barramento).",
+        "middle_off": "{count} nós no barramento: termine apenas as duas extremidades; o(s) nó(s) do meio devem ter o terminador de 120Ω DESLIGADO.",
+        "single_node": "Apenas um nó CAN detectado."
+      }
     }
   }
 }

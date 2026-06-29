@@ -27,7 +27,7 @@ import { pendingNode } from './topologyFocus'
 import TopologyGraph from './TopologyGraph.vue'
 import type { ManualAddition, RelatedRef, Topology, TopologyChange, TopologyDiff } from './types'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, te } = useI18n({ useScope: 'global' })
 const { go } = useNav()
 const { focusEntity } = useEntityFocus()
 
@@ -246,6 +246,23 @@ function fmtBitrate(n?: number | null): string {
   return n % 1_000_000 === 0 ? `${n / 1_000_000} Mbit` : `${Math.round(n / 1000)} kbit`
 }
 
+// -- CAN 120Ω termination advisory --------------------------------------------
+/** Translate a termination type/default code, falling back to the raw value. */
+function termLabel(key: string, raw: string): string {
+  return te(key) ? t(key) : raw
+}
+function termType(type?: string | null): string {
+  if (!type) return ''
+  return termLabel('boardTopology.termination.type.' + type, type.replace(/_/g, ' '))
+}
+function termDefault(d?: string | null): string {
+  if (!d) return ''
+  return termLabel('boardTopology.termination.default.' + d, d)
+}
+function termFinding(f: { code: string; count?: number | null }): string {
+  return t('boardTopology.termination.finding.' + f.code, { count: f.count ?? 0 })
+}
+
 onMounted(() => void load())
 </script>
 
@@ -344,6 +361,47 @@ onMounted(() => void load())
             >· {{ t('boardTopology.canbus.adapter') }}</span
           >
         </span>
+      </div>
+
+      <!-- CAN 120Ω termination advisory: where each board's terminator is + the exactly-two rule -->
+      <div
+        v-if="topology.can_termination && topology.can_termination.nodes.length"
+        class="nb-card space-y-1.5 bg-surface p-2 text-xs"
+      >
+        <p class="font-bold">
+          <span aria-hidden="true">⏛</span> {{ t('boardTopology.termination.title') }}
+        </p>
+        <p class="opacity-70">{{ t('boardTopology.termination.intro') }}</p>
+        <ul class="space-y-0.5" dir="ltr">
+          <li
+            v-for="n in topology.can_termination.nodes"
+            :key="n.role + n.name"
+            class="flex flex-wrap items-baseline gap-x-1.5"
+          >
+            <span class="font-mono font-bold">{{ n.name }}</span>
+            <span class="opacity-50">({{ t('boardTopology.termination.role.' + n.role) }})</span>
+            <template v-if="n.termination">
+              <span>· {{ termType(n.termination.type) }}</span>
+              <span v-if="n.termination.location" class="opacity-70"
+                >— {{ n.termination.location }}</span
+              >
+              <span v-if="termDefault(n.termination.default)" class="opacity-60"
+                >· {{ termDefault(n.termination.default) }}</span
+              >
+            </template>
+            <span v-else class="opacity-50">· {{ t('boardTopology.termination.unknownLoc') }}</span>
+          </li>
+        </ul>
+        <ul class="space-y-0.5">
+          <li
+            v-for="(f, i) in topology.can_termination.findings"
+            :key="i"
+            class="rounded-sm px-1 py-0.5"
+            :class="f.level === 'warning' ? 'bg-brand-yellow/20 font-bold' : 'opacity-70'"
+          >
+            {{ termFinding(f) }}
+          </li>
+        </ul>
       </div>
 
       <!-- Legend -->

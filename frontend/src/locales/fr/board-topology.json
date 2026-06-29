@@ -305,6 +305,33 @@
       "edit": "Modifier",
       "delete": "Supprimer",
       "badge": "Manuel"
+    },
+    "termination": {
+      "title": "Terminaison CAN (120Ω)",
+      "intro": "Un bus CAN a besoin d'exactement deux terminaisons de 120Ω, à ses deux extrémités physiques. Le logiciel ne peut pas lire un cavalier : vérifiez donc la terminaison de chaque carte ci-dessous.",
+      "unknownLoc": "emplacement de la terminaison non documenté pour cette carte",
+      "role": {
+        "adapter": "adaptateur",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "cavalier",
+        "solder_bridge": "pont de soudure",
+        "switch": "interrupteur DIP",
+        "fixed": "fixe (toujours active)",
+        "none": "aucune terminaison intégrée"
+      },
+      "default": {
+        "on": "active par défaut",
+        "off": "inactive par défaut",
+        "unknown": "état par défaut inconnu"
+      },
+      "finding": {
+        "rule": "Ne terminez qu'exactement deux nœuds — les deux extrémités physiques du bus.",
+        "both_ends": "Deux nœuds : les deux extrémités doivent être terminées (≈60Ω sur l'ensemble du bus).",
+        "middle_off": "{count} nœuds sur le bus : ne terminez que les deux extrémités ; la ou les terminaisons 120Ω des nœuds intermédiaires doivent être DÉSACTIVÉES.",
+        "single_node": "Un seul nœud CAN détecté."
+      }
     }
   }
 }

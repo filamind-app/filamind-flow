@@ -1337,6 +1337,41 @@ class TopologyCanBus(BaseModel):
     manual_id: str | None = None
 
 
+class CanTerminationInfo(BaseModel):
+    """Where a board's 120Ω CAN terminator is + how it's set (from the catalog canTermination)."""
+
+    location: str | None = None
+    type: str | None = None  # jumper | solder_bridge | switch | fixed | none
+    default: str | None = None  # on | off | unknown
+    notes: str | None = None
+
+
+class CanTerminationNode(BaseModel):
+    """One node on the CAN segment (the bridging adapter or a CAN MCU) + its terminator info."""
+
+    name: str
+    role: str  # "adapter" | "mcu"
+    board_id: str | None = None
+    board_name: str | None = None
+    termination: CanTerminationInfo | None = None
+
+
+class CanTerminationFinding(BaseModel):
+    """A termination advisory (rendered via boardTopology.termination.finding.<code>)."""
+
+    code: str  # rule | both_ends | middle_off | single_node
+    level: str = "info"  # info | warning
+    count: int | None = None
+
+
+class CanTermination(BaseModel):
+    """CAN-bus termination guidance: the nodes on the segment + correction advisories. A CAN bus
+    needs exactly two 120Ω terminators, at its two physical ends."""
+
+    nodes: list[CanTerminationNode] = []
+    findings: list[CanTerminationFinding] = []
+
+
 class Topology(BaseModel):
     """Host → MCU topology built from the live config (GET /api/topology)."""
 
@@ -1346,6 +1381,8 @@ class Topology(BaseModel):
     mcu_count: int = 0
     # CAN buses the host carries + their bridging adapter (U2C-class), if any.
     can_buses: list[TopologyCanBus] = []
+    # 120Ω termination guidance for the CAN segment (null when there's no CAN).
+    can_termination: CanTermination | None = None
     detail: str | None = None
 
 

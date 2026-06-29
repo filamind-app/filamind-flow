@@ -76,6 +76,16 @@ export interface BoardMedia {
   mediaStatus?: string
 }
 
+/** Where a board's 120Ω CAN terminator is + how it's set. */
+export interface CanTerminationInfo {
+  location?: string | null
+  /** jumper | solder_bridge | switch | fixed | none */
+  type?: string | null
+  /** on | off | unknown */
+  default?: string | null
+  notes?: string | null
+}
+
 /** Full board record from `GET /api/hardware/boards/{board_id}`. */
 export interface BoardDetail {
   board_id: string
@@ -84,6 +94,8 @@ export interface BoardDetail {
   display_name?: string
   boardClass?: string
   specs?: Record<string, string>
+  /** 120Ω CAN termination location/type/default for CAN-capable boards. */
+  canTermination?: CanTerminationInfo
   /** Config-affecting electronics caveats (key → note). */
   electronics?: Record<string, string>
   /** Setup / config notes for this board. */
@@ -127,6 +139,27 @@ export interface TopologyCanBus {
   manual_id?: string | null
 }
 
+/** One node on the CAN segment (the bridging adapter or a CAN MCU) + its terminator info. */
+export interface CanTerminationNode {
+  name: string
+  role: string // "adapter" | "mcu"
+  board_id?: string | null
+  board_name?: string | null
+  termination?: CanTerminationInfo | null
+}
+
+export interface CanTerminationFinding {
+  code: string // rule | both_ends | middle_off | single_node
+  level: string // info | warning
+  count?: number | null
+}
+
+/** CAN-bus 120Ω termination guidance for the whole segment. */
+export interface CanTermination {
+  nodes: CanTerminationNode[]
+  findings: CanTerminationFinding[]
+}
+
 export interface Topology {
   reachable?: boolean
   host: TopologyHost | null
@@ -134,6 +167,8 @@ export interface Topology {
   mcu_count: number
   /** CAN buses the host carries + their bridging adapter (U2C-class), if any. */
   can_buses?: TopologyCanBus[]
+  /** 120Ω termination guidance for the CAN segment (null when there's no CAN). */
+  can_termination?: CanTermination | null
   detail?: string
 }
 

@@ -305,6 +305,33 @@
       "edit": "Bewerken",
       "delete": "Verwijderen",
       "badge": "Handmatig"
+    },
+    "termination": {
+      "title": "CAN-terminatie (120Ω)",
+      "intro": "Een CAN-bus heeft precies twee 120Ω-terminators nodig, aan de twee fysieke uiteinden. Software kan een jumper niet uitlezen, dus controleer hieronder de terminator van elk board.",
+      "unknownLoc": "terminatorlocatie niet gedocumenteerd voor dit board",
+      "role": {
+        "adapter": "adapter",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "jumper",
+        "solder_bridge": "soldeerbrug",
+        "switch": "DIP-schakelaar",
+        "fixed": "vast (altijd aan)",
+        "none": "geen ingebouwde terminator"
+      },
+      "default": {
+        "on": "standaard aan",
+        "off": "standaard uit",
+        "unknown": "standaard onbekend"
+      },
+      "finding": {
+        "rule": "Termineer precies twee nodes — de twee fysieke uiteinden van de bus.",
+        "both_ends": "Twee nodes: beide uiteinden moeten getermineerd zijn (≈60Ω over de bus).",
+        "middle_off": "{count} nodes op de bus: termineer alleen de twee uiteinden; bij de tussenliggende node(s) moet de 120Ω-terminator UIT staan.",
+        "single_node": "Slechts één CAN-node gedetecteerd."
+      }
     }
   }
 }
