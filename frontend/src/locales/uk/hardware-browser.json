@@ -180,6 +180,8 @@
         "toolhead": "Друкуюча голова",
         "printer-preset": "Пресет принтера",
         "expansion": "Розширення",
+        "probe": "Щуп",
+        "adapter": "USB-CAN адаптер",
         "host": "Хост SBC"
       }
     },

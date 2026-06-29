@@ -146,12 +146,19 @@ export interface CanTerminationNode {
   board_id?: string | null
   board_name?: string | null
   termination?: CanTerminationInfo | null
+  /** Live CAN controller state for this node's interface (adapters only): ERROR-ACTIVE / BUS-OFF /…. */
+  live_state?: string | null
+  errors_rx?: number | null
+  errors_tx?: number | null
 }
 
 export interface CanTerminationFinding {
-  code: string // rule | both_ends | middle_off | single_node
-  level: string // info | warning
+  code: string // rule | both_ends | middle_off | single_node | bus_error
+  level: string // info | warning | error
   count?: number | null
+  /** Set on a `bus_error` finding: the unhealthy CAN interface + its live controller state. */
+  interface?: string | null
+  state?: string | null
 }
 
 /** CAN-bus 120Ω termination guidance for the whole segment. */

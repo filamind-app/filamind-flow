@@ -58,3 +58,48 @@ def test_three_nodes_flags_middle_off(monkeypatch: Any) -> None:
     assert middle["level"] == "warning" and middle["count"] == 3
     # a node whose board has no catalog entry still appears, just without terminator info
     assert all(n["termination"] is None for n in term["nodes"])
+
+
+def test_live_bus_off_raises_error_finding(monkeypatch: Any) -> None:
+    """A bus-off controller is the runtime fingerprint of wrong 120Ω termination."""
+    monkeypatch.setattr(reference_data, "board_by_id", lambda i: None)
+    result = {
+        "mcus": [{"name": "toolhead", "connection": "canbus", "board_id": "ebb"}],
+        "can_buses": [{"interface": "can0", "board_id": "u2c"}],
+    }
+    live = {"can0": {"link_up": True, "state": "BUS-OFF", "errors_rx": 0, "errors_tx": 255}}
+    term = board_topology._can_termination(result, live)
+    err = next(f for f in term["findings"] if f["code"] == "bus_error")
+    assert err["level"] == "error"
+    assert err["interface"] == "can0" and err["state"] == "BUS-OFF"
+    # the adapter node carries the live state for the UI to show
+    adapter = next(n for n in term["nodes"] if n["role"] == "adapter")
+    assert adapter["live_state"] == "BUS-OFF" and adapter["errors_tx"] == 255
+
+
+def test_live_high_error_counters_warn(monkeypatch: Any) -> None:
+    """Elevated error counters on an error-active bus surface as a warning, not an error."""
+    monkeypatch.setattr(reference_data, "board_by_id", lambda i: None)
+    result = {
+        "mcus": [{"name": "toolhead", "connection": "canbus", "board_id": "ebb"}],
+        "can_buses": [{"interface": "can0", "board_id": "u2c"}],
+    }
+    live = {"can0": {"link_up": True, "state": "ERROR-ACTIVE", "errors_rx": 120, "errors_tx": 4}}
+    term = board_topology._can_termination(result, live)
+    err = next(f for f in term["findings"] if f["code"] == "bus_error")
+    assert err["level"] == "warning" and err["interface"] == "can0"
+
+
+def test_live_healthy_bus_has_no_error_finding(monkeypatch: Any) -> None:
+    monkeypatch.setattr(reference_data, "board_by_id", lambda i: None)
+    result = {
+        "mcus": [{"name": "toolhead", "connection": "canbus", "board_id": "ebb"}],
+        "can_buses": [{"interface": "can0", "board_id": "u2c"}],
+    }
+    live = {"can0": {"link_up": True, "state": "ERROR-ACTIVE", "errors_rx": 0, "errors_tx": 0}}
+    term = board_topology._can_termination(result, live)
+    assert not any(f["code"] == "bus_error" for f in term["findings"])
+    # a down interface is not flagged (it isn't carrying the bus)
+    down = {"can0": {"link_up": False, "state": "BUS-OFF"}}
+    term2 = board_topology._can_termination(result, down)
+    assert not any(f["code"] == "bus_error" for f in term2["findings"])

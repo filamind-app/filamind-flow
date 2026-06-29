@@ -180,6 +180,8 @@
         "toolhead": "工具頭",
         "printer-preset": "印表機預設",
         "expansion": "擴充板",
+        "probe": "探針",
+        "adapter": "USB-CAN 轉接器",
         "host": "主機 SBC"
       }
     },

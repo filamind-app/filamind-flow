@@ -176,6 +176,8 @@
         "toolhead": "Toolhead",
         "printer-preset": "Drucker-Preset",
         "expansion": "Erweiterung",
+        "probe": "Sonde",
+        "adapter": "USB-CAN-Adapter",
         "host": "Host-SBC"
       },
       "anyType": "Alle Typen"

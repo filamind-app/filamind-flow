@@ -180,6 +180,8 @@
         "toolhead": "Tool head",
         "printer-preset": "Yazıcı ön ayarı",
         "expansion": "Genişletme",
+        "probe": "Prob",
+        "adapter": "USB-CAN adaptörü",
         "host": "Ana Bilgisayar SBC"
       }
     },

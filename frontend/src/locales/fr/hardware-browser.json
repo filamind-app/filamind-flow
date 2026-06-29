@@ -176,6 +176,8 @@
         "toolhead": "Tête d'outil",
         "printer-preset": "Préréglage imprimante",
         "expansion": "Extension",
+        "probe": "Palpeur",
+        "adapter": "Adaptateur USB-CAN",
         "host": "Hôte (SBC)"
       },
       "anyType": "Tous les types"

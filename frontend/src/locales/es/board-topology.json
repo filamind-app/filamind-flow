@@ -330,7 +330,8 @@
         "rule": "Termina exactamente dos nodos: los dos extremos físicos del bus.",
         "both_ends": "Dos nodos: ambos extremos deben estar terminados (≈60Ω a lo largo del bus).",
         "middle_off": "{count} nodos en el bus: termina solo los dos extremos; el o los nodos intermedios deben tener su terminador de 120Ω DESACTIVADO.",
-        "single_node": "Solo se detectó un nodo CAN."
+        "single_node": "Solo se detectó un nodo CAN.",
+        "bus_error": "{interface} informa errores de CAN ({state}). Suele indicar una terminación de 120Ω incorrecta (ausente, de más o no en los dos extremos) o un fallo de cableado/ruido. Confirma exactamente dos terminadores de 120Ω, uno en cada extremo del bus."
       }
     }
   }

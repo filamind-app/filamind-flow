@@ -42,7 +42,7 @@ export interface PartTypeDef {
   fixed?: Record<string, unknown>
 }
 
-const BOARD_CLASSES = ['mainboard', 'toolhead', 'expansion', 'host', 'probe', 'other']
+const BOARD_CLASSES = ['mainboard', 'toolhead', 'expansion', 'host', 'probe', 'adapter', 'other']
 const HOST_KINDS = ['sbc', 'x86', 'mainboard', 'locked', 'other']
 const STEPS_PER_REV = ['200', '400']
 

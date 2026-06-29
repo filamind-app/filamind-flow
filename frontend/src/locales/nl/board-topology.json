@@ -330,7 +330,8 @@
         "rule": "Termineer precies twee nodes — de twee fysieke uiteinden van de bus.",
         "both_ends": "Twee nodes: beide uiteinden moeten getermineerd zijn (≈60Ω over de bus).",
         "middle_off": "{count} nodes op de bus: termineer alleen de twee uiteinden; bij de tussenliggende node(s) moet de 120Ω-terminator UIT staan.",
-        "single_node": "Slechts één CAN-node gedetecteerd."
+        "single_node": "Slechts één CAN-node gedetecteerd.",
+        "bus_error": "{interface} meldt CAN-fouten ({state}). Dit duidt meestal op een verkeerde 120Ω-terminatie (ontbrekend, te veel of niet aan beide uiteinden) of een bedradings-/ruisfout. Controleer of er precies twee 120Ω-afsluitingen zijn, één aan elk uiteinde van de bus."
       }
     }
   }

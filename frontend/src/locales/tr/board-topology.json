@@ -330,7 +330,8 @@
         "rule": "Tam olarak iki düğümü sonlandırın — bus'ın iki fiziksel ucunu.",
         "both_ends": "İki düğüm: her iki uç da sonlandırılmalı (bus genelinde ≈60Ω).",
         "middle_off": "Bus üzerinde {count} düğüm: yalnızca iki ucu sonlandırın; aradaki düğüm(ler)in 120Ω sonlandırıcısı KAPALI olmalı.",
-        "single_node": "Yalnızca bir CAN düğümü algılandı."
+        "single_node": "Yalnızca bir CAN düğümü algılandı.",
+        "bus_error": "{interface} CAN hataları bildiriyor ({state}). Bu genellikle yanlış 120Ω sonlandırması (eksik, fazla veya iki uçta değil) ya da kablolama/gürültü arızası anlamına gelir. Veriyolunun her iki ucunda birer tane olmak üzere tam olarak iki adet 120Ω sonlandırıcı bulunduğundan emin olun."
       }
     }
   }

@@ -330,7 +330,8 @@
         "rule": "Terminiere genau zwei Knoten – die beiden physischen Enden des Busses.",
         "both_ends": "Zwei Knoten: beide Enden sollten terminiert sein (≈60Ω über den Bus).",
         "middle_off": "{count} Knoten am Bus: Terminiere nur die beiden Enden; die mittleren Knoten müssen ihren 120Ω-Abschlusswiderstand DEAKTIVIERT haben.",
-        "single_node": "Nur ein CAN-Knoten erkannt."
+        "single_node": "Nur ein CAN-Knoten erkannt.",
+        "bus_error": "{interface} meldet CAN-Fehler ({state}). Das deutet meist auf eine falsche 120Ω-Terminierung hin (fehlend, zu viele oder nicht an den beiden Enden) oder einen Verdrahtungs-/Störungsfehler. Stelle sicher, dass genau zwei 120Ω-Abschlusswiderstände vorhanden sind, je einer an jedem Ende des Busses."
       }
     }
   }

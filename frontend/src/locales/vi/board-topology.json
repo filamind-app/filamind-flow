@@ -330,7 +330,8 @@
         "rule": "Chỉ đặt đầu cuối ở đúng hai nút — hai đầu vật lý của bus.",
         "both_ends": "Hai nút: cả hai đầu đều nên có điện trở đầu cuối (≈60Ω trên toàn bus).",
         "middle_off": "{count} nút trên bus: chỉ đặt đầu cuối ở hai đầu; (các) nút ở giữa phải TẮT điện trở đầu cuối 120Ω của chúng.",
-        "single_node": "Chỉ phát hiện một nút CAN."
+        "single_node": "Chỉ phát hiện một nút CAN.",
+        "bus_error": "{interface} đang báo lỗi CAN ({state}). Điều này thường có nghĩa là điện trở đầu cuối 120Ω sai (thiếu, dư, hoặc không nằm ở hai đầu) hoặc lỗi dây nối/nhiễu. Hãy đảm bảo có đúng hai điện trở đầu cuối 120Ω, mỗi đầu bus một cái."
       }
     }
   }

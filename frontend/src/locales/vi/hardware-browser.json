@@ -180,6 +180,8 @@
         "toolhead": "Toolhead",
         "printer-preset": "Cấu hình máy in",
         "expansion": "Mở rộng",
+        "probe": "Đầu dò",
+        "adapter": "Bộ chuyển đổi USB-CAN",
         "host": "SBC máy chủ"
       }
     },

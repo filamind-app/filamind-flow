@@ -180,6 +180,8 @@
         "toolhead": "Toolhead",
         "printer-preset": "Printer-preset",
         "expansion": "Uitbreiding",
+        "probe": "Probe",
+        "adapter": "USB-CAN-adapter",
         "host": "Host-SBC"
       }
     },

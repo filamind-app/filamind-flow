@@ -176,6 +176,8 @@
         "toolhead": "رأس الأداة",
         "printer-preset": "إعداد طابعة",
         "expansion": "لوحة توسعة",
+        "probe": "مجس",
+        "adapter": "محول USB-CAN",
         "host": "حاسب مضيف"
       },
       "anyType": "كل الأنواع"
