@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP ve Statik IP",
           "body": "DHCP (otomatik), yönlendiricinizin adresi otomatik atamasını sağlar. Statik (manuel), sabit bir adres belirler - IP, alt ağ (CIDR, örn. /24), ağ geçidi (genellikle yönlendiriciniz) ve DNS'i ayarlayın. Yalnızca IPv4. Bu paneli sunan bağlantının adresini değiştirmek oturumunuzu keser; yeni IP'de yeniden bağlanın. Yanlış bir statik adres ya da ağ geçidi, cihazın kendisinde düzeltene kadar yazıcıyı erişilemez yapabilir, bu yüzden ayarlar doğrulanır ve yazarak onay gerektirir."
+        },
+        "canbus": {
+          "title": "CAN bus kurulumu",
+          "body": "Bir CAN bus, ana makineyi araç kafası/MCU kartlarınıza iki tel (CANH ve CANL) üzerinden bağlar. Çalışması için üç kural vardır: her kartın, yazıcı yapılandırmanıza giren benzersiz bir UUID'si vardır; her düğüm AYNI bitrate ile çalışmalıdır; ve bus'ın, her fiziksel uçta bir tane olmak üzere tam olarak iki adet 120Ω sonlandırıcıya ihtiyacı vardır. 1 Mbit/s (1000000) standart hızdır. Kablolamadan sonra arayüzü etkinleştirin ve denetleyicinin ERROR-ACTIVE okuduğunu ve MCU'larınızın bağlandığını doğrulayın. Görünmeyen bir kart çoğunlukla zaten yapılandırmanızda kayıtlıdır (normaldir) ya da farklı bir bitrate ile çalışıyordur."
+        },
+        "canParams": {
+          "title": "Bitrate ve gelişmiş parametreler",
+          "body": "Bitrate, her kartın bellenimine (ve önyükleyicisine) sabitlenmiştir - yalnızca burada, ana makinede değiştirmek her CAN MCU'sunu çevrimdışı yapar. Bunu yalnızca her kartı aynı yeni hıza yeniden bellenimledikten sonra değiştirin. Daha düşük hızlar (500k/250k) uzun ya da gürültülü bir bus'ta pay sağlar, ancak yalnızca kablolama ve sonlandırma doğru olduğunda; ve bant genişliğini azaltırlar - yani bir doygunluk sorununu çözmez, daha da kötüleştirirler. Örnekleme noktasını ve SJW'yi boş bırakın: çekirdek o zaman önerilen ~%87,5 örnekleme noktasını sizin için seçer; bunları yalnızca uzman bir geçersiz kılma olarak ayarlayın. TX kuyruk uzunluğu 128 olmalıdır (yalnızca tek bir bus'ta 5+ MCU varken artırın; çok daha büyük değerler gecikme ekler ve hatalara yol açabilir). Otomatik yeniden başlatmanın 0 olması bunu kapalı tutar; ~100 ms bir bus-off durumundan kendini kurtarır, ancak bus sürekli düşüyorsa, ona güvenmek yerine kablolamayı düzeltin. Normal baskı için her denetim modu bayrağını KAPALI tutun - özellikle Yalnızca dinleme ve Tek atış, ana makinenin çerçeveleri onaylamasını ya da yeniden denemesini durdurur ve MCU'ları erişilemez kılar."
+        },
+        "canTermination": {
+          "title": "120Ω sonlandırma ve sorun giderme",
+          "body": "Tam olarak iki düğümü sonlandırın - bus'ın iki fiziksel ucunu; ortadaki herhangi bir düğümün 120Ω sonlandırıcısı KAPALI olmalıdır. Bunu kontrol etmek için yazıcıyı KAPATIN ve CANH/CANL arasında ölçün: yaklaşık 60Ω doğrudur (paralel iki sonlandırıcı), ~120Ω yalnızca birinin takılı olduğu, ~40Ω üçünün takılı olduğu, açık devre okuması ise hiçbirinin olmadığı anlamına gelir. CANH ve CANL'yi birbirine sarın, hattı kısa tutun ve step motor, ısıtıcı ve şebeke kablolarından uzakta tutun, ayrıca araç kafası konnektörlerinin gevşeyemeyeceğinden emin olun (hareket, aralıklı hataların başlıca nedenidir). Bus'ı okuma: ERROR-ACTIVE sağlıklıdır; ERROR-PASSIVE, BUS-OFF ya da artan hata sayaçları sonlandırma, kablolama veya bir bitrate uyuşmazlığına işaret eder - bunları bu sırayla kontrol edin."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Maskeleme",
           "def": "Devre dışı bırakmanın daha güçlü bir biçimi - servis maskesi kaldırılana kadar hiç başlatılamaz (başka bir servis tarafından bile). Dikkatli kullanın."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Ana makineyi araç kafası ve MCU kartlarına bağlayan iki telli (CANH/CANL) bir ağ; böylece bir araç kafası, tam bir kablo demeti yerine yalnızca birkaç tele ihtiyaç duyar."
+        },
+        "uuid": {
+          "term": "CAN UUID",
+          "def": "Her CAN kartı için benzersiz bir fabrika tanımlayıcısı. Ana makinenin hangi kartın hangisi olduğunu bilmesi için bunu yazıcı yapılandırmanıza koyarsınız."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "Saniyedeki bit cinsinden CAN sinyalleşme hızı (1000000 = 1 Mbit/s standarttır). Her kartın belleniminde ayarlanır; ana makine ve her düğüm aynı değeri kullanmalıdır."
+        },
+        "samplePoint": {
+          "term": "Örnekleme noktası",
+          "def": "Sinyal seviyesinin her bitin neresinde okunduğu (~%87,5 standarttır). Boş bırakın; çekirdek bunu seçilen bitrate için doğru şekilde ayarlar."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width - denetleyicinin senkronizasyonda kalmak için zamanlamasını her bitte ne kadar kaydırabileceği. Bir saat toleransı sorununuz olmadıkça boş bırakın; denetleyicinin sınırını aşamaz."
+        },
+        "termination": {
+          "term": "120Ω sonlandırma",
+          "def": "İki bus ucunun her birinde bir direnç (güç kapalıyken CANH/CANL arasında yaklaşık 60Ω ölçülür). Tam olarak iki tane gerekir; ortadaki düğümlerinki kapalı olmalıdır."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "Denetleyici, çok fazla hatadan sonra kendini bus'tan çıkardı - genellikle yanlış sonlandırma, kablolama ya da bir bitrate uyuşmazlığı. Bir yeniden başlatma ve altta yatan arızanın giderilmesi gerekir."
+        },
+        "txqueuelen": {
+          "term": "TX kuyruk uzunluğu",
+          "def": "Linux'un gönderim için kaç CAN paketi tamponladığı. 128 önerilir; çok daha büyük değerler gecikme ekler ve kurtarılamayan hatalara yol açabilir."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "BUS-OFF durumuna geçmiş bir denetleyiciyi kurtarın.",
       "noiseHint": "Üçlü örnekleme ve daha yüksek bir SJW, elektriksel gürültüye karşı toleransı artırır. Otomatik yeniden başlatma (ms), bir BUS-OFF sonrasında bus'ı geri getirir.",
       "restartKlipper": "Klipper ve MCU'ları yeniden başlat",
-      "confirmBitrate": "Bitrate değiştirilsin mi? Bu işlem CAN bus'ı kısa süreliğine devre dışı bırakır (her CAN MCU'sunun bağlantısı kesilir), yeniden zamanlar, tekrar açar ve ardından Klipper'ı yeniden başlatır. Bunu asla bir baskı sırasında yapmayın.",
+      "confirmBitrate": "Bitrate değiştirilsin mi? Bitrate, her MCU'nun belleniminde sabitlenmiştir - yalnızca ana makinede değiştirmek her CAN MCU'sunu çevrimdışı yapar. Bunu yalnızca her kartı (ve önyükleyicisini) aynı hıza yeniden bellenimledikten sonra yapın. Bus'ı kısa süreliğine düşürür ve Klipper'ı yeniden başlatır. Asla bir baskı sırasında yapmayın.",
       "confirmParams": "Bu CAN ayarları uygulansın mı? Bu işlem bus'ı kısa süreliğine devre dışı bırakır (her CAN MCU'sunun bağlantısı kesilir), değişikliği uygular, tekrar açar ve ardından Klipper'ı yeniden başlatır. Bunu asla bir baskı sırasında yapmayın.",
       "confirmKlipper": "Klipper ve her MCU şimdi yeniden başlatılsın mı? CAN MCU'ları yeniden bağlanacaktır. Bunu asla bir baskı sırasında yapmayın.",
       "appliedRestarting": "Uygulandı. Bus tekrar açık ve MCU'ların yeniden bağlanması için Klipper yeniden başlatılıyor.",
       "restartingKlipper": "Klipper yeniden başlatılıyor; MCU'lar yeniden bağlanacaktır.",
       "restartFailed": "Değişiklik uygulandı, ancak Klipper'ı yeniden başlatma isteği başarısız oldu - elle yeniden başlatın.",
-      "applyHint": "Uygulama, bus'ı kısa süreliğine devre dışı bırakır ve MCU'ların yeni ayarlarla yeniden bağlanması için Klipper'ı yeniden başlatır."
+      "applyHint": "Uygulama, bus'ı kısa süreliğine devre dışı bırakır ve MCU'ların yeni ayarlarla yeniden bağlanması için Klipper'ı yeniden başlatır.",
+      "advancedTip": "Örnekleme noktasını ve SJW'yi boş bırakın - çekirdek önerilen ~%87,5 örnekleme noktasını otomatik olarak seçer. TX kuyruk uzunluğu 128 olmalıdır. Otomatik yeniden başlatma 0 = kapalı, 100 ms bir bus-off durumundan kendini kurtarır.",
+      "flagsWarn": "Normal baskı için bunları kapalı tutun. Yalnızca dinleme ve Tek atış, ana makinenin çerçeveleri onaylamasını ya da yeniden denemesini durdurur ve bu da MCU'ları erişilemez kılar."
     },
     "advisor": {
       "intro": "Ana makine sağlığına bir bakış - CPU, bellek, disk, saat ve servisler; her biri çözümüyle birlikte derecelendirilir.",

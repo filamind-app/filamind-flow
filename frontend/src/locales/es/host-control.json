@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP frente a IP estática",
           "body": "DHCP (automático) deja que tu router asigne la dirección automáticamente. Estática (manual) fija una dirección — define la IP, la subred (CIDR, p. ej. /24), la puerta de enlace (normalmente tu router) y el DNS. Solo IPv4. Cambiar la dirección de la conexión que sirve este panel cortará tu sesión; reconéctate en la nueva IP. Una dirección o puerta de enlace estática incorrecta puede dejar la impresora inaccesible hasta arreglarla en el propio dispositivo, por eso los ajustes se validan y requieren una confirmación escrita."
+        },
+        "canbus": {
+          "title": "Configuración del CAN bus",
+          "body": "Un CAN bus conecta el host con las placas del cabezal/MCU mediante dos cables (CANH y CANL). Tres reglas hacen que funcione: cada placa tiene un UUID único que va en la configuración de tu impresora; cada nodo debe usar el MISMO bitrate; y el bus necesita exactamente dos terminadores de 120Ω, uno en cada extremo físico. 1 Mbit/s (1000000) es la velocidad estándar. Tras el cableado, activa la interfaz y confirma que el controlador lee ERROR-ACTIVE y que tus MCU se conectan. Una placa que no aparece suele estar ya reclamada en tu configuración (normal) o funcionando a un bitrate distinto."
+        },
+        "canParams": {
+          "title": "Bitrate y parámetros avanzados",
+          "body": "El bitrate está fijado en el firmware de cada placa (y en su bootloader) — cambiarlo aquí solo en el host deja sin conexión a todos los MCU CAN. Cámbialo únicamente después de reflashear cada placa a la misma velocidad nueva. Las velocidades más bajas (500k/250k) dan margen en un bus largo o ruidoso, pero solo una vez que el cableado y la terminación son correctos, y reducen el ancho de banda — así que empeoran un problema de saturación, no lo mejoran. Deja el punto de muestreo y el SJW en blanco: entonces el kernel elige por ti el punto de muestreo recomendado de ~87,5 %; ajústalos solo como anulación experta. La longitud de la cola TX debería ser 128 (súbela solo con 5 o más MCU en un mismo bus; valores mucho mayores añaden latencia y pueden causar errores). Un reinicio automático de 0 lo mantiene desactivado; ~100 ms se recupera por sí solo de un bus-off, pero si el bus sigue cayéndose, arregla el cableado en lugar de depender de él. Mantén desactivado cada indicador de modo de control para la impresión normal — Solo escucha y Disparo único en particular impiden que el host confirme o reintente las tramas y dejan los MCU inaccesibles."
+        },
+        "canTermination": {
+          "title": "Terminación de 120Ω y resolución de problemas",
+          "body": "Termina exactamente dos nodos — los dos extremos físicos del bus; cualquier nodo intermedio debe tener su terminador de 120Ω DESACTIVADO. Para comprobarlo, APAGA la impresora y mide entre CANH/CANL: unos 60Ω es lo correcto (dos terminadores en paralelo), ~120Ω significa que solo hay uno instalado, ~40Ω significa que hay tres, y una lectura abierta significa que no hay ninguno. Trenza CANH y CANL juntos, mantén el tramo corto y lejos del cableado de motores, calentadores y red eléctrica, y asegúrate de que los conectores del cabezal no puedan aflojarse con las vibraciones (el movimiento es la causa principal de errores intermitentes). Lectura del bus: ERROR-ACTIVE es saludable; ERROR-PASSIVE, BUS-OFF o contadores de errores que suben apuntan a la terminación, el cableado o un bitrate que no coincide — revísalos en ese orden."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Enmascarar (mask)",
           "def": "Una forma más fuerte de desactivar — el servicio no puede iniciarse en absoluto (ni siquiera por otro servicio) hasta que se desenmascara. Úsalo con cuidado."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Una red de dos cables (CANH/CANL) que conecta el host con las placas del cabezal y de los MCU, de modo que un cabezal solo necesita unos pocos cables en lugar de un mazo completo."
+        },
+        "uuid": {
+          "term": "UUID de CAN",
+          "def": "Un identificador de fábrica único para cada placa CAN. Lo pones en la configuración de tu impresora para que el host sepa qué placa es cuál."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "La velocidad de señalización de CAN en bits por segundo (1000000 = 1 Mbit/s es lo estándar). Se define en el firmware de cada placa; el host y todos los nodos deben usar el mismo valor."
+        },
+        "samplePoint": {
+          "term": "Punto de muestreo",
+          "def": "El punto de cada bit en el que se lee el nivel de la señal (~87,5 % es lo estándar). Déjalo en blanco y el kernel lo ajusta correctamente para el bitrate elegido."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width (ancho de salto de sincronización) — cuánto puede desplazar el controlador su temporización por bit para mantenerse sincronizado. Déjalo en blanco salvo que tengas un problema de tolerancia de reloj; no puede superar el límite del controlador."
+        },
+        "termination": {
+          "term": "Terminación de 120Ω",
+          "def": "Una resistencia en cada uno de los dos extremos del bus (unos 60Ω medidos entre CANH/CANL con la alimentación apagada). Se necesitan exactamente dos; los nodos intermedios deben tener la suya desactivada."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "El controlador se retiró del bus tras demasiados errores — normalmente una terminación incorrecta, el cableado o un bitrate que no coincide. Necesita un reinicio, y que se corrija el fallo subyacente."
+        },
+        "txqueuelen": {
+          "term": "Longitud de la cola TX",
+          "def": "Cuántos paquetes CAN almacena Linux en búfer para enviar. Se recomienda 128; valores mucho mayores añaden latencia y pueden causar errores irrecuperables."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "Recupera un controlador que ha pasado a BUS-OFF.",
       "noiseHint": "El triple muestreo y un SJW más alto mejoran la tolerancia al ruido eléctrico; el reinicio automático (ms) restablece el bus tras un BUS-OFF.",
       "restartKlipper": "Reiniciar Klipper y los MCU",
-      "confirmBitrate": "¿Cambiar el bitrate? Esto desactiva brevemente el CAN bus (todos los MCU CAN se desconectan), reajusta sus tiempos, lo vuelve a activar y luego reinicia Klipper. Nunca lo hagas durante una impresión.",
+      "confirmBitrate": "¿Cambiar el bitrate? El bitrate está fijado en el firmware de cada MCU — cambiarlo solo en el host dejará sin conexión a todos los MCU CAN. Hazlo únicamente después de reflashear cada placa (y su bootloader) a la misma velocidad. Esto desactiva brevemente el bus y reinicia Klipper. Nunca durante una impresión.",
       "confirmParams": "¿Aplicar estos ajustes de CAN? Esto desactiva brevemente el bus (todos los MCU CAN se desconectan), aplica el cambio, lo vuelve a activar y luego reinicia Klipper. Nunca lo hagas durante una impresión.",
       "confirmKlipper": "¿Reiniciar Klipper y todos los MCU ahora? Los MCU CAN se volverán a conectar. Nunca lo hagas durante una impresión.",
       "appliedRestarting": "Aplicado. El bus está activo de nuevo y Klipper se está reiniciando para que los MCU se vuelvan a conectar.",
       "restartingKlipper": "Klipper se está reiniciando; los MCU se volverán a conectar.",
       "restartFailed": "El cambio se aplicó, pero la solicitud de reinicio de Klipper falló: reinícialo manualmente.",
-      "applyHint": "Al aplicar se desactiva brevemente el bus y se reinicia Klipper para que los MCU se vuelvan a conectar con los nuevos ajustes."
+      "applyHint": "Al aplicar se desactiva brevemente el bus y se reinicia Klipper para que los MCU se vuelvan a conectar con los nuevos ajustes.",
+      "advancedTip": "Deja el punto de muestreo y el SJW en blanco — el kernel elige automáticamente el punto de muestreo recomendado de ~87,5 %. La longitud de la cola TX debería ser 128. Reinicio automático 0 = desactivado, 100 ms se recupera por sí solo de un bus-off.",
+      "flagsWarn": "Mantén esto desactivado para la impresión normal. Solo escucha y Disparo único impiden que el host confirme o reintente las tramas, lo que deja los MCU inaccesibles."
     },
     "advisor": {
       "intro": "Estado del host de un vistazo — CPU, memoria, disco, reloj y servicios, cada uno con una calificación y una solución.",

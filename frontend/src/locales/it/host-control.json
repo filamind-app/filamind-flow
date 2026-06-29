@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP vs IP statico",
           "body": "DHCP (auto) lascia che il router assegni l'indirizzo automaticamente. Statico (manuale) fissa un indirizzo prestabilito - imposta l'IP, la subnet (CIDR, es. /24), il gateway (di solito il router) e il DNS. Solo IPv4. Cambiare l'indirizzo della connessione che serve questo pannello interromperà la sessione; riconnettiti al nuovo IP. Un indirizzo statico o un gateway errato può rendere la stampante irraggiungibile finché non lo correggi sul dispositivo stesso, perciò le impostazioni sono validate e richiedono una conferma digitata."
+        },
+        "canbus": {
+          "title": "Configurazione del CAN bus",
+          "body": "Un CAN bus collega l'host alle schede toolhead/MCU tramite due fili (CANH e CANL). Tre regole lo fanno funzionare: ogni scheda ha un UUID univoco che va inserito nella config della stampante; ogni nodo deve usare lo STESSO bitrate; e il bus ha bisogno di esattamente due terminatori da 120Ω, uno a ciascuna estremità fisica. 1 Mbit/s (1000000) è la velocità standard. Dopo il cablaggio, attiva l'interfaccia e verifica che il controller legga ERROR-ACTIVE e che gli MCU si connettano. Una scheda che non compare è, il più delle volte, già occupata nella tua config (normale) oppure sta usando un bitrate diverso."
+        },
+        "canParams": {
+          "title": "Bitrate e parametri avanzati",
+          "body": "Il bitrate è fissato nel firmware di ogni scheda (e nel suo bootloader) - cambiarlo qui solo sull'host mette offline ogni MCU CAN. Cambialo solo dopo aver riflashato ogni scheda alla stessa nuova velocità. Velocità più basse (500k/250k) aggiungono margine su un bus lungo o disturbato, ma solo quando cablaggio e terminazione sono corretti, e riducono la banda - quindi peggiorano un problema di saturazione, non lo migliorano. Lascia vuoti Sample point e SJW: il kernel sceglie così per te il sample point raccomandato di ~87.5%; impostali solo come override esperto. La lunghezza della coda TX dovrebbe essere 128 (aumentala solo con 5+ MCU su un bus; valori molto più grandi aggiungono latenza e possono causare errori). Un riavvio automatico di 0 lo tiene disattivato; ~100 ms si autoripristina da un bus-off, ma se il bus continua a cadere, sistema il cablaggio invece di farci affidamento. Tieni OGNI flag di modalità di controllo DISATTIVATO per la stampa normale - Solo ascolto e One-shot in particolare impediscono all'host di confermare o ritrasmettere i frame e rendono gli MCU irraggiungibili."
+        },
+        "canTermination": {
+          "title": "Terminazione da 120Ω e risoluzione dei problemi",
+          "body": "Termina esattamente due nodi - le due estremità fisiche del bus; qualsiasi nodo in mezzo deve avere il proprio terminatore da 120Ω DISATTIVATO. Per verificarlo, SPEGNI la stampante e misura tra CANH/CANL: circa 60Ω è corretto (due terminatori in parallelo), ~120Ω significa che ne è montato solo uno, ~40Ω significa tre, e una lettura aperta significa nessuno. Intreccia insieme CANH e CANL, mantieni il percorso corto e lontano dai cablaggi di motori passo-passo, riscaldatori e rete elettrica, e assicurati che i connettori del toolhead non possano allentarsi (il movimento è la causa principale degli errori intermittenti). Leggere il bus: ERROR-ACTIVE è sano; ERROR-PASSIVE, BUS-OFF o contatori di errore in aumento indicano terminazione, cablaggio o un bitrate non corrispondente - controllali in quest'ordine."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Mascherare (mask)",
           "def": "Una forma più forte di disabilitazione - il servizio non può essere avviato affatto (nemmeno da un altro servizio) finché non viene smascherato. Usare con cautela."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Una rete a due fili (CANH/CANL) che collega l'host alle schede toolhead e MCU, così che un toolhead richieda solo pochi fili invece di un cablaggio completo."
+        },
+        "uuid": {
+          "term": "CAN UUID",
+          "def": "Un identificatore di fabbrica univoco per ogni scheda CAN. Lo inserisci nella config della stampante così che l'host sappia quale scheda è quale."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "La velocità di segnalazione CAN in bit al secondo (1000000 = 1 Mbit/s è lo standard). Viene impostata nel firmware di ogni scheda; l'host e ogni nodo devono usare lo stesso valore."
+        },
+        "samplePoint": {
+          "term": "Sample point",
+          "def": "Il punto in ogni bit in cui viene letto il livello del segnale (~87.5% è lo standard). Lascialo vuoto e il kernel lo imposta correttamente per il bitrate scelto."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width - di quanto il controller può spostare la propria temporizzazione per bit per restare sincronizzato. Lascialo vuoto a meno che tu non abbia un problema di tolleranza di clock; non può superare il limite del controller."
+        },
+        "termination": {
+          "term": "Terminazione da 120Ω",
+          "def": "Una resistenza a ciascuna delle due estremità del bus (circa 60Ω misurati tra CANH/CANL ad alimentazione spenta). Ne servono esattamente due; i nodi in mezzo devono avere la propria disattivata."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "Il controller si è rimosso dal bus dopo troppi errori - di solito terminazione errata, cablaggio o un bitrate non corrispondente. Richiede un riavvio, e che il guasto di fondo venga risolto."
+        },
+        "txqueuelen": {
+          "term": "Lunghezza coda TX",
+          "def": "Quanti pacchetti CAN Linux mette in buffer per l'invio. 128 è il valore raccomandato; valori molto più grandi aggiungono latenza e possono causare errori irrecuperabili."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "Ripristina un controller andato in BUS-OFF.",
       "noiseHint": "Il campionamento triplo e un valore di SJW piu alto migliorano la tolleranza ai disturbi elettrici; il riavvio automatico (ms) ripristina il bus dopo un BUS-OFF.",
       "restartKlipper": "Riavvia Klipper e gli MCU",
-      "confirmBitrate": "Cambiare il bitrate? Questo disattiva brevemente il CAN bus (ogni MCU CAN si scollega), lo ritempora, lo riattiva e poi riavvia Klipper. Non farlo mai durante una stampa.",
+      "confirmBitrate": "Cambiare il bitrate? Il bitrate è fissato nel firmware di ogni MCU - cambiarlo solo sull'host metterà offline ogni MCU CAN. Fallo solo dopo aver riflashato ogni scheda (e il suo bootloader) alla stessa velocità. Disattiva brevemente il bus e riavvia Klipper. Mai durante una stampa.",
       "confirmParams": "Applicare queste impostazioni CAN? Questo disattiva brevemente il bus (ogni MCU CAN si scollega), applica la modifica, lo riattiva e poi riavvia Klipper. Non farlo mai durante una stampa.",
       "confirmKlipper": "Riavviare ora Klipper e ogni MCU? Gli MCU CAN si riconnetteranno. Non farlo mai durante una stampa.",
       "appliedRestarting": "Applicato. Il bus è di nuovo attivo e Klipper si sta riavviando, così gli MCU si riconnettono.",
       "restartingKlipper": "Klipper si sta riavviando; gli MCU si riconnetteranno.",
       "restartFailed": "La modifica è stata applicata, ma la richiesta di riavvio di Klipper è fallita - riavvialo manualmente.",
-      "applyHint": "L'applicazione disattiva brevemente il bus e riavvia Klipper, così gli MCU si riconnettono con le nuove impostazioni."
+      "applyHint": "L'applicazione disattiva brevemente il bus e riavvia Klipper, così gli MCU si riconnettono con le nuove impostazioni.",
+      "advancedTip": "Lascia vuoti Sample point e SJW - il kernel sceglie automaticamente il sample point raccomandato di ~87.5%. La lunghezza della coda TX dovrebbe essere 128. Riavvio automatico 0 = disattivato, 100 ms si autoripristina da un bus-off.",
+      "flagsWarn": "Tienili disattivati per la stampa normale. Solo ascolto e One-shot impediscono all'host di confermare o ritrasmettere i frame, il che rende gli MCU irraggiungibili."
     },
     "advisor": {
       "intro": "Stato dell'host a colpo d'occhio: CPU, memoria, disco, orologio e servizi, ciascuno valutato con un suggerimento.",

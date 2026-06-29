@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP so với IP tĩnh",
           "body": "DHCP (tự động) để bộ định tuyến tự gán địa chỉ. IP tĩnh (thủ công) cố định một địa chỉ - đặt IP, subnet (CIDR, ví dụ /24), gateway (thường là bộ định tuyến của bạn) và DNS. Chỉ IPv4. Thay đổi địa chỉ của kết nối phục vụ bảng điều khiển này sẽ làm rớt phiên của bạn; hãy kết nối lại tại IP mới. Một địa chỉ tĩnh hoặc gateway sai có thể khiến máy in không truy cập được cho đến khi bạn sửa trên chính thiết bị, nên các cài đặt được kiểm tra và cần xác nhận bằng cách gõ."
+        },
+        "canbus": {
+          "title": "Thiết lập CAN bus",
+          "body": "CAN bus nối máy chủ với các bo mạch đầu in/MCU qua hai dây (CANH và CANL). Ba quy tắc giúp nó hoạt động: mỗi bo mạch có một UUID duy nhất phải khai trong cấu hình máy in; mọi node phải chạy CÙNG một bitrate; và bus cần đúng hai điện trở kết cuối 120Ω, mỗi đầu vật lý một cái. 1 Mbit/s (1000000) là tốc độ tiêu chuẩn. Sau khi đấu dây, hãy bật giao diện lên và xác nhận bộ điều khiển báo ERROR-ACTIVE cùng việc các MCU kết nối được. Một bo mạch không hiện lên thường là do đã được khai trong cấu hình của bạn (bình thường) hoặc đang chạy bitrate khác."
+        },
+        "canParams": {
+          "title": "Bitrate & tham số nâng cao",
+          "body": "Bitrate được cố định trong firmware của từng bo mạch (và bootloader của nó) - chỉ thay đổi nó tại đây trên máy chủ sẽ làm mọi MCU CAN ngoại tuyến. Chỉ thay đổi nó sau khi đã nạp lại firmware cho mọi bo mạch về cùng một tốc độ mới. Tốc độ thấp hơn (500k/250k) tạo thêm biên độ an toàn trên bus dài hoặc nhiều nhiễu, nhưng chỉ khi đấu dây và kết cuối đã đúng, và chúng giảm băng thông - nên chúng làm vấn đề bão hòa tệ hơn, không phải tốt hơn. Để trống Điểm lấy mẫu và SJW: khi đó nhân (kernel) sẽ tự chọn điểm lấy mẫu ~87.5% được khuyến nghị cho bạn; chỉ đặt chúng khi cần ghi đè ở mức chuyên gia. Độ dài hàng đợi TX nên là 128 (chỉ tăng khi có 5+ MCU trên một bus; giá trị lớn hơn nhiều sẽ tăng độ trễ và có thể gây lỗi). Tự khởi động lại bằng 0 giữ nó tắt; ~100 ms tự khôi phục sau khi gặp bus-off, nhưng nếu bus liên tục rớt, hãy sửa đấu dây thay vì dựa vào nó. Giữ TẮT mọi cờ chế độ điều khiển khi in bình thường - đặc biệt Chỉ lắng nghe và Gửi một lần ngăn máy chủ xác nhận hoặc gửi lại khung dữ liệu và khiến các MCU không kết nối được."
+        },
+        "canTermination": {
+          "title": "Kết cuối 120Ω & khắc phục sự cố",
+          "body": "Chỉ kết cuối đúng hai node - hai đầu vật lý của bus; mọi node ở giữa phải TẮT điện trở kết cuối 120Ω của nó. Để kiểm tra, hãy TẮT nguồn máy in và đo qua CANH/CANL: khoảng 60Ω là đúng (hai điện trở kết cuối song song), ~120Ω nghĩa là chỉ lắp một cái, ~40Ω nghĩa là ba, và số đo hở mạch nghĩa là không có cái nào. Xoắn CANH và CANL với nhau, giữ đoạn dây ngắn và tránh xa dây động cơ bước, dây sợi đốt và dây điện lưới, và đảm bảo các đầu nối ở đầu in không thể bị lỏng do rung (chuyển động là nguyên nhân hàng đầu gây lỗi chập chờn). Đọc bus: ERROR-ACTIVE là khỏe mạnh; ERROR-PASSIVE, BUS-OFF, hoặc bộ đếm lỗi tăng dần cho thấy vấn đề ở kết cuối, đấu dây, hoặc bitrate không khớp - hãy kiểm tra chúng theo thứ tự đó."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Che (mask)",
           "def": "Một dạng tắt mạnh hơn - dịch vụ hoàn toàn không thể khởi động (kể cả bởi dịch vụ khác) cho đến khi bỏ che. Hãy dùng cẩn thận."
+        },
+        "canbus": {
+          "term": "CAN bus",
+          "def": "Một mạng hai dây (CANH/CANL) nối máy chủ với các bo mạch đầu in và MCU, để một đầu in chỉ cần vài sợi dây thay vì cả bó dây đầy đủ."
+        },
+        "uuid": {
+          "term": "CAN UUID",
+          "def": "Một định danh nhà sản xuất duy nhất cho mỗi bo mạch CAN. Bạn khai nó trong cấu hình máy in để máy chủ biết bo mạch nào là bo mạch nào."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "Tốc độ truyền tín hiệu CAN tính theo bit mỗi giây (1000000 = 1 Mbit/s là tiêu chuẩn). Nó được đặt trong firmware của từng bo mạch; máy chủ và mọi node phải dùng cùng một giá trị."
+        },
+        "samplePoint": {
+          "term": "Điểm lấy mẫu",
+          "def": "Vị trí trong mỗi bit nơi mức tín hiệu được đọc (~87.5% là tiêu chuẩn). Để trống và nhân (kernel) sẽ đặt nó đúng cho bitrate đã chọn."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width - mức bộ điều khiển có thể dịch thời gian của nó mỗi bit để giữ đồng bộ. Để trống trừ khi bạn gặp vấn đề về dung sai đồng hồ; nó không thể vượt quá giới hạn của bộ điều khiển."
+        },
+        "termination": {
+          "term": "Kết cuối 120Ω",
+          "def": "Một điện trở ở mỗi đầu trong hai đầu bus (đo được khoảng 60Ω qua CANH/CANL khi tắt nguồn). Cần đúng hai cái; các node ở giữa phải tắt điện trở của chúng."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "Bộ điều khiển đã tự loại mình khỏi bus sau quá nhiều lỗi - thường do kết cuối sai, đấu dây, hoặc bitrate không khớp. Nó cần khởi động lại, và phải sửa lỗi gốc."
+        },
+        "txqueuelen": {
+          "term": "Độ dài hàng đợi TX",
+          "def": "Số gói tin CAN mà Linux đệm để gửi. Khuyến nghị là 128; giá trị lớn hơn nhiều sẽ tăng độ trễ và có thể gây lỗi không khôi phục được."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "Khôi phục bộ điều khiển đã rơi vào trạng thái BUS-OFF.",
       "noiseHint": "Lấy mẫu ba lần và tăng SJW giúp cải thiện khả năng chống nhiễu điện; tự khởi động lại (ms) đưa bus hoạt động trở lại sau khi gặp BUS-OFF.",
       "restartKlipper": "Khởi động lại Klipper & MCU",
-      "confirmBitrate": "Thay đổi bitrate? Thao tác này tạm thời tắt bus CAN (mọi MCU CAN bị ngắt kết nối), định lại thời gian, bật lại, rồi khởi động lại Klipper. Đừng bao giờ làm điều này khi đang in.",
+      "confirmBitrate": "Thay đổi bitrate? Bitrate được cố định trong firmware của từng MCU - chỉ thay đổi nó trên máy chủ sẽ làm mọi MCU CAN ngoại tuyến. Chỉ làm điều này sau khi đã nạp lại firmware cho mọi bo mạch (và bootloader của nó) về cùng một tốc độ. Nó tạm thời làm rớt bus và khởi động lại Klipper. Đừng bao giờ làm điều này khi đang in.",
       "confirmParams": "Áp dụng các cài đặt CAN này? Thao tác này tạm thời tắt bus (mọi MCU CAN bị ngắt kết nối), áp dụng thay đổi, bật lại, rồi khởi động lại Klipper. Đừng bao giờ làm điều này khi đang in.",
       "confirmKlipper": "Khởi động lại Klipper và mọi MCU ngay bây giờ? Các MCU CAN sẽ kết nối lại. Đừng bao giờ làm điều này khi đang in.",
       "appliedRestarting": "Đã áp dụng. Bus đã bật lại và Klipper đang khởi động lại để các MCU kết nối lại.",
       "restartingKlipper": "Klipper đang khởi động lại; các MCU sẽ kết nối lại.",
       "restartFailed": "Thay đổi đã được áp dụng, nhưng yêu cầu khởi động lại Klipper thất bại - hãy khởi động lại thủ công.",
-      "applyHint": "Việc áp dụng sẽ tạm thời tắt bus và khởi động lại Klipper để các MCU kết nối lại với cài đặt mới."
+      "applyHint": "Việc áp dụng sẽ tạm thời tắt bus và khởi động lại Klipper để các MCU kết nối lại với cài đặt mới.",
+      "advancedTip": "Để trống Điểm lấy mẫu và SJW - nhân (kernel) tự chọn điểm lấy mẫu ~87.5% được khuyến nghị. Độ dài hàng đợi TX nên là 128. Tự khởi động lại 0 = tắt, 100 ms tự khôi phục sau khi gặp bus-off.",
+      "flagsWarn": "Giữ các cờ này tắt khi in bình thường. Chỉ lắng nghe và Gửi một lần ngăn máy chủ xác nhận hoặc gửi lại khung dữ liệu, khiến các MCU không kết nối được."
     },
     "advisor": {
       "intro": "Tổng quan nhanh tình trạng máy chủ - CPU, bộ nhớ, ổ đĩa, đồng hồ và dịch vụ, mỗi mục đều được chấm điểm kèm cách khắc phục.",

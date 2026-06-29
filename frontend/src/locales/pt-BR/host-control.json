@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP vs IP estático",
           "body": "O DHCP (automático) deixa o roteador atribuir o endereço automaticamente. O estático (manual) fixa um endereço - defina o IP, a sub-rede (CIDR, ex. /24), o gateway (geralmente seu roteador) e o DNS. Apenas IPv4. Alterar o endereço da conexão que serve este painel encerrará sua sessão; reconecte-se no novo IP. Um endereço estático ou gateway errado pode tornar a impressora inacessível até que você corrija no próprio dispositivo, por isso as configurações são validadas e exigem uma confirmação digitada."
+        },
+        "canbus": {
+          "title": "Configuração do barramento CAN",
+          "body": "Um barramento CAN liga o host às placas do cabeçote/MCU por dois fios (CANH e CANL). Três regras o fazem funcionar: cada placa tem um UUID único que vai na configuração da impressora; cada nó deve usar o MESMO bitrate; e o barramento precisa de exatamente dois terminadores de 120Ω, um em cada extremidade física. 1 Mbit/s (1000000) é a taxa padrão. Depois de cabear, ative a interface e confirme que o controlador lê ERROR-ACTIVE e que seus MCUs conectam. Uma placa que não aparece geralmente já está reservada na sua configuração (normal) ou rodando um bitrate diferente."
+        },
+        "canParams": {
+          "title": "Bitrate e parâmetros avançados",
+          "body": "O bitrate é fixado no firmware de cada placa (e no seu bootloader) - alterá-lo aqui só no host deixa todos os MCUs CAN offline. Só altere depois de regravar todas as placas com a mesma nova velocidade. Taxas mais baixas (500k/250k) dão margem em um barramento longo ou ruidoso, mas só depois que o cabeamento e a terminação estiverem corretos, e reduzem a largura de banda - então pioram um problema de saturação, em vez de resolvê-lo. Deixe Ponto de amostragem e SJW em branco: o kernel então escolhe para você o ponto de amostragem recomendado de ~87,5%; defina-os apenas como uma sobreposição de especialista. O tamanho da fila TX deve ser 128 (aumente-o só com 5+ MCUs em um barramento; valores muito maiores adicionam latência e podem causar erros). Reinício automático de 0 o mantém desligado; ~100 ms se autorrecupera de um bus-off, mas se o barramento continuar caindo, corrija o cabeamento em vez de depender disso. Mantenha todas as flags de modo de controle DESLIGADAS para impressão normal - Somente escuta e Disparo único, em particular, impedem o host de confirmar ou retransmitir quadros e tornam os MCUs inacessíveis."
+        },
+        "canTermination": {
+          "title": "Terminação de 120Ω e solução de problemas",
+          "body": "Termine exatamente dois nós - as duas extremidades físicas do barramento; qualquer nó no meio deve ter seu terminador de 120Ω DESLIGADO. Para verificar, DESLIGUE a impressora e meça entre CANH/CANL: cerca de 60Ω é o correto (dois terminadores em paralelo), ~120Ω significa que só um está instalado, ~40Ω significa três, e uma leitura aberta significa nenhum. Trance CANH e CANL juntos, mantenha o trajeto curto e longe da fiação de motores de passo, aquecedores e rede elétrica, e garanta que os conectores do cabeçote não soltem com a vibração (o movimento é a principal causa de erros intermitentes). Lendo o barramento: ERROR-ACTIVE é saudável; ERROR-PASSIVE, BUS-OFF ou contadores de erro crescentes apontam para terminação, cabeamento ou um bitrate divergente - verifique esses nessa ordem."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Mascarar",
           "def": "Uma forma mais forte de desativar - o serviço não pode ser iniciado de jeito nenhum (nem mesmo por outro serviço) até que seja desmascarado. Use com cuidado."
+        },
+        "canbus": {
+          "term": "Barramento CAN",
+          "def": "Uma rede de dois fios (CANH/CANL) que liga o host às placas do cabeçote e MCU, de modo que um cabeçote precisa de apenas alguns fios em vez de uma cablagem completa."
+        },
+        "uuid": {
+          "term": "UUID CAN",
+          "def": "Um identificador de fábrica único para cada placa CAN. Você o coloca na configuração da impressora para que o host saiba qual placa é qual."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "A velocidade de sinalização CAN em bits por segundo (1000000 = 1 Mbit/s é o padrão). É definida no firmware de cada placa; o host e cada nó devem usar o mesmo valor."
+        },
+        "samplePoint": {
+          "term": "Ponto de amostragem",
+          "def": "Onde, em cada bit, o nível do sinal é lido (~87,5% é o padrão). Deixe em branco e o kernel o define corretamente para o bitrate escolhido."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width - quanto o controlador pode deslocar sua temporização por bit para se manter sincronizado. Deixe em branco a menos que você tenha um problema de tolerância de relógio; não pode exceder o limite do controlador."
+        },
+        "termination": {
+          "term": "Terminação de 120Ω",
+          "def": "Um resistor em cada uma das duas extremidades do barramento (cerca de 60Ω medidos entre CANH/CANL com a energia desligada). São necessários exatamente dois; os nós do meio devem ter o seu desligado."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "O controlador se removeu do barramento após erros demais - geralmente terminação, cabeamento errado ou um bitrate divergente. Ele precisa de um reinício, e a falha subjacente corrigida."
+        },
+        "txqueuelen": {
+          "term": "Tamanho da fila TX",
+          "def": "Quantos pacotes CAN o Linux armazena em buffer para envio. 128 é o recomendado; valores muito maiores adicionam latência e podem causar erros irrecuperáveis."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "Recupera um controlador que entrou em estado BUS-OFF.",
       "noiseHint": "A amostragem tripla e um SJW mais alto melhoram a tolerância a ruído elétrico; o reinício automático (ms) restabelece o barramento após um BUS-OFF.",
       "restartKlipper": "Reiniciar Klipper e MCUs",
-      "confirmBitrate": "Alterar o bitrate? Isso derruba brevemente o barramento CAN (todos os MCUs CAN desconectam), reajusta os tempos, reativa-o e então reinicia o Klipper. Nunca faça isso durante uma impressão.",
+      "confirmBitrate": "Alterar o bitrate? O bitrate é fixado no firmware de cada MCU - alterá-lo só no host deixará todos os MCUs CAN offline. Só faça isso depois de regravar todas as placas (e seus bootloaders) com a mesma velocidade. Isso derruba brevemente o barramento e reinicia o Klipper. Nunca durante uma impressão.",
       "confirmParams": "Aplicar estas configurações de CAN? Isso derruba brevemente o barramento (todos os MCUs CAN desconectam), aplica a alteração, reativa-o e então reinicia o Klipper. Nunca faça isso durante uma impressão.",
       "confirmKlipper": "Reiniciar o Klipper e todos os MCUs agora? Os MCUs CAN vão reconectar. Nunca faça isso durante uma impressão.",
       "appliedRestarting": "Aplicado. O barramento voltou a ficar ativo e o Klipper está reiniciando para que os MCUs reconectem.",
       "restartingKlipper": "O Klipper está reiniciando; os MCUs vão reconectar.",
       "restartFailed": "A alteração foi aplicada, mas a solicitação de reinício do Klipper falhou - reinicie-o manualmente.",
-      "applyHint": "Aplicar derruba brevemente o barramento e reinicia o Klipper para que os MCUs reconectem com as novas configurações."
+      "applyHint": "Aplicar derruba brevemente o barramento e reinicia o Klipper para que os MCUs reconectem com as novas configurações.",
+      "advancedTip": "Deixe Ponto de amostragem e SJW em branco - o kernel escolhe automaticamente o ponto de amostragem recomendado de ~87,5%. O tamanho da fila TX deve ser 128. Reinício automático 0 = desligado, 100 ms se autorrecupera de um bus-off.",
+      "flagsWarn": "Mantenha estas desligadas para impressão normal. Somente escuta e Disparo único impedem o host de confirmar ou retransmitir quadros, o que torna os MCUs inacessíveis."
     },
     "advisor": {
       "intro": "Saúde do host num relance - CPU, memória, disco, relógio e serviços, cada um avaliado com uma correção.",

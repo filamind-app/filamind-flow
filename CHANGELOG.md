@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-06-29
+
+### Added
+
+- **CAN bus usage guide + correct-control guidance.** The Host Control help drawer gains three
+  CAN topics — setup, bitrate & advanced parameters, and 120Ω termination & troubleshooting — plus
+  a CAN glossary (UUID, bitrate, sample point, SJW, termination, BUS-OFF, TX queue length). Built
+  from the official Klipper docs, the Linux SocketCAN docs and the CAN physical-layer standards.
+
+### Changed
+
+- **CAN Bus panel — safer, more correct control.** Changing the bitrate now warns that the rate is
+  fixed in each MCU's firmware, so changing it on the host alone takes every CAN MCU offline (you
+  must reflash every board to the same speed first). The advanced editor now advises leaving Sample
+  point and SJW blank (the kernel picks the recommended ~87.5% sample point), recommends a TX queue
+  length of 128, and warns that the control-mode flags — especially Listen-only and One-shot — break
+  a working bus and should stay off for normal printing.
+
 ## [1.12.0] - 2026-06-29
 
 ### Fixed

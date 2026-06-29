@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP a statyczny IP",
           "body": "DHCP (automatycznie) pozwala routerowi przydzielić adres automatycznie. Statyczny (ręcznie) przypina stały adres - ustaw IP, podsieć (CIDR, np. /24), bramę (zwykle Twój router) i DNS. Tylko IPv4. Zmiana adresu połączenia, które obsługuje ten panel, zakończy Twoją sesję; połącz się ponownie pod nowym IP. Błędny statyczny adres lub brama mogą sprawić, że drukarka będzie nieosiągalna, dopóki nie naprawisz tego na samym urządzeniu, dlatego ustawienia są walidowane i wymagają wpisanego potwierdzenia."
+        },
+        "canbus": {
+          "title": "Konfiguracja magistrali CAN",
+          "body": "Magistrala CAN łączy hosta z płytkami głowicy/MCU dwoma przewodami (CANH i CANL). Działa dzięki trzem zasadom: każda płytka ma unikalny UUID, który trafia do konfiguracji drukarki; każdy węzeł musi używać TEGO SAMEGO bitrate; a magistrala potrzebuje dokładnie dwóch terminatorów 120Ω, po jednym na każdym fizycznym końcu. 1 Mbit/s (1000000) to standardowa prędkość. Po podłączeniu przewodów włącz interfejs i upewnij się, że kontroler odczytuje ERROR-ACTIVE, a Twoje MCU się łączą. Płytka, która się nie pojawia, najczęściej jest już zajęta w Twojej konfiguracji (to normalne) lub działa z innym bitrate."
+        },
+        "canParams": {
+          "title": "Bitrate i parametry zaawansowane",
+          "body": "Bitrate jest ustalony na stałe w firmware każdej płytki (i w jej bootloaderze) - zmiana go tutaj, tylko na hoście, odłączy każdy MCU CAN. Zmieniaj go dopiero po przeprogramowaniu każdej płytki na tę samą nową prędkość. Niższe prędkości (500k/250k) dają zapas na długiej lub zaszumionej magistrali, ale tylko gdy okablowanie i terminacja są poprawne, oraz zmniejszają przepustowość - więc pogarszają problem przeciążenia, a nie poprawiają. Zostaw pola Punkt próbkowania i SJW puste: jądro samo dobierze wtedy zalecany punkt próbkowania ~87,5%; ustawiaj je tylko jako ekspercką nadpisanie. Długość kolejki TX powinna wynosić 128 (zwiększaj ją tylko przy 5+ MCU na jednej magistrali; znacznie większe wartości dodają opóźnienia i mogą powodować błędy). Auto-restart 0 utrzymuje go wyłączonym; ~100 ms automatycznie przywraca po stanie bus-off, ale jeśli magistrala wciąż się rozłącza, napraw okablowanie zamiast na tym polegać. Trzymaj każdą flagę trybu sterowania WYŁĄCZONĄ przy normalnym druku - w szczególności Tylko nasłuch i Pojedyncza próba uniemożliwiają hostowi potwierdzanie lub ponawianie ramek i sprawiają, że MCU stają się nieosiągalne."
+        },
+        "canTermination": {
+          "title": "Terminacja 120Ω i rozwiązywanie problemów",
+          "body": "Terminuj dokładnie dwa węzły - dwa fizyczne końce magistrali; każdy węzeł pośrodku musi mieć terminator 120Ω WYŁĄCZONY. Aby to sprawdzić, WYŁĄCZ zasilanie drukarki i zmierz między CANH/CANL: około 60Ω jest poprawne (dwa terminatory równolegle), ~120Ω oznacza, że zamontowano tylko jeden, ~40Ω oznacza trzy, a odczyt rozwarcia oznacza brak. Skręć razem CANH i CANL, prowadź przewody krótko i z dala od okablowania silników krokowych, grzałek i zasilania sieciowego oraz upewnij się, że złącza głowicy nie mogą się obluzować (ruch to główna przyczyna sporadycznych błędów). Odczyt magistrali: ERROR-ACTIVE jest zdrowy; ERROR-PASSIVE, BUS-OFF lub rosnące liczniki błędów wskazują na terminację, okablowanie lub niezgodność bitrate - sprawdź je w tej kolejności."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Maskowanie",
           "def": "Silniejsza forma wyłączenia - usługi nie można uruchomić w ogóle (nawet przez inną usługę), dopóki nie zostanie odmaskowana. Używaj ostrożnie."
+        },
+        "canbus": {
+          "term": "Magistrala CAN",
+          "def": "Dwuprzewodowa (CANH/CANL) sieć łącząca hosta z płytkami głowicy i MCU, dzięki czemu głowica potrzebuje tylko kilku przewodów zamiast pełnej wiązki."
+        },
+        "uuid": {
+          "term": "CAN UUID",
+          "def": "Unikalny fabryczny identyfikator każdej płytki CAN. Wpisujesz go w konfiguracji drukarki, aby host wiedział, która płytka jest którą."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "Prędkość sygnalizacji CAN w bitach na sekundę (1000000 = 1 Mbit/s to standard). Jest ustawiana w firmware każdej płytki; host i każdy węzeł muszą używać tej samej wartości."
+        },
+        "samplePoint": {
+          "term": "Punkt próbkowania",
+          "def": "Miejsce w każdym bicie, w którym odczytywany jest poziom sygnału (~87,5% to standard). Zostaw puste, a jądro ustawi go poprawnie dla wybranego bitrate."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width - jak daleko kontroler może przesunąć swoje taktowanie na bit, aby pozostać w synchronizacji. Zostaw puste, chyba że masz problem z tolerancją zegara; nie może przekroczyć limitu kontrolera."
+        },
+        "termination": {
+          "term": "Terminacja 120Ω",
+          "def": "Rezystor na każdym z dwóch końców magistrali (około 60Ω mierzone między CANH/CANL przy wyłączonym zasilaniu). Potrzebne są dokładnie dwa; węzły pośrodku muszą mieć swoje wyłączone."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "Kontroler odłączył się od magistrali po zbyt wielu błędach - zwykle z powodu błędnej terminacji, okablowania lub niezgodności bitrate. Wymaga restartu oraz naprawienia źródłowej usterki."
+        },
+        "txqueuelen": {
+          "term": "Długość kolejki TX",
+          "def": "Ile pakietów CAN Linux buforuje do wysłania. Zalecane jest 128; znacznie większe wartości dodają opóźnienia i mogą powodować nieodwracalne błędy."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "Przywróć kontroler, który przeszedł w stan BUS-OFF.",
       "noiseHint": "Potrójne próbkowanie i wyższy SJW zwiększają odporność na zakłócenia elektryczne; auto-restart (ms) przywraca magistralę po stanie BUS-OFF.",
       "restartKlipper": "Zrestartuj Klippera i MCU",
-      "confirmBitrate": "Zmienić bitrate? To na chwilę wyłącza magistralę CAN (każdy MCU CAN się rozłącza), zmienia jej taktowanie, włącza ją ponownie, a następnie restartuje Klippera. Nigdy nie rób tego podczas druku.",
+      "confirmBitrate": "Zmienić bitrate? Bitrate jest ustalony na stałe w firmware każdego MCU - zmiana go tylko na hoście odłączy każdy MCU CAN. Rób to dopiero po przeprogramowaniu każdej płytki (i jej bootloadera) na tę samą prędkość. To na chwilę wyłącza magistralę i restartuje Klippera. Nigdy podczas druku.",
       "confirmParams": "Zastosować te ustawienia CAN? To na chwilę wyłącza magistralę (każdy MCU CAN się rozłącza), wprowadza zmianę, włącza ją ponownie, a następnie restartuje Klippera. Nigdy nie rób tego podczas druku.",
       "confirmKlipper": "Zrestartować teraz Klippera i każdy MCU? MCU CAN połączą się ponownie. Nigdy nie rób tego podczas druku.",
       "appliedRestarting": "Zastosowano. Magistrala jest znów aktywna, a Klipper się restartuje, aby MCU połączyły się ponownie.",
       "restartingKlipper": "Klipper się restartuje; MCU połączą się ponownie.",
       "restartFailed": "Zmiana została zastosowana, ale żądanie restartu Klippera nie powiodło się - zrestartuj go ręcznie.",
-      "applyHint": "Zastosowanie na chwilę wyłącza magistralę i restartuje Klippera, aby MCU połączyły się ponownie z nowymi ustawieniami."
+      "applyHint": "Zastosowanie na chwilę wyłącza magistralę i restartuje Klippera, aby MCU połączyły się ponownie z nowymi ustawieniami.",
+      "advancedTip": "Zostaw pola Punkt próbkowania i SJW puste - jądro automatycznie dobierze zalecany punkt próbkowania ~87,5%. Długość kolejki TX powinna wynosić 128. Auto-restart 0 = wyłączony, 100 ms automatycznie przywraca po stanie bus-off.",
+      "flagsWarn": "Trzymaj je wyłączone przy normalnym druku. Tylko nasłuch i Pojedyncza próba uniemożliwiają hostowi potwierdzanie lub ponawianie ramek, co sprawia, że MCU stają się nieosiągalne."
     },
     "advisor": {
       "intro": "Kondycja hosta w skrócie - CPU, pamięć, dysk, zegar i usługi, każde z oceną i wskazówką naprawy.",

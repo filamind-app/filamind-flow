@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP vs. statische IP",
           "body": "DHCP (automatisch) lässt deinen Router die Adresse automatisch vergeben. Statisch (manuell) legt eine feste Adresse fest — setze IP, Subnetz (CIDR, z. B. /24), Gateway (meist dein Router) und DNS. Nur IPv4. Das Ändern der Adresse der Verbindung, die dieses Panel bedient, trennt deine Sitzung; verbinde dich an der neuen IP neu. Eine falsche statische Adresse oder ein falsches Gateway kann den Drucker unerreichbar machen, bis du es am Gerät selbst behebst — daher werden die Einstellungen validiert und brauchen eine getippte Bestätigung."
+        },
+        "canbus": {
+          "title": "CAN-Bus-Einrichtung",
+          "body": "Ein CAN-Bus verbindet den Host über zwei Leitungen (CANH und CANL) mit deinen Toolhead-/MCU-Boards. Drei Regeln sorgen dafür, dass es funktioniert: Jedes Board hat eine eindeutige UUID, die in deine Druckerkonfiguration gehört; jeder Knoten muss dieselbe Bitrate fahren; und der Bus braucht genau zwei 120Ω-Abschlusswiderstände, einen an jedem physischen Ende. 1 Mbit/s (1000000) ist die Standardrate. Bring die Schnittstelle nach der Verkabelung hoch und prüfe, dass der Controller ERROR-ACTIVE meldet und deine MCUs sich verbinden. Ein Board, das nicht auftaucht, ist meist bereits in deiner Konfiguration belegt (normal) oder fährt eine andere Bitrate."
+        },
+        "canParams": {
+          "title": "Bitrate & erweiterte Parameter",
+          "body": "Die Bitrate ist in der Firmware jedes Boards (und seinem Bootloader) festgelegt — sie hier allein am Host zu ändern nimmt jeden CAN-MCU offline. Ändere sie erst, nachdem du jedes Board auf dieselbe neue Geschwindigkeit neu geflasht hast. Niedrigere Raten (500k/250k) schaffen Reserve auf einem langen oder störungsbehafteten Bus, aber nur wenn Verkabelung und Abschluss bereits korrekt sind, und sie verringern die Bandbreite — sie verschlimmern ein Sättigungsproblem also, statt es zu beheben. Lass Abtastpunkt und SJW leer: Der Kernel wählt dann den empfohlenen Abtastpunkt von ~87,5 % für dich; setze sie nur als Experten-Override. Die TX-Warteschlangenlänge sollte 128 betragen (erhöhe sie nur bei 5+ MCUs an einem Bus; deutlich größere Werte erhöhen die Latenz und können Fehler verursachen). Ein Auto-Neustart von 0 hält ihn aus; ~100 ms erholt sich selbst von einem Bus-Off, doch wenn der Bus weiter abbricht, behebe die Verkabelung, statt dich darauf zu verlassen. Lass jedes Steuermodus-Flag für den normalen Druck AUS — vor allem Nur mithören und One-Shot verhindern, dass der Host Frames bestätigt oder erneut sendet, und machen die MCUs unerreichbar."
+        },
+        "canTermination": {
+          "title": "120Ω-Abschluss & Fehlersuche",
+          "body": "Schließe genau zwei Knoten ab — die beiden physischen Enden des Busses; bei jedem Knoten in der Mitte muss der 120Ω-Abschlusswiderstand AUS sein. Zum Prüfen schalte den Drucker AUS und miss über CANH/CANL: etwa 60Ω ist korrekt (zwei Abschlusswiderstände parallel), ~120Ω heißt, nur einer ist verbaut, ~40Ω heißt drei, und ein offener Messwert heißt keiner. Verdrille CANH und CANL miteinander, halte die Leitung kurz und fern von Schrittmotor-, Heizungs- und Netzverkabelung, und stelle sicher, dass sich die Toolhead-Stecker nicht losrütteln können (Bewegung ist die häufigste Ursache sporadischer Fehler). Den Bus lesen: ERROR-ACTIVE ist gesund; ERROR-PASSIVE, BUS-OFF oder steigende Fehlerzähler deuten auf Abschluss, Verkabelung oder eine Bitrate-Abweichung hin — prüfe diese in dieser Reihenfolge."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Maskieren",
           "def": "Eine stärkere Form des Deaktivierens — der Dienst kann gar nicht gestartet werden (auch nicht von einem anderen Dienst), bis er demaskiert wird. Mit Vorsicht verwenden."
+        },
+        "canbus": {
+          "term": "CAN-Bus",
+          "def": "Ein Zweidraht-Netzwerk (CANH/CANL), das den Host mit Toolhead- und MCU-Boards verbindet, sodass ein Toolhead nur wenige Leitungen statt eines kompletten Kabelbaums braucht."
+        },
+        "uuid": {
+          "term": "CAN-UUID",
+          "def": "Eine eindeutige werkseitige Kennung für jedes CAN-Board. Du trägst sie in deine Druckerkonfiguration ein, damit der Host weiß, welches Board welches ist."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "Die CAN-Signalisierungsgeschwindigkeit in Bit pro Sekunde (1000000 = 1 Mbit/s ist Standard). Sie wird in der Firmware jedes Boards gesetzt; der Host und jeder Knoten müssen denselben Wert verwenden."
+        },
+        "samplePoint": {
+          "term": "Abtastpunkt",
+          "def": "Wo innerhalb jedes Bits der Signalpegel gelesen wird (~87,5 % ist Standard). Lass ihn leer, und der Kernel setzt ihn passend zur gewählten Bitrate."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width — wie weit der Controller sein Timing pro Bit verschieben darf, um synchron zu bleiben. Lass es leer, sofern du kein Taktgenauigkeitsproblem hast; es kann das Limit des Controllers nicht überschreiten."
+        },
+        "termination": {
+          "term": "120Ω-Abschluss",
+          "def": "Ein Widerstand an jedem der beiden Busenden (etwa 60Ω über CANH/CANL gemessen, bei ausgeschalteter Stromversorgung). Es werden genau zwei benötigt; bei mittleren Knoten muss ihrer aus sein."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "Der Controller hat sich nach zu vielen Fehlern selbst vom Bus genommen — meist falscher Abschluss, falsche Verkabelung oder eine Bitrate-Abweichung. Er braucht einen Neustart, und der zugrunde liegende Fehler muss behoben werden."
+        },
+        "txqueuelen": {
+          "term": "TX-Warteschlangenlänge",
+          "def": "Wie viele CAN-Pakete Linux zum Senden puffert. 128 wird empfohlen; deutlich größere Werte erhöhen die Latenz und können nicht behebbare Fehler verursachen."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "Stellt einen Controller wieder her, der in den Zustand BUS-OFF gegangen ist.",
       "noiseHint": "Dreifachabtastung und ein höherer SJW verbessern die Toleranz gegenüber elektrischen Störungen. Der Auto-Neustart (ms) holt den Bus nach einem BUS-OFF zurück.",
       "restartKlipper": "Klipper & MCUs neu starten",
-      "confirmBitrate": "Die Bitrate ändern? Dabei wird der CAN-Bus kurz deaktiviert (jeder CAN-MCU fällt ab), neu getaktet, wieder aktiviert und anschließend Klipper neu gestartet. Niemals während eines Drucks durchführen.",
+      "confirmBitrate": "Die Bitrate ändern? Die Bitrate ist in der Firmware jedes MCU festgelegt — sie allein am Host zu ändern nimmt jeden CAN-MCU offline. Tu dies erst, nachdem du jedes Board (und seinen Bootloader) auf dieselbe Geschwindigkeit neu geflasht hast. Dabei wird der Bus kurz getrennt und Klipper neu gestartet. Niemals während eines Drucks.",
       "confirmParams": "Diese CAN-Einstellungen übernehmen? Dabei wird der Bus kurz deaktiviert (jeder CAN-MCU fällt ab), die Änderung angewendet, der Bus wieder aktiviert und anschließend Klipper neu gestartet. Niemals während eines Drucks durchführen.",
       "confirmKlipper": "Klipper und jeden MCU jetzt neu starten? Die CAN-MCUs verbinden sich neu. Niemals während eines Drucks durchführen.",
       "appliedRestarting": "Übernommen. Der Bus ist wieder aktiv und Klipper wird neu gestartet, damit sich die MCUs neu verbinden.",
       "restartingKlipper": "Klipper wird neu gestartet; die MCUs verbinden sich neu.",
       "restartFailed": "Die Änderung wurde übernommen, aber die Anfrage zum Neustart von Klipper ist fehlgeschlagen – starte ihn manuell neu.",
-      "applyHint": "Beim Übernehmen wird der Bus kurz deaktiviert und Klipper neu gestartet, damit sich die MCUs mit den neuen Einstellungen neu verbinden."
+      "applyHint": "Beim Übernehmen wird der Bus kurz deaktiviert und Klipper neu gestartet, damit sich die MCUs mit den neuen Einstellungen neu verbinden.",
+      "advancedTip": "Lass Abtastpunkt und SJW leer — der Kernel wählt automatisch den empfohlenen Abtastpunkt von ~87,5 %. Die TX-Warteschlangenlänge sollte 128 betragen. Auto-Neustart 0 = aus, 100 ms erholt sich selbst von einem Bus-Off.",
+      "flagsWarn": "Lass diese für den normalen Druck aus. Nur mithören und One-Shot verhindern, dass der Host Frames bestätigt oder erneut sendet, was die MCUs unerreichbar macht."
     },
     "advisor": {
       "intro": "Host-Zustand auf einen Blick: CPU, Speicher, Datenträger, Uhr und Dienste, jeweils bewertet samt Lösung.",

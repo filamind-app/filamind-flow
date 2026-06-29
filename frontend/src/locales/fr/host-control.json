@@ -43,6 +43,18 @@
         "network": {
           "title": "DHCP ou IP statique",
           "body": "Le DHCP (automatique) laisse votre routeur attribuer l'adresse automatiquement. Le statique (manuel) fixe une adresse — définissez l'IP, le sous-réseau (CIDR, p. ex. /24), la passerelle (généralement votre routeur) et le DNS. IPv4 uniquement. Changer l'adresse de la connexion qui dessert ce panneau coupera votre session ; reconnectez-vous à la nouvelle IP. Une adresse statique ou une passerelle erronée peut rendre l'imprimante inaccessible jusqu'à correction sur l'appareil lui-même ; les réglages sont donc validés et exigent une confirmation saisie."
+        },
+        "canbus": {
+          "title": "Configuration du bus CAN",
+          "body": "Un bus CAN relie l'hôte à vos cartes de tête d'outil/MCU au moyen de deux fils (CANH et CANL). Trois règles le font fonctionner : chaque carte possède un UUID unique à inscrire dans la configuration de votre imprimante ; chaque nœud doit utiliser le MÊME bitrate ; et le bus a besoin d'exactement deux terminaisons de 120 Ω, une à chaque extrémité physique. 1 Mbit/s (1000000) est le débit standard. Après le câblage, activez l'interface et vérifiez que le contrôleur indique ERROR-ACTIVE et que vos MCU se connectent. Une carte qui n'apparaît pas est le plus souvent déjà revendiquée dans votre configuration (normal) ou fonctionne à un bitrate différent."
+        },
+        "canParams": {
+          "title": "Bitrate et paramètres avancés",
+          "body": "Le bitrate est fixé dans le firmware de chaque carte (et dans son bootloader) — le modifier ici sur le seul hôte met hors ligne tous les MCU CAN. Ne le changez qu'après avoir reflashé chaque carte au même nouveau débit. Des débits plus bas (500k/250k) offrent une marge sur un bus long ou bruité, mais seulement une fois le câblage et la terminaison corrects, et ils réduisent la bande passante — ils aggravent donc un problème de saturation, ils ne le résolvent pas. Laissez le Point d'échantillonnage et le SJW vides : le noyau choisit alors pour vous le point d'échantillonnage recommandé de ~87,5 % ; ne les définissez qu'en tant que réglage expert. La longueur de la file TX doit être de 128 (ne l'augmentez qu'avec 5 MCU ou plus sur un même bus ; des valeurs bien plus grandes ajoutent de la latence et peuvent provoquer des erreurs). Un redémarrage automatique de 0 le laisse désactivé ; ~100 ms permet une auto-récupération après un bus-off, mais si le bus tombe sans cesse, corrigez le câblage au lieu de vous y fier. Gardez tous les indicateurs de mode de contrôle DÉSACTIVÉS pour une impression normale — Écoute seule et Tir unique en particulier empêchent l'hôte d'acquitter ou de réémettre les trames et rendent les MCU inaccessibles."
+        },
+        "canTermination": {
+          "title": "Terminaison 120 Ω et dépannage",
+          "body": "Ne terminez qu'exactement deux nœuds — les deux extrémités physiques du bus ; tout nœud au milieu doit avoir sa terminaison de 120 Ω DÉSACTIVÉE. Pour vérifier, ÉTEIGNEZ l'imprimante et mesurez entre CANH et CANL : environ 60 Ω est correct (deux terminaisons en parallèle), ~120 Ω signifie qu'une seule est en place, ~40 Ω signifie trois, et une mesure en circuit ouvert signifie aucune. Torsadez CANH et CANL ensemble, gardez le parcours court et à l'écart du câblage des moteurs pas-à-pas, des résistances chauffantes et du secteur, et assurez-vous que les connecteurs de la tête d'outil ne peuvent pas se desserrer (le mouvement est la première cause d'erreurs intermittentes). Lecture du bus : ERROR-ACTIVE est sain ; ERROR-PASSIVE, BUS-OFF ou des compteurs d'erreurs qui grimpent pointent vers la terminaison, le câblage ou une incompatibilité de bitrate — vérifiez-les dans cet ordre."
         }
       },
       "glossary": {
@@ -81,6 +93,38 @@
         "mask": {
           "term": "Masquer (mask)",
           "def": "Une forme plus forte de désactivation — le service ne peut pas du tout être démarré (même par un autre service) tant qu'il n'est pas démasqué. À utiliser avec prudence."
+        },
+        "canbus": {
+          "term": "Bus CAN",
+          "def": "Un réseau à deux fils (CANH/CANL) reliant l'hôte aux cartes de tête d'outil et MCU, de sorte qu'une tête d'outil n'a besoin que de quelques fils au lieu d'un faisceau complet."
+        },
+        "uuid": {
+          "term": "UUID CAN",
+          "def": "Un identifiant d'usine unique pour chaque carte CAN. Vous l'inscrivez dans la configuration de votre imprimante pour que l'hôte sache quelle carte est laquelle."
+        },
+        "bitrate": {
+          "term": "Bitrate",
+          "def": "La vitesse de signalisation CAN en bits par seconde (1000000 = 1 Mbit/s est la norme). Elle est définie dans le firmware de chaque carte ; l'hôte et chaque nœud doivent utiliser la même valeur."
+        },
+        "samplePoint": {
+          "term": "Point d'échantillonnage",
+          "def": "L'endroit dans chaque bit où le niveau du signal est lu (~87,5 % est la norme). Laissez-le vide et le noyau le règle correctement pour le bitrate choisi."
+        },
+        "sjw": {
+          "term": "SJW",
+          "def": "Sync Jump Width — de combien le contrôleur peut décaler sa synchronisation par bit pour rester synchronisé. Laissez vide sauf si vous avez un problème de tolérance d'horloge ; il ne peut pas dépasser la limite du contrôleur."
+        },
+        "termination": {
+          "term": "Terminaison 120 Ω",
+          "def": "Une résistance à chacune des deux extrémités du bus (environ 60 Ω mesurés entre CANH et CANL, hors tension). Il en faut exactement deux ; les nœuds intermédiaires doivent avoir la leur désactivée."
+        },
+        "busoff": {
+          "term": "BUS-OFF",
+          "def": "Le contrôleur s'est retiré du bus après trop d'erreurs — généralement une terminaison erronée, un câblage défectueux ou une incompatibilité de bitrate. Il nécessite un redémarrage, et la correction du défaut sous-jacent."
+        },
+        "txqueuelen": {
+          "term": "Longueur de la file TX",
+          "def": "Le nombre de paquets CAN que Linux met en mémoire tampon pour l'envoi. 128 est recommandé ; des valeurs bien plus grandes ajoutent de la latence et peuvent provoquer des erreurs irrécupérables."
         }
       }
     },
@@ -314,13 +358,15 @@
       "restartHint": "Récupère un contrôleur passé à l'état BUS-OFF.",
       "noiseHint": "Le triple échantillonnage et un SJW plus élevé améliorent la tolérance au bruit électrique ; le redémarrage automatique (ms) remet le bus en service après un BUS-OFF.",
       "restartKlipper": "Redémarrer Klipper et les MCU",
-      "confirmBitrate": "Modifier le bitrate ? Cela coupe brièvement le bus CAN (tous les MCU CAN sont déconnectés), le resynchronise, le réactive, puis redémarre Klipper. Ne le faites jamais pendant une impression.",
+      "confirmBitrate": "Modifier le bitrate ? Le bitrate est fixé dans le firmware de chaque MCU — le modifier sur le seul hôte mettra hors ligne tous les MCU CAN. Ne le faites qu'après avoir reflashé chaque carte (et son bootloader) au même débit. Cela coupe brièvement le bus et redémarre Klipper. Jamais pendant une impression.",
       "confirmParams": "Appliquer ces paramètres CAN ? Cela coupe brièvement le bus (tous les MCU CAN sont déconnectés), applique la modification, le réactive, puis redémarre Klipper. Ne le faites jamais pendant une impression.",
       "confirmKlipper": "Redémarrer Klipper et tous les MCU maintenant ? Les MCU CAN se reconnecteront. Ne le faites jamais pendant une impression.",
       "appliedRestarting": "Appliqué. Le bus est de nouveau actif et Klipper redémarre pour que les MCU se reconnectent.",
       "restartingKlipper": "Klipper redémarre ; les MCU se reconnecteront.",
       "restartFailed": "La modification a été appliquée, mais la demande de redémarrage de Klipper a échoué — redémarrez-le manuellement.",
-      "applyHint": "L'application coupe brièvement le bus et redémarre Klipper afin que les MCU se reconnectent avec les nouveaux paramètres."
+      "applyHint": "L'application coupe brièvement le bus et redémarre Klipper afin que les MCU se reconnectent avec les nouveaux paramètres.",
+      "advancedTip": "Laissez le Point d'échantillonnage et le SJW vides — le noyau choisit automatiquement le point d'échantillonnage recommandé de ~87,5 %. La longueur de la file TX doit être de 128. Redémarrage automatique 0 = désactivé, 100 ms permet une auto-récupération après un bus-off.",
+      "flagsWarn": "Gardez-les désactivés pour une impression normale. Écoute seule et Tir unique empêchent l'hôte d'acquitter ou de réémettre les trames, ce qui rend les MCU inaccessibles."
     },
     "advisor": {
       "intro": "État de santé de l'hôte en un coup d'œil : CPU, mémoire, disque, horloge et services, chacun noté avec une solution.",
