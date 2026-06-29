@@ -54,6 +54,12 @@ function askConfirm(iface: string, kind: ConfirmKind): void {
   pendingDown.value = null
   confirmAction.value = { iface, kind }
 }
+/** Open the bring-down confirm, closing any open bitrate/params/klipper confirm first (so the two
+ *  confirmation prompts are mutually exclusive). */
+function askBringDown(iface: string): void {
+  confirmAction.value = null
+  pendingDown.value = iface
+}
 async function runConfirmed(): Promise<void> {
   const a = confirmAction.value
   if (!a) return
@@ -375,7 +381,7 @@ function fmtBitrate(b: number | null): string {
             type="button"
             class="nb-btn bg-brand-red/80 px-2 py-0.5 text-xs font-bold text-surface disabled:opacity-50"
             :disabled="busy === b.interface"
-            @click="pendingDown = b.interface"
+            @click="askBringDown(b.interface)"
           >
             {{ t('hostControl.canbus.bringDown') }}
           </button>
