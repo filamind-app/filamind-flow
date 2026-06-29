@@ -107,7 +107,7 @@
           "def": "La velocità di segnalazione CAN in bit al secondo (1000000 = 1 Mbit/s è lo standard). Viene impostata nel firmware di ogni scheda; l'host e ogni nodo devono usare lo stesso valore."
         },
         "samplePoint": {
-          "term": "Sample point",
+          "term": "Punto di campionamento",
           "def": "Il punto in ogni bit in cui viene letto il livello del segnale (~87.5% è lo standard). Lascialo vuoto e il kernel lo imposta correttamente per il bitrate scelto."
         },
         "sjw": {
@@ -339,7 +339,7 @@
       "actionOk": "Interfaccia aggiornata.",
       "actionFailed": "Azione non riuscita.",
       "advanced": "Parametri avanzati",
-      "samplePoint": "Sample point",
+      "samplePoint": "Punto di campionamento",
       "sjw": "SJW",
       "restartMs": "Riavvio automatico (ms)",
       "txQueueLen": "Lunghezza coda TX",
