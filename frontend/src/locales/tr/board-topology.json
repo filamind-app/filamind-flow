@@ -305,6 +305,33 @@
       "edit": "Düzenle",
       "delete": "Sil",
       "badge": "Manuel"
+    },
+    "termination": {
+      "title": "CAN sonlandırması (120Ω)",
+      "intro": "Bir CAN bus, iki fiziksel ucunda tam olarak iki adet 120Ω sonlandırıcı gerektirir. Yazılım bir jumper'ı okuyamaz, bu yüzden aşağıdan her kartın sonlandırıcısını kontrol edin.",
+      "unknownLoc": "bu kart için sonlandırıcı konumu belgelenmemiş",
+      "role": {
+        "adapter": "adaptör",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "jumper",
+        "solder_bridge": "lehim köprüsü",
+        "switch": "DIP anahtarı",
+        "fixed": "sabit (her zaman açık)",
+        "none": "kart üzerinde sonlandırıcı yok"
+      },
+      "default": {
+        "on": "varsayılan olarak açık",
+        "off": "varsayılan olarak kapalı",
+        "unknown": "varsayılan bilinmiyor"
+      },
+      "finding": {
+        "rule": "Tam olarak iki düğümü sonlandırın — bus'ın iki fiziksel ucunu.",
+        "both_ends": "İki düğüm: her iki uç da sonlandırılmalı (bus genelinde ≈60Ω).",
+        "middle_off": "Bus üzerinde {count} düğüm: yalnızca iki ucu sonlandırın; aradaki düğüm(ler)in 120Ω sonlandırıcısı KAPALI olmalı.",
+        "single_node": "Yalnızca bir CAN düğümü algılandı."
+      }
     }
   }
 }

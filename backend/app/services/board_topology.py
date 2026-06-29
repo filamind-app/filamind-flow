@@ -790,6 +790,46 @@ def _can_buses(
     return out
 
 
+def _term_node(name: str, board_id: str | None, role: str) -> dict[str, Any]:
+    """One CAN node + its board's 120Ω terminator info (from the catalog ``canTermination``)."""
+    board = reference_data.board_by_id(str(board_id)) if board_id else None
+    board = board if isinstance(board, dict) else None
+    term = board.get("canTermination") if board else None
+    return {
+        "name": str(name),
+        "role": role,
+        "board_id": board_id,
+        "board_name": (board.get("display_name") or board.get("model")) if board else None,
+        "termination": term if isinstance(term, dict) else None,
+    }
+
+
+def _can_termination(result: dict[str, Any]) -> dict[str, Any] | None:
+    """CAN-bus termination guidance: the nodes on the segment (the external USB-CAN adapter + every
+    CAN MCU) with each board's 120Ω terminator location, plus advisories. A CAN bus needs EXACTLY
+    two terminators, at its two physical ends - software can't read a jumper, so this surfaces where
+    each board's terminator is + the rule, and flags the common >2-node mistake. ``None`` when the
+    printer has no CAN at all."""
+    can_mcus = [m for m in (result.get("mcus") or []) if m.get("connection") == "canbus"]
+    adapters = [b for b in (result.get("can_buses") or []) if b.get("board_id")]
+    if not can_mcus and not adapters:
+        return None
+    nodes = [
+        _term_node(a.get("interface") or "adapter", a.get("board_id"), "adapter") for a in adapters
+    ]
+    nodes += [_term_node(m.get("name") or "mcu", m.get("board_id"), "mcu") for m in can_mcus]
+
+    findings: list[dict[str, Any]] = [{"code": "rule", "level": "info"}]
+    count = len(nodes)
+    if count >= 3:
+        findings.append({"code": "middle_off", "level": "warning", "count": count})
+    elif count == 2:
+        findings.append({"code": "both_ends", "level": "info"})
+    elif count == 1:
+        findings.append({"code": "single_node", "level": "info"})
+    return {"nodes": nodes, "findings": findings}
+
+
 def _host_displays(system_info: dict[str, Any], sections: dict[str, Any]) -> list[dict[str, Any]]:
     """Displays that live on the HOST, not on an MCU: the touch panel KlipperScreen drives (a
     service, not a Klipper section), and an external WiFi display (KNOMI) configured only via its
@@ -832,6 +872,7 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     _mark_integrated_host(result)
     # Merge any user-added nodes (board/MCU, USB-CAN adapter, host display) the detection missed.
     apply_manual_additions(result, manual_additions.read_additions(data_dir))
+    result["can_termination"] = _can_termination(result)
     result["reachable"] = True
     return result
 

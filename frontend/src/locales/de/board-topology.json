@@ -305,6 +305,33 @@
       "edit": "Bearbeiten",
       "delete": "Löschen",
       "badge": "Manuell"
+    },
+    "termination": {
+      "title": "CAN-Terminierung (120Ω)",
+      "intro": "Ein CAN-Bus braucht genau zwei 120Ω-Abschlusswiderstände – an seinen beiden physischen Enden. Software kann einen Jumper nicht auslesen, prüfe daher den Abschlusswiderstand jeder Platine unten.",
+      "unknownLoc": "Position des Abschlusswiderstands für diese Platine nicht dokumentiert",
+      "role": {
+        "adapter": "Adapter",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "Jumper",
+        "solder_bridge": "Lötbrücke",
+        "switch": "DIP-Schalter",
+        "fixed": "fest verlötet (immer aktiv)",
+        "none": "kein Abschlusswiderstand auf der Platine"
+      },
+      "default": {
+        "on": "standardmäßig aktiviert",
+        "off": "standardmäßig deaktiviert",
+        "unknown": "Standard unbekannt"
+      },
+      "finding": {
+        "rule": "Terminiere genau zwei Knoten – die beiden physischen Enden des Busses.",
+        "both_ends": "Zwei Knoten: beide Enden sollten terminiert sein (≈60Ω über den Bus).",
+        "middle_off": "{count} Knoten am Bus: Terminiere nur die beiden Enden; die mittleren Knoten müssen ihren 120Ω-Abschlusswiderstand DEAKTIVIERT haben.",
+        "single_node": "Nur ein CAN-Knoten erkannt."
+      }
     }
   }
 }

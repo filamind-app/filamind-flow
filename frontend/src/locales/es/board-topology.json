@@ -305,6 +305,33 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "badge": "Manual"
+    },
+    "termination": {
+      "title": "Terminación CAN (120Ω)",
+      "intro": "Un bus CAN necesita exactamente dos terminadores de 120Ω, en sus dos extremos físicos. El software no puede leer un jumper, así que comprueba abajo el terminador de cada placa.",
+      "unknownLoc": "la ubicación del terminador no está documentada para esta placa",
+      "role": {
+        "adapter": "adaptador",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "jumper",
+        "solder_bridge": "puente de soldadura",
+        "switch": "interruptor DIP",
+        "fixed": "fijo (siempre activo)",
+        "none": "sin terminador integrado"
+      },
+      "default": {
+        "on": "activo por defecto",
+        "off": "inactivo por defecto",
+        "unknown": "estado por defecto desconocido"
+      },
+      "finding": {
+        "rule": "Termina exactamente dos nodos: los dos extremos físicos del bus.",
+        "both_ends": "Dos nodos: ambos extremos deben estar terminados (≈60Ω a lo largo del bus).",
+        "middle_off": "{count} nodos en el bus: termina solo los dos extremos; el o los nodos intermedios deben tener su terminador de 120Ω DESACTIVADO.",
+        "single_node": "Solo se detectó un nodo CAN."
+      }
     }
   }
 }

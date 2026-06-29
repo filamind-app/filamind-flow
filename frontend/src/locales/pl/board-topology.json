@@ -305,6 +305,33 @@
       "edit": "Edytuj",
       "delete": "Usuń",
       "badge": "Ręcznie"
+    },
+    "termination": {
+      "title": "Terminacja CAN (120Ω)",
+      "intro": "Magistrala CAN wymaga dokładnie dwóch terminatorów 120Ω, na obu jej fizycznych końcach. Oprogramowanie nie odczyta zworki, więc sprawdź terminator na każdej płycie poniżej.",
+      "unknownLoc": "lokalizacja terminatora nieudokumentowana dla tej płyty",
+      "role": {
+        "adapter": "adapter",
+        "mcu": "MCU"
+      },
+      "type": {
+        "jumper": "zworka",
+        "solder_bridge": "mostek lutowniczy",
+        "switch": "przełącznik DIP",
+        "fixed": "stały (zawsze włączony)",
+        "none": "brak terminatora na płycie"
+      },
+      "default": {
+        "on": "domyślnie włączony",
+        "off": "domyślnie wyłączony",
+        "unknown": "stan domyślny nieznany"
+      },
+      "finding": {
+        "rule": "Zterminuj dokładnie dwa węzły — oba fizyczne końce magistrali.",
+        "both_ends": "Dwa węzły: oba końce powinny być zterminowane (≈60Ω na magistrali).",
+        "middle_off": "Węzłów na magistrali: {count}. Zterminuj tylko dwa końce; węzły pośrednie muszą mieć terminator 120Ω WYŁĄCZONY.",
+        "single_node": "Wykryto tylko jeden węzeł CAN."
+      }
     }
   }
 }
