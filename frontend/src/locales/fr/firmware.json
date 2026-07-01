@@ -171,7 +171,8 @@
       "warn": {
         "printing": "Une impression est en cours - le flashage est bloqué.",
         "no_artifact": "Aucun firmware n'a encore été compilé pour ce profil.",
-        "no_sudo": "sudo sans mot de passe non configuré - exécutez 'scripts/install.sh sudoers' sur l'hôte."
+        "no_sudo": "sudo sans mot de passe non configuré - exécutez 'scripts/install.sh sudoers' sur l'hôte.",
+        "build_tools": "L'hôte ne dispose pas des outils de compilation du firmware ('make' et un compilateur). Installez build-essential (ainsi que le compilateur du MCU) sur l'hôte, puis réessayez."
       }
     },
     "configEditor": {

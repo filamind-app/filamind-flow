@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import sys
 from pathlib import Path
+from typing import Any
 
 from fastapi.testclient import TestClient
 
@@ -50,6 +51,31 @@ def test_build_missing_makefile_reports_error(tmp_path: Path) -> None:
         return "".join([line async for line in service.run_build(str(tmp_path / "x.config"), "x")])
 
     assert "Makefile not found" in asyncio.run(collect())
+
+
+def test_build_without_make_fails_early_with_actionable_message(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    """A host set up without the build tools has no `make`; the build must fail early with an
+    install-these message, not run three doomed `make` commands (issue #558)."""
+    klipper = tmp_path / "klipper"
+    klipper.mkdir()
+    (klipper / "Makefile").write_text("# fake makefile\n")
+    profile_cfg = tmp_path / "p.config"
+    profile_cfg.write_text("CONFIG_DEMO=y\n")
+    # build_command=None -> the real `make` path; pretend `make` is absent from PATH.
+    monkeypatch.setattr("app.services.build_service.make_available", lambda: False)
+    service = BuildService(str(klipper), str(tmp_path / "data"))
+
+    async def collect() -> str:
+        return "".join([line async for line in service.run_build(str(profile_cfg), "p")])
+
+    log = asyncio.run(collect())
+    assert "build tools are not installed" in log
+    assert "build-essential" in log
+    assert "BUILD FAILED" in log
+    # no artifact was produced / staged, and it did not claim success
+    assert "BUILD OK" not in log
 
 
 def test_build_endpoint_unknown_profile_404(tmp_path: Path) -> None:

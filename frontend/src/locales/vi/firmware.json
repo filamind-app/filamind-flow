@@ -171,7 +171,8 @@
       "warn": {
         "printing": "Đang có bản in - việc nạp firmware bị chặn.",
         "no_artifact": "Chưa có firmware nào được build cho hồ sơ này.",
-        "no_sudo": "Chưa cấu hình sudo không mật khẩu - chạy 'scripts/install.sh sudoers' trên máy chủ."
+        "no_sudo": "Chưa cấu hình sudo không mật khẩu - chạy 'scripts/install.sh sudoers' trên máy chủ.",
+        "build_tools": "Máy chủ thiếu công cụ biên dịch firmware ('make' và một trình biên dịch). Hãy cài đặt build-essential (và trình biên dịch cho MCU) trên máy chủ, rồi thử lại."
       }
     },
     "configEditor": {

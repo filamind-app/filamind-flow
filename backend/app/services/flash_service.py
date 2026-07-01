@@ -26,6 +26,7 @@ import httpx
 
 from app.config import Settings
 from app.services import devices_store, printer_guard
+from app.services.build_tools import make_available, missing_toolchain_lines
 from app.services.firmware_profiles import artifact_path_for, profile_path
 from app.services.moonraker_client import MoonrakerClient
 from app.services.version_store import read_build_info, record_flash
@@ -310,7 +311,11 @@ async def flash_plan(
         warnings.append({"code": "no_artifact", "params": {}})
     if needs_sudo and not sudo:
         warnings.append({"code": "no_sudo", "params": {}})
-    ready = bool(artifact) and not printing and (sudo or not needs_sudo)
+    # `make flash` needs the host build tools; warn (and block) if `make` is absent.
+    make_missing = method == "make" and not make_available()
+    if make_missing:
+        warnings.append({"code": "build_tools", "params": {}})
+    ready = bool(artifact) and not printing and (sudo or not needs_sudo) and not make_missing
     return {
         "method": method,
         "device": device,
@@ -525,6 +530,13 @@ async def run_flash(
         return
 
     method = resolve_method(method, device)
+    # `make flash` needs the host build tools; check before stopping Klipper so a host without
+    # `make` fails early and clearly instead of after a needless service stop + cryptic code 127.
+    if method == "make" and not make_available():
+        for line in missing_toolchain_lines():
+            yield line
+        yield "!! Flash aborted - the host is missing the firmware build tools.\n"
+        return
     yield _phase("start")
     yield f">>> Flashing {os.path.basename(artifact)} → {device} via {method}\n"
 

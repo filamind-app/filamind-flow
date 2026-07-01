@@ -171,7 +171,8 @@
       "warn": {
         "printing": "هناك طباعة جارية - الفلاش محظور.",
         "no_artifact": "لم يُبنَ أي برنامج ثابت لهذا الملف بعد.",
-        "no_sudo": "sudo بلا كلمة مرور غير مُهيّأ - شغّل 'scripts/install.sh sudoers' على المضيف."
+        "no_sudo": "sudo بلا كلمة مرور غير مُهيّأ - شغّل 'scripts/install.sh sudoers' على المضيف.",
+        "build_tools": "المضيف يفتقر إلى أدوات بناء البرنامج الثابت ('make' ومُصرِّف). ثبّت build-essential (ومُصرِّف الـ MCU) على المضيف، ثم حاول مرة أخرى."
       }
     },
     "configEditor": {

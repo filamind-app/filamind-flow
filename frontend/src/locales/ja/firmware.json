@@ -171,7 +171,8 @@
       "warn": {
         "printing": "印刷中です - 書き込みはブロックされています。",
         "no_artifact": "このプロファイル用のファームウェアはまだビルドされていません。",
-        "no_sudo": "パスワードなし sudo が未設定です - ホストで 'scripts/install.sh sudoers' を実行してください。"
+        "no_sudo": "パスワードなし sudo が未設定です - ホストで 'scripts/install.sh sudoers' を実行してください。",
+        "build_tools": "ホストにファームウェアのビルドツール（'make' とコンパイラ）がありません。ホストに build-essential（および MCU 用のコンパイラ）をインストールしてから、もう一度お試しください。"
       }
     },
     "configEditor": {

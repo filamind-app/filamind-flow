@@ -171,7 +171,8 @@
       "warn": {
         "printing": "Ada pencetakan berlangsung - flashing diblokir.",
         "no_artifact": "Belum ada firmware yang dibangun untuk profil ini.",
-        "no_sudo": "sudo tanpa kata sandi belum dikonfigurasi - jalankan 'scripts/install.sh sudoers' di host."
+        "no_sudo": "sudo tanpa kata sandi belum dikonfigurasi - jalankan 'scripts/install.sh sudoers' di host.",
+        "build_tools": "Host tidak memiliki alat build firmware ('make' + sebuah compiler). Instal build-essential (dan compiler untuk MCU) pada host, lalu coba lagi."
       }
     },
     "configEditor": {

@@ -171,7 +171,8 @@
       "warn": {
         "printing": "Há uma impressão em andamento - o flash está bloqueado.",
         "no_artifact": "Nenhum firmware foi compilado para este perfil ainda.",
-        "no_sudo": "sudo sem senha não configurado - execute 'scripts/install.sh sudoers' no host."
+        "no_sudo": "sudo sem senha não configurado - execute 'scripts/install.sh sudoers' no host.",
+        "build_tools": "O host não tem as ferramentas de compilação do firmware ('make' + um compilador). Instale o build-essential (e o compilador do MCU) no host e tente novamente."
       }
     },
     "configEditor": {
