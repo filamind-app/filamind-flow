@@ -6,6 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.13.2] - 2026-07-01
+
+### Fixed
+
+- CI/build: the native touch-app (Tauri) build broke when `time 0.3.52` was released and stopped
+  compiling the transitive `cookie 0.18.1` dependency. Pinned `time` below 0.3.52 in the Tauri crate
+  so the build is green again (the web bundle was unaffected). See #560.
+
 ## [1.13.1] - 2026-06-29
 
 ### Fixed
