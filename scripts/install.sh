@@ -53,7 +53,7 @@ fi
 # added in exactly one place and reaches both the fresh-install and update code paths.
 render_sudoers() {
   local user_name="$1"
-  local systemctl dfu cp chmod fuser journalctl rm_bin timedatectl localectl hostnamectl nmcli ip_bin
+  local systemctl dfu cp chmod fuser journalctl rm_bin timedatectl localectl hostnamectl nmcli ip_bin mkdir_bin
   systemctl="$(command -v systemctl || echo /usr/bin/systemctl)"
   dfu="$(command -v dfu-util || echo /usr/bin/dfu-util)"
   cp="$(command -v cp || echo /bin/cp)"
@@ -66,6 +66,7 @@ render_sudoers() {
   hostnamectl="$(command -v hostnamectl || echo /usr/bin/hostnamectl)"
   nmcli="$(command -v nmcli || echo /usr/bin/nmcli)"
   ip_bin="$(command -v ip || echo /usr/sbin/ip)"  # CAN bus control: ip link set up/down/bitrate/params
+  mkdir_bin="$(command -v mkdir || echo /bin/mkdir)"  # host-MCU -r auto-fix: create the klipper-mcu drop-in dir
   local apt_get dpkg_bin bash_bin flow_home flow_install
   apt_get="$(command -v apt-get || echo /usr/bin/apt-get)"
   dpkg_bin="$(command -v dpkg || echo /usr/bin/dpkg)"
@@ -75,7 +76,7 @@ render_sudoers() {
   cat <<EOF
 # Managed by FilaMind Flow (scripts/install.sh) - firmware flashing + Host Control. Auto-refreshed
 # on each update, so a new capability the panel needs reaches every install without a manual step.
-$user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli, $ip_bin
+$user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli, $ip_bin, $mkdir_bin
 # Native touch-app install (FilaMind screen .deb kiosk): package + WebKit runtime via apt/dpkg, and
 # the Flow kiosk unit-writer. Wider than the base grant - enables one-click native install.
 $user_name ALL=(root) NOPASSWD: $apt_get, $dpkg_bin, $bash_bin $flow_install kiosk *
