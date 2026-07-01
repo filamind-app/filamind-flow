@@ -80,6 +80,20 @@ def _profile_flags(config_path: str) -> dict[str, bool]:
     }
 
 
+def is_linux_profile(data_dir: str, name: str) -> bool:
+    """True if the profile builds the Linux host-process target (``CONFIG_MACH_LINUX=y``).
+
+    Such a build is the Klipper *host* MCU (e.g. ``[mcu PI2] serial: /tmp/klipper_host_mcu``): it
+    is installed as the ``klipper_mcu`` binary, never flashed over serial / CAN. Used to force the
+    ``linux`` flash method even when the device was registered with a bus method.
+    """
+    try:
+        path = profile_path(data_dir, name)
+    except ProfileNameError:
+        return False
+    return _profile_flags(path).get("is_linux", False)
+
+
 def list_profiles(data_dir: str) -> list[dict[str, Any]]:
     """Lists saved profiles with the flags that drive build/flash behaviour."""
     directory = profiles_dir(data_dir)
