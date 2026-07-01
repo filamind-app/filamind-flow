@@ -171,7 +171,8 @@
       "warn": {
         "printing": "Trwa drukowanie - flashowanie jest zablokowane.",
         "no_artifact": "Nie zbudowano jeszcze firmware dla tego profilu.",
-        "no_sudo": "Bezhasłowe sudo nie jest skonfigurowane - uruchom 'scripts/install.sh sudoers' na hoście."
+        "no_sudo": "Bezhasłowe sudo nie jest skonfigurowane - uruchom 'scripts/install.sh sudoers' na hoście.",
+        "build_tools": "Na hoście brakuje narzędzi do budowania firmware ('make' oraz kompilatora). Zainstaluj build-essential (oraz kompilator dla MCU) na hoście, a następnie spróbuj ponownie."
       }
     },
     "configEditor": {

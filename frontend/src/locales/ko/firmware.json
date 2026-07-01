@@ -171,7 +171,8 @@
       "warn": {
         "printing": "인쇄가 진행 중입니다 - 플래싱이 차단되었습니다.",
         "no_artifact": "이 프로필용 펌웨어가 아직 빌드되지 않았습니다.",
-        "no_sudo": "비밀번호 없는 sudo가 구성되지 않았습니다 - 호스트에서 'scripts/install.sh sudoers'를 실행하세요."
+        "no_sudo": "비밀번호 없는 sudo가 구성되지 않았습니다 - 호스트에서 'scripts/install.sh sudoers'를 실행하세요.",
+        "build_tools": "호스트에 펌웨어 빌드 도구('make'와 컴파일러)가 없습니다. 호스트에 build-essential(및 MCU용 컴파일러)을 설치한 후 다시 시도하세요."
       }
     },
     "configEditor": {

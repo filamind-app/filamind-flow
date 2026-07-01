@@ -171,7 +171,8 @@
       "warn": {
         "printing": "Ein Druck läuft - Flashen ist blockiert.",
         "no_artifact": "Für dieses Profil wurde noch keine Firmware gebaut.",
-        "no_sudo": "Passwortloses sudo nicht konfiguriert - 'scripts/install.sh sudoers' auf dem Host ausführen."
+        "no_sudo": "Passwortloses sudo nicht konfiguriert - 'scripts/install.sh sudoers' auf dem Host ausführen.",
+        "build_tools": "Auf dem Host fehlen die Firmware-Build-Tools ('make' und ein Compiler). Installieren Sie build-essential (und den Compiler für den MCU) auf dem Host und versuchen Sie es dann erneut."
       }
     },
     "configEditor": {

@@ -95,6 +95,73 @@ def test_flash_plan_with_artifact(tmp_path: Path) -> None:
     assert body["printing"] is False
 
 
+async def test_flash_plan_warns_when_make_missing(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A `make flash` on a host without the build tools is pre-warned + blocked (issue #558)."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "p.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "p.config").write_text("CONFIG_X=y\n")
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service, "make_available", lambda: False)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir=str(tmp_path / "kat"),
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    plan = await flash_service.flash_plan("p", "make", "usb0", "can0", settings)
+    assert any(w["code"] == "build_tools" for w in plan["warnings"])
+    assert plan["ready"] is False
+
+
+async def test_flash_run_aborts_before_stopping_klipper_when_make_missing(
+    tmp_path: Path,
+    monkeypatch,  # type: ignore[no-untyped-def]
+) -> None:
+    """The make-flash run must fail early (no systemctl stop klipper) when `make` is absent."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "p.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "p.config").write_text("CONFIG_X=y\n")
+    calls: list[list[str]] = []
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def record_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover - makes this an async generator
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service, "make_available", lambda: False)
+    monkeypatch.setattr(flash_service, "_stream", record_stream)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir=str(tmp_path / "kat"),
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    log = "".join(
+        [line async for line in flash_service.run_flash("p", "make", "usb0", "can0", settings)]
+    )
+    assert "build tools" in log and "Flash aborted" in log
+    # crucially, Klipper was never stopped for a doomed flash
+    assert not any("stop" in c and "klipper" in c for c in calls)
+
+
 def test_flash_refused_without_artifact(tmp_path: Path) -> None:
     resp = _client(tmp_path).post(
         "/api/firmware/flash",

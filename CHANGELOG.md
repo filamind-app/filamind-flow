@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.13.1] - 2026-06-29
+
+### Fixed
+
+- Firmware Manager: building or flashing on a host that has no build toolchain installed failed with
+  a cryptic `cannot run 'make': [Errno 2]` / `make exited with code 127` (#558). The build and
+  `make flash` paths now check for `make` up front and stop with a clear, actionable message telling
+  you to install the host's build dependencies (`build-essential` plus the MCU's compiler, e.g. the
+  ARM toolchain for STM32/RP2040 boards), and the flash no longer needlessly stops Klipper first. The
+  flash confirmation also warns when the build tools are missing.
+
 ## [1.13.0] - 2026-06-29
 
 ### Added

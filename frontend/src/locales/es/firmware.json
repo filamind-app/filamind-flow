@@ -171,7 +171,8 @@
       "warn": {
         "printing": "Hay una impresión en curso - el flasheo está bloqueado.",
         "no_artifact": "Aún no se ha compilado firmware para este perfil.",
-        "no_sudo": "sudo sin contraseña no configurado - ejecuta 'scripts/install.sh sudoers' en el host."
+        "no_sudo": "sudo sin contraseña no configurado - ejecuta 'scripts/install.sh sudoers' en el host.",
+        "build_tools": "Al host le faltan las herramientas de compilación del firmware ('make' y un compilador). Instala build-essential (y el compilador del MCU) en el host y vuelve a intentarlo."
       }
     },
     "configEditor": {

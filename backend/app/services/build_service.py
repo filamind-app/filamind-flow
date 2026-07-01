@@ -17,6 +17,7 @@ import os
 import shutil
 from collections.abc import AsyncIterator
 
+from app.services.build_tools import make_available, missing_toolchain_lines
 from app.services.firmware_profiles import artifacts_dir
 from app.services.version_store import get_klipper_version, write_build_info
 
@@ -44,6 +45,13 @@ class BuildService:
             return
         if not os.path.isfile(config_path):
             yield f"!! Profile config not found: {config_path}\n"
+            return
+        # Preflight: a host set up without the build dependencies has no `make`, which would
+        # otherwise fail three times over as a cryptic "cannot run 'make'". Fail early + clearly.
+        if self.build_command is None and not make_available():
+            for line in missing_toolchain_lines():
+                yield line
+            yield ">>> BUILD FAILED - the host is missing the firmware build tools\n"
             return
         try:
             shutil.copy(config_path, os.path.join(self.klipper_dir, ".config"))
