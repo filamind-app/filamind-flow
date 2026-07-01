@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.14.1] - 2026-07-01
+
+### Fixed
+
+- Firmware Manager: build/flash could fail with `cannot run 'make': [Errno 2]` even when the build
+  tools were installed, because the backend service can run with a minimal `PATH` that omits
+  `/usr/bin` (the real cause behind #558 — the tools were present all along). Build and `make flash`
+  now run with an augmented `PATH` covering the standard locations, so `make` and the MCU compilers
+  resolve regardless of the service's own `PATH`.
+
 ## [1.14.0] - 2026-07-01
 
 ### Added

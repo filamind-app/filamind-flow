@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -42,6 +43,64 @@ def test_build_streams_and_collects_artifact(tmp_path: Path) -> None:
     assert (Path(firmware_profiles.artifacts_dir(str(data))) / "p.bin").is_file()
     # The artifact now marks the profile as built.
     assert firmware_profiles.profile_is_built(str(data), "p") is True
+
+
+def test_build_env_augments_path_with_standard_dirs(monkeypatch: Any) -> None:
+    """The build/flash subprocess PATH must include the standard toolchain dirs even when the
+    service started with a minimal PATH - the real cause of #558 (make installed in /usr/bin but
+    /usr/bin absent from the backend's PATH)."""
+    from app.services import build_tools
+
+    monkeypatch.setenv("PATH", "/opt/custom/bin")
+    parts = build_tools.build_env()["PATH"].split(os.pathsep)
+    assert "/opt/custom/bin" in parts  # keeps the existing PATH entries
+    for d in ("/usr/local/bin", "/usr/bin", "/usr/sbin", "/bin", "/sbin"):
+        assert d in parts  # adds every standard toolchain dir
+    assert parts.count("/usr/bin") == 1  # de-duplicated
+
+    # Even a wholly empty PATH still yields the standard dirs.
+    monkeypatch.setenv("PATH", "")
+    assert "/usr/bin" in build_tools.build_env()["PATH"].split(os.pathsep)
+
+
+class _FakeStdout:
+    def __init__(self, lines: list[bytes]) -> None:
+        self._lines = list(lines)
+
+    async def readline(self) -> bytes:
+        return self._lines.pop(0) if self._lines else b""
+
+
+class _FakeProc:
+    def __init__(self) -> None:
+        self.stdout = _FakeStdout([b"ok\n"])
+
+    async def wait(self) -> int:
+        return 0
+
+    def kill(self) -> None:  # pragma: no cover - only hit on a timeout
+        pass
+
+
+def test_build_stream_spawns_with_augmented_path(tmp_path: Path, monkeypatch: Any) -> None:
+    """build_service runs its commands with the augmented PATH, so `make` (and the compilers it
+    invokes) resolve regardless of the service's own PATH."""
+    service = BuildService(str(tmp_path), str(tmp_path / "data"))
+    seen: dict[str, Any] = {}
+
+    async def fake_exec(*_args: Any, **kwargs: Any) -> _FakeProc:
+        seen["env"] = kwargs.get("env")
+        return _FakeProc()
+
+    monkeypatch.setattr("app.services.build_service.asyncio.create_subprocess_exec", fake_exec)
+
+    async def run() -> None:
+        async for _ in service._stream(["make", "clean"]):
+            pass
+
+    asyncio.run(run())
+    assert seen["env"] is not None
+    assert "/usr/bin" in seen["env"]["PATH"].split(os.pathsep)
 
 
 def test_build_missing_makefile_reports_error(tmp_path: Path) -> None:

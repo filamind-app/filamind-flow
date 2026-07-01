@@ -26,7 +26,7 @@ import httpx
 
 from app.config import Settings
 from app.services import devices_store, printer_guard
-from app.services.build_tools import make_available, missing_toolchain_lines
+from app.services.build_tools import build_env, make_available, missing_toolchain_lines
 from app.services.firmware_profiles import artifact_path_for, profile_path
 from app.services.moonraker_client import MoonrakerClient
 from app.services.version_store import read_build_info, record_flash
@@ -340,6 +340,7 @@ async def _stream(
         proc = await asyncio.create_subprocess_exec(
             *cmd,
             cwd=cwd,
+            env=build_env(),  # augmented PATH so make / flash tools resolve (#558)
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
         )
