@@ -27,7 +27,7 @@ import httpx
 from app.config import Settings
 from app.services import devices_store, printer_guard
 from app.services.build_tools import build_env, make_available, missing_toolchain_lines
-from app.services.firmware_profiles import artifact_path_for, profile_path
+from app.services.firmware_profiles import artifact_path_for, is_linux_profile, profile_path
 from app.services.moonraker_client import MoonrakerClient
 from app.services.version_store import read_build_info, record_flash
 
@@ -99,16 +99,17 @@ def dfu_leave_command(offset: str, serial: str | None = None) -> list[str]:
     return cmd
 
 
-def resolve_method(method: str, device: str) -> str:
+def resolve_method(method: str, device: str, is_linux: bool = False) -> str:
     """Normalises the flash method to what the device actually needs.
 
-    * The Linux-process host MCU (id ``linux_process``) is installed as a binary, never flashed
-      over a bus - force ``linux`` even if its registry entry stored a serial/CAN method (it isn't
-      a serial device, so a serial flash fails with "No Serial Device found at linux_process").
+    * The Linux host-process MCU is installed as a binary, never flashed over a bus - force
+      ``linux`` when the profile builds the Linux target (``is_linux``) or the device is the host
+      MCU (``linux_process`` / the ``klipper_host_mcu`` socket). Its "serial" is that socket, so a
+      serial flash otherwise fails with "No Serial Device found" (the ``[mcu PI2]`` host case).
     * A USB-to-CAN bridge is configured as CAN but enumerates as a serial ``/dev/`` path, so a
       ``/dev/`` device given for CAN is flashed over serial.
     """
-    if device == "linux_process":
+    if is_linux or device == "linux_process" or device.endswith("klipper_host_mcu"):
         return "linux"
     if method == "can" and device.startswith("/dev/"):
         return "serial"
@@ -293,7 +294,8 @@ async def flash_plan(
     profile: str, method: str, device: str, interface: str, settings: Settings
 ) -> dict[str, Any]:
     """Read-only: reports the command + guards for flashing, without running it."""
-    method = resolve_method(method, device)
+    is_linux = is_linux_profile(settings.data_dir, profile) if profile else False
+    method = resolve_method(method, device, is_linux)
     artifact = artifact_path_for(settings.data_dir, profile) if profile else None
     offset = flash_offset(profile_path(settings.data_dir, profile)) if profile else "0x08000000"
     command = _build_command(
@@ -530,7 +532,8 @@ async def run_flash(
         yield "!! Run once on the host:  sudo bash scripts/install.sh sudoers\n"
         return
 
-    method = resolve_method(method, device)
+    is_linux = is_linux_profile(settings.data_dir, profile) if profile else False
+    method = resolve_method(method, device, is_linux)
     # `make flash` needs the host build tools; check before stopping Klipper so a host without
     # `make` fails early and clearly instead of after a needless service stop + cryptic code 127.
     if method == "make" and not make_available():
@@ -576,7 +579,7 @@ async def run_flash(
 
     # A DFU device is already in its bootloader; only running Katapult boards need
     # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
-    if method in ("serial", "can") and is_katapult:
+    if method == "serial" and is_katapult:
         yield _phase("boot")
         # A USB serial board renames itself once it's in the bootloader (usb-Klipper_<id> →
         # usb-katapult_<id>), so the stored running-firmware path is gone. If it's already in the
@@ -584,7 +587,7 @@ async def run_flash(
         # and then retarget to the bootloader path that appears. Without this, the flash keeps
         # pointing at the vanished Klipper path and can never complete - leaving Klipper unable to
         # connect to the MCU.
-        already = bootloader_serial_path(target) if method == "serial" else None
+        already = bootloader_serial_path(target)
         if already:
             yield (
                 f">>> Board is already in the Katapult bootloader ({os.path.basename(already)}) - "
@@ -594,11 +597,18 @@ async def run_flash(
         else:
             async for line in _reboot_to_bootloader(method, target, interface or "can0", settings):
                 yield line
-            if method == "serial":
-                booted = bootloader_serial_path(target)
-                if booted:
-                    yield f">>> Board entered the bootloader as {os.path.basename(booted)}.\n"
-                    target = booted
+            booted = bootloader_serial_path(target)
+            if booted:
+                yield f">>> Board entered the bootloader as {os.path.basename(booted)}.\n"
+                target = booted
+    elif method == "can" and is_katapult:
+        # Katapult's flashtool enters the node's bootloader itself: `flashtool.py -u <uuid> -f`
+        # always issues its own jump. A separate pre-jump (`-r`) double-jumps the node - it churns
+        # it app↔Katapult and leaves the flasher's CONNECT failing - so we do NOT pre-reboot for
+        # CAN; the one flash command handles it (a CAN node keeps its UUID in both modes, so unlike
+        # serial there is no renamed path to retarget).
+        yield _phase("boot")
+        yield ">>> The CAN flasher enters the bootloader itself - no pre-reboot needed.\n"
     elif method in ("serial", "can"):
         yield ">>> Device is not marked Katapult - skipping reboot-to-bootloader.\n"
 

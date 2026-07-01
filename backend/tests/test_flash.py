@@ -211,6 +211,117 @@ async def test_flash_skips_reboot_when_not_katapult(tmp_path: Path, monkeypatch)
     assert "enter its bootloader" in on
 
 
+def test_resolve_method_linux() -> None:
+    """A Linux-target profile / the host MCU is installed as a binary, never bus-flashed."""
+    # profile builds the Linux target -> force linux regardless of the stored bus method
+    assert flash_service.resolve_method("serial", "PI2", is_linux=True) == "linux"
+    assert flash_service.resolve_method("can", "PI2", is_linux=True) == "linux"
+    # host MCU recognised by discovery id / the klipper_host_mcu socket path
+    assert flash_service.resolve_method("serial", "linux_process") == "linux"
+    assert flash_service.resolve_method("serial", "/tmp/klipper_host_mcu") == "linux"
+    # unchanged: a real serial board, and a USB-CAN bridge given as a /dev path
+    assert flash_service.resolve_method("serial", "/dev/ttyACM0") == "serial"
+    assert flash_service.resolve_method("can", "/dev/ttyACM0") == "serial"
+    assert flash_service.resolve_method("can", "aabbccddeeff") == "can"
+
+
+async def test_flash_can_does_not_prejump(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """CAN flash lets flashtool ``-f`` enter the node's bootloader itself - no redundant ``-r``
+    pre-jump (the double-jump churns the node so the flasher's CONNECT fails)."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "p.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "p.config").write_text("CONFIG_X=y\n")
+    calls: list[list[str]] = []
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    async def record_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover - makes this an async generator
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    monkeypatch.setattr(flash_service, "_stream", record_stream)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "can", "aabbccddeeff", "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    assert "no pre-reboot needed" in log
+    assert "enter its bootloader" not in log
+    # the flash itself is the single flashtool -u <uuid> -f invocation ...
+    assert any("-u" in c and "aabbccddeeff" in c and "-f" in c for c in calls)
+    # ... and no separate -r pre-jump command ran
+    assert not any("-r" in c for c in calls)
+
+
+async def test_flash_linux_profile_installs_binary(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A profile building the Linux target is installed as the klipper_mcu binary even when the
+    device was registered with a serial method (the ``[mcu PI2]`` host-process case)."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "PI2.elf").write_bytes(b"\x7fELF")
+    Path(profiles_dir(str(data)), "PI2.config").write_text("CONFIG_MACH_LINUX=y\n")
+    calls: list[list[str]] = []
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    async def record_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover - makes this an async generator
+
+    async def service_up(_name: str) -> bool:
+        return True
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    monkeypatch.setattr(flash_service, "_stream", record_stream)
+    monkeypatch.setattr(flash_service, "_service_active", service_up)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    log = "".join(
+        [line async for line in flash_service.run_flash("PI2", "serial", "PI2", "can0", settings)]
+    )
+    assert "host MCU reinstalled" in log
+    # installed as the klipper_mcu binary, never handed to a serial flashtool
+    assert any("/usr/local/bin/klipper_mcu" in c for c in calls)
+    assert not any("flashtool.py" in " ".join(c) for c in calls)
+
+
 def test_bootloader_serial_path(monkeypatch) -> None:
     """A board in the Katapult bootloader is found under usb-katapult_<id>, not usb-Klipper_<id>."""
     kl = "/dev/serial/by-id/usb-Klipper_stm32f103xe_36FFD8054755303931861457-if00"

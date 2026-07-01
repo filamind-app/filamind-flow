@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.14.2] - 2026-07-01
+
+### Fixed
+
+- Firmware Manager: flashing a CAN (Katapult) toolhead board could fail with
+  `Error sending command [CONNECT] to Device` / `python3 exited with code 1` even on a healthy bus.
+  FilaMind asked the node to enter its bootloader and *then* ran `flashtool.py`, which issues its
+  own jump-to-bootloader — the redundant second jump churned the node between the application and
+  Katapult so the flasher could no longer connect. CAN boards are now flashed with a single
+  `flashtool.py -u <uuid> -f` call (which enters the bootloader itself), matching the standard
+  by-hand flow; serial boards still pre-reboot, since they must retarget the renamed bootloader port.
+- Firmware Manager: flashing the Linux host-process MCU (e.g. `[mcu PI2]` with
+  `serial: /tmp/klipper_host_mcu`) failed with `No Serial Device found`. A profile that builds the
+  Linux target (`CONFIG_MACH_LINUX=y`) is now always installed as the `klipper_mcu` binary instead
+  of being pushed over serial/CAN, even when the board was registered with a bus method.
+
 ## [1.14.1] - 2026-07-01
 
 ### Fixed
