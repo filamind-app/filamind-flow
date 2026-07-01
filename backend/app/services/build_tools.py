@@ -10,12 +10,39 @@ build and the flash paths fail early and clearly.
 
 from __future__ import annotations
 
+import os
 import shutil
+
+# Standard locations for the build toolchain (make, gcc, arm-none-eabi-gcc, avr-gcc, dfu-util).
+# A systemd service can start with a PATH that omits these even when the tools ARE installed - #558
+# was exactly this: build-essential + the Arm compiler were present in /usr/bin, but the backend's
+# `make` subprocess still failed with `[Errno 2]` because /usr/bin wasn't on the service's PATH. So
+# build/flash always run with an augmented PATH covering these dirs.
+_TOOLCHAIN_DIRS = ("/usr/local/bin", "/usr/bin", "/usr/sbin", "/bin", "/sbin")
+
+
+def _augmented_path() -> str:
+    """The current PATH plus the standard system bin dirs, order-preserving + de-duplicated, so
+    build/flash subprocesses find ``make`` + the MCU compilers even under a minimal service PATH."""
+    seen: list[str] = []
+    for d in os.environ.get("PATH", "").split(os.pathsep) + list(_TOOLCHAIN_DIRS):
+        if d and d not in seen:
+            seen.append(d)
+    return os.pathsep.join(seen)
+
+
+def build_env() -> dict[str, str]:
+    """``os.environ`` with PATH augmented to include the standard toolchain dirs. Pass as the
+    ``env=`` of the build / ``make flash`` subprocess so ``make`` AND the compilers it invokes are
+    found regardless of the (possibly minimal) PATH the backend service was started with."""
+    env = dict(os.environ)
+    env["PATH"] = _augmented_path()
+    return env
 
 
 def make_available() -> bool:
-    """True if ``make`` is on the host PATH (the minimum to build / ``make flash``)."""
-    return shutil.which("make") is not None
+    """True if ``make`` is resolvable via the augmented PATH (the minimum to build / flash)."""
+    return shutil.which("make", path=_augmented_path()) is not None
 
 
 def missing_toolchain_lines() -> list[str]:

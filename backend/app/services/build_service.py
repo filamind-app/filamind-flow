@@ -17,7 +17,7 @@ import os
 import shutil
 from collections.abc import AsyncIterator
 
-from app.services.build_tools import make_available, missing_toolchain_lines
+from app.services.build_tools import build_env, make_available, missing_toolchain_lines
 from app.services.firmware_profiles import artifacts_dir
 from app.services.version_store import get_klipper_version, write_build_info
 
@@ -95,6 +95,7 @@ class BuildService:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
                 cwd=self.klipper_dir,
+                env=build_env(),  # augmented PATH so make + the MCU compilers are found (#558)
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT,
             )
