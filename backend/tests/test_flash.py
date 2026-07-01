@@ -493,6 +493,50 @@ async def test_flash_linux_autofixes_blocked_realtime(tmp_path: Path, monkeypatc
     )
 
 
+async def test_make_flash_cwd_is_resolved(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """`make flash` runs in the RESOLVED (absolute) klipper dir, never a literal '~/klipper' that a
+    subprocess cwd can't chdir into - the cause of the cryptic 'cannot run make' on AVR (#565)."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "p.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "p.config").write_text("CONFIG_MACH_AVR=y\n")
+    seen: dict[str, object] = {}
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    async def record_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        if cmd and cmd[0] == "make" and "flash" in cmd:
+            seen["cwd"] = cwd
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service, "make_available", lambda: True)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    monkeypatch.setattr(flash_service, "_stream", record_stream)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir="~/klipper",  # tilde form - must be resolved before it reaches the subprocess
+        data_dir=str(data),
+    )
+    # klipper_dir is resolved at the config layer, so no '~' survives to any consumer
+    assert os.path.isabs(settings.klipper_dir) and "~" not in settings.klipper_dir
+    async for _line in flash_service.run_flash("p", "make", "/dev/ttyUSB0", "can0", settings):
+        pass
+    assert seen.get("cwd") is not None
+    assert os.path.isabs(str(seen["cwd"])) and "~" not in str(seen["cwd"])
+
+
 def test_bootloader_serial_path(monkeypatch) -> None:
     """A board in the Katapult bootloader is found under usb-katapult_<id>, not usb-Klipper_<id>."""
     kl = "/dev/serial/by-id/usb-Klipper_stm32f103xe_36FFD8054755303931861457-if00"

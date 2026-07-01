@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -62,6 +64,15 @@ class Settings(BaseSettings):
 
     # Comma-separated browser origins allowed to call this API.
     cors_origins: str = "http://localhost:5173"
+
+    @field_validator("klipper_dir", "katapult_dir", "klipperscreen_dir", "data_dir")
+    @classmethod
+    def _resolve_path(cls, value: str) -> str:
+        """Resolve ``~`` + relative segments to an absolute path once, so every consumer uses the
+        same real location. A raw ``~/klipper`` handed to a subprocess ``cwd`` can't be ``chdir``'d
+        into (the shell-only ``~`` isn't expanded), which failed the ``make flash`` step with a
+        cryptic "cannot run 'make'" (#565). The build path already expanded; now all paths do."""
+        return os.path.abspath(os.path.expanduser(value)) if value else value
 
     @property
     def cors_origin_list(self) -> list[str]:
