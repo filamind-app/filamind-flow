@@ -24,6 +24,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   drops the `-r` flag via a systemd drop-in, then brings the service back up — no hand-editing of a
   unit file. (Previously it printed instructions to edit the unit yourself.)
 
+### Fixed
+
+- **Firmware Manager — `make flash` on AVR boards** failed with `cannot run 'make': [Errno 2]` even
+  though the build succeeded, because the Klipper directory was handed to the flash subprocess as
+  the literal `~/klipper` — a working directory a process can't `chdir` into (the shell-only `~`
+  isn't expanded). Path settings are now resolved to absolute paths once, up front, so the build and
+  every flash method use the same real location (#565).
+
 ## [1.14.2] - 2026-07-01
 
 ### Fixed

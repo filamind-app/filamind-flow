@@ -409,14 +409,23 @@ _MCU_NOREALTIME = (
 
 
 async def _mcu_realtime_blocked() -> bool:
-    """True if klipper-mcu's recent journal shows the realtime-scheduling denial (the -r crash)."""
+    """True if klipper-mcu's current-boot journal shows the realtime-scheduling denial (-r crash).
+
+    Runs via the granted ``sudo -n journalctl`` (like the rest of the codebase) so it reads the
+    root-run service's own lines - an unprivileged journalctl would only see the caller's messages
+    and miss the crash. Scoped to the current boot (``-b``) so a stale prior-boot crash can't fire a
+    needless fix.
+    """
     try:
         proc = await asyncio.create_subprocess_exec(
+            "sudo",
+            "-n",
             "journalctl",
             "-u",
             "klipper-mcu",
+            "-b",
             "-n",
-            "20",
+            "30",
             "--no-pager",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.DEVNULL,
@@ -642,22 +651,30 @@ async def _flash_can(
         yield f">>> Lowering {interface} txqueuelen {original} -> {_CAN_QLEN} for the flash.\n"
         await _set_txqueuelen(interface, _CAN_QLEN)
     rc = 127
-    for attempt in range(1, _CAN_FLASH_ATTEMPTS + 1):
-        if attempt > 1:
-            yield f">>> CAN flash attempt {attempt}/{_CAN_FLASH_ATTEMPTS}…\n"
-        yield f">>> {' '.join(command)}\n"
-        attempt_result: dict[str, int] = {}
-        async for line in _stream(command, result=attempt_result):
-            yield line
-        rc = attempt_result.get("rc", 127)
-        if rc == 0:
-            break
-        if attempt < _CAN_FLASH_ATTEMPTS:
-            yield ">>> CAN write failed - retrying (Katapult re-erases before each write)…\n"
-            await asyncio.sleep(2)
-    if lowered and original is not None:
-        await _set_txqueuelen(interface, original)
-        yield f">>> Restored {interface} txqueuelen to {original}.\n"
+    restored = ""
+    try:
+        for attempt in range(1, _CAN_FLASH_ATTEMPTS + 1):
+            if attempt > 1:
+                yield f">>> CAN flash attempt {attempt}/{_CAN_FLASH_ATTEMPTS}…\n"
+            yield f">>> {' '.join(command)}\n"
+            attempt_result: dict[str, int] = {}
+            async for line in _stream(command, result=attempt_result):
+                yield line
+            rc = attempt_result.get("rc", 127)
+            if rc == 0:
+                break
+            if attempt < _CAN_FLASH_ATTEMPTS:
+                yield ">>> CAN write failed - retrying (Katapult re-erases before each write)…\n"
+                await asyncio.sleep(2)
+    finally:
+        # Restore on every exit path - success, failure, or a client-disconnect cancellation - so a
+        # tab closed mid-flash can't leave the interface stuck at 128. No yield in finally (that
+        # raises during GeneratorExit); the log line is emitted after, on the normal path.
+        if lowered and original is not None:
+            await _set_txqueuelen(interface, original)
+            restored = f">>> Restored {interface} txqueuelen to {original}.\n"
+    if restored:
+        yield restored
     result["rc"] = rc
 
 
