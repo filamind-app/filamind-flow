@@ -557,6 +557,11 @@ def test_arch_mismatch_guard() -> None:
     assert flash_service.arch_mismatch(True, "linux_process", "make") is None
     assert flash_service.device_chip_token(rp) == "rp2040"
     assert flash_service.device_chip_token("/dev/ttyUSB0") is None
+    # real ATmega boards enumerate through a USB-serial bridge (no Klipper chip token) -> fail open,
+    # and the token is anchored to the Klipper prefix so a bridge name can't collide
+    by_id = "/dev/serial/by-id/"
+    assert flash_service.device_chip_token(by_id + "usb-1a86_USB_Serial-if00-port0") is None
+    assert flash_service.device_chip_token(by_id + "usb-FTDI_FT232R_USB_UART_A5-if00-port0") is None
 
 
 async def test_flash_refuses_avr_firmware_on_non_avr_board(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]

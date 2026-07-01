@@ -175,7 +175,11 @@ def device_chip_token(device: str) -> str | None:
     if "/serial/by-id/" not in device:
         return None
     name = os.path.basename(device).lower()
-    return next((token for token in _NON_AVR_DEVICE_TOKENS if token in name), None)
+    # Anchor the token to Klipper's ``usb-Klipper_<chip>_<id>`` prefix, so a third-party USB-serial
+    # bridge name (FTDI / CH340 / CP2102) can never collide with a token substring - keeps the guard
+    # airtight-fail-open. Every real Klipper by-id name is ``usb-Klipper_<chip>...``, so this still
+    # catches all genuine chips (klipper_stm32h723xx, klipper_rp2040, klipper_samd21g18, ...).
+    return next((token for token in _NON_AVR_DEVICE_TOKENS if f"klipper_{token}" in name), None)
 
 
 def arch_mismatch(is_avr: bool, device: str, method: str) -> tuple[str, str] | None:
