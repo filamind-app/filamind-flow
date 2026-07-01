@@ -29,7 +29,12 @@ import httpx
 from app.config import Settings
 from app.services import devices_store, printer_guard
 from app.services.build_tools import build_env, make_available, missing_toolchain_lines
-from app.services.firmware_profiles import artifact_path_for, is_linux_profile, profile_path
+from app.services.firmware_profiles import (
+    artifact_path_for,
+    is_avr_profile,
+    is_linux_profile,
+    profile_path,
+)
 from app.services.moonraker_client import MoonrakerClient
 from app.services.version_store import read_build_info, record_flash
 
@@ -138,6 +143,79 @@ def method_for(connection: str, is_avr: bool) -> str:
     if is_avr:
         return "make"
     return {"usb": "serial", "can": "can", "dfu": "dfu", "linux": "linux"}.get(connection, "serial")
+
+
+# Non-AVR MCU tokens that appear in a /dev/serial/by-id name (usb-Klipper_<chip>_...). Used ONLY to
+# refuse the certain conflict we can prove: AVR firmware aimed at a non-AVR board (#567). A positive
+# allowlist, so an unknown / token-less device never blocks a genuine flash.
+_NON_AVR_DEVICE_TOKENS = (
+    "rp2040",
+    "stm32",
+    "samd51",
+    "samd21",
+    "samd",
+    "same5",
+    "sam3",
+    "gd32",
+    "lpc176",
+    "hc32",
+    "ch32",
+    "ar100",
+)
+
+
+def device_chip_token(device: str) -> str | None:
+    """The non-AVR MCU family named in a ``/dev/serial/by-id`` device, or None.
+
+    Klipper names a USB board ``usb-Klipper_<chip>_<id>-if00``; reading <chip> lets us detect the
+    one conflict we can prove - an AVR build aimed at a non-AVR board. Returns None for a raw
+    ``/dev/ttyACM*`` / ``ttyUSB*`` (a genuine ATmega enumerates there), a CAN uuid, a DFU vid:pid,
+    the Linux socket, or any name without a recognised token - so the arch guard fails OPEN.
+    """
+    if "/serial/by-id/" not in device:
+        return None
+    name = os.path.basename(device).lower()
+    return next((token for token in _NON_AVR_DEVICE_TOKENS if token in name), None)
+
+
+def arch_mismatch(is_avr: bool, device: str, method: str) -> tuple[str, str] | None:
+    """The one certain firmware-vs-board conflict, or None.
+
+    Fires only for an AVR ``make`` flash whose target device names a non-AVR chip (e.g. an AVR
+    profile aimed at an ``rp2040`` board - #567), where Klipper's ``make flash`` would run avrdude
+    against a board it cannot program. Fails OPEN on any unknown / token-less / non-serial target,
+    so it never blocks a real flash. Returns ``(firmware_arch, device_chip)``.
+    """
+    if method != "make" or not is_avr:
+        return None
+    chip = device_chip_token(device)
+    return ("AVR", chip) if chip else None
+
+
+def _diagnose_make_failure(tail: list[str], device: str) -> list[str]:
+    """Actionable ``!!`` hints for a failed ``make flash``, inferred from the tail of its output.
+
+    Turns a bare "make exited with code N" into something the user can act on - covering cases the
+    pre-flash arch guard cannot classify (external firmware, unusual device names).
+    """
+    blob = "".join(tail).lower()
+    if any(
+        t in blob
+        for t in ("avrdude", "device signature", "not in sync", "programmer is not responding")
+    ):
+        return [
+            "!! 'make flash' ran avrdude (the AVR/ATmega programmer). If your board isn't an\n",
+            "!! ATmega (e.g. an rp2040/stm32), the profile's MCU doesn't match the board -\n",
+            "!! rebuild the profile for your actual board in the Config step, then flash again.\n",
+        ]
+    if "no such file" in blob or "no such device" in blob or "cannot open" in blob:
+        return [
+            f"!! The flash device {device} was not found - is the board plugged in and did it\n",
+            "!! re-enumerate? Re-plug it (or re-run discovery), then flash again.\n",
+        ]
+    if "permission denied" in blob:
+        return ["!! Permission denied talking to the board - a udev / sudo rule may be missing.\n"]
+    return []
 
 
 def _saved_baudrate(settings: Settings, device: str) -> int:
@@ -298,6 +376,8 @@ async def flash_plan(
     """Read-only: reports the command + guards for flashing, without running it."""
     is_linux = is_linux_profile(settings.data_dir, profile) if profile else False
     method = resolve_method(method, device, is_linux)
+    is_avr = is_avr_profile(settings.data_dir, profile) if profile else False
+    mismatch = arch_mismatch(is_avr, device, method)
     artifact = artifact_path_for(settings.data_dir, profile) if profile else None
     offset = flash_offset(profile_path(settings.data_dir, profile)) if profile else "0x08000000"
     command = _build_command(
@@ -319,7 +399,18 @@ async def flash_plan(
     make_missing = method == "make" and not make_available()
     if make_missing:
         warnings.append({"code": "build_tools", "params": {}})
-    ready = bool(artifact) and not printing and (sudo or not needs_sudo) and not make_missing
+    # AVR firmware can't be flashed to a non-AVR board (avrdude vs the chip) - block it (#567).
+    if mismatch:
+        warnings.append(
+            {"code": "arch_mismatch", "params": {"firmware": mismatch[0], "chip": mismatch[1]}}
+        )
+    ready = (
+        bool(artifact)
+        and not printing
+        and (sudo or not needs_sudo)
+        and not make_missing
+        and not mismatch
+    )
     return {
         "method": method,
         "device": device,
@@ -716,6 +807,25 @@ async def run_flash(
             yield line
         yield "!! Flash aborted - the host is missing the firmware build tools.\n"
         return
+    # An AVR profile aimed at a non-AVR board would run avrdude against a chip it can't program
+    # (e.g. an rp2040), failing with a cryptic "make exited with code 2" (#567). Refuse up front,
+    # before touching the board - the fix is to build a profile that matches the board.
+    is_avr = is_avr_profile(settings.data_dir, profile) if profile else False
+    mismatch = arch_mismatch(is_avr, device, method)
+    if mismatch:
+        _fw, chip = mismatch
+        yield (
+            f"!! This profile builds AVR / ATmega firmware, but the target board is an {chip}\n"
+            f"!! ({device}). Klipper's 'make flash' runs avrdude, which cannot program an {chip}.\n"
+            "!! Build or select a profile whose MCU matches this board (in the Config step), then\n"
+            "!! flash again - the board was not touched.\n"
+        )
+        return
+    # A make flash to a /dev path: fail early if the device vanished (unplugged / re-enumerated),
+    # rather than after a needless Klipper stop + a cryptic make error.
+    if method == "make" and device.startswith("/dev/") and not os.path.exists(device):
+        yield f"!! The flash device {device} was not found - is the board plugged in?\n"
+        return
     yield _phase("start")
     yield f">>> Flashing {os.path.basename(artifact)} → {device} via {method}\n"
 
@@ -790,6 +900,7 @@ async def run_flash(
     yield _phase("write")
     flash_result: dict[str, int] = {}
     flash_tool = ""
+    make_tail: list[str] = []
     if method == "dfu":
         async for line in _flash_dfu(device, artifact, offset):
             yield line
@@ -804,6 +915,9 @@ async def run_flash(
         async for line in _stream(
             command, cwd=settings.klipper_dir if method == "make" else None, result=flash_result
         ):
+            if method == "make":
+                make_tail.append(line)
+                del make_tail[:-60]  # keep the last ~60 lines to diagnose a make-flash failure
             yield line
 
     yield _phase("restart")
@@ -839,6 +953,9 @@ async def run_flash(
                 yield _phase("done")
                 yield ">>> Flash sequence complete - verified through Klipper.\n"
                 return
+        if method == "make":
+            for hint in _diagnose_make_failure(make_tail, device):
+                yield hint
         yield (
             f"!! Flash failed - {flash_tool or 'the flash tool'} exited with code {rc}. "
             "The board was not flashed; see the output above.\n"

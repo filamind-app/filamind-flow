@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "engellendi - uyarılara bakın",
       "flashNow": "⚠ Şimdi flaşla",
       "warn": {
+        "arch_mismatch": "Bu profil {firmware} donanım yazılımı derler, ancak hedef kart bir {chip} — MCU'su bu karta uyan bir profil seçin.",
         "printing": "Bir baskı sürüyor - flaşlama engellendi.",
         "no_artifact": "Bu profil için henüz firmware derlenmedi.",
         "no_sudo": "Parolasız sudo yapılandırılmamış - ana makinede 'scripts/install.sh sudoers' çalıştırın.",

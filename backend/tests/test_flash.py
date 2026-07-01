@@ -523,6 +523,7 @@ async def test_make_flash_cwd_is_resolved(tmp_path: Path, monkeypatch) -> None: 
     monkeypatch.setattr(flash_service, "make_available", lambda: True)
     monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
     monkeypatch.setattr(flash_service, "_stream", record_stream)
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: True)  # device is present
     settings = Settings(
         moonraker_url="http://127.0.0.1:1",
         katapult_dir="/kat",
@@ -535,6 +536,100 @@ async def test_make_flash_cwd_is_resolved(tmp_path: Path, monkeypatch) -> None: 
         pass
     assert seen.get("cwd") is not None
     assert os.path.isabs(str(seen["cwd"])) and "~" not in str(seen["cwd"])
+
+
+def test_arch_mismatch_guard() -> None:
+    """The AVR-vs-non-AVR-board guard fires only on a certain conflict + fails open (#567)."""
+    rp = "/dev/serial/by-id/usb-Klipper_rp2040_34343433391347D6-if00"
+    stm = "/dev/serial/by-id/usb-Klipper_stm32h723xx_12001F00-if00"
+    # AVR firmware aimed at a non-AVR board -> certain conflict
+    assert flash_service.arch_mismatch(True, rp, "make") == ("AVR", "rp2040")
+    assert flash_service.arch_mismatch(True, stm, "make") == ("AVR", "stm32")
+    # genuine ATmega boards enumerate token-less (ttyUSB/ttyACM) -> MUST NOT block
+    assert flash_service.arch_mismatch(True, "/dev/ttyUSB0", "make") is None
+    assert flash_service.arch_mismatch(True, "/dev/ttyACM0", "make") is None
+    # not a make flash / not an AVR build -> never fires
+    assert flash_service.arch_mismatch(False, rp, "make") is None
+    assert flash_service.arch_mismatch(True, rp, "serial") is None
+    # CAN uuid / DFU vid:pid / linux socket carry no by-id chip token -> fail open
+    assert flash_service.arch_mismatch(True, "aabbccddeeff", "make") is None
+    assert flash_service.arch_mismatch(True, "0483:df11", "make") is None
+    assert flash_service.arch_mismatch(True, "linux_process", "make") is None
+    assert flash_service.device_chip_token(rp) == "rp2040"
+    assert flash_service.device_chip_token("/dev/ttyUSB0") is None
+
+
+async def test_flash_refuses_avr_firmware_on_non_avr_board(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """An AVR profile aimed at an rp2040 is refused up front with an actionable message, and the
+    board is never touched (Klipper is not stopped) - the #567 fix."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "nite.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "nite.config").write_text("CONFIG_MACH_AVR=y\n")
+    calls: list[list[str]] = []
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def record_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service, "make_available", lambda: True)
+    monkeypatch.setattr(flash_service, "_stream", record_stream)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    dev = "/dev/serial/by-id/usb-Klipper_rp2040_34343433391347D6-if00"
+    log = "".join(
+        [line async for line in flash_service.run_flash("nite", "make", dev, "can0", settings)]
+    )
+    assert "rp2040" in log and "avrdude" in log
+    # refused BEFORE touching the board: Klipper was never stopped
+    assert not any("stop" in c and "klipper" in c for c in calls)
+
+
+async def test_flash_plan_blocks_arch_mismatch(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """flash_plan flags the mismatch as a blocking coded warning that survives the FlashPlan
+    response_model round-trip (per the response-model-strips-undeclared-fields lesson)."""
+    from app.models.schemas import FlashPlan
+
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "nite.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "nite.config").write_text("CONFIG_MACH_AVR=y\n")
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service, "make_available", lambda: True)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    dev = "/dev/serial/by-id/usb-Klipper_rp2040_34343433391347D6-if00"
+    plan = await flash_service.flash_plan("nite", "make", dev, "can0", settings)
+    warn = next(w for w in plan["warnings"] if w["code"] == "arch_mismatch")
+    assert warn["params"] == {"firmware": "AVR", "chip": "rp2040"}
+    assert plan["ready"] is False
+    round_trip = FlashPlan.model_validate(plan).model_dump()
+    assert any(w["code"] == "arch_mismatch" for w in round_trip["warnings"])
 
 
 def test_bootloader_serial_path(monkeypatch) -> None:

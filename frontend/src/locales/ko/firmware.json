@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "차단됨 - 경고를 확인하세요",
       "flashNow": "⚠ 지금 플래시",
       "warn": {
+        "arch_mismatch": "이 프로필은 {firmware} 펌웨어를 빌드하지만 대상 보드는 {chip}입니다. 보드의 MCU와 일치하는 프로필을 선택하세요.",
         "printing": "인쇄가 진행 중입니다 - 플래싱이 차단되었습니다.",
         "no_artifact": "이 프로필용 펌웨어가 아직 빌드되지 않았습니다.",
         "no_sudo": "비밀번호 없는 sudo가 구성되지 않았습니다 - 호스트에서 'scripts/install.sh sudoers'를 실행하세요.",

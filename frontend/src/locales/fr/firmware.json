@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "bloqué — voir les avertissements",
       "flashNow": "⚠ Flasher maintenant",
       "warn": {
+        "arch_mismatch": "Ce profil compile un firmware {firmware}, mais la carte cible est un {chip} — choisissez un profil dont le MCU correspond à cette carte.",
         "printing": "Une impression est en cours - le flashage est bloqué.",
         "no_artifact": "Aucun firmware n'a encore été compilé pour ce profil.",
         "no_sudo": "sudo sans mot de passe non configuré - exécutez 'scripts/install.sh sudoers' sur l'hôte.",

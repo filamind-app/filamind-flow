@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "blockiert — siehe Warnungen",
       "flashNow": "⚠ Jetzt flashen",
       "warn": {
+        "arch_mismatch": "Dieses Profil erstellt {firmware}-Firmware, aber die Zielplatine ist ein {chip} – wähle ein Profil, dessen MCU zu dieser Platine passt.",
         "printing": "Ein Druck läuft - Flashen ist blockiert.",
         "no_artifact": "Für dieses Profil wurde noch keine Firmware gebaut.",
         "no_sudo": "Passwortloses sudo nicht konfiguriert - 'scripts/install.sh sudoers' auf dem Host ausführen.",

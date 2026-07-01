@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "ブロック中 - 警告を確認してください",
       "flashNow": "⚠ 今すぐ書き込み",
       "warn": {
+        "arch_mismatch": "このプロファイルは {firmware} 用ファームウェアをビルドしますが、対象ボードは {chip} です。ボードの MCU に合ったプロファイルを選択してください。",
         "printing": "印刷中です - 書き込みはブロックされています。",
         "no_artifact": "このプロファイル用のファームウェアはまだビルドされていません。",
         "no_sudo": "パスワードなし sudo が未設定です - ホストで 'scripts/install.sh sudoers' を実行してください。",

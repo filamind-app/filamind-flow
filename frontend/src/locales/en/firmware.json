@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "blocked - see warnings",
       "flashNow": "⚠ Flash now",
       "warn": {
+        "arch_mismatch": "This profile builds {firmware} firmware, but the target board is a {chip} - pick a profile whose MCU matches this board.",
         "printing": "A print is in progress - flashing is blocked.",
         "no_artifact": "No firmware has been built for this profile yet.",
         "no_sudo": "Passwordless sudo not configured - run 'scripts/install.sh sudoers' on the host.",
