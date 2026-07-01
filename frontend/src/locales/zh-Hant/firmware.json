@@ -172,7 +172,7 @@
         "printing": "正在列印 - 已禁止刷寫。",
         "no_artifact": "尚未為此設定檔建置韌體。",
         "no_sudo": "未設定免密碼 sudo - 在主機上執行 'scripts/install.sh sudoers'。",
-        "build_tools": "主機缺少韌體建置工具（'make' 與編譯器）。請在主機上安裝 build-essential（以及 MCU 的編譯器），然後再試一次。"
+        "build_tools": "韌體建置工具尚未安裝。FilaMind 會在更新時自動安裝這些工具——請從印表機的更新管理員更新 FilaMind，然後再試一次。不需要手動執行任何指令。"
       }
     },
     "configEditor": {

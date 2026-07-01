@@ -172,7 +172,7 @@
         "printing": "正在打印 - 已禁止刷写。",
         "no_artifact": "尚未为此配置构建固件。",
         "no_sudo": "未配置免密码 sudo - 在主机上运行 'scripts/install.sh sudoers'。",
-        "build_tools": "主机缺少固件编译工具（'make' 和编译器）。请在主机上安装 build-essential（以及 MCU 对应的编译器），然后重试。"
+        "build_tools": "固件构建工具尚未安装。FilaMind 会在更新时自动安装它们 — 请在打印机的更新管理器中更新 FilaMind，然后重试。无需手动运行任何命令。"
       }
     },
     "configEditor": {

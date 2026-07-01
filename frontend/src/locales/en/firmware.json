@@ -172,7 +172,7 @@
         "printing": "A print is in progress - flashing is blocked.",
         "no_artifact": "No firmware has been built for this profile yet.",
         "no_sudo": "Passwordless sudo not configured - run 'scripts/install.sh sudoers' on the host.",
-        "build_tools": "The host is missing the firmware build tools ('make' + a compiler). Install build-essential (and the MCU's compiler) on the host, then try again."
+        "build_tools": "The firmware build tools aren't installed yet. FilaMind installs them automatically when it updates - update it from your printer's update manager, then try again. No commands to run by hand."
       }
     },
     "configEditor": {

@@ -172,7 +172,7 @@
         "printing": "Una stampa è in corso - il flashing è bloccato.",
         "no_artifact": "Nessun firmware è stato ancora compilato per questo profilo.",
         "no_sudo": "sudo senza password non configurato - esegui 'scripts/install.sh sudoers' sull'host.",
-        "build_tools": "Nell'host mancano gli strumenti per la compilazione del firmware ('make' + un compilatore). Installa build-essential (e il compilatore dell'MCU) sull'host, poi riprova."
+        "build_tools": "Gli strumenti di compilazione del firmware non sono ancora installati. FilaMind li installa automaticamente quando si aggiorna: aggiornalo dal gestore aggiornamenti della tua stampante, poi riprova. Nessun comando da eseguire manualmente."
       }
     },
     "configEditor": {
