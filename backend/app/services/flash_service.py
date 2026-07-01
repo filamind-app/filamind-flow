@@ -15,10 +15,12 @@ Klipper's ``make flash`` (AVR) - and a Linux-process MCU is installed as the
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import glob
 import os
 import re
 import shutil
+import tempfile
 from collections.abc import AsyncIterator
 from typing import Any
 
@@ -392,6 +394,66 @@ async def _service_active(name: str) -> bool:
     return await proc.wait() == 0
 
 
+_MCU_DROPIN_DIR = "/etc/systemd/system/klipper-mcu.service.d"
+_MCU_DROPIN = f"{_MCU_DROPIN_DIR}/filamind-norealtime.conf"
+# Drop-in that runs klipper-mcu WITHOUT -r. Some ARM SBC kernels deny realtime scheduling to a
+# service cgroup (CONFIG_RT_GROUP_SCHED, cpu.rt_runtime_us=0), so `klipper_mcu -r` fails with
+# `sched_setscheduler: Operation not permitted` and crash-loops. The host MCU runs fine without it.
+_MCU_NOREALTIME = (
+    "# Managed by FilaMind Flow. This kernel denies realtime scheduling to the service cgroup,\n"
+    "# so 'klipper_mcu -r' fails (sched_setscheduler EPERM) and crash-loops. Run without -r.\n"
+    "[Service]\n"
+    "ExecStart=\n"
+    "ExecStart=/usr/local/bin/klipper_mcu -I ${KLIPPER_HOST_MCU_SERIAL}\n"
+)
+
+
+async def _mcu_realtime_blocked() -> bool:
+    """True if klipper-mcu's recent journal shows the realtime-scheduling denial (the -r crash)."""
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "journalctl",
+            "-u",
+            "klipper-mcu",
+            "-n",
+            "20",
+            "--no-pager",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.DEVNULL,
+            env=build_env(),
+        )
+        out, _ = await proc.communicate()
+    except (OSError, NotImplementedError):
+        return False
+    return "sched_setscheduler" in out.decode(errors="replace")
+
+
+async def _drop_mcu_realtime() -> AsyncIterator[str]:
+    """Install a drop-in that runs klipper-mcu without -r, then reload + restart it.
+
+    Uses only the panel's granted sudo (mkdir / cp / systemctl) so the fix is automatic - the user
+    never edits a systemd unit by hand.
+    """
+    yield ">>> This kernel blocks realtime scheduling - reconfiguring klipper-mcu without -r…\n"
+    fd, tmp = tempfile.mkstemp(suffix=".conf")
+    try:
+        with os.fdopen(fd, "w") as handle:
+            handle.write(_MCU_NOREALTIME)
+        async for line in _stream(["sudo", "-n", "mkdir", "-p", _MCU_DROPIN_DIR]):
+            yield line
+        async for line in _stream(["sudo", "-n", "cp", tmp, _MCU_DROPIN]):
+            yield line
+    finally:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+    async for line in _stream(["sudo", "-n", "systemctl", "daemon-reload"]):
+        yield line
+    async for line in _stream(["sudo", "-n", "systemctl", "reset-failed", "klipper-mcu"]):
+        yield line
+    async for line in _stream(["sudo", "-n", "systemctl", "restart", "klipper-mcu"]):
+        yield line
+
+
 async def _flash_linux(firmware: str) -> AsyncIterator[str]:
     """Installs a Linux-process host MCU as /usr/local/bin/klipper_mcu."""
     target = "/usr/local/bin/klipper_mcu"
@@ -414,8 +476,18 @@ async def _flash_linux(firmware: str) -> AsyncIterator[str]:
         if await _service_active("klipper-mcu"):
             yield ">>> klipper-mcu is running.\n"
             return
-    yield "!! klipper-mcu did not come up. If its journal shows 'sched_setscheduler',\n"
-    yield "!! this kernel blocks realtime - drop the -r flag from the klipper-mcu unit.\n"
+    # Didn't come up. On kernels that deny realtime scheduling, `klipper_mcu -r` crash-loops with
+    # sched_setscheduler EPERM - auto-fix by dropping -r (no manual step) and retry.
+    if await _mcu_realtime_blocked():
+        async for line in _drop_mcu_realtime():
+            yield line
+        for _ in range(12):
+            await asyncio.sleep(0.5)
+            if await _service_active("klipper-mcu"):
+                yield ">>> klipper-mcu is running (realtime disabled - this kernel blocks it).\n"
+                return
+    yield "!! klipper-mcu did not come up - see its journal in Host Control -> Services.\n"
+    yield "!! If this persists, update FilaMind so the latest host fixes reach your printer.\n"
 
 
 def _serial_by_id() -> set[str]:
@@ -501,6 +573,92 @@ async def _flash_dfu(
     yield ">>> Exiting DFU (:leave) to return to firmware…\n"
     async for line in _stream(dfu_leave_command(offset, device)):
         yield line
+
+
+#: Klipper's documented CAN txqueuelen (klipper3d.org). The BTT default of 1024 bufferbloats the
+#: sustained block write during a CAN flash, so Katapult aborts with SEND_BLOCK - we lower it for
+#: the flash and restore it after.
+_CAN_QLEN = "128"
+_CAN_FLASH_ATTEMPTS = 3
+
+
+async def _can_txqueuelen(interface: str) -> str | None:
+    """The CAN interface's current txqueuelen, or None if it can't be read."""
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "ip",
+            "-o",
+            "link",
+            "show",
+            interface,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.DEVNULL,
+            env=build_env(),
+        )
+        out, _ = await proc.communicate()
+    except (OSError, NotImplementedError):
+        return None
+    match = re.search(r"qlen (\d+)", out.decode(errors="replace"))
+    return match.group(1) if match else None
+
+
+async def _set_txqueuelen(interface: str, value: str) -> None:
+    """Best-effort set of a CAN interface's txqueuelen (uses the panel's ``ip`` sudo grant)."""
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "sudo",
+            "-n",
+            "ip",
+            "link",
+            "set",
+            interface,
+            "txqueuelen",
+            value,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL,
+            env=build_env(),
+        )
+        await proc.wait()
+    except (OSError, NotImplementedError):
+        pass
+
+
+async def _flash_can(
+    uuid: str, firmware: str, interface: str, settings: Settings, result: dict[str, int]
+) -> AsyncIterator[str]:
+    """Katapult CAN flash, hardened for the two failure modes seen on real buses.
+
+    * A large txqueuelen (the BTT default 1024) bufferbloats the sustained block write, so Katapult
+      aborts with ``SEND_BLOCK``; we lower it to Klipper's documented 128 for the flash + restore.
+    * A single attempt can still drop a CAN frame under load. Katapult re-erases the app region
+      before every write, so a retry is safe - we try a few times before giving up.
+
+    ``result["rc"]`` is set to the last attempt's exit code (0 = flashed).
+    """
+    command = can_command(settings.katapult_dir, interface, uuid, firmware)
+    original = await _can_txqueuelen(interface)
+    lowered = bool(original and original != _CAN_QLEN)
+    if lowered:
+        yield f">>> Lowering {interface} txqueuelen {original} -> {_CAN_QLEN} for the flash.\n"
+        await _set_txqueuelen(interface, _CAN_QLEN)
+    rc = 127
+    for attempt in range(1, _CAN_FLASH_ATTEMPTS + 1):
+        if attempt > 1:
+            yield f">>> CAN flash attempt {attempt}/{_CAN_FLASH_ATTEMPTS}…\n"
+        yield f">>> {' '.join(command)}\n"
+        attempt_result: dict[str, int] = {}
+        async for line in _stream(command, result=attempt_result):
+            yield line
+        rc = attempt_result.get("rc", 127)
+        if rc == 0:
+            break
+        if attempt < _CAN_FLASH_ATTEMPTS:
+            yield ">>> CAN write failed - retrying (Katapult re-erases before each write)…\n"
+            await asyncio.sleep(2)
+    if lowered and original is not None:
+        await _set_txqueuelen(interface, original)
+        yield f">>> Restored {interface} txqueuelen to {original}.\n"
+    result["rc"] = rc
 
 
 async def run_flash(
@@ -617,6 +775,10 @@ async def run_flash(
     flash_tool = ""
     if method == "dfu":
         async for line in _flash_dfu(device, artifact, offset):
+            yield line
+    elif method == "can":
+        flash_tool = "flashtool.py"
+        async for line in _flash_can(target, artifact, interface or "can0", settings, flash_result):
             yield line
     else:
         command = _build_command(method, settings, target, artifact, interface or "can0", offset)

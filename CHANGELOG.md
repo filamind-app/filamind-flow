@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-07-02
+
+### Changed
+
+- **Firmware Manager — CAN flash reliability.** A CAN flash now runs with the txqueuelen Klipper
+  documents (128) instead of whatever the interface carries. A large txqueuelen (the BTT default of
+  1024) bufferbloats the sustained block write, so Katapult aborts mid-transfer with
+  `Error sending command [SEND_BLOCK]` — which leaves the board's app firmware half-written. FilaMind
+  lowers txqueuelen for the flash, restores it afterward, and retries a transient write failure a few
+  times (Katapult re-erases before every write, so a retry is safe). This makes CAN flashing succeed
+  on buses where a single attempt was marginal.
+- **Firmware Manager — Linux host MCU on kernels that block realtime.** Installing the Linux
+  host-process MCU restarts `klipper-mcu`, which on some ARM SBC kernels crash-loops because the
+  kernel denies realtime scheduling to the service cgroup (`klipper_mcu -r` →
+  `sched_setscheduler: Operation not permitted`). FilaMind now detects this and **automatically**
+  drops the `-r` flag via a systemd drop-in, then brings the service back up — no hand-editing of a
+  unit file. (Previously it printed instructions to edit the unit yourself.)
+
 ## [1.14.2] - 2026-07-01
 
 ### Fixed

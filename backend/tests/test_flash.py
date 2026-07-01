@@ -322,6 +322,177 @@ async def test_flash_linux_profile_installs_binary(tmp_path: Path, monkeypatch) 
     assert not any("flashtool.py" in " ".join(c) for c in calls)
 
 
+async def test_flash_can_retries_and_lowers_txqueuelen(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """CAN flash lowers txqueuelen to 128 for the write, retries a transient failure, then restores
+    the original txqueuelen (the SEND_BLOCK-under-bufferbloat fix)."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "p.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "p.config").write_text("CONFIG_X=y\n")
+    calls: list[list[str]] = []
+    set_calls: list[str] = []
+    flash_n = {"n": 0}
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    async def qlen(_iface: str) -> str:
+        return "1024"
+
+    async def set_q(_iface: str, value: str) -> None:
+        set_calls.append(value)
+
+    async def record_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            if any("flashtool.py" in c for c in cmd):
+                flash_n["n"] += 1
+                result["rc"] = 0 if flash_n["n"] >= 2 else 1
+            else:
+                result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    monkeypatch.setattr(flash_service, "_stream", record_stream)
+    monkeypatch.setattr(flash_service, "_can_txqueuelen", qlen)
+    monkeypatch.setattr(flash_service, "_set_txqueuelen", set_q)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "can", "aabbccddeeff", "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    assert set_calls == ["128", "1024"]  # lowered for the flash, restored after
+    flash_runs = [c for c in calls if any("flashtool.py" in x for x in c)]
+    assert len(flash_runs) == 2  # transient first failure retried, second succeeded
+    assert "retrying" in log
+    assert "Flash sequence complete" in log
+
+
+async def test_flash_can_fails_after_retry_budget(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """Every CAN attempt failing gives up after the retry budget and reports failure."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "p.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "p.config").write_text("CONFIG_X=y\n")
+    calls: list[list[str]] = []
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    async def qlen(_iface: str) -> str:
+        return "128"  # already 128 -> no lower/restore
+
+    async def record_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 1 if any("flashtool.py" in c for c in cmd) else 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    monkeypatch.setattr(flash_service, "_stream", record_stream)
+    monkeypatch.setattr(flash_service, "_can_txqueuelen", qlen)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "can", "aabbccddeeff", "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    flash_runs = [c for c in calls if any("flashtool.py" in x for x in c)]
+    assert len(flash_runs) == flash_service._CAN_FLASH_ATTEMPTS
+    assert "Flash failed" in log
+
+
+async def test_flash_linux_autofixes_blocked_realtime(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """When klipper-mcu can't start because the kernel blocks realtime (-r crash-loop), the flash
+    drops -r via a drop-in automatically - no manual unit edit - and brings the service up."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "PI2.elf").write_bytes(b"\x7fELF")
+    Path(profiles_dir(str(data)), "PI2.config").write_text("CONFIG_MACH_LINUX=y\n")
+    calls: list[list[str]] = []
+    state = {"restarted": False}
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    async def record_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if "restart" in cmd and "klipper-mcu" in cmd:
+            state["restarted"] = True
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    async def blocked() -> bool:
+        return True
+
+    async def active(_name: str) -> bool:
+        return state["restarted"]
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    monkeypatch.setattr(flash_service, "_stream", record_stream)
+    monkeypatch.setattr(flash_service, "_mcu_realtime_blocked", blocked)
+    monkeypatch.setattr(flash_service, "_service_active", active)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    log = "".join(
+        [line async for line in flash_service.run_flash("PI2", "serial", "PI2", "can0", settings)]
+    )
+    assert "without -r" in log
+    assert "realtime disabled" in log
+    # a drop-in was created + the service restarted, all via granted sudo
+    assert any("mkdir" in c and flash_service._MCU_DROPIN_DIR in c for c in calls)
+    assert any("cp" in c and flash_service._MCU_DROPIN in c for c in calls)
+    assert any(
+        c[:4] == ["sudo", "-n", "systemctl", "restart"] and "klipper-mcu" in c for c in calls
+    )
+
+
 def test_bootloader_serial_path(monkeypatch) -> None:
     """A board in the Katapult bootloader is found under usb-katapult_<id>, not usb-Klipper_<id>."""
     kl = "/dev/serial/by-id/usb-Klipper_stm32f103xe_36FFD8054755303931861457-if00"
