@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "已阻止 — 请查看警告",
       "flashNow": "⚠ 立即刷写",
       "warn": {
+        "arch_mismatch": "此配置构建的是 {firmware} 固件，但目标主板是 {chip}——请选择 MCU 与该主板匹配的配置。",
         "printing": "正在打印 - 已禁止刷写。",
         "no_artifact": "尚未为此配置构建固件。",
         "no_sudo": "未配置免密码 sudo - 在主机上运行 'scripts/install.sh sudoers'。",

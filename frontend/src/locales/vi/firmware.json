@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "bị chặn - xem các cảnh báo",
       "flashNow": "⚠ Nạp ngay",
       "warn": {
+        "arch_mismatch": "Hồ sơ này tạo firmware {firmware}, nhưng bo mạch đích là {chip} — hãy chọn hồ sơ có MCU khớp với bo mạch này.",
         "printing": "Đang có bản in - việc nạp firmware bị chặn.",
         "no_artifact": "Chưa có firmware nào được build cho hồ sơ này.",
         "no_sudo": "Chưa cấu hình sudo không mật khẩu - chạy 'scripts/install.sh sudoers' trên máy chủ.",

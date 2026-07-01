@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "terblokir - lihat peringatan",
       "flashNow": "⚠ Flash sekarang",
       "warn": {
+        "arch_mismatch": "Profil ini membangun firmware {firmware}, tetapi papan target adalah {chip} — pilih profil yang MCU-nya cocok dengan papan ini.",
         "printing": "Ada pencetakan berlangsung - flashing diblokir.",
         "no_artifact": "Belum ada firmware yang dibangun untuk profil ini.",
         "no_sudo": "sudo tanpa kata sandi belum dikonfigurasi - jalankan 'scripts/install.sh sudoers' di host.",

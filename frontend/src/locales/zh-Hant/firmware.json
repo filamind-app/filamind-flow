@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "已封鎖——請查看警告",
       "flashNow": "⚠ 立即燒錄",
       "warn": {
+        "arch_mismatch": "此設定檔建置的是 {firmware} 韌體，但目標主機板是 {chip}——請選擇 MCU 與該主機板相符的設定檔。",
         "printing": "正在列印 - 已禁止刷寫。",
         "no_artifact": "尚未為此設定檔建置韌體。",
         "no_sudo": "未設定免密碼 sudo - 在主機上執行 'scripts/install.sh sudoers'。",

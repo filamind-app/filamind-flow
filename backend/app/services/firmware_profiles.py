@@ -94,6 +94,19 @@ def is_linux_profile(data_dir: str, name: str) -> bool:
     return _profile_flags(path).get("is_linux", False)
 
 
+def is_avr_profile(data_dir: str, name: str) -> bool:
+    """True if the profile builds AVR / ATmega firmware (``CONFIG_MACH_AVR=y``).
+
+    Klipper flashes such a build with ``make flash`` -> avrdude, which only works on an actual
+    ATmega board. Used to refuse an AVR profile aimed at a non-AVR board (the arch guard, #567).
+    """
+    try:
+        path = profile_path(data_dir, name)
+    except ProfileNameError:
+        return False
+    return _profile_flags(path).get("is_avr", False)
+
+
 def list_profiles(data_dir: str) -> list[dict[str, Any]]:
     """Lists saved profiles with the flags that drive build/flash behaviour."""
     directory = profiles_dir(data_dir)

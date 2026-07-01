@@ -414,6 +414,9 @@ function requestBuildFlash(device: Device): void {
     }),
     warning: t('firmware.widget.confirmBuildFlashWarning'),
     device: device.name,
+    // Preview the flash plan so a firmware/board mismatch (e.g. AVR profile on an rp2040) is
+    // caught + blocked in the confirm dialog BEFORE the long build starts (#567).
+    request: flashRequest(device),
   }
   pendingExec = () => void buildAndFlash(device)
 }

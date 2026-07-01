@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "zablokowane - zobacz ostrzeżenia",
       "flashNow": "⚠ Wgraj teraz",
       "warn": {
+        "arch_mismatch": "Ten profil buduje firmware {firmware}, ale płytka docelowa to {chip} — wybierz profil, którego MCU pasuje do tej płytki.",
         "printing": "Trwa drukowanie - flashowanie jest zablokowane.",
         "no_artifact": "Nie zbudowano jeszcze firmware dla tego profilu.",
         "no_sudo": "Bezhasłowe sudo nie jest skonfigurowane - uruchom 'scripts/install.sh sudoers' na hoście.",

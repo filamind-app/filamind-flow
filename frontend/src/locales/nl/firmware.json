@@ -169,6 +169,7 @@
       "blockedSeeWarnings": "geblokkeerd - zie waarschuwingen",
       "flashNow": "⚠ Nu flashen",
       "warn": {
+        "arch_mismatch": "Dit profiel bouwt {firmware}-firmware, maar het doelbord is een {chip} — kies een profiel waarvan de MCU bij dit bord past.",
         "printing": "Er is een print bezig - flashen is geblokkeerd.",
         "no_artifact": "Er is nog geen firmware gebouwd voor dit profiel.",
         "no_sudo": "Wachtwoordloze sudo is niet geconfigureerd - voer 'scripts/install.sh sudoers' uit op de host.",

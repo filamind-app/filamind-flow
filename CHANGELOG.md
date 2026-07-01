@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.15.1] - 2026-07-02
+
+### Fixed
+
+- **Firmware Manager — flashing AVR firmware to a non-AVR board.** A profile built for AVR/ATmega
+  (`CONFIG_MACH_AVR=y`) but aimed at an RP2040 (or other non-AVR) board ran Klipper's `make flash` →
+  avrdude against a chip it can't program, failing with a cryptic `make exited with code 2` (#567).
+  FilaMind now detects this firmware↔board mismatch (the profile's build arch vs. the target's
+  `usb-Klipper_<chip>_…` serial id) and **blocks it before the board is touched** — both in the
+  flash confirm dialog and in the flash itself — with a clear message to pick a profile that matches
+  the board. The guard fails open (never blocks a genuine flash where the board type is unknown),
+  and a failed `make flash` now surfaces the real cause (avrdude/wrong-chip, a missing device, or a
+  permissions problem) instead of just an exit code.
+
 ## [1.15.0] - 2026-07-02
 
 ### Changed
