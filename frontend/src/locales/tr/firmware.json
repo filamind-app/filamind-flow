@@ -172,7 +172,7 @@
         "printing": "Bir baskı sürüyor - flaşlama engellendi.",
         "no_artifact": "Bu profil için henüz firmware derlenmedi.",
         "no_sudo": "Parolasız sudo yapılandırılmamış - ana makinede 'scripts/install.sh sudoers' çalıştırın.",
-        "build_tools": "Ana bilgisayarda ürün yazılımı derleme araçları eksik ('make' ve bir derleyici). Ana bilgisayara build-essential paketini (ve MCU'nun derleyicisini) kurun, ardından tekrar deneyin."
+        "build_tools": "Firmware derleme araçları henüz kurulu değil. FilaMind, güncellenirken bunları otomatik olarak kurar - yazıcınızın güncelleme yöneticisinden FilaMind'ı güncelleyin, ardından tekrar deneyin. Elle çalıştırmanız gereken bir komut yok."
       }
     },
     "configEditor": {

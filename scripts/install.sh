@@ -106,6 +106,43 @@ refresh_sudoers_on_update() {
   rm -f "$tmp"
 }
 
+# The Firmware Manager builds + flashes Klipper firmware, which needs the host build toolchain (make
+# + the MCU cross-compilers). Install it AUTOMATICALLY + idempotently on install/update so a user
+# never has to run apt by hand (issue #558). Reuses the passwordless apt-get grant the sudoers
+# already carries. Best-effort: an offline / apt-busy failure never breaks the update - it just
+# retries on the next one. Once `make` + the Arm compiler are present this is two cheap checks.
+ensure_build_toolchain() {
+  command -v apt-get >/dev/null 2>&1 || return 0
+  # Already installed? make = the base blocker; arm-none-eabi-gcc = the common STM32/RP2040 compiler.
+  if command -v make >/dev/null 2>&1 && command -v arm-none-eabi-gcc >/dev/null 2>&1; then
+    return 0
+  fi
+  local sudo_pfx=""
+  if [ "$(id -u)" -ne 0 ]; then
+    if sudo -n true 2>/dev/null; then
+      sudo_pfx="sudo -n"          # update hook: the panel's passwordless apt-get grant is active
+    elif [ -t 0 ]; then
+      sudo_pfx="sudo"             # interactive install: prompt once if needed
+    else
+      return 0                    # no grant + no terminal: defer to the next update
+    fi
+  fi
+  echo "FilaMind Flow: installing the firmware build tools (one-time; this can take a few minutes)…"
+  $sudo_pfx apt-get update -qq >/dev/null 2>&1 || true
+  # Arm (STM32 / RP2040 / SAM) + AVR (atmega) compilers + dfu-util - Klipper's firmware build deps.
+  $sudo_pfx apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi \
+    gcc-avr avr-libc binutils-avr avrdude \
+    dfu-util >/dev/null 2>&1 || true
+  if command -v make >/dev/null 2>&1; then
+    echo "FilaMind Flow: firmware build tools ready."
+  else
+    echo "FilaMind Flow: could not install the firmware build tools automatically" \
+      "(host offline or apt busy) - will retry on the next update." >&2
+  fi
+}
+
 # -- update: refresh the backend virtualenv (Moonraker update_manager hook) -----
 do_update() {
   local dir="${REPO_ROOT:-$APP}"
@@ -128,6 +165,9 @@ do_update() {
   echo "FilaMind Flow: backend dependencies up to date."
   # Self-heal the passwordless-sudo grant so new privileged capabilities apply on update alone.
   refresh_sudoers_on_update
+  # Auto-install the firmware build toolchain so users never run apt by hand (after the sudoers
+  # refresh above, the passwordless apt-get grant it needs is guaranteed current).
+  ensure_build_toolchain
 }
 
 # -- sudoers: grant the narrow passwordless-sudo rights the panel needs ---------
@@ -386,6 +426,10 @@ do_install() {
   fi
   ./.venv/bin/pip install -q -U pip
   ./.venv/bin/pip install -q -r requirements.txt
+
+  # Firmware build toolchain, so a fresh install can build/flash straight away (sudo is already warm
+  # from the venv step above). Best-effort - if it can't run now, the update hook installs it later.
+  ensure_build_toolchain
 
   info "systemd service (sudo)"
   sudo tee /etc/systemd/system/${SERVICE}.service >/dev/null <<EOF

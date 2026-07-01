@@ -172,7 +172,7 @@
         "printing": "Ada pencetakan berlangsung - flashing diblokir.",
         "no_artifact": "Belum ada firmware yang dibangun untuk profil ini.",
         "no_sudo": "sudo tanpa kata sandi belum dikonfigurasi - jalankan 'scripts/install.sh sudoers' di host.",
-        "build_tools": "Host tidak memiliki alat build firmware ('make' + sebuah compiler). Instal build-essential (dan compiler untuk MCU) pada host, lalu coba lagi."
+        "build_tools": "Alat build firmware belum terpasang. FilaMind memasangnya secara otomatis saat diperbarui - perbarui melalui update manager printer Anda, lalu coba lagi. Tidak ada perintah yang perlu dijalankan secara manual."
       }
     },
     "configEditor": {

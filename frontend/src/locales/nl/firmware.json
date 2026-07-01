@@ -172,7 +172,7 @@
         "printing": "Er is een print bezig - flashen is geblokkeerd.",
         "no_artifact": "Er is nog geen firmware gebouwd voor dit profiel.",
         "no_sudo": "Wachtwoordloze sudo is niet geconfigureerd - voer 'scripts/install.sh sudoers' uit op de host.",
-        "build_tools": "De host mist de firmware-buildtools ('make' + een compiler). Installeer build-essential (en de compiler van de MCU) op de host en probeer het opnieuw."
+        "build_tools": "De firmware-buildtools zijn nog niet geïnstalleerd. FilaMind installeert ze automatisch bij het bijwerken - werk FilaMind bij via het updatebeheer van je printer en probeer het daarna opnieuw. Je hoeft geen commando's handmatig uit te voeren."
       }
     },
     "configEditor": {

@@ -71,8 +71,10 @@ def test_build_without_make_fails_early_with_actionable_message(
         return "".join([line async for line in service.run_build(str(profile_cfg), "p")])
 
     log = asyncio.run(collect())
-    assert "build tools are not installed" in log
-    assert "build-essential" in log
+    assert "build tools aren't installed" in log
+    # points the user at the auto-update flow, not at manual shell commands
+    assert "Update FilaMind" in log
+    assert "sudo apt" not in log
     assert "BUILD FAILED" in log
     # no artifact was produced / staged, and it did not claim success
     assert "BUILD OK" not in log

@@ -19,18 +19,15 @@ def make_available() -> bool:
 
 
 def missing_toolchain_lines() -> list[str]:
-    """Actionable log lines telling the user to install Klipper's build dependencies.
-
-    Streamed into the build/flash log (``!!`` marks an error line), so it reads the
-    same as the rest of the tool output. Covers the ARM (STM32/RP2040/SAM) and AVR
-    compilers since the board's MCU family isn't known at this point."""
+    """Log lines shown when ``make`` is absent. FilaMind installs the build toolchain automatically
+    on update (``scripts/install.sh`` ``ensure_build_toolchain``), so the user is pointed at the
+    update flow rather than handed shell commands. Streamed into the build/flash log (``!!`` marks
+    an error line), so it reads the same as the rest of the tool output."""
     return [
-        "!! The firmware build tools are not installed on this host - 'make' was not found,\n",
-        "!! so the firmware could not be built or flashed.\n",
-        "!! Install Klipper's build dependencies on the host (over SSH), then try again:\n",
-        "!!   sudo apt update && sudo apt install build-essential\n",
-        "!! For 32-bit MCUs (STM32 / RP2040 / SAM, e.g. BigTreeTech Octopus) also install the "
-        "ARM compiler:\n",
-        "!!   sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi\n",
-        "!! For 8-bit AVR boards install instead:  sudo apt install avr-gcc avr-libc\n",
+        "!! The firmware build tools aren't installed on this host yet, so the firmware couldn't\n",
+        "!! be built or flashed. FilaMind installs them for you automatically when it updates.\n",
+        "!! Update FilaMind from your printer's update manager (Mainsail / Fluidd -> Machine ->\n",
+        "!! Update), then try Build & Flash again - no commands to run by hand.\n",
+        "!! (If you just updated and still see this, the host may have been offline during the\n",
+        "!! update; it retries automatically on the next one.)\n",
     ]

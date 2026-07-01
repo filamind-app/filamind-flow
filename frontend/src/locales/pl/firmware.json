@@ -172,7 +172,7 @@
         "printing": "Trwa drukowanie - flashowanie jest zablokowane.",
         "no_artifact": "Nie zbudowano jeszcze firmware dla tego profilu.",
         "no_sudo": "Bezhasłowe sudo nie jest skonfigurowane - uruchom 'scripts/install.sh sudoers' na hoście.",
-        "build_tools": "Na hoście brakuje narzędzi do budowania firmware ('make' oraz kompilatora). Zainstaluj build-essential (oraz kompilator dla MCU) na hoście, a następnie spróbuj ponownie."
+        "build_tools": "Narzędzia do budowania firmware nie są jeszcze zainstalowane. FilaMind instaluje je automatycznie podczas aktualizacji — zaktualizuj go w menedżerze aktualizacji drukarki, a następnie spróbuj ponownie. Nie musisz uruchamiać żadnych poleceń ręcznie."
       }
     },
     "configEditor": {

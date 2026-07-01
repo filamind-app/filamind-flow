@@ -172,7 +172,7 @@
         "printing": "Ein Druck läuft - Flashen ist blockiert.",
         "no_artifact": "Für dieses Profil wurde noch keine Firmware gebaut.",
         "no_sudo": "Passwortloses sudo nicht konfiguriert - 'scripts/install.sh sudoers' auf dem Host ausführen.",
-        "build_tools": "Auf dem Host fehlen die Firmware-Build-Tools ('make' und ein Compiler). Installieren Sie build-essential (und den Compiler für den MCU) auf dem Host und versuchen Sie es dann erneut."
+        "build_tools": "Die Firmware-Build-Tools sind noch nicht installiert. FilaMind installiert sie automatisch bei einem Update – aktualisieren Sie es über den Update-Manager Ihres Druckers und versuchen Sie es dann erneut. Es sind keine Befehle von Hand einzugeben."
       }
     },
     "configEditor": {

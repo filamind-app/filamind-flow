@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-07-01
+
+### Added
+
+- **The firmware build toolchain now installs itself automatically** on install and on every update
+  (`scripts/install.sh`), so users never have to run `apt` by hand to build or flash firmware
+  (follow-up to #558). It's best-effort and idempotent — once `make` and the Arm compiler are
+  present it's a no-op — and it reuses the passwordless grant the panel already has, so there's no
+  extra setup step. When the tools are somehow still missing, the in-app message now points to the
+  update flow ("update FilaMind and it installs them for you") instead of handing you shell commands.
+
 ## [1.13.1] - 2026-06-29
 
 ### Fixed
