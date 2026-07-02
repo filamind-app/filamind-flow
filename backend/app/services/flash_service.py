@@ -532,8 +532,13 @@ async def _dfu_device_present() -> bool:
             stderr=asyncio.subprocess.STDOUT,
             env=build_env(),
         )
-        out, _ = await asyncio.wait_for(proc.communicate(), timeout=10)
-    except (OSError, NotImplementedError, asyncio.TimeoutError):
+        try:
+            out, _ = await asyncio.wait_for(proc.communicate(), timeout=10)
+        except asyncio.TimeoutError:
+            with contextlib.suppress(ProcessLookupError, OSError):
+                proc.kill()
+            return False
+    except (OSError, NotImplementedError):
         return False
     return b"0483:df11" in out
 
@@ -991,21 +996,22 @@ async def run_flash(
             return
         target = resolved
 
-    yield _phase("stop")
-    yield ">>> Stopping Klipper to free the device…\n"
-    async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
-        yield line
-
-    # A board can re-appear under a new /dev id after a serial flash - snapshot first.
-    before = _serial_by_id() if method == "serial" else set()
-
-    # From here Klipper is down: whatever happens (including the client closing the stream at a
-    # yield), it must come back up. The finally fires a detached restart on any abnormal exit.
+    # From here Klipper goes down: whatever happens (including the client closing the stream at a
+    # yield - even during the stop itself), it must come back up. The finally fires a detached
+    # restart on any abnormal exit.
     flash_result: dict[str, int] = {}
     flash_tool = ""
     tail: list[str] = []
     klipper_restarted = False
     try:
+        yield _phase("stop")
+        yield ">>> Stopping Klipper to free the device…\n"
+        async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
+            yield line
+
+        # A board can re-appear under a new /dev id after a serial flash - snapshot first.
+        before = _serial_by_id() if method == "serial" else set()
+
         # A DFU device is already in its bootloader; only running Katapult boards need
         # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
         if method == "serial" and is_katapult:
@@ -1022,26 +1028,45 @@ async def run_flash(
                 )
                 target = already
             else:
+                # Snapshot DFU presence BEFORE the reboot: the fallback below must only fire on a
+                # DFU device that NEWLY appeared (i.e. this board), never on some other STM32
+                # already parked in DFU on the same host - that one must not receive this firmware.
+                dfu_before = await _dfu_device_present()
                 async for line in _reboot_to_bootloader(
                     method, target, interface or "can0", settings
                 ):
                     yield line
-                # Probe what the board became (bounded): the Katapult-renamed port, the original
-                # port still present, or - on a board with no Katapult - the STM32 ROM DFU.
+                # Probe what the board became - giving the Katapult port the FULL budget first
+                # (a slow udev symlink must not lose a race to the DFU check).
                 booted = bootloader_serial_path(target)
                 for _ in range(4):
                     if booted or os.path.exists(target):
-                        break
-                    if await _dfu_device_present():
                         break
                     await asyncio.sleep(2)
                     booted = bootloader_serial_path(target)
                 if booted:
                     yield f">>> Board entered the bootloader as {os.path.basename(booted)}.\n"
                     target = booted
-                elif not os.path.exists(target) and await _dfu_device_present():
-                    # No Katapult on this board: the bootloader request dropped it into ROM DFU.
-                    # Flash it right there instead of failing against the vanished serial port.
+                elif not os.path.exists(target) and not dfu_before and await _dfu_device_present():
+                    # No Katapult on this board: the bootloader request dropped it into ROM DFU
+                    # (the DFU device appeared only after OUR reboot request, so it is this board).
+                    if offset != _DEFAULT_OFFSET:
+                        # The profile is linked for a bootloader offset, but the board just proved
+                        # it has no Katapult - flashing at that offset would "succeed" and never
+                        # boot. Refuse honestly instead.
+                        yield (
+                            f"!! This profile expects a bootloader (firmware linked at {offset}), "
+                            "but the board has no Katapult -\n"
+                            "!! it rebooted into ROM DFU instead. Rebuild the profile without a "
+                            "bootloader offset, then flash again.\n"
+                        )
+                        yield _phase("restart")
+                        yield ">>> Restarting Klipper…\n"
+                        async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
+                            yield line
+                        klipper_restarted = True
+                        yield "!! Flash aborted - nothing was written to the board.\n"
+                        return
                     yield (
                         ">>> The board rebooted into ROM DFU instead of Katapult - continuing as "
                         f"a DFU flash at offset {offset}.\n"
@@ -1049,8 +1074,8 @@ async def run_flash(
                     method = "dfu"
                 elif not os.path.exists(target):
                     yield (
-                        "!! After the bootloader request the board is gone from USB (no Katapult "
-                        "port, no DFU device).\n"
+                        "!! After the bootloader request the board's port did not come back (no "
+                        "Katapult port appeared).\n"
                         "!! Power-cycle the printer to boot the board back into its firmware, "
                         "then flash again.\n"
                     )
