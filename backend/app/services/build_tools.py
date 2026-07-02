@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import os
 import shutil
+import subprocess
+import sys
 
 # Standard locations for the build toolchain (make, gcc, arm-none-eabi-gcc, avr-gcc, dfu-util).
 # A systemd service can start with a PATH that omits these even when the tools ARE installed - #558
@@ -43,6 +45,55 @@ def build_env() -> dict[str, str]:
 def make_available() -> bool:
     """True if ``make`` is resolvable via the augmented PATH (the minimum to build / flash)."""
     return shutil.which("make", path=_augmented_path()) is not None
+
+
+#: Cached result of flash_python() - the interpreter doesn't change during a run. Tests reset it.
+_FLASH_PYTHON: str | None = None
+
+
+def _has_pyserial(python: str) -> bool:
+    """True if running ``<python> -c 'import serial'`` succeeds (time-boxed, best-effort)."""
+    try:
+        return (
+            subprocess.run(
+                [python, "-c", "import serial"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=4,
+                check=False,
+            ).returncode
+            == 0
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+def flash_python() -> str:
+    """The interpreter to run Katapult's ``flashtool.py`` with - the first one that has pyserial.
+
+    ``flashtool.py`` needs pyserial for serial / USB-CAN-bridge flashing; a bare ``python3`` token
+    resolves to whatever is first on the service PATH, which is often NOT the interpreter pyserial
+    was installed into (#569). We probe, in order, and cache the first candidate that can
+    ``import serial``: an explicit override, our own venv python (pyserial is bundled), Klipper's
+    env (always carries pyserial), then PATH's ``python3`` - falling back to ``python3`` so a host
+    that already worked never regresses. CAN flashing itself needs no pyserial (stdlib sockets), but
+    running it through the same interpreter is harmless and keeps the flasher deterministic.
+    """
+    global _FLASH_PYTHON
+    if _FLASH_PYTHON is not None:
+        return _FLASH_PYTHON
+    candidates = (
+        os.environ.get("FILAMIND_FLASH_PYTHON"),
+        sys.executable,
+        os.path.expanduser("~/klippy-env/bin/python"),
+        shutil.which("python3", path=_augmented_path()),
+    )
+    for candidate in candidates:
+        if candidate and _has_pyserial(candidate):
+            _FLASH_PYTHON = candidate
+            return candidate
+    _FLASH_PYTHON = "python3"
+    return _FLASH_PYTHON
 
 
 def missing_toolchain_lines() -> list[str]:

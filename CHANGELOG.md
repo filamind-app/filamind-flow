@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.15.2] - 2026-07-02
+
+### Fixed
+
+- **Firmware Manager — serial / CAN flashing under the wrong Python.** A serial (or USB-CAN-bridge)
+  flash could fail with a cryptic `python3 exited with code 1` (#569). FilaMind launched Katapult's
+  `flashtool.py` as a bare `python3`, which the service resolves to whichever interpreter is first
+  on its `PATH` — often not the one carrying **pyserial** (which `flashtool.py` needs for serial).
+  Now the flasher always runs under a pyserial-capable interpreter (it probes FilaMind's own venv,
+  Klipper's env, then `PATH`), pyserial is bundled into FilaMind's environment so a normal update
+  provides it (no `apt`/`pip` by hand), and a failed serial/CAN flash now shows the real reason
+  (missing serial support, a busy port, a missing device, or a flaky-cable transfer error) instead
+  of a bare exit code.
+
 ## [1.15.1] - 2026-07-02
 
 ### Fixed

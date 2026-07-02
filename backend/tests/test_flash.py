@@ -3,14 +3,23 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings
 from app.main import create_app
-from app.services import flash_service
+from app.services import build_tools, flash_service
 from app.services.firmware_profiles import artifacts_dir, profiles_dir
 
 _FLASHTOOL = os.path.join("/kat", "scripts", "flashtool.py")
+
+
+@pytest.fixture(autouse=True)
+def _pin_flash_python(monkeypatch):  # type: ignore[no-untyped-def]
+    """Pin the flasher interpreter to 'python3' for deterministic command tests + no real probing.
+    (The real flash_python() picker is covered by its own unit test, which uses build_tools.)"""
+    build_tools._FLASH_PYTHON = None
+    monkeypatch.setattr(flash_service, "flash_python", lambda: "python3")
 
 
 def test_command_builders() -> None:
@@ -635,6 +644,87 @@ async def test_flash_plan_blocks_arch_mismatch(tmp_path: Path, monkeypatch) -> N
     assert plan["ready"] is False
     round_trip = FlashPlan.model_validate(plan).model_dump()
     assert any(w["code"] == "arch_mismatch" for w in round_trip["warnings"])
+
+
+def test_flash_python_prefers_first_pyserial_capable(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """flash_python() picks the first interpreter that has pyserial, caches it, and falls back to
+    'python3' when none qualify - so the flasher never runs under a serial-less python (#569)."""
+    monkeypatch.delenv("FILAMIND_FLASH_PYTHON", raising=False)
+    build_tools._FLASH_PYTHON = None
+    klippy = os.path.expanduser("~/klippy-env/bin/python")
+    # only klippy-env has pyserial in this scenario (sys.executable is probed first, fails)
+    monkeypatch.setattr(build_tools, "_has_pyserial", lambda p: p == klippy)
+    assert build_tools.flash_python() == klippy
+    # cached: a later probe flip does not change the resolved interpreter
+    monkeypatch.setattr(build_tools, "_has_pyserial", lambda _p: False)
+    assert build_tools.flash_python() == klippy
+    # fresh probe with nothing capable -> fall back to 'python3' (never regress a working host)
+    build_tools._FLASH_PYTHON = None
+    assert build_tools.flash_python() == "python3"
+    build_tools._FLASH_PYTHON = None
+
+
+def test_diagnose_serial_failure() -> None:
+    """A failed serial/CAN flash is explained from its output tail, not a bare exit code (#569)."""
+    d = flash_service._diagnose_serial_failure
+    assert any("pyserial" in ln.lower() for ln in d(["No module named 'serial'"], "/dev/x"))
+    assert any(
+        "port" in ln.lower() for ln in d(["Could not open port /dev/ttyACM0"], "/dev/ttyACM0")
+    )
+    assert any("bootloader" in ln.lower() for ln in d(["No Serial Device found"], "/dev/x"))
+    assert any("cable" in ln.lower() for ln in d(["Checksum mismatch at 0x1000"], "/dev/x"))
+    # never invents a diagnosis on a clean/unknown tail
+    assert d(["Programming Complete", "success"], "/dev/x") == []
+
+
+async def test_flash_serial_surfaces_pyserial_error(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """When flashtool fails because its python lacks pyserial, the real cause is surfaced (not just
+    'python3 exited with code 1'). The interpreter-picker fix + this diagnosis close #569."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), "p.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), "p.config").write_text("CONFIG_X=y\n")
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        if "-f" in cmd:  # the flashtool flash command fails on a missing pyserial
+            yield "ModuleNotFoundError: No module named 'serial'\n"
+            if result is not None:
+                result["rc"] = 1
+            return
+        if result is not None:
+            result["rc"] = 0
+        return
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "bootloader_serial_path", lambda _d: None)
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: True)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "serial", "/dev/ttyACM0", "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    assert "pyserial" in log.lower()  # the real cause is surfaced
+    assert "exited with code 1" in log  # the generic line still follows
 
 
 def test_bootloader_serial_path(monkeypatch) -> None:

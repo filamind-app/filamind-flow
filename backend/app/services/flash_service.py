@@ -28,7 +28,12 @@ import httpx
 
 from app.config import Settings
 from app.services import devices_store, printer_guard
-from app.services.build_tools import build_env, make_available, missing_toolchain_lines
+from app.services.build_tools import (
+    build_env,
+    flash_python,
+    make_available,
+    missing_toolchain_lines,
+)
 from app.services.firmware_profiles import (
     artifact_path_for,
     is_avr_profile,
@@ -81,13 +86,13 @@ def _flashtool(katapult_dir: str) -> str:
 
 
 def serial_command(katapult_dir: str, device: str, firmware: str, baud: int = 250000) -> list[str]:
-    """Katapult serial flash."""
-    return ["python3", _flashtool(katapult_dir), "-f", firmware, "-d", device, "-b", str(baud)]
+    """Katapult serial flash (run under a pyserial-capable interpreter - #569)."""
+    return [flash_python(), _flashtool(katapult_dir), "-f", firmware, "-d", device, "-b", str(baud)]
 
 
 def can_command(katapult_dir: str, interface: str, uuid: str, firmware: str) -> list[str]:
-    """Katapult CAN flash."""
-    return ["python3", _flashtool(katapult_dir), "-i", interface, "-u", uuid, "-f", firmware]
+    """Katapult CAN flash (run under the same interpreter for determinism - #569)."""
+    return [flash_python(), _flashtool(katapult_dir), "-i", interface, "-u", uuid, "-f", firmware]
 
 
 def dfu_command(firmware: str, offset: str, serial: str | None = None) -> list[str]:
@@ -219,6 +224,38 @@ def _diagnose_make_failure(tail: list[str], device: str) -> list[str]:
         ]
     if "permission denied" in blob:
         return ["!! Permission denied talking to the board - a udev / sudo rule may be missing.\n"]
+    return []
+
+
+def _diagnose_serial_failure(tail: list[str], device: str) -> list[str]:
+    """Actionable ``!!`` hints for a failed serial / CAN flash, from the tail of flashtool's output.
+
+    The serial/CAN path can exit non-zero for reasons the bare exit code hides (#569). Never echoes
+    Katapult's own ``apt install python3-serial`` line - FilaMind installs pyserial on update.
+    """
+    blob = "".join(tail).lower()
+    if any(t in blob for t in ("no module named 'serial'", "no module named serial", "pyserial")):
+        return [
+            "!! The flasher's Python is missing serial support (pyserial).\n",
+            "!! Update FilaMind - it installs it automatically - then flash again.\n",
+        ]
+    if any(
+        t in blob for t in ("could not open port", "permission denied", "resource busy", "in use")
+    ):
+        return [
+            f"!! Could not open the serial port {device}.\n",
+            "!! It may be in use or missing a udev rule - re-plug the board and retry.\n",
+        ]
+    if any(t in blob for t in ("no serial device found", "no such file", "no such device")):
+        return [
+            f"!! The flash device {device} was not found.\n",
+            "!! The board may not be in its bootloader, or it re-enumerated - re-plug and retry.\n",
+        ]
+    if any(t in blob for t in ("checksum mismatch", "block request error", "got eof", "timeout")):
+        return [
+            "!! The transfer failed mid-flash (verify/timeout) - often a bad USB cable or port.\n",
+            "!! Try a different (rear) USB port and cable, then flash again.\n",
+        ]
     return []
 
 
@@ -465,9 +502,17 @@ async def _reboot_to_bootloader(
     """Asks a running device to drop into its Katapult/DFU bootloader."""
     yield f">>> Requesting {device} to enter its bootloader…\n"
     if method == "can":
-        cmd = ["python3", _flashtool(settings.katapult_dir), "-i", interface, "-u", device, "-r"]
+        cmd = [
+            flash_python(),
+            _flashtool(settings.katapult_dir),
+            "-i",
+            interface,
+            "-u",
+            device,
+            "-r",
+        ]
     else:
-        cmd = ["python3", _flashtool(settings.katapult_dir), "-d", device, "-r"]
+        cmd = [flash_python(), _flashtool(settings.katapult_dir), "-d", device, "-r"]
     async for line in _stream(cmd):
         yield line
     await asyncio.sleep(5)
@@ -904,13 +949,15 @@ async def run_flash(
     yield _phase("write")
     flash_result: dict[str, int] = {}
     flash_tool = ""
-    make_tail: list[str] = []
+    tail: list[str] = []
     if method == "dfu":
         async for line in _flash_dfu(device, artifact, offset):
             yield line
     elif method == "can":
         flash_tool = "flashtool.py"
         async for line in _flash_can(target, artifact, interface or "can0", settings, flash_result):
+            tail.append(line)
+            del tail[:-60]
             yield line
     else:
         command = _build_command(method, settings, target, artifact, interface or "can0", offset)
@@ -919,9 +966,8 @@ async def run_flash(
         async for line in _stream(
             command, cwd=settings.klipper_dir if method == "make" else None, result=flash_result
         ):
-            if method == "make":
-                make_tail.append(line)
-                del make_tail[:-60]  # keep the last ~60 lines to diagnose a make-flash failure
+            tail.append(line)
+            del tail[:-60]  # keep the last ~60 lines to diagnose a make / serial flash failure
             yield line
 
     yield _phase("restart")
@@ -958,7 +1004,10 @@ async def run_flash(
                 yield ">>> Flash sequence complete - verified through Klipper.\n"
                 return
         if method == "make":
-            for hint in _diagnose_make_failure(make_tail, device):
+            for hint in _diagnose_make_failure(tail, device):
+                yield hint
+        elif method in ("serial", "can"):
+            for hint in _diagnose_serial_failure(tail, device):
                 yield hint
         yield (
             f"!! Flash failed - {flash_tool or 'the flash tool'} exited with code {rc}. "
