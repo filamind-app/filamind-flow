@@ -48,6 +48,25 @@ def _norm(s: Any) -> str:
     return re.sub(r"[^a-z0-9]+", "", str(s or "").lower())
 
 
+#: Section names that describe a ROLE, not a product - they must never name-match a catalog board
+#: ("[mcu scanner]" is Cartographer's documented section name, but "scanner" also appears inside
+#: an unrelated board's display name; "toolhead"/"extra_mcu" are generic conventions). Normalised
+#: via _norm, so "extra_mcu" -> "extramcu".
+_GENERIC_SECTION_TOKENS = frozenset(
+    {
+        "extramcu",
+        "toolhead",
+        "toolboard",
+        "scanner",
+        "probemcu",
+        "extruder",
+        "mainboard",
+        "display",
+        "expander",
+    }
+)
+
+
 def _resolve_board_id(
     board_name: str | None,
     signature: str,
@@ -86,11 +105,12 @@ def _resolve_board_id(
     hits: dict[str, float] = {}
     for probe, conf in ((board_name, 0.5), (section, 0.45)):
         np_ = _norm(probe)
-        if len(np_) < 5:
+        if len(np_) < 5 or np_ in _GENERIC_SECTION_TOKENS:
             continue
         for b in boards:
             bid = str(b.get("board_id") or "")
-            if not bid:
+            # Pseudo-boards (printer presets / hosts) are never a valid identification target.
+            if not bid or str(b.get("boardClass") or "").lower() in _NON_FP_CLASSES:
                 continue
             for cand in (b.get("model"), b.get("display_name"), *(b.get("aliases") or [])):
                 nc = _norm(cand)
@@ -604,7 +624,8 @@ def analyze(
             )
             if fp_id and (board_id is None or fp_conf > board_id_conf):
                 board_id, board_id_conf, board_candidates = fp_id, fp_conf, []
-            elif fp_candidates and not board_id and not board_candidates:
+            elif fp_candidates and not board_id:
+                # A fingerprint tie is pin-level evidence - stronger than a name-tier shortlist.
                 board_candidates = fp_candidates
             mcus.append(
                 {
@@ -801,7 +822,8 @@ async def _enrich_live_mcus(
                 fp_conf,
             )
             m["board_candidates"] = []
-        elif fp_candidates and not m.get("board_id") and not m.get("board_candidates"):
+        elif fp_candidates and not m.get("board_id"):
+            # Pin-level evidence beats any name-tier shortlist carried over from analyze().
             m["board_candidates"] = fp_candidates
             m["board_match"] = "ambiguous"
 
