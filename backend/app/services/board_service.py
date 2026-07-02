@@ -24,10 +24,9 @@ from typing import Any
 
 import httpx
 
-from app.services import devices_store
+from app.services import devices_store, version_store
 from app.services.firmware_service import _klipper_mcu_service_active
 from app.services.moonraker_client import MoonrakerClient
-from app.services.version_store import flashed_version
 
 _SERVICE_HINTS = ("klipper", "kalico")
 _BOOTLOADER_HINTS = ("katapult", "canboot")
@@ -245,6 +244,22 @@ def _board(**kwargs: Any) -> dict[str, Any]:
     return base
 
 
+def _linked_identities(board_id: str, registry: list[dict[str, Any]]) -> set[str]:
+    """Every identity this board is known under: the current id, its bootloader/runtime rename
+    (``usb-Klipper_<id>`` <-> ``usb-katapult_<id>``), and - when a registry device links to any of
+    those - that device's whole identity set (id + bound serial_id/dfu_id)."""
+    ids = {board_id}
+    ids.add(re.sub(r"(?i)(usb-)Klipper(_)", r"\1katapult\2", board_id))
+    ids.add(re.sub(r"(?i)(usb-)katapult(_)", r"\1Klipper\2", board_id))
+    for device in registry:
+        device_ids = {
+            str(device.get(key)) for key in ("id", "serial_id", "dfu_id") if device.get(key)
+        }
+        if ids & device_ids:
+            ids |= device_ids
+    return ids
+
+
 async def discover_boards(
     moonraker_url: str, klipper_dir: str, katapult_dir: str, data_dir: str
 ) -> dict[str, Any]:
@@ -299,10 +314,16 @@ async def discover_boards(
             mode="available",
         )
 
-    # Annotate each board with its last-flashed version + registry membership.
+    # Annotate each board with its last-flashed version + registry membership. The version lookup
+    # walks the board's LINKED identities (bound serial_id / dfu_id, the bootloader-renamed port),
+    # so a record written under one enumeration stays visible under the others.
     managed = devices_store.managed_identities(data_dir)
+    registry = devices_store.read_devices(data_dir)
     for board in boards.values():
-        board["flashed_version"] = flashed_version(data_dir, board["id"])
+        record = version_store.flashed_record(
+            data_dir, _linked_identities(str(board["id"]), registry)
+        )
+        board["flashed_version"] = record.get("version") if record else None
         board["managed"] = board["id"] in managed
 
     ordered = sorted(

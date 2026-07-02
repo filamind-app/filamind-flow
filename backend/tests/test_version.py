@@ -29,3 +29,23 @@ def test_flash_record_tracks_version(tmp_path: Path) -> None:
     record = version_store.flash_records(data)["linux_process"]
     assert record["profile"] == "host-mcu"
     assert record["flashed_at"]
+
+
+def test_flashed_record_joins_linked_identities(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A flash recorded under ONE of a board's identities stays visible under the others - a board
+    re-enumerated as its bootloader port must not lose its recorded version."""
+    times = iter(["2026-07-02 10:00:00", "2026-07-02 10:00:01"])
+    monkeypatch.setattr(version_store, "_now", lambda: next(times))
+    data = str(tmp_path)
+    klipper_id = "/dev/serial/by-id/usb-Klipper_stm32f446xx_AB-if00"
+    katapult_id = "/dev/serial/by-id/usb-katapult_stm32f446xx_AB-if00"
+    version_store.record_flash(data, klipper_id, "octopus", {"version": "v1", "commit": "c1"})
+    # looked up under the OTHER identity via the identity set
+    record = version_store.flashed_record(data, {katapult_id, klipper_id})
+    assert record is not None and record["version"] == "v1"
+    # no identity matches -> None
+    assert version_store.flashed_record(data, {"unrelated"}) is None
+    # several matching records -> the newest wins
+    version_store.record_flash(data, katapult_id, "octopus", {"version": "v2", "commit": "c2"})
+    record = version_store.flashed_record(data, {katapult_id, klipper_id})
+    assert record is not None and record["version"] == "v2"

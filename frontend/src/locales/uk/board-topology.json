@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "Чип",
       "firmware": "Прошивка",
+      "lastFlashed": "Остання прошивка",
       "board": "Плата",
       "unknown": "невідомо",
       "identifier": "Ідентифікатор",

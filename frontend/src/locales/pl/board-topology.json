@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "Układ",
       "firmware": "Firmware",
+      "lastFlashed": "Ostatnio wgrane",
       "board": "Płyta",
       "unknown": "nieznana",
       "identifier": "Identyfikator",

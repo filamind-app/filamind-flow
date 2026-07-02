@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "チップ",
       "firmware": "ファームウェア",
+      "lastFlashed": "最終書き込み",
       "board": "ボード",
       "unknown": "不明",
       "identifier": "識別子",

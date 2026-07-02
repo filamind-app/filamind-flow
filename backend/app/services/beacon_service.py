@@ -42,15 +42,33 @@ def _parse_beacon(by_id: str) -> dict[str, str] | None:
     return {"id": by_id, "name": f"Beacon {revision}", "revision": revision, "serial": serial}
 
 
-def discover_beacons() -> list[dict[str, str]]:
-    """Finds connected Beacon probes off /dev/serial/by-id."""
-    probes: list[dict[str, str]] = []
+def _probe_current_version(by_id_path: str) -> str | None:
+    """The probe's RUNNING firmware version, read host-side from its USB device descriptor.
+
+    The probe reports its firmware version as the USB ``bcdDevice`` field (a sysfs file read - no
+    serial traffic, safe while Klipper holds the port). BCD-encoded: ``0210`` -> ``2.10``.
+    """
+    try:
+        tty = os.path.basename(os.path.realpath(by_id_path))
+        device_dir = os.path.realpath(os.path.join(f"/sys/class/tty/{tty}/device", ".."))
+        with open(os.path.join(device_dir, "bcdDevice")) as handle:
+            raw = handle.read().strip()
+    except OSError:
+        return None
+    if not raw.isdigit() or len(raw) < 3:
+        return None
+    return f"{int(raw[:-2])}.{raw[-2:]}"
+
+
+def discover_beacons() -> list[dict[str, Any]]:
+    """Finds connected Beacon probes off /dev/serial/by-id (with each probe's running version)."""
+    probes: list[dict[str, Any]] = []
     seen: set[str] = set()
     for dev in sorted(glob.glob(_BEACON_GLOB)):
         parsed = _parse_beacon(dev)
         if parsed and parsed["serial"] not in seen:
             seen.add(parsed["serial"])
-            probes.append(parsed)
+            probes.append({**parsed, "current_version": _probe_current_version(dev)})
     return probes
 
 

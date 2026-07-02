@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "芯片",
       "firmware": "固件",
+      "lastFlashed": "最近刷写",
       "board": "板卡",
       "unknown": "未知",
       "identifier": "标识符",

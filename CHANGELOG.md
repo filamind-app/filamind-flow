@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.18.0] - 2026-07-02
+
+### Added
+
+- **A firmware version for every device class that truthfully has one.**
+  - **Beacon probes** now show their *running* firmware version (read host-side from the probe's
+    USB descriptor — no serial traffic) next to the available update.
+  - The **Linux host MCU**'s version now comes from the version stamped inside the installed
+    binary, so it shows correctly even when FilaMind never flashed it.
+  - **Board Topology** nodes fall back to the **last-flashed record** (clearly labelled) when the
+    live version is unavailable — exactly the klippy-down moment users open the topology to debug.
+
+### Fixed
+
+- **Flash records survive re-enumeration.** A version recorded under one of a board's identities
+  (its runtime port, the bootloader-renamed port, a bound serial/DFU identity) vanished when the
+  board was looked up under another. Every lookup — the Devices panel, board discovery, and the
+  topology — now joins the record through the board's full linked-identity set.
+
 ## [1.17.0] - 2026-07-02
 
 ### Added

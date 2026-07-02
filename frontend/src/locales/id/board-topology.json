@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "Chip",
       "firmware": "Firmware",
+      "lastFlashed": "Terakhir di-flash",
       "board": "Board",
       "unknown": "unknown",
       "identifier": "Pengenal",

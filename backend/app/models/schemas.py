@@ -682,6 +682,8 @@ class BeaconProbe(BaseModel):
     name: str
     revision: str
     serial: str
+    # The probe's RUNNING firmware version (from its USB descriptor, host-side); null if unread.
+    current_version: str | None = None
 
 
 class BeaconResponse(BaseModel):
@@ -1309,6 +1311,9 @@ class TopologyMcu(BaseModel):
     board_candidates: list[str] = []
     # Running firmware version of this MCU (from the live mcu object); null on an offline read.
     firmware: str | None = None
+    # The last version FilaMind flashed to this board (from the flash records, joined through the
+    # board's linked identities) - shown when the live version is unavailable, labelled as such.
+    last_flashed: str | None = None
     components: list[TopologyComponent] = []
     # Set when this node was added by the user (not auto-detected); the manual entry's id, so the
     # UI can edit/remove it. None for a detected MCU.

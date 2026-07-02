@@ -247,6 +247,8 @@ export interface BeaconProbe {
   name: string
   revision: string
   serial: string
+  /** The probe's RUNNING firmware version (read host-side from its USB descriptor). */
+  current_version: string | null
 }
 
 export interface BeaconResponse {
