@@ -814,13 +814,22 @@ async def test_flash_dfu_refused_when_no_device(tmp_path: Path, monkeypatch) -> 
     assert not any("stop" in c and "klipper" in c for c in calls)
 
 
+def _dfu_appears_after_reboot():  # type: ignore[no-untyped-def]
+    """A DFU-presence mock that is False on the pre-reboot snapshot, True afterwards - i.e. the
+    DFU device NEWLY appeared because of our reboot request (it is our board)."""
+    state = {"n": 0}
+
+    async def dfu_present() -> bool:
+        state["n"] += 1
+        return state["n"] > 1
+
+    return dfu_present
+
+
 async def test_serial_reboot_falls_back_to_dfu(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     """A non-Katapult native-USB board that lands in ROM DFU after the bootloader request is
     flashed via DFU at the profile offset instead of failing against the vanished serial path."""
     settings, calls = _flash_env(tmp_path, monkeypatch)
-
-    async def dfu_present() -> bool:
-        return True
 
     async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
         calls.append(list(cmd))
@@ -830,7 +839,7 @@ async def test_serial_reboot_falls_back_to_dfu(tmp_path: Path, monkeypatch) -> N
             result["rc"] = 0
         return
 
-    monkeypatch.setattr(flash_service, "_dfu_device_present", dfu_present)
+    monkeypatch.setattr(flash_service, "_dfu_device_present", _dfu_appears_after_reboot())
     monkeypatch.setattr(flash_service, "_stream", rec)
     monkeypatch.setattr(flash_service, "bootloader_serial_path", lambda _d: None)
     monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: False)  # serial path vanished
@@ -846,6 +855,71 @@ async def test_serial_reboot_falls_back_to_dfu(tmp_path: Path, monkeypatch) -> N
     assert "ROM DFU instead of Katapult" in log
     assert "Flash sequence complete" in log
     assert any("dfu-util" in c and "-D" in c for c in calls)  # the write really went via DFU
+
+
+async def test_no_dfu_fallback_for_stray_dfu_device(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A DFU device that was ALREADY present before the reboot request must never receive this
+    firmware - the fallback fires only on a newly-appeared DFU device (it is not our board)."""
+    settings, calls = _flash_env(tmp_path, monkeypatch)
+
+    async def dfu_always_there() -> bool:  # a stray STM32 parked in DFU the whole time
+        return True
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_dfu_device_present", dfu_always_there)
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "bootloader_serial_path", lambda _d: None)
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: False)
+    dev = "/dev/serial/by-id/usb-Klipper_stm32h723xx_12001F00-if00"
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "serial", dev, "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    assert "Flash aborted - nothing was written" in log
+    # crucially: no DFU download ever ran against the stray device
+    assert not any("dfu-util" in c and "-D" in c for c in calls)
+
+
+async def test_dfu_fallback_refused_for_bootloader_offset_profile(
+    tmp_path: Path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    """A profile linked for a Katapult offset must not be DFU-written to a board that just proved
+    it has NO Katapult - the image would 'flash fine' and never boot. Refuse with an explanation."""
+    settings, calls = _flash_env(tmp_path, monkeypatch, config="CONFIG_STM32_FLASH_START_2000=y\n")
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_dfu_device_present", _dfu_appears_after_reboot())
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "bootloader_serial_path", lambda _d: None)
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: False)
+    dev = "/dev/serial/by-id/usb-Klipper_stm32h723xx_12001F00-if00"
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "serial", dev, "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    assert "expects a bootloader" in log
+    assert "Flash aborted - nothing was written" in log
+    assert not any("dfu-util" in c and "-D" in c for c in calls)
 
 
 async def test_cancel_mid_flash_restarts_klipper(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
