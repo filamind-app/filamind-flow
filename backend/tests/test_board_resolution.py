@@ -62,6 +62,31 @@ def test_usb_mcu_not_narrowed() -> None:
     assert bt._narrow_by_connection([toolhead, mainboard], "usb") == [toolhead, mainboard]
 
 
+def test_fingerprint_pool_keeps_boards_with_unparsed_chip() -> None:
+    """Chip-narrowing must FAIL OPEN for boards whose catalog entry parses no MCU id: an unknown
+    chip can't prove a mismatch. Otherwise a true board with an unparsed spec loses its 1.0
+    self-match to a wrong same-chip board (verified regression on the real catalog)."""
+    with_chip = {"board_id": "mini-e3", "boardClass": "Mainboard", "specs": {"MCU": "STM32G0B1"}}
+    no_chip = {"board_id": "hurakan", "boardClass": "Mainboard", "specs": {}}
+    other_chip = {"board_id": "octopus", "boardClass": "Mainboard", "specs": {"MCU": "STM32F446"}}
+    from app.services import hardware_links
+
+    def fake_ids(b):  # type: ignore[no-untyped-def]
+        mcu = str((b.get("specs") or {}).get("MCU") or "")
+        return {(mcu.lower()[:9], None, None)} if mcu else set()
+
+    orig = hardware_links.board_mcu_ids
+    hardware_links.board_mcu_ids = fake_ids  # type: ignore[assignment]
+    try:
+        pool = bt._fingerprint_candidates([with_chip, no_chip, other_chip], "stm32g0b1", "usb")
+    finally:
+        hardware_links.board_mcu_ids = orig  # type: ignore[assignment]
+    ids = [b["board_id"] for b in pool]
+    assert "mini-e3" in ids  # carries the detected chip
+    assert "hurakan" in ids  # unparsed chip -> kept (fail open)
+    assert "octopus" not in ids  # provably a different chip -> excluded
+
+
 def test_fingerprint_pool_excludes_pseudo_boards() -> None:
     """Printer presets duplicate their real mainboard's pin-map and host entries aren't MCU
     boards - both must never be fingerprint candidates (they zero the ambiguity margin and let a

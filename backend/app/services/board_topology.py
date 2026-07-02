@@ -436,9 +436,13 @@ def _fingerprint_candidates(
     """
     pool = [b for b in boards if str(b.get("boardClass") or "").lower() not in _NON_FP_CLASSES]
     if mcu_id:
-        chipped = [
-            b for b in pool if mcu_id in {mid for mid, _, _ in hardware_links.board_mcu_ids(b)}
-        ]
+        chipped = []
+        for b in pool:
+            ids = {mid for mid, _, _ in hardware_links.board_mcu_ids(b)}
+            # A board whose catalog entry parses NO chip cannot prove a mismatch - keep it
+            # (fail open), else a true board with an unparsed spec loses to a wrong same-chip one.
+            if not ids or mcu_id in ids:
+                chipped.append(b)
         if chipped:
             pool = chipped
     return _narrow_by_connection(pool, connection)
