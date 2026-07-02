@@ -67,6 +67,12 @@ def test_method_for_and_offset(tmp_path: Path) -> None:
     assert flash_service.flash_offset(str(cfg)) == "0x0800c000"
     cfg.write_text("CONFIG_FLASH_APPLICATION_ADDRESS=0x08020200\n")
     assert flash_service.flash_offset(str(cfg)) == "0x08020200"
+    # Klipper's kconfig writes hex defaults UNPADDED (0x8000000) - the address must canonicalise
+    # so the "has a bootloader offset" string comparison can't false-fire on a no-bootloader board
+    cfg.write_text("CONFIG_FLASH_APPLICATION_ADDRESS=0x8000000\n")
+    assert flash_service.flash_offset(str(cfg)) == "0x08000000"
+    cfg.write_text("CONFIG_FLASH_APPLICATION_ADDRESS=0x2000\n")  # short SAMD-style address
+    assert flash_service.flash_offset(str(cfg)) == "0x00002000"
 
 
 def _client(tmp_path: Path) -> TestClient:
@@ -1149,9 +1155,10 @@ async def test_flash_aborts_when_klipper_stop_fails(tmp_path: Path, monkeypatch)
     )
     assert "Could not stop the Klipper service" in log
     assert "Flash aborted" in log
-    # no write ran, and no detached restart fired (nothing was stopped)
+    # no write ran; the detached restart fires as a safety net (systemctl start is idempotent -
+    # a no-op if Klipper never stopped, a recovery if the stop half-landed)
     assert not any("flashtool.py" in " ".join(c) for c in calls)
-    assert restarted == []
+    assert restarted == ["x"]
 
 
 def test_bootloader_serial_path(monkeypatch) -> None:
