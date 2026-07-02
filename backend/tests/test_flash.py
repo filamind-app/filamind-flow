@@ -533,6 +533,7 @@ async def test_make_flash_cwd_is_resolved(tmp_path: Path, monkeypatch) -> None: 
     monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
     monkeypatch.setattr(flash_service, "_stream", record_stream)
     monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: True)  # device is present
+    monkeypatch.setattr(flash_service.shutil, "copy", lambda *_a, **_k: None)  # staging no-op
     settings = Settings(
         moonraker_url="http://127.0.0.1:1",
         katapult_dir="/kat",
@@ -957,6 +958,152 @@ async def test_cancel_mid_flash_restarts_klipper(tmp_path: Path, monkeypatch) ->
     )
     assert "Flash sequence complete" in log
     assert restarted == []
+
+
+def test_saved_baudrate_matches_registry_id(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """The per-device baudrate is honoured: registry records are keyed by 'id' (not 'device'),
+    and the flash path may hand in the bootloader-renamed port - all must match."""
+    dev = "/dev/serial/by-id/usb-Klipper_stm32f103xe_ABCD-if00"
+    kat = "/dev/serial/by-id/usb-katapult_stm32f103xe_ABCD-if00"
+    settings = Settings(moonraker_url="http://x", katapult_dir="/kat", data_dir=str(tmp_path))
+    monkeypatch.setattr(
+        flash_service.devices_store,
+        "read_devices",
+        lambda _d: [{"id": dev, "serial_id": None, "baudrate": 115200}],
+    )
+    assert flash_service._saved_baudrate(settings, dev) == 115200
+    assert flash_service._saved_baudrate(settings, kat) == 115200  # bootloader-renamed port
+    assert flash_service._saved_baudrate(settings, "/dev/ttyACM9") == 250000  # unknown -> default
+
+
+async def test_external_firmware_guards(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """External files: 'make' is refused (it would flash the last-built profile), DFU without an
+    offset is refused (0x08000000 could wipe the bootloader), and a provable MCU mismatch between
+    the binary and the board is refused - all before Klipper is stopped."""
+    settings, calls = _flash_env(tmp_path, monkeypatch)
+    fw = tmp_path / "ext.bin"
+    fw.write_bytes(b"\x00")
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(
+        flash_service.external_firmware, "read_meta", lambda _d, _n: {"detected_mcu": "rp2040"}
+    )
+
+    async def run(method: str, device: str, offset=None) -> str:  # type: ignore[no-untyped-def]
+        return "".join(
+            [
+                line
+                async for line in flash_service.run_flash(
+                    "ext",
+                    method,
+                    device,
+                    "can0",
+                    settings,
+                    firmware=str(fw),
+                    offset_override=offset,
+                )
+            ]
+        )
+
+    assert "can't be flashed with 'make'" in await run("make", "/dev/ttyUSB0")
+    log = await run("dfu", "0483:df11")
+    assert "needs its start offset" in log
+    stm = "/dev/serial/by-id/usb-Klipper_stm32h723xx_12001F00-if00"
+    log = await run("serial", stm)  # rp2040 binary aimed at an stm32 board
+    assert "built for 'rp2040'" in log and "unbootable" in log
+    assert not any("stop" in c and "klipper" in c for c in calls)  # all refused pre-stop
+
+
+def test_external_meta_validators() -> None:
+    """External meta: method 'make' and malformed offsets are rejected at the schema."""
+    from app.models.schemas import ExternalMetaUpdate
+
+    assert ExternalMetaUpdate(method="Serial").method == "serial"
+    assert ExternalMetaUpdate(offset="0x08002000").offset == "0x08002000"
+    with pytest.raises(ValueError):
+        ExternalMetaUpdate(method="make")
+    with pytest.raises(ValueError):
+        ExternalMetaUpdate(offset="bootloader")
+
+
+async def test_make_flash_stages_the_profile_config(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """`make flash` re-stages the SELECTED profile's .config first, so a batch that built another
+    profile last can never push the wrong firmware."""
+    settings, calls = _flash_env(tmp_path, monkeypatch, config="CONFIG_MACH_AVR=y\n")
+    staged: list[tuple[str, str]] = []
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "make_available", lambda: True)
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: True)
+    monkeypatch.setattr(flash_service.shutil, "copy", lambda s, d: staged.append((str(s), str(d))))
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash("p", "make", "/dev/ttyUSB0", "can0", settings)
+        ]
+    )
+    assert "Staged this profile's build config" in log
+    assert staged and staged[0][0].endswith("p.config") and staged[0][1].endswith(".config")
+    assert any(c[:2] == ["make", "olddefconfig"] for c in calls)
+    # the olddefconfig runs BEFORE the make flash command
+    idx_cfg = next(i for i, c in enumerate(calls) if c[:2] == ["make", "olddefconfig"])
+    idx_flash = next(i for i, c in enumerate(calls) if c[:2] == ["make", "flash"])
+    assert idx_cfg < idx_flash
+
+
+async def test_can_verify_skipped_on_same_version_reflash(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A failed CAN write is NOT rescued by the version check when the node already ran the same
+    version before the flash - the old firmware answering proves nothing."""
+    settings, calls = _flash_env(tmp_path, monkeypatch)
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 1 if any("flashtool.py" in x for x in cmd) else 0
+        return
+        yield ""  # pragma: no cover
+
+    async def pre_version(_u: str, _m: str) -> str:
+        return "v0.13.0-1"
+
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "_can_txqueuelen", lambda _i: _none())
+    monkeypatch.setattr(flash_service, "_can_node_version", pre_version)
+    monkeypatch.setattr(flash_service, "read_build_info", lambda _d, _p: {"version": "v0.13.0-1"})
+
+    async def _resolve(_d: str, _m: str):  # type: ignore[no-untyped-def]
+        return "aabbccddeeff", None
+
+    monkeypatch.setattr(flash_service, "resolve_can_uuid", _resolve)
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "can", "aabbccddeeff", "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    # the same-version rescue is skipped: straight to the honest failure
+    assert "checking via Klipper" not in log
+    assert "Flash failed" in log
+
+
+async def _none():  # type: ignore[no-untyped-def]
+    return None
 
 
 def test_bootloader_serial_path(monkeypatch) -> None:
