@@ -1109,6 +1109,16 @@ async def run_flash(
                     " - flashing it directly.\n"
                 )
                 target = already
+            elif not os.path.exists(target) and await _dfu_device_present():
+                # The board's port is gone and a DFU device is on USB: a previous attempt left the
+                # board parked in ROM DFU (a state our own failure policy deliberately produces).
+                # Flash it over DFU at the profile's linked address instead of failing again.
+                # (With two+ DFU devices present dfu-util refuses the ambiguity - fail-safe.)
+                yield (
+                    ">>> The board's serial port is gone and a board is waiting in ROM DFU - "
+                    f"continuing as a DFU flash at {offset}.\n"
+                )
+                method = "dfu"
             else:
                 # Snapshot DFU presence BEFORE the reboot: the fallback below must only fire on a
                 # DFU device that NEWLY appeared (i.e. this board), never on some other STM32
@@ -1132,27 +1142,19 @@ async def run_flash(
                 elif not os.path.exists(target) and not dfu_before and await _dfu_device_present():
                     # No Katapult on this board: the bootloader request dropped it into ROM DFU
                     # (the DFU device appeared only after OUR reboot request, so it is this board).
-                    if offset != _DEFAULT_OFFSET:
-                        # The profile is linked for a bootloader offset, but the board just proved
-                        # it has no Katapult - flashing at that offset would "succeed" and never
-                        # boot. Refuse honestly instead.
-                        yield (
-                            f"!! This profile expects a bootloader (firmware linked at {offset}), "
-                            "but the board has no Katapult -\n"
-                            "!! it rebooted into ROM DFU instead. Rebuild the profile without a "
-                            "bootloader offset, then flash again.\n"
-                        )
-                        yield _phase("restart")
-                        yield ">>> Restarting Klipper…\n"
-                        async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
-                            yield line
-                        klipper_restarted = True
-                        yield "!! Flash aborted - nothing was written to the board.\n"
-                        return
+                    # Writing at the profile's linked address is always the correct write - boards
+                    # with a stock (non-Katapult) bootloader at the flash base, like most Octopus
+                    # family boards, are flashed at their offset exactly this way.
                     yield (
                         ">>> The board rebooted into ROM DFU instead of Katapult - continuing as "
-                        f"a DFU flash at offset {offset}.\n"
+                        f"a DFU flash at {offset}.\n"
                     )
+                    if offset != _DEFAULT_OFFSET:
+                        yield (
+                            ">>> (The board's bootloader region at the flash base is left "
+                            "untouched. If the board does not boot after this, rebuild the "
+                            "profile without a bootloader offset and flash again.)\n"
+                        )
                     method = "dfu"
                 elif not os.path.exists(target):
                     yield (
