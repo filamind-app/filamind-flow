@@ -19,9 +19,18 @@ from typing import Any
 import httpx
 
 from app.config import Settings
+from app.services.build_tools import flash_python
 
 _BEACON_GLOB = "/dev/serial/by-id/*Beacon_Beacon_Rev*"
 _BEACON_RE = re.compile(r"Beacon_Beacon_(Rev[A-Za-z0-9]+)_([A-Za-z0-9]+)")
+
+#: The flash-progress marker contract shared with the Firmware widget: it promotes the stream's
+#: ``::phase::<code>`` lines to the progress bar, and ``done`` is what turns the panel green.
+_PHASE = "::phase::"
+
+
+def _phase(code: str) -> str:
+    return f"{_PHASE}{code}\n"
 
 
 def _parse_beacon(by_id: str) -> dict[str, str] | None:
@@ -91,7 +100,13 @@ async def gather_beacons(moonraker_url: str) -> dict[str, Any]:
 
 
 async def flash_beacon(device: str, settings: Settings) -> AsyncIterator[str]:
-    """Updates a Beacon probe through the plugin's ``update_firmware.py``."""
+    """Updates a Beacon probe through the plugin's ``update_firmware.py``.
+
+    Emits the same ``::phase::`` markers as a board flash so the widget shows the same progress
+    bar and green completion state, and reports the updater's REAL outcome - its exit code used to
+    be ignored, so a failed update still printed "complete".
+    """
+    yield _phase("start")
     repo = await beacon_repo_path(settings.moonraker_url)
     if not repo:
         yield "!! Could not find the Beacon plugin via Moonraker's update_manager.\n"
@@ -100,10 +115,13 @@ async def flash_beacon(device: str, settings: Settings) -> AsyncIterator[str]:
     if not os.path.isfile(script):
         yield f"!! Beacon updater not found at {script}.\n"
         return
+    yield _phase("write")
     yield f">>> Updating Beacon {device} via update_firmware.py…\n"
     try:
+        # The updater talks to the probe over serial - run it under a pyserial-capable
+        # interpreter, never a bare PATH `python3` (the #569 class).
         proc = await asyncio.create_subprocess_exec(
-            "python3",
+            flash_python(),
             script,
             "update",
             device,
@@ -119,5 +137,9 @@ async def flash_beacon(device: str, settings: Settings) -> AsyncIterator[str]:
         if not raw:
             break
         yield raw.decode(errors="replace")
-    await proc.wait()
+    rc = await proc.wait()
+    if rc != 0:
+        yield f"!! Beacon update failed - update_firmware.py exited with code {rc}.\n"
+        return
+    yield _phase("done")
     yield ">>> Beacon update complete - verify it reconnects in Mainsail.\n"
