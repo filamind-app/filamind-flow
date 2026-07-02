@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "Chip",
       "firmware": "Firmware",
+      "lastFlashed": "Zuletzt geflasht",
       "board": "Platine",
       "unknown": "unbekannt",
       "identifier": "Kennung",

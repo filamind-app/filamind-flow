@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "Çip",
       "firmware": "Firmware",
+      "lastFlashed": "Son yükleme",
       "board": "Kart",
       "unknown": "bilinmiyor",
       "identifier": "Tanımlayıcı",

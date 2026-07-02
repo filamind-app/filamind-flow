@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "الشريحة",
       "firmware": "البرنامج الثابت",
+      "lastFlashed": "آخر فلاش",
       "board": "اللوحة",
       "unknown": "غير معروف",
       "identifier": "المُعرّف",

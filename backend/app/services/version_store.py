@@ -114,3 +114,22 @@ def flashed_version(data_dir: str, board_id: str) -> str | None:
     """The firmware version last flashed to a board, if recorded."""
     record = flash_records(data_dir).get(board_id)
     return record.get("version") if isinstance(record, dict) else None
+
+
+def flashed_record(data_dir: str, identities: set[str] | list[str]) -> dict[str, Any] | None:
+    """The newest flash record matching ANY of a board's identities.
+
+    A board enumerates under different ids across its lifetime (runtime serial path, the
+    bootloader-renamed port, a bound ``serial_id``/``dfu_id``) - a record written under one
+    identity must stay visible under the others, or the version vanishes exactly when the user
+    checks it before a flash.
+    """
+    records = flash_records(data_dir)
+    hits: list[dict[str, Any]] = []
+    for identity in identities:
+        record = records.get(str(identity)) if identity else None
+        if isinstance(record, dict):
+            hits.append(record)
+    if not hits:
+        return None
+    return max(hits, key=lambda r: str(r.get("flashed_at") or ""))

@@ -675,6 +675,12 @@ onUnmounted(() => {
             class="flex items-center justify-between gap-2 rounded-brutal border-2 border-ink px-2 py-1"
           >
             <span class="min-w-0 flex-1 truncate font-bold">{{ p.name }}</span>
+            <span
+              v-if="p.current_version"
+              class="shrink-0 font-mono text-[11px] opacity-60"
+              dir="ltr"
+              >v{{ p.current_version }}</span
+            >
             <span class="shrink-0 font-mono text-[10px] uppercase opacity-50">beacon</span>
             <button
               class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5 text-[11px]"

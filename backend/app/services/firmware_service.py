@@ -8,11 +8,27 @@ from typing import Any
 
 import httpx
 
+from app.services import external_firmware
 from app.services.moonraker_client import MoonrakerClient
 from app.services.version_store import flashed_version
 
 #: A Klipper 'Linux process' MCU connects over this host Unix socket.
 _HOST_MCU_SOCKET = "klipper_host_mcu"
+
+#: Where the Linux-process host MCU binary is installed.
+_HOST_MCU_BINARY = "/usr/local/bin/klipper_mcu"
+
+
+def _host_binary_version() -> str | None:
+    """The version stamped inside the installed ``klipper_mcu`` binary (Klipper's standard
+    embedded stamp) - a truthful version even when FilaMind never flashed the host MCU itself."""
+    if not os.path.isfile(_HOST_MCU_BINARY):
+        return None
+    try:
+        version = external_firmware.inspect_firmware(_HOST_MCU_BINARY).get("detected_version")
+    except OSError:
+        return None
+    return str(version) if version else None
 
 
 def _normalize(version: str | None) -> str:
@@ -134,7 +150,10 @@ async def gather_status(
         "host_mcu": {
             "configured": any(m["kind"] == "host" for m in mcus),
             "service_active": service_active,
-            "version": flashed_version(data_dir, "linux_process"),
+            # Prefer the version stamped in the installed binary (always current); fall back to
+            # the last-flashed record for hosts where the binary can't be read.
+            "version": await asyncio.to_thread(_host_binary_version)
+            or flashed_version(data_dir, "linux_process"),
         },
         "tools": _scan_tools(klipper_dir, katapult_dir),
     }

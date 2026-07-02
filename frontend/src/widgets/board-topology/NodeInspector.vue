@@ -423,6 +423,11 @@ function onPickCan(id: string | null): void {
         <span class="opacity-60">{{ t('boardTopology.mcu.firmware') }}:</span>
         <span dir="ltr">{{ mcu.firmware }}</span>
       </div>
+      <!-- live version unavailable (klippy down): show the last-FLASHED record, honestly labelled -->
+      <div v-else-if="mcu.last_flashed" class="font-mono">
+        <span class="opacity-60">{{ t('boardTopology.mcu.lastFlashed') }}:</span>
+        <span dir="ltr">{{ mcu.last_flashed }}</span>
+      </div>
 
       <div
         v-if="mcu.identifier"

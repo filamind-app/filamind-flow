@@ -1012,6 +1012,22 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     # only way to identify a CAN MCU's chip + every MCU's running firmware. Best-effort.
     with contextlib.suppress(httpx.HTTPError):
         await _enrich_live_mcus(client, result, sections)
+    # When the live read gave no firmware (klippy in error/startup - exactly when users open the
+    # topology to debug), fall back to the last-FLASHED record so the node isn't blank. Kept in a
+    # separate field so the UI can label its provenance honestly.
+    if data_dir:
+        from app.services import devices_store, version_store
+        from app.services.board_service import _linked_identities
+
+        registry = devices_store.read_devices(data_dir)
+        for m in result.get("mcus", []):
+            if m.get("firmware") or not m.get("identifier"):
+                continue
+            record = version_store.flashed_record(
+                data_dir, _linked_identities(str(m["identifier"]), registry)
+            )
+            if record and record.get("version"):
+                m["last_flashed"] = str(record["version"])
     # Identify the host SBC (optional - older Moonraker may lack /machine/system_info; degrade
     # gracefully so the topology still returns).
     try:

@@ -52,6 +52,8 @@ export interface TopologyMcu {
   board_candidates?: string[]
   /** Running firmware version of this MCU (from the live mcu object); null on an offline read. */
   firmware?: string | null
+  /** The last version FilaMind flashed to this board - shown (labelled) when `firmware` is null. */
+  last_flashed?: string | null
   /** The components (steppers / drivers / heaters / fans / sensors) that live on this MCU. */
   components?: TopologyComponent[]
   /** Set when the user added this node manually; the manual entry's id (for edit/remove). */

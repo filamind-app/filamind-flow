@@ -63,6 +63,34 @@ async def test_flash_beacon_emits_phases_and_reports_failure(tmp_path, monkeypat
     assert "Beacon update failed" in log and "code 3" in log
 
 
+def test_probe_version_bcd_parse(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """bcdDevice is BCD-encoded ('0210' -> '2.10'); unreadable / malformed values yield None."""
+    sysdir = tmp_path / "sys"
+    sysdir.mkdir()
+    (sysdir / "bcdDevice").write_text("0210\n")
+
+    real_realpath = beacon_service.os.path.realpath
+
+    def fake_realpath(p: str) -> str:
+        if "by-id" in str(p):
+            return "/dev/ttyACM7"
+        if "ttyACM7" in str(p):
+            return str(sysdir)
+        return real_realpath(p)
+
+    real_join = beacon_service.os.path.join
+    monkeypatch.setattr(beacon_service.os.path, "realpath", fake_realpath)
+    monkeypatch.setattr(
+        beacon_service.os.path,
+        "join",
+        lambda *a: str(sysdir / "bcdDevice") if a[-1] == "bcdDevice" else real_join(*a),
+    )
+    assert beacon_service._probe_current_version("/dev/serial/by-id/usb-Beacon-if00") == "2.10"
+    # malformed content -> None
+    (sysdir / "bcdDevice").write_text("xyz\n")
+    assert beacon_service._probe_current_version("/dev/serial/by-id/usb-Beacon-if00") is None
+
+
 def test_beacon_route_graceful_without_hardware() -> None:
     app = create_app()
     app.dependency_overrides[get_settings] = lambda: Settings(moonraker_url="http://127.0.0.1:1")

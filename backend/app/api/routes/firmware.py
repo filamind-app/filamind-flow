@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re
 from typing import Any
 
 import httpx
@@ -401,7 +402,19 @@ async def firmware_devices(settings: Settings = Depends(get_settings)) -> Device
     records = flash_records(settings.data_dir)
     devices: list[Device] = []
     for device in devices_store.read_devices(settings.data_dir):
-        record = records.get(device["id"]) or {}
+        # Look the record up under ALL the device's identities (runtime id + bound serial/dfu ids
+        # + the bootloader-renamed port) - a flash recorded under a re-enumerated id must not
+        # vanish from the panel.
+        identities: list[str] = []
+        for key in ("id", "serial_id", "dfu_id"):
+            value = str(device.get(key) or "")
+            if value:
+                identities.append(value)
+                identities.append(re.sub(r"(?i)(usb-)Klipper(_)", r"\1katapult\2", value))
+                identities.append(re.sub(r"(?i)(usb-)katapult(_)", r"\1Klipper\2", value))
+        record: dict[str, Any] = next(
+            (records[i] for i in identities if isinstance(records.get(i), dict)), {}
+        )
         device["flashed_version"] = record.get("version")
         device["flashed_commit"] = record.get("commit")
         device["last_flashed"] = record.get("flashed_at")

@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "Chip",
       "firmware": "Firmware",
+      "lastFlashed": "Laatst geflasht",
       "board": "Kaart",
       "unknown": "onbekend",
       "identifier": "Identificatie",

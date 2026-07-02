@@ -59,6 +59,7 @@
     "mcu": {
       "chip": "Chip",
       "firmware": "Firmware",
+      "lastFlashed": "Lần nạp cuối",
       "board": "Bo mạch",
       "unknown": "không rõ",
       "identifier": "Định danh",
