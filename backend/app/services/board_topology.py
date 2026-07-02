@@ -53,15 +53,16 @@ def _resolve_board_id(
     signature: str,
     boards: list[dict[str, Any]],
     section: str = "",
-) -> tuple[str | None, float]:
+) -> tuple[str | None, float, list[str]]:
     """Map a detected MCU to a catalog ``board_id``.
 
     Tries each board's folded ``matchPatterns`` against the connection signature (serial / canbus
-    id) and, as a weaker signal, the MCU's config section name (e.g. ``[mcu eddy]`` -> ``eddy``) -
-    how standalone accessory boards such as eddy scanners are usually named, since their serial id
-    reveals only the chip. Falls back to a normalized-name match against the ``board_patterns``
-    guess. Returns ``(board_id, confidence)`` - often ``(None, 0)``, as a serial / canbus id
-    usually reveals only the chip, not the board.
+    id) and, as a weaker signal, the MCU's config section name. When no pattern hits, the section
+    name and the pattern-level guess are matched DIRECTLY against every board's name / model /
+    aliases - users overwhelmingly name a section after the board (``[mcu ebb36]``), and a serial
+    id reveals only the chip, so this is often the only board-level signal. Returns
+    ``(board_id, confidence, candidates)``: a unique name hit is a suggestion; several same-name
+    catalog variants come back as an honest ``candidates`` shortlist instead of a silent pick.
     """
     sig = signature.lower()
     sec = (section or "").lower()
@@ -81,15 +82,29 @@ def _resolve_board_id(
                 if sconf > best[1]:
                     best = (b.get("board_id"), sconf)
     if best[0]:
-        return best
-    if board_name:
-        nb = _norm(board_name)
+        return best[0], best[1], []
+    hits: dict[str, float] = {}
+    for probe, conf in ((board_name, 0.5), (section, 0.45)):
+        np_ = _norm(probe)
+        if len(np_) < 5:
+            continue
         for b in boards:
+            bid = str(b.get("board_id") or "")
+            if not bid:
+                continue
             for cand in (b.get("model"), b.get("display_name"), *(b.get("aliases") or [])):
                 nc = _norm(cand)
-                if nc and len(nc) > 4 and (nc in nb or nb in nc):
-                    return (b.get("board_id"), 0.5)
-    return (None, 0.0)
+                if nc and len(nc) > 4 and (nc in np_ or np_ in nc):
+                    hits[bid] = max(hits.get(bid, 0.0), conf)
+                    break
+    if len(hits) == 1:
+        bid, conf = next(iter(hits.items()))
+        return bid, conf, []
+    if len(hits) > 1:
+        # Several catalog variants share the name (EBB36 v1.0/v1.1/…): report the shortlist for
+        # the user's confirm flow rather than silently picking one variant.
+        return None, 0.0, sorted(hits, key=lambda k: (-hits[k], k))[:8]
+    return None, 0.0, []
 
 
 def _connection(cfg: dict[str, Any]) -> dict[str, Any]:
@@ -387,23 +402,51 @@ _FINGERPRINT_MIN_JACCARD = 0.45
 _FINGERPRINT_MIN_MARGIN = 0.15
 
 
-def _fingerprint_board(used: set[str], boards: list[dict[str, Any]]) -> tuple[str | None, float]:
+#: Catalog pseudo-boards that must never be fingerprint candidates: printer presets duplicate
+#: their real mainboard's pin-map (zeroing the ambiguity margin) and hosts are not MCU boards.
+_NON_FP_CLASSES = ("printer-preset", "host")
+
+
+def _fingerprint_candidates(
+    boards: list[dict[str, Any]], mcu_id: str | None, connection: str
+) -> list[dict[str, Any]]:
+    """The cleaned fingerprint pool: pseudo-boards excluded, chip-narrowed when the chip is known
+    (a board can never match a chip it doesn't carry), and connection-narrowed like the live path.
+    Falls back to the un-narrowed (but still cleaned) pool so it can never over-narrow to nothing.
+    """
+    pool = [b for b in boards if str(b.get("boardClass") or "").lower() not in _NON_FP_CLASSES]
+    if mcu_id:
+        chipped = [
+            b for b in pool if mcu_id in {mid for mid, _, _ in hardware_links.board_mcu_ids(b)}
+        ]
+        if chipped:
+            pool = chipped
+    return _narrow_by_connection(pool, connection)
+
+
+def _fingerprint_board(
+    used: set[str], boards: list[dict[str, Any]]
+) -> tuple[str | None, float, list[str]]:
     """Match the printer's used pin set to a catalog board by containment (how many of the used
     pins exist in the board's pin-map), guarded against ambiguous matches. A strong, board-specific
-    signal - unlike a serial id, which reveals only the chip. Returns ``(board_id, confidence)`` or
-    ``(None, 0)`` when no board is a confident, unambiguous match.
+    signal - unlike a serial id, which reveals only the chip. Returns
+    ``(board_id, confidence, candidates)``: ``(None, 0, [...])`` carries the tied shortlist when
+    several boards match equally well (an honest input for the user's confirm flow).
 
     Containment alone favours *large* boards (more pins → more likely to contain any given pin), so
     a toolhead's few generic pins can tie across many small boards. The guard accepts the top board
     only when it also clears a Jaccard floor (its pin-map size fits) *or* beats the next distinct
-    board's containment by a margin - otherwise the match is ``None`` (no confident board).
+    board's containment by a margin - otherwise no single board is named.
     """
     if len(used) < 5:
-        return None, 0.0  # too few pins to discriminate
+        return None, 0.0, []  # too few pins to discriminate
     scored: list[tuple[float, float, str | None]] = []
     for b in boards:
         bp = _board_pin_set(b)
-        if len(bp) < 10:
+        # Toolhead boards legitimately have small pin-maps (an EBB36 documents 6-9 pins) - for
+        # them the fingerprint is often the ONLY board-level signal, so allow a lower floor.
+        floor = 6 if _board_role(b) == "toolhead" else 10
+        if len(bp) < floor:
             continue  # board has too sparse a pin-map to fingerprint against
         inter = len(used & bp)
         containment = inter / len(used)
@@ -411,17 +454,23 @@ def _fingerprint_board(used: set[str], boards: list[dict[str, Any]]) -> tuple[st
         jaccard = inter / union if union else 0.0
         scored.append((containment, jaccard, b.get("board_id")))
     if not scored:
-        return None, 0.0
+        return None, 0.0, []
     scored.sort(key=lambda s: (s[0], s[1]), reverse=True)
     best_containment, best_jaccard, best_id = scored[0]
     if best_containment < _FINGERPRINT_MIN_CONTAINMENT:
-        return None, 0.0
+        return None, 0.0, []
     # Containment margin over the next *distinct* board (~0 when several boards tie at the top).
     runner = next((s for s in scored[1:] if s[2] != best_id), None)
     margin = best_containment - runner[0] if runner else best_containment
     if best_jaccard < _FINGERPRINT_MIN_JACCARD and margin < _FINGERPRINT_MIN_MARGIN:
-        return None, 0.0  # weak overlap AND ambiguous → not a real board match
-    return best_id, round(best_containment, 2)
+        # Weak overlap AND ambiguous: no confident single board. Surface the near-tied top
+        # boards as a shortlist instead of throwing the signal away.
+        tied = [
+            str(s[2]) for s in scored if s[2] and s[0] >= best_containment - _FINGERPRINT_MIN_MARGIN
+        ]
+        unique = list(dict.fromkeys(tied))
+        return None, 0.0, unique[:8] if len(unique) > 1 else []
+    return best_id, round(best_containment, 2), []
 
 
 def _board_role(board: dict[str, Any]) -> str | None:
@@ -535,13 +584,9 @@ def analyze(
             signature = str(conn.get("id") or "")
             chip, _ = _match(mpats, signature, "mcu")
             board, confidence = _match(bpats, signature, "board")
-            board_id, board_id_conf = _resolve_board_id(board, signature, catalog, mcu_name)
-            # Pin-fingerprint: match the printer's used pin set on this MCU against each board's
-            # verbatim pin-map - a board-specific signal a serial id can't give. Use it when it
-            # beats (or fills in for) the signature-based guess.
-            fp_id, fp_conf = _fingerprint_board(_used_pins(sections, mcu_name), catalog)
-            if fp_id and (board_id is None or fp_conf > board_id_conf):
-                board_id, board_id_conf = fp_id, fp_conf
+            board_id, board_id_conf, board_candidates = _resolve_board_id(
+                board, signature, catalog, mcu_name
+            )
             # Join the detected chip to a canonical DB MCU entity (one of the first-class MCUs) -
             # a reliable DB anchor even when no board_id resolves. null for unrecognised chips.
             norm = hardware_links.normalize_mcu(chip or signature or "")
@@ -549,6 +594,18 @@ def analyze(
             mcu_family: str | None = None
             if norm and reference_data.mcu_by_id(norm[0]):
                 mcu_id, _, mcu_family = norm
+            # Pin-fingerprint: match the printer's used pin set on this MCU against each board's
+            # verbatim pin-map - a board-specific signal a serial id can't give. The pool is
+            # cleaned (no printer-presets/hosts) + chip- and connection-narrowed, so a real board
+            # can't lose its margin to a preset that mirrors its pin-map.
+            fp_id, fp_conf, fp_candidates = _fingerprint_board(
+                _used_pins(sections, mcu_name),
+                _fingerprint_candidates(catalog, mcu_id, conn["type"]),
+            )
+            if fp_id and (board_id is None or fp_conf > board_id_conf):
+                board_id, board_id_conf, board_candidates = fp_id, fp_conf, []
+            elif fp_candidates and not board_id and not board_candidates:
+                board_candidates = fp_candidates
             mcus.append(
                 {
                     "name": mcu_name,
@@ -564,8 +621,14 @@ def analyze(
                     # null - a serial/canbus id usually reveals only the chip. Surfaced as
                     # a *suggested* match the user can override.
                     "board_id": board_id,
-                    "board_match": "suggested" if board_id else None,
+                    "board_match": "suggested"
+                    if board_id
+                    else ("ambiguous" if board_candidates else None),
                     "board_match_confidence": board_id_conf,
+                    # When no single board wins but several catalog variants match equally
+                    # (same-name variants / a fingerprint tie): an honest shortlist the UI feeds
+                    # into the per-MCU confirm flow. Empty when identified or truly unknown.
+                    "board_candidates": board_candidates,
                     # Running firmware version (e.g. "v0.13.0-628-g…"); filled from the live MCU
                     # object by gather_topology - null on a config-only (offline) analyze.
                     "firmware": None,
@@ -594,6 +657,7 @@ def apply_overrides(result: dict[str, Any], overrides: dict[str, dict[str, Any]]
             mcu["board_id"] = override["board_id"]
             mcu["board_match"] = "confirmed"
             mcu["board_match_confidence"] = 1.0
+            mcu["board_candidates"] = []  # the user's pick supersedes any shortlist
 
 
 def apply_manual_additions(result: dict[str, Any], additions: dict[str, dict[str, Any]]) -> None:
@@ -718,18 +782,14 @@ async def _enrich_live_mcus(
         if norm and reference_data.mcu_by_id(norm[0]):
             m["mcu_id"], _, m["mcu_family"] = norm
         # Chip-narrowed pin-fingerprint - a confident, board-specific guess the config alone can't
-        # give. Skip a user-confirmed board and an unrecognised chip.
+        # give. Skip a user-confirmed board and an unrecognised chip. The pool is the same cleaned
+        # set the offline analyze uses (no presets/hosts, chip- + connection-narrowed).
         if m.get("board_match") == "confirmed" or not norm:
             continue
-        candidates = [
-            b for b in boards if norm[0] in {mid for mid, _, _ in hardware_links.board_mcu_ids(b)}
-        ]
+        candidates = _fingerprint_candidates(boards, norm[0], str(m.get("connection") or ""))
         if not candidates:
             continue
-        # Narrow same-chip candidates by how this MCU connects (a CAN MCU is almost always a
-        # toolhead board), so an EBB SB2209's few generic pins don't tie with a same-chip mainboard.
-        candidates = _narrow_by_connection(candidates, str(m.get("connection") or ""))
-        fp_id, fp_conf = _fingerprint_board(
+        fp_id, fp_conf, fp_candidates = _fingerprint_board(
             _used_pins(sections, str(m.get("name") or "")), candidates
         )
         if fp_id and (
@@ -740,6 +800,10 @@ async def _enrich_live_mcus(
                 "suggested",
                 fp_conf,
             )
+            m["board_candidates"] = []
+        elif fp_candidates and not m.get("board_id") and not m.get("board_candidates"):
+            m["board_candidates"] = fp_candidates
+            m["board_match"] = "ambiguous"
 
 
 #: External USB-CAN dongles all present as the candleLight ``gs_usb`` driver - a BTT U2C, a Canable

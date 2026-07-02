@@ -1302,8 +1302,11 @@ class TopologyMcu(BaseModel):
     board: str | None = None
     confidence: float = 0.0
     board_id: str | None = None
+    # "suggested" | "confirmed" | "ambiguous" (several catalog variants match equally) | null.
     board_match: str | None = None
     board_match_confidence: float = 0.0
+    # The tied shortlist when board_match == "ambiguous" - board_ids for the confirm flow.
+    board_candidates: list[str] = []
     # Running firmware version of this MCU (from the live mcu object); null on an offline read.
     firmware: str | None = None
     components: list[TopologyComponent] = []

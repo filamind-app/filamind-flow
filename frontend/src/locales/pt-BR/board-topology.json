@@ -109,6 +109,7 @@
       "specsTitle": "Especificações",
       "portsTitle": "Portas",
       "none": "Ainda não há detalhes de catálogo para esta placa.",
+      "ambiguous": "Várias variantes do catálogo correspondem a esta placa — escolha a sua para confirmar:",
       "noMatch": "Nenhuma placa coincidiu ainda - confirme ou defina uma abaixo.",
       "loading": "Carregando placa…",
       "links": {

@@ -163,10 +163,18 @@ def _as_str_list(value: Any) -> list[str]:
 
 _HW_ITEMS = _rows("items")
 _HW_BOARDS = _rows("boards")
-# Normalise a board field the catalog sometimes stores as a bare string (see _as_str_list).
+# Normalise board fields the catalog sometimes stores in a legacy shape (see _as_str_list).
 for _b in _HW_BOARDS:
     if "configNotes" in _b:
         _b["configNotes"] = _as_str_list(_b.get("configNotes"))
+    # matchPatterns entries are dicts ({pattern, confidence}) for most boards but bare pattern
+    # strings for a few - left as strings, every consumer silently drops them.
+    if isinstance(_b.get("matchPatterns"), list):
+        _b["matchPatterns"] = [
+            mp if isinstance(mp, dict) else {"pattern": str(mp).strip(), "confidence": 0.5}
+            for mp in _b["matchPatterns"]
+            if (isinstance(mp, dict) and mp.get("pattern")) or (isinstance(mp, str) and mp.strip())
+        ]
 _HW_DRIVERS = _rows("drivers")
 _HW_MOTORS = _rows("motors")
 _HW_HOSTS = _rows("hosts")

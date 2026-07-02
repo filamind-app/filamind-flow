@@ -98,6 +98,7 @@
         "datasheet": "Datenblatt",
         "image": "Foto"
       },
+      "ambiguous": "Mehrere Katalogvarianten passen zu dieser Platine – wähle deine zur Bestätigung:",
       "noMatch": "Noch kein Board zugeordnet — unten bestätigen oder festlegen.",
       "portCat": {
         "motor": "Motor",

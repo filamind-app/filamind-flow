@@ -109,6 +109,7 @@
       "specsTitle": "Specs",
       "portsTitle": "Ports",
       "none": "No catalog details for this board yet.",
+      "ambiguous": "Several catalog variants match this board - pick yours to confirm:",
       "noMatch": "No board matched yet - confirm or set one below.",
       "loading": "Loading board…",
       "links": {

@@ -109,6 +109,7 @@
       "specsTitle": "Spesifikasi",
       "portsTitle": "Port",
       "none": "Belum ada detail katalog untuk board ini.",
+      "ambiguous": "Beberapa varian katalog cocok dengan papan ini — pilih milik Anda untuk konfirmasi:",
       "noMatch": "Belum ada board yang cocok - konfirmasi atau setel satu di bawah.",
       "loading": "Memuat board…",
       "links": {

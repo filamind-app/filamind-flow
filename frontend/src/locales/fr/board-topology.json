@@ -98,6 +98,7 @@
         "datasheet": "Fiche technique",
         "image": "Photo"
       },
+      "ambiguous": "Plusieurs variantes du catalogue correspondent à cette carte — choisissez la vôtre pour confirmer :",
       "noMatch": "Aucune carte correspondante pour l'instant — confirmez ou choisissez-en une ci-dessous.",
       "portCat": {
         "motor": "moteur",
