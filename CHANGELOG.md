@@ -6,6 +6,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.16.0] - 2026-07-02
+
+### Added
+
+- **Firmware Manager — automatic ROM-DFU fallback.** On boards without a Katapult bootloader
+  (native-USB STM32), asking the board to enter its bootloader drops it into the chip's ROM DFU
+  instead — previously the serial flash then ran against the now-vanished serial port, failed, and
+  left the board stranded in DFU with Klipper down. FilaMind now probes what the board actually
+  became after the bootloader request: a Katapult port (flashed over serial), a ROM DFU device
+  (**automatically flashed via DFU at the profile's offset**), or gone (the flash is aborted cleanly
+  before anything is written, with recovery guidance). No manual intervention needed.
+
+### Fixed
+
+- **Firmware Manager — a failed DFU flash was reported (and recorded) as a success.** dfu-util's
+  exit was never checked: all attempts could fail and the log still said "Flash sequence complete"
+  while the version registry recorded the new firmware. A DFU flash now reports its real outcome,
+  explains the failure (no device in DFU / wrong offset range / permissions), only boots the board
+  (`:leave`) after a *successful* write — a failed write leaves it parked in DFU so it can simply be
+  flashed again — and a DFU flash is refused up front when no DFU device is present.
+- **Firmware Manager — a closed tab or cancelled batch mid-flash left Klipper stopped.** The flash
+  stream stops Klipper, writes, then restarts it; if the browser disconnected in between, the
+  restart never ran and the printer stayed down (with the flash tool still running against the
+  board). Klipper is now always brought back — a detached restart fires on any abnormal end of the
+  flash stream — and an interrupted flash tool process is terminated instead of orphaned.
+
 ## [1.15.2] - 2026-07-02
 
 ### Fixed

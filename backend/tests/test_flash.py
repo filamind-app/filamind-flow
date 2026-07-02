@@ -728,6 +728,163 @@ async def test_flash_serial_surfaces_pyserial_error(tmp_path: Path, monkeypatch)
     assert "exited with code 1" in log  # the generic line still follows
 
 
+def _flash_env(tmp_path: Path, monkeypatch, profile: str = "p", config: str = "CONFIG_X=y\n"):  # type: ignore[no-untyped-def]
+    """Shared run_flash test scaffolding: artifact+profile on disk, guards mocked, call recorder."""
+    data = tmp_path / "data"
+    Path(artifacts_dir(str(data)), f"{profile}.bin").write_bytes(b"\x00")
+    Path(profiles_dir(str(data)), f"{profile}.config").write_text(config)
+    calls: list[list[str]] = []
+
+    async def no_print(_url: str) -> bool:
+        return False
+
+    async def sudo_ok() -> bool:
+        return True
+
+    async def fast_sleep(*_a: object, **_k: object) -> None:
+        return None
+
+    monkeypatch.setattr(flash_service, "_is_printing", no_print)
+    monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
+    monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    settings = Settings(
+        moonraker_url="http://127.0.0.1:1",
+        katapult_dir="/kat",
+        klipper_dir=str(tmp_path / "klipper"),
+        data_dir=str(data),
+    )
+    return settings, calls
+
+
+async def test_flash_dfu_failure_is_reported(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A DFU flash whose every dfu-util attempt fails is reported as FAILED (not recorded as a
+    success), no ':leave' runs (the board stays parked in DFU), and a diagnosis is shown."""
+    settings, calls = _flash_env(tmp_path, monkeypatch)
+
+    async def dfu_present() -> bool:
+        return True
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if "dfu-util" in cmd and "-D" in cmd:
+            yield "dfu-util: No DFU capable USB device available\n"
+            if result is not None:
+                result["rc"] = 74
+            return
+        if result is not None:
+            result["rc"] = 0
+        return
+
+    monkeypatch.setattr(flash_service, "_dfu_device_present", dfu_present)
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    recorded: list[str] = []
+    monkeypatch.setattr(flash_service, "record_flash", lambda *a, **k: recorded.append("x"))
+    log = "".join(
+        [line async for line in flash_service.run_flash("p", "dfu", "0483:df11", "", settings)]
+    )
+    assert "Flash failed - dfu-util exited" in log
+    assert "leaving the board in DFU" in log
+    # the early guard passed (Klipper was stopped for a real attempt); the WRITE failed
+    assert any("stop" in c and "klipper" in c for c in calls)
+    assert "Flash sequence complete" not in log
+    assert recorded == []  # a failed flash must never be recorded
+    assert not any(":leave" in " ".join(c) for c in calls)  # no boot of a half-written app
+
+
+async def test_flash_dfu_refused_when_no_device(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A DFU flash with no 0483:df11 device on USB is refused before Klipper is stopped."""
+    settings, calls = _flash_env(tmp_path, monkeypatch)
+
+    async def dfu_absent() -> bool:
+        return False
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    monkeypatch.setattr(flash_service, "_dfu_device_present", dfu_absent)
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    log = "".join(
+        [line async for line in flash_service.run_flash("p", "dfu", "0483:df11", "", settings)]
+    )
+    assert "No board in DFU mode" in log
+    assert not any("stop" in c and "klipper" in c for c in calls)
+
+
+async def test_serial_reboot_falls_back_to_dfu(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A non-Katapult native-USB board that lands in ROM DFU after the bootloader request is
+    flashed via DFU at the profile offset instead of failing against the vanished serial path."""
+    settings, calls = _flash_env(tmp_path, monkeypatch)
+
+    async def dfu_present() -> bool:
+        return True
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if "dfu-util" in cmd and "-D" in cmd:
+            yield "File downloaded successfully\n"
+        if result is not None:
+            result["rc"] = 0
+        return
+
+    monkeypatch.setattr(flash_service, "_dfu_device_present", dfu_present)
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "bootloader_serial_path", lambda _d: None)
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: False)  # serial path vanished
+    dev = "/dev/serial/by-id/usb-Klipper_stm32h723xx_12001F00-if00"
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "serial", dev, "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    assert "ROM DFU instead of Katapult" in log
+    assert "Flash sequence complete" in log
+    assert any("dfu-util" in c and "-D" in c for c in calls)  # the write really went via DFU
+
+
+async def test_cancel_mid_flash_restarts_klipper(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """Closing the stream mid-write (client disconnect / cancel) still brings Klipper back."""
+    settings, _calls = _flash_env(tmp_path, monkeypatch)
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        if result is not None:
+            result["rc"] = 0
+        yield "line\n"
+
+    restarted: list[str] = []
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "bootloader_serial_path", lambda _d: None)
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: True)
+    monkeypatch.setattr(flash_service, "_restart_klipper_detached", lambda: restarted.append("x"))
+    gen = flash_service.run_flash(
+        "p", "serial", "/dev/ttyACM0", "can0", settings, is_katapult=False
+    )
+    async for line in gen:
+        if "flashtool.py" in line:  # parked inside the write phase
+            break
+    await gen.aclose()
+    assert restarted == ["x"]  # the detached restart fired on the abnormal close
+
+    # ... and a NORMAL completion does not double-restart
+    restarted.clear()
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "serial", "/dev/ttyACM0", "can0", settings, is_katapult=False
+            )
+        ]
+    )
+    assert "Flash sequence complete" in log
+    assert restarted == []
+
+
 def test_bootloader_serial_path(monkeypatch) -> None:
     """A board in the Katapult bootloader is found under usb-katapult_<id>, not usb-Klipper_<id>."""
     kl = "/dev/serial/by-id/usb-Klipper_stm32f103xe_36FFD8054755303931861457-if00"

@@ -20,6 +20,7 @@ import glob
 import os
 import re
 import shutil
+import subprocess
 import tempfile
 from collections.abc import AsyncIterator
 from typing import Any
@@ -486,14 +487,55 @@ async def _stream(
             result["rc"] = 127
         return
     assert proc.stdout is not None
-    while True:
-        raw = await proc.stdout.readline()
-        if not raw:
-            break
-        yield raw.decode(errors="replace")
-    rc = await proc.wait()
-    if result is not None:
-        result["rc"] = rc
+    try:
+        while True:
+            raw = await proc.stdout.readline()
+            if not raw:
+                break
+            yield raw.decode(errors="replace")
+        rc = await proc.wait()
+        if result is not None:
+            result["rc"] = rc
+    finally:
+        # The consumer can vanish mid-run (client disconnect closes the generator at a yield).
+        # Never leave the child (flashtool / dfu-util / make) running orphaned against the board.
+        if proc.returncode is None:
+            with contextlib.suppress(ProcessLookupError, OSError):
+                proc.kill()
+
+
+def _restart_klipper_detached() -> None:
+    """Best-effort fire-and-forget ``systemctl start klipper`` that survives generator teardown.
+
+    A client disconnect (closed tab / dropped proxy) closes the flash stream at a yield, mid
+    stop→write→restart - Klipper must never be left stopped. Plain ``subprocess.Popen`` needs no
+    event-loop cooperation during the unwind, so it works even while the request is being torn down.
+    """
+    with contextlib.suppress(OSError):
+        subprocess.Popen(
+            ["sudo", "-n", "systemctl", "start", "klipper"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            env=build_env(),
+        )
+
+
+async def _dfu_device_present() -> bool:
+    """True if an STM32 ROM-DFU device (0483:df11) is enumerated on USB right now."""
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "sudo",
+            "-n",
+            "dfu-util",
+            "-l",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,
+            env=build_env(),
+        )
+        out, _ = await asyncio.wait_for(proc.communicate(), timeout=10)
+    except (OSError, NotImplementedError, asyncio.TimeoutError):
+        return False
+    return b"0483:df11" in out
 
 
 async def _reboot_to_bootloader(
@@ -702,15 +744,48 @@ async def reboot_to_dfu(device: str) -> AsyncIterator[str]:
     yield ">>> Touch sent - the board should now enumerate as a DFU device.\n"
 
 
+def _diagnose_dfu_failure(tail: list[str], device: str) -> list[str]:
+    """Actionable ``!!`` hints for a failed dfu-util run, from the tail of its output."""
+    blob = "".join(tail).lower()
+    if "no dfu capable usb device" in blob:
+        return [
+            "!! No board in DFU mode was found on USB. Put the board into DFU (or use the\n",
+            "!! 'reboot to DFU' action) and flash again.\n",
+        ]
+    if "not writeable" in blob or "last page" in blob:
+        return [
+            "!! dfu-util refused the write range - the firmware's start offset doesn't fit this\n",
+            "!! chip's flash layout. Rebuild the profile for this exact board, then flash again.\n",
+        ]
+    if "cannot open dfu device" in blob or "permission" in blob or "password is required" in blob:
+        return [
+            "!! Could not open the DFU device (permissions). Update FilaMind - it refreshes the\n",
+            "!! needed access automatically - then flash again.\n",
+        ]
+    return []
+
+
 async def _flash_dfu(
-    device: str, firmware: str, offset: str, attempts: int = 3
+    device: str,
+    firmware: str,
+    offset: str,
+    result: dict[str, int] | None = None,
+    attempts: int = 3,
 ) -> AsyncIterator[str]:
-    """DFU download with retries, then ``:leave`` to return the board to firmware."""
+    """DFU download with retries; ``:leave`` (boot the app) only after a successful write.
+
+    Reports the real outcome via ``result["rc"]`` (0 only when dfu-util's success marker was seen) -
+    a fully failed download must never be recorded as a flash. On failure the board is deliberately
+    left parked in DFU (rebooting a half-written app is worse), and the log says so.
+    """
     cmd = dfu_command(firmware, offset, device)
+    ok = False
+    tail: list[str] = []
     for attempt in range(1, attempts + 1):
         yield f">>> DFU attempt {attempt}/{attempts}: {' '.join(cmd)}\n"
-        ok = False
         async for line in _stream(cmd):
+            tail.append(line)
+            del tail[:-60]
             yield line
             if "success" in line.lower() or "download done" in line.lower():
                 ok = True
@@ -719,6 +794,13 @@ async def _flash_dfu(
         if attempt < attempts:
             yield ">>> DFU failed - retrying…\n"
             await asyncio.sleep(2)
+    if result is not None:
+        result["rc"] = 0 if ok else 1
+    if not ok:
+        for hint in _diagnose_dfu_failure(tail, device):
+            yield hint
+        yield "!! DFU write failed - leaving the board in DFU so it can be flashed again.\n"
+        return
     yield ">>> Exiting DFU (:leave) to return to firmware…\n"
     async for line in _stream(dfu_leave_command(offset, device)):
         yield line
@@ -875,6 +957,12 @@ async def run_flash(
     if method == "make" and device.startswith("/dev/") and not os.path.exists(device):
         yield f"!! The flash device {device} was not found - is the board plugged in?\n"
         return
+    # A DFU flash needs a board that is actually sitting in ROM DFU - fail early and clearly
+    # (before stopping Klipper) instead of letting dfu-util fail three times.
+    if method == "dfu" and not await _dfu_device_present():
+        yield "!! No board in DFU mode was found on USB. Put the board into DFU first (or use\n"
+        yield "!! the 'reboot to DFU' action), then flash again.\n"
+        return
     yield _phase("start")
     yield f">>> Flashing {os.path.basename(artifact)} → {device} via {method}\n"
 
@@ -911,69 +999,115 @@ async def run_flash(
     # A board can re-appear under a new /dev id after a serial flash - snapshot first.
     before = _serial_by_id() if method == "serial" else set()
 
-    # A DFU device is already in its bootloader; only running Katapult boards need
-    # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
-    if method == "serial" and is_katapult:
-        yield _phase("boot")
-        # A USB serial board renames itself once it's in the bootloader (usb-Klipper_<id> →
-        # usb-katapult_<id>), so the stored running-firmware path is gone. If it's already in the
-        # bootloader (e.g. a previous flash didn't finish), flash it directly; otherwise reboot it
-        # and then retarget to the bootloader path that appears. Without this, the flash keeps
-        # pointing at the vanished Klipper path and can never complete - leaving Klipper unable to
-        # connect to the MCU.
-        already = bootloader_serial_path(target)
-        if already:
-            yield (
-                f">>> Board is already in the Katapult bootloader ({os.path.basename(already)}) - "
-                "flashing it directly.\n"
-            )
-            target = already
-        else:
-            async for line in _reboot_to_bootloader(method, target, interface or "can0", settings):
-                yield line
-            booted = bootloader_serial_path(target)
-            if booted:
-                yield f">>> Board entered the bootloader as {os.path.basename(booted)}.\n"
-                target = booted
-    elif method == "can" and is_katapult:
-        # Katapult's flashtool enters the node's bootloader itself: `flashtool.py -u <uuid> -f`
-        # always issues its own jump. A separate pre-jump (`-r`) double-jumps the node - it churns
-        # it app↔Katapult and leaves the flasher's CONNECT failing - so we do NOT pre-reboot for
-        # CAN; the one flash command handles it (a CAN node keeps its UUID in both modes, so unlike
-        # serial there is no renamed path to retarget).
-        yield _phase("boot")
-        yield ">>> The CAN flasher enters the bootloader itself - no pre-reboot needed.\n"
-    elif method in ("serial", "can"):
-        yield ">>> Device is not marked Katapult - skipping reboot-to-bootloader.\n"
-
-    yield _phase("write")
+    # From here Klipper is down: whatever happens (including the client closing the stream at a
+    # yield), it must come back up. The finally fires a detached restart on any abnormal exit.
     flash_result: dict[str, int] = {}
     flash_tool = ""
     tail: list[str] = []
-    if method == "dfu":
-        async for line in _flash_dfu(device, artifact, offset):
-            yield line
-    elif method == "can":
-        flash_tool = "flashtool.py"
-        async for line in _flash_can(target, artifact, interface or "can0", settings, flash_result):
-            tail.append(line)
-            del tail[:-60]
-            yield line
-    else:
-        command = _build_command(method, settings, target, artifact, interface or "can0", offset)
-        flash_tool = os.path.basename(command[0])
-        yield f">>> {' '.join(command)}\n"
-        async for line in _stream(
-            command, cwd=settings.klipper_dir if method == "make" else None, result=flash_result
-        ):
-            tail.append(line)
-            del tail[:-60]  # keep the last ~60 lines to diagnose a make / serial flash failure
-            yield line
+    klipper_restarted = False
+    try:
+        # A DFU device is already in its bootloader; only running Katapult boards need
+        # a reboot. Boards not marked Katapult are flashed directly (skip the reboot).
+        if method == "serial" and is_katapult:
+            yield _phase("boot")
+            # A USB serial board renames itself once it's in the bootloader (usb-Klipper_<id> →
+            # usb-katapult_<id>), so the stored running-firmware path is gone. If it's already in
+            # the bootloader (e.g. a previous flash didn't finish), flash it directly; otherwise
+            # reboot it and then retarget to whatever the board actually became.
+            already = bootloader_serial_path(target)
+            if already:
+                yield (
+                    f">>> Board is already in the Katapult bootloader ({os.path.basename(already)})"
+                    " - flashing it directly.\n"
+                )
+                target = already
+            else:
+                async for line in _reboot_to_bootloader(
+                    method, target, interface or "can0", settings
+                ):
+                    yield line
+                # Probe what the board became (bounded): the Katapult-renamed port, the original
+                # port still present, or - on a board with no Katapult - the STM32 ROM DFU.
+                booted = bootloader_serial_path(target)
+                for _ in range(4):
+                    if booted or os.path.exists(target):
+                        break
+                    if await _dfu_device_present():
+                        break
+                    await asyncio.sleep(2)
+                    booted = bootloader_serial_path(target)
+                if booted:
+                    yield f">>> Board entered the bootloader as {os.path.basename(booted)}.\n"
+                    target = booted
+                elif not os.path.exists(target) and await _dfu_device_present():
+                    # No Katapult on this board: the bootloader request dropped it into ROM DFU.
+                    # Flash it right there instead of failing against the vanished serial port.
+                    yield (
+                        ">>> The board rebooted into ROM DFU instead of Katapult - continuing as "
+                        f"a DFU flash at offset {offset}.\n"
+                    )
+                    method = "dfu"
+                elif not os.path.exists(target):
+                    yield (
+                        "!! After the bootloader request the board is gone from USB (no Katapult "
+                        "port, no DFU device).\n"
+                        "!! Power-cycle the printer to boot the board back into its firmware, "
+                        "then flash again.\n"
+                    )
+                    yield _phase("restart")
+                    yield ">>> Restarting Klipper…\n"
+                    async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
+                        yield line
+                    klipper_restarted = True
+                    yield "!! Flash aborted - nothing was written to the board.\n"
+                    return
+        elif method == "can" and is_katapult:
+            # Katapult's flashtool enters the node's bootloader itself: `flashtool.py -u <uuid> -f`
+            # always issues its own jump. A separate pre-jump (`-r`) double-jumps the node - it
+            # churns it app↔Katapult and leaves the flasher's CONNECT failing - so we do NOT
+            # pre-reboot for CAN; the one flash command handles it (a CAN node keeps its UUID in
+            # both modes, so unlike serial there is no renamed path to retarget).
+            yield _phase("boot")
+            yield ">>> The CAN flasher enters the bootloader itself - no pre-reboot needed.\n"
+        elif method in ("serial", "can"):
+            yield ">>> Device is not marked Katapult - skipping reboot-to-bootloader.\n"
 
-    yield _phase("restart")
-    yield ">>> Restarting Klipper…\n"
-    async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
-        yield line
+        yield _phase("write")
+        if method == "dfu":
+            flash_tool = "dfu-util"
+            async for line in _flash_dfu(device, artifact, offset, flash_result):
+                yield line
+        elif method == "can":
+            flash_tool = "flashtool.py"
+            async for line in _flash_can(
+                target, artifact, interface or "can0", settings, flash_result
+            ):
+                tail.append(line)
+                del tail[:-60]
+                yield line
+        else:
+            command = _build_command(
+                method, settings, target, artifact, interface or "can0", offset
+            )
+            flash_tool = os.path.basename(command[0])
+            yield f">>> {' '.join(command)}\n"
+            async for line in _stream(
+                command, cwd=settings.klipper_dir if method == "make" else None, result=flash_result
+            ):
+                tail.append(line)
+                del tail[:-60]  # keep the last ~60 lines to diagnose a flash failure
+                yield line
+
+        yield _phase("restart")
+        yield ">>> Restarting Klipper…\n"
+        async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
+            yield line
+        klipper_restarted = True
+    finally:
+        # Abnormal exit (client disconnect / cancel / unexpected error) before the restart ran:
+        # bring Klipper back detached - the printer must never be left headless by a dead stream.
+        if not klipper_restarted:
+            _restart_klipper_detached()
 
     # The flash tool failed (non-zero exit). For CAN this is often the read-back VERIFY
     # phase dying on the USB-CAN adapter (sustained node→host flood) AFTER the write
