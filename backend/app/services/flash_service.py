@@ -981,8 +981,10 @@ async def run_flash(
             yield "!! board's bootloader). Set the offset in the firmware's properties, then\n"
             yield "!! flash again.\n"
             return
+        # Read the MCU from the FILE being flashed (best-effort binary inspection) - the meta
+        # sidecar only stores the editable fields, never the detected properties.
         detected = str(
-            external_firmware.read_meta(settings.data_dir, profile).get("detected_mcu") or ""
+            external_firmware.inspect_firmware(firmware).get("detected_mcu") or ""
         ).lower()
         chip = device_chip_token(device)
         if detected and chip and not (detected.startswith(chip) or chip.startswith(detected)):
@@ -1229,8 +1231,12 @@ async def run_flash(
     if rc != 0:
         expected = str((read_build_info(settings.data_dir, profile) or {}).get("version") or "")
         # Same-version reflash: the node reporting `expected` proves nothing (the OLD firmware
-        # answers with the identical string), so the tool's exit code stays authoritative.
-        if method == "can" and expected and expected != pre_version:
+        # answers with the identical string), so the tool's exit code stays authoritative. The
+        # sameness test mirrors the rescue's own startswith tolerance (suffixed version strings).
+        same_version = bool(pre_version) and (
+            pre_version == expected or pre_version.startswith(expected)
+        )
+        if method == "can" and expected and not same_version:
             yield (
                 ">>> Flash tool reported an error - checking via Klipper whether the "
                 "board took the new firmware anyway…\n"

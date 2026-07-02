@@ -992,8 +992,12 @@ async def test_external_firmware_guards(tmp_path: Path, monkeypatch) -> None:  #
         yield ""  # pragma: no cover
 
     monkeypatch.setattr(flash_service, "_stream", rec)
+    # Mock the REAL source the guard reads (binary inspection of the flashed file) - the meta
+    # sidecar never carries detected_mcu, which is exactly why the guard must not read it.
     monkeypatch.setattr(
-        flash_service.external_firmware, "read_meta", lambda _d, _n: {"detected_mcu": "rp2040"}
+        flash_service.external_firmware,
+        "inspect_firmware",
+        lambda _p: {"detected_mcu": "rp2040"},
     )
 
     async def run(method: str, device: str, offset=None) -> str:  # type: ignore[no-untyped-def]
