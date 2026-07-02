@@ -658,10 +658,11 @@ def test_flash_python_prefers_first_pyserial_capable(monkeypatch) -> None:  # ty
     # cached: a later probe flip does not change the resolved interpreter
     monkeypatch.setattr(build_tools, "_has_pyserial", lambda _p: False)
     assert build_tools.flash_python() == klippy
-    # fresh probe with nothing capable -> fall back to 'python3' (never regress a working host)
+    # fresh probe, nothing capable -> fall back to 'python3' WITHOUT caching, so a transient probe
+    # timeout on a busy host is retried on the next flash rather than frozen for the process life.
     build_tools._FLASH_PYTHON = None
     assert build_tools.flash_python() == "python3"
-    build_tools._FLASH_PYTHON = None
+    assert build_tools._FLASH_PYTHON is None
 
 
 def test_diagnose_serial_failure() -> None:
