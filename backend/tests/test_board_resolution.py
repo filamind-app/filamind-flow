@@ -100,3 +100,34 @@ def test_resolve_board_id_matches_section_name_against_aliases() -> None:
     # nothing matches -> truly unknown, no invented candidates
     bid, conf, cands = bt._resolve_board_id(None, "sig", boards, "toolboard9")
     assert bid is None and cands == []
+
+
+def test_resolve_board_id_ignores_generic_and_pseudo(tmp_path=None) -> None:  # type: ignore[no-untyped-def]
+    """Role-style section names must never name a product, and printer presets / hosts are never
+    valid identification targets - both were verified false-positive paths on the real catalog
+    ('[mcu scanner]' hit an unrelated board via an '(eddy scanner)' display-name parenthetical)."""
+    boards = [
+        {"board_id": "idm-x", "display_name": "IDM (eddy scanner)", "aliases": []},
+        {
+            "board_id": "sv08-preset",
+            "boardClass": "printer-preset",
+            "display_name": "Sovol SV08 extra_mcu",
+            "aliases": ["extra_mcu board"],
+        },
+    ]
+    # generic role names are blocked outright
+    for section in ("scanner", "toolhead", "extra_mcu", "extruder"):
+        bid, _conf, cands = bt._resolve_board_id(None, "sig", boards, section)
+        assert bid is None and cands == [], section
+    # a pseudo-board can't be hit even by a specific name
+    bid, _conf, cands = bt._resolve_board_id(None, "sig", boards[1:], "sv08 extra")
+    assert bid is None and cands == []
+
+
+def test_real_catalog_scanner_section_stays_unknown() -> None:
+    """Against the REAL catalog: Cartographer's documented '[mcu scanner]' section must not be
+    identified as some other vendor's board."""
+    from app.services import reference_data
+
+    bid, _conf, cands = bt._resolve_board_id(None, "can-uuid", reference_data.boards(), "scanner")
+    assert bid is None and cands == []
