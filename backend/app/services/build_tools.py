@@ -59,7 +59,7 @@ def _has_pyserial(python: str) -> bool:
                 [python, "-c", "import serial"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                timeout=4,
+                timeout=10,  # tolerate cold interpreter startup on a loaded / SD-card-bound SBC
                 check=False,
             ).returncode
             == 0
@@ -92,8 +92,9 @@ def flash_python() -> str:
         if candidate and _has_pyserial(candidate):
             _FLASH_PYTHON = candidate
             return candidate
-    _FLASH_PYTHON = "python3"
-    return _FLASH_PYTHON
+    # Nothing qualified - maybe a transient probe timeout on a busy host. Return the bare fallback
+    # but do NOT cache it, so the next flash re-probes instead of freezing a serial-less python.
+    return "python3"
 
 
 def missing_toolchain_lines() -> list[str]:
