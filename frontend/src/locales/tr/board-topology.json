@@ -109,6 +109,7 @@
       "specsTitle": "Özellikler",
       "portsTitle": "Bağlantı noktaları",
       "none": "Bu kart için henüz katalog ayrıntısı yok.",
+      "ambiguous": "Katalogdaki birden çok varyant bu kartla eşleşiyor — onaylamak için kendi kartınızı seçin:",
       "noMatch": "Henüz eşleşen kart yok - aşağıdan birini onaylayın veya ayarlayın.",
       "loading": "Kart yükleniyor…",
       "links": {

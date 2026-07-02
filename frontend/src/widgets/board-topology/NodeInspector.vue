@@ -588,6 +588,24 @@ function onPickCan(id: string | null): void {
             >
           </div>
         </div>
+        <div
+          v-else-if="!mcu.board_id && (mcu.board_candidates?.length ?? 0) > 0"
+          class="space-y-0.5 text-[11px]"
+        >
+          <p class="opacity-60">{{ t('boardTopology.board.ambiguous') }}</p>
+          <div class="flex flex-wrap gap-1">
+            <button
+              v-for="c in mcu.board_candidates"
+              :key="c"
+              type="button"
+              class="nb-btn bg-paper px-1 py-0 font-mono"
+              :disabled="busy"
+              @click="emit('setOverride', mcu.name, c)"
+            >
+              {{ c }}
+            </button>
+          </div>
+        </div>
         <p v-else-if="!mcu.board_id" class="opacity-60">{{ t('boardTopology.board.noMatch') }}</p>
       </template>
 
@@ -625,6 +643,16 @@ function onPickCan(id: string | null): void {
             class="rounded-sm bg-brand-lime px-1 font-bold text-ink"
           >
             ✓ {{ t('boardTopology.override.confirmed') }}
+          </span>
+          <span
+            v-if="mcu.board_match === 'suggested' && (mcu.board_match_confidence ?? 0) > 0"
+            class="rounded-sm bg-paper px-1 opacity-70"
+          >
+            {{
+              t('boardTopology.mcu.confidence', {
+                pct: Math.round((mcu.board_match_confidence ?? 0) * 100),
+              })
+            }}
           </span>
           <button
             v-if="mcu.board_id && mcu.board_match !== 'confirmed'"

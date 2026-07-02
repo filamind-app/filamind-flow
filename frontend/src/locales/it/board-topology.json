@@ -109,6 +109,7 @@
       "specsTitle": "Specifiche",
       "portsTitle": "Porte",
       "none": "Ancora nessun dettaglio di catalogo per questa scheda.",
+      "ambiguous": "Diverse varianti del catalogo corrispondono a questa scheda: scegli la tua per confermare:",
       "noMatch": "Nessuna scheda corrispondente - conferma o impostane una qui sotto.",
       "loading": "Caricamento scheda…",
       "links": {

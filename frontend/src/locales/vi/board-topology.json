@@ -109,6 +109,7 @@
       "specsTitle": "Thông số",
       "portsTitle": "Cổng",
       "none": "Chưa có chi tiết danh mục cho bo mạch này.",
+      "ambiguous": "Nhiều biến thể trong danh mục khớp với bo mạch này — hãy chọn bo của bạn để xác nhận:",
       "noMatch": "Chưa có bo mạch nào khớp - xác nhận hoặc đặt một bo mạch bên dưới.",
       "loading": "Đang tải bo mạch…",
       "links": {

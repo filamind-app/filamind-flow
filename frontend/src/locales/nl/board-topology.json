@@ -109,6 +109,7 @@
       "specsTitle": "Specs",
       "portsTitle": "Poorten",
       "none": "Nog geen catalogusdetails voor dit board.",
+      "ambiguous": "Meerdere catalogusvarianten passen bij dit bord — kies de jouwe om te bevestigen:",
       "noMatch": "Nog geen board gematcht - bevestig of stel er hieronder een in.",
       "loading": "Board laden…",
       "links": {

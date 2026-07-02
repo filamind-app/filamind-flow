@@ -109,6 +109,7 @@
       "specsTitle": "Specyfikacja",
       "portsTitle": "Porty",
       "none": "Brak na razie szczegółów katalogowych dla tej płyty.",
+      "ambiguous": "Kilka wariantów z katalogu pasuje do tej płytki — wybierz swoją, aby potwierdzić:",
       "noMatch": "Brak dopasowanej płyty - potwierdź lub ustaw jedną poniżej.",
       "loading": "Ładowanie płyty…",
       "links": {

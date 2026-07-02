@@ -98,6 +98,7 @@
         "datasheet": "Hoja de datos",
         "image": "Foto"
       },
+      "ambiguous": "Varias variantes del catálogo coinciden con esta placa: elige la tuya para confirmar:",
       "noMatch": "Ninguna placa coincidente aún — confirma o elige una abajo.",
       "portCat": {
         "motor": "motor",

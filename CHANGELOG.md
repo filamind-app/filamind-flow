@@ -6,6 +6,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.17.0] - 2026-07-02
+
+### Added
+
+- **Board Topology — much stronger automatic board identification.** Naming a config section after
+  the board (`[mcu ebb36]`) now resolves it against the whole catalog's names and aliases — the
+  most common real-world signal, previously consulted for only a fraction of boards. When several
+  catalog variants match equally (EBB36 v1.0/v1.1/v1.2…), the node now shows an honest
+  **candidates shortlist** — one click confirms yours — instead of staying "unknown". Suggested
+  matches now display their **match confidence**.
+
+### Fixed
+
+- **Board Topology — pin-fingerprint matching was sabotaging itself.** Printer-preset catalog
+  entries (which mirror a real mainboard's pin-map) and host pseudo-boards polluted the candidate
+  pool, zeroing the ambiguity margin so genuine matches were rejected; the chip narrowing applied
+  on the live path was missing on the config path; and the pin-count floor excluded practically
+  every CAN toolhead board (EBB/SB/SHT document 6–9 pins) — exactly the boards whose only
+  board-level signal is the fingerprint. All four corrected; a handful of catalog boards whose
+  match patterns were stored in a legacy shape (and silently dropped) now load too.
+
 ## [1.16.4] - 2026-07-02
 
 ### Fixed

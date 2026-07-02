@@ -44,9 +44,12 @@ export interface TopologyMcu {
   confidence: number
   /** Link into the board catalog; null when only the chip could be identified. */
   board_id?: string | null
-  /** `suggested` = auto-detected guess; `confirmed` = the user confirmed / overrode it. */
-  board_match?: 'suggested' | 'confirmed' | null
+  /** `suggested` = auto guess; `confirmed` = the user's pick; `ambiguous` = several catalog
+   *  variants match equally (see `board_candidates`). */
+  board_match?: 'suggested' | 'confirmed' | 'ambiguous' | null
   board_match_confidence?: number
+  /** The tied shortlist when board_match === 'ambiguous' - board ids for the confirm flow. */
+  board_candidates?: string[]
   /** Running firmware version of this MCU (from the live mcu object); null on an offline read. */
   firmware?: string | null
   /** The components (steppers / drivers / heaters / fans / sensors) that live on this MCU. */
