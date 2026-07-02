@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.16.3] - 2026-07-02
+
+### Fixed
+
+- **Firmware Manager — the ROM-DFU fallback now works for stock-bootloader boards** (#571). Boards
+  like the Octopus family carry a vendor bootloader at the flash base with the app linked at an
+  offset; when such a board dropped into ROM DFU, the fallback refused to flash it. It now writes
+  at the profile's linked address — the standard way these boards are flashed — leaving the
+  bootloader region untouched, with a note about what to do if the board doesn't boot.
+- **Firmware Manager — a board left parked in ROM DFU by a previous attempt is now recovered
+  automatically** (#571). When the board's serial port is gone and a DFU device is waiting at the
+  start of a serial flash, the flash continues over DFU at the profile's offset instead of failing
+  against the missing port again. (A second attempt after updating is all it takes.)
+
 ## [1.16.2] - 2026-07-02
 
 ### Fixed
