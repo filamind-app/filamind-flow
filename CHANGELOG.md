@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.16.4] - 2026-07-02
+
+### Fixed
+
+- **Firmware Manager — Beacon flashes now show the same progress and green completion state as
+  board flashes** (#571). The Beacon updater's stream carried no progress markers, so the panel
+  jumped back to the Flash button with no completion indicator even though the update succeeded.
+  It also ignored the updater's exit code — a failed update printed "complete" — and launched the
+  updater with a PATH-resolved `python3`. The Beacon flash now drives the standard progress bar,
+  reports the updater's real outcome, and runs under a serial-capable interpreter.
+
 ## [1.16.3] - 2026-07-02
 
 ### Fixed
