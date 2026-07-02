@@ -58,27 +58,26 @@ def _phase(code: str) -> str:
 
 
 _DEFAULT_OFFSET = "0x08000000"
-# CONFIG_*FLASH_START_<suffix> → application start address (Katapult/DFU bootloaders).
-_OFFSETS = {
-    "800": "0x08000800",
-    "2000": "0x08002000",
-    "4000": "0x08004000",
-    "8000": "0x08008000",
-    "10000": "0x08010000",
-    "20000": "0x08020000",
-}
+#: ``CONFIG_*_FLASH_START_<hex>=y`` → the app starts at flash base + <hex> (Katapult/DFU
+#: bootloaders). Parsed generically: a fixed table silently mapped unknown offsets to the flash
+#: base, which would make a DFU write overwrite the resident bootloader.
+_FLASH_START_RE = re.compile(r"_FLASH_START_([0-9A-Fa-f]{2,6})=y")
+_FLASH_ADDRESS_RE = re.compile(r"CONFIG_FLASH_APPLICATION_ADDRESS=(0x[0-9A-Fa-f]{6,10})")
 
 
 def flash_offset(config_path: str) -> str:
-    """Reads the bootloader offset from a profile's ``.config`` (default 0x08000000)."""
+    """Reads the app start address from a profile's ``.config`` (default 0x08000000)."""
     try:
         with open(config_path) as handle:
             content = handle.read()
     except OSError:
         return _DEFAULT_OFFSET
-    for suffix, address in _OFFSETS.items():
-        if f"_FLASH_START_{suffix}=y" in content:
-            return address
+    direct = _FLASH_ADDRESS_RE.search(content)
+    if direct:
+        return direct.group(1)
+    start = _FLASH_START_RE.search(content)
+    if start:
+        return f"0x{0x08000000 + int(start.group(1), 16):08x}"
     return _DEFAULT_OFFSET
 
 
@@ -1073,8 +1072,19 @@ async def run_flash(
     try:
         yield _phase("stop")
         yield ">>> Stopping Klipper to free the device…\n"
-        async for line in _stream(["sudo", "-n", "systemctl", "stop", "klipper"]):
+        stop_result: dict[str, int] = {}
+        async for line in _stream(
+            ["sudo", "-n", "systemctl", "stop", "klipper"], result=stop_result
+        ):
             yield line
+        if stop_result.get("rc", 0) != 0:
+            # Klipper is still holding the device (non-standard unit name / sudo hiccup) - a
+            # flash against a busy port only produces confusing downstream errors. Abort here;
+            # nothing was stopped, so nothing needs restarting.
+            yield "!! Could not stop the Klipper service - the board is still in use.\n"
+            yield "!! Flash aborted - nothing was written to the board.\n"
+            klipper_restarted = True
+            return
 
         # A board can re-appear under a new /dev id after a serial flash - snapshot first.
         before = _serial_by_id() if method == "serial" else set()

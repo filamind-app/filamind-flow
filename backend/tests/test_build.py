@@ -139,6 +139,60 @@ def test_build_without_make_fails_early_with_actionable_message(
     assert "BUILD OK" not in log
 
 
+def test_build_failure_is_not_masked_by_stale_artifacts(tmp_path: Path) -> None:
+    """A non-zero build exits BUILD FAILED even when a previous run left out/klipper.bin behind -
+    artifact presence alone must never turn a failed build into 'BUILD OK' (stale firmware)."""
+    klipper = tmp_path / "klipper"
+    (klipper / "out").mkdir(parents=True)
+    (klipper / "Makefile").write_text("# fake makefile\n")
+    (klipper / "out" / "klipper.bin").write_bytes(b"\x00")  # stale artifact from a prior build
+    profile_cfg = tmp_path / "p.config"
+    profile_cfg.write_text("CONFIG_DEMO=y\n")
+    data = tmp_path / "data"
+    failing = [sys.executable, "-c", "import sys; print('boom'); sys.exit(2)"]
+    service = BuildService(str(klipper), str(data), build_command=failing)
+
+    async def collect() -> str:
+        return "".join([line async for line in service.run_build(str(profile_cfg), "p")])
+
+    log = asyncio.run(collect())
+    assert "BUILD FAILED" in log and "exited with code 2" in log
+    assert "BUILD OK" not in log
+    # the stale out/klipper.bin was NOT saved as the profile's artifact
+    assert not (Path(firmware_profiles.artifacts_dir(str(data))) / "p.bin").is_file()
+
+
+def test_collect_purges_stale_sibling_artifacts(tmp_path: Path) -> None:
+    """Re-targeting a profile (e.g. STM32 .bin -> Linux .elf) must purge the old extension - the
+    flash path picks the first extension it finds, and a leftover must never win."""
+    klipper = tmp_path / "klipper"
+    (klipper / "out").mkdir(parents=True)
+    (klipper / "Makefile").write_text("# fake makefile\n")
+    profile_cfg = tmp_path / "p.config"
+    profile_cfg.write_text("CONFIG_DEMO=y\n")
+    data = tmp_path / "data"
+    # a stale .bin from the profile's previous target
+    stale = Path(firmware_profiles.artifacts_dir(str(data))) / "p.bin"
+    stale.write_bytes(b"\x00")
+    elf_only = [
+        sys.executable,
+        "-c",
+        "import os; os.makedirs('out', exist_ok=True); "
+        "open(os.path.join('out', 'klipper.elf'), 'wb').close(); "
+        "os.path.exists(os.path.join('out','klipper.bin')) and "
+        "os.remove(os.path.join('out','klipper.bin')); print('built elf')",
+    ]
+    service = BuildService(str(klipper), str(data), build_command=elf_only)
+
+    async def collect() -> str:
+        return "".join([line async for line in service.run_build(str(profile_cfg), "p")])
+
+    log = asyncio.run(collect())
+    assert "BUILD OK" in log
+    assert (Path(firmware_profiles.artifacts_dir(str(data))) / "p.elf").is_file()
+    assert not stale.is_file()  # the old-extension artifact is gone
+
+
 def test_build_endpoint_unknown_profile_404(tmp_path: Path) -> None:
     app = create_app()
     app.dependency_overrides[get_settings] = lambda: Settings(

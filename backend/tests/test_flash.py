@@ -61,6 +61,12 @@ def test_method_for_and_offset(tmp_path: Path) -> None:
     cfg.write_text("CONFIG_STM32_FLASH_START_8000=y\n")
     assert flash_service.flash_offset(str(cfg)) == "0x08008000"
     assert flash_service.flash_offset(str(tmp_path / "missing.config")) == "0x08000000"
+    # offsets are parsed generically - an uncommon bootloader offset must not silently fall back
+    # to the flash base (a DFU write there would overwrite the resident bootloader)
+    cfg.write_text("CONFIG_STM32_FLASH_START_C000=y\n")
+    assert flash_service.flash_offset(str(cfg)) == "0x0800c000"
+    cfg.write_text("CONFIG_FLASH_APPLICATION_ADDRESS=0x08020200\n")
+    assert flash_service.flash_offset(str(cfg)) == "0x08020200"
 
 
 def _client(tmp_path: Path) -> TestClient:
@@ -200,9 +206,18 @@ async def test_flash_skips_reboot_when_not_katapult(tmp_path: Path, monkeypatch)
     async def fast_sleep(*_a: object, **_k: object) -> None:
         return None
 
+    async def ok_stream(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
     monkeypatch.setattr(flash_service, "_is_printing", no_print)
     monkeypatch.setattr(flash_service, "_sudo_ready", sudo_ok)
     monkeypatch.setattr(flash_service.asyncio, "sleep", fast_sleep)
+    monkeypatch.setattr(flash_service, "_stream", ok_stream)
+    monkeypatch.setattr(flash_service, "bootloader_serial_path", lambda _d: None)
+    monkeypatch.setattr(flash_service.os.path, "exists", lambda _p: True)
 
     async def run(is_katapult: bool) -> str:
         out = ""
@@ -1108,6 +1123,35 @@ async def test_can_verify_skipped_on_same_version_reflash(tmp_path: Path, monkey
 
 async def _none():  # type: ignore[no-untyped-def]
     return None
+
+
+async def test_flash_aborts_when_klipper_stop_fails(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A failed 'systemctl stop klipper' aborts before touching the board (nothing to restart)."""
+    settings, calls = _flash_env(tmp_path, monkeypatch)
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 1 if ("stop" in cmd and "klipper" in cmd) else 0
+        return
+        yield ""  # pragma: no cover
+
+    restarted: list[str] = []
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "_restart_klipper_detached", lambda: restarted.append("x"))
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "serial", "/dev/ttyACM0", "can0", settings, is_katapult=False
+            )
+        ]
+    )
+    assert "Could not stop the Klipper service" in log
+    assert "Flash aborted" in log
+    # no write ran, and no detached restart fired (nothing was stopped)
+    assert not any("flashtool.py" in " ".join(c) for c in calls)
+    assert restarted == []
 
 
 def test_bootloader_serial_path(monkeypatch) -> None:

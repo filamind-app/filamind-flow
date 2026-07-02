@@ -26,6 +26,19 @@ _STALL_TIMEOUT_S = 120.0
 _TOTAL_TIMEOUT_S = 600.0
 
 
+def _diagnose_build_failure(tail: list[str]) -> list[str]:
+    """Actionable ``!!`` hints for a failed build, inferred from the tail of make's output."""
+    blob = "".join(tail).lower()
+    if "no space left" in blob:
+        return ["!! The host's disk is full - free some space, then build again.\n"]
+    if "internal compiler error" in blob or "killed" in blob or "out of memory" in blob:
+        return [
+            "!! The compiler ran out of memory (common on small boards while printing).\n",
+            "!! Retry while the printer is idle, or close other host tasks first.\n",
+        ]
+    return []
+
+
 class BuildService:
     """Compiles a profile and streams the build log line by line."""
 
@@ -62,12 +75,29 @@ class BuildService:
         yield f">>> Building firmware for profile '{profile_name}'\n"
         async for line in self._stream(["make", "clean"]):
             yield line
-        async for line in self._stream(["make", "olddefconfig"]):
+        cfg_result: dict[str, int] = {}
+        async for line in self._stream(["make", "olddefconfig"], result=cfg_result):
             yield line
+        # The real make path must not build from a config that failed to validate (the
+        # test-override path runs a portable command instead of make, so it skips this gate).
+        if self.build_command is None and cfg_result.get("rc", 0) != 0:
+            yield ">>> BUILD FAILED - the profile's config could not be applied (olddefconfig)\n"
+            return
         build_cmd = self.build_command or ["make", f"-j{os.cpu_count() or 1}"]
         yield f">>> {' '.join(build_cmd)}\n"
-        async for line in self._stream(build_cmd):
+        tail: list[str] = []
+        build_result: dict[str, int] = {}
+        async for line in self._stream(build_cmd, result=build_result):
+            tail.append(line)
+            del tail[:-40]
             yield line
+        # A non-zero make is a failed build even when a previous run left artifacts in out/ -
+        # judging by artifact presence alone can save (and later flash) stale firmware.
+        if build_result.get("rc", 0) != 0:
+            for hint in _diagnose_build_failure(tail):
+                yield hint
+            yield f">>> BUILD FAILED - the build exited with code {build_result['rc']}\n"
+            return
 
         saved = self._collect(profile_name)
         if saved:
@@ -79,18 +109,34 @@ class BuildService:
             yield ">>> BUILD FAILED - no firmware artifact was produced\n"
 
     def _collect(self, profile_name: str) -> list[str]:
-        """Copies freshly built ``out/klipper.*`` into the artifacts directory."""
+        """Copies freshly built ``out/klipper.*`` into the artifacts directory.
+
+        Stale sibling artifacts from a previous build (e.g. an old ``.bin`` after the profile was
+        re-targeted to a platform that produces only ``.elf``) are purged first - the flash path
+        picks the first extension it finds, and a leftover must never win over the fresh build.
+        """
         saved: list[str] = []
         out_dir = os.path.join(self.klipper_dir, "out")
-        for ext in _ARTIFACT_EXTS:
-            src = os.path.join(out_dir, f"klipper.{ext}")
-            if os.path.isfile(src):
-                shutil.copy(src, os.path.join(self.artifacts, f"{profile_name}.{ext}"))
-                saved.append(f"{profile_name}.{ext}")
+        fresh = {
+            ext: os.path.join(out_dir, f"klipper.{ext}")
+            for ext in _ARTIFACT_EXTS
+            if os.path.isfile(os.path.join(out_dir, f"klipper.{ext}"))
+        }
+        if fresh:
+            for ext in _ARTIFACT_EXTS:
+                stale = os.path.join(self.artifacts, f"{profile_name}.{ext}")
+                if ext not in fresh and os.path.isfile(stale):
+                    os.remove(stale)
+        for ext, src in fresh.items():
+            shutil.copy(src, os.path.join(self.artifacts, f"{profile_name}.{ext}"))
+            saved.append(f"{profile_name}.{ext}")
         return saved
 
-    async def _stream(self, cmd: list[str]) -> AsyncIterator[str]:
-        """Runs a command in the Klipper dir, yielding stdout+stderr lines."""
+    async def _stream(
+        self, cmd: list[str], result: dict[str, int] | None = None
+    ) -> AsyncIterator[str]:
+        """Runs a command in the Klipper dir, yielding stdout+stderr lines. When ``result`` is
+        given, its ``"rc"`` is set to the exit code (127 if the command couldn't start)."""
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -101,6 +147,8 @@ class BuildService:
             )
         except (OSError, NotImplementedError) as exc:
             yield f"!! cannot run '{cmd[0]}': {exc}\n"
+            if result is not None:
+                result["rc"] = 127
             return
         assert proc.stdout is not None
 
@@ -120,4 +168,6 @@ class BuildService:
             if not raw:
                 break
             yield raw.decode(errors="replace")
-        await proc.wait()
+        rc = await proc.wait()
+        if result is not None:
+            result["rc"] = rc

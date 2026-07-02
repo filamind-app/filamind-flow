@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.16.2] - 2026-07-02
+
+### Fixed
+
+- **Firmware Manager — a failed build could ship stale firmware.** A build was judged by whether an
+  artifact file existed, not by whether `make` succeeded — so a compile error after a previous
+  successful build re-saved the *old* artifact and reported `BUILD OK`. The build now fails on a
+  non-zero `make` (with a diagnosis for full disks and out-of-memory compiles), a config that fails
+  `olddefconfig` stops the build, and re-targeting a profile purges its old-extension artifacts so
+  the flash can never pick up a leftover.
+- **Firmware Manager — a failed "stop Klipper" no longer proceeds to flash.** If the Klipper
+  service could not be stopped (non-standard unit name, sudo hiccup), the flash ran anyway against
+  a port Klipper still held, producing confusing downstream errors. It now aborts up front.
+- **Firmware Manager — uncommon bootloader offsets are honoured.** The app start address was read
+  from a fixed table of known values; an uncommon `FLASH_START` silently fell back to `0x08000000`,
+  where a DFU write would overwrite the resident bootloader. The offset is now parsed generically
+  from the profile's config.
+
 ## [1.16.1] - 2026-07-02
 
 ### Fixed
