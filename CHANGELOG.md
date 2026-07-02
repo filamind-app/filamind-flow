@@ -6,6 +6,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.16.1] - 2026-07-02
+
+### Fixed
+
+- **Firmware Manager — per-device baudrate was silently ignored.** The Devices panel stores a
+  baudrate per board, but the serial flash looked it up under a key the registry never writes, so
+  every flash ran at the 250000 default — a 115200 board always timed out with no visible cause.
+  The lookup now matches the device's registry id, its bound serial identity, and the
+  bootloader-renamed port.
+- **Firmware Manager — `make flash` could push the wrong profile's firmware.** Klipper's
+  `make flash` builds from `klipper/.config`, which still held whatever profile was built *last*
+  (e.g. after a batch build). The selected profile's config is now re-staged (with `olddefconfig`)
+  immediately before every `make flash`, so the flashed bytes always match the board being flashed.
+- **Firmware Manager — external firmware guard gaps.** Uploaded firmware files now get the same
+  protection as profiles: the `make` method is refused (it would flash the last-built profile, not
+  the file), a DFU flash without the file's start offset is refused (a default-offset write can
+  wipe the board's bootloader), a provable mismatch between the binary's embedded MCU and the
+  target board's chip is refused, and a malformed offset is rejected when saved.
+- **Firmware Manager — a failed CAN reflash of the *same* firmware version could be reported as
+  success.** The post-failure "did the board take it anyway?" check trusted the node reporting the
+  built version — but on a same-version reflash the *old* firmware answers with the identical
+  string. The node's pre-flash version is now snapshotted, and the check only counts when the
+  version actually changed.
+
 ## [1.16.0] - 2026-07-02
 
 ### Added

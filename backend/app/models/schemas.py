@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from pydantic import BaseModel, field_validator
@@ -535,6 +536,25 @@ class ExternalMetaUpdate(BaseModel):
     offset: str | None = None
     interface: str | None = None
     notes: str | None = None
+
+    @field_validator("method")
+    @classmethod
+    def _method_allowed(cls, v: str | None) -> str | None:
+        # No 'make' for external firmware: Klipper's `make flash` pushes whatever was built last
+        # in the klipper tree, NOT the uploaded file - it would silently flash the wrong firmware.
+        allowed = {"serial", "can", "dfu", "linux"}
+        if v is not None and v.lower() not in allowed:
+            raise ValueError(f"method must be one of {sorted(allowed)}")
+        return v.lower() if v is not None else v
+
+    @field_validator("offset")
+    @classmethod
+    def _offset_shape(cls, v: str | None) -> str | None:
+        # Either empty (serial/can need none) or a hex flash address - a malformed offset must
+        # never reach dfu-util.
+        if v and not re.fullmatch(r"0x[0-9a-fA-F]{4,10}", v.strip()):
+            raise ValueError("offset must be a hex address like 0x08002000 (or empty)")
+        return v.strip() if v else v
 
 
 class ExternalFlashRequest(BaseModel):

@@ -28,7 +28,7 @@ from typing import Any
 import httpx
 
 from app.config import Settings
-from app.services import devices_store, printer_guard
+from app.services import devices_store, external_firmware, printer_guard
 from app.services.build_tools import (
     build_env,
     flash_python,
@@ -264,10 +264,16 @@ def _saved_baudrate(settings: Settings, device: str) -> int:
     """The baudrate stored on the saved device matching this serial path (default 250000).
 
     The Devices panel lets users edit a baudrate per board; serial flashes must actually use it
-    (a 115200 board flashed at the 250000 default just times out).
+    (a 115200 board flashed at the 250000 default just times out). Registry records are keyed by
+    ``id`` (with optional ``serial_id``), and the path handed here may already be retargeted to the
+    board's bootloader-renamed port (usb-Klipper_<id> -> usb-katapult_<id>) - match all three.
     """
     for saved in devices_store.read_devices(settings.data_dir):
-        if saved.get("device") == device:
+        candidates = {saved.get("id"), saved.get("serial_id")}
+        saved_id = str(saved.get("id") or "")
+        if saved_id:
+            candidates.add(re.sub(r"(?i)(usb-)Klipper(_)", r"\1katapult\2", saved_id))
+        if device in candidates:
             raw = saved.get("baudrate")
             if isinstance(raw, int) and raw > 0:
                 return raw
@@ -314,6 +320,28 @@ async def _live_config(moonraker_url: str) -> dict[str, Any]:
         return {}
     config = data.get("configfile", {}).get("config", {})
     return config if isinstance(config, dict) else {}
+
+
+async def _can_node_version(uuid: str, moonraker_url: str) -> str:
+    """The firmware version a CAN node currently reports (via its live ``[mcu]`` object), or ""."""
+    client = MoonrakerClient(moonraker_url)
+    try:
+        config = (await client.query_objects(["configfile"])).get("configfile", {})
+        sections = config.get("config", {})
+        section = next(
+            (
+                name
+                for name, cfg in sections.items()
+                if isinstance(cfg, dict) and str(cfg.get("canbus_uuid", "")).strip() == uuid
+            ),
+            None,
+        )
+        if not section:
+            return ""
+        status_ = await client.query_objects([section])
+        return str((status_.get(section) or {}).get("mcu_version") or "")
+    except httpx.HTTPError:
+        return ""
 
 
 async def _can_node_runs_version(
@@ -936,6 +964,38 @@ async def run_flash(
 
     is_linux = is_linux_profile(settings.data_dir, profile) if profile else False
     method = resolve_method(method, device, is_linux)
+    # External firmware (a direct file, no profile .config) gets its own guards FIRST - they are
+    # the most specific refusals, and the generic method guards below can't see inside the file.
+    if firmware:
+        if method == "make":
+            # `make flash` builds+pushes klipper/out - whatever profile was built LAST - never
+            # this file. Silently flashing the wrong firmware is the worst possible outcome.
+            yield "!! External firmware can't be flashed with 'make' - that would push the last\n"
+            yield "!! BUILT firmware, not this file. Set the method to serial / can / dfu in the\n"
+            yield "!! firmware's properties, then flash again.\n"
+            return
+        if method == "dfu" and not offset_override:
+            # Without the file's true start offset a DFU write lands at 0x08000000 and can wipe
+            # the board's bootloader.
+            yield "!! A DFU flash of an external file needs its start offset (it depends on the\n"
+            yield "!! board's bootloader). Set the offset in the firmware's properties, then\n"
+            yield "!! flash again.\n"
+            return
+        detected = str(
+            external_firmware.read_meta(settings.data_dir, profile).get("detected_mcu") or ""
+        ).lower()
+        chip = device_chip_token(device)
+        if detected and chip and not (detected.startswith(chip) or chip.startswith(detected)):
+            # Same contract as the profile arch guard: refuse only a PROVABLE mismatch between
+            # the binary's embedded MCU and the chip named in the board's serial id; fail open
+            # when either side is unknown.
+            yield (
+                f"!! This firmware was built for '{detected}', but the target board is a "
+                f"{chip}\n"
+                f"!! ({device}). Flashing it would leave the board unbootable. Pick a firmware\n"
+                "!! built for this board, then flash again.\n"
+            )
+            return
     # `make flash` needs the host build tools; check before stopping Klipper so a host without
     # `make` fails early and clearly instead of after a needless service stop + cryptic code 127.
     if method == "make" and not make_available():
@@ -989,12 +1049,17 @@ async def run_flash(
     # CAN flashing addresses the node by its 12-hex canbus_uuid, not a friendly name -
     # resolve it from the live config so a device registered as "Toolhead" still flashes.
     target = device
+    pre_version = ""
     if method == "can":
         resolved, uuid_err = await resolve_can_uuid(device, settings.moonraker_url)
         if resolved is None:
             yield uuid_err or "!! Could not resolve the CAN node to flash.\n"
             return
         target = resolved
+        # Snapshot the node's CURRENT firmware version (Klipper is still up here). The
+        # verify-via-Klipper rescue below is only trustworthy when the built version DIFFERS -
+        # on a same-version reflash the old firmware answers with the same string.
+        pre_version = await _can_node_version(target, settings.moonraker_url)
 
     # From here Klipper goes down: whatever happens (including the client closing the stream at a
     # yield - even during the stop itself), it must come back up. The finally fires a detached
@@ -1111,6 +1176,27 @@ async def run_flash(
                 del tail[:-60]
                 yield line
         else:
+            if method == "make" and profile and not firmware:
+                # `make flash` builds + pushes from klipper/.config, which may still hold the
+                # LAST-built profile (e.g. after a batch build) - re-stage this profile's config
+                # so the flashed bytes always match the board being flashed.
+                try:
+                    shutil.copy(
+                        profile_path(settings.data_dir, profile),
+                        os.path.join(settings.klipper_dir, ".config"),
+                    )
+                except OSError as exc:
+                    yield f"!! Could not stage the profile's build config: {exc}\n"
+                    yield _phase("restart")
+                    yield ">>> Restarting Klipper…\n"
+                    async for line in _stream(["sudo", "-n", "systemctl", "start", "klipper"]):
+                        yield line
+                    klipper_restarted = True
+                    yield "!! Flash aborted - nothing was written to the board.\n"
+                    return
+                yield ">>> Staged this profile's build config for make flash.\n"
+                async for line in _stream(["make", "olddefconfig"], cwd=settings.klipper_dir):
+                    yield line
             command = _build_command(
                 method, settings, target, artifact, interface or "can0", offset
             )
@@ -1142,7 +1228,9 @@ async def run_flash(
     rc = flash_result.get("rc", 0)
     if rc != 0:
         expected = str((read_build_info(settings.data_dir, profile) or {}).get("version") or "")
-        if method == "can" and expected:
+        # Same-version reflash: the node reporting `expected` proves nothing (the OLD firmware
+        # answers with the identical string), so the tool's exit code stays authoritative.
+        if method == "can" and expected and expected != pre_version:
             yield (
                 ">>> Flash tool reported an error - checking via Klipper whether the "
                 "board took the new firmware anyway…\n"
