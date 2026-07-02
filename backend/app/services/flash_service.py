@@ -62,11 +62,16 @@ _DEFAULT_OFFSET = "0x08000000"
 #: bootloaders). Parsed generically: a fixed table silently mapped unknown offsets to the flash
 #: base, which would make a DFU write overwrite the resident bootloader.
 _FLASH_START_RE = re.compile(r"_FLASH_START_([0-9A-Fa-f]{2,6})=y")
-_FLASH_ADDRESS_RE = re.compile(r"CONFIG_FLASH_APPLICATION_ADDRESS=(0x[0-9A-Fa-f]{6,10})")
+_FLASH_ADDRESS_RE = re.compile(r"CONFIG_FLASH_APPLICATION_ADDRESS=(0x[0-9A-Fa-f]{4,10})")
 
 
 def flash_offset(config_path: str) -> str:
-    """Reads the app start address from a profile's ``.config`` (default 0x08000000)."""
+    """Reads the app start address from a profile's ``.config`` (default 0x08000000).
+
+    The address is canonicalised to 8 padded hex digits: Klipper's kconfig writes hex defaults
+    unpadded (``0x8000000``), and downstream comparisons against ``_DEFAULT_OFFSET`` are string
+    equality - an unpadded-but-equal address must not read as "has a bootloader offset".
+    """
     try:
         with open(config_path) as handle:
             content = handle.read()
@@ -74,7 +79,7 @@ def flash_offset(config_path: str) -> str:
         return _DEFAULT_OFFSET
     direct = _FLASH_ADDRESS_RE.search(content)
     if direct:
-        return direct.group(1)
+        return f"0x{int(direct.group(1), 16):08x}"
     start = _FLASH_START_RE.search(content)
     if start:
         return f"0x{0x08000000 + int(start.group(1), 16):08x}"
@@ -1079,11 +1084,11 @@ async def run_flash(
             yield line
         if stop_result.get("rc", 0) != 0:
             # Klipper is still holding the device (non-standard unit name / sudo hiccup) - a
-            # flash against a busy port only produces confusing downstream errors. Abort here;
-            # nothing was stopped, so nothing needs restarting.
+            # flash against a busy port only produces confusing downstream errors. Abort here.
+            # The finally's detached `systemctl start` still fires: it is a no-op on a running
+            # unit and a safety net if the stop half-landed.
             yield "!! Could not stop the Klipper service - the board is still in use.\n"
             yield "!! Flash aborted - nothing was written to the board.\n"
-            klipper_restarted = True
             return
 
         # A board can re-appear under a new /dev id after a serial flash - snapshot first.
