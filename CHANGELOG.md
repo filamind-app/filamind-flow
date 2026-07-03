@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.18.1] - 2026-07-03
+
+### Fixed
+
+- **Devices panel: a CAN device saved under a friendly name showed no version and no update
+  badge** (verified live). The device row is now bridged to its live board through the full
+  identity set — including the board's `[mcu]` section name — so the running version and the
+  UPDATE badge appear for friendly-named CAN devices too.
+- **Board Topology: the host MCU node showed no version.** It now reads the version stamped in
+  the installed host-MCU binary (the same authoritative source the Firmware Manager uses), and
+  flash-record lookups now also match the node's section name, case-insensitively — records are
+  keyed by the flash-time id ("PI2") while Moonraker lowercases section names ("pi2").
+- **CAN flashes are now recorded under the resolved canbus uuid as well as the registry name** —
+  a record only the friendly name could find was invisible in the topology and board discovery,
+  which key CAN boards by uuid.
+
 ## [1.18.0] - 2026-07-02
 
 ### Added

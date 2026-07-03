@@ -8,6 +8,7 @@ and assemble a host → MCU topology. No hardware access - the route feeds it th
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import re
 from typing import Any
@@ -1018,14 +1019,25 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
     if data_dir:
         from app.services import devices_store, version_store
         from app.services.board_service import _linked_identities
+        from app.services.firmware_service import _HOST_MCU_SOCKET, _host_binary_version
 
         registry = devices_store.read_devices(data_dir)
         for m in result.get("mcus", []):
             if m.get("firmware") or not m.get("identifier"):
                 continue
-            record = version_store.flashed_record(
-                data_dir, _linked_identities(str(m["identifier"]), registry)
-            )
+            identifier = str(m["identifier"])
+            # The host-process MCU's firmware IS the installed binary - its embedded stamp is the
+            # authoritative version whether or not klippy is up to report it.
+            if identifier.endswith(_HOST_MCU_SOCKET):
+                binary_version = await asyncio.to_thread(_host_binary_version)
+                if binary_version:
+                    m["firmware"] = binary_version
+                    continue
+            # Flash records are keyed by whatever id the flash used - often the registry's
+            # friendly name (== the mcu section name), so include the node's NAME too.
+            identities = _linked_identities(identifier, registry)
+            identities.add(str(m.get("name") or ""))
+            record = version_store.flashed_record(data_dir, identities)
             if record and record.get("version"):
                 m["last_flashed"] = str(record["version"])
     # Identify the host SBC (optional - older Moonraker may lack /machine/system_info; degrade

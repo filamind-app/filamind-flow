@@ -34,7 +34,7 @@ def test_flash_record_tracks_version(tmp_path: Path) -> None:
 def test_flashed_record_joins_linked_identities(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     """A flash recorded under ONE of a board's identities stays visible under the others - a board
     re-enumerated as its bootloader port must not lose its recorded version."""
-    times = iter(["2026-07-02 10:00:00", "2026-07-02 10:00:01"])
+    times = iter(["2026-07-02 10:00:00", "2026-07-02 10:00:01", "2026-07-02 10:00:02"])
     monkeypatch.setattr(version_store, "_now", lambda: next(times))
     data = str(tmp_path)
     klipper_id = "/dev/serial/by-id/usb-Klipper_stm32f446xx_AB-if00"
@@ -49,3 +49,8 @@ def test_flashed_record_joins_linked_identities(tmp_path: Path, monkeypatch) -> 
     version_store.record_flash(data, katapult_id, "octopus", {"version": "v2", "commit": "c2"})
     record = version_store.flashed_record(data, {katapult_id, klipper_id})
     assert record is not None and record["version"] == "v2"
+    # case-insensitive: records keyed by the flash-time id ("PI2") must be found from Moonraker's
+    # lowercased section names ("pi2")
+    version_store.record_flash(data, "PI2", "linux_host", {"version": "v3", "commit": "c3"})
+    record = version_store.flashed_record(data, {"pi2"})
+    assert record is not None and record["version"] == "v3"
