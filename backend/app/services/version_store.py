@@ -125,9 +125,12 @@ def flashed_record(data_dir: str, identities: set[str] | list[str]) -> dict[str,
     checks it before a flash.
     """
     records = flash_records(data_dir)
+    # Case-insensitive: records are keyed by whatever id the flash used ("PI2", "EBBCan"), while
+    # lookups often come from Moonraker's lowercased section names ("pi2").
+    by_lower = {str(k).lower(): v for k, v in records.items() if isinstance(v, dict)}
     hits: list[dict[str, Any]] = []
     for identity in identities:
-        record = records.get(str(identity)) if identity else None
+        record = by_lower.get(str(identity).lower()) if identity else None
         if isinstance(record, dict):
             hits.append(record)
     if not hits:

@@ -315,9 +315,20 @@ function normalizeVer(v: string | null | undefined): string {
 }
 
 /** The board's actual running firmware, as the live MCU reports it to Moonraker
- *  (NOT the repo build version) - falls back to the recorded flashed version. */
+ *  (NOT the repo build version) - falls back to the recorded flashed version.
+ *  Joined across the device's whole identity set: a CAN device saved under a friendly name
+ *  ("EBBCan") discovers as its canbus uuid, so the live board is bridged via its `[mcu]` section
+ *  name too - otherwise the device row never shows a version or the update badge. */
 function deviceFirmware(device: Device): string | null {
-  return boards.value.find((b) => b.id === device.id)?.version ?? device.flashed_version
+  const id = device.id.toLowerCase()
+  const live = boards.value.find(
+    (b) =>
+      b.id === device.id ||
+      (device.serial_id != null && b.id === device.serial_id) ||
+      (device.dfu_id != null && b.id === device.dfu_id) ||
+      (b.mcu_name != null && b.mcu_name.toLowerCase() === id),
+  )
+  return live?.version ?? device.flashed_version
 }
 
 /** Out of date = the board's firmware differs from the host's running Klipper. Uses the same

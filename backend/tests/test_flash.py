@@ -1205,6 +1205,44 @@ async def test_flash_aborts_when_klipper_stop_fails(tmp_path: Path, monkeypatch)
     assert restarted == ["x"]
 
 
+async def test_can_flash_records_under_uuid_too(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A CAN flash of a friendly-named registry device records under BOTH the name and the
+    resolved canbus uuid - the topology / discovery key CAN boards by uuid, so a name-only record
+    is invisible exactly where the user looks for it."""
+    settings, calls = _flash_env(tmp_path, monkeypatch)
+    recorded: list[str] = []
+
+    async def rec(cmd, cwd=None, result=None):  # type: ignore[no-untyped-def]
+        calls.append(list(cmd))
+        if result is not None:
+            result["rc"] = 0
+        return
+        yield ""  # pragma: no cover
+
+    async def _resolve(_d: str, _m: str):  # type: ignore[no-untyped-def]
+        return "72e5b6ba7195", None
+
+    monkeypatch.setattr(flash_service, "_stream", rec)
+    monkeypatch.setattr(flash_service, "_can_txqueuelen", lambda _i: _none())
+    monkeypatch.setattr(flash_service, "resolve_can_uuid", _resolve)
+    monkeypatch.setattr(flash_service, "record_flash", lambda _d, bid, _p, _i: recorded.append(bid))
+
+    async def pre_version(_u: str, _m: str) -> str:
+        return ""
+
+    monkeypatch.setattr(flash_service, "_can_node_version", pre_version)
+    log = "".join(
+        [
+            line
+            async for line in flash_service.run_flash(
+                "p", "can", "EBBCan", "can0", settings, is_katapult=True
+            )
+        ]
+    )
+    assert "Flash sequence complete" in log
+    assert set(recorded) == {"EBBCan", "72e5b6ba7195"}
+
+
 def test_bootloader_serial_path(monkeypatch) -> None:
     """A board in the Katapult bootloader is found under usb-katapult_<id>, not usb-Klipper_<id>."""
     kl = "/dev/serial/by-id/usb-Klipper_stm32f103xe_36FFD8054755303931861457-if00"

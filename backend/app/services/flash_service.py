@@ -1264,12 +1264,12 @@ async def run_flash(
                     ">>> (The tool's error was in its read-back verify, a known limitation "
                     "of some USB-CAN adapters under sustained load.)\n"
                 )
-                record_flash(
-                    settings.data_dir,
-                    device,
-                    profile,
-                    read_build_info(settings.data_dir, profile) or {},
-                )
+                info = read_build_info(settings.data_dir, profile) or {}
+                record_flash(settings.data_dir, device, profile, info)
+                if target != device:
+                    # Also record under the resolved canbus uuid: the topology / discovery key
+                    # CAN boards by uuid, not by the registry's friendly name.
+                    record_flash(settings.data_dir, target, profile, info)
                 yield _phase("done")
                 yield ">>> Flash sequence complete - verified through Klipper.\n"
                 return
@@ -1299,9 +1299,13 @@ async def run_flash(
                 )
             flashed_id = new_id
 
-    record_flash(
-        settings.data_dir, flashed_id, profile, read_build_info(settings.data_dir, profile) or {}
-    )
+    build_info = read_build_info(settings.data_dir, profile) or {}
+    record_flash(settings.data_dir, flashed_id, profile, build_info)
+    if method == "can" and target != flashed_id:
+        # Also record under the resolved canbus uuid: the topology / discovery key CAN boards by
+        # uuid, not by the registry's friendly name - a record only the name can find is invisible
+        # exactly where the user looks for it.
+        record_flash(settings.data_dir, target, profile, build_info)
     yield _phase("done")
     yield ">>> Flash sequence complete - verify the board reconnects in Mainsail.\n"
 
