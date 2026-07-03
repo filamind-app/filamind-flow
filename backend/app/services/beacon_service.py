@@ -45,8 +45,10 @@ def _parse_beacon(by_id: str) -> dict[str, str] | None:
 def _probe_current_version(by_id_path: str) -> str | None:
     """The probe's RUNNING firmware version, read host-side from its USB device descriptor.
 
-    The probe reports its firmware version as the USB ``bcdDevice`` field (a sysfs file read - no
-    serial traffic, safe while Klipper holds the port). BCD-encoded: ``0210`` -> ``2.10``.
+    The probe stamps its firmware version into the USB ``bcdDevice`` field (a sysfs file read -
+    no serial traffic, safe while Klipper holds the port). The four BCD digits encode
+    major / two-digit minor / patch: ``2010`` -> ``2.1.0`` - directly comparable to the plugin
+    checkout's version tags.
     """
     try:
         tty = os.path.basename(os.path.realpath(by_id_path))
@@ -55,9 +57,9 @@ def _probe_current_version(by_id_path: str) -> str | None:
             raw = handle.read().strip()
     except OSError:
         return None
-    if not raw.isdigit() or len(raw) < 3:
+    if not raw.isdigit() or len(raw) != 4:
         return None
-    return f"{int(raw[:-2])}.{raw[-2:]}"
+    return f"{int(raw[0])}.{int(raw[1:3])}.{int(raw[3])}"
 
 
 def discover_beacons() -> list[dict[str, Any]]:

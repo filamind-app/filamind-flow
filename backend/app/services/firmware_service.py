@@ -18,17 +18,29 @@ _HOST_MCU_SOCKET = "klipper_host_mcu"
 #: Where the Linux-process host MCU binary is installed.
 _HOST_MCU_BINARY = "/usr/local/bin/klipper_mcu"
 
+#: (mtime, size) -> detected version memo: the status endpoint polls every few seconds and the
+#: binary scan is not free on SBC-class hosts - only rescan when the installed file changes.
+_HOST_VERSION_CACHE: tuple[tuple[float, int], str | None] | None = None
+
 
 def _host_binary_version() -> str | None:
     """The version stamped inside the installed ``klipper_mcu`` binary (Klipper's standard
     embedded stamp) - a truthful version even when FilaMind never flashed the host MCU itself."""
-    if not os.path.isfile(_HOST_MCU_BINARY):
+    global _HOST_VERSION_CACHE
+    try:
+        stat = os.stat(_HOST_MCU_BINARY)
+    except OSError:
         return None
+    key = (stat.st_mtime, stat.st_size)
+    if _HOST_VERSION_CACHE and _HOST_VERSION_CACHE[0] == key:
+        return _HOST_VERSION_CACHE[1]
     try:
         version = external_firmware.inspect_firmware(_HOST_MCU_BINARY).get("detected_version")
     except OSError:
         return None
-    return str(version) if version else None
+    value = str(version) if version else None
+    _HOST_VERSION_CACHE = (key, value)
+    return value
 
 
 def _normalize(version: str | None) -> str:
