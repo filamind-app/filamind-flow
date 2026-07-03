@@ -59,7 +59,7 @@ from app.services.build_service import BuildService
 from app.services.kconfig_service import KconfigError, get_kconfig_service
 from app.services.moonraker_client import MoonrakerClient
 from app.services.task_store import Task
-from app.services.version_store import flash_records, read_build_info
+from app.services.version_store import flashed_record, read_build_info
 
 router = APIRouter(prefix="/firmware", tags=["firmware"])
 
@@ -399,12 +399,11 @@ async def firmware_identify(settings: Settings = Depends(get_settings)) -> dict[
 @router.get("/devices", response_model=DevicesResponse)
 async def firmware_devices(settings: Settings = Depends(get_settings)) -> DevicesResponse:
     """Returns the saved devices, each device enriched with its last-flashed version."""
-    records = flash_records(settings.data_dir)
     devices: list[Device] = []
     for device in devices_store.read_devices(settings.data_dir):
         # Look the record up under ALL the device's identities (runtime id + bound serial/dfu ids
         # + the bootloader-renamed port) - a flash recorded under a re-enumerated id must not
-        # vanish from the panel.
+        # vanish from the panel. Same newest-wins rule as every other lookup.
         identities: list[str] = []
         for key in ("id", "serial_id", "dfu_id"):
             value = str(device.get(key) or "")
@@ -412,9 +411,7 @@ async def firmware_devices(settings: Settings = Depends(get_settings)) -> Device
                 identities.append(value)
                 identities.append(re.sub(r"(?i)(usb-)Klipper(_)", r"\1katapult\2", value))
                 identities.append(re.sub(r"(?i)(usb-)katapult(_)", r"\1Klipper\2", value))
-        record: dict[str, Any] = next(
-            (records[i] for i in identities if isinstance(records.get(i), dict)), {}
-        )
+        record: dict[str, Any] = flashed_record(settings.data_dir, identities) or {}
         device["flashed_version"] = record.get("version")
         device["flashed_commit"] = record.get("commit")
         device["last_flashed"] = record.get("flashed_at")
