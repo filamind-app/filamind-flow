@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Status",
       "tabConfigure": "🔧 Konfigurieren",
       "tabDevices": "🖥 Geräte",
+      "tabAdapter": "🔌 Adapter",
       "tabExternal": "📦 Extern",
       "loading": "Firmware-Status wird geladen…",
       "retrying": "erneuter Versuch…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Adapter flashen / aktualisieren",
-        "desc": "Der Adapter wird außerhalb von Klipper per USB-DFU aktualisiert.",
+        "desc": "Der Adapter wird außerhalb von Klipper per USB-DFU aktualisiert - das Panel versetzt ihn selbst in den DFU-Modus.",
         "revision": "Adaptermodell",
-        "boot": "Adapter abziehen, dann die BOOT-Taste GEDRÜCKT HALTEN, während das USB-Kabel wieder an den Drucker gesteckt wird, dann loslassen.",
+        "auto": "Wähle einfach dein Modell und Flashen - das Panel versetzt sich selbst in den DFU-Modus (ein USB-Detach) und startet Klipper neu. Kein Tastendruck nötig.",
         "check": "Auf DFU prüfen",
         "ready": "DFU erkannt - bereit zum Flashen",
-        "notReady": "Noch nicht im DFU - Schritt 1 ausführen, dann erneut prüfen",
+        "detected": "Adapter gefunden - er wechselt automatisch in den DFU-Modus",
+        "notReady": "Kein Adapter gefunden - stecke ihn in den Drucker und prüfe erneut",
         "noSudo": "Passwortloses sudo ist nicht eingerichtet. Einmal ausführen: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Mir ist klar: falsche Firmware kann den Adapter unbrauchbar machen; während des Flashens nicht abziehen.",
+        "fallbackLabel": "Falls der automatische Wechsel fehlschlägt:",
+        "boot": "Adapter abziehen, die BOOT-Taste GEDRÜCKT HALTEN, während das USB-Kabel wieder an den Drucker gesteckt wird, loslassen, dann erneut Flashen.",
         "flash": "Flashen",
         "flashing": "Wird geflasht...",
         "warn": "Ein Update ist selten nötig - der Adapter wird vorgeflasht geliefert. Gründe: eine fehlerhafte Charge oder ein Paket-Reihenfolge-Bug in alter Firmware."

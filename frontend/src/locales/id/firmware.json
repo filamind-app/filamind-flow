@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Status",
       "tabConfigure": "🔧 Konfigurasi",
       "tabDevices": "🖥 Perangkat",
+      "tabAdapter": "🔌 Adapter",
       "tabExternal": "📦 Eksternal",
       "loading": "Memuat status firmware…",
       "retrying": "mencoba lagi…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Flash / perbarui adapter",
-        "desc": "Adapter diperbarui di luar Klipper, lewat USB-DFU.",
+        "desc": "Adapter diperbarui di luar Klipper, lewat USB-DFU - panel yang memasukkannya ke DFU untuk Anda.",
         "revision": "Model adapter",
-        "boot": "Cabut adapter, lalu TAHAN tombol BOOT sambil mencolokkan kabel USB ke printer, kemudian lepaskan.",
+        "auto": "Cukup pilih model Anda lalu Flash - panel masuk DFU sendiri (pelepasan USB) dan memulai ulang Klipper. Tidak perlu menekan tombol.",
         "check": "Periksa DFU",
         "ready": "DFU terdeteksi - siap diflash",
-        "notReady": "Belum di DFU - lakukan langkah 1, lalu periksa lagi",
+        "detected": "Adapter ditemukan - akan masuk DFU secara otomatis",
+        "notReady": "Tidak ada adapter ditemukan - colokkan ke printer, lalu periksa lagi",
         "noSudo": "sudo tanpa kata sandi belum disetel. Jalankan sekali: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Saya paham firmware yang salah bisa membuat adapter tak berfungsi; jangan cabut saat flashing.",
+        "fallbackLabel": "Jika masuk otomatis gagal:",
+        "boot": "cabut adapter, TAHAN tombol BOOT-nya sambil mencolokkan kembali kabel USB ke printer, lepaskan, lalu Flash lagi.",
         "flash": "Flash",
         "flashing": "Memflash...",
         "warn": "Pembaruan jarang diperlukan - adapter sudah terflash dari pabrik. Alasan: batch cacat atau bug urutan paket pada firmware lama."

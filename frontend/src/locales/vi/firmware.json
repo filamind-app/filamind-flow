@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Trạng thái",
       "tabConfigure": "🔧 Cấu hình",
       "tabDevices": "🖥 Thiết bị",
+      "tabAdapter": "🔌 Bộ chuyển",
       "tabExternal": "📦 Bên ngoài",
       "loading": "Đang tải trạng thái firmware…",
       "retrying": "đang thử lại…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Nạp / cập nhật bộ chuyển",
-        "desc": "Bộ chuyển được cập nhật ngoài Klipper, qua USB-DFU.",
+        "desc": "Bộ chuyển được cập nhật ngoài Klipper, qua USB-DFU - bảng điều khiển sẽ tự đưa nó vào chế độ DFU.",
         "revision": "Model bộ chuyển",
-        "boot": "Rút bộ chuyển, rồi GIỮ nút BOOT trong khi cắm cáp USB lại vào máy in, sau đó thả ra.",
+        "auto": "Chỉ cần chọn model rồi bấm Nạp - bảng điều khiển tự vào DFU (ngắt kết nối USB) và khởi động lại Klipper. Không cần bấm nút nào.",
         "check": "Kiểm tra DFU",
         "ready": "Đã phát hiện DFU - sẵn sàng nạp",
-        "notReady": "Chưa ở DFU - làm bước 1 rồi kiểm tra lại",
+        "detected": "Đã tìm thấy bộ chuyển - nó sẽ tự vào DFU",
+        "notReady": "Không tìm thấy bộ chuyển - cắm nó vào máy in, rồi kiểm tra lại",
         "noSudo": "sudo không mật khẩu chưa được thiết lập. Chạy một lần: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Tôi hiểu firmware sai có thể làm hỏng bộ chuyển; không rút trong khi nạp.",
+        "fallbackLabel": "Nếu tự vào DFU không được:",
+        "boot": "rút bộ chuyển, GIỮ nút BOOT của nó trong khi cắm cáp USB lại vào máy in, thả ra, rồi bấm Nạp lại.",
         "flash": "Nạp",
         "flashing": "Đang nạp...",
         "warn": "Hiếm khi cần cập nhật - bộ chuyển đã được nạp sẵn. Lý do: lô lỗi hoặc lỗi thứ tự gói trong firmware cũ."

@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Status",
       "tabConfigure": "🔧 Configure",
       "tabDevices": "🖥 Devices",
+      "tabAdapter": "🔌 Adapter",
       "tabExternal": "📦 External",
       "loading": "Loading firmware status…",
       "retrying": "retrying…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Flash / update adapter",
-        "desc": "The adapter is updated outside Klipper, over USB-DFU.",
+        "desc": "The adapter is updated outside Klipper, over USB-DFU - the panel puts it into DFU for you.",
         "revision": "Adapter model",
-        "boot": "Unplug the adapter, then HOLD its BOOT button while plugging the USB cable back into the printer, then release.",
+        "auto": "Just pick your model and Flash - the panel enters DFU itself (a USB detach) and restarts Klipper. No button press needed.",
         "check": "Check for DFU",
         "ready": "DFU detected - ready to flash",
-        "notReady": "Not in DFU yet - do step 1, then check again",
+        "detected": "Adapter found - it will enter DFU automatically",
+        "notReady": "No adapter found - plug it into the printer, then check again",
         "noSudo": "Passwordless sudo isn't set up. Run once: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "I understand a wrong firmware can disable the adapter; don't unplug it while flashing.",
+        "fallbackLabel": "If auto-entry fails:",
+        "boot": "unplug the adapter, HOLD its BOOT button while plugging the USB cable back into the printer, release, then Flash again.",
         "flash": "Flash",
         "flashing": "Flashing...",
         "warn": "Updating is rarely needed - the adapter ships pre-flashed. Reasons: a bad batch, or a packet-ordering bug in old firmware."

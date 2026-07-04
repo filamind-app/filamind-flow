@@ -80,6 +80,7 @@
       "tabStatus": "🩺 狀態",
       "tabConfigure": "🔧 設定",
       "tabDevices": "🖥 裝置",
+      "tabAdapter": "🔌 轉接器",
       "tabExternal": "📦 外部",
       "loading": "正在載入韌體狀態…",
       "retrying": "重試中…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "刷寫 / 更新轉接器",
-        "desc": "轉接器在 Klipper 之外，透過 USB-DFU 更新。",
+        "desc": "轉接器在 Klipper 之外，透過 USB-DFU 更新 - 面板會自動幫你進入 DFU。",
         "revision": "轉接器型號",
-        "boot": "拔下轉接器，然後按住其 BOOT 按鈕同時將 USB 線插回印表機，再放開。",
+        "auto": "只要選擇型號並刷寫 - 面板會自行進入 DFU（一次 USB 卸離）並重新啟動 Klipper，無需按任何按鈕。",
         "check": "檢查 DFU",
         "ready": "已偵測到 DFU - 可以刷寫",
-        "notReady": "尚未進入 DFU - 先執行步驟 1 再檢查",
+        "detected": "已找到轉接器 - 它將自動進入 DFU",
+        "notReady": "找不到轉接器 - 請將它插入印表機，然後再檢查一次",
         "noSudo": "未設定免密碼 sudo。執行一次: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "我了解錯誤的韌體可能使轉接器無法使用；刷寫時請勿拔除。",
+        "fallbackLabel": "若自動進入失敗：",
+        "boot": "拔下轉接器，按住其 BOOT 按鈕同時將 USB 線插回印表機，放開後再刷寫一次。",
         "flash": "刷寫",
         "flashing": "刷寫中...",
         "warn": "很少需要更新 - 轉接器出廠已刷寫。原因：批次不良或舊韌體的封包順序錯誤。"

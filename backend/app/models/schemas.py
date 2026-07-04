@@ -1511,6 +1511,7 @@ class CanDfuStatus(BaseModel):
     """Whether a USB-CAN adapter is currently in its STM32 ROM-DFU bootloader."""
 
     present: bool = False
+    runtime: bool = False  # a running gs_usb adapter we can auto-detach into DFU (no BOOT button)
     detail: str | None = None
     sudo: bool = True  # false when passwordless sudo for dfu-util isn't granted
 

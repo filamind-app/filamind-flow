@@ -1,11 +1,12 @@
 <script setup lang="ts">
 /** Guided flash / update for the USB-CAN adapter (a BTT U2C / candleLight dongle) - BETA.
  *
- *  The adapter is NOT a Klipper MCU, so it's flashed over USB-DFU: the user must HOLD the BOOT
- *  button while plugging the cable in (gs_usb has no software bootloader-entry), then the host runs
- *  dfu-util. This walks that with the button timing front and centre + a DFU check before Flash is
- *  enabled. Lives in the Firmware Manager (Devices tab) - the Board Topology widget links here. */
-import { onMounted, ref } from 'vue'
+ *  The adapter is NOT a Klipper MCU, so it's flashed over USB-DFU. candleLight / budgetcan firmware
+ *  exposes a DFU runtime interface, so the host puts a running adapter into DFU on its own (a
+ *  `dfu-util -e` detach) - no button press. We only fall back to the manual BOOT-button entry when
+ *  the adapter can't be detached in software. Lives in its own Adapter tab in the Firmware Manager -
+ *  the Board Topology widget links here. */
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { describeError } from '@/core/describeError'
@@ -15,7 +16,7 @@ import type { CanDfuStatus, CanFlashResult, CanFlashRevision } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
-const open = ref(false)
+const open = ref(true) // its own tab - show expanded by default (still collapsible)
 const revs = ref<CanFlashRevision[]>([])
 const rev = ref<string>('')
 const dfu = ref<CanDfuStatus | null>(null)
@@ -25,6 +26,9 @@ const ack = ref(false)
 const result = ref<CanFlashResult | null>(null)
 const error = ref<string | null>(null)
 
+// Flashable when the adapter is already in DFU, or running and detachable in software.
+const flashable = computed(() => !!(dfu.value?.present || dfu.value?.runtime))
+
 onMounted(async () => {
   try {
     revs.value = await fetchCanRevisions()
@@ -32,6 +36,7 @@ onMounted(async () => {
   } catch {
     /* leave empty - the section just won't offer revisions */
   }
+  void check() // best-effort initial detection so we can enable Flash straight away
 })
 
 async function check(): Promise<void> {
@@ -90,12 +95,10 @@ async function flash(): Promise<void> {
         </select>
       </label>
 
-      <!-- 2. the BOOT-button timing (the crux of the guided flow) -->
-      <p class="rounded-sm bg-brand-yellow/30 p-1">
-        <b>1.</b> {{ t('firmware.canbus.flash.boot') }}
-      </p>
+      <!-- 2. the panel enters DFU on its own - no button press in the common case -->
+      <p class="rounded-sm bg-brand-lime/25 p-1">{{ t('firmware.canbus.flash.auto') }}</p>
 
-      <!-- 3. confirm it actually entered DFU before enabling Flash -->
+      <!-- detection status (auto-checked; a manual re-check for after plugging in) -->
       <div class="flex flex-wrap items-center gap-2">
         <button
           type="button"
@@ -103,10 +106,13 @@ async function flash(): Promise<void> {
           :disabled="checking"
           @click="check"
         >
-          <b>2.</b> {{ t('firmware.canbus.flash.check') }}
+          {{ t('firmware.canbus.flash.check') }}
         </button>
         <span v-if="dfu?.present" class="font-bold text-brand-lime"
           >✓ {{ t('firmware.canbus.flash.ready') }}</span
+        >
+        <span v-else-if="dfu?.runtime" class="font-bold text-brand-lime"
+          >✓ {{ t('firmware.canbus.flash.detected') }}</span
         >
         <span v-else-if="dfu && !dfu.sudo" class="text-brand-red">{{
           t('firmware.canbus.flash.noSudo')
@@ -114,7 +120,7 @@ async function flash(): Promise<void> {
         <span v-else-if="dfu" class="opacity-70">{{ t('firmware.canbus.flash.notReady') }}</span>
       </div>
 
-      <!-- 4. risk gate + flash -->
+      <!-- 3. risk gate + flash (auto-enters DFU; falls back to manual only if that fails) -->
       <label class="flex items-start gap-1">
         <input v-model="ack" type="checkbox" class="mt-0.5" />
         <span>{{ t('firmware.canbus.flash.risk') }}</span>
@@ -122,12 +128,16 @@ async function flash(): Promise<void> {
       <button
         type="button"
         class="nb-btn bg-brand-red/80 px-1.5 py-0.5 font-bold text-surface disabled:opacity-40"
-        :disabled="!dfu?.present || !ack || flashing"
+        :disabled="!flashable || !ack || flashing"
         @click="flash"
       >
-        <b>3.</b>
         {{ flashing ? t('firmware.canbus.flash.flashing') : t('firmware.canbus.flash.flash') }}
       </button>
+
+      <!-- manual fallback, only needed if software entry fails -->
+      <p class="opacity-60">
+        <b>{{ t('firmware.canbus.flash.fallbackLabel') }}</b> {{ t('firmware.canbus.flash.boot') }}
+      </p>
 
       <pre
         v-if="result"

@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Stato",
       "tabConfigure": "🔧 Configura",
       "tabDevices": "🖥 Dispositivi",
+      "tabAdapter": "🔌 Adattatore",
       "tabExternal": "📦 Esterno",
       "loading": "Caricamento stato firmware…",
       "retrying": "nuovo tentativo…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Flash / aggiorna adattatore",
-        "desc": "L'adattatore si aggiorna fuori da Klipper, via USB-DFU.",
+        "desc": "L'adattatore si aggiorna fuori da Klipper, via USB-DFU - il pannello lo mette in DFU per te.",
         "revision": "Modello adattatore",
-        "boot": "Scollega l'adattatore, poi TIENI premuto il pulsante BOOT mentre ricolleghi il cavo USB alla stampante, quindi rilascia.",
+        "auto": "Scegli il modello e premi Flash - il pannello entra da solo in DFU (un distacco USB) e riavvia Klipper. Nessun pulsante da premere.",
         "check": "Verifica DFU",
         "ready": "DFU rilevato - pronto al flash",
-        "notReady": "Non ancora in DFU - esegui il passo 1, poi riverifica",
+        "detected": "Adattatore rilevato - entrerà in DFU automaticamente",
+        "notReady": "Nessun adattatore rilevato - collegalo alla stampante, poi riverifica",
         "noSudo": "sudo senza password non configurato. Esegui una volta: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Capisco che un firmware errato può rendere inutilizzabile l'adattatore; non scollegarlo durante il flash.",
+        "fallbackLabel": "Se l'ingresso automatico non riesce:",
+        "boot": "scollega l'adattatore, TIENI premuto il pulsante BOOT mentre ricolleghi il cavo USB alla stampante, rilascia, poi premi di nuovo Flash.",
         "flash": "Flash",
         "flashing": "Flashing...",
         "warn": "L'aggiornamento serve raramente - l'adattatore è preflashato. Motivi: un lotto difettoso o un bug di ordinamento pacchetti nel vecchio firmware."

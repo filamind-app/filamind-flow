@@ -6,8 +6,6 @@ import ReportErrorButton from '@/components/feedback/ReportErrorButton.vue'
 import { useNav } from '@/core/nav'
 import { focusTopologyNode } from '@/widgets/board-topology/topologyFocus'
 
-import CanFlashPanel from './CanFlashPanel.vue'
-
 import {
   attachIdentity,
   exportBackup,
@@ -469,9 +467,5 @@ onUnmounted(() => {
         </p>
       </div>
     </template>
-
-    <!-- BETA: guided flash/update of the USB-CAN adapter (U2C) - not a Klipper MCU, so it lives in
-         its own section rather than the device registry. -->
-    <CanFlashPanel />
   </div>
 </template>

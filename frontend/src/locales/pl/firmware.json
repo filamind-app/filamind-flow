@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Stan",
       "tabConfigure": "🔧 Konfiguruj",
       "tabDevices": "🖥 Urządzenia",
+      "tabAdapter": "🔌 Adapter",
       "tabExternal": "📦 Zewnętrzny",
       "loading": "Wczytywanie statusu firmware…",
       "retrying": "ponawianie…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Flashuj / aktualizuj adapter",
-        "desc": "Adapter aktualizuje się poza Klipperem, przez USB-DFU.",
+        "desc": "Adapter aktualizuje się poza Klipperem, przez USB-DFU - panel sam wprowadza go w tryb DFU.",
         "revision": "Model adaptera",
-        "boot": "Odłącz adapter, następnie PRZYTRZYMAJ przycisk BOOT podczas podłączania kabla USB do drukarki, po czym zwolnij.",
+        "auto": "Wystarczy wybrać model i Flashuj - panel sam wchodzi w DFU (odłączenie USB) i restartuje Klipper. Bez wciskania przycisku.",
         "check": "Sprawdź DFU",
         "ready": "Wykryto DFU - gotowy do flashowania",
-        "notReady": "Jeszcze nie w DFU - wykonaj krok 1 i sprawdź ponownie",
+        "detected": "Wykryto adapter - sam wejdzie w DFU",
+        "notReady": "Nie wykryto adaptera - podłącz go do drukarki i sprawdź ponownie",
         "noSudo": "Bezhasłowe sudo nie jest skonfigurowane. Uruchom raz: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Rozumiem, że zły firmware może uszkodzić adapter; nie odłączaj go podczas flashowania.",
+        "fallbackLabel": "Jeśli automatyczne wejście zawiedzie:",
+        "boot": "odłącz adapter, PRZYTRZYMAJ jego przycisk BOOT podczas ponownego podłączania kabla USB do drukarki, zwolnij, a następnie ponownie Flashuj.",
         "flash": "Flashuj",
         "flashing": "Flashowanie...",
         "warn": "Aktualizacja rzadko jest potrzebna - adapter jest fabrycznie wgrany. Powody: wadliwa partia lub błąd kolejności pakietów w starym firmware."

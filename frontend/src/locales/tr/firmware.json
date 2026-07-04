@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Durum",
       "tabConfigure": "🔧 Yapılandır",
       "tabDevices": "🖥 Cihazlar",
+      "tabAdapter": "🔌 Adaptör",
       "tabExternal": "📦 Harici",
       "loading": "Firmware durumu yükleniyor…",
       "retrying": "yeniden deneniyor…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Adaptörü flashla / güncelle",
-        "desc": "Adaptör Klipper dışında, USB-DFU ile güncellenir.",
+        "desc": "Adaptör Klipper dışında, USB-DFU üzerinden güncellenir - panel onu sizin için DFU'ya alır.",
         "revision": "Adaptör modeli",
-        "boot": "Adaptörü çıkar, sonra USB kablosunu yazıcıya takarken BOOT düğmesini BASILI TUT, ardından bırak.",
+        "auto": "Modelinizi seçip Flashla'ya basmanız yeterli - panel kendisi DFU'ya girer (bir USB ayrılması) ve Klipper'ı yeniden başlatır. Düğmeye basmaya gerek yok.",
         "check": "DFU'yu denetle",
         "ready": "DFU algılandı - flashlamaya hazır",
-        "notReady": "Henüz DFU'da değil - 1. adımı yap, sonra tekrar denetle",
+        "detected": "Adaptör bulundu - otomatik olarak DFU'ya girecek",
+        "notReady": "Adaptör bulunamadı - yazıcıya takın, sonra tekrar denetleyin",
         "noSudo": "Parolasız sudo ayarlı değil. Bir kez çalıştır: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Yanlış firmware'in adaptörü kullanılamaz hale getirebileceğini anlıyorum; flashlama sırasında çıkarma.",
+        "fallbackLabel": "Otomatik giriş başarısız olursa:",
+        "boot": "adaptörü çıkarın, USB kablosunu yazıcıya geri takarken BOOT düğmesini BASILI TUTUN, bırakın, sonra tekrar Flashla'ya basın.",
         "flash": "Flashla",
         "flashing": "Flashlanıyor...",
         "warn": "Güncelleme nadiren gerekir - adaptör önceden yüklenmiş gelir. Nedenler: hatalı parti veya eski firmware'de paket sırası hatası."

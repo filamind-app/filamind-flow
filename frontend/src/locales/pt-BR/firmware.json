@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Status",
       "tabConfigure": "🔧 Configurar",
       "tabDevices": "🖥 Dispositivos",
+      "tabAdapter": "🔌 Adaptador",
       "tabExternal": "📦 Externo",
       "loading": "Carregando status do firmware…",
       "retrying": "tentando novamente…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Atualizar / regravar adaptador",
-        "desc": "O adaptador é atualizado fora do Klipper, via USB-DFU.",
+        "desc": "O adaptador é atualizado fora do Klipper, via USB-DFU - o painel o coloca em DFU para você.",
         "revision": "Modelo do adaptador",
-        "boot": "Desconecte o adaptador, então SEGURE o botão BOOT enquanto reconecta o cabo USB à impressora, e solte.",
+        "auto": "Basta escolher seu modelo e Regravar - o painel entra em DFU sozinho (um desligamento USB) e reinicia o Klipper. Não é preciso apertar nenhum botão.",
         "check": "Verificar DFU",
         "ready": "DFU detectado - pronto para regravar",
-        "notReady": "Ainda não está em DFU - faça o passo 1 e verifique de novo",
+        "detected": "Adaptador encontrado - ele entrará em DFU automaticamente",
+        "notReady": "Nenhum adaptador encontrado - conecte-o à impressora e verifique de novo",
         "noSudo": "sudo sem senha não está configurado. Execute uma vez: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Entendo que um firmware errado pode inutilizar o adaptador; não o desconecte durante a regravação.",
+        "fallbackLabel": "Se a entrada automática falhar:",
+        "boot": "desconecte o adaptador, SEGURE o botão BOOT enquanto reconecta o cabo USB à impressora, solte e Regrave de novo.",
         "flash": "Regravar",
         "flashing": "Regravando...",
         "warn": "Atualizar raramente é necessário - o adaptador vem pré-gravado. Motivos: um lote defeituoso ou um bug de ordem de pacotes em firmware antigo."
