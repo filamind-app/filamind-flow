@@ -13,6 +13,7 @@ import ExternalFirmwarePanel from './ExternalFirmwarePanel.vue'
 import FirmwareConfigEditor from './FirmwareConfigEditor.vue'
 import FirmwareGuided from './FirmwareGuided.vue'
 import FirmwareDevicesPanel from './FirmwareDevicesPanel.vue'
+import CanFlashPanel from './CanFlashPanel.vue'
 import FirmwareFlashConfirm from './FirmwareFlashConfirm.vue'
 import HelpNote from './HelpNote.vue'
 import HelpIllo from './HelpIllo.vue'
@@ -49,11 +50,12 @@ import type {
 
 const { t } = useI18n({ useScope: 'global' })
 
-type FwMode = 'guided' | 'status' | 'configure' | 'devices' | 'external'
+type FwMode = 'guided' | 'status' | 'configure' | 'devices' | 'adapter' | 'external'
 const mode = ref<FwMode>('status')
-// Deep link: #firmware-upgrade/<tab> lands on that view (guided / status / configure / devices / external).
+// Deep link: #firmware-upgrade/<tab> lands on that view
+// (guided / status / configure / devices / adapter / external).
 useHashTab('firmware-upgrade', (tab) => {
-  if (['guided', 'status', 'configure', 'devices', 'external'].includes(tab)) {
+  if (['guided', 'status', 'configure', 'devices', 'adapter', 'external'].includes(tab)) {
     mode.value = tab as FwMode
   }
 })
@@ -62,6 +64,7 @@ const FW_TABS = computed<{ id: FwMode; label: string }[]>(() => [
   { id: 'status', label: t('firmware.widget.tabStatus') },
   { id: 'configure', label: t('firmware.widget.tabConfigure') },
   { id: 'devices', label: t('firmware.widget.tabDevices') },
+  { id: 'adapter', label: t('firmware.widget.tabAdapter') },
   { id: 'external', label: t('firmware.widget.tabExternal') },
 ])
 const status = ref<FirmwareStatus | null>(null)
@@ -562,6 +565,9 @@ onUnmounted(() => {
       <FirmwareConfigEditor @close="mode = 'status'" />
     </div>
     <FirmwareDevicesPanel v-else-if="mode === 'devices'" @close="mode = 'status'" />
+    <div v-else-if="mode === 'adapter'" class="space-y-2">
+      <CanFlashPanel />
+    </div>
     <div v-else-if="mode === 'external'" class="space-y-2">
       <HelpNote topic="external" />
       <ExternalFirmwarePanel />

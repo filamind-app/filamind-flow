@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Estado",
       "tabConfigure": "🔧 Configurar",
       "tabDevices": "🖥 Dispositivos",
+      "tabAdapter": "🔌 Adaptador",
       "tabExternal": "📦 Externo",
       "loading": "Cargando el estado del firmware…",
       "retrying": "reintentando…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Flashear / actualizar adaptador",
-        "desc": "El adaptador se actualiza fuera de Klipper, por USB-DFU.",
+        "desc": "El adaptador se actualiza fuera de Klipper, por USB-DFU - el panel lo pone en DFU por ti.",
         "revision": "Modelo de adaptador",
-        "boot": "Desconecta el adaptador, luego MANTÉN pulsado su botón BOOT mientras enchufas el cable USB a la impresora, y suéltalo.",
+        "auto": "Solo elige tu modelo y pulsa Flashear - el panel entra en DFU por sí mismo (un desacople USB) y reinicia Klipper. No hay que pulsar ningún botón.",
         "check": "Comprobar DFU",
         "ready": "DFU detectado - listo para flashear",
-        "notReady": "Aún no está en DFU - haz el paso 1 y vuelve a comprobar",
+        "detected": "Adaptador encontrado - entrará en DFU automáticamente",
+        "notReady": "No se encontró ningún adaptador - conéctalo a la impresora y vuelve a comprobar",
         "noSudo": "sudo sin contraseña no está configurado. Ejecuta una vez: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Entiendo que un firmware incorrecto puede inutilizar el adaptador; no lo desconectes durante el flasheo.",
+        "fallbackLabel": "Si la entrada automática falla:",
+        "boot": "desconecta el adaptador, MANTÉN pulsado su botón BOOT mientras vuelves a enchufar el cable USB a la impresora, suéltalo y pulsa Flashear otra vez.",
         "flash": "Flashear",
         "flashing": "Flasheando...",
         "warn": "Rara vez es necesario actualizar - el adaptador viene preflasheado. Motivos: un lote defectuoso o un fallo de orden de paquetes en firmware antiguo."

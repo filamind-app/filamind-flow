@@ -80,6 +80,7 @@
       "tabStatus": "🩺 Status",
       "tabConfigure": "🔧 Configureren",
       "tabDevices": "🖥 Apparaten",
+      "tabAdapter": "🔌 Adapter",
       "tabExternal": "📦 Extern",
       "loading": "Firmwarestatus laden…",
       "retrying": "opnieuw proberen…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "Adapter flashen / bijwerken",
-        "desc": "De adapter wordt buiten Klipper bijgewerkt, via USB-DFU.",
+        "desc": "De adapter wordt buiten Klipper bijgewerkt, via USB-DFU - het paneel zet hem voor je in DFU.",
         "revision": "Adaptermodel",
-        "boot": "Koppel de adapter los, HOUD dan de BOOT-knop ingedrukt terwijl je de USB-kabel weer in de printer steekt, en laat los.",
+        "auto": "Kies gewoon je model en Flashen - het paneel gaat zelf in DFU (een USB-detach) en herstart Klipper. Geen knop indrukken nodig.",
         "check": "Controleer op DFU",
         "ready": "DFU gedetecteerd - klaar om te flashen",
-        "notReady": "Nog niet in DFU - doe stap 1 en controleer opnieuw",
+        "detected": "Adapter gevonden - hij gaat automatisch in DFU",
+        "notReady": "Geen adapter gevonden - steek hem in de printer en controleer opnieuw",
         "noSudo": "Wachtwoordloze sudo is niet ingesteld. Voer eenmalig uit: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "Ik begrijp dat verkeerde firmware de adapter onbruikbaar kan maken; koppel hem niet los tijdens het flashen.",
+        "fallbackLabel": "Als automatisch starten mislukt:",
+        "boot": "koppel de adapter los, HOUD de BOOT-knop ingedrukt terwijl je de USB-kabel weer in de printer steekt, laat los en flash dan opnieuw.",
         "flash": "Flashen",
         "flashing": "Bezig met flashen...",
         "warn": "Bijwerken is zelden nodig - de adapter wordt voorgeflasht geleverd. Redenen: een slechte batch of een pakketvolgorde-bug in oude firmware."

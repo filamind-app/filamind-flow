@@ -80,6 +80,7 @@
       "tabStatus": "🩺 状态",
       "tabConfigure": "🔧 配置",
       "tabDevices": "🖥 设备",
+      "tabAdapter": "🔌 适配器",
       "tabExternal": "📦 外部",
       "loading": "正在加载固件状态…",
       "retrying": "重试中…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "刷写 / 更新适配器",
-        "desc": "适配器在 Klipper 之外，通过 USB-DFU 更新。",
+        "desc": "适配器会在 Klipper 之外通过 USB-DFU 更新 - 面板会自动为你进入 DFU。",
         "revision": "适配器型号",
-        "boot": "拔下适配器，然后按住其 BOOT 按钮的同时把 USB 线插回打印机，再松开。",
+        "auto": "只需选择型号并刷写 - 面板会自行进入 DFU（一次 USB 断开）并重启 Klipper。无需按任何按钮。",
         "check": "检查 DFU",
         "ready": "已检测到 DFU - 可以刷写",
-        "notReady": "尚未进入 DFU - 执行第 1 步后再检查",
+        "detected": "已检测到适配器 - 它将自动进入 DFU",
+        "notReady": "未检测到适配器 - 请将其插入打印机，然后再次检查",
         "noSudo": "未设置免密 sudo。运行一次: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "我明白错误的固件可能使适配器无法使用；刷写时请勿拔出。",
+        "fallbackLabel": "若自动进入失败：",
+        "boot": "拔下适配器，按住其 BOOT 按钮的同时把 USB 线插回打印机，再松开，然后重新刷写。",
         "flash": "刷写",
         "flashing": "刷写中...",
         "warn": "很少需要更新 - 适配器出厂已刷写。原因：批次不良或旧固件的数据包顺序错误。"

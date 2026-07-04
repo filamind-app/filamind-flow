@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.19.0] - 2026-07-04
+
+### Changed
+
+- **USB-CAN adapter (U2C) flashing no longer needs the BOOT button in the common case.** candleLight /
+  budgetcan firmware exposes a USB DFU runtime interface, so the Firmware Manager now puts a *running*
+  adapter into DFU itself (a `dfu-util -e` detach — Klipper is stopped for it and restarted after),
+  then flashes. The manual BOOT-button entry (hold BOOT while plugging the USB cable in) is kept as the
+  automatic fallback for an adapter that can't be detached in software — a corrupt adapter, or a build
+  without the DFU runtime interface. `/canbus/dfu-status` gains a `runtime` flag so the panel enables
+  Flash for a running adapter, not only one already parked in DFU.
+- **The USB-CAN adapter flash now has its own "🔌 Adapter" tab** in the Firmware Manager, moved out of
+  the Devices tab — updating the adapter is a first-class action rather than a section buried below the
+  device registry.
+
 ## [1.18.1] - 2026-07-03
 
 ### Fixed

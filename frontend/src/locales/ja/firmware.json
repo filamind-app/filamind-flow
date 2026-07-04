@@ -80,6 +80,7 @@
       "tabStatus": "🩺 ステータス",
       "tabConfigure": "🔧 構成",
       "tabDevices": "🖥 デバイス",
+      "tabAdapter": "🔌 アダプター",
       "tabExternal": "📦 外部",
       "loading": "ファームウェアの状態を読み込み中…",
       "retrying": "再試行中…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "アダプターをフラッシュ / 更新",
-        "desc": "アダプターは Klipper の外、USB-DFU で更新します。",
+        "desc": "アダプターは Klipper の外、USB-DFU で更新します。パネルが自動で DFU に切り替えます。",
         "revision": "アダプターのモデル",
-        "boot": "アダプターを抜き、BOOT ボタンを押したまま USB ケーブルをプリンターに挿し直し、離します。",
+        "auto": "モデルを選んで Flash するだけです。パネルが自動で DFU に入り（USB デタッチ）、Klipper を再起動します。ボタン操作は不要です。",
         "check": "DFU を確認",
         "ready": "DFU を検出 - フラッシュ可能",
-        "notReady": "まだ DFU ではありません - 手順1を行い、再確認してください",
+        "detected": "アダプターを検出 - 自動で DFU に入ります",
+        "notReady": "アダプターが見つかりません - プリンターに接続してから再確認してください",
         "noSudo": "パスワードなし sudo が未設定です。一度実行: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "誤ったファームウェアはアダプターを使用不能にする可能性があります。フラッシュ中は抜かないでください。",
+        "fallbackLabel": "自動切り替えに失敗した場合：",
+        "boot": "アダプターを抜き、BOOT ボタンを押したまま USB ケーブルをプリンターに挿し直し、離してから、もう一度 Flash してください。",
         "flash": "フラッシュ",
         "flashing": "フラッシュ中...",
         "warn": "更新が必要なことはまれです - アダプターは出荷時にフラッシュ済みです。理由: 不良ロットや旧ファームのパケット順序バグ。"

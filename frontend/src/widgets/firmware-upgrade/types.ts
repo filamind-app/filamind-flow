@@ -278,6 +278,8 @@ export interface CanFlashRevision {
 /** Whether the adapter is currently in its STM32 ROM-DFU bootloader (polled in the guided flash). */
 export interface CanDfuStatus {
   present: boolean
+  /** A running gs_usb adapter the host can auto-detach into DFU (no BOOT button needed). */
+  runtime?: boolean
   detail?: string | null
   sudo: boolean
 }

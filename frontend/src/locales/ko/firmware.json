@@ -80,6 +80,7 @@
       "tabStatus": "🩺 상태",
       "tabConfigure": "🔧 구성",
       "tabDevices": "🖥 장치",
+      "tabAdapter": "🔌 어댑터",
       "tabExternal": "📦 외부",
       "loading": "펌웨어 상태 불러오는 중…",
       "retrying": "재시도 중…",
@@ -331,14 +332,17 @@
     "canbus": {
       "flash": {
         "title": "어댑터 플래시 / 업데이트",
-        "desc": "어댑터는 Klipper 외부에서 USB-DFU로 업데이트됩니다.",
+        "desc": "어댑터는 Klipper 외부에서 USB-DFU로 업데이트됩니다 - 패널이 대신 DFU로 진입시킵니다.",
         "revision": "어댑터 모델",
-        "boot": "어댑터를 뽑은 뒤, USB 케이블을 프린터에 다시 꽂는 동안 BOOT 버튼을 누른 채로 유지하고 놓습니다.",
+        "auto": "모델만 고르고 플래시하세요 - 패널이 스스로 DFU로 진입(USB 분리)한 뒤 Klipper를 재시작합니다. 버튼을 누를 필요가 없습니다.",
         "check": "DFU 확인",
         "ready": "DFU 감지됨 - 플래시 준비됨",
-        "notReady": "아직 DFU 아님 - 1단계를 한 뒤 다시 확인하세요",
+        "detected": "어댑터 감지됨 - 자동으로 DFU에 진입합니다",
+        "notReady": "어댑터를 찾을 수 없습니다 - 프린터에 연결한 뒤 다시 확인하세요",
         "noSudo": "비밀번호 없는 sudo가 설정되지 않았습니다. 한 번 실행: sudo bash ~/filamind-flow/scripts/install.sh sudoers",
         "risk": "잘못된 펌웨어가 어댑터를 사용 불가로 만들 수 있음을 이해합니다; 플래시 중 분리하지 마세요.",
+        "fallbackLabel": "자동 진입이 실패하면:",
+        "boot": "어댑터를 뽑고, USB 케이블을 프린터에 다시 꽂는 동안 BOOT 버튼을 누른 채로 유지한 뒤 놓고, 다시 플래시하세요.",
         "flash": "플래시",
         "flashing": "플래시 중...",
         "warn": "업데이트는 거의 필요 없습니다 - 어댑터는 사전 플래시되어 출고됩니다. 이유: 불량 배치 또는 구형 펌웨어의 패킷 순서 버그."
