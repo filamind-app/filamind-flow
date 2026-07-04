@@ -105,6 +105,7 @@ async def test_flash_auto_detaches_running_adapter(monkeypatch) -> None:  # type
     assert _stopped_klipper(calls) and _detached(calls) and _flashed(calls)
     assert state["_started"] == [1]  # Klipper restart fired (the finally)
     assert "File downloaded successfully" in res["output"]
+    assert "plug it back in" in res["output"]  # the one-replug guidance
 
 
 async def test_flash_direct_when_already_in_dfu(monkeypatch) -> None:  # type: ignore[no-untyped-def]

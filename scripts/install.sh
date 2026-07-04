@@ -53,7 +53,7 @@ fi
 # added in exactly one place and reaches both the fresh-install and update code paths.
 render_sudoers() {
   local user_name="$1"
-  local systemctl dfu cp chmod fuser journalctl rm_bin timedatectl localectl hostnamectl nmcli ip_bin mkdir_bin
+  local systemctl dfu cp chmod fuser journalctl rm_bin timedatectl localectl hostnamectl nmcli ip_bin mkdir_bin udevadm_bin
   systemctl="$(command -v systemctl || echo /usr/bin/systemctl)"
   dfu="$(command -v dfu-util || echo /usr/bin/dfu-util)"
   cp="$(command -v cp || echo /bin/cp)"
@@ -67,6 +67,7 @@ render_sudoers() {
   nmcli="$(command -v nmcli || echo /usr/bin/nmcli)"
   ip_bin="$(command -v ip || echo /usr/sbin/ip)"  # CAN bus control: ip link set up/down/bitrate/params
   mkdir_bin="$(command -v mkdir || echo /bin/mkdir)"  # host-MCU -r auto-fix: create the klipper-mcu drop-in dir
+  udevadm_bin="$(command -v udevadm || echo /usr/bin/udevadm)"  # reload the CAN-recovery udev rule on update
   local apt_get dpkg_bin bash_bin flow_home flow_install
   apt_get="$(command -v apt-get || echo /usr/bin/apt-get)"
   dpkg_bin="$(command -v dpkg || echo /usr/bin/dpkg)"
@@ -76,7 +77,7 @@ render_sudoers() {
   cat <<EOF
 # Managed by FilaMind Flow (scripts/install.sh) - firmware flashing + Host Control. Auto-refreshed
 # on each update, so a new capability the panel needs reaches every install without a manual step.
-$user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli, $ip_bin, $mkdir_bin
+$user_name ALL=(root) NOPASSWD: $systemctl, $dfu, $cp, $chmod, $fuser, $journalctl, $rm_bin, $timedatectl, $localectl, $hostnamectl, $nmcli, $ip_bin, $mkdir_bin, $udevadm_bin
 # Native touch-app install (FilaMind screen .deb kiosk): package + WebKit runtime via apt/dpkg, and
 # the Flow kiosk unit-writer. Wider than the base grant - enables one-click native install.
 $user_name ALL=(root) NOPASSWD: $apt_get, $dpkg_bin, $bash_bin $flow_install kiosk *
@@ -107,6 +108,31 @@ refresh_sudoers_on_update() {
   rm -f "$tmp"
 }
 
+# Keep the CAN-bus auto-recovery (udev rule + oneshot service + script) current on EVERY update, so a
+# (re)plugged USB-CAN adapter reconnects the bus + Klipper without a manual step - reaching existing
+# installs on update alone. Uses the panel's already-granted passwordless sudo (cp/chmod/systemctl/
+# udevadm). Best-effort + silent: if the grant was never set up, the existing files are left as-is.
+refresh_canbus_recovery_on_update() {
+  local base="${REPO_ROOT:-$APP}/deploy"
+  [ -f "$base/filamind-canbus-recover.sh" ] || return 0
+  command -v sudo >/dev/null 2>&1 || return 0
+  # NB: don't probe `sudo -n true` here - `true` isn't in the FilaMind grant, so it would false-fail
+  # on a narrow-grant host. The first `sudo -n cp ... || return 0` below is the real gate (cp IS
+  # granted), so a host without the passwordless grant bails there without touching anything.
+  local cp_bin chmod_bin sctl udevadm_bin
+  cp_bin="$(command -v cp || echo /bin/cp)"
+  chmod_bin="$(command -v chmod || echo /bin/chmod)"
+  sctl="$(command -v systemctl || echo /usr/bin/systemctl)"
+  udevadm_bin="$(command -v udevadm || echo /usr/bin/udevadm)"
+  sudo -n "$cp_bin" "$base/filamind-canbus-recover.sh" /usr/local/bin/filamind-canbus-recover 2>/dev/null || return 0
+  sudo -n "$chmod_bin" 0755 /usr/local/bin/filamind-canbus-recover 2>/dev/null || true
+  sudo -n "$cp_bin" "$base/filamind-canbus-recover@.service" /etc/systemd/system/filamind-canbus-recover@.service 2>/dev/null || true
+  sudo -n "$cp_bin" "$base/99-filamind-canbus.rules" /etc/udev/rules.d/99-filamind-canbus.rules 2>/dev/null || true
+  sudo -n "$sctl" daemon-reload 2>/dev/null || true
+  sudo -n "$udevadm_bin" control --reload-rules 2>/dev/null || true
+  echo "FilaMind Flow: CAN-bus auto-recovery up to date."
+}
+
 # The Firmware Manager builds + flashes Klipper firmware, which needs the host build toolchain (make
 # + the MCU cross-compilers). Install it AUTOMATICALLY + idempotently on install/update so a user
 # never has to run apt by hand (issue #558). Reuses the passwordless apt-get grant the sudoers
@@ -120,7 +146,9 @@ ensure_build_toolchain() {
   fi
   local sudo_pfx=""
   if [ "$(id -u)" -ne 0 ]; then
-    if sudo -n true 2>/dev/null; then
+    # Probe a GRANTED command (cp is in the FilaMind grant), not `true` - `sudo -n true` false-fails
+    # on a narrow-grant host and would wrongly defer the toolchain forever on the update hook.
+    if sudo -n "$(command -v cp || echo /bin/cp)" --version >/dev/null 2>&1; then
       sudo_pfx="sudo -n"          # update hook: the panel's passwordless apt-get grant is active
     elif [ -t 0 ]; then
       sudo_pfx="sudo"             # interactive install: prompt once if needed
@@ -166,6 +194,9 @@ do_update() {
   echo "FilaMind Flow: backend dependencies up to date."
   # Self-heal the passwordless-sudo grant so new privileged capabilities apply on update alone.
   refresh_sudoers_on_update
+  # Keep the CAN-bus auto-recovery (udev rule + oneshot service) current on update too, so existing
+  # installs gain it without a manual re-run - via the panel's already-granted passwordless sudo.
+  refresh_canbus_recovery_on_update
   # Auto-install the firmware build toolchain so users never run apt by hand (after the sudoers
   # refresh above, the passwordless apt-get grant it needs is guaranteed current).
   ensure_build_toolchain
@@ -204,6 +235,24 @@ do_sudoers() {
     udevadm trigger 2>/dev/null || true
     echo "Installed $udev_rule - STM32 DFU boards are reachable without sudo."
   fi
+
+  # CAN-bus auto-recovery: a (re)plugged USB-CAN adapter brings the bus up + reconnects Klipper on
+  # its own, so a post-flash replug (unavoidable when the host's USB hub can't cycle port power) is
+  # the only manual step.
+  install_canbus_recovery
+}
+
+# Install the CAN-bus auto-recovery (udev rule + oneshot service + script) as root. Idempotent.
+install_canbus_recovery() {
+  local base="${REPO_ROOT:-$APP}/deploy"
+  [ -f "$base/filamind-canbus-recover.sh" ] || return 0
+  install -m 0755 -o root -g root "$base/filamind-canbus-recover.sh" /usr/local/bin/filamind-canbus-recover
+  install -m 0644 -o root -g root "$base/filamind-canbus-recover@.service" /etc/systemd/system/filamind-canbus-recover@.service
+  install -m 0644 -o root -g root "$base/99-filamind-canbus.rules" /etc/udev/rules.d/99-filamind-canbus.rules
+  systemctl daemon-reload 2>/dev/null || true
+  udevadm control --reload-rules 2>/dev/null || true
+  udevadm trigger --subsystem-match=net 2>/dev/null || true
+  echo "Installed CAN-bus auto-recovery - a (re)plugged USB-CAN adapter reconnects the bus + Klipper."
 }
 
 # -- kiosk: turn the printer's touchscreen into the fullscreen native FilaMind app ---
@@ -747,7 +796,11 @@ PY
   sudo systemctl restart moonraker 2>/dev/null || true
 
   info "Removing the sudo + udev rules"
-  sudo rm -f /etc/sudoers.d/filamind /etc/udev/rules.d/99-stm32-dfu.rules
+  sudo rm -f /etc/sudoers.d/filamind /etc/udev/rules.d/99-stm32-dfu.rules \
+    /etc/udev/rules.d/99-filamind-canbus.rules \
+    /etc/systemd/system/filamind-canbus-recover@.service \
+    /usr/local/bin/filamind-canbus-recover
+  sudo systemctl daemon-reload 2>/dev/null || true
   sudo udevadm control --reload-rules 2>/dev/null || true
 
   info "Done - system integration removed. The app files are still at $APP."

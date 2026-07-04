@@ -198,10 +198,13 @@ async def flash(revision: str) -> dict[str, Any]:
         ok = "File downloaded successfully" in out or "Download done" in out or rc == 0
         header = f"Firmware: {fw['label']} ({len(data)} bytes)\nSource: {fw['url']}\n\n"
         body = ("\n".join(prelog) + "\n\n" if prelog else "") + out.strip()
-        if klipper_stopped:
+        if ok:
+            # The adapter needs a power-cycle to boot the new firmware. On a host whose USB hub
+            # can't switch port power in software that is one physical replug - after which the
+            # installed CAN-recovery udev rule brings the bus up + reconnects Klipper on its own.
             body += (
-                "\n\n>>> Klipper is being restarted. If the adapter doesn't come back on the CAN "
-                "bus, unplug and replug it once to power-cycle it, then Klipper will reconnect."
+                "\n\n>>> Firmware written. Unplug the adapter's USB cable and plug it back in once "
+                "to power-cycle it - the CAN bus and Klipper reconnect automatically after that."
             )
         return {"ok": ok, "output": header + body}
     finally:
