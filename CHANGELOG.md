@@ -6,6 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.20.1] - 2026-07-04
+
+### Changed
+
+- Dependency maintenance — bumped the frontend dev tooling (vite 8.1.3, prettier 3.9.4, vue-tsc
+  3.3.6, `@types/node` 26.1.0, postcss 8.5.16) and the backend `fastapi` (`>=0.139.0`). The stricter
+  vue-tsc 3.3.6 surfaced a null-unsafe MCU chip deep-link in Board Topology's inspector, now guarded.
+
 ## [1.20.0] - 2026-07-04
 
 ### Added
