@@ -331,6 +331,26 @@ def test_fingerprint_lower_floor_for_toolhead_boards() -> None:
     assert mid is None  # same containment, but the mainboard floor rejects it
 
 
+def test_used_pins_excludes_board_pins_header_aliases() -> None:
+    """Generic ``[board_pins]`` header aliases (the EXP display connector, spare headers) carry no
+    board-identifying signal and no catalog pin-map lists them, so counting them only drags a real
+    board's containment below the match floor. They must be excluded from the fingerprint's used-pin
+    set while the physical functional pins are kept - this is what lets a real Octopus Max EZ (which
+    read at ~0.51 with the aliases counted) clear the 0.6 mainboard floor."""
+    sections = {
+        "board_pins": {"mcu": ["mcu"], "aliases": [["EXP1_1", "PE7"], ["EXP1_2", "PG1"]]},
+        "stepper_x": {"step_pin": "PA0", "dir_pin": "PA1", "enable_pin": "PA2"},
+        "stepper_y": {"step_pin": "PA3", "dir_pin": "PA4", "enable_pin": "PA5"},
+        "display": {"cs_pin": "EXP1_1", "a0_pin": "EXP1_2"},  # written as header aliases
+    }
+    used = board_topology._used_pins(sections, "mcu")
+    assert "EXP1_1" not in used and "EXP1_2" not in used  # header aliases excluded
+    assert {"PA0", "PA1", "PA2", "PA3", "PA4", "PA5"} <= used  # functional pins kept
+    # A [board_pins] scoped to a different MCU must not suppress this MCU's identically-named pins.
+    other = {"board_pins": {"mcu": ["can0"], "aliases": [["PA0", "x"]]}, "s": {"step_pin": "PA0"}}
+    assert "PA0" in board_topology._used_pins(other, "mcu")
+
+
 async def test_gather_pin_doctor_aggregates_findings(monkeypatch: Any) -> None:
     """The whole-config pin doctor runs the atlas per MCU and aggregates double-assign + caveat
     findings - here a pin driven by two sections on the primary MCU."""
@@ -416,6 +436,47 @@ async def test_gather_topology_enriches_live_chip_and_firmware(monkeypatch: Any)
     assert by_name["ebbcan"]["firmware"] == "v0.13.0-628-gabc"
     assert by_name["mcu"]["mcu"] == "stm32h723xx"
     assert by_name["mcu"]["firmware"] == "v0.13.0-628-gabc"
+
+
+async def test_gather_topology_flags_outdated_against_host_version(monkeypatch: Any) -> None:
+    """gather_topology compares each MCU's running firmware to the host's Klipper build (from
+    /printer/info software_version, minus the -dirty suffix) and flags the ones that differ -
+    this drives the up-to-date / update-available badge on every board node."""
+    sections = {
+        "mcu": {"serial": "/dev/serial/by-id/usb-Klipper_stm32h723xx_X-if00"},
+        "mcu ebbcan": {"canbus_uuid": "72e5b6ba7195"},
+    }
+
+    async def fake_query(_self: Any, objects: Any) -> dict[str, Any]:
+        if list(objects) == ["configfile"]:
+            return {"configfile": {"settings": sections}}
+        return {  # mcu matches the host build; the toolhead runs an older one
+            "mcu": {"mcu_version": "v0.13.0-701-gaaa", "mcu_constants": {"MCU": "stm32h723xx"}},
+            "mcu EBBCan": {"mcu_version": "v0.13.0-628-gbbb", "mcu_constants": {"MCU": "rp2040"}},
+        }
+
+    async def fake_list(_self: Any) -> list[str]:
+        return ["configfile", "mcu", "mcu EBBCan"]
+
+    async def fake_sysinfo(_self: Any) -> dict[str, Any]:
+        return {}
+
+    async def fake_info(_self: Any) -> dict[str, Any]:
+        return {"software_version": "v0.13.0-701-gaaa-dirty"}  # -dirty must be ignored
+
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.query_objects", fake_query)
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.list_objects", fake_list)
+    monkeypatch.setattr(
+        "app.services.moonraker_client.MoonrakerClient.machine_system_info", fake_sysinfo
+    )
+    monkeypatch.setattr("app.services.moonraker_client.MoonrakerClient.get_printer_info", fake_info)
+    from app.services.moonraker_client import MoonrakerClient
+
+    out = await board_topology.gather_topology(MoonrakerClient("http://x"))
+    assert out["host"]["version"] == "v0.13.0-701-gaaa-dirty"
+    by_name = {m["name"]: m for m in out["mcus"]}
+    assert by_name["mcu"]["outdated"] is False  # same build as the host (ignoring -dirty)
+    assert by_name["ebbcan"]["outdated"] is True  # older build - a re-flash is due
 
 
 def test_attach_components_case_insensitive_mcu_prefix() -> None:

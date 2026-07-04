@@ -262,8 +262,51 @@ def _split_pin(value: Any) -> tuple[str, str]:
     return chip, pin.lstrip("^~!").strip().upper()
 
 
+def _board_alias_pins(sections: dict[str, Any], mcu_name: str) -> set[str]:
+    """The alias names defined by a ``[board_pins]`` section for ``mcu_name`` (e.g. ``EXP1_2``,
+    ``EXP2_1``). These are generic breakout-header pins (the EXP display connector, spare headers) -
+    the same layout appears across many boards, so they carry no board-identifying signal. Counting
+    them in the pin-fingerprint only adds noise no catalog pin-map contains, dragging a real board's
+    containment below the match floor; the caller excludes them."""
+    out: set[str] = set()
+    for name, cfg in sections.items():
+        if not (isinstance(name, str) and name.split()[:1] == ["board_pins"]):
+            continue
+        if not isinstance(cfg, dict):
+            continue
+        # ``mcu`` names which MCU these aliases target (defaults to "mcu"); scope to this one.
+        targets = cfg.get("mcu")
+        target_names = (
+            [str(t) for t in targets]
+            if isinstance(targets, list)
+            else [str(targets)]
+            if targets
+            else ["mcu"]
+        )
+        if mcu_name.lower() not in {t.lower() for t in target_names}:
+            continue
+        pairs: list[Any] = []
+        aliases = cfg.get("aliases")
+        if isinstance(aliases, list):
+            pairs = aliases
+        elif isinstance(aliases, str):
+            for tok in aliases.replace("\n", ",").split(","):
+                alias, sep, _ = tok.partition("=")
+                if sep:
+                    pairs.append([alias, _])
+        for pair in pairs:
+            if isinstance(pair, (list, tuple)) and len(pair) >= 1:
+                alias = str(pair[0]).strip()
+                if alias:
+                    out.add(alias)
+    return out
+
+
 def _used_pins(sections: dict[str, Any], mcu_name: str) -> set[str]:
-    """The set of pin names the live config uses on a given MCU (chip-prefix == ``mcu_name``)."""
+    """The set of pin names the live config uses on a given MCU (chip-prefix == ``mcu_name``),
+    excluding ``[board_pins]`` header aliases so the fingerprint reflects only board-identifying
+    functional pins, not the generic EXP/breakout headers (see :func:`_board_alias_pins`)."""
+    header_aliases = _board_alias_pins(sections, mcu_name)
     used: set[str] = set()
     for cfg in sections.values():
         if not isinstance(cfg, dict):
@@ -272,7 +315,7 @@ def _used_pins(sections: dict[str, Any], mcu_name: str) -> set[str]:
             if not isinstance(value, str) or not (key.endswith("_pin") or key == "pin"):
                 continue
             chip, pin = _split_pin(value)
-            if chip.lower() == mcu_name.lower() and pin:
+            if chip.lower() == mcu_name.lower() and pin and pin not in header_aliases:
                 used.add(pin)
     return used
 
@@ -1075,6 +1118,22 @@ async def gather_topology(client: MoonrakerClient, data_dir: str = "") -> dict[s
 
         live_can = await canbus_control._all_live_status()
     result["can_termination"] = _can_termination(result, live_can)
+    # The host's Klipper version is the update reference: flag each MCU whose running firmware
+    # differs from it (a re-flash is due) vs matches (up to date). Best-effort - a missing version
+    # leaves `outdated` null so the UI shows no badge rather than a wrong one.
+    with contextlib.suppress(httpx.HTTPError):
+        from app.services.firmware_service import _normalize
+
+        info = await client.get_printer_info()
+        ref = info.get("software_version") if isinstance(info, dict) else None
+        if isinstance(ref, str) and ref:
+            if isinstance(result.get("host"), dict):
+                result["host"]["version"] = ref
+            nref = _normalize(ref)
+            for m in result.get("mcus", []):
+                fw = m.get("firmware")
+                if isinstance(fw, str) and fw:
+                    m["outdated"] = _normalize(fw) != nref
     result["reachable"] = True
     return result
 

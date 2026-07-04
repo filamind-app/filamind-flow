@@ -348,9 +348,21 @@ type Health = 'ok' | 'warn' | 'out' | 'unknown'
 function mcuNameOf(id: string): string {
   return id.startsWith('mcu:') ? id.slice(4) : ''
 }
+/** Topology MCUs by name - lets healthOf() fall back to the offline `outdated` flag. */
+const mcuByName = computed<Record<string, TopologyMcu>>(() =>
+  Object.fromEntries(mcus.value.map((m) => [m.name, m])),
+)
 function healthOf(id: string): Health {
-  const f = props.health[mcuNameOf(id)]
-  if (!f || f.in_sync == null) return 'unknown'
+  const name = mcuNameOf(id)
+  const f = props.health[name.toLowerCase()]
+  if (!f || f.in_sync == null) {
+    // No live firmware-status verdict - fall back to the topology's own outdated flag (host
+    // Klipper version vs this MCU's running build) so the node still shows a green/red state.
+    const o = mcuByName.value[name]?.outdated
+    if (o === true) return 'out'
+    if (o === false) return 'ok'
+    return 'unknown'
+  }
   if (f.in_sync === false) return 'out' // firmware out of sync with the host - needs a restart/flash
   if ((f.retransmits ?? 0) > 1000 || (f.awake ?? 0) > 0.6) return 'warn' // flaky link / high load
   return 'ok'
@@ -360,7 +372,7 @@ function targetHealth(target?: string): Health {
   return target ? healthOf('mcu:' + target) : 'unknown'
 }
 function vitals(id: string): string {
-  const f = props.health[mcuNameOf(id)]
+  const f = props.health[mcuNameOf(id).toLowerCase()]
   if (!f) return ''
   const parts: string[] = []
   if (f.freq != null)
