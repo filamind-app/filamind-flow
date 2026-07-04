@@ -8,7 +8,8 @@
       "system": "System",
       "boot": "Boot",
       "canbus": "CAN-Bus",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Boot-Parameter"
     },
     "help": {
       "guide": "Hilfe",
@@ -315,6 +316,165 @@
         "applied": "Boot-Splash angewendet.",
         "failed": "Boot-Splash konnte nicht angewendet werden.",
         "caveat": "Schreibt ein PNG an den Splash-Pfad; ob es beim Booten erscheint, hängt von der Splash-Einrichtung ab."
+      },
+      "params": {
+        "intro": "Aktivieren Sie Hardware-Schnittstellen und optimieren Sie die Boot-Einstellungen für Ihr Host-Board. Änderungen werden vorgemerkt, als Diff angezeigt, vor dem Schreiben gesichert und nach einem Neustart wirksam.",
+        "refresh": "Aktualisieren",
+        "loading": "Boot-Konfiguration wird gelesen…",
+        "needsSetup": "Aktualisieren Sie FilaMind, um das Bearbeiten von Boot-Parametern zu ermöglichen.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Dieses Host-Image verwendet kein bekanntes Boot-Konfigurationsformat, daher ist die Bearbeitung hier nur lesbar."
+        },
+        "groups": {
+          "hardware_interfaces": "Hardware-Schnittstellen",
+          "display_console": "Anzeige & Konsole",
+          "performance_memory": "Leistung & Speicher",
+          "usb_power": "USB & Stromversorgung"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN über MCP2515",
+            "purpose": "Fügen Sie über einen SPI-MCP2515-Controller einen CAN-Bus für einen CAN-Toolhead hinzu.",
+            "caveat": "Benötigt einen SPI-Bus, einen freien Interrupt-Pin und die Kristallfrequenz des Moduls; teilt sich die SPI-Pins mit einem Beschleunigungssensor."
+          },
+          "spi_accel": {
+            "label": "SPI-Beschleunigungssensor-Bus",
+            "purpose": "Aktivieren Sie einen SPI-Bus für einen ADXL345-Input-Shaping-Beschleunigungssensor.",
+            "caveat": "Wählen Sie den Bus, dessen Pins auf Ihrem Board-Header herausgeführt sind."
+          },
+          "i2c_bus": {
+            "label": "I2C-Bus",
+            "purpose": "Aktivieren Sie einen I2C-Bus für Sensoren, eine RTC oder einen LIS2DW-Beschleunigungssensor.",
+            "caveat": "Der richtige Controller hängt davon ab, welche SDA/SCL-Pins Ihr Header bereitstellt."
+          },
+          "uart_extra": {
+            "label": "Zusätzlicher UART",
+            "purpose": "Fügen Sie eine serielle Schnittstelle für einen zweiten MCU oder eine serielle CAN-Bridge hinzu.",
+            "caveat": "Wählen Sie die Pin-Mux-Variante, die Ihr Header bereitstellt; verwenden Sie nicht den Konsolen-UART, während die Konsolenausgabe auf seriell eingestellt ist."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Aktivieren Sie einen Host-Pin für adressierbare RGB-LEDs.",
+            "caveat": "NeoPixel werden in der Regel besser vom Drucker-MCU angesteuert; lassen Sie es aus, es sei denn, Sie verdrahten die LEDs mit dem Host."
+          },
+          "rtc_module": {
+            "label": "Echtzeituhr",
+            "purpose": "Aktivieren Sie eine batteriegepufferte RTC, damit der Host die Uhrzeit auch offline behält.",
+            "caveat": "Aktivieren Sie nur den Chip, den Sie tatsächlich verbaut haben."
+          },
+          "console_target": {
+            "label": "Konsolenausgabe",
+            "purpose": "Wohin die Kernel-Boot-Meldungen gehen - die Anzeige oder die serielle Schnittstelle."
+          },
+          "bootlogo": {
+            "label": "Boot-Logo",
+            "purpose": "Das Boot-Startbild-Logo während des Startvorgangs anzeigen."
+          },
+          "cma_size": {
+            "label": "Reservierter CMA-Speicher",
+            "purpose": "Zusammenhängender Speicher, der für eine Kamera oder ein DSI-Display reserviert ist."
+          },
+          "boot_verbosity": {
+            "label": "Ausführlichkeit des Boot-Logs",
+            "purpose": "Wie detailliert der Kernel beim Booten protokolliert (0-8)."
+          },
+          "enable_uart": {
+            "label": "UART aktivieren",
+            "purpose": "Schalten Sie die primäre serielle Schnittstelle für einen seriell angeschlossenen MCU ein."
+          },
+          "disable_bt": {
+            "label": "Den guten UART freigeben (Bluetooth deaktivieren)",
+            "purpose": "Geben Sie den hochwertigen PL011-UART frei, indem Sie Bluetooth deaktivieren.",
+            "caveat": "Sie verlieren das integrierte Bluetooth."
+          },
+          "spi": {
+            "label": "SPI-Bus",
+            "purpose": "Aktivieren Sie den SPI-Bus für einen ADXL345-Beschleunigungssensor."
+          },
+          "i2c_arm": {
+            "label": "I2C-Bus",
+            "purpose": "Aktivieren Sie den I2C-Bus für Sensoren oder einen I2C-Beschleunigungssensor."
+          },
+          "i2c_rtc": {
+            "label": "Hardware-RTC",
+            "purpose": "Fügen Sie eine I2C-Echtzeituhr hinzu, damit der Host die Uhrzeit auch offline behält.",
+            "caveat": "Wählen Sie den RTC-Chip, den Sie verbaut haben."
+          },
+          "gpu_mem": {
+            "label": "GPU-Speicher",
+            "purpose": "Speicher, der der GPU zugewiesen wird; verringern Sie ihn, um auf einem Headless-Host RAM freizugeben."
+          },
+          "arm_freq": {
+            "label": "ARM-Takt (Übertaktung)",
+            "purpose": "CPU-Takt in MHz. Eine Erhöhung erfordert eine gute Kühlung.",
+            "caveat": "Eine instabile Übertaktung kann die SD-Karte beschädigen; fügen Sie einen Kühlkörper hinzu."
+          },
+          "over_voltage": {
+            "label": "Überspannung",
+            "purpose": "Zusätzliche Kernspannung zur Stabilisierung einer Übertaktung.",
+            "caveat": "Höhere Spannung führt zu höheren Temperaturen."
+          },
+          "max_usb_current": {
+            "label": "USB-Strom erhöhen",
+            "purpose": "Erlauben Sie mehr Gesamt-USB-Strom für Adapter und Zubehör.",
+            "caveat": "Benötigt ein Netzteil, das ihn liefern kann."
+          }
+        },
+        "opt": {
+          "8000000": "8-MHz-Kristall",
+          "12000000": "12-MHz-Kristall",
+          "16000000": "16-MHz-Kristall",
+          "20000000": "20-MHz-Kristall"
+        },
+        "control": {
+          "changed": "geändert",
+          "disabled": "Deaktiviert"
+        },
+        "advanced": {
+          "title": "Erweitert",
+          "warn": "Erweiterte Änderungen schreiben Boot-Token direkt. Ein falscher Wert kann verhindern, dass der Host bootet - prüfen Sie den Diff sorgfältig.",
+          "overlays": "Device-Tree-Overlays",
+          "overlayName": "Overlay-Name",
+          "addOverlay": "Hinzufügen",
+          "remove": "Entfernen",
+          "dtparams": "Device-Tree-Parameter",
+          "paramKey": "Parameter",
+          "paramValue": "Wert",
+          "addParam": "Hinzufügen",
+          "staged": "{n} erweiterte Änderungen vorgemerkt",
+          "clear": "Löschen"
+        },
+        "preview": {
+          "button": "Änderungen vorschauen",
+          "none": "Keine Änderungen vorgemerkt.",
+          "noDiff": "Keine effektive Änderung.",
+          "diffTitle": "Diff"
+        },
+        "apply": {
+          "button": "Anwenden",
+          "applying": "Wird angewendet…",
+          "done": "Boot-Konfiguration aktualisiert.",
+          "warnAck": "Ich verstehe, dass diese Änderungen beeinflussen, wie der Host bootet."
+        },
+        "revert": {
+          "button": "Auf letzte Sicherung zurücksetzen",
+          "confirm": "Die neueste Sicherung dieser Datei wiederherstellen?",
+          "yes": "Ja, wiederherstellen",
+          "done": "Die vorherige Boot-Konfiguration wurde wiederhergestellt."
+        },
+        "reboot": {
+          "banner": "Ein Neustart ist erforderlich, um Ihre Boot-Änderungen anzuwenden.",
+          "prompt": "Geben Sie REBOOT ein, um den Neustart des Hosts zu bestätigen.",
+          "token": "REBOOT",
+          "button": "Jetzt neu starten",
+          "rebooting": "Neustart läuft - verbinden Sie sich in einem Moment erneut."
+        },
+        "warn": {
+          "removes_root": "Dies entfernt das root=-Boot-Token - der Host bootet möglicherweise nicht.",
+          "removes_console": "Dies entfernt das console=-Token."
+        }
       }
     },
     "canbus": {

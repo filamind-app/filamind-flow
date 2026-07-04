@@ -8,7 +8,8 @@
       "system": "システム",
       "boot": "起動",
       "canbus": "CANバス",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "起動パラメータ"
     },
     "help": {
       "guide": "ヘルプ",
@@ -315,6 +316,165 @@
         "applied": "起動スプラッシュを適用しました。",
         "failed": "起動スプラッシュを適用できませんでした。",
         "caveat": "PNG をスプラッシュのパスに書き込みます。起動時に表示されるかはホストの設定に依存します。"
+      },
+      "params": {
+        "intro": "ホストボードのハードウェアインターフェースを有効化し、起動設定を調整します。変更はステージングされ、差分として表示され、書き込み前にバックアップされ、再起動後に反映されます。",
+        "refresh": "更新",
+        "loading": "起動設定を読み込み中…",
+        "needsSetup": "起動パラメータの編集を有効にするには FilaMind を更新してください。",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "このホストイメージは既知の起動設定フォーマットを使用していないため、ここでは読み取り専用です。"
+        },
+        "groups": {
+          "hardware_interfaces": "ハードウェアインターフェース",
+          "display_console": "ディスプレイとコンソール",
+          "performance_memory": "パフォーマンスとメモリ",
+          "usb_power": "USBと電源"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "MCP2515 経由の CAN",
+            "purpose": "SPI 接続の MCP2515 コントローラで CAN バスを追加し、CAN ツールヘッドに使用します。",
+            "caveat": "SPI バス、空きの割り込みピン、モジュールのクリスタル周波数が必要です。加速度センサーと SPI ピンを共有します。"
+          },
+          "spi_accel": {
+            "label": "SPI 加速度センサーバス",
+            "purpose": "入力整形用の ADXL345 加速度センサー向けに SPI バスを有効化します。",
+            "caveat": "ボードのヘッダーにピンが引き出されているバスを選択してください。"
+          },
+          "i2c_bus": {
+            "label": "I2C バス",
+            "purpose": "センサー、RTC、または LIS2DW 加速度センサー向けに I2C バスを有効化します。",
+            "caveat": "適切なコントローラは、ヘッダーに引き出されている SDA/SCL ピンによって異なります。"
+          },
+          "uart_extra": {
+            "label": "追加 UART",
+            "purpose": "2 台目の MCU またはシリアル CAN ブリッジ用にシリアルポートを追加します。",
+            "caveat": "ヘッダーに引き出されているピンマルチプレクス構成を選択してください。コンソール出力がシリアルに設定されている間はコンソール UART を使用しないでください。"
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "アドレサブル RGB LED 向けにホストのピンを有効化します。",
+            "caveat": "NeoPixel は通常プリンタの MCU で駆動する方が適しています。LED をホストに配線しない限り無効のままにしてください。"
+          },
+          "rtc_module": {
+            "label": "リアルタイムクロック",
+            "purpose": "バッテリーバックアップ付き RTC を有効化し、オフライン時もホストが時刻を保持できるようにします。",
+            "caveat": "実際に取り付けたチップのみを有効にしてください。"
+          },
+          "console_target": {
+            "label": "コンソール出力",
+            "purpose": "カーネルの起動メッセージの出力先 - ディスプレイまたはシリアルポート。"
+          },
+          "bootlogo": {
+            "label": "起動ロゴ",
+            "purpose": "起動時に起動スプラッシュロゴを表示します。"
+          },
+          "cma_size": {
+            "label": "予約 CMA メモリ",
+            "purpose": "カメラまたは DSI ディスプレイ用に予約する連続メモリ。"
+          },
+          "boot_verbosity": {
+            "label": "起動ログの詳細度",
+            "purpose": "起動中にカーネルが記録するログの詳細度（0〜8）。"
+          },
+          "enable_uart": {
+            "label": "UART を有効化",
+            "purpose": "シリアル接続の MCU 向けにプライマリシリアルポートを有効にします。"
+          },
+          "disable_bt": {
+            "label": "高品質 UART を解放（Bluetooth を無効化）",
+            "purpose": "Bluetooth を無効にして高品質な PL011 UART を解放します。",
+            "caveat": "オンボードの Bluetooth が使えなくなります。"
+          },
+          "spi": {
+            "label": "SPI バス",
+            "purpose": "ADXL345 加速度センサー向けに SPI バスを有効化します。"
+          },
+          "i2c_arm": {
+            "label": "I2C バス",
+            "purpose": "センサーまたは I2C 加速度センサー向けに I2C バスを有効化します。"
+          },
+          "i2c_rtc": {
+            "label": "ハードウェア RTC",
+            "purpose": "I2C リアルタイムクロックを追加し、オフライン時もホストが時刻を保持できるようにします。",
+            "caveat": "取り付けた RTC チップを選択してください。"
+          },
+          "gpu_mem": {
+            "label": "GPU メモリ",
+            "purpose": "GPU に割り当てるメモリ。ヘッドレスホストでは下げて RAM を空けられます。"
+          },
+          "arm_freq": {
+            "label": "ARM クロック（オーバークロック）",
+            "purpose": "CPU クロック（MHz）。上げるには十分な冷却が必要です。",
+            "caveat": "不安定なオーバークロックは SD カードを破損させる恐れがあります。ヒートシンクを追加してください。"
+          },
+          "over_voltage": {
+            "label": "オーバーボルテージ",
+            "purpose": "オーバークロックを安定させるためのコア電圧の追加。",
+            "caveat": "電圧を上げるほど発熱が増えます。"
+          },
+          "max_usb_current": {
+            "label": "USB 電流を増強",
+            "purpose": "アダプタやアクセサリ向けに USB 全体の電流を増やせるようにします。",
+            "caveat": "供給可能な電源が必要です。"
+          }
+        },
+        "opt": {
+          "8000000": "8 MHz クリスタル",
+          "12000000": "12 MHz クリスタル",
+          "16000000": "16 MHz クリスタル",
+          "20000000": "20 MHz クリスタル"
+        },
+        "control": {
+          "changed": "変更あり",
+          "disabled": "無効"
+        },
+        "advanced": {
+          "title": "詳細設定",
+          "warn": "詳細な編集は起動トークンを直接書き込みます。誤った値はホストが起動しなくなる恐れがあります - 差分を注意深く確認してください。",
+          "overlays": "デバイスツリーオーバーレイ",
+          "overlayName": "オーバーレイ名",
+          "addOverlay": "追加",
+          "remove": "削除",
+          "dtparams": "デバイスツリーパラメータ",
+          "paramKey": "パラメータ",
+          "paramValue": "値",
+          "addParam": "追加",
+          "staged": "{n} 件の詳細な変更がステージング済み",
+          "clear": "クリア"
+        },
+        "preview": {
+          "button": "変更をプレビュー",
+          "none": "ステージング済みの変更はありません。",
+          "noDiff": "実質的な変更はありません。",
+          "diffTitle": "差分"
+        },
+        "apply": {
+          "button": "適用",
+          "applying": "適用中…",
+          "done": "起動設定を更新しました。",
+          "warnAck": "これらの変更がホストの起動方法に影響することを理解しています。"
+        },
+        "revert": {
+          "button": "直近のバックアップに戻す",
+          "confirm": "このファイルの最新バックアップを復元しますか？",
+          "yes": "はい、復元する",
+          "done": "以前の起動設定を復元しました。"
+        },
+        "reboot": {
+          "banner": "起動の変更を適用するには再起動が必要です。",
+          "prompt": "ホストの再起動を確認するには REBOOT と入力してください。",
+          "token": "REBOOT",
+          "button": "今すぐ再起動",
+          "rebooting": "再起動中 - しばらくして再接続してください。"
+        },
+        "warn": {
+          "removes_root": "これは root= 起動トークンを削除します - ホストが起動しなくなる恐れがあります。",
+          "removes_console": "これは console= トークンを削除します。"
+        }
       }
     },
     "canbus": {

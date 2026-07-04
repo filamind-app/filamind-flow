@@ -14,6 +14,7 @@ import { describeError } from '@/core/describeError'
 import { fetchMonitor } from './api'
 import AdvisorPanel from './AdvisorPanel.vue'
 import BootPanel from './BootPanel.vue'
+import BootParamsPanel from './BootParamsPanel.vue'
 import CanBusPanel from './CanBusPanel.vue'
 import CleanupPanel from './CleanupPanel.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
@@ -24,7 +25,15 @@ import type { HostMonitor } from './types'
 
 const { t } = useI18n({ useScope: 'global' })
 
-type View = 'monitor' | 'advisor' | 'services' | 'cleanup' | 'system' | 'boot' | 'canbus'
+type View =
+  | 'monitor'
+  | 'advisor'
+  | 'services'
+  | 'cleanup'
+  | 'system'
+  | 'boot'
+  | 'bootParams'
+  | 'canbus'
 const view = ref<View>('monitor')
 
 const monitor = ref<HostMonitor | null>(null)
@@ -158,6 +167,7 @@ function signalLabel(sig: number | null): string {
             'cleanup',
             'system',
             'boot',
+            'bootParams',
             'canbus',
           ] as View[]"
           :key="v"
@@ -369,6 +379,8 @@ function signalLabel(sig: number | null): string {
     <SystemPanel v-else-if="view === 'system'" />
 
     <BootPanel v-else-if="view === 'boot'" />
+
+    <BootParamsPanel v-else-if="view === 'bootParams'" />
 
     <CanBusPanel v-else-if="view === 'canbus'" />
   </div>

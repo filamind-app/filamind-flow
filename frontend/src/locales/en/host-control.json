@@ -8,7 +8,8 @@
       "system": "System",
       "boot": "Boot",
       "canbus": "CAN Bus",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Boot params"
     },
     "help": {
       "guide": "Help",
@@ -315,6 +316,165 @@
         "applied": "Boot splash applied.",
         "failed": "Could not apply the boot splash.",
         "caveat": "Writes a PNG to the boot-splash path; whether it shows at boot depends on your host's splash setup."
+      },
+      "params": {
+        "intro": "Enable hardware interfaces and tune boot settings for your host board. Changes are staged, shown as a diff, backed up before writing, and take effect after a reboot.",
+        "refresh": "Refresh",
+        "loading": "Reading boot configuration…",
+        "needsSetup": "Update FilaMind to enable boot-parameter editing.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "This host image doesn't use a known boot-config format, so editing is read-only here."
+        },
+        "groups": {
+          "hardware_interfaces": "Hardware interfaces",
+          "display_console": "Display & console",
+          "performance_memory": "Performance & memory",
+          "usb_power": "USB & power"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN via MCP2515",
+            "purpose": "Add a CAN bus through an SPI MCP2515 controller for a CAN toolhead.",
+            "caveat": "Needs an SPI bus, a free interrupt pin and the module crystal frequency; it shares SPI pins with an accelerometer."
+          },
+          "spi_accel": {
+            "label": "SPI accelerometer bus",
+            "purpose": "Enable an SPI bus for an ADXL345 input-shaping accelerometer.",
+            "caveat": "Pick the bus whose pins are broken out on your board header."
+          },
+          "i2c_bus": {
+            "label": "I2C bus",
+            "purpose": "Enable an I2C bus for sensors, an RTC or a LIS2DW accelerometer.",
+            "caveat": "The right controller depends on which SDA/SCL pins your header exposes."
+          },
+          "uart_extra": {
+            "label": "Extra UART",
+            "purpose": "Add a serial port for a second MCU or a serial CAN bridge.",
+            "caveat": "Choose the pin-mux variant exposed on your header; do not use the console UART while console output is set to serial."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Enable a host pin for addressable RGB LEDs.",
+            "caveat": "NeoPixels are usually driven better by the printer MCU; leave off unless you wire LEDs to the host."
+          },
+          "rtc_module": {
+            "label": "Real-time clock",
+            "purpose": "Enable a battery-backed RTC so the host keeps time offline.",
+            "caveat": "Enable only the chip you actually fitted."
+          },
+          "console_target": {
+            "label": "Console output",
+            "purpose": "Where kernel boot messages go - the display or the serial port."
+          },
+          "bootlogo": {
+            "label": "Boot logo",
+            "purpose": "Show the boot splash logo during startup."
+          },
+          "cma_size": {
+            "label": "Reserved CMA memory",
+            "purpose": "Contiguous memory reserved for a camera or DSI display."
+          },
+          "boot_verbosity": {
+            "label": "Boot log verbosity",
+            "purpose": "How much detail the kernel logs while booting (0-8)."
+          },
+          "enable_uart": {
+            "label": "Enable UART",
+            "purpose": "Turn on the primary serial port for a serial-connected MCU."
+          },
+          "disable_bt": {
+            "label": "Free the good UART (disable Bluetooth)",
+            "purpose": "Release the high-quality PL011 UART by turning off Bluetooth.",
+            "caveat": "You lose on-board Bluetooth."
+          },
+          "spi": {
+            "label": "SPI bus",
+            "purpose": "Enable the SPI bus for an ADXL345 accelerometer."
+          },
+          "i2c_arm": {
+            "label": "I2C bus",
+            "purpose": "Enable the I2C bus for sensors or an I2C accelerometer."
+          },
+          "i2c_rtc": {
+            "label": "Hardware RTC",
+            "purpose": "Add an I2C real-time clock so the host keeps time offline.",
+            "caveat": "Select the RTC chip you fitted."
+          },
+          "gpu_mem": {
+            "label": "GPU memory",
+            "purpose": "Memory given to the GPU; lower it to free RAM on a headless host."
+          },
+          "arm_freq": {
+            "label": "ARM clock (overclock)",
+            "purpose": "CPU clock in MHz. Raising it needs good cooling.",
+            "caveat": "An unstable overclock can corrupt the SD card; add a heatsink."
+          },
+          "over_voltage": {
+            "label": "Over-voltage",
+            "purpose": "Extra core voltage to stabilise an overclock.",
+            "caveat": "Higher voltage runs hotter."
+          },
+          "max_usb_current": {
+            "label": "Boost USB current",
+            "purpose": "Allow more total USB current for adapters and accessories.",
+            "caveat": "Needs a power supply that can deliver it."
+          }
+        },
+        "opt": {
+          "8000000": "8 MHz crystal",
+          "12000000": "12 MHz crystal",
+          "16000000": "16 MHz crystal",
+          "20000000": "20 MHz crystal"
+        },
+        "control": {
+          "changed": "changed",
+          "disabled": "Disabled"
+        },
+        "advanced": {
+          "title": "Advanced",
+          "warn": "Advanced edits write boot tokens directly. A wrong value can stop the host booting - check the diff carefully.",
+          "overlays": "Device-tree overlays",
+          "overlayName": "Overlay name",
+          "addOverlay": "Add",
+          "remove": "Remove",
+          "dtparams": "Device-tree parameters",
+          "paramKey": "Parameter",
+          "paramValue": "Value",
+          "addParam": "Add",
+          "staged": "{n} advanced changes staged",
+          "clear": "Clear"
+        },
+        "preview": {
+          "button": "Preview changes",
+          "none": "No changes staged.",
+          "noDiff": "No effective change.",
+          "diffTitle": "Diff"
+        },
+        "apply": {
+          "button": "Apply",
+          "applying": "Applying…",
+          "done": "Boot configuration updated.",
+          "warnAck": "I understand these changes affect how the host boots."
+        },
+        "revert": {
+          "button": "Revert to last backup",
+          "confirm": "Restore the most recent backup of this file?",
+          "yes": "Yes, restore",
+          "done": "Restored the previous boot configuration."
+        },
+        "reboot": {
+          "banner": "A reboot is needed to apply your boot changes.",
+          "prompt": "Type REBOOT to confirm restarting the host.",
+          "token": "REBOOT",
+          "button": "Reboot now",
+          "rebooting": "Rebooting - reconnect in a moment."
+        },
+        "warn": {
+          "removes_root": "This removes the root= boot token - the host may not boot.",
+          "removes_console": "This removes the console= token."
+        }
       }
     },
     "canbus": {

@@ -8,7 +8,8 @@
       "system": "Sistema",
       "boot": "Inicialização",
       "canbus": "Barramento CAN",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Parâmetros de boot"
     },
     "help": {
       "guide": "Ajuda",
@@ -315,6 +316,165 @@
         "applied": "Tela de inicialização aplicada.",
         "failed": "Não foi possível aplicar a tela de inicialização.",
         "caveat": "Grava um PNG no caminho do splash; se aparece na inicialização depende da configuração do host."
+      },
+      "params": {
+        "intro": "Ative interfaces de hardware e ajuste as configurações de boot da sua placa host. As alterações são preparadas, exibidas como um diff, salvas em backup antes da gravação e passam a valer após uma reinicialização.",
+        "refresh": "Atualizar",
+        "loading": "Lendo a configuração de boot…",
+        "needsSetup": "Atualize o FilaMind para habilitar a edição de parâmetros de boot.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Esta imagem do host não usa um formato de configuração de boot conhecido, então a edição aqui é somente leitura."
+        },
+        "groups": {
+          "hardware_interfaces": "Interfaces de hardware",
+          "display_console": "Tela e console",
+          "performance_memory": "Desempenho e memória",
+          "usb_power": "USB e energia"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN via MCP2515",
+            "purpose": "Adiciona um barramento CAN por meio de um controlador SPI MCP2515 para uma toolhead CAN.",
+            "caveat": "Precisa de um barramento SPI, um pino de interrupção livre e a frequência do cristal do módulo; ele compartilha os pinos SPI com um acelerômetro."
+          },
+          "spi_accel": {
+            "label": "Barramento SPI do acelerômetro",
+            "purpose": "Ativa um barramento SPI para um acelerômetro ADXL345 de input shaping.",
+            "caveat": "Escolha o barramento cujos pinos estão disponíveis no header da sua placa."
+          },
+          "i2c_bus": {
+            "label": "Barramento I2C",
+            "purpose": "Ativa um barramento I2C para sensores, um RTC ou um acelerômetro LIS2DW.",
+            "caveat": "O controlador correto depende de quais pinos SDA/SCL seu header expõe."
+          },
+          "uart_extra": {
+            "label": "UART extra",
+            "purpose": "Adiciona uma porta serial para um segundo MCU ou uma ponte CAN serial.",
+            "caveat": "Escolha a variante de pin-mux exposta no seu header; não use a UART do console enquanto a saída do console estiver definida como serial."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Ativa um pino do host para LEDs RGB endereçáveis.",
+            "caveat": "Os NeoPixels geralmente são controlados melhor pelo MCU da impressora; deixe desligado a menos que você conecte os LEDs ao host."
+          },
+          "rtc_module": {
+            "label": "Relógio de tempo real",
+            "purpose": "Ativa um RTC com bateria para que o host mantenha a hora offline.",
+            "caveat": "Ative somente o chip que você realmente instalou."
+          },
+          "console_target": {
+            "label": "Saída do console",
+            "purpose": "Para onde vão as mensagens de boot do kernel - a tela ou a porta serial."
+          },
+          "bootlogo": {
+            "label": "Logo de boot",
+            "purpose": "Exibe o logo de abertura durante a inicialização."
+          },
+          "cma_size": {
+            "label": "Memória CMA reservada",
+            "purpose": "Memória contígua reservada para uma câmera ou tela DSI."
+          },
+          "boot_verbosity": {
+            "label": "Verbosidade do log de boot",
+            "purpose": "Quanto detalhe o kernel registra durante o boot (0-8)."
+          },
+          "enable_uart": {
+            "label": "Ativar UART",
+            "purpose": "Liga a porta serial principal para um MCU conectado via serial."
+          },
+          "disable_bt": {
+            "label": "Liberar a boa UART (desativar Bluetooth)",
+            "purpose": "Libera a UART PL011 de alta qualidade desligando o Bluetooth.",
+            "caveat": "Você perde o Bluetooth integrado."
+          },
+          "spi": {
+            "label": "Barramento SPI",
+            "purpose": "Ativa o barramento SPI para um acelerômetro ADXL345."
+          },
+          "i2c_arm": {
+            "label": "Barramento I2C",
+            "purpose": "Ativa o barramento I2C para sensores ou um acelerômetro I2C."
+          },
+          "i2c_rtc": {
+            "label": "RTC de hardware",
+            "purpose": "Adiciona um relógio de tempo real I2C para que o host mantenha a hora offline.",
+            "caveat": "Selecione o chip RTC que você instalou."
+          },
+          "gpu_mem": {
+            "label": "Memória da GPU",
+            "purpose": "Memória atribuída à GPU; reduza-a para liberar RAM em um host sem tela."
+          },
+          "arm_freq": {
+            "label": "Clock do ARM (overclock)",
+            "purpose": "Clock da CPU em MHz. Aumentá-lo exige boa refrigeração.",
+            "caveat": "Um overclock instável pode corromper o cartão SD; adicione um dissipador de calor."
+          },
+          "over_voltage": {
+            "label": "Sobretensão",
+            "purpose": "Tensão extra do núcleo para estabilizar um overclock.",
+            "caveat": "Tensão mais alta esquenta mais."
+          },
+          "max_usb_current": {
+            "label": "Aumentar a corrente USB",
+            "purpose": "Permite mais corrente USB total para adaptadores e acessórios.",
+            "caveat": "Precisa de uma fonte de alimentação capaz de fornecê-la."
+          }
+        },
+        "opt": {
+          "8000000": "Cristal de 8 MHz",
+          "12000000": "Cristal de 12 MHz",
+          "16000000": "Cristal de 16 MHz",
+          "20000000": "Cristal de 20 MHz"
+        },
+        "control": {
+          "changed": "alterado",
+          "disabled": "Desativado"
+        },
+        "advanced": {
+          "title": "Avançado",
+          "warn": "As edições avançadas gravam tokens de boot diretamente. Um valor errado pode impedir o host de dar boot - verifique o diff com cuidado.",
+          "overlays": "Overlays de device-tree",
+          "overlayName": "Nome do overlay",
+          "addOverlay": "Adicionar",
+          "remove": "Remover",
+          "dtparams": "Parâmetros de device-tree",
+          "paramKey": "Parâmetro",
+          "paramValue": "Valor",
+          "addParam": "Adicionar",
+          "staged": "{n} alterações avançadas preparadas",
+          "clear": "Limpar"
+        },
+        "preview": {
+          "button": "Pré-visualizar alterações",
+          "none": "Nenhuma alteração preparada.",
+          "noDiff": "Nenhuma alteração efetiva.",
+          "diffTitle": "Diff"
+        },
+        "apply": {
+          "button": "Aplicar",
+          "applying": "Aplicando…",
+          "done": "Configuração de boot atualizada.",
+          "warnAck": "Entendo que estas alterações afetam como o host dá boot."
+        },
+        "revert": {
+          "button": "Reverter para o último backup",
+          "confirm": "Restaurar o backup mais recente deste arquivo?",
+          "yes": "Sim, restaurar",
+          "done": "Configuração de boot anterior restaurada."
+        },
+        "reboot": {
+          "banner": "É necessária uma reinicialização para aplicar suas alterações de boot.",
+          "prompt": "Digite REBOOT para confirmar a reinicialização do host.",
+          "token": "REBOOT",
+          "button": "Reiniciar agora",
+          "rebooting": "Reiniciando - reconecte em instantes."
+        },
+        "warn": {
+          "removes_root": "Isto remove o token de boot root= - o host pode não dar boot.",
+          "removes_console": "Isto remove o token console=."
+        }
       }
     },
     "canbus": {

@@ -8,7 +8,8 @@
       "system": "Sistema",
       "boot": "Avvio",
       "canbus": "CAN Bus",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Parametri di avvio"
     },
     "help": {
       "guide": "Aiuto",
@@ -315,6 +316,165 @@
         "applied": "Splash di avvio applicato.",
         "failed": "Impossibile applicare lo splash di avvio.",
         "caveat": "Scrive un PNG nel percorso dello splash; se appare all'avvio dipende dalla configurazione dell'host."
+      },
+      "params": {
+        "intro": "Abilita le interfacce hardware e regola le impostazioni di avvio per la tua scheda host. Le modifiche vengono preparate, mostrate come diff, salvate in backup prima della scrittura e hanno effetto dopo un riavvio.",
+        "refresh": "Aggiorna",
+        "loading": "Lettura della configurazione di avvio…",
+        "needsSetup": "Aggiorna FilaMind per abilitare la modifica dei parametri di avvio.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Questa immagine host non usa un formato di configurazione di avvio noto, quindi qui la modifica è di sola lettura."
+        },
+        "groups": {
+          "hardware_interfaces": "Interfacce hardware",
+          "display_console": "Display e console",
+          "performance_memory": "Prestazioni e memoria",
+          "usb_power": "USB e alimentazione"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN tramite MCP2515",
+            "purpose": "Aggiungi un bus CAN tramite un controller SPI MCP2515 per una testa di stampa CAN.",
+            "caveat": "Richiede un bus SPI, un pin di interrupt libero e la frequenza del cristallo del modulo; condivide i pin SPI con un accelerometro."
+          },
+          "spi_accel": {
+            "label": "Bus accelerometro SPI",
+            "purpose": "Abilita un bus SPI per un accelerometro ADXL345 per l'input shaping.",
+            "caveat": "Scegli il bus i cui pin sono esposti sul connettore della tua scheda."
+          },
+          "i2c_bus": {
+            "label": "Bus I2C",
+            "purpose": "Abilita un bus I2C per sensori, un RTC o un accelerometro LIS2DW.",
+            "caveat": "Il controller corretto dipende da quali pin SDA/SCL espone il tuo connettore."
+          },
+          "uart_extra": {
+            "label": "UART aggiuntiva",
+            "purpose": "Aggiungi una porta seriale per un secondo MCU o un bridge seriale CAN.",
+            "caveat": "Scegli la variante di pin-mux esposta sul tuo connettore; non usare l'UART della console mentre l'output della console è impostato su seriale."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Abilita un pin dell'host per LED RGB indirizzabili.",
+            "caveat": "I NeoPixel sono di solito pilotati meglio dall'MCU della stampante; lascia disattivato a meno che tu non colleghi i LED all'host."
+          },
+          "rtc_module": {
+            "label": "Orologio in tempo reale",
+            "purpose": "Abilita un RTC con batteria tampone in modo che l'host mantenga l'ora offline.",
+            "caveat": "Abilita solo il chip che hai effettivamente montato."
+          },
+          "console_target": {
+            "label": "Output della console",
+            "purpose": "Dove vanno i messaggi di avvio del kernel: sul display o sulla porta seriale."
+          },
+          "bootlogo": {
+            "label": "Logo di avvio",
+            "purpose": "Mostra il logo dello splash di avvio durante l'accensione."
+          },
+          "cma_size": {
+            "label": "Memoria CMA riservata",
+            "purpose": "Memoria contigua riservata per una fotocamera o un display DSI."
+          },
+          "boot_verbosity": {
+            "label": "Verbosità del log di avvio",
+            "purpose": "Quanti dettagli registra il kernel durante l'avvio (0-8)."
+          },
+          "enable_uart": {
+            "label": "Abilita UART",
+            "purpose": "Attiva la porta seriale primaria per un MCU collegato via seriale."
+          },
+          "disable_bt": {
+            "label": "Libera l'UART buona (disabilita Bluetooth)",
+            "purpose": "Libera l'UART PL011 di alta qualità disattivando il Bluetooth.",
+            "caveat": "Perdi il Bluetooth integrato."
+          },
+          "spi": {
+            "label": "Bus SPI",
+            "purpose": "Abilita il bus SPI per un accelerometro ADXL345."
+          },
+          "i2c_arm": {
+            "label": "Bus I2C",
+            "purpose": "Abilita il bus I2C per sensori o un accelerometro I2C."
+          },
+          "i2c_rtc": {
+            "label": "RTC hardware",
+            "purpose": "Aggiungi un orologio in tempo reale I2C in modo che l'host mantenga l'ora offline.",
+            "caveat": "Seleziona il chip RTC che hai montato."
+          },
+          "gpu_mem": {
+            "label": "Memoria GPU",
+            "purpose": "Memoria assegnata alla GPU; riducila per liberare RAM su un host senza monitor."
+          },
+          "arm_freq": {
+            "label": "Clock ARM (overclock)",
+            "purpose": "Clock della CPU in MHz. Aumentarlo richiede un buon raffreddamento.",
+            "caveat": "Un overclock instabile può corrompere la scheda SD; aggiungi un dissipatore."
+          },
+          "over_voltage": {
+            "label": "Sovratensione",
+            "purpose": "Tensione core aggiuntiva per stabilizzare un overclock.",
+            "caveat": "Una tensione più alta scalda di più."
+          },
+          "max_usb_current": {
+            "label": "Aumenta la corrente USB",
+            "purpose": "Consenti una corrente USB totale maggiore per adattatori e accessori.",
+            "caveat": "Richiede un alimentatore in grado di erogarla."
+          }
+        },
+        "opt": {
+          "8000000": "Cristallo da 8 MHz",
+          "12000000": "Cristallo da 12 MHz",
+          "16000000": "Cristallo da 16 MHz",
+          "20000000": "Cristallo da 20 MHz"
+        },
+        "control": {
+          "changed": "modificato",
+          "disabled": "Disabilitato"
+        },
+        "advanced": {
+          "title": "Avanzate",
+          "warn": "Le modifiche avanzate scrivono direttamente i token di avvio. Un valore errato può impedire l'avvio dell'host: controlla attentamente il diff.",
+          "overlays": "Overlay device-tree",
+          "overlayName": "Nome overlay",
+          "addOverlay": "Aggiungi",
+          "remove": "Rimuovi",
+          "dtparams": "Parametri device-tree",
+          "paramKey": "Parametro",
+          "paramValue": "Valore",
+          "addParam": "Aggiungi",
+          "staged": "{n} modifiche avanzate preparate",
+          "clear": "Cancella"
+        },
+        "preview": {
+          "button": "Anteprima modifiche",
+          "none": "Nessuna modifica preparata.",
+          "noDiff": "Nessuna modifica effettiva.",
+          "diffTitle": "Diff"
+        },
+        "apply": {
+          "button": "Applica",
+          "applying": "Applicazione in corso…",
+          "done": "Configurazione di avvio aggiornata.",
+          "warnAck": "Comprendo che queste modifiche influiscono su come si avvia l'host."
+        },
+        "revert": {
+          "button": "Ripristina l'ultimo backup",
+          "confirm": "Ripristinare il backup più recente di questo file?",
+          "yes": "Sì, ripristina",
+          "done": "Configurazione di avvio precedente ripristinata."
+        },
+        "reboot": {
+          "banner": "È necessario un riavvio per applicare le modifiche di avvio.",
+          "prompt": "Digita REBOOT per confermare il riavvio dell'host.",
+          "token": "REBOOT",
+          "button": "Riavvia ora",
+          "rebooting": "Riavvio in corso: riconnettiti tra un momento."
+        },
+        "warn": {
+          "removes_root": "Questo rimuove il token di avvio root= - l'host potrebbe non avviarsi.",
+          "removes_console": "Questo rimuove il token console=."
+        }
       }
     },
     "canbus": {

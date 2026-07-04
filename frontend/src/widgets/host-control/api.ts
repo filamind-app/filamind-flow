@@ -2,7 +2,11 @@ import { httpError } from '@/core/describeError'
 import { resolveEndpoints } from '@/core/moonraker'
 
 import type {
+  BootApplyResult,
   BootInfo,
+  BootOp,
+  BootParamsState,
+  BootPreview,
   CanBusActionResult,
   CanBusStatus,
   CleanupRunResult,
@@ -210,6 +214,38 @@ export const setCanParams = (
 export const restartCanBus = (iface: string) => postCanbus('restart', { iface })
 /** FIRMWARE_RESTART Klipper (host + every MCU) so CAN MCUs reconnect. Throws if refused (printing). */
 export const restartKlipper = () => postCanbus('firmware-restart', {})
+
+// -- Boot parameters (device-tree overlays / kernel args) -----------------------
+
+/** The host's boot configuration, projected for the UI (platform + parsed files). Read-only. */
+export async function fetchBootParams(): Promise<BootParamsState> {
+  const r = await fetch(`${base()}/api/host/boot-params`)
+  if (!r.ok) throw new Error(httpError(r.status))
+  return (await r.json()) as BootParamsState
+}
+
+async function postBoot<T>(path: string, body: unknown): Promise<T> {
+  const r = await fetch(`${base()}/api/host/boot-params/${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const data = (await r.json().catch(() => ({}))) as { detail?: string } & Record<string, unknown>
+  if (!r.ok) throw new HostActionError(data.detail || httpError(r.status), r.status)
+  return data as T
+}
+
+/** Preview staged boot changes: returns a unified diff + hashes + validation, with NO write. */
+export const previewBootChange = (file: string, ops: BootOp[], beforeHash?: string) =>
+  postBoot<BootPreview>('preview', { file, ops, before_hash: beforeHash ?? null })
+/** Apply staged boot changes (gated: confirm + a matching before_hash for optimistic concurrency). */
+export const applyBootChange = (file: string, ops: BootOp[], beforeHash: string) =>
+  postBoot<BootApplyResult>('apply', { file, ops, confirm: true, before_hash: beforeHash })
+/** Restore the most recent (or a named) timestamped backup of a boot file. */
+export const revertBootFile = (file: string, backup?: string) =>
+  postBoot<SystemActionResult>('revert', { file, backup: backup ?? null })
+/** Reboot the host to apply boot changes (typed REBOOT confirm + print-busy gated). */
+export const rebootForBoot = () => postBoot<SystemActionResult>('reboot', { confirm: 'REBOOT' })
 
 export const setTimezone = (timezone: string) => postSystem('timezone', { timezone })
 export const setNtp = (enabled: boolean) => postSystem('ntp', { enabled })

@@ -281,3 +281,77 @@ export interface NetworkSetReq {
   gateway?: string
   dns?: string
 }
+
+// -- Boot parameters (device-tree overlays / kernel args) -----------------------
+
+export type BootPlatform = 'armbian' | 'rpi' | 'unknown'
+export type BootControl = 'toggle' | 'select' | 'number' | 'text'
+
+/** A single typed edit the UI stages; discriminated by `op` (validated server-side). Extra fields
+ *  (name / key / value / params / token) depend on the op - kept open for the catalog to compose. */
+export interface BootOp {
+  op: string
+  [k: string]: unknown
+}
+
+export interface BootBackup {
+  name: string
+  ts: string
+  size: number
+}
+
+/** One boot-config file, parsed into the typed groups the UI reads (only the fields for its
+ *  `format` are present). */
+export interface BootFile {
+  name: string
+  path: string
+  exists: boolean
+  format: 'armbian' | 'config.txt' | 'cmdline.txt'
+  raw_lines: number
+  backups: BootBackup[]
+  /** armbian: every KEY=VALUE line. */
+  keys?: { key: string; value: string }[]
+  /** armbian: the space-separated `overlays=` tokens; config.txt: parsed dtoverlay records. */
+  overlays?: string[] | { name: string; params: string; section: string | null }[]
+  /** armbian: the space-separated `extraargs=` tokens. */
+  extraargs?: string[]
+  /** config.txt: parsed dtparam / plain key=value records. */
+  dtparams?: { key: string; value: string | null; section: string | null }[]
+  kv?: { key: string; value: string; section: string | null }[]
+  /** cmdline.txt: the space-separated tokens. */
+  tokens?: string[]
+}
+
+export interface BootParamsState {
+  platform: BootPlatform
+  editable: boolean
+  reboot_required: boolean
+  files: BootFile[]
+}
+
+export interface BootValidationEntry {
+  code: string
+  message: string
+}
+
+export interface BootValidation {
+  errors: BootValidationEntry[]
+  warnings: BootValidationEntry[]
+}
+
+/** A preview (dry-run) of staged changes: the unified diff, content hashes for optimistic
+ *  concurrency, and any validation errors/warnings. */
+export interface BootPreview {
+  ok: boolean
+  file: string
+  editable: boolean
+  diff: string[]
+  before_hash: string
+  after_hash: string
+  validation: BootValidation
+}
+
+export interface BootApplyResult extends SystemActionResult {
+  backup?: string
+  reboot_required?: boolean
+}

@@ -6,6 +6,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.20.0] - 2026-07-04
+
+### Added
+
+- **Host Control · Boot parameters** — a new tab to edit the host's boot configuration (device-tree
+  overlays and kernel arguments) through curated capability cards plus a raw Advanced editor. It is
+  platform-aware: it reads and writes `/boot/armbianEnv.txt` on Armbian hosts (BigTreeTech CB1/CB2
+  and other RK/Allwinner boards) and `config.txt` on Raspberry Pi. Curated toggles cover the common
+  printer-relevant interfaces — an SPI accelerometer bus, I2C, an extra UART, a CAN MCP2515
+  controller, WS2812, a battery-backed RTC — plus console, CMA, GPU/overclock and USB-current
+  settings, each with plain-language help and a caveat where it matters. Every edit is staged and
+  shown as a unified diff you review before applying; the file is backed up (timestamped) before any
+  write; a wrong edit can be reverted to the last backup. Changes need a reboot to take effect,
+  offered behind a typed confirmation and refused while a print is running — nothing reboots
+  automatically. Writes reuse the existing granted `sudo cp` (path-guarded to the known boot files),
+  so no new privilege or manual setup is required. Localised across all 19 languages. (Verified live
+  on a BigTreeTech CB2: reading, staging, diff preview and the backed-up write path all confirmed.)
+
 ## [1.19.3] - 2026-07-04
 
 ### Added

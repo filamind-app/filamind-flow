@@ -8,7 +8,8 @@
       "system": "Sistem",
       "boot": "Boot",
       "canbus": "CAN Bus",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Parameter boot"
     },
     "help": {
       "guide": "Bantuan",
@@ -315,6 +316,165 @@
         "applied": "Splash boot diterapkan.",
         "failed": "Tidak dapat menerapkan splash boot.",
         "caveat": "Menulis PNG ke jalur splash; apakah tampil saat boot tergantung pengaturan host Anda."
+      },
+      "params": {
+        "intro": "Aktifkan antarmuka perangkat keras dan sesuaikan pengaturan boot untuk papan host Anda. Perubahan disiapkan, ditampilkan sebagai diff, dicadangkan sebelum ditulis, dan berlaku setelah reboot.",
+        "refresh": "Segarkan",
+        "loading": "Membaca konfigurasi boot…",
+        "needsSetup": "Perbarui FilaMind untuk mengaktifkan pengeditan parameter boot.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Image host ini tidak menggunakan format konfigurasi boot yang dikenal, sehingga pengeditan di sini hanya baca saja."
+        },
+        "groups": {
+          "hardware_interfaces": "Antarmuka perangkat keras",
+          "display_console": "Tampilan & konsol",
+          "performance_memory": "Kinerja & memori",
+          "usb_power": "USB & daya"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN via MCP2515",
+            "purpose": "Tambahkan bus CAN melalui pengendali SPI MCP2515 untuk toolhead CAN.",
+            "caveat": "Memerlukan bus SPI, pin interrupt yang bebas, dan frekuensi kristal modul; ia berbagi pin SPI dengan akselerometer."
+          },
+          "spi_accel": {
+            "label": "Bus akselerometer SPI",
+            "purpose": "Aktifkan bus SPI untuk akselerometer input-shaping ADXL345.",
+            "caveat": "Pilih bus yang pin-nya tersedia di header papan Anda."
+          },
+          "i2c_bus": {
+            "label": "Bus I2C",
+            "purpose": "Aktifkan bus I2C untuk sensor, RTC, atau akselerometer LIS2DW.",
+            "caveat": "Pengendali yang tepat bergantung pada pin SDA/SCL mana yang tersedia di header Anda."
+          },
+          "uart_extra": {
+            "label": "UART tambahan",
+            "purpose": "Tambahkan port serial untuk MCU kedua atau jembatan CAN serial.",
+            "caveat": "Pilih varian pin-mux yang tersedia di header Anda; jangan gunakan UART konsol saat output konsol diatur ke serial."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Aktifkan pin host untuk LED RGB beralamat.",
+            "caveat": "NeoPixel biasanya lebih baik dikendalikan oleh MCU printer; biarkan mati kecuali Anda menyambungkan LED ke host."
+          },
+          "rtc_module": {
+            "label": "Jam waktu-nyata",
+            "purpose": "Aktifkan RTC bertenaga baterai agar host tetap menyimpan waktu saat offline.",
+            "caveat": "Aktifkan hanya chip yang benar-benar Anda pasang."
+          },
+          "console_target": {
+            "label": "Output konsol",
+            "purpose": "Ke mana pesan boot kernel dikirim - tampilan atau port serial."
+          },
+          "bootlogo": {
+            "label": "Logo boot",
+            "purpose": "Tampilkan logo splash boot selama proses startup."
+          },
+          "cma_size": {
+            "label": "Memori CMA yang dicadangkan",
+            "purpose": "Memori berdampingan yang dicadangkan untuk kamera atau tampilan DSI."
+          },
+          "boot_verbosity": {
+            "label": "Tingkat detail log boot",
+            "purpose": "Seberapa banyak detail yang dicatat kernel saat booting (0-8)."
+          },
+          "enable_uart": {
+            "label": "Aktifkan UART",
+            "purpose": "Nyalakan port serial utama untuk MCU yang tersambung secara serial."
+          },
+          "disable_bt": {
+            "label": "Bebaskan UART yang bagus (nonaktifkan Bluetooth)",
+            "purpose": "Lepaskan UART PL011 berkualitas tinggi dengan mematikan Bluetooth.",
+            "caveat": "Anda kehilangan Bluetooth on-board."
+          },
+          "spi": {
+            "label": "Bus SPI",
+            "purpose": "Aktifkan bus SPI untuk akselerometer ADXL345."
+          },
+          "i2c_arm": {
+            "label": "Bus I2C",
+            "purpose": "Aktifkan bus I2C untuk sensor atau akselerometer I2C."
+          },
+          "i2c_rtc": {
+            "label": "RTC perangkat keras",
+            "purpose": "Tambahkan jam waktu-nyata I2C agar host tetap menyimpan waktu saat offline.",
+            "caveat": "Pilih chip RTC yang Anda pasang."
+          },
+          "gpu_mem": {
+            "label": "Memori GPU",
+            "purpose": "Memori yang diberikan ke GPU; turunkan untuk membebaskan RAM pada host tanpa layar."
+          },
+          "arm_freq": {
+            "label": "Clock ARM (overclock)",
+            "purpose": "Clock CPU dalam MHz. Menaikkannya memerlukan pendinginan yang baik.",
+            "caveat": "Overclock yang tidak stabil dapat merusak kartu SD; tambahkan heatsink."
+          },
+          "over_voltage": {
+            "label": "Over-voltage",
+            "purpose": "Tegangan inti ekstra untuk menstabilkan overclock.",
+            "caveat": "Tegangan lebih tinggi berjalan lebih panas."
+          },
+          "max_usb_current": {
+            "label": "Tingkatkan arus USB",
+            "purpose": "Izinkan total arus USB lebih besar untuk adaptor dan aksesori.",
+            "caveat": "Memerlukan catu daya yang mampu menyediakannya."
+          }
+        },
+        "opt": {
+          "8000000": "Kristal 8 MHz",
+          "12000000": "Kristal 12 MHz",
+          "16000000": "Kristal 16 MHz",
+          "20000000": "Kristal 20 MHz"
+        },
+        "control": {
+          "changed": "diubah",
+          "disabled": "Dinonaktifkan"
+        },
+        "advanced": {
+          "title": "Lanjutan",
+          "warn": "Pengeditan lanjutan menulis token boot secara langsung. Nilai yang salah dapat menghentikan host booting - periksa diff dengan teliti.",
+          "overlays": "Overlay device-tree",
+          "overlayName": "Nama overlay",
+          "addOverlay": "Tambah",
+          "remove": "Hapus",
+          "dtparams": "Parameter device-tree",
+          "paramKey": "Parameter",
+          "paramValue": "Nilai",
+          "addParam": "Tambah",
+          "staged": "{n} perubahan lanjutan disiapkan",
+          "clear": "Bersihkan"
+        },
+        "preview": {
+          "button": "Pratinjau perubahan",
+          "none": "Tidak ada perubahan yang disiapkan.",
+          "noDiff": "Tidak ada perubahan efektif.",
+          "diffTitle": "Diff"
+        },
+        "apply": {
+          "button": "Terapkan",
+          "applying": "Menerapkan…",
+          "done": "Konfigurasi boot diperbarui.",
+          "warnAck": "Saya memahami perubahan ini memengaruhi cara host melakukan booting."
+        },
+        "revert": {
+          "button": "Kembalikan ke cadangan terakhir",
+          "confirm": "Pulihkan cadangan terbaru dari file ini?",
+          "yes": "Ya, pulihkan",
+          "done": "Konfigurasi boot sebelumnya telah dipulihkan."
+        },
+        "reboot": {
+          "banner": "Reboot diperlukan untuk menerapkan perubahan boot Anda.",
+          "prompt": "Ketik REBOOT untuk mengonfirmasi memulai ulang host.",
+          "token": "REBOOT",
+          "button": "Reboot sekarang",
+          "rebooting": "Melakukan reboot - sambungkan kembali sesaat lagi."
+        },
+        "warn": {
+          "removes_root": "Ini menghapus token boot root= - host mungkin tidak dapat booting.",
+          "removes_console": "Ini menghapus token console=."
+        }
       }
     },
     "canbus": {

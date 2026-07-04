@@ -8,7 +8,8 @@
       "system": "系统",
       "boot": "启动",
       "canbus": "CAN 总线",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "启动参数"
     },
     "help": {
       "guide": "帮助",
@@ -315,6 +316,165 @@
         "applied": "已应用启动画面。",
         "failed": "无法应用启动画面。",
         "caveat": "将 PNG 写入启动画面路径；能否在启动时显示取决于主机的启动画面设置。"
+      },
+      "params": {
+        "intro": "为你的主机板启用硬件接口并调整启动设置。更改会被暂存、以差异形式显示、写入前先备份，并在重启后生效。",
+        "refresh": "刷新",
+        "loading": "正在读取启动配置…",
+        "needsSetup": "请更新 FilaMind 以启用启动参数编辑。",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "此主机镜像未使用已知的启动配置格式，因此这里只能只读查看。"
+        },
+        "groups": {
+          "hardware_interfaces": "硬件接口",
+          "display_console": "显示与控制台",
+          "performance_memory": "性能与内存",
+          "usb_power": "USB 与电源"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "通过 MCP2515 使用 CAN",
+            "purpose": "通过 SPI MCP2515 控制器添加 CAN 总线，用于 CAN 工具头。",
+            "caveat": "需要一条 SPI 总线、一个空闲的中断引脚以及模块晶振频率；它与加速度计共用 SPI 引脚。"
+          },
+          "spi_accel": {
+            "label": "SPI 加速度计总线",
+            "purpose": "为 ADXL345 输入整形加速度计启用 SPI 总线。",
+            "caveat": "选择在你的板载排针上引出对应引脚的那条总线。"
+          },
+          "i2c_bus": {
+            "label": "I2C 总线",
+            "purpose": "为传感器、RTC 或 LIS2DW 加速度计启用 I2C 总线。",
+            "caveat": "正确的控制器取决于你的排针引出了哪些 SDA/SCL 引脚。"
+          },
+          "uart_extra": {
+            "label": "额外 UART",
+            "purpose": "为第二个 MCU 或串行 CAN 桥接添加一个串口。",
+            "caveat": "选择你的排针引出的引脚复用变体；当控制台输出设置为串口时，请勿使用控制台 UART。"
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "为可寻址 RGB LED 启用一个主机引脚。",
+            "caveat": "NeoPixel 通常由打印机 MCU 驱动效果更好；除非你把 LED 接到主机上，否则请保持关闭。"
+          },
+          "rtc_module": {
+            "label": "实时时钟",
+            "purpose": "启用带电池的 RTC，使主机在离线时也能保持时间。",
+            "caveat": "只启用你实际安装的芯片。"
+          },
+          "console_target": {
+            "label": "控制台输出",
+            "purpose": "内核启动消息的输出位置——显示屏或串口。"
+          },
+          "bootlogo": {
+            "label": "启动徽标",
+            "purpose": "在启动期间显示启动画面徽标。"
+          },
+          "cma_size": {
+            "label": "预留 CMA 内存",
+            "purpose": "为摄像头或 DSI 显示屏预留的连续内存。"
+          },
+          "boot_verbosity": {
+            "label": "启动日志详细度",
+            "purpose": "内核在启动时记录的详细程度（0-8）。"
+          },
+          "enable_uart": {
+            "label": "启用 UART",
+            "purpose": "为串行连接的 MCU 打开主串口。"
+          },
+          "disable_bt": {
+            "label": "释放优质 UART（禁用 Bluetooth）",
+            "purpose": "通过关闭 Bluetooth 释放高质量的 PL011 UART。",
+            "caveat": "你将失去板载 Bluetooth。"
+          },
+          "spi": {
+            "label": "SPI 总线",
+            "purpose": "为 ADXL345 加速度计启用 SPI 总线。"
+          },
+          "i2c_arm": {
+            "label": "I2C 总线",
+            "purpose": "为传感器或 I2C 加速度计启用 I2C 总线。"
+          },
+          "i2c_rtc": {
+            "label": "硬件 RTC",
+            "purpose": "添加一个 I2C 实时时钟，使主机在离线时也能保持时间。",
+            "caveat": "选择你安装的 RTC 芯片。"
+          },
+          "gpu_mem": {
+            "label": "GPU 内存",
+            "purpose": "分配给 GPU 的内存；在无显示器的主机上调低它可释放 RAM。"
+          },
+          "arm_freq": {
+            "label": "ARM 时钟（超频）",
+            "purpose": "以 MHz 为单位的 CPU 时钟。提高它需要良好的散热。",
+            "caveat": "不稳定的超频可能损坏 SD 卡；请加装散热片。"
+          },
+          "over_voltage": {
+            "label": "过电压",
+            "purpose": "额外的核心电压，用于稳定超频。",
+            "caveat": "更高的电压会运行得更热。"
+          },
+          "max_usb_current": {
+            "label": "提升 USB 电流",
+            "purpose": "为适配器和配件允许更大的 USB 总电流。",
+            "caveat": "需要一个能够提供该电流的电源。"
+          }
+        },
+        "opt": {
+          "8000000": "8 MHz 晶振",
+          "12000000": "12 MHz 晶振",
+          "16000000": "16 MHz 晶振",
+          "20000000": "20 MHz 晶振"
+        },
+        "control": {
+          "changed": "已更改",
+          "disabled": "已禁用"
+        },
+        "advanced": {
+          "title": "高级",
+          "warn": "高级编辑会直接写入启动令牌。错误的值可能导致主机无法启动——请仔细检查差异。",
+          "overlays": "设备树叠加层",
+          "overlayName": "叠加层名称",
+          "addOverlay": "添加",
+          "remove": "移除",
+          "dtparams": "设备树参数",
+          "paramKey": "参数",
+          "paramValue": "值",
+          "addParam": "添加",
+          "staged": "已暂存 {n} 项高级更改",
+          "clear": "清除"
+        },
+        "preview": {
+          "button": "预览更改",
+          "none": "没有暂存的更改。",
+          "noDiff": "没有实际更改。",
+          "diffTitle": "差异"
+        },
+        "apply": {
+          "button": "应用",
+          "applying": "正在应用…",
+          "done": "启动配置已更新。",
+          "warnAck": "我了解这些更改会影响主机的启动方式。"
+        },
+        "revert": {
+          "button": "还原到上一次备份",
+          "confirm": "还原此文件最近的一次备份？",
+          "yes": "是，还原",
+          "done": "已还原之前的启动配置。"
+        },
+        "reboot": {
+          "banner": "需要重启才能应用你的启动更改。",
+          "prompt": "输入 REBOOT 以确认重启主机。",
+          "token": "REBOOT",
+          "button": "立即重启",
+          "rebooting": "正在重启——请稍候重新连接。"
+        },
+        "warn": {
+          "removes_root": "这会移除 root= 启动令牌——主机可能无法启动。",
+          "removes_console": "这会移除 console= 令牌。"
+        }
       }
     },
     "canbus": {
