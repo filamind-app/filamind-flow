@@ -1,0 +1,10 @@
+[Unit]
+Description=FilaMind Flow - bring up %i and reconnect Klipper after the USB-CAN adapter (re)appears
+# Triggered by 99-filamind-canbus.rules when the gs_usb adapter's CAN netdev is added. Ordered
+# after Moonraker so the Klipper-reconnect step can reach its API when both come up together.
+After=moonraker.service
+ConditionPathExists=/usr/local/bin/filamind-canbus-recover
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/filamind-canbus-recover %i

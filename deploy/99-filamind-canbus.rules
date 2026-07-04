@@ -1,0 +1,6 @@
+# FilaMind Flow: auto-recover the CAN bus when a candleLight / budgetcan USB-CAN adapter (gs_usb -
+# a BTT U2C / CANable) is (re)plugged. Flashing the adapter over USB-DFU leaves it needing a power
+# cycle to re-enumerate; on a printer host whose USB hub can't switch port power in software, that
+# means one physical replug. This rule makes that the ONLY step: when the adapter's CAN netdev
+# appears, a oneshot service brings the interface up and reconnects Klipper - no manual command.
+ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="606f", TAG+="systemd", ENV{SYSTEMD_WANTS}+="filamind-canbus-recover@%k.service"

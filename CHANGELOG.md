@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.19.1] - 2026-07-04
+
+### Added
+
+- **The CAN bus now recovers on its own after the USB-CAN adapter is (re)plugged.** Flashing the
+  adapter over USB-DFU leaves it needing a power-cycle to re-enumerate; on a printer host whose USB
+  hub can't switch port power in software (confirmed via `uhubctl` on a ganged hub), that means one
+  physical replug. A new udev rule (`99-filamind-canbus.rules`) + oneshot service now make that the
+  *only* step: when the `gs_usb` adapter's CAN interface reappears, the host brings it up (reusing
+  the site's bitrate / sample-point / txqueuelen) and reconnects Klipper — but only when Klipper is
+  stuck, so a ready or printing printer is never interrupted. Installed by `scripts/install.sh`
+  (and self-healed on update, like the sudoers grant), so it reaches the fleet with no manual step.
+- The adapter-flash result now ends with the single post-flash action ("unplug and plug back in
+  once — the bus and Klipper reconnect automatically") instead of a conditional warning.
+
 ## [1.19.0] - 2026-07-04
 
 ### Changed
