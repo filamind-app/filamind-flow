@@ -138,8 +138,7 @@ function resetFacets(): void {
         </div>
         <pre
           class="overflow-x-auto rounded-brutal border-2 border-ink bg-paper p-2 text-[9px] leading-tight"
-          >{{ detail.configSnippet }}</pre
-        >
+          >{{ detail.configSnippet }}</pre>
         <a
           v-if="detail.configSource"
           :href="detail.configSource"

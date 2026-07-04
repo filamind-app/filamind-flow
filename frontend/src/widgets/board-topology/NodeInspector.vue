@@ -41,6 +41,13 @@ const emit = defineEmits<{
   deleteManual: [id: string]
 }>()
 
+/** Open the MCU's chip entity in the Hardware Browser (narrows the possibly-null mcu + mcu_id so
+ *  the emitted RelatedRef always has a string id). */
+function openMcuChip(): void {
+  const m = props.mcu
+  if (m?.mcu_id) emit('openInBrowser', { type: 'mcu', id: m.mcu_id, name: m.mcu || m.mcu_id })
+}
+
 /** Build the edit payload for the manual entry behind the selected node. */
 function editMcu(m: TopologyMcu): void {
   emit('editManual', {
@@ -423,9 +430,7 @@ function onPickCan(id: string | null): void {
           v-if="mcu.mcu_id"
           type="button"
           class="nb-btn rounded-sm bg-paper px-1 hover:bg-brand-cyan"
-          @click="
-            emit('openInBrowser', { type: 'mcu', id: mcu.mcu_id, name: mcu.mcu || mcu.mcu_id })
-          "
+          @click="openMcuChip"
         >
           {{ mcu.mcu || mcu.mcu_id }}
         </button>
@@ -603,8 +608,7 @@ function onPickCan(id: string | null): void {
             </div>
             <pre
               class="max-w-full overflow-x-auto rounded-brutal border border-ink/30 bg-paper p-1 text-[11px] leading-tight"
-              >{{ detail.configSnippet }}</pre
-            >
+              >{{ detail.configSnippet }}</pre>
           </div>
         </div>
         <div

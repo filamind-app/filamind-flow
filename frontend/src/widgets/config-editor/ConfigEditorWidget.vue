@@ -280,12 +280,7 @@ function pinFlags(value: string): {
 // "Add a part": pick a part type + a FREE pin (from the live board pin map) + a name, get a
 // ready section, and write it through the shared gated apply - no pin guessing, no copy-paste.
 type PartKind =
-  | 'fan'
-  | 'heater_fan'
-  | 'controller_fan'
-  | 'output_pin'
-  | 'filament_switch_sensor'
-  | 'neopixel'
+  'fan' | 'heater_fan' | 'controller_fan' | 'output_pin' | 'filament_switch_sensor' | 'neopixel'
 const PART_KINDS: PartKind[] = [
   'fan',
   'heater_fan',

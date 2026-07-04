@@ -467,7 +467,6 @@ onMounted(async () => {
     <pre
       v-if="buildLog"
       class="max-h-48 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight text-surface"
-      >{{ buildLog }}</pre
-    >
+      >{{ buildLog }}</pre>
   </div>
 </template>

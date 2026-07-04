@@ -462,8 +462,7 @@ function stateLabel(s: ServiceUnit): string {
               </div>
               <pre
                 class="mt-1 max-h-64 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[10px] leading-tight text-surface"
-                >{{ logs || t('hostControl.services.noLogs') }}</pre
-              >
+                >{{ logs || t('hostControl.services.noLogs') }}</pre>
             </details>
           </template>
         </div>

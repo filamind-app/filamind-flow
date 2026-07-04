@@ -111,8 +111,7 @@ async function doApply(): Promise<void> {
       <p class="text-[11px] opacity-70">{{ t('tuning.temp.commandHint') }}</p>
       <pre
         class="overflow-x-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
-        >{{ plan.command }}</pre
-      >
+        >{{ plan.command }}</pre>
       <table class="w-full text-[11px]">
         <thead>
           <tr class="text-start opacity-70">

@@ -26,14 +26,7 @@ import type { HostMonitor } from './types'
 const { t } = useI18n({ useScope: 'global' })
 
 type View =
-  | 'monitor'
-  | 'advisor'
-  | 'services'
-  | 'cleanup'
-  | 'system'
-  | 'boot'
-  | 'bootParams'
-  | 'canbus'
+  'monitor' | 'advisor' | 'services' | 'cleanup' | 'system' | 'boot' | 'bootParams' | 'canbus'
 const view = ref<View>('monitor')
 
 const monitor = ref<HostMonitor | null>(null)

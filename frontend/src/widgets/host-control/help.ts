@@ -5,14 +5,7 @@
  */
 
 export type HelpIlloKey =
-  | 'host'
-  | 'monitor'
-  | 'services'
-  | 'cleanup'
-  | 'system'
-  | 'network'
-  | 'canbus'
-  | 'termination'
+  'host' | 'monitor' | 'services' | 'cleanup' | 'system' | 'network' | 'canbus' | 'termination'
 
 export type HelpTopic =
   | 'glossary'

@@ -312,8 +312,7 @@ async function copyConfig(): Promise<void> {
           <pre
             v-if="configText"
             class="overflow-x-auto rounded-brutal border-2 border-ink bg-surface p-1.5 text-[10px] leading-tight"
-            >{{ configText }}</pre
-          >
+            >{{ configText }}</pre>
 
           <!-- Write the same block into the config behind the shared gate (no copy-paste). -->
           <details v-if="configText" class="nb-card mt-1 bg-surface p-2">

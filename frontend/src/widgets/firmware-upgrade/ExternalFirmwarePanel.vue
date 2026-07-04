@@ -433,8 +433,7 @@ onMounted(load)
       <pre
         v-if="log && activeName === fw.name"
         class="max-h-40 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight text-surface"
-        >{{ log }}</pre
-      >
+        >{{ log }}</pre>
     </div>
 
     <p v-if="!items.length" class="font-mono text-xs opacity-70">

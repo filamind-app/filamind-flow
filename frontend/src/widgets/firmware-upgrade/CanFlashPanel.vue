@@ -144,8 +144,7 @@ async function flash(): Promise<void> {
         class="max-h-40 overflow-auto whitespace-pre-wrap rounded-sm bg-paper p-1 text-[10px]"
         :class="result.ok ? '' : 'text-brand-red'"
         dir="ltr"
-        >{{ result.output }}</pre
-      >
+        >{{ result.output }}</pre>
       <p v-if="error" role="alert" class="text-brand-red">{{ error }}</p>
       <p class="opacity-60">{{ t('firmware.canbus.flash.warn') }}</p>
     </div>

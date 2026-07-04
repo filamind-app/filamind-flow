@@ -138,8 +138,7 @@ const focusMatch = (f: FocusTarget): boolean => f.tab === 'hosts'
         </div>
         <pre
           class="overflow-x-auto rounded-brutal border-2 border-ink bg-paper p-2 text-[9px] leading-tight"
-          >{{ detail.configSnippet }}</pre
-        >
+          >{{ detail.configSnippet }}</pre>
       </div>
 
       <!-- cross-entity links (its manufacturer) -->
