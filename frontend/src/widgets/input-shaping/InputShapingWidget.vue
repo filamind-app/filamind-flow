@@ -594,8 +594,7 @@ async function saveConfig(): Promise<void> {
       </div>
       <pre
         class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight text-surface"
-        >{{ configText }}</pre
-      >
+        >{{ configText }}</pre>
       <i18n-t
         keypath="inputShaping.widget.pasteHint"
         tag="p"

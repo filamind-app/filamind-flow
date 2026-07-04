@@ -644,8 +644,7 @@ onMounted(() => {
               </div>
               <pre
                 class="max-h-48 overflow-auto rounded-sm bg-ink/5 p-1 font-mono text-[10px] leading-snug"
-                >{{ scaffold[which] }}</pre
-              >
+                >{{ scaffold[which] }}</pre>
             </div>
           </div>
 

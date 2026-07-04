@@ -370,8 +370,7 @@ function submit(): void {
             </summary>
             <pre
               class="max-h-48 overflow-auto border-t-2 border-ink/20 bg-ink p-2 font-mono text-[10px] text-surface"
-              >{{ fragmentJson }}</pre
-            >
+              >{{ fragmentJson }}</pre>
           </details>
 
           <p

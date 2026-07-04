@@ -22,13 +22,7 @@ import type {
 } from './types'
 
 export type AuditKind =
-  | 'shaper'
-  | 'noise'
-  | 'belts'
-  | 'axes_map'
-  | 'static'
-  | 'vibrations'
-  | 'config'
+  'shaper' | 'noise' | 'belts' | 'axes_map' | 'static' | 'vibrations' | 'config'
 export type GradeTrend = 'up' | 'down' | 'same' | 'none'
 
 export interface AuditField {

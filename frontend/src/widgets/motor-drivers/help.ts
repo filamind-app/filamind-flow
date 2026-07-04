@@ -5,13 +5,7 @@
  */
 
 export type HelpIlloKey =
-  | 'driver'
-  | 'current'
-  | 'chopper'
-  | 'microsteps'
-  | 'stallguard'
-  | 'homing'
-  | 'coolstep'
+  'driver' | 'current' | 'chopper' | 'microsteps' | 'stallguard' | 'homing' | 'coolstep'
 
 export type HelpTopic =
   | 'glossary'

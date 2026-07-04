@@ -7,12 +7,7 @@
 export type HelpIlloKey = 'file' | 'section' | 'include' | 'validation' | 'saveConfig'
 
 export type HelpTopic =
-  | 'glossary'
-  | 'sections'
-  | 'includes'
-  | 'validation'
-  | 'saveConfig'
-  | 'readonly'
+  'glossary' | 'sections' | 'includes' | 'validation' | 'saveConfig' | 'readonly'
 
 /** Every help topic, in display order. Text: `configEditor.help.topics.<topic>.{title,body}`. */
 export const HELP_TOPICS: HelpTopic[] = [

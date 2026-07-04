@@ -144,8 +144,7 @@ const diagRows = computed(() => {
             <span class="text-xs font-bold">{{ t('shell.feedback.field.error') }}</span>
             <pre
               class="max-h-24 overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] text-surface"
-              >{{ feedback.errorText }}</pre
-            >
+              >{{ feedback.errorText }}</pre>
           </div>
 
           <!-- Screenshot (bug only) -->

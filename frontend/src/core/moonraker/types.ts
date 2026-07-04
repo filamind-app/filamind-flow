@@ -28,12 +28,7 @@ export type JsonRpcMessage = JsonRpcSuccess | JsonRpcError | JsonRpcNotification
 
 /** Connection lifecycle states surfaced to the UI. */
 export type ConnectionState =
-  | 'idle'
-  | 'connecting'
-  | 'connected'
-  | 'reconnecting'
-  | 'error'
-  | 'closed'
+  'idle' | 'connecting' | 'connected' | 'reconnecting' | 'error' | 'closed'
 
 /** A Moonraker "printer objects" status payload is an open-ended map. */
 export type PrinterObjectStatus = Record<string, Record<string, unknown>>

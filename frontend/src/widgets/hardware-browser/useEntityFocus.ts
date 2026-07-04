@@ -10,13 +10,7 @@ import type { RelatedRef } from './types'
 
 /** The tab a graph entity lives under. */
 export type EntityTab =
-  | 'boards'
-  | 'drivers'
-  | 'motors'
-  | 'hosts'
-  | 'manufacturers'
-  | 'mcus'
-  | 'category'
+  'boards' | 'drivers' | 'motors' | 'hosts' | 'manufacturers' | 'mcus' | 'category'
 
 export interface FocusTarget {
   tab: EntityTab

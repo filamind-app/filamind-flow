@@ -528,15 +528,13 @@ onMounted(load)
             v-if="busyId === c.id && installLog"
             class="nb-card max-h-40 overflow-auto bg-surface p-2 text-[11px] whitespace-pre-wrap"
             aria-live="polite"
-            >{{ installLog }}</pre
-          >
+            >{{ installLog }}</pre>
           <pre
             v-else-if="lastResult && lastResult.id === c.id"
             class="nb-card max-h-40 overflow-auto p-2 text-[11px] whitespace-pre-wrap"
             :class="lastResult.ok ? 'bg-surface' : 'bg-brand-red/20'"
             :role="lastResult.ok ? undefined : 'alert'"
-            >{{ lastResult.text }}</pre
-          >
+            >{{ lastResult.text }}</pre>
         </li>
       </ul>
     </section>

@@ -331,8 +331,7 @@ function review(i: number): void {
         <pre
           v-if="step.id === 'pressure'"
           class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
-          >{{ paGcode }}</pre
-        >
+          >{{ paGcode }}</pre>
 
         <!-- Action bar -->
         <div class="flex flex-wrap items-center gap-2 text-[11px]">
@@ -665,8 +664,7 @@ function review(i: number): void {
         </div>
         <pre
           class="overflow-auto rounded-brutal border-2 border-ink bg-ink p-2 font-mono text-[11px] leading-tight text-surface"
-          >{{ guidedConfig }}</pre
-        >
+          >{{ guidedConfig }}</pre>
         <p v-if="cfgSaved" class="text-[10px] text-brand-lime">
           {{ t('inputShaping.guided.ui.autoSaved') }}
         </p>

@@ -120,8 +120,7 @@ onMounted(fetchCurrent)
       <p class="text-[11px] opacity-70">{{ t('tuning.flow.snippetTitle') }}</p>
       <pre
         class="overflow-x-auto rounded-brutal border-2 border-ink bg-ink p-1.5 font-mono text-[11px] text-surface"
-        >{{ snippet }}</pre
-      >
+        >{{ snippet }}</pre>
       <p class="nb-card bg-brand-yellow px-2 py-1 text-[11px] text-ink" role="note">
         {{ t('tuning.flow.notLive') }}
       </p>
