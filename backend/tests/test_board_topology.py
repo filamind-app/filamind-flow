@@ -312,6 +312,25 @@ def test_fingerprint_suppresses_ambiguous_sparse_match() -> None:
     assert board_id == "fit-x" and conf >= 0.6 and cands == []
 
 
+def test_fingerprint_lower_floor_for_toolhead_boards() -> None:
+    """A CAN toolhead's catalog pin-map is often incomplete, so a correct match caps just under the
+    mainboard containment floor (~0.53, the real EBB SB2209 case). A toolhead is accepted at the
+    lower toolhead floor; the SAME pins as a mainboard stay rejected under the stricter one."""
+    used = {f"GPIO{i}" for i in range(17)}
+    documented = [f"GPIO{i}" for i in range(9)]  # 9 of the 17 used → containment 9/17 ≈ 0.53
+    pinmap = [*documented, "GPIO20", "GPIO21"]  # +2 filler → Jaccard 9/19 ≈ 0.47 (clears the floor)
+    toolhead = {
+        "board_id": "ebb",
+        "boardClass": "CAN toolhead",
+        "ports": _board("_", pinmap)["ports"],
+    }
+    mainboard = {"board_id": "mb", "boardClass": "mainboard", "ports": _board("_", pinmap)["ports"]}
+    tid, tconf, _tc = board_topology._fingerprint_board(used, [toolhead])
+    assert tid == "ebb" and 0.5 <= tconf < 0.6  # accepted at the lower toolhead floor
+    mid, _mconf, _mc = board_topology._fingerprint_board(used, [mainboard])
+    assert mid is None  # same containment, but the mainboard floor rejects it
+
+
 async def test_gather_pin_doctor_aggregates_findings(monkeypatch: Any) -> None:
     """The whole-config pin doctor runs the atlas per MCU and aggregates double-assign + caveat
     findings - here a pin driven by two sections on the primary MCU."""
