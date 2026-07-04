@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.19.2] - 2026-07-04
+
+### Fixed
+
+- **Board Topology now auto-detects CAN toolhead boards** (e.g. a BTT EBB SB2209) instead of leaving
+  them unidentified. A toolhead's catalog pin-map is often incomplete — its config drives more pins
+  than the catalog documents — so a correct pin-fingerprint caps just under the mainboard containment
+  floor (a real SB2209 tops out at ~0.53 against a 0.6 floor) and was rejected outright. Toolhead
+  boards now use a lower containment floor, still guarded by the Jaccard floor and the ambiguity
+  margin, so a real CAN toolhead resolves to a *suggested* board the user can confirm; mainboards keep
+  the stricter floor. (Verified live: an EBB SB2209 that showed as unidentified now suggests SB2209.)
+
 ## [1.19.1] - 2026-07-04
 
 ### Added

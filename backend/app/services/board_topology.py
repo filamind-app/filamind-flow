@@ -419,6 +419,12 @@ def _board_pin_set(board: dict[str, Any]) -> set[str]:
 #: clearly beats the next distinct board. This stops a handful of generic MCU pins shared by many
 #: small boards (e.g. a CAN toolhead with no catalog entry) from producing a confident wrong match.
 _FINGERPRINT_MIN_CONTAINMENT = 0.6
+#: Toolhead catalog pin-maps are often INCOMPLETE - a CAN toolhead config uses more pins than the
+#: catalog documents, so a correct match caps lower on containment (a BTT EBB SB2209 whose config
+#: uses 17 pins but whose catalog entry lists 12 tops out at ~0.53). A lower floor for toolheads -
+#: still guarded by the Jaccard floor + the margin - lets real CAN toolheads auto-detect instead of
+#: being rejected just under the mainboard floor.
+_FINGERPRINT_MIN_CONTAINMENT_TOOLHEAD = 0.5
 _FINGERPRINT_MIN_JACCARD = 0.45
 _FINGERPRINT_MIN_MARGIN = 0.15
 
@@ -482,7 +488,15 @@ def _fingerprint_board(
         return None, 0.0, []
     scored.sort(key=lambda s: (s[0], s[1]), reverse=True)
     best_containment, best_jaccard, best_id = scored[0]
-    if best_containment < _FINGERPRINT_MIN_CONTAINMENT:
+    # Toolhead pin-maps are often incomplete, so accept a lower containment for them (see the
+    # constant). The winner's own class picks the floor; mainboards keep the stricter one.
+    best_board = next((b for b in boards if b.get("board_id") == best_id), None)
+    min_containment = (
+        _FINGERPRINT_MIN_CONTAINMENT_TOOLHEAD
+        if _board_role(best_board or {}) == "toolhead"
+        else _FINGERPRINT_MIN_CONTAINMENT
+    )
+    if best_containment < min_containment:
         return None, 0.0, []
     # Containment margin over the next *distinct* board (~0 when several boards tie at the top).
     runner = next((s for s in scored[1:] if s[2] != best_id), None)
