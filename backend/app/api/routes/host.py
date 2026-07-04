@@ -323,6 +323,74 @@ async def host_power(req: PowerReq, settings: Settings = Depends(get_settings)) 
     return await _apply(host_control_service.power(req.action, settings.moonraker_url))
 
 
+# -- Boot parameters (device-tree overlays / kernel args) -----------------------
+# Edit the host's boot config (armbianEnv.txt, or config.txt + cmdline.txt on a Pi) through a
+# curated capability UI + a raw advanced editor. Two-phase preview -> apply, backed up +
+# path-guarded in the service, applied via the granted `sudo cp`. Nothing reboots automatically.
+
+
+class BootApply(BaseModel):
+    file: (
+        str  # a boot-file basename (armbianEnv.txt / config.txt / cmdline.txt); resolved serverside
+    )
+    ops: list[dict[str, Any]]
+    confirm: bool = False
+    before_hash: str | None = None
+
+
+class BootRevert(BaseModel):
+    file: str
+    backup: str | None = None  # a backup basename; defaults to the most recent
+
+
+class BootReboot(BaseModel):
+    confirm: str  # must be the literal "REBOOT"
+
+
+@router.get("/boot-params")
+async def host_boot_params() -> dict[str, Any]:
+    """The host's boot configuration, projected for the UI. Read-only; safe on every platform."""
+    return host_control_service.read_boot_params()
+
+
+@router.post("/boot-params/preview")
+async def host_boot_params_preview(req: BootApply) -> dict[str, Any]:
+    """Preview staged boot changes: a unified diff + hashes + validation, WITHOUT writing."""
+    return await _apply(
+        host_control_service.apply_boot_change(
+            req.model_dump(), dry_run=True, confirm=False, before_hash=req.before_hash
+        )
+    )
+
+
+@router.post("/boot-params/apply")
+async def host_boot_params_apply(req: BootApply) -> dict[str, Any]:
+    """Apply staged boot changes (gated: requires confirm + a matching before_hash). Backed up."""
+    if not req.confirm:
+        raise HTTPException(status_code=403, detail="Apply requires confirmation.")
+    return await _apply(
+        host_control_service.apply_boot_change(
+            req.model_dump(), dry_run=False, confirm=True, before_hash=req.before_hash
+        )
+    )
+
+
+@router.post("/boot-params/revert")
+async def host_boot_params_revert(req: BootRevert) -> dict[str, Any]:
+    """Restore a timestamped backup of a boot file (itself a gated, backed-up write)."""
+    return await _apply(host_control_service.revert_boot_file(req.file, req.backup))
+
+
+@router.post("/boot-params/reboot")
+async def host_boot_params_reboot(
+    req: BootReboot, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    """Reboot the host to apply boot changes - gated by a typed confirm + the print-busy guard."""
+    return await _apply(
+        host_control_service.reboot_host_for_boot(req.confirm, settings.moonraker_url)
+    )
+
+
 @router.post("/system/network")
 async def host_set_network(
     req: NetworkReq, settings: Settings = Depends(get_settings)

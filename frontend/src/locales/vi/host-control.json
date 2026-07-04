@@ -8,7 +8,8 @@
       "system": "Hệ thống",
       "boot": "Khởi động",
       "canbus": "CAN Bus",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Tham số khởi động"
     },
     "help": {
       "guide": "Trợ giúp",
@@ -315,6 +316,165 @@
         "applied": "Đã áp dụng splash khởi động.",
         "failed": "Không thể áp dụng splash khởi động.",
         "caveat": "Ghi PNG vào đường dẫn splash; việc hiển thị khi khởi động tùy thuộc cấu hình máy chủ."
+      },
+      "params": {
+        "intro": "Bật các giao diện phần cứng và tinh chỉnh cài đặt khởi động cho bo mạch host của bạn. Thay đổi được sắp xếp, hiển thị dưới dạng diff, sao lưu trước khi ghi và có hiệu lực sau khi khởi động lại.",
+        "refresh": "Làm mới",
+        "loading": "Đang đọc cấu hình khởi động…",
+        "needsSetup": "Cập nhật FilaMind để bật chỉnh sửa tham số khởi động.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Bản ảnh host này không dùng định dạng cấu hình khởi động đã biết, nên việc chỉnh sửa ở đây chỉ ở chế độ đọc."
+        },
+        "groups": {
+          "hardware_interfaces": "Giao diện phần cứng",
+          "display_console": "Màn hình & console",
+          "performance_memory": "Hiệu năng & bộ nhớ",
+          "usb_power": "USB & nguồn"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN qua MCP2515",
+            "purpose": "Thêm một bus CAN thông qua bộ điều khiển SPI MCP2515 cho đầu công cụ CAN.",
+            "caveat": "Cần một bus SPI, một chân ngắt trống và tần số thạch anh của mô-đun; nó dùng chung các chân SPI với gia tốc kế."
+          },
+          "spi_accel": {
+            "label": "Bus gia tốc kế SPI",
+            "purpose": "Bật một bus SPI cho gia tốc kế ADXL345 dùng cho input shaping.",
+            "caveat": "Chọn bus có các chân được đưa ra trên header của bo mạch."
+          },
+          "i2c_bus": {
+            "label": "Bus I2C",
+            "purpose": "Bật một bus I2C cho cảm biến, một RTC hoặc gia tốc kế LIS2DW.",
+            "caveat": "Bộ điều khiển phù hợp phụ thuộc vào các chân SDA/SCL nào mà header của bạn đưa ra."
+          },
+          "uart_extra": {
+            "label": "UART bổ sung",
+            "purpose": "Thêm một cổng nối tiếp cho MCU thứ hai hoặc một cầu nối CAN nối tiếp.",
+            "caveat": "Chọn biến thể pin-mux được đưa ra trên header của bạn; đừng dùng UART console khi đầu ra console đang được đặt sang cổng nối tiếp."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Bật một chân host cho các LED RGB địa chỉ hóa.",
+            "caveat": "NeoPixel thường được điều khiển tốt hơn bởi MCU máy in; hãy tắt trừ khi bạn đấu LED vào host."
+          },
+          "rtc_module": {
+            "label": "Đồng hồ thời gian thực",
+            "purpose": "Bật một RTC có pin dự phòng để host giữ thời gian khi ngoại tuyến.",
+            "caveat": "Chỉ bật con chip mà bạn thực sự đã lắp."
+          },
+          "console_target": {
+            "label": "Đầu ra console",
+            "purpose": "Nơi các thông báo khởi động của kernel đi tới - màn hình hoặc cổng nối tiếp."
+          },
+          "bootlogo": {
+            "label": "Logo khởi động",
+            "purpose": "Hiển thị logo splash khi khởi động trong lúc bật máy."
+          },
+          "cma_size": {
+            "label": "Bộ nhớ CMA dành riêng",
+            "purpose": "Bộ nhớ liền kề dành riêng cho camera hoặc màn hình DSI."
+          },
+          "boot_verbosity": {
+            "label": "Mức chi tiết nhật ký khởi động",
+            "purpose": "Mức độ chi tiết mà kernel ghi nhật ký trong khi khởi động (0-8)."
+          },
+          "enable_uart": {
+            "label": "Bật UART",
+            "purpose": "Bật cổng nối tiếp chính cho một MCU kết nối qua cổng nối tiếp."
+          },
+          "disable_bt": {
+            "label": "Giải phóng UART tốt (tắt Bluetooth)",
+            "purpose": "Giải phóng UART PL011 chất lượng cao bằng cách tắt Bluetooth.",
+            "caveat": "Bạn sẽ mất Bluetooth tích hợp trên bo mạch."
+          },
+          "spi": {
+            "label": "Bus SPI",
+            "purpose": "Bật bus SPI cho gia tốc kế ADXL345."
+          },
+          "i2c_arm": {
+            "label": "Bus I2C",
+            "purpose": "Bật bus I2C cho cảm biến hoặc gia tốc kế I2C."
+          },
+          "i2c_rtc": {
+            "label": "RTC phần cứng",
+            "purpose": "Thêm một đồng hồ thời gian thực I2C để host giữ thời gian khi ngoại tuyến.",
+            "caveat": "Chọn con chip RTC mà bạn đã lắp."
+          },
+          "gpu_mem": {
+            "label": "Bộ nhớ GPU",
+            "purpose": "Bộ nhớ cấp cho GPU; giảm nó để giải phóng RAM trên host không có màn hình."
+          },
+          "arm_freq": {
+            "label": "Xung nhịp ARM (ép xung)",
+            "purpose": "Xung nhịp CPU tính bằng MHz. Tăng nó cần tản nhiệt tốt.",
+            "caveat": "Ép xung không ổn định có thể làm hỏng thẻ SD; hãy thêm tản nhiệt."
+          },
+          "over_voltage": {
+            "label": "Tăng điện áp",
+            "purpose": "Điện áp lõi bổ sung để ổn định việc ép xung.",
+            "caveat": "Điện áp cao hơn sẽ chạy nóng hơn."
+          },
+          "max_usb_current": {
+            "label": "Tăng dòng USB",
+            "purpose": "Cho phép tổng dòng USB lớn hơn cho các bộ chuyển đổi và phụ kiện.",
+            "caveat": "Cần một bộ nguồn có thể cung cấp được dòng đó."
+          }
+        },
+        "opt": {
+          "8000000": "Thạch anh 8 MHz",
+          "12000000": "Thạch anh 12 MHz",
+          "16000000": "Thạch anh 16 MHz",
+          "20000000": "Thạch anh 20 MHz"
+        },
+        "control": {
+          "changed": "đã thay đổi",
+          "disabled": "Đã tắt"
+        },
+        "advanced": {
+          "title": "Nâng cao",
+          "warn": "Chỉnh sửa nâng cao ghi trực tiếp các token khởi động. Một giá trị sai có thể khiến host không khởi động được - hãy kiểm tra diff cẩn thận.",
+          "overlays": "Overlay device-tree",
+          "overlayName": "Tên overlay",
+          "addOverlay": "Thêm",
+          "remove": "Xóa",
+          "dtparams": "Tham số device-tree",
+          "paramKey": "Tham số",
+          "paramValue": "Giá trị",
+          "addParam": "Thêm",
+          "staged": "Đã sắp xếp {n} thay đổi nâng cao",
+          "clear": "Xóa hết"
+        },
+        "preview": {
+          "button": "Xem trước thay đổi",
+          "none": "Chưa sắp xếp thay đổi nào.",
+          "noDiff": "Không có thay đổi hiệu lực.",
+          "diffTitle": "Diff"
+        },
+        "apply": {
+          "button": "Áp dụng",
+          "applying": "Đang áp dụng…",
+          "done": "Đã cập nhật cấu hình khởi động.",
+          "warnAck": "Tôi hiểu rằng những thay đổi này ảnh hưởng đến cách host khởi động."
+        },
+        "revert": {
+          "button": "Khôi phục về bản sao lưu gần nhất",
+          "confirm": "Khôi phục bản sao lưu gần đây nhất của tệp này?",
+          "yes": "Có, khôi phục",
+          "done": "Đã khôi phục cấu hình khởi động trước đó."
+        },
+        "reboot": {
+          "banner": "Cần khởi động lại để áp dụng các thay đổi khởi động của bạn.",
+          "prompt": "Nhập REBOOT để xác nhận khởi động lại host.",
+          "token": "REBOOT",
+          "button": "Khởi động lại ngay",
+          "rebooting": "Đang khởi động lại - hãy kết nối lại sau giây lát."
+        },
+        "warn": {
+          "removes_root": "Thao tác này xóa token khởi động root= - host có thể không khởi động được.",
+          "removes_console": "Thao tác này xóa token console=."
+        }
       }
     },
     "canbus": {

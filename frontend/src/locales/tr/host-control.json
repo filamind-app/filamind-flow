@@ -8,7 +8,8 @@
       "system": "Sistem",
       "boot": "Önyükleme",
       "canbus": "CAN Bus",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Önyükleme parametreleri"
     },
     "help": {
       "guide": "Yardım",
@@ -315,6 +316,165 @@
         "applied": "Önyükleme ekranı uygulandı.",
         "failed": "Önyükleme ekranı uygulanamadı.",
         "caveat": "Açılış yoluna bir PNG yazar; önyüklemede görünüp görünmemesi ana makine ayarına bağlıdır."
+      },
+      "params": {
+        "intro": "Ana kartınız için donanım arayüzlerini etkinleştirin ve önyükleme ayarlarını yapın. Değişiklikler hazırlanır, fark olarak gösterilir, yazılmadan önce yedeklenir ve yeniden başlatmadan sonra etkinleşir.",
+        "refresh": "Yenile",
+        "loading": "Önyükleme yapılandırması okunuyor…",
+        "needsSetup": "Önyükleme parametresi düzenlemeyi etkinleştirmek için FilaMind'ı güncelleyin.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Bu ana kart imajı bilinen bir önyükleme yapılandırma biçimi kullanmıyor, bu yüzden burada düzenleme salt okunurdur."
+        },
+        "groups": {
+          "hardware_interfaces": "Donanım arayüzleri",
+          "display_console": "Ekran ve konsol",
+          "performance_memory": "Performans ve bellek",
+          "usb_power": "USB ve güç"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "MCP2515 üzerinden CAN",
+            "purpose": "CAN kafası için bir SPI MCP2515 denetleyicisi aracılığıyla bir CAN veri yolu ekleyin.",
+            "caveat": "Bir SPI veri yolu, boş bir kesme pini ve modül kristal frekansı gerektirir; SPI pinlerini bir ivmeölçerle paylaşır."
+          },
+          "spi_accel": {
+            "label": "SPI ivmeölçer veri yolu",
+            "purpose": "ADXL345 giriş şekillendirme ivmeölçeri için bir SPI veri yolu etkinleştirin.",
+            "caveat": "Pinleri kartınızın başlığında dışarı çıkarılmış olan veri yolunu seçin."
+          },
+          "i2c_bus": {
+            "label": "I2C veri yolu",
+            "purpose": "Sensörler, bir RTC veya bir LIS2DW ivmeölçer için bir I2C veri yolu etkinleştirin.",
+            "caveat": "Doğru denetleyici, başlığınızın hangi SDA/SCL pinlerini açığa çıkardığına bağlıdır."
+          },
+          "uart_extra": {
+            "label": "Ek UART",
+            "purpose": "İkinci bir MCU veya seri CAN köprüsü için bir seri bağlantı noktası ekleyin.",
+            "caveat": "Başlığınızda açığa çıkarılmış pin-mux çeşidini seçin; konsol çıkışı seri olarak ayarlıyken konsol UART'ını kullanmayın."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Adreslenebilir RGB LED'ler için bir ana kart pinini etkinleştirin.",
+            "caveat": "NeoPixel'ler genellikle yazıcı MCU tarafından daha iyi sürülür; LED'leri ana karta bağlamadıkça kapalı bırakın."
+          },
+          "rtc_module": {
+            "label": "Gerçek zamanlı saat",
+            "purpose": "Ana kartın çevrimdışıyken zamanı tutması için pil destekli bir RTC etkinleştirin.",
+            "caveat": "Yalnızca gerçekten taktığınız yongayı etkinleştirin."
+          },
+          "console_target": {
+            "label": "Konsol çıkışı",
+            "purpose": "Çekirdek önyükleme mesajlarının nereye gideceği - ekran veya seri bağlantı noktası."
+          },
+          "bootlogo": {
+            "label": "Önyükleme logosu",
+            "purpose": "Başlangıç sırasında önyükleme açılış logosunu göster."
+          },
+          "cma_size": {
+            "label": "Ayrılmış CMA belleği",
+            "purpose": "Bir kamera veya DSI ekran için ayrılan bitişik bellek."
+          },
+          "boot_verbosity": {
+            "label": "Önyükleme günlüğü ayrıntı düzeyi",
+            "purpose": "Çekirdeğin önyükleme sırasında ne kadar ayrıntı günlüğe kaydettiği (0-8)."
+          },
+          "enable_uart": {
+            "label": "UART'ı etkinleştir",
+            "purpose": "Seri bağlantılı bir MCU için birincil seri bağlantı noktasını açın."
+          },
+          "disable_bt": {
+            "label": "İyi UART'ı serbest bırak (Bluetooth'u devre dışı bırak)",
+            "purpose": "Bluetooth'u kapatarak yüksek kaliteli PL011 UART'ı serbest bırakın.",
+            "caveat": "Yerleşik Bluetooth'u kaybedersiniz."
+          },
+          "spi": {
+            "label": "SPI veri yolu",
+            "purpose": "Bir ADXL345 ivmeölçer için SPI veri yolunu etkinleştirin."
+          },
+          "i2c_arm": {
+            "label": "I2C veri yolu",
+            "purpose": "Sensörler veya bir I2C ivmeölçer için I2C veri yolunu etkinleştirin."
+          },
+          "i2c_rtc": {
+            "label": "Donanım RTC",
+            "purpose": "Ana kartın çevrimdışıyken zamanı tutması için bir I2C gerçek zamanlı saat ekleyin.",
+            "caveat": "Taktığınız RTC yongasını seçin."
+          },
+          "gpu_mem": {
+            "label": "GPU belleği",
+            "purpose": "GPU'ya verilen bellek; ekransız bir ana kartta RAM'i boşaltmak için düşürün."
+          },
+          "arm_freq": {
+            "label": "ARM saati (hız aşırtma)",
+            "purpose": "MHz cinsinden CPU saati. Yükseltmek iyi soğutma gerektirir.",
+            "caveat": "Kararsız bir hız aşırtma SD kartını bozabilir; bir soğutucu ekleyin."
+          },
+          "over_voltage": {
+            "label": "Aşırı voltaj",
+            "purpose": "Bir hız aşırtmayı kararlı hale getirmek için ek çekirdek voltajı.",
+            "caveat": "Daha yüksek voltaj daha sıcak çalışır."
+          },
+          "max_usb_current": {
+            "label": "USB akımını artır",
+            "purpose": "Adaptörler ve aksesuarlar için daha fazla toplam USB akımına izin verin.",
+            "caveat": "Bunu sağlayabilen bir güç kaynağı gerektirir."
+          }
+        },
+        "opt": {
+          "8000000": "8 MHz kristal",
+          "12000000": "12 MHz kristal",
+          "16000000": "16 MHz kristal",
+          "20000000": "20 MHz kristal"
+        },
+        "control": {
+          "changed": "değişti",
+          "disabled": "Devre dışı"
+        },
+        "advanced": {
+          "title": "Gelişmiş",
+          "warn": "Gelişmiş düzenlemeler önyükleme belirteçlerini doğrudan yazar. Yanlış bir değer ana kartın önyüklemesini durdurabilir - farkı dikkatlice kontrol edin.",
+          "overlays": "Aygıt ağacı yer paylaşımları",
+          "overlayName": "Yer paylaşımı adı",
+          "addOverlay": "Ekle",
+          "remove": "Kaldır",
+          "dtparams": "Aygıt ağacı parametreleri",
+          "paramKey": "Parametre",
+          "paramValue": "Değer",
+          "addParam": "Ekle",
+          "staged": "{n} gelişmiş değişiklik hazırlandı",
+          "clear": "Temizle"
+        },
+        "preview": {
+          "button": "Değişiklikleri önizle",
+          "none": "Hazırlanmış değişiklik yok.",
+          "noDiff": "Etkin bir değişiklik yok.",
+          "diffTitle": "Fark"
+        },
+        "apply": {
+          "button": "Uygula",
+          "applying": "Uygulanıyor…",
+          "done": "Önyükleme yapılandırması güncellendi.",
+          "warnAck": "Bu değişikliklerin ana kartın nasıl önyükleneceğini etkilediğini anlıyorum."
+        },
+        "revert": {
+          "button": "Son yedeğe geri dön",
+          "confirm": "Bu dosyanın en son yedeği geri yüklensin mi?",
+          "yes": "Evet, geri yükle",
+          "done": "Önceki önyükleme yapılandırması geri yüklendi."
+        },
+        "reboot": {
+          "banner": "Önyükleme değişikliklerinizi uygulamak için yeniden başlatma gereklidir.",
+          "prompt": "Ana kartı yeniden başlatmayı onaylamak için REBOOT yazın.",
+          "token": "REBOOT",
+          "button": "Şimdi yeniden başlat",
+          "rebooting": "Yeniden başlatılıyor - birazdan yeniden bağlanın."
+        },
+        "warn": {
+          "removes_root": "Bu, root= önyükleme belirtecini kaldırır - ana kart önyüklenmeyebilir.",
+          "removes_console": "Bu, console= belirtecini kaldırır."
+        }
       }
     },
     "canbus": {

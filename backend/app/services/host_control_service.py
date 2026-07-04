@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import difflib
 import glob
+import hashlib
 import ipaddress
 import os
 import platform
@@ -1368,3 +1370,713 @@ async def advisory(data_dir: str) -> dict[str, Any]:
         services,
     ]
     return {"cards": cards}
+
+
+# =========================== Boot parameters ===================================
+# Edit the host's boot configuration - /boot/armbianEnv.txt on Armbian (RK/Allwinner boards like the
+# BTT CB1/CB2), or config.txt + cmdline.txt on Raspberry Pi - through a curated capability UI plus a
+# raw advanced editor. Every write is a MINIMAL-DIFF edit (only the targeted token changes; every
+# other line is preserved byte-for-byte), backed up first, path-guarded to the known boot files, and
+# applied through the already-granted `sudo -n cp` - so no new sudoers entry is needed. Nothing
+# reboots automatically; the UI shows a "reboot required" state and offers a gated reboot.
+
+_ARMBIAN_ENV = "/boot/armbianEnv.txt"
+_RPI_CONFIG_CANDIDATES = ("/boot/firmware/config.txt", "/boot/config.txt")
+_RPI_CMDLINE_CANDIDATES = ("/boot/firmware/cmdline.txt", "/boot/cmdline.txt")
+
+#: The ONLY paths a boot write may target. This allow-list is the security boundary (sudoers grants
+#: an unrestricted `cp`; THIS restricts where it may land), the same role _SPLASH_PATHS plays.
+_BOOT_MANAGED_PATHS: frozenset[str] = frozenset(
+    (_ARMBIAN_ENV, *_RPI_CONFIG_CANDIDATES, *_RPI_CMDLINE_CANDIDATES)
+)
+_MAX_BOOT_BYTES = 64 * 1024  # a boot config over 64 KiB is pathological -> refuse to touch it
+_MAX_BOOT_BACKUPS = 10  # keep at most this many timestamped backups per file
+_BOOT_BAK_MARK = ".filamind.bak-"  # suffix marker: <path>.filamind.bak-YYYYmmddHHMMSS
+_BOOT_BAK_RE = re.compile(r"\.filamind\.bak-(\d{14})$")
+
+#: Whitelist regexes (defence-in-depth; the curated UI only sends known-safe values).
+_BOOT_VALUE_RE = re.compile(r"^[^\n\x00]*$")  # any single-line value (armbian kv / extraarg)
+_BOOT_TOKEN_RE = re.compile(r"^[A-Za-z0-9._,=:+@/-]+$")  # an overlay / dtoverlay / dtparam token
+_BOOT_KEY_RE = re.compile(r"^[A-Za-z0-9_]+$")
+_CMDLINE_TOKEN_RE = re.compile(r"^[^\s\x00]+$")
+_SECTION_RE = re.compile(r"^\s*\[.+\]\s*$")  # a config.txt [filter] header
+
+
+# --- platform detection (pure filesystem, no sudo) ---
+
+
+def _boot_is_regular(path: str) -> bool:
+    try:
+        return stat.S_ISREG(os.stat(path).st_mode)
+    except OSError:
+        return False
+
+
+def _boot_first_existing(cands: tuple[str, ...]) -> str | None:
+    return next((p for p in cands if _boot_is_regular(p)), None)
+
+
+def detect_boot_platform() -> dict[str, Any]:
+    """Which boot-config mechanism this host uses. Armbian-FIRST: an Armbian image can ship a stub
+    /boot/config.txt, but /boot/armbianEnv.txt is the authoritative one when present. Within RPi,
+    /boot/firmware (Bookworm) beats legacy /boot, and cmdline.txt is the SIBLING of the chosen
+    config.txt so both writes stay on one partition."""
+    if _boot_is_regular(_ARMBIAN_ENV):
+        return {"platform": "armbian", "config_path": _ARMBIAN_ENV, "cmdline_path": None}
+    cfg = _boot_first_existing(_RPI_CONFIG_CANDIDATES)
+    if cfg:
+        sibling = os.path.join(os.path.dirname(cfg), "cmdline.txt")
+        cmd = (
+            sibling if _boot_is_regular(sibling) else _boot_first_existing(_RPI_CMDLINE_CANDIDATES)
+        )
+        return {"platform": "rpi", "config_path": cfg, "cmdline_path": cmd}
+    return {"platform": "unknown", "config_path": None, "cmdline_path": None}
+
+
+def _boot_paths_for(plat: dict[str, Any]) -> list[str]:
+    if plat["platform"] == "armbian":
+        return [plat["config_path"]]
+    if plat["platform"] == "rpi":
+        return [p for p in (plat["config_path"], plat["cmdline_path"]) if p]
+    return []
+
+
+def _boot_format_for(path: str) -> str:
+    base = os.path.basename(path)
+    if base == "armbianEnv.txt":
+        return "armbian"
+    if base == "cmdline.txt":
+        return "cmdline"
+    return "config"
+
+
+def _boot_resolve_file(plat: dict[str, Any], name: str | None) -> str | None:
+    """Map a client-sent file basename to its absolute, SERVER-resolved path (never trust a client
+    path). Defaults to the platform's config file; only the platform's own files resolve."""
+    if not name:
+        return plat.get("config_path")
+    base = os.path.basename(str(name))
+    for path in (plat.get("config_path"), plat.get("cmdline_path")):
+        if path and os.path.basename(path) == base:
+            return path
+    return None
+
+
+# --- line model (preserve trailing-newline state; round-trips byte-for-byte) ---
+
+
+def _to_lines(text: str) -> tuple[list[str], bool]:
+    if text == "":
+        return [], False
+    had_nl = text.endswith("\n")
+    body = text[:-1] if had_nl else text
+    return body.split("\n"), had_nl
+
+
+def _from_lines(lines: list[str], had_nl: bool) -> str:
+    text = "\n".join(lines)
+    return text + "\n" if had_nl else text
+
+
+# --- armbianEnv.txt (KEY=VALUE; `overlays=` + `extraargs=` are space-separated token lists) ---
+
+
+def _armbian_find_kv(lines: list[str], key: str) -> int:
+    for i, ln in enumerate(lines):
+        s = ln.strip()
+        if s.startswith("#") or "=" not in s:
+            continue
+        if s.split("=", 1)[0].strip() == key:
+            return i
+    return -1
+
+
+def _armbian_get(lines: list[str], key: str) -> str | None:
+    i = _armbian_find_kv(lines, key)
+    return lines[i].split("=", 1)[1] if i >= 0 else None
+
+
+def _armbian_set_key(lines: list[str], key: str, value: str) -> None:
+    i = _armbian_find_kv(lines, key)
+    if i < 0:
+        lines.append(f"{key}={value}")
+    else:  # keep the on-disk key text (casing), replace only the value
+        lines[i] = f"{lines[i].split('=', 1)[0]}={value}"
+
+
+def _armbian_add_overlay(lines: list[str], name: str) -> None:
+    toks = (_armbian_get(lines, "overlays") or "").split()
+    if name not in toks:
+        toks.append(name)
+    _armbian_set_key(lines, "overlays", " ".join(toks))
+
+
+def _armbian_remove_overlay(lines: list[str], name: str) -> None:
+    toks = [t for t in (_armbian_get(lines, "overlays") or "").split() if t != name]
+    _armbian_set_key(lines, "overlays", " ".join(toks))
+
+
+def _armbian_set_extraarg(lines: list[str], key: str, value: str) -> None:
+    toks = (_armbian_get(lines, "extraargs") or "").split()
+    newtok = f"{key}={value}" if value != "" else key
+    out: list[str] = []
+    replaced = False
+    for t in toks:
+        if t.split("=", 1)[0] == key:
+            if not replaced:
+                out.append(newtok)
+                replaced = True
+        else:
+            out.append(t)
+    if not replaced:
+        out.append(newtok)
+    _armbian_set_key(lines, "extraargs", " ".join(out))
+
+
+def _armbian_remove_extraarg(lines: list[str], key: str) -> None:
+    toks = [
+        t for t in (_armbian_get(lines, "extraargs") or "").split() if t.split("=", 1)[0] != key
+    ]
+    _armbian_set_key(lines, "extraargs", " ".join(toks))
+
+
+# --- config.txt (line-oriented; edits happen in the EDITABLE scope: the pre-filter global block or
+# an [all] section - never a model-specific [pi4]/[cm4]/[none] block, which is left as the user set
+# it. This keeps a curated edit from being silently overridden by a later [all] assignment.) -
+
+
+def _config_section_name(ln: str) -> str | None:
+    """The lowercased name of a ``[filter]`` header line, else None (not a header)."""
+    return ln.strip()[1:-1].strip().lower() if _SECTION_RE.match(ln) else None
+
+
+def _config_editable_scope(section: str | None) -> bool:
+    """True for scopes a curated edit may touch: the pre-filter global block (None) and ``[all]``
+    (both apply to every model). Model-specific filters are preserved untouched."""
+    return section is None or section == "all"
+
+
+def _dtparam_key(s: str) -> str:
+    return s[len("dtparam=") :].split("=", 1)[0].split(",")[0]
+
+
+def _dtoverlay_name(s: str) -> str:
+    return s[len("dtoverlay=") :].split(",", 1)[0].strip()
+
+
+def _config_is_plain_kv(s: str) -> bool:
+    return (
+        "=" in s
+        and not s.startswith("#")
+        and not s.startswith("dtparam=")
+        and not s.startswith("dtoverlay=")
+    )
+
+
+def _config_insert_global(lines: list[str], newline: str) -> None:
+    """Insert a new line into global scope - before the first [filter] header (so a later filter
+    can't swallow it), or at EOF when there are no filters."""
+    for i, ln in enumerate(lines):
+        if _SECTION_RE.match(ln):
+            lines.insert(i, newline)
+            return
+    lines.append(newline)
+
+
+def _config_set_line(lines: list[str], match: Any, newline: str) -> None:
+    """Replace the LAST editable-scope line matching ``match`` in place (the last one is the value
+    that actually wins); if none exists, insert into global scope."""
+    section: str | None = None
+    hit = -1
+    for i, ln in enumerate(lines):
+        if _SECTION_RE.match(ln):
+            section = _config_section_name(ln)
+            continue
+        if _config_editable_scope(section) and match(ln.strip()):
+            hit = i
+    if hit >= 0:
+        lines[hit] = newline
+    else:
+        _config_insert_global(lines, newline)
+
+
+def _config_remove(lines: list[str], match: Any) -> None:
+    """Drop every editable-scope line matching ``match`` (model-specific sections are preserved)."""
+    out: list[str] = []
+    section: str | None = None
+    for ln in lines:
+        if _SECTION_RE.match(ln):
+            section = _config_section_name(ln)
+            out.append(ln)
+            continue
+        if _config_editable_scope(section) and match(ln.strip()):
+            continue
+        out.append(ln)
+    lines[:] = out
+
+
+def _config_set_dtparam(lines: list[str], key: str, value: str) -> None:
+    target = f"dtparam={key}={value}" if value != "" else f"dtparam={key}"
+    _config_set_line(lines, lambda s: s.startswith("dtparam=") and _dtparam_key(s) == key, target)
+
+
+def _config_remove_dtparam(lines: list[str], key: str) -> None:
+    _config_remove(lines, lambda s: s.startswith("dtparam=") and _dtparam_key(s) == key)
+
+
+def _config_set_kv(lines: list[str], key: str, value: str) -> None:
+    target = f"{key}={value}"
+    _config_set_line(
+        lines, lambda s: _config_is_plain_kv(s) and s.split("=", 1)[0].strip() == key, target
+    )
+
+
+def _config_remove_kv(lines: list[str], key: str) -> None:
+    _config_remove(lines, lambda s: _config_is_plain_kv(s) and s.split("=", 1)[0].strip() == key)
+
+
+def _config_add_dtoverlay(lines: list[str], name: str, params: str) -> None:
+    """Upsert a dtoverlay by NAME: replace an existing same-name overlay in editable scope (so
+    changing its params is an edit, not a conflicting duplicate); otherwise insert it global."""
+    line = f"dtoverlay={name},{params}" if params else f"dtoverlay={name}"
+    _config_set_line(
+        lines, lambda s: s.startswith("dtoverlay=") and _dtoverlay_name(s) == name, line
+    )
+
+
+def _config_remove_dtoverlay(lines: list[str], name: str) -> None:
+    _config_remove(lines, lambda s: s.startswith("dtoverlay=") and _dtoverlay_name(s) == name)
+
+
+# --- cmdline.txt (a single space-separated line) ---
+
+
+def _cmdline_has_key(text: str, key: str) -> bool:
+    return any(t.split("=", 1)[0] == key for t in text.split())
+
+
+# --- op dispatch (each op is validated against the whitelist; unknown/bad -> ValueError -> 400) ---
+
+
+def _boot_req(op: dict[str, Any], field: str, rx: re.Pattern[str]) -> str:
+    v = str(op.get(field, ""))
+    if not v or not rx.match(v):
+        raise ValueError(f"invalid boot op value for '{field}'")
+    return v
+
+
+def _boot_val(op: dict[str, Any], field: str) -> str:
+    v = str(op.get(field, ""))
+    if not _BOOT_VALUE_RE.match(v):
+        raise ValueError(f"invalid boot value for '{field}'")
+    return v
+
+
+def _boot_opt_token(op: dict[str, Any], field: str) -> str:
+    v = str(op.get(field, ""))
+    if v and not _BOOT_TOKEN_RE.match(v):
+        raise ValueError(f"invalid boot token for '{field}'")
+    return v
+
+
+def _apply_armbian_op(lines: list[str], op: dict[str, Any]) -> None:
+    name = op.get("op")
+    if name == "set_key":
+        _armbian_set_key(lines, _boot_req(op, "key", _BOOT_KEY_RE), _boot_val(op, "value"))
+    elif name == "add_overlay":
+        _armbian_add_overlay(lines, _boot_req(op, "name", _BOOT_TOKEN_RE))
+    elif name == "remove_overlay":
+        _armbian_remove_overlay(lines, _boot_req(op, "name", _BOOT_TOKEN_RE))
+    elif name == "set_extraarg":
+        _armbian_set_extraarg(
+            lines, _boot_req(op, "key", _BOOT_KEY_RE), _boot_opt_token(op, "value")
+        )
+    elif name == "remove_extraarg":
+        _armbian_remove_extraarg(lines, _boot_req(op, "key", _BOOT_KEY_RE))
+    else:
+        raise ValueError(f"unsupported armbian op: {name!r}")
+
+
+def _apply_config_op(lines: list[str], op: dict[str, Any]) -> None:
+    name = op.get("op")
+    if name == "set_dtparam":
+        _config_set_dtparam(lines, _boot_req(op, "key", _BOOT_KEY_RE), _boot_opt_token(op, "value"))
+    elif name == "remove_dtparam":
+        _config_remove_dtparam(lines, _boot_req(op, "key", _BOOT_KEY_RE))
+    elif name == "set_kv":
+        _config_set_kv(lines, _boot_req(op, "key", _BOOT_KEY_RE), _boot_opt_token(op, "value"))
+    elif name == "remove_kv":
+        _config_remove_kv(lines, _boot_req(op, "key", _BOOT_KEY_RE))
+    elif name == "add_dtoverlay":
+        _config_add_dtoverlay(
+            lines, _boot_req(op, "name", _BOOT_TOKEN_RE), _boot_opt_token(op, "params")
+        )
+    elif name == "remove_dtoverlay":
+        _config_remove_dtoverlay(lines, _boot_req(op, "name", _BOOT_TOKEN_RE))
+    else:
+        raise ValueError(f"unsupported config op: {name!r}")
+
+
+def _apply_cmdline_op(tokens: list[str], op: dict[str, Any]) -> list[str]:
+    name = op.get("op")
+    if name == "add_token":
+        tok = _boot_req(op, "token", _CMDLINE_TOKEN_RE)
+        if tok not in tokens:
+            tokens.append(tok)
+        return tokens
+    if name == "remove_token":
+        tok = str(op.get("token", ""))
+        return [t for t in tokens if t != tok]
+    if name == "set_token":
+        key = _boot_req(op, "key", _BOOT_KEY_RE)
+        val = _boot_req(op, "value", _CMDLINE_TOKEN_RE)
+        newtok = f"{key}={val}"
+        out: list[str] = []
+        replaced = False
+        for t in tokens:
+            if t.split("=", 1)[0] == key:
+                if not replaced:
+                    out.append(newtok)
+                    replaced = True
+            else:
+                out.append(t)
+        if not replaced:
+            out.append(newtok)
+        return out
+    if name == "remove_token_key":
+        key = str(op.get("key", ""))
+        return [t for t in tokens if t.split("=", 1)[0] != key]
+    raise ValueError(f"unsupported cmdline op: {name!r}")
+
+
+def _boot_apply_ops(path: str, before: str, fmt: str, ops: list[dict[str, Any]]) -> str:
+    """Build the after-text by applying validated ops onto the parsed before-text. Minimal-diff:
+    only targeted tokens change; everything else is preserved. Raises ValueError on a bad op."""
+    if fmt == "cmdline":
+        had_nl = before.endswith("\n") or before == ""
+        tokens = before.split()
+        for op in ops:
+            tokens = _apply_cmdline_op(tokens, op)
+        for t in tokens:
+            if not _CMDLINE_TOKEN_RE.match(t):
+                raise ValueError("invalid cmdline token")
+        return " ".join(tokens) + ("\n" if had_nl else "")
+    lines, had_nl = _to_lines(before)
+    for op in ops:
+        if fmt == "armbian":
+            _apply_armbian_op(lines, op)
+        else:
+            _apply_config_op(lines, op)
+    return _from_lines(lines, had_nl)
+
+
+# --- read state (read-only, no sudo) ---
+
+
+def _project_boot_file(path: str, text: str, fmt: str) -> dict[str, Any]:
+    lines, _ = _to_lines(text)
+    out: dict[str, Any] = {
+        "name": os.path.basename(path),
+        "path": path,
+        "exists": _boot_is_regular(path),
+        "format": {"armbian": "armbian", "cmdline": "cmdline"}.get(fmt, "config.txt"),
+        "raw_lines": len(lines),
+        "backups": _list_boot_backups(path),
+    }
+    if fmt == "armbian":
+        keys = []
+        for ln in lines:
+            s = ln.strip()
+            if s and not s.startswith("#") and "=" in s:
+                k, v = s.split("=", 1)
+                keys.append({"key": k.strip(), "value": v})
+        out["keys"] = keys
+        out["overlays"] = (_armbian_get(lines, "overlays") or "").split()
+        out["extraargs"] = (_armbian_get(lines, "extraargs") or "").split()
+    elif fmt == "cmdline":
+        out["tokens"] = text.split()
+    else:
+        overlays, dtparams, kv = _config_parse(lines)
+        out["overlays"] = overlays
+        out["dtparams"] = dtparams
+        out["kv"] = kv
+    return out
+
+
+def _config_parse(lines: list[str]) -> tuple[list[dict], list[dict], list[dict]]:
+    section: str | None = None
+    overlays: list[dict[str, Any]] = []
+    dtparams: list[dict[str, Any]] = []
+    kv: list[dict[str, Any]] = []
+    for ln in lines:
+        if _SECTION_RE.match(ln):
+            section = ln.strip()[1:-1].strip()
+            continue
+        s = ln.strip()
+        if not s or s.startswith("#"):
+            continue
+        if s.startswith("dtoverlay="):
+            body = s[len("dtoverlay=") :]
+            nm, _, pr = body.partition(",")
+            overlays.append({"name": nm.strip(), "params": pr, "section": section})
+        elif s.startswith("dtparam="):
+            body = s[len("dtparam=") :]
+            k, _, v = body.partition("=")
+            dtparams.append({"key": k.strip(), "value": v or None, "section": section})
+        elif "=" in s:
+            k, v = s.split("=", 1)
+            kv.append({"key": k.strip(), "value": v, "section": section})
+    return overlays, dtparams, kv
+
+
+def _boot_time() -> float | None:
+    up = _read("/proc/uptime").split()
+    if not up:
+        return None
+    try:
+        return time.time() - float(up[0])
+    except ValueError:
+        return None
+
+
+def _boot_reboot_pending(plat: dict[str, Any]) -> bool:
+    """A reboot is pending when any managed boot file was modified AFTER the last boot - a stateless
+    signal that survives a backend restart and also catches edits made by other tools."""
+    bt = _boot_time()
+    if bt is None:
+        return False
+    for path in _boot_paths_for(plat):
+        try:
+            if os.stat(path).st_mtime > bt + 2:  # +2s guards vfat mtime granularity at boot
+                return True
+        except OSError:
+            continue
+    return False
+
+
+def read_boot_params() -> dict[str, Any]:
+    """The host's boot configuration, projected for the UI. Read-only, safe on every platform."""
+    plat = detect_boot_platform()
+    if plat["platform"] == "unknown":
+        return {"platform": "unknown", "editable": False, "reboot_required": False, "files": []}
+    files = [_project_boot_file(p, _read(p), _boot_format_for(p)) for p in _boot_paths_for(plat)]
+    return {
+        "platform": plat["platform"],
+        "editable": True,
+        "reboot_required": _boot_reboot_pending(plat),
+        "files": files,
+    }
+
+
+# --- backup / write (reuse the granted `cp` + `rm`) ---
+
+
+def _list_boot_backups(path: str) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for p in glob.glob(f"{path}{_BOOT_BAK_MARK}*"):
+        m = _BOOT_BAK_RE.search(p)
+        if not (m and _boot_is_regular(p)):
+            continue
+        try:
+            size = os.stat(p).st_size
+        except OSError:
+            size = 0
+        out.append({"name": os.path.basename(p), "ts": m.group(1), "size": size})
+    out.sort(key=lambda b: b["ts"], reverse=True)
+    return out
+
+
+def _boot_latest_backup(path: str) -> str | None:
+    baks = _list_boot_backups(path)
+    return f"{os.path.dirname(path)}/{baks[0]['name']}" if baks else None
+
+
+async def _boot_backup(path: str) -> tuple[bool, str]:
+    """`sudo -n cp -a <path> <path>.filamind.bak-YYYYmmddHHMMSS`. No-op (ok) if the source is absent
+    (a fresh file will be created). A failed backup is a hard stop for the caller."""
+    if not _boot_is_regular(path):
+        return True, ""
+    bak = f"{path}{_BOOT_BAK_MARK}{time.strftime('%Y%m%d%H%M%S')}"
+    rc, out = await _run_rc(["sudo", "-n", "cp", "-a", path, bak])
+    return (rc == 0), (bak if rc == 0 else out)
+
+
+async def _boot_prune_backups(path: str) -> None:
+    for b in _list_boot_backups(path)[_MAX_BOOT_BACKUPS:]:
+        await _run_rc(["sudo", "-n", "rm", "-f", f"{os.path.dirname(path)}/{b['name']}"])
+
+
+async def _boot_write_file(path: str, content: str) -> dict[str, Any]:
+    """Gated write: back up the current file (hard-stop on failure), stage a temp file, then the
+    narrow `sudo -n cp`. Mirrors set_splash's write, plus the mandatory backup."""
+    ok, bak = await _boot_backup(path)
+    if not ok:
+        return {
+            "ok": False,
+            "refused": False,
+            "output": bak.strip() or "Could not back up the boot file.",
+            "needs_setup": _needs_setup(bak),
+        }
+    tmp = ""
+    try:
+        fd, tmp = tempfile.mkstemp(suffix=".bootcfg")
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(content)
+        rc, out = await _run_rc(["sudo", "-n", "cp", tmp, path])
+    finally:
+        if tmp:
+            with contextlib.suppress(OSError):
+                os.unlink(tmp)
+    if rc == 0:
+        with contextlib.suppress(Exception):
+            await _boot_prune_backups(path)
+        res: dict[str, Any] = {
+            "ok": True,
+            "refused": False,
+            "output": f"Updated {os.path.basename(path)}.",
+            "needs_setup": False,
+            "reboot_required": True,
+        }
+        if bak:
+            res["backup"] = os.path.basename(bak)
+        return res
+    return {
+        "ok": False,
+        "refused": False,
+        "output": out.strip() or "Could not write the boot file.",
+        "needs_setup": _needs_setup(out),
+    }
+
+
+# --- validation / diff ---
+
+
+def _sha256(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _boot_validate(fmt: str, before: str, after: str) -> dict[str, Any]:
+    errors: list[dict[str, Any]] = []
+    warnings: list[dict[str, Any]] = []
+    if fmt == "cmdline":
+        if "\n" in after.rstrip("\n"):
+            errors.append(
+                {
+                    "code": "cmdline_multiline",
+                    "message": "The kernel command line must be one line.",
+                }
+            )
+        if _cmdline_has_key(before, "root") and not _cmdline_has_key(after, "root"):
+            warnings.append(
+                {"code": "removes_root", "message": "This removes the root= boot token."}
+            )
+        if _cmdline_has_key(before, "console") and not _cmdline_has_key(after, "console"):
+            warnings.append(
+                {"code": "removes_console", "message": "This removes the console= token."}
+            )
+    return {"errors": errors, "warnings": warnings}
+
+
+def _boot_diff(path: str, before: str, after: str) -> list[str]:
+    base = os.path.basename(path)
+    return list(
+        difflib.unified_diff(
+            before.splitlines(),
+            after.splitlines(),
+            fromfile=base,
+            tofile=f"{base} (new)",
+            lineterm="",
+        )
+    )
+
+
+# --- gated apply / preview / revert / reboot ---
+
+
+async def apply_boot_change(
+    payload: dict[str, Any], *, dry_run: bool, confirm: bool, before_hash: str | None
+) -> dict[str, Any]:
+    """Two-phase: dry_run=True previews (diff + hashes + validation, NO write); dry_run=False writes
+    (requires confirm + a matching before_hash for optimistic concurrency)."""
+    plat = detect_boot_platform()
+    if plat["platform"] == "unknown":
+        return _refused("Editing boot parameters is not supported on this host image.")
+    path = _boot_resolve_file(plat, payload.get("file"))
+    if path is None or path not in _BOOT_MANAGED_PATHS:
+        return _refused("Refusing to write outside the known boot-config locations.")
+    fmt = _boot_format_for(path)
+    before = _read(path)
+    if len(before.encode("utf-8")) > _MAX_BOOT_BYTES:
+        return _refused("This boot file is unexpectedly large; refusing to edit it.")
+    ops = payload.get("ops") or []
+    if not isinstance(ops, list):
+        raise ValueError("ops must be a list")
+    after = _boot_apply_ops(path, before, fmt, ops)  # ValueError -> 400
+    validation = _boot_validate(fmt, before, after)
+    if validation["errors"]:
+        out = _refused(validation["errors"][0]["message"])
+        out["validation"] = validation
+        return out
+    bh, ah = _sha256(before), _sha256(after)
+    if dry_run:
+        return {
+            "ok": True,
+            "refused": False,
+            "output": "",
+            "needs_setup": False,
+            "file": os.path.basename(path),
+            "editable": True,
+            "diff": _boot_diff(path, before, after),
+            "before_hash": bh,
+            "after_hash": ah,
+            "validation": validation,
+        }
+    if not confirm:
+        return _refused("Apply requires explicit confirmation.")
+    # Optimistic concurrency: a real apply MUST carry the hash from its preview, and the file must
+    # still be exactly what was previewed - re-read here to close the preview->apply window so a
+    # concurrent write (another apply / revert / an external tool) can't be silently clobbered.
+    if before_hash is None:
+        return _refused("Apply requires the preview hash. Preview the changes again.")
+    if _sha256(_read(path)) != before_hash:
+        return _refused("The boot file changed since you previewed it. Reload and try again.")
+    if ah == bh:
+        return {"ok": True, "refused": False, "output": "No change to apply.", "needs_setup": False}
+    return await _boot_write_file(path, after)
+
+
+async def revert_boot_file(file: str, backup: str | None) -> dict[str, Any]:
+    """Restore a timestamped backup (a revert is itself a gated, backed-up write)."""
+    plat = detect_boot_platform()
+    path = _boot_resolve_file(plat, file)
+    if path is None or path not in _BOOT_MANAGED_PATHS:
+        return _refused("Unknown boot file.")
+    if backup:
+        cand = f"{os.path.dirname(path)}/{os.path.basename(str(backup))}"
+        bak = (
+            cand
+            if (cand.startswith(f"{path}{_BOOT_BAK_MARK}") and _boot_is_regular(cand))
+            else None
+        )
+    else:
+        bak = _boot_latest_backup(path)
+    if not bak:
+        return _refused("No backup available to restore.")
+    content = _read(bak)
+    if not content.strip():
+        return _refused("Could not read the backup.")
+    return await _boot_write_file(path, content)
+
+
+async def reboot_host_for_boot(confirm: str, moonraker_url: str) -> dict[str, Any]:
+    """Reboot the host to apply boot changes - gated by a typed confirmation AND the print-busy
+    guard, exactly like `power('reboot')`. Never automatic."""
+    if confirm != "REBOOT":
+        return _refused("Reboot requires confirmation.")
+    try:
+        busy = await printer_guard.is_busy(MoonrakerClient(moonraker_url))
+    except httpx.HTTPError:
+        return _refused("Refused: could not reach Moonraker to confirm the printer is idle.")
+    if busy:
+        return _refused("Refused: a print is in progress.")
+    return _result(*await _run_rc(["sudo", "-n", "systemctl", "reboot"]))

@@ -8,7 +8,8 @@
       "system": "Sistema",
       "boot": "Arranque",
       "canbus": "CAN Bus",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Parámetros de arranque"
     },
     "help": {
       "guide": "Ayuda",
@@ -315,6 +316,165 @@
         "applied": "Pantalla de arranque aplicada.",
         "failed": "No se pudo aplicar la pantalla de arranque.",
         "caveat": "Escribe un PNG en la ruta del splash; que aparezca al arrancar depende de la configuración del host."
+      },
+      "params": {
+        "intro": "Habilita interfaces de hardware y ajusta la configuración de arranque de tu placa host. Los cambios se preparan, se muestran como una diferencia, se respaldan antes de escribir y surten efecto tras reiniciar.",
+        "refresh": "Actualizar",
+        "loading": "Leyendo la configuración de arranque…",
+        "needsSetup": "Actualiza FilaMind para habilitar la edición de parámetros de arranque.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Esta imagen del host no usa un formato de configuración de arranque conocido, así que aquí la edición es solo de lectura."
+        },
+        "groups": {
+          "hardware_interfaces": "Interfaces de hardware",
+          "display_console": "Pantalla y consola",
+          "performance_memory": "Rendimiento y memoria",
+          "usb_power": "USB y alimentación"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN mediante MCP2515",
+            "purpose": "Añade un bus CAN a través de un controlador SPI MCP2515 para un cabezal CAN.",
+            "caveat": "Necesita un bus SPI, un pin de interrupción libre y la frecuencia del cristal del módulo; comparte pines SPI con un acelerómetro."
+          },
+          "spi_accel": {
+            "label": "Bus SPI de acelerómetro",
+            "purpose": "Habilita un bus SPI para un acelerómetro ADXL345 de conformación de entrada.",
+            "caveat": "Elige el bus cuyos pines estén expuestos en el conector de tu placa."
+          },
+          "i2c_bus": {
+            "label": "Bus I2C",
+            "purpose": "Habilita un bus I2C para sensores, un RTC o un acelerómetro LIS2DW.",
+            "caveat": "El controlador correcto depende de qué pines SDA/SCL expone tu conector."
+          },
+          "uart_extra": {
+            "label": "UART adicional",
+            "purpose": "Añade un puerto serie para un segundo MCU o un puente CAN serie.",
+            "caveat": "Elige la variante de multiplexación de pines expuesta en tu conector; no uses la UART de la consola mientras la salida de consola esté configurada como serie."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Habilita un pin del host para LED RGB direccionables.",
+            "caveat": "Los NeoPixels suelen controlarse mejor desde el MCU de la impresora; déjalo desactivado salvo que conectes los LED al host."
+          },
+          "rtc_module": {
+            "label": "Reloj en tiempo real",
+            "purpose": "Habilita un RTC con batería para que el host mantenga la hora sin conexión.",
+            "caveat": "Habilita solo el chip que hayas instalado realmente."
+          },
+          "console_target": {
+            "label": "Salida de consola",
+            "purpose": "A dónde van los mensajes de arranque del kernel: la pantalla o el puerto serie."
+          },
+          "bootlogo": {
+            "label": "Logo de arranque",
+            "purpose": "Muestra el logo de bienvenida durante el arranque."
+          },
+          "cma_size": {
+            "label": "Memoria CMA reservada",
+            "purpose": "Memoria contigua reservada para una cámara o una pantalla DSI."
+          },
+          "boot_verbosity": {
+            "label": "Verbosidad del registro de arranque",
+            "purpose": "Cuánto detalle registra el kernel durante el arranque (0-8)."
+          },
+          "enable_uart": {
+            "label": "Habilitar UART",
+            "purpose": "Activa el puerto serie principal para un MCU conectado por serie."
+          },
+          "disable_bt": {
+            "label": "Liberar la UART buena (desactivar Bluetooth)",
+            "purpose": "Libera la UART PL011 de alta calidad desactivando el Bluetooth.",
+            "caveat": "Pierdes el Bluetooth integrado."
+          },
+          "spi": {
+            "label": "Bus SPI",
+            "purpose": "Habilita el bus SPI para un acelerómetro ADXL345."
+          },
+          "i2c_arm": {
+            "label": "Bus I2C",
+            "purpose": "Habilita el bus I2C para sensores o un acelerómetro I2C."
+          },
+          "i2c_rtc": {
+            "label": "RTC de hardware",
+            "purpose": "Añade un reloj en tiempo real I2C para que el host mantenga la hora sin conexión.",
+            "caveat": "Selecciona el chip RTC que instalaste."
+          },
+          "gpu_mem": {
+            "label": "Memoria de la GPU",
+            "purpose": "Memoria asignada a la GPU; redúcela para liberar RAM en un host sin pantalla."
+          },
+          "arm_freq": {
+            "label": "Reloj de la ARM (overclock)",
+            "purpose": "Reloj de la CPU en MHz. Aumentarlo requiere buena refrigeración.",
+            "caveat": "Un overclock inestable puede corromper la tarjeta SD; añade un disipador."
+          },
+          "over_voltage": {
+            "label": "Sobretensión",
+            "purpose": "Voltaje adicional del núcleo para estabilizar un overclock.",
+            "caveat": "Un voltaje más alto genera más calor."
+          },
+          "max_usb_current": {
+            "label": "Aumentar corriente USB",
+            "purpose": "Permite más corriente USB total para adaptadores y accesorios.",
+            "caveat": "Necesita una fuente de alimentación capaz de suministrarla."
+          }
+        },
+        "opt": {
+          "8000000": "Cristal de 8 MHz",
+          "12000000": "Cristal de 12 MHz",
+          "16000000": "Cristal de 16 MHz",
+          "20000000": "Cristal de 20 MHz"
+        },
+        "control": {
+          "changed": "modificado",
+          "disabled": "Deshabilitado"
+        },
+        "advanced": {
+          "title": "Avanzado",
+          "warn": "Las ediciones avanzadas escriben directamente los tokens de arranque. Un valor incorrecto puede impedir que el host arranque; revisa la diferencia con atención.",
+          "overlays": "Overlays de árbol de dispositivos",
+          "overlayName": "Nombre del overlay",
+          "addOverlay": "Añadir",
+          "remove": "Quitar",
+          "dtparams": "Parámetros del árbol de dispositivos",
+          "paramKey": "Parámetro",
+          "paramValue": "Valor",
+          "addParam": "Añadir",
+          "staged": "{n} cambios avanzados preparados",
+          "clear": "Limpiar"
+        },
+        "preview": {
+          "button": "Previsualizar cambios",
+          "none": "No hay cambios preparados.",
+          "noDiff": "Sin cambios efectivos.",
+          "diffTitle": "Diferencia"
+        },
+        "apply": {
+          "button": "Aplicar",
+          "applying": "Aplicando…",
+          "done": "Configuración de arranque actualizada.",
+          "warnAck": "Entiendo que estos cambios afectan a cómo arranca el host."
+        },
+        "revert": {
+          "button": "Revertir a la última copia de seguridad",
+          "confirm": "¿Restaurar la copia de seguridad más reciente de este archivo?",
+          "yes": "Sí, restaurar",
+          "done": "Se restauró la configuración de arranque anterior."
+        },
+        "reboot": {
+          "banner": "Se necesita un reinicio para aplicar tus cambios de arranque.",
+          "prompt": "Escribe REBOOT para confirmar el reinicio del host.",
+          "token": "REBOOT",
+          "button": "Reiniciar ahora",
+          "rebooting": "Reiniciando: vuelve a conectarte en un momento."
+        },
+        "warn": {
+          "removes_root": "Esto elimina el token de arranque root=, el host podría no arrancar.",
+          "removes_console": "Esto elimina el token console=."
+        }
       }
     },
     "canbus": {

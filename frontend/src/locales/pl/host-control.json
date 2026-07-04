@@ -8,7 +8,8 @@
       "system": "System",
       "boot": "Rozruch",
       "canbus": "Magistrala CAN",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Parametry rozruchu"
     },
     "help": {
       "guide": "Pomoc",
@@ -315,6 +316,165 @@
         "applied": "Splash rozruchu zastosowany.",
         "failed": "Nie można zastosować splasha rozruchu.",
         "caveat": "Zapisuje PNG do ścieżki splasha; czy pojawi się przy rozruchu zależy od konfiguracji hosta."
+      },
+      "params": {
+        "intro": "Włącz interfejsy sprzętowe i dostosuj ustawienia rozruchu dla swojej płyty hosta. Zmiany są przygotowywane, pokazywane jako różnice, tworzona jest kopia zapasowa przed zapisem, a wejdą w życie po ponownym uruchomieniu.",
+        "refresh": "Odśwież",
+        "loading": "Odczytywanie konfiguracji rozruchu…",
+        "needsSetup": "Zaktualizuj FilaMind, aby włączyć edycję parametrów rozruchu.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Ten obraz hosta nie używa znanego formatu konfiguracji rozruchu, więc edycja jest tutaj tylko do odczytu."
+        },
+        "groups": {
+          "hardware_interfaces": "Interfejsy sprzętowe",
+          "display_console": "Wyświetlacz i konsola",
+          "performance_memory": "Wydajność i pamięć",
+          "usb_power": "USB i zasilanie"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN przez MCP2515",
+            "purpose": "Dodaj magistralę CAN przez kontroler SPI MCP2515 dla głowicy CAN.",
+            "caveat": "Wymaga magistrali SPI, wolnego pinu przerwań i częstotliwości kwarcu modułu; współdzieli piny SPI z akcelerometrem."
+          },
+          "spi_accel": {
+            "label": "Magistrala SPI akcelerometru",
+            "purpose": "Włącz magistralę SPI dla akcelerometru ADXL345 do kształtowania sygnału wejściowego.",
+            "caveat": "Wybierz magistralę, której piny są wyprowadzone na złączu twojej płyty."
+          },
+          "i2c_bus": {
+            "label": "Magistrala I2C",
+            "purpose": "Włącz magistralę I2C dla czujników, RTC lub akcelerometru LIS2DW.",
+            "caveat": "Właściwy kontroler zależy od tego, które piny SDA/SCL wyprowadza twoje złącze."
+          },
+          "uart_extra": {
+            "label": "Dodatkowy UART",
+            "purpose": "Dodaj port szeregowy dla drugiego MCU lub mostka szeregowego CAN.",
+            "caveat": "Wybierz wariant multipleksowania pinów wyprowadzony na twoim złączu; nie używaj UART konsoli, gdy wyjście konsoli jest ustawione na port szeregowy."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Włącz pin hosta dla adresowalnych diod RGB LED.",
+            "caveat": "NeoPixel są zwykle lepiej sterowane przez MCU drukarki; pozostaw wyłączone, chyba że podłączasz diody LED do hosta."
+          },
+          "rtc_module": {
+            "label": "Zegar czasu rzeczywistego",
+            "purpose": "Włącz RTC z podtrzymaniem bateryjnym, aby host utrzymywał czas w trybie offline.",
+            "caveat": "Włącz tylko układ, który faktycznie zamontowałeś."
+          },
+          "console_target": {
+            "label": "Wyjście konsoli",
+            "purpose": "Gdzie trafiają komunikaty rozruchu jądra - na wyświetlacz lub port szeregowy."
+          },
+          "bootlogo": {
+            "label": "Logo rozruchu",
+            "purpose": "Pokaż ekran powitalny logo podczas rozruchu."
+          },
+          "cma_size": {
+            "label": "Zarezerwowana pamięć CMA",
+            "purpose": "Ciągła pamięć zarezerwowana dla kamery lub wyświetlacza DSI."
+          },
+          "boot_verbosity": {
+            "label": "Szczegółowość dziennika rozruchu",
+            "purpose": "Ile szczegółów jądro rejestruje podczas rozruchu (0-8)."
+          },
+          "enable_uart": {
+            "label": "Włącz UART",
+            "purpose": "Włącz podstawowy port szeregowy dla MCU podłączonego szeregowo."
+          },
+          "disable_bt": {
+            "label": "Uwolnij dobry UART (wyłącz Bluetooth)",
+            "purpose": "Zwolnij wysokiej jakości UART PL011 poprzez wyłączenie Bluetooth.",
+            "caveat": "Tracisz wbudowany Bluetooth."
+          },
+          "spi": {
+            "label": "Magistrala SPI",
+            "purpose": "Włącz magistralę SPI dla akcelerometru ADXL345."
+          },
+          "i2c_arm": {
+            "label": "Magistrala I2C",
+            "purpose": "Włącz magistralę I2C dla czujników lub akcelerometru I2C."
+          },
+          "i2c_rtc": {
+            "label": "Sprzętowy RTC",
+            "purpose": "Dodaj zegar czasu rzeczywistego I2C, aby host utrzymywał czas w trybie offline.",
+            "caveat": "Wybierz układ RTC, który zamontowałeś."
+          },
+          "gpu_mem": {
+            "label": "Pamięć GPU",
+            "purpose": "Pamięć przydzielona GPU; zmniejsz ją, aby zwolnić RAM na hoście bez wyświetlacza."
+          },
+          "arm_freq": {
+            "label": "Zegar ARM (podkręcanie)",
+            "purpose": "Zegar CPU w MHz. Podniesienie go wymaga dobrego chłodzenia.",
+            "caveat": "Niestabilne podkręcenie może uszkodzić kartę SD; dodaj radiator."
+          },
+          "over_voltage": {
+            "label": "Podwyższone napięcie",
+            "purpose": "Dodatkowe napięcie rdzenia stabilizujące podkręcenie.",
+            "caveat": "Wyższe napięcie oznacza wyższą temperaturę."
+          },
+          "max_usb_current": {
+            "label": "Zwiększ prąd USB",
+            "purpose": "Zezwól na większy całkowity prąd USB dla adapterów i akcesoriów.",
+            "caveat": "Wymaga zasilacza, który jest w stanie go dostarczyć."
+          }
+        },
+        "opt": {
+          "8000000": "Kwarc 8 MHz",
+          "12000000": "Kwarc 12 MHz",
+          "16000000": "Kwarc 16 MHz",
+          "20000000": "Kwarc 20 MHz"
+        },
+        "control": {
+          "changed": "zmieniono",
+          "disabled": "Wyłączone"
+        },
+        "advanced": {
+          "title": "Zaawansowane",
+          "warn": "Zaawansowane edycje zapisują tokeny rozruchu bezpośrednio. Błędna wartość może uniemożliwić rozruch hosta - dokładnie sprawdź różnice.",
+          "overlays": "Nakładki drzewa urządzeń",
+          "overlayName": "Nazwa nakładki",
+          "addOverlay": "Dodaj",
+          "remove": "Usuń",
+          "dtparams": "Parametry drzewa urządzeń",
+          "paramKey": "Parametr",
+          "paramValue": "Wartość",
+          "addParam": "Dodaj",
+          "staged": "Przygotowano {n} zaawansowanych zmian",
+          "clear": "Wyczyść"
+        },
+        "preview": {
+          "button": "Podgląd zmian",
+          "none": "Brak przygotowanych zmian.",
+          "noDiff": "Brak faktycznej zmiany.",
+          "diffTitle": "Różnice"
+        },
+        "apply": {
+          "button": "Zastosuj",
+          "applying": "Stosowanie…",
+          "done": "Konfiguracja rozruchu zaktualizowana.",
+          "warnAck": "Rozumiem, że te zmiany wpływają na sposób rozruchu hosta."
+        },
+        "revert": {
+          "button": "Przywróć ostatnią kopię zapasową",
+          "confirm": "Przywrócić najnowszą kopię zapasową tego pliku?",
+          "yes": "Tak, przywróć",
+          "done": "Przywrócono poprzednią konfigurację rozruchu."
+        },
+        "reboot": {
+          "banner": "Wymagane jest ponowne uruchomienie, aby zastosować zmiany rozruchu.",
+          "prompt": "Wpisz REBOOT, aby potwierdzić ponowne uruchomienie hosta.",
+          "token": "REBOOT",
+          "button": "Uruchom ponownie teraz",
+          "rebooting": "Ponowne uruchamianie - połącz się ponownie za chwilę."
+        },
+        "warn": {
+          "removes_root": "To usuwa token rozruchu root= - host może się nie uruchomić.",
+          "removes_console": "To usuwa token console=."
+        }
       }
     },
     "canbus": {

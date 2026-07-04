@@ -8,7 +8,8 @@
       "system": "Systeem",
       "boot": "Opstarten",
       "canbus": "CAN-bus",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "Bootparameters"
     },
     "help": {
       "guide": "Help",
@@ -315,6 +316,165 @@
         "applied": "Boot-splash toegepast.",
         "failed": "Kon de boot-splash niet toepassen.",
         "caveat": "Schrijft een PNG naar het splash-pad; of het bij het opstarten verschijnt hangt af van je host-setup."
+      },
+      "params": {
+        "intro": "Schakel hardware-interfaces in en stem bootinstellingen af voor je hostbord. Wijzigingen worden voorbereid, als diff getoond, geback-upt voordat ze worden weggeschreven, en worden actief na een herstart.",
+        "refresh": "Vernieuwen",
+        "loading": "Bootconfiguratie lezen…",
+        "needsSetup": "Werk FilaMind bij om het bewerken van bootparameters mogelijk te maken.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Deze host-image gebruikt geen bekend bootconfiguratie-formaat, dus bewerken is hier alleen-lezen."
+        },
+        "groups": {
+          "hardware_interfaces": "Hardware-interfaces",
+          "display_console": "Display & console",
+          "performance_memory": "Prestaties & geheugen",
+          "usb_power": "USB & voeding"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN via MCP2515",
+            "purpose": "Voeg een CAN-bus toe via een SPI MCP2515-controller voor een CAN-toolhead.",
+            "caveat": "Vereist een SPI-bus, een vrije interruptpin en de kristalfrequentie van de module; deelt SPI-pinnen met een accelerometer."
+          },
+          "spi_accel": {
+            "label": "SPI-accelerometerbus",
+            "purpose": "Schakel een SPI-bus in voor een ADXL345 input-shaping-accelerometer.",
+            "caveat": "Kies de bus waarvan de pinnen op je bord-header zijn uitgeleid."
+          },
+          "i2c_bus": {
+            "label": "I2C-bus",
+            "purpose": "Schakel een I2C-bus in voor sensoren, een RTC of een LIS2DW-accelerometer.",
+            "caveat": "De juiste controller hangt af van welke SDA/SCL-pinnen je header blootlegt."
+          },
+          "uart_extra": {
+            "label": "Extra UART",
+            "purpose": "Voeg een seriële poort toe voor een tweede MCU of een seriële CAN-brug.",
+            "caveat": "Kies de pin-mux-variant die op je header is blootgelegd; gebruik de console-UART niet terwijl de console-uitvoer op serieel staat ingesteld."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Schakel een hostpin in voor adresseerbare RGB LED's.",
+            "caveat": "NeoPixels worden meestal beter aangestuurd door de printer-MCU; laat uitgeschakeld tenzij je LED's op de host aansluit."
+          },
+          "rtc_module": {
+            "label": "Real-time klok",
+            "purpose": "Schakel een batterijgevoede RTC in zodat de host offline de tijd bijhoudt.",
+            "caveat": "Schakel alleen de chip in die je daadwerkelijk hebt geplaatst."
+          },
+          "console_target": {
+            "label": "Console-uitvoer",
+            "purpose": "Waar kernel-bootberichten heen gaan - het display of de seriële poort."
+          },
+          "bootlogo": {
+            "label": "Bootlogo",
+            "purpose": "Toon het boot-splashlogo tijdens het opstarten."
+          },
+          "cma_size": {
+            "label": "Gereserveerd CMA-geheugen",
+            "purpose": "Aaneengesloten geheugen gereserveerd voor een camera of DSI-display."
+          },
+          "boot_verbosity": {
+            "label": "Uitgebreidheid bootlog",
+            "purpose": "Hoeveel detail de kernel logt tijdens het opstarten (0-8)."
+          },
+          "enable_uart": {
+            "label": "UART inschakelen",
+            "purpose": "Schakel de primaire seriële poort in voor een serieel aangesloten MCU."
+          },
+          "disable_bt": {
+            "label": "Maak de goede UART vrij (Bluetooth uitschakelen)",
+            "purpose": "Maak de hoogwaardige PL011-UART vrij door Bluetooth uit te schakelen.",
+            "caveat": "Je verliest de ingebouwde Bluetooth."
+          },
+          "spi": {
+            "label": "SPI-bus",
+            "purpose": "Schakel de SPI-bus in voor een ADXL345-accelerometer."
+          },
+          "i2c_arm": {
+            "label": "I2C-bus",
+            "purpose": "Schakel de I2C-bus in voor sensoren of een I2C-accelerometer."
+          },
+          "i2c_rtc": {
+            "label": "Hardware-RTC",
+            "purpose": "Voeg een I2C real-time klok toe zodat de host offline de tijd bijhoudt.",
+            "caveat": "Selecteer de RTC-chip die je hebt geplaatst."
+          },
+          "gpu_mem": {
+            "label": "GPU-geheugen",
+            "purpose": "Geheugen toegewezen aan de GPU; verlaag het om RAM vrij te maken op een host zonder display."
+          },
+          "arm_freq": {
+            "label": "ARM-klok (overclock)",
+            "purpose": "CPU-klok in MHz. Verhogen vereist goede koeling.",
+            "caveat": "Een instabiele overclock kan de SD-kaart beschadigen; voeg een koellichaam toe."
+          },
+          "over_voltage": {
+            "label": "Overspanning",
+            "purpose": "Extra kernspanning om een overclock te stabiliseren.",
+            "caveat": "Hogere spanning draait warmer."
+          },
+          "max_usb_current": {
+            "label": "USB-stroom verhogen",
+            "purpose": "Sta meer totale USB-stroom toe voor adapters en accessoires.",
+            "caveat": "Vereist een voeding die dit kan leveren."
+          }
+        },
+        "opt": {
+          "8000000": "8 MHz-kristal",
+          "12000000": "12 MHz-kristal",
+          "16000000": "16 MHz-kristal",
+          "20000000": "20 MHz-kristal"
+        },
+        "control": {
+          "changed": "gewijzigd",
+          "disabled": "Uitgeschakeld"
+        },
+        "advanced": {
+          "title": "Geavanceerd",
+          "warn": "Geavanceerde bewerkingen schrijven boottokens rechtstreeks weg. Een verkeerde waarde kan verhinderen dat de host opstart - controleer de diff zorgvuldig.",
+          "overlays": "Device-tree-overlays",
+          "overlayName": "Overlaynaam",
+          "addOverlay": "Toevoegen",
+          "remove": "Verwijderen",
+          "dtparams": "Device-tree-parameters",
+          "paramKey": "Parameter",
+          "paramValue": "Waarde",
+          "addParam": "Toevoegen",
+          "staged": "{n} geavanceerde wijzigingen voorbereid",
+          "clear": "Wissen"
+        },
+        "preview": {
+          "button": "Wijzigingen voorbeschouwen",
+          "none": "Geen wijzigingen voorbereid.",
+          "noDiff": "Geen effectieve wijziging.",
+          "diffTitle": "Diff"
+        },
+        "apply": {
+          "button": "Toepassen",
+          "applying": "Toepassen…",
+          "done": "Bootconfiguratie bijgewerkt.",
+          "warnAck": "Ik begrijp dat deze wijzigingen invloed hebben op hoe de host opstart."
+        },
+        "revert": {
+          "button": "Terug naar laatste back-up",
+          "confirm": "De meest recente back-up van dit bestand herstellen?",
+          "yes": "Ja, herstellen",
+          "done": "De vorige bootconfiguratie hersteld."
+        },
+        "reboot": {
+          "banner": "Een herstart is nodig om je bootwijzigingen toe te passen.",
+          "prompt": "Typ REBOOT om te bevestigen dat de host opnieuw wordt gestart.",
+          "token": "REBOOT",
+          "button": "Nu herstarten",
+          "rebooting": "Bezig met herstarten - maak over een moment opnieuw verbinding."
+        },
+        "warn": {
+          "removes_root": "Dit verwijdert het root= boottoken - de host start mogelijk niet op.",
+          "removes_console": "Dit verwijdert het console= token."
+        }
       }
     },
     "canbus": {

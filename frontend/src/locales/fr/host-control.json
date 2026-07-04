@@ -8,7 +8,8 @@
       "system": "Système",
       "boot": "Démarrage",
       "canbus": "Bus CAN",
-      "advisor": "Conseiller"
+      "advisor": "Conseiller",
+      "bootParams": "Paramètres de démarrage"
     },
     "help": {
       "guide": "Aide",
@@ -315,6 +316,165 @@
         "applied": "Écran de démarrage appliqué.",
         "failed": "Impossible d'appliquer l'écran de démarrage.",
         "caveat": "Écrit un PNG dans le chemin du splash ; son affichage au démarrage dépend de la config de l'hôte."
+      },
+      "params": {
+        "intro": "Activez les interfaces matérielles et ajustez les paramètres de démarrage de votre carte hôte. Les modifications sont préparées, présentées sous forme de diff, sauvegardées avant l'écriture et prennent effet après un redémarrage.",
+        "refresh": "Actualiser",
+        "loading": "Lecture de la configuration de démarrage…",
+        "needsSetup": "Mettez à jour FilaMind pour activer la modification des paramètres de démarrage.",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "Cette image hôte n'utilise pas un format de config de démarrage connu, la modification est donc en lecture seule ici."
+        },
+        "groups": {
+          "hardware_interfaces": "Interfaces matérielles",
+          "display_console": "Affichage et console",
+          "performance_memory": "Performances et mémoire",
+          "usb_power": "USB et alimentation"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "CAN via MCP2515",
+            "purpose": "Ajoute un bus CAN via un contrôleur SPI MCP2515 pour une tête d'impression CAN.",
+            "caveat": "Nécessite un bus SPI, une broche d'interruption libre et la fréquence du quartz du module ; il partage les broches SPI avec un accéléromètre."
+          },
+          "spi_accel": {
+            "label": "Bus SPI d'accéléromètre",
+            "purpose": "Active un bus SPI pour un accéléromètre ADXL345 d'input shaping.",
+            "caveat": "Choisissez le bus dont les broches sont accessibles sur le connecteur de votre carte."
+          },
+          "i2c_bus": {
+            "label": "Bus I2C",
+            "purpose": "Active un bus I2C pour des capteurs, un RTC ou un accéléromètre LIS2DW.",
+            "caveat": "Le bon contrôleur dépend des broches SDA/SCL exposées par votre connecteur."
+          },
+          "uart_extra": {
+            "label": "UART supplémentaire",
+            "purpose": "Ajoute un port série pour un second MCU ou un pont série-CAN.",
+            "caveat": "Choisissez la variante de multiplexage de broches exposée sur votre connecteur ; n'utilisez pas l'UART de la console tant que la sortie console est réglée sur série."
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "Active une broche de l'hôte pour des LED RGB adressables.",
+            "caveat": "Les NeoPixels sont généralement mieux pilotés par le MCU de l'imprimante ; laissez désactivé sauf si vous câblez les LED à l'hôte."
+          },
+          "rtc_module": {
+            "label": "Horloge temps réel",
+            "purpose": "Active un RTC à pile pour que l'hôte conserve l'heure hors ligne.",
+            "caveat": "Activez uniquement la puce que vous avez réellement installée."
+          },
+          "console_target": {
+            "label": "Sortie console",
+            "purpose": "Où vont les messages de démarrage du noyau - l'affichage ou le port série."
+          },
+          "bootlogo": {
+            "label": "Logo de démarrage",
+            "purpose": "Affiche le logo d'accueil au démarrage."
+          },
+          "cma_size": {
+            "label": "Mémoire CMA réservée",
+            "purpose": "Mémoire contiguë réservée à une caméra ou un écran DSI."
+          },
+          "boot_verbosity": {
+            "label": "Verbosité du journal de démarrage",
+            "purpose": "Niveau de détail consigné par le noyau au démarrage (0-8)."
+          },
+          "enable_uart": {
+            "label": "Activer l'UART",
+            "purpose": "Active le port série principal pour un MCU connecté en série."
+          },
+          "disable_bt": {
+            "label": "Libérer le bon UART (désactiver le Bluetooth)",
+            "purpose": "Libère l'UART PL011 de haute qualité en désactivant le Bluetooth.",
+            "caveat": "Vous perdez le Bluetooth intégré."
+          },
+          "spi": {
+            "label": "Bus SPI",
+            "purpose": "Active le bus SPI pour un accéléromètre ADXL345."
+          },
+          "i2c_arm": {
+            "label": "Bus I2C",
+            "purpose": "Active le bus I2C pour des capteurs ou un accéléromètre I2C."
+          },
+          "i2c_rtc": {
+            "label": "RTC matériel",
+            "purpose": "Ajoute une horloge temps réel I2C pour que l'hôte conserve l'heure hors ligne.",
+            "caveat": "Sélectionnez la puce RTC que vous avez installée."
+          },
+          "gpu_mem": {
+            "label": "Mémoire GPU",
+            "purpose": "Mémoire attribuée au GPU ; réduisez-la pour libérer de la RAM sur un hôte sans écran."
+          },
+          "arm_freq": {
+            "label": "Fréquence ARM (overclock)",
+            "purpose": "Fréquence CPU en MHz. L'augmenter nécessite un bon refroidissement.",
+            "caveat": "Un overclock instable peut corrompre la carte SD ; ajoutez un dissipateur."
+          },
+          "over_voltage": {
+            "label": "Surtension",
+            "purpose": "Tension supplémentaire du cœur pour stabiliser un overclock.",
+            "caveat": "Une tension plus élevée chauffe davantage."
+          },
+          "max_usb_current": {
+            "label": "Augmenter le courant USB",
+            "purpose": "Autorise un courant USB total plus élevé pour les adaptateurs et accessoires.",
+            "caveat": "Nécessite une alimentation capable de le fournir."
+          }
+        },
+        "opt": {
+          "8000000": "Quartz 8 MHz",
+          "12000000": "Quartz 12 MHz",
+          "16000000": "Quartz 16 MHz",
+          "20000000": "Quartz 20 MHz"
+        },
+        "control": {
+          "changed": "modifié",
+          "disabled": "Désactivé"
+        },
+        "advanced": {
+          "title": "Avancé",
+          "warn": "Les modifications avancées écrivent directement des tokens de démarrage. Une valeur erronée peut empêcher l'hôte de démarrer - vérifiez le diff attentivement.",
+          "overlays": "Overlays de device-tree",
+          "overlayName": "Nom de l'overlay",
+          "addOverlay": "Ajouter",
+          "remove": "Supprimer",
+          "dtparams": "Paramètres de device-tree",
+          "paramKey": "Paramètre",
+          "paramValue": "Valeur",
+          "addParam": "Ajouter",
+          "staged": "{n} modifications avancées préparées",
+          "clear": "Effacer"
+        },
+        "preview": {
+          "button": "Aperçu des modifications",
+          "none": "Aucune modification préparée.",
+          "noDiff": "Aucune modification effective.",
+          "diffTitle": "Diff"
+        },
+        "apply": {
+          "button": "Appliquer",
+          "applying": "Application…",
+          "done": "Configuration de démarrage mise à jour.",
+          "warnAck": "Je comprends que ces modifications affectent la manière dont l'hôte démarre."
+        },
+        "revert": {
+          "button": "Restaurer la dernière sauvegarde",
+          "confirm": "Restaurer la sauvegarde la plus récente de ce fichier ?",
+          "yes": "Oui, restaurer",
+          "done": "Configuration de démarrage précédente restaurée."
+        },
+        "reboot": {
+          "banner": "Un redémarrage est nécessaire pour appliquer vos modifications de démarrage.",
+          "prompt": "Tapez REBOOT pour confirmer le redémarrage de l'hôte.",
+          "token": "REBOOT",
+          "button": "Redémarrer maintenant",
+          "rebooting": "Redémarrage - reconnectez-vous dans un instant."
+        },
+        "warn": {
+          "removes_root": "Ceci supprime le token de démarrage root= - l'hôte risque de ne pas démarrer.",
+          "removes_console": "Ceci supprime le token console=."
+        }
       }
     },
     "canbus": {

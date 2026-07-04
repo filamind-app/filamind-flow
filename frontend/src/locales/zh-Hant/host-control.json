@@ -8,7 +8,8 @@
       "system": "系統",
       "boot": "啟動",
       "canbus": "CAN 匯流排",
-      "advisor": "Advisor"
+      "advisor": "Advisor",
+      "bootParams": "開機參數"
     },
     "help": {
       "guide": "說明",
@@ -315,6 +316,165 @@
         "applied": "已套用啟動畫面。",
         "failed": "無法套用啟動畫面。",
         "caveat": "將 PNG 寫入啟動畫面路徑；能否在啟動時顯示取決於主機的啟動畫面設定。"
+      },
+      "params": {
+        "intro": "為主機板啟用硬體介面並調整開機設定。變更會先暫存、以差異形式顯示、寫入前先備份，並在重新開機後生效。",
+        "refresh": "重新整理",
+        "loading": "正在讀取開機設定…",
+        "needsSetup": "請更新 FilaMind 以啟用開機參數編輯。",
+        "platform": {
+          "armbian": "Armbian · armbianEnv.txt",
+          "rpi": "Raspberry Pi · config.txt",
+          "unknown": "此主機映像未使用已知的開機設定格式，因此此處僅供唯讀檢視。"
+        },
+        "groups": {
+          "hardware_interfaces": "硬體介面",
+          "display_console": "顯示與主控台",
+          "performance_memory": "效能與記憶體",
+          "usb_power": "USB 與電源"
+        },
+        "items": {
+          "can_mcp2515": {
+            "label": "透過 MCP2515 的 CAN",
+            "purpose": "透過 SPI MCP2515 控制器新增 CAN 匯流排，用於 CAN 工具頭。",
+            "caveat": "需要一組 SPI 匯流排、一支空閒的中斷腳位以及模組的晶振頻率；它會與加速度計共用 SPI 腳位。"
+          },
+          "spi_accel": {
+            "label": "SPI 加速度計匯流排",
+            "purpose": "為 ADXL345 輸入整形加速度計啟用一組 SPI 匯流排。",
+            "caveat": "請選擇腳位有引出到主機板針腳的匯流排。"
+          },
+          "i2c_bus": {
+            "label": "I2C 匯流排",
+            "purpose": "為感測器、RTC 或 LIS2DW 加速度計啟用一組 I2C 匯流排。",
+            "caveat": "正確的控制器取決於你的針腳引出了哪些 SDA/SCL 腳位。"
+          },
+          "uart_extra": {
+            "label": "額外 UART",
+            "purpose": "為第二個 MCU 或序列 CAN 橋接器新增一個序列埠。",
+            "caveat": "請選擇你的針腳引出的腳位多工變體；當主控台輸出設為序列時，請勿使用主控台 UART。"
+          },
+          "ws2812": {
+            "label": "WS2812 / NeoPixel",
+            "purpose": "啟用一支主機腳位以驅動可定址的 RGB LED。",
+            "caveat": "NeoPixel 通常由印表機 MCU 驅動效果較佳；除非你將 LED 接到主機，否則請保持關閉。"
+          },
+          "rtc_module": {
+            "label": "即時時鐘",
+            "purpose": "啟用電池備援的 RTC，讓主機在離線時仍能保持時間。",
+            "caveat": "只啟用你實際裝上的晶片。"
+          },
+          "console_target": {
+            "label": "主控台輸出",
+            "purpose": "核心開機訊息的輸出位置－顯示器或序列埠。"
+          },
+          "bootlogo": {
+            "label": "開機標誌",
+            "purpose": "在啟動過程中顯示開機啟動畫面標誌。"
+          },
+          "cma_size": {
+            "label": "保留的 CMA 記憶體",
+            "purpose": "為攝影機或 DSI 顯示器保留的連續記憶體。"
+          },
+          "boot_verbosity": {
+            "label": "開機記錄詳細程度",
+            "purpose": "核心開機時記錄的詳細程度（0-8）。"
+          },
+          "enable_uart": {
+            "label": "啟用 UART",
+            "purpose": "為序列連接的 MCU 開啟主要序列埠。"
+          },
+          "disable_bt": {
+            "label": "釋出優質 UART（停用 Bluetooth）",
+            "purpose": "關閉 Bluetooth 以釋出高品質的 PL011 UART。",
+            "caveat": "你將失去板載 Bluetooth。"
+          },
+          "spi": {
+            "label": "SPI 匯流排",
+            "purpose": "為 ADXL345 加速度計啟用 SPI 匯流排。"
+          },
+          "i2c_arm": {
+            "label": "I2C 匯流排",
+            "purpose": "為感測器或 I2C 加速度計啟用 I2C 匯流排。"
+          },
+          "i2c_rtc": {
+            "label": "硬體 RTC",
+            "purpose": "新增一個 I2C 即時時鐘，讓主機在離線時仍能保持時間。",
+            "caveat": "請選擇你裝上的 RTC 晶片。"
+          },
+          "gpu_mem": {
+            "label": "GPU 記憶體",
+            "purpose": "配給 GPU 的記憶體；在無顯示器的主機上調低它以釋出 RAM。"
+          },
+          "arm_freq": {
+            "label": "ARM 時脈（超頻）",
+            "purpose": "以 MHz 為單位的 CPU 時脈。調高需要良好的散熱。",
+            "caveat": "不穩定的超頻可能損毀 SD 卡；請加裝散熱片。"
+          },
+          "over_voltage": {
+            "label": "超電壓",
+            "purpose": "額外的核心電壓以穩定超頻。",
+            "caveat": "電壓越高運行溫度越高。"
+          },
+          "max_usb_current": {
+            "label": "提升 USB 電流",
+            "purpose": "允許更高的 USB 總電流，供轉接器與配件使用。",
+            "caveat": "需要能夠提供該電流的電源供應器。"
+          }
+        },
+        "opt": {
+          "8000000": "8 MHz 晶振",
+          "12000000": "12 MHz 晶振",
+          "16000000": "16 MHz 晶振",
+          "20000000": "20 MHz 晶振"
+        },
+        "control": {
+          "changed": "已變更",
+          "disabled": "已停用"
+        },
+        "advanced": {
+          "title": "進階",
+          "warn": "進階編輯會直接寫入開機權杖。錯誤的值可能導致主機無法開機－請仔細檢查差異。",
+          "overlays": "裝置樹疊加層",
+          "overlayName": "疊加層名稱",
+          "addOverlay": "新增",
+          "remove": "移除",
+          "dtparams": "裝置樹參數",
+          "paramKey": "參數",
+          "paramValue": "值",
+          "addParam": "新增",
+          "staged": "已暫存 {n} 項進階變更",
+          "clear": "清除"
+        },
+        "preview": {
+          "button": "預覽變更",
+          "none": "沒有暫存的變更。",
+          "noDiff": "沒有實際變更。",
+          "diffTitle": "差異"
+        },
+        "apply": {
+          "button": "套用",
+          "applying": "正在套用…",
+          "done": "開機設定已更新。",
+          "warnAck": "我了解這些變更會影響主機的開機方式。"
+        },
+        "revert": {
+          "button": "還原至上次備份",
+          "confirm": "要還原此檔案最近一次的備份嗎？",
+          "yes": "是，還原",
+          "done": "已還原先前的開機設定。"
+        },
+        "reboot": {
+          "banner": "需要重新開機以套用你的開機變更。",
+          "prompt": "輸入 REBOOT 以確認重新啟動主機。",
+          "token": "REBOOT",
+          "button": "立即重新開機",
+          "rebooting": "正在重新開機－請稍候重新連線。"
+        },
+        "warn": {
+          "removes_root": "這會移除 root= 開機權杖－主機可能無法開機。",
+          "removes_console": "這會移除 console= 權杖。"
+        }
       }
     },
     "canbus": {
