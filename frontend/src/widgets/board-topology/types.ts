@@ -54,6 +54,10 @@ export interface TopologyMcu {
   firmware?: string | null
   /** The last version FilaMind flashed to this board - shown (labelled) when `firmware` is null. */
   last_flashed?: string | null
+  /** True when the running firmware differs from the host's Klipper build (needs a re-flash);
+   *  false when in sync; null/undefined when the reference version is unavailable. Drives the
+   *  up-to-date / update-available badge. */
+  outdated?: boolean | null
   /** The components (steppers / drivers / heaters / fans / sensors) that live on this MCU. */
   components?: TopologyComponent[]
   /** Set when the user added this node manually; the manual entry's id (for edit/remove). */
@@ -120,6 +124,9 @@ export interface BoardDetail {
 export interface TopologyHost {
   name: string
   role: string
+  /** The host's running Klipper (Klippy) version - the reference every MCU's firmware is
+   *  compared against for the up-to-date / update-available badges. */
+  version?: string | null
   /** Best-effort link to a catalog host entity (one of the DB hosts); null if unmatched. */
   host_id?: string | null
   host_match?: 'suggested' | null

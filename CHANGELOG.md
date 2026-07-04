@@ -6,6 +6,35 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.19.3] - 2026-07-04
+
+### Added
+
+- **Firmware update badges on every Board Topology node.** Each MCU now shows an at-a-glance
+  up-to-date (green ✓) or update-available (red ✕) state, computed from the host's running Klipper
+  build (the `software_version` from `/printer/info`, with the `-dirty` suffix ignored) versus each
+  MCU's running firmware. The selected node's inspector shows the matching *Firmware in sync* /
+  *out of sync* pill. The verdict prefers the live firmware-status feed and falls back to this
+  topology-native comparison, so a board is still badged even when the firmware-status feed does not
+  cover it — or when Klipper is mid-restart.
+
+### Fixed
+
+- **Some boards showed no firmware state at all in Board Topology.** Moonraker reports live MCU
+  objects under their declared name casing (e.g. `EBBCan`, `PI2`) while the topology's node names are
+  lower-cased, so joining the firmware-status feed by exact name silently missed those nodes — they
+  rendered with neither a green nor a red badge and no live link vitals. The join is now
+  case-insensitive, so every MCU picks up its firmware verdict and telemetry. (Verified live: a
+  toolhead and host-linked MCU that previously showed no badge now read as up to date, with vitals.)
+- **Mainboards with an EXP display header went unidentified in Board Topology.** The board
+  pin-fingerprint counted a config's `[board_pins]` header aliases (the generic `EXP1_*` / `EXP2_*`
+  display-connector pins) as used pins — but no catalog pin-map lists those aliases, so they were
+  pure noise that dragged a real board's containment score just under the match floor (an Octopus Max
+  EZ read ~0.51 against a 0.6 floor and resolved to nothing). Header aliases are now excluded from the
+  fingerprint, leaving only board-identifying functional pins, so large mainboards resolve to a
+  *suggested* catalog board. (Verified live: an STM32H723 mainboard that showed as unidentified now
+  suggests the BigTreeTech Octopus Max EZ.)
+
 ## [1.19.2] - 2026-07-04
 
 ### Fixed

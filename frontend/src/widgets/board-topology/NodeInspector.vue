@@ -4,7 +4,7 @@
  *  cross-entity deep-links) plus the confirm / change / clear board-override write path. For the
  *  host it shows the SBC and, when integrated, the mainboard it sits on. Self-contained board fetch;
  *  override + deep-link actions are emitted to the parent (which owns the topology state). */
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useNav } from '@/core/nav'
@@ -70,6 +70,20 @@ function editDisplay(d: TopologyDisplay): void {
 }
 
 const { t, te } = useI18n({ useScope: 'global' })
+
+/** Unified firmware-sync verdict driving the up-to-date / update-available badge. Prefers the live
+ *  firmware-status feed (fw.in_sync); falls back to the topology's own `outdated` flag (host Klipper
+ *  version vs each MCU's running build) so a board still gets a green/red badge even when the
+ *  firmware-status feed hasn't matched it by name. */
+const syncState = computed<'synced' | 'outdated' | null>(() => {
+  const fw = props.fw
+  if (fw?.in_sync === true) return 'synced'
+  if (fw?.in_sync === false) return 'outdated'
+  const o = props.mcu?.outdated
+  if (o === true) return 'outdated'
+  if (o === false) return 'synced'
+  return null
+})
 
 // Catalog labels (port categories / spec keys / board classes) are English data values -
 // translate via a slugged key when one exists, otherwise show the raw value (new catalog
@@ -368,18 +382,18 @@ function onPickCan(id: string | null): void {
       <div class="flex items-center justify-between gap-2">
         <span class="min-w-0 truncate font-display text-sm font-bold">{{ mcu.name }}</span>
         <span
-          v-if="fw?.in_sync === true || fw?.in_sync === false"
+          v-if="syncState"
           class="shrink-0 rounded-sm px-1 text-[11px] font-bold"
-          :class="fw.in_sync ? 'bg-brand-lime text-ink' : 'bg-brand-red text-surface'"
+          :class="syncState === 'synced' ? 'bg-brand-lime text-ink' : 'bg-brand-red text-surface'"
         >
           {{
-            fw.in_sync
+            syncState === 'synced'
               ? '✓ ' + t('boardTopology.sync.synced')
               : '⚠ ' + t('boardTopology.sync.outOfSync')
           }}
         </span>
         <button
-          v-if="fw && fw.in_sync === false"
+          v-if="syncState === 'outdated'"
           class="nb-btn shrink-0 bg-brand-yellow px-1.5 py-0.5 text-[11px]"
           @click="go('firmware-upgrade', 'status')"
         >

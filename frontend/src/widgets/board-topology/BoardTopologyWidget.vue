@@ -74,7 +74,7 @@ const selectedMcu = computed(() => {
 })
 const isHost = computed(() => selected.value === 'host')
 const selectedFw = computed(() =>
-  selectedMcu.value ? fwMcus.value[selectedMcu.value.name] : undefined,
+  selectedMcu.value ? fwMcus.value[selectedMcu.value.name.toLowerCase()] : undefined,
 )
 /** The CAN adapter node (id `canbus:<iface>`) when its node is selected, else null. */
 const selectedCanBus = computed(() => {
@@ -111,7 +111,9 @@ async function load(): Promise<void> {
     }
     fetchFirmwareStatus()
       .then((fw) => {
-        fwMcus.value = Object.fromEntries((fw.mcus ?? []).map((m) => [m.name, m]))
+        // Key by lower-cased name: the firmware feed preserves the config's casing (EBBCan, PI2)
+        // while the topology's MCU names are lower-cased, so a raw join silently misses those nodes.
+        fwMcus.value = Object.fromEntries((fw.mcus ?? []).map((m) => [m.name.toLowerCase(), m]))
       })
       .catch(() => {
         fwMcus.value = {}

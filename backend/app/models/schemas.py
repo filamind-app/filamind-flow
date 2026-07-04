@@ -1314,6 +1314,10 @@ class TopologyMcu(BaseModel):
     # The last version FilaMind flashed to this board (from the flash records, joined through the
     # board's linked identities) - shown when the live version is unavailable, labelled as such.
     last_flashed: str | None = None
+    # True when the running firmware differs from the host's Klipper build (needs a re-flash);
+    # False when it matches (up to date); null when either version is unknown. Drives the UI's
+    # up-to-date / update-available badge.
+    outdated: bool | None = None
     components: list[TopologyComponent] = []
     # Set when this node was added by the user (not auto-detected); the manual entry's id, so the
     # UI can edit/remove it. None for a detected MCU.
@@ -1337,6 +1341,9 @@ class TopologyHost(BaseModel):
 
     name: str
     role: str
+    # The host's running Klipper (Klippy) version - the reference every MCU's firmware is compared
+    # against for the up-to-date / update badge. Null when Klippy is offline.
+    version: str | None = None
     host_id: str | None = None
     host_match: str | None = None
     host_match_confidence: float = 0.0
