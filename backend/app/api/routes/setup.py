@@ -51,6 +51,11 @@ class WritesRef(BaseModel):
     enabled: bool
 
 
+class IncludeRef(BaseModel):
+    id: str
+    add: bool
+
+
 async def _moonraker_full(
     settings: Settings,
 ) -> tuple[dict[str, Any], set[str], int | None]:
@@ -160,9 +165,14 @@ async def setup_update(
 
 
 @router.post("/remove")
-async def setup_remove(req: RemoveRef) -> dict[str, Any]:
+async def setup_remove(
+    req: RemoveRef, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
+    # Pass the Moonraker signals so the dependency guard also detects managed/service-only
+    # dependents (e.g. a Mainsail that Moonraker tracks but that isn't cloned under $HOME).
+    managed, services = await _moonraker_signals(settings)
     try:
-        return _apply(await setup_manager.remove(req.id, req.confirm))
+        return _apply(await setup_manager.remove(req.id, req.confirm, managed, services))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -174,6 +184,36 @@ async def setup_restart(req: ComponentRef) -> dict[str, Any]:
     them without leaving the panel."""
     try:
         return _apply(await setup_manager.restart(req.id))
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/logs")
+async def setup_logs(req: ComponentRef) -> dict[str, Any]:
+    """The last lines of a component's systemd journal (read-only) - debug a failed install/start
+    without SSH. Always allowed (no writes gate)."""
+    try:
+        return _apply(await setup_manager.service_logs(req.id))
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/register")
+async def setup_register(req: ComponentRef) -> dict[str, Any]:
+    """Register an installed unmanaged git checkout with Moonraker's update manager, so it gains
+    reliable Moonraker-tracked updates."""
+    try:
+        return _apply(await setup_manager.register_component(req.id))
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/include")
+async def setup_include(req: IncludeRef) -> dict[str, Any]:
+    """Wire an add-on into printer.cfg (or remove its ``[include]``) - so a cloned config add-on
+    (KAMP, Nevermore…) is actually active, not just downloaded."""
+    try:
+        return _apply(await setup_manager.toggle_include(req.id, req.add))
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 

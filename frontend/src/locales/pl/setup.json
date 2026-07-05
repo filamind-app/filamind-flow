@@ -50,6 +50,16 @@
           "body": "Przeglądaj katalog według grup; każdy komponent pokazuje, czy jest zainstalowany, oraz jego wersję. Instalowanie, aktualizowanie i usuwanie działają na hoście drukarki i pozostają tu wyłączone, dopóki ich nie włączysz. Włącz aktualizacje automatyczne, aby wszystko było na bieżąco, gdy drukarka jest bezczynna."
         }
       }
-    }
+    },
+    "logs": "Dziennik",
+    "wiredIn": "Podłączone",
+    "notWired": "Niepodłączone",
+    "wireIn": "Podłącz",
+    "unwire": "Odłącz",
+    "register": "Zarejestruj w Moonrakerze",
+    "registerHint": "Zarejestruj ten komponent w menedżerze aktualizacji Moonrakera, aby zapewnić niezawodne, śledzone aktualizacje.",
+    "blocks": "Używane przez {x} - usuń je najpierw.",
+    "builtIn": "Wbudowane",
+    "releaseNotes": "Informacje o wydaniu"
   }
 }

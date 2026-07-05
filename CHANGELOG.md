@@ -6,6 +6,46 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.22.0] - 2026-07-05
+
+### Added
+
+- **The Setup widget can now install and remove almost everything from the panel** - no more "On
+  host" dead ends. Third-party web UIs (**Mainsail**, **Fluidd**) install with one click (their
+  release zip is fetched, an nginx site is written, and a Moonraker `[update_manager]` entry is
+  registered so updates then flow through Moonraker), and **G-Code Shell Command** installs as a
+  proper Klipper extra (cloned, symlinked into `klippy/extras`, registered, and Klipper restarted).
+  CAN-bus tools - which already ship inside Klipper - are now an honest "Built in" info card instead
+  of a broken install button.
+- **New components in the catalog:** Beacon, Cartographer and BTT Eddy (probes); Happy Hare
+  (MMU/ERCF); Klippain, Z-Calibration, Nevermore, Sonar and Auto Speed.
+- **Running/health, Restart and Logs for every service** (Crowsnest, Spoolman, Obico, the Telegram
+  bot, Sonar…), not just the first-party apps - so you can see what's up and read a failed unit's
+  journal without SSH.
+- **Config-include management:** add-ons that need an `[include]` in `printer.cfg` (KAMP, Nevermore,
+  BTT Eddy…) show a "Wired in / Not wired" badge and a one-click **Wire in / Unwire** (backed up,
+  with a Klipper restart) - so a cloned add-on is actually active, not just downloaded.
+- **Register with Moonraker:** a one-click action for an installed but untracked git checkout, so it
+  gains reliable Moonraker-managed updates. Version numbers now link to their GitHub release notes.
+
+### Changed
+
+- **Removal is now complete and safe for every component type.** The old uninstall just deleted the
+  clone directory, orphaning the nginx site, the Moonraker `[update_manager]` block, the systemd
+  unit, and - worst - a Klipper-extra's symlink in `klippy/extras` (a dangling symlink there stops
+  Klipper from starting). Removal now reverses exactly what each install placed: it **unlinks any
+  extra first**, strips the `[include]`, removes the nginx site, stops + removes the systemd unit,
+  deregisters from Moonraker, then deletes the directory - taking a **backup first** and **refusing
+  to remove a component others still depend on** (e.g. Moonraker while Mainsail is installed).
+
+### Fixed
+
+- **Update reading is now reliable for every component type.** Shallow (`--depth 1`) clones could
+  never compute "commits behind", so every unmanaged checkout wrongly read "up to date" - they're
+  now un-shallowed before the comparison. A leading `v` (e.g. `v1.2.0` vs `1.2.0`) no longer reads
+  as a spurious update, `commits_behind_count` is honored, and every install records a small
+  provenance stamp so manual / web / extra installs surface a real version + update flag too.
+
 ## [1.21.0] - 2026-07-05
 
 ### Changed

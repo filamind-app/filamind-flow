@@ -50,6 +50,16 @@
           "body": "Blader door de catalogus per groep; elke kaart toont of het component is geïnstalleerd en welke versie. Installeren, bijwerken en verwijderen draaien op de host van de printer en blijven hier uitgeschakeld totdat u ze inschakelt. Schakel Automatische updates in om alles up-to-date te houden terwijl de printer inactief is."
         }
       }
-    }
+    },
+    "logs": "Logboek",
+    "wiredIn": "Gekoppeld",
+    "notWired": "Niet gekoppeld",
+    "wireIn": "Koppelen",
+    "unwire": "Ontkoppelen",
+    "register": "Registreren bij Moonraker",
+    "registerHint": "Registreer dit onderdeel bij de updatebeheerder van Moonraker voor betrouwbare, bijgehouden updates.",
+    "blocks": "In gebruik door {x} - verwijder die eerst.",
+    "builtIn": "Ingebouwd",
+    "releaseNotes": "Release-opmerkingen"
   }
 }

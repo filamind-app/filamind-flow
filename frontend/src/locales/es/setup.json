@@ -50,6 +50,16 @@
           "body": "Explora el catálogo por sección; cada tarjeta muestra si está instalado y su versión. Instalar, actualizar y eliminar se ejecutan en el host de la impresora y permanecen desactivados aquí hasta que los habilites. Activa las Actualizaciones automáticas para mantener todo al día mientras la impresora está inactiva."
         }
       }
-    }
+    },
+    "logs": "Registros",
+    "wiredIn": "Vinculado",
+    "notWired": "Sin vincular",
+    "wireIn": "Vincular",
+    "unwire": "Desvincular",
+    "register": "Registrar en Moonraker",
+    "registerHint": "Registra este componente en el gestor de actualizaciones de Moonraker para tener actualizaciones fiables y con seguimiento.",
+    "blocks": "En uso por {x}: elimínalos primero.",
+    "builtIn": "Integrado",
+    "releaseNotes": "Notas de la versión"
   }
 }
