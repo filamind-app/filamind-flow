@@ -130,8 +130,37 @@ function revert(): Promise<void> {
   return run(() => revertDriver(props.driver.stepper))
 }
 
-function autotune(): Promise<void> {
-  return run(() => runAutotune(props.driver.stepper))
+/** Native full auto-tune: compute + apply the whole register set server-side (no add-on), then
+ *  surface a matching printer.cfg block so the tune can be made permanent. */
+async function autotune(): Promise<void> {
+  busy.value = true
+  resultMsg.value = null
+  try {
+    const res = await runAutotune(props.driver.stepper, voltage.value)
+    resultOk.value = res.ok
+    resultMsg.value = applyResultText(res)
+    if (res.ok) {
+      emit('applied')
+      const p = res.params ?? {}
+      const fields = p.fields as Record<string, number> | undefined
+      if (fields) {
+        const { text } = await fetchConfigBlock({
+          stepper: props.driver.stepper,
+          model: props.driver.model,
+          run_current: (p.run_current as number | null) ?? null,
+          hold_current: (p.hold_current as number | null) ?? null,
+          fields,
+          velocity_fields: (p.velocity_fields as Record<string, number> | undefined) ?? {},
+        })
+        configText.value = text
+      }
+    }
+  } catch (e) {
+    resultOk.value = false
+    resultMsg.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    busy.value = false
+  }
 }
 
 async function copyConfig(): Promise<void> {

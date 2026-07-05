@@ -1,9 +1,9 @@
 """Last successful driver-tuning action, persisted so the Machine Doctor can tell whether the
 motor drivers have been tuned.
 
-Live ``SET_TMC_*`` / ``AUTOTUNE_TMC`` writes are transient (``INIT_TMC`` / a restart reverts them)
-and leave no host-side trace, so nothing server-side could otherwise know the user has tuned their
-drivers. This records the fact - a small JSON under the data dir - when a live apply or autotune
+Live ``SET_TMC_*`` writes are transient (``INIT_TMC`` / a restart reverts them) and leave no
+host-side trace, so nothing server-side could otherwise know the user has tuned their drivers. This
+records the fact - a small JSON under the data dir - when a live apply or a native full auto-tune
 succeeds. Mirrors :mod:`max_flow_store`'s atomic-write / graceful-read idiom: best-effort, never
 raises into a request.
 """
@@ -23,7 +23,7 @@ def _path(data_dir: str) -> str:
 
 def write_tuned(data_dir: str, stepper: str, method: str) -> None:
     """Record that a driver was tuned (best-effort; never raises into a request). ``method`` is
-    ``apply`` (live current/field write) or ``autotune`` (klipper_tmc_autotune run)."""
+    ``apply`` (a live current/field write) or ``autotune`` (a native full TMC tune)."""
     if not data_dir:
         return
     record = {

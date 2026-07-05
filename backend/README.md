@@ -56,7 +56,7 @@ Interactive API docs: <http://localhost:8000/docs>
 | POST   | `/api/drivers/config-block`| Render a printer.cfg override block to copy (no write). |
 | POST   | `/api/drivers/apply`       | Write tuning live via `SET_TMC_CURRENT` / `SET_TMC_FIELD` (refused while printing; validated). |
 | POST   | `/api/drivers/init`        | `INIT_TMC` - re-apply the stepper's configured registers (revert a live apply). |
-| POST   | `/api/drivers/autotune`    | Drive `AUTOTUNE_TMC` if the `klipper_tmc_autotune` add-on is installed for the stepper. |
+| POST   | `/api/drivers/autotune`    | Native full auto-tune - compute + apply the whole TMC register set (current + StealthChop + SpreadCycle + CoolStep + velocity thresholds) from the assigned motor's datasheet via `SET_TMC_*` (gated; no host extra). |
 | POST   | `/api/drivers/stallguard`  | Set a StallGuard threshold (`sgthrs` / `sgt` / `sg4_thrs`) - sensorless-homing sensitivity (gated + server-clamped). |
 | GET    | `/api/drivers/field-policy/{model}` | The editable-register policy for a model - which fields the editor may expose, with control type + clamp range. |
 | POST   | `/api/drivers/field`       | Write one editable TMC register field live via `SET_TMC_FIELD` (gated; server-side allowlist + per-field clamp; velocity thresholds sent as mm/s). |

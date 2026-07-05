@@ -97,7 +97,7 @@ coverage (P9) v0.61.0.** **Generic by design:** drivers are detected from
 the live config (any axis layout), and all TMC models are handled (2209 / 2208 / 2130 /
 2240 / 5160 / 2660…) by reading what the running config exposes - never hardcoded to one
 board. A built-in `motor_constants` physics model (computed locally, like the vendored `shaper_calibrate`)
-makes recommendations work even without a TMC autotune host extra installed.
+powers both the recommendations and a native full auto-tune - no host extra required.
 
 | Phase | Scope | Risk |
 | ----- | ----- | ---- |
@@ -105,7 +105,7 @@ makes recommendations work even without a TMC autotune host extra installed.
 | ✅ **2a - Capability map** | Annotate each driver with authoritative per-model reference data (interface UART/SPI, current cap, chopper modes, StallGuard field, sensorless / temperature) from a curated catalog verified against the Klipper code; a ⚠ near-cap hint. (`GET /api/drivers/catalog`) | low (read-only) |
 | ✅ **2b - Motor picker** | A searchable catalog of 200+ motors; assign the motor on each stepper (its datasheet specs surface on the card), persisted to `<data_dir>/motor-mapping.json`. (`GET /api/drivers/motors`, `GET`/`POST /api/drivers/mapping`) | low |
 | ✅ **3 - Recommender** | A built-in `motor_constants` model → recommended run current + StealthChop/SpreadCycle registers (pwm_grad/pwm_ofs/hstrt/hend) from datasheet specs + supply voltage; preview diffed vs live. Compute-only. (`POST /api/drivers/recommend`) | low (compute) |
-| ✅ **4 - Apply** | Copy-to-config, gated live `SET_TMC_CURRENT` / `SET_TMC_FIELD` writes (explicit confirm + refused while printing + value validation), `INIT_TMC` revert, and drive `AUTOTUNE_TMC` when the extra is installed. (`POST /api/drivers/config-block · /apply · /init · /autotune`) | high (writes registers) |
+| ✅ **4 - Apply** | Copy-to-config, gated live `SET_TMC_CURRENT` / `SET_TMC_FIELD` writes (explicit confirm + refused while printing + value validation), `INIT_TMC` revert, and a native full auto-tune - current + StealthChop + SpreadCycle + CoolStep + velocity thresholds computed in-house and applied via built-in `SET_TMC_*` (no host extra), with a matching printer.cfg persist block. (`POST /api/drivers/config-block · /apply · /init · /autotune`) | high (writes registers) |
 | ✅ **5 - Sensorless homing** | StallGuard threshold helper (`sgthrs` / `sgt` / `sg4_thrs`) - gated set + gated test-home (`G28 <axis>`) with a crash warning; guidance to dial it in. (`POST /api/drivers/stallguard · /home`) | high (motion) |
 | ✅ **6 - Live monitor** | Per-driver live `drv_status` telemetry (~1.5 s poll): temperature, `SG_RESULT` (+ sparkline), `CS_ACTUAL`, fault flags. (`GET /api/drivers/live/{stepper}`) | low (read-only) |
 | ✅ **7 - Tuning wizard** | A 🧭 Guided view walking one driver through choose → motor → recommend & apply → sensorless → done, reusing the dashboard panels with a step breadcrumb + Back/Next. | medium |

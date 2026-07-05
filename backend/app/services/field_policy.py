@@ -196,6 +196,13 @@ def _applicable(fp: FieldPolicy, model: str | None) -> bool:
     return model.lower() in fp.models
 
 
+def applies_to(field: str, model: str | None) -> bool:
+    """Whether ``field`` is an editable field that exists on ``model`` - used to model-gate a
+    full auto-tune's register set before it is applied (an unknown or blocked field is not)."""
+    fp = _POLICY.get(field)
+    return fp is not None and not fp.blocked and _applicable(fp, model)
+
+
 def validate(field: str, value: float, model: str | None = None) -> float | int:
     """Validate a requested field write against policy, returning the accepted numeric value.
 

@@ -135,7 +135,10 @@ export interface ConfigBlockRequest {
   stepper: string
   model: string
   run_current?: number | null
+  hold_current?: number | null
   fields?: Record<string, number>
+  /** Velocity-threshold options (mm/s) written as the section's own keys, not driver_ overrides. */
+  velocity_fields?: Record<string, number>
 }
 
 /** Result of a write / revert / autotune: whether it ran + the exact g-code sent. */
@@ -145,8 +148,9 @@ export interface ApplyResponse {
   message: string
   /** i18n code for `message` (rendered via `applyResultText`); null for passthrough errors. */
   code?: string | null
-  /** Interpolation args for the coded message (stepper, n, field, num, ax, cmd…). */
-  params?: Record<string, string | number>
+  /** Interpolation args for the coded message; a native auto-tune also echoes the applied set
+   *  (`fields`, `velocity_fields`, `run_current`, `hold_current`, `model`) for the persist block. */
+  params?: Record<string, unknown>
 }
 
 /** Whether the motors_sync add-on is installed (GET /api/drivers/motors-sync). */

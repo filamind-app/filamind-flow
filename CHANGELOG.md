@@ -6,6 +6,29 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.23.0] - 2026-07-05
+
+### Changed
+
+- **The Motor Drivers "autotune" button is now fully native - no add-on required.** It used to drive
+  an external Klipper autotune extra and refused when that extra wasn't installed. It now computes the
+  complete TMC register tune in-house from the assigned motor's datasheet and applies it entirely
+  through Klipper's built-in commands: run current, StealthChop (`pwm_ofs` / `pwm_grad` + auto-scale),
+  SpreadCycle hysteresis (`hstrt` / `hend`), the CoolStep loop, and the StealthChop→SpreadCycle
+  velocity thresholds (`stealthchop_threshold` / `coolstep_threshold`, plus `high_velocity_threshold`
+  on high-voltage models). Every value is validated + clamped server-side (out-of-range is rejected,
+  never mask-truncated) and capped at the driver/motor current ceiling. The write is gated (refused
+  while printing) and reversible with **Revert** (`INIT_TMC`); after a live apply the panel offers a
+  matching printer.cfg block so the tune can be made permanent. Velocity thresholds are computed only
+  when the stepper's `rotation_distance` is known, and are otherwise omitted rather than guessed.
+  (`POST /api/drivers/autotune`)
+
+### Removed
+
+- **The external TMC-autotune add-on dependency.** With autotune now native, the third-party add-on
+  is no longer referenced by the widget and has been removed from the Setup add-ons catalog.
+  FilaMind's own features work without any third-party Klipper extra installed.
+
 ## [1.22.2] - 2026-07-05
 
 ### Fixed
