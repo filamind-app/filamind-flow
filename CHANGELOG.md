@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.22.2] - 2026-07-05
+
+### Fixed
+
+- **The passwordless-sudo self-heal now actually runs.** It validated the new grant with a bare
+  `visudo`, but `visudo` lives in `/usr/sbin` — which isn't on the systemd service's PATH — so the
+  check silently failed and the whole refresh was skipped. That quietly let the grant go stale on
+  some hosts (e.g. missing the `apt`/`dpkg` rules the native FilaMind screen install needs). `visudo`
+  is now resolved by absolute path in both the update self-heal and the `sudoers` command, so the
+  grant is kept current and `sudoers-refresh` can grant a new capability without a manual step.
+
 ## [1.22.1] - 2026-07-05
 
 ### Fixed

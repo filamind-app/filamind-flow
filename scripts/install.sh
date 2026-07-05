@@ -93,15 +93,19 @@ EOF
 refresh_sudoers_on_update() {
   local dest="/etc/sudoers.d/filamind"
   local user_name="${SUDO_USER:-$(id -un)}"
-  command -v visudo >/dev/null 2>&1 || return 0
+  # Resolve visudo by absolute path: it lives in /usr/sbin, which is NOT on the systemd service's
+  # (or a non-login shell's) PATH, so a bare `command -v visudo` guard would silently skip the whole
+  # self-heal - which is exactly why the grant went stale on some hosts.
+  local visudo_bin cp_bin chmod_bin tmp
+  visudo_bin="$(command -v visudo || echo /usr/sbin/visudo)"
+  [ -x "$visudo_bin" ] || return 0
   command -v sudo >/dev/null 2>&1 || return 0
-  local cp_bin chmod_bin tmp
   cp_bin="$(command -v cp || echo /bin/cp)"
   chmod_bin="$(command -v chmod || echo /bin/chmod)"
   tmp="$(mktemp)" || return 0
   render_sudoers "$user_name" >"$tmp"
   chmod 0440 "$tmp" 2>/dev/null || true
-  if visudo -cf "$tmp" >/dev/null 2>&1 && sudo -n "$cp_bin" "$tmp" "$dest" 2>/dev/null; then
+  if "$visudo_bin" -cf "$tmp" >/dev/null 2>&1 && sudo -n "$cp_bin" "$tmp" "$dest" 2>/dev/null; then
     sudo -n "$chmod_bin" 0440 "$dest" 2>/dev/null || true
     echo "FilaMind Flow: refreshed the passwordless-sudo grant (CAN control + any new capabilities)."
   fi
@@ -217,8 +221,11 @@ do_sudoers() {
   tmp="$(mktemp)"
   trap 'rm -f "${tmp:-}"' EXIT  # always clean up, even if `install` fails under set -e
   render_sudoers "$user_name" > "$tmp"  # single source of truth (see render_sudoers above)
-  # Validate syntax BEFORE installing so a mistake can never lock you out of sudo.
-  if visudo -cf "$tmp"; then
+  # Validate syntax BEFORE installing so a mistake can never lock you out of sudo. Resolve visudo
+  # by absolute path (it's in /usr/sbin, not always on PATH).
+  local visudo_bin
+  visudo_bin="$(command -v visudo || echo /usr/sbin/visudo)"
+  if "$visudo_bin" -cf "$tmp"; then
     install -m 0440 -o root -g root "$tmp" "$sudoers_file"
     echo "Installed $sudoers_file - '$user_name' can flash firmware and manage the host without a password."
   else
