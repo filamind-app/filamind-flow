@@ -65,6 +65,18 @@ def _load_latest_cache() -> None:
         pass
 
 
+def clear_version_caches() -> None:
+    """Drop the in-memory version caches so the next probe re-reads from GitHub / each clone's
+    origin. Backs the "Check for updates" button, which must reflect a just-published release rather
+    than a week-old cached value. (Also called with ``force`` on the probe path.) Resets the
+    disk-load flag so the persisted last-known versions are re-read - a forced refresh under low
+    GitHub quota must still show those (as retained fallbacks), never blank them out."""
+    global _latest_cache_loaded
+    _latest_cache.clear()
+    _git_latest_cache.clear()
+    _latest_cache_loaded = False
+
+
 def _save_latest_cache() -> None:
     try:
         path = _latest_cache_path()
@@ -386,13 +398,14 @@ async def _git_latest(dest: Path) -> tuple[str, bool]:
     return result
 
 
-async def _github_latest(repo: str) -> str:
+async def _github_latest(repo: str, force: bool = False) -> str:
     """Latest published version of ``owner/name`` from GitHub (release tag, else newest tag). Cached
     on success for ``_LATEST_TTL``. Returns ``""`` on rate-limit / unreachable / no tags (and does
-    NOT cache the empty, so it can be retried once quota is back). Never raises."""
+    NOT cache the empty, so it can be retried once quota is back). Never raises. ``force`` bypasses
+    the freshness cache (the "Check for updates" button re-reads even a recently-cached version)."""
     now = time.time()
     hit = _latest_cache.get(repo)
-    if hit and now - hit[0] < _LATEST_TTL:
+    if not force and hit and now - hit[0] < _LATEST_TTL:
         return hit[1]
     version = ""
     try:
@@ -416,19 +429,25 @@ async def _github_latest(repo: str) -> str:
 
 
 async def _latest_versions(
-    repos_by_cid: dict[str, str], github_remaining: int | None
+    repos_by_cid: dict[str, str], github_remaining: int | None, force: bool = False
 ) -> dict[str, str]:
     """Best-effort latest version per component id, for not-installed components. Repos already
     cached are free; uncached ones are fetched only when there is comfortable quota headroom (each
-    may cost up to 2 requests), so a status read never exhausts the host's GitHub limit."""
+    may cost up to 2 requests), so a status read never exhausts the host's GitHub limit. ``force``
+    (the "Check for updates" button) ignores cache freshness so newly-published releases show up,
+    still bounded by the quota budget."""
     _load_latest_cache()
     now = time.time()
     repos = set(repos_by_cid.values())
-    cached = {
-        r: _latest_cache[r][1]
-        for r in repos
-        if r in _latest_cache and now - _latest_cache[r][0] < _LATEST_TTL
-    }
+    cached = (
+        {}
+        if force
+        else {
+            r: _latest_cache[r][1]
+            for r in repos
+            if r in _latest_cache and now - _latest_cache[r][0] < _LATEST_TTL
+        }
+    )
     to_fetch = [r for r in repos if r not in cached]
     # Budget the lookups: each repo costs up to 2 requests, and we reserve headroom for Moonraker's
     # own update checks. Fetch only as many as fit (partial is fine; the rest fill in over later
@@ -437,20 +456,24 @@ async def _latest_versions(
     # read fan out across the whole catalog and exhaust GitHub's 60/hr limit.
     budget = github_remaining if github_remaining is not None else 30
     max_fetch = max(0, (budget - 10) // 2)
-    if len(to_fetch) > max_fetch:
-        to_fetch = to_fetch[:max_fetch]
+    # Repos that don't fit the quota budget this round: keep their last-known (disk-cached) version
+    # rather than re-fetching, so a forced refresh under low quota never BLANKS a version that was
+    # showing - it just doesn't update those until quota recovers.
+    dropped = to_fetch[max_fetch:]
+    to_fetch = to_fetch[:max_fetch]
     fetched: dict[str, str] = {}
     if to_fetch:
         sem = asyncio.Semaphore(6)
 
         async def one(repo: str) -> None:
             async with sem:
-                fetched[repo] = await _github_latest(repo)
+                fetched[repo] = await _github_latest(repo, force=force)
 
         await asyncio.gather(*[one(r) for r in to_fetch])
         if any(fetched.values()):
             _save_latest_cache()  # persist new versions so they survive restarts / quota droughts
-    versions = {**cached, **fetched}
+    retained = {r: _latest_cache[r][1] for r in dropped if r in _latest_cache}
+    versions = {**retained, **cached, **fetched}
     return {cid: versions.get(repo, "") for cid, repo in repos_by_cid.items()}
 
 
@@ -458,6 +481,7 @@ async def probe_detailed(
     version_info: dict[str, Any] | None = None,
     services: set[str] | None = None,
     github_remaining: int | None = None,
+    force_refresh: bool = False,
 ) -> dict[str, dict[str, Any]]:
     """Rich per-component status for the widget: install state + version numbers + an update flag.
 
@@ -544,7 +568,9 @@ async def probe_detailed(
     # (web/manual/extra, to compute an update flag against the stamped install version).
     gh_targets = {**not_installed, **stamped}
     if gh_targets:
-        for cid, latest in (await _latest_versions(gh_targets, github_remaining)).items():
+        for cid, latest in (
+            await _latest_versions(gh_targets, github_remaining, force=force_refresh)
+        ).items():
             out[cid]["latest"] = latest
             if cid in stamped:
                 v, remote = _norm_ver(out[cid]["version"]), _norm_ver(latest)

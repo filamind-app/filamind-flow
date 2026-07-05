@@ -90,12 +90,19 @@ async def setup_catalog() -> dict[str, Any]:
 
 
 @router.get("/status")
-async def setup_status(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
+async def setup_status(
+    refresh: bool = False, settings: Settings = Depends(get_settings)
+) -> dict[str, Any]:
     """Per-component install state + version numbers + an update-available flag, plus whether GUI
-    writes are enabled on this host."""
+    writes are enabled on this host. ``refresh=true`` (the "Check for updates" button) bypasses the
+    version caches so a just-published release shows up instead of a week-old cached value."""
+    if refresh:
+        setup_manager.clear_version_caches()
     version_info, services, github_remaining = await _moonraker_full(settings)
     return {
-        "status": await setup_manager.probe_detailed(version_info, services, github_remaining),
+        "status": await setup_manager.probe_detailed(
+            version_info, services, github_remaining, force_refresh=refresh
+        ),
         "writesEnabled": setup_manager.writes_enabled(),
         "autoUpdate": setup_manager.autoupdate_prefs(),
     }
