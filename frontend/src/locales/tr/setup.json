@@ -50,6 +50,16 @@
           "body": "Kataloğa gruba göre göz atın; her kart bileşenin kurulu olup olmadığını ve sürümünü gösterir. Kurma, güncelleme ve kaldırma işlemleri yazıcı ana makinesinde çalışır ve siz etkinleştirene kadar burada kapalı kalır. Yazıcı boştayken her şeyi güncel tutmak için Otomatik güncellemeleri açın."
         }
       }
-    }
+    },
+    "logs": "Günlükler",
+    "wiredIn": "Bağlı",
+    "notWired": "Bağlı değil",
+    "wireIn": "Bağla",
+    "unwire": "Bağlantıyı kaldır",
+    "register": "Moonraker'a kaydet",
+    "registerHint": "Güvenilir, izlenen güncellemeler için bu bileşeni Moonraker'ın güncelleme yöneticisine kaydedin.",
+    "blocks": "{x} tarafından kullanılıyor - önce onları kaldırın.",
+    "builtIn": "Yerleşik",
+    "releaseNotes": "Sürüm notları"
   }
 }

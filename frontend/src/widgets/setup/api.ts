@@ -66,12 +66,20 @@ export async function installComponentStream(
 }
 
 export const updateComponent = (id: string): Promise<SetupActionResult> => post('update', { id })
-/** Restart a first-party app's runtime (reload nginx for 3d/screen, or restart its service). */
+/** Restart a component's runtime (reload nginx for a first-party app, or restart its service). */
 export const restartComponent = (id: string): Promise<SetupActionResult> => post('restart', { id })
 export const removeComponent = (id: string, confirm: string): Promise<SetupActionResult> =>
   post('remove', { id, confirm })
 export const setPort = (id: string, port: number): Promise<SetupActionResult> =>
   post('port', { id, port })
+/** The last lines of a component's systemd journal (read-only) - debug a failed install/start. */
+export const fetchLogs = (id: string): Promise<SetupActionResult> => post('logs', { id })
+/** Register an installed unmanaged git checkout with Moonraker's update manager. */
+export const registerComponent = (id: string): Promise<SetupActionResult> =>
+  post('register', { id })
+/** Wire an add-on into printer.cfg (add=true) or remove its `[include]` (add=false). */
+export const toggleInclude = (id: string, add: boolean): Promise<SetupActionResult> =>
+  post('include', { id, add })
 
 /** Enable/disable installing from the widget itself (persisted; no CLI/env needed). */
 export async function setWrites(enabled: boolean): Promise<boolean> {

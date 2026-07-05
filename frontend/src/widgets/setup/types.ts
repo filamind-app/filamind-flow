@@ -6,6 +6,8 @@ export interface SetupComponent {
   type: string
   deps?: string[]
   first_party?: boolean
+  /** systemd unit name when this component runs as a service (drives restart / logs / health). */
+  service?: string
   /** One-line description of what the component does. */
   desc?: string
   /** For web UIs: the port the component is served on by default. */
@@ -18,6 +20,18 @@ export interface SetupComponent {
   service_install?: string
   /** Human note explaining what `service_install` adds (shown on the agent button's row). */
   service_install_hint?: string
+  /** A third-party web UI's release-zip asset (`mainsail.zip`) - marks it one-click installable. */
+  release_asset?: string
+  /** The Moonraker `[update_manager]` block type written on install (`web` | `git_repo`). */
+  mr_type?: string
+  /** A `printer.cfg` `[include <file>]` this add-on needs to be wired in (toggle in the widget). */
+  config_include?: string
+  /** Klipper-extra module filenames this component symlinks into `klippy/extras`. */
+  extras?: string[]
+  /** An information-only card (nothing to install here - e.g. CAN tools ship inside Klipper). */
+  guide?: boolean
+  /** The component's installer prompts interactively (best-effort headless). */
+  interactive?: boolean
 }
 
 export interface SetupGroup {
@@ -42,8 +56,13 @@ export interface SetupComponentStatus {
   updateAvailable: boolean
   /** For an installed first-party nginx app (FilaMind 3d / screen): the port it's served on. */
   port?: number
-  /** For an installed first-party nginx app: whether it actually responds on its port right now. */
+  /** Whether the component is running right now: an nginx app's port responds, or its systemd unit
+   *  is active. Present for any installed component with a runtime (undefined otherwise). */
   running?: boolean
+  /** For an add-on with a `config_include`: whether that `[include]` is currently in printer.cfg. */
+  includeActive?: boolean
+  /** Whether Moonraker's update manager already tracks this component (hides the register action). */
+  managed?: boolean
 }
 
 /** Periodic auto-update preferences (opt-in; applied only while the printer is idle). */

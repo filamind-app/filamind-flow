@@ -50,6 +50,16 @@
           "body": "Sfoglia il catalogo per gruppo; ogni scheda indica se il componente è installato e la sua versione. L'installazione, l'aggiornamento e la rimozione vengono eseguiti sull'host della stampante e restano disattivati qui finché non li abiliti. Attiva gli aggiornamenti automatici per mantenere tutto aggiornato mentre la stampante è inattiva."
         }
       }
-    }
+    },
+    "logs": "Log",
+    "wiredIn": "Collegato",
+    "notWired": "Non collegato",
+    "wireIn": "Collega",
+    "unwire": "Scollega",
+    "register": "Registra con Moonraker",
+    "registerHint": "Registra questo componente con l'update manager di Moonraker per aggiornamenti affidabili e tracciati.",
+    "blocks": "In uso da {x} - rimuovili prima.",
+    "builtIn": "Integrato",
+    "releaseNotes": "Note di rilascio"
   }
 }

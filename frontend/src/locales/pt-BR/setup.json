@@ -50,6 +50,16 @@
           "body": "Navegue pelo catálogo por seção; cada componente mostra se está instalado e sua versão. Instalar, atualizar e remover são executados no host da impressora e ficam desativados aqui até que você os habilite. Ative as atualizações automáticas para manter tudo em dia enquanto a impressora está ociosa."
         }
       }
-    }
+    },
+    "logs": "Logs",
+    "wiredIn": "Conectado",
+    "notWired": "Não conectado",
+    "wireIn": "Conectar",
+    "unwire": "Desconectar",
+    "register": "Registrar no Moonraker",
+    "registerHint": "Registre este componente no gerenciador de atualizações do Moonraker para atualizações confiáveis e rastreadas.",
+    "blocks": "Em uso por {x} - remova esses primeiro.",
+    "builtIn": "Integrado",
+    "releaseNotes": "Notas de versão"
   }
 }

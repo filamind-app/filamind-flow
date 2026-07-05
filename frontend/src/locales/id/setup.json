@@ -50,6 +50,16 @@
           "body": "Jelajahi katalog menurut bagian; setiap kartu menunjukkan apakah komponen sudah terpasang beserta versinya. Pemasangan, pembaruan, dan penghapusan dijalankan pada host printer dan tetap nonaktif di sini sampai Anda mengaktifkannya. Aktifkan Pembaruan otomatis agar semuanya tetap terkini saat printer sedang menganggur."
         }
       }
-    }
+    },
+    "logs": "Log",
+    "wiredIn": "Terpasang",
+    "notWired": "Belum terpasang",
+    "wireIn": "Pasang",
+    "unwire": "Lepas",
+    "register": "Daftarkan ke Moonraker",
+    "registerHint": "Daftarkan komponen ini ke pengelola pembaruan Moonraker agar pembaruan andal dan terlacak.",
+    "blocks": "Dipakai oleh {x} - hapus itu dulu.",
+    "builtIn": "Bawaan",
+    "releaseNotes": "Catatan rilis"
   }
 }

@@ -50,6 +50,16 @@
           "body": "Duyệt danh mục theo nhóm; mỗi thẻ cho biết nó đã được cài đặt hay chưa cùng với phiên bản. Cài đặt, cập nhật và gỡ bỏ chạy trên máy chủ máy in và vẫn tắt ở đây cho đến khi bạn bật chúng. Hãy bật Cập nhật tự động để giữ mọi thứ luôn mới nhất khi máy in đang rảnh."
         }
       }
-    }
+    },
+    "logs": "Nhật ký",
+    "wiredIn": "Đã kết nối",
+    "notWired": "Chưa kết nối",
+    "wireIn": "Kết nối",
+    "unwire": "Ngắt kết nối",
+    "register": "Đăng ký với Moonraker",
+    "registerHint": "Đăng ký thành phần này với trình quản lý cập nhật của Moonraker để cập nhật ổn định và được theo dõi.",
+    "blocks": "Đang được dùng bởi {x} - hãy gỡ chúng trước.",
+    "builtIn": "Tích hợp sẵn",
+    "releaseNotes": "Ghi chú phát hành"
   }
 }

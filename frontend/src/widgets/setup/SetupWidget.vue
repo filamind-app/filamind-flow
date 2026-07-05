@@ -8,13 +8,16 @@ import { fetchTask } from '@/core/tasks'
 
 import {
   fetchCatalog,
+  fetchLogs,
   fetchStatus,
   installComponentStream,
+  registerComponent,
   removeComponent,
   restartComponent,
   setAutoUpdate,
   setPort,
   setWrites,
+  toggleInclude,
   updateComponent,
 } from './api'
 import SetupHelpIllo from './SetupHelpIllo.vue'
@@ -48,10 +51,12 @@ const installLog = ref('')
 /** Auto-update interval choices (hours): 6h, 12h, daily, 2 days, weekly. */
 const INTERVALS = [6, 12, 24, 48, 168] as const
 
-/** One-click installable from the GUI: git_repo / service (clone + install.sh), or any FilaMind app
- *  (which ships its own one-line installer). Third-party web UIs / manual add-ons install on host. */
+/** One-click installable from the GUI: git_repo / service (clone + install.sh), a FilaMind app (its
+ *  own one-line installer), a third-party web UI (release zip + nginx + Moonraker entry), or a
+ *  Klipper extra (clone + symlink). A `guide` card is information-only (nothing to install here). */
 const INSTALLABLE_TYPES = new Set(['git_repo', 'service'])
-const canInstall = (c: SetupComponent): boolean => INSTALLABLE_TYPES.has(c.type) || !!c.first_party
+const canInstall = (c: SetupComponent): boolean =>
+  !c.guide && (INSTALLABLE_TYPES.has(c.type) || !!c.first_party || !!c.release_asset)
 
 /** A first-party app with an ADDITIONAL managed deployment installable by its own button (FilaMind
  *  3d → agent). When service_install equals install_args it IS the main install (FilaMind screen),
@@ -179,7 +184,6 @@ function applyPort(c: SetupComponent): void {
  *  backend reports the served port + whether it actually responds. These drive the running/stopped
  *  badge, the open link, and the restart button. */
 const appPort = (c: SetupComponent): number | undefined => status.value[c.id]?.port
-const hasRuntime = (c: SetupComponent): boolean => isInstalled(c) && appPort(c) !== undefined
 const isRunning = (c: SetupComponent): boolean => status.value[c.id]?.running === true
 /** Same-origin host + the app's port, so "Open" navigates the current tab to the app. */
 const appUrl = (c: SetupComponent): string => {
@@ -187,6 +191,46 @@ const appUrl = (c: SetupComponent): string => {
   return port ? `${window.location.protocol}//${window.location.hostname}:${port}/` : '#'
 }
 const doRestart = (c: SetupComponent): Promise<void> => run(c.id, () => restartComponent(c.id))
+
+/** Generalized runtime health for ANY installed component with a runtime (a first-party nginx app
+ *  OR a plain systemd service): the backend reports `running` for all of them now. */
+const hasHealth = (c: SetupComponent): boolean =>
+  isInstalled(c) && status.value[c.id]?.running !== undefined
+/** Restartable from here: a first-party nginx app, or any component with its own systemd service. */
+const canRestart = (c: SetupComponent): boolean =>
+  isInstalled(c) && (appPort(c) !== undefined || !!c.service)
+/** A component with a systemd service can show its journal for debugging. */
+const hasLogs = (c: SetupComponent): boolean => isInstalled(c) && !!c.service
+const doLogs = (c: SetupComponent): Promise<void> => run(c.id, () => fetchLogs(c.id))
+
+/** Config-include wiring: an add-on with a `config_include` can be toggled into printer.cfg, and
+ *  the status reports whether that `[include]` is currently active. */
+const hasInclude = (c: SetupComponent): boolean => isInstalled(c) && !!c.config_include
+const includeActive = (c: SetupComponent): boolean => status.value[c.id]?.includeActive === true
+const doToggleInclude = (c: SetupComponent): Promise<void> =>
+  run(c.id, () => toggleInclude(c.id, !includeActive(c)))
+
+/** Offer 'register with Moonraker' for an installed plain git checkout that Moonraker doesn't
+ *  already track (and that has no `mr_type` of its own) - it then gains managed updates. Hidden for
+ *  already-managed components so we never rewrite their existing update_manager block. */
+const isSelf = (c: SetupComponent): boolean => c.id === 'filamind-flow'
+const canRegister = (c: SetupComponent): boolean =>
+  isInstalled(c) &&
+  !c.first_party &&
+  c.type === 'git_repo' &&
+  !c.mr_type &&
+  status.value[c.id]?.managed !== true
+const doRegister = (c: SetupComponent): Promise<void> => run(c.id, () => registerComponent(c.id))
+
+/** Installed components that depend on this one (a client-side pre-warn before removal; the backend
+ *  also hard-refuses). */
+const dependents = (c: SetupComponent): string[] =>
+  Object.values(byId.value)
+    .filter((o) => isInstalled(o) && (o.deps ?? []).includes(c.id))
+    .map((o) => o.name)
+
+/** The component's GitHub releases page (release notes for the latest/installed version). */
+const releasesUrl = (c: SetupComponent): string => `https://github.com/${c.repo}/releases`
 
 /** Install with live progress: start the background task, then poll it and stream its log into the
  *  card until it finishes. `action: 'service'` installs a first-party app's extra deployment (3d →
@@ -358,23 +402,29 @@ onMounted(load)
                 class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-ink/60"
               >
                 <span>{{ c.kind }}</span>
-                <span
+                <a
                   v-if="isInstalled(c) && installedVersion(c)"
-                  class="font-mono"
-                  :title="t('setup.versionInstalled')"
+                  class="font-mono underline decoration-dotted hover:text-ink"
+                  :href="releasesUrl(c)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :title="t('setup.releaseNotes')"
                 >
                   {{ installedVersion(c)
                   }}<template v-if="updateAvailable(c) && latestVersion(c)">
                     → {{ latestVersion(c) }}</template
                   >
-                </span>
-                <span
+                </a>
+                <a
                   v-else-if="!isInstalled(c) && latestVersion(c)"
-                  class="font-mono"
-                  :title="t('setup.versionLatest')"
+                  class="font-mono underline decoration-dotted hover:text-ink"
+                  :href="releasesUrl(c)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :title="t('setup.releaseNotes')"
                 >
                   {{ latestVersion(c) }}
-                </span>
+                </a>
               </div>
             </div>
             <span
@@ -401,24 +451,57 @@ onMounted(load)
             </a>
           </div>
 
-          <!-- Runtime status for an installed first-party app (3d / screen): is it actually serving,
-               where, with an open-in-this-tab link and a restart (reload nginx). -->
-          <div v-if="hasRuntime(c)" class="flex flex-wrap items-center gap-2 text-[11px]">
-            <span class="inline-flex items-center gap-1">
+          <!-- Runtime status for any installed component with a runtime (a first-party nginx app OR
+               a systemd service): is it running, where, with open / restart / logs. -->
+          <div
+            v-if="hasHealth(c) || hasLogs(c)"
+            class="flex flex-wrap items-center gap-2 text-[11px]"
+          >
+            <span v-if="hasHealth(c)" class="inline-flex items-center gap-1">
               <span
                 class="h-2.5 w-2.5 rounded-full border border-ink"
                 :class="isRunning(c) ? 'bg-brand-green' : 'bg-brand-red'"
               />
               {{ isRunning(c) ? t('setup.serving') : t('setup.notServing') }}
             </span>
-            <span class="text-ink/60">{{ t('setup.port') }} {{ appPort(c) }}</span>
-            <a class="nb-btn px-2.5 py-0.5" :href="appUrl(c)">{{ t('setup.open') }}</a>
+            <span v-if="appPort(c) !== undefined" class="text-ink/60"
+              >{{ t('setup.port') }} {{ appPort(c) }}</span
+            >
+            <a v-if="appPort(c) !== undefined" class="nb-btn px-2.5 py-0.5" :href="appUrl(c)">{{
+              t('setup.open')
+            }}</a>
             <button
+              v-if="canRestart(c)"
               class="nb-btn px-2.5 py-0.5"
               :disabled="!writesEnabled || busyId !== null"
               @click="doRestart(c)"
             >
               {{ busyId === c.id ? t('setup.working') : t('setup.restart') }}
+            </button>
+            <button
+              v-if="hasLogs(c)"
+              class="nb-btn px-2.5 py-0.5"
+              :disabled="busyId !== null"
+              @click="doLogs(c)"
+            >
+              {{ t('setup.logs') }}
+            </button>
+          </div>
+
+          <!-- Config-include wiring for an add-on that needs an [include] in printer.cfg (KAMP…). -->
+          <div v-if="hasInclude(c)" class="flex flex-wrap items-center gap-2 text-[11px]">
+            <span
+              class="nb-badge text-[10px]"
+              :class="includeActive(c) ? 'bg-brand-green' : 'bg-brand-yellow'"
+            >
+              {{ includeActive(c) ? t('setup.wiredIn') : t('setup.notWired') }}
+            </span>
+            <button
+              class="nb-btn px-2.5 py-0.5"
+              :disabled="!writesEnabled || busyId !== null"
+              @click="doToggleInclude(c)"
+            >
+              {{ includeActive(c) ? t('setup.unwire') : t('setup.wireIn') }}
             </button>
           </div>
 
@@ -446,9 +529,22 @@ onMounted(load)
                 {{ t('setup.installNamed', { x: c.service_install }) }}
               </button>
               <button
+                v-if="canRegister(c)"
+                class="nb-btn px-3 py-1"
+                :disabled="!writesEnabled || busyId !== null"
+                :title="t('setup.registerHint')"
+                @click="doRegister(c)"
+              >
+                {{ t('setup.register') }}
+              </button>
+              <button
+                v-if="!isSelf(c)"
                 class="nb-btn px-3 py-1"
                 :class="{ 'bg-brand-red text-paper': confirmRemoveId === c.id }"
                 :disabled="!writesEnabled || busyId !== null"
+                :title="
+                  dependents(c).length ? t('setup.blocks', { x: dependents(c).join(', ') }) : ''
+                "
                 @click="onRemove(c)"
               >
                 {{ confirmRemoveId === c.id ? t('setup.removeConfirm') : t('setup.remove') }}
@@ -479,6 +575,9 @@ onMounted(load)
               >
                 {{ busyId === c.id ? t('setup.working') : t('setup.install') }}
               </button>
+              <span v-else-if="c.guide" class="nb-badge bg-surface text-[10px] text-ink/60">
+                {{ t('setup.builtIn') }}
+              </span>
               <a
                 v-else
                 class="nb-btn px-3 py-1"

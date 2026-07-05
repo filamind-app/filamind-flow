@@ -1,13 +1,21 @@
 from __future__ import annotations
 
 import time
+from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import create_app
-from app.services import setup_manager
+from app.services import setup_manager, setup_provenance
 
 client = TestClient(create_app())
+
+
+@pytest.fixture(autouse=True)
+def _isolate_provenance(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Keep install-stamp writes out of the real data dir (and hermetic per test)."""
+    monkeypatch.setattr(setup_provenance, "_path", lambda: tmp_path / "setup-installed.json")
 
 
 def test_catalog_lists_components() -> None:
@@ -35,6 +43,17 @@ def test_unknown_component_is_404() -> None:
     assert r.status_code == 404
 
 
+def test_logs_refused_for_a_serviceless_component() -> None:
+    # Klipper has no managed systemd unit in the catalog, so there's no journal to show here.
+    assert client.post("/api/setup/logs", json={"id": "klipper"}).status_code == 403
+
+
+def test_register_and_include_require_writes() -> None:
+    # Both mutate host config, so they refuse (403) while GUI writes are off (the default).
+    assert client.post("/api/setup/register", json={"id": "guppyscreen"}).status_code == 403
+    assert client.post("/api/setup/include", json={"id": "kamp", "add": True}).status_code == 403
+
+
 def test_resolve_order_puts_dependencies_first() -> None:
     catalog = setup_manager.load_catalog()
     order = setup_manager.resolve_order(["mainsail"], catalog)
@@ -45,6 +64,16 @@ def test_every_component_has_a_description() -> None:
     catalog = setup_manager.load_catalog()
     assert catalog, "catalog should not be empty"
     assert all(c.desc for c in catalog.values()), "every component needs a description"
+
+
+def test_update_available_normalizes_versions_and_uses_count() -> None:
+    upd = setup_manager._update_available
+    # A leading 'v' must not read as a difference (v1.2.0 == 1.2.0 → up to date).
+    assert upd({"version": "v1.2.0", "remote_version": "1.2.0"}) is False
+    assert upd({"version": "1.2.0", "remote_version": "1.3.0"}) is True
+    # commits_behind_count (int) is honored when the commits_behind list is absent.
+    assert upd({"commits_behind_count": 3}) is True
+    assert upd({"commits_behind_count": 0}) is False
 
 
 async def test_status_uses_moonraker_signals_then_dir_heuristic() -> None:
@@ -202,21 +231,58 @@ async def test_install_refuses_when_a_dependency_is_missing(monkeypatch, tmp_pat
     assert "Klipper" in result["output"]  # Moonraker depends on Klipper
 
 
-async def test_install_of_non_first_party_non_git_type_is_refused(monkeypatch) -> None:
-    # Third-party web UIs / manual add-ons set themselves up on the host; the GUI refuses to
-    # one-click them and points at their Source instead. mainsail is type "web" and not first-party.
+async def test_web_ui_installs_via_zip_nginx_and_moonraker(monkeypatch) -> None:
+    # A third-party web UI (Mainsail) now one-click installs: fetch its release zip, write an nginx
+    # site, register a Moonraker [update_manager web] entry, and stamp the install.
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    calls: list[str] = []
+
+    async def fake_zip(c, dest):
+        calls.append("zip")
+        return {"ok": True, "output": "downloaded"}
+
+    async def fake_site(c, port, root):
+        calls.append(f"nginx:{port}")
+        return {"ok": True, "output": f"served on {port}"}
+
+    async def fake_register(c):
+        calls.append("register")
+
+    async def fake_latest(repo):
+        return "v2.18.0"
+
+    stamped: dict = {}
+    monkeypatch.setattr(setup_manager, "_fetch_release_zip", fake_zip)
+    monkeypatch.setattr(setup_manager, "_install_nginx_site", fake_site)
+    monkeypatch.setattr(setup_manager, "_register_moonraker", fake_register)
+    monkeypatch.setattr(setup_manager, "_github_latest", fake_latest)
+    monkeypatch.setattr(
+        setup_manager.setup_provenance, "record", lambda cid, **kw: stamped.update({cid: kw})
+    )
+
     result = await setup_manager.install(
         "mainsail", managed={"klipper", "moonraker"}, services=set()
     )
+    assert result.get("ok") is True
+    assert "zip" in calls and "register" in calls and any(c.startswith("nginx:") for c in calls)
+    assert stamped["mainsail"]["method"] == "web-ui"
+    assert stamped["mainsail"]["nginx_site"] == "mainsail"
+    assert stamped["mainsail"]["ref"] == "v2.18.0"
+
+
+async def test_guide_component_is_not_installable(monkeypatch) -> None:
+    # An info-only card (CAN tools ship inside Klipper) refuses install with its guidance text.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    result = await setup_manager.install("can-tools", managed={"klipper"}, services=set())
     assert result.get("refused") is True
-    assert "installs on the printer host" in result["output"]
+    assert "CAN" in result["output"]
 
 
 async def test_first_party_app_installs_via_its_one_liner(monkeypatch) -> None:
     # FilaMind apps (3d / screen / flow) are web/tauri but DO install from the GUI by running their
     # own one-line installer, even though they aren't a plain git_repo.
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    monkeypatch.setattr(setup_manager.setup_provenance, "record", lambda *a, **k: None)
     captured: list[list[str]] = []
 
     async def fake_run(cmd: list[str]) -> dict:
@@ -231,6 +297,110 @@ async def test_first_party_app_installs_via_its_one_liner(monkeypatch) -> None:
     assert captured, "installer command was not run"
     cmd = " ".join(captured[0])
     assert "curl" in cmd and "filamind-3d/main/scripts/install.sh" in cmd
+
+
+async def test_remove_refuses_removing_the_app_itself(monkeypatch) -> None:
+    # Removing filamind-flow would kill the process serving the request + drop the sudo grant.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    result = await setup_manager.remove("filamind-flow", "filamind-flow")
+    assert result.get("refused") is True
+    assert "the app you're using" in result["output"]
+
+
+async def test_register_does_not_clobber_an_existing_block(monkeypatch, tmp_path) -> None:
+    # A component already tracked by Moonraker (its installer wrote the block) must stay untouched.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    conf = tmp_path / "moonraker.conf"
+    original = "[update_manager crowsnest]\ntype: git_repo\npath: ~/crowsnest\nchannel: beta\n"
+    conf.write_text(original, encoding="utf-8")
+    (tmp_path / ".git").mkdir()
+    monkeypatch.setattr(
+        setup_manager, "_klipper_config_file", lambda n: conf if n == "moonraker.conf" else None
+    )
+    monkeypatch.setattr(setup_manager, "_install_dir", lambda c: tmp_path)
+
+    result = await setup_manager.register_component("crowsnest")
+    assert result.get("ok") is True and "already registered" in result["output"]
+    assert conf.read_text(encoding="utf-8") == original  # left byte-for-byte untouched
+
+
+async def test_reinstall_reruns_installer_when_already_cloned(monkeypatch, tmp_path) -> None:
+    # A half-failed install (clone ok, install.sh failed) must be finishable by clicking Install
+    # again: the clone is skipped but install.sh is re-run (not short-circuited on dir presence).
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+    monkeypatch.setattr(setup_manager, "_install_dir", lambda c: tmp_path)
+    (tmp_path / ".git").mkdir()
+    (tmp_path / "install.sh").write_text("#!/bin/bash\n", encoding="utf-8")
+    ran: list[list[str]] = []
+
+    async def fake_run(cmd):
+        ran.append(cmd)
+        return {"ok": True, "output": ""}
+
+    async def fake_ver(_d):
+        return "v1"
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    monkeypatch.setattr(setup_manager, "_git_version", fake_ver)
+
+    result = await setup_manager.install(
+        "crowsnest", managed={"klipper", "moonraker"}, services=set()
+    )
+    assert result.get("ok") is True
+    assert any("install.sh" in " ".join(c) for c in ran)  # installer re-ran
+    assert not any(c[:2] == ["git", "clone"] for c in ran)  # clone skipped (already present)
+
+
+async def test_remove_refuses_when_a_dependent_is_installed(monkeypatch) -> None:
+    # Never pull a dependency out from under something that needs it: Moonraker installed blocks
+    # removing Klipper.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+
+    async def fake_status(*a, **k):
+        return {"moonraker": "installed"}
+
+    monkeypatch.setattr(setup_manager, "probe_status", fake_status)
+    result = await setup_manager.remove("klipper", "klipper")
+    assert result.get("refused") is True
+    assert "Moonraker" in result["output"]
+
+
+async def test_remove_klipper_extra_unlinks_before_deleting(monkeypatch, tmp_path) -> None:
+    # The Klipper-brick fix: an extra's symlink must be unlinked BEFORE anything else, so a dangling
+    # symlink can never stop Klipper from starting; and Klipper is restarted afterwards.
+    monkeypatch.setattr(setup_manager, "writes_enabled", lambda: True)
+
+    async def no_deps(*a, **k):
+        return {}
+
+    async def fake_backup(c):
+        return str(tmp_path / "bk")
+
+    order: list[str] = []
+    monkeypatch.setattr(setup_manager, "probe_status", no_deps)
+    monkeypatch.setattr(setup_manager, "_backup_before_remove", fake_backup)
+    monkeypatch.setattr(
+        setup_manager, "_unlink_extras", lambda names: order.append(f"unlink:{names}")
+    )
+
+    async def fake_run(cmd):
+        order.append("run:" + " ".join(cmd))
+        return {"ok": True, "output": ""}
+
+    async def fake_dereg(c):
+        order.append("dereg")
+
+    monkeypatch.setattr(setup_manager, "_run", fake_run)
+    monkeypatch.setattr(setup_manager, "_deregister_moonraker", fake_dereg)
+    removed: list[str] = []
+    monkeypatch.setattr(setup_manager.setup_provenance, "remove", lambda cid: removed.append(cid))
+
+    result = await setup_manager.remove("gcode-shell-cmd", "gcode-shell-cmd")
+    assert result.get("ok") is True
+    # unlink happens first, and a klipper restart happens after.
+    assert order[0] == "unlink:['gcode_shell_command.py']"
+    assert any("restart klipper" in s for s in order)
+    assert removed == ["gcode-shell-cmd"]
 
 
 async def test_first_party_screen_installs_its_native_kiosk(monkeypatch) -> None:

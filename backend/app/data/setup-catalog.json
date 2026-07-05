@@ -1,6 +1,6 @@
 {
-  "schema": 1,
-  "comment": "FilaMind Setup component catalog. Adding a component = one entry here, no engine change. 'type' selects how it installs/updates (git_repo / service install via git clone + install.sh; web / tauri / manual are catalog-only for now). 'manager_key' / 'service' / 'dir' refine install detection when a component's runtime name differs from its id.",
+  "schema": 2,
+  "comment": "FilaMind Setup component catalog. Adding a component = one entry here, no engine change. 'type' selects how it installs/updates: git_repo/service = git clone + install.sh; a web-UI (kind web-ui, not first_party) with 'release_asset' installs its release zip + an nginx site + a Moonraker [update_manager web] entry; an entry with 'extras' is a Klipper extra (clone + symlink each file into klippy/extras + optional Moonraker git entry + restart klipper); 'guide': true is an information-only card (nothing to install). 'mr_type' (web|git_repo) is the [update_manager] block written to moonraker.conf on install so updates read+apply through Moonraker. 'config_include' is a printer.cfg [include <file>] the add-on needs to be wired in. 'manager_key' / 'service' / 'dir' refine install detection when a component's runtime name differs from its id. 'interactive': true flags an installer that prompts (best-effort headless).",
   "groups": [
     {
       "group": "core",
@@ -13,8 +13,8 @@
       "group": "web-uis",
       "components": [
         { "id": "filamind-3d", "name": "FilaMind 3d", "kind": "web-ui", "repo": "filamind-app/filamind-3d", "type": "web", "deps": ["moonraker"], "first_party": true, "serve": "port-or-path", "default_port": 8089, "primary": true, "service": "filamind-3d", "service_install": "agent", "service_install_hint": "Adds the FilaMind 3d agent (its managed service): it then appears in Host Control → Service Control and unlocks the suite widgets (Material Brain, Tuning, …). Run on the printer (needs sudo):", "desc": "FilaMind's web control interface for Klipper - the suite's primary printer UI." },
-        { "id": "mainsail", "name": "Mainsail", "kind": "web-ui", "repo": "mainsail-crew/mainsail", "type": "web", "deps": ["moonraker"], "serve": "port-or-path", "default_port": 81, "manager_key": "mainsail", "dir": "mainsail", "desc": "A web interface for Klipper, served as static files in the browser." },
-        { "id": "fluidd", "name": "Fluidd", "kind": "web-ui", "repo": "fluidd-core/fluidd", "type": "web", "deps": ["moonraker"], "serve": "port-or-path", "default_port": 82, "manager_key": "fluidd", "dir": "fluidd", "desc": "A web interface for Klipper, served as static files in the browser." }
+        { "id": "mainsail", "name": "Mainsail", "kind": "web-ui", "repo": "mainsail-crew/mainsail", "type": "web", "deps": ["moonraker"], "serve": "port-or-path", "default_port": 81, "manager_key": "mainsail", "dir": "mainsail", "release_asset": "mainsail.zip", "mr_type": "web", "desc": "A web interface for Klipper, served as static files in the browser." },
+        { "id": "fluidd", "name": "Fluidd", "kind": "web-ui", "repo": "fluidd-core/fluidd", "type": "web", "deps": ["moonraker"], "serve": "port-or-path", "default_port": 82, "manager_key": "fluidd", "dir": "fluidd", "release_asset": "fluidd.zip", "mr_type": "web", "desc": "A web interface for Klipper, served as static files in the browser." }
       ]
     },
     {
@@ -59,24 +59,43 @@
       ]
     },
     {
+      "group": "probes",
+      "components": [
+        { "id": "beacon", "name": "Beacon", "kind": "probe", "repo": "beacon3d/beacon_klipper", "type": "git_repo", "deps": ["klipper"], "manager_key": "beacon", "dir": "beacon", "desc": "Eddy-current scanning probe for contactless homing and high-speed bed meshing." },
+        { "id": "cartographer", "name": "Cartographer", "kind": "probe", "repo": "Cartographer3D/cartographer-klipper", "type": "git_repo", "deps": ["klipper"], "manager_key": "cartographer", "dir": "cartographer-klipper", "desc": "Eddy-current scanning probe (contactless homing + fast bed mesh), an alternative to Beacon." },
+        { "id": "btt-eddy", "name": "BTT Eddy", "kind": "probe", "repo": "bigtreetech/Eddy", "type": "git_repo", "deps": ["klipper"], "dir": "Eddy", "config_include": "eddy.cfg", "desc": "BTT's inductive eddy-current probe; uses Klipper's built-in probe_eddy_current plus calibration macros." }
+      ]
+    },
+    {
       "group": "klipper-addons",
       "components": [
-        { "id": "kamp", "name": "Adaptive Meshing & Purging (KAMP)", "kind": "config-addon", "repo": "kyleisah/Klipper-Adaptive-Meshing-Purging", "type": "git_repo", "deps": ["klipper"], "dir": "Klipper-Adaptive-Meshing-Purging", "desc": "Meshes only the area your print uses and lays a smart purge line - less wasted time and filament." },
+        { "id": "kamp", "name": "Adaptive Meshing & Purging (KAMP)", "kind": "config-addon", "repo": "kyleisah/Klipper-Adaptive-Meshing-Purging", "type": "git_repo", "deps": ["klipper"], "dir": "Klipper-Adaptive-Meshing-Purging", "config_include": "KAMP_Settings.cfg", "desc": "Meshes only the area your print uses and lays a smart purge line - less wasted time and filament." },
         { "id": "klipper-backup", "name": "Klipper Backup", "kind": "utility", "repo": "Staubgeborener/klipper-backup", "type": "git_repo", "deps": [], "manager_key": "klipper-backup", "dir": "klipper-backup", "desc": "Backs up your printer configuration to a Git repository on a schedule or on demand." },
         { "id": "tmc-autotune", "name": "TMC Autotune", "kind": "config-addon", "repo": "andrewmcgr/klipper_tmc_autotune", "type": "git_repo", "deps": ["klipper"], "manager_key": "klipper_tmc_autotune", "dir": "klipper_tmc_autotune", "desc": "Tunes TMC stepper-driver registers automatically from each motor's specifications." },
         { "id": "shaketune", "name": "Shake&Tune", "kind": "config-addon", "repo": "Frix-x/klippain-shaketune", "type": "git_repo", "deps": ["klipper"], "dir": "klippain_shaketune", "desc": "Resonance-measurement and input-shaping analysis tooling with detailed diagnostic graphs." },
+        { "id": "klippain", "name": "Klippain", "kind": "config-framework", "repo": "Frix-x/klippain", "type": "git_repo", "deps": ["klipper"], "dir": "klippain", "desc": "A modular, batteries-included Klipper configuration framework (same author as Shake&Tune)." },
+        { "id": "z-calibration", "name": "Z-Calibration", "kind": "config-addon", "repo": "protoloft/klipper_z_calibration", "type": "git_repo", "deps": ["klipper"], "manager_key": "z_calibration", "dir": "klipper_z_calibration", "desc": "Automatic Z-offset calibration relative to the nozzle, probe and switch positions." },
+        { "id": "auto-speed", "name": "Auto Speed", "kind": "config-addon", "repo": "Anonoei/klipper_auto_speed", "type": "git_repo", "deps": ["klipper"], "dir": "klipper_auto_speed", "desc": "Benchmarks your machine to find its real maximum acceleration and velocity limits." },
         { "id": "led-effect", "name": "LED Effect", "kind": "config-addon", "repo": "julianschill/klipper-led_effect", "type": "git_repo", "deps": ["klipper"], "dir": "klipper-led_effect", "desc": "Drives addressable LED strips with animated effects tied to printer state." },
-        { "id": "gcode-shell-cmd", "name": "G-Code Shell Command", "kind": "config-addon", "repo": "filamind-app/klipper-extras", "type": "manual", "deps": ["klipper"], "desc": "Lets G-code macros run host shell commands - the building block for many add-ons." },
+        { "id": "gcode-shell-cmd", "name": "G-Code Shell Command", "kind": "config-addon", "repo": "filamind-app/klipper-extras", "type": "git_repo", "deps": ["klipper"], "manager_key": "gcode_shell_command", "dir": "klipper-extras", "extras": ["gcode_shell_command.py"], "mr_type": "git_repo", "desc": "Lets G-code macros run host shell commands - the building block for many add-ons." },
+        { "id": "nevermore", "name": "Nevermore Air Filter", "kind": "config-addon", "repo": "nevermore3d/Nevermore_Max", "type": "git_repo", "deps": ["klipper"], "dir": "Nevermore_Max", "config_include": "nevermore.cfg", "desc": "Activated-carbon enclosure air filter with Klipper fan control and print-state macros." },
+        { "id": "sonar", "name": "Sonar", "kind": "utility", "repo": "mainsail-crew/sonar", "type": "git_repo", "deps": [], "manager_key": "sonar", "service": "sonar", "dir": "sonar", "desc": "Keeps the network connection alive on hosts that drop Wi-Fi during long idle periods." },
         { "id": "pretty-gcode", "name": "PrettyGCode", "kind": "viewer", "repo": "Kragrathea/pgcode", "type": "git_repo", "deps": ["moonraker"], "manager_key": "pgcode", "dir": "pgcode", "desc": "An interactive 3D G-code viewer for previewing toolpaths in the browser." },
         { "id": "timelapse", "name": "Moonraker Timelapse", "kind": "utility", "repo": "mainsail-crew/moonraker-timelapse", "type": "git_repo", "deps": ["moonraker", "crowsnest"], "manager_key": "timelapse", "dir": "moonraker-timelapse", "desc": "Records timelapse videos of prints by capturing a webcam frame each layer." },
         { "id": "telegram-bot", "name": "Moonraker Telegram Bot", "kind": "notifier", "repo": "nlef/moonraker-telegram-bot", "type": "git_repo", "deps": ["moonraker"], "manager_key": "moonraker-telegram-bot", "service": "moonraker-telegram-bot", "dir": "moonraker-telegram-bot", "desc": "Reports print status and lets you control the printer through a Telegram chat bot." }
       ]
     },
     {
+      "group": "mmu",
+      "components": [
+        { "id": "happy-hare", "name": "Happy Hare (MMU/ERCF)", "kind": "mmu", "repo": "moggieuk/Happy-Hare", "type": "git_repo", "deps": ["klipper"], "manager_key": "happy-hare", "dir": "Happy-Hare", "interactive": true, "desc": "The de-facto MMU / ERCF / Box-Turtle firmware layer for Klipper. Its installer is interactive." }
+      ]
+    },
+    {
       "group": "firmware-tools",
       "components": [
         { "id": "katapult", "name": "Katapult (bootloader)", "kind": "flash-tool", "repo": "Arksine/katapult", "type": "git_repo", "deps": [], "manager_key": "katapult", "dir": "katapult", "desc": "A bootloader for Klipper MCUs that enables firmware flashing over USB, CAN or serial." },
-        { "id": "can-tools", "name": "CAN-bus tools", "kind": "flash-tool", "repo": "Klipper3d/klipper", "type": "manual", "deps": ["klipper"], "desc": "Command-line utilities for bringing up and flashing CAN-bus toolhead boards." }
+        { "id": "can-tools", "name": "CAN-bus tools", "kind": "flash-tool", "repo": "Klipper3d/klipper", "type": "manual", "deps": ["klipper"], "guide": true, "desc": "CAN-bus bring-up and flashing utilities. These ship inside Klipper - manage CAN from Host Control → CAN Bus rather than installing anything here." }
       ]
     }
   ]
