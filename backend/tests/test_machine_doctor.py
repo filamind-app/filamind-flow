@@ -231,9 +231,12 @@ async def test_run_scan_composites_pillars_and_assesses(monkeypatch: pytest.Monk
     assert pillars["config"]["score"] == 100.0
     assert pillars["services"]["score"] == 40.0 and pillars["services"]["status"] == "fail"
     assert pillars["firmware"]["score"] is None  # not measured → excluded from the composite
-    # composite renormalizes over the two measured pillars:
-    # (0.45*100 + 0.15*40) / (0.45 + 0.15) = 51 / 0.6 = 85.0
-    assert report["score"] == pytest.approx(85.0)
+    # The HEADLINE score is the transparent additive number (0 errors / 0 warnings → 100), so it
+    # matches the counts shown beside it. The GRADE draws on the pillar composite, renormalized
+    # over the two measured pillars: (0.45*100 + 0.15*40) / (0.45 + 0.15) = 51 / 0.6 = 85.0 → B.
+    # This is the intended split: a perfect config but a down Klipper service = Score 100, Grade B.
+    assert report["score"] == pytest.approx(100.0)
+    assert report["grade"] == "B"
     assert report["assessment"]["code"] == "critical"
     assert report["assessment"]["params"]["pillar"] == "services"
     assert report["services"]["units"][0]["name"] == "klipper"

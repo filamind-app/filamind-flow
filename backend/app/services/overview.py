@@ -110,14 +110,22 @@ async def _setup_block(client: MoonrakerClient, data_dir: str) -> dict[str, Any]
     identified board, and whether any motors are assigned. (Baseline / firmware / tuning
     status already live in their own blocks.)"""
     from app.services import motor_mapping
+    from app.services.firmware_service import _HOST_MCU_SOCKET
 
     identified = 0
     total = 0
     try:
         topo = await board_topology.gather_topology(client, data_dir)
-        mcus = topo.get("mcus", [])
-        total = len(mcus)
-        identified = sum(1 for m in mcus if m.get("board_id"))
+        # The Klipper HOST process (``/tmp/klipper_host_mcu``) is a virtual MCU, not a physical
+        # control board the user identifies in the picker - so it must NOT count toward the "confirm
+        # your boards" total, or the step could never complete (it has no board to confirm).
+        boards = [
+            m
+            for m in topo.get("mcus", [])
+            if not str(m.get("identifier") or "").endswith(_HOST_MCU_SOCKET)
+        ]
+        total = len(boards)
+        identified = sum(1 for m in boards if m.get("board_id"))
     except Exception:
         pass
     return {

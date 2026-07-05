@@ -7,9 +7,11 @@ checks. Each source's findings are normalized into ``{code, level, params, link}
 frontend translates ``code`` + ``params`` (no English leaks from here) and turns ``link``
 into a deep-link button into the widget that fixes the problem.
 
-The headline is an A-F grade in the Input Shaping idiom: transparent scoring
-(``100 - 25*errors - 8*warnings``, floored at 0) so a user can see exactly why their
-printer scored a B.
+The headline SCORE is transparent (``100 - 25*errors - 8*warnings``, floored at 0) so a user can
+verify it from the error/warning counts shown beside it. The A-F GRADE draws on a richer weighted
+blend of health pillars (config integrity, firmware sync, services, input shaping, max flow) - so a
+down service or firmware drift can pull the grade below what config errors alone would give, with
+the per-pillar bars explaining why.
 """
 
 from __future__ import annotations
@@ -412,6 +414,11 @@ async def run_scan(settings: Settings) -> dict[str, Any]:
         sum(_PILLAR_WEIGHTS[k] * s for k, s in contributing) / total_w if total_w else config_score
     )
     grade = _grade(composite)
+    # The HEADLINE score stays the transparent additive number (100 - 25*errors - 8*warnings) so it
+    # matches the error/warning counts shown beside it and the "transparent scoring" hint exactly.
+    # The A-F GRADE draws on the richer weighted-pillar composite (a down service / firmware drift
+    # can pull the grade below what config errors alone would give), explained by the pillar bars.
+    score = config_score
 
     stats = {
         "max_flow": last_flow,
@@ -429,7 +436,7 @@ async def run_scan(settings: Settings) -> dict[str, Any]:
 
     return {
         "grade": grade,
-        "score": round(composite, 1),
+        "score": round(score, 1),
         "errors": errors,
         "warnings": warnings,
         "categories": categories,

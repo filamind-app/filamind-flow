@@ -6,6 +6,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.20.2] - 2026-07-05
+
+### Fixed
+
+- **Machine Doctor score now matches the formula shown beside it.** The headline score is again the
+  transparent `100 − 25 per error − 8 per warning` (so it equals the error/warning counts next to
+  it), instead of the weighted-pillar composite that could read e.g. 93.4 with "0 errors, 1 warning"
+  (should be 92) or 98.2 with "0 errors, 0 warnings" (should be 100). The A-F **grade** still draws
+  on the richer pillar blend — a down service or firmware drift can pull the grade below the score,
+  explained by the per-pillar bars — but the number no longer contradicts its own explanation.
+- **The "Confirm your boards" setup step no longer stays incomplete after every board is confirmed.**
+  The Klipper host process (`/tmp/klipper_host_mcu`) is a virtual MCU, not a physical control board,
+  but it was counted in the boards total — and it usually has no board to identify, so the count
+  never reached 100% and the Dashboard checklist step could never complete. The host MCU is now
+  excluded from the board count. (Verified live on a printer whose host MCU was uncounted.)
+
 ## [1.20.1] - 2026-07-04
 
 ### Changed
