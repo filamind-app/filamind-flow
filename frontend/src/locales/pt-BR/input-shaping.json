@@ -369,6 +369,7 @@
         "summaryNote": "Suas capturas de X e Y estão no bloco combinado {code} abaixo — copie-o, depois reinicie o Klipper. Reabra o ajuste guiado a qualquer momento para reverificar.",
         "beltsNotApplicable": "A comparação de correias se aplica a impressoras CoreXY — esta impressora reporta '{kin}', então esta etapa é pulada.",
         "resultsSoFar": "Resultados até agora",
+        "resumed": "Ajuste em andamento retomado",
         "archived": "Salvo",
         "autoSaved": "Salvo automaticamente no arquivo da impressora.",
         "beltA": "Correia A (1,1)",

@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.24.0] - 2026-07-05
+
+### Added
+
+- **The Input Shaping "Guided tune" now survives leaving the widget or refreshing the page.** Your
+  in-progress run - the current step, each completed stage's result and verdict, and the accumulated
+  cards - is saved locally as you go, so switching to another widget or an accidental page refresh no
+  longer restarts you at step one. The saved session is restored automatically (with a brief
+  "resumed" note) and is cleared only when the tune finishes; leaving via Exit keeps it so you can
+  pick up later.
+
 ## [1.23.0] - 2026-07-05
 
 ### Changed

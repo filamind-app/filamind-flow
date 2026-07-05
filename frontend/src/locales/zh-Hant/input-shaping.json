@@ -369,6 +369,7 @@
         "summaryNote": "你的 X 與 Y 擷取都在下方合併的 {code} 區塊中——複製它，然後重啟 Klipper。隨時可重新開啟引導式調校重新檢查。",
         "beltsNotApplicable": "皮帶比較適用於 CoreXY 印表機——這台印表機回報為「{kin}」，因此略過此步驟。",
         "resultsSoFar": "目前結果",
+        "resumed": "已還原您進行中的調校",
         "archived": "已儲存",
         "autoSaved": "已自動儲存到印表機上的封存。",
         "beltA": "皮帶 A (1,1)",

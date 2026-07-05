@@ -369,6 +369,7 @@
         "summaryNote": "Twoje rejestracje X i Y są w połączonym bloku {code} poniżej - skopiuj go, a następnie uruchom Klippera ponownie. Otwórz strojenie z przewodnikiem ponownie w dowolnej chwili, aby sprawdzić ponownie.",
         "beltsNotApplicable": "Porównanie pasków dotyczy drukarek CoreXY - ta drukarka zgłasza '{kin}', więc ten krok jest pomijany.",
         "resultsSoFar": "Dotychczasowe wyniki",
+        "resumed": "Wznowiono rozpoczęte strojenie",
         "archived": "Zapisano",
         "autoSaved": "Zapisano automatycznie w archiwum na drukarce.",
         "beltA": "Pasek A (1,1)",

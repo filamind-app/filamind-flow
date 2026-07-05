@@ -369,6 +369,7 @@
         "summaryNote": "Các bản thu X và Y của bạn nằm trong khối {code} kết hợp bên dưới - sao chép nó, rồi khởi động lại Klipper. Mở lại tinh chỉnh có hướng dẫn bất cứ lúc nào để kiểm tra lại.",
         "beltsNotApplicable": "So sánh dây đai áp dụng cho máy in CoreXY - máy in này báo '{kin}', nên bước này được bỏ qua.",
         "resultsSoFar": "Kết quả đến hiện tại",
+        "resumed": "Đã khôi phục phiên tinh chỉnh đang thực hiện",
         "archived": "Đã lưu",
         "autoSaved": "Đã tự động lưu vào kho lưu trữ trên máy in.",
         "beltA": "Dây đai A (1,1)",

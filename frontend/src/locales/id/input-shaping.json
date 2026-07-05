@@ -369,6 +369,7 @@
         "summaryNote": "Tangkapan X dan Y Anda ada di blok gabungan {code} di bawah - salin, lalu restart Klipper. Buka kembali tuning terpandu kapan saja untuk memeriksa ulang.",
         "beltsNotApplicable": "Perbandingan belt berlaku untuk printer CoreXY - printer ini melaporkan '{kin}', jadi langkah ini dilewati.",
         "resultsSoFar": "Hasil sejauh ini",
+        "resumed": "Melanjutkan penyetelan yang tertunda",
         "archived": "Tersimpan",
         "autoSaved": "Tersimpan otomatis ke arsip di printer.",
         "beltA": "Belt A (1,1)",
