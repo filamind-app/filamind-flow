@@ -13,10 +13,13 @@ import { resolveEndpoints } from '@/core/moonraker'
 import { useNav } from '@/core/nav'
 import { focusTopologyNode } from '@/widgets/board-topology/topologyFocus'
 import { fetchDoctorScan } from '@/widgets/machine-doctor/api'
+import ReadinessRing from '@/widgets/machine-doctor/ReadinessRing.vue'
 import type { DoctorReport } from '@/widgets/machine-doctor/types'
+import { useDoctorAssessment } from '@/widgets/machine-doctor/useDoctorAssessment'
 
-const { t, te } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'global' })
 const { go } = useNav()
+const { localizeAssessment } = useDoctorAssessment()
 
 interface OverviewMcu {
   name: string
@@ -159,18 +162,10 @@ const GRADE_BG: Record<string, string> = {
   D: 'bg-brand-pink',
   F: 'bg-brand-red',
 }
-function doctorPillarLabel(key: string): string {
-  const k = `machineDoctor.pillar.${key}`
-  return te(k) ? t(k) : key
-}
-const doctorAssessment = computed(() => {
-  const a = doctor.value?.assessment
-  if (!a) return ''
-  const key = `machineDoctor.assessment.${a.code}`
-  if (!te(key)) return ''
-  const pillar = a.params.pillar ? doctorPillarLabel(String(a.params.pillar)) : ''
-  return t(key, { ...a.params, pillar } as Record<string, unknown>)
-})
+// Shared with the Machine Doctor widget so the verdict (incl. the setup_incomplete `pillars` array)
+// is localized identically on both surfaces - a home-only copy once leaked the raw key array.
+const doctorAssessment = computed(() => localizeAssessment(doctor.value?.assessment))
+const doctorIncomplete = computed(() => (doctor.value?.setup?.pending.length ?? 0) > 0)
 
 const journal = ref<JournalEvent[]>([])
 async function loadJournal(): Promise<void> {
@@ -463,12 +458,13 @@ function openMcu(name: string): void {
         </div>
         <template v-if="doctor">
           <div class="flex items-center gap-3">
-            <span
-              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-brutal border-3 border-ink font-display text-2xl font-bold text-ink"
-              :class="GRADE_BG[doctor.grade] ?? 'bg-ink/10'"
-            >
-              {{ doctor.grade }}
-            </span>
+            <ReadinessRing
+              :done="doctor.setup.done"
+              :total="doctor.setup.total"
+              :grade="doctor.grade"
+              :grade-class="GRADE_BG[doctor.grade] ?? 'bg-ink/10'"
+              :size="52"
+            />
             <div class="min-w-0">
               <p v-if="doctorAssessment" class="text-xs font-bold">{{ doctorAssessment }}</p>
               <p class="font-mono text-[11px] opacity-70">
@@ -477,8 +473,22 @@ function openMcu(name: string): void {
                   t('machineDoctor.counts', { errors: doctor.errors, warnings: doctor.warnings })
                 }}
               </p>
+              <p v-if="doctor.setup?.total" class="font-mono text-[11px] opacity-70">
+                {{
+                  t('machineDoctor.setup.line', {
+                    done: doctor.setup.done,
+                    total: doctor.setup.total,
+                  })
+                }}
+              </p>
             </div>
           </div>
+          <p
+            v-if="doctorIncomplete"
+            class="rounded-brutal border-2 border-ink bg-brand-yellow px-2 py-1 text-[11px] font-bold text-ink"
+          >
+            ⚠ {{ t('machineDoctor.readiness.banner') }}
+          </p>
           <p
             v-if="doctor.stats?.max_flow?.max_flow_mm3s != null"
             class="flex items-center gap-1.5 font-mono text-[11px]"

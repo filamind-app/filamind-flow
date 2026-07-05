@@ -5,7 +5,7 @@
     "rescan": "Pindai ulang",
     "scoreLine": "Skor {score} / 100",
     "counts": "{errors} kesalahan · {warnings} peringatan",
-    "scoreHint": "Perpaduan berbobot dari pilar kesehatan yang terukur di bawah ini. Integritas konfigurasi kehilangan 25 poin per kesalahan dan 8 per peringatan; sinyal yang tidak dapat kami baca saat ini tidak mengurangi skor Anda. Langkah penyiapan yang belum Anda jalankan (Input shaping, Aliran maksimum) tidak menurunkan skor, tetapi menahan nilai hingga selesai.",
+    "scoreHint": "Perpaduan berbobot dari pilar-pilar di bawah ini. Pemeriksaan kesehatan (Integritas konfigurasi, Sinkronisasi firmware, Layanan) menilai apa yang bisa kami ukur - Integritas konfigurasi kehilangan 25 poin per kesalahan dan 8 per peringatan. Langkah penyiapan yang belum Anda jalankan (Input shaping, Aliran maksimum, Driver motor) dihitung nol hingga selesai, jadi menuntaskannya menaikkan skor. Sinyal yang tidak dapat kami baca saat ini tidak mengurangi skor Anda.",
     "allClear": "Semua aman.",
     "notChecked": "Tidak dapat diperiksa (printer tidak terjangkau atau tidak ada baseline).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Sinkronisasi firmware",
       "services": "Layanan",
       "tuning": "Input shaping",
-      "flow": "Aliran maksimum"
+      "flow": "Aliran maksimum",
+      "drivers": "Driver motor"
     },
     "services": {
       "title": "Layanan",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "Nilai A-F",
-          "body": "Skor ini adalah perpaduan berbobot dari pilar kesehatan yang benar-benar dapat kami ukur (integritas konfigurasi, sinkronisasi firmware, layanan). Langkah penyiapan seperti Input shaping dan Aliran maksimum dilacak terpisah: melewatkannya tidak pernah menurunkan skor, tetapi hingga selesai nilai ditahan di B. Peringatan yang belum dibereskan juga menahannya di B, dan kesalahan nyata menahannya di C - jadi hurufnya selalu mencerminkan seberapa sehat printer dan seberapa lengkap penyiapannya."
+          "body": "Skor memadukan dua hal. Pemeriksaan kesehatan (Integritas konfigurasi, Sinkronisasi firmware, Layanan) menilai apa yang bisa kami ukur. Langkah penyiapan - Input shaping, Aliran maksimum, dan penyetelan Driver motor - dihitung nol hingga Anda menjalankannya, jadi printer yang belum disetel akan berskor rendah meski tidak ada yang rusak, dan setiap langkah yang Anda tuntaskan menaikkan angkanya. Nilai huruf mengikuti langsung dari skor itu, dan sinyal yang tidak dapat kami baca saat ini (Moonraker atau host mati) sekadar diabaikan alih-alih mengurangi skor Anda."
         },
         "fixes": {
           "title": "Tautan langsung-perbaiki",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Kelengkapan penyiapan: {done} / {total} langkah selesai"
     },
-    "capped": {
-      "setup": "Nilai ditahan di {grade} hingga penyiapan selesai.",
-      "warnings": "Nilai ditahan di {grade} - ada peringatan yang belum dibereskan.",
-      "errors": "Nilai ditahan di {grade} - ada kesalahan yang perlu diperbaiki."
+    "readiness": {
+      "title": "Kesiapan penyiapan",
+      "banner": "Penyiapan belum selesai - langkah yang belum dijalankan dihitung nol dan menahan skor. Jalankan untuk menaikkannya.",
+      "runIt": "Jalankan"
     }
   }
 }

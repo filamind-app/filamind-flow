@@ -10,11 +10,11 @@ The scan looks at your machine from several angles in one pass. It checks for pi
 
 Beyond the config itself, it confirms firmware is in sync, flags hardware changes since the last time it looked, and checks that the install is healthy.
 
-Every check feeds into one overall grade from A to F. The scoring is transparent, so you can see why a finding lowered the grade rather than just being handed a number. The score itself is a weighted blend of the health pillars the Doctor could actually measure (config integrity, firmware sync, services) — signals it can't read right now, like a firmware version while Moonraker is down, simply don't count against you.
+Every check feeds into one overall grade from A to F, and the scoring is transparent so you can see exactly why the number is what it is. The score blends two kinds of pillar. **Health checks** — config integrity, firmware sync, services — score how healthy the things the Doctor could actually read are; a signal it can't read right now, like a firmware version while Moonraker is offline, simply drops out instead of counting against you.
 
-Setup steps are handled separately from health. Running input shaping and finding your max flow are tuning tasks, not faults, so leaving them undone never lowers the score — but until they're done the Doctor holds the letter grade at B and tells you what's left, alongside a small "Setup completeness" tally. An unresolved warning also holds the grade at B and a real error holds it at C, so a clean "healthy" A only ever appears when nothing is broken and setup is finished. That way a strong score and a held-back grade never look like a contradiction: the widget always says why.
+**Setup steps** — running input shaping, finding your max flow, and tuning your motor drivers — are the readiness half. Until you've run one it counts as zero, so a printer that hasn't been tuned scores low even when nothing is broken, and each step you finish visibly raises the number. The hero shows this as a readiness ring around the grade (one segment per step, filled as you go), a "Setup readiness" checklist, and a caution banner while any step is still pending. A clean "healthy" A only appears once nothing is broken and every setup step is done.
 
-Each finding is actionable too. When the Doctor spots a problem, it deep-links straight into the widget that fixes it, so you don't have to go hunting for the right screen.
+Each finding is actionable too. When the Doctor spots a problem — or a setup step still to run — it deep-links straight into the widget that handles it (input shaping, max flow, the Motor Drivers widget…), so you go from "what's wrong" to "here's where to fix it" in one click.
 
 ## Using it
 

@@ -25,7 +25,7 @@ from typing import Any
 
 import httpx
 
-from app.services import field_policy, motor_mapping, printer_guard, reference_data
+from app.services import drivers_store, field_policy, motor_mapping, printer_guard, reference_data
 from app.services.moonraker_client import MoonrakerClient
 
 #: Recommendation keys that map directly to ``SET_TMC_FIELD FIELD=`` names.
@@ -188,6 +188,9 @@ async def apply_live(
             await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
         return _res(False, [], f"Moonraker error: {exc}")
+    # Record that this stepper's drivers were tuned, so the Machine Doctor's readiness track can
+    # tell tuning has been done (the live writes themselves leave no host-side trace).
+    drivers_store.write_tuned(data_dir, stepper, "apply")
     return _res(
         True,
         commands,
@@ -277,7 +280,7 @@ async def autotune_available(moonraker_url: str, stepper: str) -> bool:
 
 
 async def run_autotune(
-    moonraker_url: str, stepper: str, *, timeout: float = 120.0
+    moonraker_url: str, stepper: str, *, data_dir: str = "", timeout: float = 120.0
 ) -> dict[str, Any]:
     """Drives ``AUTOTUNE_TMC`` if the extra is installed for this stepper."""
     try:
@@ -305,6 +308,7 @@ async def run_autotune(
         await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
         return _res(False, [], f"Moonraker error: {exc}")
+    drivers_store.write_tuned(data_dir, stepper, "autotune")  # readiness track (see apply_live)
     return _res(True, [cmd], f"Ran AUTOTUNE_TMC on {stepper}.", "autotuneRan", stepper=stepper)
 
 

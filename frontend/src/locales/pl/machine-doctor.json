@@ -5,7 +5,7 @@
     "rescan": "Skanuj ponownie",
     "scoreLine": "Wynik {score} / 100",
     "counts": "{errors} błąd(ów) · {warnings} ostrzeżeń",
-    "scoreHint": "Ważona kombinacja zmierzonych filarów kondycji poniżej. Integralność konfiguracji traci 25 za każdy błąd i 8 za każde ostrzeżenie; sygnały, których teraz nie da się odczytać, nie działają na Twoją niekorzyść. Kroki konfiguracji, których jeszcze nie wykonano (input shaping, max flow), nie obniżają wyniku, ale wstrzymują ocenę do czasu ich ukończenia.",
+    "scoreHint": "Ważona kombinacja filarów poniżej. Sprawdzenia kondycji (integralność konfiguracji, synchronizacja firmware'u, usługi) punktują to, co udało się zmierzyć - integralność konfiguracji traci 25 za każdy błąd i 8 za każde ostrzeżenie. Kroki konfiguracji, których jeszcze nie wykonano (kształtowanie sygnału, maksymalny przepływ, sterowniki silników), liczą się jako zero, dopóki ich nie ukończysz, więc ich zakończenie podnosi wynik. Sygnały, których teraz nie da się odczytać, nie działają na Twoją niekorzyść.",
     "allClear": "Wszystko w porządku.",
     "notChecked": "Nie udało się sprawdzić (drukarka nieosiągalna lub brak punktu odniesienia).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Synchronizacja firmware'u",
       "services": "Usługi",
       "tuning": "Kształtowanie sygnału",
-      "flow": "Maksymalny przepływ"
+      "flow": "Maksymalny przepływ",
+      "drivers": "Sterowniki silników"
     },
     "services": {
       "title": "Usługi",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "Ocena A-F",
-          "body": "Wynik to ważona kombinacja filarów kondycji, które faktycznie udało się zmierzyć (integralność konfiguracji, synchronizacja firmware'u, usługi). Kroki konfiguracji, takie jak input shaping i max flow, są śledzone osobno: ich pominięcie nigdy nie obniża wyniku, ale do czasu ich ukończenia ocena jest wstrzymana na B. Nierozwiązane ostrzeżenie również wstrzymuje ją na B, a rzeczywisty błąd wstrzymuje ją na C - dzięki temu litera zawsze odzwierciedla zarówno kondycję drukarki, jak i stopień ukończenia jej konfiguracji."
+          "body": "Wynik łączy dwie rzeczy. Sprawdzenia kondycji (integralność konfiguracji, synchronizacja firmware'u, usługi) punktują to, co udało się zmierzyć. Kroki konfiguracji - kształtowanie sygnału, maksymalny przepływ i strojenie sterowników silników - liczą się jako zero, dopóki ich nie uruchomisz, więc drukarka, która nie została nastrojona, uzyskuje niski wynik, nawet jeśli nic nie jest zepsute, a każdy ukończony krok podnosi tę liczbę. Ocena literowa wynika wprost z tego wyniku, a sygnał, którego teraz nie da się odczytać (Moonraker lub host offline), po prostu wypada zamiast działać na Twoją niekorzyść."
         },
         "fixes": {
           "title": "Linki do naprawy",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Ukończenie konfiguracji: {done} / {total} kroków wykonanych"
     },
-    "capped": {
-      "setup": "Ocena wstrzymana na {grade} do czasu ukończenia konfiguracji.",
-      "warnings": "Ocena wstrzymana na {grade} - nierozwiązane ostrzeżenie.",
-      "errors": "Ocena wstrzymana na {grade} - błąd wymaga naprawy."
+    "readiness": {
+      "title": "Gotowość konfiguracji",
+      "banner": "Konfiguracja nie jest ukończona - niewykonane kroki liczą się jako zero i obniżają wynik. Wykonaj je, aby go podnieść.",
+      "runIt": "Uruchom"
     }
   }
 }

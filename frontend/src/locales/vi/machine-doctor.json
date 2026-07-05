@@ -5,7 +5,7 @@
     "rescan": "Quét lại",
     "scoreLine": "Điểm {score} / 100",
     "counts": "{errors} lỗi · {warnings} cảnh báo",
-    "scoreHint": "Điểm tổng hợp có trọng số từ các trụ cột sức khỏe được đo bên dưới. Tính toàn vẹn cấu hình mất 25 điểm mỗi lỗi và 8 điểm mỗi cảnh báo; các tín hiệu hiện chưa đọc được sẽ không bị trừ điểm. Các bước thiết lập bạn chưa chạy (input shaping, max flow) không làm giảm điểm nhưng sẽ giữ hạng lại cho đến khi hoàn tất.",
+    "scoreHint": "Một mức tổng hợp có trọng số của các trụ cột bên dưới. Các kiểm tra sức khỏe (tính toàn vẹn cấu hình, đồng bộ firmware, dịch vụ) chấm điểm những gì chúng tôi đo được - tính toàn vẹn cấu hình mất 25 điểm mỗi lỗi và 8 điểm mỗi cảnh báo. Các bước thiết lập bạn chưa chạy (input shaping, lưu lượng tối đa, trình điều khiển động cơ) được tính bằng không cho đến khi hoàn tất, nên hoàn thành chúng sẽ nâng điểm lên. Các tín hiệu hiện chưa đọc được sẽ không bị trừ điểm.",
     "allClear": "Tất cả ổn.",
     "notChecked": "Không thể kiểm tra (không kết nối được máy in hoặc chưa có mốc tham chiếu).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Đồng bộ firmware",
       "services": "Dịch vụ",
       "tuning": "Input shaping",
-      "flow": "Lưu lượng tối đa"
+      "flow": "Lưu lượng tối đa",
+      "drivers": "Trình điều khiển động cơ"
     },
     "services": {
       "title": "Dịch vụ",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "Điểm A-F",
-          "body": "Điểm số là mức tổng hợp có trọng số của các trụ cột sức khỏe mà chúng tôi thực sự đo được (tính toàn vẹn cấu hình, đồng bộ firmware, dịch vụ). Các bước thiết lập như input shaping và max flow được theo dõi riêng: bỏ qua chúng không bao giờ làm giảm điểm, nhưng cho đến khi hoàn tất thì hạng vẫn bị giữ ở B. Một cảnh báo chưa xử lý cũng giữ hạng ở B, và một lỗi thực sự sẽ giữ hạng ở C - vì vậy chữ hạng luôn phản ánh cả mức độ khỏe mạnh của máy in lẫn mức độ hoàn tất của thiết lập."
+          "body": "Điểm số tổng hợp hai yếu tố. Các kiểm tra sức khỏe (tính toàn vẹn cấu hình, đồng bộ firmware, dịch vụ) chấm điểm những gì chúng tôi đo được. Các bước thiết lập - input shaping, lưu lượng tối đa và tinh chỉnh trình điều khiển động cơ - được tính bằng không cho đến khi bạn chạy chúng, nên một máy in chưa được tinh chỉnh sẽ có điểm thấp ngay cả khi không có gì hỏng, và mỗi bước bạn hoàn thành sẽ nâng con số lên. Chữ hạng suy ra thẳng từ điểm số đó, và một tín hiệu hiện chưa đọc được (Moonraker hoặc host ngoại tuyến) chỉ đơn giản bị loại ra thay vì bị trừ điểm."
         },
         "fixes": {
           "title": "Liên kết tới-cách-khắc-phục",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Mức độ hoàn tất thiết lập: {done} / {total} bước đã xong"
     },
-    "capped": {
-      "setup": "Hạng bị giữ ở {grade} cho đến khi thiết lập hoàn tất.",
-      "warnings": "Hạng bị giữ ở {grade} - còn một cảnh báo chưa xử lý.",
-      "errors": "Hạng bị giữ ở {grade} - có một lỗi cần khắc phục."
+    "readiness": {
+      "title": "Mức sẵn sàng thiết lập",
+      "banner": "Thiết lập chưa hoàn tất - các bước chưa chạy được tính bằng không và đang giữ điểm lại. Hãy chạy chúng để nâng điểm lên.",
+      "runIt": "Chạy"
     }
   }
 }

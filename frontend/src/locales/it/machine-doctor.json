@@ -5,7 +5,7 @@
     "rescan": "Scansiona di nuovo",
     "scoreLine": "Punteggio {score} / 100",
     "counts": "{errors} errore/i · {warnings} avviso/i",
-    "scoreHint": "Una combinazione ponderata dei pilastri di salute qui sotto. L'integrità della configurazione perde 25 punti per ogni errore e 8 per ogni avviso; i segnali che ora non è possibile leggere non vengono conteggiati a tuo sfavore. I passaggi di configurazione che non hai ancora eseguito (Input shaping, Flusso massimo) non abbassano il punteggio, ma bloccano il voto finché non li completi.",
+    "scoreHint": "Una combinazione ponderata dei pilastri qui sotto. I controlli di salute (Integrità configurazione, Sincronizzazione firmware, Servizi) valutano ciò che siamo riusciti a misurare: l'Integrità configurazione perde 25 punti per ogni errore e 8 per ogni avviso. I passaggi di configurazione che non hai ancora eseguito (Input shaping, Flusso massimo, Driver motori) valgono zero finché non li completi, quindi portarli a termine alza il punteggio. I segnali che ora non è possibile leggere non vengono conteggiati a tuo sfavore.",
     "allClear": "Tutto a posto.",
     "notChecked": "Impossibile controllare (stampante irraggiungibile o nessun riferimento).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Sincronizzazione firmware",
       "services": "Servizi",
       "tuning": "Input shaping",
-      "flow": "Flusso massimo"
+      "flow": "Flusso massimo",
+      "drivers": "Driver motori"
     },
     "services": {
       "title": "Servizi",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "Il voto da A a F",
-          "body": "Il punteggio è una combinazione ponderata dei pilastri di salute che abbiamo potuto misurare davvero (integrità configurazione, sincronizzazione firmware, servizi). I passaggi di configurazione come Input shaping e Flusso massimo sono tracciati separatamente: saltarli non abbassa mai il punteggio, ma finché non sono completati il voto resta bloccato su B. Anche un avviso irrisolto lo blocca su B, e un errore reale lo blocca su C - così la lettera riflette sempre sia quanto è in salute la stampante sia quanto è completa la sua configurazione."
+          "body": "Il punteggio combina due elementi. I controlli di salute (Integrità configurazione, Sincronizzazione firmware, Servizi) valutano ciò che siamo riusciti a misurare. I passaggi di configurazione - Input shaping, Flusso massimo e taratura dei Driver motori - valgono zero finché non li esegui, quindi una stampante non ancora tarata ottiene un punteggio basso anche se nulla è rotto, e ogni passaggio completato alza il valore. Il voto in lettere deriva direttamente da quel punteggio, e un segnale che ora non è possibile leggere (Moonraker o l'host offline) viene semplicemente escluso invece di essere conteggiato a tuo sfavore."
         },
         "fixes": {
           "title": "Link per risolvere",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Completezza configurazione: {done} / {total} passaggi completati"
     },
-    "capped": {
-      "setup": "Voto bloccato su {grade} finché la configurazione non è completa.",
-      "warnings": "Voto bloccato su {grade} - un avviso è irrisolto.",
-      "errors": "Voto bloccato su {grade} - un errore deve essere risolto."
+    "readiness": {
+      "title": "Stato configurazione",
+      "banner": "La configurazione non è finita: i passaggi non eseguiti valgono zero e abbassano il punteggio. Eseguili per alzarlo.",
+      "runIt": "Esegui"
     }
   }
 }

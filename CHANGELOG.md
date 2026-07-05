@@ -6,6 +6,34 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.21.0] - 2026-07-05
+
+### Changed
+
+- **Machine Doctor score now reflects setup readiness, so an untuned printer no longer reads in the
+  90s.** Previously the headline number measured only "health of what could be read", and unfinished
+  tuning was held out of it entirely - a fresh printer that had run no input shaping, no max flow and
+  no driver tuning could still score 93/100. Now the score blends two kinds of pillar: **health
+  checks** (config integrity, firmware sync, services) score what we could measure, while **setup
+  steps** (input shaping, max flow, and motor-driver tuning) **count as zero until they're run**, so
+  finishing each one visibly raises the number and a printer with nothing tuned lands around 65/C
+  instead of 93/B. Signals we genuinely can't read right now (Moonraker or the host offline) still
+  drop out instead of counting against you, and the letter grade is read straight off the score (no
+  separate cap). The report card is redesigned to match: the hero now leads with a **readiness ring**
+  (one segment per setup step, filled as you complete them) around the grade, a caution banner when
+  setup is unfinished, and a **Setup readiness** checklist whose unfinished steps carry a "Run it"
+  button that deep-links straight into input shaping / max flow / the Motor Drivers widget.
+- **Motor-driver tuning is now tracked.** Applying a live driver tune or running autotune from the
+  Motor Drivers widget records that the drivers have been tuned, which feeds the new motor-drivers
+  setup step in the Machine Doctor.
+
+### Fixed
+
+- **The home page no longer prints the raw `["tuning","flow"]` list** in the "setup isn't finished
+  yet" line. The home Doctor tile had its own copy of the verdict-formatting logic that never
+  localized the array of pending steps; both the widget and the home now share one helper, and the
+  home tile also shows the readiness/setup line and the caution banner it was previously missing.
+
 ## [1.20.4] - 2026-07-05
 
 ### Changed

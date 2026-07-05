@@ -5,7 +5,7 @@
     "rescan": "Relancer le scan",
     "scoreLine": "Score {score} / 100",
     "counts": "{errors} erreur(s) · {warnings} avertissement(s)",
-    "scoreHint": "Combinaison pondérée des piliers de santé mesurés ci-dessous. L'intégrité de la configuration perd 25 par erreur et 8 par avertissement ; les signaux que l'on ne peut pas lire pour l'instant ne vous pénalisent pas. Les étapes de configuration que vous n'avez pas encore effectuées (Input shaping, Max flow) ne baissent pas le score mais bloquent la note tant qu'elles ne sont pas terminées.",
+    "scoreHint": "Combinaison pondérée des piliers ci-dessous. Les contrôles de santé (Intégrité config, Sync firmware, Services) notent ce que l'on a pu mesurer : l'Intégrité config perd 25 par erreur et 8 par avertissement. Les étapes de configuration que vous n'avez pas encore lancées (Input shaping, Débit max, Drivers moteur) comptent pour zéro tant qu'elles ne sont pas faites ; les terminer fait donc monter le score. Les signaux illisibles pour l'instant ne vous pénalisent pas.",
     "allClear": "Rien à signaler.",
     "notChecked": "Impossible à vérifier (imprimante injoignable ou pas de référence).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Sync firmware",
       "services": "Services",
       "tuning": "Input shaping",
-      "flow": "Débit max"
+      "flow": "Débit max",
+      "drivers": "Drivers moteur"
     },
     "services": {
       "title": "Services",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "La note A–F",
-          "body": "Le score est une combinaison pondérée des piliers de santé que nous avons réellement pu mesurer (intégrité de la configuration, synchronisation du firmware, services). Les étapes de configuration comme Input shaping et Max flow sont suivies séparément : les ignorer ne baisse jamais le score, mais tant qu'elles ne sont pas terminées, la note reste bloquée à B. Un avertissement non résolu la maintient aussi à B, et une véritable erreur la maintient à C - ainsi la lettre reflète toujours à la fois l'état de santé de l'imprimante et l'avancement de sa configuration."
+          "body": "Le score combine deux choses. Les contrôles de santé (Intégrité config, Sync firmware, Services) notent ce que l'on a pu mesurer. Les étapes de configuration - Input shaping, Débit max et réglage des Drivers moteur - comptent pour zéro tant que vous ne les avez pas lancées : une imprimante non réglée obtient donc un score bas même si rien n'est cassé, et chaque étape terminée fait monter le chiffre. La note en lettre découle directement de ce score, et un signal illisible pour l'instant (Moonraker ou l'hôte hors ligne) est simplement écarté au lieu de vous pénaliser."
         },
         "fixes": {
           "title": "Liens de saut vers la correction",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Achèvement de la configuration : {done} / {total} étapes effectuées"
     },
-    "capped": {
-      "setup": "Note bloquée à {grade} tant que la configuration n'est pas terminée.",
-      "warnings": "Note bloquée à {grade} - un avertissement n'est pas résolu.",
-      "errors": "Note bloquée à {grade} - une erreur doit être corrigée."
+    "readiness": {
+      "title": "Avancement de la configuration",
+      "banner": "Configuration non terminée : les étapes non lancées comptent pour zéro et retiennent le score. Lancez-les pour le faire monter.",
+      "runIt": "Lancer"
     }
   }
 }

@@ -5,7 +5,7 @@
     "rescan": "重新掃描",
     "scoreLine": "分數 {score} / 100",
     "counts": "{errors} 個錯誤 · {warnings} 個警告",
-    "scoreHint": "下方各項已量測健康指標的加權綜合結果。設定完整性每個錯誤扣 25 分、每個警告扣 8 分；目前無法讀取的訊號不會計入扣分。尚未執行的設定步驟（Input shaping、Max flow）不會降低分數，但在完成前會壓住評級。",
+    "scoreHint": "下方各支柱的加權綜合分數。健康檢查（Config integrity、Firmware sync、Services）評估我們能實際量測的項目，其中 Config integrity 每個錯誤扣 25 分、每個警告扣 8 分。尚未執行的設定步驟（Input shaping、Max flow、Motor drivers）在完成前計為零分，因此完成它們可提高分數。目前無法讀取的訊號不會對你造成扣分。",
     "allClear": "一切正常。",
     "notChecked": "無法檢查（印表機無法連線或無基準）。",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "韌體同步",
       "services": "服務",
       "tuning": "輸入整形",
-      "flow": "最大流量"
+      "flow": "最大流量",
+      "drivers": "Motor drivers"
     },
     "services": {
       "title": "服務",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "A-F 等級",
-          "body": "分數是我們實際能量測的健康指標（設定完整性、韌體同步、服務）的加權綜合結果。像 Input shaping 和 Max flow 這類設定步驟則另外追蹤：略過它們絕不會降低分數，但在完成前評級會維持在 B。未解決的警告同樣會將評級壓在 B，真正的錯誤則會壓到 C——因此這個字母同時反映了印表機的健康程度與設定的完成程度。"
+          "body": "分數由兩部分綜合而成。健康檢查（Config integrity、Firmware sync、Services）評估我們能實際量測的項目。設定步驟（Input shaping、Max flow 與 Motor drivers 調校）在你執行之前計為零分，因此即使一切正常，未經調校的印表機分數仍偏低，而你每完成一個步驟都會提高數值。等級評分直接由該分數換算而來；目前無法讀取的訊號（Moonraker 或主機離線）只會被略過，而不會對你造成扣分。"
         },
         "fixes": {
           "title": "前往修正的連結",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "設定完整度：已完成 {done} / {total} 個步驟"
     },
-    "capped": {
-      "setup": "評級維持在 {grade}，直到設定完成。",
-      "warnings": "評級維持在 {grade}——有一項警告尚未解決。",
-      "errors": "評級維持在 {grade}——有一項錯誤需要修正。"
+    "readiness": {
+      "title": "設定就緒度",
+      "banner": "設定尚未完成，未執行的步驟計為零分，正在拉低分數。執行它們即可提高分數。",
+      "runIt": "前往執行"
     }
   }
 }

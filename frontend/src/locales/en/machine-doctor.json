@@ -6,7 +6,7 @@
     "scoreLine": "Score {score} / 100",
     "counts": "{errors} error(s) · {warnings} warning(s)",
     "listSep": ", ",
-    "scoreHint": "A weighted blend of the measured health pillars below. Config integrity loses 25 per error and 8 per warning; signals we can't read right now don't count against you. Setup steps you haven't run yet (input shaping, max flow) don't lower the score but hold the grade until they're done.",
+    "scoreHint": "A weighted blend of the pillars below. Health checks (config integrity, firmware sync, services) score what we could measure - config integrity loses 25 per error and 8 per warning. Setup steps you haven't run yet (input shaping, max flow, motor drivers) count as zero until done, so finishing them raises the score. Signals we can't read right now don't count against you.",
     "allClear": "All clear.",
     "notChecked": "Could not be checked (printer unreachable or no baseline).",
     "assessment": {
@@ -24,17 +24,18 @@
     "setup": {
       "line": "Setup completeness: {done} / {total} steps done"
     },
-    "capped": {
-      "setup": "Grade held at {grade} until setup is finished.",
-      "warnings": "Grade held at {grade} - a warning is unresolved.",
-      "errors": "Grade held at {grade} - an error needs fixing."
+    "readiness": {
+      "title": "Setup readiness",
+      "banner": "Setup isn't finished - the unrun steps count as zero and are holding the score down. Run them to raise it.",
+      "runIt": "Run it"
     },
     "pillar": {
       "config": "Config integrity",
       "firmware": "Firmware sync",
       "services": "Services",
       "tuning": "Input shaping",
-      "flow": "Max flow"
+      "flow": "Max flow",
+      "drivers": "Motor drivers"
     },
     "services": {
       "title": "Services",
@@ -123,7 +124,7 @@
         },
         "grade": {
           "title": "The A-F grade",
-          "body": "The score is a weighted blend of the health pillars we could actually measure (config integrity, firmware sync, services). Setup steps like input shaping and max flow are tracked separately: skipping them never lowers the score, but until they're done the grade is held at B. An unresolved warning also holds it at B, and a real error holds it at C - so the letter always reflects both how healthy the printer is and how finished its setup is."
+          "body": "The score blends two things. Health checks (config integrity, firmware sync, services) score what we could measure. Setup steps - input shaping, max flow and motor-driver tuning - count as zero until you run them, so a printer that hasn't been tuned scores low even if nothing is broken, and each step you finish raises the number. The letter grade follows straight from that score, and a signal we can't read right now (Moonraker or the host offline) simply drops out instead of counting against you."
         },
         "fixes": {
           "title": "Jump-to-fix links",

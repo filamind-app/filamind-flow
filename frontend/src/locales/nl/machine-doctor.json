@@ -5,7 +5,7 @@
     "rescan": "Opnieuw scannen",
     "scoreLine": "Score {score} / 100",
     "counts": "{errors} fout(en) · {warnings} waarschuwing(en)",
-    "scoreHint": "Een gewogen combinatie van de gezondheidspijlers hieronder. Configuratie-integriteit verliest 25 punten per fout en 8 per waarschuwing; signalen die we nu niet kunnen uitlezen, tellen niet in je nadeel mee. Installatiestappen die je nog niet hebt uitgevoerd (input shaping, max flow) verlagen de score niet, maar houden het cijfer vast tot ze klaar zijn.",
+    "scoreHint": "Een gewogen combinatie van de pijlers hieronder. Gezondheidscontroles (configintegriteit, firmwaresync, diensten) scoren wat we konden meten - configintegriteit verliest 25 punten per fout en 8 per waarschuwing. Installatiestappen die je nog niet hebt uitgevoerd (input shaping, max flow, motordrivers) tellen als nul tot ze klaar zijn, dus ze afronden verhoogt de score. Signalen die we nu niet kunnen uitlezen, tellen niet in je nadeel mee.",
     "allClear": "Alles in orde.",
     "notChecked": "Kon niet worden gecontroleerd (printer onbereikbaar of geen referentie).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Firmwaresync",
       "services": "Diensten",
       "tuning": "Input shaping",
-      "flow": "Max. flow"
+      "flow": "Max. flow",
+      "drivers": "Motordrivers"
     },
     "services": {
       "title": "Diensten",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "Het A-F-cijfer",
-          "body": "De score is een gewogen combinatie van de gezondheidspijlers die we daadwerkelijk konden meten (configuratie-integriteit, firmwaresync, diensten). Installatiestappen zoals input shaping en max flow worden apart bijgehouden: ze overslaan verlaagt de score nooit, maar tot ze klaar zijn blijft het cijfer op B staan. Een onopgeloste waarschuwing houdt het ook op B, en een echte fout houdt het op C - zo weerspiegelt de letter altijd zowel hoe gezond de printer is als hoe compleet de installatie ervan is."
+          "body": "De score combineert twee dingen. Gezondheidscontroles (configintegriteit, firmwaresync, diensten) scoren wat we konden meten. Installatiestappen - input shaping, max flow en het afstellen van motordrivers - tellen als nul tot je ze uitvoert, dus een printer die niet is afgesteld scoort laag zelfs als er niets kapot is, en elke stap die je afrondt verhoogt het getal. Het lettercijfer volgt rechtstreeks uit die score, en een signaal dat we nu niet kunnen uitlezen (Moonraker of de host offline) valt gewoon weg in plaats van in je nadeel mee te tellen."
         },
         "fixes": {
           "title": "Spring-naar-oplossing-links",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Volledigheid installatie: {done} / {total} stappen klaar"
     },
-    "capped": {
-      "setup": "Cijfer vastgehouden op {grade} tot de installatie af is.",
-      "warnings": "Cijfer vastgehouden op {grade} - een waarschuwing is niet opgelost.",
-      "errors": "Cijfer vastgehouden op {grade} - een fout moet worden opgelost."
+    "readiness": {
+      "title": "Installatiegereedheid",
+      "banner": "De installatie is nog niet af - de niet-uitgevoerde stappen tellen als nul en drukken de score omlaag. Voer ze uit om hem te verhogen.",
+      "runIt": "Uitvoeren"
     }
   }
 }

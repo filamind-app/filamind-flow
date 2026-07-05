@@ -7,13 +7,16 @@ checks. Each source's findings are normalized into ``{code, level, params, link}
 frontend translates ``code`` + ``params`` (no English leaks from here) and turns ``link``
 into a deep-link button into the widget that fixes the problem.
 
-The headline SCORE is a weighted blend of the MEASURED health pillars (config integrity, firmware
-sync, services, input shaping, max flow) - the exact bars shown in the Health breakdown. Config
-integrity is the transparent additive pillar (``100 - 25*errors - 8*warnings``, floored at 0);
-pillars that can't be judged right now (Moonraker/host down) renormalize out, so the score always
-equals the visible weighted bars. An UNDONE setup step (input shaping / max flow never run) is not a
-fault, so it doesn't lower the number - but it CAPS the letter grade (can't be an ``A``), is named
-in the verdict, and is tracked under Setup completeness, so a half-set-up printer never reads as A.
+The headline SCORE is a weighted blend of the pillars shown in the Health breakdown, split into two
+kinds. HEALTH pillars (config integrity, firmware sync, services) measure how healthy what we could
+read is; config integrity is the transparent additive pillar (``100 - 25*errors - 8*warnings``,
+floored at 0). SETUP pillars (input shaping, max flow, motor-driver tuning) are Get-Started tasks:
+each scores its measured quality when done, but an UNDONE setup step counts as **0** in the number
+(a real, knowable readiness gap the user must close), so a printer that has done none of its tuning
+cannot read in the 90s. A pillar we can't judge right now (Moonraker/host down) renormalizes OUT
+instead - a transient outage never penalizes. The letter grade is derived straight from that
+readiness-aware score (no separate cap), undone steps are named in the verdict, and Setup
+completeness tracks how many of the setup steps are done.
 """
 
 from __future__ import annotations
@@ -25,6 +28,7 @@ from app.config import Settings
 from app.services import (
     board_topology,
     config_service,
+    drivers_store,
     firmware_service,
     health_service,
     max_flow_store,
@@ -45,19 +49,24 @@ def _grade(score: float) -> str:
     return "F"
 
 
-#: Weighted health pillars. Each contributes a 0-100 sub-score; weights are renormalized over the
-#: pillars that COULD be measured, so a signal we can't judge now (Moonraker down) drops out of the
-#: NUMBER. Config integrity (the original additive score) always contributes, so the denominator is
-#: never zero. (An undone setup pillar also drops out of the number but caps the grade - see
-#: _cap_grade / _SETUP_PILLARS.)
-_PILLAR_WEIGHTS = {"config": 0.45, "firmware": 0.15, "services": 0.15, "tuning": 0.15, "flow": 0.10}
-_PILLAR_ORDER = ("config", "firmware", "services", "tuning", "flow")
+#: Weighted pillars, summing to 1.0. HEALTH pillars (config, firmware, services = 0.70) score how
+#: healthy what we could read is. SETUP pillars (tuning, flow, drivers = 0.30) are Get-Started tasks
+#: that count as 0 in the number until done. A pillar we can't judge now (Moonraker down) is
+#: renormalized OUT of the denominator; config integrity always contributes, so it's never zero.
+_PILLAR_WEIGHTS = {
+    "config": 0.45,
+    "firmware": 0.13,
+    "services": 0.12,
+    "tuning": 0.12,
+    "flow": 0.09,
+    "drivers": 0.09,
+}
+_PILLAR_ORDER = ("config", "firmware", "services", "tuning", "flow", "drivers")
 _CRITICAL_SERVICES = ("klipper", "moonraker")
 _TUNING_GRADE_SCORE = {"A": 95.0, "B": 85.0, "C": 72.0, "D": 53.0, "F": 30.0}
-_GRADE_RANK = {"A": 0, "B": 1, "C": 2, "D": 3, "F": 4}
-#: Pillars that represent a Get-Started checklist task. When one is UNDONE (never run) it does NOT
-#: lower the number (it isn't a fault), but it caps the grade and is listed in the verdict.
-_SETUP_PILLARS = ("tuning", "flow")
+#: Pillars that represent a Get-Started checklist task. When one is UNDONE (never run) it counts as
+#: 0 in the score (a readiness gap) and is listed in the verdict + the Setup-completeness track.
+_SETUP_PILLARS = ("tuning", "flow", "drivers")
 
 #: A pillar's ``reason`` when its score is None: ``undone`` = a setup task never run (holds the
 #: grade); ``blocked`` = can't be judged right now (Moonraker/host down) - never penalizes.
@@ -127,19 +136,12 @@ def _flow_pillar(last: dict[str, Any] | None) -> tuple[float | None, dict[str, A
     )  # a clean measurement exists; no rated value to compare against
 
 
-def _cap_grade(base: str, undone_count: int, errors: int, warnings: int) -> tuple[str, str | None]:
-    """Cap the letter grade so it can only WORSEN: an error can't be A/B (cap C); an undone setup
-    step or any warning can't be an A (cap B). Returns (grade, cap_reason|None)."""
-    cap: str | None = None
-    cap_reason: str | None = None
-    if errors > 0:
-        cap, cap_reason = "C", "errors"
-    elif undone_count >= 1 or warnings > 0:
-        cap, cap_reason = "B", ("setup" if undone_count else "warnings")
-    if cap is None:
-        return base, None
-    final = base if _GRADE_RANK[base] >= _GRADE_RANK[cap] else cap  # keep the worse of the two
-    return final, (cap_reason if final != base else None)
+def _drivers_pillar(tuned: bool) -> tuple[float | None, dict[str, Any], str]:
+    """Motor-driver tuning is a binary Get-Started task: a recorded live apply / autotune marks it
+    done (full marks). Never 'blocked' - it's a local fact, always knowable."""
+    if tuned:
+        return 100.0, {"tuned": True}, "measured"
+    return None, {"tuned": False}, "undone"  # no recorded apply/autotune = drivers never tuned
 
 
 def _assessment(
@@ -431,6 +433,7 @@ async def run_scan(settings: Settings) -> dict[str, Any]:
         "services": _services_pillar(services["units"]),
         "tuning": _tuning_pillar(tuning),
         "flow": _flow_pillar(last_flow),
+        "drivers": _drivers_pillar(drivers_store.is_tuned(settings.data_dir)),
     }
     pillars: list[dict[str, Any]] = []
     contributing: list[tuple[str, float]] = []
@@ -446,23 +449,27 @@ async def run_scan(settings: Settings) -> dict[str, Any]:
                 "detail": detail,
             }
         )
-        if raw_score is not None:
-            contributing.append((key, raw_score))
+        # A pillar we can't judge right now (blocked) renormalizes OUT - a transient outage never
+        # penalizes. A measured pillar contributes its score; an UNDONE setup step counts as 0 - a
+        # real readiness gap, so a printer with no tuning done can't approach the 90s.
+        if reason == "blocked":
+            continue
+        contributing.append((key, raw_score if raw_score is not None else 0.0))
     total_w = sum(_PILLAR_WEIGHTS[k] for k, _ in contributing)
     composite = (
         sum(_PILLAR_WEIGHTS[k] * s for k, s in contributing) / total_w if total_w else config_score
     )
-    # The headline score IS the weighted-pillar composite shown in the Health breakdown - config
-    # integrity (100 - 25*errors - 8*warnings) is just its biggest pillar, blended with firmware /
-    # services / tuning / max-flow. Unmeasured pillars renormalize out (never count against you), so
-    # the number always equals the visible weighted bars.
-    # UNDONE setup steps (input shaping / max flow never run) don't lower the number (they aren't a
-    # fault) but they cap the letter grade and are named in the verdict + a Setup-completeness list.
+    # The headline score IS this readiness-aware weighted composite - the exact bars in the Health
+    # breakdown (undone setup bars sit at 0). The letter grade is read straight off it; undone setup
+    # steps are named in the verdict and counted under Setup completeness.
     undone = [p["key"] for p in pillars if p["status"] == "todo"]
-    grade, cap_reason = _cap_grade(_grade(composite), len(undone), errors, warnings)
+    grade = _grade(composite)
+    # A setup pillar we can't judge right now (blocked - e.g. an unreadable shaper archive) drops
+    # OUT of the total too, mirroring the composite: it's neither done nor pending, so it must not
+    # leave a phantom empty segment on the readiness ring next to a "setup complete" verdict.
     setup = {
         "done": sum(1 for k in _SETUP_PILLARS if raw[k][2] == "measured"),
-        "total": len(_SETUP_PILLARS),
+        "total": sum(1 for k in _SETUP_PILLARS if raw[k][2] != "blocked"),
         "pending": undone,
     }
     score = composite
@@ -490,7 +497,6 @@ async def run_scan(settings: Settings) -> dict[str, Any]:
         "pillars": pillars,
         "assessment": _assessment(grade, pillars, errors, warnings, undone),
         "setup": setup,
-        "cap_reason": cap_reason,
         "services": services,
         "stats": stats,
     }

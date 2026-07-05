@@ -20,7 +20,9 @@ import { focusStepper } from '@/widgets/motor-drivers/driverFocus'
 import { fetchDoctorScan } from './api'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
 import HelpIllo from './HelpIllo.vue'
+import ReadinessRing from './ReadinessRing.vue'
 import type { DoctorFinding, DoctorLink, DoctorReport } from './types'
+import { setupStepClass, setupStepGlyph, useDoctorAssessment } from './useDoctorAssessment'
 
 const { t, te } = useI18n({ useScope: 'global' })
 const { go } = useNav()
@@ -99,26 +101,21 @@ const PILLAR_BAR: Record<string, string> = {
   unknown: 'bg-ink/20',
 }
 
-function pillarLabel(key: string): string {
-  const k = `machineDoctor.pillar.${key}`
-  return te(k) ? t(k) : key
-}
+const { localizeAssessment, canRunSetup, goToSetup } = useDoctorAssessment()
 
-/** The headline verdict, with pillar key(s) resolved to localized labels. `pillar` is a single
- *  weakest-pillar key (critical/attention); `pillars` is a list of undone setup steps joined for
- *  the `setup_incomplete` verdict. */
-const assessmentText = computed(() => {
-  const a = report.value?.assessment
-  if (!a) return ''
-  const key = `machineDoctor.assessment.${a.code}`
-  if (!te(key)) return ''
-  const parts: Record<string, unknown> = { ...a.params }
-  if (Array.isArray(a.params.pillars)) {
-    parts.pillars = (a.params.pillars as string[]).map(pillarLabel).join(t('machineDoctor.listSep'))
-  }
-  if (a.params.pillar) parts.pillar = pillarLabel(String(a.params.pillar))
-  return t(key, parts)
-})
+/** The setup pillars (Get-Started tasks). Undone ones count as 0 in the score, so they're split
+ *  out of the health bars into their own actionable readiness checklist. Mirrors the backend
+ *  ``_SETUP_PILLARS``. */
+const SETUP_KEYS = ['tuning', 'flow', 'drivers']
+
+const assessmentText = computed(() => localizeAssessment(report.value?.assessment))
+const healthPillars = computed(
+  () => report.value?.pillars.filter((p) => !SETUP_KEYS.includes(p.key)) ?? [],
+)
+const setupPillars = computed(
+  () => report.value?.pillars.filter((p) => SETUP_KEYS.includes(p.key)) ?? [],
+)
+const readinessIncomplete = computed(() => (report.value?.setup?.pending.length ?? 0) > 0)
 
 const hasStats = computed(() => {
   const s = report.value?.stats
@@ -162,49 +159,83 @@ const hasStats = computed(() => {
     </p>
 
     <template v-if="report">
-      <!-- Grade hero -->
+      <!-- Grade + readiness hero -->
       <div class="nb-card flex items-center gap-4 bg-surface p-3">
-        <span
-          class="flex h-16 w-16 shrink-0 items-center justify-center rounded-brutal border-3 border-ink font-display text-4xl font-bold text-ink"
-          :class="GRADE_BG[report.grade] ?? 'bg-ink/10'"
-        >
-          {{ report.grade }}
-        </span>
+        <ReadinessRing
+          :done="report.setup.done"
+          :total="report.setup.total"
+          :grade="report.grade"
+          :grade-class="GRADE_BG[report.grade] ?? 'bg-ink/10'"
+        />
         <div class="min-w-0 space-y-0.5">
           <p v-if="assessmentText" class="font-bold">{{ assessmentText }}</p>
           <p class="font-mono text-[11px] opacity-70">
             {{ t('machineDoctor.scoreLine', { score: report.score }) }} ·
             {{ t('machineDoctor.counts', { errors: report.errors, warnings: report.warnings }) }}
           </p>
-          <p v-if="report.cap_reason" class="text-[11px] font-bold text-brand-red/80">
-            {{ t('machineDoctor.capped.' + report.cap_reason, { grade: report.grade }) }}
-          </p>
           <p v-if="report.setup?.total" class="font-mono text-[11px] opacity-70">
             {{
-              t('machineDoctor.setup.line', {
-                done: report.setup.done,
-                total: report.setup.total,
-              })
+              t('machineDoctor.setup.line', { done: report.setup.done, total: report.setup.total })
             }}
           </p>
           <p class="text-[11px] opacity-50">{{ t('machineDoctor.scoreHint') }}</p>
         </div>
       </div>
 
-      <!-- Health pillars -->
-      <div v-if="report.pillars?.length" class="nb-card space-y-2 bg-surface p-3">
+      <!-- Readiness caution banner (deliberately NOT the primary cyan): unfinished setup is
+           counting as zero and dragging the score down until the steps below are run. -->
+      <div
+        v-if="readinessIncomplete"
+        class="nb-card flex items-center gap-2 border-2 border-ink bg-brand-yellow p-2 text-xs font-bold text-ink"
+      >
+        <span aria-hidden="true">⚠</span>
+        <span class="min-w-0">{{ t('machineDoctor.readiness.banner') }}</span>
+      </div>
+
+      <!-- Setup readiness - the Get-Started steps, each a tick or an actionable "Run it" button -->
+      <div v-if="setupPillars.length" class="nb-card space-y-1.5 bg-surface p-3">
+        <p class="text-xs font-bold">{{ t('machineDoctor.readiness.title') }}</p>
+        <div v-for="p in setupPillars" :key="p.key" class="flex items-center gap-2 text-[11px]">
+          <span
+            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2 border-ink text-[11px] font-bold"
+            :class="setupStepClass(p.status)"
+            aria-hidden="true"
+          >
+            {{ setupStepGlyph(p.status) }}
+          </span>
+          <span class="min-w-0 flex-1 font-bold" :class="{ 'opacity-60': p.status === 'ok' }">
+            {{ t('machineDoctor.pillar.' + p.key) }}
+          </span>
+          <span v-if="p.score !== null" class="shrink-0 font-mono font-bold">
+            {{ Math.round(p.score) }}
+          </span>
+          <span v-else-if="p.status === 'unknown'" class="shrink-0 font-mono opacity-50">
+            {{ t('machineDoctor.pillars.notMeasured') }}
+          </span>
+          <button
+            v-else-if="canRunSetup(p.key)"
+            class="nb-btn shrink-0 bg-brand-cyan px-2 py-0.5 text-[10px]"
+            @click="goToSetup(p.key)"
+          >
+            {{ t('machineDoctor.readiness.runIt') }} ↗
+          </button>
+          <span v-else class="shrink-0 font-mono opacity-60">
+            {{ t('machineDoctor.pillars.notDone') }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Health breakdown - the measured pillars that make up the score -->
+      <div v-if="healthPillars.length" class="nb-card space-y-2 bg-surface p-3">
         <p class="text-xs font-bold">{{ t('machineDoctor.pillars.title') }}</p>
-        <div v-for="p in report.pillars" :key="p.key" class="space-y-1">
+        <div v-for="p in healthPillars" :key="p.key" class="space-y-1">
           <div class="flex items-center justify-between gap-2 text-[11px]">
             <span class="min-w-0 truncate">
               {{ t('machineDoctor.pillar.' + p.key) }}
               <span class="opacity-50">· {{ Math.round(p.weight * 100) }}%</span>
             </span>
             <span class="shrink-0 font-mono" :class="p.score === null ? 'opacity-50' : 'font-bold'">
-              <template v-if="p.status === 'todo'">{{
-                t('machineDoctor.pillars.notDone')
-              }}</template>
-              <template v-else-if="p.score === null">{{
+              <template v-if="p.score === null">{{
                 t('machineDoctor.pillars.notMeasured')
               }}</template>
               <template v-else>{{ Math.round(p.score) }}</template>

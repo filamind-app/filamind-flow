@@ -5,7 +5,7 @@
     "rescan": "Erneut scannen",
     "scoreLine": "Punktzahl {score} / 100",
     "counts": "{errors} Fehler · {warnings} Warnung(en)",
-    "scoreHint": "Eine gewichtete Mischung der unten stehenden gemessenen Gesundheitssäulen. Die Konfigurationsintegrität verliert 25 Punkte pro Fehler und 8 pro Warnung; Signale, die sich gerade nicht auslesen lassen, zählen nicht gegen Sie. Einrichtungsschritte, die Sie noch nicht durchgeführt haben (Input Shaping, Max-Flow), senken die Note nicht, halten sie aber zurück, bis sie erledigt sind.",
+    "scoreHint": "Eine gewichtete Mischung der unten stehenden Säulen. Gesundheitsprüfungen (Konfig-Integrität, Firmware-Sync, Dienste) bewerten, was wir messen konnten — die Konfig-Integrität verliert 25 Punkte pro Fehler und 8 pro Warnung. Einrichtungsschritte, die Sie noch nicht durchgeführt haben (Input Shaping, Max. Fluss, Motortreiber), zählen als null, bis sie erledigt sind, sodass ihre Fertigstellung die Punktzahl anhebt. Signale, die sich gerade nicht auslesen lassen, zählen nicht gegen Sie.",
     "allClear": "Alles in Ordnung.",
     "notChecked": "Konnte nicht geprüft werden (Drucker nicht erreichbar oder keine Basislinie).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Firmware-Sync",
       "services": "Dienste",
       "tuning": "Input Shaping",
-      "flow": "Max. Fluss"
+      "flow": "Max. Fluss",
+      "drivers": "Motortreiber"
     },
     "services": {
       "title": "Dienste",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "Die A–F-Note",
-          "body": "Der Score ist eine gewichtete Mischung der Gesundheitssäulen, die wir tatsächlich messen konnten (Konfigurationsintegrität, Firmware-Sync, Dienste). Einrichtungsschritte wie Input Shaping und Max-Flow werden separat erfasst: Sie auszulassen senkt den Score nie, aber bis sie erledigt sind, wird die Note bei B gehalten. Auch eine ungelöste Warnung hält sie bei B, und ein echter Fehler hält sie bei C — so spiegelt der Buchstabe immer wider, wie gesund der Drucker ist und wie weit seine Einrichtung fortgeschritten ist."
+          "body": "Die Punktzahl vereint zwei Dinge. Gesundheitsprüfungen (Konfig-Integrität, Firmware-Sync, Dienste) bewerten, was wir messen konnten. Einrichtungsschritte — Input Shaping, Max. Fluss und die Abstimmung der Motortreiber — zählen als null, bis Sie sie durchführen, sodass ein nicht abgestimmter Drucker niedrig abschneidet, selbst wenn nichts kaputt ist, und jeder erledigte Schritt den Wert anhebt. Die Buchstabennote folgt direkt aus dieser Punktzahl, und ein Signal, das sich gerade nicht auslesen lässt (Moonraker oder der Host offline), fällt einfach heraus, statt gegen Sie zu zählen."
         },
         "fixes": {
           "title": "Sprung-zur-Lösung-Links",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Vollständigkeit der Einrichtung: {done} / {total} Schritte erledigt"
     },
-    "capped": {
-      "setup": "Note bei {grade} gehalten, bis die Einrichtung abgeschlossen ist.",
-      "warnings": "Note bei {grade} gehalten — eine Warnung ist ungelöst.",
-      "errors": "Note bei {grade} gehalten — ein Fehler muss behoben werden."
+    "readiness": {
+      "title": "Einrichtungsbereitschaft",
+      "banner": "Die Einrichtung ist noch nicht abgeschlossen — die nicht durchgeführten Schritte zählen als null und halten die Punktzahl zurück. Führen Sie sie durch, um sie anzuheben.",
+      "runIt": "Durchführen"
     }
   }
 }

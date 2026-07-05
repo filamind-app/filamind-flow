@@ -195,7 +195,11 @@ async def autotune(
 ) -> ApplyResponse:
     """Drive AUTOTUNE_TMC if a TMC autotune host extra is installed for this stepper."""
     data = await _guarded(
-        "driver_write", drivers_apply.run_autotune, settings.moonraker_url, request.stepper
+        "driver_write",
+        drivers_apply.run_autotune,
+        settings.moonraker_url,
+        request.stepper,
+        data_dir=settings.data_dir,
     )
     return ApplyResponse.model_validate(data)
 
