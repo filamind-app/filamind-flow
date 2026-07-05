@@ -811,6 +811,11 @@ PY
 CMD="${1:-install}"
 case "$CMD" in
   sudoers) shift; do_sudoers "$@" ;;
+  # Re-apply the passwordless-sudo grant WITHOUT root, via the panel's already-granted `sudo -n cp`
+  # (same self-heal the update hook runs). Lets another suite installer top up the grant with a new
+  # capability - e.g. the FilaMind screen native install adding the apt/dpkg rules - so the user
+  # never has to run a sudo command by hand.
+  sudoers-refresh) refresh_sudoers_on_update ;;
   kiosk) shift; do_kiosk "$@" ;;
   native) shift; exec bash "$(cd "$(dirname "$0")/.." && pwd)/deploy/install-native.sh" "$@" ;;
   update) do_update ;;
@@ -819,7 +824,7 @@ case "$CMD" in
   uninstall) do_uninstall ;;
   *)
     echo "Unknown command: $CMD" >&2
-    echo "Usage: install.sh [install|suite|uninstall|sudoers [user]|kiosk [user] [url]|kiosk --uninstall|native [--uninstall]|update]" >&2
+    echo "Usage: install.sh [install|suite|uninstall|sudoers [user]|sudoers-refresh|kiosk [user] [url]|kiosk --uninstall|native [--uninstall]|update]" >&2
     exit 2
     ;;
 esac

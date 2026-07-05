@@ -25,9 +25,11 @@ export async function fetchCatalog(): Promise<SetupCatalog> {
   return (await r.json()) as SetupCatalog
 }
 
-/** Installed status per component + whether GUI writes are enabled on this host. */
-export async function fetchStatus(): Promise<SetupStatus> {
-  const r = await fetch(`${base()}/api/setup/status`)
+/** Installed status per component + whether GUI writes are enabled on this host. Pass
+ *  `refresh` (the "Check for updates" button) to bypass the version caches and re-read from
+ *  GitHub, so a just-published release shows up instead of a week-old cached value. */
+export async function fetchStatus(refresh = false): Promise<SetupStatus> {
+  const r = await fetch(`${base()}/api/setup/status${refresh ? '?refresh=true' : ''}`)
   if (!r.ok) throw new Error(httpError(r.status))
   return (await r.json()) as SetupStatus
 }

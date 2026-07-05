@@ -64,11 +64,13 @@ const canInstall = (c: SetupComponent): boolean =>
 const hasService = (c: SetupComponent): boolean =>
   !!c.first_party && !!c.service_install && c.service_install !== (c.install_args ?? '')
 
-async function load(): Promise<void> {
+async function load(refresh = false): Promise<void> {
   loading.value = true
   error.value = null
   try {
-    const [catalog, st] = await Promise.all([fetchCatalog(), fetchStatus()])
+    // "Check for updates" forces a fresh version read (bypasses the caches); the initial load uses
+    // the cache so opening the widget is fast.
+    const [catalog, st] = await Promise.all([fetchCatalog(), fetchStatus(refresh)])
     groups.value = catalog.groups
     for (const g of catalog.groups)
       for (const c of g.components)
@@ -313,7 +315,11 @@ onMounted(load)
         >
           {{ t('setup.updateAll', { n: updateCount }) }}
         </button>
-        <button class="nb-btn px-3 py-1.5" :disabled="loading || busyId !== null" @click="load">
+        <button
+          class="nb-btn px-3 py-1.5"
+          :disabled="loading || busyId !== null"
+          @click="load(true)"
+        >
           {{ t('setup.checkUpdates') }}
         </button>
       </div>

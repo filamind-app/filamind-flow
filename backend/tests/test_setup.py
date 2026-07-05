@@ -144,6 +144,63 @@ async def test_unmanaged_git_checkout_surfaces_updates(monkeypatch) -> None:
     assert d["guppyscreen"]["updateAvailable"] is False  # level with origin -> no update offered
 
 
+async def test_check_for_updates_forces_a_fresh_lookup(monkeypatch) -> None:
+    # A recently-cached version is served from cache normally, but force=True (the "Check for
+    # updates" button) re-fetches so a just-published release shows up instead of a week-old value.
+    setup_manager._latest_cache.clear()
+    setup_manager._latest_cache_loaded = True
+    monkeypatch.setattr(setup_manager, "_save_latest_cache", lambda: None)
+    setup_manager._latest_cache["owner/repo"] = (time.time(), "v1.0.0")  # fresh cache entry
+    calls: list[tuple[str, bool]] = []
+
+    async def fake_latest(repo: str, force: bool = False) -> str:
+        calls.append((repo, force))
+        return "v2.0.0"
+
+    monkeypatch.setattr(setup_manager, "_github_latest", fake_latest)
+
+    out = await setup_manager._latest_versions({"c": "owner/repo"}, github_remaining=200)
+    assert out["c"] == "v1.0.0" and calls == []  # served from cache, no fetch
+
+    out = await setup_manager._latest_versions(
+        {"c": "owner/repo"}, github_remaining=200, force=True
+    )
+    assert out["c"] == "v2.0.0" and calls == [("owner/repo", True)]  # re-fetched
+
+
+def test_clear_version_caches_empties_both_and_allows_reload() -> None:
+    setup_manager._latest_cache["x"] = (1.0, "v1")
+    setup_manager._git_latest_cache["/y"] = (1.0, ("v1", False))
+    setup_manager._latest_cache_loaded = True
+    setup_manager.clear_version_caches()
+    assert not setup_manager._latest_cache and not setup_manager._git_latest_cache
+    assert setup_manager._latest_cache_loaded is False  # disk values can be re-read next time
+
+
+async def test_force_refresh_retains_cached_versions_under_low_quota(monkeypatch) -> None:
+    # A forced "Check for updates" under LOW GitHub quota must re-fetch what fits the budget but
+    # keep the last-known (cached) version for the rest - never blank a version that was showing.
+    setup_manager._latest_cache.clear()
+    setup_manager._latest_cache_loaded = True  # simulate disk already loaded (no clobber)
+    monkeypatch.setattr(setup_manager, "_save_latest_cache", lambda: None)
+    for i in range(5):
+        setup_manager._latest_cache[f"owner/repo{i}"] = (time.time(), f"v{i}.0")
+    fetched: list[str] = []
+
+    async def fake_latest(repo: str, force: bool = False) -> str:
+        fetched.append(repo)
+        return "vNEW"
+
+    monkeypatch.setattr(setup_manager, "_github_latest", fake_latest)
+    repos = {f"c{i}": f"owner/repo{i}" for i in range(5)}
+    # budget 14 → max_fetch = (14-10)//2 = 2: only 2 re-fetched, the other 3 retained.
+    out = await setup_manager._latest_versions(repos, github_remaining=14, force=True)
+    assert len(fetched) == 2  # quota budget honored
+    assert all(v for v in out.values())  # NONE blanked
+    assert sum(1 for v in out.values() if v == "vNEW") == 2  # fresh
+    assert sum(1 for v in out.values() if v != "vNEW") == 3  # retained last-known
+
+
 async def test_latest_version_lookups_are_quota_capped(monkeypatch) -> None:
     # Best-effort GitHub lookups for not-installed components must never exhaust the host's quota.
     setup_manager._latest_cache.clear()
@@ -151,7 +208,7 @@ async def test_latest_version_lookups_are_quota_capped(monkeypatch) -> None:
     monkeypatch.setattr(setup_manager, "_save_latest_cache", lambda: None)  # don't touch disk
     calls: list[str] = []
 
-    async def fake_latest(repo: str) -> str:
+    async def fake_latest(repo: str, force: bool = False) -> str:
         calls.append(repo)
         return "v1.0.0"
 

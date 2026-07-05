@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.22.1] - 2026-07-05
+
+### Fixed
+
+- **"Check for updates" now actually re-reads versions.** The version lookups were served from a
+  week-long cache, so a component that just published a new release (or was just installed) kept
+  showing the old version. The button now bypasses the caches and re-queries GitHub / each clone's
+  origin, so a fresh release shows up immediately (the initial widget load still uses the cache to
+  stay fast).
+
+### Added
+
+- **`scripts/install.sh sudoers-refresh`** — re-applies the passwordless-sudo grant without root,
+  through the panel's already-granted `sudo -n cp`. Lets a suite installer top up the grant with a
+  new capability (e.g. the FilaMind screen native install adding the apt/dpkg rules it needs) so the
+  user never has to run a sudo command by hand.
+
 ## [1.22.0] - 2026-07-05
 
 ### Added
