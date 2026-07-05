@@ -5,7 +5,7 @@
     "rescan": "Quét lại",
     "scoreLine": "Điểm {score} / 100",
     "counts": "{errors} lỗi · {warnings} cảnh báo",
-    "scoreHint": "Chấm điểm minh bạch: 100 − 25 mỗi lỗi − 8 mỗi cảnh báo. Các mục không xác định không bao giờ bị trừ điểm.",
+    "scoreHint": "Điểm tổng hợp có trọng số từ các tiêu chí sức khỏe bên dưới. Tính toàn vẹn cấu hình bị trừ 25 điểm mỗi lỗi và 8 điểm mỗi cảnh báo; những tiêu chí không đo được sẽ không bị tính vào điểm của bạn.",
     "allClear": "Tất cả ổn.",
     "notChecked": "Không thể kiểm tra (không kết nối được máy in hoặc chưa có mốc tham chiếu).",
     "assessment": {

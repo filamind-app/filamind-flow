@@ -5,7 +5,7 @@
     "rescan": "Erneut scannen",
     "scoreLine": "Punktzahl {score} / 100",
     "counts": "{errors} Fehler · {warnings} Warnung(en)",
-    "scoreHint": "Transparente Wertung: 100 − 25 je Fehler − 8 je Warnung. Nicht Prüfbares zählt nie gegen dich.",
+    "scoreHint": "Eine gewichtete Mischung der unten stehenden Zustandssäulen. Die Konfigurationsintegrität verliert 25 Punkte pro Fehler und 8 pro Warnung; Säulen, die sich nicht messen lassen, zählen nicht gegen Sie.",
     "allClear": "Alles in Ordnung.",
     "notChecked": "Konnte nicht geprüft werden (Drucker nicht erreichbar oder keine Basislinie).",
     "assessment": {

@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.20.3] - 2026-07-05
+
+### Fixed
+
+- **Machine Doctor score now equals the weighted Health breakdown it's shown with.** The headline
+  score is the weighted blend of the health pillars (config integrity, firmware sync, services,
+  input shaping, max flow) — the exact bars in the breakdown — so a printer with config 92, firmware
+  100 and services 91 reads 93.4, not 92. The 1.20.2 change had made it the config pillar alone,
+  which then contradicted the weighted pillar bars right below it. The score line's explanation now
+  describes the weighted blend (config integrity loses 25 per error / 8 per warning; unmeasured
+  pillars don't count), so the number, the pillar bars and the hint all agree. (Verified live: score
+  93.4 = the weighted blend of the measured pillars.)
+
 ## [1.20.2] - 2026-07-05
 
 ### Fixed

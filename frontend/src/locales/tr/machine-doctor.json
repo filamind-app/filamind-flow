@@ -5,7 +5,7 @@
     "rescan": "Tekrar tara",
     "scoreLine": "Puan {score} / 100",
     "counts": "{errors} hata · {warnings} uyarı",
-    "scoreHint": "Şeffaf puanlama: 100 − her hata için 25 − her uyarı için 8. Kontrol edilemeyen öğeler aleyhinize sayılmaz.",
+    "scoreHint": "Aşağıdaki sağlık ölçütlerinin ağırlıklı bir bileşimi. Yapılandırma bütünlüğü her hata için 25, her uyarı için 8 puan kaybeder; ölçülemeyen ölçütler puanınızı düşürmez.",
     "allClear": "Her şey yolunda.",
     "notChecked": "Kontrol edilemedi (yazıcıya erişilemiyor veya referans yok).",
     "assessment": {

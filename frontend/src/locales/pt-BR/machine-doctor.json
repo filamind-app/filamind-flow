@@ -5,7 +5,7 @@
     "rescan": "Verificar de novo",
     "scoreLine": "Pontuação {score} / 100",
     "counts": "{errors} erro(s) · {warnings} aviso(s)",
-    "scoreHint": "Pontuação transparente: 100 − 25 por erro − 8 por aviso. Verificações desconhecidas nunca contam contra você.",
+    "scoreHint": "Uma combinação ponderada dos pilares de saúde abaixo. A integridade da configuração perde 25 pontos por erro e 8 por aviso; pilares que não podem ser medidos não prejudicam sua pontuação.",
     "allClear": "Tudo certo.",
     "notChecked": "Não foi possível verificar (impressora inacessível ou sem baseline).",
     "assessment": {

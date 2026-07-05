@@ -5,7 +5,7 @@
     "rescan": "Skanuj ponownie",
     "scoreLine": "Wynik {score} / 100",
     "counts": "{errors} błąd(ów) · {warnings} ostrzeżeń",
-    "scoreHint": "Przejrzysta punktacja: 100 − 25 za każdy błąd − 8 za każde ostrzeżenie. Niesprawdzone testy nigdy nie obniżają wyniku.",
+    "scoreHint": "Ważona kombinacja poniższych filarów kondycji. Integralność konfiguracji traci 25 pkt za każdy błąd i 8 za każde ostrzeżenie; filary, których nie da się zmierzyć, nie obniżają wyniku.",
     "allClear": "Wszystko w porządku.",
     "notChecked": "Nie udało się sprawdzić (drukarka nieosiągalna lub brak punktu odniesienia).",
     "assessment": {

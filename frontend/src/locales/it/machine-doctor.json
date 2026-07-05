@@ -5,7 +5,7 @@
     "rescan": "Scansiona di nuovo",
     "scoreLine": "Punteggio {score} / 100",
     "counts": "{errors} errore/i · {warnings} avviso/i",
-    "scoreHint": "Punteggio trasparente: 100 − 25 per ogni errore − 8 per ogni avviso. I controlli sconosciuti non vengono mai conteggiati a tuo sfavore.",
+    "scoreHint": "Una combinazione ponderata dei pilastri di salute qui sotto. L'integrità della configurazione perde 25 punti per ogni errore e 8 per ogni avviso; i pilastri che non è possibile misurare non vengono conteggiati a tuo sfavore.",
     "allClear": "Tutto a posto.",
     "notChecked": "Impossibile controllare (stampante irraggiungibile o nessun riferimento).",
     "assessment": {
