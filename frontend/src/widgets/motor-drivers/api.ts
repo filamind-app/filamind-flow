@@ -118,9 +118,10 @@ export async function revertDriver(stepper: string): Promise<ApplyResponse> {
   return postJson('/api/drivers/init', { stepper })
 }
 
-/** Drive AUTOTUNE_TMC if the klipper_tmc_autotune extra is installed for this stepper. */
-export async function runAutotune(stepper: string): Promise<ApplyResponse> {
-  return postJson('/api/drivers/autotune', { stepper })
+/** Compute + apply the full TMC register tune natively (current + StealthChop + SpreadCycle +
+ *  CoolStep + velocity thresholds) from the motor's datasheet - no add-on. Gated server-side. */
+export async function runAutotune(stepper: string, voltage: number): Promise<ApplyResponse> {
+  return postJson('/api/drivers/autotune', { stepper, voltage })
 }
 
 /** Set a StallGuard threshold (sensorless-homing sensitivity). Gated server-side. */

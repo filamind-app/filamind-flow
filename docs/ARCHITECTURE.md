@@ -105,7 +105,8 @@ a 600+ motor catalog from the same hardware reference. `/api/drivers/mapping` is
 persisted stepper→motor map, and `/api/drivers/recommend` produces a run-current and
 register recommendation from a built-in `motor_constants` physics model. Finally,
 `/api/drivers/{config-block,apply,init,autotune,stallguard,home}` handle copy-to-config
-and the gated live writes - `SET_TMC_*`, `INIT_TMC`, `AUTOTUNE_TMC` - plus the
+and the gated live writes - `SET_TMC_*`, `INIT_TMC`, and a native full auto-tune (the full
+register set computed in-house and applied via `SET_TMC_*`, no host extra) - plus the
 sensorless-homing threshold and test-home. All of those writes are refused while the
 printer is running.
 

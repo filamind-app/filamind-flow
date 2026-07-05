@@ -1201,12 +1201,16 @@ class ApplyRequest(BaseModel):
 
 
 class ConfigBlockRequest(BaseModel):
-    """Render a printer.cfg override block (copy-to-config; no write)."""
+    """Render a printer.cfg override block (copy-to-config; no write). ``velocity_fields`` are the
+    friendly velocity-threshold keys (mm/s) written as the section's own options, not ``driver_``
+    overrides - used to persist a full native auto-tune."""
 
     stepper: str
     model: str
     run_current: float | None = None
+    hold_current: float | None = None
     fields: dict[str, float] = {}
+    velocity_fields: dict[str, float] = {}
 
 
 class ConfigBlockResponse(BaseModel):
@@ -1214,9 +1218,18 @@ class ConfigBlockResponse(BaseModel):
 
 
 class StepperRequest(BaseModel):
-    """A bare stepper target (for revert / autotune)."""
+    """A bare stepper target (for revert)."""
 
     stepper: str
+
+
+class AutotuneRequest(BaseModel):
+    """Compute + apply the full native TMC tune for a stepper (POST /api/drivers/autotune). The
+    motor + driver model + rotation_distance are resolved server-side; only the supply voltage is
+    an input."""
+
+    stepper: str
+    voltage: float = 24.0
 
 
 class ApplyResponse(BaseModel):

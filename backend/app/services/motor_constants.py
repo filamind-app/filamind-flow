@@ -1,10 +1,10 @@
 """Pure stepper-motor physics (datasheet parameters → TMC register values).
 
 No klippy dependency: each function takes the motor's datasheet parameters plus the
-operating conditions and returns the value autotune would compute. Used by the
-recommender to suggest StealthChop PWM (``pwm_grad`` / ``pwm_ofs``) and SpreadCycle
-hysteresis (``hstrt`` / ``hend``) from a motor's specs - so a recommendation works even
-without the ``klipper_tmc_autotune`` host extra installed.
+operating conditions and returns a computed register value. Used by the recommender to
+suggest StealthChop PWM (``pwm_grad`` / ``pwm_ofs``) and SpreadCycle hysteresis
+(``hstrt`` / ``hend``) from a motor's specs - powering both the recommendation and the
+native full auto-tune, with no host extra installed.
 
 Formulas derive each value from the datasheet parameters and operating point.
 """
@@ -68,3 +68,31 @@ def hysteresis(
     hstrt = max(min(htotal, 8), 1)
     hend = min(htotal - hstrt, 12)
     return hstrt - 1, hend + 3
+
+
+# --- StealthChop -> SpreadCycle -> CoolStep velocity thresholds (native full auto-tune) -------
+# The full tune adds the register set the autotune extra applies on top of the PWM / hysteresis
+# values above: the StealthChop auto-scaling enables, the vetted CoolStep loop, and the velocity
+# thresholds. The thresholds are expressed as velocities (rev/s); Klipper's
+# ``SET_TMC_FIELD ... VELOCITY=`` converts mm/s (rev/s * rotation_distance) to the TSTEP register,
+# so this module only needs the rev/s (the caller supplies the stepper's rotation_distance).
+
+#: THIGH sits above the StealthChop handoff - autotune keeps SpreadCycle/fullstep engaged from
+#: about twice the PWM-saturation speed upward.
+THIGH_RPS_MULT = 2.0
+
+#: Fixed StealthChop enables autotune always writes: seed PWM_OFS/PWM_GRAD, then let the driver
+#: auto-scale and auto-gradient around them at runtime.
+STEALTH_ENABLES: dict[str, int] = {"pwm_autoscale": 1, "pwm_autograd": 1}
+
+#: The autotune-vetted CoolStep loop (kept in step with ``drivers_apply._COOLSTEP_ON``).
+COOLSTEP_SET: dict[str, int] = {"semin": 2, "semax": 4, "seup": 3, "sedn": 2, "seimin": 1}
+
+
+def velocity_mm_s(rps: float, rotation_distance: float) -> float:
+    """Convert a motor speed (rev/s) to mm/s via the stepper's ``rotation_distance`` (mm per motor
+    rev) - the value to pass as ``SET_TMC_FIELD ... VELOCITY=``. Returns 0 when either input is
+    non-positive (i.e. the threshold is undefined and must be omitted, never fabricated)."""
+    if rps <= 0.0 or rotation_distance <= 0.0:
+        return 0.0
+    return rps * rotation_distance

@@ -8,6 +8,7 @@ from app.config import Settings, get_settings
 from app.models.schemas import (
     ApplyRequest,
     ApplyResponse,
+    AutotuneRequest,
     ConfigBlockRequest,
     ConfigBlockResponse,
     CoolstepRequest,
@@ -33,6 +34,7 @@ from app.services import (
     drivers_service,
     field_policy,
     motor_mapping,
+    native_autotune,
     printer_guard,
     recommender,
     reference_data,
@@ -154,7 +156,12 @@ async def recommend_tuning(request: RecommendRequest) -> DriverRecommendation:
 async def config_block(request: ConfigBlockRequest) -> ConfigBlockResponse:
     """Render a printer.cfg override block to copy - no write, always safe."""
     text = drivers_apply.config_block(
-        request.stepper, request.model, request.run_current, request.fields
+        request.stepper,
+        request.model,
+        request.run_current,
+        request.fields,
+        hold_current=request.hold_current,
+        velocity_fields=request.velocity_fields,
     )
     return ConfigBlockResponse(text=text)
 
@@ -191,15 +198,19 @@ async def init_driver(
 
 @router.post("/autotune", response_model=ApplyResponse)
 async def autotune(
-    request: StepperRequest, settings: Settings = Depends(get_settings)
+    request: AutotuneRequest, settings: Settings = Depends(get_settings)
 ) -> ApplyResponse:
-    """Drive AUTOTUNE_TMC if a TMC autotune host extra is installed for this stepper."""
+    """Compute and apply the full TMC register tune natively (current + StealthChop + SpreadCycle +
+    CoolStep + velocity thresholds) from the assigned motor's datasheet - no host extra. Gated;
+    reversible with /init. On success the applied set is returned in ``params`` so the UI can offer
+    a matching printer.cfg persist block."""
     data = await _guarded(
         "driver_write",
-        drivers_apply.run_autotune,
+        native_autotune.run,
         settings.moonraker_url,
+        settings.data_dir,
         request.stepper,
-        data_dir=settings.data_dir,
+        request.voltage,
     )
     return ApplyResponse.model_validate(data)
 

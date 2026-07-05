@@ -1,12 +1,13 @@
 """Apply driver tuning - the Motor Drivers widget's first *write* path.
 
-Three mechanisms, in increasing risk:
+Three mechanisms, in increasing scope:
   1. ``config_block`` - render a printer.cfg override block to copy (no write at all).
   2. ``apply_live`` - push values now via ``SET_TMC_CURRENT`` / ``SET_TMC_FIELD``;
      gated: refuses while the printer is *printing*. ``revert`` (``INIT_TMC``) restores
      the configured values.
-  3. ``run_autotune`` - drive the ``klipper_tmc_autotune`` extra's ``AUTOTUNE_TMC`` if it
-     is configured (``[autotune_tmc <stepper>]`` present).
+  3. ``apply_autotune`` - apply a full native tune (current + StealthChop + SpreadCycle +
+     CoolStep + velocity thresholds) computed in-house from the motor's datasheet, entirely via
+     Klipper's built-in ``SET_TMC_*`` commands - no host extra. Same gate as ``apply_live``.
 
 Live writes are reversible (INIT_TMC re-reads the config, a restart fully restores), but
 they touch the driver, so the UI also requires an explicit confirm. The actual numbers
@@ -30,6 +31,30 @@ from app.services.moonraker_client import MoonrakerClient
 
 #: Recommendation keys that map directly to ``SET_TMC_FIELD FIELD=`` names.
 _FIELDS = ("pwm_grad", "pwm_ofs", "hstrt", "hend")
+
+#: Full-tune register order for the config block (mirrors ``_AUTOTUNE_ORDER``); each becomes a
+#: ``driver_<field>`` override in the ``[tmcXXXX <stepper>]`` section.
+_CONFIG_FIELD_ORDER = (
+    "pwm_autoscale",
+    "pwm_autograd",
+    "pwm_ofs",
+    "pwm_grad",
+    "toff",
+    "tbl",
+    "hstrt",
+    "hend",
+    "semin",
+    "semax",
+    "seup",
+    "sedn",
+    "seimin",
+)
+#: Velocity thresholds are the section's own mm/s options, NOT ``driver_`` register overrides.
+_CONFIG_VELOCITY_KEYS = (
+    "stealthchop_threshold",
+    "coolstep_threshold",
+    "high_velocity_threshold",
+)
 
 #: Field/current values must be plain numbers - never interpolate arbitrary text into g-code.
 _NUM = re.compile(r"^-?\d+(\.\d+)?$")
@@ -66,15 +91,33 @@ def _safe_num(value: Any) -> str:
 
 
 def config_block(
-    stepper: str, model: str, run_current: float | None, fields: dict[str, Any]
+    stepper: str,
+    model: str,
+    run_current: float | None,
+    fields: dict[str, Any],
+    *,
+    hold_current: float | None = None,
+    velocity_fields: dict[str, Any] | None = None,
 ) -> str:
-    """A printer.cfg override block the user can paste - pure, no side effects."""
+    """A printer.cfg override block the user can paste - pure, no side effects.
+
+    Register fields become ``driver_<field>`` overrides; the velocity thresholds are the
+    ``[tmcXXXX <stepper>]`` section's own mm/s options (``stealthchop_threshold`` etc.), NOT
+    ``driver_`` overrides (writing ``driver_TPWMTHRS`` would be ignored). Persisting the full tune
+    here is the native equivalent of the autotune extra's re-apply on every startup.
+    """
     lines = [f"[{model} {stepper}]"]
     if run_current is not None:
         lines.append(f"run_current: {run_current}")
-    for key in _FIELDS:
+    if hold_current is not None:
+        lines.append(f"hold_current: {hold_current}")
+    for key in _CONFIG_FIELD_ORDER:
         if key in fields and fields[key] is not None:
             lines.append(f"driver_{key}: {_fmt(fields[key])}")
+    vfields = velocity_fields or {}
+    for key in _CONFIG_VELOCITY_KEYS:
+        if key in vfields and vfields[key] is not None:
+            lines.append(f"{key}: {_fmt(vfields[key])}")
     return "\n".join(lines) + "\n"
 
 
@@ -266,50 +309,133 @@ async def revert(moonraker_url: str, stepper: str, *, timeout: float = 20.0) -> 
     )
 
 
-async def autotune_available(moonraker_url: str, stepper: str) -> bool:
-    """True if the klipper_tmc_autotune extra is configured for this stepper."""
-    client = MoonrakerClient(moonraker_url)
-    try:
-        cf = await client.query_objects(["configfile"])
-    except httpx.HTTPError:
-        return False
-    configfile = cf.get("configfile")
-    settings = configfile.get("settings") if isinstance(configfile, dict) else None
-    settings = settings if isinstance(settings, dict) else {}
-    return f"autotune_tmc {stepper}" in settings
+#: Fixed apply order for a native auto-tune: StealthChop enables first (so PWM_OFS/PWM_GRAD seed a
+#: running auto-scale), then SpreadCycle hysteresis + chopper, then the CoolStep loop.
+_AUTOTUNE_ORDER = (
+    "pwm_autoscale",
+    "pwm_autograd",
+    "pwm_ofs",
+    "pwm_grad",
+    "toff",
+    "tbl",
+    "hstrt",
+    "hend",
+    "semin",
+    "semax",
+    "seup",
+    "sedn",
+    "seimin",
+)
+#: Velocity thresholds are applied last (they arm the mode switch once the registers they depend on
+#: are set); CoolStep/StealthChop handoff before the high-velocity ceiling.
+_AUTOTUNE_VELOCITY_ORDER = (
+    "coolstep_threshold",
+    "stealthchop_threshold",
+    "high_velocity_threshold",
+)
 
 
-async def run_autotune(
-    moonraker_url: str, stepper: str, *, data_dir: str = "", timeout: float = 120.0
+def _autotune_commands(
+    stepper: str,
+    run_current: float | None,
+    hold_current: float | None,
+    fields: dict[str, Any],
+    velocity_fields: dict[str, Any],
+    model: str | None,
+) -> list[str]:
+    """Build the ordered, validated g-code for a native auto-tune. Every field passes through the
+    ``field_policy`` allowlist + clamp; a field not applicable to this model is skipped (not an
+    error), and an out-of-range one raises ``PolicyError``. Velocity thresholds are sent as
+    ``VELOCITY=`` (mm/s) so Klipper does the TSTEP conversion."""
+    stepper = _safe_name(stepper)
+    cmds: list[str] = []
+    if run_current is not None:
+        cmd = f"SET_TMC_CURRENT STEPPER={stepper} CURRENT={_safe_num(run_current)}"
+        if hold_current is not None:
+            cmd += f" HOLDCURRENT={_safe_num(hold_current)}"
+        cmds.append(cmd)
+    for field in _AUTOTUNE_ORDER:
+        if field not in fields or fields[field] is None:
+            continue
+        if not field_policy.applies_to(field, model):
+            continue
+        num = _safe_num(field_policy.validate(field, fields[field], model))
+        cmds.append(f"SET_TMC_FIELD STEPPER={stepper} FIELD={field} VALUE={num}")
+    for field in _AUTOTUNE_VELOCITY_ORDER:
+        if field not in velocity_fields or velocity_fields[field] is None:
+            continue
+        if not field_policy.applies_to(field, model):
+            continue
+        num = _safe_num(field_policy.validate(field, velocity_fields[field], model))
+        reg = field_policy.register_name(field)
+        cmds.append(f"SET_TMC_FIELD STEPPER={stepper} FIELD={reg} VELOCITY={num}")
+    return cmds
+
+
+async def apply_autotune(
+    moonraker_url: str,
+    stepper: str,
+    run_current: float | None,
+    hold_current: float | None,
+    fields: dict[str, Any],
+    velocity_fields: dict[str, Any],
+    *,
+    model: str | None = None,
+    data_dir: str = "",
+    timeout: float = 30.0,
 ) -> dict[str, Any]:
-    """Drives ``AUTOTUNE_TMC`` if the extra is installed for this stepper."""
+    """Apply a full native TMC tune live via ``SET_TMC_CURRENT`` / ``SET_TMC_FIELD`` - the whole
+    register set computed in-house, with no host extra. Same guards as :func:`apply_live`: refused
+    while printing, and run/hold current capped at the binding ceiling (driver full-scale limit /
+    mapped motor rating). Reversible via :func:`revert` (``INIT_TMC``). The values come from
+    :func:`native_autotune.compute_tune`; this only validates + sends g-code."""
     try:
-        stepper = _safe_name(stepper)
-    except ValueError as exc:
-        return _res(False, [], str(exc))
-    if not await autotune_available(moonraker_url, stepper):
-        return _res(
-            False,
-            [],
-            "klipper_tmc_autotune is not installed for this stepper "
-            "- use the recommendation or copy-to-config instead.",
-            "autotuneNotInstalled",
+        commands = _autotune_commands(
+            stepper, run_current, hold_current, fields, velocity_fields, model
         )
+    except (field_policy.PolicyError, ValueError) as exc:
+        return _res(False, [], str(exc))
+    if not commands:
+        return _res(False, [], "Nothing to apply.", "nothingToApply")
+
     client = MoonrakerClient(moonraker_url, timeout=timeout)
-    cmd = f"AUTOTUNE_TMC STEPPER={stepper}"
     try:
         if await _is_busy(client):
             return _res(
                 False,
                 [],
-                "Refusing to autotune while the printer is busy (printing or paused).",
-                "busyAutotune",
+                "Refusing to write to a driver while the printer is busy (printing or paused).",
+                "busyApply",
             )
-        await client.run_gcode(cmd)
+        cap = await _resolve_current_cap(client, stepper, data_dir)
+        if cap is not None:
+            cap_r = round(cap, 2)
+            for requested in (run_current, hold_current):
+                if requested is not None and requested > cap + 1e-9:
+                    return _res(
+                        False,
+                        [],
+                        f"Refusing {requested} A on {stepper}: it exceeds the {cap_r} A ceiling "
+                        "(driver full-scale limit / rated current of the assigned motor).",
+                        "overCurrentCap",
+                        stepper=stepper,
+                        requested=requested,
+                        cap=cap_r,
+                    )
+        for cmd in commands:
+            await client.run_gcode(cmd)
     except httpx.HTTPError as exc:
         return _res(False, [], f"Moonraker error: {exc}")
-    drivers_store.write_tuned(data_dir, stepper, "autotune")  # readiness track (see apply_live)
-    return _res(True, [cmd], f"Ran AUTOTUNE_TMC on {stepper}.", "autotuneRan", stepper=stepper)
+    # Record the tune for the Machine Doctor readiness track (see apply_live).
+    drivers_store.write_tuned(data_dir, stepper, "autotune")
+    return _res(
+        True,
+        commands,
+        f"Auto-tuned {stepper} - applied {len(commands)} change(s).",
+        "autotuneApplied",
+        n=len(commands),
+        stepper=stepper,
+    )
 
 
 #: StallGuard threshold field names, by model family (2209 / 2130-5160 / 2240).
@@ -408,7 +534,7 @@ async def set_field(
 
 
 #: CoolStep is a coupled loop - rather than five scattered 0-15 boxes, expose one toggle that
-#: applies the klipper_tmc_autotune-vetted set (or semin=0 to disable, which turns CoolStep off).
+#: applies the recommended CoolStep set (or semin=0 to disable, which turns CoolStep off).
 _COOLSTEP_ON = {"semin": 2, "semax": 4, "seup": 3, "sedn": 2, "seimin": 1}
 _COOLSTEP_OFF = {"semin": 0}
 

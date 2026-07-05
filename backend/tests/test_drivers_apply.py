@@ -10,19 +10,17 @@ from app.services import drivers_apply
 
 
 class _FakeClient:
-    """Records g-code and reports printing state + which steppers have the autotune extra."""
+    """Records g-code and reports printing state + an optional configfile settings map."""
 
     def __init__(
         self,
         *,
         printing: bool = False,
         state: str | None = None,
-        autotune: tuple[str, ...] = (),
         config: dict[str, Any] | None = None,
     ) -> None:
         # `state` overrides `printing` for the paused/error gate tests.
         self.state = state if state is not None else ("printing" if printing else "ready")
-        self.autotune = set(autotune)
         self.config = config or {}  # extra configfile sections (e.g. tmc run_current)
         self.scripts: list[str] = []
 
@@ -31,9 +29,7 @@ class _FakeClient:
         if "print_stats" in objects:
             out["print_stats"] = {"state": self.state}
         if "configfile" in objects:
-            settings: dict[str, Any] = {f"autotune_tmc {s}": {} for s in self.autotune}
-            settings.update(self.config)
-            out["configfile"] = {"settings": settings}
+            out["configfile"] = {"settings": dict(self.config)}
         return out
 
     async def run_gcode(self, script: str) -> None:
@@ -162,21 +158,125 @@ async def test_revert_without_config_current_just_inits(monkeypatch: pytest.Monk
     assert fake.scripts == ["INIT_TMC STEPPER=stepper_x"]
 
 
-async def test_autotune_unavailable_does_not_run(monkeypatch: pytest.MonkeyPatch) -> None:
-    fake = _FakeClient()  # no [autotune_tmc ...] sections
+_FULL_FIELDS = {
+    "pwm_autoscale": 1,
+    "pwm_autograd": 1,
+    "pwm_ofs": 33,
+    "pwm_grad": 14,
+    "toff": 3,
+    "tbl": 2,
+    "hstrt": 5,
+    "hend": 6,
+    "semin": 2,
+    "semax": 4,
+    "seup": 3,
+    "sedn": 2,
+    "seimin": 1,
+}
+
+
+async def test_apply_autotune_sends_ordered_gcode(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The native full tune: current first, then register fields (StealthChop enables BEFORE
+    # pwm_ofs/pwm_grad), then the velocity thresholds as VELOCITY= (coolstep→stealthchop),
+    # each written to its register name (coolstep_threshold→tcoolthrs, stealthchop→tpwmthrs).
+    fake = _FakeClient()  # no tmc section → no cap fabricated, apply proceeds
     _patch(monkeypatch, fake)
-    res = await drivers_apply.run_autotune("http://x", "stepper_x")
-    assert res["ok"] is False
-    assert "not installed" in res["message"]
+    res = await drivers_apply.apply_autotune(
+        "http://x",
+        "stepper_x",
+        1.4,
+        None,
+        dict(_FULL_FIELDS),
+        {"coolstep_threshold": 120.0, "stealthchop_threshold": 120.0},
+        model="tmc2209",
+    )
+    assert res["ok"] is True and res["code"] == "autotuneApplied"
+    assert fake.scripts == [
+        "SET_TMC_CURRENT STEPPER=stepper_x CURRENT=1.4",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=pwm_autoscale VALUE=1",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=pwm_autograd VALUE=1",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=pwm_ofs VALUE=33",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=pwm_grad VALUE=14",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=toff VALUE=3",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=tbl VALUE=2",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=hstrt VALUE=5",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=hend VALUE=6",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=semin VALUE=2",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=semax VALUE=4",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=seup VALUE=3",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=sedn VALUE=2",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=seimin VALUE=1",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=tcoolthrs VELOCITY=120",
+        "SET_TMC_FIELD STEPPER=stepper_x FIELD=tpwmthrs VELOCITY=120",
+    ]
+
+
+async def test_apply_autotune_refuses_while_printing(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = _FakeClient(printing=True)
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.apply_autotune(
+        "http://x", "stepper_x", 1.4, None, dict(_FULL_FIELDS), {}, model="tmc2209"
+    )
+    assert res["ok"] is False and res["code"] == "busyApply"
     assert fake.scripts == []
 
 
-async def test_autotune_runs_when_installed(monkeypatch: pytest.MonkeyPatch) -> None:
-    fake = _FakeClient(autotune=("stepper_x",))
+async def test_apply_autotune_respects_current_cap(monkeypatch: pytest.MonkeyPatch) -> None:
+    # A TMC2209's full-scale ceiling is ~2.0 A; 2.5 A must be refused with nothing written.
+    fake = _FakeClient(config={"tmc2209 stepper_x": {"run_current": 0.8}})
     _patch(monkeypatch, fake)
-    res = await drivers_apply.run_autotune("http://x", "stepper_x")
+    res = await drivers_apply.apply_autotune(
+        "http://x", "stepper_x", 2.5, None, {}, {}, model="tmc2209"
+    )
+    assert res["ok"] is False and res["code"] == "overCurrentCap"
+    assert res["params"]["cap"] == 2.0 and res["params"]["requested"] == 2.5
+    assert fake.scripts == []
+
+
+async def test_apply_autotune_drops_non_applicable_field(monkeypatch: pytest.MonkeyPatch) -> None:
+    # THIGH doesn't exist on a 2209 - it's skipped (not an error), the rest still applies.
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.apply_autotune(
+        "http://x",
+        "stepper_x",
+        1.4,
+        None,
+        {"pwm_ofs": 33},
+        {"coolstep_threshold": 120.0, "high_velocity_threshold": 200.0},
+        model="tmc2209",
+    )
     assert res["ok"] is True
-    assert fake.scripts == ["AUTOTUNE_TMC STEPPER=stepper_x"]
+    assert not any("thigh" in s for s in fake.scripts)
+    assert "SET_TMC_FIELD STEPPER=stepper_x FIELD=tcoolthrs VELOCITY=120" in fake.scripts
+
+
+async def test_apply_autotune_rejects_out_of_range(monkeypatch: pytest.MonkeyPatch) -> None:
+    # A computed field out of its register range is rejected (never mask-truncated); nothing sent.
+    fake = _FakeClient()
+    _patch(monkeypatch, fake)
+    res = await drivers_apply.apply_autotune(
+        "http://x", "stepper_x", 1.4, None, {"semin": 99}, {}, model="tmc2209"
+    )
+    assert res["ok"] is False
+    assert fake.scripts == []
+
+
+async def test_config_block_full_tune() -> None:
+    # A full-tune block: register fields as driver_<field>; velocity thresholds as the section's
+    # own mm/s options (NOT driver_ overrides, which Klipper would ignore).
+    text = drivers_apply.config_block(
+        "stepper_x",
+        "tmc2209",
+        1.4,
+        {"pwm_autoscale": 1, "pwm_ofs": 33, "pwm_grad": 14, "hstrt": 5, "hend": 6, "semin": 2},
+        hold_current=0.8,
+        velocity_fields={"stealthchop_threshold": 120.0, "coolstep_threshold": 120.0},
+    )
+    assert "run_current: 1.4" in text and "hold_current: 0.8" in text
+    assert "driver_pwm_autoscale: 1" in text and "driver_semin: 2" in text
+    assert "stealthchop_threshold: 120" in text
+    assert "driver_stealthchop_threshold" not in text
 
 
 async def test_set_stallguard_sends_field(monkeypatch: pytest.MonkeyPatch) -> None:
