@@ -22,13 +22,17 @@ export interface DoctorCategory {
   findings: DoctorFinding[]
 }
 
-/** One weighted contributor to the composite grade (score null = "not measured"). */
+/** One weighted contributor to the composite grade (score null = "not measured").
+ *  `reason` explains a null score: `undone` = a Get-Started task never run (input shaping, max
+ *  flow) - shown as a "todo" bar and held out of the number; `blocked` = can't judge right now
+ *  (Moonraker/host down); `measured` = the score is real. */
 export interface DoctorPillar {
   key: string
   score: number | null
   weight: number
-  status: 'ok' | 'warn' | 'fail' | 'unknown' | string
+  status: 'ok' | 'warn' | 'fail' | 'unknown' | 'todo' | string
   detail: Record<string, number | string | null>
+  reason?: 'measured' | 'undone' | 'blocked' | string
 }
 
 /** Translatable verdict: `machineDoctor.assessment.<code>`; params name the weakest pillar. */
@@ -82,4 +86,8 @@ export interface DoctorReport {
   assessment: DoctorAssessment
   services: DoctorServices
   stats: DoctorStats
+  /** How many Get-Started setup steps (input shaping, max flow) are done, and which remain. */
+  setup: { done: number; total: number; pending: string[] }
+  /** Why the letter grade is held below the score, if it is. */
+  cap_reason?: 'errors' | 'setup' | 'warnings' | null
 }

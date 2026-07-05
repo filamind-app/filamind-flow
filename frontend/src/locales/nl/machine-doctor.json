@@ -5,17 +5,20 @@
     "rescan": "Opnieuw scannen",
     "scoreLine": "Score {score} / 100",
     "counts": "{errors} fout(en) · {warnings} waarschuwing(en)",
-    "scoreHint": "Een gewogen combinatie van de gezondheidspijlers hieronder. Configuratie-integriteit verliest 25 punten per fout en 8 per waarschuwing; pijlers die niet gemeten kunnen worden, tellen niet in je nadeel mee.",
+    "scoreHint": "Een gewogen combinatie van de gezondheidspijlers hieronder. Configuratie-integriteit verliest 25 punten per fout en 8 per waarschuwing; signalen die we nu niet kunnen uitlezen, tellen niet in je nadeel mee. Installatiestappen die je nog niet hebt uitgevoerd (input shaping, max flow) verlagen de score niet, maar houden het cijfer vast tot ze klaar zijn.",
     "allClear": "Alles in orde.",
     "notChecked": "Kon niet worden gecontroleerd (printer onbereikbaar of geen referentie).",
     "assessment": {
-      "healthy": "Gezond - alles wat de app kan controleren ziet er goed uit.",
+      "healthy": "Gezond - alles wat de app kan controleren ziet er goed uit en de installatie is compleet.",
       "attention": "Grotendeels gezond, maar {pillar} heeft aandacht nodig.",
-      "critical": "{pillar} heeft een probleem dat het oplossen waard is."
+      "critical": "{pillar} heeft een probleem dat het oplossen waard is.",
+      "setup_incomplete": "Niets kapot, maar de installatie is nog niet af - {pillars} nog uit te voeren.",
+      "clean_but_findings": "Niets kapot, maar er is/zijn nog {warnings} waarschuwing(en) op te lossen."
     },
     "pillars": {
       "title": "Gezondheidsoverzicht",
-      "notMeasured": "niet gemeten"
+      "notMeasured": "niet gemeten",
+      "notDone": "nog niet klaar"
     },
     "pillar": {
       "config": "Configintegriteit",
@@ -52,7 +55,8 @@
       "ok": "OK",
       "warn": "Waarschuwingen",
       "fail": "Problemen",
-      "unknown": "Niet gecontroleerd"
+      "unknown": "Niet gecontroleerd",
+      "todo": "Niet klaar"
     },
     "link": {
       "config_section": "Config-editor",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "Het A-F-cijfer",
-          "body": "Elke gezondheidspijler (configintegriteit, firmwaresync, services, input shaping, max flow) krijgt een score, en de zwakste trekken het totaalcijfer omlaag. De scoreregel laat precies zien hoe het cijfer tot stand kwam - niets wordt verborgen."
+          "body": "De score is een gewogen combinatie van de gezondheidspijlers die we daadwerkelijk konden meten (configuratie-integriteit, firmwaresync, diensten). Installatiestappen zoals input shaping en max flow worden apart bijgehouden: ze overslaan verlaagt de score nooit, maar tot ze klaar zijn blijft het cijfer op B staan. Een onopgeloste waarschuwing houdt het ook op B, en een echte fout houdt het op C - zo weerspiegelt de letter altijd zowel hoe gezond de printer is als hoe compleet de installatie ervan is."
         },
         "fixes": {
           "title": "Spring-naar-oplossing-links",
@@ -134,6 +138,15 @@
           "def": "Een specifiek probleem dat de scan detecteerde, met de ernst en een link naar de widget die het oplost."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Volledigheid installatie: {done} / {total} stappen klaar"
+    },
+    "capped": {
+      "setup": "Cijfer vastgehouden op {grade} tot de installatie af is.",
+      "warnings": "Cijfer vastgehouden op {grade} - een waarschuwing is niet opgelost.",
+      "errors": "Cijfer vastgehouden op {grade} - een fout moet worden opgelost."
     }
   }
 }

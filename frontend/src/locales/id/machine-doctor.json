@@ -5,17 +5,20 @@
     "rescan": "Pindai ulang",
     "scoreLine": "Skor {score} / 100",
     "counts": "{errors} kesalahan · {warnings} peringatan",
-    "scoreHint": "Perpaduan berbobot dari pilar kesehatan di bawah ini. Integritas konfigurasi kehilangan 25 poin per kesalahan dan 8 per peringatan; pilar yang tidak dapat diukur tidak mengurangi skor Anda.",
+    "scoreHint": "Perpaduan berbobot dari pilar kesehatan yang terukur di bawah ini. Integritas konfigurasi kehilangan 25 poin per kesalahan dan 8 per peringatan; sinyal yang tidak dapat kami baca saat ini tidak mengurangi skor Anda. Langkah penyiapan yang belum Anda jalankan (Input shaping, Aliran maksimum) tidak menurunkan skor, tetapi menahan nilai hingga selesai.",
     "allClear": "Semua aman.",
     "notChecked": "Tidak dapat diperiksa (printer tidak terjangkau atau tidak ada baseline).",
     "assessment": {
-      "healthy": "Sehat - semua yang bisa diperiksa aplikasi terlihat baik.",
+      "healthy": "Sehat - semua yang bisa diperiksa aplikasi terlihat baik dan penyiapan sudah selesai.",
       "attention": "Sebagian besar sehat, tetapi {pillar} perlu perhatian.",
-      "critical": "{pillar} punya masalah yang perlu diperbaiki."
+      "critical": "{pillar} punya masalah yang perlu diperbaiki.",
+      "setup_incomplete": "Tidak ada yang rusak, tetapi penyiapan belum selesai - {pillars} masih perlu dijalankan.",
+      "clean_but_findings": "Tidak ada yang rusak, tetapi ada {warnings} peringatan yang perlu dibereskan."
     },
     "pillars": {
       "title": "Rincian kesehatan",
-      "notMeasured": "tidak diukur"
+      "notMeasured": "tidak diukur",
+      "notDone": "belum selesai"
     },
     "pillar": {
       "config": "Integritas konfigurasi",
@@ -52,7 +55,8 @@
       "ok": "OK",
       "warn": "Peringatan",
       "fail": "Masalah",
-      "unknown": "Tidak diperiksa"
+      "unknown": "Tidak diperiksa",
+      "todo": "Belum selesai"
     },
     "link": {
       "config_section": "Editor Konfigurasi",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "Nilai A-F",
-          "body": "Setiap pilar kesehatan (integritas konfigurasi, sinkronisasi firmware, layanan, input shaping, aliran maksimum) dinilai, dan yang terlemah menurunkan nilai keseluruhan. Baris skor menunjukkan persis bagaimana nilai itu dicapai - tidak ada yang disembunyikan."
+          "body": "Skor ini adalah perpaduan berbobot dari pilar kesehatan yang benar-benar dapat kami ukur (integritas konfigurasi, sinkronisasi firmware, layanan). Langkah penyiapan seperti Input shaping dan Aliran maksimum dilacak terpisah: melewatkannya tidak pernah menurunkan skor, tetapi hingga selesai nilai ditahan di B. Peringatan yang belum dibereskan juga menahannya di B, dan kesalahan nyata menahannya di C - jadi hurufnya selalu mencerminkan seberapa sehat printer dan seberapa lengkap penyiapannya."
         },
         "fixes": {
           "title": "Tautan langsung-perbaiki",
@@ -134,6 +138,15 @@
           "def": "Masalah spesifik yang terdeteksi pemindaian, lengkap dengan tingkat keparahan dan tautan ke widget yang memperbaikinya."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Kelengkapan penyiapan: {done} / {total} langkah selesai"
+    },
+    "capped": {
+      "setup": "Nilai ditahan di {grade} hingga penyiapan selesai.",
+      "warnings": "Nilai ditahan di {grade} - ada peringatan yang belum dibereskan.",
+      "errors": "Nilai ditahan di {grade} - ada kesalahan yang perlu diperbaiki."
     }
   }
 }

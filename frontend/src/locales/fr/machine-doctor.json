@@ -5,17 +5,20 @@
     "rescan": "Relancer le scan",
     "scoreLine": "Score {score} / 100",
     "counts": "{errors} erreur(s) · {warnings} avertissement(s)",
-    "scoreHint": "Un mélange pondéré des piliers de santé ci-dessous. L'intégrité de la configuration perd 25 points par erreur et 8 par avertissement ; les piliers qui ne peuvent pas être mesurés ne vous pénalisent pas.",
+    "scoreHint": "Combinaison pondérée des piliers de santé mesurés ci-dessous. L'intégrité de la configuration perd 25 par erreur et 8 par avertissement ; les signaux que l'on ne peut pas lire pour l'instant ne vous pénalisent pas. Les étapes de configuration que vous n'avez pas encore effectuées (Input shaping, Max flow) ne baissent pas le score mais bloquent la note tant qu'elles ne sont pas terminées.",
     "allClear": "Rien à signaler.",
     "notChecked": "Impossible à vérifier (imprimante injoignable ou pas de référence).",
     "assessment": {
-      "healthy": "En bonne santé — tout ce qui peut être vérifié est correct.",
+      "healthy": "Bon état - tout ce que l'application peut vérifier semble correct et la configuration est terminée.",
       "attention": "Globalement sain, mais {pillar} nécessite de l'attention.",
-      "critical": "{pillar} présente un problème à corriger."
+      "critical": "{pillar} présente un problème à corriger.",
+      "setup_incomplete": "Rien de cassé, mais la configuration n'est pas encore terminée - {pillars} restant(s) à effectuer.",
+      "clean_but_findings": "Rien de cassé, mais il reste {warnings} avertissement(s) à résoudre."
     },
     "pillars": {
       "title": "Détail de santé",
-      "notMeasured": "non mesuré"
+      "notMeasured": "non mesuré",
+      "notDone": "pas encore effectué"
     },
     "pillar": {
       "config": "Intégrité config",
@@ -52,7 +55,8 @@
       "ok": "OK",
       "warn": "Avertissements",
       "fail": "Problèmes",
-      "unknown": "Non vérifié"
+      "unknown": "Non vérifié",
+      "todo": "Non effectué"
     },
     "link": {
       "config_section": "Éditeur de configuration",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "La note A–F",
-          "body": "Chaque pilier de santé (intégrité de la config, synchro firmware, services, input shaping, débit max) est noté ; les plus faibles tirent la note globale vers le bas. La ligne de score montre exactement comment la note a été obtenue — rien n'est caché."
+          "body": "Le score est une combinaison pondérée des piliers de santé que nous avons réellement pu mesurer (intégrité de la configuration, synchronisation du firmware, services). Les étapes de configuration comme Input shaping et Max flow sont suivies séparément : les ignorer ne baisse jamais le score, mais tant qu'elles ne sont pas terminées, la note reste bloquée à B. Un avertissement non résolu la maintient aussi à B, et une véritable erreur la maintient à C - ainsi la lettre reflète toujours à la fois l'état de santé de l'imprimante et l'avancement de sa configuration."
         },
         "fixes": {
           "title": "Liens de saut vers la correction",
@@ -134,6 +138,15 @@
           "def": "Un problème précis détecté par l'analyse, avec sa gravité et un lien vers le widget qui le corrige."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Achèvement de la configuration : {done} / {total} étapes effectuées"
+    },
+    "capped": {
+      "setup": "Note bloquée à {grade} tant que la configuration n'est pas terminée.",
+      "warnings": "Note bloquée à {grade} - un avertissement n'est pas résolu.",
+      "errors": "Note bloquée à {grade} - une erreur doit être corrigée."
     }
   }
 }

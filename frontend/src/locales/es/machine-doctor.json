@@ -5,17 +5,20 @@
     "rescan": "Escanear de nuevo",
     "scoreLine": "Puntuación {score} / 100",
     "counts": "{errors} error(es) · {warnings} aviso(s)",
-    "scoreHint": "Una combinación ponderada de los pilares de salud que se muestran abajo. La integridad de la configuración pierde 25 puntos por cada error y 8 por cada advertencia; los pilares que no se pueden medir no restan puntos.",
+    "scoreHint": "Una combinación ponderada de los pilares de salud medidos abajo. La integridad de la configuración pierde 25 por cada error y 8 por cada advertencia; las señales que no podemos leer ahora no te penalizan. Los pasos de configuración que aún no has ejecutado (Input shaping, Max flow) no bajan la puntuación, pero mantienen la nota hasta que se completen.",
     "allClear": "Todo en orden.",
     "notChecked": "No se pudo comprobar (impresora inaccesible o sin línea base).",
     "assessment": {
-      "healthy": "Saludable: todo lo que se puede comprobar se ve bien.",
+      "healthy": "En buen estado: todo lo que la app puede comprobar tiene buena pinta y la configuración está completa.",
       "attention": "Mayormente saludable, pero {pillar} necesita atención.",
-      "critical": "{pillar} tiene un problema que conviene corregir."
+      "critical": "{pillar} tiene un problema que conviene corregir.",
+      "setup_incomplete": "Nada está roto, pero la configuración aún no está terminada: falta ejecutar {pillars}.",
+      "clean_but_findings": "Nada está roto, pero hay {warnings} advertencia(s) por resolver."
     },
     "pillars": {
       "title": "Desglose de salud",
-      "notMeasured": "sin medir"
+      "notMeasured": "sin medir",
+      "notDone": "aún sin hacer"
     },
     "pillar": {
       "config": "Integridad de config",
@@ -52,7 +55,8 @@
       "ok": "OK",
       "warn": "Avisos",
       "fail": "Problemas",
-      "unknown": "Sin comprobar"
+      "unknown": "Sin comprobar",
+      "todo": "Sin hacer"
     },
     "link": {
       "config_section": "Editor de configuración",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "La nota A–F",
-          "body": "Cada pilar de salud (integridad de config, sincronización de firmware, servicios, input shaping, flujo máximo) se puntúa, y los más débiles bajan la nota global. La línea de puntuación muestra exactamente cómo se obtuvo la nota — nada se oculta."
+          "body": "La puntuación es una combinación ponderada de los pilares de salud que pudimos medir realmente (integridad de la configuración, sincronización del firmware, servicios). Los pasos de configuración como Input shaping y Max flow se registran por separado: omitirlos nunca baja la puntuación, pero hasta que se completen la nota se mantiene en B. Una advertencia sin resolver también la mantiene en B, y un error real la mantiene en C, de modo que la letra siempre refleja tanto lo saludable que está la impresora como lo terminada que está su configuración."
         },
         "fixes": {
           "title": "Enlaces de salto a la solución",
@@ -134,6 +138,15 @@
           "def": "Un problema concreto detectado por el análisis, con su gravedad y un enlace al widget que lo soluciona."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Configuración completada: {done} / {total} pasos hechos"
+    },
+    "capped": {
+      "setup": "Nota limitada a {grade} hasta que se complete la configuración.",
+      "warnings": "Nota limitada a {grade}: hay una advertencia sin resolver.",
+      "errors": "Nota limitada a {grade}: hay un error que corregir."
     }
   }
 }

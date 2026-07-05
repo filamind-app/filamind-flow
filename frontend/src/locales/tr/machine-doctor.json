@@ -5,17 +5,20 @@
     "rescan": "Tekrar tara",
     "scoreLine": "Puan {score} / 100",
     "counts": "{errors} hata · {warnings} uyarı",
-    "scoreHint": "Aşağıdaki sağlık ölçütlerinin ağırlıklı bir bileşimi. Yapılandırma bütünlüğü her hata için 25, her uyarı için 8 puan kaybeder; ölçülemeyen ölçütler puanınızı düşürmez.",
+    "scoreHint": "Aşağıdaki ölçülen sağlık sütunlarının ağırlıklı bir bileşimi. Yapılandırma bütünlüğü her hata için 25, her uyarı için 8 puan kaybeder; şu anda okuyamadığımız sinyaller aleyhinize sayılmaz. Henüz çalıştırmadığınız kurulum adımları (Input shaping, Max flow) puanı düşürmez ama tamamlanana kadar notu sabit tutar.",
     "allClear": "Her şey yolunda.",
     "notChecked": "Kontrol edilemedi (yazıcıya erişilemiyor veya referans yok).",
     "assessment": {
-      "healthy": "Sağlıklı - uygulamanın denetleyebildiği her şey iyi görünüyor.",
+      "healthy": "Sağlıklı - uygulamanın kontrol edebildiği her şey iyi görünüyor ve kurulum tamamlandı.",
       "attention": "Genel olarak sağlıklı, ancak {pillar} dikkat gerektiriyor.",
-      "critical": "{pillar} düzeltilmeye değer bir sorun içeriyor."
+      "critical": "{pillar} düzeltilmeye değer bir sorun içeriyor.",
+      "setup_incomplete": "Bozuk bir şey yok, ancak kurulum henüz bitmedi - {pillars} çalıştırılmayı bekliyor.",
+      "clean_but_findings": "Bozuk bir şey yok, ancak giderilmesi gereken {warnings} uyarı var."
     },
     "pillars": {
       "title": "Sağlık dökümü",
-      "notMeasured": "ölçülmedi"
+      "notMeasured": "ölçülmedi",
+      "notDone": "henüz yapılmadı"
     },
     "pillar": {
       "config": "Yapılandırma bütünlüğü",
@@ -52,7 +55,8 @@
       "ok": "Tamam",
       "warn": "Uyarılar",
       "fail": "Sorunlar",
-      "unknown": "Kontrol edilmedi"
+      "unknown": "Kontrol edilmedi",
+      "todo": "Yapılmadı"
     },
     "link": {
       "config_section": "Yapılandırma Düzenleyici",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "A-F notu",
-          "body": "Her sağlık sütunu (yapılandırma bütünlüğü, firmware senkronizasyonu, servisler, input shaping, maksimum akış) puanlanır ve en zayıf olanlar genel notu aşağı çeker. Puan satırı, notun tam olarak nasıl elde edildiğini gösterir - hiçbir şey gizlenmez."
+          "body": "Puan, gerçekten ölçebildiğimiz sağlık sütunlarının (yapılandırma bütünlüğü, yazılım senkronizasyonu, hizmetler) ağırlıklı bir bileşimidir. Input shaping ve Max flow gibi kurulum adımları ayrı olarak izlenir: bunları atlamak puanı asla düşürmez, ancak tamamlanana kadar not B olarak tutulur. Çözülmemiş bir uyarı da notu B'de tutar ve gerçek bir hata C'de tutar - böylece harf her zaman hem yazıcının ne kadar sağlıklı olduğunu hem de kurulumunun ne kadar tamamlandığını yansıtır."
         },
         "fixes": {
           "title": "Düzeltmeye-atla bağlantıları",
@@ -134,6 +138,15 @@
           "def": "Taramanın algıladığı belirli bir sorun; önem derecesi ve onu düzelten widget'a bir bağlantı ile birlikte."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Kurulum tamlığı: {done} / {total} adım tamamlandı"
+    },
+    "capped": {
+      "setup": "Kurulum tamamlanana kadar not {grade} olarak tutuluyor.",
+      "warnings": "Not {grade} olarak tutuluyor - bir uyarı çözülmemiş.",
+      "errors": "Not {grade} olarak tutuluyor - bir hatanın düzeltilmesi gerekiyor."
     }
   }
 }

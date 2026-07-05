@@ -95,6 +95,7 @@ const PILLAR_BAR: Record<string, string> = {
   ok: 'bg-brand-lime',
   warn: 'bg-brand-yellow',
   fail: 'bg-brand-red',
+  todo: 'bg-brand-yellow/40',
   unknown: 'bg-ink/20',
 }
 
@@ -103,14 +104,20 @@ function pillarLabel(key: string): string {
   return te(k) ? t(k) : key
 }
 
-/** The headline verdict, with the weakest pillar's key resolved to its localized label. */
+/** The headline verdict, with pillar key(s) resolved to localized labels. `pillar` is a single
+ *  weakest-pillar key (critical/attention); `pillars` is a list of undone setup steps joined for
+ *  the `setup_incomplete` verdict. */
 const assessmentText = computed(() => {
   const a = report.value?.assessment
   if (!a) return ''
   const key = `machineDoctor.assessment.${a.code}`
   if (!te(key)) return ''
-  const pillar = a.params.pillar ? pillarLabel(String(a.params.pillar)) : ''
-  return t(key, { ...a.params, pillar } as Record<string, unknown>)
+  const parts: Record<string, unknown> = { ...a.params }
+  if (Array.isArray(a.params.pillars)) {
+    parts.pillars = (a.params.pillars as string[]).map(pillarLabel).join(t('machineDoctor.listSep'))
+  }
+  if (a.params.pillar) parts.pillar = pillarLabel(String(a.params.pillar))
+  return t(key, parts)
 })
 
 const hasStats = computed(() => {
@@ -169,6 +176,17 @@ const hasStats = computed(() => {
             {{ t('machineDoctor.scoreLine', { score: report.score }) }} ·
             {{ t('machineDoctor.counts', { errors: report.errors, warnings: report.warnings }) }}
           </p>
+          <p v-if="report.cap_reason" class="text-[11px] font-bold text-brand-red/80">
+            {{ t('machineDoctor.capped.' + report.cap_reason, { grade: report.grade }) }}
+          </p>
+          <p v-if="report.setup?.total" class="font-mono text-[11px] opacity-70">
+            {{
+              t('machineDoctor.setup.line', {
+                done: report.setup.done,
+                total: report.setup.total,
+              })
+            }}
+          </p>
           <p class="text-[11px] opacity-50">{{ t('machineDoctor.scoreHint') }}</p>
         </div>
       </div>
@@ -183,7 +201,13 @@ const hasStats = computed(() => {
               <span class="opacity-50">· {{ Math.round(p.weight * 100) }}%</span>
             </span>
             <span class="shrink-0 font-mono" :class="p.score === null ? 'opacity-50' : 'font-bold'">
-              {{ p.score === null ? t('machineDoctor.pillars.notMeasured') : Math.round(p.score) }}
+              <template v-if="p.status === 'todo'">{{
+                t('machineDoctor.pillars.notDone')
+              }}</template>
+              <template v-else-if="p.score === null">{{
+                t('machineDoctor.pillars.notMeasured')
+              }}</template>
+              <template v-else>{{ Math.round(p.score) }}</template>
             </span>
           </div>
           <div class="h-2 overflow-hidden rounded-full border border-ink bg-paper">

@@ -6,6 +6,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.20.4] - 2026-07-05
+
+### Changed
+
+- **Machine Doctor grade now reflects unfinished setup, so a printer with input shaping and max
+  flow still to run can no longer show a healthy "A".** The headline score stays the honest
+  weighted blend of the pillars the app could actually measure (config integrity, firmware sync,
+  services) — those tuning steps never drag the number down, because skipping an optional tuning
+  task is not a fault. But an un-run setup step now _holds the letter grade at B_ and the verdict
+  names what's left: "Nothing broken, but setup isn't finished yet — Input shaping, Max flow still
+  to run." A new **Setup completeness: 0 / 2 steps done** line and a "Grade held at B until setup is
+  finished" badge explain why a strong score still isn't an A. An unresolved warning likewise holds
+  the grade at B, and a real error holds it at C. "Healthy — everything looks good" is now only ever
+  shown when nothing is broken _and_ setup is complete _and_ there are no warnings. The two pending
+  pillars render as "not done yet" (a muted to-do bar) rather than as measured zeros, so the number,
+  the bars and the verdict all point at the same two tasks. Signals that genuinely can't be read
+  right now (Moonraker or the host unreachable) are treated as "not checked" and never held against
+  the grade. (Verified live: score 93.4, grade B, "setup isn't finished yet", Setup 0 / 2.)
+
 ## [1.20.3] - 2026-07-05
 
 ### Fixed

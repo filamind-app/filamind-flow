@@ -5,17 +5,20 @@
     "rescan": "Scansiona di nuovo",
     "scoreLine": "Punteggio {score} / 100",
     "counts": "{errors} errore/i · {warnings} avviso/i",
-    "scoreHint": "Una combinazione ponderata dei pilastri di salute qui sotto. L'integrità della configurazione perde 25 punti per ogni errore e 8 per ogni avviso; i pilastri che non è possibile misurare non vengono conteggiati a tuo sfavore.",
+    "scoreHint": "Una combinazione ponderata dei pilastri di salute qui sotto. L'integrità della configurazione perde 25 punti per ogni errore e 8 per ogni avviso; i segnali che ora non è possibile leggere non vengono conteggiati a tuo sfavore. I passaggi di configurazione che non hai ancora eseguito (Input shaping, Flusso massimo) non abbassano il punteggio, ma bloccano il voto finché non li completi.",
     "allClear": "Tutto a posto.",
     "notChecked": "Impossibile controllare (stampante irraggiungibile o nessun riferimento).",
     "assessment": {
-      "healthy": "In salute - tutto ciò che l'app può controllare sembra a posto.",
+      "healthy": "In salute - tutto ciò che l'app può controllare sembra a posto e la configurazione è completa.",
       "attention": "Per lo più in salute, ma {pillar} richiede attenzione.",
-      "critical": "{pillar} ha un problema da risolvere."
+      "critical": "{pillar} ha un problema da risolvere.",
+      "setup_incomplete": "Nulla è rotto, ma la configurazione non è ancora finita - {pillars} ancora da eseguire.",
+      "clean_but_findings": "Nulla è rotto, ma ci sono {warnings} avviso/i da risolvere."
     },
     "pillars": {
       "title": "Dettaglio dello stato",
-      "notMeasured": "non misurato"
+      "notMeasured": "non misurato",
+      "notDone": "non ancora fatto"
     },
     "pillar": {
       "config": "Integrità configurazione",
@@ -52,7 +55,8 @@
       "ok": "OK",
       "warn": "Avvisi",
       "fail": "Problemi",
-      "unknown": "Non controllato"
+      "unknown": "Non controllato",
+      "todo": "Non fatto"
     },
     "link": {
       "config_section": "Editor configurazione",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "Il voto da A a F",
-          "body": "Ogni pilastro dello stato (integrità configurazione, sincronizzazione firmware, servizi, input shaping, flusso massimo) viene valutato e i più deboli abbassano il voto complessivo. La riga del punteggio mostra esattamente come si è arrivati al voto - nulla è nascosto."
+          "body": "Il punteggio è una combinazione ponderata dei pilastri di salute che abbiamo potuto misurare davvero (integrità configurazione, sincronizzazione firmware, servizi). I passaggi di configurazione come Input shaping e Flusso massimo sono tracciati separatamente: saltarli non abbassa mai il punteggio, ma finché non sono completati il voto resta bloccato su B. Anche un avviso irrisolto lo blocca su B, e un errore reale lo blocca su C - così la lettera riflette sempre sia quanto è in salute la stampante sia quanto è completa la sua configurazione."
         },
         "fixes": {
           "title": "Link per risolvere",
@@ -134,6 +138,15 @@
           "def": "Un problema specifico rilevato dalla scansione, con la sua gravità e un link al widget che lo risolve."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Completezza configurazione: {done} / {total} passaggi completati"
+    },
+    "capped": {
+      "setup": "Voto bloccato su {grade} finché la configurazione non è completa.",
+      "warnings": "Voto bloccato su {grade} - un avviso è irrisolto.",
+      "errors": "Voto bloccato su {grade} - un errore deve essere risolto."
     }
   }
 }

@@ -10,7 +10,11 @@ The scan looks at your machine from several angles in one pass. It checks for pi
 
 Beyond the config itself, it confirms firmware is in sync, flags hardware changes since the last time it looked, and checks that the install is healthy.
 
-Every check feeds into one overall grade from A to F. The scoring is transparent, so you can see why a finding lowered the grade rather than just being handed a number. Each finding is actionable too. When the Doctor spots a problem, it deep-links straight into the widget that fixes it, so you don't have to go hunting for the right screen.
+Every check feeds into one overall grade from A to F. The scoring is transparent, so you can see why a finding lowered the grade rather than just being handed a number. The score itself is a weighted blend of the health pillars the Doctor could actually measure (config integrity, firmware sync, services) — signals it can't read right now, like a firmware version while Moonraker is down, simply don't count against you.
+
+Setup steps are handled separately from health. Running input shaping and finding your max flow are tuning tasks, not faults, so leaving them undone never lowers the score — but until they're done the Doctor holds the letter grade at B and tells you what's left, alongside a small "Setup completeness" tally. An unresolved warning also holds the grade at B and a real error holds it at C, so a clean "healthy" A only ever appears when nothing is broken and setup is finished. That way a strong score and a held-back grade never look like a contradiction: the widget always says why.
+
+Each finding is actionable too. When the Doctor spots a problem, it deep-links straight into the widget that fixes it, so you don't have to go hunting for the right screen.
 
 ## Using it
 
