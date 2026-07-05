@@ -151,12 +151,22 @@ async def test_run_scan_degrades_a_crashing_analyzer(monkeypatch: pytest.MonkeyP
     ):
         monkeypatch.setattr(machine_doctor, name, clean)
     _stub_pillar_inputs(monkeypatch)
+    # A fully-set-up baseline (tuning + max flow done) so the setup-cap doesn't mask what this test
+    # checks: that a crashing analyzer degrades to "unknown" and still grades A.
+    monkeypatch.setattr(
+        machine_doctor.overview,
+        "_tuning_block",
+        lambda _d: {"available": True, "axes": [{"axis": "x", "grade": "A"}]},
+    )
+    monkeypatch.setattr(
+        machine_doctor.max_flow_store, "read_last", lambda _d: {"max_flow_mm3s": 24}
+    )
 
     report = await machine_doctor.run_scan(Settings())
     by_key = {c["key"]: c for c in report["categories"]}
     # The crash becomes an honest "unknown", not a failed scan or a fake "all clear".
     assert by_key["pins"]["status"] == "unknown"
-    assert report["grade"] == "A"  # nothing scored against what could not be checked
+    assert report["grade"] == "A"  # nothing broken, nothing undone → not capped
 
 
 def test_pillar_helpers() -> None:
@@ -178,16 +188,26 @@ def test_pillar_helpers() -> None:
     ]
     assert machine_doctor._services_pillar(core_down)[0] == 40.0
 
-    # tuning: mean of letter grades; none → "not measured"
-    assert machine_doctor._tuning_pillar({"axes": []})[0] is None
-    two_axes = {"axes": [{"grade": "A"}, {"grade": "C"}]}
+    # tuning: mean of letter grades; none → not measured. reason distinguishes undone vs blocked.
+    assert machine_doctor._tuning_pillar({"available": True, "axes": []}) == (
+        None,
+        {"axes": 0},
+        "undone",
+    )
+    assert machine_doctor._tuning_pillar({"available": False, "axes": []})[2] == "blocked"
+    two_axes = {"available": True, "axes": [{"grade": "A"}, {"grade": "C"}]}
     assert machine_doctor._tuning_pillar(two_axes)[0] == pytest.approx((95 + 72) / 2)
+    assert machine_doctor._tuning_pillar(two_axes)[2] == "measured"
 
-    # flow: vs the rated max if known, else 100 for a clean measurement
-    assert machine_doctor._flow_pillar(None)[0] is None
+    # flow: a missing run reads as UNDONE (never run), not blocked.
+    assert machine_doctor._flow_pillar(None) == (None, {}, "undone")
     rated = {"max_flow_mm3s": 24, "expected_max_flow_mm3s": 30}
     assert machine_doctor._flow_pillar(rated)[0] == 80.0
     assert machine_doctor._flow_pillar({"max_flow_mm3s": 24})[0] == 100.0
+
+    # firmware / services with no data can't be judged now (blocked), not "undone".
+    assert machine_doctor._firmware_pillar({"available": False})[2] == "blocked"
+    assert machine_doctor._services_pillar([])[2] == "blocked"
 
 
 async def test_run_scan_composites_pillars_and_assesses(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -236,6 +256,147 @@ async def test_run_scan_composites_pillars_and_assesses(monkeypatch: pytest.Monk
     # perfect config but a down Klipper service pulls the score below 100, matching the shown bars.
     assert report["score"] == pytest.approx(85.0)
     assert report["grade"] == "B"
+    # undone tuning/flow stay out of the number but render as a "todo" bar (not "unknown").
+    assert pillars["tuning"]["status"] == "todo" and pillars["flow"]["status"] == "todo"
+    # a real fault (services fail) outranks undone setup in the verdict.
     assert report["assessment"]["code"] == "critical"
     assert report["assessment"]["params"]["pillar"] == "services"
     assert report["services"]["units"][0]["name"] == "klipper"
+
+
+def test_cap_grade() -> None:
+    cap = machine_doctor._cap_grade
+    assert cap("A", 2, 0, 0) == ("B", "setup")  # undone setup → can't be A
+    assert cap("A", 0, 0, 1) == ("B", "warnings")  # a warning → can't be A
+    assert cap("A", 0, 1, 0) == ("C", "errors")  # an error → can't be A/B
+    assert cap("A", 0, 0, 0) == ("A", None)  # clean → no cap
+    assert cap("D", 2, 0, 0) == ("D", None)  # cap never RAISES a grade
+    assert cap("B", 1, 0, 0) == ("B", None)  # already at the cap → no cap_reason
+
+
+async def test_the_user_scenario(monkeypatch: pytest.MonkeyPatch) -> None:
+    """config 92 (1 warning) + firmware 100 + services 91, input shaping + max flow NOT DONE: the
+    number stays the honest measured blend (93.4) but the grade is held at B and the verdict names
+    the undone steps - never a healthy A."""
+
+    async def clean(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {"status": "ok", "findings": []}
+
+    async def drift_warn(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {
+            "status": "ok",
+            "findings": [machine_doctor._finding("drift.changed", "warning", {}, None)],
+        }
+
+    for name in (
+        "_scan_pins",
+        "_scan_drivers",
+        "_scan_project",
+        "_scan_firmware",
+        "_scan_hardware",
+        "_scan_install",
+    ):
+        monkeypatch.setattr(machine_doctor, name, clean)
+    monkeypatch.setattr(machine_doctor, "_scan_drift", drift_warn)
+
+    async def fw_ok(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {"available": True, "host_version": "v1", "mcus": [{}], "out_of_sync": 0}
+
+    async def services(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {
+            "source": "moonraker",
+            "units": [{"name": f"s{i}", "active": i > 0} for i in range(11)],  # 10/11 active = 90.9
+        }
+
+    monkeypatch.setattr(machine_doctor.overview, "_firmware_block", fw_ok)
+    monkeypatch.setattr(machine_doctor, "_gather_services", services)
+    monkeypatch.setattr(
+        machine_doctor.overview, "_tuning_block", lambda _d: {"available": True, "axes": []}
+    )
+    monkeypatch.setattr(machine_doctor.max_flow_store, "read_last", lambda _d: None)
+
+    report = await machine_doctor.run_scan(Settings())
+    assert report["score"] == pytest.approx(93.4, abs=0.1)  # honest measured blend, unchanged
+    assert report["grade"] == "B"  # held at B: setup unfinished
+    assert report["cap_reason"] == "setup"
+    assert report["assessment"]["code"] == "setup_incomplete"
+    assert report["assessment"]["params"]["pillars"] == ["tuning", "flow"]
+    assert report["setup"] == {"done": 0, "total": 2, "pending": ["tuning", "flow"]}
+
+
+async def test_healthy_only_when_complete(monkeypatch: pytest.MonkeyPatch) -> None:
+    """All pillars measured + zero findings → A, healthy. This is the ONLY path to 'healthy'."""
+
+    async def clean(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {"status": "ok", "findings": []}
+
+    for name in (
+        "_scan_pins",
+        "_scan_drivers",
+        "_scan_drift",
+        "_scan_project",
+        "_scan_firmware",
+        "_scan_hardware",
+        "_scan_install",
+    ):
+        monkeypatch.setattr(machine_doctor, name, clean)
+
+    async def fw_ok(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {"available": True, "host_version": "v1", "mcus": [{}], "out_of_sync": 0}
+
+    async def services(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {"source": "moonraker", "units": [{"name": "klipper", "active": True}]}
+
+    monkeypatch.setattr(machine_doctor.overview, "_firmware_block", fw_ok)
+    monkeypatch.setattr(machine_doctor, "_gather_services", services)
+    monkeypatch.setattr(
+        machine_doctor.overview,
+        "_tuning_block",
+        lambda _d: {"available": True, "axes": [{"axis": "x", "grade": "A"}]},
+    )
+    monkeypatch.setattr(
+        machine_doctor.max_flow_store, "read_last", lambda _d: {"max_flow_mm3s": 24}
+    )
+
+    report = await machine_doctor.run_scan(Settings())
+    assert report["grade"] == "A" and report["cap_reason"] is None
+    assert report["assessment"]["code"] == "healthy"
+    assert report["setup"] == {"done": 2, "total": 2, "pending": []}
+
+
+async def test_blocked_pillars_do_not_cap_for_setup(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Moonraker fully down blocks firmware + services + tuning (available False). Only genuinely
+    UNDONE flow lands in setup.pending; blocked pillars never appear there or cap for 'setup'."""
+
+    async def clean(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {"status": "ok", "findings": []}
+
+    for name in (
+        "_scan_pins",
+        "_scan_drivers",
+        "_scan_drift",
+        "_scan_project",
+        "_scan_firmware",
+        "_scan_hardware",
+        "_scan_install",
+    ):
+        monkeypatch.setattr(machine_doctor, name, clean)
+
+    async def fw_down(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {"available": False, "mcus": []}
+
+    async def no_services(*_a: Any, **_k: Any) -> dict[str, Any]:
+        return {"source": None, "units": []}
+
+    monkeypatch.setattr(machine_doctor.overview, "_firmware_block", fw_down)
+    monkeypatch.setattr(machine_doctor, "_gather_services", no_services)
+    monkeypatch.setattr(
+        machine_doctor.overview, "_tuning_block", lambda _d: {"available": False, "axes": []}
+    )
+    monkeypatch.setattr(machine_doctor.max_flow_store, "read_last", lambda _d: None)
+
+    report = await machine_doctor.run_scan(Settings())
+    pillars = {p["key"]: p for p in report["pillars"]}
+    assert pillars["tuning"]["status"] == "unknown" and pillars["tuning"]["reason"] == "blocked"
+    assert pillars["firmware"]["reason"] == "blocked"
+    assert report["setup"]["pending"] == ["flow"]  # only the truly-undone flow, not blocked tuning

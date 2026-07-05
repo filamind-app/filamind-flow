@@ -5,17 +5,29 @@
     "rescan": "Scan again",
     "scoreLine": "Score {score} / 100",
     "counts": "{errors} error(s) · {warnings} warning(s)",
-    "scoreHint": "A weighted blend of the health pillars below. Config integrity loses 25 per error and 8 per warning; pillars that can't be measured don't count against you.",
+    "listSep": ", ",
+    "scoreHint": "A weighted blend of the measured health pillars below. Config integrity loses 25 per error and 8 per warning; signals we can't read right now don't count against you. Setup steps you haven't run yet (input shaping, max flow) don't lower the score but hold the grade until they're done.",
     "allClear": "All clear.",
     "notChecked": "Could not be checked (printer unreachable or no baseline).",
     "assessment": {
-      "healthy": "Healthy - everything the app can check looks good.",
+      "healthy": "Healthy - everything the app can check looks good and setup is complete.",
       "attention": "Mostly healthy, but {pillar} needs attention.",
-      "critical": "{pillar} has a problem worth fixing."
+      "critical": "{pillar} has a problem worth fixing.",
+      "setup_incomplete": "Nothing broken, but setup isn't finished yet - {pillars} still to run.",
+      "clean_but_findings": "Nothing broken, but there are {warnings} warning(s) to clear."
     },
     "pillars": {
       "title": "Health breakdown",
-      "notMeasured": "not measured"
+      "notMeasured": "not measured",
+      "notDone": "not done yet"
+    },
+    "setup": {
+      "line": "Setup completeness: {done} / {total} steps done"
+    },
+    "capped": {
+      "setup": "Grade held at {grade} until setup is finished.",
+      "warnings": "Grade held at {grade} - a warning is unresolved.",
+      "errors": "Grade held at {grade} - an error needs fixing."
     },
     "pillar": {
       "config": "Config integrity",
@@ -52,7 +64,8 @@
       "ok": "OK",
       "warn": "Warnings",
       "fail": "Problems",
-      "unknown": "Not checked"
+      "unknown": "Not checked",
+      "todo": "Not done"
     },
     "link": {
       "config_section": "Config Editor",
@@ -110,7 +123,7 @@
         },
         "grade": {
           "title": "The A-F grade",
-          "body": "Each health pillar (config integrity, firmware sync, services, input shaping, max flow) is scored, and the weakest ones pull the overall grade down. The score line shows exactly how the grade was reached - nothing is hidden."
+          "body": "The score is a weighted blend of the health pillars we could actually measure (config integrity, firmware sync, services). Setup steps like input shaping and max flow are tracked separately: skipping them never lowers the score, but until they're done the grade is held at B. An unresolved warning also holds it at B, and a real error holds it at C - so the letter always reflects both how healthy the printer is and how finished its setup is."
         },
         "fixes": {
           "title": "Jump-to-fix links",

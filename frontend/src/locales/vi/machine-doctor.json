@@ -5,17 +5,20 @@
     "rescan": "Quét lại",
     "scoreLine": "Điểm {score} / 100",
     "counts": "{errors} lỗi · {warnings} cảnh báo",
-    "scoreHint": "Điểm tổng hợp có trọng số từ các tiêu chí sức khỏe bên dưới. Tính toàn vẹn cấu hình bị trừ 25 điểm mỗi lỗi và 8 điểm mỗi cảnh báo; những tiêu chí không đo được sẽ không bị tính vào điểm của bạn.",
+    "scoreHint": "Điểm tổng hợp có trọng số từ các trụ cột sức khỏe được đo bên dưới. Tính toàn vẹn cấu hình mất 25 điểm mỗi lỗi và 8 điểm mỗi cảnh báo; các tín hiệu hiện chưa đọc được sẽ không bị trừ điểm. Các bước thiết lập bạn chưa chạy (input shaping, max flow) không làm giảm điểm nhưng sẽ giữ hạng lại cho đến khi hoàn tất.",
     "allClear": "Tất cả ổn.",
     "notChecked": "Không thể kiểm tra (không kết nối được máy in hoặc chưa có mốc tham chiếu).",
     "assessment": {
-      "healthy": "Khỏe mạnh - mọi thứ ứng dụng có thể kiểm tra đều ổn.",
+      "healthy": "Khỏe mạnh - mọi thứ ứng dụng có thể kiểm tra đều ổn và thiết lập đã hoàn tất.",
       "attention": "Hầu hết ổn, nhưng {pillar} cần lưu ý.",
-      "critical": "{pillar} có vấn đề đáng khắc phục."
+      "critical": "{pillar} có vấn đề đáng khắc phục.",
+      "setup_incomplete": "Không có gì hỏng, nhưng thiết lập chưa hoàn tất - còn {pillars} cần chạy.",
+      "clean_but_findings": "Không có gì hỏng, nhưng có {warnings} cảnh báo cần xử lý."
     },
     "pillars": {
       "title": "Phân tích sức khỏe",
-      "notMeasured": "chưa đo"
+      "notMeasured": "chưa đo",
+      "notDone": "chưa hoàn tất"
     },
     "pillar": {
       "config": "Tính toàn vẹn cấu hình",
@@ -52,7 +55,8 @@
       "ok": "OK",
       "warn": "Cảnh báo",
       "fail": "Vấn đề",
-      "unknown": "Chưa kiểm tra"
+      "unknown": "Chưa kiểm tra",
+      "todo": "Chưa hoàn tất"
     },
     "link": {
       "config_section": "Trình sửa cấu hình",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "Điểm A-F",
-          "body": "Mỗi trụ cột sức khỏe (tính toàn vẹn cấu hình, đồng bộ firmware, dịch vụ, input shaping, lưu lượng tối đa) được chấm điểm, và những trụ cột yếu nhất kéo điểm tổng thể xuống. Dòng điểm cho thấy chính xác cách đạt được điểm - không có gì bị giấu."
+          "body": "Điểm số là mức tổng hợp có trọng số của các trụ cột sức khỏe mà chúng tôi thực sự đo được (tính toàn vẹn cấu hình, đồng bộ firmware, dịch vụ). Các bước thiết lập như input shaping và max flow được theo dõi riêng: bỏ qua chúng không bao giờ làm giảm điểm, nhưng cho đến khi hoàn tất thì hạng vẫn bị giữ ở B. Một cảnh báo chưa xử lý cũng giữ hạng ở B, và một lỗi thực sự sẽ giữ hạng ở C - vì vậy chữ hạng luôn phản ánh cả mức độ khỏe mạnh của máy in lẫn mức độ hoàn tất của thiết lập."
         },
         "fixes": {
           "title": "Liên kết tới-cách-khắc-phục",
@@ -134,6 +138,15 @@
           "def": "Một vấn đề cụ thể mà lần quét phát hiện, kèm mức độ nghiêm trọng và một liên kết tới widget khắc phục nó."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Mức độ hoàn tất thiết lập: {done} / {total} bước đã xong"
+    },
+    "capped": {
+      "setup": "Hạng bị giữ ở {grade} cho đến khi thiết lập hoàn tất.",
+      "warnings": "Hạng bị giữ ở {grade} - còn một cảnh báo chưa xử lý.",
+      "errors": "Hạng bị giữ ở {grade} - có một lỗi cần khắc phục."
     }
   }
 }

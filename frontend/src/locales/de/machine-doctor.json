@@ -5,17 +5,20 @@
     "rescan": "Erneut scannen",
     "scoreLine": "Punktzahl {score} / 100",
     "counts": "{errors} Fehler · {warnings} Warnung(en)",
-    "scoreHint": "Eine gewichtete Mischung der unten stehenden Zustandssäulen. Die Konfigurationsintegrität verliert 25 Punkte pro Fehler und 8 pro Warnung; Säulen, die sich nicht messen lassen, zählen nicht gegen Sie.",
+    "scoreHint": "Eine gewichtete Mischung der unten stehenden gemessenen Gesundheitssäulen. Die Konfigurationsintegrität verliert 25 Punkte pro Fehler und 8 pro Warnung; Signale, die sich gerade nicht auslesen lassen, zählen nicht gegen Sie. Einrichtungsschritte, die Sie noch nicht durchgeführt haben (Input Shaping, Max-Flow), senken die Note nicht, halten sie aber zurück, bis sie erledigt sind.",
     "allClear": "Alles in Ordnung.",
     "notChecked": "Konnte nicht geprüft werden (Drucker nicht erreichbar oder keine Basislinie).",
     "assessment": {
-      "healthy": "Gesund — alles Prüfbare sieht gut aus.",
+      "healthy": "Gesund — alles, was die App prüfen kann, sieht gut aus und die Einrichtung ist abgeschlossen.",
       "attention": "Größtenteils gesund, aber {pillar} braucht Aufmerksamkeit.",
-      "critical": "{pillar} hat ein Problem, das behoben werden sollte."
+      "critical": "{pillar} hat ein Problem, das behoben werden sollte.",
+      "setup_incomplete": "Nichts kaputt, aber die Einrichtung ist noch nicht fertig — {pillars} noch durchzuführen.",
+      "clean_but_findings": "Nichts kaputt, aber es gibt {warnings} Warnung(en) zu beheben."
     },
     "pillars": {
       "title": "Gesundheits-Aufschlüsselung",
-      "notMeasured": "nicht gemessen"
+      "notMeasured": "nicht gemessen",
+      "notDone": "noch nicht erledigt"
     },
     "pillar": {
       "config": "Konfig-Integrität",
@@ -52,7 +55,8 @@
       "ok": "OK",
       "warn": "Warnungen",
       "fail": "Probleme",
-      "unknown": "Nicht geprüft"
+      "unknown": "Nicht geprüft",
+      "todo": "Nicht erledigt"
     },
     "link": {
       "config_section": "Konfig-Editor",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "Die A–F-Note",
-          "body": "Jede Gesundheitssäule (Konfig-Integrität, Firmware-Sync, Dienste, Input Shaping, Max-Flow) wird bewertet; die schwächsten ziehen die Gesamtnote nach unten. Die Score-Zeile zeigt genau, wie die Note zustande kam — nichts ist verborgen."
+          "body": "Der Score ist eine gewichtete Mischung der Gesundheitssäulen, die wir tatsächlich messen konnten (Konfigurationsintegrität, Firmware-Sync, Dienste). Einrichtungsschritte wie Input Shaping und Max-Flow werden separat erfasst: Sie auszulassen senkt den Score nie, aber bis sie erledigt sind, wird die Note bei B gehalten. Auch eine ungelöste Warnung hält sie bei B, und ein echter Fehler hält sie bei C — so spiegelt der Buchstabe immer wider, wie gesund der Drucker ist und wie weit seine Einrichtung fortgeschritten ist."
         },
         "fixes": {
           "title": "Sprung-zur-Lösung-Links",
@@ -134,6 +138,15 @@
           "def": "Ein konkretes vom Scan erkanntes Problem, mit Schweregrad und einem Link zum Widget, das es behebt."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Vollständigkeit der Einrichtung: {done} / {total} Schritte erledigt"
+    },
+    "capped": {
+      "setup": "Note bei {grade} gehalten, bis die Einrichtung abgeschlossen ist.",
+      "warnings": "Note bei {grade} gehalten — eine Warnung ist ungelöst.",
+      "errors": "Note bei {grade} gehalten — ein Fehler muss behoben werden."
     }
   }
 }

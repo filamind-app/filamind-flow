@@ -5,17 +5,20 @@
     "rescan": "Skanuj ponownie",
     "scoreLine": "Wynik {score} / 100",
     "counts": "{errors} błąd(ów) · {warnings} ostrzeżeń",
-    "scoreHint": "Ważona kombinacja poniższych filarów kondycji. Integralność konfiguracji traci 25 pkt za każdy błąd i 8 za każde ostrzeżenie; filary, których nie da się zmierzyć, nie obniżają wyniku.",
+    "scoreHint": "Ważona kombinacja zmierzonych filarów kondycji poniżej. Integralność konfiguracji traci 25 za każdy błąd i 8 za każde ostrzeżenie; sygnały, których teraz nie da się odczytać, nie działają na Twoją niekorzyść. Kroki konfiguracji, których jeszcze nie wykonano (input shaping, max flow), nie obniżają wyniku, ale wstrzymują ocenę do czasu ich ukończenia.",
     "allClear": "Wszystko w porządku.",
     "notChecked": "Nie udało się sprawdzić (drukarka nieosiągalna lub brak punktu odniesienia).",
     "assessment": {
-      "healthy": "Sprawna - wszystko, co aplikacja potrafi sprawdzić, wygląda dobrze.",
+      "healthy": "Dobra kondycja - wszystko, co aplikacja może sprawdzić, wygląda dobrze, a konfiguracja jest ukończona.",
       "attention": "Przeważnie sprawna, ale {pillar} wymaga uwagi.",
-      "critical": "{pillar} ma problem wart naprawienia."
+      "critical": "{pillar} ma problem wart naprawienia.",
+      "setup_incomplete": "Nic nie jest zepsute, ale konfiguracja nie jest jeszcze ukończona - pozostało do wykonania: {pillars}.",
+      "clean_but_findings": "Nic nie jest zepsute, ale są ostrzeżenia do usunięcia: {warnings}."
     },
     "pillars": {
       "title": "Podział kondycji",
-      "notMeasured": "nie zmierzono"
+      "notMeasured": "nie zmierzono",
+      "notDone": "jeszcze nie wykonano"
     },
     "pillar": {
       "config": "Integralność konfiguracji",
@@ -52,7 +55,8 @@
       "ok": "OK",
       "warn": "Ostrzeżenia",
       "fail": "Problemy",
-      "unknown": "Nie sprawdzono"
+      "unknown": "Nie sprawdzono",
+      "todo": "Nie wykonano"
     },
     "link": {
       "config_section": "Edytor konfiguracji",
@@ -110,7 +114,7 @@
         },
         "grade": {
           "title": "Ocena A-F",
-          "body": "Każdy filar kondycji (integralność konfiguracji, synchronizacja firmware'u, usługi, kształtowanie sygnału, maksymalny przepływ) jest punktowany, a najsłabsze obniżają ogólną ocenę. Wiersz wyniku pokazuje dokładnie, jak osiągnięto ocenę - nic nie jest ukryte."
+          "body": "Wynik to ważona kombinacja filarów kondycji, które faktycznie udało się zmierzyć (integralność konfiguracji, synchronizacja firmware'u, usługi). Kroki konfiguracji, takie jak input shaping i max flow, są śledzone osobno: ich pominięcie nigdy nie obniża wyniku, ale do czasu ich ukończenia ocena jest wstrzymana na B. Nierozwiązane ostrzeżenie również wstrzymuje ją na B, a rzeczywisty błąd wstrzymuje ją na C - dzięki temu litera zawsze odzwierciedla zarówno kondycję drukarki, jak i stopień ukończenia jej konfiguracji."
         },
         "fixes": {
           "title": "Linki do naprawy",
@@ -134,6 +138,15 @@
           "def": "Konkretny problem wykryty przez skanowanie, z jego wagą i linkiem do widżetu, który go naprawia."
         }
       }
+    },
+    "listSep": ", ",
+    "setup": {
+      "line": "Ukończenie konfiguracji: {done} / {total} kroków wykonanych"
+    },
+    "capped": {
+      "setup": "Ocena wstrzymana na {grade} do czasu ukończenia konfiguracji.",
+      "warnings": "Ocena wstrzymana na {grade} - nierozwiązane ostrzeżenie.",
+      "errors": "Ocena wstrzymana na {grade} - błąd wymaga naprawy."
     }
   }
 }
