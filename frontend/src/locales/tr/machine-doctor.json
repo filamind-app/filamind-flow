@@ -5,7 +5,7 @@
     "rescan": "Tekrar tara",
     "scoreLine": "Puan {score} / 100",
     "counts": "{errors} hata · {warnings} uyarı",
-    "scoreHint": "Aşağıdaki ölçülen sağlık sütunlarının ağırlıklı bir bileşimi. Yapılandırma bütünlüğü her hata için 25, her uyarı için 8 puan kaybeder; şu anda okuyamadığımız sinyaller aleyhinize sayılmaz. Henüz çalıştırmadığınız kurulum adımları (Input shaping, Max flow) puanı düşürmez ama tamamlanana kadar notu sabit tutar.",
+    "scoreHint": "Aşağıdaki sütunların ağırlıklı bir bileşimi. Sağlık kontrolleri (Yapılandırma bütünlüğü, Firmware senkronizasyonu, Servisler) ölçebildiğimizi puanlar; Yapılandırma bütünlüğü her hata için 25, her uyarı için 8 puan kaybeder. Henüz çalıştırmadığınız kurulum adımları (Input shaping, Maksimum akış, Motor Sürücüleri) tamamlanana kadar sıfır sayılır; bu yüzden onları bitirmek puanı yükseltir. Şu anda okuyamadığımız sinyaller aleyhinize sayılmaz.",
     "allClear": "Her şey yolunda.",
     "notChecked": "Kontrol edilemedi (yazıcıya erişilemiyor veya referans yok).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Firmware senkronizasyonu",
       "services": "Servisler",
       "tuning": "Input shaping",
-      "flow": "Maksimum akış"
+      "flow": "Maksimum akış",
+      "drivers": "Motor Sürücüleri"
     },
     "services": {
       "title": "Servisler",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "A-F notu",
-          "body": "Puan, gerçekten ölçebildiğimiz sağlık sütunlarının (yapılandırma bütünlüğü, yazılım senkronizasyonu, hizmetler) ağırlıklı bir bileşimidir. Input shaping ve Max flow gibi kurulum adımları ayrı olarak izlenir: bunları atlamak puanı asla düşürmez, ancak tamamlanana kadar not B olarak tutulur. Çözülmemiş bir uyarı da notu B'de tutar ve gerçek bir hata C'de tutar - böylece harf her zaman hem yazıcının ne kadar sağlıklı olduğunu hem de kurulumunun ne kadar tamamlandığını yansıtır."
+          "body": "Puan iki şeyi harmanlar. Sağlık kontrolleri (Yapılandırma bütünlüğü, Firmware senkronizasyonu, Servisler) ölçebildiğimizi puanlar. Kurulum adımları (Input shaping, Maksimum akış ve Motor Sürücüleri ayarı) siz çalıştırana kadar sıfır sayılır; bu yüzden hiçbir şeyi bozuk olmasa bile ayarlanmamış bir yazıcı düşük puan alır ve tamamladığınız her adım puanı yükseltir. Harf notu doğrudan bu puandan gelir ve şu anda okuyamadığımız bir sinyal (Moonraker veya host çevrimdışı) aleyhinize sayılmak yerine hesaplamadan çıkarılır."
         },
         "fixes": {
           "title": "Düzeltmeye-atla bağlantıları",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Kurulum tamlığı: {done} / {total} adım tamamlandı"
     },
-    "capped": {
-      "setup": "Kurulum tamamlanana kadar not {grade} olarak tutuluyor.",
-      "warnings": "Not {grade} olarak tutuluyor - bir uyarı çözülmemiş.",
-      "errors": "Not {grade} olarak tutuluyor - bir hatanın düzeltilmesi gerekiyor."
+    "readiness": {
+      "title": "Kurulum hazırlığı",
+      "banner": "Kurulum henüz bitmedi; çalıştırılmamış adımlar sıfır sayılır ve puanı düşük tutar. Puanı yükseltmek için onları çalıştırın.",
+      "runIt": "Çalıştır"
     }
   }
 }

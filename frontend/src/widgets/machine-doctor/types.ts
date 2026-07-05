@@ -35,10 +35,11 @@ export interface DoctorPillar {
   reason?: 'measured' | 'undone' | 'blocked' | string
 }
 
-/** Translatable verdict: `machineDoctor.assessment.<code>`; params name the weakest pillar. */
+/** Translatable verdict: `machineDoctor.assessment.<code>`; params name the weakest pillar, or -
+ *  for `setup_incomplete` - the array of undone setup pillar keys (localized on the frontend). */
 export interface DoctorAssessment {
   code: string
-  params: Record<string, string | number | null>
+  params: Record<string, string | number | string[] | null>
 }
 
 export interface DoctorService {
@@ -86,8 +87,7 @@ export interface DoctorReport {
   assessment: DoctorAssessment
   services: DoctorServices
   stats: DoctorStats
-  /** How many Get-Started setup steps (input shaping, max flow) are done, and which remain. */
+  /** How many Get-Started setup steps (input shaping, max flow, motor drivers) are done, and which
+   *  remain. Undone steps count as 0 in the score, so `pending` is what's dragging it down. */
   setup: { done: number; total: number; pending: string[] }
-  /** Why the letter grade is held below the score, if it is. */
-  cap_reason?: 'errors' | 'setup' | 'warnings' | null
 }

@@ -5,7 +5,7 @@
     "rescan": "Escanear de nuevo",
     "scoreLine": "Puntuación {score} / 100",
     "counts": "{errors} error(es) · {warnings} aviso(s)",
-    "scoreHint": "Una combinación ponderada de los pilares de salud medidos abajo. La integridad de la configuración pierde 25 por cada error y 8 por cada advertencia; las señales que no podemos leer ahora no te penalizan. Los pasos de configuración que aún no has ejecutado (Input shaping, Max flow) no bajan la puntuación, pero mantienen la nota hasta que se completen.",
+    "scoreHint": "Una combinación ponderada de los pilares de abajo. Las comprobaciones de salud (Integridad de config, Sincronía de firmware, Servicios) puntúan lo que pudimos medir: la integridad de config pierde 25 por cada error y 8 por cada advertencia. Los pasos de configuración que aún no has ejecutado (Input shaping, Flujo máximo, Controladores de motor) cuentan como cero hasta completarse, así que terminarlos sube la puntuación. Las señales que no podemos leer ahora no te penalizan.",
     "allClear": "Todo en orden.",
     "notChecked": "No se pudo comprobar (impresora inaccesible o sin línea base).",
     "assessment": {
@@ -25,7 +25,8 @@
       "firmware": "Sincronía de firmware",
       "services": "Servicios",
       "tuning": "Input shaping",
-      "flow": "Flujo máximo"
+      "flow": "Flujo máximo",
+      "drivers": "Controladores de motor"
     },
     "services": {
       "title": "Servicios",
@@ -114,7 +115,7 @@
         },
         "grade": {
           "title": "La nota A–F",
-          "body": "La puntuación es una combinación ponderada de los pilares de salud que pudimos medir realmente (integridad de la configuración, sincronización del firmware, servicios). Los pasos de configuración como Input shaping y Max flow se registran por separado: omitirlos nunca baja la puntuación, pero hasta que se completen la nota se mantiene en B. Una advertencia sin resolver también la mantiene en B, y un error real la mantiene en C, de modo que la letra siempre refleja tanto lo saludable que está la impresora como lo terminada que está su configuración."
+          "body": "La puntuación combina dos cosas. Las comprobaciones de salud (Integridad de config, Sincronía de firmware, Servicios) puntúan lo que pudimos medir. Los pasos de configuración —Input shaping, Flujo máximo y el ajuste de los controladores de motor— cuentan como cero hasta que los ejecutas, así que una impresora sin ajustar puntúa bajo aunque nada esté roto, y cada paso que completas sube la cifra. La nota se deriva directamente de esa puntuación, y una señal que no podemos leer ahora (Moonraker o el host sin conexión) simplemente queda fuera en lugar de penalizarte."
         },
         "fixes": {
           "title": "Enlaces de salto a la solución",
@@ -143,10 +144,10 @@
     "setup": {
       "line": "Configuración completada: {done} / {total} pasos hechos"
     },
-    "capped": {
-      "setup": "Nota limitada a {grade} hasta que se complete la configuración.",
-      "warnings": "Nota limitada a {grade}: hay una advertencia sin resolver.",
-      "errors": "Nota limitada a {grade}: hay un error que corregir."
+    "readiness": {
+      "title": "Preparación de la configuración",
+      "banner": "La configuración no está terminada: los pasos sin ejecutar cuentan como cero y frenan la puntuación. Ejecútalos para subirla.",
+      "runIt": "Ejecutar"
     }
   }
 }
