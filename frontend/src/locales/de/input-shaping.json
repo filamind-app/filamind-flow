@@ -369,6 +369,7 @@
         "summaryNote": "Deine X- und Y-Erfassungen befinden sich im kombinierten {code}-Block unten — kopiere ihn, dann starte Klipper neu. Öffne die geführte Abstimmung jederzeit erneut, um nachzuprüfen.",
         "beltsNotApplicable": "Der Riemenvergleich gilt für CoreXY-Drucker — dieser Drucker meldet '{kin}', der Schritt wird übersprungen.",
         "resultsSoFar": "Bisherige Ergebnisse",
+        "resumed": "Deine begonnene Abstimmung wurde wiederhergestellt",
         "archived": "Gespeichert",
         "autoSaved": "Automatisch im Drucker-Archiv gespeichert.",
         "beltA": "Riemen A (1,1)",

@@ -9,7 +9,7 @@
  *  "results so far" section (a later Y chart no longer replaces the earlier X chart). The combined
  *  printer.cfg block appears only in the final step.
  */
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import ConfigApply from '@/components/ui/ConfigApply.vue'
@@ -30,6 +30,7 @@ import {
   type Gate,
   type GateStatus,
   type StepId,
+  type StepState,
   gateBelts,
   gateNoise,
   gateShaper,
@@ -38,6 +39,12 @@ import {
   PA_TOWER_GCODE,
   STEPS,
 } from './guided'
+import {
+  clearGuidedSession,
+  type GuidedSnapshot,
+  loadGuidedSession,
+  saveGuidedSession,
+} from './guided-store'
 import {
   recommendBelts,
   recommendNoise,
@@ -56,12 +63,12 @@ const { t } = useI18n({ useScope: 'global' })
 // Step keys are built from the (typed) step id at runtime - use a string-accepting view of t.
 const tt = t as unknown as (key: string) => string
 
-type StepState = GateStatus | 'pending' | 'skipped'
-
 const idx = ref(0)
 const ready = ref(false)
 const busy = ref(false)
 const error = ref<string | null>(null)
+/** True right after a saved in-progress session was restored (drives the "resumed" notice). */
+const resumed = ref(false)
 const statuses = reactive<Record<StepId, StepState>>({
   noise: 'pending',
   belts: 'pending',
@@ -93,7 +100,39 @@ const beltsSupported = computed(
   () => kinematics.value == null || kinematics.value.includes('corexy'),
 )
 
-onMounted(() => {
+/** The durable slice of the wizard, for persistence (transient busy/error/ready are excluded). */
+function snapshot(): GuidedSnapshot {
+  return {
+    idx: idx.value,
+    statuses: { ...statuses },
+    results: { ...results },
+    verdicts: { ...verdicts },
+    sugg: { ...sugg },
+    archived: { ...archived },
+    openCards: { ...openCards },
+    kinematics: kinematics.value,
+  }
+}
+
+// Persist the in-progress tune on every change so it survives navigating to another widget or an
+// accidental refresh. Once the run completes we stop saving (clearGuidedSession, in advance(), has
+// already dropped the snapshot) so a finished tune doesn't linger.
+watch(
+  [idx, statuses, results, verdicts, sugg, archived, openCards, kinematics],
+  () => {
+    if (statuses.done === 'passed') return
+    // Persist only once there's genuine progress (a captured result or a step advanced past the
+    // first), so merely opening the wizard doesn't leave a session that shows a spurious
+    // "resumed" notice on the next visit.
+    const hasProgress =
+      idx.value > 0 ||
+      !!(results.noise || results.belts || results.shaperX || results.shaperY || results.vibrations)
+    if (hasProgress) saveGuidedSession(snapshot())
+  },
+  { deep: true },
+)
+
+function loadKinematics(): void {
   fetchKinematics()
     .then((kin) => {
       kinematics.value = kin
@@ -102,6 +141,25 @@ onMounted(() => {
         statuses.belts = 'skipped'
     })
     .catch(() => (kinematics.value = null))
+}
+
+onMounted(() => {
+  // Resume an in-progress session if one was saved (widget-switch / refresh). Restore into the
+  // reactive objects (not by replacing them) so the accumulated cards + charts re-render.
+  const saved = loadGuidedSession()
+  if (saved) {
+    idx.value = saved.idx
+    Object.assign(statuses, saved.statuses)
+    Object.assign(results, saved.results)
+    Object.assign(verdicts, saved.verdicts)
+    Object.assign(sugg, saved.sugg)
+    Object.assign(archived, saved.archived)
+    Object.assign(openCards, saved.openCards)
+    kinematics.value = saved.kinematics
+    resumed.value = true
+  }
+  // Fetch kinematics only if a restore didn't already provide it.
+  if (kinematics.value == null) loadKinematics()
 })
 
 const canProceed = computed(() => {
@@ -233,9 +291,11 @@ function advance(): void {
     idx.value = STEPS.findIndex((s) => s.id === nextStep('belts'))
   }
   error.value = null
-  // Reaching the final step completes the run: mark its rail badge + auto-save the config.
+  // Reaching the final step completes the run: mark its rail badge, drop the saved session (the
+  // tune is finished, per "keep it until done"), and auto-save the config.
   if (step.value.id === 'done') {
     statuses.done = 'passed'
+    clearGuidedSession()
     void saveGuidedConfig(true)
   }
 }
@@ -297,6 +357,16 @@ function review(i: number): void {
         {{ t('inputShaping.guided.ui.exit') }}
       </button>
     </div>
+
+    <!-- Shown once when a saved in-progress tune was restored (survives widget-switch / refresh).
+         Click to dismiss. -->
+    <button
+      v-if="resumed"
+      class="nb-badge flex items-center gap-1 bg-brand-cyan text-[10px]"
+      @click="resumed = false"
+    >
+      <span aria-hidden="true">↻</span> {{ t('inputShaping.guided.ui.resumed') }}
+    </button>
 
     <!-- Pinned control zone: the step rail + the active-step ACTION BAR stay at the top, so the
          buttons never slide below the (possibly tall) results. -->

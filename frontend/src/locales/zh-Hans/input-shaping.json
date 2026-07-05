@@ -369,6 +369,7 @@
         "summaryNote": "你的 X 和 Y 采集已在下方合并的 {code} 块中 — 复制它，然后重启 Klipper。可随时重新打开引导调校以重新检查。",
         "beltsNotApplicable": "皮带对比适用于 CoreXY 打印机 — 此打印机报告 '{kin}'，已跳过该步骤。",
         "resultsSoFar": "目前的结果",
+        "resumed": "已恢复未完成的调校",
         "archived": "已保存",
         "autoSaved": "已自动保存到打印机存档。",
         "beltA": "皮带 A (1,1)",

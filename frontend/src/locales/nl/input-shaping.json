@@ -369,6 +369,7 @@
         "summaryNote": "Je X- en Y-metingen staan in het gecombineerde {code}-blok hieronder - kopieer het, herstart daarna Klipper. Heropen de begeleide afstelling op elk moment om opnieuw te controleren.",
         "beltsNotApplicable": "Riemvergelijking geldt voor CoreXY-printers - deze printer rapporteert '{kin}', dus deze stap wordt overgeslagen.",
         "resultsSoFar": "Resultaten tot nu toe",
+        "resumed": "Je lopende afstelling hervat",
         "archived": "Opgeslagen",
         "autoSaved": "Automatisch opgeslagen in het archief op de printer.",
         "beltA": "Riem A (1,1)",

@@ -369,6 +369,7 @@
         "summaryNote": "X ve Y yakalamalarınız aşağıdaki birleşik {code} bloğunda - kopyalayın, sonra Klipper'ı yeniden başlatın. Yeniden kontrol etmek için rehberli ayarı istediğiniz zaman yeniden açın.",
         "beltsNotApplicable": "Kayış karşılaştırması CoreXY yazıcılara uygulanır - bu yazıcı '{kin}' bildiriyor, bu yüzden bu adım atlanıyor.",
         "resultsSoFar": "Şimdiye kadarki sonuçlar",
+        "resumed": "Devam eden ayarınıza geri dönüldü",
         "archived": "Kaydedildi",
         "autoSaved": "Yazıcı üzerindeki arşive otomatik olarak kaydedildi.",
         "beltA": "Kayış A (1,1)",

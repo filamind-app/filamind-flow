@@ -369,6 +369,7 @@
         "summaryNote": "Le tue acquisizioni X e Y sono nel blocco combinato {code} qui sotto - copialo, poi riavvia Klipper. Riapri la taratura guidata in qualsiasi momento per ricontrollare.",
         "beltsNotApplicable": "Il confronto delle cinghie si applica alle stampanti CoreXY - questa stampante riporta '{kin}', quindi questo passo viene saltato.",
         "resultsSoFar": "Risultati finora",
+        "resumed": "Taratura in corso ripristinata",
         "archived": "Salvato",
         "autoSaved": "Salvato automaticamente nell'archivio sulla stampante.",
         "beltA": "Cinghia A (1,1)",

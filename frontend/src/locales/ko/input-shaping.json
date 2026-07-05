@@ -369,6 +369,7 @@
         "summaryNote": "X와 Y 캡처가 아래 결합된 {code} 블록에 있습니다 - 복사한 뒤 Klipper를 재시작하세요. 다시 확인하려면 언제든 가이드 튜닝을 다시 여세요.",
         "beltsNotApplicable": "벨트 비교는 CoreXY 프린터에 적용됩니다 - 이 프린터는 '{kin}'을 보고하므로 이 단계를 건너뜁니다.",
         "resultsSoFar": "지금까지의 결과",
+        "resumed": "진행 중이던 튜닝을 이어갑니다",
         "archived": "저장됨",
         "autoSaved": "프린터 내 아카이브에 자동으로 저장되었습니다.",
         "beltA": "벨트 A (1,1)",

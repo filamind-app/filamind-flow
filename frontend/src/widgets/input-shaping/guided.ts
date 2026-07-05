@@ -12,6 +12,8 @@ import type { NoiseResult, ShaperAnalysis, VibrationsProfile } from './types'
 
 export type StepId = 'noise' | 'belts' | 'shaperX' | 'shaperY' | 'vibrations' | 'pressure' | 'done'
 export type GateStatus = 'passed' | 'warn' | 'failed'
+/** A step's rail state: a gate result once run, or the pre-run/skipped states. */
+export type StepState = GateStatus | 'pending' | 'skipped'
 
 export interface Gate {
   status: GateStatus

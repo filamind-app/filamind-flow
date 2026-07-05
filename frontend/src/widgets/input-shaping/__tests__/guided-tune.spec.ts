@@ -1,9 +1,12 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 
 import { i18n } from '@/core/i18n'
 
 import GuidedTune from '../GuidedTune.vue'
+
+// Mounting now persists/restores a guided session via localStorage - keep tests isolated.
+afterEach(() => localStorage.clear())
 
 describe('GuidedTune.vue (renders through i18n)', () => {
   it('renders the step rail and the active step from the catalog (no raw keys leak)', () => {
