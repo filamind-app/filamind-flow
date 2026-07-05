@@ -1,0 +1,2 @@
+import{d as e}from"./main-xEh8HX_Y.js";async function t(t){let{backendUrl:n}=e(),r=await fetch(`${n}/api/tasks/${encodeURIComponent(t)}`);if(!r.ok)throw Error(`Task lookup failed (${r.status})`);return await r.json()}async function n(t){let{backendUrl:n}=e(),r=await fetch(`${n}/api/tasks/${encodeURIComponent(t)}/cancel`,{method:`POST`});if(!r.ok)throw Error(`Cancel failed (${r.status})`)}function r(e){let t=e.split(`
+`).filter(e=>e.trim());return t.length?t[t.length-1].replace(/^!+\s*/,``):``}export{t as n,r,n as t};
