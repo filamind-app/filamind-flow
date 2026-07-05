@@ -5,7 +5,7 @@
     "rescan": "重新扫描",
     "scoreLine": "得分 {score} / 100",
     "counts": "{errors} 个错误 · {warnings} 个警告",
-    "scoreHint": "透明计分：100 − 每错误 25 − 每警告 8。无法检查的项不计入扣分。",
+    "scoreHint": "下方各项健康指标的加权综合评分。配置完整性每出现一个错误扣 25 分、每个警告扣 8 分；无法评估的指标不会计入扣分。",
     "allClear": "一切正常。",
     "notChecked": "无法检查（打印机不可达或无基线）。",
     "assessment": {

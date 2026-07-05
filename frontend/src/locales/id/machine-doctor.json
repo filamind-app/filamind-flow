@@ -5,7 +5,7 @@
     "rescan": "Pindai ulang",
     "scoreLine": "Skor {score} / 100",
     "counts": "{errors} kesalahan · {warnings} peringatan",
-    "scoreHint": "Penilaian transparan: 100 − 25 per kesalahan − 8 per peringatan. Pemeriksaan yang tidak diketahui tidak pernah mengurangi nilai Anda.",
+    "scoreHint": "Perpaduan berbobot dari pilar kesehatan di bawah ini. Integritas konfigurasi kehilangan 25 poin per kesalahan dan 8 per peringatan; pilar yang tidak dapat diukur tidak mengurangi skor Anda.",
     "allClear": "Semua aman.",
     "notChecked": "Tidak dapat diperiksa (printer tidak terjangkau atau tidak ada baseline).",
     "assessment": {

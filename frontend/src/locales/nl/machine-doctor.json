@@ -5,7 +5,7 @@
     "rescan": "Opnieuw scannen",
     "scoreLine": "Score {score} / 100",
     "counts": "{errors} fout(en) · {warnings} waarschuwing(en)",
-    "scoreHint": "Transparante scoring: 100 − 25 per fout − 8 per waarschuwing. Onbekende controles tellen nooit tegen je.",
+    "scoreHint": "Een gewogen combinatie van de gezondheidspijlers hieronder. Configuratie-integriteit verliest 25 punten per fout en 8 per waarschuwing; pijlers die niet gemeten kunnen worden, tellen niet in je nadeel mee.",
     "allClear": "Alles in orde.",
     "notChecked": "Kon niet worden gecontroleerd (printer onbereikbaar of geen referentie).",
     "assessment": {

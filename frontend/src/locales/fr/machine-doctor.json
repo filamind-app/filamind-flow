@@ -5,7 +5,7 @@
     "rescan": "Relancer le scan",
     "scoreLine": "Score {score} / 100",
     "counts": "{errors} erreur(s) · {warnings} avertissement(s)",
-    "scoreHint": "Notation transparente : 100 − 25 par erreur − 8 par avertissement. L'invérifiable ne compte jamais contre vous.",
+    "scoreHint": "Un mélange pondéré des piliers de santé ci-dessous. L'intégrité de la configuration perd 25 points par erreur et 8 par avertissement ; les piliers qui ne peuvent pas être mesurés ne vous pénalisent pas.",
     "allClear": "Rien à signaler.",
     "notChecked": "Impossible à vérifier (imprimante injoignable ou pas de référence).",
     "assessment": {
