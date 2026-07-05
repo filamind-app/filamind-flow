@@ -1,0 +1,1 @@
+import{Y as e}from"./i18n-Cv9yBtHV.js";var t=e(null);function n(e){t.value=e}export{t as n,n as t};
