@@ -106,6 +106,8 @@
       "noServices": "サービスが検出されません",
       "beaconHeading": "Beacon",
       "beaconAvailable": "利用可能 {version}",
+      "beaconUpToDate": "最新",
+      "beaconUpToDateTitle": "このプローブは最新の Beacon ファームウェアで動作しています。",
       "flashing": "書き込み中…",
       "flash": "書き込み",
       "devicesHeading": "デバイス",

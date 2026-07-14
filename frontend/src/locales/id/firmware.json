@@ -106,6 +106,8 @@
       "noServices": "tidak ada layanan terdeteksi",
       "beaconHeading": "Beacon",
       "beaconAvailable": "tersedia {version}",
+      "beaconUpToDate": "terkini",
+      "beaconUpToDateTitle": "Probe ini menjalankan firmware Beacon terbaru.",
       "flashing": "mem-flash…",
       "flash": "flash",
       "devicesHeading": "Perangkat",

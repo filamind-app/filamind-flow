@@ -106,6 +106,8 @@
       "noServices": "no services detected",
       "beaconHeading": "Beacon",
       "beaconAvailable": "available {version}",
+      "beaconUpToDate": "up to date",
+      "beaconUpToDateTitle": "This probe is running the latest Beacon firmware.",
       "flashing": "flashing…",
       "flash": "flash",
       "devicesHeading": "Devices",

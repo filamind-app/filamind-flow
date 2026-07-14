@@ -106,6 +106,8 @@
       "noServices": "keine Dienste erkannt",
       "beaconHeading": "Beacon",
       "beaconAvailable": "verfügbar {version}",
+      "beaconUpToDate": "aktuell",
+      "beaconUpToDateTitle": "Diese Sonde verwendet die neueste Beacon-Firmware.",
       "flashing": "flashe…",
       "flash": "flashen",
       "devicesHeading": "Geräte",

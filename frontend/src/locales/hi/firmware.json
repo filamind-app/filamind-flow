@@ -106,6 +106,8 @@
       "noServices": "कोई सेवा नहीं मिली",
       "beaconHeading": "Beacon",
       "beaconAvailable": "उपलब्ध {version}",
+      "beaconUpToDate": "अद्यतित",
+      "beaconUpToDateTitle": "यह प्रोब नवीनतम Beacon फ़र्मवेयर चला रहा है।",
       "flashing": "फ्लैश हो रहा है…",
       "flash": "फ्लैश करें",
       "devicesHeading": "डिवाइस",

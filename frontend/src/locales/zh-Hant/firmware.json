@@ -106,6 +106,8 @@
       "noServices": "未偵測到服務",
       "beaconHeading": "Beacon",
       "beaconAvailable": "可用 {version}",
+      "beaconUpToDate": "最新",
+      "beaconUpToDateTitle": "此探針正在執行最新的 Beacon 韌體。",
       "flashing": "燒錄中…",
       "flash": "燒錄",
       "devicesHeading": "裝置",

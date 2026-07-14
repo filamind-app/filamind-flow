@@ -106,6 +106,8 @@
       "noServices": "servis algılanmadı",
       "beaconHeading": "Beacon",
       "beaconAvailable": "mevcut {version}",
+      "beaconUpToDate": "güncel",
+      "beaconUpToDateTitle": "Bu prob en güncel Beacon donanım yazılımını çalıştırıyor.",
       "flashing": "flaşlanıyor…",
       "flash": "flaşla",
       "devicesHeading": "Cihazlar",

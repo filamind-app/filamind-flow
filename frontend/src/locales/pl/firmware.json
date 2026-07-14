@@ -106,6 +106,8 @@
       "noServices": "nie wykryto usług",
       "beaconHeading": "Beacon",
       "beaconAvailable": "dostępna {version}",
+      "beaconUpToDate": "aktualne",
+      "beaconUpToDateTitle": "Ta sonda korzysta z najnowszego oprogramowania układowego Beacon.",
       "flashing": "wgrywanie…",
       "flash": "wgraj",
       "devicesHeading": "Urządzenia",

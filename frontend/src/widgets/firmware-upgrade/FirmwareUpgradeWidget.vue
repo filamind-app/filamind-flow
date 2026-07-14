@@ -18,6 +18,7 @@ import FirmwareFlashConfirm from './FirmwareFlashConfirm.vue'
 import HelpNote from './HelpNote.vue'
 import HelpIllo from './HelpIllo.vue'
 import { GLOSSARY_KEYS, HELP_ILLO, HELP_TOPICS } from './help'
+import { beaconUpToDate } from './beacon'
 import {
   buildFirmware,
   cancelTask,
@@ -699,7 +700,17 @@ onUnmounted(() => {
               >v{{ p.current_version }}</span
             >
             <span class="shrink-0 font-mono text-[10px] uppercase opacity-50">beacon</span>
+            <!-- Up to date reports "done" like the other MCUs (matches the newest plugin version);
+                 only a probe that is behind - or whose version can't be read - still offers Flash. -->
+            <span
+              v-if="beaconUpToDate(p.current_version, beacon?.available_version)"
+              class="nb-badge shrink-0 bg-brand-lime text-[10px]"
+              :title="t('firmware.widget.beaconUpToDateTitle')"
+            >
+              {{ t('firmware.widget.beaconUpToDate') }}
+            </span>
             <button
+              v-else
               class="nb-btn shrink-0 bg-brand-yellow px-2 py-0.5 text-[11px]"
               :disabled="beaconFlashing"
               @click="requestBeacon(p)"

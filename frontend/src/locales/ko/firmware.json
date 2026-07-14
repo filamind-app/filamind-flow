@@ -106,6 +106,8 @@
       "noServices": "감지된 서비스 없음",
       "beaconHeading": "Beacon",
       "beaconAvailable": "사용 가능 {version}",
+      "beaconUpToDate": "최신",
+      "beaconUpToDateTitle": "이 프로브는 최신 Beacon 펌웨어를 실행 중입니다.",
       "flashing": "플래시 중…",
       "flash": "플래시",
       "devicesHeading": "장치",
