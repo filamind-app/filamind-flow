@@ -106,6 +106,8 @@
       "noServices": "aucun service détecté",
       "beaconHeading": "Beacon",
       "beaconAvailable": "disponible {version}",
+      "beaconUpToDate": "à jour",
+      "beaconUpToDateTitle": "Cette sonde utilise le dernier micrologiciel Beacon.",
       "flashing": "flash en cours…",
       "flash": "flasher",
       "devicesHeading": "Périphériques",

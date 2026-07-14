@@ -106,6 +106,8 @@
       "noServices": "сервисы не обнаружены",
       "beaconHeading": "Beacon",
       "beaconAvailable": "доступна {version}",
+      "beaconUpToDate": "актуально",
+      "beaconUpToDateTitle": "На этом датчике установлена последняя прошивка Beacon.",
       "flashing": "прошивка…",
       "flash": "прошить",
       "devicesHeading": "Устройства",

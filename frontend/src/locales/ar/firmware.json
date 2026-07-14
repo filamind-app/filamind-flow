@@ -106,6 +106,8 @@
       "noServices": "لم يُكتشف أي خدمات",
       "beaconHeading": "Beacon",
       "beaconAvailable": "متوفّر {version}",
+      "beaconUpToDate": "محدّث",
+      "beaconUpToDateTitle": "يعمل هذا المجس بأحدث إصدار من برنامج Beacon الثابت.",
       "flashing": "جارٍ الرفع…",
       "flash": "رفع",
       "devicesHeading": "الأجهزة",

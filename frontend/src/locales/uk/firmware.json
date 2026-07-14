@@ -106,6 +106,8 @@
       "noServices": "служб не виявлено",
       "beaconHeading": "Beacon",
       "beaconAvailable": "доступно {version}",
+      "beaconUpToDate": "актуальна",
+      "beaconUpToDateTitle": "Цей зонд працює на найновішій прошивці Beacon.",
       "flashing": "прошивка…",
       "flash": "прошити",
       "devicesHeading": "Пристрої",

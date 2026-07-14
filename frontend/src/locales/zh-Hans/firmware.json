@@ -106,6 +106,8 @@
       "noServices": "未检测到服务",
       "beaconHeading": "Beacon",
       "beaconAvailable": "可用 {version}",
+      "beaconUpToDate": "最新",
+      "beaconUpToDateTitle": "此探头正在运行最新的 Beacon 固件。",
       "flashing": "刷写中…",
       "flash": "刷写",
       "devicesHeading": "设备",

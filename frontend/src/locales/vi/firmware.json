@@ -106,6 +106,8 @@
       "noServices": "không phát hiện dịch vụ nào",
       "beaconHeading": "Beacon",
       "beaconAvailable": "có sẵn {version}",
+      "beaconUpToDate": "đã cập nhật",
+      "beaconUpToDateTitle": "Đầu dò này đang chạy firmware Beacon mới nhất.",
       "flashing": "đang nạp…",
       "flash": "nạp",
       "devicesHeading": "Thiết bị",

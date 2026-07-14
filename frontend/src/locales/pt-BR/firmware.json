@@ -106,6 +106,8 @@
       "noServices": "nenhum serviço detectado",
       "beaconHeading": "Beacon",
       "beaconAvailable": "disponível {version}",
+      "beaconUpToDate": "atualizado",
+      "beaconUpToDateTitle": "Esta sonda está executando o firmware mais recente da Beacon.",
       "flashing": "gravando…",
       "flash": "gravar",
       "devicesHeading": "Dispositivos",

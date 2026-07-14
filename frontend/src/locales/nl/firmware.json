@@ -106,6 +106,8 @@
       "noServices": "geen services gedetecteerd",
       "beaconHeading": "Beacon",
       "beaconAvailable": "beschikbaar {version}",
+      "beaconUpToDate": "actueel",
+      "beaconUpToDateTitle": "Deze probe gebruikt de nieuwste Beacon-firmware.",
       "flashing": "flashen…",
       "flash": "flashen",
       "devicesHeading": "Apparaten",

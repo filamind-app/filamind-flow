@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.24.1] - 2026-07-14
+
+### Fixed
+
+- **A Beacon probe now reports "up to date" once it is on the latest firmware, instead of always
+  showing a Flash button.** The Firmware Manager already reads a probe's running version (from its
+  USB descriptor) and the newest version its plugin offers, but never compared the two - so a
+  freshly-flashed Beacon kept offering Flash and read as a permanent outstanding update, unlike the
+  other MCUs. The probe row now shows an "up to date" badge when its running version is at or ahead
+  of the newest available one - a numeric `X.Y.Z` comparison, so a `v`-prefixed plugin tag still
+  matches the probe's bare report, and a probe running a build newer than the plugin's latest git
+  tag (the flasher ships HEAD, which can lead the last tag) is correctly treated as current. Flash
+  is offered only when the probe is genuinely behind, or when either version can't be read. (#610)
+
 ## [1.24.0] - 2026-07-05
 
 ### Added
