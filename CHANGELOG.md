@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.24.2] - 2026-07-18
+
+### Fixed
+
+- **The Config Editor no longer raises a red "lint" card just because a SAVE_CONFIG is pending.** Any
+  printer that has ever calibrated boots with Klipper reporting an unsaved SAVE_CONFIG, and the
+  editor was surfacing that as a structural-lint finding - painting the whole findings card red with
+  a "1 finding" alarm (and misleading "restart to apply" advice) on every visit, even when nothing
+  was actually wrong. A pending SAVE_CONFIG is transient runtime state, not a config problem, so it
+  has been dropped from the structural lint. It is still reported - correctly, and now with the exact
+  sections Klipper lists as pending - in the dedicated "what Klipper is running" panel, whose advice
+  (run `SAVE_CONFIG`) is the right one. (#616)
+
 ## [1.24.1] - 2026-07-14
 
 ### Fixed

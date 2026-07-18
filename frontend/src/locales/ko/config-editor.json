@@ -247,7 +247,6 @@
         "double_assigned_pin": "{pin} 핀이 여러 섹션({sections})에 할당되어 있습니다. firmware restart가 실패합니다.",
         "pin_caveat": "{section}: {pin} 핀 — {message}",
         "klipper_warning": "Klipper: {message}",
-        "save_config_pending": "저장되지 않은 SAVE_CONFIG 보정이 대기 중입니다. 적용하려면 재시작하세요.",
         "missing_printer": "[printer] 섹션이 없습니다 — 이 섹션 없이는 Klipper가 시작되지 않습니다.",
         "no_stepper": "stepper 또는 extruder 섹션이 없습니다.",
         "heater_temp_range": "{section}: min_temp({min_temp})가 max_temp({max_temp})보다 낮지 않습니다."

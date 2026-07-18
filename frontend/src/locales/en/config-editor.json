@@ -247,7 +247,6 @@
         "double_assigned_pin": "Pin {pin} is assigned in multiple sections ({sections}). A firmware restart will fail.",
         "pin_caveat": "{section}: pin {pin} — {message}",
         "klipper_warning": "Klipper: {message}",
-        "save_config_pending": "Unsaved SAVE_CONFIG calibration is pending. Restart to apply it.",
         "missing_printer": "No [printer] section found — Klipper will not start without it.",
         "no_stepper": "No stepper or extruder section found.",
         "heater_temp_range": "{section}: min_temp ({min_temp}) is not below max_temp ({max_temp})."

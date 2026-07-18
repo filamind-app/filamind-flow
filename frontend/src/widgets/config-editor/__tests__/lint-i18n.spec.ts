@@ -32,7 +32,6 @@ describe('Config Editor: lint rule i18n', () => {
       'double_assigned_pin',
       'pin_caveat',
       'klipper_warning',
-      'save_config_pending',
       'missing_printer',
       'no_stepper',
       'heater_temp_range',

@@ -247,7 +247,6 @@
         "double_assigned_pin": "{pin} pini birden fazla bölümde atanmış ({sections}). Firmware restart başarısız olur.",
         "pin_caveat": "{section}: pin {pin} — {message}",
         "klipper_warning": "Klipper: {message}",
-        "save_config_pending": "Kaydedilmemiş bir SAVE_CONFIG kalibrasyonu bekliyor. Uygulamak için yeniden başlatın.",
         "missing_printer": "[printer] bölümü bulunamadı — Klipper bu bölüm olmadan başlamaz.",
         "no_stepper": "stepper veya extruder bölümü bulunamadı.",
         "heater_temp_range": "{section}: min_temp ({min_temp}) değeri max_temp ({max_temp}) değerinin altında değil."

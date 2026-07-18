@@ -247,7 +247,6 @@
         "double_assigned_pin": "pin {pin} एक से अधिक सेक्शन ({sections}) में असाइन है। firmware restart विफल हो जाएगा।",
         "pin_caveat": "{section}: pin {pin} — {message}",
         "klipper_warning": "Klipper: {message}",
-        "save_config_pending": "बिना सहेजा गया SAVE_CONFIG कैलिब्रेशन लंबित है। इसे लागू करने के लिए रीस्टार्ट करें।",
         "missing_printer": "कोई [printer] सेक्शन नहीं मिला — इसके बिना Klipper शुरू नहीं होगा।",
         "no_stepper": "कोई stepper या extruder सेक्शन नहीं मिला।",
         "heater_temp_range": "{section}: min_temp ({min_temp}), max_temp ({max_temp}) से कम नहीं है।"

@@ -7,8 +7,10 @@ It leans on AUTHORITATIVE sources rather than a hand-maintained rule list:
   * pin conflicts + electronics caveats - reuses ``board_topology.gather_pin_doctor``;
   * Klipper's OWN ``configfile.warnings`` (deprecated options etc., computed by Klipper itself) -
     zero false positives, always current with the running Klipper;
-  * ``save_config_pending`` - a heads-up that calibration is unsaved;
   * a few unambiguous structural checks (no ``[printer]``, no stepper, heater min>=max).
+
+A pending ``SAVE_CONFIG`` is deliberately NOT reported here (it is runtime state, not a structural
+problem) - the drift panel owns that, with the pending items and the right "run SAVE_CONFIG" advice.
 
 Finding shape mirrors ``gather_sanity``: ``{level, rule, section, detail}``. Degrades to
 ``reachable=false`` when Moonraker is down."""
@@ -140,9 +142,9 @@ async def lint_config(client: MoonrakerClient, data_dir: str = "") -> dict[str, 
     findings: list[dict[str, Any]] = []
     findings += await _pin_findings(client, data_dir)
     findings += _klipper_warnings(cfobj)
-    if cfobj.get("save_config_pending"):
-        findings.append(
-            {"level": "info", "rule": "save_config_pending", "section": "", "detail": {}}
-        )
+    # A pending SAVE_CONFIG is NOT a structural lint problem - it is transient runtime state, and
+    # surfacing it here painted this whole (red) findings card for an info-only note on every boot
+    # of any printer that has ever calibrated. It is already reported - with correct guidance and
+    # the exact pending items - by the "what Klipper is running" drift panel, so it is not repeated.
     findings += _structural_findings(sections)
     return {"reachable": True, "findings": findings, "checked": len(sections)}

@@ -112,6 +112,10 @@ const hasLiveInfo = computed(() => {
   )
 })
 
+// Which config sections Klipper lists as pending a SAVE_CONFIG - shown next to the pending notice so
+// it's clear WHAT is unsaved (a bed mesh, a probe model, a PID result...) rather than a bare warning.
+const pendingItemNames = computed(() => Object.keys(drift.value?.pending_items ?? {}))
+
 async function loadDrift(filename: string): Promise<void> {
   try {
     drift.value = await fetchConfigDrift(filename)
@@ -1124,9 +1128,20 @@ onMounted(() => {
       <!-- Disk vs live: what Klipper is actually running (drift + pending SAVE_CONFIG + warnings) -->
       <div v-if="hasLiveInfo && drift" class="nb-card space-y-2 bg-brand-yellow/15 p-2">
         <p class="text-xs font-bold">{{ t('configEditor.drift.title') }}</p>
-        <p v-if="drift.save_config_pending" class="font-mono text-[11px]">
-          <span aria-hidden="true">⚠</span> {{ t('configEditor.drift.pending') }}
-        </p>
+        <div v-if="drift.save_config_pending" class="space-y-1">
+          <p class="font-mono text-[11px]">
+            <span aria-hidden="true">⚠</span> {{ t('configEditor.drift.pending') }}
+          </p>
+          <ul v-if="pendingItemNames.length" class="flex flex-wrap gap-1">
+            <li
+              v-for="name in pendingItemNames"
+              :key="name"
+              class="rounded-sm bg-brand-yellow/40 px-1 font-mono text-[10px]"
+            >
+              [{{ name }}]
+            </li>
+          </ul>
+        </div>
         <div v-if="drift.warnings.length" class="space-y-0.5">
           <p class="text-[11px] font-bold opacity-70">
             {{ t('configEditor.drift.warningsTitle') }}
