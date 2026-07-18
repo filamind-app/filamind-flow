@@ -247,7 +247,6 @@
         "double_assigned_pin": "الـ pin رقم {pin} مُخصَّص في أكثر من قسم ({sections}). ستفشل إعادة تشغيل البرنامج الثابت.",
         "pin_caveat": "{section}: الـ pin رقم {pin} — {message}",
         "klipper_warning": "Klipper: {message}",
-        "save_config_pending": "توجد معايرة SAVE_CONFIG غير محفوظة بانتظار التطبيق. أعد التشغيل لتطبيقها.",
         "missing_printer": "لا يوجد قسم [printer] — لن يبدأ Klipper بدونه.",
         "no_stepper": "لا يوجد قسم stepper أو extruder.",
         "heater_temp_range": "{section}: قيمة min_temp ({min_temp}) ليست أقل من max_temp ({max_temp})."

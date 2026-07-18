@@ -247,7 +247,6 @@
         "double_assigned_pin": "Pin {pin} ist mehreren Abschnitten zugewiesen ({sections}). Ein firmware restart schlägt fehl.",
         "pin_caveat": "{section}: Pin {pin} – {message}",
         "klipper_warning": "Klipper: {message}",
-        "save_config_pending": "Nicht gespeicherte SAVE_CONFIG-Kalibrierung steht aus. Neu starten, um sie anzuwenden.",
         "missing_printer": "Kein [printer]-Abschnitt gefunden – ohne ihn startet Klipper nicht.",
         "no_stepper": "Kein stepper- oder extruder-Abschnitt gefunden.",
         "heater_temp_range": "{section}: min_temp ({min_temp}) liegt nicht unter max_temp ({max_temp})."

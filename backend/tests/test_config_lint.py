@@ -54,7 +54,9 @@ async def test_lint_aggregates_sources(monkeypatch: Any) -> None:
     assert "double_assigned_pin" in rules
     assert "pin_caveat" in rules
     assert rules.count("klipper_warning") == 2
-    assert "save_config_pending" in rules
+    # A pending SAVE_CONFIG is runtime state, not a structural lint finding: even with the flag set
+    # it must NOT appear here (the drift panel owns it).
+    assert "save_config_pending" not in rules
     assert "heater_temp_range" in rules
     # printer + a stepper exist -> no structural-absence findings
     assert "missing_printer" not in rules

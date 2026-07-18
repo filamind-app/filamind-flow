@@ -247,7 +247,6 @@
         "double_assigned_pin": "Pin {pin} назначен в нескольких секциях ({sections}). Перезапуск прошивки завершится ошибкой.",
         "pin_caveat": "{section}: pin {pin} — {message}",
         "klipper_warning": "Klipper: {message}",
-        "save_config_pending": "Есть несохранённая калибровка SAVE_CONFIG. Перезапустите, чтобы применить её.",
         "missing_printer": "Секция [printer] не найдена — без неё Klipper не запустится.",
         "no_stepper": "Секция stepper или extruder не найдена.",
         "heater_temp_range": "{section}: min_temp ({min_temp}) не меньше max_temp ({max_temp})."

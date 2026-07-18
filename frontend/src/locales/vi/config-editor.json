@@ -247,7 +247,6 @@
         "double_assigned_pin": "Pin {pin} được gán ở nhiều mục ({sections}). Việc firmware restart sẽ thất bại.",
         "pin_caveat": "{section}: pin {pin} — {message}",
         "klipper_warning": "Klipper: {message}",
-        "save_config_pending": "Có hiệu chỉnh SAVE_CONFIG chưa được lưu đang chờ. Hãy khởi động lại để áp dụng.",
         "missing_printer": "Không tìm thấy mục [printer] — Klipper sẽ không khởi động nếu thiếu mục này.",
         "no_stepper": "Không tìm thấy mục stepper hay extruder nào.",
         "heater_temp_range": "{section}: min_temp ({min_temp}) không thấp hơn max_temp ({max_temp})."
