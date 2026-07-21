@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.24.3] - 2026-07-21
+
+### Changed
+
+- **Dependency maintenance.** Routine updates to runtime and tooling dependencies - FastAPI,
+  Uvicorn, and Tailwind's PostCSS plugin on the runtime side; ESLint, Prettier, vue-tsc, the Tauri
+  CLI, mypy, ruff, and the setup-node action on the tooling side. No behaviour change; all bumps are
+  minor/patch within their existing compatible ranges and passed CI individually.
+
 ## [1.24.2] - 2026-07-18
 
 ### Fixed
