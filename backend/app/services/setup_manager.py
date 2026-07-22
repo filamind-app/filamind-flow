@@ -272,40 +272,79 @@ async def _service_active(unit: str) -> bool:
     return bool(res["ok"])
 
 
-def _is_installed(c: Component, managed: set[str], services: set[str]) -> bool:
+def section_keys(sections: list[str]) -> set[str]:
+    """Moonraker config section names reduced to comparable keys: the first token, lowercased -
+    ``[spoolman]`` -> ``spoolman``, ``[power Auto Lights]`` -> ``power``, ``[update_manager X]`` ->
+    ``update_manager`` (which matches no component, so it can't false-positive)."""
+    out: set[str] = set()
+    for raw in sections:
+        head = str(raw).strip().split()
+        if head:
+            out.add(head[0].lower())
+    return out
+
+
+def _install_dir_present(c: Component) -> bool:
+    """The clone-to-``$HOME`` heuristic, matched case-INSENSITIVELY.
+
+    Several ecosystem installers clone to the repo's own capitalisation (``~/Spoolman``,
+    ``~/KlipperScreen``) while the catalog keys are lowercase - and Linux paths are case-sensitive,
+    so an exact match silently missed those installs and reported them as available.
+    """
+    name = (c.dir or c.id).lower()
+    home = Path.home()
+    if (home / (c.dir or c.id)).is_dir():
+        return True
+    try:
+        return any(p.name.lower() == name and p.is_dir() for p in home.iterdir())
+    except OSError:
+        return False
+
+
+def _is_installed(
+    c: Component, managed: set[str], services: set[str], sections: set[str] = frozenset()
+) -> bool:
     """Combine the install signals, most-authoritative first:
 
     1. Moonraker's update-manager registry (``manager_key`` or ``id``) - the components Moonraker
        actually tracks; survives non-``$HOME`` layouts and is the source of truth when present.
     2. A managed systemd unit (``service``) - catches service-style installs (crowsnest, spoolman).
-    3. For a first-party nginx app, the nginx site itself - a bare clone (downloaded but never set
+    3. A section in Moonraker's OWN config named after the component - how Moonraker is wired to a
+       component that runs as a container or on another host (``[spoolman]``), where there is no
+       local unit and no clone to find.
+    4. For a first-party nginx app, the nginx site itself - a bare clone (downloaded but never set
        up) is NOT installed; the site only exists once its installer's web-server step succeeded.
-    4. The clone-to-``$HOME`` directory heuristic - the offline fallback for everything else.
+    5. The clone-to-``$HOME`` directory heuristic (case-insensitive) - the offline fallback.
     """
     key = (c.manager_key or c.id).lower()
     if key in managed:
         return True
     if c.service and c.service.lower() in services:
         return True
+    if key in sections:
+        return True
     if _is_nginx_app(c):
         return _nginx_site_present(c.id)
-    return _install_dir(c).is_dir()
+    return _install_dir_present(c)
 
 
 async def probe_status(
-    managed: set[str] | None = None, services: set[str] | None = None
+    managed: set[str] | None = None,
+    services: set[str] | None = None,
+    sections: set[str] | None = None,
 ) -> dict[str, str]:
     """Read-only install status per component, combining Moonraker signals with the dir heuristic.
 
-    ``managed`` (update-manager keys) and ``services`` (systemd units) come from Moonraker when
-    reachable; when omitted/empty the detection falls back to the clone-to-``$HOME`` heuristic, so
-    this stays correct offline.
+    ``managed`` (update-manager keys), ``services`` (systemd units) and ``sections`` (Moonraker's
+    own config sections) come from Moonraker when reachable; when omitted/empty the detection falls
+    back to the clone-to-``$HOME`` heuristic, so this stays correct offline.
     """
     catalog = load_catalog()
     m = managed or set()
     s = services or set()
+    sec = sections or set()
     return {
-        cid: ("installed" if _is_installed(c, m, s) else "not-installed")
+        cid: ("installed" if _is_installed(c, m, s, sec) else "not-installed")
         for cid, c in catalog.items()
     }
 
@@ -482,6 +521,7 @@ async def probe_detailed(
     services: set[str] | None = None,
     github_remaining: int | None = None,
     force_refresh: bool = False,
+    sections: set[str] | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Rich per-component status for the widget: install state + version numbers + an update flag.
 
@@ -504,7 +544,7 @@ async def probe_detailed(
     service_units: dict[str, str] = {}  # installed component cid -> its systemd unit
 
     for cid, c in catalog.items():
-        installed = _is_installed(c, managed, s)
+        installed = _is_installed(c, managed, s, sections or set())
         entry = vi_map.get((c.manager_key or c.id).lower())
         rec: dict[str, Any] = {
             "status": "installed" if installed else "not-installed",
@@ -686,11 +726,12 @@ async def auto_update_tick(moonraker_url: str, now: float) -> dict[str, Any]:
         version_info = vi if isinstance(vi, dict) else {}
         remaining = raw.get("github_requests_remaining")
         services = {s.lower() for s in await client.available_services()}
+        sections = section_keys(await client.config_sections())
         github_remaining = remaining if isinstance(remaining, int) else None
     except (httpx.HTTPError, ValueError):
-        version_info, services, github_remaining = {}, set(), None
+        version_info, services, sections, github_remaining = {}, set(), set(), None
 
-    detailed = await probe_detailed(version_info, services, github_remaining)
+    detailed = await probe_detailed(version_info, services, github_remaining, sections=sections)
     targets = [cid for cid, rec in detailed.items() if rec.get("updateAvailable")]
     # Record the run up front so a mid-list failure doesn't make us retry on every tick.
     state["lastRun"] = now

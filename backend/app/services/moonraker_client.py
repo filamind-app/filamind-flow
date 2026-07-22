@@ -102,6 +102,19 @@ class MoonrakerClient:
         services = info.get("available_services", [])
         return [str(s) for s in services] if isinstance(services, list) else []
 
+    async def config_sections(self) -> list[str]:
+        """Section names from Moonraker's OWN config (``/server/config`` → ``config``).
+
+        A third install signal for components that Moonraker integrates with through a config
+        section rather than a managed unit or an update-manager entry - ``[spoolman]`` is the
+        notable one: the server it points at is frequently a container or another host, so neither
+        a local systemd unit nor a clone directory exists even though the component is installed
+        and in use. Returns an empty list when absent or malformed.
+        """
+        result = await self._get("/server/config")
+        config = result.get("config")
+        return [str(k) for k in config] if isinstance(config, dict) else []
+
     async def list_objects(self) -> list[str]:
         """Names of all available printer objects."""
         result = await self._get("/printer/objects/list")

@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.24.4] - 2026-07-22
+
+### Fixed
+
+- **Setup now recognises an install that Moonraker reaches over the network, such as a Spoolman in a
+  container or on another host.** A component only counted as installed when Moonraker's update
+  manager tracked it, a managed systemd unit existed, or a clone sat in `$HOME` under the exact
+  lowercase catalog name - so a Spoolman wired in through a `[spoolman]` section in moonraker.conf,
+  with no local unit and no local clone, was listed as available with an Install button. Setup now
+  also treats a section in Moonraker's own config named after a component as an install signal, and
+  the `$HOME` clone heuristic matches case-insensitively (installers clone to the repo's own
+  capitalisation - `~/Spoolman` - which a case-sensitive exact match silently missed). The local
+  remove and port paths deliberately keep using local signals only, so nothing tries to act on an
+  install that isn't on this host. (#619)
+
 ## [1.24.3] - 2026-07-21
 
 ### Changed
