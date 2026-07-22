@@ -56,6 +56,20 @@ class IncludeRef(BaseModel):
     add: bool
 
 
+async def _config_sections(client: MoonrakerClient) -> set[str]:
+    """The config-section signal ALONE, failing to an empty set.
+
+    Isolated on purpose: it is the weakest of the three signals and the only one served by an
+    endpoint a host can plausibly refuse (an older Moonraker, or one with authorization on). Folded
+    into the main try it would take the update-manager and systemd signals down with it and drop
+    every component back to the directory heuristic - a far worse outcome than losing one signal.
+    """
+    try:
+        return setup_manager.section_keys(await client.config_sections())
+    except (httpx.HTTPError, ValueError):
+        return set()
+
+
 async def _moonraker_full(
     settings: Settings,
 ) -> tuple[dict[str, Any], set[str], set[str], int | None]:
@@ -67,16 +81,16 @@ async def _moonraker_full(
     dir heuristic, so the status read never 500s.
     """
     client = MoonrakerClient(settings.moonraker_url)
+    sections = await _config_sections(client)
     try:
         raw = await client.update_status_full()
         vi = raw.get("version_info")
         version_info = vi if isinstance(vi, dict) else {}
         remaining = raw.get("github_requests_remaining")
         services = {s.lower() for s in await client.available_services()}
-        sections = setup_manager.section_keys(await client.config_sections())
         return version_info, services, sections, (remaining if isinstance(remaining, int) else None)
     except (httpx.HTTPError, ValueError):
-        return {}, set(), set(), None
+        return {}, set(), sections, None
 
 
 async def _moonraker_signals(settings: Settings) -> tuple[set[str], set[str]]:

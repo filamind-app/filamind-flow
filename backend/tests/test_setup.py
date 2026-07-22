@@ -3,9 +3,12 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+from app.api.routes import setup as setup_routes
+from app.config import get_settings
 from app.main import create_app
 from app.services import setup_manager, setup_provenance
 
@@ -715,3 +718,57 @@ async def test_restart_refused_when_writes_disabled(monkeypatch) -> None:
     monkeypatch.setattr(setup_manager, "writes_enabled", lambda: False)
     r = await setup_manager.restart("filamind-3d")
     assert r.get("refused") is True
+
+
+class _RefusesConfigEndpoint:
+    """Moonraker answering the update manager but refusing ``/server/config`` - an older build, or
+    one with authorization on."""
+
+    def __init__(self, *_a: object, **_k: object) -> None: ...
+
+    async def update_status_full(self) -> dict:
+        return {"version_info": {"klipper": {}}, "github_requests_remaining": 42}
+
+    async def available_services(self) -> list[str]:
+        return ["klipper", "moonraker"]
+
+    async def config_sections(self) -> list[str]:
+        raise httpx.HTTPError("refused")
+
+
+class _OnlyConfigEndpoint:
+    """The mirror case: the update manager is unreachable, the config read still works."""
+
+    def __init__(self, *_a: object, **_k: object) -> None: ...
+
+    async def update_status_full(self) -> dict:
+        raise httpx.HTTPError("unreachable")
+
+    async def available_services(self) -> list[str]:
+        raise httpx.HTTPError("unreachable")
+
+    async def config_sections(self) -> list[str]:
+        return ["spoolman"]
+
+
+async def test_a_refused_config_read_does_not_wipe_the_other_install_signals(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # The config-section read is the weakest signal and the likeliest to be refused. Sharing one
+    # try/except with the update-manager read would take BOTH down and drop every component back to
+    # the directory heuristic - so it gets its own guard and only its own result is lost.
+    monkeypatch.setattr(setup_routes, "MoonrakerClient", _RefusesConfigEndpoint)
+    version_info, services, sections, remaining = await setup_routes._moonraker_full(get_settings())
+    assert set(version_info) == {"klipper"}
+    assert services == {"klipper", "moonraker"}
+    assert remaining == 42
+    assert sections == set()
+
+
+async def test_the_config_section_signal_survives_an_unreachable_update_manager(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(setup_routes, "MoonrakerClient", _OnlyConfigEndpoint)
+    version_info, services, sections, remaining = await setup_routes._moonraker_full(get_settings())
+    assert version_info == {} and services == set() and remaining is None
+    assert sections == {"spoolman"}

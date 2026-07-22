@@ -724,16 +724,21 @@ async def auto_update_tick(moonraker_url: str, now: float) -> dict[str, Any]:
     from app.services.moonraker_client import MoonrakerClient
 
     client = MoonrakerClient(moonraker_url)
+    # The config-section signal gets its own guard: it is served by an endpoint a host can refuse,
+    # and folding it into the main try would take the update-manager signal down with it.
+    try:
+        sections = section_keys(await client.config_sections())
+    except (httpx.HTTPError, ValueError):
+        sections = set()
     try:
         raw = await client.update_status_full()
         vi = raw.get("version_info")
         version_info = vi if isinstance(vi, dict) else {}
         remaining = raw.get("github_requests_remaining")
         services = {s.lower() for s in await client.available_services()}
-        sections = section_keys(await client.config_sections())
         github_remaining = remaining if isinstance(remaining, int) else None
     except (httpx.HTTPError, ValueError):
-        version_info, services, sections, github_remaining = {}, set(), set(), None
+        version_info, services, github_remaining = {}, set(), None
 
     detailed = await probe_detailed(version_info, services, github_remaining, sections=sections)
     targets = [cid for cid, rec in detailed.items() if rec.get("updateAvailable")]
