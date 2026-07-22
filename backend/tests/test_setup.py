@@ -86,6 +86,33 @@ async def test_status_uses_moonraker_signals_then_dir_heuristic() -> None:
     assert status["crowsnest"] == "installed"
 
 
+async def test_status_counts_a_moonraker_config_section_as_installed() -> None:
+    # Spoolman commonly runs as a container or on another host - no local unit and no clone to find -
+    # but Moonraker is wired to it by a `[spoolman]` section, which means it IS installed and in use.
+    status = await setup_manager.probe_status(managed=set(), services=set(), sections={"spoolman"})
+    assert status["spoolman"] == "installed"
+    # The signal is per-component, not a blanket: an unrelated component stays available.
+    assert status["cartographer"] == "not-installed"
+
+
+def test_section_keys_reduces_moonraker_sections_to_their_first_token() -> None:
+    keys = setup_manager.section_keys(
+        ["spoolman", "power Auto Lights", "update_manager mainsail", "   ", "Timelapse"]
+    )
+    assert keys == {"spoolman", "power", "update_manager", "timelapse"}
+
+
+async def test_dir_heuristic_matches_a_differently_cased_clone(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    # Installers clone to the repo's own capitalisation (~/Spoolman) while the catalog key is
+    # lowercase - and Linux paths are case-sensitive, so an exact match read it as not installed.
+    (tmp_path / "Spoolman").mkdir()
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    status = await setup_manager.probe_status(managed=set(), services=set())
+    assert status["spoolman"] == "installed"
+
+
 async def test_probe_detailed_reports_versions_and_update_flag() -> None:
     # Versions + an update flag come from Moonraker's update-manager version_info: a git component
     # with commits behind, a web component whose version differs from remote, and an up-to-date one.
@@ -120,7 +147,9 @@ async def test_unmanaged_git_checkout_surfaces_updates(monkeypatch) -> None:
     # apps, guppyscreen) must still get `latest` + updateAvailable - from the local clone vs its own
     # origin, NOT from GitHub. Hermetic: monkeypatch the install signal + the two git helpers so no
     # real git/network runs.
-    monkeypatch.setattr(setup_manager, "_is_installed", lambda c, m, s: c.id == "guppyscreen")
+    monkeypatch.setattr(
+        setup_manager, "_is_installed", lambda c, m, s, sec=frozenset(): c.id == "guppyscreen"
+    )
 
     async def _ver(_dest: object) -> str:
         return "07409cb"

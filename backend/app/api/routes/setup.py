@@ -58,11 +58,13 @@ class IncludeRef(BaseModel):
 
 async def _moonraker_full(
     settings: Settings,
-) -> tuple[dict[str, Any], set[str], int | None]:
-    """Best-effort (update-manager ``version_info``, managed services, remaining GitHub quota) from
-    Moonraker; empty when unreachable. ``version_info`` carries each managed component's version /
-    remote_version / commits_behind; the remaining-quota number gates best-effort GitHub lookups.
-    On ANY failure callers fall back to the dir heuristic, so the status read never 500s.
+) -> tuple[dict[str, Any], set[str], set[str], int | None]:
+    """Best-effort (update-manager ``version_info``, managed services, Moonraker's own config
+    sections, remaining GitHub quota) from Moonraker; empty when unreachable. ``version_info``
+    carries each managed component's version / remote_version / commits_behind; the config sections
+    catch components Moonraker talks to without a local unit or clone (``[spoolman]``); the
+    remaining-quota number gates best-effort GitHub lookups. On ANY failure callers fall back to the
+    dir heuristic, so the status read never 500s.
     """
     client = MoonrakerClient(settings.moonraker_url)
     try:
@@ -71,15 +73,21 @@ async def _moonraker_full(
         version_info = vi if isinstance(vi, dict) else {}
         remaining = raw.get("github_requests_remaining")
         services = {s.lower() for s in await client.available_services()}
-        return version_info, services, (remaining if isinstance(remaining, int) else None)
+        sections = setup_manager.section_keys(await client.config_sections())
+        return version_info, services, sections, (remaining if isinstance(remaining, int) else None)
     except (httpx.HTTPError, ValueError):
-        return {}, set(), None
+        return {}, set(), set(), None
 
 
 async def _moonraker_signals(settings: Settings) -> tuple[set[str], set[str]]:
     """(update-manager keys, managed services) for install detection - install/port paths only need
-    the boolean signals, not versions, so this thin wrapper keeps their call sites unchanged."""
-    version_info, services, _ = await _moonraker_full(settings)
+    the boolean signals, not versions, so this thin wrapper keeps their call sites unchanged.
+
+    Deliberately does NOT carry the config-section signal: that means "Moonraker is wired to this
+    component" (possibly a container or another host), which is right for the status display but
+    must not make a local remove/port path believe there is something local to act on.
+    """
+    version_info, services, _sections, _ = await _moonraker_full(settings)
     return {k.lower() for k in version_info}, services
 
 
@@ -98,10 +106,10 @@ async def setup_status(
     version caches so a just-published release shows up instead of a week-old cached value."""
     if refresh:
         setup_manager.clear_version_caches()
-    version_info, services, github_remaining = await _moonraker_full(settings)
+    version_info, services, sections, github_remaining = await _moonraker_full(settings)
     return {
         "status": await setup_manager.probe_detailed(
-            version_info, services, github_remaining, force_refresh=refresh
+            version_info, services, github_remaining, force_refresh=refresh, sections=sections
         ),
         "writesEnabled": setup_manager.writes_enabled(),
         "autoUpdate": setup_manager.autoupdate_prefs(),
