@@ -302,7 +302,7 @@ def _install_dir_present(c: Component) -> bool:
 
 
 def _is_installed(
-    c: Component, managed: set[str], services: set[str], sections: set[str] = frozenset()
+    c: Component, managed: set[str], services: set[str], sections: set[str] | None = None
 ) -> bool:
     """Combine the install signals, most-authoritative first:
 
@@ -321,7 +321,7 @@ def _is_installed(
         return True
     if c.service and c.service.lower() in services:
         return True
-    if key in sections:
+    if sections and key in sections:
         return True
     if _is_nginx_app(c):
         return _nginx_site_present(c.id)
