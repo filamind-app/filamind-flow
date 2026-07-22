@@ -87,8 +87,8 @@ async def test_status_uses_moonraker_signals_then_dir_heuristic() -> None:
 
 
 async def test_status_counts_a_moonraker_config_section_as_installed() -> None:
-    # Spoolman commonly runs as a container or on another host - no local unit and no clone to find -
-    # but Moonraker is wired to it by a `[spoolman]` section, which means it IS installed and in use.
+    # Spoolman commonly runs as a container or on another host - no local unit and no clone to
+    # find - but Moonraker is wired to it by a `[spoolman]` section, so it IS installed and in use.
     status = await setup_manager.probe_status(managed=set(), services=set(), sections={"spoolman"})
     assert status["spoolman"] == "installed"
     # The signal is per-component, not a blanket: an unrelated component stays available.
