@@ -80,5 +80,38 @@ being the tagged one, `release.yml` is skipped and the release must be published
 - Features target the general Klipper and Moonraker surface, not one printer model.
 - Do not ship configuration nobody asked for.
 
-Maintainers: the full handbook, the research corpus and the current handoff live in the private
-`filamind-app/filamind-internal` repo.
+## When you finish work here — update the team repo
+
+FilaMind's working state lives in the private `filamind-app/filamind-internal` repo: the handbook,
+the research corpus, and the handoff that records what shipped and what is still open. Several
+sessions work on FilaMind in parallel, on different machines and at different times, and that repo
+is how they stay in agreement about what is true.
+
+**Updating it is part of finishing a piece of work, not an optional extra.** A later session cannot
+reconstruct what you knew. Work is not finished when the code ships; it is finished when that repo
+says the code shipped.
+
+If you do not have it (it is private — you need access to the `filamind-app` account):
+
+```bash
+git clone https://github.com/filamind-app/filamind-internal.git
+```
+
+`handbook/sync-protocol.md` in that repo is the full contract. The short version:
+
+- **`git pull --ff-only` first.** Assume those files are newer than your memory of them.
+- **Verify before you record.** Check `gh release list`, `gh issue list`, `gh pr list` and
+  `git log origin/main` rather than writing down what you remember. If a file there contradicts
+  reality, fix it and say so in the commit — a wrong state table is worse than a missing one,
+  because the next session acts on it.
+- **Released something** → a changelog line and the new version in the newest file in `handoffs/`.
+- **Answered, fixed or closed an issue** → update its row in that handoff's open-items table, saying
+  exactly what is now being waited on and by whom.
+- **Learned something the hard way** → a numbered rule in `handbook/rules.md` **with the cost
+  attached**, or a trap in `handbook/ci-and-release.md` if it is mechanical.
+- **Ended a stretch of work, or handing over** → write a **new dated handoff**; never edit an old one
+  to make it current.
+- **Never invent state.** If you did not check whether CI passed, write "not verified", not a guess.
+
+Do not record work in progress, an unmerged PR you are still iterating on, or an intention. That repo
+records what is true, not what is planned.
