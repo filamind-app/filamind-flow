@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.25.1] - 2026-07-22
+
+### Fixed
+
+- **A Moonraker that won't serve its own config no longer blanks every Setup install badge.** The
+  config-section signal added in 1.24.4 (which is what recognises a Spoolman wired in from a
+  container or another host) shared one failure path with the update-manager and systemd reads, so
+  an older Moonraker - or one with authorization enabled - refusing that single endpoint dropped
+  all three signals at once and sent every component back to the directory-name guess. Each read is
+  guarded on its own now: losing one costs only that one, and the config-section signal likewise
+  survives an update manager that can't be reached.
+
 ## [1.25.0] - 2026-07-22
 
 ### Changed
