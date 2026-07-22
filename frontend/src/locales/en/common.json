@@ -1,6 +1,8 @@
 {
   "common": {
     "appName": "FilaMind Flow",
+    "experimental": "Experimental",
+    "experimentalNote": "Under active development and research. We're still shaping this toward an interface that stays light and enjoyable, so expect it - and the features it unlocks - to keep changing. Suggestions and improvement ideas are very welcome.",
     "errors": {
       "backendUnreachable": "Cannot reach the FilaMind backend - check that the filamind-flow service is running and reachable.",
       "requestFailed": "Request failed ({status})"

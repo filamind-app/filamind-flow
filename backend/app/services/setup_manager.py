@@ -100,6 +100,9 @@ class Component:
     group: str
     deps: list[str] = field(default_factory=list)
     first_party: bool = False
+    #: Still under active development and research - the widget badges it so nobody mistakes it
+    #: for a settled release (the catalog is the single source; the raw payload carries the flag).
+    experimental: bool = False
     desc: str = ""
     #: Moonraker update-manager key when it differs from ``id`` (e.g. ``KlipperScreen``).
     manager_key: str = ""
@@ -147,6 +150,7 @@ def load_catalog() -> dict[str, Component]:
                 group=grp["group"],
                 deps=list(c.get("deps", [])),
                 first_party=bool(c.get("first_party", False)),
+                experimental=bool(c.get("experimental", False)),
                 desc=str(c.get("desc", "")),
                 manager_key=str(c.get("manager_key", "")),
                 service=str(c.get("service", "")),

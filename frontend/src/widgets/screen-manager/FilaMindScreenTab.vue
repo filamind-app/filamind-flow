@@ -6,6 +6,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import ExperimentalNote from '@/components/ExperimentalNote.vue'
 import { useRemoteControlStore } from '@/core/store/remoteControl'
 import type { RemoteMessageLevel } from '@/core/remote/commands'
 
@@ -59,6 +60,10 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
+    <!-- This tab drives FilaMind screen, which is itself still under development - say so here too,
+         not only on its Setup card, since this is where an operator actually uses it. -->
+    <ExperimentalNote />
+
     <header class="flex items-center justify-between gap-3">
       <p class="text-sm text-ink/70">{{ t('remoteControl.intro') }}</p>
       <span

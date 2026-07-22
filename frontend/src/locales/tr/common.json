@@ -1,6 +1,8 @@
 {
   "common": {
     "appName": "FilaMind Flow",
+    "experimental": "Deneysel",
+    "experimentalNote": "Geliştirme ve araştırma aşamasında. Hafif ve kullanması keyifli bir arayüz hâline getirmek için üzerinde çalışmaya devam ediyoruz; bu yüzden hem bu bölüm hem de beraberinde gelen özellikler değişmeye devam edecek. Önerilerinizi ve iyileştirme fikirlerinizi memnuniyetle bekliyoruz.",
     "errors": {
       "backendUnreachable": "FilaMind arka ucuna ulaşılamıyor - filamind-flow hizmetinin çalıştığından ve erişilebilir olduğundan emin olun.",
       "requestFailed": "İstek başarısız ({status})"

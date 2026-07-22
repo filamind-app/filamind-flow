@@ -403,6 +403,12 @@ onMounted(load)
                 <span v-if="c.first_party" class="nb-badge bg-brand-cyan text-[10px]">{{
                   t('setup.firstParty')
                 }}</span>
+                <span
+                  v-if="c.experimental"
+                  class="nb-badge bg-brand-yellow text-[10px]"
+                  :title="t('common.experimentalNote')"
+                  >{{ t('common.experimental') }}</span
+                >
               </div>
               <div
                 class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-ink/60"
@@ -442,6 +448,14 @@ onMounted(load)
           </div>
 
           <p v-if="c.desc" class="line-clamp-2 text-xs text-ink/70">{{ c.desc }}</p>
+          <!-- Says plainly that this one is still being researched and reshaped, so an operator
+               installing it knows to expect change rather than a settled release. -->
+          <p
+            v-if="c.experimental"
+            class="rounded-brutal border-2 border-ink bg-brand-yellow/25 px-2 py-1 text-[11px]"
+          >
+            <span aria-hidden="true">🧪</span> {{ t('common.experimentalNote') }}
+          </p>
 
           <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-ink/55">
             <span v-if="depNames(c).length">
