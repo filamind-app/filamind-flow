@@ -6,6 +6,9 @@ export interface SetupComponent {
   type: string
   deps?: string[]
   first_party?: boolean
+  /** Still under active development and research - badged so nobody mistakes it for a settled
+   *  release, with a note explaining that it (and the features it unlocks) will keep changing. */
+  experimental?: boolean
   /** systemd unit name when this component runs as a service (drives restart / logs / health). */
   service?: string
   /** One-line description of what the component does. */

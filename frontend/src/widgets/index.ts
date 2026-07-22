@@ -13,9 +13,15 @@ import { suiteUnlocked } from '@/core/host/suite'
  */
 function gatedComponent(id: string, real: Component): Component {
   const SuiteGate = defineAsyncComponent(() => import('@/components/SuiteGate.vue'))
+  const ExperimentalNote = defineAsyncComponent(() => import('@/components/ExperimentalNote.vue'))
   return defineComponent({
     name: `suite-gated-${id}`,
-    setup: () => () => (suiteUnlocked.value ? h(real) : h(SuiteGate, { widgetId: id })),
+    // Unlocked, these widgets are the FilaMind 3d feature set - still under development and
+    // research like 3d itself - so each carries the experimental note above its real UI.
+    setup: () => () =>
+      suiteUnlocked.value
+        ? h('div', { class: 'flex flex-col gap-2' }, [h(ExperimentalNote), h(real)])
+        : h(SuiteGate, { widgetId: id }),
   })
 }
 

@@ -5,6 +5,8 @@
  */
 import { useI18n } from 'vue-i18n'
 
+import ExperimentalNote from './ExperimentalNote.vue'
+
 const props = defineProps<{ widgetId: string }>()
 
 const { t } = useI18n({ useScope: 'global' })
@@ -23,6 +25,9 @@ const tt = t as unknown as (key: string, named?: Record<string, unknown>) => str
         <p class="text-[11px] opacity-60">
           {{ t(`shell.widgets.${props.widgetId}.description`) }}
         </p>
+        <!-- Says up front that what this gate asks you to install is still being researched, so the
+             decision to install FilaMind 3d is made with that in view. -->
+        <ExperimentalNote />
       </div>
     </div>
   </div>

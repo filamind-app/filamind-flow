@@ -1,6 +1,8 @@
 {
   "common": {
     "appName": "FilaMind Flow",
+    "experimental": "Experimentell",
+    "experimentalNote": "Wird derzeit aktiv entwickelt und erprobt. Wir arbeiten weiter daran, dass die Oberfläche leichtgewichtig und angenehm zu bedienen bleibt – sie und die damit verbundenen Funktionen werden sich also noch verändern. Über Anregungen und Verbesserungsvorschläge freuen wir uns sehr.",
     "errors": {
       "backendUnreachable": "FilaMind-Backend nicht erreichbar — prüfe, ob der filamind-flow-Dienst läuft und erreichbar ist.",
       "requestFailed": "Anfrage fehlgeschlagen ({status})"

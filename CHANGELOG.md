@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.25.0] - 2026-07-22
+
+### Changed
+
+- **FilaMind 3d and FilaMind screen now say plainly that they are experimental, everywhere they
+  appear.** Both are still under active development and research, and so are the widgets FilaMind 3d
+  unlocks (Material Brain, Tuning Wizards, Pre-Print Check, Known-Good Pack, Rules Engine). An
+  **Experimental** badge and a plain-language note now appear on their Setup cards, on the install
+  gate those widgets show when 3d isn't present, above each widget once 3d unlocks it, on the Screen
+  Manager's FilaMind screen tab, and next to FilaMind screen in the touch-UI switcher. The note says
+  what it means - under development and research, expect it and the features it unlocks to keep
+  changing - and invites suggestions and improvement ideas. A catalog `experimental` flag drives all
+  of it, so marking any future component is a one-line change. Translated across all 19 locales.
+
 ## [1.24.4] - 2026-07-22
 
 ### Fixed

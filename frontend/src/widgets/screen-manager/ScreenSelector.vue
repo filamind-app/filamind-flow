@@ -18,6 +18,9 @@ const LABELS: Record<TouchKey, string> = {
   'filamind-screen': 'FilaMind screen',
   'filamind-flow': 'FilaMind flow',
 }
+/** Touch UIs still under active development and research - badged so switching to one is a choice
+ *  made knowingly (the Setup card and the FilaMind screen tab carry the full note). */
+const EXPERIMENTAL = new Set<TouchKey>(['filamind-screen'])
 
 async function load(): Promise<void> {
   error.value = null
@@ -61,6 +64,13 @@ onMounted(load)
         class="nb-card flex flex-wrap items-center gap-2 bg-surface p-2"
       >
         <span class="font-bold">{{ LABELS[k] }}</span>
+        <span
+          v-if="EXPERIMENTAL.has(k)"
+          class="nb-badge bg-brand-yellow text-xs"
+          :title="t('common.experimentalNote')"
+        >
+          {{ t('common.experimental') }}
+        </span>
         <span v-if="status?.screens[k]?.active" class="nb-badge bg-brand-green text-xs">
           {{ t('klipperscreenStudio.selector.active') }}
         </span>
