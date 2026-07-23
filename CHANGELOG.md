@@ -6,6 +6,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Consume the published `@filamind-app/core` 0.1.6; the lockfile had pinned 0.1.4. No behaviour
+  change - the difference upstream is formatting only.
+
 ## [1.25.2] - 2026-07-23
 
 ### Changed
