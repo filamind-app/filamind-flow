@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.25.2] - 2026-07-23
+
+### Changed
+
+- **The frontend toolchain now matches the rest of the FilaMind suite.** vue, vite, vitest and
+  eslint move to the versions the other surfaces carry, the declared Node floor rises to 22.13 -
+  which vue-i18n and its unplugin already required, so the old 20.19 was under-declared - and CI
+  and the release workflow build on Node 22. The four repos share a formatter, a compiler and a
+  core package, so a version difference between them is a failure mode rather than an
+  inconsistency.
+- **Prettier is pinned to an exact version instead of a caret range.** A formatter patch release
+  can change formatting; with a floating range each repo resolved whatever was newest when it last
+  installed, so a format check could pass in one repo and fail in another for the same file. The
+  pin makes every formatter upgrade an explicit, coordinated change.
+
 ## [1.25.1] - 2026-07-22
 
 ### Fixed
