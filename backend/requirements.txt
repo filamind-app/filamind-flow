@@ -2,7 +2,7 @@ fastapi>=0.139.2,<1.0
 uvicorn[standard]>=0.51.0,<1.0
 httpx>=0.28.1,<1.0
 pydantic>=2.13.4,<3.0
-pydantic-settings>=2.14.2,<3.0
+pydantic-settings>=2.15.0,<3.0
 # Parses Klipper's Kconfig for the firmware config editor (Klipper ships its own
 # copy under lib/kconfiglib, used in preference to this one at runtime).
 kconfiglib>=14.1,<15.0
